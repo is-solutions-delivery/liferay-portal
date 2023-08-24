@@ -52,21 +52,21 @@ import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.PublishArtifact;
 import org.gradle.api.artifacts.PublishArtifactSet;
 import org.gradle.api.file.CopySpec;
+import org.gradle.api.file.DuplicatesStrategy;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.api.logging.Logger;
-import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.plugins.JavaBasePlugin;
 import org.gradle.api.plugins.JavaPlugin;
-import org.gradle.api.plugins.MavenPlugin;
 import org.gradle.api.plugins.PluginContainer;
 import org.gradle.api.plugins.WarPlugin;
+import org.gradle.api.publish.maven.plugins.MavenPublishPlugin;
+import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.Copy;
 import org.gradle.api.tasks.Delete;
 import org.gradle.api.tasks.TaskOutputs;
 import org.gradle.api.tasks.TaskProvider;
-import org.gradle.api.tasks.Upload;
 import org.gradle.util.CollectionUtils;
 
 /**
@@ -101,15 +101,16 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 		// Plugins
 
 		GradleUtil.applyPlugin(project, ChangeLogBuilderPlugin.class);
-		GradleUtil.applyPlugin(project, MavenPlugin.class);
+		GradleUtil.applyPlugin(project, MavenPublishPlugin.class);
 
 		// Configurations
 
 		ConfigurationContainer configurationContainer =
 			project.getConfigurations();
 
-		Configuration archivesConfiguration = configurationContainer.getByName(
-			Dependency.ARCHIVES_CONFIGURATION);
+		Configuration archivesConfiguration =
+			configurationContainer.maybeCreate(
+				Dependency.ARCHIVES_CONFIGURATION);
 
 		// Tasks
 
@@ -140,9 +141,8 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 			GradleUtil.getTaskProvider(
 				project, ChangeLogBuilderPlugin.BUILD_CHANGE_LOG_TASK_NAME,
 				BuildChangeLogTask.class);
-		TaskProvider<Upload> uploadArchivesTaskProvider =
-			GradleUtil.getTaskProvider(
-				project, BasePlugin.UPLOAD_ARCHIVES_TASK_NAME, Upload.class);
+		TaskProvider<Task> publishTaskProvider = GradleUtil.getTaskProvider(
+			project, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME);
 
 		File relengDir = LiferayRelengUtil.getRelengDir(project);
 
@@ -155,8 +155,8 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 			printStaleArtifactTaskProvider);
 		_configureTaskRecordArtifactProvider(
 			project, recordArtifactTaskProvider, relengDir);
-		_configureTaskUploadArchivesProvider(
-			recordArtifactTaskProvider, uploadArchivesTaskProvider);
+		_configureTaskPublishProvider(
+			recordArtifactTaskProvider, publishTaskProvider);
 		_configureTaskWriteArtifactPublishCommandsProvider(
 			project, cleanArtifactsPublishCommandsTaskProvider,
 			mergeArtifactsPublishCommandsTaskProvider,
@@ -574,6 +574,9 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 
 				@Override
 				public void execute(Copy processResourcesCopy) {
+					processResourcesCopy.setDuplicatesStrategy(
+						DuplicatesStrategy.INCLUDE);
+
 					processResourcesCopy.from(
 						new Callable<File>() {
 
@@ -594,6 +597,24 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 							}
 
 						});
+				}
+
+			});
+	}
+
+	private void _configureTaskPublishProvider(
+		final TaskProvider<WritePropertiesTask> recordArtifactTaskProvider,
+		TaskProvider<Task> publishTaskProvider) {
+
+		publishTaskProvider.configure(
+			new Action<Task>() {
+
+				@Override
+				public void execute(Task publishTask) {
+					publishTask.dependsOn(recordArtifactTaskProvider);
+
+					_configureTaskEnabledIfRelease(
+						recordArtifactTaskProvider.get());
 				}
 
 			});
@@ -676,24 +697,6 @@ public class LiferayRelengPlugin implements Plugin<Project> {
 				public String call() throws Exception {
 					return LiferayRelengUtil.getArtifactRemoteURL(
 						project, publishArtifact, true);
-				}
-
-			});
-	}
-
-	private void _configureTaskUploadArchivesProvider(
-		final TaskProvider<WritePropertiesTask> recordArtifactTaskProvider,
-		TaskProvider<Upload> uploadArchivesTaskProvider) {
-
-		uploadArchivesTaskProvider.configure(
-			new Action<Upload>() {
-
-				@Override
-				public void execute(Upload uploadArchivesUpload) {
-					uploadArchivesUpload.dependsOn(recordArtifactTaskProvider);
-
-					_configureTaskEnabledIfRelease(
-						recordArtifactTaskProvider.get());
 				}
 
 			});

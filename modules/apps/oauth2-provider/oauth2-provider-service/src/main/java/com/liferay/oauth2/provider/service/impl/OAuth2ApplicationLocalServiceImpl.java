@@ -113,7 +113,7 @@ public class OAuth2ApplicationLocalServiceImpl
 
 		if (Validator.isBlank(clientAuthenticationMethod)) {
 			clientAuthenticationMethod =
-				OAuthConstants.TOKEN_ENDPOINT_AUTH_BASIC;
+				OAuthConstants.TOKEN_ENDPOINT_AUTH_POST;
 		}
 
 		if (Validator.isBlank(clientId)) {
@@ -207,7 +207,7 @@ public class OAuth2ApplicationLocalServiceImpl
 
 		if (Validator.isBlank(clientAuthenticationMethod)) {
 			clientAuthenticationMethod =
-				OAuthConstants.TOKEN_ENDPOINT_AUTH_BASIC;
+				OAuthConstants.TOKEN_ENDPOINT_AUTH_POST;
 		}
 
 		if (Validator.isBlank(clientId)) {
@@ -614,7 +614,7 @@ public class OAuth2ApplicationLocalServiceImpl
 
 		if (Validator.isBlank(clientAuthenticationMethod)) {
 			clientAuthenticationMethod =
-				OAuthConstants.TOKEN_ENDPOINT_AUTH_BASIC;
+				OAuthConstants.TOKEN_ENDPOINT_AUTH_POST;
 		}
 
 		clientId = StringUtil.trim(clientId);
@@ -766,9 +766,7 @@ public class OAuth2ApplicationLocalServiceImpl
 			}
 		}
 		else if (clientAuthenticationMethod.equals(
-					OAuthConstants.TOKEN_ENDPOINT_AUTH_BASIC) ||
-				 clientAuthenticationMethod.equals(
-					 OAuthConstants.TOKEN_ENDPOINT_AUTH_POST) ||
+					OAuthConstants.TOKEN_ENDPOINT_AUTH_POST) ||
 				 clientAuthenticationMethod.equals("client_secret_jwt")) {
 
 			// Confidential client with client secret

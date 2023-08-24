@@ -10,22 +10,21 @@ import com.liferay.portal.kernel.search.query.QueryTranslator;
 
 import org.elasticsearch.index.query.QueryBuilder;
 
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+
 /**
  * @author Michael C. Han
  */
+@Component(service = QueryFilterTranslator.class)
 public class QueryFilterTranslatorImpl implements QueryFilterTranslator {
-
-	public QueryFilterTranslatorImpl(
-		QueryTranslator<QueryBuilder> queryTranslator) {
-
-		_queryTranslator = queryTranslator;
-	}
 
 	@Override
 	public QueryBuilder translate(QueryFilter queryFilter) {
 		return _queryTranslator.translate(queryFilter.getQuery(), null);
 	}
 
-	private final QueryTranslator<QueryBuilder> _queryTranslator;
+	@Reference
+	private QueryTranslator<QueryBuilder> _queryTranslator;
 
 }

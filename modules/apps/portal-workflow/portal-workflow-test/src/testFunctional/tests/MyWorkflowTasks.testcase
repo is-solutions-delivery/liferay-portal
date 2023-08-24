@@ -54,6 +54,7 @@ definition {
 	test AccountUserCanApproveTask {
 		property portal.upstream = "quarantine";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
@@ -335,6 +336,7 @@ definition {
 	@priority = 4
 	test ApproveResubmitTaskByActions {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		Navigator.openURL();
 
@@ -418,6 +420,11 @@ definition {
 	@description = "Verify that when there are no pending tasks Assigned to My Roles, the page is displaying -There are no pending tasks assigned to your roles.-"
 	@priority = 2
 	test AssignedToMyRolesShowsMessageWhenNoPendingTasks {
+		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
+
+		SearchAdministration.executeReindex();
+
 		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
 
 		Navigator.gotoNavTab(navTab = "Assigned to My Roles");
@@ -433,6 +440,7 @@ definition {
 	@priority = 5
 	test CanAssignTaskToCurrentUser {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		JSONBlog.addEntry(
 			entryContent = "Blogs Entry Content",
@@ -499,6 +507,7 @@ definition {
 	@priority = 4
 	test CanAssignTaskToUserWithAccountRole {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
@@ -653,15 +662,6 @@ definition {
 			key_workflowAssetTitle = "Blogs Entry Title",
 			key_workflowTask = "Blogs Entry",
 			locator1 = "MyWorkflowTasks#ASSIGNED_TO_MY_ROLES_TABLE_ASSET_TITLE");
-	}
-
-	@description = "Verify that in Update Due Date modal, the user can expand the comment box"
-	@ignore = "Test Stub"
-	@priority = 2
-	test CanExpandCommentBox {
-
-		// TODO LRQA-68860 CanExpandCommentBox pending implementation
-
 	}
 
 	@description = "Verify that the user can filter the results inside Assigned to Me by status"
@@ -904,6 +904,7 @@ definition {
 	@priority = 5
 	test CanSearchForAssetTitleOnAssignedToMyRolesTab {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		JSONBlog.addEntry(
 			entryContent = "Blogs Entry Content",
@@ -1394,6 +1395,7 @@ definition {
 	test ResubmitTaskByDetails {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		Navigator.openURL();
 

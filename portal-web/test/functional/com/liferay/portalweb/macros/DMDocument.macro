@@ -1295,7 +1295,7 @@ definition {
 			menuItem = "Copy To",
 			rowEntry = ${dmDocumentTitle});
 
-		Alert.viewWarningSpecific(warningMessage = "The copying process may take some time. Note that categories, ratings, tags, and custom document types will not be copied.");
+		Alert.viewWarningSpecific(warningMessage = "The copying process may take some time. Only categories, tags, and ratings in the global scope or asset libraries connected to both sites will be copied.");
 
 		AssertElementPresent(
 			key_fieldLabel = "Copy From",
@@ -1413,7 +1413,7 @@ definition {
 			key_rowEntry = ${mgDocumentTitle},
 			locator1 = "Icon#ROW_VERTICAL_ELLIPSIS");
 
-		Click.waitForMenuToggleJSClick(
+		Click.waitForPersonalMenuJSClick(
 			key_rowEntry = ${mgDocumentTitle},
 			locator1 = "Icon#ROW_VERTICAL_ELLIPSIS");
 
@@ -3070,7 +3070,7 @@ definition {
 
 	macro viewActionDetailsInKebabMenu {
 		for (var menuItem : list ${menuItem}) {
-			MenuItem.verifyPresent(menuItem = ${menuItem});
+			MenuItem.verifyVisible(menuItem = ${menuItem});
 		}
 	}
 
@@ -3657,6 +3657,32 @@ definition {
 				key_fieldFieldLabel = ${dateFieldLabel},
 				locator1 = "DocumentsAndMediaDocument#METADATA_PANEL_DATE",
 				value1 = ${dateValue});
+		}
+	}
+
+	macro viewDocumentVersionInfoFromVersionsPage {
+		AssertVisible(
+			index = ${orderIndex},
+			key_tableEntry = ${dmDocumentTitle},
+			locator1 = "LexiconTable#TABLE_ENTRY_TITLE_INDEXED");
+
+		var list1 = ListUtil.newListFromString("id,title,version,status,modified-date,author");
+		var list2 = ListUtil.newListFromString(${dmDocumentVersionInfo});
+		var size = ListUtil.size(${list1});
+		var i = 0;
+
+		while (${i} != ${size}) {
+			var tableTitle = ListUtil.get(${list1}, ${i});
+			var dmDocumentVersionInfo = ListUtil.get(${list2}, ${i});
+
+			AssertVisible(
+				key_columnName = ${tableTitle},
+				key_tableEntry = ${dmDocumentVersionInfo},
+				locator1 = "LexiconTable#TABLE_ENTRY_INFO");
+
+			var i = ${i} + 1;
+
+			var i = StringUtil.valueOf(${i});
 		}
 	}
 

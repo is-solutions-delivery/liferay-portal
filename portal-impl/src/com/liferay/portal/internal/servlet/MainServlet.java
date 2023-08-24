@@ -381,7 +381,7 @@ public class MainServlet extends HttpServlet {
 		}
 
 		if (DBUpgrader.isUpgradeDatabaseAutoRunEnabled()) {
-			DBUpgrader.upgradeModules();
+			DBUpgrader.upgradeModules(true);
 
 			StartupHelperUtil.setUpgrading(false);
 		}
@@ -1254,19 +1254,6 @@ public class MainServlet extends HttpServlet {
 					"original.bean", Boolean.TRUE
 				).put(
 					"service.vendor", ReleaseInfo.getVendor()
-				).build()));
-
-		_serviceRegistrations.add(
-			bundleContext.registerService(
-				ModuleServiceLifecycle.class,
-				new ModuleServiceLifecycle() {
-				},
-				HashMapDictionaryBuilder.<String, Object>put(
-					"module.service.lifecycle", "system.check"
-				).put(
-					"service.vendor", ReleaseInfo.getVendor()
-				).put(
-					"service.version", ReleaseInfo.getVersion()
 				).build()));
 
 		_serviceRegistrations.add(

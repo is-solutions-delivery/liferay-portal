@@ -13,6 +13,15 @@ interface Actions {
 	permissions: HTTPMethod;
 	update: HTTPMethod;
 }
+interface Folder {
+	actions: [];
+	dateCreated: string;
+	dateModified: string;
+	externalReferenceCode: string;
+	id: number;
+	label: LocalizedValue<string>;
+	name: string;
+}
 interface PickListItem {
 	externalReferenceCode: string;
 	id: number;
@@ -75,6 +84,7 @@ declare type Recipients = {
 	to: LocalizedValue<string>;
 };
 export declare function deleteObjectDefinitions(id: number): Promise<void>;
+export declare function deleteFolder(id: number): Promise<void>;
 export declare function deleteObjectField(id: number): Promise<void>;
 export declare function deleteObjectRelationships(id: number): Promise<void>;
 export declare function deletePickList(pickListId: number): Promise<void>;
@@ -84,6 +94,7 @@ export declare function fetchJSON<T>(
 	init?: RequestInit
 ): Promise<T>;
 export declare function getAllObjectDefinitions(): Promise<ObjectDefinition[]>;
+export declare function getAllObjectFolders(): Promise<Folder[]>;
 export declare function getList<T>(url: string): Promise<T[]>;
 export declare function getNotificationTemplateByExternalReferenceCode(
 	notificationTemplateExternalReferenceCode: string
@@ -138,7 +149,7 @@ export declare function putObjectDefinitionByExternalReferenceCode(
 export declare function save(
 	url: string,
 	item: unknown,
-	method?: 'PUT' | 'POST'
+	method?: 'PATCH' | 'POST' | 'PUT'
 ): Promise<void>;
 export declare function addPickListItem({
 	id,

@@ -13,14 +13,20 @@ import com.liferay.fragment.listener.FragmentEntryLinkListenerRegistry;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.model.FragmentEntryLink;
+import com.liferay.fragment.model.FragmentEntryLinkTable;
 import com.liferay.fragment.processor.DefaultFragmentEntryProcessorContext;
 import com.liferay.fragment.processor.FragmentEntryProcessorContext;
 import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.fragment.service.base.FragmentEntryLinkLocalServiceBaseImpl;
 import com.liferay.fragment.service.persistence.FragmentCollectionPersistence;
 import com.liferay.fragment.service.persistence.FragmentEntryPersistence;
+import com.liferay.layout.page.template.model.LayoutPageTemplateEntryTable;
+import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
+import com.liferay.petra.sql.dsl.Table;
+import com.liferay.petra.sql.dsl.expression.Expression;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.exception.LockedLayoutException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -28,15 +34,18 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutTable;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.security.auth.GuestOrUserUtil;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
+import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -78,6 +87,8 @@ public class FragmentEntryLinkLocalServiceImpl
 			String editableValues, String namespace, int position,
 			String rendererKey, int type, ServiceContext serviceContext)
 		throws PortalException {
+
+		_checkUnlockedLayout(plid, userId);
 
 		User user = _userLocalService.getUser(userId);
 
@@ -317,7 +328,27 @@ public class FragmentEntryLinkLocalServiceImpl
 	public int getAllFragmentEntryLinksCountByFragmentEntryId(
 		long groupId, long fragmentEntryId) {
 
-		return fragmentEntryLinkFinder.countByG_F(groupId, fragmentEntryId);
+		return fragmentEntryLinkPersistence.dslQueryCount(
+			DSLQueryFactoryUtil.count(
+			).from(
+				DSLQueryFactoryUtil.selectDistinct(
+					FragmentEntryLinkTable.INSTANCE.classNameId,
+					FragmentEntryLinkTable.INSTANCE.classPK
+				).from(
+					FragmentEntryLinkTable.INSTANCE
+				).where(
+					FragmentEntryLinkTable.INSTANCE.groupId.eq(
+						groupId
+					).and(
+						FragmentEntryLinkTable.INSTANCE.fragmentEntryId.eq(
+							fragmentEntryId)
+					).and(
+						FragmentEntryLinkTable.INSTANCE.deleted.eq(false)
+					)
+				).as(
+					"tempFragmentEntryLinkTable"
+				)
+			));
 	}
 
 	/**
@@ -489,8 +520,43 @@ public class FragmentEntryLinkLocalServiceImpl
 	public int getLayoutFragmentEntryLinksCountByFragmentEntryId(
 		long groupId, long fragmentEntryId) {
 
-		return fragmentEntryLinkFinder.countByG_F_P_L(
-			groupId, fragmentEntryId, -1);
+		Table<LayoutTable> tempLayoutTableTable = DSLQueryFactoryUtil.select(
+			LayoutTable.INSTANCE.plid
+		).from(
+			LayoutTable.INSTANCE
+		).leftJoinOn(
+			LayoutPageTemplateEntryTable.INSTANCE,
+			LayoutTable.INSTANCE.plid.eq(
+				LayoutPageTemplateEntryTable.INSTANCE.plid
+			).or(
+				LayoutTable.INSTANCE.classPK.eq(
+					LayoutPageTemplateEntryTable.INSTANCE.plid)
+			)
+		).where(
+			LayoutPageTemplateEntryTable.INSTANCE.plid.isNull()
+		).as(
+			"tempLayoutTable", LayoutTable.INSTANCE
+		);
+
+		return fragmentEntryLinkPersistence.dslQueryCount(
+			DSLQueryFactoryUtil.countDistinct(
+				FragmentEntryLinkTable.INSTANCE.plid
+			).from(
+				FragmentEntryLinkTable.INSTANCE
+			).innerJoinON(
+				tempLayoutTableTable,
+				FragmentEntryLinkTable.INSTANCE.plid.eq(
+					(Expression<Long>)tempLayoutTableTable.getColumn("plid"))
+			).where(
+				FragmentEntryLinkTable.INSTANCE.groupId.eq(
+					groupId
+				).and(
+					FragmentEntryLinkTable.INSTANCE.fragmentEntryId.eq(
+						fragmentEntryId)
+				).and(
+					FragmentEntryLinkTable.INSTANCE.deleted.eq(false)
+				)
+			));
 	}
 
 	@Override
@@ -509,8 +575,44 @@ public class FragmentEntryLinkLocalServiceImpl
 	public int getLayoutPageTemplateFragmentEntryLinksCountByFragmentEntryId(
 		long groupId, long fragmentEntryId, int layoutPageTemplateType) {
 
-		return fragmentEntryLinkFinder.countByG_F_P_L(
-			groupId, fragmentEntryId, layoutPageTemplateType);
+		Table<LayoutTable> tempLayoutTableTable = DSLQueryFactoryUtil.select(
+			LayoutTable.INSTANCE.plid
+		).from(
+			LayoutTable.INSTANCE
+		).innerJoinON(
+			LayoutPageTemplateEntryTable.INSTANCE,
+			LayoutTable.INSTANCE.plid.eq(
+				LayoutPageTemplateEntryTable.INSTANCE.plid
+			).or(
+				LayoutTable.INSTANCE.classPK.eq(
+					LayoutPageTemplateEntryTable.INSTANCE.plid)
+			)
+		).where(
+			LayoutPageTemplateEntryTable.INSTANCE.type.eq(
+				layoutPageTemplateType)
+		).as(
+			"tempLayoutTable", LayoutTable.INSTANCE
+		);
+
+		return fragmentEntryLinkPersistence.dslQueryCount(
+			DSLQueryFactoryUtil.countDistinct(
+				FragmentEntryLinkTable.INSTANCE.plid
+			).from(
+				FragmentEntryLinkTable.INSTANCE
+			).innerJoinON(
+				tempLayoutTableTable,
+				FragmentEntryLinkTable.INSTANCE.plid.eq(
+					(Expression<Long>)tempLayoutTableTable.getColumn("plid"))
+			).where(
+				FragmentEntryLinkTable.INSTANCE.groupId.eq(
+					groupId
+				).and(
+					FragmentEntryLinkTable.INSTANCE.fragmentEntryId.eq(
+						fragmentEntryId)
+				).and(
+					FragmentEntryLinkTable.INSTANCE.deleted.eq(false)
+				)
+			));
 	}
 
 	@Override
@@ -536,6 +638,9 @@ public class FragmentEntryLinkLocalServiceImpl
 		FragmentEntryLink fragmentEntryLink =
 			fragmentEntryLinkPersistence.findByPrimaryKey(fragmentEntryLinkId);
 
+		_checkUnlockedLayout(
+			fragmentEntryLink.getPlid(), GuestOrUserUtil.getUserId());
+
 		fragmentEntryLink.setDeleted(deleted);
 
 		return fragmentEntryLinkPersistence.update(fragmentEntryLink);
@@ -548,6 +653,9 @@ public class FragmentEntryLinkLocalServiceImpl
 
 		FragmentEntryLink fragmentEntryLink = fetchFragmentEntryLink(
 			fragmentEntryLinkId);
+
+		_checkUnlockedLayout(
+			fragmentEntryLink.getPlid(), GuestOrUserUtil.getUserId());
 
 		fragmentEntryLink.setPosition(position);
 
@@ -564,6 +672,8 @@ public class FragmentEntryLinkLocalServiceImpl
 		throws PortalException {
 
 		User user = _userLocalService.getUser(userId);
+
+		_checkUnlockedLayout(plid, userId);
 
 		FragmentEntryLink fragmentEntryLink = fetchFragmentEntryLink(
 			fragmentEntryLinkId);
@@ -602,6 +712,9 @@ public class FragmentEntryLinkLocalServiceImpl
 		FragmentEntryLink fragmentEntryLink = fetchFragmentEntryLink(
 			fragmentEntryLinkId);
 
+		_checkUnlockedLayout(
+			fragmentEntryLink.getPlid(), GuestOrUserUtil.getUserId());
+
 		fragmentEntryLink.setEditableValues(editableValues);
 
 		return fragmentEntryLinkPersistence.update(fragmentEntryLink);
@@ -615,6 +728,9 @@ public class FragmentEntryLinkLocalServiceImpl
 
 		FragmentEntryLink fragmentEntryLink = fetchFragmentEntryLink(
 			fragmentEntryLinkId);
+
+		_checkUnlockedLayout(
+			fragmentEntryLink.getPlid(), GuestOrUserUtil.getUserId());
 
 		fragmentEntryLink.setEditableValues(editableValues);
 
@@ -731,6 +847,16 @@ public class FragmentEntryLinkLocalServiceImpl
 				fragmentEntryLink.getFragmentEntryId());
 
 		updateLatestChanges(fragmentEntry, fragmentEntryLink);
+	}
+
+	private void _checkUnlockedLayout(long plid, long userId)
+		throws PortalException {
+
+		Layout layout = _layoutLocalService.fetchLayout(plid);
+
+		if ((layout != null) && !layout.isUnlocked(Constants.EDIT, userId)) {
+			throw new LockedLayoutException();
+		}
 	}
 
 	private String _getProcessedHTML(

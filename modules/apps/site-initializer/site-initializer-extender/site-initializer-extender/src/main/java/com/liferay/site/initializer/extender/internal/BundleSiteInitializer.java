@@ -182,6 +182,7 @@ import com.liferay.segments.service.SegmentsExperienceLocalService;
 import com.liferay.site.exception.InitializationException;
 import com.liferay.site.initializer.SiteInitializer;
 import com.liferay.site.initializer.extender.CommerceSiteInitializer;
+import com.liferay.site.initializer.extender.OSBSiteInitializer;
 import com.liferay.site.initializer.extender.SiteInitializerUtil;
 import com.liferay.site.navigation.menu.item.layout.constants.SiteNavigationMenuItemTypeConstants;
 import com.liferay.site.navigation.model.SiteNavigationMenu;
@@ -431,6 +432,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 	public void initialize(long groupId) throws InitializationException {
 		if (_log.isDebugEnabled()) {
 			_log.debug("Commerce site initializer " + _commerceSiteInitializer);
+			_log.debug("OSB site initializer " + _osbSiteInitializer);
 		}
 
 		long startTime = System.currentTimeMillis();
@@ -457,6 +459,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			serviceContext.setScopeGroupId(groupId);
 			serviceContext.setTimeZone(user.getTimeZone());
 			serviceContext.setUserId(user.getUserId());
+
+			ServiceContextThreadLocal.pushServiceContext(serviceContext);
 
 			SiteNavigationMenuItemSettingsBuilder
 				siteNavigationMenuItemSettingsBuilder =
@@ -501,6 +505,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_invoke(() -> _addSiteConfiguration(serviceContext));
 			_invoke(() -> _addSiteSettings(serviceContext));
 			_invoke(() -> _addStyleBookEntries(serviceContext));
+			_invoke(() -> _addOrUpdateSXPBlueprint(serviceContext));
 			_invoke(() -> _addOrUpdateUserGroups(serviceContext));
 
 			Map<String, String>
@@ -628,6 +633,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			throw new InitializationException(exception);
 		}
+		finally {
+			ServiceContextThreadLocal.popServiceContext();
+		}
 
 		if (_log.isInfoEnabled()) {
 			_log.info(
@@ -658,6 +666,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 		CommerceSiteInitializer commerceSiteInitializer) {
 
 		_commerceSiteInitializer = commerceSiteInitializer;
+	}
+
+	protected void setOSBSiteInitializer(
+		OSBSiteInitializer osbSiteInitializer) {
+
+		_osbSiteInitializer = osbSiteInitializer;
 	}
 
 	protected void setServletContext(ServletContext servletContext) {
@@ -2336,7 +2350,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					calendar.get(Calendar.YEAR),
 					calendar.get(Calendar.HOUR_OF_DAY),
 					calendar.get(Calendar.MINUTE), 0, 0, 0, 0, 0, true, 0, 0, 0,
-					0, 0, true, true, false, null, null, null, null,
+					0, 0, true, true, false, 0, null, null, null, null,
 					serviceContext);
 			}
 			else {
@@ -2355,7 +2369,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					calendar.get(Calendar.YEAR),
 					calendar.get(Calendar.HOUR_OF_DAY),
 					calendar.get(Calendar.MINUTE), 0, 0, 0, 0, 0, true, 0, 0, 0,
-					0, 0, true, true, false, null, null, null, null,
+					0, 0, true, true, false, 0, null, null, null, null,
 					serviceContext);
 			}
 
@@ -3547,6 +3561,17 @@ public class BundleSiteInitializer implements SiteInitializer {
 					structuredContentFolder);
 
 		return structuredContentFolder.getId();
+	}
+
+	private void _addOrUpdateSXPBlueprint(ServiceContext serviceContext)
+		throws Exception {
+
+		if (_osbSiteInitializer == null) {
+			return;
+		}
+
+		_osbSiteInitializer.addOrUpdateSXPBlueprint(
+			serviceContext, _servletContext);
 	}
 
 	private TaxonomyCategory _addOrUpdateTaxonomyCategoryTaxonomyCategory(
@@ -5164,6 +5189,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_objectRelationshipResourceFactory;
 	private final OrganizationLocalService _organizationLocalService;
 	private final OrganizationResource.Factory _organizationResourceFactory;
+	private OSBSiteInitializer _osbSiteInitializer;
 	private final PLOEntryLocalService _ploEntryLocalService;
 	private final Portal _portal;
 	private final Map<String, String> _releaseInfoStringUtilReplaceValues;

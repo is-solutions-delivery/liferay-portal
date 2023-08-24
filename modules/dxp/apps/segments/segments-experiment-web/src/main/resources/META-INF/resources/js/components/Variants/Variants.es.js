@@ -73,9 +73,11 @@ function Variants({onVariantPublish, selectedSegmentsExperienceId}) {
 							)}
 						</b>
 					</p>
+
 					<p className="mb-2 text-secondary">
 						{Liferay.Language.get('variants-help')}
 					</p>
+
 					{errors.variantsError && (
 						<div className="font-weight-semi-bold mb-3 text-danger">
 							<ClayIcon
@@ -88,18 +90,18 @@ function Variants({onVariantPublish, selectedSegmentsExperienceId}) {
 							)}
 						</div>
 					)}
-				</>
-			)}
 
-			{experiment.editable && (
-				<ClayButton
-					className="mb-3"
-					data-testid="create-variant"
-					displayType="secondary"
-					onClick={() => setCreatingVariant(!creatingVariant)}
-				>
-					{Liferay.Language.get('create-variant')}
-				</ClayButton>
+					{experiment.editable && (
+						<ClayButton
+							className="mb-3"
+							data-testid="create-variant"
+							displayType="secondary"
+							onClick={() => setCreatingVariant(!creatingVariant)}
+						>
+							{Liferay.Language.get('create-variant')}
+						</ClayButton>
+					)}
+				</>
 			)}
 
 			<VariantList

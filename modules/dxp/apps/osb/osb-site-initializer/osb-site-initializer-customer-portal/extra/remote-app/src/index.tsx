@@ -2,6 +2,7 @@
  * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
+
 import {ApolloProvider} from '@apollo/client';
 import {ClayIconSpriteContext} from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
@@ -10,6 +11,7 @@ import {createRoot} from 'react-dom/client';
 import {SWRConfig} from 'swr';
 import './common/styles/global.scss';
 
+import {OktaStatusPortal} from './OktaStatus';
 import SWRCacheProvider from './SWRCacheProvider';
 import {AppPropertiesContext} from './common/contexts/AppPropertiesContext';
 import useApollo from './common/hooks/useApollo';
@@ -23,9 +25,9 @@ import Onboarding from './routes/onboarding';
 const ELEMENT_ID = 'liferay-remote-app-customer-portal';
 
 const AppRoutes = {
-	home: <Home />,
-	onboarding: <Onboarding />,
-	portal: <CustomerPortal />,
+	home: Home,
+	onboarding: Onboarding,
+	portal: CustomerPortal,
 };
 
 type Properties = {
@@ -33,7 +35,7 @@ type Properties = {
 	articleDeployingActivationKeysURL: string | null;
 	articleGettingStartedWithLiferayEnterpriseSearchURL: string | null;
 	articleWhatIsMyInstanceSizingValueURL: string | null;
-	featureFlag?: string[];
+	featureFlags?: string[];
 	importDate?: Date | null;
 	submitSupportTicketURL: string | null;
 };
@@ -65,6 +67,8 @@ const CustomerPortalApp: React.FC<CustomerPortalAppProps> = ({
 		return <ClayLoadingIndicator />;
 	}
 
+	const AppRouteComponent = (AppRoutes as any)[route];
+
 	return (
 		<ApolloProvider client={client}>
 			<AppPropertiesContext.Provider
@@ -76,7 +80,11 @@ const CustomerPortalApp: React.FC<CustomerPortalAppProps> = ({
 					} as any
 				}
 			>
-				{(AppRoutes as any)[route]}
+				{properties.featureFlags?.includes('LPS-192494') && (
+					<OktaStatusPortal />
+				)}
+
+				<AppRouteComponent />
 			</AppPropertiesContext.Provider>
 		</ApolloProvider>
 	);

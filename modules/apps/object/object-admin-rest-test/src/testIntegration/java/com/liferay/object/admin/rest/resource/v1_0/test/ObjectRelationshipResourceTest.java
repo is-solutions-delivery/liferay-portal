@@ -116,6 +116,11 @@ public class ObjectRelationshipResourceTest
 	}
 
 	@Override
+	protected String[] getIgnoredEntityFieldNames() {
+		return new String[] {"dateCreated", "dateModified", "label", "userId"};
+	}
+
+	@Override
 	protected ObjectRelationship randomObjectRelationship() throws Exception {
 		ObjectRelationship objectRelationship =
 			super.randomObjectRelationship();
@@ -218,7 +223,7 @@ public class ObjectRelationshipResourceTest
 		String value = "A" + RandomTestUtil.randomString();
 
 		return _objectDefinitionLocalService.addCustomObjectDefinition(
-			TestPropsValues.getUserId(), false, false,
+			TestPropsValues.getUserId(), 0, false, false,
 			LocalizedMapUtil.getLocalizedMap(value), value, null, null,
 			LocalizedMapUtil.getLocalizedMap(value), true,
 			ObjectDefinitionConstants.SCOPE_COMPANY,

@@ -5,8 +5,6 @@
 
 package com.liferay.source.formatter.check;
 
-import com.liferay.petra.string.CharPool;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.source.formatter.SourceFormatterExcludes;
 import com.liferay.source.formatter.check.util.SourceUtil;
 import com.liferay.source.formatter.parser.JavaClass;
@@ -57,16 +55,13 @@ public class JavaModuleUniqueVerifyProcessCheck extends BaseJavaTermCheck {
 			return javaTerm.getContent();
 		}
 
-		List<String> javaFileNames = SourceFormatterUtil.scanForFiles(
+		List<String> javaFileNames = SourceFormatterUtil.scanForFileNames(
 			absolutePath.substring(0, x + 5), new String[0],
 			new String[] {"**/*.java"}, new SourceFormatterExcludes(), true);
 
 		int extendedVerifyProcessClassCount = 0;
 
 		for (String javaFileName : javaFileNames) {
-			javaFileName = StringUtil.replace(
-				javaFileName, CharPool.BACK_SLASH, CharPool.SLASH);
-
 			File file = new File(javaFileName);
 
 			if (!file.exists()) {

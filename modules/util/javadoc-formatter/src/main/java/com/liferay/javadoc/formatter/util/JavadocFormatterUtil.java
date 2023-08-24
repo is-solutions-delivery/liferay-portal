@@ -57,7 +57,7 @@ public class JavadocFormatterUtil {
 
 		Element rootElement = document.addElement("deprecations");
 
-		List<String> fileNames = scanForFiles(
+		List<String> fileNames = scanForFileNames(
 			dirName,
 			new String[] {
 				"**/.git/**", "**/.gradle/**", "**/bin/**", "**/build/**",
@@ -107,7 +107,7 @@ public class JavadocFormatterUtil {
 			s, StringPool.RETURN_NEW_LINE, StringPool.NEW_LINE);
 	}
 
-	public static List<String> scanForFiles(
+	public static List<String> scanForFileNames(
 			String dirName, String[] excludes, String[] includes)
 		throws Exception {
 

@@ -7,8 +7,10 @@ package com.liferay.headless.builder.internal.model.listener;
 
 import com.liferay.headless.builder.internal.helper.ObjectEntryHelper;
 import com.liferay.object.exception.ObjectEntryValuesException;
+import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.listener.RelevantObjectEntryModelListener;
+import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.ModelListenerException;
 import com.liferay.portal.kernel.model.BaseModelListener;
@@ -50,18 +52,31 @@ public class APISchemaRelevantObjectEntryModelListener
 	}
 
 	private void _validate(ObjectEntry objectEntry) {
-		Map<String, Serializable> values = objectEntry.getValues();
-
 		try {
+			Map<String, Serializable> values = objectEntry.getValues();
+
 			if (!_objectEntryHelper.isValidObjectEntry(
 					(long)values.get(
 						"r_apiApplicationToAPISchemas_c_apiApplicationId"),
 					"L_API_APPLICATION")) {
 
 				throw new ObjectEntryValuesException.InvalidObjectField(
-					"An API schema must be related to an API application",
-					"an-api-schema-must-be-related-to-an-api-application",
-					null);
+					null, "An API schema must be related to an API application",
+					"an-api-schema-must-be-related-to-an-api-application");
+			}
+
+			String mainObjectDefinitionERC = (String)values.get(
+				"mainObjectDefinitionERC");
+
+			ObjectDefinition objectDefinition =
+				_objectDefinitionLocalService.
+					fetchObjectDefinitionByExternalReferenceCode(
+						mainObjectDefinitionERC, objectEntry.getCompanyId());
+
+			if (objectDefinition == null) {
+				throw new ObjectEntryValuesException.InvalidObjectField(
+					null, "An API schema must be an existing object definition",
+					"an-api-schema-must-be-an-existing-object-definition");
 			}
 
 			if (Validator.isNotNull(
@@ -79,17 +94,20 @@ public class APISchemaRelevantObjectEntryModelListener
 						"L_API_SCHEMA"))) {
 
 				throw new ObjectEntryValuesException.InvalidObjectField(
+					null,
 					"There is an API schema with the same name in the API " +
 						"application",
 					"there-is-an-api-schema-with-the-same-name-in-the-api-" +
-						"application",
-					null);
+						"application");
 			}
 		}
 		catch (Exception exception) {
 			throw new ModelListenerException(exception);
 		}
 	}
+
+	@Reference
+	private ObjectDefinitionLocalService _objectDefinitionLocalService;
 
 	@Reference
 	private ObjectEntryHelper _objectEntryHelper;

@@ -10,7 +10,6 @@ import com.liferay.petra.memory.FinalizeManager;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.internal.util.SystemCheckerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.util.ServiceTrackerFieldUpdaterCustomizer;
@@ -269,7 +268,8 @@ public class ServiceProxyFactory {
 						_log.error(sb.toString());
 
 						if (!calledSystemCheckers) {
-							SystemCheckerUtil.runSystemCheckers(_log);
+							SystemCheckerUtil.runSystemCheckers(
+								_log::info, _log::warn);
 
 							calledSystemCheckers = true;
 						}

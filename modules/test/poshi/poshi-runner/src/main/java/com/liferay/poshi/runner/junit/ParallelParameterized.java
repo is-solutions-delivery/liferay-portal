@@ -5,7 +5,7 @@
 
 package com.liferay.poshi.runner.junit;
 
-import com.liferay.poshi.core.util.PoshiProperties;
+import com.liferay.poshi.core.PoshiProperties;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,7 +40,7 @@ public class ParallelParameterized extends Parameterized {
 			_executorService.shutdown();
 
 			try {
-				_executorService.awaitTermination(10, TimeUnit.MINUTES);
+				_executorService.awaitTermination(180, TimeUnit.MINUTES);
 			}
 			catch (InterruptedException interruptedException) {
 				throw new RuntimeException(interruptedException);

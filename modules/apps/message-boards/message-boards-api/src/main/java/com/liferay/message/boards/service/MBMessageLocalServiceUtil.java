@@ -637,6 +637,20 @@ public class MBMessageLocalServiceUtil {
 		return getService().getGroupMessagesCount(groupId, userId, status);
 	}
 
+	public static List<MBMessage> getGroupUserMessageBoardMessagesActivity(
+		long groupId, long userId, int start, int end) {
+
+		return getService().getGroupUserMessageBoardMessagesActivity(
+			groupId, userId, start, end);
+	}
+
+	public static int getGroupUserMessageBoardMessagesActivityCount(
+		long groupId, long userId) {
+
+		return getService().getGroupUserMessageBoardMessagesActivityCount(
+			groupId, userId);
+	}
+
 	public static
 		com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery
 			getIndexableActionableDynamicQuery() {

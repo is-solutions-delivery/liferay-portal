@@ -35,9 +35,9 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserNotificationDeliveryConstants;
 import com.liferay.portal.kernel.notifications.UserNotificationManagerUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
-import com.liferay.portal.kernel.security.permission.BaseModelPermissionCheckerUtil;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionUtil;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.ResourceActionLocalServiceUtil;
@@ -623,10 +623,9 @@ public class SubscriptionSender implements Serializable {
 		Boolean hasPermission = null;
 
 		if (Validator.isNotNull(className)) {
-			hasPermission =
-				BaseModelPermissionCheckerUtil.containsBaseModelPermission(
-					permissionChecker, groupId, className, classPK,
-					ActionKeys.VIEW);
+			hasPermission = ModelResourcePermissionUtil.contains(
+				permissionChecker, groupId, className, classPK,
+				ActionKeys.VIEW);
 
 			if ((hasPermission == null) || !hasPermission) {
 				return false;
@@ -660,7 +659,7 @@ public class SubscriptionSender implements Serializable {
 				subscription.getClassName(), ActionKeys.SUBSCRIBE);
 
 		if (resourceAction != null) {
-			return BaseModelPermissionCheckerUtil.containsBaseModelPermission(
+			return ModelResourcePermissionUtil.contains(
 				permissionChecker, groupId, subscription.getClassName(),
 				subscription.getClassPK(), ActionKeys.SUBSCRIBE);
 		}

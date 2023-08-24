@@ -88,11 +88,20 @@ export function getValueDetailsFromItem(item, fieldName) {
 		return null;
 	}
 
+	const i18nRawTextFieldName = `${fieldName}RawText`;
+
 	let rootPropertyName = fieldName;
 	const valuePath = [];
 	let navigatedValue = item;
 
-	if (Array.isArray(fieldName)) {
+	if (
+		Object.hasOwn(item, i18nRawTextFieldName) &&
+		Object.values(i18nRawTextFieldName).length
+	) {
+		valuePath.push(fieldName);
+		navigatedValue = navigatedValue[i18nRawTextFieldName];
+	}
+	else if (Array.isArray(fieldName)) {
 		rootPropertyName = fieldName[0];
 
 		fieldName.forEach((property) => {

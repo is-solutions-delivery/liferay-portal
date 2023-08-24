@@ -25,7 +25,9 @@ import org.gradle.api.file.FileCollection;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.PathSensitive;
 import org.gradle.api.tasks.PathSensitivity;
@@ -91,7 +93,7 @@ public class TranspileJSTask extends ExecuteNodeScriptTask {
 		return GradleUtil.toString(_modules);
 	}
 
-	@Input
+	@InputDirectory
 	@PathSensitive(PathSensitivity.RELATIVE)
 	public File getSourceDir() {
 		return GradleUtil.toFile(getProject(), _sourceDir);
@@ -126,10 +128,12 @@ public class TranspileJSTask extends ExecuteNodeScriptTask {
 		return GradleUtil.toStringList(_soyDependencies);
 	}
 
+	@Input
 	public List<String> getSoySrcIncludes() {
 		return GradleUtil.toStringList(_soySrcIncludes);
 	}
 
+	@Input
 	public List<String> getSrcIncludes() {
 		return GradleUtil.toStringList(_srcIncludes);
 	}
@@ -140,6 +144,7 @@ public class TranspileJSTask extends ExecuteNodeScriptTask {
 		return super.getWorkingDir();
 	}
 
+	@Input
 	public boolean isSkipWhenEmpty() {
 		return _skipWhenEmpty;
 	}
@@ -247,6 +252,7 @@ public class TranspileJSTask extends ExecuteNodeScriptTask {
 
 	}
 
+	@Internal
 	@Override
 	protected List<String> getCompleteArgs() {
 		List<String> completeArgs = super.getCompleteArgs();

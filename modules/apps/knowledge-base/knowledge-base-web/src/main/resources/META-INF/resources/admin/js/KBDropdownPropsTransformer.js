@@ -4,19 +4,21 @@
  */
 
 import {
+	addParams,
 	fetch,
 	objectToFormData,
 	openConfirmModal,
 	openModal,
 	openSelectionModal,
 	openToast,
+	sub,
 } from 'frontend-js-web';
 
 import showSuccessMessage from './utils/showSuccessMessage';
 
 const ITEM_TYPES = {
-	article: 'article',
-	folder: 'folder',
+	KBArticle: 'KBArticle',
+	KBFolder: 'KBFolder',
 };
 
 const ACTIONS = {
@@ -35,22 +37,23 @@ const ACTIONS = {
 
 	move(
 		{
-			itemClassNameId,
-			itemId,
-			itemType,
-			moveKBItemActionURL,
-			moveKBItemModalURL,
+			kbObjectClassNameId,
+			kbObjectId,
+			kbObjectTitle,
+			kbObjectType,
+			moveKBObjectActionURL,
+			moveKBObjectModalURL,
 		},
 		portletNamespace
 	) {
 		openSelectionModal({
-			buttonAddLabel: Liferay.Language.get('move'),
+			buttonAddLabel: Liferay.Language.get('save'),
 			height: '50vh',
 			multiple: true,
 			onSelect: ({destinationItem, index}) => {
 				if (
-					itemType === ITEM_TYPES.folder &&
-					destinationItem.type === ITEM_TYPES.article
+					kbObjectType === ITEM_TYPES.KBFolder &&
+					destinationItem.type === ITEM_TYPES.KBArticle
 				) {
 					openToast({
 						message: Liferay.Language.get(
@@ -62,12 +65,12 @@ const ACTIONS = {
 					return false;
 				}
 
-				fetch(moveKBItemActionURL, {
+				fetch(moveKBObjectActionURL, {
 					body: objectToFormData({
 						[`${portletNamespace}dragAndDrop`]: true,
 						[`${portletNamespace}position`]: index?.next ?? -1,
-						[`${portletNamespace}resourceClassNameId`]: itemClassNameId,
-						[`${portletNamespace}resourcePrimKey`]: itemId,
+						[`${portletNamespace}resourceClassNameId`]: kbObjectClassNameId,
+						[`${portletNamespace}resourcePrimKey`]: kbObjectId,
 						[`${portletNamespace}parentResourceClassNameId`]: destinationItem.classNameId,
 						[`${portletNamespace}parentResourcePrimKey`]: destinationItem.id,
 					}),
@@ -104,8 +107,11 @@ const ACTIONS = {
 			},
 			selectEventName: `selectKBMoveFolder`,
 			size: 'md',
-			title: Liferay.Language.get('move'),
-			url: moveKBItemModalURL,
+			title: sub(Liferay.Language.get('move-x-to'), `"${kbObjectTitle}"`),
+			url: addParams(
+				`${portletNamespace}moveKBObjectId=${kbObjectId}&${portletNamespace}moveKBObjectClassName=${kbObjectType}`,
+				moveKBObjectModalURL
+			),
 		});
 	},
 

@@ -76,7 +76,8 @@ public class CPOptionValueIndexer extends BaseIndexer<CPOptionValue> {
 		throws Exception {
 
 		if (_log.isDebugEnabled()) {
-			_log.debug("Indexing option value " + cpOptionValue);
+			_log.debug(
+				"Indexing commerce product option value " + cpOptionValue);
 		}
 
 		Document document = getBaseModelDocument(CLASS_NAME, cpOptionValue);
@@ -105,7 +106,9 @@ public class CPOptionValueIndexer extends BaseIndexer<CPOptionValue> {
 		}
 
 		if (_log.isDebugEnabled()) {
-			_log.debug("Document " + cpOptionValue + " indexed successfully");
+			_log.debug(
+				"Commerce product option value " + cpOptionValue +
+					" indexed successfully");
 		}
 
 		return document;
@@ -156,8 +159,8 @@ public class CPOptionValueIndexer extends BaseIndexer<CPOptionValue> {
 				catch (PortalException portalException) {
 					if (_log.isWarnEnabled()) {
 						_log.warn(
-							"Unable to index commerce product option " +
-								cpOptionValue.getCPOptionValueId(),
+							"Unable to index commerce product option value " +
+								cpOptionValue,
 							portalException);
 					}
 				}

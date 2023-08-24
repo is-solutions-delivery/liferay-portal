@@ -30,6 +30,12 @@ type PurchasedSolutionsccountSelectionProps = {
 	setStep: React.Dispatch<Steps>;
 };
 
+const productCustomFields = [
+	'Github Username',
+	'Project Name',
+	'Site Initializer',
+];
+
 const PurchasedSolutionsAccountSelection: React.FC<
 	PurchasedSolutionsccountSelectionProps
 > = ({accounts, currentUserAccount, orderInfo, setStep}) => {
@@ -79,7 +85,7 @@ const PurchasedSolutionsAccountSelection: React.FC<
 		const channels = await getChannels();
 		const orderTypes = await getOrderTypes();
 
-		if (!channels.length || !orderTypes.length) {
+		if (!channels.length || !orderTypes.length || !orderInfo?.sku) {
 			setDisabledButton(true);
 
 			renderToastMessage();
@@ -95,6 +101,7 @@ const PurchasedSolutionsAccountSelection: React.FC<
 			orderTypes,
 			'Solutions - 30 day trial'
 		);
+
 		setOrderType(projectOrderType);
 	};
 
@@ -102,6 +109,25 @@ const PurchasedSolutionsAccountSelection: React.FC<
 		fetchDataAndSetState();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	const customFields =
+		orderInfo?.product?.customFields?.filter((item) =>
+			productCustomFields.find((field) => item.name === field)
+		) || [];
+
+	const getProductCustomFields = () => {
+		let data = {};
+
+		productCustomFields.forEach((fieldName) => {
+			customFields.forEach((field) => {
+				if (field.name === fieldName) {
+					data = {...data, [fieldName]: field.customValue.data};
+				}
+			});
+		});
+
+		return data;
+	};
 
 	const onsubmit = async () => {
 		const payload: Order = {
@@ -118,6 +144,7 @@ const PurchasedSolutionsAccountSelection: React.FC<
 			},
 			channelId: channel?.id,
 			currencyCode: 'USD',
+			customFields: getProductCustomFields(),
 			orderItems: [
 				{
 					id: 0,
@@ -132,6 +159,7 @@ const PurchasedSolutionsAccountSelection: React.FC<
 		};
 
 		await postOrder(payload);
+
 		setStep({page: 'projectCreated'});
 	};
 
@@ -242,7 +270,9 @@ const PurchasedSolutionsAccountSelection: React.FC<
 										disabled={
 											!radio?.value || disabledButton
 										}
-										onClick={() => onsubmit()}
+										onClick={() =>
+											orderInfo?.sku && onsubmit()
+										}
 									>
 										Continue
 									</ClayButton>

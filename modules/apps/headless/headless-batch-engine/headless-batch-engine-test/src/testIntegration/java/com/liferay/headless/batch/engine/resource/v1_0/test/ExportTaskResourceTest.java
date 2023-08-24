@@ -445,6 +445,8 @@ public class ExportTaskResourceTest {
 		"com.liferay.headless.commerce.delivery.catalog.dto.v1_0.Product",
 		"com.liferay.headless.commerce.delivery.catalog.dto.v1_0.ProductOption",
 		"com.liferay.headless.commerce.delivery.catalog.dto.v1_0." +
+			"ProductOptionValue",
+		"com.liferay.headless.commerce.delivery.catalog.dto.v1_0." +
 			"ProductSpecification",
 		"com.liferay.headless.commerce.delivery.catalog.dto.v1_0." +
 			"RelatedProduct",
@@ -494,6 +496,7 @@ public class ExportTaskResourceTest {
 		"com.liferay.notification.rest.dto.v1_0.NotificationQueueEntry",
 		"com.liferay.object.admin.rest.dto.v1_0.ObjectAction",
 		"com.liferay.object.admin.rest.dto.v1_0.ObjectField",
+		"com.liferay.object.admin.rest.dto.v1_0.ObjectFolder",
 		"com.liferay.object.admin.rest.dto.v1_0.ObjectLayout",
 		"com.liferay.object.admin.rest.dto.v1_0.ObjectRelationship",
 		"com.liferay.object.admin.rest.dto.v1_0.ObjectValidationRule",

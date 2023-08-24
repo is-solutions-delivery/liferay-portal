@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -90,10 +89,6 @@ public class TicketCommandLineRunner implements CommandLineRunner {
 
 	private static final Log _log = LogFactory.getLog(
 		TicketCommandLineRunner.class);
-
-	@Autowired
-	private AuthorizedClientServiceOAuth2AuthorizedClientManager
-		_authorizedClientServiceOAuth2AuthorizedClientManager;
 
 	@Value("${com.liferay.lxc.dxp.mainDomain}")
 	private String _lxcDXPMainDomain;

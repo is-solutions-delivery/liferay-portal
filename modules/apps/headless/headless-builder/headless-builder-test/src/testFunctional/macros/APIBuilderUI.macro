@@ -12,9 +12,65 @@ definition {
 
 		Click(locator1 = "APIBuilder#CHANGE_PUBLICATION_STATUS_BUTTON");
 
-		if (!(isSet(check))) {
+		if (isSet(unpublish)) {
 			Click(locator1 = "Button#UNPUBLISH");
 		}
+	}
+
+	macro createAPIApplication {
+		Variables.assertDefined(parameterList = ${title});
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "API Builder");
+
+		if (isSet(addByPlus)) {
+			Click(locator1 = "Button#PLUS");
+		}
+		else {
+			Click(locator1 = "APIBuilder#ADD_NEW_API_APPLICATION");
+		}
+
+		Type(
+			key_fieldLabel = "Title",
+			locator1 = "Modal#INPUT_WITH_LABEL",
+			value1 = ${title});
+
+		Click(locator1 = "APIBuilder#CREATE_BUTTON");
+	}
+
+	macro deleteAPIApplication {
+		ApplicationsMenu.gotoPortlet(
+			category = "Object",
+			panel = "Control Panel",
+			portlet = "API Builder");
+
+		Click(
+			key_title = ${key_title},
+			locator1 = "APIBuilder#DROPDOWN_MENU");
+
+		Click(locator1 = "APIBuilder#DELETE_IN_DROPDOWN_MENU");
+	}
+
+	macro filterByLastUpdated {
+		Variables.assertDefined(parameterList = "${fromDate},${toDate}");
+
+		Click.pauseClickAt(locator1 = "Dropdown#FILTER");
+
+		Click.pauseClickAt(locator1 = "APIBuilder#LAST_UPDATED_IN_FILTER");
+
+		Type(
+			locator1 = "APIBuilder#FROM_DATE",
+			value1 = ${fromDate});
+
+		Type(
+			locator1 = "APIBuilder#TO_DATE",
+			value1 = ${toDate});
+
+		Click(
+			key_text = "Add Filter",
+			locator1 = "Button#ANY");
 	}
 
 	macro goToEditAPIApplicationPage {
@@ -28,6 +84,49 @@ definition {
 			locator1 = "APIBuilder#DROPDOWN_MENU");
 
 		Click(locator1 = "APIBuilder#EDIT_BUTTON");
+	}
+
+	macro publishApplication {
+		APIBuilderUI.goToEditAPIApplicationPage(key_title = ${key_title});
+
+		Click(locator1 = "APIBuilder#PUBLISH_BUTTON");
+	}
+
+	macro searchItem {
+		Variables.assertDefined(parameterList = ${value});
+
+		Type(
+			locator1 = "TextInput#SEARCH",
+			value1 = ${value});
+
+		KeyPress(
+			locator1 = "TextInput#SEARCH",
+			value1 = "\RETURN");
+	}
+
+	macro switchToRelatedEntryInEditApplication {
+		Variables.assertDefined(parameterList = "${entity},${title}");
+
+		APIBuilderUI.goToEditAPIApplicationPage(key_title = ${title});
+
+		Click(
+			locator1 = "Button#BUTTON_WITH_VALUE",
+			value = ${entity});
+	}
+
+	macro viewItemsInOrder {
+		Variables.assertDefined(parameterList = ${itemList});
+
+		var key_index = 1;
+
+		for (var itemValue : list ${itemList}) {
+			AssertTextEquals(
+				index = ${key_index},
+				locator1 = "APIBuilder#TABLE_LIST",
+				value1 = ${itemValue});
+
+			var key_index = ${key_index} + 1;
+		}
 	}
 
 }

@@ -21,11 +21,9 @@ import com.liferay.source.formatter.ExcludeSyntaxPattern;
 import com.liferay.source.formatter.SourceFormatterExcludes;
 import com.liferay.source.formatter.check.util.SourceUtil;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 import java.net.URL;
 
@@ -44,6 +42,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -412,21 +411,24 @@ public class SourceFormatterUtil {
 
 		ProcessBuilder processBuilder = new ProcessBuilder(allArgs);
 
-		processBuilder.directory(new File(baseDirName));
+		if (baseDirName != null) {
+			processBuilder.directory(new File(baseDirName));
+		}
 
 		try {
 			Process process = processBuilder.start();
 
-			BufferedReader bufferedReader = new BufferedReader(
-				new InputStreamReader(process.getInputStream()));
+			Scanner scanner = new Scanner(process.getInputStream());
 
-			String line = null;
-
-			while ((line = bufferedReader.readLine()) != null) {
-				consumer.accept(line);
+			if (allArgs.contains("ls-files") && allArgs.contains("-z")) {
+				scanner.useDelimiter("\0");
 			}
 
-			bufferedReader.close();
+			while (scanner.hasNext()) {
+				consumer.accept(scanner.next());
+			}
+
+			scanner.close();
 		}
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);
@@ -441,7 +443,7 @@ public class SourceFormatterUtil {
 		System.out.println(message);
 	}
 
-	public static List<String> scanForFiles(
+	public static List<String> scanForFileNames(
 			String baseDirName, String[] excludes, String[] includes,
 			SourceFormatterExcludes sourceFormatterExcludes,
 			boolean includeSubrepositories)
@@ -451,7 +453,7 @@ public class SourceFormatterUtil {
 			return new ArrayList<>();
 		}
 
-		return _scanForFiles(
+		return _scanForFileNames(
 			baseDirName,
 			_getPathMatchers(excludes, includes, sourceFormatterExcludes),
 			includeSubrepositories);
@@ -612,6 +614,12 @@ public class SourceFormatterUtil {
 		}
 	}
 
+	private static List<String> _getDeletedFileNames(String baseDirName) {
+		return git(
+			Arrays.asList("ls-files", "-d", "-z", "--full-name"), baseDirName,
+			null, false);
+	}
+
 	private static String _getDocumentationURLString(String checkName) {
 		String markdownFileName = getMarkdownFileName(checkName);
 
@@ -667,7 +675,8 @@ public class SourceFormatterUtil {
 
 		git(
 			Arrays.asList(
-				"ls-files", "--", "**/source_formatter.ignore", "**/.gitrepo"),
+				"ls-files", "-z", "--", "**/source_formatter.ignore",
+				"**/.gitrepo"),
 			baseDirName, null, false,
 			filePath -> {
 				filePath = filePath.replace(
@@ -676,7 +685,9 @@ public class SourceFormatterUtil {
 				if (filePath.endsWith("/source_formatter.ignore")) {
 					File file = new File(baseDirName, filePath);
 
-					_sfIgnoreDirectories.add(file.getParent());
+					if (file.exists()) {
+						_sfIgnoreDirectories.add(file.getParent());
+					}
 				}
 
 				if (filePath.endsWith("/.gitrepo")) {
@@ -691,38 +702,61 @@ public class SourceFormatterUtil {
 						throw new RuntimeException(ioException);
 					}
 
-					if (content.contains("autopull = true")) {
+					if ((content != null) &&
+						content.contains("autopull = true")) {
+
 						_subrepoIgnoreDirectories.add(file.getParent());
 					}
 				}
 			});
 	}
 
-	private static List<String> _scanForFiles(
+	private static List<String> _scanForFileNames(
 			final String baseDirName, final PathMatchers pathMatchers,
 			final boolean includeSubrepositories)
 		throws IOException {
 
 		try {
-			if (GitUtil.getLatestCommitId() != null) {
+			if (!baseDirName.contains("gradle-plugins-source-formatter") &&
+				(GitUtil.getLatestCommitId() != null)) {
+
 				if ((_sfIgnoreDirectories == null) ||
 					(_subrepoIgnoreDirectories == null)) {
 
 					_populateIgnoreDirectories(baseDirName);
 				}
 
-				List<String> gitFiles = new ArrayList<>();
+				if (_gitTopLevelFolder == null) {
+					List<String> lines = git(
+						Arrays.asList("rev-parse", "--show-toplevel"), null,
+						null, false);
+
+					_gitTopLevelFolder = new File(
+						StringUtil.replace(
+							lines.get(0), CharPool.BACK_SLASH, CharPool.SLASH));
+				}
+
+				List<String> deletedFileNames = _getDeletedFileNames(
+					baseDirName);
+				List<String> gitFileNames = new ArrayList<>();
 
 				git(
-					Arrays.asList("ls-files"), baseDirName, pathMatchers,
-					includeSubrepositories,
-					line -> gitFiles.add(
-						StringBundler.concat(
-							baseDirName, StringPool.FORWARD_SLASH,
-							StringUtil.replace(
-								line, CharPool.BACK_SLASH, CharPool.SLASH))));
+					Arrays.asList("ls-files", "-z", "--full-name"), baseDirName,
+					pathMatchers, includeSubrepositories,
+					line -> {
+						if (deletedFileNames.contains(line)) {
+							return;
+						}
 
-				return gitFiles;
+						gitFileNames.add(
+							StringBundler.concat(
+								_gitTopLevelFolder, StringPool.FORWARD_SLASH,
+								StringUtil.replace(
+									line, CharPool.BACK_SLASH,
+									CharPool.SLASH)));
+					});
+
+				return gitFileNames;
 			}
 		}
 		catch (Exception exception) {
@@ -871,6 +905,7 @@ public class SourceFormatterUtil {
 		SourceFormatterUtil.class);
 
 	private static final FileSystem _fileSystem = FileSystems.getDefault();
+	private static File _gitTopLevelFolder;
 	private static List<String> _sfIgnoreDirectories;
 	private static List<String> _subrepoIgnoreDirectories;
 

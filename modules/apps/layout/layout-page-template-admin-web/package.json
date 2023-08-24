@@ -1,13 +1,15 @@
 {
 	"dependencies": {
 		"@liferay/frontend-icons-web": "*",
+		"@liferay/frontend-js-react-web": "*",
+		"@liferay/layout-js-components-web": "*",
 		"frontend-js-web": "*"
 	},
-	"name": "layout-template-admin-web",
+	"name": "@liferay/layout-page-template-admin-web",
 	"scripts": {
 		"build": "liferay-npm-scripts build",
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "2.0.98"
+	"version": "2.0.100"
 }

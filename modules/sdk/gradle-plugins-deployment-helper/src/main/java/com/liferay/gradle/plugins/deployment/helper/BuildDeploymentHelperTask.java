@@ -20,9 +20,12 @@ import java.util.Map;
 import org.gradle.api.Project;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.FileTree;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputFile;
@@ -37,7 +40,9 @@ import org.gradle.api.tasks.SkipWhenEmpty;
 public class BuildDeploymentHelperTask extends JavaExec {
 
 	public BuildDeploymentHelperTask() {
-		setMain("com.liferay.deployment.helper.DeploymentHelper");
+		Property<String> mainClass = getMainClass();
+
+		mainClass.set("com.liferay.deployment.helper.DeploymentHelper");
 	}
 
 	public BuildDeploymentHelperTask deploymentFiles(
@@ -61,6 +66,9 @@ public class BuildDeploymentHelperTask extends JavaExec {
 		super.exec();
 	}
 
+	@InputFiles
+	@PathSensitive(PathSensitivity.RELATIVE)
+	@SkipWhenEmpty
 	public FileCollection getDeploymentFiles() {
 		Project project = getProject();
 
@@ -89,7 +97,7 @@ public class BuildDeploymentHelperTask extends JavaExec {
 		return project.files(inputFiles);
 	}
 
-	@Input
+	@InputFile
 	@Optional
 	@PathSensitive(PathSensitivity.RELATIVE)
 	public File getDeploymentPath() {
@@ -119,6 +127,7 @@ public class BuildDeploymentHelperTask extends JavaExec {
 		_outputFile = outputFile;
 	}
 
+	@Internal
 	protected List<String> getCompleteArgs() {
 		List<String> completeArgs = new ArrayList<>();
 
@@ -138,6 +147,7 @@ public class BuildDeploymentHelperTask extends JavaExec {
 		return completeArgs;
 	}
 
+	@Input
 	protected String getDeploymentFileNames() {
 		StringBuilder sb = new StringBuilder();
 

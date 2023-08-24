@@ -378,7 +378,8 @@ public class EditCPInstanceMVCActionCommand extends BaseMVCActionCommand {
 				_cpDefinitionOptionRelLocalService.
 					getCPDefinitionOptionRelCPDefinitionOptionValueRelIds(
 						cpDefinitionId,
-						ParamUtil.getString(actionRequest, "ddmFormValues")),
+						ParamUtil.getString(
+							actionRequest, "cpInstanceOptions")),
 				width, height, depth, weight, price, promoPrice, cost,
 				published, displayDateMonth, displayDateDay, displayDateYear,
 				displayDateHour, displayDateMinute, expirationDateMonth,
@@ -493,7 +494,7 @@ public class EditCPInstanceMVCActionCommand extends BaseMVCActionCommand {
 		CommercePriceEntry commercePriceEntry =
 			_commercePriceEntryLocalService.fetchCommercePriceEntry(
 				commercePriceList.getCommercePriceListId(),
-				cpInstance.getCPInstanceUuid());
+				cpInstance.getCPInstanceUuid(), StringPool.BLANK);
 
 		serviceContext.setWorkflowAction(WorkflowConstants.ACTION_PUBLISH);
 

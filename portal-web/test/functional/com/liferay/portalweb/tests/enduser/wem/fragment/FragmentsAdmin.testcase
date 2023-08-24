@@ -567,6 +567,7 @@ definition {
 	@priority = 4
 	test ManuallyPropagateChanges {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Given a site administrator accesses to the Page Fragments configuration of Instance Settings") {
 			PortalSettings.gotoConfiguration(
@@ -909,6 +910,7 @@ definition {
 	@priority = 4
 	test ViewDefaultFormFragmentOfTextFieldAddedInGlobalSiteInheritesInNewSite {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Given a Text Input fragment copied from Form Components in global site") {
 			task ("Add a fragment set") {
@@ -1121,7 +1123,7 @@ definition {
 		}
 
 		task ("Then the Fragments creator can see the new icons on the dropdown menu of custom fragment") {
-			DropdownMenuItem.viewIcon(iconList = "pencil,change,upload,copy,move-folder,trash");
+			DropdownMenuItem.viewIcon(iconList = "pencil,change,export,copy,move-folder,trash");
 		}
 
 		task ("When the Fragments creator opens the dropdown menu of custom fragment set") {
@@ -1131,7 +1133,7 @@ definition {
 		}
 
 		task ("Then the Fragments creator can see the new icons on the dropdown menu of custom fragment set") {
-			DropdownMenuItem.viewIcon(iconList = "pencil,upload,import,trash");
+			DropdownMenuItem.viewIcon(iconList = "pencil,export,import,trash");
 		}
 
 		task ("When the Fragments creator opens the dropdown menu on the Fragment Sets") {
@@ -1139,7 +1141,7 @@ definition {
 		}
 
 		task ("Then the Fragments creator can see the new icons on the dropdown menu of Framents Sets") {
-			DropdownMenuItem.viewIcon(iconList = "upload,import,trash");
+			DropdownMenuItem.viewIcon(iconList = "export,import,trash");
 		}
 
 		task ("When the Fragments creator opens the dropdown menu of management toolbar after selecting the new fragment") {
@@ -1149,7 +1151,7 @@ definition {
 		}
 
 		task ("Then the Fragments creator can see the new icons on the dropdown menu") {
-			DropdownMenuItem.viewIcon(iconList = "upload,copy,move-folder,trash");
+			DropdownMenuItem.viewIcon(iconList = "export,copy,move-folder,trash");
 		}
 	}
 
@@ -1157,6 +1159,7 @@ definition {
 	@priority = 3
 	test ViewErrorMessageWhenFailToPropagateChanges {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Given a site administrator unchecks the Propagate Default Fragments Changes During Deploy Process Automatically") {
 			PortalSettings.gotoConfiguration(

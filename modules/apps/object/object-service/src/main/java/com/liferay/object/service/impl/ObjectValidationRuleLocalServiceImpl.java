@@ -16,6 +16,7 @@ import com.liferay.object.exception.ObjectValidationRuleScriptException;
 import com.liferay.object.exception.ObjectValidationRuleSettingNameException;
 import com.liferay.object.exception.ObjectValidationRuleSettingValueException;
 import com.liferay.object.internal.action.util.ObjectEntryVariablesUtil;
+import com.liferay.object.internal.validation.rule.FunctionObjectValidationRuleEngineImpl;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectValidationRule;
@@ -84,14 +85,15 @@ public class ObjectValidationRuleLocalServiceImpl
 			List<ObjectValidationRuleSetting> objectValidationRuleSettings)
 		throws PortalException {
 
+		User user = _userLocalService.getUser(userId);
+
 		_validate(
-			engine, nameMap, outputType, script, objectValidationRuleSettings);
+			user.getCompanyId(), engine, nameMap, outputType, script,
+			objectValidationRuleSettings);
 
 		ObjectValidationRule objectValidationRule =
 			objectValidationRulePersistence.create(
 				counterLocalService.increment());
-
-		User user = _userLocalService.getUser(userId);
 
 		objectValidationRule.setCompanyId(user.getCompanyId());
 		objectValidationRule.setUserId(user.getUserId());
@@ -241,12 +243,13 @@ public class ObjectValidationRuleLocalServiceImpl
 			List<ObjectValidationRuleSetting> objectValidationRuleSettings)
 		throws PortalException {
 
-		_validate(
-			engine, nameMap, outputType, script, objectValidationRuleSettings);
-
 		ObjectValidationRule objectValidationRule =
 			objectValidationRulePersistence.findByPrimaryKey(
 				objectValidationRuleId);
+
+		_validate(
+			objectValidationRule.getCompanyId(), engine, nameMap, outputType,
+			script, objectValidationRuleSettings);
 
 		objectValidationRule.setActive(active);
 		objectValidationRule.setEngine(engine);
@@ -305,19 +308,27 @@ public class ObjectValidationRuleLocalServiceImpl
 			ObjectValidationRuleEngine objectValidationRuleEngine =
 				_objectValidationRuleEngineRegistry.
 					getObjectValidationRuleEngine(
+						objectValidationRule.getCompanyId(),
 						objectValidationRule.getEngine());
 
 			if (StringUtil.equals(
-					objectValidationRuleEngine.getName(),
+					objectValidationRuleEngine.getKey(),
 					ObjectValidationRuleConstants.ENGINE_TYPE_DDM)) {
 
 				results = objectValidationRuleEngine.execute(
 					variables, objectValidationRule.getScript());
 			}
-			else {
+			else if (StringUtil.equals(
+						objectValidationRuleEngine.getKey(),
+						ObjectValidationRuleConstants.ENGINE_TYPE_GROOVY)) {
+
 				results = objectValidationRuleEngine.execute(
 					(Map<String, Object>)variables.get("baseModel"),
 					objectValidationRule.getScript());
+			}
+			else {
+				results = objectValidationRuleEngine.execute(
+					(Map<String, Object>)variables.get("entryDTO"), null);
 			}
 
 			Locale locale = LocaleUtil.getMostRelevantLocale();
@@ -329,7 +340,9 @@ public class ObjectValidationRuleLocalServiceImpl
 			}
 
 			if (!FeatureFlagManagerUtil.isEnabled("LPS-187846")) {
-				if (GetterUtil.getBoolean(results.get("invalidFields"))) {
+				if (!GetterUtil.getBoolean(
+						results.get("validationCriteriaMet"))) {
+
 					throw new ObjectValidationRuleEngineException.InvalidFields(
 						objectValidationRule.getErrorLabel(locale));
 				}
@@ -344,7 +357,7 @@ public class ObjectValidationRuleLocalServiceImpl
 
 			String errorMessage = null;
 
-			if (GetterUtil.getBoolean(results.get("invalidFields"))) {
+			if (!GetterUtil.getBoolean(results.get("validationCriteriaMet"))) {
 				errorMessage = objectValidationRule.getErrorLabel(locale);
 			}
 			else if (GetterUtil.getBoolean(results.get("invalidScript"))) {
@@ -427,8 +440,8 @@ public class ObjectValidationRuleLocalServiceImpl
 	}
 
 	private void _validate(
-			String engine, Map<Locale, String> nameMap, String outputType,
-			String script,
+			long companyId, String engine, Map<Locale, String> nameMap,
+			String outputType, String script,
 			List<ObjectValidationRuleSetting> objectValidationRuleSettings)
 		throws PortalException {
 
@@ -438,7 +451,7 @@ public class ObjectValidationRuleLocalServiceImpl
 
 		ObjectValidationRuleEngine objectValidationRuleEngine =
 			_objectValidationRuleEngineRegistry.getObjectValidationRuleEngine(
-				engine);
+				companyId, engine);
 
 		if (objectValidationRuleEngine == null) {
 			throw new ObjectValidationRuleEngineException.NoSuchEngine(engine);
@@ -463,8 +476,12 @@ public class ObjectValidationRuleLocalServiceImpl
 				"Invalid output type " + outputType);
 		}
 
-		if (Validator.isNull(script)) {
-			throw new ObjectValidationRuleScriptException("required");
+		if (Validator.isNull(script) &&
+			!(objectValidationRuleEngine instanceof
+				FunctionObjectValidationRuleEngineImpl)) {
+
+			throw new ObjectValidationRuleScriptException(
+				"The script is required", "required");
 		}
 
 		try {
@@ -493,10 +510,12 @@ public class ObjectValidationRuleLocalServiceImpl
 					(ObjectScriptingException)portalException;
 
 				throw new ObjectValidationRuleScriptException(
+					objectScriptingException.getMessage(),
 					objectScriptingException.getMessageKey());
 			}
 
-			throw new ObjectValidationRuleScriptException("syntax-error");
+			throw new ObjectValidationRuleScriptException(
+				"The script syntax is invalid", "syntax-error");
 		}
 
 		if (!FeatureFlagManagerUtil.isEnabled("LPS-187846")) {

@@ -142,7 +142,7 @@ public class CommerceOrderItemIndexer extends BaseIndexer<CommerceOrderItem> {
 		throws Exception {
 
 		if (_log.isDebugEnabled()) {
-			_log.debug("Indexing order item " + commerceOrderItem);
+			_log.debug("Indexing commerce order item " + commerceOrderItem);
 		}
 
 		Document document = getBaseModelDocument(CLASS_NAME, commerceOrderItem);
@@ -167,7 +167,8 @@ public class CommerceOrderItemIndexer extends BaseIndexer<CommerceOrderItem> {
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
-				"Document " + commerceOrderItem + " indexed successfully");
+				"Commerce order item " + commerceOrderItem +
+					" indexed successfully");
 		}
 
 		return document;
@@ -223,7 +224,7 @@ public class CommerceOrderItemIndexer extends BaseIndexer<CommerceOrderItem> {
 					if (_log.isWarnEnabled()) {
 						_log.warn(
 							"Unable to index commerce order item " +
-								commerceOrderItem.getCommerceOrderItemId(),
+								commerceOrderItem,
 							portalException);
 					}
 				}

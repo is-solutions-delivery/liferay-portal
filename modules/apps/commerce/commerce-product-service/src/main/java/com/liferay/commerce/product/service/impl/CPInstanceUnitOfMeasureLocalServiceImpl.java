@@ -111,9 +111,21 @@ public class CPInstanceUnitOfMeasureLocalServiceImpl
 	}
 
 	@Override
+	public List<CPInstanceUnitOfMeasure> getCPInstanceUnitOfMeasures(
+		long companyId, String sku) {
+
+		return cpInstanceUnitOfMeasurePersistence.findByC_S(companyId, sku);
+	}
+
+	@Override
 	public int getCPInstanceUnitOfMeasuresCount(long cpInstanceId) {
 		return cpInstanceUnitOfMeasurePersistence.countByCPInstanceId(
 			cpInstanceId);
+	}
+
+	@Override
+	public int getCPInstanceUnitOfMeasuresCount(long companyId, String sku) {
+		return cpInstanceUnitOfMeasurePersistence.countByC_S(companyId, sku);
 	}
 
 	@Override

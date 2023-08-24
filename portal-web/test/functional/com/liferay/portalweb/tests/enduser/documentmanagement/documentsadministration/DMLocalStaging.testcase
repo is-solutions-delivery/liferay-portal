@@ -973,6 +973,7 @@ definition {
 	test CanPublishSubfolderWithDocumentsViaSAP {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		JSONFolder.addFolder(
 			dmFolderDescription = "DM Folder Description",
@@ -1325,6 +1326,8 @@ definition {
 
 		Staging.publishToLive();
 
+		Refresh();
+
 		DepotNavigator.openToEditDMEntryInDepot(
 			depotName = "Test Depot Name",
 			dmDocumentTitle = "Test YouTube Video",
@@ -1477,6 +1480,7 @@ definition {
 	@priority = 4
 	test CanViewImageInDynamicCollectionViaAPAfterFriendlyURLIsUpdated {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		JSONDepot.addDepot(
 			depotDescription = "This is the description of a depot",

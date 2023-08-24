@@ -12,6 +12,7 @@ import com.liferay.fragment.service.FragmentEntryLocalServiceUtil;
 import com.liferay.fragment.web.internal.constants.FragmentWebKeys;
 import com.liferay.info.field.type.BooleanInfoFieldType;
 import com.liferay.info.field.type.DateInfoFieldType;
+import com.liferay.info.field.type.DateTimeInfoFieldType;
 import com.liferay.info.field.type.FileInfoFieldType;
 import com.liferay.info.field.type.HTMLInfoFieldType;
 import com.liferay.info.field.type.InfoFieldType;
@@ -21,6 +22,7 @@ import com.liferay.info.field.type.NumberInfoFieldType;
 import com.liferay.info.field.type.RelationshipInfoFieldType;
 import com.liferay.info.field.type.SelectInfoFieldType;
 import com.liferay.info.field.type.TextInfoFieldType;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
@@ -83,6 +85,12 @@ public class ConfigurationDisplayContext {
 						themeDisplay.getLocale());
 
 				for (InfoFieldType infoFieldType : _INFO_FIELD_TYPES) {
+					if (!FeatureFlagManagerUtil.isEnabled("LPS-183727") &&
+						(infoFieldType == DateTimeInfoFieldType.INSTANCE)) {
+
+						continue;
+					}
+
 					formTypes.add(
 						HashMapBuilder.put(
 							"fragmentName",
@@ -169,10 +177,11 @@ public class ConfigurationDisplayContext {
 
 	private static final InfoFieldType[] _INFO_FIELD_TYPES = {
 		BooleanInfoFieldType.INSTANCE, DateInfoFieldType.INSTANCE,
-		FileInfoFieldType.INSTANCE, HTMLInfoFieldType.INSTANCE,
-		LongTextInfoFieldType.INSTANCE, MultiselectInfoFieldType.INSTANCE,
-		NumberInfoFieldType.INSTANCE, RelationshipInfoFieldType.INSTANCE,
-		SelectInfoFieldType.INSTANCE, TextInfoFieldType.INSTANCE
+		DateTimeInfoFieldType.INSTANCE, FileInfoFieldType.INSTANCE,
+		HTMLInfoFieldType.INSTANCE, LongTextInfoFieldType.INSTANCE,
+		MultiselectInfoFieldType.INSTANCE, NumberInfoFieldType.INSTANCE,
+		RelationshipInfoFieldType.INSTANCE, SelectInfoFieldType.INSTANCE,
+		TextInfoFieldType.INSTANCE
 	};
 
 	private final DefaultInputFragmentEntryConfigurationProvider

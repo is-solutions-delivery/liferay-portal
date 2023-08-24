@@ -48,7 +48,7 @@ public class ObjectViewResourceTest extends BaseObjectViewResourceTestCase {
 
 		_objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
-				TestPropsValues.getUserId(), false, false,
+				TestPropsValues.getUserId(), 0, false, false,
 				LocalizedMapUtil.getLocalizedMap(value), value, null, null,
 				LocalizedMapUtil.getLocalizedMap(value), true,
 				ObjectDefinitionConstants.SCOPE_COMPANY,
@@ -157,6 +157,11 @@ public class ObjectViewResourceTest extends BaseObjectViewResourceTestCase {
 				(Map)copiedObjectView.getName()));
 
 		assertValid(copiedObjectView);
+	}
+
+	@Override
+	protected String[] getIgnoredEntityFieldNames() {
+		return new String[] {"label"};
 	}
 
 	@Override

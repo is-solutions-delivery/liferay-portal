@@ -54,23 +54,23 @@ public class APIApplicationRelevantObjectEntryModelListener
 	}
 
 	private void _validate(ObjectEntry objectEntry) {
-
-		// APIApplication is defined in headless-builder.json and has a required
-		// object field called "baseURL".
-
-		Map<String, Serializable> values = objectEntry.getValues();
-
-		String baseURL = (String)values.get("baseURL");
-
-		if (baseURL == null) {
-			return;
-		}
-
-		// Just because you have an object field called "baseURL" does not mean
-		// you are an APIApplication. My mom is a woman, but not every woman is
-		// my mom.
-
 		try {
+
+			// APIApplication is defined in headless-builder.json and has a
+			// required object field called "baseURL".
+
+			Map<String, Serializable> values = objectEntry.getValues();
+
+			String baseURL = (String)values.get("baseURL");
+
+			if (baseURL == null) {
+				return;
+			}
+
+			// Just because you have an object field called "baseURL" does not
+			// mean you are an APIApplication. My mom is a woman, but not every
+			// woman is my mom.
+
 			Matcher matcher = _baseURLPattern.matcher(baseURL);
 
 			if (!matcher.matches()) {
@@ -81,11 +81,11 @@ public class APIApplicationRelevantObjectEntryModelListener
 						objectEntry.getObjectDefinitionId(), "baseURL");
 
 				throw new ObjectEntryValuesException.InvalidObjectField(
+					Arrays.asList(objectField.getLabel(user.getLocale())),
 					String.format(
 						"%s can have a maximum of 255 alphanumeric characters",
 						objectField.getLabel(user.getLocale())),
-					"x-can-have-a-maximum-of-255-alphanumeric-characters",
-					Arrays.asList(objectField.getLabel(user.getLocale())));
+					"x-can-have-a-maximum-of-255-alphanumeric-characters");
 			}
 		}
 		catch (Exception exception) {

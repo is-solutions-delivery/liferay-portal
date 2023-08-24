@@ -5,11 +5,11 @@
 
 package com.liferay.jethr0.project.queue;
 
-import com.liferay.jethr0.build.Build;
-import com.liferay.jethr0.build.repository.BuildParameterRepository;
-import com.liferay.jethr0.build.repository.BuildRepository;
-import com.liferay.jethr0.build.repository.BuildRunRepository;
-import com.liferay.jethr0.build.run.BuildRun;
+import com.liferay.jethr0.bui1d.Build;
+import com.liferay.jethr0.bui1d.repository.BuildParameterRepository;
+import com.liferay.jethr0.bui1d.repository.BuildRepository;
+import com.liferay.jethr0.bui1d.repository.BuildRunRepository;
+import com.liferay.jethr0.bui1d.run.BuildRun;
 import com.liferay.jethr0.gitbranch.repository.GitBranchRepository;
 import com.liferay.jethr0.project.Project;
 import com.liferay.jethr0.project.comparator.BaseProjectComparator;
@@ -189,6 +189,14 @@ public class ProjectQueue {
 				Comparator.comparingInt(ProjectComparator::getPosition));
 
 			_projects.sort(new PrioritizedProjectComparator());
+
+			for (int i = 0; i < _projects.size(); i++) {
+				Project project = _projects.get(i);
+
+				project.setPosition(i + 1);
+
+				_projectRepository.update(project);
+			}
 		}
 	}
 

@@ -2781,7 +2781,7 @@ sendPasswordCaptchaEnabled=&quot;false&quot;</echo>
 		</sequential>
 	</macrodef>
 
-	<macrodef name="prepare-database-upgrade-configuration">
+	<macrodef name="prepare-database-upgrade-properties">
 		<sequential>
 			<delete file="${liferay.home}/tools/portal-tools-db-upgrade-client/logs/upgrade.log" />
 
@@ -9568,6 +9568,16 @@ org.apache.catalina.tribes.level = FINE]]>
 					</then>
 				</if>
 
+				<get-testcase-property property.name="delete.temp.dir" />
+
+				<if>
+					<equals arg1="${delete.temp.dir}" arg2="true" />
+
+					<then>
+						<delete dir="${app.server.tomcat.temp.dir}" />
+					</then>
+				</if>
+
 				<get-testcase-property property.name="portal.version" />
 
 				<if>
@@ -10425,7 +10435,7 @@ send_user $expect_out(buffer)]]></echo>
 	<target name="execute-mysql">
 		<get-test-app-server-lib-portal-dir />
 
-		<sql classpath="${test.app.server.lib.portal.dir}/${jdbc.mysql.driver}" driver="${database.mysql.driver}" onerror="continue" output="${mysql.output.file}" password="${database.mysql.password}" print="true" showtrailers="false" src="${mysql.input.file}" url="${database.mysql.url}" userid="${database.mysql.username}" />
+		<sql classpath="${test.app.server.lib.portal.dir}/${jdbc.mysql.driver}" driver="${database.mysql.driver}" onerror="continue" output="${mysql.output.file}" password="${database.mysql.password}" print="true" showheaders="false" showtrailers="false" src="${mysql.input.file}" url="${database.mysql.url}" userid="${database.mysql.username}" />
 	</target>
 
 	<target name="export-database-schema">
@@ -11173,8 +11183,8 @@ ${update.properties}</echo>
 		<prepare-azure-store-configuration />
 	</target>
 
-	<target name="prepare-database-upgrade-configuration">
-		<prepare-database-upgrade-configuration />
+	<target name="prepare-database-upgrade-properties">
+		<prepare-database-upgrade-properties />
 	</target>
 
 	<target name="prepare-encryption-PCKS12-certificate">
@@ -11616,6 +11626,17 @@ cluster.link.channel.properties.transport.0=${project.dir}/portal-web/test/funct
 					<replacetoken>cluster.link.autodetect.address=</replacetoken>
 					<replacevalue></replacevalue>
 				</replace>
+			</then>
+		</if>
+
+		<get-testcase-property property.name="database.auto.upgrade.enabled" />
+
+		<if>
+			<equals arg1="${database.auto.upgrade.enabled}" arg2="true" />
+			<then>
+				<echo append="true" file="portal-impl/src/portal-ext.properties">
+
+upgrade.database.auto.run=true</echo>
 			</then>
 		</if>
 
@@ -13090,6 +13111,8 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 			</then>
 		</if>
 
+		<get-testcase-property property.name="test.assert.liferay.errors" />
+
 		<if>
 			<equals arg1="${test.assert.liferay.errors}" arg2="false" />
 			<then>
@@ -13884,6 +13907,18 @@ ANT_OPTS=${env.ANT_OPTS}</echo>
 		</antcall>
 		<antcall target="prepare-portlet-ext-properties" />
 		<antcall target="prepare-system-ext-properties" />
+
+		<get-testcase-property property.name="aws.store.enabled" />
+
+		<if>
+			<equals arg1="${aws.store.enabled}" arg2="true" />
+			<then>
+				<copy
+					file="${test.release.bundle.parent.dir}/bundles-original/osgi/configs/com.liferay.portal.store.s3.configuration.S3StoreConfiguration.config"
+					tofile="${test.release.bundle.parent.dir}/bundles/osgi/configs/com.liferay.portal.store.s3.configuration.S3StoreConfiguration.config"
+				/>
+			</then>
+		</if>
 	</target>
 
 	<target name="prepare-virtual-host-name-properties">
@@ -16065,6 +16100,15 @@ mail.send.blacklist=</echo>
 			</then>
 		</if>
 
+		<get-testcase-property property.name="database.upgrade.enabled" />
+
+		<if>
+			<equals arg1="${database.upgrade.enabled}" arg2="true" />
+			<then>
+				<prepare-database-upgrade-properties />
+			</then>
+		</if>
+
 		<get-testcase-property property.name="analytics.cloud.enabled" />
 
 		<if>
@@ -16119,6 +16163,19 @@ mail.send.blacklist=</echo>
 						</ant>
 					</sequential>
 				</for>
+			</then>
+		</if>
+
+		<get-testcase-property property.name="jmxremote.enabled" />
+
+		<if>
+			<isset property="jmxremote.enabled" />
+			<then>
+				<echo append="true" file="${app.server.tomcat.bin.dir}/setenv${file.suffix.bat}">
+						<![CDATA[
+CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.ssl=false"
+						]]>
+				</echo>
 			</then>
 		</if>
 
@@ -16311,6 +16368,21 @@ mail.send.blacklist=</echo>
 		</if>
 
 		<stop-remote-search-engine />
+
+		<get-testcase-property property.name="jmxremote.enabled" />
+
+		<if>
+			<isset property="jmxremote.enabled" />
+			<then>
+				<replace
+					file="${app.server.tomcat.bin.dir}/setenv${file.suffix.bat}"
+					token="CATALINA_OPTS=&quot;$CATALINA_OPTS -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.port=1234 -Dcom.sun.management.jmxremote.ssl=false&quot;"
+					value=""
+				/>
+
+				<delete failonerror="false" file="${project.dir}/mbean-attributes-output.txt" />
+			</then>
+		</if>
 
 		<antcall target="clean-up-web-xml" />
 	</target>
@@ -16596,7 +16668,7 @@ mail.send.blacklist=</echo>
 	</target>
 
 	<target name="upgrade-legacy-database">
-		<prepare-database-upgrade-configuration />
+		<prepare-database-upgrade-properties />
 
 		<get-java-jdk-bundle-version test.batch.name="${test.batch.name}" />
 

@@ -6,7 +6,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import Categorization from './Categorization';
 import CollapsibleSection from './CollapsibleSection';
 import ItemLanguages from './ItemLanguages';
 import PreviewActionsDescriptionSection from './PreviewActionsDescriptionSection';
@@ -24,10 +23,8 @@ const DetailsContent = ({
 	modifiedDate,
 	preview,
 	specificFields,
-	tags = [],
 	title,
 	viewURLs = [],
-	vocabularies,
 }) => {
 	const specificItems = Object.values(specificFields);
 
@@ -42,11 +39,9 @@ const DetailsContent = ({
 					preview={preview}
 					title={title}
 				/>
-
-				<Categorization tags={tags} vocabularies={vocabularies} />
 			</>
 
-			<CollapsibleSection title={Liferay.Language.get('details')}>
+			<CollapsibleSection title={Liferay.Language.get('properties')}>
 				<div className="sidebar-section">
 					<SpecificFields
 						fields={specificItems}

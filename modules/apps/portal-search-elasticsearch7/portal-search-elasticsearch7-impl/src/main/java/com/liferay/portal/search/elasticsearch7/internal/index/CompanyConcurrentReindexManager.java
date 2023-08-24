@@ -6,7 +6,10 @@
 package com.liferay.portal.search.elasticsearch7.internal.index;
 
 import com.liferay.osgi.util.service.Snapshot;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.service.CompanyLocalService;
@@ -68,6 +71,10 @@ public class CompanyConcurrentReindexManager
 			return;
 		}
 
+		if (_log.isInfoEnabled()) {
+			_log.info("Creating next index " + newIndexName);
+		}
+
 		_companyIndexFactoryHelper.createIndex(
 			newIndexName, restHighLevelClient.indices());
 
@@ -91,6 +98,10 @@ public class CompanyConcurrentReindexManager
 		if (!Validator.isBlank(indexName)) {
 			RestHighLevelClient restHighLevelClient =
 				_elasticsearchConnectionManager.getRestHighLevelClient();
+
+			if (_log.isInfoEnabled()) {
+				_log.info("Deleting next index " + indexName);
+			}
 
 			_companyIndexFactoryHelper.deleteIndex(
 				indexName, restHighLevelClient.indices(), companyId, false);
@@ -184,12 +195,23 @@ public class CompanyConcurrentReindexManager
 			baseIndexName, indicesClient);
 
 		if (!removeIndexNames.isEmpty()) {
+			if (_log.isInfoEnabled()) {
+				_log.info("Removing indexes " + removeIndexNames);
+			}
+
 			indicesAliasesRequest.addAliasAction(
 				new IndicesAliasesRequest.AliasActions(
 					IndicesAliasesRequest.AliasActions.Type.REMOVE_INDEX
 				).indices(
 					ArrayUtil.toStringArray(removeIndexNames)
 				));
+		}
+
+		if (_log.isInfoEnabled()) {
+			_log.info(
+				StringBundler.concat(
+					"Adding alias ", baseIndexName, " for index ",
+					company.getIndexNameNext()));
 		}
 
 		indicesAliasesRequest.addAliasAction(
@@ -204,6 +226,9 @@ public class CompanyConcurrentReindexManager
 		indicesClient.updateAliases(
 			indicesAliasesRequest, RequestOptions.DEFAULT);
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		CompanyConcurrentReindexManager.class);
 
 	private static final Snapshot<CrossClusterReplicationHelper>
 		_crossClusterReplicationHelperSnapshot = new Snapshot(

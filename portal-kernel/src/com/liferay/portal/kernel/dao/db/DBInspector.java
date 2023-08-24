@@ -150,6 +150,18 @@ public class DBInspector {
 				return false;
 			}
 
+			Integer expectedColumnDecimalDigits = _getByColumnType(
+				columnType, DB::getSQLTypeDecimalDigits);
+
+			if (expectedColumnDecimalDigits != DB.SQL_SIZE_NONE) {
+				int actualColumnDecimalDigits = resultSet.getInt(
+					"DECIMAL_DIGITS");
+
+				if (expectedColumnDecimalDigits != actualColumnDecimalDigits) {
+					return false;
+				}
+			}
+
 			boolean expectedColumnNullable = _isColumnNullable(columnType);
 
 			int actualColumnNullable = resultSet.getInt("NULLABLE");
@@ -163,11 +175,19 @@ public class DBInspector {
 			}
 
 			if (!expectedColumnNullable) {
+				String expectedColumnDefaultValue = _getColumnDefaultValue(
+					columnType);
+				String actualColumnDefaultValue = _getColumnDefaultValue(
+					resultSet.getString("COLUMN_DEF"), DB::getDefaultValue);
+
+				if (Validator.isNull(expectedColumnDefaultValue) &&
+					Validator.isNull(actualColumnDefaultValue)) {
+
+					return true;
+				}
+
 				return StringUtil.equals(
-					_getColumnDefaultValue(columnType),
-					_getColumnDefaultValue(
-						resultSet.getString("COLUMN_DEF"),
-						DB::getDefaultValue));
+					expectedColumnDefaultValue, actualColumnDefaultValue);
 			}
 
 			return true;
@@ -313,7 +333,7 @@ public class DBInspector {
 		Matcher matcher = _columnDefaultClausePattern.matcher(columnType);
 
 		if (matcher.find()) {
-			return matcher.group(1);
+			return StringUtil.unquote(matcher.group(1));
 		}
 
 		return null;
@@ -351,8 +371,7 @@ public class DBInspector {
 			}
 		}
 
-		Integer dataTypeSize = _getByColumnType(
-			columnType, DB::getSQLVarcharSize);
+		Integer dataTypeSize = _getByColumnType(columnType, DB::getSQLTypeSize);
 
 		if (dataTypeSize != null) {
 			return dataTypeSize;
@@ -404,7 +423,7 @@ public class DBInspector {
 	private static final Log _log = LogFactoryUtil.getLog(DBInspector.class);
 
 	private static final Pattern _columnDefaultClausePattern = Pattern.compile(
-		".*DEFAULT '?(.*[^'])'? NOT NULL", Pattern.CASE_INSENSITIVE);
+		".*DEFAULT ((?:'[^']+')|(?:\\S+)) NOT NULL", Pattern.CASE_INSENSITIVE);
 	private static final Pattern _columnSizePattern = Pattern.compile(
 		"^\\w+(?:\\((\\d+)\\))?.*", Pattern.CASE_INSENSITIVE);
 	private static final Pattern _columnTypePattern = Pattern.compile(

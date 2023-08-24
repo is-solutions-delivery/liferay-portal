@@ -15,6 +15,7 @@ import java.util.concurrent.Callable;
 import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.file.DuplicatesStrategy;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.plugins.WarPlugin;
@@ -52,6 +53,7 @@ public class LiferayWarPlugin implements Plugin<Project> {
 			project, buildWarDirTaskProvider, warTaskProvider);
 		_configureTaskWatchProvider(
 			buildWarDirTaskProvider, warTaskProvider, watchTaskProvider);
+		_configureTaskWarProvider(warTaskProvider);
 	}
 
 	private void _configureTaskBuildWarDirProvider(
@@ -92,6 +94,18 @@ public class LiferayWarPlugin implements Plugin<Project> {
 					buildWarDirSync.setDescription(
 						"Unzips the project's WAR file into a temporary " +
 							"directory.");
+				}
+
+			});
+	}
+
+	private void _configureTaskWarProvider(TaskProvider<War> warTaskProvider) {
+		warTaskProvider.configure(
+			new Action<War>() {
+
+				@Override
+				public void execute(War war) {
+					war.setDuplicatesStrategy(DuplicatesStrategy.INCLUDE);
 				}
 
 			});

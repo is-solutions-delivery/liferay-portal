@@ -17,11 +17,11 @@ import com.liferay.message.boards.model.MBThread;
 import com.liferay.message.boards.service.MBCategoryLocalService;
 import com.liferay.message.boards.service.MBThreadLocalService;
 import com.liferay.message.boards.service.base.MBMessageServiceBaseImpl;
-import com.liferay.message.boards.service.permission.MBDiscussionPermission;
 import com.liferay.message.boards.util.comparator.MessageCreateDateComparator;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.comment.DiscussionPermission;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermi
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.permission.UserPermission;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HtmlParser;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -92,10 +93,9 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 
 		User user = getGuestOrUser();
 
-		MBDiscussionPermission.check(
+		_discussionPermission.checkAddPermission(
 			getPermissionChecker(), user.getCompanyId(),
-			serviceContext.getScopeGroupId(), className, classPK,
-			ActionKeys.ADD_DISCUSSION);
+			serviceContext.getScopeGroupId(), className, classPK);
 
 		return mbMessageLocalService.addDiscussionMessage(
 			null, user.getUserId(), null, groupId, className, classPK, threadId,
@@ -314,8 +314,8 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 
 	@Override
 	public void deleteDiscussionMessage(long messageId) throws PortalException {
-		MBDiscussionPermission.check(
-			getPermissionChecker(), messageId, ActionKeys.DELETE_DISCUSSION);
+		_discussionPermission.checkDeletePermission(
+			getPermissionChecker(), messageId);
 
 		mbMessageLocalService.deleteDiscussionMessage(messageId);
 	}
@@ -661,6 +661,27 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 	}
 
 	@Override
+	public List<MBMessage> getGroupUserMessageBoardMessagesActivity(
+			long groupId, long userId, int start, int end)
+		throws PortalException {
+
+		_userPermission.check(getPermissionChecker(), userId, ActionKeys.VIEW);
+
+		return mbMessageLocalService.getGroupUserMessageBoardMessagesActivity(
+			groupId, userId, start, end);
+	}
+
+	public int getGroupUserMessageBoardMessagesActivityCount(
+			long groupId, long userId)
+		throws PortalException {
+
+		_userPermission.check(getPermissionChecker(), userId, ActionKeys.VIEW);
+
+		return mbMessageLocalService.
+			getGroupUserMessageBoardMessagesActivityCount(groupId, userId);
+	}
+
+	@Override
 	public MBMessage getMBMessageByExternalReferenceCode(
 			String externalReferenceCode, long groupId)
 		throws PortalException {
@@ -849,8 +870,8 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 			String body, ServiceContext serviceContext)
 		throws PortalException {
 
-		MBDiscussionPermission.check(
-			getPermissionChecker(), messageId, ActionKeys.UPDATE_DISCUSSION);
+		_discussionPermission.checkUpdatePermission(
+			getPermissionChecker(), messageId);
 
 		return mbMessageLocalService.updateDiscussionMessage(
 			getUserId(), messageId, className, classPK, subject, body,
@@ -1040,6 +1061,9 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 	private CompanyLocalService _companyLocalService;
 
 	@Reference
+	private DiscussionPermission _discussionPermission;
+
+	@Reference
 	private GroupLocalService _groupLocalService;
 
 	@Reference
@@ -1070,5 +1094,8 @@ public class MBMessageServiceImpl extends MBMessageServiceBaseImpl {
 
 	@Reference
 	private SyndModelFactory _syndModelFactory;
+
+	@Reference
+	private UserPermission _userPermission;
 
 }

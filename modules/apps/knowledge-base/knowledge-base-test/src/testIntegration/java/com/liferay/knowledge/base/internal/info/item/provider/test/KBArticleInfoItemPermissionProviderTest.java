@@ -30,6 +30,8 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
+import java.util.Date;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -64,7 +66,7 @@ public class KBArticleInfoItemPermissionProviderTest {
 			KBFolderConstants.DEFAULT_PARENT_FOLDER_ID,
 			StringUtil.randomString(), StringUtil.randomString(),
 			StringUtil.randomString(), StringUtil.randomString(), null,
-			StringPool.BLANK, null, null, null,
+			StringPool.BLANK, new Date(), null, null, null,
 			ServiceContextTestUtil.getServiceContext());
 
 		RoleTestUtil.removeResourcePermission(

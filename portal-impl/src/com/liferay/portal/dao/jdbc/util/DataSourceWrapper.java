@@ -68,8 +68,8 @@ public class DataSourceWrapper implements DataSource {
 	}
 
 	@Override
-	public void setLogWriter(PrintWriter out) throws SQLException {
-		_dataSource.setLogWriter(out);
+	public void setLogWriter(PrintWriter printWriter) throws SQLException {
+		_dataSource.setLogWriter(printWriter);
 	}
 
 	public void setWrappedDataSource(DataSource wrappedDataSource) {

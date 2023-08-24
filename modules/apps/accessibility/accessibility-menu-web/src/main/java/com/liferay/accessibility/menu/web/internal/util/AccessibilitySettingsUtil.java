@@ -35,6 +35,8 @@ public class AccessibilitySettingsUtil {
 		return ListUtil.fromArray(
 			new AccessibilitySetting(
 				"c-prefers-link-underline", false,
+				LanguageUtil.get(
+					httpServletRequest, "underlined-links-description"),
 				AccessibilitySettingConstants.
 					ACCESSIBILITY_SETTING_UNDERLINED_LINKS,
 				LanguageUtil.get(httpServletRequest, "underlined-links"),
@@ -44,6 +46,8 @@ public class AccessibilitySettingsUtil {
 						ACCESSIBILITY_SETTING_UNDERLINED_LINKS)),
 			new AccessibilitySetting(
 				"c-prefers-letter-spacing-1", false,
+				LanguageUtil.get(
+					httpServletRequest, "increased-text-spacing-description"),
 				AccessibilitySettingConstants.
 					ACCESSIBILITY_SETTING_INCREASED_TEXT_SPACING,
 				LanguageUtil.get(httpServletRequest, "increased-text-spacing"),
@@ -53,6 +57,8 @@ public class AccessibilitySettingsUtil {
 						ACCESSIBILITY_SETTING_INCREASED_TEXT_SPACING)),
 			new AccessibilitySetting(
 				"c-prefers-expanded-text", false,
+				LanguageUtil.get(
+					httpServletRequest, "expanded-text-description"),
 				AccessibilitySettingConstants.
 					ACCESSIBILITY_SETTING_EXPANDED_TEXT,
 				LanguageUtil.get(httpServletRequest, "expanded-text"),
@@ -62,6 +68,8 @@ public class AccessibilitySettingsUtil {
 						ACCESSIBILITY_SETTING_EXPANDED_TEXT)),
 			new AccessibilitySetting(
 				"c-prefers-reduced-motion", false,
+				LanguageUtil.get(
+					httpServletRequest, "reduced-motion-description"),
 				AccessibilitySettingConstants.
 					ACCESSIBILITY_SETTING_REDUCED_MOTION,
 				LanguageUtil.get(httpServletRequest, "reduced-motion"),

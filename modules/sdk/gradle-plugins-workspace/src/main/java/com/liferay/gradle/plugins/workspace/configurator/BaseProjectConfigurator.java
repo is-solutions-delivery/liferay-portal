@@ -26,6 +26,7 @@ import org.gradle.api.GradleException;
 import org.gradle.api.NamedDomainObjectCollection;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.file.DuplicatesStrategy;
 import org.gradle.api.initialization.Settings;
 import org.gradle.api.tasks.Copy;
 import org.gradle.api.tasks.TaskProvider;
@@ -102,6 +103,13 @@ public abstract class BaseProjectConfigurator implements ProjectConfigurator {
 			project, RootProjectConfigurator.DOCKER_DEPLOY_TASK_NAME,
 			Copy.class);
 
+		copy.setDescription(
+			"Assembles the project and deploys it to the Liferay Docker " +
+				"container.");
+		copy.setGroup(RootProjectConfigurator.DOCKER_GROUP);
+
+		copy.setDuplicatesStrategy(DuplicatesStrategy.INCLUDE);
+
 		copy.from(sourcePath);
 
 		copy.into(
@@ -114,12 +122,6 @@ public abstract class BaseProjectConfigurator implements ProjectConfigurator {
 
 			});
 
-		copy.setDescription(
-			"Assembles the project and deploys it to the Liferay Docker " +
-				"container.");
-
-		copy.setGroup(RootProjectConfigurator.DOCKER_GROUP);
-
 		Task deployTask = GradleUtil.getTask(
 			project, LiferayBasePlugin.DEPLOY_TASK_NAME);
 
@@ -129,7 +131,7 @@ public abstract class BaseProjectConfigurator implements ProjectConfigurator {
 			project.getRootProject(),
 			RootProjectConfigurator.BUILD_DOCKER_IMAGE_TASK_NAME);
 
-		buildDockerImageTask.dependsOn(deployTask);
+		buildDockerImageTask.dependsOn(copy);
 
 		return copy;
 	}

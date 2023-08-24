@@ -71,12 +71,12 @@ public abstract class BaseSourceCheck implements SourceCheck {
 	}
 
 	public boolean hasParameterTypes(
-		String content, String fileContent, String[] parameterList,
+		String fileContent, String javaMethodContent, String[] parameterList,
 		String[] parameterTypes) {
 
 		for (int i = 0; i < parameterTypes.length; i++) {
 			String variableTypeName = getVariableTypeName(
-				content, fileContent, parameterList[i], true);
+				javaMethodContent, fileContent, parameterList[i], true);
 
 			if ((variableTypeName == null) ||
 				!parameterTypes[i].equals(variableTypeName)) {
@@ -392,7 +392,7 @@ public abstract class BaseSourceCheck implements SourceCheck {
 			String baseDirName, String[] excludes, String[] includes)
 		throws IOException {
 
-		return SourceFormatterUtil.scanForFiles(
+		return SourceFormatterUtil.scanForFileNames(
 			baseDirName, excludes, includes, _sourceFormatterExcludes, true);
 	}
 
@@ -664,7 +664,9 @@ public abstract class BaseSourceCheck implements SourceCheck {
 		String variableTypeName = getVariableTypeName(
 			content, fileContent, variable.trim(), true);
 
-		if (variableTypeName.startsWith(className)) {
+		if ((variableTypeName != null) &&
+			variableTypeName.startsWith(className)) {
+
 			return true;
 		}
 

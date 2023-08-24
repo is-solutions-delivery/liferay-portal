@@ -30,14 +30,17 @@ public class ObjectDefinitionEntityModel implements EntityModel {
 				"dateModified",
 				locale -> Field.getSortableFieldName(Field.MODIFIED_DATE),
 				locale -> Field.MODIFIED_DATE),
+			new IntegerEntityField("userId", locale -> Field.USER_ID),
 			new StringEntityField(
 				"label",
 				locale -> Field.getSortableFieldName(
 					"localized_label_".concat(
 						LocaleUtil.toLanguageId(locale)))),
-			new IntegerEntityField("userId", locale -> Field.USER_ID),
 			new StringEntityField(
-				"name", locale -> Field.getSortableFieldName("name")));
+				"name", locale -> Field.getSortableFieldName("name")),
+			new StringEntityField(
+				"objectFolderExternalReferenceCode",
+				locale -> "objectFolderExternalReferenceCode"));
 	}
 
 	@Override

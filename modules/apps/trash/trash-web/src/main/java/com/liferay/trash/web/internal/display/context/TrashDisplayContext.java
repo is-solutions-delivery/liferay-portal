@@ -173,19 +173,15 @@ public class TrashDisplayContext {
 		String rootContainerModelTitle = LanguageUtil.get(
 			themeDisplay.getLocale(), trashHandler.getRootContainerModelName());
 
+		BreadcrumbEntry breadcrumbEntry = new BreadcrumbEntry();
+
+		breadcrumbEntry.setTitle(rootContainerModelTitle);
+
 		if (classPK == 0) {
-			BreadcrumbEntry breadcrumbEntry = new BreadcrumbEntry();
-
-			breadcrumbEntry.setTitle(rootContainerModelTitle);
-
 			breadcrumbEntries.add(breadcrumbEntry);
 
 			return breadcrumbEntries;
 		}
-
-		BreadcrumbEntry breadcrumbEntry = new BreadcrumbEntry();
-
-		breadcrumbEntry.setTitle(rootContainerModelTitle);
 
 		containerModelURL.setParameter("containerModelId", "0");
 
@@ -316,6 +312,15 @@ public class TrashDisplayContext {
 		_keywords = ParamUtil.getString(_httpServletRequest, "keywords");
 
 		return _keywords;
+	}
+
+	public String getLastElementBreadcrumbTitle(
+		List<BreadcrumbEntry> breadcrumbEntries) {
+
+		BreadcrumbEntry breadcrumbEntry = breadcrumbEntries.get(
+			breadcrumbEntries.size() - 1);
+
+		return breadcrumbEntry.getTitle();
 	}
 
 	public String getNavigation() {

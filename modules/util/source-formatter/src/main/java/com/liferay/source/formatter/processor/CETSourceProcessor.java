@@ -52,7 +52,7 @@ public class CETSourceProcessor extends BaseSourceProcessor {
 
 		String oldContent = FileUtil.read(jsonFile);
 
-		List<String> cetFileNames = SourceFormatterUtil.scanForFiles(
+		List<String> cetFileNames = SourceFormatterUtil.scanForFileNames(
 			getPortalDir() + _CET_DIR_LOCATION, new String[0],
 			new String[] {"**/*CET.java"}, new SourceFormatterExcludes(), true);
 

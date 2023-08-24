@@ -222,7 +222,7 @@ public class SalesforceObjectEntryManagerImpl
 
 						return accountEntry.getExternalReferenceCode();
 					}),
-				", '"),
+				"', '"),
 			"')");
 	}
 
@@ -263,7 +263,7 @@ public class SalesforceObjectEntryManagerImpl
 			return HttpComponentsUtil.addParameter(
 				"search", "q",
 				StringBundler.concat(
-					"FIND {", search, "} IN ALL FIELDS RETURNING ",
+					"FIND {`", search, "`} IN ALL FIELDS RETURNING ",
 					objectDefinition.getExternalReferenceCode(), "(FIELDS(ALL)",
 					predicateString,
 					_getSorts(objectDefinition.getObjectDefinitionId(), sorts),
@@ -415,7 +415,7 @@ public class SalesforceObjectEntryManagerImpl
 				companyId, dtoConverterContext, objectDefinition, scopeKey);
 
 		String filterSOSQLString = _filterFactory.create(
-			filterString, objectDefinition.getObjectDefinitionId());
+			filterString, objectDefinition);
 
 		String sosqlString = StringPool.BLANK;
 

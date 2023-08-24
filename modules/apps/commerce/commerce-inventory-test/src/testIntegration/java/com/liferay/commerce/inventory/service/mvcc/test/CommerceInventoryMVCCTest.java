@@ -78,14 +78,16 @@ public class CommerceInventoryMVCCTest {
 					null, _user.getUserId(),
 					commerceInventoryWarehouse.
 						getCommerceInventoryWarehouseId(),
-					new Date(), 10, cpInstance.getSku(), StringPool.BLANK);
+					new Date(), BigDecimal.TEN, cpInstance.getSku(),
+					StringPool.BLANK);
 
 		_commerceInventoryReplenishmentItemLocalService.
 			updateCommerceInventoryReplenishmentItem(
 				null,
 				commerceInventoryReplenishmentItem.
 					getCommerceInventoryReplenishmentItemId(),
-				commerceInventoryReplenishmentItem.getAvailabilityDate(), 15,
+				commerceInventoryReplenishmentItem.getAvailabilityDate(),
+				new BigDecimal(15),
 				commerceInventoryReplenishmentItem.getMvccVersion());
 
 		_commerceInventoryReplenishmentItemLocalService.
@@ -93,7 +95,8 @@ public class CommerceInventoryMVCCTest {
 				null,
 				commerceInventoryReplenishmentItem.
 					getCommerceInventoryReplenishmentItemId(),
-				commerceInventoryReplenishmentItem.getAvailabilityDate(), 20,
+				commerceInventoryReplenishmentItem.getAvailabilityDate(),
+				new BigDecimal(20),
 				commerceInventoryReplenishmentItem.getMvccVersion());
 	}
 
@@ -120,14 +123,16 @@ public class CommerceInventoryMVCCTest {
 				commerceInventoryWarehouseItem.getUserId(),
 				commerceInventoryWarehouseItem.
 					getCommerceInventoryWarehouseItemId(),
-				BigDecimal.ONE, commerceInventoryWarehouse.getMvccVersion());
+				commerceInventoryWarehouse.getMvccVersion(), BigDecimal.ONE,
+				StringPool.BLANK);
 
 		_commerceInventoryWarehouseItemLocalService.
 			updateCommerceInventoryWarehouseItem(
 				commerceInventoryWarehouseItem.getUserId(),
 				commerceInventoryWarehouseItem.
 					getCommerceInventoryWarehouseItemId(),
-				BigDecimal.ONE, commerceInventoryWarehouse.getMvccVersion());
+				commerceInventoryWarehouse.getMvccVersion(), BigDecimal.ONE,
+				StringPool.BLANK);
 	}
 
 	@Test(expected = MVCCException.class)

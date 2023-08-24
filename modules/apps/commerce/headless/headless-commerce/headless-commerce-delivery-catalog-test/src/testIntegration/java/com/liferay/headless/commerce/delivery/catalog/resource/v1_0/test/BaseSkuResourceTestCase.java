@@ -453,6 +453,14 @@ public abstract class BaseSkuResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("backOrderAllowed", additionalAssertFieldName)) {
+				if (sku.getBackOrderAllowed() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("depth", additionalAssertFieldName)) {
 				if (sku.getDepth() == null) {
 					valid = false;
@@ -788,6 +796,17 @@ public abstract class BaseSkuResourceTestCase {
 			if (Objects.equals("availability", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
 						sku1.getAvailability(), sku2.getAvailability())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("backOrderAllowed", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						sku1.getBackOrderAllowed(),
+						sku2.getBackOrderAllowed())) {
 
 					return false;
 				}
@@ -1150,6 +1169,11 @@ public abstract class BaseSkuResourceTestCase {
 		}
 
 		if (entityFieldName.equals("availability")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("backOrderAllowed")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
@@ -1607,6 +1631,7 @@ public abstract class BaseSkuResourceTestCase {
 	protected Sku randomSku() throws Exception {
 		return new Sku() {
 			{
+				backOrderAllowed = RandomTestUtil.randomBoolean();
 				depth = RandomTestUtil.randomDouble();
 				discontinued = RandomTestUtil.randomBoolean();
 				discontinuedDate = RandomTestUtil.nextDate();

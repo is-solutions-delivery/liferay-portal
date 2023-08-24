@@ -14,12 +14,33 @@ import FeatureFlagContext from './FeatureFlagContext';
 import LinkOrButton from './LinkOrButton';
 
 function disableActionIfNeeded(item, event, bulkSelection) {
+	const selectedElementNodes = event.elements.allSelectedElements.getDOMNodes();
+
+	const selectedElementModels = selectedElementNodes.map(
+		(node) => node.dataset.modelclassname
+	);
+
+	const selectedDocumentTypes = selectedElementModels.filter(
+		(selectedElementModel, index) =>
+			selectedElementModels.indexOf(selectedElementModel) === index
+	);
+
 	if (item.type === 'group') {
 		return {
 			...item,
 			items: item.items?.map((child) =>
 				disableActionIfNeeded(child, event, bulkSelection)
 			),
+		};
+	}
+
+	if (
+		item.multipleTypesBulkActionDisabled &&
+		selectedDocumentTypes.length > 1
+	) {
+		return {
+			...item,
+			disabled: true,
 		};
 	}
 
@@ -57,7 +78,6 @@ const SelectionControls = ({
 	const [selectAllButtonVisible, setSelectAllButtonVisible] = useState(
 		initialSelectAllButtonVisible
 	);
-
 	const searchContainerRef = useRef();
 
 	const updateControls = ({bulkSelection, elements}) => {

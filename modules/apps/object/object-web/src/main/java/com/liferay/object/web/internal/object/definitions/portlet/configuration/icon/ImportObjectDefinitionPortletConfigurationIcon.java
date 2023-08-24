@@ -6,6 +6,7 @@
 package com.liferay.object.web.internal.object.definitions.portlet.configuration.icon;
 
 import com.liferay.object.constants.ObjectPortletKeys;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.portlet.configuration.icon.BaseJSPPortletConfigurationIcon;
 import com.liferay.portal.kernel.portlet.configuration.icon.PortletConfigurationIcon;
@@ -40,6 +41,11 @@ public class ImportObjectDefinitionPortletConfigurationIcon
 	}
 
 	@Override
+	public String getIconCssClass() {
+		return "download";
+	}
+
+	@Override
 	public String getJspPath() {
 		return "/object_definitions/configuration/icon" +
 			"/import_object_definition.jsp";
@@ -52,6 +58,10 @@ public class ImportObjectDefinitionPortletConfigurationIcon
 
 	@Override
 	public boolean isShow(PortletRequest portletRequest) {
+		if (FeatureFlagManagerUtil.isEnabled("LPS-148856")) {
+			return false;
+		}
+
 		return true;
 	}
 

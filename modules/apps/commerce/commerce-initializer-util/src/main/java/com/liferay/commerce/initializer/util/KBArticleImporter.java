@@ -22,6 +22,8 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 
+import java.util.Date;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -101,8 +103,8 @@ public class KBArticleImporter {
 		KBArticle kbArticle = _kbArticleLocalService.addKBArticle(
 			null, userId, folderClassNameId,
 			KBFolderConstants.DEFAULT_PARENT_FOLDER_ID, title, null, content,
-			StringPool.BLANK, sections, null, null, null, selectedFileNames,
-			serviceContext);
+			StringPool.BLANK, sections, null, new Date(), null, null,
+			selectedFileNames, serviceContext);
 
 		JSONArray tagsJSONArray = jsonObject.getJSONArray("tags");
 

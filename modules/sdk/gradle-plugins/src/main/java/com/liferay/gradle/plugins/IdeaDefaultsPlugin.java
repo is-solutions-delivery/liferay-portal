@@ -57,7 +57,7 @@ public class IdeaDefaultsPlugin extends BaseDefaultsPlugin<IdeaPlugin> {
 		SourceSetContainer javaSourceSetContainer =
 			javaPluginConvention.getSourceSets();
 
-		final SourceSet javaMainSourceSet = javaSourceSetContainer.getByName(
+		SourceSet javaMainSourceSet = javaSourceSetContainer.getByName(
 			SourceSet.MAIN_SOURCE_SET_NAME);
 
 		// Tasks
@@ -71,20 +71,12 @@ public class IdeaDefaultsPlugin extends BaseDefaultsPlugin<IdeaPlugin> {
 
 		IdeaModel ideaModel = ideaPlugin.getModel();
 
-		final IdeaModule ideaModule = ideaModel.getModule();
+		IdeaModule ideaModule = ideaModel.getModule();
 
 		_configureIdeaModule(project, javaMainSourceSet, ideaModule);
 
-		project.afterEvaluate(
-			new Action<Project>() {
-
-				@Override
-				public void execute(Project project) {
-					_configureIdeaModuleAfterEvaluate(
-						project, javaMainSourceSet, ideaModule);
-				}
-
-			});
+		_configureIdeaModuleAfterEvaluate(
+			project, javaMainSourceSet, ideaModule);
 	}
 
 	@Override

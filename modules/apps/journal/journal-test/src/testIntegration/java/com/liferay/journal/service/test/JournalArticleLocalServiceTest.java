@@ -39,7 +39,9 @@ import com.liferay.journal.exception.DuplicateArticleExternalReferenceCodeExcept
 import com.liferay.journal.exception.DuplicateArticleIdException;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleDisplay;
+import com.liferay.journal.model.JournalFolder;
 import com.liferay.journal.service.JournalArticleLocalService;
+import com.liferay.journal.service.JournalArticleLocalServiceUtil;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.journal.util.JournalConverter;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
@@ -110,6 +112,8 @@ import java.io.InputStream;
 
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -683,6 +687,37 @@ public class JournalArticleLocalServiceTest {
 	}
 
 	@Test
+	public void testGetArticlesByReviewDate() throws Exception {
+		JournalFolder folder = JournalTestUtil.addFolder(
+			_group.getGroupId(), RandomTestUtil.randomString());
+
+		JournalArticle article = JournalTestUtil.addArticle(
+			_group.getGroupId(), folder.getFolderId());
+
+		article.setUserId(RandomTestUtil.randomLong());
+
+		Calendar calendar = new GregorianCalendar();
+
+		calendar.add(Calendar.DATE, -1);
+
+		article.setExpirationDate(calendar.getTime());
+		article.setReviewDate(calendar.getTime());
+
+		article = JournalArticleLocalServiceUtil.updateJournalArticle(article);
+
+		JournalTestUtil.addArticle(_group.getGroupId(), folder.getFolderId());
+
+		calendar.add(Calendar.DATE, -1);
+
+		List<JournalArticle> articles =
+			_journalArticleLocalService.getArticlesByReviewDate(
+				calendar.getTime(), new Date());
+
+		Assert.assertEquals(articles.toString(), 1, articles.size());
+		Assert.assertEquals(article, articles.get(0));
+	}
+
+	@Test
 	public void testGetNoAssetArticles() throws Exception {
 		JournalArticle article = JournalTestUtil.addArticle(
 			_group.getGroupId(),
@@ -785,8 +820,8 @@ public class JournalArticleLocalServiceTest {
 				_readFileToString("journal_content_with_different_locales.xml"),
 				"[$DOCUMENT_JSON$]", _toJSON(fileEntry)),
 			ddmStructure.getStructureId(), null, null, 1, 1, 1965, 0, 0, 0, 0,
-			0, 0, 0, true, 0, 0, 0, 0, 0, true, true, false, null, null, null,
-			null,
+			0, 0, 0, true, 0, 0, 0, 0, 0, true, true, false, 0, null, null,
+			null, null,
 			ServiceContextTestUtil.getServiceContext(
 				_group.getGroupId(), TestPropsValues.getUserId()));
 
@@ -858,8 +893,8 @@ public class JournalArticleLocalServiceTest {
 					"journal_content_nested_fields_with_different_locales.xml"),
 				"[$DOCUMENT_JSON$]", _toJSON(fileEntry)),
 			ddmStructure.getStructureId(), null, null, 1, 1, 1965, 0, 0, 0, 0,
-			0, 0, 0, true, 0, 0, 0, 0, 0, true, true, false, null, null, null,
-			null,
+			0, 0, 0, true, 0, 0, 0, 0, 0, true, true, false, 0, null, null,
+			null, null,
 			ServiceContextTestUtil.getServiceContext(
 				_group.getGroupId(), TestPropsValues.getUserId()));
 
@@ -1135,7 +1170,7 @@ public class JournalArticleLocalServiceTest {
 				).build(),
 				null, content, ddmStructure.getStructureId(),
 				ddmTemplate.getTemplateKey(), null, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, true, 0, 0, 0, 0, 0, true, true, false, null, null,
+				0, true, 0, 0, 0, 0, 0, true, true, false, 0, null, null,
 				serviceContext);
 
 		return new Tuple(article, ddmStructure);
@@ -1237,7 +1272,7 @@ public class JournalArticleLocalServiceTest {
 			journalArticle.getContent(), journalArticle.getDDMTemplateKey(),
 			journalArticle.getLayoutUuid(), displayDateMonth, displayDateDay,
 			displayDateYear, displayDateHour, displayDateMinute, 0, 0, 0, 0, 0,
-			true, 0, 0, 0, 0, 0, true, journalArticle.isIndexable(), false,
+			true, 0, 0, 0, 0, 0, true, journalArticle.isIndexable(), false, 0,
 			null, null, null, null,
 			ServiceContextTestUtil.getServiceContext(
 				journalArticle.getGroupId(), TestPropsValues.getUserId()));

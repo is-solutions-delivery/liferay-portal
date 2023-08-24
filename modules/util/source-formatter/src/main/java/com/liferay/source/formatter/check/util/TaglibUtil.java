@@ -100,7 +100,7 @@ public class TaglibUtil {
 
 				if (file.exists()) {
 					tldFileNames.addAll(
-						SourceFormatterUtil.scanForFiles(
+						SourceFormatterUtil.scanForFileNames(
 							baseDirName + tldDirLocation, new String[0],
 							new String[] {"**/*.tld"}, sourceFormatterExcludes,
 							true));

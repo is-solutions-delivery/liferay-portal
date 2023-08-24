@@ -11,9 +11,9 @@ import com.liferay.portal.kernel.messaging.DestinationFactory;
 import com.liferay.portal.kernel.messaging.DestinationNames;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 
+import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -30,8 +30,6 @@ public class ExportImportLifecycleMessagingConfigurator {
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
-		_bundleContext = bundleContext;
-
 		_registerDestination(
 			bundleContext, DestinationNames.EXPORT_IMPORT_LIFECYCLE_EVENT_ASYNC,
 			DestinationConfiguration.DESTINATION_TYPE_SERIAL);
@@ -45,15 +43,8 @@ public class ExportImportLifecycleMessagingConfigurator {
 		for (ServiceRegistration<Destination> serviceRegistration :
 				_serviceRegistrations) {
 
-			Destination destination = _bundleContext.getService(
-				serviceRegistration.getReference());
-
 			serviceRegistration.unregister();
-
-			destination.destroy();
 		}
-
-		_bundleContext = null;
 	}
 
 	private ServiceRegistration<Destination> _registerDestination(
@@ -80,12 +71,10 @@ public class ExportImportLifecycleMessagingConfigurator {
 		return serviceRegistration;
 	}
 
-	private volatile BundleContext _bundleContext;
-
 	@Reference
 	private DestinationFactory _destinationFactory;
 
-	private final Set<ServiceRegistration<Destination>> _serviceRegistrations =
-		new HashSet<>();
+	private final List<ServiceRegistration<Destination>> _serviceRegistrations =
+		new ArrayList<>();
 
 }

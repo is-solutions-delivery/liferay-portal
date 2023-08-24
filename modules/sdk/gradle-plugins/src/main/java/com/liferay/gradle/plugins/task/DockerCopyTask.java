@@ -16,6 +16,8 @@ import java.util.List;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Exec;
+import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Internal;
 import org.gradle.util.CollectionUtils;
 
 /**
@@ -30,7 +32,6 @@ public class DockerCopyTask extends Exec {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void exec() {
 		Logger logger = getLogger();
 
@@ -50,18 +51,22 @@ public class DockerCopyTask extends Exec {
 		}
 	}
 
+	@Input
 	public String getContainerId() {
 		return GradleUtil.toString(_containerId);
 	}
 
+	@Input
 	public String getDeployDir() {
 		return GradleUtil.toString(_deployDir);
 	}
 
+	@Input
 	public String getLiferayHome() {
 		return GradleUtil.toString(_liferayHome);
 	}
 
+	@Internal
 	public File getSourceFile() {
 		return GradleUtil.toFile(getProject(), _sourceFile);
 	}

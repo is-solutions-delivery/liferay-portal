@@ -277,6 +277,22 @@ public class MBMessageServiceUtil {
 			entryURL, themeDisplay);
 	}
 
+	public static List<MBMessage> getGroupUserMessageBoardMessagesActivity(
+			long groupId, long userId, int start, int end)
+		throws PortalException {
+
+		return getService().getGroupUserMessageBoardMessagesActivity(
+			groupId, userId, start, end);
+	}
+
+	public static int getGroupUserMessageBoardMessagesActivityCount(
+			long groupId, long userId)
+		throws PortalException {
+
+		return getService().getGroupUserMessageBoardMessagesActivityCount(
+			groupId, userId);
+	}
+
 	public static MBMessage getMBMessageByExternalReferenceCode(
 			String externalReferenceCode, long groupId)
 		throws PortalException {

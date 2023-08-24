@@ -6,7 +6,6 @@
 package com.liferay.search.experiences.rest.internal.resource.v1_0;
 
 import com.liferay.petra.string.StringBundler;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
@@ -29,6 +28,7 @@ import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.search.experiences.constants.SXPActionKeys;
 import com.liferay.search.experiences.constants.SXPConstants;
+import com.liferay.search.experiences.exception.DuplicateSXPElementExternalReferenceCodeException;
 import com.liferay.search.experiences.rest.dto.v1_0.ElementDefinition;
 import com.liferay.search.experiences.rest.dto.v1_0.FieldSet;
 import com.liferay.search.experiences.rest.dto.v1_0.SXPElement;
@@ -39,16 +39,16 @@ import com.liferay.search.experiences.rest.internal.odata.entity.v1_0.SXPElement
 import com.liferay.search.experiences.rest.internal.resource.v1_0.util.SearchUtil;
 import com.liferay.search.experiences.rest.internal.resource.v1_0.util.TitleMapUtil;
 import com.liferay.search.experiences.rest.resource.v1_0.SXPElementResource;
+import com.liferay.search.experiences.service.SXPElementLocalService;
 import com.liferay.search.experiences.service.SXPElementService;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-
-import org.apache.commons.lang.StringUtils;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -305,7 +305,11 @@ public class SXPElementResourceImpl extends BaseSXPElementResourceImpl {
 
 	@Override
 	public SXPElement postSXPElementValidate(String json) throws Exception {
-		return SXPElementUtil.toSXPElement(json);
+		SXPElement sxpElement = SXPElementUtil.toSXPElement(json);
+
+		_validateSXPElementExternalReferenceCode(sxpElement);
+
+		return sxpElement;
 	}
 
 	@Override
@@ -395,8 +399,29 @@ public class SXPElementResourceImpl extends BaseSXPElementResourceImpl {
 	}
 
 	private String _getSchemaVersion() {
-		return StringUtils.substringBetween(
-			contextUriInfo.getPath(), "v", StringPool.SLASH);
+		return "1.0";
+	}
+
+	private void _validateSXPElementExternalReferenceCode(SXPElement sxpElement)
+		throws Exception {
+
+		if (Validator.isBlank(sxpElement.getExternalReferenceCode())) {
+			return;
+		}
+
+		com.liferay.search.experiences.model.SXPElement
+			serviceBuilderSXPElement =
+				_sxpElementLocalService.fetchSXPElementByExternalReferenceCode(
+					sxpElement.getExternalReferenceCode(),
+					contextCompany.getCompanyId());
+
+		if ((serviceBuilderSXPElement != null) &&
+			!Objects.equals(
+				serviceBuilderSXPElement.getSXPElementId(),
+				sxpElement.getId())) {
+
+			throw new DuplicateSXPElementExternalReferenceCodeException();
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -420,6 +445,9 @@ public class SXPElementResourceImpl extends BaseSXPElementResourceImpl {
 	private DTOConverter
 		<com.liferay.search.experiences.model.SXPElement, SXPElement>
 			_sxpElementDTOConverter;
+
+	@Reference
+	private SXPElementLocalService _sxpElementLocalService;
 
 	@Reference
 	private SXPElementService _sxpElementService;

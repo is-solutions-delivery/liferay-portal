@@ -255,6 +255,37 @@ export const addIncidentReportAnalyticsCloud = gql`
 	}
 `;
 
+export const addHighPriorityContact = gql`
+	mutation addHighPriorityContact(
+		$HighPriorityContacts: InputC_HighPriorityContacts!
+	) {
+		createHighPriorityContacts(input: $HighPriorityContacts)
+			@rest(
+				method: "POST"
+				type: "C_HighPriorityContactsPage"
+				path: "/c/highprioritycontactses/"
+			) {
+			contactsCategory
+			r_userToHighPriorityContacts_userId
+		}
+	}
+`;
+
+export const deleteHighPriorityContacts = gql`
+	mutation deleteHighPriorityContacts($highPriorityContactsId: Long!) {
+		deleteHighPriorityContacts(
+			highPriorityContactsId: $highPriorityContactsId
+		)
+			@rest(
+				type: "Boolean"
+				path: "/c/highprioritycontactses/{args.highPriorityContactsId}"
+				method: "DELETE"
+			) {
+			NoResponse
+		}
+	}
+`;
+
 export const getAnalyticsCloudWorkspace = gql`
 	query getAnalyticsCloudWorkspace($filter: String) {
 		c {
@@ -563,9 +594,56 @@ export const getAccountUserAccountsByExternalReferenceCode = gql`
 	}
 `;
 
+export const getOrganizations = gql`
+	query getOrganizations($filter: String) {
+		organizations(filter: $filter) {
+			items {
+				name
+				id
+				accounts {
+					totalCount
+					items {
+						id
+						name
+						externalReferenceCode
+					}
+				}
+			}
+		}
+	}
+`;
+
 export const getUserAccount = gql`
 	query getUserAccount($id: Long!) {
 		userAccount(userAccountId: $id) {
+			accountBriefs {
+				externalReferenceCode
+				id
+				name
+				roleBriefs {
+					id
+					name
+				}
+			}
+			externalReferenceCode
+			id
+			image
+			name
+			roleBriefs {
+				id
+				name
+			}
+			organizationBriefs {
+				id
+				name
+			}
+		}
+	}
+`;
+
+export const getMyUserAccount = gql`
+	query getMyUserAccount {
+		myUserAccount {
 			accountBriefs {
 				externalReferenceCode
 				id

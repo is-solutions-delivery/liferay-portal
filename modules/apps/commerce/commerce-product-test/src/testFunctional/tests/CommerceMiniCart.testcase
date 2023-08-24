@@ -919,12 +919,9 @@ definition {
 		task ("and adding the product to the bundled product to the cart") {
 			ApplicationsMenu.gotoSite(site = "Minium");
 
-			CommerceAccelerators.viewAllVariants(productName = "Bundled Product");
-
-			FrontStore.addToCartFromProductDetails(
-				optionNamesAndValues = "Color:Black",
+			FrontStore.addInitializerProductToCart(
 				productName = "Bundled Product",
-				productSku = "BLACKSKU");
+				productQuantity = 1);
 		}
 
 		task ("Then as an admin and a buyer, the user is able to edit and view the bundled product details in the mini cart.") {
@@ -1653,12 +1650,9 @@ definition {
 		task ("and adding the product to the bundled product to the cart") {
 			ApplicationsMenu.gotoSite(site = "Minium");
 
-			CommerceAccelerators.viewAllVariants(productName = "Bundled Product");
-
-			FrontStore.addToCartFromProductDetails(
-				optionNamesAndValues = "Color:Black",
+			FrontStore.addInitializerProductToCart(
 				productName = "Bundled Product",
-				productSku = "BLACKSKU");
+				productQuantity = 1);
 		}
 
 		task ("Then as an admin and a buyer, the user is able to view the bundled product details in the mini cart.") {
@@ -1986,6 +1980,7 @@ definition {
 	test ViewMiniCartItemWithDiscountLevels {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		// TODO Review
 

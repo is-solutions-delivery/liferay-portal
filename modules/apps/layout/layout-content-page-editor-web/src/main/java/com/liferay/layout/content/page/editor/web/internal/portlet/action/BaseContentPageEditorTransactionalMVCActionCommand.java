@@ -7,6 +7,8 @@ package com.liferay.layout.content.page.editor.web.internal.portlet.action;
 
 import com.liferay.fragment.exception.FragmentCompositionDescriptionException;
 import com.liferay.fragment.exception.FragmentCompositionNameException;
+import com.liferay.layout.content.page.editor.web.internal.util.LayoutLockManager;
+import com.liferay.portal.kernel.exception.LockedLayoutException;
 import com.liferay.portal.kernel.exception.PortletIdException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -41,6 +43,10 @@ public abstract class BaseContentPageEditorTransactionalMVCActionCommand
 		JSONObject jsonObject = null;
 
 		try {
+			if (isLayoutLockRequired()) {
+				LayoutLockManager.getLock(actionRequest);
+			}
+
 			Callable<JSONObject> callable = () -> doTransactionalCommand(
 				actionRequest, actionResponse);
 
@@ -74,8 +80,16 @@ public abstract class BaseContentPageEditorTransactionalMVCActionCommand
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception;
 
+	protected boolean isLayoutLockRequired() {
+		return true;
+	}
+
 	protected JSONObject processException(
 		ActionRequest actionRequest, Exception exception) {
+
+		if (exception instanceof LockedLayoutException) {
+			return processLockedLayoutException(actionRequest);
+		}
 
 		String errorMessage = "an-unexpected-error-occurred";
 
@@ -97,6 +111,14 @@ public abstract class BaseContentPageEditorTransactionalMVCActionCommand
 
 		return JSONUtil.put(
 			"error", LanguageUtil.get(themeDisplay.getRequest(), errorMessage));
+	}
+
+	protected JSONObject processLockedLayoutException(
+		ActionRequest actionRequest) {
+
+		return JSONUtil.put(
+			"redirectURL",
+			() -> LayoutLockManager.getLockedLayoutURL(actionRequest));
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

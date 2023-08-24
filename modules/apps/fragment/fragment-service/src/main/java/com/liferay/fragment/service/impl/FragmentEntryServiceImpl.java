@@ -15,13 +15,13 @@ import com.liferay.fragment.service.base.FragmentEntryServiceBaseImpl;
 import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.sql.dsl.Table;
+import com.liferay.petra.sql.dsl.expression.Predicate;
 import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.petra.sql.dsl.query.GroupByStep;
 import com.liferay.petra.sql.dsl.spi.expression.Scalar;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.dao.orm.custom.sql.CustomSQL;
-import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.dao.orm.WildcardMode;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
@@ -212,20 +212,98 @@ public class FragmentEntryServiceImpl extends FragmentEntryServiceBaseImpl {
 	public int getFragmentCompositionsAndFragmentEntriesCount(
 		long groupId, long fragmentCollectionId, int status) {
 
-		QueryDefinition<?> queryDefinition = new QueryDefinition<>(status);
-
-		return fragmentEntryFinder.countFC_FE_ByG_FCI(
-			groupId, fragmentCollectionId, queryDefinition);
+		return getFragmentCompositionsAndFragmentEntriesCount(
+			groupId, fragmentCollectionId, null, status);
 	}
 
 	@Override
 	public int getFragmentCompositionsAndFragmentEntriesCount(
 		long groupId, long fragmentCollectionId, String name, int status) {
 
-		QueryDefinition<?> queryDefinition = new QueryDefinition<>(status);
+		Table<?> tempFragmentEntryTable = DSLQueryFactoryUtil.countDistinct(
+			FragmentCompositionTable.INSTANCE.fragmentCompositionId
+		).from(
+			FragmentCompositionTable.INSTANCE
+		).where(
+			() -> {
+				Predicate predicate =
+					FragmentCompositionTable.INSTANCE.groupId.eq(
+						groupId
+					).and(
+						FragmentCompositionTable.INSTANCE.fragmentCollectionId.
+							eq(
+								fragmentCollectionId
+							).and(
+								FragmentCompositionTable.INSTANCE.status.eq(
+									status)
+							)
+					);
 
-		return fragmentEntryFinder.countFC_FE_ByG_FCI_N(
-			groupId, fragmentCollectionId, name, queryDefinition);
+				if (Validator.isNotNull(name)) {
+					return Predicate.withParentheses(
+						predicate.and(
+							_customSQL.getKeywordsPredicate(
+								DSLFunctionFactoryUtil.lower(
+									FragmentCompositionTable.INSTANCE.name),
+								_customSQL.keywords(name, true))));
+				}
+
+				return predicate;
+			}
+		).unionAll(
+			DSLQueryFactoryUtil.countDistinct(
+				FragmentEntryTable.INSTANCE.fragmentEntryId
+			).from(
+				FragmentEntryTable.INSTANCE
+			).where(
+				() -> {
+					Predicate predicate =
+						FragmentEntryTable.INSTANCE.groupId.eq(
+							groupId
+						).and(
+							FragmentEntryTable.INSTANCE.fragmentCollectionId.eq(
+								fragmentCollectionId
+							).and(
+								Predicate.withParentheses(
+									Predicate.or(
+										FragmentEntryTable.INSTANCE.head.eq(
+											true),
+										FragmentEntryTable.INSTANCE.headId.eq(
+											FragmentEntryTable.INSTANCE.
+												fragmentEntryId)))
+							)
+						);
+
+					if (Validator.isNotNull(name)) {
+						return Predicate.withParentheses(
+							predicate.and(
+								_customSQL.getKeywordsPredicate(
+									DSLFunctionFactoryUtil.lower(
+										FragmentEntryTable.INSTANCE.name),
+									_customSQL.keywords(name, true))));
+					}
+
+					return predicate;
+				}
+			)
+		).as(
+			"tempFragmentCompositionsAndFragmentEntriesTable"
+		);
+
+		DSLQuery dslQuery = DSLQueryFactoryUtil.select(
+		).from(
+			tempFragmentEntryTable
+		);
+
+		int count = 0;
+
+		for (Object countValue :
+				fragmentEntryPersistence.<List<Object>>dslQuery(dslQuery)) {
+
+			count += GetterUtil.getInteger(countValue);
+		}
+
+		return count;
 	}
 
 	@Override

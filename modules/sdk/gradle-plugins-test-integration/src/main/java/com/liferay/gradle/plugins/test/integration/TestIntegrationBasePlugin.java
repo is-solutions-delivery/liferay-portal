@@ -31,6 +31,7 @@ import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.internal.ConventionMapping;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.api.plugins.JavaBasePlugin;
+import org.gradle.api.plugins.JavaLibraryPlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.PluginContainer;
 import org.gradle.api.tasks.SourceSet;
@@ -57,7 +58,7 @@ public class TestIntegrationBasePlugin implements Plugin<Project> {
 
 	@Override
 	public void apply(Project project) {
-		GradleUtil.applyPlugin(project, JavaPlugin.class);
+		GradleUtil.applyPlugin(project, JavaLibraryPlugin.class);
 
 		SourceSet testIntegrationSourceSet = _addSourceSetTestIntegration(
 			project);
@@ -65,8 +66,16 @@ public class TestIntegrationBasePlugin implements Plugin<Project> {
 		Test testIntegrationTask = _addTaskTestIntegration(
 			project, testIntegrationSourceSet);
 
-		_configureEclipse(project, testIntegrationSourceSet);
-		_configureIdea(project, testIntegrationSourceSet);
+		project.afterEvaluate(
+			new Action<Project>() {
+
+				@Override
+				public void execute(Project project) {
+					_configureEclipse(project, testIntegrationSourceSet);
+					_configureIdea(project, testIntegrationSourceSet);
+				}
+
+			});
 
 		_configureTaskCheck(testIntegrationTask);
 	}
@@ -75,27 +84,30 @@ public class TestIntegrationBasePlugin implements Plugin<Project> {
 		SourceSet testIntegrationSourceSet = GradleUtil.addSourceSet(
 			project, TEST_INTEGRATION_SOURCE_SET_NAME);
 
-		Configuration testIntegrationCompileConfiguration =
+		Configuration testIntegrationImplementationConfiguration =
 			GradleUtil.getConfiguration(
 				project,
-				testIntegrationSourceSet.getCompileConfigurationName());
+				testIntegrationSourceSet.getImplementationConfigurationName());
 
-		Configuration testCompileConfiguration = GradleUtil.getConfiguration(
-			project, JavaPlugin.TEST_COMPILE_CONFIGURATION_NAME);
+		Configuration testImplementationConfiguration =
+			GradleUtil.getConfiguration(
+				project, JavaPlugin.TEST_IMPLEMENTATION_CONFIGURATION_NAME);
 
-		testIntegrationCompileConfiguration.extendsFrom(
-			testCompileConfiguration);
+		testIntegrationImplementationConfiguration.extendsFrom(
+			testImplementationConfiguration);
 
-		Configuration testIntegrationRuntimeConfiguration =
+		Configuration testIntegrationRuntimeOnlyConfiguration =
 			GradleUtil.getConfiguration(
 				project,
-				testIntegrationSourceSet.getRuntimeConfigurationName());
+				testIntegrationSourceSet.getRuntimeOnlyConfigurationName());
 
-		Configuration testRuntimeConfiguration = GradleUtil.getConfiguration(
-			project, JavaPlugin.TEST_RUNTIME_CONFIGURATION_NAME);
+		Configuration testRuntimeOnlyConfiguration =
+			GradleUtil.getConfiguration(
+				project, JavaPlugin.TEST_RUNTIME_ONLY_CONFIGURATION_NAME);
 
-		testIntegrationRuntimeConfiguration.extendsFrom(
-			testRuntimeConfiguration, testIntegrationCompileConfiguration);
+		testIntegrationRuntimeOnlyConfiguration.extendsFrom(
+			testRuntimeOnlyConfiguration,
+			testIntegrationImplementationConfiguration);
 
 		SourceSet mainSourceSet = GradleUtil.getSourceSet(
 			project, SourceSet.MAIN_SOURCE_SET_NAME);
@@ -252,7 +264,8 @@ public class TestIntegrationBasePlugin implements Plugin<Project> {
 		plusConfigurations.add(
 			GradleUtil.getConfiguration(
 				project,
-				testIntegrationSourceSet.getRuntimeConfigurationName()));
+				testIntegrationSourceSet.
+					getRuntimeClasspathConfigurationName()));
 	}
 
 	private void _configureIdea(
@@ -273,11 +286,11 @@ public class TestIntegrationBasePlugin implements Plugin<Project> {
 	}
 
 	private void _configureIdeaModule(
-		Project project, final SourceSet testIntegrationSourceSet) {
+		Project project, SourceSet testIntegrationSourceSet) {
 
 		IdeaModel ideaModel = GradleUtil.getExtension(project, IdeaModel.class);
 
-		final IdeaModule ideaModule = ideaModel.getModule();
+		IdeaModule ideaModule = ideaModel.getModule();
 
 		Map<String, Map<String, Collection<Configuration>>> scopes =
 			ideaModule.getScopes();
@@ -289,25 +302,18 @@ public class TestIntegrationBasePlugin implements Plugin<Project> {
 		plusConfigurations.add(
 			GradleUtil.getConfiguration(
 				project,
-				testIntegrationSourceSet.getRuntimeConfigurationName()));
+				testIntegrationSourceSet.
+					getRuntimeClasspathConfigurationName()));
 
-		project.afterEvaluate(
-			new Action<Project>() {
+		Set<File> testSrcDirs = new LinkedHashSet<>(
+			ideaModule.getTestSourceDirs());
 
-				@Override
-				public void execute(Project project) {
-					Set<File> testSrcDirs = new LinkedHashSet<>(
-						ideaModule.getTestSourceDirs());
+		SourceDirectorySet sourceDirectorySet =
+			testIntegrationSourceSet.getAllSource();
 
-					SourceDirectorySet sourceDirectorySet =
-						testIntegrationSourceSet.getAllSource();
+		testSrcDirs.addAll(sourceDirectorySet.getSrcDirs());
 
-					testSrcDirs.addAll(sourceDirectorySet.getSrcDirs());
-
-					ideaModule.setTestSourceDirs(testSrcDirs);
-				}
-
-			});
+		ideaModule.setTestSourceDirs(testSrcDirs);
 	}
 
 	private void _configureTaskCheck(Test test) {

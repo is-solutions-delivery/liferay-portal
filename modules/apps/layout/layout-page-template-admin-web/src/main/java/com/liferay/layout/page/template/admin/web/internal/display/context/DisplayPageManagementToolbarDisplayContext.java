@@ -16,10 +16,12 @@ import com.liferay.layout.page.template.constants.LayoutPageTemplateActionKeys;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
+import com.liferay.portal.kernel.portlet.url.builder.ResourceURLBuilder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -27,8 +29,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.portlet.ResourceURL;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -129,6 +129,24 @@ public class DisplayPageManagementToolbarDisplayContext
 	@Override
 	public CreationMenu getCreationMenu() {
 		return CreationMenuBuilder.addDropdownItem(
+			() -> FeatureFlagManagerUtil.isEnabled("LPS-189856"),
+			dropdownItem -> {
+				dropdownItem.putData("action", "addDisplayPageCollection");
+				dropdownItem.putData(
+					"addDisplayPageCollectionURL",
+					PortletURLBuilder.createActionURL(
+						liferayPortletResponse
+					).setActionName(
+						"/layout_page_template_admin" +
+							"/add_display_page_collection"
+					).setRedirect(
+						_themeDisplay.getURLCurrent()
+					).buildString());
+				dropdownItem.setIcon("folder");
+				dropdownItem.setLabel(
+					LanguageUtil.get(httpServletRequest, "folder"));
+			}
+		).addDropdownItem(
 			dropdownItem -> {
 				dropdownItem.setHref(
 					PortletURLBuilder.createRenderURL(
@@ -139,7 +157,8 @@ public class DisplayPageManagementToolbarDisplayContext
 						_themeDisplay.getURLCurrent()
 					).buildString());
 				dropdownItem.setLabel(
-					LanguageUtil.get(httpServletRequest, "add"));
+					LanguageUtil.get(
+						httpServletRequest, "display-page-template"));
 			}
 		).build();
 	}
@@ -173,13 +192,11 @@ public class DisplayPageManagementToolbarDisplayContext
 	}
 
 	private String _getExportDisplayPageURL() {
-		ResourceURL exportDisplayPageURL =
-			liferayPortletResponse.createResourceURL();
-
-		exportDisplayPageURL.setResourceID(
-			"/layout_page_template_admin/export_display_pages");
-
-		return exportDisplayPageURL.toString();
+		return ResourceURLBuilder.createResourceURL(
+			liferayPortletResponse
+		).setResourceID(
+			"/layout_page_template_admin/export_display_pages"
+		).buildString();
 	}
 
 	private final ThemeDisplay _themeDisplay;

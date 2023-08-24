@@ -11,6 +11,6 @@ export default function SearchForm({
 	onChange,
 }: {
 	className?: string;
-	label: string;
+	label?: string;
 	onChange: Function;
 }): JSX.Element;

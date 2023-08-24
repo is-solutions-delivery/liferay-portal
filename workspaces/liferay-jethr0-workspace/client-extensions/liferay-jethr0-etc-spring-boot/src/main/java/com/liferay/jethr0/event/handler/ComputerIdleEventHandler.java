@@ -5,11 +5,12 @@
 
 package com.liferay.jethr0.event.handler;
 
-import com.liferay.jethr0.build.Build;
-import com.liferay.jethr0.build.queue.BuildQueue;
-import com.liferay.jethr0.build.repository.BuildRepository;
-import com.liferay.jethr0.build.repository.BuildRunRepository;
-import com.liferay.jethr0.build.run.BuildRun;
+import com.liferay.jethr0.bui1d.Build;
+import com.liferay.jethr0.bui1d.queue.BuildQueue;
+import com.liferay.jethr0.bui1d.repository.BuildRepository;
+import com.liferay.jethr0.bui1d.repository.BuildRunRepository;
+import com.liferay.jethr0.bui1d.run.BuildRun;
+import com.liferay.jethr0.jenkins.JenkinsQueue;
 import com.liferay.jethr0.jenkins.node.JenkinsNode;
 import com.liferay.jethr0.jms.JMSEventHandler;
 
@@ -28,6 +29,12 @@ public class ComputerIdleEventHandler extends ComputerUpdateEventHandler {
 
 	@Override
 	public String process() throws Exception {
+		JenkinsQueue jenkinsQueue = getJenkinsQueue();
+
+		if (!jenkinsQueue.isInitialized()) {
+			return "{\"message\": \"Jenkins queue is not initialized\"}";
+		}
+
 		super.process();
 
 		JenkinsNode jenkinsNode = getJenkinsNode();
@@ -55,7 +62,7 @@ public class ComputerIdleEventHandler extends ComputerUpdateEventHandler {
 
 		jmsEventHandler.send(
 			jenkinsNode.getJenkinsServer(),
-			String.valueOf(buildRun.getInvokeJSONObject()));
+			String.valueOf(buildRun.getInvokeJSONObject(jenkinsNode)));
 
 		BuildRepository buildRepository = getBuildRepository();
 

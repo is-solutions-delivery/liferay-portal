@@ -31,7 +31,7 @@ import org.gradle.api.NamedDomainObjectContainer;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
-import org.gradle.api.plugins.BasePlugin;
+import org.gradle.api.publish.plugins.PublishingPlugin;
 import org.gradle.api.specs.Spec;
 import org.gradle.util.GUtil;
 
@@ -54,7 +54,7 @@ public class PublishPluginDefaultsPlugin
 		_configurePluginBundle(project, bundleExtension);
 
 		_configureTaskPublishPlugins(project);
-		_configureTaskUploadArchives(project);
+		_configureTaskPublish(project);
 	}
 
 	@Override
@@ -137,6 +137,13 @@ public class PublishPluginDefaultsPlugin
 			});
 	}
 
+	private void _configureTaskPublish(Project project) {
+		Task publishTask = GradleUtil.getTask(
+			project, PublishingPlugin.PUBLISH_LIFECYCLE_TASK_NAME);
+
+		publishTask.dependsOn(_PUBLISH_PLUGINS_TASK_NAME);
+	}
+
 	private void _configureTaskPublishPlugins(Project project) {
 		Task task = GradleUtil.getTask(project, _PUBLISH_PLUGINS_TASK_NAME);
 
@@ -155,13 +162,6 @@ public class PublishPluginDefaultsPlugin
 				}
 
 			});
-	}
-
-	private void _configureTaskUploadArchives(Project project) {
-		Task uploadArchivesTask = GradleUtil.getTask(
-			project, BasePlugin.UPLOAD_ARCHIVES_TASK_NAME);
-
-		uploadArchivesTask.dependsOn(_PUBLISH_PLUGINS_TASK_NAME);
 	}
 
 	private static final String _BASE_URL =

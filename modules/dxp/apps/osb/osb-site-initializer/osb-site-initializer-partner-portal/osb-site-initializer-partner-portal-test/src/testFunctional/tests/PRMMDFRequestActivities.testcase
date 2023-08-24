@@ -25,6 +25,16 @@ definition {
 			JSONPRM.updateAccount();
 		}
 
+		task ("Assign the users to the account") {
+			JSONAccountEntryUser.addExistUsertoAccount(
+				accountEntryName = "Company Name 1",
+				userEmailAddress = "pmu@partner.com");
+
+			JSONAccountEntryUser.addExistUsertoAccount(
+				accountEntryName = "Company Name 1",
+				userEmailAddress = "cmm@liferaytest.com");
+		}
+
 		task ("Go to Partner Portal and login with the created user") {
 			User.logoutAndLoginPG(
 				userLoginEmailAddress = "pmu@partner.com",
@@ -51,14 +61,60 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-192014. Verify that the partner can submit an MDF with an Content Marketing > All activity"
+	@priority = 4
+	test CanSubmitMDFWithContentMarketingActivity {
+		task ("Given that the PMU goes to add a new MDF Request with 'Content Marketing' as Type of Activity and 'Other' as Tactic") {
+			PRMMDFRequest.createNewRequest(
+				accountName = "Company Name 1",
+				activityDescription = "Activity Description",
+				activityName = "Activity Name 1",
+				budgetList = "Sponsorship Fee-2000",
+				campaignDescription = "Campaign Description",
+				campaignName = "Campaign Name",
+				goalsOptions = "Lead generation",
+				leadFollowUpList = "Other",
+				leadList = "No",
+				tactic = "Other",
+				targetMarketOptions = "Education",
+				targetRolesOptions = "Administrator",
+				typeOfActivity = "Content Marketing");
+		}
+
+		task ("When the PMU goes to the created MDF") {
+			PRMNavigator.openSitePage(pageName = "MDF Requests");
+
+			PRMMDFRequest.goToMDF(campaignName = "Campaign Name");
+		}
+
+		task ("Then the PMU can see the added data in MDF Detail Page") {
+			PRMMDFRequest.viewMDFActivityDetails(
+				activityName = "Activity Name 1",
+				tactic = "Other",
+				typeOfActivity = "Content Marketing");
+
+			var tacticFieldsList = '''
+				Will this content be gated and have a landing page?: No,
+				Primary theme or message of your content: Primary Theme,
+				Goal of Content: Goal of Content,
+				Are you hiring an outside writer or agency to prepare the content?: No
+			''';
+
+			var tacticFields = ListUtil.newListFromString(${tacticFieldsList});
+
+			PRMMDFRequest.viewTacticFields(tacticFields = ${tacticFields});
+		}
+	}
+
 	@description = "This is test is for LPS-188868. Verify that the partner can submit an MDF with an Digital Marketing > Advertising activity"
 	@priority = 5
 	test CanSubmitMDFWithDigitalMarketingAdvertisingActivity {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		// Temporarily skip portal instances to get tests running for pending release. LRQA-80052
 
-		task ("Given I go to add a new MDF Request with 'Digital Marketing' as Type of Activity and 'Digital Advertising/Banner Ad' as Tactic") {
+		task ("Given that the PMU goes to add a new MDF Request with 'Digital Marketing' as Type of Activity and 'Digital Advertising/Banner Ad' as Tactic") {
 			PRMMDFRequest.createNewRequest(
 				accountName = "Company Name 1",
 				activityDescription = "Activity Description",
@@ -74,13 +130,13 @@ definition {
 				typeOfActivity = "Digital Marketing");
 		}
 
-		task ("When I go to the created MDF") {
+		task ("When the PMU goes to the created MDF") {
 			PRMNavigator.openSitePage(pageName = "MDF Requests");
 
 			PRMMDFRequest.goToMDF(campaignName = "Campaign Name");
 		}
 
-		task ("Then I can see the added data in MDF Detail Page") {
+		task ("Then the PMU can see the added data in MDF Detail Page") {
 			PRMMDFRequest.viewMDFActivityDetails(
 				activityName = "Activity Name 1",
 				tactic = "Digital Advertising/Banner Ad",
@@ -102,7 +158,7 @@ definition {
 	@description = "This is a test for LPS-182116. Verify that the partner can submit an MDF with an Event > In-person activity"
 	@priority = 4
 	test CanSubmitMDFWithEventInPersonActivity {
-		task ("Given I go to add a new MDF Request with 'Event' as Type of Activity and 'In-person networking event/seminar/meet-up' as Tactic") {
+		task ("Given that the PMU goes to add a new MDF Request with 'Event' as Type of Activity and 'In-person networking event/seminar/meet-up' as Tactic") {
 			PRMMDFRequest.createNewRequest(
 				accountName = "Company Name 1",
 				activityDescription = "Activity Description",
@@ -118,13 +174,13 @@ definition {
 				typeOfActivity = "Event");
 		}
 
-		task ("When I go to the created MDF") {
+		task ("When the PMU goes to the created MDF") {
 			PRMNavigator.openSitePage(pageName = "MDF Requests");
 
 			PRMMDFRequest.goToMDF(campaignName = "Campaign Name");
 		}
 
-		task ("Then I can see the added data in MDF Detail Page") {
+		task ("Then the PMU can see the added data in MDF Detail Page") {
 			PRMMDFRequest.viewMDFActivityDetails(
 				activityName = "Activity Name 1",
 				tactic = "In-person networking event/seminar/meet-up",
@@ -149,7 +205,7 @@ definition {
 	@description = "This is a test for LPS-188238. Verify that the partner can submit an MDF with an Event > Webinar activity"
 	@priority = 4
 	test CanSubmitMDFWithEventWebinarActivity {
-		task ("Given I go to add a new MDF Request with 'Event' as Type of Activity and 'Webinar' as Tactic") {
+		task ("Given that the PMU goes to add a new MDF Request with 'Event' as Type of Activity and 'Webinar' as Tactic") {
 			PRMMDFRequest.createNewRequest(
 				accountName = "Company Name 1",
 				activityDescription = "Activity Description",
@@ -165,13 +221,13 @@ definition {
 				typeOfActivity = "Event");
 		}
 
-		task ("When I go to the created MDF") {
+		task ("When the PMU goes to the created MDF") {
 			PRMNavigator.openSitePage(pageName = "MDF Requests");
 
 			PRMMDFRequest.goToMDF(campaignName = "Campaign Name");
 		}
 
-		task ("Then I can see the added data in MDF Detail Page") {
+		task ("Then the PMU can see the added data in MDF Detail Page") {
 			PRMMDFRequest.viewMDFActivityDetails(
 				activityName = "Activity Name 1",
 				tactic = "Webinar",

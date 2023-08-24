@@ -56,7 +56,15 @@ export type MetricHistogram = {
 	variantMetrics: Array<VariantMetric>;
 };
 
-export type GetLinkFn = (pageURL: string, id: string) => string;
+export type GetLinkFn = ({
+	action,
+	id,
+	pageURL
+}: {
+	action?: string;
+	id: string;
+	pageURL: string;
+}) => string;
 
 export type GetFormattedVariantHistogramFn = (
 	histogram: Array<VariantHistogram>
@@ -135,16 +143,6 @@ export type ModalCompleteFn = (
 	title: string;
 };
 
-export type ModalDeleteFn = (
-	experimentId: string
-) => {
-	Component: React.ReactNode;
-	props: {
-		experimentId: string;
-	};
-	title: string;
-};
-
 export type ModalPublishOtherVariantFn = (
 	dxpVariants: Array<Variant>,
 	experimentId: string,
@@ -203,8 +201,6 @@ export type StepInputs = {
 	disabled?: boolean;
 	Description: React.FC<React.HTMLAttributes<HTMLElement>>;
 	modal?: Modal;
-	label: string;
-	link?: string;
 	showIcon?: boolean;
 	title: string;
 	tooltip?: string;

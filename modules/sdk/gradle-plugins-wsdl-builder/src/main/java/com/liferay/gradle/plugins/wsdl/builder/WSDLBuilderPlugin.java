@@ -24,13 +24,16 @@ import org.gradle.api.Task;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.DependencySet;
 import org.gradle.api.file.CopySpec;
+import org.gradle.api.file.DuplicatesStrategy;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.plugins.BasePlugin;
+import org.gradle.api.plugins.JavaLibraryPlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.PluginContainer;
 import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.plugins.WarPluginConvention;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Copy;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.SourceSet;
@@ -51,7 +54,7 @@ public class WSDLBuilderPlugin implements Plugin<Project> {
 
 	@Override
 	public void apply(Project project) {
-		GradleUtil.applyPlugin(project, JavaPlugin.class);
+		GradleUtil.applyPlugin(project, JavaLibraryPlugin.class);
 
 		BuildWSDLTask buildWSDLTask = _addTaskBuildWSDL(project);
 
@@ -90,10 +93,10 @@ public class WSDLBuilderPlugin implements Plugin<Project> {
 		configuration.setVisible(false);
 
 		if (buildWSDLTask.getAxisVersion() == 2) {
-			Configuration compileConfiguration = GradleUtil.getConfiguration(
-				project, JavaPlugin.COMPILE_CONFIGURATION_NAME);
+			Configuration apiConfiguration = GradleUtil.getConfiguration(
+				project, JavaPlugin.API_CONFIGURATION_NAME);
 
-			configuration.extendsFrom(compileConfiguration);
+			configuration.extendsFrom(apiConfiguration);
 		}
 
 		return configuration;
@@ -213,19 +216,23 @@ public class WSDLBuilderPlugin implements Plugin<Project> {
 		javaExec.args(generateOptions.getArgs());
 
 		if (buildWSDLTask.getAxisVersion() == 2) {
+			Property<String> mainClass = javaExec.getMainClass();
+
+			mainClass.set("org.apache.axis2.wsdl.WSDL2Code");
+
 			javaExec.args("--output", FileUtil.getAbsolutePath(destinationDir));
 			javaExec.args("-uri", FileUtil.getAbsolutePath(inputFile));
-
-			javaExec.setMain("org.apache.axis2.wsdl.WSDL2Code");
 		}
 		else {
+			Property<String> mainClass = javaExec.getMainClass();
+
+			mainClass.set("org.apache.axis.wsdl.WSDL2Java");
+
 			String outputPath = FileUtil.getAbsolutePath(destinationDir);
 
 			javaExec.args("--output=" + outputPath);
 
 			javaExec.args(FileUtil.getAbsolutePath(inputFile));
-
-			javaExec.setMain("org.apache.axis.wsdl.WSDL2Java");
 		}
 
 		if (deleteDestinationDir) {
@@ -381,11 +388,14 @@ public class WSDLBuilderPlugin implements Plugin<Project> {
 			TaskOutputs taskOutputs = buildWSDLTask.getOutputs();
 
 			GradleUtil.addDependency(
-				project, JavaPlugin.COMPILE_CONFIGURATION_NAME,
+				project, JavaPlugin.API_CONFIGURATION_NAME,
 				taskOutputs.getFiles());
 		}
 
 		if (buildWSDLTask.isIncludeWSDLs() && (processResourcesTask != null)) {
+			processResourcesTask.setDuplicatesStrategy(
+				DuplicatesStrategy.INCLUDE);
+
 			processResourcesTask.into(
 				"wsdl",
 				new Closure<Void>(project) {

@@ -36,6 +36,7 @@ import org.gradle.api.Project;
 import org.gradle.api.Task;
 import org.gradle.api.file.CopySourceSpec;
 import org.gradle.api.file.CopySpec;
+import org.gradle.api.file.DuplicatesStrategy;
 import org.gradle.api.initialization.Settings;
 import org.gradle.api.plugins.ExtensionAware;
 import org.gradle.api.plugins.JavaPlugin;
@@ -162,6 +163,11 @@ public class ExtProjectConfigurator extends BaseProjectConfigurator {
 			project, RootProjectConfigurator.DOCKER_DEPLOY_TASK_NAME,
 			Copy.class);
 
+		dockerDeploy.setDescription(
+			"Assembles the project and deploys it to the Liferay Docker " +
+				"container.");
+		dockerDeploy.setGroup(RootProjectConfigurator.DOCKER_GROUP);
+
 		dockerDeploy.dependsOn(rootDockerDeployTask);
 
 		File configsDir = workspaceExtension.getConfigsDir();
@@ -184,6 +190,8 @@ public class ExtProjectConfigurator extends BaseProjectConfigurator {
 				});
 
 			if ((configDirs != null) && (configDirs.length > 0)) {
+				dockerDeploy.setDuplicatesStrategy(DuplicatesStrategy.INCLUDE);
+
 				dockerDeploy.into(workspaceExtension.getDockerDir());
 
 				for (File configDir : configDirs) {
@@ -208,11 +216,6 @@ public class ExtProjectConfigurator extends BaseProjectConfigurator {
 				}
 			}
 		}
-
-		dockerDeploy.setDescription(
-			"Assembles the project and deploys it to the Liferay Docker " +
-				"container.");
-		dockerDeploy.setGroup(RootProjectConfigurator.DOCKER_GROUP);
 
 		Task deployTask = GradleUtil.getTask(
 			project, LiferayBasePlugin.DEPLOY_TASK_NAME);

@@ -45,6 +45,7 @@ GradlePropertiesCheck | .gradle | Validates property values in gradle build file
 GradleProvidedDependenciesCheck | .gradle | Validates the scope of dependencies in build gradle files. |
 [GradleRequiredDependenciesCheck](check/gradle_required_dependencies_check.markdown#gradlerequireddependenciescheck) | .gradle | Validates the dependencies in `/required-dependencies/required-dependencies/build.gradle`. |
 GradleTestDependencyVersionCheck | .gradle | Checks the version for dependencies in gradle build files. |
+GradleTestUtilDeployDirCheck | .gradle | Checks for incorrect use of `deployDir`. |
 IllegalImportsCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl or .vm | Finds cases of incorrect use of certain classes. |
 IllegalTaglibsCheck | .ftl, .jsp, .jspf, .jspx, .tag, .tpl or .vm | Finds cases of incorrect use of certain taglibs. |
 [IncorrectFileLocationCheck](check/incorrect_file_location_check.markdown#incorrectfilelocationcheck) | | Checks that `/src/*/java/` only contains `.java` files. |
@@ -68,7 +69,7 @@ JSPLogFileNameCheck | .jsp, .jspf, .jspx, .tag, .tpl or .vm | Validates the valu
 [JSPSendRedirectCheck](check/jsp_send_redirect_check.markdown#jspsendredirectcheck) | .jsp, .jspf, .jspx, .tag, .tpl or .vm | Checks that there are no calls to `HttpServletResponse.sendRedirect` from `jsp` files. |
 JSPSessionKeysCheck | .jsp, .jspf, .jspx, .tag, .tpl or .vm | Checks that messages send to `SessionsErrors` or `SessionMessages` follow naming conventions. |
 JSPTagAttributesCheck | .jsp, .jspf, .jspx, .tag, .tpl or .vm | Performs several checks on tag attributes. |
-JSPTaglibAttributesCheck | .jsp, .jspf, .jspx, .tag, .tpl or .vm | Performs several checks on taglib attributes. |
+JSPTaglibMissingAttributesCheck | .jsp, .jspf, .jspx, .tag, .tpl or .vm | Checks for missing taglib attributes. |
 JavaAbstractMethodCheck | .java | Finds incorrect `abstract` methods in `interface`. |
 JavaAnnotationsCheck | .java | Performs several checks on annotations. |
 [JavaAnonymousInnerClassCheck](check/java_anonymous_inner_class_check.markdown#javaanonymousinnerclasscheck) | .java | Performs several checks on anonymous classes. |
@@ -87,6 +88,7 @@ JavaFinderImplCustomSQLCheck | .java | Checks that hardcoded SQL values in `*Fin
 JavaGetFeatureFlagCheck | .java | Checks that `FeatureFlagManagerUtil.isEnabled` should be used (instead of `PropsUtil.get` in `GetterUtil.getBoolean`). |
 JavaIgnoreAnnotationCheck | .java | Finds methods with `@Ignore` annotation in test classes. |
 [JavaIndexableCheck](check/java_indexable_check.markdown#javaindexablecheck) | .java | Checks that the type gets returned when using annotation `@Indexable`. |
+JavaInjectAnnotationsCheck | .java | Performs several checks on classes with `@Inject` annotations. |
 JavaInterfaceCheck | .java | Checks that `interface` is not `static`. |
 JavaInternalPackageCheck | .java | Performs several checks on class in `internal` package. |
 JavaJSPDynamicIncludeCheck | .java | Performs several checks on `*JSPDynamicInclude` class. |

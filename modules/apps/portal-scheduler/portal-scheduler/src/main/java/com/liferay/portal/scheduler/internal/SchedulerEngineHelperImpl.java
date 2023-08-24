@@ -47,13 +47,12 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.scheduler.internal.configuration.SchedulerEngineHelperConfiguration;
 import com.liferay.portal.scheduler.internal.messaging.config.ScriptingMessageListener;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Dictionary;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.osgi.framework.BundleContext;
@@ -356,12 +355,13 @@ public class SchedulerEngineHelperImpl implements SchedulerEngineHelper {
 
 		scriptingDestination.register(schedulerJobConfigurationMessageListener);
 
-		_schedulerJobConfigurationServiceTracker = ServiceTrackerFactory.open(
-			_bundleContext, SchedulerJobConfiguration.class,
-			new SchedulerJobConfigurationServiceTrackerCustomizer());
-
 		DependencyManagerSyncUtil.registerSyncCallable(
 			() -> {
+				_schedulerJobConfigurationServiceTracker =
+					ServiceTrackerFactory.open(
+						_bundleContext, SchedulerJobConfiguration.class,
+						new SchedulerJobConfigurationServiceTrackerCustomizer());
+
 				_schedulerEngine.start();
 
 				return null;
@@ -388,12 +388,7 @@ public class SchedulerEngineHelperImpl implements SchedulerEngineHelper {
 		for (ServiceRegistration<Destination> serviceRegistration :
 				_destinationServiceRegistrations) {
 
-			Destination destination = _bundleContext.getService(
-				serviceRegistration.getReference());
-
 			serviceRegistration.unregister();
-
-			destination.destroy();
 		}
 
 		_bundleContext = null;
@@ -442,8 +437,8 @@ public class SchedulerEngineHelperImpl implements SchedulerEngineHelper {
 	@Reference
 	private DestinationFactory _destinationFactory;
 
-	private final Set<ServiceRegistration<Destination>>
-		_destinationServiceRegistrations = new HashSet<>();
+	private final List<ServiceRegistration<Destination>>
+		_destinationServiceRegistrations = new ArrayList<>();
 
 	@Reference
 	private JSONFactory _jsonFactory;

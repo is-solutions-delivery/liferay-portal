@@ -24,11 +24,13 @@ ViewObjectDefinitionsDisplayContext viewObjectDefinitionsDisplayContext = (ViewO
 			).put(
 				"creationMenu", viewObjectDefinitionsDisplayContext.getCreationMenu()
 			).put(
+				"editObjectFolderURL", viewObjectDefinitionsDisplayContext.getEditObjectFolderURL()
+			).put(
 				"id", ObjectDefinitionsFDSNames.OBJECT_DEFINITIONS
 			).put(
 				"items", viewObjectDefinitionsDisplayContext.getFDSActionDropdownItems()
 			).put(
-				"sorting", viewObjectDefinitionsDisplayContext.getFDSSortItemList()
+				"objectFolderPermissionsURL", viewObjectDefinitionsDisplayContext.getPermissionsURL(ObjectFolder.class.getName())
 			).put(
 				"storages", viewObjectDefinitionsDisplayContext.getStoragesJSONArray()
 			).put(

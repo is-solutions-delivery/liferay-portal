@@ -164,6 +164,14 @@ public class JenkinsResultsParserUtil {
 
 	public static boolean debug;
 
+	public static void addRedactToken(String token) {
+		if (_redactTokens.isEmpty()) {
+			_initializeRedactTokens();
+		}
+
+		_redactTokens.add(token);
+	}
+
 	public static void append(File file, String content) throws IOException {
 		if (debug) {
 			System.out.println(
@@ -1408,7 +1416,7 @@ public class JenkinsResultsParserUtil {
 			_buildProperties.putAll(properties);
 		}
 
-		return properties;
+		return new SecureProperties(properties);
 	}
 
 	public static String getBuildProperty(
@@ -1595,7 +1603,7 @@ public class JenkinsResultsParserUtil {
 
 		ciPropertyURLs.add(sb.toString());
 
-		Properties ciProperties = new Properties();
+		Properties ciProperties = new SecureProperties();
 
 		for (String ciPropertyURL : ciPropertyURLs) {
 			try {
@@ -2164,7 +2172,7 @@ public class JenkinsResultsParserUtil {
 			_jenkinsBuildProperties.putAll(properties);
 		}
 
-		return properties;
+		return new SecureProperties(properties);
 	}
 
 	public static String getJenkinsBuildResult(String buildURL) {
@@ -2367,9 +2375,9 @@ public class JenkinsResultsParserUtil {
 			properties.putAll(getProperties(jenkinsPropertiesFile));
 		}
 
-		_jenkinsProperties = properties;
+		_jenkinsProperties = new SecureProperties(properties);
 
-		return properties;
+		return (Properties)_jenkinsProperties;
 	}
 
 	public static Document getJobConfigDocument(
@@ -2668,7 +2676,7 @@ public class JenkinsResultsParserUtil {
 			}
 		}
 
-		return properties;
+		return new SecureProperties(properties);
 	}
 
 	public static String getProperty(Properties properties, String name) {
@@ -4689,7 +4697,7 @@ public class JenkinsResultsParserUtil {
 
 		properties.load(new StringReader(toString(url)));
 
-		return properties;
+		return new SecureProperties(properties);
 	}
 
 	public static String toString(String url) throws IOException {
@@ -5178,6 +5186,23 @@ public class JenkinsResultsParserUtil {
 
 	}
 
+	public static class BearerHTTPAuthorization extends HTTPAuthorization {
+
+		public BearerHTTPAuthorization(String token) {
+			super(Type.BEARER);
+
+			this.token = token;
+		}
+
+		@Override
+		public String toString() {
+			return "Bearer " + token;
+		}
+
+		protected String token;
+
+	}
+
 	public abstract static class HTTPAuthorization {
 
 		public Type getType() {
@@ -5186,7 +5211,7 @@ public class JenkinsResultsParserUtil {
 
 		public static enum Type {
 
-			BASIC, TOKEN
+			BASIC, BEARER, TOKEN
 
 		}
 
@@ -5242,7 +5267,7 @@ public class JenkinsResultsParserUtil {
 			int count = 0;
 
 			for (String propertyOpt : propertyOptSet) {
-				if (propertyOpt.contains(".+")) {
+				if (propertyOpt.contains(".*")) {
 					count++;
 				}
 			}
@@ -5835,7 +5860,7 @@ public class JenkinsResultsParserUtil {
 				propertyName, getProperty(properties, propertyName));
 		}
 
-		return properties;
+		return new SecureProperties(properties);
 	}
 
 	private static String _getProperty(
@@ -5956,7 +5981,7 @@ public class JenkinsResultsParserUtil {
 			String opt = Pattern.quote(
 				propertyName.substring(indices.get(i) + 1, nextIndex));
 
-			propertyOptSet.add(opt.replaceAll("\\*", "\\\\E.+\\\\Q"));
+			propertyOptSet.add(opt.replaceAll("\\*", "\\\\E.*\\\\Q"));
 
 			i++;
 		}
@@ -5978,8 +6003,6 @@ public class JenkinsResultsParserUtil {
 			throw new RuntimeException(
 				"Unable to get build properties", ioException);
 		}
-
-		_redactTokens.clear();
 
 		for (int i = 1; properties.containsKey(_getRedactTokenKey(i)); i++) {
 			String key = _getRedactTokenKey(i);

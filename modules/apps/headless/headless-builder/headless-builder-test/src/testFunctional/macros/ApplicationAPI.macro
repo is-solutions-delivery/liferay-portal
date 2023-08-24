@@ -29,12 +29,12 @@ definition {
 	}
 
 	macro createAPIApplication {
-		Variables.assertDefined(parameterList = "${baseURL},${statusKey},${statusName},${title}");
+		Variables.assertDefined(parameterList = "${baseURL},${status},${title}");
 
-		var curl = ApplicationAPI._curlAPIApplication();
+		var curl = ApplicationAPI._curlAPIApplication(virtualHost = ${virtualHost});
 		var body = '''
 			-d {
-				"applicationStatus": {"key": "${statusKey}","name": "${statusName}"},
+				"applicationStatus": {"key": "${status}","name": "${status}"},
 				"baseURL": "${baseURL}",
 				"title": "${title}"
 			}
@@ -73,6 +73,16 @@ definition {
 		var response = JSONCurlUtil.get(${curl});
 
 		return ${response};
+	}
+
+	macro setUpGlobalAPIApplicationId {
+		var response = ApplicationAPI.getAPIApplications();
+
+		var applicationId = JSONUtil.getWithJSONPath(${response}, "$.items[0].id");
+
+		static var staticApplicationId = ${applicationId};
+
+		return ${staticApplicationId};
 	}
 
 	macro updateAPIApplication {

@@ -18,7 +18,7 @@ long parentFolderId = BeanParamUtil.getLong(folder, request, "parentFolderId", J
 
 boolean rootFolder = ParamUtil.getBoolean(request, "rootFolder");
 
-boolean workflowEnabled = WorkflowEngineManagerUtil.isDeployed() && (WorkflowHandlerRegistryUtil.getWorkflowHandler(JournalArticle.class.getName()) != null);
+boolean workflowEnabled = WorkflowHandlerRegistryUtil.getWorkflowHandler(JournalArticle.class.getName()) != null;
 
 List<WorkflowDefinition> workflowDefinitions = null;
 
@@ -53,11 +53,40 @@ renderResponse.setTitle(title);
 </portlet:actionURL>
 
 <liferay-util:buffer
-	var="removeDDMStructureIcon"
+	var="removeButton"
 >
-	<clay:icon
-		symbol="times-circle"
-	/>
+	<button
+		aria-label='<%= LanguageUtil.get(request, "remove") %>'
+		class="btn btn-monospaced btn-outline-borderless btn-outline-secondary float-right modify-link"
+		data-rowId="REMOVE_BUTTON_ROW_ID"
+		title='<%= LanguageUtil.get(request, "remove") %>'
+		type="button"
+	>
+		<clay:icon
+			symbol="times-circle"
+		/>
+	</button>
+</liferay-util:buffer>
+
+<liferay-util:buffer
+	var="workflowDefinitionsBuffer"
+>
+	<c:if test="<%= workflowEnabled %>">
+		<aui:select label="" name="WORKFLOW_NAME" title="workflow-definition" wrapperCssClass="mb-0">
+			<aui:option label="no-workflow" value="" />
+
+			<%
+			for (WorkflowDefinition workflowDefinition : workflowDefinitions) {
+			%>
+
+				<aui:option label="<%= HtmlUtil.escape(workflowDefinition.getTitle(languageId)) %>" value="<%= HtmlUtil.escapeAttribute(workflowDefinition.getName()) + StringPool.AT + workflowDefinition.getVersion() %>" />
+
+			<%
+			}
+			%>
+
+		</aui:select>
+	</c:if>
 </liferay-util:buffer>
 
 <liferay-frontend:edit-form
@@ -133,7 +162,7 @@ renderResponse.setTitle(title);
 				%>
 
 				<div class="form-group">
-					<aui:input name="parentFolderName" type="resource" value="<%= parentFolderName %>" />
+					<aui:input name="folderName" type="resource" value="<%= parentFolderName %>" />
 
 					<clay:button
 						displayType="secondary"
@@ -141,41 +170,30 @@ renderResponse.setTitle(title);
 						label="select"
 					/>
 
-					<aui:script sandbox="<%= true %>">
-						var selectFolderButton = document.getElementById(
-							'<portlet:namespace />selectFolderButton'
-						);
-
-						selectFolderButton.addEventListener('click', (event) => {
-							Liferay.Util.openSelectionModal({
-								onSelect: function (selectedItem) {
-									if (selectedItem) {
-										var folderData = {
-											idString: 'parentFolderId',
-											idValue: selectedItem.folderId,
-											nameString: 'parentFolderName',
-											nameValue: selectedItem.folderName,
-										};
-
-										Liferay.Util.selectFolder(folderData, '<portlet:namespace />');
-									}
-								},
-								selectEventName: '<portlet:namespace />selectFolder',
-								title: '<liferay-ui:message arguments="folder" key="select-x" />',
-
-								<portlet:renderURL var="selectFolderURL" windowState="<%= LiferayWindowState.POP_UP.toString() %>">
-									<portlet:param name="mvcPath" value="/select_folder.jsp" />
-									<portlet:param name="folderId" value="<%= String.valueOf(folderId) %>" />
-									<portlet:param name="parentFolderId" value="<%= String.valueOf(parentFolderId) %>" />
-								</portlet:renderURL>
-
-								url: '<%= selectFolderURL.toString() %>',
-							});
-						});
-					</aui:script>
+					<liferay-frontend:component
+						context='<%=
+							HashMapBuilder.<String, Object>put(
+								"inputName", "parentFolderId"
+							).put(
+								"selectFolderURL",
+								PortletURLBuilder.createRenderURL(
+									renderResponse
+								).setMVCPath(
+									"/select_folder.jsp"
+								).setParameter(
+									"folderId", folderId
+								).setParameter(
+									"parentFolderId", parentFolderId
+								).setWindowState(
+									LiferayWindowState.POP_UP
+								).buildString()
+							).build()
+						%>'
+						module="js/SelectFolderButton"
+					/>
 
 					<%
-					String taglibRemoveFolder = "Liferay.Util.removeEntitySelection('parentFolderId', 'parentFolderName', this, '" + liferayPortletResponse.getNamespace() + "');";
+					String taglibRemoveFolder = "Liferay.Util.removeEntitySelection('parentFolderId', 'folderName', this, '" + liferayPortletResponse.getNamespace() + "');";
 					%>
 
 					<clay:button
@@ -301,6 +319,21 @@ renderResponse.setTitle(title);
 							id='<%= liferayPortletResponse.getNamespace() + "selectDDMStructure" %>'
 							label="choose-structure"
 						/>
+
+						<liferay-frontend:component
+							context='<%=
+								HashMapBuilder.<String, Object>put(
+									"removeButton", removeButton
+								).put(
+									"selectDDMStructureURL", journalDisplayContext.getSelectDDMStructureURL()
+								).put(
+									"workflowDefinitions", workflowDefinitionsBuffer
+								).put(
+									"workflowEnabled", workflowEnabled
+								).build()
+							%>'
+							module="js/SelectDDMStructureButton"
+						/>
 					</div>
 				</c:if>
 
@@ -360,91 +393,6 @@ renderResponse.setTitle(title);
 		/>
 	</liferay-frontend:edit-form-footer>
 </liferay-frontend:edit-form>
-
-<liferay-util:buffer
-	var="workflowDefinitionsBuffer"
->
-	<c:if test="<%= workflowEnabled %>">
-		<aui:select label="" name="LIFERAY_WORKFLOW_DEFINITION_DDM_STRUCTURE" title="workflow-definition" wrapperCssClass="mb-0">
-			<aui:option label="no-workflow" value="" />
-
-			<%
-			for (WorkflowDefinition workflowDefinition : workflowDefinitions) {
-			%>
-
-				<aui:option label="<%= HtmlUtil.escape(workflowDefinition.getTitle(languageId)) %>" value="<%= HtmlUtil.escapeAttribute(workflowDefinition.getName()) + StringPool.AT + workflowDefinition.getVersion() %>" />
-
-			<%
-			}
-			%>
-
-		</aui:select>
-	</c:if>
-</liferay-util:buffer>
-
-<aui:script use="liferay-search-container">
-	var searchContainer = Liferay.SearchContainer.get(
-		'<portlet:namespace />ddmStructuresSearchContainer'
-	);
-
-	var selectDDMStructureButton = document.getElementById(
-		'<portlet:namespace />selectDDMStructure'
-	);
-
-	if (selectDDMStructureButton) {
-		selectDDMStructureButton.addEventListener('click', (event) => {
-			Liferay.Util.openSelectionModal({
-				onSelect: function (selectedItem) {
-					const itemValue = JSON.parse(selectedItem.value);
-
-					var ddmStructureLink = `
-							<button aria-label="<%= LanguageUtil.get(request, "remove") %>" class="btn btn-monospaced btn-outline-borderless btn-outline-secondary float-right modify-link" data-rowId="${itemValue.ddmstructureid }" title="<%= LanguageUtil.get(request, "remove") %>">
-								<%= UnicodeFormatter.toString(removeDDMStructureIcon) %></button>`;
-
-					<c:choose>
-						<c:when test="<%= workflowEnabled %>">
-							var workflowDefinitions =
-								'<%= UnicodeFormatter.toString(workflowDefinitionsBuffer) %>';
-
-							workflowDefinitions = workflowDefinitions.replace(
-								/LIFERAY_WORKFLOW_DEFINITION_DDM_STRUCTURE/g,
-								'workflowDefinition' + itemValue.ddmstructureid
-							);
-
-							searchContainer.addRow(
-								[itemValue.name, workflowDefinitions, ddmStructureLink],
-								itemValue.ddmstructureid
-							);
-						</c:when>
-						<c:otherwise>
-							searchContainer.addRow(
-								[itemValue.name, ddmStructureLink],
-								itemValue.ddmstructureid
-							);
-						</c:otherwise>
-					</c:choose>
-
-					searchContainer.updateDataStore();
-				},
-				selectEventName: '<portlet:namespace />selectDDMStructure',
-				title: '<%= UnicodeLanguageUtil.get(request, "structures") %>',
-				url: '<%= journalDisplayContext.getSelectDDMStructureURL() %>>',
-			});
-		});
-	}
-
-	searchContainer.get('contentBox').delegate(
-		'click',
-		(event) => {
-			var link = event.currentTarget;
-
-			var tr = link.ancestor('tr');
-
-			searchContainer.deleteRow(tr, link.attr('data-rowId'));
-		},
-		'.modify-link'
-	);
-</aui:script>
 
 <aui:script>
 	Liferay.Util.toggleRadio('<portlet:namespace />restrictionTypeInherit', '', [

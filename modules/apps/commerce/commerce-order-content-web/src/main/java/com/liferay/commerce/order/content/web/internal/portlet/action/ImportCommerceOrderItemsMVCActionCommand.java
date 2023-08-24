@@ -20,7 +20,6 @@ import com.liferay.commerce.order.importer.type.CommerceOrderImporterTypeRegistr
 import com.liferay.commerce.product.exception.NoSuchCPInstanceException;
 import com.liferay.commerce.service.CommerceOrderItemService;
 import com.liferay.commerce.service.CommerceOrderService;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
@@ -35,9 +34,12 @@ import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
+import com.liferay.portal.kernel.util.BigDecimalUtil;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+
+import java.math.BigDecimal;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -196,7 +198,9 @@ public class ImportCommerceOrderItemsMVCActionCommand
 		for (CommerceOrderImporterItem commerceOrderImporterItem :
 				commerceOrderImporterItems) {
 
-			if (commerceOrderImporterItem.getQuantity() < 1) {
+			BigDecimal quantity = commerceOrderImporterItem.getQuantity();
+
+			if (BigDecimalUtil.lt(quantity, BigDecimal.ONE)) {
 				counts[1]++;
 
 				continue;
@@ -207,9 +211,8 @@ public class ImportCommerceOrderItemsMVCActionCommand
 					_commerceOrderItemService.addOrUpdateCommerceOrderItem(
 						commerceOrder.getCommerceOrderId(),
 						commerceOrderImporterItem.getCPInstanceId(),
-						commerceOrderImporterItem.getJSON(),
-						commerceOrderImporterItem.getQuantity(), 0, 0,
-						StringPool.BLANK,
+						commerceOrderImporterItem.getJSON(), quantity, 0, 0,
+						commerceOrderImporterItem.getUnitOfMeasureKey(),
 						(CommerceContext)actionRequest.getAttribute(
 							CommerceWebKeys.COMMERCE_CONTEXT),
 						ServiceContextFactory.getInstance(

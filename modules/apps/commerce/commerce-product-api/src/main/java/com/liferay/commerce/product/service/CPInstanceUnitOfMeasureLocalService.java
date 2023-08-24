@@ -284,6 +284,10 @@ public interface CPInstanceUnitOfMeasureLocalService
 		long cpInstanceId, int start, int end,
 		OrderByComparator<CPInstanceUnitOfMeasure> orderByComparator);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<CPInstanceUnitOfMeasure> getCPInstanceUnitOfMeasures(
+		long companyId, String sku);
+
 	/**
 	 * Returns the number of cp instance unit of measures.
 	 *
@@ -294,6 +298,9 @@ public interface CPInstanceUnitOfMeasureLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getCPInstanceUnitOfMeasuresCount(long cpInstanceId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getCPInstanceUnitOfMeasuresCount(long companyId, String sku);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ExportActionableDynamicQuery getExportActionableDynamicQuery(

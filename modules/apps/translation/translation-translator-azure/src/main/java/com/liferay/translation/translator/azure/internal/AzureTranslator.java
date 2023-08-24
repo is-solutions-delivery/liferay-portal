@@ -118,6 +118,11 @@ public class AzureTranslator implements Translator {
 				}
 
 				@Override
+				public Map<String, Boolean> getHTMLMap() {
+					return null;
+				}
+
+				@Override
 				public String getSourceLanguageId() {
 					return translatorPacket.getSourceLanguageId();
 				}

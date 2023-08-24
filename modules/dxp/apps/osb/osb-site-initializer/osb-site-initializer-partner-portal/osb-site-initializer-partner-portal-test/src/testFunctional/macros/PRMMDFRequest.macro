@@ -29,6 +29,8 @@ definition {
 
 		if (${statusButton} == "Cancel") {
 			ClickNoError(locator1 = "Button#CANCEL");
+
+			Confirm.acceptAlert();
 		}
 		else {
 			ScrollWebElementIntoView(locator1 = "PRMMDFRequest#STATUS_DROPDOWN");
@@ -166,6 +168,8 @@ definition {
 				tactic = ${tactic},
 				targetOfLeads = ${targetOfLeads},
 				typeOfActivity = ${typeOfActivity});
+
+			Button.click(button = "Continue");
 		}
 
 		if (isSet(removeActivity)) {
@@ -185,9 +189,9 @@ definition {
 				newActivityName = ${newActivityName},
 				newBugdetValue = ${newBugdetValue},
 				removeBudgetByIndex = ${removeBudgetByIndex});
-		}
 
-		Button.click(button = "Continue");
+			Button.click(button = "Continue");
+		}
 
 		Button.click(button = "Continue");
 
@@ -305,13 +309,11 @@ definition {
 	}
 
 	macro filterMDF {
-		Click(
-			key_filterOption = ${filterOption},
-			locator1 = "AppBuilder#CHOOSE_SEARCH_FILTER_BY_OPTION");
+		Button.click(button = "Filter");
 
 		Click(
-			key_partnerOptions = "Filter",
-			locator1 = "PRMMDFRequest#FILTER_TYPE");
+			key_text = ${filterOption},
+			locator1 = "Button#ANY_WITH_SPAN");
 
 		Click.clickAtNotVisible(
 			checkboxName = ${checkboxName},
@@ -550,6 +552,28 @@ definition {
 				value1 = "Liferay Brand");
 		}
 
+		if (${typeOfActivity} == "Content Marketing") {
+			Click.clickAtNotVisible(
+				key_buttonText = "No",
+				key_fieldName = "activities[${activityIndex}].activityDescription.gatedLandingPage",
+				locator1 = "PRMMDFRequest#INPUT_BUTTON");
+
+			Type(
+				key_fieldName = "activities[${activityIndex}].activityDescription.primaryThemeOrMessage",
+				locator1 = "PRMMDFRequest#TEXT_FIELD",
+				value1 = "Primary Theme");
+
+			Type(
+				key_fieldName = "activities[${activityIndex}].activityDescription.goalOfContent",
+				locator1 = "PRMMDFRequest#TEXT_FIELD",
+				value1 = "Goal of Content");
+
+			Click.clickAtNotVisible(
+				key_buttonText = "No",
+				key_fieldName = "activities[${activityIndex}].activityDescription.hiringOutsideWriterOrAgency",
+				locator1 = "PRMMDFRequest#INPUT_BUTTON");
+		}
+
 		if (isSet(leadList)) {
 			Click.clickAtNotVisible(
 				key_buttonText = ${leadList},
@@ -757,33 +781,33 @@ definition {
 	}
 
 	macro viewExportedMDF {
-		for (var fileContentItem : list ${fileContentList}) {
-			var directoryPath = PropsUtil.get("output.dir.name");
+		DownloadTempFile();
 
-			var fileContent = FileUtil.read("${directoryPath}/${fileName}");
+		var directoryPath = PropsUtil.get("output.dir.name");
 
-			if (!(contains(${fileContent}, ${fileContentItem}))) {
-				echo(${fileContent});
+		var tempFileDir = "${directoryPath}/${fileName}";
 
-				fail("The string '${fileContentItem}' doesn't exists on this file");
-			}
-			else {
-				echo("The string '${fileContentItem}' exists on this file");
+		if (isSet(fileContentList)) {
+			for (var fileContent : list ${fileContentList}) {
+				if (!(contains(${tempFileDir}, ${fileContent}))) {
+					echo(${fileContent});
+
+					fail("The string '${fileContent}' doesn't exists on this file");
+				}
+				else {
+					echo("The string '${fileContent}' exists on this file");
+				}
 			}
 		}
 
 		if (isSet(fileContentNotPresent)) {
-			var directoryPath = PropsUtil.get("output.dir.name");
+			if (contains(${tempFileDir}, ${fileContentNotPresent})) {
+				echo(${fileContentNotPresent});
 
-			var fileContent = FileUtil.read("${directoryPath}/${fileName}");
-
-			if (contains(${fileContent}, ${fileContentItem})) {
-				echo(${fileContent});
-
-				fail("The string '${fileContentItem}' exists on this file");
+				fail("The string '${fileContentNotPresent}' exists on this file");
 			}
 			else {
-				echo("The string '${fileContentItem}' doesn't exists on this file");
+				echo("The string '${fileContentNotPresent}' doesn't exists on this file");
 			}
 		}
 

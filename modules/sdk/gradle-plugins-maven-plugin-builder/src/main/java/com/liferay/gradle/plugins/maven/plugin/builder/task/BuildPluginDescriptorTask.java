@@ -8,6 +8,7 @@ package com.liferay.gradle.plugins.maven.plugin.builder.task;
 import com.liferay.gradle.plugins.maven.plugin.builder.internal.util.GradleUtil;
 import com.liferay.gradle.plugins.maven.plugin.builder.internal.util.XMLUtil;
 import com.liferay.gradle.util.GUtil;
+import com.liferay.gradle.util.StringUtil;
 import com.liferay.gradle.util.Validator;
 
 import com.thoughtworks.qdox.JavaDocBuilder;
@@ -55,11 +56,11 @@ import org.gradle.api.artifacts.Dependency;
 import org.gradle.api.artifacts.ProjectDependency;
 import org.gradle.api.artifacts.ResolvedConfiguration;
 import org.gradle.api.artifacts.ResolvedDependency;
-import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer;
 import org.gradle.api.file.CopySpec;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.logging.Logger;
 import org.gradle.api.plugins.JavaPlugin;
+import org.gradle.api.provider.Property;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
@@ -84,10 +85,7 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 
 	public BuildPluginDescriptorTask() {
 		_configurationScopeMappings.put(
-			JavaPlugin.COMPILE_CONFIGURATION_NAME,
-			Conf2ScopeMappingContainer.COMPILE);
-		_configurationScopeMappings.put(
-			"provided", Conf2ScopeMappingContainer.PROVIDED);
+			JavaPlugin.API_CONFIGURATION_NAME, "compile");
 
 		_pomRepositories.put(
 			"liferay-public",
@@ -154,6 +152,7 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 		return GradleUtil.toFile(getProject(), _classesDir);
 	}
 
+	@Input
 	public Map<String, String> getConfigurationScopeMappings() {
 		return _configurationScopeMappings;
 	}
@@ -222,6 +221,7 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 		return GradleUtil.toFile(getProject(), _sourceDir);
 	}
 
+	@Input
 	public boolean isMavenDebug() {
 		return _mavenDebug;
 	}
@@ -337,10 +337,18 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 
 		Set<String> forcedExclusions = getForcedExclusions();
 
-		ResolvedConfiguration resolvedConfiguration =
-			configuration.getResolvedConfiguration();
+		Configuration resolvableConfiguration = GradleUtil.addConfiguration(
+			project, "resolvable" + StringUtil.capitalize(configurationName));
 
-		for (Dependency dependency : configuration.getDependencies()) {
+		resolvableConfiguration.extendsFrom(configuration);
+		resolvableConfiguration.setVisible(false);
+
+		ResolvedConfiguration resolvedConfiguration =
+			resolvableConfiguration.getResolvedConfiguration();
+
+		for (Dependency dependency :
+				resolvableConfiguration.getAllDependencies()) {
+
 			Element dependencyElement = document.createElement("dependency");
 
 			dependenciesElement.appendChild(dependencyElement);
@@ -450,6 +458,10 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 
 				@Override
 				public void execute(JavaExecSpec javaExecSpec) {
+					Property<String> mainClass = javaExecSpec.getMainClass();
+
+					mainClass.set(getMavenEmbedderMainClassName());
+
 					javaExecSpec.args("--batch-mode", "--errors");
 
 					Logger logger = getLogger();
@@ -478,7 +490,6 @@ public class BuildPluginDescriptorTask extends DefaultTask {
 
 					javaExecSpec.setClasspath(getMavenEmbedderClasspath());
 					javaExecSpec.setDebug(isMavenDebug());
-					javaExecSpec.setMain(getMavenEmbedderMainClassName());
 
 					javaExecSpec.systemProperty(
 						"maven.multiModuleProjectDirectory",

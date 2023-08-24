@@ -126,12 +126,14 @@ public class PreviewCommerceOrderItemFDSDataProvider
 				CommerceOrderItemPrice commerceOrderItemPrice =
 					commerceOrderImporterItem.getCommerceOrderItemPrice();
 
+				BigDecimal quantity = commerceOrderImporterItem.getQuantity();
+
 				return new PreviewOrderItem(
 					externalReferenceCode,
 					_getImportStatus(commerceOrderImporterItem, locale),
 					_getCommerceOrderOptions(commerceOrderImporterItem, locale),
 					commerceOrderImporterItem.getName(locale),
-					commerceOrderImporterItem.getQuantity(),
+					quantity.intValue(),
 					commerceOrderImporterItem.getReplacingSKU(),
 					_formatImportDate(
 						commerceOrderImporterItem.
@@ -141,9 +143,8 @@ public class PreviewCommerceOrderItemFDSDataProvider
 						themeDisplay.getLocale()),
 					integerWrapper.increment(),
 					commerceOrderImporterItem.getSKU(),
-					_formatFinalPrice(
-						commerceOrderItemPrice,
-						commerceOrderImporterItem.getQuantity(), locale),
+					_formatFinalPrice(commerceOrderItemPrice, quantity, locale),
+					commerceOrderImporterItem.getUnitOfMeasureKey(),
 					_formatUnitPrice(commerceOrderItemPrice, locale));
 			});
 	}
@@ -182,7 +183,7 @@ public class PreviewCommerceOrderItemFDSDataProvider
 	}
 
 	private String _formatFinalPrice(
-		CommerceOrderItemPrice commerceOrderItemPrice, int quantity,
+		CommerceOrderItemPrice commerceOrderItemPrice, BigDecimal quantity,
 		Locale locale) {
 
 		if ((commerceOrderItemPrice == null) ||
@@ -200,8 +201,7 @@ public class PreviewCommerceOrderItemFDSDataProvider
 
 		BigDecimal unitPrice = unitPriceCommerceMoney.getPrice();
 
-		BigDecimal finalPrice = unitPrice.multiply(
-			BigDecimal.valueOf(quantity));
+		BigDecimal finalPrice = unitPrice.multiply(quantity);
 
 		try {
 			return _commercePriceFormatter.format(

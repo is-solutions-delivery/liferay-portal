@@ -36,6 +36,18 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testUpgradeDLUtilCheck() throws Exception {
+		test("upgrade/UpgradeJavaDLUtilCheck.testjava");
+		test("upgrade/UpgradeJSPDLUtilCheck.testjsp");
+	}
+
+	@Test
+	public void testUpgradeGetClassNamesMethodCheck() throws Exception {
+		test("upgrade/UpgradeJavaGetClassNamesMethodCheck.testjava");
+		test("upgrade/UpgradeJSPFGetClassNamesMethodCheck.testjspf");
+	}
+
+	@Test
 	public void testUpgradeGetImagePreviewURLMethodCheck() throws Exception {
 		test("upgrade/UpgradeJavaGetImagePreviewURLMethodCheck.testjava");
 		test("upgrade/UpgradeJSPGetImagePreviewURLMethodCheck.testjsp");
@@ -101,8 +113,23 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testUpgradeJavaCookieKeysCheck() throws Exception {
+		test("upgrade/UpgradeJavaCookieKeysCheck.testjava");
+	}
+
+	@Test
+	public void testUpgradeJavaCookieUtilCheck() throws Exception {
+		test("upgrade/UpgradeJavaCookieUtilCheck.testjava");
+	}
+
+	@Test
 	public void testUpgradeJavaExtractTextMethodCheck() throws Exception {
 		test("upgrade/UpgradeJavaExtractTextMethodCheck.testjava");
+	}
+
+	@Test
+	public void testUpgradeJavaFacetedSearcherCheck() throws Exception {
+		test("upgrade/UpgradeJavaFacetedSearcherCheck.testjava");
 	}
 
 	@Test
@@ -116,8 +143,30 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testUpgradeJavaFetchCPDefinitionByCProductExternalReferenceCodeCheck()
+		throws Exception {
+
+		test(
+			"upgrade/UpgradeJavaFetchCPDefinitionByCProductExternal" +
+				"ReferenceCodeCheck.testjava");
+	}
+
+	@Test
 	public void testUpgradeJavaGetFileMethodCheck() throws Exception {
 		test("upgrade/UpgradeJavaGetFileMethodCheck.testjava");
+	}
+
+	@Test
+	public void testUpgradeJavaGetLayoutDisplayPageObjectProviderCheck()
+		throws Exception {
+
+		test(
+			"upgrade/UpgradeJavaGetLayoutDisplayPageObjectProviderCheck." +
+				"testjava",
+			StringBundler.concat(
+				"Could not resolve variable className for new ",
+				"InfoItemReference(). Replace 'TO_BE_REPLACED_FOR_CLASSNAME' ",
+				"with the correct type"));
 	}
 
 	@Test
@@ -125,6 +174,22 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 		throws Exception {
 
 		test("upgrade/UpgradeJavaGetLayoutDisplayPageProviderCheck.testjava");
+	}
+
+	@Test
+	public void testUpgradeJavaIndexerCheck() throws Exception {
+		test("upgrade/UpgradeJavaIndexerCheck.testjava");
+	}
+
+	@Test
+	public void testUpgradeJavaLayoutServicesCheck() throws Exception {
+		test(
+			"upgrade/UpgradeJavaLayoutServicesCheck.testjava",
+			StringBundler.concat(
+				"Unable to format methods addLayout and updateLayout from ",
+				"LayoutService, LayoutLocalService, LayoutServiceUtil and ",
+				"LayoutLocalServiceUtil. Fill the new parameters manually, ",
+				"see LPS-188828 and LPS-190401"));
 	}
 
 	@Test
@@ -143,6 +208,11 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 	@Test
 	public void testUpgradeJavaOnAfterUpdateParameterCheck() throws Exception {
 		test("upgrade/UpgradeJavaOnAfterUpdateParameterCheck.testjava");
+	}
+
+	@Test
+	public void testUpgradeJavaPhoneLocalServiceUtilCheck() throws Exception {
+		test("upgrade/UpgradeJavaPhoneLocalServiceUtilCheck.testjava");
 	}
 
 	@Test
@@ -166,11 +236,9 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 		test(
 			"upgrade/UpgradeJavaSearchVocabulariesMethodCheck.testjava",
 			StringBundler.concat(
-				"Could not resolve types of searchVocabularies method. The ",
-				"method signature has changed to searchVocabularies(",
-				"long companyId, long[] groupIds, String title, int[] ",
-				"visibilityTypes, int start, int end, Sort sort). Fill the ",
-				"new parameters manually."));
+				"Unable to format searchVocabularies method from ",
+				"AssetVocabularyService and AssetVocabularyLocalService. Fill ",
+				"the new parameters manually, see LPS-189866"));
 	}
 
 	@Test

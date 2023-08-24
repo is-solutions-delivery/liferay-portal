@@ -176,7 +176,7 @@ public class JavadocFormatter {
 				includes.add("**/*.java");
 			}
 
-			List<String> fileNames = JavadocFormatterUtil.scanForFiles(
+			List<String> fileNames = JavadocFormatterUtil.scanForFileNames(
 				_inputDirName, excludes, includes.toArray(new String[0]));
 
 			if (fileNames.isEmpty() && Validator.isNotNull(limit) &&

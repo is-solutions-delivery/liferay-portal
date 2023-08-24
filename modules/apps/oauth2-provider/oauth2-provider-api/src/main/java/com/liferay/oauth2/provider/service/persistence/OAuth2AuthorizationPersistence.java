@@ -1006,16 +1006,18 @@ public interface OAuth2AuthorizationPersistence
 	 *
 	 * @param pk the primary key of the o auth2 authorization
 	 * @param oAuth2ScopeGrantPK the primary key of the o auth2 scope grant
+	 * @return <code>true</code> if an association between the o auth2 authorization and the o auth2 scope grant was added; <code>false</code> if they were already associated
 	 */
-	public void addOAuth2ScopeGrant(long pk, long oAuth2ScopeGrantPK);
+	public boolean addOAuth2ScopeGrant(long pk, long oAuth2ScopeGrantPK);
 
 	/**
 	 * Adds an association between the o auth2 authorization and the o auth2 scope grant. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	 *
 	 * @param pk the primary key of the o auth2 authorization
 	 * @param oAuth2ScopeGrant the o auth2 scope grant
+	 * @return <code>true</code> if an association between the o auth2 authorization and the o auth2 scope grant was added; <code>false</code> if they were already associated
 	 */
-	public void addOAuth2ScopeGrant(
+	public boolean addOAuth2ScopeGrant(
 		long pk,
 		com.liferay.oauth2.provider.model.OAuth2ScopeGrant oAuth2ScopeGrant);
 
@@ -1024,16 +1026,18 @@ public interface OAuth2AuthorizationPersistence
 	 *
 	 * @param pk the primary key of the o auth2 authorization
 	 * @param oAuth2ScopeGrantPKs the primary keys of the o auth2 scope grants
+	 * @return <code>true</code> if at least one association between the o auth2 authorization and the o auth2 scope grants was added; <code>false</code> if they were all already associated
 	 */
-	public void addOAuth2ScopeGrants(long pk, long[] oAuth2ScopeGrantPKs);
+	public boolean addOAuth2ScopeGrants(long pk, long[] oAuth2ScopeGrantPKs);
 
 	/**
 	 * Adds an association between the o auth2 authorization and the o auth2 scope grants. Also notifies the appropriate model listeners and clears the mapping table finder cache.
 	 *
 	 * @param pk the primary key of the o auth2 authorization
 	 * @param oAuth2ScopeGrants the o auth2 scope grants
+	 * @return <code>true</code> if at least one association between the o auth2 authorization and the o auth2 scope grants was added; <code>false</code> if they were all already associated
 	 */
-	public void addOAuth2ScopeGrants(
+	public boolean addOAuth2ScopeGrants(
 		long pk,
 		java.util.List<com.liferay.oauth2.provider.model.OAuth2ScopeGrant>
 			oAuth2ScopeGrants);

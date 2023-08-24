@@ -69,7 +69,7 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
-import com.liferay.sites.kernel.util.SitesUtil;
+import com.liferay.sites.kernel.util.Sites;
 
 import java.io.Closeable;
 import java.io.File;
@@ -271,14 +271,14 @@ public class ExportImportPerformanceTest {
 			_layoutLocalService.updateLayout(layout);
 		}
 
-		SitesUtil.updateLayoutSetPrototypesLinks(
+		_sites.updateLayoutSetPrototypesLinks(
 			_group, _layoutSetPrototype.getLayoutSetPrototypeId(), 0, true,
 			true);
 
 		try (Closeable closeable = _startTimer()) {
 			MergeLayoutPrototypesThreadLocal.clearMergeComplete();
 
-			SitesUtil.mergeLayoutSetPrototypeLayouts(
+			_sites.mergeLayoutSetPrototypeLayouts(
 				_group, _group.getPublicLayoutSet());
 		}
 	}
@@ -432,7 +432,7 @@ public class ExportImportPerformanceTest {
 			RandomTestUtil.randomLocaleStringMap(defaultLocale), content,
 			_ddmStructure.getStructureId(), _ddmTemplate.getTemplateKey(),
 			StringPool.BLANK, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, true, 0, 0, 0, 0, 0,
-			true, true, false, null, null, null, null, _serviceContext);
+			true, true, false, 0, null, null, null, null, _serviceContext);
 	}
 
 	private void _addLayouts() throws Exception {
@@ -622,6 +622,9 @@ public class ExportImportPerformanceTest {
 	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
 
 	private ServiceContext _serviceContext;
+
+	@Inject
+	private Sites _sites;
 
 	@Inject
 	private Staging _staging;

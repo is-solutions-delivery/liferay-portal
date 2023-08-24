@@ -26,6 +26,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -316,7 +317,7 @@ public abstract class BaseDB implements DB {
 			return matcher.group(2);
 		}
 
-		return columnDef;
+		return StringUtil.trim(columnDef);
 	}
 
 	@Override
@@ -373,8 +374,13 @@ public abstract class BaseDB implements DB {
 	}
 
 	@Override
-	public Integer getSQLVarcharSize(String templateType) {
-		return _sqlVarcharSizes.get(templateType);
+	public Integer getSQLTypeDecimalDigits(String templateType) {
+		return _sqlTypeDecimalDigits.get(templateType);
+	}
+
+	@Override
+	public Integer getSQLTypeSize(String templateType) {
+		return _sqlTypeSizes.get(templateType);
 	}
 
 	@Override
@@ -791,18 +797,44 @@ public abstract class BaseDB implements DB {
 			_templates.put(TEMPLATE[i], actual[i]);
 		}
 
-		String[] templateTypes = ArrayUtil.clone(TEMPLATE, 5, 15);
+		String[] templateTypes = ArrayUtil.clone(TEMPLATE, 5, 16);
 
 		for (int i = 0; i < templateTypes.length; i++) {
-			_sqlTypes.put(StringUtil.trim(templateTypes[i]), getSQLTypes()[i]);
-		}
+			String actualType = StringUtil.trim(
+				_templates.get(templateTypes[i]));
 
-		String[] sqlTypeStringAndText = ArrayUtil.clone(TEMPLATE, 12, 14);
+			String templateType = StringUtil.trim(templateTypes[i]);
 
-		for (int i = 0; i < sqlTypeStringAndText.length; i++) {
-			_sqlVarcharSizes.put(
-				StringUtil.trim(sqlTypeStringAndText[i]),
-				getSQLVarcharSizes()[i]);
+			_sqlTypes.put(templateType, getSQLTypes()[i]);
+
+			Matcher matcher = _sqlTypeDecimalDigitsPattern.matcher(actualType);
+
+			_sqlTypeDecimalDigits.put(
+				templateType,
+				matcher.matches() ? GetterUtil.getInteger(matcher.group(1)) :
+					DB.SQL_SIZE_NONE);
+
+			if (templateType.equals("DATE")) {
+				_sqlTypeSizes.put(templateType, DB.SQL_SIZE_NONE);
+
+				continue;
+			}
+			else if (templateType.equals("STRING") ||
+					 templateType.equals("TEXT")) {
+
+				_sqlTypeSizes.put(
+					templateType, getSQLVarcharSizes().get(templateType));
+
+				continue;
+			}
+
+			matcher = _sqlTypeSizePattern.matcher(actualType);
+
+			_sqlTypeSizes.put(
+				templateType,
+				matcher.matches() ?
+					GetterUtil.getInteger(matcher.group(1), DB.SQL_SIZE_NONE) :
+						DB.SQL_SIZE_NONE);
 		}
 	}
 
@@ -833,35 +865,59 @@ public abstract class BaseDB implements DB {
 	}
 
 	protected String[] buildColumnNameTokens(String line) {
-		String[] words = StringUtil.split(line, CharPool.SPACE);
+		Matcher matcher = _alterColumnNamePattern.matcher(line);
 
-		String nullable = "";
-
-		if (words.length == 7) {
-			nullable = "not null;";
+		if (!matcher.find()) {
+			throw new IllegalArgumentException(
+				"Invalid alter column name statement");
 		}
 
-		return new String[] {words[1], words[2], words[3], words[4], nullable};
-	}
+		String defaultValue = matcher.group(5);
+		String nullable = matcher.group(6);
 
-	protected String[] buildColumnTypeTokens(String line) {
-		String[] words = StringUtil.split(line, CharPool.SPACE);
-
-		String nullable = "";
-
-		if (words.length == 6) {
+		if (defaultValue != null) {
 			nullable = "not null";
 		}
-		else if (words.length == 5) {
-			nullable = "null";
-		}
-		else if (words.length == 4) {
-			if (words[3].endsWith(";")) {
-				words[3] = words[3].substring(0, words[3].length() - 1);
+		else {
+			defaultValue = StringPool.BLANK;
+
+			if (nullable == null) {
+				nullable = StringPool.BLANK;
 			}
 		}
 
-		return new String[] {words[1], words[2], "", words[3], nullable};
+		return new String[] {
+			matcher.group(1), matcher.group(2), matcher.group(3),
+			matcher.group(4), defaultValue, StringUtil.toLowerCase(nullable)
+		};
+	}
+
+	protected String[] buildColumnTypeTokens(String line) {
+		Matcher matcher = _alterColumnTypePattern.matcher(line);
+
+		if (!matcher.find()) {
+			throw new IllegalArgumentException(
+				"Invalid alter column type statement");
+		}
+
+		String defaultValue = matcher.group(4);
+		String nullable = matcher.group(5);
+
+		if (defaultValue != null) {
+			nullable = "not null";
+		}
+		else if (nullable == null) {
+			defaultValue = StringPool.BLANK;
+
+			if (nullable == null) {
+				nullable = StringPool.BLANK;
+			}
+		}
+
+		return new String[] {
+			matcher.group(1), matcher.group(2), "", matcher.group(3),
+			defaultValue, StringUtil.toLowerCase(nullable)
+		};
 	}
 
 	protected String[] buildTableNameTokens(String line) {
@@ -1273,8 +1329,12 @@ public abstract class BaseDB implements DB {
 
 	protected abstract int[] getSQLTypes();
 
-	protected int[] getSQLVarcharSizes() {
-		return new int[] {-1, -1};
+	protected Map<String, Integer> getSQLVarcharSizes() {
+		return HashMapBuilder.put(
+			"STRING", SQL_SIZE_NONE
+		).put(
+			"TEXT", SQL_SIZE_NONE
+		).build();
 	}
 
 	protected abstract String[] getTemplate();
@@ -1349,7 +1409,8 @@ public abstract class BaseDB implements DB {
 	};
 
 	protected static final String[] REWORD_TEMPLATE = {
-		"@table@", "@old-column@", "@new-column@", "@type@", "@nullable@"
+		"@table@", "@old-column@", "@new-column@", "@type@", "@default@",
+		"@nullable@"
 	};
 
 	protected static final int[] SQL_VARCHAR_TYPES = {
@@ -1358,8 +1419,9 @@ public abstract class BaseDB implements DB {
 
 	protected static final String[] TEMPLATE = {
 		"##", "TRUE", "FALSE", "'01/01/1970'", "CURRENT_TIMESTAMP", " BLOB",
-		" SBLOB", " BOOLEAN", " DATE", " DOUBLE", " INTEGER", " LONG",
-		" STRING", " TEXT", " VARCHAR", " IDENTITY", "COMMIT_TRANSACTION"
+		" SBLOB", " BIGDECIMAL", " BOOLEAN", " DATE", " DOUBLE", " INTEGER",
+		" LONG", " STRING", " TEXT", " VARCHAR", " IDENTITY",
+		"COMMIT_TRANSACTION"
 	};
 
 	protected static final Pattern columnTypePattern = Pattern.compile(
@@ -1493,10 +1555,16 @@ public abstract class BaseDB implements DB {
 
 	private static final Log _log = LogFactoryUtil.getLog(BaseDB.class);
 
+	private static final Pattern _alterColumnNamePattern;
+	private static final Pattern _alterColumnTypePattern;
 	private static final Pattern _columnLengthPattern = Pattern.compile(
 		"([^,(\\s]+)\\[\\$COLUMN_LENGTH:(\\d+)\\$\\]");
 	private static final Pattern _defaultValuePattern = Pattern.compile(
-		"^('?)(\\d+|.*)\\1(::.*| )?", Pattern.CASE_INSENSITIVE);
+		"^(')?(\\d+|.*)\\1(::.*| )?", Pattern.CASE_INSENSITIVE);
+	private static final Pattern _sqlTypeDecimalDigitsPattern = Pattern.compile(
+		"^\\w+(?:\\(\\d+,\\s(\\d+)\\))", Pattern.CASE_INSENSITIVE);
+	private static final Pattern _sqlTypeSizePattern = Pattern.compile(
+		"^\\w+(?:\\((\\d+).*\\))", Pattern.CASE_INSENSITIVE);
 	private static final Pattern _templatePattern;
 
 	static {
@@ -1522,13 +1590,29 @@ public abstract class BaseDB implements DB {
 		sb.setIndex(sb.index() - 1);
 
 		_templatePattern = Pattern.compile(sb.toString());
+
+		String dataTypeRegex = "(\\w+(?:\\([^\\)]+\\))?)";
+		String defaultAndNullableRegex =
+			"(?:(?:DEFAULT\\s+('?.*[^']'?)\\s+NOT\\s+NULL)|((?:NOT\\s+)?NULL))";
+
+		_alterColumnNamePattern = Pattern.compile(
+			StringBundler.concat(
+				"^ALTER_COLUMN_NAME\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+",
+				dataTypeRegex, "\\s*", defaultAndNullableRegex, "?;?$"),
+			Pattern.CASE_INSENSITIVE);
+		_alterColumnTypePattern = Pattern.compile(
+			StringBundler.concat(
+				"^ALTER_COLUMN_TYPE\\s+(\\S+)\\s+(\\S+)\\s+", dataTypeRegex,
+				"\\s*", defaultAndNullableRegex, "?;?$"),
+			Pattern.CASE_INSENSITIVE);
 	}
 
 	private final DBType _dbType;
 	private final int _majorVersion;
 	private final int _minorVersion;
+	private final Map<String, Integer> _sqlTypeDecimalDigits = new HashMap<>();
 	private final Map<String, Integer> _sqlTypes = new HashMap<>();
-	private final Map<String, Integer> _sqlVarcharSizes = new HashMap<>();
+	private final Map<String, Integer> _sqlTypeSizes = new HashMap<>();
 	private boolean _supportsStringCaseSensitiveQuery = true;
 	private final Map<String, String> _templates = new HashMap<>();
 

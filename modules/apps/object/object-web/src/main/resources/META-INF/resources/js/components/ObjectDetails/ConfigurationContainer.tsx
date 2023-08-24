@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayPanel from '@clayui/panel';
 import {Toggle} from '@liferay/object-js-components-web';
+import {sub} from 'frontend-js-web';
 import React from 'react';
 
 interface ConfigurationContainerProps {
@@ -23,65 +23,62 @@ export function ConfigurationContainer({
 		: values.system;
 
 	return (
-		<ClayPanel
-			collapsable
-			defaultExpanded
-			displayTitle={Liferay.Language.get('configuration')}
-			displayType="unstyled"
-		>
-			<ClayPanel.Body>
-				<div className="lfr-objects__object-definition-details-configuration">
-					<Toggle
-						disabled={
-							isReadOnly || !hasUpdateObjectDefinitionPermission
-						}
-						label={Liferay.Language.get('show-widget')}
-						name="showWidget"
-						onToggle={() => setValues({portlet: !values.portlet})}
-						toggled={values.portlet}
-					/>
+		<div className="lfr-objects__object-definition-details-configuration">
+			<Toggle
+				disabled={isReadOnly || !hasUpdateObjectDefinitionPermission}
+				label={sub(
+					Liferay.Language.get('show-widget-in-x'),
+					Liferay.Language.get('page-builder')
+				)}
+				name="showWidget"
+				onToggle={() => setValues({portlet: !values.portlet})}
+				toggled={values.portlet}
+			/>
 
-					<Toggle
-						disabled={
-							isReadOnly || !hasUpdateObjectDefinitionPermission
-						}
-						label={Liferay.Language.get('enable-categorization')}
-						name="enableCategorization"
-						onToggle={() =>
-							setValues({
-								enableCategorization: !values.enableCategorization,
-							})
-						}
-						toggled={values.enableCategorization}
-					/>
+			<Toggle
+				disabled={isReadOnly || !hasUpdateObjectDefinitionPermission}
+				label={sub(
+					Liferay.Language.get('enable-x'),
+					Liferay.Language.get('categorization-of-object-entries')
+				)}
+				name="enableCategorization"
+				onToggle={() =>
+					setValues({
+						enableCategorization: !values.enableCategorization,
+					})
+				}
+				toggled={values.enableCategorization}
+			/>
 
-					<Toggle
-						disabled={
-							isReadOnly || !hasUpdateObjectDefinitionPermission
-						}
-						label={Liferay.Language.get('enable-comments')}
-						name="enableComments"
-						onToggle={() =>
-							setValues({
-								enableComments: !values.enableComments,
-							})
-						}
-						toggled={values.enableComments}
-					/>
+			<Toggle
+				disabled={isReadOnly || !hasUpdateObjectDefinitionPermission}
+				label={sub(
+					Liferay.Language.get('enable-x'),
+					Liferay.Language.get('comments-in-page-builder')
+				)}
+				name="enableComments"
+				onToggle={() =>
+					setValues({
+						enableComments: !values.enableComments,
+					})
+				}
+				toggled={values.enableComments}
+			/>
 
-					<Toggle
-						disabled={isReadOnly}
-						label={Liferay.Language.get('enable-entry-history')}
-						name="enableEntryHistory"
-						onToggle={() =>
-							setValues({
-								enableObjectEntryHistory: !values.enableObjectEntryHistory,
-							})
-						}
-						toggled={values.enableObjectEntryHistory}
-					/>
-				</div>
-			</ClayPanel.Body>
-		</ClayPanel>
+			<Toggle
+				disabled={isReadOnly}
+				label={sub(
+					Liferay.Language.get('enable-x'),
+					Liferay.Language.get('entry-history-in-audit-framework')
+				)}
+				name="enableEntryHistory"
+				onToggle={() =>
+					setValues({
+						enableObjectEntryHistory: !values.enableObjectEntryHistory,
+					})
+				}
+				toggled={values.enableObjectEntryHistory}
+			/>
+		</div>
 	);
 }

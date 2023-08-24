@@ -29,6 +29,7 @@ definition {
 	test BlockedSLACanBeFixed {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		WorkflowMetrics.setSLADefinitionsJobInterval(
 			definitionsJobInterval = 1,
@@ -173,6 +174,7 @@ definition {
 	@priority = 4
 	test DeletingSLANotReflectCompletedInstances {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		WorkflowMetrics.setSLADefinitionsJobInterval(
 			definitionsJobInterval = 1,
@@ -245,6 +247,7 @@ definition {
 	@priority = 5
 	test DeletingSLAReflectInProgressInstances {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		WorkflowMetrics.setSLADefinitionsJobInterval(
 			definitionsJobInterval = 1,
@@ -309,6 +312,7 @@ definition {
 	@priority = 2
 	test ErrorAlertIsDisplayedAgainWhenClosed {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		WorkflowMetrics.setSLADefinitionsJobInterval(
 			definitionsJobInterval = 1,
@@ -368,8 +372,10 @@ definition {
 	@description = "LPS-89082 - Verify and click (if possible) the error messages (at metrics, SLA list, and SLA defintion page) when SLA is blocked due to workflow changes"
 	@priority = 4
 	test ErrorMessagesAreDisplayedAndClickableWhenSLABlocked {
-		property portal.upstream = "quarantine";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
+
+		SearchAdministration.executeReindex();
 
 		WorkflowMetrics.setSLADefinitionsJobInterval(
 			definitionsJobInterval = 1,
@@ -820,6 +826,7 @@ definition {
 	@priority = 4
 	test SLAListIsGroupedWhenSLABlocked {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		WorkflowMetrics.setSLADefinitionsJobInterval(
 			definitionsJobInterval = 1,
@@ -896,6 +903,9 @@ definition {
 	@priority = 3
 	test SLAProcessingDateIsDisplayedUnderAlertMessage {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
+
+		SearchAdministration.executeReindex();
 
 		WorkflowMetrics.setSLADefinitionsJobInterval(
 			definitionsJobInterval = 1,
@@ -1101,12 +1111,6 @@ definition {
 	test SLASettingsAvailableOnMetricsPage {
 		WorkflowMetrics.goToWorkflowProcessMetrics(workflowProcessName = "Single Approver");
 
-		// Workaround for LPS-186021
-
-		while ((IsElementNotPresent(locator1 = "WorkflowMetricsSLA#SLA_ELLIPSIS_BUTTON")) && (maxIterations = "5")) {
-			Refresh();
-		}
-
 		AssertElementPresent(locator1 = "WorkflowMetricsSLA#SLA_ELLIPSIS_BUTTON");
 
 		Click(locator1 = "WorkflowMetricsSLA#SLA_ELLIPSIS_BUTTON");
@@ -1228,6 +1232,7 @@ definition {
 	@priority = 4
 	test UpdatingSLANotReflectCompletedInstances {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		WorkflowMetrics.setSLADefinitionsJobInterval(
 			definitionsJobInterval = 1,
@@ -1319,6 +1324,7 @@ definition {
 	test UpdatingSLARecalculateTimeInProgressInstances {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		WorkflowMetrics.setSLADefinitionsJobInterval(
 			definitionsJobInterval = 1,

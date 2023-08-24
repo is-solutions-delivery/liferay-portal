@@ -37,11 +37,10 @@ MBCategoryDisplay categoryDisplay = new MBCategoryDisplay(scopeGroupId, category
 					<c:when test="<%= curCategory != null %>">
 
 						<%
-						Map<String, Object> rowData = HashMapBuilder.<String, Object>put(
-							"actions", StringUtil.merge(mbEntriesManagementToolbarDisplayContext.getAvailableActions(curCategory))
-						).build();
-
-						row.setData(rowData);
+						row.setData(
+							HashMapBuilder.<String, Object>put(
+								"actions", StringUtil.merge(mbEntriesManagementToolbarDisplayContext.getAvailableActions(curCategory))
+							).build());
 
 						row.setPrimaryKey(String.valueOf(curCategory.getCategoryId()));
 						%>
@@ -65,7 +64,12 @@ MBCategoryDisplay categoryDisplay = new MBCategoryDisplay(scopeGroupId, category
 								</aui:a>
 
 								<c:if test='<%= Objects.equals(curCategory.getDisplayStyle(), "question") %>'>
-									<aui:icon cssClass="icon-monospaced" image="question-circle" markupView="lexicon" message="question" />
+									<span class="lfr-portal-tooltip" title="<%= LanguageUtil.get(request, "question") %>">
+										<clay:icon
+											aria-label="<%= LanguageUtil.get(request, "question") %>"
+											symbol="question-circle"
+										/>
+									</span>
 								</c:if>
 							</h2>
 
@@ -109,11 +113,10 @@ MBCategoryDisplay categoryDisplay = new MBCategoryDisplay(scopeGroupId, category
 							row.setRestricted(!MBMessagePermission.contains(permissionChecker, message, ActionKeys.VIEW));
 						}
 
-						Map<String, Object> rowData = HashMapBuilder.<String, Object>put(
-							"actions", StringUtil.merge(mbEntriesManagementToolbarDisplayContext.getAvailableActions(message))
-						).build();
-
-						row.setData(rowData);
+						row.setData(
+							HashMapBuilder.<String, Object>put(
+								"actions", StringUtil.merge(mbEntriesManagementToolbarDisplayContext.getAvailableActions(message))
+							).build());
 						%>
 
 						<liferay-portlet:renderURL varImpl="rowURL">
@@ -149,11 +152,21 @@ MBCategoryDisplay categoryDisplay = new MBCategoryDisplay(scopeGroupId, category
 								%>
 
 								<c:if test="<%= (threadPriority != null) && (thread.getPriority() > 0) %>">
-									<div class="<%= threadPriority[1] %>" title="<%= HtmlUtil.escapeAttribute(threadPriority[0]) %>"></div>
+									<span class="lfr-portal-tooltip" title="<%= HtmlUtil.escapeAttribute(threadPriority[0]) %>">
+										<clay:icon
+											aria-label="<%= HtmlUtil.escapeAttribute(threadPriority[0]) %>"
+											symbol="<%= threadPriority[1] %>"
+										/>
+									</span>
 								</c:if>
 
 								<c:if test="<%= thread.isQuestion() %>">
-									<aui:icon cssClass="icon-monospaced" image="question-circle" markupView="lexicon" message="question" />
+									<span class="lfr-portal-tooltip" title="<%= LanguageUtil.get(request, "question") %>">
+										<clay:icon
+											aria-label="<%= LanguageUtil.get(request, "question") %>"
+											symbol="question-circle"
+										/>
+									</span>
 								</c:if>
 							</h2>
 
@@ -232,7 +245,10 @@ MBCategoryDisplay categoryDisplay = new MBCategoryDisplay(scopeGroupId, category
 								<aui:workflow-status markupView="lexicon" showIcon="<%= false %>" showLabel="<%= false %>" status="<%= message.getStatus() %>" />
 
 								<c:if test="<%= thread.isLocked() %>">
-									<aui:icon image="lock" markupView="lexicon" />
+									<clay:icon
+										aria-label="<%= LanguageUtil.get(request, "locked") %>"
+										symbol="lock"
+									/>
 
 									<liferay-ui:message key="locked" />
 								</c:if>

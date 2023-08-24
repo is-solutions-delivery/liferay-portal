@@ -66,6 +66,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ANY_WITH_NAME</td>
+	<td>//input[@name='${name}']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ASSET_PRIORITY</td>
 	<td>//input[contains(@id,'assetPriority')]</td>
 	<td></td>
@@ -367,7 +372,7 @@
 </tr>
 <tr>
 	<td>GROUPED_TEXT_INPUT</td>
-	<td>//div[contains(@class,'panel-group')][contains(.,'${key_groupLabel}')]//div[contains(@class,'form-group')][label[normalize-space(text())='${key_fieldLabel}']]//input</td>
+	<td>//div[contains(@class,'panel')][@role='tablist'][contains(.,'${key_groupLabel}')]//div[contains(@class,'form-group')][label[normalize-space(text())='${key_fieldLabel}']]//input</td>
 	<td></td>
 </tr>
 <tr>

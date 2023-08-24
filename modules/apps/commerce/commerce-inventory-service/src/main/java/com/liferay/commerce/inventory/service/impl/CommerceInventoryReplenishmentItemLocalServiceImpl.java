@@ -22,6 +22,8 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.math.BigDecimal;
+
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +46,7 @@ public class CommerceInventoryReplenishmentItemLocalServiceImpl
 			addCommerceInventoryReplenishmentItem(
 				String externalReferenceCode, long userId,
 				long commerceInventoryWarehouseId, Date availabilityDate,
-				int quantity, String sku, String unitOfMeasureKey)
+				BigDecimal quantity, String sku, String unitOfMeasureKey)
 		throws PortalException {
 
 		User user = _userLocalService.getUser(userId);
@@ -126,7 +128,7 @@ public class CommerceInventoryReplenishmentItemLocalServiceImpl
 	}
 
 	@Override
-	public long getCommerceInventoryReplenishmentItemsCount(
+	public BigDecimal getCommerceInventoryReplenishmentItemsCount(
 		long commerceInventoryWarehouseId, String sku) {
 
 		DynamicQuery dynamicQuery =
@@ -145,12 +147,12 @@ public class CommerceInventoryReplenishmentItemLocalServiceImpl
 
 		dynamicQuery.add(skuProperty.eq(sku));
 
-		List<Long> results =
+		List<BigDecimal> results =
 			commerceInventoryReplenishmentItemLocalService.dynamicQuery(
 				dynamicQuery);
 
 		if (results.get(0) == null) {
-			return 0;
+			return BigDecimal.ZERO;
 		}
 
 		return results.get(0);
@@ -178,7 +180,7 @@ public class CommerceInventoryReplenishmentItemLocalServiceImpl
 			updateCommerceInventoryReplenishmentItem(
 				String externalReferenceCode,
 				long commerceInventoryReplenishmentItemId,
-				Date availabilityDate, int quantity, long mvccVersion)
+				Date availabilityDate, BigDecimal quantity, long mvccVersion)
 		throws PortalException {
 
 		CommerceInventoryReplenishmentItem commerceInventoryReplenishmentItem =
@@ -238,8 +240,8 @@ public class CommerceInventoryReplenishmentItemLocalServiceImpl
 		}
 	}
 
-	private void _validateQuantity(int quantity) throws PortalException {
-		if (quantity <= 0) {
+	private void _validateQuantity(BigDecimal quantity) throws PortalException {
+		if ((quantity == null) || (quantity.compareTo(BigDecimal.ZERO) <= 0)) {
 			throw new CommerceInventoryReplenishmentQuantityException(
 				"Enter a quantity greater than or equal to 1");
 		}

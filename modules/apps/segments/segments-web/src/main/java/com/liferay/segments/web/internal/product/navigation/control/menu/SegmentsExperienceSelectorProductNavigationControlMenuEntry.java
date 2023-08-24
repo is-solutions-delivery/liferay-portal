@@ -17,6 +17,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutTypeController;
 import com.liferay.portal.kernel.model.LayoutTypePortlet;
+import com.liferay.portal.kernel.model.impl.VirtualLayout;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.permission.LayoutPermission;
@@ -91,19 +92,19 @@ public class SegmentsExperienceSelectorProductNavigationControlMenuEntry
 						_segmentsExperimentLocalService,
 						_segmentsExperimentRelLocalService);
 
-			PrintWriter writer = httpServletResponse.getWriter();
+			PrintWriter printWriter = httpServletResponse.getWriter();
 
-			writer.write("<div class=\"border-left border-secondary ");
-			writer.write("control-menu-nav-item ml-3 pl-3\">");
+			printWriter.write("<div class=\"border-left border-secondary ");
+			printWriter.write("control-menu-nav-item c-ml-3 c-pl-md-3\">");
 
 			_reactRenderer.renderReact(
 				new ComponentDescriptor(
 					_npmResolver.resolveModuleName("segments-web") +
 						"/js/components/ExperiencePicker"),
 				segmentsExperienceSelectorDisplayContext.getData(),
-				httpServletRequest, writer);
+				httpServletRequest, printWriter);
 
-			writer.write("</div>");
+			printWriter.write("</div>");
 		}
 		catch (PortalException portalException) {
 			if (_log.isDebugEnabled()) {
@@ -141,7 +142,9 @@ public class SegmentsExperienceSelectorProductNavigationControlMenuEntry
 
 		Layout layout = themeDisplay.getLayout();
 
-		if (!layout.isTypeContent() || !_sites.isLayoutUpdateable(layout)) {
+		if ((layout instanceof VirtualLayout) || !layout.isLayoutUpdateable() ||
+			!layout.isTypeContent()) {
+
 			return false;
 		}
 

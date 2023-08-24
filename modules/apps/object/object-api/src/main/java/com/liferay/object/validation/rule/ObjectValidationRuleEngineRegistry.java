@@ -13,8 +13,9 @@ import java.util.List;
 public interface ObjectValidationRuleEngineRegistry {
 
 	public ObjectValidationRuleEngine getObjectValidationRuleEngine(
-		String name);
+		long companyId, String key);
 
-	public List<ObjectValidationRuleEngine> getObjectValidationRuleEngines();
+	public List<ObjectValidationRuleEngine> getObjectValidationRuleEngines(
+		long companyId, String objectDefinitionName);
 
 }

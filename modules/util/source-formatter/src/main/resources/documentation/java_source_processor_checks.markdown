@@ -94,6 +94,7 @@ JavaIOExceptionCheck | [Styling](styling_checks.markdown#styling-checks) | Valid
 JavaIgnoreAnnotationCheck | [Bug Prevention](bug_prevention_checks.markdown#bug-prevention-checks) | Finds methods with `@Ignore` annotation in test classes. |
 JavaImportsCheck | [Styling](styling_checks.markdown#styling-checks) | Sorts and groups imports in `.java` files. |
 [JavaIndexableCheck](check/java_indexable_check.markdown#javaindexablecheck) | [Bug Prevention](bug_prevention_checks.markdown#bug-prevention-checks) | Checks that the type gets returned when using annotation `@Indexable`. |
+JavaInjectAnnotationsCheck | [Bug Prevention](bug_prevention_checks.markdown#bug-prevention-checks) | Performs several checks on classes with `@Inject` annotations. |
 JavaInnerClassImportsCheck | [Styling](styling_checks.markdown#styling-checks) | Finds cases where inner classes are imported. |
 JavaInterfaceCheck | [Bug Prevention](bug_prevention_checks.markdown#bug-prevention-checks) | Checks that `interface` is not `static`. |
 JavaInternalPackageCheck | [Bug Prevention](bug_prevention_checks.markdown#bug-prevention-checks) | Performs several checks on class in `internal` package. |
@@ -165,6 +166,7 @@ JavaUpgradeCommerceShippingOptionCheck | [Upgrade](upgrade_checks.markdown#upgra
 JavaUpgradeConnectionCheck | [Bug Prevention](bug_prevention_checks.markdown#bug-prevention-checks) | Finds cases where `DataAccess.getConnection` is used (instead of using the available global variable `connection`). |
 [JavaUpgradeDropTableCheck](check/java_upgrade_drop_table_check.markdown#javaupgradedroptablecheck) | [Bug Prevention](bug_prevention_checks.markdown#bug-prevention-checks) | Finds cases where `DROP_TABLE_IF_EXISTS` should be used (instead of `drop table if exists`). |
 JavaUpgradeEmptyLinesCheck | [Styling](styling_checks.markdown#styling-checks) | Finds missing and unnecessary empty lines in Upgrade classes. |
+JavaUpgradeFetchCPDefinitionByCProductExternalReferenceCodeCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Reorder parameters in the fetchCPDefinitionByCProductExternalReferenceCode method |
 [JavaUpgradeIndexCheck](check/java_upgrade_index_check.markdown#javaupgradeindexcheck) | [Bug Prevention](bug_prevention_checks.markdown#bug-prevention-checks) | Finds cases where the service builder indexes are updated manually in Upgrade classes. This is not needed because Liferay takes care of it. |
 JavaUpgradeModelPermissionsCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replace setGroupPermissions and setGuestPermissions by new implementation |
 JavaUpgradeOnAfterUpdateParameterCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Add new parameter in method onAfterUpdate for classes extending the BaseModelListener |

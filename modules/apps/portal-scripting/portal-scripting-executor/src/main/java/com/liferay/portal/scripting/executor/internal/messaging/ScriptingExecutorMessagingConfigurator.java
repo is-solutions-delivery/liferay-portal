@@ -30,8 +30,6 @@ public class ScriptingExecutorMessagingConfigurator {
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
-		_bundleContext = bundleContext;
-
 		DestinationConfiguration destinationConfiguration =
 			new DestinationConfiguration(
 				DestinationConfiguration.DESTINATION_TYPE_PARALLEL,
@@ -45,7 +43,7 @@ public class ScriptingExecutorMessagingConfigurator {
 				"destination.name", destination.getName()
 			).build();
 
-		_destinationServiceRegistration = bundleContext.registerService(
+		_serviceRegistration = bundleContext.registerService(
 			Destination.class, destination, properties);
 
 		ScriptingExecutorMessageListener scriptingExecutorMessageListener =
@@ -56,30 +54,18 @@ public class ScriptingExecutorMessagingConfigurator {
 
 	@Deactivate
 	protected void deactivate() {
-		if (_destinationServiceRegistration != null) {
-			Destination destination = _bundleContext.getService(
-				_destinationServiceRegistration.getReference());
-
-			_destinationServiceRegistration.unregister();
-
-			destination.destroy();
-		}
-
-		_bundleContext = null;
+		_serviceRegistration.unregister();
 	}
-
-	private volatile BundleContext _bundleContext;
 
 	@Reference
 	private DestinationFactory _destinationFactory;
-
-	private volatile ServiceRegistration<Destination>
-		_destinationServiceRegistration;
 
 	@Reference
 	private MessageBus _messageBus;
 
 	@Reference
 	private Scripting _scripting;
+
+	private ServiceRegistration<Destination> _serviceRegistration;
 
 }

@@ -116,7 +116,9 @@ definition {
 	test AssertSuggestionsCannotOfferInvalidWordsAsSuggestion {
 		property custom.properties = "locales.enabled=de_DE,en_US${line.separator}locales=de_DE,en_US${line.separator}index.search.spell.checker.dictionary[de_DE]=spellchecker/dictionary_de_DE.txt${line.separator}index.search.spell.checker.supported.locales=en_US,es_ES,de_DE";
 		property index.search.spell.checker.enabled = "true";
+		property search.environment.suite.exclude = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		JSONWebcontent.addBasicWebContentLocalized(
 			contentMap = "en_US:WC Content,de_DE:ächten angreifen anmarschieren",
@@ -1187,11 +1189,26 @@ definition {
 
 	@priority = 4
 	test SearchWikiPage {
-		JSONWiki.addWikiPage(
-			groupName = "Guest",
-			wikiNodeName = "Main",
+		ProductMenu.gotoPortlet(
+			category = "Site Builder",
+			portlet = "Pages");
+
+		PagesAdmin.addPage(pageName = "Wiki Test Page");
+
+		Navigator.gotoPage(pageName = "Wiki Test Page");
+
+		Portlet.addPG(portletName = "Wiki");
+
+		Navigator.gotoPage(pageName = "Wiki Test Page");
+
+		WikiNavigator.gotoAllPagesPG();
+
+		WikiPage.addPG(
+			pageName = "Wiki Test Page",
 			wikiPageContent = "Wiki Page Content",
-			wikiPageName = "Wiki Page Title");
+			wikiPageTitle = "Wiki Page Title");
+
+		Navigator.openURL();
 
 		SearchPortlets.searchEmbedded(searchTerm = "Wiki Page Title");
 
@@ -1418,7 +1435,9 @@ definition {
 
 	@priority = 5
 	test ViewSearchResultDetails {
+		property app.server.types = "tomcat";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Configuration",

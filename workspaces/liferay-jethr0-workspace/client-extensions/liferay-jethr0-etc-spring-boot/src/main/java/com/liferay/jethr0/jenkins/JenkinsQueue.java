@@ -5,11 +5,11 @@
 
 package com.liferay.jethr0.jenkins;
 
-import com.liferay.jethr0.build.Build;
-import com.liferay.jethr0.build.queue.BuildQueue;
-import com.liferay.jethr0.build.repository.BuildRepository;
-import com.liferay.jethr0.build.repository.BuildRunRepository;
-import com.liferay.jethr0.build.run.BuildRun;
+import com.liferay.jethr0.bui1d.Build;
+import com.liferay.jethr0.bui1d.queue.BuildQueue;
+import com.liferay.jethr0.bui1d.repository.BuildRepository;
+import com.liferay.jethr0.bui1d.repository.BuildRunRepository;
+import com.liferay.jethr0.bui1d.run.BuildRun;
 import com.liferay.jethr0.jenkins.node.JenkinsNode;
 import com.liferay.jethr0.jenkins.repository.JenkinsCohortRepository;
 import com.liferay.jethr0.jenkins.repository.JenkinsNodeRepository;
@@ -54,10 +54,16 @@ public class JenkinsQueue {
 		_jenkinsServerRepository.initializeRelationships();
 
 		invoke();
+
+		_initialized = true;
 	}
 
 	public void invoke() {
 		update();
+	}
+
+	public boolean isInitialized() {
+		return _initialized;
 	}
 
 	@Scheduled(cron = "${liferay.jethr0.jenkins.queue.update.cron}")
@@ -99,7 +105,7 @@ public class JenkinsQueue {
 
 				_jmsEventHandler.send(
 					jenkinsServer,
-					String.valueOf(buildRun.getInvokeJSONObject()));
+					String.valueOf(buildRun.getInvokeJSONObject(jenkinsNode)));
 
 				_buildRepository.update(build);
 				_buildRunRepository.update(buildRun);
@@ -117,6 +123,8 @@ public class JenkinsQueue {
 
 	@Autowired
 	private BuildRunRepository _buildRunRepository;
+
+	private boolean _initialized;
 
 	@Autowired
 	private JenkinsCohortRepository _jenkinsCohortRepository;

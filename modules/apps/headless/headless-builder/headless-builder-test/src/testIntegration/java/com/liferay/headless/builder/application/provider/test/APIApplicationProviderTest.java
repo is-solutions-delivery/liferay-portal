@@ -79,6 +79,7 @@ public class APIApplicationProviderTest extends BaseTestCase {
 				"title", "title"
 			).toString(),
 			"headless-builder/applications", Http.Method.POST);
+
 		HTTPTestUtil.invokeToJSONObject(
 			null,
 			StringBundler.concat(

@@ -24,8 +24,6 @@ import org.gradle.api.artifacts.ConfigurationContainer;
 import org.gradle.api.artifacts.DependencySet;
 import org.gradle.api.artifacts.dsl.ArtifactHandler;
 import org.gradle.api.file.CopySpec;
-import org.gradle.api.plugins.BasePlugin;
-import org.gradle.api.tasks.Upload;
 import org.gradle.api.tasks.bundling.Jar;
 
 /**
@@ -38,19 +36,14 @@ public class PoshiRunnerResourcesPlugin implements Plugin<Project> {
 	public static final String POSHI_RUNNER_RESOURCES_CONFIGURATION_NAME =
 		"poshiRunnerResources";
 
-	public static final String UPLOAD_POSHI_RUNNER_RESOURCES_TASK_NAME =
-		"uploadPoshiRunnerResources";
-
 	@Override
 	public void apply(Project project) {
 		final PoshiRunnerResourcesExtension poshiRunnerResourcesExtension =
 			GradleUtil.addExtension(
 				project, PLUGIN_NAME, PoshiRunnerResourcesExtension.class);
 
-		Configuration configuration = _addConfigurationPoshiRunnerResources(
+		_addConfigurationPoshiRunnerResources(
 			project, poshiRunnerResourcesExtension);
-
-		_addTaskUploadPoshiRunnerResources(project, configuration);
 
 		project.afterEvaluate(
 			new Action<Project>() {
@@ -157,19 +150,6 @@ public class PoshiRunnerResourcesPlugin implements Plugin<Project> {
 			project, POSHI_RUNNER_RESOURCES_CONFIGURATION_NAME, "com.liferay",
 			"com.liferay.poshi.runner.resources",
 			poshiRunnerResourcesExtension.getVersion());
-	}
-
-	private Upload _addTaskUploadPoshiRunnerResources(
-		Project project, Configuration configuration) {
-
-		Upload upload = GradleUtil.addTask(
-			project, UPLOAD_POSHI_RUNNER_RESOURCES_TASK_NAME, Upload.class);
-
-		upload.setConfiguration(configuration);
-		upload.setDescription("Uploads all Poshi Runner resources artifacts.");
-		upload.setGroup(BasePlugin.UPLOAD_GROUP);
-
-		return upload;
 	}
 
 }

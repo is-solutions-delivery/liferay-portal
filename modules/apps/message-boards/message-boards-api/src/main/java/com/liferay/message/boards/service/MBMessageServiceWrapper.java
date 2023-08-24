@@ -302,6 +302,24 @@ public class MBMessageServiceWrapper
 	}
 
 	@Override
+	public java.util.List<MBMessage> getGroupUserMessageBoardMessagesActivity(
+			long groupId, long userId, int start, int end)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _mbMessageService.getGroupUserMessageBoardMessagesActivity(
+			groupId, userId, start, end);
+	}
+
+	@Override
+	public int getGroupUserMessageBoardMessagesActivityCount(
+			long groupId, long userId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _mbMessageService.getGroupUserMessageBoardMessagesActivityCount(
+			groupId, userId);
+	}
+
+	@Override
 	public MBMessage getMBMessageByExternalReferenceCode(
 			String externalReferenceCode, long groupId)
 		throws com.liferay.portal.kernel.exception.PortalException {

@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.workflow.WorkflowInstanceManagerUtil;
 import com.liferay.portal.workflow.comparator.WorkflowComparatorFactory;
 import com.liferay.portal.workflow.constants.WorkflowPortletKeys;
 import com.liferay.portal.workflow.constants.WorkflowWebKeys;
+import com.liferay.portal.workflow.manager.WorkflowLogManager;
 import com.liferay.portal.workflow.portlet.tab.BaseWorkflowPortletTab;
 import com.liferay.portal.workflow.portlet.tab.WorkflowPortletTab;
 import com.liferay.portal.workflow.web.internal.configuration.WorkflowInstanceWebConfiguration;
@@ -59,11 +60,6 @@ public class WorkflowInstancePortletTab extends BaseWorkflowPortletTab {
 	@Override
 	public String getName() {
 		return WorkflowWebKeys.WORKFLOW_TAB_INSTANCE;
-	}
-
-	@Override
-	public String getSearchJspPath() {
-		return "/instance/workflow_instance_search.jsp";
 	}
 
 	@Override
@@ -148,6 +144,9 @@ public class WorkflowInstancePortletTab extends BaseWorkflowPortletTab {
 		workflowInstanceWebConfiguration;
 
 	@Reference
+	protected WorkflowLogManager workflowLogManager;
+
+	@Reference
 	protected WorkflowPreprocessorHelper workflowPreprocessorHelper;
 
 	private void _setWorkflowInstanceDisplayContextRenderRequestAttribute(
@@ -168,13 +167,13 @@ public class WorkflowInstancePortletTab extends BaseWorkflowPortletTab {
 				new MyWorkflowInstanceViewDisplayContext(
 					portal.getLiferayPortletRequest(renderRequest),
 					portal.getLiferayPortletResponse(renderResponse),
-					workflowComparatorFactory));
+					workflowComparatorFactory, workflowLogManager));
 			renderRequest.setAttribute(
 				WorkflowWebKeys.WORKFLOW_INSTANCE_EDIT_DISPLAY_CONTEXT,
 				new MyWorkflowInstanceEditDisplayContext(
 					portal.getLiferayPortletRequest(renderRequest),
 					portal.getLiferayPortletResponse(renderResponse),
-					workflowComparatorFactory));
+					workflowComparatorFactory, workflowLogManager));
 		}
 		else {
 			renderRequest.setAttribute(
@@ -182,13 +181,13 @@ public class WorkflowInstancePortletTab extends BaseWorkflowPortletTab {
 				new WorkflowInstanceViewDisplayContext(
 					portal.getLiferayPortletRequest(renderRequest),
 					portal.getLiferayPortletResponse(renderResponse),
-					workflowComparatorFactory));
+					workflowComparatorFactory, workflowLogManager));
 			renderRequest.setAttribute(
 				WorkflowWebKeys.WORKFLOW_INSTANCE_EDIT_DISPLAY_CONTEXT,
 				new WorkflowInstanceEditDisplayContext(
 					portal.getLiferayPortletRequest(renderRequest),
 					portal.getLiferayPortletResponse(renderResponse),
-					workflowComparatorFactory));
+					workflowComparatorFactory, workflowLogManager));
 		}
 	}
 

@@ -976,12 +976,6 @@ definition {
 
 		WorkflowMetrics.goToWorkflowProcessMetrics(workflowProcessName = ${workflowProcessName});
 
-		// Workaround for LPS-186021
-
-		while ((IsElementNotPresent(locator1 = "WorkflowMetricsSLA#METRICS_MENU_SLA")) && (maxIterations = "5")) {
-			Refresh();
-		}
-
 		Click(locator1 = "WorkflowMetricsSLA#METRICS_MENU_SLA");
 
 		Click(locator1 = "WorkflowMetricsSLA#METRICS_SLA_SETTINGS");
@@ -1007,11 +1001,15 @@ definition {
 
 		Check.checkNotVisible(locator1 = "WorkflowAllItems#WORKFLOW_ALL_ITEMS_SELECT_ALL_MODAL");
 
-		Click(locator1 = "Pagination#NEXT_LINK");
+		Click(
+			key_pageNumber = 2,
+			locator1 = "Pagination#ANY_PAGE_MODAL");
 
 		WorkflowMetrics.assertCheckboxUnchecked(taskListUnchecked = ${taskListUnchecked});
 
-		Click(locator1 = "Pagination#PREVIOUS_LINK");
+		Click(
+			key_pageNumber = 1,
+			locator1 = "Pagination#ANY_PAGE_MODAL");
 
 		WorkflowMetrics.assertCheckboxChecked(taskList = ${taskList});
 

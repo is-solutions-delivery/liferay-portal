@@ -670,6 +670,8 @@ definition {
 		}
 		else {
 			Alert.viewSuccessMessage();
+
+			Click(locator1 = "PageEditor#EXPERIENCE_SELECTOR");
 		}
 	}
 
@@ -2084,6 +2086,8 @@ definition {
 
 				SelectFrameTop();
 
+				PageEditor.waitForAutoSave();
+
 				PageEditor.viewItemSelectorText(
 					fieldLabel = "Collection",
 					text = ${assetListName});
@@ -2093,7 +2097,9 @@ definition {
 
 				LexiconCard.clickCard(card = ${infoListProviderName});
 
-				Refresh();
+				SelectFrameTop();
+
+				PageEditor.waitForAutoSave();
 
 				PageEditor.clickConfigurableField(
 					fragmentName = ${fragmentName},
@@ -2107,6 +2113,10 @@ definition {
 				NavItem.click(navItem = "Related Items Collection Providers");
 
 				LexiconCard.clickCard(card = ${infoItemRelatedListProviderName});
+
+				SelectFrameTop();
+
+				PageEditor.waitForAutoSave();
 
 				PageEditor.viewItemSelectorText(
 					fieldLabel = "Collection",
@@ -3002,12 +3012,10 @@ definition {
 	}
 
 	macro editFragmentImage {
-		PageEditor.clickEditableField(
+		PageEditor.gotoImageSource(
 			contributed = ${contributed},
 			fragmentName = ${fragmentName},
 			id = ${id});
-
-		Navigator.gotoNavTab(navTab = "Image Source");
 
 		if (!(IsSelectedLabel(key_fieldLabel = "Source Selection", locator1 = "Select#GENERIC_SELECT_FIELD", value1 = "Direct"))) {
 			Select(
@@ -4309,6 +4317,15 @@ return	Array.from(getWebElement("(//div[@aria-label='${fragmentName}'])[${index}
 		}
 	}
 
+	macro gotoImageSource {
+		PageEditor.clickEditableField(
+			contributed = ${contributed},
+			fragmentName = ${fragmentName},
+			id = ${id});
+
+		Navigator.gotoNavTab(navTab = "Image Source");
+	}
+
 	macro gotoSaveAsFragment {
 		var key_fragmentName = ${fragmentName};
 
@@ -4785,7 +4802,7 @@ return	Array.from(getWebElement("(//div[@aria-label='${fragmentName}'])[${index}
 			locator1 = "IFrame#MODAL_ANY");
 
 		Click(
-			key_objectLabel = ${objectLabel},
+			key_entryValue = ${entryValue},
 			locator1 = "PageEditor#PREVIEW_WITH_CUSTOM_OBJECT_ITEM");
 
 		IFrame.selectTopFrame();

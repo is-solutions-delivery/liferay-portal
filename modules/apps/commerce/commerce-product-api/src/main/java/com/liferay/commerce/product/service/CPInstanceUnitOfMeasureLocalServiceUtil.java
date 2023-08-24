@@ -318,6 +318,12 @@ public class CPInstanceUnitOfMeasureLocalServiceUtil {
 			cpInstanceId, start, end, orderByComparator);
 	}
 
+	public static List<CPInstanceUnitOfMeasure> getCPInstanceUnitOfMeasures(
+		long companyId, String sku) {
+
+		return getService().getCPInstanceUnitOfMeasures(companyId, sku);
+	}
+
 	/**
 	 * Returns the number of cp instance unit of measures.
 	 *
@@ -329,6 +335,12 @@ public class CPInstanceUnitOfMeasureLocalServiceUtil {
 
 	public static int getCPInstanceUnitOfMeasuresCount(long cpInstanceId) {
 		return getService().getCPInstanceUnitOfMeasuresCount(cpInstanceId);
+	}
+
+	public static int getCPInstanceUnitOfMeasuresCount(
+		long companyId, String sku) {
+
+		return getService().getCPInstanceUnitOfMeasuresCount(companyId, sku);
 	}
 
 	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery

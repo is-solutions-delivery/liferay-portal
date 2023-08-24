@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -32,6 +33,7 @@ import java.sql.Types;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -331,8 +333,12 @@ public class OracleDB extends BaseDB {
 	}
 
 	@Override
-	protected int[] getSQLVarcharSizes() {
-		return _SQL_VARCHAR_SIZES;
+	protected Map<String, Integer> getSQLVarcharSizes() {
+		return HashMapBuilder.put(
+			"STRING", _SQL_STRING_SIZE
+		).put(
+			"TEXT", SQL_SIZE_NONE
+		).build();
 	}
 
 	@Override
@@ -413,21 +419,36 @@ public class OracleDB extends BaseDB {
 
 					String nullable = template[template.length - 1];
 
-					if (!Validator.isBlank(nullable)) {
-						boolean currentNullable = isNullable(
-							template[0], template[1]);
+					boolean currentNullable = isNullable(
+						template[0], template[1]);
 
+					if (!Validator.isBlank(nullable)) {
 						if ((nullable.equals("null") && currentNullable) ||
 							(nullable.equals("not null") && !currentNullable)) {
 
 							nullable = StringPool.BLANK;
 						}
 					}
+					else if (!currentNullable) {
+						nullable = "null";
+					}
 
-					line = StringUtil.replace(
-						"alter table @table@ modify @old-column@ @type@ " +
-							nullable + ";",
-						REWORD_TEMPLATE, template);
+					String defaultValue = template[template.length - 2];
+
+					if (!Validator.isBlank(defaultValue)) {
+						line = StringUtil.replace(
+							StringBundler.concat(
+								"alter table @table@ modify @old-column@ ",
+								"@type@ default @default@ ", nullable, ";"),
+							REWORD_TEMPLATE, template);
+					}
+					else {
+						line = StringUtil.replace(
+							StringBundler.concat(
+								"alter table @table@ modify @old-column@ ",
+								"@type@ default null ", nullable, ";"),
+							REWORD_TEMPLATE, template);
+					}
 
 					line = StringUtil.replace(line, " ;", ";");
 				}
@@ -456,9 +477,9 @@ public class OracleDB extends BaseDB {
 	private static final String[] _ORACLE = {
 		"--", "1", "0",
 		"to_date('1970-01-01 00:00:00','YYYY-MM-DD HH24:MI:SS')", "sysdate",
-		" blob", " blob", " number(1, 0)", " timestamp", " binary_double",
-		" number(30,0)", " number(30,0)", " varchar2(4000 char)", " clob",
-		" varchar2", "", "commit"
+		" blob", " blob", " decimal(30, 16)", " number(1, 0)", " timestamp",
+		" binary_double", " number(30,0)", " number(30,0)",
+		" varchar2(4000 char)", " clob", " varchar2", "", "commit"
 	};
 
 	private static final int _SQL_STRING_SIZE = 4000;
@@ -466,13 +487,9 @@ public class OracleDB extends BaseDB {
 	private static final int _SQL_TYPE_BINARY_DOUBLE = 101;
 
 	private static final int[] _SQL_TYPES = {
-		Types.BLOB, Types.BLOB, Types.NUMERIC, Types.TIMESTAMP,
+		Types.BLOB, Types.BLOB, Types.NUMERIC, Types.NUMERIC, Types.TIMESTAMP,
 		_SQL_TYPE_BINARY_DOUBLE, Types.NUMERIC, Types.NUMERIC, Types.VARCHAR,
 		Types.CLOB, Types.VARCHAR
-	};
-
-	private static final int[] _SQL_VARCHAR_SIZES = {
-		_SQL_STRING_SIZE, SQL_SIZE_NONE
 	};
 
 	private static final boolean _SUPPORTS_DDL_ROLLBACK = false;

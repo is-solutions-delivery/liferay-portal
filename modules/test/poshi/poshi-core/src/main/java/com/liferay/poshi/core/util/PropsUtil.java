@@ -5,12 +5,16 @@
 
 package com.liferay.poshi.core.util;
 
+import com.liferay.poshi.core.PoshiProperties;
+
 import java.io.IOException;
 import java.io.InputStream;
 
 import java.lang.reflect.Field;
 
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * @author Brian Wing Shun Chan
@@ -50,21 +54,47 @@ public class PropsUtil {
 
 		poshiProperties.setProperty(key, value);
 
-		System.out.println("Setting property \"" + key + "\" to: " + value);
+		if (poshiProperties.debugStacktrace) {
+			System.out.println("Setting property \"" + key + "\" to: " + value);
+		}
 
 		Class<?> poshiPropertiesClass = poshiProperties.getClass();
 
 		try {
+			Object objectValue = value;
+
 			Field field = poshiPropertiesClass.getField(_toCamelCase(key));
 
-			field.set(poshiProperties, value);
+			Class<?> fieldType = field.getType();
+
+			String fieldTypeName = fieldType.getName();
+
+			if (fieldTypeName.equals("boolean") ||
+				fieldTypeName.equals("java.lang.Boolean")) {
+
+				objectValue = GetterUtil.getBoolean(value);
+			}
+			else if (fieldTypeName.equals("int") ||
+					 fieldTypeName.equals("java.lang.Integer")) {
+
+				objectValue = GetterUtil.getInteger(value);
+			}
+			else if (fieldType.isArray()) {
+				objectValue = StringUtil.split(value);
+			}
+
+			field.set(poshiProperties, objectValue);
 		}
 		catch (IllegalAccessException illegalAccessException) {
-			System.out.println("Unable to set field " + _toCamelCase(key));
+			if (poshiProperties.debugStacktrace) {
+				System.out.println("Unable to set field " + _toCamelCase(key));
+			}
 		}
 		catch (NoSuchFieldException noSuchFieldException) {
-			System.out.println(
-				"Field " + _toCamelCase(key) + " does not exist");
+			if (poshiProperties.debugStacktrace) {
+				System.out.println(
+					"Field " + _toCamelCase(key) + " does not exist");
+			}
 		}
 	}
 
@@ -105,8 +135,6 @@ public class PropsUtil {
 	}
 
 	private static void _setProperties(Properties properties) {
-		PoshiProperties poshiProperties = PoshiProperties.getPoshiProperties();
-
 		for (String propertyName : properties.stringPropertyNames()) {
 			String propertyValue = properties.getProperty(propertyName);
 
@@ -114,7 +142,7 @@ public class PropsUtil {
 				continue;
 			}
 
-			poshiProperties.setProperty(propertyName, propertyValue);
+			set(propertyName, propertyValue);
 		}
 	}
 
@@ -127,7 +155,12 @@ public class PropsUtil {
 			String term = terms[i];
 
 			if (i != 0) {
-				term = StringUtil.capitalize(term);
+				if (_upperCaseTerms.contains(term)) {
+					term = StringUtil.upperCase(term);
+				}
+				else {
+					term = StringUtil.capitalize(term);
+				}
 			}
 
 			sb.append(term);
@@ -135,5 +168,12 @@ public class PropsUtil {
 
 		return sb.toString();
 	}
+
+	private static final Set<String> _upperCaseTerms = new HashSet<String>() {
+		{
+			add("csv");
+			add("url");
+		}
+	};
 
 }

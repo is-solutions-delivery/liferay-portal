@@ -30,12 +30,12 @@ import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectRelationship;
-import com.liferay.object.rest.internal.resource.v1_0.test.util.ObjectDefinitionTestUtil;
-import com.liferay.object.rest.internal.resource.v1_0.test.util.ObjectEntryTestUtil;
-import com.liferay.object.rest.internal.resource.v1_0.test.util.ObjectFieldTestUtil;
-import com.liferay.object.rest.internal.resource.v1_0.test.util.ObjectRelationshipTestUtil;
-import com.liferay.object.rest.internal.resource.v1_0.test.util.UserAccountTestUtil;
 import com.liferay.object.rest.resource.v1_0.ObjectEntryResource;
+import com.liferay.object.rest.test.util.ObjectDefinitionTestUtil;
+import com.liferay.object.rest.test.util.ObjectEntryTestUtil;
+import com.liferay.object.rest.test.util.ObjectFieldTestUtil;
+import com.liferay.object.rest.test.util.ObjectRelationshipTestUtil;
+import com.liferay.object.rest.test.util.UserAccountTestUtil;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
@@ -83,6 +83,7 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.URLCodec;
+import com.liferay.portal.odata.filter.InvalidFilterException;
 import com.liferay.portal.test.log.LogCapture;
 import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.FeatureFlags;
@@ -120,6 +121,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 
 /**
  * @author Luis Miguel Barcos
@@ -3133,6 +3135,29 @@ public class ObjectEntryResourceTest {
 	}
 
 	@Test
+	public void testFilterByUnknownField() throws Exception {
+		String filterString = "unknownField eq 'value'";
+
+		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
+			null,
+			_objectDefinition1.getRESTContextPath() + "?filter=" +
+				_escape(filterString),
+			Http.Method.GET);
+
+		JSONAssert.assertEquals(
+			JSONUtil.put(
+				"status", "BAD_REQUEST"
+			).put(
+				"title",
+				"A property used in the filter criteria is not supported: " +
+					filterString
+			).put(
+				"type", InvalidFilterException.class.getSimpleName()
+			).toString(),
+			jsonObject.toString(), JSONCompareMode.STRICT);
+	}
+
+	@Test
 	public void testFilterObjectEntriesByRelatesSystemObjectEntriesFields()
 		throws Exception {
 
@@ -3684,7 +3709,7 @@ public class ObjectEntryResourceTest {
 
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
-				TestPropsValues.getUserId(), false, false,
+				TestPropsValues.getUserId(), 0, false, false,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				"A" + RandomTestUtil.randomString(), null, null,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),

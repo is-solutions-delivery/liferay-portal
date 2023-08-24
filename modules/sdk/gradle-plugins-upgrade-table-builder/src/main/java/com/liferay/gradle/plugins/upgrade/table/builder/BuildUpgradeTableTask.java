@@ -14,10 +14,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
-import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.PathSensitive;
@@ -30,7 +30,9 @@ import org.gradle.api.tasks.PathSensitivity;
 public class BuildUpgradeTableTask extends JavaExec {
 
 	public BuildUpgradeTableTask() {
-		setMain(
+		Property<String> mainClass = getMainClass();
+
+		mainClass.set(
 			"com.liferay.portal.tools.upgrade.table.builder." +
 				"UpgradeTableBuilder");
 	}
@@ -48,7 +50,7 @@ public class BuildUpgradeTableTask extends JavaExec {
 		return GradleUtil.toFile(getProject(), _baseDir);
 	}
 
-	@InputFile
+	@Input
 	@Optional
 	public String getReleaseInfoVersion() {
 		return GradleUtil.toString(_releaseInfoVersion);

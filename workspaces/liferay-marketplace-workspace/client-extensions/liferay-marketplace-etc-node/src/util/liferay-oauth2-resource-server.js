@@ -37,7 +37,7 @@ const corsOptions = {
 	},
 };
 
-export async function corsWithReady(req, res, next) {
+export function corsWithReady(req, res, next) {
 	if (req.originalUrl === config.readyPath) {
 		return next();
 	}

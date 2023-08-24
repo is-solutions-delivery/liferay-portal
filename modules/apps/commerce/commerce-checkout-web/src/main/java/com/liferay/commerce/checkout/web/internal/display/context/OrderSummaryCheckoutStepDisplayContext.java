@@ -39,7 +39,6 @@ import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.product.util.CPInstanceHelper;
 import com.liferay.commerce.term.model.CommerceTermEntry;
 import com.liferay.commerce.term.service.CommerceTermEntryLocalService;
-import com.liferay.commerce.util.CommerceBigDecimalUtil;
 import com.liferay.commerce.util.CommerceShippingEngineRegistry;
 import com.liferay.commerce.util.CommerceUtil;
 import com.liferay.petra.string.StringPool;
@@ -51,6 +50,7 @@ import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.BigDecimalUtil;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -119,8 +119,11 @@ public class OrderSummaryCheckoutStepDisplayContext {
 	}
 
 	public int getCommerceOrderItemsQuantity() throws PortalException {
-		return _commerceOrderHttpHelper.getCommerceOrderItemsQuantity(
-			_httpServletRequest);
+		BigDecimal quantity =
+			_commerceOrderHttpHelper.getCommerceOrderItemsQuantity(
+				_httpServletRequest);
+
+		return quantity.intValue();
 	}
 
 	public CommerceOrderPrice getCommerceOrderPrice() throws PortalException {
@@ -354,15 +357,17 @@ public class OrderSummaryCheckoutStepDisplayContext {
 		CommerceProductPriceRequest commerceProductPriceRequest =
 			new CommerceProductPriceRequest();
 
+		commerceProductPriceRequest.setCalculateTax(true);
+		commerceProductPriceRequest.setCommerceContext(commerceContext);
+		commerceProductPriceRequest.setCommerceOptionValues(
+			cpDefinitionCommerceOptionValues);
 		commerceProductPriceRequest.setCpInstanceId(
 			commerceOrderItem.getCPInstanceId());
 		commerceProductPriceRequest.setQuantity(
 			commerceOrderItem.getQuantity());
 		commerceProductPriceRequest.setSecure(false);
-		commerceProductPriceRequest.setCommerceContext(commerceContext);
-		commerceProductPriceRequest.setCommerceOptionValues(
-			cpDefinitionCommerceOptionValues);
-		commerceProductPriceRequest.setCalculateTax(true);
+		commerceProductPriceRequest.setUnitOfMeasureKey(
+			commerceOrderItem.getUnitOfMeasureKey());
 
 		return _commerceProductPriceCalculation.getCommerceProductPrice(
 			commerceProductPriceRequest);
@@ -379,22 +384,37 @@ public class OrderSummaryCheckoutStepDisplayContext {
 		BigDecimal activePriceWithTaxAmount =
 			commerceOrderItem.getUnitPriceWithTaxAmount();
 
+		BigDecimal quantity = commerceOrderItem.getQuantity();
+
+		BigDecimal unitOfMeasureIncrementalOrderQuantity =
+			_getUnitOfMeasureIncrementalOrderQuantity(
+				activePrice, commerceOrderItem.getFinalPriceMoney(), quantity);
+
 		BigDecimal promoPrice = commerceOrderItem.getPromoPrice();
 
 		if ((promoPrice != null) &&
-			CommerceBigDecimalUtil.gt(promoPrice, BigDecimal.ZERO) &&
-			CommerceBigDecimalUtil.lte(promoPrice, activePrice)) {
+			BigDecimalUtil.gt(promoPrice, BigDecimal.ZERO) &&
+			BigDecimalUtil.lte(promoPrice, activePrice)) {
 
 			activePrice = promoPrice;
 			activePriceWithTaxAmount =
 				commerceOrderItem.getPromoPriceWithTaxAmount();
+
+			unitOfMeasureIncrementalOrderQuantity =
+				_getUnitOfMeasureIncrementalOrderQuantity(
+					activePrice, commerceOrderItem.getFinalPriceMoney(),
+					quantity);
 		}
 
 		commerceProductPriceImpl.setFinalPrice(
 			commerceOrderItem.getFinalPriceMoney());
 		commerceProductPriceImpl.setFinalPriceWithTaxAmount(
 			commerceOrderItem.getFinalPriceWithTaxAmountMoney());
-		commerceProductPriceImpl.setQuantity(commerceOrderItem.getQuantity());
+		commerceProductPriceImpl.setQuantity(quantity);
+		commerceProductPriceImpl.setUnitOfMeasureKey(
+			commerceOrderItem.getUnitOfMeasureKey());
+		commerceProductPriceImpl.setUnitOfMeasureIncrementalOrderQuantity(
+			unitOfMeasureIncrementalOrderQuantity);
 		commerceProductPriceImpl.setUnitPrice(
 			commerceOrderItem.getUnitPriceMoney());
 		commerceProductPriceImpl.setUnitPriceWithTaxAmount(
@@ -406,14 +426,16 @@ public class OrderSummaryCheckoutStepDisplayContext {
 
 		BigDecimal discountAmount = commerceOrderItem.getDiscountAmount();
 
-		if ((discountAmount == null) ||
-			CommerceBigDecimalUtil.isZero(discountAmount)) {
-
+		if ((discountAmount == null) || BigDecimalUtil.isZero(discountAmount)) {
 			return commerceProductPriceImpl;
 		}
 
-		activePrice = activePrice.multiply(
-			BigDecimal.valueOf(commerceOrderItem.getQuantity()));
+		BigDecimal baseQuantity = quantity.divide(
+			unitOfMeasureIncrementalOrderQuantity,
+			unitOfMeasureIncrementalOrderQuantity.scale(),
+			RoundingMode.HALF_UP);
+
+		activePrice = activePrice.multiply(baseQuantity);
 
 		BigDecimal discountedAmount = activePrice.subtract(discountAmount);
 
@@ -441,7 +463,7 @@ public class OrderSummaryCheckoutStepDisplayContext {
 			commerceDiscountValue);
 
 		activePriceWithTaxAmount = activePriceWithTaxAmount.multiply(
-			BigDecimal.valueOf(commerceOrderItem.getQuantity()));
+			baseQuantity);
 
 		CommerceMoney discountWithTaxAmountCommerceMoney =
 			commerceOrderItem.getDiscountWithTaxAmountMoney();
@@ -488,6 +510,16 @@ public class OrderSummaryCheckoutStepDisplayContext {
 			discountPercentage.precision(), roundingMode);
 
 		return _ONE_HUNDRED.subtract(discountPercentage, mathContext);
+	}
+
+	private BigDecimal _getUnitOfMeasureIncrementalOrderQuantity(
+		BigDecimal activePrice, CommerceMoney finalPrice, BigDecimal quantity) {
+
+		BigDecimal price = finalPrice.getPrice();
+
+		return quantity.divide(
+			price.divide(activePrice, RoundingMode.HALF_UP),
+			RoundingMode.HALF_UP);
 	}
 
 	private static final BigDecimal _ONE_HUNDRED = BigDecimal.valueOf(100);

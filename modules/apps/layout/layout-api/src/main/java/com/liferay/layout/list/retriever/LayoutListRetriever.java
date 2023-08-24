@@ -6,6 +6,7 @@
 package com.liferay.layout.list.retriever;
 
 import com.liferay.info.filter.InfoFilter;
+import com.liferay.info.pagination.InfoPage;
 import com.liferay.item.selector.ItemSelectorReturnType;
 
 import java.util.Collections;
@@ -20,10 +21,7 @@ import org.osgi.annotation.versioning.ProviderType;
 public interface LayoutListRetriever
 	<T extends ItemSelectorReturnType, S extends ListObjectReference> {
 
-	public List<Object> getList(
-		S s, LayoutListRetrieverContext layoutListRetrieverContext);
-
-	public int getListCount(
+	public InfoPage<?> getInfoPage(
 		S s, LayoutListRetrieverContext layoutListRetrieverContext);
 
 	public default List<InfoFilter> getSupportedInfoFilters(S s) {

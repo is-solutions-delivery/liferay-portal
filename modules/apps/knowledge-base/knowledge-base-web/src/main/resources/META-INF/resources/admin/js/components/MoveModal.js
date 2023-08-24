@@ -6,7 +6,7 @@
 import {TreeView as ClayTreeView} from '@clayui/core';
 import ClayIcon from '@clayui/icon';
 import classnames from 'classnames';
-import {getOpener} from 'frontend-js-web';
+import {getOpener, sub} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React, {useMemo, useState} from 'react';
 
@@ -15,13 +15,13 @@ import normalizeItems from '../utils/normalizeItems';
 import SearchField from './SearchField';
 
 const ITEM_TYPES_SYMBOL = {
-	article: 'document-text',
-	folder: 'folder',
+	KBArticle: 'document-text',
+	KBFolder: 'folder',
 };
 
 const SELECT_EVENT_NAME = 'selectKBMoveFolder';
 
-export default function MoveModal({itemToMoveId, items: initialItems}) {
+export default function MoveModal({items: initialItems, moveParentKBObjectId}) {
 	const items = useMemo(() => normalizeItems(initialItems), [initialItems]);
 
 	const searchItems = useMemo(() => getSearchItems(initialItems), [
@@ -53,25 +53,33 @@ export default function MoveModal({itemToMoveId, items: initialItems}) {
 			<SearchField
 				handleSearchChange={handleSearchChange}
 				items={searchItems}
+				placeholder={sub(
+					Liferay.Language.get('search-in-x'),
+					'destination-folders'
+				)}
 			/>
 
 			{!searchActive && (
 				<ClayTreeView
 					defaultItems={items}
-					defaultSelectedKeys={new Set([itemToMoveId])}
-					dragAndDrop
+					defaultSelectedKeys={new Set([moveParentKBObjectId])}
 					nestedKey="children"
 					onItemMove={handleItemMove}
 					showExpanderOnHover={false}
 				>
-					{(item) => {
+					{(item, selection) => {
 						return (
 							<ClayTreeView.Item
 								className={classnames({
-									'knowledge-base-navigation-item-active':
-										item.id === itemToMoveId,
+									'knowledge-base-navigation-item-active': selection.has(
+										item.id
+									),
 								})}
 								onClick={(event) => {
+									if (!selection.has(item.id)) {
+										selection.toggle(item.id);
+									}
+
 									onItemClick(item, event);
 								}}
 							>
@@ -120,6 +128,6 @@ const itemShape = {
 itemShape.children = PropTypes.arrayOf(PropTypes.shape(itemShape));
 
 MoveModal.propTypes = {
-	itemToMoveId: PropTypes.string,
 	items: PropTypes.arrayOf(PropTypes.shape(itemShape)),
+	moveParentKBObjectId: PropTypes.number.isRequired,
 };

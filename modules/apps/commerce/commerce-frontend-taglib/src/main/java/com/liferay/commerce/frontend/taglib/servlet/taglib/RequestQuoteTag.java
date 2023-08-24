@@ -20,7 +20,7 @@ import com.liferay.commerce.frontend.util.ProductHelper;
 import com.liferay.commerce.product.catalog.CPCatalogEntry;
 import com.liferay.commerce.product.catalog.CPSku;
 import com.liferay.commerce.product.constants.CommerceChannelConstants;
-import com.liferay.commerce.product.content.util.CPContentHelper;
+import com.liferay.commerce.product.content.helper.CPContentHelper;
 import com.liferay.commerce.product.service.CPInstanceLocalServiceUtil;
 import com.liferay.commerce.util.CommerceUtil;
 import com.liferay.petra.string.StringPool;
@@ -38,6 +38,8 @@ import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.taglib.util.IncludeTag;
+
+import java.math.BigDecimal;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
@@ -79,16 +81,12 @@ public class RequestQuoteTag extends IncludeTag {
 			_commerceCurrencyCode = commerceCurrency.getCode();
 
 			CPSku cpSku = null;
-			boolean hasChildCPDefinitions = false;
 
 			if (_cpCatalogEntry != null) {
 				cpSku = _cpContentHelper.getDefaultCPSku(_cpCatalogEntry);
-
-				hasChildCPDefinitions = _cpContentHelper.hasChildCPDefinitions(
-					_cpCatalogEntry.getCPDefinitionId());
 			}
 
-			if ((cpSku != null) && !hasChildCPDefinitions) {
+			if (cpSku != null) {
 				_cpInstanceId = cpSku.getCPInstanceId();
 				_disabled = !cpSku.isPurchasable() || (_commerceAccountId == 0);
 
@@ -302,8 +300,9 @@ public class RequestQuoteTag extends IncludeTag {
 				_cpCatalogEntry.getCPDefinitionId());
 
 		return _productHelper.getPriceModel(
-			cpInstanceId, productSettingsModel.getMinQuantity(),
-			commerceContext, StringPool.BLANK, themeDisplay.getLocale());
+			cpInstanceId, StringPool.BLANK,
+			BigDecimal.valueOf(productSettingsModel.getMinQuantity()),
+			StringPool.BLANK, commerceContext, themeDisplay.getLocale());
 	}
 
 	private static final String _PAGE = "/request_quote/page.jsp";

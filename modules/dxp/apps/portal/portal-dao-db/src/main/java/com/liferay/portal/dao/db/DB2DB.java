@@ -16,6 +16,7 @@ import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -31,6 +32,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -131,7 +133,10 @@ public class DB2DB extends BaseDB {
 
 			String tempColumnName = "temp" + columnName;
 
-			if (newColumnType.endsWith("not null")) {
+			if (StringUtil.endsWith(newColumnType, "not null") &&
+				!StringUtil.containsIgnoreCase(
+					newColumnType, "default", StringPool.SPACE)) {
+
 				runSQL(
 					StringBundler.concat(
 						"alter table ", tableName, " add ", tempColumnName,
@@ -389,8 +394,12 @@ public class DB2DB extends BaseDB {
 	}
 
 	@Override
-	protected int[] getSQLVarcharSizes() {
-		return _SQL_VARCHAR_SIZES;
+	protected Map<String, Integer> getSQLVarcharSizes() {
+		return HashMapBuilder.put(
+			"STRING", _SQL_STRING_SIZE
+		).put(
+			"TEXT", SQL_SIZE_NONE
+		).build();
 	}
 
 	@Override
@@ -499,6 +508,23 @@ public class DB2DB extends BaseDB {
 							"data type @type@;",
 						REWORD_TEMPLATE, template);
 
+					String defaultValue = template[template.length - 2];
+
+					if (Validator.isBlank(defaultValue)) {
+						line = line.concat(
+							StringUtil.replace(
+								"alter table @table@ alter column " +
+									"@old-column@ drop default;",
+								REWORD_TEMPLATE, template));
+					}
+					else {
+						line = line.concat(
+							StringUtil.replace(
+								"alter table @table@ alter column " +
+									"@old-column@ set default @default@;",
+								REWORD_TEMPLATE, template));
+					}
+
 					String nullable = template[template.length - 1];
 
 					if (!Validator.isBlank(nullable)) {
@@ -554,20 +580,17 @@ public class DB2DB extends BaseDB {
 
 	private static final String[] _DB2 = {
 		"--", "1", "0", "'1970-01-01-00.00.00.000000'", "current timestamp",
-		" blob", " blob", " smallint", " timestamp", " double", " integer",
-		" bigint", " varchar(4000)", " clob", " varchar",
+		" blob", " blob", " decimal(30, 16)", " smallint", " timestamp",
+		" double", " integer", " bigint", " varchar(4000)", " clob", " varchar",
 		" generated always as identity", "commit"
 	};
 
 	private static final int _SQL_STRING_SIZE = 4000;
 
 	private static final int[] _SQL_TYPES = {
-		Types.BLOB, Types.BLOB, Types.SMALLINT, Types.TIMESTAMP, Types.DOUBLE,
-		Types.INTEGER, Types.BIGINT, Types.VARCHAR, Types.CLOB, Types.VARCHAR
-	};
-
-	private static final int[] _SQL_VARCHAR_SIZES = {
-		_SQL_STRING_SIZE, SQL_SIZE_NONE
+		Types.BLOB, Types.BLOB, Types.DECIMAL, Types.SMALLINT, Types.TIMESTAMP,
+		Types.DOUBLE, Types.INTEGER, Types.BIGINT, Types.VARCHAR, Types.CLOB,
+		Types.VARCHAR
 	};
 
 	private static final boolean _SUPPORTS_DUPLICATED_INDEX_NAME = false;

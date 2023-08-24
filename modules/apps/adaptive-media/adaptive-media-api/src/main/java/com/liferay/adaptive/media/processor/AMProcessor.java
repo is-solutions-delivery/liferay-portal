@@ -6,6 +6,7 @@
 package com.liferay.adaptive.media.processor;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.repository.model.FileVersion;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -21,7 +22,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * @author Adolfo Pérez
  */
 @ProviderType
-public interface AMProcessor<M, T> {
+public interface AMProcessor<M> {
 
 	/**
 	 * Completely removes any generated media for the model.
@@ -31,6 +32,9 @@ public interface AMProcessor<M, T> {
 	 *         services
 	 */
 	public void cleanUp(M model) throws PortalException;
+
+	public void process(FileVersion fileVersion, String configurationEntryUuid)
+		throws PortalException;
 
 	/**
 	 * Generates the media for the model. Some implementations might not

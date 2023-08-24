@@ -17,6 +17,7 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemListBuilder;
 import com.liferay.info.field.type.BooleanInfoFieldType;
 import com.liferay.info.field.type.DateInfoFieldType;
+import com.liferay.info.field.type.DateTimeInfoFieldType;
 import com.liferay.info.field.type.FileInfoFieldType;
 import com.liferay.info.field.type.HTMLInfoFieldType;
 import com.liferay.info.field.type.InfoFieldType;
@@ -28,6 +29,7 @@ import com.liferay.info.field.type.SelectInfoFieldType;
 import com.liferay.info.field.type.TextInfoFieldType;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.criteria.UUIDItemSelectorReturnType;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -281,6 +283,12 @@ public class BasicFragmentManagementToolbarDisplayContext
 		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
 
 		for (InfoFieldType infoFieldType : _INFO_FIELD_TYPES) {
+			if (!FeatureFlagManagerUtil.isEnabled("LPS-183727") &&
+				(infoFieldType == DateTimeInfoFieldType.INSTANCE)) {
+
+				continue;
+			}
+
 			jsonArray.put(
 				JSONUtil.put(
 					"key", infoFieldType.getName()
@@ -329,11 +337,11 @@ public class BasicFragmentManagementToolbarDisplayContext
 
 	private static final InfoFieldType[] _INFO_FIELD_TYPES = {
 		BooleanInfoFieldType.INSTANCE, CaptchaInfoFieldType.INSTANCE,
-		DateInfoFieldType.INSTANCE, FileInfoFieldType.INSTANCE,
-		HTMLInfoFieldType.INSTANCE, LongTextInfoFieldType.INSTANCE,
-		MultiselectInfoFieldType.INSTANCE, NumberInfoFieldType.INSTANCE,
-		RelationshipInfoFieldType.INSTANCE, SelectInfoFieldType.INSTANCE,
-		TextInfoFieldType.INSTANCE
+		DateInfoFieldType.INSTANCE, DateTimeInfoFieldType.INSTANCE,
+		FileInfoFieldType.INSTANCE, HTMLInfoFieldType.INSTANCE,
+		LongTextInfoFieldType.INSTANCE, MultiselectInfoFieldType.INSTANCE,
+		NumberInfoFieldType.INSTANCE, RelationshipInfoFieldType.INSTANCE,
+		SelectInfoFieldType.INSTANCE, TextInfoFieldType.INSTANCE
 	};
 
 	private final ItemSelector _itemSelector;

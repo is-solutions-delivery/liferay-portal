@@ -523,12 +523,12 @@
 </tr>
 <tr>
 	<td>FRAGMENT_SIDEBAR_COLLECTION_PANEL_COLLAPSED</td>
-	<td>//*[contains(@class,'sheet-subtitle collapsed')][normalize-space()='${key_collectionName}']</td>
+	<td>//*[contains(@class,'panel-header-link collapse-icon') and contains(@class,'collapsed')][normalize-space()='${key_collectionName}']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>FRAGMENT_SIDEBAR_COLLECTION_PANEL_EXPANDED</td>
-	<td>//*[contains(@class,'collapse-icon sheet-subtitle')][normalize-space()='${key_collectionName}']</td>
+	<td>//*[contains(@class,'panel-header-link collapse-icon')][normalize-space()='${key_collectionName}']</td>
 	<td></td>
 </tr>
 <tr>
@@ -918,7 +918,7 @@
 </tr>
 <tr>
 	<td>PREVIEW_WITH_CUSTOM_OBJECT_ITEM</td>
-	<td>//dd[contains(@data-value,'${key_objectLabel}')]</td>
+	<td>//dd[contains(@data-value,'${key_entryValue}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -1012,7 +1012,7 @@
 </tr>
 <tr>
 	<td>IMAGE_RESOLUTION_LABEL</td>
-	<td>//p[contains(@class,'text-secondary')]/b[contains(.,'${key_resolutionLabel}')]</td>
+	<td>//p[contains(@class,'text-secondary')]/strong[contains(.,'${key_resolutionLabel}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -1042,12 +1042,12 @@
 </tr>
 <tr>
 	<td>TEXT_ALIGN_ICON</td>
-	<td>//div[contains(@class,'page-editor__collapse')][button[normalize-space()='Text']]//button[*[name()='svg'][contains(@class,'lexicon-icon-${key_text}')]]</td>
+	<td>//button[contains(@class,'collapse-icon-middle')][span[normalize-space()='Text']]//..//button[*[name()='svg'][contains(@class,'lexicon-icon-${key_text}')]]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>ACTIVE_TEXT_ALIGN_ICON</td>
-	<td>//div[contains(@class,'page-editor__collapse')][button[normalize-space()='Text']]//button[@aria-pressed='true'][*[name()='svg'][contains(@class,'lexicon-icon-${key_text}')]]</td>
+	<td>//button[contains(@class,'collapse-icon-middle')][span[normalize-space()='Text']]//..//button[@aria-pressed='true'][*[name()='svg'][contains(@class,'lexicon-icon-${key_text}')]]</td>
 	<td></td>
 </tr>
 </tbody>

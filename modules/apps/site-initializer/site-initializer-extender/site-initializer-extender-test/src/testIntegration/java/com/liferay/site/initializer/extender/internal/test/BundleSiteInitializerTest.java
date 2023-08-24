@@ -171,6 +171,9 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.vulcan.pagination.Page;
+import com.liferay.search.experiences.rest.dto.v1_0.GeneralConfiguration;
+import com.liferay.search.experiences.rest.dto.v1_0.SXPBlueprint;
+import com.liferay.search.experiences.rest.resource.v1_0.SXPBlueprintResource;
 import com.liferay.segments.model.SegmentsEntry;
 import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.service.SegmentsEntryLocalService;
@@ -2110,7 +2113,7 @@ public class BundleSiteInitializerTest {
 				getObjectDefinitionObjectRelationshipsPage(
 					objectDefinition1.getObjectDefinitionId(), null,
 					objectRelationshipResource.toFilter("name eq 'testOR1'"),
-					null);
+					null, null);
 
 		ObjectRelationship existingObjectRelationship1 = page1.fetchFirstItem();
 
@@ -2128,7 +2131,7 @@ public class BundleSiteInitializerTest {
 				getObjectDefinitionObjectRelationshipsPage(
 					objectDefinition.getObjectDefinitionId(), null,
 					objectRelationshipResource.toFilter("name eq 'testOR2'"),
-					null);
+					null, null);
 
 		ObjectRelationship existingObjectRelationship2 = page2.fetchFirstItem();
 
@@ -2157,7 +2160,7 @@ public class BundleSiteInitializerTest {
 					objectDefinition.getObjectDefinitionId(), null,
 					objectRelationshipResource.toFilter(
 						"name eq 'accountEntryToTestObjectDefinition4'"),
-					null);
+					null, null);
 
 		ObjectRelationship existingObjectRelationship3 = page3.fetchFirstItem();
 
@@ -2191,7 +2194,7 @@ public class BundleSiteInitializerTest {
 				getObjectDefinitionObjectRelationshipsPage(
 					objectDefinition1.getObjectDefinitionId(), null,
 					objectRelationshipResource.toFilter("name eq 'testOR1'"),
-					null);
+					null, null);
 
 		ObjectRelationship existingObjectRelationship1 = page1.fetchFirstItem();
 
@@ -2209,7 +2212,7 @@ public class BundleSiteInitializerTest {
 				getObjectDefinitionObjectRelationshipsPage(
 					objectDefinition.getObjectDefinitionId(), null,
 					objectRelationshipResource.toFilter("name eq 'testOR2'"),
-					null);
+					null, null);
 
 		ObjectRelationship existingObjectRelationship2 = page2.fetchFirstItem();
 
@@ -2238,7 +2241,7 @@ public class BundleSiteInitializerTest {
 					objectDefinition.getObjectDefinitionId(), null,
 					objectRelationshipResource.toFilter(
 						"name eq 'accountEntryToTestObjectDefinition4'"),
-					null);
+					null, null);
 
 		ObjectRelationship existingObjectRelationship3 = page3.fetchFirstItem();
 
@@ -2257,7 +2260,7 @@ public class BundleSiteInitializerTest {
 					objectDefinition.getObjectDefinitionId(), null,
 					objectRelationshipResource.toFilter(
 						"name eq 'accountEntryToTestObjectDefinition5'"),
-					null);
+					null, null);
 
 		ObjectRelationship existingObjectRelationship4 = page4.fetchFirstItem();
 
@@ -2980,6 +2983,19 @@ public class BundleSiteInitializerTest {
 			allowedServiceSignatures2.size());
 	}
 
+	private void _assertSearchableAssetTypes(
+		String[] className,
+		com.liferay.search.experiences.rest.dto.v1_0.Configuration
+			configuration) {
+
+		GeneralConfiguration generalConfiguration =
+			configuration.getGeneralConfiguration();
+
+		Assert.assertTrue(
+			ArrayUtil.containsAll(
+				generalConfiguration.getSearchableAssetTypes(), className));
+	}
+
 	private void _assertSegmentsEntries() {
 		Assert.assertEquals(
 			2,
@@ -3143,6 +3159,82 @@ public class BundleSiteInitializerTest {
 
 		Assert.assertTrue(
 			frontendTokensValues.contains("blockquote-small-color"));
+	}
+
+	private void _assertSXPBlueprint1() throws Exception {
+		SXPBlueprintResource.Builder sxpBlueprintResourceBuilder =
+			_sxpBlueprintResourceFactory.create();
+
+		SXPBlueprintResource sxpBlueprintResource =
+			sxpBlueprintResourceBuilder.user(
+				_serviceContext.fetchUser()
+			).build();
+
+		SXPBlueprint sxpBlueprint =
+			sxpBlueprintResource.getSXPBlueprintByExternalReferenceCode(
+				"TESTSXPBLUEPRINT1");
+
+		Assert.assertNotNull(sxpBlueprint);
+		_assertSearchableAssetTypes(
+			new String[] {"com.liferay.journal.model.JournalArticle"},
+			sxpBlueprint.getConfiguration());
+		Assert.assertEquals("Test SXBlueprint 1", sxpBlueprint.getTitle());
+
+		sxpBlueprint =
+			sxpBlueprintResource.getSXPBlueprintByExternalReferenceCode(
+				"TESTSXPBLUEPRINT2");
+
+		Assert.assertNotNull(sxpBlueprint);
+		_assertSearchableAssetTypes(
+			new String[] {
+				"com.liferay.document.library.kernel.model.DLFileEntry"
+			},
+			sxpBlueprint.getConfiguration());
+		Assert.assertEquals("Test SXBlueprint 2", sxpBlueprint.getTitle());
+	}
+
+	private void _assertSXPBlueprint2() throws Exception {
+		SXPBlueprintResource.Builder sxpBlueprintResourceBuilder =
+			_sxpBlueprintResourceFactory.create();
+
+		SXPBlueprintResource sxpBlueprintResource =
+			sxpBlueprintResourceBuilder.user(
+				_serviceContext.fetchUser()
+			).build();
+
+		SXPBlueprint sxpBlueprint =
+			sxpBlueprintResource.getSXPBlueprintByExternalReferenceCode(
+				"TESTSXPBLUEPRINT1");
+
+		Assert.assertNotNull(sxpBlueprint);
+		_assertSearchableAssetTypes(
+			new String[] {"com.liferay.journal.model.JournalArticle"},
+			sxpBlueprint.getConfiguration());
+		Assert.assertEquals("Test SXBlueprint 1", sxpBlueprint.getTitle());
+
+		sxpBlueprint =
+			sxpBlueprintResource.getSXPBlueprintByExternalReferenceCode(
+				"TESTSXPBLUEPRINT2");
+
+		Assert.assertNotNull(sxpBlueprint);
+		_assertSearchableAssetTypes(
+			new String[] {
+				"com.liferay.document.library.kernel.model.DLFileEntry",
+				"com.liferay.journal.model.JournalArticle"
+			},
+			sxpBlueprint.getConfiguration());
+		Assert.assertEquals(
+			"Test SXBlueprint 2 Update", sxpBlueprint.getTitle());
+
+		sxpBlueprint =
+			sxpBlueprintResource.getSXPBlueprintByExternalReferenceCode(
+				"TESTSXPBLUEPRINT3");
+
+		Assert.assertNotNull(sxpBlueprint);
+		_assertSearchableAssetTypes(
+			new String[] {"com.liferay.portal.kernel.model.User"},
+			sxpBlueprint.getConfiguration());
+		Assert.assertEquals("Test SXBlueprint 3", sxpBlueprint.getTitle());
 	}
 
 	private void _assertUserAccounts1() throws Exception {
@@ -3503,6 +3595,7 @@ public class BundleSiteInitializerTest {
 		_assertSiteSettings();
 		_assertSiteNavigationMenu();
 		_assertStyleBookEntry();
+		_assertSXPBlueprint1();
 		_assertUserAccounts1();
 		_assertUserGroups();
 		_assertUserRoles();
@@ -3527,6 +3620,7 @@ public class BundleSiteInitializerTest {
 		_assertOrganizations2();
 		_assertPLOEntries2();
 		_assertResourcePermission2();
+		_assertSXPBlueprint2();
 		_assertUserAccounts2();
 	}
 
@@ -3729,6 +3823,9 @@ public class BundleSiteInitializerTest {
 
 	@Inject
 	private StyleBookEntryLocalService _styleBookEntryLocalService;
+
+	@Inject
+	private SXPBlueprintResource.Factory _sxpBlueprintResourceFactory;
 
 	@Inject
 	private TemplateEntryLocalService _templateEntryLocalService;

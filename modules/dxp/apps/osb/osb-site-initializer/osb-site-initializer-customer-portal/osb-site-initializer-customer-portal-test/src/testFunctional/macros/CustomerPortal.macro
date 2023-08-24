@@ -421,7 +421,7 @@ definition {
 		ClientExtensionGeneral.deleteRemoteApp(tableEntry = "Customer Portal");
 	}
 
-	
+
 	macro deactivateKoroneikiAccount {
 		ApplicationsMenu.gotoPortlet(
 			category = "Object",
@@ -498,7 +498,7 @@ definition {
 
 	macro loginOktaToUpdateCP {
 		var userEmailAddress = "dbace26d5dadb9eed597@uat.com.broken";
-		var userPassword = "q4F63ZEH3njnnA34S761";
+		var oktaUserPassword = "q4F63ZEH3njnnA34S761";
 
 		Open.openInTheNewTab(locator1 = "https://login-dev.liferay.com/");
 
@@ -508,7 +508,7 @@ definition {
 
 		Type(
 			locator1 = "CustomerPortalSite#OKTA_PASSWORD",
-			value1 = ${userPassword});
+			value1 = ${oktaUserPassword});
 
 		Click(locator1 = "CustomerPortalSite#OKTA_SUBMIT");
 
@@ -613,9 +613,9 @@ definition {
 	}
 
 	macro search {
-		if (IsElementPresent(locator1 = "CustomerPortalSite#SEARCH_BAR")) {
+		if (IsElementPresent(locator1 = "CustomerPortalSite#SEARCH")) {
 			Type(
-				locator1 = "CustomerPortalSite#SEARCH_BAR",
+				locator1 = "CustomerPortalSite#SEARCH",
 				value1 = ${searchItem});
 		}
 	}

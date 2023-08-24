@@ -175,6 +175,15 @@ public class FragmentEntryImpl extends FragmentEntryBaseImpl {
 		path = path + StringPool.SLASH + getFragmentEntryKey();
 
 		JSONObject jsonObject = JSONUtil.put(
+			"cacheable",
+			() -> {
+				if (isCacheable()) {
+					return true;
+				}
+
+				return null;
+			}
+		).put(
 			"configurationPath", "configuration.json"
 		).put(
 			"cssPath", "index.css"

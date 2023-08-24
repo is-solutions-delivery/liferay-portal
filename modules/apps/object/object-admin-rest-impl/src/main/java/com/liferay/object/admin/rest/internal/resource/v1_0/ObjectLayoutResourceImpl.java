@@ -11,6 +11,7 @@ import com.liferay.object.admin.rest.dto.v1_0.ObjectLayoutColumn;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectLayoutRow;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectLayoutTab;
 import com.liferay.object.admin.rest.internal.dto.v1_0.util.ObjectLayoutUtil;
+import com.liferay.object.admin.rest.internal.odata.entity.v1_0.ObjectLayoutEntityModel;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectLayoutResource;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
@@ -23,16 +24,20 @@ import com.liferay.object.service.persistence.ObjectLayoutRowPersistence;
 import com.liferay.object.service.persistence.ObjectLayoutTabPersistence;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.fields.NestedField;
 import com.liferay.portal.vulcan.fields.NestedFieldSupport;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portal.vulcan.util.SearchUtil;
+
+import javax.ws.rs.core.MultivaluedMap;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -55,10 +60,15 @@ public class ObjectLayoutResourceImpl
 	}
 
 	@Override
+	public EntityModel getEntityModel(MultivaluedMap multivaluedMap) {
+		return _entityModel;
+	}
+
+	@Override
 	public Page<ObjectLayout>
 			getObjectDefinitionByExternalReferenceCodeObjectLayoutsPage(
 				String externalReferenceCode, String search,
-				Pagination pagination)
+				Pagination pagination, Sort[] sorts)
 		throws Exception {
 
 		ObjectDefinition objectDefinition =
@@ -67,7 +77,8 @@ public class ObjectLayoutResourceImpl
 					externalReferenceCode, contextCompany.getCompanyId());
 
 		return getObjectDefinitionObjectLayoutsPage(
-			objectDefinition.getObjectDefinitionId(), search, pagination);
+			objectDefinition.getObjectDefinitionId(), search, pagination,
+			sorts);
 	}
 
 	@NestedField(
@@ -76,7 +87,8 @@ public class ObjectLayoutResourceImpl
 	)
 	@Override
 	public Page<ObjectLayout> getObjectDefinitionObjectLayoutsPage(
-			Long objectDefinitionId, String search, Pagination pagination)
+			Long objectDefinitionId, String search, Pagination pagination,
+			Sort[] sorts)
 		throws Exception {
 
 		return SearchUtil.search(
@@ -118,7 +130,7 @@ public class ObjectLayoutResourceImpl
 					"objectDefinitionId", objectDefinitionId);
 				searchContext.setCompanyId(contextCompany.getCompanyId());
 			},
-			null,
+			sorts,
 			document -> _toObjectLayout(
 				_objectLayoutService.getObjectLayout(
 					GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK)))));
@@ -302,6 +314,9 @@ public class ObjectLayoutResourceImpl
 
 		return serviceBuilderObjectLayoutTab;
 	}
+
+	private static final EntityModel _entityModel =
+		new ObjectLayoutEntityModel();
 
 	@Reference
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;

@@ -5,6 +5,9 @@
 
 package com.liferay.gradle.plugins.poshi.runner;
 
+import com.jayway.jsonpath.DocumentContext;
+import com.jayway.jsonpath.JsonPath;
+
 import com.liferay.gradle.plugins.poshi.runner.internal.util.StringUtil;
 import com.liferay.gradle.util.FileUtil;
 import com.liferay.gradle.util.GradleUtil;
@@ -53,6 +56,7 @@ import org.gradle.api.plugins.BasePlugin;
 import org.gradle.api.plugins.ExtensionContainer;
 import org.gradle.api.plugins.ExtraPropertiesExtension;
 import org.gradle.api.plugins.PluginContainer;
+import org.gradle.api.provider.Property;
 import org.gradle.api.reporting.DirectoryReport;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.Copy;
@@ -320,11 +324,14 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 		JavaExec javaExec = GradleUtil.addTask(
 			project, EVALUATE_POSHI_CONSOLE_TASK_NAME, JavaExec.class);
 
-		javaExec.setClasspath(_getPoshiRunnerClasspath(project));
 		javaExec.setDescription("Evaluate the console output errors.");
 		javaExec.setGroup("verification");
-		javaExec.setMain(
-			"com.liferay.poshi.runner.PoshiRunnerConsoleEvaluator");
+
+		Property<String> mainClass = javaExec.getMainClass();
+
+		mainClass.set("com.liferay.poshi.runner.PoshiRunnerConsoleEvaluator");
+
+		javaExec.setClasspath(_getPoshiRunnerClasspath(project));
 
 		return javaExec;
 	}
@@ -333,12 +340,16 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 		JavaExec javaExec = GradleUtil.addTask(
 			project, EXECUTE_PQL_QUERY_TASK_NAME, JavaExec.class);
 
+		javaExec.setDescription("Execute the PQL query.");
+		javaExec.setGroup("verification");
+
+		Property<String> mainClass = javaExec.getMainClass();
+
+		mainClass.set("com.liferay.poshi.runner.PoshiRunnerCommandExecutor");
+
 		javaExec.args(Collections.singleton("executePQLQuery"));
 
 		javaExec.setClasspath(_getPoshiRunnerClasspath(project));
-		javaExec.setDescription("Execute the PQL query.");
-		javaExec.setGroup("verification");
-		javaExec.setMain("com.liferay.poshi.runner.PoshiRunnerCommandExecutor");
 
 		return javaExec;
 	}
@@ -498,10 +509,14 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 		JavaExec javaExec = GradleUtil.addTask(
 			project, VALIDATE_POSHI_TASK_NAME, JavaExec.class);
 
-		javaExec.setClasspath(_getPoshiRunnerClasspath(project));
 		javaExec.setDescription("Validates the Poshi files syntax.");
 		javaExec.setGroup("verification");
-		javaExec.setMain("com.liferay.poshi.core.PoshiValidation");
+
+		Property<String> mainClass = javaExec.getMainClass();
+
+		mainClass.set("com.liferay.poshi.core.PoshiValidation");
+
+		javaExec.setClasspath(_getPoshiRunnerClasspath(project));
 
 		return javaExec;
 	}
@@ -510,10 +525,14 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 		JavaExec javaExec = GradleUtil.addTask(
 			project, WRITE_POSHI_PROPERTIES_TASK_NAME, JavaExec.class);
 
-		javaExec.setClasspath(_getPoshiRunnerClasspath(project));
 		javaExec.setDescription("Write the Poshi properties files.");
 		javaExec.setGroup("verification");
-		javaExec.setMain("com.liferay.poshi.core.PoshiContext");
+
+		Property<String> mainClass = javaExec.getMainClass();
+
+		mainClass.set("com.liferay.poshi.core.PoshiContext");
+
+		javaExec.setClasspath(_getPoshiRunnerClasspath(project));
 
 		return javaExec;
 	}
@@ -639,24 +658,44 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 	}
 
 	private String _getChromeDriverURL(String chromeDriverVersion) {
+		Matcher matcher = _majorChromeVersionPattern.matcher(
+			chromeDriverVersion);
+
+		if (!matcher.find()) {
+			return _getLegacyChromeDriverURL(chromeDriverVersion);
+		}
+
+		Integer chromeMajorVersion = Integer.parseInt(matcher.group(1));
+
+		if (chromeMajorVersion < 115) {
+			return _getLegacyChromeDriverURL(chromeDriverVersion);
+		}
+
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(_CHROME_DRIVER_BASE_URL);
-
+		sb.append(
+			"https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/");
 		sb.append(chromeDriverVersion);
+		sb.append("/");
 
-		sb.append("/chromedriver_");
+		String osType = "";
 
 		if (OSDetector.isApple()) {
-			sb.append("mac64");
+			osType = "mac-x64";
+		}
+		else if (OSDetector.isAppleARM()) {
+			osType = "mac-arm64";
 		}
 		else if (OSDetector.isWindows()) {
-			sb.append("win32");
+			osType = "win" + OSDetector.getBitmode();
 		}
 		else {
-			sb.append("linux64");
+			osType = "linux64";
 		}
 
+		sb.append(osType);
+		sb.append("/chromedriver-");
+		sb.append(osType);
 		sb.append(".zip");
 
 		return sb.toString();
@@ -743,16 +782,33 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 		Matcher matcher = _browserVersionPattern.matcher(chromeVersionOutput);
 
 		if (matcher.find()) {
-			String chromeMajorVersion = matcher.group("majorVersion");
+			Integer chromeMajorVersion = Integer.parseInt(
+				matcher.group("majorVersion"));
 
 			if (_chromeDriverVersions.containsKey(chromeMajorVersion)) {
 				return _chromeDriverVersions.get(chromeMajorVersion);
 			}
 
 			try {
+				if (chromeMajorVersion >= 115) {
+					URL url = new URL(
+						"https://googlechromelabs.github.io" +
+							"/chrome-for-testing/latest-versions-per-" +
+								"milestone-with-downloads.json");
+
+					DocumentContext documentContext = JsonPath.parse(
+						StringUtil.read(url.openStream()));
+
+					Object object = documentContext.read(
+						"milestones." + chromeMajorVersion.toString() +
+							".version");
+
+					return object.toString();
+				}
+
 				URL url = new URL(
-					_CHROME_DRIVER_BASE_URL + "LATEST_RELEASE_" +
-						chromeMajorVersion);
+					_LEGACY_CHROME_DRIVER_BASE_URL + "LATEST_RELEASE_" +
+						chromeMajorVersion.toString());
 
 				String chromeDriverVersion = StringUtil.read(url.openStream());
 
@@ -764,7 +820,8 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 				if (logger.isWarnEnabled()) {
 					logger.warn(
 						"Unable to get driver version for Chrome {}: {}",
-						chromeMajorVersion, ioException.getMessage());
+						chromeMajorVersion.toString(),
+						ioException.getMessage());
 				}
 			}
 		}
@@ -892,6 +949,28 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 		else {
 			sb.append("linux64.tar.gz");
 		}
+
+		return sb.toString();
+	}
+
+	private String _getLegacyChromeDriverURL(String chromeDriverVersion) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(_LEGACY_CHROME_DRIVER_BASE_URL);
+		sb.append(chromeDriverVersion);
+		sb.append("/chromedriver_");
+
+		if (OSDetector.isApple()) {
+			sb.append("mac64");
+		}
+		else if (OSDetector.isWindows()) {
+			sb.append("win32");
+		}
+		else {
+			sb.append("linux64");
+		}
+
+		sb.append(".zip");
 
 		return sb.toString();
 	}
@@ -1168,12 +1247,12 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 		}
 	}
 
-	private static final String _CHROME_DRIVER_BASE_URL =
-		"https://chromedriver.storage.googleapis.com/";
-
 	private static final String _DEFAULT_CHROME_DRIVER_VERSION = "2.37";
 
 	private static final String _DEFAULT_GECKO_DRIVER_VERSION = "0.31.0";
+
+	private static final String _LEGACY_CHROME_DRIVER_BASE_URL =
+		"https://chromedriver.storage.googleapis.com/";
 
 	private static final String _START_TESTABLE_TOMCAT_TASK_NAME =
 		"startTestableTomcat";
@@ -1183,35 +1262,43 @@ public class PoshiRunnerPlugin implements Plugin<Project> {
 
 	private static final Pattern _browserVersionPattern = Pattern.compile(
 		"[A-z=\\s]+(?<fullVersion>(?<majorVersion>[0-9]+)\\.[0-9\\.]+)");
-	private static final Map<String, String> _chromeDriverVersions =
-		new HashMap<String, String>() {
+	private static final Map<Integer, String> _chromeDriverVersions =
+		new HashMap<Integer, String>() {
 			{
-				put("86", "86.0.4240.22");
-				put("87", "87.0.4280.20");
-				put("88", "88.0.4324.96");
-				put("89", "89.0.4389.23");
-				put("90", "90.0.4430.24");
-				put("91", "91.0.4472.101");
-				put("92", "92.0.4515.107");
-				put("93", "93.0.4577.63");
-				put("94", "94.0.4606.61");
-				put("95", "95.0.4638.17");
-				put("96", "96.0.4664.45");
-				put("97", "97.0.4692.71");
-				put("98", "98.0.4758.102");
-				put("99", "99.0.4844.51");
-				put("100", "100.0.4896.60");
-				put("101", "101.0.4951.41");
-				put("102", "102.0.5005.61");
-				put("103", "103.0.5060.134");
-				put("104", "104.0.5112.79");
-				put("105", "105.0.5195.52");
-				put("106", "106.0.5249.61");
-				put("107", "107.0.5304.62");
-				put("108", "108.0.5359.71");
-				put("109", "109.0.5414.74");
+				put(86, "86.0.4240.22");
+				put(87, "87.0.4280.20");
+				put(88, "88.0.4324.96");
+				put(89, "89.0.4389.23");
+				put(90, "90.0.4430.24");
+				put(91, "91.0.4472.101");
+				put(92, "92.0.4515.107");
+				put(93, "93.0.4577.63");
+				put(94, "94.0.4606.61");
+				put(95, "95.0.4638.17");
+				put(96, "96.0.4664.45");
+				put(97, "97.0.4692.71");
+				put(98, "98.0.4758.102");
+				put(99, "99.0.4844.51");
+				put(100, "100.0.4896.60");
+				put(101, "101.0.4951.41");
+				put(102, "102.0.5005.61");
+				put(103, "103.0.5060.134");
+				put(104, "104.0.5112.79");
+				put(105, "105.0.5195.52");
+				put(106, "106.0.5249.61");
+				put(107, "107.0.5304.62");
+				put(108, "108.0.5359.71");
+				put(109, "109.0.5414.74");
+				put(110, "110.0.5481.77");
+				put(111, "111.0.5563.64");
+				put(112, "112.0.5615.49");
+				put(113, "113.0.5672.63");
+				put(114, "114.0.5735.90");
+				put(115, "115.0.5790.170");
 			}
 		};
+	private static final Pattern _majorChromeVersionPattern = Pattern.compile(
+		"([\\d]+)\\.[\\d\\.]+");
 	private static final Map<String, String> _webDriverBrowserBinaryNames =
 		new HashMap<String, String>() {
 			{

@@ -25,8 +25,10 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.TabsItemList;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.TabsItemListBuilder;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.ItemSelectorCriterion;
+import com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType;
 import com.liferay.item.selector.criteria.URLItemSelectorReturnType;
 import com.liferay.item.selector.criteria.UUIDItemSelectorReturnType;
+import com.liferay.item.selector.criteria.image.criterion.ImageItemSelectorCriterion;
 import com.liferay.journal.constants.JournalArticleConstants;
 import com.liferay.journal.constants.JournalFolderConstants;
 import com.liferay.journal.model.JournalArticle;
@@ -789,6 +791,26 @@ public class JournalEditArticleDisplayContext {
 		return _portletResource;
 	}
 
+	public Map<String, Object> getProps() {
+		return HashMapBuilder.<String, Object>put(
+			"itemSelectorURL",
+			() -> {
+				ItemSelectorCriterion itemSelectorCriterion =
+					new ImageItemSelectorCriterion();
+
+				itemSelectorCriterion.setDesiredItemSelectorReturnTypes(
+					new FileEntryItemSelectorReturnType());
+
+				return String.valueOf(
+					_itemSelector.getItemSelectorURL(
+						RequestBackedPortletURLFactoryUtil.create(
+							_httpServletRequest),
+						_liferayPortletResponse.getNamespace() + "selectImage",
+						itemSelectorCriterion));
+			}
+		).build();
+	}
+
 	public String getPublishButtonLabel() throws PortalException {
 		if (getClassNameId() > JournalArticleConstants.CLASS_NAME_ID_DEFAULT) {
 			return "save";
@@ -911,34 +933,35 @@ public class JournalEditArticleDisplayContext {
 		return _defaultLanguageId;
 	}
 
-	public String getSmallImageSource() {
-		if (Validator.isNotNull(_smallImageSource)) {
+	public int getSmallImageSource() {
+		if (_smallImageSource != null) {
 			return _smallImageSource;
 		}
 
 		if (_article == null) {
-			_smallImageSource = "none";
+			_smallImageSource = JournalArticleConstants.SMALL_IMAGE_SOURCE_NONE;
 
 			return _smallImageSource;
 		}
 
-		_smallImageSource = ParamUtil.getString(
+		_smallImageSource = ParamUtil.getInteger(
 			_httpServletRequest, "smallImageSource");
 
-		if (Validator.isNotNull(_smallImageSource)) {
+		if (_smallImageSource <= 0) {
 			return _smallImageSource;
 		}
 
 		if (!_article.isSmallImage()) {
-			_smallImageSource = "none";
+			_smallImageSource = JournalArticleConstants.SMALL_IMAGE_SOURCE_NONE;
 		}
 		else if (Validator.isNotNull(_article.getSmallImageURL())) {
-			_smallImageSource = "url";
+			_smallImageSource = JournalArticleConstants.SMALL_IMAGE_SOURCE_URL;
 		}
 		else if ((_article.getSmallImageId() > 0) &&
 				 Validator.isNull(_article.getSmallImageURL())) {
 
-			_smallImageSource = "file";
+			_smallImageSource =
+				JournalArticleConstants.SMALL_IMAGE_SOURCE_USER_COMPUTER;
 		}
 
 		return _smallImageSource;
@@ -1540,7 +1563,7 @@ public class JournalEditArticleDisplayContext {
 	private String _referringPortletResource;
 	private Boolean _showHeader;
 	private Boolean _showSelectFolder;
-	private String _smallImageSource;
+	private Integer _smallImageSource;
 	private final ThemeDisplay _themeDisplay;
 	private Double _version;
 

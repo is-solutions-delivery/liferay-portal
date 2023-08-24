@@ -30,6 +30,7 @@ import com.liferay.commerce.wish.list.service.CommerceWishListService;
 import com.liferay.frontend.data.set.provider.search.FDSPagination;
 import com.liferay.frontend.taglib.servlet.taglib.util.JSPRenderer;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -40,6 +41,8 @@ import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.IOException;
+
+import java.math.BigDecimal;
 
 import java.util.List;
 import java.util.Locale;
@@ -210,7 +213,8 @@ public class CommerceWishListsCommerceOrderImporterTypeImpl
 
 			commerceOrderImporterItemImpl.setErrorMessages(
 				new String[] {"the-product-is-no-longer-available"});
-			commerceOrderImporterItemImpl.setQuantity(1);
+			commerceOrderImporterItemImpl.setQuantity(BigDecimal.ONE);
+			commerceOrderImporterItemImpl.setUnitOfMeasureKey(StringPool.BLANK);
 		}
 		else {
 			CPInstance firstAvailableReplacementCPInstance =
@@ -235,7 +239,10 @@ public class CommerceWishListsCommerceOrderImporterTypeImpl
 			commerceOrderImporterItemImpl.setNameMap(cpDefinition.getNameMap());
 
 			commerceOrderImporterItemImpl.setQuantity(
-				_cpDefinitionInventoryEngine.getMinOrderQuantity(cpInstance));
+				BigDecimal.valueOf(
+					_cpDefinitionInventoryEngine.getMinOrderQuantity(
+						cpInstance)));
+			commerceOrderImporterItemImpl.setUnitOfMeasureKey(StringPool.BLANK);
 		}
 
 		String json = commerceWishListItem.getJson();

@@ -356,6 +356,14 @@ public class CPInstanceUnitOfMeasureLocalServiceWrapper
 			cpInstanceId, start, end, orderByComparator);
 	}
 
+	@Override
+	public java.util.List<CPInstanceUnitOfMeasure> getCPInstanceUnitOfMeasures(
+		long companyId, String sku) {
+
+		return _cpInstanceUnitOfMeasureLocalService.getCPInstanceUnitOfMeasures(
+			companyId, sku);
+	}
+
 	/**
 	 * Returns the number of cp instance unit of measures.
 	 *
@@ -371,6 +379,12 @@ public class CPInstanceUnitOfMeasureLocalServiceWrapper
 	public int getCPInstanceUnitOfMeasuresCount(long cpInstanceId) {
 		return _cpInstanceUnitOfMeasureLocalService.
 			getCPInstanceUnitOfMeasuresCount(cpInstanceId);
+	}
+
+	@Override
+	public int getCPInstanceUnitOfMeasuresCount(long companyId, String sku) {
+		return _cpInstanceUnitOfMeasureLocalService.
+			getCPInstanceUnitOfMeasuresCount(companyId, sku);
 	}
 
 	@Override

@@ -87,6 +87,7 @@ public class DeepLTranslator implements Translator {
 
 		Map<String, String> translatedFieldsMap = _translate(
 			deepLTranslatorConfiguration, translatorPacket.getFieldsMap(),
+			translatorPacket.getHTMLMap(),
 			_getLanguageCode(translatorPacket.getSourceLanguageId()),
 			targetLanguageCode);
 
@@ -100,6 +101,11 @@ public class DeepLTranslator implements Translator {
 			@Override
 			public Map<String, String> getFieldsMap() {
 				return translatedFieldsMap;
+			}
+
+			@Override
+			public Map<String, Boolean> getHTMLMap() {
+				return translatorPacket.getHTMLMap();
 			}
 
 			@Override
@@ -145,9 +151,6 @@ public class DeepLTranslator implements Translator {
 
 		options.addHeader(
 			HttpHeaders.AUTHORIZATION, "DeepL-Auth-Key " + authKey);
-		options.addHeader(
-			HttpHeaders.CONTENT_TYPE,
-			ContentTypes.APPLICATION_X_WWW_FORM_URLENCODED);
 		options.setLocation(url);
 
 		try {
@@ -171,18 +174,20 @@ public class DeepLTranslator implements Translator {
 
 	private Map<String, String> _translate(
 			DeepLTranslatorConfiguration deepLTranslatorConfiguration,
-			Map<String, String> fieldsMap, String sourceLanguageCode,
-			String targetLanguageCode)
+			Map<String, String> fieldsMap, Map<String, Boolean> htmlMap,
+			String sourceLanguageCode, String targetLanguageCode)
 		throws PortalException {
 
 		Map<String, String> translatedFieldsMap = new HashMap<>();
 
 		for (Map.Entry<String, String> entry : fieldsMap.entrySet()) {
+			Boolean html = htmlMap.get(entry.getKey());
+
 			translatedFieldsMap.put(
 				entry.getKey(),
 				_translate(
 					deepLTranslatorConfiguration, sourceLanguageCode,
-					targetLanguageCode, entry.getValue()));
+					targetLanguageCode, entry.getValue(), html));
 		}
 
 		return translatedFieldsMap;
@@ -190,21 +195,38 @@ public class DeepLTranslator implements Translator {
 
 	private String _translate(
 			DeepLTranslatorConfiguration deepLTranslatorConfiguration,
-			String sourceLanguageCode, String targetLanguageCode, String text)
+			String sourceLanguageCode, String targetLanguageCode, String text,
+			Boolean html)
 		throws PortalException {
 
 		if (Validator.isBlank(text)) {
 			return text;
 		}
 
+		JSONObject requestJSONObject = _jsonFactory.createJSONObject();
+
+		if ((html != null) && html) {
+			requestJSONObject.put("tag_handling", "html");
+		}
+
+		requestJSONObject.put(
+			"source_lang", sourceLanguageCode
+		).put(
+			"target_lang", targetLanguageCode
+		).put(
+			"text", new String[] {text}
+		);
+
+		Http.Body body = new Http.Body(
+			requestJSONObject.toString(), ContentTypes.APPLICATION_JSON,
+			"UTF-8");
+
 		Http.Options options = new Http.Options();
 
 		options.addHeader(
-			HttpHeaders.AUTHORIZATION,
-			"DeepL-Auth-Key " + deepLTranslatorConfiguration.authKey());
-		options.addPart("source_lang", sourceLanguageCode);
-		options.addPart("target_lang", targetLanguageCode);
-		options.addPart("text", text);
+			HttpHeaders.CONTENT_TYPE, ContentTypes.APPLICATION_JSON);
+
+		options.setBody(body);
 		options.setMethod(Http.Method.POST);
 
 		JSONObject jsonObject = _jsonFactory.createJSONObject(

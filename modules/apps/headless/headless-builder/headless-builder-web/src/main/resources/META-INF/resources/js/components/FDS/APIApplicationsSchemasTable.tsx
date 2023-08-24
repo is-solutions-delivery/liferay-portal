@@ -4,39 +4,79 @@
  */
 
 import {FrontendDataSet} from '@liferay/frontend-data-set-web';
+import {openModal} from 'frontend-js-web';
 import React from 'react';
 
-import {getAPIApplicationsSchemasFDSProps} from './fdsUtils/schemasFDSProps.';
+import {CreateAPISchemaModalContent} from '../modals/CreateAPISchemaModalContent';
+import {DeleteAPIApplicationModalContent} from '../modals/DeleteAPISchemaModalContent';
+import {getFilterRelatedItemURL} from '../utils/urlUtil';
+import {getAPISchemasFDSProps} from './fdsUtils/schemasFDSProps';
 
 interface APIApplicationsTableProps {
 	apiURLPaths: APIURLPaths;
+	currentAPIApplicationId: string | null;
 	portletId: string;
-	readOnly: boolean;
 }
 
 export default function APIApplicationsSchemasTable({
 	apiURLPaths,
+	currentAPIApplicationId,
 	portletId,
 }: APIApplicationsTableProps) {
 	const createAPIApplicationSchema = {
 		label: Liferay.Language.get('add-new-schema'),
+		onClick: ({loadData}: {loadData: voidReturn}) => {
+			openModal({
+				center: true,
+				contentComponent: ({closeModal}: {closeModal: voidReturn}) =>
+					CreateAPISchemaModalContent({
+						apiSchemasURLPath: apiURLPaths.schemas,
+						closeModal,
+						currentAPIApplicationId,
+						loadData,
+					}),
+				id: 'createAPISchemaModal',
+				size: 'md',
+			});
+		},
+	};
+
+	const schemaAPIURLPath = getFilterRelatedItemURL({
+		apiURLPath: apiURLPaths.schemas,
+		filterQuery: `r_apiApplicationToAPISchemas_c_apiApplicationId eq '${currentAPIApplicationId}'`,
+	});
+
+	const deleteAPISchema = (
+		itemData: APIApplicationSchemaItem,
+		loadData: voidReturn
+	) => {
+		openModal({
+			center: true,
+			contentComponent: ({closeModal}: {closeModal: voidReturn}) =>
+				DeleteAPIApplicationModalContent({
+					closeModal,
+					itemData,
+					loadData,
+				}),
+			id: 'deleteAPISchemaModal',
+			size: 'md',
+			status: 'danger',
+		});
 	};
 
 	function onActionDropdownItemClick({
 		action,
 		itemData,
-	}: FDSItem<APIApplicationEndpointItem>) {
-		if (action.id === 'editAPIApplicationSchema') {
-			return void itemData;
+		loadData,
+	}: FDSItem<APIApplicationSchemaItem>) {
+		if (action.id === 'deleteAPIApplicationSchema') {
+			deleteAPISchema(itemData, loadData);
 		}
 	}
 
 	return (
 		<FrontendDataSet
-			{...getAPIApplicationsSchemasFDSProps(
-				apiURLPaths.schemas,
-				portletId
-			)}
+			{...getAPISchemasFDSProps(schemaAPIURLPath, portletId)}
 			creationMenu={{
 				primaryItems: [createAPIApplicationSchema],
 			}}

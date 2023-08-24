@@ -192,7 +192,9 @@ public class CPDisplayLayoutIndexer extends BaseIndexer<CPDisplayLayout> {
 		}
 
 		if (_log.isDebugEnabled()) {
-			_log.debug("Document " + cpDisplayLayout + " indexed successfully");
+			_log.debug(
+				"Commerce product display layout " + cpDisplayLayout +
+					" indexed successfully");
 		}
 
 		return document;
@@ -244,7 +246,7 @@ public class CPDisplayLayoutIndexer extends BaseIndexer<CPDisplayLayout> {
 					if (_log.isWarnEnabled()) {
 						_log.warn(
 							"Unable to index commerce product display layout " +
-								cpDisplayLayout.getCPDisplayLayoutId(),
+								cpDisplayLayout,
 							portalException);
 					}
 				}

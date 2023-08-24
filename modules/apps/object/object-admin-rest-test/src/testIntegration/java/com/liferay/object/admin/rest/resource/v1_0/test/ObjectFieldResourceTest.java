@@ -48,7 +48,7 @@ public class ObjectFieldResourceTest extends BaseObjectFieldResourceTestCase {
 
 		_objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
-				TestPropsValues.getUserId(), false, true,
+				TestPropsValues.getUserId(), 0, false, true,
 				LocalizedMapUtil.getLocalizedMap(value), value, null, null,
 				LocalizedMapUtil.getLocalizedMap(value), true,
 				ObjectDefinitionConstants.SCOPE_COMPANY,
@@ -315,6 +315,11 @@ public class ObjectFieldResourceTest extends BaseObjectFieldResourceTestCase {
 	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {"label", "state"};
+	}
+
+	@Override
+	protected String[] getIgnoredEntityFieldNames() {
+		return new String[] {"label"};
 	}
 
 	@Override

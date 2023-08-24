@@ -151,6 +151,26 @@ public class JSPTagAttributesCheck extends BaseTagAttributesCheck {
 					StringUtil.replaceLast(attributeValue, ".toString()", ""));
 			}
 
+			if (isAttributeValue(_CHECK_CLAY_ALERT_MESSAGE_KEY, absolutePath) &&
+				tagFullName.equals("clay:alert") &&
+				attributeName.equals("message")) {
+
+				matcher = _languageUtilPattern.matcher(attributeValue);
+
+				if (matcher.find()) {
+					String languageKey = matcher.group(1);
+
+					if (languageKey.matches("\"[^\"]+\"")) {
+						tag.putAttribute(
+							attributeName, StringUtil.unquote(languageKey));
+					}
+					else {
+						tag.putAttribute(
+							attributeName, "<%= " + languageKey + " %>");
+					}
+				}
+			}
+
 			if (tagFullName.equals("liferay-ui:message") &&
 				attributeName.equals("arguments")) {
 
@@ -416,9 +436,6 @@ public class JSPTagAttributesCheck extends BaseTagAttributesCheck {
 
 		outerLoop:
 		for (String tldFileName : tldFileNames) {
-			tldFileName = StringUtil.replace(
-				tldFileName, CharPool.BACK_SLASH, CharPool.SLASH);
-
 			File tldFile = new File(tldFileName);
 
 			String content = FileUtil.read(tldFile);
@@ -636,6 +653,9 @@ public class JSPTagAttributesCheck extends BaseTagAttributesCheck {
 		return attributeValue;
 	}
 
+	private static final String _CHECK_CLAY_ALERT_MESSAGE_KEY =
+		"checkClayAlertMessage";
+
 	private static final String _JAVA_SOURCE_REPLACEMENT = "__JAVA_SOURCE__";
 
 	private static final String[] _SINGLE_LINE_TAG_WHITELIST = {
@@ -653,6 +673,8 @@ public class JSPTagAttributesCheck extends BaseTagAttributesCheck {
 
 	private static final Pattern _javaSourceInsideTagPattern = Pattern.compile(
 		"<%.*?%>");
+	private static final Pattern _languageUtilPattern = Pattern.compile(
+		"<%= LanguageUtil\\.get\\(\\w+, (.+)\\) %>");
 	private static final Pattern _messageArgumentArrayPattern = Pattern.compile(
 		"^(<%= )new \\w+\\[\\] \\{([^<>]+)\\}( %>)$");
 	private static final Pattern _styleAttributePattern = Pattern.compile(

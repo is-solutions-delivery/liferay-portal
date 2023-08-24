@@ -5,7 +5,9 @@
 
 package com.liferay.object.rest.filter.factory;
 
+import com.liferay.object.model.ObjectDefinition;
 import com.liferay.portal.odata.entity.EntityModel;
+import com.liferay.portal.odata.filter.expression.Expression;
 
 /**
  * @author Gabriel Albuquerque
@@ -13,8 +15,12 @@ import com.liferay.portal.odata.entity.EntityModel;
 public interface FilterFactory<T> {
 
 	public T create(
-		EntityModel entityModel, String filterString, long objectDefinitionId);
+		EntityModel entityModel, String filterString,
+		ObjectDefinition objectDefinition);
 
-	public T create(String filterString, long objectDefinitionId);
+	public T create(
+		Expression filterExpression, ObjectDefinition objectDefinition);
+
+	public T create(String filterString, ObjectDefinition objectDefinition);
 
 }

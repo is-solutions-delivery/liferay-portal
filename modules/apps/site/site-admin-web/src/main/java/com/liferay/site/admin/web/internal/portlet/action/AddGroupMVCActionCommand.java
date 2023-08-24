@@ -206,7 +206,7 @@ public class AddGroupMVCActionCommand extends BaseMVCActionCommand {
 		String friendlyURL = ParamUtil.getString(
 			actionRequest, "groupFriendlyURL");
 		boolean manualMembership = ParamUtil.getBoolean(
-			actionRequest, "manualMembership", true);
+			actionRequest, "manualMembership");
 		boolean inheritContent = ParamUtil.getBoolean(
 			actionRequest, "inheritContent");
 		boolean active = ParamUtil.getBoolean(actionRequest, "active", true);
@@ -516,7 +516,7 @@ public class AddGroupMVCActionCommand extends BaseMVCActionCommand {
 			ActionRequest actionRequest, Group group)
 		throws Exception {
 
-		ActionUtil.updateLayoutSetPrototypesLinks(actionRequest, group);
+		ActionUtil.updateLayoutSetPrototypesLinks(actionRequest, group, _sites);
 
 		long layoutSetPrototypeId = ParamUtil.getLong(
 			actionRequest, "layoutSetPrototypeId");
@@ -575,6 +575,9 @@ public class AddGroupMVCActionCommand extends BaseMVCActionCommand {
 
 	@Reference
 	private SiteInitializerRegistry _siteInitializerRegistry;
+
+	@Reference
+	private Sites _sites;
 
 	@Reference
 	private WorkflowDefinitionLinkLocalService

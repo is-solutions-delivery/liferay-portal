@@ -182,7 +182,8 @@ public class CPAttachmentFileEntryIndexer
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
-				"Indexing attachment file entry " + cpAttachmentFileEntry);
+				"Indexing commerce product attachment file entry " +
+					cpAttachmentFileEntry);
 		}
 
 		Document document = getBaseModelDocument(
@@ -234,7 +235,8 @@ public class CPAttachmentFileEntryIndexer
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
-				"Document " + cpAttachmentFileEntry + " indexed successfully");
+				"Commerce product attachment file entry " +
+					cpAttachmentFileEntry + " indexed successfully");
 		}
 
 		return document;
@@ -293,12 +295,9 @@ public class CPAttachmentFileEntryIndexer
 				}
 				catch (PortalException portalException) {
 					if (_log.isWarnEnabled()) {
-						long cpAttachmentFileEntryId =
-							cpAttachmentFileEntry.getCPAttachmentFileEntryId();
-
 						_log.warn(
 							"Unable to index commerce product attachment " +
-								"file entry " + cpAttachmentFileEntryId,
+								"file entry " + cpAttachmentFileEntry,
 							portalException);
 					}
 				}

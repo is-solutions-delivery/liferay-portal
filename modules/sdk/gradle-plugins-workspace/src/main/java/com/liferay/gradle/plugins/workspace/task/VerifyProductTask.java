@@ -5,6 +5,9 @@
 
 package com.liferay.gradle.plugins.workspace.task;
 
+import com.liferay.gradle.plugins.workspace.WorkspaceExtension;
+import com.liferay.gradle.util.Validator;
+
 import java.util.Objects;
 
 import org.gradle.api.DefaultTask;
@@ -20,65 +23,74 @@ public class VerifyProductTask extends DefaultTask {
 
 	@Input
 	@Optional
-	public String getBundleUrl() {
-		return _bundleUrl;
+	public WorkspaceExtension getExtension() {
+		return _extension;
 	}
 
 	@Input
 	@Optional
-	public String getDockerImageLiferay() {
-		return _dockerImageLiferay;
+	public String getProcut() {
+		return _product;
 	}
 
-	@Input
-	@Optional
-	public String getErrorMessage() {
-		return _errorMessage;
+	public void setExtension(WorkspaceExtension extension) {
+		_extension = extension;
 	}
 
-	@Input
-	@Optional
-	public String getTargetPlatformVersion() {
-		return _targetPlatformVersion;
-	}
-
-	public void setBundleUrl(String bundleUrl) {
-		_bundleUrl = bundleUrl;
-	}
-
-	public void setDockerImageLiferay(String dockerImageLiferay) {
-		_dockerImageLiferay = dockerImageLiferay;
-	}
-
-	public void setErrorMessage(String errorMessage) {
-		_errorMessage = errorMessage;
-	}
-
-	public void setTargetPlatformVersion(String targetPlatformVersion) {
-		_targetPlatformVersion = targetPlatformVersion;
+	public void setProduct(String product) {
+		_product = product;
 	}
 
 	@TaskAction
 	public void verifyProduct() throws Exception {
-		if (!_errorMessage.isEmpty()) {
-			throw new GradleException(_errorMessage);
+		WorkspaceExtension.ProductInfo productInfo =
+			_extension.getProductInfo();
+
+		if (Objects.isNull(productInfo)) {
+			throw new GradleException(
+				"Unable to get produt info for product '" + _product + "'");
 		}
 
-		if (Objects.isNull(_bundleUrl) || _bundleUrl.isEmpty()) {
-			throw new GradleException("Liferay bundle URL should not be null");
-		}
-
-		if (Objects.isNull(_dockerImageLiferay) ||
-			_dockerImageLiferay.isEmpty()) {
+		if (Validator.isNull(_extension.getAppServerTomcatVersion()) &&
+			Validator.isNull(productInfo.getAppServerTomcatVersion())) {
 
 			throw new GradleException(
-				"Liferay Docker image name should not be null");
+				"Unable to get Tomcat version for product '" + _product + "'");
+		}
+
+		if (Validator.isNull(_extension.getBundleChecksumMD5()) &&
+			Validator.isNull(productInfo.getBundleChecksumMD5())) {
+
+			throw new GradleException(
+				"Unable to get bundle checksum MD5 for product '" + _product +
+					"'");
+		}
+
+		if (Validator.isNull(_extension.getBundleUrl()) &&
+			Validator.isNull(productInfo.getBundleUrl())) {
+
+			throw new GradleException(
+				"Unable to get bundle URL for product '" + _product + "'");
+		}
+
+		if (Validator.isNull(_extension.getDockerImageLiferay()) &&
+			Validator.isNull(productInfo.getLiferayDockerImage())) {
+
+			throw new GradleException(
+				"Unable to get Liferay Docker image for product '" + _product +
+					"'");
+		}
+
+		if (Validator.isNull(_extension.getTargetPlatformVersion()) &&
+			Validator.isNull(productInfo.getTargetPlatformVersion())) {
+
+			throw new GradleException(
+				"Unable to get target platform version for product '" +
+					_product + "'");
 		}
 	}
 
-	private String _bundleUrl = "";
-	private String _dockerImageLiferay = "";
-	private String _errorMessage = "";
-	private String _targetPlatformVersion = "";
+	private WorkspaceExtension _extension;
+	private String _product;
 
 }

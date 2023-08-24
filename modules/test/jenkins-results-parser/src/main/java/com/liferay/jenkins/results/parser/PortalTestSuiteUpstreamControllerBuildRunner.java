@@ -37,12 +37,6 @@ public class PortalTestSuiteUpstreamControllerBuildRunner
 
 	@Override
 	public void run() {
-		List<String> testSuiteNames = _getSelectedTestSuiteNames();
-
-		boolean keepLogs = !testSuiteNames.isEmpty();
-
-		keepJenkinsBuild(keepLogs);
-
 		invokeTestSuiteBuilds();
 	}
 
@@ -106,8 +100,12 @@ public class PortalTestSuiteUpstreamControllerBuildRunner
 		if (testSuiteNames.isEmpty()) {
 			System.out.println("There are no test suites to run at this time.");
 
+			keepJenkinsBuild(false);
+
 			return;
 		}
+
+		keepJenkinsBuild(true);
 
 		String jenkinsAuthenticationToken;
 
@@ -227,19 +225,25 @@ public class PortalTestSuiteUpstreamControllerBuildRunner
 
 		StringBuilder sb = new StringBuilder();
 
-		String portalSHA = buildData.getPortalBranchSHA();
-
 		sb.append(JenkinsResultsParserUtil.join(", ", _invokedTestSuiteNames));
-
+		sb.append(",");
 		sb.append(" <strong>GIT ID</strong> - ");
 		sb.append("<a href=\"https://github.com/");
 		sb.append(buildData.getPortalGitHubUsername());
 		sb.append("/");
 		sb.append(buildData.getPortalGitHubRepositoryName());
 		sb.append("/commit/");
-		sb.append(buildData.getPortalBranchSHA());
+
+		String portalSHA = buildData.getPortalBranchSHA();
+
+		sb.append(portalSHA);
+
 		sb.append("\">");
-		sb.append(portalSHA, 0, 7);
+
+		String abbreviatedSHA = portalSHA.substring(0, 7);
+
+		sb.append(abbreviatedSHA);
+
 		sb.append("</a>");
 
 		buildData.setBuildDescription(sb.toString());

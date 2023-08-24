@@ -6,11 +6,13 @@
 import {FrontendDataSet} from '@liferay/frontend-data-set-web';
 import React from 'react';
 
+import {getFilterRelatedItemURL} from '../utils/urlUtil';
 import {getAPIApplicationsEndpointsFDSProps} from './fdsUtils/endpointsFDSProps';
 
 interface APIApplicationsTableProps {
 	apiApplicationBaseURL: string;
 	apiURLPaths: APIURLPaths;
+	currentAPIApplicationId: string | null;
 	portletId: string;
 	readOnly: boolean;
 }
@@ -18,11 +20,17 @@ interface APIApplicationsTableProps {
 export default function APIApplicationsEndpointsTable({
 	apiApplicationBaseURL,
 	apiURLPaths,
+	currentAPIApplicationId,
 	portletId,
 }: APIApplicationsTableProps) {
 	const createAPIApplicationEndpoint = {
 		label: Liferay.Language.get('add-api-endpoint'),
 	};
+
+	const endpointAPIURLPath = getFilterRelatedItemURL({
+		apiURLPath: apiURLPaths.endpoints,
+		filterQuery: `r_apiApplicationToAPIEndpoints_c_apiApplicationId eq '${currentAPIApplicationId}'`,
+	});
 
 	function onActionDropdownItemClick({
 		action,
@@ -38,7 +46,7 @@ export default function APIApplicationsEndpointsTable({
 	return (
 		<FrontendDataSet
 			{...getAPIApplicationsEndpointsFDSProps(
-				apiURLPaths.endpoints,
+				endpointAPIURLPath,
 				portletId
 			)}
 			creationMenu={{

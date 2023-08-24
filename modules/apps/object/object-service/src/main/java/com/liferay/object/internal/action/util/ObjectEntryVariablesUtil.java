@@ -96,6 +96,8 @@ public class ObjectEntryVariablesUtil {
 		return HashMapBuilder.<String, Object>put(
 			"baseModel", currentVariables
 		).put(
+			"entryDTO", currentVariables.get("entryDTO")
+		).put(
 			"originalBaseModel",
 			() -> {
 				String suffix = _getSuffix(
@@ -242,6 +244,11 @@ public class ObjectEntryVariablesUtil {
 			variables.putAll((Map<String, Object>)variables.get("values"));
 
 			variables.remove("values");
+
+			allowedVariables.put(
+				"entryDTO",
+				payloadJSONObject.get(
+					"objectEntryDTO" + objectDefinition.getShortName()));
 
 			Object objectEntryId = variables.get("objectEntryId");
 

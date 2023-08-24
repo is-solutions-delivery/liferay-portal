@@ -35,6 +35,7 @@ import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.exception.ObjectDefinitionEnableLocalizationException;
 import com.liferay.object.exception.ObjectDefinitionStorageTypeException;
+import com.liferay.object.model.ObjectFolder;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectActionService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
@@ -42,6 +43,7 @@ import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectFieldSettingLocalService;
 import com.liferay.object.service.ObjectFilterLocalService;
+import com.liferay.object.service.ObjectFolderLocalService;
 import com.liferay.object.service.ObjectLayoutLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.service.ObjectValidationRuleLocalService;
@@ -63,6 +65,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Localization;
+import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -237,6 +240,13 @@ public class ObjectDefinitionResourceImpl
 			throw new UnsupportedOperationException();
 		}
 
+		if (Validator.isNotNull(
+				objectDefinition.getObjectFolderExternalReferenceCode()) &&
+			!FeatureFlagManagerUtil.isEnabled("LPS-148856")) {
+
+			throw new UnsupportedOperationException();
+		}
+
 		if (!Validator.isBlank(objectDefinition.getStorageType()) &&
 			!FeatureFlagManagerUtil.isEnabled("LPS-135430")) {
 
@@ -255,6 +265,9 @@ public class ObjectDefinitionResourceImpl
 				_objectDefinitionService.addSystemObjectDefinition(
 					objectDefinition.getExternalReferenceCode(),
 					contextUser.getUserId(),
+					_getObjectFolderId(
+						objectDefinition.
+							getObjectFolderExternalReferenceCode()),
 					GetterUtil.getBoolean(objectDefinition.getEnableComments()),
 					LocalizedMapUtil.getLocalizedMap(
 						objectDefinition.getLabel()),
@@ -277,6 +290,9 @@ public class ObjectDefinitionResourceImpl
 		else {
 			serviceBuilderObjectDefinition =
 				_objectDefinitionService.addCustomObjectDefinition(
+					_getObjectFolderId(
+						objectDefinition.
+							getObjectFolderExternalReferenceCode()),
 					GetterUtil.getBoolean(objectDefinition.getEnableComments()),
 					GetterUtil.getBoolean(
 						objectDefinition.getEnableLocalization()),
@@ -423,6 +439,13 @@ public class ObjectDefinitionResourceImpl
 			throw new UnsupportedOperationException();
 		}
 
+		if (Validator.isNotNull(
+				objectDefinition.getObjectFolderExternalReferenceCode()) &&
+			!FeatureFlagManagerUtil.isEnabled("LPS-148856")) {
+
+			throw new UnsupportedOperationException();
+		}
+
 		if (!Validator.isBlank(objectDefinition.getStorageType()) &&
 			!FeatureFlagManagerUtil.isEnabled("LPS-135430")) {
 
@@ -468,7 +491,11 @@ public class ObjectDefinitionResourceImpl
 			serviceBuilderObjectDefinition =
 				_objectDefinitionService.updateSystemObjectDefinition(
 					objectDefinition.getExternalReferenceCode(),
-					objectDefinitionId, titleObjectFieldId);
+					objectDefinitionId,
+					_getObjectFolderId(
+						objectDefinition.
+							getObjectFolderExternalReferenceCode()),
+					titleObjectFieldId);
 		}
 		else {
 			serviceBuilderObjectDefinition =
@@ -476,6 +503,9 @@ public class ObjectDefinitionResourceImpl
 					objectDefinition.getExternalReferenceCode(),
 					objectDefinitionId,
 					GetterUtil.getLong(accountEntryRestrictedObjectFieldId), 0,
+					_getObjectFolderId(
+						objectDefinition.
+							getObjectFolderExternalReferenceCode()),
 					titleObjectFieldId,
 					GetterUtil.getBoolean(
 						objectDefinition.getAccountEntryRestricted()),
@@ -571,11 +601,6 @@ public class ObjectDefinitionResourceImpl
 		Set<String> accountEntryRestrictedObjectRelationshipsNames =
 			_getAccountEntryRestrictedObjectRelationshipsNames(
 				serviceBuilderObjectDefinition, objectRelationships);
-
-		if (objectRelationships != null) {
-			_objectRelationshipLocalService.deleteObjectRelationships(
-				objectDefinitionId, false);
-		}
 
 		ObjectValidationRule[] objectValidationRules =
 			objectDefinition.getObjectValidationRules();
@@ -675,6 +700,29 @@ public class ObjectDefinitionResourceImpl
 		}
 
 		if (objectRelationships != null) {
+			Set<String> deleteObjectRelationshipsNames =
+				SetUtil.asymmetricDifference(
+					transform(
+						_objectRelationshipLocalService.getObjectRelationships(
+							objectDefinitionId),
+						com.liferay.object.model.ObjectRelationship::getName),
+					transformToList(
+						objectRelationships, ObjectRelationship::getName));
+
+			for (String deleteObjectRelationshipsName :
+					deleteObjectRelationshipsNames) {
+
+				com.liferay.object.model.ObjectRelationship
+					serviceBuilderObjectRelationship =
+						_objectRelationshipLocalService.
+							fetchObjectRelationshipByObjectDefinitionId(
+								objectDefinitionId,
+								deleteObjectRelationshipsName);
+
+				_objectRelationshipLocalService.deleteObjectRelationship(
+					serviceBuilderObjectRelationship.getObjectRelationshipId());
+			}
+
 			ObjectRelationshipResource.Builder builder =
 				_objectRelationshipResourceFactory.create();
 
@@ -684,6 +732,22 @@ public class ObjectDefinitionResourceImpl
 				).build();
 
 			for (ObjectRelationship objectRelationship : objectRelationships) {
+				com.liferay.object.model.ObjectRelationship
+					serviceBuilderObjectRelationship =
+						_objectRelationshipLocalService.
+							fetchObjectRelationshipByObjectDefinitionId(
+								objectDefinitionId,
+								objectRelationship.getName());
+
+				if (serviceBuilderObjectRelationship != null) {
+					objectRelationshipResource.putObjectRelationship(
+						serviceBuilderObjectRelationship.
+							getObjectRelationshipId(),
+						objectRelationship);
+
+					continue;
+				}
+
 				objectRelationship =
 					objectRelationshipResource.
 						postObjectDefinitionObjectRelationship(
@@ -790,6 +854,21 @@ public class ObjectDefinitionResourceImpl
 		return accountEntryRestrictedObjectRelationshipsNames;
 	}
 
+	private long _getObjectFolderId(String objectFolderExternalReferenceCode)
+		throws Exception {
+
+		if (Validator.isNull(objectFolderExternalReferenceCode)) {
+			return 0;
+		}
+
+		ObjectFolder objectFolder =
+			_objectFolderLocalService.getObjectFolderByExternalReferenceCode(
+				objectFolderExternalReferenceCode,
+				contextCompany.getCompanyId());
+
+		return objectFolder.getObjectFolderId();
+	}
+
 	private ObjectDefinition _toObjectDefinition(
 		com.liferay.object.model.ObjectDefinition objectDefinition) {
 
@@ -865,7 +944,9 @@ public class ObjectDefinitionResourceImpl
 				).put(
 					"update",
 					() -> {
-						if (objectDefinition.isUnmodifiableSystemObject()) {
+						if (!FeatureFlagManagerUtil.isEnabled("LPS-148856") &&
+							objectDefinition.isUnmodifiableSystemObject()) {
+
 							return null;
 						}
 
@@ -920,6 +1001,12 @@ public class ObjectDefinitionResourceImpl
 							null),
 						objectField),
 					ObjectField.class);
+
+				if (FeatureFlagManagerUtil.isEnabled("LPS-148856")) {
+					objectFolderExternalReferenceCode =
+						objectDefinition.getObjectFolderExternalReferenceCode();
+				}
+
 				objectLayouts = transformToArray(
 					_objectLayoutLocalService.getObjectLayouts(
 						objectDefinition.getObjectDefinitionId()),
@@ -1062,6 +1149,9 @@ public class ObjectDefinitionResourceImpl
 
 	@Reference
 	private ObjectFilterLocalService _objectFilterLocalService;
+
+	@Reference
+	private ObjectFolderLocalService _objectFolderLocalService;
 
 	@Reference
 	private ObjectLayoutLocalService _objectLayoutLocalService;

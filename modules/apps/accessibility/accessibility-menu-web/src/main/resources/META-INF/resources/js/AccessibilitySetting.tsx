@@ -3,39 +3,54 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {ClayToggle} from '@clayui/form';
+import ClayForm, {ClayToggle} from '@clayui/form';
 import React from 'react';
 
 const KEY_EVENT = 'Enter';
 
 type Props = {
-	className: string;
+	description: string;
 	disabled: boolean;
+	index: number;
 	label: string;
 	onChange: (value: boolean) => void;
 	value: boolean;
 };
 
 const AccessibilitySetting = ({
-	className,
+	description,
 	disabled,
+	index,
 	label,
 	onChange,
 	value,
-}: Props) => (
-	<li className={className}>
-		<ClayToggle
-			disabled={disabled}
-			label={label}
-			onKeyDown={(event) => {
-				if (!disabled && event.key === KEY_EVENT) {
-					onChange(!value);
-				}
-			}}
-			onToggle={onChange}
-			toggled={value}
-		/>
-	</li>
-);
+}: Props) => {
+	const ariaDescriptionId = `accessibilityHelp${index}`;
+
+	return (
+		<li>
+			<ClayForm.Group>
+				<ClayToggle
+					aria-describedby={ariaDescriptionId}
+					disabled={disabled}
+					label={label}
+					onKeyDown={(event) => {
+						if (!disabled && event.key === KEY_EVENT) {
+							onChange(!value);
+						}
+					}}
+					onToggle={onChange}
+					toggled={value}
+				/>
+
+				<ClayForm.FeedbackGroup>
+					<ClayForm.Text id={ariaDescriptionId}>
+						{description}
+					</ClayForm.Text>
+				</ClayForm.FeedbackGroup>
+			</ClayForm.Group>
+		</li>
+	);
+};
 
 export default AccessibilitySetting;

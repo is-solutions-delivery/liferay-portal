@@ -8,6 +8,7 @@ package com.liferay.object.admin.rest.internal.graphql.mutation.v1_0;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectAction;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectField;
+import com.liferay.object.admin.rest.dto.v1_0.ObjectFolder;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectLayout;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectRelationship;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectValidationRule;
@@ -15,6 +16,7 @@ import com.liferay.object.admin.rest.dto.v1_0.ObjectView;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectActionResource;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectFieldResource;
+import com.liferay.object.admin.rest.resource.v1_0.ObjectFolderResource;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectLayoutResource;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectRelationshipResource;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectValidationRuleResource;
@@ -72,6 +74,14 @@ public class Mutation {
 
 		_objectFieldResourceComponentServiceObjects =
 			objectFieldResourceComponentServiceObjects;
+	}
+
+	public static void setObjectFolderResourceComponentServiceObjects(
+		ComponentServiceObjects<ObjectFolderResource>
+			objectFolderResourceComponentServiceObjects) {
+
+		_objectFolderResourceComponentServiceObjects =
+			objectFolderResourceComponentServiceObjects;
 	}
 
 	public static void setObjectLayoutResourceComponentServiceObjects(
@@ -194,6 +204,7 @@ public class Mutation {
 	public Response createObjectDefinitionObjectActionsPageExportBatch(
 			@GraphQLName("objectDefinitionId") Long objectDefinitionId,
 			@GraphQLName("search") String search,
+			@GraphQLName("sort") String sortsString,
 			@GraphQLName("callbackURL") String callbackURL,
 			@GraphQLName("contentType") String contentType,
 			@GraphQLName("fieldNames") String fieldNames)
@@ -205,8 +216,10 @@ public class Mutation {
 			objectActionResource ->
 				objectActionResource.
 					postObjectDefinitionObjectActionsPageExportBatch(
-						objectDefinitionId, search, callbackURL, contentType,
-						fieldNames));
+						objectDefinitionId, search,
+						_sortsBiFunction.apply(
+							objectActionResource, sortsString),
+						callbackURL, contentType, fieldNames));
 	}
 
 	@GraphQLField
@@ -525,6 +538,128 @@ public class Mutation {
 	}
 
 	@GraphQLField
+	public Response createObjectFoldersPageExportBatch(
+			@GraphQLName("search") String search,
+			@GraphQLName("callbackURL") String callbackURL,
+			@GraphQLName("contentType") String contentType,
+			@GraphQLName("fieldNames") String fieldNames)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_objectFolderResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			objectFolderResource ->
+				objectFolderResource.postObjectFoldersPageExportBatch(
+					search, callbackURL, contentType, fieldNames));
+	}
+
+	@GraphQLField
+	public ObjectFolder createObjectFolder(
+			@GraphQLName("objectFolder") ObjectFolder objectFolder)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_objectFolderResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			objectFolderResource -> objectFolderResource.postObjectFolder(
+				objectFolder));
+	}
+
+	@GraphQLField
+	public Response createObjectFolderBatch(
+			@GraphQLName("callbackURL") String callbackURL,
+			@GraphQLName("object") Object object)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_objectFolderResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			objectFolderResource -> objectFolderResource.postObjectFolderBatch(
+				callbackURL, object));
+	}
+
+	@GraphQLField
+	public ObjectFolder updateObjectFolderByExternalReferenceCode(
+			@GraphQLName("externalReferenceCode") String externalReferenceCode,
+			@GraphQLName("objectFolder") ObjectFolder objectFolder)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_objectFolderResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			objectFolderResource ->
+				objectFolderResource.putObjectFolderByExternalReferenceCode(
+					externalReferenceCode, objectFolder));
+	}
+
+	@GraphQLField
+	public boolean deleteObjectFolder(
+			@GraphQLName("objectFolderId") Long objectFolderId)
+		throws Exception {
+
+		_applyVoidComponentServiceObjects(
+			_objectFolderResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			objectFolderResource -> objectFolderResource.deleteObjectFolder(
+				objectFolderId));
+
+		return true;
+	}
+
+	@GraphQLField
+	public Response deleteObjectFolderBatch(
+			@GraphQLName("callbackURL") String callbackURL,
+			@GraphQLName("object") Object object)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_objectFolderResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			objectFolderResource ->
+				objectFolderResource.deleteObjectFolderBatch(
+					callbackURL, object));
+	}
+
+	@GraphQLField
+	public ObjectFolder patchObjectFolder(
+			@GraphQLName("objectFolderId") Long objectFolderId,
+			@GraphQLName("objectFolder") ObjectFolder objectFolder)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_objectFolderResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			objectFolderResource -> objectFolderResource.patchObjectFolder(
+				objectFolderId, objectFolder));
+	}
+
+	@GraphQLField
+	public ObjectFolder updateObjectFolder(
+			@GraphQLName("objectFolderId") Long objectFolderId,
+			@GraphQLName("objectFolder") ObjectFolder objectFolder)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_objectFolderResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			objectFolderResource -> objectFolderResource.putObjectFolder(
+				objectFolderId, objectFolder));
+	}
+
+	@GraphQLField
+	public Response updateObjectFolderBatch(
+			@GraphQLName("callbackURL") String callbackURL,
+			@GraphQLName("object") Object object)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_objectFolderResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			objectFolderResource -> objectFolderResource.putObjectFolderBatch(
+				callbackURL, object));
+	}
+
+	@GraphQLField
 	public ObjectLayout
 			createObjectDefinitionByExternalReferenceCodeObjectLayout(
 				@GraphQLName("externalReferenceCode") String
@@ -545,6 +680,7 @@ public class Mutation {
 	public Response createObjectDefinitionObjectLayoutsPageExportBatch(
 			@GraphQLName("objectDefinitionId") Long objectDefinitionId,
 			@GraphQLName("search") String search,
+			@GraphQLName("sort") String sortsString,
 			@GraphQLName("callbackURL") String callbackURL,
 			@GraphQLName("contentType") String contentType,
 			@GraphQLName("fieldNames") String fieldNames)
@@ -556,8 +692,10 @@ public class Mutation {
 			objectLayoutResource ->
 				objectLayoutResource.
 					postObjectDefinitionObjectLayoutsPageExportBatch(
-						objectDefinitionId, search, callbackURL, contentType,
-						fieldNames));
+						objectDefinitionId, search,
+						_sortsBiFunction.apply(
+							objectLayoutResource, sortsString),
+						callbackURL, contentType, fieldNames));
 	}
 
 	@GraphQLField
@@ -666,6 +804,7 @@ public class Mutation {
 			@GraphQLName("objectDefinitionId") Long objectDefinitionId,
 			@GraphQLName("search") String search,
 			@GraphQLName("filter") String filterString,
+			@GraphQLName("sort") String sortsString,
 			@GraphQLName("callbackURL") String callbackURL,
 			@GraphQLName("contentType") String contentType,
 			@GraphQLName("fieldNames") String fieldNames)
@@ -680,6 +819,8 @@ public class Mutation {
 						objectDefinitionId, search,
 						_filterBiFunction.apply(
 							objectRelationshipResource, filterString),
+						_sortsBiFunction.apply(
+							objectRelationshipResource, sortsString),
 						callbackURL, contentType, fieldNames));
 	}
 
@@ -795,6 +936,7 @@ public class Mutation {
 	public Response createObjectDefinitionObjectValidationRulesPageExportBatch(
 			@GraphQLName("objectDefinitionId") Long objectDefinitionId,
 			@GraphQLName("search") String search,
+			@GraphQLName("sort") String sortsString,
 			@GraphQLName("callbackURL") String callbackURL,
 			@GraphQLName("contentType") String contentType,
 			@GraphQLName("fieldNames") String fieldNames)
@@ -806,8 +948,10 @@ public class Mutation {
 			objectValidationRuleResource ->
 				objectValidationRuleResource.
 					postObjectDefinitionObjectValidationRulesPageExportBatch(
-						objectDefinitionId, search, callbackURL, contentType,
-						fieldNames));
+						objectDefinitionId, search,
+						_sortsBiFunction.apply(
+							objectValidationRuleResource, sortsString),
+						callbackURL, contentType, fieldNames));
 	}
 
 	@GraphQLField
@@ -934,6 +1078,7 @@ public class Mutation {
 	public Response createObjectDefinitionObjectViewsPageExportBatch(
 			@GraphQLName("objectDefinitionId") Long objectDefinitionId,
 			@GraphQLName("search") String search,
+			@GraphQLName("sort") String sortsString,
 			@GraphQLName("callbackURL") String callbackURL,
 			@GraphQLName("contentType") String contentType,
 			@GraphQLName("fieldNames") String fieldNames)
@@ -945,8 +1090,9 @@ public class Mutation {
 			objectViewResource ->
 				objectViewResource.
 					postObjectDefinitionObjectViewsPageExportBatch(
-						objectDefinitionId, search, callbackURL, contentType,
-						fieldNames));
+						objectDefinitionId, search,
+						_sortsBiFunction.apply(objectViewResource, sortsString),
+						callbackURL, contentType, fieldNames));
 	}
 
 	@GraphQLField
@@ -1145,6 +1291,27 @@ public class Mutation {
 	}
 
 	private void _populateResourceContext(
+			ObjectFolderResource objectFolderResource)
+		throws Exception {
+
+		objectFolderResource.setContextAcceptLanguage(_acceptLanguage);
+		objectFolderResource.setContextCompany(_company);
+		objectFolderResource.setContextHttpServletRequest(_httpServletRequest);
+		objectFolderResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		objectFolderResource.setContextUriInfo(_uriInfo);
+		objectFolderResource.setContextUser(_user);
+		objectFolderResource.setGroupLocalService(_groupLocalService);
+		objectFolderResource.setRoleLocalService(_roleLocalService);
+
+		objectFolderResource.setVulcanBatchEngineExportTaskResource(
+			_vulcanBatchEngineExportTaskResource);
+
+		objectFolderResource.setVulcanBatchEngineImportTaskResource(
+			_vulcanBatchEngineImportTaskResource);
+	}
+
+	private void _populateResourceContext(
 			ObjectLayoutResource objectLayoutResource)
 		throws Exception {
 
@@ -1234,6 +1401,8 @@ public class Mutation {
 		_objectDefinitionResourceComponentServiceObjects;
 	private static ComponentServiceObjects<ObjectFieldResource>
 		_objectFieldResourceComponentServiceObjects;
+	private static ComponentServiceObjects<ObjectFolderResource>
+		_objectFolderResourceComponentServiceObjects;
 	private static ComponentServiceObjects<ObjectLayoutResource>
 		_objectLayoutResourceComponentServiceObjects;
 	private static ComponentServiceObjects<ObjectRelationshipResource>

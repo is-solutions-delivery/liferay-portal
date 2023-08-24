@@ -46,7 +46,7 @@ public class ObjectLayoutResourceTest extends BaseObjectLayoutResourceTestCase {
 
 		_objectDefinition =
 			_objectDefinitionLocalService.addCustomObjectDefinition(
-				TestPropsValues.getUserId(), false, false,
+				TestPropsValues.getUserId(), 0, false, false,
 				LocalizedMapUtil.getLocalizedMap(value), value, null, null,
 				LocalizedMapUtil.getLocalizedMap(value), true,
 				ObjectDefinitionConstants.SCOPE_COMPANY,
@@ -89,6 +89,11 @@ public class ObjectLayoutResourceTest extends BaseObjectLayoutResourceTestCase {
 	@Override
 	@Test
 	public void testGraphQLGetObjectLayoutNotFound() {
+	}
+
+	@Override
+	protected String[] getIgnoredEntityFieldNames() {
+		return new String[] {"label"};
 	}
 
 	@Override

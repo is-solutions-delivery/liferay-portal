@@ -27,13 +27,13 @@ const DefaultSidebarHeader = () => {
 	const showRefreshButton = data?.validConnection && !data?.privateLayout;
 
 	return (
-		<div className="d-flex justify-content-between p-3 sidebar-header">
+		<div className="d-flex justify-content-between sidebar-header">
 			<span className="font-weight-bold">
 				{Liferay.Language.get('page-audit')}
 			</span>
 
 			<div>
-				{showRefreshButton && (
+				{!Liferay.FeatureFlags['LPS-187284'] && showRefreshButton && (
 					<ClayButtonWithIcon
 						className="component-action mr-2 sidenav-relaunch text-secondary"
 						disabled={loading}

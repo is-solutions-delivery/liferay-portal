@@ -7,6 +7,8 @@ package com.liferay.commerce.order.importer.item;
 
 import com.liferay.commerce.price.CommerceOrderItemPrice;
 
+import java.math.BigDecimal;
+
 import java.util.Locale;
 import java.util.Map;
 
@@ -56,7 +58,7 @@ public class CommerceOrderImporterItemImpl
 	}
 
 	@Override
-	public int getQuantity() {
+	public BigDecimal getQuantity() {
 		return _quantity;
 	}
 
@@ -73,6 +75,10 @@ public class CommerceOrderImporterItemImpl
 	@Override
 	public String getSKU() {
 		return _sku;
+	}
+
+	public String getUnitOfMeasureKey() {
+		return _unitOfMeasureKey;
 	}
 
 	@Override
@@ -128,7 +134,7 @@ public class CommerceOrderImporterItemImpl
 			parentCommerceOrderItemCPDefinitionId;
 	}
 
-	public void setQuantity(int quantity) {
+	public void setQuantity(BigDecimal quantity) {
 		_quantity = quantity;
 	}
 
@@ -146,6 +152,10 @@ public class CommerceOrderImporterItemImpl
 		_sku = sku;
 	}
 
+	public void setUnitOfMeasureKey(String unitOfMeasureKey) {
+		_unitOfMeasureKey = unitOfMeasureKey;
+	}
+
 	private CommerceOrderItemPrice _commerceOrderItemPrice;
 	private long _cpDefinitionId;
 	private long _cpInstanceId;
@@ -153,9 +163,10 @@ public class CommerceOrderImporterItemImpl
 	private String _json;
 	private Map<Locale, String> _nameMap;
 	private long _parentCommerceOrderItemCPDefinitionId;
-	private int _quantity;
+	private BigDecimal _quantity;
 	private String _replacingSKU;
 	private String _requestedDeliveryDateString;
 	private String _sku;
+	private String _unitOfMeasureKey;
 
 }

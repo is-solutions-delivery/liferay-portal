@@ -76,8 +76,14 @@ public class DDLDisplayExportImportTest
 		PortletPreferences importedPortletPreferences =
 			getImportedPortletPreferences(
 				HashMapBuilder.put(
+					"groupId",
+					new String[] {String.valueOf(recordSet.getGroupId())}
+				).put(
 					"recordSetId",
 					new String[] {String.valueOf(recordSet.getRecordSetId())}
+				).put(
+					"recordSetKey",
+					new String[] {String.valueOf(recordSet.getRecordSetKey())}
 				).build());
 
 		DDLRecord importedRecord =

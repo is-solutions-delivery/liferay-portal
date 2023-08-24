@@ -32,6 +32,9 @@ public interface ModelSearchDefinition {
 	public void setModelVisibilityContributor(
 		ModelVisibilityContributor modelVisibilityContributor);
 
+	/**
+	 * See LPS-192313.
+	 */
 	public void setPermissionAware(boolean permissionAware);
 
 	public void setSearchResultPermissionFilterSuppressed(

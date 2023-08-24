@@ -12,7 +12,7 @@ import com.liferay.commerce.model.CPDefinitionInventory;
 import com.liferay.commerce.product.catalog.CPCatalogEntry;
 import com.liferay.commerce.product.catalog.CPSku;
 import com.liferay.commerce.product.constants.CPContentContributorConstants;
-import com.liferay.commerce.product.content.util.CPContentHelper;
+import com.liferay.commerce.product.content.helper.CPContentHelper;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.product.util.CPDefinitionHelper;
@@ -109,11 +109,7 @@ public class AvailabilityLabelInfoItemRenderer
 
 			CPSku cpSku = _cpContentHelper.getDefaultCPSku(cpCatalogEntry);
 
-			boolean hasChildCPDefinitions =
-				_cpContentHelper.hasChildCPDefinitions(
-					cpCatalogEntry.getCPDefinitionId());
-
-			if ((cpSku != null) && !hasChildCPDefinitions) {
+			if (cpSku != null) {
 				ProductSettingsModel productSettingsModel =
 					_productHelper.getProductSettingsModel(
 						cpDefinition.getCPDefinitionId());

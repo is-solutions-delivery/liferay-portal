@@ -18,6 +18,7 @@ import com.liferay.fragment.web.internal.constants.FragmentWebKeys;
 import com.liferay.fragment.web.internal.info.field.type.CaptchaInfoFieldType;
 import com.liferay.info.field.type.BooleanInfoFieldType;
 import com.liferay.info.field.type.DateInfoFieldType;
+import com.liferay.info.field.type.DateTimeInfoFieldType;
 import com.liferay.info.field.type.FileInfoFieldType;
 import com.liferay.info.field.type.HTMLInfoFieldType;
 import com.liferay.info.field.type.InfoFieldType;
@@ -28,6 +29,7 @@ import com.liferay.info.field.type.RelationshipInfoFieldType;
 import com.liferay.info.field.type.SelectInfoFieldType;
 import com.liferay.info.field.type.TextInfoFieldType;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -283,6 +285,12 @@ public class EditFragmentEntryDisplayContext {
 		}
 
 		for (InfoFieldType infoFieldType : _INFO_FIELD_TYPES) {
+			if (!FeatureFlagManagerUtil.isEnabled("LPS-183727") &&
+				(infoFieldType == DateTimeInfoFieldType.INSTANCE)) {
+
+				continue;
+			}
+
 			jsonArray.put(
 				JSONUtil.put(
 					"key", infoFieldType.getName()
@@ -357,7 +365,9 @@ public class EditFragmentEntryDisplayContext {
 		}
 
 		for (InfoFieldType infoFieldType : _INFO_FIELD_TYPES) {
-			if (!JSONUtil.hasValue(
+			if ((!FeatureFlagManagerUtil.isEnabled("LPS-183727") &&
+				 (infoFieldType == DateTimeInfoFieldType.INSTANCE)) ||
+				!JSONUtil.hasValue(
 					fieldTypesJSONArray, infoFieldType.getName())) {
 
 				continue;
@@ -645,11 +655,11 @@ public class EditFragmentEntryDisplayContext {
 
 	private static final InfoFieldType[] _INFO_FIELD_TYPES = {
 		BooleanInfoFieldType.INSTANCE, CaptchaInfoFieldType.INSTANCE,
-		DateInfoFieldType.INSTANCE, FileInfoFieldType.INSTANCE,
-		HTMLInfoFieldType.INSTANCE, LongTextInfoFieldType.INSTANCE,
-		MultiselectInfoFieldType.INSTANCE, NumberInfoFieldType.INSTANCE,
-		RelationshipInfoFieldType.INSTANCE, SelectInfoFieldType.INSTANCE,
-		TextInfoFieldType.INSTANCE
+		DateInfoFieldType.INSTANCE, DateTimeInfoFieldType.INSTANCE,
+		FileInfoFieldType.INSTANCE, HTMLInfoFieldType.INSTANCE,
+		LongTextInfoFieldType.INSTANCE, MultiselectInfoFieldType.INSTANCE,
+		NumberInfoFieldType.INSTANCE, RelationshipInfoFieldType.INSTANCE,
+		SelectInfoFieldType.INSTANCE, TextInfoFieldType.INSTANCE
 	};
 
 	private static final Log _log = LogFactoryUtil.getLog(

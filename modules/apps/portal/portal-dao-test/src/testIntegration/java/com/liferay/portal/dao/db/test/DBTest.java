@@ -70,14 +70,7 @@ public class DBTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_db.runSQL(
-			StringBundler.concat(
-				"create table ", _TABLE_NAME_1, " (id LONG not null primary ",
-				"key, notNilColumn VARCHAR(75) not null, nilColumn ",
-				"VARCHAR(75) null, typeBlob BLOB, typeBoolean BOOLEAN,",
-				"typeDate DATE null, typeDouble DOUBLE, typeInteger INTEGER, ",
-				"typeLong LONG null, typeSBlob SBLOB, typeString STRING null, ",
-				"typeText TEXT null, typeVarchar VARCHAR(75) null);"));
+		_createTestTable(_TABLE_NAME_1);
 	}
 
 	@After
@@ -85,6 +78,25 @@ public class DBTest {
 		_db.runSQL("DROP_TABLE_IF_EXISTS(" + _TABLE_NAME_1 + ")");
 		_db.runSQL("DROP_TABLE_IF_EXISTS(" + _TABLE_NAME_2 + ")");
 		_db.runSQL("DROP_TABLE_IF_EXISTS(" + _TABLE_NAME_3 + ")");
+	}
+
+	@Test
+	public void testAlterColumnNameNoNullableChange() throws Exception {
+		_db.alterColumnName(
+			_connection, _TABLE_NAME_1, "nilColumn",
+			"nilColumnTest VARCHAR(75) null");
+
+		Assert.assertTrue(
+			_dbInspector.hasColumnType(
+				_TABLE_NAME_1, "nilColumnTest", "VARCHAR(75) null"));
+
+		_db.alterColumnName(
+			_connection, _TABLE_NAME_1, "notNilColumn",
+			"notNilColumnTest VARCHAR(75) not null");
+
+		Assert.assertTrue(
+			_dbInspector.hasColumnType(
+				_TABLE_NAME_1, "notNilColumnTest", "VARCHAR(75) not null"));
 	}
 
 	@Test
@@ -96,6 +108,38 @@ public class DBTest {
 		Assert.assertTrue(
 			_dbInspector.hasColumnType(
 				_TABLE_NAME_1, "notNilColumn", "VARCHAR(200) not null"));
+	}
+
+	@Test
+	public void testAlterColumnTypeChangeToDefaultNotNull() throws Exception {
+		_db.alterColumnType(
+			_connection, _TABLE_NAME_1, "nilColumn",
+			"VARCHAR(75) default 'test' not null");
+
+		Assert.assertTrue(
+			_dbInspector.hasColumnType(
+				_TABLE_NAME_1, "nilColumn",
+				"VARCHAR(75) default 'test' not null"));
+	}
+
+	@Test
+	public void testAlterColumnTypeChangeToDefaultNull() throws Exception {
+		try {
+			_db.alterColumnType(
+				_connection, _TABLE_NAME_1, "notNilColumn",
+				"VARCHAR(75) default 'test' null");
+
+			Assert.fail();
+		}
+		catch (IllegalArgumentException illegalArgumentException) {
+			Assert.assertEquals(
+				"Invalid alter column type statement",
+				illegalArgumentException.getMessage());
+
+			Assert.assertTrue(
+				_dbInspector.hasColumnType(
+					_TABLE_NAME_1, "notNilColumn", "VARCHAR(75) not null"));
+		}
 	}
 
 	@Test
@@ -126,6 +170,69 @@ public class DBTest {
 		Assert.assertTrue(
 			_dbInspector.hasColumnType(
 				_TABLE_NAME_1, "typeString", "TEXT null"));
+	}
+
+	@Test
+	public void testAlterColumnTypeChangeWithoutDefaultClause()
+		throws Exception {
+
+		_db.alterColumnType(
+			_connection, _TABLE_NAME_1, "typeVarcharDefault",
+			"VARCHAR(10) not null");
+
+		Assert.assertTrue(
+			_dbInspector.hasColumnType(
+				_TABLE_NAME_1, "typeVarcharDefault", "VARCHAR(10) not null"));
+	}
+
+	@Test
+	public void testAlterColumnTypeChangeWithoutNullClause() throws Exception {
+		_db.alterColumnType(
+			_connection, _TABLE_NAME_1, "notNilColumn", "VARCHAR(75)");
+
+		Assert.assertTrue(
+			_dbInspector.hasColumnType(
+				_TABLE_NAME_1, "notNilColumn", "VARCHAR(75) null"));
+
+		_db.alterColumnType(
+			_connection, _TABLE_NAME_1, "nilColumn", "VARCHAR(75)");
+
+		Assert.assertTrue(
+			_dbInspector.hasColumnType(
+				_TABLE_NAME_1, "nilColumn", "VARCHAR(75) null"));
+	}
+
+	@Test
+	public void testAlterColumnTypeDefaultWithData() throws Exception {
+		_db.alterColumnType(
+			_connection, _TABLE_NAME_1, "nilColumn",
+			"VARCHAR(75) default 'test' not null");
+
+		_db.runSQL(
+			"insert into " + _TABLE_NAME_1 +
+				" (id, notNilColumn) values (1, '1')");
+
+		_db.runSQL(
+			"insert into " + _TABLE_NAME_1 +
+				" (id, notNilColumn, nilColumn) values (2, '2', 'nil')");
+
+		Assert.assertTrue(
+			_dbInspector.hasColumnType(
+				_TABLE_NAME_1, "nilColumn",
+				"VARCHAR(75) default 'test' not null"));
+
+		try (PreparedStatement preparedStatement = _connection.prepareStatement(
+				"select nilColumn from " + _TABLE_NAME_1 + " order by id");
+			ResultSet resultSet = preparedStatement.executeQuery()) {
+
+			resultSet.next();
+
+			Assert.assertEquals("test", resultSet.getString(1));
+
+			resultSet.next();
+
+			Assert.assertEquals("nil", resultSet.getString(1));
+		}
 	}
 
 	@Test
@@ -323,14 +430,7 @@ public class DBTest {
 
 	@Test
 	public void testCopyTableRows() throws Exception {
-		_db.runSQL(
-			StringBundler.concat(
-				"create table ", _TABLE_NAME_2, " (id LONG not null primary ",
-				"key, notNilColumn VARCHAR(75) not null, nilColumn ",
-				"VARCHAR(75) null, typeBlob BLOB, typeBoolean BOOLEAN,",
-				"typeDate DATE null, typeDouble DOUBLE, typeInteger INTEGER, ",
-				"typeLong LONG null, typeSBlob SBLOB, typeString STRING null, ",
-				"typeText TEXT null, typeVarchar VARCHAR(75) null);"));
+		_createTestTable(_TABLE_NAME_2);
 
 		_db.runSQL(
 			StringBundler.concat(
@@ -477,14 +577,7 @@ public class DBTest {
 				" (id, notNilColumn, typeString) values (1, '1', ",
 				"'testValueA')"));
 
-		_db.runSQL(
-			StringBundler.concat(
-				"create table ", _TABLE_NAME_2, " (id LONG not null primary ",
-				"key, notNilColumn VARCHAR(75) not null, nilColumn ",
-				"VARCHAR(75) null, typeBlob BLOB, typeBoolean BOOLEAN,",
-				"typeDate DATE null, typeDouble DOUBLE, typeInteger INTEGER, ",
-				"typeLong LONG null, typeSBlob SBLOB, typeString STRING null, ",
-				"typeText TEXT null, typeVarchar VARCHAR(75) null);"));
+		_createTestTable(_TABLE_NAME_2);
 
 		_db.runSQL(
 			StringBundler.concat(
@@ -537,8 +630,10 @@ public class DBTest {
 				"key, notNilColumn2 VARCHAR(75) not null, nilColumn2 ",
 				"VARCHAR(75) null, typeBlob2 BLOB, typeBoolean2 BOOLEAN,",
 				"typeDate2 DATE null, typeDouble2 DOUBLE, typeInteger2 ",
-				"INTEGER, typeLong2 LONG null, typeSBlob2 SBLOB, typeString2 ",
-				"STRING null, typeText2 TEXT null, typeVarchar2 VARCHAR(75) ",
+				"INTEGER, typeLong2 LONG null, typeLongDefault2 LONG default ",
+				"10 not null, typeSBlob2 SBLOB, typeString2 STRING null, ",
+				"typeText2 TEXT null, typeVarchar2 VARCHAR(75) null,",
+				"typeVarcharDefault2 VARCHAR(10) default 'testValue' not ",
 				"null);"));
 
 		_db.runSQL(
@@ -596,6 +691,19 @@ public class DBTest {
 		ReflectionTestUtil.invoke(
 			_db, "addIndexes", new Class<?>[] {Connection.class, List.class},
 			_connection, indexMetadatas);
+	}
+
+	private void _createTestTable(String tableName) throws Exception {
+		_db.runSQL(
+			StringBundler.concat(
+				"create table ", tableName, " (id LONG not null primary key, ",
+				"notNilColumn VARCHAR(75) not null, nilColumn VARCHAR(75) ",
+				"null , typeBlob BLOB, typeBoolean BOOLEAN, typeDate DATE ",
+				"null, typeDouble DOUBLE, typeInteger INTEGER, typeLong LONG ",
+				"null, typeLongDefault LONG default 10 not null, typeSBlob ",
+				"SBLOB, typeString STRING null, typeText TEXT null, ",
+				"typeVarchar VARCHAR(75) null, typeVarcharDefault VARCHAR(10) ",
+				"default 'testValue' not null);"));
 	}
 
 	private List<IndexMetadata> _getIndexes(

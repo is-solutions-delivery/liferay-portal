@@ -7,6 +7,7 @@ package com.liferay.object.web.internal.object.definitions.display.context;
 
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
+import com.liferay.learn.LearnMessageUtil;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectValidationRuleConstants;
 import com.liferay.object.model.ObjectDefinition;
@@ -82,17 +83,20 @@ public class ObjectDefinitionsValidationsDisplayContext
 	}
 
 	public List<Map<String, String>> getObjectValidationRuleEngines() {
+		ObjectDefinition objectDefinition = getObjectDefinition();
+
 		return ListUtil.sort(
 			TransformUtil.transform(
 				_objectValidationRuleEngineRegistry.
-					getObjectValidationRuleEngines(),
+					getObjectValidationRuleEngines(
+						objectDefinition.getCompanyId(),
+						objectDefinition.getName()),
 				objectValidationRuleEngine -> HashMapBuilder.put(
 					"label",
-					LanguageUtil.get(
-						objectRequestHelper.getLocale(),
-						objectValidationRuleEngine.getName())
+					objectValidationRuleEngine.getLabel(
+						objectRequestHelper.getLocale())
 				).put(
-					"name", objectValidationRuleEngine.getName()
+					"name", objectValidationRuleEngine.getKey()
 				).build()),
 			Comparator.comparing(item -> item.get("label")));
 	}
@@ -105,6 +109,9 @@ public class ObjectDefinitionsValidationsDisplayContext
 
 		return HashMapBuilder.<String, Object>put(
 			"creationLanguageId", objectDefinition.getDefaultLanguageId()
+		).put(
+			"learnResources",
+			LearnMessageUtil.getReactDataJSONObject("object-web")
 		).put(
 			"objectDefinitionId", objectDefinition.getObjectDefinitionId()
 		).put(

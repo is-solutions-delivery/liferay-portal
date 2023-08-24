@@ -30,9 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * @author     Raymond Augé
  * @author     James Lefeu
- * @deprecated As of Mueller (7.2.x), with no direct replacement
  */
-@Deprecated
 public class VerifyResourcePermissions extends VerifyProcess {
 
 	public static void verify(
@@ -74,11 +72,11 @@ public class VerifyResourcePermissions extends VerifyProcess {
 				Role role = RoleLocalServiceUtil.getRole(
 					companyId, RoleConstants.OWNER);
 
-				processConcurrently(
-					verifiableResourcedModels,
-					verifiableResourcedModel -> _verifyResourcedModel(
-						role, verifiableResourcedModel),
-					null);
+				for (VerifiableResourcedModel verifiableResourcedModel :
+						verifiableResourcedModels) {
+
+					_verifyResourcedModel(role, verifiableResourcedModel);
+				}
 			});
 	}
 

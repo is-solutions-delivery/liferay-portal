@@ -22,7 +22,6 @@ import com.liferay.poshi.core.util.FileUtil;
 import com.liferay.poshi.core.util.GetterUtil;
 import com.liferay.poshi.core.util.MathUtil;
 import com.liferay.poshi.core.util.OSDetector;
-import com.liferay.poshi.core.util.PoshiProperties;
 import com.liferay.poshi.core.util.PropsUtil;
 import com.liferay.poshi.core.util.StringUtil;
 import com.liferay.poshi.core.util.Validator;
@@ -168,6 +167,10 @@ public class PoshiContext {
 		System.out.println(sb.toString());
 
 		return classCommandNames;
+	}
+
+	public static Map<String, Element> getCommandElements() {
+		return _commandElements;
 	}
 
 	public static String getDefaultNamespace() {
@@ -463,6 +466,10 @@ public class PoshiContext {
 		return requiredPoshiPropertyNames;
 	}
 
+	public static Map<String, Element> getRootElements() {
+		return _rootElements;
+	}
+
 	public static List<Element> getRootVarElements(
 		String classType, String className, String namespace) {
 
@@ -501,10 +508,7 @@ public class PoshiContext {
 				}
 			}
 
-			if (!properties.containsKey("test.liferay.virtual.instance") ||
-				Boolean.parseBoolean(
-					(String)properties.get("test.liferay.virtual.instance"))) {
-
+			if (!_isTestRunIndividually(properties)) {
 				properties.remove("test.class.method.name");
 			}
 
@@ -668,6 +672,12 @@ public class PoshiContext {
 		}
 
 		for (String testDirName : testDirNames) {
+			testDirName = testDirName.trim();
+
+			if (testDirName.isEmpty()) {
+				continue;
+			}
+
 			poshiURLs.addAll(
 				_getPoshiURLs(
 					poshiFileIncludes.toArray(new String[0]), testDirName));
@@ -1054,6 +1064,23 @@ public class PoshiContext {
 		if (ignorableCommandNames.contains(commandName) ||
 			(rootElement.attributeValue("ignore") != null)) {
 
+			return true;
+		}
+
+		return false;
+	}
+
+	private static boolean _isTestRunIndividually(Properties properties) {
+		if (properties.containsKey("test.liferay.virtual.instance") &&
+			!Boolean.parseBoolean(
+				(String)properties.get("test.liferay.virtual.instance"))) {
+
+			return true;
+		}
+
+		String testRunType = (String)properties.get("test.run.type");
+
+		if (Validator.isNotNull(testRunType) && testRunType.equals("single")) {
 			return true;
 		}
 

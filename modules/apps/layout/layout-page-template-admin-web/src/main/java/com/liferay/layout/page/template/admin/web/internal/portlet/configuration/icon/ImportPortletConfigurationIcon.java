@@ -17,6 +17,7 @@ import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 
@@ -80,6 +81,24 @@ public class ImportPortletConfigurationIcon
 					PortletRequest.RENDER_PHASE)
 			).setMVCRenderCommandName(
 				"/layout_page_template_admin/view_import"
+			).setBackURL(
+				PortletURLBuilder.create(
+					_portal.getControlPanelPortletURL(
+						portletRequest,
+						LayoutPageTemplateAdminPortletKeys.
+							LAYOUT_PAGE_TEMPLATES,
+						PortletRequest.RENDER_PHASE)
+				).setTabs1(
+					ParamUtil.getString(portletRequest, "tabs1")
+				).setParameter(
+					"layoutPageTemplateCollectionId",
+					ParamUtil.getString(
+						portletRequest, "layoutPageTemplateCollectionId")
+				).buildString()
+			).setParameter(
+				"layoutPageTemplateCollectionId",
+				ParamUtil.getString(
+					portletRequest, "layoutPageTemplateCollectionId")
 			).buildString();
 		}
 

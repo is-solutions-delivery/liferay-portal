@@ -6,6 +6,7 @@
 package com.liferay.site.admin.web.internal.portlet.action;
 
 import com.liferay.exportimport.kernel.staging.MergeLayoutPrototypesThreadLocal;
+import com.liferay.layout.set.prototype.helper.LayoutSetPrototypeHelper;
 import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.LayoutSetPrototype;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
@@ -59,7 +60,7 @@ public class ResetMergeFailCountAndMergeMVCActionCommand
 			_layoutSetPrototypeService.getLayoutSetPrototype(
 				layoutSetPrototypeId);
 
-		_sites.setMergeFailCount(layoutSetPrototype, 0);
+		_layoutSetPrototypeHelper.setMergeFailCount(layoutSetPrototype, 0);
 
 		long groupId = ParamUtil.getLong(actionRequest, "groupId");
 		boolean privateLayoutSet = ParamUtil.getBoolean(
@@ -68,7 +69,7 @@ public class ResetMergeFailCountAndMergeMVCActionCommand
 		LayoutSet layoutSet = _layoutSetLocalService.getLayoutSet(
 			groupId, privateLayoutSet);
 
-		_sites.resetPrototype(layoutSet);
+		_layoutSetPrototypeHelper.resetPrototype(layoutSet);
 
 		MergeLayoutPrototypesThreadLocal.setSkipMerge(false);
 
@@ -78,7 +79,7 @@ public class ResetMergeFailCountAndMergeMVCActionCommand
 		layoutSetPrototype = _layoutSetPrototypeService.getLayoutSetPrototype(
 			layoutSetPrototypeId);
 
-		if (_sites.getMergeFailCount(layoutSetPrototype) > 0) {
+		if (layoutSetPrototype.getMergeFailCount() > 0) {
 			SessionErrors.add(actionRequest, "resetMergeFailCountAndMerge");
 		}
 	}
@@ -88,6 +89,9 @@ public class ResetMergeFailCountAndMergeMVCActionCommand
 
 	@Reference
 	private LayoutSetLocalService _layoutSetLocalService;
+
+	@Reference
+	private LayoutSetPrototypeHelper _layoutSetPrototypeHelper;
 
 	@Reference
 	private LayoutSetPrototypeService _layoutSetPrototypeService;

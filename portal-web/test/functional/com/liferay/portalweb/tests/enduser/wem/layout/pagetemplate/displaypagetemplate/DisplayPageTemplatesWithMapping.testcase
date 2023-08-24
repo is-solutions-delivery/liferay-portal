@@ -675,6 +675,7 @@ definition {
 	test MapPreviewURLOfImageAttachmentToFragment {
 		property custom.properties = "feature.flag.LPS-176083=true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		var labelName = StringUtil.randomString(8);
 
@@ -1115,7 +1116,7 @@ definition {
 				value1 = "Specific Content");
 
 			PageEditorMapping.mapEditableFieldToAsset(
-				entryTitle = "${labelName}2 ${objectEntryId2}",
+				entryTitle = ${objectEntryId2},
 				navItem = "${labelName}2s",
 				rowItem = "//*[@data-qa-id='row'][contains(.,'${objectEntryId2}')]");
 

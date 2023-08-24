@@ -92,7 +92,7 @@ public class PortalJSONObjectUtil {
 		JSONObject taglibsJSONObject = new JSONObjectImpl();
 		JSONObject xmlDefinitionsJSONObject = new JSONObjectImpl();
 
-		List<String> fileNames = SourceFormatterUtil.scanForFiles(
+		List<String> fileNames = SourceFormatterUtil.scanForFileNames(
 			dirName, new String[0],
 			new String[] {
 				"**/*.dtd", "**/*.java", "**/resources/META-INF/*.tld",
@@ -102,31 +102,27 @@ public class PortalJSONObjectUtil {
 			sourceFormatterExcludes, true);
 
 		for (String fileName : fileNames) {
-			String normalizedFileName = StringUtil.replace(
-				fileName, CharPool.BACK_SLASH, CharPool.SLASH);
-
-			if (normalizedFileName.endsWith(".dtd")) {
+			if (fileName.endsWith(".dtd")) {
 				xmlDefinitionsJSONObject = _addXMLdefinition(
-					xmlDefinitionsJSONObject, normalizedFileName);
+					xmlDefinitionsJSONObject, fileName);
 
 				continue;
 			}
 
-			if (normalizedFileName.endsWith(".tld")) {
-				taglibsJSONObject = _addTaglib(
-					taglibsJSONObject, normalizedFileName);
+			if (fileName.endsWith(".tld")) {
+				taglibsJSONObject = _addTaglib(taglibsJSONObject, fileName);
 
 				continue;
 			}
 
-			if (!normalizedFileName.contains("/com/liferay/")) {
+			if (!fileName.contains("/com/liferay/")) {
 				continue;
 			}
 
-			if (normalizedFileName.endsWith("/VerifyProperties.java")) {
+			if (fileName.endsWith("/VerifyProperties.java")) {
 				portalJSONObject.put(
 					"legacyProperties",
-					_getLegacyPropertiesJSONObject(normalizedFileName));
+					_getLegacyPropertiesJSONObject(fileName));
 			}
 
 			Future<Tuple> future = executorService.submit(
@@ -134,8 +130,7 @@ public class PortalJSONObjectUtil {
 
 					@Override
 					public Tuple call() throws Exception {
-						return _getClassTuple(
-							normalizedFileName, maxLineLength);
+						return _getClassTuple(fileName, maxLineLength);
 					}
 
 				});
@@ -247,6 +242,10 @@ public class PortalJSONObjectUtil {
 			document = SourceUtil.readXML(FileUtil.read(tldFile));
 		}
 		catch (Exception exception) {
+			return taglibsJSONObject;
+		}
+
+		if (document == null) {
 			return taglibsJSONObject;
 		}
 

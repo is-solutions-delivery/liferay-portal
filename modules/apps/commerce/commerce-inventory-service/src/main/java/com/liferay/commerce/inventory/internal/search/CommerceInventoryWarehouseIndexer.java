@@ -126,7 +126,8 @@ public class CommerceInventoryWarehouseIndexer
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
-				"Indexing inventory warehouse " + commerceInventoryWarehouse);
+				"Indexing commerce inventory warehouse " +
+					commerceInventoryWarehouse);
 		}
 
 		Document document = getBaseModelDocument(
@@ -160,7 +161,7 @@ public class CommerceInventoryWarehouseIndexer
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
-				"Document " + commerceInventoryWarehouse +
+				"Commerce inventory warehouse " + commerceInventoryWarehouse +
 					" indexed successfully");
 		}
 
@@ -251,13 +252,9 @@ public class CommerceInventoryWarehouseIndexer
 				}
 				catch (PortalException portalException) {
 					if (_log.isWarnEnabled()) {
-						long commerceInventoryWarehouseId =
-							commerceInventoryWarehouse.
-								getCommerceInventoryWarehouseId();
-
 						_log.warn(
 							"Unable to index commerce inventory warehouse " +
-								commerceInventoryWarehouseId,
+								commerceInventoryWarehouse,
 							portalException);
 					}
 				}

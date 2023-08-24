@@ -215,7 +215,6 @@ import com.liferay.portlet.PortletPreferencesImpl;
 import com.liferay.portlet.PortletPreferencesWrapper;
 import com.liferay.portlet.admin.util.OmniadminUtil;
 import com.liferay.sites.kernel.util.Sites;
-import com.liferay.sites.kernel.util.SitesUtil;
 import com.liferay.social.kernel.model.SocialRelationConstants;
 import com.liferay.util.JS;
 
@@ -2589,16 +2588,6 @@ public class PortalImpl implements Portal {
 		}
 
 		return value;
-	}
-
-	@Override
-	public Serializable getExpandoValue(
-			PortletRequest portletRequest, String name, int type,
-			String displayType)
-		throws PortalException {
-
-		return getExpandoValue(
-			getHttpServletRequest(portletRequest), name, type, displayType);
 	}
 
 	@Override
@@ -7491,7 +7480,7 @@ public class PortalImpl implements Portal {
 
 		for (Group group : siteGroup.getAncestors()) {
 			if (checkContentSharingWithChildrenEnabled &&
-				!SitesUtil.isContentSharingWithChildrenEnabled(group)) {
+				!group.isContentSharingWithChildrenEnabled()) {
 
 				continue;
 			}

@@ -5,8 +5,11 @@
 
 import ClayForm, {ClaySelectWithOption} from '@clayui/form';
 import {useIsMounted} from '@liferay/frontend-js-react-web';
+import {isNullOrUndefined} from '@liferay/layout-js-components-web';
+import classNames from 'classnames';
+import {useId} from 'frontend-js-components-web';
 import PropTypes from 'prop-types';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 
 import {useGetFieldValue} from '../../app/contexts/CollectionItemContext';
 import {useGlobalContext} from '../../app/contexts/GlobalContext';
@@ -15,7 +18,6 @@ import selectLanguageId from '../../app/selectors/selectLanguageId';
 import ImageService from '../../app/services/ImageService';
 import isMapped from '../../app/utils/editable_value/isMapped';
 import resolveEditableValue from '../../app/utils/editable_value/resolveEditableValue';
-import {useId} from '../hooks/useId';
 
 export const DEFAULT_IMAGE_SIZE_ID = 'auto';
 
@@ -27,10 +29,15 @@ const DEFAULT_IMAGE_SIZE = {
 	width: null,
 };
 
+/**
+ * @param {object} props
+ * @param {number} [props.imageSizeLimit] Image size limit to show warnings, expressed in KB.
+ */
 export function ImageSelectorSize({
 	fieldValue,
 	getEditableElement = DEFAULT_GET_EDITABLE_ELEMENT,
 	imageSizeId,
+	imageSizeLimit,
 	onImageSizeIdChanged = null,
 }) {
 	const [fileEntryId, setFileEntryId] = useState(
@@ -46,6 +53,24 @@ export function ImageSelectorSize({
 	const selectedViewportSize = useSelector(
 		(state) => state.selectedViewportSize
 	);
+
+	const showImageSizeWarning = useMemo(() => {
+		if (!Liferay.FeatureFlags['LPS-187285']) {
+			return false;
+		}
+
+		if (isNullOrUndefined(imageSizeLimit)) {
+			return false;
+		}
+
+		const imageSizeValue = Number(imageSize.size);
+
+		if (isNaN(imageSizeValue)) {
+			return false;
+		}
+
+		return imageSizeValue >= imageSizeLimit;
+	}, [imageSize.size, imageSizeLimit]);
 
 	useEffect(() => {
 		if (fieldValue.fileEntryId) {
@@ -150,7 +175,11 @@ export function ImageSelectorSize({
 	}, [fileEntryId]);
 
 	return (
-		<ClayForm.Group className="mb-3">
+		<ClayForm.Group
+			className={classNames('mb-3', {
+				'has-warning': showImageSizeWarning,
+			})}
+		>
 			{onImageSizeIdChanged && (
 				<ClayForm.Group className="mb-2">
 					<label htmlFor={imageSizeSelectId}>
@@ -173,23 +202,35 @@ export function ImageSelectorSize({
 				</ClayForm.Group>
 			)}
 
-			{!!imageSize.width && (
-				<p className="m-0 small text-secondary">
-					<b>{Liferay.Language.get('width')}:</b>
+			{imageSize.width ? (
+				<p className="m-0 text-2 text-secondary">
+					<strong>{Liferay.Language.get('width')}:</strong>
 
 					<span className="ml-1">{imageSize.width}px</span>
 				</p>
-			)}
+			) : null}
 
-			{!!imageSize.size && (
-				<p className="m-0 small text-secondary">
-					<b>{Liferay.Language.get('file-size')}:</b>
+			{imageSize.size ? (
+				<p className="m-0 text-2 text-secondary">
+					<strong>{Liferay.Language.get('file-size')}:</strong>
 
 					<span className="ml-1">
 						{Number(imageSize.size).toFixed(2)}kB
 					</span>
 				</p>
-			)}
+			) : null}
+
+			{showImageSizeWarning ? (
+				<ClayForm.FeedbackGroup>
+					<ClayForm.FeedbackItem className="font-weight-normal text-2">
+						<ClayForm.FeedbackIndicator symbol="warning-full" />
+
+						{Liferay.Language.get(
+							'big-image-file-size-used-please-consider-configuring-adaptive-media-lazy-loading-or-reducing-the-image-size'
+						)}
+					</ClayForm.FeedbackItem>
+				</ClayForm.FeedbackGroup>
+			) : null}
 		</ClayForm.Group>
 	);
 }
@@ -210,5 +251,6 @@ ImageSelectorSize.propTypes = {
 	]).isRequired,
 	getEditableElement: PropTypes.func,
 	imageSizeId: PropTypes.string,
+	imageSizeLimit: PropTypes.number,
 	onImageSizeIdChanged: PropTypes.func,
 };

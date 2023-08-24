@@ -19,6 +19,8 @@ public interface TranslatorPacket {
 
 	public Map<String, String> getFieldsMap();
 
+	public Map<String, Boolean> getHTMLMap();
+
 	public String getSourceLanguageId();
 
 	public String getTargetLanguageId();

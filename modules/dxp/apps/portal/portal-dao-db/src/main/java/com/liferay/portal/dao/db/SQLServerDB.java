@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.dao.db.IndexMetadata;
 import com.liferay.portal.kernel.io.unsync.UnsyncBufferedReader;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringReader;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -28,6 +29,7 @@ import java.sql.Types;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,6 +64,8 @@ public class SQLServerDB extends BaseDB {
 		if (primaryKey) {
 			removePrimaryKey(connection, tableName);
 		}
+
+		_dropDefaultConstraint(connection, tableName, columnName);
 
 		super.alterColumnType(connection, tableName, columnName, newColumnType);
 
@@ -390,8 +394,12 @@ public class SQLServerDB extends BaseDB {
 	}
 
 	@Override
-	protected int[] getSQLVarcharSizes() {
-		return _SQL_VARCHAR_SIZES;
+	protected Map<String, Integer> getSQLVarcharSizes() {
+		return HashMapBuilder.put(
+			"STRING", _SQL_STRING_SIZE
+		).put(
+			"TEXT", SQL_VARCHAR_MAX_SIZE
+		).build();
 	}
 
 	@Override
@@ -426,6 +434,17 @@ public class SQLServerDB extends BaseDB {
 						REWORD_TEMPLATE, template);
 
 					line = StringUtil.replace(line, " ;", ";");
+
+					String defaultValue = template[template.length - 2];
+
+					if (!Validator.isBlank(defaultValue)) {
+						line = line.concat(
+							StringUtil.replace(
+								"alter table @table@ add constraint " +
+									"@old-column@_default default @default@ " +
+										"for @old-column@;",
+								REWORD_TEMPLATE, template));
+					}
 				}
 				else if (line.startsWith(ALTER_TABLE_NAME)) {
 					String[] template = buildTableNameTokens(line);
@@ -488,15 +507,17 @@ public class SQLServerDB extends BaseDB {
 		}
 
 		runSQL(
+			connection,
 			StringBundler.concat(
 				"alter table ", tableName, " drop constraint ",
 				defaultConstraintName));
 	}
 
 	private static final String[] _SQL_SERVER = {
-		"--", "1", "0", "'19700101'", "GetDate()", " image", " image", " bit",
-		" datetime2(6)", " float", " int", " bigint", " nvarchar(4000)",
-		" nvarchar(max)", " nvarchar", "  identity(1,1)", "go"
+		"--", "1", "0", "'19700101'", "GetDate()", " image", " image",
+		" decimal(30, 16)", " bit", " datetime2(6)", " float", " int",
+		" bigint", " nvarchar(4000)", " nvarchar(max)", " nvarchar",
+		"  identity(1,1)", "go"
 	};
 
 	private static final int _SQL_SERVER_2000 = 8;
@@ -504,13 +525,9 @@ public class SQLServerDB extends BaseDB {
 	private static final int _SQL_STRING_SIZE = 4000;
 
 	private static final int[] _SQL_TYPES = {
-		Types.LONGVARBINARY, Types.LONGVARBINARY, Types.BIT, Types.TIMESTAMP,
-		Types.DOUBLE, Types.INTEGER, Types.BIGINT, Types.NVARCHAR,
-		Types.NVARCHAR, Types.NVARCHAR
-	};
-
-	private static final int[] _SQL_VARCHAR_SIZES = {
-		_SQL_STRING_SIZE, SQL_VARCHAR_MAX_SIZE
+		Types.LONGVARBINARY, Types.LONGVARBINARY, Types.DECIMAL, Types.BIT,
+		Types.TIMESTAMP, Types.DOUBLE, Types.INTEGER, Types.BIGINT,
+		Types.NVARCHAR, Types.NVARCHAR, Types.NVARCHAR
 	};
 
 	private static final boolean _SUPPORTS_NEW_UUID_FUNCTION = true;

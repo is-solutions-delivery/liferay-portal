@@ -29,6 +29,7 @@ definition {
 	test CanActivateOrDeactivateAction {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Add an object, field, action, and check if an action is active") {
 			ObjectAdmin.addObjectViaAPI(
@@ -504,6 +505,7 @@ definition {
 	@priority = 4
 	test CanCreateActionAddAnObjectEntryUsingOldValueWithOnAfterDeleteTrigger {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Given two custom objects with a text field") {
 			for (var letters : list "A,B") {
@@ -743,6 +745,18 @@ definition {
 			ObjectAdmin.goToCustomObject(objectName = "CustomObject171861");
 
 			ObjectPortlet.viewEntry(entry = "Value Test");
+
+			// Workaround for LPS-193383
+
+			CommerceOrders.openOrdersAdmin();
+
+			Click.clickNoMouseOverNoWaitForVisible(locator1 = "CommerceNavigation#SELECT_ALL_CHECKBOX");
+
+			ClickNoError(locator1 = "Button#TRASH_ENABLED");
+
+			AssertConfirm.assertPartialConfirmation(value1 = "Are you sure you want to delete all selected orders?");
+
+			CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
 		}
 	}
 
@@ -824,6 +838,18 @@ definition {
 			ObjectAdmin.goToCustomObject(objectName = "CustomObject171913");
 
 			ObjectPortlet.viewEntry(entry = "Action shot on add");
+
+			// Workaround for LPS-193383
+
+			CommerceOrders.openOrdersAdmin();
+
+			Click.clickNoMouseOverNoWaitForVisible(locator1 = "CommerceNavigation#SELECT_ALL_CHECKBOX");
+
+			ClickNoError(locator1 = "Button#TRASH_ENABLED");
+
+			AssertConfirm.assertPartialConfirmation(value1 = "Are you sure you want to delete all selected orders?");
+
+			CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
 		}
 	}
 
@@ -1249,6 +1275,18 @@ definition {
 			Click(
 				key_text = "Accept Order",
 				locator1 = "Link#ANY");
+
+			// Workaround for LPS-193383
+
+			CommerceOrders.openOrdersAdmin();
+
+			Click.clickNoMouseOverNoWaitForVisible(locator1 = "CommerceNavigation#SELECT_ALL_CHECKBOX");
+
+			ClickNoError(locator1 = "Button#TRASH_ENABLED");
+
+			AssertConfirm.assertPartialConfirmation(value1 = "Are you sure you want to delete all selected orders?");
+
+			CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
 		}
 
 		task ("Then the action is triggered and the notification is sent") {
@@ -1344,6 +1382,18 @@ definition {
 				moveOrderItemsInShipment = "true",
 				productSkuList = "MIN55861",
 				warehouseName = "Italy");
+
+			// Workaround for LPS-193383
+
+			CommerceOrders.openOrdersAdmin();
+
+			Click.clickNoMouseOverNoWaitForVisible(locator1 = "CommerceNavigation#SELECT_ALL_CHECKBOX");
+
+			ClickNoError(locator1 = "Button#TRASH_ENABLED");
+
+			AssertConfirm.assertPartialConfirmation(value1 = "Are you sure you want to delete all selected orders?");
+
+			CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
 		}
 
 		task ("Then the action is triggered and the notification is sent") {
@@ -1438,6 +1488,18 @@ definition {
 				key_entryLabel = "CommerceOrder",
 				key_entryStatus = "Sent",
 				locator1 = "ObjectNotifications#VIEW_NOTIFICATION_ENTRIES");
+
+			// Workaround for LPS-193383
+
+			CommerceOrders.openOrdersAdmin();
+
+			Click.clickNoMouseOverNoWaitForVisible(locator1 = "CommerceNavigation#SELECT_ALL_CHECKBOX");
+
+			ClickNoError(locator1 = "Button#TRASH_ENABLED");
+
+			AssertConfirm.assertPartialConfirmation(value1 = "Are you sure you want to delete all selected orders?");
+
+			CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
 		}
 	}
 
@@ -1581,6 +1643,18 @@ definition {
 				actionActive = "Yes",
 				actionLabel = "Custom Action",
 				status = "Success");
+
+			// Workaround for LPS-193383
+
+			CommerceOrders.openOrdersAdmin();
+
+			Click.clickNoMouseOverNoWaitForVisible(locator1 = "CommerceNavigation#SELECT_ALL_CHECKBOX");
+
+			ClickNoError(locator1 = "Button#TRASH_ENABLED");
+
+			AssertConfirm.assertPartialConfirmation(value1 = "Are you sure you want to delete all selected orders?");
+
+			CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
 		}
 	}
 
@@ -1658,6 +1732,18 @@ definition {
 				actionActive = "Yes",
 				actionLabel = "Custom Action",
 				status = "Success");
+
+			// Workaround for LPS-193383
+
+			CommerceOrders.openOrdersAdmin();
+
+			Click.clickNoMouseOverNoWaitForVisible(locator1 = "CommerceNavigation#SELECT_ALL_CHECKBOX");
+
+			ClickNoError(locator1 = "Button#TRASH_ENABLED");
+
+			AssertConfirm.assertPartialConfirmation(value1 = "Are you sure you want to delete all selected orders?");
+
+			CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
 		}
 	}
 
@@ -1736,6 +1822,18 @@ definition {
 				actionActive = "Yes",
 				actionLabel = "Action Label",
 				status = "Success");
+
+			// Workaround for LPS-193383
+
+			CommerceOrders.openOrdersAdmin();
+
+			Click.clickNoMouseOverNoWaitForVisible(locator1 = "CommerceNavigation#SELECT_ALL_CHECKBOX");
+
+			ClickNoError(locator1 = "Button#TRASH_ENABLED");
+
+			AssertConfirm.assertPartialConfirmation(value1 = "Are you sure you want to delete all selected orders?");
+
+			CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
 		}
 	}
 
@@ -1819,6 +1917,7 @@ definition {
 	@priority = 4
 	test CanCreateActionWithExpressionBuilder {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Given an object with a field is created") {
 			ObjectAdmin.addObjectViaAPI(
@@ -1874,6 +1973,7 @@ definition {
 	@priority = 5
 	test CanCreateActionWithGroovyScript {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Given a Groovy Script") {
 			var groovyScript = '''
@@ -1957,6 +2057,7 @@ definition {
 	@priority = 4
 	test CanCreateEntryWithActions {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Given an object with a field is created") {
 			ObjectAdmin.addObjectViaAPI(
@@ -2168,6 +2269,7 @@ definition {
 	@priority = 5
 	test CanEditActionWithGroovyScript {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Given a Groovy Script") {
 			var groovyScript = '''
@@ -2263,6 +2365,7 @@ definition {
 	test CanEditExpression {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Add an Object, Field and Action") {
 			ObjectAdmin.addObjectViaAPI(
@@ -2338,6 +2441,7 @@ definition {
 	test CanEnableAndDisableCondition {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Add object, field, and publish then") {
 			ObjectAdmin.addObjectViaAPI(
@@ -2633,6 +2737,7 @@ definition {
 	@priority = 3
 	test CannotLeaveActionThenBlank {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		ObjectAdmin.addObjectViaAPI(
 			labelName = "Custom Object 187",
@@ -2663,6 +2768,7 @@ definition {
 	@priority = 3
 	test CannotLeaveActionWhenBlank {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		ObjectAdmin.addObjectViaAPI(
 			labelName = "Custom Object 188",
@@ -2694,6 +2800,7 @@ definition {
 	@priority = 3
 	test CannotLeaveURLBlank {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		ObjectAdmin.addObjectViaAPI(
 			labelName = "Custom Object 189",
@@ -2784,6 +2891,7 @@ definition {
 	@priority = 3
 	test CannotSaveWithoutExpressionBuilder {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		ObjectAdmin.addObjectViaAPI(
 			labelName = "Custom Object",
@@ -3035,6 +3143,19 @@ definition {
 		}
 
 		task ("Then the action is triggered and an email is sent") {
+
+			// Workaround for LPS-193383
+
+			CommerceOrders.openOrdersAdmin();
+
+			Click.clickNoMouseOverNoWaitForVisible(locator1 = "CommerceNavigation#SELECT_ALL_CHECKBOX");
+
+			ClickNoError(locator1 = "Button#TRASH_ENABLED");
+
+			AssertConfirm.assertPartialConfirmation(value1 = "Are you sure you want to delete all selected orders?");
+
+			CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
+
 			MockMock.viewMail(
 				asset = "Subject Test",
 				content = "Email Body",
@@ -3049,6 +3170,7 @@ definition {
 	test CanTriggerActionAfterDisablingExpression {
 		task ("Given an object with a field is created") {
 			property test.liferay.virtual.instance = "false";
+			property test.run.type = "single";
 
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object",
@@ -3773,6 +3895,18 @@ definition {
 			AssertElementPresent(
 				key_value = "On Hold",
 				locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
+
+			// Workaround for LPS-193383
+
+			CommerceOrders.openOrdersAdmin();
+
+			Click.clickNoMouseOverNoWaitForVisible(locator1 = "CommerceNavigation#SELECT_ALL_CHECKBOX");
+
+			ClickNoError(locator1 = "Button#TRASH_ENABLED");
+
+			AssertConfirm.assertPartialConfirmation(value1 = "Are you sure you want to delete all selected orders?");
+
+			CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
 		}
 	}
 
@@ -3834,6 +3968,7 @@ definition {
 	@priority = 3
 	test CanUseExpressionWithWebhook {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Given an object with a field is created") {
 			ObjectAdmin.addObjectViaAPI(
@@ -3958,6 +4093,7 @@ definition {
 	@priority = 4
 	test VerifyActionNameIsRequired {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		ObjectAdmin.addObjectViaAPI(
 			labelName = "Custom Object 156562",

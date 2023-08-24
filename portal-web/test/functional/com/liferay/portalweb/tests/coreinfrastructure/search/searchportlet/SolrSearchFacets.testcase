@@ -147,6 +147,8 @@ definition {
 	}
 
 	test AssertNonAdminsCannotAddCertainWidgets {
+		property app.server.types = "tomcat";
+
 		JSONRole.addRegularRole(
 			roleKey = "Can Add Widgets",
 			roleTitle = "Can Add Widgets");
@@ -373,6 +375,7 @@ definition {
 	@priority = 3
 	test ViewFacetPersistence {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		// Workaround for LPS-89026
 

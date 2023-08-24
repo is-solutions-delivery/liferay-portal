@@ -114,7 +114,9 @@ public class CommerceCatalogIndexer extends BaseIndexer<CommerceCatalog> {
 			"accountEntryId", commerceCatalog.getAccountEntryId());
 
 		if (_log.isDebugEnabled()) {
-			_log.debug("Document " + commerceCatalog + " indexed successfully");
+			_log.debug(
+				"Commerce catalog " + commerceCatalog +
+					" indexed successfully");
 		}
 
 		return document;
@@ -166,7 +168,7 @@ public class CommerceCatalogIndexer extends BaseIndexer<CommerceCatalog> {
 					if (_log.isWarnEnabled()) {
 						_log.warn(
 							"Unable to index commerce catalog " +
-								commerceCatalog.getCommerceCatalogId(),
+								commerceCatalog,
 							portalException);
 					}
 				}

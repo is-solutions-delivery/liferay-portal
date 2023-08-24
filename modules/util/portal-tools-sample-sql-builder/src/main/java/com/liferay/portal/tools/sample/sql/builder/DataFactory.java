@@ -1764,7 +1764,7 @@ public class DataFactory {
 
 		commerceOrderItemModel.setParentCommerceOrderItemId(0);
 		commerceOrderItemModel.setName("Commerce Order Item Name");
-		commerceOrderItemModel.setQuantity(1);
+		commerceOrderItemModel.setQuantity(BigDecimal.ONE);
 		commerceOrderItemModel.setShippedQuantity(0);
 		commerceOrderItemModel.setShipSeparately(true);
 		commerceOrderItemModel.setShippable(true);
@@ -2056,6 +2056,25 @@ public class DataFactory {
 		commercePriceListModel.setExternalReferenceCode(uuid);
 
 		return commercePriceListModel;
+	}
+
+	public List<CommercePriceListModel> newCommercePriceListModels(
+		long groupId, long commerceCurrencyId, boolean catalogBasePriceList,
+		boolean netPrice, String type) {
+
+		List<CommercePriceListModel> commercePriceListModels = new ArrayList<>(
+			BenchmarksPropsValues.MAX_COMMERCE_PRICE_LIST_COUNT);
+
+		for (int i = 1;
+			 i <= BenchmarksPropsValues.MAX_COMMERCE_PRICE_LIST_COUNT; i++) {
+
+			commercePriceListModels.add(
+				newCommercePriceListModel(
+					groupId, commerceCurrencyId, catalogBasePriceList, netPrice,
+					type));
+		}
+
+		return commercePriceListModels;
 	}
 
 	public CommerceShippingFixedOptionModel newCommerceShippingFixedOptionModel(

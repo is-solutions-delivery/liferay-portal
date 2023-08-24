@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
+import com.liferay.portal.kernel.util.BigDecimalUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.odata.entity.EntityModel;
@@ -270,9 +271,10 @@ public class WarehouseResourceImpl extends BaseWarehouseResourceImpl {
 						commerceInventoryWarehouse.getCompanyId(),
 						commerceInventoryWarehouse.
 							getCommerceInventoryWarehouseId(),
-						BigDecimal.valueOf(
-							GetterUtil.getInteger(warehouseItem.getQuantity())),
-						warehouseItem.getSku(), StringPool.BLANK);
+						BigDecimalUtil.get(
+							warehouseItem.getQuantity(), BigDecimal.ZERO),
+						warehouseItem.getSku(),
+						warehouseItem.getUnitOfMeasureKey());
 			}
 		}
 	}

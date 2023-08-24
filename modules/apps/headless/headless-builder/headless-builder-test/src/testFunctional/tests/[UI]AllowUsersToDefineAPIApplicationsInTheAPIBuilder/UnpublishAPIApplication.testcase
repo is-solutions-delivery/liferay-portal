@@ -15,8 +15,7 @@ definition {
 		task ("Given publish an API application") {
 			ApplicationAPI.createAPIApplication(
 				baseURL = "App-test",
-				statusKey = "published",
-				statusName = "published",
+				status = "published",
 				title = "App-test");
 		}
 	}
@@ -35,9 +34,12 @@ definition {
 	test CanGetUnpublishedStatusInResponse {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("And Given I unpublish it with Change Publication Status") {
-			APIBuilderUI.changePublicationStatus(key_title = "App-test");
+			APIBuilderUI.changePublicationStatus(
+				key_title = "App-test",
+				unpublish = "true");
 		}
 
 		task ("When with getAPIApplicationsPage to retrieve the api application") {
@@ -57,11 +59,10 @@ definition {
 	test CanPromptUnpublishAPIApplicationDialog {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("When I click Change Publication Status") {
-			APIBuilderUI.changePublicationStatus(
-				check = "true",
-				key_title = "App-test");
+			APIBuilderUI.changePublicationStatus(key_title = "App-test");
 		}
 
 		task ("Then the unpublish warning dialog is present") {
@@ -73,9 +74,12 @@ definition {
 	test CanShowAvailableButtonsAfterUnpublish {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("And Given I unpublish the API application") {
-			APIBuilderUI.changePublicationStatus(key_title = "App-test");
+			APIBuilderUI.changePublicationStatus(
+				key_title = "App-test",
+				unpublish = "true");
 		}
 
 		task ("When I edit the API application") {
@@ -95,6 +99,7 @@ definition {
 	test CanUnpublishThroughAPI {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("When with patchAPIApplication and aPIApplicationId to unpublish the API") {
 			var responseFromGet = ApplicationAPI.getAPIApplications();
@@ -134,9 +139,12 @@ definition {
 	test CanUpdatedToUnpublishedStatus {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("When I unpublish it with Change Publication Status") {
-			APIBuilderUI.changePublicationStatus(key_title = "App-test");
+			APIBuilderUI.changePublicationStatus(
+				key_title = "App-test",
+				unpublish = "true");
 		}
 
 		task ("Then the application status is updated to unpublished") {

@@ -7,10 +7,10 @@ package com.liferay.poshi.runner.logger;
 
 import com.liferay.poshi.core.PoshiContext;
 import com.liferay.poshi.core.PoshiGetterUtil;
+import com.liferay.poshi.core.PoshiProperties;
 import com.liferay.poshi.core.PoshiStackTrace;
 import com.liferay.poshi.core.PoshiVariablesContext;
 import com.liferay.poshi.core.util.FileUtil;
-import com.liferay.poshi.core.util.PoshiProperties;
 import com.liferay.poshi.core.util.StringUtil;
 import com.liferay.poshi.core.util.Validator;
 import com.liferay.poshi.runner.exception.PoshiRunnerLoggerException;
@@ -60,7 +60,7 @@ public final class SummaryLogger {
 
 	public void createSummaryReport() throws Exception {
 		String summaryHTMLContent = _readResource(
-			"META-INF/resources/html/summary.html");
+			"META-INF/resources/logger/html/summary.html");
 
 		_summaryContentWrapperLoggerElement.addChildLoggerElement(
 			_getSummaryContentLoggerElement());

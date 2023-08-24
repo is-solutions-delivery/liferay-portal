@@ -113,7 +113,8 @@ public class CPDefinitionOptionValueRelIndexer
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
-				"Indexing definition option rel " + cpDefinitionOptionValueRel);
+				"Indexing commerce product definition option value " +
+					"relationship " + cpDefinitionOptionValueRel);
 		}
 
 		Document document = getBaseModelDocument(
@@ -144,8 +145,8 @@ public class CPDefinitionOptionValueRelIndexer
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
-				"Document " + cpDefinitionOptionValueRel +
-					" indexed successfully");
+				"Commerce product definition option value relationship " +
+					cpDefinitionOptionValueRel + " indexed successfully");
 		}
 
 		return document;
@@ -203,13 +204,10 @@ public class CPDefinitionOptionValueRelIndexer
 				}
 				catch (PortalException portalException) {
 					if (_log.isWarnEnabled()) {
-						long cpDefinitionOptionValueRelId =
-							cpDefinitionOptionValueRel.
-								getCPDefinitionOptionValueRelId();
-
 						_log.warn(
-							"Unable to index definition option rel " +
-								cpDefinitionOptionValueRelId,
+							"Unable to index commerce product definition " +
+								"option value relationship " +
+									cpDefinitionOptionValueRel,
 							portalException);
 					}
 				}

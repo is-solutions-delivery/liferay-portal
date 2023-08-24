@@ -25,6 +25,7 @@ import org.gradle.api.artifacts.DependencySet;
 import org.gradle.api.artifacts.ResolutionStrategy;
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier;
 import org.gradle.api.plugins.JavaBasePlugin;
+import org.gradle.api.plugins.JavaLibraryPlugin;
 import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.plugins.ReportingBasePlugin;
 import org.gradle.api.tasks.SourceSet;
@@ -46,7 +47,7 @@ public class BaselinePlugin implements Plugin<Project> {
 
 	@Override
 	public void apply(Project project) {
-		GradleUtil.applyPlugin(project, JavaPlugin.class);
+		GradleUtil.applyPlugin(project, JavaLibraryPlugin.class);
 		GradleUtil.applyPlugin(project, ReportingBasePlugin.class);
 
 		final BaselineConfigurationExtension baselineConfigurationExtension =
@@ -155,7 +156,14 @@ public class BaselinePlugin implements Plugin<Project> {
 						newJarTask.getProject(),
 						SourceSet.MAIN_SOURCE_SET_NAME);
 
-					return GradleUtil.getSrcDir(sourceSet.getResources());
+					File srcDir = GradleUtil.getSrcDir(
+						sourceSet.getResources());
+
+					if (!srcDir.exists()) {
+						srcDir.mkdirs();
+					}
+
+					return srcDir;
 				}
 
 			});

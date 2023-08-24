@@ -117,7 +117,7 @@ public class CommercePriceEntryIndexer extends BaseIndexer<CommercePriceEntry> {
 		throws Exception {
 
 		if (_log.isDebugEnabled()) {
-			_log.debug("Indexing price entry " + commercePriceEntry);
+			_log.debug("Indexing commerce price entry " + commercePriceEntry);
 		}
 
 		Document document = getBaseModelDocument(
@@ -144,7 +144,8 @@ public class CommercePriceEntryIndexer extends BaseIndexer<CommercePriceEntry> {
 
 		if (_log.isDebugEnabled()) {
 			_log.debug(
-				"Document " + commercePriceEntry + " indexed successfully");
+				"Commerce price entry " + commercePriceEntry +
+					" indexed successfully");
 		}
 
 		return document;
@@ -201,7 +202,7 @@ public class CommercePriceEntryIndexer extends BaseIndexer<CommercePriceEntry> {
 					if (_log.isWarnEnabled()) {
 						_log.warn(
 							"Unable to index commerce price entry " +
-								commercePriceEntry.getCommercePriceEntryId(),
+								commercePriceEntry,
 							portalException);
 					}
 				}

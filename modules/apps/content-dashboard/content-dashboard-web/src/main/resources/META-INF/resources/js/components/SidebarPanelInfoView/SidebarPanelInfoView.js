@@ -9,15 +9,22 @@ import ClayLabel from '@clayui/label';
 import ClayLayout from '@clayui/layout';
 import ClaySticker from '@clayui/sticker';
 import ClayTabs from '@clayui/tabs';
-import classnames from 'classnames';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, {useCallback, useState} from 'react';
 
 import Sidebar from '../Sidebar';
+import Categorization from './Categorization';
 import DetailsContent from './DetailsContent';
 import ManageCollaborators from './ManageCollaborators';
 import Subscribe from './Subscribe';
 import VersionsContent from './VersionsContent';
+
+const TABS = {
+	categorization: 1,
+	details: 0,
+	version: 2,
+};
 
 const SidebarPanelInfoView = ({
 	classPK,
@@ -41,7 +48,7 @@ const SidebarPanelInfoView = ({
 	viewURLs = [],
 	vocabularies = {},
 }) => {
-	const [activeTabKeyValue, setActiveTabKeyValue] = useState(0);
+	const [activeTabKeyValue, setActiveTabKeyValue] = useState(TABS.details);
 
 	const showTabs = !!getItemVersionsURL;
 
@@ -52,6 +59,9 @@ const SidebarPanelInfoView = ({
 	const handleError = useCallback(() => {
 		setError(true);
 	}, []);
+
+	const hasCategorization =
+		!!tags.length || !!Object.keys(vocabularies).length;
 
 	return (
 		<>
@@ -104,7 +114,7 @@ const SidebarPanelInfoView = ({
 							))}
 						</div>
 
-						<div className="sidebar-section">
+						<div className="mb-1 sidebar-section">
 							{fetchSharingCollaboratorsURL ? (
 								<ManageCollaborators
 									fetchSharingCollaboratorsURL={
@@ -115,7 +125,7 @@ const SidebarPanelInfoView = ({
 							) : (
 								<>
 									<ClaySticker
-										className={classnames(
+										className={classNames(
 											'sticker-user-icon',
 											{
 												[`user-icon-color-${stickerColor}`]: !user.url,
@@ -139,40 +149,67 @@ const SidebarPanelInfoView = ({
 								</>
 							)}
 						</div>
-
-						<div className="mb-0 sidebar-section">
-							{showTabs && activeTabKeyValue !== null && (
-								<ClayTabs modern>
-									<ClayTabs.Item
-										active={activeTabKeyValue === 0}
-										innerProps={{
-											'aria-controls': 'details',
-										}}
-										onClick={() => setActiveTabKeyValue(0)}
-									>
-										{Liferay.Language.get('details')}
-									</ClayTabs.Item>
-
-									<ClayTabs.Item
-										active={activeTabKeyValue === 1}
-										innerProps={{
-											'aria-controls': 'versions',
-										}}
-										onClick={() => setActiveTabKeyValue(1)}
-									>
-										{Liferay.Language.get('versions')}
-									</ClayTabs.Item>
-								</ClayTabs>
-							)}
-						</div>
 					</div>
 				</ClayLayout.ContentRow>
 			</Sidebar.Header>
 
+			<div className="c-mb-3 sidebar-section">
+				{showTabs && activeTabKeyValue !== null && (
+					<ClayTabs
+						className={classNames('d-flex flex-nowrap', {
+							'justify-content-center': hasCategorization,
+						})}
+						modern
+					>
+						<ClayTabs.Item
+							active={activeTabKeyValue === TABS.details}
+							className="flex-shrink-0"
+							innerProps={{
+								'aria-controls': 'details',
+							}}
+							onClick={() => setActiveTabKeyValue(TABS.details)}
+						>
+							{Liferay.Language.get('details')}
+						</ClayTabs.Item>
+
+						{hasCategorization && (
+							<ClayTabs.Item
+								active={
+									activeTabKeyValue === TABS.categorization
+								}
+								className="flex-shrink-0"
+								innerProps={{
+									'aria-controls': 'categorization',
+								}}
+								onClick={() =>
+									setActiveTabKeyValue(TABS.categorization)
+								}
+							>
+								{Liferay.Language.get('categorization')}
+							</ClayTabs.Item>
+						)}
+
+						<ClayTabs.Item
+							active={activeTabKeyValue === TABS.version}
+							className="flex-shrink-0"
+							innerProps={{
+								'aria-controls': 'versions',
+							}}
+							onClick={() => setActiveTabKeyValue(TABS.version)}
+						>
+							{Liferay.Language.get('versions')}
+						</ClayTabs.Item>
+					</ClayTabs>
+				)}
+			</div>
+
 			<Sidebar.Body>
 				<div>
 					<ClayTabs.Content activeIndex={activeTabKeyValue} fade>
-						<ClayTabs.TabPane aria-labelledby="tab-1">
+						<ClayTabs.TabPane
+							aria-labelledby="tab-1"
+							className="flex-shrink-0"
+						>
 							<DetailsContent
 								classPK={classPK}
 								createDate={createDate}
@@ -183,17 +220,32 @@ const SidebarPanelInfoView = ({
 								modifiedDate={modifiedDate}
 								preview={preview}
 								specificFields={specificFields}
-								tags={tags}
 								title={title}
 								viewURLs={viewURLs}
-								vocabularies={vocabularies}
 							/>
 						</ClayTabs.TabPane>
 
-						{showTabs && (
-							<ClayTabs.TabPane aria-labelledby="tab-2">
+						{hasCategorization &&
+							showTabs &&
+							activeTabKeyValue === TABS.categorization && (
+								<ClayTabs.TabPane
+									aria-labelledby="tab-2"
+									className="flex-shrink-0"
+								>
+									<Categorization
+										tags={tags}
+										vocabularies={vocabularies}
+									/>
+								</ClayTabs.TabPane>
+							)}
+
+						{showTabs && activeTabKeyValue === TABS.version && (
+							<ClayTabs.TabPane
+								aria-labelledby="tab-2"
+								className="flex-shrink-0"
+							>
 								<VersionsContent
-									active={activeTabKeyValue === 1}
+									active={activeTabKeyValue === TABS.version}
 									getItemVersionsURL={getItemVersionsURL}
 									languageTag={languageTag}
 									onError={handleError}

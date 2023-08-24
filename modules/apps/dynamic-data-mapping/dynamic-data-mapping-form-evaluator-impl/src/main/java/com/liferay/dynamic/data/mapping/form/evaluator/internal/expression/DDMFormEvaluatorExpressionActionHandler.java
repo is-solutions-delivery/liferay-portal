@@ -10,6 +10,7 @@ import com.liferay.dynamic.data.mapping.expression.ExecuteActionRequest;
 import com.liferay.dynamic.data.mapping.expression.ExecuteActionResponse;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Leonardo Barros
@@ -19,9 +20,10 @@ public class DDMFormEvaluatorExpressionActionHandler
 	implements DDMExpressionActionHandler {
 
 	public DDMFormEvaluatorExpressionActionHandler(
-		Map<Integer, Integer> pageFlow) {
+		Map<Integer, Integer> pageFlow, Set<Integer> disabledPageIndexes) {
 
 		_pageFlow = pageFlow;
+		_disabledPageIndexes = disabledPageIndexes;
 	}
 
 	@Override
@@ -48,7 +50,8 @@ public class DDMFormEvaluatorExpressionActionHandler
 			int toPageFlowIndex = entry.getValue();
 
 			if ((toPageIndex < fromPageFlowIndex) ||
-				(fromPageIndex > toPageFlowIndex)) {
+				(fromPageIndex > toPageFlowIndex) ||
+				!_disabledPageIndexes.contains(toPageIndex)) {
 
 				continue;
 			}
@@ -77,6 +80,7 @@ public class DDMFormEvaluatorExpressionActionHandler
 		return builder.build();
 	}
 
+	private final Set<Integer> _disabledPageIndexes;
 	private final Map<Integer, Integer> _pageFlow;
 
 }

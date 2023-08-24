@@ -8,6 +8,7 @@ package com.liferay.layout.content.page.editor.web.internal.portlet.action;
 import com.liferay.exportimport.kernel.staging.LayoutStagingUtil;
 import com.liferay.layout.content.LayoutContentProvider;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
+import com.liferay.layout.content.page.editor.web.internal.util.LayoutLockManager;
 import com.liferay.layout.content.page.editor.web.internal.util.layout.structure.LayoutStructureUtil;
 import com.liferay.layout.service.LayoutLocalizationLocalService;
 import com.liferay.layout.util.LayoutCopyHelper;
@@ -15,7 +16,6 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutRevision;
 import com.liferay.portal.kernel.model.LayoutSet;
-import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutRevisionLocalService;
@@ -57,10 +57,11 @@ import org.osgi.service.component.annotations.Reference;
 	},
 	service = MVCActionCommand.class
 )
-public class PublishLayoutMVCActionCommand extends BaseMVCActionCommand {
+public class PublishLayoutMVCActionCommand
+	extends BaseContentPageEditorMVCActionCommand {
 
 	@Override
-	protected void doProcessAction(
+	protected void doCommand(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
@@ -71,8 +72,6 @@ public class PublishLayoutMVCActionCommand extends BaseMVCActionCommand {
 			themeDisplay.getPlid());
 
 		if (!draftLayout.isDraftLayout()) {
-			sendRedirect(actionRequest, actionResponse);
-
 			return;
 		}
 
@@ -102,8 +101,6 @@ public class PublishLayoutMVCActionCommand extends BaseMVCActionCommand {
 		}
 
 		MultiSessionMessages.add(actionRequest, "layoutPublished");
-
-		sendRedirect(actionRequest, actionResponse);
 	}
 
 	private void _publishLayout(
@@ -123,6 +120,8 @@ public class PublishLayoutMVCActionCommand extends BaseMVCActionCommand {
 				layout.getCompanyId(), layout.getGroupId(), userId,
 				Layout.class.getName(), layout.getPlid(), layout,
 				serviceContext, Collections.emptyMap());
+
+			LayoutLockManager.unlock(draftLayout, userId);
 		}
 		else {
 			UnicodeProperties originalTypeSettingsUnicodeProperties =

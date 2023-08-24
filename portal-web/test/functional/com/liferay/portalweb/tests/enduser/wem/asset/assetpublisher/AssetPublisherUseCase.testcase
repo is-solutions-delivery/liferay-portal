@@ -42,6 +42,7 @@ definition {
 		property osgi.module.configurations = "promptEnabled=\"true\"";
 		property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Add an organization with site") {
 			JSONOrganization.addOrganization(
@@ -182,6 +183,7 @@ definition {
 		property osgi.module.configuration.file.names = "com.liferay.login.web.internal.configuration.AuthLoginConfiguration.config";
 		property osgi.module.configurations = "promptEnabled=\"true\"";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Add an organization with site") {
 			JSONOrganization.addOrganization(
@@ -343,6 +345,7 @@ definition {
 	test ConfigureAssetPublisherAfterAddingKaleoFormsAdminPortletToBlackList {
 		property test.liferay.virtual.instance = "false";
 		property test.run.environment = "EE";
+		property test.run.type = "single";
 
 		task ("Add the Kaleo Forms admin portlet to blacklist") {
 			ApplicationsMenu.gotoPortlet(
@@ -624,6 +627,7 @@ definition {
 	test FilterAndOrderAssetsByField {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Add a Language Selector to page") {
 			JSONLayout.addWidgetToPublicLayout(
@@ -1230,6 +1234,7 @@ definition {
 	@priority = 4
 	test RemoveMultipleManualSelectionAssetEntries {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Stop and start com.liferay.layout.type.controller.portlet bundle via GogoShell") {
 			GogoShell.openGogoShellAdmin(siteURLKey = ${siteURLKey});
@@ -1395,8 +1400,6 @@ definition {
 	@description = "This is a use case for LPS-133629. The user can select folder by search when create web content based on custom structure via Asset Publisher."
 	@priority = 4
 	test SelectFolderBySearchWhenCreateWebContentBasedOnCustomStructureViaAssetPublisher {
-		property timeout.explicit.wait = "10";
-
 		task ("Add a web content folder") {
 			JSONWebcontent.addFolder(
 				folderDescription = "WC Folder Description",
@@ -1474,7 +1477,6 @@ definition {
 	@priority = 5
 	test SelectFolderWhenCreateWebContentViaAssetPublisher {
 		property portal.acceptance = "true";
-		property timeout.explicit.wait = "20";
 
 		task ("Add a web content folder") {
 			JSONWebcontent.addFolder(
@@ -1926,6 +1928,7 @@ definition {
 	@priority = 4
 	test ViewInContextTranslatedWCWithFriendlyURL {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		JSONLayout.addWidgetToPublicLayout(
 			groupName = ${randomSiteName},
@@ -1991,6 +1994,7 @@ definition {
 	@priority = 3
 	test ViewLocalizedWebContentWithLocalizedCategories {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Add a vocabulary with localized title") {
 			JSONCategory.addVocabulary(
@@ -2108,6 +2112,7 @@ definition {
 	@priority = 4
 	test ViewNonSearchableWebContentAfterDisableSearchWithIndex {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Add a normal web content") {
 			JSONWebcontent.addWebContent(
@@ -2172,6 +2177,7 @@ definition {
 	test ViewNotificationEmailWhenSetDynamicSubscriptionLimitToZero {
 		property custom.properties = "mail.send.blacklist=";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 		property test.smtp.server.enabled = "true";
 
 		task ("Set the Dynamic Subscription Limit to 0 in Asset Publisher") {
@@ -2251,6 +2257,7 @@ catch (Exception e) {
 	@uitest
 	test ViewOpenOfficeFileTypeLinks {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Enable OpenOffice Integration") {
 			SystemSettings.openSystemSettingsAdmin();
@@ -2581,8 +2588,6 @@ catch (Exception e) {
 	@description = "This is a test for LPS-129012. View web content in associated public content page."
 	@priority = 4
 	test ViewWebContentInAssociatedPublicContentPage {
-		property timeout.explicit.wait = "10";
-
 		task ("Add a content page") {
 			JSONLayout.addPublicLayout(
 				groupName = ${randomSiteName},
@@ -2663,8 +2668,6 @@ catch (Exception e) {
 	@description = "View web content in associated public page."
 	@priority = 4
 	test ViewWebContentInAssociatedPublicPage {
-		property timeout.explicit.wait = "10";
-
 		task ("Set the Asset Publisher as default for page") {
 			Navigator.gotoSitePage(
 				pageName = "Asset Publisher Page",

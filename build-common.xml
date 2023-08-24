@@ -758,6 +758,7 @@ information.
 		<attribute default="true" name="setupbinariescache" />
 		<attribute default="true" name="stacktrace" />
 		<attribute name="task" />
+		<attribute default="" name="test.name" />
 		<element implicit="true" name="args" optional="true" />
 
 		<sequential>
@@ -920,17 +921,39 @@ information.
 
 					<local name="${redirector.error.property}" />
 					<local name="${redirector.output.property}" />
+					<local name="test.name" />
+
+					<condition property="test.name" value="@{test.name}">
+						<not>
+							<equals arg1="@{test.name}" arg2="" />
+						</not>
+					</condition>
 
 					<trycatch>
 						<try>
-							<if>
-								<not>
-									<equals arg1="${gradle.executable.task}" arg2="" />
-								</not>
-								<then>
-									<echo>Executing Gradle task: ${gradle.executable.task}</echo>
-								</then>
-							</if>
+							<beanshell>
+								<![CDATA[
+									StringBuilder sb = new StringBuilder();
+
+									String gradleExecutableTask = project.getProperty("gradle.executable.task");
+
+									if ((gradleExecutableTask != null) && !gradleExecutableTask.isEmpty()) {
+										sb.append("Executing Gradle task: ");
+										sb.append(gradleExecutableTask);
+									}
+
+									String testName = project.getProperty("test.name");
+
+									if ((testName != null) && !testName.isEmpty()) {
+										sb.append(" --tests ");
+										sb.append(testName);
+									}
+
+									if (sb.length() > 0) {
+										System.out.println(sb.toString());
+									}
+								]]>
+							</beanshell>
 
 							<exec dir="@{dir}" executable="${project.dir}/gradlew${gradlew.suffix}" failonerror="@{failonerror}">
 								<args />
@@ -950,6 +973,8 @@ information.
 								<arg if:set="env.FIX_PACKS_RELEASE_ENVIRONMENT" value="-Dpatcher.hotfix.dirs=${build.patcher.hotfix.dirs}" />
 								<arg if:set="env.FIX_PACKS_RELEASE_ENVIRONMENT" value="-Dpatcher.hotfix.qualifier=${build.patcher.hotfix.qualifier}" />
 								<arg line="@{task}" />
+								<arg if:set="test.name" value="--tests" />
+								<arg if:set="test.name" value="${test.name}" />
 								<redirector errorproperty="${redirector.error.property}" outputproperty="${redirector.output.property}" unless:blank="${redirector.output.property}" />
 							</exec>
 						</try>
@@ -986,6 +1011,8 @@ information.
 									<arg if:set="env.FIX_PACKS_RELEASE_ENVIRONMENT" value="-Dpatcher.hotfix.dirs=${build.patcher.hotfix.dirs}" />
 									<arg if:set="env.FIX_PACKS_RELEASE_ENVIRONMENT" value="-Dpatcher.hotfix.qualifier=${build.patcher.hotfix.qualifier}" />
 									<arg line="@{task}" />
+									<arg if:set="test.name" value="--tests" />
+									<arg if:set="test.name" value="${test.name}" />
 									<redirector errorproperty="${redirector.error.property}" outputproperty="${redirector.output.property}" unless:blank="${redirector.output.property}" />
 								</exec>
 							</echoxml>

@@ -23,7 +23,6 @@ import com.liferay.commerce.price.list.service.CommercePriceListDiscountRelLocal
 import com.liferay.commerce.pricing.configuration.CommercePricingConfiguration;
 import com.liferay.commerce.product.model.CPInstance;
 import com.liferay.commerce.product.service.CPInstanceLocalService;
-import com.liferay.commerce.util.CommerceBigDecimalUtil;
 import com.liferay.commerce.util.CommerceUtil;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
@@ -32,6 +31,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.util.BigDecimalUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.math.BigDecimal;
@@ -101,7 +101,7 @@ public class CommerceDiscountCalculationV2Impl
 
 	@Override
 	public CommerceDiscountValue getProductCommerceDiscountValue(
-			long cpInstanceId, int quantity, BigDecimal productUnitPrice,
+			long cpInstanceId, BigDecimal quantity, BigDecimal productUnitPrice,
 			CommerceContext commerceContext)
 		throws PortalException {
 
@@ -111,7 +111,7 @@ public class CommerceDiscountCalculationV2Impl
 
 	@Override
 	public CommerceDiscountValue getProductCommerceDiscountValue(
-			long cpInstanceId, long commercePriceListId, int quantity,
+			long cpInstanceId, long commercePriceListId, BigDecimal quantity,
 			BigDecimal productUnitPrice, CommerceContext commerceContext)
 		throws PortalException {
 
@@ -195,7 +195,7 @@ public class CommerceDiscountCalculationV2Impl
 		throws PortalException {
 
 		if ((commerceDiscountValue == null) ||
-			CommerceBigDecimalUtil.isZero(commercePrice)) {
+			BigDecimalUtil.isZero(commercePrice)) {
 
 			return null;
 		}
@@ -213,10 +213,8 @@ public class CommerceDiscountCalculationV2Impl
 			BigDecimal maximumDiscountAmount =
 				commerceDiscount.getMaximumDiscountAmount();
 
-			if (CommerceBigDecimalUtil.gt(
-					maximumDiscountAmount, BigDecimal.ZERO) &&
-				CommerceBigDecimalUtil.gt(
-					discountAmount, maximumDiscountAmount)) {
+			if (BigDecimalUtil.gt(maximumDiscountAmount, BigDecimal.ZERO) &&
+				BigDecimalUtil.gt(discountAmount, maximumDiscountAmount)) {
 
 				discountAmount = commerceDiscount.getMaximumDiscountAmount();
 			}
@@ -224,9 +222,7 @@ public class CommerceDiscountCalculationV2Impl
 		else {
 			discountAmount = commerceDiscountValue;
 
-			if (CommerceBigDecimalUtil.gt(
-					commerceDiscountValue, commercePrice)) {
-
+			if (BigDecimalUtil.gt(commerceDiscountValue, commercePrice)) {
 				discountAmount = commercePrice;
 			}
 		}
@@ -240,8 +236,7 @@ public class CommerceDiscountCalculationV2Impl
 			discountedAmount, commercePrice, roundingMode);
 
 		if ((currentDiscountLevel == null) ||
-			CommerceBigDecimalUtil.gt(
-				discountPercentage, currentDiscountLevel)) {
+			BigDecimalUtil.gt(discountPercentage, currentDiscountLevel)) {
 
 			return discountPercentage;
 		}
@@ -338,9 +333,7 @@ public class CommerceDiscountCalculationV2Impl
 			CommerceContext commerceContext, String target)
 		throws PortalException {
 
-		if ((amount == null) ||
-			CommerceBigDecimalUtil.lte(amount, BigDecimal.ZERO)) {
-
+		if ((amount == null) || BigDecimalUtil.lte(amount, BigDecimal.ZERO)) {
 			return null;
 		}
 
@@ -387,7 +380,7 @@ public class CommerceDiscountCalculationV2Impl
 	}
 
 	private CommerceDiscountValue _getCommerceDiscountValues(
-			BigDecimal commercePrice, int quantity,
+			BigDecimal commercePrice, BigDecimal quantity,
 			CommerceContext commerceContext,
 			List<CommerceDiscount> commerceDiscounts)
 		throws PortalException {
@@ -416,14 +409,13 @@ public class CommerceDiscountCalculationV2Impl
 		currentDiscountAmount = currentDiscountAmount.setScale(
 			_SCALE, roundingMode);
 
-		if (CommerceBigDecimalUtil.isZero(currentDiscountAmount)) {
+		if (BigDecimalUtil.isZero(currentDiscountAmount)) {
 			return null;
 		}
 
 		CommerceMoney discountAmountCommerceMoney =
 			_commerceMoneyFactory.create(
-				commerceCurrency,
-				currentDiscountAmount.multiply(new BigDecimal(quantity)));
+				commerceCurrency, currentDiscountAmount.multiply(quantity));
 
 		return new CommerceDiscountValue(
 			0, discountAmountCommerceMoney,

@@ -100,6 +100,7 @@ import org.gradle.api.tasks.bundling.Compression;
 import org.gradle.api.tasks.bundling.Tar;
 import org.gradle.api.tasks.bundling.Zip;
 import org.gradle.language.base.plugins.LifecycleBasePlugin;
+import org.gradle.util.Path;
 
 /**
  * @author Andrea Di Giorgi
@@ -877,6 +878,7 @@ public class RootProjectConfigurator implements Plugin<Project> {
 		copy.setGroup(DOCKER_GROUP);
 
 		copy.setDestinationDir(workspaceExtension.getDockerDir());
+		copy.setDuplicatesStrategy(DuplicatesStrategy.INCLUDE);
 
 		copy.from(
 			providedModulesConfiguration,
@@ -1085,7 +1087,8 @@ public class RootProjectConfigurator implements Plugin<Project> {
 
 				@Override
 				public void execute(Project project) {
-					_configureDownloadTask(download, workspaceExtension);
+					_configureDownloadTask(
+						project, download, workspaceExtension);
 				}
 
 			});
@@ -1126,6 +1129,9 @@ public class RootProjectConfigurator implements Plugin<Project> {
 
 					WorkResult workResult = project.copy(
 						copySpec -> {
+							copySpec.setDuplicatesStrategy(
+								DuplicatesStrategy.INCLUDE);
+
 							copySpec.from(
 								new File(
 									workspaceExtension.getConfigsDir(),
@@ -1660,37 +1666,24 @@ public class RootProjectConfigurator implements Plugin<Project> {
 		VerifyProductTask verifyProductTask = GradleUtil.addTask(
 			project, VERIFY_PRODUCT_TASK_NAME, VerifyProductTask.class);
 
+		verifyProductTask.onlyIf(
+			new Spec<Task>() {
+
+				@Override
+				public boolean isSatisfiedBy(Task task) {
+					return Validator.isNotNull(workspaceExtension.getProduct());
+				}
+
+			});
+
 		project.afterEvaluate(
 			new Action<Project>() {
 
 				@Override
 				public void execute(Project project) {
-					if (Objects.nonNull(workspaceExtension.getProduct())) {
-						WorkspaceExtension.ProductInfo productInfo =
-							workspaceExtension.getProductInfo();
-
-						if (Objects.nonNull(productInfo)) {
-							verifyProductTask.setBundleUrl(
-								productInfo.getBundleUrl());
-							verifyProductTask.setDockerImageLiferay(
-								productInfo.getLiferayDockerImage());
-							verifyProductTask.setTargetPlatformVersion(
-								productInfo.getTargetPlatformVersion());
-						}
-						else {
-							verifyProductTask.setErrorMessage(
-								"The product key is invalid. Please provide " +
-									"a valid product key.");
-						}
-					}
-					else {
-						verifyProductTask.setBundleUrl(
-							workspaceExtension.getBundleUrl());
-						verifyProductTask.setDockerImageLiferay(
-							workspaceExtension.getDockerImageLiferay());
-						verifyProductTask.setTargetPlatformVersion(
-							workspaceExtension.getTargetPlatformVersion());
-					}
+					verifyProductTask.setProduct(
+						workspaceExtension.getProduct());
+					verifyProductTask.setExtension(workspaceExtension);
 				}
 
 			});
@@ -1750,7 +1743,8 @@ public class RootProjectConfigurator implements Plugin<Project> {
 	}
 
 	private void _configureDownloadTask(
-		Download download, WorkspaceExtension workspaceExtension) {
+		Project project, Download download,
+		WorkspaceExtension workspaceExtension) {
 
 		File destinationDir = workspaceExtension.getBundleCacheDir();
 
@@ -1768,9 +1762,22 @@ public class RootProjectConfigurator implements Plugin<Project> {
 			if (bundleURLString.startsWith("file:")) {
 				URL url = new URL(bundleURLString);
 
-				File file = new File(url.getFile());
+				Path bundleFilePath = Path.path(url.getPath());
 
-				file = file.getAbsoluteFile();
+				File file = null;
+
+				if (bundleFilePath.isAbsolute()) {
+					file = new File(url.getFile());
+
+					file = file.getAbsoluteFile();
+				}
+				else {
+					file = project.file(url.getFile());
+				}
+
+				if (Objects.isNull(file)) {
+					return;
+				}
 
 				URI uri = file.toURI();
 

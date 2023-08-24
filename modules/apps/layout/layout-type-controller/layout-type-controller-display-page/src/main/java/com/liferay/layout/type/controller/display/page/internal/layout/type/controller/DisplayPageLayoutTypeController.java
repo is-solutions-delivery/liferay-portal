@@ -12,6 +12,7 @@ import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.search.InfoSearchClassMapperRegistry;
+import com.liferay.layout.admin.constants.LayoutAdminPortletKeys;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorWebKeys;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
@@ -26,6 +27,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutTypeController;
+import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -38,9 +40,12 @@ import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.List;
+
+import javax.portlet.PortletRequest;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -133,12 +138,30 @@ public class DisplayPageLayoutTypeController
 
 		String layoutMode = ParamUtil.getString(
 			httpServletRequest, "p_l_mode", Constants.VIEW);
+		String redirect = StringPool.BLANK;
 
 		if (layoutMode.equals(Constants.EDIT) &&
 			!_hasUpdatePermissions(
 				themeDisplay.getPermissionChecker(), layout)) {
 
 			layoutMode = Constants.VIEW;
+		}
+		else if (!layout.isUnlocked(layoutMode, themeDisplay.getUserId())) {
+			redirect = PortletURLBuilder.create(
+				_portal.getControlPanelPortletURL(
+					httpServletRequest, LayoutAdminPortletKeys.GROUP_PAGES,
+					PortletRequest.RENDER_PHASE)
+			).setMVCRenderCommandName(
+				"/layout_admin/locked_layout"
+			).setBackURL(
+				() -> {
+					HttpServletRequest originalHttpServletRequest =
+						_portal.getOriginalServletRequest(httpServletRequest);
+
+					return ParamUtil.getString(
+						originalHttpServletRequest, "p_l_back_url", null);
+				}
+			).buildString();
 		}
 
 		DisplayPageLayoutTypeControllerDisplayContext
@@ -171,21 +194,39 @@ public class DisplayPageLayoutTypeController
 			RequestDispatcher.INCLUDE_SERVLET_PATH);
 
 		try {
-			LayoutPageTemplateEntry layoutPageTemplateEntry =
-				_fetchLayoutPageTemplateEntry(layout);
+			boolean hasViewPermission =
+				displayPageLayoutTypeControllerDisplayContext.hasPermission(
+					themeDisplay.getPermissionChecker(), ActionKeys.VIEW);
 
-			if (layoutPageTemplateEntry != null) {
-				httpServletRequest.setAttribute(
-					ContentPageEditorWebKeys.CLASS_NAME,
-					LayoutPageTemplateEntry.class.getName());
-				httpServletRequest.setAttribute(
-					ContentPageEditorWebKeys.CLASS_PK,
-					layoutPageTemplateEntry.getLayoutPageTemplateEntryId());
+			if (!hasViewPermission && themeDisplay.isSignedIn()) {
+				httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
+			}
+			else if (!hasViewPermission) {
+				redirect = HttpComponentsUtil.setParameter(
+					themeDisplay.getURLSignIn(), "redirect",
+					themeDisplay.getURLCurrent());
 			}
 
-			addAttributes(httpServletRequest);
+			if (Validator.isNotNull(redirect)) {
+				httpServletResponse.sendRedirect(redirect);
+			}
+			else {
+				LayoutPageTemplateEntry layoutPageTemplateEntry =
+					_fetchLayoutPageTemplateEntry(layout);
 
-			requestDispatcher.include(httpServletRequest, servletResponse);
+				if (layoutPageTemplateEntry != null) {
+					httpServletRequest.setAttribute(
+						ContentPageEditorWebKeys.CLASS_NAME,
+						LayoutPageTemplateEntry.class.getName());
+					httpServletRequest.setAttribute(
+						ContentPageEditorWebKeys.CLASS_PK,
+						layoutPageTemplateEntry.getLayoutPageTemplateEntryId());
+				}
+
+				addAttributes(httpServletRequest);
+
+				requestDispatcher.include(httpServletRequest, servletResponse);
+			}
 		}
 		finally {
 			removeAttributes(httpServletRequest);
@@ -201,21 +242,6 @@ public class DisplayPageLayoutTypeController
 
 		if (contentType != null) {
 			httpServletResponse.setContentType(contentType);
-		}
-
-		if (!displayPageLayoutTypeControllerDisplayContext.hasPermission(
-				themeDisplay.getPermissionChecker(), ActionKeys.VIEW)) {
-
-			if (themeDisplay.isSignedIn()) {
-				httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
-			}
-			else {
-				String signInURL = themeDisplay.getURLSignIn();
-
-				httpServletResponse.sendRedirect(
-					HttpComponentsUtil.setParameter(
-						signInURL, "redirect", themeDisplay.getURLCurrent()));
-			}
 		}
 
 		return false;

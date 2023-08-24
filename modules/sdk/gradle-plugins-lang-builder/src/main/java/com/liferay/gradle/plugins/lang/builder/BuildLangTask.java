@@ -20,22 +20,23 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.gradle.api.tasks.CacheableTask;
+import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.JavaExec;
 import org.gradle.api.tasks.Optional;
-import org.gradle.api.tasks.PathSensitive;
-import org.gradle.api.tasks.PathSensitivity;
 
 /**
  * @author Andrea Di Giorgi
  */
-@CacheableTask
 public class BuildLangTask extends JavaExec {
 
 	public BuildLangTask() {
+		Property<String> mainClass = getMainClass();
+
+		mainClass.set("com.liferay.lang.builder.LangBuilder");
+
 		setExcludedLanguageIds((Object[])LangBuilderArgs.EXCLUDED_LANGUAGE_IDS);
-		setMain("com.liferay.lang.builder.LangBuilder");
 	}
 
 	public BuildLangTask excludedLanguageIds(Iterable<?> excludedLanguageIds) {
@@ -60,8 +61,7 @@ public class BuildLangTask extends JavaExec {
 		return _excludedLanguageIds;
 	}
 
-	@Input
-	@PathSensitive(PathSensitivity.RELATIVE)
+	@Internal
 	public File getLangDir() {
 		return GradleUtil.toFile(getProject(), _langDir);
 	}

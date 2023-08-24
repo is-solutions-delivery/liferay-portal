@@ -17,6 +17,7 @@ import {collectDigitalSignature} from './digital-signature/DigitalSignatureUtil'
 
 export default function propsTransformer({
 	additionalProps: {
+		bulkCopyURL,
 		bulkPermissionsConfiguration: {defaultModelClassName, permissionsURLs},
 		collectDigitalSignaturePortlet,
 		downloadEntryURL,
@@ -104,6 +105,17 @@ export default function propsTransformer({
 				processAction('checkin', editEntryURL);
 			});
 		});
+	};
+
+	const copy = () => {
+		const selectedEntries = getAllSelectedElements().get('value');
+
+		const url = addParams(
+			`${portletNamespace}selectedEntries=${selectedEntries.join(',')}`,
+			bulkCopyURL
+		);
+
+		navigate(url);
 	};
 
 	const deleteEntries = () => {
@@ -393,6 +405,9 @@ export default function propsTransformer({
 					getAllSelectedElements().get('value'),
 					collectDigitalSignaturePortlet
 				);
+			}
+			else if (action === 'copy') {
+				copy();
 			}
 			else if (action === 'deleteEntries') {
 				deleteEntries();

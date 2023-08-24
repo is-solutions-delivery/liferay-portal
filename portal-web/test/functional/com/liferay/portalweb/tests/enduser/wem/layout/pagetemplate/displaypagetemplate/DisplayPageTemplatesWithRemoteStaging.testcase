@@ -19,9 +19,9 @@ definition {
 		}
 
 		task ("Activate remote staging") {
-			Staging.remoteStagingSetUpViaJson(
-				groupName = "Test Site Name",
-				remotePort = 9080);
+			Staging.remoteStagingSetUp(
+				remotePort = 9080,
+				siteName = "Test Site Name");
 		}
 	}
 
@@ -46,6 +46,7 @@ definition {
 		property databases.size = "1";
 		property minimum.slave.ram = "24";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Add a web content and select the display page template") {
 			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");

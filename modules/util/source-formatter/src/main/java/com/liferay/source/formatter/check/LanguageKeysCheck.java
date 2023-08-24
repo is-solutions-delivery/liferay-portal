@@ -275,7 +275,7 @@ public class LanguageKeysCheck extends BaseFileCheck {
 
 		for (String langModulePath : langModulePaths) {
 			List<String> languagePropertyFileNames =
-				SourceFormatterUtil.scanForFiles(
+				SourceFormatterUtil.scanForFileNames(
 					langModulePath, new String[0],
 					new String[] {"**/resources/content/Language.properties"},
 					new SourceFormatterExcludes(), true);

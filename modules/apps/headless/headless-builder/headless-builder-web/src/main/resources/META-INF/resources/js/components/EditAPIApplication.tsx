@@ -37,7 +37,7 @@ export default function EditAPIApplication({
 	basePath,
 	portletId,
 }: EditAPIApplicationProps) {
-	const currentAPIApplicationID = getCurrentURLParamValue({
+	const currentAPIApplicationId = getCurrentURLParamValue({
 		paramSufix: 'apiApplicationId',
 		portletId,
 	});
@@ -70,9 +70,9 @@ export default function EditAPIApplication({
 
 	const fetchAPIApplication = () => {
 		fetchJSON<APIApplicationItem>({
-			input: apiURLPaths.applications + currentAPIApplicationID,
+			input: apiURLPaths.applications + currentAPIApplicationId,
 		}).then((response) => {
-			if (response.id.toString() === currentAPIApplicationID) {
+			if (response.id.toString() === currentAPIApplicationId) {
 				setData(response);
 				setTitle(response.title);
 			}
@@ -158,7 +158,7 @@ export default function EditAPIApplication({
 		}
 	};
 
-	return data ? (
+	return data && currentAPIApplicationId ? (
 		<>
 			<APIApplicationManagementToolbar
 				hideButtons={activeTab !== 'details'}
@@ -224,6 +224,7 @@ export default function EditAPIApplication({
 				<APIApplicationsEndpointsTable
 					apiApplicationBaseURL={data.baseURL}
 					apiURLPaths={apiURLPaths}
+					currentAPIApplicationId={currentAPIApplicationId}
 					portletId={portletId}
 					readOnly={false}
 				/>
@@ -231,8 +232,8 @@ export default function EditAPIApplication({
 			{activeTab === 'schemas' && (
 				<APIApplicationsSchemasTable
 					apiURLPaths={apiURLPaths}
+					currentAPIApplicationId={currentAPIApplicationId}
 					portletId={portletId}
-					readOnly={false}
 				/>
 			)}
 		</>

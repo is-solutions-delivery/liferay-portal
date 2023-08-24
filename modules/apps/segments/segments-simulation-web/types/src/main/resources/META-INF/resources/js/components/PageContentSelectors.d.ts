@@ -5,8 +5,8 @@
 
 /// <reference types="react" />
 
+import {SegmentExperience} from '@liferay/layout-js-components-web';
 import SegmentEntry from '../../types/SegmentEntry';
-import SegmentExperience from '../../types/SegmentExperience';
 interface Props {
 	deactivateSimulationURL: string;
 	namespace: string;
@@ -15,20 +15,15 @@ interface Props {
 	segmentsCompanyConfigurationURL: string;
 	segmentsEntries: SegmentEntry[];
 	segmentsExperiences: SegmentExperience[];
-	selectSegmentsEntryURL: string;
-	selectSegmentsExperienceURL: string;
 	simulateSegmentsEntriesURL: string;
 }
 declare function PageContentSelectors({
 	deactivateSimulationURL,
 	namespace,
-	portletNamespace,
 	segmentationEnabled,
 	segmentsCompanyConfigurationURL,
 	segmentsEntries,
 	segmentsExperiences,
-	selectSegmentsEntryURL,
-	selectSegmentsExperienceURL,
 	simulateSegmentsEntriesURL,
 }: Props): JSX.Element;
 export default PageContentSelectors;

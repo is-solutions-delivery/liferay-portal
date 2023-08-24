@@ -6,6 +6,7 @@
 package com.liferay.object.validation.rule;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -19,6 +20,8 @@ public interface ObjectValidationRuleEngine {
 		return Collections.emptyMap();
 	}
 
-	public String getName();
+	public String getKey();
+
+	public String getLabel(Locale locale);
 
 }

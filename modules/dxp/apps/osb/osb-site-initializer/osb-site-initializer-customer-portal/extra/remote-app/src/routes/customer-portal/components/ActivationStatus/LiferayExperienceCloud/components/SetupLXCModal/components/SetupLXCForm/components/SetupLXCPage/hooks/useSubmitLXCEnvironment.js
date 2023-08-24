@@ -12,6 +12,8 @@ import {
 	useCreateLiferayExperienceCloudEnvironments,
 } from '../../../../../../../../../../../../common/services/liferay/graphql/liferay-experience-cloud-environments';
 import {
+	addHighPriorityContact,
+	deleteHighPriorityContacts,
 	getLiferayExperienceCloudEnvironments,
 	updateAccountSubscriptionGroups,
 } from '../../../../../../../../../../../../common/services/liferay/graphql/queries';
@@ -21,6 +23,8 @@ export default function useSubmitLXCEnvironment(
 	handleChangeForm,
 	project,
 	setFormAlreadySubmitted,
+	addHighPriorityContactList,
+	removeHighPriorityContactList,
 	subscriptionGroupLxcId,
 	values
 ) {
@@ -109,6 +113,43 @@ export default function useSubmitLXCEnvironment(
 									fullName,
 									githubUsername: '...',
 									liferayExperienceCloudEnvironmentId,
+								},
+							},
+						});
+					})
+				);
+
+				await Promise.allSettled(
+					removeHighPriorityContactList?.map((item) => {
+						return client.mutate({
+							context: {
+								displaySuccess: false,
+								type: 'liferay-rest',
+							},
+							mutation: deleteHighPriorityContacts,
+							variables: {
+								highPriorityContactsId: item.objectId,
+							},
+						});
+					})
+				);
+
+				await Promise.allSettled(
+					addHighPriorityContactList?.map((item) => {
+						return client.mutate({
+							context: {
+								displaySuccess: false,
+								type: 'liferay-rest',
+							},
+							mutation: addHighPriorityContact,
+							variables: {
+								HighPriorityContacts: {
+									contactsCategory: {
+										key: item.category.key,
+										name: item.category.name,
+									},
+									r_userToHighPriorityContacts_userId:
+										item.id,
 								},
 							},
 						});
