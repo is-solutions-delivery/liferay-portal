@@ -16,7 +16,7 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.service.DDMStructureService;
 import com.liferay.friendly.url.model.FriendlyURLEntryLocalization;
 import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
-import com.liferay.headless.common.spi.service.context.ServiceContextRequestUtil;
+import com.liferay.headless.common.spi.service.context.ServiceContextBuilder;
 import com.liferay.headless.delivery.dto.v1_0.ClientExtension;
 import com.liferay.headless.delivery.dto.v1_0.ContentDocument;
 import com.liferay.headless.delivery.dto.v1_0.CustomMetaTag;
@@ -506,10 +506,15 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 			assetTagNames = sitePage.getKeywords();
 		}
 
-		return ServiceContextRequestUtil.createServiceContext(
-			assetCategoryIds, assetTagNames,
-			_getExpandoBridgeAttributes(sitePage), groupId,
-			contextHttpServletRequest, null);
+		return ServiceContextBuilder.create(
+			groupId, contextHttpServletRequest, null
+		).assetCategoryIds(
+			assetCategoryIds
+		).assetTagNames(
+			assetTagNames
+		).expandoBridgeAttributes(
+			_getExpandoBridgeAttributes(sitePage)
+		).build();
 	}
 
 	private Map<String, Map<String, String>> _getBasicActions(Layout layout) {
@@ -994,9 +999,9 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 			return _layoutLocalService.updateLayout(layout);
 		}
 
-		ServiceContext serviceContext =
-			ServiceContextRequestUtil.createServiceContext(
-				null, layout.getGroupId(), contextHttpServletRequest, null);
+		ServiceContext serviceContext = ServiceContextBuilder.create(
+			layout.getGroupId(), contextHttpServletRequest, null
+		).build();
 
 		Settings settings = pageDefinition.getSettings();
 
@@ -1210,9 +1215,9 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 			}
 		}
 
-		ServiceContext serviceContext =
-			ServiceContextRequestUtil.createServiceContext(
-				null, groupId, contextHttpServletRequest, null);
+		ServiceContext serviceContext = ServiceContextBuilder.create(
+			groupId, contextHttpServletRequest, null
+		).build();
 
 		String ddmFormValues = _getDDMFormValues(pageSettings);
 
