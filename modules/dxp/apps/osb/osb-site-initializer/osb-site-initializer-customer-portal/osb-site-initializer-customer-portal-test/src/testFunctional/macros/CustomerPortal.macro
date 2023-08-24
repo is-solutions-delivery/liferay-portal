@@ -421,22 +421,7 @@ definition {
 		ClientExtensionGeneral.deleteRemoteApp(tableEntry = "Customer Portal");
 	}
 
-	macro customerPortalTearDown {
-		ApplicationsMenu.gotoPortlet(
-			category = "Object",
-			panel = "Control Panel",
-			portlet = "Account Flags");
-
-		if (IsElementPresent(locator1 = "ObjectPortlet#ENTRY_KEBAB_MENU")) {
-			CustomerPortal.deleteEntryAccountFlag(entry = "ERC-");
-
-			CustomerPortal.customerPortalApisTearDown();
-		}
-		else {
-			CustomerPortal.customerPortalApisTearDown();
-		}
-	}
-
+	
 	macro deactivateKoroneikiAccount {
 		ApplicationsMenu.gotoPortlet(
 			category = "Object",
