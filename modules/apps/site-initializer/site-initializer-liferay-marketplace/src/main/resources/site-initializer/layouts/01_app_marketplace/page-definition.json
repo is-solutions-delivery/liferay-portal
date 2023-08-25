@@ -665,7 +665,7 @@
 																	"cpContentListRendererKey": "list-default",
 																	"diagram--cpTypeListEntryRendererKey": "list-entry-diagram",
 																	"displayStyle": "ddmTemplate_APPS-SEARCH-RESULTS",
-																	"displayStyleGroupId": "34816",
+																	"displayStyleGroupId": "[$GROUP_ID$]",
 																	"grouped--cpTypeListEntryRendererKey": "list-entry-default",
 																	"lfrAppShowShareWithFriendsLink": "false",
 																	"lfrFacebookApiKey": "",
