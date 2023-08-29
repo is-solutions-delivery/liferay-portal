@@ -3988,16 +3988,23 @@ public class BundleSiteInitializer implements SiteInitializer {
 			}
 
 			SiteNavigationMenuItem siteNavigationMenuItem =
-				_siteNavigationMenuItemLocalService.addSiteNavigationMenuItem(
-					serviceContext.getUserId(),
-					serviceContext.getScopeGroupId(),
-					siteNavigationMenu.getSiteNavigationMenuId(),
-					parentSiteNavigationMenuItemId, type, typeSettings,
-					serviceContext);
+				_siteNavigationMenuItemLocalService.
+					addOrUpdateSiteNavigationMenuItem(
+						jsonObject.getString("externalReferenceCode"),
+						serviceContext.getUserId(),
+						serviceContext.getScopeGroupId(),
+						siteNavigationMenu.getSiteNavigationMenuId(),
+						parentSiteNavigationMenuItemId, type,
+						_siteNavigationMenuItemLocalService.
+							getSiteNavigationMenuItems(
+								siteNavigationMenu.getSiteNavigationMenuId(),
+								parentSiteNavigationMenuItemId
+							).size(),
+						typeSettings, serviceContext);
 
 			stringUtilReplaceValues.put(
 				"SITE_NAVIGATION_MENU_ITEM_ID:" +
-					siteNavigationMenuItem.getName(),
+					siteNavigationMenuItem.getExternalReferenceCode(),
 				String.valueOf(
 					siteNavigationMenuItem.getSiteNavigationMenuItemId()));
 
