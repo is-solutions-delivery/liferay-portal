@@ -227,6 +227,11 @@ public interface SiteNavigationMenuItemLocalService
 	public SiteNavigationMenuItem fetchSiteNavigationMenuItem(
 		long siteNavigationMenuItemId);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public SiteNavigationMenuItem
+		fetchSiteNavigationMenuItemByExternalReferenceCode(
+			String externalReferenceCode, long groupId);
+
 	/**
 	 * Returns the site navigation menu item matching the UUID and group.
 	 *
@@ -277,6 +282,12 @@ public interface SiteNavigationMenuItemLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public SiteNavigationMenuItem getSiteNavigationMenuItem(
 			long siteNavigationMenuItemId)
+		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public SiteNavigationMenuItem
+			getSiteNavigationMenuItemByExternalReferenceCode(
+				String externalReferenceCode, long groupId)
 		throws PortalException;
 
 	/**
