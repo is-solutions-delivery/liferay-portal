@@ -255,6 +255,14 @@ public class SiteNavigationMenuItemLocalServiceUtil {
 			siteNavigationMenuItemId);
 	}
 
+	public static SiteNavigationMenuItem
+		fetchSiteNavigationMenuItemByExternalReferenceCode(
+			String externalReferenceCode, long groupId) {
+
+		return getService().fetchSiteNavigationMenuItemByExternalReferenceCode(
+			externalReferenceCode, groupId);
+	}
+
 	/**
 	 * Returns the site navigation menu item matching the UUID and group.
 	 *
@@ -327,6 +335,15 @@ public class SiteNavigationMenuItemLocalServiceUtil {
 		throws PortalException {
 
 		return getService().getSiteNavigationMenuItem(siteNavigationMenuItemId);
+	}
+
+	public static SiteNavigationMenuItem
+			getSiteNavigationMenuItemByExternalReferenceCode(
+				String externalReferenceCode, long groupId)
+		throws PortalException {
+
+		return getService().getSiteNavigationMenuItemByExternalReferenceCode(
+			externalReferenceCode, groupId);
 	}
 
 	/**
