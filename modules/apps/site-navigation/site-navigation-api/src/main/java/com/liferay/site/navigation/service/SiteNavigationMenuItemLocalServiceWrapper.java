@@ -34,6 +34,21 @@ public class SiteNavigationMenuItemLocalServiceWrapper
 	}
 
 	@Override
+	public SiteNavigationMenuItem addOrUpdateSiteNavigationMenuItem(
+			String externalReferenceCode, long userId, long groupId,
+			long siteNavigationMenuId, long parentSiteNavigationMenuItemId,
+			String type, String typeSettings,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws Exception {
+
+		return _siteNavigationMenuItemLocalService.
+			addOrUpdateSiteNavigationMenuItem(
+				externalReferenceCode, userId, groupId, siteNavigationMenuId,
+				parentSiteNavigationMenuItemId, type, typeSettings,
+				serviceContext);
+	}
+
+	@Override
 	public SiteNavigationMenuItem addSiteNavigationMenuItem(
 			long userId, long groupId, long siteNavigationMenuId,
 			long parentSiteNavigationMenuItemId, String type, int order,
