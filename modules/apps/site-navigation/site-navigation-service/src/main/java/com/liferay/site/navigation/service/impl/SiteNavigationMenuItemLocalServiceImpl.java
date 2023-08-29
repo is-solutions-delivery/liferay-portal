@@ -52,6 +52,41 @@ public class SiteNavigationMenuItemLocalServiceImpl
 	extends SiteNavigationMenuItemLocalServiceBaseImpl {
 
 	@Override
+	public SiteNavigationMenuItem addOrUpdateSiteNavigationMenuItem(
+			String externalReferenceCode, long userId, long groupId,
+			long siteNavigationMenuId, long parentSiteNavigationMenuItemId,
+			String type, int order, String typeSettings,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		SiteNavigationMenuItem siteNavigationMenuItem =
+			siteNavigationMenuItemPersistence.fetchByERC_G(
+				externalReferenceCode, groupId);
+
+		if (siteNavigationMenuItem != null) {
+			siteNavigationMenuItem = addSiteNavigationMenuItem(
+				userId, groupId, siteNavigationMenuId,
+				parentSiteNavigationMenuItemId, type, order, typeSettings,
+				serviceContext);
+
+			siteNavigationMenuItem.setExternalReferenceCode(
+				externalReferenceCode);
+
+			siteNavigationMenuItem = siteNavigationMenuItemPersistence.update(
+				siteNavigationMenuItem);
+		}
+		else {
+			siteNavigationMenuItem = updateSiteNavigationMenuItem(
+				userId,
+				siteNavigationMenuItem.getParentSiteNavigationMenuItemId(),
+				groupId, siteNavigationMenuId, parentSiteNavigationMenuItemId,
+				type, order, typeSettings);
+		}
+
+		return siteNavigationMenuItem;
+	}
+
+	@Override
 	public SiteNavigationMenuItem addSiteNavigationMenuItem(
 			long userId, long groupId, long siteNavigationMenuId,
 			long parentSiteNavigationMenuItemId, String type, int order,
