@@ -445,6 +445,10 @@ definition {
 
 		CustomerPortal.viewCPObjectInfo();
 
+		// Refresh Need due to Instabilit from the portal
+
+		Refresh();
+
 		Click(locator1 = "CP2TeamMembers#SELECT_PARTNER");
 
 		Click(locator1 = "Button#SAVE");
