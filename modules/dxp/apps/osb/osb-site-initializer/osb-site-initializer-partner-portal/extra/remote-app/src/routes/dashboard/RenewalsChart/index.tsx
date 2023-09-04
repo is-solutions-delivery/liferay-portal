@@ -21,10 +21,16 @@ export default function () {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const getRenewalsData = async () => {
+		const TODAY = new Date();
+		const TODAY_ISO = TODAY.toISOString().split('T')[0];
+
+		TODAY.setDate(TODAY.getDate() + 30);
+		const TODAY_PLUS_30_DAYS = TODAY.toISOString().split('T')[0];
+
 		setIsLoading(true);
 		// eslint-disable-next-line @liferay/portal/no-global-fetch
 		const response = await fetch(
-			'/o/c/opportunitysfs?pageSize=200&sort=closeDate:asc',
+			`/o/c/opportunitysfs?pageSize=200&sort=closeDate:asc&filter=type eq 'Existing Business' and stage ne 'Closed Lost' and stage ne 'Disqualified' and stage ne 'Rejected' and stage ne 'Rolled into another opportunity' and closeDate ge ${TODAY_ISO} and closeDate le ${TODAY_PLUS_30_DAYS}`,
 			{
 				headers: {
 					'accept': 'application/json',
