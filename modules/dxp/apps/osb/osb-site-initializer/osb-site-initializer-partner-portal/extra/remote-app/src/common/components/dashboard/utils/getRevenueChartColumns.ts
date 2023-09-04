@@ -5,29 +5,19 @@
 
 export default function getRevenueChartColumns(
 	revenueCurrency: any,
-	revenueData: any,
+	growthRevenueData: any,
+	renewalRevenueData: any,
 	setTitleChart: any,
 	setValueChart: any,
 	setColumnsRevenueChart: any
 ) {
-	const STAGE_CLOSEDLOST = 'Closed Lost';
-	const STAGE_DISQUALIFIED = 'Disqualified';
-	const STAGE_ROLLED_INTO_ANOTHER_OPPORTUNITY =
-		'Rolled into another opportunity';
 	const STAGE_CLOSEDWON = 'Closed Won';
-	const STAGE_REJECTED = 'Rejected';
-	const NEW_BUSINESS = 'New Business';
-	const NEW_PROJECT_EXISTING_BUSINESS = 'New Project Existing Business';
 
 	const chartColumns = [];
 
-	const totalGrowthRevenue = revenueData?.items?.reduce(
+	const totalGrowthRevenue = growthRevenueData?.items?.reduce(
 		(accumulator: number, currentValue: any) => {
-			if (
-				currentValue.stage === STAGE_CLOSEDWON &&
-				(currentValue.type === NEW_BUSINESS ||
-					currentValue.type === NEW_PROJECT_EXISTING_BUSINESS)
-			) {
+			if (currentValue.stage === STAGE_CLOSEDWON) {
 				return accumulator + currentValue.growthArr;
 			}
 
@@ -38,18 +28,9 @@ export default function getRevenueChartColumns(
 
 	chartColumns.push(['Growth Revenue', totalGrowthRevenue]);
 
-	const totalRenewalRevenue = revenueData?.items?.reduce(
+	const totalRenewalRevenue = renewalRevenueData?.items?.reduce(
 		(accumulator: number, currentValue: any) => {
-			if (
-				currentValue.type !== NEW_BUSINESS &&
-				currentValue.type !== NEW_PROJECT_EXISTING_BUSINESS &&
-				currentValue.stage !== STAGE_REJECTED &&
-				currentValue.stage !== STAGE_ROLLED_INTO_ANOTHER_OPPORTUNITY &&
-				currentValue.stage !== STAGE_DISQUALIFIED &&
-				currentValue.stage !== STAGE_CLOSEDLOST
-			) {
-				return accumulator + currentValue.renewalArr;
-			}
+			accumulator + currentValue.renewalArr;
 
 			return accumulator;
 		},

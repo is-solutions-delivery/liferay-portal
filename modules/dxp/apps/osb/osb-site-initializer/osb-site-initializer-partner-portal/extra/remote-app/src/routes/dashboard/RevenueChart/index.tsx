@@ -21,23 +21,39 @@ export default function () {
 	const getRevenueData = async () => {
 		setLoading(true);
 		// eslint-disable-next-line @liferay/portal/no-global-fetch
-		const response = await fetch('/o/c/opportunitysfs?&pageSize=200', {
-			headers: {
-				'accept': 'application/json',
-				'x-csrf-token': Liferay.authToken,
-			},
-		});
+		const growthRevenueResponse = await fetch(
+			"/o/c/opportunitysfs?pageSize=200&sort=closeDate:asc&filter=type eq 'New Business' or type eq 'New Project Existing Business'",
+			{
+				headers: {
+					'accept': 'application/json',
+					'x-csrf-token': Liferay.authToken,
+				},
+			}
+		);
 
-		if (response.ok) {
-			const revenueData = await response.json();
+		// eslint-disable-next-line @liferay/portal/no-global-fetch
+		const renewalRevenueResponse = await fetch(
+			"/o/c/opportunitysfs?&pageSize=200&sort=closeDate:asc&filter=type ne 'New Business' and type ne 'New Project Existing Business' and stage ne 'Rejected' and stage ne 'Rolled into another opportunity' and stage ne 'Disqualified' and stage ne 'Closed Lost'",
+			{
+				headers: {
+					'accept': 'application/json',
+					'x-csrf-token': Liferay.authToken,
+				},
+			}
+		);
 
-			const revenueCurrency = revenueData?.items[0]?.currency?.key;
+		if (growthRevenueResponse.ok && renewalRevenueResponse.ok) {
+			const growthRevenueData = await growthRevenueResponse.json();
+			const renewalRevenueData = await renewalRevenueResponse.json();
+
+			const revenueCurrency = growthRevenueData?.items[0]?.currency?.key;
 
 			setCurrencyData(revenueCurrency);
 
 			getRevenueChartColumns(
 				revenueCurrency,
-				revenueData,
+				growthRevenueData,
+				renewalRevenueData,
 				setTitleChart,
 				setValueChart,
 				setColumnsRevenueChart
