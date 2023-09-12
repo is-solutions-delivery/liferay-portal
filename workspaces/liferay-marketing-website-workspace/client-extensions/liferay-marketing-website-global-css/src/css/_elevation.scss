@@ -1,0 +1,7 @@
+@import 'elevation-extendables';
+
+@each $elevation-class, $elevation-value in $elevations-map {
+	.elevation#{$elevation-class} {
+		box-shadow: $elevation-value;
+	}
+}

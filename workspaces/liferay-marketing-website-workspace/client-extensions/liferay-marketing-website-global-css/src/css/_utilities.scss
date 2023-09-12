@@ -1,0 +1,333 @@
+.aspect-ratio-item-flush-110 {
+	max-width: none;
+	position: absolute;
+	width: 110%;
+}
+
+.aspect-ratio-item-flush-120 {
+	max-width: none;
+	position: absolute;
+	width: 120%;
+}
+
+.aspect-ratio-item-flush-130 {
+	max-width: none;
+	position: absolute;
+	width: 130%;
+}
+
+.aspect-ratio-item-vertical-flush-110 {
+	height: 110%;
+	max-height: none;
+	position: absolute;
+}
+
+.aspect-ratio-item-vertical-flush-120 {
+	height: 120%;
+	max-height: none;
+	position: absolute;
+}
+
+.aspect-ratio-item-vertical-flush-130 {
+	height: 130%;
+	max-height: none;
+	position: absolute;
+}
+
+// Markup should be:
+// <div class="my-container"> set width and height
+//   <div class="aspect-ratio aspect-ratio-object-fit-cover"> works with modifer
+//     <lfr-editable class="fragments-div" id="theId" type="image">
+//       <img class="h-100 position-absolute w-100" src=""/>
+// Remember to implement background-image fallback for IE11 in index.js
+.aspect-ratio-object-fit-cover {
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: cover;
+
+	.fragments-image-div,
+	.fragments-div,
+	.fragments-editor__editable[type='image'] {
+		height: 100%;
+		position: absolute;
+		width: 100%;
+
+		img {
+			height: 100%;
+			left: 0;
+			object-fit: cover;
+			position: absolute;
+			width: 100%;
+		}
+	}
+}
+
+// Component for equal width and height svgs with placeholder graphic
+// Markup should be:
+// <div class="my-container"> set width and height
+//   <div class="osb-svg--monospaced">
+//     <lfr-editable class="fragments-div" id="theId" type="html">
+//       <div class="html-placeholder">
+//         <span class="html-placeholder-text">HTML</span>
+.osb-svg--monospaced {
+	height: 100%;
+	width: 100%;
+
+	.fragments-div,
+	.fragments-editor__editable[type='html'] {
+		align-items: center;
+		display: flex;
+		height: 100%;
+		text-align: center;
+		width: 100%;
+		word-wrap: break-word;
+
+		svg {
+			height: auto;
+			width: 100%;
+		}
+	}
+
+	.html-placeholder {
+		background-color: #a7a9bc;
+		display: flex;
+		height: 100%;
+		justify-content: center;
+		position: relative;
+		width: 100%;
+	}
+
+	.html-placeholder-text {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+}
+
+.hide-phone {
+	@include for-phone-only {
+		display: none !important;
+	}
+}
+
+.hide-tablet-portrait {
+	@include for-tablet-portrait-only {
+		display: none !important;
+	}
+}
+
+.hide-tablet-landscape {
+	@include for-tablet-landscape-only {
+		display: none !important;
+	}
+}
+
+.hide-desktop {
+	@include for-desktop-only {
+		display: none !important;
+	}
+}
+
+.hide-large-desktop-up {
+	@include for-large-desktop-up {
+		display: none !important;
+	}
+}
+
+.hover-text-decoration-none {
+	&:hover {
+		text-decoration: none;
+	}
+}
+
+.content {
+	.align-center {
+		align-items: center;
+	}
+
+	.align-start {
+		align-items: flex-start;
+	}
+
+	.align-content-center {
+		align-content: center;
+	}
+
+	.block-container {
+		box-sizing: border-box;
+		display: flex;
+		flex-wrap: wrap;
+		padding: $standard-spacing;
+
+		.block {
+			box-sizing: border-box;
+
+			&.preview-block {
+				padding: $small-spacing;
+				width: 25%;
+
+				a {
+					border: 1px solid;
+					border-radius: $border-radius;
+					display: block;
+					text-decoration: none;
+				}
+
+				@include respond-to(tablet) {
+					width: 33.333%;
+				}
+			}
+
+			&.right-block {
+				padding-left: $standard-spacing;
+			}
+
+			@include respond-to(phone) {
+				width: 100% !important;
+			}
+		}
+	}
+
+	.border-bottom {
+		border-bottom-style: solid;
+		border-bottom-width: 1px;
+	}
+
+	.border-left {
+		border-left-style: solid;
+		border-left-width: 1px;
+	}
+
+	.border-right {
+		border-right-style: solid;
+		border-right-width: 1px;
+	}
+
+	.border-top {
+		border-top-style: solid;
+		border-top-width: 1px;
+	}
+
+	.flex {
+		display: flex;
+	}
+
+	.flex-column {
+		flex-direction: column;
+	}
+
+	.flex-column-reverse {
+		flex-direction: column-reverse;
+	}
+
+	.flex-row {
+		flex-direction: row;
+	}
+
+	.flex-row-reverse {
+		flex-direction: row-reverse;
+	}
+
+	.font-weight-lighter {
+		font-weight: 200;
+	}
+
+	.font-weight-bold {
+		font-weight: 600;
+	}
+
+	.full-screen {
+		max-width: none !important;
+
+		.portlet-column {
+			max-width: none;
+		}
+	}
+
+	.justify-center {
+		justify-content: center;
+	}
+
+	.justify-end {
+		justify-content: flex-end;
+	}
+
+	.justify-space-around {
+		justify-content: space-around;
+	}
+
+	.justify-space-between {
+		justify-content: space-between;
+	}
+
+	.justify-start {
+		justify-content: flex-start;
+	}
+
+	.max-full,
+	.max-lg,
+	.max-med,
+	.max-sm {
+		box-sizing: border-box;
+		margin: 0 auto;
+		padding: 0 $standard-spacing;
+	}
+
+	.max-full {
+		max-width: 1200px;
+	}
+
+	.max-lg {
+		max-width: 960px;
+	}
+
+	.max-med {
+		max-width: 720px;
+	}
+
+	.max-sm {
+		max-width: 480px;
+	}
+
+	.no-padding {
+		padding: 0;
+	}
+
+	.no-padding-horizontal {
+		padding-left: 0 !important;
+		padding-right: 0 !important;
+	}
+
+	.no-padding-vertical {
+		padding-bottom: 0 !important;
+		padding-top: 0 !important;
+	}
+
+	.small-padding {
+		padding: $small-spacing;
+	}
+
+	.small-padding-horizontal {
+		padding-left: $small-spacing;
+		padding-right: $small-spacing;
+	}
+
+	.small-padding-vertical {
+		padding-bottom: $small-spacing;
+		padding-top: $small-spacing;
+	}
+
+	.standard-padding {
+		padding: $standard-spacing;
+	}
+
+	.standard-padding-horizontal {
+		padding-left: $standard-spacing;
+		padding-right: $standard-spacing;
+	}
+
+	.standard-padding-vertical {
+		padding-bottom: $standard-spacing;
+		padding-top: $standard-spacing;
+	}
+}

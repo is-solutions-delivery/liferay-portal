@@ -1,0 +1,96 @@
+// .color[key], .background-color[key]
+$color-primary-map: (
+	'-transparent': 'transparent',
+	'-black': $color-black,
+	'-primary': $color-primary,
+	'-primary-10': $color-primary-10,
+	'-primary-5': $color-primary-5,
+	'-primary-7': $color-primary-7,
+	'-primary-dark': $color-primary-dark,
+	'-white': $color-white
+);
+
+// .color[key], .background-color[key]
+$color-accent-map: (
+	'-accent-1': $color-accent-1,
+	'-accent-2': $color-accent-2,
+	'-accent-3': $color-accent-3,
+	'-accent-4': $color-accent-4,
+	'-accent-5': $color-accent-5,
+	'-accent-6': $color-accent-6,
+	'-accent-7': $color-accent-7,
+	'-accent-8': $color-accent-8,
+	'-accent-9': $color-accent-9,
+	'-accent-10': $color-accent-10
+);
+
+// .color[key], .background-color[key]
+$color-neutral-map: (
+	'-neutral-1': $color-neutral-1,
+	'-neutral-2': $color-neutral-2,
+	'-neutral-3': $color-neutral-3,
+	'-neutral-4': $color-neutral-4,
+	'-neutral-5': $color-neutral-5,
+	'-neutral-6': $color-neutral-6,
+	'-neutral-7': $color-neutral-7,
+	'-neutral-8': $color-neutral-8,
+	'-neutral-9': $color-neutral-9
+);
+
+// .color[key], .background-color[key]
+$color-action-map: (
+	'-action-default': $color-action-default,
+	'-action-default-hover': $color-action-default-hover,
+	'-action-default-active': $color-action-default-active,
+	'-action-secondary': $color-action-secondary,
+	'-action-secondary-hover': $color-action-secondary-hover,
+	'-action-secondary-active': $color-action-secondary-active,
+	'-action-visited': $color-action-visited
+);
+
+// .color[key], .background-color[key]
+$color-function-map: (
+	'-function-error': $color-function-error,
+	'-function-error-border': $color-function-error-border,
+	'-function-error-background': $color-function-error-background,
+	'-function-warning': $color-function-warning,
+	'-function-warning-border': $color-function-warning-border,
+	'-function-warning-background': $color-function-warning-background,
+	'-function-success': $color-function-success,
+	'-function-success-border': $color-function-success-border,
+	'-function-success-background': $color-function-success-background,
+	'-function-info': $color-function-info-border,
+	'-function-info-border': $color-function-info-border,
+	'-function-info-background': $color-function-info-background
+);
+
+@mixin color($map, $type: 'class') {
+	@each $color-class, $color-value in $map {
+		@if ($type == 'placeholder') {
+			%color#{$color-class} {
+				color: $color-value;
+			}
+
+			%bg#{$color-class} {
+				background-color: $color-value;
+			}
+		}
+		@else {
+			.color#{$color-class} {
+				color: $color-value;
+			}
+
+			.bg#{$color-class} {
+				background-color: $color-value;
+			}
+		}
+	}
+}
+
+// Outputs placeholders %color-* and %bg-* (e.g., %color-transparent,
+// %color-primary, %color-accent-1, %bg-transparent, %bg-primary, %bg-accent-1)
+@include color($color-primary-map, 'placeholder');
+@include color($color-accent-map, 'placeholder');
+@include color($color-neutral-map, 'placeholder');
+@include color($color-action-map, 'placeholder');
+@include color($color-function-map, 'placeholder');

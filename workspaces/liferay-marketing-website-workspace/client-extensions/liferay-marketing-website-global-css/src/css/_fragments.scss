@@ -1,0 +1,91 @@
+body.dark,
+.dark body {
+	background-image: linear-gradient(
+		95.92deg,
+		$color-primary-dark 20.61%,
+		$color-primary 100%
+	);
+
+	.page-editor__layout-viewport,
+	.page-editor__layout-viewport__resizer {
+		background-color: transparent;
+	}
+}
+
+.dark {
+	color: $color-white;
+}
+
+.light {
+	color: $color-black;
+}
+
+.content .layout-content {
+	font: 400 16px/1.5 'Source Sans Pro', Tahoma, 'Trebuchet MS', sans-serif;
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box !important;
+	}
+
+	h1 {
+		@extend %font-size-heading-f1;
+	}
+
+	h2 {
+		@extend %font-size-heading-f2;
+	}
+
+	h3 {
+		@extend %font-size-heading-f3;
+	}
+
+	h4 {
+		@extend %font-size-heading-f4;
+	}
+
+	h5 {
+		@extend %font-size-heading-f5;
+	}
+
+	p {
+		@extend %font-size-paragraph-base;
+	}
+
+	.font-size-display-large {
+		@extend %font-size-display-large;
+	}
+
+	.font-size-display-small {
+		@extend %font-size-display-small;
+	}
+
+	.text-center-tablet-portrait-up {
+		@include for-tablet-portrait-up {
+			text-align: center;
+		}
+	}
+}
+
+// h1 - h5 selectors bleed into fragment editor sidebar re-declaring styles
+.content .layout-content {
+	.fragments-editor-sidebar-section__title {
+		font-size: 18px;
+		font-weight: $font-weight-semi-bold;
+		margin: 32px 0 24px 0;
+	}
+}
+
+// Long text with no white-space inside lfr-editable should break to new line
+// Remove if t-echo fixes
+.fragments-editor__editable[type='text'],
+.fragments-editor__editable[type='rich-text'] {
+	max-width: 100%;
+	word-wrap: break-word;
+}
+
+.zh_CN .content .layout-content {
+	font-family: 'Source Sans Pro', 'Noto Sans SC', Tahoma, 'Trebuchet MS',
+		sans-serif;
+}

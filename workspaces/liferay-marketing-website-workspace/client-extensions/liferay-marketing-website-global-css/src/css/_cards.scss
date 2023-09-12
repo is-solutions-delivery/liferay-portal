@@ -1,0 +1,5 @@
+@import 'cards-extendables';
+
+.osb-card {
+	@include osb-card($osb-card);
+}

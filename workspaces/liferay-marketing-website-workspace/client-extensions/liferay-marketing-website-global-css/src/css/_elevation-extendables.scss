@@ -1,0 +1,18 @@
+// elevation[key]
+$elevations-map: (
+	'-1': $elevation-1,
+	'-2': $elevation-2,
+	'-3': $elevation-3,
+	'-4': $elevation-4,
+	'-5': $elevation-5,
+	'-6': $elevation-6,
+	'-7': $elevation-7,
+	'-8': $elevation-8,
+	'-9': $elevation-9
+);
+
+@each $elevation-class, $elevation-value in $elevations-map {
+	%elevation#{$elevation-class} {
+		box-shadow: $elevation-value;
+	}
+}

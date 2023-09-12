@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "sass": "^1.66.1"
+  },
+  "description": "",
+  "keywords": [],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "@liferay/liferay-marketing-website-global-css",
+  "scripts": {
+    "build": "sass src/css/osb-foundations-theme-contributor.scss build/index.css"
+  },
+  "version": "1.0.0"
+}

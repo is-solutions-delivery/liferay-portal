@@ -1,0 +1,27 @@
+@import 'flexbox-extendables';
+
+@each $alignment-type-class, $alignment-type-value in $alignment-types-map {
+	@each $alignment-variable-class,
+		$alignment-variable-value in $alignment-variables-map
+	{
+		.#{$alignment-type-class}#{$alignment-variable-class} {
+			@extend %#{$alignment-type-class}#{$alignment-variable-class};
+		}
+	}
+}
+
+@each $flex-direction-class, $flex-direction-value in $flex-direction-map {
+	.flex#{$flex-direction-class} {
+		flex-direction: #{$flex-direction-value};
+	}
+}
+
+@each $flex-wrap-class, $flex-wrap-value in $flex-wrap-map {
+	.flex#{$flex-wrap-class} {
+		flex-wrap: #{$flex-wrap-value};
+	}
+}
+
+.flex {
+	display: flex;
+}

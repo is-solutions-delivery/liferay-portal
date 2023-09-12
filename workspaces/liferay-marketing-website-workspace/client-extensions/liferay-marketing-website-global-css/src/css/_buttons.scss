@@ -1,0 +1,272 @@
+@import 'buttons-extendables';
+
+// Osb Icon
+
+// Base SVG Icon class, add this to every SVG Icon that way there is a global
+// class we can hook to make wholesale changes
+
+.osb-icon {
+  fill: currentColor;
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+// SVG Icons are fixed width and height, use this to scale it based on parent
+// element font-size
+
+.osb-icon--scale {
+  height: 1.5em;
+  width: 1.5em;
+}
+
+// For SVG Icons that render to the edge of the viewBox. This sizes the icons
+// similar to new ones that have white space between viewBox and icon. The old
+// SVG icons were drawn this way
+
+.osb-icon--content-edge {
+  padding: 6px;
+}
+
+// Osb Inline Link
+
+.osb-inline-link {
+  @include osb-btn($osb-inline-link);
+}
+
+.osb-inline-link--secondary {
+  @include osb-btn($osb-inline-link--secondary);
+}
+
+.osb-inline-link--light {
+  @include osb-btn($osb-inline-link--light);
+}
+
+.osb-inline-link--underline {
+  @include osb-btn($osb-inline-link--underline);
+}
+
+// Osb Return Link
+
+.osb-return-link {
+  @include osb-btn($osb-return-link);
+
+  > div {
+    display: inline;
+  }
+
+  > svg {
+    flex-shrink: 0;
+    width: 1.5em;
+  }
+}
+
+.osb-cta {
+  @include osb-btn($osb-cta);
+
+  > div {
+    display: inline;
+  }
+
+  > svg {
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .osb-icon--content-edge.osb-icon--scale {
+    margin-left: -4px;
+    padding: 7px;
+  }
+}
+
+.osb-cta--animate {
+  &:hover {
+    > svg {
+      &:first-child {
+        transform: translateX(-0.25rem);
+      }
+
+      &:last-child {
+        transform: translateX(0.25rem);
+      }
+    }
+  }
+
+  > svg {
+    transition: transform 0.5s ease;
+  }
+}
+
+.osb-cta--large {
+  @include osb-btn($osb-cta--large);
+
+  .osb-icon--content-edge.osb-icon--scale {
+    margin-left: -5px;
+    padding: 11px;
+  }
+}
+
+.osb-cta--light,
+.dark .osb-cta {
+  @include osb-btn($osb-cta--light);
+}
+
+// Osb Btn
+
+.osb-btn {
+  @include osb-btn($osb-btn);
+}
+
+.osb-btn--icon-start {
+  padding-left: 2.5rem;
+  position: relative;
+
+  svg {
+    height: 1.5em;
+    left: 0.6875rem;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-48%);
+    width: 1.5em;
+  }
+}
+
+.osb-btn--icon-end {
+  padding-right: 2.5rem;
+  position: relative;
+
+  svg {
+    height: 1.5em;
+    position: absolute;
+    right: 0.6875rem;
+    top: 50%;
+    transform: translateY(-48%);
+    width: 1.5em;
+  }
+}
+
+.osb-btn--large {
+  @include osb-btn($osb-btn--large);
+
+  &.osb-btn--icon-start {
+    padding-left: 2.75rem;
+
+    svg {
+      left: 0.75rem;
+    }
+  }
+
+  &.osb-btn--icon-end {
+    padding-right: 2.75rem;
+
+    svg {
+      right: 0.75rem;
+    }
+  }
+}
+
+.osb-btn--small {
+  @include osb-btn($osb-btn--small);
+
+  @include for-tablet-landscape-up {
+    margin: 0;
+  }
+
+  &.osb-btn--icon-start {
+    padding-left: 1.75rem;
+
+    svg {
+      left: 0.25rem;
+    }
+  }
+
+  &.osb-btn--icon-end {
+    padding-right: 1.75rem;
+
+    svg {
+      right: 0.25rem;
+    }
+  }
+}
+
+.osb-btn--block {
+  display: block;
+  width: 100%;
+}
+
+.osb-btn--monospaced {
+  @include osb-btn($osb-btn--monospaced);
+}
+
+.osb-btn--monospaced.osb-btn--large {
+  @include osb-btn($osb-btn--monospaced--large);
+}
+
+.osb-btn--monospaced.osb-btn--small {
+  @include osb-btn($osb-btn--monospaced--small);
+}
+
+.osb-btn--flat {
+  @include osb-btn($osb-btn--flat);
+}
+
+.osb-btn--primary {
+  @include osb-btn($osb-btn--primary);
+}
+
+.osb-btn--secondary {
+  @include osb-btn($osb-btn--secondary);
+}
+
+.osb-btn--alternate {
+  @include osb-btn($osb-btn--alternate);
+}
+
+.osb-btn--plaintext {
+  @include osb-btn($osb-btn--plaintext);
+
+  &.osb-btn--icon-start {
+    padding-left: 2rem;
+
+    > svg {
+      left: 3px;
+      margin-top: 0;
+    }
+  }
+
+  &.osb-btn--icon-end {
+    padding-right: 2rem;
+
+    > svg {
+      margin-top: 0;
+      right: 3px;
+    }
+  }
+
+  &.osb-btn--small {
+    padding-bottom: 0.375rem;
+    padding-top: 0.375rem;
+  }
+
+  &.osb-btn--large {
+    font-size: map-get($osb-cta--large, font-size);
+    line-height: map-get($osb-cta--large, line-height);
+    padding-bottom: 0.34375rem;
+    padding-top: 0.34375rem;
+
+    &.osb-btn--icon-start {
+      padding-left: 2.5rem;
+
+      > svg {
+        left: 1px;
+      }
+    }
+
+    &.osb-btn--icon-end {
+      padding-right: 2.5rem;
+
+      > svg {
+        right: 1px;
+      }
+    }
+  }
+}

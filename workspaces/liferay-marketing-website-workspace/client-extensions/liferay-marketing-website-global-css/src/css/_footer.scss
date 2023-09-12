@@ -1,0 +1,288 @@
+#footer.f-navigation-footer {
+  background-color: $color-brand-primary-darken-5;
+  color: $color-white;
+  padding: 1em;
+
+  @media screen and (min-width: 767px) {
+    padding: 0 3em;
+  }
+
+  .max-nav {
+    margin: 0 auto;
+    max-width: 1240px;
+    padding: 3em 0 !important;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    line-height: 20px;
+    list-style: none;
+    margin: 0;
+  }
+
+  h4 {
+    color: $color-white;
+    line-height: 1.5em;
+    margin: 0;
+    padding: 1.5em 0;
+  }
+
+  a {
+    display: block;
+
+    &:hover {
+      text-decoration: none;
+    }
+  }
+
+  .footer-content {
+    -webkit-box-direction: normal;
+    -webkit-box-orient: vertical;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    padding: 1em 0;
+
+    @media screen and (min-width: 767px) {
+      flex-direction: row;
+    }
+
+    .footer-navigation {
+      -webkit-box-flex: 5;
+      flex: 5;
+
+      .language-wrapper {
+        box-sizing: border-box;
+        margin: 0;
+        padding-bottom: 1.5em;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+
+        @media screen and (min-width: 767px) {
+          margin-left: -2em;
+        }
+
+        .languages {
+          .selected {
+            display: none;
+          }
+        }
+
+        &.class-toggle-active {
+          .dropdown-content {
+            height: auto;
+            opacity: 1;
+            overflow: visible;
+            padding: 0.5em;
+            visibility: visible;
+
+            a {
+              color: $color-black;
+              padding: 0.375em 0.75em;
+            }
+          }
+        }
+
+        .dropdown-content {
+          background: $color-white;
+          border-radius: 0.25em;
+          -webkit-box-shadow: $elevation-3;
+          box-shadow: $elevation-3;
+          -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+          height: 0;
+          line-height: 0;
+          opacity: 0;
+          overflow: hidden;
+          padding: 0;
+          position: absolute;
+          -webkit-transform-origin: center top;
+          transform-origin: center top;
+          -webkit-transition: opacity 0.25s cubic-bezier(0.77, 0, 0.175, 1),
+            visibility 0.25s cubic-bezier(0.77, 0, 0.175, 1);
+          transition: opacity 0.25s cubic-bezier(0.77, 0, 0.175, 1),
+            visibility 0.25s cubic-bezier(0.77, 0, 0.175, 1);
+          visibility: hidden;
+          white-space: nowrap;
+          z-index: 1000;
+
+          &::after {
+            background: $color-white;
+            border-radius: 1.25em 0 0;
+            bottom: -7px;
+            content: '';
+            height: 14px;
+            left: 10%;
+            position: absolute;
+            -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+            -webkit-transition: left 0.25s cubic-bezier(0.77, 0, 0.175, 1);
+            transition: left 0.25s cubic-bezier(0.77, 0, 0.175, 1);
+            width: 14px;
+          }
+
+          &.top {
+            bottom: calc(100% + 14px);
+          }
+
+          &.right {
+            left: 0;
+          }
+        }
+
+        .language-selector {
+          align-items: center;
+          -webkit-box-align: center;
+          cursor: pointer;
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          -ms-flex-align: center;
+
+          .current-language {
+            font-size: 1.15em;
+            font-weight: 600;
+            padding-left: 0.5em;
+          }
+        }
+      }
+
+      .navigation {
+        flex-wrap: wrap;
+
+        a {
+          color: $color-white;
+          font-weight: $font-weight-semi-bold;
+          padding-bottom: 1em;
+
+          &:hover {
+            color: $color-neutral-5;
+          }
+        }
+
+        div {
+          box-sizing: border-box;
+          padding-right: 0;
+          width: 100%;
+
+          @media screen and (min-width: 767px) {
+            width: initial;
+          }
+
+          @include for-tablet-landscape-up {
+            padding-right: 4em;
+          }
+
+          @media (min-width: 768px) and (max-width: 979px) {
+            padding-right: 3em;
+          }
+
+          .nav-item-header {
+            font-size: 0.833125em;
+            font-weight: $font-weight-normal;
+            letter-spacing: 1px;
+            margin-bottom: 0;
+            text-transform: uppercase;
+          }
+        }
+      }
+    }
+
+    .footer-liferay-connect {
+      -webkit-box-flex: 1;
+      -ms-flex: 1;
+      flex: 1;
+      padding-top: 4em;
+
+      @media screen and (min-width: 767px) {
+        padding-top: 0;
+      }
+
+      .social-nav {
+        margin-left: -1em;
+        margin-right: -1em;
+        padding-left: 0.5em;
+        padding-right: 0.5em;
+
+        @media screen and (min-width: 767px) {
+          margin-left: 0;
+        }
+
+        a {
+          color: $color-white;
+          height: 3.25em;
+        }
+
+        svg {
+          display: inline-block;
+          fill: $color-white;
+          height: 1.25em;
+          margin: 0.5em;
+          -webkit-transition: all 0.25s ease-in-out;
+          transition: all 0.25s ease-in-out;
+          width: 1.25em;
+        }
+      }
+
+      .contact-info {
+        color: $color-white;
+        text-align: left;
+
+        @media screen and (min-width: 767px) {
+          text-align: right;
+        }
+
+        a {
+          color: $color-white;
+          cursor: pointer;
+          line-height: 1.5em;
+          margin: 0;
+          padding: 1.5em 0;
+        }
+
+        p {
+          font-size: 1.125em;
+        }
+      }
+    }
+  }
+
+  .fine-print {
+    background-color: $color-accent-10;
+    box-sizing: border-box;
+    color: $color-neutral-7;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 2em 0 5em;
+    text-align: left;
+
+    a {
+      color: $color-neutral-7;
+      font-size: 0.9em;
+      width: 100%;
+
+      @media screen and (min-width: 767px) {
+        width: initial;
+      }
+
+      &:hover {
+        color: $color-black;
+      }
+    }
+
+    p {
+      font-size: 0.9em;
+      width: 100%;
+
+      @media screen and (min-width: 767px) {
+        width: initial;
+      }
+    }
+  }
+}

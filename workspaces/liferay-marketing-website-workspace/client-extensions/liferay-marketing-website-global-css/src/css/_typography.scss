@@ -1,0 +1,387 @@
+@import 'typography-extendables';
+
+@function str-replace($string, $search, $replace: '') {
+	$index: str-index($string, $search);
+
+	@if $index {
+		@return str-slice($string, 1, $index - 1) + $replace +
+			str-replace(
+				str-slice($string, $index + str-length($search)),
+				$search,
+				$replace
+			);
+	}
+
+	@return $string;
+}
+
+@mixin font-face(
+	$name,
+	$path,
+	$weight: null,
+	$style: null,
+	$exts: eot woff2 woff ttf svg
+) {
+	$src: null;
+	$srceot: null;
+
+	$extmods: (
+		eot: '?#iefix',
+		svg: '#' + str-replace($name, ' ', '_')
+	);
+
+	$formats: (
+		eot: 'embedded-opentype',
+		otf: 'opentype',
+		ttf: 'truetype'
+	);
+
+	@each $ext in $exts {
+		$extmod: if(
+			map-has-key($extmods, $ext),
+			$ext + map-get($extmods, $ext),
+			$ext
+		);
+		$format: if(map-has-key($formats, $ext), map-get($formats, $ext), $ext);
+		$src: append(
+			$src,
+			url(quote($path + '.' + $extmod)) format(quote($format)),
+			comma
+		);
+	}
+
+	@font-face {
+		font-family: quote($name);
+		font-style: $style;
+		font-weight: $weight;
+		src: url(quote($path + '.' + eot));
+		src: local(''), $src;
+	}
+}
+
+$font-family-map: (
+	'source-code-pro': (
+		'Source Code Pro',
+		'21'
+	),
+	'source-sans-pro': (
+		'Source Sans Pro',
+		'21'
+	)
+);
+
+$font-weight-map: (
+	'200': 200,
+	'300': 300,
+	'400': 400,
+	'400italic': 400,
+	'600': 600,
+	'700': 700
+);
+
+@each $font-family-class, $font-family-value in $font-family-map {
+	@each $font-weight-class, $font-weight-value in $font-weight-map {
+		@if ($font-weight-class == '400italic') {
+			@include font-face(
+				nth($font-family-value, 1),
+				'/o/osb-www-foundations-theme-contributor/fonts/#{$font-family-class}-v#{nth($font-family-value, 2)}-vietnamese_latin_cyrillic-italic',
+				$font-weight-value,
+				italic,
+				eot woff2 woff ttf svg
+			);
+		} @else {
+			@include font-face(
+				nth($font-family-value, 1),
+				'/o/osb-www-foundations-theme-contributor/fonts/#{$font-family-class}-v#{nth($font-family-value, 2)}-vietnamese_latin_cyrillic-#{$font-weight-value}',
+				$font-weight-value,
+				normal,
+				eot woff2 woff ttf svg
+			);
+		}
+	}
+}
+
+$font-weight-map-chinese: (
+	'100': 200,
+	'300': 300,
+	'400': 400,
+	'500': 500,
+	'700': 700
+);
+
+@each $font-weight-class-chinese,
+	$font-weight-value-chinese in $font-weight-map-chinese
+{
+	@include font-face(
+		'Noto Sans SC',
+		'/o/osb-www-foundations-theme-contributor/fonts/noto-sans-sc-v26-latin_chinese-simplified-#{$font-weight-value-chinese}',
+		$font-weight-value-chinese,
+		normal,
+		eot woff2 woff ttf svg
+	);
+}
+
+.font-family-mono {
+	@extend %font-family-mono;
+}
+
+.font-family-sans {
+	@extend %font-family-sans;
+}
+
+.font-family-serif {
+	@extend %font-family-serif;
+}
+
+// Generates styles for class .font-size-small-caps
+
+@each $small-caps-style-class,
+	$small-caps-style-values in $small-caps-styles-map
+{
+	.font-size#{$small-caps-style-class} {
+		@extend %font-size#{$small-caps-style-class};
+	}
+}
+
+// Generates styles for classes .font-size-display-large,
+// .font-size-display-small
+
+@each $display-style-class, $display-style-values in $display-styles-map {
+	.font-size-display#{$display-style-class} {
+		@extend %font-size-display#{$display-style-class};
+	}
+}
+
+// Generates styles for classes .font-size-heading-h1, .font-size-heading-h2,
+// .font-size-heading-h3, .font-size-heading-h4, .font-size-heading-h5
+
+@each $heading-style-class, $heading-style-values in $heading-styles-map {
+	.font-size-heading#{$heading-style-class} {
+		@extend %font-size-heading#{$heading-style-class};
+	}
+}
+
+// Generates styles for classes .font-size-long-form-sans-serif,
+// .font-size-long-form-serif
+
+@each $long-form-style-class, $long-form-style-values in $long-form-styles-map {
+	.font-size-long-form#{$long-form-style-class} {
+		@extend %font-size-long-form#{$long-form-style-class};
+	}
+}
+
+// Generates styles for classes .font-size-paragraph-large,
+// .font-size-paragraph-base, .font-size-paragraph-base-semi-bold,
+// .font-size-paragraph-small, .font-size-paragraph-xsmall,
+// .font-size-paragraph-tiny
+
+@each $paragraph-style-class, $paragraph-style-values in $paragraph-styles-map {
+	.font-size-paragraph#{$paragraph-style-class} {
+		@extend %font-size-paragraph#{$paragraph-style-class};
+	}
+}
+
+.font-weight-bold {
+	@extend %font-weight-bold;
+}
+
+.font-weight-extra-light {
+	@extend %font-weight-extra-light;
+}
+
+.font-weight-light {
+	@extend %font-weight-light;
+}
+
+.font-weight-normal {
+	@extend %font-weight-normal;
+}
+
+.font-weight-semi-bold {
+	@extend %font-weight-semi-bold;
+}
+
+// Typography moved from www-theme
+
+body .content {
+	font: 400 16px/1.5 'Source Sans Pro', Tahoma, 'Trebuchet MS', sans-serif;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+	position: relative;
+	right: 0;
+
+	b,
+	strong {
+		font-weight: $font-weight-bold;
+	}
+
+	blockquote {
+		font-size: 1.25em;
+		line-height: 1.25;
+
+		@include respond-to(phone, tablet) {
+			font-size: 1.5em;
+			line-height: 1.5;
+		}
+	}
+
+	h1,
+	.font-spec-1 {
+		@extend %font-spec-1;
+	}
+
+	h2,
+	.font-spec-2 {
+		@extend %font-spec-2;
+	}
+
+	h3,
+	.font-spec-3 {
+		@extend %font-spec-3;
+	}
+
+	h4,
+	.font-spec-4 {
+		@extend %font-spec-4;
+	}
+
+	h5,
+	.font-spec-5 {
+		@extend %font-spec-5;
+	}
+
+	p {
+		&.fine-print {
+			@extend %font-spec-fine-print;
+		}
+
+		&.large {
+			@extend %font-spec-large;
+		}
+
+		&.superfine-print {
+			@extend %font-spec-superfine-print;
+		}
+	}
+
+	.long-form {
+		font-size: 1.25em;
+		line-height: 1.5;
+
+		a:not(.btn) {
+			text-decoration: underline;
+		}
+
+		h2 {
+			font-size: 1.5em;
+			font-weight: 400;
+			margin-top: 1em;
+
+			&:first-child {
+				margin-top: 0.25em;
+			}
+		}
+
+		h3 {
+			font-size: 1.25em;
+			font-weight: 600;
+			margin-top: 1em;
+		}
+
+		h4 {
+			font-size: 1.2em;
+			margin-top: 1em;
+		}
+
+		li {
+			line-height: inherit;
+			margin-bottom: 1em;
+		}
+
+		ol,
+		p:not(.small-caps),
+		ul {
+			font-family: 'Source Serif Pro', Georgia, Cambria, 'Times New Roman',
+				Times, serif;
+			font-weight: 400;
+			margin-bottom: 1em;
+		}
+
+		p.introduction {
+			font-size: 1.2em;
+		}
+
+		ul:not(.unstyled) {
+			list-style: none;
+
+			li:before {
+				background-color: $color-neutral-5;
+				border-radius: 0.25em;
+				content: '';
+				display: inline-block;
+				height: 0.25em;
+				margin: 0 0.5em 0.25em -1em;
+				width: 0.25em;
+			}
+		}
+
+		.long-form-title {
+			margin-bottom: calc(2em + 4px);
+			position: relative;
+
+			&:after {
+				background: #134194;
+				bottom: -1em;
+				content: '';
+				display: block;
+				height: 4px;
+				position: absolute;
+				width: 56px;
+			}
+		}
+
+		@include respond-to(tablet) {
+			h2 {
+				font-size: 1.4em;
+			}
+
+			h3 {
+				font-size: 1.2em;
+			}
+		}
+
+		@include respond-to(phone) {
+			font-size: 1.1em;
+			line-height: 1.6em;
+
+			h2 {
+				font-size: 1.2em;
+				font-weight: 600;
+			}
+
+			h3 {
+				font-size: 1.125em;
+			}
+		}
+	}
+
+	.page-heading .preheading,
+	.preheading {
+		font-size: 1em;
+	}
+
+	.small-caps {
+		@extend %small-caps;
+	}
+
+	.subheading {
+		color: $color-neutral-5;
+		font-weight: $font-weight-normal;
+	}
+
+	.source-text {
+		color: $color-neutral-5;
+		font-size: 0.75em;
+		margin: 0.5em 0;
+	}
+}

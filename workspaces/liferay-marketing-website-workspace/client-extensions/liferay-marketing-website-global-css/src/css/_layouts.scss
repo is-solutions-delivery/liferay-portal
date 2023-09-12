@@ -1,0 +1,88 @@
+html .content #main-content.layout-content {
+	margin: 0;
+	max-width: none;
+}
+
+.layout-content {
+	.container {
+		max-width: $max-width-full;
+
+		&.sidebar-layouts-section__layout-preview {
+			padding: 0;
+
+			.sidebar-layouts-section__layout-preview__row {
+				margin: 0;
+			}
+		}
+	}
+
+	@include for-phone-only {
+		.container {
+			padding-left: $container-horizontal-padding-for-phone-only !important;
+			padding-right: $container-horizontal-padding-for-phone-only !important;
+		}
+
+		div[class*='col-md'] {
+			padding-left: $container-gutter-padding-for-phone-only;
+			padding-right: $container-gutter-padding-for-phone-only;
+		}
+
+		.row {
+			margin-left: -$container-gutter-padding-for-phone-only;
+			margin-right: -$container-gutter-padding-for-phone-only;
+		}
+	}
+
+	@include for-tablet-portrait-up {
+		.container {
+			padding-left: $container-horizontal-padding-for-tablet-portrait-up !important;
+			padding-right: $container-horizontal-padding-for-tablet-portrait-up !important;
+		}
+
+		div[class*='col-md'] {
+			padding-left: $container-gutter-padding-for-tablet-portrait-up;
+			padding-right: $container-gutter-padding-for-tablet-portrait-up;
+		}
+
+		.row {
+			margin-left: -$container-gutter-padding-for-tablet-portrait-up;
+			margin-right: -$container-gutter-padding-for-tablet-portrait-up;
+		}
+	}
+
+	@include for-tablet-landscape-up {
+		.container {
+			padding-left: $container-horizontal-padding-for-tablet-landscape-up !important;
+			padding-right: $container-horizontal-padding-for-tablet-landscape-up !important;
+		}
+
+		div[class*='col-md'] {
+			padding-left: $container-gutter-padding-for-tablet-landscape-up;
+			padding-right: $container-gutter-padding-for-tablet-landscape-up;
+		}
+
+		.row {
+			margin-left: -$container-gutter-padding-for-tablet-landscape-up;
+			margin-right: -$container-gutter-padding-for-tablet-landscape-up;
+		}
+	}
+}
+
+// max[key]
+$max-width-map: (
+	'-none': 'none',
+	'-xsmall': $max-width-xsmall,
+	'-form-small': $max-width-form-small,
+	'-form': $max-width-form,
+	'-small': $max-width-small,
+	'-medium': $max-width-medium,
+	'-large': $max-width-large,
+	'-xlarge': $max-width-xlarge,
+	'-full': $max-width-full
+);
+
+@each $max-width-class, $max-width-value in $max-width-map {
+	.max-width#{$max-width-class} {
+		max-width: $max-width-value;
+	}
+}

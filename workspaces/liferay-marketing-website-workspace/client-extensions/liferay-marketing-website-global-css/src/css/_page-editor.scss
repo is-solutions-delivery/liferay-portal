@@ -1,0 +1,9 @@
+html:not(#__):not(#___) body .page-editor__layout-viewport--size-tablet,
+html:not(#__):not(#___)
+	body
+	.page-editor__layout-viewport--size-landscapeMobile,
+html:not(#__):not(#___)
+	body
+	.page-editor__layout-viewport--size-portraitMobile {
+	height: 100vh;
+}

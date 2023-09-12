@@ -1,0 +1,408 @@
+%font-family {
+	&-mono {
+		font-family: $font-family-mono;
+	}
+
+	&-sans {
+		font-family: $font-family-sans;
+	}
+
+	&-serif {
+		font-family: $font-family-serif;
+	}
+}
+
+%font-weight {
+	&-bold {
+		font-weight: $font-weight-bold;
+	}
+
+	&-extra-light {
+		font-weight: $font-weight-extra-light;
+	}
+
+	&-light {
+		font-weight: $font-weight-light;
+	}
+
+	&-normal {
+		font-weight: $font-weight-normal;
+	}
+
+	&-semi-bold {
+		font-weight: $font-weight-semi-bold;
+	}
+}
+
+// Values:
+// MEDIA QUERY KEYS: 'all', 'phone-only', 'tablet-portrait-up', 'tablet-landscape-up', 'desktop-up'
+// MEDIA QUERY VALUES: 'font-size' and 'line-height'
+// ADDITIONAL KEYS: 'additional-styles'
+
+//.font-size-heading[key]
+$heading-styles-map: (
+	'-f1': (
+		'additional-styles': (
+			(
+				font-weight: $font-weight-semi-bold
+			)
+		),
+		'phone-only': 2rem 1.125,
+		'tablet-portrait-up': 2.625rem 1.143,
+		'tablet-landscape-up': 3rem 1.167,
+		'desktop-up': 3.438rem 1.018
+	),
+	'-f2': (
+		'additional-styles': (
+			(
+				font-weight: $font-weight-semi-bold
+			)
+		),
+		'phone-only': 1.813rem 1.103,
+		'tablet-portrait-up': 2.188rem 1.029,
+		'tablet-landscape-up': 2.438rem 1.026,
+		'desktop-up': 2.75rem 1.091
+	),
+	'-f3': (
+		'additional-styles': (
+			(
+				font-weight: $font-weight-semi-bold
+			)
+		),
+		'phone-only': 1.625rem 1.23,
+		'tablet-portrait-up': 1.875rem 1.2,
+		'tablet-landscape-up': 2rem 1.125,
+		'desktop-up': 2.188rem 1.143
+	),
+	'-f4': (
+		'additional-styles': (
+			(
+				font-weight: $font-weight-semi-bold
+			)
+		),
+		'phone-only': 1.375rem 1.244,
+		'tablet-portrait-up': 1.563rem 1.28,
+		'tablet-landscape-up': 1.625rem 1.230769231,
+		'desktop-up': 1.75rem 1.143
+	),
+	'-f5': (
+		'additional-styles': (
+			(
+				font-weight: $font-weight-semi-bold
+			)
+		),
+		'phone-only': 1.25rem 1.2,
+		'tablet-portrait-up': 1.313rem 1.143,
+		'tablet-landscape-up': 1.375rem 1.273,
+		'desktop-up': 1.375rem 1.244
+	)
+);
+
+// .font-size-paragraph[key]
+$paragraph-styles-map: (
+	'-large': (
+		'phone-only': 1.25rem 1.379,
+		'tablet-portrait-up': 1.438rem 1.362,
+		'tablet-landscape-up': 1.563rem 1.412,
+		'desktop-up': 1.75rem 1.286
+	),
+	'-base': (
+		'all': 1.125rem 1.556
+	),
+	'-base-semi-bold': (
+		'all': 1.125rem 1.556,
+		'additional-styles': (
+			(
+				font-weight: $font-weight-semi-bold
+			)
+		)
+	),
+	'-small': (
+		'all': 1rem 1.5
+	),
+	'-xsmall': (
+		'all': 0.9em 1.389
+	),
+	'-tiny': (
+		'all': 0.688rem 1.391
+	)
+);
+
+// .font-size-long-form[key]
+$long-form-styles-map: (
+	'-sans-serif': (
+		'all': 1.063rem 1.647,
+		'tablet-landscape-up': 1.25rem 1.5
+	),
+	'-serif': (
+		'all': 1.063rem 1.647,
+		'tablet-landscape-up': 1.25rem 1.5,
+		'additional-styles': (
+			(
+				font-family: $font-family-serif
+			)
+		)
+	)
+);
+
+// .font-size-display[key]
+$display-styles-map: (
+	'-large': (
+		'additional-styles': (
+			(
+				font-weight: $font-weight-bold
+			)
+		),
+		'phone-only': 2.875rem 0.957,
+		'tablet-portrait-up': 4.438rem 1.01,
+		'tablet-landscape-up': 5.563rem 0.989,
+		'desktop-up': 6.688rem 0.972
+	),
+	'-small': (
+		'additional-styles': (
+			(
+				font-weight: $font-weight-bold
+			)
+		),
+		'phone-only': 2.563rem 0.976,
+		'tablet-portrait-up': 2.938rem 1.021,
+		'tablet-landscape-up': 4.5rem 1,
+		'desktop-up': 5.375rem 1.023
+	)
+);
+
+// .font-size-small-caps[key]
+$small-caps-styles-map: (
+	'-small-caps': (
+		'all': 0.9rem 1.389,
+		'additional-styles': (
+			font-weight: $font-weight-semi-bold,
+			letter-spacing: 1px,
+			text-transform: uppercase
+		)
+	)
+);
+
+@mixin font-sizing($tag, $modifier, $fontValues, $parentClass) {
+	%#{$parentClass}#{$modifier} {
+		@each $key, $values in $fontValues {
+			@if ($key == 'additional-styles') {
+				@each $property, $value in $values {
+					#{$property}: $value;
+				}
+			}
+
+			@if ($key == 'all') {
+				font-size: nth($values, 1);
+				line-height: nth($values, 2);
+			}
+
+			@if ($key == 'phone-only') {
+				@include for-phone-only {
+					font-size: nth($values, 1);
+					line-height: nth($values, 2);
+				}
+			}
+
+			@if ($key == 'tablet-portrait-up') {
+				@include for-tablet-portrait-up {
+					font-size: nth($values, 1);
+					line-height: nth($values, 2);
+				}
+			}
+
+			@if ($key == 'tablet-landscape-up') {
+				@include for-tablet-landscape-up {
+					font-size: nth($values, 1);
+					line-height: nth($values, 2);
+				}
+			}
+
+			@if ($key == 'desktop-up') {
+				@include for-desktop-up {
+					font-size: nth($values, 1);
+					line-height: nth($values, 2);
+				}
+			}
+		}
+	}
+}
+
+// Generates Sass placeholder(s) %font-size-heading-f1, %font-size-heading-f2,
+// %font-size-heading-f3, %font-size-heading-f4, %font-size-heading-f5
+
+@each $heading-style-class, $heading-style-values in $heading-styles-map {
+	@include font-sizing(
+		'#{$heading-style-class}, ',
+		$heading-style-class,
+		$heading-style-values,
+		font-size-heading
+	);
+}
+
+// Generates Sass placeholder(s) %font-size-display-large,
+// %font-size-display-small
+
+@each $display-style-class, $display-style-values in $display-styles-map {
+	@include font-sizing(
+		'',
+		$display-style-class,
+		$display-style-values,
+		font-size-display
+	);
+}
+
+// Generates Sass placeholder(s) %font-size-long-form-sans-serif,
+// %font-size-long-form-serif
+
+@each $long-form-style-class, $long-form-style-values in $long-form-styles-map {
+	@include font-sizing(
+		'',
+		$long-form-style-class,
+		$long-form-style-values,
+		font-size-long-form
+	);
+}
+
+// Generates Sass placeholder(s) %font-size-paragraph-large,
+// %font-size-paragraph-base, %font-size-paragraph-base-semi-bold,
+// %font-size-paragraph-small, %font-size-paragraph-xsmall,
+// %font-size-paragraph-tiny
+
+@each $paragraph-style-class, $paragraph-style-values in $paragraph-styles-map {
+	@include font-sizing(
+		'',
+		$paragraph-style-class,
+		$paragraph-style-values,
+		font-size-paragraph
+	);
+}
+
+// Generates Sass placeholder(s) %font-size-small-caps
+
+@each $small-caps-style-class,
+	$small-caps-style-values in $small-caps-styles-map
+{
+	@include font-sizing(
+		'',
+		$small-caps-style-class,
+		$small-caps-style-values,
+		font-size
+	);
+}
+
+// Font extendables from www-theme
+
+%headings {
+	font-weight: $font-weight-semi-bold;
+	line-height: 1.25;
+}
+
+%textblock {
+	margin: 0 0 16px;
+}
+
+// Fonts
+
+%font-spec-fine-print {
+	font-size: 1em;
+
+	@extend %textblock;
+}
+
+%font-spec-1 {
+	font-size: 3em;
+	line-height: 1.05;
+
+	@extend %headings;
+	@extend %textblock;
+
+	@include respond-to(tablet) {
+		font-size: 2.5em;
+	}
+
+	@include respond-to(phone) {
+		font-size: 2em;
+	}
+}
+
+%font-spec-2 {
+	font-size: 2.25em;
+
+	@extend %headings;
+	@extend %textblock;
+
+	@include respond-to(tablet) {
+		font-size: 2em;
+	}
+
+	@include respond-to(phone) {
+		font-size: 1.625em;
+	}
+}
+
+%font-spec-3 {
+	font-size: 1.75em;
+
+	@extend %headings;
+	@extend %textblock;
+
+	@include respond-to(tablet) {
+		font-size: 1.5em;
+	}
+
+	@include respond-to(phone) {
+		font-size: 1.375em;
+	}
+}
+
+%font-spec-4 {
+	font-size: 1.125em;
+
+	@extend %headings;
+	@extend %textblock;
+}
+
+%font-spec-5 {
+	font-size: 1em;
+
+	@extend %headings;
+	@extend %textblock;
+}
+
+%font-spec-large {
+	font-size: 1.75em;
+	line-height: 1.25em;
+
+	@extend %textblock;
+
+	@include respond-to(tablet) {
+		font-size: 1.5em;
+	}
+
+	@include respond-to(phone) {
+		font-size: 1.375em;
+	}
+}
+
+%font-spec-small {
+	font-size: 0.9em;
+	line-height: 1.5em;
+
+	@extend %textblock;
+}
+
+%font-spec-superfine-print {
+	font-size: 0.85714em;
+
+	@extend %textblock;
+}
+
+%small-caps {
+	font-size: 0.833125em;
+	font-weight: $font-weight-normal;
+	letter-spacing: 1px;
+	text-transform: uppercase;
+
+	@extend %textblock;
+}

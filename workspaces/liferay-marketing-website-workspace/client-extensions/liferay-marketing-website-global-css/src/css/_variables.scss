@@ -1,0 +1,405 @@
+// ---------- COLORS ----------
+// ---------- primary ----------
+$color-black: var(--black); // rgb(9, 16, 29)
+$color-primary-10: var(--primary-10);
+$color-primary-5: var(--primary-5);
+$color-primary-7: var(--primary-7);
+$color-primary-dark: var(--primary-dark); // rgb(19, 65, 148)
+$color-primary: var(--primary); // rgb(11, 99, 206)
+$color-white: var(--white); // rgb(255, 255, 255)
+
+// ---------- brand primary ----------
+$color-brand-primary-darken-1: var(--color-brand-primary-darken-1);
+$color-brand-primary-darken-2: var(--color-brand-primary-darken-2);
+$color-brand-primary-darken-3: var(--color-brand-primary-darken-3);
+$color-brand-primary-darken-4: var(--color-brand-primary-darken-4);
+$color-brand-primary-darken-5: var(--color-brand-primary-darken-5);
+$color-brand-primary-lighten-1: var(--color-brand-primary-lighten-1);
+$color-brand-primary-lighten-2: var(--color-brand-primary-lighten-2);
+$color-brand-primary-lighten-3: var(--color-brand-primary-lighten-3);
+$color-brand-primary-lighten-4: var(--color-brand-primary-lighten-4);
+$color-brand-primary-lighten-5: var(--color-brand-primary-lighten-5);
+$color-brand-primary-lighten-6: var(--color-brand-primary-lighten-6);
+$color-brand-primary: var(--color-brand-primary);
+
+// ---------- accent ----------
+$color-accent-1: var(--color-accent-1); // rgb(26, 160, 232)
+$color-accent-2: var(--color-accent-2); // rgb(224, 110, 49)
+$color-accent-3: var(--color-accent-3); // rgb(211, 58, 47)
+$color-accent-4: var(--color-accent-4); // rgb(66, 191, 194)
+$color-accent-5: var(--color-accent-5); // rgb(229, 94, 117)
+$color-accent-6: var(--color-accent-6); // rgb(25, 171, 79)
+$color-accent-7: var(--color-accent-7); // rgb(80, 54, 144)
+$color-accent-8: var(--color-accent-8); // rgb(253, 204, 74)
+$color-accent-9: var(--color-accent-9); // rgb(71, 198, 245)
+$color-accent-10: var(--color-accent-10); // rgb(7, 34, 82)
+
+// ---------- neutral ----------
+$color-neutral-1: var(--color-neutral-1); // rgb(44, 58, 75)
+$color-neutral-2: var(--color-neutral-2); // rgb(57, 68, 82)
+$color-neutral-3: var(--color-neutral-3); // rgb(84, 93, 105)
+$color-neutral-4: var(--color-neutral-4); // rgb(109, 117, 128)
+$color-neutral-5: var(--color-neutral-5); // rgb(133, 140, 148)
+$color-neutral-6: var(--color-neutral-6); // rgb(165, 171, 179)
+$color-neutral-7: var(--color-neutral-7); // rgb(218, 222, 227)
+$color-neutral-8: var(--color-neutral-8); // rgb(235, 238, 242)
+$color-neutral-9: var(--color-neutral-9); // rgb(244, 246, 249)
+
+// ---------- action ----------
+$color-action-default: var(--action-default); // rgb(11, 95, 255)
+$color-action-default-hover: var(
+  --action-default-hover
+); // #0053F0, rgb(0, 83, 240)
+$color-action-default-active: var(
+  --action-default-active
+); // #004AD7, rgb(0, 74, 215)
+$color-action-secondary: var(--action-secondary);
+$color-action-secondary-hover: var(
+  --action-secondary-hover
+); // #0C9E42, rgb(12, 158, 66)
+$color-action-secondary-active: var(
+  --action-secondary-active
+); // #009236, rgb(0, 146, 54)
+$color-action-visited: var(--action-visited); // rgb(94, 56, 186)
+
+// ---------- function ----------
+$color-function-error: #da1414; // rgb(218, 20, 20)
+$color-function-error-border: lighten(
+  $color-function-error,
+  28%
+); // #F48989, rgb(244, 137, 137)
+$color-function-error-background: lighten(
+  $color-function-error,
+  50%
+); // #FEEFEF, rgb(254, 239, 239)
+$color-function-warning: #b95000; // rgb(185, 80, 0)
+$color-function-warning-border: lighten(
+  $color-function-warning,
+  25%
+); // #FF8F39, rgb(255, 143, 57)
+$color-function-warning-background: lighten(
+  $color-function-warning,
+  60%
+); // #FFF4EC, rgb(255, 244, 236)
+$color-function-success: #287d3c; // rgb(40, 125, 60)
+$color-function-success-border: lighten(
+  $color-function-success,
+  25%
+); // #5ACA75, rgb(90, 202, 117)
+$color-function-success-background: lighten(
+  $color-function-success,
+  63%
+); // #EDF9F0, rgb(237, 249, 240)
+$color-function-info: #2e5aac; // rgb(46, 90, 172)
+$color-function-info-border: lighten(
+  $color-function-info,
+  28%
+); // #89A7E0, rgb(137, 167, 224)
+$color-function-info-background: lighten(
+  $color-function-info,
+  53%
+); // #EEF2FA, rgb(238, 242, 250)
+
+// ---------- ELEVATION ----------
+$shadow-color-1: rgba(0, 0, 0, 0.14);
+$shadow-color-3: rgba(0, 0, 0, 0.06);
+
+$elevation-values: (1, 2, 3, 4, 6, 8, 11, 15, 24);
+
+@function elevation($n) {
+  @return 0px ($n - 1) * 0.3 + 0.5px $n * 0.35 + 3px ($n - 1) * -0.33px
+      $shadow-color-1,
+    0px $n * 1px $n * 1.5px ($n - 1) * 0.15px rgba(0, 0, 0, 0.03 + ($n * 0.002)),
+    0px $n * 0.3 + 2px $n * 2px $n * 0.4 - 1px $shadow-color-3;
+}
+
+$elevation-1: elevation(nth($elevation-values, 1));
+$elevation-2: elevation(nth($elevation-values, 2));
+$elevation-3: elevation(nth($elevation-values, 3));
+$elevation-4: elevation(nth($elevation-values, 4));
+$elevation-5: elevation(nth($elevation-values, 5));
+$elevation-6: elevation(nth($elevation-values, 6));
+$elevation-7: elevation(nth($elevation-values, 7));
+$elevation-8: elevation(nth($elevation-values, 8));
+$elevation-9: elevation(nth($elevation-values, 9));
+
+// ---------- LAYOUT ----------
+$max-width-xsmall: 320px;
+$max-width-form-small: 400px;
+$max-width-form: 500px;
+$max-width-small: 520px;
+$max-width-medium: 720px;
+$max-width-large: 900px;
+$max-width-xlarge: 1200px;
+$max-width-full: 1366px;
+
+// ---------- SPACING ----------
+$large-spacing: 3em;
+$small-spacing: 0.5em;
+$standard-spacing: 1em;
+
+// ---------- BREAKPOINTS ---------
+$breakpoint-for-phone-only: 599px;
+$breakpoint-for-tablet-portrait-up: 600px;
+$breakpoint-for-tablet-landscape-up: 900px;
+$breakpoint-for-desktop-up: 1200px;
+$breakpoint-for-large-desktop-up: 1800px;
+
+// ---------- GUTTERS ----------
+$container-horizontal-padding-for-phone-only: 1.5rem;
+$container-gutter-padding-for-phone-only: 0.5rem;
+
+$container-horizontal-padding-for-tablet-portrait-up: 1.5rem;
+$container-gutter-padding-for-tablet-portrait-up: 0.75rem;
+
+$container-horizontal-padding-for-tablet-landscape-up: 4rem;
+$container-gutter-padding-for-tablet-landscape-up: 1rem;
+
+// ---------- TYPOGRAPHY ----------
+$font-family-sans: 'Source Sans Pro', Tahoma, 'Trebuchet MS', sans-serif;
+$font-family-serif: 'Source Serif Pro', Georgia, Cambria, 'Times New Roman',
+  Times, serif;
+$font-family-mono: 'Source Code Pro', Menlo, monospace;
+
+$font-weight-bold: 700;
+$font-weight-extra-light: 200;
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-semi-bold: 600;
+
+// ---------- BORDER RADIUS ----------
+$border-radius-small: 2px;
+$border-radius: 4px;
+$border-radius-large: 6px;
+$border-radius-xlarge: 8px;
+
+// ---------- INLINE LINK ----------
+$osb-inline-link: (
+  color: $color-action-default,
+  font-size: 18px,
+  visited-color: $color-action-visited,
+  hover-color: $color-action-default-hover,
+  active-color: $color-action-default-active,
+);
+
+$osb-inline-link--secondary: (
+  color: $color-neutral-5,
+  font-size: 18px,
+  text-decoration: underline,
+);
+
+$osb-inline-link--light: (
+  color: rgba($color-white, 0.7),
+  visited-color: rgba($color-white, 0.7),
+);
+
+$osb-inline-link--underline: (
+  text-decoration: underline,
+  hover-text-decoration: none,
+);
+
+// ---------- RETURN LINK ----------
+$osb-return-link: (
+  align-items: center,
+  background-color: transparent,
+  // for <button class="osb-return-link">
+  border-width: 0,
+  // for <button class="osb-return-link">
+  color: $color-neutral-5,
+  display: inline-flex,
+  font-size: 0.9rem,
+  line-height: 27px,
+  // so focus outline doesn't look janky
+  max-width: 100%,
+  padding: 0,
+  text-decoration: none,
+  word-wrap: break-word,
+  hover-color: $color-neutral-3,
+  hover-text-decoration: none,
+  active-color: $color-black,
+);
+
+// ---------- CTA ----------
+$osb-cta: (
+  align-items: center,
+  background-color: transparent,
+  // for <button class="osb-cta">
+  border-width: 0,
+  // for <button class="osb-cta">
+  color: $color-action-default,
+  display: inline-flex,
+  font-size: 1.125rem,
+  font-weight: $font-weight-semi-bold,
+  line-height: 27px,
+  // center icon with text
+  max-width: 100%,
+  text-decoration: none,
+  word-wrap: break-word,
+  visited-color: $color-action-visited,
+  hover-color: $color-action-default-hover,
+  hover-text-decoration: none,
+  active-color: $color-action-default-active,
+);
+
+$osb-cta--large: (
+  font-size: 1.5rem,
+  line-height: 36px,
+  // centers icon with text
+);
+
+$osb-cta--light: (
+  color: $color-white,
+  visited-color: $color-white,
+);
+
+// ---------- BUTTONS ----------
+$osb-btn: (
+  background-color: transparent,
+  border-color: transparent,
+  border-style: solid,
+  border-width: 1px,
+  border-radius: $border-radius,
+  box-shadow: $elevation-2,
+  color: $color-black,
+  cursor: pointer,
+  display: inline-block,
+  font-size: 1em,
+  font-weight: $font-weight-semi-bold,
+  line-height: 1,
+  margin: 0.25em 0 0.375em,
+  max-width: 100%,
+  padding-bottom: 0.6875rem,
+  padding-left: 1rem,
+  padding-right: 1rem,
+  padding-top: 0.6875rem,
+  text-align: center,
+  transition: all 0.2s ease-in-out,
+  user-select: none,
+  vertical-align: middle,
+  word-wrap: break-word,
+  z-index: 1,
+  hover-box-shadow: $elevation-3,
+  hover-color: $color-black,
+  hover-text-decoration: none,
+  hover-transform: translateY(calc(-3px + -1%)),
+  hover-transition: all 0.2s,
+  focus-box-shadow: 0 5px 11px -5px #000,
+  focus-outline: 0,
+  focus-transform: translateY(calc(-3px + -1%)),
+  active-box-shadow: 0 5px 8px -5px rgba(0, 0, 0, 0.5),
+  active-transform: translateY(0),
+  active-transition: all 0.1s,
+  disabled-box-shadow: $elevation-2,
+  disabled-cursor: not-allowed,
+  disabled-opacity: 0.5,
+  disabled-transform: none,
+  disabled-active-pointer-events: none,
+);
+
+$osb-btn--large: (
+  font-size: 1.125em,
+  padding-bottom: 0.875rem,
+  padding-left: 1.1875rem,
+  padding-right: 1.1875rem,
+  padding-top: 0.875rem,
+);
+
+$osb-btn--small: (
+  font-size: 0.875em,
+  margin: 0.5rem auto,
+  padding-bottom: 0.5rem,
+  padding-left: 0.5rem,
+  padding-right: 0.5rem,
+  padding-top: 0.5rem,
+);
+
+$osb-btn--monospaced: (
+  align-items: center,
+  box-shadow: none,
+  display: inline-flex,
+  height: 2.5rem,
+  justify-content: center,
+  line-height: 1,
+  padding: 0,
+  transform: none,
+  width: 2.5rem,
+  hover-box-shadow: none,
+  hover-transform: none,
+);
+
+$osb-btn--monospaced--large: (
+  height: 3rem,
+  width: 3rem,
+);
+
+$osb-btn--monospaced--small: (
+  height: 2rem,
+  width: 2rem,
+);
+
+$osb-btn--flat: (
+  margin-bottom: 0,
+  margin-top: 0,
+  transition: none,
+  hover-transform: none,
+  active-transform: none,
+  active-transition: none,
+);
+
+$osb-btn--primary: (
+  background-color: $color-action-default,
+  border-color: $color-action-default,
+  color: $color-white,
+  hover-background-color: $color-action-default-hover,
+  hover-border-color: $color-action-default-hover,
+  active-background-color: $color-action-default-active,
+  active-border-color: $color-action-default-active,
+);
+
+$osb-btn--secondary: (
+  background-color: $color-white,
+  border-color: $color-white,
+  color: $color-action-default,
+  hover-color: $color-action-default-hover,
+  active-color: $color-action-default-active,
+);
+
+$osb-btn--alternate: (
+  background-color: $color-accent-6,
+  border-color: $color-accent-6,
+  color: $color-white,
+  hover-background-color: #169545,
+  hover-border-color: #169545,
+  active-background-color: #127f3a,
+  active-border-color: #127f3a,
+);
+
+$osb-btn--plaintext: (
+  background-color: transparent,
+  box-shadow: none,
+  color: $color-action-default,
+  cursor: default,
+  display: inline-block,
+  font-size: 1.125rem,
+  font-weight: $font-weight-semi-bold,
+  max-width: 100%,
+  padding: 0.625rem 0.5rem,
+  word-wrap: break-word,
+  hover-box-shadow: none,
+);
+
+// ---------- CARDS ----------
+$osb-card: (
+  box-shadow: $elevation-2,
+  color: $color-black,
+  cursor: pointer,
+  margin-bottom: 0,
+  text-decoration: none,
+  transition: all 0.2s ease-in-out,
+  hover-background-color: $color-white,
+  hover-box-shadow: $elevation-3,
+  hover-color: $color-action-default-hover,
+  hover-text-decoration: none,
+  hover-transform: translateY(calc(-3px + -1%)),
+  hover-transition: all 0.2s,
+);

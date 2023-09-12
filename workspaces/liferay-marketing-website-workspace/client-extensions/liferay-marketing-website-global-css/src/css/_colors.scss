@@ -1,0 +1,9 @@
+@import 'colors-extendables';
+
+// Outputs utilities .color-* and .bg-* (e.g., .color-transparent,
+// .color-primary, .color-accent-1, .bg-transparent, .bg-primary, .bg-accent-1)
+@include color($color-primary-map);
+@include color($color-accent-map);
+@include color($color-neutral-map);
+@include color($color-action-map);
+@include color($color-function-map);

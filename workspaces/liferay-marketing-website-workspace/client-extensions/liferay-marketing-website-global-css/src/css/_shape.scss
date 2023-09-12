@@ -1,0 +1,7 @@
+@import 'shape-extendables';
+
+@each $border-radius-class, $border-radius-value in $border-radius-map {
+	.border-radius#{$border-radius-class} {
+		border-radius: $border-radius-value;
+	}
+}

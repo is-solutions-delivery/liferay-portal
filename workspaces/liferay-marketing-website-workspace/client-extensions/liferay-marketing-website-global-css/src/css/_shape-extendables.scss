@@ -1,0 +1,14 @@
+// border-radius[key]
+$border-radius-map: (
+	'-none': 0,
+	'-small': $border-radius-small,
+	'-medium': $border-radius,
+	'-large': $border-radius-large,
+	'-xlarge': $border-radius-xlarge
+);
+
+@each $border-radius-class, $border-radius-value in $border-radius-map {
+	%border-radius#{$border-radius-class} {
+		border-radius: $border-radius-value;
+	}
+}

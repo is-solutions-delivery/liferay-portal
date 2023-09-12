@@ -1,0 +1,49 @@
+$alignment-types-map: (
+	'align': align-items,
+	'align-content': align-content,
+	'justify': justify-content
+);
+
+$alignment-variables-map: (
+	'-baseline': baseline,
+	'-center': center,
+	'-end': flex-end,
+	'-space-around': space-around,
+	'-space-between': space-between,
+	'-start': flex-start,
+	'-stretch': stretch
+);
+
+@each $alignment-type-class, $alignment-type-value in $alignment-types-map {
+	@each $alignment-variable-class,
+		$alignment-variable-value in $alignment-variables-map
+	{
+		%#{$alignment-type-class}#{$alignment-variable-class} {
+			#{$alignment-type-value}: #{$alignment-variable-value};
+		}
+	}
+}
+
+$flex-direction-map: (
+	'-column': column,
+	'-column-reverse': column-reverse,
+	'-row': row,
+	'-row-reverse': row-reverse
+);
+
+@each $flex-direction-class, $flex-direction-value in $flex-direction-map {
+	%flex#{$flex-direction-class} {
+		flex-direction: #{$flex-direction-value};
+	}
+}
+
+$flex-wrap-map: (
+	'-wrap': wrap,
+	'-nowrap': nowrap
+);
+
+@each $flex-wrap-class, $flex-wrap-value in $flex-wrap-map {
+	%flex#{$flex-wrap-class} {
+		flex-wrap: #{$flex-wrap-value};
+	}
+}

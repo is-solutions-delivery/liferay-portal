@@ -1,0 +1,151 @@
+@mixin osb-btn($map) {
+	align-items: map-get($map, align-items);
+	background-color: map-get($map, background-color);
+	border-color: map-get($map, border-color);
+	border-style: map-get($map, border-style);
+	border-width: map-get($map, border-width);
+
+	border-bottom-left-radius: map-get($map, border-bottom-left-radius);
+	border-bottom-right-radius: map-get($map, border-bottom-right-radius);
+	border-radius: map-get($map, border-radius);
+	border-top-left-radius: map-get($map, border-top-left-radius);
+	border-top-right-radius: map-get($map, border-top-right-radius);
+
+	bottom: map-get($map, bottom);
+	box-shadow: map-get($map, box-shadow);
+	color: map-get($map, color);
+	cursor: map-get($map, cursor);
+	display: map-get($map, display);
+	flex: map-get($map, flex);
+	flex-basis: map-get($map, flex-basis);
+	flex-grow: map-get($map, flex-grow);
+	flex-shrink: map-get($map, flex-shrink);
+	font-size: map-get($map, font-size);
+	font-weight: map-get($map, font-weight);
+	height: map-get($map, height);
+	justify-content: map-get($map, justify-content);
+	left: map-get($map, left);
+	line-height: map-get($map, line-height);
+
+	margin: map-get($map, margin);
+	margin-bottom: map-get($map, margin-bottom);
+	margin-left: map-get($map, margin-left);
+	margin-right: map-get($map, margin-right);
+	margin-top: map-get($map, margin-top);
+
+	max-width: map-get($map, max-width);
+	opacity: map-get($map, opacity);
+	overflow: map-get($map, overflow);
+	padding: map-get($map, padding);
+	padding-bottom: map-get($map, padding-bottom);
+	padding-left: map-get($map, padding-left);
+	padding-right: map-get($map, padding-right);
+	padding-top: map-get($map, padding-top);
+	position: map-get($map, position);
+	right: map-get($map, right);
+	text-align: map-get($map, text-align);
+	text-decoration: map-get($map, text-decoration);
+	top: map-get($map, top);
+	transform: map-get($map, transform);
+	transition: map-get($map, transition);
+	user-select: map-get($map, user-select);
+	vertical-align: map-get($map, vertical-align);
+	white-space: map-get($map, white-space);
+	width: map-get($map, width);
+	word-wrap: map-get($map, word-wrap);
+	z-index: map-get($map, z-index);
+
+	$visited-color: if(map-get($map, visited-color), map-get($map, visited-color), map-get($map, color));
+
+	&:visited {
+		color: $visited-color;
+	}
+
+	$hover-background-color: map-get($map, hover-background-color);
+	$hover-border-color: map-get($map, hover-border-color);
+	$hover-box-shadow: map-get($map, hover-box-shadow);
+	$hover-color: if(map-get($map, hover-color), map-get($map, hover-color), map-get($map, color));
+	$hover-opacity: map-get($map, hover-opacity);
+	$hover-text-decoration: map-get($map, hover-text-decoration);
+	$hover-transition: map-get($map, hover-transition);
+	$hover-transform: map-get($map, hover-transform);
+	$hover-z-index: map-get($map, hover-z-index);
+
+	&:hover {
+		background-color: $hover-background-color;
+		border-color: $hover-border-color;
+		box-shadow: $hover-box-shadow;
+		color: $hover-color;
+		opacity: $hover-opacity;
+		text-decoration: $hover-text-decoration;
+		transform: $hover-transform;
+		transition: $hover-transition;
+		z-index: $hover-z-index;
+	}
+
+	$focus-background-color: if(map-get($map, focus-background-color), map-get($map, focus-background-color), $hover-background-color);
+	$focus-border-color: if(map-get($map, focus-border-color), map-get($map, focus-border-color), $hover-border-color);
+	$focus-box-shadow: if(map-get($map, focus-box-shadow), map-get($map, focus-box-shadow), $hover-box-shadow);
+	$focus-color: if(map-get($map, focus-color), map-get($map, focus-color), $hover-color);
+	$focus-opacity: if(map-get($map, focus-opacity), map-get($map, focus-opacity), $hover-opacity);
+	$focus-outline: map-get($map, focus-outline);
+	$focus-transition: if(map-get($map, focus-transition), map-get($map, focus-transition), $hover-transition);
+	$focus-transform: if(map-get($map, focus-transform), map-get($map, focus-transform), $hover-transform);
+	$focus-z-index: if(map-get($map, focus-z-index), map-get($map, focus-z-index), $hover-z-index);
+
+	&:focus,
+	&.osb-btn--focus {
+		background-color: $focus-background-color;
+		border-color: $focus-border-color;
+		box-shadow: $focus-box-shadow;
+		color: $focus-color;
+		opacity: $focus-opacity;
+		outline: $focus-outline;
+		transform: $focus-transform;
+		transition: $focus-transition;
+		z-index: $focus-z-index;
+	}
+
+	$active-background-color: map-get($map, active-background-color);
+	$active-border-color: map-get($map, active-border-color);
+	$active-box-shadow: map-get($map, active-box-shadow);
+	$active-color: if(map-get($map, active-color), map-get($map, active-color), map-get($map, color));
+	$active-opacity: map-get($map, active-opacity);
+	$active-transition: map-get($map, active-transition);
+	$active-transform: map-get($map, active-transform);
+	$active-z-index: map-get($map, active-z-index);
+
+	&:active,
+	&.osb-btn--active {
+		background-color: $active-background-color;
+		border-color: $active-border-color;
+		box-shadow: $active-box-shadow;
+		color: $active-color;
+		opacity: $active-opacity;
+		transform: $active-transform;
+		transition: $active-transition;
+		z-index: $active-z-index;
+
+		&:focus {
+			box-shadow: map-get($map, active-focus-box-shadow);
+		}
+	}
+
+	&:disabled,
+	&.osb-btn--disabled {
+		background-color: if(map-get($map, disabled-background-color), map-get($map, disabled-background-color), map-get($map, background-color));
+		border-color: if(map-get($map, disabled-border-color), map-get($map, disabled-border-color), map-get($map, border-color));
+		box-shadow: if(map-get($map, disabled-box-shadow), map-get($map, disabled-box-shadow), map-get($map, box-shadow));
+		color: if(map-get($map, disabled-color), map-get($map, disabled-color), map-get($map, color));
+		cursor: map-get($map, disabled-cursor);
+		opacity: map-get($map, disabled-opacity);
+		pointer-events: map-get($map, disabled-pointer-events);
+		transform: map-get($map, disabled-transform);
+		transition: map-get($map, disabled-transition);
+		z-index: map-get($map, disabled-z-index);
+
+		&:active {
+			pointer-events: map-get($map, disabled-active-pointer-events);
+		}
+	}
+}
