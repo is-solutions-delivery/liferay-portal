@@ -498,26 +498,6 @@ merge-stream@^2.0.0:
   resolved "https://registry.yarnpkg.com/merge-stream/-/merge-stream-2.0.0.tgz#52823629a14dd00c9770fb6ad47dc6310f2c1f60"
   integrity sha512-abv/qOcuPfk3URPfDzmZU1LKmuw8kT+0nIHvKrKgFrwifol/doWcdA4ZqsWQ8ENrFKkd67Mfpo/LovbIUsbt3w==
 
-metal-dom@^2.16.8:
-  version "2.16.8"
-  resolved "https://registry.yarnpkg.com/metal-dom/-/metal-dom-2.16.8.tgz#e3bdfd341ca2f6aae5daba39952cf1ba5a8861a6"
-  integrity sha512-wmLcuaJ63W/LMT/GgZhqpUefFOVDXlQLI+NJvHJUduIc1XSQOEpSH3OTlzxFsNeMxWEzeC2VAZuKJlrIjNQvDA==
-  dependencies:
-    metal "^2.16.8"
-    metal-events "^2.16.8"
-
-metal-events@^2.16.8:
-  version "2.16.8"
-  resolved "https://registry.yarnpkg.com/metal-events/-/metal-events-2.16.8.tgz#14894c9e3a41dbe527684ff90c1511760cc9e533"
-  integrity sha512-Aa9ozlChOuJT0rLMSSpV7V+0RAk+TGhoe8Khlqh9iaJUPWlofptpgTTlagoqNxTm13iFNm6b2+mZauWM65iBlQ==
-  dependencies:
-    metal "^2.16.8"
-
-metal@^2.16.8:
-  version "2.16.8"
-  resolved "https://registry.yarnpkg.com/metal/-/metal-2.16.8.tgz#7121b2ee18f5165f637d69212ce41ef6e6bcb63c"
-  integrity sha512-5XN1DKLPEhgHCql8spIl4d8H+M6DQVNWAkagEryh+Pup3VxQe2v5KqEL7huFhE0cBXJiEq/RtHRBMqwjxOsV1g==
-
 mime-db@1.52.0:
   version "1.52.0"
   resolved "https://registry.yarnpkg.com/mime-db/-/mime-db-1.52.0.tgz#bbabcdc02859f4987301c856e3387ce5ec43bf70"
