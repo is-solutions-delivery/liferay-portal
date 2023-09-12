@@ -42,9 +42,10 @@ public interface QuestionsConfiguration {
 	public boolean showCardsForTopicNavigation();
 
 	@Meta.AD(
-		deflt = "false", name = "show-feature-request-text", required = false
+		deflt = "false", name = "replace-question-to-feature-request",
+		required = false
 	)
-	public boolean showFeatureRequestText();
+	public boolean replaceQuestionToFeatureRequest();
 
 	@Meta.AD(
 		deflt = "", name = "set-base-path-for-history-router", required = false

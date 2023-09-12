@@ -45,7 +45,7 @@
 			).put(
 				"showCardsForTopicNavigation", questionsConfiguration.showCardsForTopicNavigation()
 			).put(
-				"showFeatureRequestText", questionsConfiguration.showFeatureRequestText()
+				"replaceQuestionToFeatureRequest", questionsConfiguration.replaceQuestionToFeatureRequest()
 			).put(
 				"siteKey", String.valueOf(themeDisplay.getScopeGroupId())
 			).put(

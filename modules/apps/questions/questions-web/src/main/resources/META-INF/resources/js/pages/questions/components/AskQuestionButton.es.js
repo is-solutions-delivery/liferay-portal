@@ -20,7 +20,7 @@ export default function AskQuestionButton({navigateToNewQuestion}) {
 				onClick={navigateToNewQuestion}
 			>
 				{Liferay.FeatureFlags['LPS-185892'] &&
-				context.showFeatureRequestText
+				context.replaceQuestionToFeatureRequest
 					? Liferay.Language.get('feature-request')
 					: Liferay.Language.get('ask-question')}
 			</ClayButton>

@@ -43,13 +43,13 @@ export default withRouter(
 		});
 
 		const BuildTitleButton = () => {
-			if (context.trustedUser && !context.showFeatureRequestText) {
+			if (context.trustedUser && !context.replaceQuestionToFeatureRequest) {
 				return Liferay.Language.get('update-your-question');
 			}
 
 			if (
 				Liferay.FeatureFlags['LPS-185892'] &&
-				context.showFeatureRequestText
+				context.replaceQuestionToFeatureRequest
 			) {
 				return Liferay.Language.get('update-your-request');
 			}
