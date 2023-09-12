@@ -4,8 +4,8 @@
 	border-style: map-get($map, border-style);
 	border-width: map-get($map, border-width);
 	box-shadow: map-get($map, box-shadow);
-	cursor: map-get($map, cursor);
 	color: map-get($map, color);
+	cursor: map-get($map, cursor);
 	display: map-get($map, display);
 	flex-basis: map-get($map, flex-basis);
 	flex-direction: map-get($map, flex-direction);

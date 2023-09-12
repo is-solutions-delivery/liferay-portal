@@ -1,7 +1,7 @@
 assemble:
-  - from: build
-    into: static
+    - from: build
+      into: static
 liferay-marketing-website-global-css:
-  name: Liferay Marketing Website Global CSS
-  type: globalCSS
-  url: "index.css"
+    name: Liferay Marketing Website Global CSS
+    type: globalCSS
+    url: "index.css"

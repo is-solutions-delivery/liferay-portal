@@ -1,9 +1,9 @@
 {
-  "private": true,
-  "workspaces": {
-    "packages": [
-      "client-extensions/liferay-marketing-website-global-js",
-      "client-extensions/liferay-marketing-website-global-css"
-    ]
-  }
+	"private": true,
+	"workspaces": {
+		"packages": [
+			"client-extensions/liferay-marketing-website-global-js",
+			"client-extensions/liferay-marketing-website-global-css"
+		]
+	}
 }

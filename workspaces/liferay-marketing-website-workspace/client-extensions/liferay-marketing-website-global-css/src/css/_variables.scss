@@ -107,10 +107,10 @@ $shadow-color-3: rgba(0, 0, 0, 0.06);
 $elevation-values: (1, 2, 3, 4, 6, 8, 11, 15, 24);
 
 @function elevation($n) {
-  @return 0px ($n - 1) * 0.3 + 0.5px $n * 0.35 + 3px ($n - 1) * -0.33px
+  @return 0 ($n - 1) * 0.3 + 0.5px $n * 0.35 + 3px ($n - 1) * -0.33px
       $shadow-color-1,
-    0px $n * 1px $n * 1.5px ($n - 1) * 0.15px rgba(0, 0, 0, 0.03 + ($n * 0.002)),
-    0px $n * 0.3 + 2px $n * 2px $n * 0.4 - 1px $shadow-color-3;
+    0 $n * 1px $n * 1.5px ($n - 1) * 0.15px rgba(0, 0, 0, 0.03 + ($n * 0.002)),
+    0 $n * 0.3 + 2px $n * 2px $n * 0.4 - 1px $shadow-color-3;
 }
 
 $elevation-1: elevation(nth($elevation-values, 1));
@@ -156,10 +156,10 @@ $container-horizontal-padding-for-tablet-landscape-up: 4rem;
 $container-gutter-padding-for-tablet-landscape-up: 1rem;
 
 // ---------- TYPOGRAPHY ----------
-$font-family-sans: 'Source Sans Pro', Tahoma, 'Trebuchet MS', sans-serif;
-$font-family-serif: 'Source Serif Pro', Georgia, Cambria, 'Times New Roman',
-  Times, serif;
-$font-family-mono: 'Source Code Pro', Menlo, monospace;
+$font-family-sans: 'Source Sans Pro', tahoma, 'Trebuchet MS', sans-serif;
+$font-family-serif: 'Source Serif Pro', georgia, cambria, 'Times New Roman',
+  times, serif;
+$font-family-mono: 'Source Code Pro', menlo, monospace;
 
 $font-weight-bold: 700;
 $font-weight-extra-light: 200;

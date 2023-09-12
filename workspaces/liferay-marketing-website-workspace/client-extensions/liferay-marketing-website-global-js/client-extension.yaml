@@ -1,7 +1,7 @@
 assemble:
-  - from: build
-    into: static
+    - from: build
+      into: static
 liferay-marketing-website-global-js:
-  name: Liferay Marketing Website Global JS
-  type: globalJS
-  url: "*.js"
+    name: Liferay Marketing Website Global JS
+    type: globalJS
+    url: "*.js"
