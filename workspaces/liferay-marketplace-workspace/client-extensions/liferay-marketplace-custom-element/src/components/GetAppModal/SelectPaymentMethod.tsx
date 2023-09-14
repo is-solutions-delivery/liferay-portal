@@ -8,7 +8,7 @@ import {Input} from '../../components/Input/Input';
 import {BillingAddress} from './BillingAddress';
 import {PaymentMethodMode} from './PaymentMethodMode';
 import {PaymentMethodSelector} from './PaymentMethodSelector';
-import {TrialTimeline} from './TrialTimeline';
+import { TrialTimeline } from './LicenseSelector/TrialTimeline/TrialTimeline';
 
 export function SelectPaymentMethod({
 	addresses,

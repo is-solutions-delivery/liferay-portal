@@ -360,11 +360,25 @@ type PermissionDescription = {
 type SKU = {
 	cost: number;
 	customFields?: CustomField[];
+	depth?: number;
+	discontinued?: boolean;
+	displayDate?: string;
 	externalReferenceCode: string;
+	gtin?: string;
+  height?: number;
 	id: number;
+	manufacturerPartNumber?: string;
 	price: number;
+	productId?: number;
+	productName?: Record<string, string>;
+	promoPrice?: number;
+	published?: boolean;
+  purchasable?: boolean;
 	sku: string;
 	skuOptions: {key: string; value: string}[];
+	unspsc?: string;
+  weight?: number;
+	width?: number;
 };
 
 type ProductSpecification = {
