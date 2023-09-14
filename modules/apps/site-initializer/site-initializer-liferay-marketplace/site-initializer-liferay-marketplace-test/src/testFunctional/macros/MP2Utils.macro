@@ -1,5 +1,5 @@
 definition {
-	
+
 	macro assertDetailsUser {
 		for (var details : list ${detailsList}) {
 			var key_text = ${details};
@@ -22,7 +22,6 @@ definition {
 			recipient = ${recipient});
 
 		var userPassword = selenium.getText("MP2Utils#MOCKMOCK_HTML_BODY_FORMATTED");
-
 		var key_bodyLink = ${bodyLink};
 
 		AssertClick(
