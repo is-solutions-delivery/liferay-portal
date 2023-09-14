@@ -1,0 +1,21 @@
+.license-selector-timeline{
+  .license-selector {
+    display: flex;
+    gap: 0 16px;
+  
+    .card-button {
+      width: 100%;
+      .card-icon {
+        width: 16px;
+        height: 16px;
+        svg {
+          height: 100%;
+          width: 100%;
+          filter: invert(21%) sepia(91%) saturate(3572%) hue-rotate(220deg)
+            brightness(100%) contrast(101%);
+        }
+      }
+    }
+  
+  }
+}

@@ -3,16 +3,17 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayButton from '@clayui/button';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import ClayButton from "@clayui/button";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
-import { getSiteURL } from '../../components/InviteMemberModal/services';
-import { Liferay } from '../../liferay/liferay';
-import { getUrlParam } from '../../utils/getUrlParam';
-import AccountSelection from './components/AccountSelection';
-import ProductCard from './components/ProductCard';
-import { StepType } from './enums/stepType';
+import { getSiteURL } from "../../components/InviteMemberModal/services";
+import { Liferay } from "../../liferay/liferay";
+import { getUrlParam } from "../../utils/getUrlParam";
+import AccountSelection from "./components/AccountSelection";
+import ProductCard from "./components/ProductCard";
+import { StepType } from "./enums/stepType";
+import { LicenseSelector } from "../../components/GetAppModal/LicenseSelector/LicenseSelector";
 
 type StepComponent = {
   [key in StepType]?: JSX.Element;
@@ -27,17 +28,17 @@ const sectionProperties = {
   [StepType.ACCOUNT]: {
     backStep: StepType.ACCOUNT,
     nextStep: StepType.LICENSES,
-    title: 'Account Selection',
+    title: "Account Selection",
   },
   [StepType.LICENSES]: {
     backStep: StepType.ACCOUNT,
     nextStep: StepType.PAYMENT,
-    title: 'License Selection',
+    title: "License Selection",
   },
   [StepType.PAYMENT]: {
     backStep: StepType.LICENSES,
     nextStep: StepType.PAYMENT,
-    title: 'Payment Method',
+    title: "Payment Method",
   },
 };
 
@@ -72,20 +73,22 @@ const GetAPPFlow = () => {
     [StepType.ACCOUNT]: (
       <AccountSelection
         onSelectAccount={(account: Account) => {
-          setValue('selectedAccount', account);
+          setValue("selectedAccount", account);
           setShowAccount(true);
         }}
       />
     ),
-    [StepType.LICENSES]: <h1>ss</h1>,
+    [StepType.LICENSES]: (
+      <LicenseSelector selectedProduct={getValues("product")} />
+    ),
   };
 
   return (
     <>
       <ProductCard
-        productId={Number(getUrlParam('productId'))}
-        selectedAccount={getValues('selectedAccount')}
-        setProductToForm={(product: Product) => setValue('product', product)}
+        productId={Number(getUrlParam("productId"))}
+        selectedAccount={getValues("selectedAccount")}
+        setProductToForm={(product: Product) => setValue("product", product)}
         showAccount={showAccount}
       ></ProductCard>
       <div className="border d-flex flex-column mt-7 p-5 rounded">
