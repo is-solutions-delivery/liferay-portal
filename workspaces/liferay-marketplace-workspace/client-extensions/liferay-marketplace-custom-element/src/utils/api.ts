@@ -247,6 +247,52 @@ export async function getAccountPostalAddressesByAccountId(accountId: number) {
 	return (await response.json()) as {items: AccountPostalAddresses[]};
 }
 
+export async function createCart({
+  body,
+  channelId,
+}: {
+  body: object;
+  channelId: number;
+}) {
+  const cartResponse = await fetch(
+    `${baseURL}/o/headless-commerce-delivery-cart/v1.0/channels/${channelId}/carts`,
+    {
+      body: JSON.stringify(body),
+      headers,
+      method: "POST",
+    }
+  );
+  return await cartResponse.json();
+}
+
+export async function updateCart({
+  body,
+  cartId,
+}: {
+  body: object;
+  cartId: number;
+}) {
+  const cartResponse = await fetch(
+    `${baseURL}/o/headless-commerce-delivery-cart/v1.0/carts/${cartId}`,
+    {
+      body: JSON.stringify(body),
+      headers,
+      method: "PATCH",
+    }
+  );
+  return await cartResponse.json();
+}
+
+export async function deleteCart(cartId:number){
+	await fetch(
+		`${baseURL}/o/headless-commerce-delivery-cart/v1.0/carts/${cartId}`,
+		{
+			headers,
+			method: 'DELETE',
+		}
+	);
+}
+
 export async function getCart(cartId: number) {
 	const cartResponse = await fetch(
 		`${baseURL}/o/headless-commerce-delivery-cart/v1.0/carts/${cartId}`,
@@ -269,6 +315,52 @@ export async function getCartItems(cartId: number) {
 	);
 
 	return await cartResponse.json();
+}
+
+export async function createCartItems({
+	body,
+	cartId,
+  }: {
+	body: object;
+	cartId: number;
+  }){
+	const cartResponse = await fetch(
+		`${baseURL}/o/headless-commerce-delivery-cart/v1.0/carts/${cartId}/items`,
+		{
+		  body: JSON.stringify(body),
+		  headers,
+		  method: "POST",
+		}
+	  );
+	  return await cartResponse.json();
+}
+
+export async function updateCartItem({
+	body,
+	cartItemId,
+  }: {
+	body: object;
+	cartItemId: number;
+  }){
+	const cartResponse = await fetch(
+		`${baseURL}/o/headless-commerce-delivery-cart/v1.0/cart-items/${cartItemId}`,
+		{
+		  body: JSON.stringify(body),
+		  headers,
+		  method: "PATCH",
+		}
+	  );
+	  return await cartResponse.json();
+  }
+
+export async function deleteCartItem(cartItemId:number){
+	await fetch(
+		`${baseURL}/o/headless-commerce-delivery-cart/v1.0/cart-items/${cartItemId}`,
+		{
+			headers,
+			method: 'DELETE',
+		}
+	);
 }
 
 export async function getCatalogs() {
