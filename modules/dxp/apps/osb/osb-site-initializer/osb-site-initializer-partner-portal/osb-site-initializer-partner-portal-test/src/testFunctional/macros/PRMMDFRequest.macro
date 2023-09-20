@@ -354,9 +354,17 @@ definition {
 	}
 
 	macro goToMDF {
+		if (isSet(campaignName)) {
 		Click(
 			key_campaignName = ${campaignName},
 			locator1 = "PRMMDFRequest#REQUEST_ID");
+	}
+
+		if (isSet(requestID)) {
+			Click(
+				key_requestID = ${requestID},
+				locator1 = "PRMMDFRequest#REQUEST_ID");
+		}
 	}
 
 	macro insertDate {
@@ -809,10 +817,23 @@ definition {
 	}
 
 	macro searchMDF {
+		WaitForElementPresent(
+			key_placeHolder = "Search",
+			locator1 = "TextInput#ANY_PLACEHOLDER");
+
+		if (isSet(campaignName)) {
 		Type(
 			key_placeHolder = "Search",
 			locator1 = "TextInput#ANY_PLACEHOLDER",
 			value1 = ${campaignName});
+		}
+
+		if (isSet(requestID)) {
+			Type(
+				key_placeHolder = "Search",
+				locator1 = "TextInput#ANY_PLACEHOLDER",
+				value1 = ${requestID});
+		}
 
 		KeyPress(
 			key_placeHolder = "Search",
