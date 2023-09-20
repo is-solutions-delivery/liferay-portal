@@ -29,7 +29,7 @@ const ProductCard = ({
 			{
 				productId &&
 					getProductById({
-						nestedFields: 'skus',
+						nestedFields: 'skus, productChannels, productSpecifications',
 						productId,
 					}).then((item: Product) => {
 						setProduct([item]);

@@ -4,16 +4,27 @@
  */
 
 import ClayButton from "@clayui/button";
-import { useState } from "react";
+import { useEffect,useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { LicenseSelector } from "../../components/GetAppModal/LicenseSelector/LicenseSelector";
 import { getSiteURL } from "../../components/InviteMemberModal/services";
 import { Liferay } from "../../liferay/liferay";
+import { createCart, patchOrderByERC, postCheckoutCart } from "../../utils/api";
 import { getUrlParam } from "../../utils/getUrlParam";
 import AccountSelection from "./components/AccountSelection";
 import ProductCard from "./components/ProductCard";
 import { StepType } from "./enums/stepType";
+
+enum ProductFields {
+	SPECIFICATIONFREE = 'free',
+}
+
+type ProductSku = {
+  productId: number | undefined
+  skuId: number
+  specification: string
+}
 
 type StepComponent = {
 	[key in StepType]?: JSX.Element;
@@ -42,9 +53,10 @@ const sectionProperties = {
   },
 };
 
-const GetAppFlow = () => {
-	const [step, setStep] = useState<StepType>(StepType.ACCOUNT);
-	const [showAccount, setShowAccount] = useState<Boolean>(false);
+const GetAPPFlow = () => {
+  const [step, setStep] = useState<StepType>(StepType.ACCOUNT);
+  const [showAccount, setShowAccount] = useState<Boolean>(false);
+  const [productSku, setProductSku] = useState<ProductSku>({ productId: 0, skuId: 0, specification: ""});
 
 	const {getValues, setValue} = useForm<getAppProps>({
 		defaultValues: {
@@ -83,6 +95,94 @@ const GetAppFlow = () => {
     ),
   };
 
+  const clearAlphanumericString = (value: string) => {
+    return value.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+  };
+
+  const getProductSpecification = () => {
+
+    const productSpecifications = getValues('product')?.productSpecifications;
+    let productSpecificationName = "";
+    if(productSpecifications){
+      for (const productSpecificationItem of productSpecifications) {
+        productSpecificationName = productSpecificationItem?.value?.en_US;
+        break;
+      }
+      
+      return clearAlphanumericString(productSpecificationName)
+  
+    }
+  }
+
+  const specification = getProductSpecification();
+  
+  useEffect(() => {
+    
+    if (specification === ProductFields.SPECIFICATIONFREE) {
+      const productSkus = getValues('product')?.skus;
+      const skuItem = (productSkus || [])[0];     
+      const { id: skuId, productId } = skuItem;
+      
+      setProductSku({ productId, skuId, specification });
+    }
+
+  }, [specification]);
+    
+
+  const getChannelId = () => {
+
+    const productChannels = getValues('product')?.productChannels;
+
+    const channel = (productChannels || [])[0];
+
+    return channel ? channel.channelId : undefined;
+    
+  };
+ 
+  const cartCriation = async () => {
+
+    const channelId = getChannelId();
+    const account = getValues('selectedAccount');  
+
+    const ObjCartCreation = {
+      body: {
+        accountId: account?.id,
+        currencyCode: "USD",
+        cartItems: [
+        {
+          productId: productSku.productId,
+          quantity: 1,
+          skuId: productSku.skuId
+        }
+      ]
+    },
+      channelId: Number(channelId)
+    }
+
+    const cartResponse = await createCart(ObjCartCreation)
+
+    const cartCheckoutResponse = await postCheckoutCart({
+      cartId: cartResponse.id,
+    })
+
+    const newOrderValues = {
+      orderStatus: 6,
+    };
+
+    const cartChangeStatusResponse =  await patchOrderByERC(
+      cartCheckoutResponse.orderUUID,
+      newOrderValues
+    );
+      
+    if(cartChangeStatusResponse.ok){
+      console.log("NExt Step");
+
+      // sectionProperties[StepType.ACCOUNT].nextStep = StepType.NEXTSTEPS;
+    }
+      
+  }
+  
+
   return (
     <>
       <ProductCard
@@ -102,6 +202,7 @@ const GetAppFlow = () => {
           <ClayButton displayType={null} onClick={() => onCancel()}>
             Cancel
           </ClayButton>
+          
           <div className="align-self-end">
             {sectionProperties[step].backStep !== step && (
               <ClayButton
@@ -111,16 +212,17 @@ const GetAppFlow = () => {
                 Back
               </ClayButton>
             )}
-            {sectionProperties[step].nextStep && (
-              <ClayButton
-                className="ml-5"
-                onClick={() => {
-                  onContinue(sectionProperties[step].nextStep);
-                }}
-              >
-                Continue
-              </ClayButton>
-            )}
+            <ClayButton
+              className="ml-5"
+              disabled={
+                productSku.productId !== 0 ? false : true 
+              }
+              onClick={() => {
+                productSku.specification === ProductFields.SPECIFICATIONFREE ? cartCriation() : onContinue(sectionProperties[step].nextStep);
+              }}
+            >
+              Get App
+            </ClayButton>
           </div>
         </div>
       </div>
