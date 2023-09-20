@@ -21,10 +21,16 @@ export default function () {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const getRenewalsData = async () => {
+		const todayDate = new Date();
+		const todayDateISO = todayDate.toISOString().split('T')[0];
+
+		todayDate.setDate(todayDate.getDate() + 30);
+		const todayDate30Days = todayDate.toISOString().split('T')[0];
+
 		setIsLoading(true);
 		// eslint-disable-next-line @liferay/portal/no-global-fetch
 		const response = await fetch(
-			'/o/c/opportunitysfs?pageSize=200&sort=closeDate:asc',
+			`/o/c/opportunitysfs?pageSize=200&sort=closeDate:asc&filter=type eq 'Existing Business' and stage ne 'Closed Lost' and stage ne 'Disqualified' and stage ne 'Rejected' and stage ne 'Rolled into another opportunity' and closeDate ge ${todayDateISO} and closeDate le ${todayDate30Days}`,
 			{
 				headers: {
 					'accept': 'application/json',
@@ -56,11 +62,9 @@ export default function () {
 	const getCurrentStatusColor = (item: any) => {
 		if (item?.expirationDays <= 5) {
 			return status[5];
-		}
-		else if (item?.expirationDays <= 15) {
+		} else if (item?.expirationDays <= 15) {
 			return status[15];
-		}
-		else if (item?.expirationDays <= 30) {
+		} else if (item?.expirationDays <= 30) {
 			return status[30];
 		}
 	};
