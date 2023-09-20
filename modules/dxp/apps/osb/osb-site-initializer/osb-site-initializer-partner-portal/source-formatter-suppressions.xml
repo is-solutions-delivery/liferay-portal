@@ -3,6 +3,6 @@
 <suppressions>
 	<source-check>
 		<suppress checks="CDNCheck" files="build.gradle" />
-		<suppress checks="JSONPackageJSONDependencyVersionCheck" files="extra/remote-app/package\.json" />
+		<suppress checks="JSONPackageJSONDependencyVersionCheck" files="workspaces/liferay-partner-workspace/client-extensions/liferay-partner-custom-element/package\.json" />
 	</source-check>
 </suppressions>
