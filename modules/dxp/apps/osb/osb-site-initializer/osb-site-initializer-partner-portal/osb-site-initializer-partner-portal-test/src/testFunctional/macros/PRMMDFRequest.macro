@@ -92,13 +92,30 @@ definition {
 
 		ScrollWebElementIntoView(locator1 = "Button#SUBMIT");
 
-		Button.click(button = "Submit");
+		if (isSet(saveAsDraft)) {
+			Button.click(button = "Save as Draft");
+		} 
+		else {
+			Button.click(button = "Submit");
 
-		WaitForPageLoad();
+			WaitForPageLoad();
 
-		Alert.viewSuccessMessage();
+			Alert.viewSuccessMessage();
+		}
 	}
 
+	macro deleteRequest {
+		Button.click(button = "Delete");
+
+		Confirm(value1 = "Are you sure?");
+
+		PRMMDFRequest.searchMDF(requestID = ${firstID});
+
+		AssertElementNotPresent(
+			key_campaignName = "Company Name 1",
+			locator1 = "PRMMDFRequest#REQUEST_ID");
+
+	}
 	macro editActivity {
 		Click(
 			key_activityName = ${activityName},
@@ -353,12 +370,24 @@ definition {
 		return ${fieldDigits};
 	}
 
+	macro getRequestID {
+		var key_index = ${requestIndex};
+
+		WaitForElementPresent(locator1 = "PRMMDFRequest#REQUEST_ID_INDEX");
+
+		var requestID = selenium.getText("PRMMDFRequest#REQUEST_ID_INDEX");
+
+		var requestID = StringUtil.extractLast(${requestID}, "-");
+
+		return ${requestID};
+	}
+
 	macro goToMDF {
 		if (isSet(campaignName)) {
-		Click(
-			key_campaignName = ${campaignName},
-			locator1 = "PRMMDFRequest#REQUEST_ID");
-	}
+			Click(
+				key_campaignName = ${campaignName},
+				locator1 = "PRMMDFRequest#REQUEST_ID");
+		}
 
 		if (isSet(requestID)) {
 			Click(
@@ -822,10 +851,10 @@ definition {
 			locator1 = "TextInput#ANY_PLACEHOLDER");
 
 		if (isSet(campaignName)) {
-		Type(
-			key_placeHolder = "Search",
-			locator1 = "TextInput#ANY_PLACEHOLDER",
-			value1 = ${campaignName});
+			Type(
+				key_placeHolder = "Search",
+				locator1 = "TextInput#ANY_PLACEHOLDER",
+				value1 = ${campaignName});
 		}
 
 		if (isSet(requestID)) {
