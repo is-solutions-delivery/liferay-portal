@@ -94,7 +94,7 @@ definition {
 
 		if (isSet(saveAsDraft)) {
 			Button.click(button = "Save as Draft");
-		} 
+		}
 		else {
 			Button.click(button = "Submit");
 
@@ -114,8 +114,8 @@ definition {
 		AssertElementNotPresent(
 			key_campaignName = "Company Name 1",
 			locator1 = "PRMMDFRequest#REQUEST_ID");
-
 	}
+
 	macro editActivity {
 		Click(
 			key_activityName = ${activityName},
@@ -352,6 +352,18 @@ definition {
 		return ${nextDayDate};
 	}
 
+	macro getRequestID {
+		var key_index = ${requestIndex};
+
+		WaitForElementPresent(locator1 = "PRMMDFRequest#REQUEST_ID_INDEX");
+
+		var requestID = selenium.getText("PRMMDFRequest#REQUEST_ID_INDEX");
+
+		var requestID = StringUtil.extractLast(${requestID}, "-");
+
+		return ${requestID};
+	}
+
 	macro getValueByFieldName {
 		Click.pauseClickAt(
 			key_fieldName = ${fieldName},
@@ -368,18 +380,6 @@ definition {
 		var fieldDigits = StringUtil.extractDigits(${fieldValue});
 
 		return ${fieldDigits};
-	}
-
-	macro getRequestID {
-		var key_index = ${requestIndex};
-
-		WaitForElementPresent(locator1 = "PRMMDFRequest#REQUEST_ID_INDEX");
-
-		var requestID = selenium.getText("PRMMDFRequest#REQUEST_ID_INDEX");
-
-		var requestID = StringUtil.extractLast(${requestID}, "-");
-
-		return ${requestID};
 	}
 
 	macro goToMDF {
