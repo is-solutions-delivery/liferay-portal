@@ -57,16 +57,15 @@ definition {
 		}
 	}
 
-	// tearDown {
-	// 	var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-	// 	if (${testLiferayVirtualInstance} == "true") {
-	// 		PortalInstances.tearDownCP();
-	// 	}
-	// 	else {
-	// 		PRMUtils.tearDown();
-	// 	}
-	// }
+	//tearDown {
+	//	var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
+	//	if (${testLiferayVirtualInstance} == "true") {
+	//		PortalInstances.tearDownCP();
+	//}
+	//	else {
+	//		PRMUtils.tearDown();
+	//}
+	//}
 
 	@description = "This is a test for LPS-175292. Verify that is possible to export all visible Claims"
 	@priority = 4
@@ -506,6 +505,43 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-195725. Verify that it's possible to delete the MDF Claim while in draft status"
+	@priority = 4
+	test PMUUserCanDeleteMDFClaimInDraftStatus {
+		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
+
+		task ("Given that the PMU user goes to the created MDF") {
+			PRMNavigator.openSitePage(pageName = "MDF Requests");
+
+			WaitForElementPresent(
+				key_campaignName = "Campaign Name",
+				locator1 = "PRMMDFRequest#REQUEST_ID");
+
+			PRMMDFRequest.goToMDF(campaignName = "Campaign Name");
+		}
+
+		task ("And creates a draft Claim") {
+			PRMMDFClaim.createNewClaim(
+				listLeads = "Document_1.xlsx",
+				reimbursementInvoice = "Document_1.png",
+				saveAsDraft = "true",
+				thirdInvoice = "Document_1.png");
+
+			PRMMDFClaim.getClaimIdOnDetailPage(index = 1);
+		}
+
+		task ("When the PMU goes to the created draft Claim") {
+			PRMNavigator.gotoClaim(claimId = ${staticClaimId1});
+		}
+
+		task ("Then the PMU will be able to delete the Claim") {
+			PRMMDFClaim.deleteClaim(
+				claimId = ${staticClaimId1},
+				claimIndex = 1);
+		}
+	}
+
 	@description = "This is a test for LPS-179371. Verify that the Total Claim Amount reflects the value claimed per budget"
 	@priority = 5
 	test TotalClaimAmountReflectsBudgetValue {
@@ -546,42 +582,5 @@ definition {
 				expected = ${expectedTotalClaimAmountValue});
 		}
 	}
-
-	@description = "This is a test for LPS-195725. Verify that it's possible to delete the MDF Claim while in draft status"
-    @priority = 4
-    test PMUUserCanDeleteMDFClaimInDraftStatus {
-        property test.liferay.virtual.instance = "false";
-        property test.run.type = "single";
-
-        task ("Given that the PMU user goes to the created MDF") {
-            PRMNavigator.openSitePage(pageName = "MDF Requests");
-
-			WaitForElementPresent(
-				key_campaignName = "Campaign Name",
-				locator1 = "PRMMDFRequest#REQUEST_ID");
-
-            PRMMDFRequest.goToMDF(campaignName = "Campaign Name");
-        }
-
-        task ("And creates a draft Claim") {
-            PRMMDFClaim.createNewClaim(
-                listLeads = "Document_1.xlsx",
-				saveAsDraft = "true",
-                reimbursementInvoice = "Document_1.png",
-                thirdInvoice = "Document_1.png");
-
-			PRMMDFClaim.getClaimIdOnDetailPage(index = 1);
-        }
-
-		task ("When the PMU goes to the created draft Claim") {
-			PRMNavigator.gotoClaim(claimId = ${staticClaimId1});
-		}
-
-        task ("Then the PMU will be able to delete the Claim") {
-			PRMMDFClaim.deleteClaim(
-				claimIndex = 1,
-				claimId = ${staticClaimId1});
-        }
-    }
 
 }

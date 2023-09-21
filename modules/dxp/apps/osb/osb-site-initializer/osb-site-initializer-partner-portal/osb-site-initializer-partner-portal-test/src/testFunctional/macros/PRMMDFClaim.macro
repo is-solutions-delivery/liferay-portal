@@ -116,17 +116,17 @@ definition {
 	}
 
 	macro deleteClaim {
-        Button.click(button = "Delete");
+		Button.click(button = "Delete");
 
-        Confirm(value1 = "Are you sure?");
+		Confirm(value1 = "Are you sure?");
 
 		PRMNavigator.openSitePage(pageName = "MDF Claims");
 
-        PRMMDFClaim.searchClaim(claimID = ${staticClaimId1});
+		PRMMDFClaim.searchClaim(claimID = ${staticClaimId1});
 
-        AssertElementNotPresent(
-            key_index = ${claimIndex},
-            locator1 = "PRMMDFClaim#CLAIM_ID_INDEX");
+		AssertElementNotPresent(
+			key_index = ${claimIndex},
+			locator1 = "PRMMDFClaim#CLAIM_ID_INDEX");
 	}
 
 	macro editButton {
