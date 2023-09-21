@@ -262,6 +262,7 @@ export async function createCart({
       method: "POST",
     }
   );
+
   return await cartResponse.json();
 }
 
@@ -280,6 +281,7 @@ export async function updateCart({
       method: "PATCH",
     }
   );
+
   return await cartResponse.json();
 }
 
@@ -332,6 +334,7 @@ export async function createCartItems({
 		  method: "POST",
 		}
 	  );
+
 	  return await cartResponse.json();
 }
 
@@ -350,6 +353,7 @@ export async function updateCartItem({
 		  method: "PATCH",
 		}
 	  );
+
 	  return await cartResponse.json();
   }
 

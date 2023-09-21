@@ -53,7 +53,7 @@ const sectionProperties = {
   },
 };
 
-const GetAPPFlow = () => {
+const GetAppFlow = () => {
   const [step, setStep] = useState<StepType>(StepType.ACCOUNT);
   const [showAccount, setShowAccount] = useState<Boolean>(false);
   const [productSku, setProductSku] = useState<ProductSku>({ productId: 0, skuId: 0, specification: ""});
@@ -147,15 +147,15 @@ const GetAPPFlow = () => {
     const ObjCartCreation = {
       body: {
         accountId: account?.id,
-        currencyCode: "USD",
         cartItems: [
-        {
-          productId: productSku.productId,
-          quantity: 1,
-          skuId: productSku.skuId
-        }
-      ]
-    },
+          {
+            productId: productSku.productId,
+            quantity: 1,
+            skuId: productSku.skuId
+          }
+        ],
+        currencyCode: "USD",
+      },
       channelId: Number(channelId)
     }
 
@@ -175,9 +175,9 @@ const GetAPPFlow = () => {
     );
       
     if(cartChangeStatusResponse.ok){
-      console.log("NExt Step");
 
-      // sectionProperties[StepType.ACCOUNT].nextStep = StepType.NEXTSTEPS;
+      window.location.href = `${Liferay.ThemeDisplay.getPortalURL()}${getSiteURL()}/next-steps?orderId=${cartCheckoutResponse.id}`;
+
     }
       
   }
