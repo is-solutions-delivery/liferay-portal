@@ -40,10 +40,18 @@
 	&-button-text {
 		font-size: 14px;
 		font-weight: 600;
+
+		&.icon-right{
+			display: flex;	
+			gap: 0 8px;
+		}
 	}
 
 	&-button-title {
 		font-size: 16px;
 		padding-left: 8px;
 	}
+
+	
+
 }

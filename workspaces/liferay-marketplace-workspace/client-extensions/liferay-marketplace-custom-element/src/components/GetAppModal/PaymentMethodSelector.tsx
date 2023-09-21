@@ -40,6 +40,7 @@ export function PaymentMethodSelector({
 					<CardButton
 						description={description}
 						disabled={disabled}
+						iconLeft={true}
 						key={method}
 						onClick={() => {
 							if (!disabled) {

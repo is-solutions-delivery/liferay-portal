@@ -55,7 +55,7 @@ export function SelectPaymentMethod({
 				</div>
 			</div>
 
-			{selectedPaymentMethod === 'trial' && <TrialTimeline />}
+			{selectedPaymentMethod === 'trial' && <TrialMethod />}
 
 			{selectedPaymentMethod === 'pay' && (
 				<PaymentMethodMode
