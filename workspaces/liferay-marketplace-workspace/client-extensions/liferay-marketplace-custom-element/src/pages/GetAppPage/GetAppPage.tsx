@@ -4,13 +4,15 @@
  */
 
 import ClayButton from '@clayui/button';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 
 import {getSiteURL} from '../../components/InviteMemberModal/services';
 import {Liferay} from '../../liferay/liferay';
+import {getOrderTypes, postOrder} from '../../utils/api';
 import {getUrlParam} from '../../utils/getUrlParam';
 import AccountSelection from './components/AccountSelection';
+import {LicenseSelector} from './components/LicenseSelector/index';
 import ProductCard from './components/ProductCard';
 import {StepType} from './enums/stepType';
 
@@ -18,9 +20,22 @@ type StepComponent = {
 	[key in StepType]?: JSX.Element;
 };
 
+type ProjectOrderType = {
+	externalReferenceCode: string;
+	id: number;
+};
+
+const productCustomFields = [
+	'Github Username',
+	'Project Name',
+	'Site Initializer',
+];
+
 type getAppProps = {
+	licenseSelected?: boolean;
 	product?: Product;
 	selectedAccount?: Account;
+	sku?: SKU;
 };
 
 const sectionProperties = {
@@ -37,18 +52,21 @@ const sectionProperties = {
 	[StepType.PAYMENT]: {
 		backStep: StepType.LICENSES,
 		nextStep: StepType.PAYMENT,
-		title: 'Payment Method',
+		title: 'Payment us',
 	},
 };
 
 const GetAppFlow = () => {
 	const [step, setStep] = useState<StepType>(StepType.ACCOUNT);
 	const [showAccount, setShowAccount] = useState<Boolean>(false);
+	const [orderType, setOrderType] = useState<OrderType[]>([]);
 
 	const {getValues, setValue} = useForm<getAppProps>({
 		defaultValues: {
+			licenseSelected: false,
 			product: undefined,
 			selectedAccount: undefined,
+			sku: undefined,
 		},
 	});
 
@@ -77,10 +95,124 @@ const GetAppFlow = () => {
 				}}
 			/>
 		),
+		[StepType.LICENSES]: (
+			<LicenseSelector
+				onSelectLicense={(
+					licenseSelected: boolean,
+					sku: SKU | undefined
+				) => {
+					setValue('licenseSelected', licenseSelected);
+					setValue('sku', sku);
+				}}
+				selectedProduct={getValues('product')}
+			/>
+		),
+	};
+
+	const findOrderTypeByName = (
+		orderTypes: OrderType[],
+		nameOrderType: string
+	) => {
+		return orderTypes.find(
+			({externalReferenceCode}: OrderType) =>
+				externalReferenceCode === nameOrderType
+		);
+	};
+
+	useEffect(() => {
+		(async () => {
+			const responseOrderTypes = await getOrderTypes();
+			setOrderType(responseOrderTypes);
+		})();
+	}, []);
+
+	const customFields =
+		getValues('product')?.customFields?.filter((item) =>
+			productCustomFields.find((field) => item.name === field)
+		) || [];
+
+	const getProductCustomFields = () => {
+		let data = {};
+
+		productCustomFields.forEach((fieldName) => {
+			customFields.forEach((field) => {
+				if (field.name === fieldName) {
+					data = {...data, [fieldName]: field.customValue.data};
+				}
+			});
+		});
+
+		return data;
+	};
+
+	const onsubmit = async (
+		account: Account | undefined,
+		productChannels: Channel | undefined,
+		productSku: SKU | undefined,
+		projectOrderType: ProjectOrderType | undefined
+	) => {
+		const payload: Order = {
+			account: {
+				id: Number(account?.id),
+				type: account?.type as string,
+			},
+			accountExternalReferenceCode: account?.externalReferenceCode,
+			accountId: Number(account?.id),
+			channel: {
+				currencyCode: productChannels?.currencyCode,
+				id: Number(productChannels?.id),
+				type: productChannels?.type as string,
+			},
+			channelId: Number(productChannels?.channelId),
+			currencyCode: 'USD',
+			customFields: getProductCustomFields(),
+			orderItems: [
+				{
+					id: 0,
+					quantity: 1,
+					skuId: Number(productSku?.id),
+				},
+			],
+			orderStatus: 1,
+			orderTypeExternalReferenceCode:
+				projectOrderType?.externalReferenceCode,
+			orderTypeId: Number(projectOrderType?.id),
+			shippingAmount: 0,
+			shippingWithTaxAmount: 0,
+		};
+
+		const response = await postOrder(payload);
+		if (response.id) {
+			window.location.href = `${Liferay.ThemeDisplay.getPortalURL()}${getSiteURL()}/next-steps?orderId=${
+				response.id
+			}`;
+		}
+	};
+
+	const handleCreateOrder = () => {
+		const account = getValues('selectedAccount');
+		const productChannels = getValues('product')?.productChannels[0];
+		const productSpecifications = getValues('product')
+			?.productSpecifications;
+		const productSku = getValues('sku');
+
+		const trialLenght =
+			productSpecifications &&
+			productSpecifications?.find(
+				(specification) =>
+					specification?.specificationKey === 'trial-length'
+			);
+
+		const projectOrderType = findOrderTypeByName(
+			orderType,
+			trialLenght?.value?.en_US as string
+		);
+
+		onsubmit(account, productChannels, productSku, projectOrderType);
 	};
 
 	return (
-		<>
+		<div style={{width: '600px'}}>
 			<ProductCard
 				productId={Number(getUrlParam('productId'))}
 				selectedAccount={getValues('selectedAccount')}
@@ -94,7 +226,6 @@ const GetAppFlow = () => {
 					<div className="align-self-center h1 mb-6">
 						{sectionProperties[step].title}
 					</div>
-
 					<div>{StepFormComponent[step]}</div>
 				</div>
 				<div className="d-flex justify-content-between mt-5 pt-2">
@@ -116,9 +247,14 @@ const GetAppFlow = () => {
 							<ClayButton
 								className="ml-5"
 								onClick={() => {
-									onContinue(
-										sectionProperties[step].nextStep
-									);
+									if (getValues('licenseSelected') === true) {
+										handleCreateOrder();
+									}
+									else {
+										onContinue(
+											sectionProperties[step].nextStep
+										);
+									}
 								}}
 							>
 								Continue
@@ -127,7 +263,7 @@ const GetAppFlow = () => {
 					</div>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 

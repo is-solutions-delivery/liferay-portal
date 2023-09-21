@@ -309,6 +309,7 @@ interface Product {
 	name: {[key: string]: string};
 	productChannels: Channel[];
 	productId: number;
+	productSpecifications: ProductSpecification[];
 	productStatus: number;
 	productType: string;
 	skus: SKU[];
@@ -363,6 +364,7 @@ type SKU = {
 	externalReferenceCode: string;
 	id: number;
 	price: number;
+	purchasable?: boolean;
 	sku: string;
 	skuOptions: {key: string; value: string}[];
 };
