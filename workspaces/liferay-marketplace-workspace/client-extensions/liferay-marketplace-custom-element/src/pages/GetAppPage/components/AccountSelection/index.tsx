@@ -6,10 +6,11 @@
 import ClayLink from '@clayui/link';
 import {useEffect, useState} from 'react';
 
+import './index.scss';
 import RadioCardList, {
 	RadioCardContent,
-} from '../../../components/RadioCardList/RadioCardList';
-import {getAccountInfo, getUserAccount} from '../../../utils/api';
+} from '../../../../components/RadioCardList/RadioCardList';
+import {getAccountInfo, getUserAccount} from '../../../../utils/api';
 
 const enabledAccountRoles = ['Account Administrator', 'Account Buyer'];
 

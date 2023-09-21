@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {Input} from '../../../components/Input/Input';
 import infoCircleIcon from '../../assets/icons/info_circle_icon.svg';
-import {Input} from '../../components/Input/Input';
-import {BillingAddress} from '../../pages/GetAppPage/components/BillingAddress';
-import {PaymentMethodMode} from '../../pages/GetAppPage/components/PaymentMethodMode';
-import {PaymentMethodSelector} from '../../pages/GetAppPage/components/PaymentMethodSelector';
-import {TrialTimeline} from '../../pages/GetAppPage/components/TrialTimeline';
+import {BillingAddress} from './BillingAddress';
+import {PaymentMethodMode} from './PaymentMethodMode';
+import {PaymentMethodSelector} from './PaymentMethodSelector';
+import {TrialMethod} from './TrialMethod';
 
 export function SelectPaymentMethod({
 	addresses,
@@ -55,7 +55,7 @@ export function SelectPaymentMethod({
 				</div>
 			</div>
 
-			{selectedPaymentMethod === 'trial' && <TrialTimeline />}
+			{selectedPaymentMethod === 'trial' && <TrialMethod />}
 
 			{selectedPaymentMethod === 'pay' && (
 				<PaymentMethodMode

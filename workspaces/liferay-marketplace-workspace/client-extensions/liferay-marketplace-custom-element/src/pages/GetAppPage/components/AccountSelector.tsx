@@ -5,11 +5,9 @@
 
 import {useEffect} from 'react';
 
-import {getAccountInfoFromCommerce} from '../../utils/api';
-import {showAccountImage} from '../../utils/util';
-import {RadioCard} from '../RadioCard/RadioCard';
-
-import './AccountSelector.scss';
+import {RadioCard} from '../../../components/RadioCard/RadioCard';
+import {getAccountInfoFromCommerce} from '../../../utils/api';
+import {showAccountImage} from '../../../utils/util';
 
 export function AccountSelector({
 	accounts,

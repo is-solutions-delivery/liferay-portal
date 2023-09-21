@@ -1,0 +1,54 @@
+.license__card {
+	border-radius: 10px;
+	border: 1px solid var(--neutral-02, #e2e2e4);
+	background: var(--neutral-00, #fff);
+
+	&__text {
+		color: var(--neutral-07, #6c6c75);
+		font-size: 13px;
+		line-height: 16px;
+	}
+
+	&__icon {
+		fill: #377cff;
+		color: #377cff;
+	}
+
+	&__tier {
+		border-radius: 8px;
+		border: 0 dashed var(--neutral-04, #b1b2b9);
+		background: var(--neutral-01, #f7f7f8);
+
+		&__title {
+			font-size: 13px;
+			line-height: 16px;
+		}
+
+		&__price__text {
+			color: var(--neutral-07, #6c6c75);
+			font-size: 13px;
+			line-height: 16px;
+		}
+	}
+
+	&__buttons__container {
+		width: 121px;
+		border-radius: 50px;
+		border: 1px solid var(--neutral-02, #e2e2e4);
+		height: 40px;
+
+		&__conut {
+			width: 40px;
+		}
+	}
+
+	&__buttons {
+		border-radius: 38px;
+		width: 32px;
+		height: 32px;
+
+		.lexicon-icon {
+			margin-top: 0 !important;
+		}
+	}
+}
