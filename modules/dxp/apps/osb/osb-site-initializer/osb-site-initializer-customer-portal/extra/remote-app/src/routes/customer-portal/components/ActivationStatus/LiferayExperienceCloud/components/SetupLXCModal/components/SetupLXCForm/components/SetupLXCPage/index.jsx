@@ -74,7 +74,10 @@ const SetupLiferayExperienceCloudPage = ({
 				...contactList.filter(
 					(contact) =>
 						!oldList.some(
-							(oldContact) => oldContact.id === contact.id
+							(oldContact) =>
+								oldContact.category?.role ===
+									contact.category?.role &&
+								oldContact?.id === contact?.id
 						)
 				),
 			];
@@ -90,7 +93,10 @@ const SetupLiferayExperienceCloudPage = ({
 				...contactList.filter(
 					(contact) =>
 						!oldList.some(
-							(oldContact) => oldContact.id === contact.id
+							(oldContact) =>
+								oldContact.category?.role ===
+									contact.category?.role &&
+								oldContact?.id === contact?.id
 						)
 				),
 			];

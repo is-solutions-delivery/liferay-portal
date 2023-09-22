@@ -5,8 +5,9 @@
 
 import i18n from '~/common/I18n';
 import {
-	addHighPriorityContact,
-	deleteHighPriorityContacts,
+	createAccountUserRoles,
+	deleteAccountUserRoles,
+	getAccountAccountRolesByExternalReferenceCode,
 } from '~/common/services/liferay/graphql/queries';
 import {
 	associateContactRoleNameByEmailByProject,
@@ -19,6 +20,25 @@ const HIGH_PRIORITY_CONTACT_CATEGORIES = {
 	securityBreach: i18n.translate('security-breach'),
 };
 
+const getContactRoleByFilter = (filter) => {
+	if (filter.includes('privacy')) {
+		return 'Data Breach Contact';
+	}
+
+	if (filter.includes('security')) {
+		return 'Security Incident Contact';
+	}
+	if (filter.includes('critical')) {
+		return 'Critical Incident Contact';
+	}
+};
+
+const rolesHighPriorityContacts = [
+	'Data Breach Contact',
+	'Security Incident Contact',
+	'Critical Incident Contact',
+];
+
 const removeContactRole = async (
 	item,
 	project,
@@ -29,18 +49,18 @@ const removeContactRole = async (
 		accountKey: project.accountKey,
 		emailURI: encodeURI(item.email),
 		provisioningServerAPI,
-		rolesToDelete: item.filter.role,
+		rolesToDelete: item.filter,
 		sessionId,
 	});
 };
 
-const associateContactRole = async (
+const associateContactRole = (
 	item,
 	project,
 	sessionId,
 	provisioningServerAPI
 ) => {
-	return await associateContactRoleNameByEmailByProject({
+	return associateContactRoleNameByEmailByProject({
 		accountKey: project.accountKey,
 		emailURI: encodeURI(item.email),
 		firstName: item.label,
@@ -51,44 +71,55 @@ const associateContactRole = async (
 	});
 };
 
-const removeHighPriorityContactsList = async (client, item) => {
+const removeHighPriorityContactsList = async (item, project, client) => {
 	return client.mutate({
 		context: {
 			displaySuccess: false,
-			type: 'liferay-rest',
 		},
-		mutation: deleteHighPriorityContacts,
+		mutation: deleteAccountUserRoles,
 		variables: {
-			highPriorityContactsId: item.objectId,
+			accountKey: project.accountKey,
+			accountRoleId: item.filterId,
+			emailAddress: item.email,
 		},
 	});
 };
 
-const addHighPriorityContactsList = async (client, item, project) => {
+const addHighPriorityContacts = async (item, project, client) => {
 	return client.mutate({
 		context: {
 			displaySuccess: false,
-			type: 'liferay-rest',
 		},
-		mutation: addHighPriorityContact,
+		mutation: createAccountUserRoles,
 		variables: {
-			HighPriorityContacts: {
-				contactsCategory: {
-					key: item.category.key,
-					name: item.category.name,
-				},
-				r_accountEntryToHighPriorityContacts_accountEntryERC:
-					project.accountKey,
-				r_userToHighPriorityContacts_userId: item.id,
-			},
+			accountRoleId: item.filterId,
+			emailAddress: item.email,
+			externalReferenceCode: project.accountKey,
 		},
 	});
+};
+
+const getAccountRolesId = async (project, client) => {
+	const result = await client.query({
+		context: {
+			displaySuccess: false,
+		},
+		query: getAccountAccountRolesByExternalReferenceCode,
+		variables: {
+			externalReferenceCode: project.accountKey,
+		},
+	});
+
+	return result.data.accountAccountRolesByExternalReferenceCode.items;
 };
 
 export {
 	removeContactRole,
 	associateContactRole,
-	addHighPriorityContactsList,
+	addHighPriorityContacts,
 	HIGH_PRIORITY_CONTACT_CATEGORIES,
 	removeHighPriorityContactsList,
+	getAccountRolesId,
+	getContactRoleByFilter,
+	rolesHighPriorityContacts,
 };

@@ -6,7 +6,7 @@
 import {useMutation} from '@apollo/client';
 import SearchBuilder from '~/common/core/SearchBuilder';
 import {
-	addHighPriorityContactsList,
+	addHighPriorityContacts,
 	associateContactRole,
 	removeContactRole,
 	removeHighPriorityContactsList,
@@ -162,20 +162,21 @@ export default function useSubmitLXCEnvironment(
 					);
 					if (featureFlags.includes('LPS-159127')) {
 						await Promise.all(
-							removeHighPriorityContactList?.map((item) => {
-								return removeHighPriorityContactsList(
-									client,
+							addHighPriorityContactList?.map((item) => {
+								return addHighPriorityContacts(
 									item,
-									project
+									project,
+									client
 								);
 							})
 						);
+
 						await Promise.all(
-							addHighPriorityContactList?.map((item) => {
-								return addHighPriorityContactsList(
-									client,
+							removeHighPriorityContactList?.map((item) => {
+								return removeHighPriorityContactsList(
 									item,
-									project
+									project,
+									client
 								);
 							})
 						);
@@ -216,8 +217,7 @@ export default function useSubmitLXCEnvironment(
 				}
 				handleLoadingSubmitButton(false);
 				handleChangeForm(true);
-			}
-			catch {
+			} catch {
 				handleLoadingSubmitButton(false);
 			}
 		}

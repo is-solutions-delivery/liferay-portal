@@ -15,7 +15,7 @@ import getKebabCase from '../../../../../../common/utils/getKebabCase';
 import {useCustomerPortal} from '../../../../../../routes/customer-portal/context';
 import {
 	HIGH_PRIORITY_CONTACT_CATEGORIES,
-	addHighPriorityContactsList,
+	addHighPriorityContacts,
 	associateContactRole,
 	removeContactRole,
 	removeHighPriorityContactsList,
@@ -31,28 +31,19 @@ const IncidentContactEditModal = ({
 }) => {
 	const [{project, sessionId}] = useCustomerPortal();
 
+	const [addHighPriorityContactList, setAddHighPriorityContacts] = useState(
+		[]
+	);
+
 	const [
-		addHighPriorityContactList,
-		setAddHighPriorityContactList,
+		removeHighPriorityContacts,
+		setRemoveHighPriorityContacts,
 	] = useState([]);
-	const [
-		removeHighPriorityContactList,
-		setRemoveHighPriorityContactList,
-	] = useState([]);
+
 	const [isMultiSelectEmpty, setIsMultiSelectEmpty] = useState(false);
 
 	const {client, provisioningServerAPI} = useAppPropertiesContext();
 	const [isLoadingSaveButton, setIsLoadingSaveButton] = useState(false);
-
-	const addHighPriorityContacts = (contactList) => {
-		const contactsList = contactList.map((item) => item);
-
-		setAddHighPriorityContactList(contactsList);
-	};
-	const removeHighPriorityContacts = (contactList) => {
-		const contactsList = contactList.map((item) => item);
-		setRemoveHighPriorityContactList(contactsList);
-	};
 
 	const updateMultiSelectEmpty = (error) => {
 		setIsMultiSelectEmpty(error);
@@ -74,7 +65,7 @@ const IncidentContactEditModal = ({
 			);
 
 			await Promise.all(
-				removeHighPriorityContactList?.map(async (item) => {
+				removeHighPriorityContacts?.map(async (item) => {
 					return removeContactRole(
 						item,
 						project,
@@ -85,22 +76,26 @@ const IncidentContactEditModal = ({
 			);
 
 			await Promise.all(
-				addHighPriorityContactList?.map((item) => {
-					return addHighPriorityContactsList(client, item, project);
+				addHighPriorityContactList?.map(async (item) => {
+					return addHighPriorityContacts(item, project, client);
 				})
 			);
 
 			await Promise.all(
-				removeHighPriorityContactList?.map((item) => {
-					return removeHighPriorityContactsList(client, item);
+				removeHighPriorityContacts?.map(async (item) => {
+					return removeHighPriorityContactsList(
+						item,
+						project,
+						client
+					);
 				})
 			);
 
-			removeHighPriorityContactList?.map((item) => {
+			removeHighPriorityContacts?.map((item) => {
 				openToast(
 					`${item.label}`,
 					`${i18n.translate('high-priority-contact-removed')} 
-					<b>${i18n.translate(`${getKebabCase(item.filter.name)}-contact`)}</b>`
+					<b>${i18n.translate(`${getKebabCase(item.filter)}`)}</b>`
 				);
 			});
 
@@ -184,11 +179,11 @@ const IncidentContactEditModal = ({
 			}}
 		>
 			<SetupHighPriorityContactForm
-				addContactList={addHighPriorityContacts}
+				addContactList={setAddHighPriorityContacts}
 				disableSubmit={updateMultiSelectEmpty}
 				filter={modalFilter}
 				isCriticalIncidentCard
-				removedContactList={removeHighPriorityContacts}
+				removedContactList={setRemoveHighPriorityContacts}
 			/>
 		</Layout>
 	);

@@ -14,7 +14,7 @@ import SearchBuilder from '~/common/core/SearchBuilder';
 import NotificationQueueService from '~/common/services/actions/notificationAction';
 import {
 	HIGH_PRIORITY_CONTACT_CATEGORIES,
-	addHighPriorityContactsList,
+	addHighPriorityContacts,
 	associateContactRole,
 	removeContactRole,
 	removeHighPriorityContactsList,
@@ -281,21 +281,21 @@ const SetupDXPCloudPage = ({
 					});
 					if (featureFlags.includes('LPS-159127')) {
 						await Promise.all(
-							removeHighPriorityContactList?.map((item) => {
-								return removeHighPriorityContactsList(
-									client,
+							addHighPriorityContactList?.map(async (item) => {
+								return addHighPriorityContacts(
 									item,
-									project
+									project,
+									client
 								);
 							})
 						);
 
 						await Promise.all(
-							addHighPriorityContactList?.map((item) => {
-								return addHighPriorityContactsList(
-									client,
+							removeHighPriorityContactList?.map(async (item) => {
+								return removeHighPriorityContactsList(
 									item,
-									project
+									project,
+									client
 								);
 							})
 						);
@@ -352,7 +352,7 @@ const SetupDXPCloudPage = ({
 		setAddHighPriorityContactList(contactsList);
 	};
 	const removeHighPriorityContacts = (contactList) => {
-		const contactsList = contactList.map(({objectId}) => objectId);
+		const contactsList = contactList.map((objectId) => objectId);
 		setRemoveHighPriorityContactList(contactsList);
 	};
 	const updateMultiSelectEmpty = (error) => {
