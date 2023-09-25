@@ -59,6 +59,7 @@ const AccountSelection = ({onSelectAccount, setUserAccount, userAccount}: Accoun
 
 	useEffect(() => {
 		getUserAccountList();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
