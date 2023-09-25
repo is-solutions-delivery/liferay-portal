@@ -15,16 +15,17 @@ const enabledAccountRoles = ['Account Administrator', 'Account Buyer'];
 
 interface AccountSelectionProps {
 	onSelectAccount: (account: Account) => void;
+	setUserAccount: (value: UserAccount) => void;
+	userAccount?: UserAccount;
 }
 
-const AccountSelection = ({onSelectAccount}: AccountSelectionProps) => {
-	const [userAccount, setUserAccount] = useState<UserAccount>();
+const AccountSelection = ({onSelectAccount, setUserAccount, userAccount}: AccountSelectionProps) => {
 	const [accounts, setAccounts] = useState<RadioCardContent<Account>[]>([]);
 
 	const getUserAccountList = async () => {
 		const userAccount: UserAccount = await getUserAccount();
 
-		setUserAccount(userAccount);
+		setUserAccount(userAccount);	
 
 		const radioAccountList: RadioCardContent<Account>[] = [];
 
@@ -43,7 +44,7 @@ const AccountSelection = ({onSelectAccount}: AccountSelectionProps) => {
 			if (displayAccount) {
 				const accountInfo: Account = await getAccountInfo({
 					accountId: Number(accountBrief.id),
-				});
+				});				
 
 				radioAccountList.push({
 					imageURL: accountInfo.logoURL,
