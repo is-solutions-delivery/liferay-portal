@@ -19,13 +19,17 @@ interface AccountSelectionProps {
 	userAccount?: UserAccount;
 }
 
-const AccountSelection = ({onSelectAccount, setUserAccount, userAccount}: AccountSelectionProps) => {
+const AccountSelection = ({
+	onSelectAccount,
+	setUserAccount,
+	userAccount,
+}: AccountSelectionProps) => {
 	const [accounts, setAccounts] = useState<RadioCardContent<Account>[]>([]);
 
 	const getUserAccountList = async () => {
 		const userAccount: UserAccount = await getUserAccount();
 
-		setUserAccount(userAccount);	
+		setUserAccount(userAccount);
 
 		const radioAccountList: RadioCardContent<Account>[] = [];
 
@@ -44,7 +48,7 @@ const AccountSelection = ({onSelectAccount, setUserAccount, userAccount}: Accoun
 			if (displayAccount) {
 				const accountInfo: Account = await getAccountInfo({
 					accountId: Number(accountBrief.id),
-				});				
+				});
 
 				radioAccountList.push({
 					imageURL: accountInfo.logoURL,
@@ -59,7 +63,7 @@ const AccountSelection = ({onSelectAccount, setUserAccount, userAccount}: Accoun
 
 	useEffect(() => {
 		getUserAccountList();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (

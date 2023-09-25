@@ -68,24 +68,24 @@ const ProductCard = ({
 			});
 	};
 
-  const getProdut = async () => {
-    // eslint-disable-next-line promise/catch-or-return
-    {
-      productId &&
-        getProductById({
-          nestedFields: 'skus,productSpecifications,attachments',
-          productId,
-        }).then((item: Product) => {
-          setProduct([item]);
-          setProductToForm(item);
-        });
-    }
-  };
+	const getProdut = async () => {
+		// eslint-disable-next-line promise/catch-or-return
+		{
+			productId &&
+				getProductById({
+					nestedFields: 'skus,productSpecifications,attachments',
+					productId,
+				}).then((item: Product) => {
+					setProduct([item]);
+					setProductToForm(item);
+				});
+		}
+	};
 
-  useEffect(() => {
-    getProdut();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+	useEffect(() => {
+		getProdut();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	const iconURL =
 		product &&
