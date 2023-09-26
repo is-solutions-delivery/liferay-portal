@@ -3,8 +3,9 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {useEffect, useState} from 'react';
 import ClayBadge from '@clayui/badge';
+import {useEffect, useState} from 'react';
+
 import {getProductById} from '../../../utils/api';
 
 interface ProductCardProps {
@@ -28,7 +29,7 @@ const ProductCard = ({
 			{
 				productId &&
 					getProductById({
-						nestedFields: 'skus',
+						nestedFields: 'skus, productChannels, productSpecifications',
 						productId,
 					}).then((item: Product) => {
 						setProduct([item]);

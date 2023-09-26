@@ -27,6 +27,7 @@ export function LicenseSelector({
   const hasTrialSkuVerification = useCallback(() => {
     selectedProduct?.skus?.some((sku) => {
       sku.skuOptions.some((options) => {
+  
         if (options.key === "trial" && options.value === "yes") {
           setTrialSKU(sku);
         }
@@ -39,6 +40,8 @@ export function LicenseSelector({
   }, [hasTrialSkuVerification]);
 
   const handleTimelineSelect = (timeline: string) => {
+    
+    
     setSelectedTimeline(timeline);
   };
 
@@ -47,7 +50,7 @@ export function LicenseSelector({
       onSelectLicense(true, trialSKU);
     }
   };
-
+  
   return (
     <div className="license-selector-timeline">
       <div className="license-selector mb-6">
@@ -57,7 +60,7 @@ export function LicenseSelector({
           icon={<GetClayIcon className="license-icon" icon="check-circle" />}
           onClick={() => handleTimelineSelect("trial")}
           selected={selectedTimeline === "trial" ? true : false}
-          title="Trial"
+          title={selectedTimeline === "trial" ? "30-day Trial" : "Trial"}
         />
         <CardButton
           description="Pay Today"

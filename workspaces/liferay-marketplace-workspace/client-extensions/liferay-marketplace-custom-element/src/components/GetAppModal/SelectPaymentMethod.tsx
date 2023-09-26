@@ -5,10 +5,10 @@
 
 import infoCircleIcon from '../../assets/icons/info_circle_icon.svg';
 import {Input} from '../../components/Input/Input';
-import {BillingAddress} from './BillingAddress';
-import {PaymentMethodMode} from './PaymentMethodMode';
-import {PaymentMethodSelector} from './PaymentMethodSelector';
-import {TrialTimeline} from './TrialTimeline';
+import {BillingAddress} from '../../pages/GetAppPage/components/BillingAddress';
+import {PaymentMethodMode} from '../../pages/GetAppPage/components/PaymentMethodMode';
+import {PaymentMethodSelector} from '../../pages/GetAppPage/components/PaymentMethodSelector';
+import {TrialTimeline} from '../../pages/GetAppPage/components/TrialTimeline';
 
 export function SelectPaymentMethod({
 	addresses,
