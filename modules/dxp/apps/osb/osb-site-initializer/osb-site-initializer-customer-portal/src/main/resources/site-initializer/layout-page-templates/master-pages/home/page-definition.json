@@ -335,37 +335,6 @@
 										"definition": {
 											"fragmentStyle": {
 												"borderWidth": "0",
-												"hidden": true,
-												"width": "30px"
-											},
-											"fragmentViewports": [
-												{
-													"fragmentViewportStyle": {
-														"marginBottom": "5",
-														"width": "20%"
-													},
-													"id": "portraitMobile"
-												},
-												{
-													"fragmentViewportStyle": {
-														"hidden": false,
-														"marginLeft": "4",
-														"width": "30%"
-													},
-													"id": "tablet"
-												}
-											],
-											"indexed": true,
-											"layout": {
-												"contentDisplay": "FlexRow"
-											}
-										},
-										"type": "Section"
-									},
-									{
-										"definition": {
-											"fragmentStyle": {
-												"borderWidth": "0",
 												"fontWeight": "fontWeightBold",
 												"marginLeft": "2",
 												"width": "30vw"
@@ -386,10 +355,10 @@
 												},
 												{
 													"fragmentViewportStyle": {
-														"marginLeft": "8",
+														"marginLeft": "0",
 														"marginTop": "4",
 														"textAlign": "left",
-														"width": "70vw"
+														"width": "100vw"
 													},
 													"id": "tablet"
 												}
@@ -419,7 +388,7 @@
 																			"fieldKey": "FileEntry_previewImage",
 																			"itemReference": {
 																				"className": "com.liferay.portal.kernel.repository.model.FileEntry",
-																				"classPK": 52581
+																				"classPK": "[#DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/group/assets/navigation-menu/logo.svg#]"
 																			}
 																		}
 																	}
@@ -456,11 +425,10 @@
 											{
 												"definition": {
 													"fragment": {
-														"key": "DIALECT-dialect-text"
+														"key": "BASIC_COMPONENT-heading"
 													},
 													"fragmentConfig": {
-														"textType": "h1",
-														"truncateText": false
+														"headingLevel": "h1"
 													},
 													"fragmentFields": [
 														{
