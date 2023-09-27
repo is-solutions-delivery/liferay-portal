@@ -686,15 +686,15 @@ public class MessageBoardThreadResourceImpl
 	}
 
 	private MessageBoardThread _toMessageBoardThread(
-			MBMessage mbMessage, boolean userGroupInformations)
+			MBMessage mbMessage, boolean userGroupBriefs)
 		throws Exception {
 
 		return _toMessageBoardThread(
-			mbMessage.getThread(), userGroupInformations);
+			mbMessage.getThread(), userGroupBriefs);
 	}
 
 	private MessageBoardThread _toMessageBoardThread(
-			MBThread mbThread, boolean userGroupInformations)
+			MBThread mbThread, boolean userGroupBriefs)
 		throws Exception {
 
 		MBMessage mbMessage = _mbMessageLocalService.getMessage(
@@ -751,7 +751,7 @@ public class MessageBoardThreadResourceImpl
 				contextUser);
 
 		dtoConverterContext.setAttribute(
-			"userGroupInformations", userGroupInformations);
+			"userGroupBriefs", userGroupBriefs);
 
 		return _messageBoardThreadDTOConverter.toDTO(
 			dtoConverterContext, mbThread);
