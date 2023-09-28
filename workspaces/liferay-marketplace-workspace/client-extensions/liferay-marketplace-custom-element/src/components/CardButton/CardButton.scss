@@ -6,10 +6,10 @@
 		box-sizing: border-box;
 		cursor: pointer;
 		display: flex;
+		gap: 8px;
 		height: 76px;
 		padding: 17px 12px;
 		width: 173.33px;
-		gap: 8px;
 
 		&--selected {
 			background-color: #e6edfb;

@@ -49,9 +49,9 @@ export function CardButton({
 			<div className="card-button-info">
 				<div className="card-button-title">
 					<div
-						className={`card-button-text ${
-							iconRight ? 'icon-right' : null
-						}`}
+						className={classNames('card-button-text', {
+							'icon-right': iconRight,
+						})}
 					>
 						{title}
 						{iconRight && icon}

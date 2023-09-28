@@ -8,7 +8,7 @@ import {Input} from '../../components/Input/Input';
 import {BillingAddress} from '../../pages/GetAppPage/components/BillingAddress';
 import {PaymentMethodMode} from '../../pages/GetAppPage/components/PaymentMethodMode';
 import {PaymentMethodSelector} from '../../pages/GetAppPage/components/PaymentMethodSelector';
-import {TrialTimeline} from '../../pages/GetAppPage/components/TrialTimeline';
+import {TrialMethod} from '../../pages/GetAppPage/components/TrialMethod';
 
 export function SelectPaymentMethod({
 	addresses,
@@ -55,7 +55,7 @@ export function SelectPaymentMethod({
 				</div>
 			</div>
 
-			{selectedPaymentMethod === 'trial' && <TrialTimeline />}
+			{selectedPaymentMethod === 'trial' && <TrialMethod />}
 
 			{selectedPaymentMethod === 'pay' && (
 				<PaymentMethodMode

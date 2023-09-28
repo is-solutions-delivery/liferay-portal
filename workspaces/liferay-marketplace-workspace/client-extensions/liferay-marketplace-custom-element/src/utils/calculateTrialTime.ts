@@ -5,10 +5,12 @@
 
 import {months} from './getMonths';
 
+const MILLISECONDS_IN_30_DAYS = 30 * 24 * 60 * 60 * 1000;
+
 export function calculateTrialTime() {
 	const date = new Date();
 
-	date.setTime(date.getTime() + 30 * 24 * 60 * 60 * 1000);
+	date.setTime(date.getTime() + MILLISECONDS_IN_30_DAYS);
 
 	const endOfTrialDay = date.getDate();
 	const endOfTrialMonth = months[date.getMonth()];

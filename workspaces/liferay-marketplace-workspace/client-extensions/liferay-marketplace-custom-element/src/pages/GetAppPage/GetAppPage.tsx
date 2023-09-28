@@ -12,9 +12,11 @@ import {Liferay} from '../../liferay/liferay';
 import {getOrderTypes, postOrder} from '../../utils/api';
 import {getUrlParam} from '../../utils/getUrlParam';
 import AccountSelection from './components/AccountSelection';
-import {LicenseSelector} from './components/LicenseSelector/index';
+import {LicenseSelector} from './components/LicenseSelector';
 import ProductCard from './components/ProductCard';
 import {StepType} from './enums/stepType';
+
+import './GetAppPage.scss';
 
 type StepComponent = {
 	[key in StepType]?: JSX.Element;
@@ -97,26 +99,13 @@ const GetAppFlow = () => {
 		),
 		[StepType.LICENSES]: (
 			<LicenseSelector
-				onSelectLicense={(
-					licenseSelected: boolean,
-					sku: SKU | undefined
-				) => {
+				onSelectLicense={(licenseSelected: boolean, sku?: SKU) => {
 					setValue('licenseSelected', licenseSelected);
 					setValue('sku', sku);
 				}}
 				selectedProduct={getValues('product')}
 			/>
 		),
-	};
-
-	const findOrderTypeByName = (
-		orderTypes: OrderType[],
-		nameOrderType: string
-	) => {
-		return orderTypes.find(
-			({externalReferenceCode}: OrderType) =>
-				externalReferenceCode === nameOrderType
-		);
 	};
 
 	useEffect(() => {
@@ -146,10 +135,10 @@ const GetAppFlow = () => {
 	};
 
 	const onsubmit = async (
-		account: Account | undefined,
-		productChannels: Channel | undefined,
-		productSku: SKU | undefined,
-		projectOrderType: ProjectOrderType | undefined
+		account?: Account,
+		productChannels?: Channel,
+		productSku?: SKU,
+		projectOrderType?: ProjectOrderType
 	) => {
 		const payload: Order = {
 			account: {
@@ -182,6 +171,7 @@ const GetAppFlow = () => {
 		};
 
 		const response = await postOrder(payload);
+
 		if (response.id) {
 			window.location.href = `${Liferay.ThemeDisplay.getPortalURL()}${getSiteURL()}/next-steps?orderId=${
 				response.id
@@ -196,23 +186,21 @@ const GetAppFlow = () => {
 			?.productSpecifications;
 		const productSku = getValues('sku');
 
-		const trialLenght =
-			productSpecifications &&
-			productSpecifications?.find(
-				(specification) =>
-					specification?.specificationKey === 'trial-length'
-			);
+		const trialLength = productSpecifications?.find(
+			(specification) =>
+				specification?.specificationKey === 'trial-length'
+		);
 
-		const projectOrderType = findOrderTypeByName(
-			orderType,
-			trialLenght?.value?.en_US as string
+		const projectOrderType = orderType.find(
+			({externalReferenceCode}: OrderType) =>
+				externalReferenceCode === (trialLength?.value?.en_US as string)
 		);
 
 		onsubmit(account, productChannels, productSku, projectOrderType);
 	};
 
 	return (
-		<div style={{width: '600px'}}>
+		<div className="container-get-app-content">
 			<ProductCard
 				productId={Number(getUrlParam('productId'))}
 				selectedAccount={getValues('selectedAccount')}
@@ -248,13 +236,11 @@ const GetAppFlow = () => {
 								className="ml-5"
 								onClick={() => {
 									if (getValues('licenseSelected') === true) {
-										handleCreateOrder();
+										return handleCreateOrder();
 									}
-									else {
-										onContinue(
-											sectionProperties[step].nextStep
-										);
-									}
+									onContinue(
+										sectionProperties[step].nextStep
+									);
 								}}
 							>
 								Continue

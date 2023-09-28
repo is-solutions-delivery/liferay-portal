@@ -6,41 +6,43 @@
 import {useState} from 'react';
 
 import {CardButton} from '../../../../components/CardButton/CardButton';
-import {GetClayIcon} from '../../../../components/GetClayIcon/GetClayIcon';
 
 import './index.scss';
+
+import ClayIcon from '@clayui/icon';
 
 interface TrialTimelineProps {
 	onSelectLicense: (licenseSelected: boolean) => void;
 }
 
 export function TrialTimeline({onSelectLicense}: TrialTimelineProps) {
-	const [handleSelected, setHandleSelected] = useState<Boolean>(false);
+	const [handleSelected, setHandleSelected] = useState<boolean>(false);
 
 	return (
 		<div className="d-flex flex-column trial-timeline">
-			<p className="mb-2 trial-info">
+			<p className="d-flex mb-2 trial-info">
 				Need help with license calculations?
-				<span className="info-button">
+				<span className="d-flex info-button">
 					More Info
-					<GetClayIcon icon="question-circle-full" />
+					<span>
+						<ClayIcon symbol="question-circle-full" />
+					</span>
 				</span>
 			</p>
 			<CardButton
 				description="Trial licenses are intended for you to try the app before you buy. Typical trials are 30 days."
 				disabled={false}
 				icon={
-					<GetClayIcon
-						className="trial-card-icon"
-						icon="percentage-symbol"
-					/>
+					<span className="trial-card-icon">
+						<ClayIcon symbol="percentage-symbol" />
+					</span>
 				}
-				iconRight={true}
+				iconRight
 				onClick={() => {
 					setHandleSelected(true);
 					onSelectLicense(true);
 				}}
-				selected={handleSelected ? true : false}
+				selected={handleSelected}
 				title="Trial License"
 			/>
 		</div>

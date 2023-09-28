@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import ClayIcon from '@clayui/icon';
 import {useCallback, useEffect, useState} from 'react';
 
 import {CardButton} from '../../../../components/CardButton/CardButton';
-import {GetClayIcon} from '../../../../components/GetClayIcon/GetClayIcon';
-import {PaidTimeline} from '../PaidTimeline/index';
-import {TrialTimeline} from '../TrialTimeline/index';
+import {TrialTimeline} from '../../components/TrialTimeline';
+import {PaidTimeline} from '../PaidTimeline';
 
 import './index.scss';
 
 interface LicenseSelectorProps {
-	onSelectLicense: (licenseSelected: boolean, sku: SKU | undefined) => void;
+	onSelectLicense: (licenseSelected: boolean, sku?: SKU) => void;
 	selectedProduct?: Product;
 }
 
@@ -25,8 +25,8 @@ export function LicenseSelector({
 	const [trialSKU, setTrialSKU] = useState<SKU>();
 
 	const hasTrialSkuVerification = useCallback(() => {
-		selectedProduct?.skus?.some((sku) => {
-			sku.skuOptions.some((options) => {
+		selectedProduct?.skus?.forEach((sku) => {
+			sku.skuOptions.forEach((options) => {
 				if (options.key === 'trial' && options.value === 'yes') {
 					setTrialSKU(sku);
 				}
@@ -37,10 +37,6 @@ export function LicenseSelector({
 	useEffect(() => {
 		hasTrialSkuVerification();
 	}, [hasTrialSkuVerification]);
-
-	const handleTimelineSelect = (timeline: string) => {
-		setSelectedTimeline(timeline);
-	};
 
 	const handleLicenseSelect = (selectedLicense: boolean) => {
 		if (selectedLicense) {
@@ -53,15 +49,16 @@ export function LicenseSelector({
 			<div className="license-selector mb-6">
 				<CardButton
 					description="Try now. Pay Later"
-					disabled={trialSKU ? false : true}
+					disabled={!trialSKU}
 					icon={
-						<GetClayIcon
-							className="license-icon"
-							icon="check-circle"
-						/>
+						<span className="license-icon">
+							<ClayIcon symbol="check-circle" />
+						</span>
 					}
-					onClick={() => handleTimelineSelect('trial')}
-					selected={selectedTimeline === 'trial' ? true : false}
+					onClick={
+						trialSKU ? () => setSelectedTimeline('trial') : () => {}
+					}
+					selected={selectedTimeline === 'trial'}
 					title={
 						selectedTimeline === 'trial' ? '30-day Trial' : 'Trial'
 					}
@@ -70,26 +67,25 @@ export function LicenseSelector({
 					description="Pay Today"
 					disabled={false}
 					icon={
-						<GetClayIcon
-							className="license-icon"
-							icon="credit-card"
-						/>
+						<span className="license-icon">
+							<ClayIcon symbol="credit-card" />
+						</span>
 					}
-					onClick={() => handleTimelineSelect('paid')}
-					selected={selectedTimeline === 'paid' ? true : false}
+					onClick={() => setSelectedTimeline('paid')}
+					selected={selectedTimeline === 'paid'}
 					title="Paid"
 				/>
 			</div>
 
-			{selectedTimeline ? (
+			{selectedTimeline && (
 				<div className="timeline-container">
 					{selectedTimeline === 'trial' ? (
 						<TrialTimeline onSelectLicense={handleLicenseSelect} />
 					) : (
-						<PaidTimeline product={selectedProduct} />
+						<PaidTimeline />
 					)}
 				</div>
-			) : null}
+			)}
 		</div>
 	);
 }

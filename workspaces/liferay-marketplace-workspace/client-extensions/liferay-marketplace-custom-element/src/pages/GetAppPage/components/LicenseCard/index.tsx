@@ -11,6 +11,11 @@ import ClayButton from '@clayui/button';
 
 import infoCircleFullIcon from '../../../../assets/icons/icon_info_circle_full.svg';
 
+type LicenseTiers = {
+	quantity?: number;
+	value?: number;
+};
+
 const LicenseSectorCard: React.FC<any> = ({
 	icon = <img alt="Info" src={infoCircleFullIcon} />,
 	licenseDescription,
@@ -36,7 +41,6 @@ const LicenseSectorCard: React.FC<any> = ({
 				<div className="align-items-center d-flex license__card__buttons__container p-1">
 					<span>
 						<ClayButton
-							aria-label=""
 							className="align-items-center d-flex justify-content-center license__card__buttons p-2"
 							displayType="primary"
 							onClick={() => {
@@ -44,7 +48,7 @@ const LicenseSectorCard: React.FC<any> = ({
 							}}
 						>
 							<ClayIcon
-								aria-label="123"
+								aria-label="Horizontal Line"
 								className="license__card__buttons__icon"
 								symbol="hr"
 							/>
@@ -55,7 +59,6 @@ const LicenseSectorCard: React.FC<any> = ({
 					</span>
 					<span>
 						<ClayButton
-							aria-label=""
 							className="align-items-center d-flex justify-content-center license__card__buttons p-2"
 							displayType="primary"
 							onClick={() => {
@@ -63,7 +66,7 @@ const LicenseSectorCard: React.FC<any> = ({
 							}}
 						>
 							<ClayIcon
-								aria-label="123"
+								aria-label="Horizontal Line"
 								className="license__card__buttons__icon"
 								symbol="plus"
 							/>
@@ -77,7 +80,7 @@ const LicenseSectorCard: React.FC<any> = ({
 					License Prices
 				</div>
 
-				{licensetiers.map((license: any, index: any) => (
+				{licensetiers.map((license: LicenseTiers, index: number) => (
 					<span
 						className="license__card__tier__price__text"
 						key={index}

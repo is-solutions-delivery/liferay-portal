@@ -1,34 +1,27 @@
 .trial-timeline {
 	.trial-info {
-		display: flex;
 		color: var(--neutral-08, #54555f);
 		font-size: 16px;
 		font-style: normal;
 		font-weight: 400;
-		line-height: 24px;
 		gap: 4px;
+		line-height: 24px;
 
 		.info-button {
-			display: flex;
+			background: var(--status-info-lighten-2, #e6ebf5);
+			border-radius: 4px;
 			color: var(--status-info-info, #2e5aac);
 			font-size: 11px;
 			font-style: normal;
 			font-weight: 600;
-			line-height: 20px;
-			border-radius: 4px;
-			background: var(--status-info-lighten-2, #e6ebf5);
-			padding: 2px 6px;
 			gap: 2px;
+			line-height: 20px;
+			padding: 2px 6px;
 		}
 	}
 
 	.trial-card-icon {
-		width: 16px;
 		height: 16px;
-	}
-
-	.card-button {
-		width: 100%;
-		height: auto;
+		width: 16px;
 	}
 }
