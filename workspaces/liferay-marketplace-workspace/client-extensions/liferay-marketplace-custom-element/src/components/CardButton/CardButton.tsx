@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import classNames from 'classnames';
-import {MouseEvent} from 'react';
+import classNames from "classnames";
+import { MouseEvent } from "react";
 
-import './CardButton.scss';
+import "./CardButton.scss";
 
 export function CardButton({
 	description,
@@ -25,9 +25,9 @@ export function CardButton({
 }) {
 	return (
 		<div
-			className={classNames('card-button', {
-				'card-button--disabled': disabled,
-				'card-button--selected': selected,
+			className={classNames("card-button d-flex", {
+				"card-button--disabled": disabled,
+				"card-button--selected": selected,
 			})}
 			onClick={onClick}
 		>
