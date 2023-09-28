@@ -190,7 +190,7 @@ const GetAppFlow = () => {
 					setValue('product', product)
 				}
 				showAccount={showAccount}
-			></ProductCard>
+			/>
 
 			<div className="border d-flex flex-column mt-7 p-5 rounded">
 				<div className="d-flex flex-column">
