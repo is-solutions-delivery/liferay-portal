@@ -59,7 +59,6 @@ const sectionProperties = {
 
 const GetAppFlow = () => {
 	const [step, setStep] = useState<StepType>(StepType.ACCOUNT);
-	const [showAccount, setShowAccount] = useState<boolean>(false);
 	const [enablePurchaseButton, setEnablePurchaseButton] = useState<boolean>(
 		false
 	);
@@ -74,7 +73,7 @@ const GetAppFlow = () => {
 	);
 	const [userAccount, setUserAccount] = useState<UserAccount>();
 
-	const {setValue, watch} = useForm<getAppProps>({
+	const {getValues, setValue, watch} = useForm<getAppProps>({
 		defaultValues: {
 			product: undefined,
 			selectedAccount: undefined,
@@ -158,7 +157,6 @@ const GetAppFlow = () => {
 			<AccountSelection
 				onSelectAccount={(account: Account) => {
 					setValue('selectedAccount', account);
-					setShowAccount(true);
 				}}
 				setUserAccount={setUserAccount}
 				userAccount={userAccount}
@@ -181,9 +179,9 @@ const GetAppFlow = () => {
 		),
 	};
 
-  return (
-    <>
-     <ProductCard
+	return (
+		<>
+			<ProductCard
 				productId={Number(getUrlParam('productId'))}
 				selectedAccount={watch('selectedAccount')}
 				setProductToForm={(product: Product) =>
