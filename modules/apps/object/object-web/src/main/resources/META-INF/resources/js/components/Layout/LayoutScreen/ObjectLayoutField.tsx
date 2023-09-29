@@ -83,16 +83,15 @@ export function ObjectLayoutField({
 							: Liferay.Language.get('optional')}
 					</ClayLabel>
 
-					{Liferay.FeatureFlags['LPS-170122'] &&
-						(objectField.readOnly === 'true' ||
-							objectField.readOnly === 'conditional') && (
-							<ClayLabel
-								className="label-inside-custom-select"
-								displayType="secondary"
-							>
-								{Liferay.Language.get('read-only')}
-							</ClayLabel>
-						)}
+					{(objectField.readOnly === 'true' ||
+						objectField.readOnly === 'conditional') && (
+						<ClayLabel
+							className="label-inside-custom-select"
+							displayType="secondary"
+						>
+							{Liferay.Language.get('read-only')}
+						</ClayLabel>
+					)}
 				</PanelSimpleBody>
 			</Panel>
 		</>

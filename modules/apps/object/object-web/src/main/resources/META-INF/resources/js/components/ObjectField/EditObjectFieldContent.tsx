@@ -64,9 +64,8 @@ export function EditObjectFieldContent({
 	);
 
 	if (
-		(Liferay.FeatureFlags['LPS-170122'] ||
-			values.businessType === 'Picklist') &&
-		TABS.length < 2
+		isDefaultStorageType ||
+		(values.businessType === 'Picklist' && TABS.length < 2)
 	) {
 		TABS.push(Liferay.Language.get('advanced'));
 	}
@@ -111,8 +110,7 @@ export function EditObjectFieldContent({
 
 	return (
 		<>
-			{(Liferay.FeatureFlags['LPS-170122'] && isDefaultStorageType) ||
-			values.businessType === 'Picklist' ? (
+			{isDefaultStorageType || values.businessType === 'Picklist' ? (
 				<>
 					<ClayTabs className="side-panel-iframe__tabs">
 						{TABS.map((label, index) => (

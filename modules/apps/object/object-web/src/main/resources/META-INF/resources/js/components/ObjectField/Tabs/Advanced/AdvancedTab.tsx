@@ -42,7 +42,7 @@ export function AdvancedTab({
 
 	return (
 		<>
-			{Liferay.FeatureFlags['LPS-170122'] && isDefaultStorageType && (
+			{isDefaultStorageType && (
 				<ContainerWrapper
 					collapsable
 					defaultExpanded

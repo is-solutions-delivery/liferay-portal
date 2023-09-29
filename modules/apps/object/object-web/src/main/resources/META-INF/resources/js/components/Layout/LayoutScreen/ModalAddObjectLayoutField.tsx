@@ -163,16 +163,15 @@ export default function ModalAddObjectLayoutField({
 										: Liferay.Language.get('optional')}
 								</ClayLabel>
 
-								{Liferay.FeatureFlags['LPS-170122'] &&
-									(readOnlyField === 'conditional' ||
-										readOnlyField === 'true') && (
-										<ClayLabel
-											className="label-inside-custom-select"
-											displayType="secondary"
-										>
-											{Liferay.Language.get('read-only')}
-										</ClayLabel>
-									)}
+								{(readOnlyField === 'conditional' ||
+									readOnlyField === 'true') && (
+									<ClayLabel
+										className="label-inside-custom-select"
+										displayType="secondary"
+									>
+										{Liferay.Language.get('read-only')}
+									</ClayLabel>
+								)}
 							</>
 						}
 						emptyStateMessage={Liferay.Language.get(
@@ -212,18 +211,15 @@ export default function ModalAddObjectLayoutField({
 											: Liferay.Language.get('optional')}
 									</ClayLabel>
 
-									{Liferay.FeatureFlags['LPS-170122'] &&
-										(readOnly === 'conditional' ||
-											readOnly === 'true') && (
-											<ClayLabel
-												className="label-inside-custom-select"
-												displayType="secondary"
-											>
-												{Liferay.Language.get(
-													'read-only'
-												)}
-											</ClayLabel>
-										)}
+									{(readOnly === 'conditional' ||
+										readOnly === 'true') && (
+										<ClayLabel
+											className="label-inside-custom-select"
+											displayType="secondary"
+										>
+											{Liferay.Language.get('read-only')}
+										</ClayLabel>
+									)}
 								</div>
 							</div>
 						)}

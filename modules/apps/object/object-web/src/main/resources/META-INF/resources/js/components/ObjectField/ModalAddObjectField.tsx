@@ -66,11 +66,6 @@ export function ModalAddObjectField({
 			delete field.readOnlyConditionExpression;
 		}
 
-		if (!Liferay.FeatureFlags['LPS-170122']) {
-			delete field.readOnly;
-			delete field.readOnlyConditionExpression;
-		}
-
 		if (field.label) {
 			field = {
 				...field,
