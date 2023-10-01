@@ -21,7 +21,8 @@ interface ProductFooterProps {
 	selectedAccount?: Account;
 	selectedPaymentMethod: PaymentMethodSelector;
 	setStep: (nextStep: StepType) => void;
-	sku: SKU;
+	selectedSKU?: SKU;
+	licenseSelected: boolean;
 	step: StepType;
 }
 
@@ -32,6 +33,8 @@ type SectionPropertiesType = {
 	};
 };
 
+
+
 const ProductFooter = ({
 	addresses,
 	enablePurchaseButton,
@@ -41,7 +44,8 @@ const ProductFooter = ({
 	selectedAccount,
 	selectedPaymentMethod,
 	setStep,
-	sku,
+	selectedSKU,
+	licenseSelected,
 	step,
 }: ProductFooterProps) => {
 	const getButtonText = () => {
@@ -60,13 +64,13 @@ const ProductFooter = ({
 			return 'Continue';
 		}
 		if (isPayMethodSelected) {
-			return `Pay $${sku?.price} Now`;
+			return `Pay $${selectedSKU?.price} Now`;
 		}
 		if (isTrialMethodSelected) {
 			return 'Start Free Trial';
 		}
 		if (isOrderMethodSelected) {
-			return `Create PO for $${sku.price}`;
+			return `Create PO for $${selectedSKU?.price}`;
 		}
 	};
 
@@ -85,7 +89,7 @@ const ProductFooter = ({
 		const isPaymentStep = step === StepType.PAYMENT;
 		const isLicenseStep = step === StepType.LICENSES;
 
-		if ((!isFreeApp && isAccountStep && selectedAccount) || isLicenseStep) {
+		if ((!isFreeApp && isAccountStep && selectedAccount || isLicenseStep)) {
 			setStep(nextStep);
 
 			return;
@@ -119,6 +123,9 @@ const ProductFooter = ({
 					{sectionProperties[step].nextStep && (
 						<ClayButton
 							className="ml-5"
+							disabled={
+								step === StepType.LICENSES && !licenseSelected ? true : false
+							}
 							onClick={() => {
 								onContinue(sectionProperties[step].nextStep);
 							}}

@@ -9,9 +9,9 @@ import circleFill from '../../../../../../assets/icons/circle_fill_icon.svg';
 import radioSelected from '../../../../../../assets/icons/radio_button_checked_2_icon.svg';
 import timeline from '../../../../../../assets/images/timeline.png';
 
-import './TrialTimeline.scss';
+import './TrialMethod.scss';
 
-export function TrialTimeline() {
+export function TrialMethod() {
 	const months = [
 		'January',
 		'February',

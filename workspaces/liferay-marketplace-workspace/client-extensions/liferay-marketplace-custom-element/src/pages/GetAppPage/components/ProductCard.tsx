@@ -68,24 +68,25 @@ const ProductCard = ({
 			});
 	};
 
-	const getProdut = async () => {
-		// eslint-disable-next-line promise/catch-or-return
-		{
-			productId &&
-				getProductById({
-					nestedFields: 'skus,productSpecifications,attachments',
-					productId,
-				}).then((item: Product) => {
-					setProduct([item]);
-					setProductToForm(item);
-				});
-		}
-	};
-
 	useEffect(() => {
-		getProdut();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+		const fetchData = async () => {
+			const productResponse =
+				productId &&
+				(await getProductById({
+					nestedFields: 'attachments,productSpecifications,skus',
+					productId,
+				}));
+
+			if (productResponse) {
+				setProduct(productResponse);
+				productHasTrialSKU(productResponse.skus);
+				setProductToForm(productResponse);
+				getProductBasePrice(productResponse);
+			}
+		};
+
+		fetchData();
+	}, [productId, setProductToForm]);
 
 	const iconURL =
 		product &&

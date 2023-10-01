@@ -13,7 +13,7 @@ export default function buildNewCart(
 	purchaseOrderNumber: string,
 	selectedAccount: Account | undefined,
 	selectedPaymentMethod: PaymentMethodSelector,
-	sku: SKU
+	selectedSKU?: SKU
 ) {
 	const cart: Partial<Cart> = {
 		accountId: selectedAccount?.id as number,
@@ -30,7 +30,7 @@ export default function buildNewCart(
 				settings: {
 					maxQuantity: 1,
 				},
-				skuId: sku?.id as number,
+				skuId: selectedSKU?.id as number,
 			},
 		],
 		currencyCode: channel.currencyCode,
@@ -55,6 +55,10 @@ export default function buildNewCart(
 			paymentMethod: 'paypal',
 		},
 		trial: {
+			...cart,
+			billingAddress,
+		},
+		free: {
 			...cart,
 			billingAddress,
 		},

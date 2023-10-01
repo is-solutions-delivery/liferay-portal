@@ -3,32 +3,33 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {useState} from 'react';
-import {useForm} from 'react-hook-form';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 import {
 	getPaymentMethodURL,
 	postCheckoutCart,
 	postEmailAppInformation,
 } from '../../utils/api';
-import {getUrlParam} from '../../utils/getUrlParam';
+import { getUrlParam } from '../../utils/getUrlParam';
 import AccountSelection from './components/AccountSelection';
 import ProductFooter from './components/Footer';
 import ProductCard from './components/ProductCard';
-import {SelectPaymentMethod} from './components/SelectPaymentMethod/SelectPaymentMethod';
-import {initialBillingAddress} from './constants/initialBillingAddress';
-import {paymentMethod} from './enums/paymentMethod';
-import {StepType} from './enums/stepType';
+import { SelectPaymentMethod } from './components/SelectPaymentMethod/SelectPaymentMethod';
+import { initialBillingAddress } from './constants/initialBillingAddress';
+import { paymentMethod } from './enums/paymentMethod';
+import { StepType } from './enums/stepType';
 import useGetAddresses from './hooks/useGetAddresses';
 import useGetChannelInfo from './hooks/useGetChannelInfo';
 import useGetProductSkus from './hooks/useGetProductSkus';
 import useProductPriceModel from './hooks/useProductPriceModel';
 import buildNewCart from './utils/buildNewCart';
 import getEmailInformation from './utils/getEmailInformation';
-import {getProductOrderTypes} from './utils/getProductOrderTypes';
-import {getProductSpecificationValues} from './utils/getProductSpecificationValues';
+import { getProductOrderTypes } from './utils/getProductOrderTypes';
+import { getProductSpecificationValues } from './utils/getProductSpecificationValues';
 import getReplaceCurrentURL from './utils/getReplaceCurrentURL';
-import {postCartByPaymentMethod} from './utils/postCartByPaymentMethod';
+import { postCartByPaymentMethod } from './utils/postCartByPaymentMethod';
+import { LicenseSelector } from './components/LicenseSelector';
 
 type StepComponent = {
 	[key in StepType]?: JSX.Element;
@@ -37,6 +38,7 @@ type StepComponent = {
 type getAppProps = {
 	product?: Product;
 	selectedAccount?: Account;
+	selectedSKU?: SKU;
 };
 
 const sectionProperties = {
@@ -59,7 +61,6 @@ const sectionProperties = {
 
 const GetAppFlow = () => {
 	const [step, setStep] = useState<StepType>(StepType.ACCOUNT);
-	const [showAccount, setShowAccount] = useState<boolean>(false);
 	const [enablePurchaseButton, setEnablePurchaseButton] = useState<boolean>(
 		false
 	);
@@ -73,22 +74,24 @@ const GetAppFlow = () => {
 		initialBillingAddress
 	);
 	const [userAccount, setUserAccount] = useState<UserAccount>();
+	const [licenseSelected, setLincenseSelected] = useState<boolean>(false);
 
-	const {setValue, watch} = useForm<getAppProps>({
+	const { setValue, getValues, watch } = useForm<getAppProps>({
 		defaultValues: {
 			product: undefined,
 			selectedAccount: undefined,
+			selectedSKU: undefined,
 		},
 	});
 
-	const {product, selectedAccount} = getValues();
+
+	const { product, selectedAccount, selectedSKU } = getValues();
 	const productId = product?.productId;
 	const productName = product?.name.en_US;
-
-	const {sku} = useGetProductSkus(product, setEnableTrialMethod);
-	const {channel} = useGetChannelInfo();
-	const {addresses} = useGetAddresses(selectedAccount?.id);
-	const {isFreeApp, priceModel} = useProductPriceModel(product);
+	const { sku } = useGetProductSkus(product, setEnableTrialMethod);
+	const { channel } = useGetChannelInfo();
+	const { addresses } = useGetAddresses(selectedAccount?.id);
+	const { isFreeApp, priceModel } = useProductPriceModel(product);
 
 	async function handleGetApp() {
 		const productSpecificationValues = await getProductSpecificationValues(
@@ -100,6 +103,7 @@ const GetAppFlow = () => {
 		const orderType = await getProductOrderTypes(
 			productSpecificationValues
 		);
+
 		const cart = buildNewCart(
 			billingAddress,
 			channel,
@@ -110,12 +114,12 @@ const GetAppFlow = () => {
 			purchaseOrderNumber,
 			selectedAccount,
 			selectedPaymentMethod,
-			sku
+			selectedSKU
 		);
 
 		const cartResponse = await postCartByPaymentMethod(cart, channel.id);
 
-		await postCheckoutCart({cartId: cartResponse.id});
+		await postCheckoutCart({ cartId: cartResponse.id });
 
 		const dashboardURL = getReplaceCurrentURL(
 			'get-app',
@@ -158,10 +162,18 @@ const GetAppFlow = () => {
 			<AccountSelection
 				onSelectAccount={(account: Account) => {
 					setValue('selectedAccount', account);
-					setShowAccount(true);
 				}}
 				setUserAccount={setUserAccount}
 				userAccount={userAccount}
+			/>
+		),
+		[StepType.LICENSES]: (
+			<LicenseSelector
+				onSelectLicense={(sku?: SKU) => {
+					setValue('selectedSKU', sku);
+				}}
+				sku={sku}
+				setLicenseSelected={setLincenseSelected}
 			/>
 		),
 		[StepType.PAYMENT]: (
@@ -179,17 +191,17 @@ const GetAppFlow = () => {
 				setSelectedPaymentMethod={setSelectedPaymentMethod}
 			/>
 		),
+
 	};
 
 	return (
 		<>
 			<ProductCard
 				productId={Number(getUrlParam('productId'))}
-				selectedAccount={getValues('selectedAccount')}
+				selectedAccount={watch('selectedAccount')}
 				setProductToForm={(product: Product) =>
 					setValue('product', product)
 				}
-				showAccount={showAccount}
 			/>
 
 			<div className="border d-flex flex-column mt-7 p-5 rounded">
@@ -208,8 +220,9 @@ const GetAppFlow = () => {
 					selectedAccount={selectedAccount}
 					selectedPaymentMethod={selectedPaymentMethod}
 					setStep={setStep}
-					sku={sku}
 					step={step}
+					selectedSKU={selectedSKU}
+					licenseSelected={licenseSelected}
 				/>
 			</div>
 		</>

@@ -10,7 +10,7 @@ import {paymentMethod} from '../../enums/paymentMethod';
 import {BillingAddress} from './components/BillingAddress/BillingAddress';
 import {PaymentMethodMode} from './components/PaymentMethodMode/PaymentMethodMode';
 import {PaymentMethodSelector} from './components/PaymentMethodSelector/PaymentMethodSelector';
-import {TrialTimeline} from './components/TrialTimeLine/TrialTimeline';
+import { TrialMethod } from './components/TrialMethod/TrialMethod';
 
 interface SelectPaymentMethodProps {
 	addresses: BillingAddress[];
@@ -54,7 +54,7 @@ export function SelectPaymentMethod({
 				/>
 			</div>
 
-			{selectedPaymentMethod === paymentMethod.TRIAL && <TrialTimeline />}
+			{selectedPaymentMethod === paymentMethod.TRIAL && <TrialMethod />}
 
 			{selectedPaymentMethod === paymentMethod.PAY && (
 				<PaymentMethodMode

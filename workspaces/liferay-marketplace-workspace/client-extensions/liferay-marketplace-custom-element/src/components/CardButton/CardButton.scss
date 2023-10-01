@@ -6,9 +6,10 @@
 		box-sizing: border-box;
 		cursor: pointer;
 		display: flex;
+		gap: 8px;
 		height: 76px;
 		padding: 17px 12px;
-		width: 185.5px;
+		width: 173.33px;
 
 		&--selected {
 			background-color: #e6edfb;
@@ -40,10 +41,14 @@
 	&-button-text {
 		font-size: 14px;
 		font-weight: 600;
+
+		&.icon-right {
+			display: flex;
+			gap: 8px;
+		}
 	}
 
 	&-button-title {
 		font-size: 16px;
-		padding-left: 8px;
 	}
 }
