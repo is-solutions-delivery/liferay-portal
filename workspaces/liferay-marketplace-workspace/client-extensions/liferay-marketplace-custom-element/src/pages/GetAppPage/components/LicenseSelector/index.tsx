@@ -9,17 +9,30 @@ import {useCallback, useEffect, useState} from 'react';
 import {CardButton} from '../../../../components/CardButton/CardButton';
 
 import './index.scss';
-import {PaidTimeline} from './components/PaidTimeline';
-import {TrialTimeline} from './components/TrialTimeline';
+
+import { UseFormGetValues, UseFormSetValue } from 'react-hook-form';
+
+import { getAppProps } from '../../GetAppPage';
+import { PaidTimeline } from './components/PaidTimeline';
+import { TrialTimeline } from './components/TrialTimeline';
 
 interface LicenseSelectorProps {
+	cart: any;
+	form: {
+		getValues: UseFormGetValues<getAppProps>;
+		setValue: UseFormSetValue<getAppProps>;
+	};
 	onSelectLicense: (sku?: SKU) => void;
+	selectedProduct?: Product;
 	setLicenseSelected: (licenseSelected: boolean) => void;
-	sku: SKU;
+	sku: SKU
 }
 
 export function LicenseSelector({
+	cart,
+	form,
 	onSelectLicense,
+	selectedProduct,
 	setLicenseSelected,
 	sku,
 }: LicenseSelectorProps) {
@@ -27,10 +40,10 @@ export function LicenseSelector({
 	const [trialSKU, setTrialSKU] = useState<SKU>();
 
 	const hasTrialSkuVerification = useCallback(() => {
-		sku.skuOptions.forEach((option) => {
-			if (option.key === 'trial' && option.value === 'yes') {
-				setTrialSKU(sku);
-			}
+			sku.skuOptions.forEach((option) => {
+				if (option.key === 'trial' && option.value === 'yes') {
+					setTrialSKU(sku);
+				}
 		});
 	}, [sku]);
 
@@ -81,11 +94,10 @@ export function LicenseSelector({
 			{selectedTimeline && (
 				<div className="timeline-container">
 					{selectedTimeline === 'trial' ? (
-						<TrialTimeline
-							setLicenseSelected={handleLicenseSelect}
-						/>
+						<TrialTimeline setLicenseSelected={handleLicenseSelect}/>
 					) : (
-						<PaidTimeline />
+						<PaidTimeline cart={cart} form={form} product={selectedProduct} />
+
 					)}
 				</div>
 			)}

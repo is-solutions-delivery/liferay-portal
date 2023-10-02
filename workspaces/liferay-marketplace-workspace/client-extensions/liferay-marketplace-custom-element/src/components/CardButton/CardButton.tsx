@@ -8,7 +8,7 @@ import {MouseEvent, ReactNode} from 'react';
 
 import arrowLeft from '../../assets/icons/guide_icon.svg';
 
-import './CardButton.scss';
+import "./CardButton.scss";
 
 export function CardButton({
 	description,
@@ -29,9 +29,9 @@ export function CardButton({
 }) {
 	return (
 		<div
-			className={classNames('card-button', {
-				'card-button--disabled': disabled,
-				'card-button--selected': selected,
+			className={classNames("card-button d-flex", {
+				"card-button--disabled": disabled,
+				"card-button--selected": selected,
 			})}
 			onClick={onClick}
 		>

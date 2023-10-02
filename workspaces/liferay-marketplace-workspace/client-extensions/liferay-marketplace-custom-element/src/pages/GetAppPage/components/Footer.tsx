@@ -3,21 +3,22 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayButton from '@clayui/button';
+import ClayButton from "@clayui/button";
 
-import infoCircleIcon from '../../../assets/icons/info_circle_icon.svg';
-import {getSiteURL} from '../../../components/InviteMemberModal/services';
-import {Liferay} from '../../../liferay/liferay';
-import {paymentMethod} from '../enums/paymentMethod';
-import {StepType} from '../enums/stepType';
+import infoCircleIcon from "../../../assets/icons/info_circle_icon.svg";
+import { getSiteURL } from "../../../components/InviteMemberModal/services";
+import { Liferay } from "../../../liferay/liferay";
+import { paymentMethod } from "../enums/paymentMethod";
+import { StepType } from "../enums/stepType";
 
 interface ProductFooterProps {
 	addresses: BillingAddress[];
 	cartId?: number;
 	enablePurchaseButton: boolean;
-	handleGetApp: () => void;
+	handleGetApp: (orderId?: number) => void;
 	isFreeApp: boolean;
 	licenseSelected: boolean;
+	orderId: any;
 	sectionProperties: SectionPropertiesType;
 	selectedAccount?: Account;
 	selectedPaymentMethod: PaymentMethodSelector;
@@ -39,6 +40,7 @@ const ProductFooter = ({
 	handleGetApp,
 	isFreeApp,
 	licenseSelected,
+	orderId,
 	sectionProperties,
 	selectedAccount,
 	selectedPaymentMethod,
@@ -50,22 +52,20 @@ const ProductFooter = ({
 		const isAccountOrLicenseStep =
 			step === StepType.ACCOUNT || step === StepType.LICENSES;
 		const isPayMethodSelected = selectedPaymentMethod === paymentMethod.PAY;
-		const isTrialMethodSelected =
-			selectedPaymentMethod === paymentMethod.TRIAL;
-		const isOrderMethodSelected =
-			selectedPaymentMethod === paymentMethod.ORDER;
+		const isTrialMethodSelected = selectedPaymentMethod === paymentMethod.TRIAL;
+		const isOrderMethodSelected = selectedPaymentMethod === paymentMethod.ORDER;
 
 		if (isFreeApp) {
-			return 'Get This App';
+			return "Get This App";
 		}
 		if (isAccountOrLicenseStep) {
-			return 'Continue';
+			return "Continue";
 		}
 		if (isPayMethodSelected) {
 			return `Pay $${selectedSKU?.price} Now`;
 		}
 		if (isTrialMethodSelected) {
-			return 'Start Free Trial';
+			return "Start Free Trial";
 		}
 		if (isOrderMethodSelected) {
 			return `Create PO for $${selectedSKU?.price}`;
@@ -97,7 +97,7 @@ const ProductFooter = ({
 			(isFreeApp && selectedAccount) ||
 			(isPaymentStep && enablePurchaseButton && addresses)
 		) {
-			handleGetApp();
+			handleGetApp(orderId);
 		}
 	};
 
@@ -111,9 +111,7 @@ const ProductFooter = ({
 					{sectionProperties[step].backStep !== step && (
 						<ClayButton
 							displayType="secondary"
-							onClick={() =>
-								onPrevious(sectionProperties[step].backStep)
-							}
+							onClick={() => onPrevious(sectionProperties[step].backStep)}
 						>
 							Back
 						</ClayButton>
@@ -139,18 +137,12 @@ const ProductFooter = ({
 				step === StepType.PAYMENT &&
 				selectedPaymentMethod === paymentMethod.PAY && (
 					<div className="align-items-end d-flex flex-column mt-4">
-						<span>
-							You will be redirected to PayPal to complete payment
-						</span>
+						<span>You will be redirected to PayPal to complete payment</span>
 						<div className="mt-1">
-							<img
-								alt="Account icon"
-								className="mr-2"
-								src={infoCircleIcon}
-							/>
+							<img alt="Account icon" className="mr-2" src={infoCircleIcon} />
 							<span>
-								Terms, privacy, returns, or contact support. All
-								costs are in US Dollars
+								Terms, privacy, returns, or contact support. All costs are in US
+								Dollars
 							</span>
 						</div>
 					</div>
