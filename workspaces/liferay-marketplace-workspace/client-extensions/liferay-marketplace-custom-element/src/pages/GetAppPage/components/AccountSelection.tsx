@@ -33,19 +33,25 @@ const AccountSelection = ({
 		const radioAccountList: RadioCardContent<Account>[] = [];
 
 		for (const accountBrief of userAccount.accountBriefs) {
-			let displayAccount = false;
+			let displayAccount: boolean = false;
 			if (!accountBrief.roleBriefs.length) {
 				const accountInfo: Account = await getAccountInfo({
 					accountId: Number(accountBrief.id),
 				});
-
 				if (accountInfo.type === 'person') {
 					displayAccount = true;
 				}
 			}
 			else {
-				displayAccount = accountBrief.roleBriefs.some((roleBrief) =>
-					enabledAccountRoles.includes(roleBrief.name)
+				displayAccount = accountBrief.roleBriefs.reduce(
+					(display, roleBrief) => {
+						if (enabledAccountRoles.includes(roleBrief.name)) {
+							return true;
+						}
+
+						return display;
+					},
+					false
 				);
 			}
 
@@ -57,8 +63,11 @@ const AccountSelection = ({
 				radioAccountList.push({
 					imageURL: accountInfo.logoURL,
 					selected:
-						selectedAccount?.externalReferenceCode ===
-						accountInfo.externalReferenceCode,
+						selectedAccount &&
+						selectedAccount.externalReferenceCode ===
+							accountInfo.externalReferenceCode
+							? true
+							: false,
 					title: accountInfo.name,
 					value: accountInfo,
 				});
@@ -77,10 +86,16 @@ const AccountSelection = ({
 		onSelectAccount(radioOption.value);
 
 		setAccounts((previousValue) =>
-			previousValue.map((account, index) => ({
-				...account,
-				selected: index === radioOption.index,
-			}))
+			previousValue.map((account, index) => {
+				if (index === radioOption.index) {
+					account.selected = true;
+
+					return account;
+				}
+				account.selected = false;
+
+				return account;
+			})
 		);
 	};
 
