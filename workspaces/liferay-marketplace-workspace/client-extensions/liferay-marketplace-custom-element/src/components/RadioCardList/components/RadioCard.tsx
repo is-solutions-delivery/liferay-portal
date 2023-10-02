@@ -10,8 +10,8 @@ import classNames from 'classnames';
 import './RadioCard.scss';
 import emptyPictureIcon from '../../../assets/icons/avatar.svg';
 
-interface RadioCardProps {
-	activeRadio: boolean | undefined;
+interface RadioCardProps<T> {
+	activeRadio: RadioOption<T> | undefined;
 	description?: string;
 	imageURL?: string;
 	index: number;
@@ -21,7 +21,7 @@ interface RadioCardProps {
 	title: string;
 }
 
-const NewRadioCard = ({
+const NewRadioCard = <T extends unknown>({
 	activeRadio,
 	description,
 	imageURL,
@@ -30,13 +30,13 @@ const NewRadioCard = ({
 	selectRadio,
 	showImage,
 	title,
-}: RadioCardProps) => {
+}: RadioCardProps<T>) => {
 	return (
 		<div
 			className={classNames(
 				'align-items-center d-flex justify-content-between form-control mb-5 cursor-pointer py-4 px-0',
 				{
-					'radio-selected': activeRadio,
+					'radio-selected': activeRadio?.index === index,
 				}
 			)}
 			key={index}
@@ -51,7 +51,7 @@ const NewRadioCard = ({
 					{leftRadio && (
 						<div className="col-1">
 							<ClayRadio
-								checked={activeRadio}
+								checked={activeRadio?.index === index}
 								onChange={() => selectRadio()}
 								type="radio"
 								value={title}
@@ -107,7 +107,7 @@ const NewRadioCard = ({
 			{!leftRadio && (
 				<div className="col-2">
 					<ClayRadio
-						checked={activeRadio}
+						checked={activeRadio?.index === index}
 						onChange={() => selectRadio()}
 						type="radio"
 						value={title}
