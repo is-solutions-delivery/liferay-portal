@@ -1,4 +1,10 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
 import { useState } from "react";
+
 import { createCart, getCart, updateCart } from "../utils/api";
 
 type cartItem = {
@@ -26,7 +32,7 @@ const useCart = () => {
 		} else {
 			setCartItems((prevCart) => [
 				...prevCart,
-				{ productId: productId, skuId: skuId, quantity: 1 },
+				{ productId, quantity: 1, skuId, },
 			]);
 		}
 	};
@@ -49,16 +55,19 @@ const useCart = () => {
 		currencyCode: string,
 	) => {
 		const cartData = await createCart(channelId, accountId, currencyCode);
+
 		return cartData;
 	};
 
 	const getCartData = async (cartId: number) => {
 		const cartdata = await getCart(cartId);
+
 		return cartdata;
 	};
 
 	const updateCartItems = async (cartId: number, data: any) => {
 		const response = await updateCart(cartId, data);
+
 		return response;
 	};
 

@@ -15,12 +15,12 @@ const maxItem = 99;
 const minItem = 0;
 
 const LicenseSectorCard: React.FC<any> = ({
-	productId,
-	sku,
 	cart,
 	licenseDescription,
 	licensetiers,
 	lisenceType,
+	productId,
+	sku,
 }) => {
 	const count =
 		cart.cartItems.find((item: any) => item.skuId === sku.id)?.quantity ||
@@ -58,12 +58,12 @@ const LicenseSectorCard: React.FC<any> = ({
 						<p className="license__card__text mb-0">{licenseDescription}</p>
 					</div>
 				</span>
-				<div className="align-items-center d-flex license__card__buttons__container p-1 justify-content-between">
+				<div className="align-items-center d-flex justify-content-between license__card__buttons__container p-1">
 					<span>
 						<ClayButton
-							disabled={count === minItem}
 							aria-label=""
 							className="align-items-center d-flex justify-content-center license__card__buttons p-2"
+							disabled={count === minItem}
 							displayType="primary"
 							onClick={() => cart.removeFromCart(sku.id)}
 						>
@@ -79,9 +79,9 @@ const LicenseSectorCard: React.FC<any> = ({
 					</span>
 					<span>
 						<ClayButton
-							disabled={count === maxItem}
 							aria-label=""
 							className="align-items-center d-flex justify-content-center license__card__buttons p-2"
+							disabled={count === maxItem}
 							displayType="primary"
 							onClick={() => {
 								cart.addCartItem(productId, count, sku.id);

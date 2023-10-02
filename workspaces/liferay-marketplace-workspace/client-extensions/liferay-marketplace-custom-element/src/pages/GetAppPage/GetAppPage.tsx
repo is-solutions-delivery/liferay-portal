@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import useCart from '../../hooks/useCart';
@@ -75,12 +75,12 @@ const GetAppFlow = () => {
   );
   const [licenseSelected, setLincenseSelected] = useState<boolean>(false);
 
-	const {getValues, setValue, watch} = useForm<getAppProps>({
-		defaultValues: {
-			product: undefined,
-			selectedAccount: undefined,
-		},
-	});
+  const { getValues, setValue, watch } = useForm<getAppProps>({
+    defaultValues: {
+      product: undefined,
+      selectedAccount: undefined,
+    },
+  });
 
   const cartUtil = useCart();
 
@@ -123,13 +123,13 @@ const GetAppFlow = () => {
 
     const dashboardURL = getReplaceCurrentURL('get-app', 'customer-dashboard');
 
-	const emailAppInformation = {
-		dashboardLink: dashboardURL,
-		orderID: cartResponse.id,
-		priceModel,
-		productName,
-		productType,
-	  }
+    const emailAppInformation = {
+      dashboardLink: dashboardURL,
+      orderID: cartResponse.id,
+      priceModel,
+      productName,
+      productType,
+    };
 
     await postEmailAppInformation(emailAppInformation);
 
@@ -155,9 +155,11 @@ const GetAppFlow = () => {
 
   const accountId = selectedAccount;
 
-  if (step === StepType.LICENSES && accountId) {
-    cartUtil.addCart(accountId?.id, channel.id, 'USD');
-  }
+  useEffect(() => {
+    if (step === StepType.LICENSES && accountId) {
+      cartUtil.addCart(accountId?.id, channel.id, 'USD');
+    }
+  }, [accountId, cartUtil, channel.id, step]);
 
   const StepFormComponent: StepComponent = {
     [StepType.ACCOUNT]: (
@@ -202,7 +204,7 @@ const GetAppFlow = () => {
     <>
       <ProductCard
         productId={Number(getUrlParam('productId'))}
-		    selectedAccount={watch('selectedAccount')}
+        selectedAccount={watch('selectedAccount')}
         setProductToForm={(product: Product) => setValue('product', product)}
       />
 
@@ -213,10 +215,10 @@ const GetAppFlow = () => {
           </div>
           <div>{StepFormComponent[step]}</div>
         </div>
-		
+
         <ProductFooter
-		  addresses={addresses}
-		  enablePurchaseButton={enablePurchaseButton}
+          addresses={addresses}
+          enablePurchaseButton={enablePurchaseButton}
           handleGetApp={handleGetApp}
           isFreeApp={isFreeApp}
           licenseSelected={licenseSelected}

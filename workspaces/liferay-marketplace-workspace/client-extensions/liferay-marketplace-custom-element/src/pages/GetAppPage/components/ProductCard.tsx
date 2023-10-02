@@ -129,7 +129,7 @@ const ProductCard = ({
 				<div className="p-5 product-banner">
 					<div className="d-flex flex-row justify-content-between">
 						<div className="d-flex flex-row">
-							<img height="64px" src={convertedIconURL} width="64px" alt="" />
+							<img alt="" height="64px" src={convertedIconURL} width="64px" />
 							<div className="align-items-center ml-4">
 								<h1 className="text-weight-bold">{product.name.en_US}</h1>
 								<div className="sub-text">

@@ -1,25 +1,30 @@
-import { useEffect, useState } from "react";
+/**
+ * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
 
+import { useEffect, useState } from "react";
+import { UseFormGetValues, UseFormSetValue } from "react-hook-form";
+
+import useCart from "../../../../../hooks/useCart";
 import {
 	getLicenseDescription,
 	getPricelistByCatalogName,
 	getTierPrice,
 } from "../../../../../utils/api";
-import { UseFormGetValues, UseFormSetValue } from "react-hook-form";
-import useCart from "../../../../../hooks/useCart";
 import { getAppProps } from "../../../GetAppPage";
 import LicenseSectorCard from "../LicenseCard";
 
 interface PaidTimelineProps {
-	product?: Product;
 	cart: any;
 	form: {
-		setValue?: UseFormSetValue<getAppProps>;
 		getValues: UseFormGetValues<getAppProps>;
+		setValue?: UseFormSetValue<getAppProps>;
 	};
+	product?: Product;
 }
 
-export function PaidTimeline({ product, form, cart }: PaidTimelineProps) {
+export function PaidTimeline({ cart, form, product }: PaidTimelineProps) {
 	console.log("PaidTimeline  product:", product);
 	const [skuInfo, setSkuInfo] = useState<any>({});
 	const [tierPrice, setTierPrice] = useState<any>([]);
@@ -37,7 +42,7 @@ export function PaidTimeline({ product, form, cart }: PaidTimelineProps) {
 			const skuDescription = await getLicenseDescription();
 			setSkuInfo(skuDescription?.items[0]);
 		})();
-	}, []);
+	}, [product?.catalog?.name]);
 
 	const skus = product?.skus;
 
@@ -66,14 +71,14 @@ export function PaidTimeline({ product, form, cart }: PaidTimelineProps) {
 					return (
 						<div className="mb-5" key={index}>
 							<LicenseSectorCard
-								productId={productId}
 								cart={cart}
-								sku={sku}
 								licenseDescription={
 									skuInfo[licenseTypeName?.key as keyof typeof skuInfo]
 								}
 								licensetiers={tierPricesList}
 								lisenceType={licenseTypeName?.key}
+								productId={productId}
+								sku={sku}
 							/>
 						</div>
 					);
