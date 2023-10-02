@@ -17,12 +17,12 @@ interface ProductFooterProps {
 	enablePurchaseButton: boolean;
 	handleGetApp: () => void;
 	isFreeApp: boolean;
+	licenseSelected: boolean;
 	sectionProperties: SectionPropertiesType;
 	selectedAccount?: Account;
 	selectedPaymentMethod: PaymentMethodSelector;
-	setStep: (nextStep: StepType) => void;
 	selectedSKU?: SKU;
-	licenseSelected: boolean;
+	setStep: (nextStep: StepType) => void;
 	step: StepType;
 }
 
@@ -33,19 +33,17 @@ type SectionPropertiesType = {
 	};
 };
 
-
-
 const ProductFooter = ({
 	addresses,
 	enablePurchaseButton,
 	handleGetApp,
 	isFreeApp,
+	licenseSelected,
 	sectionProperties,
 	selectedAccount,
 	selectedPaymentMethod,
-	setStep,
 	selectedSKU,
-	licenseSelected,
+	setStep,
 	step,
 }: ProductFooterProps) => {
 	const getButtonText = () => {
@@ -89,7 +87,7 @@ const ProductFooter = ({
 		const isPaymentStep = step === StepType.PAYMENT;
 		const isLicenseStep = step === StepType.LICENSES;
 
-		if ((!isFreeApp && isAccountStep && selectedAccount || isLicenseStep)) {
+		if ((!isFreeApp && isAccountStep && selectedAccount) || isLicenseStep) {
 			setStep(nextStep);
 
 			return;
@@ -124,7 +122,9 @@ const ProductFooter = ({
 						<ClayButton
 							className="ml-5"
 							disabled={
-								step === StepType.LICENSES && !licenseSelected ? true : false
+								step === StepType.LICENSES && !licenseSelected
+									? true
+									: false
 							}
 							onClick={() => {
 								onContinue(sectionProperties[step].nextStep);

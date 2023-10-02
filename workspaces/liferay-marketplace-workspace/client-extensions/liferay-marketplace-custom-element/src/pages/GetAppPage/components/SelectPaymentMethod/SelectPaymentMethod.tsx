@@ -10,7 +10,7 @@ import {paymentMethod} from '../../enums/paymentMethod';
 import {BillingAddress} from './components/BillingAddress/BillingAddress';
 import {PaymentMethodMode} from './components/PaymentMethodMode/PaymentMethodMode';
 import {PaymentMethodSelector} from './components/PaymentMethodSelector/PaymentMethodSelector';
-import { TrialMethod } from './components/TrialMethod/TrialMethod';
+import {TrialMethod} from './components/TrialMethod/TrialMethod';
 
 interface SelectPaymentMethodProps {
 	addresses: BillingAddress[];

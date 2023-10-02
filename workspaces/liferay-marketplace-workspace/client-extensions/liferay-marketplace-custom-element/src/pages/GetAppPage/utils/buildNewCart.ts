@@ -43,6 +43,10 @@ export default function buildNewCart(
 	}
 
 	const newCart = {
+		free: {
+			...cart,
+			billingAddress,
+		},
 		order: {
 			...cart,
 			author: email,
@@ -55,10 +59,6 @@ export default function buildNewCart(
 			paymentMethod: 'paypal',
 		},
 		trial: {
-			...cart,
-			billingAddress,
-		},
-		free: {
 			...cart,
 			billingAddress,
 		},
