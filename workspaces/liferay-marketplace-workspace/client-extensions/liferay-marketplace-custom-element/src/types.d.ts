@@ -2,12 +2,12 @@
  * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
-declare module '*.svg' {
+declare module "*.svg" {
 	const content: any;
 	export default content;
 }
 
-declare module 'warning';
+declare module "warning";
 
 type Account = {
 	customFields?: CustomField[];
@@ -104,6 +104,7 @@ type BillingAddress = {
 type Cart = {
 	accountId: number;
 	author?: string;
+	id: number;
 	billingAddress: BillingAddress;
 	cartItems: CartItem[];
 	currencyCode: string;
@@ -170,7 +171,7 @@ type Channel = {
 	type: string;
 };
 
-interface CommerceAccount extends Omit<Account, 'description'> {
+interface CommerceAccount extends Omit<Account, "description"> {
 	active: boolean;
 	logoURL: string;
 	taxId: string;
@@ -200,7 +201,7 @@ interface Order {
 	createDate?: string;
 	creatorEmailAddress?: string;
 	currencyCode: string;
-	customFields?: {[key: string]: string};
+	customFields?: { [key: string]: string };
 	externalReferenceCode?: string;
 	id?: number;
 	marketplaceOrderType?: string;
@@ -212,7 +213,7 @@ interface Order {
 			quantity?: number;
 			skuId: number;
 			unitPriceWithTaxAmount?: number;
-		}
+		},
 	];
 	orderStatus: number;
 	orderTypeExternalReferenceCode?: string;
@@ -227,19 +228,19 @@ interface OrderType {
 	displayOrder: number;
 	externalReferenceCode: string;
 	id: number;
-	name: {[key: string]: string};
+	name: { [key: string]: string };
 }
 
-type PaymentMethodMode = 'PayPal';
+type PaymentMethodMode = "PayPal";
 
-type PaymentMethodSelector = 'order' | 'pay' | 'trial' | 'free';
+type PaymentMethodSelector = "order" | "pay" | "trial" | "free";
 
 interface PlacedOrder {
 	account: string;
 	accountId: number;
 	author: string;
 	createDate: string;
-	customFields: {[key: string]: string};
+	customFields: { [key: string]: string };
 	id: number;
 	orderStatusInfo: {
 		code: number;
@@ -307,17 +308,18 @@ interface PostCheckoutCartResponse extends PostCartResponse {
 interface Product {
 	active: boolean;
 	attachments: ProductAttachment[];
+	catalog: Catalog;
 	catalogId: number;
 	categories: ProductCategories[];
 	customFields?: CustomField[];
-	description: {[key: string]: string};
+	description: { [key: string]: string };
 	externalReferenceCode: string;
 	finalPrice: any;
 	id?: number;
 	images: ProductImages[];
 	modifiedDate: string;
-	name: {[key: string]: string};
-	price: any;
+	name: { [key: string]: string };
+	price?: number;
 	productChannels: Channel[];
 	productId: number;
 	productSpecifications: ProductSpecification[];
@@ -339,7 +341,7 @@ interface ProductAttachment {
 	id: number;
 	priority: number;
 	src: string;
-	title: {[key: string]: string};
+	title: { [key: string]: string };
 }
 
 type ProductCategories = {
@@ -376,17 +378,17 @@ type SKU = {
 	id: number;
 	price: number;
 	sku: string;
-	skuOptions: {key: string; value: string}[];
+	skuOptions: { key: string; value: string }[];
 };
 
 type ProductSpecification = {
-	id: number;
-	optionCategoryId: number;
-	priority: number;
-	productId: number;
-	specificationId: number;
-	specificationKey: string;
-	value: {[key: string]: string};
+	id?: number;
+	optionCategoryId?: number;
+	priority?: number;
+	productId?: number;
+	specificationId?: number;
+	specificationKey?: string;
+	value: { [key: string]: string };
 };
 
 type UserAccount = {
@@ -432,7 +434,7 @@ type AdditionalInfoBody = {
 	r_accountEntryToUserAdditionalInfo_accountEntryId: number;
 	r_userToUserAddInfo_userId: string;
 	roles: string;
-	sendType: {key: string; name: string};
+	sendType: { key: string; name: string };
 	userFirstName: string;
 };
 
@@ -447,7 +449,7 @@ type Industries = {
 	key: string;
 	name: string;
 	name_i18n: {
-		'en-US': string;
+		"en-US": string;
 	};
 };
 
