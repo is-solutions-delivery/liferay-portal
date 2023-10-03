@@ -424,9 +424,9 @@ public class TimeBasedOTPBrowserSetupMFAChecker
 			return false;
 		}
 
-		String lastValidOTP = mfaTimeBasedOTPEntry.getLastValidTOTP();
+		String lastValidTOTP = mfaTimeBasedOTPEntry.getLastValidTOTP();
 
-		if (!mfaTimeBasedOTP.equals(lastValidOTP)) {
+		if (!mfaTimeBasedOTP.equals(lastValidTOTP)) {
 			return MFATimeBasedOTPUtil.verifyTimeBasedOTP(
 				_mfaTimeBasedOTPConfiguration.clockSkew(),
 				mfaTimeBasedOTPEntry.getSharedSecret(), mfaTimeBasedOTP);
