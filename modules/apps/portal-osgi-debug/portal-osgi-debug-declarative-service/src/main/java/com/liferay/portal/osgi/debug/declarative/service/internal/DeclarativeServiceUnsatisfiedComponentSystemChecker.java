@@ -28,7 +28,7 @@ public class DeclarativeServiceUnsatisfiedComponentSystemChecker
 
 	@Override
 	public String getName() {
-		return "Declarative Service Unsatisfied Component Checker";
+		return "Declarative Service Unsatisfied Component System Checker";
 	}
 
 	@Override

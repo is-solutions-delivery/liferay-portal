@@ -28,7 +28,7 @@ public class DeclarativeServiceSoftCircularDependencySystemChecker
 
 	@Override
 	public String getName() {
-		return "Declarative Service Soft Circular Dependency Checker";
+		return "Declarative Service Soft Circular Dependency System Checker";
 	}
 
 	@Override

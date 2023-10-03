@@ -24,7 +24,7 @@ public class PendingUpgradeSystemChecker implements SystemChecker {
 
 	@Override
 	public String getName() {
-		return "Pending Upgrade Scanner";
+		return "Pending Upgrade System Checker";
 	}
 
 	@Override

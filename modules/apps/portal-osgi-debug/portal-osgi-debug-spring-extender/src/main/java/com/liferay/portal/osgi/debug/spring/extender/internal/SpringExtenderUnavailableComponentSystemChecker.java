@@ -23,7 +23,7 @@ public class SpringExtenderUnavailableComponentSystemChecker
 
 	@Override
 	public String getName() {
-		return "Spring Extender Unavailable Component Checker";
+		return "Spring Extender Unavailable Component System Checker";
 	}
 
 	@Override
