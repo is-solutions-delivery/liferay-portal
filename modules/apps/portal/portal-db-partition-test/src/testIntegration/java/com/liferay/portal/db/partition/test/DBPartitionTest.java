@@ -62,8 +62,9 @@ public class DBPartitionTest extends BaseDBPartitionTestCase {
 		enableDBPartition();
 
 		entityCache.removeCache(ClassNameImpl.class.getName());
-		finderCache.removeCache(ClassNameImpl.class.getName());
 		entityCache.removeCache(ResourceActionImpl.class.getName());
+
+		finderCache.removeCache(ClassNameImpl.class.getName());
 		finderCache.removeCache(ResourceActionImpl.class.getName());
 
 		createControlTable(TEST_CONTROL_TABLE_NAME);
@@ -92,8 +93,9 @@ public class DBPartitionTest extends BaseDBPartitionTestCase {
 		disableDBPartition();
 
 		entityCache.removeCache(ClassNameImpl.class.getName());
-		finderCache.removeCache(ClassNameImpl.class.getName());
 		entityCache.removeCache(ResourceActionImpl.class.getName());
+
+		finderCache.removeCache(ClassNameImpl.class.getName());
 		finderCache.removeCache(ResourceActionImpl.class.getName());
 
 		_resourceActionMap.clear();
