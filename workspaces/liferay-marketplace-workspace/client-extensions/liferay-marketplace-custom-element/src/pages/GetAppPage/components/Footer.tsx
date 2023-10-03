@@ -3,26 +3,27 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayButton from '@clayui/button';
+import ClayButton from "@clayui/button";
 
-import infoCircleIcon from '../../../assets/icons/info_circle_icon.svg';
-import {getSiteURL} from '../../../components/InviteMemberModal/services';
-import {Liferay} from '../../../liferay/liferay';
-import {paymentMethod} from '../enums/paymentMethod';
-import {StepType} from '../enums/stepType';
+import infoCircleIcon from "../../../assets/icons/info_circle_icon.svg";
+import { getSiteURL } from "../../../components/InviteMemberModal/services";
+import { Liferay } from "../../../liferay/liferay";
+import { paymentMethod } from "../enums/paymentMethod";
+import { StepType } from "../enums/stepType";
 
 interface ProductFooterProps {
 	addresses: BillingAddress[];
 	cartId?: number;
 	enablePurchaseButton: boolean;
-	handleGetApp: () => void;
+	handleGetApp: (orderId?: number) => void;
 	isFreeApp: boolean;
+	licenseSelected: boolean;
+	cartUtil: any;
 	sectionProperties: SectionPropertiesType;
 	selectedAccount?: Account;
 	selectedPaymentMethod: PaymentMethodSelector;
-	setStep: (nextStep: StepType) => void;
 	selectedSKU?: SKU;
-	licenseSelected: boolean;
+	setStep: (nextStep: StepType) => void;
 	step: StepType;
 }
 
@@ -33,44 +34,41 @@ type SectionPropertiesType = {
 	};
 };
 
-
-
 const ProductFooter = ({
 	addresses,
 	enablePurchaseButton,
 	handleGetApp,
 	isFreeApp,
+	licenseSelected,
+	cartUtil,
 	sectionProperties,
 	selectedAccount,
 	selectedPaymentMethod,
-	setStep,
 	selectedSKU,
-	licenseSelected,
+	setStep,
 	step,
 }: ProductFooterProps) => {
 	const getButtonText = () => {
 		const isAccountOrLicenseStep =
 			step === StepType.ACCOUNT || step === StepType.LICENSES;
 		const isPayMethodSelected = selectedPaymentMethod === paymentMethod.PAY;
-		const isTrialMethodSelected =
-			selectedPaymentMethod === paymentMethod.TRIAL;
-		const isOrderMethodSelected =
-			selectedPaymentMethod === paymentMethod.ORDER;
+		const isTrialMethodSelected = selectedPaymentMethod === paymentMethod.TRIAL;
+		const isOrderMethodSelected = selectedPaymentMethod === paymentMethod.ORDER;
 
 		if (isFreeApp) {
-			return 'Get This App';
+			return "Get This App";
 		}
 		if (isAccountOrLicenseStep) {
-			return 'Continue';
+			return "Continue";
 		}
 		if (isPayMethodSelected) {
-			return `Pay $${selectedSKU?.price} Now`;
+			return `Pay ${cartUtil?.cart?.summary?.totalFormatted} Now`;
 		}
 		if (isTrialMethodSelected) {
-			return 'Start Free Trial';
+			return "Start Free Trial";
 		}
 		if (isOrderMethodSelected) {
-			return `Create PO for $${selectedSKU?.price}`;
+			return `Create PO for ${cartUtil?.cart?.summary?.totalFormatted}`;
 		}
 	};
 
@@ -89,7 +87,7 @@ const ProductFooter = ({
 		const isPaymentStep = step === StepType.PAYMENT;
 		const isLicenseStep = step === StepType.LICENSES;
 
-		if ((!isFreeApp && isAccountStep && selectedAccount || isLicenseStep)) {
+		if ((!isFreeApp && isAccountStep && selectedAccount) || isLicenseStep) {
 			setStep(nextStep);
 
 			return;
@@ -97,25 +95,32 @@ const ProductFooter = ({
 
 		if (
 			(isFreeApp && selectedAccount) ||
-			(isPaymentStep && enablePurchaseButton && addresses)
+			(enablePurchaseButton && addresses && isPaymentStep)
 		) {
-			handleGetApp();
+			handleGetApp(cartUtil?.cart.id);
 		}
 	};
 
 	return (
 		<div className="mt-5 pt-2 text-black-50">
 			<div className="d-flex justify-content-between">
-				<ClayButton displayType={null} onClick={() => onCancel()}>
+				<ClayButton
+					displayType={null}
+					onClick={() => {
+						cartUtil.cart?.id && cartUtil?.removeCart(cartUtil.cart?.id);
+						onCancel();
+					}}
+				>
 					Cancel
 				</ClayButton>
 				<div>
 					{sectionProperties[step].backStep !== step && (
 						<ClayButton
 							displayType="secondary"
-							onClick={() =>
-								onPrevious(sectionProperties[step].backStep)
-							}
+							onClick={() => {
+								cartUtil?.cart?.id && cartUtil?.removeCart(cartUtil?.cart?.id);
+								onPrevious(sectionProperties[step].backStep);
+							}}
 						>
 							Back
 						</ClayButton>
@@ -124,7 +129,10 @@ const ProductFooter = ({
 						<ClayButton
 							className="ml-5"
 							disabled={
-								step === StepType.LICENSES && !licenseSelected ? true : false
+								(step === StepType.ACCOUNT && !selectedAccount) ||
+								(step === StepType.LICENSES && !licenseSelected)
+									? true
+									: false
 							}
 							onClick={() => {
 								onContinue(sectionProperties[step].nextStep);
@@ -139,18 +147,12 @@ const ProductFooter = ({
 				step === StepType.PAYMENT &&
 				selectedPaymentMethod === paymentMethod.PAY && (
 					<div className="align-items-end d-flex flex-column mt-4">
-						<span>
-							You will be redirected to PayPal to complete payment
-						</span>
+						<span>You will be redirected to PayPal to complete payment</span>
 						<div className="mt-1">
-							<img
-								alt="Account icon"
-								className="mr-2"
-								src={infoCircleIcon}
-							/>
+							<img alt="Account icon" className="mr-2" src={infoCircleIcon} />
 							<span>
-								Terms, privacy, returns, or contact support. All
-								costs are in US Dollars
+								Terms, privacy, returns, or contact support. All costs are in US
+								Dollars
 							</span>
 						</div>
 					</div>
