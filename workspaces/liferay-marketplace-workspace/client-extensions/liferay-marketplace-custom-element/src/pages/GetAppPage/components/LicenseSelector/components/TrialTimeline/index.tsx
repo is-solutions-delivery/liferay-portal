@@ -1,7 +1,15 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
 import ClayIcon from '@clayui/icon';
+
 import './index.scss';
-import { CardButton } from '../../../../../../components/CardButton/CardButton';
-import { useState } from 'react';
+
+import {useState} from 'react';
+
+import {CardButton} from '../../../../../../components/CardButton/CardButton';
 
 interface TrialTimelineProps {
 	setLicenseSelected: (licenseSelected: boolean) => void;
@@ -9,6 +17,7 @@ interface TrialTimelineProps {
 
 export function TrialTimeline({setLicenseSelected}: TrialTimelineProps) {
 	const [selectedLicense, setSelectedLicense] = useState<boolean>(false);
+
 	return (
 		<div className="d-flex flex-column trial-timeline">
 			<p className="d-flex mb-2 trial-info">
@@ -30,8 +39,8 @@ export function TrialTimeline({setLicenseSelected}: TrialTimelineProps) {
 				}
 				iconRight
 				onClick={() => {
-					setLicenseSelected(true)
-					setSelectedLicense(true)
+					setLicenseSelected(true);
+					setSelectedLicense(true);
 				}}
 				selected={selectedLicense}
 				title="Trial License"
