@@ -420,14 +420,16 @@ public class TimeBasedOTPBrowserSetupMFAChecker
 			_mfaTimeBasedOTPEntryLocalService.fetchMFATimeBasedOTPEntryByUserId(
 				userId);
 
-		if (mfaTimeBasedOTPEntry != null) {
-			String lastValidOTP = mfaTimeBasedOTPEntry.getLastValidTOTP();
+		if (mfaTimeBasedOTPEntry == null) {
+			return false;
+		}
 
-			if (!mfaTimeBasedOTP.equals(lastValidOTP)) {
-				return MFATimeBasedOTPUtil.verifyTimeBasedOTP(
-					_mfaTimeBasedOTPConfiguration.clockSkew(),
-					mfaTimeBasedOTPEntry.getSharedSecret(), mfaTimeBasedOTP);
-			}
+		String lastValidOTP = mfaTimeBasedOTPEntry.getLastValidTOTP();
+
+		if (!mfaTimeBasedOTP.equals(lastValidOTP)) {
+			return MFATimeBasedOTPUtil.verifyTimeBasedOTP(
+				_mfaTimeBasedOTPConfiguration.clockSkew(),
+				mfaTimeBasedOTPEntry.getSharedSecret(), mfaTimeBasedOTP);
 		}
 
 		return false;
