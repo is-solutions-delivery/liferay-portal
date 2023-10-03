@@ -635,7 +635,7 @@ public class MainServlet extends HttpServlet {
 		}
 		catch (Exception exception) {
 			if (_log.isWarnEnabled()) {
-				_log.warn("Unable to get the build date", exception);
+				_log.warn("Unable to check build date", exception);
 			}
 		}
 	}
