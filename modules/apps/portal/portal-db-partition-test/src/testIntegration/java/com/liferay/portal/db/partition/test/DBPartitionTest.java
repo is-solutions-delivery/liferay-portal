@@ -71,10 +71,10 @@ public class DBPartitionTest extends BaseDBPartitionTestCase {
 
 		addDBPartitions();
 
-		_resourceActionMap = ReflectionTestUtil.getFieldValue(
+		_resourceActions = ReflectionTestUtil.getFieldValue(
 			ResourceActionLocalServiceImpl.class, "_resourceActions");
 
-		_resourceActionMap.clear();
+		_resourceActions.clear();
 
 		DBPartitionUtil.forEachCompanyId(
 			companyId -> _resourceActionLocalService.checkResourceActions());
@@ -98,7 +98,7 @@ public class DBPartitionTest extends BaseDBPartitionTestCase {
 		finderCache.removeCache(ClassNameImpl.class.getName());
 		finderCache.removeCache(ResourceActionImpl.class.getName());
 
-		_resourceActionMap.clear();
+		_resourceActions.clear();
 
 		DBPartitionUtil.forEachCompanyId(
 			companyId -> _resourceActionLocalService.checkResourceActions());
@@ -465,7 +465,7 @@ public class DBPartitionTest extends BaseDBPartitionTestCase {
 	@Inject
 	private static ResourceActionLocalService _resourceActionLocalService;
 
-	private static Map<String, ResourceAction> _resourceActionMap;
+	private static Map<String, ResourceAction> _resourceActions;
 
 	@Inject
 	private ClassNameLocalService _classNameLocalService;
