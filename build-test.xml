@@ -12661,15 +12661,6 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 		</echo>
 
 		<if>
-			<isset property="validation.resource.file.types" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					validation.resource.file.types=${validation.resource.file.types}
-				</echo>
-			</then>
-		</if>
-
-		<if>
 			<isset property="dl.store.antivirus.enabled" />
 			<then>
 				<echo append="true" file="${test.ext.properties.file}">
@@ -13050,6 +13041,15 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 			<then>
 				<echo append="true" file="${test.ext.properties.file}">
 					test.build.fix.pack.zip.url.previous=${test.build.fix.pack.zip.url.previous}
+				</echo>
+			</then>
+		</if>
+
+		<if>
+			<isset property="validation.resource.file.types" />
+			<then>
+				<echo append="true" file="${test.ext.properties.file}">
+					validation.resource.file.types=${validation.resource.file.types}
 				</echo>
 			</then>
 		</if>
