@@ -1,17 +1,24 @@
-import classNames from 'classnames';
-import {MouseEvent, ReactNode} from 'react';
+/**
+ * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
 
-import arrowLeft from '../../assets/icons/guide_icon.svg';
+import classNames from "classnames";
+import { MouseEvent, ReactNode } from "react";
 
-import './CardButton.scss';
+import arrowLeft from "../../assets/icons/guide_icon.svg";
+
+import "./CardButton.scss";
+import { StepType } from "../../pages/GetAppPage/enums/stepType";
 
 export function CardButton({
 	description,
 	disabled,
-	icon,
+	icon = "",
 	iconRight,
 	onClick,
 	selected,
+	step,
 	title,
 }: {
 	description: string;
@@ -20,40 +27,51 @@ export function CardButton({
 	iconRight?: boolean;
 	onClick: (event: MouseEvent) => void;
 	selected: boolean;
+	step?: StepType;
 	title: string;
 }) {
 	return (
 		<div
-			className={classNames('card-button', {
-				'card-button--disabled': disabled,
-				'card-button--selected': selected,
+			className={classNames("card-button d-flex", {
+				"card-button--disabled": disabled,
+				"card-button--selected": selected,
 			})}
 			onClick={onClick}
 		>
-			{!iconRight &&
+			{step === StepType.PAYMENT ? (
+				<img alt="trial" className="card-button-icon" src={icon as string} />
+			) : (
+				!iconRight &&
 				(icon ? (
 					icon
 				) : (
-					<img
-						alt="trial"
-						className="card-button-icon"
-						src={arrowLeft}
-					/>
-				))}
+					<img alt="trial" className="card-button-icon" src={arrowLeft} />
+				))
+			)}
 
 			<div className="card-button-info">
 				<div className="card-button-title">
 					<div
-						className={classNames('card-button-text', {
-							'icon-right': iconRight,
+						className={classNames("card-button-text", {
+							"icon-right": iconRight,
 						})}
 					>
 						{title}
-						{iconRight && icon}
+						{step !== StepType.PAYMENT && iconRight && icon}
 					</div>
-					<div className="card-button-description">{description}</div>
+
+					<div
+						className={classNames({
+							"card-button-description": step === StepType.PAYMENT,
+							"card-button-description-paid": step === StepType.LICENSES,
+						})}
+					>
+						{description}
+					</div>
 				</div>
 			</div>
 		</div>
 	);
 }
+
+export default CardButton;
