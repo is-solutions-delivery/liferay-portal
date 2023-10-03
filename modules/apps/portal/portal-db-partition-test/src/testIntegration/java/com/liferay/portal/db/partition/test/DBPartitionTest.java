@@ -248,7 +248,7 @@ public class DBPartitionTest extends BaseDBPartitionTestCase {
 
 	@Test
 	public void testGetClassName() throws Exception {
-		CopyOnWriteArraySet<ClassName> classNames = new CopyOnWriteArraySet<>();
+		Set<ClassName> classNames = new CopyOnWriteArraySet<>();
 
 		try {
 			DBPartitionUtil.forEachCompanyId(
@@ -270,8 +270,7 @@ public class DBPartitionTest extends BaseDBPartitionTestCase {
 
 	@Test
 	public void testGetResourceAction() throws Exception {
-		CopyOnWriteArraySet<ResourceAction> resourceActions =
-			new CopyOnWriteArraySet<>();
+		Set<ResourceAction> resourceActions = new CopyOnWriteArraySet<>();
 
 		try {
 			DBPartitionUtil.forEachCompanyId(
