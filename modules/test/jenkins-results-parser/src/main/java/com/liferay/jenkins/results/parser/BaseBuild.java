@@ -2753,7 +2753,7 @@ public abstract class BaseBuild implements Build {
 		catch (Exception exception) {
 			System.out.println(
 				JenkinsResultsParserUtil.combine(
-					"[", getBuildName(), "] Unable to get Queue Item"));
+					"[", getBuildName(), "] Unable to get queue item"));
 		}
 
 		return false;
@@ -2779,7 +2779,7 @@ public abstract class BaseBuild implements Build {
 
 			System.out.println(
 				JenkinsResultsParserUtil.combine(
-					"[", getBuildName(), "] Unable to get Build Item"));
+					"[", getBuildName(), "] Unable to get build item"));
 		}
 
 		return false;
