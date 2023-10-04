@@ -34,7 +34,6 @@ interface LicenseSelectorProps {
 
 export function LicenseSelector({
 	cart,
-	form,
 	onSelectLicense,
 	selectedPaymentMethod,
 	selectedProduct,
@@ -109,11 +108,7 @@ export function LicenseSelector({
 							setLicenseSelected={handleLicenseSelect}
 						/>
 					) : (
-						<PaidTimeline
-							cart={cart}
-							form={form}
-							product={selectedProduct}
-						/>
+						<PaidTimeline cart={cart} product={selectedProduct} />
 					)}
 				</div>
 			)}

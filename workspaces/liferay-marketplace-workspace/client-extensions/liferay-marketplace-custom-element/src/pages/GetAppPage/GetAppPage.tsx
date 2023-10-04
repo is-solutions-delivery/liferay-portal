@@ -192,7 +192,8 @@ const GetAppFlow = () => {
 			);
 
 			window.location.href = paymentMethodURL;
-		} else {
+		}
+		else {
 			window.location.href = nextStepsCallbackURL;
 		}
 	}

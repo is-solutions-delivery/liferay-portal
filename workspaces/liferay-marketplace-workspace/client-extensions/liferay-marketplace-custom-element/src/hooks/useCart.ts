@@ -71,7 +71,8 @@ const useCart = ({
 						: item
 				)
 			);
-		} else {
+		}
+		else {
 			setCartItems((prevCart) => [
 				...prevCart,
 				{productId, quantity: 1, skuId},
