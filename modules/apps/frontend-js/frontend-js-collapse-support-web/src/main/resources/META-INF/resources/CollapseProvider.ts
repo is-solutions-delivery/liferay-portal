@@ -117,8 +117,8 @@ class CollapseProvider {
 			trigger = this._getTrigger(panel);
 		}
 
-		// If the initial trigger isn't found, assume it could be a clay:panel
-		// taglib and attempt to expand it.
+		// If the initial trigger is not found, assume it could be a clay:panel
+		// taglib and attempt to expand it
 
 		if (!trigger) {
 			const clayPanelTrigger = panel
