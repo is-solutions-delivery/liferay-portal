@@ -5,6 +5,11 @@
 
 package com.liferay.commerce.site.initializer;
 
+import com.liferay.commerce.constants.CommerceWebKeys;
+import com.liferay.commerce.context.CommerceContext;
+import com.liferay.commerce.context.CommerceContextFactory;
+import com.liferay.commerce.context.CommerceContextThreadLocal;
+import com.liferay.commerce.context.CommerceGroupThreadLocal;
 import com.liferay.commerce.currency.service.CommerceCurrencyLocalService;
 import com.liferay.commerce.initializer.util.CPDefinitionsImporter;
 import com.liferay.commerce.initializer.util.CPOptionCategoriesImporter;
@@ -50,6 +55,7 @@ import com.liferay.headless.commerce.admin.order.resource.v1_0.OrderTypeResource
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -93,6 +99,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.wiring.BundleWiring;
@@ -196,6 +203,27 @@ public class CommerceSiteInitializerImpl implements CommerceSiteInitializer {
 
 	public String getCommerceOrderClassName() {
 		return CommerceOrder.class.getName();
+	}
+
+	public void setCommerceContext(HttpServletRequest httpServletRequest) {
+		CommerceContext commerceContext = _commerceContextFactory.create(
+			httpServletRequest);
+
+		httpServletRequest.setAttribute(
+			CommerceWebKeys.COMMERCE_CONTEXT, commerceContext);
+
+		try {
+			CommerceContextThreadLocal.set(commerceContext);
+
+			CommerceGroupThreadLocal.set(
+				_groupLocalService.fetchGroup(
+					commerceContext.getCommerceChannelGroupId()));
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(portalException);
+			}
+		}
 	}
 
 	private void _addCommerceChannelConfiguration(
@@ -993,6 +1021,9 @@ public class CommerceSiteInitializerImpl implements CommerceSiteInitializer {
 
 	@Reference
 	private CommerceChannelService _commerceChannelService;
+
+	@Reference
+	private CommerceContextFactory _commerceContextFactory;
 
 	@Reference
 	private CommerceCurrencyLocalService _commerceCurrencyLocalService;

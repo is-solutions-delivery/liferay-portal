@@ -13,7 +13,11 @@ import com.liferay.portal.kernel.change.tracking.CTAware;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.LayoutSetPrototype;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.GroupService;
@@ -22,6 +26,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
+import com.liferay.portal.kernel.servlet.DummyHttpServletResponse;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -34,6 +39,7 @@ import com.liferay.portal.vulcan.multipart.MultipartBody;
 import com.liferay.site.initializer.SiteInitializer;
 import com.liferay.site.initializer.SiteInitializerFactory;
 import com.liferay.site.initializer.SiteInitializerRegistry;
+import com.liferay.site.initializer.extender.CommerceSiteInitializer;
 import com.liferay.sites.kernel.util.Sites;
 
 import java.io.File;
@@ -102,23 +108,47 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 				ActionKeys.UPDATE);
 		}
 
-		File tempFile = FileUtil.createTempFile(
-			multipartBody.getBinaryFileAsBytes("file"));
-		File tempFolder = FileUtil.createTempFolder();
-
-		FileUtil.unzip(tempFile, tempFolder);
-
-		tempFile.delete();
+		long currentCompanyId = CompanyThreadLocal.getCompanyId();
+		PermissionChecker currentPermissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
+		String currentPrincipalThreadLocalName = PrincipalThreadLocal.getName();
 
 		try {
-			SiteInitializer siteInitializer = _siteInitializerFactory.create(
-				new File(tempFolder, "site-initializer"),
-				group.getName(LocaleUtil.getDefault()));
+			ServiceContext serviceContext =
+				ServiceContextThreadLocal.getServiceContext();
 
-			siteInitializer.initialize(group.getGroupId());
+			if (serviceContext == null) {
+				serviceContext = new ServiceContext();
+			}
+
+			serviceContext.setCompanyId(contextCompany.getCompanyId());
+			serviceContext.setScopeGroupId(group.getGroupId());
+			serviceContext.setUserId(contextUser.getUserId());
+
+			ThemeDisplay themeDisplay = serviceContext.getThemeDisplay();
+
+			themeDisplay.setResponse(new DummyHttpServletResponse());
+
+			CompanyThreadLocal.setCompanyId(contextCompany.getCompanyId());
+			PermissionThreadLocal.setPermissionChecker(
+				PermissionCheckerFactoryUtil.create(contextUser));
+			PrincipalThreadLocal.setName(contextUser.getUserId());
+			ServiceContextThreadLocal.pushServiceContext(serviceContext);
+
+			_initialize(group, multipartBody);
+		}
+		catch (Exception exception) {
+			PermissionCacheUtil.clearCache(contextUser.getUserId());
+
+			ServiceContextThreadLocal.popServiceContext();
+
+			throw exception;
 		}
 		finally {
-			tempFolder.delete();
+			CompanyThreadLocal.setCompanyId(currentCompanyId);
+			PermissionThreadLocal.setPermissionChecker(
+				currentPermissionChecker);
+			PrincipalThreadLocal.setName(currentPrincipalThreadLocalName);
 		}
 
 		Group finalGroup = group;
@@ -277,6 +307,37 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 		}
 
 		return group;
+	}
+
+	private void _initialize(Group group, MultipartBody multipartBody)
+		throws Exception {
+
+		File tempFile = FileUtil.createTempFile(
+			multipartBody.getBinaryFileAsBytes("file"));
+		File tempFolder = FileUtil.createTempFolder();
+
+		FileUtil.unzip(tempFile, tempFolder);
+
+		tempFile.delete();
+
+		try {
+			SiteInitializer siteInitializer = _siteInitializerFactory.create(
+				new File(tempFolder, "site-initializer"),
+				group.getName(LocaleUtil.getDefault()));
+
+			CommerceSiteInitializer commerceSiteInitializer =
+				siteInitializer.getCommerceSiteInitializer();
+
+			if (commerceSiteInitializer != null) {
+				commerceSiteInitializer.setCommerceContext(
+					contextHttpServletRequest);
+			}
+
+			siteInitializer.initialize(group.getGroupId());
+		}
+		finally {
+			tempFolder.delete();
+		}
 	}
 
 	private void _initThemeDisplay() throws Exception {
