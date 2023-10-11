@@ -4,6 +4,7 @@
  */
 
 import ClayAlert from '@clayui/alert';
+import ClayBadge from '@clayui/badge';
 import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import ClayDropDown, {Align, ClayDropDownWithItems} from '@clayui/drop-down';
 import ClayEmptyState from '@clayui/empty-state';
@@ -16,6 +17,7 @@ import ClayNavigationBar from '@clayui/navigation-bar';
 import ClayTable from '@clayui/table';
 import classNames from 'classnames';
 import {
+	createPortletURL,
 	fetch,
 	navigate as navigateUtil,
 	openConfirmModal,
@@ -136,7 +138,6 @@ export default function ChangeTrackingRenderView({
 	handleShowHideable,
 	initialDataURL,
 	moveChangesURL,
-	namespace,
 	parentEntries,
 	showDropdown,
 	showHeader = true,
@@ -874,7 +875,15 @@ export default function ChangeTrackingRenderView({
 
 		if (moveChangesURL !== null) {
 			dropdownItems.push({
-				label: Liferay.Language.get('move-changes'),
+				label: (
+					<>
+						{Liferay.Language.get('move-changes')}
+
+						<div className="float-right">
+							<ClayBadge displayType="beta" label="beta" />
+						</div>
+					</>
+				),
 				onClick: () => navigate(moveChangesURL),
 				symbolLeft: 'move-folder',
 			});
@@ -1475,27 +1484,11 @@ export default function ChangeTrackingRenderView({
 
 	const updatePreviewRender = (segmentsExperienceId) => {
 		if (segmentsExperienceId) {
-			let newDataURL;
+			const newDataURL = createPortletURL(initialDataURL, {
+				segmentsExperienceId,
+			});
 
-			if (initialDataURL.includes('segmentsExperienceId=')) {
-				const regex = /segmentsExperienceId=\d*/i;
-
-				newDataURL = initialDataURL.replace(
-					regex,
-					'segmentsExperienceId=' +
-						encodeURIComponent(segmentsExperienceId)
-				);
-			}
-			else {
-				newDataURL =
-					initialDataURL +
-					'&' +
-					namespace +
-					'segmentsExperienceId=' +
-					encodeURIComponent(segmentsExperienceId);
-			}
-
-			setDataURL(newDataURL);
+			setDataURL(newDataURL.toString());
 			setSelectedSegmentsExperienceId(segmentsExperienceId);
 		}
 		else {

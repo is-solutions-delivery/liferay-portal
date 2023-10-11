@@ -12,6 +12,7 @@ import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.module.service.Snapshot;
 import com.liferay.portal.kernel.scheduler.SchedulerJobConfiguration;
 import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.scheduler.TriggerConfiguration;
@@ -25,9 +26,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.osgi.service.component.annotations.ReferencePolicy;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Adolfo Pérez
@@ -66,29 +64,25 @@ public class CleanUpStoreAreasSchedulerJobConfiguration
 			StoreAreaConfiguration.class, properties);
 	}
 
-	private void _cleanUpDeletedStoreArea(long companyId) {
-		_startOffsets.put(
-			companyId,
-			_storeAreaProcessor.cleanUpDeletedStoreArea(
-				companyId, _storeAreaConfiguration.evictionQuota(),
-				name -> !_isDLFileVersionReferenced(companyId, name),
-				_startOffsets.getOrDefault(companyId, StringPool.BLANK),
-				Duration.ofDays(_storeAreaConfiguration.evictionAge())));
-	}
-
-	private void _cleanUpNewStoreArea(long companyId) {
-		_startOffsets.put(
-			companyId,
-			_storeAreaProcessor.cleanUpNewStoreArea(
-				companyId, _storeAreaConfiguration.evictionQuota(),
-				name -> !_isDLFileVersionReferenced(companyId, name),
-				_startOffsets.getOrDefault(companyId, StringPool.BLANK),
-				Duration.ofDays(_storeAreaConfiguration.evictionAge())));
-	}
-
 	private void _cleanUpStorageAreas(long companyId) {
-		_cleanUpDeletedStoreArea(companyId);
-		_cleanUpNewStoreArea(companyId);
+		StoreAreaProcessor storeAreaProcessor =
+			_storeAreaProcessorSnapshot.get();
+
+		_startOffsets.put(
+			companyId,
+			storeAreaProcessor.cleanUpDeletedStoreArea(
+				companyId, _storeAreaConfiguration.evictionQuota(),
+				name -> !_isDLFileVersionReferenced(companyId, name),
+				_startOffsets.getOrDefault(companyId, StringPool.BLANK),
+				Duration.ofDays(_storeAreaConfiguration.evictionAge())));
+
+		_startOffsets.put(
+			companyId,
+			storeAreaProcessor.cleanUpNewStoreArea(
+				companyId, _storeAreaConfiguration.evictionQuota(),
+				name -> !_isDLFileVersionReferenced(companyId, name),
+				_startOffsets.getOrDefault(companyId, StringPool.BLANK),
+				Duration.ofDays(_storeAreaConfiguration.evictionAge())));
 	}
 
 	private boolean _isDLFileVersionReferenced(Long companyId, String name) {
@@ -108,6 +102,11 @@ public class CleanUpStoreAreasSchedulerJobConfiguration
 		return false;
 	}
 
+	private static final Snapshot<StoreAreaProcessor>
+		_storeAreaProcessorSnapshot = new Snapshot<>(
+			CleanUpStoreAreasSchedulerJobConfiguration.class,
+			StoreAreaProcessor.class, "(default=true)", true);
+
 	@Reference
 	private CompanyLocalService _companyLocalService;
 
@@ -116,12 +115,5 @@ public class CleanUpStoreAreasSchedulerJobConfiguration
 
 	private Map<Long, String> _startOffsets;
 	private StoreAreaConfiguration _storeAreaConfiguration;
-
-	@Reference(
-		cardinality = ReferenceCardinality.OPTIONAL,
-		policy = ReferencePolicy.DYNAMIC,
-		policyOption = ReferencePolicyOption.GREEDY, target = "(default=true)"
-	)
-	private volatile StoreAreaProcessor _storeAreaProcessor;
 
 }

@@ -2228,9 +2228,6 @@ public class PropsValues {
 	public static final String[] SPRING_INFRASTRUCTURE_CONFIGS =
 		PropsUtil.getArray(PropsKeys.SPRING_INFRASTRUCTURE_CONFIGS);
 
-	public static final int SQL_DATA_MAX_PARAMETERS = GetterUtil.getInteger(
-		PropsUtil.get(PropsKeys.SQL_DATA_MAX_PARAMETERS));
-
 	public static int STAGING_DRAFT_EXPORT_IMPORT_CONFIGURATION_CHECK_INTERVAL =
 		GetterUtil.getInteger(
 			PropsUtil.get(
@@ -2384,6 +2381,9 @@ public class PropsValues {
 	public static final boolean UPGRADE_LOG_CONTEXT_ENABLED =
 		GetterUtil.getBoolean(
 			PropsUtil.get(PropsKeys.UPGRADE_LOG_CONTEXT_ENABLED));
+
+	public static final String UPGRADE_REPORT_DIR = GetterUtil.getString(
+		PropsUtil.get(PropsKeys.UPGRADE_REPORT_DIR));
 
 	public static final long UPGRADE_REPORT_DL_STORAGE_SIZE_TIMEOUT =
 		GetterUtil.getLong(

@@ -51,6 +51,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>DROPDOWN_MENU_ITEM_N</td>
+	<td>//div[@class='autocomplete-items']//li[contains(.,'${key_text}')][${key_index}]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>SELECT_ITEM_FROM_LIST</td>
 	<td>//div[contains(@class,'table-list-title')]/a[contains(.,'${key_itemName}')]//following::div//a[contains(.,'Select')]</td>
 	<td></td>
@@ -1449,6 +1454,19 @@
 <tr>
 	<td>QUANTITY_IN_SHIPMENT_BY_WAREHOUSE</td>
 	<td>//div[contains(@class,'dnd-tbody')]//div[contains(text(),'${key_warehouseName}')]/..//div[6]</td>
+	<td></td>
+</tr>
+
+<!--SKU-->
+
+<tr>
+	<td>ADMIN_PRODUCT_UOM_SELECT</td>
+	<td>//select[contains(@name,'unitOfMeasureKey') and contains(@class,"disabled")]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRICE_ENTRY_WITH_UOM</td>
+	<td>//div[contains(@class,'dnd-tr')]//a[contains(.,"${key_pricing}")]/../../..//div[contains(.,"${key_uomkey}")]/..//a</td>
 	<td></td>
 </tr>
 

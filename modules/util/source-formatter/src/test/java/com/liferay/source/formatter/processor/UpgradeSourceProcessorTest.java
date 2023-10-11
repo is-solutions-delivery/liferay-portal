@@ -43,6 +43,14 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testUpgradeCatchAllCheck() throws Exception {
+		test(
+			"upgrade/UpgradeCatchAllCheck.testjava",
+			"See LPS-189866, AssetVocabularyService" +
+				"/AssetVocabularyLocalService#searchVocabularies");
+	}
+
+	@Test
 	public void testUpgradeDLUtilCheck() throws Exception {
 		test("upgrade/UpgradeJavaDLUtilCheck.testjava");
 		test("upgrade/UpgradeJSPDLUtilCheck.testjsp");
@@ -177,8 +185,8 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
-	public void testUpgradeJavaCommerceRegionCheck() throws Exception {
-		test("upgrade/UpgradeJavaCommerceRegionCheck.testjava");
+	public void testUpgradeJavaCommerceOrderValidatorCheck() throws Exception {
+		test("upgrade/UpgradeJavaCommerceOrderValidatorCheck.testjava");
 	}
 
 	@Test
@@ -205,11 +213,6 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 				"DLFolderLocalService, DLFolderServiceUtil and ",
 				"DLFolderLocalServiceUtil. Fill the new parameter manually, ",
 				"see LPS-194001."));
-	}
-
-	@Test
-	public void testUpgradeJavaExtractTextMethodCheck() throws Exception {
-		test("upgrade/UpgradeJavaExtractTextMethodCheck.testjava");
 	}
 
 	@Test
@@ -347,18 +350,6 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
-	public void testUpgradeJavaSearchVocabulariesMethodCheck()
-		throws Exception {
-
-		test(
-			"upgrade/UpgradeJavaSearchVocabulariesMethodCheck.testjava",
-			StringBundler.concat(
-				"Unable to format searchVocabularies method from ",
-				"AssetVocabularyService and AssetVocabularyLocalService. Fill ",
-				"the new parameters manually, see LPS-189866"));
-	}
-
-	@Test
 	public void testUpgradeJavaServiceReferenceAnnotationCheck()
 		throws Exception {
 
@@ -408,6 +399,12 @@ public class UpgradeSourceProcessorTest extends BaseSourceProcessorTestCase {
 	@Test
 	public void testUpgradeJSPFieldSetGroupCheck() throws Exception {
 		test("upgrade/UpgradeJSPFieldSetGroupCheck.testjsp");
+	}
+
+	@Test
+	public void testUpgradePortletDisplayCheck() throws Exception {
+		test("upgrade/UpgradeJavaPortletDisplayCheck.testjava");
+		test("upgrade/UpgradeJSPPortletDisplayCheck.testjsp");
 	}
 
 	@Test

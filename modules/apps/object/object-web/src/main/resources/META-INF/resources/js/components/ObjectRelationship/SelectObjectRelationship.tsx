@@ -71,7 +71,16 @@ export default function SelectRelationship({
 				setCreationLanguageId(objectDefinition.defaultLanguageId);
 
 				const objectFieldOptions = objectFields.filter(
-					({businessType}) => businessType === 'Relationship'
+					({objectFieldSettings}) => {
+						const objectDefinition1ShortName = objectFieldSettings?.find(
+							({name}) => name === 'objectDefinition1ShortName'
+						);
+
+						return (
+							objectDefinition1ShortName &&
+							objectDefinition1ShortName.value === 'AccountEntry'
+						);
+					}
 				);
 
 				setCreationLanguageId(objectDefinition.defaultLanguageId);
@@ -90,6 +99,7 @@ export default function SelectRelationship({
 		<AutoComplete<LabelNameObject>
 			emptyStateMessage={Liferay.Language.get('no-parameters-were-found')}
 			error={error}
+			id="objectRelationshipSelectObjectRelationship"
 			items={filteredOptions ?? []}
 			label={Liferay.Language.get('parameter')}
 			onActive={(item) => item.name === selectedValue?.name}

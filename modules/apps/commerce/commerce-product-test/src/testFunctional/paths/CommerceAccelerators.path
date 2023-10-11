@@ -171,6 +171,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>MINI_CART_ENTRY_PRICE_ON_APPLICATION</td>
+	<td>//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]/../../../../div[contains(@class,'mini-cart')]//span[contains(text(),'Price on Application')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ASSERT_PRODUCT_CARD</td>
 	<td>//*[@class='product-card-tiles']/div[${key_value}]</td>
 	<td></td>
@@ -570,6 +575,16 @@
 	<td></td>
 </tr>
 <tr>
+	<td>MINI_CART_ITEM_UOM_NAME</td>
+	<td>//div[@class='ml-2' and contains(.,'${key_uom}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MINI_CART_ITEM_SKU_UOM</td>
+	<td>//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]/../../../../div[contains(@class,'mini-cart-item-quantity')]/div[contains(@class,'ml-2') and text()='${uomKey}']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>MINI_CART_ITEM_NAME</td>
 	<td>//div[@class="mini-cart-item"]//h5[@class="item-name" and contains(.,'${key_cartItemName}')]</td>
 	<td></td>
@@ -600,6 +615,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>MINI_CART_ITEM_QUANTITY_SELECTOR_INPUT_FIELD_OPTION_VALUE</td>
+	<td>//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]/../../../../div[contains(@class,'mini-cart-item-quantity')]//input[@value='${key_optionValue}']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>MINI_CART_ITEM_PRICE_VALUE</td>
 	<td>//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]/../../../..//span[@class='price-value']</td>
 	<td></td>
@@ -620,6 +640,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>MINI_CART_ITEM_GENERIC_ERROR</td>
+	<td>//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]/../../../../div[contains(@class,'mini-cart-item-errors')]//div[contains(.,'${key_messageError}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>MINI_CART_ITEM_THUMBNAIL</td>
 	<td>//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]/../../../div[@class='mini-cart-item-thumbnail']</td>
 	<td></td>
@@ -637,6 +662,11 @@
 <tr>
 	<td>MINI_CART_ITEM_INFO_EXTRA</td>
 	<td>//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]/../../div[@class='item-info-extra mt-3']/*</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MINI_CART_SPECIFIC_ITEM_BUNDLED_ITEMS</td>
+	<td>//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]//../..//div[@class='child-item']//span</td>
 	<td></td>
 </tr>
 <tr>
@@ -731,6 +761,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ORDER_DETAILS_PRICE_2</td>
+	<td>//*[contains(@class,'table-list-title')]/a[text()='${key_productName}']/../../../div[9]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ORDER_DETAILS_QUANTITY</td>
 	<td>//*[contains(@class,'table-list-title')]/a[text()='${key_productName}']/../../../div[7]</td>
 	<td></td>
@@ -743,6 +778,11 @@
 <tr>
 	<td>ORDER_DETAILS_UNIT_PRICE</td>
 	<td>//*[contains(@class,'table-list-title')]/a[text()='${key_productName}']/../../../div[4]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ORDER_DETAILS_UOM</td>
+	<td>//*[contains(@class,'table-list-title')]/a[text()='${key_productName}']/../../../div[8]</td>
 	<td></td>
 </tr>
 <tr>

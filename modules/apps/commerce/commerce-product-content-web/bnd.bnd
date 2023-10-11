@@ -1,10 +1,5 @@
 Bundle-Name: Liferay Commerce Product Content Web
 Bundle-SymbolicName: com.liferay.commerce.product.content.web
-Bundle-Version: 4.0.104
-Liferay-JS-Config: /META-INF/resources/js/config.js
-Provide-Capability:\
-	soy;\
-		type="commerce-product-content-web";\
-		version:Version="${Bundle-Version}"
+Bundle-Version: 4.0.105
 Web-ContextPath: /commerce-product-content-web
 -dsannotations-options: inherit

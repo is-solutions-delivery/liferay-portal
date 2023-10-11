@@ -268,7 +268,7 @@ definition {
 				paymentMethod = "Test Offline Payment Method",
 				productListPrice = "24.00",
 				productName = "U-Joint",
-				productQuantity = "1.00",
+				productQuantity = 1,
 				productSku = "MIN55861",
 				productTotalPrice = "24.00");
 		}

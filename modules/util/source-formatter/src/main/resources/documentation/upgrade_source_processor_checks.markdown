@@ -3,6 +3,7 @@
 Check | Category | Description
 ----- | -------- | -----------
 UpgradeBNDIncludeResourceCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Checks if the property value `-includeresource` or `Include-Resource` exists and removes it |
+UpgradeCatchAllCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Performs replacements on Liferay's outdated code |
 UpgradeDLUtilCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replace the getGroupIds method of class `DLUtil` by getCurrentAndAncestorSiteGroupIds of class `PortalUtil`. |
 UpgradeGetClassNamesMethodCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Run code migration of method from 'getClassNames' to 'getSearchClassNames' |
 UpgradeGetImagePreviewURLMethodCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replaces the references of the method 'DLUtil.getImagePreviewURL' with the method 'getImagePreviewURL' of 'DLURLHelper' class |
@@ -23,11 +24,10 @@ UpgradeJavaCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Performs 
 UpgradeJavaCommerceCountryCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replaces the old methods of class `CommerceCountry` with the new equivalents in the `Country` class. |
 UpgradeJavaCommerceCountryServiceCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replaces the old methods of class `CommerceCountryService` with the new equivalents in the `CountryService` class. |
 UpgradeJavaCommerceOrderItemServicesCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Fill the new parameters of the method `addCommerceOrderItem` and `deleteCommerceOrderItems` of `CommerceOrderItemLocalService`, `CommerceOrderItemLocalServiceUtil`, `CommerceOrderItemService` and `CommerceOrderItemServiceUtil` classes |
-UpgradeJavaCommerceRegionCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replaces the old methods of class `CommerceRegion` with the new equivalents in the `Region` class. |
+UpgradeJavaCommerceOrderValidatorCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replace the parameter Int for BigDecimal of method validate of 'CommerceOrderValidator' interface |
 UpgradeJavaCookieKeysCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | CookieKeys class was replaced by CookiesManagerUtil and CookieConstants |
 UpgradeJavaCookieUtilCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replace CookieUtilCheck.get by CookiesManagerUtil.getCookieValue and reorder parameters |
 UpgradeJavaDLFolderMethodCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Fill the new parameter of the method addFolder of DLFolderLocalService, DLFolderLocalServiceUtil, DLFolderService and DLFolderServiceUtil |
-UpgradeJavaExtractTextMethodCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replaces the references of the method `HtmlUtil.extractText(` with the method `extractText(` of `HtmlParser` class |
 UpgradeJavaFDSActionProviderCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Reorder parameters in the getDropdownItems method of the FDSDataProvider interface |
 UpgradeJavaFDSDataProviderCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Reorder parameters in the getItems and getItemsCount methods of the FDSDataProvider interface |
 UpgradeJavaFacetedSearcherCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replaces the references of the `Indexer indexer = FacetedSearcher.getInstance();` declaration and `indexer.search` method call. |
@@ -45,12 +45,12 @@ UpgradeJavaPhoneLocalServiceUtilCheck | [Upgrade](upgrade_checks.markdown#upgrad
 UpgradeJavaPortletIdMethodCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replace the 'document.get(Field.PORTLET_ID)' by the new interface 'PortletProviderUtil.getPortletId' |
 UpgradeJavaPortletSharedSearchSettingsCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replaces the Optional return type of the methods `getParameterValues` and `getPortletPreferences` of `PortletSharedSearchSettings` class |
 UpgradeJavaSchedulerEntryImplConstructorCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replace constructors that use the empty constructor of the SchedulerEntryImpl class. |
-UpgradeJavaSearchVocabulariesMethodCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Fill in the new parameters of the method `searchVocabularies` of 'AssetVocabularyService' and 'AssetVocabularyLocalService' |
 UpgradeJavaServiceReferenceAnnotationCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Run code migration to replace '@ServiceReference' by '@Reference' |
 UpgradeJavaServiceTrackerListCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replace the number of generic type arguments in ServiceTrackerList |
 UpgradeJavaUpdateCommerceAddressCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replace parameter in updateCommerceAddress method by other parameters list |
 UpgradeJavaUpdateFileEntryMethodCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Fill in the new parameters of the method 'updateFileEntry' of 'DLAppLocalService' and 'DLAppLocalServiceUtil' |
 UpgradeJavaUserLocalServiceUtilCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replace parameters of addUser and updateStatus methods in UserServices |
+UpgradePortletDisplayCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replaces 'portletDisplay.getPortletInstanceConfiguration' with 'ConfigurationProviderUtil.getPortletInstanceConfiguration' |
 UpgradePortletFTLCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Include the CSS classes 'cadmin' and include for impression of 'right cadmin' in 'portlet.ftl' file |
 UpgradeRejectedExecutionHandlerCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replace Liferay's RejectedExecutionHandler with Java's RejectedExecutionHandler |
 UpgradeSCSSImportsCheck | [Upgrade](upgrade_checks.markdown#upgrade-checks) | Replace compat/mixins by clay/cadmin-variables |

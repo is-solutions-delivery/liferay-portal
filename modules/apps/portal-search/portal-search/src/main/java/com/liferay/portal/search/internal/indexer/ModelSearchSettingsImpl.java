@@ -5,6 +5,7 @@
 
 package com.liferay.portal.search.internal.indexer;
 
+import com.liferay.portal.search.spi.model.registrar.ModelSearchConfigurator;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchSettings;
 
 /**
@@ -12,10 +13,22 @@ import com.liferay.portal.search.spi.model.registrar.ModelSearchSettings;
  */
 public class ModelSearchSettingsImpl implements ModelSearchSettings {
 
-	public ModelSearchSettingsImpl(String className) {
-		_className = className;
+	public ModelSearchSettingsImpl(
+		ModelSearchConfigurator<?> modelSearchConfigurator) {
 
-		_searchClassNames = new String[] {className};
+		_className = modelSearchConfigurator.getClassName();
+
+		_searchClassNames = new String[] {_className};
+
+		_defaultSelectedFieldNames =
+			modelSearchConfigurator.getDefaultSelectedFieldNames();
+		_defaultSelectedLocalizedFieldNames =
+			modelSearchConfigurator.getDefaultSelectedLocalizedFieldNames();
+		_permissionAware = modelSearchConfigurator.isPermissionAware();
+		_searchResultPermissionFilterSuppressed =
+			modelSearchConfigurator.isSearchResultPermissionFilterSuppressed();
+		_selectAllLocales = modelSearchConfigurator.isSelectAllLocales();
+		_stagingAware = modelSearchConfigurator.isStagingAware();
 	}
 
 	@Override
@@ -39,11 +52,6 @@ public class ModelSearchSettingsImpl implements ModelSearchSettings {
 	}
 
 	@Override
-	public boolean isCommitImmediately() {
-		return _commitImmediately;
-	}
-
-	@Override
 	public boolean isPermissionAware() {
 		return _permissionAware;
 	}
@@ -63,54 +71,13 @@ public class ModelSearchSettingsImpl implements ModelSearchSettings {
 		return _stagingAware;
 	}
 
-	public void setCommitImmediately(boolean commitImmediately) {
-		_commitImmediately = commitImmediately;
-	}
-
-	public void setDefaultSelectedFieldNames(
-		String... defaultSelectedFieldNames) {
-
-		_defaultSelectedFieldNames = defaultSelectedFieldNames;
-	}
-
-	public void setDefaultSelectedLocalizedFieldNames(
-		String... defaultSelectedLocalizedFieldNames) {
-
-		_defaultSelectedLocalizedFieldNames =
-			defaultSelectedLocalizedFieldNames;
-	}
-
-	public void setPermissionAware(boolean permissionAware) {
-		_permissionAware = permissionAware;
-	}
-
-	public void setSearchClassNames(String... searchClassNames) {
-		_searchClassNames = searchClassNames;
-	}
-
-	public void setSearchResultPermissionFilterSuppressed(
-		boolean searchResultPermissionFilterSuppressed) {
-
-		_searchResultPermissionFilterSuppressed =
-			searchResultPermissionFilterSuppressed;
-	}
-
-	public void setSelectAllLocales(boolean selectAllLocales) {
-		_selectAllLocales = selectAllLocales;
-	}
-
-	public void setStagingAware(boolean stagingAware) {
-		_stagingAware = stagingAware;
-	}
-
 	private final String _className;
-	private boolean _commitImmediately;
-	private String[] _defaultSelectedFieldNames;
-	private String[] _defaultSelectedLocalizedFieldNames;
-	private boolean _permissionAware = true;
-	private String[] _searchClassNames;
-	private boolean _searchResultPermissionFilterSuppressed;
-	private boolean _selectAllLocales;
-	private boolean _stagingAware = true;
+	private final String[] _defaultSelectedFieldNames;
+	private final String[] _defaultSelectedLocalizedFieldNames;
+	private final boolean _permissionAware;
+	private final String[] _searchClassNames;
+	private final boolean _searchResultPermissionFilterSuppressed;
+	private final boolean _selectAllLocales;
+	private final boolean _stagingAware;
 
 }

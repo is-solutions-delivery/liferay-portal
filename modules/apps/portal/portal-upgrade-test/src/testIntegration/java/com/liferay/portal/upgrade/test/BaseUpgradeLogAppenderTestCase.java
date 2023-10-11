@@ -29,6 +29,7 @@ import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.ReleaseInfo;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Time;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.version.Version;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -112,9 +113,18 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 	public void tearDown() {
 		_appender.stop();
 
-		File reportsDir = new File(getFilePath(), "reports");
+		File reportsDir = null;
 
-		if ((reportsDir != null) && reportsDir.exists()) {
+		if (_upgradeReportDir.isEmpty()) {
+			reportsDir = new File(getFilePath(), "reports");
+		}
+		else {
+			reportsDir = new File(_upgradeReportDir);
+
+			_upgradeReportDir = "";
+		}
+
+		if (reportsDir.exists()) {
 			File reportFile = new File(reportsDir, "upgrade_report.info");
 
 			if (reportFile.exists()) {
@@ -498,6 +508,40 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 				latestSchemaVersion, StringPool.NEW_LINE));
 	}
 
+	@Test
+	public void testUpgradeReportDirectory() throws Exception {
+		String originalUpgradeReportDir =
+			ReflectionTestUtil.getAndSetFieldValue(
+				PropsValues.class, "UPGRADE_REPORT_DIR", "./test_reports");
+
+		try {
+			_upgradeReportDir = PropsValues.UPGRADE_REPORT_DIR;
+
+			_appender.start();
+
+			LogEvent logEvent = Log4jLogEvent.newBuilder(
+			).setLoggerName(
+				"Warn"
+			).setLevel(
+				Level.WARN
+			).setMessage(
+				new SimpleMessage(
+					"Upgrade report generated in " + _upgradeReportDir)
+			).build();
+
+			_appender.append(logEvent);
+
+			_appender.stop();
+
+			_assertReport("Upgrade report generated in " + _upgradeReportDir);
+		}
+		finally {
+			ReflectionTestUtil.setFieldValue(
+				PropsValues.class, "UPGRADE_REPORT_DIR",
+				originalUpgradeReportDir);
+		}
+	}
+
 	protected static void setUpClass(boolean upgradeClient) throws Exception {
 		_db = DBManagerUtil.getDB();
 
@@ -600,7 +644,14 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 	}
 
 	private String _getReportContent() throws Exception {
-		File reportsDir = new File(getFilePath(), "reports");
+		File reportsDir = null;
+
+		if (Validator.isBlank(_upgradeReportDir)) {
+			reportsDir = new File(getFilePath(), "reports");
+		}
+		else {
+			reportsDir = new File(_upgradeReportDir);
+		}
 
 		Assert.assertTrue(reportsDir.exists());
 
@@ -670,5 +721,6 @@ public abstract class BaseUpgradeLogAppenderTestCase {
 	private String _reportContent;
 	private final UnsyncStringWriter _unsyncStringWriter =
 		new UnsyncStringWriter();
+	private String _upgradeReportDir = "";
 
 }

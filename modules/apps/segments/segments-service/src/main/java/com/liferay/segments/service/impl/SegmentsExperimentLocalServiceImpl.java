@@ -27,11 +27,13 @@ import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.UserNotificationEventLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
+import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
 import com.liferay.portal.kernel.util.BigDecimalUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.segments.constants.SegmentsExperienceConstants;
 import com.liferay.segments.constants.SegmentsExperimentConstants;
 import com.liferay.segments.constants.SegmentsPortletKeys;
 import com.liferay.segments.exception.DuplicateSegmentsExperimentException;
@@ -60,6 +62,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -387,43 +390,63 @@ public class SegmentsExperimentLocalServiceImpl
 		SegmentsExperience controlSegmentsExperience,
 		SegmentsExperience variantSegmentsExperience) {
 
+		int originalPriority = controlSegmentsExperience.getPriority();
+
 		SegmentsExperience segmentsExperience =
 			_segmentsExperiencePersistence.fetchByG_P_Last(
 				controlSegmentsExperience.getGroupId(),
 				controlSegmentsExperience.getPlid(), null);
 
-		int controlSegmentsExperiencePriority =
-			controlSegmentsExperience.getPriority();
-		int variantSegmentsExperiencePriority =
-			variantSegmentsExperience.getPriority();
-
 		controlSegmentsExperience.setPriority(
 			segmentsExperience.getPriority() - 1);
 
-		controlSegmentsExperience = _segmentsExperiencePersistence.update(
-			controlSegmentsExperience);
-
-		variantSegmentsExperience.setPriority(
-			segmentsExperience.getPriority() - 2);
-
-		variantSegmentsExperience = _segmentsExperiencePersistence.update(
-			variantSegmentsExperience);
-
-		_segmentsExperiencePersistence.flush();
-
-		controlSegmentsExperience.setPriority(
-			variantSegmentsExperiencePriority);
 		controlSegmentsExperience.setActive(false);
+
+		boolean controlSegmentsExperienceKeyDefault = Objects.equals(
+			SegmentsExperienceConstants.KEY_DEFAULT,
+			controlSegmentsExperience.getSegmentsExperienceKey());
+
+		if (controlSegmentsExperienceKeyDefault) {
+			_setSegmentsExperienceKeyProperty(controlSegmentsExperience);
+
+			controlSegmentsExperience.setSegmentsExperienceKey(
+				String.valueOf(
+					counterLocalService.increment(
+						SegmentsExperience.class.getName())));
+		}
 
 		_segmentsExperienceLocalService.updateSegmentsExperience(
 			controlSegmentsExperience);
 
-		variantSegmentsExperience.setPriority(
-			controlSegmentsExperiencePriority);
 		variantSegmentsExperience.setActive(true);
 
-		return _segmentsExperienceLocalService.updateSegmentsExperience(
-			variantSegmentsExperience);
+		variantSegmentsExperience =
+			_segmentsExperienceLocalService.updateSegmentsExperience(
+				variantSegmentsExperience);
+
+		long variantSegmentsExperienceId =
+			variantSegmentsExperience.getSegmentsExperienceId();
+
+		TransactionCommitCallbackUtil.registerCallback(
+			() -> {
+				SegmentsExperience callbackVariantSegmentsExperience =
+					_segmentsExperienceLocalService.getSegmentsExperience(
+						variantSegmentsExperienceId);
+
+				if (controlSegmentsExperienceKeyDefault) {
+					callbackVariantSegmentsExperience.setSegmentsExperienceKey(
+						SegmentsExperienceConstants.KEY_DEFAULT);
+				}
+
+				callbackVariantSegmentsExperience.setPriority(originalPriority);
+
+				_segmentsExperienceLocalService.updateSegmentsExperience(
+					callbackVariantSegmentsExperience);
+
+				return null;
+			});
+
+		return variantSegmentsExperience;
 	}
 
 	private void _sendNotificationEvent(SegmentsExperiment segmentsExperiment)
@@ -458,6 +481,20 @@ public class SegmentsExperimentLocalServiceImpl
 				"segmentsExperimentKey",
 				segmentsExperiment.getSegmentsExperimentKey()
 			));
+	}
+
+	private void _setSegmentsExperienceKeyProperty(
+		SegmentsExperience segmentsExperience) {
+
+		UnicodeProperties typeSettingsUnicodeProperties =
+			segmentsExperience.getTypeSettingsUnicodeProperties();
+
+		typeSettingsUnicodeProperties.setProperty(
+			"segmentsExperimentSegmentsExperienceKey",
+			segmentsExperience.getSegmentsExperienceKey());
+
+		segmentsExperience.setTypeSettingsUnicodeProperties(
+			typeSettingsUnicodeProperties);
 	}
 
 	private SegmentsExperiment _updateSegmentsExperimentStatus(

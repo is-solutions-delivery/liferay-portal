@@ -3252,7 +3252,7 @@ definition {
 	macro viewCheckedoutCP {
 		if (${dmRepositoryName} == "true") {
 			AssertTextEquals.assertPartialText(
-				locator1 = "Message#INFO",
+				locator1 = "Message#INFO_1",
 				value1 = "You now have an indefinite lock on this document. No one else can edit this document until you unlock it. This lock will never expire.");
 		}
 		else {
@@ -3594,6 +3594,10 @@ definition {
 		}
 		else {
 			DMDocument.expandInfo();
+		}
+
+		if (isSet(panelName)) {
+			Panel.expandPanel(panel = ${panelName});
 		}
 
 		if (isSet(booleanValue)) {
@@ -4287,6 +4291,8 @@ definition {
 				value1 = ${dmDocumentTitle});
 
 			DMDocument.expandInfo();
+
+			Panel.expandPanel(panel = "Custom Fields");
 
 			AssertTextEquals(
 				locator1 = "DocumentsAndMediaDocument#CUSTOM_FIELD_NAME",

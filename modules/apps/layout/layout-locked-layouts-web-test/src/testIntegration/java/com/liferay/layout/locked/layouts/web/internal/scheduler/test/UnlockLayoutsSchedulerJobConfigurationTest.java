@@ -113,18 +113,18 @@ public class UnlockLayoutsSchedulerJobConfigurationTest {
 
 	private void _testUnlockLayouts(
 			boolean allowAutomaticUnlockingProcess, Lock expectedLock,
-			int timeWithoutAutosave)
+			int autosaveMinutes)
 		throws Exception {
 
 		try (ConfigurationTemporarySwapper configurationTemporarySwapper =
 				new ConfigurationTemporarySwapper(
 					"com.liferay.layout.locked.layouts.web.internal." +
-						"configuration.LockedLayoutsConfiguration",
+						"configuration.LockedLayoutsCompanyConfiguration",
 					HashMapDictionaryBuilder.<String, Object>put(
 						"allowAutomaticUnlockingProcess",
 						allowAutomaticUnlockingProcess
 					).put(
-						"timeWithoutAutosave", timeWithoutAutosave
+						"autosaveMinutes", autosaveMinutes
 					).build())) {
 
 			UnsafeRunnable<Exception> unsafeRunnable =

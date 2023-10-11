@@ -1123,23 +1123,29 @@ public class JournalArticleLocalServiceImpl
 
 		// Asset
 
-		long[] assetCategoryIds = _assetCategoryLocalService.getCategoryIds(
-			JournalArticle.class.getName(), sourceArticle.getResourcePrimKey());
-		String[] assetTagNames = _assetTagLocalService.getTagNames(
-			JournalArticle.class.getName(), sourceArticle.getResourcePrimKey());
+		AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
+			JournalArticle.class.getName(), sourceArticle.getId());
 
-		AssetEntry oldAssetEntry = _assetEntryLocalService.getEntry(
-			JournalArticle.class.getName(), sourceArticle.getResourcePrimKey());
+		if (assetEntry == null) {
+			assetEntry = _assetEntryLocalService.getEntry(
+				JournalArticle.class.getName(),
+				sourceArticle.getResourcePrimKey());
+		}
+
+		long[] assetCategoryIds = _assetCategoryLocalService.getCategoryIds(
+			JournalArticle.class.getName(), assetEntry.getClassPK());
+		String[] assetTagNames = _assetTagLocalService.getTagNames(
+			JournalArticle.class.getName(), assetEntry.getClassPK());
 
 		List<AssetLink> assetLinks = _assetLinkLocalService.getDirectLinks(
-			oldAssetEntry.getEntryId(), false);
+			assetEntry.getEntryId(), false);
 
 		long[] assetLinkEntryIds = ListUtil.toLongArray(
 			assetLinks, AssetLink.ENTRY_ID2_ACCESSOR);
 
 		updateAsset(
 			userId, targetArticle, assetCategoryIds, assetTagNames,
-			assetLinkEntryIds, oldAssetEntry.getPriority());
+			assetLinkEntryIds, assetEntry.getPriority());
 
 		AssetDisplayPageEntry assetDisplayPageEntry =
 			_assetDisplayPageEntryLocalService.fetchAssetDisplayPageEntry(
@@ -7128,11 +7134,10 @@ public class JournalArticleLocalServiceImpl
 				_classNameLocalService.getClassNameId(JournalArticle.class),
 				article.getResourcePrimKey());
 
-		FriendlyURLEntry newFriendlyURLEntry =
-			friendlyURLEntryLocalService.addFriendlyURLEntry(
-				article.getGroupId(),
-				_classNameLocalService.getClassNameId(JournalArticle.class),
-				article.getResourcePrimKey(), urlTitleMap, serviceContext);
+		friendlyURLEntryLocalService.addFriendlyURLEntry(
+			article.getGroupId(),
+			_classNameLocalService.getClassNameId(JournalArticle.class),
+			article.getResourcePrimKey(), urlTitleMap, serviceContext);
 
 		for (Map.Entry<String, String> entry : urlTitleMap.entrySet()) {
 			if (Validator.isNull(entry.getValue())) {
@@ -7153,17 +7158,6 @@ public class JournalArticleLocalServiceImpl
 					}
 				}
 			}
-		}
-
-		for (FriendlyURLEntry friendlyURLEntry : friendlyURLEntries) {
-			if (newFriendlyURLEntry.getFriendlyURLEntryId() ==
-					friendlyURLEntry.getFriendlyURLEntryId()) {
-
-				continue;
-			}
-
-			friendlyURLEntryLocalService.deleteFriendlyURLEntry(
-				friendlyURLEntry);
 		}
 	}
 

@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DataGuard;
@@ -41,7 +42,6 @@ import java.util.function.BiConsumer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -77,7 +77,6 @@ public class UpgradeKaleoDefinitionVersionTest {
 		_deleteKaleoDefinitionVersion(_name);
 	}
 
-	@Ignore
 	@Test
 	public void testCreateKaleoDefinitionVersion() throws Exception {
 		Company company1 = CompanyTestUtil.addCompany();
@@ -97,6 +96,9 @@ public class UpgradeKaleoDefinitionVersionTest {
 		_getKaleoDefinitionVersion(company1.getCompanyId(), _name, 2);
 		_getKaleoDefinition(company2.getCompanyId(), _name);
 		_getKaleoDefinitionVersion(company2.getCompanyId(), _name, 3);
+
+		_companyLocalService.deleteCompany(company1);
+		_companyLocalService.deleteCompany(company2);
 	}
 
 	private void _addColumn(String table, String column) throws Exception {
@@ -220,6 +222,9 @@ public class UpgradeKaleoDefinitionVersionTest {
 
 			});
 	}
+
+	@Inject
+	private CompanyLocalService _companyLocalService;
 
 	private DB _db;
 	private DBInspector _dbInspector;

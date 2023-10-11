@@ -8,6 +8,9 @@ package com.liferay.analytics.batch.exportimport.internal.engine;
 import com.liferay.analytics.batch.exportimport.internal.odata.entity.AnalyticsDXPEntityEntityModel;
 import com.liferay.analytics.dxp.entity.rest.dto.v1_0.DXPEntity;
 import com.liferay.batch.engine.BaseBatchEngineTaskItemDelegate;
+import com.liferay.petra.sql.dsl.Column;
+import com.liferay.petra.sql.dsl.base.BaseTable;
+import com.liferay.petra.sql.dsl.expression.Predicate;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.search.Query;
@@ -18,7 +21,6 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.odata.entity.EntityModel;
-import com.liferay.portal.vulcan.util.SearchUtil;
 
 import java.util.Date;
 import java.util.List;
@@ -78,16 +80,49 @@ public abstract class BaseAnalyticsDXPEntityBatchEngineTaskItemDelegate
 		return dynamicQuery;
 	}
 
-	protected void getSearchContext(SearchUtil.SearchContext searchContext) {
-		searchContext.setCompanyId(contextCompany.getCompanyId());
-		searchContext.setGroupIds(new long[] {0});
+	protected Predicate buildPredicate(
+		BaseTable<?> baseTable, long companyId, Predicate predicate,
+		Filter filter) {
 
-		if (contextUser.getLocale() != null) {
-			searchContext.setLocale(contextUser.getLocale());
+		Column<?, Long> companyIdColumn = (Column<?, Long>)baseTable.getColumn(
+			"companyId");
+
+		predicate = predicate.and(companyIdColumn.eq(companyId));
+
+		if (filter instanceof QueryFilter) {
+			QueryFilter queryFilter = (QueryFilter)filter;
+
+			Query query = queryFilter.getQuery();
+
+			if (query instanceof TermRangeQuery) {
+				TermRangeQuery termRangeQuery = (TermRangeQuery)query;
+
+				if (StringUtil.startsWith(
+						termRangeQuery.getField(), "modified")) {
+
+					Column<?, Date> modifiedDateColumn =
+						(Column<?, Date>)baseTable.getColumn("modifiedDate");
+
+					String lowerTerm = termRangeQuery.getLowerTerm();
+
+					if ((lowerTerm != null) && Validator.isNumber(lowerTerm)) {
+						predicate = predicate.and(
+							modifiedDateColumn.gt(
+								new Date(GetterUtil.getLong(lowerTerm))));
+					}
+
+					String upperTerm = termRangeQuery.getUpperTerm();
+
+					if ((upperTerm != null) && Validator.isNumber(upperTerm)) {
+						predicate = predicate.and(
+							modifiedDateColumn.lte(
+								new Date(GetterUtil.getLong(upperTerm))));
+					}
+				}
+			}
 		}
 
-		searchContext.setUserId(0);
-		searchContext.setVulcanCheckPermissions(false);
+		return predicate;
 	}
 
 	private static final EntityModel _entityModel =

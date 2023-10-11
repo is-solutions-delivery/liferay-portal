@@ -255,11 +255,11 @@ public class ObjectRelationshipLocalServiceImpl
 			objectRelationshipPersistence.getDataSource());
 
 		ObjectDBManagerUtil.createIndexMetadata(
-			pkObjectFieldDBColumnName1, connection,
-			objectRelationship.getDBTableName(), false);
+			connection, objectRelationship.getDBTableName(), false,
+			pkObjectFieldDBColumnName1);
 		ObjectDBManagerUtil.createIndexMetadata(
-			pkObjectFieldDBColumnName2, connection,
-			objectRelationship.getDBTableName(), false);
+			connection, objectRelationship.getDBTableName(), false,
+			pkObjectFieldDBColumnName2);
 
 		return objectRelationship;
 	}
@@ -336,6 +336,14 @@ public class ObjectRelationshipLocalServiceImpl
 
 			_objectFieldLocalService.deleteRelationshipTypeObjectField(
 				objectRelationship.getObjectFieldId2());
+
+			for (ObjectRelationship parameterObjectFieldIdObjectRelationship :
+					objectRelationshipPersistence.findByParameterObjectFieldId(
+						objectRelationship.getObjectFieldId2())) {
+
+				objectRelationshipLocalService.deleteObjectRelationship(
+					parameterObjectFieldIdObjectRelationship);
+			}
 		}
 		else if (Objects.equals(
 					objectRelationship.getType(),
@@ -865,10 +873,9 @@ public class ObjectRelationshipLocalServiceImpl
 				dbTableName, objectField.getDBColumnName(), "Long"));
 
 		ObjectDBManagerUtil.createIndexMetadata(
-			objectField.getDBColumnName(),
 			_currentConnection.getConnection(
 				objectRelationshipPersistence.getDataSource()),
-			dbTableName, false);
+			dbTableName, false, objectField.getDBColumnName());
 
 		ObjectDefinitionLocalService objectDefinitionLocalService =
 			_objectDefinitionLocalServiceSnapshot.get();

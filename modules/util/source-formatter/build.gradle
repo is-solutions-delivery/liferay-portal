@@ -1,4 +1,10 @@
+import org.gradle.util.GUtil
+
 apply plugin: "com.liferay.maven.plugin.builder"
+
+task installDistCache(type: Copy)
+
+File userHomeDistDir = new File(System.getProperty("user.home"), ".liferay/install/dist")
 
 buildPluginDescriptor {
 	ext {
@@ -58,6 +64,14 @@ deployDependencies {
 	}
 
 	rename(/checkstyle-(.+)\.jar/, "checkstyle" + renameSuffix)
+}
+
+installDistCache {
+	description = "Installs the distribution content to ${userHomeDistDir} for testing."
+	group = "Publishing"
+
+	from installDist
+	into new File(userHomeDistDir, GUtil.loadProperties(file("bnd.bnd"))["Bundle-SymbolicName"])
 }
 
 liferay {

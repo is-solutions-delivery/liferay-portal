@@ -17,6 +17,7 @@ import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapListene
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -36,6 +37,7 @@ import com.liferay.portal.vulcan.graphql.dto.GraphQLDTOProperty;
 import com.liferay.portal.vulcan.graphql.dto.v1_0.Creator;
 import com.liferay.portal.vulcan.graphql.servlet.ServletData;
 import com.liferay.portal.vulcan.graphql.validation.GraphQLRequestContextValidator;
+import com.liferay.portal.vulcan.internal.configuration.HeadlessAPICompanyConfiguration;
 import com.liferay.portal.vulcan.internal.configuration.VulcanCompanyConfiguration;
 import com.liferay.portal.vulcan.internal.configuration.VulcanConfiguration;
 import com.liferay.portal.vulcan.internal.configuration.util.ConfigurationUtil;
@@ -44,6 +46,8 @@ import com.liferay.portal.vulcan.internal.graphql.data.fetcher.GraphQLDTOContrib
 import com.liferay.portal.vulcan.internal.graphql.data.fetcher.LiferayMethodDataFetcher;
 import com.liferay.portal.vulcan.internal.graphql.data.processor.GraphQLDTOContributorDataFetchingProcessor;
 import com.liferay.portal.vulcan.internal.graphql.data.processor.LiferayMethodDataFetchingProcessor;
+import com.liferay.portal.vulcan.internal.graphql.exception.QueryDepthLimitExceededException;
+import com.liferay.portal.vulcan.internal.graphql.instrumentation.QueryDepthLimitInstrumentation;
 import com.liferay.portal.vulcan.internal.graphql.util.GraphQLUtil;
 import com.liferay.portal.vulcan.internal.graphql.validation.GraphQLDTOContributorRequestContext;
 import com.liferay.portal.vulcan.internal.graphql.validation.ServletDataRequestContext;
@@ -704,6 +708,64 @@ public class GraphQLServletExtender {
 		).build();
 	}
 
+	private static Object _parseLiteral(Object value)
+		throws CoercingParseLiteralException {
+
+		if (value instanceof ArrayValue) {
+			ArrayValue arrayValue = (ArrayValue)value;
+
+			return TransformUtil.transform(
+				arrayValue.getValues(), GraphQLServletExtender::_parseLiteral);
+		}
+		else if (value instanceof BooleanValue) {
+			BooleanValue booleanValue = (BooleanValue)value;
+
+			return booleanValue.isValue();
+		}
+		else if (value instanceof EnumValue) {
+			EnumValue enumValue = (EnumValue)value;
+
+			return enumValue.getName();
+		}
+		else if (value instanceof FloatValue) {
+			FloatValue floatValue = (FloatValue)value;
+
+			return floatValue.getValue();
+		}
+		else if (value instanceof IntValue) {
+			IntValue intValue = (IntValue)value;
+
+			return intValue.getValue();
+		}
+		else if (value instanceof NullValue) {
+			return null;
+		}
+		else if (value instanceof ObjectValue) {
+			return _parseObjectValue((ObjectValue)value);
+		}
+		else if (value instanceof StringValue) {
+			StringValue stringValue = (StringValue)value;
+
+			return stringValue.getValue();
+		}
+
+		throw new CoercingSerializeException("Unable to parse " + value);
+	}
+
+	private static Map<String, Object> _parseObjectValue(
+		ObjectValue objectValue) {
+
+		return new HashMap<String, Object>() {
+			{
+				for (ObjectField objectField : objectValue.getObjectFields()) {
+					put(
+						objectField.getName(),
+						_parseLiteral(objectField.getValue()));
+				}
+			}
+		};
+	}
+
 	private GraphQLArgument _addGraphQLArgument(
 		GraphQLInputType graphQLInputType, String name) {
 
@@ -936,6 +998,8 @@ public class GraphQLServletExtender {
 				GraphQLQueryInvoker.newBuilder(
 				).withExecutionStrategyProvider(
 					executionStrategyProvider
+				).withInstrumentation(
+					() -> _getQueryDepthLimitInstrumentation(companyId)
 				).build();
 
 			graphQLConfigurationBuilder.with(graphQLQueryInvoker);
@@ -1080,6 +1144,22 @@ public class GraphQLServletExtender {
 		graphQLObjectTypeBuilder.name(name + "Page");
 
 		return graphQLObjectTypeBuilder.build();
+	}
+
+	private QueryDepthLimitInstrumentation _getQueryDepthLimitInstrumentation(
+		long companyId) {
+
+		try {
+			HeadlessAPICompanyConfiguration headlessAPICompanyConfiguration =
+				_configurationProvider.getCompanyConfiguration(
+					HeadlessAPICompanyConfiguration.class, companyId);
+
+			return new QueryDepthLimitInstrumentation(
+				headlessAPICompanyConfiguration.queryDepthLimit());
+		}
+		catch (Exception exception) {
+			throw new RuntimeException(exception);
+		}
 	}
 
 	private Integer _getVersion(Method method) {
@@ -1745,6 +1825,10 @@ public class GraphQLServletExtender {
 				public Object parseLiteral(Object value)
 					throws CoercingParseLiteralException {
 
+					if (value instanceof ObjectValue) {
+						return _parseObjectValue((ObjectValue)value);
+					}
+
 					return value;
 				}
 
@@ -1776,58 +1860,7 @@ public class GraphQLServletExtender {
 				public Object parseLiteral(Object value)
 					throws CoercingParseLiteralException {
 
-					if (value instanceof ArrayValue) {
-						ArrayValue arrayValue = (ArrayValue)value;
-
-						return TransformUtil.transform(
-							arrayValue.getValues(), this::parseLiteral);
-					}
-					else if (value instanceof BooleanValue) {
-						BooleanValue booleanValue = (BooleanValue)value;
-
-						return booleanValue.isValue();
-					}
-					else if (value instanceof EnumValue) {
-						EnumValue enumValue = (EnumValue)value;
-
-						return enumValue.getName();
-					}
-					else if (value instanceof FloatValue) {
-						FloatValue floatValue = (FloatValue)value;
-
-						return floatValue.getValue();
-					}
-					else if (value instanceof IntValue) {
-						IntValue intValue = (IntValue)value;
-
-						return intValue.getValue();
-					}
-					else if (value instanceof NullValue) {
-						return null;
-					}
-					else if (value instanceof ObjectValue) {
-						return new HashMap<String, Object>() {
-							{
-								ObjectValue objectValue = (ObjectValue)value;
-
-								for (ObjectField objectField :
-										objectValue.getObjectFields()) {
-
-									put(
-										objectField.getName(),
-										parseLiteral(objectField.getValue()));
-								}
-							}
-						};
-					}
-					else if (value instanceof StringValue) {
-						StringValue stringValue = (StringValue)value;
-
-						return stringValue.getValue();
-					}
-
-					throw new CoercingSerializeException(
-						"Unable to parse " + value);
+					return _parseLiteral(value);
 				}
 
 				@Override
@@ -1853,6 +1886,9 @@ public class GraphQLServletExtender {
 
 	@Reference
 	private ConfigurationAdmin _configurationAdmin;
+
+	@Reference
+	private ConfigurationProvider _configurationProvider;
 
 	private DefaultTypeFunction _defaultTypeFunction;
 
@@ -2181,6 +2217,10 @@ public class GraphQLServletExtender {
 
 				return exceptionWhileDataFetching.getException() instanceof
 					GraphQLError;
+			}
+
+			if (graphQLError instanceof QueryDepthLimitExceededException) {
+				return true;
 			}
 
 			String message = graphQLError.getMessage();

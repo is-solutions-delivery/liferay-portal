@@ -102,13 +102,12 @@ definition {
 			restEndpoint = ${restEndpoint},
 			restSchema = ${restSchema});
 
-		Refresh();
-
-		DataSetAdmin.goToViews(dataSetName = ${dataSetName});
-
-		DataSetAdmin.createDataSetView(
-			description = ${dataSetViewDescription},
-			key_name = ${dataSetViewName});
+		DataSetAdmin.createFDSViewViaAPI(
+			dataSetName = ${dataSetName},
+			dataSetViewDescription = ${dataSetViewDescription},
+			defaultItemsPerPage = ${defaultItemsPerPage},
+			key_dataSetViewNameList = ${dataSetViewName},
+			listOfItemsPerPage = ${listOfItemsPerPage});
 
 		DataSetAdmin.goToSpecificViewPage(
 			dataSetName = ${dataSetName},
@@ -118,22 +117,6 @@ definition {
 			DataSetAdmin.goToTab(tabName = "Fields");
 
 			DataSetAdmin.addFields(key_fieldList = ${key_fieldList});
-		}
-
-		if (isSet(key_ListItemsPerPage)) {
-			DataSetAdmin.goToTab(tabName = "Pagination");
-
-			Type(
-				key_label = "List of Items per Page",
-				locator1 = "Gmail#GMAIL_HTML_MODE_MESSAGE_QUICK_REPLY_FIELD",
-				value1 = ${key_ListItemsPerPage});
-
-			Type(
-				key_type = "Default Items per Page",
-				locator1 = "DataSet#EDIT_DATA_SET_VIEW",
-				value1 = ${key_DefaultItemsperPage});
-
-			Button.clickSave();
 		}
 	}
 
@@ -206,12 +189,98 @@ definition {
 		}
 	}
 
+	macro createDateFilter {
+		Click(locator1 = "Button#PLUS");
+
+		DropdownMenuItem.click(menuItem = "Date Range");
+
+		PortletEntry.inputName(name = ${filterName});
+
+		Click(
+			dropdownLabel = "Select",
+			locator1 = "ObjectField#ANY_DROPDOWN_LABEL");
+
+		DropdownMenuItem.click(menuItem = ${filterBy});
+
+		Click(
+			key_label = "From",
+			locator1 = "DataSet#DATE_CALENDAR");
+
+		Click(
+			key_index = 1,
+			locator1 = "DataSet#YEAR_CALENDAR_FIELD");
+
+		Click(
+			key_index = 1,
+			key_optionYear = ${valueYearFrom},
+			locator1 = "DataSet#YEAR_CALENDAR_OPTION");
+
+		Select(
+			key_number = 1,
+			locator1 = "DataSet#SELECT_MONTH",
+			value1 = ${valueMonthFrom});
+
+		Click.clickNoMouseOver(
+			key_index = 1,
+			key_valueDay = ${valueDayFrom},
+			locator1 = "DataSet#DATE_CALENDAR_DAY");
+
+		AssertTextEquals(
+			key_label = "From",
+			locator1 = "DataSet#DATE_FIELD",
+			value1 = ${fieldValueFrom});
+
+		Click(
+			key_label = "To",
+			locator1 = "DataSet#DATE_CALENDAR");
+
+		Click(
+			key_index = 2,
+			locator1 = "DataSet#YEAR_CALENDAR_FIELD");
+
+		Click(
+			key_index = 2,
+			key_optionYear = ${valueYearTo},
+			locator1 = "DataSet#YEAR_CALENDAR_OPTION");
+
+		Select(
+			key_number = 2,
+			locator1 = "DataSet#SELECT_MONTH",
+			value1 = ${valueMonthTo});
+
+		Click.clickNoMouseOver(
+			key_index = 2,
+			key_valueDay = ${valueDayTo},
+			locator1 = "DataSet#DATE_CALENDAR_DAY");
+
+		AssertTextEquals(
+			key_label = "To",
+			locator1 = "DataSet#DATE_FIELD",
+			value1 = ${fieldValueTo});
+
+		if (${button} == "Cancel") {
+			Button.clickCancel();
+		}
+		else {
+			Click(locator1 = "DataSet#MODAL_SAVE_BUTTON");
+		}
+
+		Alert.viewSuccessMessage();
+	}
+
 	macro createFDSViewViaAPI {
+		if (!(isSet(defaultItemsPerPage))) {
+			var defaultItemsPerPage = 4;
+			var listOfItemsPerPage = "4, 8, 20, 40, 60, 100";
+		}
+
 		for (var key_dataSetViewName : list ${key_dataSetViewNameList}) {
 			JSONDataSet._createFDSViewViaAPI(
 				dataSetName = ${dataSetName},
 				dataSetViewDescription = ${dataSetViewDescription},
-				dataSetViewName = ${key_dataSetViewName});
+				dataSetViewName = ${key_dataSetViewName},
+				defaultItemsPerPage = ${defaultItemsPerPage},
+				listOfItemsPerPage = ${listOfItemsPerPage});
 		}
 	}
 
@@ -320,6 +389,37 @@ definition {
 			locator1 = "FormFields#FIELD_DROPDOWN_ITEM");
 
 		Button.click(button = "Delete");
+
+		Alert.viewSuccessMessage();
+	}
+
+	macro editField {
+		Click(
+			key_fieldName = ${key_fieldItem},
+			locator1 = "DataSet#VERTICAL_ELLIPSIS_BY_FIELDS_NAME");
+
+		MenuItem.click(menuItem = "Edit");
+
+		if (${sortable} == "Check") {
+			Check.checkNotVisible(
+				checkboxName = "Sortable",
+				locator1 = "Checkbox#ANY_CHECKBOX");
+		}
+
+		if (${sortable} == "Uncheck") {
+			Uncheck.uncheckNotVisible(
+				checkboxName = "Sortable",
+				locator1 = "Checkbox#ANY_CHECKBOX");
+		}
+
+		if (isSet(key_newLabel)) {
+			Type(
+				key_text = "Label",
+				locator1 = "TextInput#ANY",
+				value1 = ${key_newLabel});
+		}
+
+		Click(locator1 = "DataSet#MODAL_SAVE_BUTTON");
 
 		Alert.viewSuccessMessage();
 	}

@@ -22,6 +22,10 @@ import org.dom4j.Node;
  */
 public class PortalRelease {
 
+	public static boolean isQuarterlyRelease(String portalVersion) {
+		return portalVersion.matches(_QUARTERLY_RELEASE_VERSION_REGEX);
+	}
+
 	public PortalRelease(String portalVersion) {
 		URL bundlesBaseURL = null;
 
@@ -114,20 +118,20 @@ public class PortalRelease {
 
 		String bundleFileName = bundleURLMatcher.group("bundleFileName");
 
-		Matcher bundleFileNameMatcher = _bundleFileNamePattern.matcher(
+		Matcher bundleFileNameMatcher = _bundleFileNamePattern.find(
 			bundleFileName);
 
-		if (bundleFileNameMatcher.find()) {
+		if (bundleFileNameMatcher != null) {
 			portalVersion = bundleFileNameMatcher.group("portalVersion");
 		}
 
 		String bundlesBaseURLString = bundleURLMatcher.group("bundlesBaseURL");
 
 		if (portalVersion == null) {
-			Matcher bundlesBaseURLMatcher = _bundlesBaseURLPattern.matcher(
+			Matcher bundlesBaseURLMatcher = _bundlesBaseURLPattern.find(
 				bundlesBaseURLString);
 
-			if (!bundlesBaseURLMatcher.find()) {
+			if (bundlesBaseURLMatcher == null) {
 				throw new RuntimeException(
 					"Invalid bundle file name " + bundleFileName);
 			}
@@ -136,6 +140,7 @@ public class PortalRelease {
 		}
 
 		_bundlesBaseURL = _getLocalURL(bundlesBaseURLString);
+
 		_portalVersion = portalVersion;
 
 		_initializeURLs();
@@ -675,10 +680,15 @@ public class PortalRelease {
 		"(?<portalVersion>\\d\\.([u\\d\\.]+)(-ee)?(-dxp-\\d+)?" +
 			"(\\-(ep|ga|rc|sp)\\d+)?)";
 
-	private static final Pattern _bundleFileNamePattern = Pattern.compile(
-		".+\\-" + _PORTAL_VERSION_REGEX + ".*\\.(7z|tar.gz|zip)");
-	private static final Pattern _bundlesBaseURLPattern = Pattern.compile(
-		"https?://.+/" + _PORTAL_VERSION_REGEX);
+	private static final String _QUARTERLY_RELEASE_VERSION_REGEX =
+		"(?<portalVersion>\\d{4}.q\\d+.\\d+)";
+
+	private static final MultiPattern _bundleFileNamePattern = new MultiPattern(
+		".+\\-" + _PORTAL_VERSION_REGEX + ".*\\.(7z|tar.gz|zip)",
+		".+\\-" + _QUARTERLY_RELEASE_VERSION_REGEX + ".*\\.(7z|tar.gz|zip)");
+	private static final MultiPattern _bundlesBaseURLPattern = new MultiPattern(
+		"https?://.+/" + _PORTAL_VERSION_REGEX,
+		"https?://.+/" + _QUARTERLY_RELEASE_VERSION_REGEX);
 	private static final Pattern _bundleURLPattern = Pattern.compile(
 		"(?<bundlesBaseURL>https?://.+)/(?<bundleFileName>[^\\/]+" +
 			"\\.(7z|tar.gz|zip))");

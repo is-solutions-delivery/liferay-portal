@@ -113,6 +113,7 @@ export function ObjectFolderReducer(state: TState, action: TAction): TState {
 						businessType: objectField.businessType,
 						externalReferenceCode:
 							objectField.externalReferenceCode,
+						id: objectField.id,
 						label: objectField.label,
 						name: objectField.name,
 						primaryKey: objectField.name === 'id',
@@ -143,11 +144,7 @@ export function ObjectFolderReducer(state: TState, action: TAction): TState {
 					hasObjectDefinitionUpdateResourcePermission: !!newObjectDefinition
 						.actions.update,
 					hasObjectDefinitionViewResourcePermission: false,
-					label: getLocalizableLabel(
-						newObjectDefinition.defaultLanguageId,
-						newObjectDefinition.label,
-						newObjectDefinition.name
-					),
+					label: newObjectDefinition.label,
 					linkedObjectDefinition: false,
 					objectFields: objectFieldsCustomSort(objectFields),
 					selected: true,

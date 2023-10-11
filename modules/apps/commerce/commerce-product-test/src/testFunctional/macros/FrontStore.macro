@@ -44,6 +44,12 @@ definition {
 
 		Refresh();
 
+		if (isSet(uomName)) {
+			Select(
+				locator1 = "CommerceFrontStore#FS_PRODUCT_UOM_SELECT",
+				value1 = ${uomName});
+		}
+
 		Type(
 			locator1 = "CommerceAccelerators#PRODUCT_DETAILS_QUANTITY_SELECTOR_INPUT_FIELD",
 			value1 = ${productQuantity});
@@ -361,6 +367,50 @@ definition {
 			value1 = ${basePrice});
 	}
 
+	macro changeQuantityByUsingKeyArrows {
+		if (${quantitySelectorType} == "Product Card") {
+			Click(
+				key_productName = ${productName},
+				locator1 = "CommerceAccelerators#PRODUCT_CARD_QUANTITY_SELECTOR_INPUT_FIELD");
+
+			KeyPress(
+				key_productName = ${productName},
+				locator1 = "CommerceAccelerators#PRODUCT_CARD_QUANTITY_SELECTOR_INPUT_FIELD",
+				value1 = "\${arrowAction}");
+
+			KeyPress(
+				key_productName = ${productName},
+				locator1 = "CommerceAccelerators#PRODUCT_CARD_QUANTITY_SELECTOR_INPUT_FIELD",
+				value1 = "\TAB");
+		}
+		else {
+			if (${quantitySelectorType} == "Product Details") {
+				Click(locator1 = "CommerceAccelerators#PRODUCT_DETAILS_QUANTITY_SELECTOR_INPUT_FIELD");
+
+				KeyPress(
+					locator1 = "CommerceAccelerators#PRODUCT_DETAILS_QUANTITY_SELECTOR_INPUT_FIELD",
+					value1 = "\${arrowAction}");
+			}
+			else {
+				if (${quantitySelectorType} == "Mini-cart") {
+					Click(
+						key_cartItemSku = ${productSKU},
+						locator1 = "CommerceAccelerators#MINI_CART_ITEM_QUANTITY");
+
+					KeyPress(
+						key_cartItemSku = ${productSKU},
+						locator1 = "CommerceAccelerators#MINI_CART_ITEM_QUANTITY",
+						value1 = "\${arrowAction}");
+
+					KeyPress(
+						key_cartItemSku = ${productSKU},
+						locator1 = "CommerceAccelerators#MINI_CART_ITEM_QUANTITY",
+						value1 = "\TAB");
+				}
+			}
+		}
+	}
+
 	macro compareProducts {
 		var comparisonItems = 0;
 
@@ -463,6 +513,10 @@ definition {
 				else {
 					TestUtils.fail(message = "Selected quantity configuration is not valid.");
 				}
+
+				if (isSet(quantityConfigurationDecimalText)) {
+					var quantityConfigurationDecimalText = "Quantity allows for ${quantityConfigurationDecimalText} decimal places ";
+				}
 			}
 		}
 
@@ -547,11 +601,33 @@ definition {
 			locator1 = "CommerceAccelerators#MINI_CART_ITEM_QUANTITY",
 			value1 = ${cartItemQuantity});
 
+		if (isSet(bundledItems)) {
+			for (var bundledItem : list ${bundledItems}) {
+				AssertTextEquals.assertPartialText(
+					key_cartItemSku = ${cartItemSku},
+					locator1 = "CommerceAccelerators#MINI_CART_SPECIFIC_ITEM_BUNDLED_ITEMS",
+					value1 = ${bundledItem});
+			}
+		}
+
 		if (isSet(cartItemPriceValue)) {
 			AssertTextEquals.assertPartialText(
 				key_cartItemSku = ${cartItemSku},
 				locator1 = "CommerceAccelerators#MINI_CART_ITEM_PRICE_VALUE",
 				value1 = "$ ${cartItemPriceValue}");
+		}
+
+		if (isSet(cartItemPromoPriceValue)) {
+			AssertTextEquals(
+				locator1 = "CommerceAccelerators#PRODUCT_DETAILS_LIST_PRICE_PROMO",
+				value1 = "$ ${cartItemPromoPriceValue}");
+		}
+
+		if (isSet(cartItemUOMKey)) {
+			AssertTextEquals.assertPartialText(
+				key_uom = ${cartItemUOMKey},
+				locator1 = "CommerceAccelerators#MINI_CART_ITEM_UOM_NAME",
+				value1 = ${cartItemUOMKey});
 		}
 
 		AssertElementPresent(

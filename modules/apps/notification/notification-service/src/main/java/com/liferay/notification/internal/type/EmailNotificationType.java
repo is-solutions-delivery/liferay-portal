@@ -203,7 +203,7 @@ public class EmailNotificationType extends BaseNotificationType {
 				() -> {
 					NotificationRecipientSetting notificationRecipientSetting =
 						notificationRecipientSettingLocalService.
-							getNotificationRecipientSetting(
+							fetchNotificationRecipientSetting(
 								notificationRecipient.
 									getNotificationRecipientId(),
 								"fromName");
@@ -217,10 +217,14 @@ public class EmailNotificationType extends BaseNotificationType {
 				() -> {
 					NotificationRecipientSetting notificationRecipientSetting =
 						notificationRecipientSettingLocalService.
-							getNotificationRecipientSetting(
+							fetchNotificationRecipientSetting(
 								notificationRecipient.
 									getNotificationRecipientId(),
 								"singleRecipient");
+
+					if (notificationRecipientSetting == null) {
+						return Boolean.TRUE.toString();
+					}
 
 					return notificationRecipientSetting.getValue();
 				}
@@ -229,23 +233,21 @@ public class EmailNotificationType extends BaseNotificationType {
 				() -> {
 					NotificationRecipientSetting notificationRecipientSetting =
 						notificationRecipientSettingLocalService.
-							getNotificationRecipientSetting(
+							fetchNotificationRecipientSetting(
 								notificationRecipient.
 									getNotificationRecipientId(),
 								"to");
 
-					String to = _formatTo(
-						notificationRecipientSetting.getValue(user.getLocale()),
-						notificationContext);
+					String to = notificationRecipientSetting.getValue(
+						user.getLocale());
 
-					if (Validator.isNotNull(to)) {
-						return to;
+					if (Validator.isNull(to)) {
+						to = notificationRecipientSetting.getValue(
+							siteDefaultLocale);
 					}
 
-					return formatLocalizedContent(
-						notificationRecipientSetting.getValue(
-							siteDefaultLocale),
-						notificationContext);
+					return _formatTo(
+						formatLocalizedContent(to, notificationContext));
 				}
 			).build();
 
@@ -493,9 +495,7 @@ public class EmailNotificationType extends BaseNotificationType {
 		return stringWriter.toString();
 	}
 
-	private String _formatTo(String to, NotificationContext notificationContext)
-		throws PortalException {
-
+	private String _formatTo(String to) {
 		if (Validator.isNull(to)) {
 			return StringPool.BLANK;
 		}
@@ -508,8 +508,7 @@ public class EmailNotificationType extends BaseNotificationType {
 			emailAddresses.add(matcher.group());
 		}
 
-		return formatLocalizedContent(
-			StringUtil.merge(emailAddresses), notificationContext);
+		return StringUtil.merge(emailAddresses);
 	}
 
 	private List<Long> _getFileEntryIds(

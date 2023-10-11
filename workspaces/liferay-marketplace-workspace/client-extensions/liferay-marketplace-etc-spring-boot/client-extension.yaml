@@ -1,0 +1,10 @@
+assemble:
+    - fromTask: bootJar
+liferay-marketplace-etc-spring-boot-oauth-application-user-agent:
+    .serviceAddress: localhost:58081
+    .serviceScheme: http
+    name: Liferay Marketplace Etc Spring Boot OAuth Application User Agent
+    scopes:
+        - Liferay.Headless.Admin.User.everything
+        - Liferay.Headless.Admin.Workflow.everything
+    type: oAuthApplicationUserAgent
