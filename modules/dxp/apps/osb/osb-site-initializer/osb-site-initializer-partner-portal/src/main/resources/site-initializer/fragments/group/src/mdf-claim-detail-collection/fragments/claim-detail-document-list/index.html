@@ -1,5 +1,4 @@
 [#assign mdf_claim_id = (request.getAttribute("INFO_ITEM").objectEntryId)! /]
-
 [#macro document_card document]
 	<div class="panel panel-secondary">
 		<div class="panel-header">
@@ -22,7 +21,7 @@
 [#if mdf_claim_id?has_content]
 	[#assign claim = restClient.get("/c/mdfclaims/${mdf_claim_id}") /]
 
-	[#if claim.reimbursementInvoice?has_content]
+	[#if (claim.reimbursementInvoice?has_content)!false]
 		[@document_card document=claim.reimbursementInvoice /]
 	[/#if]
 [#else]
