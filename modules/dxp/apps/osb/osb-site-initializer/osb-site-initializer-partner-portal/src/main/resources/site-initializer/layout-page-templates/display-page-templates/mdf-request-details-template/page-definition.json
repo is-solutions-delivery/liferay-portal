@@ -43,17 +43,8 @@
 					],
 					"indexed": true,
 					"layout": {
-						"borderWidth": 0,
-						"marginBottom": 0,
-						"marginLeft": 0,
-						"marginRight": 0,
-						"marginTop": 0,
-						"opacity": 100,
 						"paddingBottom": 2,
-						"paddingLeft": 0,
-						"paddingRight": 0,
-						"paddingTop": 6,
-						"widthType": "Fluid"
+						"paddingTop": 6
 					},
 					"name": "Page"
 				},
@@ -61,21 +52,12 @@
 					{
 						"definition": {
 							"fragmentStyle": {
+								"borderWidth": "0",
 								"marginBottom": "3"
 							},
 							"indexed": true,
 							"layout": {
-								"borderWidth": 0,
-								"marginBottom": 1,
-								"marginLeft": 0,
-								"marginRight": 0,
-								"marginTop": 0,
-								"opacity": 100,
-								"paddingBottom": 0,
-								"paddingLeft": 0,
-								"paddingRight": 0,
-								"paddingTop": 0,
-								"widthType": "Fluid"
+								"marginBottom": 1
 							},
 							"name": "Back Container"
 						},
@@ -87,7 +69,8 @@
 									},
 									"fragmentConfig": {
 										"buttonSize": "nm",
-										"buttonType": "secondary"
+										"buttonType": "secondary",
+										"type": "link"
 									},
 									"fragmentFields": [
 										{
@@ -149,17 +132,11 @@
 							},
 							"indexed": true,
 							"layout": {
-								"borderWidth": 0,
 								"marginBottom": 1,
-								"marginLeft": 0,
-								"marginRight": 0,
-								"marginTop": 0,
-								"opacity": 100,
 								"paddingBottom": 2,
 								"paddingLeft": 2,
 								"paddingRight": 2,
-								"paddingTop": 2,
-								"widthType": "Fluid"
+								"paddingTop": 2
 							},
 							"name": "Header"
 						},
@@ -184,20 +161,9 @@
 									"indexed": true,
 									"layout": {
 										"align": "Start",
-										"borderWidth": 0,
 										"contentDisplay": "FlexRow",
 										"flexWrap": "Wrap",
-										"justify": "SpaceBetween",
-										"marginBottom": 0,
-										"marginLeft": 0,
-										"marginRight": 0,
-										"marginTop": 0,
-										"opacity": 100,
-										"paddingBottom": 0,
-										"paddingLeft": 0,
-										"paddingRight": 0,
-										"paddingTop": 0,
-										"widthType": "Fluid"
+										"justify": "SpaceBetween"
 									}
 								},
 								"pageElements": [
@@ -265,7 +231,6 @@
 															"fragmentStyle": {
 																"borderRadius": "",
 																"fontWeight": "fontWeightBold",
-																"paddingBottom": "1",
 																"shadow": "",
 																"textAlign": "",
 																"textColor": "colorNeutral10"
@@ -312,8 +277,8 @@
 															"fragmentStyle": {
 																"borderRadius": "",
 																"fontWeight": "fontWeightBold",
-																"marginLeft": "2",
-																"marginRight": "2",
+																"paddingLeft": "2",
+																"paddingRight": "2",
 																"shadow": "",
 																"textAlign": "",
 																"textColor": "colorNeutral10"
@@ -328,7 +293,8 @@
 																"key": "dialect-dialect-text"
 															},
 															"fragmentConfig": {
-																"textType": "h1"
+																"textType": "h1",
+																"truncateText": false
 															},
 															"fragmentFields": [
 																{
@@ -348,7 +314,11 @@
 																}
 															],
 															"fragmentStyle": {
-																"fontWeight": "fontWeightBold"
+																"borderRadius": "",
+																"fontWeight": "fontWeightBold",
+																"shadow": "",
+																"textAlign": "",
+																"textColor": "colorNeutral10"
 															},
 															"indexed": true
 														},
@@ -367,19 +337,8 @@
 													},
 													"indexed": true,
 													"layout": {
-														"borderWidth": 0,
 														"contentDisplay": "FlexRow",
-														"flexWrap": "Wrap",
-														"marginBottom": 0,
-														"marginLeft": 0,
-														"marginRight": 0,
-														"marginTop": 0,
-														"opacity": 100,
-														"paddingBottom": 0,
-														"paddingLeft": 0,
-														"paddingRight": 0,
-														"paddingTop": 0,
-														"widthType": "Fluid"
+														"flexWrap": "Wrap"
 													}
 												},
 												"pageElements": [
@@ -565,20 +524,9 @@
 											"indexed": true,
 											"layout": {
 												"align": "Center",
-												"borderWidth": 0,
 												"contentDisplay": "FlexRow",
 												"flexWrap": "Wrap",
-												"justify": "End",
-												"marginBottom": 0,
-												"marginLeft": 0,
-												"marginRight": 0,
-												"marginTop": 0,
-												"opacity": 100,
-												"paddingBottom": 0,
-												"paddingLeft": 0,
-												"paddingRight": 0,
-												"paddingTop": 0,
-												"widthType": "Fluid"
+												"justify": "End"
 											}
 										},
 										"pageElements": [
@@ -671,17 +619,11 @@
 							},
 							"indexed": true,
 							"layout": {
-								"borderWidth": 0,
 								"marginBottom": 1,
-								"marginLeft": 0,
-								"marginRight": 0,
-								"marginTop": 0,
-								"opacity": 100,
 								"paddingBottom": 2,
 								"paddingLeft": 2,
 								"paddingRight": 2,
-								"paddingTop": 2,
-								"widthType": "Fluid"
+								"paddingTop": 2
 							},
 							"name": "Summary"
 						},
@@ -779,17 +721,6 @@
 							},
 							"indexed": true,
 							"layout": {
-								"borderWidth": 0,
-								"marginBottom": 0,
-								"marginLeft": 0,
-								"marginRight": 0,
-								"marginTop": 0,
-								"opacity": 100,
-								"paddingBottom": 0,
-								"paddingLeft": 0,
-								"paddingRight": 0,
-								"paddingTop": 0,
-								"widthType": "Fluid"
 							},
 							"name": "Body"
 						},
@@ -870,18 +801,12 @@
 													},
 													"indexed": true,
 													"layout": {
-														"borderWidth": 0,
 														"contentDisplay": "FlexColumn",
 														"marginBottom": 1,
-														"marginLeft": 0,
-														"marginRight": 0,
-														"marginTop": 0,
-														"opacity": 100,
 														"paddingBottom": 2,
 														"paddingLeft": 1,
 														"paddingRight": 2,
-														"paddingTop": 2,
-														"widthType": "Fluid"
+														"paddingTop": 2
 													}
 												},
 												"pageElements": [
@@ -1008,18 +933,12 @@
 													},
 													"indexed": true,
 													"layout": {
-														"borderWidth": 0,
 														"contentDisplay": "FlexColumn",
 														"marginBottom": 1,
-														"marginLeft": 0,
-														"marginRight": 0,
-														"marginTop": 0,
-														"opacity": 100,
 														"paddingBottom": 2,
 														"paddingLeft": 1,
 														"paddingRight": 2,
-														"paddingTop": 2,
-														"widthType": "Fluid"
+														"paddingTop": 2
 													}
 												},
 												"pageElements": [
@@ -1118,17 +1037,6 @@
 													},
 													"indexed": true,
 													"layout": {
-														"borderWidth": 0,
-														"marginBottom": 0,
-														"marginLeft": 0,
-														"marginRight": 0,
-														"marginTop": 0,
-														"opacity": 100,
-														"paddingBottom": 0,
-														"paddingLeft": 0,
-														"paddingRight": 0,
-														"paddingTop": 0,
-														"widthType": "Fluid"
 													}
 												},
 												"pageElements": [
@@ -1148,18 +1056,11 @@
 															},
 															"indexed": true,
 															"layout": {
-																"borderWidth": 0,
 																"contentDisplay": "FlexColumn",
-																"marginBottom": 0,
-																"marginLeft": 0,
-																"marginRight": 0,
-																"marginTop": 0,
-																"opacity": 100,
 																"paddingBottom": 2,
 																"paddingLeft": 1,
 																"paddingRight": 2,
-																"paddingTop": 2,
-																"widthType": "Fluid"
+																"paddingTop": 2
 															}
 														},
 														"pageElements": [
@@ -1499,30 +1400,6 @@
 																	}
 																},
 																{
-																	"id": "rowTitle-3",
-																	"value": {
-																		"fragmentLink": {
-																		},
-																		"text": {
-																			"value_i18n": {
-																				"ar_SA": "Liferay business/sales goals",
-																				"ca_ES": "Liferay business/sales goals",
-																				"de_DE": "Liferay business/sales goals",
-																				"en_US": "Liferay business/sales goals",
-																				"es_ES": "Liferay business/sales goals",
-																				"fi_FI": "Liferay business/sales goals",
-																				"fr_FR": "Liferay business/sales goals",
-																				"hu_HU": "Liferay business/sales goals",
-																				"ja_JP": "Liferay business/sales goals",
-																				"nl_NL": "Liferay business/sales goals",
-																				"pt_BR": "Liferay business/sales goals",
-																				"sv_SE": "Liferay business/sales goals",
-																				"zh_CN": "Liferay business/sales goals"
-																			}
-																		}
-																	}
-																},
-																{
 																	"id": "rowTitle-4",
 																	"value": {
 																		"fragmentLink": {
@@ -1542,6 +1419,45 @@
 																				"pt_BR": "Liferay business/sales goals Other",
 																				"sv_SE": "Liferay business/sales goals Other",
 																				"zh_CN": "Liferay business/sales goals Other"
+																			}
+																		}
+																	}
+																},
+																{
+																	"id": "rowValue-4",
+																	"value": {
+																		"fragmentLink": {
+																		},
+																		"text": {
+																			"mapping": {
+																				"fieldKey": "ObjectField_liferayBusinessSalesGoalsOther",
+																				"itemReference": {
+																					"contextSource": "DisplayPageItem"
+																				}
+																			}
+																		}
+																	}
+																},
+																{
+																	"id": "rowTitle-3",
+																	"value": {
+																		"fragmentLink": {
+																		},
+																		"text": {
+																			"value_i18n": {
+																				"ar_SA": "Liferay business/sales goals",
+																				"ca_ES": "Liferay business/sales goals",
+																				"de_DE": "Liferay business/sales goals",
+																				"en_US": "Liferay business/sales goals",
+																				"es_ES": "Liferay business/sales goals",
+																				"fi_FI": "Liferay business/sales goals",
+																				"fr_FR": "Liferay business/sales goals",
+																				"hu_HU": "Liferay business/sales goals",
+																				"ja_JP": "Liferay business/sales goals",
+																				"nl_NL": "Liferay business/sales goals",
+																				"pt_BR": "Liferay business/sales goals",
+																				"sv_SE": "Liferay business/sales goals",
+																				"zh_CN": "Liferay business/sales goals"
 																			}
 																		}
 																	}
@@ -1593,21 +1509,6 @@
 																		"text": {
 																			"mapping": {
 																				"fieldKey": "ObjectField_liferayBusinessSalesGoals",
-																				"itemReference": {
-																					"contextSource": "DisplayPageItem"
-																				}
-																			}
-																		}
-																	}
-																},
-																{
-																	"id": "rowValue-4",
-																	"value": {
-																		"fragmentLink": {
-																		},
-																		"text": {
-																			"mapping": {
-																				"fieldKey": "ObjectField_liferayBusinessSalesGoalsOther",
 																				"itemReference": {
 																					"contextSource": "DisplayPageItem"
 																				}
@@ -1864,17 +1765,10 @@
 													},
 													"indexed": true,
 													"layout": {
-														"borderWidth": 0,
-														"marginBottom": 0,
-														"marginLeft": 0,
-														"marginRight": 0,
-														"marginTop": 0,
-														"opacity": 100,
 														"paddingBottom": 2,
 														"paddingLeft": 2,
 														"paddingRight": 2,
-														"paddingTop": 2,
-														"widthType": "Fluid"
+														"paddingTop": 2
 													}
 												},
 												"pageElements": [
@@ -1952,6 +1846,8 @@
 														},
 														"pageElements": [
 															{
+																"definition": {
+																},
 																"pageElements": [
 																	{
 																		"definition": {
