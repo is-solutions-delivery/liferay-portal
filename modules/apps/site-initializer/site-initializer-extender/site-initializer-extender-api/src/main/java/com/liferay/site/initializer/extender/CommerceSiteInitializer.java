@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.annotation.versioning.ProviderType;
 import org.osgi.framework.Bundle;
@@ -38,5 +39,7 @@ public interface CommerceSiteInitializer {
 	public long getCommerceChannelGroupId(long siteGroupId);
 
 	public String getCommerceOrderClassName();
+
+	public void setCommerceContext(HttpServletRequest httpServletRequest);
 
 }

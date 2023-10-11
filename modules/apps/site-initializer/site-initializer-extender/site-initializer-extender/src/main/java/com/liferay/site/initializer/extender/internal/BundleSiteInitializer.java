@@ -411,6 +411,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 	}
 
 	@Override
+	public CommerceSiteInitializer getCommerceSiteInitializer() {
+		return _commerceSiteInitializer;
+	}
+
+	@Override
 	public String getDescription(Locale locale) {
 		Dictionary<String, String> headers = _bundle.getHeaders(
 			StringPool.BLANK);

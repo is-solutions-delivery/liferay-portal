@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.site.exception.InitializationException;
 import com.liferay.site.initializer.SiteInitializer;
+import com.liferay.site.initializer.extender.CommerceSiteInitializer;
 
 import java.util.Date;
 import java.util.Locale;
@@ -42,6 +43,11 @@ import org.osgi.service.component.annotations.Reference;
 public class BlankSiteInitializer implements SiteInitializer {
 
 	public static final String KEY = "blank-site-initializer";
+
+	@Override
+	public CommerceSiteInitializer getCommerceSiteInitializer() {
+		return null;
+	}
 
 	@Override
 	public String getDescription(Locale locale) {
