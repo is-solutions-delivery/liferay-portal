@@ -6,6 +6,7 @@
 package com.liferay.site.initializer;
 
 import com.liferay.site.exception.InitializationException;
+import com.liferay.site.initializer.extender.CommerceSiteInitializer;
 
 import java.util.Locale;
 
@@ -16,6 +17,8 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @ProviderType
 public interface SiteInitializer {
+
+	public CommerceSiteInitializer getCommerceSiteInitializer();
 
 	public String getDescription(Locale locale);
 

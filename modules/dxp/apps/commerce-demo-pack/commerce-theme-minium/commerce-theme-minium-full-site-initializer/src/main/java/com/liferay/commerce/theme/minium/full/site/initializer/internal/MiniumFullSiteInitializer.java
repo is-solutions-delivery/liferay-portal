@@ -30,6 +30,7 @@ import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.site.exception.InitializationException;
 import com.liferay.site.initializer.SiteInitializer;
+import com.liferay.site.initializer.extender.CommerceSiteInitializer;
 
 import java.util.List;
 import java.util.Locale;
@@ -49,6 +50,11 @@ import org.osgi.service.component.annotations.Reference;
 public class MiniumFullSiteInitializer implements SiteInitializer {
 
 	public static final String KEY = "minium-full-initializer";
+
+	@Override
+	public CommerceSiteInitializer getCommerceSiteInitializer() {
+		return null;
+	}
 
 	@Override
 	public String getDescription(Locale locale) {

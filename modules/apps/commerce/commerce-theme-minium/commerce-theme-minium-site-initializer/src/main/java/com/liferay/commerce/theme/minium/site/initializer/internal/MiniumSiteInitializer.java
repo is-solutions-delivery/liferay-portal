@@ -94,6 +94,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.search.capabilities.SearchCapabilities;
 import com.liferay.site.exception.InitializationException;
 import com.liferay.site.initializer.SiteInitializer;
+import com.liferay.site.initializer.extender.CommerceSiteInitializer;
 
 import java.io.File;
 import java.io.InputStream;
@@ -126,6 +127,11 @@ import org.osgi.service.component.annotations.Reference;
 public class MiniumSiteInitializer implements SiteInitializer {
 
 	public static final String KEY = "minium-initializer";
+
+	@Override
+	public CommerceSiteInitializer getCommerceSiteInitializer() {
+		return null;
+	}
 
 	@Override
 	public String getDescription(Locale locale) {
