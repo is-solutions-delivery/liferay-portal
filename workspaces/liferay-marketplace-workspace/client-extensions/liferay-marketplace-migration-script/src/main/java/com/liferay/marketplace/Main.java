@@ -12,10 +12,7 @@ import com.liferay.headless.admin.taxonomy.client.resource.v1_0.TaxonomyVocabula
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.*;
 import com.liferay.headless.commerce.admin.catalog.client.pagination.Page;
 import com.liferay.headless.commerce.admin.catalog.client.pagination.Pagination;
-import com.liferay.headless.commerce.admin.catalog.client.resource.v1_0.AttachmentResource;
-import com.liferay.headless.commerce.admin.catalog.client.resource.v1_0.CatalogResource;
-import com.liferay.headless.commerce.admin.catalog.client.resource.v1_0.ProductResource;
-import com.liferay.headless.commerce.admin.catalog.client.resource.v1_0.SkuResource;
+import com.liferay.headless.commerce.admin.catalog.client.resource.v1_0.*;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -23,12 +20,13 @@ import com.liferay.portal.kernel.util.Validator;
 
 import java.io.InputStream;
 
-import java.net.MalformedURLException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLConnection;
 
 import java.nio.charset.Charset;
 
+import java.rmi.server.ExportException;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -272,7 +270,7 @@ public class Main {
 
 		try {
 			return productResource.getProductByExternalReferenceCode(
-					externalReferenceCode);
+				externalReferenceCode);
 		}
 		catch (Exception exception) {
 			_log.info("Product not found.");
@@ -303,6 +301,37 @@ public class Main {
 			productId, Pagination.of(-1, -1));
 	}
 
+	private Page<ProductSpecification> _getProductIdProductSpecificationsPage(
+			long productId, long siteGroupId)
+		throws Exception {
+
+		ProductSpecificationResource.Builder
+			productSpecificationResourceBuilder =
+				ProductSpecificationResource.builder();
+
+		URL url = new URL(_getLiferayURL(siteGroupId));
+
+		ProductSpecificationResource productSpecificationResource =
+			productSpecificationResourceBuilder.bearerToken(
+				_getOAuthAuthorization(siteGroupId)
+			).header(
+				"User-Agent", "Application"
+			).endpoint(
+				url.getHost(), url.getPort(), url.getProtocol()
+			).build();
+
+		try {
+			return productSpecificationResource.
+				getProductIdProductSpecificationsPage(
+					productId, Pagination.of(-1, -1));
+		}
+		catch (Exception exception) {
+			_log.info("Product Specification not found.");
+
+			return null;
+		}
+	}
+
 	private Page<Product> _getProductsPage(String filter, long siteGroupId)
 		throws Exception {
 
@@ -323,93 +352,45 @@ public class Main {
 			null, filter, Pagination.of(-1, -1), null);
 	}
 
-	private Page<Sku> _getSkusPage(String filter, long siteGroupId)
-			throws Exception {
-
-		SkuResource.Builder skuResourceBuilder =
-				SkuResource.builder();
-
-		URL url = new URL(_getLiferayURL(siteGroupId));
-
-		SkuResource skuResource = skuResourceBuilder.bearerToken(
-				_getOAuthAuthorization(siteGroupId)
-		).header(
-				"User-Agent", "Application"
-		).endpoint(
-				url.getHost(), url.getPort(), url.getProtocol()
-		).build();
-
-		return skuResource.getSkusPage(
-				null, filter, Pagination.of(-1, -1), null);
-	}
-
-//	private Sku _getProductsSku(String productExternalReferenceCode, long siteGroupId) throws Exception {
-//
-//		long destinationSiteGroupId = GetterUtil.getLong(
-//				_properties.getProperty(
-//						"LIFERAY_MARKETPLACE_DESTINATION_MARKETPLACE_SITE_GROUP_ID"));
-//
-//		SkuResource.Builder skuResourceBuilder = SkuResource.builder();
-//
-//		URL url = new URL(_getLiferayURL(siteGroupId));
-//
-//		SkuResource skuResource = skuResourceBuilder.bearerToken(
-//				_getOAuthAuthorization(siteGroupId)
-//		).header(
-//				"User-Agent", "Application"
-//		).endpoint(
-//				url.getHost(), url.getPort(), url.getProtocol()
-//		).build();
-//
-//		try{
-//			Product product = _getProductByExternalReferenceCode(productExternalReferenceCode, destinationSiteGroupId);
-//
-//				return skuResource.getSkuByExternalReferenceCode());
-//
-//		}catch (Exception exception){
-//			_log.info("Sku not found.");
-//
-//			return null;
-//		}
-//	};
-
-	private ProductSpecification[] _getProductSpecifications(Product product, String productExternalReferenceCode) throws Exception {
+	private ProductSpecification[] _getProductSpecifications(Product product, long originSiteGroupId) throws Exception {
 		long bundledCategoryId = GetterUtil.getLong(
 			_properties.getProperty(
 				"LIFERAY_MARKETPLACE_ORIGIN_BUNDLED_CATEGORY_ID"));
 
-		long originSiteGroupId = GetterUtil.getLong(
-				_properties.getProperty(
-						"LIFERAY_MARKETPLACE_ORIGIN_MARKETPLACE_SITE_GROUP_ID"));
-
-		long destinationSiteGroupId = GetterUtil.getLong(
-			_properties.getProperty(
-				"LIFERAY_MARKETPLACE_DESTINATION_MARKETPLACE_SITE_GROUP_ID"));
-
-//		Product originProduct = _getProductByExternalReferenceCode(productExternalReferenceCode, originSiteGroupId);
-		Product product2 = _getProductByExternalReferenceCode(productExternalReferenceCode, destinationSiteGroupId);
-
-		System.out.println("\n\n\n\t\t\tproductExternalReferenceCode: ============> " + productExternalReferenceCode);
-		System.out.println("\t\t\tproduct2.getProductId(): =============> " + product2.getProductId());
-
-		String filter = String.format(
-				"(productId eq %d))",
-				product2.getProductId());
-
-		System.out.println("\t\t\tfilter: =============> " + filter);
-
-		Page<Sku> skusPage = _getSkusPage(
-				filter, originSiteGroupId);
-
-		System.out.println("\t\t\tskusPage: =============> " + skusPage);
+		Page<ProductSpecification> originProductSpecifications =
+				_getProductIdProductSpecificationsPage(
+						product.getProductId(), originSiteGroupId);
 
 		ProductSpecification productSpecification = new ProductSpecification();
 
-		productSpecification.setSpecificationKey("price-model");	
-		productSpecification.setValue(
-			HashMapBuilder.put(
-				"en_US", "Free"
-			).build());
+		for (ProductSpecification originProductSpecification :
+				originProductSpecifications.getItems()) {
+
+			JSONObject jsonObject = new JSONObject(originProductSpecification);
+
+			JSONObject valueJSONObject = (JSONObject) jsonObject.get("value");
+
+			String value = (String) valueJSONObject.get("en_US");
+
+			productSpecification.setSpecificationKey("price-model");
+
+			if(value.equals("Free")){
+				productSpecification.setValue(
+						HashMapBuilder.put(
+								"en_US", "Free"
+						).build());
+			}else if(value.equals("Paid")){
+				productSpecification.setValue(
+						HashMapBuilder.put(
+								"en_US", "Paid"
+						).build());
+			}else if(value.equals("Bundled")){
+				productSpecification.setValue(
+						HashMapBuilder.put(
+								"en_US", "Bundled"
+						).build());
+			}
+		}
 
 		ProductSpecification[] productSpecifications =
 			product.getProductSpecifications();
@@ -440,6 +421,46 @@ public class Main {
 
 		return productSpecifications;
 	}
+
+	private Sku[] _getSkus(Product product, long originSiteGroupId)
+		throws Exception {
+
+		Page<ProductSpecification> originProductSpecifications =
+			_getProductIdProductSpecificationsPage(
+				product.getProductId(), originSiteGroupId);
+
+		if(originProductSpecifications.getTotalCount() == 0){
+			return null;
+		}
+
+		Sku[] skus = new Sku[] {new Sku()};
+
+		for (ProductSpecification productSpecification :
+				originProductSpecifications.getItems()) {
+
+			JSONObject jsonObject = new JSONObject(productSpecification);
+
+			System.out.println("\n\n\n\t\t\tjsonObject: ============> " + jsonObject + "\n\n\n");
+
+			JSONObject valueJSONObject = (JSONObject) jsonObject.get("value");
+
+			String value = (String) valueJSONObject.get("en_US");
+
+			if (productSpecification.getSpecificationKey().equals("price-model") && value != null) {
+
+				skus[0].setSku("default");
+				skus[0].setPurchasable(false);
+				skus[0].setNeverExpire(true);
+
+				if(value.equals("Free")) {
+					skus[0].setPurchasable(true);
+				}
+
+			}
+		}
+		System.out.println("\n\n\n\t\t\tskus: ============> " + skus + "\n\n\n");
+		return skus;
+	};
 
 	private com.liferay.headless.admin.taxonomy.client.pagination.Page
 		<TaxonomyCategory> _getTaxonomyCategoriesPage(
@@ -666,15 +687,20 @@ public class Main {
 		long bundledCategoryId = GetterUtil.getLong(
 			_properties.getProperty(
 				"LIFERAY_MARKETPLACE_ORIGIN_BUNDLED_CATEGORY_ID"));
+
 		long solutionCategoryId = GetterUtil.getLong(
 			_properties.getProperty(
 				"LIFERAY_MARKETPLACE_ORIGIN_SOLUTION_CATEGORY_ID"));
 
+		long freeCategoryId = GetterUtil.getLong(
+				_properties.getProperty(
+						"LIFERAY_MARKETPLACE_ORIGIN_FREE_CATEGORY_ID"));
+
 		_loadTaxonomy(destinationSiteGroupId);
 
 		String filter = String.format(
-			"(categoryIds/any(x:" + "(x eq '%d') or (x eq '%d')))",
-			bundledCategoryId, solutionCategoryId);
+			"(categoryIds/any(x:" + "(x eq '%d') or (x eq '%d') or (x eq '%d')))",
+			bundledCategoryId, solutionCategoryId, freeCategoryId);
 
 		Page<Product> productsPage = _getProductsPage(
 			filter, originSiteGroupId);
@@ -733,9 +759,10 @@ public class Main {
 			product2.setMetaTitle(product.getMetaTitle());
 			product2.setName(product.getName());
 			product2.setProductSpecifications(
-				_getProductSpecifications(product, productExternalReferenceCode));
+				_getProductSpecifications(product, originSiteGroupId));
 			product2.setProductType(product.getProductType());
 			product2.setShortDescription(product.getShortDescription());
+			product2.setSkus(_getSkus(product, originSiteGroupId));
 
 			product2 = _postProduct(product2, destinationSiteGroupId);
 
