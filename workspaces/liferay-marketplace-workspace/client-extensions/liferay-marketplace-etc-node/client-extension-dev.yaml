@@ -1,7 +1,7 @@
 assemble:
     - from: src
 liferay-marketplace-etc-node-oauth-application-user-agent:
-    .serviceAddress: 172.17.0.1:3001
+    .serviceAddress: 127.10.0.1:3001
     .serviceScheme: http
     name: Liferay Marketplace Etc Node OAuth Application User Agent
     scopes:
