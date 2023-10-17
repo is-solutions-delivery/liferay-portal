@@ -480,3 +480,7 @@ type RadioOption<T> = {
 	index: number;
 	value: T;
 };
+
+type Subscription = {
+	subscription: string;
+};
