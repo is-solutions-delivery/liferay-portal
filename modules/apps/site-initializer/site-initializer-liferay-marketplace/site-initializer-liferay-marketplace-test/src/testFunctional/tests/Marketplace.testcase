@@ -11,7 +11,20 @@ definition {
 	var testSiteURL = "marketplace-site";
 
 	setUp {
-		MP2Configuration.marketplaceSetUp();
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
+
+			User.firstLoginPG();
+		}
+
+		task ("Create a new Liferay Marketplace Site") {
+			HeadlessSite.addSite(
+				siteName = ${testSiteName},
+				templateName = "Liferay Marketplace",
+				templateType = "Site Initializer");
+
+			ApplicationsMenu.gotoSite(site = ${testSiteName});
+		}
 	}
 
 	tearDown {
