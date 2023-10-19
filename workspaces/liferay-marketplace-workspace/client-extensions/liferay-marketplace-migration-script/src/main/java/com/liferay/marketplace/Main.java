@@ -12,9 +12,7 @@ import com.liferay.headless.admin.taxonomy.client.resource.v1_0.TaxonomyVocabula
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.*;
 import com.liferay.headless.commerce.admin.catalog.client.pagination.Page;
 import com.liferay.headless.commerce.admin.catalog.client.pagination.Pagination;
-import com.liferay.headless.commerce.admin.catalog.client.resource.v1_0.AttachmentResource;
-import com.liferay.headless.commerce.admin.catalog.client.resource.v1_0.CatalogResource;
-import com.liferay.headless.commerce.admin.catalog.client.resource.v1_0.ProductResource;
+import com.liferay.headless.commerce.admin.catalog.client.resource.v1_0.*;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -301,6 +299,56 @@ public class Main {
 			productId, Pagination.of(-1, -1));
 	}
 
+	private Page<ProductSpecification> _getProductIdProductSpecificationsPage(
+			long productId, long siteGroupId)
+		throws Exception {
+
+		ProductSpecificationResource.Builder
+			productSpecificationResourceBuilder =
+				ProductSpecificationResource.builder();
+
+		URL url = new URL(_getLiferayURL(siteGroupId));
+
+		ProductSpecificationResource productSpecificationResource =
+			productSpecificationResourceBuilder.bearerToken(
+				_getOAuthAuthorization(siteGroupId)
+			).header(
+				"User-Agent", "Application"
+			).endpoint(
+				url.getHost(), url.getPort(), url.getProtocol()
+			).build();
+
+		try {
+			return productSpecificationResource.
+				getProductIdProductSpecificationsPage(
+					productId, Pagination.of(-1, -1));
+		}
+		catch (Exception exception) {
+			_log.info("Product Specification not found.");
+
+			return null;
+		}
+	}
+
+	private Page<Sku> _getProductIdSkusPage(long siteGroupId, long productId)
+		throws Exception {
+
+		SkuResource.Builder skuResourceBuilder = SkuResource.builder();
+
+		URL url = new URL(_getLiferayURL(siteGroupId));
+
+		SkuResource skuResource = skuResourceBuilder.bearerToken(
+			_getOAuthAuthorization(siteGroupId)
+		).header(
+			"User-Agent", "Application"
+		).endpoint(
+			url.getHost(), url.getPort(), url.getProtocol()
+		).build();
+
+		return skuResource.getProductIdSkusPage(
+			productId, Pagination.of(-1, -1));
+	};
+
 	private Page<Product> _getProductsPage(String filter, long siteGroupId)
 		throws Exception {
 
@@ -322,9 +370,8 @@ public class Main {
 	}
 
 	private ProductSpecification[] _getProductSpecifications(Product product) {
-		long bundledCategoryId = GetterUtil.getLong(
-			_properties.getProperty(
-				"LIFERAY_MARKETPLACE_ORIGIN_BUNDLED_CATEGORY_ID"));
+		ProductSpecification[] productSpecifications =
+			product.getProductSpecifications();
 
 		ProductSpecification productSpecification = new ProductSpecification();
 
@@ -334,12 +381,30 @@ public class Main {
 				"en_US", "Bundled"
 			).build());
 
-		ProductSpecification[] productSpecifications =
-			product.getProductSpecifications();
-
 		for (Category category : product.getCategories()) {
 			if (category.getId(
-				).longValue() == bundledCategoryId) {
+				).longValue() == _freeCategoryId) {
+
+				productSpecification.setValue(
+					HashMapBuilder.put(
+						"en_US", "Free"
+					).build());
+			}
+			else if (category.getId(
+					).longValue() == _paidCategoryId) {
+
+				productSpecification.setValue(
+					HashMapBuilder.put(
+						"en_US", "Paid"
+					).build());
+			}
+
+			if ((category.getId(
+				).longValue() == _bundledCategoryId) ||
+				(category.getId(
+				).longValue() == _freeCategoryId) ||
+				(category.getId(
+				).longValue() == _paidCategoryId)) {
 
 				if (productSpecifications == null) {
 					productSpecifications = new ProductSpecification[1];
@@ -363,6 +428,62 @@ public class Main {
 
 		return productSpecifications;
 	}
+
+	private Sku[] _getSkus(
+		Product product, String productExternalReferenceCode) {
+
+		Sku[] skus = {new Sku()};
+
+		try {
+			Product product2 = _getProductByExternalReferenceCode(
+				productExternalReferenceCode, _destinationSiteGroupId);
+
+			Page<Sku> skusPage = _getProductIdSkusPage(
+				_destinationSiteGroupId, product2.getProductId());
+
+			if (skusPage != null) {
+				for (Sku sku : skusPage.getItems()) {
+					sku.setNeverExpire(true);
+					sku.setPurchasable(false);
+
+					for (Category category : product.getCategories()) {
+						if (category.getId(
+							).longValue() == _freeCategoryId) {
+
+							sku.setPurchasable(true);
+						}
+					}
+
+					_patchSkuByExternalReferenceCode(
+						sku.getExternalReferenceCode(), sku,
+						_destinationSiteGroupId);
+
+					return new Sku[] {sku};
+				}
+			}
+		}
+		catch (Exception exception) {
+			_log.info(
+				"Product does not exist for external reference code: " +
+					productExternalReferenceCode + ". Continuing execution.");
+		}
+
+		for (Category category : product.getCategories()) {
+			skus[0].setSku("default");
+			skus[0].setPurchasable(false);
+			skus[0].setNeverExpire(true);
+
+			if (category.getId(
+				).longValue() == _freeCategoryId) {
+
+				skus[0].setPurchasable(true);
+
+				return skus;
+			}
+		}
+
+		return skus;
+	};
 
 	private com.liferay.headless.admin.taxonomy.client.pagination.Page
 		<TaxonomyCategory> _getTaxonomyCategoriesPage(
@@ -496,6 +617,26 @@ public class Main {
 		}
 	}
 
+	private Sku _patchSkuByExternalReferenceCode(
+			String externalReferenceCode, Sku sku, long siteGroupId)
+		throws Exception {
+
+		SkuResource.Builder skuResourceBuilder = SkuResource.builder();
+
+		URL url = new URL(_getLiferayURL(siteGroupId));
+
+		SkuResource skuResource = skuResourceBuilder.bearerToken(
+			_getOAuthAuthorization(siteGroupId)
+		).header(
+			"User-Agent", "Application"
+		).endpoint(
+			url.getHost(), url.getPort(), url.getProtocol()
+		).build();
+
+		return skuResource.patchSkuByExternalReferenceCode(
+			externalReferenceCode, sku);
+	}
+
 	private Catalog _postCatalog(Catalog catalog, long siteGroupId)
 		throws Exception {
 
@@ -578,29 +719,59 @@ public class Main {
 			productId, attachmentBase64);
 	}
 
+	private Sku _postProductIdSku(long productId, Sku sku, long siteGroupId)
+		throws Exception {
+
+		SkuResource.Builder skuResourceBuilder = SkuResource.builder();
+
+		URL url = new URL(_getLiferayURL(siteGroupId));
+
+		SkuResource skuResource = skuResourceBuilder.bearerToken(
+			_getOAuthAuthorization(siteGroupId)
+		).header(
+			"User-Agent", "Application"
+		).endpoint(
+			url.getHost(), url.getPort(), url.getProtocol()
+		).build();
+
+		return skuResource.postProductIdSku(productId, sku);
+	}
+
 	private void _process() throws Exception {
-		long originSiteGroupId = GetterUtil.getLong(
+		_bundledCategoryId = GetterUtil.getLong(
 			_properties.getProperty(
-				"LIFERAY_MARKETPLACE_ORIGIN_MARKETPLACE_SITE_GROUP_ID"));
-		long destinationSiteGroupId = GetterUtil.getLong(
+				"LIFERAY_MARKETPLACE_ORIGIN_BUNDLED_CATEGORY_ID"));
+
+		_destinationSiteGroupId = GetterUtil.getLong(
 			_properties.getProperty(
 				"LIFERAY_MARKETPLACE_DESTINATION_MARKETPLACE_SITE_GROUP_ID"));
 
-		long bundledCategoryId = GetterUtil.getLong(
+		_freeCategoryId = GetterUtil.getLong(
 			_properties.getProperty(
-				"LIFERAY_MARKETPLACE_ORIGIN_BUNDLED_CATEGORY_ID"));
-		long solutionCategoryId = GetterUtil.getLong(
+				"LIFERAY_MARKETPLACE_ORIGIN_FREE_CATEGORY_ID"));
+
+		_originSiteGroupId = GetterUtil.getLong(
+			_properties.getProperty(
+				"LIFERAY_MARKETPLACE_ORIGIN_MARKETPLACE_SITE_GROUP_ID"));
+
+		_paidCategoryId = GetterUtil.getLong(
+			_properties.getProperty(
+				"LIFERAY_MARKETPLACE_ORIGIN_PAID_CATEGORY_ID"));
+
+		_solutionCategoryId = GetterUtil.getLong(
 			_properties.getProperty(
 				"LIFERAY_MARKETPLACE_ORIGIN_SOLUTION_CATEGORY_ID"));
 
-		_loadTaxonomy(destinationSiteGroupId);
+		_loadTaxonomy(_destinationSiteGroupId);
 
 		String filter = String.format(
-			"(categoryIds/any(x:" + "(x eq '%d') or (x eq '%d')))",
-			bundledCategoryId, solutionCategoryId);
+			"(categoryIds/any(x:" +
+				"(x eq '%d') or (x eq '%d') or (x eq '%d') or (x eq '%d')))",
+			_bundledCategoryId, _freeCategoryId, _paidCategoryId,
+			_solutionCategoryId);
 
 		Page<Product> productsPage = _getProductsPage(
-			filter, originSiteGroupId);
+			filter, _originSiteGroupId);
 
 		System.out.println(
 			"\n\n\n\t\t\tCount: " + productsPage.getTotalCount());
@@ -619,7 +790,7 @@ public class Main {
 			}
 
 			Catalog catalog1 = _getCatalog(
-				product.getCatalogId(), originSiteGroupId);
+				product.getCatalogId(), _originSiteGroupId);
 
 			String catalogExternalReferenceCode =
 				catalog1.getExternalReferenceCode();
@@ -629,7 +800,7 @@ public class Main {
 			}
 
 			Catalog catalog2 = _getCatalogByExternalReferencecode(
-				catalogExternalReferenceCode, destinationSiteGroupId);
+				catalogExternalReferenceCode, _destinationSiteGroupId);
 
 			if (catalog2 == null) {
 				catalog2 = new Catalog();
@@ -640,7 +811,7 @@ public class Main {
 				catalog2.setName(catalog1.getName());
 				catalog2.setSystem(catalog1.getSystem());
 
-				catalog2 = _postCatalog(catalog2, destinationSiteGroupId);
+				catalog2 = _postCatalog(catalog2, _destinationSiteGroupId);
 			}
 
 			Product product2 = new Product();
@@ -650,6 +821,41 @@ public class Main {
 			product2.setCategories(_getCategories(product));
 			product2.setDescription(product.getDescription());
 			product2.setExpando(product.getExpando());
+
+			if (product.getExpando() != null) {
+				Object profile = product.getExpando(
+				).get(
+					"Profile"
+				);
+
+				String profileString =
+					(profile != null) ? profile.toString() : "";
+
+				int startIndex = profileString.indexOf("en_US=");
+				String textAfterEnUs = (startIndex != -1) ?
+					profileString.substring(startIndex + "en_US=".length()) :
+						"";
+
+				Map<String, String> productExpandoMap = new HashMap<>();
+				final String[] keys = {
+					"Collects Personal Data", "Developer Name", "Documentation",
+					"Instructions", "License", "Reference", "Release Notes",
+					"Source", "Support", "Terms", "Terms Text", "Version"
+				};
+
+				for (String key : keys) {
+					Object value = product.getExpando(
+					).get(
+						key
+					);
+
+					productExpandoMap.put(key, String.valueOf(value));
+				}
+
+				productExpandoMap.put("Profile", textAfterEnUs);
+				product2.setExpando(productExpandoMap);
+			}
+
 			product2.setExternalReferenceCode(productExternalReferenceCode);
 			product2.setMetaDescription(product.getMetaDescription());
 			product2.setMetaKeyword(product.getMetaKeyword());
@@ -659,8 +865,9 @@ public class Main {
 				_getProductSpecifications(product));
 			product2.setProductType(product.getProductType());
 			product2.setShortDescription(product.getShortDescription());
+			product2.setSkus(_getSkus(product, productExternalReferenceCode));
 
-			product2 = _postProduct(product2, destinationSiteGroupId);
+			product2 = _postProduct(product2, _destinationSiteGroupId);
 
 			_log.info(
 				"Product ID: " + product2.getId() + " " + product2.getName() +
@@ -669,7 +876,7 @@ public class Main {
 			_log.info("Saving attachments.");
 
 			Page<Attachment> attachmentPage = _getProductIdImagesPage(
-				product.getProductId(), originSiteGroupId);
+				product.getProductId(), _originSiteGroupId);
 
 			for (Attachment attachment : attachmentPage.getItems()) {
 				System.out.println("Src: " + attachment.getSrc());
@@ -691,7 +898,7 @@ public class Main {
 					attachment.getExpirationDate());
 				attachmentBase64.setExternalReferenceCode(
 					attachmentExternalReferenceCode);
-				attachmentBase64.setNeverExpire(attachment.getNeverExpire());
+				attachmentBase64.setNeverExpire(true);
 				attachmentBase64.setOptions(attachment.getOptions());
 				attachmentBase64.setPriority(attachment.getPriority());
 				attachmentBase64.setTitle(attachment.getTitle());
@@ -721,7 +928,7 @@ public class Main {
 
 					_postProductIdImageByBase64(
 						attachmentBase64, product2.getProductId(),
-						destinationSiteGroupId);
+						_destinationSiteGroupId);
 				}
 			}
 		}
@@ -729,7 +936,13 @@ public class Main {
 
 	private static final Logger _log = Logger.getLogger(Main.class.getName());
 
+	private long _bundledCategoryId;
+	private long _destinationSiteGroupId;
+	private long _freeCategoryId;
+	private long _originSiteGroupId;
+	private long _paidCategoryId;
 	private final Properties _properties = new Properties();
+	private long _solutionCategoryId;
 	private Map<String, Map<String, TaxonomyCategory>>
 		_taxonomyVocabularyTaxonomyCategoriesMap;
 
