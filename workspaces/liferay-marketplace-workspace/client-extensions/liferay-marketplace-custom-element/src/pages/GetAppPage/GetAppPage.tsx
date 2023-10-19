@@ -3,11 +3,9 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClaySticker from '@clayui/sticker';
 import {useCallback, useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 
-import emptyPictureIcon from '../../assets/icons/avatar.svg';
 import useCart from '../../hooks/useCart';
 import {
 	getPaymentMethodURL,
@@ -16,6 +14,7 @@ import {
 	postEmailAppInformation,
 } from '../../utils/api';
 import {getValueFromSpecifications} from '../../utils/util';
+import AccountEmailInfo from '../CreateLicense/AccountEmail';
 import AccountSelection from './components/AccountSelection';
 import ProductFooter from './components/Footer';
 import {LicenseSelector} from './components/LicenseSelector';
@@ -345,34 +344,16 @@ const GetAppFlow = () => {
 		</div>
 	);
 
-	const AccountEmailInfo = () => (
-		<div className="align-items-center d-flex">
-			<div className="account-banner-name-text align-items-end d-flex flex-column m-2">
-				<strong>{productCreatorAccount?.name}</strong>
-
-				<div className="account-banner-email-text">
-					{userAccount?.emailAddress}
-				</div>
-			</div>
-
-			<ClaySticker shape="circle" size="sm">
-				<ClaySticker.Image
-					alt="placeholder"
-					height="24"
-					src={productCreatorAccount?.logoURL ?? emptyPictureIcon}
-					width="24"
-				/>
-			</ClaySticker>
-		</div>
-	);
-
 	const ExtendBanner = () => (
 		<div className="d-flex flex-row justify-content-between">
 			<strong className="account-banner-title-text align-self-center">
 				Account Selected
 			</strong>
 
-			<AccountEmailInfo />
+			<AccountEmailInfo
+				productCreatorAccount={productCreatorAccount}
+				userAccount={userAccount}
+			/>
 		</div>
 	);
 
@@ -381,11 +362,9 @@ const GetAppFlow = () => {
 			<ProductCard
 				ExtendBanner={ExtendBanner}
 				RightSideBanner={PriceTypeInfo}
-				cartUtil={cartUtil}
 				creatorAccount={productCreatorAccount}
 				product={product}
 				showExtendBanner={!!account}
-				userAccount={userAccount}
 			/>
 
 			<div className="border d-flex flex-column mt-7 p-5 rounded">
