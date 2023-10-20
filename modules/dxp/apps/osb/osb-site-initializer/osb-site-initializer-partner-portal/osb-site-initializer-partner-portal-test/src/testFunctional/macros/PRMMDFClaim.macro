@@ -114,6 +114,8 @@ definition {
 
 		WaitForPageLoad();
 
+		PRMNavigator.openSitePage(pageName = "MDF Requests");
+
 		PRMMDFRequest.goToMDF(campaignName = "Campaign Name 1");
 
 		WaitForVisible(
