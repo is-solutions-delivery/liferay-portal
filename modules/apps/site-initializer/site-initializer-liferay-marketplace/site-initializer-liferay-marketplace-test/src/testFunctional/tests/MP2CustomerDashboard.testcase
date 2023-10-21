@@ -123,11 +123,12 @@ definition {
 				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
+				route = "customer-gate",
 				userEmailAddress = "test.mp@liferay.com");
 		}
 
-		task ("Then I should be able to assert that the user has access to the Publisher Dashboard from the Marketpace account") {
-			AssertLocation.assertPartialLocation(value1 = "web/marketplace-site/customer-dashboard");
+		task ("Then I should be able to assert that the user has access to the Customer Gate page from the Marketpace account") {
+			AssertLocation.assertPartialLocation(value1 = "web/marketplace-site/customer-gate");
 		}
 	}
 
@@ -156,7 +157,12 @@ definition {
 				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
+				route = "customer-gate",
 				userEmailAddress = "test.mp@liferay.com");
+
+			MP2Dashboards.customerGateFlow();
+
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Development");
 
 			MP2Navigator.gotoNavItem(navItem = "Members");
 
@@ -262,6 +268,29 @@ definition {
 		}
 	}
 
+	@description = "LPS-174809 | Verify if it is possible to upload an image for the form avatar"
+	@priority = 3
+	test CanUploadImage {
+		task ("Given that the user goes to the Customer Gate page") {
+			var portalURL = PropsUtil.get("portal.url");
+
+			Navigator.openSpecificURL(url = "${portalURL}/web/marketplace-site/customer-gate");
+
+			MP2Dashboards.clickOnTheGetStartedButton();
+		}
+
+		task ("When I upload the image") {
+			UploadCommonFile.uploadCommonFileHiddenNoMouseOver(
+				field = "image",
+				locator1 = "MP2Dashboards#UPLOAD_FIELD",
+				value1 = "marketplace_icon.png");
+		}
+
+		task ("Then I should be able to assert that the upload was made") {
+			MP2Utils.assertUploadImage();
+		}
+	}
+
 	@description = "ISSD-1261 | After an Administrator Account invite a new member, assert if the user is able to see the email in their email box"
 	@priority = 5
 	test CanViewInviteEmail {
@@ -325,10 +354,15 @@ definition {
 				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
+				route = "customer-gate",
 				userEmailAddress = "test.mp@liferay.com");
 		}
 
 		task ("When I go to the member page") {
+			MP2Dashboards.customerGateFlow();
+
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Development");
+
 			MP2Navigator.gotoNavItem(navItem = "Members");
 		}
 
@@ -350,46 +384,6 @@ definition {
 					key_text = ${value},
 					locator1 = "MP2Dashboards#DASHBOARD_TABLE");
 			}
-		}
-	}
-
-	@description = "LPS-174809 | Verify that after passing through the gate and confirming all the information, the user is redirected to the account dashboard"
-	@priority = 5
-	test RedirectToAccountDashboard {
-		task ("Given that a user is invited to the Customer Dashboard") {
-			MP2Navigator.openSitePage(pageName = "Customer Dashboard");
-
-			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Development");
-
-			MP2Navigator.gotoNavItem(navItem = "Members");
-
-			MP2Dashboards.inviteNewMember(
-				button = "true",
-				checkboxName = "Account Buyer",
-				emailAddress = "test.mp@liferay.com",
-				firstName = "Test",
-				lastName = "QA");
-		}	
-
-		task ("And go to MockMock > Accept invitation to Marketplace account") {
-			User.logoutPG();
-
-			MockMock._gotoMail();
-
-			MP2Utils.firstLoginMKT(
-				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
-				bodyLink = "Accept invitation",
-				recipient = "da@administrator.com",
-				route = "customer-gate",
-				userEmailAddress = "test.mp@liferay.com");
-		}
-
-		task ("When I go through the Customer Gate page") {
-			MP2Dashboards.customerGateFlow();
-		}
-
-		task ("Then I should be able to assert that the user is redirected to the account dashboard") {
-			AssertLocation.assertPartialLocation(value1 = "web/marketplace-site/customer-dashboard");
 		}
 	}
 
@@ -431,26 +425,43 @@ definition {
 		}
 	}
 
-	@description = "LPS-174809 | Verify if it is possible to upload an image for the form avatar"
-	@priority = 3
-	test CanUploadImage {
-		task ("Given that the user goes to the Customer Gate page") {
-			var portalURL = PropsUtil.get("portal.url");
+	@description = "LPS-174809 | Verify that after passing through the gate and confirming all the information, the user is redirected to the account dashboard"
+	@priority = 5
+	test RedirectToAccountDashboard {
+		task ("Given that a user is invited to the Customer Dashboard") {
+			MP2Navigator.openSitePage(pageName = "Customer Dashboard");
 
-			Navigator.openSpecificURL(url = "${portalURL}/web/marketplace-site/customer-gate");
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Development");
 
-			MP2Dashboards.clickOnTheGetStartedButton();
+			MP2Navigator.gotoNavItem(navItem = "Members");
+
+			MP2Dashboards.inviteNewMember(
+				button = "true",
+				checkboxName = "Account Buyer",
+				emailAddress = "test.mp@liferay.com",
+				firstName = "Test",
+				lastName = "QA");
 		}
 
-		task ("When I upload the image") {
-			UploadCommonFile.uploadCommonFileHiddenNoMouseOver(
-				field = "image",
-				locator1 = "MP2Dashboards#UPLOAD_FIELD",
-				value1 = "marketplace_icon.png");
+		task ("And go to MockMock > Accept invitation to Marketplace account") {
+			User.logoutPG();
+
+			MockMock._gotoMail();
+
+			MP2Utils.firstLoginMKT(
+				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
+				bodyLink = "Accept invitation",
+				recipient = "da@administrator.com",
+				route = "customer-gate",
+				userEmailAddress = "test.mp@liferay.com");
 		}
 
-		task ("Then I should be able to assert that the upload was made") {
-			MP2Utils.assertUploadImage();
+		task ("When I go through the Customer Gate page") {
+			MP2Dashboards.customerGateFlow();
+		}
+
+		task ("Then I should be able to assert that the user is redirected to the account dashboard") {
+			AssertLocation.assertPartialLocation(value1 = "web/marketplace-site/customer-dashboard");
 		}
 	}
 

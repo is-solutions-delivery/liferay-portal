@@ -173,6 +173,7 @@ definition {
 				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
+				route = "loading",
 				userEmailAddress = "test.mp@liferay.com");
 		}
 
@@ -363,6 +364,7 @@ definition {
 				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
+				route = "loading",
 				userEmailAddress = "test.mp@liferay.com");
 		}
 
