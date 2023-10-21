@@ -12,7 +12,7 @@
 <tbody>
 <tr>
 	<td>ANY_DASHBOARD_BUTTON</td>
-	<td>//*[contains(@class, 'dashboard-page') and contains(text(), '${key_buttonName}')]</td>
+	<td>//*[contains(@class, 'dashboard-page')]//*[@type='button' and contains(text(), '${key_buttonName')]</td>
 	<td></td>
 </tr>
 <tr>

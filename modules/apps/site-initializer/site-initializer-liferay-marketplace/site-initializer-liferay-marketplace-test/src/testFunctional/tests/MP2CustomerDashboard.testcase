@@ -281,7 +281,7 @@ definition {
 
 		task ("When I upload the image") {
 			UploadCommonFile.uploadCommonFileHiddenNoMouseOver(
-				field = "image",
+				key_field = "image",
 				locator1 = "MP2Dashboards#UPLOAD_FIELD",
 				value1 = "marketplace_icon.png");
 		}
