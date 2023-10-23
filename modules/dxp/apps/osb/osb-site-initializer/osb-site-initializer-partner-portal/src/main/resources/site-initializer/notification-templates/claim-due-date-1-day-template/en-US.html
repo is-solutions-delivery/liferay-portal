@@ -2,146 +2,71 @@
 
 <html lang="en">
 	<head>
-		<style>
-			.address {
-				text-align: center;
-				margin: 40px 0px 40px 0px;
-			}
-
-			.btn {
-				background-color: #377cff;
-				color: #ffffff;
-				padding: 12px 24px;
-				margin-bottom: 20px;
-				text-decoration: none;
-				border: none;
-				border-radius: 4px;
-	 	 	}
-
-			.email-body {
-				margin-top: 16px;
-				padding: auto;
-			}
-
-			.footer{
-				margin: 20px;
-			}
-
-			.footer-links{
-				justify-content: center;
-			}
-
-			.header-logo {
-				padding: 40px;
-				text-align: center;
-				margin: auto;
-			}
-
-			.logo {
-				width: 28;
-				height: 28;
-			}
-
-			.main-container {
-				margin: 10px 150px 10px 150px;
-			}
-
-			.section-line {
-				margin: auto;
-				margin-top: 20px;
-				margin-bottom: 20px;
-				background-color: #6b6c7e;
-				height: 1px;
-				width: 592px;
-			}
-
-			.text-center {
-				text-align: center;
-			}
-
-			.text-primary {
-				color: #377cff;
-				font-size: 24px;
-				margin-bottom: 16px;
-			}
-
-			.text-secondary {
-				color: #6b6c7e;
-				font-size: 14px;
-				margin-top: 8px;
-				margin-bottom: 8px;
-			}
-		</style>
+		<meta http-equiv="Content-Type" content="text/html charset=UTF-8" />
 	</head>
 
 	<body>
-		<div class="header-logo">
-			<img alt="Liferay Logo" class="logo" src="[$PORTAL_URL$]/documents/d/[$GROUP_KEY$]/liferay-logo-svg" />
+		<div class="header-logo" style="padding: 40px; text-align: center; margin: auto;">
+			<img alt="Liferay Logo" class="logo" style="width: 200px;" src="[$PORTAL_URL$]/documents/d/[$GROUP_KEY$]/liferay_logo_image-png" />
 
-			<img alt="Liferay Name" src="[$PORTAL_URL$]/documents/d/[$GROUP_KEY$]/liferay-name-svg" />
-
-			<div class="section-line"></div>
+			<div class="section-line" style="margin: auto; margin-top: 20px; margin-bottom: 20px; background-color: #6b6c7e; height: 1px; width: 592px;"></div>
 		</div>
 
-		<div class="main-container">
+		<div class="main-container" style="margin: 0% 33%;">
 			<div>
-				<h1 class="text-primary">Liferay MDF Claim is Due Soon</h1>
+				<h1 class="text-primary" style="color: #377cff; font-size: 24px; margin-bottom: 16px;">Liferay MDF Claim is Due Soon</h1>
 			</div>
 
 			<div class="email-body">
-				<p>Dear [%ACTIVITY_CREATOR%],</p>
-				<p>Your Liferay Marketing Development Fund Claim is Due on 1 day.</p>
-				<p>Please provide your claim documents no later than the duedate in order to be reimbursed for the claimed activities.</p>
-
-				<p>Thank you,</p>
+				<p  style="color:#6b6c7e; margin-top: 16px; padding: auto;">Dear [%ACTIVITY_CREATOR%],</p>
+				<p  style="color:#6b6c7e; margin-top: 16px; padding: auto;">Your Liferay Marketing Development Fund Claim is Due on 1 day.</p>
+				<p  style="color:#6b6c7e; margin-top: 16px; padding: auto;">Please provide your claim documents no later than the duedate in order to be reimbursed for the claimed activities.</p>
+				<p  style="color:#6b6c7e; margin-top: 16px; padding: auto;">Thank you,</p>
 			</div>
 
 			<div>
-				<a href="[$PORTAL_URL$]/web[$GROUP_FRIENDLY_URL$]/l/[%ACTIVITY_R_MDFREQTOACTS_C_MDFREQUESTID%]">
-					<button class="btn">View MDF Request</button>
-				</a>
 
-				<p class="text-secondary">OR copy and paste the link below into your browser.</p>
-				<p class="text-secondary">[$PORTAL_URL$]/web[$GROUP_FRIENDLY_URL$]/l/[%ACTIVITY_R_MDFREQTOACTS_C_MDFREQUESTID%]</p>
+				<a href="[$PORTAL_URL$]/web[$GROUP_FRIENDLY_URL$]/l/[%ACTIVITY_R_MDFREQTOACTS_C_MDFREQUESTID%]" style="display: inline-block; background-color: #377cff; color: #ffffff; padding: 12px 24px; margin-bottom: 20px; text-decoration: none; border: none; border-radius: 4px;">View MDF Request </a>
+
+				<p class="text-secondary" style="color: #6b6c7e; font-size: 14px; margin-top: 8px; margin-bottom: 8px;">OR copy and paste the link below into your browser.</p>
+				<p class="text-secondary" style="color: #6b6c7e; font-size: 14px; margin-top: 8px; margin-bottom: 8px;">[$PORTAL_URL$]/web[$GROUP_FRIENDLY_URL$]/l/[%ACTIVITY_R_MDFREQTOACTS_C_MDFREQUESTID%]</p>
 			</div>
 		</div>
 
-		<footer class="text-center">
+		<footer class="text-center" style="text-align: center;">
 			<div>
-				<img alt="Liferay EmailImage" src="[$PORTAL_URL$]/documents/d/[$GROUP_KEY$]/liferay-email-image-svg" />
+				<img alt="Liferay Email Image" src="[$PORTAL_URL$]/documents/d/[$GROUP_KEY$]/liferay_email_image-png" />
 			</div>
 
-			<div class="section-line"></div>
+			<div class="section-line" style="margin: auto; margin-top: 20px; margin-bottom: 20px; background-color: #6b6c7e; height: 1px; width: 592px;"></div>
 
 			<div>
-				<p class="text-secondary">This email was sent by
+				<p class="text-secondary" style="color: #6b6c7e; font-size: 14px; margin-top: 8px; margin-bottom: 8px;">This email was sent by
 					<a href="https://www.liferay.com/">Liferay, Inc.</a>
 				</p>
 			</div>
 
-			<div class="footer">
-				<img alt="Liferay Logo" class="logo" src="[$PORTAL_URL$]/documents/d/[$GROUP_KEY$]/liferay-logo-svg" />
+			<div class="footer" style="margin: 20px;">
+				<img alt="Liferay Logo" class="logo" style="width: 200px;" src="[$PORTAL_URL$]/documents/d/[$GROUP_KEY$]/liferay_logo_image-png" />
 
-				<img alt="Liferay Name" src="[$PORTAL_URL$]/documents/d/[$GROUP_KEY$]/liferay-name-svg" />
-
-				<div class="address">
-					<p class="text-secondary m-0">Copyright © 2023 Liferay, Inc.</p>
-					<p class="text-secondary m-0">1400 Montefino Ave</p>
-					<p class="text-secondary m-0">Diamond Bar, CA 91765</p>
+				<div class="address" style="text-align: center; margin: 40px 0px 40px 0px;">
+					<p class="text-secondary" style="color: #6b6c7e; font-size: 14px; margin-top: 8px; margin-bottom: 8px;">Copyright © 2023 Liferay, Inc.</p>
+					<p class="text-secondary" style="color: #6b6c7e; font-size: 14px; margin-top: 8px; margin-bottom: 8px;">1400 Montefino Ave</p>
+					<p class="text-secondary" style="color: #6b6c7e; font-size: 14px; margin-top: 8px; margin-bottom: 8px;">Diamond Bar, CA 91765</p>
 				</div>
 
-				<div class="footer-links">
+				<div class="footer-links" style="justify-content: center;">
 					<a href="https://www.liferay.com/contact-us">Contact Support</a>
 
-					<span class="text-secondary">|</span>
+					<span class="text-secondary" style="color: #6b6c7e; font-size: 14px; margin-top: 8px; margin-bottom: 8px;">|</span>
 
 					<a href="https://www.liferay.com/learning">Documentation</a>
 
-					<span class="text-secondary">|</span>
+					<span class="text-secondary" style="color: #6b6c7e; font-size: 14px; margin-top: 8px; margin-bottom: 8px;">|</span>
 
 					<a href="https://help.liferay.com/hc/en-us">Help Center</a>
 
-					<span class="text-secondary">|</span>
+					<span class="text-secondary" style="color: #6b6c7e; font-size: 14px; margin-top: 8px; margin-bottom: 8px;">|</span>
 
 					<a href="[$PORTAL_URL$]/web[$GROUP_FRIENDLY_URL$]/home/announcements">Announcements</a>
 
