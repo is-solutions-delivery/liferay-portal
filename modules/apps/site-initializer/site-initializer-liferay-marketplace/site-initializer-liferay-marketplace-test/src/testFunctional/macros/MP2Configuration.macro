@@ -93,6 +93,8 @@ definition {
 
 		ApplicationsMenu.gotoSite(site = "Marketplace Site");
 
+		Refresh();
+
 		WaitForPageLoad();
 	}
 
