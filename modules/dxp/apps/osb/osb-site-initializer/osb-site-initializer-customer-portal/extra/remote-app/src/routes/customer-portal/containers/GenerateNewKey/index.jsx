@@ -4,8 +4,12 @@
  */
 
 import {useEffect, useState} from 'react';
-import {Navigate, useOutletContext} from 'react-router-dom';
+import {Navigate, useLocation, useOutletContext} from 'react-router-dom';
+import useSWR from 'swr';
+import {useAppPropertiesContext} from '~/common/contexts/AppPropertiesContext';
+import {putDeactivateKeys} from '~/common/services/liferay/rest/raysource/LicenseKeys';
 import {useCustomerPortal} from '../../context';
+import {ALERT_DOWNLOAD_TYPE, STATUS_CODE} from '../../utils/constants';
 import {hasAdminOrPartnerManager} from '../ActivationKeysTable/utils/hasAdminOrPartnerManager';
 import GenerateNewKeySkeleton from './Skeleton';
 import ComplimentaryDate from './pages/ComplimentaryDate';
@@ -16,10 +20,27 @@ import {STEP_TYPES} from './utils/constants/stepType';
 const ACTIVATION_ROOT_ROUTER = 'activation';
 
 const GenerateNewKey = ({productGroupName}) => {
+	const {provisioningServerAPI} = useAppPropertiesContext();
 	const [{project, sessionId, userAccount}] = useCustomerPortal();
 	const [infoSelectedKey, setInfoSelectedKey] = useState();
 	const [step, setStep] = useState(STEP_TYPES.selectDescriptions);
 	const {setHasQuickLinksPanel, setHasSideMenu} = useOutletContext();
+	const [status, setStatus] = useState({
+		deactivate: '',
+		downloadAggregated: '',
+		downloadMultiple: '',
+	});
+
+	const [isDeactivating, setIsDeactivating] = useState(false);
+	const [alreadyDeactivated, setAlreadyDeactivated] = useState(false);
+
+	const {data: generateFormValues} = useSWR(
+		sessionId
+			? `/${project?.accountKey}/${productGroupName}/form-values`
+			: null
+	);
+
+	const {state} = useLocation();
 
 	useEffect(() => {
 		setHasQuickLinksPanel(false);
@@ -39,6 +60,26 @@ const GenerateNewKey = ({productGroupName}) => {
 		project?.accountKey
 	}/${ACTIVATION_ROOT_ROUTER}/${productGroupName.toLowerCase()}`;
 
+	const deactivateKeysConfirm = async () => {
+		setIsDeactivating(true);
+
+		const response = await putDeactivateKeys(
+			provisioningServerAPI,
+			state.filterCheckedActivationKeys,
+			sessionId
+		);
+
+		if (response.status === STATUS_CODE.successNoContent) {
+			setIsDeactivating(false);
+			setAlreadyDeactivated(true);
+
+			return;
+		}
+
+		setIsDeactivating(false);
+		setStatus({...status, deactivate: ALERT_DOWNLOAD_TYPE.danger});
+	};
+
 	const StepLayout = {
 		[STEP_TYPES.generateKeys]: (
 			<RequiredInformation
@@ -52,6 +93,10 @@ const GenerateNewKey = ({productGroupName}) => {
 		[STEP_TYPES.selectDescriptions]: (
 			<SelectSubscription
 				accountKey={project?.accountKey}
+				activationKeysByStatusPaginatedChecked
+				deactivateKeysConfirm={deactivateKeysConfirm}
+				filterCheckedActivationKeys
+				identifier
 				infoSelectedKey={infoSelectedKey}
 				productGroupName={productGroupName}
 				sessionId={sessionId}
@@ -63,9 +108,19 @@ const GenerateNewKey = ({productGroupName}) => {
 		[STEP_TYPES.selectInfoComplementaryKey]: (
 			<ComplimentaryDate
 				accountKey={project?.accountKey}
+				deactivateKeysConfirm={deactivateKeysConfirm}
+				deactivateKeysStatus={status.deactivate}
+				filterCheckedActivationKeys
+				generateFormValues={generateFormValues}
 				infoSelectedKey={infoSelectedKey}
 				productGroupName={productGroupName}
 				sessionId={sessionId}
+				setDeactivateKeysStatus={(value) =>
+					setStatus((previousStatus) => ({
+						...previousStatus,
+						deactivate: value,
+					}))
+				}
 				setInfoSelectedKey={setInfoSelectedKey}
 				setStep={setStep}
 				urlPreviousPage={urlPreviousPage}

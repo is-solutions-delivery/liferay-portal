@@ -5,8 +5,11 @@
 
 import ClayDatePicker from '@clayui/date-picker';
 import {ClayCheckbox} from '@clayui/form';
-import {useMemo, useState} from 'react';
-import {Link} from 'react-router-dom';
+import {useCallback, useMemo, useState} from 'react';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
+import {useAppPropertiesContext} from '~/common/contexts/AppPropertiesContext';
+import useProvisioningLicenseKeys from '~/common/hooks/useProvisioningLicenseKeys';
+import {putSubscriptionInKey} from '~/common/services/liferay/rest/raysource/LicenseKeys';
 import i18n from '../../../../../common/I18n';
 import {Button} from '../../../../../common/components';
 import Layout from '../../../../../common/containers/setup-forms/Layout';
@@ -15,21 +18,67 @@ const now = new Date();
 const NAVIGATION_YEARS_RANGE = 2;
 
 const ComplimentaryDate = ({
+	accountKey,
+	deactivateKeysConfirm,
+	generateFormValues,
 	infoSelectedKey,
+	sessionId,
 	setInfoSelectedKey,
 	setStep,
 	urlPreviousPage,
 }) => {
+	const {provisioningServerAPI} = useAppPropertiesContext();
+	const provisioningService = useProvisioningLicenseKeys();
 	const currentDate = now.toISOString().split('T')[0];
 	const [selectedSubscription] = useState(
 		infoSelectedKey?.selectedSubscription
 	);
 	const [expandedOnOrAfter, setExpandedOnOrAfter] = useState(false);
 	const [selectedStartDate, setSelectedStartDate] = useState(currentDate);
-
+	const checkedBoxSubscription = true;
+	const [isLoadingGenerateKey, setIsLoadingGenerateKey] = useState(false);
 	const [checkBoxConfirmationTerms, setCheckBoxConfirmationTerms] = useState(
 		false
 	);
+
+	const navigate = useNavigate();
+	const {state} = useLocation();
+
+	const matchingProductKeys = state.activationKeys.map((activationKey) => {
+		const productName = activationKey.productName;
+		const licenseEntryType = activationKey.licenseEntryType;
+		const productVersionLabel = activationKey.productVersion;
+
+		const matchingProductType = generateFormValues.versions
+			.find((versionData) => versionData.label === productVersionLabel)
+			?.types.find((productType) => {
+				const displayNameMatch = productType.licenseEntryName.includes(
+					productName
+				);
+				const typeMatch = productType.licenseEntryType.includes(
+					licenseEntryType
+				);
+
+				if (displayNameMatch && typeMatch) {
+					return true;
+				}
+
+				return false;
+			});
+
+		return matchingProductType ? matchingProductType.productKey : 'N/A';
+	});
+
+	const useUniqueProductKey = useMemo(() => {
+		const uniqueKeys = [];
+		matchingProductKeys.forEach((item) => {
+			if (!uniqueKeys.includes(item)) {
+				uniqueKeys.push(item);
+			}
+		});
+
+		return uniqueKeys;
+	}, [matchingProductKeys]);
 
 	const {endDate, startDate} = useMemo(() => {
 		const inputStartDate = new Date(selectedStartDate);
@@ -67,6 +116,166 @@ const ComplimentaryDate = ({
 		return dateLimitExceeded;
 	}, [startDate]);
 
+	const isComplementaryKeys = state.activationKeys?.map((item) => {
+		return item.complimentary;
+	});
+	const isComplementaryKey = [...new Set(isComplementaryKeys)].join(', ');
+
+	const hasDesiredEntry = state.activationKeys.some(
+		(item) =>
+			item.licenseEntryType === 'oem' ||
+			item.licenseEntryType === 'virtual-cluster' ||
+			item.licenseEntryType === 'enterprise'
+	);
+
+	const submitKey = useCallback(async () => {
+		const selectedFields = [
+			'active',
+			'description',
+			'hostName',
+			'ipAddresses',
+			'licenseEntryType',
+			'macAddresses',
+			'maxClusterNodes',
+			'name',
+			'productName',
+			'productVersion',
+			'sizing',
+		];
+
+		const saveSubscriptionKey = async (id) => {
+			return putSubscriptionInKey(provisioningServerAPI, id, sessionId);
+		};
+
+		try {
+			setIsLoadingGenerateKey(true);
+
+			if (hasDesiredEntry) {
+				try {
+					const createKeyPromises = state.activationKeys.map(
+						async (item) => {
+							const licenseKey = {
+								accountKey,
+								complimentary: 'true',
+								expirationDate: endDate,
+								productKey: useUniqueProductKey.toString(),
+								startDate,
+							};
+
+							selectedFields.forEach((field) => {
+								licenseKey[field] = item[field];
+							});
+
+							const response = await provisioningService.createNewGenerateKey(
+								accountKey,
+								licenseKey
+							);
+
+							if (checkedBoxSubscription) {
+								await saveSubscriptionKey(
+									response?.items?.[0]?.id
+								);
+							}
+						}
+					);
+
+					await Promise.all(createKeyPromises);
+
+					setIsLoadingGenerateKey(false);
+
+					return true;
+				} catch (error) {
+					console.error(error);
+					setIsLoadingGenerateKey(false);
+
+					return false;
+				}
+			} else {
+				setIsLoadingGenerateKey(true);
+
+				try {
+					const results = await Promise.all(
+						state.activationKeys.map(async (item) => {
+							const licenseKey = {
+								accountKey,
+								complimentary: 'true',
+								expirationDate: endDate,
+								productKey: useUniqueProductKey.toString(),
+								startDate,
+							};
+
+							selectedFields.forEach((field) => {
+								licenseKey[field] = item[field];
+							});
+
+							const response = await provisioningService.createNewGenerateKey(
+								accountKey,
+								licenseKey
+							);
+
+							if (checkedBoxSubscription && isComplementaryKey) {
+								await saveSubscriptionKey(
+									response?.items?.[0]?.id
+								);
+							}
+						})
+					);
+
+					await Promise.all(results);
+
+					setIsLoadingGenerateKey(false);
+
+					navigate(urlPreviousPage, {
+						state: {newKeyGeneratedAlert: true},
+					});
+
+					return true;
+				} catch (error) {
+					console.error(error);
+					setIsLoadingGenerateKey(false);
+
+					return false;
+				}
+			}
+		} catch (error) {
+			Liferay.Util.openToast({
+				message:
+					error?.info?.title ??
+					i18n.translate('an-unexpected-error-occurred'),
+				title: i18n.translate('error'),
+				type: 'danger',
+			});
+
+			console.error(error);
+			setIsLoadingGenerateKey(false);
+
+			return false;
+		}
+	}, [
+		accountKey,
+		checkedBoxSubscription,
+		isComplementaryKey,
+		hasDesiredEntry,
+		state.activationKeys,
+		navigate,
+		provisioningServerAPI,
+		provisioningService,
+		sessionId,
+		startDate,
+		urlPreviousPage,
+		useUniqueProductKey,
+		endDate,
+	]);
+
+	const handleSubmit = async () => {
+		const submitResult = await submitKey();
+
+		if (submitResult) {
+			deactivateKeysConfirm();
+			setIsLoadingGenerateKey(false);
+		}
+	};
+
 	return (
 		<div>
 			<Layout
@@ -101,21 +310,34 @@ const ComplimentaryDate = ({
 								disabled={
 									!checkBoxConfirmationTerms ||
 									!selectedStartDate ||
-									hasDateLimitExceeded
+									hasDateLimitExceeded ||
+									isLoadingGenerateKey
 								}
 								displayType="primary"
+								isLoading={isLoadingGenerateKey}
 								onClick={() => {
-									setInfoSelectedKey(
-										(previousInfoSelectedKey) => ({
-											...previousInfoSelectedKey,
-											selectedSubscription: updatedSelectedSubscription,
-										})
-									);
+									if (state.id === 'renew') {
+										handleSubmit();
+									} else {
+										setInfoSelectedKey(
+											(previousInfoSelectedKey) => ({
+												...previousInfoSelectedKey,
+												selectedSubscription: updatedSelectedSubscription,
+											})
+										);
 
-									setStep(2);
+										setStep(2);
+									}
 								}}
 							>
-								{i18n.translate('next')}
+								{state.id === 'renew'
+									? i18n.sub(
+											state.activationKeys.length > 1
+												? 'generate-x-keys'
+												: 'generate-x-key',
+											[state.activationKeys.length]
+									  )
+									: i18n.translate('next')}
 							</Button>
 						</div>
 					),

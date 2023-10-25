@@ -16,6 +16,7 @@ import BadgeFilter from '../BadgeFilter';
 import DeactivateButton from '../Deactivate';
 import DownloadAlert from '../DownloadAlert';
 import Filter from '../Filter';
+import RenewButton from '../Renew';
 import useGetAccountUserAccount from './hooks/useGetAccountUserAccount';
 
 const ActivationKeysTableHeader = ({
@@ -105,6 +106,33 @@ const ActivationKeysTableHeader = ({
 
 	const allowSelfProvisioning = project.allowSelfProvisioning;
 
+	function has100YearsDifference(startDate, expirationDate) {
+		const startDateDne = new Date(startDate);
+		const expirationDateDne = new Date(expirationDate);
+		const differenceInYears =
+			expirationDateDne.getFullYear() - startDateDne.getFullYear();
+
+		return Math.abs(differenceInYears - 100) < 1;
+	}
+	function isBulkRenewAvailable(items) {
+		const firstItem = items[0];
+		for (const item of items) {
+			if (
+				item.productName !== firstItem.productName ||
+				item.expirationDate !== firstItem.expirationDate ||
+				item.startDate !== firstItem.startDate ||
+				has100YearsDifference(item.startDate, item.expirationDate)
+			) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+	const bulkRenewAvailable = isBulkRenewAvailable(
+		activationKeysByStatusPaginatedChecked
+	);
+
 	return (
 		<>
 			<div className="bg-neutral-1 d-flex flex-column pb-1 pt-3 px-3 rounded">
@@ -146,6 +174,19 @@ const ActivationKeysTableHeader = ({
 							</>
 						)}
 
+						{activationKeysByStatusPaginatedChecked.length >= 2 &&
+							bulkRenewAvailable && (
+								<RenewButton
+									activationKeysByStatusPaginatedChecked={
+										activationKeysByStatusPaginatedChecked
+									}
+									filterCheckedActivationKeys={
+										filterCheckedActivationKeys
+									}
+									identifier="renew"
+								/>
+							)}
+
 						<ActionButton
 							activationKeysByStatusPaginatedChecked={
 								activationKeysByStatusPaginatedChecked
@@ -153,6 +194,7 @@ const ActivationKeysTableHeader = ({
 							filterCheckedActivationKeys={
 								filterCheckedActivationKeys
 							}
+							identifier="action"
 							isAbleToDownloadAggregateKeys={
 								isAbleToDownloadAggregateKeys
 							}
