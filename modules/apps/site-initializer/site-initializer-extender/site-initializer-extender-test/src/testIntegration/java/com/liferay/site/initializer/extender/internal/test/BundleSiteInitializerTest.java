@@ -2854,7 +2854,6 @@ public class BundleSiteInitializerTest {
 		_assertResourceAction(
 			new String[] {"UPDATE", "VIEW"}, resourcePermission);
 
-		//ExpandoColumn
 		List<ExpandoColumn> expandoColumns =
 			_expandoColumnLocalService.getExpandoColumns(-1, -1);
 
@@ -3742,7 +3741,7 @@ public class BundleSiteInitializerTest {
 		_assertExpandoColumns1();
 		_assertExpandoValues1();
 		_assertFragmentEntries();
-		//_assertJournalArticles();
+		_assertJournalArticles();
 		_assertKBArticles();
 		_assertLayoutPageTemplateEntries();
 		_assertLayoutSets();
@@ -3789,7 +3788,7 @@ public class BundleSiteInitializerTest {
 		_assertResourcePermission2();
 		_assertSiteNavigationMenu2();
 		_assertSXPBlueprint2();
-		//_assertUserAccounts2();
+		_assertUserAccounts2();
 	}
 
 	@Inject
