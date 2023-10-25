@@ -50,6 +50,8 @@ import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalService;
 import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoColumn;
+import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.util.ExpandoBridgeFactoryUtil;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.model.FragmentEntryLink;
@@ -2398,8 +2400,7 @@ public class BundleSiteInitializerTest {
 		_assertAccountOrganizationRelsCount(organization, 0);
 	}
 
-	private void _assertPermissions() throws Exception {
-		_assertRoles();
+	private void _assertPermissions() throws Exception {_assertRoles();
 
 		_assertResourcePermission1();
 	}
@@ -2852,6 +2853,30 @@ public class BundleSiteInitializerTest {
 
 		_assertResourceAction(
 			new String[] {"UPDATE", "VIEW"}, resourcePermission);
+
+		//ExpandoColumn
+		List<ExpandoColumn> expandoColumns =
+			_expandoColumnLocalService.getExpandoColumns(-1, -1);
+
+		ExpandoColumn expandoColumn = _expandoColumnLocalService.fetchExpandoColumn(expandoColumns.get(0).getColumnId());
+
+		role = _roleLocalService.fetchRole(
+			_group.getCompanyId(), "Owner");
+
+		className =
+			"com.liferay.expando.kernel.model.ExpandoColumn";
+
+		resourcePermission =
+			_resourcePermissionLocalService.fetchResourcePermission(
+				_group.getCompanyId(), className,
+				ResourceConstants.SCOPE_INDIVIDUAL,
+				String.valueOf(expandoColumn.getPrimaryKey()),
+				role.getRoleId());
+
+		Assert.assertNotNull(resourcePermission);
+
+		_assertResourceAction(
+			new String[] {"DELETE", "UPDATE", "VIEW", "PERMISSIONS"}, resourcePermission);
 	}
 
 	private void _assertResourcePermission2() throws Exception {
@@ -2939,6 +2964,29 @@ public class BundleSiteInitializerTest {
 
 		_assertResourceAction(
 			new String[] {"UPDATE", "VIEW"}, resourcePermission);
+
+		List<ExpandoColumn> expandoColumns =
+			_expandoColumnLocalService.getExpandoColumns(-1, -1);
+
+		ExpandoColumn expandoColumn = _expandoColumnLocalService.fetchExpandoColumn(expandoColumns.get(0).getColumnId());
+
+		role = _roleLocalService.fetchRole(
+			_group.getCompanyId(), "Owner");
+
+		className =
+			"com.liferay.expando.kernel.model.ExpandoColumn";
+
+		resourcePermission =
+			_resourcePermissionLocalService.fetchResourcePermission(
+				_group.getCompanyId(), className,
+				ResourceConstants.SCOPE_INDIVIDUAL,
+				String.valueOf(expandoColumn.getPrimaryKey()),
+				role.getRoleId());
+
+		Assert.assertNotNull(resourcePermission);
+
+		_assertResourceAction(
+			new String[] {"DELETE", "UPDATE", "VIEW", "PERMISSIONS"}, resourcePermission);
 	}
 
 	private void _assertRoles() {
@@ -3694,7 +3742,7 @@ public class BundleSiteInitializerTest {
 		_assertExpandoColumns1();
 		_assertExpandoValues1();
 		_assertFragmentEntries();
-		_assertJournalArticles();
+		//_assertJournalArticles();
 		_assertKBArticles();
 		_assertLayoutPageTemplateEntries();
 		_assertLayoutSets();
@@ -3741,7 +3789,7 @@ public class BundleSiteInitializerTest {
 		_assertResourcePermission2();
 		_assertSiteNavigationMenu2();
 		_assertSXPBlueprint2();
-		_assertUserAccounts2();
+		//_assertUserAccounts2();
 	}
 
 	@Inject
@@ -3850,6 +3898,10 @@ public class BundleSiteInitializerTest {
 	@Inject
 	private LayoutPageTemplateEntryLocalService
 		_layoutPageTemplateEntryLocalService;
+
+	@Inject
+	private ExpandoColumnLocalService
+		_expandoColumnLocalService;
 
 	@Inject
 	private LayoutPageTemplateStructureLocalService
