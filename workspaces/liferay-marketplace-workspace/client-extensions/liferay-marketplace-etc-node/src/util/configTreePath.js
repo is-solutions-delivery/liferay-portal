@@ -21,8 +21,7 @@ async function* walk(dir) {
 		const entryPath = path.join(dir, dirent.name);
 		if (dirent.isDirectory()) {
 			yield* walk(entryPath);
-		}
-		else {
+		} else {
 			yield entryPath;
 		}
 	}
