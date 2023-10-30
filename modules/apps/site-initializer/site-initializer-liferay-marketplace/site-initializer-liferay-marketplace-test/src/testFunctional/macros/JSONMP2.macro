@@ -3,7 +3,7 @@ definition {
 	@summary = "Default summary"
 	macro addCatalog() {
 		if (!(isSet(catalogName))) {
-			var catalogName = "MKT Catalog";
+			var catalogName = "QA Test";
 		}
 
 		CommerceJSONCatalogsAPI._addCatalog(catalogName = ${catalogName});
@@ -12,11 +12,11 @@ definition {
 	@summary = "Default summary"
 	macro updateAccount() {
 		if (!(isSet(accountName))) {
-			var accountName = "QA Development";
+			var accountName = "QA Test";
 		}
 
 		if (!(isSet(catalogName))) {
-			var catalogName = "MKT Catalog";
+			var catalogName = "QA Test";
 		}
 
 		JSONMP2API.updateAccount(
@@ -35,7 +35,7 @@ definition {
 
 		Account.addAssigneeToRoleViaUsersTab(
 			accountRoleTitle = "Account Administrator",
-			accountUserName = "Dashboard Administrator");
+			accountUserName = "Dashboard ADM");
 
 		JSONRole.assignRoleToUser(
 			roleTitle = "Administrator",

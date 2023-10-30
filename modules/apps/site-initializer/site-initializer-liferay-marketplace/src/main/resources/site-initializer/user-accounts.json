@@ -46,7 +46,7 @@
 		],
 		"alternateName": "da",
 		"emailAddress": "da@administrator.com",
-		"familyName": "Administrator",
+		"familyName": "ADM",
 		"givenName": "Dashboard",
 		"jobTitle": "Owner",
 		"name": "Dashboard Administrator (DA)",
@@ -66,22 +66,6 @@
 		"familyName": "Buyer",
 		"givenName": "Customer Account",
 		"name": "Customer Account Buyer (CAB)",
-		"password": "test"
-	},
-	{
-		"accountBriefs": [
-			{
-				"externalReferenceCode": "MKT-ACCOUNT-2",
-				"roleBriefs": [
-					"Account Administrator (Regular)"
-				]
-			}
-		],
-		"alternateName": "aar",
-		"emailAddress": "aar@regular.com",
-		"familyName": "Regular",
-		"givenName": "MKT Account Administrator",
-		"name": "MKT Account Administrator Regular (AAR)",
 		"password": "test"
 	}
 ]
