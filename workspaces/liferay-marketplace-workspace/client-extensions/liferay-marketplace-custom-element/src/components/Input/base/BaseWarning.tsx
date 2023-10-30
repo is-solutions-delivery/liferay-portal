@@ -7,6 +7,8 @@ import ClayIcon from '@clayui/icon';
 import ClayLabel from '@clayui/label';
 import React, {ReactNode} from 'react';
 
+import './index.scss';
+
 const BaseWarning: React.FC<{children: ReactNode}> = ({children}) => {
 	return (
 		<ClayLabel className="label-tonal-danger mt-1 mx-0 p-0 rounded w-100">
@@ -17,7 +19,6 @@ const BaseWarning: React.FC<{children: ReactNode}> = ({children}) => {
 						symbol="exclamation-full"
 					/>
 				</span>
-
 				<span className="font-weight-normal text-paragraph">
 					{children}
 				</span>
@@ -25,5 +26,4 @@ const BaseWarning: React.FC<{children: ReactNode}> = ({children}) => {
 		</ClayLabel>
 	);
 };
-
 export default BaseWarning;

@@ -9,23 +9,26 @@ import {ReactNode} from 'react';
 
 import BaseWarning from './BaseWarning';
 
+import './index.scss';
+
 type BaseWrapperProps = {
 	boldLabel?: boolean;
 	children: ReactNode;
 	description?: string;
 	disabled?: boolean;
 	error?: string;
+	helpMessage?: string;
 	id?: string;
 	label?: string;
 	required?: boolean;
 };
-
 const BaseWrapper: React.FC<BaseWrapperProps> = ({
 	boldLabel = false,
 	children,
 	description,
 	disabled,
 	error,
+	helpMessage,
 	id,
 	label,
 	required,
@@ -51,9 +54,7 @@ const BaseWrapper: React.FC<BaseWrapperProps> = ({
 					{label}
 				</label>
 			)}
-
 			{children}
-
 			{description && (
 				<small className="form-text text-muted" id="Help">
 					{description}
@@ -61,8 +62,11 @@ const BaseWrapper: React.FC<BaseWrapperProps> = ({
 			)}
 
 			{error && <BaseWarning>{error}</BaseWarning>}
+
+			{helpMessage && (
+				<p className=".input__base-text mt-1">{helpMessage}</p>
+			)}
 		</ClayForm.Group>
 	);
 };
-
 export default BaseWrapper;
