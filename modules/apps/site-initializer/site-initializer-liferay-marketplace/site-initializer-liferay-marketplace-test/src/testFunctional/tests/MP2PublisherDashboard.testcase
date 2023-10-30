@@ -30,7 +30,7 @@ definition {
 		task ("Go to Marketplace and login with the created user") {
 			User.logoutAndLoginPG(
 				userLoginEmailAddress = "da@administrator.com",
-				userLoginFullName = "Dashboard Administrator");
+				userLoginFullName = "Dashboard ADM");
 
 			MP2Navigator.gotoMP2();
 		}
@@ -170,9 +170,10 @@ definition {
 
 		task ("When the user log into the account") {
 			MP2Utils.firstLoginMKT(
-				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
+				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
+				route = "loading",
 				userEmailAddress = "test.mp@liferay.com");
 		}
 
@@ -220,7 +221,7 @@ definition {
 			MockMock._gotoMail();
 
 			MP2Utils.firstLoginMKT(
-				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
+				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
 				userEmailAddress = "test.mp@liferay.com");
@@ -229,7 +230,7 @@ definition {
 		task ("And I go back to the members page details") {
 			User.logoutAndLoginPG(
 				userLoginEmailAddress = "da@administrator.com",
-				userLoginFullName = "Dashboard Administrator");
+				userLoginFullName = "Dashboard ADM");
 
 			MP2Navigator.gotoMP2();
 
@@ -360,9 +361,10 @@ definition {
 
 		task ("And logs into the panel with the invited roles") {
 			MP2Utils.firstLoginMKT(
-				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
+				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
+				route = "loading",
 				userEmailAddress = "test.mp@liferay.com");
 		}
 

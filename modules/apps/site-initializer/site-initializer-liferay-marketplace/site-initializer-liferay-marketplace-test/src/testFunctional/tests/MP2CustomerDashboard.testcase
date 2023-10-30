@@ -28,7 +28,7 @@ definition {
 		task ("Login with the created user and go to Marketplace") {
 			User.logoutAndLoginPG(
 				userLoginEmailAddress = "da@administrator.com",
-				userLoginFullName = "Dashboard Administrator");
+				userLoginFullName = "Dashboard ADM");
 
 			MP2Navigator.gotoMP2();
 		}
@@ -120,14 +120,15 @@ definition {
 
 		task ("When the user log into the account") {
 			MP2Utils.firstLoginMKT(
-				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
+				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
+				route = "customer-gate",
 				userEmailAddress = "test.mp@liferay.com");
 		}
 
-		task ("Then I should be able to assert that the user has access to the Publisher Dashboard from the Marketpace account") {
-			AssertLocation.assertPartialLocation(value1 = "web/marketplace-site/customer-dashboard");
+		task ("Then I should be able to assert that the user has access to the Customer Gate page from the Marketpace account") {
+			AssertLocation.assertPartialLocation(value1 = "web/marketplace-site/customer-gate");
 		}
 	}
 
@@ -153,10 +154,15 @@ definition {
 			MockMock._gotoMail();
 
 			MP2Utils.firstLoginMKT(
-				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
+				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
+				route = "customer-gate",
 				userEmailAddress = "test.mp@liferay.com");
+
+			MP2Dashboards.customerGateFlow();
+
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Development");
 
 			MP2Navigator.gotoNavItem(navItem = "Members");
 
@@ -182,7 +188,7 @@ definition {
 		task ("When I invite the same user to the Customer Dashboard") {
 			User.logoutAndLoginPG(
 				userLoginEmailAddress = "da@administrator.com",
-				userLoginFullName = "Dashboard Administrator");
+				userLoginFullName = "Dashboard ADM");
 
 			MP2Navigator.gotoMP2();
 
@@ -345,13 +351,18 @@ definition {
 
 		task ("And logs into the panel with the invited roles") {
 			MP2Utils.firstLoginMKT(
-				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
+				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
+				route = "customer-gate",
 				userEmailAddress = "test.mp@liferay.com");
 		}
 
 		task ("When I go to the member page") {
+			MP2Dashboards.customerGateFlow();
+
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Development");
+
 			MP2Navigator.gotoNavItem(navItem = "Members");
 		}
 
@@ -400,7 +411,7 @@ definition {
 
 		task ("When the user accepts the invitation to the Publisher Dashboard") {
 			MP2Utils.firstLoginMKT(
-				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
+				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
 				route = "loading",
@@ -438,7 +449,7 @@ definition {
 			MockMock._gotoMail();
 
 			MP2Utils.firstLoginMKT(
-				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
+				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
 				route = "customer-gate",
