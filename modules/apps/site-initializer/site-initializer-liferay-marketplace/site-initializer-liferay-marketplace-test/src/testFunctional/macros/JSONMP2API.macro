@@ -14,7 +14,7 @@ definition {
 			var defaultLanguageId = "en_US";
 		}
 
-		if (${catalogName} == "MKT Catalog") {
+		if (${catalogName} == "QA Test") {
 			var externalReferenceCode = "MKT-CATALOG-01";
 		}
 
@@ -44,7 +44,7 @@ definition {
 
 		var portalURL = JSONCompany.getPortalURL();
 
-		if (${accountName} == "QA Development") {
+		if (${accountName} == "QA Test") {
 			var externalReferenceCode = "MKT-ACCOUNT-1";
 			var type = "business";
 		}
@@ -77,7 +77,7 @@ definition {
 	macro updateAccount(accountName = null) {
 		Variables.assertDefined(parameterList = "${accountName},${catalogName}");
 
-		if (${accountName} == "QA Development") {
+		if (${accountName} == "QA Test") {
 			var externalReferenceCode = "MKT-ACCOUNT-1";
 			var type = "business";
 		}
@@ -88,7 +88,7 @@ definition {
 		}
 
 		if (!(isSet(catalogName))) {
-			var catalogName = "MKT Catalog";
+			var catalogName = "QA Test";
 		}
 
 		JSONMP2.addCatalog();

@@ -21,14 +21,14 @@ definition {
 			JSONMP2.updateAccount();
 
 			JSONAccountEntryUser.addExistUsertoAccount(
-				accountEntryName = "QA Development",
+				accountEntryName = "QA Test",
 				userEmailAddress = "da@administrator.com");
 		}
 
 		task ("Login with the created user and go to Marketplace") {
 			User.logoutAndLoginPG(
 				userLoginEmailAddress = "da@administrator.com",
-				userLoginFullName = "Dashboard Administrator");
+				userLoginFullName = "Dashboard ADM");
 
 			MP2Navigator.gotoMP2();
 		}
@@ -43,11 +43,11 @@ definition {
 	test AssertCustomerIsTakenBackDashboard {
 		task ("Given that the user goes to the Customer Dashboard page") {
 			MP2Navigator.openSitePage(pageName = "Customer Dashboard");
+
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Test");
 		}
 
 		task ("When the admin user invites a new member") {
-			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Development");
-
 			MP2Navigator.gotoNavItem(navItem = "Members");
 
 			MP2Dashboards.inviteNewMember(
@@ -70,11 +70,11 @@ definition {
 	test AssertNewMemberListedAndGreyedOut {
 		task ("Given that the user goes to the Customer Dashboard page") {
 			MP2Navigator.openSitePage(pageName = "Customer Dashboard");
+
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Test");
 		}
 
 		task ("When the user invites a new member") {
-			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Development");
-
 			MP2Navigator.gotoNavItem(navItem = "Members");
 
 			MP2Dashboards.inviteNewMember(
@@ -98,7 +98,7 @@ definition {
 		task ("Given that a marketplace account administrator invites a member to the Customer Dashboard") {
 			MP2Navigator.openSitePage(pageName = "Customer Dashboard");
 
-			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Development");
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Test");
 
 			MP2Navigator.gotoNavItem(navItem = "Members");
 
@@ -120,14 +120,15 @@ definition {
 
 		task ("When the user log into the account") {
 			MP2Utils.firstLoginMKT(
-				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
+				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
+				route = "customer-gate",
 				userEmailAddress = "test.mp@liferay.com");
 		}
 
-		task ("Then I should be able to assert that the user has access to the Publisher Dashboard from the Marketpace account") {
-			AssertLocation.assertPartialLocation(value1 = "web/marketplace-site/customer-dashboard");
+		task ("Then I should be able to assert that the user has access to the Customer Gate page from the Marketpace account") {
+			AssertLocation.assertPartialLocation(value1 = "web/marketplace-site/customer-gate");
 		}
 	}
 
@@ -136,6 +137,8 @@ definition {
 	test CannotBeInvitedToMoreThanOneDashboard {
 		task ("Given that a marketplace account administrator invites a member to the Publisher Dashboard") {
 			MP2Navigator.openSitePage(pageName = "Publisher Dashboard");
+
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Test");
 
 			MP2Navigator.gotoNavItem(navItem = "Members");
 
@@ -153,10 +156,15 @@ definition {
 			MockMock._gotoMail();
 
 			MP2Utils.firstLoginMKT(
-				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
+				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
+				route = "customer-gate",
 				userEmailAddress = "test.mp@liferay.com");
+
+			MP2Dashboards.customerGateFlow();
+
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Test");
 
 			MP2Navigator.gotoNavItem(navItem = "Members");
 
@@ -182,13 +190,13 @@ definition {
 		task ("When I invite the same user to the Customer Dashboard") {
 			User.logoutAndLoginPG(
 				userLoginEmailAddress = "da@administrator.com",
-				userLoginFullName = "Dashboard Administrator");
+				userLoginFullName = "Dashboard ADM");
 
 			MP2Navigator.gotoMP2();
 
 			MP2Navigator.openSitePage(pageName = "Customer Dashboard");
 
-			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Development");
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Test");
 
 			MP2Navigator.gotoNavItem(navItem = "Members");
 
@@ -210,7 +218,7 @@ definition {
 	test CannotInviteNewMembers {
 		task ("Given that the user goes to the Customer Dashboard page") {
 			JSONAccountEntryUser.addExistUsertoAccount(
-				accountEntryName = "QA Development",
+				accountEntryName = "QA Test",
 				userEmailAddress = "cab@buyer.com");
 
 			User.logoutAndLoginPG(
@@ -221,7 +229,7 @@ definition {
 		}
 
 		task ("When the user tries to invite a new member") {
-			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Development");
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Test");
 
 			MP2Navigator.gotoNavItem(navItem = "Members");
 		}
@@ -236,11 +244,11 @@ definition {
 	test CanSeeMemberDetails {
 		task ("Given that the user goes to the Customer Dashboard page") {
 			MP2Navigator.openSitePage(pageName = "Customer Dashboard");
+
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Test");
 		}
 
 		task ("When the admin user invites a new member") {
-			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Development");
-
 			MP2Navigator.gotoNavItem(navItem = "Members");
 
 			MP2Dashboards.inviteNewMember(
@@ -290,11 +298,11 @@ definition {
 	test CanViewInviteEmail {
 		task ("Given that the user goes to the Customer Dashboard page") {
 			MP2Navigator.openSitePage(pageName = "Customer Dashboard");
+
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Test");
 		}
 
 		task ("And the admin user invites a new member") {
-			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Development");
-
 			MP2Navigator.gotoNavItem(navItem = "Members");
 
 			MP2Dashboards.inviteNewMember(
@@ -327,7 +335,7 @@ definition {
 		task ("Given the user accepts the invitation") {
 			MP2Navigator.openSitePage(pageName = "Customer Dashboard");
 
-			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Development");
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Test");
 
 			MP2Navigator.gotoNavItem(navItem = "Members");
 
@@ -345,13 +353,18 @@ definition {
 
 		task ("And logs into the panel with the invited roles") {
 			MP2Utils.firstLoginMKT(
-				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
+				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
+				route = "customer-gate",
 				userEmailAddress = "test.mp@liferay.com");
 		}
 
 		task ("When I go to the member page") {
+			MP2Dashboards.customerGateFlow();
+
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Test");
+
 			MP2Navigator.gotoNavItem(navItem = "Members");
 		}
 
@@ -382,6 +395,8 @@ definition {
 		task ("Given that a marketplace account administrator invites a member to the Publisher Dashboard") {
 			MP2Navigator.openSitePage(pageName = "Publisher Dashboard");
 
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Test");
+
 			MP2Navigator.gotoNavItem(navItem = "Members");
 
 			MP2Dashboards.inviteNewMember(
@@ -400,7 +415,7 @@ definition {
 
 		task ("When the user accepts the invitation to the Publisher Dashboard") {
 			MP2Utils.firstLoginMKT(
-				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
+				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
 				route = "loading",
@@ -420,7 +435,7 @@ definition {
 		task ("Given that a user is invited to the Customer Dashboard") {
 			MP2Navigator.openSitePage(pageName = "Customer Dashboard");
 
-			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Development");
+			MP2Dashboards.clickBreadcrumb(accountTitle = "QA Test");
 
 			MP2Navigator.gotoNavItem(navItem = "Members");
 
@@ -438,7 +453,7 @@ definition {
 			MockMock._gotoMail();
 
 			MP2Utils.firstLoginMKT(
-				asset = "Liferay Marketplace - Invitation from Dashboard Administrator",
+				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
 				recipient = "da@administrator.com",
 				route = "customer-gate",
