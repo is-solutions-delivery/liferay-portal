@@ -1959,7 +1959,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			siteNavigationMenuItemSettingsBuilder, stringUtilReplaceValues);
 	}
 
-	private void _addOrUpdateExpandoColumns(ServiceContext serviceContext)
+	private void _addOrUpdateExpandoColumns(ServiceContext serviceContext, Map<String, String> stringUtilReplaceValues)
 		throws Exception {
 
 		String json = SiteInitializerUtil.read(
@@ -1971,6 +1971,19 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		JSONArray jsonArray = _jsonFactory.createJSONArray(json);
 
+		List<ExpandoColumn> expandoColumns =
+			_expandoColumnLocalService.getExpandoColumns(-1, -1);
+
+		for (ExpandoColumn expandoColumn :
+			expandoColumns) {
+
+			stringUtilReplaceValues.put(
+				"EXPANDO_COLUMN_ID:" +
+				expandoColumn.getName(),
+				String.valueOf(
+					expandoColumn.getColumnId()));
+		}
+
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
 
@@ -1981,6 +1994,19 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			if (expandoBridge == null) {
 				continue;
+			}
+
+			List<ExpandoColumn> expandoColumns =
+				_expandoColumnLocalService.getExpandoColumns(-1, -1);
+
+			for (ExpandoColumn expandoColumn :
+				expandoColumns) {
+
+				stringUtilReplaceValues.put(
+					"EXPANDO_COLUMN_ID:" +
+					expandoColumn.getName(),
+					String.valueOf(
+						expandoColumn.getColumnId()));
 			}
 
 			if (expandoBridge.getAttribute(jsonObject.getString("name")) !=
@@ -3168,19 +3194,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 					layoutPageTemplateEntry.getName(),
 				String.valueOf(
 					layoutPageTemplateEntry.getLayoutPageTemplateEntryId()));
-		}
-
-		List<ExpandoColumn> expandoColumns =
-			_expandoColumnLocalService.getExpandoColumns(-1, -1);
-
-		for (ExpandoColumn expandoColumn :
-			expandoColumns) {
-
-			stringUtilReplaceValues.put(
-				"EXPANDO_COLUMN_ID:" +
-				expandoColumn.getName(),
-				String.valueOf(
-					expandoColumn.getColumnId()));
 		}
 
 		JSONArray jsonArray = _jsonFactory.createJSONArray(

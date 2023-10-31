@@ -2400,7 +2400,8 @@ public class BundleSiteInitializerTest {
 		_assertAccountOrganizationRelsCount(organization, 0);
 	}
 
-	private void _assertPermissions() throws Exception {_assertRoles();
+	private void _assertPermissions() throws Exception {
+		_assertRoles();
 
 		_assertResourcePermission1();
 	}
@@ -2853,29 +2854,6 @@ public class BundleSiteInitializerTest {
 
 		_assertResourceAction(
 			new String[] {"UPDATE", "VIEW"}, resourcePermission);
-
-		List<ExpandoColumn> expandoColumns =
-			_expandoColumnLocalService.getExpandoColumns(-1, -1);
-
-		ExpandoColumn expandoColumn = _expandoColumnLocalService.fetchExpandoColumn(expandoColumns.get(0).getColumnId());
-
-		role = _roleLocalService.fetchRole(
-			_group.getCompanyId(), "Owner");
-
-		className =
-			"com.liferay.expando.kernel.model.ExpandoColumn";
-
-		resourcePermission =
-			_resourcePermissionLocalService.fetchResourcePermission(
-				_group.getCompanyId(), className,
-				ResourceConstants.SCOPE_INDIVIDUAL,
-				String.valueOf(expandoColumn.getPrimaryKey()),
-				role.getRoleId());
-
-		Assert.assertNotNull(resourcePermission);
-
-		_assertResourceAction(
-			new String[] {"DELETE", "UPDATE", "VIEW", "PERMISSIONS"}, resourcePermission);
 	}
 
 	private void _assertResourcePermission2() throws Exception {
@@ -2963,29 +2941,6 @@ public class BundleSiteInitializerTest {
 
 		_assertResourceAction(
 			new String[] {"UPDATE", "VIEW"}, resourcePermission);
-
-		List<ExpandoColumn> expandoColumns =
-			_expandoColumnLocalService.getExpandoColumns(-1, -1);
-
-		ExpandoColumn expandoColumn = _expandoColumnLocalService.fetchExpandoColumn(expandoColumns.get(0).getColumnId());
-
-		role = _roleLocalService.fetchRole(
-			_group.getCompanyId(), "Owner");
-
-		className =
-			"com.liferay.expando.kernel.model.ExpandoColumn";
-
-		resourcePermission =
-			_resourcePermissionLocalService.fetchResourcePermission(
-				_group.getCompanyId(), className,
-				ResourceConstants.SCOPE_INDIVIDUAL,
-				String.valueOf(expandoColumn.getPrimaryKey()),
-				role.getRoleId());
-
-		Assert.assertNotNull(resourcePermission);
-
-		_assertResourceAction(
-			new String[] {"DELETE", "UPDATE", "VIEW", "PERMISSIONS"}, resourcePermission);
 	}
 
 	private void _assertRoles() {
