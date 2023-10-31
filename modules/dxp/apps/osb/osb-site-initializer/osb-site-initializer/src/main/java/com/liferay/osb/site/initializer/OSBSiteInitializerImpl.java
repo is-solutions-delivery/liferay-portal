@@ -20,6 +20,8 @@ import javax.servlet.ServletContext;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import java.util.Map;
+
 /**
  * @author Nilton Vieira
  */
@@ -27,7 +29,7 @@ import org.osgi.service.component.annotations.Reference;
 public class OSBSiteInitializerImpl implements OSBSiteInitializer {
 
 	public void addOrUpdateSXPBlueprint(
-			ServiceContext serviceContext, ServletContext servletContext)
+			ServiceContext serviceContext, ServletContext servletContext, Map<String, String> stringUtilReplaceValues)
 		throws Exception {
 
 		String json = SiteInitializerUtil.read(
@@ -60,8 +62,14 @@ public class OSBSiteInitializerImpl implements OSBSiteInitializer {
 				continue;
 			}
 
-			sxpBlueprintResource.putSXPBlueprintByExternalReferenceCode(
+			sxpBlueprint = sxpBlueprintResource.putSXPBlueprintByExternalReferenceCode(
 				sxpBlueprint.getExternalReferenceCode(), sxpBlueprint);
+
+			stringUtilReplaceValues.put(
+				"SXP_BLUEPRINT_ID:" +
+				sxpBlueprint.getExternalReferenceCode(),
+				String.valueOf(
+					sxpBlueprint.getId()));
 		}
 	}
 

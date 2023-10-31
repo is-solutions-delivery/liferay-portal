@@ -528,7 +528,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_invoke(() -> _addSiteConfiguration(serviceContext));
 			_invoke(() -> _addSiteSettings(serviceContext));
 			_invoke(() -> _addStyleBookEntries(serviceContext));
-			_invoke(() -> _addOrUpdateSXPBlueprint(serviceContext));
+			_invoke(() -> _addOrUpdateSXPBlueprint(serviceContext, stringUtilReplaceValues));
 			_invoke(() -> _addOrUpdateUserGroups(serviceContext));
 
 			_invoke(
@@ -3659,7 +3659,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		return structuredContentFolder.getId();
 	}
 
-	private void _addOrUpdateSXPBlueprint(ServiceContext serviceContext)
+	private void _addOrUpdateSXPBlueprint(ServiceContext serviceContext, Map<String, String> stringUtilReplaceValues)
 		throws Exception {
 
 		OSBSiteInitializer osbSiteInitializer =
@@ -3670,7 +3670,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 
 		osbSiteInitializer.addOrUpdateSXPBlueprint(
-			serviceContext, _servletContext);
+			serviceContext, _servletContext, stringUtilReplaceValues);
 	}
 
 	private TaxonomyCategory _addOrUpdateTaxonomyCategoryTaxonomyCategory(
