@@ -12,10 +12,11 @@ import './PurchasedAppsDashboardTableRow.scss';
 import DropDown from '@clayui/drop-down/lib/DropDown';
 import {ClayTooltipProvider} from '@clayui/tooltip';
 import classNames from 'classnames';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useOutletContext} from 'react-router-dom';
 
 import {OrderStatus} from '../../enums/OrderStatus';
 import {orderType} from '../../enums/orderType';
+import {AppTabType} from '../../pages/PurchasedAppsDashboard/Apps/enums/AppTabType';
 import {PurchasedAppProps} from '../../pages/PurchasedAppsDashboard/PurchasedAppsDashboardOutlet';
 import {showAppImage} from '../../utils/util';
 
@@ -47,10 +48,15 @@ export function PurchasedAppsDashboardTableRow({
 	const orderStatusIsNotCompleted =
 		provisioningLabel !== OrderStatus.COMPLETED;
 
+	const {setActive} = useOutletContext<any>();
+
 	return (
 		<ClayTable.Row
 			className="dashboard-table-row"
-			onClick={() => navigate(`/app/${productId}`)}
+			onClick={() => {
+				navigate(`/app/${productId}`);
+				setActive(AppTabType.DETAILS);
+			}}
 		>
 			<ClayTable.Cell>
 				<div className="dashboard-table-row-name-container">
@@ -169,6 +175,14 @@ export function PurchasedAppsDashboardTableRow({
 								</DropDown.Item>
 							</ClayTooltipProvider>
 						)}
+						<DropDown.Item
+							onClick={() => {
+								navigate(`/app/${productId}/licenses`);
+								setActive(AppTabType.LICENSES);
+							}}
+						>
+							Manage License Key(s)
+						</DropDown.Item>
 						<DropDown.Item
 							onClick={() => {
 								window.location.href =

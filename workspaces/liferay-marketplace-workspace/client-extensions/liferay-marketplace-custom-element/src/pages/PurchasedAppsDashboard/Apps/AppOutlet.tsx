@@ -6,15 +6,19 @@
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClayNavigationBar from '@clayui/navigation-bar';
-import {useState} from 'react';
-import {Outlet, useNavigate, useParams} from 'react-router-dom';
+import {
+	Outlet,
+	useNavigate,
+	useOutletContext,
+	useParams,
+} from 'react-router-dom';
 
 import {AppTabType} from './enums/AppTabType';
 
 const AppOutlet = () => {
 	const navigate = useNavigate();
 
-	const [active, setActive] = useState('');
+	const {active, setActive} = useOutletContext<any>();
 
 	const {appId: productId} = useParams();
 
@@ -42,7 +46,7 @@ const AppOutlet = () => {
 				<ClayNavigationBar.Item active={active === AppTabType.LICENSES}>
 					<ClayButton
 						onClick={() => {
-							navigate(`app/${productId}/licenses`);
+							navigate(`licenses`);
 							setActive(AppTabType.LICENSES);
 						}}
 					>

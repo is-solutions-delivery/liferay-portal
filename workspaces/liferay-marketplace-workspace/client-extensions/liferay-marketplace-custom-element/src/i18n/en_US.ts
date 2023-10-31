@@ -4,6 +4,10 @@
  */
 
 export default {
+	'create-license-key': 'Create License Key',
+	'create-new-licenses-and-they-will-show-up-here':
+		'Create new licenses and they will show up here.',
+	'no-licenses-yet': 'No Licenses yet',
 	'no-results-found': 'No results found',
 	'sorry-there-are-no-results-found': 'Sorry, there are no results found',
 };
