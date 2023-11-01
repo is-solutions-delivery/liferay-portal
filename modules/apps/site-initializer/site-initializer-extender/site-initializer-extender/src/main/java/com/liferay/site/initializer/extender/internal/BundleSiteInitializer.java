@@ -1977,15 +1977,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 		JSONArray jsonArray = _jsonFactory.createJSONArray(json);
 
-		List<ExpandoColumn> expandoColumns =
-			_expandoColumnLocalService.getExpandoColumns(-1, -1);
-
-		for (ExpandoColumn expandoColumn : expandoColumns) {
-			stringUtilReplaceValues.put(
-				"EXPANDO_COLUMN_ID:" + expandoColumn.getName(),
-				String.valueOf(expandoColumn.getColumnId()));
-		}
-
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
 
@@ -2029,6 +2020,15 @@ public class BundleSiteInitializer implements SiteInitializer {
 				expandoBridge.setAttributeProperties(
 					jsonObject.getString("name"), unicodeProperties);
 			}
+		}
+
+		List<ExpandoColumn> expandoColumns =
+			_expandoColumnLocalService.getExpandoColumns(QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+		for (ExpandoColumn expandoColumn : expandoColumns) {
+			stringUtilReplaceValues.put(
+				"EXPANDO_COLUMN_ID:" + expandoColumn.getName(),
+				String.valueOf(expandoColumn.getColumnId()));
 		}
 	}
 
