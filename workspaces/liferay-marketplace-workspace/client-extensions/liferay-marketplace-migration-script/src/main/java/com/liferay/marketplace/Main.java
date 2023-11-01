@@ -159,6 +159,30 @@ public class Main {
 		return categoriesArray;
 	}
 
+	private Map<String, String> _getExpando(Product product) {
+		Map<String, String> productExpandoMap = new HashMap<>();
+
+		for (String key : _keys) {
+			Object value = product.getExpando(
+			).get(
+				key
+			);
+
+			if (StringUtil.equals(key, "Profile")) {
+				String profileString = (value != null) ? value.toString() : "";
+
+				int startIndex = profileString.indexOf("en_US=");
+				value = (startIndex != -1) ?
+					profileString.substring(startIndex + "en_US=".length()) :
+						"";
+			}
+
+			productExpandoMap.put(key, String.valueOf(value));
+		}
+
+		return productExpandoMap;
+	}
+
 	private long _getGlobalSiteGroupId(long siteGroupId) {
 		if (siteGroupId == GetterUtil.getLong(
 				_properties.getProperty(
@@ -347,7 +371,7 @@ public class Main {
 
 		return skuResource.getProductIdSkusPage(
 			productId, Pagination.of(-1, -1));
-	};
+	}
 
 	private Page<Product> _getProductsPage(String filter, long siteGroupId)
 		throws Exception {
@@ -382,6 +406,16 @@ public class Main {
 			).build());
 
 		for (Category category : product.getCategories()) {
+			if ((category.getId(
+				).longValue() != _bundledCategoryId) &&
+				(category.getId(
+				).longValue() != _freeCategoryId) &&
+				(category.getId(
+				).longValue() != _paidCategoryId)) {
+
+				continue;
+			}
+
 			if (category.getId(
 				).longValue() == _freeCategoryId) {
 
@@ -399,41 +433,24 @@ public class Main {
 					).build());
 			}
 
-			if ((category.getId(
-				).longValue() == _bundledCategoryId) ||
-				(category.getId(
-				).longValue() == _freeCategoryId) ||
-				(category.getId(
-				).longValue() == _paidCategoryId)) {
-
-				if (productSpecifications == null) {
-					productSpecifications = new ProductSpecification[1];
-				}
-				else {
-					ProductSpecification[] productSpecifications2 =
-						new ProductSpecification
-							[productSpecifications.length + 1];
-
-					for (int i = 0; i < productSpecifications.length; i++) {
-						productSpecifications2[i] = productSpecifications[i];
-					}
-
-					productSpecifications = productSpecifications2;
-				}
-
-				productSpecifications[productSpecifications.length - 1] =
-					productSpecification;
+			if (productSpecifications == null) {
+				productSpecifications = new ProductSpecification[1];
 			}
+			else {
+				productSpecifications = Arrays.copyOf(
+					productSpecifications, productSpecifications.length + 1);
+			}
+
+			productSpecifications[productSpecifications.length - 1] =
+				productSpecification;
+
+			break;
 		}
 
 		return productSpecifications;
 	}
 
-	private Sku[] _getSkus(
-		Product product, String productExternalReferenceCode) {
-
-		Sku[] skus = {new Sku()};
-
+	private Sku _getSku(Product product, String productExternalReferenceCode) {
 		try {
 			Product product2 = _getProductByExternalReferenceCode(
 				productExternalReferenceCode, _destinationSiteGroupId);
@@ -441,25 +458,10 @@ public class Main {
 			Page<Sku> skusPage = _getProductIdSkusPage(
 				_destinationSiteGroupId, product2.getProductId());
 
-			if (skusPage != null) {
-				for (Sku sku : skusPage.getItems()) {
-					sku.setNeverExpire(true);
-					sku.setPurchasable(false);
-
-					for (Category category : product.getCategories()) {
-						if (category.getId(
-							).longValue() == _freeCategoryId) {
-
-							sku.setPurchasable(true);
-						}
-					}
-
-					_patchSkuByExternalReferenceCode(
-						sku.getExternalReferenceCode(), sku,
-						_destinationSiteGroupId);
-
-					return new Sku[] {sku};
-				}
+			for (Sku sku : skusPage.getItems()) {
+				return _patchSkuByExternalReferenceCode(
+					sku.getExternalReferenceCode(),
+					_setSkuPurchasable(product, sku), _destinationSiteGroupId);
 			}
 		}
 		catch (Exception exception) {
@@ -468,22 +470,12 @@ public class Main {
 					productExternalReferenceCode + ". Continuing execution.");
 		}
 
-		for (Category category : product.getCategories()) {
-			skus[0].setSku("default");
-			skus[0].setPurchasable(false);
-			skus[0].setNeverExpire(true);
+		Sku sku = _setSkuPurchasable(product, new Sku());
 
-			if (category.getId(
-				).longValue() == _freeCategoryId) {
+		sku.setSku("default");
 
-				skus[0].setPurchasable(true);
-
-				return skus;
-			}
-		}
-
-		return skus;
-	};
+		return sku;
+	}
 
 	private com.liferay.headless.admin.taxonomy.client.pagination.Page
 		<TaxonomyCategory> _getTaxonomyCategoriesPage(
@@ -820,42 +812,7 @@ public class Main {
 			product2.setCatalogId(catalog2.getId());
 			product2.setCategories(_getCategories(product));
 			product2.setDescription(product.getDescription());
-			product2.setExpando(product.getExpando());
-
-			if (product.getExpando() != null) {
-				Object profile = product.getExpando(
-				).get(
-					"Profile"
-				);
-
-				String profileString =
-					(profile != null) ? profile.toString() : "";
-
-				int startIndex = profileString.indexOf("en_US=");
-				String textAfterEnUs = (startIndex != -1) ?
-					profileString.substring(startIndex + "en_US=".length()) :
-						"";
-
-				Map<String, String> productExpandoMap = new HashMap<>();
-				final String[] keys = {
-					"Collects Personal Data", "Developer Name", "Documentation",
-					"Instructions", "License", "Reference", "Release Notes",
-					"Source", "Support", "Terms", "Terms Text", "Version"
-				};
-
-				for (String key : keys) {
-					Object value = product.getExpando(
-					).get(
-						key
-					);
-
-					productExpandoMap.put(key, String.valueOf(value));
-				}
-
-				productExpandoMap.put("Profile", textAfterEnUs);
-				product2.setExpando(productExpandoMap);
-			}
-
+			product2.setExpando(_getExpando(product));
 			product2.setExternalReferenceCode(productExternalReferenceCode);
 			product2.setMetaDescription(product.getMetaDescription());
 			product2.setMetaKeyword(product.getMetaKeyword());
@@ -865,7 +822,8 @@ public class Main {
 				_getProductSpecifications(product));
 			product2.setProductType(product.getProductType());
 			product2.setShortDescription(product.getShortDescription());
-			product2.setSkus(_getSkus(product, productExternalReferenceCode));
+			product2.setSkus(
+				new Sku[] {_getSku(product, productExternalReferenceCode)});
 
 			product2 = _postProduct(product2, _destinationSiteGroupId);
 
@@ -934,7 +892,30 @@ public class Main {
 		}
 	}
 
+	private Sku _setSkuPurchasable(Product product, Sku sku) {
+		sku.setNeverExpire(true);
+		sku.setPurchasable(false);
+
+		for (Category category : product.getCategories()) {
+			if (category.getId(
+				).longValue() == _freeCategoryId) {
+
+				sku.setPurchasable(true);
+
+				return sku;
+			}
+		}
+
+		return sku;
+	}
+
 	private static final Logger _log = Logger.getLogger(Main.class.getName());
+
+	private static final String[] _keys = {
+		"Collects Personal Data", "Developer Name", "Documentation",
+		"Instructions", "License", "Profile", "Reference", "Release Notes",
+		"Source", "Support", "Terms", "Terms Text", "Version"
+	};
 
 	private long _bundledCategoryId;
 	private long _destinationSiteGroupId;
