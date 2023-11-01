@@ -162,11 +162,13 @@ const CreateLicense = () => {
 		try {
 			const licenseKey = await provisioningKoroneikiOAuth2.createLicenseKey(
 				{
-					description: form.description,
-					hostname: form.hostname,
-					ipAddress: form.ipAddress,
-					macAddress: form.macAddress,
-					orderId: orderId as string,
+					licenseEntry: {
+						description: form.description,
+						hostName: form.hostname,
+						ipAddresses: form.ipAddress,
+						macAddresses: form.macAddress,
+						orderId: orderId as string,
+					},
 					productPurchaseKey: form.subscription
 						?.productPurchasedKey as string,
 					skuId: form.subscription?.skuId as number,
@@ -182,8 +184,7 @@ const CreateLicense = () => {
 			navigate('/');
 
 			provisioningKoroneikiOAuth2.downloadLicenseKey(licenseKey.id);
-		}
-		catch {
+		} catch {
 			Liferay.Util.openToast({
 				message: 'Something went wrong to create a License Key',
 				type: 'danger',
