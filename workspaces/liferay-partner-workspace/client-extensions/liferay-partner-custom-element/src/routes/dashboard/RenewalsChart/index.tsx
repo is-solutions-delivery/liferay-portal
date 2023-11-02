@@ -78,13 +78,7 @@ export default function () {
 
 		if (!renewalsData.length && !isLoading) {
 			return (
-				<ClayAlert
-					className="h-75 mx-auto text-center"
-					displayType="info"
-					title="Info:"
-				>
-					No Data Available
-				</ClayAlert>
+				<h5>You have no expiring renewals at this time</h5>
 			);
 		}
 
