@@ -450,7 +450,9 @@ public class Main {
 		return productSpecifications;
 	}
 
-	private Sku _getSku(Product product, String productExternalReferenceCode) {
+	private Sku[] _getSku(
+		Product product, String productExternalReferenceCode) {
+
 		try {
 			Product product2 = _getProductByExternalReferenceCode(
 				productExternalReferenceCode, _destinationSiteGroupId);
@@ -459,9 +461,11 @@ public class Main {
 				_destinationSiteGroupId, product2.getProductId());
 
 			for (Sku sku : skusPage.getItems()) {
-				return _patchSkuByExternalReferenceCode(
+				_patchSkuByExternalReferenceCode(
 					sku.getExternalReferenceCode(),
 					_setSkuPurchasable(product, sku), _destinationSiteGroupId);
+
+				return new Sku[] {sku};
 			}
 		}
 		catch (Exception exception) {
@@ -470,11 +474,13 @@ public class Main {
 					productExternalReferenceCode + ". Continuing execution.");
 		}
 
-		Sku sku = _setSkuPurchasable(product, new Sku());
+		Sku sku = new Sku();
+
+		sku = _setSkuPurchasable(product, sku);
 
 		sku.setSku("default");
 
-		return sku;
+		return new Sku[] {sku};
 	}
 
 	private com.liferay.headless.admin.taxonomy.client.pagination.Page
@@ -822,8 +828,7 @@ public class Main {
 				_getProductSpecifications(product));
 			product2.setProductType(product.getProductType());
 			product2.setShortDescription(product.getShortDescription());
-			product2.setSkus(
-				new Sku[] {_getSku(product, productExternalReferenceCode)});
+			product2.setSkus(_getSku(product, productExternalReferenceCode));
 
 			product2 = _postProduct(product2, _destinationSiteGroupId);
 
