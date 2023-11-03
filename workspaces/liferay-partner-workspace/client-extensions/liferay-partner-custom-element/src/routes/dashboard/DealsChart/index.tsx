@@ -20,6 +20,7 @@ import {ObjectActionName} from '../../../common/enums/objectActionName';
 import {PermissionActionType} from '../../../common/enums/permissionActionType';
 import {PRMPageRoute} from '../../../common/enums/prmPageRoute';
 import usePermissionActions from '../../../common/hooks/usePermissionActions';
+import {Filters} from '../../../common/utils/constants/filters';
 import {retry} from '../../../common/utils/retry';
 
 const DealsChart = () => {
@@ -36,7 +37,7 @@ const DealsChart = () => {
 		// eslint-disable-next-line @liferay/portal/no-global-fetch
 		const responseApproved = await retry<Response>(() =>
 			fetch(
-				"/o/c/leadsfs?pageSize=200&filter=leadType eq 'Partner Qualified Lead (PQL)' and leadStatus eq 'Qualified'",
+				`/o/c/leadsfs?pageSize=200&filter=${Filters.DEAL_DASHBOARD.approvedLeads}`,
 				{
 					headers: {
 						'accept': 'application/json',
@@ -48,7 +49,7 @@ const DealsChart = () => {
 
 		const responseRejected = await retry<Response>(() =>
 			fetch(
-				"/o/c/leadsfs?pageSize=200&filter=leadType eq 'Partner Qualified Lead (PQL)' and leadStatus eq 'CAM rejected'",
+				`/o/c/leadsfs?pageSize=200&filter=${Filters.DEAL_DASHBOARD.rejectedLeads}`,
 				{
 					headers: {
 						'accept': 'application/json',
@@ -60,7 +61,7 @@ const DealsChart = () => {
 
 		const responseSubmitted = await retry<Response>(() =>
 			fetch(
-				"/o/c/leadsfs?pageSize=200&filter=leadType eq 'Partner Qualified Lead (PQL)' and leadStatus ne 'Qualified' and leadStatus ne 'CAM rejected'",
+				`/o/c/leadsfs?pageSize=200&filter=${Filters.DEAL_DASHBOARD.submittedLeads}`,
 				{
 					headers: {
 						'accept': 'application/json',

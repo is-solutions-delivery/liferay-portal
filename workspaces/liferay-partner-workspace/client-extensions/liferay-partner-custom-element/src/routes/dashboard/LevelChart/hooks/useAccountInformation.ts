@@ -16,6 +16,7 @@ import UserAccount from '../../../../common/interfaces/userAccount';
 import {LiferayAPIs} from '../../../../common/services/liferay/common/enums/apis';
 import LiferayItems from '../../../../common/services/liferay/common/interfaces/liferayItems';
 import useGet from '../../../../common/services/liferay/object/useGet';
+import {Filters} from '../../../../common/utils/constants/filters';
 
 export default function useAccountInformation() {
 	const [headcountAccumulator, setHeadcountAccumulator] = useState({
@@ -59,7 +60,7 @@ export default function useAccountInformation() {
 		isValidating: isValidatingOpportunities,
 	} = useGet<LiferayItems<Opportunity[]>>(
 		account?.name &&
-			`/o/${LiferayAPIs.OBJECT}/opportunitysfs?pageSize=200&sort=closeDate:desc&filter=stage eq 'Closed Won'`
+			`/o/${LiferayAPIs.OBJECT}/opportunitysfs?pageSize=200&sort=closeDate:desc&filter=${Filters.LEVEL_DASHBOARD.closedWon}`
 	);
 
 	const {
@@ -67,7 +68,7 @@ export default function useAccountInformation() {
 		isValidating: isValidatingOpportunitiesNB,
 	} = useGet<LiferayItems<Opportunity[]>>(
 		account?.name &&
-			`/o/${LiferayAPIs.OBJECT}/opportunitysfs?pageSize=200&sort=closeDate:desc&filter=type eq 'New Business' and stage eq 'Closed Won'`
+			`/o/${LiferayAPIs.OBJECT}/opportunitysfs?pageSize=200&sort=closeDate:desc&filter=${Filters.LEVEL_DASHBOARD.newBusiness}`
 	);
 
 	const {
@@ -75,7 +76,7 @@ export default function useAccountInformation() {
 		isValidating: isValidatingOpportunitiesNP,
 	} = useGet<LiferayItems<Opportunity[]>>(
 		account?.name &&
-			`/o/${LiferayAPIs.OBJECT}/opportunitysfs?pageSize=200&sort=closeDate:desc&filter=type eq 'New Project Existing Business' and stage eq 'Closed Won'`
+			`/o/${LiferayAPIs.OBJECT}/opportunitysfs?pageSize=200&sort=closeDate:desc&filter=${Filters.LEVEL_DASHBOARD.newProjectExistingBusiness}`
 	);
 
 	const {data: partnerLevel, isValidating: isValidatingPartnerLevel} = useGet<

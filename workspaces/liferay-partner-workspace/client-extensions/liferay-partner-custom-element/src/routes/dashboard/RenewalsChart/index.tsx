@@ -15,6 +15,7 @@ import {status} from '../../../common/components/dashboard/utils/constants/statu
 import getFilteredRenewals from '../../../common/components/dashboard/utils/getFilteredRenewalsData';
 import {siteURL} from '../../../common/components/dashboard/utils/siteURL';
 import {Liferay} from '../../../common/services/liferay';
+import {Filters} from '../../../common/utils/constants/filters';
 import {retry} from '../../../common/utils/retry';
 
 export default function () {
@@ -24,16 +25,10 @@ export default function () {
 	const getRenewalsData = async () => {
 		setIsLoading(true);
 
-		const todayDate = new Date();
-		const todayDateISO = todayDate.toISOString().split('T')[0];
-
-		todayDate.setDate(todayDate.getDate() + 30);
-		const todayDate30Days = todayDate.toISOString().split('T')[0];
-
 		// eslint-disable-next-line @liferay/portal/no-global-fetch
 		const response = await retry<Response>(() =>
 			fetch(
-				`/o/c/opportunitysfs?pageSize=200&sort=closeDate:asc&filter=type eq 'Existing Business' and stage ne 'Closed Lost' and stage ne 'Disqualified' and stage ne 'Rejected' and stage ne 'Rolled into another opportunity' and closeDate ge ${todayDateISO} and closeDate le ${todayDate30Days}`,
+				`/o/c/opportunitysfs?pageSize=200&sort=closeDate:asc&filter=${Filters.RENEWAL_DASHBOARD.renewals}`,
 				{
 					headers: {
 						'accept': 'application/json',
@@ -62,11 +57,9 @@ export default function () {
 	const getCurrentStatusColor = (item: any) => {
 		if (item?.expirationDays <= 5) {
 			return status[5];
-		}
-		else if (item?.expirationDays <= 15) {
+		} else if (item?.expirationDays <= 15) {
 			return status[15];
-		}
-		else if (item?.expirationDays <= 30) {
+		} else if (item?.expirationDays <= 30) {
 			return status[30];
 		}
 	};
@@ -78,7 +71,13 @@ export default function () {
 
 		if (!renewalsData.length && !isLoading) {
 			return (
-				<h5>You have no expiring renewals at this time</h5>
+				<ClayAlert
+					className="h-75 mx-auto text-center"
+					displayType="info"
+					title="Info:"
+				>
+					You have no expiring renewals at this time
+				</ClayAlert>
 			);
 		}
 

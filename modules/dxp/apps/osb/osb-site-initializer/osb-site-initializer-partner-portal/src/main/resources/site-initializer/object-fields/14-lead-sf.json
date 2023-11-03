@@ -351,6 +351,18 @@
 			"name": "leadOwner",
 			"required": false,
 			"type": "String"
+		},
+		{
+			"DBType": "Boolean",
+			"externalReferenceCode": "IsConverted",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "IsConverted"
+			},
+			"name": "isConverted",
+			"required": false,
+			"type": "Boolean"
 		}
 	],
 	"objectDefinitionId": "[$OBJECT_DEFINITION_ID:LeadSF$]"
