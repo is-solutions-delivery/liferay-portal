@@ -26,7 +26,6 @@ export default function useAccountInformation() {
 	const [aRRResults, setARRResults] = useState({
 		aRRAmountTotal: 0,
 		growthArrTotal: 0,
-		renewalArrTotal: 0,
 		targetArr: 0,
 	});
 	const [checkedProperties, setCheckedProperties] = useState({
@@ -100,20 +99,15 @@ export default function useAccountInformation() {
 				(aRRAccumulator, data: Opportunity) => ({
 					aRRAmountTotal:
 						(Number(aRRAccumulator.aRRAmountTotal) || 0) +
-						(Number(data.growthArr) || 0) +
-						(Number(data.renewalArr) || 0),
+						(Number(data.growthArr) || 0),
 					growthArrTotal:
 						(Number(aRRAccumulator.growthArrTotal) || 0) +
 						(Number(data.growthArr) || 0),
-					renewalArrTotal:
-						(Number(aRRAccumulator.renewalArrTotal) || 0) +
-						(Number(data.renewalArr) || 0),
 					targetArr: Number(accountData.targetArr) || 0,
 				}),
 				{
 					aRRAmountTotal: 0,
 					growthArrTotal: 0,
-					renewalArrTotal: 0,
 					targetArr: 0,
 				}
 			);

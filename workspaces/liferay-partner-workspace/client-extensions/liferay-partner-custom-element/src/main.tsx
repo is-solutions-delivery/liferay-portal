@@ -42,7 +42,7 @@ const appRoutes: AppRouteComponent = {
 	[AppRouteType.DEAL_REGISTRATION_FORM]: <DealRegistrationForm />,
 	[AppRouteType.DEAL_REGISTRATION_LIST]: (
 		<DealRegistrationList
-			dealRegistrationFilter={Filters.DEAL_LISTING.submitted}
+			dealRegistrationFilter={Filters.DEAL_LISTING.combo}
 			sort="dateCreated:desc"
 		/>
 	),
@@ -60,7 +60,7 @@ const appRoutes: AppRouteComponent = {
 			]}
 			name="Partner Opportunities"
 			newButtonDeal={false}
-			opportunitiesFilter={Filters.OPPORTUNITY_LISTING.open}
+			opportunitiesFilter={Filters.OPPORTUNITY_LISTING.combo}
 			sort="dateCreated:desc"
 		/>
 	),
@@ -74,7 +74,7 @@ const appRoutes: AppRouteComponent = {
 			]}
 			name="Renewal Opportunities"
 			newButtonDeal={false}
-			opportunitiesFilter={Filters.RENEWAL_LISTING.open}
+			opportunitiesFilter={Filters.RENEWAL_LISTING.combo}
 			sort="closeDate:asc"
 		/>
 	),

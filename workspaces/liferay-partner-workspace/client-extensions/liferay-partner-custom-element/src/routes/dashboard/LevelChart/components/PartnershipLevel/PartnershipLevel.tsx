@@ -74,9 +74,14 @@ const PartnershipLevel = ({
 
 	const getHeadcount = (partnerLevelKey: PartnershipLevels) => {
 		if (partnerLevel.partnerLevelType) {
-			return `${headcount.partnerMarketingUser}/${partnerLevelProperties[partnerLevelKey].partnerMarketingUser}
-             Marketing / ${headcount.partnerSalesUser}/${partnerLevelProperties[partnerLevelKey].partnerSalesUser} Sales`;
+			return `0/${partnerLevelProperties[partnerLevelKey].partnerMarketingUser}
+             Marketing & 0/${partnerLevelProperties[partnerLevelKey].partnerSalesUser} Sales`;
 		}
+
+		// if (partnerLevel.partnerLevelType) {
+		// 	return `${headcount.partnerMarketingUser}/${partnerLevelProperties[partnerLevelKey].partnerMarketingUser}
+        //      Marketing / ${headcount.partnerSalesUser}/${partnerLevelProperties[partnerLevelKey].partnerSalesUser} Sales`;
+		// }
 
 		return '';
 	};

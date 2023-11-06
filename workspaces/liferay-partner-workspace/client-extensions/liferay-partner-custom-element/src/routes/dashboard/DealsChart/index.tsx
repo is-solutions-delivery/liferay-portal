@@ -95,9 +95,9 @@ const DealsChart = () => {
 	}, []);
 
 	const leadsChartValues = getLeadsChartValues(
-		rejectedLeads,
 		submittedLeads,
-		approvedLeads
+		approvedLeads,
+		rejectedLeads
 	);
 
 	const Chart = () => {

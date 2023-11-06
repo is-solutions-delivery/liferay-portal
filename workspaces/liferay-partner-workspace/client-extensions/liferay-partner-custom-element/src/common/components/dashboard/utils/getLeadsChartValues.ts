@@ -6,22 +6,20 @@
 import getChartQuarterCount from './getDealsChartQuarterCount';
 
 export default function getLeadsChartValues(
-	rejectedLeads: any[],
 	submittedLeads: any[],
-	approvedLeads: any[]
+	approvedLeads: any[],
+	rejectedLeads: any[]
 ) {
 	return {
-		approved: approvedLeads
-			?.filter((approvedLead: any) => approvedLead.isConverted)
-			.reduce(
-				(accumulatedApprovedValues, item) =>
-					getChartQuarterCount(
-						accumulatedApprovedValues,
-						item.dateCreated
-					),
-				[0, 0, 0, 0]
-			),
-		rejected: rejectedLeads.reduce(
+		approved: approvedLeads?.reduce(
+			(accumulatedApprovedValues, item) =>
+				getChartQuarterCount(
+					accumulatedApprovedValues,
+					item.dateCreated
+				),
+			[0, 0, 0, 0]
+		),
+		rejected: rejectedLeads?.reduce(
 			(accumulatedRejectedValues, item) =>
 				getChartQuarterCount(
 					accumulatedRejectedValues,
@@ -29,20 +27,13 @@ export default function getLeadsChartValues(
 				),
 			[0, 0, 0, 0]
 		),
-		submitted: submittedLeads
-			?.filter(
-				(submittedLead: any) =>
-					!submittedLead.isConverted ||
-					(submittedLead.stage !== 'CAM Rejected' &&
-						submittedLead.stage !== 'Qualified')
-			)
-			.reduce(
-				(accumulatedSubmittedValues, item) =>
-					getChartQuarterCount(
-						accumulatedSubmittedValues,
-						item.dateCreated
-					),
-				[0, 0, 0, 0]
-			),
+		submitted: submittedLeads?.reduce(
+			(accumulatedSubmittedValues, item) =>
+				getChartQuarterCount(
+					accumulatedSubmittedValues,
+					item.dateCreated
+				),
+			[0, 0, 0, 0]
+		),
 	};
 }
