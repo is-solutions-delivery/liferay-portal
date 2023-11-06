@@ -193,8 +193,6 @@ public class MirrorsGetTask extends Task {
 			if (!_ignoreErrors) {
 				throw ioException;
 			}
-
-			ioException.printStackTrace();
 		}
 
 		if (_verbose) {
@@ -254,7 +252,6 @@ public class MirrorsGetTask extends Task {
 						Thread.sleep(30000);
 					}
 					catch (InterruptedException interruptedException) {
-						interruptedException.printStackTrace();
 					}
 				}
 			}
@@ -337,9 +334,11 @@ public class MirrorsGetTask extends Task {
 				catch (IOException ioException) {
 					URL defaultURL = new URL(_src);
 
-					System.out.println(
-						"Unable to connect to " + sourceURL +
-							", defaulting to " + defaultURL);
+					if (_verbose) {
+						System.out.println(
+							"Unable to connect to " + sourceURL +
+								", defaulting to " + defaultURL);
+					}
 
 					_downloadFile(defaultURL, localCacheFile, 0);
 				}
@@ -427,8 +426,6 @@ public class MirrorsGetTask extends Task {
 		}
 		catch (Exception exception) {
 			System.out.println("Unable to get process output.");
-
-			exception.printStackTrace();
 		}
 
 		return processOutput.toString();

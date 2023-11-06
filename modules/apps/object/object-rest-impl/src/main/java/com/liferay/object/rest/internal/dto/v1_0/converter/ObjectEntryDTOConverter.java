@@ -60,6 +60,8 @@ import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.Base64;
+import com.liferay.portal.kernel.util.File;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
@@ -117,7 +119,67 @@ public class ObjectEntryDTOConverter
 			com.liferay.object.model.ObjectEntry objectEntry)
 		throws Exception {
 
-		return _toDTO(dtoConverterContext, objectEntry);
+		ObjectDefinition objectDefinition = _getObjectDefinition(
+			dtoConverterContext, objectEntry);
+
+		return new ObjectEntry() {
+			{
+				actions = dtoConverterContext.getActions();
+				auditEvents = _toAuditEvents(
+					dtoConverterContext, objectDefinition, objectEntry);
+				creator = CreatorUtil.toCreator(
+					_portal, dtoConverterContext.getUriInfo(),
+					_userLocalService.fetchUser(objectEntry.getUserId()));
+				dateCreated = objectEntry.getCreateDate();
+				dateModified = objectEntry.getModifiedDate();
+				externalReferenceCode = objectEntry.getExternalReferenceCode();
+				id = objectEntry.getObjectEntryId();
+				properties = _toProperties(
+					dtoConverterContext, objectDefinition, objectEntry);
+				scopeKey = _getScopeKey(objectDefinition, objectEntry);
+				status = new Status() {
+					{
+						code = objectEntry.getStatus();
+						label = WorkflowConstants.getStatusLabel(
+							objectEntry.getStatus());
+						label_i18n = _language.get(
+							LanguageResources.getResourceBundle(
+								dtoConverterContext.getLocale()),
+							WorkflowConstants.getStatusLabel(
+								objectEntry.getStatus()));
+					}
+				};
+
+				setKeywords(
+					() -> {
+						if (!objectDefinition.isEnableCategorization()) {
+							return null;
+						}
+
+						return ListUtil.toArray(
+							_assetTagLocalService.getTags(
+								objectDefinition.getClassName(),
+								objectEntry.getObjectEntryId()),
+							AssetTag.NAME_ACCESSOR);
+					});
+				setTaxonomyCategoryBriefs(
+					() -> {
+						if (!objectDefinition.isEnableCategorization()) {
+							return null;
+						}
+
+						return TransformUtil.transformToArray(
+							_assetCategoryLocalService.getCategories(
+								objectDefinition.getClassName(),
+								objectEntry.getObjectEntryId()),
+							assetCategory ->
+								TaxonomyCategoryBriefUtil.
+									toTaxonomyCategoryBrief(
+										assetCategory, dtoConverterContext),
+							TaxonomyCategoryBrief.class);
+					});
+			}
+		};
 	}
 
 	private void _addManyToOneObjectRelationshipNames(
@@ -388,7 +450,7 @@ public class ObjectEntryDTOConverter
 						com.liferay.object.model.ObjectEntry objectEntry =
 							(com.liferay.object.model.ObjectEntry)relatedModel;
 
-						return _toDTO(
+						return toDTO(
 							_getDTOConverterContext(
 								dtoConverterContext,
 								objectEntry.getObjectEntryId()),
@@ -516,74 +578,6 @@ public class ObjectEntryDTOConverter
 			AuditFieldChange.class);
 	}
 
-	private ObjectEntry _toDTO(
-			DTOConverterContext dtoConverterContext,
-			com.liferay.object.model.ObjectEntry objectEntry)
-		throws Exception {
-
-		ObjectDefinition objectDefinition = _getObjectDefinition(
-			dtoConverterContext, objectEntry);
-
-		return new ObjectEntry() {
-			{
-				actions = dtoConverterContext.getActions();
-				auditEvents = _toAuditEvents(
-					dtoConverterContext, objectDefinition, objectEntry);
-				creator = CreatorUtil.toCreator(
-					_portal, dtoConverterContext.getUriInfo(),
-					_userLocalService.fetchUser(objectEntry.getUserId()));
-				dateCreated = objectEntry.getCreateDate();
-				dateModified = objectEntry.getModifiedDate();
-				externalReferenceCode = objectEntry.getExternalReferenceCode();
-				id = objectEntry.getObjectEntryId();
-				properties = _toProperties(
-					dtoConverterContext, objectDefinition, objectEntry);
-				scopeKey = _getScopeKey(objectDefinition, objectEntry);
-				status = new Status() {
-					{
-						code = objectEntry.getStatus();
-						label = WorkflowConstants.getStatusLabel(
-							objectEntry.getStatus());
-						label_i18n = _language.get(
-							LanguageResources.getResourceBundle(
-								dtoConverterContext.getLocale()),
-							WorkflowConstants.getStatusLabel(
-								objectEntry.getStatus()));
-					}
-				};
-
-				setKeywords(
-					() -> {
-						if (!objectDefinition.isEnableCategorization()) {
-							return null;
-						}
-
-						return ListUtil.toArray(
-							_assetTagLocalService.getTags(
-								objectDefinition.getClassName(),
-								objectEntry.getObjectEntryId()),
-							AssetTag.NAME_ACCESSOR);
-					});
-				setTaxonomyCategoryBriefs(
-					() -> {
-						if (!objectDefinition.isEnableCategorization()) {
-							return null;
-						}
-
-						return TransformUtil.transformToArray(
-							_assetCategoryLocalService.getCategories(
-								objectDefinition.getClassName(),
-								objectEntry.getObjectEntryId()),
-							assetCategory ->
-								TaxonomyCategoryBriefUtil.
-									toTaxonomyCategoryBrief(
-										assetCategory, dtoConverterContext),
-							TaxonomyCategoryBrief.class);
-					});
-			}
-		};
-	}
-
 	private ExtendedEntity _toExtendedEntity(
 			BaseModel<?> baseModel, DTOConverterContext dtoConverterContext,
 			ObjectDefinition objectDefinition,
@@ -660,6 +654,15 @@ public class ObjectEntryDTOConverter
 					_dLFileEntryLocalService.fetchDLFileEntry(fileEntryId);
 
 				if (dlFileEntry != null) {
+					if (FeatureFlagManagerUtil.isEnabled("LPS-174455")) {
+						fileEntry.setFileBase64(
+							(String)NestedFieldsSupplier.supply(
+								objectFieldName + ".fileBase64",
+								fieldName -> Base64.encode(
+									_file.getBytes(
+										dlFileEntry.getContentStream()))));
+					}
+
 					fileEntry.setId(dlFileEntry.getFileEntryId());
 					fileEntry.setLink(
 						LinkUtil.toLink(
@@ -799,6 +802,9 @@ public class ObjectEntryDTOConverter
 
 	@Reference
 	private ExtensionProviderRegistry _extensionProviderRegistry;
+
+	@Reference
+	private File _file;
 
 	@Reference
 	private GroupLocalService _groupLocalService;

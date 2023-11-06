@@ -52,6 +52,35 @@ public class AdvancedConfiguration implements Serializable {
 
 	@Schema
 	@Valid
+	public Collapse getCollapse() {
+		return collapse;
+	}
+
+	public void setCollapse(Collapse collapse) {
+		this.collapse = collapse;
+	}
+
+	@JsonIgnore
+	public void setCollapse(
+		UnsafeSupplier<Collapse, Exception> collapseUnsafeSupplier) {
+
+		try {
+			collapse = collapseUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Collapse collapse;
+
+	@Schema
+	@Valid
 	public Source getSource() {
 		return source;
 	}
@@ -134,6 +163,16 @@ public class AdvancedConfiguration implements Serializable {
 		StringBundler sb = new StringBundler();
 
 		sb.append("{");
+
+		if (collapse != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"collapse\": ");
+
+			sb.append(String.valueOf(collapse));
+		}
 
 		if (source != null) {
 			if (sb.length() > 1) {

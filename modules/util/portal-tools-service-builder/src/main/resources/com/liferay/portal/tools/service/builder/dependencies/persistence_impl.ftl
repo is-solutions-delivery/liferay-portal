@@ -73,6 +73,13 @@ import ${apiPackagePath}.service.persistence.${entity.name}Util;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
+
+<#if !serviceBuilder.isVersionGTE_7_1_0()>
+	import com.liferay.portal.kernel.configuration.Filter;
+	import com.liferay.portal.kernel.dao.db.DBManagerUtil;
+	import com.liferay.portal.kernel.dao.db.DBType;
+</#if>
+
 import com.liferay.portal.kernel.dao.orm.ArgumentsResolver;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
@@ -249,6 +256,10 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 		<#assign columnBitmaskEnabled = (entity.databaseRegularEntityColumns?size &lt; 64) && !entity.hasEagerBlobColumn() />
 	<#else>
 		<#assign columnBitmaskEnabled = (entity.finderEntityColumns?size &gt; 0) && (entity.finderEntityColumns?size &lt; 64) && !entity.hasEagerBlobColumn() />
+	</#if>
+
+	<#if !serviceBuilder.isVersionGTE_7_1_0()>
+		private int _databaseInMaxParameters;
 	</#if>
 
 	private FinderPath _finderPathWithPaginationFindAll;
@@ -1338,6 +1349,22 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 							Set<Serializable> page = new HashSet<>();
 
 							for (int i = 0; (i < databaseInMaxParameters) && iterator.hasNext(); i++) {
+								page.add(iterator.next());
+							}
+
+							map.putAll(fetchByPrimaryKeys(page));
+						}
+
+						return map;
+					}
+				<#else>
+					if ((_databaseInMaxParameters > 0) && (primaryKeys.size() > _databaseInMaxParameters)) {
+						Iterator<Serializable> iterator = primaryKeys.iterator();
+
+						while (iterator.hasNext()) {
+							Set<Serializable> page = new HashSet<>();
+
+							for (int i = 0; (i < _databaseInMaxParameters) && iterator.hasNext(); i++) {
 								page.add(iterator.next());
 							}
 
@@ -2932,6 +2959,15 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 		<#if serviceBuilder.isVersionLTE_7_2_0()>
 			private boolean _columnBitmaskEnabled;
 		</#if>
+	<#elseif !serviceBuilder.isVersionGTE_7_1_0()>
+		@Override
+		public void setSessionFactory(SessionFactory sessionFactory) {
+			super.setSessionFactory(sessionFactory);
+
+			DBType dbType = DBManagerUtil.getDBType(sessionFactory.getDialect());
+
+			_databaseInMaxParameters = GetterUtil.getInteger(PropsUtil.get("database.in.max.parameters", new Filter(dbType.getName())));
+		}
 	</#if>
 
 	<#if osgiModule>

@@ -17,10 +17,10 @@ interface BillingAddressProps {
 	addresses: BillingAddress[];
 	billingAddress: BillingAddress;
 	selectedAddress: string;
-	setBillingAddress: (value: BillingAddress) => void;
-	setEnablePurchaseButton: (value: boolean) => void;
-	setSelectedAddress: (value: string) => void;
-	setShowNewAddressButton: (value: boolean) => void;
+	setBillingAddress: React.Dispatch<BillingAddress>;
+	setEnablePurchaseButton: React.Dispatch<boolean>;
+	setSelectedAddress: React.Dispatch<string>;
+	setShowNewAddressButton: React.Dispatch<boolean>;
 	showNewAddressButton: boolean;
 }
 
@@ -50,13 +50,19 @@ export function BillingAddress({
 		}
 	}, [billingAddress, setEnablePurchaseButton]);
 
+	const onChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+		setBillingAddress({
+			...billingAddress,
+			[event.target.name]: event.target.value,
+		});
+
 	return (
 		<Section
 			className="billing-address-section w-100"
 			label="Billing Address"
 		>
 			<div className="billing-address-section-card-addresses">
-				{addresses.map((address, i) => {
+				{addresses.map((address, index) => {
 					const {description, title} = getPostalAddressDescription(
 						address
 					);
@@ -64,7 +70,7 @@ export function BillingAddress({
 					return (
 						<RadioCard
 							description={description}
-							key={i}
+							key={index}
 							onChange={() => {
 								setSelectedAddress(address.name as string);
 
@@ -72,7 +78,7 @@ export function BillingAddress({
 									(address) => address.name === title
 								);
 
-								const billingAddress: BillingAddress = {
+								const billingAddress = {
 									city: postalAddress?.city,
 									country: postalAddress?.countryISOCode,
 									countryISOCode: 'US',
@@ -96,16 +102,14 @@ export function BillingAddress({
 			</div>
 
 			{showNewAddressButton ? (
-				<>
-					<button
-						className="align-items-center billing-address-section-card-new-address d-flex justify-content-center mt-4 w-100"
-						onClick={() => setShowNewAddressButton(false)}
-					>
-						<ClayIcon symbol="plus" />
+				<button
+					className="align-items-center billing-address-section-card-new-address d-flex justify-content-center mt-4 w-100"
+					onClick={() => setShowNewAddressButton(false)}
+				>
+					<ClayIcon symbol="plus" />
 
-						<span>New Address</span>
-					</button>
-				</>
+					<span>New Address</span>
+				</button>
 			) : (
 				<div className="billing-address-section-card-container h-auto w-100">
 					<div className="align-items-center billing-address-section-card-header d-flex justify-content-between w-100">
@@ -119,7 +123,7 @@ export function BillingAddress({
 								setShowNewAddressButton(true);
 								setSelectedAddress('');
 
-								const billingAddress: BillingAddress = {
+								setBillingAddress({
 									city: '',
 									country: '',
 									countryISOCode: 'US',
@@ -129,9 +133,7 @@ export function BillingAddress({
 									street1: '',
 									street2: '',
 									zip: '',
-								};
-
-								setBillingAddress(billingAddress);
+								});
 							}}
 						>
 							Cancel
@@ -141,59 +143,39 @@ export function BillingAddress({
 					<div className="billing-address-section-container d-flex flex-column p-4 w-100">
 						<Input
 							label="Full Name"
-							onChange={({target}) =>
-								setBillingAddress({
-									...billingAddress,
-									name: target.value,
-								})
-							}
+							name="name"
+							onChange={onChange}
 							required
 							value={billingAddress?.name}
 						/>
 
 						<Input
 							label="Address"
-							onChange={({target}) =>
-								setBillingAddress({
-									...billingAddress,
-									street1: target.value,
-								})
-							}
+							name="street1"
+							onChange={onChange}
 							required
 							value={billingAddress?.street1}
 						/>
 
 						<Input
-							onChange={({target}) =>
-								setBillingAddress({
-									...billingAddress,
-									street2: target.value,
-								})
-							}
+							name="street2"
+							onChange={onChange}
 							value={billingAddress?.street2}
 						/>
 
 						<div className="billing-address-double-input">
 							<Input
 								label="City"
-								onChange={({target}) =>
-									setBillingAddress({
-										...billingAddress,
-										city: target.value,
-									})
-								}
+								name="city"
+								onChange={onChange}
 								required
 								value={billingAddress?.city}
 							/>
 
 							<Input
 								label="State"
-								onChange={({target}) =>
-									setBillingAddress({
-										...billingAddress,
-										regionISOCode: target.value,
-									})
-								}
+								name="regionISOCode"
+								onChange={onChange}
 								required
 								value={billingAddress?.regionISOCode}
 							/>
@@ -202,24 +184,16 @@ export function BillingAddress({
 						<div className="billing-address-double-input">
 							<Input
 								label="Zip/Area Code"
-								onChange={({target}) =>
-									setBillingAddress({
-										...billingAddress,
-										zip: target.value,
-									})
-								}
+								name="zip"
+								onChange={onChange}
 								required
 								value={billingAddress?.zip}
 							/>
 
 							<Input
 								label="Country"
-								onChange={({target}) =>
-									setBillingAddress({
-										...billingAddress,
-										country: target.value,
-									})
-								}
+								name="country"
+								onChange={onChange}
 								required
 								value={billingAddress?.country}
 							/>
@@ -227,12 +201,8 @@ export function BillingAddress({
 
 						<Input
 							label="Phone"
-							onChange={({target}) =>
-								setBillingAddress({
-									...billingAddress,
-									phoneNumber: target.value,
-								})
-							}
+							name="phoneNumber"
+							onChange={onChange}
 							required
 							value={billingAddress?.phoneNumber}
 						/>

@@ -100,7 +100,8 @@ export function getThumbnailByProductAttachment(
 		return !!customField;
 	};
 
-	const thumbnail = attachments.find(findThumbnailWithAppIcon);
+	const thumbnail =
+		attachments.find(findThumbnailWithAppIcon) ?? attachments[0];
 
 	return thumbnail?.src;
 }
@@ -124,16 +125,16 @@ export function getValueFromSpecifications(
 	valueKey: string
 ) {
 	let value = '';
-	specifications.forEach((specification) => {
-		if (specification.specificationKey === valueKey) {
-			value = specification.value.en_US;
+	specifications?.forEach((specification) => {
+		if (specification?.specificationKey === valueKey) {
+			value = specification?.value?.en_US;
 		}
 	});
 
 	return value;
 }
 
-export function showAccountImage(url?: string) {
+export function getAccountImage(url?: string) {
 	return url?.includes('img_id=0') || !url ? accountPlaceholder : url;
 }
 

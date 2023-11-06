@@ -108,6 +108,10 @@ definition {
 			requireReset = "false",
 			userEmailAddress = "user1@liferay.com");
 
+		Site.openSiteSettingsAdmin(siteURLKey = "guest");
+
+		Site.manageMembershipOptions(allowManualMembershipManagement = "true");
+
 		var siteName = TestCase.getSiteName(siteName = ${siteName});
 
 		User.openUsersAdmin();
@@ -188,7 +192,7 @@ definition {
 
 		WebContent.copyCP(webContentTitle = "EXAMPLE");
 
-		var key_webContentTitle = "EXAMPLE (Copy 1)";
+		var key_webContentTitle = "EXAMPLE (Copy)";
 
 		LexiconEntry.changeDisplayStyle(displayStyle = "table");
 
@@ -542,7 +546,7 @@ definition {
 		}
 
 		task ("Then the image appears in the new tab and should be seen without being overflowed") {
-			SelectWindow(locator1 = "WC Title - Liferay DXP");
+			SelectWindow(value1 = "WC Title - Liferay DXP");
 
 			OcularAssertElementImage(
 				locator1 = "PageEditor#CONTENT_PAGE_WEB_CONTENT_CONTENT",

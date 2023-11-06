@@ -12,9 +12,11 @@ import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.search.constants.SearchContextAttributes;
 import com.liferay.portal.search.elasticsearch7.constants.ElasticsearchSearchContextAttributes;
 import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
+import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.index.IndexNameBuilder;
 import com.liferay.portal.search.internal.legacy.searcher.SearchRequestBuilderFactoryImpl;
+import com.liferay.portal.search.internal.legacy.searcher.SearchResponseBuilderFactoryImpl;
 import com.liferay.portal.search.legacy.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.test.util.indexing.DocumentFixture;
@@ -92,6 +94,31 @@ public class ElasticsearchIndexSearcherTest {
 		Assert.assertEquals("testValue", searchSearchRequest.getPreference());
 	}
 
+	@Test
+	public void testSearchPastMaxResultWindow() {
+		int maxResultWindow = 10000;
+
+		Mockito.when(
+			_elasticsearchConfigurationWrapper.indexMaxResultWindow()
+		).thenReturn(
+			maxResultWindow
+		);
+
+		Mockito.when(
+			_searchEngineAdapter.execute(Mockito.any(SearchSearchRequest.class))
+		).thenThrow(
+			new RuntimeException("Search of size 0 attempted")
+		);
+
+		SearchContext searchContext = new SearchContext();
+
+		searchContext.setEnd(maxResultWindow + 20);
+		searchContext.setStart(maxResultWindow);
+
+		_elasticsearchIndexSearcher.search(
+			searchContext, Mockito.mock(Query.class));
+	}
+
 	private ElasticsearchIndexSearcher _createElasticsearchIndexSearcher(
 		SearchRequestBuilderFactory searchRequestBuilderFactory) {
 
@@ -100,10 +127,16 @@ public class ElasticsearchIndexSearcherTest {
 
 		ReflectionTestUtil.setFieldValue(
 			elasticsearchIndexSearcher, "_elasticsearchConfigurationWrapper",
-			Mockito.mock(ElasticsearchConfigurationWrapper.class));
+			_elasticsearchConfigurationWrapper);
 		ReflectionTestUtil.setFieldValue(
 			elasticsearchIndexSearcher, "_indexNameBuilder",
 			(IndexNameBuilder)String::valueOf);
+		ReflectionTestUtil.setFieldValue(
+			elasticsearchIndexSearcher, "_searchEngineAdapter",
+			_searchEngineAdapter);
+		ReflectionTestUtil.setFieldValue(
+			elasticsearchIndexSearcher, "_searchResponseBuilderFactory",
+			new SearchResponseBuilderFactoryImpl());
 		ReflectionTestUtil.setFieldValue(
 			elasticsearchIndexSearcher, "_searchRequestBuilderFactory",
 			searchRequestBuilderFactory);
@@ -112,7 +145,12 @@ public class ElasticsearchIndexSearcherTest {
 	}
 
 	private final DocumentFixture _documentFixture = new DocumentFixture();
+	private final ElasticsearchConfigurationWrapper
+		_elasticsearchConfigurationWrapper = Mockito.mock(
+			ElasticsearchConfigurationWrapper.class);
 	private ElasticsearchIndexSearcher _elasticsearchIndexSearcher;
+	private final SearchEngineAdapter _searchEngineAdapter = Mockito.mock(
+		SearchEngineAdapter.class);
 	private SearchRequestBuilderFactory _searchRequestBuilderFactory;
 
 }

@@ -57,7 +57,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.gradle.api.Action;
-import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -80,6 +79,7 @@ import org.gradle.api.tasks.Copy;
 import org.gradle.api.tasks.Delete;
 import org.gradle.api.tasks.TaskContainer;
 import org.gradle.api.tasks.TaskInputs;
+import org.gradle.api.tasks.TaskOutputs;
 import org.gradle.api.tasks.TaskProvider;
 import org.gradle.api.tasks.TaskState;
 import org.gradle.api.tasks.bundling.Zip;
@@ -146,28 +146,30 @@ public class ClientExtensionProjectConfigurator
 			GradleUtil.addTaskProvider(
 				project, BUILD_SITE_INITIALIZER_ZIP_TASK_NAME, Zip.class);
 
-		TaskProvider<DefaultTask> validateClientExtensionIdsTaskProvider =
+		TaskProvider<Task> validateClientExtensionIdsTaskProvider =
 			GradleUtil.addTaskProvider(
-				project, VALIDATE_CLIENT_EXTENSION_IDS_TASK_NAME,
-				DefaultTask.class);
+				project, VALIDATE_CLIENT_EXTENSION_IDS_TASK_NAME, Task.class);
 
-		TaskProvider<DefaultTask> validateClientExtensionTaskProvider =
+		TaskProvider<Task> validateClientExtensionTaskProvider =
 			GradleUtil.addTaskProvider(
-				project, VALIDATE_CLIENT_EXTENSIONS_TASK_NAME,
-				DefaultTask.class);
+				project, VALIDATE_CLIENT_EXTENSIONS_TASK_NAME, Task.class);
 
 		_baseConfigureClientExtensionProject(
 			project, assembleClientExtensionTaskProvider,
 			buildClientExtensionZipTaskProvider,
 			buildSiteInitializerZipTaskProvider,
 			createClientExtensionConfigTaskProvider,
-			validateClientExtensionIdsTaskProvider, workspaceExtension);
+			validateClientExtensionIdsTaskProvider,
+			validateClientExtensionTaskProvider, workspaceExtension);
 
 		AtomicBoolean hasThemeCSSClientExtension = new AtomicBoolean(false);
 
 		Map<String, JsonNode> profileJsonNodes =
 			_configureClientExtensionJsonNodes(
-				project, createClientExtensionConfigTaskProvider);
+				project, assembleClientExtensionTaskProvider,
+				createClientExtensionConfigTaskProvider,
+				validateClientExtensionIdsTaskProvider,
+				validateClientExtensionTaskProvider);
 
 		for (Map.Entry<String, JsonNode> profileJsonNodeEntry :
 				profileJsonNodes.entrySet()) {
@@ -218,8 +220,15 @@ public class ClientExtensionProjectConfigurator
 
 						validateClientExtensionTaskProvider.configure(
 							task -> task.doLast(
-								task1 -> _validateClientExtension(
-									clientExtension, project)));
+								new Action<Task>() {
+
+									@Override
+									public void execute(Task task1) {
+										_validateClientExtension(
+											clientExtension, project);
+									}
+
+								}));
 
 						_clientExtensionIds.compute(
 							clientExtension.id,
@@ -267,6 +276,9 @@ public class ClientExtensionProjectConfigurator
 									zip.from(project.file("site-initializer"));
 									zip.into("site-initializer");
 								});
+							createClientExtensionConfigTaskProvider.configure(
+								task -> task.dependsOn(
+									BUILD_SITE_INITIALIZER_ZIP_TASK_NAME));
 						}
 					}
 					catch (JsonProcessingException jsonProcessingException) {
@@ -443,7 +455,8 @@ public class ClientExtensionProjectConfigurator
 		TaskProvider<Zip> buildSiteInitializerZipTaskProvider,
 		TaskProvider<CreateClientExtensionConfigTask>
 			createClientExtensionConfigTaskProvider,
-		TaskProvider<DefaultTask> validateClientExtensionIdsTaskProvider,
+		TaskProvider<Task> validateClientExtensionIdsTaskProvider,
+		TaskProvider<Task> validateClientExtensionTaskProvider,
 		WorkspaceExtension workspaceExtension) {
 
 		if (isDefaultRepositoryEnabled()) {
@@ -471,7 +484,8 @@ public class ClientExtensionProjectConfigurator
 			buildClientExtensionZipTaskProvider,
 			buildSiteInitializerZipTaskProvider,
 			createClientExtensionConfigTaskProvider,
-			validateClientExtensionIdsTaskProvider);
+			validateClientExtensionIdsTaskProvider,
+			validateClientExtensionTaskProvider);
 
 		addTaskDockerDeploy(
 			project, buildClientExtensionZipTaskProvider,
@@ -514,10 +528,6 @@ public class ClientExtensionProjectConfigurator
 				if (!_isActiveProfile(project, profileName)) {
 					return;
 				}
-
-				TaskInputs taskInputs = assembleClientExtensionCopy.getInputs();
-
-				taskInputs.file(_CLIENT_EXTENSION_YAML);
 
 				assembleArrayNode.forEach(
 					copyJsonNode -> {
@@ -575,9 +585,7 @@ public class ClientExtensionProjectConfigurator
 	}
 
 	private Map<String, JsonNode> _configureClientExtensionJsonNodes(
-		Project project,
-		TaskProvider<CreateClientExtensionConfigTask>
-			createClientExtensionConfigTaskProvider) {
+		Project project, TaskProvider<?>... taskProviders) {
 
 		Map<String, JsonNode> profileJsonNodes = new HashMap<>();
 
@@ -620,12 +628,16 @@ public class ClientExtensionProjectConfigurator
 
 			profileJsonNodes.put(profileName, jsonNode);
 
-			createClientExtensionConfigTaskProvider.configure(
-				task -> {
-					TaskInputs taskInputs = task.getInputs();
+			for (TaskProvider<?> taskProvider : taskProviders) {
+				taskProvider.configure(
+					task -> {
+						if (_isActiveProfile(project, profileName)) {
+							TaskInputs taskInputs = task.getInputs();
 
-					taskInputs.file(file);
-				});
+							taskInputs.file(file);
+						}
+					});
+			}
 		}
 
 		return profileJsonNodes;
@@ -637,20 +649,22 @@ public class ClientExtensionProjectConfigurator
 		TaskProvider<Zip> buildSiteInitializerZipTaskProvider,
 		TaskProvider<CreateClientExtensionConfigTask>
 			createClientExtensionConfigTaskProvider,
-		TaskProvider<DefaultTask> validateClientExtensionIdsTaskProvider) {
+		TaskProvider<Task> validateClientExtensionIdsTaskProvider,
+		TaskProvider<Task> validateClientExtensionTaskProvider) {
+
+		File clientExtensionYamlFile = project.file(_CLIENT_EXTENSION_YAML);
 
 		createClientExtensionConfigTaskProvider.configure(
 			createClientExtensionConfigTask -> {
 				createClientExtensionConfigTask.dependsOn(
 					ASSEMBLE_CLIENT_EXTENSION_TASK_NAME,
-					BUILD_SITE_INITIALIZER_ZIP_TASK_NAME,
 					VALIDATE_CLIENT_EXTENSION_IDS_TASK_NAME,
 					VALIDATE_CLIENT_EXTENSIONS_TASK_NAME);
 
 				TaskInputs taskInputs =
 					createClientExtensionConfigTask.getInputs();
 
-				taskInputs.file(project.file(_CLIENT_EXTENSION_YAML));
+				taskInputs.file(clientExtensionYamlFile);
 
 				createClientExtensionConfigTask.addClientExtensionProperties(
 					_getClientExtensionProperties());
@@ -660,7 +674,13 @@ public class ClientExtensionProjectConfigurator
 			project.getBuildDir(), CLIENT_EXTENSION_BUILD_DIR);
 
 		assembleClientExtensionTaskProvider.configure(
-			copy -> copy.into(clientExtensionBuildDir));
+			copy -> {
+				TaskInputs taskInputs = copy.getInputs();
+
+				taskInputs.file(clientExtensionYamlFile);
+
+				copy.into(clientExtensionBuildDir);
+			});
 
 		buildClientExtensionZipTaskProvider.configure(
 			zip -> {
@@ -691,52 +711,78 @@ public class ClientExtensionProjectConfigurator
 			});
 
 		validateClientExtensionIdsTaskProvider.configure(
-			validateClientExtensionIdsTask -> {
-				validateClientExtensionIdsTask.setDescription(
+			task -> {
+				task.setDescription(
 					"Validates that this project's client extension IDs are " +
 						"unique among all projects.");
-				validateClientExtensionIdsTask.setGroup(
-					LifecycleBasePlugin.VERIFICATION_GROUP);
+				task.setGroup(LifecycleBasePlugin.VERIFICATION_GROUP);
 
-				validateClientExtensionIdsTask.doFirst(
-					validateClientExtensionIdsTask1 -> {
-						StringBundler sb = new StringBundler();
+				TaskInputs taskInputs = task.getInputs();
 
-						File rootDir = project.getRootDir();
+				taskInputs.file(clientExtensionYamlFile);
 
-						Path rootDirPath = rootDir.toPath();
+				TaskOutputs taskOutputs = task.getOutputs();
 
-						for (Map.Entry<String, Set<Project>> entry :
-								_clientExtensionIds.entrySet()) {
+				taskOutputs.upToDateWhen(task1 -> true);
 
-							Set<Project> projects = entry.getValue();
+				task.doFirst(
+					new Action<Task>() {
 
-							if ((projects.size() > 1) &&
-								projects.contains(project)) {
+						@Override
+						public void execute(
+							Task validateClientExtensionIdsTask1) {
 
-								sb.append("Duplicate client extension ID \"");
-								sb.append(entry.getKey());
-								sb.append("\" found in these projects:\n");
+							StringBundler sb = new StringBundler();
 
-								for (Project curProject : projects) {
-									File projectDir =
-										curProject.getProjectDir();
+							File rootDir = project.getRootDir();
+
+							Path rootDirPath = rootDir.toPath();
+
+							for (Map.Entry<String, Set<Project>> entry :
+									_clientExtensionIds.entrySet()) {
+
+								Set<Project> projects = entry.getValue();
+
+								if ((projects.size() > 1) &&
+									projects.contains(project)) {
 
 									sb.append(
-										rootDirPath.relativize(
-											projectDir.toPath()));
+										"Duplicate client extension ID \"");
+									sb.append(entry.getKey());
+									sb.append("\" found in these projects:\n");
+
+									for (Project curProject : projects) {
+										File projectDir =
+											curProject.getProjectDir();
+
+										sb.append(
+											rootDirPath.relativize(
+												projectDir.toPath()));
+
+										sb.append(StringPool.NEW_LINE);
+									}
 
 									sb.append(StringPool.NEW_LINE);
 								}
+							}
 
-								sb.append(StringPool.NEW_LINE);
+							if (sb.length() > 0) {
+								throw new GradleException(sb.toString());
 							}
 						}
 
-						if (sb.length() > 0) {
-							throw new GradleException(sb.toString());
-						}
 					});
+			});
+
+		validateClientExtensionTaskProvider.configure(
+			task -> {
+				TaskInputs taskInputs = task.getInputs();
+
+				taskInputs.file(clientExtensionYamlFile);
+
+				TaskOutputs taskOutputs = task.getOutputs();
+
+				taskOutputs.upToDateWhen(task1 -> true);
 			});
 
 		buildSiteInitializerZipTaskProvider.configure(

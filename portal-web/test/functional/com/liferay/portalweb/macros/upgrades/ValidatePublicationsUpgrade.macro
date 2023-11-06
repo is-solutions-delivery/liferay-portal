@@ -1,6 +1,7 @@
 definition {
 
-	macro viewAdminRoleName {
+	@summary = "Default summary"
+	macro viewAdminRoleName() {
 		Publications.createNewPublication(
 			gotoPublicationsAdmin = "true",
 			publicationName = "Publication Name");
@@ -8,6 +9,8 @@ definition {
 		PublicationsNavigator.gotoPublicationEllipsisItem(
 			menuItem = "Invite Users",
 			publicationName = "Publication Name");
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
 		Click(
 			key_title = "Viewers can view. Viewers cannot edit, publish, or invite other users.",
@@ -22,7 +25,8 @@ definition {
 			locator1 = "Publications#PUBLICATION_ROLE_BUTTON");
 	}
 
-	macro viewNoUnrelatedPreviews {
+	@summary = "Default summary"
+	macro viewNoUnrelatedPreviews() {
 		ApplicationsMenu.gotoPortlet(
 			category = "Configuration",
 			panel = "Control Panel",
@@ -39,8 +43,6 @@ definition {
 
 		PublicationsNavigator.openPublicationsAdmin();
 
-		LexiconEntry.changeDisplayStyle(displayStyle = "list");
-
 		PublicationsNavigator.gotoReviewChanges(
 			gotoPublicationsAdmin = "true",
 			publicationName = "Publication Name");
@@ -48,15 +50,13 @@ definition {
 		AssertElementPresent(locator1 = "PublicationsChanges#MESSAGE_NO_CHANGES");
 	}
 
-	macro viewOutOfDatePublications {
+	@summary = "Default summary"
+	macro viewOutOfDatePublications() {
 		PublicationsNavigator.openPublicationsAdmin();
 
-		LexiconEntry.changeDisplayStyle(displayStyle = "list");
-
-		var key_publicationName = "Publication 2 Name";
-
 		AssertTextEquals(
-			locator1 = "Publications#LIST_OUT_OF_DATE_STATUS",
+			key_publicationName = "Publication 2 Name",
+			locator1 = "Publications#OUT_OF_DATE_STATUS",
 			value1 = "Out of Date");
 
 		PublicationsNavigator.gotoReviewChanges(
@@ -73,11 +73,7 @@ definition {
 
 		PublicationsNavigator.openPublicationsHistory();
 
-		LexiconEntry.changeDisplayStyle(displayStyle = "list");
-
-		AssertVisible(
-			key_publicationName = "Publication 1 Name",
-			locator1 = "Publications#LIST_REVERT_DISABLED");
+		AssertVisible(locator1 = "Publications#REVIEW_CHANGES_BUTTON");
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Configuration",
@@ -97,12 +93,13 @@ definition {
 
 		AssertConsoleTextPresent(value1 = "Completed upgrade process com.liferay.data.cleanup.internal.upgrade.OutdatedPublishedCTCollectionUpgradeProcess");
 
-		AssertTextEquals(
-			locator1 = "Message#EMPTY_INFO_TAGLIB_TITLE",
-			value1 = "No publication has been published yet.");
+		AssertTextEquals.assertPartialText(
+			locator1 = "Message#EMPTY_STATE_TEXT",
+			value1 = "Sorry, no results were found.");
 	}
 
-	macro viewPublicationsUserRolePermissions {
+	@summary = "Default summary"
+	macro viewPublicationsUserRolePermissions() {
 		ApplicationsMenu.gotoPortlet(
 			category = "Users",
 			panel = "Control Panel",

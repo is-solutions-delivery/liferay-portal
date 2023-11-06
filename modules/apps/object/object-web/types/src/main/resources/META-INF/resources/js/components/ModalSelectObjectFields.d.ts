@@ -5,14 +5,17 @@
 
 /// <reference types="react" />
 
+import {IClayAlertProps} from '@clayui/alert';
 import './ModalSelectObjectFields.scss';
+export declare type Alert = {
+	content: string;
+	otherProps: IClayAlertProps;
+};
 declare function ModalSelectObjectFields<
 	T extends ModalItem
 >(): JSX.Element | null;
 export default ModalSelectObjectFields;
-interface ModalItem {
+interface ModalItem extends ObjectField {
 	checked?: boolean;
-	id?: unknown;
-	label: LocalizedValue<string>;
-	required?: boolean;
+	disableCheckbox?: boolean;
 }

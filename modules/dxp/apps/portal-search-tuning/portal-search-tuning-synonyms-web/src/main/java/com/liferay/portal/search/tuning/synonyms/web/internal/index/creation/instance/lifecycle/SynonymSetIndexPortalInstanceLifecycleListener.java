@@ -51,15 +51,9 @@ public class SynonymSetIndexPortalInstanceLifecycleListener
 			return;
 		}
 
-		SynonymSetIndexName synonymSetIndexName =
+		_synonymSetIndexCreator.deleteIfExists(
 			_synonymSetIndexNameBuilder.getSynonymSetIndexName(
-				company.getCompanyId());
-
-		if (!_synonymSetIndexReader.isExists(synonymSetIndexName)) {
-			return;
-		}
-
-		_synonymSetIndexCreator.delete(synonymSetIndexName);
+				company.getCompanyId()));
 	}
 
 	@Reference

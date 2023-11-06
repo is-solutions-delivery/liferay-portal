@@ -42,7 +42,7 @@ const ReactPortal = React.forwardRef<HTMLElement, IProps>(
 	) => {
 		const cssClass = classNames('lfr-tooltip-scope', className);
 
-		let content;
+		let content: React.ReactNode;
 
 		if (Wrapper) {
 			content = (

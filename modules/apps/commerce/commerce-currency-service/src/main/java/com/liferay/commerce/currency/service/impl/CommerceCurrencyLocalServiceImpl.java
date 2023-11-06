@@ -19,11 +19,14 @@ import com.liferay.commerce.currency.service.base.CommerceCurrencyLocalServiceBa
 import com.liferay.commerce.currency.util.ExchangeRateProvider;
 import com.liferay.commerce.currency.util.ExchangeRateProviderRegistry;
 import com.liferay.commerce.currency.util.comparator.CommerceCurrencyPriorityComparator;
+import com.liferay.commerce.product.constants.CPField;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.instance.lifecycle.PortalInstanceLifecycleListener;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -32,6 +35,14 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.search.BaseModelSearchResult;
+import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.Indexable;
+import com.liferay.portal.kernel.search.IndexableType;
+import com.liferay.portal.kernel.search.Indexer;
+import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -40,14 +51,29 @@ import com.liferay.portal.kernel.settings.SystemSettingsLocator;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.search.document.Document;
+import com.liferay.portal.search.hits.SearchHits;
+import com.liferay.portal.search.searcher.SearchRequest;
+import com.liferay.portal.search.searcher.SearchRequestBuilder;
+import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
+import com.liferay.portal.search.searcher.SearchResponse;
+import com.liferay.portal.search.searcher.Searcher;
+import com.liferay.portal.search.sort.FieldSort;
+import com.liferay.portal.search.sort.SortFieldBuilder;
+import com.liferay.portal.search.sort.SortOrder;
+import com.liferay.portal.search.sort.Sorts;
+
+import java.io.Serializable;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -72,6 +98,7 @@ import org.osgi.service.component.annotations.Reference;
 public class CommerceCurrencyLocalServiceImpl
 	extends CommerceCurrencyLocalServiceBaseImpl {
 
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public CommerceCurrency addCommerceCurrency(
 			long userId, String code, Map<Locale, String> nameMap,
@@ -136,6 +163,7 @@ public class CommerceCurrencyLocalServiceImpl
 		commerceCurrencyPersistence.removeByCompanyId(companyId);
 	}
 
+	@Indexable(type = IndexableType.DELETE)
 	@Override
 	@SystemEvent(type = SystemEventConstants.TYPE_DELETE)
 	public CommerceCurrency deleteCommerceCurrency(
@@ -277,6 +305,45 @@ public class CommerceCurrencyLocalServiceImpl
 	}
 
 	@Override
+	public BaseModelSearchResult<CommerceCurrency> searchCommerceCurrencies(
+			long companyId, String keywords,
+			LinkedHashMap<String, Object> params, int start, int end, Sort sort)
+		throws PortalException {
+
+		SearchResponse searchResponse = _searcher.search(
+			_getSearchRequest(companyId, keywords, params, start, end, sort));
+
+		SearchHits searchHits = searchResponse.getSearchHits();
+
+		return new BaseModelSearchResult<>(
+			(List<CommerceCurrency>)TransformUtil.transform(
+				searchHits.getSearchHits(),
+				searchHit -> {
+					Document document = searchHit.getDocument();
+
+					long commerceCurrencyId = document.getLong(
+						Field.ENTRY_CLASS_PK);
+
+					CommerceCurrency commerceCurrency = fetchCommerceCurrency(
+						commerceCurrencyId);
+
+					if (commerceCurrency == null) {
+						Indexer<CommerceCurrency> indexer =
+							IndexerRegistryUtil.getIndexer(
+								CommerceCurrency.class);
+
+						indexer.delete(
+							document.getLong(Field.COMPANY_ID),
+							document.getString(Field.UID));
+					}
+
+					return commerceCurrency;
+				}),
+			searchResponse.getTotalHits());
+	}
+
+	@Indexable(type = IndexableType.REINDEX)
+	@Override
 	public CommerceCurrency setActive(long commerceCurrencyId, boolean active)
 		throws PortalException {
 
@@ -319,6 +386,7 @@ public class CommerceCurrencyLocalServiceImpl
 		return commerceCurrencyPersistence.update(commerceCurrency);
 	}
 
+	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public CommerceCurrency updateCommerceCurrency(
 			long commerceCurrencyId, Map<Locale, String> nameMap, String symbol,
@@ -463,6 +531,83 @@ public class CommerceCurrencyLocalServiceImpl
 		}
 	}
 
+	private SearchRequest _getSearchRequest(
+		long companyId, String keywords, LinkedHashMap<String, Object> params,
+		int start, int end, Sort sort) {
+
+		SearchRequestBuilder searchRequestBuilder =
+			_searchRequestBuilderFactory.builder();
+
+		searchRequestBuilder.entryClassNames(
+			CommerceCurrency.class.getName()
+		).emptySearchEnabled(
+			true
+		).highlightEnabled(
+			false
+		).withSearchContext(
+			searchContext -> _populateSearchContext(
+				searchContext, companyId, keywords, params, start, end, sort)
+		);
+
+		if (start != QueryUtil.ALL_POS) {
+			searchRequestBuilder.from(start);
+			searchRequestBuilder.size(end);
+		}
+
+		if (Validator.isNotNull(sort.getFieldName())) {
+			SortOrder sortOrder = SortOrder.ASC;
+
+			if (sort.isReverse()) {
+				sortOrder = SortOrder.DESC;
+			}
+
+			FieldSort fieldSort = _sorts.field(
+				_sortFieldBuilder.getSortField(
+					CommerceCurrency.class, sort.getFieldName()),
+				sortOrder);
+
+			searchRequestBuilder.sorts(fieldSort);
+		}
+
+		return searchRequestBuilder.build();
+	}
+
+	private void _populateSearchContext(
+		SearchContext searchContext, long companyId, String keywords,
+		LinkedHashMap<String, Object> params, int start, int end, Sort sort) {
+
+		searchContext.setAttributes(
+			HashMapBuilder.<String, Serializable>put(
+				CPField.CODE, keywords
+			).put(
+				Field.NAME, keywords
+			).put(
+				"params",
+				LinkedHashMapBuilder.<String, Object>put(
+					"keywords", keywords
+				).build()
+			).build());
+
+		Boolean active = (Boolean)params.get("active");
+
+		if (active != null) {
+			searchContext.setAttribute(CPField.ACTIVE, active);
+		}
+
+		searchContext.setCompanyId(companyId);
+		searchContext.setEnd(end);
+
+		if (Validator.isNotNull(keywords)) {
+			searchContext.setKeywords(keywords);
+		}
+
+		if (sort != null) {
+			searchContext.setSorts(sort);
+		}
+
+		searchContext.setStart(start);
+	}
+
 	private void _updateExchangeRates(
 			long companyId, String exchangeRateProviderKey)
 		throws PortalException {
@@ -523,7 +668,19 @@ public class CommerceCurrencyLocalServiceImpl
 	@Reference
 	private JSONFactory _jsonFactory;
 
+	@Reference
+	private Searcher _searcher;
+
+	@Reference
+	private SearchRequestBuilderFactory _searchRequestBuilderFactory;
+
 	private ServiceRegistration<?> _serviceRegistration;
+
+	@Reference
+	private SortFieldBuilder _sortFieldBuilder;
+
+	@Reference
+	private Sorts _sorts;
 
 	@Reference
 	private UserLocalService _userLocalService;

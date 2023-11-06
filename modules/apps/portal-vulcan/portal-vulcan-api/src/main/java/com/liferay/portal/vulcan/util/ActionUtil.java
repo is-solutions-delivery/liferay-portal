@@ -17,6 +17,7 @@ import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.graphql.util.GraphQLNamingUtil;
 
@@ -79,8 +80,8 @@ public class ActionUtil {
 		try {
 			return _addAction(
 				actionName, clazz, id, methodName, modelResourcePermission,
-				null, null, parameterId, null, null,
-				() -> UriInfoUtil.getBaseUriBuilder(uriInfo), uriInfo);
+				null, null, parameterId, null, null, null, uriInfo,
+				() -> UriInfoUtil.getBaseUriBuilder(uriInfo));
 		}
 		catch (Exception exception) {
 			throw new RuntimeException(exception);
@@ -95,7 +96,7 @@ public class ActionUtil {
 		try {
 			return _addAction(
 				actionName, clazz, id, methodName, null, object, ownerId, id,
-				permissionName, siteId, uriBuilderSupplier, uriInfo);
+				permissionName, siteId, null, uriInfo, uriBuilderSupplier);
 		}
 		catch (Exception exception) {
 			throw new RuntimeException(exception);
@@ -127,13 +128,29 @@ public class ActionUtil {
 	public static Map<String, String> addAction(
 		String actionName, Class<?> clazz, Long id, String methodName,
 		Object object, ModelResourcePermission<?> modelResourcePermission,
+		Map<String, String> templateParameterMap, UriInfo uriInfo) {
+
+		try {
+			return _addAction(
+				actionName, clazz, id, methodName, modelResourcePermission,
+				object, null, id, null, null, templateParameterMap, uriInfo,
+				() -> UriInfoUtil.getBaseUriBuilder(uriInfo));
+		}
+		catch (Exception exception) {
+			throw new RuntimeException(exception);
+		}
+	}
+
+	public static Map<String, String> addAction(
+		String actionName, Class<?> clazz, Long id, String methodName,
+		Object object, ModelResourcePermission<?> modelResourcePermission,
 		UriInfo uriInfo) {
 
 		try {
 			return _addAction(
 				actionName, clazz, id, methodName, modelResourcePermission,
-				object, null, id, null, null,
-				() -> UriInfoUtil.getBaseUriBuilder(uriInfo), uriInfo);
+				object, null, id, null, null, null, uriInfo,
+				() -> UriInfoUtil.getBaseUriBuilder(uriInfo));
 		}
 		catch (Exception exception) {
 			throw new RuntimeException(exception);
@@ -174,7 +191,8 @@ public class ActionUtil {
 			String actionName, Class<?> clazz, Long id, String methodName,
 			ModelResourcePermission<?> modelResourcePermission, Object object,
 			Long ownerId, Long parameterId, String permissionName, Long siteId,
-			Supplier<UriBuilder> uriBuilderSupplier, UriInfo uriInfo)
+			Map<String, String> templateParameterMap, UriInfo uriInfo,
+			Supplier<UriBuilder> uriBuilderSupplier)
 		throws Exception {
 
 		if (uriInfo == null) {
@@ -278,7 +296,8 @@ public class ActionUtil {
 				if (parameterId != null) {
 					uriBuilder = uriBuilder.resolveTemplates(
 						_getParameterMap(
-							clazz, parameterId, methodName, siteId, uriInfo),
+							clazz, parameterId, methodName, siteId,
+							templateParameterMap, uriInfo),
 						false);
 				}
 
@@ -354,7 +373,7 @@ public class ActionUtil {
 
 	private static Map<String, Object> _getParameterMap(
 			Class<?> clazz, Long id, String methodName, Long siteId,
-			UriInfo uriInfo)
+			Map<String, String> templateParameterMap, UriInfo uriInfo)
 		throws PortalException {
 
 		Map<String, Object> parameterMap = new HashMap<>();
@@ -368,6 +387,10 @@ public class ActionUtil {
 			List<String> value = entry.getValue();
 
 			parameterMap.put(entry.getKey(), value.get(0));
+		}
+
+		if (templateParameterMap != null) {
+			parameterMap.putAll(templateParameterMap);
 		}
 
 		String firstParameterName = _getFirstParameterNameFromPath(
@@ -385,12 +408,15 @@ public class ActionUtil {
 
 			parameterMap.put(firstParameterName, depotEntry.getDepotEntryId());
 		}
+		else if (Objects.equals(firstParameterName, "id")) {
+			parameterMap.put(firstParameterName, id);
+		}
 		else if ((siteId != null) &&
 				 Objects.equals(firstParameterName, "siteId")) {
 
 			parameterMap.put(firstParameterName, siteId);
 		}
-		else {
+		else if (StringUtil.endsWith(firstParameterName, "Id")) {
 			parameterMap.put(firstParameterName, id);
 		}
 

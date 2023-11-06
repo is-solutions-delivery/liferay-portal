@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import ClayAlert, {IClayAlertProps} from '@clayui/alert';
 import ClayButton from '@clayui/button';
+import ClayEmptyState from '@clayui/empty-state';
 import {ClayCheckbox} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import ClayList from '@clayui/list';
@@ -14,47 +16,69 @@ import React, {useEffect, useMemo, useState} from 'react';
 
 import './ModalSelectObjectFields.scss';
 
-import ClayAlert, {IClayAlertProps} from '@clayui/alert';
+export type Alert = {
+	content: string;
+	otherProps: IClayAlertProps;
+};
 
 function ModalSelectObjectFields<T extends ModalItem>() {
 	const [
 		{
-			alert,
-			disableRequired,
-			disableRequiredChecked,
+			alerts,
+			emptyState,
 			getLabel,
 			getName,
 			header,
 			items,
+			onAfterClose,
 			onSave,
 			searchTerm,
 			selected,
+			showModal,
 			title,
 		},
 		setState,
-	] = useState<IState<T>>({items: [], searchTerm: '', selected: []});
+	] = useState<IState<T>>({
+		items: [],
+		searchTerm: '',
+		selected: [],
+		showModal: false,
+	});
 
 	const resetModal = () => {
-		setState({items: [], searchTerm: '', selected: []});
+		setState({items: [], searchTerm: '', selected: [], showModal: false});
 	};
 
-	const {observer} = useModal({
-		onClose: resetModal,
+	const {observer, onClose} = useModal({
+		onClose: onAfterClose
+			? () => {
+					onAfterClose();
+					resetModal();
+
+					return;
+			  }
+			: resetModal,
 	});
 
 	useEffect(() => {
 		const openModal = ({
-			alert = {
-				content: '',
-				otherProps: {},
-				showAlert: false,
-			},
+			alerts = [],
 			items = [],
+			onAfterClose,
 			searchTerm = '',
 			selected = [],
+			showModal = false,
 			...otherProps
 		}: Partial<IState<T>>) => {
-			setState({alert, items, searchTerm, selected, ...otherProps});
+			setState({
+				alerts,
+				items,
+				onAfterClose,
+				searchTerm,
+				selected,
+				showModal,
+				...otherProps,
+			});
 		};
 
 		Liferay.on('openModalSelectObjectFields', openModal);
@@ -75,25 +99,13 @@ function ModalSelectObjectFields<T extends ModalItem>() {
 			if (getName?.(item).toLowerCase().includes(loweredTerm)) {
 				filtered.push({
 					...item,
-					checked:
-						disableRequired &&
-						item.required &&
-						!disableRequiredChecked
-							? true
-							: selectedIds.has(item.id),
+					checked: selectedIds.has(item.id),
 				});
 			}
 		});
 
 		return filtered;
-	}, [
-		disableRequired,
-		disableRequiredChecked,
-		getName,
-		searchTerm,
-		selected,
-		items,
-	]);
+	}, [getName, searchTerm, selected, items]);
 
 	const toggleFieldCheckbox = (id: unknown, checked: boolean) => {
 		let selectedItems: T[];
@@ -107,109 +119,150 @@ function ModalSelectObjectFields<T extends ModalItem>() {
 		setState((state) => ({...state, selected: selectedItems}));
 	};
 
-	return items.length ? (
+	return showModal ? (
 		<ClayModal
+			center
 			className="lfr-object__object-view-modal-select-object-fields"
 			observer={observer}
 		>
 			<ClayModal.Header>{header}</ClayModal.Header>
 
-			{alert?.showAlert && (
-				<ClayAlert
-					displayType={alert.otherProps.displayType}
-					title={alert.otherProps.title}
-					variant={alert.otherProps.variant}
-				>
-					{alert.content}
-				</ClayAlert>
-			)}
+			{!!alerts?.length &&
+				!!items.length &&
+				alerts.map((alert, index) => (
+					<ClayAlert
+						displayType={alert.otherProps.displayType}
+						key={index}
+						title={alert.otherProps.title}
+						variant={alert.otherProps.variant}
+					>
+						{alert.content}
+					</ClayAlert>
+				))}
 
 			<ClayModal.Body>
-				<div className="lfr-object__object-view-modal-select-object-fields-selection-title">
-					{title}
-				</div>
+				{items.length ? (
+					<>
+						<div className="lfr-object__object-view-modal-select-object-fields-selection-title">
+							{title}
+						</div>
 
-				<ManagementToolbar.Container>
-					<ManagementToolbar.ItemList>
-						<ManagementToolbar.Item>
-							<ClayCheckbox
-								checked={items.length === selected.length}
-								indeterminate={
-									!!selected.length &&
-									items.length !== selected.length
-								}
-								onChange={() => {
-									const requiredFields = selected.filter(
-										(item) => item.required
-									);
-									const selectedItems =
-										items.length - requiredFields.length ===
-										selected.length - requiredFields.length
-											? [...requiredFields]
-											: [...items];
+						<ManagementToolbar.Container>
+							<ManagementToolbar.ItemList>
+								<ManagementToolbar.Item>
+									<ClayCheckbox
+										checked={
+											items.length === selected.length
+										}
+										indeterminate={
+											!!selected.length &&
+											items.length !== selected.length
+										}
+										onChange={() => {
+											const disabledItems = selected.filter(
+												(item) => item.disableCheckbox
+											);
+											const selectedItems =
+												items.length -
+													disabledItems.length ===
+												selected.length -
+													disabledItems.length
+													? [...disabledItems]
+													: [...items];
+											setState((state) => ({
+												...state,
+												selected: selectedItems,
+											}));
+										}}
+									/>
+								</ManagementToolbar.Item>
+							</ManagementToolbar.ItemList>
+
+							<ManagementToolbarSearch
+								query={searchTerm}
+								setQuery={(searchTerm) =>
 									setState((state) => ({
 										...state,
-										selected: selectedItems,
-									}));
-								}}
+										searchTerm,
+									}))
+								}
 							/>
-						</ManagementToolbar.Item>
-					</ManagementToolbar.ItemList>
+						</ManagementToolbar.Container>
 
-					<ManagementToolbarSearch
-						query={searchTerm}
-						setQuery={(searchTerm) =>
-							setState((state) => ({...state, searchTerm}))
-						}
-					/>
-				</ManagementToolbar.Container>
-			</ClayModal.Body>
+						<ClayList className="lfr-object__object-view-modal-select-object-fields-list">
+							{filteredItems.map((item, index) => (
+								<ClayList.Item flex key={`list-item-${index}`}>
+									<ClayCheckbox
+										checked={!!item.checked}
+										disabled={item.disableCheckbox}
+										label={
+											getLabel?.(item) ?? getName?.(item)
+										}
+										onChange={() => {
+											toggleFieldCheckbox(
+												item.id,
+												!item.checked
+											);
+										}}
+									/>
 
-			<ClayList className="lfr-object__object-view-modal-select-object-fields-list">
-				{filteredItems.map((item, index) => (
-					<ClayList.Item flex key={`list-item-${index}`}>
-						<ClayCheckbox
-							checked={!!item.checked}
-							disabled={
-								disableRequired &&
-								item.required &&
-								!disableRequiredChecked
+									{item.required && (
+										<span className="lfr-object__object-view-modal-select-object-fields-reference-mark">
+											<ClayIcon symbol="asterisk" />
+										</span>
+									)}
+								</ClayList.Item>
+							))}
+						</ClayList>
+					</>
+				) : (
+					<div className="lfr-object__object-view-modal-select-object-fields-empty-state">
+						<ClayEmptyState
+							description={
+								emptyState?.message ??
+								Liferay.Language.get(
+									'there-are-no-fields-in-this-definition'
+								)
 							}
-							label={getLabel?.(item) ?? getName?.(item)}
-							onChange={() => {
-								toggleFieldCheckbox(item.id, !item.checked);
-							}}
+							imgSrc={`${Liferay.ThemeDisplay.getPathThemeImages()}/states/empty_state.gif`}
+							small
+							title={
+								emptyState?.title ??
+								Liferay.Language.get(
+									'there-are-no-fields-created-yet'
+								)
+							}
 						/>
-
-						{disableRequired && item.required && (
-							<span className="lfr-object__object-view-modal-select-object-fields-reference-mark">
-								<ClayIcon symbol="asterisk" />
-							</span>
-						)}
-					</ClayList.Item>
-				))}
-			</ClayList>
+					</div>
+				)}
+			</ClayModal.Body>
 
 			<ClayModal.Footer
 				last={
-					<ClayButton.Group spaced>
-						<ClayButton
-							displayType="secondary"
-							onClick={resetModal}
-						>
-							{Liferay.Language.get('cancel')}
-						</ClayButton>
+					items.length ? (
+						<ClayButton.Group spaced>
+							<ClayButton
+								displayType="secondary"
+								onClick={onClose}
+							>
+								{Liferay.Language.get('cancel')}
+							</ClayButton>
 
-						<ClayButton
-							displayType="primary"
-							onClick={() => {
-								onSave?.(selected);
-								resetModal();
-							}}
-						>
-							{Liferay.Language.get('save')}
+							<ClayButton
+								displayType="primary"
+								onClick={() => {
+									onSave?.(selected);
+									resetModal();
+								}}
+							>
+								{Liferay.Language.get('save')}
+							</ClayButton>
+						</ClayButton.Group>
+					) : (
+						<ClayButton displayType="primary" onClick={resetModal}>
+							{Liferay.Language.get('done')}
 						</ClayButton>
-					</ClayButton.Group>
+					)
 				}
 			/>
 		</ClayModal>
@@ -218,27 +271,27 @@ function ModalSelectObjectFields<T extends ModalItem>() {
 
 export default ModalSelectObjectFields;
 
-interface ModalItem {
+interface ModalItem extends ObjectField {
 	checked?: boolean;
-	id?: unknown;
-	label: LocalizedValue<string>;
-	required?: boolean;
+	disableCheckbox?: boolean;
 }
 
 interface IState<T extends ModalItem> {
-	alert?: {
-		content: string;
-		otherProps: IClayAlertProps;
-		showAlert: boolean;
-	};
+	alerts?: Alert[];
 	disableRequired?: boolean;
 	disableRequiredChecked?: boolean;
+	emptyState?: {
+		message: string;
+		title: string;
+	};
 	getLabel?: (label: T) => string;
 	getName?: (name: T) => string;
 	header?: string;
 	items: T[];
+	onAfterClose?: () => void;
 	onSave?: (selected: T[]) => void;
 	searchTerm: string;
 	selected: T[];
+	showModal: boolean;
 	title?: string;
 }

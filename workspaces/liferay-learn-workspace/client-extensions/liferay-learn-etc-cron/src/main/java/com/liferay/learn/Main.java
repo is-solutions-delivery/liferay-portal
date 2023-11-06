@@ -265,11 +265,15 @@ public class Main {
 						"Updating structured content " +
 							structuredContent.getFriendlyUrlPath());
 
-					_setPermissions(fileName, structuredContent);
-
 					importedStructuredContent =
 						_structuredContentResource.putStructuredContent(
 							siteStructuredContent.getId(), structuredContent);
+
+					_structuredContentResource.
+						putStructuredContentPermissionsPage(
+							importedStructuredContent.getId(),
+							_getPermissions(
+								fileName, importedStructuredContent.getId()));
 
 					updatedStructuredContentCount++;
 				}
@@ -296,7 +300,8 @@ public class Main {
 						"Adding structured content " +
 							structuredContent.getFriendlyUrlPath());
 
-					_setPermissions(fileName, structuredContent);
+					structuredContent.setPermissions(
+						_getPermissions(fileName, structuredContent.getId()));
 
 					importedStructuredContent =
 						_structuredContentResource.
@@ -670,6 +675,90 @@ public class Main {
 		return parentMarkdownFile;
 	}
 
+	private Permission[] _getPermissions(
+			String fileName, Long structuredContentId)
+		throws Exception {
+
+		List<Permission> permissions = new ArrayList<>();
+
+		if (structuredContentId != null) {
+			Page<Permission> structuredContentPermissionsPage =
+				_structuredContentResource.getStructuredContentPermissionsPage(
+					structuredContentId, null);
+
+			for (Permission permission :
+					structuredContentPermissionsPage.getItems()) {
+
+				if (Objects.equals(permission.getRoleName(), "Owner")) {
+					continue;
+				}
+
+				permission.setActionIds(new String[0]);
+
+				permissions.add(permission);
+			}
+		}
+
+		SnakeYamlFrontMatterVisitor snakeYamlFrontMatterVisitor =
+			new SnakeYamlFrontMatterVisitor();
+
+		File file = new File(fileName);
+
+		snakeYamlFrontMatterVisitor.visit(
+			_parser.parse(
+				_processMarkdown(
+					FileUtils.readFileToString(file, StandardCharsets.UTF_8),
+					file)));
+
+		Map<String, Object> data = snakeYamlFrontMatterVisitor.getData();
+
+		if ((data == null) || !data.containsKey("visibility")) {
+			permissions.add(
+				new Permission() {
+					{
+						actionIds = new String[] {"VIEW"};
+						roleName = "Guest";
+					}
+				});
+
+			return permissions.toArray(new Permission[0]);
+		}
+
+		Object visibilityObject = data.get("visibility");
+
+		if (!(visibilityObject instanceof ArrayList)) {
+			return null;
+		}
+
+		for (Object object : (ArrayList)visibilityObject) {
+			if (!(object instanceof String)) {
+				continue;
+			}
+
+			permissions.add(
+				new Permission() {
+					{
+						actionIds = new String[] {"ADD_DISCUSSION", "VIEW"};
+						roleName = (String)object;
+					}
+				});
+		}
+
+		if (permissions.isEmpty()) {
+			return null;
+		}
+
+		permissions.add(
+			new Permission() {
+				{
+					actionIds = new String[0];
+					roleName = "Guest";
+				}
+			});
+
+		return permissions.toArray(new Permission[0]);
+	}
+
 	private String _getProduct(File file) {
 		String filePathString = file.getPath();
 
@@ -1036,11 +1125,15 @@ public class Main {
 	}
 
 	private void _loadTaxonomyVocabularies() throws Exception {
+		File file = new File(
+			_markdownImportDirName + "/../taxonomy-vocabularies.json");
+
+		if (!file.exists()) {
+			return;
+		}
+
 		JSONObject taxonomyVocabulariesJSONObject = new JSONObject(
-			FileUtils.readFileToString(
-				new File(
-					_markdownImportDirName + "/../taxonomy-vocabularies.json"),
-				StandardCharsets.UTF_8));
+			FileUtils.readFileToString(file, StandardCharsets.UTF_8));
 
 		if (taxonomyVocabulariesJSONObject.isEmpty()) {
 			return;
@@ -1525,75 +1618,6 @@ public class Main {
 		}
 
 		return line;
-	}
-
-	private void _setPermissions(
-			String fileName, StructuredContent structuredContent)
-		throws Exception {
-
-		SnakeYamlFrontMatterVisitor snakeYamlFrontMatterVisitor =
-			new SnakeYamlFrontMatterVisitor();
-
-		File file = new File(fileName);
-
-		snakeYamlFrontMatterVisitor.visit(
-			_parser.parse(
-				_processMarkdown(
-					FileUtils.readFileToString(file, StandardCharsets.UTF_8),
-					file)));
-
-		Map<String, Object> data = snakeYamlFrontMatterVisitor.getData();
-
-		if ((data == null) || !data.containsKey("visibility")) {
-			structuredContent.setPermissions(
-				new Permission[] {
-					new Permission() {
-						{
-							actionIds = new String[] {"VIEW"};
-							roleName = "Guest";
-						}
-					}
-				});
-
-			return;
-		}
-
-		Object roleNames = data.get("visibility");
-
-		if (!(roleNames instanceof ArrayList)) {
-			return;
-		}
-
-		List<Permission> permissions = new ArrayList<>();
-
-		for (Object roleNamesObject : (ArrayList)roleNames) {
-			if (!(roleNamesObject instanceof String)) {
-				continue;
-			}
-
-			permissions.add(
-				new Permission() {
-					{
-						actionIds = new String[] {"ADD_DISCUSSION", "VIEW"};
-						roleName = (String)roleNamesObject;
-					}
-				});
-		}
-
-		if (permissions.isEmpty()) {
-			return;
-		}
-
-		permissions.add(
-			new Permission() {
-				{
-					actionIds = new String[0];
-					roleName = "Guest";
-				}
-			});
-
-		structuredContent.setPermissions(
-			permissions.toArray(new Permission[0]));
 	}
 
 	private String _toFriendlyURLPath(File file) {

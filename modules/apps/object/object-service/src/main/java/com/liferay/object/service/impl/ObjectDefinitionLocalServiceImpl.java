@@ -736,6 +736,13 @@ public class ObjectDefinitionLocalServiceImpl
 	}
 
 	@Override
+	public ObjectDefinition getObjectDefinition(long companyId, String name)
+		throws PortalException {
+
+		return objectDefinitionPersistence.findByC_N(companyId, name);
+	}
+
+	@Override
 	public List<ObjectDefinition> getObjectDefinitions(
 		long companyId, boolean active, boolean system, int status) {
 
@@ -1762,6 +1769,12 @@ public class ObjectDefinitionLocalServiceImpl
 	private ObjectDefinition _publishObjectDefinition(
 			long userId, ObjectDefinition objectDefinition)
 		throws PortalException {
+
+		if (objectDefinition.isApproved()) {
+			throw new ObjectDefinitionStatusException(
+				"The object definition is already published",
+				"the-object-definition-is-already-published");
+		}
 
 		if (!ListUtil.exists(
 				_objectFieldPersistence.findByObjectDefinitionId(

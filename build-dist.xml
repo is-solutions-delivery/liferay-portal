@@ -2908,6 +2908,7 @@ plugins.includes=</echo>
 								<arg value="catalina.sh" />
 								<arg value="run" />
 								<env key="LIFERAY_CLEAN_OSGI_STATE" value="true" />
+								<redirector alwayslog="true" errorproperty="portal.startup.error" outputproperty="portal.startup.output" />
 							</exec>
 
 							<sequential>
@@ -2915,7 +2916,10 @@ plugins.includes=</echo>
 									<http url="http://localhost:8080" />
 								</waitfor>
 
-								<sleep seconds="5" />
+								<get
+									dest="${zip.executable.dir}/../homepage.html"
+									src="http://localhost:8080"
+								/>
 
 								<exec dir="dist/${tstamp.value}/liferay-portal-${lp.version}/tomcat-${app.server.tomcat.version}/bin" executable="sh">
 									<arg value="shutdown.sh" />
@@ -2930,6 +2934,15 @@ plugins.includes=</echo>
 								</delete>
 							</sequential>
 						</parallel>
+
+						<echo />
+						<echo>Portal Startup Output:</echo>
+						<echo />
+						<echo>${portal.startup.output}</echo>
+						<echo />
+						<echo>Portal Startup Error Output:</echo>
+						<echo />
+						<echo>${portal.startup.error}</echo>
 					</then>
 				</if>
 

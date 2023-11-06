@@ -8,6 +8,7 @@ package com.liferay.list.type.service.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.list.type.exception.DuplicateListTypeEntryException;
 import com.liferay.list.type.exception.DuplicateListTypeEntryExternalReferenceCodeException;
+import com.liferay.list.type.exception.ListTypeDefinitionSystemException;
 import com.liferay.list.type.exception.ListTypeEntryKeyException;
 import com.liferay.list.type.exception.NoSuchListTypeDefinitionException;
 import com.liferay.list.type.exception.NoSuchListTypeEntryException;
@@ -15,10 +16,12 @@ import com.liferay.list.type.model.ListTypeDefinition;
 import com.liferay.list.type.model.ListTypeEntry;
 import com.liferay.list.type.service.ListTypeDefinitionLocalService;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
+import com.liferay.portal.kernel.test.AssertUtils;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.SystemProperties;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
@@ -58,6 +61,18 @@ public class ListTypeEntryLocalServiceTest {
 			null, TestPropsValues.getUserId(),
 			_listTypeDefinition.getListTypeDefinitionId(), "able",
 			Collections.singletonMap(LocaleUtil.US, "Able"));
+
+		_systemListTypeDefinition =
+			_listTypeDefinitionLocalService.addListTypeDefinition(
+				null, TestPropsValues.getUserId(),
+				Collections.singletonMap(
+					LocaleUtil.US, RandomTestUtil.randomString()),
+				true, Collections.emptyList());
+
+		_systemListTypeEntry = _listTypeEntryLocalService.addListTypeEntry(
+			null, TestPropsValues.getUserId(),
+			_systemListTypeDefinition.getListTypeDefinitionId(), "able",
+			Collections.singletonMap(LocaleUtil.US, "Able"));
 	}
 
 	@After
@@ -68,86 +83,43 @@ public class ListTypeEntryLocalServiceTest {
 
 	@Test
 	public void testAddListTypeEntry() throws Exception {
-
-		// No ListTypeDefinition exists with the primary key
-
-		try {
-			_testAddListTypeEntry(0, "able");
-
-			Assert.fail();
-		}
-		catch (NoSuchListTypeDefinitionException
-					noSuchListTypeDefinitionException) {
-
-			Assert.assertEquals(
-				"No ListTypeDefinition exists with the primary key 0",
-				noSuchListTypeDefinitionException.getMessage());
-		}
-
-		// Key is null
-
-		try {
-			_testAddListTypeEntry(
-				_listTypeDefinition.getListTypeDefinitionId(), null);
-
-			Assert.fail();
-		}
-		catch (ListTypeEntryKeyException listTypeEntryKeyException) {
-			Assert.assertEquals(
-				"Key is null", listTypeEntryKeyException.getMessage());
-		}
-
-		// Key must only contain letters and digits
-
-		try {
-			_testAddListTypeEntry(
-				_listTypeDefinition.getListTypeDefinitionId(), " able ");
-
-			Assert.fail();
-		}
-		catch (ListTypeEntryKeyException listTypeEntryKeyException) {
-			Assert.assertEquals(
-				"Key must only contain letters and digits",
-				listTypeEntryKeyException.getMessage());
-		}
-
-		Assert.assertEquals(
-			_listTypeEntry.getUuid(),
-			_listTypeEntry.getExternalReferenceCode());
-
-		// Duplicate key
-
-		try {
-			_testAddListTypeEntry(
-				_listTypeDefinition.getListTypeDefinitionId(), "able");
-		}
-		catch (DuplicateListTypeEntryException
-					duplicateListTypeEntryException) {
-
-			Assert.assertEquals(
-				"Duplicate key able",
-				duplicateListTypeEntryException.getMessage());
-		}
-
 		String externalReferenceCode =
 			_listTypeEntry.getExternalReferenceCode();
 
-		try {
-			_listTypeEntryLocalService.addListTypeEntry(
+		Assert.assertEquals(_listTypeEntry.getUuid(), externalReferenceCode);
+
+		AssertUtils.assertFailure(
+			DuplicateListTypeEntryException.class, "Duplicate key able",
+			() -> _testAddListTypeEntry(
+				_listTypeDefinition.getListTypeDefinitionId(), "able"));
+		AssertUtils.assertFailure(
+			DuplicateListTypeEntryExternalReferenceCodeException.class,
+			"Duplicate external reference code " + externalReferenceCode,
+			() -> _listTypeEntryLocalService.addListTypeEntry(
 				externalReferenceCode, TestPropsValues.getUserId(),
 				_listTypeDefinition.getListTypeDefinitionId(),
 				RandomTestUtil.randomString(),
 				Collections.singletonMap(
-					LocaleUtil.US, RandomTestUtil.randomString()));
-		}
-		catch (DuplicateListTypeEntryExternalReferenceCodeException
-					duplicateListTypeEntryExternalReferenceCodeException) {
+					LocaleUtil.US, RandomTestUtil.randomString())));
 
-			Assert.assertEquals(
-				"Duplicate external reference code " + externalReferenceCode,
-				duplicateListTypeEntryExternalReferenceCodeException.
-					getMessage());
-		}
+		AssertUtils.assertFailure(
+			ListTypeDefinitionSystemException.class, false,
+			"Only allowed bundles can add system list type entries",
+			() -> _testAddListTypeEntry(
+				_systemListTypeDefinition.getListTypeDefinitionId(), "baker"));
+		AssertUtils.assertFailure(
+			ListTypeEntryKeyException.class, "Key is null",
+			() -> _testAddListTypeEntry(
+				_listTypeDefinition.getListTypeDefinitionId(), null));
+		AssertUtils.assertFailure(
+			ListTypeEntryKeyException.class,
+			"Key must only contain letters and digits",
+			() -> _testAddListTypeEntry(
+				_listTypeDefinition.getListTypeDefinitionId(), " able "));
+		AssertUtils.assertFailure(
+			NoSuchListTypeDefinitionException.class,
+			"No ListTypeDefinition exists with the primary key 0",
+			() -> _testAddListTypeEntry(0, "able"));
 
 		ListTypeEntry listTypeEntry =
 			_listTypeEntryLocalService.addListTypeEntry(
@@ -163,6 +135,15 @@ public class ListTypeEntryLocalServiceTest {
 			listTypeEntry.getNameMap());
 
 		_listTypeEntryLocalService.deleteListTypeEntry(listTypeEntry);
+	}
+
+	@Test
+	public void testDeleteListTypeEntry() throws Exception {
+		AssertUtils.assertFailure(
+			ListTypeDefinitionSystemException.class, false,
+			"Only allowed bundles can delete system list type entries",
+			() -> _listTypeEntryLocalService.deleteListTypeEntry(
+				_systemListTypeEntry.getListTypeEntryId()));
 	}
 
 	@Test
@@ -241,6 +222,28 @@ public class ListTypeEntryLocalServiceTest {
 			externalReferenceCode, listTypeEntry.getExternalReferenceCode());
 
 		Assert.assertEquals(nameMap, listTypeEntry.getNameMap());
+
+		externalReferenceCode = "externalReferenceCode2";
+
+		String liferayMode = SystemProperties.get("liferay.mode");
+
+		SystemProperties.clear("liferay.mode");
+
+		try {
+			_systemListTypeEntry =
+				_listTypeEntryLocalService.updateListTypeEntry(
+					externalReferenceCode,
+					_systemListTypeEntry.getListTypeEntryId(), nameMap);
+		}
+		finally {
+			SystemProperties.set("liferay.mode", liferayMode);
+		}
+
+		Assert.assertNotEquals(
+			externalReferenceCode,
+			_systemListTypeEntry.getExternalReferenceCode());
+
+		Assert.assertEquals(nameMap, _systemListTypeEntry.getNameMap());
 	}
 
 	private void _testAddListTypeEntry(long listTypeDefinitionId, String key)
@@ -270,5 +273,8 @@ public class ListTypeEntryLocalServiceTest {
 
 	@Inject
 	private ListTypeEntryLocalService _listTypeEntryLocalService;
+
+	private ListTypeDefinition _systemListTypeDefinition;
+	private ListTypeEntry _systemListTypeEntry;
 
 }

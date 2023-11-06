@@ -175,6 +175,39 @@ definition {
 		SearchResults.viewSearchResultsSpecificOrder(resultsList = "Article 1,Article 2,Article 3");
 	}
 
+	@description = "This is a use case for LPS-197744."
+	@priority = 3
+	test AssertResultRankingsDoesNotAffectResultRankingsEditScreen {
+		task ("Add Result Ranking with pinned result") {
+			SearchTuning.openResultRankingsAdmin();
+
+			SearchTuning.addResultRanking(searchQuery = "test");
+
+			SearchTuning.pinResult(assetTitle = "tree.png");
+
+			Button.clickSave();
+		}
+
+		task ("Add second Result Ranking and assert the pinned result from the first Result Ranking is not the top result") {
+			SearchTuning.addResultRanking(searchQuery = "test2");
+
+			Button.click(button = "Add Result");
+
+			Type(
+				locator1 = "SearchTuning#RESULT_RANKINGS_ADD_RESULT_SEARCH_BAR",
+				value1 = "test");
+
+			KeyPress(
+				locator1 = "SearchTuning#RESULT_RANKINGS_ADD_RESULT_SEARCH_BAR",
+				value1 = "\RETURN");
+
+			AssertTextNotEquals.assertNotPartialText(
+				locator1 = "SearchTuning#RESULT_RANKINGS_ADD_RESULT_RESULT_TITLE_SPECIFIC_ORDER",
+				resultOrder = 1,
+				value1 = "tree.png");
+		}
+	}
+
 	@priority = 3
 	test AssertResultRankingsMiscUI {
 		SearchTuning.openResultRankingsAdmin();
@@ -488,7 +521,7 @@ definition {
 
 		ClickNoError(locator1 = "Icon#DELETE");
 
-		Confirm();
+		Confirm(value1 = "null");
 
 		AssertElementNotPresent(
 			key_rowEntry = "phone2, mobile2",
@@ -508,7 +541,7 @@ definition {
 
 		ClickNoError(locator1 = "Icon#DELETE");
 
-		Confirm();
+		Confirm(value1 = "null");
 
 		for (var counter : list "1,2,3,4,5,6") {
 			AssertElementNotPresent(
@@ -1283,7 +1316,7 @@ definition {
 		var assetName = "MB Thread Message Subject Apple";
 		var siteName = TestCase.getSiteName(siteName = ${siteName});
 
-		SelectWindow(locator1 = "title=${assetName} - ${assetName} - ${siteName}");
+		SelectWindow(value1 = "title=${assetName} - ${assetName} - ${siteName}");
 
 		AssertTextEquals(
 			locator1 = "ControlMenu#HEADING",
@@ -1293,13 +1326,13 @@ definition {
 			key_threadBody = "banana, red apple, blueberry!",
 			locator1 = "MessageBoardsThread#THREAD_BODY");
 
-		Close.closeAndSelectWindow(locator1 = "title=Customize Results - ${siteName}");
+		Close.closeAndSelectWindow(value1 = "title=Customize Results - ${siteName}");
 
 		Click(
 			key_assetTitle = "Web Content Article Apple",
 			locator1 = "SearchTuning#RESULT_RANKINGS_RESULT_TITLE");
 
-		SelectWindow(locator1 = "title=Result Rankings - ${siteName}");
+		SelectWindow(value1 = "title=Result Rankings - ${siteName}");
 
 		AssertVisible(
 			key_assetTitle = "Web Content Article Apple",

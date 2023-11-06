@@ -19,7 +19,6 @@ import com.liferay.batch.engine.unit.BatchEngineUnitMetaInfo;
 import com.liferay.batch.engine.unit.BatchEngineUnitProcessor;
 import com.liferay.batch.engine.unit.BatchEngineUnitThreadLocal;
 import com.liferay.batch.engine.unit.BundleBatchEngineUnit;
-import com.liferay.petra.executor.PortalExecutorManager;
 import com.liferay.petra.io.StreamUtil;
 import com.liferay.petra.io.unsync.UnsyncByteArrayOutputStream;
 import com.liferay.petra.reflect.ReflectionUtil;
@@ -37,7 +36,6 @@ import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.vulcan.batch.engine.VulcanBatchEngineTaskItemDelegateAdaptorFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -434,13 +432,6 @@ public class BatchEngineUnitProcessorImpl implements BatchEngineUnitProcessor {
 	private File _file;
 
 	@Reference
-	private PortalExecutorManager _portalExecutorManager;
-
-	@Reference
 	private UserLocalService _userLocalService;
-
-	@Reference
-	private VulcanBatchEngineTaskItemDelegateAdaptorFactory
-		_vulcanBatchEngineTaskItemDelegateAdaptorFactory;
 
 }

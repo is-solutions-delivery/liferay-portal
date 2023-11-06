@@ -18,8 +18,10 @@ interface CodeEditorLocalizedProps {
 	onSelectedLocaleChange: (val: IItem) => void;
 	onTranslationsChange: (val: LocalizedValue<string>) => void;
 	placeholder?: string;
+	readOnly?: boolean;
 	selectedLocale: Liferay.Language.Locale;
 	sidebarElements: SidebarCategory[];
+	sidebarElementsDisabled?: boolean;
 	translations: LocalizedValue<string>;
 }
 interface IItem {
@@ -33,8 +35,10 @@ export declare function CodeEditorLocalized({
 	onSelectedLocaleChange,
 	onTranslationsChange,
 	placeholder,
+	readOnly,
 	selectedLocale,
 	sidebarElements,
+	sidebarElementsDisabled,
 	translations,
 }: CodeEditorLocalizedProps): JSX.Element;
 export {};

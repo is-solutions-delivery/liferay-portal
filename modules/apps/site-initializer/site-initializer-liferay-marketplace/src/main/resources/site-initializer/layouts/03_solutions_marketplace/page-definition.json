@@ -169,7 +169,7 @@
 												"marginTop": "",
 												"maxWidth": "1270px",
 												"paddingBottom": "",
-												"paddingLeft": "8",
+												"paddingLeft": "3",
 												"paddingTop": "",
 												"shadow": "",
 												"textAlign": ""
@@ -454,9 +454,7 @@
 					{
 						"definition": {
 							"fragmentStyle": {
-								"borderWidth": "0",
-								"paddingLeft": "8",
-								"paddingRight": "8"
+								"borderWidth": "0"
 							},
 							"fragmentViewports": [
 								{
@@ -469,14 +467,15 @@
 							],
 							"indexed": true,
 							"layout": {
-								"paddingLeft": 10,
-								"paddingRight": 10,
 								"widthType": "Fixed"
 							}
 						},
 						"pageElements": [
 							{
 								"definition": {
+									"fragmentStyle": {
+										"paddingLeft": "3"
+									},
 									"gutters": true,
 									"indexed": true,
 									"modulesPerRow": 2,

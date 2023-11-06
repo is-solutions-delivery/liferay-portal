@@ -1275,15 +1275,16 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			new PagePermission() {
 				{
 					actionKeys = new String[] {
-						ActionKeys.UPDATE_DISCUSSION, ActionKeys.PERMISSIONS,
+						ActionKeys.ADD_DISCUSSION, ActionKeys.ADD_LAYOUT,
+						ActionKeys.CONFIGURE_PORTLETS, ActionKeys.CUSTOMIZE,
+						ActionKeys.DELETE, ActionKeys.DELETE_DISCUSSION,
+						ActionKeys.LAYOUT_RULE_BUILDER, ActionKeys.UPDATE,
+						ActionKeys.UPDATE_DISCUSSION,
 						ActionKeys.UPDATE_LAYOUT_ADVANCED_OPTIONS,
-						ActionKeys.UPDATE_LAYOUT_CONTENT, ActionKeys.CUSTOMIZE,
-						ActionKeys.ADD_LAYOUT, ActionKeys.VIEW,
-						ActionKeys.DELETE, ActionKeys.UPDATE_LAYOUT_BASIC,
-						ActionKeys.DELETE_DISCUSSION,
-						ActionKeys.CONFIGURE_PORTLETS, ActionKeys.UPDATE,
+						ActionKeys.UPDATE_LAYOUT_BASIC,
+						ActionKeys.UPDATE_LAYOUT_CONTENT,
 						ActionKeys.UPDATE_LAYOUT_LIMITED,
-						ActionKeys.ADD_DISCUSSION
+						ActionKeys.PERMISSIONS, ActionKeys.VIEW
 					};
 					roleKey = RoleConstants.OWNER;
 				}
@@ -1303,15 +1304,16 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			new PagePermission() {
 				{
 					actionKeys = new String[] {
-						ActionKeys.UPDATE_DISCUSSION, ActionKeys.PERMISSIONS,
+						ActionKeys.ADD_DISCUSSION, ActionKeys.ADD_LAYOUT,
+						ActionKeys.CONFIGURE_PORTLETS, ActionKeys.CUSTOMIZE,
+						ActionKeys.DELETE, ActionKeys.DELETE_DISCUSSION,
+						ActionKeys.LAYOUT_RULE_BUILDER, ActionKeys.UPDATE,
+						ActionKeys.UPDATE_DISCUSSION,
 						ActionKeys.UPDATE_LAYOUT_ADVANCED_OPTIONS,
-						ActionKeys.UPDATE_LAYOUT_CONTENT, ActionKeys.CUSTOMIZE,
-						ActionKeys.ADD_LAYOUT, ActionKeys.VIEW,
-						ActionKeys.DELETE, ActionKeys.UPDATE_LAYOUT_BASIC,
-						ActionKeys.DELETE_DISCUSSION,
-						ActionKeys.CONFIGURE_PORTLETS, ActionKeys.UPDATE,
+						ActionKeys.UPDATE_LAYOUT_BASIC,
+						ActionKeys.UPDATE_LAYOUT_CONTENT,
 						ActionKeys.UPDATE_LAYOUT_LIMITED,
-						ActionKeys.ADD_DISCUSSION
+						ActionKeys.PERMISSIONS, ActionKeys.VIEW
 					};
 					roleKey = RoleConstants.OWNER;
 				}
@@ -1375,15 +1377,16 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 			new PagePermission() {
 				{
 					actionKeys = new String[] {
-						ActionKeys.UPDATE_DISCUSSION, ActionKeys.PERMISSIONS,
+						ActionKeys.ADD_DISCUSSION, ActionKeys.ADD_LAYOUT,
+						ActionKeys.CONFIGURE_PORTLETS, ActionKeys.CUSTOMIZE,
+						ActionKeys.DELETE, ActionKeys.DELETE_DISCUSSION,
+						ActionKeys.LAYOUT_RULE_BUILDER, ActionKeys.UPDATE,
+						ActionKeys.UPDATE_DISCUSSION,
 						ActionKeys.UPDATE_LAYOUT_ADVANCED_OPTIONS,
-						ActionKeys.UPDATE_LAYOUT_CONTENT, ActionKeys.CUSTOMIZE,
-						ActionKeys.ADD_LAYOUT, ActionKeys.VIEW,
-						ActionKeys.DELETE, ActionKeys.UPDATE_LAYOUT_BASIC,
-						ActionKeys.DELETE_DISCUSSION,
-						ActionKeys.CONFIGURE_PORTLETS, ActionKeys.UPDATE,
+						ActionKeys.UPDATE_LAYOUT_BASIC,
+						ActionKeys.UPDATE_LAYOUT_CONTENT,
 						ActionKeys.UPDATE_LAYOUT_LIMITED,
-						ActionKeys.ADD_DISCUSSION
+						ActionKeys.PERMISSIONS, ActionKeys.VIEW
 					};
 					roleKey = RoleConstants.OWNER;
 				}

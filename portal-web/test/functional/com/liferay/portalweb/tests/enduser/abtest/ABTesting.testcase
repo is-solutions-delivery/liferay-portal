@@ -826,7 +826,7 @@ definition {
 		task ("Check that exist only one variant in Analytics Cloud") {
 			ABTest.viewDataInAnalyticsCloud();
 
-			SelectWindow(locator1 = "name=undefined");
+			SelectWindow(value1 = "name=undefined");
 
 			if (IsElementPresent(locator1 = "AnalyticsCloudConnection#ANALYTICS_CLOUD_USER_LOGIN_FIELD")) {
 				AnalyticsCloud.loginAnalyticsCloud(
@@ -1876,7 +1876,7 @@ definition {
 		}
 
 		task ("Edit variant page and add some fragment to the page") {
-			Click(locator1 = "ABTest#PENCIL_BUTTON");
+			ContentPages.gotoPageEditor();
 
 			PageEditor.addFragment(
 				collectionName = "Basic Components",
@@ -1913,7 +1913,7 @@ definition {
 		}
 
 		task ("Edit variant page and add some fragment to the page") {
-			Click(locator1 = "ABTest#PENCIL_BUTTON");
+			ContentPages.gotoPageEditor();
 
 			PageEditor.addFragment(
 				collectionName = "Basic Components",

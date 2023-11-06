@@ -59,45 +59,47 @@ else {
 	<clay:container-fluid
 		cssClass="container-view sidenav-content"
 	>
-		<c:if test="<%= !journalDisplayContext.isNavigationMine() && !journalDisplayContext.isNavigationRecent() %>">
-			<liferay-site-navigation:breadcrumb
-				breadcrumbEntries="<%= JournalPortletUtil.getPortletBreadcrumbEntries(journalDisplayContext.getFolder(), request, journalDisplayContext.getPortletURL(null)) %>"
-			/>
-		</c:if>
 
-		<aui:form action="<%= journalDisplayContext.getPortletURL(null) %>" method="get" name="fm">
-			<aui:input name="<%= ActionRequest.ACTION_NAME %>" type="hidden" />
-			<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
-			<aui:input name="groupId" type="hidden" value="<%= scopeGroupId %>" />
-			<aui:input name="newFolderId" type="hidden" />
+		<%
+		VerticalNavItemList ddmStructureVerticalNavItemList = journalDisplayContext.getDDMStructureVerticalNavItemList();
+		%>
 
-			<c:choose>
-				<c:when test="<%= !journalDisplayContext.isSearch() %>">
-					<liferay-util:include page="/view_entries.jsp" servletContext="<%= application %>" />
-				</c:when>
-				<c:otherwise>
-					<clay:navigation-bar
-						cssClass="mt-4"
-						navigationItems="<%= journalDisplayContext.getSearchNavigationItems() %>"
-					/>
+		<c:choose>
+			<c:when test='<%= FeatureFlagManagerUtil.isEnabled("LPS-194763") && ListUtil.isNotEmpty(ddmStructureVerticalNavItemList) %>'>
+				<clay:row>
+					<clay:col
+						lg="3"
+					>
+						<clay:vertical-nav
+							verticalNavItems="<%= journalDisplayContext.getVerticalNavItemList() %>"
+						/>
 
-					<c:choose>
-						<c:when test="<%= journalDisplayContext.isWebContentTabSelected() %>">
-							<liferay-util:include page="/view_entries.jsp" servletContext="<%= application %>" />
-						</c:when>
-						<c:when test="<%= journalDisplayContext.isVersionsTabSelected() %>">
-							<liferay-util:include page="/view_versions.jsp" servletContext="<%= application %>" />
-						</c:when>
-						<c:when test="<%= journalDisplayContext.isCommentsTabSelected() %>">
-							<liferay-util:include page="/view_comments.jsp" servletContext="<%= application %>" />
-						</c:when>
-						<c:otherwise>
-							<liferay-util:include page="/view_entries.jsp" servletContext="<%= application %>" />
-						</c:otherwise>
-					</c:choose>
-				</c:otherwise>
-			</c:choose>
-		</aui:form>
+						<span class="c-mb-1 c-mt-3 sheet-tertiary-title text-2 text-secondary">
+							<liferay-ui:message key="highlighted-structures" />
+						</span>
+
+						<clay:vertical-nav
+							verticalNavItems="<%= ddmStructureVerticalNavItemList %>"
+						/>
+					</clay:col>
+
+					<clay:col
+						lg="9"
+					>
+						<clay:sheet
+							size="full"
+						>
+							<h2 class="sheet-title"><%= journalDisplayContext.getTitle() %></h2>
+
+							<%@ include file="/view_form.jspf" %>
+						</clay:sheet>
+					</clay:col>
+				</clay:row>
+			</c:when>
+			<c:otherwise>
+				<%@ include file="/view_form.jspf" %>
+			</c:otherwise>
+		</c:choose>
 	</clay:container-fluid>
 </div>
 

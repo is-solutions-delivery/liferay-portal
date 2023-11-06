@@ -4,7 +4,7 @@
  */
 
 import {ReactNode, createContext, useContext} from 'react';
-import useSWR from 'swr';
+import useSWR, {KeyedMutator} from 'swr';
 
 import SearchBuilder from '../core/SearchBuilder';
 import HeadlessAdminUserImpl from '../services/rest/HeadlessAdminUser';
@@ -12,11 +12,15 @@ import HeadlessCommerceDeliveryCatalogImpl from '../services/rest/HeadlessCommer
 
 type ContextType = {
 	channel: Channel;
+	mutateMyUserAccount: KeyedMutator<UserAccount | undefined>;
 	myUserAccount: UserAccount;
 };
 
 const MarketplaceContext = createContext<ContextType>({
 	channel: {} as Channel,
+	mutateMyUserAccount: ((() => null) as unknown) as KeyedMutator<
+		UserAccount | undefined
+	>,
 	myUserAccount: {} as UserAccount,
 });
 
@@ -45,15 +49,19 @@ const MarketplaceContextProvider: React.FC<MarketplaceContextProviderProps> = ({
 		}
 	);
 
-	const {data: myUserAccount} = useSWR('/marketplace/my-user-account', () => {
-		return HeadlessAdminUserImpl.getMyUserAccount();
-	});
+	const {data: myUserAccount, mutate} = useSWR(
+		'/marketplace/my-user-account',
+		() => {
+			return HeadlessAdminUserImpl.getMyUserAccount();
+		}
+	);
 
 	return (
 		<MarketplaceContext.Provider
 			value={
 				{
 					channel: marketplaceChannel,
+					mutateMyUserAccount: mutate,
 					myUserAccount,
 				} as ContextType
 			}

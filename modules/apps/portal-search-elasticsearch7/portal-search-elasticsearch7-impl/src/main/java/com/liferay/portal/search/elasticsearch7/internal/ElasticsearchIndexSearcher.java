@@ -238,6 +238,7 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 			searchRequest.isBasicFacetSelection());
 
 		searchSearchRequest.putAllFacets(searchContext.getFacets());
+		searchSearchRequest.setCollapse(searchRequest.getCollapse());
 		searchSearchRequest.setFetchSource(searchRequest.getFetchSource());
 		searchSearchRequest.setFetchSourceExcludes(
 			searchRequest.getFetchSourceExcludes());
@@ -528,6 +529,21 @@ public class ElasticsearchIndexSearcher extends BaseIndexSearcher {
 		while (true) {
 			SearchSearchRequest searchSearchRequest = createSearchSearchRequest(
 				searchRequest, searchContext, query);
+
+			if (_elasticsearchConfigurationWrapper.indexMaxResultWindow() <=
+					start) {
+
+				if (_log.isDebugEnabled()) {
+					_log.debug(
+						StringBundler.concat(
+							"Skip search because index max result window ",
+							_elasticsearchConfigurationWrapper.
+								indexMaxResultWindow(),
+							" is less than or equal to ", start));
+				}
+
+				return new HitsImpl();
+			}
 
 			searchSearchRequest.setSize(
 				Math.min(

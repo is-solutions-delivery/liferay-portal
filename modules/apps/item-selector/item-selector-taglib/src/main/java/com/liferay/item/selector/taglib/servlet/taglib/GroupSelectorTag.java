@@ -13,7 +13,6 @@ import com.liferay.portal.kernel.dao.search.SearchPaginationUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.taglib.util.IncludeTag;
 
@@ -58,6 +57,9 @@ public class GroupSelectorTag extends IncludeTag {
 
 		_groups = null;
 		_groupsCount = -1;
+		_groupType = null;
+		_keywords = null;
+		_scopeGroupType = null;
 	}
 
 	@Override
@@ -96,10 +98,7 @@ public class GroupSelectorTag extends IncludeTag {
 
 		Group group = _getGroup(themeDisplay);
 
-		String scopeGroupType = ParamUtil.getString(
-			httpServletRequest, "scopeGroupType");
-
-		if (Validator.isNotNull(scopeGroupType) && groupType.equals("site")) {
+		if (_isScopeGroupType(httpServletRequest) && groupType.equals("site")) {
 			_groups = new ArrayList<>();
 
 			_groups.add(group);
@@ -123,11 +122,9 @@ public class GroupSelectorTag extends IncludeTag {
 			return _groups;
 		}
 
-		String keywords = ParamUtil.getString(httpServletRequest, "keywords");
-
 		List<Group> groups = groupItemSelectorProvider.getGroups(
-			group.getCompanyId(), group.getGroupId(), keywords, startAndEnd[0],
-			startAndEnd[1]);
+			group.getCompanyId(), group.getGroupId(),
+			_getKeywords(httpServletRequest), startAndEnd[0], startAndEnd[1]);
 
 		if (groups == null) {
 			_groups = Collections.emptyList();
@@ -141,10 +138,7 @@ public class GroupSelectorTag extends IncludeTag {
 	}
 
 	private int _getGroupsCount(HttpServletRequest httpServletRequest) {
-		String scopeGroupType = ParamUtil.getString(
-			httpServletRequest, "scopeGroupType");
-
-		if (Validator.isNotNull(scopeGroupType)) {
+		if (_isScopeGroupType(httpServletRequest)) {
 			_groupsCount = 1;
 
 			return _groupsCount;
@@ -166,19 +160,48 @@ public class GroupSelectorTag extends IncludeTag {
 
 		Group group = _getGroup(themeDisplay);
 
-		String keywords = ParamUtil.getString(httpServletRequest, "keywords");
-
 		_groupsCount = groupSelectorProvider.getGroupsCount(
-			group.getCompanyId(), group.getGroupId(), keywords);
+			group.getCompanyId(), group.getGroupId(),
+			_getKeywords(httpServletRequest));
 
 		return _groupsCount;
 	}
 
 	private String _getGroupType(HttpServletRequest httpServletRequest) {
-		return ParamUtil.getString(httpServletRequest, "groupType");
+		if (_groupType != null) {
+			return _groupType;
+		}
+
+		_groupType = ParamUtil.getString(httpServletRequest, "groupType");
+
+		return _groupType;
+	}
+
+	private String _getKeywords(HttpServletRequest httpServletRequest) {
+		if (_keywords != null) {
+			return _keywords;
+		}
+
+		_keywords = ParamUtil.getString(httpServletRequest, "keywords");
+
+		return _keywords;
+	}
+
+	private boolean _isScopeGroupType(HttpServletRequest httpServletRequest) {
+		if (_scopeGroupType != null) {
+			return _scopeGroupType;
+		}
+
+		_scopeGroupType = ParamUtil.getBoolean(
+			httpServletRequest, "scopeGroupType");
+
+		return _scopeGroupType;
 	}
 
 	private List<Group> _groups;
 	private int _groupsCount = -1;
+	private String _groupType;
+	private String _keywords;
+	private Boolean _scopeGroupType;
 
 }

@@ -29,10 +29,6 @@ definition {
 	tearDown {
 		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
-
-		//ACUtils.tearDownAC();
-
 		ACUtils.tearDownDXP();
 
 		if (${testLiferayVirtualInstance} == "true") {
@@ -41,6 +37,8 @@ definition {
 		else {
 			JSONGroup.deleteGroupByName(groupName = "Site Name");
 		}
+
+		ACUtils.tearDownAC();
 	}
 
 	@description = "Story: LRAC-11664 | Automation ID: LRAC-11844 | Test Summary: Check that cancel button does not enable email report"
@@ -168,9 +166,12 @@ definition {
 	}
 
 	@description = "Story: LRAC-11663 | Automation ID: LRAC-11835 | Test Summary: Check that the Email Reports widget appears on the property settings page for all users"
+	@ignore = "true"
 	@priority = 2
 	test CheckEmailReportsAppearsForAllUsers {
 		var emailAddressList = "bryan.cheung@faro.io,michelle.hoshi@faro.io,corbin.murakami@faro.io";
+
+		// The default AC users do not appear in Users and Organizations. The bug will be resolved after LRAC-14468
 
 		task ("Sign in AC as Test Test user") {
 			ACUtils.launchAC();
@@ -337,6 +338,7 @@ definition {
 
 		property test.run.type = "single";
 
+		var analyticsCloudURL = PropsUtil.get("analytics.cloud.url");
 		var reportDetailsNameList = "Workspace,Property";
 		var reportDetailsValueList = "FARO-DEV-liferay,${assignedPropertyName}";
 		var activitiesNameList = "Unique Visitors,Sessions / Visitor,Session Duration,Bounce Rate";
@@ -344,13 +346,11 @@ definition {
 		var emailAddress = "test@liferay.com";
 
 		task ("Launch AC") {
-			var analyticsCloudURL = PropsUtil.get("analytics.cloud.url");
-
-			Open(locator1 = ${analyticsCloudURL});
+			ACUtils.launchAC();
 		}
 
 		task ("Go to admin page") {
-			ACAdmin.goToACAdmin();
+			ACAdmin.goToACAdmin(userScreenNameToResetPassword = "test");
 		}
 
 		task ("Go to Server Administration > Change SMTP Server Port") {
@@ -360,11 +360,7 @@ definition {
 		}
 
 		task ("Navigate to users page") {
-			ProductMenuHelper.expandPanel(panel = "control panel");
-
-			ProductMenuHelper.expandCategory(category = "Users");
-
-			ProductMenuHelper.gotoPortlet(portlet = "Users and Organizations");
+			User.openUsersAdmin(baseURL = ${analyticsCloudURL});
 		}
 
 		task ("Go to user data page") {
@@ -407,7 +403,7 @@ definition {
 		task ("Check that the Full Report link is redirected to the AC page in the correct property") {
 			ACUtils.clickGenericHyperlink(hyperlinkText = "SEE FULL REPORT");
 
-			SelectWindow(locator1 = "title=Analytics Cloud");
+			SelectWindow(value1 = "title=Analytics Cloud");
 
 			if (IsElementPresent(locator1 = "ACLogin#EMAIL_LOGIN_FIELD")) {
 				ACLogin.loginAs(emailAddress = ${emailAddress});
@@ -421,7 +417,7 @@ definition {
 		task ("Check Liferay.com page link") {
 			ACUtils.clickGenericHyperlink(hyperlinkText = "Liferay, Inc.");
 
-			SelectWindow(locator1 = "title=Digital Experience Software Tailored to Your Needs | Liferay");
+			SelectWindow(value1 = "title=Digital Experience Software Tailored to Your Needs | Liferay");
 
 			ACUtils.viewGenericText(textValueList = "Introducing Liferay Experience Cloud");
 
@@ -431,7 +427,7 @@ definition {
 		task ("Check the Contact Support page link") {
 			ACUtils.clickGenericHyperlink(hyperlinkText = "Contact Support");
 
-			SelectWindow(locator1 = "title=Liferay Help Center");
+			SelectWindow(value1 = "title=Liferay Help Center");
 
 			ACUtils.viewGenericText(textValueList = "Help Center,How can we help?");
 
@@ -441,7 +437,7 @@ definition {
 		task ("Check the Learn Liferay page link") {
 			ACUtils.clickGenericHyperlink(hyperlinkText = "Learn Liferay");
 
-			SelectWindow(locator1 = "title=Liferay Learn - Liferay Learn");
+			SelectWindow(value1 = "title=Liferay Learn - Liferay Learn");
 
 			ACUtils.viewGenericText(textValueList = "Welcome to Liferay Docs");
 

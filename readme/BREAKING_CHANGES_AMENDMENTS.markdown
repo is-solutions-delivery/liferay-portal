@@ -29,3 +29,64 @@ so the correct message on **What** section should be
 modules/apps/frontend-taglib/frontend-taglib-clay/src/main/java/com/liferay/frontend/taglib/clay/servlet/taglib/base/BaseClayTag.java
 
 ----
+
+# 678e4379fb055804a2100169b6310319d8f0d07e
+
+Incorrect format on multiple file breaking change
+
+Correct message should be:
+```
+LPS-199164 Move XmlRpcUtil, Success, Fault into impl
+    
+# breaking_change_report
+## What portal-kernel/src/com/liferay/portal/kernel.xmlrpc.Success.java
+XmlRpcUtil related files are moved from portal-kernel into portal-impl.
+## Why
+We are merging portal-kernel into portal-impl.
+## Alternatives
+Make sure to have portal-impl in build dependency and change import statement to use the same classes in portal-impl.
+----
+
+# breaking_change_report
+## What portal-kernel/src/com/liferay/portal/kernel.xmlrpc.Fault.java
+XmlRpcUtil related files are moved from portal-kernel into portal-impl.
+## Why
+We are merging portal-kernel into portal-impl.
+## Alternatives
+Make sure to have portal-impl in build dependency and change import statement to use the same classes in portal-impl.
+----
+
+# breaking_change_report
+## What portal-kernel/src/com/liferay/portal/kernel.xmlrpc.XmlRpcUtil.java
+XmlRpcUtil related files are moved from portal-kernel into portal-impl.
+## Why
+We are merging portal-kernel into portal-impl.
+## Alternatives
+Make sure to have portal-impl in build dependency and change import statement to use the same classes in portal-impl.
+----
+```
+
+----
+
+# ab4a450c1d7ffe215a8d56379c787fb34c1ea41b
+
+Incorrect format on multiple file breaking change
+
+Correct message should be:
+```
+LPS-198859 Remove ThreadLocalDistributor, no usage
+    
+# breaking_change_report
+## What portal-kernel/src/com/liferay/portal/kernel/util/ThreadLocalDistributor.java
+ThreadLocalDistributor is being removed.
+## Why
+ThreadLocalDistributor has no current usage.
+----
+
+# breaking_change_report
+## What portal-kernel/src/com/liferay/portal/kernel/util/ThreadLocalDistributorRegistry.java
+ThreadLocalDistributorRegistry is being removed.
+## Why
+ThreadLocalDistributor has no current usage.
+----
+```

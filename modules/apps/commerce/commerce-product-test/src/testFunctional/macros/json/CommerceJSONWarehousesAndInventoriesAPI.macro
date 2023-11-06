@@ -1,6 +1,49 @@
 definition {
 
-	macro _addWarehouse {
+	@summary = "Default summary"
+	macro _addIncomingQuantity(quantity = null, sku = null, warehouseName = null,) {
+		Variables.assertDefined(parameterList = "${quantity},${sku},${warehouseName}");
+
+		var baseURL = ${baseURL};
+
+		if (!(isSet(baseURL))) {
+			var baseURL = JSONCompany.getPortalURL();
+		}
+
+		if (!(isSet(availabilityDate))) {
+			var availabilityDate = DateUtil.getFormattedCurrentDate("yyyy-MM-dd");
+		}
+
+		if (!(isSet(externalReferenceCode))) {
+			var externalReferenceCode = "";
+		}
+
+		if (!(isSet(uomKey))) {
+			var uomKey = "";
+		}
+
+		var warehouseId = CommerceJSONWarehousesAndInventoriesAPI._getWarehouseId(warehouseName = ${warehouseName});
+		var userLoginInfo = JSONUtil2.formatJSONUser();
+		var curl = '''
+			${baseURL}/o/headless-commerce-admin-inventory/v1.0/warehouses/${warehouseId}/skus/by-sku/${sku}/replenishment-items \
+				-u test@liferay.com:test \
+				-H 'accept: application/json' \
+				-H 'Content-Type: application/json' \
+				-d '{
+					"availabilityDate" : "${availabilityDate}",
+					"externalReferenceCode": "${externalReferenceCode}",
+					"quantity": ${quantity},
+					"unitOfMeasureKey": "${uomKey}"
+				}'
+		''';
+
+		var responseBody = JSONCurlUtil.post(${curl});
+
+		return ${responseBody};
+	}
+
+	@summary = "Default summary"
+	macro _addWarehouse(latitude = null, warehouseName = null, longitude = null) {
 		Variables.assertDefined(parameterList = "${latitude},${longitude},${warehouseName}");
 
 		var baseURL = ${baseURL};
@@ -31,7 +74,8 @@ definition {
 		com.liferay.poshi.runner.util.JSONCurlUtil.post(${curl});
 	}
 
-	macro _addWarehouseItem {
+	@summary = "Default summary"
+	macro _addWarehouseItem(warehouseItemSku = null, warehouseName = null, warehouseItemQuantity = null) {
 		Variables.assertDefined(parameterList = "${warehouseItemSku},${warehouseItemQuantity},${warehouseName}");
 
 		var baseURL = ${baseURL};
@@ -62,7 +106,8 @@ definition {
 		com.liferay.poshi.runner.util.JSONCurlUtil.post(${curl});
 	}
 
-	macro _deleteAllWarehouseItems {
+	@summary = "Default summary"
+	macro _deleteAllWarehouseItems() {
 		var emptyCount = 0;
 		var baseURL = ${baseURL};
 
@@ -122,7 +167,8 @@ definition {
 		}
 	}
 
-	macro _getCommerceWarehouseIds {
+	@summary = "Default summary"
+	macro _getCommerceWarehouseIds(warehouseCount = null) {
 		var baseURL = ${baseURL};
 
 		if (!(isSet(baseURL))) {
@@ -149,7 +195,8 @@ definition {
 		return ${warehouseIds};
 	}
 
-	macro _getCommerceWarehousesCount {
+	@summary = "Default summary"
+	macro _getCommerceWarehousesCount() {
 		var baseURL = ${baseURL};
 
 		if (!(isSet(baseURL))) {
@@ -171,7 +218,8 @@ definition {
 		return ${warehousesCount};
 	}
 
-	macro _getWarehouseId {
+	@summary = "Default summary"
+	macro _getWarehouseId(warehouseCount = null, warehouseName = null) {
 		Variables.assertDefined(parameterList = ${warehouseName});
 
 		var baseURL = ${baseURL};
@@ -202,7 +250,8 @@ definition {
 		return ${warehouseId};
 	}
 
-	macro _getWarehouseItemId {
+	@summary = "Default summary"
+	macro _getWarehouseItemId(productSku = null, uomKey = null, warehouseName = null) {
 		Variables.assertDefined(parameterList = "${productSku},${warehouseName}");
 
 		var baseURL = ${baseURL};
@@ -231,7 +280,8 @@ definition {
 		return ${warehouseItemId};
 	}
 
-	macro _patchWarehouseItem {
+	@summary = "Default summary"
+	macro _patchWarehouseItem(warehouseName = null, productSku = null, uomKey = null) {
 		Variables.assertDefined(parameterList = ${warehouseName});
 
 		var baseURL = ${baseURL};

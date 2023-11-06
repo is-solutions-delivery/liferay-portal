@@ -74,6 +74,7 @@ export function FreeMarkerTemplateEditor({
 		<CodeEditorLocalized
 			CustomSidebarContent={
 				<AutoComplete<ObjectDefinition>
+					disabled={values.system}
 					emptyStateMessage={Liferay.Language.get(
 						'no-entities-were-found'
 					)}
@@ -118,8 +119,10 @@ export function FreeMarkerTemplateEditor({
 			placeholder={`<#--${Liferay.Language.get(
 				'add-elements-from-the-sidebar-to-define-your-template'
 			)}-->`}
+			readOnly={values.system}
 			selectedLocale={selectedLocale}
 			sidebarElements={entityFields}
+			sidebarElementsDisabled={values.system}
 			translations={values.body}
 		/>
 	);

@@ -25,10 +25,6 @@ definition {
 	tearDown {
 		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
-
-		//ACUtils.tearDownAC();
-
 		ACUtils.tearDownDXP();
 
 		if (${testLiferayVirtualInstance} == "true") {
@@ -37,6 +33,8 @@ definition {
 		else {
 			JSONGroup.deleteGroupByName(groupName = "Site Name");
 		}
+
+		ACUtils.tearDownAC();
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8147 | Test Summary: Anonymous individuals are not counted towards usage"
@@ -264,10 +262,10 @@ definition {
 				usageSince = "${percentage} since");
 
 			AssertAttributeValue(
-				attribute1 = "style",
 				key_metricName = "Individuals",
 				locator1 = "ACUsage#USAGE_BAR",
-				value1 = "width: ${percentage};");
+				value1 = "style",
+				value2 = "width: ${percentage};");
 		}
 	}
 
@@ -436,10 +434,10 @@ definition {
 				usageSince = "${percentage} since");
 
 			AssertAttributeValue(
-				attribute1 = "style",
 				key_metricName = "Page Views",
 				locator1 = "ACUsage#USAGE_BAR",
-				value1 = "width: ${percentage};");
+				value1 = "style",
+				value2 = "width: ${percentage};");
 		}
 	}
 

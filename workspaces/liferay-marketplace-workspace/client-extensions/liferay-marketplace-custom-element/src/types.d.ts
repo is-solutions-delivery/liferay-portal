@@ -234,8 +234,6 @@ interface OrderType {
 	name: {[key: string]: string};
 }
 
-type PaymentMethodMode = 'PayPal';
-
 type PaymentMethodSelector = 'order' | 'pay' | 'trial' | 'free';
 
 interface PlacedOrder {
@@ -458,6 +456,9 @@ type Industries = {
 };
 
 type UserForm = {
+	accountQuantity: number;
+	accountSelected: Account | undefined;
+	accounts: Account[];
 	agreeToTermsAndConditions: boolean;
 	companyName: string;
 	emailAddress: string;
@@ -489,8 +490,4 @@ type APIResponse<Query = any> = {
 	page: number;
 	pageSize: number;
 	totalCount: number;
-};
-
-type Subscription = {
-	subscription: string;
 };

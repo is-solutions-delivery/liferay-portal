@@ -70,7 +70,31 @@ export default function render(
 				destroy: () => {
 					container.classList.remove('lfr-tooltip-scope');
 
-					ReactDOM.unmountComponentAtNode(container);
+					/**
+					 * When navigating to another page, this error can be thrown
+					 * when a component uses a React portal:
+					 *
+					 * "Uncaught DOMException: Failed to execute 'removeChild'
+					 * on 'Node': The node to be removed is not a child of this
+					 * node."
+					 *
+					 * This is because the contents of the React portal can be
+					 * placed in an additional senna surface <div> so when
+					 * `container.removeChild(child)` is called, this error is
+					 * thrown. (`container` being document.body and `child`
+					 * being the portal contents)
+					 *
+					 * This temporarily catches this error until a better fix
+					 * can be found.
+					 */
+					try {
+						ReactDOM.unmountComponentAtNode(container);
+					}
+					catch (error) {
+						if (process.env.NODE_ENV === 'development') {
+							console.error(error);
+						}
+					}
 				},
 			},
 			{
@@ -95,9 +119,9 @@ export default function render(
 			if (children.length) {
 				renderData.children = children;
 			}
-
-			delete renderData.hasBodyContent;
 		}
+
+		delete renderData.hasBodyContent;
 
 		// eslint-disable-next-line @liferay/portal/no-react-dom-render
 		ReactDOM.render(

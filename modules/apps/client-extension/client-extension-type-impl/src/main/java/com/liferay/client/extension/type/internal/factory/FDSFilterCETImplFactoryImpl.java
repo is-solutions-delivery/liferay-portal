@@ -62,7 +62,8 @@ public class FDSFilterCETImplFactoryImpl
 
 		if (Validator.isNull(fdsFilterCET.getURL())) {
 			throw new ClientExtensionEntryTypeSettingsException(
-				"please-enter-at-least-one-url");
+				"At least one JavaScript URL is required",
+				"please-enter-at-least-one-javascript-url");
 		}
 	}
 

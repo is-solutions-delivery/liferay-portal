@@ -16,7 +16,7 @@ catch (error) {
 	console.error(error);
 }
 
-function useSpringBootData({setData, timeout = -1, urlPath}) {
+function useSpringBootData({setData, urlPath}) {
 	useEffect(() => {
 		oAuth2Client
 			?.fetch(urlPath)
@@ -29,21 +29,6 @@ function useSpringBootData({setData, timeout = -1, urlPath}) {
 				console.log(error);
 			});
 	}, [setData, urlPath]);
-
-	if (timeout > 0) {
-		setTimeout(() => {
-			oAuth2Client
-				?.fetch(urlPath)
-				.then((response) => response.text())
-				.then((data) => {
-					setData(JSON.parse(data));
-				})
-				.catch((error) => {
-					// eslint-disable-next-line no-console
-					console.log(error);
-				});
-		}, timeout);
-	}
 }
 
 export default useSpringBootData;

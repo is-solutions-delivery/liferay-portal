@@ -49,11 +49,9 @@ definition {
 
 		PublicationsNavigator.openPublicationsAdmin();
 
-		LexiconEntry.changeDisplayStyle(displayStyle = "list");
-
 		AssertTextEquals(
 			key_publicationName = "Publication Name",
-			locator1 = "Publications#LIST_OUT_OF_DATE_STATUS",
+			locator1 = "Publications#OUT_OF_DATE_STATUS",
 			value1 = "Out of Date");
 	}
 
@@ -65,11 +63,9 @@ definition {
 
 		PublicationsNavigator.openPublicationsAdmin();
 
-		LexiconEntry.changeDisplayStyle(displayStyle = "list");
-
 		AssertTextEquals(
 			key_publicationName = "Publication Name",
-			locator1 = "Publications#LIST_OUT_OF_DATE_STATUS",
+			locator1 = "Publications#OUT_OF_DATE_STATUS",
 			value1 = "Out of Date");
 	}
 
@@ -247,15 +243,13 @@ definition {
 
 		PublicationsTemplate.viewPublicationTemplate(templateName = "Template Name");
 
-		Publications.createNewPublicationWithTemplate(
-			gotoPublicationsAdmin = "true",
-			publicationDescription = "Publications Description test",
-			publicationName = "Publication Name test",
-			templateName = "Template Name");
+		PublicationsNavigator.openPublicationsAdmin();
 
 		PublicationsNavigator.gotoPublicationEllipsisItem(
 			menuItem = "Invite Users",
 			publicationName = "Publication Name test");
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
 		Publications.viewInvitedUser(
 			publicationRole = "Editor",
@@ -264,6 +258,14 @@ definition {
 		Publications.viewInvitedUser(
 			publicationRole = "Viewer",
 			userInvite = "userea2@liferay.com");
+
+		PublicationsNavigator.openPublicationsAdmin();
+
+		Publications.createNewPublicationWithTemplate(
+			gotoPublicationsAdmin = "true",
+			publicationDescription = "Publications Description test",
+			publicationName = "Publication Name test",
+			templateName = "Template Name");
 	}
 
 }

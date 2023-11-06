@@ -8,12 +8,25 @@ package com.liferay.search.experiences.internal.blueprint.search.request.enhance
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.search.collapse.CollapseBuilderFactory;
+import com.liferay.portal.search.collapse.InnerHitBuilderFactory;
+import com.liferay.portal.search.internal.collapse.CollapseBuilderFactoryImpl;
+import com.liferay.portal.search.internal.collapse.InnerHitBuilderFactoryImpl;
+import com.liferay.portal.search.internal.geolocation.GeoBuildersImpl;
+import com.liferay.portal.search.internal.query.QueriesImpl;
+import com.liferay.portal.search.internal.script.ScriptsImpl;
 import com.liferay.portal.search.internal.searcher.SearchRequestBuilderFactoryImpl;
+import com.liferay.portal.search.internal.sort.SortsImpl;
+import com.liferay.portal.search.searcher.SearchRequest;
 import com.liferay.portal.search.searcher.SearchRequestBuilder;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
+import com.liferay.search.experiences.internal.blueprint.query.QueryConverter;
+import com.liferay.search.experiences.internal.blueprint.script.ScriptConverter;
 import com.liferay.search.experiences.internal.blueprint.search.request.body.contributor.AdvancedSXPSearchRequestBodyContributor;
+import com.liferay.search.experiences.internal.blueprint.sort.SortConverter;
 import com.liferay.search.experiences.rest.dto.v1_0.AdvancedConfiguration;
+import com.liferay.search.experiences.rest.dto.v1_0.Collapse;
 import com.liferay.search.experiences.rest.dto.v1_0.Configuration;
 
 import java.util.Arrays;
@@ -39,17 +52,46 @@ public class AdvancedSXPSearchRequestBodyContributorTest {
 	@Before
 	public void setUp() throws Exception {
 		_advancedSXPSearchRequestBodyContributor =
-			new AdvancedSXPSearchRequestBodyContributor();
+			new AdvancedSXPSearchRequestBodyContributor(
+				_collapseBuilderFactory, _innerHitBuilderFactory,
+				_sortConverter);
+	}
 
-		SearchRequestBuilderFactory searchRequestBuilderFactory =
-			new SearchRequestBuilderFactoryImpl();
+	@Test
+	public void testCollapse() {
+		Configuration configuration = new Configuration();
 
-		_searchRequestBuilder = searchRequestBuilderFactory.builder();
+		AdvancedConfiguration advancedConfiguration =
+			new AdvancedConfiguration();
+
+		Collapse collapse = new Collapse();
+
+		collapse.setField("entryClassPK");
+
+		advancedConfiguration.setCollapse(collapse);
+
+		configuration.setAdvancedConfiguration(advancedConfiguration);
+
+		SearchRequestBuilder searchRequestBuilder =
+			_searchRequestBuilderFactory.builder();
+
+		_advancedSXPSearchRequestBodyContributor.contribute(
+			configuration, searchRequestBuilder, null);
+
+		SearchRequest searchRequest = searchRequestBuilder.build();
+
+		com.liferay.portal.search.collapse.Collapse searchRequestCollapse =
+			searchRequest.getCollapse();
+
+		Assert.assertEquals("entryClassPK", searchRequestCollapse.getField());
 	}
 
 	@Test
 	public void testStoredFields() {
 		Configuration configuration = new Configuration();
+
+		SearchRequestBuilder searchRequestBuilder =
+			_searchRequestBuilderFactory.builder();
 
 		AdvancedConfiguration advancedConfiguration =
 			new AdvancedConfiguration();
@@ -63,10 +105,10 @@ public class AdvancedSXPSearchRequestBodyContributorTest {
 		configuration.setAdvancedConfiguration(advancedConfiguration);
 
 		_advancedSXPSearchRequestBodyContributor.contribute(
-			configuration, _searchRequestBuilder, null);
+			configuration, searchRequestBuilder, null);
 
-		SearchContext searchContext =
-			_searchRequestBuilder.withSearchContextGet(Function.identity());
+		SearchContext searchContext = searchRequestBuilder.withSearchContextGet(
+			Function.identity());
 
 		QueryConfig queryConfig = searchContext.getQueryConfig();
 
@@ -76,6 +118,14 @@ public class AdvancedSXPSearchRequestBodyContributorTest {
 
 	private AdvancedSXPSearchRequestBodyContributor
 		_advancedSXPSearchRequestBodyContributor;
-	private SearchRequestBuilder _searchRequestBuilder;
+	private final CollapseBuilderFactory _collapseBuilderFactory =
+		new CollapseBuilderFactoryImpl();
+	private final InnerHitBuilderFactory _innerHitBuilderFactory =
+		new InnerHitBuilderFactoryImpl();
+	private final SearchRequestBuilderFactory _searchRequestBuilderFactory =
+		new SearchRequestBuilderFactoryImpl();
+	private final SortConverter _sortConverter = new SortConverter(
+		new GeoBuildersImpl(), new QueryConverter(new QueriesImpl()),
+		new ScriptConverter(new ScriptsImpl()), new SortsImpl());
 
 }

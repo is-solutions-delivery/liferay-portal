@@ -71,24 +71,29 @@ public class CustomElementCETImplFactoryImpl
 			for (String cssURL : cssURLs.split(StringPool.NEW_LINE)) {
 				if (!Validator.isUrl(cssURL, true)) {
 					throw new ClientExtensionEntryTypeSettingsException(
-						"css-url-x-is-invalid", cssURL);
+						"Invalid CSS URL: " + cssURL, "css-url-x-is-invalid",
+						cssURL);
 				}
 			}
 		}
 
+		String friendlyURLMapping = newCustomElementCET.getFriendlyURLMapping();
+
 		Matcher matcher = _friendlyURLMappingPattern.matcher(
-			newCustomElementCET.getFriendlyURLMapping());
+			friendlyURLMapping);
 
 		if (!matcher.matches()) {
 			throw new ClientExtensionEntryTypeSettingsException(
-				"please-enter-a-valid-friendly-url-mapping");
+				"Invalid friendly URL mapping: " + friendlyURLMapping,
+				"friendly-url-mapping-x-is-invalid", friendlyURLMapping);
 		}
 
 		String htmlElementName = newCustomElementCET.getHTMLElementName();
 
 		if (Validator.isNull(htmlElementName)) {
 			throw new ClientExtensionEntryTypeSettingsException(
-				"html-element-name-is-empty");
+				"HTML element name is null",
+				"please-enter-an-html-element-name");
 		}
 
 		char[] htmlElementNameCharArray = htmlElementName.toCharArray();
@@ -97,6 +102,7 @@ public class CustomElementCETImplFactoryImpl
 			!Character.isLowerCase(htmlElementNameCharArray[0])) {
 
 			throw new ClientExtensionEntryTypeSettingsException(
+				"HTML element name must start with a lowercase letter",
 				"html-element-name-must-start-with-a-lowercase-letter");
 		}
 
@@ -113,17 +119,20 @@ public class CustomElementCETImplFactoryImpl
 			}
 			else {
 				throw new ClientExtensionEntryTypeSettingsException(
+					"HTML element name contains an invalid character: " + c,
 					"html-element-name-contains-invalid-character-x", c);
 			}
 		}
 
 		if (!containsDash) {
 			throw new ClientExtensionEntryTypeSettingsException(
+				"HTML element name must contain at least one hyphen",
 				"html-element-name-must-contain-at-least-one-hyphen");
 		}
 
 		if (_reservedHTMLElementNames.contains(htmlElementName)) {
 			throw new ClientExtensionEntryTypeSettingsException(
+				"Reserved custom element HTML element name: " + htmlElementName,
 				"x-is-a-reserved-html-element-name", htmlElementName);
 		}
 
@@ -131,13 +140,15 @@ public class CustomElementCETImplFactoryImpl
 
 		if (Validator.isNull(urls)) {
 			throw new ClientExtensionEntryTypeSettingsException(
-				"please-enter-at-least-one-url");
+				"At least one JavaScript URL is required",
+				"please-enter-at-least-one-javascript-url");
 		}
 
 		for (String url : urls.split(StringPool.NEW_LINE)) {
 			if (!Validator.isUrl(url, true)) {
 				throw new ClientExtensionEntryTypeSettingsException(
-					"url-x-is-invalid", url);
+					"Invalid JavaScript URL: " + url,
+					"javascript-url-x-is-invalid", url);
 			}
 		}
 
@@ -149,6 +160,7 @@ public class CustomElementCETImplFactoryImpl
 					oldCustomElementCET.isInstanceable()) {
 
 				throw new ClientExtensionEntryTypeSettingsException(
+					"The instanceable value cannot be changed",
 					"the-instanceable-value-cannot-be-changed");
 			}
 		}

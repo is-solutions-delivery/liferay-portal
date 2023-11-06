@@ -63,10 +63,6 @@ definition {
 	tearDown {
 		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
-
-		//ACUtils.tearDownAC();
-
 		ACUtils.tearDownDXP();
 
 		if (${testLiferayVirtualInstance} == "true") {
@@ -75,6 +71,8 @@ definition {
 		else {
 			JSONGroup.deleteGroupByName(groupName = "Site Name");
 		}
+
+		ACUtils.tearDownAC();
 	}
 
 	@description = "Feature ID: LRAC-7943 | Automation ID: LRAC-10223 | Test Summary: Able to access hidden event"
@@ -410,7 +408,7 @@ definition {
 		task ("Login as a non-admin user and switch the property in AC") {
 			var analyticsCloudURL = PropsUtil.get("analytics.cloud.url");
 
-			Open(locator1 = ${analyticsCloudURL});
+			Open(value1 = ${analyticsCloudURL});
 
 			if (IsElementNotPresent(locator1 = "ACLogin#EMAIL_LOGIN_FIELD")) {
 				ACWorkspace.signOut();

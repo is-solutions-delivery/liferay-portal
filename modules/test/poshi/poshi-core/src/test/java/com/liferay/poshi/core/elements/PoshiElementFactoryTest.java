@@ -119,7 +119,7 @@ public class PoshiElementFactoryTest {
 			"PoshiScriptMacro.macro");
 
 		int[] expectedLineNumbers = {
-			4, 9, 11, 17, 19, 29, 30, 31, 33, 35, 39, 43, 47, 51, 55, 59
+			5, 11, 13, 19, 21, 31, 32, 33, 35, 37, 41, 45, 49, 53, 57, 61
 		};
 
 		int i = 0;
@@ -212,6 +212,32 @@ public class PoshiElementFactoryTest {
 	}
 
 	@Test
+	public void testPoshiSignatureScriptFunctionToXML() throws Exception {
+		String actualFileName = "PoshiSignatureScript.function";
+		String expectedFileName = "PoshiSignatureSyntax.function";
+
+		PoshiElement actualElement = _getPoshiElement(actualFileName);
+		Element expectedElement = _getDom4JElement(expectedFileName);
+
+		_assertEqualElements(
+			actualFileName, actualElement, expectedFileName, expectedElement,
+			"Poshi script syntax does not translate to Poshi XML");
+	}
+
+	@Test
+	public void testPoshiSignatureScriptMacroToXML() throws Exception {
+		String actualFileName = "PoshiSignatureScript.macro";
+		String expectedFileName = "PoshiSignatureSyntax.macro";
+
+		PoshiElement actualElement = _getPoshiElement(actualFileName);
+		Element expectedElement = _getDom4JElement(expectedFileName);
+
+		_assertEqualElements(
+			actualFileName, actualElement, expectedFileName, expectedElement,
+			"Poshi script syntax does not translate to Poshi XML");
+	}
+
+	@Test
 	public void testPoshiXMLFunctionToPoshiScript() throws Exception {
 		String expectedFileName = "PoshiScriptFunction.function";
 
@@ -263,6 +289,40 @@ public class PoshiElementFactoryTest {
 		String actualContent = poshiElement.toPoshiScript();
 
 		String expectedFileName = "PoshiScriptMacro.macro";
+
+		String expectedContent = FileUtil.read(_getFile(expectedFileName));
+
+		_assertEqualStrings(
+			actualFileName, actualContent, expectedFileName, expectedContent,
+			"Poshi XML syntax does not translate to Poshi script syntax");
+	}
+
+	@Test
+	public void testPoshiXMLSignatureFunctionToPoshiScript() throws Exception {
+		String actualFileName = "PoshiSignatureSyntax.function";
+
+		PoshiElement poshiElement = _getPoshiElement(actualFileName);
+
+		String actualContent = poshiElement.toPoshiScript();
+
+		String expectedFileName = "PoshiSignatureScript.function";
+
+		String expectedContent = FileUtil.read(_getFile(expectedFileName));
+
+		_assertEqualStrings(
+			actualFileName, actualContent, expectedFileName, expectedContent,
+			"Poshi XML syntax does not translate to Poshi script syntax");
+	}
+
+	@Test
+	public void testPoshiXMLSignatureMacroToPoshiScript() throws Exception {
+		String actualFileName = "PoshiSignatureSyntax.macro";
+
+		PoshiElement poshiElement = _getPoshiElement(actualFileName);
+
+		String actualContent = poshiElement.toPoshiScript();
+
+		String expectedFileName = "PoshiSignatureScript.macro";
 
 		String expectedContent = FileUtil.read(_getFile(expectedFileName));
 

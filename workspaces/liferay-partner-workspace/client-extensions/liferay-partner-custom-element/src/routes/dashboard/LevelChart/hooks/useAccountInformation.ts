@@ -26,6 +26,7 @@ export default function useAccountInformation() {
 		aRRAmountTotal: 0,
 		growthArrTotal: 0,
 		renewalArrTotal: 0,
+		targetArr: 0,
 	});
 	const [checkedProperties, setCheckedProperties] = useState({
 		arr: false,
@@ -50,7 +51,7 @@ export default function useAccountInformation() {
 
 	const {data: accountUserAccounts} = useGet<LiferayItems<UserAccount[]>>(
 		account?.externalReferenceCode &&
-			`/o/${LiferayAPIs.HEADERLESS_ADMIN_USER}/accounts/by-external-reference-code/${account.externalReferenceCode}/user-accounts`
+			`/o/${LiferayAPIs.HEADERLESS_ADMIN_USER}/accounts/by-external-reference-code/${account.externalReferenceCode}/user-accounts?pageSize=-1`
 	);
 
 	const {
@@ -91,23 +92,28 @@ export default function useAccountInformation() {
 
 	useEffect(() => {
 		const getARRValues = (
-			opportunitiesData: LiferayItems<Opportunity[]>
+			opportunitiesData: LiferayItems<Opportunity[]>,
+			accountData: AccountEntry
 		) => {
 			const aRRResults = opportunitiesData.items.reduce(
 				(aRRAccumulator, data: Opportunity) => ({
 					aRRAmountTotal:
-						aRRAccumulator.aRRAmountTotal +
-						data.growthArr +
-						data.renewalArr,
+						(Number(aRRAccumulator.aRRAmountTotal) || 0) +
+						(Number(data.growthArr) || 0) +
+						(Number(data.renewalArr) || 0),
 					growthArrTotal:
-						aRRAccumulator.growthArrTotal + data.growthArr,
+						(Number(aRRAccumulator.growthArrTotal) || 0) +
+						(Number(data.growthArr) || 0),
 					renewalArrTotal:
-						aRRAccumulator.renewalArrTotal + data.renewalArr,
+						(Number(aRRAccumulator.renewalArrTotal) || 0) +
+						(Number(data.renewalArr) || 0),
+					targetArr: Number(accountData.targetArr) || 0,
 				}),
 				{
 					aRRAmountTotal: 0,
 					growthArrTotal: 0,
 					renewalArrTotal: 0,
+					targetArr: 0,
 				}
 			);
 
@@ -231,7 +237,7 @@ export default function useAccountInformation() {
 			accountUserAccounts &&
 			partnerLevel
 		) {
-			const aRRResults = getARRValues(opportunities);
+			const aRRResults = getARRValues(opportunities, account);
 
 			const {headcount, properties} = formatCheckedProperties(
 				aRRResults,

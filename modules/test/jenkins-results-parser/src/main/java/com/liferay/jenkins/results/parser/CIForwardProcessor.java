@@ -113,9 +113,24 @@ public class CIForwardProcessor {
 
 						_pullRequest.close();
 
+						StringBuilder sb = new StringBuilder();
+
+						sb.append("Original Pull Request URL: ");
+						sb.append(_pullRequest.getURL());
+						sb.append("\nNew Pull Request URL: ");
+						sb.append(pullRequestURL);
+
+						NotificationUtil.sendSlackNotification(
+							sb.toString(), "#ci-notifications",
+							"Pull Request Successfully Forwarded.");
+
 						return pullRequestURL;
 					}
 					catch (Exception exception) {
+						if (exception instanceof RuntimeException) {
+							throw (RuntimeException)exception;
+						}
+
 						throw new RuntimeException(exception);
 					}
 				}
@@ -134,8 +149,41 @@ public class CIForwardProcessor {
 			try {
 				forwardedPullRequestURL = retryable.executeWithRetries();
 			}
+			catch (GitHubSecondaryRateLimitRuntimeException
+						gitHubSecondaryRateLimitRuntimeException) {
+
+				StringBuilder sb = new StringBuilder();
+
+				sb.append("Secondary rate limit exceeded\n");
+				sb.append("Pull Request URL: ");
+				sb.append(_pullRequest.getURL());
+				sb.append("\nConsole log URL: ");
+				sb.append(_consoleLogURL);
+
+				NotificationUtil.sendSlackNotification(
+					sb.toString(), "#ci-notifications", ":liferay-ci:",
+					"Unable to forward pull request. ", "Liferay CI");
+
+				throw new GitHubSecondaryRateLimitRuntimeException(
+					gitHubSecondaryRateLimitRuntimeException.getGitHubApiUrl(),
+					gitHubSecondaryRateLimitRuntimeException.
+						getRetryAfterSeconds(),
+					sb.toString(), gitHubSecondaryRateLimitRuntimeException);
+			}
 			catch (Exception exception) {
 				exception.printStackTrace();
+
+				StringBuilder sb = new StringBuilder();
+
+				sb.append("Unknown exception\n");
+				sb.append("Pull Request URL: ");
+				sb.append(_pullRequest.getURL());
+				sb.append("\nConsole log URL: ");
+				sb.append(_consoleLogURL);
+
+				NotificationUtil.sendSlackNotification(
+					sb.toString(), "#ci-notifications", ":liferay-ci:",
+					"Unable to forward pull request", "Liferay CI");
 
 				_pullRequest.addComment(_getFailureCommentBody());
 			}
@@ -151,6 +199,20 @@ public class CIForwardProcessor {
 
 			throw new RuntimeException(
 				"Unable to forward pull request", exception);
+		}
+
+		PullRequest forwardedPullRequest = new PullRequest(
+			forwardedPullRequestURL);
+
+		try {
+			for (String suiteTestResultGitHubComment :
+					_getSuiteTestResultGitHubComments()) {
+
+				forwardedPullRequest.addComment(suiteTestResultGitHubComment);
+			}
+		}
+		catch (IOException ioException) {
+			ioException.printStackTrace();
 		}
 
 		if (!JenkinsResultsParserUtil.isNullOrEmpty(forwardedPullRequestURL)) {
@@ -257,25 +319,12 @@ public class CIForwardProcessor {
 	private String _getCIForwardPullRequestInitialComment() throws IOException {
 		StringBuilder sb = new StringBuilder();
 
-		JSONObject pullRequestJSONObject = _pullRequest.getJSONObject();
-
-		String pullRequestBody = pullRequestJSONObject.optString("body");
+		String pullRequestBody = _pullRequest.getBody();
 
 		if (!pullRequestBody.isEmpty()) {
 			sb.append("\n");
 			sb.append("Original pull request comment:\n");
 			sb.append(pullRequestBody);
-			sb.append("\n\n\n");
-		}
-
-		Set<String> suiteTestResultGithubComments =
-			_getSuiteTestResultGithubComments();
-
-		for (String suiteTestResultGithubComment :
-				suiteTestResultGithubComments) {
-
-			sb.append("\n\n\n");
-			sb.append(suiteTestResultGithubComment);
 		}
 
 		return sb.toString();
@@ -510,8 +559,8 @@ public class CIForwardProcessor {
 		return sb.toString();
 	}
 
-	private Set<String> _getSuiteTestResultGithubComments() throws IOException {
-		Set<String> suiteTestResultGithubComments = new HashSet<>();
+	private Set<String> _getSuiteTestResultGitHubComments() throws IOException {
+		Set<String> suiteTestResultGitHubComments = new HashSet<>();
 
 		Set<String> testSuiteNames = new HashSet<>();
 
@@ -553,13 +602,13 @@ public class CIForwardProcessor {
 					continue;
 				}
 
-				suiteTestResultGithubComments.add(commentBody);
+				suiteTestResultGitHubComments.add(commentBody);
 
 				break;
 			}
 		}
 
-		return suiteTestResultGithubComments;
+		return suiteTestResultGitHubComments;
 	}
 
 	private String _getUnsuccessfulCommentBody() throws IOException {

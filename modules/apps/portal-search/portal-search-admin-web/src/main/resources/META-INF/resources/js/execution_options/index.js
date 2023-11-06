@@ -10,42 +10,10 @@ import {ClayRadio, ClayRadioGroup} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import ClaySticker from '@clayui/sticker';
 import {ClayTooltipProvider} from '@clayui/tooltip';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 
+import {EXECUTION_MODES, SCOPES} from '../constants';
 import InstanceSelector from './InstanceSelector';
-
-const EXECUTE_BUTTON_QUERY_SELECTOR = '.save-server-button';
-
-const EXECUTION_MODES = {
-	CONCURRENT: {
-		description: Liferay.Language.get(
-			'reindex-mode-concurrent-description'
-		),
-		label: Liferay.Language.get('concurrent'),
-		showBetaBadge: true,
-		symbol: 'change-list',
-		value: 'concurrent',
-	},
-	FULL: {
-		description: Liferay.Language.get('reindex-mode-full-description'),
-		label: Liferay.Language.get('full'),
-		showBetaBadge: false,
-		symbol: 'globe-lines',
-		value: 'full',
-	},
-	SYNC: {
-		description: Liferay.Language.get('reindex-mode-sync-description'),
-		label: Liferay.Language.get('sync'),
-		showBetaBadge: true,
-		symbol: 'reload',
-		value: 'sync',
-	},
-};
-
-const SCOPES = {
-	ALL: 'all',
-	SELECTED: 'selected',
-};
 
 /**
  * Options on the left of the Index Actions page that affect the reindex
@@ -56,58 +24,30 @@ const SCOPES = {
  * 	- Execution Mode: Value is submitted as `executionMode`.
  */
 function ExecutionOptions({
-	initialCompanyIds = [],
-	initialExecutionMode,
-	initialScope,
-	isConcurrentModeSupported,
+	concurrentModeSupported,
+	executionMode,
+	executionScope,
+	onExecutionModeChange,
+	onExecutionScopeChange,
+	onSelectedCompanyIdsChange,
 	portletNamespace,
+	selectedCompanyIds = [],
 	virtualInstances = [],
 }) {
-	const [executionMode, setExecutionMode] = useState(
-		initialExecutionMode || EXECUTION_MODES.FULL.value
-	);
 	const [
 		executionModeDropdownActive,
 		setExecutionModeDropdownActive,
 	] = useState(false);
-	const [selected, setSelected] = useState(initialCompanyIds);
-	const [scope, setScope] = useState(initialScope || SCOPES.ALL);
 
 	const alignElementRef = useRef();
 
-	/**
-	 * Disables execute buttons with the attribute `data-concurrent-disabled`
-	 * if Concurrent execution mode is selected.
-	 */
-	useEffect(() => {
-		const executeButtonsElement = document.querySelectorAll(
-			EXECUTE_BUTTON_QUERY_SELECTOR
-		);
-
-		executeButtonsElement.forEach((element) => {
-			if (
-				executionMode === EXECUTION_MODES.CONCURRENT.value &&
-				element.hasAttribute('data-concurrent-disabled')
-			) {
-				element.classList.add('disabled');
-			}
-			else {
-				element.classList.remove('disabled');
-			}
-		});
-	}, [executionMode]);
-
 	const _handleExecutionModeChange = (mode) => {
-		setExecutionMode(mode);
+		onExecutionModeChange(mode);
 		setExecutionModeDropdownActive(false);
 	};
 
 	const _handleExecutionModeDropdownChange = () =>
 		setExecutionModeDropdownActive(!executionModeDropdownActive);
-
-	const _handleScopeChange = (value) => {
-		setScope(value);
-	};
 
 	return (
 		<div className="execution-scope-sheet sheet sheet-lg">
@@ -115,7 +55,7 @@ function ExecutionOptions({
 				{Liferay.Language.get('configuration')}
 			</h2>
 
-			{isConcurrentModeSupported && (
+			{concurrentModeSupported && (
 				<div className="c-mb-1 sheet-section">
 					<div
 						className="sheet-subtitle text-secondary"
@@ -245,8 +185,8 @@ function ExecutionOptions({
 				<ClayRadioGroup
 					className="c-pb-2"
 					name={`${portletNamespace}scope`}
-					onChange={_handleScopeChange}
-					value={scope}
+					onChange={onExecutionScopeChange}
+					value={executionScope}
 				>
 					<ClayRadio
 						label={Liferay.Language.get('all-instances')}
@@ -259,10 +199,10 @@ function ExecutionOptions({
 					/>
 				</ClayRadioGroup>
 
-				{scope === SCOPES.SELECTED && (
+				{executionScope === SCOPES.SELECTED && (
 					<InstanceSelector
-						selected={selected}
-						setSelected={setSelected}
+						onSelectedChange={onSelectedCompanyIdsChange}
+						selected={selectedCompanyIds}
 						virtualInstances={virtualInstances}
 					/>
 				)}
@@ -271,9 +211,9 @@ function ExecutionOptions({
 					name={`${portletNamespace}companyIds`}
 					type="hidden"
 					value={
-						scope === SCOPES.ALL
-							? virtualInstances.map(({id}) => id).toString()
-							: selected.toString()
+						executionScope === SCOPES.ALL
+							? virtualInstances.map(({id}) => id)?.toString()
+							: selectedCompanyIds.toString()
 					}
 				/>
 			</div>

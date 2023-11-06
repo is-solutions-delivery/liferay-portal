@@ -97,13 +97,13 @@ public class ObjectEntryResourceImpl extends BaseObjectEntryResourceImpl {
 
 			if (StringUtil.equalsIgnoreCase(createStrategy, "INSERT")) {
 				objectEntryUnsafeFunction = objectEntry -> postScopeScopeKey(
-					(String)parameters.get("scopeKey"), objectEntry);
+					_getScopeKey(parameters), objectEntry);
 			}
 
 			if (StringUtil.equalsIgnoreCase(createStrategy, "UPSERT")) {
 				objectEntryUnsafeFunction =
 					objectEntry -> putScopeScopeKeyByExternalReferenceCode(
-						(String)parameters.get("scopeKey"),
+						_getScopeKey(parameters),
 						objectEntry.getExternalReferenceCode(), objectEntry);
 			}
 
@@ -210,17 +210,10 @@ public class ObjectEntryResourceImpl extends BaseObjectEntryResourceImpl {
 			_objectEntryManagerRegistry.getObjectEntryManager(
 				_objectDefinition.getStorageType());
 
-		String filterString = null;
-
-		if (contextHttpServletRequest != null) {
-			filterString = ParamUtil.getString(
-				contextHttpServletRequest, "filter");
-		}
-
 		return objectEntryManager.getObjectEntries(
 			contextCompany.getCompanyId(), _objectDefinition, null, aggregation,
-			_getDTOConverterContext(null), filterString, pagination, search,
-			sorts);
+			_getDTOConverterContext(null), _getFilterString(), pagination,
+			search, sorts);
 	}
 
 	@Override
@@ -262,8 +255,7 @@ public class ObjectEntryResourceImpl extends BaseObjectEntryResourceImpl {
 
 		return objectEntryManager.getObjectEntries(
 			contextCompany.getCompanyId(), _objectDefinition, scopeKey,
-			aggregation, _getDTOConverterContext(null),
-			ParamUtil.getString(contextHttpServletRequest, "filter"),
+			aggregation, _getDTOConverterContext(null), _getFilterString(),
 			pagination, search, sorts);
 	}
 
@@ -511,7 +503,7 @@ public class ObjectEntryResourceImpl extends BaseObjectEntryResourceImpl {
 
 		if (objectScopeProvider.isGroupAware()) {
 			return getScopeScopeKeyPage(
-				(String)parameters.get("scopeKey"),
+				_getScopeKey(parameters),
 				Boolean.parseBoolean((String)parameters.get("flatten")), search,
 				null, filter, pagination, sorts);
 		}
@@ -569,6 +561,14 @@ public class ObjectEntryResourceImpl extends BaseObjectEntryResourceImpl {
 			_dtoConverterRegistry, contextHttpServletRequest, objectEntryId,
 			contextAcceptLanguage.getPreferredLocale(), contextUriInfo,
 			contextUser);
+	}
+
+	private String _getFilterString() {
+		if (contextHttpServletRequest == null) {
+			return null;
+		}
+
+		return ParamUtil.getString(contextHttpServletRequest, "filter");
 	}
 
 	private long _getPrimaryKey(
@@ -630,6 +630,18 @@ public class ObjectEntryResourceImpl extends BaseObjectEntryResourceImpl {
 		}
 
 		return objectEntry;
+	}
+
+	private String _getScopeKey(Map<String, Serializable> parameters) {
+		if (parameters.containsKey("scopeKey")) {
+			return String.valueOf(parameters.get("scopeKey"));
+		}
+
+		if (parameters.containsKey("siteId")) {
+			return String.valueOf(parameters.get("siteId"));
+		}
+
+		return null;
 	}
 
 	private void _loadObjectDefinition(Map<String, Serializable> parameters)

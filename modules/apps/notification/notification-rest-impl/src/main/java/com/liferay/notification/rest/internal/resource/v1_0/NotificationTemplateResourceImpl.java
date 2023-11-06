@@ -311,12 +311,18 @@ public class NotificationTemplateResourceImpl
 							getNotificationTemplateId())
 				).put(
 					"delete",
-					addAction(
-						ActionKeys.DELETE, "deleteNotificationTemplate",
-						com.liferay.notification.model.NotificationTemplate.
-							class.getName(),
-						serviceBuilderNotificationTemplate.
-							getNotificationTemplateId())
+					() -> {
+						if (serviceBuilderNotificationTemplate.isSystem()) {
+							return null;
+						}
+
+						return addAction(
+							ActionKeys.DELETE, "deleteNotificationTemplate",
+							com.liferay.notification.model.NotificationTemplate.
+								class.getName(),
+							serviceBuilderNotificationTemplate.
+								getNotificationTemplateId());
+					}
 				).put(
 					"get",
 					addAction(
@@ -349,9 +355,13 @@ public class NotificationTemplateResourceImpl
 								getNotificationTemplateId()),
 					notificationTemplateAttachment -> {
 						ObjectField objectField =
-							_objectFieldLocalService.getObjectField(
+							_objectFieldLocalService.fetchObjectField(
 								notificationTemplateAttachment.
 									getObjectFieldId());
+
+						if (objectField == null) {
+							return null;
+						}
 
 						return objectField.getExternalReferenceCode();
 					},
@@ -390,6 +400,7 @@ public class NotificationTemplateResourceImpl
 					serviceBuilderNotificationTemplate.getRecipientType();
 				subject = LocalizedMapUtil.getLanguageIdMap(
 					serviceBuilderNotificationTemplate.getSubjectMap());
+				system = serviceBuilderNotificationTemplate.isSystem();
 				type = serviceBuilderNotificationTemplate.getType();
 				typeLabel = _language.get(
 					_getLocale(), notificationType.getTypeLanguageKey());

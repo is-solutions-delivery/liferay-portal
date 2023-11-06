@@ -9,7 +9,7 @@ import org.gradle.util.GUtil
 
 buildscript {
 	dependencies {
-		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.defaults", version: "10.1.13"
+		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.defaults", version: "10.1.25"
 		classpath group: "com.liferay", name: "com.liferay.gradle.plugins.maven.plugin.builder", version: "2.0.2"
 		classpath group: "de.undercouch", name: "gradle-download-task", version: "5.4.0"
 		classpath group: "org.ysb33r.gradle", name: "gradletest", version: "3.0.0-alpha.2"
@@ -71,6 +71,8 @@ dependencies {
 			Matcher matcher = testBaseDirName =~ /.*liferay-qa-portal-legacy-ee.*\/(?<portalVersion>\d+(\.\d+)*).*/
 
 			if (matcher.find()) {
+				poshiRunner group: "com.liferay", name: "com.liferay.poshi.runner", version: "1.0.471"
+
 				String portalVersion = matcher.group("portalVersion")
 
 				if (portalVersion.startsWith("6.1")) {

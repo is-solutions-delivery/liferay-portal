@@ -2969,9 +2969,7 @@ s3Region=&quot;us-east&quot;</echo>
 	<macrodef name="prepare-liferay-online-properties">
 		<sequential>
 			<echo append="true" file="portal-impl/src/portal-ext.properties">
-include-and-override=portal-liferay-online-config.properties
-include-and-override=portal-liferay-online-database-partition.properties
-include-and-override=portal-liferay-online-limit.properties</echo>
+include-and-override=portal-liferay-online.properties</echo>
 
 			<replace
 				file="portal-impl/src/portal-ext.properties"
@@ -3361,16 +3359,6 @@ tell application "Safari" to quit
 
 	<macrodef name="prepare-selenium-browser">
 		<sequential>
-			<get-testcase-property property.name="browser.type" />
-			<get-testcase-property property.name="browser.${browser.type}.version" />
-
-			<propertycopy from="browser.${browser.type}.version" name="browser.version" override="true" />
-
-			<echo append="true" file="${test.ext.properties.file}">
-				browser.type=${browser.type}
-				browser.version=${browser.version}
-			</echo>
-
 			<if>
 				<equals arg1="${browser.type}" arg2="chrome" />
 				<then>
@@ -4782,50 +4770,6 @@ tell application "Safari" to quit
 					<echo append="true" file="${test.ext.properties.file}">
 						test.assert.warning.exceptions=${test.assert.warning.exceptions}
 					</echo>
-				</then>
-			</if>
-
-			<get-testcase-property property.name="test.name.skip.portal.instance" />
-
-			<if>
-				<isset property="test.name.skip.portal.instance" />
-				<then>
-					<echo append="true" file="${test.ext.properties.file}">
-						test.name.skip.portal.instance=${test.name.skip.portal.instance}
-					</echo>
-				</then>
-			</if>
-
-			<get-testcase-property property.name="theme.file.name" />
-
-			<if>
-				<isset property="theme.file.name" />
-				<then>
-					<propertyregex
-						input="${theme.file.name}"
-						override="true"
-						property="zipfileset.includes"
-						regexp="([^\.]+)(\.[^\s]+)"
-						replace="\1*\2"
-					/>
-
-					<if>
-						<resourcecount count="0" when="greater">
-							<zipfileset
-								dir="${liferay.home}/osgi/war"
-								includes="${zipfileset.includes}"
-							>
-								<patternset>
-									<include name="**/private.lar" />
-								</patternset>
-							</zipfileset>
-						</resourcecount>
-						<then>
-							<echo append="true" file="${test.ext.properties.file}">
-								theme.contains.resources=true
-							</echo>
-						</then>
-					</if>
 				</then>
 			</if>
 
@@ -8880,15 +8824,6 @@ diff -y -B -W250 ${selenium.output.dir.name}/upgraded-@{upgraded.db.schema}.sql 
 			<get-dxp-license-product-name />
 
 			<wait-for-app-server-log-message log.message="${dxp.license.product.name} license validation passed" />
-
-			<get-testcase-property property.name="commerce.license.enabled" />
-
-			<if>
-				<equals arg1="${commerce.license.enabled}" arg2="true" />
-				<then>
-					<wait-for-app-server-log-message log.message="Liferay Commerce Subscription Development license validation passed" />
-				</then>
-			</if>
 		</sequential>
 	</macrodef>
 
@@ -10006,15 +9941,6 @@ org.apache.catalina.tribes.level = FINE]]>
 
 		<echo>Deploy directory is ${deploy.dir}.</echo>
 
-		<if>
-			<not>
-				<isset property="liferay.dependency.jar" />
-			</not>
-			<then>
-				<get-testcase-property property.name="liferay.dependency.jar" />
-			</then>
-		</if>
-
 		<property name="liferay.dependency.dir" value="${project.dir}/portal-web/test/functional/com/liferay/portalweb/dependencies" />
 
 		<if>
@@ -10053,19 +9979,6 @@ org.apache.catalina.tribes.level = FINE]]>
 			<else>
 				<echo>The property "liferay.dependency.jar" is not set.</echo>
 			</else>
-		</if>
-	</target>
-
-	<target name="deploy-extra-apps">
-		<get-testcase-property property.name="extraapps.plugins.includes" />
-
-		<if>
-			<isset property="extraapps.plugins.includes" />
-			<then>
-				<ant antfile="build-test-plugins.xml" target="deploy-extra-apps">
-					<property name="plugins.includes" value="${extraapps.plugins.includes}" />
-				</ant>
-			</then>
 		</if>
 	</target>
 
@@ -10197,15 +10110,6 @@ org.apache.catalina.tribes.level = FINE]]>
 					/>
 				</then>
 			</elseif>
-		</if>
-
-		<get-testcase-property property.name="commerce.license.enabled" />
-
-		<if>
-			<equals arg1="${commerce.license.enabled}" arg2="true" />
-			<then>
-				<antcall target="deploy-commerce-license-xml" />
-			</then>
 		</if>
 	</target>
 
@@ -10534,70 +10438,11 @@ org.apache.catalina.tribes.level = FINE]]>
 		</if>
 	</target>
 
-	<target name="deploy-specific-marketplace-apps">
-		<get-testcase-property property.name="specific.marketplace.app.includes" />
-
-		<if>
-			<isset property="specific.marketplace.app.includes" />
-			<then>
-				<for list="${specific.marketplace.app.includes}" param="specific.marketplace.app.includes">
-					<sequential>
-						<local name="specific.marketplace.app.file.name" />
-
-						<basename file="${portal.legacy.dir}/@{specific.marketplace.app.includes}" property="specific.marketplace.app.file.name" />
-
-						<echo>Copying ${portal.legacy.dir}/@{specific.marketplace.app.includes} to ${liferay.home}/deploy/${specific.marketplace.app.file.name}.</echo>
-
-						<copy
-							file="${portal.legacy.dir}/@{specific.marketplace.app.includes}"
-							todir="${liferay.home}/deploy"
-						/>
-					</sequential>
-				</for>
-
-				<get-testcase-property property.name="restart.required" />
-
-				<if>
-					<equals arg1="${restart.required}" arg2="true" />
-					<then>
-						<start-app-server />
-
-						<stop-app-server />
-					</then>
-				</if>
-			</then>
-		</if>
-	</target>
-
 	<target name="deploy-specific-plugins">
 
 		<!--
 		Deploy plugin files to the deploy directory.
 		-->
-
-		<get-testcase-property property.name="hook.plugins.includes" />
-
-		<if>
-			<isset property="hook.plugins.includes" />
-			<then>
-				<ant antfile="build-test-plugins.xml" target="deploy-simple-server-plugins">
-					<property name="plugin.types" value="hooks" />
-					<property name="plugins.includes" value="${hook.plugins.includes}" />
-				</ant>
-			</then>
-		</if>
-
-		<get-testcase-property property.name="layouttpl.plugins.includes" />
-
-		<if>
-			<isset property="layouttpl.plugins.includes" />
-			<then>
-				<ant antfile="build-test-plugins.xml" target="deploy-simple-server-plugins">
-					<property name="plugin.types" value="layouttpl" />
-					<property name="plugins.includes" value="${layouttpl.plugins.includes}" />
-				</ant>
-			</then>
-		</if>
 
 		<get-testcase-property property.name="portlet.plugins.includes" />
 
@@ -10607,30 +10452,6 @@ org.apache.catalina.tribes.level = FINE]]>
 				<ant antfile="build-test-plugins.xml" target="deploy-simple-server-plugins">
 					<property name="plugin.types" value="portlets" />
 					<property name="plugins.includes" value="${portlet.plugins.includes}" />
-				</ant>
-			</then>
-		</if>
-
-		<get-testcase-property property.name="theme.plugins.includes" />
-
-		<if>
-			<isset property="theme.plugins.includes" />
-			<then>
-				<ant antfile="build-test-plugins.xml" target="deploy-simple-server-plugins">
-					<property name="plugin.types" value="themes" />
-					<property name="plugins.includes" value="${theme.plugins.includes}" />
-				</ant>
-			</then>
-		</if>
-
-		<get-testcase-property property.name="web.plugins.includes" />
-
-		<if>
-			<isset property="web.plugins.includes" />
-			<then>
-				<ant antfile="build-test-plugins.xml" target="deploy-simple-server-plugins">
-					<property name="plugin.types" value="webs" />
-					<property name="plugins.includes" value="${web.plugins.includes}" />
 				</ant>
 			</then>
 		</if>
@@ -12206,7 +12027,7 @@ dl.store.impl=com.liferay.portal.store.s3.IBMS3Store</echo>
 		<propertycopy from="liferay.online.properties[${env.CI_TEST_SUITE}]" name="liferay.online.properties" silent="true" />
 
 		<if>
-			<isset property="liferay.online.properties" />
+			<equals arg1="${liferay.online.properties}" arg2="true" />
 			<then>
 				<prepare-liferay-online-properties />
 			</then>
@@ -12303,39 +12124,6 @@ portal.security.manager.strategy=liferay</echo>
 				<echo append="true" file="portal-impl/src/portal-ext.properties">
 
 javascript.fast.load=false</echo>
-			</then>
-		</if>
-
-		<get-testcase-property property.name="blacklist.portal.profile.names.remove" />
-
-		<if>
-			<isset property="blacklist.portal.profile.names.remove" />
-			<then>
-				<beanshell>
-					<![CDATA[
-						StringBuilder sb = new StringBuilder();
-
-						String blacklistPortalProfileNamesString = project.getProperty("blacklist.portal.profile.names");
-
-						List blacklistPortalProfileNames = new ArrayList(Arrays.asList(blacklistPortalProfileNamesString.split(",")));
-
-						String blacklistPortalProfileNamesRemoveString = project.getProperty("blacklist.portal.profile.names.remove");
-
-						List blacklistPortalProfileNamesRemove = new ArrayList(Arrays.asList(blacklistPortalProfileNamesRemoveString.split(",")));
-
-						blacklistPortalProfileNames.removeAll(blacklistPortalProfileNamesRemove);
-
-						for (int i = 0; i < blacklistPortalProfileNames.size(); i++) {
-							sb.append(blacklistPortalProfileNames.get(i));
-
-							if ((i + 1) < blacklistPortalProfileNames.size()) {
-								sb.append(",");
-							}
-						}
-
-						project.setProperty("blacklist.portal.profile.names", sb.toString());
-					]]>
-				</beanshell>
 			</then>
 		</if>
 
@@ -13475,17 +13263,6 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 			</then>
 		</if>
 
-		<get-testcase-property property.name="liferay.data.guard.enabled" />
-
-		<if>
-			<istrue value="${liferay.data.guard.enabled}" />
-			<then>
-				<echo append="true" file="${test.ext.properties.file}">
-					liferay.data.guard.enabled=${liferay.data.guard.enabled}
-				</echo>
-			</then>
-		</if>
-
 		<if>
 			<isset property="liferay.portal.branch" />
 			<then>
@@ -13523,19 +13300,7 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 		</if>
 
 		<if>
-			<not>
-				<isset property="test.assert.console.errors" />
-			</not>
-			<then>
-				<get-testcase-property property.name="test.assert.console.errors" />
-			</then>
-		</if>
-
-		<if>
-			<or>
-				<equals arg1="${test.assert.console.errors}" arg2="false" />
-				<equals arg1="${test.assert.console.errors}" arg2="true" />
-			</or>
+			<isset property="test.assert.console.errors" />
 			<then>
 				<echo append="true" file="${test.ext.properties.file}">
 					test.assert.console.errors=${test.assert.console.errors}
@@ -13573,7 +13338,6 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 		</if>
 
 		<get-testcase-property property.name="test.liferay.virtual.instance" />
-		<get-testcase-property property.name="test.skip.tear.down" />
 
 		<if>
 			<and>
@@ -13616,7 +13380,6 @@ auto.deploy.dest.dir=C:/WINDOWS/system32/config/systemprofile/liferay/websphere-
 		</if>
 
 		<get-testcase-property property.name="ci.retries.disabled" />
-		<get-testcase-property property.name="test.jvm.max.retries" />
 
 		<if>
 			<equals arg1="${ci.retries.disabled}" arg2="true" />
@@ -16068,15 +15831,6 @@ mail.send.blacklist=</echo>
 			</then>
 		</if>
 
-		<get-testcase-property property.name="cas.enabled" />
-
-		<if>
-			<equals arg1="${cas.enabled}" arg2="true" />
-			<then>
-				<ant antfile="build-test-cas.xml" target="setup-cas" />
-			</then>
-		</if>
-
 		<get-testcase-property property.name="gcs.store.enabled" />
 
 		<if>
@@ -16154,32 +15908,6 @@ mail.send.blacklist=</echo>
 			</then>
 		</if>
 
-		<get-testcase-property property.name="socks.proxy.enabled" />
-
-		<if>
-			<equals arg1="${socks.proxy.enabled}" arg2="true" />
-			<then>
-				<echo file="tools/sdk/build.${user.name}.properties">auto.deploy.dir=${liferay.home}/deploy</echo>
-
-				<gradle-execute dir="${project.dir}/modules/test/simple-socks-proxy" task="deploy">
-					<arg value="clean" />
-				</gradle-execute>
-
-				<echo file="${liferay.home}/osgi/modules/com.liferay.simple.socks.proxy.SocksProxyConfiguration.cfg">allowedHostnames=${env.HOSTNAME}</echo>
-
-				<get-testcase-property property.name="socks.proxy.hosts" />
-
-				<if>
-					<isset property="socks.proxy.hosts" />
-					<then>
-						<echo append="true" file="${liferay.home}/osgi/modules/com.liferay.simple.socks.proxy.SocksProxyConfiguration.cfg">,${socks.proxy.hosts}</echo>
-					</then>
-				</if>
-
-				<print-file file.name="${liferay.home}/osgi/modules/com.liferay.simple.socks.proxy.SocksProxyConfiguration.cfg" />
-			</then>
-		</if>
-
 		<get-testcase-property property.name="txtai.enabled" />
 
 		<if>
@@ -16216,17 +15944,6 @@ mail.send.blacklist=</echo>
 				<request-cmis-repository-vm
 					cmis.repository.type="${cmis.repository.type}"
 				/>
-
-				<get-testcase-property property.name="socks.proxy.enabled" />
-
-				<if>
-					<equals arg1="${socks.proxy.enabled}" arg2="true" />
-					<then>
-						<echo append="true" file="${liferay.home}/osgi/modules/com.liferay.simple.socks.proxy.SocksProxyConfiguration.cfg">,${cmis.repository.vm.host.name}</echo>
-
-						<print-file file.name="${liferay.home}/osgi/modules/com.liferay.simple.socks.proxy.SocksProxyConfiguration.cfg" />
-					</then>
-				</if>
 			</then>
 		</if>
 
@@ -16247,31 +15964,11 @@ mail.send.blacklist=</echo>
 
 		<antcall target="deploy-osgi-modules" />
 
-		<get-testcase-property property.name="liferay.data.guard.enabled" />
-
-		<if>
-			<istrue value="${liferay.data.guard.enabled}" />
-			<then>
-				<antcall target="deploy-data-guard" />
-			</then>
-		</if>
-
 		<antcall target="deploy-specific-plugins">
 			<param name="test.class" value="${test.class}" />
 		</antcall>
 
 		<antcall target="deploy-dependency-jars" />
-
-		<get-testcase-property property.name="specific.marketplace.app.includes" />
-
-		<if>
-			<isset property="specific.marketplace.app.includes" />
-			<then>
-				<antcall target="deploy-specific-marketplace-apps" />
-			</then>
-		</if>
-
-		<antcall target="deploy-extra-apps" />
 
 		<get-testcase-property property.name="cluster.session.replicated" />
 
@@ -16374,23 +16071,6 @@ mail.send.blacklist=</echo>
 			</then>
 		</if>
 
-		<get-testcase-property property.name="hook.plugins.includes" />
-
-		<if>
-			<and>
-				<contains string="${hook.plugins.includes}" substring="so-hook" />
-				<or>
-					<equals arg1="${app.server.type}" arg2="jboss" />
-					<equals arg1="${app.server.type}" arg2="wildfly" />
-				</or>
-			</and>
-			<then>
-				<start-app-server />
-
-				<stop-app-server />
-			</then>
-		</if>
-
 		<get-testcase-property property.name="websphere.ssl.truststore.enabled" />
 
 		<if>
@@ -16400,33 +16080,6 @@ mail.send.blacklist=</echo>
 			</and>
 			<then>
 				<antcall target="setup-websphere-ssl-truststore" />
-			</then>
-		</if>
-
-		<get-testcase-property property.name="theme.file.name" />
-
-		<if>
-			<isset property="theme.file.name" />
-			<then>
-				<mkdir dir="${liferay.home}/tmp" />
-
-				<move
-					todir="${liferay.home}/tmp"
-				>
-					<fileset
-						dir="${liferay.home}/deploy"
-						includes="${theme.file.name}"
-					/>
-				</move>
-
-				<move
-					todir="${liferay.home}/tmp"
-				>
-					<fileset
-						dir="${liferay.home}/osgi/marketplace"
-						includes="*Theme*.lpkg"
-					/>
-				</move>
 			</then>
 		</if>
 
@@ -16516,43 +16169,6 @@ mail.send.blacklist=</echo>
 				</waitfor>
 
 				<antcall target="wait-for-plugins-deployment" />
-
-				<if>
-					<available file="${liferay.home}/tmp/${theme.file.name}" />
-					<then>
-						<move
-							todir="${liferay.home}/deploy"
-						>
-							<fileset
-								dir="${liferay.home}/tmp"
-								includes="${theme.file.name}"
-							/>
-						</move>
-
-						<delete dir="${liferay.home}/tmp" failonerror="false" />
-
-						<waitfor checkevery="5" maxwait="300" maxwaitunit="second" timeoutproperty="theme.not.deployed">
-							<available file="${liferay.home}/osgi/war/${theme.file.name}" />
-						</waitfor>
-
-						<fail if="theme.not.deployed" message="${theme.file.name} has failed to deploy." />
-					</then>
-					<elseif>
-						<available file="${liferay.home}/tmp" type="dir" />
-						<then>
-							<move
-								todir="${liferay.home}/osgi/marketplace"
-							>
-								<fileset
-									dir="${liferay.home}/tmp"
-									includes="*Theme*.lpkg"
-								/>
-							</move>
-
-							<delete dir="${liferay.home}/tmp" failonerror="false" />
-						</then>
-					</elseif>
-				</if>
 			</then>
 		</if>
 
@@ -16607,21 +16223,6 @@ mail.send.blacklist=</echo>
 			</then>
 		</if>
 
-		<get-testcase-property property.name="workspaces.names" />
-
-		<if>
-			<isset property="workspaces.names" />
-			<then>
-				<for list="${workspaces.names}" param="workspace.name">
-					<sequential>
-						<ant antfile="build-test-@{workspace.name}.xml" inheritAll="false" target="start-workspace">
-							<property name="workspace.name" value="@{workspace.name}" />
-						</ant>
-					</sequential>
-				</for>
-			</then>
-		</if>
-
 		<get-testcase-property property.name="jmxremote.enabled" />
 
 		<if>
@@ -16659,21 +16260,6 @@ CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote -Dcom.sun.managemen
 				<ant antfile="build-test-${test.workspace.name}.xml" inheritAll="false" target="stop-workspace">
 					<property name="workspace.name" value="${test.workspace.name}" />
 				</ant>
-			</then>
-		</if>
-
-		<get-testcase-property property.name="workspaces.names" />
-
-		<if>
-			<isset property="workspaces.names" />
-			<then>
-				<for list="${workspaces.names}" param="workspace.name">
-					<sequential>
-						<ant antfile="build-test-@{workspace.name}.xml" inheritAll="false" target="stop-workspace">
-							<property name="workspace.name" value="@{workspace.name}" />
-						</ant>
-					</sequential>
-				</for>
 			</then>
 		</if>
 
@@ -17238,20 +16824,12 @@ CATALINA_OPTS="$CATALINA_OPTS -Dcom.sun.management.jmxremote -Dcom.sun.managemen
 	<target name="wait-for-plugins-deployment">
 		<fail message="Please set the property ${test.class}." unless="test.class" />
 
-		<get-testcase-property property.name="hook.plugins.includes" />
-		<get-testcase-property property.name="layouttpl.plugins.includes" />
 		<get-testcase-property property.name="portlet.plugins.includes" />
-		<get-testcase-property property.name="theme.plugins.includes" />
-		<get-testcase-property property.name="web.plugins.includes" />
 
 		<if>
 			<or>
-				<isset property="hook.plugins.includes" />
-				<isset property="layouttpl.plugins.includes" />
 				<isset property="portlet.plugins.includes" />
 				<isset property="required.plugins.includes" />
-				<isset property="theme.plugins.includes" />
-				<isset property="web.plugins.includes" />
 			</or>
 			<then>
 				<if>

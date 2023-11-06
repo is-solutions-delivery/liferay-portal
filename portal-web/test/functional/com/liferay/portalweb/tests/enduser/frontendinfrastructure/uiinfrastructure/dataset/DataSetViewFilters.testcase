@@ -1,8 +1,7 @@
 @component-name = "portal-frontend-infrastructure"
-@ignore = "true"
 definition {
 
-	property custom.properties = "feature.flag.LPS-164563=true${line.separator}feature.flag.LPS-188645=true";
+	property custom.properties = "feature.flag.LPS-164563=true${line.separator}feature.flag.LPS-167253=true${line.separator}feature.flag.LPS-188645=true";
 	property portal.acceptance = "true";
 	property portal.release = "true";
 	property portal.upstream = "true";
@@ -14,27 +13,14 @@ definition {
 
 		User.firstLoginPG();
 
-		task ("Given the creation of a new data set") {
-			DataSetAdmin.goToDataSetAdminPage();
-
-			DataSetAdmin.createDataSetEntryViaAPI(
+		task ("Given the creation of a new data set entry and view") {
+			DataSetAdmin.createAndConfigureDataSetEntry(
 				dataSetName = "Data Set Test",
+				dataSetViewDescription = "View Description",
+				dataSetViewName = "View Test",
 				restApplication = "/data-set-manager/date-filters",
 				restEndpoint = "/",
 				restSchema = "FDSDateFilter");
-		}
-
-		task ("And adding a data set view") {
-			DataSetAdmin.createFDSViewViaAPI(
-				dataSetName = "Data Set Test",
-				dataSetViewDescription = "FDSViewDescription",
-				key_dataSetViewNameList = "View Test");
-		}
-
-		task ("When go to the View page of the data set created.") {
-			DataSetAdmin.goToSpecificViewPage(
-				dataSetName = "Data Set Test",
-				key_viewName = "View Test");
 		}
 
 		task ("When the user accesses the Filters tab") {
@@ -53,6 +39,7 @@ definition {
 	}
 
 	@description = "LPS-176184. Confirm that all fields in the schema are displayed"
+	@ignore = "true"
 	@priority = 5
 	test AssertAllFieldsAreDisplayedInSchema {
 		task ("And clicks to add a new filter") {
@@ -67,6 +54,7 @@ definition {
 	}
 
 	@description = "LPS-176184. Confirm that when 'Name Field' is not provided, it is filled with the same name as field name."
+	@ignore = "true"
 	@priority = 3
 	test AssertNameIsFilledByDefault {
 		task ("And adds a new filter") {
@@ -90,7 +78,42 @@ definition {
 		}
 	}
 
+	@description = "LPS-190851. Confirm that the filter options are shown after clicking on the Create Filter button"
+	@priority = 4
+	test AssertOptionsAfterClickingCreateButton {
+		task ("And clicks to add a new filter") {
+			Click(
+				key_text = "Create Filter",
+				locator1 = "Button#ANY");
+		}
+
+		task ("Then 3 options is displayed") {
+			MenuItem.viewPresent(menuItem = "Date Range");
+
+			MenuItem.viewPresent(menuItem = "Client Extension");
+
+			MenuItem.viewPresent(menuItem = "Selection");
+		}
+	}
+
+	@description = "LPS-190851. Confirm that the filter options are shown after clicking on the button plus"
+	@priority = 4
+	test AssertOptionsAfterClickingPlusButton {
+		task ("And clicks to add a new filter") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("Then 3 options is displayed") {
+			MenuItem.viewPresent(menuItem = "Date Range");
+
+			MenuItem.viewPresent(menuItem = "Client Extension");
+
+			MenuItem.viewPresent(menuItem = "Selection");
+		}
+	}
+
 	@description = "LPS-183621. Confirm that the Selection and Preselect value options are present."
+	@ignore = "true"
 	@priority = 2
 	test AssertSelectedAndPreselected {
 		task ("And creating a picklist") {
@@ -146,6 +169,7 @@ definition {
 	}
 
 	@description = "LPS-183621. When there are two items, and we check the single radio button, an error message is displayed, the filter cannot be saved."
+	@ignore = "true"
 	@priority = 5
 	test AssertTheErrorMessageInPreselect {
 		task ("And creating a picklist") {
@@ -239,6 +263,7 @@ definition {
 	}
 
 	@description = "LPS-186878 Confirm that the translated option appears when selecting pt_BR in the translation modal"
+	@ignore = "true"
 	@priority = 4
 	test AssertTheTranslatedOption {
 		task ("And adds a new filter") {
@@ -284,6 +309,7 @@ definition {
 	}
 
 	@description = "LPS-186878 Confirm that translation options in filters are displayed on the page by adding pt to the URL"
+	@ignore = "true"
 	@priority = 5
 	test AssertTheTranslationInFilters {
 		task ("And creating a picklist") {
@@ -396,6 +422,7 @@ definition {
 	}
 
 	@description = " LPS-186878 Confirm that the translation modal is opened and displayed correctly"
+	@ignore = "true"
 	@priority = 4
 	test AssertTheTranslationModal {
 		task ("And adds a new filter") {
@@ -422,6 +449,7 @@ definition {
 	}
 
 	@description = "LPS-176188. Confirm that the Delete option is present."
+	@ignore = "true"
 	@priority = 3
 	test CanAssertDeleteIsPresent {
 		task ("And adds a filter") {
@@ -446,6 +474,7 @@ definition {
 	}
 
 	@description = "LPS-183056. Confirm that the filter edit modal is displayed."
+	@ignore = "true"
 	@priority = 3
 	test CanAssertEditFilterModal {
 		task ("And creating a picklist") {
@@ -494,6 +523,7 @@ definition {
 	}
 
 	@description = "LPS-176187. Confirm that the fields Name and Filter by are present in the New Filter modal."
+	@ignore = "true"
 	@priority = 5
 	test CanAssertFieldsIsPresent {
 		task ("And Clicks Save") {
@@ -524,6 +554,7 @@ definition {
 	}
 
 	@description = "LPS-183056. Confirm that the "Filter by" field is not editable after the filter is created."
+	@ignore = "true"
 	@priority = 4
 	test CanAssertFilterByIsNotEditable {
 		task ("And creating a picklist") {
@@ -570,6 +601,7 @@ definition {
 	}
 
 	@description = "LPS-176188. Confirm that the field is deleted and a successful message is displayed."
+	@ignore = "true"
 	@priority = 3
 	test CanAssertFilterIsDeleted {
 		task ("And adds a filter") {
@@ -611,6 +643,7 @@ definition {
 	}
 
 	@description = "LPS-176184. Confirm that 'No default filters were created.' and 'Start creating a filter to display specific data' messages are displayed"
+	@ignore = "true"
 	@priority = 3
 	test CanAssertNoDefaultFilters {
 		task ("Then asserts the message: 'No default filters were created. Start creating a filter to display specific data' is displayed") {
@@ -625,6 +658,7 @@ definition {
 	}
 
 	@description = "LPS-183056. Confirm that the preselect option shows Ana as the value."
+	@ignore = "true"
 	@priority = 5
 	test CanAssertPreselectShowsAna {
 		task ("And creating two picklist Cars and Names, with two items Civic and Ana") {
@@ -699,6 +733,7 @@ definition {
 	}
 
 	@description = "LPS-183056. Confirm that the "Multiple" and "Include" radio buttons are deselected."
+	@ignore = "true"
 	@priority = 5
 	test CanAssertRadioButtonsIsDeselected {
 		task ("And creating a picklist") {
@@ -761,6 +796,7 @@ definition {
 	}
 
 	@description = "LPS-176187. Confirm that the Selection option is not displayed."
+	@ignore = "true"
 	@priority = 5
 	test CanAssertSelectionIsNotDisplayed {
 		task ("And creating a picklist") {
@@ -792,6 +828,7 @@ definition {
 	}
 
 	@description = "LPS-176187. Confirm that the Selection option has a tooltip with the text message."
+	@ignore = "true"
 	@priority = 3
 	test CanAssertSelectionTooltip {
 		task ("And creating a picklist") {
@@ -830,6 +867,7 @@ definition {
 	}
 
 	@description = "LPS-176187. Confirm that the Source Option is displayed in the New Filter Modal."
+	@ignore = "true"
 	@priority = 3
 	test CanAssertSourceOption {
 		task ("And selects the option "creator" in the Filter By field") {
@@ -850,6 +888,7 @@ definition {
 	}
 
 	@description = "LPS-183056. Confirm the change of the Source Options from Cars to Names."
+	@ignore = "true"
 	@priority = 5
 	test CanAssertSourceOptionsIsNames {
 		task ("And creating two picklist Cars and Names, with two items Civic and Ana") {
@@ -923,6 +962,7 @@ definition {
 	}
 
 	@description = "LPS-176187. Confirm the text message in the Source Option Tooltip."
+	@ignore = "true"
 	@priority = 3
 	test CanAssertSourceOptionTooltip {
 		task ("And selects an option "creator" in the Filter By field") {
@@ -956,6 +996,7 @@ definition {
 	}
 
 	@description = "LPS-176187. Confirm that the Filter has been created and has the Name and Field Name fields."
+	@ignore = "true"
 	@priority = 5
 	test CanAssertTheFieldsIsDisplayed {
 		task ("And creating a picklist") {
@@ -1011,6 +1052,7 @@ definition {
 	}
 
 	@description = "LPS-183056. Confirm that the filter name has been changed ."
+	@ignore = "true"
 	@priority = 5
 	test CanAssertTheNameFieldIsChanged {
 		task ("And creating a picklist") {
@@ -1071,6 +1113,7 @@ definition {
 	}
 
 	@description = "LPS-183056. Confirm that there is only one option of car in Custom Picklist / Preselected."
+	@ignore = "true"
 	@priority = 4
 	test CanAssertThereIsOnlyTheCarOption {
 		task ("And creating a picklist") {
@@ -1135,6 +1178,7 @@ definition {
 	}
 
 	@description = "LPS-176188. Confirm that an element dragged and dropped below another,will be deprioritized."
+	@ignore = "true"
 	@priority = 5
 	test CanBeDeprioritizedBelowAnother {
 		task ("And adds two or more new filters") {
@@ -1164,6 +1208,7 @@ definition {
 	}
 
 	@description = "LPS-176188. Confirm that an element dragged and dropped on top of another element will be prioritized."
+	@ignore = "true"
 	@priority = 4
 	test CanBePrioritizedOverAnother {
 		task ("And adds two or more new filters") {
@@ -1193,6 +1238,7 @@ definition {
 	}
 
 	@description = "LPS-176188. Confirm that the field is not deleted by clicking the Cancel button."
+	@ignore = "true"
 	@priority = 5
 	test CanCancelButtonDeleteFilter {
 		task ("And adds a filter") {
@@ -1227,6 +1273,7 @@ definition {
 	}
 
 	@description = "LPS-183056. Confirm the cancellation of the edit with the Cancel button."
+	@ignore = "true"
 	@priority = 3
 	test CanCancelEditOnCancelButton {
 		task ("And creating a picklist, and an item to the created picklist "bike"") {
@@ -1285,6 +1332,7 @@ definition {
 	}
 
 	@description = "LPS-183056. Confirm the cancellation of the edit with the Close button."
+	@ignore = "true"
 	@priority = 2
 	test CanCancelEditOnCloseButton {
 		task ("And creating a picklist") {
@@ -1345,6 +1393,7 @@ definition {
 	}
 
 	@description = "LPS-176184. Confirm that the New filter modal is closed and the changes are not applied when canceling on Cancel button"
+	@ignore = "true"
 	@priority = 3
 	test CanCancelFilterCreationOnCancelButton {
 		task ("And clicks to add a new filter") {
@@ -1367,6 +1416,7 @@ definition {
 	}
 
 	@description = "LPS-176184. Confirm that the New filter modal is closed and the changes are not applied when canceling on Close X button"
+	@ignore = "true"
 	@priority = 3
 	test CanCancelFilterCreationOnCloseButton {
 		task ("And clicks to add a new filter") {
@@ -1391,6 +1441,7 @@ definition {
 	}
 
 	@description = "LPS-176187. Confirm the cancellation of the Filter creation with the cancel button."
+	@ignore = "true"
 	@priority = 4
 	test CanCancelOnCancelButton {
 		task ("And creating a picklist") {
@@ -1438,6 +1489,7 @@ definition {
 	}
 
 	@description = "LPS-176187. Confirm the cancellation of the Filter creation with the close button."
+	@ignore = "true"
 	@priority = 4
 	test CanCancelOnCloseButton {
 		task ("And creating a picklist") {
@@ -1487,6 +1539,7 @@ definition {
 	}
 
 	@description = "LPS-176184. Confirm that the text Select is labeling the  Filter By Field"
+	@ignore = "true"
 	@priority = 5
 	test CanCreateFilters {
 		task ("And adds a new filter") {
@@ -1505,6 +1558,7 @@ definition {
 	}
 
 	@description = "LPS-176188. Confirm that the elements of the list can be dragged and dropped."
+	@ignore = "true"
 	@priority = 4
 	test CanInteractDragDrop {
 		task ("And adds two or more filters") {
@@ -1536,6 +1590,7 @@ definition {
 	}
 
 	@description = "LPS-176184. Confirm that 'Filter By' field cannot be empty"
+	@ignore = "true"
 	@priority = 3
 	test CannotLeaveFilterByEmpty {
 		task ("And adds a new filter") {
@@ -1556,6 +1611,7 @@ definition {
 	}
 
 	@description = "LPS-176187. Confirm that only one radio button can be selected."
+	@ignore = "true"
 	@priority = 5
 	test CanOnlyOneRadioButtonIsSelected {
 		task ("And creating a picklist") {
@@ -1613,6 +1669,7 @@ definition {
 	}
 
 	@description = "LPS-176184. Confirm that is possible search filter when click on search icon"
+	@ignore = "true"
 	@priority = 3
 	test CanSearchFilterOnIcon {
 		task ("And adds two or more new filters") {
@@ -1637,6 +1694,7 @@ definition {
 	}
 
 	@description = "LPS-183621. Confirm error when selecting Single, having two items selected in Preselected values."
+	@ignore = "true"
 	@priority = 5
 	test CantAddMoreThanOneItemInSingle {
 		task ("And creating a picklist") {
@@ -1732,6 +1790,7 @@ definition {
 	}
 
 	@description = "LPS-183621. Confirm that Single works when there is only one item left in Preselected values."
+	@ignore = "true"
 	@priority = 4
 	test CanUseOnlyOneItemInSingle {
 		task ("And creating a picklist") {
@@ -1830,7 +1889,42 @@ definition {
 		}
 	}
 
+	@description = "LPS-190851. Confirm that it is not possible to create a Selection filter without creating a picklist before"
+	@priority = 4
+	test ConfirmPicklistIsNecessaryToCreateSelectionType {
+		task ("And selects the Selection option") {
+			DataSetAdmin.selectFilterType(key_filterType = "Selection");
+		}
+
+		task ("Then the New Selection Filter modal is displayed") {
+			AssertTextEquals(
+				locator1 = "Modal#HEADER",
+				value1 = "New Selection Filter");
+		}
+
+		task ("When Fill the Name filed") {
+			PortletEntry.inputText(
+				fieldLabel = "Name",
+				text = "Filter 1");
+		}
+
+		task ("Then The user cannot save the changes") {
+			AssertElementPresent(
+				key_text = "Save",
+				locator1 = "DataSet#ANY_BUTTON_DISABLED");
+		}
+
+		task ("And Confirm that is not possible edit the Filter by field") {
+			Click(
+				dropdownLabel = "Select",
+				locator1 = "Dropdown#ANY_DROPDOWN_LABEL");
+
+			DropdownMenuItem.viewDisabledItem(itemList = "creator,externalReferenceCode,status");
+		}
+	}
+
 	@description = "LPS-183621. Confirm that by selecting the radio button Multiple and selecting more than one item, the filter can be saved ."
+	@ignore = "true"
 	@priority = 5
 	test MultipleAllowMoreThanOneItem {
 		task ("And creating a picklist") {
@@ -1918,6 +2012,7 @@ definition {
 	}
 
 	@description = "LPS-186878 When canceling filter creation on the cancel button, confirm that it is not possible to translate a page with translation filters"
+	@ignore = "true"
 	@priority = 3
 	test NotTranslatedWhenCanceledOnCancelButton {
 		task ("And creating a picklist") {
@@ -2040,6 +2135,7 @@ definition {
 	}
 
 	@description = "LPS-186878 When canceling filter creation on the close button, confirm that it is not possible to translate a page with translation filters"
+	@ignore = "true"
 	@priority = 2
 	test NotTranslatedWhenCanceledOnCloseButton {
 		task ("And creating a picklist") {
@@ -2162,6 +2258,7 @@ definition {
 	}
 
 	@description = "LPS-183621. Confirm that by editing the filter and selecting Multiple, other items can be added and saved."
+	@ignore = "true"
 	@priority = 5
 	test SelectMoreOneItemWithMultiple {
 		task ("And creating a picklist") {
@@ -2345,6 +2442,7 @@ definition {
 	}
 
 	@description = "LPS-183621. Confirm that it is possible to create the filter without filling out the Preselected field."
+	@ignore = "true"
 	@priority = 3
 	test TheFilterWithoutPreselection {
 		task ("And creating a picklist") {
@@ -2396,6 +2494,7 @@ definition {
 	}
 
 	@description = "LPS-183056. Confirm that the Name field cannot be empty."
+	@ignore = "true"
 	@priority = 3
 	test TheNameFieldCannotBeEmpty {
 		task ("And creating a picklist") {

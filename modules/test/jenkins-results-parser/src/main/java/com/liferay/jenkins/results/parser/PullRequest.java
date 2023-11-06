@@ -78,6 +78,27 @@ public class PullRequest {
 
 			return new Comment(responseJSONObject);
 		}
+		catch (GitHubSecondaryRateLimitRuntimeException
+					gitHubSecondaryRateLimitRuntimeException) {
+
+			StringBuilder sb = new StringBuilder();
+
+			sb.append("Unable to post comment in GitHub pull request\n");
+			sb.append("URL: ");
+			sb.append(getURL());
+			sb.append("\nMessage:\n");
+			sb.append(body);
+			sb.append("\n");
+
+			NotificationUtil.sendSlackNotification(
+				sb.toString(), "#ci-notifications", ":liferay-ci:",
+				"Secondary Rate Limit exceeded", "Liferay CI");
+
+			throw new GitHubSecondaryRateLimitRuntimeException(
+				gitHubSecondaryRateLimitRuntimeException.getGitHubApiUrl(),
+				gitHubSecondaryRateLimitRuntimeException.getRetryAfterSeconds(),
+				sb.toString(), gitHubSecondaryRateLimitRuntimeException);
+		}
 		catch (IOException ioException) {
 			throw new RuntimeException(
 				"Unable to post comment in GitHub pull request " + getURL(),
@@ -176,17 +197,13 @@ public class PullRequest {
 			throw new RuntimeException("Unable to push branch to GitHub");
 		}
 
-		try {
-			return gitWorkingDirectory.createPullRequest(
-				commentBody, forwardBranchName, forwardReceiverUsername,
-				forwardSenderUsername, getTitle());
-		}
-		catch (IOException ioException) {
-			ioException.printStackTrace();
+		return gitWorkingDirectory.createPullRequest(
+			commentBody, forwardBranchName, forwardReceiverUsername,
+			forwardSenderUsername, getTitle());
+	}
 
-			throw new RuntimeException(
-				"Unable to create new pull request", ioException);
-		}
+	public String getBody() {
+		return _jsonObject.optString("body");
 	}
 
 	public String getCIMergeSHA() {

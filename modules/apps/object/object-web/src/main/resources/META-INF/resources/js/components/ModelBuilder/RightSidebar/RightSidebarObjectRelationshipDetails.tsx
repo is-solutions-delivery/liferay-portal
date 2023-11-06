@@ -169,23 +169,65 @@ export function RightSidebarObjectRelationshipDetails({
 				openToast({message, type: 'danger'});
 			}
 
+			if (!objectRelationship || !objectRelationship?.id) {
+				return;
+			}
+
 			let newObjectRelationship = {};
 
+			const isSelfObjectRelationship =
+				objectRelationship.objectDefinitionId1 ===
+				objectRelationship.objectDefinitionId2;
+
 			const updatedElements = elements.map((element) => {
-				if (
-					isEdge(element) &&
-					(element as Edge<ObjectRelationshipEdgeData>).data
-						?.objectRelationshipId === objectRelationship?.id
-				) {
-					newObjectRelationship = {
-						...element.data,
-						deletionType: objectRelationship.deletionType,
-						label: getLocalizableLabel(
-							defaultLanguageId,
-							objectRelationship.label,
-							objectRelationship.name
-						),
-					};
+				if (isEdge(element)) {
+					const edgeData = (element as Edge<
+						ObjectRelationshipEdgeData
+					>).data;
+
+					const objectRelationshipId = edgeData?.objectRelationshipId;
+					const selfObjectRelationships =
+						edgeData?.selfObjectRelationships;
+
+					const newSelfObjectRelationships = selfObjectRelationships?.map(
+						(selfObjectRelationship) => {
+							if (
+								objectRelationship?.id ===
+								selfObjectRelationship.id
+							) {
+								return {
+									...selfObjectRelationship,
+									label: objectRelationship.label,
+								};
+							}
+
+							return selfObjectRelationship;
+						}
+					);
+
+					if (objectRelationshipId === objectRelationship?.id) {
+						newObjectRelationship = {
+							...edgeData,
+							deletionType: objectRelationship.deletionType,
+							label:
+								isSelfObjectRelationship &&
+								selfObjectRelationships &&
+								selfObjectRelationships.length > 1
+									? selfObjectRelationships.length.toString()
+									: getLocalizableLabel(
+											defaultLanguageId,
+											objectRelationship.label,
+											objectRelationship.name
+									  ),
+							selfObjectRelationships: newSelfObjectRelationships,
+						};
+					}
+					else {
+						newObjectRelationship = {
+							...edgeData,
+							selfObjectRelationships: newSelfObjectRelationships,
+						};
+					}
 
 					return {
 						...element,

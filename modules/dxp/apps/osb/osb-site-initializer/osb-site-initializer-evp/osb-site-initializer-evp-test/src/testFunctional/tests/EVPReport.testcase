@@ -35,40 +35,22 @@ definition {
 		}
 	}
 
-	@description = "LPS-164731 - Reports bar Should not be visible on top menu for Employee users."
-	@priority = 4
-	test CanEmployeeNotSeeReportPage {
-		task ("Given the employee user are logged") {
-			User.logoutAndLoginPG(
-				userLoginEmailAddress = "employee@liferay.com",
-				userLoginFullName = "Employee User");
-		}
-
-		task ("When he goes to EVP Site") {
-			EVPUtils.gotoEVP();
-		}
-
-		task ("Then he can not see Reports Page on top menu") {
-			EVPNavigator.navItemNotPresent(navItem = "Reports");
-		}
-	}
-
 	@description = "LPS-172931 - Finance user can generate a report with filters applied"
 	@priority = 5
 	test CanFinanceGenerateReportWithFilters {
-		task ("Given the finance user are logged") {
+		task ("Given the finance user is logged in") {
 			User.logoutAndLoginPG(
 				userLoginEmailAddress = "finance@liferay.com",
 				userLoginFullName = "Finance User");
 		}
 
-		task ("And he goes to Reports Page") {
+		task ("And the user goes to Reports Page") {
 			EVPUtils.gotoEVP();
 
 			EVPNavigator.goToNavItem(navItem = "Reports");
 		}
 
-		task ("When the finance user generate financial report") {
+		task ("When the user generates a financial report") {
 			EVPUtils.generateFinancialReport(
 				cardTitle = "EVP Financial Report",
 				dateRange = "-1",
@@ -76,7 +58,7 @@ definition {
 				initialDateLabel = "Initial Payment Date");
 		}
 
-		task ("The he can generate the CSV file") {
+		task ("The the user can generate the CSV file") {
 			EVPUtils.downloadFileViaCurl(fileName = "payment-report.csv");
 		}
 	}
@@ -84,19 +66,19 @@ definition {
 	@description = "LPS-172931 - Manager user can generate a report with filters applied"
 	@priority = 5
 	test CanManagerGenerateReportWithFilters {
-		task ("Given the manager user are logged") {
+		task ("Given the manager user is logged in") {
 			User.logoutAndLoginPG(
 				userLoginEmailAddress = "manager@liferay.com",
 				userLoginFullName = "Manager User");
 		}
 
-		task ("And he goes to Reports Page") {
+		task ("And the user goes to Reports Page") {
 			EVPUtils.gotoEVP();
 
 			EVPNavigator.goToNavItem(navItem = "Reports");
 		}
 
-		task ("When the manager user generate requests listing") {
+		task ("When the user generates a requests listing") {
 			EVPUtils.generateRequestsListing(
 				cardTitle = "EVP Requests Listing",
 				companyName = "Test ID",
@@ -109,48 +91,58 @@ definition {
 				listCheckbox = "Awaiting Approval On EVP,Closed,Liferay US");
 		}
 
-		task ("The he can generate the CSV file") {
+		task ("The the user can generate the CSV file") {
 			EVPUtils.downloadFileViaCurl(fileName = "request-report.csv");
 		}
 	}
 
-	@description = "LPS-164731 - Finance user should be able to see the Report card through 'Reports' Tab on top menu"
+	@description = "LPS-164731 - Liferay Staff users should be able to see the Report card through 'Reports' Tab on top menu"
 	@priority = 5
-	test CanReportCardShouldBeVisibleForFinanceUsers {
-		task ("Given the finance user are logged") {
-			User.logoutAndLoginPG(
-				userLoginEmailAddress = "finance@liferay.com",
-				userLoginFullName = "Finance User");
-		}
+	test ReportCardShouldBeVisibleForLiferayStaffUsers {
+		var table = '''
+			| finance@liferay.com | Finance User |
+			| manager@liferay.com | Manager User |
+		''';
 
-		task ("When he goes to Reports Page") {
-			EVPUtils.gotoEVP();
+		var rawTable = TableUtil.newTable(${table});
 
-			EVPNavigator.goToNavItem(navItem = "Reports");
-		}
+		for (var row : table ${rawTable}) {
+			var liferayStaffEmail = "${row[0]}";
+			var userLoginFullName = "${row[1]}";
 
-		task ("Then he can see the cards present in the page") {
-			EVPUtils.assertCardsTitle(listcardTitle = "EVP Requests Listing,EVP Financial Report");
+			task ("Given a Liferay Staff user is logged in") {
+				User.logoutAndLoginPG(
+					userLoginEmailAddress = ${liferayStaffEmail},
+					userLoginFullName = ${userLoginFullName});
+			}
+
+			task ("When the user goes to Reports Page") {
+				EVPUtils.gotoEVP();
+
+				EVPNavigator.goToNavItem(navItem = "Reports");
+			}
+
+			task ("Then the user can see the cards presented on the page") {
+				EVPUtils.assertCardsTitle(listcardTitle = "EVP Requests Listing,EVP Financial Report");
+			}
 		}
 	}
 
-	@description = "LPS-164731 - Manager user should be able to see the Report card through 'Reports' Tab on top menu"
-	@priority = 5
-	test ReportCardShouldBeVisibleForManagerUsers {
-		task ("Given the manager user are logged") {
+	@description = "LPS-164731 - Employee user should not be able to see Reports tab on top menu"
+	@priority = 4
+	test ReportTabIsNotVisibleForEmployeeUser {
+		task ("Given that the employee user is logged in") {
 			User.logoutAndLoginPG(
-				userLoginEmailAddress = "manager@liferay.com",
-				userLoginFullName = "Manager User");
+				userLoginEmailAddress = "employee@liferay.com",
+				userLoginFullName = "Employee User");
 		}
 
-		task ("When he goes to Reports Page") {
+		task ("When the user goes to EVP Site") {
 			EVPUtils.gotoEVP();
-
-			EVPNavigator.goToNavItem(navItem = "Reports");
 		}
 
-		task ("Then he can see the cards present in the page") {
-			EVPUtils.assertCardsTitle(listcardTitle = "EVP Requests Listing,EVP Financial Report");
+		task ("Then the user cannot see the Reports Page on top menu") {
+			EVPNavigator.navItemNotPresent(navItem = "Reports");
 		}
 	}
 

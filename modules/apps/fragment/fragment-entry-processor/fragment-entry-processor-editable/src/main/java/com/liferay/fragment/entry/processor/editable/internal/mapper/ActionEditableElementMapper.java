@@ -8,11 +8,18 @@ package com.liferay.fragment.entry.processor.editable.internal.mapper;
 import com.liferay.fragment.entry.processor.editable.element.constants.ActionEditableElementConstants;
 import com.liferay.fragment.entry.processor.editable.mapper.EditableElementMapper;
 import com.liferay.fragment.processor.FragmentEntryProcessorContext;
+import com.liferay.info.field.InfoFieldValue;
 import com.liferay.info.item.ClassPKInfoItemIdentifier;
 import com.liferay.info.item.InfoItemIdentifier;
 import com.liferay.info.item.InfoItemReference;
+import com.liferay.info.item.InfoItemServiceRegistry;
+import com.liferay.info.item.provider.InfoItemFieldValuesProvider;
+import com.liferay.info.item.provider.InfoItemObjectProvider;
+import com.liferay.info.localized.bundle.FunctionInfoLocalizedValue;
+import com.liferay.info.type.WebURL;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.service.LayoutLocalService;
@@ -63,10 +70,10 @@ public class ActionEditableElementMapper implements EditableElementMapper {
 			return;
 		}
 
-		String classNameId = mappedActionJSONObject.getString("classNameId");
-		String classPK = mappedActionJSONObject.getString("classPK");
+		long classNameId = mappedActionJSONObject.getLong("classNameId");
+		long classPK = mappedActionJSONObject.getLong("classPK");
 
-		if (Validator.isNull(classNameId) || Validator.isNull(classPK)) {
+		if ((classNameId == 0) || (classPK == 0)) {
 			InfoItemReference infoItemReference =
 				fragmentEntryProcessorContext.getContextInfoItemReference();
 
@@ -74,8 +81,8 @@ public class ActionEditableElementMapper implements EditableElementMapper {
 				return;
 			}
 
-			classNameId = String.valueOf(
-				_portal.getClassNameId(infoItemReference.getClassName()));
+			classNameId = _portal.getClassNameId(
+				infoItemReference.getClassName());
 
 			InfoItemIdentifier infoItemIdentifier =
 				infoItemReference.getInfoItemIdentifier();
@@ -84,27 +91,29 @@ public class ActionEditableElementMapper implements EditableElementMapper {
 				ClassPKInfoItemIdentifier classPKInfoItemIdentifier =
 					(ClassPKInfoItemIdentifier)infoItemIdentifier;
 
-				classPK = String.valueOf(
-					classPKInfoItemIdentifier.getClassPK());
+				classPK = classPKInfoItemIdentifier.getClassPK();
 			}
 
-			if (Validator.isNull(classNameId) || Validator.isNull(classPK)) {
+			if ((classNameId == 0) || (classPK == 0)) {
 				return;
 			}
 		}
 
-		element.attr("data-lfr-class-name-id", classNameId);
-		element.attr("data-lfr-class-pk", classPK);
+		element.attr("data-lfr-class-name-id", String.valueOf(classNameId));
+		element.attr("data-lfr-class-pk", String.valueOf(classPK));
 		element.attr("data-lfr-field-id", fieldId);
 
 		_addDataAtributes(
-			element, configJSONObject.getJSONObject("onError"), "error");
+			classNameId, classPK, element,
+			configJSONObject.getJSONObject("onError"), "error");
 		_addDataAtributes(
-			element, configJSONObject.getJSONObject("onSuccess"), "success");
+			classNameId, classPK, element,
+			configJSONObject.getJSONObject("onSuccess"), "success");
 	}
 
 	private void _addDataAtributes(
-			Element element, JSONObject jsonObject, String resultType)
+			long classNameId, long classPK, Element element,
+			JSONObject jsonObject, String resultType)
 		throws PortalException {
 
 		if (jsonObject == null) {
@@ -140,6 +149,77 @@ public class ActionEditableElementMapper implements EditableElementMapper {
 
 		if (themeDisplay == null) {
 			return;
+		}
+
+		if (FeatureFlagManagerUtil.isEnabled("LPS-195263") &&
+			interaction.equals(
+				ActionEditableElementConstants.INTERACTION_DISPLAY_PAGE)) {
+
+			if (!resultType.equals("success")) {
+				return;
+			}
+
+			InfoItemObjectProvider<?> infoItemObjectProvider =
+				_infoItemServiceRegistry.getFirstInfoItemService(
+					InfoItemObjectProvider.class,
+					_portal.getClassName(classNameId),
+					ClassPKInfoItemIdentifier.INFO_ITEM_SERVICE_FILTER);
+
+			if (infoItemObjectProvider == null) {
+				return;
+			}
+
+			InfoItemFieldValuesProvider<Object> infoItemFieldValuesProvider =
+				_infoItemServiceRegistry.getFirstInfoItemService(
+					InfoItemFieldValuesProvider.class,
+					_portal.getClassName(classNameId));
+
+			if (infoItemFieldValuesProvider == null) {
+				return;
+			}
+
+			Object infoItem = infoItemObjectProvider.getInfoItem(
+				new ClassPKInfoItemIdentifier(classPK));
+
+			if (infoItem == null) {
+				return;
+			}
+
+			InfoFieldValue<Object> infoFieldValue =
+				infoItemFieldValuesProvider.getInfoFieldValue(
+					infoItem, jsonObject.getString("displayPage"));
+
+			if (infoFieldValue == null) {
+				return;
+			}
+
+			String url = null;
+
+			Object infoFieldValueValue = infoFieldValue.getValue();
+
+			if (infoFieldValueValue instanceof FunctionInfoLocalizedValue) {
+				FunctionInfoLocalizedValue<?> functionInfoLocalizedValue =
+					(FunctionInfoLocalizedValue<?>)infoFieldValueValue;
+
+				Object value = functionInfoLocalizedValue.getValue();
+
+				if (!(value instanceof WebURL)) {
+					return;
+				}
+
+				WebURL webURL = (WebURL)value;
+
+				url = webURL.getURL();
+			}
+			else if (infoFieldValueValue instanceof String) {
+				url = (String)infoFieldValueValue;
+			}
+
+			if (Validator.isNull(url)) {
+				return;
+			}
+
+			element.attr("data-lfr-on-" + resultType + "-page-url", url);
 		}
 
 		if (interaction.equals(
@@ -206,6 +286,9 @@ public class ActionEditableElementMapper implements EditableElementMapper {
 			element.attr("data-lfr-on-" + resultType + "-page-url", url);
 		}
 	}
+
+	@Reference
+	private InfoItemServiceRegistry _infoItemServiceRegistry;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;

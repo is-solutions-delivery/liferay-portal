@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Frontend JS Web
 Bundle-SymbolicName: com.liferay.frontend.js.web
-Bundle-Version: 5.0.96
+Bundle-Version: 5.0.97
 Liferay-JS-Resources-Top-Head:\
 	/liferay/dom_task_runner.js,\
 	/liferay/events.js,\
@@ -17,4 +17,3 @@ Provide-Capability:\
 		version:Version="${Bundle-Version}"
 Web-ContextPath: /frontend-js-web
 -donotcopy: (\.touch|.*_diffs.*)
--includeresource: META-INF/resources=tmp/META-INF/resources

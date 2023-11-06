@@ -1745,6 +1745,25 @@ public class JenkinsResultsParserUtil {
 		return System.currentTimeMillis() - _currentTimeMillisDelta;
 	}
 
+	public static String[] getDateStrings(long startTime, long duration) {
+		long durationDays = TimeUnit.MILLISECONDS.toDays(duration);
+
+		String[] dateStrings = new String[(int)durationDays];
+
+		LocalDate localDate = getLocalDate(startTime);
+
+		for (int i = 0; i < durationDays; i++) {
+			String dateString = localDate.format(
+				DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+			dateStrings[i] = dateString;
+
+			localDate = localDate.plusDays(1);
+		}
+
+		return dateStrings;
+	}
+
 	public static List<File> getDirectoriesContainingFiles(
 		List<File> directories, List<File> files) {
 
@@ -2083,6 +2102,24 @@ public class JenkinsResultsParserUtil {
 		}
 
 		return globs.toArray(new String[0]);
+	}
+
+	public static String getHeadersString(URLConnection urlConnection) {
+		Map<String, List<String>> headersMap = urlConnection.getHeaderFields();
+
+		StringBuilder sb = new StringBuilder();
+
+		for (Map.Entry<String, List<String>> entry : headersMap.entrySet()) {
+			sb.append(entry.getKey());
+			sb.append(": ");
+
+			sb.append(join(", ", entry.getValue()));
+			sb.append("\n");
+		}
+
+		sb.append("\n");
+
+		return sb.toString();
 	}
 
 	public static String getHostIPAddress() {
@@ -2572,6 +2609,14 @@ public class JenkinsResultsParserUtil {
 		return zonedDateTime.toLocalDate();
 	}
 
+	public static LocalDate getLocalDate(long milliseconds) {
+		Instant instant = Instant.ofEpochMilli(milliseconds);
+
+		ZonedDateTime zonedDateTime = instant.atZone(ZoneId.systemDefault());
+
+		return zonedDateTime.toLocalDate();
+	}
+
 	public static LocalDateTime getLocalDateTime(Date date) {
 		Instant instant = date.toInstant();
 
@@ -2668,6 +2713,15 @@ public class JenkinsResultsParserUtil {
 		}
 
 		return localURL + localURLQueryString;
+	}
+
+	public static long getMillis(LocalDateTime localDateTime) {
+		ZonedDateTime zonedDateTime = ZonedDateTime.of(
+			localDateTime, ZoneId.systemDefault());
+
+		Instant instant = zonedDateTime.toInstant();
+
+		return instant.toEpochMilli();
 	}
 
 	public static JenkinsMaster getMostAvailableJenkinsMaster(
@@ -3213,6 +3267,21 @@ public class JenkinsResultsParserUtil {
 
 			return readInputStream(resourceInputStream);
 		}
+	}
+
+	public static String getResponseHeaders(URLConnection urlConnection) {
+		StringBuilder sb = new StringBuilder();
+
+		Map<String, List<String>> map = urlConnection.getHeaderFields();
+
+		for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+			sb.append(entry.getKey());
+			sb.append(":");
+			sb.append(join(",", entry.getValue()));
+			sb.append("\n");
+		}
+
+		return sb.toString();
 	}
 
 	public static List<String> getSlaves(
@@ -4041,6 +4110,10 @@ public class JenkinsResultsParserUtil {
 	}
 
 	public static String redact(String string) {
+		if (isNullOrEmpty(string)) {
+			return string;
+		}
+
 		if (_redactTokens.isEmpty()) {
 			synchronized (_redactTokens) {
 				_initializeRedactTokens();
@@ -4400,16 +4473,35 @@ public class JenkinsResultsParserUtil {
 			}
 		}
 
+		boolean gitHubAPICall = false;
 		int retryCount = 0;
 
 		while (true) {
+			URLConnection urlConnection = null;
+
 			try {
 				if (debug) {
 					System.out.println("Downloading " + url);
 				}
 
+				Matcher matcher = _gitHubAPIURLPattern.matcher(url);
+
+				if (matcher.matches()) {
+					gitHubAPICall = true;
+
+					if (_updatingHttpRequestMethods.contains(
+							httpRequestMethod)) {
+
+						Properties buildProperties = getBuildProperties();
+
+						url =
+							buildProperties.getProperty("github.api.proxy") +
+								matcher.group(1);
+					}
+				}
+
 				if ((httpAuthorizationHeader == null) &&
-					(url.startsWith("https://api.github.com") ||
+					(gitHubAPICall ||
 					 url.startsWith(
 						 "https://raw.githubusercontent.com/liferay/"))) {
 
@@ -4485,7 +4577,7 @@ public class JenkinsResultsParserUtil {
 
 				URL urlObject = new URL(url);
 
-				URLConnection urlConnection = urlObject.openConnection();
+				urlConnection = urlObject.openConnection();
 
 				if (urlConnection instanceof HttpURLConnection) {
 					HttpURLConnection httpURLConnection =
@@ -4502,7 +4594,7 @@ public class JenkinsResultsParserUtil {
 							httpRequestMethod.name());
 					}
 
-					if (url.startsWith("https://api.github.com") &&
+					if (gitHubAPICall &&
 						(httpURLConnection instanceof HttpsURLConnection)) {
 
 						SSLContext sslContext = null;
@@ -4574,7 +4666,7 @@ public class JenkinsResultsParserUtil {
 
 				urlConnection.connect();
 
-				if (url.startsWith("https://api.github.com")) {
+				if (gitHubAPICall) {
 					try {
 						int limit = Integer.parseInt(
 							urlConnection.getHeaderField("X-RateLimit-Limit"));
@@ -4614,16 +4706,79 @@ public class JenkinsResultsParserUtil {
 						retryPeriod, timeout, httpAuthorizationHeader);
 				}
 
-				retryCount++;
+				String exceptionMessage = ioException.getMessage();
+
+				if (exceptionMessage.matches(
+						".*HTTP response code\\: 422 .*") &&
+					(urlConnection != null)) {
+
+					StringBuilder sb = new StringBuilder();
+
+					sb.append(exceptionMessage);
+					sb.append("\n");
+
+					if (!isNullOrEmpty(postContent)) {
+						sb.append("Post content:\n");
+						sb.append(postContent);
+					}
+
+					System.out.println(sb.toString());
+
+					throw new RuntimeException(exceptionMessage, ioException);
+				}
+
+				Integer retryPeriodOverride = null;
+
+				if (exceptionMessage.matches(
+						".*HTTP response code\\: 403 .*") &&
+					(urlConnection != null)) {
+
+					try {
+						retryPeriodOverride = Integer.parseInt(
+							urlConnection.getHeaderField("retry-after"));
+					}
+					catch (NumberFormatException numberFormatException) {
+						retryPeriodOverride = null;
+					}
+
+					if ((retryPeriodOverride == null) ||
+						(retryPeriodOverride == 0)) {
+
+						retryPeriodOverride = retryPeriod;
+
+						for (int i = 0; i < retryCount; i++) {
+							retryPeriodOverride *= retryPeriodOverride;
+						}
+					}
+
+					if (((maxRetries >= 0) && (retryCount >= maxRetries)) ||
+						(retryPeriodOverride > _SECONDS_RETRY_PERIOD_MAX)) {
+
+						throw new GitHubSecondaryRateLimitRuntimeException(
+							url, retryPeriodOverride, ioException);
+					}
+				}
+
+				long retryPeriodMillis = 1000 * retryPeriod;
+
+				if ((retryPeriodOverride != null) &&
+					(retryPeriodOverride > 0)) {
+
+					retryPeriodMillis = 1000 * retryPeriodOverride;
+				}
 
 				if ((maxRetries >= 0) && (retryCount >= maxRetries)) {
 					throw ioException;
 				}
 
 				System.out.println(
-					"Retrying " + url + " in " + retryPeriod + " seconds");
+					combine(
+						"Retrying ", url, " in ",
+						toDurationString(retryPeriodMillis)));
 
-				sleep(1000 * retryPeriod);
+				retryCount++;
+
+				sleep(retryPeriodMillis);
 			}
 		}
 	}
@@ -6310,6 +6465,8 @@ public class JenkinsResultsParserUtil {
 
 	private static final int _SECONDS_RETRY_PERIOD_DEFAULT = 5;
 
+	private static final int _SECONDS_RETRY_PERIOD_MAX = 60 * 30;
+
 	private static final String _URL_LOAD_BALANCER =
 		"http://cloud-10-0-0-31.lax.liferay.com/osb-jenkins-web/load_balancer";
 
@@ -6337,6 +6494,8 @@ public class JenkinsResultsParserUtil {
 	private static final List<String> _forbiddenRedactTokens = Arrays.asList(
 		"test");
 	private static JSONArray _gitDirectoriesJSONArray;
+	private static final Pattern _gitHubAPIURLPattern = Pattern.compile(
+		"https\\:\\/\\/api\\.github\\.com(.*)");
 	private static final DateFormat _gitHubDateFormat = new SimpleDateFormat(
 		"yyyy-MM-dd'T'HH:mm:ss");
 	private static JSONArray _gitWorkingDirectoriesJSONArray;
@@ -6385,6 +6544,10 @@ public class JenkinsResultsParserUtil {
 	};
 
 	private static final Set<String> _timeStamps = new HashSet<>();
+	private static final List<HttpRequestMethod> _updatingHttpRequestMethods =
+		Arrays.asList(
+			HttpRequestMethod.POST, HttpRequestMethod.PATCH,
+			HttpRequestMethod.PUT, HttpRequestMethod.DELETE);
 	private static final Pattern _urlQueryStringPattern = Pattern.compile(
 		"\\&??(\\w++)=([^\\&]*)");
 	private static final File _userHomeDir = new File(

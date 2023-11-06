@@ -6,6 +6,8 @@
 package com.liferay.site.admin.web.internal.frontend.taglib.clay.servlet.taglib;
 
 import com.liferay.frontend.taglib.clay.servlet.taglib.VerticalCard;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -34,6 +36,13 @@ public class SelectSiteInitializerVerticalCard implements VerticalCard {
 		_renderResponse = renderResponse;
 
 		_httpServletRequest = PortalUtil.getHttpServletRequest(renderRequest);
+	}
+
+	@Override
+	public String getAriaLabel() {
+		return LanguageUtil.format(
+			_httpServletRequest, "select-x-x",
+			new Object[] {"template", _siteInitializerItem.getName()});
 	}
 
 	@Override
@@ -66,12 +75,21 @@ public class SelectSiteInitializerVerticalCard implements VerticalCard {
 			).setWindowState(
 				LiferayWindowState.POP_UP
 			).buildString()
+		).put(
+			"role", "button"
+		).put(
+			"tabIndex", "0"
 		).build();
 	}
 
 	@Override
 	public String getIcon() {
 		return "site-template";
+	}
+
+	@Override
+	public String getImageAlt() {
+		return StringPool.BLANK;
 	}
 
 	@Override

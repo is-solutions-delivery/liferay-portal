@@ -36,6 +36,62 @@ definition {
 		}
 	}
 
+	@description = "This test ensures that bulk copy does not factor in document status."
+	@priority = 4
+	test BulkCopyDoesNotFactorInDocumentStatus {
+		property custom.properties = "feature.flag.LPS-182512=true";
+
+		HeadlessSite.addSite(siteName = "Site Name");
+
+		for (var entryCount : list "1,2,3") {
+			JSONDocument.addFileWithUploadedFile(
+				dmDocumentDescription = "DM Document Description",
+				dmDocumentTitle = "Document_${entryCount}.jpg",
+				groupName = "Guest",
+				mimeType = "image/jpeg",
+				sourceFileName = "Document_${entryCount}.jpg");
+		}
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		DMFolder.deleteCP(dmFolderName = "Provided by Liferay");
+
+		PortletEntry.selectAll();
+
+		DMNavigator.gotoItemViaManagementBar(
+			item = "dropdownMenu",
+			menuItem = "Checkout");
+
+		for (var entryCount : list "1,2,3") {
+			DMDocument.viewStatus(
+				dmDocumentStatus = "Draft",
+				dmDocumentTitle = "Document_${entryCount}.jpg");
+
+			DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+		}
+
+		PortletEntry.selectAll();
+
+		DMNavigator.gotoItemViaManagementBar(
+			item = "dropdownMenu",
+			menuItem = "Copy To");
+
+		DMDocument.copy(
+			bulkCopy = "true",
+			homeFolder = "true",
+			siteName = "Site Name");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "site-name");
+
+		for (var entryCount : list "1,2,3") {
+			LexiconEntry.viewEntryName(rowEntry = "Document_${entryCount}.jpg");
+
+			DMDocument.viewStatus(
+				dmDocumentStatus = "Approved",
+				dmDocumentTitle = "Document_${entryCount}.jpg");
+		}
+	}
+
 	@description = "This test covers LPS-191375. This ensures that a file entry can be accessed by the legacy URL."
 	@priority = 5
 	test CanAccessFileByLegacyURL {
@@ -423,6 +479,104 @@ definition {
 			key_fieldLabel = "File Name",
 			locator1 = "TextInput#GENERIC_TEXT_INPUT",
 			value1 = ">.jpg");
+	}
+
+	@description = "This test ensures that Users can copy multiple documents at the same time."
+	@priority = 5
+	test CanBulkCopyFiles {
+		property custom.properties = "feature.flag.LPS-182512=true";
+
+		HeadlessSite.addSite(siteName = "Site Name");
+
+		for (var entryCount : list "1,2,3") {
+			JSONDocument.addFileWithUploadedFile(
+				dmDocumentDescription = "DM Document Description",
+				dmDocumentTitle = "Document_${entryCount}.jpg",
+				groupName = "Guest",
+				mimeType = "image/jpeg",
+				sourceFileName = "Document_${entryCount}.jpg");
+		}
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		DMFolder.deleteCP(dmFolderName = "Provided by Liferay");
+
+		PortletEntry.selectAll();
+
+		DMNavigator.gotoItemViaManagementBar(
+			item = "dropdownMenu",
+			menuItem = "Copy To");
+
+		DMDocument.copy(
+			bulkCopy = "true",
+			homeFolder = "true",
+			siteName = "Site Name");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "site-name");
+
+		for (var entryCount : list "1,2,3") {
+			LexiconEntry.viewEntryName(rowEntry = "Document_${entryCount}.jpg");
+		}
+	}
+
+	@description = "This test ensures that document permissions can be copied over correctly."
+	@priority = 4
+	test CanBulkCopyFilesPermission {
+		property custom.properties = "feature.flag.LPS-182512=true";
+
+		HeadlessSite.addSite(siteName = "Site Name");
+
+		for (var entryCount : list "1,2,3") {
+			JSONDocument.addFileWithUploadedFile(
+				dmDocumentDescription = "DM Document Description",
+				dmDocumentTitle = "Document_${entryCount}.jpg",
+				groupName = "Guest",
+				mimeType = "image/jpeg",
+				sourceFileName = "Document_${entryCount}.jpg");
+		}
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		DMFolder.deleteCP(dmFolderName = "Provided by Liferay");
+
+		PortletEntry.selectAll();
+
+		DMNavigator.gotoItemViaManagementBar(
+			item = "dropdownMenu",
+			menuItem = "Permissions");
+
+		for (var permissionDefinitionKey : list "CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX,INLINE_PERMISSIONS_DOWNLOAD_CHECKBOX,INLINE_PERMISSIONS_ADD_DISCUSSION_CHECKBOX") {
+			PermissionsInline.addOrRemoveAnyPermissionsFromSpecificRole(
+				permissionDefinitionKey = ${permissionDefinitionKey},
+				roleTitle = "Guest");
+		}
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		PortletEntry.selectAll();
+
+		DMNavigator.gotoItemViaManagementBar(
+			item = "dropdownMenu",
+			menuItem = "Copy To");
+
+		DMDocument.copy(
+			bulkCopy = "true",
+			homeFolder = "true",
+			siteName = "Site Name");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "site-name");
+
+		PortletEntry.selectAll();
+
+		DMNavigator.gotoItemViaManagementBar(
+			item = "dropdownMenu",
+			menuItem = "Permissions");
+
+		for (var permissionDefinitionKey : list "CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX,INLINE_PERMISSIONS_DOWNLOAD_CHECKBOX,INLINE_PERMISSIONS_ADD_DISCUSSION_CHECKBOX") {
+			PermissionsInline.viewPermissionsRemoved(
+				permissionDefinitionKey = ${permissionDefinitionKey},
+				roleTitle = "Guest");
+		}
 	}
 
 	@priority = 4
@@ -2405,7 +2559,7 @@ definition {
 		DMNavigator.openToConfigInSystemSettings(portlet = "File Entries");
 
 		Type(
-			key_fieldLabel = "Previewable Processor Maximum Size",
+			key_fieldLabel = "Maximum File Size",
 			locator1 = "TextInput#GENERIC_TEXT_INPUT",
 			value1 = 1024);
 
@@ -2691,9 +2845,9 @@ definition {
 		Navigator.openSpecificURL(url = ${latestVersionURL});
 
 		AssertAttributeValue(
-			attribute1 = "baseURI",
 			locator1 = "//embed",
-			value1 = ${latestVersionURL});
+			value1 = "baseURI",
+			value2 = ${latestVersionURL});
 
 		DMNavigator.openToEntryInAdmin(
 			dmDocumentTitle = "pdf_no_extension",
@@ -2705,9 +2859,9 @@ definition {
 		Navigator.openSpecificURL(url = ${latestVersionURL});
 
 		AssertAttributeValue(
-			attribute1 = "baseURI",
 			locator1 = "//embed",
-			value1 = ${latestVersionURL});
+			value1 = "baseURI",
+			value2 = ${latestVersionURL});
 	}
 
 	@description = "This test covers LPS-104957. It ensures that the PNG file can be previewed."
@@ -3541,7 +3695,7 @@ definition {
 
 		// We need to wait for the system time to pass by 2 minutes in order to verify the document is expired. There is currently no easy way to manipulate the system time in CI for automation. 2 minutes is the shortest value we can set while ensuring the stability of the test. See LPS-157957.
 
-		Pause(locator1 = 120000);
+		Pause(value1 = 120000);
 
 		User.logoutAndLoginPG(
 			userLoginEmailAddress = "userea@liferay.com",
@@ -3552,6 +3706,53 @@ definition {
 		DMDocument.viewStatus(
 			dmDocumentStatus = "Expired",
 			dmDocumentTitle = "Document_5.txt");
+	}
+
+	@description = "This test ensures that users can view generic error when bulk copy more than ten wrong files."
+	@priority = 4
+	test CanViewGenericErrorWhenBulkCopyMoreThanTenWrongFiles {
+		property custom.properties = "feature.flag.LPS-182512=true";
+
+		HeadlessSite.addSite(siteName = "Site Name");
+
+		for (var entryCount : list "1,2,3,4,5,6,7,8,9,10,11") {
+			JSONDocument.addFileWithUploadedFile(
+				dmDocumentDescription = "DM Document Description",
+				dmDocumentTitle = "Document_${entryCount}.jpg",
+				groupName = "Guest",
+				mimeType = "image/jpeg",
+				sourceFileName = "Document_${entryCount}.jpg");
+		}
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		DMFolder.deleteCP(dmFolderName = "Provided by Liferay");
+
+		PortletEntry.selectAll();
+
+		DMNavigator.gotoItemViaManagementBar(
+			item = "dropdownMenu",
+			menuItem = "Copy To");
+
+		DMDocument.copy(
+			bulkCopy = "true",
+			homeFolder = "true",
+			siteName = "Site Name");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		PortletEntry.selectAll();
+
+		DMNavigator.gotoItemViaManagementBar(
+			item = "dropdownMenu",
+			menuItem = "Copy To");
+
+		DMDocument.copy(
+			bulkCopy = "true",
+			bulkCopyDuplicatedDocument = "true",
+			errorMessage = "Error:11 items could not be copied.",
+			homeFolder = "true",
+			siteName = "Site Name");
 	}
 
 	@description = "This ensures that a user can view the information about an image when navigating to info panel."
@@ -3715,6 +3916,53 @@ definition {
 		AssertVisible(
 			key_dmDocumentFileName = "Document_2.jpg",
 			locator1 = "DocumentsAndMediaDocument#DOCUMENT_DETAILS_IMAGE_PREVIEW");
+	}
+
+	@description = "This test ensures that Users can view specify error when bulk copy less than ten wrong files."
+	@priority = 4
+	test CanViewSpecifyErrorWhenBulkCopyLessThanTenWrongFiles {
+		property custom.properties = "feature.flag.LPS-182512=true";
+
+		HeadlessSite.addSite(siteName = "Site Name");
+
+		for (var entryCount : list "1,2,3,4,5,6,7,8,9,10") {
+			JSONDocument.addFileWithUploadedFile(
+				dmDocumentDescription = "DM Document Description",
+				dmDocumentTitle = "Document_${entryCount}.jpg",
+				groupName = "Guest",
+				mimeType = "image/jpeg",
+				sourceFileName = "Document_${entryCount}.jpg");
+		}
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		DMFolder.deleteCP(dmFolderName = "Provided by Liferay");
+
+		PortletEntry.selectAll();
+
+		DMNavigator.gotoItemViaManagementBar(
+			item = "dropdownMenu",
+			menuItem = "Copy To");
+
+		DMDocument.copy(
+			bulkCopy = "true",
+			homeFolder = "true",
+			siteName = "Site Name");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		PortletEntry.selectAll();
+
+		DMNavigator.gotoItemViaManagementBar(
+			item = "dropdownMenu",
+			menuItem = "Copy To");
+
+		DMDocument.copy(
+			bulkCopy = "true",
+			bulkCopyDuplicatedDocument = "true",
+			errorMessage = "Error:10 items could not be copied. A file entry already exists with title Document_10.jpg A file entry already exists with title Document_9.jpg A file entry already exists with title Document_8.jpg A file entry already exists with title Document_7.jpg A file entry already exists with title Document_6.jpg A file entry already exists with title Document_5.jpg A file entry already exists with title Document_4.jpg A file entry already exists with title Document_3.jpg A file entry already exists with title Document_2.jpg A file entry already exists with title Document_1.jpg",
+			homeFolder = "true",
+			siteName = "Site Name");
 	}
 
 	@description = "This is a test for LPS-145630. It checks that the DOCs linked in web articles content can be updated."

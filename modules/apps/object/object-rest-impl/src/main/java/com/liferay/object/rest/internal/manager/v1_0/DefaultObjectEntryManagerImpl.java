@@ -827,27 +827,25 @@ public class DefaultObjectEntryManagerImpl
 	private Map<String, String> _addAction(
 			String actionName, String methodName,
 			com.liferay.object.model.ObjectEntry serviceBuilderObjectEntry,
-			UriInfo uriInfo)
+			HashMap<String, String> templateParameterMap, UriInfo uriInfo)
 		throws Exception {
-
-		Map<String, String> map = ActionUtil.addAction(
-			actionName, ObjectEntryResourceImpl.class,
-			serviceBuilderObjectEntry.getObjectEntryId(), methodName, null,
-			serviceBuilderObjectEntry.getUserId(),
-			_getObjectEntryPermissionName(
-				serviceBuilderObjectEntry.getObjectDefinitionId()),
-			serviceBuilderObjectEntry.getGroupId(), uriInfo);
-
-		if (map != null) {
-			return map;
-		}
 
 		return ActionUtil.addAction(
 			actionName, ObjectEntryResourceImpl.class,
 			serviceBuilderObjectEntry.getObjectEntryId(), methodName, null,
 			_objectEntryService.getModelResourcePermission(
 				serviceBuilderObjectEntry),
-			uriInfo);
+			templateParameterMap, uriInfo);
+	}
+
+	private Map<String, String> _addAction(
+			String actionName, String methodName,
+			com.liferay.object.model.ObjectEntry serviceBuilderObjectEntry,
+			UriInfo uriInfo)
+		throws Exception {
+
+		return _addAction(
+			actionName, methodName, serviceBuilderObjectEntry, null, uriInfo);
 	}
 
 	private com.liferay.object.model.ObjectEntry
@@ -1549,6 +1547,12 @@ public class DefaultObjectEntryManagerImpl
 						"putByExternalReferenceCodeObjectEntryExternal" +
 							"ReferenceCodeObjectActionObjectActionName",
 						serviceBuilderObjectEntry,
+						HashMapBuilder.put(
+							"objectActionName", objectAction.getName()
+						).put(
+							"objectEntryExternalReferenceCode",
+							serviceBuilderObjectEntry.getExternalReferenceCode()
+						).build(),
 						dtoConverterContext.getUriInfo()));
 			}
 		}

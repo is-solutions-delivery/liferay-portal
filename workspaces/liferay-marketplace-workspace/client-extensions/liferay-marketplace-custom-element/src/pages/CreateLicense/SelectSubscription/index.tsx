@@ -4,23 +4,17 @@
  */
 
 import {useCallback, useEffect, useState} from 'react';
+import {useParams} from 'react-router-dom';
 
 import RadioCardList, {
 	RadioCardContent,
 } from '../../../components/RadioCardList/RadioCardList';
+import useProvisioningKoroneikiOAuth2 from '../../GetAppPage/hooks/useProvisioningKoroneikiOAuth2';
+import {formatDate} from '../../PublishedAppsDashboard/PublishedDashboardPageUtil';
 
-interface SubscriptionSelectionProps {
-	onSelectSubscription: (subscription: string) => void;
-	selectedSubscriptionValue?: string;
-}
-
-const licenseKeyData = {
-	avaliableKeys: {
-		provisionedCount: 1,
-		purchasedCount: 1,
-	},
-	supportLifeEndDate: 'Sep 24, 2024',
-	supportLifeStartDate: 'Sep 24, 2023',
+type SubscriptionSelectionProps = {
+	onSelectSubscription: (subscription: any) => void;
+	selectedSubscriptionValue?: any;
 };
 
 const SelectSubscription = ({
@@ -31,32 +25,49 @@ const SelectSubscription = ({
 		RadioCardContent<String>[]
 	>([]);
 
+	const params = useParams();
+
+	const orderId = Number(params.orderId);
+
+	const provisioningKoroneikiOAuth2 = useProvisioningKoroneikiOAuth2();
+
 	const getSubscriptionList = useCallback(async () => {
-		const contentList: RadioCardContent<String>[] = [
-			{
+		const _subscriptions = await provisioningKoroneikiOAuth2.getSubscriptions(
+			orderId
+		);
+
+		const subscriptions = _subscriptions.map((licenseKey: any) => {
+			const expirationDate = licenseKey?.endDate
+				? formatDate(new Date(licenseKey.endDate).toISOString())
+				: 'DNE';
+
+			return {
 				description: (
 					<small className="text-success">
-						Key activations available:{' '}
-						{licenseKeyData.avaliableKeys.purchasedCount} of{' '}
-						{licenseKeyData.avaliableKeys.provisionedCount}
+						Key activations available: {licenseKey.provisionedCount}{' '}
+						of {licenseKey.purchasedCount}
 					</small>
 				),
-				label: `${licenseKeyData.supportLifeStartDate} - ${licenseKeyData.supportLifeEndDate}`,
-				selected: selectedSubscriptionValue === 'Trial',
-				title: <h3 className="mt-0">Trial</h3>,
-				value: 'Trial',
-			},
-		];
+				label: `${formatDate(
+					licenseKey.startDate
+				)} - ${expirationDate}`,
+				selected: selectedSubscriptionValue?.name === licenseKey.name,
+				title: (
+					<h3 className="mt-0 text-capitalize">{licenseKey.name}</h3>
+				),
+				value: licenseKey,
+			};
+		});
 
-		setSubscription(contentList);
-	}, [selectedSubscriptionValue]);
+		setSubscription(subscriptions);
+	}, [orderId, provisioningKoroneikiOAuth2, selectedSubscriptionValue?.name]);
 
 	useEffect(() => {
 		getSubscriptionList();
 	}, [getSubscriptionList]);
 
-	const handleSelect = (radioOption: RadioOption<String>) => {
-		onSelectSubscription(String(radioOption.value));
+	const handleSelect = (radioOption: RadioOption<any>) => {
+		onSelectSubscription(radioOption.value);
 
 		setSubscription((previousValue) =>
 			previousValue.map((subscription, index) => ({

@@ -20,6 +20,10 @@ import com.liferay.journal.util.comparator.ArticleVersionComparator;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbEntry;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -31,7 +35,6 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.portlet.PortletRequest;
-import javax.portlet.PortletURL;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -104,7 +107,8 @@ public class JournalPortletUtil {
 
 	public static List<BreadcrumbEntry> getPortletBreadcrumbEntries(
 			JournalFolder folder, HttpServletRequest httpServletRequest,
-			PortletURL portletURL)
+			boolean lastElementLinkable,
+			LiferayPortletResponse liferayPortletResponse)
 		throws Exception {
 
 		List<BreadcrumbEntry> breadcrumbEntries = new ArrayList<>();
@@ -112,18 +116,23 @@ public class JournalPortletUtil {
 		BreadcrumbEntry breadcrumbEntry = new BreadcrumbEntry();
 
 		breadcrumbEntry.setTitle(LanguageUtil.get(httpServletRequest, "home"));
-
-		portletURL.setParameter(
-			"folderId",
-			String.valueOf(JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID));
-
-		breadcrumbEntry.setURL(portletURL.toString());
+		breadcrumbEntry.setURL(
+			PortletURLBuilder.createRenderURL(
+				liferayPortletResponse
+			).buildString());
 
 		breadcrumbEntries.add(breadcrumbEntry);
 
 		if (folder == null) {
 			return breadcrumbEntries;
 		}
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		PermissionChecker permissionChecker =
+			themeDisplay.getPermissionChecker();
 
 		List<JournalFolder> ancestorFolders = folder.getAncestors();
 
@@ -132,12 +141,21 @@ public class JournalPortletUtil {
 		for (JournalFolder ancestorFolder : ancestorFolders) {
 			BreadcrumbEntry folderBreadcrumbEntry = new BreadcrumbEntry();
 
-			folderBreadcrumbEntry.setTitle(ancestorFolder.getName());
+			if (permissionChecker.hasPermission(
+					ancestorFolder.getGroupId(), JournalFolder.class.getName(),
+					ancestorFolder.getFolderId(), ActionKeys.VIEW)) {
 
-			portletURL.setParameter(
-				"folderId", String.valueOf(ancestorFolder.getFolderId()));
-
-			folderBreadcrumbEntry.setURL(portletURL.toString());
+				folderBreadcrumbEntry.setTitle(ancestorFolder.getName());
+				folderBreadcrumbEntry.setURL(
+					PortletURLBuilder.createRenderURL(
+						liferayPortletResponse
+					).setParameter(
+						"folderId", ancestorFolder.getFolderId()
+					).buildString());
+			}
+			else {
+				folderBreadcrumbEntry.setTitle(StringPool.TRIPLE_PERIOD);
+			}
 
 			breadcrumbEntries.add(folderBreadcrumbEntry);
 		}
@@ -147,14 +165,26 @@ public class JournalPortletUtil {
 
 			BreadcrumbEntry folderBreadcrumbEntry = new BreadcrumbEntry();
 
-			JournalFolder unescapedFolder = folder.toUnescapedModel();
+			if (permissionChecker.hasPermission(
+					folder.getGroupId(), JournalFolder.class.getName(),
+					folder.getFolderId(), ActionKeys.VIEW)) {
 
-			folderBreadcrumbEntry.setTitle(unescapedFolder.getName());
+				JournalFolder unescapedFolder = folder.toUnescapedModel();
 
-			portletURL.setParameter(
-				"folderId", String.valueOf(folder.getFolderId()));
+				folderBreadcrumbEntry.setTitle(unescapedFolder.getName());
 
-			folderBreadcrumbEntry.setURL(portletURL.toString());
+				if (lastElementLinkable) {
+					folderBreadcrumbEntry.setURL(
+						PortletURLBuilder.createRenderURL(
+							liferayPortletResponse
+						).setParameter(
+							"folderId", folder.getFolderId()
+						).buildString());
+				}
+			}
+			else {
+				folderBreadcrumbEntry.setTitle(StringPool.TRIPLE_PERIOD);
+			}
 
 			breadcrumbEntries.add(folderBreadcrumbEntry);
 		}

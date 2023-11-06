@@ -66,7 +66,6 @@ import com.liferay.portal.kernel.model.Team;
 import com.liferay.portal.kernel.model.TypedModel;
 import com.liferay.portal.kernel.model.WorkflowDefinitionLink;
 import com.liferay.portal.kernel.model.WorkflowedModel;
-import com.liferay.portal.kernel.model.adapter.ModelAdapterUtil;
 import com.liferay.portal.kernel.model.adapter.StagedGroupedWorkflowDefinitionLink;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
@@ -98,6 +97,7 @@ import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portal.kernel.zip.ZipReader;
 import com.liferay.portal.kernel.zip.ZipWriter;
+import com.liferay.portal.model.adapter.util.ModelAdapterUtil;
 import com.liferay.portal.workflow.util.WorkflowDefinitionManagerUtil;
 import com.liferay.xstream.configurator.XStreamConfigurator;
 import com.liferay.xstream.configurator.XStreamConfiguratorRegistryUtil;
@@ -1561,6 +1561,11 @@ public class PortletDataContextImpl implements PortletDataContext {
 	}
 
 	@Override
+	public boolean isOriginalPrivateLayout() {
+		return _originalPrivateLayout;
+	}
+
+	@Override
 	public boolean isPathExportedInScope(String path) {
 		return addScopedPrimaryKey(String.class, path);
 	}
@@ -1705,6 +1710,10 @@ public class PortletDataContextImpl implements PortletDataContext {
 	@Override
 	public void setNewLayouts(List<Layout> newLayouts) {
 		_newLayouts = newLayouts;
+	}
+
+	public void setOriginalPrivateLayout(boolean originalPrivateLayout) {
+		_originalPrivateLayout = originalPrivateLayout;
 	}
 
 	@Override
@@ -2765,6 +2774,7 @@ public class PortletDataContextImpl implements PortletDataContext {
 	private final Map<String, Map<?, ?>> _newPrimaryKeysMaps = new HashMap<>();
 	private final Set<String> _notUniquePerLayout = new HashSet<>();
 	private final Map<String, Object> _objectsMap = new HashMap<>();
+	private boolean _originalPrivateLayout;
 	private Map<String, String[]> _parameterMap;
 	private final Map<String, List<KeyValuePair>> _permissionsMap =
 		new HashMap<>();

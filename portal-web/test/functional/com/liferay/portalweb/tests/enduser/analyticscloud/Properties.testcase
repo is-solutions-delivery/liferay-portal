@@ -29,10 +29,6 @@ definition {
 	tearDown {
 		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
-
-		//ACUtils.tearDownAC();
-
 		ACUtils.tearDownDXP();
 
 		if (${testLiferayVirtualInstance} == "true") {
@@ -41,6 +37,8 @@ definition {
 		else {
 			JSONGroup.deleteGroupByName(groupName = "Site Name");
 		}
+
+		ACUtils.tearDownAC();
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-9037 | Test Summary: As an Business User, a Property with a duplicate name should have an incrementing identifier appended to it's name"
@@ -91,7 +89,7 @@ definition {
 	@priority = 3
 	test CanCreatePropertiesWhenNoDataSourceIsCreatedYet {
 
-		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
+		// It is not possible to delete data source after LRAC-13389. This functionality must be returned by a story that has not yet been created
 
 		task ("Remove all data sources present") {
 			ACUtils.launchAC();
@@ -494,8 +492,12 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8145 | Test Summary: Owner can create a new property"
+	@ignore = "true"
 	@priority = 5
 	test OwnerCanCreateNewProperty {
+
+		// The default AC users do not appear in Users and Organizations. The bug will be resolved after LRAC-14468
+
 		ACUtils.launchAC();
 
 		ACNavigation.goToSettings();
@@ -563,7 +565,7 @@ definition {
 		}
 
 		task ("Go to property via URL") {
-			Open(locator1 = ${propertyURL});
+			Open(value1 = ${propertyURL});
 
 			ACProperties.assertNewCreatedProperty(propertyName = ${myProperty});
 		}

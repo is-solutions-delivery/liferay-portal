@@ -49,23 +49,25 @@ public class SharingDropdownItemFactoryImpl
 
 	@Override
 	public UnsafeConsumer<DropdownContextItem, Exception>
-		createShareActionUnsafeConsumer(
-			String className, long classPK,
-			HttpServletRequest httpServletRequest) {
+			createShareActionUnsafeConsumer(
+				String className, long classPK,
+				HttpServletRequest httpServletRequest)
+		throws PortalException {
+
+		DropdownItem shareDropdownItem = createShareDropdownItem(
+			className, classPK, httpServletRequest);
+
+		shareDropdownItem.setLabel(
+			SharingItemFactoryUtil.getInviteToCollaborateLabel(
+				httpServletRequest));
 
 		return dropdownContextItem -> {
 			dropdownContextItem.setDropdownItems(
 				DropdownItemListBuilder.add(
-					createShareDropdownItem(
-						className, classPK, httpServletRequest)
+					shareDropdownItem
 				).add(
-					dropdownItem -> {
-						dropdownItem.putData("action", "copyLink");
-						dropdownItem.setIcon("link");
-						dropdownItem.setLabel(
-							SharingItemFactoryUtil.getCopyLinkLabel(
-								httpServletRequest));
-					}
+					_createCopyLinkDropdownItem(
+						className, classPK, httpServletRequest)
 				).build());
 			dropdownContextItem.setIcon("share");
 			dropdownContextItem.setLabel(
@@ -91,6 +93,24 @@ public class SharingDropdownItemFactoryImpl
 			"share"
 		).setLabel(
 			SharingItemFactoryUtil.getSharingLabel(httpServletRequest)
+		).build();
+	}
+
+	private DropdownItem _createCopyLinkDropdownItem(
+		String className, long classPK, HttpServletRequest httpServletRequest) {
+
+		return DropdownItemBuilder.setHref(
+			() -> {
+				String copyLinkOnClickMethod =
+					_sharingJavaScriptFactory.createCopyLinkClickMethod(
+						className, classPK, httpServletRequest);
+
+				return "javascript:" + copyLinkOnClickMethod;
+			}
+		).setIcon(
+			"link"
+		).setLabel(
+			SharingItemFactoryUtil.getCopyLinkLabel(httpServletRequest)
 		).build();
 	}
 

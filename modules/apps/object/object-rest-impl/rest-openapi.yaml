@@ -28,6 +28,13 @@ components:
                     type: object
         FileEntry:
             properties:
+                fileBase64:
+                    # @review
+                    description:
+                        optional field with the content of the document in Base64, can be embedded with nestedFields
+                        (the format of the nested field must be `<attachment field name>.fileBase64`)
+                    readOnly: true
+                    type: string
                 id:
                     format: int64
                     type: integer
@@ -688,12 +695,8 @@ paths:
             responses:
                 200:
                     content:
-                        application/json:
-                            schema:
-                                $ref: "#/components/schemas/ObjectEntry"
-                        application/xml:
-                            schema:
-                                $ref: "#/components/schemas/ObjectEntry"
+                        application/json: {}
+                        application/xml: {}
             tags: ["ObjectEntry"]
         put:
             operationId: putObjectEntryPermissionsPage
@@ -704,6 +707,10 @@ paths:
                   schema:
                       format: int64
                       type: integer
+            requestBody:
+                content:
+                    application/json: {}
+                    application/xml: {}
             responses:
                 204:
                     content:

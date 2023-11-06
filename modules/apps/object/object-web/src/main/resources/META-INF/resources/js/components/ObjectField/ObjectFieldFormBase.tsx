@@ -35,6 +35,7 @@ import {UniqueValues} from './UniqueValues';
 import {FORMULA_OUTPUT_OPTIONS, FormulaOutput} from './formulaFieldUtil';
 
 import './ObjectFieldFormBase.scss';
+import {AutoIncrementFormBase} from './AutoIncrementFormBase';
 
 interface ObjectFieldFormBaseProps {
 	children?: ReactNode;
@@ -434,6 +435,18 @@ export default function ObjectFieldFormBase({
 				/>
 			)}
 
+			{Liferay.FeatureFlags['LPS-196724'] &&
+				values.businessType === 'AutoIncrement' &&
+				!editingObjectField && (
+					<AutoIncrementFormBase
+						disabled={disabled as boolean}
+						errors={errors}
+						onSubmit={onSubmit}
+						setValues={setValues}
+						values={values}
+					/>
+				)}
+
 			{values.businessType === 'Aggregation' && (
 				<AggregationFormBase
 					creationLanguageId2={
@@ -561,6 +574,7 @@ export default function ObjectFieldFormBase({
 
 			<ClayForm.Group>
 				{values.businessType !== 'Aggregation' &&
+					values.businessType !== 'AutoIncrement' &&
 					values.businessType !== 'Formula' && (
 						<Toggle
 							disabled={getMandatoryToggleDisabledState()}

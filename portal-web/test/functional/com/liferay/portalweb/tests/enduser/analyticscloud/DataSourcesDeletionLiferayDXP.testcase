@@ -21,10 +21,6 @@ definition {
 	tearDown {
 		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
-
-		//ACUtils.tearDownAC();
-
 		ACUtils.tearDownDXP();
 
 		if (${testLiferayVirtualInstance} == "true") {
@@ -33,6 +29,8 @@ definition {
 		else {
 			JSONGroup.deleteGroupByName(groupName = "Site Name");
 		}
+
+		ACUtils.tearDownAC();
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8154 | Test Summary: Delete a Liferay DXP data source and ensure contacts and ensure analytics events are no longer being synced"
@@ -41,7 +39,7 @@ definition {
 	test DeleteLiferayDXPDataSourceEnsureContactsAndEventsNoBeingSynced {
 
 		// AC Bug ticket: LRAC-10534
-		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
+		// It is not possible to delete data source after LRAC-13389. This functionality must be returned by a story that has not yet been created
 
 		ACUtils.addSiteAndPage();
 

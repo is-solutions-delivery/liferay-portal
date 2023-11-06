@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.version.Version;
 import com.liferay.portal.search.ccr.CrossClusterReplicationHelper;
+import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationObserver;
 import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch7.internal.index.IndexConfigurationDynamicUpdatesExecutor;
@@ -79,7 +80,8 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	property = "search.engine.impl=Elasticsearch", service = SearchEngine.class
 )
-public class ElasticsearchSearchEngine implements SearchEngine {
+public class ElasticsearchSearchEngine
+	implements ElasticsearchConfigurationObserver, SearchEngine {
 
 	@Override
 	public synchronized String backup(long companyId, String backupName)
@@ -113,6 +115,14 @@ public class ElasticsearchSearchEngine implements SearchEngine {
 	}
 
 	@Override
+	public int compareTo(
+		ElasticsearchConfigurationObserver elasticsearchConfigurationObserver) {
+
+		return _elasticsearchConfigurationWrapper.compare(
+			this, elasticsearchConfigurationObserver);
+	}
+
+	@Override
 	public IndexSearcher getIndexSearcher() {
 		return _indexSearcher;
 	}
@@ -120,6 +130,11 @@ public class ElasticsearchSearchEngine implements SearchEngine {
 	@Override
 	public IndexWriter getIndexWriter() {
 		return _indexWriter;
+	}
+
+	@Override
+	public int getPriority() {
+		return 4;
 	}
 
 	@Override
@@ -133,8 +148,6 @@ public class ElasticsearchSearchEngine implements SearchEngine {
 
 		RestHighLevelClient restHighLevelClient =
 			_elasticsearchConnectionManager.getRestHighLevelClient();
-
-		_putTimestampPipeline(restHighLevelClient);
 
 		boolean created = _indexFactory.createIndices(
 			restHighLevelClient.indices(), companyId);
@@ -154,6 +167,11 @@ public class ElasticsearchSearchEngine implements SearchEngine {
 			crossClusterReplicationHelper.follow(
 				_indexNameBuilder.getIndexName(companyId));
 		}
+	}
+
+	@Override
+	public void onElasticsearchConfigurationUpdate() {
+		_putTimestampPipeline();
 	}
 
 	@Override
@@ -227,6 +245,8 @@ public class ElasticsearchSearchEngine implements SearchEngine {
 
 	@Activate
 	protected void activate(Map<String, Object> properties) {
+		_elasticsearchConfigurationWrapper.register(this);
+
 		_checkNodeVersions();
 
 		if (StartupHelperUtil.isDBNew()) {
@@ -234,6 +254,8 @@ public class ElasticsearchSearchEngine implements SearchEngine {
 				removeCompany(companyId);
 			}
 		}
+
+		_putTimestampPipeline();
 
 		initialize(CompanyConstants.SYSTEM);
 	}
@@ -348,9 +370,7 @@ public class ElasticsearchSearchEngine implements SearchEngine {
 		return true;
 	}
 
-	private void _putTimestampPipeline(
-		RestHighLevelClient restHighLevelClient) {
-
+	private void _putTimestampPipeline() {
 		String source = JSONUtil.put(
 			"description", "Adds timestamp to documents"
 		).put(
@@ -369,6 +389,9 @@ public class ElasticsearchSearchEngine implements SearchEngine {
 			"timestamp",
 			new BytesArray(source.getBytes(StandardCharsets.UTF_8)),
 			XContentType.JSON);
+
+		RestHighLevelClient restHighLevelClient =
+			_elasticsearchConnectionManager.getRestHighLevelClient();
 
 		IngestClient ingestClient = restHighLevelClient.ingest();
 

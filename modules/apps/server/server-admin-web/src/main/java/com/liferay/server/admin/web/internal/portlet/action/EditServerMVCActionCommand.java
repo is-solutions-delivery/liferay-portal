@@ -106,7 +106,7 @@ import com.liferay.portal.util.PropsUtil;
 import com.liferay.portal.util.ShutdownUtil;
 import com.liferay.portlet.documentlibrary.util.DLPreviewableProcessor;
 import com.liferay.server.admin.web.internal.constants.ImageMagickResourceLimitConstants;
-import com.liferay.server.admin.web.internal.scripting.ServerScripting;
+import com.liferay.server.admin.web.internal.scripting.util.ServerScriptingUtil;
 
 import java.lang.reflect.InvocationHandler;
 
@@ -432,7 +432,7 @@ public class EditServerMVCActionCommand
 					}
 
 					_portletPreferencesLocalService.deletePortletPreferences(
-						portletPreferences);
+						portletPreferences.getPortletPreferencesId());
 				});
 
 			actionableDynamicQuery.performActions();
@@ -451,6 +451,19 @@ public class EditServerMVCActionCommand
 			ActionableDynamicQuery actionableDynamicQuery =
 				_portletPreferencesLocalService.getActionableDynamicQuery();
 
+			actionableDynamicQuery.setAddCriteriaMethod(
+				dynamicQuery -> {
+					Property plidProperty = PropertyFactoryUtil.forName("plid");
+
+					DynamicQuery layoutRevisionDynamicQuery =
+						_layoutRevisionLocalService.dynamicQuery();
+
+					layoutRevisionDynamicQuery.setProjection(
+						ProjectionFactoryUtil.property("layoutRevisionId"));
+
+					dynamicQuery.add(
+						plidProperty.notIn(layoutRevisionDynamicQuery));
+				});
 			actionableDynamicQuery.setParallel(true);
 			actionableDynamicQuery.setPerformActionMethod(
 				(com.liferay.portal.kernel.model.PortletPreferences pref) -> {
@@ -489,7 +502,8 @@ public class EditServerMVCActionCommand
 
 					if (orphan) {
 						_portletPreferencesLocalService.
-							deletePortletPreferences(pref);
+							deletePortletPreferences(
+								pref.getPortletPreferencesId());
 					}
 				});
 
@@ -616,7 +630,7 @@ public class EditServerMVCActionCommand
 			SessionMessages.add(actionRequest, "script", script);
 			SessionMessages.add(actionRequest, "output", output);
 
-			_serverScripting.execute(portletObjects, language, script);
+			ServerScriptingUtil.execute(portletObjects, language, script);
 
 			unsyncPrintWriter.flush();
 
@@ -961,9 +975,6 @@ public class EditServerMVCActionCommand
 
 	@Reference
 	private RoleLocalService _roleLocalService;
-
-	@Reference
-	private ServerScripting _serverScripting;
 
 	@Reference
 	private SingleVMPool _singleVMPool;

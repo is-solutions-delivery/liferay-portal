@@ -25,10 +25,6 @@ definition {
 	tearDown {
 		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
-
-		//ACUtils.tearDownAC();
-
 		ACUtils.tearDownDXP();
 
 		if (${testLiferayVirtualInstance} == "true") {
@@ -37,6 +33,8 @@ definition {
 		else {
 			JSONGroup.deleteGroupByName(groupName = "Site Name");
 		}
+
+		ACUtils.tearDownAC();
 	}
 
 	@description = "Automation ID: LRAC-8890 | Test Summary: Able to change retention period"
@@ -66,7 +64,7 @@ definition {
 
 		task ("Assert that Retention Period changed") {
 			AssertElementPresent(
-				locator1 = "OpenIDConnectLogin#OPENID_CONNECT_DROPDOWN_MENU",
+				locator1 = "ACSettings#RETENTION_PERIOD",
 				value1 = "7 Months");
 		}
 	}

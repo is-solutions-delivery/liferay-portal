@@ -1,6 +1,20 @@
 definition {
 
-	macro configureMailSettings {
+	@summary = "Default summary"
+	macro changeACUserPassword(userScreenName) {
+		var analyticsCloudURL = PropsUtil.get("analytics.cloud.url");
+
+		User.openUsersAdmin(baseURL = ${analyticsCloudURL});
+
+		UserNavigator.gotoUser(userScreenName = ${userScreenName});
+
+		UserNavigator.gotoPassword();
+
+		User.resetPassword();
+	}
+
+	@summary = "Default summary"
+	macro configureMailSettings(incomingPOPServer = null, userPassword = null, outgoingSMTPServer = null, userName = null, incomingPort = null, outgoingPort = null,) {
 		ACAdmin.goToServerAdministration();
 
 		Navigator.gotoNavItem(navItem = "Mail");
@@ -66,19 +80,34 @@ definition {
 			value1 = "Your request completed successfully.");
 	}
 
-	macro getUserID {
+	@summary = "Default summary"
+	macro getUserID() {
 		var userID = selenium.getElementValue("UsersAndOrganizationsEditUser#DETAILS_USER_ID_FIELD");
 
 		return ${userID};
 	}
 
-	macro goToACAdmin {
-		var currentURL = Navigator.getCurrentURL();
+	@summary = "Default summary"
+	macro goToACAdmin(userScreenNameToResetPassword = null,) {
+		var analyticsCloudURL = PropsUtil.get("analytics.cloud.url");
 
-		Navigator.openSpecificURL(url = "${currentURL}admin");
+		Navigator.openSpecificURL(url = "${analyticsCloudURL}/admin");
+
+		if (IsElementPresent(locator1 = "TextInput#PASSWORD_1")) {
+			User.resetPassword(newPassword = "test1");
+
+			if (IsElementPresent(locator1 = "Modal#HEADER")) {
+				Click(locator1 = "Button#DONE");
+			}
+
+			if (isSet(userScreenNameToResetPassword)) {
+				ACAdmin.changeACUserPassword(userScreenName = ${userScreenNameToResetPassword});
+			}
+		}
 	}
 
-	macro goToServerAdministration {
+	@summary = "Default summary"
+	macro goToServerAdministration() {
 		ProductMenuHelper.expandPanel(panel = "control panel");
 
 		ProductMenuHelper.expandCategory(category = "Configuration");

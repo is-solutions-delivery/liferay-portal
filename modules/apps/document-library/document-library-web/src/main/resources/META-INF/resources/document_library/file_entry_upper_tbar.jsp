@@ -20,20 +20,22 @@ FileVersion fileVersion = dlViewFileEntryDisplayContext.getFileVersion();
 			<ul class="tbar-nav">
 				<li class="tbar-item tbar-item-expand">
 					<div class="tbar-section text-left">
-						<h2 class="text-truncate-inline upper-tbar-title" title="<%= dlViewFileEntryDisplayContext.getDocumentTitle() %>">
-							<span class="text-truncate"><%= dlViewFileEntryDisplayContext.getDocumentTitle() %></span>
+						<h2 class="text-truncate-inline upper-tbar-title" title="<%= HtmlUtil.escapeAttribute(dlViewFileEntryDisplayContext.getDocumentTitle()) %>">
+							<span class="text-truncate"><%= HtmlUtil.escape(dlViewFileEntryDisplayContext.getDocumentTitle()) %></span>
 						</h2>
 
 						<c:if test="<%= fileEntry.hasLock() || fileEntry.isCheckedOut() %>">
-							<span class="inline-item inline-item-after state-icon">
-								<aui:icon image="lock" markupView="lexicon" message="locked" />
-							</span>
+							<clay:icon
+								cssClass="inline-item inline-item-after state-icon"
+								symbol="lock"
+							/>
 						</c:if>
 
 						<c:if test="<%= dlViewFileEntryDisplayContext.isShared() %>">
-							<span class="inline-item inline-item-after lfr-portal-tooltip state-icon" title="<%= LanguageUtil.get(request, "shared") %>">
-								<aui:icon image="users" markupView="lexicon" message="shared" />
-							</span>
+							<clay:icon
+								cssClass="inline-item inline-item-after lfr-portal-tooltip state-icon"
+								symbol="users"
+							/>
 						</c:if>
 					</div>
 				</li>

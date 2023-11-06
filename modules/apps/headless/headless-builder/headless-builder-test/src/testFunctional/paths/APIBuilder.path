@@ -96,6 +96,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ENDPOINT_DROPDOWN</td>
+	<td>//button[@aria-controls='selectDropdown' and contains(.,'${key_value}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ENTER_NAME</td>
 	<td>//input[(@placeholder='Enter name.')]</td>
 	<td></td>
@@ -123,6 +128,11 @@
 <tr>
 	<td>MODAL_DELETE_BUTTON</td>
 	<td>//button[@id='modalDeleteButton']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ODATA_TEXTAREA</td>
+	<td>//textarea[@placeholder='Add a ${fieldName} using OData.']</td>
 	<td></td>
 </tr>
 <tr>

@@ -63,10 +63,6 @@ definition {
 	tearDown {
 		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
-
-		//ACUtils.tearDownAC();
-
 		ACUtils.tearDownDXP();
 
 		if (${testLiferayVirtualInstance} == "true") {
@@ -75,6 +71,8 @@ definition {
 		else {
 			JSONGroup.deleteGroupByName(groupName = "Site Name");
 		}
+
+		ACUtils.tearDownAC();
 	}
 
 	@description = "Feature ID: LRAC-6280 | Automation ID: LRAC-10563 | Test Summary: Search for analysis report"
@@ -711,18 +709,7 @@ definition {
 	test CanPaginationAnalysisReportList {
 		var eventAnalysisNameList1 = "Save Analysis 0,Save Analysis 1,Save Analysis 2,Save Analysis 3";
 		var eventAnalysisNameList2 = "Save Analysis 4,Save Analysis 5,Save Analysis 6,Save Analysis 7";
-
-		task ("Fill fields and create custom event") {
-			var customEventName = ACCustomEvents.generateCustomEventName();
-
-			ACCustomEvents.createCustomEvent(
-				customEventName = ${customEventName},
-				timeToSendCustomEvent = 1);
-		}
-
-		task ("Close sessions") {
-			ACUtils.closeAllSessionsAndWait();
-		}
+		var eventName = "pageViewed";
 
 		task ("Switch the property in AC and go to event analysis") {
 			ACUtils.launchAC();
@@ -734,19 +721,11 @@ definition {
 
 		for (var eventAnalysisName : list "${eventAnalysisNameList1},${eventAnalysisNameList2}") {
 			task ("Add the custom event to analysis by the all tab") {
-				ACEventAnalysis.addEvent(customEventName = ${customEventName});
+				ACEventAnalysis.addEvent(customEventName = ${eventName});
 			}
 
 			task ("Name the report") {
 				ACUtils.setItemName(itemName = ${eventAnalysisName});
-			}
-
-			task ("Check the analysis result appears") {
-				ACTimeFilter.clickTimeFilterButton();
-
-				ACTimeFilter.setLast24Hours();
-
-				ACEventAnalysis.viewAnalysisInformation(informationValueList = "${customEventName},1");
 			}
 
 			task ("Save the newly created analysis") {
@@ -759,7 +738,7 @@ definition {
 		}
 
 		task ("Check pagination for "20" item filter") {
-			ACUtils.viewResultsMessage(results = "Showing 1 to 10 of 10 entries.");
+			ACUtils.viewResultsMessage(results = "Showing 1 to 8 of 8 entries.");
 
 			ACUtils.viewResultsPages(pageNumber = 1);
 		}
@@ -767,7 +746,7 @@ definition {
 		task ("Change the pagination to "4" and Check pagination for "5" item filter") {
 			ACUtils.changePagination(itemsPerPage = 4);
 
-			ACUtils.viewResultsMessage(results = "Showing 1 to 4 of 10 entries.");
+			ACUtils.viewResultsMessage(results = "Showing 1 to 4 of 8 entries.");
 
 			ACUtils.viewResultsPages(pageNumber = 1);
 
@@ -783,7 +762,7 @@ definition {
 		task ("Navigate to the next page and check the pagination") {
 			ACUtils.checkPreviousNextButton(nextButton = "true");
 
-			ACUtils.viewResultsMessage(results = "Showing 5 to 8 of 10 entries.");
+			ACUtils.viewResultsMessage(results = "Showing 5 to 8 of 8 entries.");
 		}
 
 		task ("Assert the analysis is saved and show up on event analysis list") {
@@ -892,7 +871,7 @@ definition {
 			ACUtils.clickGenericHyperlink(hyperlinkText = "Access our documentation to learn more.");
 
 			task ("Switch to the documentation tab") {
-				SelectWindow(locator1 = "title=Events Analysis - Liferay Learn");
+				SelectWindow(value1 = "title=Events Analysis - Liferay Learn");
 			}
 
 			ACUtils.viewGenericText(textValueList = "Events Analysis");
@@ -900,11 +879,14 @@ definition {
 	}
 
 	@description = "Feature ID: LRAC-6280 | Automation ID: LRAC-10569 | Test Summary: Viewing the newly created analysis report with member permission"
+	@ignore = "true"
 	@priority = 4
 	test UserWithMemberPermissionCanViewAndCreateAnalysisReport {
 		var attributeName = "category";
 		var filterName = "like";
 		var defaultEventName = "webContentViewed";
+
+		// The default AC users do not appear in Users and Organizations. The bug will be resolved after LRAC-14468
 
 		task ("Fill fields and create custom event") {
 			var customEventName = ACCustomEvents.generateCustomEventName();

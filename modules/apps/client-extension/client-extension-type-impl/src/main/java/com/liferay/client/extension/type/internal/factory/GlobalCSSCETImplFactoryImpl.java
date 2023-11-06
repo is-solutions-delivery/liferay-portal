@@ -60,9 +60,11 @@ public class GlobalCSSCETImplFactoryImpl
 		GlobalCSSCET newGlobalCSSCET = new GlobalCSSCETImpl(
 			StringPool.NEW_LINE, newTypeSettingsUnicodeProperties);
 
-		if (!Validator.isUrl(newGlobalCSSCET.getURL())) {
+		String url = newGlobalCSSCET.getURL();
+
+		if (!Validator.isUrl(url)) {
 			throw new ClientExtensionEntryTypeSettingsException(
-				"please-enter-a-valid-url");
+				"Invalid CSS URL: " + url, "css-url-x-is-invalid", url);
 		}
 	}
 

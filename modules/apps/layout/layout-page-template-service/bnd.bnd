@@ -1,10 +1,10 @@
 Bundle-Name: Liferay Layout Page Template Service
 Bundle-SymbolicName: com.liferay.layout.page.template.service
-Bundle-Version: 4.0.94
+Bundle-Version: 4.0.95
 Import-Package:\
 	com.liferay.layout.page.template.util.comparator,\
 	\
 	*
-Liferay-Require-SchemaVersion: 5.3.1
+Liferay-Require-SchemaVersion: 5.4.0
 Liferay-Service: true
 -dsannotations-options: inherit

@@ -61,15 +61,9 @@ public class RankingIndexPortalInstanceLifecycleListener
 			return;
 		}
 
-		RankingIndexName rankingIndexName =
+		_rankingIndexCreator.deleteIfExists(
 			_rankingIndexNameBuilder.getRankingIndexName(
-				company.getCompanyId());
-
-		if (!_rankingIndexReader.isExists(rankingIndexName)) {
-			return;
-		}
-
-		_rankingIndexCreator.delete(rankingIndexName);
+				company.getCompanyId()));
 	}
 
 	@Reference

@@ -462,15 +462,19 @@ public class LayoutStagedModelDataHandler
 
 		boolean privateLayout = false;
 
-		if ((portletDataContext.isPrivateLayout() &&
+		if ((portletDataContext.isOriginalPrivateLayout() &&
 			 !layout.isTypeAssetDisplay()) ||
 			GetterUtil.getBoolean(
 				layoutElement.attributeValue("layout-content-page-template")) ||
+			GetterUtil.getBoolean(
+				layoutElement.attributeValue("layout-layout-prototype")) ||
 			GetterUtil.getBoolean(
 				layoutElement.attributeValue("layout-master-page-template"))) {
 
 			privateLayout = true;
 		}
+
+		portletDataContext.setPrivateLayout(privateLayout);
 
 		Map<Long, Layout> layouts =
 			(Map<Long, Layout>)portletDataContext.getNewPrimaryKeysMap(

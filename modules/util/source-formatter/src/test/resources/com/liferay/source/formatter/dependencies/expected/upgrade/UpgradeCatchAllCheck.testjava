@@ -7,11 +7,20 @@ package com.liferay.source.formatter.dependencies.upgrade;
 
 import com.liferay.commerce.constants.CommerceOrderPaymentConstants;
 
+import com.liferay.portal.kernel.util.PortalUtil;
+
+import com.liferay.document.library.kernel.model.DLVersionNumberIncrease;
+import java.util.Date;
+
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+
+import java.util.ArrayList;
 
 import com.liferay.portal.kernel.util.HtmlParser;
 
 import com.liferay.portal.kernel.search.Sort;
+
+import com.liferay.document.library.util.DLURLHelperUtil;
 
 import org.osgi.service.component.annotations.Reference;
 
@@ -21,9 +30,18 @@ import org.osgi.service.component.annotations.Reference;
 public class UpgradeCatchAllCheck {
 
 	public void method() {
+		AccountPortletKeys.ACCOUNT_USERS_ADMIN;
+		AccountPortletKeys.ACCOUNT_GROUPS_ADMIN;
+
 		CommerceOrderPaymentConstants.STATUS_AUTHORIZED;
 		CommerceOrderPaymentConstants.STATUS_COMPLETED;
 		CommerceOrderPaymentConstants.STATUS_PENDING;
+
+		for (CommerceOrderItem commerceOrderItem : commerceOrder.getCommerceOrderItems()) {
+			commerceOrderItem.getQuantity();
+		}
+
+		_countryService.fetchCountryByA2(123, "test123");
 
 		DestinationNames.COMMERCE_BASE_PRICE_LIST;
 		DestinationNames.COMMERCE_ORDER_STATUS;
@@ -32,15 +50,15 @@ public class UpgradeCatchAllCheck {
 		DestinationNames.COMMERCE_STOCK_QUANTITY;
 		DestinationNames.COMMERCE_SUBSCRIPTION_STATUS;
 
+		DLURLHelperUtil.getImagePreviewURL(null, null, null);
+
 		FDSTableSchemaBuilder fDSTableSchemaBuilder = _fDSTableSchemaBuilderFactory.create();
 
 		fDSTableSchemaBuilder.add("test123", "test123");
 
-		_htmlParser.extractText(testEntry.getContent());
+		_htmlParser.extractText(null);
 
-		if (true) {
-			_htmlParser.extractText(testEntry.getContent());
-		}
+		new ArrayList<>(LanguageUtil.getAvailableLocales());
 	}
 
 	public void method(AssetCategory<?> assetCategory) {
@@ -48,18 +66,143 @@ public class UpgradeCatchAllCheck {
 		assetCategory.getCategoryId;
 	}
 
-	public void method(CommerceAddress commerceAddress) {
-		Region region = commerceAddress.getCountry();
+	public void method(
+		CommerceAddress commerceAddress, Country country, Region region) {
 
+		commerceAddress.getCountry().getA2();
+		country.getA2();
+		country.setA2();
+		country.getA3();
+		country.setA3();
+
+		commerceAddress.getRegion().getRegionCode();
 		region.getRegionCode();
-
-		commerceAddress.getRegion(
-		).getRegionCode();
 	}
 
 	public void method(HttpServletRequest httpServletRequest) {
 		_commerceAccountHelper.getCurrentAccountEntry(0, httpServletRequest);
 		_commerceAccountHelper.getCurrentCommerceAccount(null);
+	}
+
+	public void method(
+		Indexer<?> indexer, ServiceReference<Indexer<?>> serviceReference) {
+
+		Map<Indexer<?>, Indexer<?>> indexerRequests = new LinkedHashMap<>();
+		List<Indexer<?>> indexers = portlet.getIndexerInstances();
+	}
+
+	public void method(Indexer<?> indexer) {
+		indexer.getSearchClassNames();
+	}
+
+	public void method(long commerceOrderId) {
+		CommerceOrderItemLocalServiceUtil.deleteCommerceOrderItems(0, commerceOrderId);
+		_commerceOrderItemLocalService.deleteCommerceOrderItems(123);
+		_commerceOrderItemLocalService.deleteCommerceOrderItems(0, commerceOrderId);
+	}
+
+	public void method(
+		long groupId, boolean privateLayout, long layoutId, long parentLayoutId,
+		Map<java.util.Locale, String> nameMap,
+		Map<java.util.Locale, String> titleMap,
+		Map<java.util.Locale, String> descriptionMap,
+		Map<java.util.Locale, String> keywordsMap,
+		Map<java.util.Locale, String> robotsMap, String type, boolean hidden,
+		Map<java.util.Locale, String> friendlyURLMap, boolean hasIconImage,
+		byte[] iconBytes, ServiceContext serviceContext) {
+
+		LayoutLocalServiceUtil.updateLayout(groupId, privateLayout, layoutId, parentLayoutId, nameMap, titleMap, descriptionMap, keywordsMap, robotsMap, type, hidden, friendlyURLMap, hasIconImage, iconBytes, 0, 0, 0, serviceContext);
+		LayoutServiceUtil.updateLayout(groupId, privateLayout, 123, parentLayoutId, nameMap, titleMap, descriptionMap, keywordsMap, robotsMap, test, hidden, friendlyURLMap, hasIconImage, iconBytes, serviceContext);
+		LayoutServiceUtil.updateLayout(groupId, privateLayout, layoutId, parentLayoutId, nameMap, titleMap, descriptionMap, keywordsMap, robotsMap, type, hidden, friendlyURLMap, hasIconImage, iconBytes, 0, 0, 0, serviceContext);
+		_layoutLocalService.updateLayout(groupId, privateLayout, layoutId, parentLayoutId, nameMap, titleMap, descriptionMap, keywordsMap, robotsMap, type, hidden, friendlyURLMap, hasIconImage, iconBytes, 0, 0, 0, serviceContext);
+		_layoutService.updateLayout(groupId, privateLayout, layoutId, parentLayoutId, nameMap, titleMap, descriptionMap, keywordsMap, robotsMap, type, hidden, friendlyURLMap, hasIconImage, iconBytes, 0, 0, 0, serviceContext);
+	}
+
+	public void method(
+		long companyId, boolean autoPassword, String password1,
+		String password2, boolean autoScreenName, String screenName,
+		String emailAddress, long facebookId, String openId, Locale locale,
+		String firstName, String middleName, String lastName, long prefixId,
+		long suffixId, boolean male, int birthdayMonth, int birthdayDay,
+		int birthdayYear, String jobTitle, long[] groupIds,
+		long[] organizationIds, long[] roleIds, long[] userGroupIds,
+		boolean sendEmail, ServiceContext serviceContext) {
+
+		UserLocalServiceUtil.addUser(companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
+		UserServiceUtil.addUser(123, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, facebookId, openId, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
+		UserServiceUtil.addUser(companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
+		_userLocalService.addUser(companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
+		_userService.addUser(companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
+	}
+
+	public void method(
+		long companyId, boolean autoPassword, String password1,
+		String password2, boolean autoScreenName, String screenName,
+		String emailAddress, long facebookId, String openId, Locale locale,
+		String firstName, String middleName, String lastName, long prefixId,
+		long suffixId, boolean male, int birthdayMonth, int birthdayDay,
+		int birthdayYear, String jobTitle, long[] groupIds,
+		long[] organizationIds, long[] roleIds, long[] userGroupIds,
+		List<Address> addresses, List<EmailAddress> emailAddresses,
+		List<Phone> phones, List<Website> websites,
+		List<AnnouncementsDelivery> announcementsDelivers, boolean sendEmail,
+		ServiceContext serviceContext) {
+
+		UserLocalServiceUtil.addUser(companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, groupIds, organizationIds, roleIds, userGroupIds, addresses, emailAddresses, phones, websites, announcementsDelivers, sendEmail, serviceContext);
+		UserServiceUtil.addUser(123, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, facebookId, openId, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, groupIds, organizationIds, roleIds, userGroupIds, addresses, emailAddresses, phones, websites, announcementsDelivers, sendEmail, serviceContext);
+		UserServiceUtil.addUser(companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, groupIds, organizationIds, roleIds, userGroupIds, addresses, emailAddresses, phones, websites, announcementsDelivers, sendEmail, serviceContext);
+		_userLocalService.addUser(companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, groupIds, organizationIds, roleIds, userGroupIds, addresses, emailAddresses, phones, websites, announcementsDelivers, sendEmail, serviceContext);
+		_userService.addUser(companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, groupIds, organizationIds, roleIds, userGroupIds, addresses, emailAddresses, phones, websites, announcementsDelivers, sendEmail, serviceContext);
+	}
+
+	public void method(long userId, int status) {
+		UserLocalServiceUtil.updateStatus(userId, status, ServiceContextThreadLocal.getServiceContext());
+		UserServiceUtil.updateStatus(123, status);
+		UserServiceUtil.updateStatus(userId, status, ServiceContextThreadLocal.getServiceContext());
+		_userLocalService.updateStatus(userId, status, ServiceContextThreadLocal.getServiceContext());
+		_userService.updateStatus(userId, status, ServiceContextThreadLocal.getServiceContext());
+	}
+
+	public void method(
+		long userId, long groupId, boolean privateLayout, long parentLayoutId,
+		long classNameId, long classPK, Map<java.util.Locale, String> nameMap,
+		Map<java.util.Locale, String> titleMap,
+		Map<java.util.Locale, String> descriptionMap,
+		Map<java.util.Locale, String> keywordsMap,
+		Map<java.util.Locale, String> robotsMap, String type,
+		String typeSettings, boolean hidden, boolean system,
+		Map<java.util.Locale, String> friendlyURLMap,
+		ServiceContext serviceContext) {
+
+		LayoutLocalServiceUtil.addLayout(userId, groupId, privateLayout, parentLayoutId, classNameId, classPK, nameMap, titleMap, descriptionMap, keywordsMap, robotsMap, type, typeSettings, hidden, system, friendlyURLMap, 0, serviceContext);
+		_layoutLocalService.addLayout(userId, groupId, 123, parentLayoutId, classNameId, classPK, nameMap, titleMap, descriptionMap, keywordsMap, robotsMap, type, typeSettings, hidden, system, friendlyURLMap, serviceContext);
+		_layoutLocalService.addLayout(userId, groupId, privateLayout, parentLayoutId, classNameId, classPK, nameMap, titleMap, descriptionMap, keywordsMap, robotsMap, type, typeSettings, hidden, system, friendlyURLMap, 0, serviceContext);
+	}
+
+	public void method(
+		long userId, long groupId, boolean mountPoint, long parentFolderId,
+		String name, String description, ServiceContext serviceContext) {
+
+		DLFolderServiceUtil.addFolder(123, groupId, mountPoint, parentFolderId, name, description, serviceContext);
+		DLFolderServiceUtil.addFolder(null, userId, groupId, mountPoint, parentFolderId, name, description, serviceContext);
+		_dlFolderService.addFolder(null, userId, groupId, mountPoint, parentFolderId, name, description, serviceContext);
+	}
+
+	public void method(
+		long creatorUserId, long companyId, boolean autoPassword,
+		String password1, String password2, boolean autoScreenName,
+		String screenName, String emailAddress, long facebookId, String openId,
+		Locale locale, String firstName, String middleName, String lastName,
+		long prefixId, long suffixId, boolean male, int birthdayMonth,
+		int birthdayDay, int birthdayYear, String jobTitle, long[] groupIds,
+		long[] organizationIds, long[] roleIds, long[] userGroupIds,
+		boolean sendEmail, ServiceContext serviceContext) {
+
+		UserLocalServiceUtil.addUser(creatorUserId, companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, 0, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
+		UserServiceUtil.addUser(123, companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, facebookId, openId, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
+		UserServiceUtil.addUser(creatorUserId, companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, 0, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
+		_userLocalService.addUser(creatorUserId, companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, 0, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
+		_userService.addUser(creatorUserId, companyId, autoPassword, password1, password2, autoScreenName, screenName, emailAddress, locale, firstName, middleName, lastName, prefixId, suffixId, male, birthdayMonth, birthdayDay, birthdayYear, jobTitle, 0, groupIds, organizationIds, roleIds, userGroupIds, sendEmail, serviceContext);
 	}
 
 	public void method(
@@ -72,16 +215,27 @@ public class UpgradeCatchAllCheck {
 	}
 
 	public void method(
+		long commerceOrderId, long cpInstanceId, int quantity,
+		int shippedQuantity, String json, CommerceContext commerceContext,
+		ServiceContext serviceContext) {
+
+		CommerceOrderItemLocalServiceUtil.addCommerceOrderItem(commerceOrderId, cpInstanceId, json, BigDecimal.valueOf(quantity), cpInstanceId, BigDecimal.valueOf(shippedQuantity), null, commerceContext, serviceContext);
+		CommerceOrderItemServiceUtil.addCommerceOrderItem(123, cpInstanceId, 123, shippedQuantity, "test", commerceContext, serviceContext);
+		CommerceOrderItemServiceUtil.addCommerceOrderItem(commerceOrderId, cpInstanceId, json, BigDecimal.valueOf(quantity), cpInstanceId, BigDecimal.valueOf(shippedQuantity), null, commerceContext, serviceContext);
+
+		_commerceOrderItemLocalService.addCommerceOrderItem(0, commerceOrderId, cpInstanceId, json, BigDecimal.valueOf(quantity), cpInstanceId, BigDecimal.valueOf(shippedQuantity), null, commerceContext, serviceContext);
+		_commerceOrderItemService.addCommerceOrderItem(123, cpInstanceId, 123, shippedQuantity, "test", commerceContext, serviceContext);
+		_commerceOrderItemService.addCommerceOrderItem(0, commerceOrderId, cpInstanceId, json, BigDecimal.valueOf(quantity), cpInstanceId, BigDecimal.valueOf(shippedQuantity), null, commerceContext, serviceContext);
+	}
+
+	public void method(
 		long userId, long groupId, long repositoryId, boolean mountPoint,
 		long parentFolderId, String name, String description, boolean hidden,
 		ServiceContext serviceContext) {
 
 		DLFolderLocalServiceUtil.addFolder(123, groupId, repositoryId, mountPoint, parentFolderId, name, description, hidden, serviceContext);
 		DLFolderLocalServiceUtil.addFolder(null, userId, groupId, repositoryId, mountPoint, parentFolderId, name, description, hidden, serviceContext);
-		DLFolderServiceUtil.addFolder(123, repositoryId, mountPoint, parentFolderId, name, description, serviceContext);
-		DLFolderServiceUtil.addFolder(null, groupId, repositoryId, mountPoint, parentFolderId, name, description, serviceContext);
 		_dlFolderLocalService.addFolder(null, userId, groupId, repositoryId, mountPoint, parentFolderId, name, description, hidden, serviceContext);
-		_dlFolderService.addFolder(null, groupId, repositoryId, mountPoint, parentFolderId, name, description, serviceContext);
 	}
 
 	public void method(
@@ -133,6 +287,34 @@ public class UpgradeCatchAllCheck {
 	}
 
 	public void method(
+		long groupId, long userId, Map<Locale, String> nameMap,
+		Map<Locale, String> shortDescriptionMap,
+		Map<Locale, String> descriptionMap, Map<Locale, String> urlTitleMap,
+		Map<Locale, String> metaTitleMap,
+		Map<Locale, String> metaDescriptionMap,
+		Map<Locale, String> metaKeywordsMap, String productTypeName,
+		boolean ignoreSKUCombinations, boolean shippable, boolean freeShipping,
+		boolean shipSeparately, double shippingExtraPrice, double width,
+		double height, double depth, double weight, long cpTaxCategoryId,
+		boolean taxExempt, boolean telcoOrElectronics, String ddmStructureKey,
+		boolean published, int displayDateMonth, int displayDateDay,
+		int displayDateYear, int displayDateHour, int displayDateMinute,
+		int expirationDateMonth, int expirationDateDay, int expirationDateYear,
+		int expirationDateHour, int expirationDateMinute, boolean neverExpire,
+		String defaultSku, boolean subscriptionEnabled, int subscriptionLength,
+		String subscriptionType,
+		UnicodeProperties subscriptionTypeSettingsUnicodeProperties,
+		long maxSubscriptionCycles, String externalReferenceCode,
+		ServiceContext serviceContext) {
+
+		CPDefinitionLocalServiceUtil.upsertCPDefinition(externalReferenceCode, groupId, userId, nameMap, shortDescriptionMap, descriptionMap, urlTitleMap, metaTitleMap, metaDescriptionMap, metaKeywordsMap, productTypeName, ignoreSKUCombinations, shippable, freeShipping, shipSeparately, shippingExtraPrice, width, height, depth, weight, cpTaxCategoryId, taxExempt, telcoOrElectronics, ddmStructureKey, published, displayDateMonth, displayDateDay, displayDateYear, displayDateHour, displayDateMinute, expirationDateMonth, expirationDateDay, expirationDateYear, expirationDateHour, expirationDateMinute, neverExpire, defaultSku, subscriptionEnabled, subscriptionLength, subscriptionType, subscriptionTypeSettingsUnicodeProperties, maxSubscriptionCycles, 0, serviceContext);
+		CPDefinitionServiceUtil.upsertCPDefinition(123, userId, nameMap, shortDescriptionMap, descriptionMap, urlTitleMap, metaTitleMap, metaDescriptionMap, metaKeywordsMap, productTypeName, ignoreSKUCombinations, shippable, freeShipping, shipSeparately, shippingExtraPrice, width, height, depth, weight, cpTaxCategoryId, taxExempt, telcoOrElectronics, ddmStructureKey, published, displayDateMonth, displayDateDay, displayDateYear, displayDateHour, displayDateMinute, expirationDateMonth, expirationDateDay, expirationDateYear, expirationDateHour, expirationDateMinute, neverExpire, defaultSku, subscriptionEnabled, subscriptionLength, subscriptionType, subscriptionTypeSettingsUnicodeProperties, maxSubscriptionCycles, externalReferenceCode, serviceContext);
+		CPDefinitionServiceUtil.upsertCPDefinition(externalReferenceCode, groupId, userId, nameMap, shortDescriptionMap, descriptionMap, urlTitleMap, metaTitleMap, metaDescriptionMap, metaKeywordsMap, productTypeName, ignoreSKUCombinations, shippable, freeShipping, shipSeparately, shippingExtraPrice, width, height, depth, weight, cpTaxCategoryId, taxExempt, telcoOrElectronics, ddmStructureKey, published, displayDateMonth, displayDateDay, displayDateYear, displayDateHour, displayDateMinute, expirationDateMonth, expirationDateDay, expirationDateYear, expirationDateHour, expirationDateMinute, neverExpire, defaultSku, subscriptionEnabled, subscriptionLength, subscriptionType, subscriptionTypeSettingsUnicodeProperties, maxSubscriptionCycles, 0, serviceContext);
+		_cpDefinitionLocalService.upsertCPDefinition(externalReferenceCode, groupId, userId, nameMap, shortDescriptionMap, descriptionMap, urlTitleMap, metaTitleMap, metaDescriptionMap, metaKeywordsMap, productTypeName, ignoreSKUCombinations, shippable, freeShipping, shipSeparately, shippingExtraPrice, width, height, depth, weight, cpTaxCategoryId, taxExempt, telcoOrElectronics, ddmStructureKey, published, displayDateMonth, displayDateDay, displayDateYear, displayDateHour, displayDateMinute, expirationDateMonth, expirationDateDay, expirationDateYear, expirationDateHour, expirationDateMinute, neverExpire, defaultSku, subscriptionEnabled, subscriptionLength, subscriptionType, subscriptionTypeSettingsUnicodeProperties, maxSubscriptionCycles, 0, serviceContext);
+		_cpDefinitionService.upsertCPDefinition(externalReferenceCode, groupId, userId, nameMap, shortDescriptionMap, descriptionMap, urlTitleMap, metaTitleMap, metaDescriptionMap, metaKeywordsMap, productTypeName, ignoreSKUCombinations, shippable, freeShipping, shipSeparately, shippingExtraPrice, width, height, depth, weight, cpTaxCategoryId, taxExempt, telcoOrElectronics, ddmStructureKey, published, displayDateMonth, displayDateDay, displayDateYear, displayDateHour, displayDateMinute, expirationDateMonth, expirationDateDay, expirationDateYear, expirationDateHour, expirationDateMinute, neverExpire, defaultSku, subscriptionEnabled, subscriptionLength, subscriptionType, subscriptionTypeSettingsUnicodeProperties, maxSubscriptionCycles, 0, serviceContext);
+	}
+
+	public void method(
 		long companyId, long groupId, String title, int start, int end) {
 
 		_assetVocabularyLocalService.searchVocabularies(companyId, new long[] {groupId}, title, new int[0], start, end, new Sort());
@@ -140,10 +322,35 @@ public class UpgradeCatchAllCheck {
 		_assetVocabularyService.searchVocabularies(companyId, new long[] {groupId}, title, new int[0], start, end, new Sort());
 	}
 
+	public void method(
+		long userId, long fileEntryId, String sourceFileName, String mimeType,
+		String title, String description, String changeLog,
+		boolean majorVersion, byte[] bytes, ServiceContext serviceContext) {
+
+		DLAppLocalServiceUtil.updateFileEntry(123, fileEntryId, "test123", mimeType, title, description, changeLog, majorVersion, bytes, serviceContext);
+		DLAppLocalServiceUtil.updateFileEntry(userId, fileEntryId, sourceFileName, mimeType, title, null, description, changeLog, dlVersionNumberIncrease, majorVersion, null, null, bytes, serviceContext);
+		_dlAppLocalService.updateFileEntry(userId, fileEntryId, sourceFileName, mimeType, title, null, description, changeLog, dlVersionNumberIncrease, majorVersion, null, null, bytes, serviceContext);
+	}
+
+	public void method(
+		long userId, long fileEntryId, String sourceFileName, String mimeType,
+		String title, String description, String changeLog,
+		DLVersionNumberIncrease dlVersionNumberIncrease, byte[] bytes,
+		ServiceContext serviceContext) {
+
+		DLAppLocalServiceUtil.updateFileEntry(123, fileEntryId, "test123", mimeType, title, description, changeLog, dlVersionNumberIncrease, bytes, serviceContext);
+		DLAppLocalServiceUtil.updateFileEntry(userId, fileEntryId, sourceFileName, mimeType, title, null, description, changeLog, dlVersionNumberIncrease, bytes, null, null, serviceContext);
+		_dlAppLocalService.updateFileEntry(userId, fileEntryId, sourceFileName, mimeType, title, null, description, changeLog, dlVersionNumberIncrease, bytes, null, null, serviceContext);
+	}
+
 	public void method(long companyId, String externalReferenceCode) {
 		AccountGroupLocalServiceUtil.fetchAccountGroupByExternalReferenceCode(externalReferenceCode, companyId);
 		_accountGroupLocalService.fetchCommerceAccountGroupByExternalReferenceCode(123, "test123");
 		_accountGroupLocalService.fetchAccountGroupByExternalReferenceCode(externalReferenceCode, companyId);
+
+		AssetVocabularyLocalServiceUtil.fetchAssetVocabularyByExternalReferenceCode(123, externalReferenceCode);
+		AssetVocabularyLocalServiceUtil.fetchAssetVocabularyByExternalReferenceCode(companyId, externalReferenceCode);
+		_assetVocabularyLocalService.fetchAssetVocabularyByExternalReferenceCode(companyId, externalReferenceCode);
 
 		CommercePriceListLocalServiceUtil.fetchByExternalReferenceCode(externalReferenceCode, companyId);
 		_commercePriceListLocalService.fetchByExternalReferenceCode(123, "test123");
@@ -197,17 +404,50 @@ public class UpgradeCatchAllCheck {
 	}
 
 	public void method(
-		String externalReferenceCode, long cProductId,
-		String cpInstanceUuid, long commercePriceListId, BigDecimal price,
-		BigDecimal promoPrice, ServiceContext serviceContext) {
+		ResourceRequest resourceRequest, ResourceResponse resourceResponse) {
+
+		CaptchaUtil.serveImage(PortalUtil.getHttpServletRequest(resourceRequest), PortalUtil.getHttpServletResponse(resourceResponse));
+	}
+
+	public void method(
+		String className, long classPK, long accountGroupId,
+		ServiceContext serviceContext) {
+
+		AccountGroupRelLocalServiceUtil.addAccountGroupRel(accountGroupId, className, classPK);
+		AccountGroupRelServiceUtil.addCommerceAccountGroupRel("test123", classPK, 123, serviceContext);
+		_accountGroupRelLocalService.addAccountGroupRel(accountGroupId, className, classPK);
+		_accountGroupRelService.addAccountGroupRel(accountGroupId, className, classPK);
+	}
+
+	public void method(
+		String externalReferenceCode, long cProductId, String cpInstanceUuid,
+		long commercePriceListId, BigDecimal price, BigDecimal promoPrice,
+		ServiceContext serviceContext) {
 
 		CommercePriceEntryLocalServiceUtil.addCommercePriceEntry(externalReferenceCode, cProductId, cpInstanceUuid, commercePriceListId, price, false, promoPrice, null, serviceContext);
 		_commercePriceEntryLocalService.addCommercePriceEntry("test123", cProductId, cpInstanceUuid, commercePriceListId, price, promoPrice, serviceContext);
 		_commercePriceEntryLocalService.addCommercePriceEntry(externalReferenceCode, cProductId, cpInstanceUuid, commercePriceListId, price, false, promoPrice, null, serviceContext);
-	 }
+	}
+
+	public void method(String name, String label, BigDecimal amount) {
+		CommerceShippingOption(amount, "", name, name, 0);
+	}
+
+	public void method(ThemeDisplay themeDisplay) {
+		DLUtil.getGroupIds(null);
+		PortalUtil.getCurrentAndAncestorSiteGroupIds(themeDisplay.getScopeGroupId());
+
+		themeDisplay.getScopeGroupId();
+	}
 
 	@Reference
 	private AccountGroupLocalService _accountGroupLocalService;
+
+	@Reference
+	private AccountGroupRelLocalService _accountGroupRelLocalService;
+
+	@Reference
+	private AccountGroupRelService _accountGroupRelService;
 
 	@Reference
 	private AddressLocalService _addressLocalService;
@@ -225,7 +465,13 @@ public class UpgradeCatchAllCheck {
 	private AssetVocabularyService _assetVocabularyService;
 
 	@Reference
-    private CommerceAccountHelper _commerceAccountHelper;
+	private CommerceAccountHelper _commerceAccountHelper;
+
+	@Reference
+	private CommerceOrderItemLocalService _commerceOrderItemLocalService;
+
+	@Reference
+	private CommerceOrderItemService _commerceOrderItemService;
 
 	@Reference
 	private CommerceOrderLocalService _commerceOrderLocalService;
@@ -235,6 +481,9 @@ public class UpgradeCatchAllCheck {
 
 	@Reference
 	private CommercePriceListLocalService _commercePriceListLocalService;
+
+	@Reference
+	private CountryService _countryService;
 
 	@Reference
 	private CPDefinitionLinkLocalService _cpDefinitionLinkLocalService;
@@ -265,6 +514,18 @@ public class UpgradeCatchAllCheck {
 
 	@Reference
 	private JournalFolderLocalService _journalFolderLocalService;
+
+	@Reference
+	private LayoutLocalService _layoutLocalService;
+
+	@Reference
+	private LayoutService _layoutService;
+
+	@Reference
+	private UserLocalService _userLocalService;
+
+	@Reference
+	private UserService _userService;
 
 	@Reference
 	private HtmlParser _htmlParser;

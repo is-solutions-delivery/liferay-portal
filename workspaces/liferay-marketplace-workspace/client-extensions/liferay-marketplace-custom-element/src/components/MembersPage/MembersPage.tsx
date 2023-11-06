@@ -75,7 +75,7 @@ export function MembersPage({
 	const accountId = searchParams.get('accountId');
 
 	const currentUserAccountBriefs = marketplaceContext.myUserAccount?.accountBriefs?.find(
-		(accountBrief: {id: number}) => accountBrief.id === selectedAccount.id
+		(accountBrief: {id: number}) => accountBrief.id === selectedAccount?.id
 	);
 
 	const myUserAccount = useMemo(
@@ -96,7 +96,7 @@ export function MembersPage({
 		[currentUserAccountBriefs, marketplaceContext.myUserAccount]
 	);
 
-	const members = useMembers({
+	const {members, mutate: mutateMembers} = useMembers({
 		accountId,
 		isCustomerDashboard,
 		isPublisherDashboard,
@@ -115,14 +115,12 @@ export function MembersPage({
 			) : (
 				<DashboardPage
 					buttonMessage={
-						<>
-							{myUserAccount.isAdminAccount && (
-								<>
-									<ClayIcon className="mr-1" symbol="plus" />
-									New Member
-								</>
-							)}
-						</>
+						myUserAccount.isAdminAccount && (
+							<>
+								<ClayIcon className="mr-1" symbol="plus" />
+								New Member
+							</>
+						)
 					}
 					messages={memberMessages}
 					onButtonClick={() => setVisible(true)}
@@ -161,6 +159,7 @@ export function MembersPage({
 					}
 					handleClose={() => setVisible(false)}
 					listOfRoles={listOfRoles}
+					mutateMembers={mutateMembers}
 					rolesPermissionDescription={rolesPermissionDescription}
 					selectedAccount={selectedAccount}
 				/>

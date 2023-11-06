@@ -64,10 +64,6 @@ definition {
 	tearDown {
 		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
-		// It is not possible to delete properties and data source after LRAC-13389. This functionality should return after LRAC-8040
-
-		//ACUtils.tearDownAC();
-
 		ACUtils.tearDownDXP();
 
 		if (${testLiferayVirtualInstance} == "true") {
@@ -78,6 +74,8 @@ definition {
 
 			ACUtils.tearDownCommerce();
 		}
+
+		ACUtils.tearDownAC();
 	}
 
 	@description = "Story: LRAC-10867 | Automation ID: LRAC-12909 | Test Summary: Check that all attributes for Orders are marked as required"
@@ -232,8 +230,8 @@ definition {
 	@description = "Story: LRAC-10866 | Automation ID: LRAC-12904 | Test Summary: Check that it is possible to make pagination in the Attribute for Product list"
 	@priority = 3
 	test CanPaginateInProductAttributeList {
-		var firstPageList = "catalogId,categoryIds,createDate,currencyCode,customFields";
-		var lastPageList = "tags,type,urls,vocabulary";
+		var firstPageList = "catalogId,categoryIds,cost,createDate,currencyCode";
+		var lastPageList = "value,values,vocabulary";
 
 		task ("Click to select attribute for products") {
 			ACDXPSettings.clickToSelectAttributes(attributeCategory = "Products");

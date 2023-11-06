@@ -20,12 +20,16 @@ import com.liferay.list.type.entry.util.ListTypeEntryUtil;
 import com.liferay.list.type.model.ListTypeDefinition;
 import com.liferay.list.type.service.ListTypeDefinitionLocalService;
 import com.liferay.list.type.service.ListTypeEntryLocalService;
+import com.liferay.object.constants.ObjectActionExecutorConstants;
 import com.liferay.object.constants.ObjectActionKeys;
+import com.liferay.object.constants.ObjectActionTriggerConstants;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
+import com.liferay.object.constants.ObjectFieldSettingConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.field.setting.builder.ObjectFieldSettingBuilder;
 import com.liferay.object.field.util.ObjectFieldUtil;
+import com.liferay.object.model.ObjectAction;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
@@ -36,8 +40,10 @@ import com.liferay.object.rest.test.util.ObjectEntryTestUtil;
 import com.liferay.object.rest.test.util.ObjectFieldTestUtil;
 import com.liferay.object.rest.test.util.ObjectRelationshipTestUtil;
 import com.liferay.object.rest.test.util.UserAccountTestUtil;
+import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
+import com.liferay.object.service.ObjectFieldSettingLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.system.SystemObjectDefinitionManager;
 import com.liferay.object.system.SystemObjectDefinitionManagerRegistry;
@@ -71,6 +77,7 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -83,6 +90,7 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.URLCodec;
+import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.odata.filter.InvalidFilterException;
 import com.liferay.portal.test.log.LogCapture;
 import com.liferay.portal.test.log.LoggerTestUtil;
@@ -172,8 +180,35 @@ public class ObjectEntryResourceTest {
 		_objectDefinition1 = ObjectDefinitionTestUtil.publishObjectDefinition(
 			Arrays.asList(
 				ObjectFieldUtil.createObjectField(
-					"Text", "String", true, true, null,
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
 					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME_1, false),
+				ObjectFieldUtil.createObjectField(
+					ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT,
+					ObjectFieldConstants.DB_TYPE_LONG, true, false, null,
+					_OBJECT_FIELD_NAME_ATTACHMENT,
+					_OBJECT_FIELD_NAME_ATTACHMENT,
+					Arrays.asList(
+						new ObjectFieldSettingBuilder(
+						).name(
+							ObjectFieldSettingConstants.
+								NAME_ACCEPTED_FILE_EXTENSIONS
+						).value(
+							"txt"
+						).build(),
+						new ObjectFieldSettingBuilder(
+						).name(
+							ObjectFieldSettingConstants.NAME_FILE_SOURCE
+						).value(
+							ObjectFieldSettingConstants.VALUE_USER_COMPUTER
+						).build(),
+						new ObjectFieldSettingBuilder(
+						).name(
+							ObjectFieldSettingConstants.NAME_MAX_FILE_SIZE
+						).value(
+							"100"
+						).build()),
+					false),
 				ObjectFieldUtil.createObjectField(
 					_listTypeDefinition.getListTypeDefinitionId(),
 					ObjectFieldConstants.BUSINESS_TYPE_MULTISELECT_PICKLIST,
@@ -187,7 +222,8 @@ public class ObjectEntryResourceTest {
 		_objectDefinition2 = ObjectDefinitionTestUtil.publishObjectDefinition(
 			Arrays.asList(
 				ObjectFieldUtil.createObjectField(
-					"Text", "String", true, true, null,
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
 					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME_2, false),
 				ObjectFieldUtil.createObjectField(
 					_listTypeDefinition.getListTypeDefinitionId(),
@@ -202,7 +238,8 @@ public class ObjectEntryResourceTest {
 		_objectDefinition3 = ObjectDefinitionTestUtil.publishObjectDefinition(
 			Arrays.asList(
 				ObjectFieldUtil.createObjectField(
-					"Text", "String", true, true, null,
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
 					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME_3, false),
 				ObjectFieldUtil.createObjectField(
 					_listTypeDefinition.getListTypeDefinitionId(),
@@ -217,7 +254,8 @@ public class ObjectEntryResourceTest {
 		_objectDefinition4 = ObjectDefinitionTestUtil.publishObjectDefinition(
 			Arrays.asList(
 				ObjectFieldUtil.createObjectField(
-					"Text", "String", true, true, null,
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
 					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME_4, false),
 				ObjectFieldUtil.createObjectField(
 					_listTypeDefinition.getListTypeDefinitionId(),
@@ -233,7 +271,8 @@ public class ObjectEntryResourceTest {
 			ObjectDefinitionTestUtil.publishObjectDefinition(
 				Collections.singletonList(
 					ObjectFieldUtil.createObjectField(
-						"Text", "String", true, true, null,
+						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+						ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
 						RandomTestUtil.randomString(), _OBJECT_FIELD_NAME_1,
 						false)),
 				ObjectDefinitionConstants.SCOPE_SITE);
@@ -3691,6 +3730,114 @@ public class ObjectEntryResourceTest {
 	}
 
 	@Test
+	public void testGetObjectEntryWithActions() throws Exception {
+		ObjectAction objectAction = _objectActionLocalService.addObjectAction(
+			RandomTestUtil.randomString(), TestPropsValues.getUserId(),
+			_objectDefinition1.getObjectDefinitionId(), true, StringPool.BLANK,
+			RandomTestUtil.randomString(),
+			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+			RandomTestUtil.randomString(),
+			ObjectActionExecutorConstants.KEY_GROOVY,
+			ObjectActionTriggerConstants.KEY_STANDALONE,
+			new UnicodeProperties(), false);
+
+		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
+			JSONUtil.put(
+				_OBJECT_FIELD_NAME_1, "value"
+			).toString(),
+			_objectDefinition1.getRESTContextPath(), Http.Method.POST);
+
+		JSONObject actionsJSONObject = jsonObject.getJSONObject("actions");
+
+		JSONObject actionJSONObject = actionsJSONObject.getJSONObject(
+			objectAction.getName());
+
+		Assert.assertEquals(
+			StringBundler.concat(
+				"http://localhost:8080/o",
+				_objectDefinition1.getRESTContextPath(),
+				"/by-external-reference-code/",
+				jsonObject.getString("externalReferenceCode"),
+				"/object-actions/", objectAction.getName()),
+			actionJSONObject.getString("href"));
+		Assert.assertEquals("PUT", actionJSONObject.getString("method"));
+	}
+
+	@FeatureFlags("LPS-174455")
+	@Test
+	public void testGetObjectEntryWithAttachmentField() throws Exception {
+		String content = RandomTestUtil.randomString();
+
+		FileEntry fileEntry = _addTempFileEntry(
+			content, _objectDefinition1, RandomTestUtil.randomString());
+
+		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
+			JSONUtil.put(
+				_OBJECT_FIELD_NAME_1, "value1"
+			).put(
+				_OBJECT_FIELD_NAME_ATTACHMENT, fileEntry.getFileEntryId()
+			).toString(),
+			_objectDefinition1.getRESTContextPath(), Http.Method.POST);
+
+		JSONObject attachmentJSONObject = jsonObject.getJSONObject(
+			_OBJECT_FIELD_NAME_ATTACHMENT);
+
+		Assert.assertNull(attachmentJSONObject.get("fileBase64"));
+
+		content = RandomTestUtil.randomString();
+
+		fileEntry = _addTempFileEntry(
+			content, _objectDefinition1, RandomTestUtil.randomString());
+
+		jsonObject = HTTPTestUtil.invokeToJSONObject(
+			JSONUtil.put(
+				_OBJECT_FIELD_NAME_1, "value2"
+			).put(
+				_OBJECT_FIELD_NAME_ATTACHMENT, fileEntry.getFileEntryId()
+			).toString(),
+			StringBundler.concat(
+				_objectDefinition1.getRESTContextPath(), "?nestedFields=",
+				_OBJECT_FIELD_NAME_ATTACHMENT, ".fileBase64"),
+			Http.Method.POST);
+
+		attachmentJSONObject = jsonObject.getJSONObject(
+			_OBJECT_FIELD_NAME_ATTACHMENT);
+
+		Assert.assertEquals(
+			Base64.encode(content.getBytes()),
+			attachmentJSONObject.getString("fileBase64"));
+
+		jsonObject = HTTPTestUtil.invokeToJSONObject(
+			null,
+			_objectDefinition1.getRESTContextPath() +
+				"/by-external-reference-code/" +
+					jsonObject.getString("externalReferenceCode"),
+			Http.Method.GET);
+
+		attachmentJSONObject = jsonObject.getJSONObject(
+			_OBJECT_FIELD_NAME_ATTACHMENT);
+
+		Assert.assertNull(attachmentJSONObject.get("fileBase64"));
+
+		jsonObject = HTTPTestUtil.invokeToJSONObject(
+			null,
+			StringBundler.concat(
+				_objectDefinition1.getRESTContextPath(),
+				"/by-external-reference-code/",
+				jsonObject.getString("externalReferenceCode"), "?nestedFields=",
+				_OBJECT_FIELD_NAME_ATTACHMENT, ".fileBase64"),
+			Http.Method.GET);
+
+		attachmentJSONObject = jsonObject.getJSONObject(
+			_OBJECT_FIELD_NAME_ATTACHMENT);
+
+		Assert.assertEquals(
+			Base64.encode(content.getBytes()),
+			attachmentJSONObject.getString("fileBase64"));
+	}
+
+	@Test
 	public void testGetObjectEntryWithAuditEvents() throws Exception {
 		ListTypeDefinition listTypeDefinition =
 			_listTypeDefinitionLocalService.addListTypeDefinition(
@@ -3742,19 +3889,20 @@ public class ObjectEntryResourceTest {
 						Arrays.asList(
 							new ObjectFieldSettingBuilder(
 							).name(
-								"acceptedFileExtensions"
+								ObjectFieldSettingConstants.
+									NAME_ACCEPTED_FILE_EXTENSIONS
 							).value(
 								"txt"
 							).build(),
 							new ObjectFieldSettingBuilder(
 							).name(
-								"fileSource"
+								ObjectFieldSettingConstants.NAME_FILE_SOURCE
 							).value(
-								"userComputer"
+								ObjectFieldSettingConstants.VALUE_USER_COMPUTER
 							).build(),
 							new ObjectFieldSettingBuilder(
 							).name(
-								"maximumFileSize"
+								ObjectFieldSettingConstants.NAME_MAX_FILE_SIZE
 							).value(
 								"100"
 							).build()),
@@ -3800,7 +3948,8 @@ public class ObjectEntryResourceTest {
 						"upload",
 						() -> {
 							FileEntry fileEntry = _addTempFileEntry(
-								objectDefinition, "Old Testament");
+								RandomTestUtil.randomString(), objectDefinition,
+								"Old Testament");
 
 							return fileEntry.getFileEntryId();
 						}
@@ -3823,7 +3972,8 @@ public class ObjectEntryResourceTest {
 					"upload",
 					() -> {
 						FileEntry fileEntry = _addTempFileEntry(
-							objectDefinition, "New Testament");
+							RandomTestUtil.randomString(), objectDefinition,
+							"New Testament");
 
 						return fileEntry.getFileEntryId();
 					}
@@ -5373,14 +5523,14 @@ public class ObjectEntryResourceTest {
 	}
 
 	private FileEntry _addTempFileEntry(
-			ObjectDefinition objectDefinition, String title)
+			String content, ObjectDefinition objectDefinition, String title)
 		throws Exception {
 
 		return TempFileEntryUtil.addTempFileEntry(
 			TestPropsValues.getGroupId(), TestPropsValues.getUserId(),
 			objectDefinition.getPortletId(),
 			TempFileEntryUtil.getTempFileName(title + ".txt"),
-			FileUtil.createTempFile(RandomTestUtil.randomBytes()),
+			FileUtil.createTempFile(content.getBytes()),
 			ContentTypes.TEXT_PLAIN);
 	}
 
@@ -6087,6 +6237,9 @@ public class ObjectEntryResourceTest {
 	private static final String _OBJECT_FIELD_NAME_4 =
 		"x" + RandomTestUtil.randomString();
 
+	private static final String _OBJECT_FIELD_NAME_ATTACHMENT =
+		"x" + RandomTestUtil.randomString();
+
 	private static final String _OBJECT_FIELD_NAME_MULTISELECT_PICKLIST =
 		"x" + RandomTestUtil.randomString();
 
@@ -6115,6 +6268,9 @@ public class ObjectEntryResourceTest {
 	@Inject
 	private ListTypeEntryLocalService _listTypeEntryLocalService;
 
+	@Inject
+	private ObjectActionLocalService _objectActionLocalService;
+
 	private ObjectDefinition _objectDefinition1;
 	private ObjectDefinition _objectDefinition2;
 	private ObjectDefinition _objectDefinition3;
@@ -6130,6 +6286,9 @@ public class ObjectEntryResourceTest {
 
 	@Inject
 	private ObjectEntryLocalService _objectEntryLocalService;
+
+	@Inject
+	private ObjectFieldSettingLocalService _objectFieldSettingLocalService;
 
 	private ObjectRelationship _objectRelationship1;
 	private ObjectRelationship _objectRelationship2;

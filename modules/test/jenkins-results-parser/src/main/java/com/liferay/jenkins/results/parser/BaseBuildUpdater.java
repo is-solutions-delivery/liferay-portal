@@ -5,6 +5,9 @@
 
 package com.liferay.jenkins.results.parser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Michael Hashimoto
  */
@@ -13,6 +16,10 @@ public abstract class BaseBuildUpdater implements BuildUpdater {
 	@Override
 	public Build getBuild() {
 		return _build;
+	}
+
+	@Override
+	public void reset() {
 	}
 
 	@Override
@@ -73,6 +80,8 @@ public abstract class BaseBuildUpdater implements BuildUpdater {
 		if (!_build.hasMaximumInvocationCount()) {
 			_build.setStatus("starting");
 
+			_build.reset();
+
 			return;
 		}
 
@@ -82,23 +91,21 @@ public abstract class BaseBuildUpdater implements BuildUpdater {
 	protected void runQueued() {
 		_build.setStatus("queued");
 
-		if (isBuildQueued()) {
-			return;
-		}
-
 		if (isBuildRunning()) {
 			runRunning();
 
 			return;
 		}
 
-		_build.setStatus("missing");
+		if (!isBuildQueued()) {
+			_build.setStatus("missing");
+		}
 	}
 
 	protected void runReporting() {
 		_build.setStatus("reporting");
 
-		if (isBuildCompleted()) {
+		if (isBuildFailing()) {
 			_isApplySlaveOfflineRules();
 
 			if (_isApplyReinvokeRules()) {
@@ -124,8 +131,6 @@ public abstract class BaseBuildUpdater implements BuildUpdater {
 	protected void runStarting() {
 		_build.setStatus("starting");
 
-		_build.reset();
-
 		Build.Invocation previousInvocation = _build.getPreviousInvocation();
 
 		if (previousInvocation != null) {
@@ -145,9 +150,8 @@ public abstract class BaseBuildUpdater implements BuildUpdater {
 			return false;
 		}
 
-		if ((build.isCompleted() && !build.isFailing()) ||
-			!build.isCompleted() || build.isFromArchive() ||
-			build.hasMaximumInvocationCount()) {
+		if ((isBuildCompleted() && !isBuildFailing()) || !isBuildCompleted() ||
+			build.isFromArchive() || build.hasMaximumInvocationCount()) {
 
 			return false;
 		}
@@ -172,8 +176,8 @@ public abstract class BaseBuildUpdater implements BuildUpdater {
 			return false;
 		}
 
-		if ((build.isCompleted() && !build.isFailing()) ||
-			!build.isCompleted() || build.isFromArchive()) {
+		if ((isBuildCompleted() && !isBuildFailing()) || !isBuildCompleted() ||
+			build.isFromArchive()) {
 
 			return false;
 		}
@@ -190,9 +194,10 @@ public abstract class BaseBuildUpdater implements BuildUpdater {
 			return false;
 		}
 
-		for (SlaveOfflineRule slaveOfflineRule :
-				SlaveOfflineRule.getSlaveOfflineRules()) {
+		List<SlaveOfflineRule> slaveOfflineRules = new ArrayList<>(
+			SlaveOfflineRule.getSlaveOfflineRules());
 
+		for (SlaveOfflineRule slaveOfflineRule : slaveOfflineRules) {
 			if (!slaveOfflineRule.matches(build)) {
 				continue;
 			}

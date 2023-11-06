@@ -80,6 +80,35 @@ public class PageDefinition implements Serializable {
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected PageElement pageElement;
 
+	@Schema(description = "A list of the page rules this page has.")
+	@Valid
+	public PageRule[] getPageRules() {
+		return pageRules;
+	}
+
+	public void setPageRules(PageRule[] pageRules) {
+		this.pageRules = pageRules;
+	}
+
+	@JsonIgnore
+	public void setPageRules(
+		UnsafeSupplier<PageRule[], Exception> pageRulesUnsafeSupplier) {
+
+		try {
+			pageRules = pageRulesUnsafeSupplier.get();
+		}
+		catch (RuntimeException re) {
+			throw re;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	@GraphQLField(description = "A list of the page rules this page has.")
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected PageRule[] pageRules;
+
 	@Schema(description = "The page's settings.")
 	@Valid
 	public Settings getSettings() {
@@ -176,6 +205,26 @@ public class PageDefinition implements Serializable {
 			sb.append("\"pageElement\": ");
 
 			sb.append(String.valueOf(pageElement));
+		}
+
+		if (pageRules != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"pageRules\": ");
+
+			sb.append("[");
+
+			for (int i = 0; i < pageRules.length; i++) {
+				sb.append(String.valueOf(pageRules[i]));
+
+				if ((i + 1) < pageRules.length) {
+					sb.append(", ");
+				}
+			}
+
+			sb.append("]");
 		}
 
 		if (settings != null) {

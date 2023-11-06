@@ -5,6 +5,12 @@
 
 package com.liferay.journal.web.internal.display.context;
 
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.asset.kernel.service.AssetCategoryServiceUtil;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
+import com.liferay.asset.tags.item.selector.AssetTagsItemSelectorReturnType;
+import com.liferay.asset.tags.item.selector.criterion.AssetTagsItemSelectorCriterion;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.util.comparator.StructureModifiedDateComparator;
 import com.liferay.dynamic.data.mapping.util.comparator.StructureNameComparator;
@@ -16,12 +22,16 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemList;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemListBuilder;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.LabelItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.LabelItemListBuilder;
+import com.liferay.item.selector.ItemSelector;
+import com.liferay.item.selector.criteria.InfoItemItemSelectorReturnType;
+import com.liferay.item.selector.criteria.info.item.criterion.InfoItemItemSelectorCriterion;
 import com.liferay.journal.constants.JournalPortletKeys;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.web.internal.configuration.JournalWebConfiguration;
 import com.liferay.journal.web.internal.security.permission.resource.JournalFolderPermission;
 import com.liferay.journal.web.internal.util.JournalUtil;
 import com.liferay.petra.function.UnsafeConsumer;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -37,6 +47,7 @@ import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortletURLUtil;
+import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
@@ -46,9 +57,12 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.SetUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -62,6 +76,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.portlet.PortletURL;
 
@@ -85,11 +100,14 @@ public class JournalManagementToolbarDisplayContext
 			httpServletRequest, liferayPortletRequest, liferayPortletResponse,
 			journalDisplayContext.getSearchContainer());
 
-		_liferayPortletRequest = liferayPortletRequest;
-		_liferayPortletResponse = liferayPortletResponse;
 		_journalDisplayContext = journalDisplayContext;
 		_trashHelper = trashHelper;
 
+		_assetVocabularyLocalService =
+			(AssetVocabularyLocalService)httpServletRequest.getAttribute(
+				AssetVocabularyLocalService.class.getName());
+		_itemSelector = (ItemSelector)httpServletRequest.getAttribute(
+			ItemSelector.class.getName());
 		_journalWebConfiguration =
 			(JournalWebConfiguration)httpServletRequest.getAttribute(
 				JournalWebConfiguration.class.getName());
@@ -257,7 +275,11 @@ public class JournalManagementToolbarDisplayContext
 				LiferayWindowState.POP_UP
 			).buildString()
 		).put(
+			"selectCategoryURL", _getAssetCategorySelectorURL()
+		).put(
 			"selectEntityURL", _journalDisplayContext.getSelectDDMStructureURL()
+		).put(
+			"selectTagURL", _getAssetTagSelectorURL()
 		).put(
 			"trashEnabled", _isTrashEnabled()
 		).put(
@@ -280,6 +302,10 @@ public class JournalManagementToolbarDisplayContext
 			StringPool.BLANK
 		).setNavigation(
 			StringPool.BLANK
+		).setParameter(
+			"assetCategoryId", (String)null
+		).setParameter(
+			"assetTagId", (String)null
 		).setParameter(
 			"ddmStructureId", (String)null
 		).setParameter(
@@ -342,7 +368,10 @@ public class JournalManagementToolbarDisplayContext
 	public List<LabelItem> getFilterLabelItems() {
 		int status = _journalDisplayContext.getStatus();
 
-		return LabelItemListBuilder.add(
+		LabelItemListBuilder.LabelItemListWrapper labelItemListWrapper =
+			new LabelItemListBuilder.LabelItemListWrapper();
+
+		labelItemListWrapper.add(
 			_journalDisplayContext::isNavigationMine,
 			labelItem -> {
 				labelItem.putData(
@@ -422,7 +451,13 @@ public class JournalManagementToolbarDisplayContext
 					LanguageUtil.get(httpServletRequest, "status") + ": " +
 						_getStatusLabel(status));
 			}
-		).build();
+		);
+
+		_addAssetCategoriesFilterLabelItems(labelItemListWrapper);
+
+		_addAssetTagsFilterLabelItems(labelItemListWrapper);
+
+		return labelItemListWrapper.build();
 	}
 
 	@Override
@@ -453,11 +488,22 @@ public class JournalManagementToolbarDisplayContext
 
 	@Override
 	public String getSortingOrder() {
-		if (Objects.equals(getOrderByCol(), "relevance")) {
+		if (Objects.equals(getOrderByCol(), "relevance") ||
+			_journalDisplayContext.isNavigationRecent()) {
+
 			return null;
 		}
 
 		return super.getSortingOrder();
+	}
+
+	@Override
+	public String getSortingURL() {
+		if (_journalDisplayContext.isNavigationRecent()) {
+			return null;
+		}
+
+		return super.getSortingURL();
 	}
 
 	@Override
@@ -529,6 +575,40 @@ public class JournalManagementToolbarDisplayContext
 				LanguageUtil.get(httpServletRequest, "structures")
 			).build());
 
+		if (FeatureFlagManagerUtil.isEnabled("LPS-196766")) {
+			filterNavigationDropdownItems.add(
+				DropdownItemBuilder.putData(
+					"action", "openCategoriesSelector"
+				).putData(
+					"redirectURL",
+					PortletURLBuilder.create(
+						getPortletURL()
+					).setParameter(
+						"assetCategoryId", (String)null
+					).buildString()
+				).setActive(
+					ArrayUtil.isNotEmpty(_getAssetCategoryIds())
+				).setLabel(
+					LanguageUtil.get(httpServletRequest, "categories")
+				).build());
+
+			filterNavigationDropdownItems.add(
+				DropdownItemBuilder.putData(
+					"action", "openTagsSelector"
+				).putData(
+					"redirectURL",
+					PortletURLBuilder.create(
+						getPortletURL()
+					).setParameter(
+						"assetTagId", (String)null
+					).buildString()
+				).setActive(
+					ArrayUtil.isNotEmpty(_getAssetTagIds())
+				).setLabel(
+					LanguageUtil.get(httpServletRequest, "tags")
+				).build());
+		}
+
 		return filterNavigationDropdownItems;
 	}
 
@@ -557,7 +637,162 @@ public class JournalManagementToolbarDisplayContext
 
 	@Override
 	protected String[] getOrderByKeys() {
+		if (_journalDisplayContext.isNavigationRecent()) {
+			return null;
+		}
+
 		return _journalDisplayContext.getOrderColumns();
+	}
+
+	private void _addAssetCategoriesFilterLabelItems(
+		LabelItemListBuilder.LabelItemListWrapper labelItemListWrapper) {
+
+		Set<Long> assetCategoryIds = SetUtil.fromArray(_getAssetCategoryIds());
+
+		for (Long assetCategoryId : assetCategoryIds) {
+			labelItemListWrapper.add(
+				labelItem -> {
+					labelItem.putData(
+						"removeLabelURL",
+						PortletURLBuilder.create(
+							PortletURLUtil.clone(
+								currentURLObj, liferayPortletResponse)
+						).setParameter(
+							"assetCategoryId",
+							() -> TransformUtil.transformToArray(
+								assetCategoryIds,
+								curAssetCategoryId -> {
+									if (Objects.equals(
+											assetCategoryId,
+											curAssetCategoryId)) {
+
+										return null;
+									}
+
+									return String.valueOf(curAssetCategoryId);
+								},
+								String.class)
+						).buildString());
+
+					labelItem.setCloseable(true);
+
+					String title = StringPool.BLANK;
+
+					AssetCategory assetCategory =
+						AssetCategoryServiceUtil.fetchCategory(assetCategoryId);
+
+					if (assetCategory != null) {
+						title = assetCategory.getTitle(
+							httpServletRequest.getLocale());
+					}
+
+					labelItem.setLabel(
+						LanguageUtil.get(httpServletRequest, "categories") +
+							": " + title);
+				});
+		}
+	}
+
+	private void _addAssetTagsFilterLabelItems(
+		LabelItemListBuilder.LabelItemListWrapper labelItemListWrapper) {
+
+		Set<String> assetTagIds = SetUtil.fromArray(_getAssetTagIds());
+
+		for (String assetTagId : assetTagIds) {
+			labelItemListWrapper.add(
+				labelItem -> {
+					labelItem.putData(
+						"removeLabelURL",
+						PortletURLBuilder.create(
+							PortletURLUtil.clone(
+								currentURLObj, liferayPortletResponse)
+						).setParameter(
+							"assetTagId",
+							() -> TransformUtil.transformToArray(
+								assetTagIds,
+								curAssetTagId -> {
+									if (Objects.equals(
+											assetTagId, curAssetTagId)) {
+
+										return null;
+									}
+
+									return curAssetTagId;
+								},
+								String.class)
+						).buildString());
+
+					labelItem.setCloseable(true);
+					labelItem.setLabel(
+						LanguageUtil.get(httpServletRequest, "tags") + ": " +
+							assetTagId);
+				});
+		}
+	}
+
+	private long[] _getAssetCategoryIds() {
+		if (_assetCategoryIds == null) {
+			_assetCategoryIds = ParamUtil.getLongValues(
+				httpServletRequest, "assetCategoryId");
+		}
+
+		return _assetCategoryIds;
+	}
+
+	private String _getAssetCategorySelectorURL() {
+		RequestBackedPortletURLFactory requestBackedPortletURLFactory =
+			RequestBackedPortletURLFactoryUtil.create(liferayPortletRequest);
+
+		InfoItemItemSelectorCriterion itemSelectorCriterion =
+			new InfoItemItemSelectorCriterion();
+
+		itemSelectorCriterion.setDesiredItemSelectorReturnTypes(
+			new InfoItemItemSelectorReturnType());
+		itemSelectorCriterion.setItemType(AssetCategory.class.getName());
+		itemSelectorCriterion.setMultiSelection(true);
+
+		return PortletURLBuilder.create(
+			_itemSelector.getItemSelectorURL(
+				requestBackedPortletURLFactory, _themeDisplay.getScopeGroup(),
+				_themeDisplay.getScopeGroupId(),
+				liferayPortletResponse.getNamespace() + "selectedAssetCategory",
+				itemSelectorCriterion)
+		).setParameter(
+			"selectedCategoryIds",
+			StringUtil.merge(_getAssetCategoryIds(), StringPool.COMMA)
+		).setParameter(
+			"vocabularyIds",
+			() -> ListUtil.toString(
+				_assetVocabularyLocalService.getCompanyVocabularies(
+					_themeDisplay.getCompanyId()),
+				AssetVocabulary.VOCABULARY_ID_ACCESSOR)
+		).buildString();
+	}
+
+	private String[] _getAssetTagIds() {
+		if (_assetTagIds == null) {
+			_assetTagIds = ParamUtil.getStringValues(
+				httpServletRequest, "assetTagId");
+		}
+
+		return _assetTagIds;
+	}
+
+	private String _getAssetTagSelectorURL() {
+		AssetTagsItemSelectorCriterion assetTagsItemSelectorCriterion =
+			new AssetTagsItemSelectorCriterion();
+
+		assetTagsItemSelectorCriterion.setAllGroupIds(true);
+		assetTagsItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
+			new AssetTagsItemSelectorReturnType());
+		assetTagsItemSelectorCriterion.setMultiSelection(true);
+
+		return String.valueOf(
+			_itemSelector.getItemSelectorURL(
+				RequestBackedPortletURLFactoryUtil.create(
+					liferayPortletRequest),
+				liferayPortletResponse.getNamespace() + "selectTag",
+				assetTagsItemSelectorCriterion));
 	}
 
 	private CreationMenu _getCreationMenu() throws PortalException {
@@ -854,12 +1089,14 @@ public class JournalManagementToolbarDisplayContext
 	private static final Log _log = LogFactoryUtil.getLog(
 		JournalManagementToolbarDisplayContext.class);
 
+	private long[] _assetCategoryIds;
+	private String[] _assetTagIds;
+	private final AssetVocabularyLocalService _assetVocabularyLocalService;
 	private String _ddmStructureOrderByCol;
 	private String _ddmStructureOrderByType;
+	private final ItemSelector _itemSelector;
 	private final JournalDisplayContext _journalDisplayContext;
 	private final JournalWebConfiguration _journalWebConfiguration;
-	private final LiferayPortletRequest _liferayPortletRequest;
-	private final LiferayPortletResponse _liferayPortletResponse;
 	private final ThemeDisplay _themeDisplay;
 	private final TranslationURLProvider _translationURLProvider;
 	private final TrashHelper _trashHelper;

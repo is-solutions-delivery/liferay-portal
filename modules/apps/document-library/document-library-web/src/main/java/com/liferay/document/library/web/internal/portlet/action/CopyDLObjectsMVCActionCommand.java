@@ -102,19 +102,22 @@ public class CopyDLObjectsMVCActionCommand extends BaseMVCActionCommand {
 		JSONObject jsonObject = _jsonFactory.createJSONObject();
 
 		if (!errorMessages.isEmpty()) {
-			int size = errorMessages.size();
+			int failedItems = errorMessages.size();
 
-			if (size <= 10) {
+			if (failedItems <= 10) {
 				jsonObject.put(
 					"errorMessages",
 					JSONUtil.toJSONArray(
 						errorMessages, errorMessage -> errorMessage));
 			}
 
-			jsonObject.put("errorSize", size);
-
-			hideDefaultSuccessMessage(actionRequest);
+			jsonObject.put("failedItems", failedItems);
 		}
+
+		jsonObject.put(
+			"successItems", _getItemsCopied(actionRequest, errorMessages));
+
+		hideDefaultSuccessMessage(actionRequest);
 
 		JSONPortletResponseUtil.writeJSON(
 			actionRequest, actionResponse, jsonObject);
@@ -139,7 +142,7 @@ public class CopyDLObjectsMVCActionCommand extends BaseMVCActionCommand {
 					_dlSizeLimitConfigurationProvider.getGroupMaxSizeToCopy(
 						group.getGroupId()),
 					_dlSizeLimitConfigurationProvider.getSystemMaxSizeToCopy(),
-					size, themeDisplay.getLocale()));
+					size, themeDisplay.getLocale(), true));
 		}
 	}
 
@@ -307,6 +310,15 @@ public class CopyDLObjectsMVCActionCommand extends BaseMVCActionCommand {
 
 		return _dlFileEntryLocalService.getFileEntryTypeIds(
 			folder.getCompanyId(), groupIds, folder.getTreePath());
+	}
+
+	private int _getItemsCopied(
+		ActionRequest actionRequest, List<String> errorMessages) {
+
+		long[] dlObjectIds = ParamUtil.getLongValues(
+			actionRequest, "dlObjectIds");
+
+		return dlObjectIds.length - errorMessages.size();
 	}
 
 	private String _getUploadExceptionErrorMessage(

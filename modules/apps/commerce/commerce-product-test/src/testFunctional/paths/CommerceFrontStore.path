@@ -51,18 +51,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>FS_IMAGE_GALLERY_MAIN_IMAGE</td>
-	<td>//div[@class='product-gallery']/div/img[contains(@alt, '${key_fsProductImage}')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>FS_IMAGE_GALLERY_OVERLAY</td>
-	<td>//div[@class='gallery-overlay']//img[contains(@alt, '${key_fsProductImage}')]</td>
+	<td>//div[@class='gallery-overlay']//source[contains(@srcset,'${key_fsProductImage}')]/..//img</td>
 	<td></td>
 </tr>
 <tr>
 	<td>FS_IMAGE_GALLERY_THUMBNAIL</td>
-	<td>//div[@class= 'gallery-thumbnails']//img[contains(@alt,'${key_fsProductImage}')]</td>
+	<td>//div[@class= 'gallery-thumbnails']//source[contains(@srcset,'${key_fsProductImage}')]/..//img</td>
 	<td></td>
 </tr>
 <tr>
@@ -157,7 +152,7 @@
 </tr>
 <tr>
 	<td>FS_PRODUCT_IMAGE</td>
-	<td>//div[@class='product-gallery']//img[contains(@src, '${key_fsProductImage}') or contains(@alt,'${key_fsProductImage}')]</td>
+	<td>//div[@class='product-gallery']//source[contains(@srcset,'${key_fsProductImage}')]/..//img</td>
 	<td></td>
 </tr>
 <tr>
@@ -178,6 +173,16 @@
 <tr>
 	<td>PRODUCT_DETAILS_ATTACHMENTS_BUTTON</td>
 	<td>//li[contains(@class,'list-group-item')]//h5[text()='${key_entryName}']/ancestor::li//a[contains(text(),'${key_button}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_IMAGE_MINI_CART_WITH_ALT_ATTRIBUTE</td>
+	<td>//div[@class= 'mini-cart-item-thumbnail']//img[contains(@alt,'thumbnail')]/../../../div[@class='mini-cart-item-info ml-3']//p[contains(text(),'${key_productSku}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_IMAGE_CHECKOUT_WITH_ALT_ATTRIBUTE</td>
+	<td>//div[@class='table-responsive']//img[contains(@alt,'thumbnail')]/../../../../..//div[@class='list-group-title' and contains(text(),'${key_productName}')]</td>
 	<td></td>
 </tr>
 <tr>

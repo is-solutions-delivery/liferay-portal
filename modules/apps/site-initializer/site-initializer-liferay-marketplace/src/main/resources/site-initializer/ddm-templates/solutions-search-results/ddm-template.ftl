@@ -39,13 +39,14 @@
 	.adt-solutions-search-results .labels .category-label {
 		background-color: #ebeef2;
 		color: #545D69;
+		font-size: smaller;
 	}
 
 	.adt-solutions-search-results .labels .category-label-remainder:hover .category-names {
 		display: block;
 	}
 
-	solution-search-results-card .card-image-title-container .developer-name {
+	.solution-search-results-card .card-image-title-container .developer-name {
 		color: #545d69;
 	}
 
@@ -56,7 +57,7 @@
 	.adt-solutions-search-results .solution-search-results-card .solution-search-image {
 		height: 180px;
 		object-fit: cover;
-		width: 329px;
+		width: 100%;
 	}
 
 	@media screen and (max-width: 599px) {
@@ -121,11 +122,14 @@
 					</#if>
 
 					<#if product.urlImage?has_content>
-						<#assign
-							productThumbnail = product.urlImage?split("/o/")
-						/>
+						<#assign productThumbnail = product.urlImage?split("/o/") />
+						<#if productThumbnail?has_content && productThumbnail?size gte 2>
+							<#assign productThumbnail1 = "/o/${productThumbnail[1]}" />
+						<#else>
+							<#assign productThumbnail1 = "/o/commerce-media/default/?groupId=${scopeGroupId}" />
+						</#if>
 					<#else>
-						<#assign productThumbnail = "" />
+						<#assign productThumbnail1 = "/o/commerce-media/default/?groupId=${scopeGroupId}" />
 					</#if>
 
 					<#if product.urls?has_content>
@@ -139,7 +143,7 @@
 							<img
 								alt=${productName}
 								class="solution-search-image rounded"
-								src="/o/${productThumbnail[1]}"
+								src=${productThumbnail1}
 							/>
 						</div>
 
@@ -149,8 +153,13 @@
 									<#assign productPriceModels = productSpecifications?filter(item -> item.specificationKey == "developer-name") />
 
 									<#list productPriceModels as productPriceModel>
+										<#if productPriceModel.value?has_content>
+											<#assign priceModel = productPriceModel.value />
+										<#else>
+											<#assign priceModel = "" />
+										</#if>
 										<div class="developer-name font-size-paragraph-small">
-											${productPriceModel.value.en_US}
+											${priceModel}
 										</div>
 									</#list>
 								</#if>

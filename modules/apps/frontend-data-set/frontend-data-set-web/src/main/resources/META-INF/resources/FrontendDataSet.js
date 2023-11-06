@@ -28,6 +28,7 @@ import {
 } from './management_bar/components/filters/Filter';
 import Modal from './modal/Modal';
 import SidePanel from './side_panel/SidePanel';
+import filterCreationActions from './utils/actionItems/filterCreationActions';
 import EVENTS from './utils/eventsDefinitions';
 import {
 	formatItemChanges,
@@ -50,7 +51,7 @@ const FrontendDataSet = ({
 	apiURL,
 	appURL,
 	bulkActions,
-	creationMenu,
+	creationMenu: initialCreationMenu,
 	currentURL,
 	customDataRenderers,
 	customRenderers,
@@ -89,6 +90,7 @@ const FrontendDataSet = ({
 }) => {
 	const wrapperRef = useRef(null);
 	const [componentLoading, setComponentLoading] = useState(false);
+	const [creationMenu, setCreationMenu] = useState(initialCreationMenu);
 	const [dataLoading, setDataLoading] = useState(!!apiURL);
 	const [dataSetSupportModalId] = useState(`support-modal-${getRandomId()}`);
 	const [dataSetSupportSidePanelId] = useState(
@@ -226,8 +228,8 @@ const FrontendDataSet = ({
 	const isMounted = useIsMounted();
 
 	function updateDataSetItems(dataSetData) {
-		setTotal(dataSetData.totalCount);
 		setItems(dataSetData.items);
+		setTotal(dataSetData.totalCount);
 	}
 
 	useEffect(() => {
@@ -401,6 +403,24 @@ const FrontendDataSet = ({
 					handleApiError({data, statusCode});
 				}
 				else {
+					setCreationMenu((currentCreationMenu) => {
+						if (!currentCreationMenu) {
+							return;
+						}
+
+						const filteredCreationMenu = {};
+
+						filteredCreationMenu.primaryItems = filterCreationActions(
+							{
+								customActions:
+									currentCreationMenu?.primaryItems,
+								globalCollectionActions: data?.actions,
+							}
+						);
+
+						return filteredCreationMenu;
+					});
+
 					updateDataSetItems(data);
 				}
 				setDataLoading(false);

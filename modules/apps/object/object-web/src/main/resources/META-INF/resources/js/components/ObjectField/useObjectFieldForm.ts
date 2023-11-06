@@ -15,6 +15,8 @@ import {defaultLanguageId} from '../../utils/constants';
 import {normalizeFieldSettings} from '../../utils/fieldSettings';
 import {ObjectFieldErrors} from './ObjectFieldFormBase';
 
+const AUTO_INCREMENT_INITIAL_VALUE_REGEX = /^(?!0+$)\d+$/;
+
 interface IUseObjectFieldForm {
 	forbiddenChars?: string[];
 	forbiddenLastChars?: string[];
@@ -92,6 +94,23 @@ export function useObjectFieldForm({
 
 		if (!field.businessType) {
 			errors.businessType = REQUIRED_MSG;
+		}
+		else if (
+			Liferay.FeatureFlags['LPS-196724'] &&
+			field.businessType === 'AutoIncrement'
+		) {
+			if (!settings.initialValue) {
+				errors.initialValue = REQUIRED_MSG;
+			}
+			else if (
+				!AUTO_INCREMENT_INITIAL_VALUE_REGEX.exec(
+					settings.initialValue as string
+				)
+			) {
+				errors.initialValue = Liferay.Language.get(
+					'this-value-cannot-be-less-than-1'
+				);
+			}
 		}
 		else if (field.businessType === 'Aggregation') {
 			if (!settings.function) {

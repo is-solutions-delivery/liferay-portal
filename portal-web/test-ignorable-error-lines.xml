@@ -240,14 +240,6 @@
 			<contains>already is datetime</contains>
 			<matches></matches>
 		</ignore-error>
-		<ignore-error description="LPS-122481 - temporarily ignore until fixed">
-			<contains></contains>
-			<matches>Portlet com_liferay.*failed to initialize</matches>
-		</ignore-error>
-		<ignore-error description="LPS-122481 - temporarily ignore until fixed">
-			<contains>SQL: update ResourcePermission</contains>
-			<matches></matches>
-		</ignore-error>
 		<ignore-error description="LPS-123610">
 			<contains>No default user was found for company</contains>
 			<matches></matches>

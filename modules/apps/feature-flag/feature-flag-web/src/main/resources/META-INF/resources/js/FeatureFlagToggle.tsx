@@ -4,10 +4,10 @@
  */
 
 import {ClayToggle} from '@clayui/form';
-import React, {useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
 interface IProps {
-	ariaDescribedBy: string;
+	ariaLabel: string;
 	companyId: number;
 	disabled: boolean;
 	enabled: boolean;
@@ -17,7 +17,7 @@ interface IProps {
 }
 
 const FeatureFlagToggle = ({
-	ariaDescribedBy,
+	ariaLabel,
 	companyId,
 	disabled,
 	enabled,
@@ -25,7 +25,8 @@ const FeatureFlagToggle = ({
 	inputName,
 	onItemsChange,
 }: IProps) => {
-	const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState<boolean | undefined>();
+	const toggleRef = useRef<any>(null);
 
 	const updateToggled = async (newToggled: boolean) => {
 		setIsLoading(true);
@@ -70,22 +71,27 @@ const FeatureFlagToggle = ({
 		}
 	};
 
+	useEffect(() => {
+		if (isLoading !== undefined && !disabled && !isLoading) {
+			toggleRef.current.focus();
+		}
+	}, [disabled, isLoading]);
+
 	return (
-		<>
-			<ClayToggle
-				aria-describedby={ariaDescribedBy}
-				disabled={disabled || isLoading}
-				id={inputName}
-				label={
-					enabled
-						? Liferay.Language.get('enabled')
-						: Liferay.Language.get('disabled')
-				}
-				onToggle={updateToggled}
-				toggled={enabled}
-				type="checkbox"
-			/>
-		</>
+		<ClayToggle
+			aria-label={ariaLabel}
+			disabled={disabled || isLoading}
+			id={inputName}
+			label={
+				enabled
+					? Liferay.Language.get('enabled')
+					: Liferay.Language.get('disabled')
+			}
+			onToggle={updateToggled}
+			ref={toggleRef}
+			toggled={enabled}
+			type="checkbox"
+		/>
 	);
 };
 

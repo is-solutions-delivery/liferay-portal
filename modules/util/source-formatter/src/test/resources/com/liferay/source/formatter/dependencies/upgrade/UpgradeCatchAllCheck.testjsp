@@ -9,4 +9,14 @@
 CommerceOrderConstants.PAYMENT_STATUS_AUTHORIZED;
 CommerceOrderConstants.PAYMENT_STATUS_PAID;
 CommerceOrderConstants.PAYMENT_STATUS_PENDING;
+
+for (CommerceOrderItem commerceOrderItem : commerceOrder.getCommerceOrderItems()) {
+	commerceOrderItem.getQuantity();
+}
+
+DLUtil.getGroupIds(themeDisplay);
+
+DLUtil.getImagePreviewURL(null, null);
+
+themeDisplay.getPortletGroupId();
 %>

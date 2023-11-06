@@ -31,10 +31,6 @@ jobs:
                       npm_config_arch: x64
                       os: windows-latest
                       platform: win32
-                    - arch: ia32
-                      npm_config_arch: ia32
-                      os: windows-latest
-                      platform: win32
                     - arch: arm64
                       npm_config_arch: arm
                       os: windows-latest
@@ -53,6 +49,10 @@ jobs:
                       platform: linux
                     - arch: x64
                       npm_config_arch: x64
+                      os: ubuntu-latest
+                      platform: alpine
+                    - arch: arm64
+                      npm_config_arch: arm64
                       os: ubuntu-latest
                       platform: alpine
                     - arch: x64

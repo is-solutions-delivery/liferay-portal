@@ -9,6 +9,7 @@ import com.liferay.commerce.model.CPDefinitionInventory;
 import com.liferay.commerce.product.exception.NoSuchCPDefinitionException;
 import com.liferay.commerce.product.model.CPDefinition;
 import com.liferay.commerce.product.service.CPDefinitionService;
+import com.liferay.commerce.service.CPDAvailabilityEstimateService;
 import com.liferay.commerce.service.CPDefinitionInventoryService;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Product;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductConfiguration;
@@ -96,6 +97,10 @@ public class ProductConfigurationResourceImpl
 			_cpDefinitionInventoryService, productConfiguration,
 			cpDefinition.getCPDefinitionId());
 
+		ProductConfigurationUtil.updateCPDAvailabilityEstimate(
+			_cpdAvailabilityEstimateService, productConfiguration,
+			cpDefinition.getCPDefinitionId());
+
 		Response.ResponseBuilder responseBuilder = Response.ok();
 
 		return responseBuilder.build();
@@ -118,6 +123,10 @@ public class ProductConfigurationResourceImpl
 			_cpDefinitionInventoryService, productConfiguration,
 			cpDefinition.getCPDefinitionId());
 
+		ProductConfigurationUtil.updateCPDAvailabilityEstimate(
+			_cpdAvailabilityEstimateService, productConfiguration,
+			cpDefinition.getCPDefinitionId());
+
 		Response.ResponseBuilder responseBuilder = Response.ok();
 
 		return responseBuilder.build();
@@ -131,6 +140,9 @@ public class ProductConfigurationResourceImpl
 				_dtoConverterRegistry, cpDefinitionId,
 				contextAcceptLanguage.getPreferredLocale(), null, null));
 	}
+
+	@Reference
+	private CPDAvailabilityEstimateService _cpdAvailabilityEstimateService;
 
 	@Reference
 	private CPDefinitionInventoryService _cpDefinitionInventoryService;

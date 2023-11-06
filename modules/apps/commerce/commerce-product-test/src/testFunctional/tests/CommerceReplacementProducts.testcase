@@ -108,6 +108,82 @@ definition {
 		}
 	}
 
+	@description = "COMMERCE-12026 | When an admin need to add to cart a product with a discontinued SKU without inventory and allow back orders switched off, your replacement has to be added to the cart"
+	@priority = 5
+	test CanReplacementSKUAddedToCart {
+		property portal.acceptance = "true";
+
+		task ("Given U-Joint product set as Discontinued with a replacement product") {
+			CommerceProducts.openProductsAdmin();
+
+			Search.searchCP(searchTerm = "U-Joint");
+
+			CommerceNavigator.gotoTableListEntry(entryName = "U-Joint");
+
+			CommerceEntry.gotoMenuTab(menuTab = "SKUs");
+
+			CommerceNavigator.gotoTableListEntry(entryName = "MIN55861");
+
+			SelectFrame(locator1 = "IFrame#IFRAME");
+
+			CommerceProducts.discontinueSKU();
+
+			CommerceProducts.setReplacementSKU(replacementSKU = "MIN93015");
+		}
+
+		task ("And ABS Sensor product set as Discontinued with a replacement product") {
+			CommerceProducts.openProductsAdmin();
+
+			Search.searchCP(searchTerm = "ABS Sensor");
+
+			CommerceNavigator.gotoTableListEntry(entryName = "ABS Sensor");
+
+			CommerceEntry.gotoMenuTab(menuTab = "SKUs");
+
+			CommerceNavigator.gotoTableListEntry(entryName = "MIN93015");
+
+			SelectFrame(locator1 = "IFrame#IFRAME");
+
+			CommerceProducts.discontinueSKU();
+
+			CommerceProducts.setReplacementSKU(replacementSKU = "MIN93017");
+		}
+
+		task ("And the available quantity is set to 0 for the 2 products") {
+			var warehouseList = "0:Italy,0:United States - Southwest,0:United States - Northeast";
+
+			for (var productSKU : list "MIN93015,MIN55861") {
+				for (var warehouse : list ${warehouseList}) {
+					var warehouseName = StringUtil.extractLast(${warehouse}, ":");
+					var warehouseQuantity = StringUtil.extractFirst(${warehouse}, ":");
+
+					CommerceJSONWarehousesAndInventoriesAPI._patchWarehouseItem(
+						productSku = ${productSKU},
+						quantity = ${warehouseQuantity},
+						warehouseName = ${warehouseName});
+				}
+			}
+		}
+
+		task ("And Allow Back Orders is set to false for the 2 products") {
+			for (var productName : list "ABS Sensor,U-Joint") {
+				CommerceJSONProductsAPI._patchCommerceProductConfiguration(
+					allowBackOrder = "false",
+					productName = ${productName});
+			}
+		}
+
+		task ("Then the first discontinued SKU is added to minicart using Quick Add to Cart") {
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium");
+
+			CommerceNavigator.gotoMiniCart();
+
+			FrontStore.quickAddToCartSearchAndSelectItem(orderItemSku = "MIN55861");
+
+			Click(locator1 = "CommerceAccelerators#QUICK_ADD_TO_CART_BUTTON");
+		}
+	}
+
 	@description = "COMMERCE-12548. As a buyer, I want to be able to see a SKU/UOM replace a discounted SKU"
 	@priority = 5
 	test CanSkuWithUOMReplaceDiscontinuedSku {
@@ -238,6 +314,97 @@ definition {
 		}
 	}
 
+	@description = "COMMERCE-12579. As a buyer, I can view discontinued SKUs shown in the replacement tab of the product's details page"
+	@priority = 3
+	test CanViewDiscontinuedReplacementSkusInProductDetails {
+		property portal.acceptance = "false";
+
+		task ("Given 5 SKUs are set as Discontinued with the same replacement SKU MIN93015") {
+			for (var productSku : list "MIN93016A,MIN93016B,MIN93016C,MIN93027,MIN93021") {
+				CommerceJSONProductsAPI._patchCommerceSku(
+					discontinued = "true",
+					productSku = ${productSku},
+					replacementSku = "MIN93015");
+			}
+		}
+
+		task ("When the buyer navigates to ABS Sensor's product details page") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/p/abs-sensor");
+		}
+
+		task ("Then can assert that the Replacements tab is shown") {
+			AssertElementPresent(
+				key_text = "Replacements",
+				locator1 = "Button#ANY");
+		}
+
+		task ("And can view the correct replaced products and pagination results in the Replacements details") {
+			AssertClick(
+				key_text = "Replacements",
+				locator1 = "Button#ANY",
+				value1 = "Replacements");
+
+			AssertTextEquals(
+				locator1 = "CP2ActivationKeys#PAGINATION_BUTTON",
+				value1 = "10 Items");
+
+			Pagination.viewResults(results = "Showing 1 to 5 of 5 entries.");
+
+			for (var sku : list "MIN93016A,MIN93016B,MIN93016C,MIN93027,MIN93021") {
+				LexiconEntry.viewEntryName(rowEntry = ${sku});
+			}
+		}
+
+		task ("When the pagination is changed to 4") {
+			Pagination.changePagination(itemsPerPage = "4 Items");
+		}
+
+		task ("Then the pagination results are shown accordingly") {
+			Pagination.viewResults(results = "Showing 1 to 4 of 5 entries.");
+
+			for (var sku : list "MIN93016A,MIN93016B,MIN93016C,MIN93027") {
+				LexiconEntry.viewEntryName(rowEntry = ${sku});
+			}
+
+			Click(locator1 = "Pagination#NEXT_LINK");
+
+			Pagination.viewResults(results = "Showing 5 to 5 of 5 entries.");
+
+			AssertElementPresent(
+				key_entryName = "MIN93021",
+				locator1 = "CommerceNavigation#ENTRY_NAME");
+		}
+
+		task ("When the product 'Wear Sensors' is searched on the page") {
+			CommerceNavigator.searchEntry(entryName = "MIN93027");
+		}
+
+		task ("Then the pagination results are changed accordingly only for the searched product") {
+			AssertElementPresent(
+				key_entryName = "MIN93027",
+				locator1 = "CommerceNavigation#ENTRY_NAME");
+
+			AssertTextEquals(
+				locator1 = "CP2ActivationKeys#PAGINATION_BUTTON",
+				value1 = "4 Items");
+
+			Pagination.viewResults(results = "Showing 1 to 1 of 1 entries.");
+
+			AssertElementPresent(locator1 = "Pagination#FIRST_LINK");
+
+			AssertElementNotPresent(
+				key_pageNumber = 2,
+				locator1 = "Pagination#ANY_PAGE");
+		}
+	}
+
 	@description = "COMMERCE-9352 | Verify if discontinued products are replaced by the replacement product when adding a discontinued product to an order"
 	@priority = 5
 	test DiscontinuedProductIsReplacedWhenImportedFromOrders {
@@ -349,7 +516,6 @@ definition {
 		task ("Given a simple product with a SKU") {
 			CommerceJSONProductsAPI._addCommerceProduct(
 				catalogName = "Master",
-				discontinued = "True",
 				productName = "Test Simple Product Replacement",
 				productType = "Simple",
 				sku = "SKU1001");
@@ -374,27 +540,27 @@ definition {
 				userEmailAddress = "buyer@liferay.com");
 		}
 
-		task ("When the discontinued product's product details page is reached") {
-			CommerceAcceleratorsInitializer.gotoMiniumProductDetailsPage(productName = "Test Simple Product");
+		task ("When the replaced product's product details page is reached") {
+			CommerceAcceleratorsInitializer.gotoMiniumProductDetailsPage(productName = "Test Simple Product Replacement");
 		}
 
 		task ("And when the replacement product's is selected") {
-			ScrollWebElementIntoView(
-				key_itemName = "SKU1001",
-				locator1 = "CommerceEntry#VIEW_ITEM_FROM_LIST");
-
 			Click(
 				key_text = "Replacements",
 				locator1 = "Button#ANY");
 
+			ScrollWebElementIntoView(
+				key_itemName = "SKU1002",
+				locator1 = "CommerceEntry#VIEW_ITEM_FROM_LIST");
+
 			Click(
-				key_itemName = "SKU1001",
+				key_itemName = "SKU1002",
 				locator1 = "CommerceEntry#VIEW_ITEM_FROM_LIST");
 		}
 
 		task ("Then the user is redirected to the replacement's product details page") {
 			FrontStore.assertProductDetails(
-				productName = "Test Simple Product Replacement",
+				productName = "Test Simple Product",
 				productSKU = "SKU1001");
 		}
 	}
@@ -407,7 +573,6 @@ definition {
 		task ("Given a simple product with a SKU") {
 			CommerceJSONProductsAPI._addCommerceProduct(
 				catalogName = "Master",
-				discontinued = "true",
 				productName = "Test Simple Product Replacement",
 				productType = "Simple",
 				sku = "SKU1001");
@@ -432,7 +597,7 @@ definition {
 				userEmailAddress = "buyer@liferay.com");
 		}
 
-		task ("When the discontinued product's product details page is reached") {
+		task ("When the replaced product's product details page is reached") {
 			CommerceAcceleratorsInitializer.gotoMiniumProductDetailsPage(productName = "Test Simple Product");
 		}
 
@@ -444,12 +609,12 @@ definition {
 				productAvailability = "Discontinued");
 		}
 
-		task ("And then the replacement product's is shown") {
-			Click(
+		task ("And then the replacement product is not shown") {
+			AssertElementNotPresent(
 				key_text = "Replacements",
 				locator1 = "Button#ANY");
 
-			AssertElementPresent(
+			AssertElementNotPresent(
 				key_itemName = "SKU1001",
 				locator1 = "CommerceEntry#VIEW_ITEM_FROM_LIST");
 		}

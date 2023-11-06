@@ -99,7 +99,7 @@ public class ObjectLayoutLocalServiceTest {
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionConstants.SCOPE_SITE, null, 1,
 				_objectDefinitionLocalService,
-				Arrays.asList(
+				Collections.singletonList(
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 						ObjectFieldConstants.DB_TYPE_STRING,
@@ -364,7 +364,7 @@ public class ObjectLayoutLocalServiceTest {
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				ObjectDefinitionConstants.SCOPE_SITE, null, 1,
 				_objectDefinitionLocalService,
-				Arrays.asList(
+				Collections.singletonList(
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 						ObjectFieldConstants.DB_TYPE_STRING,
@@ -483,7 +483,7 @@ public class ObjectLayoutLocalServiceTest {
 
 		_objectLayoutLocalService.updateObjectLayout(
 			objectLayout.getObjectLayoutId(), false, objectLayout.getNameMap(),
-			Arrays.asList(objectLayoutTab1));
+			Collections.singletonList(objectLayoutTab1));
 
 		screenNavigationCategories =
 			ScreenNavigationRegistryUtil.getScreenNavigationCategories(
@@ -493,22 +493,35 @@ public class ObjectLayoutLocalServiceTest {
 		Assert.assertTrue(screenNavigationCategories.isEmpty());
 	}
 
-	private long _addObjectField() throws Exception {
-		String name = RandomTestUtil.randomString();
+	private long _addObjectField(boolean system) throws Exception {
+		ObjectField objectField = null;
 
-		ObjectField objectField = ObjectFieldUtil.addCustomObjectField(
-			new TextObjectFieldBuilder(
-			).userId(
-				TestPropsValues.getUserId()
-			).labelMap(
-				LocalizedMapUtil.getLocalizedMap(name)
-			).name(
-				StringUtil.randomId()
-			).objectDefinitionId(
-				_objectDefinition.getObjectDefinitionId()
-			).required(
-				true
-			).build());
+		if (system) {
+			objectField = _objectFieldLocalService.addSystemObjectField(
+				null, TestPropsValues.getUserId(), 0,
+				_objectDefinition.getObjectDefinitionId(),
+				ObjectFieldConstants.BUSINESS_TYPE_TEXT, null, null,
+				ObjectFieldConstants.DB_TYPE_STRING, false, false, null,
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
+				StringUtil.randomId(), ObjectFieldConstants.READ_ONLY_FALSE,
+				null, false, false, Collections.emptyList());
+		}
+		else {
+			objectField = ObjectFieldUtil.addCustomObjectField(
+				new TextObjectFieldBuilder(
+				).userId(
+					TestPropsValues.getUserId()
+				).labelMap(
+					LocalizedMapUtil.getLocalizedMap(
+						RandomTestUtil.randomString())
+				).name(
+					StringUtil.randomId()
+				).objectDefinitionId(
+					_objectDefinition.getObjectDefinitionId()
+				).required(
+					true
+				).build());
+		}
 
 		return objectField.getObjectFieldId();
 	}
@@ -544,11 +557,13 @@ public class ObjectLayoutLocalServiceTest {
 		return objectLayoutBox;
 	}
 
-	private ObjectLayoutColumn _addObjectLayoutColumn() throws Exception {
+	private ObjectLayoutColumn _addObjectLayoutColumn(boolean system)
+		throws Exception {
+
 		ObjectLayoutColumn objectLayoutColumn =
 			_objectLayoutColumnPersistence.create(0);
 
-		objectLayoutColumn.setObjectFieldId(_addObjectField());
+		objectLayoutColumn.setObjectFieldId(_addObjectField(system));
 		objectLayoutColumn.setPriority(0);
 
 		return objectLayoutColumn;
@@ -560,8 +575,8 @@ public class ObjectLayoutLocalServiceTest {
 		objectLayoutRow.setPriority(0);
 		objectLayoutRow.setObjectLayoutColumns(
 			Arrays.asList(
-				_addObjectLayoutColumn(), _addObjectLayoutColumn(),
-				_addObjectLayoutColumn(), _addObjectLayoutColumn()));
+				_addObjectLayoutColumn(false), _addObjectLayoutColumn(false),
+				_addObjectLayoutColumn(true), _addObjectLayoutColumn(true)));
 
 		return objectLayoutRow;
 	}

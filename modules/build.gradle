@@ -681,6 +681,31 @@ gradle.beforeProject {
 
 			gradleTest {
 				dependsOn prepareGradleTestInputs
+
+				if (project.hasProperty("testDebug")) {
+					debug true
+					debugTests true
+				}
+
+				if (project.hasProperty("testExcludes")) {
+					String[] testExcludes = project.getProperty("testExcludes").split(",")
+
+					exclude testExcludes.collect {
+						"**/${it}"
+					}
+				}
+
+				if (project.hasProperty("testIncludes")) {
+					String[] testIncludes = project.getProperty("testIncludes").split(",")
+
+					include testIncludes.collect {
+						"**/${it}"
+					}
+				}
+
+				if (project.hasProperty("testShowOutput")) {
+					testLogging.showStandardStreams = true
+				}
 			}
 
 			prepareGradleTestInputs {

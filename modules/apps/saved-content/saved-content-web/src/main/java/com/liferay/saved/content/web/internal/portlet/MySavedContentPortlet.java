@@ -7,7 +7,7 @@ package com.liferay.saved.content.web.internal.portlet;
 
 import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.saved.content.web.internal.constants.MySavedContentPortletKeys;
+import com.liferay.saved.content.constants.MySavedContentPortletKeys;
 
 import javax.portlet.Portlet;
 
@@ -18,8 +18,8 @@ import org.osgi.service.component.annotations.Reference;
  * @author Alicia García
  */
 @Component(
-	enabled = false,
 	property = {
+		"com.liferay.portlet.add-default-resource=true",
 		"com.liferay.portlet.css-class-wrapper=saved-content-portlet",
 		"com.liferay.portlet.display-category=category.collaboration",
 		"com.liferay.portlet.preferences-owned-by-group=true",

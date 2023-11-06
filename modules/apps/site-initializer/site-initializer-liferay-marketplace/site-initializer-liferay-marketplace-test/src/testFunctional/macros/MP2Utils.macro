@@ -1,6 +1,7 @@
 definition {
 
-	macro assertDetailsUser {
+	@summary = "Default summary"
+	macro assertDetailsUser(detailsList = null) {
 		for (var details : list ${detailsList}) {
 			var key_text = ${details};
 
@@ -8,7 +9,13 @@ definition {
 		}
 	}
 
-	macro firstLoginMKT {
+	@summary = "Default summary"
+	macro assertUploadImage() {
+		AssertElementPresent(locator1 = "MP2Utils#PRODUCT_IMAGE");
+	}
+
+	@summary = "Default summary"
+	macro firstLoginMKT(recipient = null, userEmailAddress = null, asset = null) {
 		var baseURL = PropsUtil.get("portal.url");
 
 		MockMock._gotoMailMessage(
@@ -17,7 +24,7 @@ definition {
 
 		var userPassword = selenium.getText("MP2Utils#MOCKMOCK_HTML_BODY_FORMATTED");
 
-		Navigator.openSpecificURL(url = "${baseURL}/c/login?redirect=/web/marketplace-site/loading");
+		Navigator.openSpecificURL(url = "${baseURL}/c/login?redirect=/web/marketplace-site/${route}");
 
 		Type(
 			locator1 = "TextInput#EMAIL_ADDRESS",
@@ -34,7 +41,8 @@ definition {
 		User.answerPasswordReminder();
 	}
 
-	macro selectCheckbox {
+	@summary = "Default summary"
+	macro selectCheckbox(checkboxName = null) {
 		if (isSet(checkboxName)) {
 			Check.checkNotVisible(
 				checkboxName = ${checkboxName},
@@ -58,7 +66,8 @@ definition {
 		}
 	}
 
-	macro viewErrorMessage {
+	@summary = "Default summary"
+	macro viewErrorMessage() {
 		AssertElementPresent(locator1 = "MP2Utils#ALERT_NOTIFICATION");
 	}
 

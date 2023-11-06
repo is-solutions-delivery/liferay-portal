@@ -1,6 +1,7 @@
 definition {
 
-	macro addAccountAndChildToOrganization {
+	@summary = "Default summary"
+	macro addAccountAndChildToOrganization(siteName = null, key_nodeName = null, key_nodeDestination = null, pageName = null, key_nodeOrigin = null) {
 		Navigator.openSitePage(
 			pageName = ${pageName},
 			siteName = ${siteName});
@@ -30,7 +31,8 @@ definition {
 		AssertConfirm(value1 = "Child Org 1 will be moved into Organization 1.");
 	}
 
-	macro addAccountViaOrganizationManagementWidget {
+	@summary = "Default summary"
+	macro addAccountViaOrganizationManagementWidget(key_radioOption = null, value = null) {
 		Click.clickAtNotVisible(
 			key_radioOption = ${key_radioOption},
 			locator1 = "CommerceEntry#RADIO_BUTTON");
@@ -42,7 +44,8 @@ definition {
 		Button.clickSave();
 	}
 
-	macro addRootCategory {
+	@summary = "Default summary"
+	macro addRootCategory(vocabularyName = null, categoryName = null) {
 		var key_categoryName = ${categoryName};
 
 		Type(
@@ -57,7 +60,8 @@ definition {
 			tagName = ${categoryName});
 	}
 
-	macro addUserViaOrganizationManagementWidget {
+	@summary = "Default summary"
+	macro addUserViaOrganizationManagementWidget(key_roleOption = null, value = null) {
 		Type(
 			locator1 = "CommerceOrganizationManagementWidget#INVITE_EMAIL_INPUT",
 			value1 = ${value});
@@ -69,7 +73,8 @@ definition {
 		Button.clickSave();
 	}
 
-	macro assertOptionFacetsCount {
+	@summary = "Default summary"
+	macro assertOptionFacetsCount(expectedLabels = null, stringToMatch = null) {
 		var optionName = ${optionName};
 
 		var javaScriptCountElement = '''
@@ -91,13 +96,15 @@ definition {
 		}
 	}
 
-	macro assertOrganizationManagementWigetTitlePresent {
+	@summary = "Default summary"
+	macro assertOrganizationManagementWigetTitlePresent(key_nodeName = null) {
 		AssertElementPresent(
 			key_nodeName = ${key_nodeName},
 			locator1 = "CommerceOrganizationManagementWidget#NODE_TITLE");
 	}
 
-	macro assertSpecificationPanel2FacetsCount {
+	@summary = "Default summary"
+	macro assertSpecificationPanel2FacetsCount(expectedLabels = null, stringToMatch = null) {
 		var specificationGroup = ${specificationGroup};
 
 		var javaScriptCountElement = '''
@@ -119,7 +126,8 @@ definition {
 		}
 	}
 
-	macro associateAccountWithOrganization {
+	@summary = "Default summary"
+	macro associateAccountWithOrganization(key_radioOption = null, value = null) {
 		Click.clickAtNotVisible(
 			key_radioOption = ${key_radioOption},
 			locator1 = "CommerceEntry#RADIO_BUTTON");
@@ -135,7 +143,8 @@ definition {
 		Button.clickSave();
 	}
 
-	macro canCreateChildOrganization {
+	@summary = "Default summary"
+	macro canCreateChildOrganization(value = null) {
 		Type(
 			locator1 = "TextInput#NAME",
 			value1 = ${value});
@@ -143,7 +152,8 @@ definition {
 		Button.clickSave();
 	}
 
-	macro canDragAndDropOrganizaitionAndChildOrganization {
+	@summary = "Default summary"
+	macro canDragAndDropOrganizaitionAndChildOrganization(key_nodeName = null, key_nodeDestination = null, key_nodeChild = null, key_nodeOrigin = null) {
 		Click(locator1 = "Button#EXPAND");
 
 		Click(
@@ -171,7 +181,8 @@ definition {
 		Refresh();
 	}
 
-	macro deleteFilterEntry {
+	@summary = "Default summary"
+	macro deleteFilterEntry(portletName = null) {
 		Portlet.gotoPortletOptions(
 			portletName = ${portletName},
 			portletOption = "Configuration");
@@ -201,7 +212,8 @@ definition {
 		IFrame.closeFrame();
 	}
 
-	macro gotoSVGNode {
+	@summary = "Default summary"
+	macro gotoSVGNode(key_orgType = null, key_nodeName = null) {
 		Click(locator1 = "Button#EXPAND");
 
 		Click(
@@ -215,7 +227,8 @@ definition {
 			locator1 = "CommerceOrganizationManagementWidget#NODE_ACTION");
 	}
 
-	macro openOrganizationWidget {
+	@summary = "Default summary"
+	macro openOrganizationWidget() {
 		Navigator.openSitePage(
 			pageName = "Organization Management Widget Page",
 			siteName = "Minium");
@@ -223,7 +236,8 @@ definition {
 		Click(locator1 = "Button#EXPAND");
 	}
 
-	macro productPublisherAddFilter {
+	@summary = "Default summary"
+	macro productPublisherAddFilter(optionAndOperator = null, categories = null, filterType = null, filterEntries = null, optionQuery = null) {
 		CommerceUtilities.expandField(accordionTitle = "filter");
 
 		Click(
@@ -267,7 +281,8 @@ definition {
 		IFrame.closeFrame();
 	}
 
-	macro removeChildOrganization {
+	@summary = "Default summary"
+	macro removeChildOrganization(key_nodeName = null, key_nodeChild = null) {
 		Click(locator1 = "Button#EXPAND");
 
 		Click(
@@ -289,7 +304,8 @@ definition {
 		Click(locator1 = "Button#EXPAND");
 	}
 
-	macro setFilterItems {
+	@summary = "Default summary"
+	macro setFilterItems(filterTitle = null, key_card = null, categories = null, tags = null) {
 		SelectFrame.selectFrameNoLoading(
 			key_title = ${filterTitle},
 			locator1 = "IFrame#MODAL_ANY");
@@ -331,7 +347,8 @@ definition {
 		SelectFrame.selectFrameNoLoading(locator1 = "IFrame#CONFIGURATION");
 	}
 
-	macro updateFacetConfiguration {
+	@summary = "Default summary"
+	macro updateFacetConfiguration(displayTemplate = null, maxTerms = null, displayFrequencies = null, frequencyThreshold = null, parameterName = null, rangesArray = null, portletName = null) {
 		Portlet.gotoPortletOptions(
 			portletName = ${portletName},
 			portletOption = "Configuration");
@@ -343,10 +360,21 @@ definition {
 		SelectFrame(locator1 = "IFrame#CONFIGURATION");
 
 		if (isSet(displayTemplate)) {
-			Select(
-				key_fieldLabel = "Display Template",
-				locator1 = "Select#GENERIC_SELECT_FIELD",
-				value1 = ${displayTemplate});
+			if (IsElementPresent(key_fieldLabel = "Display Template", locator1 = "Select#GENERIC_SELECT_FIELD")) {
+				Select(
+					key_fieldLabel = "Display Template",
+					locator1 = "Select#GENERIC_SELECT_FIELD",
+					value1 = ${displayTemplate});
+			}
+			else {
+				Click(
+					key_fieldLabel = "Display Template",
+					locator1 = "CommerceEntry#COMMERCE_FACET_BUTTON");
+
+				Click(
+					key_entry = ${displayTemplate},
+					locator1 = "CommerceEntry#COMMERCE_FACET_DROPDOWN");
+			}
 		}
 
 		if (isSet(parameterName)) {
@@ -380,7 +408,8 @@ definition {
 		PortletEntry.save();
 	}
 
-	macro updateProductPublisherConfiguration {
+	@summary = "Default summary"
+	macro updateProductPublisherConfiguration(renderSelection = null, itemsPerPage = null, filterEntries = null, filterType = null, portletName = null, productSelection = null) {
 		Portlet.gotoPortletOptions(
 			portletName = ${portletName},
 			portletOption = "Configuration");
@@ -451,6 +480,106 @@ definition {
 				key_text = "Number of Items to Display",
 				locator1 = "TextInput#ANY",
 				value1 = ${itemsPerPage});
+		}
+
+		SelectFrameTop();
+	}
+
+	@summary = "Default summary"
+	macro updateProductPublisherConfigurationInDPT(renderSelection = null, itemsPerPage = null, dataSourceValue = null, filterEntries = null, filterType = null, portletName = null, productSelection = null) {
+		Click.javaScriptClick(
+			key_portletName = ${portletName},
+			locator1 = "Portlet#SPECIFIC_BORDERLESS_ELLIPSIS_ICON");
+
+		MenuItem.click(menuItem = "Configuration");
+
+		WaitForLiferayEvent.initializeLiferayEventLog();
+
+		SelectFrameTop();
+
+		SelectFrame.selectFrameNoLoading(locator1 = "IFrame#CONFIGURATION");
+
+		if (isSet(productSelection)) {
+			var key_content = ${productSelection};
+
+			Navigator.gotoNavTab(navTab = "Product Selection");
+
+			if (${productSelection} == "Dynamic") {
+				AssertChecked(
+					locator1 = "Radio#ANY",
+					radioLabel = ${productSelection});
+
+				AssertElementPresent(
+					key_entry = "Filter",
+					locator1 = "CommerceNavigation#ANY_ENTRY_NAME");
+
+				if (isSet(filterType)) {
+					CommerceWidget.productPublisherAddFilter(
+						filterEntries = ${filterEntries},
+						filterType = ${filterType});
+				}
+			}
+			else if (${productSelection} == "Manual") {
+				Click(
+					locator1 = "Radio#ANY",
+					radioLabel = "Manual");
+
+				AssertElementPresent(
+					key_entry = "Product Entries",
+					locator1 = "CommerceNavigation#ANY_ENTRY_NAME");
+			}
+			else if (${productSelection} == "Data Source") {
+				Click(
+					locator1 = "Radio#ANY",
+					radioLabel = "Data Source");
+
+				Click(
+					key_entry = "Data Source",
+					locator1 = "CommerceNavigation#ANY_ENTRY_NAME");
+
+				WaitForElementPresent(
+					key_fieldLabel = "Data Source",
+					locator1 = "CommerceEntry#LABEL_GENERIC_SELECT");
+
+				Select(
+					key_fieldLabel = "Data Source",
+					locator1 = "CommerceEntry#LABEL_GENERIC_SELECT",
+					value1 = ${dataSourceValue});
+			}
+		}
+
+		if (isSet(renderSelection)) {
+			var key_content = ${renderSelection};
+
+			Navigator.gotoNavTab(navTab = "Render Selection");
+
+			AssertChecked(
+				locator1 = "Radio#ANY",
+				radioLabel = ${renderSelection});
+
+			if (${renderSelection} == "Use Application Display Template") {
+				AssertElementPresent(
+					key_entry = "Display Template",
+					locator1 = "CommerceNavigation#ANY_ENTRY_NAME");
+			}
+			else if (${renderSelection} == "Use Custom Renderer") {
+				AssertElementPresent(
+					key_entry = "Product List Renderer",
+					locator1 = "CommerceNavigation#ANY_ENTRY_NAME");
+			}
+		}
+
+		if (isSet(itemsPerPage)) {
+			Navigator.gotoNavTab(navTab = "Pagination");
+
+			Type(
+				key_text = "Number of Items to Display",
+				locator1 = "TextInput#ANY",
+				value1 = ${itemsPerPage});
+
+			PortletEntry.save();
+
+			IFrame.closeFrame();
 		}
 
 		SelectFrameTop();

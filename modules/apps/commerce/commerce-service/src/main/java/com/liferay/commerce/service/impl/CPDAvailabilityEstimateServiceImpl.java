@@ -17,7 +17,6 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
-import com.liferay.portal.kernel.service.ServiceContext;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -42,22 +41,29 @@ public class CPDAvailabilityEstimateServiceImpl
 
 		_checkCommerceCatalog(cpDefinitionId, ActionKeys.VIEW);
 
+		CPDefinition cpDefinition = cpDefinitionLocalService.getCPDefinition(
+			cpDefinitionId);
+
 		return cpdAvailabilityEstimateLocalService.
-			fetchCPDAvailabilityEstimateByCPDefinitionId(cpDefinitionId);
+			fetchCPDAvailabilityEstimateByCProductId(
+				cpDefinition.getCProductId());
 	}
 
 	@Override
 	public CPDAvailabilityEstimate updateCPDAvailabilityEstimate(
 			long cpdAvailabilityEstimateId, long cpDefinitionId,
-			long commerceAvailabilityEstimateId, ServiceContext serviceContext)
+			long commerceAvailabilityEstimateId)
 		throws PortalException {
 
 		_checkCommerceCatalog(cpDefinitionId, ActionKeys.VIEW);
 
+		CPDefinition cpDefinition = cpDefinitionLocalService.getCPDefinition(
+			cpDefinitionId);
+
 		return cpdAvailabilityEstimateLocalService.
-			updateCPDAvailabilityEstimate(
-				cpdAvailabilityEstimateId, cpDefinitionId,
-				commerceAvailabilityEstimateId, serviceContext);
+			updateCPDAvailabilityEstimateByCProductId(
+				getUserId(), cpdAvailabilityEstimateId,
+				cpDefinition.getCProductId(), commerceAvailabilityEstimateId);
 	}
 
 	@Reference

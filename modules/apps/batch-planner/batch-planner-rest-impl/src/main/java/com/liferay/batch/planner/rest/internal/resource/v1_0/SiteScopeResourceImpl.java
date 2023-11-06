@@ -5,9 +5,12 @@
 
 package com.liferay.batch.planner.rest.internal.resource.v1_0;
 
+import com.liferay.batch.planner.batch.engine.task.TaskItemUtil;
 import com.liferay.batch.planner.rest.dto.v1_0.SiteScope;
 import com.liferay.batch.planner.rest.internal.vulcan.yaml.openapi.OpenAPIYAMLProvider;
 import com.liferay.batch.planner.rest.resource.v1_0.SiteScopeResource;
+import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.Company;
@@ -20,6 +23,7 @@ import com.liferay.portal.vulcan.util.OpenAPIUtil;
 import com.liferay.portal.vulcan.yaml.openapi.OpenAPIYAML;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -41,21 +45,31 @@ public class SiteScopeResourceImpl extends BaseSiteScopeResourceImpl {
 			String internalClassNameKey, Boolean export)
 		throws Exception {
 
+		if (internalClassNameKey.contains(StringPool.POUND)) {
+			ObjectDefinition objectDefinition =
+				_objectDefinitionLocalService.getObjectDefinition(
+					contextCompany.getCompanyId(),
+					TaskItemUtil.getTaskItemDelegateName(internalClassNameKey));
+
+			return Page.of(
+				_getSiteScopes(
+					Collections.singletonList(objectDefinition.getScope())));
+		}
+
 		List<String> entityScopes = null;
 
 		OpenAPIYAML openAPIYAML = _openAPIYAMLProvider.getOpenAPIYAML(
 			contextCompany.getCompanyId(), internalClassNameKey);
 
-		String simpleInternalClassName = internalClassNameKey.substring(
-			internalClassNameKey.lastIndexOf(StringPool.PERIOD) + 1);
-
 		if (GetterUtil.getBoolean(export)) {
 			entityScopes = OpenAPIUtil.getReadEntityScopes(
-				simpleInternalClassName, openAPIYAML);
+				TaskItemUtil.getSimpleClassName(internalClassNameKey),
+				openAPIYAML);
 		}
 		else {
 			entityScopes = OpenAPIUtil.getCreateEntityScopes(
-				simpleInternalClassName, openAPIYAML);
+				TaskItemUtil.getSimpleClassName(internalClassNameKey),
+				openAPIYAML);
 		}
 
 		return Page.of(_getSiteScopes(entityScopes));
@@ -95,6 +109,9 @@ public class SiteScopeResourceImpl extends BaseSiteScopeResourceImpl {
 
 	@Reference
 	private GroupService _groupService;
+
+	@Reference
+	private ObjectDefinitionLocalService _objectDefinitionLocalService;
 
 	@Reference
 	private OpenAPIYAMLProvider _openAPIYAMLProvider;

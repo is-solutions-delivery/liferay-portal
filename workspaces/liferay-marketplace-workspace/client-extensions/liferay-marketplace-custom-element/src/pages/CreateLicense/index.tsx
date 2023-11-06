@@ -3,147 +3,210 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 
 import './index.scss';
 
 import {useForm} from 'react-hook-form';
+import {useNavigate, useParams} from 'react-router-dom';
+import {z} from 'zod';
 
 import FooterButtons from '../../components/FooterButtons';
+import {useMarketplaceContext} from '../../context/MarketplaceContext';
 import {Liferay} from '../../liferay/liferay';
+import zodSchema from '../../schema/zod';
 import ProductCard from '../GetAppPage/components/ProductCard/ProductCard';
 import StepWizard from '../GetAppPage/components/StepWizard/StepWizard';
+import useGetProductById from '../GetAppPage/hooks/useGetProductById';
+import useGetProductCreatorAccount from '../GetAppPage/hooks/useGetProductCreatorAccount';
+import useProvisioningKoroneikiOAuth2 from '../GetAppPage/hooks/useProvisioningKoroneikiOAuth2';
+import {formatDate} from '../PublishedAppsDashboard/PublishedDashboardPageUtil';
 import AccountEmailInfo from './AccountInfo';
 import LicenseDetails from './LicenseDetails';
 import SelectSubscription from './SelectSubscription';
-import {
-	CreateLicenseForm,
-	ProductCardProps,
-	StepCreateLicense,
-	StepsInformation,
-} from './Types';
+import {CreateLicenseForm, StepCreateLicense, StepsInformation} from './Types';
+
+type ExtendBannerProps = {
+	subscription: {
+		endDate?: string;
+		name: string;
+		startDate: string;
+	};
+};
+
+const ExtendBanner: React.FC<ExtendBannerProps> = ({subscription}) => (
+	<>
+		<div className="align-items-center d-flex mb-3 row">
+			<small className="col-6 col-md-4 font-weight-bold m-0">
+				Key type
+			</small>
+			<small className="col-6 col-md-4 subscription-banner-text">
+				{subscription?.name}
+			</small>
+		</div>
+
+		<div className="align-items-center d-flex row">
+			<small className="col-6 col-md-4 font-weight-bold m-0">
+				Start Date - Exp. Date
+			</small>
+			<small className="col-6 col-md-4 subscription-banner-text text-nowrap">
+				{formatDate(subscription?.startDate)} &ndash;{' '}
+				{subscription?.endDate ?? 'DNE'}
+			</small>
+		</div>
+	</>
+);
+
+const stepsInformation: StepsInformation = {
+	[StepCreateLicense.SUBSCRIPTION]: {
+		backStep: StepCreateLicense.SUBSCRIPTION,
+		nextStep: StepCreateLicense.LICENSE_KEY_DETAILS,
+		stepTitle: 'Subscription',
+		title: 'Subscription',
+	},
+	[StepCreateLicense.LICENSE_KEY_DETAILS]: {
+		backStep: StepCreateLicense.SUBSCRIPTION,
+		nextStep: StepCreateLicense.SUBSCRIPTION,
+		stepTitle: 'License Key Details',
+		title: 'License Key Details',
+	},
+};
 
 const CreateLicense = () => {
+	const [loading, setLoading] = useState(false);
 	const [step, setStep] = useState<string>(StepCreateLicense.SUBSCRIPTION);
+	const {appId, orderId} = useParams();
+	const {myUserAccount} = useMarketplaceContext();
+	const {product} = useGetProductById('attachments', appId);
+	const navigate = useNavigate();
+	const productCreatorAccount = useGetProductCreatorAccount(product);
+	const provisioningKoroneikiOAuth2 = useProvisioningKoroneikiOAuth2();
 
-	const {setValue, watch} = useForm<CreateLicenseForm>({
+	const {
+		formState: {errors},
+		getValues,
+		register,
+		setValue,
+		watch,
+	} = useForm<CreateLicenseForm>({
 		defaultValues: {
+			description: '',
+			hostname: '',
+			ipAddress: '',
+			macAddress: '',
 			subscription: undefined,
 		},
 	});
 
-	const {subscription} = watch();
+	const {
+		description,
+		hostname,
+		ipAddress,
+		macAddress,
+		subscription,
+	} = watch();
 
-	const stepsInformation: StepsInformation = {
-		[StepCreateLicense.SUBSCRIPTION]: {
-			backStep: StepCreateLicense.SUBSCRIPTION,
-			component: (
-				<SelectSubscription
-					onSelectSubscription={(subscription: string) => {
-						setValue('subscription', subscription);
-					}}
-					selectedSubscriptionValue={subscription}
-				/>
-			),
-			nextStep: StepCreateLicense.LICENSE_KEY_DETAILS,
-			stepTitle: 'Subscription',
-			title: 'Subscription',
-		},
-		[StepCreateLicense.LICENSE_KEY_DETAILS]: {
-			backStep: StepCreateLicense.SUBSCRIPTION,
-			component: <LicenseDetails />,
-			nextStep: StepCreateLicense.SUBSCRIPTION,
-			stepTitle: 'License Key Details',
-			title: 'License Key Details',
-		},
+	useEffect(() => {
+		if (product) {
+			const {familyName, givenName} = myUserAccount;
+
+			setValue(
+				'description',
+				`${givenName} ${familyName} - ${product?.name?.en_US} - ${subscription?.name}`
+			);
+		}
+	}, [myUserAccount, product, setValue, subscription?.name]);
+
+	const disableContinueButton =
+		(ipAddress === '' && hostname === '' && macAddress === '') ||
+		description === '';
+
+	const inputProps = {
+		errors,
+		register,
+		required: true,
 	};
 
-	const ProductCardInfo: ProductCardProps = {
-		licenseKeyData: {
-			endDate: 'Oct 24, 2024',
-			keyType: 'Trial',
-			startDate: 'Sep 24, 2023',
-		},
-		product: {
-			attachments: [],
-			name: {en_US: 'Test Product'},
-			productSpecifications: [],
-			skus: [
-				{
-					price: 0,
-					sku: 'TESTFREEPRODUCTSKU',
-					skuOptions: [],
-				},
-			],
-		},
-		productCreatorAccount: {
-			logoURL: undefined,
-			name: 'Test Name',
-		},
-		userAccount: {
-			emailAddress: 'test@liferay.com',
-		},
-	};
-
-	const ExtendBanner = () => (
-		<>
-			<div className="align-items-center d-flex mb-3 row">
-				<small className="col-6 col-md-4 font-weight-bold m-0">
-					Key type
-				</small>
-				<small className="col-6 col-md-4 subscription-banner-text">
-					{ProductCardInfo.licenseKeyData.keyType}
-				</small>
-			</div>
-
-			<div className="align-items-center d-flex row">
-				<small className="col-6 col-md-4 font-weight-bold m-0">
-					Start Date - Exp. Date
-				</small>
-				<small className="col-6 col-md-4 subscription-banner-text text-nowrap">
-					{ProductCardInfo.licenseKeyData.startDate} &ndash;{' '}
-					{ProductCardInfo.licenseKeyData.endDate}
-				</small>
-			</div>
-		</>
+	const buttonsInfo = useMemo(
+		() => ({
+			cancelButton: {
+				displayType: 'unstyled',
+				show: true,
+			},
+			customizedButton: {
+				displayType: 'secondary',
+				show: step !== StepCreateLicense.SUBSCRIPTION,
+				text: 'Back',
+			},
+			nextButton: {
+				className: 'ml-6',
+				disabled:
+					loading ||
+					(!subscription &&
+						step === StepCreateLicense.SUBSCRIPTION) ||
+					(disableContinueButton &&
+						step !== StepCreateLicense.SUBSCRIPTION),
+				displayType: 'primary',
+				show: true,
+				text: 'Generate Key',
+			},
+		}),
+		[disableContinueButton, loading, step, subscription]
 	);
 
-	const ButtonsInfo = {
-		cancelButton: {
-			displayType: 'unstyled',
-			show: true,
-		},
-		customizedButton: {
-			displayType: 'secondary',
-			show: step !== StepCreateLicense.SUBSCRIPTION,
-			text: 'Back',
-		},
-		nextButton: {
-			className: 'ml-6',
-			disabled: !subscription,
-			displayType: 'primary',
-			show: true,
-			text: 'Generate Key',
-		},
+	const handleNextButton = async (
+		form: z.infer<typeof zodSchema.generateLicenseKey>
+	) => {
+		setLoading(true);
+
+		try {
+			const licenseKey = await provisioningKoroneikiOAuth2.createLicenseKey(
+				{
+					licenseEntry: {
+						description: form.description,
+						hostName: form.hostname,
+						ipAddresses: form.ipAddress,
+						macAddresses: form.macAddress,
+						orderId: orderId as string,
+					},
+					productPurchaseKey: form.subscription
+						?.productPurchasedKey as string,
+					skuId: form.subscription?.skuId as number,
+					type: form.subscription?.name as string,
+				}
+			);
+
+			Liferay.Util.openToast({
+				message: 'License Key created successfully',
+				type: 'success',
+			});
+
+			navigate('/');
+
+			provisioningKoroneikiOAuth2.downloadLicenseKey(licenseKey.id);
+		}
+		catch {
+			Liferay.Util.openToast({
+				message: 'Something went wrong to create a License Key',
+				type: 'danger',
+			});
+		}
+
+		setLoading(false);
 	};
 
 	return (
 		<div className="align-items-center d-flex flex-column mb-6 mkt-create-license mt-6">
 			<div className="mt-6 product-card-content">
 				<ProductCard
-					ExtendBanner={ExtendBanner}
-					RightSideBanner={() => (
-						<AccountEmailInfo
-							productCreatorAccount={
-								ProductCardInfo.productCreatorAccount
-							}
-							userAccount={ProductCardInfo.userAccount}
-						/>
+					ExtendBanner={() => (
+						<ExtendBanner subscription={subscription} />
 					)}
-					creatorAccount={
-						ProductCardInfo.productCreatorAccount as Account
-					}
-					product={(ProductCardInfo.product as any) as Product}
+					RightSideBanner={() => (
+						<AccountEmailInfo userAccount={myUserAccount} />
+					)}
+					creatorAccount={productCreatorAccount as Account}
+					product={product as Product}
 					showExtendBanner={
 						step === StepCreateLicense.LICENSE_KEY_DETAILS
 					}
@@ -169,21 +232,36 @@ const CreateLicense = () => {
 				</div>
 
 				<div>
-					{stepsInformation[step as keyof StepsInformation].component}
+					{step === StepCreateLicense.SUBSCRIPTION ? (
+						<SelectSubscription
+							onSelectSubscription={(subscription: any) => {
+								setValue('subscription', subscription);
+							}}
+							selectedSubscriptionValue={subscription}
+						/>
+					) : (
+						<LicenseDetails inputProps={inputProps} />
+					)}
 				</div>
 
 				<FooterButtons
 					className="d-flex justify-content-between mt-6"
-					dataButtons={ButtonsInfo}
+					dataButtons={buttonsInfo}
 					onClickCancel={() => {
 						window.location.href = Liferay.ThemeDisplay.getCanonicalURL();
 					}}
 					onClickCustomizedButton={() =>
 						setStep(StepCreateLicense.SUBSCRIPTION)
 					}
-					onClickNext={() =>
-						setStep(StepCreateLicense.LICENSE_KEY_DETAILS)
-					}
+					onClickNext={() => {
+						if (step === StepCreateLicense.SUBSCRIPTION) {
+							return setStep(
+								StepCreateLicense.LICENSE_KEY_DETAILS
+							);
+						}
+
+						handleNextButton(getValues());
+					}}
 				/>
 			</div>
 		</div>

@@ -13,10 +13,14 @@ import {Liferay} from '../../liferay/liferay';
 import HeadlessAdminUserImpl from '../../services/rest/HeadlessAdminUser';
 
 import './PublishedAppsDashboard.scss';
-import {getAccountInfoFromCommerce, getProducts} from '../../utils/api';
 import {
+	getAccountInfoFromCommerce,
+	getAccounts,
+	getProducts,
+} from '../../utils/api';
+import {
+	getAccountImage,
 	getProductVersionFromSpecifications,
-	showAccountImage,
 } from '../../utils/util';
 import {
 	formatDate,
@@ -31,7 +35,6 @@ const useAccountCached = (accounts: any[], accountId: string | null) => {
 		if (!accountId) {
 			return;
 		}
-
 		const cacheAccount = accounts?.find(
 			({id}: Account) => id === Number(accountId)
 		);
@@ -75,20 +78,12 @@ const PublishedAppsDashboardOutlet = () => {
 	);
 
 	const {data: accounts = []} = useSWR('/published/accounts', async () => {
-		const accounts = await HeadlessAdminUserImpl.getAccounts();
+		const accounts = await getAccounts();
 
-		const accountsPublisher = accounts.items.filter((account: Account) => {
-			const catalogIdCustomField = account.customFields?.find(
-				(customField) => customField.name === 'CatalogId'
-			);
-
-			return catalogIdCustomField?.customValue.data !== '';
-		});
-
-		return accountsPublisher;
+		return accounts.items ?? [];
 	});
 
-	const selectedAccount = useAccountCached(accounts, accountId);
+	const selectedAccount = useAccountCached(accounts ?? [], accountId);
 
 	const catalogId = useMemo(() => {
 		const accountCustomField = selectedAccount?.customFields?.find(
@@ -186,7 +181,7 @@ const PublishedAppsDashboardOutlet = () => {
 		<div className="published-apps-dashboard-page-container">
 			<DashboardNavigation
 				accountAppsNumber={appsTotalCount}
-				accountIcon={showAccountImage(commerceAccount?.logoURL)}
+				accountIcon={getAccountImage(commerceAccount?.logoURL)}
 				accounts={accounts ?? []}
 				currentAccount={selectedAccount}
 				dashboardNavigationItems={initialDashboardNavigationItems.map(

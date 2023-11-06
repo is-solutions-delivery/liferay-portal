@@ -762,8 +762,10 @@ public class ResourceOpenAPIParser {
 
 		String operationId = operation.getOperationId();
 
+		Schema schema = _getOperationSchema(operation, requestBodyMediaTypes);
+
 		if ((operationId != null) && operationId.endsWith("PermissionsPage") &&
-			operationId.startsWith("put") && requestBodyMediaTypes.isEmpty()) {
+			operationId.startsWith("put") && (schema == null)) {
 
 			javaMethodParameters.add(
 				new JavaMethodParameter(
@@ -807,17 +809,18 @@ public class ResourceOpenAPIParser {
 				throw new RuntimeException(
 					"application/x-www-form-urlencoded is not supported");
 			}
-			else if (!requestBodyMediaTypes.contains("multipart/form-data")) {
-				RequestBody requestBody = operation.getRequestBody();
-
-				Map<String, Content> contents = requestBody.getContent();
-
-				Iterator<String> iterator = requestBodyMediaTypes.iterator();
-
-				Content content = contents.get(iterator.next());
+			else if (requestBodyMediaTypes.contains("multipart/form-data")) {
+				javaMethodParameters.add(
+					new JavaMethodParameter(
+						"multipartBody", MultipartBody.class.getName()));
+			}
+			else {
+				if (schema == null) {
+					return javaMethodParameters;
+				}
 
 				String parameterType = OpenAPIParserUtil.getJavaDataType(
-					javaDataTypeMap, content.getSchema());
+					javaDataTypeMap, schema);
 
 				String simpleClassName = parameterType.substring(
 					parameterType.lastIndexOf(".") + 1);
@@ -838,11 +841,6 @@ public class ResourceOpenAPIParser {
 
 				javaMethodParameters.add(
 					new JavaMethodParameter(parameterName, parameterType));
-			}
-			else {
-				javaMethodParameters.add(
-					new JavaMethodParameter(
-						"multipartBody", MultipartBody.class.getName()));
 			}
 		}
 
@@ -1033,6 +1031,24 @@ public class ResourceOpenAPIParser {
 		}
 
 		return StringUtil.merge(methodNameSegments, "");
+	}
+
+	private static Schema _getOperationSchema(
+		Operation operation, Set<String> requestBodyMediaTypes) {
+
+		if (requestBodyMediaTypes.isEmpty()) {
+			return null;
+		}
+
+		RequestBody requestBody = operation.getRequestBody();
+
+		Map<String, Content> contents = requestBody.getContent();
+
+		Iterator<String> iterator = requestBodyMediaTypes.iterator();
+
+		Content content = contents.get(iterator.next());
+
+		return content.getSchema();
 	}
 
 	private static String _getPageClassName(String returnType) {

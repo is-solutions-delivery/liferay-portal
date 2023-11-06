@@ -47,8 +47,6 @@
 		"metal-dom": "^2.16.2",
 		"metal-events": "^2.16.2",
 		"metal-position": "^2.1.0",
-		"metal-promise": "^2.0.1",
-		"metal-storage": "^1.1.0",
 		"metal-structs": "^1.0.1",
 		"metal-uri": "^2.4.0",
 		"moment": "^2.29.4",
@@ -77,6 +75,7 @@
 		"text-mask-addons": "^3.7.2",
 		"text-mask-core": "^5.1.0",
 		"unorm": "^1.6.0",
+		"uuid": "9.0.0",
 		"whatwg-fetch": "^3.0.0"
 	},
 	"description": "Liferay Analytics Cloud",

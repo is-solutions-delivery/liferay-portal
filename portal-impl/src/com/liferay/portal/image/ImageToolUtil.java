@@ -15,11 +15,11 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Image;
 import com.liferay.portal.kernel.model.ImageConstants;
+import com.liferay.portal.kernel.module.service.Snapshot;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
-import com.liferay.portal.kernel.util.ServiceProxyFactory;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.model.impl.ImageImpl;
 import com.liferay.portal.module.framework.ModuleFrameworkUtil;
@@ -93,7 +93,9 @@ public class ImageToolUtil {
 	public static Future<RenderedImage> convertCMYKtoRGB(
 		byte[] bytes, String type) {
 
-		return CMYKImageToolHolder._cmykImageTool.convertCMYKtoRGB(bytes, type);
+		CMYKImageTool cmykImageTool = _cmykImageToolSnapshot.get();
+
+		return cmykImageTool.convertCMYKtoRGB(bytes, type);
 	}
 
 	/**
@@ -960,6 +962,8 @@ public class ImageToolUtil {
 
 	private static final Log _log = LogFactoryUtil.getLog(ImageToolUtil.class);
 
+	private static final Snapshot<CMYKImageTool> _cmykImageToolSnapshot =
+		new Snapshot<>(ImageToolUtil.class, CMYKImageTool.class);
 	private static Image _defaultCompanyLogo;
 	private static Image _defaultOrganizationLogo;
 	private static Image _defaultSpacer;
@@ -970,15 +974,6 @@ public class ImageToolUtil {
 
 	static {
 		ImageIO.setUseCache(PropsValues.IMAGE_IO_USE_DISK_CACHE);
-	}
-
-	private static class CMYKImageToolHolder {
-
-		private static volatile CMYKImageTool _cmykImageTool =
-			ServiceProxyFactory.newServiceTrackedInstance(
-				CMYKImageTool.class, CMYKImageToolHolder.class,
-				"_cmykImageTool", false);
-
 	}
 
 }

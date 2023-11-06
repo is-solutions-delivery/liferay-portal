@@ -8,6 +8,7 @@ import {z} from 'zod';
 
 const zodSchema = {
 	accountCreator: z.object({
+		accounts: z.any().array().optional(),
 		agreeToTermsAndConditions: z.boolean(),
 		companyName: z
 			.string()
@@ -24,6 +25,20 @@ const zodSchema = {
 			flag: z.string(),
 		}),
 		phoneNumber: z.string().min(1, {message: 'This field is required'}),
+	}),
+
+	generateLicenseKey: z.object({
+		description: z.string().max(100, {message: 'Invalid license name'}),
+		hostname: z.string(),
+		ipAddress: z.string(),
+		macAddress: z.string(),
+		subscription: z
+			.object({
+				name: z.string(),
+				productPurchasedKey: z.string(),
+				skuId: z.number(),
+			})
+			.optional(),
 	}),
 
 	invitedNewMember: z.object({
