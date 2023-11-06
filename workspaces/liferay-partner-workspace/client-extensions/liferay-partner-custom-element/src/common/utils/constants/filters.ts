@@ -6,11 +6,11 @@
 const todayDate = new Date();
 const currentYear = todayDate.getFullYear();
 
-const currenFiscalYearStart = `${currentYear}-01-01`;
-const currenFiscalYearEnd = `${currentYear}-12-31`;
+const currentFiscalYearStart = `${currentYear}-01-01`;
+const currentFiscalYearEnd = `${currentYear}-12-31`;
 
-const fiscalYearFilterCloseDate = `closeDate ge ${currenFiscalYearStart} and closeDate le ${currenFiscalYearEnd}`;
-const fiscalYearFilterSubmitDate = `submitDate ge ${currenFiscalYearStart}T00:00:00Z and submitDate le ${currenFiscalYearEnd}T23:59:59Z`;
+const fiscalYearFilterCloseDate = `closeDate ge ${currentFiscalYearStart} and closeDate le ${currentFiscalYearEnd}`;
+const fiscalYearFilterSubmitDate = `submitDate ge ${currentFiscalYearStart}T00:00:00Z and submitDate le ${currentFiscalYearEnd}T23:59:59Z`;
 
 const todayDateISO = todayDate.toISOString().split('T')[0];
 todayDate.setDate(todayDate.getDate() + 30);
@@ -32,40 +32,21 @@ export const Filters = {
 		requestsFilter: `${fiscalYearFilterSubmitDate} and mdfRequestStatus ne 'draft'`,
 	},
 	RENEWAL_DASHBOARD: {
-		renewals: `closeDate ge ${todayDateISO} and closeDate le ${todayDate30Days} and type eq 'Existing Business' and stage ne 'Closed Lost' and stage ne 'Disqualified' and stage ne 'Rejected' and stage ne 'Rolled into another opportunity'`,
+		renewals: `closeDate le ${todayDate30Days} and type eq 'Existing Business' and stage ne 'Closed Lost' and stage ne 'Disqualified' and stage ne 'Rejected' and stage ne 'Rolled into another opportunity'`,
 	},
 	REVENUE_DASHBOARD: {
 		closedWon: `${fiscalYearFilterCloseDate} and stage eq 'Closed Won'`,
 	},
-
-	// DEAL_LISTING: {
-	// 	// It is probably possible to write more complex querry to combine these two
-
-	// 	submitted: `/o/c/leadsfs?pageSize=200&filter=leadType eq 'Partner Qualified Lead (PQL)' and leadStatus ne 'Qualified' and leadStatus ne 'CAM rejected'`,
-	// 	rejected: `/o/c/leadsfs?pageSize=200&filter=leadType eq 'Partner Qualified Lead (PQL)' and leadStatus eq 'CAM rejected' and createDate ge ${currenFiscalYearStart} and createDate le ${currenFiscalYearEnd}`,
-	// },
-	// OPPORTUNITY_LISTING: {
-	// 	// It is probably possible to write more complex querry to combine these two
-
-	// 	closed: ``,
-	// 	open: ``,
-	// },
-	// RENEWAL_LISTING: {
-	// 	// It is probably possible to write more complex querry to combine these two
-
-	// 	open: ``,
-	// 	closed: ``,
-	// },
-	// MDF_REQUEST_LISTING: {
-	// 	// One query is for Partner Users, the other for Channels  users, only difference is Channels sees 2 years worth of data and Partners only see current year
-
-	// 	partners: ``,
-	// 	channels: ``,
-	// },
-	// MDF_CLAIM_LISTING: {
-	// 	// One query is for Partner Users, the other for Channels  users, only difference is Channels sees 2 years worth of data and Partners only see current year
-
-	// 	partners: ``,
-	// 	channels: ``,
-	// },
+	DEAL_LISTING: {
+		rejected: `leadType eq 'Partner Qualified Lead (PQL)' and leadStatus eq 'CAM rejected' and closeDate ge ${currentFiscalYearStart} and closeDate le ${currentFiscalYearEnd}`,
+		submitted: `leadType eq 'Partner Qualified Lead (PQL)' and leadStatus ne 'Qualified' and leadStatus ne 'CAM rejected'`,
+	},
+	OPPORTUNITY_LISTING: {
+		closed: `stage eq 'Closed Won' or stage eq 'Closed Lost' or stage eq 'Disqualified' or stage eq 'Rejected' and type eq 'New Business' or type eq 'New Project Existing Business' and closeDate ge ${currentFiscalYearStart} and closeDate le ${currentFiscalYearEnd}`,
+		open: `stage ne 'Closed Won' and stage ne 'Closed Lost' and stage ne 'Disqualified' and stage ne 'Rejected' stage ne 'Rolled into opportunity' and type eq 'New Business' or type eq 'New Project Existing Business'`,
+	},
+	RENEWAL_LISTING: {
+		closed: `stage eq 'Closed Won' or stage eq 'Closed Lost' and type eq 'Existing Business' and closeDate ge ${currentFiscalYearStart} and closeDate le ${currentFiscalYearEnd}`,
+		open: `stage ne 'Closed Won' and stage ne 'Closed Lost' and stage ne 'Disqualified' and stage ne 'Rolled into opportunity' and type eq 'Existing Business'`,
+	},
 };

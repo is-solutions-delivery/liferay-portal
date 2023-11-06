@@ -31,7 +31,7 @@ interface IProps {
 	columnsDates: TableColumn<PartnerOpportunitiesItem>[];
 	name: string;
 	newButtonDeal?: boolean;
-	renewalOpportunitiesFilter?: string;
+	opportunitiesFilter?: string;
 	sort: string;
 }
 
@@ -42,11 +42,11 @@ const PartnerOpportunitiesList = ({
 	columnsDates,
 	name,
 	newButtonDeal,
-	renewalOpportunitiesFilter,
+	opportunitiesFilter,
 	sort,
 }: IProps) => {
 	const {filters, filtersTerm, onFilter} = useFilters(
-		renewalOpportunitiesFilter
+		opportunitiesFilter
 	);
 	const [isVisibleModal, setIsVisibleModal] = useState(false);
 	const [modalContent, setModalContent] = useState<

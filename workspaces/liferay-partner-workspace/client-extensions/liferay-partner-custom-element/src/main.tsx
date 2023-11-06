@@ -10,6 +10,7 @@ import {SWRConfig} from 'swr';
 import {WebDAV} from './common/context/WebDAV';
 import {AppRouteType} from './common/enums/appRouteType';
 import {PartnerOpportunitiesColumnKey} from './common/enums/partnerOpportunitiesColumnKey';
+import {Filters} from './common/utils/constants/filters';
 import getIconSpriteMap from './common/utils/getIconSpriteMap';
 import DealRegistrationForm from './routes/DealRegistrationForm';
 import DealRegistrationList from './routes/DealRegistrationList';
@@ -41,7 +42,7 @@ const appRoutes: AppRouteComponent = {
 	[AppRouteType.DEAL_REGISTRATION_FORM]: <DealRegistrationForm />,
 	[AppRouteType.DEAL_REGISTRATION_LIST]: (
 		<DealRegistrationList
-			dealRegistrationFilter="leadStatus ne 'Qualified'"
+			dealRegistrationFilter={Filters.DEAL_LISTING.submitted}
 			sort="dateCreated:desc"
 		/>
 	),
@@ -59,6 +60,7 @@ const appRoutes: AppRouteComponent = {
 			]}
 			name="Partner Opportunities"
 			newButtonDeal={false}
+			opportunitiesFilter={Filters.OPPORTUNITY_LISTING.open}
 			sort="dateCreated:desc"
 		/>
 	),
@@ -72,7 +74,7 @@ const appRoutes: AppRouteComponent = {
 			]}
 			name="Renewal Opportunities"
 			newButtonDeal={false}
-			renewalOpportunitiesFilter="stage ne 'Closed Lost' and type eq 'Existing Business'"
+			opportunitiesFilter={Filters.RENEWAL_LISTING.open}
 			sort="closeDate:asc"
 		/>
 	),
