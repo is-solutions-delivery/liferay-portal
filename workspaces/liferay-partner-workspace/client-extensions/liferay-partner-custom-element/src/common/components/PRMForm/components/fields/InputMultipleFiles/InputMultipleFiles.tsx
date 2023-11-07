@@ -99,7 +99,7 @@ const InputMultipleFiles = ({
 					</div>
 				</div>
 
-				{meta.error && !Array.isArray(meta.error) && (
+				{meta.error && !Array.isArray(meta.error) && meta.touched && (
 					<ClayForm.FeedbackGroup>
 						<ClayForm.FeedbackItem>
 							{meta.error}

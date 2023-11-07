@@ -22,7 +22,8 @@ const EventPopFields = ({
 	activity,
 	currentActivityIndex,
 	setFieldValue,
-}: IProps & Pick<FormikContextType<MDFClaim>, 'setFieldValue'>) => {
+	setFieldTouched
+}: IProps & Pick<FormikContextType<MDFClaim>, 'setFieldValue' | 'setFieldTouched'>) => {
 	return (
 		<>
 			<PRMFormik.Field
@@ -50,15 +51,17 @@ const EventPopFields = ({
 				description="Drag and drop your files here to upload."
 				label="Event Invitations"
 				name={`activities[${currentActivityIndex}].proofOfPerformance.eventInvitations`}
-				onAccept={(liferayFiles: LiferayFile[]) =>
-					setFieldValue(
-						`activities[${currentActivityIndex}].proofOfPerformance.eventInvitations`,
-						activity.proofOfPerformance?.eventInvitations
-							? activity.proofOfPerformance.eventInvitations.concat(
-									liferayFiles as LiferayFile[]
-							  )
-							: liferayFiles
-					)
+				onAccept={(liferayFiles: LiferayFile[]) => {
+						setFieldValue(
+							`activities[${currentActivityIndex}].proofOfPerformance.eventInvitations`,
+							activity.proofOfPerformance?.eventInvitations
+								? activity.proofOfPerformance.eventInvitations.concat(
+										liferayFiles as LiferayFile[]
+								)
+								: liferayFiles
+						)
+						setFieldTouched(`activities[${currentActivityIndex}].proofOfPerformance.eventInvitations`, true)
+					}
 				}
 				required={activity.selected}
 				value={activity.proofOfPerformance?.eventInvitations}
@@ -69,7 +72,7 @@ const EventPopFields = ({
 				description="Drag and drop your files here to upload."
 				label="Event Photos"
 				name={`activities[${currentActivityIndex}].proofOfPerformance.eventPhotos`}
-				onAccept={(liferayFiles: LiferayFile[]) =>
+				onAccept={(liferayFiles: LiferayFile[]) => {
 					setFieldValue(
 						`activities[${currentActivityIndex}].proofOfPerformance.eventPhotos`,
 						activity.proofOfPerformance?.eventPhotos
@@ -78,6 +81,8 @@ const EventPopFields = ({
 							  )
 							: liferayFiles
 					)
+					setFieldTouched(`activities[${currentActivityIndex}].proofOfPerformance.eventPhotos`, true)
+				}
 				}
 				required={activity.selected}
 				value={activity.proofOfPerformance?.eventPhotos}
@@ -88,7 +93,7 @@ const EventPopFields = ({
 				description="Drag and drop your files here to upload."
 				label="Event Collaterals"
 				name={`activities[${currentActivityIndex}].proofOfPerformance.eventCollaterals`}
-				onAccept={(liferayFiles: LiferayFile[]) =>
+				onAccept={(liferayFiles: LiferayFile[]) => {
 					setFieldValue(
 						`activities[${currentActivityIndex}].proofOfPerformance.eventCollaterals`,
 						activity.proofOfPerformance?.eventCollaterals
@@ -97,6 +102,8 @@ const EventPopFields = ({
 							  )
 							: liferayFiles
 					)
+					setFieldTouched(`activities[${currentActivityIndex}].proofOfPerformance.eventCollaterals`, true)
+				}
 				}
 				required={activity.selected}
 				value={activity.proofOfPerformance?.eventCollaterals}

@@ -22,7 +22,8 @@ const DigitalMarketingPopFields = ({
 	activity,
 	currentActivityIndex,
 	setFieldValue,
-}: IProps & Pick<FormikContextType<MDFClaim>, 'setFieldValue'>) => {
+	setFieldTouched
+}: IProps & Pick<FormikContextType<MDFClaim>, 'setFieldValue' | 'setFieldTouched'>) => {
 	return (
 		<>
 			<PRMFormik.Field
@@ -38,7 +39,7 @@ const DigitalMarketingPopFields = ({
 				description="Drag and drop your files here to upload."
 				label="All Contents"
 				name={`activities[${currentActivityIndex}].proofOfPerformance.allContents`}
-				onAccept={async (liferayFiles: LiferayFile[]) =>
+				onAccept={async (liferayFiles: LiferayFile[]) => {
 					setFieldValue(
 						`activities[${currentActivityIndex}].proofOfPerformance.allContents`,
 						activity.proofOfPerformance?.allContents
@@ -47,6 +48,10 @@ const DigitalMarketingPopFields = ({
 							  )
 							: liferayFiles
 					)
+					setFieldTouched(
+						`activities[${currentActivityIndex}].proofOfPerformance.allContents`, true
+					)
+				}
 				}
 				required={activity.selected}
 				value={activity.proofOfPerformance?.allContents}
