@@ -165,13 +165,19 @@ public class Main {
 		HttpPost httpPost = new HttpPost(
 			System.getenv("LIFERAY_LEARN_ETC_CRON_SLACK_ENDPOINT"));
 
-		httpPost.setEntity(
-			new StringEntity(
-				StringBundler.concat(
-					"{\"channel\":\"",
-					System.getenv("LIFERAY_LEARN_ETC_CRON_SLACK_CHANNEL"),
-					"\",\"icon_emoji\":\":robot_face:\",\"text\":\"",
-					slackMessage, "\",\"username\":\"devopsbot\"}")));
+		JSONObject jsonObject = new JSONObject();
+
+		jsonObject.put(
+			"channel", System.getenv("LIFERAY_LEARN_ETC_CRON_SLACK_CHANNEL")
+		).put(
+			"icon_emoji", ":robot_face:"
+		).put(
+			"text", slackMessage
+		).put(
+			"username", "devopsbot"
+		);
+
+		httpPost.setEntity(new StringEntity(jsonObject.toString()));
 
 		httpPost.setHeader("Accept", "application/json");
 		httpPost.setHeader("Content-type", "application/json");
