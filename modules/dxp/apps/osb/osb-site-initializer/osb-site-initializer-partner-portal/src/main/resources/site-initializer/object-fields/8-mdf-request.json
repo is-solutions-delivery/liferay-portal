@@ -430,6 +430,12 @@
 				"en_US": "Submit Date"
 			},
 			"name": "submitDate",
+			"objectFieldSettings": [
+				{
+					"name": "timeStorage",
+					"value": "convertToUTC"
+				}
+			],
 			"required": false,
 			"type": "DateTime"
 		}
