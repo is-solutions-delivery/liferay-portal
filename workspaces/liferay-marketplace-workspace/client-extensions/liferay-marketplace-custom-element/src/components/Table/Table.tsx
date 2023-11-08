@@ -9,11 +9,14 @@ import {ReactNode} from 'react';
 
 import './Table.scss';
 
+import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
+
 type TableProps<T = any> = {
 	className?: string;
 	columns: TableColumn<T>[];
 	hasKebabButton?: boolean;
 	hasPagination?: boolean;
+	paginationProps?: PaginationProps;
 	rows: T[];
 };
 
@@ -31,84 +34,107 @@ type TableColumn<T = any> = {
 	truncate?: boolean;
 };
 
+type PaginationProps = {
+	active: number;
+	activeDelta: number;
+	deltas?: {
+		label: number;
+	}[];
+	onActiveChange: (page: number) => void;
+	onDeltaChange: (pageSize: number) => void;
+	totalItems: number;
+};
+
 const Table: React.FC<TableProps> = ({
 	className,
 	columns,
 	hasKebabButton,
+	hasPagination,
+	paginationProps,
 	rows,
 }) => {
 	return (
-		<ClayTable borderless className={className}>
-			<ClayTable.Head>
-				<ClayTable.Row className="border-bottom header-row">
-					{columns.map((column, index) => (
-						<ClayTable.Cell
-							align={column.align}
-							className="bg-transparent font-weight-bold"
-							headingCell
-							key={index}
-							noWrap={column.noWrap}
-						>
-							{column.title}
-						</ClayTable.Cell>
-					))}
-
-					{hasKebabButton && <ClayTable.Cell />}
-				</ClayTable.Row>
-			</ClayTable.Head>
-
-			<ClayTable.Body className="table-body">
-				{rows.map((row, rowIndex) => (
-					<ClayTable.Row key={row.id || rowIndex}>
-						{columns.map((column, columnIndex) => {
-							const data = row[column.key];
-
-							const value = column.render
-								? column.render(data, {
-										...row,
-										rowIndex,
-								  })
-								: data;
-
-							return (
-								<ClayTable.Cell
-									align={column.align}
-									className={column.bodyClass}
-									columnTextAlignment={
-										column.columnTextAlignment
-									}
-									expanded={column.expanded}
-									key={`${rowIndex}-${columnIndex}`}
-									noWrap={column.noWrap}
-									onClick={() => {
-										if (row.onClickRow) {
-											return row.onClickRow();
-										}
-									}}
-									truncate={column.truncate}
-								>
-									{value}
-								</ClayTable.Cell>
-							);
-						})}
-
-						{hasKebabButton && (
+		<>
+			<ClayTable borderless className={className}>
+				<ClayTable.Head>
+					<ClayTable.Row className="border-bottom header-row">
+						{columns.map((column, index) => (
 							<ClayTable.Cell
-								className="border-0"
-								columnTextAlignment="center"
+								align={column.align}
+								className="bg-transparent font-weight-bold"
+								headingCell
+								key={index}
+								noWrap={column.noWrap}
 							>
-								<ClayButtonWithIcon
-									aria-label="Menu"
-									displayType={null}
-									symbol="ellipsis-v"
-									title="Menu"
-								/>
+								{column.title}
 							</ClayTable.Cell>
-						)}
+						))}
+
+						{hasKebabButton && <ClayTable.Cell />}
 					</ClayTable.Row>
-				))}
-			</ClayTable.Body>
-		</ClayTable>
+				</ClayTable.Head>
+
+				<ClayTable.Body className="table-body">
+					{rows.map((row, rowIndex) => (
+						<ClayTable.Row key={row.id || rowIndex}>
+							{columns.map((column, columnIndex) => {
+								const data = row[column.key];
+
+								const value = column.render
+									? column.render(data, {
+											...row,
+											rowIndex,
+									  })
+									: data;
+
+								return (
+									<ClayTable.Cell
+										align={column.align}
+										className={column.bodyClass}
+										columnTextAlignment={
+											column.columnTextAlignment
+										}
+										expanded={column.expanded}
+										key={`${rowIndex}-${columnIndex}`}
+										noWrap={column.noWrap}
+										onClick={() => {
+											if (row.onClickRow) {
+												return row.onClickRow();
+											}
+										}}
+										truncate={column.truncate}
+									>
+										{value}
+									</ClayTable.Cell>
+								);
+							})}
+
+							{hasKebabButton && (
+								<ClayTable.Cell
+									className="border-0"
+									columnTextAlignment="center"
+								>
+									<ClayButtonWithIcon
+										aria-label="Menu"
+										displayType={null}
+										symbol="ellipsis-v"
+										title="Menu"
+									/>
+								</ClayTable.Cell>
+							)}
+						</ClayTable.Row>
+					))}
+				</ClayTable.Body>
+			</ClayTable>
+
+			{hasPagination && paginationProps && (
+				<ClayPaginationBarWithBasicItems
+					defaultActive={1}
+					ellipsisBuffer={3}
+					{...paginationProps}
+				/>
+			)}
+		</>
 	);
 };
 

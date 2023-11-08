@@ -16,6 +16,7 @@ import i18n from '../../../../i18n';
 import './Licenses.scss';
 
 import classNames from 'classnames';
+import {useState} from 'react';
 
 import {OrderType} from '../../../../enums/OrderType';
 import useGetProductByOrderId from '../../../../hooks/useGetProductByOrderId';
@@ -47,7 +48,17 @@ const TitleSubtitleHeader: React.FC<TitleSubtitleHeaderProps> = ({
 
 type OutletContext = ReturnType<typeof useGetProductByOrderId>;
 
+const PAGE_SIZES = [
+	{label: 5},
+	{label: 10},
+	{label: 20},
+	{label: 30},
+	{label: 50},
+];
+
 const Licenses = () => {
+	const [page, setPage] = useState(1);
+	const [pageSize, setPageSize] = useState(5);
 	const {orderId} = useParams();
 	const outletContext = useOutletContext<OutletContext['data']>();
 
@@ -56,11 +67,15 @@ const Licenses = () => {
 	const provisioningKoroneikiOAuth2 = useProvisioningKoroneikiOAuth2();
 
 	const {data: licenseKeysResponse, isLoading} = useSWR(
-		`/order-license-key3s/${orderId}`,
+		`/order-license-keys/${orderId}-${page}-${pageSize}`,
 		async () => {
 			try {
 				return provisioningKoroneikiOAuth2.getOrderLicenseKeys(
-					orderId as string
+					orderId as string,
+					new URLSearchParams({
+						page: page.toString(),
+						pageSize: pageSize.toString(),
+					})
 				);
 			}
 			catch (error) {
@@ -79,7 +94,7 @@ const Licenses = () => {
 	const rows = licenseKeysResponse?.items ?? [];
 
 	return (
-		<div className="licenses mt-4">
+		<div className="licenses mb-9 mt-4">
 			{rows.length ? (
 				<Table
 					columns={[
@@ -179,6 +194,15 @@ const Licenses = () => {
 					]}
 					hasKebabButton
 					hasPagination
+					paginationProps={{
+						active: page,
+						activeDelta: pageSize,
+						deltas: PAGE_SIZES,
+						onActiveChange: (page: number) => setPage(page),
+						onDeltaChange: (pageSize: number) =>
+							setPageSize(pageSize),
+						totalItems: licenseKeysResponse?.totalCount || 0,
+					}}
 					rows={rows}
 				/>
 			) : (
