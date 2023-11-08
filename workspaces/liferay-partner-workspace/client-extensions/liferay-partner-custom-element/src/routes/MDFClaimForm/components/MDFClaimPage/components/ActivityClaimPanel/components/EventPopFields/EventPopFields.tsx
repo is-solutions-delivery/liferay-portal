@@ -21,9 +21,10 @@ interface IProps {
 const EventPopFields = ({
 	activity,
 	currentActivityIndex,
+	setFieldTouched,
 	setFieldValue,
-	setFieldTouched
-}: IProps & Pick<FormikContextType<MDFClaim>, 'setFieldValue' | 'setFieldTouched'>) => {
+}: IProps &
+	Pick<FormikContextType<MDFClaim>, 'setFieldTouched' | 'setFieldValue'>) => {
 	return (
 		<>
 			<PRMFormik.Field
@@ -52,17 +53,19 @@ const EventPopFields = ({
 				label="Event Invitations"
 				name={`activities[${currentActivityIndex}].proofOfPerformance.eventInvitations`}
 				onAccept={(liferayFiles: LiferayFile[]) => {
-						setFieldValue(
-							`activities[${currentActivityIndex}].proofOfPerformance.eventInvitations`,
-							activity.proofOfPerformance?.eventInvitations
-								? activity.proofOfPerformance.eventInvitations.concat(
-										liferayFiles as LiferayFile[]
-								)
-								: liferayFiles
-						)
-						setFieldTouched(`activities[${currentActivityIndex}].proofOfPerformance.eventInvitations`, true)
-					}
-				}
+					setFieldTouched(
+						`activities[${currentActivityIndex}].proofOfPerformance.eventInvitations`,
+						true
+					);
+					setFieldValue(
+						`activities[${currentActivityIndex}].proofOfPerformance.eventInvitations`,
+						activity.proofOfPerformance?.eventInvitations
+							? activity.proofOfPerformance.eventInvitations.concat(
+									liferayFiles as LiferayFile[]
+							  )
+							: liferayFiles
+					);
+				}}
 				required={activity.selected}
 				value={activity.proofOfPerformance?.eventInvitations}
 			/>
@@ -73,6 +76,10 @@ const EventPopFields = ({
 				label="Event Photos"
 				name={`activities[${currentActivityIndex}].proofOfPerformance.eventPhotos`}
 				onAccept={(liferayFiles: LiferayFile[]) => {
+					setFieldTouched(
+						`activities[${currentActivityIndex}].proofOfPerformance.eventPhotos`,
+						true
+					);
 					setFieldValue(
 						`activities[${currentActivityIndex}].proofOfPerformance.eventPhotos`,
 						activity.proofOfPerformance?.eventPhotos
@@ -80,10 +87,8 @@ const EventPopFields = ({
 									liferayFiles as LiferayFile[]
 							  )
 							: liferayFiles
-					)
-					setFieldTouched(`activities[${currentActivityIndex}].proofOfPerformance.eventPhotos`, true)
-				}
-				}
+					);
+				}}
 				required={activity.selected}
 				value={activity.proofOfPerformance?.eventPhotos}
 			/>
@@ -94,6 +99,10 @@ const EventPopFields = ({
 				label="Event Collaterals"
 				name={`activities[${currentActivityIndex}].proofOfPerformance.eventCollaterals`}
 				onAccept={(liferayFiles: LiferayFile[]) => {
+					setFieldTouched(
+						`activities[${currentActivityIndex}].proofOfPerformance.eventCollaterals`,
+						true
+					);
 					setFieldValue(
 						`activities[${currentActivityIndex}].proofOfPerformance.eventCollaterals`,
 						activity.proofOfPerformance?.eventCollaterals
@@ -101,10 +110,8 @@ const EventPopFields = ({
 									liferayFiles as LiferayFile[]
 							  )
 							: liferayFiles
-					)
-					setFieldTouched(`activities[${currentActivityIndex}].proofOfPerformance.eventCollaterals`, true)
-				}
-				}
+					);
+				}}
 				required={activity.selected}
 				value={activity.proofOfPerformance?.eventCollaterals}
 			/>

@@ -64,9 +64,10 @@ const ActivityClaimPanel = ({
 	activity,
 	activityIndex,
 	overallCampaignDescription,
+	setFieldTouched,
 	setFieldValue,
-	setFieldTouched
-}: IProps & Pick<FormikContextType<MDFClaim>, 'setFieldValue' | "setFieldTouched">) => {
+}: IProps &
+	Pick<FormikContextType<MDFClaim>, 'setFieldTouched' | 'setFieldValue'>) => {
 	const [expanded, setExpanded] = useState<boolean>(!activity.selected);
 
 	const siteURL = Liferay.ThemeDisplay.getLayoutRelativeControlPanelURL().split(
@@ -98,33 +99,33 @@ const ActivityClaimPanel = ({
 	const typeActivityComponents: TypeActivityComponent = {
 		[TypeActivityKey.DIGITAL_MARKETING]: (
 			<DigitalMarketingPopFields
-				setFieldTouched={setFieldTouched}
 				activity={activity}
 				currentActivityIndex={activityIndex}
+				setFieldTouched={setFieldTouched}
 				setFieldValue={setFieldValue}
 			/>
 		),
 		[TypeActivityKey.CONTENT_MARKETING]: (
 			<ContentMarketingPopFields
-				setFieldTouched={setFieldTouched}
 				activity={activity}
 				currentActivityIndex={activityIndex}
+				setFieldTouched={setFieldTouched}
 				setFieldValue={setFieldValue}
 			/>
 		),
 		[TypeActivityKey.EVENT]: (
 			<EventPopFields
-				setFieldTouched={setFieldTouched}
 				activity={activity}
 				currentActivityIndex={activityIndex}
+				setFieldTouched={setFieldTouched}
 				setFieldValue={setFieldValue}
 			/>
 		),
 		[TypeActivityKey.MISCELLANEOUS_MARKETING]: (
 			<MiscellaneousMarketingPopFields
-				setFieldTouched={setFieldTouched}
 				activity={activity}
 				currentActivityIndex={activityIndex}
+				setFieldTouched={setFieldTouched}
 				setFieldValue={setFieldValue}
 			/>
 		),

@@ -11,6 +11,9 @@ export default interface MDFClaimProps {
 	onCancel: () => void;
 	onSaveAsDraft: (
 		values: MDFClaim,
-		formikHelpers: Omit<FormikHelpers<MDFClaim>, 'setFieldValue' | 'setFieldTouched'>
+		formikHelpers: Omit<
+			FormikHelpers<MDFClaim>,
+			'setFieldTouched' | 'setFieldValue'
+		>
 	) => void;
 }

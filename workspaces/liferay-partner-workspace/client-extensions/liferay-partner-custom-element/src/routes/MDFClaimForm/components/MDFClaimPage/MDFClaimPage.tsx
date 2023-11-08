@@ -36,8 +36,8 @@ const MDFClaimPage = ({
 	const {
 		isSubmitting,
 		isValid,
-		setFieldValue,
 		setFieldTouched,
+		setFieldValue,
 		status: submitted,
 		values,
 		...formikHelpers
@@ -145,13 +145,13 @@ const MDFClaimPage = ({
 
 					{values.activities?.map((activity, index) => (
 						<ActivityClaimPanel
-							setFieldTouched={setFieldTouched}
 							activity={activity}
 							activityIndex={index}
 							key={`${activity.id}-${index}`}
 							overallCampaignDescription={
 								mdfRequest.overallCampaignDescription
 							}
+							setFieldTouched={setFieldTouched}
 							setFieldValue={setFieldValue}
 						/>
 					))}

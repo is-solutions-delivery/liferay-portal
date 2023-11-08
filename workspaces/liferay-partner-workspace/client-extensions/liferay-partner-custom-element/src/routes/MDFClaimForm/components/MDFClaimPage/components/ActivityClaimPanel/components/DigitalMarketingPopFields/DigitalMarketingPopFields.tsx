@@ -21,9 +21,10 @@ interface IProps {
 const DigitalMarketingPopFields = ({
 	activity,
 	currentActivityIndex,
+	setFieldTouched,
 	setFieldValue,
-	setFieldTouched
-}: IProps & Pick<FormikContextType<MDFClaim>, 'setFieldValue' | 'setFieldTouched'>) => {
+}: IProps &
+	Pick<FormikContextType<MDFClaim>, 'setFieldTouched' | 'setFieldValue'>) => {
 	return (
 		<>
 			<PRMFormik.Field
@@ -40,6 +41,10 @@ const DigitalMarketingPopFields = ({
 				label="All Contents"
 				name={`activities[${currentActivityIndex}].proofOfPerformance.allContents`}
 				onAccept={async (liferayFiles: LiferayFile[]) => {
+					setFieldTouched(
+						`activities[${currentActivityIndex}].proofOfPerformance.allContents`,
+						true
+					);
 					setFieldValue(
 						`activities[${currentActivityIndex}].proofOfPerformance.allContents`,
 						activity.proofOfPerformance?.allContents
@@ -47,12 +52,8 @@ const DigitalMarketingPopFields = ({
 									liferayFiles as LiferayFile[]
 							  )
 							: liferayFiles
-					)
-					setFieldTouched(
-						`activities[${currentActivityIndex}].proofOfPerformance.allContents`, true
-					)
-				}
-				}
+					);
+				}}
 				required={activity.selected}
 				value={activity.proofOfPerformance?.allContents}
 			/>
