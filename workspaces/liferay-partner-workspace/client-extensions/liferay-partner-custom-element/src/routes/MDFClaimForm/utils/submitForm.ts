@@ -21,7 +21,10 @@ import submitMDFClaimProxyAPI from './submitMDFClaimProxyAPI';
 
 export default async function submitForm(
 	values: MDFClaim,
-	formikHelpers: Omit<FormikHelpers<MDFClaim>, 'setFieldValue'>,
+	formikHelpers: Omit<
+		FormikHelpers<MDFClaim>,
+		'setFieldTouched' | 'setFieldValue'
+	>,
 	claimParentFolderId: number,
 	mdfRequest: MDFRequestDTO,
 	siteURL: string,
