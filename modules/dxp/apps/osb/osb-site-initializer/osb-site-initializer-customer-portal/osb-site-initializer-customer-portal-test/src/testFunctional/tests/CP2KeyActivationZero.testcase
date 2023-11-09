@@ -1,0 +1,93 @@
+@component-name = "portal-solutions"
+definition {
+
+	property osgi.modules.includes = "osb-site-initializer-customer-portal";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property release.feature.flags.disable.DISABLE_PRIVATE_LAYOUTS = "true";
+	property testray.main.component.name = "OSB Site Initializer Customer Portal";
+
+	var testSiteName = "Customer Portal Site";
+	var testSiteURL = "customer-portal-site";
+	var testAccount = "Test Account LXC - SM";
+	var testProduct = "LXC - SM";
+
+	setUp {
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
+
+			User.firstLoginPG();
+		}
+
+		task ("Login on OKTA") {
+			CustomerPortal.loginOktaToUpdateCP();
+		}
+
+		task ("Create a new Customer Portal Site") {
+			CustomerPortal.addCustomerPortalSite(siteName = ${testSiteName});
+		}
+
+		task ("Add test user access to all Accounts") {
+			CustomerPortal.assignUserToOrganization();
+
+			CustomerPortal.addUserToOneOrMoreAccounts(accountsList = ${testAccount});
+
+			JSONAccountRole.associateUser(
+				accountEntryName = ${testAccount},
+				accountRole = "Account Administrator",
+				userEmailAddress = "test@liferay.com");
+		}
+	}
+
+	tearDown {
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
+
+		CustomerPortal.customerPortalApisTearDown();
+
+		if (${testLiferayVirtualInstance} == "false") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			JSONGroup.deleteGroupByName(groupName = ${testSiteName});
+		}
+	}
+
+	@description = "Automation ID: LPS-200260 | Test Summary: Assert if the text link 'this article' redirects to the help center page, when key activations available is zero"
+	@priority = 3
+	test AssertThatTheLinkRedirectionToHelpCenterPage {
+		task ("Given a user go to the Customer Portal Site") {
+			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
+		}
+
+		task ("And go to the test account") {
+			CustomerPortal.search(searchItem = ${testAccount});
+
+			CustomerPortal.enterOnProject(title = ${testAccount});
+
+			CP2Utils.onboardingFlow();
+		}
+
+		task ("And click on DXP product") {
+			CP2NavigationMenu.goToProductActivation();
+
+			CP2NavigationMenu.clickOnProductButton(product = ${testProduct});
+		}
+
+		task ("And select the 'Generate New' option in the drop-down of the Action button") {
+			CP2ActivationKeys.generateNewKey();
+		}
+
+		task ("When the user click on text link 'this article'") {
+			Alert.viewWarningSpecific(warningMessage = "Key activations available is zero. To deactivate a key or reach out to provisioning, read this article.");
+
+			CP2Utils.clickInTextLink(
+				key_indexNumber = 1,
+				key_text = "this article");
+		}
+
+		task ("Then can close the Liferay Help Center page") {
+			Close.closeWindow(locator1 = "title=Liferay Help Center");
+		}
+	}
+
+}
