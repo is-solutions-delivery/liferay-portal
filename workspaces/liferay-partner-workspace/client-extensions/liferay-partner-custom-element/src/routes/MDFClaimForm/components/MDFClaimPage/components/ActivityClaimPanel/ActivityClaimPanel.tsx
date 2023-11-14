@@ -84,15 +84,10 @@ const ActivityClaimPanel = ({
 		)
 	);
 
-	const claimableActivityByStatus =
+	const displayActivityClaimCheckbox =
 		(activity.activityStatus?.key === Status.APPROVED.key ||
 			activity.activityStatus?.key === Status.ACTIVE.key) &&
 		!activity.claimed;
-
-	const editableClaimActivityByStatus = activity.id && activity.selected;
-
-	const displayActivityClaimCheckbox =
-		claimableActivityByStatus || editableClaimActivityByStatus;
 
 	const typeActivityComponents: TypeActivityComponent = {
 		[TypeActivityKey.DIGITAL_MARKETING]: (
