@@ -8,7 +8,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Text",
-			"externalReferenceCode": "Partner_Account__c",
+			"externalReferenceCode": "Reseller__c",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
