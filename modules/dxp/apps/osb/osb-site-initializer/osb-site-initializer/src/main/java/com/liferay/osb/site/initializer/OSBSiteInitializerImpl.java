@@ -70,6 +70,8 @@ public class OSBSiteInitializerImpl implements OSBSiteInitializer {
 			stringUtilReplaceValues.put(
 				"SXP_BLUEPRINT_ID:" + sxpBlueprint.getExternalReferenceCode(),
 				String.valueOf(sxpBlueprint.getId()));
+			sxpBlueprintResource.putSXPBlueprintByExternalReferenceCode(
+				sxpBlueprint.getExternalReferenceCode(), sxpBlueprint);
 		}
 	}
 
