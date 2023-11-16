@@ -52,9 +52,8 @@ const GetAppFlow = () => {
 		initialBillingAddress
 	);
 	const [email, setEmail] = useState<string>('');
-	const [enablePurchaseButton, setEnablePurchaseButton] = useState<boolean>(
-		false
-	);
+	const [enablePurchaseButton, setEnablePurchaseButton] =
+		useState<boolean>(false);
 	const [enableTrialMethod, setEnableTrialMethod] = useState<boolean>(false);
 	const [licenseSelected, setLicenseSelected] = useState<boolean>(false);
 	const [orderType, setOrderType] = useState<OrderType>();
@@ -106,9 +105,8 @@ const GetAppFlow = () => {
 	useEffect(() => {
 		(async () => {
 			if (productId) {
-				const productSpecificationValues = await getProductSpecificationValues(
-					Number(productId)
-				);
+				const productSpecificationValues =
+					await getProductSpecificationValues(Number(productId));
 
 				const orderType = await getProductOrderTypes(
 					productSpecificationValues

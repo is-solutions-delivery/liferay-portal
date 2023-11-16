@@ -12,9 +12,10 @@ const useGetProductByOrderId = (orderId?: string) => {
 	const {data, error, isLoading} = useSWR(
 		`/placed-order/${orderId}`,
 		async () => {
-			const placedOrder = await HeadlessCommerceDeliveryOrderImpl.getPlacedOrder(
-				orderId as string
-			);
+			const placedOrder =
+				await HeadlessCommerceDeliveryOrderImpl.getPlacedOrder(
+					orderId as string
+				);
 
 			const productId = placedOrder.placedOrderItems[0].productId;
 

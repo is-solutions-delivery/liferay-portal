@@ -32,9 +32,8 @@ const SelectSubscription = ({
 	const provisioningKoroneikiOAuth2 = useProvisioningKoroneikiOAuth2();
 
 	const getSubscriptionList = useCallback(async () => {
-		const _subscriptions = await provisioningKoroneikiOAuth2.getSubscriptions(
-			orderId
-		);
+		const _subscriptions =
+			await provisioningKoroneikiOAuth2.getSubscriptions(orderId);
 
 		const subscriptions = _subscriptions.map((licenseKey: any) => {
 			const expirationDate = licenseKey?.endDate

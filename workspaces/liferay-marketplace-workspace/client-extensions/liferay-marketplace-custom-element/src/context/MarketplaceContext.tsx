@@ -18,7 +18,7 @@ type ContextType = {
 
 const MarketplaceContext = createContext<ContextType>({
 	channel: {} as Channel,
-	mutateMyUserAccount: ((() => null) as unknown) as KeyedMutator<
+	mutateMyUserAccount: (() => null) as unknown as KeyedMutator<
 		UserAccount | undefined
 	>,
 	myUserAccount: {} as UserAccount,
@@ -41,9 +41,10 @@ const MarketplaceContextProvider: React.FC<MarketplaceContextProviderProps> = ({
 				SearchBuilder.contains('name', 'Marketplace Channel')
 			);
 
-			const channelResponse = await HeadlessCommerceDeliveryCatalogImpl.getChannels(
-				urlSearchParams
-			);
+			const channelResponse =
+				await HeadlessCommerceDeliveryCatalogImpl.getChannels(
+					urlSearchParams
+				);
 
 			return (channelResponse?.items ?? [])[0];
 		}

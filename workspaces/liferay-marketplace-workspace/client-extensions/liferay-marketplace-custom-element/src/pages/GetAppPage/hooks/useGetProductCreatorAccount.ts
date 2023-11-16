@@ -8,9 +8,8 @@ import {useEffect, useState} from 'react';
 import {getAccounts} from '../../../utils/api';
 
 const useGetProductCreatorAccount = (product?: Product) => {
-	const [productCreatorAccount, setProductCreatorAccount] = useState<
-		Account
-	>();
+	const [productCreatorAccount, setProductCreatorAccount] =
+		useState<Account>();
 
 	useEffect(() => {
 		(async () => {

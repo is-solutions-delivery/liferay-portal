@@ -57,7 +57,8 @@ export function ReviewAndSubmitAppPage({
 				}
 			});
 
-			const productSpecifications = productResponse.productSpecifications || [];
+			const productSpecifications =
+				productResponse.productSpecifications || [];
 			const skus = productResponse.skus || [];
 
 			const nonTrialSKU = skus.find(
@@ -96,9 +97,8 @@ export function ReviewAndSubmitAppPage({
 					specificationKey === 'appdocumentationurl' ||
 					specificationKey === 'appinstallationguideurl'
 				) {
-					const supportAndHelItem = supportAndHelpMap.get(
-						specificationKey
-					);
+					const supportAndHelItem =
+						supportAndHelpMap.get(specificationKey);
 					supportAndHelpCardInfos.push({
 						...(supportAndHelItem as {icon: string; title: string}),
 						link: localizedValue,
