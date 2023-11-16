@@ -65,7 +65,7 @@ export function createApp({
 			description: {en_US: appDescription},
 			name: {en_US: appName},
 			productChannels,
-			productConfiguration: {allowBackOrder: true, maxOrderQuantity: 1},
+			productConfiguration: {allowBackOrder: true},
 			productStatus: 2,
 			productType: 'virtual',
 		}),
