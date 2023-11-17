@@ -99,6 +99,13 @@ blockquote {
 	padding-left: $spacing-default;
 }
 
+img[src^='https://resources.learn.liferay.com/images/analytics-cloud/latest/en/images/'],
+img[src^='https://resources.learn.liferay.com/images/commerce/latest/en/images/'],
+img[src^='https://resources.learn.liferay.com/images/courses/latest/en/images/'],
+img[src^='https://resources.learn.liferay.com/images/dxp/latest/en/images/'] {
+    margin: 0 0.1rem;
+}
+
 input[type='radio'],
 input[type='checkbox'] {
 	vertical-align: middle;
