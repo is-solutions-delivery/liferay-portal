@@ -28,7 +28,7 @@ export default {
 	'instance-size': 'Instance Size',
 	'ip-addresses': 'IP Addresses',
 	'key-deactivation-requested-succesfully':
-		'Key deactivation requested successfully',
+		'Key deactivation requested successfully.',
 	'key-type': 'Key Type',
 	'licenses': 'Licenses',
 	'mac-addresses': 'Mac Addresses',

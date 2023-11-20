@@ -269,6 +269,7 @@ const Licenses = () => {
 						'create-new-licenses-and-they-will-show-up-here'
 					)}
 					icon={solutionsIcon}
+					orderId={orderId}
 					title={i18n.translate('no-licenses-yet')}
 				/>
 			)}

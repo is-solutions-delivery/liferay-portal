@@ -6,6 +6,7 @@
 import './DashboardEmptyTable.scss';
 
 import ClayButton from '@clayui/button';
+import {useNavigate} from 'react-router-dom';
 
 export function DashboardEmptyTable({
 	button,
@@ -13,6 +14,7 @@ export function DashboardEmptyTable({
 	description1,
 	description2,
 	icon,
+	orderId,
 	title,
 }: {
 	button?: boolean;
@@ -20,8 +22,11 @@ export function DashboardEmptyTable({
 	description1: string;
 	description2?: string;
 	icon: string;
+	orderId?: string;
 	title: string;
 }) {
+	const navigate = useNavigate();
+
 	return (
 		<div className="dashboard-empty-state py-6">
 			<div className="dashboard-empty-state-background">
@@ -45,7 +50,12 @@ export function DashboardEmptyTable({
 			</div>
 			<div>
 				{button && (
-					<ClayButton className="dashboard-empty-state-button">
+					<ClayButton
+						className="dashboard-empty-state-button mt-3"
+						onClick={() => {
+							navigate(`/order/${orderId}/create-license`);
+						}}
+					>
 						{buttonName}
 					</ClayButton>
 				)}
