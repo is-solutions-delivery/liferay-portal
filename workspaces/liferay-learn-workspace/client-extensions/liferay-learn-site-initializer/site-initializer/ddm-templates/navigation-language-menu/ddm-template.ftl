@@ -15,13 +15,13 @@
 							</div>
 						</#if>
 
-						<@clay["a"]
+						<@clay["link"]
 							cssClass="language-entry-long-text"
 							href=entry.getURL()
 							label=entryLanguage
 							lang=entry.getW3cLanguageId()
 							rel="nofollow"
-						/>
+						></@>
 					</li>
 			</#if>
 		</#list>
