@@ -1,5 +1,14 @@
 <#include "${templatesPath}/SVG">
 
+<script>
+	let href = window.location.href;
+
+	if (currentSite.endsWith("/")){
+		currentSite = currentSite.substring(0, currentSite.length - 1);
+		window.location.assign(currentSite);
+		}
+</script>
+
 <#assign
 	groupFriendlyURL = "/web" + themeDisplay.getScopeGroup().getFriendlyURL()
 	isLandingPage = false
