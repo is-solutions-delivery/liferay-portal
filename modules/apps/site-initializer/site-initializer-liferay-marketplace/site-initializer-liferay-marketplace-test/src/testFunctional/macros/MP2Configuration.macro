@@ -207,11 +207,21 @@ definition {
 
 			WaitForConsoleTextPresent(value1 = "STARTED liferaymarketplacecustomelement");
 		}
+		//This addition should be reverted when the issue ISSD-1572 be complited and the macro HeadlessSite.addSite() is funtional.
+		if(${viaFrontEnd} == "true") {
+			Site.openSitesAdmin();
 
-		HeadlessSite.addSite(
-			siteName = "Marketplace Site",
-			templateName = "Liferay Marketplace",
-			templateType = "Site Initializer");
+			MP2Configuration.addCP(
+				siteName = "Marketplace Site",
+				siteTemplateName = "Liferay Marketplace",
+				siteType = "Site Template");
+		}
+		else {
+			HeadlessSite.addSite(
+				siteName = "Marketplace Site",
+				templateName = "Liferay Marketplace",
+				templateType = "Site Initializer");
+		}
 
 		ApplicationsMenu.gotoSite(site = "Marketplace Site");
 
