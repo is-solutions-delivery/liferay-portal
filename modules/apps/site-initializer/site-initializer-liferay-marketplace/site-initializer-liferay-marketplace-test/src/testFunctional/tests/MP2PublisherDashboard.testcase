@@ -14,7 +14,10 @@ definition {
 
 	setUp {
 		task ("Set up instance and create a new Marketplace Site") {
-			MP2Configuration.marketplaceSetUp(clientExtensionDeploy = "true");
+			//This addition should be reverted when the issue ISSD-1572 be complited and the macro HeadlessSite.addSite() is funtional.
+			MP2Configuration.marketplaceSetUp(
+				clientExtensionDeploy = "true",
+				viaFrontEnd = "true");
 		}
 
 		task ("Update the account with catalogId field") {
