@@ -24,6 +24,7 @@ interface ILiferay {
 	OAuth2Client: IOAuth2Client;
 	Service: Function;
 	ThemeDisplay: {
+		getBCP47LanguageId: () => string;
 		getCanonicalURL: () => string;
 		getCompanyGroupId: () => string;
 		getCompanyId: () => string;
