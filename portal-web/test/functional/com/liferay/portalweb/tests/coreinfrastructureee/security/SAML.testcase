@@ -128,7 +128,8 @@ definition {
 		task ("Add the OSGI configuration file to www.able.com:9080 instance") {
 			OAuth2.deployInstanceConfigFile(
 				bundleId = 1,
-				osgiConfigFileName = "com.liferay.portal.remote.cors.configuration.PortalCORSConfiguration~allow~headless~admin~user.config");
+				osgiConfigFileName = "com.liferay.portal.remote.cors.configuration.PortalCORSConfiguration~allow~headless~admin~user.config",
+				portalURL = "http://www.able.com:9080");
 		}
 
 		task ("Logout") {
@@ -251,7 +252,8 @@ definition {
 		task ("Add the OSGI configuration file to www.able.com:9080 instance") {
 			OAuth2.deployInstanceConfigFile(
 				bundleId = 1,
-				osgiConfigFileName = "com.liferay.portal.remote.cors.configuration.PortalCORSConfiguration~allow~headless~admin~user.config");
+				osgiConfigFileName = "com.liferay.portal.remote.cors.configuration.PortalCORSConfiguration~allow~headless~admin~user.config",
+				portalURL = "http://www.able.com:9080");
 		}
 
 		task ("Logout") {
@@ -3464,6 +3466,36 @@ definition {
 			Navigator.openSpecificURL(url = "http://www.able.com:9080");
 
 			SAML.loginIfUSerAvatarNotPresent();
+		}
+	}
+
+	@description = "This is a use case for LPS-201987. Certificate file should be saved to DL root folder after changing the Keystore Manager Target to Document Library Keystore Manager"
+	@priority = 5
+	test KeystoreManagerTargetShouldWorkAfterChangeFromDefault {
+		property app.server.bundles.size = "0";
+		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
+
+		task ("Given: Deploy the OSGI configuration file") {
+			SAML.deployConfigFile(osgiConfigFileName = "com.liferay.saml.runtime.configuration.SamlKeyStoreManagerConfiguration.config");
+
+			OSGiConfig.waitForOSGiConfig();
+		}
+
+		task ("When: Generate a certificate") {
+			SAML.goToSAMLAdmin();
+
+			SAMLRole.configure(
+				samlEntityId = "samlidp",
+				samlRoleType = "Identity Provider");
+
+			SAMLRole.configureCertificateAndPrivateKey(
+				certificateUsage = "SIGNING",
+				samlKeyPassword = "samlidp");
+		}
+
+		task ("Then: Verify that the certificate file should be saved to DL root folder") {
+			SAML.validateFolderExist();
 		}
 	}
 

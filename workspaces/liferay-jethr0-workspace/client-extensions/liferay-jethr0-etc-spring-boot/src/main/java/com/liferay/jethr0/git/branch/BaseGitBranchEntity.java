@@ -7,12 +7,18 @@ package com.liferay.jethr0.git.branch;
 
 import com.liferay.jethr0.entity.BaseEntity;
 import com.liferay.jethr0.job.JobEntity;
+import com.liferay.jethr0.util.PropertiesUtil;
 import com.liferay.jethr0.util.StringUtil;
+
+import java.io.IOException;
 
 import java.net.URL;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.json.JSONObject;
@@ -71,6 +77,23 @@ public class BaseGitBranchEntity extends BaseEntity implements GitBranchEntity {
 	}
 
 	@Override
+	public Properties getProperties(String propertiesFilePath)
+		throws IOException {
+
+		synchronized (_propertiesFiles) {
+			Properties properties = _propertiesFiles.get(propertiesFilePath);
+
+			if (properties == null) {
+				properties = PropertiesUtil.getProperties(propertiesFilePath);
+
+				_propertiesFiles.put(propertiesFilePath, properties);
+			}
+
+			return _propertiesFiles.get(propertiesFilePath);
+		}
+	}
+
+	@Override
 	public boolean getRebased() {
 		return _rebased;
 	}
@@ -78,6 +101,11 @@ public class BaseGitBranchEntity extends BaseEntity implements GitBranchEntity {
 	@Override
 	public String getRepositoryName() {
 		return _repositoryName;
+	}
+
+	@Override
+	public Type getType() {
+		return _type;
 	}
 
 	@Override
@@ -112,7 +140,11 @@ public class BaseGitBranchEntity extends BaseEntity implements GitBranchEntity {
 
 	@Override
 	public void setBranchSHA(String branchSHA) {
-		_branchSHA = branchSHA;
+		synchronized (_propertiesFiles) {
+			_branchSHA = branchSHA;
+
+			_propertiesFiles.clear();
+		}
 	}
 
 	@Override
@@ -132,7 +164,11 @@ public class BaseGitBranchEntity extends BaseEntity implements GitBranchEntity {
 
 	@Override
 	public void setUpstreamBranchSHA(String upstreamBranchSHA) {
-		_upstreamBranchSHA = upstreamBranchSHA;
+		synchronized (_propertiesFiles) {
+			_upstreamBranchSHA = upstreamBranchSHA;
+
+			_propertiesFiles.clear();
+		}
 	}
 
 	@Override
@@ -147,6 +183,7 @@ public class BaseGitBranchEntity extends BaseEntity implements GitBranchEntity {
 		_branchSHA = jsonObject.getString("branchSHA");
 		_rebased = jsonObject.getBoolean("rebased");
 		_repositoryName = jsonObject.getString("repositoryName");
+		_type = Type.get(jsonObject.getJSONObject("type"));
 		_upstreamBranchName = jsonObject.getString("upstreamBranchName");
 		_upstreamBranchSHA = jsonObject.getString("upstreamBranchSHA");
 		_url = StringUtil.toURL(jsonObject.getString("url"));
@@ -155,8 +192,10 @@ public class BaseGitBranchEntity extends BaseEntity implements GitBranchEntity {
 	private String _branchName;
 	private String _branchSHA;
 	private final Set<JobEntity> _jobEntities = new HashSet<>();
+	private final Map<String, Properties> _propertiesFiles = new HashMap<>();
 	private boolean _rebased;
 	private String _repositoryName;
+	private final Type _type;
 	private String _upstreamBranchName;
 	private String _upstreamBranchSHA;
 	private URL _url;

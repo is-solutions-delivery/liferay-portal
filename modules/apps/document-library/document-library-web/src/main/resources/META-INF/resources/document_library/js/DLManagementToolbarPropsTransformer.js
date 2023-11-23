@@ -301,6 +301,23 @@ export default function propsTransformer({
 		});
 	};
 
+	const openCreateAIImage = (aiCreatorDALLEEnabled, aiImageCreatorURL) => {
+		if (!aiCreatorDALLEEnabled) {
+			Liferay.componentReady(`${portletNamespace}ConfigueAIModal`).then(
+				(configureAIModal) => {
+					configureAIModal.open();
+				}
+			);
+		}
+		else {
+			openSelectionModal({
+				size: 'lg',
+				title: Liferay.Language.get('create-ai-image'),
+				url: aiImageCreatorURL,
+			});
+		}
+	};
+
 	const permissions = () => {
 		const map = new Map();
 
@@ -385,6 +402,14 @@ export default function propsTransformer({
 			}
 			else if (action === 'permissions') {
 				permissions();
+			}
+		},
+		onCreationMenuItemClick: (event, {item}) => {
+			if (item?.data?.action === 'openAICreateImage') {
+				openCreateAIImage(
+					item?.data?.aiCreatorDALLEEnabled,
+					item?.data?.aiCreatorURL
+				);
 			}
 		},
 		onFilterDropdownItemClick(event, {item}) {

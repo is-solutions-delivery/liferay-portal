@@ -2,10 +2,10 @@
 @summary = "Check the screenshot of element matches baseline image"
 definition {
 
-	function ocularAssertElementImage {
-		selenium.waitForVisible();
+	function ocularAssertElementImage(locator1, value2, value1) {
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.ocularAssertElementImage();
+		selenium.ocularAssertElementImage(${locator1}, ${value1}, ${value2});
 	}
 
 }

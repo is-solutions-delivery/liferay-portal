@@ -474,21 +474,21 @@ public class JournalManagementToolbarDisplayContext
 		return PortletURLBuilder.createRenderURL(
 			liferayPortletResponse
 		).setParameter(
-			"ddmStructureId",
+			"folderId", _journalDisplayContext.getFolderId()
+		).setParameter(
+			"highlightedDDMStructureId",
 			() -> {
-				long ddmStructureId =
-					_journalDisplayContext.getDDMStructureId();
+				long highlightedDDMStructureId =
+					_journalDisplayContext.getHighlightedDDMStructureId();
 
 				if (FeatureFlagManagerUtil.isEnabled("LPS-194763") &&
-					(ddmStructureId > 0)) {
+					(highlightedDDMStructureId > 0)) {
 
-					return ddmStructureId;
+					return highlightedDDMStructureId;
 				}
 
 				return null;
 			}
-		).setParameter(
-			"folderId", _journalDisplayContext.getFolderId()
 		).setParameter(
 			"status", _journalDisplayContext.getStatus()
 		).buildString();
@@ -584,15 +584,21 @@ public class JournalManagementToolbarDisplayContext
 			).buildPortletURL(),
 			getNavigationParam(), getNavigation());
 
-		filterNavigationDropdownItems.add(
-			DropdownItemBuilder.putData(
-				"action", "openDDMStructuresSelector"
-			).setActive(
-				_journalDisplayContext.isNavigationStructure()
-			).setLabel(
-				LanguageUtil.get(httpServletRequest, "structures") +
-					StringPool.TRIPLE_PERIOD
-			).build());
+		if (!FeatureFlagManagerUtil.isEnabled("LPS-194763") ||
+			(FeatureFlagManagerUtil.isEnabled("LPS-194763") &&
+			 (_journalDisplayContext.getHighlightedDDMStructureId() <= 0))) {
+
+			filterNavigationDropdownItems.add(
+				DropdownItemBuilder.putData(
+					"action", "openDDMStructuresSelector"
+				).setActive(
+					_journalDisplayContext.isNavigationStructure()
+				).setLabel(
+					LanguageUtil.get(httpServletRequest, "structures") +
+						StringPool.TRIPLE_PERIOD
+				).build());
+		}
+
 		filterNavigationDropdownItems.add(
 			DropdownItemBuilder.putData(
 				"action", "openCategoriesSelector"

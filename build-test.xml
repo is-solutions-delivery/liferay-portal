@@ -1075,19 +1075,27 @@ jdbc.default.connectionProperties=oracle.jdbc.ReadTimeout=0;oracle.net.CONNECT_T
 		<sequential>
 			<var name="java.jdk.home" unset="true" />
 
-			<propertycopy from="java.jdk.home[@{version}][@{architecture}][@{type}]" property="java.jdk.home" silent="true" />
-
-			<property name="java.jdk.home" value="${java.home}" />
-
 			<if>
-				<not>
-					<available file="${java.jdk.home}" />
-				</not>
+				<isset property="local.java.jdk.home" />
 				<then>
-					<var name="java.jdk.home" unset="true" />
+					<property name="java.jdk.home" value="${local.java.jdk.home}" />
+				</then>
+				<else>
+					<propertycopy from="java.jdk.home[@{version}][@{architecture}][@{type}]" property="java.jdk.home" silent="true" />
 
 					<property name="java.jdk.home" value="${java.home}" />
-				</then>
+
+					<if>
+						<not>
+							<available file="${java.jdk.home}" />
+						</not>
+						<then>
+							<var name="java.jdk.home" unset="true" />
+
+							<property name="java.jdk.home" value="${java.home}" />
+						</then>
+					</if>
+				</else>
 			</if>
 		</sequential>
 	</macrodef>
@@ -6978,7 +6986,10 @@ go</echo>
 			</if>
 
 			<if>
-				<matches pattern="\d{4}.q\d+.\d+" string="@{liferay.portal.bundle}" />
+				<or>
+					<contains string="${env.JOB_NAME}" substring="test-portal-release" />
+					<matches pattern="\d{4}.q\d+.\d+" string="@{liferay.portal.bundle}" />
+				</or>
 				<then>
 					<var name="app.server.tomcat.dir" value="${app.server.parent.dir}/tomcat" />
 					<var name="app.server.tomcat.bin.dir" value="${app.server.parent.dir}/tomcat/bin" />
@@ -6993,7 +7004,7 @@ go</echo>
 					<var name="app.server.tomcat.portal.dir" value="${app.server.parent.dir}/tomcat/webapps/ROOT" />
 					<var name="app.server.tomcat.temp.dir" value="${app.server.parent.dir}/tomcat/temp" />
 					<var name="app.server.tomcat.work.dir" value="${app.server.parent.dir}/tomcat/work" />
-					<var name="app.server.tomcat.zip.name" value="apache-tomcat.zip" />
+					<var name="app.server.tomcat.zip.name" value="apache-tomcat-${app.server.tomcat.version}.zip" />
 				</then>
 				<else>
 					<var name="app.server.tomcat.dir" value="${app.server.parent.dir}/tomcat-${app.server.tomcat.version}" />
@@ -13856,6 +13867,32 @@ ANT_OPTS=${env.ANT_OPTS}</echo>
 						<include name="**/*.sh" />
 					</fileset>
 				</chmod>
+
+				<if>
+					<or>
+						<matches pattern="\d{4}.q\d+.\d+" string="${bundle.file.name}" />
+						<contains string="${env.JOB_NAME}" substring="test-portal-release" />
+					</or>
+					<then>
+						<dirset
+							dir="${app.server.parent.dir}"
+							id="tomcat.directory"
+						>
+							<include name="tomcat*" />
+						</dirset>
+
+						<property name="bundles.tomcat.dir" refid="tomcat.directory" />
+
+						<move
+							todir="${app.server.parent.dir}/tomcat"
+						>
+							<fileset
+								dir="${app.server.parent.dir}/${bundles.tomcat.dir}"
+								includes="**"
+							/>
+						</move>
+					</then>
+				</if>
 
 				<delete dir="${app.server.parent.dir}/logs" />
 

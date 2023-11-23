@@ -84,6 +84,11 @@
 
 		<!-- Liferay Source Checks -->
 
+		<check name="BNDBreakingChangeCommitMessageCheck">
+			<category name="Bug Prevention" />
+			<description name="Checks that commit message should contain the schematized breaking changes." />
+			<property name="enabled" value="false" />
+		</check>
 		<check name="BNDExportsCheck">
 			<category name="Bug Prevention" />
 			<description name="Checks that modules not ending with `-api`, `-client`, `-spi`, `-taglib`, `-test-util` do not export packages." />
@@ -974,6 +979,10 @@
 
 		<!-- Liferay Source Checks -->
 
+		<check name="JSONBatchEngineDataFileCheck">
+			<category name="Styling" />
+			<description name="Remove elements in `*.batch-engine-data.json` files." />
+		</check>
 		<check name="JSONDeprecatedPackagesCheck">
 			<category name="Bug Prevention" />
 			<description name="Finds incorrect use of deprecated packages in `package.json` files." />
@@ -1722,7 +1731,7 @@
 		</check>
 		<check name="UpgradeSetResultsSetTotalMethodCheck">
 			<category name="Upgrade" />
-			<description name="Run code migration of method searchContainer.setResults to the searchContainer.setResultsAndTotal and delete searchContainer.setTotal" />
+			<description name="Replaces methods setResults and setTotal from SearchContainer with the method setResultsAndTotal only" />
 		</check>
 		<check name="UpgradeVelocityCommentMigrationCheck">
 			<category name="Upgrade" />

@@ -1,10 +1,10 @@
 @default = "waitForEditable"
 definition {
 
-	function waitForEditable {
-		selenium.waitForVisible();
+	function waitForEditable(locator1) {
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.waitForEditable();
+		selenium.waitForEditable(${locator1});
 	}
 
 }

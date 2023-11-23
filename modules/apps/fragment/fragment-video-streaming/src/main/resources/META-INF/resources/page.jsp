@@ -10,15 +10,16 @@
 <liferay-util:html-top
 	outputKey="vide_sctreaming_css"
 >
+	<link href="https://unpkg.com/videojs-quality-selector-hls@1.1.1/dist/videojs-quality-selector-hls.css" rel="stylesheet" type="text/css" />
 	<link href="https://vjs.zencdn.net/8.6.1/video-js.min.css" rel="stylesheet" type="text/css" />
 </liferay-util:html-top>
 
-<div style="display: flex; justify-content: flex-start;">
+<div style="display: flex; justify-content: flex-start; overflow: hidden;">
 	<div class="videojs-container">
 		<video class="video-js" controls id="fragmentVideoJsURL" preload="auto">
-			<source src="<%= (String)request.getAttribute(VideoStreamingWebKeys.VIDEO_STREAMING_SOURCE_URL) %>" type="video/mp4" />
 		</video>
 
+		<script src="https://unpkg.com/videojs-quality-selector-hls@1.1.1/dist/videojs-quality-selector-hls.js" type="text/javascript"></script>
 		<script src="https://vjs.zencdn.net/8.6.1/video.min.js"></script>
 	</div>
 </div>
@@ -31,6 +32,8 @@
 			"loop", (Boolean)request.getAttribute(VideoStreamingWebKeys.VIDEO_STREAMING_LOOP)
 		).put(
 			"muted", (Boolean)request.getAttribute(VideoStreamingWebKeys.VIDEO_STREAMING_MUTED)
+		).put(
+			"src", (String)request.getAttribute(VideoStreamingWebKeys.VIDEO_STREAMING_SOURCE_URL)
 		).put(
 			"subtitles", (String)request.getAttribute(VideoStreamingWebKeys.VIDEO_STREAMING_SUBTITLES)
 		).put(

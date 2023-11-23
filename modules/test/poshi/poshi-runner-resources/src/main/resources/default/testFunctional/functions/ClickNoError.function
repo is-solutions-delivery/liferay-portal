@@ -2,24 +2,24 @@
 @summary = "Click on '${locator1}'"
 definition {
 
-	function click {
-		selenium.waitForVisible();
+	function click(locator1) {
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.mouseOver();
+		selenium.mouseOver(${locator1});
 
-		selenium.click();
+		selenium.click(${locator1});
 	}
 
-	function clickNoMouseOver {
-		selenium.waitForVisible();
+	function clickNoMouseOver(locator1) {
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.click();
+		selenium.click(${locator1});
 	}
 
-	function mouseDownMouseUp {
-		selenium.mouseDown();
+	function mouseDownMouseUp(locator1) {
+		selenium.mouseDown(${locator1});
 
-		selenium.mouseUp();
+		selenium.mouseUp(${locator1});
 	}
 
 }

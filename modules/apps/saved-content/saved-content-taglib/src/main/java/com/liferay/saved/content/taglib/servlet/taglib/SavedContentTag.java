@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.trash.TrashHandler;
 import com.liferay.portal.kernel.trash.TrashHandlerRegistryUtil;
@@ -29,7 +30,9 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.repository.liferayrepository.model.LiferayFileEntry;
 import com.liferay.saved.content.constants.MySavedContentPortletKeys;
 import com.liferay.saved.content.model.SavedContentEntry;
+import com.liferay.saved.content.security.permission.SavedContentPermission;
 import com.liferay.saved.content.service.SavedContentEntryLocalServiceUtil;
+import com.liferay.saved.content.taglib.internal.permission.util.SavedContentPermissionUtil;
 import com.liferay.saved.content.taglib.internal.servlet.ServletContextUtil;
 import com.liferay.taglib.util.IncludeTag;
 
@@ -62,10 +65,6 @@ public class SavedContentTag extends IncludeTag {
 		return _inTrash;
 	}
 
-	public void isViewMode(boolean viewMode) {
-		_viewMode = viewMode;
-	}
-
 	public void setClassName(String className) {
 		if (className.equals(DLFileEntry.class.getName()) ||
 			className.equals(FileEntry.class.getName()) ||
@@ -94,6 +93,10 @@ public class SavedContentTag extends IncludeTag {
 		super.setPageContext(pageContext);
 
 		setServletContext(ServletContextUtil.getServletContext());
+	}
+
+	public void setViewMode(boolean viewMode) {
+		_viewMode = viewMode;
 	}
 
 	@Override
@@ -250,7 +253,14 @@ public class SavedContentTag extends IncludeTag {
 		if (_viewMode && !_isInTrash() && themeDisplay.isSignedIn()) {
 			Group group = themeDisplay.getSiteGroup();
 
-			if (!group.isStagingGroup() && !group.isStagedRemotely()) {
+			SavedContentPermission savedContentPermission =
+				SavedContentPermissionUtil.getSavedContentPermission();
+
+			if (savedContentPermission.contains(
+					themeDisplay.getPermissionChecker(), group.getGroupId(),
+					ActionKeys.ADD_ENTRY) &&
+				!group.isStagingGroup() && !group.isStagedRemotely()) {
+
 				return true;
 			}
 		}

@@ -6,6 +6,7 @@
 import {sub} from 'frontend-js-web';
 import React, {ComponentProps, useContext} from 'react';
 
+import useActionValues from '../../../app/utils/useActionValues';
 import RuleBuilderItem from './RuleBuilderItem';
 import RuleSelect from './RuleSelect';
 import {ScreenReaderAnnouncerContext} from './ScreenReaderContext';
@@ -26,7 +27,7 @@ interface ActionProps {
 	wrapperRef?: ComponentProps<typeof RuleBuilderItem>['wrapperRef'];
 }
 
-const TYPE_ITEMS = [
+export const ACTION_TYPE_ITEMS = [
 	{
 		label: Liferay.Language.get('show'),
 		value: 'show',
@@ -38,7 +39,7 @@ const TYPE_ITEMS = [
 	},
 ] as const;
 
-const ACTION_ITEMS = [
+export const ACTION_ITEMS = [
 	{
 		label: Liferay.Language.get('fragment'),
 		value: 'fragment',
@@ -55,8 +56,14 @@ export default function Action({
 }: ActionProps) {
 	const {sendMessage} = useContext(ScreenReaderAnnouncerContext);
 
+	const [{description}] = useActionValues({
+		actions: [action],
+		items: layoutDataItems,
+	});
+
 	return (
 		<RuleBuilderItem
+			description={description}
 			onDeleteButtonClick={onDeleteAction}
 			showDeleteButton={showDeleteButton}
 			type="action"
@@ -67,7 +74,7 @@ export default function Action({
 					Liferay.Language.get('select-x'),
 					Liferay.Language.get('action')
 				)}
-				items={TYPE_ITEMS}
+				items={ACTION_TYPE_ITEMS}
 				onSelectionChange={(type) => onActionChange({...action, type})}
 				selectedKey={action.type}
 			/>

@@ -1002,6 +1002,11 @@ components:
                     format: uri
                     readOnly: true
                     type: string
+                imageId:
+                    description:
+                        The user's profile image id.
+                    format: int64
+                    type: integer
                 jobTitle:
                     description:
                         The user's job title.
@@ -1013,6 +1018,15 @@ components:
                         type: string
                     readOnly: true
                     type: array
+                languageDisplayName:
+                    description:
+                        The user's preferred language.
+                    readOnly: true
+                    type: string
+                languageId:
+                    description:
+                        The user's preferred language id.
+                    type: string
                 lastLoginDate:
                     description:
                         The last time the user logged in.
@@ -1120,6 +1134,34 @@ components:
                         A list of the user's userGroups.
                     items:
                         $ref: "#/components/schemas/UserGroupBrief"
+                    readOnly: true
+                    type: array
+            type: object
+        UserAccountFullNameDefinition:
+            description:
+                Represents the definition of the user full name.
+            properties:
+                userAccountFullNameDefinitionFields:
+                    description:
+                        A list of the user's account.
+                    items:
+                        $ref: "#/components/schemas/UserAccountFullNameDefinitionField"
+                    readOnly: true
+                    type: array
+            type: object
+        UserAccountFullNameDefinitionField:
+            description:
+                Represents the definition of a single part of the user full name.
+            properties:
+                key:
+                    readOnly: true
+                    type: string
+                required:
+                    readOnly: true
+                    type: boolean
+                values:
+                    items:
+                        type: string
                     readOnly: true
                     type: array
             type: object
@@ -4594,6 +4636,26 @@ paths:
                                     $ref: "#/components/schemas/Segment"
                                 type: array
             tags: ["Segment"]
+    "/user-account-full-name-definition":
+        get:
+            description:
+                Retrieves the user account full name definition.
+            parameters:
+                - in: query
+                  name: languageId
+                  required: false
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/UserAccountFullNameDefinition"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/UserAccountFullNameDefinition"
+            tags: ["UserAccountFullNameDefinition"]
     "/user-accounts":
         get:
             description:

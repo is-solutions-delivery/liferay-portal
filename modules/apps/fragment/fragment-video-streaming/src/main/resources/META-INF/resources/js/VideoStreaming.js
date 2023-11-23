@@ -7,6 +7,7 @@ export default function VideoStreaming({
 	autoplay,
 	loop,
 	muted,
+	src,
 	subtitles,
 	videoHeight,
 	videoWidth,
@@ -15,6 +16,11 @@ export default function VideoStreaming({
 
 	const configuration = {
 		autoplay,
+		html5: {
+			hls: {
+				overrideNative: true,
+			},
+		},
 		loop,
 		muted,
 		playbackRates: [0.5, 1, 1.5, 2],
@@ -43,6 +49,8 @@ export default function VideoStreaming({
 	// eslint-disable-next-line no-undef
 	const player = videojs('fragmentVideoJsURL', configuration);
 
+	player.src(src);
+
 	player.ready(() => {
 		window.addEventListener('resize', resizeVideoJs);
 
@@ -57,5 +65,10 @@ export default function VideoStreaming({
 				src: subtitles,
 			});
 		}
+
+		player.qualitySelectorHls({
+			displayCurrentQuality: true,
+			vjsIconClass: 'vjs-icon-cog',
+		});
 	});
 }

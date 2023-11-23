@@ -1,10 +1,10 @@
 @default = "scrollWebElementIntoView"
 definition {
 
-	function scrollWebElementIntoView {
-		selenium.waitForElementPresent();
+	function scrollWebElementIntoView(locator1) {
+		selenium.waitForElementPresent(${locator1}, "true");
 
-		selenium.scrollWebElementIntoView();
+		selenium.scrollWebElementIntoView(${locator1});
 	}
 
 }

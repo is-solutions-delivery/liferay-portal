@@ -12,6 +12,9 @@ import com.liferay.change.tracking.service.CTCollectionLocalService;
 import com.liferay.change.tracking.service.CTEntryLocalService;
 import com.liferay.change.tracking.spi.display.CTDisplayRenderer;
 import com.liferay.change.tracking.spi.display.CTDisplayRendererRegistry;
+import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.model.JournalArticleLocalization;
+import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.change.tracking.sql.CTSQLModeThreadLocal;
@@ -105,6 +108,69 @@ public class CTEntryModelDocumentContributor
 		return map;
 	}
 
+	private <T extends BaseModel<T>> Group _getGroup(
+		long ctCollectionId, T model) {
+
+		long groupId = 0;
+
+		if (model instanceof GroupedModel) {
+			GroupedModel groupedModel = (GroupedModel)model;
+
+			groupId = groupedModel.getGroupId();
+		}
+		else if (model instanceof JournalArticleLocalization) {
+			JournalArticleLocalization journalArticleLocalization =
+				(JournalArticleLocalization)model;
+
+			try (SafeCloseable safeCloseable =
+					CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
+						ctCollectionId)) {
+
+				JournalArticle journalArticle =
+					_journalArticleLocalService.getJournalArticle(
+						journalArticleLocalization.getArticlePK());
+
+				groupId = journalArticle.getGroupId();
+			}
+			catch (PortalException portalException) {
+				throw new RuntimeException(portalException);
+			}
+		}
+		else {
+			Map<String, Object> modelAttributes = model.getModelAttributes();
+
+			if (modelAttributes.containsKey("groupId")) {
+				groupId = (long)modelAttributes.get("groupId");
+			}
+			else if (modelAttributes.containsKey("plid")) {
+				long plid = (long)modelAttributes.get("plid");
+
+				try (SafeCloseable safeCloseable =
+						CTCollectionThreadLocal.
+							setCTCollectionIdWithSafeCloseable(
+								ctCollectionId)) {
+
+					Layout layout = _layoutLocalService.fetchLayout(plid);
+
+					if (layout != null) {
+						groupId = layout.getGroupId();
+					}
+				}
+			}
+		}
+
+		if (groupId == 0) {
+			return null;
+		}
+
+		try (SafeCloseable safeCloseable =
+				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
+					ctCollectionId)) {
+
+			return _groupLocalService.fetchGroup(groupId);
+		}
+	}
+
 	private <T extends BaseModel<T>> Map<Locale, String> _getTitleMap(
 		long ctCollectionId, CTEntry ctEntry, Locale[] locales) {
 
@@ -185,46 +251,7 @@ public class CTEntryModelDocumentContributor
 			return;
 		}
 
-		long groupId = 0;
-
-		if (model instanceof GroupedModel) {
-			GroupedModel groupedModel = (GroupedModel)model;
-
-			groupId = groupedModel.getGroupId();
-		}
-		else {
-			Map<String, Object> modelAttributes = model.getModelAttributes();
-
-			if (modelAttributes.containsKey("groupId")) {
-				groupId = (long)modelAttributes.get("groupId");
-			}
-			else if (modelAttributes.containsKey("plid")) {
-				long plid = (long)modelAttributes.get("plid");
-
-				try (SafeCloseable safeCloseable =
-						CTCollectionThreadLocal.
-							setCTCollectionIdWithSafeCloseable(
-								ctCollectionId)) {
-
-					Layout layout = _layoutLocalService.fetchLayout(plid);
-
-					if (layout != null) {
-						groupId = layout.getGroupId();
-					}
-				}
-			}
-		}
-
-		Group group = null;
-
-		if (groupId > 0) {
-			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
-						ctCollectionId)) {
-
-				group = _groupLocalService.fetchGroup(groupId);
-			}
-		}
+		Group group = _getGroup(ctCollectionId, model);
 
 		if (group != null) {
 			document.addKeyword(Field.GROUP_ID, group.getGroupId());
@@ -283,6 +310,9 @@ public class CTEntryModelDocumentContributor
 
 	@Reference
 	private GroupLocalService _groupLocalService;
+
+	@Reference
+	private JournalArticleLocalService _journalArticleLocalService;
 
 	@Reference
 	private Language _language;

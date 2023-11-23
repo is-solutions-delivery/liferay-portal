@@ -1,8 +1,8 @@
 @default = "assertAttributeValue"
 definition {
 
-	function assertAttributeValue {
-		selenium.waitForElementPresent();
+	function assertAttributeValue(locator1) {
+		selenium.waitForElementPresent(${locator1}, "true");
 
 		selenium.assertAttributeValue("", "", "");
 	}

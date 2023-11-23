@@ -69,7 +69,23 @@ LockedLayoutsConfigurationDisplayContext lockedLayoutsConfigurationDisplayContex
 				<aui:validator name="max">99999</aui:validator>
 			</aui:input>
 
-			<p class="text-3 text-secondary" id="<portlet:namespace />autosaveMinutesHiddenDescription"><liferay-ui:message key="set-a-value-in-minutes-between-1-and-99.999" /></p>
+			<p class="text-3 text-secondary" id="<portlet:namespace />autosaveMinutesHiddenDescription"><liferay-ui:message arguments='<%= new String[] {"1", "99999"} %>' key="set-a-value-in-minutes-between-x-and-x" translateArguments="<%= false %>" /></p>
 		</clay:content-col>
 	</clay:content-row>
 </clay:sheet-section>
+
+<script>
+	const numericInput = document.getElementById(
+		'<portlet:namespace />autosaveMinutes'
+	);
+
+	if (numericInput) {
+		const keysNotAllowed = new Set(['e', '-']);
+
+		numericInput.addEventListener('keydown', (event) => {
+			if (keysNotAllowed.has(event.key)) {
+				event.preventDefault();
+			}
+		});
+	}
+</script>

@@ -2,138 +2,138 @@
 @summary = "Type to '${locator1}' the value '${value1}'"
 definition {
 
-	function clickAtType {
-		selenium.waitForVisible();
+	function clickAtType(locator1, value1) {
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.waitForEditable();
+		selenium.waitForEditable(${locator1});
 
-		selenium.mouseOver();
+		selenium.mouseOver(${locator1});
 
-		selenium.clickAt();
+		selenium.clickAt(${locator1}, ${value1});
 
-		selenium.pause("1000");
+		selenium.pause(1000);
 
-		selenium.type();
+		selenium.type(${locator1}, ${value1});
 
-		selenium.pause("1000");
+		selenium.pause(1000);
 
-		selenium.clickAt();
+		selenium.clickAt(${locator1}, ${value1});
 
-		selenium.pause("1000");
+		selenium.pause(1000);
 	}
 
-	function sendKeys {
-		selenium.waitForVisible();
+	function sendKeys(locator1, value1) {
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.waitForEditable();
+		selenium.waitForEditable(${locator1});
 
-		selenium.mouseOver();
+		selenium.mouseOver(${locator1});
 
-		selenium.sendKeys();
+		selenium.sendKeys(${locator1}, ${value1});
 	}
 
-	function sendKeysAceEditor {
-		selenium.waitForElementPresent();
+	function sendKeysAceEditor(locator1, value1) {
+		selenium.waitForElementPresent(${locator1}, "true");
 
-		selenium.waitForEditable();
+		selenium.waitForEditable(${locator1});
 
-		selenium.mouseOver();
+		selenium.mouseOver(${locator1});
 
-		selenium.sendKeysAceEditor();
+		selenium.sendKeysAceEditor(${locator1}, ${value1});
 	}
 
-	function type {
-		selenium.waitForVisible();
+	function type(locator1, value1) {
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.waitForEditable();
+		selenium.waitForEditable(${locator1});
 
-		selenium.mouseOver();
+		selenium.mouseOver(${locator1});
 
-		selenium.type();
+		selenium.type(${locator1}, ${value1});
 	}
 
-	function typeAceEditor {
-		selenium.waitForElementPresent();
+	function typeAceEditor(locator1, value1) {
+		selenium.waitForElementPresent(${locator1}, "true");
 
-		selenium.waitForEditable();
+		selenium.waitForEditable(${locator1});
 
-		selenium.mouseOver();
+		selenium.mouseOver(${locator1});
 
-		selenium.typeAceEditor();
+		selenium.typeAceEditor(${locator1}, ${value1});
 	}
 
-	function typeAceEditorNoError {
-		selenium.waitForElementPresent();
+	function typeAceEditorNoError(locator1, value1) {
+		selenium.waitForElementPresent(${locator1}, "true");
 
-		selenium.waitForEditable();
+		selenium.waitForEditable(${locator1});
 
-		selenium.mouseOver();
+		selenium.mouseOver(${locator1});
 
-		selenium.typeAceEditor();
+		selenium.typeAceEditor(${locator1}, ${value1});
 	}
 
-	function typeAceEditorNoMouseOver {
-		selenium.waitForElementPresent();
+	function typeAceEditorNoMouseOver(locator1, value1) {
+		selenium.waitForElementPresent(${locator1}, "true");
 
-		selenium.waitForEditable();
+		selenium.waitForEditable(${locator1});
 
-		selenium.typeAceEditor();
+		selenium.typeAceEditor(${locator1}, ${value1});
 	}
 
-	function typeClickAt {
-		selenium.waitForVisible();
+	function typeClickAt(locator1, value1) {
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.waitForEditable();
+		selenium.waitForEditable(${locator1});
 
-		selenium.mouseOver();
+		selenium.mouseOver(${locator1});
 
-		selenium.type();
+		selenium.type(${locator1}, ${value1});
 
-		selenium.clickAt();
+		selenium.clickAt(${locator1}, ${value1});
 	}
 
-	function typeCodeMirrorEditorNoError {
-		selenium.waitForElementPresent();
+	function typeCodeMirrorEditorNoError(locator1, value1) {
+		selenium.waitForElementPresent(${locator1}, "true");
 
-		selenium.mouseOver();
+		selenium.mouseOver(${locator1});
 
-		selenium.typeCodeMirrorEditor();
+		selenium.typeCodeMirrorEditor(${locator1}, ${value1});
 	}
 
-	function typeEditor {
-		selenium.waitForVisible();
+	function typeEditor(locator1, value1) {
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.waitForEditable();
+		selenium.waitForEditable(${locator1});
 
-		selenium.mouseOver();
+		selenium.mouseOver(${locator1});
 
-		selenium.typeEditor();
+		selenium.typeEditor(${locator1}, ${value1});
 	}
 
-	function typeNoMouseOver {
-		selenium.waitForElementPresent();
+	function typeNoMouseOver(locator1, value1) {
+		selenium.waitForElementPresent(${locator1}, "true");
 
-		selenium.waitForEditable();
+		selenium.waitForEditable(${locator1});
 
-		selenium.type();
+		selenium.type(${locator1}, ${value1});
 	}
 
-	function typeNotVisibleNoMouseOver {
-		selenium.waitForEditable();
+	function typeNotVisibleNoMouseOver(locator1, value1) {
+		selenium.waitForEditable(${locator1});
 
-		selenium.type();
+		selenium.type(${locator1}, ${value1});
 	}
 
-	function typePause {
-		selenium.waitForVisible();
+	function typePause(locator1, value1) {
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.waitForEditable();
+		selenium.waitForEditable(${locator1});
 
-		selenium.mouseOver();
+		selenium.mouseOver(${locator1});
 
-		selenium.type();
+		selenium.type(${locator1}, ${value1});
 
-		selenium.pause("5000");
+		selenium.pause(5000);
 	}
 
 }

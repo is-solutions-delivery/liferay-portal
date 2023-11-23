@@ -7,12 +7,14 @@ import {Dispatch, SetStateAction} from 'react';
 interface EditEndpointConfigurationProps {
 	currentAPIApplicationId: string;
 	data: Partial<APIEndpointUIData>;
+	displayError: EndpointDataError;
 	schemaAPIURLPath: string;
 	setData: Dispatch<SetStateAction<Partial<APIEndpointUIData>>>;
 }
 export default function EditEndpointConfiguration({
 	currentAPIApplicationId,
 	data,
+	displayError,
 	schemaAPIURLPath,
 	setData,
 }: EditEndpointConfigurationProps): JSX.Element;

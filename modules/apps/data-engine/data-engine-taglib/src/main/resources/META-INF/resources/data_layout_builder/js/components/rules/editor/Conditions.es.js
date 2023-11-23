@@ -4,13 +4,14 @@
  */
 
 import ClayButton from '@clayui/button';
+import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {Context as ModalContext} from '@clayui/modal';
 import {
 	FieldStateless,
 	FieldSupport,
 	generateName,
 } from 'data-engine-js-components-web';
-import React, {useContext, useMemo} from 'react';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
 
 import Timeline from './Timeline.es';
 import {ACTIONS_TYPES} from './actionsTypes.es';
@@ -30,12 +31,15 @@ function getCheckboxOptions() {
 }
 
 function FieldOperator({
+	index,
 	left,
 	onChange,
 	operator,
+	operatorValues,
 	operatorsByType,
 	readOnly,
 	right,
+	setOperatorValues,
 }) {
 	const options = useMemo(() => {
 		if (!left.value) {
@@ -62,6 +66,7 @@ function FieldOperator({
 		<>
 			<Timeline.FormGroupItem>
 				<FieldStateless
+					id="field-operator-id"
 					onChange={(event) => {
 						const operator = event.value[0];
 
@@ -73,17 +78,20 @@ function FieldOperator({
 							type: ACTIONS_TYPES.CHANGE_OPERATOR,
 						});
 					}}
+					onSelectionChange={(itemKey) => {
+						setOperatorValues(itemKey, index);
+					}}
 					options={options}
-					placeholder={Liferay.Language.get('choose-an-option')}
 					readOnly={readOnly}
+					selectedKey={operatorValues?.[index]}
 					showEmptyOption={false}
 					type="select"
-					value={[operator]}
 				/>
 			</Timeline.FormGroupItem>
 			{isBinaryOperator(operator) && left.type !== 'user' && (
 				<Timeline.FormGroupItem>
 					<FieldStateless
+						id="field-binary-operator-id"
 						onChange={(event) =>
 							onChange({
 								payload: event.value[0],
@@ -117,7 +125,14 @@ function FieldOperator({
 	);
 }
 
-function FieldLeft({fields, left, onChange}) {
+function FieldLeft({
+	fieldLeftSelectedKeys,
+	fields,
+	index,
+	left,
+	onChange,
+	setFieldLeftSelectedKeys,
+}) {
 	return (
 		<Timeline.FormGroupItem>
 			<FieldStateless
@@ -129,9 +144,14 @@ function FieldLeft({fields, left, onChange}) {
 						value: 'user',
 					},
 				]}
+				id="field-left-id"
 				onChange={onChange}
+				onSelectionChange={(itemKey) => {
+					setFieldLeftSelectedKeys(itemKey, index);
+				}}
 				options={fields}
 				placeholder={Liferay.Language.get('choose-an-option')}
+				selectedKey={fieldLeftSelectedKeys?.[index]?.value}
 				showEmptyOption={false}
 				type="select"
 				value={[left.value]}
@@ -218,6 +238,7 @@ function FieldRight({fields, left, right, roles, ...otherProps}) {
 				{...otherProps}
 				{...props}
 				dataType={left.field?.dataType}
+				id="field-right-id"
 				showEmptyOption={false}
 				type={
 					left.type === 'user'
@@ -241,13 +262,56 @@ export function Conditions({
 	roles,
 	state: {logicalOperator},
 }) {
+	const [fieldLeftSelectedKeys, setFieldLeftSelectedKeys] = useState([]);
+	const [operatorValues, setOperatorValues] = useState([]);
+	const [reload, setReload] = useState(false);
 	const [modal, openModal] = useContext(ModalContext);
+
+	useEffect(() => {
+		if (conditions[0].operator !== '') {
+			setFieldLeftSelectedKeys(
+				conditions.map((condition) => condition.operands[0].value)
+			);
+			setOperatorValues(
+				conditions.map((condition) => condition.operator)
+			);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	useEffect(() => {
+		setTimeout(() => {
+			setReload(false);
+		}, 200);
+	}, [reload]);
 
 	const onChangeLogicalOperator = (value) =>
 		dispatch({
 			payload: {value},
 			type: ACTIONS_TYPES.CHANGE_LOGICAL_OPERATOR,
 		});
+
+	const handleSetFieldLeftSelectedKeys = (itemKey, index) => {
+		if (
+			!!fieldLeftSelectedKeys.length &&
+			itemKey !== fieldLeftSelectedKeys?.[index]
+		) {
+			setReload(true);
+		}
+		const newFieldLeftSelectedKeys = fieldLeftSelectedKeys;
+		newFieldLeftSelectedKeys[index] = itemKey;
+		const newOperatorValues = operatorValues;
+		newOperatorValues[index] = undefined;
+
+		setOperatorValues(newOperatorValues);
+		setFieldLeftSelectedKeys(newFieldLeftSelectedKeys);
+	};
+
+	const handleSetOperatorValues = (itemKey, index) => {
+		const newOperatorValues = operatorValues;
+		newOperatorValues[index] = itemKey;
+		setOperatorValues(newOperatorValues);
+	};
 
 	return (
 		<Timeline.List className="timeline-first">
@@ -268,7 +332,9 @@ export function Conditions({
 				<Timeline.Item key={index}>
 					<Timeline.Panel expression={expression}>
 						<FieldLeft
+							fieldLeftSelectedKeys={fieldLeftSelectedKeys}
 							fields={fields}
+							index={index}
 							left={left}
 							onChange={(event) =>
 								dispatch({
@@ -280,22 +346,43 @@ export function Conditions({
 									type: ACTIONS_TYPES.CHANGE_IDENTIFIER_LEFT,
 								})
 							}
+							setFieldLeftSelectedKeys={
+								handleSetFieldLeftSelectedKeys
+							}
+							setOperatorValues={setOperatorValues}
+							setReload={setReload}
 						/>
 
-						<FieldOperator
-							fields={fields}
-							left={left}
-							onChange={({payload, type}) =>
-								dispatch({
-									payload: {loc: index, value: payload},
-									type,
-								})
-							}
-							operator={operator}
-							operatorsByType={operatorsByType}
-							readOnly={!left.value}
-							right={right}
-						/>
+						{reload && !operatorValues[index] ? (
+							<ClayLoadingIndicator
+								displayType="secondary"
+								size="sm"
+							/>
+						) : (
+							fieldLeftSelectedKeys.length !== 0 &&
+							fieldLeftSelectedKeys?.[index] &&
+							fieldLeftSelectedKeys?.[index] !== '' && (
+								<FieldOperator
+									fields={fields}
+									index={index}
+									left={left}
+									onChange={({payload, type}) =>
+										dispatch({
+											payload: {
+												loc: index,
+												value: payload,
+											},
+											type,
+										})
+									}
+									operator={operator}
+									operatorValues={operatorValues}
+									operatorsByType={operatorsByType}
+									right={right}
+									setOperatorValues={handleSetOperatorValues}
+								/>
+							)
+						)}
 
 						{right && right.type && (
 							<FieldRight
@@ -355,6 +442,20 @@ export function Conditions({
 															type:
 																ACTIONS_TYPES.DELETE_CONDITION,
 														});
+														operatorValues.splice(
+															index,
+															1
+														);
+														setOperatorValues(
+															operatorValues
+														);
+														fieldLeftSelectedKeys.splice(
+															index,
+															1
+														);
+														setFieldLeftSelectedKeys(
+															fieldLeftSelectedKeys
+														);
 														modal.onClose();
 													}}
 												>

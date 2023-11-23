@@ -26,25 +26,35 @@ public class JIRAUtil {
 
 		outerLoop:
 		for (String commitMessage : commitMessages) {
-			if (commitMessage.startsWith("Revert ") ||
-				commitMessage.startsWith("artifact:ignore") ||
-				commitMessage.startsWith("build.gradle auto SF") ||
-				commitMessage.endsWith("/ci-merge.")) {
+			String[] parts = commitMessage.split(":", 2);
+
+			String commitMessageTitle = parts[1];
+
+			int x = parts[1].indexOf("\n");
+
+			if (x != -1) {
+				commitMessageTitle = commitMessageTitle.substring(0, x);
+			}
+
+			if (commitMessageTitle.startsWith("Revert ") ||
+				commitMessageTitle.startsWith("artifact:ignore") ||
+				commitMessageTitle.startsWith("build.gradle auto SF") ||
+				commitMessageTitle.endsWith("/ci-merge.")) {
 
 				continue;
 			}
 
 			for (String projectName : projectNames) {
-				if (commitMessage.startsWith(projectName)) {
+				if (commitMessageTitle.startsWith(projectName)) {
 					continue outerLoop;
 				}
 			}
 
 			throw new Exception(
 				StringBundler.concat(
-					"Found formatting issues:\n",
-					"At least one commit message is missing a reference to a ",
-					"required JIRA project: ",
+					"Found formatting issues in SHA ", parts[0], "\n",
+					"The commit message is missing a reference to a required ",
+					"JIRA project: ",
 					StringUtil.merge(projectNames, StringPool.COMMA_AND_SPACE),
 					". Please verify that the JIRA project keys are specified",
 					"in source-formatter.properties in the liferay-portal ",

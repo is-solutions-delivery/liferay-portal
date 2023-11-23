@@ -96,9 +96,9 @@ describe('DLVideoExternalShortcutURLItemSelectorView', () => {
 			expect(add).toBeEnabled();
 		});
 
-		describe('when the form is submitted', () => {
+		describe('when add button is clicked', () => {
 			beforeEach(async () => {
-				fireEvent.submit(result.container.querySelector('form'));
+				fireEvent.click(result.getByRole('button'));
 			});
 
 			it('fires an event in the opener', () => {
@@ -156,17 +156,6 @@ describe('DLVideoExternalShortcutURLItemSelectorView', () => {
 
 			expect(addButton).toBeInTheDocument();
 			expect(addButton).toBeDisabled();
-		});
-
-		describe('when the form is submitted', () => {
-			beforeEach(async () => {
-				fireEvent.submit(result.container.querySelector('form'));
-			});
-
-			it('does not fire an event in the opener', () => {
-				expect(getOpener).not.toHaveBeenCalled();
-				expect(mockLiferayOpenerFire).not.toHaveBeenCalled();
-			});
 		});
 	});
 });

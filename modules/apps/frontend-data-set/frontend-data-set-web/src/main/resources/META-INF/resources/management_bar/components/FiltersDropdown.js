@@ -79,7 +79,12 @@ const FiltersDropdown = () => {
 				</>
 			) : (
 				<ClayDropDown.Group header={Liferay.Language.get('filters')}>
-					<ClayDropDown.Search onChange={onSearch} value={query} />
+					<ClayDropDown.Search
+						aria-label={Liferay.Language.get('search')}
+						onChange={onSearch}
+						role="none"
+						value={query}
+					/>
 
 					<ClayDropDown.Divider className="m-0" />
 

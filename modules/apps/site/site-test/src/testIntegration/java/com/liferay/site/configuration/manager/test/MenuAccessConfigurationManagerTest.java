@@ -9,6 +9,7 @@ import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
+import com.liferay.portal.configuration.test.util.GroupConfigurationTemporarySwapper;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.role.RoleConstants;
@@ -27,6 +28,7 @@ import com.liferay.site.configuration.manager.MenuAccessConfigurationManager;
 import java.util.Arrays;
 import java.util.Dictionary;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -54,13 +56,17 @@ public class MenuAccessConfigurationManagerTest {
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
 
-		_configurationProvider.saveGroupConfiguration(
-			MenuAccessConfiguration.class, _group.getGroupId(),
-			HashMapDictionaryBuilder.<String, Object>put(
-				"accessToControlMenuRoleIds", new String[0]
-			).put(
-				"showControlMenuByRole", true
-			).build());
+		_groupConfigurationTemporarySwapper =
+			new GroupConfigurationTemporarySwapper(
+				_group.getGroupId(), MenuAccessConfiguration.class.getName(),
+				HashMapDictionaryBuilder.<String, Object>put(
+					"showControlMenuByRole", true
+				).build());
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		_groupConfigurationTemporarySwapper.close();
 	}
 
 	@Test
@@ -71,39 +77,6 @@ public class MenuAccessConfigurationManagerTest {
 
 		_assertMenuAccessConfiguration(
 			new String[] {String.valueOf(role.getRoleId())});
-	}
-
-	@Test
-	public void testDeleteAccessRoleToControlMenu() throws Exception {
-		Role role1 = RoleTestUtil.addRole(RoleConstants.TYPE_REGULAR);
-		Role role2 = RoleTestUtil.addRole(RoleConstants.TYPE_REGULAR);
-
-		_configurationProvider.saveGroupConfiguration(
-			MenuAccessConfiguration.class, _group.getGroupId(),
-			HashMapDictionaryBuilder.<String, Object>put(
-				"accessToControlMenuRoleIds",
-				new String[] {
-					String.valueOf(role1.getRoleId()),
-					String.valueOf(role2.getRoleId())
-				}
-			).put(
-				"showControlMenuByRole", true
-			).build());
-
-		_menuAccessConfigurationManager.deleteRoleAccessToControlMenu(role2);
-
-		_assertMenuAccessConfiguration(
-			new String[] {String.valueOf(role1.getRoleId())});
-	}
-
-	@Test
-	public void testUpdateMenuAccessConfiguration() throws Exception {
-		String[] expectedAccessToControlMenuRoleIds = {"12345", "12346"};
-
-		_menuAccessConfigurationManager.updateMenuAccessConfiguration(
-			_group.getGroupId(), expectedAccessToControlMenuRoleIds, true);
-
-		_assertMenuAccessConfiguration(expectedAccessToControlMenuRoleIds);
 	}
 
 	private void _assertMenuAccessConfiguration(
@@ -147,6 +120,9 @@ public class MenuAccessConfigurationManagerTest {
 
 	@DeleteAfterTestRun
 	private Group _group;
+
+	private GroupConfigurationTemporarySwapper
+		_groupConfigurationTemporarySwapper;
 
 	@Inject
 	private MenuAccessConfigurationManager _menuAccessConfigurationManager;

@@ -278,7 +278,19 @@ public class PortalHibernateConfiguration extends LocalSessionFactoryBean {
 			return;
 		}
 
-		configuration.addXmlMapping(_loadBinding(configuration, url));
+		Thread currentThread = Thread.currentThread();
+
+		ClassLoader contextClassLoader = currentThread.getContextClassLoader();
+
+		currentThread.setContextClassLoader(
+			PortalHibernateConfiguration.class.getClassLoader());
+
+		try {
+			configuration.addXmlMapping(_loadBinding(configuration, url));
+		}
+		finally {
+			currentThread.setContextClassLoader(contextClassLoader);
+		}
 	}
 
 	private File _getCacheFile(URL url) {
