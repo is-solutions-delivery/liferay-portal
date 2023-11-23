@@ -22,12 +22,6 @@ const App = () => {
 		(field: {name: string}) => field.name === 'Project Name'
 	);
 
-	const formatSKUName = (sku: string) => {
-		const skuLowerCased = sku.toLowerCase();
-
-		return skuLowerCased.charAt(0).toUpperCase() + skuLowerCased.slice(1);
-	};
-
 	return (
 		<div className="app-details-page-container mt-6">
 			<div className="app-details-body-container">
@@ -84,7 +78,7 @@ const App = () => {
 									return (
 										<div className="row" key={order.id}>
 											<p className="col text-capitalize">
-												{formatSKUName(order.sku) || ''}
+												{order.sku.toLowerCase() || ''}
 											</p>
 											<p className="col">
 												{order.quantity}
