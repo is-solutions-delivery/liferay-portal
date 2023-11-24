@@ -283,3 +283,5 @@ function getBreadcrumbFromURL(url) {
 		})
 		.join(' ');
 }
+
+fragmentElement.querySelector(".public-sites-navigation").style.zIndex = "4";
