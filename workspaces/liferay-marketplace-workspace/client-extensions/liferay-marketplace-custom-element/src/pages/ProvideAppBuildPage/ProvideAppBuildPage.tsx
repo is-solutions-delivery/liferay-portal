@@ -489,7 +489,7 @@ export function ProvideAppBuildPage({
 							className:
 								'com.liferay.commerce.product.model.CPAttachmentFileEntry',
 							classPK: buildZIPFileId as number,
-							companyId: Number(getCompanyId()),
+							companyId: getCompanyId(),
 							tableName: 'CUSTOM_FIELDS',
 						});
 					});
