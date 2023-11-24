@@ -205,7 +205,8 @@ const AppsTable: React.FC<AppsTableProps> = ({items}) => {
 														orderStatusIsNotCompleted
 													}
 													onClick={() => {
-														window.location.href = virtualURL;
+														window.location.href =
+															virtualURL;
 													}}
 													title={
 														orderStatusIsNotCompleted

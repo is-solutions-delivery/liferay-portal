@@ -319,9 +319,9 @@ export function ProvideAppBuildPage({
 					<OfferingTypeCheckbox
 						handleSelectCheckbox={handleSelectCheckbox}
 						offeringTypes={
-							(offeringTypesDescription[
+							offeringTypesDescription[
 								appType.value as ProductType
-							] as unknown) as OfferingType[]
+							] as unknown as OfferingType[]
 						}
 						selectedValue={selectedCheckboxValue}
 					/>
@@ -444,14 +444,17 @@ export function ProvideAppBuildPage({
 						if (appType.id) {
 							updateProductSpecification({
 								body: {
-									specificationKey: ProductSpecification.TYPE.toLowerCase(),
+									specificationKey:
+										ProductSpecification.TYPE.toLowerCase(),
 									value: {en_US: appType.value},
 								},
 								id: appType.id,
 							});
 						}
 						else {
-							const dataSpecification = await getSpecification('type');
+							const dataSpecification = await getSpecification(
+								'type'
+							);
 
 							const {id} = await createProductSpecification({
 								appId,

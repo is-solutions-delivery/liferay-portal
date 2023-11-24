@@ -105,7 +105,7 @@ export function CreateProjectModal({
 				],
 				currencyCode: currentChannel.currencyCode,
 				orderTypeExternalReferenceCode:
-					projectOrderType?.externalReferenceCode
+					projectOrderType?.externalReferenceCode,
 			};
 
 			let newCart: Partial<Cart> = {};

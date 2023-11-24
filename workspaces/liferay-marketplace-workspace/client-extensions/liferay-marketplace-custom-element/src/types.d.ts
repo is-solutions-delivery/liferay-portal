@@ -360,7 +360,7 @@ interface DeliveryProductAttachment {
 }
 
 interface DeliveryProductSpecification {
-	id : number;
+	id: number;
 	optionCategoryId: number;
 	priority: number;
 	specificationGroupKey: string;
@@ -375,9 +375,9 @@ interface DeliverySKU {
 	customFields?: CustomField[];
 	externalReferenceCode: string;
 	id: number;
-	price: {price: number;priceFormatted: string;};
+	price: {price: number; priceFormatted: string};
 	sku: string;
-	skuOptions: {skuOptionKey: string; skuOptionValueKey: string;}[];
+	skuOptions: {skuOptionKey: string; skuOptionValueKey: string}[];
 }
 
 interface DeliveryProduct {
@@ -390,7 +390,7 @@ interface DeliveryProduct {
 	id?: number;
 	images: ProductImages[];
 	modifiedDate: string;
-	name:string;
+	name: string;
 	productId: number;
 	productSpecifications: DeliveryProductSpecification[];
 	productType: string;
@@ -450,7 +450,7 @@ type OptionCategory = {
 	key?: string;
 	priority?: number;
 	title?: {[key: string]: string};
-}
+};
 
 type Specification = {
 	description?: {[key: string]: string};
