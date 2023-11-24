@@ -16,6 +16,7 @@ import {Liferay} from '../../liferay/liferay';
 import {
 	getAccountInfoFromCommerce,
 	getAccounts,
+	getCatalogs,
 	getProducts,
 } from '../../utils/api';
 import {
@@ -58,9 +59,8 @@ const useAccountCached = (accounts: any[], accountId: string | null) => {
 const PublishedAppsDashboardOutlet = () => {
 	const [commerceAccount, setCommerceAccount] = useState<CommerceAccount>();
 	const [selectedApp, setSelectedApp] = useState<AppProps>();
-	const [showDashboardNavigation, setShowDashboardNavigation] = useState(
-		true
-	);
+	const [showDashboardNavigation, setShowDashboardNavigation] =
+		useState(true);
 	const {accountId} = Liferay.CommerceContext.account || {};
 	const [page, setPage] = useState(1);
 
@@ -70,24 +70,26 @@ const PublishedAppsDashboardOutlet = () => {
 		return accounts.items ?? [];
 	});
 
+	const {data: catalogs = []} = useSWR('/my-catalogs', async () => {
+		const catalogs = await getCatalogs();
+
+		return catalogs || [];
+	});
+
 	const selectedAccount = useAccountCached(
 		accounts ?? [],
 		accountId as string
 	);
 
 	const catalogId = useMemo(() => {
-		const accountCustomField = selectedAccount?.customFields?.find(
-			(customField: any) => customField.name === 'CatalogId'
-		);
+		const currentCatalog = catalogs.find((catalog) => {
+			return catalog.accountId === accountId;
+		});
 
-		if (accountCustomField) {
-			const accountCatalogId = Number(
-				accountCustomField.customValue.data
-			);
-
-			return accountCatalogId;
+		if (currentCatalog) {
+			return currentCatalog.id;
 		}
-	}, [selectedAccount?.customFields]);
+	}, [accountId, catalogs]);
 
 	useEffect(() => {
 		const getAccountCommerce = async () => {
@@ -116,9 +118,10 @@ const PublishedAppsDashboardOutlet = () => {
 			'attachments,productChannels'
 		);
 
-		const appListProductSpecifications = await getAppListProductSpecifications(
-			getAppListProductIds(products)
-		);
+		const appListProductSpecifications =
+			await getAppListProductSpecifications(
+				getAppListProductIds(products)
+			);
 
 		const productSpecificationsMap = appListProductSpecifications.map(
 			(productSpecification, index) => ({
@@ -182,7 +185,11 @@ const PublishedAppsDashboardOutlet = () => {
 			<DashboardNavigation
 				accountAppsNumber={publishedAppTable.totalCount}
 				accountIcon={getAccountImage(commerceAccount?.logoURL)}
-				accounts={accounts ?? []}
+				accounts={(accounts || []).filter((account) => {
+					return !!catalogs.find((catalog) => {
+						return catalog.accountId === account.id;
+					});
+				})}
 				currentAccount={selectedAccount}
 				dashboardNavigationItems={initialDashboardNavigationItems.map(
 					(navigationItems) => {

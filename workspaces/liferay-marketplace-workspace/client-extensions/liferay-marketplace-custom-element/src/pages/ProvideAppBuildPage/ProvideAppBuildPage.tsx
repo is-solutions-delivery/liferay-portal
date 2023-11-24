@@ -24,9 +24,9 @@ import {
 	addExpandoValue,
 	createAttachment,
 	createProductSpecification,
-	createSpecification,
 	getCategories,
 	getProductIdCategories,
+	getSpecification,
 	getVocabularies,
 	patchProductIdCategory,
 	updateProductSpecification,
@@ -451,16 +451,7 @@ export function ProvideAppBuildPage({
 							});
 						}
 						else {
-							const dataSpecification = await createSpecification(
-								{
-									body: {
-										key: ProductSpecification.TYPE.toLowerCase(),
-										title: {
-											en_US: ProductSpecification.TYPE,
-										},
-									},
-								}
-							);
+							const dataSpecification = await getSpecification('type');
 
 							const {id} = await createProductSpecification({
 								appId,

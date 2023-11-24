@@ -6,20 +6,27 @@
 import useSWR from 'swr';
 
 import HeadlessCommerceDeliveryOrderImpl from '../services/rest/HeadlessCommerceDeliveryOrder';
-import {getProductById} from '../utils/api';
+import {getDeliveryProductById, getProductById} from '../utils/api';
+import { useMarketplaceContext } from '../context/MarketplaceContext';
+import { Liferay } from '../liferay/liferay';
 
 const useGetProductByOrderId = (orderId?: string) => {
-	return useSWR(`/placed-order/${orderId}`, async () => {
-		const placedOrder = await HeadlessCommerceDeliveryOrderImpl.getPlacedOrder(
-			orderId as string
-		);
+	const {channel} = useMarketplaceContext();
+
+	return useSWR(
+		`/placed-order/${orderId}`,
+		async () => {
+			const placedOrder = await HeadlessCommerceDeliveryOrderImpl.getPlacedOrder(
+				orderId as string
+			);
 
 		const productId = placedOrder.placedOrderItems[0].productId;
 
-		const product = await getProductById({
-			nestedFields: 'attachments',
-			productId,
-		});
+			const product = await getDeliveryProductById(
+				Liferay.CommerceContext?.account?.accountId || 0,
+				channel.id,
+				productId,
+				'attachments');
 
 		return {
 			placedOrder,
