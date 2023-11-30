@@ -1,0 +1,6 @@
+{
+	"className": "com.liferay.portal.search.web.internal.category.facet.portlet.CategoryFacetPortlet",
+	"ddmTemplateKey": "VIEW-ALL-VOCABULARY-FACET",
+	"name": "View All Vocabulary Facet",
+	"resourceClassName": "com.liferay.portlet.display.template.PortletDisplayTemplate"
+}
