@@ -25,6 +25,8 @@ import {useCustomerPortal} from '../../../context';
 import {has100YearsDifference} from '../../ActivationKeysTable/utils';
 import GenerateNewKeySkeleton from '../Skeleton';
 import {getLicenseKeyEndDatesByLicenseType} from '../utils/licenseKeyEndDateUtil';
+import {getLicenseKeyEntryTypeSelected} from '../utils/licenseKeyEntryTypeUtil';
+import {getLicenseKeyPermanentStatus} from '../utils/licenseKeyPermanentStatus';
 
 const SelectSubscription = ({
 	accountKey,
@@ -290,7 +292,7 @@ const SelectSubscription = ({
 			.join(', ')
 			.toLowerCase();
 
-		const selectedProductName = selectedSubscription.licenseKeyEndDates.find(
+		const selectedProductName = selectedSubscription?.licenseKeyEndDates?.find(
 			(item) => item.licenseEntryType.includes(selectedProductNames)
 		);
 
@@ -320,10 +322,10 @@ const SelectSubscription = ({
 			const licenseKey = {
 				accountKey,
 				expirationDate: endDateSelected,
-				productKey: selectedSubscription.productKey,
-				productPurchaseKey: selectedSubscription.productPurchaseKey,
-				sizing: 'Sizing ' + selectedSubscription.instanceSize,
-				startDate: selectedSubscription.startDate,
+				productKey: selectedSubscription?.productKey,
+				productPurchaseKey: selectedSubscription?.productPurchaseKey,
+				sizing: 'Sizing ' + selectedSubscription?.instanceSize,
+				startDate: selectedSubscription?.startDate,
 			};
 			selectedFields.forEach((field) => {
 				licenseKey[field] = item[field];
@@ -375,13 +377,13 @@ const SelectSubscription = ({
 							mutation: patchOrderItemByExternalReferenceCode,
 							variables: {
 								externalReferenceCode:
-									selectedSubscription.productPurchaseKey,
+									selectedSubscription?.productPurchaseKey,
 								orderItem: {
 									customFields: [
 										{
 											customValue: {
 												data:
-													selectedSubscription.provisionedCount +
+													selectedSubscription?.provisionedCount +
 													1,
 											},
 											name: 'provisionedCount',
@@ -423,7 +425,12 @@ const SelectSubscription = ({
 		navigate,
 		provisioningServerAPI,
 		provisioningService,
-		selectedSubscription,
+		selectedSubscription?.instanceSize,
+		selectedSubscription?.licenseKeyEndDates,
+		selectedSubscription?.productKey,
+		selectedSubscription?.productPurchaseKey,
+		selectedSubscription?.provisionedCount,
+		selectedSubscription?.startDate,
 		sessionId,
 		state.activationKeys,
 		urlPreviousPage,
@@ -740,13 +747,6 @@ const SelectSubscription = ({
 										...subscriptionTerm,
 										index,
 									});
-								const currentStartAndEndDate = `${getDateCustomFormat(
-									subscriptionTerm.startDate,
-									FORMAT_DATE_TYPES.day2DMonthSYearN
-								)} - ${getDateCustomFormat(
-									subscriptionTerm.endDate,
-									FORMAT_DATE_TYPES.day2DMonthSYearN
-								)}`;
 
 								const infoSelectedKey = {
 									index,
@@ -754,6 +754,31 @@ const SelectSubscription = ({
 									productType: productGroupName,
 									productVersion: selectedVersion,
 								};
+
+								const subscriptionLicenseKeyByEntryType = subscriptionTerm?.licenseKeyEndDates?.find(
+									(item) =>
+										item.licenseEntryType.includes(
+											getLicenseKeyEntryTypeSelected(
+												infoSelectedKey
+											)
+										)
+								);
+
+								const licenseKeyExpirationDate =
+									subscriptionLicenseKeyByEntryType?.endDate;
+
+								const isPermanentLicenseKey = getLicenseKeyPermanentStatus(
+									subscriptionTerm?.startDate,
+									licenseKeyExpirationDate
+								);
+
+								const currentStartAndEndDate = `${getDateCustomFormat(
+									subscriptionTerm.startDate,
+									FORMAT_DATE_TYPES.day2DMonthSYearN
+								)} - ${getDateCustomFormat(
+									subscriptionTerm.endDate,
+									FORMAT_DATE_TYPES.day2DMonthSYearN
+								)}`;
 
 								let numberOfActivationKeysAvailable =
 									subscriptionTerm.quantity -
@@ -777,12 +802,6 @@ const SelectSubscription = ({
 										return displayAlertType;
 									}
 
-									if (selected) {
-										setAvailableActivationKeysTotal(
-											numberOfActivationKeysAvailable
-										);
-									}
-
 									return selected && displayAlertType;
 								};
 
@@ -802,12 +821,19 @@ const SelectSubscription = ({
 											0
 										}
 										key={index}
-										label={currentStartAndEndDate}
+										label={
+											isPermanentLicenseKey
+												? i18n.sub('perpetual-duration')
+												: currentStartAndEndDate
+										}
 										onChange={(event) => {
 											setSelectedSubscription({
 												...event.target.value,
 												index,
 											});
+											setAvailableActivationKeysTotal(
+												numberOfActivationKeysAvailable
+											);
 											setInfoSelectedKey(infoSelectedKey);
 											setHasKeyComplimentary(false);
 										}}

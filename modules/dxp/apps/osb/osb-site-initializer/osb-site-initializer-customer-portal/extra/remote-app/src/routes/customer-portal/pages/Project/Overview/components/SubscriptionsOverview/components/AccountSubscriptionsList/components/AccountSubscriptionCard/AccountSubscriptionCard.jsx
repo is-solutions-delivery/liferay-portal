@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import {memo, useMemo} from 'react';
 import {useAppPropertiesContext} from '~/common/contexts/AppPropertiesContext';
 import PopoverIconButton from '~/routes/customer-portal/components/PopoverIconButton';
+import {getLicenseKeyPermanentStatus} from '~/routes/customer-portal/containers/GenerateNewKey/utils/licenseKeyPermanentStatus';
 import i18n from '../../../../../../../../../../../common/I18n';
 import {
 	Skeleton,
@@ -152,6 +153,11 @@ const AccountSubscriptionCard = ({
 	const accountSubscriptionGroupName =
 		accountSubscription?.name === 'Designated Contact' || isPurchased;
 
+	const isPermanentLicenseKey = getLicenseKeyPermanentStatus(
+		accountSubscription?.startDate,
+		accountSubscription?.endDate
+	);
+
 	return (
 		<ClayCard
 			className={classNames(
@@ -279,10 +285,12 @@ const AccountSubscriptionCard = ({
 								)}`}</p>
 
 								<p className="description-info-bottom">
-									{getDateCustomFormat(
-										accountSubscription.endDate,
-										FORMAT_DATE_TYPES.day2DMonthSYearN
-									)}
+									{isPermanentLicenseKey
+										? i18n.translate('not-applicable')
+										: getDateCustomFormat(
+												accountSubscription.endDate,
+												FORMAT_DATE_TYPES.day2DMonthSYearN
+										  )}
 								</p>
 							</div>
 						)

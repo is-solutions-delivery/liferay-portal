@@ -23,22 +23,7 @@ import GenerateCardLayout from '../GenerateCardLayout';
 import KeyInputs from '../KeyInputs';
 import KeySelect from '../KeySelect';
 import {getLicenseKeyEndDatesByLicenseType} from '../utils/licenseKeyEndDateUtil';
-
-const getLicenseEntryTypeSelected = (infoSelectedKey) => {
-	if (infoSelectedKey?.licenseEntryType.includes('Virtual Cluster')) {
-		return 'virtual-cluster';
-	}
-
-	if (infoSelectedKey?.licenseEntryType.includes('OEM')) {
-		return 'oem';
-	}
-
-	if (infoSelectedKey?.licenseEntryType.includes('Enterprise')) {
-		return 'enterprise';
-	}
-
-	return 'production';
-};
+import {getLicenseKeyEntryTypeSelected} from '../utils/licenseKeyEntryTypeUtil';
 
 const RequiredInformation = ({
 	accountKey,
@@ -139,7 +124,7 @@ const RequiredInformation = ({
 			expirationDate:
 				getLicenseKeyEndDatesByLicenseType(infoSelectedKey) ??
 				infoSelectedKey?.selectedSubscription.endDate,
-			licenseEntryType: getLicenseEntryTypeSelected(infoSelectedKey),
+			licenseEntryType: getLicenseKeyEntryTypeSelected(infoSelectedKey),
 			maxClusterNodes: values?.maxClusterNodes || 0,
 			name: values?.name,
 			productKey: infoSelectedKey?.selectedSubscription.productKey,

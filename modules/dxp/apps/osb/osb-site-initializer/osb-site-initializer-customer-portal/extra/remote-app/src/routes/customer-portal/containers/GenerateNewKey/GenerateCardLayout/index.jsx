@@ -8,12 +8,18 @@ import i18n from '../../../../../common/I18n';
 import {FORMAT_DATE_TYPES} from '../../../../../common/utils/constants';
 import getDateCustomFormat from '../../../../../common/utils/getDateCustomFormat';
 import {getLicenseKeyEndDatesByLicenseType} from '../utils/licenseKeyEndDateUtil';
+import {getLicenseKeyPermanentStatus} from '../utils/licenseKeyPermanentStatus';
 
 const GenerateCardLayout = ({infoSelectedKey}) => {
 	const startDate = infoSelectedKey?.selectedSubscription?.startDate;
 
 	const endDate = infoSelectedKey?.selectedSubscription?.endDate;
 	const licenseEndDate = getLicenseKeyEndDatesByLicenseType(infoSelectedKey);
+
+	const isPermanentLicenseKey = getLicenseKeyPermanentStatus(
+		startDate,
+		licenseEndDate
+	);
 
 	const currentDate = `${getDateCustomFormat(
 		startDate,
@@ -50,7 +56,11 @@ const GenerateCardLayout = ({infoSelectedKey}) => {
 							{i18n.translate('start-date-exp-date')}
 						</p>
 
-						<p className="font-weight-normal">{currentDate}</p>
+						<p className="font-weight-normal">
+							{isPermanentLicenseKey
+								? i18n.translate('not-applicable')
+								: currentDate}
+						</p>
 
 						<p className="m-0">
 							{i18n.translate('key-activations-available')}
