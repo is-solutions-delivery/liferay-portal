@@ -27,6 +27,14 @@ definition {
 
 			CustomerPortal.addUserToOneOrMoreAccounts(accountsList = ${testAccount});
 		}
+
+		task ("Given I go to  Customer Portal 2.0 and I go the test account") {
+            ApplicationsMenu.gotoSite(key_site = ${testSiteName});
+
+            CustomerPortal.search(searchItem = ${testAccount});
+
+            CustomerPortal.enterOnProject(title = ${testAccount});
+        }
 	}
 
 	tearDown {
@@ -45,16 +53,6 @@ definition {
 	@description = "Automtion ID: LPS-144412 | Test Summary: Verify if the user can open the drop-down filter and select Active Status"
 	@priority = 4
 	test CanUserSelectActiveStatus {
-		task ("Go to Customer Portal 2.0") {
-			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
-		}
-
-		task ("Given I go to the test account") {
-			CustomerPortal.search(searchItem = ${testAccount});
-
-			CustomerPortal.enterOnProject(title = ${testAccount});
-		}
-
 		task ("Open the drop-down and assert the active status") {
 			Click(
 				locator1 = "CP2NavigationMenu#STATUS_BUTTON",
@@ -69,16 +67,6 @@ definition {
 	@description = "Automation ID: LPS-144419 | Test Summary: Verify if the value of the filter when transitioning between subscription types is kept and only reset when the user leaves the page"
 	@priority = 4
 	test ValueIsKeptOnTransition {
-		task ("Go to Customer Portal 2.0") {
-			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
-		}
-
-		task ("Given I go to the test account") {
-			CustomerPortal.search(searchItem = ${testAccount});
-
-			CustomerPortal.enterOnProject(title = ${testAccount});
-		}
-
 		task ("Select a status and open a subscription card") {
 			AssertVisible(
 				locator1 = "CP2NavigationMenu#STATUS_BUTTON",
