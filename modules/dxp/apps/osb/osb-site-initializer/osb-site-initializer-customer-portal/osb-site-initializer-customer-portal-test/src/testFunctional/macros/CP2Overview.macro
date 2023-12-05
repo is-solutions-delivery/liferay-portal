@@ -48,6 +48,17 @@ definition {
 		AssertVisible(locator1 = "CP2Overview#SLA_CARD_UNIC_CONTENT");
 	}
 
+	@summary = "Select a status"
+	macro selectStatus {
+		Click(
+			locator1 = "CP2NavigationMenu#STATUS_BUTTON",
+			title = "Active");
+
+		Click(
+			locator1 = "CP2NavigationMenu#STATUS_OPTIONS",
+			status = ${status});
+	}
+
 	@summary = "Default summary"
 	macro switchSLACard() {
 		MouseOver(locator1 = "CP2Overview#SLA_CARD_CONTAINER");
