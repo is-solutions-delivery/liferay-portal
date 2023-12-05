@@ -629,6 +629,13 @@ definition {
 		}
 	}
 
+	@summary = "Assert that the button is disabled"
+	macro viewDisabledButton(button = null) {
+		AssertElementPresent(
+			key_text = ${button},
+			locator1 = "Button#ANY_DISABLED");
+	}
+
 	@summary = "View error message by field label"
 	macro viewFieldErrorMessage(errorMessage = null, fieldLabel = null) {
 		VerifyElementPresent(
