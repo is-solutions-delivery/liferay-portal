@@ -66,4 +66,11 @@ definition {
 		Click(locator1 = "CP2Overview#SLA_CARD_SHIFT_BUTTON");
 	}
 
+	@summary = "Verify status is visible on page"
+	macro viewThatStatusIsVisible {
+		AssertVisible(
+			locator1 = "CP2NavigationMenu#STATUS_BUTTON",
+			title = ${viewButton});
+	}
+
 }
