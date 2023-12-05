@@ -39,19 +39,6 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro assertStatusOptions(statusList = null) {
-		Click(
-			locator1 = "CP2NavigationMenu#STATUS_BUTTON",
-			title = "Active");
-
-		for (var status : list ${statusList}) {
-			var status = ${status};
-
-			AssertVisible(locator1 = "CP2NavigationMenu#STATUS_OPTIONS");
-		}
-	}
-
-	@summary = "Default summary"
 	macro cancelTeamMembersInvitation() {
 		Click(locator1 = "CP2NavigationMenu#INVITE_MEMBERS_CANCEL_BUTTON");
 	}
@@ -107,6 +94,19 @@ definition {
 		var openURL = selenium.getAttribute("RaylifeRetrieveEmail#SITE_LINK");
 
 		Navigator.openSpecificURL(url = ${openURL});
+	}
+
+	@summary = "Verify that statuses are present"
+	macro viewStatusOptions(statusList = null) {
+		Click(
+			locator1 = "CP2NavigationMenu#STATUS_BUTTON",
+			title = "Active");
+
+		for (var status : list ${statusList}) {
+			AssertVisible(
+				key_status = ${status},
+				locator1 = "CP2NavigationMenu#STATUS_OPTIONS");
+		}
 	}
 
 }
