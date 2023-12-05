@@ -169,8 +169,8 @@ padding: 0.25rem 0.75rem; align-items: center; gap: 0.25rem;">
 									</div>
 								</#list>
 							</div>
-							</div>
-							</#list>
+						</div>
+					</#list>
 
 					</div>
 				</div>
