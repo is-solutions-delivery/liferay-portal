@@ -28,6 +28,16 @@ definition {
 
 			CustomerPortal.addUserToOneOrMoreAccounts(accountsList = ${testAccount});
 		}
+
+		task ("Change the user role in the project") {
+			Account.openAccountsAdmin();
+
+			CustomerPortal.accountTableProject(title = ${testAccount});
+
+			Account.addAssigneeToRoleViaUsersTab(
+				accountRoleTitle = "Account Administrator",
+				accountUserName = "Test Test");
+		}
 	}
 
 	tearDown {
@@ -46,16 +56,6 @@ definition {
 	@description = "Automation ID: LPS-144988 | Test Summary: Assert if button 'Add Another Admin' works when clicked"
 	@priority = 4
 	test CanAddAnotherAdmin {
-		task ("Change the user role in the project") {
-			Account.openAccountsAdmin();
-
-			CustomerPortal.accountTableProject(title = ${testAccount});
-
-			Account.addAssigneeToRoleViaUsersTab(
-				accountRoleTitle = "Account Administrator",
-				accountUserName = "Test Test");
-		}
-
 		task ("Go to CP2.0 and join a project") {
 			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
 
@@ -92,16 +92,6 @@ definition {
 			CP2DXPCloudSetup.activeFieldDisasterRecoveryDataCenter(accountKey = "ERC-001_lxc---sm");
 		}
 
-		task ("Change the user role in the project") {
-			Account.openAccountsAdmin();
-
-			CustomerPortal.accountTableProject(title = ${testAccount});
-
-			Account.addAssigneeToRoleViaUsersTab(
-				accountRoleTitle = "Account Administrator",
-				accountUserName = "Test Test");
-		}
-
 		task ("Go to CP2.0 and join a project") {
 			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
 
@@ -128,16 +118,6 @@ definition {
 	@description = "Automation ID: LPS-144970 | Test Summary: Verify if the user can choose an option at 'Primary Data Center Region"
 	@priority = 5
 	test CanChoosePrimaryDataCenter {
-		task ("Change the user role in the project") {
-			Account.openAccountsAdmin();
-
-			CustomerPortal.accountTableProject(title = ${testAccount});
-
-			Account.addAssigneeToRoleViaUsersTab(
-				accountRoleTitle = "Account Administrator",
-				accountUserName = "Test Test");
-		}
-
 		task ("Go to CP2.0 and join a project") {
 			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
 
@@ -160,16 +140,6 @@ definition {
 	@description = "Automation ID: LPS-144990 | Test Summary: If the admin user selects 'Skip for Now' then the user is taken to that project's home page / subscriptions page"
 	@priority = 4
 	test CanSkipForNowToOverview {
-		task ("Change the user role in the project") {
-			Account.openAccountsAdmin();
-
-			CustomerPortal.accountTableProject(title = ${testAccount});
-
-			Account.addAssigneeToRoleViaUsersTab(
-				accountRoleTitle = "Account Administrator",
-				accountUserName = "Test Test");
-		}
-
 		task ("Go to CP2.0 and join a project") {
 			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
 
@@ -190,16 +160,6 @@ definition {
 	@description = "Automation ID: LPS-144989 | Test Summary: Verify a success message is shown after finishing setting DXP Cloud up"
 	@priority = 4
 	test CanViewDXPCloudSetupSuccessMessage {
-		task ("Change the user role in the project") {
-			Account.openAccountsAdmin();
-
-			CustomerPortal.accountTableProject(title = ${testAccount});
-
-			Account.addAssigneeToRoleViaUsersTab(
-				accountRoleTitle = "Account Administrator",
-				accountUserName = "Test Test");
-		}
-
 		task ("Go to CP2.0 and join a project") {
 			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
 
@@ -246,16 +206,6 @@ definition {
 	@description = "Automation ID: LPS-146684 | Test Summary: Verify if the admin user selects 'Cancel', then the user goes back to the project's Product Activation page"
 	@priority = 4
 	test IfSelectsCancelThenTheUserGoesBackPreviousPage {
-		task ("Change the user role in the project") {
-			Account.openAccountsAdmin();
-
-			CustomerPortal.accountTableProject(title = ${testAccount});
-
-			Account.addAssigneeToRoleViaUsersTab(
-				accountRoleTitle = "Account Administrator",
-				accountUserName = "Test Test");
-		}
-
 		task ("Go to CP2.0 and join a project") {
 			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
 
@@ -286,16 +236,6 @@ definition {
 	@description = "Automation ID: LPS-144978 | Test Summary: Verify message 'Please insert a valid e-mail.' on DXP Cloud System Admin's Email Address"
 	@priority = 3
 	test IsDXPCloudEmailValid {
-		task ("Change the user role in the project") {
-			Account.openAccountsAdmin();
-
-			CustomerPortal.accountTableProject(title = ${testAccount});
-
-			Account.addAssigneeToRoleViaUsersTab(
-				accountRoleTitle = "Account Administrator",
-				accountUserName = "Test Test");
-		}
-
 		task ("Go to CP2.0 and join a project") {
 			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
 
@@ -328,16 +268,6 @@ definition {
 	@description = "Automation ID: LPS-146677 | Test Summary: Verify if the project name and version is correct"
 	@priority = 4
 	test NameAndVersionOfChosenProject {
-		task ("Change the user role in the project") {
-			Account.openAccountsAdmin();
-
-			CustomerPortal.accountTableProject(title = ${testAccount});
-
-			Account.addAssigneeToRoleViaUsersTab(
-				accountRoleTitle = "Account Administrator",
-				accountUserName = "Test Test");
-		}
-
 		task ("Go to CP2.0 and join a project") {
 			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
 
@@ -369,16 +299,6 @@ definition {
 	@description = "Automation ID: LPS-146676 | Test Summary: Verify if that when you click 'Finish Activation' the DXP Cloud configuration modal is shown"
 	@priority = 5
 	test OpenSetUpModal {
-		task ("Change the user role in the project") {
-			Account.openAccountsAdmin();
-
-			CustomerPortal.accountTableProject(title = ${testAccount});
-
-			Account.addAssigneeToRoleViaUsersTab(
-				accountRoleTitle = "Account Administrator",
-				accountUserName = "Test Test");
-		}
-
 		task ("Go to CP2.0 and join a project") {
 			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
 
@@ -409,16 +329,6 @@ definition {
 	@description = "Automation ID: LPS-146686 | Test Summary: Verify if the activation status of the card changes to (In Progress) after filling out the DXP Cloud Set up"
 	@priority = 4
 	test SeeIfTheCardActivationStatusChanges {
-		task ("Change the user role in the project") {
-			Account.openAccountsAdmin();
-
-			CustomerPortal.accountTableProject(title = ${testAccount});
-
-			Account.addAssigneeToRoleViaUsersTab(
-				accountRoleTitle = "Account Administrator",
-				accountUserName = "Test Test");
-		}
-
 		task ("Go to CP2.0 and join a project") {
 			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
 
