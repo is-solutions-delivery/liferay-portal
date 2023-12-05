@@ -51,18 +51,12 @@ definition {
 	}
 
 	@description = "Automtion ID: LPS-144412 | Test Summary: Verify if the user can open the drop-down filter and select Active Status"
-	@priority = 4
-	test CanUserSelectActiveStatus {
-		task ("Open the drop-down and assert the active status") {
-			Click(
-				locator1 = "CP2NavigationMenu#STATUS_BUTTON",
-				title = "Active");
-
-			AssertVisible(
-				locator1 = "CP2NavigationMenu#STATUS_OPTIONS",
-				status = "All");
-		}
-	}
+    @priority = 4
+    test CanUserViewStatus {
+        task ("Then I states that statuses are visible") {
+            CP2NavigationMenu.viewStatusOptions(statusList = "All,Expired,Future");
+        }
+    }
 
 	@description = "Automation ID: LPS-144419 | Test Summary: Verify if the value of the filter when transitioning between subscription types is kept and only reset when the user leaves the page"
 	@priority = 4
