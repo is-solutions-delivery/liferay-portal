@@ -77,7 +77,7 @@
 </tr>
 <tr>
 	<td>STATUS_OPTIONS</td>
-	<td>//button[contains(@class, 'dropdown-item') and contains(text(), '${status}')]</td>
+	<td>//button[contains(@class, 'dropdown-item') and contains(text(), '${key_status}')]</td>
 	<td></td>
 </tr>
 <tr>
