@@ -730,4 +730,53 @@ definition {
 		}
 	}
 
+	@description = "Automation ID: LRQA-83489 | Test Summary: Verify if required fields are requested in DXP form filling"
+	@priority = 3
+	test ViewFormRequiredFields {
+		var table = '''
+			| projectId | Id123 |
+			| email | test@liferay.com |
+			| firstName | FirstName |
+			| lastName | LastName |
+			| github | GitHubUser |
+		''';
+
+		var rawTable = TableUtil.newTable(${table});
+
+		task ("Given I go to CP2.0 and join a project") {
+			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
+
+			CustomerPortal.search(searchItem = ${testAccount});
+
+			CustomerPortal.enterOnProject(title = ${testAccount});
+		}
+
+		task ("And I go through onboarding form") {
+			Button.click(button = "Start Project Setup");
+
+			Button.click(button = "Skip for now");
+		}
+
+		for (var row : table ${rawTable}) {
+			var fieldLabel = "${row[0]}";
+			var fieldValue = "${row[1]}";
+
+			task ("When I try to submit the form with a mandatory field empty") {
+				CP2DXPCloudSetup.submitFormWithMandatoryFieldEmpty(
+					fieldLabel = ${fieldLabel},
+					fieldValue = ${fieldValue});
+			}
+
+			task ("Then an error message is displayed") {
+				CP2Utils.viewFieldErrorMessage(
+					errorMessage = "This field is required.",
+					fieldLabel = ${fieldLabel});
+			}
+		}
+
+		task ("And the 'Submit' button is disabled") {
+			CP2Utils.viewDisabledButton(button = "Submit");
+		}
+	}
+
 }
