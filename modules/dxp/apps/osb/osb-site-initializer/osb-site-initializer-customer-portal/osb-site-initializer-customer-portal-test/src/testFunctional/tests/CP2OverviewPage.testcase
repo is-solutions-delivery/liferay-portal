@@ -28,13 +28,13 @@ definition {
 			CustomerPortal.addUserToOneOrMoreAccounts(accountsList = ${testAccount});
 		}
 
-		task ("Given I go to  Customer Portal 2.0 and I go the test account") {
-            ApplicationsMenu.gotoSite(key_site = ${testSiteName});
+		task ("Given I go to Customer Portal 2.0 and I go the test account") {
+			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
 
-            CustomerPortal.search(searchItem = ${testAccount});
+			CustomerPortal.search(searchItem = ${testAccount});
 
-            CustomerPortal.enterOnProject(title = ${testAccount});
-        }
+			CustomerPortal.enterOnProject(title = ${testAccount});
+		}
 	}
 
 	tearDown {
@@ -51,44 +51,32 @@ definition {
 	}
 
 	@description = "Automtion ID: LPS-144412 | Test Summary: Verify if the user can open the drop-down filter and select Active Status"
-    @priority = 4
-    test CanUserViewStatus {
-        task ("Then I states that statuses are visible") {
-            CP2NavigationMenu.viewStatusOptions(statusList = "All,Expired,Future");
-        }
-    }
+	@priority = 4
+	test CanUserViewStatus {
+		task ("Then I states that statuses are visible") {
+			CP2NavigationMenu.viewStatusOptions(statusList = "All,Expired,Future");
+		}
+	}
 
 	@description = "Automation ID: LPS-144419 | Test Summary: Verify if the value of the filter when transitioning between subscription types is kept and only reset when the user leaves the page"
 	@priority = 4
 	test ValueIsKeptOnTransition {
-		task ("Select a status and open a subscription card") {
-			AssertVisible(
-				locator1 = "CP2NavigationMenu#STATUS_BUTTON",
-				title = "Active");
+		task ("Given I verify that status is active and open a subscription card") {
+			CP2Overview.viewThatStatusIsVisible(viewButton = "Active");
 
 			CustomerPortal.enterOnSubscription(modalTitle = "LXC - SM Non-Production");
 		}
 
-		task ("Assert that the subscription status is active") {
-			Click(
-				locator1 = "CP2NavigationMenu#STATUS_BUTTON",
-				title = "Active");
-
-			AssertVisible(
-				locator1 = "CP2NavigationMenu#STATUS_OPTIONS",
-				status = "All");
+		task ("When I select status 'All'") {
+			CP2Overview.selectStatus(status = "All");
 		}
 
-		task ("Go back to Homepage and join a project again") {
+		task ("Then I check that the 'All' status isn't visible on page") {
 			ApplicationsMenu.gotoSite(key_site = ${testSiteName});
 
 			CustomerPortal.enterOnProject(title = ${testAccount});
-		}
 
-		task ("Assert that the active status is no longer selected") {
-			AssertElementNotPresent(
-				locator1 = "CP2NavigationMenu#STATUS_BUTTON",
-				title = "All");
+			CP2Overview.viewThatStatusIsNotVisible(viewButton = "All");
 		}
 	}
 
