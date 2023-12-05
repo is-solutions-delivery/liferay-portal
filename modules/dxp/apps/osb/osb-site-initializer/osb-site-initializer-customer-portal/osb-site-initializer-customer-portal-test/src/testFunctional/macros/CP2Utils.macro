@@ -629,6 +629,14 @@ definition {
 		}
 	}
 
+	@summary = "View error message by field label"
+	macro viewFieldErrorMessage(errorMessage = null, fieldLabel = null) {
+		VerifyElementPresent(
+			key_fieldLabel = ${fieldLabel},
+			locator1 = "CustomerPortalSite#FIELD_ERROR_MESSAGE",
+			value1 = ${errorMessage});
+	}
+
 	@summary = "View Login Okta page"
 	macro viewLoginOktaPage() {
 		AssertElementPresent(locator1 = "CustomerPortalSite#OKTA_USERNAME");
