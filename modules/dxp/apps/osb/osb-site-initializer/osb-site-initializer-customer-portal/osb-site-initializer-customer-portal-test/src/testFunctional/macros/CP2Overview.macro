@@ -49,7 +49,7 @@ definition {
 	}
 
 	@summary = "Select a status"
-	macro selectStatus {
+	macro selectStatus(status = null) {
 		Click(
 			locator1 = "CP2NavigationMenu#STATUS_BUTTON",
 			title = "Active");
@@ -66,8 +66,15 @@ definition {
 		Click(locator1 = "CP2Overview#SLA_CARD_SHIFT_BUTTON");
 	}
 
+	@summary = "Verify status is not visible on page"
+	macro viewThatStatusIsNotVisible(viewButton = null) {
+		AssertElementNotPresent(
+			locator1 = "CP2NavigationMenu#STATUS_BUTTON",
+			title = ${viewButton});
+	}
+
 	@summary = "Verify status is visible on page"
-	macro viewThatStatusIsVisible {
+	macro viewThatStatusIsVisible(viewButton = null) {
 		AssertVisible(
 			locator1 = "CP2NavigationMenu#STATUS_BUTTON",
 			title = ${viewButton});
