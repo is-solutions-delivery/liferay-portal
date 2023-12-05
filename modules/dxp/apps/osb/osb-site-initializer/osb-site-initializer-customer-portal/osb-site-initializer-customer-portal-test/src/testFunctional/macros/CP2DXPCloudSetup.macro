@@ -110,6 +110,21 @@ definition {
 			locator1 = "CustomerPortalSite#SETUP_FIELDS");
 	}
 
+	@summary = "Submit form with required field empty"
+	macro submitFormWithMandatoryFieldEmpty(fieldLabel = null, fieldValue = null) {
+		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
+			label = ${fieldLabel},
+			value = ${fieldValue});
+
+		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
+			label = ${fieldLabel},
+			value = "");
+
+		KeyPress(
+			locator1 = "//body",
+			value1 = "\ESCAPE");
+	}
+
 	@summary = "Default summary"
 	macro typeAllSetupDXPCloudInfoFields(firstName = null,lastName = null,github = null,dataCenterRegion = null,projectId = null,email = null) {
 		CP2DXPCloudSetup.typeSetupDXPCloudInfoFields(
