@@ -1,4 +1,5 @@
 <#include "${templatesPath}/SVG">
+
 <script>
 	let href = window.location.href;
 	if (href.endsWith("/")){
@@ -6,18 +7,22 @@
 		window.location.assign(href);
 	}
 </script>
+
 <#assign
 	journalArticleId = .vars["reserved-article-id"].data
 	taxonomyCategoryBriefs = restClient.get("/headless-delivery/v1.0/sites/${groupId}/structured-contents/by-key/${journalArticleId}?nestedFields=embeddedTaxonomyCategory").taxonomyCategoryBriefs
 	taxonomyVocabularies = []
 />
+
 <#list taxonomyCategoryBriefs as taxonomyCategory>
 	<#if taxonomyVocabularies?seq_contains(taxonomyCategory.taxonomyVocabularyName)>
 	<#else>
 		<#assign taxonomyVocabularies = taxonomyVocabularies + [taxonomyCategory.taxonomyVocabularyName] />
 	</#if>
 </#list>
+
 <#assign taxonomyCategoriesMap = {} />
+
 <#list taxonomyCategoryBriefs as taxonomyCategory>
 	<#if taxonomyCategoriesMap[taxonomyCategory.taxonomyVocabularyName]?has_content>
 		<#assign taxonomyCategoriesMap = taxonomyCategoriesMap +
@@ -41,11 +46,13 @@
 		/>
 	</#if>
 </#list>
+
 <#assign
 	groupFriendlyURL = "/web" + themeDisplay.getScopeGroup().getFriendlyURL()
 	isLandingPage = false
 	topLevelArticle = true
 />
+
 <#if (breadcrumbLinks.getData())??>
 	<#assign breadcrumbLinksJSONArray = jsonFactoryUtil.createJSONArray(breadcrumbLinks.getData()) />
 	<#if breadcrumbLinksJSONArray.length() gt 0>
@@ -55,9 +62,11 @@
 		/>
 	</#if>
 </#if>
+
 <#if (landingPage.getData())?? && (landingPage.getData() == "true")>
 	<#assign isLandingPage = true />
 </#if>
+
 <div class="container-fluid documentations main-content" role="main">
 	<div class="row">
 		<div class="col-12 col-md-2 doc-nav-wrapper mobile-nav-hide">
@@ -163,7 +172,7 @@ padding: 0.25rem 0.75rem; align-items: center; gap: 0.25rem;">
 			</div>
 
 			<div class="col-12 doc-content ${isLandingPage?then("landing-page-container", "")}" id="docContent" style="margin-top: 0px;">
-				<div class="row">
+				<div class="row" style="overflow: hidden;">
 					<div class="article-body col-12 col-md-10 language-log">
 						<#if (content.getData())??>
 							${content.getData()}
