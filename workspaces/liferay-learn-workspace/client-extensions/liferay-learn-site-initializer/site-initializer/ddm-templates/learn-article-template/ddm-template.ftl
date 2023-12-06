@@ -98,7 +98,6 @@
 					</#if>
 
 					<#if (navigationLinks.getData())??>
-
 						<#assign urlTitleLastDirectory =.vars['reserved-article-url-title'].getData()?split("/")?last />
 
 						<ul class="current">
@@ -108,24 +107,25 @@
 								</li>
 							</#if>
 
-							<#assign navigationLinksJSONArray = jsonFactoryUtil.createJSONArray(navigationLinks.getData()) />
+						<#assign navigationLinksJSONArray = jsonFactoryUtil.createJSONArray(navigationLinks.getData()) />
 
-							<#if navigationLinksJSONArray.length() gt 0>
-								<#list 0..navigationLinksJSONArray.length()-1 as i>
-									<#assign navigationLink = navigationLinksJSONArray.getJSONObject(i)?eval />
+						<#if navigationLinksJSONArray.length() gt 0>
+							<#list 0..navigationLinksJSONArray.length()-1 as i>
+								<#assign navigationLink = navigationLinksJSONArray.getJSONObject(i)?eval />
 
-									<li class="${topLevelArticle?then("toctree-l1", "toctree-l2")} ${(urlTitleLastDirectory == navigationLink.url)?then("current", "")}">
-										<a class="reference internal" href="${navigationLink.url}">${navigationLink.title}</a>
-									</li>
-								</#list>
-							</#if>
+								<li class="${topLevelArticle?then("toctree-l1", "toctree-l2")} ${(urlTitleLastDirectory == navigationLink.url)?then("current", "")}">
+									<a class="reference internal" href="${navigationLink.url}">${navigationLink.title}</a>
+								</li>
+							</#list>
+						</#if>
 						</ul>
 					</#if>
 				</div>
 			</div>
 		</div>
-						<div class="col-12 col-md-10 doc-body">
-							<div class="position-static">
+
+		<div class="col-12 col-md-10 doc-body">
+			<div class="position-static">
 				<div class="border-bottom-0 h-auto p-0">
 					<div class="mt-3 offset-md-1">
 						<#if breadcrumbLinksJSONArray??>
@@ -133,7 +133,7 @@
 							<ul aria-label="breadcrumb navigation" class="article-breadcrumb" role="navigation">
 								<li>
 									<a href="${groupFriendlyURL}">
-									<@clay["icon"] symbol="home-full" />
+										<@clay["icon"] symbol="home-full" />
 									</a>
 								</li>
 
@@ -152,69 +152,68 @@
 								</li>
 							</ul>
 
-							<a href="https://liferay.dev/c/portal/login?redirect=https://liferay.dev/ask/questions/liferay-learn-feedback/new" style="text-decoration: none;">
-							  <div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1rem; font-style: normal; font-weight: 600; line-height: 1.5rem; color: var(--action-primary-default, #0B5FFF);
-	text-align: center; margin-right: 3rem;">Ask The Community <@clay["icon"] symbol="message-boards" /></div>
-							  </div>
-
-							</a>
+							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1rem; font-style: normal; font-weight: 600; line-height: 1.5rem; color: var(--action-primary-default, #0B5FFF); text-align: center; padding-right: 3rem;">
+								<a href="https://liferay.dev/c/portal/login?redirect=https://liferay.dev/ask/questions/liferay-learn-feedback/new" style="text-decoration: none;">
+									Ask The Community
+									<@clay["icon"] symbol="message-boards" />
+								</a>
+							</div>
+						</div>
 						</#if>
+
 						<#list taxonomyVocabularies as vocabulary>
 
 						<div class="col-10 d-flex flex-column mt-2 pl-0" id="tags">
-						<div class="align-items-baseline d-flex flex-wrap" id="${vocabulary}">
-							<div class="font-weight-bold mr-2" id="${vocabulary}-Title" style="font-size: 0.875rem;">
-								${vocabulary}
-							  </div>
-								<#list taxonomyCategoriesMap[vocabulary]?sort_by("categoryName") as taxonomyCategory>
+							<div class="align-items-baseline d-flex flex-wrap" id="${vocabulary}">
+								<div class="font-weight-bold mr-2" id="${vocabulary}-Title" style="font-size: 0.875rem;">
+									${vocabulary}
+							  	</div>
+							<#list taxonomyCategoriesMap[vocabulary]?sort_by("categoryName") as taxonomyCategory>
 								<div class="d-flex" id="${vocabulary}-Tags">
-									<a class="label label-primary" href="/search?category=${taxonomyCategory.categoryId}" style="border-radius: 1.5rem; border: 1px solid var(--action-primary-default, #0B5FFF); background: var(--action-primary-inverted, #FFF); display: flex;
-padding: 0.25rem 0.75rem; align-items: center; gap: 0.25rem;">
-				  <span class="label-item label-item-expand">${taxonomyCategory.categoryName}</span>
+									<a class="label label-primary" href="/search?category=${taxonomyCategory.categoryId}" style="border-radius: 1.5rem; border: 1px solid var(--action-primary-default, #0B5FFF); background: var(--action-primary-inverted, #FFF); display: flex; padding: 0.25rem 0.75rem; align-items: center; gap: 0.25rem;">
+				  						<span class="label-item label-item-expand">${taxonomyCategory.categoryName}</span>
 									</a>
-
-									</div>
-								</#list>
-							</div>
+								</div>
+							</#list>
 						</div>
-					</#list>
+						</#list>
 					</div>
 				</div>
 			</div>
+		</div>
 
-			<div class="col-12 doc-content ${isLandingPage?then("landing-page-container", "")}" id="docContent" style="margin-top: 0px;">
-				<div class="row" style="overflow: hidden;">
-					<div class="article-body col-12 col-md-10 language-log">
-						<#if (content.getData())??>
-							${content.getData()}
-						</#if>
+		<div class="col-12 doc-content ${isLandingPage?then("landing-page-container", "")}" id="docContent" style="margin-top: 0px;">
+			<div class="row" style="overflow: hidden;">
+				<div class="article-body col-12 col-md-10 language-log">
+					<#if (content.getData())??>
+						${content.getData()}
+					</#if>
 
-						<#if isLandingPage>
-							<#include "${templatesPath}/LANDING-PAGE">
-						</#if>
+					<#if isLandingPage>
+						<#include "${templatesPath}/LANDING-PAGE">
+					</#if>
 
-						<div class="autofit-padded-no-gutters-x autofit-row help-center-footer">
-							<div class="autofit-col">
-								<div class="icon-container">
-									<svg class="lexicon-icon liferay-waffle-icon" focusable="false" role="presentation" viewBox="0 0 512 512">
-										<use xlink:href="#liferay-waffle" />
-									</svg>
-								</div>
+					<div class="autofit-padded-no-gutters-x autofit-row help-center-footer">
+						<div class="autofit-col">
+							<div class="icon-container">
+								<svg class="lexicon-icon liferay-waffle-icon" focusable="false" role="presentation" viewBox="0 0 512 512">
+									<use xlink:href="#liferay-waffle" />
+								</svg>
 							</div>
+						</div>
 
-							<div class="autofit-col autofit-col-expand">
-								<h3>${languageUtil.get(locale, "not-finding-what-you-are-looking-for", "Not finding what you're looking for?")}</h3>
+						<div class="autofit-col autofit-col-expand">
+							<h3>${languageUtil.get(locale, "not-finding-what-you-are-looking-for", "Not finding what you're looking for?")}</h3>
 
-								<p>${languageUtil.get(locale, "pardon-our-dust-as-we-revamp", "Pardon our dust as we revamp and transition our product documentation to this site. If something seems missing, please check Liferay Help Center documentation for Liferay DXP 7.2 and previous versions.")}</p>
+							<p>${languageUtil.get(locale, "pardon-our-dust-as-we-revamp", "Pardon our dust as we revamp and transition our product documentation to this site. If something seems missing, please check Liferay Help Center documentation for Liferay DXP 7.2 and previous versions.")}</p>
 
-								<a href="https://help.liferay.com/hc/en-us/categories/360001749912">
-									<strong>${languageUtil.get(locale, "try-liferays-help-center", "Try Liferay's Help Center")}</strong>
+							<a href="https://help.liferay.com/hc/en-us/categories/360001749912">
+								<strong>${languageUtil.get(locale, "try-liferays-help-center", "Try Liferay's Help Center")}</strong>
 
-									<svg class="lexicon-icon lexicon-icon-shortcut" focusable="false" role="presentation" viewBox="0 0 512 512">
-										<use xlink:href="#shortcut" />
-									</svg>
-								</a>
-							</div>
+								<svg class="lexicon-icon lexicon-icon-shortcut" focusable="false" role="presentation" viewBox="0 0 512 512">
+									<use xlink:href="#shortcut" />
+								</svg>
+							</a>
 						</div>
 					</div>
 				</div>
