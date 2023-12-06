@@ -1,5 +1,4 @@
 <#include "${templatesPath}/SVG">
-
 <script>
 	let href = window.location.href;
 	if (href.endsWith("/")){
@@ -7,20 +6,17 @@
 		window.location.assign(href);
 	}
 </script>
-
 <#assign
 	journalArticleId = .vars["reserved-article-id"].data
-	taxonomyCategoryBriefs = restClient.get("/headless-delivery/v1.0/sites/${groupId}/structured-contents/by-key/${journalArticleId}").taxonomyCategoryBriefs
+	taxonomyCategoryBriefs = restClient.get("/headless-delivery/v1.0/sites/${groupId}/structured-contents/by-key/${journalArticleId}?nestedFields=embeddedTaxonomyCategory").taxonomyCategoryBriefs
 	taxonomyVocabularies = []
 />
-
 <#list taxonomyCategoryBriefs as taxonomyCategory>
 	<#if taxonomyVocabularies?seq_contains(taxonomyCategory.taxonomyVocabularyName)>
 	<#else>
 		<#assign taxonomyVocabularies = taxonomyVocabularies + [taxonomyCategory.taxonomyVocabularyName] />
 	</#if>
 </#list>
-
 <#assign taxonomyCategoriesMap = {} />
 <#list taxonomyCategoryBriefs as taxonomyCategory>
 	<#if taxonomyCategoriesMap[taxonomyCategory.taxonomyVocabularyName]?has_content>
@@ -45,13 +41,11 @@
 		/>
 	</#if>
 </#list>
-
 <#assign
 	groupFriendlyURL = "/web" + themeDisplay.getScopeGroup().getFriendlyURL()
 	isLandingPage = false
 	topLevelArticle = true
 />
-
 <#if (breadcrumbLinks.getData())??>
 	<#assign breadcrumbLinksJSONArray = jsonFactoryUtil.createJSONArray(breadcrumbLinks.getData()) />
 	<#if breadcrumbLinksJSONArray.length() gt 0>
@@ -61,11 +55,9 @@
 		/>
 	</#if>
 </#if>
-
 <#if (landingPage.getData())?? && (landingPage.getData() == "true")>
 	<#assign isLandingPage = true />
 </#if>
-
 <div class="container-fluid documentations main-content" role="main">
 	<div class="row">
 		<div class="col-12 col-md-2 doc-nav-wrapper mobile-nav-hide">
@@ -93,7 +85,6 @@
 							${languageUtil.get(locale, "go-back", "Go Back")}
 						</a>
 					</#if>
-
 					<#if (navigationLinks.getData())??>
 						<#assign urlTitleLastDirectory =.vars['reserved-article-url-title'].getData()?split("/")?last />
 
@@ -103,9 +94,7 @@
 									<a class="reference internal" href="${parentLink.url}">${parentLink.title}</a>
 								</li>
 							</#if>
-
 							<#assign navigationLinksJSONArray = jsonFactoryUtil.createJSONArray(navigationLinks.getData()) />
-
 							<#if navigationLinksJSONArray.length() gt 0>
 								<#list 0..navigationLinksJSONArray.length()-1 as i>
 									<#assign navigationLink = navigationLinksJSONArray.getJSONObject(i)?eval />
@@ -141,7 +130,6 @@
 										</li>
 									</#list>
 								</#if>
-
 								<li class="font-weight-bold">
 									${.vars['reserved-article-title'].getData()}
 								</li>
@@ -153,7 +141,6 @@
 							  </div>
 							</a>
 						</#if>
-
 						<#list taxonomyVocabularies as vocabulary>
 						<div class="col-10 d-flex flex-column mt-2 pl-0" id="tags">
 						<div class="align-items-baseline d-flex flex-wrap" id="${vocabulary}">
@@ -171,7 +158,6 @@ padding: 0.25rem 0.75rem; align-items: center; gap: 0.25rem;">
 							</div>
 						</div>
 					</#list>
-
 					</div>
 				</div>
 			</div>
@@ -182,11 +168,9 @@ padding: 0.25rem 0.75rem; align-items: center; gap: 0.25rem;">
 						<#if (content.getData())??>
 							${content.getData()}
 						</#if>
-
 						<#if isLandingPage>
 							<#include "${templatesPath}/LANDING-PAGE">
 						</#if>
-
 						<div class="autofit-padded-no-gutters-x autofit-row help-center-footer">
 							<div class="autofit-col">
 								<div class="icon-container">
