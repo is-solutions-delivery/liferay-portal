@@ -2,6 +2,7 @@
 
 <script>
 	let href = window.location.href;
+
 	if (href.endsWith("/")){
 		href = href.substring(0, href.length - 1);
 		window.location.assign(href);
@@ -55,6 +56,7 @@
 
 <#if (breadcrumbLinks.getData())??>
 	<#assign breadcrumbLinksJSONArray = jsonFactoryUtil.createJSONArray(breadcrumbLinks.getData()) />
+
 	<#if breadcrumbLinksJSONArray.length() gt 0>
 		<#assign
 			parentLink = breadcrumbLinksJSONArray.getJSONObject(0)?eval
@@ -94,7 +96,9 @@
 							${languageUtil.get(locale, "go-back", "Go Back")}
 						</a>
 					</#if>
+
 					<#if (navigationLinks.getData())??>
+
 						<#assign urlTitleLastDirectory =.vars['reserved-article-url-title'].getData()?split("/")?last />
 
 						<ul class="current">
@@ -103,7 +107,9 @@
 									<a class="reference internal" href="${parentLink.url}">${parentLink.title}</a>
 								</li>
 							</#if>
+							
 							<#assign navigationLinksJSONArray = jsonFactoryUtil.createJSONArray(navigationLinks.getData()) />
+
 							<#if navigationLinksJSONArray.length() gt 0>
 								<#list 0..navigationLinksJSONArray.length()-1 as i>
 									<#assign navigationLink = navigationLinksJSONArray.getJSONObject(i)?eval />
