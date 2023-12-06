@@ -27,9 +27,8 @@ import {initialDashboardNavigationItems} from './PublishedDashboardPageUtil';
 const PublishedAppsDashboardOutlet = () => {
 	const {accountId} = Liferay.CommerceContext.account || {};
 	const [page, setPage] = useState(1);
-	const [showDashboardNavigation, setShowDashboardNavigation] = useState(
-		true
-	);
+	const [showDashboardNavigation, setShowDashboardNavigation] =
+		useState(true);
 
 	const {data: catalogs = []} = useCatalogs();
 	const {data: supplierAccount} = useSupplierAccount();
@@ -64,8 +63,8 @@ const PublishedAppsDashboardOutlet = () => {
 			<DashboardNavigation
 				accountAppsNumber={publishedProductTable.totalCount}
 				accountIcon={getAccountImage(supplierAccount?.logoURL)}
-				accounts={(supplierAccounts as unknown) as Account[]}
-				currentAccount={(supplierAccount as unknown) as Account}
+				accounts={supplierAccounts as unknown as Account[]}
+				currentAccount={supplierAccount as unknown as Account}
 				dashboardNavigationItems={initialDashboardNavigationItems}
 			/>
 

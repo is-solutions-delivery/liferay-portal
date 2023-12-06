@@ -58,7 +58,7 @@ const getProductBasePriceAndTrial = (product: DeliveryProduct) => {
 	}
 
 	const {isFreeApp} = getProductPriceModel(product);
-	const skus = (product.skus as unknown) as DeliverySKU[];
+	const skus = product.skus as unknown as DeliverySKU[];
 
 	if (isFreeApp) {
 		return {
@@ -101,9 +101,8 @@ const GetAppFlow = () => {
 		initialBillingAddress
 	);
 	const [email, setEmail] = useState<string>('');
-	const [enablePurchaseButton, setEnablePurchaseButton] = useState<boolean>(
-		false
-	);
+	const [enablePurchaseButton, setEnablePurchaseButton] =
+		useState<boolean>(false);
 
 	const [licenseSelected, setLicenseSelected] = useState<boolean>(false);
 	const [purchaseOrderNumber, setPurchaseOrderNumber] = useState<string>('');
@@ -123,7 +122,7 @@ const GetAppFlow = () => {
 	const {data: product} = useDeliveryProduct(getUrlParam('productId') ?? '');
 
 	const {basePrice, firstSku, trialSku} = getProductBasePriceAndTrial(
-		(product as unknown) as DeliveryProduct
+		product as unknown as DeliveryProduct
 	);
 	const hasTrial = !!trialSku;
 	const sku = trialSku ?? firstSku;

@@ -21,13 +21,15 @@ const useGetProduct = (
 		setProductId(selectedProduct?.productId || urlProductId);
 
 		if (productId) {
-			const fetchProduct = await HeadlessCommerceDeliveryCatalogImpl.getProduct(
-				channel.id,
-				productId,
-				new URLSearchParams({
-					nestedFields: 'attachments,images,productSpecifications,skus',
-				})
-			);
+			const fetchProduct =
+				await HeadlessCommerceDeliveryCatalogImpl.getProduct(
+					channel.id,
+					productId,
+					new URLSearchParams({
+						nestedFields:
+							'attachments,images,productSpecifications,skus',
+					})
+				);
 
 			setProduct(fetchProduct);
 		}

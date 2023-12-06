@@ -97,9 +97,8 @@ export function ReviewAndSubmitAppPage({
 					specificationKey === 'appdocumentationurl' ||
 					specificationKey === 'appinstallationguideurl'
 				) {
-					const supportAndHelItem = supportAndHelpMap.get(
-						specificationKey
-					);
+					const supportAndHelItem =
+						supportAndHelpMap.get(specificationKey);
 					supportAndHelpCardInfos.push({
 						...(supportAndHelItem as {icon: string; title: string}),
 						link: localizedValue,
@@ -115,8 +114,11 @@ export function ReviewAndSubmitAppPage({
 				}
 			});
 
-			const attachment = productResponse.attachments.find((attachment) => {
-				return (attachment.tags || []).indexOf('app icon') < 0});
+			const attachment = productResponse.attachments.find(
+				(attachment) => {
+					return (attachment.tags || []).indexOf('app icon') < 0;
+				}
+			);
 
 			const thumbnail = showAppImage(
 				getThumbnailByProductAttachment(productResponse.images)
@@ -130,8 +132,8 @@ export function ReviewAndSubmitAppPage({
 				name: productResponse.name['en_US'],
 				price: nonTrialSKU?.price as number,
 				priceModel,
-				storefront: (productResponse.images || []).filter(image => {
-					return image.galleryEnabled
+				storefront: (productResponse.images || []).filter((image) => {
+					return image.galleryEnabled;
 				}),
 				supportAndHelp: supportAndHelpCardInfos,
 				tags: productTags,

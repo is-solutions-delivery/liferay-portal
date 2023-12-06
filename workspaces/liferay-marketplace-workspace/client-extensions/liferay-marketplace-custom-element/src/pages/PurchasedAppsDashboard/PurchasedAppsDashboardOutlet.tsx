@@ -71,62 +71,59 @@ const PurchasedAppsDashboardOutlet = () => {
 	const {data: accounts = []} = useAccounts();
 	const selectedAccount = useAccountCached(accounts, accountId as string);
 
-	const {
-		data: placedOrders = {items: [], totalCount: 0},
-		key,
-	} = usePurchasedOrders({
-		accountId: selectedAccount?.id,
-		channelId,
-		orderTypeExternalReferenceCodes: ['CLOUDAPP', 'DXPAPP'],
-		page,
-		pageSize: 10,
-	});
+	const {data: placedOrders = {items: [], totalCount: 0}, key} =
+		usePurchasedOrders({
+			accountId: selectedAccount?.id,
+			channelId,
+			orderTypeExternalReferenceCodes: ['CLOUDAPP', 'DXPAPP'],
+			page,
+			pageSize: 10,
+		});
 
-	const {
-		data: placedOrdersWithAttachements = {items: [], totalCount: 0},
-	} = useSWR(
-		`/${key}/with-attachments/${placedOrders.totalCount}`,
-		async () => {
-			if (!selectedAccount?.id && channelId) {
-				return {items: [], totalCount: 0};
+	const {data: placedOrdersWithAttachements = {items: [], totalCount: 0}} =
+		useSWR(
+			`/${key}/with-attachments/${placedOrders.totalCount}`,
+			async () => {
+				if (!selectedAccount?.id && channelId) {
+					return {items: [], totalCount: 0};
+				}
+
+				const orders = await Promise.all(
+					placedOrders.items.map(async (order) => {
+						const [placeOrderItem] = order.placedOrderItems;
+
+						const images = await getDeliveryProductImages(
+							selectedAccount.id,
+							channelId,
+							placeOrderItem.productId
+						);
+
+						return {
+							...order,
+							name: placeOrderItem.name,
+							productId: order.placedOrderItems[0].productId,
+							thumbnail: getThumbnailByProductAttachment(images),
+							type: placeOrderItem.subscription
+								? 'Subscription'
+								: 'Perpetual',
+							virtualURL: placeOrderItem?.virtualItemURLs,
+						};
+					})
+				);
+
+				return {
+					items: orders,
+					totalCount: placedOrders.totalCount,
+				};
 			}
-
-			const orders = await Promise.all(
-				placedOrders.items.map(async (order) => {
-					const [placeOrderItem] = order.placedOrderItems;
-
-					const images = await getDeliveryProductImages(
-						selectedAccount.id,
-						channelId,
-						placeOrderItem.productId
-					);
-
-					return {
-						...order,
-						name: placeOrderItem.name,
-						productId: order.placedOrderItems[0].productId,
-						thumbnail: getThumbnailByProductAttachment(images),
-						type: placeOrderItem.subscription
-							? 'Subscription'
-							: 'Perpetual',
-						virtualURL: placeOrderItem?.virtualItemURLs,
-					};
-				})
-			);
-
-			return {
-				items: orders,
-				totalCount: placedOrders.totalCount,
-			};
-		}
-	);
+		);
 
 	return (
 		<div className="purchased-apps-dashboard-page-container">
 			<DashboardNavigation
 				accountAppsNumber={placedOrdersWithAttachements.items.length}
 				accountIcon={getAccountImage(selectedAccount?.logoURL)}
-				accounts={(accounts as unknown) as Account[]}
+				accounts={accounts as unknown as Account[]}
 				currentAccount={selectedAccount}
 				dashboardNavigationItems={dashboardNavigationItems}
 			/>

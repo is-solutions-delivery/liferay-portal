@@ -10,9 +10,8 @@ import {DashboardPage} from '../../../components/DashBoardPage/DashboardPage';
 import PublishedAppsTable from './components/PublishedAppsTable';
 
 const Apps = () => {
-	const {catalogId, page, publishedProductTable, setPage} = useOutletContext<
-		any
-	>();
+	const {catalogId, page, publishedProductTable, setPage} =
+		useOutletContext<any>();
 	const navigate = useNavigate();
 
 	return (

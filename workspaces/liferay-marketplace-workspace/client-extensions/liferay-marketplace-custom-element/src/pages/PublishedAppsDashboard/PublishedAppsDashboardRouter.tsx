@@ -25,22 +25,20 @@ const PublishedAppsDashboardRouter = () => {
 
 	useEffect(() => {
 		const loadData = async () => {
-			const [
-				supplierAccountResponse,
-				catalogResponse,
-			] = await Promise.all([
-				HeadlessAdminUserImpl.getAccounts(
-					new URLSearchParams({
-						filter: SearchBuilder.eq('type', 'supplier'),
-					})
-				),
-				HeadlessCommerceAdminCatalogImpl.getCatalogs(
-					new URLSearchParams({
-						fields: 'accountId,id',
-						pageSize: '-1',
-					})
-				),
-			]);
+			const [supplierAccountResponse, catalogResponse] =
+				await Promise.all([
+					HeadlessAdminUserImpl.getAccounts(
+						new URLSearchParams({
+							filter: SearchBuilder.eq('type', 'supplier'),
+						})
+					),
+					HeadlessCommerceAdminCatalogImpl.getCatalogs(
+						new URLSearchParams({
+							fields: 'accountId,id',
+							pageSize: '-1',
+						})
+					),
+				]);
 
 			const {items: catalogs = []} = catalogResponse;
 			const {items: supplierAccounts = []} = supplierAccountResponse;
@@ -52,10 +50,11 @@ const PublishedAppsDashboardRouter = () => {
 			);
 
 			if (!suppliers.length) {
-				window.location.href = Liferay.ThemeDisplay.getCanonicalURL().replace(
-					'/publisher-dashboard',
-					'/home'
-				);
+				window.location.href =
+					Liferay.ThemeDisplay.getCanonicalURL().replace(
+						'/publisher-dashboard',
+						'/home'
+					);
 			}
 
 			if (

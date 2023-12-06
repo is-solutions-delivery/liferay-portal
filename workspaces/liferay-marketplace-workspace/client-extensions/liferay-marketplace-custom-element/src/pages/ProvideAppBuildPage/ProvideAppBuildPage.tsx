@@ -162,9 +162,8 @@ export function ProvideAppBuildPage({
 	const [selectedCheckboxValue, setSelectedCheckboxValue] = useState<
 		string[]
 	>([]);
-	const [visibleSelectVersionModal, setVisibleSelectVersionModal] = useState(
-		false
-	);
+	const [visibleSelectVersionModal, setVisibleSelectVersionModal] =
+		useState(false);
 
 	const handleSelectCheckbox = (offeringTypelabel: string) =>
 		setSelectedCheckboxValue((prevValue) =>
@@ -467,9 +466,9 @@ export function ProvideAppBuildPage({
 					<OfferingTypeCheckbox
 						handleSelectCheckbox={handleSelectCheckbox}
 						offeringTypes={
-							(offeringTypesDescription[
+							offeringTypesDescription[
 								appType.value as ProductType
-							] as unknown) as OfferingType[]
+							] as unknown as OfferingType[]
 						}
 						selectedValue={selectedCheckboxValue}
 					/>

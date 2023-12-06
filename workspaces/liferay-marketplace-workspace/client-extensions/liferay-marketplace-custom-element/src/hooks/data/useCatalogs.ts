@@ -9,7 +9,8 @@ import HeadlessCommerceAdminCatalogImpl from '../../services/rest/HeadlessCommer
 
 const useCatalogs = () => {
 	return useSWR('/catalogs', async () => {
-		const catalogResponse = await HeadlessCommerceAdminCatalogImpl.getCatalogs();
+		const catalogResponse =
+			await HeadlessCommerceAdminCatalogImpl.getCatalogs();
 
 		return catalogResponse.items;
 	});

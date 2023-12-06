@@ -45,10 +45,7 @@ const useNextSteps = (orderId: string) => {
 			)
 	);
 
-	const {
-		data: accountCommerce,
-		isLoading: accountCommerceLoading,
-	} = useSWR(
+	const {data: accountCommerce, isLoading: accountCommerceLoading} = useSWR(
 		accountId ? `/next-steps/account-commerce/${accountId}` : null,
 		() => getAccountInfoFromCommerce(accountId)
 	);
