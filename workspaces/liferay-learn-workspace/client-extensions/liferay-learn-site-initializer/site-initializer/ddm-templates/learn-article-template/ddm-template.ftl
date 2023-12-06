@@ -3,7 +3,7 @@
 <script>
 	let href = window.location.href;
 
-	if (href.endsWith("/")){
+	if (href.endsWith("/")) {
 		href = href.substring(0, href.length - 1);
 		window.location.assign(href);
 	}
@@ -107,7 +107,7 @@
 									<a class="reference internal" href="${parentLink.url}">${parentLink.title}</a>
 								</li>
 							</#if>
-							
+
 							<#assign navigationLinksJSONArray = jsonFactoryUtil.createJSONArray(navigationLinks.getData()) />
 
 							<#if navigationLinksJSONArray.length() gt 0>
@@ -136,6 +136,7 @@
 									<@clay["icon"] symbol="home-full" />
 									</a>
 								</li>
+
 								<#if breadcrumbLinksJSONArray.length() gt 0>
 									<#list breadcrumbLinksJSONArray.length()-1..0 as i>
 										<#assign breadcrumbLink = breadcrumbLinksJSONArray.getJSONObject(i)?eval />
@@ -145,6 +146,7 @@
 										</li>
 									</#list>
 								</#if>
+
 								<li class="font-weight-bold">
 									${.vars['reserved-article-title'].getData()}
 								</li>
@@ -154,9 +156,11 @@
 							  <div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1rem; font-style: normal; font-weight: 600; line-height: 1.5rem; color: var(--action-primary-default, #0B5FFF);
 	text-align: center; margin-right: 3rem;">Ask The Community <@clay["icon"] symbol="message-boards" /></div>
 							  </div>
+
 							</a>
 						</#if>
 						<#list taxonomyVocabularies as vocabulary>
+
 						<div class="col-10 d-flex flex-column mt-2 pl-0" id="tags">
 						<div class="align-items-baseline d-flex flex-wrap" id="${vocabulary}">
 							<div class="font-weight-bold mr-2" id="${vocabulary}-Title" style="font-size: 0.875rem;">
@@ -168,6 +172,7 @@
 padding: 0.25rem 0.75rem; align-items: center; gap: 0.25rem;">
 				  <span class="label-item label-item-expand">${taxonomyCategory.categoryName}</span>
 									</a>
+
 									</div>
 								</#list>
 							</div>
@@ -183,9 +188,11 @@ padding: 0.25rem 0.75rem; align-items: center; gap: 0.25rem;">
 						<#if (content.getData())??>
 							${content.getData()}
 						</#if>
+
 						<#if isLandingPage>
 							<#include "${templatesPath}/LANDING-PAGE">
 						</#if>
+
 						<div class="autofit-padded-no-gutters-x autofit-row help-center-footer">
 							<div class="autofit-col">
 								<div class="icon-container">
