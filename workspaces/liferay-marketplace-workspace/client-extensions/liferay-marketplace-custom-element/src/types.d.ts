@@ -266,6 +266,7 @@ interface PlacedOrder {
 interface PlacedOrderItems {
 	id: number;
 	name: string;
+	options: string;
 	price: {
 		priceFormatted: string;
 	};
