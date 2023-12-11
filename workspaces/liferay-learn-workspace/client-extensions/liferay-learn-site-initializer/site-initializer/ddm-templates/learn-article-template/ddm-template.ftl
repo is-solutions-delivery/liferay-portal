@@ -10,26 +10,28 @@
 
 <#assign
 	journalArticleId = .vars["reserved-article-id"].data
-
 	taxonomyCategoryBriefs = restClient.get("/headless-delivery/v1.0/sites/${groupId}/structured-contents/by-key/${journalArticleId}?nestedFields=embeddedTaxonomyCategory").taxonomyCategoryBriefs
-
 	taxonomyVocabularies = []
 />
 
 <#list taxonomyCategoryBriefs as taxonomyCategoryBrief>
-	<#if !taxonomyVocabularies?seq_contains(taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name)>
-		<#assign taxonomyVocabularies = taxonomyVocabularies + [taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name] />
+<#assign taxonomyVocabularyName = taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name />
+
+	<#if !taxonomyVocabularies?seq_contains(taxonomyVocabularyName)>
+		<#assign taxonomyVocabularies = taxonomyVocabularies + [taxonomyVocabularyName] />
 	</#if>
 </#list>
 
 <#assign taxonomyCategoriesMap = {} />
 
 <#list taxonomyCategoryBriefs as taxonomyCategoryBrief>
-	<#if taxonomyCategoriesMap[taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name]?has_content>
+<#assign taxonomyVocabularyName = taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name />
+
+	<#if taxonomyCategoriesMap[taxonomyVocabularyName]?has_content>
 		<#assign taxonomyCategoriesMap = taxonomyCategoriesMap +
 			{
-			  taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name:
-			  taxonomyCategoriesMap[taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name] + [{
+			  taxonomyVocabularyName:
+			  taxonomyCategoriesMap[taxonomyVocabularyName] + [{
 				"categoryId": taxonomyCategoryBrief.taxonomyCategoryId,
 				"categoryName": taxonomyCategoryBrief.taxonomyCategoryName
 				}]
@@ -39,7 +41,7 @@
 	<#else>
 		<#assign taxonomyCategoriesMap = taxonomyCategoriesMap +
 			{
-			  taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name:
+			  taxonomyVocabularyName:
 				[{
 					"categoryId": taxonomyCategoryBrief.taxonomyCategoryId,
 					"categoryName": taxonomyCategoryBrief.taxonomyCategoryName
