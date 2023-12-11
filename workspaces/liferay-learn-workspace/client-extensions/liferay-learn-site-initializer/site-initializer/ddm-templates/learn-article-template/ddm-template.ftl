@@ -60,6 +60,7 @@
 
 <#if (breadcrumbLinks.getData())??>
 	<#assign breadcrumbLinksJSONArray = jsonFactoryUtil.createJSONArray(breadcrumbLinks.getData()) />
+
 	<#if breadcrumbLinksJSONArray.length() gt 0>
 		<#assign
 			parentLink = breadcrumbLinksJSONArray.getJSONObject(0)?eval
@@ -97,6 +98,7 @@
 							<svg class="lexicon-icon lexicon-icon-angle-left" role="presentation" viewBox="0 0 512 512">
 								<use xlink:href="#angle-left" />
 							</svg>
+
 							${languageUtil.get(locale, "go-back", "Go Back")}
 						</a>
 					</#if>
