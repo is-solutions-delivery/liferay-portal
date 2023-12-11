@@ -10,7 +10,9 @@
 
 <#assign
 	journalArticleId = .vars["reserved-article-id"].data
+
 	taxonomyCategoryBriefs = restClient.get("/headless-delivery/v1.0/sites/${groupId}/structured-contents/by-key/${journalArticleId}?nestedFields=embeddedTaxonomyCategory").taxonomyCategoryBriefs
+
 	taxonomyVocabularies = []
 />
 
@@ -33,6 +35,7 @@
 				}]
 			}
 		/>
+
 	<#else>
 		<#assign taxonomyCategoriesMap = taxonomyCategoriesMap +
 			{
@@ -143,6 +146,7 @@
 										</li>
 									</#list>
 								</#if>
+
 								<li class="font-weight-bold">
 									${.vars['reserved-article-title'].getData()}
 								</li>
