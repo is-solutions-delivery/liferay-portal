@@ -47,6 +47,9 @@ public class DeleteLayoutPageTemplateEntryMVCActionCommand
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
+		List<Long> deleteLayoutPageTemplateEntryIdsList = new ArrayList<>();
+		Set<Class<?>> exceptionClasses = new HashSet<>();
+
 		long[] deleteLayoutPageTemplateEntryIds = null;
 
 		long layoutPageTemplateEntryId = ParamUtil.getLong(
@@ -61,10 +64,6 @@ public class DeleteLayoutPageTemplateEntryMVCActionCommand
 			deleteLayoutPageTemplateEntryIds = ParamUtil.getLongValues(
 				actionRequest, "rowIds");
 		}
-
-		Set<Class<?>> exceptionClasses = new HashSet<>();
-
-		List<Long> deleteLayoutPageTemplateEntryIdsList = new ArrayList<>();
 
 		for (long deleteLayoutPageTemplateEntryId :
 				deleteLayoutPageTemplateEntryIds) {
