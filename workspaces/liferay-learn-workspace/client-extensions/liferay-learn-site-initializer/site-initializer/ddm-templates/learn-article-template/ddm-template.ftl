@@ -2,7 +2,6 @@
 
 <script>
 	let href = window.location.href;
-
 	if (href.endsWith("/")) {
 		href = href.substring(0, href.length - 1);
 		window.location.assign(href);
@@ -15,33 +14,32 @@
 	taxonomyVocabularies = []
 />
 
-<#list taxonomyCategoryBriefs as taxonomyCategory>
-	<#if taxonomyVocabularies?seq_contains(taxonomyCategory.taxonomyVocabularyName)>
-	<#else>
-		<#assign taxonomyVocabularies = taxonomyVocabularies + [taxonomyCategory.taxonomyVocabularyName] />
+<#list taxonomyCategoryBriefs as taxonomyCategoryBrief>
+	<#if !taxonomyVocabularies?seq_contains(taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name)>
+		<#assign taxonomyVocabularies = taxonomyVocabularies + [taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name] />
 	</#if>
 </#list>
 
 <#assign taxonomyCategoriesMap = {} />
 
-<#list taxonomyCategoryBriefs as taxonomyCategory>
-	<#if taxonomyCategoriesMap[taxonomyCategory.taxonomyVocabularyName]?has_content>
+<#list taxonomyCategoryBriefs as taxonomyCategoryBrief>
+	<#if taxonomyCategoriesMap[taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name]?has_content>
 		<#assign taxonomyCategoriesMap = taxonomyCategoriesMap +
 			{
-			  taxonomyCategory.taxonomyVocabularyName:
-			  taxonomyCategoriesMap[taxonomyCategory.taxonomyVocabularyName] + [{
-				"categoryId": taxonomyCategory.taxonomyCategoryId,
-				"categoryName": taxonomyCategory.taxonomyCategoryName
+			  taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name:
+			  taxonomyCategoriesMap[taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name] + [{
+				"categoryId": taxonomyCategoryBrief.taxonomyCategoryId,
+				"categoryName": taxonomyCategoryBrief.taxonomyCategoryName
 				}]
 			}
 		/>
 	<#else>
 		<#assign taxonomyCategoriesMap = taxonomyCategoriesMap +
 			{
-			  taxonomyCategory.taxonomyVocabularyName:
+			  taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name:
 				[{
-					"categoryId": taxonomyCategory.taxonomyCategoryId,
-					"categoryName": taxonomyCategory.taxonomyCategoryName
+					"categoryId": taxonomyCategoryBrief.taxonomyCategoryId,
+					"categoryName": taxonomyCategoryBrief.taxonomyCategoryName
 				}]
 			}
 		/>
@@ -56,7 +54,6 @@
 
 <#if (breadcrumbLinks.getData())??>
 	<#assign breadcrumbLinksJSONArray = jsonFactoryUtil.createJSONArray(breadcrumbLinks.getData()) />
-
 	<#if breadcrumbLinksJSONArray.length() gt 0>
 		<#assign
 			parentLink = breadcrumbLinksJSONArray.getJSONObject(0)?eval
@@ -125,10 +122,9 @@
 		</div>
 
 		<div class="col-12 col-md-10 doc-body">
-			<div class="position-static">
-				<div class="border-bottom-0 h-auto p-0">
-					<div class="mt-3 offset-md-1">
-						<#if breadcrumbLinksJSONArray??>
+			<div class="border-bottom-0 h-auto p-0">
+				<div class="mt-3 offset-md-1">
+					<#if breadcrumbLinksJSONArray??>
 						<div class="d-flex" style="align-items: baseline; justify-content: space-between;">
 							<ul aria-label="breadcrumb navigation" class="article-breadcrumb" role="navigation">
 								<li>
@@ -136,7 +132,6 @@
 										<@clay["icon"] symbol="home-full" />
 									</a>
 								</li>
-
 								<#if breadcrumbLinksJSONArray.length() gt 0>
 									<#list breadcrumbLinksJSONArray.length()-1..0 as i>
 										<#assign breadcrumbLink = breadcrumbLinksJSONArray.getJSONObject(i)?eval />
@@ -146,7 +141,6 @@
 										</li>
 									</#list>
 								</#if>
-
 								<li class="font-weight-bold">
 									${.vars['reserved-article-title'].getData()}
 								</li>
@@ -159,61 +153,59 @@
 								</a>
 							</div>
 						</div>
-						</#if>
-
-						<#list taxonomyVocabularies as vocabulary>
-
-						<div class="col-10 d-flex flex-column mt-2 pl-0" id="tags">
-							<div class="align-items-baseline d-flex flex-wrap" id="${vocabulary}">
-								<div class="font-weight-bold mr-2" id="${vocabulary}-Title" style="font-size: 0.875rem;">
-									${vocabulary}
-							  	</div>
-							<#list taxonomyCategoriesMap[vocabulary]?sort_by("categoryName") as taxonomyCategory>
-								<div class="d-flex" id="${vocabulary}-Tags">
-									<a class="label label-primary" href="/search?category=${taxonomyCategory.categoryId}" style="border-radius: 1.5rem; border: 1px solid var(--action-primary-default, #0B5FFF); background: var(--action-primary-inverted, #FFF); display: flex; padding: 0.25rem 0.75rem; align-items: center; gap: 0.25rem;">
-				  						<span class="label-item label-item-expand">${taxonomyCategory.categoryName}</span>
-									</a>
-								</div>
-							</#list>
-						</div>
-						</#list>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="col-12 doc-content ${isLandingPage?then("landing-page-container", "")}" id="docContent" style="margin-top: 0px;">
-			<div class="row" style="overflow: hidden;">
-				<div class="article-body col-12 col-md-10 language-log">
-					<#if (content.getData())??>
-						${content.getData()}
 					</#if>
 
-					<#if isLandingPage>
-						<#include "${templatesPath}/LANDING-PAGE">
-					</#if>
+					<#list taxonomyVocabularies as vocabulary>
+						<div class="col-10 d-flex mt-2 pl-0" id="tagContent" style="gap: 1rem;">
+							<div class="align-items-baseline d-flex flex-wrap" id="${vocabulary}-tags">
+								${vocabulary}
+							</div>
 
-					<div class="autofit-padded-no-gutters-x autofit-row help-center-footer">
-						<div class="autofit-col">
-							<div class="icon-container">
-								<svg class="lexicon-icon liferay-waffle-icon" focusable="false" role="presentation" viewBox="0 0 512 512">
-									<use xlink:href="#liferay-waffle" />
-								</svg>
+							<div class="d-flex font-weight-bold mr-2" id="${vocabulary}-Title" style="font-size: 0.875rem;">
+								<#list taxonomyCategoriesMap[vocabulary]?sort_by("categoryName") as taxonomyCategory>
+									<div class="d-flex" id="${vocabulary}-tag">
+										<a class="label label-primary" href="/search?category=${taxonomyCategory.categoryId}" style="border-radius: 1.5rem; border: 1px solid var(--action-primary-default, #0B5FFF); background: var(--action-primary-inverted, #FFF); display: flex; padding: 0.25rem 0.75rem; align-items: center; gap: 0.25rem;">
+											<span class="label-item label-item-expand">${taxonomyCategory.categoryName}</span>
+										</a>
+									</div>
+								</#list>
 							</div>
 						</div>
+					</#list>
+				</div>
+			</div>
 
-						<div class="autofit-col autofit-col-expand">
-							<h3>${languageUtil.get(locale, "not-finding-what-you-are-looking-for", "Not finding what you're looking for?")}</h3>
+			<div class="col-12 doc-content ${isLandingPage?then("landing-page-container", "")}" id="docContent" style="margin-top: 0px;">
+				<div class="row" style="overflow: hidden;">
+					<div class="article-body col-12 col-md-10 language-log>
+						<#if (content.getData())??>
+							${content.getData()}
+						</#if>
+						<#if isLandingPage>
+							<#include "${templatesPath}/LANDING-PAGE">
+						</#if>
+						<div class="autofit-padded-no-gutters-x autofit-row help-center-footer">
+							<div class="autofit-col">
+								<div class="icon-container">
+									<svg class="lexicon-icon liferay-waffle-icon" focusable="false" role="presentation" viewBox="0 0 512 512">
+										<use xlink:href="#liferay-waffle" />
+									</svg>
+								</div>
+							</div>
 
-							<p>${languageUtil.get(locale, "pardon-our-dust-as-we-revamp", "Pardon our dust as we revamp and transition our product documentation to this site. If something seems missing, please check Liferay Help Center documentation for Liferay DXP 7.2 and previous versions.")}</p>
+							<div class="autofit-col autofit-col-expand">
+								<h3>${languageUtil.get(locale, "not-finding-what-you-are-looking-for", "Not finding what you're looking for?")}</h3>
 
-							<a href="https://help.liferay.com/hc/en-us/categories/360001749912">
-								<strong>${languageUtil.get(locale, "try-liferays-help-center", "Try Liferay's Help Center")}</strong>
+								<p>${languageUtil.get(locale, "pardon-our-dust-as-we-revamp", "Pardon our dust as we revamp and transition our product documentation to this site. If something seems missing, please check Liferay Help Center documentation for Liferay DXP 7.2 and previous versions.")}</p>
 
-								<svg class="lexicon-icon lexicon-icon-shortcut" focusable="false" role="presentation" viewBox="0 0 512 512">
-									<use xlink:href="#shortcut" />
-								</svg>
-							</a>
+								<a href="https://help.liferay.com/hc/en-us/categories/360001749912">
+									<strong>${languageUtil.get(locale, "try-liferays-help-center", "Try Liferay's Help Center")}</strong>
+
+									<svg class="lexicon-icon lexicon-icon-shortcut" focusable="false" role="presentation" viewBox="0 0 512 512">
+										<use xlink:href="#shortcut" />
+									</svg>
+								</a>
+							</div>
 						</div>
 					</div>
 				</div>
