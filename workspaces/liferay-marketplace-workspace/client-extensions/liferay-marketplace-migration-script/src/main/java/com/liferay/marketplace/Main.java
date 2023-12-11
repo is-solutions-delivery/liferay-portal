@@ -406,31 +406,10 @@ public class Main {
 			).build());
 
 		for (Category category : product.getCategories()) {
-			if ((category.getId(
-				).longValue() != _bundledCategoryId) &&
-				(category.getId(
-				).longValue() != _freeCategoryId) &&
-				(category.getId(
-				).longValue() != _paidCategoryId)) {
+			if (category.getId(
+				).longValue() != _bundledCategoryId) {
 
 				continue;
-			}
-
-			if (category.getId(
-				).longValue() == _freeCategoryId) {
-
-				productSpecification.setValue(
-					HashMapBuilder.put(
-						"en_US", "Free"
-					).build());
-			}
-			else if (category.getId(
-					).longValue() == _paidCategoryId) {
-
-				productSpecification.setValue(
-					HashMapBuilder.put(
-						"en_US", "Paid"
-					).build());
 			}
 
 			if (productSpecifications == null) {
