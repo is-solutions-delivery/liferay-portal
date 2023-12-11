@@ -1,8 +1,6 @@
 <#include "${templatesPath}/SVG">
-
 <script>
 	let href = window.location.href;
-
 	if (href.endsWith("/")) {
 		href = href.substring(0, href.length - 1);
 		window.location.assign(href);
@@ -10,14 +8,47 @@
 </script>
 
 <#assign
+	journalArticleId = .vars["reserved-article-id"].data
+	taxonomyCategoryBriefs = restClient.get("/headless-delivery/v1.0/sites/${groupId}/structured-contents/by-key/${journalArticleId}?nestedFields=embeddedTaxonomyCategory").taxonomyCategoryBriefs
+	taxonomyVocabularies = []
+	taxonomyCategoriesMap = {}
+/>
+
+<#list taxonomyCategoryBriefs as taxonomyCategoryBrief>
+<#assign taxonomyVocabularyName = taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name />
+	<#if !taxonomyVocabularies?seq_contains(taxonomyVocabularyName)>
+		<#assign taxonomyVocabularies = taxonomyVocabularies + [taxonomyVocabularyName] />
+	</#if>
+	<#if taxonomyCategoriesMap[taxonomyVocabularyName]?has_content>
+		<#assign taxonomyCategoriesMap = taxonomyCategoriesMap +
+			{
+			  taxonomyVocabularyName:
+			  taxonomyCategoriesMap[taxonomyVocabularyName] + [{
+				"categoryId": taxonomyCategoryBrief.taxonomyCategoryId,
+				"categoryName": taxonomyCategoryBrief.taxonomyCategoryName
+				}]
+			}
+		/>
+	<#else>
+		<#assign taxonomyCategoriesMap = taxonomyCategoriesMap +
+			{
+			  taxonomyVocabularyName:
+				[{
+					"categoryId": taxonomyCategoryBrief.taxonomyCategoryId,
+					"categoryName": taxonomyCategoryBrief.taxonomyCategoryName
+				}]
+			}
+		/>
+	</#if>
+</#list>
+
+<#assign
 	groupFriendlyURL = "/web" + themeDisplay.getScopeGroup().getFriendlyURL()
 	isLandingPage = false
 	topLevelArticle = true
 />
-
 <#if (breadcrumbLinks.getData())??>
 	<#assign breadcrumbLinksJSONArray = jsonFactoryUtil.createJSONArray(breadcrumbLinks.getData()) />
-
 	<#if breadcrumbLinksJSONArray.length() gt 0>
 		<#assign
 			parentLink = breadcrumbLinksJSONArray.getJSONObject(0)?eval
@@ -25,11 +56,9 @@
 		/>
 	</#if>
 </#if>
-
 <#if (landingPage.getData())?? && (landingPage.getData() == "true")>
 	<#assign isLandingPage = true />
 </#if>
-
 <div class="container-fluid documentations main-content" role="main">
 	<div class="row">
 		<div class="col-12 col-md-2 doc-nav-wrapper mobile-nav-hide">
@@ -38,31 +67,17 @@
 					<button
 						aria-label="Expand Documentation Menu" class="btn expand-btn" onclick="javascript:;"
 						title="Expand Documentation Menu" type="button">
-						<@clay["icon"] symbol="angle-down-small" />
+							<@clay["icon"] symbol="angle-down-small" />
 					</button>
 
 					<button
 						aria-label="Close Documentation Menu" class="btn collapse-btn" onclick="javascript:;"
 						title="Close Documentation Menu" type="button">
-						<@clay["icon"] symbol="angle-up-small" />
+							<@clay["icon"] symbol="angle-up-small" />
 					</button>
 				</div>
 
 				<div class="doc-nav">
-					<div class="admonition hide hilighting-alert important" id="highlightAlert">
-						<p class="admonition-title">
-							<span class="title-text">
-								${languageUtil.get(locale, "highlighting", "Highlighting")}
-
-								<span id="highlightTextMatch"></span>
-							</span>
-						</p>
-
-						<a class="remove-link" href="javascript:;" id="removeHighlightLink">
-							${languageUtil.get(locale, "remove-highlighting", "Remove Highlighting")}
-						</a>
-					</div>
-
 					<#if !topLevelArticle>
 						<a class="back-link btn btn-link btn-monospaced d-flex flex-row justify-content-start" href="${parentLink.url}" id="backLink">
 							<svg class="lexicon-icon lexicon-icon-angle-left" role="presentation" viewBox="0 0 512 512">
@@ -71,9 +86,7 @@
 							${languageUtil.get(locale, "go-back", "Go Back")}
 						</a>
 					</#if>
-
 					<#if (navigationLinks.getData())??>
-
 						<#assign urlTitleLastDirectory =.vars['reserved-article-url-title'].getData()?split("/")?last />
 
 						<ul class="current">
@@ -82,9 +95,7 @@
 									<a class="reference internal" href="${parentLink.url}">${parentLink.title}</a>
 								</li>
 							</#if>
-
 							<#assign navigationLinksJSONArray = jsonFactoryUtil.createJSONArray(navigationLinks.getData()) />
-
 							<#if navigationLinksJSONArray.length() gt 0>
 								<#list 0..navigationLinksJSONArray.length()-1 as i>
 									<#assign navigationLink = navigationLinksJSONArray.getJSONObject(i)?eval />
@@ -101,13 +112,13 @@
 		</div>
 
 		<div class="col-12 col-md-10 doc-body">
-			<div class="col-12 general-info p-md-0">
-				<div class="col-12 info-bar p-0">
-					<div class="col-12 col-md-7 offset-md-1 p-0">
-						<#if breadcrumbLinksJSONArray??>
+			<div class="border-bottom-0 h-auto p-0">
+				<div class="mt-3 offset-md-1">
+					<#if breadcrumbLinksJSONArray??>
+						<div class="d-flex" style="align-items: baseline; justify-content: space-between;">
 							<ul aria-label="breadcrumb navigation" class="article-breadcrumb" role="navigation">
 								<li>
-									<a href="${groupFriendlyURL}">Liferay Learn</a>
+									<a href="${groupFriendlyURL}"><@clay["icon"] symbol="home-full" /></a>
 								</li>
 								<#if breadcrumbLinksJSONArray.length() gt 0>
 									<#list breadcrumbLinksJSONArray.length()-1..0 as i>
@@ -118,29 +129,42 @@
 										</li>
 									</#list>
 								</#if>
-								<li>
+								<li class="font-weight-bold">
 									${.vars['reserved-article-title'].getData()}
 								</li>
 							</ul>
-						</#if>
-					</div>
 
-					<div class="actions col-md-2 d-md-block d-none offset-md-1">
-						<a
-							aria-label="${languageUtil.get(locale, 'give-feedback', 'Give Feedback')}"
-							href="https://liferay.dev/c/portal/login?redirect=https://liferay.dev/ask/questions/liferay-learn-feedback/new"
-							title="${languageUtil.get(locale, 'give-feedback', 'Give Feedback')}">
-							<svg>
-								<use xlink:href="#edit"></use>
-							</svg>
-						</a>
-					</div>
+							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1rem; font-style: normal; font-weight: 600; line-height: 1.5rem; color: var(--action-primary-default, #0B5FFF); text-align: center; padding-right: 3rem;">
+								<a href="https://liferay.dev/c/portal/login?redirect=https://liferay.dev/ask/questions/liferay-learn-feedback/new" style="text-decoration: none;">
+									Ask The Community
+									<@clay["icon"] symbol="message-boards" />
+								</a>
+							</div>
+						</div>
+					</#if>
+					<#list taxonomyVocabularies as vocabulary>
+						<div class="col-10 d-flex mt-2 pl-0" id="tagContent" style="gap: 1rem;">
+							<div class="align-items-baseline d-flex flex-wrap" id="${vocabulary}-tags">
+								${vocabulary}
+							</div>
+
+							<div class="d-flex font-weight-bold mr-2" id="${vocabulary}-Title" style="font-size: 0.875rem;">
+								<#list taxonomyCategoriesMap[vocabulary]?sort_by("categoryName") as taxonomyCategory>
+									<div class="d-flex" id="${vocabulary}-tag">
+										<a class="label label-primary" href="/search?category=${taxonomyCategory.categoryId}" style="border-radius: 1.5rem; border: 1px solid var(--action-primary-default, #0B5FFF); background: var(--action-primary-inverted, #FFF); display: flex; padding: 0.25rem 0.75rem; align-items: center; gap: 0.25rem;">
+											<span class="label-item label-item-expand">${taxonomyCategory.categoryName}</span>
+										</a>
+									</div>
+								</#list>
+							</div>
+						</div>
+					</#list>
 				</div>
 			</div>
 
-			<div class="col-12 doc-content ${isLandingPage?then("landing-page-container", "")}" id="docContent">
-				<div class="row">
-					<div class="article-body col-12 col-md-8 language-log">
+			<div class="col-12 doc-content ${isLandingPage?then("landing-page-container", "")}" id="docContent" style="margin-top: 0px;">
+				<div class="row" style="overflow: hidden;">
+					<div class="article-body col-12 col-md-10 language-log">
 						<#if (content.getData())??>
 							${content.getData()}
 						</#if>
@@ -170,10 +194,6 @@
 								</a>
 							</div>
 						</div>
-					</div>
-
-					<div class="col-md-4 d-none d-sm-block toc-container">
-						<ul class="nav nav-stacked toc" id="articleTOC"></ul>
 					</div>
 				</div>
 			</div>
