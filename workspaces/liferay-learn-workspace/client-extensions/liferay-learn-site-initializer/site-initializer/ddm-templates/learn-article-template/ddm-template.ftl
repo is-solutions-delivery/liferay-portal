@@ -2,6 +2,7 @@
 
 <script>
 	let href = window.location.href;
+
 	if (href.endsWith("/")) {
 		href = href.substring(0, href.length - 1);
 		window.location.assign(href);
@@ -21,7 +22,6 @@
 		<#assign taxonomyVocabularies = taxonomyVocabularies + [taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name] />
 
 	</#if>
-
 </#list>
 
 <#assign taxonomyCategoriesMap = {} />
@@ -37,6 +37,7 @@
 				}]
 			}
 		/>
+
 	<#else>
 		<#assign taxonomyCategoriesMap = taxonomyCategoriesMap +
 			{
@@ -47,8 +48,8 @@
 				}]
 			}
 		/>
-	</#if>
 
+	</#if>
 </#list>
 
 <#assign
@@ -67,11 +68,13 @@
 
 			topLevelArticle = false
 		/>
+
 	</#if>
 </#if>
 
 <#if (landingPage.getData())?? && (landingPage.getData() == "true")>
 	<#assign isLandingPage = true />
+
 
 </#if>
 
@@ -85,13 +88,11 @@
 						title="Expand Documentation Menu" type="button">
 						<@clay["icon"] symbol="angle-down-small" />
 					</button>
-
 					<button
 						aria-label="Close Documentation Menu" class="btn collapse-btn" onclick="javascript:;"
 						title="Close Documentation Menu" type="button">
 						<@clay["icon"] symbol="angle-up-small" />
 					</button>
-
 				</div>
 
 				<div class="doc-nav">
@@ -106,7 +107,6 @@
 
 					<#if (navigationLinks.getData())??>
 						<#assign urlTitleLastDirectory =.vars['reserved-article-url-title'].getData()?split("/")?last />
-
 						<ul class="current">
 							<#if !topLevelArticle>
 								<li class="current parent-level toctree-l1">
@@ -114,18 +114,18 @@
 								</li>
 							</#if>
 
-						<#assign navigationLinksJSONArray = jsonFactoryUtil.createJSONArray(navigationLinks.getData()) />
+							<#assign navigationLinksJSONArray = jsonFactoryUtil.createJSONArray(navigationLinks.getData()) />
 
-						<#if navigationLinksJSONArray.length() gt 0>
-							<#list 0..navigationLinksJSONArray.length()-1 as i>
-								<#assign navigationLink = navigationLinksJSONArray.getJSONObject(i)?eval />
-
-								<li class="${topLevelArticle?then("toctree-l1", "toctree-l2")} ${(urlTitleLastDirectory == navigationLink.url)?then("current", "")}">
-									<a class="reference internal" href="${navigationLink.url}">${navigationLink.title}</a>
-								</li>
-
-							</#list>
-						</#if>
+							<#if navigationLinksJSONArray.length() gt 0>
+								<#list 0..navigationLinksJSONArray.length()-1 as i>
+									<#assign navigationLink = navigationLinksJSONArray.getJSONObject(i)?eval />
+	
+									<li class="${topLevelArticle?then("toctree-l1", "toctree-l2")} ${(urlTitleLastDirectory == navigationLink.url)?then("current", "")}">
+										<a class="reference internal" href="${navigationLink.url}">${navigationLink.title}</a>
+									</li>
+	
+								</#list>
+							</#if>
 						</ul>
 					</#if>
 				</div>
@@ -142,7 +142,6 @@
 									<a href="${groupFriendlyURL}">
 										<@clay["icon"] symbol="home-full" />
 									</a>
-
 								</li>
 
 								<#if breadcrumbLinksJSONArray.length() gt 0>
@@ -152,14 +151,12 @@
 										<li>
 											<a href="${breadcrumbLink.url}">${breadcrumbLink.title}</a>
 										</li>
-
 									</#list>
 								</#if>
 
 								<li class="font-weight-bold">
 									${.vars['reserved-article-title'].getData()}
 								</li>
-
 							</ul>
 
 							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1rem; font-style: normal; font-weight: 600; line-height: 1.5rem; color: var(--action-primary-default, #0B5FFF); text-align: center; padding-right: 3rem;">
@@ -183,14 +180,11 @@
 										<a class="label label-primary" href="/search?category=${taxonomyCategory.categoryId}" style="border-radius: 1.5rem; border: 1px solid var(--action-primary-default, #0B5FFF); background: var(--action-primary-inverted, #FFF); display: flex; padding: 0.25rem 0.75rem; align-items: center; gap: 0.25rem;">
 											<span class="label-item label-item-expand">${taxonomyCategory.categoryName}</span>
 										</a>
-
 									</div>
 								</#list>
-
 							</div>
 						</div>
 					</#list>
-
 				</div>
 			</div>
 
