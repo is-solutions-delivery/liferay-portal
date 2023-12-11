@@ -10,7 +10,9 @@
 
 <#assign
 	journalArticleId = .vars["reserved-article-id"].data
+
 	taxonomyCategoryBriefs = restClient.get("/headless-delivery/v1.0/sites/${groupId}/structured-contents/by-key/${journalArticleId}?nestedFields=embeddedTaxonomyCategory").taxonomyCategoryBriefs
+
 	taxonomyVocabularies = []
 />
 
@@ -48,7 +50,9 @@
 
 <#assign
 	groupFriendlyURL = "/web" + themeDisplay.getScopeGroup().getFriendlyURL()
+
 	isLandingPage = false
+
 	topLevelArticle = true
 />
 
@@ -57,6 +61,7 @@
 	<#if breadcrumbLinksJSONArray.length() gt 0>
 		<#assign
 			parentLink = breadcrumbLinksJSONArray.getJSONObject(0)?eval
+
 			topLevelArticle = false
 		/>
 	</#if>
@@ -139,8 +144,8 @@
 										<li>
 											<a href="${breadcrumbLink.url}">${breadcrumbLink.title}</a>
 										</li>
-									</#list>
-								</#if>
+									</#list>								</#if>
+
 								<li class="font-weight-bold">
 									${.vars['reserved-article-title'].getData()}
 								</li>
@@ -167,23 +172,23 @@
 										<a class="label label-primary" href="/search?category=${taxonomyCategory.categoryId}" style="border-radius: 1.5rem; border: 1px solid var(--action-primary-default, #0B5FFF); background: var(--action-primary-inverted, #FFF); display: flex; padding: 0.25rem 0.75rem; align-items: center; gap: 0.25rem;">
 											<span class="label-item label-item-expand">${taxonomyCategory.categoryName}</span>
 										</a>
-									</div>
-								</#list>
-							</div>
-						</div>
+									</div>								</#list>
+
+							</div>						</div>
 					</#list>
-				</div>
-			</div>
+				</div>			</div>
 
 			<div class="col-12 doc-content ${isLandingPage?then("landing-page-container", "")}" id="docContent" style="margin-top: 0px;">
 				<div class="row" style="overflow: hidden;">
-					<div class="article-body col-12 col-md-10 language-log>
+					<div class="article-body col-12 col-md-10 language-log">
 						<#if (content.getData())??>
 							${content.getData()}
 						</#if>
+
 						<#if isLandingPage>
 							<#include "${templatesPath}/LANDING-PAGE">
 						</#if>
+
 						<div class="autofit-padded-no-gutters-x autofit-row help-center-footer">
 							<div class="autofit-col">
 								<div class="icon-container">
