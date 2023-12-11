@@ -13,14 +13,13 @@
 	journalArticleId = .vars["reserved-article-id"].data
 
 	taxonomyCategoryBriefs = restClient.get("/headless-delivery/v1.0/sites/${groupId}/structured-contents/by-key/${journalArticleId}?nestedFields=embeddedTaxonomyCategory").taxonomyCategoryBriefs
-	
+
 	taxonomyVocabularies = []
 />
 
 <#list taxonomyCategoryBriefs as taxonomyCategoryBrief>
 	<#if !taxonomyVocabularies?seq_contains(taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name)>
 		<#assign taxonomyVocabularies = taxonomyVocabularies + [taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name] />
-
 	</#if>
 </#list>
 
@@ -48,7 +47,6 @@
 				}]
 			}
 		/>
-
 	</#if>
 </#list>
 
@@ -68,14 +66,11 @@
 
 			topLevelArticle = false
 		/>
-
 	</#if>
 </#if>
 
 <#if (landingPage.getData())?? && (landingPage.getData() == "true")>
 	<#assign isLandingPage = true />
-
-
 </#if>
 
 <div class="container-fluid documentations main-content" role="main">
@@ -88,6 +83,7 @@
 						title="Expand Documentation Menu" type="button">
 						<@clay["icon"] symbol="angle-down-small" />
 					</button>
+
 					<button
 						aria-label="Close Documentation Menu" class="btn collapse-btn" onclick="javascript:;"
 						title="Close Documentation Menu" type="button">
@@ -107,6 +103,7 @@
 
 					<#if (navigationLinks.getData())??>
 						<#assign urlTitleLastDirectory =.vars['reserved-article-url-title'].getData()?split("/")?last />
+
 						<ul class="current">
 							<#if !topLevelArticle>
 								<li class="current parent-level toctree-l1">
@@ -119,11 +116,10 @@
 							<#if navigationLinksJSONArray.length() gt 0>
 								<#list 0..navigationLinksJSONArray.length()-1 as i>
 									<#assign navigationLink = navigationLinksJSONArray.getJSONObject(i)?eval />
-	
+
 									<li class="${topLevelArticle?then("toctree-l1", "toctree-l2")} ${(urlTitleLastDirectory == navigationLink.url)?then("current", "")}">
 										<a class="reference internal" href="${navigationLink.url}">${navigationLink.title}</a>
 									</li>
-	
 								</#list>
 							</#if>
 						</ul>
@@ -198,7 +194,7 @@
 						<#if isLandingPage>
 							<#include "${templatesPath}/LANDING-PAGE">
 						</#if>
-						
+
 						<div class="autofit-padded-no-gutters-x autofit-row help-center-footer">
 							<div class="autofit-col">
 								<div class="icon-container">
