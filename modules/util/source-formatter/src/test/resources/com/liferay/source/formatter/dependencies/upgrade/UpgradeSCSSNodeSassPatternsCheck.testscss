@@ -5,11 +5,11 @@ $control-panel-spacing-mobile:    ( $spacer / 1.25 );
 	}
 }
 
-$line-height-h1:                  50 / 44;
-$line-height-h2:                  5 / 4;
-$line-height-h3:                  5.4 / 45;
-$line-height-h4:                  58 / 4.4;
-$line-height-h5:                  5.8 / 4.4;
+$line-height-h1: 50 / 44;
+$line-height-h2: 5 / 4;
+$line-height-h3: 5.4 / 45;
+$line-height-h4: 58 / 4.4;
+$line-height-h5: 5.8 / 4.4;
 
 $multiplier: nth($value, 1) / $spacer;
 
