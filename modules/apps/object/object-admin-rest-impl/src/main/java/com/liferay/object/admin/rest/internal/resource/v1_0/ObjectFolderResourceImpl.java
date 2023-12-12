@@ -192,11 +192,11 @@ public class ObjectFolderResourceImpl extends BaseObjectFolderResourceImpl {
 			throw new UnsupportedOperationException();
 		}
 
+		objectFolder.setExternalReferenceCode(externalReferenceCode);
+
 		com.liferay.object.model.ObjectFolder serviceBuilderObjectFolder =
 			_objectFolderLocalService.fetchObjectFolderByExternalReferenceCode(
 				externalReferenceCode, contextCompany.getCompanyId());
-
-		objectFolder.setExternalReferenceCode(externalReferenceCode);
 
 		if (serviceBuilderObjectFolder != null) {
 			return putObjectFolder(
