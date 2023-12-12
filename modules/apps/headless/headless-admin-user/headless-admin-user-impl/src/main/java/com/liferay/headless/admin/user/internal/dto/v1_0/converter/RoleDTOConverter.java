@@ -69,7 +69,6 @@ public class RoleDTOConverter
 				id = role.getRoleId();
 				name = role.getTitle(dtoConverterContext.getLocale());
 				name_i18n = LocalizedMapUtil.getI18nMap(role.getTitleMap());
-
 				rolePermissions = TransformUtil.transformToArray(
 					_resourcePermissionLocalService.getRoleResourcePermissions(
 						id),
@@ -109,7 +108,6 @@ public class RoleDTOConverter
 
 									return actionIdsSet.toArray(new String[0]);
 								});
-
 							setLabel(
 								() -> {
 									if (Validator.isBlank(resourceName)) {
@@ -134,7 +132,6 @@ public class RoleDTOConverter
 						}
 					},
 					RolePermission.class);
-
 				roleType = role.getTypeLabel();
 			}
 		};

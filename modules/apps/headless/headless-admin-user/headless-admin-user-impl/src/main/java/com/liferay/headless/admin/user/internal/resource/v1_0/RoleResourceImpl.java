@@ -129,13 +129,13 @@ public class RoleResourceImpl extends BaseRoleResourceImpl {
 					contextCompany.getCompanyId(), search, types, null,
 					pagination.getStartPosition(), pagination.getEndPosition(),
 					null),
-				roleModel -> _roleDTOConverter.toDTO(
+				role -> _roleDTOConverter.toDTO(
 					new DefaultDTOConverterContext(
-						true, _getActions(roleModel.getRoleId()),
-						_dtoConverterRegistry, roleModel.getRoleId(),
+						true, _getActions(role.getRoleId()),
+						_dtoConverterRegistry, role.getRoleId(),
 						contextAcceptLanguage.getPreferredLocale(),
 						contextUriInfo, contextUser),
-					roleModel)),
+					role)),
 			pagination,
 			_roleService.searchCount(
 				contextCompany.getCompanyId(), search, types, null));
@@ -160,8 +160,9 @@ public class RoleResourceImpl extends BaseRoleResourceImpl {
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			contextHttpServletRequest);
 
-		com.liferay.portal.kernel.model.Role roleModel = _roleService.fetchRole(
-			contextCompany.getCompanyId(), role.getExternalReferenceCode());
+		com.liferay.portal.kernel.model.Role serviceBuilderRole =
+			_roleService.fetchRole(
+				contextCompany.getCompanyId(), role.getExternalReferenceCode());
 
 		List<RoleTypeContributor> roleTypeContributors = ListUtil.filter(
 			_roleTypeContributorProvider.getRoleTypeContributors(),
@@ -198,26 +199,41 @@ public class RoleResourceImpl extends BaseRoleResourceImpl {
 				role.getDescription_i18n());
 		}
 
-		if (roleModel == null) {
-			roleModel = _roleService.addRole(
+		if (serviceBuilderRole == null) {
+			serviceBuilderRole = _roleService.addRole(
 				className, 0, role.getExternalReferenceCode(), titleMap,
 				descriptionMap, type, null, serviceContext);
 		}
 		else {
-			roleModel = _roleService.updateRole(
-				roleModel.getRoleId(), role.getExternalReferenceCode(),
+			serviceBuilderRole = _roleService.updateRole(
+				serviceBuilderRole.getRoleId(), role.getExternalReferenceCode(),
 				titleMap, descriptionMap, null, serviceContext);
 		}
 
-		_updateRolePermission(roleModel, role);
+		for (RolePermission rolePermission : role.getRolePermissions()) {
+			if (rolePermission.getScope() ==
+					ResourceConstants.SCOPE_INDIVIDUAL) {
+
+				continue;
+			}
+
+			for (String actionId : rolePermission.getActionIds()) {
+				_resourcePermissionService.addResourcePermission(
+					contextUser.getGroupId(), contextCompany.getCompanyId(),
+					rolePermission.getResourceName(),
+					Math.toIntExact(rolePermission.getScope()),
+					rolePermission.getPrimaryKey(),
+					serviceBuilderRole.getRoleId(), actionId);
+			}
+		}
 
 		return _roleDTOConverter.toDTO(
 			new DefaultDTOConverterContext(
-				true, _getActions(roleModel.getRoleId()), _dtoConverterRegistry,
-				roleModel.getRoleId(),
+				true, _getActions(serviceBuilderRole.getRoleId()),
+				_dtoConverterRegistry, serviceBuilderRole.getRoleId(),
 				contextAcceptLanguage.getPreferredLocale(), contextUriInfo,
 				contextUser),
-			roleModel);
+			serviceBuilderRole);
 	}
 
 	@Override
@@ -295,28 +311,6 @@ public class RoleResourceImpl extends BaseRoleResourceImpl {
 				ActionKeys.VIEW, roleId, "getRole",
 				_roleModelResourcePermission)
 		).build();
-	}
-
-	private void _updateRolePermission(
-			com.liferay.portal.kernel.model.Role roleModel, Role roleDto)
-		throws Exception {
-
-		for (RolePermission rolePermission : roleDto.getRolePermissions()) {
-			if (rolePermission.getScope() ==
-					ResourceConstants.SCOPE_INDIVIDUAL) {
-
-				continue;
-			}
-
-			for (String actionId : rolePermission.getActionIds()) {
-				_resourcePermissionService.addResourcePermission(
-					contextUser.getGroupId(), contextCompany.getCompanyId(),
-					rolePermission.getResourceName(),
-					Math.toIntExact(rolePermission.getScope()),
-					rolePermission.getPrimaryKey(), roleModel.getRoleId(),
-					actionId);
-			}
-		}
 	}
 
 	@Reference
