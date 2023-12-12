@@ -27,16 +27,18 @@ public class LayoutPageTemplateEntryModelListener
 	public void onBeforeRemove(LayoutPageTemplateEntry layoutPageTemplateEntry)
 		throws ModelListenerException {
 
-		if (!GroupThreadLocal.isDeleteInProcess()) {
-			int assetDisplayPageEntriesCount =
-				_assetDisplayPageEntryLocalService.
-					getAssetDisplayPageEntriesCountByLayoutPageTemplateEntryId(
-						layoutPageTemplateEntry.getLayoutPageTemplateEntryId());
+		if (GroupThreadLocal.isDeleteInProcess()) {
+			return;
+		}
 
-			if (assetDisplayPageEntriesCount > 0) {
-				throw new ModelListenerException(
-					new RequiredLayoutPageTemplateEntryException());
-			}
+		int assetDisplayPageEntriesCount =
+			_assetDisplayPageEntryLocalService.
+				getAssetDisplayPageEntriesCountByLayoutPageTemplateEntryId(
+					layoutPageTemplateEntry.getLayoutPageTemplateEntryId());
+
+		if (assetDisplayPageEntriesCount > 0) {
+			throw new ModelListenerException(
+				new RequiredLayoutPageTemplateEntryException());
 		}
 	}
 
