@@ -426,7 +426,7 @@ public class TimeBasedOTPBrowserSetupMFAChecker
 		return true;
 	}
 
-	private void _sendReuseAttemptWarningEmail(
+	private void _sendEmail(
 			User user, String emailAddress,
 			HttpServletRequest httpServletRequest)
 		throws Exception {
@@ -440,6 +440,22 @@ public class TimeBasedOTPBrowserSetupMFAChecker
 				emailTOTPReuseAttemptWarningFromAddress();
 		String fromName =
 			mfaTimeBasedOTPConfiguration.emailTOTPReuseAttemptWarningFromName();
+
+		LocalizedValuesMap subjectLocalizedValuesMap =
+			mfaTimeBasedOTPConfiguration.emailTOTPReuseAttemptWarningSubject();
+
+		String subject = subjectLocalizedValuesMap.get(user.getLocale());
+
+		MailTemplate subjectMailTemplate =
+			MailTemplateFactoryUtil.createMailTemplate(subject, false);
+
+		LocalizedValuesMap bodyLocalizedValuesMap =
+			mfaTimeBasedOTPConfiguration.emailTOTPReuseAttemptWarningBody();
+
+		String body = bodyLocalizedValuesMap.get(user.getLocale());
+
+		MailTemplate bodyMailTemplate =
+			MailTemplateFactoryUtil.createMailTemplate(body, true);
 
 		MailTemplateContextBuilder mailTemplateContextBuilder =
 			MailTemplateFactoryUtil.createMailTemplateContextBuilder();
@@ -458,21 +474,6 @@ public class TimeBasedOTPBrowserSetupMFAChecker
 
 		MailTemplateContext mailTemplateContext =
 			mailTemplateContextBuilder.build();
-
-		LocalizedValuesMap subjectLocalizedValuesMap =
-			mfaTimeBasedOTPConfiguration.emailTOTPReuseAttemptWarningSubject();
-
-		String subject = subjectLocalizedValuesMap.get(user.getLocale());
-
-		LocalizedValuesMap bodyLocalizedValuesMap =
-			mfaTimeBasedOTPConfiguration.emailTOTPReuseAttemptWarningBody();
-
-		String body = bodyLocalizedValuesMap.get(user.getLocale());
-
-		MailTemplate subjectMailTemplate =
-			MailTemplateFactoryUtil.createMailTemplate(subject, false);
-		MailTemplate bodyMailTemplate =
-			MailTemplateFactoryUtil.createMailTemplate(body, true);
 
 		MailMessage mailMessage = new MailMessage(
 			new InternetAddress(fromAddress, fromName),
@@ -507,8 +508,7 @@ public class TimeBasedOTPBrowserSetupMFAChecker
 				mfaTimeBasedOTPEntry.getSharedSecret(), mfaTimeBasedOTP);
 		}
 
-		_sendReuseAttemptWarningEmail(
-			user, user.getEmailAddress(), httpServletRequest);
+		_sendEmail(user, user.getEmailAddress(), httpServletRequest);
 
 		return false;
 	}
