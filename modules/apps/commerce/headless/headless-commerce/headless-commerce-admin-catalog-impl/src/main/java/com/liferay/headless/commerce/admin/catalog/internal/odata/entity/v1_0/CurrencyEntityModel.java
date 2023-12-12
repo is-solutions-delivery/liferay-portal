@@ -21,10 +21,10 @@ public class CurrencyEntityModel implements EntityModel {
 	public CurrencyEntityModel() {
 		_entityFieldsMap = EntityModel.toEntityFieldsMap(
 			new BooleanEntityField("active", locale -> "active"),
+			new BooleanEntityField("primary", locale -> "primary"),
 			new StringEntityField("code", locale -> "code"),
 			new StringEntityField(
-				"name", locale -> Field.getSortableFieldName("name")),
-			new BooleanEntityField("primary", locale -> "primary"));
+				"name", locale -> Field.getSortableFieldName("name")));
 	}
 
 	@Override
