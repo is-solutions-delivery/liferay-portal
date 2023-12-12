@@ -714,11 +714,11 @@ public class FDSViewFragmentRenderer implements FragmentRenderer {
 		}
 
 		String nestedFields = StringPool.BLANK;
-
 		int nestedFieldsDepth = 1;
 
-		for (ObjectEntry fdsField : fdsFieldObjectEntries) {
-			Map<String, Object> properties = fdsField.getProperties();
+		for (ObjectEntry fdsFieldObjectEntry : fdsFieldObjectEntries) {
+			Map<String, Object> properties =
+				fdsFieldObjectEntry.getProperties();
 
 			String[] fieldNameList = StringUtil.split(
 				String.valueOf(properties.get("name")), CharPool.PERIOD);
