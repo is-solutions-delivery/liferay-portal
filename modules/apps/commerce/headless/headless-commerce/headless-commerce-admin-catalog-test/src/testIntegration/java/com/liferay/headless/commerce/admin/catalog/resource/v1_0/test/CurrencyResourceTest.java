@@ -58,7 +58,6 @@ public class CurrencyResourceTest extends BaseCurrencyResourceTestCase {
 		assertValid(page, testGetCurrenciesPage_getExpectedActions());
 
 		currencyResource.deleteCurrency(currency1.getId());
-
 		currencyResource.deleteCurrency(currency2.getId());
 	}
 
