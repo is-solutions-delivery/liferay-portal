@@ -415,7 +415,7 @@ public class FDSViewFragmentRenderer implements FragmentRenderer {
 			ObjectEntry fdsViewObjectEntry)
 		throws Exception {
 
-		Set<ObjectEntry> objectEntries = new TreeSet<>(
+		Set<ObjectEntry> fdsFieldObjectEntries = new TreeSet<>(
 			new ObjectEntryComparator(
 				ListUtil.toList(
 					ListUtil.fromString(
@@ -425,12 +425,12 @@ public class FDSViewFragmentRenderer implements FragmentRenderer {
 						StringPool.COMMA),
 					Long::parseLong)));
 
-		objectEntries.addAll(
+		fdsFieldObjectEntries.addAll(
 			_getRelatedObjectEntries(
 				fdsViewObjectDefinition, fdsViewObjectEntry,
 				"fdsViewFDSFieldRelationship"));
 
-		return objectEntries;
+		return fdsFieldObjectEntries;
 	}
 
 	private JSONArray _getFieldsJSONArray(
@@ -706,11 +706,11 @@ public class FDSViewFragmentRenderer implements FragmentRenderer {
 	}
 
 	private String _getNestedFields(
-			String apiUrl, Set<ObjectEntry> fdsFieldObjectEntries)
+			String apiURL, Set<ObjectEntry> fdsFieldObjectEntries)
 		throws Exception {
 
 		if (fdsFieldObjectEntries == null) {
-			return apiUrl;
+			return apiURL;
 		}
 
 		String nestedFields = StringPool.BLANK;
@@ -740,12 +740,12 @@ public class FDSViewFragmentRenderer implements FragmentRenderer {
 		}
 
 		if (nestedFields.equals(StringPool.BLANK)) {
-			return apiUrl;
+			return apiURL;
 		}
 
 		StringBundler sb = new StringBundler(5);
 
-		sb.append(apiUrl);
+		sb.append(apiURL);
 		sb.append("?nestedFields=");
 		sb.append(
 			StringUtil.replaceLast(
@@ -888,25 +888,25 @@ public class FDSViewFragmentRenderer implements FragmentRenderer {
 	}
 
 	private String _interpolateURL(
-		String apiUrl, HttpServletRequest httpServletRequest) {
+		String apiURL, HttpServletRequest httpServletRequest) {
 
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
-		apiUrl = StringUtil.replace(
-			apiUrl, "{siteId}", String.valueOf(themeDisplay.getScopeGroupId()));
-		apiUrl = StringUtil.replace(
-			apiUrl, "{scopeKey}",
+		apiURL = StringUtil.replace(
+			apiURL, "{siteId}", String.valueOf(themeDisplay.getScopeGroupId()));
+		apiURL = StringUtil.replace(
+			apiURL, "{scopeKey}",
 			String.valueOf(themeDisplay.getScopeGroupId()));
-		apiUrl = StringUtil.replace(
-			apiUrl, "{userId}", String.valueOf(themeDisplay.getUserId()));
+		apiURL = StringUtil.replace(
+			apiURL, "{userId}", String.valueOf(themeDisplay.getUserId()));
 
-		if (StringUtil.contains(apiUrl, "{") && _log.isWarnEnabled()) {
-			_log.warn("Unsupported parameter in API URL: " + apiUrl);
+		if (StringUtil.contains(apiURL, "{") && _log.isWarnEnabled()) {
+			_log.warn("Unsupported parameter in API URL: " + apiURL);
 		}
 
-		return apiUrl;
+		return apiURL;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
