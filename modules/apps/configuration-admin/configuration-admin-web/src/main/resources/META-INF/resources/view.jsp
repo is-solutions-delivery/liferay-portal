@@ -42,13 +42,14 @@ ExtendedObjectClassDefinition.Scope scope = configurationScopeDisplayContext.get
 	<c:if test="<%= scope.equals(ExtendedObjectClassDefinition.Scope.COMPANY) || scope.equals(ExtendedObjectClassDefinition.Scope.SYSTEM) %>">
 
 		<%
-		String[] installedPatches = PatcherValues.INSTALLED_PATCH_NAMES;
+		String[] installedPatchNames = PatcherValues.INSTALLED_PATCH_NAMES;
 		%>
 
 		<div class="alert alert-info">
 			<strong><liferay-ui:message key="info" /></strong>: <%= ReleaseInfo.getReleaseInfo() %>
-			<c:if test="<%= (installedPatches != null) && (installedPatches.length > 0) %>">
-				<strong><liferay-ui:message key="patch" /></strong>: <%= StringUtil.merge(installedPatches, StringPool.COMMA_AND_SPACE) %>
+
+			<c:if test="<%= (installedPatchNames != null) && (installedPatchNames.length > 0) %>">
+				<strong><liferay-ui:message key="patch" /></strong>: <%= StringUtil.merge(installedPatchNames, StringPool.COMMA_AND_SPACE) %>
 			</c:if>
 		</div>
 	</c:if>
