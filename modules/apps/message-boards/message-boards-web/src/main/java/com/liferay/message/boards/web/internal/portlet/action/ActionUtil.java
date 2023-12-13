@@ -73,8 +73,8 @@ public class ActionUtil {
 			if (category.getGroupId() != themeDisplay.getScopeGroupId()) {
 				throw new NoSuchCategoryException(
 					StringBundler.concat(
-						"Unable to find Category with Id: ", categoryId,
-						" in group ", themeDisplay.getScopeGroupId()));
+						"Category ", categoryId, " does not belong to group ",
+						themeDisplay.getScopeGroupId()));
 			}
 		}
 		else {
