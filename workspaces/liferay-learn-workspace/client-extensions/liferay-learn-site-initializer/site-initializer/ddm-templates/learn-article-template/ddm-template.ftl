@@ -41,6 +41,7 @@
 		/>
 	</#if>
 </#list>
+
 <#assign
 	groupFriendlyURL = "/web" + themeDisplay.getScopeGroup().getFriendlyURL()
 	isLandingPage = false
@@ -59,36 +60,36 @@
 	<#assign isLandingPage = true />
 </#if>
 <div class="container-fluid documentations main-content" role="main">
-<div class="row">
-<div class="col-12 col-md-2 doc-nav-wrapper mobile-nav-hide">
-<div class="doc-nav-wrapper-inner">
+	<div class="row">
+		<div class="col-12 col-md-2 doc-nav-wrapper mobile-nav-hide">
+			<div class="doc-nav-wrapper-inner">
 				<div class="d-md-none mobile-doc-nav-toggler" id="mobileDocNavToggler">${languageUtil.get(locale, "documentation-menu", "Documentation Menu")}
 					<button
 						aria-label="Expand Documentation Menu" class="btn expand-btn" onclick="javascript:;"
 						title="Expand Documentation Menu" type="button">
-<@clay["icon"] symbol="angle-down-small" />
+							<@clay["icon"] symbol="angle-down-small" />
 					</button>
 
 					<button
 						aria-label="Close Documentation Menu" class="btn collapse-btn" onclick="javascript:;"
 						title="Close Documentation Menu" type="button">
-<@clay["icon"] symbol="angle-up-small" />
+							<@clay["icon"] symbol="angle-up-small" />
 					</button>
 				</div>
-<div class="doc-nav">
+				<div class="doc-nav">
 					<#if !topLevelArticle>
-<a class="back-link btn btn-link btn-monospaced d-flex flex-row justify-content-start" href="${parentLink.url}" id="backLink">
-<svg class="lexicon-icon lexicon-icon-angle-left" role="presentation" viewBox="0 0 512 512">
-<use xlink:href="#angle-left" />
+						<a class="back-link btn btn-link btn-monospaced d-flex flex-row justify-content-start" href="${parentLink.url}" id="backLink">
+							<svg class="lexicon-icon lexicon-icon-angle-left" role="presentation" viewBox="0 0 512 512">
+								<use xlink:href="#angle-left" />
 							</svg>
 							${languageUtil.get(locale, "go-back", "Go Back")}
 						</a>
 					</#if>
 					<#if (navigationLinks.getData())??>
 						<#assign urlTitleLastDirectory =.vars['reserved-article-url-title'].getData()?split("/")?last />
-<ul class="current">
+						<ul class="current">
 							<#if !topLevelArticle>
-<li class="current parent-level toctree-l1">
+								<li class="current parent-level toctree-l1">
 									<a class="reference internal" href="${parentLink.url}">${parentLink.title}</a>
 								</li>
 							</#if>
@@ -96,7 +97,6 @@
 							<#if navigationLinksJSONArray.length() gt 0>
 								<#list 0..navigationLinksJSONArray.length()-1 as i>
 									<#assign navigationLink = navigationLinksJSONArray.getJSONObject(i)?eval />
-
 									<li class="${topLevelArticle?then("toctree-l1", "toctree-l2")} ${(urlTitleLastDirectory == navigationLink.url)?then("current", "")}">
 										<a class="reference internal" href="${navigationLink.url}">${navigationLink.title}</a>
 									</li>
