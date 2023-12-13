@@ -351,7 +351,7 @@ public class AssetCategoriesSearchFacetDisplayContextBuilder
 			return getEmptyBucketDisplayContexts();
 		}
 
-		_removeExcludedGroup();
+		_filterBuckets();
 
 		int maxCount = 1;
 		int minCount = 1;
@@ -448,7 +448,7 @@ public class AssetCategoriesSearchFacetDisplayContextBuilder
 		return false;
 	}
 
-	private void _removeExcludedGroup() {
+	private void _filterBuckets() {
 		if (_buckets.isEmpty()) {
 			return;
 		}
