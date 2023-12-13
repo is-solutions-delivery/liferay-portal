@@ -62,7 +62,7 @@ public class AssetCategoriesSearchFacetDisplayContextBuilder
 			bucketDisplayContexts);
 
 		Map<String, List<BucketDisplayContext>> bucketDisplayContextsMap =
-			_getBucketDisplayContextMap(bucketDisplayContexts);
+			_getBucketDisplayContextsMap(bucketDisplayContexts);
 
 		assetCategoriesSearchFacetDisplayContext.setBucketDisplayContextsMap(
 			bucketDisplayContextsMap);
@@ -305,7 +305,7 @@ public class AssetCategoriesSearchFacetDisplayContextBuilder
 		return null;
 	}
 
-	private Map<String, List<BucketDisplayContext>> _getBucketDisplayContextMap(
+	private Map<String, List<BucketDisplayContext>> _getBucketDisplayContextsMap(
 		List<BucketDisplayContext> bucketDisplayContexts) {
 
 		Map<String, List<BucketDisplayContext>> bucketDisplayContextsMap =
