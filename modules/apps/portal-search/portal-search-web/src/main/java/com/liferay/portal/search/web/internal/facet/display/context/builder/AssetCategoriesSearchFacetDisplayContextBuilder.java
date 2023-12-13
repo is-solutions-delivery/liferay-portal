@@ -322,10 +322,10 @@ public class AssetCategoriesSearchFacetDisplayContextBuilder
 				_assetVocabularyLocalService.fetchAssetVocabulary(
 					assetCategory.getVocabularyId());
 
-			String assetVocabularyTitle = assetVocabulary.getTitle(_locale);
+			String title = assetVocabulary.getTitle(_locale);
 
 			List<BucketDisplayContext> curBucketDisplayContexts =
-				bucketDisplayContextsMap.get(assetVocabularyTitle);
+				bucketDisplayContextsMap.get(title);
 
 			if (curBucketDisplayContexts == null) {
 				curBucketDisplayContexts = new ArrayList<>();
@@ -340,7 +340,7 @@ public class AssetCategoriesSearchFacetDisplayContextBuilder
 			}
 
 			bucketDisplayContextsMap.put(
-				assetVocabularyTitle, curBucketDisplayContexts);
+				title, curBucketDisplayContexts);
 		}
 
 		return bucketDisplayContextsMap;
