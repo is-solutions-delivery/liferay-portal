@@ -243,7 +243,7 @@ public interface SimpleCaptchaResource {
 			httpInvoker.path(
 				_builder._scheme + "://" + _builder._host + ":" +
 					_builder._port + _builder._contextPath +
-						"/o/captcha/v1.0/simple-captcha-challenge");
+						"/o/captcha/v1.0/simple-captcha/challenge");
 
 			httpInvoker.userNameAndPassword(
 				_builder._login + ":" + _builder._password);
@@ -346,7 +346,7 @@ public interface SimpleCaptchaResource {
 			httpInvoker.path(
 				_builder._scheme + "://" + _builder._host + ":" +
 					_builder._port + _builder._contextPath +
-						"/o/captcha/v1.0/simple-captcha-response");
+						"/o/captcha/v1.0/simple-captcha/response");
 
 			httpInvoker.userNameAndPassword(
 				_builder._login + ":" + _builder._password);
