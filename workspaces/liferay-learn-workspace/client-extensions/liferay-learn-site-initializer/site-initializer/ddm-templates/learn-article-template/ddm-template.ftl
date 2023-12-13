@@ -187,6 +187,7 @@
 
 								<a href="https://help.liferay.com/hc/en-us/categories/360001749912">
 									<strong>${languageUtil.get(locale, "try-liferays-help-center", "Try Liferay's Help Center")}</strong>
+
 									<svg class="lexicon-icon lexicon-icon-shortcut" focusable="false" role="presentation" viewBox="0 0 512 512">
 										<use xlink:href="#shortcut" />
 									</svg>
