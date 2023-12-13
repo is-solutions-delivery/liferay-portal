@@ -925,14 +925,14 @@ public class DefaultObjectEntryManagerImplTest
 
 		user = _userLocalService.updateUser(user);
 
+		DateTimeFormatter utcDateTimeFormatter = DateTimeFormatter.ofPattern(
+			"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
 		ZonedDateTime zonedDateTime = localDateTime.atZone(
 			ZoneId.of(user.getTimeZoneId()));
 
 		LocalDateTime utcLocalDateTime = LocalDateTime.from(
 			zonedDateTime.withZoneSameInstant(ZoneId.of(StringPool.UTC)));
-
-		DateTimeFormatter utcDateTimeFormatter = DateTimeFormatter.ofPattern(
-			"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
 		String dateTimeString1 = utcDateTimeFormatter.format(utcLocalDateTime);
 
