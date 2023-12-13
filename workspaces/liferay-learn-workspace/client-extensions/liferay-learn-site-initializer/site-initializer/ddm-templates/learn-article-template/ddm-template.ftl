@@ -110,16 +110,15 @@
 				</div>
 			</div>
 		</div>
-<div class="col-12 col-md-10 doc-body">
-<div class="border-bottom-0 h-auto p-0">
-<div class="mt-3 offset-md-1">
+
+		<div class="col-12 col-md-10 doc-body">
+			<div class="border-bottom-0 h-auto p-0">
+				<div class="mt-3 offset-md-1">
 					<#if breadcrumbLinksJSONArray??>
-<div class="d-flex" style="align-items: baseline; justify-content: space-between;">
+						<div class="d-flex" style="align-items: baseline; justify-content: space-between;">
 							<ul aria-label="breadcrumb navigation" class="article-breadcrumb" role="navigation">
 								<li>
-<a href="${groupFriendlyURL}">
-<@clay["icon"] symbol="home-full" />
-									</a>
+									<a href="${groupFriendlyURL}"><@clay["icon"] symbol="home-full" /></a>
 								</li>
 								<#if breadcrumbLinksJSONArray.length() gt 0>
 									<#list breadcrumbLinksJSONArray.length()-1..0 as i>
@@ -130,27 +129,29 @@
 										</li>
 									</#list>
 								</#if>
-<li class="font-weight-bold">
+								<li class="font-weight-bold">
 									${.vars['reserved-article-title'].getData()}
 								</li>
 							</ul>
-<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1rem; font-style: normal; font-weight: 600; line-height: 1.5rem; color: var(--action-primary-default, #0B5FFF); text-align: center; padding-right: 3rem;">
-<a href="https://liferay.dev/c/portal/login?redirect=https://liferay.dev/ask/questions/liferay-learn-feedback/new" style="text-decoration: none;">
+
+							<div style="font-family: 'Source Sans Pro', sans-serif; font-size: 1rem; font-style: normal; font-weight: 600; line-height: 1.5rem; color: var(--action-primary-default, #0B5FFF); text-align: center; padding-right: 3rem;">
+								<a href="https://liferay.dev/c/portal/login?redirect=https://liferay.dev/ask/questions/liferay-learn-feedback/new" style="text-decoration: none;">
 									Ask The Community
-<@clay["icon"] symbol="message-boards" />
+									<@clay["icon"] symbol="message-boards" />
 								</a>
 							</div>
 						</div>
 					</#if>
 					<#list taxonomyVocabularies as vocabulary>
-<div class="col-10 d-flex mt-2 pl-0" id="tagContent" style="gap: 1rem;">
-<div class="align-items-baseline d-flex flex-wrap" id="${vocabulary}-tags">
+						<div class="col-10 d-flex mt-2 pl-0" id="tagContent" style="gap: 1rem;">
+							<div class="align-items-baseline d-flex flex-wrap" id="${vocabulary}-tags">
 								${vocabulary}
 							</div>
-<div class="d-flex font-weight-bold mr-2" id="${vocabulary}-Title" style="font-size: 0.875rem;">
+
+							<div class="d-flex font-weight-bold mr-2" id="${vocabulary}-Title" style="font-size: 0.875rem;">
 								<#list taxonomyCategoriesMap[vocabulary]?sort_by("categoryName") as taxonomyCategory>
-<div class="d-flex" id="${vocabulary}-tag">
-<a class="label label-primary" href="/search?category=${taxonomyCategory.categoryId}" style="border-radius: 1.5rem; border: 1px solid var(--action-primary-default, #0B5FFF); background: var(--action-primary-inverted, #FFF); display: flex; padding: 0.25rem 0.75rem; align-items: center; gap: 0.25rem;">
+									<div class="d-flex" id="${vocabulary}-tag">
+										<a class="label label-primary" href="/search?category=${taxonomyCategory.categoryId}" style="border-radius: 1.5rem; border: 1px solid var(--action-primary-default, #0B5FFF); background: var(--action-primary-inverted, #FFF); display: flex; padding: 0.25rem 0.75rem; align-items: center; gap: 0.25rem;">
 											<span class="label-item label-item-expand">${taxonomyCategory.categoryName}</span>
 										</a>
 									</div>
