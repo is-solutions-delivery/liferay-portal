@@ -61,7 +61,39 @@
 </#if>
 <div class="container-fluid documentations main-content" role="main">
 	<div class="row">
-		<div class="col-12 col-md-2 doc-nav-wrapper mobile-nav-hide">
+    <div class="col-12 col-md-2 mobile-nav-hide mt-2">
+		
+		
+		
+		<div id="test">
+		  <#if (navigationLinks.getData())??>
+			  
+				
+				<#if (product.getData())??>
+	${product.getData()}
+</#if>
+
+<#assign currentLength = breadcrumbLinksJSONArray.length() />
+<#assign articleTitle = .vars['reserved-article-title'].getData() />
+
+        <p> currentLength = ${currentLength} </p>
+				
+
+				
+        
+			  <h1> oi </h1>
+			</#if>
+		
+		
+		
+		
+		
+		
+		
+		</div>
+		
+		
+		
 			<div class="doc-nav-wrapper-inner">
 				<div class="d-md-none mobile-doc-nav-toggler" id="mobileDocNavToggler">${languageUtil.get(locale, "documentation-menu", "Documentation Menu")}
 					<button
@@ -77,15 +109,23 @@
 					</button>
 				</div>
 
-				<div class="doc-nav">
+				<div class="doc-nav" style="border-radius: 1rem; padding: 0.5rem 0">
 					<#if !topLevelArticle>
-						<a class="back-link btn btn-link btn-monospaced d-flex flex-row justify-content-start" href="${parentLink.url}" id="backLink">
-							<svg class="lexicon-icon lexicon-icon-angle-left" role="presentation" viewBox="0 0 512 512">
-								<use xlink:href="#angle-left" />
-							</svg>
-							${languageUtil.get(locale, "go-back", "Go Back")}
-						</a>
+					  	<div class="d-flex" style="border-bottom: solid; border-color: #EAECEE">
+						  	<div class="m-2">
+								<a href="${parentLink.url}" id="backLink">
+									<svg class="lexicon-icon lexicon-icon-angle-left" role="presentation" viewBox="0 0 512 512">
+										<use xlink:href="#angle-left" />
+									</svg>
+								</a>
+							</div>
+							<#assign articleTitle = .vars['reserved-article-title'].getData() />
+							<div class="align-self-center">
+								<a>${articleTitle}</a>
+							</div>
+						</div>
 					</#if>
+
 					<#if (navigationLinks.getData())??>
 						<#assign urlTitleLastDirectory =.vars['reserved-article-url-title'].getData()?split("/")?last />
 
@@ -101,7 +141,7 @@
 									<#assign navigationLink = navigationLinksJSONArray.getJSONObject(i)?eval />
 
 									<li class="${topLevelArticle?then("toctree-l1", "toctree-l2")} ${(urlTitleLastDirectory == navigationLink.url)?then("current", "")}">
-										<a class="reference internal" href="${navigationLink.url}">${navigationLink.title}</a>
+										<a class="reference internal" href="${navigationLink.url}">${navigationLink.title}321</a>
 									</li>
 								</#list>
 							</#if>
@@ -200,3 +240,13 @@
 		</div>
 	</div>
 </div>
+
+<style>
+  #backLink {
+	  border-radius: 0.5rem;
+	}
+	#backLink:hover {
+	  background-color: #EAECEE;
+	  transition: box-shadow 0.1s linear, background-color 0.1s linear;
+		}
+</style>
