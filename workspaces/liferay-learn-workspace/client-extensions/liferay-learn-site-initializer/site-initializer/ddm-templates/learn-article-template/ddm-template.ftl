@@ -6,20 +6,19 @@
 		window.location.assign(href);
 	}
 </script>
+
 <#assign
 	journalArticleId = .vars["reserved-article-id"].data
 	taxonomyCategoryBriefs = restClient.get("/headless-delivery/v1.0/sites/${groupId}/structured-contents/by-key/${journalArticleId}?nestedFields=embeddedTaxonomyCategory").taxonomyCategoryBriefs
 	taxonomyVocabularies = []
+	taxonomyCategoriesMap = {}
 />
+
 <#list taxonomyCategoryBriefs as taxonomyCategoryBrief>
 <#assign taxonomyVocabularyName = taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name />
 	<#if !taxonomyVocabularies?seq_contains(taxonomyVocabularyName)>
 		<#assign taxonomyVocabularies = taxonomyVocabularies + [taxonomyVocabularyName] />
 	</#if>
-</#list>
-<#assign taxonomyCategoriesMap = {} />
-<#list taxonomyCategoryBriefs as taxonomyCategoryBrief>
-<#assign taxonomyVocabularyName = taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name />
 	<#if taxonomyCategoriesMap[taxonomyVocabularyName]?has_content>
 		<#assign taxonomyCategoriesMap = taxonomyCategoriesMap +
 			{
