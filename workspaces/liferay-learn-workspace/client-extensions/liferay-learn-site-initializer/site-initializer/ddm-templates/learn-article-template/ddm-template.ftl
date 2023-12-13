@@ -76,6 +76,7 @@
 							<@clay["icon"] symbol="angle-up-small" />
 					</button>
 				</div>
+
 				<div class="doc-nav">
 					<#if !topLevelArticle>
 						<a class="back-link btn btn-link btn-monospaced d-flex flex-row justify-content-start" href="${parentLink.url}" id="backLink">
@@ -87,6 +88,7 @@
 					</#if>
 					<#if (navigationLinks.getData())??>
 						<#assign urlTitleLastDirectory =.vars['reserved-article-url-title'].getData()?split("/")?last />
+
 						<ul class="current">
 							<#if !topLevelArticle>
 								<li class="current parent-level toctree-l1">
@@ -97,6 +99,7 @@
 							<#if navigationLinksJSONArray.length() gt 0>
 								<#list 0..navigationLinksJSONArray.length()-1 as i>
 									<#assign navigationLink = navigationLinksJSONArray.getJSONObject(i)?eval />
+
 									<li class="${topLevelArticle?then("toctree-l1", "toctree-l2")} ${(urlTitleLastDirectory == navigationLink.url)?then("current", "")}">
 										<a class="reference internal" href="${navigationLink.url}">${navigationLink.title}</a>
 									</li>
