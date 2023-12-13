@@ -163,30 +163,32 @@
 			</div>
 
 			<div class="col-12 doc-content ${isLandingPage?then("landing-page-container", "")}" id="docContent" style="margin-top: 0px;">
-<div class="row" style="overflow: hidden;">
-<div class="article-body col-12 col-md-10 language-log">
+				<div class="row" style="overflow: hidden;">
+					<div class="article-body col-12 col-md-10 language-log">
 						<#if (content.getData())??>
 							${content.getData()}
 						</#if>
 						<#if isLandingPage>
 							<#include "${templatesPath}/LANDING-PAGE">
 						</#if>
-<div class="autofit-padded-no-gutters-x autofit-row help-center-footer">
-<div class="autofit-col">
-<div class="icon-container">
-<svg class="lexicon-icon liferay-waffle-icon" focusable="false" role="presentation" viewBox="0 0 512 512">
-<use xlink:href="#liferay-waffle" />
+						<div class="autofit-padded-no-gutters-x autofit-row help-center-footer">
+							<div class="autofit-col">
+								<div class="icon-container">
+									<svg class="lexicon-icon liferay-waffle-icon" focusable="false" role="presentation" viewBox="0 0 512 512">
+										<use xlink:href="#liferay-waffle" />
 									</svg>
 								</div>
 							</div>
-<div class="autofit-col autofit-col-expand">
+
+							<div class="autofit-col autofit-col-expand">
 								<h3>${languageUtil.get(locale, "not-finding-what-you-are-looking-for", "Not finding what you're looking for?")}</h3>
 
 								<p>${languageUtil.get(locale, "pardon-our-dust-as-we-revamp", "Pardon our dust as we revamp and transition our product documentation to this site. If something seems missing, please check Liferay Help Center documentation for Liferay DXP 7.2 and previous versions.")}</p>
-<a href="https://help.liferay.com/hc/en-us/categories/360001749912">
+
+								<a href="https://help.liferay.com/hc/en-us/categories/360001749912">
 									<strong>${languageUtil.get(locale, "try-liferays-help-center", "Try Liferay's Help Center")}</strong>
-<svg class="lexicon-icon lexicon-icon-shortcut" focusable="false" role="presentation" viewBox="0 0 512 512">
-<use xlink:href="#shortcut" />
+									<svg class="lexicon-icon lexicon-icon-shortcut" focusable="false" role="presentation" viewBox="0 0 512 512">
+										<use xlink:href="#shortcut" />
 									</svg>
 								</a>
 							</div>
