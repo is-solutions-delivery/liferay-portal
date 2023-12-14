@@ -356,7 +356,7 @@ public class DefaultExportImportContentProcessorTest {
 
 		for (String url : urls) {
 			Assert.assertTrue(
-				url + " must be unchanged in :" + content,
+				url + " must be unchanged in: " + content,
 				content.contains(url));
 		}
 	}
