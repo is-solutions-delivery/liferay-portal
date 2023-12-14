@@ -2250,7 +2250,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 
 		<#if properties?keys?seq_contains("siteId")>
 			<#if generateDepotEntry>
-				Group group = testDepotEntry.getGroup();
+				com.liferay.portal.kernel.model.Group group = testDepotEntry.getGroup();
 
 				if (!Objects.equals(${schemaVarName}.getAssetLibraryKey(), group.getGroupKey()) && !Objects.equals(${schemaVarName}.getSiteId(), testGroup.getGroupId())) {
 					valid = false;
