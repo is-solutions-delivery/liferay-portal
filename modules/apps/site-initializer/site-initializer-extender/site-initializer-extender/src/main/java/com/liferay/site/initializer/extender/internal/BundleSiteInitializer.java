@@ -3535,18 +3535,46 @@ public class BundleSiteInitializer implements SiteInitializer {
 						layout);
 			}
 			else if (type.equals(SiteNavigationMenuItemTypeConstants.NODE)) {
-				typeSettings = UnicodePropertiesBuilder.put(
-					"name", menuItemJSONObject.getString("name")
-				).buildString();
+				UnicodePropertiesBuilder.UnicodePropertiesWrapper
+					unicodePropertiesWrapper = UnicodePropertiesBuilder.put(
+						"defaultLanguageId",
+						LocaleUtil.toLanguageId(LocaleUtil.getDefault())
+					).put(
+						"title", menuItemJSONObject.getString("title")
+					);
+
+				for (String locale :
+						menuItemJSONObject.getJSONObject(
+							"name_i18n"
+						).keySet()) {
+
+					unicodePropertiesWrapper.put(
+						"name_" + locale, menuItemJSONObject.getString(locale));
+				}
+
+				typeSettings = unicodePropertiesWrapper.buildString();
 			}
 			else if (type.equals(SiteNavigationMenuItemTypeConstants.URL)) {
-				typeSettings = UnicodePropertiesBuilder.put(
-					"name", menuItemJSONObject.getString("name")
-				).put(
-					"url", menuItemJSONObject.getString("url")
-				).put(
-					"useNewTab", menuItemJSONObject.getString("useNewTab")
-				).buildString();
+				UnicodePropertiesBuilder.UnicodePropertiesWrapper
+					unicodePropertiesWrapper = UnicodePropertiesBuilder.put(
+						"defaultLanguageId",
+						LocaleUtil.toLanguageId(LocaleUtil.getDefault())
+					).put(
+						"url", menuItemJSONObject.getString("url")
+					).put(
+						"useNewTab", menuItemJSONObject.getString("useNewTab")
+					);
+
+				for (String locale :
+						menuItemJSONObject.getJSONObject(
+							"name_i18n"
+						).keySet()) {
+
+					unicodePropertiesWrapper.put(
+						"name_" + locale, menuItemJSONObject.getString(locale));
+				}
+
+				typeSettings = unicodePropertiesWrapper.buildString();
 			}
 			else if (type.equals("display-page")) {
 				String key = menuItemJSONObject.getString("key");
