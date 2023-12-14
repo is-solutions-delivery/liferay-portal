@@ -2803,7 +2803,7 @@ public abstract class BaseDocumentResourceTestCase {
 			valid = false;
 		}
 
-		Group group = testDepotEntry.getGroup();
+		com.liferay.portal.kernel.model.Group group = testDepotEntry.getGroup();
 
 		if (!Objects.equals(
 				document.getAssetLibraryKey(), group.getGroupKey()) &&

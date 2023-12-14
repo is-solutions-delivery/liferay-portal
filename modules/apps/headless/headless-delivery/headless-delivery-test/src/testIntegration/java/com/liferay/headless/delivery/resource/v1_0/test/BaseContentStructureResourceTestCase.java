@@ -1444,7 +1444,7 @@ public abstract class BaseContentStructureResourceTestCase {
 			valid = false;
 		}
 
-		Group group = testDepotEntry.getGroup();
+		com.liferay.portal.kernel.model.Group group = testDepotEntry.getGroup();
 
 		if (!Objects.equals(
 				contentStructure.getAssetLibraryKey(), group.getGroupKey()) &&
