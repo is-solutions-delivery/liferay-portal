@@ -40,7 +40,7 @@ public class UpgradeJavaScreenContributorClassCheck extends BaseUpgradeCheck {
 			return content;
 		}
 
-		String javaTermContent;
+		String javaTermContent = null;
 
 		List<String> oldVariables = new ArrayList<>();
 
