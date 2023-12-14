@@ -3204,7 +3204,8 @@ public class BundleSiteInitializerTest {
 			SiteNavigationMenuItemTypeConstants.NODE,
 			siteNavigationMenuItem3.getType());
 		Assert.assertEquals(
-			"name_en_US=Other Links\n", siteNavigationMenuItem3.getTypeSettings());
+			"name_en_US=Other Links\n",
+			siteNavigationMenuItem3.getTypeSettings());
 
 		SiteNavigationMenuItem siteNavigationMenuItem4 =
 			siteNavigationMenuItems.get(3);
