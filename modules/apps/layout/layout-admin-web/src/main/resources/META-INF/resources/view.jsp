@@ -47,7 +47,7 @@ portletDisplay.setShowStagingIcon(false);
 			</c:if>
 
 			<c:if test="<%= lte.getType() == LayoutTypeException.FIRST_LAYOUT_PERMISSION %>">
-				<liferay-ui:message key="the-first-page-should-be-visible-for-guest-user" />
+				<liferay-ui:message key="the-first-page-should-be-visible-for-guest-users" />
 			</c:if>
 		</liferay-ui:error>
 
