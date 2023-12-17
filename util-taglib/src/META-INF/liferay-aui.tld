@@ -807,7 +807,6 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
-			<description>Whether to make visible the languages dropdown. The default value is <![CDATA[<code>true</code>]]></description>
 			<name>languagesDropdownVisible</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
