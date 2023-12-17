@@ -70,7 +70,7 @@ public class OpenGitHubPullRequestEventHandler
 		gitHubPullRequest.comment(
 			StringUtil.combine(
 				"The following guidelines have been set by the owner of this ",
-				"repository: \n- &nbsp;&nbsp;&nbsp;&nbsp;", autoCommentMessage,
+				"repository:\n- &nbsp;&nbsp;&nbsp;&nbsp;", autoCommentMessage,
 				"\n"));
 	}
 
