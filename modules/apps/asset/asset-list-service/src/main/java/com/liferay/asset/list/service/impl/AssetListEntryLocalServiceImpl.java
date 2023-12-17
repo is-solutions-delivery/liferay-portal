@@ -298,11 +298,11 @@ public class AssetListEntryLocalServiceImpl
 	public AssetListEntry deleteAssetListEntry(AssetListEntry assetListEntry)
 		throws PortalException {
 
+		// Asset list entry
+
 		if (!GroupThreadLocal.isDeleteInProcess()) {
 			_checkCompanyAssetListEntryUsages(assetListEntry);
 		}
-
-		// Asset list entry
 
 		assetListEntryPersistence.remove(assetListEntry);
 
