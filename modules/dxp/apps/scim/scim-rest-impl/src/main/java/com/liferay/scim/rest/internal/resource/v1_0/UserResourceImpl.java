@@ -52,7 +52,7 @@ public class UserResourceImpl extends BaseUserResourceImpl {
 	}
 
 	@Override
-	public Object getV2User(Integer count, Integer startIndex)
+	public Object getV2Users(Integer count, Integer startIndex)
 		throws Exception {
 
 		return _buildResponse(

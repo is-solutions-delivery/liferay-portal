@@ -329,7 +329,7 @@ paths:
         get:
             description:
                 Lists groups.
-            operationId: getV2Group
+            operationId: getV2Groups
             parameters:
                 - in: query
                   name: count
@@ -465,7 +465,7 @@ paths:
         get:
             description:
                 Lists users.
-            operationId: getV2User
+            operationId: getV2Users
             parameters:
                 - in: query
                   name: count
