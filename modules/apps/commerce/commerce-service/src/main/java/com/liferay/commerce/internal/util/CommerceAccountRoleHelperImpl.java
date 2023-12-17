@@ -344,7 +344,6 @@ public class CommerceAccountRoleHelperImpl
 				new String[] {
 					CPActionKeys.VIEW_COMMERCE_PRODUCT_TAX_CATEGORIES
 				});
-
 			companyResourceActionIds.put(
 				"com.liferay.document.library",
 				new String[] {ActionKeys.ADD_DOCUMENT});
