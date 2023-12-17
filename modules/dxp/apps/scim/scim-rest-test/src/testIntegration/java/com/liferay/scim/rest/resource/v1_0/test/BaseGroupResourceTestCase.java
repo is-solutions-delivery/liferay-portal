@@ -183,7 +183,7 @@ public abstract class BaseGroupResourceTestCase {
 	}
 
 	@Test
-	public void testGetV2Group() throws Exception {
+	public void testGetV2Groups() throws Exception {
 		Assert.assertTrue(false);
 	}
 
@@ -204,28 +204,6 @@ public abstract class BaseGroupResourceTestCase {
 
 		assertHttpResponseStatusCode(
 			204, groupResource.deleteV2GroupHttpResponse(group.getId()));
-
-		assertHttpResponseStatusCode(
-			404,
-			groupResource.getV2GroupHttpResponse(
-				testDeleteV2Group_getCount(),
-				testDeleteV2Group_getStartIndex()));
-
-		assertHttpResponseStatusCode(
-			404,
-			groupResource.getV2GroupHttpResponse(
-				testDeleteV2Group_getCount(),
-				testDeleteV2Group_getStartIndex()));
-	}
-
-	protected Integer testDeleteV2Group_getCount() throws Exception {
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
-	}
-
-	protected Integer testDeleteV2Group_getStartIndex() throws Exception {
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
 	}
 
 	protected Group testDeleteV2Group_addGroup() throws Exception {

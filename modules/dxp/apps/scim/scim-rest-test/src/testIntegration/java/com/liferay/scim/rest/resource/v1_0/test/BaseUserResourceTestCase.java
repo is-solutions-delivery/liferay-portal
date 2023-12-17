@@ -202,7 +202,7 @@ public abstract class BaseUserResourceTestCase {
 	}
 
 	@Test
-	public void testGetV2User() throws Exception {
+	public void testGetV2Users() throws Exception {
 		Assert.assertTrue(false);
 	}
 
@@ -223,26 +223,6 @@ public abstract class BaseUserResourceTestCase {
 
 		assertHttpResponseStatusCode(
 			204, userResource.deleteV2UserHttpResponse(user.getId()));
-
-		assertHttpResponseStatusCode(
-			404,
-			userResource.getV2UserHttpResponse(
-				testDeleteV2User_getCount(), testDeleteV2User_getStartIndex()));
-
-		assertHttpResponseStatusCode(
-			404,
-			userResource.getV2UserHttpResponse(
-				testDeleteV2User_getCount(), testDeleteV2User_getStartIndex()));
-	}
-
-	protected Integer testDeleteV2User_getCount() throws Exception {
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
-	}
-
-	protected Integer testDeleteV2User_getStartIndex() throws Exception {
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
 	}
 
 	protected User testDeleteV2User_addUser() throws Exception {

@@ -72,7 +72,7 @@ public abstract class BaseGroupResourceImpl implements GroupResource {
 	@javax.ws.rs.Path("/v2/Groups")
 	@javax.ws.rs.Produces("application/scim+json")
 	@Override
-	public Object getV2Group(
+	public Object getV2Groups(
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@javax.ws.rs.QueryParam("count")
 			Integer count,

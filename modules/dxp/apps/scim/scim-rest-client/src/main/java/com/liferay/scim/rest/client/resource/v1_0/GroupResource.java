@@ -32,10 +32,10 @@ public interface GroupResource {
 		return new Builder();
 	}
 
-	public Object getV2Group(Integer count, Integer startIndex)
+	public Object getV2Groups(Integer count, Integer startIndex)
 		throws Exception;
 
-	public HttpInvoker.HttpResponse getV2GroupHttpResponse(
+	public HttpInvoker.HttpResponse getV2GroupsHttpResponse(
 			Integer count, Integer startIndex)
 		throws Exception;
 
@@ -175,10 +175,10 @@ public interface GroupResource {
 
 	public static class GroupResourceImpl implements GroupResource {
 
-		public Object getV2Group(Integer count, Integer startIndex)
+		public Object getV2Groups(Integer count, Integer startIndex)
 			throws Exception {
 
-			HttpInvoker.HttpResponse httpResponse = getV2GroupHttpResponse(
+			HttpInvoker.HttpResponse httpResponse = getV2GroupsHttpResponse(
 				count, startIndex);
 
 			String content = httpResponse.getContent();
@@ -240,7 +240,7 @@ public interface GroupResource {
 			}
 		}
 
-		public HttpInvoker.HttpResponse getV2GroupHttpResponse(
+		public HttpInvoker.HttpResponse getV2GroupsHttpResponse(
 				Integer count, Integer startIndex)
 			throws Exception {
 
