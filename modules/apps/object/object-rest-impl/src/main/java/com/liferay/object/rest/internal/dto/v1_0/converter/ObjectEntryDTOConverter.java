@@ -157,13 +157,13 @@ public class ObjectEntryDTOConverter
 
 			Map<String, Object> properties = objectEntry.getProperties();
 
-			Map<String, String> listTypeEntryMap =
-				(Map<String, String>)properties.get(objectField.getName());
+			Map<String, String> map = (Map<String, String>)properties.get(
+				objectField.getName());
 
 			properties.put(
 				objectField.getName(),
 				_getListEntry(
-					dtoConverterContext, listTypeEntryMap.get("key"),
+					dtoConverterContext, map.get("key"),
 					objectField.getListTypeDefinitionId()));
 
 			objectEntry.setProperties(properties);
