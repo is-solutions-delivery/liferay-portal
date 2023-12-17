@@ -30,8 +30,8 @@ public class OpenGitHubPullRequestEventHandler
 
 	@Override
 	public String process() throws InvalidJSONException, IOException {
-		if (closeInvalidUpstreamGitHubBranchName() ||
-			checkLiferayGitHubUser()) {
+		if (checkLiferayGitHubUser() ||
+			closeInvalidUpstreamGitHubBranchName()) {
 
 			return null;
 		}

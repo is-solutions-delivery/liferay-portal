@@ -91,7 +91,7 @@ public abstract class BaseGitHubIssueEventHandler
 		sb.append("You cannot perform that action because you are not a ");
 		sb.append("member of the Liferay organization. Please make sure that ");
 		sb.append("you have been added and that your organization membership ");
-		sb.append("is set as Public. See https://help.github.com/articles");
+		sb.append("is set as public. See https://help.github.com/articles");
 		sb.append("/publicizing-or-hiding-organization-membership for more ");
 		sb.append("information.");
 
