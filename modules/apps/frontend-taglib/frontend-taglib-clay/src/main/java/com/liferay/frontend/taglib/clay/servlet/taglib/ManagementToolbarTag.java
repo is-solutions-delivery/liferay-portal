@@ -897,12 +897,8 @@ public class ManagementToolbarTag extends BaseContainerTag {
 
 			iconTag.doTag(pageContext);
 
-			jspWriter.write("</span><span class=\"");
-
-			jspWriter.write("navbar-text-truncate\">");
-
+			jspWriter.write("</span><span class=\"navbar-text-truncate\">");
 			jspWriter.write(LanguageUtil.get(resourceBundle, "filter"));
-
 			jspWriter.write("</span>");
 
 			iconTag = new IconTag();
@@ -1183,8 +1179,7 @@ public class ManagementToolbarTag extends BaseContainerTag {
 
 				linkTag.doTag(pageContext);
 
-				jspWriter.write("</li>");
-				jspWriter.write("<li class=\"nav-item\">");
+				jspWriter.write("</li><li class=\"nav-item\">");
 
 				linkTag = new LinkTag();
 
