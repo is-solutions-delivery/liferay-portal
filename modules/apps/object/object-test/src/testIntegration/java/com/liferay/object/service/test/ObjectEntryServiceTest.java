@@ -650,7 +650,9 @@ public class ObjectEntryServiceTest {
 	}
 
 	@Test
-	public void testValidateMaximumNumberOfObjectEntries() throws Exception {
+	public void testValidateMaximumNumberOfGuestUserObjectEntriesPerObjectDefinition()
+		throws Exception {
+
 		_setUser(_guestUser);
 
 		Dictionary<String, Object> objectConfigurationDictionary =
