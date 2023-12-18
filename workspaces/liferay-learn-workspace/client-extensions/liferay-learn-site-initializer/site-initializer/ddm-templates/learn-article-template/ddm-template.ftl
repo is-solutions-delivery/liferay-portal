@@ -1,6 +1,8 @@
 <#include "${templatesPath}/SVG">
+
 <script>
 	let href = window.location.href;
+
 	if (href.endsWith("/")) {
 		href = href.substring(0, href.length - 1);
 		window.location.assign(href);
@@ -9,21 +11,23 @@
 
 <#assign
 	journalArticleId = .vars["reserved-article-id"].data
+	taxonomyCategoriesMap = {}
 	taxonomyCategoryBriefs = restClient.get("/headless-delivery/v1.0/sites/${groupId}/structured-contents/by-key/${journalArticleId}?nestedFields=embeddedTaxonomyCategory").taxonomyCategoryBriefs
 	taxonomyVocabularies = []
-	taxonomyCategoriesMap = {}
 />
 
 <#list taxonomyCategoryBriefs as taxonomyCategoryBrief>
-<#assign taxonomyVocabularyName = taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name />
+	<#assign taxonomyVocabularyName = taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name />
+
 	<#if !taxonomyVocabularies?seq_contains(taxonomyVocabularyName)>
 		<#assign taxonomyVocabularies = taxonomyVocabularies + [taxonomyVocabularyName] />
 	</#if>
+
 	<#if taxonomyCategoriesMap[taxonomyVocabularyName]?has_content>
 		<#assign taxonomyCategoriesMap = taxonomyCategoriesMap +
 			{
-			  taxonomyVocabularyName:
-			  taxonomyCategoriesMap[taxonomyVocabularyName] + [{
+			taxonomyVocabularyName:
+			taxonomyCategoriesMap[taxonomyVocabularyName] + [{
 				"categoryId": taxonomyCategoryBrief.taxonomyCategoryId,
 				"categoryName": taxonomyCategoryBrief.taxonomyCategoryName
 				}]
@@ -32,7 +36,7 @@
 	<#else>
 		<#assign taxonomyCategoriesMap = taxonomyCategoriesMap +
 			{
-			  taxonomyVocabularyName:
+			taxonomyVocabularyName:
 				[{
 					"categoryId": taxonomyCategoryBrief.taxonomyCategoryId,
 					"categoryName": taxonomyCategoryBrief.taxonomyCategoryName
@@ -47,8 +51,10 @@
 	isLandingPage = false
 	topLevelArticle = true
 />
+
 <#if (breadcrumbLinks.getData())??>
 	<#assign breadcrumbLinksJSONArray = jsonFactoryUtil.createJSONArray(breadcrumbLinks.getData()) />
+
 	<#if breadcrumbLinksJSONArray.length() gt 0>
 		<#assign
 			parentLink = breadcrumbLinksJSONArray.getJSONObject(0)?eval
@@ -56,9 +62,11 @@
 		/>
 	</#if>
 </#if>
+
 <#if (landingPage.getData())?? && (landingPage.getData() == "true")>
 	<#assign isLandingPage = true />
 </#if>
+
 <div class="container-fluid documentations main-content" role="main">
 	<div class="row">
 		<div class="col-12 col-md-2 doc-nav-wrapper mobile-nav-hide">
@@ -86,6 +94,7 @@
 							${languageUtil.get(locale, "go-back", "Go Back")}
 						</a>
 					</#if>
+
 					<#if (navigationLinks.getData())??>
 						<#assign urlTitleLastDirectory =.vars['reserved-article-url-title'].getData()?split("/")?last />
 
@@ -95,7 +104,9 @@
 									<a class="reference internal" href="${parentLink.url}">${parentLink.title}</a>
 								</li>
 							</#if>
+
 							<#assign navigationLinksJSONArray = jsonFactoryUtil.createJSONArray(navigationLinks.getData()) />
+
 							<#if navigationLinksJSONArray.length() gt 0>
 								<#list 0..navigationLinksJSONArray.length()-1 as i>
 									<#assign navigationLink = navigationLinksJSONArray.getJSONObject(i)?eval />
