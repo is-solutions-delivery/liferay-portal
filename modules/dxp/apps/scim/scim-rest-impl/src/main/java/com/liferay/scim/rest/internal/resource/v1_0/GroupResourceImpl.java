@@ -97,16 +97,16 @@ public class GroupResourceImpl extends BaseGroupResourceImpl {
 		Response.ResponseBuilder responseBuilder = Response.status(
 			scimResponse.getResponseStatus());
 
+		if (scimResponse.getResponseMessage() != null) {
+			responseBuilder.entity(scimResponse.getResponseMessage());
+		}
+
 		Map<String, String> map = scimResponse.getHeaderParamMap();
 
 		if (MapUtil.isNotEmpty(map)) {
 			for (Map.Entry<String, String> entry : map.entrySet()) {
 				responseBuilder.header(entry.getKey(), entry.getValue());
 			}
-		}
-
-		if (scimResponse.getResponseMessage() != null) {
-			responseBuilder.entity(scimResponse.getResponseMessage());
 		}
 
 		return responseBuilder.build();
