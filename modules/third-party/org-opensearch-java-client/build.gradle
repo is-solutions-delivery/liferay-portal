@@ -30,7 +30,7 @@ dependencies {
 	api group: "com.fasterxml.jackson.core", name: "jackson-core", version: "2.15.2"
 	api group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "2.15.2"
 	api group: "com.google.code.findbugs", name: "jsr305", transitive: false, version: "3.0.2"
-	api group: "com.liferay", name: "org.opensearch.client.rest.client", version: "2.7.0.LIFERAY-PATCHED-1"
+	api group: "com.liferay", name: "org.opensearch.rest.client", version: "2.7.0.LIFERAY-PATCHED-1"
 	api group: "jakarta.json", name: "jakarta.json-api", transitive: false, version: "2.0.0"
 	api group: "jakarta.json.bind", name: "jakarta.json.bind-api", transitive: false, version: "2.0.0"
 	api group: "org.apache.httpcomponents.client5", name: "httpclient5", transitive: false, version: "5.1.4"
