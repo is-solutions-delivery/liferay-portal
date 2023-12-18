@@ -11,6 +11,9 @@ import useCart from '../../../hooks/useCart';
 import {Liferay} from '../../../liferay/liferay';
 import {PaymentMethod} from '../enums/paymentMethod';
 import {StepType} from '../enums/stepType';
+import {useState} from 'react';
+import {Checkbox} from '../../../components/Checkbox/Checkbox';
+import ClayModal, {useModal} from '@clayui/modal';
 
 interface ProductFooterProps {
 	addresses: BillingAddress[];
@@ -103,72 +106,110 @@ const ProductFooter = ({
 		}
 	};
 
-	return (
-		<div className="mt-5 pt-2 text-black-50">
-			<div className="d-flex justify-content-between">
-				<ClayButton
-					displayType={null}
-					onClick={() => {
-						if (cartUtil?.cart?.id) {
-							cartUtil.removeCart(cartUtil.cart.id);
-						}
+	const [eulaCheckbox, setEulaCheckbox] = useState<boolean>(false);
 
-						onCancel();
-					}}
-				>
-					Cancel
-				</ClayButton>
-				<div>
-					{stepsNavigation[step].backStep !== step && (
-						<ClayButton
-							displayType="secondary"
-							onClick={() =>
-								onPrevious(stepsNavigation[step].backStep)
-							}
-						>
-							Back
-						</ClayButton>
+	const {observer, onOpenChange, open} = useModal();
+
+	return (
+		<>
+			<div>
+				{!isFreeApp &&
+					step === StepType.PAYMENT &&
+					selectedPaymentMethod === PaymentMethod.PAY && (
+						<div className="d-flex align-items-start mt-4">
+							<Checkbox
+								checked={eulaCheckbox}
+								onChange={() =>
+									eulaCheckbox
+										? setEulaCheckbox(false)
+										: setEulaCheckbox(true)
+								}
+							/>
+							<div>
+								<span>I have read and agree to the</span>
+								<a
+									onClick={() => {
+										onOpenChange(true);
+									}}
+								>
+									End User License Agreement
+								</a>
+								<span>and the</span>
+								<a>Terms</a>
+								<span>of Service.</span>
+							</div>
+						</div>
 					)}
-					{stepsNavigation[step].nextStep && (
-						<ClayButton
-							className="ml-5"
-							disabled={
-								disabled ||
-								(step === StepType.ACCOUNT &&
-									!selectedAccount) ||
-								(step === StepType.LICENSES && !licenseSelected)
+				{open && (
+					<ClayModal observer={observer} size="lg">
+						<ClayModal.Header>
+							End User License Agreement
+						</ClayModal.Header>
+						<ClayModal.Body>
+							<p>Do you want to save your documents?</p>
+						</ClayModal.Body>
+						<ClayModal.Footer
+							first={
+								<ClayButton.Group spaced>
+									<ClayButton
+										displayType="secondary"
+										onClick={() => onOpenChange(false)}
+									>
+										Cancel
+									</ClayButton>
+								</ClayButton.Group>
 							}
-							onClick={() =>
-								onContinue(stepsNavigation[step].nextStep)
+						/>
+					</ClayModal>
+				)}
+			</div>
+			<div className="mt-5 pt-2 text-black-50">
+				<div className="d-flex justify-content-between">
+					<ClayButton
+						displayType={null}
+						onClick={() => {
+							if (cartUtil?.cart?.id) {
+								cartUtil.removeCart(cartUtil.cart.id);
 							}
-						>
-							{getButtonText()}
-						</ClayButton>
-					)}
+
+							onCancel();
+						}}
+					>
+						Cancel
+					</ClayButton>
+					<div>
+						{stepsNavigation[step].backStep !== step && (
+							<ClayButton
+								displayType="secondary"
+								onClick={() =>
+									onPrevious(stepsNavigation[step].backStep)
+								}
+							>
+								Back
+							</ClayButton>
+						)}
+						{stepsNavigation[step].nextStep && (
+							<ClayButton
+								className="ml-5"
+								disabled={
+									disabled ||
+									(step === StepType.ACCOUNT &&
+										!selectedAccount) ||
+									(step === StepType.LICENSES &&
+										!licenseSelected) ||
+									(step === StepType.PAYMENT && !eulaCheckbox)
+								}
+								onClick={() =>
+									onContinue(stepsNavigation[step].nextStep)
+								}
+							>
+								{getButtonText()}
+							</ClayButton>
+						)}
+					</div>
 				</div>
 			</div>
-
-			{!isFreeApp &&
-				step === StepType.PAYMENT &&
-				selectedPaymentMethod === PaymentMethod.PAY && (
-					<div className="align-items-end d-flex flex-column mt-4">
-						<span>
-							You will be redirected to PayPal to complete payment
-						</span>
-						<div className="mt-1">
-							<img
-								alt="Account icon"
-								className="mr-2"
-								src={infoCircleIcon}
-							/>
-							<span>
-								Terms, privacy, returns, or contact support. All
-								costs are in US Dollars
-							</span>
-						</div>
-					</div>
-				)}
-		</div>
+		</>
 	);
 };
 
