@@ -81,6 +81,7 @@ patch {
 	ext {
 		autoClean = false
 	}
+
 	fileNames "org/opensearch/client/RestClient.java"
 
 	originalLibModuleName = "opensearch-rest-client"
@@ -88,16 +89,15 @@ patch {
 
 unzip {
 	dependsOn downloadSrc
-	from zipTree(file("${tempDir}/opensearch-rest-client-${openSearchRestClientVersion}-sources.jar"))
-	into file("${tempDir}/src")
-
-	File srcTmpDir = new File("${tempDir}/src/org")
 
 	doLast {
+		File srcTmpDir = new File("${tempDir}/src/org")
+
 		srcTmpDir.eachFileRecurse(FileType.FILES) {
 			if (it.name == "RestClient.java") {
 				return
 			}
+
 			if (it.name.endsWith(".java")) {
 				File destFile = new File(file("src/main/java"), FileUtil.relativize(it, srcTmpDir))
 
@@ -107,7 +107,11 @@ unzip {
 			}
 		}
 	}
+
 	ext {
 		autoClean = false
 	}
+
+	from zipTree(file("${tempDir}/opensearch-rest-client-${openSearchRestClientVersion}-sources.jar"))
+	into file("${tempDir}/src")
 }

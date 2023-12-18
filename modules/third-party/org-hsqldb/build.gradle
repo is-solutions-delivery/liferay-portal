@@ -69,12 +69,10 @@ jarPatched {
 
 unzip {
 	dependsOn downloadSrc
-	from zipTree(file("${tempDir}/hsqldb-${hsqldbVersion}-sources.jar"))
-	into file("${tempDir}/src")
-
-	File srcTmpDir = new File("${tempDir}/src/org")
 
 	doLast {
+		File srcTmpDir = new File("${tempDir}/src/org")
+
 		srcTmpDir.eachFileRecurse(FileType.FILES) {
 			if (it.toPath().toString().contains("cmdline") ) {
 				return
@@ -89,7 +87,11 @@ unzip {
 			}
 		}
 	}
+
 	ext {
 		autoClean = false
 	}
+
+	from zipTree(file("${tempDir}/hsqldb-${hsqldbVersion}-sources.jar"))
+	into file("${tempDir}/src")
 }

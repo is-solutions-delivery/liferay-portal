@@ -92,6 +92,7 @@ patch {
 	ext {
 		autoClean = false
 	}
+
 	fileNames "org/opensearch/client/opensearch/_types/mapping/Property.java"
 	fileNames "org/opensearch/client/opensearch/cat/CatRequestBase.java"
 	fileNames "org/opensearch/client/opensearch/cluster/stats/ClusterNodeCount.java"
@@ -105,20 +106,19 @@ patch {
 
 unzip {
 	dependsOn downloadSrc
-	from zipTree(file("${tempDir}/opensearch-java-${openSearchJavaClientVersion}-sources.jar"))
-	into file("${tempDir}/src")
-
-	File srcTmpDir = new File("${tempDir}/src/org")
 
 	doLast {
+		File srcTmpDir = new File("${tempDir}/src/org")
+
 		srcTmpDir.eachFileRecurse(FileType.FILES) {
-			if (it.name == "CatRequestBase.java"
-					|| it.name == "ClusterNodeCount.java"
-					|| it.name == "NodePackagingType.java"
-					|| it.name == "TransportOptions.java"
-					|| it.name == "AwsSdk2Transport.java"
-					|| it.name == "ApacheHttpClient5Transport.java"
-					|| it.name == "Property.java") {
+			if (it.name == "ApacheHttpClient5Transport.java" ||
+				it.name == "AwsSdk2Transport.java" ||
+				it.name == "CatRequestBase.java" ||
+				it.name == "ClusterNodeCount.java" ||
+				it.name == "NodePackagingType.java" ||
+				it.name == "Property.java" ||
+				it.name == "TransportOptions.java") {
+
 				return
 			}
 
@@ -131,7 +131,11 @@ unzip {
 			}
 		}
 	}
+
 	ext {
 		autoClean = false
 	}
+
+	from zipTree(file("${tempDir}/opensearch-java-${openSearchJavaClientVersion}-sources.jar"))
+	into file("${tempDir}/src")
 }
