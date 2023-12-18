@@ -64,8 +64,6 @@ public class DLFileEntryModelSearchConfigurator
 			new DLFileEntryModelIndexerWriterContributor(
 				_dlFileEntryLocalService,
 				_dynamicQueryBatchIndexingActionableFactory);
-
-		_modelSummaryContributor = new DLFileEntryModelSummaryContributor();
 	}
 
 	@Reference
@@ -77,7 +75,8 @@ public class DLFileEntryModelSearchConfigurator
 
 	private ModelIndexerWriterContributor<DLFileEntry>
 		_modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new DLFileEntryModelSummaryContributor();
 
 	@Reference(
 		target = "(indexer.class.name=com.liferay.document.library.kernel.model.DLFileEntry)"

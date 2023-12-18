@@ -57,8 +57,6 @@ public class DLFolderModelSearchConfigurator
 			new DLFolderModelIndexerWriterContributor(
 				_dlFolderLocalService,
 				_dynamicQueryBatchIndexingActionableFactory);
-
-		_modelSummaryContributor = new DLFolderModelSummaryContributor();
 	}
 
 	@Reference
@@ -70,6 +68,7 @@ public class DLFolderModelSearchConfigurator
 
 	private ModelIndexerWriterContributor<DLFolder>
 		_modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new DLFolderModelSummaryContributor();
 
 }

@@ -66,7 +66,6 @@ public class DDLRecordModelSearchConfigurator
 				_ddlRecordLocalService, _ddlRecordSetLocalService,
 				_ddlRecordVersionLocalService,
 				_dynamicQueryBatchIndexingActionableFactory);
-
 		_modelSummaryContributor = new DDLRecordModelSummaryContributor(
 			_ddlRecordSetLocalService, _language);
 	}

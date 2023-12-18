@@ -64,7 +64,6 @@ public class SXPElementModelSearchConfigurator
 			new SXPElementModelIndexerWriterContributor(
 				_dynamicQueryBatchIndexingActionableFactory,
 				_sxpElementLocalService);
-
 		_modelSummaryContributor = new SXPElementModelSummaryContributor(
 			_localization);
 	}

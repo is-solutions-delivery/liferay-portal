@@ -62,8 +62,6 @@ public class AccountGroupModelSearchConfigurator
 			new AccountGroupModelIndexerWriterContributor(
 				_accountGroupLocalService,
 				_dynamicQueryBatchIndexingActionableFactory);
-
-		_modelSummaryContributor = new AccountGroupModelSummaryContributor();
 	}
 
 	@Reference
@@ -75,6 +73,7 @@ public class AccountGroupModelSearchConfigurator
 
 	private ModelIndexerWriterContributor<AccountGroup>
 		_modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new AccountGroupModelSummaryContributor();
 
 }

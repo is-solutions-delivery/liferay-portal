@@ -71,7 +71,6 @@ public class MBMessageModelSearchConfigurator
 			new MBMessageModelIndexerWriterContributor(
 				_dynamicQueryBatchIndexingActionableFactory,
 				_mbMessageLocalService, _mbThreadLocalService);
-
 		_modelSummaryContributor = new MBMessageModelSummaryContributor(
 			_localization);
 	}

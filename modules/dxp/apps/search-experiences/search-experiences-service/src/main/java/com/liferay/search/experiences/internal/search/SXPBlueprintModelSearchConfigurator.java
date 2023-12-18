@@ -64,7 +64,6 @@ public class SXPBlueprintModelSearchConfigurator
 			new SXPBlueprintModelIndexerWriterContributor(
 				_dynamicQueryBatchIndexingActionableFactory,
 				_sxpBlueprintLocalService);
-
 		_modelSummaryContributor = new SXPBlueprintModelSummaryContributor(
 			_localization);
 	}

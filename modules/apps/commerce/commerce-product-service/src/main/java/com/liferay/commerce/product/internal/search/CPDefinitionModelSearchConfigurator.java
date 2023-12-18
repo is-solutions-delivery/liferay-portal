@@ -77,8 +77,6 @@ public class CPDefinitionModelSearchConfigurator
 			new CPDefinitionModelIndexerWriterContributor(
 				_cpDefinitionLocalService,
 				_dynamicQueryBatchIndexingActionableFactory);
-
-		_modelSummaryContributor = new CPDefinitionModelSummaryContributor();
 	}
 
 	@Reference
@@ -90,6 +88,7 @@ public class CPDefinitionModelSearchConfigurator
 
 	private ModelIndexerWriterContributor<CPDefinition>
 		_modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new CPDefinitionModelSummaryContributor();
 
 }

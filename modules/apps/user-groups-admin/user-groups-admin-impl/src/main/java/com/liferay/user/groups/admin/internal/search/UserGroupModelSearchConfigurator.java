@@ -57,8 +57,6 @@ public class UserGroupModelSearchConfigurator
 			new UserGroupModelIndexerWriterContributor(
 				_dynamicQueryBatchIndexingActionableFactory,
 				_userGroupLocalService);
-
-		_modelSummaryContributor = new UserGroupModelSummaryContributor();
 	}
 
 	@Reference
@@ -67,7 +65,8 @@ public class UserGroupModelSearchConfigurator
 
 	private ModelIndexerWriterContributor<UserGroup>
 		_modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new UserGroupModelSummaryContributor();
 
 	@Reference
 	private UserGroupLocalService _userGroupLocalService;

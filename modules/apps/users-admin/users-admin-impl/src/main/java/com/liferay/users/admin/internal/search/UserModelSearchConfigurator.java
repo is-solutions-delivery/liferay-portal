@@ -62,8 +62,6 @@ public class UserModelSearchConfigurator
 		_modelIndexWriterContributor = new UserModelIndexerWriterContributor(
 			_contactBatchReindexer, _dynamicQueryBatchIndexingActionableFactory,
 			_userLocalService);
-
-		_modelSummaryContributor = new UserModelSummaryContributor();
 	}
 
 	@Reference
@@ -74,7 +72,8 @@ public class UserModelSearchConfigurator
 		_dynamicQueryBatchIndexingActionableFactory;
 
 	private ModelIndexerWriterContributor<User> _modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new UserModelSummaryContributor();
 
 	@Reference
 	private UserLocalService _userLocalService;

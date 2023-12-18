@@ -80,8 +80,6 @@ public class JournalArticleModelSearchConfigurator
 				_dynamicQueryBatchIndexingActionableFactory,
 				_journalArticleLocalService,
 				_journalArticleResourceLocalService);
-
-		_modelSummaryContributor = new JournalArticleModelSummaryContributor();
 	}
 
 	@Reference
@@ -103,7 +101,8 @@ public class JournalArticleModelSearchConfigurator
 
 	private ModelIndexerWriterContributor<JournalArticle>
 		_modelIndexerWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new JournalArticleModelSummaryContributor();
 
 	@Reference(
 		target = "(indexer.class.name=com.liferay.journal.model.JournalArticle)"

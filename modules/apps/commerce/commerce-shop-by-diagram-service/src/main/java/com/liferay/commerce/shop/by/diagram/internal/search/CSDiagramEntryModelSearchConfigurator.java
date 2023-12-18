@@ -63,8 +63,6 @@ public class CSDiagramEntryModelSearchConfigurator
 			new CSDiagramEntryModelIndexerWriterContributor(
 				_csDiagramEntryLocalService,
 				_dynamicQueryBatchIndexingActionableFactory);
-
-		_modelSummaryContributor = new CSDiagramEntryModelSummaryContributor();
 	}
 
 	@Reference
@@ -76,7 +74,8 @@ public class CSDiagramEntryModelSearchConfigurator
 
 	private ModelIndexerWriterContributor<CSDiagramEntry>
 		_modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new CSDiagramEntryModelSummaryContributor();
 
 	@Reference(
 		target = "(indexer.class.name=com.liferay.commerce.shop.by.diagram.model.CSDiagramEntry)"

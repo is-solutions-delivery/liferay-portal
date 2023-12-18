@@ -64,7 +64,6 @@ public class CalendarBookingModelSearchConfigurator
 			new CalendarBookingModelIndexerWriterContributor(
 				_calendarBookingLocalService,
 				_dynamicQueryBatchIndexingActionableFactory);
-
 		_modelSummaryContributor = new CalendarBookingModelSummaryContributor(
 			_summaryHelper, _htmlParser);
 	}

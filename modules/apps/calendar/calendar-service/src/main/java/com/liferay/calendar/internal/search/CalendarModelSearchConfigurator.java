@@ -69,8 +69,6 @@ public class CalendarModelSearchConfigurator
 			new CalendarModelIndexerWriterContributor(
 				_calendarBookingBatchReindexer, _calendarLocalService,
 				_dynamicQueryBatchIndexingActionableFactory);
-
-		_modelSummaryContributor = new CalendarModelSummaryContributor();
 	}
 
 	@Reference
@@ -85,6 +83,7 @@ public class CalendarModelSearchConfigurator
 
 	private ModelIndexerWriterContributor<Calendar>
 		_modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new CalendarModelSummaryContributor();
 
 }

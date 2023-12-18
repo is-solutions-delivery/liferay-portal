@@ -64,8 +64,6 @@ public class CPInstanceModelSearchConfigurator
 			new CPInstanceModelIndexerWriterContributor(
 				_cpInstanceLocalService,
 				_dynamicQueryBatchIndexingActionableFactory);
-
-		_modelSummaryContributor = new CPInstanceModelSummaryContributor();
 	}
 
 	@Reference
@@ -77,6 +75,7 @@ public class CPInstanceModelSearchConfigurator
 
 	private ModelIndexerWriterContributor<CPInstance>
 		_modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new CPInstanceModelSummaryContributor();
 
 }

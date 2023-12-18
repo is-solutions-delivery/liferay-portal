@@ -53,8 +53,6 @@ public class CommerceOrderModelSearchConfigurator
 			new CommerceOrderModelIndexerWriterContributor(
 				_commerceOrderLocalService,
 				_dynamicQueryBatchIndexingActionableFactory);
-
-		_modelSummaryContributor = new CommerceOrderModelSummaryContributor();
 	}
 
 	@Reference
@@ -66,6 +64,7 @@ public class CommerceOrderModelSearchConfigurator
 
 	private ModelIndexerWriterContributor<CommerceOrder>
 		_modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new CommerceOrderModelSummaryContributor();
 
 }

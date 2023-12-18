@@ -63,8 +63,6 @@ public class COREntryModelSearchConfigurator
 			new COREntryModelIndexerWriterContributor(
 				_corEntryLocalService,
 				_dynamicQueryBatchIndexingActionableFactory);
-
-		_modelSummaryContributor = new COREntryModelSummaryContributor();
 	}
 
 	@Reference
@@ -76,7 +74,8 @@ public class COREntryModelSearchConfigurator
 
 	private ModelIndexerWriterContributor<COREntry>
 		_modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new COREntryModelSummaryContributor();
 
 	@Reference(
 		target = "(indexer.class.name=com.liferay.commerce.order.rule.model.COREntry)"

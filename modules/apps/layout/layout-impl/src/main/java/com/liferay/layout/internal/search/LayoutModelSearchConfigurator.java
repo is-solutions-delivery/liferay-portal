@@ -62,7 +62,6 @@ public class LayoutModelSearchConfigurator
 	protected void activate() {
 		_modelIndexWriterContributor = new LayoutModelIndexerWriterContributor(
 			_dynamicQueryBatchIndexingActionableFactory, _layoutLocalService);
-
 		_modelSummaryContributor = new LayoutModelSummaryContributor(
 			_htmlParser);
 	}

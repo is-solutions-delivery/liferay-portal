@@ -70,7 +70,6 @@ public class BlogsEntryModelSearchConfigurator
 			new BlogsEntryModelIndexerWriterContributor(
 				_blogsEntryLocalService,
 				_dynamicQueryBatchIndexingActionableFactory);
-
 		_modelSummaryContributor = new BlogsEntryModelSummaryContributor(
 			_localization);
 	}

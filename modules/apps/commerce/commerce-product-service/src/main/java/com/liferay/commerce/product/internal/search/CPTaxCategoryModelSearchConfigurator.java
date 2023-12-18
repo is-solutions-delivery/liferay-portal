@@ -53,8 +53,6 @@ public class CPTaxCategoryModelSearchConfigurator
 			new CPTaxCategoryModelIndexerWriterContributor(
 				_cpTaxCategoryLocalService,
 				_dynamicQueryBatchIndexingActionableFactory);
-
-		_modelSummaryContributor = new CPTaxCategoryModelSummaryContributor();
 	}
 
 	@Reference
@@ -66,6 +64,7 @@ public class CPTaxCategoryModelSearchConfigurator
 
 	private ModelIndexerWriterContributor<CPTaxCategory>
 		_modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new CPTaxCategoryModelSummaryContributor();
 
 }

@@ -46,8 +46,6 @@ public class ContactModelSearchConfigurator
 	protected void activate() {
 		_modelIndexWriterContributor = new ContactModelIndexerWriterContributor(
 			_contactLocalService, _dynamicQueryBatchIndexingActionableFactory);
-
-		_modelSummaryContributor = new ContactModelSummaryContributor();
 	}
 
 	@Reference
@@ -58,6 +56,7 @@ public class ContactModelSearchConfigurator
 		_dynamicQueryBatchIndexingActionableFactory;
 
 	private ModelIndexerWriterContributor<Contact> _modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new ContactModelSummaryContributor();
 
 }

@@ -67,8 +67,6 @@ public class JournalFolderModelSearchConfigurator
 			new JournalFolderModelIndexerWriterContributor(
 				_dynamicQueryBatchIndexingActionableFactory,
 				_journalFolderLocalService);
-
-		_modelSummaryContributor = new JournalFolderModelSummaryContributor();
 	}
 
 	@Reference
@@ -80,6 +78,7 @@ public class JournalFolderModelSearchConfigurator
 
 	private ModelIndexerWriterContributor<JournalFolder>
 		_modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new JournalFolderModelSummaryContributor();
 
 }

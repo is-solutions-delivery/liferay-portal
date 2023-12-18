@@ -57,8 +57,6 @@ public class BookmarksFolderModelSearchConfigurator
 			new BookmarksFolderModelIndexerWriterContributor(
 				_bookmarksFolderLocalService,
 				_dynamicQueryBatchIndexingActionableFactory);
-
-		_modelSummaryContributor = new BookmarksFolderModelSummaryContributor();
 	}
 
 	@Reference
@@ -70,6 +68,7 @@ public class BookmarksFolderModelSearchConfigurator
 
 	private ModelIndexerWriterContributor<BookmarksFolder>
 		_modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new BookmarksFolderModelSummaryContributor();
 
 }

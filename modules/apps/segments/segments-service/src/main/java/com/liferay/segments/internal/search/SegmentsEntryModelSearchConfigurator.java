@@ -63,8 +63,6 @@ public class SegmentsEntryModelSearchConfigurator
 			new SegmentsEntryModelIndexerWriterContributor(
 				_dynamicQueryBatchIndexingActionableFactory,
 				_segmentsEntryLocalService);
-
-		_modelSummaryContributor = new SegmentsEntryModelSummaryContributor();
 	}
 
 	@Reference
@@ -73,7 +71,8 @@ public class SegmentsEntryModelSearchConfigurator
 
 	private ModelIndexerWriterContributor<SegmentsEntry>
 		_modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new SegmentsEntryModelSummaryContributor();
 
 	@Reference
 	private SegmentsEntryLocalService _segmentsEntryLocalService;

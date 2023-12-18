@@ -63,8 +63,6 @@ public class OrganizationModelSearchConfigurator
 			new OrganizationModelIndexerWriterContributor(
 				_dynamicQueryBatchIndexingActionableFactory,
 				_organizationLocalService);
-
-		_modelSummaryContributor = new OrganizationModelSummaryContributor();
 	}
 
 	@Reference
@@ -73,7 +71,8 @@ public class OrganizationModelSearchConfigurator
 
 	private ModelIndexerWriterContributor<Organization>
 		_modelIndexWriterContributor;
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new OrganizationModelSummaryContributor();
 
 	@Reference
 	private OrganizationLocalService _organizationLocalService;
