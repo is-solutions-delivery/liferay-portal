@@ -9,7 +9,6 @@ import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -72,7 +71,7 @@ public abstract class BaseUserResourceImpl implements UserResource {
 	@javax.ws.rs.Path("/v2/Users")
 	@javax.ws.rs.Produces("application/scim+json")
 	@Override
-	public Object getV2User(
+	public Object getV2Users(
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@javax.ws.rs.QueryParam("count")
 			Integer count,
@@ -297,7 +296,9 @@ public abstract class BaseUserResourceImpl implements UserResource {
 	}
 
 	protected Map<String, String> addAction(
-		String actionName, GroupedModel groupedModel, String methodName) {
+		String actionName,
+		com.liferay.portal.kernel.model.GroupedModel groupedModel,
+		String methodName) {
 
 		return ActionUtil.addAction(
 			actionName, getClass(), groupedModel, methodName,

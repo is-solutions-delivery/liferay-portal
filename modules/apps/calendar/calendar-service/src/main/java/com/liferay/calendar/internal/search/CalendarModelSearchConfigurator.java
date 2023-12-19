@@ -5,12 +5,17 @@
 
 package com.liferay.calendar.internal.search;
 
+import com.liferay.calendar.internal.search.spi.model.index.contributor.CalendarModelIndexerWriterContributor;
+import com.liferay.calendar.internal.search.spi.model.result.contributor.CalendarModelSummaryContributor;
 import com.liferay.calendar.model.Calendar;
+import com.liferay.calendar.service.CalendarLocalService;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchConfigurator;
 import com.liferay.portal.search.spi.model.result.contributor.ModelSummaryContributor;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -58,15 +63,27 @@ public class CalendarModelSearchConfigurator
 		return true;
 	}
 
-	@Reference(
-		target = "(indexer.class.name=com.liferay.calendar.model.Calendar)"
-	)
+	@Activate
+	protected void activate() {
+		_modelIndexWriterContributor =
+			new CalendarModelIndexerWriterContributor(
+				_calendarBookingBatchReindexer, _calendarLocalService,
+				_dynamicQueryBatchIndexingActionableFactory);
+	}
+
+	@Reference
+	private CalendarBookingBatchReindexer _calendarBookingBatchReindexer;
+
+	@Reference
+	private CalendarLocalService _calendarLocalService;
+
+	@Reference
+	private DynamicQueryBatchIndexingActionableFactory
+		_dynamicQueryBatchIndexingActionableFactory;
+
 	private ModelIndexerWriterContributor<Calendar>
 		_modelIndexWriterContributor;
-
-	@Reference(
-		target = "(indexer.class.name=com.liferay.calendar.model.Calendar)"
-	)
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new CalendarModelSummaryContributor();
 
 }

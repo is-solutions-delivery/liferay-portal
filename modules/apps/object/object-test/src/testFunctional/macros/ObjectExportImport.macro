@@ -6,12 +6,14 @@ definition {
 			kebabOption = "Export as JSON",
 			objectLabel = ${objectLabel});
 
-		var tempFileName = TestCase.getDownloadedTempFileName(fileNamePattern = "Object_${objectName}*.json");
+		DownloadTempFile();
+
+		var tempFileName = TestCase.getDownloadedTempFileName(fileNamePattern = "Object_Definition_${objectName}*.json");
 		var tempFileDirectory = selenium.getOutputDirName();
 
 		var exportedConfigFile = FileUtil.exists("${tempFileDirectory}/${tempFileName}");
 
-		if (${exportedConfigFile} == "true") {
+		if ((${exportedConfigFile} == "true") && (${tempFileName} != "")) {
 			echo("PASSED! The file ${tempFileName} exists.");
 		}
 		else {
@@ -20,14 +22,22 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro importObject(objectFileName = null, objectName = null) {
+	macro importObject(objectFileName = null, objectName = null, tempFile = null) {
 		ObjectAdmin.openObjectAdmin();
 
 		Click(locator1 = "ObjectAdmin#KEBAB_MENU");
 
 		MenuItem.click(menuItem = "Import Object Definition");
 
-		var filePath = TestCase.getDependenciesDirPath(fileName = "${objectFileName}.json");
+		if (${tempFile} == "true") {
+			var tempFileName = TestCase.getDownloadedTempFileName(fileNamePattern = "Object_Definition_${objectName}*.json");
+			var tempFileDirectory = selenium.getOutputDirName();
+
+			var filePath = "${tempFileDirectory}/${tempFileName}";
+		}
+		else {
+			var filePath = TestCase.getDependenciesDirPath(fileName = "${objectFileName}.json");
+		}
 
 		UploadFile(
 			locator1 = "TextInput#FILE",

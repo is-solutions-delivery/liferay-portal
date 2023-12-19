@@ -12,16 +12,31 @@
 <tbody>
 <tr>
 	<td>ANY_ICON</td>
-	<td>//nav[contains(@class,'management-bar')]//*[*[name()='svg'][contains(@class,'icon-${key_text}')]]</td>
+	<td>//nav[contains(@class,'management-bar')]//button[contains(@class,'inline')][.//*[name()='svg'][contains(@class,'icon-${key_text}')]]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>FILTER_AND_ORDER</td>
-	<td>//nav[contains(@class,'management-bar')]//*[self::button or self::a][.//*[normalize-space(text())='Filter and Order']]</td>
+	<td>ELLIPSIS</td>
+	<td>//nav[contains(@class,'management-bar')]//button[contains(@class,'monospaced')][.//*[name()='svg'][contains(@class,'icon-ellipsis-v')]]</td>
 	<td></td>
 </tr>
 <tr>
-	<td>FILTER_AND_ORDER_DISABLED</td>
+	<td>FILTER</td>
+	<td>//nav[contains(@class,'management-bar')]//*[self::button or self::a][.//*[normalize-space(text())='Filter']]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ORDER</td>
+	<td>//nav[contains(@class,'management-bar')]//*[self::button or self::a][.//*[normalize-space(text())='Order']]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FILTER_DISABLED</td>
+	<td>//nav[contains(@class,'management-bar')]//button[@disabled]//*[*[normalize-space(text())='Filter and Order']]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ORDER_DISABLED</td>
 	<td>//nav[contains(@class,'management-bar')]//button[@disabled]//*[*[normalize-space(text())='Filter and Order']]</td>
 	<td></td>
 </tr>

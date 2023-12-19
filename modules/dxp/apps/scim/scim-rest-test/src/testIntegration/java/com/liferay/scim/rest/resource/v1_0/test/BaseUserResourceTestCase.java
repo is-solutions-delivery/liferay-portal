@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -34,6 +32,7 @@ import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
+import com.liferay.scim.rest.client.dto.v1_0.Group;
 import com.liferay.scim.rest.client.dto.v1_0.User;
 import com.liferay.scim.rest.client.http.HttpInvoker;
 import com.liferay.scim.rest.client.pagination.Page;
@@ -203,7 +202,7 @@ public abstract class BaseUserResourceTestCase {
 	}
 
 	@Test
-	public void testGetV2User() throws Exception {
+	public void testGetV2Users() throws Exception {
 		Assert.assertTrue(false);
 	}
 
@@ -224,26 +223,6 @@ public abstract class BaseUserResourceTestCase {
 
 		assertHttpResponseStatusCode(
 			204, userResource.deleteV2UserHttpResponse(user.getId()));
-
-		assertHttpResponseStatusCode(
-			404,
-			userResource.getV2UserHttpResponse(
-				testDeleteV2User_getCount(), testDeleteV2User_getStartIndex()));
-
-		assertHttpResponseStatusCode(
-			404,
-			userResource.getV2UserHttpResponse(
-				testDeleteV2User_getCount(), testDeleteV2User_getStartIndex()));
-	}
-
-	protected Integer testDeleteV2User_getCount() throws Exception {
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
-	}
-
-	protected Integer testDeleteV2User_getStartIndex() throws Exception {
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
 	}
 
 	protected User testDeleteV2User_addUser() throws Exception {
@@ -1675,9 +1654,9 @@ public abstract class BaseUserResourceTestCase {
 	}
 
 	protected UserResource userResource;
-	protected Group irrelevantGroup;
-	protected Company testCompany;
-	protected Group testGroup;
+	protected com.liferay.portal.kernel.model.Group irrelevantGroup;
+	protected com.liferay.portal.kernel.model.Company testCompany;
+	protected com.liferay.portal.kernel.model.Group testGroup;
 
 	protected static class BeanTestUtil {
 

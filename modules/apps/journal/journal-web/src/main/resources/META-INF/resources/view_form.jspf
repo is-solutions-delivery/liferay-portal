@@ -18,18 +18,22 @@
 	<aui:input name="newFolderId" type="hidden" />
 
 	<c:choose>
-		<c:when test="<%= !journalDisplayContext.isSearch() %>">
+		<c:when test="<%= !journalDisplayContext.isSearch() && !journalDisplayContext.isFilterApplied() %>">
 			<liferay-util:include page="/view_entries.jsp" servletContext="<%= application %>" />
 		</c:when>
 		<c:otherwise>
 			<div>
 				<div class="cadmin row">
 					<div class="col d-flex">
-						<div class="c-mr-2 d-inline-flex form-group">
-							<button class="btn btn-secondary btn-sm form-control-select">
-								<%= journalDisplayContext.getSearchResultsLabel() %>
-							</button>
-						</div>
+						<c:choose>
+							<c:when test='<%= !FeatureFlagManagerUtil.isEnabled("LPS-196768") %>'>
+								<div class="c-mr-2 d-inline-flex form-group">
+									<button class="btn btn-secondary btn-sm form-control-select">
+										<%= journalDisplayContext.getSearchResultsLabel() %>
+									</button>
+								</div>
+							</c:when>
+						</c:choose>
 
 						<%
 						String searchLocationLabel = journalDisplayContext.getSearchLocationLabel();
@@ -45,29 +49,30 @@
 							</div>
 						</c:if>
 
-						<div class="d-inline-flex form-group">
-							<button class="btn btn-secondary btn-sm form-control-select">
-								<%= journalDisplayContext.getSearchInLabel() %>
-							</button>
-						</div>
+						<c:if test='<%= !FeatureFlagManagerUtil.isEnabled("LPS-196768") || (FeatureFlagManagerUtil.isEnabled("LPS-196768") && journalDisplayContext.isSearch()) %>'>
+							<div class="d-inline-flex form-group">
+								<button class="btn btn-secondary btn-sm form-control-select">
+									<%= journalDisplayContext.getSearchInLabel() %>
+								</button>
+							</div>
+						</c:if>
 					</div>
 				</div>
 
-				<react:component
-					module="js/SearchOptions"
-					props="<%= journalDisplayContext.getSearchProps() %>"
-				/>
+				<c:if test='<%= !FeatureFlagManagerUtil.isEnabled("LPS-196768") || (FeatureFlagManagerUtil.isEnabled("LPS-196768") && journalDisplayContext.isSearch()) %>'>
+					<react:component
+						module="js/SearchOptions"
+						props="<%= journalDisplayContext.getSearchProps() %>"
+					/>
+				</c:if>
 			</div>
 
 			<c:choose>
-				<c:when test="<%= journalDisplayContext.isWebContentTabSelected() %>">
-					<liferay-util:include page="/view_entries.jsp" servletContext="<%= application %>" />
-				</c:when>
-				<c:when test="<%= journalDisplayContext.isVersionsTabSelected() %>">
-					<liferay-util:include page="/view_versions.jsp" servletContext="<%= application %>" />
-				</c:when>
-				<c:when test="<%= journalDisplayContext.isCommentsTabSelected() %>">
+				<c:when test="<%= journalDisplayContext.isShowComments() %>">
 					<liferay-util:include page="/view_comments.jsp" servletContext="<%= application %>" />
+				</c:when>
+				<c:when test="<%= journalDisplayContext.isShowVersions() %>">
+					<liferay-util:include page="/view_versions.jsp" servletContext="<%= application %>" />
 				</c:when>
 				<c:otherwise>
 					<liferay-util:include page="/view_entries.jsp" servletContext="<%= application %>" />

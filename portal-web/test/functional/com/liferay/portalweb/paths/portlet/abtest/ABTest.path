@@ -37,7 +37,7 @@
 </tr>
 <tr>
 	<td>CONNECTED_NOT_SYNC_BUTTON</td>
-	<td>//div[div[h1[contains(.,'A/B Test')]]] //h4[contains(.,'Sync to Liferay Analytics Cloud')]</td>
+	<td>//div[div[h1[contains(.,'Tests')]]] //h4[contains(.,'Sync to Liferay Analytics Cloud')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -82,7 +82,7 @@
 </tr>
 <tr>
 	<td>KEBAB_AB_TEST</td>
-	<td>//button[contains(@class, 'dropdown-toggle btn-monospaced btn btn-outline-borderless btn-outline-secondary')]</td>
+	<td>//div[@data-testid]//button[contains(@class, 'dropdown-toggle')][@aria-label='Show Actions']</td>
 	<td></td>
 </tr>
 <tr>

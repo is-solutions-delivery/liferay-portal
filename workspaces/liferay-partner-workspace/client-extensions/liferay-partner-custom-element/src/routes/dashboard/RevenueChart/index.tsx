@@ -12,6 +12,7 @@ import {revenueChartColumnColors} from '../../../common/components/dashboard/uti
 import getRevenueChartColumns from '../../../common/components/dashboard/utils/getRevenueChartColumns';
 import {Liferay} from '../../../common/services/liferay';
 import {LiferayAPIs} from '../../../common/services/liferay/common/enums/apis';
+import {Filters} from '../../../common/utils/constants/filters';
 import {retry} from '../../../common/utils/retry';
 
 export default function () {
@@ -25,9 +26,9 @@ export default function () {
 		setLoading(true);
 
 		// eslint-disable-next-line @liferay/portal/no-global-fetch
-		const growthRevenueResponseNewProject = await retry<Response>(() =>
+		const opportunities = await retry<any>(() =>
 			fetch(
-				"/o/c/opportunitysfs?pageSize=200&sort=closeDate:desc&filter=type eq 'New Project Existing Business' and stage eq 'Closed Won'",
+				`/o/c/opportunitysfs?pageSize=200&sort=closeDate:desc&filter=${Filters.REVENUE_DASHBOARD.opportunities}`,
 				{
 					headers: {
 						'accept': 'application/json',
@@ -37,31 +38,7 @@ export default function () {
 			)
 		);
 
-		const growthRevenueResponseNewBusiness = await retry<Response>(() =>
-			fetch(
-				"/o/c/opportunitysfs?pageSize=200&sort=closeDate:desc&filter=type eq 'New Business' and stage eq 'Closed Won'",
-				{
-					headers: {
-						'accept': 'application/json',
-						'x-csrf-token': Liferay.authToken,
-					},
-				}
-			)
-		);
-
-		const renewalRevenueResponse = await retry<Response>(() =>
-			fetch(
-				"/o/c/opportunitysfs?&pageSize=200&sort=closeDate:desc&filter=type eq 'Existing Business' and stage eq 'Closed Won'",
-				{
-					headers: {
-						'accept': 'application/json',
-						'x-csrf-token': Liferay.authToken,
-					},
-				}
-			)
-		);
-
-		const myUserAccountResponse = await retry<Response>(() =>
+		const myUserAccount = await retry<any>(() =>
 			fetch(`/o/${LiferayAPIs.HEADERLESS_ADMIN_USER}/my-user-account`, {
 				headers: {
 					'accept': 'application/json',
@@ -69,11 +46,10 @@ export default function () {
 				},
 			})
 		);
-		const myUserAccount = await myUserAccountResponse.json();
 
-		const accountResponse =
+		const account =
 			myUserAccount.accountBriefs[0]?.externalReferenceCode &&
-			(await retry<Response>(() =>
+			(await retry<any>(() =>
 				fetch(
 					`/o/${LiferayAPIs.HEADERLESS_ADMIN_USER}/accounts/by-external-reference-code/${myUserAccount.accountBriefs[0]?.externalReferenceCode}`,
 					{
@@ -85,31 +61,19 @@ export default function () {
 				)
 			));
 
-		const account = await accountResponse?.json();
-
 		const currency = account ? account.currency : 'USD';
 
-		if (
-			growthRevenueResponseNewProject.ok &&
-			renewalRevenueResponse.ok &&
-			growthRevenueResponseNewBusiness.ok &&
-			currency
-		) {
-			const growthRevenueResponseNewProjectData = await growthRevenueResponseNewProject.json();
-			const growthRevenueResponseNewBusinessData = await growthRevenueResponseNewBusiness.json();
-			const renewalRevenueData = await renewalRevenueResponse.json();
-
+		if (opportunities) {
 			setCurrencyData(currency);
 
 			getRevenueChartColumns(
 				currency,
-				growthRevenueResponseNewProjectData,
-				growthRevenueResponseNewBusinessData,
-				renewalRevenueData,
+				opportunities,
 				setTitleChart,
 				setValueChart,
 				setColumnsRevenueChart
 			);
+
 			setLoading(false);
 
 			return;

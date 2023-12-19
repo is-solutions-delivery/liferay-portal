@@ -9,8 +9,9 @@ import ClayForm from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import getCN from 'classnames';
-import React, {useRef, useState} from 'react';
+import React, {useContext, useRef, useState} from 'react';
 
+import NamespaceContext from '../../NamespaceContext';
 import {fetchResponse} from '../../utils/api.es';
 import {SCOPE_TYPES} from '../../utils/constants.es';
 import {sub} from '../../utils/language.es';
@@ -42,6 +43,8 @@ const ScopeSelect = ({
 	touched = false,
 	type = SCOPE_TYPES.SITE,
 }) => {
+	const {namespace} = useContext(NamespaceContext);
+
 	const [activeDropdown, setActiveDropdown] = useState(false);
 	const [displayName, setDisplayName] = useState('');
 	const [loading, setLoading] = useState(false);
@@ -53,9 +56,11 @@ const ScopeSelect = ({
 	const _fetchDropdownItems = () => {
 		setLoading(true);
 
+		const paramPrefix = type === SCOPE_TYPES.SITE ? namespace : '';
+
 		fetchResponse(fetchItemsUrl, {
-			page: 1,
-			pageSize: 5,
+			[`${paramPrefix}page`]: 1,
+			[`${paramPrefix}pageSize`]: 5,
 		})
 			.then(({items}) => {
 				setResourceItems(items || []);
@@ -151,21 +156,16 @@ const ScopeSelect = ({
 										{item[locator.label]}
 									</div>
 
-									<div className="list-group-text">
-										{type === SCOPE_TYPES.SITE
-											? sub(
-													Liferay.Language.get(
-														'x-child-sites'
-													),
-													[item.sites?.length]
-											  )
-											: sub(
-													Liferay.Language.get(
-														'external-reference-code-x'
-													),
-													[item.externalReferenceCode]
-											  )}
-									</div>
+									{type === SCOPE_TYPES.SXP_BLUEPRINT && (
+										<div className="list-group-text">
+											{sub(
+												Liferay.Language.get(
+													'external-reference-code-x'
+												),
+												[item.externalReferenceCode]
+											)}
+										</div>
+									)}
 								</ClayDropDown.Item>
 							)}
 						</ClayDropDown.Group>

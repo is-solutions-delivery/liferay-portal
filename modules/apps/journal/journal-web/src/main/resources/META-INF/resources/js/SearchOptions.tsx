@@ -48,6 +48,7 @@ type Option = {
 type Props = {
 	portletNamespace: string;
 	searchIn: Key;
+	searchInCommentsURL: string;
 	searchInOptions: Option[];
 	searchLocation: Key;
 	searchLocationOptions: Option[];
@@ -59,6 +60,7 @@ type Props = {
 const SearchOptions = ({
 	portletNamespace: namespace,
 	searchIn: initialSearchIn,
+	searchInCommentsURL,
 	searchInOptions,
 	searchLocation: initialLocation,
 	searchLocationOptions,
@@ -81,7 +83,7 @@ const SearchOptions = ({
 				[`${namespace}searchLocation`]: location || initialLocation,
 				[`${namespace}tab`]: results || initialResults,
 			},
-			searchURL
+			searchIn === 'comments' ? searchInCommentsURL : searchURL
 		);
 
 		navigate(url);
@@ -90,26 +92,30 @@ const SearchOptions = ({
 	return (
 		<ClayLayout.Row className="cadmin">
 			<ClayLayout.Col>
-				<ClayForm.Group className="c-mr-2 d-inline-flex">
-					<Picker
-						aria-label={Liferay.Language.get('results')}
-						as={Trigger}
-						id={`${namespace}searchResults`}
-						onSelectionChange={(key: Key) =>
-							onChange({results: key})
-						}
-						selectedKey={initialResults}
-					>
-						<DropDown.Group
-							header={Liferay.Language.get('results')}
-							items={searchResultsOptions}
+				{!Liferay.FeatureFlags['LPS-196768'] && (
+					<ClayForm.Group className="c-mr-2 d-inline-flex">
+						<Picker
+							aria-label={Liferay.Language.get('results')}
+							as={Trigger}
+							id={`${namespace}searchResults`}
+							onSelectionChange={(key: Key) =>
+								onChange({results: key})
+							}
+							selectedKey={initialResults}
 						>
-							{(item) => (
-								<Option key={item.value}>{item.label}</Option>
-							)}
-						</DropDown.Group>
-					</Picker>
-				</ClayForm.Group>
+							<DropDown.Group
+								header={Liferay.Language.get('results')}
+								items={searchResultsOptions}
+							>
+								{(item) => (
+									<Option key={item.value}>
+										{item.label}
+									</Option>
+								)}
+							</DropDown.Group>
+						</Picker>
+					</ClayForm.Group>
+				)}
 
 				{searchLocationOptions ? (
 					<ClayForm.Group className="c-mr-2 d-inline-flex">

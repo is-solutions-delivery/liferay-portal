@@ -13,7 +13,14 @@ type Specification = {
 	value: string;
 };
 
-export interface InitialStateProps {
+type LicenceTiersPrices = {
+	developer: LicensePrice[];
+	standard: LicensePrice[];
+};
+
+export type LicensePrice = {key: number; value: number};
+
+export type InitialStateProps = {
 	appBuild: string;
 	appCategories: Categories[];
 	appDescription: string;
@@ -22,7 +29,7 @@ export interface InitialStateProps {
 	appId: string;
 	appInstallationGuideURL: Specification;
 	appLicense: Specification;
-	appLicensePrice: string;
+	appLicensePrice: LicenceTiersPrices;
 	appLogo: UploadedFile;
 	appName: string;
 	appNotes: string;
@@ -46,16 +53,25 @@ export interface InitialStateProps {
 	skuVersionId: number;
 	supportURL: Specification;
 	versionName?: string;
-}
+};
 
-const initialState = {
+export type Sku = {id: number; sku: string};
+
+export type PriceEntry = {priceEntryId: number; sku: {name: string}};
+
+const initialState = ({
 	appBuild: 'upload',
 	appLicense: {value: 'Perpetual'},
+	appLicensePrice: {
+		developer: [],
+		standard: [{key: 1, value: 0}],
+	},
 	appType: {value: 'cloud'},
 	buildAppPackages: {},
 	dayTrial: 'no',
+	optionValuesId: {},
 	priceModel: {value: 'Paid'},
-} as InitialStateProps;
+} as unknown) as InitialStateProps;
 
 interface AppContextProps extends Array<InitialStateProps | Function> {
 	0: typeof initialState;

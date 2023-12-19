@@ -344,7 +344,7 @@ definition {
 				category = "Configuration",
 				portlet = "Locked Pages");
 
-			Click.waitForMenuToggleJSClick(locator1 = "ManagementBar#FILTER_AND_ORDER");
+			Click.waitForMenuToggleJSClick(locator1 = "ManagementBar#FILTER");
 		}
 
 		task ("Then the filter by type options should be in alphabetical order") {
@@ -391,7 +391,7 @@ definition {
 				category = "Configuration",
 				portlet = "Locked Pages");
 
-			Click.waitForMenuToggleJSClick(locator1 = "ManagementBar#FILTER_AND_ORDER");
+			Click.waitForMenuToggleJSClick(locator1 = "ManagementBar#ORDER");
 		}
 
 		task ("Then the order by options should be in alphabetical order") {
@@ -401,8 +401,7 @@ definition {
 				AssertVisible(
 					index = ${index},
 					key_menuItem = ${menuItem},
-					key_subheader = "Order By",
-					locator1 = "MenuItem#GROUPED_DROPDOWN_MENU_ITEM_BY_INDEX");
+					locator1 = "MenuItem#MENU_ITEM_BY_INDEX");
 
 				var index = ${index} + 1;
 			}

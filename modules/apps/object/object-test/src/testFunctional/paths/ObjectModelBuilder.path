@@ -42,7 +42,7 @@
 	</tr>
 	<tr>
 		<td>SELECT_OBJECT_IN_LEFT_SIDEBAR</td>
-		<td>//div[contains(@class,'left-sidebar-current-object-folder-group')]//span[contains(@class,'c-inner') and contains(.,'${key_label}')]</td>
+		<td>//div[@id = '${key_folderLabel}']//span[contains(@class,'c-inner') and contains(.,'${key_objectLabel}')]</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -53,6 +53,11 @@
 	<tr>
 		<td>LINKED_OBJECT_IN_OTHER_FOLDERS</td>
 		<td>//div[@id='${key_folderLabel}']//*[contains(@class, 'icon-link')]/../../following-sibling::div//span[text()='${key_objectLabel}']</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>OBJECT_IN_LEFT_SIDEBAR_KEBAB_MENU</td>
+		<td>//span[normalize-space()='${key_objectLabel}']//following-sibling::div//button[contains(@class,'dropdown-toggle')]</td>
 		<td></td>
 	</tr>
 </tbody>

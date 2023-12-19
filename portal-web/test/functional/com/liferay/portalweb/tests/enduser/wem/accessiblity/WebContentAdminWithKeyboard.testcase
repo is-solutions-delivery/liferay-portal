@@ -124,13 +124,21 @@ definition {
 
 		task ("The user can reverse sort direction via the keyboard") {
 			KeyPress(
-				locator1 = "ManagementBar#FILTER_AND_ORDER",
+				locator1 = "ManagementBar#FILTER",
 				value1 = "\TAB");
 
-			AssertElementFocused(locator1 = "ManagementBar#ORDER_ICON_GENERIC");
+			KeyPress(
+				locator1 = "ManagementBar#ORDER",
+				value1 = "\ENTER");
 
 			KeyPress(
-				locator1 = "ManagementBar#ORDER_ICON_GENERIC",
+				key_menuItem = "Ascending",
+				locator1 = "MenuItem#ANY_MENU_ITEM",
+				value1 = "\DOWN");
+
+			KeyPress(
+				key_menuItem = "Descending",
+				locator1 = "MenuItem#ANY_MENU_ITEM",
 				value1 = "\ENTER");
 
 			AssertTextEquals.assertPartialText(
@@ -144,13 +152,21 @@ definition {
 				value1 = "APAC Guild");
 
 			KeyPress(
-				locator1 = "ManagementBar#FILTER_AND_ORDER",
+				locator1 = "ManagementBar#FILTER",
 				value1 = "\TAB");
 
-			AssertElementFocused(locator1 = "ManagementBar#ORDER_ICON_GENERIC");
+			KeyPress(
+				locator1 = "ManagementBar#ORDER",
+				value1 = "\ENTER");
 
 			KeyPress(
-				locator1 = "ManagementBar#ORDER_ICON_GENERIC",
+				key_menuItem = "Descending",
+				locator1 = "MenuItem#ANY_MENU_ITEM",
+				value1 = "\UP");
+
+			KeyPress(
+				key_menuItem = "Ascending",
+				locator1 = "MenuItem#ANY_MENU_ITEM",
 				value1 = "\ENTER");
 
 			AssertTextEquals.assertPartialText(

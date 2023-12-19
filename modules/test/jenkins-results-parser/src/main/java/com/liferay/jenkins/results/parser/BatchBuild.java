@@ -100,53 +100,49 @@ public class BatchBuild extends BaseParentBuild {
 		Element messageElement = super.getGitHubMessageElement();
 
 		if (messageElement == null) {
-			return messageElement;
+			return null;
 		}
 
 		String result = getResult();
 
 		if (result.equals("ABORTED") && (getDownstreamBuildCount(null) == 0)) {
-			return messageElement;
+			_gitHubMessageElement = messageElement;
+
+			return _gitHubMessageElement;
 		}
 
-		Map<Build, Element> downstreamBuildFailureMessages =
-			getDownstreamBuildMessages(getFailedDownstreamBuilds());
+		List<Build> failedDownstreamBuilds = getFailedDownstreamBuilds();
+
+		List<Element> downstreamBuildMessageElements =
+			getDownstreamBuildMessageElements(failedDownstreamBuilds);
 
 		if (result.equals("FAILURE") &&
-			downstreamBuildFailureMessages.isEmpty()) {
+			downstreamBuildMessageElements.isEmpty()) {
 
-			return messageElement;
+			_gitHubMessageElement = messageElement;
+
+			return _gitHubMessageElement;
 		}
 
 		List<Element> failureElements = new ArrayList<>();
 		List<Element> upstreamJobFailureElements = new ArrayList<>();
 
-		for (Map.Entry<Build, Element> entry :
-				downstreamBuildFailureMessages.entrySet()) {
+		for (Build failedDownstreamBuild : failedDownstreamBuilds) {
+			Element gitHubMessageElement =
+				failedDownstreamBuild.getGitHubMessageElement();
 
-			Build failedDownstreamBuild = entry.getKey();
+			if (gitHubMessageElement != null) {
+				failureElements.add(gitHubMessageElement);
+			}
 
-			Element upstreamJobFailureElement =
+			Element gitHubMessageUpstreamJobFailureElement =
 				failedDownstreamBuild.
 					getGitHubMessageUpstreamJobFailureElement();
 
-			if (upstreamJobFailureElement != null) {
-				upstreamJobFailureElements.add(upstreamJobFailureElement);
+			if (gitHubMessageUpstreamJobFailureElement != null) {
+				upstreamJobFailureElements.add(
+					gitHubMessageUpstreamJobFailureElement);
 			}
-
-			Element failureElement = entry.getValue();
-
-			if (failureElement == null) {
-				continue;
-			}
-
-			if (isHighPriorityBuildFailureElement(failureElement)) {
-				failureElements.add(0, failureElement);
-
-				continue;
-			}
-
-			failureElements.add(failureElement);
 		}
 
 		if (!upstreamJobFailureElements.isEmpty()) {
@@ -171,7 +167,9 @@ public class BatchBuild extends BaseParentBuild {
 			return null;
 		}
 
-		return messageElement;
+		_gitHubMessageElement = messageElement;
+
+		return _gitHubMessageElement;
 	}
 
 	@Override
@@ -483,5 +481,7 @@ public class BatchBuild extends BaseParentBuild {
 		JenkinsResultsParserUtil.getNewThreadPoolExecutor(10, true);
 	private static final Pattern _jobVariantPattern = Pattern.compile(
 		"(?<batchName>[^/]+)(/.*)?");
+
+	private Element _gitHubMessageElement;
 
 }

@@ -24,7 +24,6 @@ import com.liferay.portal.kernel.model.ModelHintsUtil;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -61,10 +60,16 @@ public class LayoutExceptionRequestHandlerUtil {
 	}
 
 	private static String _handleLayoutTypeException(
-		ActionRequest actionRequest, int exceptionType) {
+		ActionRequest actionRequest, int exceptionType, String layoutType) {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
+
+		if (exceptionType == LayoutTypeException.FIRST_LAYOUT_PERMISSION) {
+			return LanguageUtil.get(
+				themeDisplay.getLocale(),
+				"the-first-page-should-be-visible-for-guest-users");
+		}
 
 		String errorMessage = "pages-of-type-x-cannot-be-selected";
 
@@ -72,20 +77,17 @@ public class LayoutExceptionRequestHandlerUtil {
 			errorMessage = "the-first-page-cannot-be-of-type-x";
 		}
 
-		String type = ParamUtil.getString(actionRequest, "type");
-
 		LayoutTypeController layoutTypeController =
-			LayoutTypeControllerTracker.getLayoutTypeController(type);
+			LayoutTypeControllerTracker.getLayoutTypeController(layoutType);
 
 		ResourceBundle layoutTypeResourceBundle = ResourceBundleUtil.getBundle(
 			"content.Language", themeDisplay.getLocale(),
 			layoutTypeController.getClass());
 
-		String layoutTypeName = LanguageUtil.get(
-			layoutTypeResourceBundle, "layout.types." + type);
-
 		return LanguageUtil.format(
-			themeDisplay.getRequest(), errorMessage, layoutTypeName);
+			themeDisplay.getRequest(), errorMessage,
+			LanguageUtil.get(
+				layoutTypeResourceBundle, "layout.types." + layoutType));
 	}
 
 	private static void _handlePortalException(
@@ -165,10 +167,13 @@ public class LayoutExceptionRequestHandlerUtil {
 			if ((layoutTypeException.getType() ==
 					LayoutTypeException.FIRST_LAYOUT) ||
 				(layoutTypeException.getType() ==
+					LayoutTypeException.FIRST_LAYOUT_PERMISSION) ||
+				(layoutTypeException.getType() ==
 					LayoutTypeException.NOT_INSTANCEABLE)) {
 
 				errorMessage = _handleLayoutTypeException(
-					actionRequest, layoutTypeException.getType());
+					actionRequest, layoutTypeException.getType(),
+					layoutTypeException.getLayoutType());
 			}
 		}
 		else if (portalException instanceof PrincipalException) {

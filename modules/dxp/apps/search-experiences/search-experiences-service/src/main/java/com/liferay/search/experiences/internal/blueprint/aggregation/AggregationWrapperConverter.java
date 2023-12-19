@@ -176,7 +176,7 @@ public class AggregationWrapperConverter {
 			).put(
 				"scripted_metric", this::_toScriptedMetricAggregation
 			).put(
-				"scripted_metric", this::_toStatsAggregation
+				"stats", this::_toStatsAggregation
 			).put(
 				"sum", this::_toSumAggregation
 			).put(
@@ -1513,15 +1513,19 @@ public class AggregationWrapperConverter {
 			weightedAvgAggregation::setValueMissing, valueJSONObject,
 			"missing");
 
-		weightedAvgAggregation.setValueScript(
-			_scriptConverter.toScript(valueJSONObject.get("script")));
+		if (valueJSONObject.get("script") != null) {
+			weightedAvgAggregation.setValueScript(
+				_scriptConverter.toScript(valueJSONObject.get("script")));
+		}
 
 		_setObject(
 			weightedAvgAggregation::setWeightMissing, weightJSONObject,
 			"missing");
 
-		weightedAvgAggregation.setWeightScript(
-			_scriptConverter.toScript(weightJSONObject.get("script")));
+		if (weightJSONObject.get("script") != null) {
+			weightedAvgAggregation.setWeightScript(
+				_scriptConverter.toScript(weightJSONObject.get("script")));
+		}
 
 		return weightedAvgAggregation;
 	}

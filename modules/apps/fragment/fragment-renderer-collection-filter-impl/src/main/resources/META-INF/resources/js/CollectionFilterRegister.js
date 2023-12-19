@@ -41,7 +41,8 @@ export function getCollectionFilterValue(
 export function setCollectionFilterValue(
 	filterType,
 	filterFragmentEntryLinkId,
-	value
+	value,
+	targetCollections
 ) {
 	if (document.body.classList.contains('has-edit-mode-menu')) {
 		return;
@@ -61,6 +62,15 @@ export function setCollectionFilterValue(
 		url.searchParams.set(paramName, value);
 	}
 
+	if (targetCollections) {
+		for (const targetCollection of targetCollections) {
+			if (!targetCollection) {
+				continue;
+			}
+
+			url.searchParams.delete('page_number_' + targetCollection);
+		}
+	}
 	window.location.href = url.toString();
 }
 

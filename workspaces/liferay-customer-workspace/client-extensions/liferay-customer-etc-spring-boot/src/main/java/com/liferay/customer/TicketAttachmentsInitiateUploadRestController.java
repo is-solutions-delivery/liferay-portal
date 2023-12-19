@@ -23,9 +23,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -37,17 +37,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class TicketAttachmentsInitiateUploadRestController
 	extends BaseRestController {
 
-	@GetMapping
-	public ResponseEntity<String> get(
-			@AuthenticationPrincipal Jwt jwt,
-			@RequestParam(name = "fileName") String fileName,
-			@RequestParam(name = "fileSize") String fileSize,
-			@RequestParam(name = "md5Checksum") String md5Checksum,
-			@RequestParam(name = "type", required = false) String type,
-			@RequestParam(name = "zendeskTicketId") long zendeskTicketId)
+	@PostMapping
+	public ResponseEntity<String> post(
+			@AuthenticationPrincipal Jwt jwt, @RequestBody String json)
 		throws Exception {
 
 		try {
+			JSONObject jsonObject = new JSONObject(json);
+
+			String fileName = jsonObject.getString("fileName");
+			String md5Checksum = jsonObject.getString("md5Checksum");
+			long zendeskTicketId = jsonObject.getLong("zendeskTicketId");
+
 			TicketAttachment ticketAttachment =
 				_ticketAttachmentWebService.fetchTicketAttachment(
 					jwt, fileName, md5Checksum, zendeskTicketId);
@@ -62,16 +63,21 @@ public class TicketAttachmentsInitiateUploadRestController
 				}
 			}
 			else {
+				String externalReferenceCode = jsonObject.optString(
+					"externalReferenceCode");
+				String fileSize = jsonObject.getString("fileSize");
+				String type = jsonObject.optString("type");
+
 				ticketAttachment =
 					_ticketAttachmentWebService.addTicketAttachment(
-						jwt, _getAccountKey(zendeskTicketId), fileName,
-						fileSize, md5Checksum, TicketAttachment.STATUS_DRAFT,
-						type, zendeskTicketId);
+						jwt, _getAccountKey(zendeskTicketId),
+						externalReferenceCode, fileName, fileSize, md5Checksum,
+						TicketAttachment.STATUS_DRAFT, type, zendeskTicketId);
 			}
 
-			JSONObject jsonObject = new JSONObject();
+			JSONObject responseJSONObject = new JSONObject();
 
-			jsonObject.put(
+			responseJSONObject.put(
 				"gcsSessionURL",
 				_googleCloudStorageWebService.getUploadSessionURL(
 					ticketAttachment.getGCSBucketName(),
@@ -80,7 +86,8 @@ public class TicketAttachmentsInitiateUploadRestController
 				"ticketAttachmentId", ticketAttachment.getTicketAttachmentId()
 			);
 
-			return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
+			return new ResponseEntity<>(
+				responseJSONObject.toString(), HttpStatus.OK);
 		}
 		catch (Exception exception) {
 			_log.error(exception);

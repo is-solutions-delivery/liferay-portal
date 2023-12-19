@@ -71,6 +71,7 @@ definition {
 	test CanAddAPIApplicationWithCluster {
 		property app.server.bundles.size = "1";
 		property cluster.enabled = "true";
+		property database.types = "mysql, postgresql";
 		property minimum.slave.ram = "24";
 		property portal.acceptance = "true";
 		property remote.elasticsearch.enabled = "true";
@@ -91,12 +92,12 @@ definition {
 				title = "My-app");
 
 			SchemaAPI.relateRequestSchemaToEndpointByErc(
-				endpointErc = "testendpoint",
-				requestSchemaErc = "testSchema");
+				endpointErc = "My-app_testendpoint",
+				requestSchemaErc = "My-app_testSchema");
 
 			SchemaAPI.relateResponseSchemaToEndpointByErc(
-				endpointErc = "testendpoint",
-				responseSchemaErc = "testSchema");
+				endpointErc = "My-app_testendpoint",
+				responseSchemaErc = "My-app_testSchema");
 		}
 
 		task ("When executing the endpoint on second node") {
@@ -156,14 +157,14 @@ definition {
 				title = "My-app");
 
 			SchemaAPI.relateRequestSchemaToEndpointByErc(
-				endpointErc = "testendpoint",
+				endpointErc = "My-app_testendpoint",
 				portalURL = "http://localhost:9080",
-				requestSchemaErc = "testSchema");
+				requestSchemaErc = "My-app_testSchema");
 
 			SchemaAPI.relateResponseSchemaToEndpointByErc(
-				endpointErc = "testendpoint",
+				endpointErc = "My-app_testendpoint",
 				portalURL = "http://localhost:9080",
-				responseSchemaErc = "testSchema");
+				responseSchemaErc = "My-app_testSchema");
 		}
 
 		task ("When executing the endpoint on the default node") {

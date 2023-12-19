@@ -3,6 +3,7 @@
 [#if mdfClaimId?has_content]
 	[#assign permissionAction = restClient.get("/c/permissionactions?filter=object%20eq%20%27MDF%20Claim%27&pageSize=-1") /]
 	[#assign mdfClaim = (restClient.get("/c/mdfclaims/${mdfClaimId}"))! /]
+	[#assign mdfRequestIdFromMdfClaim = mdfClaim.r_mdfReqToMDFClms_c_mdfRequestId! /]
 
 	[#assign hasMarketingReviewAction = (permissionAction.items?filter(permissionAction -> permissionAction.action == "MARKETING-REVIEW-STATUS-UPDATE")?has_content)! /]
 	[#assign hasApproveAction = (permissionAction.items?filter(permissionAction -> permissionAction.action== "APPROVE")?has_content)! /]
@@ -50,38 +51,39 @@
 			});
 		};
 
-		const updatePaidClaimStatus = async (status, payment, checkNumber) => {
-			const response = await fetch(`/o/c/mdfclaims/${mdfClaimId}`, {
-				body:
-					`{"mdfClaimStatus": "` +
-					status +
-					`", "claimPaid": "` +
-					payment +
-					`", "checkNumber": "` +
-					checkNumber +
-					`"}`,
-				headers: {
-					'content-type': 'application/json',
-					'x-csrf-token': Liferay.authToken,
-				},
-				method: 'PATCH',
-			});
+		const updatePaidClaimStatus = async (
+		status,
+		payment,
+		checkNumber,
+		paymentDate
+	) => {
+		const response = await fetch(`/o/c/mdfclaims/${mdfClaimId}`, {
+			body:
+				`{"mdfClaimStatus": "` + status + `", "claimPaid": "` + payment + `",
+			"checkNumber": "` + checkNumber + `", "paymentDate": "` + paymentDate + `"}`,
 
-			if (response.ok) {
-				location.reload();
+			headers: {
+				'content-type': 'application/json',
+				'x-csrf-token': Liferay.authToken,
+			},
+			method: 'PATCH',
+		});
 
-				return;
-			}
+		if (response.ok) {
+			location.reload();
 
-			Liferay.Util.openToast({
-				message: 'The MDF Claim Status cannot be changed.',
-				type: 'danger',
-			});
-		};
+			return;
+		}
+
+		Liferay.Util.openToast({
+			message: 'The MDF Claim Status cannot be changed.',
+			type: 'danger',
+		});
+	};
 
 		const callClaimPaidModal = (status) => {
-			return Liferay.Util.openModal({
-				bodyHTML: `<form>
+		return Liferay.Util.openModal({
+			bodyHTML: `<form>
 								<div class="form-group">
 									<label for="claimPaidInput">Amount Paid</label>
 
@@ -93,47 +95,56 @@
 
 									<input class="form-control" id="checkNumberInput" placeholder="Check Number" type="text" />
 								</div>
+
+								<div class="form-group">
+									<label>Payment Date</label>
+
+									<input class="form-control" id="paymentDate" placeholder="Payment Data" type="date" />
+								</div>
 							</form>`,
-				buttons: [
-					{
-						displayType: 'secondary',
-						label: Liferay.Language.get('Cancel'),
-						type: 'cancel',
+			buttons: [
+				{
+					displayType: 'secondary',
+					label: Liferay.Language.get('Cancel'),
+					type: 'cancel',
+				},
+				{
+					displayType: 'primary',
+					label: 'Submit',
+
+					onClick() {
+						const checkNumber = document.getElementById(
+							'checkNumberInput'
+						).value;
+						const claimPaid = document.getElementById(
+							'claimPaidInput'
+						).value;
+						const paymentDate = document.getElementById(
+							'paymentDate'
+						).value;
+
+						if (checkNumber && claimPaid && paymentDate) {
+							return updatePaidClaimStatus(
+								status,
+								claimPaid,
+								checkNumber,
+								paymentDate
+							);
+						}
+
+						Liferay.Util.openToast({
+							message:
+								'The MDF Claim Status cannot be changed without the fields being filled.',
+							type: 'danger',
+						});
 					},
-					{
-						displayType: 'primary',
-						label: 'Submit',
-
-						onClick() {
-							const checkNumber = document.getElementById(
-								'checkNumberInput'
-							).value;
-							const claimPaid = document.getElementById(
-								'claimPaidInput'
-							).value;
-
-							if (checkNumber && claimPaid) {
-								return updatePaidClaimStatus(
-									status,
-									claimPaid,
-									checkNumber
-								);
-							}
-
-							Liferay.Util.openToast({
-								message:
-									'The MDF Claim Status cannot be changed without the fields being filled.',
-								type: 'danger',
-							});
-
-						},
-						type: 'submit',
-					},
-				],
-				headerHTML: `<h1 class="m-0">Status Change</h1>`,
-				size: 'md',
-			});
-		};
+					type: 'submit',
+				},
+			],
+			headerHTML: `<h1 class="m-0">Status Change</h1>`,
+			size: 'md',
+		});
+	};
 
 		const callMDFClaimModal = (status) => {
 			if (status !== 'approved') {
@@ -266,6 +277,13 @@
 				</li>
 			[/#if]
 
+			[#if hasClaimPaidAction]
+				[#assign count = count + 1]
+				<li class="dropdown-item" id="dropdownMDFClaimStatusItem" onclick="callClaimPaidModal('claimPaid')">
+					Claim Paid
+				</li>
+			[/#if]
+
 			[#if hasFinanceReviewAction]
 				[#assign count = count + 1]
 				<li class="dropdown-item" id="dropdownMDFClaimStatusItem" onclick="callMDFClaimModal('inFinanceReview')">
@@ -282,15 +300,6 @@
 		[/#if]
 
 		[#if mdfClaimStatusKey == 'rejected']
-			[#if hasMarketingReviewAction]
-				[#assign count = count + 1]
-				<li class="dropdown-item" id="dropdownMDFClaimStatusItem" onclick="callMDFClaimModal('pendingMarketingReview')">
-					Pending Marketing Review
-				</li>
-			[/#if]
-		[/#if]
-
-		[#if mdfClaimStatusKey == 'draft']
 			[#if hasMarketingReviewAction]
 				[#assign count = count + 1]
 				<li class="dropdown-item" id="dropdownMDFClaimStatusItem" onclick="callMDFClaimModal('pendingMarketingReview')">

@@ -382,6 +382,38 @@ public abstract class BaseJobEntity extends BaseEntity implements JobEntity {
 
 	protected abstract String getJenkinsJobName();
 
+	protected Long getParameterValueLong(String name) {
+		String valueLong = getParameterValue(name);
+
+		if (StringUtil.isNullOrEmpty(valueLong)) {
+			return null;
+		}
+
+		return Long.valueOf(valueLong);
+	}
+
+	protected URL getParameterValueURL(String name) {
+		String urlString = getParameterValue(name);
+
+		if (StringUtil.isNullOrEmpty(urlString)) {
+			return null;
+		}
+
+		return StringUtil.toURL(urlString);
+	}
+
+	protected void setParameterValueLong(String name, Long valueLong) {
+		setParameterValue(name, String.valueOf(valueLong));
+	}
+
+	protected void setParameterValueURL(String name, URL valueURL) {
+		if (valueURL == null) {
+			setParameterValue(name, null);
+		}
+
+		setParameterValue(name, String.valueOf(valueURL));
+	}
+
 	private JSONArray _getInitialBuildParametersJSONArray() {
 		JSONArray initialBuildParametersJSONArray = new JSONArray();
 
@@ -394,7 +426,9 @@ public abstract class BaseJobEntity extends BaseEntity implements JobEntity {
 			String initialBuildParameterValue =
 				initialBuildParameter.getValue();
 
-			if (StringUtil.isNullOrEmpty(initialBuildParameterValue)) {
+			if (StringUtil.isNullOrEmpty(initialBuildParameterValue) ||
+				initialBuildParameterValue.equals("null")) {
+
 				continue;
 			}
 

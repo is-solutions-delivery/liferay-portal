@@ -29,7 +29,9 @@ definition {
 
 			PortletEntry.selectAll();
 
-			ClickNoError(locator1 = "Icon#DELETE");
+			ClickNoError(
+				key_text = "trash",
+				locator1 = "ManagementBar#ANY_ICON");
 
 			Alert.viewSuccessMessage();
 		}
@@ -50,9 +52,7 @@ definition {
 
 	@summary = "Default summary"
 	macro goToFilterValues(filterValues = null) {
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
-
-		MenuItem.click(menuItem = ${filterValues});
+		ManagementBar.setFilterAndOrder(filterBy = ${filterValues});
 	}
 
 	@summary = "Default summary"
@@ -97,7 +97,9 @@ definition {
 			LexiconEntry.selectEntry(key_rowEntry = ${notificationsTitle});
 		}
 
-		Click(locator1 = "Icon#MARK_AS_READ");
+		Click(
+			key_text = "envelope-open",
+			locator1 = "ManagementBar#ANY_ICON");
 
 		Alert.viewSuccessMessage();
 	}
@@ -111,7 +113,9 @@ definition {
 			LexiconEntry.selectEntry(key_rowEntry = ${notificationsTitle});
 		}
 
-		Click(locator1 = "Icon#MARK_AS_UNREAD");
+		Click(
+			key_text = "envelope-closed",
+			locator1 = "ManagementBar#ANY_ICON");
 
 		Alert.viewSuccessMessage();
 	}
@@ -134,7 +138,9 @@ definition {
 			LexiconEntry.selectEntry(key_rowEntry = ${notificationsTitle});
 		}
 
-		Click(locator1 = "Icon#DELETE");
+		Click(
+			key_text = "times-circle",
+			locator1 = "ManagementBar#ANY_ICON");
 
 		Alert.viewSuccessMessage();
 	}

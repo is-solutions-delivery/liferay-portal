@@ -13,19 +13,6 @@ definition {
 		User.firstLoginPG();
 	}
 
-	tearDown {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			Site.tearDownCP();
-
-			PageTemplatesAdminGlobalSite.tearDownCP();
-		}
-	}
-
 	@description = "Add a page template in global site."
 	@priority = 4
 	@uitest
@@ -228,7 +215,11 @@ definition {
 
 			PageTemplatesAdmin.deletePageTemplate(pageTemplateName = "Page Template Name");
 
-			Alert.viewErrorMessage(errorMessage = "You cannot delete page templates that are used by a page.");
+			Alert.viewErrorMessage(errorMessage = "Error:One or more entries could not be deleted.");
+
+			AssertTextEquals.assertPartialText(
+				locator1 = "Message#ERROR_2",
+				value1 = "Error:You cannot delete page templates that are used by a page.");
 		}
 	}
 

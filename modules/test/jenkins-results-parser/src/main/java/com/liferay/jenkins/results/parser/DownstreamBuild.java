@@ -172,6 +172,10 @@ public class DownstreamBuild extends BaseBuild {
 
 	@Override
 	public Element getGitHubMessageElement() {
+		if (_gitHubMessageElement != null) {
+			return _gitHubMessageElement;
+		}
+
 		String status = getStatus();
 
 		if (!status.equals("completed") && (getParentBuild() != null)) {
@@ -212,10 +216,29 @@ public class DownstreamBuild extends BaseBuild {
 			}
 		}
 
+		String batchName = getBatchName();
+
+		if (batchName.contains("playwright")) {
+			for (URL url : getTestrayAttachmentURLs()) {
+				String urlString = url.toString();
+
+				if (urlString.contains("playwright-report")) {
+					Dom4JUtil.addToElement(
+						messageElement, " - ",
+						Dom4JUtil.getNewAnchorElement(
+							urlString, null, "Playwright Report"));
+
+					break;
+				}
+			}
+		}
+
 		if (result.equals("FAILURE")) {
 			Element failureMessageElement = getFailureMessageElement();
 
-			if (failureMessageElement != null) {
+			if ((failureMessageElement != null) &&
+				!batchName.contains("playwright")) {
+
 				messageElement.add(failureMessageElement);
 			}
 
@@ -272,7 +295,9 @@ public class DownstreamBuild extends BaseBuild {
 				"[", getBuildName(), "] Created a failure GitHub message: ",
 				String.valueOf(hashCode())));
 
-		return messageElement;
+		_gitHubMessageElement = messageElement;
+
+		return _gitHubMessageElement;
 	}
 
 	public Map<String, List<String>> getTestClassMethodsMap() {
@@ -986,5 +1011,7 @@ public class DownstreamBuild extends BaseBuild {
 		new CIFailureMessageGenerator(),
 		new GenericFailureMessageGenerator()
 	};
+
+	private Element _gitHubMessageElement;
 
 }

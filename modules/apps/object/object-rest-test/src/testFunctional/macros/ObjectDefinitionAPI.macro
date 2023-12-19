@@ -528,6 +528,17 @@ definition {
 	}
 
 	@summary = "Default summary"
+	macro assertObjectDefinitionInResponse(expectedValue = null) {
+		var response = ObjectDefinitionAPI.getObjectDefinitions();
+
+		var actual = JSONUtil.getWithJSONPath(${response}, "$..name");
+
+		TestUtils.assertContain(
+			actual = ${actual},
+			expected = ${expectedValue});
+	}
+
+	@summary = "Default summary"
 	macro assertResponseHasCorrectObjectEntryName(responseToParse = null, expectedValue = null, objectEntryId = null) {
 		var actual = JSONUtil.getWithJSONPath(${responseToParse}, "$.items[?(@.id==${objectEntryId})].name");
 

@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {useEffect} from 'react';
-
 import {Header} from '../../components/Header/Header';
 import {Input} from '../../components/Input/Input';
 import {NewAppPageFooterButtons} from '../../components/NewAppPageFooterButtons/NewAppPageFooterButtons';
@@ -16,89 +14,238 @@ import {
 	addExpandoValue,
 	createAppSKU,
 	getOptions,
-	getProductSKU,
+	postOption,
 	postOptionValue,
-	postTrialOption,
-	postTrialProductOption,
+	postProductOption,
 } from '../../utils/api';
-import {createSkuName} from '../../utils/util';
+import {
+	createSkuName,
+	getDxpOptionBody,
+	getDxpProductOptionBody,
+	getLicenceTypesObject,
+	getOptionDeveloperBody,
+	getOptionNoBody,
+	getOptionStandardBody,
+	getOptionTrialBody,
+	getOptionYesBody,
+	getTrialOptionBody,
+	getTrialProductOptionBody,
+} from '../../utils/util';
 
 import './ProvideVersionDetailsPage.scss';
 
-interface ProvideVersionDetailsPageProps {
+import {useState} from 'react';
+import useSWR from 'swr';
+
+type ProvideVersionDetailsPageProps = {
 	onClickBack: () => void;
 	onClickContinue: () => void;
-}
+};
 
 export function ProvideVersionDetailsPage({
 	onClickBack,
 	onClickContinue,
 }: ProvideVersionDetailsPageProps) {
+	const [isProcessing, setProcessing] = useState(false);
+
 	const [
 		{
 			appNotes,
 			appProductId,
+			appType,
 			appVersion,
 			optionId,
-			optionValuesId,
 			productOptionId,
 		},
 		dispatch,
 	] = useAppContext();
 
-	useEffect(() => {
-		if (!productOptionId) {
-			const makeFetch = async () => {
-				let newOptionId: number;
-				const options = await getOptions();
+	const {data: options = []} = useSWR('/publish-product/options', () =>
+		getOptions()
+	);
 
-				const trialOption = options.find(({key}) => key === 'trial');
+	const isDXP = appType.value === 'dxp';
 
-				if (!optionId && !trialOption) {
-					newOptionId = await postTrialOption();
-				}
-				else {
-					newOptionId = optionId ?? trialOption!.id;
-				}
+	const createExpandoValue = (skuId: number) => {
+		addExpandoValue({
+			attributeValues: {
+				'Version': appVersion,
+				'Version Description': appNotes,
+			},
+			className: 'com.liferay.commerce.product.model.CPInstance',
+			classPK: skuId,
+			companyId: getCompanyId(),
+			tableName: 'CUSTOM_FIELDS',
+		});
+	};
 
-				dispatch({
-					payload: {value: newOptionId},
-					type: TYPES.UPDATE_OPTION_ID,
-				});
+	const createProductOptions = async () => {
+		const trialOption = options.find(({key}) => key === 'trial');
 
-				const newProductOptionId = await postTrialProductOption(
-					newOptionId,
-					appProductId
-				);
+		const dxpOption = options.find(
+			({key}) => key === 'dxp-license-usage-type'
+		);
 
-				dispatch({
-					payload: {value: newProductOptionId},
-					type: TYPES.UPDATE_PRODUCT_OPTION_ID,
-				});
+		const targetOption = isDXP ? dxpOption : trialOption;
+		let newOptionId: number;
 
-				const noOptionId = await postOptionValue(
-					'no',
-					'No',
-					newProductOptionId,
-					0
-				);
-				const yesOptionId = await postOptionValue(
-					'yes',
-					'Yes',
-					newProductOptionId,
-					1
-				);
-
-				dispatch({
-					payload: {noOptionId, yesOptionId},
-					type: TYPES.UPDATE_PRODUCT_OPTION_VALUES_ID,
-				});
-			};
-
-			makeFetch();
+		if (!optionId && !targetOption) {
+			newOptionId = await postOption(
+				isDXP ? getDxpOptionBody() : getTrialOptionBody()
+			);
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [appProductId, dispatch, productOptionId]);
+		else {
+			newOptionId = optionId ?? targetOption!.id;
+		}
+
+		const productOption = isDXP
+			? getDxpProductOptionBody(newOptionId)
+			: getTrialProductOptionBody(newOptionId);
+
+		const newProductOptionId = await postProductOption(
+			appProductId,
+			productOption
+		);
+
+		dispatch({
+			payload: {value: newOptionId},
+			type: TYPES.UPDATE_OPTION_ID,
+		});
+
+		dispatch({
+			payload: {value: newProductOptionId},
+			type: TYPES.UPDATE_PRODUCT_OPTION_ID,
+		});
+
+		if (isDXP) {
+			const [
+				standardOptionId,
+				developerOptionId,
+				trialOptionId,
+			] = await Promise.all([
+				postOptionValue(getOptionStandardBody(), newProductOptionId),
+				postOptionValue(getOptionDeveloperBody(), newProductOptionId),
+				postOptionValue(getOptionTrialBody(), newProductOptionId),
+			]);
+
+			return {
+				developerOptionId,
+				newProductOptionId,
+				standardOptionId,
+				trialOptionId,
+			};
+		}
+
+		const [noOptionId, yesOptionId] = await Promise.all([
+			postOptionValue(getOptionNoBody(), newProductOptionId),
+			postOptionValue(getOptionYesBody(), newProductOptionId),
+		]);
+
+		dispatch({
+			payload: {
+				newOptionId,
+				noOptionId,
+				yesOptionId,
+			},
+			type: TYPES.UPDATE_PRODUCT_OPTION_VALUES_ID,
+		});
+
+		return {
+			newProductOptionId,
+			noOptionId,
+			yesOptionId,
+		};
+	};
+
+	const getSkuBody = (
+		sku: string,
+		skuProductOptions: Awaited<ReturnType<typeof createProductOptions>>,
+		skuName = sku
+	) => {
+		let value;
+
+		const payload = {
+			appProductId,
+			body: {
+				published: true,
+				purchasable: true,
+				sku: skuName,
+				skuOptions: [
+					{
+						key: skuProductOptions.newProductOptionId,
+						value,
+					},
+				],
+			},
+		};
+
+		if (isDXP) {
+			if (sku === 'DEVELOPER') {
+				value = skuProductOptions.developerOptionId;
+			}
+			else if (sku === 'STANDARD') {
+				value = skuProductOptions.standardOptionId;
+			}
+			else {
+				(payload.body as any).skuSubscriptionConfiguration = {
+					enable: true,
+					length: 30,
+					numberOfLength: 1,
+					overrideSubscriptionInfo: true,
+					subscriptionType: 'daily',
+				};
+
+				value = skuProductOptions.trialOptionId;
+			}
+		}
+		else {
+			value = skuProductOptions.noOptionId;
+		}
+
+		payload.body.skuOptions[0].value = value;
+
+		return payload;
+	};
+
+	const createSkus = async (
+		skuProductOptions: Awaited<ReturnType<typeof createProductOptions>>
+	) => {
+		if (isDXP) {
+			for (const sku of getLicenceTypesObject()) {
+				const response = await createAppSKU(
+					getSkuBody(
+						sku.name,
+						skuProductOptions,
+						createSkuName(appProductId, appVersion, sku.code)
+					)
+				);
+
+				if (sku.name === 'TRIAL') {
+					dispatch({
+						payload: {value: response.id},
+						type: TYPES.UPDATE_SKU_TRIAL_ID,
+					});
+				}
+
+				createExpandoValue(response.id);
+			}
+
+			return;
+		}
+		const sku = getSkuBody(
+			createSkuName(appProductId, appVersion),
+			skuProductOptions
+		);
+
+		const response = await createAppSKU(sku);
+
+		createExpandoValue(response.id);
+
+		dispatch({
+			payload: {value: response.id},
+			type: TYPES.UPDATE_SKU_VERSION_ID,
+		});
+	};
 
 	return (
 		<div className="provide-version-details-page-container">
@@ -125,7 +272,7 @@ export function ProvideVersionDetailsPage({
 					}
 					placeholder="0.0.0"
 					required
-					tooltip={`Specify your app's version.  This will help the user to understand the latest version of your app offered on the Marketplace.`}
+					tooltip={`Specify your app's version. This will help the user to understand the latest version of your app offered on the Marketplace.`}
 					value={appVersion}
 				/>
 
@@ -141,64 +288,23 @@ export function ProvideVersionDetailsPage({
 					}
 					placeholder="Enter app description"
 					required
-					tooltip="Notes pertaining to the release of the project.  These will be displayed when the customer goes to purchase and/or update the app."
+					tooltip="Notes pertaining to the release of the project. These will be displayed when the customer goes to purchase and/or update the app."
 					value={appNotes}
 				/>
 			</Section>
 
 			<NewAppPageFooterButtons
-				disableContinueButton={!appVersion || !appNotes}
+				disableContinueButton={!appVersion || !appNotes || isProcessing}
 				onClickBack={() => onClickBack()}
 				onClickContinue={async () => {
-					const skuResponse = await getProductSKU({appProductId});
+					if (!productOptionId) {
+						setProcessing(true);
 
-					const versionSku = skuResponse.items.find(
-						({sku}) =>
-							sku === createSkuName(appProductId, appVersion)
-					);
+						const skuProductOptions = await createProductOptions();
+						await createSkus(skuProductOptions);
 
-					let skuId;
-
-					if (versionSku) {
-						skuId = versionSku.id;
+						setProcessing(false);
 					}
-					else {
-						const response = await createAppSKU({
-							appProductId,
-							body: {
-								published: true,
-								purchasable: true,
-								sku: createSkuName(appProductId, appVersion),
-								skuOptions: [
-									{
-										key: productOptionId,
-										value: optionValuesId.noOptionId,
-									},
-								],
-							},
-						});
-
-						skuId = response.id;
-
-						dispatch({
-							payload: {
-								value: response.id,
-							},
-							type: TYPES.UPDATE_SKU_VERSION_ID,
-						});
-					}
-
-					addExpandoValue({
-						attributeValues: {
-							'Version': appVersion,
-							'Version Description': appNotes,
-						},
-						className:
-							'com.liferay.commerce.product.model.CPInstance',
-						classPK: skuId,
-						companyId: getCompanyId(),
-						tableName: 'CUSTOM_FIELDS',
-					});
 
 					onClickContinue();
 				}}

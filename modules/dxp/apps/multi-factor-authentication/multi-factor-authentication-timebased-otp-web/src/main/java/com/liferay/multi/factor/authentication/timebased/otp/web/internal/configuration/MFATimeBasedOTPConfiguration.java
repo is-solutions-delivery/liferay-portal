@@ -8,6 +8,7 @@ package com.liferay.multi.factor.authentication.timebased.otp.web.internal.confi
 import aQute.bnd.annotation.metatype.Meta;
 
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
+import com.liferay.portal.kernel.settings.LocalizedValuesMap;
 
 /**
  * @author Tomas Polesovsky
@@ -48,5 +49,30 @@ public interface MFATimeBasedOTPConfiguration {
 		name = "algorithm-key-size", required = false
 	)
 	public int algorithmKeySize();
+
+	@Meta.AD(
+		deflt = "${server-property://com.liferay.portal/admin.email.from.address}",
+		description = "set-the-sender-address-on-the-totp-reuse-attempt-warning-email",
+		name = "email-totp-reuse-attempt-warning-from-address", required = false
+	)
+	public String emailTOTPReuseAttemptWarningFromAddress();
+
+	@Meta.AD(
+		deflt = "${server-property://com.liferay.portal/admin.email.from.name}",
+		name = "email-totp-reuse-attempt-warning-from-name", required = false
+	)
+	public String emailTOTPReuseAttemptWarningFromName();
+
+	@Meta.AD(
+		deflt = "${resource:com/liferay/multi/factor/authentication/timebased/otp/configuration/dependencies/email_totp_reuse_attempt_warning_body.tmpl}",
+		name = "email-totp-reuse-attempt-warning-body", required = false
+	)
+	public LocalizedValuesMap emailTOTPReuseAttemptWarningBody();
+
+	@Meta.AD(
+		deflt = "${resource:com/liferay/multi/factor/authentication/timebased/otp/configuration/dependencies/email_totp_reuse_attempt_warning_subject.tmpl}",
+		name = "email-totp-reuse-attempt-warning-subject", required = false
+	)
+	public LocalizedValuesMap emailTOTPReuseAttemptWarningSubject();
 
 }

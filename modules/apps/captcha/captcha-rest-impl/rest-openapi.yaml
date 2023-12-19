@@ -2,12 +2,18 @@ components:
     schemas:
         SimpleCaptcha:
             properties:
+                answer:
+                    type: string
+                image:
+                    type: string
                 token:
                     type: string
+            required:
+                - token
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.captcha.rest.client', and version '1.0.0'."
+        'com.liferay.captcha.rest.client', and version '1.0.2'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -15,9 +21,9 @@ info:
     version: v1.0
 openapi: 3.0.1
 paths:
-    "/simple-captcha":
+    "/simple-captcha/challenge":
         get:
-            operationId: getSimpleCaptcha
+            operationId: getSimpleCaptchaChallenge
             responses:
                 200:
                     content:
@@ -27,4 +33,29 @@ paths:
                         application/xml:
                             schema:
                                 $ref: "#/components/schemas/SimpleCaptcha"
+                    description:
+                        Send a captcha token and image.
+            tags: ["SimpleCaptcha"]
+    "/simple-captcha/response":
+        post:
+            operationId: postSimpleCaptchaResponse
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/SimpleCaptcha"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/SimpleCaptcha"
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+                400:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+                    description:
+                        Invalid answer provided
             tags: ["SimpleCaptcha"]

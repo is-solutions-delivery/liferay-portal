@@ -5,6 +5,9 @@
 
 package com.liferay.jethr0.event.github.pullrequest;
 
+import com.liferay.jethr0.event.github.GitHubFactory;
+import com.liferay.jethr0.event.github.client.GitHubClient;
+import com.liferay.jethr0.event.github.comment.GitHubComment;
 import com.liferay.jethr0.event.github.commit.GitHubCommit;
 import com.liferay.jethr0.event.github.repository.GitHubRepository;
 import com.liferay.jethr0.event.github.user.GitHubUser;
@@ -19,30 +22,57 @@ import org.json.JSONObject;
  */
 public class GitHubPullRequest {
 
-	public GitHubPullRequest(JSONObject jsonObject) {
+	public GitHubPullRequest(
+		GitHubFactory gitHubFactory, JSONObject jsonObject) {
+
+		_gitHubFactory = gitHubFactory;
 		_jsonObject = jsonObject;
 
 		JSONObject baseJSONObject = jsonObject.getJSONObject("base");
 
 		_baseBranchName = baseJSONObject.getString("ref");
-		_baseGitHubCommit = new GitHubCommit(baseJSONObject);
-		_baseGitHubRepository = new GitHubRepository(
+		_baseGitHubCommit = _gitHubFactory.newGitHubCommit(baseJSONObject);
+		_baseGitHubRepository = _gitHubFactory.newGitHubRepository(
 			baseJSONObject.getJSONObject("repo"));
 
 		JSONObject headJSONObject = jsonObject.getJSONObject("head");
 
 		_headBranchName = headJSONObject.getString("ref");
-		_headGitHubCommit = new GitHubCommit(headJSONObject);
-		_headGitHubRepository = new GitHubRepository(
+		_headGitHubCommit = _gitHubFactory.newGitHubCommit(headJSONObject);
+		_headGitHubRepository = _gitHubFactory.newGitHubRepository(
 			headJSONObject.getJSONObject("repo"));
 
-		_originGitHubUser = new GitHubUser(
+		_originGitHubUser = _gitHubFactory.newGitHubUser(
 			headJSONObject.getJSONObject("user"));
 
-		_receiverGitHubUser = new GitHubUser(
+		_receiverGitHubUser = _gitHubFactory.newGitHubUser(
 			baseJSONObject.getJSONObject("user"));
 
-		_senderGitHubUser = new GitHubUser(jsonObject.getJSONObject("user"));
+		_senderGitHubUser = _gitHubFactory.newGitHubUser(
+			jsonObject.getJSONObject("user"));
+	}
+
+	public void close() {
+		JSONObject requestJSONObject = new JSONObject();
+
+		requestJSONObject.put("state", "closed");
+
+		GitHubClient gitHubClient = getGitHubClient();
+
+		gitHubClient.requestPatch(getAPIURL(), requestJSONObject);
+	}
+
+	public GitHubComment comment(String body) {
+		JSONObject requestJSONObject = new JSONObject();
+
+		requestJSONObject.put("body", body);
+
+		GitHubClient gitHubClient = getGitHubClient();
+
+		JSONObject responseJSONObject = new JSONObject(
+			gitHubClient.requestPost(getCommentsURL(), requestJSONObject));
+
+		return _gitHubFactory.newGitHubComment(responseJSONObject);
 	}
 
 	public URL getAPIURL() {
@@ -65,6 +95,10 @@ public class GitHubPullRequest {
 		return StringUtil.toURL(_jsonObject.getString("comments_url"));
 	}
 
+	public GitHubClient getGitHubClient() {
+		return _gitHubFactory.getGitHubClient();
+	}
+
 	public String getHeadBranchName() {
 		return _headBranchName;
 	}
@@ -82,6 +116,14 @@ public class GitHubPullRequest {
 
 	public URL getHTMLURL() {
 		return StringUtil.toURL(_jsonObject.getString("html_url"));
+	}
+
+	public URL getIssueLockURL() {
+		return StringUtil.toURL(getIssueURL() + "/lock");
+	}
+
+	public URL getIssueURL() {
+		return StringUtil.toURL(_jsonObject.getString("issue_url"));
 	}
 
 	public GitHubUser getOriginGitHubUser() {
@@ -103,9 +145,16 @@ public class GitHubPullRequest {
 				"/tree/", getBaseBranchName()));
 	}
 
+	public void lock() {
+		GitHubClient gitHubClient = getGitHubClient();
+
+		gitHubClient.requestPut(getIssueLockURL(), null);
+	}
+
 	private final String _baseBranchName;
 	private final GitHubCommit _baseGitHubCommit;
 	private final GitHubRepository _baseGitHubRepository;
+	private final GitHubFactory _gitHubFactory;
 	private final String _headBranchName;
 	private final GitHubCommit _headGitHubCommit;
 	private final GitHubRepository _headGitHubRepository;

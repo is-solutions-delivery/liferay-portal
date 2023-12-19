@@ -276,6 +276,86 @@
 					}
 				},
 				{
+					"externalReferenceCode": "generateCISystemHistoryReport",
+					"key": "generateCISystemHistoryReport",
+					"name": "Generate CI System History Report",
+					"name_i18n": {
+						"en-US": "Generate CI System History Report"
+					}
+				},
+				{
+					"externalReferenceCode": "generateCISystemStatusReport",
+					"key": "generateCISystemStatusReport",
+					"name": "Generate CI System Status Report",
+					"name_i18n": {
+						"en-US": "Generate CI System Status Report"
+					}
+				},
+				{
+					"externalReferenceCode": "generateReports",
+					"key": "generateReports",
+					"name": "Generate Reports",
+					"name_i18n": {
+						"en-US": "Generate Reports"
+					}
+				},
+				{
+					"externalReferenceCode": "generateTestDurationMetrics",
+					"key": "generateTestDurationMetrics",
+					"name": "Generate Test Duration Metrics",
+					"name_i18n": {
+						"en-US": "Generate Test Duration Metrics"
+					}
+				},
+				{
+					"externalReferenceCode": "generateTestrayCSV",
+					"key": "generateTestrayCSV",
+					"name": "Generate Testray CSV",
+					"name_i18n": {
+						"en-US": "Generate Testray CSV"
+					}
+				},
+				{
+					"externalReferenceCode": "maintenanceDaily",
+					"key": "maintenanceDaily",
+					"name": "Maintenance Daily",
+					"name_i18n": {
+						"en-US": "Maintenance Daily"
+					}
+				},
+				{
+					"externalReferenceCode": "maintenanceMatrixJobs",
+					"key": "maintenanceMatrixJobs",
+					"name": "Maintenance Matrix Jobs",
+					"name_i18n": {
+						"en-US": "Maintenance Matrix Jobs"
+					}
+				},
+				{
+					"externalReferenceCode": "maintenanceStaleArtifacts",
+					"key": "maintenanceStaleArtifacts",
+					"name": "Maintenance Stale Artifacts",
+					"name_i18n": {
+						"en-US": "Maintenance Stale Artifacts"
+					}
+				},
+				{
+					"externalReferenceCode": "maintenanceWeekly",
+					"key": "maintenanceWeekly",
+					"name": "Maintenance Weekly",
+					"name_i18n": {
+						"en-US": "Maintenance Weekly"
+					}
+				},
+				{
+					"externalReferenceCode": "maintenanceWeeklyNode",
+					"key": "maintenanceWeeklyNode",
+					"name": "Maintenance Weekly Node",
+					"name_i18n": {
+						"en-US": "Maintenance Weekly Node"
+					}
+				},
+				{
 					"externalReferenceCode": "portalAppRelease",
 					"key": "portalAppRelease",
 					"name": "Portal App Release",
@@ -337,6 +417,62 @@
 					"name": "Portal Upstream Test Suite",
 					"name_i18n": {
 						"en-US": "Portal Upstream Test Suite"
+					}
+				},
+				{
+					"externalReferenceCode": "poshiRelease",
+					"key": "poshiRelease",
+					"name": "Poshi Release",
+					"name_i18n": {
+						"en-US": "Poshi Release"
+					}
+				},
+				{
+					"externalReferenceCode": "qaWebsitesDaily",
+					"key": "qaWebsitesDaily",
+					"name": "QA Websites Daily",
+					"name_i18n": {
+						"en-US": "QA Websites Daily"
+					}
+				},
+				{
+					"externalReferenceCode": "qaWebsitesPullRequestSF",
+					"key": "qaWebsitesPullRequestSF",
+					"name": "QA Websites Pull Request SF",
+					"name_i18n": {
+						"en-US": "QA Websites Pull Request SF"
+					}
+				},
+				{
+					"externalReferenceCode": "qaWebsitesWeekly",
+					"key": "qaWebsitesWeekly",
+					"name": "QA Websites Weekly",
+					"name_i18n": {
+						"en-US": "QA Websites Weekly"
+					}
+				},
+				{
+					"externalReferenceCode": "repositoryArchive",
+					"key": "repositoryArchive",
+					"name": "Repository Archive",
+					"name_i18n": {
+						"en-US": "Repository Archive"
+					}
+				},
+				{
+					"externalReferenceCode": "verification",
+					"key": "verification",
+					"name": "Verification",
+					"name_i18n": {
+						"en-US": "Verification"
+					}
+				},
+				{
+					"externalReferenceCode": "verificationNode",
+					"key": "verificationNode",
+					"name": "Verification Node",
+					"name_i18n": {
+						"en-US": "Verification Node"
 					}
 				}
 			],

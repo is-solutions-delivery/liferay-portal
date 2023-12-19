@@ -11,7 +11,7 @@ export async function retry<T>(
 	const result = await operation();
 
 	if (result.ok) {
-		return result as T;
+		return result.json() as T;
 	}
 
 	if (maxRetryCount > 0) {

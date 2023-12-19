@@ -4,6 +4,7 @@
  */
 
 import Button, {ClayButtonWithIcon} from '@clayui/button';
+import ClayLoadingIndicator from '@clayui/loading-indicator';
 import ClayModal from '@clayui/modal';
 
 import ModalFormatedInformation from '../../../../common/components/ModalFormatedInformation';
@@ -29,6 +30,7 @@ export default function ModalContent({content, onClose}: IProps) {
 				/>
 			</div>
 
+			{!content && <ClayLoadingIndicator />}
 			<div className="d-md-flex">
 				<div className="col">
 					{content?.[
@@ -40,7 +42,7 @@ export default function ModalContent({content, onClose}: IProps) {
 								content?.[
 									PartnerOpportunitiesColumnKey
 										.PARTNER_ACCOUNT_NAME
-								]
+								] as string
 							}
 							label="Partner Account Name"
 						/>
@@ -52,7 +54,7 @@ export default function ModalContent({content, onClose}: IProps) {
 							information={
 								content?.[
 									PartnerOpportunitiesColumnKey.CURRENCY
-								]
+								] as string
 							}
 							label="Currency"
 						/>
@@ -64,7 +66,7 @@ export default function ModalContent({content, onClose}: IProps) {
 							information={
 								content?.[
 									PartnerOpportunitiesColumnKey.PARTNER_NAME
-								]
+								] as string
 							}
 							label="Partner Name"
 						/>
@@ -76,33 +78,24 @@ export default function ModalContent({content, onClose}: IProps) {
 							information={
 								content?.[
 									PartnerOpportunitiesColumnKey.ACCOUNT_NAME
-								]
+								] as string
 							}
 							label="Account Name"
 						/>
 					)}
 
-					{content?.[PartnerOpportunitiesColumnKey.START_DATE] && (
+					{content?.[
+						PartnerOpportunitiesColumnKey.SUBSCRIPTION_TERM
+					] && (
 						<ModalFormatedInformation
 							className="col mb-2"
 							information={
 								content?.[
-									PartnerOpportunitiesColumnKey.START_DATE
-								]
+									PartnerOpportunitiesColumnKey
+										.SUBSCRIPTION_TERM
+								] as string
 							}
-							label="Start Date"
-						/>
-					)}
-
-					{content?.[PartnerOpportunitiesColumnKey.END_DATE] && (
-						<ModalFormatedInformation
-							className="col mb-2"
-							information={
-								content?.[
-									PartnerOpportunitiesColumnKey.END_DATE
-								]
-							}
-							label="End Date"
+							label="Subscription Term"
 						/>
 					)}
 
@@ -112,7 +105,7 @@ export default function ModalContent({content, onClose}: IProps) {
 							information={
 								content?.[
 									PartnerOpportunitiesColumnKey.CLOSE_DATE
-								]
+								] as string
 							}
 							label="Close Date"
 						/>
@@ -127,7 +120,7 @@ export default function ModalContent({content, onClose}: IProps) {
 								content?.[
 									PartnerOpportunitiesColumnKey
 										.SUBSCRIPTION_ARR
-								]
+								] as string
 							}
 							label="Subscription ARR"
 						/>
@@ -144,7 +137,7 @@ export default function ModalContent({content, onClose}: IProps) {
 								content?.[
 									PartnerOpportunitiesColumnKey
 										.PARTNER_REP_NAME
-								]
+								] as string
 							}
 							label="Partner Rep Name"
 						/>
@@ -159,7 +152,7 @@ export default function ModalContent({content, onClose}: IProps) {
 								content?.[
 									PartnerOpportunitiesColumnKey
 										.PARTNER_REP_EMAIL
-								]
+								] as string
 							}
 							label="Partner Rep Email"
 						/>
@@ -171,7 +164,7 @@ export default function ModalContent({content, onClose}: IProps) {
 							information={
 								content?.[
 									PartnerOpportunitiesColumnKey.LIFERAY_REP
-								]
+								] as string
 							}
 							label="Liferay Rep"
 						/>
@@ -181,7 +174,9 @@ export default function ModalContent({content, onClose}: IProps) {
 						<ModalFormatedInformation
 							className="col mb-2"
 							information={
-								content?.[PartnerOpportunitiesColumnKey.STAGE]
+								content?.[
+									PartnerOpportunitiesColumnKey.STAGE
+								] as string
 							}
 							label="Stage"
 						/>
@@ -191,7 +186,9 @@ export default function ModalContent({content, onClose}: IProps) {
 						<ModalFormatedInformation
 							className="col mb-2"
 							information={
-								content?.[PartnerOpportunitiesColumnKey.TYPE]
+								content?.[
+									PartnerOpportunitiesColumnKey.TYPE
+								] as string
 							}
 							label="Type"
 						/>

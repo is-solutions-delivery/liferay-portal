@@ -5,12 +5,17 @@
 
 package com.liferay.bookmarks.internal.search;
 
+import com.liferay.bookmarks.internal.search.spi.model.index.contributor.BookmarksEntryModelIndexerWriterContributor;
+import com.liferay.bookmarks.internal.search.spi.model.result.contributor.BookmarksEntryModelSummaryContributor;
 import com.liferay.bookmarks.model.BookmarksEntry;
+import com.liferay.bookmarks.service.BookmarksEntryLocalService;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchConfigurator;
 import com.liferay.portal.search.spi.model.result.contributor.ModelSummaryContributor;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -47,15 +52,27 @@ public class BookmarksEntryModelSearchConfigurator
 		return _modelSummaryContributor;
 	}
 
-	@Reference(
-		target = "(indexer.class.name=com.liferay.bookmarks.model.BookmarksEntry)"
-	)
+	@Activate
+	protected void activate() {
+		_modelIndexWriterContributor =
+			new BookmarksEntryModelIndexerWriterContributor(
+				_bookmarksEntryLocalService, _bookmarksFolderBatchReindexer,
+				_dynamicQueryBatchIndexingActionableFactory);
+	}
+
+	@Reference
+	private BookmarksEntryLocalService _bookmarksEntryLocalService;
+
+	@Reference
+	private BookmarksFolderBatchReindexer _bookmarksFolderBatchReindexer;
+
+	@Reference
+	private DynamicQueryBatchIndexingActionableFactory
+		_dynamicQueryBatchIndexingActionableFactory;
+
 	private ModelIndexerWriterContributor<BookmarksEntry>
 		_modelIndexWriterContributor;
-
-	@Reference(
-		target = "(indexer.class.name=com.liferay.bookmarks.model.BookmarksEntry)"
-	)
-	private ModelSummaryContributor _modelSummaryContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new BookmarksEntryModelSummaryContributor();
 
 }

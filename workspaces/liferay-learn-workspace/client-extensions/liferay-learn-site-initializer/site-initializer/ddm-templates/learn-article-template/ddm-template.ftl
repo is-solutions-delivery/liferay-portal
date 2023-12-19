@@ -1,4 +1,5 @@
 <#include "${templatesPath}/SVG">
+
 <script>
 	let href = window.location.href;
 	if (href.endsWith("/")) {
@@ -9,21 +10,23 @@
 
 <#assign
 	journalArticleId = .vars["reserved-article-id"].data
+	taxonomyCategoriesMap = {}
 	taxonomyCategoryBriefs = restClient.get("/headless-delivery/v1.0/sites/${groupId}/structured-contents/by-key/${journalArticleId}?nestedFields=embeddedTaxonomyCategory").taxonomyCategoryBriefs
 	taxonomyVocabularies = []
-	taxonomyCategoriesMap = {}
 />
 
 <#list taxonomyCategoryBriefs as taxonomyCategoryBrief>
-<#assign taxonomyVocabularyName = taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name />
+	<#assign taxonomyVocabularyName = taxonomyCategoryBrief.embeddedTaxonomyCategory.parentTaxonomyVocabulary.name />
+
 	<#if !taxonomyVocabularies?seq_contains(taxonomyVocabularyName)>
 		<#assign taxonomyVocabularies = taxonomyVocabularies + [taxonomyVocabularyName] />
 	</#if>
+
 	<#if taxonomyCategoriesMap[taxonomyVocabularyName]?has_content>
 		<#assign taxonomyCategoriesMap = taxonomyCategoriesMap +
 			{
-			  taxonomyVocabularyName:
-			  taxonomyCategoriesMap[taxonomyVocabularyName] + [{
+			taxonomyVocabularyName:
+			taxonomyCategoriesMap[taxonomyVocabularyName] + [{
 				"categoryId": taxonomyCategoryBrief.taxonomyCategoryId,
 				"categoryName": taxonomyCategoryBrief.taxonomyCategoryName
 				}]
@@ -32,7 +35,7 @@
 	<#else>
 		<#assign taxonomyCategoriesMap = taxonomyCategoriesMap +
 			{
-			  taxonomyVocabularyName:
+			taxonomyVocabularyName:
 				[{
 					"categoryId": taxonomyCategoryBrief.taxonomyCategoryId,
 					"categoryName": taxonomyCategoryBrief.taxonomyCategoryName
@@ -47,53 +50,24 @@
 	isLandingPage = false
 	topLevelArticle = true
 />
+
 <#if (breadcrumbLinks.getData())??>
 	<#assign breadcrumbLinksJSONArray = jsonFactoryUtil.createJSONArray(breadcrumbLinks.getData()) />
+
 	<#if breadcrumbLinksJSONArray.length() gt 0>
 		<#assign
-			parentLink = breadcrumbLinksJSONArray.getJSONObject(0)?eval
 			topLevelArticle = false
 		/>
 	</#if>
 </#if>
+
 <#if (landingPage.getData())?? && (landingPage.getData() == "true")>
 	<#assign isLandingPage = true />
 </#if>
+
 <div class="container-fluid documentations main-content" role="main">
 	<div class="row">
-    <div class="col-12 col-md-2 mobile-nav-hide mt-2">
-		
-		
-		
-		<div id="test">
-		  <#if (navigationLinks.getData())??>
-			  
-				
-				<#if (product.getData())??>
-	${product.getData()}
-</#if>
-
-<#assign currentLength = breadcrumbLinksJSONArray.length() />
-<#assign articleTitle = .vars['reserved-article-title'].getData() />
-
-        <p> currentLength = ${currentLength} </p>
-				
-
-				
-        
-			  <h1> oi </h1>
-			</#if>
-		
-		
-		
-		
-		
-		
-		
-		</div>
-		
-		
-		
+    	<div class="col-12 col-md-2 mobile-nav-hide mt-2">
 			<div class="doc-nav-wrapper-inner">
 				<div class="d-md-none mobile-doc-nav-toggler" id="mobileDocNavToggler">${languageUtil.get(locale, "documentation-menu", "Documentation Menu")}
 					<button
@@ -128,11 +102,10 @@
 
 					<#if (navigationLinks.getData())??>
 						<#assign urlTitleLastDirectory =.vars['reserved-article-url-title'].getData()?split("/")?last />
-
-						<ul class="current">
+<ul class="current">
 							<#if !topLevelArticle>
-								<li class="current parent-level toctree-l1">
-									<a class="reference internal" href="${parentLink.url}">${parentLink.title}</a>
+<li class="current parent-level toctree-l1">
+									<a class="reference internal" href="${breadcrumbLinksJSONArray.getJSONObject(0).url}">${breadcrumbLinksJSONArray.getJSONObject(0).title}</a>
 								</li>
 							</#if>
 							<#assign navigationLinksJSONArray = jsonFactoryUtil.createJSONArray(navigationLinks.getData()) />
@@ -159,7 +132,9 @@
 							<ul aria-label="breadcrumb navigation" class="article-breadcrumb" role="navigation">
 								<li>
 									<a href="${groupFriendlyURL}"><@clay["icon"] symbol="home-full" /></a>
+									<a href="${groupFriendlyURL}"><@clay["icon"] symbol="home-full" /></a>
 								</li>
+
 								<#if breadcrumbLinksJSONArray.length() gt 0>
 									<#list breadcrumbLinksJSONArray.length()-1..0 as i>
 										<#assign breadcrumbLink = breadcrumbLinksJSONArray.getJSONObject(i)?eval />
@@ -208,28 +183,28 @@
 						<#if (content.getData())??>
 							${content.getData()}
 						</#if>
+
 						<#if isLandingPage>
 							<#include "${templatesPath}/LANDING-PAGE">
 						</#if>
-						<div class="autofit-padded-no-gutters-x autofit-row help-center-footer">
-							<div class="autofit-col">
-								<div class="icon-container">
-									<svg class="lexicon-icon liferay-waffle-icon" focusable="false" role="presentation" viewBox="0 0 512 512">
-										<use xlink:href="#liferay-waffle" />
+
+<div class="autofit-padded-no-gutters-x autofit-row help-center-footer">
+<div class="autofit-col">
+<div class="icon-container">
+<svg class="lexicon-icon liferay-waffle-icon" focusable="false" role="presentation" viewBox="0 0 512 512">
+<use xlink:href="#liferay-waffle" />
 									</svg>
 								</div>
 							</div>
 
-							<div class="autofit-col autofit-col-expand">
+<div class="autofit-col autofit-col-expand">
 								<h3>${languageUtil.get(locale, "not-finding-what-you-are-looking-for", "Not finding what you're looking for?")}</h3>
 
 								<p>${languageUtil.get(locale, "pardon-our-dust-as-we-revamp", "Pardon our dust as we revamp and transition our product documentation to this site. If something seems missing, please check Liferay Help Center documentation for Liferay DXP 7.2 and previous versions.")}</p>
-
-								<a href="https://help.liferay.com/hc/en-us/categories/360001749912">
+<a href="https://help.liferay.com/hc/en-us/categories/360001749912">
 									<strong>${languageUtil.get(locale, "try-liferays-help-center", "Try Liferay's Help Center")}</strong>
-
-									<svg class="lexicon-icon lexicon-icon-shortcut" focusable="false" role="presentation" viewBox="0 0 512 512">
-										<use xlink:href="#shortcut" />
+<svg class="lexicon-icon lexicon-icon-shortcut" focusable="false" role="presentation" viewBox="0 0 512 512">
+<use xlink:href="#shortcut" />
 									</svg>
 								</a>
 							</div>

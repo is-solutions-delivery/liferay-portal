@@ -18,6 +18,7 @@ import com.liferay.object.exception.ObjectDefinitionAccountEntryRestrictedExcept
 import com.liferay.object.exception.ObjectEntryCountException;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
+import com.liferay.object.model.ObjectEntryTable;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.service.ObjectFieldLocalService;
@@ -32,14 +33,17 @@ import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.ResourcePermission;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.UserGroupRole;
+import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -58,9 +62,14 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.io.Serializable;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Activate;
@@ -572,6 +581,18 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 			accountEntryRestrictedObjectField.getName());
 	}
 
+	private Date _getStartDate() {
+		return Date.from(
+			LocalDate.now(
+			).minusDays(
+				Objects.equals(_objectConfiguration.timeScale(), "days") ?
+					_objectConfiguration.duration() :
+						_objectConfiguration.duration() * 7
+			).atStartOfDay(
+				ZoneId.systemDefault()
+			).toInstant());
+	}
+
 	private void _validateSubmissionLimit(long objectDefinitionId, User user)
 		throws PortalException {
 
@@ -579,19 +600,63 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 			return;
 		}
 
-		int count = objectEntryPersistence.countByU_ODI(
-			user.getUserId(), objectDefinitionId);
-		long maximumNumberOfGuestUserObjectEntriesPerObjectDefinition =
-			_objectConfiguration.
-				maximumNumberOfGuestUserObjectEntriesPerObjectDefinition();
+		if (FeatureFlagManagerUtil.isEnabled("LPS-192957")) {
+			ObjectDefinition objectDefinition =
+				_objectDefinitionPersistence.findByPrimaryKey(
+					objectDefinitionId);
 
-		if (count >= maximumNumberOfGuestUserObjectEntriesPerObjectDefinition) {
-			throw new ObjectEntryCountException(
-				StringBundler.concat(
-					"Unable to exceed ",
-					maximumNumberOfGuestUserObjectEntriesPerObjectDefinition,
-					" guest object entries for object definition ",
-					objectDefinitionId));
+			try {
+				_objectConfiguration =
+					_configurationProvider.getCompanyConfiguration(
+						ObjectConfiguration.class,
+						objectDefinition.getCompanyId());
+
+				if (_objectConfiguration == null) {
+					_objectConfiguration =
+						_configurationProvider.getSystemConfiguration(
+							ObjectConfiguration.class);
+				}
+			}
+			catch (ConfigurationException configurationException) {
+				throw new RuntimeException(configurationException);
+			}
+
+			long count = objectEntryLocalService.getObjectEntriesCount(
+				user.getUserId(), objectDefinition,
+				ObjectEntryTable.INSTANCE.createDate.gte(_getStartDate()));
+
+			long maximumNumberOfGuestUserObjectEntriesPerObjectDefinition =
+				_objectConfiguration.
+					maximumNumberOfGuestUserObjectEntriesPerObjectDefinition();
+
+			if (count >=
+					maximumNumberOfGuestUserObjectEntriesPerObjectDefinition) {
+
+				throw new ObjectEntryCountException(
+					StringBundler.concat(
+						"Unable to exceed ",
+						maximumNumberOfGuestUserObjectEntriesPerObjectDefinition,
+						" guest object entries for object definition ",
+						objectDefinitionId));
+			}
+		}
+		else {
+			int count = objectEntryPersistence.countByU_ODI(
+				user.getUserId(), objectDefinitionId);
+			long maximumNumberOfGuestUserObjectEntriesPerObjectDefinition =
+				_objectConfiguration.
+					maximumNumberOfGuestUserObjectEntriesPerObjectDefinition();
+
+			if (count >=
+					maximumNumberOfGuestUserObjectEntriesPerObjectDefinition) {
+
+				throw new ObjectEntryCountException(
+					StringBundler.concat(
+						"Unable to exceed ",
+						maximumNumberOfGuestUserObjectEntriesPerObjectDefinition,
+						" guest object entries for object definition ",
+						objectDefinitionId));
+			}
 		}
 	}
 
@@ -601,6 +666,9 @@ public class ObjectEntryServiceImpl extends ObjectEntryServiceBaseImpl {
 	@Reference
 	private AccountEntryOrganizationRelLocalService
 		_accountEntryOrganizationRelLocalService;
+
+	@Reference
+	private ConfigurationProvider _configurationProvider;
 
 	@Reference
 	private GroupLocalService _groupLocalService;

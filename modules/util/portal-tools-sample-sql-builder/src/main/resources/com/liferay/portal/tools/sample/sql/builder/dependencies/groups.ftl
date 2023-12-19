@@ -69,3 +69,18 @@
 	_layoutModels=defaultSiteHomePageContentLayoutModels
 	_templateFileName="default-homepage-layout-definition.json"
 />
+
+<#assign
+	searchLayoutModel = dataFactory.newSearchLayoutModel(guestGroupModel.groupId, true)
+	layoutPrototypeModel = dataFactory.newLayoutPrototypeModel(defaultAdminUserModel.userId)
+	searchTemplateGroupModel = dataFactory.newSearchTemplateGroupModel(layoutPrototypeModel.layoutPrototypeId, defaultAdminUserModel.userId)
+	searchGroupLayoutModel = dataFactory.newSearchGroupLayoutModel(searchTemplateGroupModel.groupId, searchLayoutModel)
+/>
+
+<@insertLayout _layoutModel=searchLayoutModel />
+
+<@insertLayout _layoutModel=searchGroupLayoutModel />
+
+${dataFactory.toInsertSQL(layoutPrototypeModel)}
+
+<@insertGroup _groupModel=searchTemplateGroupModel />

@@ -63,23 +63,30 @@ public class KBArticleAssetRendererFactory
 	public AssetEntry getAssetEntry(String className, long classPK)
 		throws PortalException {
 
-		return getAssetEntry(
-			_getKBArticle(classPK, WorkflowConstants.STATUS_ANY));
+		return getAssetEntry(_getKBArticle(classPK, TYPE_LATEST));
+	}
+
+	@Override
+	public AssetRenderer<KBArticle> getAssetRenderer(
+			KBArticle kbArticle, int type)
+		throws PortalException {
+
+		KBArticleAssetRenderer kbArticleAssetRenderer =
+			new KBArticleAssetRenderer(
+				_assetDisplayPageFriendlyURLProvider, _htmlParser, kbArticle,
+				_trashHelper);
+
+		kbArticleAssetRenderer.setAssetRendererType(type);
+		kbArticleAssetRenderer.setServletContext(_servletContext);
+
+		return kbArticleAssetRenderer;
 	}
 
 	@Override
 	public AssetRenderer<KBArticle> getAssetRenderer(long classPK, int type)
 		throws PortalException {
 
-		KBArticleAssetRenderer kbArticleAssetRenderer =
-			new KBArticleAssetRenderer(
-				_assetDisplayPageFriendlyURLProvider, _htmlParser,
-				_getKBArticle(classPK, _getTypeStatus(type)), _trashHelper);
-
-		kbArticleAssetRenderer.setAssetRendererType(type);
-		kbArticleAssetRenderer.setServletContext(_servletContext);
-
-		return kbArticleAssetRenderer;
+		return getAssetRenderer(_getKBArticle(classPK, type), type);
 	}
 
 	@Override
@@ -135,7 +142,7 @@ public class KBArticleAssetRendererFactory
 			permissionChecker, classPK, actionId);
 	}
 
-	private KBArticle _getKBArticle(long classPK, int status)
+	private KBArticle _getKBArticle(long classPK, int type)
 		throws PortalException {
 
 		KBArticle kbArticle = _kbArticleLocalService.fetchKBArticle(classPK);
@@ -144,8 +151,21 @@ public class KBArticleAssetRendererFactory
 			return kbArticle;
 		}
 
-		kbArticle = _kbArticleLocalService.fetchLatestKBArticle(
-			classPK, status);
+		if (type == TYPE_LATEST_APPROVED) {
+			kbArticle = _kbArticleLocalService.fetchLatestKBArticle(
+				classPK, WorkflowConstants.STATUS_APPROVED);
+
+			if (kbArticle != null) {
+				return kbArticle;
+			}
+
+			kbArticle = _kbArticleLocalService.fetchLatestKBArticle(
+				classPK, WorkflowConstants.STATUS_EXPIRED);
+		}
+		else {
+			kbArticle = _kbArticleLocalService.fetchLatestKBArticle(
+				classPK, WorkflowConstants.STATUS_ANY);
+		}
 
 		if (kbArticle != null) {
 			return kbArticle;
@@ -153,14 +173,6 @@ public class KBArticleAssetRendererFactory
 
 		return _kbArticleLocalService.getLatestKBArticle(
 			classPK, WorkflowConstants.STATUS_IN_TRASH);
-	}
-
-	private int _getTypeStatus(int type) {
-		if (type == TYPE_LATEST_APPROVED) {
-			return WorkflowConstants.STATUS_APPROVED;
-		}
-
-		return WorkflowConstants.STATUS_ANY;
 	}
 
 	@Reference

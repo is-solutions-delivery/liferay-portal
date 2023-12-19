@@ -1098,7 +1098,7 @@ definition {
 
 			AssertElementPresent(
 				key_value = "Processing",
-				locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
+				locator1 = "CommerceEntry#ORDERS_ENTRY_BODY_VERTICAL_ELLIPSIS");
 		}
 
 		task ("Then the action is triggered") {
@@ -1112,18 +1112,6 @@ definition {
 				actionActive = "Yes",
 				actionLabel = "Action Label",
 				status = "Success");
-
-			// Workaround for LPS-193383
-
-			CommerceOrders.openOrdersAdmin();
-
-			Click.clickNoMouseOverNoWaitForVisible(locator1 = "CommerceNavigation#SELECT_ALL_CHECKBOX");
-
-			ClickNoError(locator1 = "Button#TRASH_ENABLED");
-
-			AssertConfirm.assertPartialConfirmation(value1 = "Are you sure you want to delete all selected orders?");
-
-			CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
 		}
 	}
 
@@ -2978,7 +2966,7 @@ definition {
 
 			AssertElementPresent(
 				key_value = "On Hold",
-				locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
+				locator1 = "CommerceEntry#ORDERS_ENTRY_BODY_VERTICAL_ELLIPSIS");
 
 			// Workaround for LPS-193383
 

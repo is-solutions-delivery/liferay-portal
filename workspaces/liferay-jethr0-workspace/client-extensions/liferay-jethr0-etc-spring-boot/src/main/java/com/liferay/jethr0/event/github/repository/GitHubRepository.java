@@ -5,6 +5,9 @@
 
 package com.liferay.jethr0.event.github.repository;
 
+import com.liferay.jethr0.event.github.GitHubFactory;
+import com.liferay.jethr0.event.github.client.GitHubClient;
+import com.liferay.jethr0.event.github.user.GitHubUser;
 import com.liferay.jethr0.util.StringUtil;
 
 import java.net.URL;
@@ -16,8 +19,22 @@ import org.json.JSONObject;
  */
 public class GitHubRepository {
 
-	public GitHubRepository(JSONObject jsonObject) {
+	public GitHubRepository(
+		GitHubFactory gitHubFactory, JSONObject jsonObject) {
+
+		_gitHubFactory = gitHubFactory;
 		_jsonObject = jsonObject;
+
+		_gitHubUser = _gitHubFactory.newGitHubUser(
+			jsonObject.getJSONObject("owner"));
+	}
+
+	public GitHubClient getGitHubClient() {
+		return _gitHubFactory.getGitHubClient();
+	}
+
+	public GitHubUser getGitHubUser() {
+		return _gitHubUser;
 	}
 
 	public URL getHTMLURL() {
@@ -28,6 +45,8 @@ public class GitHubRepository {
 		return _jsonObject.getString("name");
 	}
 
+	private final GitHubFactory _gitHubFactory;
+	private final GitHubUser _gitHubUser;
 	private final JSONObject _jsonObject;
 
 }

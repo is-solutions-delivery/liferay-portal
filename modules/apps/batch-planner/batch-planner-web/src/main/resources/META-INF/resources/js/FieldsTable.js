@@ -5,13 +5,19 @@
 
 import ClayAlert from '@clayui/alert';
 import {ClayCheckbox} from '@clayui/form';
+import ClayIcon from '@clayui/icon';
+import ClayLabel from '@clayui/label';
 import ClayTable from '@clayui/table';
+import {ClayTooltipProvider} from '@clayui/tooltip';
 import {sub} from 'frontend-js-web';
 import React, {useEffect, useRef, useState} from 'react';
 
 import {
+	CSV_FORMAT,
+	DISALLOWED_CSV_ENTITY_TYPES,
 	EXPORT_FILE_FORMAT_SELECTED_EVENT,
-	OBJECT_DEFINITION,
+	FORBIDDEN_CSV_FIELDS_ENTITY_NAMES,
+	FORBIDDEN_CSV_FIELDS_ENTITY_TYPES,
 	SCHEMA_SELECTED_EVENT,
 	TEMPLATE_SELECTED_EVENT,
 	TEMPLATE_SOILED_EVENT,
@@ -20,12 +26,35 @@ import getFieldsFromSchema from './getFieldsFromSchema';
 
 function FieldsTable({portletNamespace}) {
 	const [fields, setFields] = useState([]);
+	const [selectedExportFileFormat, setSelectedExportFileFormat] = useState(
+		''
+	);
 	const [selectedFields, setSelectedFields] = useState([]);
+	const [selectedSchemaName, setSelectedSchemaName] = useState('');
 	const useTemplateMappingRef = useRef();
+
+	const getForbiddenValues = (part, o) =>
+		Object.entries(o).find(([k]) => part.startsWith(k))?.[1];
+
+	const isForbidden = (field) => {
+		return (
+			selectedExportFileFormat === CSV_FORMAT.toUpperCase() &&
+			(getForbiddenValues(
+				selectedSchemaName,
+				FORBIDDEN_CSV_FIELDS_ENTITY_TYPES
+			).includes(field.type) ||
+				getForbiddenValues(
+					selectedSchemaName,
+					FORBIDDEN_CSV_FIELDS_ENTITY_NAMES
+				).includes(field.name))
+		);
+	};
 
 	useEffect(() => {
 		const handleSchemaUpdated = (event) => {
 			if (event.schema) {
+				setSelectedSchemaName(event.schemaName);
+
 				const newFields = getFieldsFromSchema(event.schema);
 
 				const formattedFields = [
@@ -71,9 +100,10 @@ function FieldsTable({portletNamespace}) {
 			selectedExportFileFormat,
 			selectedSchema,
 		}) => {
+			setSelectedExportFileFormat(selectedExportFileFormat);
 			if (
-				selectedExportFileFormat === 'CSV' &&
-				selectedSchema === OBJECT_DEFINITION
+				selectedExportFileFormat === CSV_FORMAT.toUpperCase() &&
+				DISALLOWED_CSV_ENTITY_TYPES.includes(selectedSchema)
 			) {
 				setFields([]);
 				setSelectedFields([]);
@@ -154,15 +184,22 @@ function FieldsTable({portletNamespace}) {
 							>
 								{Liferay.Language.get('attribute-code')}
 							</ClayTable.Cell>
+
+							<ClayTable.Cell
+								className="table-cell-expand-small"
+								headingCell
+							/>
 						</ClayTable.Row>
 					</ClayTable.Head>
 
 					<ClayTable.Body id="fieldsTableBody">
 						{fields.map((field) => {
-							const included = selectedFields.some(
-								(selectedField) =>
-									selectedField.name === field.name
-							);
+							const included =
+								!isForbidden(field) &&
+								selectedFields.some(
+									(selectedField) =>
+										selectedField.name === field.name
+								);
 
 							return (
 								<ClayTable.Row key={field.name}>
@@ -175,6 +212,7 @@ function FieldsTable({portletNamespace}) {
 												field.name
 											)}
 											checked={included}
+											disabled={isForbidden(field)}
 											id={`${portletNamespace}fieldName_${field.name}`}
 											name={`${portletNamespace}fieldName`}
 											onChange={() => {
@@ -204,10 +242,40 @@ function FieldsTable({portletNamespace}) {
 
 									<ClayTable.Cell>
 										<label
+											className={
+												isForbidden(field)
+													? 'disabled'
+													: ''
+											}
 											htmlFor={`${portletNamespace}fieldName_${field.name}`}
 										>
 											{field.name}
 										</label>
+									</ClayTable.Cell>
+
+									<ClayTable.Cell className="pr-5 text-right">
+										{isForbidden(field) && (
+											<>
+												<ClayLabel displayType="info">
+													{Liferay.Language.get(
+														'not-supported'
+													)}
+												</ClayLabel>
+												<ClayTooltipProvider>
+													<span
+														className="inline-item-after"
+														title={Liferay.Language.get(
+															'exporting-this-field-type-will-be-supported-in-a-future-release'
+														)}
+													>
+														<ClayIcon
+															className="text-secondary"
+															symbol="question-circle-full"
+														/>
+													</span>
+												</ClayTooltipProvider>
+											</>
+										)}
 									</ClayTable.Cell>
 								</ClayTable.Row>
 							);

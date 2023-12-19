@@ -2337,15 +2337,8 @@ public class DLFileEntryLocalServiceImpl
 				_dlFileVersionLocalService.fetchLatestFileVersion(
 					fileEntry.getFileEntryId(), false);
 
-			_notifySubscribers(
-				fileEntry.getUserId(), _EMAIL_TYPE_REVIEW,
-				_buildEntryURL(latestFileVersion), latestFileVersion,
-				new ServiceContext());
-
-			_notifyOwner(
-				fileEntry.getUserId(), _EMAIL_TYPE_REVIEW,
-				_buildEntryURL(latestFileVersion), latestFileVersion,
-				new ServiceContext());
+			_notify(
+				fileEntry.getUserId(), _EMAIL_TYPE_REVIEW, latestFileVersion);
 		}
 	}
 
@@ -2674,29 +2667,23 @@ public class DLFileEntryLocalServiceImpl
 
 				for (DLFileVersion fileVersion : fileVersions) {
 					_expireFileVersion(
-						userId, fileEntry, fileVersion, workflowContext,
-						serviceContext);
+						userId, fileEntry, fileVersion,
+						fileVersion.getFileVersionId() ==
+							latestFileVersion.getFileVersionId(),
+						workflowContext, serviceContext);
 				}
 			}
 			else {
 				_expireFileVersion(
-					userId, fileEntry, latestFileVersion, workflowContext,
+					userId, fileEntry, latestFileVersion, true, workflowContext,
 					serviceContext);
 			}
-
-			_notifySubscribers(
-				userId, _EMAIL_TYPE_EXPIRED, _buildEntryURL(latestFileVersion),
-				latestFileVersion, new ServiceContext());
-
-			_notifyOwner(
-				userId, _EMAIL_TYPE_EXPIRED, _buildEntryURL(latestFileVersion),
-				latestFileVersion, new ServiceContext());
 		}
 	}
 
 	private void _expireFileVersion(
 			long userId, DLFileEntry fileEntry, DLFileVersion fileVersion,
-			Map<String, Serializable> workflowContext,
+			boolean notify, Map<String, Serializable> workflowContext,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -2708,12 +2695,17 @@ public class DLFileEntryLocalServiceImpl
 			_log.debug(
 				StringBundler.concat(
 					"Expiring file entry ", fileEntry.getFileEntryId(),
+					" on version ", fileVersion.getVersion(),
 					" with expiration date ", fileEntry.getExpirationDate()));
 		}
 
 		updateStatus(
 			userId, fileEntry, fileVersion, WorkflowConstants.STATUS_EXPIRED,
 			serviceContext, workflowContext);
+
+		if (notify) {
+			_notify(userId, _EMAIL_TYPE_EXPIRED, fileVersion);
+		}
 	}
 
 	private long _getActiveCompanyAdminUserId(long companyId)
@@ -2989,6 +2981,18 @@ public class DLFileEntryLocalServiceImpl
 			dlFileEntry.getDataRepositoryId(), dlFileEntry.getName());
 
 		return dlFileEntry;
+	}
+
+	private void _notify(long userId, int emailType, DLFileVersion fileVersion)
+		throws PortalException {
+
+		_notifySubscribers(
+			userId, emailType, _buildEntryURL(fileVersion), fileVersion,
+			new ServiceContext());
+
+		_notifyOwner(
+			userId, emailType, _buildEntryURL(fileVersion), fileVersion,
+			new ServiceContext());
 	}
 
 	private void _notifyOwner(

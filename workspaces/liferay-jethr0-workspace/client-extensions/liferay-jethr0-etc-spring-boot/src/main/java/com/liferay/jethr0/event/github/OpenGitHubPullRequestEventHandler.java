@@ -30,23 +30,63 @@ public class OpenGitHubPullRequestEventHandler
 
 	@Override
 	public String process() throws InvalidJSONException, IOException {
-		if (closeInvalidUpstreamGitHubBranchName()) {
+		if (checkLiferayGitHubUser() ||
+			closeInvalidUpstreamGitHubBranchName()) {
+
 			return null;
 		}
 
-		Set<JobEntity> jobEntities = _createJobEntities();
+		_commentAutoCommentMessage();
+		_commentBroadcastMessage();
 
-		for (JobEntity jobEntity : jobEntities) {
-			invokeJobEntity(jobEntity);
-		}
+		_invokeJobEntities();
 
-		return jobEntities.toString();
+		return String.valueOf(getMessageJSONObject());
 	}
 
 	protected OpenGitHubPullRequestEventHandler(
 		EventHandlerContext eventHandlerContext, JSONObject messageJSONObject) {
 
 		super(eventHandlerContext, messageJSONObject);
+	}
+
+	private void _commentAutoCommentMessage()
+		throws InvalidJSONException, IOException {
+
+		GitHubPullRequest gitHubPullRequest = getGitHubPullRequest();
+
+		GitHubUser receiverGitHubUser =
+			gitHubPullRequest.getReceiverGitHubUser();
+
+		String autoCommentMessage = getCIProperty(
+			StringUtil.combine(
+				"ci.pull.request.auto.comment[", receiverGitHubUser.getName(),
+				"]"));
+
+		if (StringUtil.isNullOrEmpty(autoCommentMessage)) {
+			return;
+		}
+
+		gitHubPullRequest.comment(
+			StringUtil.combine(
+				"The following guidelines have been set by the owner of this ",
+				"repository:\n- &nbsp;&nbsp;&nbsp;&nbsp;", autoCommentMessage,
+				"\n"));
+	}
+
+	private void _commentBroadcastMessage()
+		throws InvalidJSONException, IOException {
+
+		String broadcastMessage = getCIProperty(
+			"pull.request.broadcast.message");
+
+		if (StringUtil.isNullOrEmpty(broadcastMessage)) {
+			return;
+		}
+
+		GitHubPullRequest gitHubPullRequest = getGitHubPullRequest();
+
+		gitHubPullRequest.comment(broadcastMessage);
 	}
 
 	private Set<JobEntity> _createJobEntities()
@@ -106,6 +146,14 @@ public class OpenGitHubPullRequestEventHandler
 		}
 
 		return testSuites;
+	}
+
+	private void _invokeJobEntities() throws InvalidJSONException, IOException {
+		Set<JobEntity> jobEntities = _createJobEntities();
+
+		for (JobEntity jobEntity : jobEntities) {
+			invokeJobEntity(jobEntity);
+		}
 	}
 
 	private static final Pattern _ciTestAutoRecipientPattern = Pattern.compile(

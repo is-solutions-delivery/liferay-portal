@@ -39,6 +39,79 @@ export async function getCatalogId() {
 	return catalogs[0].id;
 }
 
+export function getDxpOptionBody() {
+	return {
+		fieldType: 'radio',
+		key: 'dxp-license-usage-type',
+		name: {en_US: 'DXP License Usage Type'},
+	};
+}
+
+export function getDxpProductOptionBody(newOptionId: number) {
+	return {
+		facetable: false,
+		fieldType: 'radio',
+		key: 'dxp-license-usage-type',
+		name: {
+			en_US: 'DXP License Usage Type',
+		},
+		optionId: newOptionId,
+		productOptionValues: [],
+		required: true,
+		skuContributor: true,
+	};
+}
+
+export function getLicenceTypesObject() {
+	return [
+		{code: 'd', key: 'developer', name: 'DEVELOPER'},
+		{code: 's', key: 'standard', name: 'STANDARD'},
+		{code: 'ts', key: 'trial', name: 'TRIAL'},
+	];
+}
+
+export function getOptionDeveloperBody() {
+	return {key: 'developer', name: {en_US: 'Developer'}, priority: 1};
+}
+
+export function getOptionNoBody() {
+	return {key: 'no', name: {en_US: 'No'}, priority: 0};
+}
+
+export function getOptionYesBody() {
+	return {key: 'yes', name: {en_US: 'Yes'}, priority: 1};
+}
+export function getOptionStandardBody() {
+	return {key: 'standard', name: {en_US: 'Standard'}, priority: 0};
+}
+
+export function getOptionTrialBody() {
+	return {key: 'trial', name: {en_US: 'Trial'}, priority: 2};
+}
+
+export function getTrialOptionBody() {
+	return {
+		fieldType: 'radio',
+		key: 'trial',
+		name: {en_US: 'Trial'},
+	};
+}
+
+export function getTrialProductOptionBody(newOptionId: number) {
+	return {
+		facetable: false,
+		fieldType: 'radio',
+		key: 'trial',
+		name: {
+			en_US: 'Trial',
+		},
+		optionId: newOptionId,
+		productOptionValues: [],
+		required: true,
+		skuContributor: true,
+	};
+}
+
 export function getInitials(userName: string) {
 	const names = userName.trim().split(' ');
 	const lastNameIndex = names.length - 1;
@@ -138,6 +211,41 @@ export function getValueFromDeliverySpecifications(
 
 export function getAccountImage(url?: string) {
 	return url?.includes('img_id=0') || !url ? accountPlaceholder : url;
+}
+
+type LicenceTiersPrices = {
+	developer: {key: number; value: number}[];
+	standard: {key: number; value: number}[];
+};
+
+export function getSkuPrice(appLicensePrice: LicenceTiersPrices, sku: SKU) {
+	const dxpLicenseUsageType = sku.skuOptions.find(
+		({key}) => key === 'dxp-license-usage-type'
+	);
+
+	if (!dxpLicenseUsageType) {
+		if (sku.sku.endsWith('ts')) {
+			return 0;
+		}
+
+		if (sku?.sku.endsWith('d')) {
+			appLicensePrice.developer[0]?.value ?? 0;
+		}
+
+		return appLicensePrice.standard[0]?.value ?? 0;
+	}
+
+	const dxpLicenseUsageTypeValue = dxpLicenseUsageType.value;
+
+	if (dxpLicenseUsageTypeValue === 'standard') {
+		return appLicensePrice['standard'][0]?.value;
+	}
+	else if (dxpLicenseUsageTypeValue === 'developer') {
+		return appLicensePrice['developer'][0]?.value;
+	}
+	else {
+		return 0;
+	}
 }
 
 export function showAppImage(url?: string) {

@@ -807,6 +807,12 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>languagesDropdownVisible</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>boolean</type>
+		</attribute>
+		<attribute>
 			<description>Whether the component should be the last element of the form.</description>
 			<name>last</name>
 			<required>false</required>

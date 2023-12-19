@@ -8,8 +8,9 @@ import {Col} from '@clayui/layout';
 import React, {useEffect, useReducer, useState} from 'react';
 
 import {
+	CSV_FORMAT,
+	DISALLOWED_CSV_ENTITY_TYPES,
 	EXPORT_FILE_FORMAT_SELECTED_EVENT,
-	OBJECT_DEFINITION,
 } from '../constants';
 
 function ExportSettings({
@@ -36,9 +37,9 @@ function ExportSettings({
 		dispatchInternalClassNameKeyOptions,
 	] = useReducer((state, action) => {
 		if (action === 'update') {
-			if (selectedExternalTypeOption === 'CSV') {
+			if (selectedExternalTypeOption === CSV_FORMAT.toUpperCase()) {
 				return internalClassNameKeyInitialOptions.filter(
-					(item) => item.value !== OBJECT_DEFINITION
+					(item) => !DISALLOWED_CSV_ENTITY_TYPES.includes(item.value)
 				);
 			}
 			else {

@@ -1930,9 +1930,25 @@ public class ObjectEntryLocalServiceImpl
 				continue;
 			}
 
-			Predicate objectFieldPredicate =
-				ObjectEntrySearchUtil.getObjectFieldPredicate(
-					(Column<?, Object>)column, objectField.getDBType(), search);
+			Predicate objectFieldPredicate = null;
+
+			if (Objects.equals(
+					objectField.getRelationshipType(),
+					ObjectRelationshipConstants.TYPE_ONE_TO_MANY)) {
+
+				objectFieldPredicate = _getRelationshipObjectFieldPredicate(
+					column, objectField, search);
+			}
+			else {
+				objectFieldPredicate =
+					ObjectEntrySearchUtil.getObjectFieldPredicate(
+						(Column<?, Object>)column, objectField.getDBType(),
+						search);
+			}
+
+			if (objectFieldPredicate == null) {
+				continue;
+			}
 
 			if (searchPredicate == null) {
 				searchPredicate = objectFieldPredicate;
@@ -1940,13 +1956,6 @@ public class ObjectEntryLocalServiceImpl
 			else {
 				searchPredicate = searchPredicate.or(objectFieldPredicate);
 			}
-		}
-
-		long searchLong = GetterUtil.getLong(search);
-
-		if (searchLong != 0L) {
-			searchPredicate = searchPredicate.or(
-				ObjectEntryTable.INSTANCE.objectEntryId.eq(searchLong));
 		}
 
 		if (predicate == null) {
@@ -2277,7 +2286,10 @@ public class ObjectEntryLocalServiceImpl
 			GetterUtil.getString(prefix), sb, GetterUtil.getString(suffix));
 	}
 
-	private Map<String, Object> _getColumns(ObjectDefinition objectDefinition) {
+	private Map<String, Object> _getColumns(
+		DynamicObjectDefinitionTable dynamicObjectDefinitionTable,
+		ObjectDefinition objectDefinition) {
+
 		Map<String, Object> columns = new HashMap<>();
 
 		List<ObjectField> objectFields =
@@ -2297,6 +2309,14 @@ public class ObjectEntryLocalServiceImpl
 				Objects.equals(
 					objectField.getBusinessType(),
 					ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT)) {
+
+				continue;
+			}
+
+			if (Objects.equals(objectField.getName(), "id")) {
+				columns.put(
+					objectField.getName(),
+					dynamicObjectDefinitionTable.getPrimaryKeyColumn());
 
 				continue;
 			}
@@ -2643,8 +2663,8 @@ public class ObjectEntryLocalServiceImpl
 				}
 			).and(
 				ObjectEntrySearchUtil.getRelatedModelsPredicate(
-					dynamicObjectDefinitionTable, objectDefinition2,
-					_objectFieldLocalService, search)
+					objectDefinition2, _objectFieldLocalService, search,
+					dynamicObjectDefinitionTable)
 			)
 		);
 	}
@@ -2754,10 +2774,10 @@ public class ObjectEntryLocalServiceImpl
 				}
 			).and(
 				ObjectEntrySearchUtil.getRelatedModelsPredicate(
-					dynamicObjectDefinitionTable,
 					_objectDefinitionPersistence.fetchByPrimaryKey(
 						objectRelationship.getObjectDefinitionId2()),
-					_objectFieldLocalService, search)
+					_objectFieldLocalService, search,
+					dynamicObjectDefinitionTable)
 			)
 		);
 	}
@@ -2835,6 +2855,52 @@ public class ObjectEntryLocalServiceImpl
 		}
 
 		return ObjectEntryTable.INSTANCE.objectEntryId;
+	}
+
+	private Predicate _getRelationshipObjectFieldPredicate(
+			Column<?, ?> column, ObjectField objectField, String search)
+		throws PortalException {
+
+		ObjectRelationship objectRelationship =
+			_objectRelationshipPersistence.fetchByObjectFieldId2(
+				objectField.getObjectFieldId());
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionPersistence.findByPrimaryKey(
+				objectRelationship.getObjectDefinitionId1());
+
+		ObjectField titleObjectField =
+			_objectFieldLocalService.fetchObjectField(
+				objectDefinition.getTitleObjectFieldId());
+
+		Table<?> table = _objectFieldLocalService.getTable(
+			objectDefinition.getObjectDefinitionId(),
+			titleObjectField.getName());
+
+		if (Objects.equals(
+				table.getColumn(titleObjectField.getDBColumnName()),
+				ObjectEntryTable.INSTANCE.objectEntryId)) {
+
+			return ObjectEntrySearchUtil.getObjectFieldPredicate(
+				(Column<?, Object>)column, objectField.getDBType(), search);
+		}
+
+		Predicate relatedModelsPredicate =
+			ObjectEntrySearchUtil.getRelatedModelsPredicate(
+				objectDefinition, _objectFieldLocalService, search, table);
+
+		if (relatedModelsPredicate == null) {
+			return null;
+		}
+
+		return column.in(
+			DSLQueryFactoryUtil.select(
+				table.getColumn(objectDefinition.getPKObjectFieldDBColumnName())
+			).from(
+				table
+			).where(
+				relatedModelsPredicate
+			));
 	}
 
 	private Object _getResult(
@@ -2999,7 +3065,8 @@ public class ObjectEntryLocalServiceImpl
 				}
 
 				if (columns == null) {
-					columns = _getColumns(objectDefinition);
+					columns = _getColumns(
+						dynamicObjectDefinitionTable, objectDefinition);
 				}
 
 				DDMExpression<Expression<?>> ddmExpression =

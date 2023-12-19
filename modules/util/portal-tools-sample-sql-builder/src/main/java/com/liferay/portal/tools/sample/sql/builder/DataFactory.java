@@ -219,6 +219,8 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutFriendlyURLModel;
 import com.liferay.portal.kernel.model.LayoutModel;
+import com.liferay.portal.kernel.model.LayoutPrototype;
+import com.liferay.portal.kernel.model.LayoutPrototypeModel;
 import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.LayoutSetModel;
 import com.liferay.portal.kernel.model.LayoutTypePortletConstants;
@@ -273,6 +275,7 @@ import com.liferay.portal.model.impl.CountryModelImpl;
 import com.liferay.portal.model.impl.GroupModelImpl;
 import com.liferay.portal.model.impl.LayoutFriendlyURLModelImpl;
 import com.liferay.portal.model.impl.LayoutModelImpl;
+import com.liferay.portal.model.impl.LayoutPrototypeModelImpl;
 import com.liferay.portal.model.impl.LayoutSetModelImpl;
 import com.liferay.portal.model.impl.PortalPreferencesModelImpl;
 import com.liferay.portal.model.impl.PortletPreferenceValueImpl;
@@ -799,9 +802,10 @@ public class DataFactory {
 		AccountEntryModel accountEntryModel) {
 
 		return newGroupModel(
-			_counter.get(), getClassNameId(AccountEntry.class),
-			accountEntryModel.getAccountEntryId(), accountEntryModel.getName(),
-			GroupConstants.TYPE_SITE_PRIVATE, false);
+			getClassNameId(AccountEntry.class),
+			accountEntryModel.getAccountEntryId(), _counter.get(),
+			accountEntryModel.getName(), GroupConstants.TYPE_SITE_PRIVATE,
+			StringPool.BLANK, false);
 	}
 
 	public AccountEntryModel newAccountEntryModel(String type, int index) {
@@ -1278,8 +1282,8 @@ public class DataFactory {
 		CommerceCatalogModel commerceCatalogModel) {
 
 		return newGroupModel(
-			_counter.get(), getClassNameId(CommerceCatalog.class),
-			commerceCatalogModel.getCommerceCatalogId(),
+			getClassNameId(CommerceCatalog.class),
+			commerceCatalogModel.getCommerceCatalogId(), _counter.get(),
 			commerceCatalogModel.getName(), false);
 	}
 
@@ -1348,8 +1352,8 @@ public class DataFactory {
 		CommerceChannelModel commerceChannelModel) {
 
 		return newGroupModel(
-			_counter.get(), getClassNameId(CommerceChannel.class),
-			commerceChannelModel.getCommerceChannelId(),
+			getClassNameId(CommerceChannel.class),
+			commerceChannelModel.getCommerceChannelId(), _counter.get(),
 			commerceChannelModel.getName(), false);
 	}
 
@@ -1364,8 +1368,8 @@ public class DataFactory {
 
 			groupModels.add(
 				newGroupModel(
-					_counter.get(), getClassNameId(CommerceChannel.class),
-					commerceChannelModel.getCommerceChannelId(),
+					getClassNameId(CommerceChannel.class),
+					commerceChannelModel.getCommerceChannelId(), _counter.get(),
 					commerceChannelModel.getName(), false));
 		}
 
@@ -1513,7 +1517,7 @@ public class DataFactory {
 
 			groupModels.add(
 				newGroupModel(
-					id, getClassNameId(Group.class), id, "Commerce Site " + i,
+					getClassNameId(Group.class), id, id, "Commerce Site " + i,
 					true));
 		}
 
@@ -1643,12 +1647,11 @@ public class DataFactory {
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
 
 			LayoutModel layoutModel = newLayoutModel(
-				groupId,
+				groupId, jsonObject.getString("layoutTemplateId"),
 				StringUtil.replace(
 					StringUtil.toLowerCase(jsonObject.getString("name")),
 					CharPool.SPACE, CharPool.DASH),
 				jsonObject.getBoolean("privateLayout"),
-				jsonObject.getString("layoutTemplateId"),
 				getPortletNames(jsonObject.getJSONArray("portlets")));
 
 			layoutModels.add(layoutModel);
@@ -1665,14 +1668,14 @@ public class DataFactory {
 
 					layoutModels.add(
 						newLayoutModel(
-							groupId, layoutModel.getLayoutId(),
+							groupId, sublayoutJSONObject.getBoolean("hidden"),
+							sublayoutJSONObject.getString("layoutTemplateId"),
 							StringUtil.replace(
 								StringUtil.toLowerCase(
 									sublayoutJSONObject.getString("name")),
 								CharPool.SPACE, CharPool.DASH),
 							sublayoutJSONObject.getBoolean("privateLayout"),
-							sublayoutJSONObject.getBoolean("hidden"),
-							sublayoutJSONObject.getString("layoutTemplateId"),
+							layoutModel.getLayoutId(),
 							getPortletNames(
 								sublayoutJSONObject.getJSONArray("portlets"))));
 				}
@@ -4171,7 +4174,7 @@ public class DataFactory {
 		_globalGroupId = _counter.get();
 
 		return newGroupModel(
-			_globalGroupId, getClassNameId(Company.class), _companyId,
+			getClassNameId(Company.class), _companyId, _globalGroupId,
 			GroupConstants.GLOBAL, false);
 	}
 
@@ -4204,31 +4207,7 @@ public class DataFactory {
 		}
 
 		if (BenchmarksPropsValues.SEARCH_BAR_ENABLED) {
-			layoutModels.add(
-				newLayoutModel(
-					groupId, "search", false, "1_2_columns_i",
-					new String[] {
-						StringBundler.concat(
-							SearchBarPortletKeys.SEARCH_BAR, StringPool.COMMA,
-							SuggestionsPortletKeys.SUGGESTIONS,
-							StringPool.COMMA),
-						StringBundler.concat(
-							SiteFacetPortletKeys.SITE_FACET, StringPool.COMMA,
-							TypeFacetPortletKeys.TYPE_FACET, StringPool.COMMA,
-							TagFacetPortletKeys.TAG_FACET, StringPool.COMMA,
-							CategoryFacetPortletKeys.CATEGORY_FACET,
-							StringPool.COMMA,
-							FolderFacetPortletKeys.FOLDER_FACET,
-							StringPool.COMMA, UserFacetPortletKeys.USER_FACET,
-							StringPool.COMMA,
-							ModifiedFacetPortletKeys.MODIFIED_FACET,
-							StringPool.COMMA),
-						StringBundler.concat(
-							SearchResultsPortletKeys.SEARCH_RESULTS,
-							StringPool.COMMA,
-							SearchOptionsPortletKeys.SEARCH_OPTIONS,
-							StringPool.COMMA)
-					}));
+			layoutModels.add(newSearchLayoutModel(groupId, false));
 		}
 
 		return layoutModels;
@@ -4236,7 +4215,7 @@ public class DataFactory {
 
 	public GroupModel newGroupModel(UserModel userModel) {
 		return newGroupModel(
-			_counter.get(), getClassNameId(User.class), userModel.getUserId(),
+			getClassNameId(User.class), userModel.getUserId(), _counter.get(),
 			userModel.getScreenName(), false);
 	}
 
@@ -4249,7 +4228,7 @@ public class DataFactory {
 
 			groupModels.add(
 				newGroupModel(
-					groupId, getClassNameId(Group.class), groupId, "Site " + i,
+					getClassNameId(Group.class), groupId, groupId, "Site " + i,
 					true));
 		}
 
@@ -4259,15 +4238,9 @@ public class DataFactory {
 	public GroupModel newGuestGroupModel() {
 		_guestGroupId = _counter.get();
 
-		String typeSettings = StringPool.BLANK;
-
-		if (!BenchmarksPropsValues.SEARCH_BAR_ENABLED) {
-			typeSettings = "searchLayoutCreated=true";
-		}
-
 		return newGroupModel(
-			_guestGroupId, getClassNameId(Group.class), _guestGroupId,
-			GroupConstants.GUEST, 0, typeSettings, true);
+			getClassNameId(Group.class), _guestGroupId, _guestGroupId,
+			GroupConstants.GUEST, 0, "searchLayoutCreated=true", true);
 	}
 
 	public UserModel newGuestUserModel() {
@@ -4537,7 +4510,7 @@ public class DataFactory {
 		long groupId, String name, String column1, String column2) {
 
 		return newLayoutModel(
-			groupId, name, false, "2_columns_ii", column1, column2);
+			groupId, "2_columns_ii", name, false, column1, column2);
 	}
 
 	public LayoutPageTemplateStructureModel newLayoutPageTemplateStructureModel(
@@ -4677,6 +4650,37 @@ public class DataFactory {
 		layoutPageTemplateStructureRelModel.setUuid(SequentialUUID.generate());
 
 		return layoutPageTemplateStructureRelModel;
+	}
+
+	public LayoutPrototypeModel newLayoutPrototypeModel(long userId) {
+		LayoutPrototypeModel layoutPrototypeModel =
+			new LayoutPrototypeModelImpl();
+
+		// PK fields
+
+		layoutPrototypeModel.setLayoutPrototypeId(_counter.get());
+
+		// Audit fields
+
+		layoutPrototypeModel.setCompanyId(_companyId);
+		layoutPrototypeModel.setUserId(userId);
+		layoutPrototypeModel.setCreateDate(new Date());
+		layoutPrototypeModel.setModifiedDate(new Date());
+
+		// Other fields
+
+		layoutPrototypeModel.setName(
+			"<?xml version=\"1.0\"?><root><name>Search</name></root>");
+		layoutPrototypeModel.setDescription(
+			"<?xml version=\"1.0\"?><root><Description>Display search " +
+				"results with a default set of facets.</Description></root>");
+		layoutPrototypeModel.setActive(true);
+
+		// Autogenerated fields
+
+		layoutPrototypeModel.setUuid(SequentialUUID.generate());
+
+		return layoutPrototypeModel;
 	}
 
 	public List<LayoutSetModel> newLayoutSetModels(long groupId) {
@@ -5436,6 +5440,46 @@ public class DataFactory {
 			_SAMPLE_USER_NAME, UserConstants.TYPE_REGULAR);
 	}
 
+	public LayoutModel newSearchGroupLayoutModel(
+		long groupId, LayoutModel layoutModel) {
+
+		return newLayoutModel(
+			"layout", groupId, false, layoutModel.getName(),
+			layoutModel.isPrivateLayout(), layoutModel.getParentLayoutId(),
+			layoutModel.getTypeSettings());
+	}
+
+	public LayoutModel newSearchLayoutModel(long groupId, boolean hidden) {
+		return newLayoutModel(
+			groupId, hidden, "1_2_columns_i", "search", false, 0,
+			new String[] {
+				StringBundler.concat(
+					SearchBarPortletKeys.SEARCH_BAR, StringPool.COMMA,
+					SuggestionsPortletKeys.SUGGESTIONS, StringPool.COMMA),
+				StringBundler.concat(
+					SiteFacetPortletKeys.SITE_FACET, StringPool.COMMA,
+					TypeFacetPortletKeys.TYPE_FACET, StringPool.COMMA,
+					TagFacetPortletKeys.TAG_FACET, StringPool.COMMA,
+					CategoryFacetPortletKeys.CATEGORY_FACET, StringPool.COMMA,
+					FolderFacetPortletKeys.FOLDER_FACET, StringPool.COMMA,
+					UserFacetPortletKeys.USER_FACET, StringPool.COMMA,
+					ModifiedFacetPortletKeys.MODIFIED_FACET, StringPool.COMMA),
+				StringBundler.concat(
+					SearchResultsPortletKeys.SEARCH_RESULTS, StringPool.COMMA,
+					SearchOptionsPortletKeys.SEARCH_OPTIONS, StringPool.COMMA)
+			});
+	}
+
+	public GroupModel newSearchTemplateGroupModel(
+		long layoutPrototypeId, long userId) {
+
+		return newGroupModel(
+			getClassNameId(LayoutPrototype.class), layoutPrototypeId,
+			"template-" + String.valueOf(layoutPrototypeId), _counter.get(),
+			String.valueOf(layoutPrototypeId), "Search", false, 0,
+			StringPool.BLANK, userId);
+	}
+
 	public SegmentsEntry newSegmentsEntry(long groupId, int index) {
 		SegmentsEntry segmentsEntry = new SegmentsEntryImpl();
 
@@ -5603,8 +5647,8 @@ public class DataFactory {
 
 	public GroupModel newUserPersonalSiteGroupModel() {
 		return newGroupModel(
-			_counter.get(), getClassNameId(UserPersonalSite.class),
-			_guestUserId, GroupConstants.USER_PERSONAL_SITE, false);
+			getClassNameId(UserPersonalSite.class), _guestUserId,
+			_counter.get(), GroupConstants.USER_PERSONAL_SITE, false);
 	}
 
 	public VirtualHostModel newVirtualHostModel() {
@@ -6445,24 +6489,26 @@ public class DataFactory {
 	}
 
 	protected GroupModel newGroupModel(
-		long groupId, long classNameId, long classPK, String name,
+		long classNameId, long classPK, long groupId, String name,
 		boolean site) {
 
 		return newGroupModel(
-			groupId, classNameId, classPK, name, 0, StringPool.BLANK, site);
+			classNameId, classPK, groupId, name, 0, StringPool.BLANK, site);
 	}
 
 	protected GroupModel newGroupModel(
-		long groupId, long classNameId, long classPK, String name, int type,
-		boolean site) {
-
-		return newGroupModel(
-			groupId, classNameId, classPK, name, type, StringPool.BLANK, site);
-	}
-
-	protected GroupModel newGroupModel(
-		long groupId, long classNameId, long classPK, String name, int type,
+		long classNameId, long classPK, long groupId, String name, int type,
 		String typeSettings, boolean site) {
+
+		return newGroupModel(
+			classNameId, classPK, name, groupId, name, name, site, type,
+			typeSettings, _sampleUserId);
+	}
+
+	protected GroupModel newGroupModel(
+		long classNameId, long classPK, String friendlyURL, long groupId,
+		String groupKey, String name, boolean site, int type,
+		String typeSettings, long userId) {
 
 		GroupModel groupModel = new GroupModelImpl();
 
@@ -6473,7 +6519,7 @@ public class DataFactory {
 		// Audit fields
 
 		groupModel.setCompanyId(_companyId);
-		groupModel.setCreatorUserId(_sampleUserId);
+		groupModel.setCreatorUserId(userId);
 
 		// Other fields
 
@@ -6481,7 +6527,7 @@ public class DataFactory {
 		groupModel.setClassPK(classPK);
 		groupModel.setTreePath(
 			StringPool.SLASH + groupModel.getGroupId() + StringPool.SLASH);
-		groupModel.setGroupKey(name);
+		groupModel.setGroupKey(groupKey);
 		groupModel.setName(name);
 		groupModel.setType(type);
 		groupModel.setTypeSettings(typeSettings);
@@ -6489,7 +6535,8 @@ public class DataFactory {
 		groupModel.setMembershipRestriction(
 			GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION);
 		groupModel.setFriendlyURL(
-			StringPool.FORWARD_SLASH + _friendlyURLNormalizer.normalize(name));
+			StringPool.FORWARD_SLASH +
+				_friendlyURLNormalizer.normalize(friendlyURL));
 		groupModel.setSite(site);
 		groupModel.setActive(true);
 
@@ -6504,8 +6551,47 @@ public class DataFactory {
 	}
 
 	protected LayoutModel newLayoutModel(
-		long groupId, long parentLayoutId, String name, boolean privateLayout,
-		boolean hidden, String layoutTemplateId, String... columns) {
+		long groupId, boolean hidden, String layoutTemplateId, String name,
+		boolean privateLayout, long parentLayoutId, String... columns) {
+
+		UnicodeProperties typeSettingsUnicodeProperties =
+			UnicodePropertiesBuilder.create(
+				true
+			).put(
+				LayoutTypePortletConstants.LAYOUT_TEMPLATE_ID, layoutTemplateId
+			).build();
+
+		for (int i = 0; i < columns.length; i++) {
+			if (!columns[i].equals("")) {
+				typeSettingsUnicodeProperties.setProperty(
+					"column-" + (i + 1), columns[i]);
+			}
+		}
+
+		if (name.equals("search")) {
+			typeSettingsUnicodeProperties.setProperty("privateLayout", "true");
+		}
+		else {
+			typeSettingsUnicodeProperties.setProperty(
+				"privateLayout", String.valueOf(privateLayout));
+		}
+
+		return newLayoutModel(
+			name, groupId, hidden, name, privateLayout, parentLayoutId,
+			typeSettingsUnicodeProperties.toString());
+	}
+
+	protected LayoutModel newLayoutModel(
+		long groupId, String layoutTemplateId, String name,
+		boolean privateLayout, String... columns) {
+
+		return newLayoutModel(
+			groupId, false, layoutTemplateId, name, privateLayout, 0, columns);
+	}
+
+	protected LayoutModel newLayoutModel(
+		String friendlyURL, long groupId, boolean hidden, String name,
+		boolean privateLayout, long parentLayoutId, String typeSettings) {
 
 		SimpleCounter simpleCounter = _layoutIdCounters.computeIfAbsent(
 			LayoutLocalServiceImpl.getCounterName(groupId, privateLayout),
@@ -6539,30 +6625,10 @@ public class DataFactory {
 		layoutModel.setType(LayoutConstants.TYPE_PORTLET);
 		layoutModel.setHidden(hidden);
 
-		UnicodeProperties typeSettingsUnicodeProperties =
-			UnicodePropertiesBuilder.create(
-				true
-			).put(
-				LayoutTypePortletConstants.LAYOUT_TEMPLATE_ID, layoutTemplateId
-			).build();
-
-		for (int i = 0; i < columns.length; i++) {
-			if (!columns[i].equals("")) {
-				typeSettingsUnicodeProperties.setProperty(
-					"column-" + (i + 1), columns[i]);
-			}
-		}
-
-		if (privateLayout) {
-			typeSettingsUnicodeProperties.setProperty(
-				"privateLayout", String.valueOf(privateLayout));
-		}
-
 		layoutModel.setTypeSettings(
-			StringUtil.replace(
-				typeSettingsUnicodeProperties.toString(), '\n', "\\n"));
+			StringUtil.replace(typeSettings, '\n', "\\n"));
 
-		layoutModel.setFriendlyURL(StringPool.FORWARD_SLASH + name);
+		layoutModel.setFriendlyURL(StringPool.FORWARD_SLASH + friendlyURL);
 		layoutModel.setLastPublishDate(new Date());
 
 		// Autogenerated fields
@@ -6570,14 +6636,6 @@ public class DataFactory {
 		layoutModel.setUuid(SequentialUUID.generate());
 
 		return layoutModel;
-	}
-
-	protected LayoutModel newLayoutModel(
-		long groupId, String name, boolean privateLayout,
-		String layoutTemplateId, String... columns) {
-
-		return newLayoutModel(
-			groupId, 0, name, privateLayout, false, layoutTemplateId, columns);
 	}
 
 	protected LayoutSetModel newLayoutSetModel(

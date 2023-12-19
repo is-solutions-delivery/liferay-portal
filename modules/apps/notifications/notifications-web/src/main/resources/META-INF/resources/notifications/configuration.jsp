@@ -97,6 +97,8 @@
 										</td>
 
 										<%
+										String description = LanguageUtil.get(request, "receive-a-notification-when-someone") + StringPool.SPACE + LanguageUtil.get(request, userNotificationDefinition.getDescription(locale));
+
 										for (Map.Entry<Integer, UserNotificationDeliveryType> userNotificationDeliveryTypeEntry : userNotificationDeliveryTypesMap.entrySet()) {
 											UserNotificationDeliveryType userNotificationDeliveryType = userNotificationDeliveryTypeEntry.getValue();
 
@@ -108,9 +110,18 @@
 										%>
 
 											<td class="lfr-<%= userNotificationDeliveryType.getName() %>-column">
-												<div class="checkbox-container">
-													<aui:input cssClass="notification-delivery" data-userNotificationDeliveryId="<%= String.valueOf(userNotificationDelivery.getUserNotificationDeliveryId()) %>" disabled="<%= !userNotificationDeliveryType.isModifiable() %>" inlineLabel="<%= Boolean.TRUE.toString() %>" label="" name="<%= String.valueOf(userNotificationDelivery.getUserNotificationDeliveryId()) %>" type="toggle-switch" value="<%= userNotificationDelivery.isDeliver() %>" />
-												</div>
+												<aui:input
+													aria-label="<%= description %>"
+													cssClass="notification-delivery"
+													data-userNotificationDeliveryId="<%= String.valueOf(userNotificationDelivery.getUserNotificationDeliveryId()) %>"
+													disabled="<%= !userNotificationDeliveryType.isModifiable() %>"
+													inlineLabel="<%= Boolean.TRUE.toString() %>"
+													label=""
+													name="<%= String.valueOf(userNotificationDelivery.getUserNotificationDeliveryId()) %>"
+													title="<%= userNotificationDeliveryType.getName() %>"
+													type="checkbox"
+													value="<%= userNotificationDelivery.isDeliver() %>"
+												/>
 											</td>
 
 										<%

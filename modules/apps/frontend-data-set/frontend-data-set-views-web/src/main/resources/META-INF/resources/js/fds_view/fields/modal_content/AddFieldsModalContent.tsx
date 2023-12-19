@@ -202,7 +202,10 @@ const AddFieldsModalContent = ({
 
 		visit(initialFields || [], (field: IFieldTreeItem) => {
 			if (selectedKeys.has(field.name) && !field.savedId) {
-				creationData.push({name: field.name, type: field.type});
+				creationData.push({
+					name: field.name,
+					type: field.type,
+				});
 			}
 
 			if (field.savedId && !selectedKeys.has(field.name)) {

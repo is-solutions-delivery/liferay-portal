@@ -5,6 +5,10 @@
 
 package com.liferay.jethr0.event.github.issue;
 
+import com.liferay.jethr0.event.github.GitHubFactory;
+import com.liferay.jethr0.event.github.client.GitHubClient;
+import com.liferay.jethr0.event.github.comment.GitHubComment;
+import com.liferay.jethr0.event.github.pullrequest.GitHubPullRequest;
 import com.liferay.jethr0.util.StringUtil;
 
 import java.net.URL;
@@ -16,12 +20,56 @@ import org.json.JSONObject;
  */
 public class GitHubIssue {
 
-	public GitHubIssue(JSONObject jsonObject) {
+	public GitHubIssue(GitHubFactory gitHubFactory, JSONObject jsonObject) {
+		_gitHubFactory = gitHubFactory;
 		_jsonObject = jsonObject;
+	}
+
+	public void close() {
+		JSONObject requestJSONObject = new JSONObject();
+
+		requestJSONObject.put("state", "closed");
+
+		GitHubClient gitHubClient = getGitHubClient();
+
+		gitHubClient.requestPatch(getPullRequestAPIURL(), requestJSONObject);
+	}
+
+	public GitHubComment createGitHubComment(String body) {
+		JSONObject requestJSONObject = new JSONObject();
+
+		requestJSONObject.put("body", body);
+
+		GitHubClient gitHubClient = getGitHubClient();
+
+		JSONObject responseJSONObject = new JSONObject(
+			gitHubClient.requestPost(getCommentsURL(), requestJSONObject));
+
+		return _gitHubFactory.newGitHubComment(responseJSONObject);
 	}
 
 	public URL getCommentsURL() {
 		return StringUtil.toURL(_jsonObject.getString("comments_url"));
+	}
+
+	public GitHubClient getGitHubClient() {
+		return _gitHubFactory.getGitHubClient();
+	}
+
+	public GitHubPullRequest getGitHubPullRequest() {
+		if (_gitHubPullRequest != null) {
+			return _gitHubPullRequest;
+		}
+
+		GitHubClient gitHubClient = getGitHubClient();
+
+		JSONObject responseJSONObject = new JSONObject(
+			gitHubClient.requestGet(getPullRequestAPIURL()));
+
+		_gitHubPullRequest = _gitHubFactory.newGitHubPullRequest(
+			responseJSONObject);
+
+		return _gitHubPullRequest;
 	}
 
 	public URL getHTMLURL() {
@@ -34,6 +82,8 @@ public class GitHubIssue {
 		return StringUtil.toURL(jsonObject.getString("url"));
 	}
 
+	private final GitHubFactory _gitHubFactory;
+	private GitHubPullRequest _gitHubPullRequest;
 	private final JSONObject _jsonObject;
 
 }

@@ -10,7 +10,10 @@ import com.liferay.expando.kernel.service.ExpandoTableLocalService;
 import com.liferay.expando.kernel.service.ExpandoValueLocalService;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.UserGroupLocalService;
+import com.liferay.portal.kernel.service.UserGroupService;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.service.UserService;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.Searcher;
@@ -51,19 +54,19 @@ public class UserResourceImpl extends BaseUserResourceImpl {
 	}
 
 	@Override
-	public Object getV2User(Integer count, Integer startIndex)
+	public Object getV2UserById(String id) throws Exception {
+		return _buildResponse(
+			_userResourceManager.get(id, _userManager, null, null));
+	}
+
+	@Override
+	public Object getV2Users(Integer count, Integer startIndex)
 		throws Exception {
 
 		return _buildResponse(
 			_userResourceManager.listWithGET(
 				_userManager, null, startIndex, count, null, null, null, null,
 				null));
-	}
-
-	@Override
-	public Object getV2UserById(String id) throws Exception {
-		return _buildResponse(
-			_userResourceManager.get(id, _userManager, null, null));
 	}
 
 	@Override
@@ -86,12 +89,17 @@ public class UserResourceImpl extends BaseUserResourceImpl {
 			_classNameLocalService, _companyLocalService, _configurationAdmin,
 			_expandoColumnLocalService, _expandoTableLocalService,
 			_expandoValueLocalService, _searcher, _searchRequestBuilderFactory,
-			_userLocalService);
+			_userGroupLocalService, _userGroupService, _userLocalService,
+			_userService);
 	}
 
 	private Response _buildResponse(SCIMResponse scimResponse) {
 		Response.ResponseBuilder responseBuilder = Response.status(
 			scimResponse.getResponseStatus());
+
+		if (scimResponse.getResponseMessage() != null) {
+			responseBuilder.entity(scimResponse.getResponseMessage());
+		}
 
 		Map<String, String> map = scimResponse.getHeaderParamMap();
 
@@ -99,10 +107,6 @@ public class UserResourceImpl extends BaseUserResourceImpl {
 			for (Map.Entry<String, String> entry : map.entrySet()) {
 				responseBuilder.header(entry.getKey(), entry.getValue());
 			}
-		}
-
-		if (scimResponse.getResponseMessage() != null) {
-			responseBuilder.entity(scimResponse.getResponseMessage());
 		}
 
 		return responseBuilder.build();
@@ -142,8 +146,17 @@ public class UserResourceImpl extends BaseUserResourceImpl {
 	private SearchRequestBuilderFactory _searchRequestBuilderFactory;
 
 	@Reference
+	private UserGroupLocalService _userGroupLocalService;
+
+	@Reference
+	private UserGroupService _userGroupService;
+
+	@Reference
 	private UserLocalService _userLocalService;
 
 	private UserManager _userManager;
+
+	@Reference
+	private UserService _userService;
 
 }

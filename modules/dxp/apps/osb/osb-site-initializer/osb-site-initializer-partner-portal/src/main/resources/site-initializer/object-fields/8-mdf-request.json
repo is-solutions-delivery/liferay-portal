@@ -262,6 +262,9 @@
 									},
 									{
 										"key": "marketingDirectorReview"
+									},
+									{
+										"key": "completed"
 									}
 								]
 							},
@@ -359,6 +362,11 @@
 									{
 										"key": "marketingDirectorReview"
 									}
+								]
+							},
+							{
+								"key": "completed",
+								"objectStateTransitions": [
 								]
 							}
 						]

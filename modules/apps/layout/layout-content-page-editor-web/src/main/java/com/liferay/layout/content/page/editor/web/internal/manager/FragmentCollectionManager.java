@@ -17,10 +17,12 @@ import com.liferay.fragment.service.FragmentCollectionService;
 import com.liferay.fragment.service.FragmentCompositionService;
 import com.liferay.fragment.service.FragmentEntryService;
 import com.liferay.fragment.util.comparator.FragmentCollectionContributorNameComparator;
+import com.liferay.info.item.InfoItemClassDetails;
 import com.liferay.info.item.InfoItemServiceRegistry;
+import com.liferay.info.permission.provider.InfoPermissionProvider;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
 import com.liferay.layout.content.page.editor.web.internal.constants.ContentPageEditorConstants;
-import com.liferay.layout.content.page.editor.web.internal.util.ObjectUtil;
+import com.liferay.layout.page.template.info.item.capability.EditPageInfoItemCapability;
 import com.liferay.layout.util.PortalPreferencesUtil;
 import com.liferay.layout.util.structure.DropZoneLayoutStructureItem;
 import com.liferay.petra.string.StringPool;
@@ -29,6 +31,7 @@ import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactory;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -40,6 +43,7 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,8 +72,7 @@ public class FragmentCollectionManager {
 		List<Map<String, Object>> allFragmentCollectionMapsList =
 			new ArrayList<>();
 
-		boolean hideInputFragments = ObjectUtil.hideInputFragments(
-			themeDisplay.getCompanyId(), _infoItemServiceRegistry,
+		boolean hideInputFragments = _hideInputFragments(
 			themeDisplay.getPermissionChecker());
 
 		PortalPreferences portalPreferences =
@@ -201,6 +204,19 @@ public class FragmentCollectionManager {
 		}
 
 		return allFragmentCollectionMapsList;
+	}
+
+	public Map<String, List<Map<String, Object>>> getLayoutElementMapsListMap(
+		PermissionChecker permissionChecker) {
+
+		Map<String, List<Map<String, Object>>> layoutElementMapsListMap =
+			new HashMap<>(ContentPageEditorConstants.layoutElementMapsListMap);
+
+		if (_hideInputFragments(permissionChecker)) {
+			layoutElementMapsListMap.remove("INPUTS");
+		}
+
+		return layoutElementMapsListMap;
 	}
 
 	public List<String> getSortedFragmentCollectionKeys(
@@ -514,9 +530,7 @@ public class FragmentCollectionManager {
 			masterDropZoneLayoutStructureItem, themeDisplay);
 
 		Map<String, List<Map<String, Object>>> layoutElementMapsListMap =
-			ObjectUtil.getLayoutElementMapsListMap(
-				themeDisplay.getCompanyId(), _infoItemServiceRegistry,
-				themeDisplay.getPermissionChecker());
+			getLayoutElementMapsListMap(themeDisplay.getPermissionChecker());
 
 		for (Map.Entry<String, List<Map<String, Object>>> entry :
 				layoutElementMapsListMap.entrySet()) {
@@ -578,6 +592,26 @@ public class FragmentCollectionManager {
 		return _getSortedFragmentCollectionMapsList(
 			fragmentCollectionMaps,
 			ListUtil.fromArray(_SORTED_FRAGMENT_COLLECTION_KEYS));
+	}
+
+	private boolean _hideInputFragments(PermissionChecker permissionChecker) {
+		for (InfoItemClassDetails infoItemClassDetails :
+				_infoItemServiceRegistry.getInfoItemClassDetails(
+					EditPageInfoItemCapability.KEY)) {
+
+			InfoPermissionProvider infoPermissionProvider =
+				_infoItemServiceRegistry.getFirstInfoItemService(
+					InfoPermissionProvider.class,
+					infoItemClassDetails.getClassName());
+
+			if ((infoPermissionProvider == null) ||
+				infoPermissionProvider.hasViewPermission(permissionChecker)) {
+
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private boolean _isAllowedFragmentEntryKey(

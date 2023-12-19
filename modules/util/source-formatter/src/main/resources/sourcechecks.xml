@@ -1612,6 +1612,16 @@
 		<check name="UpgradeCatchAllCheck">
 			<category name="Upgrade" />
 			<description name="Performs replacements on Liferay's outdated code" />
+			<weight>2</weight>
+		</check>
+		<check name="UpgradeCatchAllJavaImportsCheck">
+			<category name="Upgrade" />
+			<description name="Sorts and groups imports in `UpgradeCatchAllCheck.testjava` file." />
+			<weight>1</weight>
+		</check>
+		<check name="UpgradeCatchAllJSPImportsCheck">
+			<category name="Upgrade" />
+			<description name="Sorts and groups imports in `UpgradeCatchAllCheck.testjsp` file." />
 			<weight>1</weight>
 		</check>
 		<check name="UpgradeGradleIncludeResourceCheck">
@@ -1692,6 +1702,10 @@
 		<check name="UpgradeJavaSchedulerEntryImplConstructorCheck">
 			<category name="Upgrade" />
 			<description name="Replace constructors that use the empty constructor of the SchedulerEntryImpl class." />
+		</check>
+		<check name="UpgradeJavaScreenContributorClassCheck">
+			<category name="Upgrade" />
+			<description name="Replace class `PortalSettingsConfigurationScreenContributor` by `ConfigurationScreenWrapper` and create an inner class" />
 		</check>
 		<check name="UpgradeJavaServiceReferenceAnnotationCheck">
 			<category name="Upgrade" />

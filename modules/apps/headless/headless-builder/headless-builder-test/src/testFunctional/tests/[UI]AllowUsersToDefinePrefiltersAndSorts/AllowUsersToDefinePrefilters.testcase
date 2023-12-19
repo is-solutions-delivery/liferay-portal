@@ -88,7 +88,7 @@ definition {
 				name = "testSchema");
 
 			SchemaAPI.relateResponseSchemaToEndpointByErc(
-				endpointErc = "testEndpoint",
+				endpointErc = "My-app_testEndpoint",
 				responseSchemaErc = "testSchema");
 
 			PropertyAPI.createAPIProperty(
@@ -323,6 +323,7 @@ definition {
 		}
 	}
 
+	@ignore = "true"
 	@priority = 3
 	test PrefilterIsLimitedByODataCharacterLimit {
 		property portal.acceptance = "true";

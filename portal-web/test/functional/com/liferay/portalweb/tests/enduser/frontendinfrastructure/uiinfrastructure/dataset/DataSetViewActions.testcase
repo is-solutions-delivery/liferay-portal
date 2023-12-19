@@ -1042,6 +1042,82 @@ definition {
 		}
 	}
 
+	@description = "LPS-196835 Confirm that the user can change the selected icon in the Item Action"
+	@priority = 4
+	test CanChangeIconOnItemAction {
+		task ("When the user clicks on the plus button in the Item Action") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And user click on the plus button and choose an icon") {
+			LexiconEntry.gotoAdd();
+
+			SelectFrameTop();
+
+			Type(
+				locator1 = "DataSet#MODAL_SEARCH",
+				value1 = "analytics");
+
+			Click.mouseOverClick(
+				key_text = "analytics",
+				locator1 = "Modal#MODAL_ICON");
+		}
+
+		task ("Then user clicks on the Change icon button, the Select an icon modal is displayed and the icon previously selected is high-lighted") {
+			Click.mouseOverClick(
+				key_text = "change",
+				locator1 = "Icon#ANY");
+
+			AssertElementPresent(
+				locator1 = "Modal#HEADER",
+				value1 = "Select an Icon");
+		}
+
+		task ("And user can change to another icon") {
+			Click.mouseOverClick(
+				key_text = "accessibility",
+				locator1 = "Modal#MODAL_ICON");
+		}
+	}
+
+	@description = "LPS-196835 Confirm that the icon picker shows in Item Actions creation page when is selected on the icon field"
+	@priority = 3
+	test CanChooseAIconOnItemAction {
+		task ("When the user clicks on the plus button in the Item Action") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And clicks on the plus button in the icon picker") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("Then choose an icon") {
+			SelectFrameTop();
+
+			Type(
+				locator1 = "DataSet#MODAL_SEARCH",
+				value1 = "analytics");
+
+			Click.mouseOverClick(
+				key_text = "analytics",
+				locator1 = "Modal#MODAL_ICON");
+		}
+
+		task ("And the icon appears as selected in the icon field, the modal is closed") {
+			AssertElementPresent(
+				key_text = "analytics",
+				locator1 = "Icon#ANY");
+
+			AssertElementNotPresent(locator1 = "Modal#MODAL");
+		}
+
+		task ("And correct icon name and image show inside the picker") {
+			AssertElementPresent(
+				key_unnamedTitle = "analytics",
+				locator1 = "TextInput#DEPOT_UNNAMED_DEFAULT_TITLE");
+		}
+	}
+
 	@description = "LPS-192150. Verify if is possible to click on the Action icon in the Data Set fragment and the action works."
 	@priority = 5
 	test CanClickActionIconInFragment {
@@ -1634,6 +1710,40 @@ definition {
 				key_position = 1,
 				keyName = "Headless Item Action",
 				locator1 = "DataSet#FIELDS_TABLE");
+		}
+	}
+
+	@description = "LPS-196835 Confirm that the user can delete the selected icon in the Item Action"
+	@priority = 4
+	test CanDeleteASelectedIconOnItemAction {
+		task ("When the user clicks on the plus button in the Item Action") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And user click on the plus button and choose an icon") {
+			LexiconEntry.gotoAdd();
+
+			SelectFrameTop();
+
+			Type(
+				locator1 = "DataSet#MODAL_SEARCH",
+				value1 = "analytics");
+
+			Click.mouseOverClick(
+				key_text = "analytics",
+				locator1 = "Modal#MODAL_ICON");
+		}
+
+		task ("Then user clicks on the recycle bin, the icon is removed from the selection") {
+			Click(
+				key_text = "trash",
+				locator1 = "Icon#ANY");
+		}
+
+		task ("And “No icon selected” is shown in the field") {
+			AssertElementPresent(
+				key_placeHolder = "No Icon Selected",
+				locator1 = "TextInput#ANY_PLACEHOLDER");
 		}
 	}
 
@@ -2898,6 +3008,38 @@ definition {
 		}
 	}
 
+	@description = "LPS-196835 Confirm that both change button and delete button are shown in the picker after selection in the Item Action"
+	@priority = 3
+	test CanSeeRecycleAndChangeButtonAfterSelectAIconOnItemAction {
+		task ("When the user clicks on the plus button in the Item Action") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And user click on the plus button and choose an icon") {
+			LexiconEntry.gotoAdd();
+
+			SelectFrameTop();
+
+			Type(
+				locator1 = "DataSet#MODAL_SEARCH",
+				value1 = "analytics");
+
+			Click.mouseOverClick(
+				key_text = "analytics",
+				locator1 = "Modal#MODAL_ICON");
+		}
+
+		task ("Then the Recycle bin button and the Change icon button are displayed next to the icon field") {
+			AssertElementPresent(
+				key_text = "change",
+				locator1 = "Icon#ANY");
+
+			AssertElementPresent(
+				key_text = "trash",
+				locator1 = "Icon#ANY");
+		}
+	}
+
 	@description = "LPS-191485. Verify if when the user hovers over the Message field a text appears in the Item Action"
 	@priority = 3
 	test CanSeeTextInMessageTabsFieldOnItemAction {
@@ -3537,6 +3679,38 @@ definition {
 				key_position = 1,
 				keyName = "New Action",
 				locator1 = "DataSet#FIELDS_TABLE");
+		}
+	}
+
+	@description = "LPS-196835 Confirm that the user can use search box and the autocomplete function to choose an icon in the Item Action"
+	@priority = 3
+	test SearchIconFillsAutomaticallyOnItemAction {
+		task ("When the user clicks on the plus button in the Item Action") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And clicks on the plus button in the icon picker") {
+			LexiconEntry.gotoAdd();
+		}
+
+		task ("And the user types incompleted icon name in the search box in the icon picker") {
+			SelectFrameTop();
+
+			Type(
+				locator1 = "DataSet#MODAL_SEARCH",
+				value1 = "analy");
+		}
+
+		task ("Then the autocomplete result shows in the search box") {
+			AssertVisible(
+				key_text = "analytics",
+				locator1 = "Modal#MODAL_ICON");
+		}
+
+		task ("And user can choose the icon") {
+			Click.mouseOverClick(
+				key_text = "analytics",
+				locator1 = "Modal#MODAL_ICON");
 		}
 	}
 

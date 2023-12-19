@@ -219,10 +219,10 @@ definition {
 			key_text = "pencil",
 			locator1 = "Icon#ANY");
 
-		AssertVisible(locator1 = "Icon#TOOLBAR_ELLIPSIS");
+		AssertVisible(locator1 = "ManagementBar#ELLIPSIS");
 
 		if (isSet(moreActions)) {
-			Click(locator1 = "Icon#TOOLBAR_ELLIPSIS");
+			Click(locator1 = "ManagementBar#ELLIPSIS");
 
 			MenuItem.viewVisible(menuItem = "Edit");
 
@@ -238,7 +238,9 @@ definition {
 	macro viewActiveActionsManagementToolbar() {
 		AssertElementNotPresent(locator1 = "Checkbox#LEXICON_SELECT_ALL_CONTAINER_DISABLED");
 
-		AssertElementNotPresent(locator1 = "ManagementBar#FILTER_AND_ORDER_DISABLED");
+		AssertElementNotPresent(locator1 = "ManagementBar#FILTER_DISABLED");
+
+		AssertElementNotPresent(locator1 = "ManagementBar#ORDER_DISABLED");
 
 		AssertElementNotPresent(locator1 = "ManagementBar#ORDER_ICON_GENERIC_BUTTON_DISABLED");
 
@@ -246,7 +248,7 @@ definition {
 
 		AssertVisible(locator1 = "Checkbox#LEXICON_SELECT_ALL_CONTAINER");
 
-		AssertVisible(locator1 = "ManagementBar#FILTER_AND_ORDER");
+		AssertVisible(locator1 = "ManagementBar#FILTER");
 
 		AssertVisible(locator1 = "ManagementBar#ORDER_ICON_GENERIC_BUTTON");
 

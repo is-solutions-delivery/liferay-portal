@@ -68,7 +68,8 @@ const PublishedAppsDashboardRouter = () => {
 					accountId: suppliers[0].id,
 				};
 
-				window.location.reload();
+				// window.location.reload();
+
 			}
 		};
 

@@ -450,10 +450,12 @@ definition {
 		var objectEntryId = JSONObject.addObjectSingleFieldEntry(
 			ercName = ${ercName},
 			fieldName = ${fieldName},
+			fieldType = ${fieldType},
 			objectName = ${objectName},
 			userEmailAddress = ${userEmailAddress},
 			userPassword = ${userPassword},
-			value = ${value});
+			value = ${value},
+			valueList = ${valueList});
 
 		return ${objectEntryId};
 
@@ -1290,7 +1292,7 @@ definition {
 
 			if (${thenAction} == "Notification") {
 				Click(
-					key_currentOption = "Select an option",
+					key_currentOption = "Select an Option",
 					locator1 = "ObjectAdmin#CLAY_GENERIC_SELECT_OPTION");
 
 				Click(
@@ -1516,21 +1518,6 @@ definition {
 		Click(locator1 = "ObjectAdmin#LAYOUT_INFO_TAB");
 
 		Click.clickAtNotVisible(locator1 = "ObjectAdmin#ENTRY_BOOLEAN_CHECKBOX");
-	}
-
-	@summary = "Default summary"
-	macro moveDefinitionFolder(definitionName = null,folderLabel = null) {
-		Click(
-			key_value = ${definitionName},
-			locator1 = "ObjectAdmin#BODY_VERTICAL_ELLIPSIS");
-
-		DropdownMenuItem.click(menuItem = "Move");
-
-		Click(
-			key_folderLabel = ${folderLabel},
-			locator1 = "ObjectAdmin#SELECT_MOVE_FOLDER");
-
-		Button.click(button = "Move");
 	}
 
 	@summary = "Default summary"

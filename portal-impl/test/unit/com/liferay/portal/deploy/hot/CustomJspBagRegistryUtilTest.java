@@ -10,15 +10,24 @@ import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.servlet.ServletContextPool;
 import com.liferay.portal.kernel.url.URLContainer;
 import com.liferay.portal.kernel.util.CustomJspRegistryUtil;
+import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.spring.context.PortalContextLoaderListener;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 import com.liferay.portal.util.CustomJspRegistryImpl;
+import com.liferay.portal.util.FastDateFormatFactoryImpl;
 import com.liferay.portal.util.PortalImpl;
 
+import java.io.File;
+import java.io.IOException;
+
 import java.net.URL;
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +37,9 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -50,6 +61,12 @@ public class CustomJspBagRegistryUtilTest {
 
 	@BeforeClass
 	public static void setUpClass() {
+		FastDateFormatFactoryUtil fastDateFormatFactoryUtil =
+			new FastDateFormatFactoryUtil();
+
+		fastDateFormatFactoryUtil.setFastDateFormatFactory(
+			new FastDateFormatFactoryImpl());
+
 		PortalUtil portalUtil = new PortalUtil();
 
 		portalUtil.setPortal(new PortalImpl());
@@ -58,79 +75,40 @@ public class CustomJspBagRegistryUtilTest {
 			new CustomJspRegistryUtil();
 
 		customJspRegistryUtil.setCustomJspRegistry(new CustomJspRegistryImpl());
+	}
 
-		_servletContext = Mockito.mock(ServletContext.class);
+	@Before
+	public void setUp() throws IOException {
+		_tempFolder = FileUtil.createTempFolder();
+
+		ServletContext servletContext = Mockito.mock(ServletContext.class);
 
 		Mockito.when(
-			_servletContext.getRealPath(Mockito.anyString())
+			servletContext.getRealPath(Mockito.anyString())
 		).thenReturn(
-			StringPool.BLANK
+			_tempFolder.getPath()
 		);
 
 		ServletContextPool.put(
 			PortalContextLoaderListener.getPortalServletContextName(),
-			_servletContext);
+			servletContext);
+	}
+
+	@After
+	public void tearDown() {
+		FileUtil.deltree(_tempFolder);
 	}
 
 	@Test
 	public void testGetCustomJspBags() {
-		TestCustomJspBag testCustomJspBag = new TestCustomJspBag(false);
-
-		ServiceRegistration<CustomJspBag> serviceRegistration =
-			_bundleContext.registerService(
-				CustomJspBag.class, testCustomJspBag,
-				HashMapDictionaryBuilder.<String, Object>put(
-					"context.id", _TEST_CUSTOM_JSP_BAG
-				).put(
-					"context.name", "Test Custom JSP Bag"
-				).build());
-
-		try {
-			Assert.assertSame(
-				testCustomJspBag, _getCustomJspBag(_TEST_CUSTOM_JSP_BAG));
-
-			Set<String> servletContextNames =
-				CustomJspRegistryUtil.getServletContextNames();
-
-			Assert.assertTrue(
-				_TEST_CUSTOM_JSP_BAG + " not found in " +
-					servletContextNames.toString(),
-				servletContextNames.contains(_TEST_CUSTOM_JSP_BAG));
-		}
-		finally {
-			serviceRegistration.unregister();
-		}
+		_testGetCustomJspBags(
+			false, "TEST_CUSTOM_JSP_BAG", "Test Custom JSP Bag");
 	}
 
 	@Test
 	public void testGetGlobalCustomJspBags() {
-		TestCustomJspBag testCustomJspBag = new TestCustomJspBag(true);
-
-		ServiceRegistration<CustomJspBag> serviceRegistration =
-			_bundleContext.registerService(
-				CustomJspBag.class, testCustomJspBag,
-				HashMapDictionaryBuilder.<String, Object>put(
-					"context.id", _TEST_GLOBAL_CUSTOM_JSP_BAG
-				).put(
-					"context.name", "Test Global Custom JSP Bag"
-				).build());
-
-		try {
-			Assert.assertSame(
-				testCustomJspBag,
-				_getCustomJspBag(_TEST_GLOBAL_CUSTOM_JSP_BAG));
-
-			Set<String> servletContextNames =
-				CustomJspRegistryUtil.getServletContextNames();
-
-			Assert.assertFalse(
-				_TEST_GLOBAL_CUSTOM_JSP_BAG + " should not be found in " +
-					servletContextNames.toString(),
-				servletContextNames.contains(_TEST_GLOBAL_CUSTOM_JSP_BAG));
-		}
-		finally {
-			serviceRegistration.unregister();
-		}
+		_testGetCustomJspBags(
+			true, "TEST_GLOBAL_CUSTOM_JSP_BAG", "Test Global Custom JSP Bag");
 	}
 
 	private CustomJspBag _getCustomJspBag(String targetContextId) {
@@ -153,14 +131,54 @@ public class CustomJspBagRegistryUtilTest {
 		return null;
 	}
 
-	private static final String _TEST_CUSTOM_JSP_BAG = "TEST_CUSTOM_JSP_BAG";
+	private void _testGetCustomJspBags(
+		boolean customJspGlobal, String contextId, String contextName) {
 
-	private static final String _TEST_GLOBAL_CUSTOM_JSP_BAG =
-		"TEST_GLOBAL_CUSTOM_JSP_BAG";
+		TestCustomJspBag testCustomJspBag = new TestCustomJspBag(
+			customJspGlobal);
+
+		ServiceRegistration<CustomJspBag> serviceRegistration =
+			_bundleContext.registerService(
+				CustomJspBag.class, testCustomJspBag,
+				HashMapDictionaryBuilder.<String, Object>put(
+					"context.id", contextId
+				).put(
+					"context.name", contextName
+				).build());
+
+		try {
+			Assert.assertSame(testCustomJspBag, _getCustomJspBag(contextId));
+
+			Set<String> servletContextNames =
+				CustomJspRegistryUtil.getServletContextNames();
+
+			if (customJspGlobal) {
+				Assert.assertFalse(
+					contextId + " should not be found in " +
+						servletContextNames.toString(),
+					servletContextNames.contains(contextId));
+			}
+			else {
+				Assert.assertTrue(
+					contextId + " not found in " +
+						servletContextNames.toString(),
+					servletContextNames.contains(contextId));
+			}
+
+			Assert.assertFalse(
+				Files.exists(Paths.get(_tempFolder.getPath() + "html")));
+			Assert.assertTrue(
+				Files.exists(Paths.get(_tempFolder.getPath() + "/html")));
+		}
+		finally {
+			serviceRegistration.unregister();
+		}
+	}
 
 	private static final BundleContext _bundleContext =
 		SystemBundleUtil.getBundleContext();
-	private static ServletContext _servletContext;
+
+	private File _tempFolder;
 
 	private static class TestCustomJspBag implements CustomJspBag {
 

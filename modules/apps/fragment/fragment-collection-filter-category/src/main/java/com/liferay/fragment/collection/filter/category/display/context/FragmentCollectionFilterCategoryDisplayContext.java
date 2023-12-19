@@ -9,6 +9,7 @@ import com.liferay.asset.kernel.model.AssetCategory;
 import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.kernel.service.AssetCategoryServiceUtil;
 import com.liferay.asset.kernel.service.AssetVocabularyServiceUtil;
+import com.liferay.fragment.constants.FragmentConfigurationFieldDataType;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.renderer.FragmentRendererContext;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
@@ -118,6 +119,11 @@ public class FragmentCollectionFilterCategoryDisplayContext {
 			"showSearch", _isShowSearch()
 		).put(
 			"singleSelection", _isSingleSelection()
+		).put(
+			"targetCollections",
+			_fragmentEntryConfigurationParser.getConfigurationFieldValue(
+				_fragmentEntryLink.getEditableValues(), "targetCollections",
+				FragmentConfigurationFieldDataType.ARRAY)
 		).build();
 
 		return _props;

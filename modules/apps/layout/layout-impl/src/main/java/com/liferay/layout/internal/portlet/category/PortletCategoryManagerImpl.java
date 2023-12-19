@@ -6,10 +6,12 @@
 package com.liferay.layout.internal.portlet.category;
 
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
+import com.liferay.layout.portlet.PortletManager;
 import com.liferay.layout.portlet.category.PortletCategoryManager;
 import com.liferay.layout.util.PortalPreferencesUtil;
+import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
+import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -33,11 +35,9 @@ import com.liferay.portal.kernel.service.PortletItemLocalService;
 import com.liferay.portal.kernel.service.PortletLocalService;
 import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -65,7 +65,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -137,6 +140,17 @@ public class PortletCategoryManagerImpl implements PortletCategoryManager {
 			portalPreferences,
 			ContentPageEditorPortletKeys.CONTENT_PAGE_EDITOR_PORTLET,
 			"sortedPortletCategoryKeys", sortedPortletCategoryKeys);
+	}
+
+	@Activate
+	protected void activate(BundleContext bundleContext) {
+		_serviceTrackerMap = ServiceTrackerMapFactory.openSingleValueMap(
+			bundleContext, PortletManager.class, "javax.portlet.name");
+	}
+
+	@Deactivate
+	protected void deactivate() {
+		_serviceTrackerMap.close();
 	}
 
 	private Set<String> _getHighlightedPortletIds(
@@ -437,28 +451,15 @@ public class PortletCategoryManagerImpl implements PortletCategoryManager {
 			return false;
 		}
 
-		if ((layout.isTypeAssetDisplay() || layout.isTypeContent()) &&
-			ArrayUtil.contains(
-				_UNSUPPORTED_PORTLETS_NAMES, portlet.getPortletName())) {
+		PortletManager portletManager = _serviceTrackerMap.getService(
+			portlet.getRootPortletId());
 
-			return false;
-		}
-
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-153839") &&
-			Objects.equals(portlet.getPortletId(), _PORTLET_ID)) {
-
+		if ((portletManager != null) && !portletManager.isVisible(layout)) {
 			return false;
 		}
 
 		return true;
 	}
-
-	private static final String _PORTLET_ID =
-		"com_liferay_portal_search_web_date_facet_portlet_DateFacetPortlet";
-
-	private static final String[] _UNSUPPORTED_PORTLETS_NAMES = {
-		PortletKeys.NESTED_PORTLETS
-	};
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		PortletCategoryManagerImpl.class);
@@ -480,5 +481,7 @@ public class PortletCategoryManagerImpl implements PortletCategoryManager {
 
 	@Reference
 	private PortletPreferencesFactory _portletPreferencesFactory;
+
+	private ServiceTrackerMap<String, PortletManager> _serviceTrackerMap;
 
 }

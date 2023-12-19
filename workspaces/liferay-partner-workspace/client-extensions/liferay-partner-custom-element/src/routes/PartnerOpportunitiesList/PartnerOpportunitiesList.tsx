@@ -8,6 +8,7 @@ import ClayButton from '@clayui/button';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {useModal} from '@clayui/modal';
 import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
+import ClayTabs from '@clayui/tabs';
 import {useState} from 'react';
 import {CSVLink} from 'react-csv';
 
@@ -19,7 +20,6 @@ import {PartnerOpportunitiesColumnKey} from '../../common/enums/partnerOpportuni
 import {PRMPageRoute} from '../../common/enums/prmPageRoute';
 import useLiferayNavigate from '../../common/hooks/useLiferayNavigate';
 import usePagination from '../../common/hooks/usePagination';
-import TableColumn from '../../common/interfaces/tableColumn';
 import {Liferay} from '../../common/services/liferay';
 import getDoubleParagraph from '../../common/utils/getDoubleParagraph';
 import ModalContent from './components/ModalContent';
@@ -28,10 +28,14 @@ import useGetListItemsFromPartnerOpportunities from './hooks/useGetListItemsFrom
 import PartnerOpportunitiesItem from './interfaces/partnerOpportunitiesItem';
 
 interface IProps {
-	columnsDates: TableColumn<PartnerOpportunitiesItem>[];
+	closedOpportunitiesFilter: string;
+	getFilteredItems: (
+		items: PartnerOpportunitiesItem[],
+		opportunitiesFilter: string
+	) => PartnerOpportunitiesItem[];
 	name: string;
 	newButtonDeal?: boolean;
-	renewalOpportunitiesFilter?: string;
+	openOpportunitiesFilter: string;
 	sort: string;
 }
 
@@ -39,21 +43,27 @@ const BASE_PAGE = 1;
 const MAX_ITEMS = 200;
 
 const PartnerOpportunitiesList = ({
-	columnsDates,
+	closedOpportunitiesFilter,
+	getFilteredItems,
 	name,
 	newButtonDeal,
-	renewalOpportunitiesFilter,
+	openOpportunitiesFilter,
 	sort,
 }: IProps) => {
-	const {filters, filtersTerm, onFilter} = useFilters(
-		renewalOpportunitiesFilter
+	const [opportunitiesFilter, setOpportunitiesFilter] = useState(
+		openOpportunitiesFilter
 	);
+
+	const {filters, filtersTerm, onFilter} = useFilters(opportunitiesFilter);
 	const [isVisibleModal, setIsVisibleModal] = useState(false);
 	const [modalContent, setModalContent] = useState<
 		PartnerOpportunitiesItem
 	>();
 	const {observer, onClose} = useModal({
-		onClose: () => setIsVisibleModal(false),
+		onClose: () => {
+			setIsVisibleModal(false);
+			setModalContent(undefined);
+		},
 	});
 
 	const pagination = usePagination();
@@ -63,6 +73,7 @@ const PartnerOpportunitiesList = ({
 		filtersTerm,
 		sort
 	);
+
 	const {data: dataCSV} = useGetListItemsFromPartnerOpportunities(
 		BASE_PAGE,
 		MAX_ITEMS,
@@ -71,8 +82,10 @@ const PartnerOpportunitiesList = ({
 	);
 
 	const {totalCount: totalPagination} = data;
-	const filteredData = data.items;
-	const filteredCSVData = dataCSV.items;
+	const filteredData =
+		data.items && getFilteredItems(data.items, opportunitiesFilter);
+	const filteredCSVData =
+		dataCSV.items && getFilteredItems(dataCSV.items, opportunitiesFilter);
 
 	const siteURL = useLiferayNavigate();
 	const columns = [
@@ -84,10 +97,21 @@ const PartnerOpportunitiesList = ({
 			columnKey: PartnerOpportunitiesColumnKey.ACCOUNT_NAME,
 			label: 'Account Name',
 		},
-		...columnsDates,
 		{
 			columnKey: PartnerOpportunitiesColumnKey.SUBSCRIPTION_ARR,
 			label: 'Subscription ARR',
+		},
+		{
+			columnKey: PartnerOpportunitiesColumnKey.STAGE,
+			label: 'Stage',
+		},
+		{
+			columnKey: PartnerOpportunitiesColumnKey.CLOSE_DATE,
+			label: 'Close Date',
+		},
+		{
+			columnKey: PartnerOpportunitiesColumnKey.SUBSCRIPTION_TERM,
+			label: 'Subscription Term',
 		},
 		{
 			columnKey: PartnerOpportunitiesColumnKey.PARTNER_REP_NAME,
@@ -101,13 +125,9 @@ const PartnerOpportunitiesList = ({
 			columnKey: PartnerOpportunitiesColumnKey.LIFERAY_REP,
 			label: 'Liferay Rep',
 		},
-		{
-			columnKey: PartnerOpportunitiesColumnKey.STAGE,
-			label: 'Stage',
-		},
 	];
 
-	const handleCustomClickOnRow = (row: PartnerOpportunitiesItem) => {
+	const handleCustomClickOnRow = async (row: PartnerOpportunitiesItem) => {
 		setIsVisibleModal(true);
 		setModalContent(row);
 	};
@@ -158,7 +178,31 @@ const PartnerOpportunitiesList = ({
 
 	return (
 		<div className="border-0 my-4">
-			<h1>{name}</h1>
+			<div className="align-items-center d-md-flex justify-content-between mb-3 mr-4">
+				<h1>{name}</h1>
+				<ClayTabs className="h-100 nav nav-segment nav-tabs">
+					<ClayTabs.Item
+						active={opportunitiesFilter === openOpportunitiesFilter}
+						className="nav-item"
+						onClick={() =>
+							setOpportunitiesFilter(openOpportunitiesFilter)
+						}
+					>
+						Open
+					</ClayTabs.Item>
+					<ClayTabs.Item
+						active={
+							opportunitiesFilter === closedOpportunitiesFilter
+						}
+						className="nav-item"
+						onClick={() =>
+							setOpportunitiesFilter(closedOpportunitiesFilter)
+						}
+					>
+						Closed
+					</ClayTabs.Item>
+				</ClayTabs>
+			</div>
 
 			<TableHeader>
 				<div className="d-flex">

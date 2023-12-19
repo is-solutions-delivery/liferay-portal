@@ -10,9 +10,11 @@ import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.object.configuration.ObjectConfiguration;
 import com.liferay.object.constants.ObjectActionKeys;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
+import com.liferay.object.exception.ObjectEntryCountException;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
@@ -31,6 +33,7 @@ import com.liferay.object.tree.Tree;
 import com.liferay.object.tree.TreeFactory;
 import com.liferay.object.tree.constants.TreeConstants;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.configuration.test.util.ConfigurationTestUtil;
 import com.liferay.portal.kernel.exception.NoSuchResourceActionException;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.Role;
@@ -55,6 +58,7 @@ import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
@@ -63,8 +67,13 @@ import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.io.Serializable;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
+import java.util.Dictionary;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -81,7 +90,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Marco Leo
  */
-@FeatureFlags("LPS-187142")
+@FeatureFlags({"LPS-187142", "LPS-192957"})
 @RunWith(Arquillian.class)
 public class ObjectEntryServiceTest {
 
@@ -558,7 +567,8 @@ public class ObjectEntryServiceTest {
 
 		ObjectDefinition accountEntryObjectDefinition =
 			_objectDefinitionLocalService.fetchObjectDefinition(
-				TestPropsValues.getCompanyId(), "accountEntry");
+				TestPropsValues.getCompanyId(),
+				AccountEntry.class.getSimpleName());
 
 		ObjectRelationship objectRelationship =
 			_objectRelationshipLocalService.addObjectRelationship(
@@ -638,6 +648,99 @@ public class ObjectEntryServiceTest {
 
 		_objectEntryLocalService.deleteObjectEntry(objectEntry1);
 		_objectEntryLocalService.deleteObjectEntry(objectEntry2);
+	}
+
+	@Test
+	public void testValidateMaximumNumberOfGuestUserObjectEntriesPerObjectDefinition()
+		throws Exception {
+
+		_setUser(_guestUser);
+
+		Dictionary<String, Object> objectConfigurationDictionary =
+			HashMapDictionaryBuilder.<String, Object>put(
+				"duration", 1
+			).put(
+				"maximumFileSizeForGuestUsers", 25
+			).put(
+				"maximumNumberOfGuestUserObjectEntriesPerObjectDefinition", 1
+			).put(
+				"timeScale", "days"
+			).build();
+
+		ConfigurationTestUtil.saveConfiguration(
+			ObjectConfiguration.class.getName(), objectConfigurationDictionary);
+
+		Role guestRole = _roleLocalService.getRole(
+			TestPropsValues.getCompanyId(), RoleConstants.GUEST);
+
+		_resourcePermissionLocalService.addResourcePermission(
+			TestPropsValues.getCompanyId(), _objectDefinition.getResourceName(),
+			ResourceConstants.SCOPE_COMPANY,
+			String.valueOf(TestPropsValues.getCompanyId()),
+			guestRole.getRoleId(), ObjectActionKeys.ADD_OBJECT_ENTRY);
+
+		Assert.assertNotNull(
+			_objectEntryService.addObjectEntry(
+				0, _objectDefinition.getObjectDefinitionId(),
+				Collections.emptyMap(),
+				ServiceContextTestUtil.getServiceContext(
+					TestPropsValues.getGroupId(), _guestUser.getUserId())));
+
+		AssertUtils.assertFailure(
+			ObjectEntryCountException.class,
+			StringBundler.concat(
+				"Unable to exceed ", 1,
+				" guest object entries for object definition ",
+				_objectDefinition.getObjectDefinitionId()),
+			() -> _objectEntryService.addObjectEntry(
+				0, _objectDefinition.getObjectDefinitionId(),
+				Collections.emptyMap(),
+				ServiceContextTestUtil.getServiceContext(
+					TestPropsValues.getGroupId(), _guestUser.getUserId())));
+
+		ConfigurationTestUtil.deleteConfiguration(
+			ObjectConfiguration.class.getName());
+
+		objectConfigurationDictionary.put(
+			"maximumNumberOfGuestUserObjectEntriesPerObjectDefinition", 2);
+		objectConfigurationDictionary.put("timeScale", "weeks");
+
+		ConfigurationTestUtil.saveConfiguration(
+			ObjectConfiguration.class.getName(), objectConfigurationDictionary);
+
+		ObjectEntry objectEntry = _objectEntryService.addObjectEntry(
+			0, _objectDefinition.getObjectDefinitionId(),
+			Collections.emptyMap(),
+			ServiceContextTestUtil.getServiceContext(
+				TestPropsValues.getGroupId(), _guestUser.getUserId()));
+
+		objectEntry.setCreateDate(
+			Date.from(
+				LocalDate.now(
+				).minusDays(
+					7
+				).atStartOfDay(
+					ZoneId.systemDefault()
+				).toInstant()));
+
+		_objectEntryLocalService.addOrUpdateObjectEntry(
+			objectEntry.getExternalReferenceCode(), _user.getUserId(),
+			TestPropsValues.getGroupId(),
+			_objectDefinition.getObjectDefinitionId(), objectEntry.getValues(),
+			ServiceContextTestUtil.getServiceContext(
+				TestPropsValues.getGroupId(), _guestUser.getUserId()));
+
+		AssertUtils.assertFailure(
+			ObjectEntryCountException.class,
+			StringBundler.concat(
+				"Unable to exceed ", 2,
+				" guest object entries for object definition ",
+				_objectDefinition.getObjectDefinitionId()),
+			() -> _objectEntryService.addObjectEntry(
+				0, _objectDefinition.getObjectDefinitionId(),
+				Collections.emptyMap(),
+				ServiceContextTestUtil.getServiceContext(
+					TestPropsValues.getGroupId(), _guestUser.getUserId())));
 	}
 
 	private ObjectEntry _addObjectEntry(User user) throws Exception {

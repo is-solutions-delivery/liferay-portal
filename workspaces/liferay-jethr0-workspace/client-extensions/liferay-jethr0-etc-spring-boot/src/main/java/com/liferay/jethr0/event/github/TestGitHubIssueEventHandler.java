@@ -27,7 +27,9 @@ public class TestGitHubIssueEventHandler extends BaseGitHubIssueEventHandler {
 
 	@Override
 	public String process() throws InvalidJSONException, IOException {
-		if (closeInvalidUpstreamGitHubBranchName()) {
+		if (checkLiferayGitHubUser() ||
+			closeInvalidUpstreamGitHubBranchName()) {
+
 			return null;
 		}
 

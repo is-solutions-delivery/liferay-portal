@@ -1004,7 +1004,7 @@ definition {
 	@priority = 4
 	test EditNavigationMenuInVirtualInstanceWithDBPartitioning {
 		property database.partition.enabled = "true";
-		property database.types = "mysql";
+		property database.types = "mysql, postgresql";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
@@ -1502,6 +1502,26 @@ definition {
 			NavigationMenusAdmin.editMenu(navigationMenuName = "Navigation Menu Name 1");
 
 			NavigationMenusAdmin.viewItemNotPresent(itemNameList = "Page 3");
+		}
+	}
+
+	@description = "This is a test for LPS-177769. The tooltip of the back button in a new Navigation Menu is Go to Navigation Menus."
+	@priority = 3
+	test ViewBackButtonTooltipInNavigationMenuEditor {
+		task ("Given access to the navigation menu editor") {
+			NavigationMenusAdmin.openNavigationMenusAdmin(siteURLKey = ${siteURLKey});
+
+			NavigationMenusAdmin.addMenu(menuName = "Navigation Menu Name");
+		}
+
+		task ("When hover over the back button") {
+			MouseOver(locator1 = "Icon#BACK");
+		}
+
+		task ("Then see the tooltip message") {
+			AssertVisible(
+				key_content = "Go to Navigation Menus",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
 		}
 	}
 

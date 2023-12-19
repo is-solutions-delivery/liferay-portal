@@ -8,6 +8,8 @@ import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
+import ClayTabs from '@clayui/tabs';
+import {useState} from 'react';
 import {CSVLink} from 'react-csv';
 
 import Table from '../../common/components/Table';
@@ -16,15 +18,16 @@ import CheckboxFilter from '../../common/components/TableHeader/Filter/component
 import DropDownWithDrillDown from '../../common/components/TableHeader/Filter/components/DropDownWithDrillDown';
 import DateFilter from '../../common/components/TableHeader/Filter/components/filters/DateFilter';
 import Search from '../../common/components/TableHeader/Search';
-import {LiferayPicklistName} from '../../common/enums/liferayPicklistName';
 import {MDFClaimColumnKey} from '../../common/enums/mdfClaimColumnKey';
 import {ObjectActionName} from '../../common/enums/objectActionName';
 import {PermissionActionType} from '../../common/enums/permissionActionType';
+import useIsChannel from '../../common/hooks/useIsChannel';
 import useLiferayNavigate from '../../common/hooks/useLiferayNavigate';
 import usePagination from '../../common/hooks/usePagination';
 import usePermissionActions from '../../common/hooks/usePermissionActions';
 import {MDFClaimListItem} from '../../common/interfaces/mdfClaimListItem';
 import TableColumn from '../../common/interfaces/tableColumn';
+import {Filters} from '../../common/utils/constants/filters';
 import getDropDownFilterMenus from '../../common/utils/getDropDownFilterMenus';
 import useDynamicFieldEntries from './hooks/useDynamicFieldEntries';
 import useFilters from './hooks/useFilters';
@@ -40,9 +43,16 @@ const BASE_PAGE = 1;
 const MAX_ITEMS = -1;
 
 const MDFClaimList = () => {
-	const {companiesEntries, fieldEntries} = useDynamicFieldEntries();
+	const {isChannel} = useIsChannel();
 
-	const {filters, filtersTerm, onFilter, setFilters} = useFilters();
+	const [openClaimsFilter, setOpenClaimsFilter] = useState(true);
+
+	const {companiesEntries} = useDynamicFieldEntries();
+
+	const {filters, filtersTerm, onFilter, setFilters} = useFilters(
+		openClaimsFilter,
+		isChannel
+	);
 
 	const pagination = usePagination();
 	const {data, isValidating, mutate} = useGetListItemsFromMDFClaims(
@@ -98,7 +108,25 @@ const MDFClaimList = () => {
 
 	return (
 		<div className="border-0 my-4">
-			<h1>MDF Claim</h1>
+			<div className="align-items-center d-md-flex justify-content-between mb-3 mr-4">
+				<h1>MDF Claim</h1>
+				<ClayTabs className="h-100 nav nav-segment nav-tabs">
+					<ClayTabs.Item
+						active={openClaimsFilter}
+						className="nav-item"
+						onClick={() => setOpenClaimsFilter(true)}
+					>
+						Open
+					</ClayTabs.Item>
+					<ClayTabs.Item
+						active={!openClaimsFilter}
+						className="nav-item"
+						onClick={() => setOpenClaimsFilter(false)}
+					>
+						Completed
+					</ClayTabs.Item>
+				</ClayTabs>
+			</div>
 
 			<TableHeader>
 				<div className="d-flex">
@@ -171,11 +199,13 @@ const MDFClaimList = () => {
 							{
 								component: (
 									<CheckboxFilter
-										availableItems={fieldEntries[
-											LiferayPicklistName.MDF_CLAIM_STATUS
-										]?.map<string>(
-											(status) => status.label as string
-										)}
+										availableItems={
+											openClaimsFilter
+												? Filters.MDF_CLAIM_LISTING
+														.openList
+												: Filters.MDF_CLAIM_LISTING
+														.completedList
+										}
 										clearCheckboxes={
 											!filters.status.value?.length
 										}

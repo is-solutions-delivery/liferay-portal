@@ -1063,7 +1063,7 @@ definition {
 			Check(locator1 = "DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_CHECKBOX");
 		}
 
-		Click(locator1 = "Icon#TOOLBAR_ELLIPSIS");
+		Click(locator1 = "ManagementBar#ELLIPSIS");
 
 		MenuItem.click(menuItem = "Checkin");
 
@@ -1189,7 +1189,7 @@ definition {
 
 	@summary = "Default summary"
 	macro checkoutViaManagementBar() {
-		Click(locator1 = "Icon#TOOLBAR_ELLIPSIS");
+		Click(locator1 = "ManagementBar#ELLIPSIS");
 
 		MenuItem.click(menuItem = "Checkout");
 
@@ -1493,7 +1493,9 @@ definition {
 				locator1 = "ManagementBar#NAVBAR_TEXT",
 				value1 = "All Selected");
 
-			Click(locator1 = "Icon#DELETE");
+			Click(
+				key_text = "trash",
+				locator1 = "ManagementBar#ANY_ICON");
 
 			Alert.viewSuccessMessage();
 		}
@@ -1692,14 +1694,10 @@ definition {
 			Click(locator1 = "Modal#BODY");
 
 			if (${editAction} == "Append") {
-				FormFields.selectRadioOption(
-					fieldName = "add",
-					radioOption = "Add");
+				Click(locator1 = "Radio#APPEND");
 			}
 			else if (${editAction} == "Replace") {
-				FormFields.selectRadioOption(
-					fieldName = "replace",
-					radioOption = "Replace");
+				Click(locator1 = "Radio#REPLACE");
 			}
 		}
 		else {
@@ -2160,14 +2158,10 @@ definition {
 			Click(locator1 = "Modal#BODY");
 
 			if (${editAction} == "Append") {
-				FormFields.selectRadioOption(
-					fieldName = "add",
-					radioOption = "Add");
+				Click(locator1 = "Radio#APPEND");
 			}
 			else if (${editAction} == "Replace") {
-				FormFields.selectRadioOption(
-					fieldName = "replace",
-					radioOption = "Replace");
+				Click(locator1 = "Radio#REPLACE");
 			}
 		}
 		else {
@@ -2361,7 +2355,9 @@ definition {
 				locator1 = "Button#SELECT_ALL",
 				value1 = "Select All");
 
-			Click(locator1 = "Icon#MOVE");
+			Click(
+				key_text = "move",
+				locator1 = "ManagementBar#ANY_ICON");
 		}
 		else {
 			var key_dmDocumentTitle = ${dmDocumentTitle};
@@ -4683,7 +4679,7 @@ definition {
 
 		Check(locator1 = "DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_CHECKBOX");
 
-		Click(locator1 = "Icon#TOOLBAR_ELLIPSIS");
+		Click(locator1 = "ManagementBar#ELLIPSIS");
 
 		MenuItem.viewPresent(menuItem = "Download");
 

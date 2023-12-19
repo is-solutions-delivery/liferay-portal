@@ -11,7 +11,6 @@ import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -49,7 +48,7 @@ public abstract class BaseSimpleCaptchaResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'GET' 'http://localhost:8080/o/captcha/v1.0/simple-captcha'  -u 'test@liferay.com:test'
+	 * curl -X 'GET' 'http://localhost:8080/o/captcha/v1.0/simple-captcha/challenge'  -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.tags.Tags(
 		value = {
@@ -57,11 +56,30 @@ public abstract class BaseSimpleCaptchaResourceImpl
 		}
 	)
 	@javax.ws.rs.GET
-	@javax.ws.rs.Path("/simple-captcha")
+	@javax.ws.rs.Path("/simple-captcha/challenge")
 	@javax.ws.rs.Produces({"application/json", "application/xml"})
 	@Override
-	public SimpleCaptcha getSimpleCaptcha() throws Exception {
+	public SimpleCaptcha getSimpleCaptchaChallenge() throws Exception {
 		return new SimpleCaptcha();
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -X 'POST' 'http://localhost:8080/o/captcha/v1.0/simple-captcha/response' -d $'{"answer": ___, "image": ___, "token": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 */
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {
+			@io.swagger.v3.oas.annotations.tags.Tag(name = "SimpleCaptcha")
+		}
+	)
+	@javax.ws.rs.Consumes({"application/json", "application/xml"})
+	@javax.ws.rs.Path("/simple-captcha/response")
+	@javax.ws.rs.POST
+	@javax.ws.rs.Produces({"application/json", "application/xml"})
+	@Override
+	public void postSimpleCaptchaResponse(SimpleCaptcha simpleCaptcha)
+		throws Exception {
 	}
 
 	public void setContextAcceptLanguage(AcceptLanguage contextAcceptLanguage) {
@@ -140,7 +158,9 @@ public abstract class BaseSimpleCaptchaResourceImpl
 	}
 
 	protected Map<String, String> addAction(
-		String actionName, GroupedModel groupedModel, String methodName) {
+		String actionName,
+		com.liferay.portal.kernel.model.GroupedModel groupedModel,
+		String methodName) {
 
 		return ActionUtil.addAction(
 			actionName, getClass(), groupedModel, methodName,

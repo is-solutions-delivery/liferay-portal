@@ -9,7 +9,8 @@ import {SWRConfig} from 'swr';
 
 import {WebDAV} from './common/context/WebDAV';
 import {AppRouteType} from './common/enums/appRouteType';
-import {PartnerOpportunitiesColumnKey} from './common/enums/partnerOpportunitiesColumnKey';
+import {OpportunityType} from './common/enums/opportunityType';
+import {Filters} from './common/utils/constants/filters';
 import getIconSpriteMap from './common/utils/getIconSpriteMap';
 import DealRegistrationForm from './routes/DealRegistrationForm';
 import DealRegistrationList from './routes/DealRegistrationList';
@@ -41,39 +42,99 @@ const appRoutes: AppRouteComponent = {
 	[AppRouteType.DEAL_REGISTRATION_FORM]: <DealRegistrationForm />,
 	[AppRouteType.DEAL_REGISTRATION_LIST]: (
 		<DealRegistrationList
-			dealRegistrationFilter="leadStatus ne 'Qualified'"
+			getFilteredItems={(items, dealsFilter) => {
+				const currentYear = new Date().getFullYear();
+
+				if (dealsFilter === Filters.DEAL_LISTING.rejectedWIP) {
+					return items.filter((item) => {
+						const createDateYear = new Date(
+							item['DATE-CREATED']
+						).getFullYear();
+
+						return (
+							item.STATUS === 'Rejected' &&
+							createDateYear === currentYear
+						);
+					});
+				}
+
+				return items.filter((item) => {
+					const createDateYear = new Date(
+						item['DATE-CREATED']
+					).getFullYear();
+
+					return (
+						item.STATUS !== 'Rejected' &&
+						!item.ISCONVERTED &&
+						createDateYear >= 2023
+					);
+				});
+			}}
+			rejectedDealsFilter={Filters.DEAL_LISTING.rejectedWIP}
 			sort="dateCreated:desc"
+			submittedDealsFilter={Filters.DEAL_LISTING.submittedWIP}
 		/>
 	),
 	[AppRouteType.PARTNER_OPPORTUNITIES_LIST]: (
 		<PartnerOpportunitiesList
-			columnsDates={[
-				{
-					columnKey: PartnerOpportunitiesColumnKey.START_DATE,
-					label: 'Start Date',
-				},
-				{
-					columnKey: PartnerOpportunitiesColumnKey.END_DATE,
-					label: 'End Date',
-				},
-			]}
+			closedOpportunitiesFilter={Filters.OPPORTUNITY_LISTING.closedWIP}
+			getFilteredItems={(items, opportunitiesFilter) => {
+				if (
+					opportunitiesFilter ===
+					Filters.OPPORTUNITY_LISTING.closedWIP
+				) {
+					return items.filter(
+						(item) =>
+							(item['TYPE'] === OpportunityType.NEW_BUSINESS ||
+								item['TYPE'] ===
+									OpportunityType.NEW_PROJECT_EXISTING_BUSINESS ||
+								(item['TYPE'] ===
+									OpportunityType.EXISTING_BUSINESS &&
+									!item['HAS-RENEWAL'])) &&
+							item['ACTIVE']
+					);
+				}
+				if (
+					opportunitiesFilter === Filters.OPPORTUNITY_LISTING.openWIP
+				) {
+					return items.filter(
+						(item) =>
+							(item['TYPE'] === OpportunityType.NEW_BUSINESS ||
+								item['TYPE'] ===
+									OpportunityType.NEW_PROJECT_EXISTING_BUSINESS ||
+								(item['TYPE'] ===
+									OpportunityType.EXISTING_BUSINESS &&
+									!item['HAS-RENEWAL'] &&
+									Number(item['GROWTH-ARR']) > 0)) &&
+							item['ACTIVE']
+					);
+				}
+
+				return items;
+			}}
 			name="Partner Opportunities"
 			newButtonDeal={false}
-			renewalOpportunitiesFilter="type eq 'New Business' or type eq 'New Project Existing Business'"
-			sort="dateCreated:desc"
+			openOpportunitiesFilter={Filters.OPPORTUNITY_LISTING.openWIP}
+			sort="closeDate:desc"
 		/>
 	),
 	[AppRouteType.RENEWALS_OPPORTUNITIES_LIST]: (
 		<PartnerOpportunitiesList
-			columnsDates={[
-				{
-					columnKey: PartnerOpportunitiesColumnKey.CLOSE_DATE,
-					label: 'Close Date',
-				},
-			]}
+			closedOpportunitiesFilter={Filters.RENEWAL_LISTING.closedWIP}
+			getFilteredItems={(items, opportunitiesFilter) => {
+				if (opportunitiesFilter === Filters.RENEWAL_LISTING.closedWIP) {
+					return items.filter(
+						(item) => item['HAS-RENEWAL'] && item['ACTIVE']
+					);
+				}
+
+				return items.filter(
+					(item) => item['HAS-RENEWAL'] && item['ACTIVE']
+				);
+			}}
 			name="Renewal Opportunities"
 			newButtonDeal={false}
-			renewalOpportunitiesFilter="stage ne 'Closed Lost' and type eq 'Existing Business'"
+			openOpportunitiesFilter={Filters.RENEWAL_LISTING.openWIP}
 			sort="closeDate:asc"
 		/>
 	),
