@@ -55,10 +55,7 @@
 	<#assign breadcrumbLinksJSONArray = jsonFactoryUtil.createJSONArray(breadcrumbLinks.getData()) />
 
 	<#if breadcrumbLinksJSONArray.length() gt 0>
-		<#assign
-			parentLink = breadcrumbLinksJSONArray.getJSONObject(0)?eval
-			topLevelArticle = false
-		/>
+		<#assign topLevelArticle = false />
 	</#if>
 </#if>
 
@@ -133,7 +130,7 @@
 									aria-haspopup="true"
 									class="adt-nav-title text-truncate"
 								>
-									${productList[product].title}123
+									${productList[product].title}
 								</span>
 							</div>
 
@@ -177,7 +174,7 @@
 					<#if !topLevelArticle>
 						<div class="d-flex" style="border-bottom: solid; border-color: #EAECEE; align-items: center;">
 							<div class="m-2">
-								<a href="${parentLink.url}" id="backLink" style="color: #34465B; padding: 0.5rem; border-left-width: 0px;">
+								<a href="${breadcrumbLinksJSONArray.getJSONObject(0).url}" id="backLink" style="color: #34465B; padding: 0.5rem; border-left-width: 0px;">
 									<svg class="lexicon-icon lexicon-icon-angle-left" role="presentation" viewBox="0 0 512 512">
 										<use xlink:href="#angle-left" />
 									</svg>
@@ -185,7 +182,7 @@
 							</div>
 
 							<div class="align-self-center">
-								<a class="pl-0 pr-0" style="color: #282934; font-weight: 700;">${parentLink.title}</a>
+								<a class="pl-0 pr-0" style="color: #282934; font-weight: 700;">${breadcrumbLinksJSONArray.getJSONObject(0).title}</a>
 							</div>
 						</div>
 					</#if>
@@ -198,10 +195,8 @@
 
 							<#if navigationLinksJSONArray.length() gt 0>
 								<#list 0..navigationLinksJSONArray.length()-1 as i>
-									<#assign navigationLink = navigationLinksJSONArray.getJSONObject(i)?eval />
-									
-									<li class="${topLevelArticle?then("toctree-test", "")} sideNav d-flex ${(urlTitleLastDirectory == navigationLink.url)?then("currentLevel", "")}" style="justify-content: space-between; align-items: center; margin: 0.3rem 1rem; border-radius: 0.5rem;">
-										<a class="reference internal ${(urlTitleLastDirectory == navigationLink.url)?then("currentLevel", "")}" href="${navigationLink.url}" style="font-size: 1rem; color: #282934; font-weight:600; width: fit-content;">${navigationLink.title}</a>
+									<li class="${topLevelArticle?then("toctree-test", "")} sideNav d-flex ${(urlTitleLastDirectory == navigationLinksJSONArray.getJSONObject(i).url)?then("currentLevel", "")}" style="justify-content: space-between; align-items: center; margin: 0.3rem 1rem; border-radius: 0.5rem;">
+										<a class="reference internal ${(urlTitleLastDirectory == navigationLinksJSONArray.getJSONObject(i).url)?then("currentLevel", "")}" href="${navigationLinksJSONArray.getJSONObject(i).url}" style="font-size: 1rem; color: #282934; font-weight:600; width: fit-content;">${navigationLinksJSONArray.getJSONObject(i).title}</a>
 										<#if breadcrumbLinksJSONArray.length() lt 1>
 											<svg class="lexicon-icon lexicon-icon-angle-left" role="presentation" viewBox="0 0 512 512" style="width: 0.6rem; height: 0.6rem; display: block; margin-right: 10px; transform: rotate(180deg)">
 												<use xlink:href="#angle-left" />
