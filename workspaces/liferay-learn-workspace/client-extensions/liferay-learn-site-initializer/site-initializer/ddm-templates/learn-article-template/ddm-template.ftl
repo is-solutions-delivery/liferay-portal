@@ -115,7 +115,7 @@
 					<div
 						class="adt-nav-item w-100 ml-0"
 						data-toggle="liferay-dropdown"
-						style="background-color: #F4F6F9; border-radius: 0.5rem;"
+						style="background-color: #F7F7F8; border-radius: 0.5rem;"
 					>
 						<div class="adt-nav-text d-flex p-3 justify-content-between" style="border-radius: 0.5rem; align-items: center;">
 							<div>
@@ -154,14 +154,16 @@
 								<div class="br-13 dropdown-item col-sm-12 d-flex justify-content-between" style="align-items: center; margin-left: 0; margin-right: 0; border-radius: 0.5rem;">
 								  <div>
 									  <a class="adt-submenu-item-link color-black text-decoration-none" href="/w/${productList[key].url}/index" tabindex="4" style="color: #282934;">
-											<div>
-												<img
-													class="lexicon-icon lexicon-icon-caret-bottom product-icon mr-2"
-													role="presentation"
-													src="${value.image}"
-													viewBox="0 0 512 512"
-													style="width: 25px; height: 25px;"
-									      />
+											<div class="d-flex" style="align-items: center;">
+											  <div class="d-flex mr-1" style="width: 2.25rem; height: 2.25rem; border-radius: 2rem; align-items: center; border: 1px solid; border-color: #F7F7F8;">
+													<img
+														class="lexicon-icon lexicon-icon-caret-bottom product-icon mt-0 mr-2"
+														role="presentation"
+														src="${value.image}"
+														viewBox="0 0 512 512"
+														style="width: 25px; height: 25px; max-width: none; margin-left: 5px;"
+													/>
+												</div>
 												<b>${value.title}</b>
 											</div>
 										</a>
@@ -179,7 +181,7 @@
 			</#if>
 			<#assign navigationLinksJSONArray = jsonFactoryUtil.createJSONArray(navigationLinks.getData()) />
 			<#if navigationLinksJSONArray.length() gt 0>
-				<div class="doc-nav mt-3" style="border-radius: 0.5rem; padding: 0 0">
+				<div class="doc-nav mt-3" style="border-radius: 0.5rem; padding: 0 0; background-color: #F7F7F8;">
 					<#if !topLevelArticle>
 						<div class="d-flex" style="border-bottom: solid; border-color: #EAECEE; align-items: center;">
 							<div class="m-2">
@@ -201,7 +203,7 @@
 							<#if navigationLinksJSONArray.length() gt 0>
 								<#list 0..navigationLinksJSONArray.length()-1 as i>
 									<li class="${topLevelArticle?then("toctree-test", "")} sideNav d-flex ${(urlTitleLastDirectory == navigationLinksJSONArray.getJSONObject(i).url)?then("currentLevel", "")}" style="justify-content: space-between; align-items: center; margin: 0.3rem 1rem; border-radius: 0.5rem;">
-										<a class="reference internal ${(urlTitleLastDirectory == navigationLinksJSONArray.getJSONObject(i).url)?then("currentLevel", "")}" href="${navigationLinksJSONArray.getJSONObject(i).url}" style="font-size: 1rem; color: #282934; font-weight:600; width: fit-content;">${navigationLinksJSONArray.getJSONObject(i).title}</a>
+										<a class="reference internal ${(urlTitleLastDirectory == navigationLinksJSONArray.getJSONObject(i).url)?then("currentLevel", "")}" href="${navigationLinksJSONArray.getJSONObject(i).url}" style="font-size: 1rem; color: #282934; font-weight:600; width: fit-content; border-radius: 0.5rem;">${navigationLinksJSONArray.getJSONObject(i).title}</a>
 										<#if breadcrumbLinksJSONArray.length() lt 1>
 											<svg class="lexicon-icon lexicon-icon-angle-left" role="presentation" viewBox="0 0 512 512" style="width: 0.6rem; height: 0.6rem; display: block; margin-right: 10px; transform: rotate(180deg)">
 												<use xlink:href="#angle-left" />
@@ -328,7 +330,10 @@
     align-self: stretch;
 	}
 	
-	
+	.dropdown-item:hover>div>.adt-submenu-item-link>div>div {
+	  background-color: #E7EFFF !important;
+		border-color: #FFFFFF !important;
+	}
 	
 	#backLink {
 		border-radius: 0.5rem;
