@@ -126,16 +126,16 @@
 			<#if productList[product].title?has_content>
 				<div class="dropdown">
 					<div
-						class="adt-nav-item w-100 ml-0 br-5"
+						class="adt-nav-item br-5 ml-0 w-100"
 						data-toggle="liferay-dropdown"
 						style="background-color: #F7F7F8;"
 					>
-						<div class="adt-nav-text d-flex p-3 justify-content-between br-5 align-items-center">
+						<div class="adt-nav-text align-items-center br-5 d-flex justify-content-between p-3" id="dropdown-products">
 							<div>
 								<span
 									aria-expanded="false"
 									aria-haspopup="true"
-									class="adt-nav-title text-truncate d-flex align-items-center"
+									class="adt-nav-title d-flex align-items-center"
 									style="color: #282934; font-weight: 700;"
 								>
 									<div class="d-flex mr-1 align-items-center" style="background-color: #E7EFFF; width: 3.25rem; height: 3.25rem; border-radius: 2rem; border: 1px solid; border-color: #FFFFFF;">
@@ -162,11 +162,11 @@
 
 					<div
 						class="br-13 dropdown-menu m-0 p-0"
-						style="overflow-x:hidden; will-change: transform;"
+						style="overflow-x:hidden; width: max-content; will-change: transform; z-index: 1;"
 					>
 						<div class="m-0 p-3 row">
 							<#list productList as key, value>
-								<a class="adt-submenu-item-link color-black text-decoration-none" href="/w/${productList[key].url}/index" tabindex="4" style="color: #282934; display:contents;">
+								<a class="adt-submenu-item-link color-black text-decoration-none" href="/w/${productList[key].url}/index" tabindex="4" style="color: #282934; display: contents;">
 									<div class="br-13 dropdown-item col-sm-12 d-flex justify-content-between align-items-center br-5" style="margin-left: 0; margin-right: 0;">
 										<div>
 											<div class="d-flex align-items-center">
@@ -225,7 +225,7 @@
 							<#if navigationLinksJSONArray.length() gt 0>
 								<#list 0..navigationLinksJSONArray.length()-1 as i>
 									<li class="br-5 d-flex sideNav ${topLevelArticle?then("toctree-test", "")} ${(urlTitleLastDirectory == navigationLinksJSONArray.getJSONObject(i).url)?then("currentLevel", "")}" style="margin: 0.3rem 1rem;">
-										<a class="align-items-center br-5 d-flex p-2 internal reference ${(urlTitleLastDirectory == navigationLinksJSONArray.getJSONObject(i).url)?then("currentLevel", "")}" href="${navigationLinksJSONArray.getJSONObject(i).url}" style="font-size: 1rem; color: #282934; font-weight:600; width: 100%; justify-content: space-between;">
+										<a class="align-items-center br-5 d-flex internal justify-content-between p-2 reference ${(urlTitleLastDirectory == navigationLinksJSONArray.getJSONObject(i).url)?then("currentLevel", "")}" href="${navigationLinksJSONArray.getJSONObject(i).url}" style="font-size: 1rem; color: #282934; font-weight:600; width: 100%;">
 										  ${navigationLinksJSONArray.getJSONObject(i).title}
 										<#if breadcrumbLinksJSONArray.length() lt 1>
 										<div class="d-flex">
@@ -248,7 +248,7 @@
 	<div class="col-12 col-md-10 doc-body">
 		<div class="border-bottom-0 h-auto p-0">
 			<div class="mt-3 offset-md-1">
-				<div class="d-flex align-items-baseline" style="justify-content: space-between;">
+				<div class="align-items-baseline d-flex justify-content-between">
 					<ul aria-label="breadcrumb navigation" class="article-breadcrumb" role="navigation">
 						<li>
 							<a href="${groupFriendlyURL}"><@clay["icon"] symbol="home-full" /></a>
@@ -335,10 +335,10 @@
 </div>
 
 <style>
-	.adt-nav-text:hover {
+	#dropdown-products:hover {
 	  	background-color: #EDF3FE !important;
 	}
-	.adt-nav-text:hover svg {
+	.dropdown-products:hover svg {
 	  	color: var(--color-action-primary-hover);
 	}
 	.br-5 {
@@ -357,7 +357,6 @@
     	align-self: stretch;
 	  	display: flex;
     	gap: 0.75rem;
-    	justify-content: center;
     	padding: 0.75rem;
 	}
 	.dropdown-item:hover {
@@ -374,11 +373,11 @@
 	.reference:hover {
 		color: #0053F0 !important;
 	}
-	.show .adt-nav-text {
+	.show #dropdown-products {
 	  	background-color: #EDF3FE !important;
 	}
-	.show .adt-nav-text svg {
-	  	color: var(--color-action-primary-hover);
+	.show #dropdown-products svg {
+	  color: var(--color-action-primary-hover);
 		transform: rotate(180deg);
 	}
 	.sideNav:hover {
