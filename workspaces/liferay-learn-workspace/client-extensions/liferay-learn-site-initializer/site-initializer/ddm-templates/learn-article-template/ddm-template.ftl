@@ -22,7 +22,7 @@
 	<#if !taxonomyVocabularies?seq_contains(taxonomyVocabularyName)>
 		<#assign taxonomyVocabularies = taxonomyVocabularies + [taxonomyVocabularyName] />
 	</#if>
-	
+
 	<#if taxonomyCategoriesMap[taxonomyVocabularyName]?has_content>
 		<#assign taxonomyCategoriesMap = taxonomyCategoriesMap +
 			{
@@ -66,7 +66,7 @@
 
 <div class="container-fluid documentations main-content" role="main">
 	<div class="row">
-    	<div class="col-12 col-md-2 mobile-nav-hide mt-5">
+<div class="col-12 col-md-2 mobile-nav-hide mt-5">
 			<div class="doc-nav-wrapper-inner">
 				<div class="d-md-none mobile-doc-nav-toggler" id="mobileDocNavToggler">${languageUtil.get(locale, "documentation-menu", "Documentation Menu")}
 					<button
@@ -81,52 +81,51 @@
 <@clay["icon"] symbol="angle-up-small" />
 					</button>
 				</div>
-				
+
 			<#if !topLevelArticle>
-				<#assign 
-				  productTitle = breadcrumbLinksJSONArray.getJSONObject(breadcrumbLinksJSONArray.length()-1).title 
-				  productUrl = breadcrumbLinksJSONArray.getJSONObject(breadcrumbLinksJSONArray.length()-1).url 
+				<#assign
+				  productTitle = breadcrumbLinksJSONArray.getJSONObject(breadcrumbLinksJSONArray.length()-1).title
+				  productUrl = breadcrumbLinksJSONArray.getJSONObject(breadcrumbLinksJSONArray.length()-1).url
 				/>
 			<#else>
-				<#assign productTitle = .vars["reserved-article-title"].data />
+				<#assign productTitle =.vars["reserved-article-title"].data />
 			</#if>
 
-			<#assign productList =
-				{
-					"analytics-cloud": {
-						"title": "Analytics Cloud",
-						"url": "analytics-cloud",
-						"image": "/documents/d/guest/analytics_c-svg"
-					},
-					"commerce": {
-						"title": "Commerce",
-						"url": "commerce",
-						"image": "/documents/d/guest/commerce_product-svg"
-					},
-					"dxp": {
-						"title": "DXP / Portal",
-						"url": "dxp",
-						"image": "/documents/d/guest/dxp_p-svg"
-						
-					},
-					"liferay-cloud": {
-						"title": "DXP Cloud",
-						"url": "liferay-cloud",
-						"image": "/documents/d/guest/dxp_c-svg"
-					},
-					"reference": {
-						"title": "Reference",
-						"url": "reference",
-						"image": "/documents/d/guest/reference-svg"
-					}
-				}
-			/>
-				
 			<#assign
-			  currentProduct = {} 
-			  product = product.getData() 
+				productList =
+				{
+				"analytics-cloud": {
+				"title": "Analytics Cloud",
+				"url": "analytics-cloud",
+				"image": "/documents/d/guest/analytics_c-svg"
+				},
+				"commerce": {
+				"title": "Commerce",
+				"url": "commerce",
+				"image": "/documents/d/guest/commerce_product-svg"
+				},
+				"dxp": {
+				"title": "DXP / Portal",
+				"url": "dxp",
+				"image": "/documents/d/guest/dxp_p-svg"
+
+				},
+				"liferay-cloud": {
+				"title": "DXP Cloud",
+				"url": "liferay-cloud",
+				"image": "/documents/d/guest/dxp_c-svg"
+				},
+				"reference": {
+				"title": "Reference",
+				"url": "reference",
+				"image": "/documents/d/guest/reference-svg"
+				}
+				}
+
+				  currentProduct = {}
+				  product = product.getData()
 			/>
-		
+
 			<#if productList[product].title?has_content>
 				<div class="dropdown">
 					<div
@@ -151,9 +150,9 @@
 											viewBox="0 0 512 512"
 										/>
 									</div>
-									
+
 									<div>${productList[product].title}</div>
-								</span>	
+								</span>
 							</div>
 
 							<div>
@@ -170,10 +169,10 @@
 					>
 						<div class="m-0 p-3 row">
 							<#list productList as key, value>
-								<a class="adt-submenu-item-link color-black text-decoration-none" href="/w/${productList[key].url}/index" tabindex="4" style="color: #282934; display: contents;">
-									<div class="align-items-center br-5 br-13 dropdown-item col-sm-12 d-flex justify-content-between ml-0 mr-0"
+								<a class="adt-submenu-item-link color-black text-decoration-none" href="/w/${productList[key].url}/index" style="color: #282934; display: contents;" tabindex="4">
+									<div class="align-items-center br-13 br-5 col-sm-12 d-flex dropdown-item justify-content-between ml-0 mr-0">
 										<div>
-											<div class="d-flex align-items-center">
+											<div class="align-items-center d-flex">
 												<div class="align-items-center br-20 d-flex mr-1" style="border: 1px solid; border-color: #F7F7F8; height: 2.25rem; width: 2.25rem;">
 													<img
 														class="lexicon-icon lexicon-icon-caret-bottom product-icon mt-0 mr-2"
@@ -183,6 +182,7 @@
 														viewBox="0 0 512 512"
 													/>
 												</div>
+
 												<b>${value.title}</b>
 											</div>
 										</div>
@@ -203,11 +203,11 @@
 			<#assign navigationLinksJSONArray = jsonFactoryUtil.createJSONArray(navigationLinks.getData()) />
 
 			<#if navigationLinksJSONArray.length() gt 0>
-				<div class="doc-nav mt-3 br-5" style="background-color: #F7F7F8;">
+				<div class="br-5 doc-nav mt-3" style="background-color: #F7F7F8;">
 					<#if !topLevelArticle>
-						<div class="d-flex align-items-center" style="border-bottom: solid; border-color: #EAECEE;">
+						<div class="align-items-center d-flex" style="border-bottom: solid; border-color: #EAECEE;">
 							<div class="m-2">
-								<a href="${breadcrumbLinksJSONArray.getJSONObject(0).url}" class="br-5 p-2" id="backLink" style="color: #282934; border-left-width: 0px;">
+								<a class="br-5 p-2" href="${breadcrumbLinksJSONArray.getJSONObject(0).url}" id="backLink" style="color: #282934; border-left-width: 0px;">
 									<svg class="lexicon-icon lexicon-icon-angle-left" role="presentation" viewBox="0 0 512 512">
 										<use xlink:href="#angle-left" />
 									</svg>
@@ -231,7 +231,7 @@
 										  	${navigationLinksJSONArray.getJSONObject(i).title}
 											<#if breadcrumbLinksJSONArray.length() lt 1>
 												<div class="d-flex">
-													<svg class="lexicon-icon lexicon-icon-angle-left" role="presentation" viewBox="0 0 512 512" style="width: 0.6rem; height: 0.6rem; display: block; transform: rotate(180deg)">
+													<svg class="lexicon-icon lexicon-icon-angle-left" role="presentation" style="width: 0.6rem; height: 0.6rem; display: block; transform: rotate(180deg)" viewBox="0 0 512 512">
 														<use xlink:href="#angle-left" />
 													</svg>
 												</div>
@@ -259,13 +259,13 @@
 						<#if !topLevelArticle>
 							<#list breadcrumbLinksJSONArray.length()-1..0 as i>
 								<#assign breadcrumbLink = breadcrumbLinksJSONArray.getJSONObject(i)?eval />
-								
+
 								<li>
 									<a href="${breadcrumbLink.url}">${breadcrumbLink.title}</a>
 								</li>
 							</#list>
 						</#if>
-				
+
 						<li>
 							${.vars['reserved-article-title'].getData()}
 						</li>
@@ -288,7 +288,7 @@
 						<div class="d-flex font-weight-bold mr-2" style="flex-wrap: wrap; font-size: 0.875rem;">
 							<#list taxonomyCategoriesMap[vocabulary]?sort_by("categoryName") as taxonomyCategory>
 								<div class="d-flex">
-									<a class="label label-primary align-items-center d-flex" href="/search?category=${taxonomyCategory.categoryId}" style="border-radius: 1.5rem; border: 1px solid #0B5FFF; background: var(--action-primary-inverted, #FFF); padding: 0.25rem 0.75rem; gap: 0.25rem;">
+									<a class="align-items-center d-flex label label-primary" href="/search?category=${taxonomyCategory.categoryId}" style="border-radius: 1.5rem; border: 1px solid #0B5FFF; background: var(--action-primary-inverted, #FFF); padding: 0.25rem 0.75rem; gap: 0.25rem;">
 										<span class="label-item label-item-expand">${taxonomyCategory.categoryName}</span>
 									</a>
 								</div>
@@ -318,12 +318,15 @@
 								</svg>
 							</div>
 						</div>
-						
+
 						<div class="autofit-col autofit-col-expand">
 							<h3>${languageUtil.get(locale, "not-finding-what-you-are-looking-for", "Not finding what you're looking for?")}</h3>
+
 							<p>${languageUtil.get(locale, "pardon-our-dust-as-we-revamp", "Pardon our dust as we revamp and transition our product documentation to this site. If something seems missing, please check Liferay Help Center documentation for Liferay DXP 7.2 and previous versions.")}</p>
+
 							<a href="https://help.liferay.com/hc/en-us/categories/360001749912">
 								<strong>${languageUtil.get(locale, "try-liferays-help-center", "Try Liferay's Help Center")}</strong>
+
 								<svg class="lexicon-icon lexicon-icon-shortcut" focusable="false" role="presentation" viewBox="0 0 512 512">
 									<use xlink:href="#shortcut" />
 								</svg>
@@ -338,10 +341,10 @@
 
 <style>
 	.br-5 {
-	    border-radius: 0.5rem;
+		border-radius: 0.5rem;
 	}
 	.br-20 {
-	    border-radius: 2.0rem;
+		border-radius: 2.0rem;
 	}
 	.currentLevel {
 		color: #004AD7 !important;
@@ -352,11 +355,11 @@
 		color: ##004AD7 !important;
 	}
 	.dropdown-item {
-    	align-items: center;
-    	align-self: stretch;
+		align-items: center;
+		align-self: stretch;
 	  	display: flex;
-    	gap: 0.75rem;
-    	padding: 0.75rem;
+		gap: 0.75rem;
+		padding: 0.75rem;
 	}
 	.dropdown-item:hover {
 	  	background-color: #EDF3FE;
@@ -371,7 +374,7 @@
 	  	background-color: #EDF3FE !important;
 	}
 	.show #dropdown-products svg {
-    	color: var(--color-action-primary-hover);
+		color: var(--color-action-primary-hover);
 		transform: rotate(180deg);
 	}
 	.sideNav:hover {
@@ -392,7 +395,7 @@
 		transition: box-shadow 0.1s linear, background-color 0.1s linear;
 	}
 	#dropdown-products:hover {
-	    background-color: #EDF3FE !important;
+		background-color: #EDF3FE !important;
 	}
 	#dropdown-products:hover svg {
 	  	color: var(--color-action-primary-hover);
