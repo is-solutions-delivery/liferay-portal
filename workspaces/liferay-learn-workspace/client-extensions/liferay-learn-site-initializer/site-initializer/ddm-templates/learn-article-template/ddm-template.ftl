@@ -82,9 +82,11 @@
 					</button>
 				</div>
 				
-			<#if breadcrumbLinksJSONArray.length() gt 0>
-				<#assign productTitle = breadcrumbLinksJSONArray.getJSONObject(breadcrumbLinksJSONArray.length()-1).title />
-				<#assign productUrl = breadcrumbLinksJSONArray.getJSONObject(breadcrumbLinksJSONArray.length()-1).url />
+			<#if !topLevelArticle>
+				<#assign 
+				  productTitle = breadcrumbLinksJSONArray.getJSONObject(breadcrumbLinksJSONArray.length()-1).title 
+				  productUrl = breadcrumbLinksJSONArray.getJSONObject(breadcrumbLinksJSONArray.length()-1).url 
+				/>
 			<#else>
 				<#assign productTitle = .vars["reserved-article-title"].data />
 			</#if>
@@ -120,8 +122,10 @@
 				}
 			/>
 				
-			<#assign currentProduct = {} />
-			<#assign product = product.getData() />
+			<#assign
+			  currentProduct = {} 
+			  product = product.getData() 
+			/>
 		
 			<#if productList[product].title?has_content>
 				<div class="dropdown">
@@ -138,13 +142,13 @@
 									class="adt-nav-title d-flex align-items-center"
 									style="color: #282934; font-weight: 700;"
 								>
-									<div class="d-flex mr-1 align-items-center" style="background-color: #E7EFFF; width: 3.25rem; height: 3.25rem; border-radius: 2rem; border: 1px solid; border-color: #FFFFFF;">
+									<div class="align-items-center br-20 d-flex mr-1" style="background-color: #E7EFFF; width: 3.25rem; height: 3.25rem; border: 1px solid; border-color: #FFFFFF;">
 										<img
 											class="lexicon-icon lexicon-icon-caret-bottom product-icon p-2 mt-0"
 											role="presentation"
 											src="${productList[product].image}"
+											style="height: 3.5rem; margin-left: -0.125rem; max-width: none; width: 3.5rem;"
 											viewBox="0 0 512 512"
-											style="width: 3.5rem; height: 3.5rem; max-width: none; margin-left: -0.125rem;"
 										/>
 									</div>
 									
@@ -167,16 +171,16 @@
 						<div class="m-0 p-3 row">
 							<#list productList as key, value>
 								<a class="adt-submenu-item-link color-black text-decoration-none" href="/w/${productList[key].url}/index" tabindex="4" style="color: #282934; display: contents;">
-									<div class="br-13 dropdown-item col-sm-12 d-flex justify-content-between align-items-center br-5" style="margin-left: 0; margin-right: 0;">
+									<div class="align-items-center br-5 br-13 dropdown-item col-sm-12 d-flex justify-content-between ml-0 mr-0"
 										<div>
 											<div class="d-flex align-items-center">
-												<div class="d-flex mr-1 align-items-center" style="width: 2.25rem; height: 2.25rem; border-radius: 2rem; border: 1px solid; border-color: #F7F7F8;">
+												<div class="align-items-center br-20 d-flex mr-1" style="border: 1px solid; border-color: #F7F7F8; height: 2.25rem; width: 2.25rem;">
 													<img
 														class="lexicon-icon lexicon-icon-caret-bottom product-icon mt-0 mr-2"
 														role="presentation"
 														src="${value.image}"
+														style="height: 25px; margin-left: 5px; max-width: none; width: 25px;"
 														viewBox="0 0 512 512"
-														style="width: 25px; height: 25px; max-width: none; margin-left: 5px;"
 													/>
 												</div>
 												<b>${value.title}</b>
@@ -203,7 +207,7 @@
 					<#if !topLevelArticle>
 						<div class="d-flex align-items-center" style="border-bottom: solid; border-color: #EAECEE;">
 							<div class="m-2">
-								<a href="${breadcrumbLinksJSONArray.getJSONObject(0).url}" class="br-5" id="backLink" style="color: #34465B; padding: 0.5rem; border-left-width: 0px;">
+								<a href="${breadcrumbLinksJSONArray.getJSONObject(0).url}" class="br-5 p-2" id="backLink" style="color: #282934; border-left-width: 0px;">
 									<svg class="lexicon-icon lexicon-icon-angle-left" role="presentation" viewBox="0 0 512 512">
 										<use xlink:href="#angle-left" />
 									</svg>
@@ -220,20 +224,18 @@
 						<#assign urlTitleLastDirectory =.vars['reserved-article-url-title'].getData()?split("/")?last />
 
 						<ul class="current">
-							<#assign navigationLinksJSONArray = jsonFactoryUtil.createJSONArray(navigationLinks.getData()) />
-
 							<#if navigationLinksJSONArray.length() gt 0>
 								<#list 0..navigationLinksJSONArray.length()-1 as i>
 									<li class="br-5 d-flex sideNav ${topLevelArticle?then("toctree-test", "")} ${(urlTitleLastDirectory == navigationLinksJSONArray.getJSONObject(i).url)?then("currentLevel", "")}" style="margin: 0.3rem 1rem;">
 										<a class="align-items-center br-5 d-flex internal justify-content-between p-2 reference ${(urlTitleLastDirectory == navigationLinksJSONArray.getJSONObject(i).url)?then("currentLevel", "")}" href="${navigationLinksJSONArray.getJSONObject(i).url}" style="font-size: 1rem; color: #282934; font-weight:600; width: 100%;">
-										  ${navigationLinksJSONArray.getJSONObject(i).title}
-										<#if breadcrumbLinksJSONArray.length() lt 1>
-										<div class="d-flex">
-											<svg class="lexicon-icon lexicon-icon-angle-left" role="presentation" viewBox="0 0 512 512" style="width: 0.6rem; height: 0.6rem; display: block; transform: rotate(180deg)">
-												<use xlink:href="#angle-left" />
-											</svg>
-											</div>
-										</#if>
+										  	${navigationLinksJSONArray.getJSONObject(i).title}
+											<#if breadcrumbLinksJSONArray.length() lt 1>
+												<div class="d-flex">
+													<svg class="lexicon-icon lexicon-icon-angle-left" role="presentation" viewBox="0 0 512 512" style="width: 0.6rem; height: 0.6rem; display: block; transform: rotate(180deg)">
+														<use xlink:href="#angle-left" />
+													</svg>
+												</div>
+											</#if>
 										</a>
 									</li>
 								</#list>
@@ -247,14 +249,14 @@
 
 	<div class="col-12 col-md-10 doc-body">
 		<div class="border-bottom-0 h-auto p-0">
-			<div class="mt-3 offset-md-1">
+			<div class="mt-3 offset-1">
 				<div class="align-items-baseline d-flex justify-content-between">
 					<ul aria-label="breadcrumb navigation" class="article-breadcrumb" role="navigation">
 						<li>
 							<a href="${groupFriendlyURL}"><@clay["icon"] symbol="home-full" /></a>
 						</li>
 
-						<#if breadcrumbLinksJSONArray.length() gt 0>
+						<#if !topLevelArticle>
 							<#list breadcrumbLinksJSONArray.length()-1..0 as i>
 								<#assign breadcrumbLink = breadcrumbLinksJSONArray.getJSONObject(i)?eval />
 								
@@ -278,12 +280,12 @@
 				</div>
 
 				<#list taxonomyVocabularies as vocabulary>
-					<div class="col-10 d-flex mt-2 pl-0" style="gap: 1rem;">
+					<div class="align-items-baseline col-10 d-flex mt-2 pl-0" style="gap: 1rem;">
 						<div class="align-items-baseline d-flex flex-wrap">
 							${vocabulary}
 						</div>
 
-						<div class="d-flex font-weight-bold mr-2" style="font-size: 0.875rem;">
+						<div class="d-flex font-weight-bold mr-2" style="flex-wrap: wrap; font-size: 0.875rem;">
 							<#list taxonomyCategoriesMap[vocabulary]?sort_by("categoryName") as taxonomyCategory>
 								<div class="d-flex">
 									<a class="label label-primary align-items-center d-flex" href="/search?category=${taxonomyCategory.categoryId}" style="border-radius: 1.5rem; border: 1px solid #0B5FFF; background: var(--action-primary-inverted, #FFF); padding: 0.25rem 0.75rem; gap: 0.25rem;">
@@ -335,14 +337,11 @@
 </div>
 
 <style>
-	#dropdown-products:hover {
-	  	background-color: #EDF3FE !important;
-	}
-	.dropdown-products:hover svg {
-	  	color: var(--color-action-primary-hover);
-	}
 	.br-5 {
 	    border-radius: 0.5rem;
+	}
+	.br-20 {
+	    border-radius: 2.0rem;
 	}
 	.currentLevel {
 		color: #004AD7 !important;
@@ -362,11 +361,6 @@
 	.dropdown-item:hover {
 	  	background-color: #EDF3FE;
 	}
-	.dropdown-item:hover>div>.adt-submenu-item-link>div>div {
-	  	background-color: #E7EFFF;
-			background-color: red !important;
-		  border-color: #FFFFFF !important;
-	}
 	.dropdown-menu .row {
 	  	margin: 0 !important;
 	}
@@ -377,7 +371,7 @@
 	  	background-color: #EDF3FE !important;
 	}
 	.show #dropdown-products svg {
-	  color: var(--color-action-primary-hover);
+    	color: var(--color-action-primary-hover);
 		transform: rotate(180deg);
 	}
 	.sideNav:hover {
@@ -396,5 +390,11 @@
 	#backLink:hover {
 		background-color: #EAECEE;
 		transition: box-shadow 0.1s linear, background-color 0.1s linear;
+	}
+	#dropdown-products:hover {
+	    background-color: #EDF3FE !important;
+	}
+	#dropdown-products:hover svg {
+	  	color: var(--color-action-primary-hover);
 	}
 </style>
