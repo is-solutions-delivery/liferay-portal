@@ -4442,6 +4442,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 						_servletContext),
 					stringUtilReplaceValues));
 
+
+					
+
 			WorkflowDefinition workflowDefinition =
 				workflowDefinitionResource.postWorkflowDefinitionDeploy(
 					WorkflowDefinition.toDTO(
