@@ -4427,6 +4427,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 				serviceContext.fetchUser()
 			).build();
 
+		String string = "test";
+
+		System.out.println(string);
+
 		for (String resourcePath : resourcePaths) {
 			JSONObject workflowDefinitionJSONObject =
 				_jsonFactory.createJSONObject(
