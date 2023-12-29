@@ -16,6 +16,10 @@
 		}
 	}
 
+	a.other-level:hover {
+		color: #0053F0 !important;
+	}
+
 	.adt-nav-title.align-items-center.d-flex {
 		color: #282934;
 		font-weight: 700;
