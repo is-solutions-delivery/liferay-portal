@@ -24,6 +24,7 @@ import LevelChart from './routes/dashboard/LevelChart';
 import MDFRequestChart from './routes/dashboard/MDFRequestChart';
 import RenewalsChart from './routes/dashboard/RenewalsChart';
 import RevenueChart from './routes/dashboard/RevenueChart';
+import MDFClaimManagerStatus from './routes/MDFClaimManagerStatus';
 
 interface IProps {
 	liferayWebDAV: string;
@@ -39,6 +40,7 @@ const appRoutes: AppRouteComponent = {
 	[AppRouteType.MDF_REQUEST_LIST]: <MDFRequestList />,
 	[AppRouteType.MDF_CLAIM_FORM]: <MDFClaimForm />,
 	[AppRouteType.MDF_CLAIM_LIST]: <MDFClaimList />,
+	[AppRouteType.MDF_CLAIM_MANAGER_STATUS]: <MDFClaimManagerStatus />,
 	[AppRouteType.DEAL_REGISTRATION_FORM]: <DealRegistrationForm />,
 	[AppRouteType.DEAL_REGISTRATION_LIST]: (
 		<DealRegistrationList

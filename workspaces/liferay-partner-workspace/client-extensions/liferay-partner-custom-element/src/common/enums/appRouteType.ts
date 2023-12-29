@@ -17,4 +17,5 @@ export enum AppRouteType {
 	DASHBOARD_MDF_REQUEST_CHART = 'mdf-requests-chart',
 	DASHBOARD_RENEWALS_CHART = 'renewals-chart',
 	DASHBOARD_REVENUE_CHART = 'revenue-chart',
+	MDF_CLAIM_MANAGER_STATUS = 'mdf-claim-manager-status',
 }
