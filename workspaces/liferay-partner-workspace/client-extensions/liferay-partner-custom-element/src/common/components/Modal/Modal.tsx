@@ -10,12 +10,13 @@ import {ReactNode} from 'react';
 interface ModalProps {
 	children: ReactNode;
 	observer: Observer;
-	size: Size;
+	size?: Size;
+	center?: boolean;
 }
 
-const ModalDetails = ({children, observer, size}: ModalProps) => {
+const ModalDetails = ({children, observer, size, ...props}: ModalProps) => {
 	return (
-		<ClayModal center observer={observer} size={size}>
+		<ClayModal observer={observer} size={size} center {...props}>
 			{children}
 		</ClayModal>
 	);
