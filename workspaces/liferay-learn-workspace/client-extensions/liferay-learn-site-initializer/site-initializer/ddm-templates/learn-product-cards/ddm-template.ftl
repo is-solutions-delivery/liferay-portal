@@ -23,9 +23,13 @@
 		min-width: 100%;
 	}
 
-	.product-icon{
-		height: 50px !important;
-		width: 50px !important;
+	.product-icon {
+		width: 3.125rem !important;
+		height: 3.125rem !important;
+	}
+	
+	.product-name {
+	font-size: 1rem;
 	}
 
 	.responsive-text {
@@ -66,7 +70,7 @@
 					</#if>
 
 					<div>
-						<h6 class="responsive-text title">
+						<h6 class="responsive-text title product-name">
 							${navigationEntry.getName()}
 						</h6>
 
