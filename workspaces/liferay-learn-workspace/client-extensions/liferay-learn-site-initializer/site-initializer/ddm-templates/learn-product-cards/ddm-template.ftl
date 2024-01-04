@@ -29,7 +29,7 @@
 	}
 	
 	.product-name {
-	font-size: 1rem;
+		font-size: 1rem;
 	}
 
 	.responsive-text {
