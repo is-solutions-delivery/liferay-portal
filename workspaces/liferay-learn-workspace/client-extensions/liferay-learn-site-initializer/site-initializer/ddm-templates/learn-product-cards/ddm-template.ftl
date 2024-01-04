@@ -23,9 +23,13 @@
 		min-width: 100%;
 	}
 
-	.product-icon{
-		height: 50px !important;
-		width: 50px !important;
+	.product-icon {
+		height: 3.125rem !important;
+		width: 3.125rem !important;
+	}
+	
+	.product-name{
+		font-size: 1rem;
 	}
 
 	.responsive-text {
