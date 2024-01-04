@@ -24,10 +24,10 @@
 	}
 
 	.product-icon {
-		width: 3.125rem !important;
 		height: 3.125rem !important;
+		width: 3.125rem !important;
 	}
-	
+
 	.product-name {
 		font-size: 1rem;
 	}
