@@ -36,9 +36,13 @@ export type TAction =
 	| {
 			payload: {
 				dbTableName: string;
+				elements: Elements<
+					ObjectDefinitionNodeData | ObjectRelationshipEdgeData
+				>;
+				leftSidebarItems: LeftSidebarItem[];
 				newObjectDefinition: ObjectDefinition;
-				objectDefinitionNodes: Node<ObjectDefinitionNodeData>[];
-				selectedObjectFolderName: string;
+				objectFolders: ObjectFolder[];
+				selectedObjectFolder: ObjectFolder;
 			};
 			type: TYPES.ADD_OBJECT_DEFINITION_TO_OBJECT_FOLDER;
 	  }
@@ -87,7 +91,7 @@ export type TAction =
 			payload: {
 				objectFolders: ObjectFolder[];
 				rightSidebarType?: RightSidebarType;
-				selectedObjectFolder: ObjectFolder;
+				selectedObjectFolderName: string;
 				selectedObjectRelationshipId?: number;
 			};
 			type: TYPES.UPDATE_MODEL_BUILDER_STRUCTURE;

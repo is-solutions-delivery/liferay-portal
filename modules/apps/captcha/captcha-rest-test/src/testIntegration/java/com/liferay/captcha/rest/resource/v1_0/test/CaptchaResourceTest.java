@@ -20,19 +20,19 @@ import com.liferay.portal.test.rule.Inject;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
  * @author Loc Pham
  */
-@Ignore
 @RunWith(Arquillian.class)
 public class CaptchaResourceTest extends BaseCaptchaResourceTestCase {
 
 	@Before
-	public void setUp() {
+	public void setUp() throws Exception {
+		super.setUp();
+
 		CaptchaResource.Builder builder = CaptchaResource.builder();
 
 		_captchaResource = builder.build();

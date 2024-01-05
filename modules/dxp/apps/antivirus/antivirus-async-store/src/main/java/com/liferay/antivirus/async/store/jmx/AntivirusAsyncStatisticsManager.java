@@ -13,11 +13,11 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.messaging.Destination;
 import com.liferay.portal.kernel.messaging.DestinationStatistics;
-import com.liferay.portal.kernel.messaging.Message;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
 import com.liferay.portal.kernel.scheduler.SchedulerException;
 import com.liferay.portal.kernel.scheduler.StorageType;
 import com.liferay.portal.kernel.scheduler.messaging.SchedulerResponse;
+import com.liferay.portal.kernel.util.HashMapDictionary;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -26,9 +26,12 @@ import javax.management.DynamicMBean;
 import javax.management.NotCompliantMBeanException;
 import javax.management.StandardMBean;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 
 /**
@@ -42,15 +45,10 @@ import org.osgi.service.component.annotations.Reference;
 		"jmx.objectname=com.liferay.antivirus:classification=antivirus_async,name=AntivirusAsyncStatistics",
 		"jmx.objectname.cache.key=AntivirusAsyncStatistics"
 	},
-	service = {
-		AntivirusAsyncEventListener.class,
-		AntivirusAsyncStatisticsManagerMBean.class, DynamicMBean.class
-	}
+	service = DynamicMBean.class
 )
 public class AntivirusAsyncStatisticsManager
-	extends StandardMBean
-	implements AntivirusAsyncEventListener,
-			   AntivirusAsyncStatisticsManagerMBean {
+	extends StandardMBean implements AntivirusAsyncStatisticsManagerMBean {
 
 	@Activate
 	public AntivirusAsyncStatisticsManager(
@@ -126,30 +124,11 @@ public class AntivirusAsyncStatisticsManager
 	}
 
 	@Override
-	public void receive(Message message) {
-		AntivirusAsyncEvent antivirusAsyncEvent =
-			(AntivirusAsyncEvent)message.get("antivirusAsyncEvent");
-
-		if (antivirusAsyncEvent == AntivirusAsyncEvent.PROCESSING_ERROR) {
-			_processingErrorCounter.incrementAndGet();
-		}
-		else if (antivirusAsyncEvent == AntivirusAsyncEvent.SIZE_EXCEEDED) {
-			_sizeExceededCounter.incrementAndGet();
-		}
-		else if (antivirusAsyncEvent == AntivirusAsyncEvent.SUCCESS) {
-			_totalScannedCounter.incrementAndGet();
-		}
-		else if (antivirusAsyncEvent == AntivirusAsyncEvent.VIRUS_FOUND) {
-			_totalScannedCounter.incrementAndGet();
-			_virusFoundCounter.incrementAndGet();
-		}
-	}
-
-	@Override
 	public void refresh() {
 		if (System.currentTimeMillis() > _lastRefresh) {
 			_destinationStatistics = _destination.getDestinationStatistics();
 			_lastRefresh = System.currentTimeMillis();
+
 			_processingErrorCounter.set(0);
 			_sizeExceededCounter.set(0);
 			_totalScannedCounter.set(0);
@@ -160,6 +139,42 @@ public class AntivirusAsyncStatisticsManager
 	@Override
 	public void setAutoRefresh(boolean autoRefresh) {
 		_autoRefresh = autoRefresh;
+	}
+
+	@Activate
+	protected void activate(BundleContext bundleContext) {
+		_serviceRegistration = bundleContext.registerService(
+			AntivirusAsyncEventListener.class,
+			message -> {
+				AntivirusAsyncEvent antivirusAsyncEvent =
+					(AntivirusAsyncEvent)message.get("antivirusAsyncEvent");
+
+				if (antivirusAsyncEvent ==
+						AntivirusAsyncEvent.PROCESSING_ERROR) {
+
+					_processingErrorCounter.incrementAndGet();
+				}
+				else if (antivirusAsyncEvent ==
+							AntivirusAsyncEvent.SIZE_EXCEEDED) {
+
+					_sizeExceededCounter.incrementAndGet();
+				}
+				else if (antivirusAsyncEvent == AntivirusAsyncEvent.SUCCESS) {
+					_totalScannedCounter.incrementAndGet();
+				}
+				else if (antivirusAsyncEvent ==
+							AntivirusAsyncEvent.VIRUS_FOUND) {
+
+					_totalScannedCounter.incrementAndGet();
+					_virusFoundCounter.incrementAndGet();
+				}
+			},
+			new HashMapDictionary<>());
+	}
+
+	@Deactivate
+	protected void deactivate() {
+		_serviceRegistration.unregister();
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -174,6 +189,8 @@ public class AntivirusAsyncStatisticsManager
 	@Reference
 	private SchedulerEngineHelper _schedulerEngineHelper;
 
+	private ServiceRegistration<AntivirusAsyncEventListener>
+		_serviceRegistration;
 	private final AtomicLong _sizeExceededCounter = new AtomicLong();
 	private final AtomicLong _totalScannedCounter = new AtomicLong();
 	private final AtomicLong _virusFoundCounter = new AtomicLong();

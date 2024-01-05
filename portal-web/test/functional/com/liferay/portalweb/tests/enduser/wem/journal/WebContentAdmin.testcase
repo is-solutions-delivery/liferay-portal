@@ -1028,6 +1028,57 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-191927. The View More button will be shown when there are more than 10 versions on the info panel."
+	@priority = 3
+	test NavigateToVersionsPageViaViewMoreWhenWebContentWithMoreThan10Versions {
+		task ("Given a site administrator has a web content with 11 versions") {
+			var structuredContentId = HeadlessWebcontent.addBasicWebContent(
+				content = "Web Content Content",
+				groupName = "Test Site Name",
+				title = "Web Content Title Version 1");
+
+			for (var i : list "2,3,4,5,6,7,8,9,10,11") {
+				HeadlessWebcontent.patchStructuredContent(
+					data = "\"title\": \"Web Content Title Version ${i}\"",
+					structuredContentId = ${structuredContentId});
+			}
+		}
+
+		task ("When the site administrator navigates to the Versions tab of info panel of web content") {
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+			LexiconList.checkListCheckbox(listEntry = "Web Content Title Version 11");
+
+			ManagementBar.clickInfo();
+
+			Navigator.gotoNavTab(navTab = "Versions");
+		}
+
+		task ("Then the site administrator could only see 10 versions of web content") {
+			for (var i : list "1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0") {
+				AssertVisible(
+					key_listEntry = "Version ${i}",
+					locator1 = "Sidebar#LIST_ENTRY");
+			}
+
+			AssertElementNotPresent(
+				key_listEntry = "Version 1.0",
+				locator1 = "Sidebar#LIST_ENTRY");
+		}
+
+		task ("When the site administrator clicks the View More button") {
+			Button.click(button = "View More");
+		}
+
+		task ("Then the site administrator could see all versions of web content on versions page") {
+			ControlMenu.viewHeaderTitle(headerTitle = "Web Content Title Version 11");
+
+			for (var i : list "1,2,3,4,5,6,7,8,9,10,11") {
+				LexiconTable.viewTableEntryTitle(tableEntry = "Web Content Title Version ${i}");
+			}
+		}
+	}
+
 	@description = "This is a test for LPS-196842. When varying filters or searching if order by is applied, the order by must be applied to the new search + filters."
 	@priority = 4
 	test OrderWebContentsInSearchResults {
@@ -1077,6 +1128,68 @@ definition {
 				key_position = 2,
 				locator1 = "LexiconList#LIST_ENTRY_X",
 				value1 = "APAC Guild");
+		}
+	}
+
+	@description = "This is a test for LPS-191927. The site administrator could preview or expire a specific version on the info panel."
+	@priority = 3
+	test PreviewOrExpireSpecificVersionOfWebContentOnInfoPanel {
+		task ("Given a site administrator has a web content with versions") {
+			var structuredContentId = HeadlessWebcontent.addBasicWebContent(
+				content = "Web Content Content",
+				groupName = "Test Site Name",
+				title = "Web Content Title Version 1");
+
+			for (var title : list "Web Content Title Version 2,Web Content Title Version 3") {
+				HeadlessWebcontent.patchStructuredContent(
+					data = "\"title\": \"${title}\"",
+					structuredContentId = ${structuredContentId});
+			}
+		}
+
+		task ("When the site administrator navigates to the Versions tab of info panel of web content") {
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+			LexiconList.checkListCheckbox(listEntry = "Web Content Title Version 3");
+
+			ManagementBar.clickInfo();
+
+			Navigator.gotoNavTab(navTab = "Versions");
+		}
+
+		task ("Then the site administrator could preview or expire specific version of web content") {
+			Click.waitForMenuToggleJSClick(
+				key_listEntry = "Version 1.0",
+				locator1 = "Sidebar#LIST_ENTRY_ELLIPSIS");
+
+			MenuItem.click(menuItem = "Preview");
+
+			AssertTextEquals(
+				locator1 = "Modal#HEADER",
+				value1 = "Web Content Title Version 1");
+
+			SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+			WebContentDisplayPortlet.viewContent(webContentContent = "Web Content Content");
+
+			IFrame.closeFrame();
+
+			Click.waitForMenuToggleJSClick(
+				key_listEntry = "Version 1.1",
+				locator1 = "Sidebar#LIST_ENTRY_ELLIPSIS");
+
+			MenuItem.click(menuItem = "Expire");
+
+			LexiconList.checkListCheckbox(listEntry = "Web Content Title Version 3");
+
+			ManagementBar.clickInfo();
+
+			Navigator.gotoNavTab(navTab = "Versions");
+
+			AssertTextEquals(
+				key_listEntry = "Version 1.1",
+				locator1 = "Sidebar#LIST_ENTRY_LABEL",
+				value1 = "Expired");
 		}
 	}
 
@@ -1496,6 +1609,150 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-177690. The tooltip of the back button should be Go to Web Content in the View Usages page."
+	@priority = 3
+	test ViewBackButtonTooltipOfUsages {
+		task ("Given a content creator accesses to the Usages of a web content") {
+			JSONWebcontent.addWebContent(
+				content = "Web Content Content",
+				groupName = "Test Site Name",
+				title = "Web Content Title");
+
+			JSONLayout.addPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "Test Page Name");
+
+			Navigator.gotoSitePage(
+				pageName = "Test Page Name",
+				siteName = "Test Site Name");
+
+			WidgetPages.addRecentContentWithoutSearch(assetTitle = "Web Content Title");
+
+			Alert.viewSuccessMessage();
+
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+			WebContentNavigator.gotoEntryMenuItem(
+				entry = "Web Content Title",
+				menuItem = "View Usages");
+
+			MenuBar.viewActive(menuBar = "All (1)");
+		}
+
+		task ("When the content creator hovers over the back button") {
+			MouseOver.javaScriptFocus(locator1 = "Icon#BACK");
+		}
+
+		task ("Then the content creator could see the tooltip message") {
+			AssertVisible(
+				key_content = "Go to Web Content",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
+		}
+	}
+
+	@description = "This is a test for LPS-177690. The tooltip of the back button should be Go to Web Content in the Versions page."
+	@priority = 3
+	test ViewBackButtonTooltipOfVersions {
+		task ("Given a content creator accesses to the Versions of a web content") {
+			JSONWebcontent.addWebContent(
+				content = "Web Content Content Version 1",
+				groupName = "Test Site Name",
+				title = "Web Content Title Version 1");
+
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+			WebContentNavigator.gotoEditCP(webContentTitle = "Web Content Title Version 1");
+
+			WebContent.editCP(
+				webContentContentEdit = "Web Content Content Version 2",
+				webContentTitle = "Web Content Title Version 1",
+				webContentTitleEdit = "Web Content Title Version 2");
+
+			WebContentNavigator.gotoEntryMenuItem(
+				entry = "Web Content Title Version 2",
+				menuItem = "View History");
+
+			Navigator.viewActivatedNavTab(navTab = "Versions");
+		}
+
+		task ("When the content creator hovers over the back button") {
+			MouseOver.javaScriptFocus(locator1 = "Icon#BACK");
+		}
+
+		task ("Then the content creator could see the tooltip message") {
+			AssertVisible(
+				key_content = "Go to Web Content",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
+		}
+
+		task ("Given a content creator compares two versions") {
+			LexiconTable.clickEllipsisItem(
+				item = "Compare to...",
+				tableEntry = "Web Content Title Version 2");
+
+			SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+			LexiconEntry.gotoEntry(rowEntry = "1.0");
+
+			SelectFrameTop();
+
+			ControlMenu.viewHeaderTitle(headerTitle = "Compare Versions");
+		}
+
+		task ("When the content creator hovers over the back button") {
+			MouseOver.javaScriptFocus(locator1 = "Icon#BACK");
+		}
+
+		task ("Then the content creator could see the tooltip message") {
+			AssertVisible(
+				key_content = "Go to Web Content",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
+		}
+	}
+
+	@description = "This is a test for LPS-177690. The tooltip of the back button should be Go to usages page in View in page."
+	@priority = 3
+	test ViewBackButtonTooltipOfViewInPage {
+		task ("Given a content creator accesses to the View in Page from web content usages") {
+			JSONWebcontent.addWebContent(
+				content = "Web Content Content",
+				groupName = "Test Site Name",
+				title = "Web Content Title");
+
+			JSONLayout.addPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "Test Page Name");
+
+			Navigator.gotoSitePage(
+				pageName = "Test Page Name",
+				siteName = "Test Site Name");
+
+			WidgetPages.addRecentContentWithoutSearch(assetTitle = "Web Content Title");
+
+			Alert.viewSuccessMessage();
+
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+			WebContentNavigator.gotoEntryMenuItem(
+				entry = "Web Content Title",
+				menuItem = "View Usages");
+
+			WebContentViewUsages.viewInPage(page = "Test Page Name");
+
+			ControlMenu.viewHeaderTitle(headerTitle = "Test Page Name");
+		}
+
+		task ("When the content creator hovers over the back button") {
+			MouseOver.javaScriptFocus(locator1 = "Icon#BACK");
+		}
+
+		task ("Then the content creator could see the tooltip message") {
+			AssertVisible(
+				key_content = "Go to Web Content Title",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
+		}
+	}
+
 	@description = "This is a test for LPS-196839. Show "Results" picker with the following options: "Web Contents","Versions" and "Comments". "Web Content" will be selected as default. Show "Location" picker with the following options: "Current Folder-name" and "Everywhere". "Current Folder-name" will be selected as default. Show "Search In" picker with the following options: "All Fields", "Title Only". "All Fields" will be selected as default."
 	@priority = 4
 	test ViewDefaultOptionsWhenSearchingWebContentTitle {
@@ -1826,6 +2083,39 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-191927. The status and version of web content are shown on the header of info panel."
+	@priority = 3
+	test ViewStatusAndVersionOfWebContentOnHeaderOfInfoPanel {
+		task ("Given a site administrator has a web content") {
+			JSONWebcontent.addWebContent(
+				content = "Web Content Content",
+				groupName = "Test Site Name",
+				title = "Web Content Title");
+		}
+
+		task ("When the site administrator navigates to the info panel of web content") {
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+			LexiconList.checkListCheckbox(listEntry = "Web Content Title");
+
+			ManagementBar.clickInfo();
+		}
+
+		task ("Then the site administrator could see status and version shown on the header of info panel") {
+			AssertTextEquals(
+				locator1 = "Sidebar#COMPONENT_TITLE",
+				value1 = "Web Content Title");
+
+			AssertVisible(
+				key_labelName = "Version 1.0",
+				locator1 = "Sidebar#HEADER_LABEL");
+
+			AssertVisible(
+				key_labelName = "Approved",
+				locator1 = "Sidebar#HEADER_LABEL");
+		}
+	}
+
 	@description = "This is a test for LPS-146458. View the available status filters of Web Content admin."
 	@priority = 5
 	test ViewStatusFiltersOfWebContentAdmin {
@@ -1872,6 +2162,47 @@ definition {
 			for (var filterName : list "Draft,Denied,Pending,With Scheduled Versions,With Approved Versions,With Expired Versions") {
 				MenuItem.viewVisible(menuItem = ${filterName});
 			}
+		}
+	}
+
+	@description = "This is a test for LPS-191927. The versions of web content are shown on the Versions tab of info panel."
+	@priority = 3
+	test ViewVersionsOfWebContentOnVersionsTabOfInfoPanel {
+		task ("Given a site administrator has a web content with versions") {
+			var structuredContentId = HeadlessWebcontent.addBasicWebContent(
+				content = "Web Content Content",
+				groupName = "Test Site Name",
+				title = "Web Content Title Version 1");
+
+			for (var title : list "Web Content Title Version 2,Web Content Title Version 3") {
+				HeadlessWebcontent.patchStructuredContent(
+					data = "\"title\": \"${title}\"",
+					structuredContentId = ${structuredContentId});
+			}
+		}
+
+		task ("When the site administrator navigates to the Versions tab of info panel of web content") {
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+			LexiconList.checkListCheckbox(listEntry = "Web Content Title Version 3");
+
+			ManagementBar.clickInfo();
+
+			Navigator.gotoNavTab(navTab = "Versions");
+		}
+
+		task ("Then the site administrator could see versions of web content") {
+			AssertVisible(
+				key_listEntry = "Version 1.2",
+				locator1 = "Sidebar#LIST_ENTRY");
+
+			AssertVisible(
+				key_listEntry = "Version 1.1",
+				locator1 = "Sidebar#LIST_ENTRY");
+
+			AssertVisible(
+				key_listEntry = "Version 1.0",
+				locator1 = "Sidebar#LIST_ENTRY");
 		}
 	}
 
