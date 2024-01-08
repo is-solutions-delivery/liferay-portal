@@ -102,6 +102,13 @@
 	  border-radius: 10px;
 	}
 
+	.section-card {
+		box-shadow: none !important;
+		background-color: var(--color-brand-primary-lighten-6, #FBFCFE) !important;
+		border: 1px solid var(--color-brand-primary-lighten-5, #E7EFFF) !important;
+		border-radius: 10px !important;
+	}
+
 	.section-card:hover {
 		background-color: var(--color-action-primary-hover-10, #EDF3FE) !important;
 		border-bottom: 1px solid var(--color-brand-primary-darken-1, #0053F0) !important;
