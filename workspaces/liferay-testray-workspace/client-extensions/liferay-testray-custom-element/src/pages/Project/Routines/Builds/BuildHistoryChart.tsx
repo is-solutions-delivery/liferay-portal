@@ -100,6 +100,11 @@ const BuildHistoryChart: React.FC<BuildHistoryChartProps> = ({builds}) => (
 				position: 'inset',
 			}}
 			padding={{bottom: 5, top: 30}}
+			tooltip={{
+				format: {
+					title: (x: number) => builds[x].name,
+				},
+			}}
 		/>
 	</div>
 );
