@@ -35,15 +35,10 @@
 
 	.bg-color-1 {
 		background-color: var(--color-neutral-1, #F7F7F8);
-		background-color: var(--color-neutral-1, #F7F7F8);
 	}
 
 	.br-5 {
 		border-radius: 0.5rem;
-	}
-
-	.br-5.side-nav {
-		margin: 0.3rem 1rem;
 	}
 
 	.br-13.dropdown-menu {
@@ -81,6 +76,10 @@
 		height: 0.6rem;
 		transform: rotate(180deg);
 		width: 0.6rem;
+	}
+
+	.doc-nav {
+		overflow-x: hidden !important;
 	}
 
 	.doc-nav::-webkit-scrollbar {
@@ -189,6 +188,12 @@
 		color: var(--color-action-primary-hover) !important;
 	}
 
+	@media only screen and (max-width:1100px) {
+		.documentations .doc-nav {
+			padding: 0;
+		}
+	}
+
 	@media only screen and (min-width: 768px) and (max-width: 1000px) {
 		.doc-nav-wrapper-inner {
 			max-width: 20% !important;
@@ -196,8 +201,14 @@
 	}
 
 	@media only screen and (min-width:768px) {
-		.bg-color-1.br-5.doc-nav.mt-3 {
+		.doc-nav {
 			max-height: 66vh;
+		}
+	}
+
+	@media only screen and (min-width:1100px) {
+		.br-5 .side-nav {
+			margin: 0.3rem 1rem;
 		}
 	}
 
