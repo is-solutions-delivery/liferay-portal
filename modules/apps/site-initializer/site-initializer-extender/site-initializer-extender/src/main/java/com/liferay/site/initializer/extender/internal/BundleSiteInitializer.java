@@ -1585,10 +1585,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 			).build();
 
 		for (String resourcePath : resourcePaths) {
-			String json = SiteInitializerUtil.read(
-				resourcePath, _servletContext);
-
-			json = _replace(json, stringUtilReplaceValues);
+			String json = _replace(
+				SiteInitializerUtil.read(resourcePath, _servletContext),
+				stringUtilReplaceValues);
 
 			DataDefinition dataDefinition = DataDefinition.toDTO(json);
 
@@ -1607,7 +1606,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 							dataDefinition.getContentType(),
 							dataDefinition.getDataDefinitionKey());
 
-				dataDefinitionResource.patchDataDefinition(
+				dataDefinitionResource.putDataDefinition(
 					existingDataDefinition.getId(), dataDefinition);
 			}
 			catch (NoSuchStructureException noSuchStructureException) {
