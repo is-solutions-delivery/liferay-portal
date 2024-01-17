@@ -309,7 +309,7 @@
 		padding-right: 3rem;
 		text-align: center;
 	}
-	
+
 	a.other-level:hover {
 		color: var(--color-action-primary-hover, #0053F0) !important;
 	}
