@@ -1,16 +1,12 @@
 <#include "${templatesPath}/SVG">
 
 <script>
-	function removeEndSlash() {
-		let href = window.location.href;
+	let href = window.location.href;
 
-		if (href.endsWith("/")) {
-			href = href.substring(0, href.length - 1);
-			window.location.href = href;
-		}
+	if (href.endsWith("/")) {
+		href = href.substring(0, href.length - 1);
+		window.location.assign(href);
 	}
-
-	removeEndSlash();
 </script>
 
 <style>
@@ -216,6 +212,41 @@
 		}
 	}
 
+	#articleTOC {
+		align-items: flex-start;
+		display: flex;
+		flex-direction: row;
+		gap: 8px;
+		min-width: 20%;
+		padding: 0px 20px 20px 20px;
+	}
+
+	#articleTOC > li {
+		align-items: center;
+		margin-left: 10px;
+		min-width: 100%;
+	}
+
+	#articleTOC > li .active {
+		color: var(--color-neutral-10, #282934) !important;
+		border-left: 4px solid var(--color-brand-primary, #0B5FFF);
+		padding: 0 0 0 6px !important;
+	}
+
+	#articleTOC > li > a {
+		color: var(--color-neutral-6, #82828C) !important;
+		font-family: Source Sans 3;
+		font-size: 1rem;
+		font-style: normal;
+		font-weight: 600;
+		line-height: 1.5rem;
+		padding: 0 0 0 10px !important;
+	}
+
+	#articleTOC > li > a:hover {
+		color: var(--color-neutral-10, #282934) !important;
+	}
+
 	#backLink {
 		border-left-width: 0px;
 		color: var(--color-neutral-10, #282934);
@@ -278,7 +309,7 @@
 		padding-right: 3rem;
 		text-align: center;
 	}
-
+	
 	a.other-level:hover {
 		color: var(--color-action-primary-hover, #0053F0) !important;
 	}
@@ -322,8 +353,7 @@
 </#list>
 
 <#assign
-	groupFriendlyURL = themeDisplay.getScopeGroup().getFriendlyURL()
-	groupPathFriendlyURLPublic = themeDisplay.getPathFriendlyURLPublic() + groupFriendlyURL
+	groupFriendlyURL = "/web" + themeDisplay.getScopeGroup().getFriendlyURL()
 	isLandingPage = false
 	topLevelArticle = true
 />
@@ -359,27 +389,27 @@
 							"analytics-cloud": {
 								"title": "Analytics Cloud",
 								"url": "analytics-cloud",
-								"image": "/documents/d${groupFriendlyURL}/analytics_c-svg"
+								"image": "/documents/d/guest/analytics_c-svg"
 							},
 							"commerce": {
 								"title": "Commerce",
 								"url": "commerce",
-								"image": "/documents/d${groupFriendlyURL}/commerce_product-svg"
+								"image": "/documents/d/guest/commerce_product-svg"
 							},
 							"dxp": {
 								"title": "DXP / Portal",
 								"url": "dxp",
-								"image": "/documents/d${groupFriendlyURL}/dxp_p-svg"
+								"image": "/documents/d/guest/dxp_p-svg"
 							},
 							"liferay-cloud": {
 								"title": "DXP Cloud",
 								"url": "liferay-cloud",
-								"image": "/documents/d${groupFriendlyURL}/dxp_c-svg"
+								"image": "/documents/d/guest/dxp_c-svg"
 							},
 							"reference": {
 								"title": "Reference",
 								"url": "reference",
-								"image": "/documents/d${groupFriendlyURL}/reference-svg"
+								"image": "/documents/d/guest/reference-svg"
 							}
 						}
 
@@ -436,7 +466,7 @@
 								<#list navigationMenuItems as key, value>
 									<a
 										class="adt-submenu-item-link color-black text-decoration-none"
-										href="${groupPathFriendlyURLPublic}/w/${navigationMenuItems[key].url}/index"
+										href="/w/${navigationMenuItems[key].url}/index"
 										tabindex="4"
 									>
 										<div class="align-items-center br-13 br-5 col-sm-12 d-flex dropdown-item justify-content-between ml-0 mr-0">
@@ -535,97 +565,101 @@
 						</#if>
 					</div>
 				</#if>
-		</div>
-	</div>
-
-	<div class="col-12 col-md-10 doc-body">
-		<div class="border-bottom-0 h-auto p-0">
-			<div class="mt-3 offset-1">
-				<div class="align-items-baseline d-flex justify-content-between">
-					<ul
-						aria-label="breadcrumb navigation"
-						class="article-breadcrumb"
-						role="navigation"
-					>
-						<li>
-							<a href="${groupPathFriendlyURLPublic}"><@clay["icon"] symbol="home-full" /></a>
-						</li>
-
-						<#if !topLevelArticle>
-							<#list breadcrumbLinksJSONArray.length()-1..0 as i>
-								<#assign breadcrumbLink = breadcrumbLinksJSONArray.getJSONObject(i)?eval />
-
-								<li>
-									<a href="${breadcrumbLink.url}">${breadcrumbLink.title}</a>
-								</li>
-							</#list>
-						</#if>
-
-						<li>
-							${.vars['reserved-article-title'].getData()}
-						</li>
-					</ul>
-
-					<div id="send-feedback">
-						<a
-							class="text-decoration-none"
-							href="https://liferay.dev/c/portal/login?redirect=https://liferay.dev/ask/questions/liferay-learn-feedback/new"
-						>
-							${languageUtil.get(locale, "send-feedback", "Send Feedback")}
-							<@clay["icon"] symbol="message-boards" />
-						</a>
-					</div>
-				</div>
-
-				<#list taxonomyVocabularies as vocabulary>
-					<div class="align-items-baseline col-10 d-flex mt-2 pl-0">
-						<div class="align-items-baseline d-flex flex-wrap mr-2">
-							${vocabulary}:
-						</div>
-
-						<div class="d-flex font-weight-bold mr-2 tags-container">
-							<#list taxonomyCategoriesMap[vocabulary]?sort_by("categoryName") as taxonomyCategory>
-								<div class="d-flex">
-									<a
-										class="align-items-center d-flex label label-primary tag-container"
-										href="/search?category=${taxonomyCategory.categoryId}"
-									>
-										<span class="label-item label-item-expand">${taxonomyCategory.categoryName}</span>
-									</a>
-								</div>
-							</#list>
-						</div>
-					</div>
-				</#list>
 			</div>
 		</div>
 
-		<div
-			class="col-12 doc-content mt-0 ${isLandingPage?then("landing-page-container", "")}"
-			id="docContent"
-		>
-			<div class="overflow-hidden row">
-				<div class="article-body col-12 col-md-10 language-log">
-					<#if (content.getData())??>
-						${content.getData()}
-					</#if>
+		<div class="col-12 col-md-10 doc-body">
+			<div class="border-bottom-0 h-auto p-0">
+				<div class="mt-3 offset-1">
+					<div class="align-items-baseline d-flex justify-content-between">
+						<ul
+							aria-label="breadcrumb navigation"
+							class="article-breadcrumb"
+							role="navigation"
+						>
+							<li>
+								<a href="${groupFriendlyURL}"><@clay["icon"] symbol="home-full" /></a>
+							</li>
 
-					<#if isLandingPage>
-						<#include "${templatesPath}/LANDING-PAGE">
-					</#if>
+							<#if !topLevelArticle>
+								<#list breadcrumbLinksJSONArray.length()-1..0 as i>
+									<#assign breadcrumbLink = breadcrumbLinksJSONArray.getJSONObject(i)?eval />
 
-					<hr class="mt-4 separator solid">
-					<div class="autofit-padded-no-gutters-x autofit-row border help-center-footer pb-3 pl-3 rounded-10">
-						<div class="autofit-col autofit-col-expand">
-							<h3 class="callout-title">${languageUtil.get(locale, "not-finding-what-you-are-looking-for", "Not finding what you're looking for?")}</h3>
+									<li>
+										<a href="${breadcrumbLink.url}">${breadcrumbLink.title}</a>
+									</li>
+								</#list>
+							</#if>
 
-							<p class="w-50 overflow-auto">${languageUtil.get(locale, "pardon-our-dust-as-we-revamp", "Pardon our dust as we are in the process of revamping the documentation to the site. If something seems missing, cross reference the Liferay Help Center for a more thorough set of documentation on Liferay DXP 7.2 and previous versions.")}</p>
+							<li>
+								${.vars['reserved-article-title'].getData()}
+							</li>
+						</ul>
 
-							<a class="text-decoration-none" href="https://help.liferay.com/hc/en-us/categories/360001749912">
-								<strong >${languageUtil.get(locale, "try-liferays-help-center", "Try Liferay’s Help Center")}</strong>
-								<@clay["icon"] symbol="order-arrow-right" />
+						<div id="send-feedback">
+							<a
+								class="text-decoration-none"
+								href="https://liferay.dev/c/portal/login?redirect=https://liferay.dev/ask/questions/liferay-learn-feedback/new"
+							>
+								${languageUtil.get(locale, "send-feedback", "Send Feedback")}
+								<@clay["icon"] symbol="message-boards" />
 							</a>
 						</div>
+					</div>
+					<#list taxonomyVocabularies as vocabulary>
+						<div class="align-items-baseline col-10 d-flex mt-2 pl-0">
+							<div class="align-items-baseline d-flex flex-wrap mr-2">
+								${vocabulary}:
+							</div>
+
+							<div class="d-flex font-weight-bold mr-2 tags-container">
+								<#list taxonomyCategoriesMap[vocabulary]?sort_by("categoryName") as taxonomyCategory>
+									<div class="d-flex">
+										<a
+											class="align-items-center d-flex label label-primary tag-container"
+											href="/search?category=${taxonomyCategory.categoryId}"
+										>
+											<span class="label-item label-item-expand">${taxonomyCategory.categoryName}</span>
+										</a>
+									</div>
+								</#list>
+							</div>
+						</div>
+					</#list>
+				</div>
+			</div>
+
+			<div
+				class="col-12 doc-content mt-0 ${isLandingPage?then("landing-page-container", "")}"
+				id="docContent"
+			>
+				<div class="overflow-hidden row">
+					<div class="article-body col-12 col-md-9 language-log">
+						<#if (content.getData())??>
+							${content.getData()}
+						</#if>
+
+						<#if isLandingPage>
+							<#include "${templatesPath}/LANDING-PAGE">
+						</#if>
+
+						<hr class="mt-4 separator solid">
+						<div class="autofit-padded-no-gutters-x autofit-row border help-center-footer pb-3 pl-3 rounded-10">
+							<div class="autofit-col autofit-col-expand">
+								<h3 class="callout-title">${languageUtil.get(locale, "not-finding-what-you-are-looking-for", "Not finding what you're looking for?")}</h3>
+
+								<p class="w-50 overflow-auto">${languageUtil.get(locale, "pardon-our-dust-as-we-revamp", "Pardon our dust as we are in the process of revamping the documentation to the site. If something seems missing, cross reference the Liferay Help Center for a more thorough set of documentation on Liferay DXP 7.2 and previous versions.")}</p>
+
+								<a class="text-decoration-none" href="https://help.liferay.com/hc/en-us/categories/360001749912">
+									<strong >${languageUtil.get(locale, "try-liferays-help-center", "Try Liferay’s Help Center")}</strong>
+									<@clay["icon"] symbol="order-arrow-right" />
+								</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-3 d-none d-sm-block">
+						<ul class="nav nav-stacked toc" id="articleTOC"></ul>
 					</div>
 				</div>
 			</div>
