@@ -101,9 +101,9 @@
 							<span class="account-dropdown-icon opacity-30 pr-2">[@clay["icon"] symbol="caret-bottom-l"/]</span>
 						</div>
 
-						<div class="account-dropdown position-absolute pt-3">
+						<div class="account-dropdown position-absolute pt-2">
 							<div class="dropdown-wrapper">
-								<div class="account-configurables mb-1 pb-2 pl-3">
+								<div class="account-configurables pbt-1 plf-1 prg-1">
 									[@liferay_site_navigation["navigation-menu"]
 										ddmTemplateGroupId=(scopeGroupId)
 										ddmTemplateKey="NAVIGATION_ACCOUNT_MENU"
@@ -120,7 +120,7 @@
 									<div class="create-account-settings">
 										[#if themeDisplay.isSignedIn()]
 											<div class="signed-in-account">
-												<a class="d-flex p-3 settings text-decoration-none">
+												<a class="d-flex p-3 settings text-decoration-none" href="https://login.liferay.com/enduser/settings">
 													<span class="pr-2">[@clay["icon"] symbol="cog"/]</span>
 													<span class="account-settings">
 														${languageUtil.get(locale, "account-settings", "Account Settings")}
@@ -136,11 +136,6 @@
 											</div>
 										[#else]
 											<div class="signed-out-account">
-												<div class="d-flex p-3 settings">
-													<span class="pr-2">[@clay["icon"] symbol="user-plus"/]</span>
-													<span>${languageUtil.get(locale, "create-an-account", "Create An
-														Account")}</span>
-												</div>
 											<a class="d-flex p-3 sign-in text-decoration-none" href="${htmlUtil.escape(themeDisplay.getURLSignIn())}">
 													<span class="pr-2 sign-in-icon opacity-70">[@clay["icon"] symbol="user"/]</span>
 													<span>${languageUtil.get(locale, "sign-in")}</span>
@@ -194,7 +189,7 @@
 
 						<div class="dropdown-content position-absolute pt-3">
 							<div class="dropdown-wrapper">
-								<div class="account-configurables mb-1 pb-2 px-3">
+								<div class="account-configurables pbt-1 plf-1 prg-1">
 									[@liferay_site_navigation["navigation-menu"]
 										ddmTemplateGroupId=(scopeGroupId)
 										ddmTemplateKey="NAVIGATION_ACCOUNT_MENU"
@@ -210,7 +205,7 @@
 								<div class="account-content pt-2">
 									<div class="create-account-settings">
 										<div class="signed-in-account">
-											<a class="d-flex p-3 settings text-decoration-none">
+											<a class="d-flex p-3 settings text-decoration-none" href="https://login.liferay.com/enduser/settings">
 												<span class="pr-2">[@clay["icon"] symbol="cog"/]</span>
 												<span class="account-settings">
 													${languageUtil.get(locale, "account-settings", "Account Settings")}
@@ -249,7 +244,7 @@
 
 					<div class="dropdown-content position-absolute pt-3">
 						<div class="dropdown-wrapper">
-							<div class="account-configurables mb-1 pb-2 px-3">
+							<div class="account-configurables pbt-1 plf-1 prg-1">
 								[@liferay_site_navigation["navigation-menu"]
 									ddmTemplateGroupId=(scopeGroupId)
 									ddmTemplateKey="NAVIGATION_ACCOUNT_MENU"
@@ -265,7 +260,7 @@
 							<div class="account-content pt-2">
 								<div class="create-account-settings">
 									<div class="signed-in-account">
-										<a class="d-flex p-3 settings text-decoration-none">
+										<a class="d-flex p-3 settings text-decoration-none" href="https://login.liferay.com/enduser/settings">
 											<span class="pr-2">[@clay["icon"] symbol="cog"/]</span>
 											<span class="account-settings">
 												${languageUtil.get(locale, "account-settings", "Account Settings")}
