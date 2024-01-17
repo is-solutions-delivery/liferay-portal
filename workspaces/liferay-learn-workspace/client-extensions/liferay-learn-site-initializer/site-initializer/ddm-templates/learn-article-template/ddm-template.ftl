@@ -379,6 +379,7 @@
 						productTitle = breadcrumbLinksJSONArray.getJSONObject(breadcrumbLinksJSONArray.length()-1).title
 						productUrl = breadcrumbLinksJSONArray.getJSONObject(breadcrumbLinksJSONArray.length()-1).url
 					/>
+
 				<#else>
 					<#assign productTitle =.vars["reserved-article-title"].data />
 				</#if>
