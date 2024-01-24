@@ -15,6 +15,7 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -30,6 +31,7 @@ import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Lourdes Fernández Besada
+ * @author Roberto Díaz
  */
 @Component(
 	property = "service.ranking:Integer=100",
@@ -90,6 +92,46 @@ public class AICreatorOpenAIClientImpl implements AICreatorOpenAIClient {
 	}
 
 	@Override
+	public String[] getGenerations(
+			String apiKey, String prompt, String size, int numberOfImages)
+		throws Exception {
+
+		String[] urls = new String[0];
+
+		Http.Options options = new Http.Options();
+
+		options.addHeader("Authorization", "Bearer " + apiKey);
+		options.addHeader("Content-Type", ContentTypes.APPLICATION_JSON);
+		options.setLocation(ENDPOINT_GENERATIONS);
+		options.setBody(
+			JSONUtil.put(
+				"model", "dall-e-2"
+			).put(
+				"n", numberOfImages
+			).put(
+				"prompt", prompt
+			).put(
+				"size", size
+			).toString(),
+			ContentTypes.APPLICATION_JSON, StringPool.UTF8);
+		options.setPost(true);
+
+		JSONObject responseJSONObject = _getResponseJSONObject(options);
+
+		JSONArray dataJSONArray = responseJSONObject.getJSONArray("data");
+
+		if (!JSONUtil.isEmpty(dataJSONArray)) {
+			for (int i = 0; i < dataJSONArray.length(); i++) {
+				JSONObject dataJSONObject = dataJSONArray.getJSONObject(i);
+
+				urls = ArrayUtil.append(urls, dataJSONObject.getString("url"));
+			}
+		}
+
+		return urls;
+	}
+
+	@Override
 	public void validateAPIKey(String apiKey) throws Exception {
 		Http.Options options = new Http.Options();
 
@@ -102,8 +144,11 @@ public class AICreatorOpenAIClientImpl implements AICreatorOpenAIClient {
 	protected static final String ENDPOINT_COMPLETION =
 		"https://api.openai.com/v1/chat/completions";
 
+	protected static final String ENDPOINT_GENERATIONS =
+		"https://api.openai.com/v1/images/generations";
+
 	protected static final String ENDPOINT_VALIDATION =
-		"https://api.openai.com/v1/models/text-davinci-003";
+		"https://api.openai.com/v1/models/gpt-3.5-turbo";
 
 	private JSONObject _getResponseJSONObject(Http.Options options)
 		throws Exception {

@@ -19,7 +19,6 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Organization;
@@ -43,6 +42,7 @@ import com.liferay.portal.kernel.service.UserGroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.service.persistence.constants.UserGroupFinderConstants;
@@ -113,7 +113,7 @@ public class EditRoleAssignmentsManagementToolbarDisplayContext {
 			).build());
 	}
 
-	public String getClearResultsURL() {
+	public String getClearResultsURL() throws PortalException {
 		return PortletURLBuilder.create(
 			getPortletURL()
 		).setKeywords(
@@ -121,7 +121,7 @@ public class EditRoleAssignmentsManagementToolbarDisplayContext {
 		).buildString();
 	}
 
-	public CreationMenu getCreationMenu() {
+	public CreationMenu getCreationMenu() throws PortalException {
 		if (!_tabs2.equals("segments")) {
 			return null;
 		}
@@ -130,25 +130,26 @@ public class EditRoleAssignmentsManagementToolbarDisplayContext {
 			dropdownItem -> {
 				dropdownItem.putData("action", "addSegmentEntry");
 
+				ThemeDisplay themeDisplay =
+					(ThemeDisplay)_httpServletRequest.getAttribute(
+						WebKeys.THEME_DISPLAY);
+
+				Group companyGroup = GroupLocalServiceUtil.fetchCompanyGroup(
+					themeDisplay.getCompanyId());
+
 				dropdownItem.putData(
 					"addSegmentEntryURL",
 					PortletURLBuilder.create(
 						PortletProviderUtil.getPortletURL(
-							_renderRequest, SegmentsEntry.class.getName(),
+							_renderRequest, companyGroup,
+							SegmentsEntry.class.getName(),
 							PortletProvider.Action.EDIT)
 					).setRedirect(
 						ParamUtil.getString(_httpServletRequest, "redirect")
 					).setBackURL(
 						ParamUtil.getString(_httpServletRequest, "backURL")
 					).setParameter(
-						"groupId",
-						() -> {
-							ThemeDisplay themeDisplay =
-								(ThemeDisplay)_httpServletRequest.getAttribute(
-									WebKeys.THEME_DISPLAY);
-
-							return themeDisplay.getCompanyGroupId();
-						}
+						"groupId", themeDisplay.getCompanyGroupId()
 					).buildString());
 
 				dropdownItem.putData(
@@ -160,33 +161,9 @@ public class EditRoleAssignmentsManagementToolbarDisplayContext {
 		).build();
 	}
 
-	public List<DropdownItem> getFilterDropdownItems() {
-		return DropdownItemListBuilder.addGroup(
-			dropdownGroupItem -> {
-				dropdownGroupItem.setDropdownItems(
-					DropdownItemList.of(
-						DropdownItemBuilder.setActive(
-							true
-						).setHref(
-							StringPool.BLANK
-						).setLabel(
-							LanguageUtil.get(_httpServletRequest, "all")
-						).build()));
-				dropdownGroupItem.setLabel(
-					LanguageUtil.get(
-						_httpServletRequest, "filter-by-navigation"));
-			}
-		).addGroup(
-			() -> !FeatureFlagManagerUtil.isEnabled("LPS-144527"),
-			dropdownGroupItem -> {
-				dropdownGroupItem.setDropdownItems(getOrderByDropDownItems());
-				dropdownGroupItem.setLabel(
-					LanguageUtil.get(_httpServletRequest, "order-by"));
-			}
-		).build();
-	}
+	public SearchContainer<Group> getGroupSearchContainer()
+		throws PortalException {
 
-	public SearchContainer<Group> getGroupSearchContainer() {
 		GroupSearch groupSearch = new GroupSearch(
 			_renderRequest, getPortletURL());
 
@@ -241,7 +218,7 @@ public class EditRoleAssignmentsManagementToolbarDisplayContext {
 		return _orderByCol;
 	}
 
-	public List<DropdownItem> getOrderByDropDownItems() {
+	public List<DropdownItem> getOrderByDropDownItems() throws PortalException {
 		return DropdownItemListBuilder.add(
 			dropdownItem -> {
 				dropdownItem.setActive(Objects.equals(getOrderByCol(), "name"));
@@ -333,7 +310,7 @@ public class EditRoleAssignmentsManagementToolbarDisplayContext {
 		return organizationSearch;
 	}
 
-	public PortletURL getPortletURL() {
+	public PortletURL getPortletURL() throws PortalException {
 		PortletURL portletURL = _renderResponse.createRenderURL();
 
 		if (_tabs3.equals("current")) {
@@ -372,7 +349,7 @@ public class EditRoleAssignmentsManagementToolbarDisplayContext {
 		return portletURL;
 	}
 
-	public String getSearchActionURL() {
+	public String getSearchActionURL() throws PortalException {
 		return PortletURLBuilder.create(
 			getPortletURL()
 		).setRedirect(
@@ -410,7 +387,7 @@ public class EditRoleAssignmentsManagementToolbarDisplayContext {
 		return _searchContainer;
 	}
 
-	public String getSortingURL() {
+	public String getSortingURL() throws PortalException {
 		return PortletURLBuilder.create(
 			getPortletURL()
 		).setParameter(
@@ -419,15 +396,26 @@ public class EditRoleAssignmentsManagementToolbarDisplayContext {
 		).buildString();
 	}
 
-	public String getTabs2() {
+	public String getTabs2() throws PortalException {
 		if (Validator.isNull(_tabs2)) {
 			_tabs2 = ParamUtil.getString(_httpServletRequest, "tabs2", "users");
+		}
+
+		Role role = RoleServiceUtil.fetchRole(
+			ParamUtil.getLong(_httpServletRequest, "roleId"));
+
+		if (StringUtil.equals(_tabs2, "segments") &&
+			Objects.equals(RoleConstants.ADMINISTRATOR, role.getName())) {
+
+			_tabs2 = "users";
 		}
 
 		return _tabs2;
 	}
 
-	public SearchContainer<UserGroup> getUserGroupSearchContainer() {
+	public SearchContainer<UserGroup> getUserGroupSearchContainer()
+		throws PortalException {
+
 		SearchContainer<UserGroup> userGroupSearchContainer =
 			new SearchContainer<>(
 				_renderRequest, getPortletURL(), null,
@@ -478,7 +466,9 @@ public class EditRoleAssignmentsManagementToolbarDisplayContext {
 		return userGroupSearchContainer;
 	}
 
-	public SearchContainer<User> getUserSearchContainer() {
+	public SearchContainer<User> getUserSearchContainer()
+		throws PortalException {
+
 		UserSearch userSearch = new UserSearch(_renderRequest, getPortletURL());
 
 		ThemeDisplay themeDisplay =
@@ -515,7 +505,7 @@ public class EditRoleAssignmentsManagementToolbarDisplayContext {
 		return userSearch;
 	}
 
-	public List<ViewTypeItem> getViewTypeItems() {
+	public List<ViewTypeItem> getViewTypeItems() throws PortalException {
 		if (_tabs2.equals("segments")) {
 			return null;
 		}

@@ -199,7 +199,7 @@ public class LayoutActionsDisplayContext {
 		).setBackURL(
 			currentURL
 		).setParameter(
-			"backURLTitle", layout.getName()
+			"backURLTitle", layout.getName(_themeDisplay.getLocale())
 		).setParameter(
 			"groupId", layout.getGroupId()
 		).setParameter(

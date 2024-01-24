@@ -1468,7 +1468,7 @@ public class CalendarBookingLocalServiceTest {
 	}
 
 	@Test
-	public void testInviteUserCalendarWithWorkflowShouldNotifieInviteCalendarBookingOnlyAfterApprovedAndPublished()
+	public void testInviteUserCalendarWithWorkflowShouldNotifyInviteCalendarBookingOnlyAfterApprovedAndPublished()
 		throws Exception {
 
 		Group group = GroupTestUtil.addGroup();
@@ -3209,15 +3209,6 @@ public class CalendarBookingLocalServiceTest {
 			calendarBooking.getCalendarBookingId());
 
 		Assert.assertNull(calendarBooking.getRecurrenceObj());
-	}
-
-	protected void assertEqualsTime(
-		int hour, int minute, java.util.Calendar jCalendar) {
-
-		Assert.assertEquals(
-			hour, jCalendar.get(java.util.Calendar.HOUR_OF_DAY));
-
-		Assert.assertEquals(minute, jCalendar.get(java.util.Calendar.MINUTE));
 	}
 
 	protected void assertMailBody(String subject, String expectedBody) {

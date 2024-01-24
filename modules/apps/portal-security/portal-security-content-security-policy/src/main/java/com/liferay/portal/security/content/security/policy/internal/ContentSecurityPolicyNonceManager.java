@@ -6,9 +6,14 @@
 package com.liferay.portal.security.content.security.policy.internal;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.security.SecureRandom;
 import com.liferay.portal.kernel.util.Base64;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.security.content.security.policy.internal.configuration.ContentSecurityPolicyConfiguration;
+import com.liferay.portal.security.content.security.policy.internal.configuration.ContentSecurityPolicyConfigurationUtil;
+import com.liferay.portal.util.PropsValues;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -22,59 +27,64 @@ import org.osgi.service.component.annotations.Reference;
 @Component(service = ContentSecurityPolicyNonceManager.class)
 public class ContentSecurityPolicyNonceManager {
 
-	public String ensureNonce(HttpServletRequest httpServletRequest) {
+	public void cleanUpNonce(HttpServletRequest httpServletRequest) {
 		httpServletRequest = _portal.getOriginalServletRequest(
 			httpServletRequest);
 
-		HttpSession httpSession = httpServletRequest.getSession();
+		httpServletRequest.removeAttribute(_NONCE);
 
-		String nonce = (String)httpSession.getAttribute(_NONCE);
+		_threadLocal.remove();
+	}
+
+	public String getNonce(HttpServletRequest httpServletRequest) {
+		String nonce = GetterUtil.getString(_threadLocal.get());
 
 		if (nonce != null) {
 			return nonce;
 		}
 
-		synchronized (httpSession) {
-			nonce = (String)httpSession.getAttribute(_NONCE);
-
-			if (nonce == null) {
-				nonce = _generateNonce();
-
-				httpSession.setAttribute(_NONCE, nonce);
-			}
-		}
-
-		return nonce;
+		return GetterUtil.getString(httpServletRequest.getAttribute(_NONCE));
 	}
 
-	public String getNonce(HttpServletRequest httpServletRequest) {
+	public String setNonce(HttpServletRequest httpServletRequest) {
+		String nonce = null;
+
 		httpServletRequest = _portal.getOriginalServletRequest(
 			httpServletRequest);
 
-		String nonce;
+		ContentSecurityPolicyConfiguration contentSecurityPolicyConfiguration =
+			ContentSecurityPolicyConfigurationUtil.
+				getContentSecurityPolicyConfiguration(httpServletRequest);
 
-		if (httpServletRequest == null) {
-			nonce = _threadLocal.get();
+		if (!contentSecurityPolicyConfiguration.enabled()) {
+			nonce = StringPool.BLANK;
 		}
-		else {
+		else if (PropsValues.JAVASCRIPT_SINGLE_PAGE_APPLICATION_ENABLED) {
 			HttpSession httpSession = httpServletRequest.getSession();
 
 			nonce = (String)httpSession.getAttribute(_NONCE);
+
+			if (nonce == null) {
+				synchronized (httpSession) {
+					nonce = (String)httpSession.getAttribute(_NONCE);
+
+					if (nonce == null) {
+						nonce = _generateNonce();
+
+						httpSession.setAttribute(_NONCE, nonce);
+					}
+				}
+			}
+		}
+		else {
+			nonce = _generateNonce();
 		}
 
-		if (nonce == null) {
-			nonce = StringPool.BLANK;
-		}
+		httpServletRequest.setAttribute(_NONCE, nonce);
+
+		_threadLocal.set(nonce);
 
 		return nonce;
-	}
-
-	public void removeTLSNonce() {
-		_threadLocal.remove();
-	}
-
-	public void setTLSNonce(String nonce) {
-		_threadLocal.set(nonce);
 	}
 
 	private String _generateNonce() {
@@ -89,6 +99,9 @@ public class ContentSecurityPolicyNonceManager {
 
 	private static final String _NONCE =
 		ContentSecurityPolicyNonceManager.class.getName() + "#NONCE";
+
+	@Reference
+	private ConfigurationProvider _configurationProvider;
 
 	@Reference
 	private Portal _portal;

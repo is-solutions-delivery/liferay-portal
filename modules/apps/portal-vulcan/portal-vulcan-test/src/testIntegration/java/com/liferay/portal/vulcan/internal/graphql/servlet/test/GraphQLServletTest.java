@@ -16,7 +16,7 @@ import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.vulcan.graphql.servlet.ServletData;
-import com.liferay.portal.vulcan.internal.util.PaginationConfigurationTestUtil;
+import com.liferay.portal.vulcan.internal.test.util.PaginationConfigurationTestUtil;
 
 import java.util.Collections;
 

@@ -157,8 +157,6 @@ definition {
 
 		FormFields.viewCheckboxNotChecked(fieldName = "articleCommentsEnabled");
 
-		FormFields.viewCheckboxNotChecked(fieldName = "databaseContentKeywordSearchEnabled");
-
 		FormFields.viewCheckboxNotChecked(fieldName = "expireAllArticleVersionsEnabled");
 
 		ApplicationsMenu.gotoPortlet(
@@ -172,10 +170,6 @@ definition {
 			configurationScope = "System Scope");
 
 		FormFields.viewCheckboxChecked(fieldName = "changeableDefaultLanguage");
-
-		SystemSettings.viewTextareaValue(
-			fieldName = "defaultDisplayView",
-			fieldValue = "list");
 
 		FormFields.viewCheckboxNotChecked(fieldName = "journalArticleForceAutogenerateId");
 

@@ -19,6 +19,10 @@ definition {
 	macro addDisplayPage(displayPageName = null, subType = null, contentType = null, masterLayoutName = null) {
 		LexiconEntry.gotoAdd();
 
+		if (IsElementPresent(key_menuItem = "Folder", locator1 = "MenuItem#ANY_MENU_ITEM")) {
+			MenuItem.click(menuItem = "Display Page Template");
+		}
+
 		if (isSet(masterLayoutName)) {
 			LexiconCard.clickCard(card = ${masterLayoutName});
 		}
@@ -35,6 +39,30 @@ definition {
 		Button.clickSave();
 
 		PageEditor.assertFragmentSidebarLoaded();
+	}
+
+	@summary = "Add a folder"
+	macro addFolder(folderName = null) {
+		LexiconEntry.gotoAdd();
+
+		MenuItem.click(menuItem = "Folder");
+
+		PortletEntry.inputName(name = ${folderName});
+
+		PortletEntry.save();
+	}
+
+	@summary = "Change content type"
+	macro changeContentType(displayPageName = null, subType = null, contentType = null) {
+		DisplayPageTemplatesAdmin.gotoDisplayPageEllipsisItem(
+			displayPageName = ${displayPageName},
+			item = "Change Content Type");
+
+		DisplayPageTemplatesAdmin._selectMappingTypes(
+			contentType = ${contentType},
+			subType = ${subType});
+
+		PortletEntry.save();
 	}
 
 	@summary = "Default summary"
@@ -75,6 +103,11 @@ definition {
 		LexiconCard.clickEllipsisItem(
 			card = ${displayPageName},
 			item = ${item});
+	}
+
+	@summary = "Go to a folder"
+	macro gotoFolder(folderName = null) {
+		LexiconCard.clickCardTitleLink(card = ${folderName});
 	}
 
 	@summary = "Default summary"

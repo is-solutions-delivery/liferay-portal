@@ -14,18 +14,28 @@ long parentResourceClassNameId = ParamUtil.getLong(request, "parentResourceClass
 
 long parentResourcePrimKey = ParamUtil.getLong(request, "parentResourcePrimKey", KBFolderConstants.DEFAULT_PARENT_FOLDER_ID);
 
-KBAdminManagementToolbarDisplayContext kbAdminManagementToolbarDisplayContext = new KBAdminManagementToolbarDisplayContext(request, liferayPortletRequest, liferayPortletResponse, renderRequest, renderResponse, portletConfig);
+KBAdminManagementToolbarDisplayContext kbAdminManagementToolbarDisplayContext = new KBAdminManagementToolbarDisplayContext(request, liferayPortletRequest, liferayPortletResponse, renderRequest, renderResponse, portletConfig, trashHelper);
 %>
+
+<portlet:actionURL name="/knowledge_base/restore_kb_object" var="restoreTrashEntriesURL" />
+
+<liferay-trash:undo
+	portletURL="<%= restoreTrashEntriesURL %>"
+/>
 
 <liferay-util:include page="/admin/common/vertical_menu.jsp" servletContext="<%= application %>" />
 
 <div class="knowledge-base-admin-content">
 	<clay:management-toolbar
 		actionDropdownItems="<%= kbAdminManagementToolbarDisplayContext.getActionDropdownItems() %>"
+		additionalProps='<%=
+			HashMapBuilder.<String, Object>put(
+				"trashEnabled", kbAdminManagementToolbarDisplayContext.isTrashEnabled()
+			).build()
+		%>'
 		clearResultsURL="<%= String.valueOf(kbAdminManagementToolbarDisplayContext.getSearchURL()) %>"
 		creationMenu="<%= kbAdminManagementToolbarDisplayContext.getCreationMenu() %>"
 		disabled="<%= kbAdminManagementToolbarDisplayContext.isDisabled() %>"
-		filterDropdownItems="<%= kbAdminManagementToolbarDisplayContext.getFilterDropDownItems() %>"
 		infoPanelId="infoPanelId"
 		itemsTotal="<%= kbAdminManagementToolbarDisplayContext.getTotal() %>"
 		orderDropdownItems="<%= kbAdminManagementToolbarDisplayContext.getOrderByDropdownItems() %>"
@@ -71,6 +81,7 @@ KBAdminManagementToolbarDisplayContext kbAdminManagementToolbarDisplayContext = 
 			<liferay-portlet:actionURL name="/knowledge_base/delete_kb_articles_and_folders" varImpl="deleteKBArticlesAndFoldersURL" />
 
 			<aui:form action="<%= deleteKBArticlesAndFoldersURL %>" name="fm">
+				<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= kbAdminManagementToolbarDisplayContext.isTrashEnabled() ? Constants.MOVE_TO_TRASH : Constants.DELETE %>" />
 				<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
 
 				<liferay-ui:error exception="<%= KBArticlePriorityException.class %>" message='<%= LanguageUtil.format(request, "please-enter-a-priority-that-is-greater-than-x", "0", false) %>' translateMessage="<%= false %>" />
@@ -133,16 +144,16 @@ KBAdminManagementToolbarDisplayContext kbAdminManagementToolbarDisplayContext = 
 </div>
 
 <%
-String kbArticleScheduledSuccessMessage = GetterUtil.getString(MultiSessionMessages.get(renderRequest, "kbArticleScheduledSuccessMessage"));
+String kbArticleSuccessMessage = GetterUtil.getString(MultiSessionMessages.get(renderRequest, "kbArticleSuccessMessage"));
 %>
 
-<c:if test="<%= Validator.isNotNull(kbArticleScheduledSuccessMessage) %>">
+<c:if test="<%= Validator.isNotNull(kbArticleSuccessMessage) %>">
 	<liferay-frontend:component
 		context='<%=
 			HashMapBuilder.<String, Object>put(
 				"autoClose", 20000
 			).put(
-				"message", kbArticleScheduledSuccessMessage
+				"message", kbArticleSuccessMessage
 			).build()
 		%>'
 		module="admin/js/utils/openToast"

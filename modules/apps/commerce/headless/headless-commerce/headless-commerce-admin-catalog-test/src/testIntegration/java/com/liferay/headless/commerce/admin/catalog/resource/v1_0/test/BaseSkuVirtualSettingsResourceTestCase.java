@@ -25,8 +25,6 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -392,6 +390,19 @@ public abstract class BaseSkuVirtualSettingsResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals(
+					"skuVirtualSettingsFileEntries",
+					additionalAssertFieldName)) {
+
+				if (skuVirtualSettings.getSkuVirtualSettingsFileEntries() ==
+						null) {
+
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("src", additionalAssertFieldName)) {
 				if (skuVirtualSettings.getSrc() == null) {
 					valid = false;
@@ -663,6 +674,21 @@ public abstract class BaseSkuVirtualSettingsResourceTestCase {
 				if (!Objects.deepEquals(
 						skuVirtualSettings1.getSampleURL(),
 						skuVirtualSettings2.getSampleURL())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"skuVirtualSettingsFileEntries",
+					additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						skuVirtualSettings1.getSkuVirtualSettingsFileEntries(),
+						skuVirtualSettings2.
+							getSkuVirtualSettingsFileEntries())) {
 
 					return false;
 				}
@@ -1057,6 +1083,11 @@ public abstract class BaseSkuVirtualSettingsResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("skuVirtualSettingsFileEntries")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("src")) {
 			Object object = skuVirtualSettings.getSrc();
 
@@ -1250,9 +1281,9 @@ public abstract class BaseSkuVirtualSettingsResourceTestCase {
 	}
 
 	protected SkuVirtualSettingsResource skuVirtualSettingsResource;
-	protected Group irrelevantGroup;
-	protected Company testCompany;
-	protected Group testGroup;
+	protected com.liferay.portal.kernel.model.Group irrelevantGroup;
+	protected com.liferay.portal.kernel.model.Company testCompany;
+	protected com.liferay.portal.kernel.model.Group testGroup;
 
 	protected static class BeanTestUtil {
 

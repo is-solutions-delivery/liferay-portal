@@ -386,10 +386,7 @@ definition {
 		}
 
 		task ("When the user creates a Commerce Product entry") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Product Management",
-				panel = "Commerce",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CPCommerceCatalog.newProductsEntry(
 				productCatalog = "Master",
@@ -398,10 +395,7 @@ definition {
 		}
 
 		task ("Then the action is triggered and a user is added") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Users and Organizations");
+			User.openUsersAdmin();
 
 			LexiconEntry.viewEntryName(rowEntry = "newusertest");
 		}
@@ -565,9 +559,7 @@ definition {
 		}
 
 		task ("When The user changes the order status.") {
-			CommerceNavigator.gotoPortlet(
-				category = "Order Management",
-				portlet = "Orders");
+			CommerceOrders.openOrdersAdmin();
 
 			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
 
@@ -756,9 +748,7 @@ definition {
 		}
 
 		task ("And when the order status is updated") {
-			CommerceNavigator.gotoPortlet(
-				category = "Order Management",
-				portlet = "Orders");
+			CommerceOrders.openOrdersAdmin();
 
 			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
 
@@ -897,6 +887,8 @@ definition {
 	@description = "LPS-173537 - Verify it's possible to update an object entry with the trigger On Order Status Update"
 	@priority = 4
 	test CanCreateActionUpdateAnObjectEntryWithOnOrderStatusUpdate {
+		property portal.upstream = "quarantine";
+
 		task ("Given an action in the commerce order object with the trigger on order status update") {
 			ObjectAdmin.openObjectAdmin();
 
@@ -943,9 +935,7 @@ definition {
 		}
 
 		task ("Then the action is triggered and the order status is updated") {
-			CommerceNavigator.gotoPortlet(
-				category = "Order Management",
-				portlet = "Orders");
+			CommerceOrders.openOrdersAdmin();
 
 			AssertElementPresent(
 				key_value = "On Hold",
@@ -956,6 +946,8 @@ definition {
 	@description = "LPS-173537 - Verify it's possible to update an object entry with the trigger On Payment Status Update"
 	@priority = 4
 	test CanCreateActionUpdateAnObjectEntryWithOnPaymentStatusUpdate {
+		property portal.upstream = "quarantine";
+
 		task ("Given an action in the Commerce Order object") {
 			ObjectAdmin.openObjectAdmin();
 
@@ -1044,6 +1036,7 @@ definition {
 	@priority = 3
 	test CanCreateActionUsingGroovyScripWithOnOrderStatusUpdate {
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Given an action in the Commerce Order object") {
 			ObjectAdmin.openObjectAdmin();
@@ -1091,7 +1084,9 @@ definition {
 		}
 
 		task ("When the user changes the order status") {
-			CommerceOrders.openOrdersAdmin();
+			CommerceNavigator.gotoPortlet(
+				category = "Order Management",
+				portlet = "Orders");
 
 			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
 
@@ -1103,7 +1098,7 @@ definition {
 
 			AssertElementPresent(
 				key_value = "Processing",
-				locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
+				locator1 = "CommerceEntry#ORDERS_ENTRY_BODY_VERTICAL_ELLIPSIS");
 		}
 
 		task ("Then the action is triggered") {
@@ -1117,18 +1112,6 @@ definition {
 				actionActive = "Yes",
 				actionLabel = "Action Label",
 				status = "Success");
-
-			// Workaround for LPS-193383
-
-			CommerceOrders.openOrdersAdmin();
-
-			Click.clickNoMouseOverNoWaitForVisible(locator1 = "CommerceNavigation#SELECT_ALL_CHECKBOX");
-
-			ClickNoError(locator1 = "Button#TRASH_ENABLED");
-
-			AssertConfirm.assertPartialConfirmation(value1 = "Are you sure you want to delete all selected orders?");
-
-			CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
 		}
 	}
 
@@ -1954,6 +1937,8 @@ definition {
 	@description = "Verify if an error message appears when trying to save an Update an object Entry action with a Standalone trigger when using the invalid expression"
 	@priority = 4
 	test CannotSaveUpdateAnObjectEntryActions {
+		property portal.upstream = "quarantine";
+
 		task ("Given a custom object is created") {
 			ObjectAdmin.addObjectViaAPI(
 				labelName = "Custom Object 175620",
@@ -2981,7 +2966,7 @@ definition {
 
 			AssertElementPresent(
 				key_value = "On Hold",
-				locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
+				locator1 = "CommerceEntry#ORDERS_ENTRY_BODY_VERTICAL_ELLIPSIS");
 
 			// Workaround for LPS-193383
 
@@ -3002,6 +2987,7 @@ definition {
 	test CanUseExpressionWithGroovyScript {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
 
 		task ("Given an object with a field is created") {
 			ObjectAdmin.addObjectViaAPI(
@@ -3152,10 +3138,7 @@ definition {
 		}
 
 		task ("When check the object entries in define permissions tab of a regular role") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Roles");
+			Role.openRolesAdmin();
 
 			RoleNavigator.gotoDefineRolePermissions(roleTitle = "Portal Content Reviewer");
 
@@ -3209,10 +3192,7 @@ definition {
 		property portal.acceptance = "true";
 
 		task ("Given a object system") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Object",
-				panel = "Control Panel",
-				portlet = "Objects");
+			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectSystemObject(label = "Commerce Order");
 		}

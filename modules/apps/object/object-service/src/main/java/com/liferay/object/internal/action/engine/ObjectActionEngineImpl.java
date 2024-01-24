@@ -11,12 +11,12 @@ import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
 import com.liferay.object.action.engine.ObjectActionEngine;
 import com.liferay.object.action.executor.ObjectActionExecutor;
 import com.liferay.object.action.executor.ObjectActionExecutorRegistry;
+import com.liferay.object.action.util.ObjectActionThreadLocal;
 import com.liferay.object.constants.ObjectActionConstants;
 import com.liferay.object.constants.ObjectActionTriggerConstants;
 import com.liferay.object.dynamic.data.mapping.expression.ObjectEntryDDMExpressionFieldAccessor;
 import com.liferay.object.entry.util.ObjectEntryThreadLocal;
 import com.liferay.object.exception.ObjectActionExecutorKeyException;
-import com.liferay.object.internal.action.util.ObjectActionThreadLocal;
 import com.liferay.object.internal.action.util.ObjectEntryVariablesUtil;
 import com.liferay.object.internal.dynamic.data.mapping.expression.ObjectEntryDDMExpressionParameterAccessor;
 import com.liferay.object.model.ObjectAction;
@@ -26,6 +26,7 @@ import com.liferay.object.scope.ObjectDefinitionScoped;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.system.SystemObjectDefinitionManagerRegistry;
+import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
@@ -42,6 +43,7 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -87,9 +89,11 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 	}
 
 	@Override
-	public void executeObjectActions(
-		String className, long companyId, String objectActionTriggerKey,
-		JSONObject payloadJSONObject, long userId) {
+	public <E extends Exception> void executeObjectActions(
+			String className, long companyId, String objectActionTriggerKey,
+			UnsafeSupplier<JSONObject, E> payloadJSONObjectUnsafeSupplier,
+			long userId)
+		throws E {
 
 		if ((companyId == 0) || (userId == 0)) {
 			return;
@@ -109,6 +113,15 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 			return;
 		}
 
+		List<ObjectAction> objectActions =
+			_objectActionLocalService.getObjectActions(
+				objectDefinition.getObjectDefinitionId(),
+				objectActionTriggerKey);
+
+		if (objectActions.isEmpty()) {
+			return;
+		}
+
 		String name = PrincipalThreadLocal.getName();
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
@@ -122,6 +135,9 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 			PermissionThreadLocal.setPermissionChecker(
 				_permissionCheckerFactory.create(user));
 
+			JSONObject payloadJSONObject =
+				payloadJSONObjectUnsafeSupplier.get();
+
 			_updatePayloadJSONObject(objectDefinition, payloadJSONObject, user);
 
 			Map<String, Object> variables =
@@ -129,11 +145,7 @@ public class ObjectActionEngineImpl implements ObjectActionEngine {
 					_dtoConverterRegistry, objectDefinition, payloadJSONObject,
 					_systemObjectDefinitionManagerRegistry);
 
-			for (ObjectAction objectAction :
-					_objectActionLocalService.getObjectActions(
-						objectDefinition.getObjectDefinitionId(),
-						objectActionTriggerKey)) {
-
+			for (ObjectAction objectAction : objectActions) {
 				try {
 					_executeObjectAction(
 						objectAction, objectDefinition, payloadJSONObject,

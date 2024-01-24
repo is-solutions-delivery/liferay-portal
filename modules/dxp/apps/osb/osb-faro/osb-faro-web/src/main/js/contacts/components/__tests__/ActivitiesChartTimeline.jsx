@@ -4,13 +4,14 @@ import React from 'react';
 import {EntityTypes} from 'shared/util/constants';
 import {render} from '@testing-library/react';
 import {StaticRouter} from 'react-router';
+import {waitForLoadingToBeRemoved} from 'test/helpers';
 
 jest.unmock('react-dom');
 
 const {activityAggregations} = data.mockActivityHistory();
 
 describe('ActivitiesChartTimeline', () => {
-	it('should render', () => {
+	it('should render', async () => {
 		const {container} = render(
 			<StaticRouter>
 				<ActivitiesChartTimeline
@@ -30,6 +31,8 @@ describe('ActivitiesChartTimeline', () => {
 		);
 
 		jest.runAllTimers();
+
+		await waitForLoadingToBeRemoved(container);
 
 		expect(container).toMatchSnapshot();
 	});

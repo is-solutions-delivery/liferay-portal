@@ -1,5 +1,17 @@
 @import 'atlas-variables';
 
+.dsm-actions-icon-selection-modal ul li {
+	color: $gray-600;
+	cursor: pointer;
+	padding-bottom: 8px;
+	padding-top: 8px;
+
+	&:hover {
+		background-color: #f0f5ff;
+		color: #272833;
+	}
+}
+
 .panel-unstyled {
 	margin-bottom: 0;
 	padding: 1rem 1.5rem;

@@ -65,6 +65,7 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateStructureLocal
 import com.liferay.layout.page.template.service.LayoutPageTemplateStructureRelLocalService;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.layout.util.structure.LayoutStructure;
+import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -324,7 +325,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		_testPostSiteSitePageFailurePagePermissionsActionKeyNonexisting();
 		_testPostSiteSitePageSuccessCustomFields();
 		_testPostSiteSitePageSuccessInvalidParentSitePage();
-		_testPostSiteSitePageSuccessKeywords();
+		_testPostSiteSitePageSuccessKeywords(StringUtil::toLowerCase);
 		_testPostSiteSitePageSuccessPageDefinition();
 		_testPostSiteSitePageSuccessPageDefinitionSettingsClientExtensionEntries();
 		_testPostSiteSitePageSuccessPageDefinitionSettingsFaviconFromClientExtensionEntry();
@@ -344,6 +345,14 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		_testPostSiteSitePageSuccessTaxonomyCategoryBriefSitePageSiteSiteKeyNull();
 		_testPostSiteSitePageSuccessTaxonomyCategoryBriefSitePageSiteSiteKeyNonnull();
 		_testPostSiteSitePageSuccessTaxonomyCategoryBriefNonsitePage();
+	}
+
+	@FeatureFlags("LPS-194362")
+	@Test
+	public void testPostSiteSitePageSuccessKeywordsWithCaseSensitiveTags()
+		throws Exception {
+
+		_testPostSiteSitePageSuccessKeywords(string -> string);
 	}
 
 	@Override
@@ -434,7 +443,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 				_layoutsImporter.importPageElement(
 					layout, layoutStructure, layoutStructure.getMainItemId(),
-					_read("test-page-element.json"), 0);
+					_read("test-page-element.json"), 0, true);
 			}
 			finally {
 				PrincipalThreadLocal.setName(name);
@@ -857,7 +866,10 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 		}
 	}
 
-	private void _testPostSiteSitePageSuccessKeywords() throws Exception {
+	private void _testPostSiteSitePageSuccessKeywords(
+			UnsafeFunction<String, String, Exception> unsafeFunction)
+		throws Exception {
+
 		SitePage randomSitePage = randomSitePage();
 
 		String[] keywords = {
@@ -882,7 +894,7 @@ public class SitePageResourceTest extends BaseSitePageResourceTestCase {
 
 		for (String keyword : keywords) {
 			Assert.assertTrue(
-				ArrayUtil.contains(tags, StringUtil.toLowerCase(keyword)));
+				ArrayUtil.contains(tags, unsafeFunction.apply(keyword)));
 		}
 	}
 

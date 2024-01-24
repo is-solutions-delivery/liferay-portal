@@ -32,10 +32,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Workflow.unpublishWorkflowDefinition(workflowDefinitionTitle = "Single Approver");
 
@@ -75,6 +72,10 @@ definition {
 
 		Workflow.duplicateSingleApproverWorkflow();
 
+		WaitForElementPresent(
+			key_nodeLabel = "review",
+			locator1 = "ProcessBuilderKaleoDesignerReact#DIAGRAM_NODE_LABEL");
+
 		Workflow.updateDefinition(workflowDefinitionTitle = "Single Approver 2");
 
 		Navigator.gotoBack();
@@ -90,10 +91,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Workflow.duplicateSingleApproverWorkflow(workflowName = "Duplicated Process");
 
@@ -114,10 +112,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Workflow.duplicateSingleApproverWorkflow(workflowName = "Copy of Single Approver");
 
@@ -125,9 +120,7 @@ definition {
 
 		Workflow.unpublishWorkflowDefinition(workflowDefinitionTitle = "Copy of Single Approver");
 
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
-
-		MenuItem.click(menuItem = "Published");
+		ManagementBar.setFilterAndOrder(filterBy = "Published");
 
 		AssertElementPresent(
 			key_workflowDefinitionTitle = "Single Approver",
@@ -141,10 +134,7 @@ definition {
 	@description = "Verify that the user can not delete a published process"
 	@priority = 5
 	test CanNotDeletePublishedProcess {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		AssertElementPresent(
 			key_processName = "Single Approver",
@@ -177,10 +167,7 @@ definition {
 			workflowDefinition = "Single Approver",
 			workflowResourceValue = "Comment");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Workflow.unpublishWorkflowDefinition(workflowDefinitionTitle = "Single Approver");
 
@@ -218,10 +205,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Workflow.duplicateSingleApproverWorkflow(workflowName = "A Workflow");
 
@@ -229,13 +213,7 @@ definition {
 
 		Navigator.gotoBack();
 
-		Click(
-			key_text = "Filter and Order",
-			locator1 = "Button#ANY_WITH_SPAN");
-
-		Click(
-			key_value = "Title",
-			locator1 = "ProcessBuilderListView#DROPDOWN_ITEM");
+		ManagementBar.sortAssets(sortDirection = "Title");
 
 		WaitForElementPresent(
 			key_index = 1,
@@ -260,29 +238,6 @@ definition {
 			key_processName = "Z Workflow",
 			key_section = "Published",
 			locator1 = "ProcessBuilderListView#PROCESS_NAME_IN_SECTION_BY_INDEX");
-	}
-
-	@description = "Verify that the user is able to reverse sort direction"
-	@priority = 2
-	test CanReverseSortDirection {
-		property test.liferay.virtual.instance = "false";
-		property test.run.type = "single";
-
-		Workflow.duplicateSingleApproverWorkflow(workflowName = "Copy of Single Approver");
-
-		Navigator.gotoBack();
-
-		Workflow.clickRevertSortDirection();
-
-		AssertTextEquals(
-			key_rowNumber = 2,
-			locator1 = "ProcessBuilderListView#PROCESS_NAME_TABLE_ROW",
-			value1 = "Copy of Single Approver");
-
-		AssertTextEquals(
-			key_rowNumber = 3,
-			locator1 = "ProcessBuilderListView#PROCESS_NAME_TABLE_ROW",
-			value1 = "Single Approver");
 	}
 
 	@description = "Verify that the user is not able to search by Workflow description"
@@ -319,10 +274,7 @@ definition {
 	@description = "Verify that the user is able to search by Workflow title"
 	@priority = 4
 	test CanSearchByTitle {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		ProcessBuilderListView.searchForWorkflow(workflowName = "Approver");
 
@@ -358,10 +310,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Workflow.gotoEditWorkflowDefinition(workflowDefinitionTitle = "Single Approver");
 
@@ -383,10 +332,7 @@ definition {
 		property test.run.environment = "EE";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Workflow.unpublishWorkflowDefinition(workflowDefinitionTitle = "Single Approver");
 
@@ -412,10 +358,7 @@ definition {
 		property test.run.environment = "EE";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		ProcessBuilderListView.gotoPermissions(workflowDefinitionTitle = "Single Approver");
 	}
@@ -427,10 +370,7 @@ definition {
 		property test.run.environment = "EE";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Workflow.unpublishWorkflowDefinition(workflowDefinitionTitle = "Single Approver");
 
@@ -472,10 +412,7 @@ definition {
 	test CanViewNonPublishedProcess {
 		property test.run.environment = "EE";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Workflow.unpublishWorkflowDefinition(workflowDefinitionTitle = "Single Approver");
 
@@ -493,10 +430,7 @@ definition {
 	@description = "Verify that the Clear option cleans the search results"
 	@priority = 3
 	test ClearSearchResults {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		ProcessBuilderListView.searchForWorkflow(workflowName = "Approver");
 
@@ -510,10 +444,7 @@ definition {
 	@description = "Verify that the correct columns are displayed: Title, Description, Last Modified"
 	@priority = 5
 	test DisplaysColumnsTitleDescriptionLastModified {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		AssertElementPresent(
 			key_columnName = "title",
@@ -531,10 +462,10 @@ definition {
 	@description = "Verify that Not Published processes are displayed on table"
 	@priority = 4
 	test DisplaysNonPublishedProcessesOnTable {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
+
+		Workflow.openWorkflowListView();
 
 		Workflow.unpublishWorkflowDefinition(workflowDefinitionTitle = "Single Approver");
 
@@ -554,10 +485,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		AssertElementPresent(
 			key_tooltip = "New Workflow",
@@ -570,10 +498,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		var count = 2;
 
@@ -604,10 +529,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Click(locator1 = "Button#PLUS");
 

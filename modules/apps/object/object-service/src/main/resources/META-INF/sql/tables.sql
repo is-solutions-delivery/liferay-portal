@@ -74,6 +74,7 @@ create table ObjectEntry (
 	createDate DATE null,
 	modifiedDate DATE null,
 	objectDefinitionId LONG,
+	rootObjectEntryId LONG,
 	lastPublishDate DATE null,
 	status INTEGER,
 	statusByUserId LONG,
@@ -245,6 +246,7 @@ create table ObjectLayoutTab (
 create table ObjectRelationship (
 	mvccVersion LONG default 0 not null,
 	uuid_ VARCHAR(75) null,
+	externalReferenceCode VARCHAR(75) null,
 	objectRelationshipId LONG not null primary key,
 	companyId LONG,
 	userId LONG,

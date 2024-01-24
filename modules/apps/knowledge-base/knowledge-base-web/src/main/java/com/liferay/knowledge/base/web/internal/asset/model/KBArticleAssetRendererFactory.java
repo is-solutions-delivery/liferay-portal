@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.security.permission.resource.PortletResourcePer
 import com.liferay.portal.kernel.util.HtmlParser;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.trash.TrashHelper;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
@@ -52,28 +53,40 @@ public class KBArticleAssetRendererFactory
 	}
 
 	@Override
+	public AssetEntry getAssetEntry(KBArticle kbArticle)
+		throws PortalException {
+
+		return super.getAssetEntry(getClassName(), kbArticle.getClassPK());
+	}
+
+	@Override
 	public AssetEntry getAssetEntry(String className, long classPK)
 		throws PortalException {
 
-		KBArticle kbArticle = _getKBArticle(
-			classPK, WorkflowConstants.STATUS_ANY);
+		return getAssetEntry(_getKBArticle(classPK, TYPE_LATEST));
+	}
 
-		return super.getAssetEntry(className, kbArticle.getClassPK());
+	@Override
+	public AssetRenderer<KBArticle> getAssetRenderer(
+			KBArticle kbArticle, int type)
+		throws PortalException {
+
+		KBArticleAssetRenderer kbArticleAssetRenderer =
+			new KBArticleAssetRenderer(
+				_assetDisplayPageFriendlyURLProvider, _htmlParser, kbArticle,
+				_trashHelper);
+
+		kbArticleAssetRenderer.setAssetRendererType(type);
+		kbArticleAssetRenderer.setServletContext(_servletContext);
+
+		return kbArticleAssetRenderer;
 	}
 
 	@Override
 	public AssetRenderer<KBArticle> getAssetRenderer(long classPK, int type)
 		throws PortalException {
 
-		KBArticleAssetRenderer kbArticleAssetRenderer =
-			new KBArticleAssetRenderer(
-				_assetDisplayPageFriendlyURLProvider, _htmlParser,
-				_getKBArticle(classPK, _getTypeStatus(type)));
-
-		kbArticleAssetRenderer.setAssetRendererType(type);
-		kbArticleAssetRenderer.setServletContext(_servletContext);
-
-		return kbArticleAssetRenderer;
+		return getAssetRenderer(_getKBArticle(classPK, type), type);
 	}
 
 	@Override
@@ -129,7 +142,7 @@ public class KBArticleAssetRendererFactory
 			permissionChecker, classPK, actionId);
 	}
 
-	private KBArticle _getKBArticle(long classPK, int status)
+	private KBArticle _getKBArticle(long classPK, int type)
 		throws PortalException {
 
 		KBArticle kbArticle = _kbArticleLocalService.fetchKBArticle(classPK);
@@ -138,15 +151,28 @@ public class KBArticleAssetRendererFactory
 			return kbArticle;
 		}
 
-		return _kbArticleLocalService.getLatestKBArticle(classPK, status);
-	}
-
-	private int _getTypeStatus(int type) {
 		if (type == TYPE_LATEST_APPROVED) {
-			return WorkflowConstants.STATUS_APPROVED;
+			kbArticle = _kbArticleLocalService.fetchLatestKBArticle(
+				classPK, WorkflowConstants.STATUS_APPROVED);
+
+			if (kbArticle != null) {
+				return kbArticle;
+			}
+
+			kbArticle = _kbArticleLocalService.fetchLatestKBArticle(
+				classPK, WorkflowConstants.STATUS_EXPIRED);
+		}
+		else {
+			kbArticle = _kbArticleLocalService.fetchLatestKBArticle(
+				classPK, WorkflowConstants.STATUS_ANY);
 		}
 
-		return WorkflowConstants.STATUS_ANY;
+		if (kbArticle != null) {
+			return kbArticle;
+		}
+
+		return _kbArticleLocalService.getLatestKBArticle(
+			classPK, WorkflowConstants.STATUS_IN_TRASH);
 	}
 
 	@Reference
@@ -177,5 +203,8 @@ public class KBArticleAssetRendererFactory
 		target = "(osgi.web.symbolicname=com.liferay.knowledge.base.web)"
 	)
 	private ServletContext _servletContext;
+
+	@Reference
+	private TrashHelper _trashHelper;
 
 }

@@ -5,9 +5,7 @@
 
 package com.liferay.layout.page.template.admin.web.internal.portlet.action;
 
-import com.liferay.asset.display.page.service.AssetDisplayPageEntryLocalService;
 import com.liferay.layout.page.template.admin.constants.LayoutPageTemplateAdminPortletKeys;
-import com.liferay.layout.page.template.exception.RequiredLayoutPageTemplateEntryException;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
@@ -21,7 +19,10 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -47,6 +48,9 @@ public class DeleteLayoutPageTemplateEntryMVCActionCommand
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
+		List<Long> deleteLayoutPageTemplateEntryIdsList = new ArrayList<>();
+		Set<Class<?>> exceptionClasses = new HashSet<>();
+
 		long[] deleteLayoutPageTemplateEntryIds = null;
 
 		long layoutPageTemplateEntryId = ParamUtil.getLong(
@@ -62,72 +66,72 @@ public class DeleteLayoutPageTemplateEntryMVCActionCommand
 				actionRequest, "rowIds");
 		}
 
-		List<Long> deleteLayoutPageTemplateIdsList = new ArrayList<>();
-
 		for (long deleteLayoutPageTemplateEntryId :
 				deleteLayoutPageTemplateEntryIds) {
 
-			int assetDisplayPageEntriesCount =
-				_assetDisplayPageEntryLocalService.
-					getAssetDisplayPageEntriesCountByLayoutPageTemplateEntryId(
-						deleteLayoutPageTemplateEntryId);
-
 			try {
-				if (assetDisplayPageEntriesCount > 0) {
-					deleteLayoutPageTemplateIdsList.add(
-						deleteLayoutPageTemplateEntryId);
-
-					SessionErrors.add(
-						actionRequest,
-						RequiredLayoutPageTemplateEntryException.class);
-				}
-				else {
-					_layoutPageTemplateEntryService.
-						deleteLayoutPageTemplateEntry(
-							deleteLayoutPageTemplateEntryId);
-				}
-			}
-			catch (PortalException portalException) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(portalException);
-				}
-
-				deleteLayoutPageTemplateIdsList.add(
+				_layoutPageTemplateEntryService.deleteLayoutPageTemplateEntry(
 					deleteLayoutPageTemplateEntryId);
 			}
-		}
+			catch (Exception exception) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(exception);
+				}
 
-		if (!deleteLayoutPageTemplateIdsList.isEmpty()) {
-			SessionErrors.add(actionRequest, PortalException.class);
+				deleteLayoutPageTemplateEntryIdsList.add(
+					deleteLayoutPageTemplateEntryId);
 
-			hideDefaultErrorMessage(actionRequest);
-		}
-		else {
-			int total =
-				deleteLayoutPageTemplateEntryIds.length -
-					deleteLayoutPageTemplateIdsList.size();
+				exceptionClasses.add(exception.getClass());
 
-			if (total > 0) {
-				hideDefaultSuccessMessage(actionRequest);
+				Throwable throwable = exception.getCause();
 
-				MultiSessionMessages.add(
-					actionRequest, "displayPageTemplateDeleted",
-					_language.format(
-						_portal.getHttpServletRequest(actionRequest),
-						"you-successfully-deleted-x-display-page-templates",
-						new Object[] {total}));
+				if (throwable != null) {
+					exceptionClasses.add(throwable.getClass());
+				}
 			}
 		}
+
+		if (deleteLayoutPageTemplateEntryIds.length ==
+				deleteLayoutPageTemplateEntryIdsList.size()) {
+
+			SessionErrors.add(actionRequest, PortalException.class);
+
+			for (Class<?> clazz : exceptionClasses) {
+				SessionErrors.add(actionRequest, clazz);
+			}
+
+			hideDefaultErrorMessage(actionRequest);
+
+			sendRedirect(actionRequest, actionResponse);
+
+			return;
+		}
+
+		String tabs1 = ParamUtil.getString(actionRequest, "tabs1");
+
+		if (!Objects.equals(tabs1, "display-page-templates")) {
+			sendRedirect(actionRequest, actionResponse);
+
+			return;
+		}
+
+		hideDefaultSuccessMessage(actionRequest);
+
+		MultiSessionMessages.add(
+			actionRequest, "displayPageTemplateDeleted",
+			_language.format(
+				_portal.getHttpServletRequest(actionRequest),
+				"you-successfully-deleted-x-display-page-templates",
+				new Object[] {
+					deleteLayoutPageTemplateEntryIds.length -
+						deleteLayoutPageTemplateEntryIdsList.size()
+				}));
 
 		sendRedirect(actionRequest, actionResponse);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		DeleteLayoutPageTemplateEntryMVCActionCommand.class);
-
-	@Reference
-	private AssetDisplayPageEntryLocalService
-		_assetDisplayPageEntryLocalService;
 
 	@Reference
 	private Language _language;

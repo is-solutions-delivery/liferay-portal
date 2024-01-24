@@ -1832,6 +1832,7 @@
 										},
 										{
 											"columnViewportDefinition": {
+												"size": 12
 											},
 											"id": "tablet"
 										}
@@ -1869,48 +1870,12 @@
 										},
 										{
 											"columnViewportDefinition": {
+												"size": 12
 											},
 											"id": "tablet"
 										}
 									],
 									"size": 6
-								},
-								"pageElements": [
-									{
-										"definition": {
-											"widgetInstance": {
-												"widgetConfig": {
-													"properties": "path=deals-chart"
-												},
-												"widgetName": "com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_[$COMPANY_ID$]_LXC_liferay_partner_custom_element"
-											}
-										},
-										"type": "Widget"
-									}
-								],
-								"type": "Column"
-							},
-							{
-								"definition": {
-									"columnViewports": [
-										{
-											"columnViewportDefinition": {
-												"size": 12
-											},
-											"id": "landscapeMobile"
-										},
-										{
-											"columnViewportDefinition": {
-											},
-											"id": "portraitMobile"
-										},
-										{
-											"columnViewportDefinition": {
-											},
-											"id": "tablet"
-										}
-									],
-									"size": 4
 								},
 								"pageElements": [
 									{
@@ -1943,6 +1908,55 @@
 										},
 										{
 											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "tablet"
+										}
+									],
+									"size": 4
+								},
+								"pageElements": [
+									{
+										"definition": {
+											"indexed": true,
+											"layout": {
+											}
+										},
+										"pageElements": [
+											{
+												"definition": {
+													"widgetInstance": {
+														"widgetConfig": {
+															"properties": "path=level-chart"
+														},
+														"widgetName": "com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_[$COMPANY_ID$]_LXC_liferay_partner_custom_element"
+													}
+												},
+												"type": "Widget"
+											}
+										],
+										"type": "Section"
+									}
+								],
+								"type": "Column"
+							},
+							{
+								"definition": {
+									"columnViewports": [
+										{
+											"columnViewportDefinition": {
+												"size": 12
+											},
+											"id": "landscapeMobile"
+										},
+										{
+											"columnViewportDefinition": {
+											},
+											"id": "portraitMobile"
+										},
+										{
+											"columnViewportDefinition": {
+												"size": 12
 											},
 											"id": "tablet"
 										}
@@ -1954,7 +1968,7 @@
 										"definition": {
 											"widgetInstance": {
 												"widgetConfig": {
-													"properties": "path=level-chart"
+													"properties": "path=deals-chart"
 												},
 												"widgetName": "com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_[$COMPANY_ID$]_LXC_liferay_partner_custom_element"
 											}
@@ -1980,6 +1994,7 @@
 										},
 										{
 											"columnViewportDefinition": {
+												"size": 12
 											},
 											"id": "tablet"
 										}

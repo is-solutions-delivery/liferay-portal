@@ -29,8 +29,6 @@ definition {
 	@description = "This ensures that a document can be copied to a workflow-enabled folder."
 	@priority = 4
 	test CanApproveCopiedDocument {
-		property custom.properties = "feature.flag.LPS-182512=true";
-
 		JSONFolder.addFolder(
 			dmFolderDescription = "DM Folder Description",
 			dmFolderName = "DM Folder Name",
@@ -139,7 +137,7 @@ definition {
 	}
 
 	@description = "This is a test for LPS-84593. It ensures that a user cannot delete the dismissed notification after deleting the pending file."
-	@priority = 5
+	@priority = 4
 	test CannotDeleteDismissedNotificationAfterDeletingPendingFile {
 		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
 
@@ -307,8 +305,6 @@ definition {
 	@description = "This ensures that a folder can be copied to a workflow-enabled folder."
 	@priority = 4
 	test CopiedDocumentRespectsGrandparentFolderWorkflow {
-		property custom.properties = "feature.flag.LPS-182512=true";
-
 		HeadlessSite.addSite(siteName = "Site Name");
 
 		JSONFolder.addFolder(

@@ -40,9 +40,7 @@ definition {
 		}
 
 		task ("And a simple product with a new option is created") {
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CPCommerceCatalog.newProductsEntry(
 				productCatalog = "Minium",
@@ -250,7 +248,7 @@ definition {
 			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/p/bundled-product");
 
 			FrontStore.addToCartFromProductDetails(
-				boolean = "enabled",
+				boolean = "enabled:checkbox",
 				date = "10/23/2023",
 				multipleSelectionValuesChecked = "value1,value2",
 				numeric = 10,
@@ -423,7 +421,7 @@ definition {
 			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/p/bundled-product");
 
 			FrontStore.addToCartFromProductDetails(
-				boolean = "enabled",
+				boolean = "enabled:checkbox",
 				date = "10/23/2023",
 				multipleSelectionValuesChecked = "value1,value2",
 				numeric = 10,
@@ -527,9 +525,7 @@ definition {
 				productName = "Simple T-Shirt",
 				productType = "Simple");
 
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 		}
 
 		task ("And the admin navigates inside the product entry") {
@@ -579,9 +575,7 @@ definition {
 		}
 
 		task ("Then the changes are not saved on the corresponding option on the Simple T-Shirt 'Options' tab") {
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CommerceNavigator.gotoEntry(entryName = "Simple T-Shirt");
 
@@ -622,9 +616,7 @@ definition {
 		}
 
 		task ("And a Single Selection option with a value is created within a product") {
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CommerceProducts.searchAndGoToProductEntry(entryProductName = "ABS Sensor");
 
@@ -702,9 +694,7 @@ definition {
 				urlAppend = "web/minium",
 				userEmailAddress = "test@liferay.com");
 
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CommerceProducts.searchAndGoToProductEntry(entryProductName = "ABS Sensor");
 
@@ -1112,9 +1102,7 @@ definition {
 		}
 
 		task ("And the options are assigned to ABS Sensor product") {
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CommerceProducts.searchAndGoToProductEntry(entryProductName = "ABS Sensor");
 
@@ -1319,9 +1307,7 @@ definition {
 		}
 
 		task ("And 1 option for each option field type is added to a product") {
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CommerceProducts.searchAndGoToProductEntry(entryProductName = "ABS Sensor");
 
@@ -1792,9 +1778,7 @@ definition {
 				productName = "Simple T-Shirt",
 				productType = "Simple");
 
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 		}
 
 		task ("And the admin navigates inside the product entry") {
@@ -2082,6 +2066,60 @@ definition {
 		}
 	}
 
+	@description = "COMMERCE-12700 Verify that is not possible to view the accordion 'Show Option' in case the product has no options"
+	@priority = 4
+	test CannotViewTheAccordionForProductsWithNoOptions {
+		property custom.properties = "feature.flag.COMMERCE-9599=true${line.separator}jsonws.web.service.paths.excludes=";
+		property portal.acceptance = "false";
+
+		task ("Given a Minium site with a buyer user is created") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the buyer logs in on Minium") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When the buyer adds to the cart U-Joint without an option") {
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/p/u-joint");
+
+			FrontStore.addToCartFromProductDetails(
+				productName = "U-Joint",
+				productSku = "MIN55861");
+		}
+
+		task ("Then the accordion is not present") {
+			CommerceNavigator.gotoMiniCart();
+
+			AssertElementNotPresent(
+				key_userName = "Show Options",
+				locator1 = "Sharing#MANAGE_COLLABORATORS_NAME");
+
+			FrontStore.viewMiniCartItem(
+				cartItemName = "U-Joint",
+				cartItemQuantity = 1,
+				cartItemSku = "MIN55861");
+		}
+	}
+
 	@description = "This is a test for COMMERCE-12167.User can see SKU updated on the product details page when values are selected from multiple options."
 	@priority = 5
 	test CanSKUUpdateSuccessfullyWhenSelectingValuesFromMultipleOptions {
@@ -2254,6 +2292,418 @@ definition {
 		}
 	}
 
+	@description = "COMMERCE-12701 Verify that is possible to view and use the accordion 'Show Options' for the bundled products with UOM"
+	@priority = 5
+	test CanUseTheAccordionForBundledProductsWithUOM {
+		property custom.properties = "feature.flag.COMMERCE-9599=true${line.separator}feature.flag.COMMERCE-11287=true${line.separator}jsonws.web.service.paths.excludes=";
+		property portal.acceptance = "true";
+
+		task ("Given a Minium site with a buyer user is created") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And 1 UOM is created to MIN93015") {
+			CommerceJSONSKUsAPI._addCommerceUOM(
+				basePrice = 30,
+				productSKU = "MIN93015",
+				uomKey = "UOM1KEY",
+				uomName = "UOM1");
+		}
+
+		task ("And a new bundled product with an optional Dynamic Price Type is created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Minium",
+				productName = "Bundled Product",
+				productType = "Simple");
+
+			CommerceJSONOptionsAPI._addCommerceOption(
+				fieldType = "select",
+				optionKey = "option-select-from-list",
+				optionName = "Option Select from List",
+				optionValues = "select-from-the-list-option-value-key:Value:1");
+
+			CommerceJSONOptionsAPI._assignOptionToCommerceProduct(
+				fieldType = "select",
+				optionKey = "option-select-from-list",
+				optionName = "Option Select from List",
+				productName = "Bundled Product");
+
+			CommerceProducts.openProductsAdmin();
+
+			CommerceNavigator.searchEntry(entryName = '''"Bundled Product"''');
+
+			CommerceNavigator.gotoEntry(entryName = "Bundled Product");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Options");
+
+			CommerceProductOptions.editProductOption(
+				key_option = "Option Select from List",
+				key_priceType = "Dynamic",
+				productOptionPriceType = "true",
+				productOptionRequired = "true",
+				productOptionSkuContributor = "true");
+
+			SelectFrameTop();
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			Click(locator1 = "Icon#CLOSE");
+
+			SelectFrameTop();
+		}
+
+		task ("And the admin selects SKU/UOM as the linked product for each option value") {
+			for (var optionValueList : list "Value:MIN93015 - UOM1KEY") {
+				var optionValueName = StringUtil.extractFirst(${optionValueList}, ":");
+				var sku = StringUtil.extractLast(${optionValueList}, ":");
+
+				CommerceNavigator.gotoEntry(entryName = "Option Select from List");
+
+				CommerceProductOptions.editOptionValue(
+					optionValue = ${optionValueName},
+					sku = ${sku});
+			}
+		}
+
+		task ("And all SKUs are generated") {
+			CommerceEntry.gotoMenuTab(menuTab = "SKUs");
+
+			CommerceSKUs.generateAllSkuCombinations();
+		}
+
+		task ("When the buyer navigates to Bundled Product's detail page") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/p/bundled-product");
+		}
+
+		task ("And the buyer adds to the cart the product with the option value that is linked to another product") {
+			FrontStore.addToCartFromProductDetails(
+				optionNamesAndValues = "Option Select from List:Value",
+				productName = "Bundled Product",
+				productSku = "VALUE");
+		}
+
+		task ("Then all the information inside is correct") {
+			CommerceNavigator.gotoMiniCart();
+
+			Click(
+				key_userName = "Show Options",
+				locator1 = "Sharing#MANAGE_COLLABORATORS_NAME");
+
+			FrontStore.viewMiniCartItem(
+				cartItemName = "Bundled Product",
+				cartItemQuantity = 1,
+				cartItemSku = "VALUE");
+
+			AssertElementPresent(
+				key_cartItemName = "Option Select from List",
+				locator1 = "CommerceAccelerators#MINI_CART_ITEM_NAME_H6");
+
+			AssertElementPresent(
+				key_cartItemSku = "Value(1 × ABS Sensor UOM1KEY)",
+				locator1 = "CommerceAccelerators#MINI_CART_ITEM_SKU");
+		}
+	}
+
+	@description = "COMMERCE-12699 Verify that is possible to view and use the accordion 'Show Options' for the Define Externally bundled products"
+	@priority = 5
+	test CanUseTheAccordionForDefineExternallyProducts {
+		property custom.properties = "feature.flag.COMMERCE-9599=true${line.separator}jsonws.web.service.paths.excludes=";
+		property portal.acceptance = "true";
+
+		task ("Given a Minium site with a buyer user is created") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And the admin opens the U-Joint Product via Admin") {
+			CommerceProducts.openProductsAdmin();
+
+			CommerceProducts.searchAndGoToProductEntry(entryProductName = "U-Joint");
+		}
+
+		task ("And a new option is created") {
+			CommerceJSONOptionsAPI._addCommerceOption(
+				fieldType = "select",
+				optionKey = "option-select-from-list",
+				optionName = "Option Select from List");
+		}
+
+		task ("And is linked to the product") {
+			CommerceJSONOptionsAPI._assignOptionToCommerceProduct(
+				fieldType = "select",
+				optionKey = "option-select-from-list",
+				optionName = "Option Select from List",
+				productName = "U-Joint");
+		}
+
+		task ("And the admin enables the Define Externally toggle with a category") {
+			CommerceEntry.gotoMenuTab(menuTab = "Options");
+
+			CommerceProductOptions.editProductOption(
+				collectionProvider = "SKUs by Categories",
+				key_option = "Option Select from List",
+				key_priceType = "Dynamic",
+				productAddOptionCategoriesList = "Transmission",
+				productOptionDefineExternally = "true",
+				productOptionPriceType = "true");
+		}
+
+		task ("And the buyer logs in on Minium") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When the buyer adds to the cart U-Joint with an option") {
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/p/u-joint");
+
+			FrontStore.addToCartFromProductDetails(
+				optionNamesAndValues = "Option Select from List:Mount",
+				productName = "U-Joint",
+				productSku = "MIN55861");
+		}
+
+		task ("Then all the information inside is correct") {
+			CommerceNavigator.gotoMiniCart();
+
+			Click(
+				key_userName = "Show Options",
+				locator1 = "Sharing#MANAGE_COLLABORATORS_NAME");
+
+			FrontStore.viewMiniCartItem(
+				cartItemName = "U-Joint",
+				cartItemQuantity = 1,
+				cartItemSku = "MIN55861");
+
+			echo("Checking option name [${optionName}] with value [${optionValue}] is present");
+
+			AssertElementPresent(
+				key_cartItemName = "Option Select from List",
+				locator1 = "CommerceAccelerators#MINI_CART_ITEM_NAME_H6");
+
+			AssertElementPresent(
+				key_cartItemSku = "Mount(1 × Mount )",
+				locator1 = "CommerceAccelerators#MINI_CART_ITEM_SKU");
+		}
+	}
+
+	@description = "COMMERCE-12698 Verify that is possible to view and use the accordion 'Show Options' for the normal products"
+	@priority = 5
+	test CanUseTheAccordionForNormalProducts {
+		property custom.properties = "feature.flag.COMMERCE-9599=true${line.separator}jsonws.web.service.paths.excludes=";
+		property portal.acceptance = "true";
+
+		task ("Given a Minium site with a buyer user is created") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And 7 options, one for each type are created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Minium",
+				productName = "Simple Product",
+				productType = "Simple");
+
+			CommerceJSONOptionsAPI._addCommerceOption(
+				fieldType = "select",
+				optionKey = "option-select-from-the-list-key",
+				optionName = "select from the list",
+				optionValues = "select-from-the-list-option-value-key:select from the list option value:1");
+
+			for (var fieldType : list "checkbox,date,numeric,text") {
+				CommerceJSONOptionsAPI._addCommerceOption(
+					fieldType = ${fieldType},
+					optionKey = "option-${fieldType}-key",
+					optionName = ${fieldType},
+					skuContributor = "false");
+			}
+
+			for (var fieldType : list "checkbox_multiple,radio,checkbox") {
+				if (${fieldType} == "checkbox_multiple") {
+					CommerceJSONOptionsAPI._addCommerceOption(
+						fieldType = ${fieldType},
+						optionKey = "option-multiple-selection-key",
+						optionName = "multiple selection",
+						optionValues = "multiple-selection-option-value-key:multiple selection option value:1",
+						skuContributor = "false");
+				}
+				else {
+					if (${fieldType} == "radio") {
+						CommerceJSONOptionsAPI._addCommerceOption(
+							fieldType = ${fieldType},
+							optionKey = "option-single-selection-key",
+							optionName = "single selection",
+							optionValues = "single-selection-option-value-key:single selection option value:1",
+							skuContributor = "false");
+					}
+					else {
+						CommerceJSONOptionsAPI._addCommerceOption(
+							fieldType = ${fieldType},
+							optionKey = "option-boolean-selection-key",
+							optionName = "boolean",
+							optionValues = "boolean-option-value-key:boolean option value:1",
+							skuContributor = "false");
+					}
+				}
+			}
+
+			CommerceProducts.openProductsAdmin();
+
+			CommerceNavigator.searchEntry(entryName = '''"Simple Product"''');
+
+			CommerceNavigator.gotoEntry(entryName = "Simple Product");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Options");
+
+			for (var optionName : list "select from the list,boolean,multiple selection,date,numeric,single selection,text") {
+				CommerceRelations.assignSingleRelationToProductsEntry(
+					entryName = ${optionName},
+					title = "Add Option");
+			}
+
+			var elementsList = ListUtil.newListFromString("option-select-from-the-list-key:select from the list,option-boolean-selection-key:boolean,option-multiple-selection-key:multiple selection,option-date-key:date,option-numeric-key:numeric,option-single-selection-key:single selection,option-text-key:text");
+			var count = 0;
+
+			for (var optionFieldType : list "select,checkbox,checkbox_multiple,date,numeric,radio,text") {
+				var element = ListUtil.get(${elementsList}, ${count});
+
+				var optionKey = StringUtil.extractFirst(${element}, ":");
+				var optionName = StringUtil.extractLast(${element}, ":");
+				var count = ${count} + 1;
+
+				CommerceJSONOptionsAPI._assignOptionToCommerceProduct(
+					fieldType = ${optionFieldType},
+					optionKey = ${optionKey},
+					optionName = ${optionName},
+					productName = "Simple Product");
+			}
+		}
+
+		task ("And the buyer logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When the buyer compiles or chooses something for all the option values") {
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/p/simple-product");
+
+			FrontStore.addToCartFromProductDetails(
+				boolean = "enabled:boolean",
+				date = "10/23/2023",
+				multipleSelectionValuesChecked = "multiple selection option value",
+				numeric = 10,
+				optionNamesAndValues = "select from the list:select from the list option value",
+				productName = "Simple Product",
+				productSku = "Simple Product_default",
+				singleSelectionValueChecked = "single selection option value",
+				text = "Text Content");
+		}
+
+		task ("Then on the mini cart an accordion is present to be expanded") {
+			CommerceNavigator.gotoMiniCart();
+
+			Click(
+				key_userName = "Show Options",
+				locator1 = "Sharing#MANAGE_COLLABORATORS_NAME");
+
+			FrontStore.viewMiniCartItem(
+				cartItemName = "Simple Product",
+				cartItemQuantity = 1,
+				cartItemSku = "Simple Product_default");
+		}
+
+		task ("Then all the information inside is correct based on how the buyer compiled the values") {
+			for (var entriesList : list "select from the list:select from the list option value,date:2023-10-23,numeric:10,text:Text Content,multiple selection:multiple selection option value,single selection:single selection option value,boolean:option-boolean-selection-key") {
+				var optionName = StringUtil.extractFirst(${entriesList}, ":");
+				var optionValue = StringUtil.extractLast(${entriesList}, ":");
+
+				echo("Checking option name [${optionName}] with value [${optionValue}] is present");
+
+				AssertElementPresent(
+					key_cartItemName = ${optionName},
+					locator1 = "CommerceAccelerators#MINI_CART_ITEM_NAME_H6");
+
+				AssertElementPresent(
+					key_cartItemSku = ${optionValue},
+					locator1 = "CommerceAccelerators#MINI_CART_ITEM_SKU");
+			}
+		}
+
+		task ("But if the accordion is closed") {
+			Click(
+				key_userName = "Hide Options",
+				locator1 = "Sharing#MANAGE_COLLABORATORS_NAME");
+		}
+
+		task ("Then all the information will be hidden again") {
+			for (var entriesList : list "select from the list:select from the list option value,date:2023-10-23,numeric:10,text:Text Content,multiple selection:multiple selection option name,single selection:single selection option name,boolean:option-boolean-selection-key") {
+				var optionName = StringUtil.extractFirst(${entriesList}, ":");
+				var optionValue = StringUtil.extractLast(${entriesList}, ":");
+
+				echo("Checking option name [${optionName}] with value [${optionValue}] is not present");
+
+				AssertElementNotPresent(
+					key_cartItemName = ${optionName},
+					locator1 = "CommerceAccelerators#MINI_CART_ITEM_NAME_H6_ACCORDION_SHOW");
+
+				AssertElementNotPresent(
+					key_cartItemSku = ${optionValue},
+					locator1 = "CommerceAccelerators#MINI_CART_ITEM_SKU_ACCORDION_SHOW");
+			}
+		}
+	}
+
 	@description = "This is a test for COMMERCE-9830. CanViewOptionOnTheOptionFacetWidget"
 	@priority = 5
 	test CanViewOptionOnTheOptionFacetWidget {
@@ -2300,9 +2750,7 @@ definition {
 		}
 
 		task ("And assigning the options to ABS Sensor product") {
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CommerceProducts.searchAndGoToProductEntry(entryProductName = "ABS Sensor");
 
@@ -2344,9 +2792,7 @@ definition {
 		}
 
 		task ("And navigates to the ABS Sensor Product Detail page") {
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CommerceProducts.searchAndGoToProductEntry(entryProductName = "ABS Sensor");
 		}
@@ -2732,9 +3178,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		AppBuilderAdmin.searchByItem(itemName = "ABS Sensor");
 
@@ -2825,9 +3269,7 @@ definition {
 			optionEntryName = "Color",
 			optionValuesList = "Black:1");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -2862,11 +3304,7 @@ definition {
 
 		Alert.viewSuccessMessage();
 
-		Navigator.openURL();
-
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Simple T-Shirt");
 

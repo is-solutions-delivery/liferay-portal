@@ -6,7 +6,7 @@
 package com.liferay.layout.uad.exporter.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.layout.uad.test.LayoutUADTestUtil;
+import com.liferay.layout.uad.test.util.LayoutUADTestUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -42,11 +42,6 @@ public class LayoutUADExporterTest extends BaseUADExporterTestCase<Layout> {
 		_layouts.add(layout);
 
 		return layout;
-	}
-
-	@Override
-	protected String getPrimaryKeyName() {
-		return "plid";
 	}
 
 	@Override

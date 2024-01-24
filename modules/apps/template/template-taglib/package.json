@@ -1,8 +1,8 @@
 {
 	"dependencies": {
-		"@clayui/core": "3.104.0",
-		"@clayui/drop-down": "3.105.0",
-		"@clayui/form": "3.104.0",
+		"@clayui/core": "3.108.0",
+		"@clayui/drop-down": "3.108.0",
+		"@clayui/form": "3.107.0",
 		"react": "16.12.0"
 	},
 	"name": "@liferay/template-taglib",
@@ -11,5 +11,5 @@
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "1.0.16"
+	"version": "1.0.19"
 }

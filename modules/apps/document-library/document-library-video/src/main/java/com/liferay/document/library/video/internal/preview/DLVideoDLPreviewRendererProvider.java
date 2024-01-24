@@ -6,8 +6,10 @@
 package com.liferay.document.library.video.internal.preview;
 
 import com.liferay.document.library.constants.DLFileVersionPreviewConstants;
-import com.liferay.document.library.kernel.util.DLProcessorRegistryUtil;
-import com.liferay.document.library.kernel.util.VideoProcessor;
+import com.liferay.document.library.kernel.model.DLProcessorConstants;
+import com.liferay.document.library.kernel.processor.DLProcessor;
+import com.liferay.document.library.kernel.processor.DLProcessorHelperUtil;
+import com.liferay.document.library.kernel.processor.VideoProcessor;
 import com.liferay.document.library.preview.DLPreviewRenderer;
 import com.liferay.document.library.preview.DLPreviewRendererProvider;
 import com.liferay.document.library.preview.exception.DLFileEntryPreviewGenerationException;
@@ -28,7 +30,6 @@ import javax.servlet.ServletContext;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Alejandro Tardín
@@ -43,7 +44,10 @@ public class DLVideoDLPreviewRendererProvider
 
 		mimeTypes.add(
 			ContentTypes.APPLICATION_VND_LIFERAY_VIDEO_EXTERNAL_SHORTCUT_HTML);
-		mimeTypes.addAll(_videoProcessor.getVideoMimeTypes());
+
+		VideoProcessor videoProcessor = (VideoProcessor)_dlProcessor;
+
+		mimeTypes.addAll(videoProcessor.getVideoMimeTypes());
 
 		return mimeTypes;
 	}
@@ -52,12 +56,14 @@ public class DLVideoDLPreviewRendererProvider
 	public DLPreviewRenderer getPreviewDLPreviewRenderer(
 		FileVersion fileVersion) {
 
-		if ((fileVersion != null) && !_videoProcessor.hasVideo(fileVersion) &&
+		VideoProcessor videoProcessor = (VideoProcessor)_dlProcessor;
+
+		if ((fileVersion != null) && !videoProcessor.hasVideo(fileVersion) &&
 			!Objects.equals(
 				fileVersion.getMimeType(),
 				ContentTypes.
 					APPLICATION_VND_LIFERAY_VIDEO_EXTERNAL_SHORTCUT_HTML) &&
-			!_videoProcessor.isVideoSupported(fileVersion.getMimeType())) {
+			!videoProcessor.isVideoSupported(fileVersion.getMimeType())) {
 
 			return null;
 		}
@@ -101,10 +107,12 @@ public class DLVideoDLPreviewRendererProvider
 			throw new DLFileEntryPreviewGenerationException();
 		}
 
-		if (!_videoProcessor.hasVideo(fileVersion)) {
-			if (!DLProcessorRegistryUtil.isPreviewableSize(fileVersion)) {
+		VideoProcessor videoProcessor = (VideoProcessor)_dlProcessor;
+
+		if (!videoProcessor.hasVideo(fileVersion)) {
+			if (!DLProcessorHelperUtil.isPreviewableSize(fileVersion)) {
 				throw new DLPreviewSizeException(
-					DLProcessorRegistryUtil.getPreviewableProcessorMaxSize(
+					DLProcessorHelperUtil.getPreviewableProcessorMaxSize(
 						fileVersion.getGroupId()));
 			}
 
@@ -115,6 +123,9 @@ public class DLVideoDLPreviewRendererProvider
 	@Reference
 	private DLFileVersionPreviewLocalService _dlFileVersionPreviewLocalService;
 
+	@Reference(target = "(type=" + DLProcessorConstants.VIDEO_PROCESSOR + ")")
+	private DLProcessor _dlProcessor;
+
 	@Reference
 	private DLVideoRenderer _dlVideoRenderer;
 
@@ -122,8 +133,5 @@ public class DLVideoDLPreviewRendererProvider
 		target = "(osgi.web.symbolicname=com.liferay.document.library.video)"
 	)
 	private ServletContext _servletContext;
-
-	@Reference(policyOption = ReferencePolicyOption.GREEDY)
-	private VideoProcessor _videoProcessor;
 
 }

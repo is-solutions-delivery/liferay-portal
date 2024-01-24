@@ -12,6 +12,8 @@ import com.liferay.change.tracking.rest.client.pagination.Pagination;
 import com.liferay.change.tracking.rest.client.problem.Problem;
 import com.liferay.change.tracking.rest.client.serdes.v1_0.CTCollectionSerDes;
 
+import java.net.URL;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -249,6 +251,10 @@ public interface CTCollectionResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {

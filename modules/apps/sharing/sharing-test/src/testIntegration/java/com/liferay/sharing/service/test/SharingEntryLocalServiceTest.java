@@ -65,7 +65,7 @@ public class SharingEntryLocalServiceTest {
 		_group = GroupTestUtil.addGroup();
 		_fromUser = UserTestUtil.addUser();
 		_toUser = UserTestUtil.addUser();
-		_user = UserTestUtil.addOmniAdminUser();
+		_user = UserTestUtil.addOmniadminUser();
 
 		UserTestUtil.setUser(TestPropsValues.getUser());
 	}

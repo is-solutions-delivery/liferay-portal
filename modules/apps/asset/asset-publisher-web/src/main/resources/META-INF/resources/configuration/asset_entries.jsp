@@ -94,7 +94,7 @@ long[] groupIds = assetPublisherDisplayContext.getGroupIds();
 %>
 
 <c:if test="<%= ArrayUtil.isNotEmpty(groupIds) %>">
-	<div class="d-flex">
+	<div class="d-flex flex-wrap">
 
 		<%
 		for (long groupId : groupIds) {
@@ -114,7 +114,7 @@ long[] groupIds = assetPublisherDisplayContext.getGroupIds();
 					displayType="secondary"
 					dropdownItems="<%= assetPublisherDisplayContext.getDropdownItems(group) %>"
 					label="<%= title %>"
-					propsTransformer="js/AssetEntrySelectionDropdownPropsTransformer"
+					propsTransformer="{AssetEntrySelectionDropdownPropsTransformer} from asset-publisher-web"
 					title="<%= title %>"
 				/>
 
@@ -125,7 +125,7 @@ long[] groupIds = assetPublisherDisplayContext.getGroupIds();
 	</div>
 </c:if>
 
-<script>
+<aui:script>
 	function <portlet:namespace />moveSelectionDown(assetEntryOrder) {
 		Liferay.Util.postForm(document.<portlet:namespace />fm, {
 			data: {
@@ -145,4 +145,4 @@ long[] groupIds = assetPublisherDisplayContext.getGroupIds();
 			},
 		});
 	}
-</script>
+</aui:script>

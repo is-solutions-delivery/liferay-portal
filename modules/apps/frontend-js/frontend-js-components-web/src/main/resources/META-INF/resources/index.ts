@@ -3,10 +3,12 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-export {default as BetaBadge} from './beta_indicator/BetaBadge';
-export {default as BetaButton} from './beta_indicator/BetaButton';
+export {default as FeatureIndicator} from './feature_indicator/FeatureIndicator';
 
-export {default as ClientExtension} from './ClientExtension';
+export {
+	default as ClientExtension,
+	IHTMLElementBuilder,
+} from './ClientExtension';
 export {default as CodeMirrorKeyboardMessage} from './code_mirror_keyboard_message/CodeMirrorKeyboardMessage';
 
 export {default as useId} from './hooks/useId';
@@ -14,6 +16,7 @@ export {default as useSessionState} from './hooks/useSessionState';
 
 export {
 	default as LearnMessage,
+	ILearnResourceContext,
 	LearnResourcesContext,
 } from './learn_message/LearnMessage';
 
@@ -31,3 +34,4 @@ export {
 
 export {default as TranslationAdminModal} from './translation_manager/TranslationAdminModal';
 export {default as TranslationAdminSelector} from './translation_manager/TranslationAdminSelector';
+export {Locale} from './translation_manager/TranslationAdminContent';

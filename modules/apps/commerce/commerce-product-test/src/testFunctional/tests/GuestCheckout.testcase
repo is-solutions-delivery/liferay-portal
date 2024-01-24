@@ -21,9 +21,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Speedwell");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Speedwell Portal");
 
@@ -51,10 +49,7 @@ definition {
 
 		Site.manageMembershipOptions(allowManualMembershipManagement = "true");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.addCP(
 			userEmailAddress = "buyer@liferay.com",
@@ -122,9 +117,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Speedwell");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Speedwell Portal");
 
@@ -152,10 +145,7 @@ definition {
 
 		Site.manageMembershipOptions(allowManualMembershipManagement = "true");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.addCP(
 			userEmailAddress = "buyer@liferay.com",
@@ -251,9 +241,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Speedwell");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Speedwell Portal");
 
@@ -281,10 +269,7 @@ definition {
 
 		Site.manageMembershipOptions(allowManualMembershipManagement = "true");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.addCP(
 			userEmailAddress = "buyer@liferay.com",
@@ -380,9 +365,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Speedwell");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Speedwell Portal");
 
@@ -429,9 +412,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Speedwell");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Speedwell Portal");
 
@@ -515,10 +496,7 @@ definition {
 
 		User.loginPG();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Accounts",
-			panel = "Control Panel",
-			portlet = "Accounts");
+		Account.openAccountsAdmin();
 
 		LexiconEntry.viewEntryStatus(
 			rowEntry = "Guest Account 1",
@@ -551,9 +529,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Speedwell");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Speedwell Portal");
 
@@ -608,10 +584,7 @@ definition {
 
 		User.firstLoginPG();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Accounts",
-			panel = "Control Panel",
-			portlet = "Accounts");
+		Account.openAccountsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Address Name");
 
@@ -622,6 +595,152 @@ definition {
 		TestUtils.assertEquals(
 			actual = ${guestAccountEmail},
 			expected = "buyer@liferay.com");
+	}
+
+	@description = "COMMERCE-12938. As a guest user, I want to be able to create a quote request order that must work with email populated and submit the quote request without notes on Minium site"
+	@priority = 5
+	test CanGuestUserCreateQuoteRequestOnMinium {
+		property custom.properties = "feature.flag.COMMERCE-11028=true";
+		property portal.acceptance = "true";
+
+		task ("Given a Minium site is created") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+		}
+
+		task ("And the admin marks the U-Joint's SKU as 'Price on Application'") {
+			CommerceProducts.openProductsAdmin();
+
+			CommerceProducts.searchAndGoToProductEntry(entryProductName = "U-Joint");
+
+			CommerceEntry.gotoMenuTab(menuTab = "SKUs");
+
+			CommerceNavigator.gotoTableListEntry(entryName = "MIN55861");
+
+			CommerceSKUs.editSkuPricing(priceOnApplication = "true");
+		}
+
+		task ("And 'Guest Checkout' is enabled for the site") {
+			CommerceChannels.openChannelsAdmin();
+
+			CommerceNavigator.gotoEntry(entryName = "Minium Portal");
+
+			Check.checkToggleSwitch(
+				key_toggleSwitchLabel = "Guest Checkout",
+				locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
+
+			Button.clickSave();
+		}
+
+		task ("And a SAP is created to view the pending order for Guest") {
+			ServiceAccessPolicy.openServiceAccessPolicyAdmin();
+
+			ServiceAccessPolicy.addServiceAccessPolicy(
+				defaultSwitch = "true",
+				enabled = "true",
+				methodName = "getFDSData",
+				policyName = "FDSApplication_getFDSData",
+				serviceClass = "com.liferay.frontend.data.set.taglib.internal.jaxrs.application.FDSApplication",
+				title = "FDSApplication_getFDSData");
+		}
+
+		task ("And the View permission of Catalog and Pending Orders pages for Guest are checked") {
+			for (var pageName : list "Catalog,Pending Orders") {
+				PagesAdmin.openPagesAdmin(siteURLKey = "minium");
+
+				PagesAdmin.gotoPageEllipsisMenuItem(
+					menuItem = "Permissions",
+					pageName = ${pageName});
+
+				Role.definePermissionPG(
+					permissionDefinitionKey = "CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX",
+					roleTitle = "guest");
+			}
+		}
+
+		task ("And the guest user adds the 'Price on Application' product to Cart") {
+			User.logoutPG();
+
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/catalog");
+
+			FrontStore.addInitializerProductToCart(
+				productName = "U-Joint",
+				productQuantity = 1);
+		}
+
+		task ("When clicking the 'Request a Quote' button in the Open Order Details Page") {
+			CommerceNavigator.gotoMiniCart();
+
+			Button.click(button = "Request a Quote");
+
+			Click(
+				buttonId = "requestQuote",
+				locator1 = "Button#BUTTON_ID");
+		}
+
+		task ("Then can view a new empty field related to 'Enter an email address.' present in the Request a Quote popup") {
+			AssertElementPresent(
+				key_title = "Request a Quote",
+				locator1 = "CommerceFrontStore#MODAL_TITLE");
+
+			AssertTextEquals(
+				key_placeHolder = "Enter an email address.",
+				locator1 = "TextInput#ANY_PLACEHOLDER",
+				value1 = "");
+		}
+
+		task ("And the guest cannot submit the request without filling in email info") {
+			Button.click(button = "Submit");
+
+			AssertElementPresent(
+				key_alertMessage = "The  field is required.",
+				locator1 = "Message#ERROR_ENTER_A_VALID_VALUE");
+		}
+
+		task ("When the guest user submits the request by filling in the email format for the email field") {
+			Type(
+				key_placeHolder = "Enter an email address.",
+				locator1 = "TextInput#ANY_PLACEHOLDER",
+				value1 = "guestuser@liferay.com");
+
+			Button.click(button = "Submit");
+		}
+
+		task ("Then admin can view the order with the status 'Quote Requested' in the Orders admin page") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = "test@liferay.com",
+				userLoginFullName = "Test Test");
+
+			CommerceOrders.openOrdersAdmin();
+
+			AssertElementPresent(
+				key_orderStatus = "Quote Requested",
+				locator1 = "CommerceOrders#ORDER_ELLIPSIS_BY_STATUS");
+
+			CommerceJSONOrdersAPI._deleteAllCommerceOrders();
+		}
+
+		task ("But if the guest user submits the request by filling in non-email format for the email field") {
+			User.logoutPG();
+
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/catalog");
+
+			FrontStore.addInitializerProductToCart(
+				productName = "U-Joint",
+				productQuantity = 1);
+
+			CommerceNavigator.gotoMiniCart();
+
+			CommerceOrders.createQuoteRequest(
+				quoteRequestEmail = "guestuser",
+				requestAQuoteInMiniCart = "true",
+				requestAQuoteInOpenOrdersPage = "true");
+		}
+
+		task ("Then it's not allowed to submit a request with invalid email address") {
+			AssertElementPresent(
+				key_alertMessage = "Please enter a valid email address.",
+				locator1 = "Message#ERROR_ENTER_A_VALID_VALUE");
+		}
 	}
 
 	@description = "COMMERCE-11277. As a Guest User, I can create a Quote Request in the Cart Summary by entering a personal message."
@@ -679,7 +798,9 @@ definition {
 		}
 
 		task ("When the Guest submits the request after writing a message in the note area") {
-			CommerceOrders.createQuoteRequest(quoteRequestValue = "I kindly request a quote for this product.");
+			CommerceOrders.createQuoteRequest(
+				quoteRequestEmail = "guestuser@liferay.com",
+				quoteRequestValue = "I kindly request a quote for this product.");
 		}
 
 		task ("Then the quote request is placed with the status 'Quote Requested' in the Orders Page") {
@@ -695,15 +816,168 @@ definition {
 		}
 	}
 
+	@description = "COMMERCE-12929. As an authenticated user, I want to be able to view the open order address for checkout that is not inherited from the guest's address and no default address pre-selected"
+	@priority = 5
+	test CanLoggedUserNotInheritGuestAddress {
+		property portal.acceptance = "true";
+
+		task ("Given a Minium site with a buyer user is created") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And an account address is added") {
+			Account.openAccountsAdmin();
+
+			LexiconEntry.gotoEntry(rowEntry = "Commerce Account");
+
+			Account.gotoAssigneeTab(assigneeTab = "Addresses");
+
+			Account.addAddress(
+				addressCity = "Test City",
+				addressCountry = "United States",
+				addressName = "Test Address",
+				addressPostalCode = "Test Zip Code",
+				addressRegion = "California",
+				addressStreet1 = "Test Street");
+		}
+
+		task ("And 'Guest Checkout' is enabled for the site") {
+			CommerceChannels.openChannelsAdmin();
+
+			CommerceNavigator.gotoEntry(entryName = "Minium Portal");
+
+			Check.checkToggleSwitch(
+				key_toggleSwitchLabel = "Guest Checkout",
+				locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
+
+			Button.clickSave();
+		}
+
+		task ("And the Manage Addresses permission of Accounts is removed for the Buyer role") {
+			Permissions.removePermissionViaAPI(
+				groupName = "Minium",
+				resourceAction = "MANAGE_ADDRESSES",
+				resourceName = "com.liferay.account.model.AccountEntry",
+				roleTitle = "Buyer",
+				roleType = "account");
+		}
+
+		task ("And the View permission of Catalog, Pending Orders, Checkout pages for Guest are checked") {
+			for (var pageName : list "Catalog,Pending Orders,Checkout") {
+				PagesAdmin.openPagesAdmin(siteURLKey = "minium");
+
+				if (${pageName} == "Checkout") {
+					PagesAdmin.gotoPageEllipsisMenuItem(
+						menuItem = "Permissions",
+						pageName = ${pageName},
+						parentPagesHierarchy = "Pending Orders");
+				}
+				else {
+					PagesAdmin.gotoPageEllipsisMenuItem(
+						menuItem = "Permissions",
+						pageName = ${pageName});
+				}
+
+				Role.definePermissionPG(
+					permissionDefinitionKey = "CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX",
+					roleTitle = "guest");
+			}
+		}
+
+		task ("And the guest user adds a product to the cart") {
+			User.logoutPG();
+
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/catalog");
+
+			FrontStore.addInitializerProductToCart(
+				productName = "U-Joint",
+				productQuantity = 1);
+		}
+
+		task ("And adds an address in the checkout page and moves to next step") {
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+
+			AssertElementNotPresent(
+				key_fieldLabel = "Choose Shipping Address",
+				locator1 = "Select#GENERIC_SELECT_FIELD");
+
+			for (var fieldNames : list "Name,Address,Zip,City") {
+				AssertTextEquals(
+					key_fieldName = ${fieldNames},
+					locator1 = "CommerceAccelerators#CHECKOUT_GENERIC_TEXT_INPUT",
+					value1 = "");
+			}
+
+			CommerceCheckout.setAddress(
+				guestEmail = "guest@liferay.com",
+				newAddressAddress = "Guest Address",
+				newAddressCity = "Guest City",
+				newAddressCountry = "United States",
+				newAddressName = "Guest Address Name",
+				newAddressZipCode = "Guest Zip Code");
+
+			Click(locator1 = "Button#CONTINUE");
+		}
+
+		task ("When the buyer navigates to the checkout page via mini-cart on Minium") {
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			CommerceCheckout.gotoCheckoutViaMiniCart();
+		}
+
+		task ("Then can view only account addresses that are created by admin are selectable and no default address pre-selected") {
+			AssertSelectedLabel(
+				key_fieldLabel = "Choose Shipping Address",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "Choose Address");
+
+			for (var optionName : list "Choose Address,Test Address,Guest Address Name") {
+				if (${optionName} == "Guest Address Name") {
+					AssertElementNotPresent(
+						key_fieldLabel = "Choose Shipping Address",
+						key_value = ${optionName},
+						locator1 = "Select#GENERIC_SELECT_VALUE");
+				}
+				else {
+					AssertElementPresent(
+						key_fieldLabel = "Choose Shipping Address",
+						key_value = ${optionName},
+						locator1 = "Select#GENERIC_SELECT_VALUE");
+				}
+			}
+
+			for (var fieldNames : list "Name,Address,Zip,City") {
+				AssertTextEquals(
+					key_fieldName = ${fieldNames},
+					locator1 = "CommerceAccelerators#CHECKOUT_GENERIC_TEXT_INPUT_DISABLED",
+					value1 = "");
+			}
+		}
+	}
+
 	@priority = 5
 	test GuestAccountIsNotCombinedWithExistingUserAccount {
 		property portal.acceptance = "true";
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Speedwell");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Speedwell Portal");
 
@@ -731,10 +1005,7 @@ definition {
 
 		Site.manageMembershipOptions(allowManualMembershipManagement = "true");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.addCP(
 			userEmailAddress = "buyer@liferay.com",
@@ -835,10 +1106,7 @@ definition {
 
 		User.loginPG();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Accounts",
-			panel = "Control Panel",
-			portlet = "Accounts");
+		Account.openAccountsAdmin();
 
 		LexiconEntry.viewEntryStatus(
 			rowEntry = "Buyer User",
@@ -871,9 +1139,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Speedwell");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Speedwell Portal");
 
@@ -898,9 +1164,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Speedwell");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Speedwell Portal");
 
@@ -964,9 +1228,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Speedwell");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Speedwell Portal");
 
@@ -1013,9 +1275,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Speedwell");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Speedwell Portal");
 
@@ -1035,9 +1295,7 @@ definition {
 
 		Button.clickSave();
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceProducts.searchProduct(search = "U-Joint");
 
@@ -1090,9 +1348,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Speedwell");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Speedwell Portal");
 
@@ -1168,9 +1424,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Speedwell");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Speedwell Portal");
 
@@ -1282,10 +1536,7 @@ definition {
 
 		User.loginPG();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Accounts",
-			panel = "Control Panel",
-			portlet = "Accounts");
+		Account.openAccountsAdmin();
 
 		LexiconEntry.viewEntryStatus(
 			rowEntry = "Guest Account",

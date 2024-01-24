@@ -31,6 +31,10 @@ public class CommercePaymentEntryTable
 	public final Column<CommercePaymentEntryTable, Long> mvccVersion =
 		createColumn(
 			"mvccVersion", Long.class, Types.BIGINT, Column.FLAG_NULLITY);
+	public final Column<CommercePaymentEntryTable, String>
+		externalReferenceCode = createColumn(
+			"externalReferenceCode", String.class, Types.VARCHAR,
+			Column.FLAG_DEFAULT);
 	public final Column<CommercePaymentEntryTable, Long>
 		commercePaymentEntryId = createColumn(
 			"commercePaymentEntryId", Long.class, Types.BIGINT,
@@ -63,9 +67,19 @@ public class CommercePaymentEntryTable
 	public final Column<CommercePaymentEntryTable, Clob> callbackURL =
 		createColumn(
 			"callbackURL", Clob.class, Types.CLOB, Column.FLAG_DEFAULT);
+	public final Column<CommercePaymentEntryTable, Clob> cancelURL =
+		createColumn("cancelURL", Clob.class, Types.CLOB, Column.FLAG_DEFAULT);
 	public final Column<CommercePaymentEntryTable, String> currencyCode =
 		createColumn(
 			"currencyCode", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
+	public final Column<CommercePaymentEntryTable, Clob> errorMessages =
+		createColumn(
+			"errorMessages", Clob.class, Types.CLOB, Column.FLAG_DEFAULT);
+	public final Column<CommercePaymentEntryTable, String> languageId =
+		createColumn(
+			"languageId", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
+	public final Column<CommercePaymentEntryTable, Clob> note = createColumn(
+		"note", Clob.class, Types.CLOB, Column.FLAG_DEFAULT);
 	public final Column<CommercePaymentEntryTable, String>
 		paymentIntegrationKey = createColumn(
 			"paymentIntegrationKey", String.class, Types.VARCHAR,
@@ -77,6 +91,12 @@ public class CommercePaymentEntryTable
 	public final Column<CommercePaymentEntryTable, Integer> paymentStatus =
 		createColumn(
 			"paymentStatus", Integer.class, Types.INTEGER, Column.FLAG_DEFAULT);
+	public final Column<CommercePaymentEntryTable, String> reasonKey =
+		createColumn(
+			"reasonKey", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
+	public final Column<CommercePaymentEntryTable, String> reasonName =
+		createColumn(
+			"reasonName", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 	public final Column<CommercePaymentEntryTable, Clob> redirectURL =
 		createColumn(
 			"redirectURL", Clob.class, Types.CLOB, Column.FLAG_DEFAULT);
@@ -84,6 +104,8 @@ public class CommercePaymentEntryTable
 		createColumn(
 			"transactionCode", String.class, Types.VARCHAR,
 			Column.FLAG_DEFAULT);
+	public final Column<CommercePaymentEntryTable, Integer> type = createColumn(
+		"type_", Integer.class, Types.INTEGER, Column.FLAG_DEFAULT);
 
 	private CommercePaymentEntryTable() {
 		super("CommercePaymentEntry", CommercePaymentEntryTable::new);

@@ -208,6 +208,16 @@ public class KBArticleLocalServiceWrapper
 	}
 
 	@Override
+	public void deleteKBArticles(
+			long groupId, long parentResourcePrimKey,
+			boolean includeTrashedEntries)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_kbArticleLocalService.deleteKBArticles(
+			groupId, parentResourcePrimKey, includeTrashedEntries);
+	}
+
+	@Override
 	public void deleteKBArticles(long[] resourcePrimKeys)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
@@ -679,6 +689,13 @@ public class KBArticleLocalServiceWrapper
 	}
 
 	@Override
+	public KBArticle getLatestKBArticle(long resourcePrimKey)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _kbArticleLocalService.getLatestKBArticle(resourcePrimKey);
+	}
+
+	@Override
 	public KBArticle getLatestKBArticle(long resourcePrimKey, int status)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
@@ -778,6 +795,24 @@ public class KBArticleLocalServiceWrapper
 	}
 
 	@Override
+	public void moveDependentKBArticlesToTrash(
+			long parentResourcePrimKey, long trashEntryId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_kbArticleLocalService.moveDependentKBArticlesToTrash(
+			parentResourcePrimKey, trashEntryId);
+	}
+
+	@Override
+	public void moveDependentKBArticleToTrash(
+			KBArticle kbArticle, long trashEntryId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_kbArticleLocalService.moveDependentKBArticleToTrash(
+			kbArticle, trashEntryId);
+	}
+
+	@Override
 	public void moveKBArticle(
 			long userId, long resourcePrimKey, long parentResourceClassNameId,
 			long parentResourcePrimKey, double priority)
@@ -786,6 +821,48 @@ public class KBArticleLocalServiceWrapper
 		_kbArticleLocalService.moveKBArticle(
 			userId, resourcePrimKey, parentResourceClassNameId,
 			parentResourcePrimKey, priority);
+	}
+
+	@Override
+	public void moveKBArticleFromTrash(
+			long userId, long resourcePrimKey, long parentResourceClassNameId,
+			long parentResourcePrimKey)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_kbArticleLocalService.moveKBArticleFromTrash(
+			userId, resourcePrimKey, parentResourceClassNameId,
+			parentResourcePrimKey);
+	}
+
+	@Override
+	public KBArticle moveKBArticleToTrash(long userId, long resourcePrimKey)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _kbArticleLocalService.moveKBArticleToTrash(
+			userId, resourcePrimKey);
+	}
+
+	@Override
+	public void restoreDependentKBArticleFromTrash(KBArticle kbArticle)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_kbArticleLocalService.restoreDependentKBArticleFromTrash(kbArticle);
+	}
+
+	@Override
+	public void restoreDependentKBArticlesFromTrash(long parentResourcePrimKey)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_kbArticleLocalService.restoreDependentKBArticlesFromTrash(
+			parentResourcePrimKey);
+	}
+
+	@Override
+	public void restoreKBArticleFromTrash(long userId, long resourcePrimKey)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_kbArticleLocalService.restoreKBArticleFromTrash(
+			userId, resourcePrimKey);
 	}
 
 	@Override

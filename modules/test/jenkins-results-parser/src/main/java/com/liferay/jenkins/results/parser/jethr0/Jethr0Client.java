@@ -6,16 +6,23 @@
 package com.liferay.jenkins.results.parser.jethr0;
 
 import com.liferay.jenkins.results.parser.JenkinsMaster;
-import com.liferay.jenkins.results.parser.Jethr0BuildUpdater;
+
+import java.io.Closeable;
+import java.io.IOException;
 
 import java.util.Map;
+
+import javax.jms.JMSException;
+import javax.jms.MessageListener;
 
 import org.json.JSONObject;
 
 /**
  * @author Michael Hashimoto
  */
-public interface Jethr0Client {
+public interface Jethr0Client extends Closeable {
+
+	public void close() throws IOException;
 
 	public void connect();
 
@@ -27,7 +34,7 @@ public interface Jethr0Client {
 		String jenkinsJobName, Map<String, String> jenkinsBuildParameters,
 		long jobId, String buildName);
 
-	public void disconnect();
+	public void createBuildRun(long buildId);
 
 	public Environment getEnvironment();
 
@@ -39,15 +46,21 @@ public interface Jethr0Client {
 
 	public String liferayDXPRequest(String urlPath, String message);
 
-	public void sendMessageToJethr0(String message);
+	public void sendGitHubMessageToJethr0(String message);
+
+	public void sendJRPMessageToJethr0(String message);
 
 	public String springBootRequest(String urlPath);
 
 	public String springBootRequest(String urlPath, String message);
 
-	public void subscribe(Jethr0BuildUpdater jethr0BuildUpdater);
+	public void subscribe(
+			MessageListener messageListener, String messageSelector)
+		throws JMSException;
 
-	public void unsubscribe(Jethr0BuildUpdater jethr0BuildUpdater);
+	public void unsubscribe(
+			MessageListener messageListener, String messageSelector)
+		throws JMSException;
 
 	public enum Environment {
 
@@ -65,9 +78,9 @@ public interface Jethr0Client {
 
 	}
 
-	public enum EventTrigger {
+	public enum EventType {
 
-		CREATE_BUILD
+		CREATE_BUILD, CREATE_BUILD_RUN
 
 	}
 

@@ -12,6 +12,8 @@ import com.liferay.object.admin.rest.client.pagination.Pagination;
 import com.liferay.object.admin.rest.client.problem.Problem;
 import com.liferay.object.admin.rest.client.serdes.v1_0.ObjectDefinitionSerDes;
 
+import java.net.URL;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -189,6 +191,10 @@ public interface ObjectDefinitionResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {

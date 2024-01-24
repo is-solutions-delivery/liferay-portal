@@ -26,11 +26,6 @@
 		<td></td>
 	</tr>
 	<tr>
-		<td>PANEL_LINK</td>
-		<td>//label[contains(.,'Panel Link')]/following-sibling::div//span</td>
-		<td></td>
-	</tr>
-	<tr>
 		<td>SAVE_BUTTON</td>
 		<td>//button[@id='_com_liferay_object_web_internal_object_definitions_portlet_ObjectDefinitionsPortlet_save']</td>
 		<td></td>
@@ -52,12 +47,12 @@
 	</tr>
 	<tr>
 		<td>SCOPE</td>
-		<td>//label[contains(.,'Scope')]/following-sibling::div//input</td>
+		<td>//label[contains(.,'Scope')]//..//button</td>
 		<td></td>
 	</tr>
 	<tr>
 		<td>TITLE_FIELD</td>
-		<td>//label[contains(.,'Title Field')]/following-sibling::div//input</td>
+		<td>//label[contains(.,'Title Field')]//..//button</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -77,7 +72,7 @@
 	</tr>
 	<tr>
 		<td>VIEW_OBJECT_SCOPE_DISABLED</td>
-		<td>//label[contains(.,'Scope')]/following-sibling::div//input[@disabled='']</td>
+		<td>//label[contains(text(),'Scope') and (@class='disabled')]//..//button</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -127,7 +122,7 @@
 	</tr>
 	<tr>
 		<td>VIEW_ENTRY_FIELD_BY_INDEX</td>
-		<td>//div[contains(@class,'dnd-td')][${key_index}]//span[contains(text(),'${key_entry}')]</td>
+		<td>//div[@class='dnd-tr'][${key_tableRow}]//div[@class='dnd-td'][${key_tableCell}]//span[contains(.,'${key_tableValue}')]|//div[@class='dnd-tr'][${key_tableRow}]//div[@class='dnd-td'][${key_tableCell}]//a[contains(.,'${key_tableValue}')]</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -171,11 +166,6 @@
 		<td></td>
 	</tr>
 	<tr>
-		<td>ASSERT_DELETION_TYPE_VALUE</td>
-		<td>//div[contains(@class, 'form-group')]//label[contains(.,'Deletion Type')]//..//input[contains(@value,'${key_value}')]</td>
-		<td></td>
-	</tr>
-	<tr>
 		<td>ASSERT_TWO_COLUMN_FIELD_ENTRY</td>
 		<td>//div[contains(@class,'col-md-6')]</td>
 		<td></td>
@@ -215,7 +205,7 @@
 
 	<tr>
 		<td>ACCOUNT_RESTRICTED_FIELD</td>
-		<td>//label[text()='Account Restricted Field']/following-sibling::div//input</td>
+		<td>//label[contains(text(),'Account Restricted Field')]//..//button</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -230,7 +220,7 @@
 	</tr>
 	<tr>
 		<td>ACCOUNT_RESTRICTED_FIELD_DISABLED</td>
-		<td>//label[text()='Account Restricted Field']/following-sibling::div//input[@disabled='']</td>
+		<td>//label[contains(text(),'Account Restricted Field') and (@class='disabled')]//..//button</td>
 		<td></td>
 	</tr>
 	<tr>

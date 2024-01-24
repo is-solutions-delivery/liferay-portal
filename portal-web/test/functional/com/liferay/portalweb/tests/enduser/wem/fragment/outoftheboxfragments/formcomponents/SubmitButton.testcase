@@ -48,6 +48,480 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-191474. It's not possible to change an object from publish to draft even if the submit is draft. If the submit is Approved it is not possible for an entry to have a draft status."
+	@priority = 5
+	test CannotChangeObjectFromApprovedToDraft {
+		task ("Given an object entry is enable 'Allow Users to Save Entries as Draft'") {
+			task ("Enable 'Allow Users to Save Entries as Draft' in object") {
+				ObjectAdmin.openObjectAdmin();
+
+				ObjectPortlet.selectCustomObject(label = "Purchase Order");
+
+				Check.checkToggleSwitch(
+					key_toggleSwitchLabel = "Allow Users to Save Entries as Draft",
+					locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
+
+				CreateObject.saveObject();
+			}
+		}
+
+		task ("When changing the submit button to draft in content page and display page") {
+			task ("Add a Form Container framgment to display page template") {
+				DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "Test Site Name");
+
+				DisplayPageTemplatesAdmin.addDisplayPage(
+					contentType = "Purchase Order",
+					displayPageName = "Display Page Name");
+
+				PageEditor.addFragment(
+					collectionName = "Form Components",
+					fragmentName = "Form Container");
+			}
+
+			task ("Map the Form Container to the object") {
+				PageEditor.editFormContainer(
+					contentType = "Purchase Order (Default)",
+					panel = "General");
+			}
+
+			task ("Duplicate the Submit Button") {
+				PageEditor.gotoDuplicate(fragmentName = "Submit Button");
+			}
+
+			task ("Change the the first submit button to draft") {
+				PageEditor.gotoConfiguration(fragmentName = "Submit Button");
+
+				Select(
+					key_fieldLabel = "Submitted Entry Status",
+					locator1 = "Select#GENERIC_SELECT_FIELD",
+					value1 = "Draft");
+
+				PageEditor.publish();
+			}
+
+			task ("Add a Form Container framgment to content page") {
+				JSONLayout.addPublicLayout(
+					groupName = "Test Site Name",
+					layoutName = "Test Page Name",
+					type = "content");
+
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Page Name",
+					siteName = "Test Site Name");
+
+				PageEditor.addFragment(
+					collectionName = "Form Components",
+					fragmentName = "Form Container");
+			}
+
+			task ("Map the Form Container to the object") {
+				PageEditor.editFormContainer(
+					contentType = "Purchase Order",
+					panel = "General");
+			}
+
+			task ("Duplicate the Submit Button") {
+				PageEditor.gotoDuplicate(fragmentName = "Submit Button");
+			}
+
+			task ("Change the the first submit button to draft") {
+				PageEditor.gotoConfiguration(fragmentName = "Submit Button");
+
+				Select(
+					key_fieldLabel = "Submitted Entry Status",
+					locator1 = "Select#GENERIC_SELECT_FIELD",
+					value1 = "Draft");
+
+				PageEditor.publish();
+			}
+		}
+
+		task ("Then assert it's not possible to change an object from publish to draft even if the submit is draft and it is not possible for an entry to have a draft status if the submit is Approved.") {
+			task ("Navigate to the content page at view mode") {
+				ContentPagesNavigator.openViewContentPage(
+					pageName = "Test Page Name",
+					siteName = "Test Site Name");
+			}
+
+			task ("Write “1” in the placeholder.submit using the first button (draft)") {
+				Type(
+					key_text = "Name",
+					locator1 = "TextInput#ANY",
+					value1 = 1);
+
+				Button.clickSubmitButton();
+			}
+
+			task ("Navigate to the content page at view mode") {
+				ContentPagesNavigator.openViewContentPage(
+					pageName = "Test Page Name",
+					siteName = "Test Site Name");
+			}
+
+			task ("Write “2” in the placeholder, submit using the second button (published)") {
+				Type(
+					key_text = "Name",
+					locator1 = "TextInput#ANY",
+					value1 = 2);
+
+				Click(
+					key_indexNumber = 2,
+					key_text = "Submit",
+					locator1 = "Button#ANY_N");
+			}
+
+			task ("View the published entry is saved as draft in object") {
+				ApplicationsMenu.gotoPortlet(
+					category = "Object",
+					panel = "Control Panel",
+					portlet = "Purchase Orders");
+
+				AssertVisible(
+					key_entry = 1,
+					key_status = "Draft",
+					locator1 = "ObjectPortlet#ENTRY_STATUS");
+
+				AssertVisible(
+					key_entry = 2,
+					key_status = "Approved",
+					locator1 = "ObjectPortlet#ENTRY_STATUS");
+			}
+
+			task ("Navigate to the content page at edit mode") {
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Page Name",
+					siteName = "Test Site Name");
+			}
+
+			task ("Add two Heading Fragments") {
+				PageEditor.addFragment(
+					collectionName = "Basic Components",
+					fragmentName = "Heading",
+					targetFragmentName = "Form Container");
+
+				PageEditor.addFragment(
+					collectionName = "Basic Components",
+					fragmentName = "Heading",
+					targetFragmentName = "Heading");
+			}
+
+			task ("Link the first one to the Draft entry number and select the DPT you created as Field.") {
+				PageEditorMapping.gotoEditableFieldMapping(
+					fragmentName = "Heading",
+					id = "element-text");
+
+				Navigator.gotoNavTab(navTab = "Link");
+
+				Select(
+					key_fieldLabel = "Link",
+					locator1 = "Select#GENERIC_SELECT_FIELD",
+					value1 = "Mapped URL");
+
+				PageEditor.waitForAutoSave();
+
+				var objectEntryId1 = JSONObject.getObjectEntryId(
+					entryValue = 1,
+					fieldName = "name",
+					objectName = "PurchaseOrder");
+
+				PageEditorMapping.mapEditableFieldToAsset(
+					entryTitle = ${objectEntryId1},
+					navItem = "Purchase Orders",
+					rowItem = "//*[@data-qa-id='row'][contains(.,'${objectEntryId1}')]");
+
+				Select(
+					locator1 = "PageEditorEditableLink#FIELD",
+					value1 = "Display Page Name");
+
+				PageEditor.waitForAutoSave();
+			}
+
+			task ("Link the second one to the Approved entry number and select the DPT you created as Field.") {
+				PageEditorMapping.gotoEditableFieldMapping(
+					fragmentName = "Heading",
+					id = "element-text",
+					index = 2);
+
+				Navigator.gotoNavTab(navTab = "Link");
+
+				Select(
+					key_fieldLabel = "Link",
+					locator1 = "Select#GENERIC_SELECT_FIELD",
+					value1 = "Mapped URL");
+
+				PageEditor.waitForAutoSave();
+
+				var objectEntryId2 = JSONObject.getObjectEntryId(
+					entryValue = 2,
+					fieldName = "name",
+					objectName = "PurchaseOrder");
+
+				PageEditorMapping.mapEditableFieldToAsset(
+					entryTitle = ${objectEntryId2},
+					navItem = "Purchase Orders",
+					rowItem = "//*[@data-qa-id='row'][contains(.,'${objectEntryId2}')]");
+
+				Select(
+					locator1 = "PageEditorEditableLink#FIELD",
+					value1 = "Display Page Name");
+
+				PageEditor.waitForAutoSave();
+			}
+
+			task ("Publish the page") {
+				PageEditor.publish();
+			}
+
+			task ("Navigate to the content page at view mode") {
+				ContentPagesNavigator.openViewContentPage(
+					pageName = "Test Page Name",
+					siteName = "Test Site Name");
+			}
+
+			task ("Click on the first Heading (Draft)") {
+				Click(
+					key_text = "Heading Example",
+					locator1 = "Link#ANY");
+			}
+
+			task ("Write “Test” in the placeholder") {
+				Type(
+					key_text = "Name",
+					locator1 = "TextInput#ANY",
+					value1 = "Test");
+
+				Button.clickSubmitButton();
+			}
+
+			task ("In a new tab navigate to the object") {
+				var portalURL = PropsUtil.get("portal.url");
+
+				Open.openInTheNewTab(value1 = ${portalURL});
+
+				ApplicationsMenu.gotoPortlet(
+					category = "Object",
+					panel = "Control Panel",
+					portlet = "Purchase Orders");
+			}
+
+			task ("View "Test" is saved as draft and has replaced "1"") {
+				AssertVisible(
+					key_entry = "Test",
+					key_status = "Draft",
+					locator1 = "ObjectPortlet#ENTRY_STATUS");
+
+				AssertElementNotPresent(
+					key_entry = 1,
+					key_status = "Draft",
+					locator1 = "ObjectPortlet#ENTRY_STATUS");
+			}
+
+			task ("Return to the open DPT tab") {
+				Navigator.closeWindow();
+			}
+
+			task ("Navigate to the content page at view mode") {
+				ContentPagesNavigator.openViewContentPage(
+					pageName = "Test Page Name",
+					siteName = "Test Site Name");
+			}
+
+			task ("Click on the first Heading (Draft)") {
+				Click(
+					key_text = "Heading Example",
+					locator1 = "Link#ANY");
+			}
+
+			task ("Write "TestApproved" in the placeholder") {
+				Type(
+					key_text = "Name",
+					locator1 = "TextInput#ANY",
+					value1 = "TestApproved");
+
+				Click(
+					key_indexNumber = 2,
+					key_text = "Submit",
+					locator1 = "Button#ANY_N");
+			}
+
+			task ("In a new tab navigate to the object") {
+				Open.openInTheNewTab(value1 = ${portalURL});
+
+				ApplicationsMenu.gotoPortlet(
+					category = "Object",
+					panel = "Control Panel",
+					portlet = "Purchase Orders");
+			}
+
+			task (""TestApproved" is saved as Approved and has replaced "Test"") {
+				AssertVisible(
+					key_entry = "TestApproved",
+					key_status = "Approved",
+					locator1 = "ObjectPortlet#ENTRY_STATUS");
+
+				AssertElementNotPresent(
+					key_entry = "Test",
+					key_status = "Draft",
+					locator1 = "ObjectPortlet#ENTRY_STATUS");
+			}
+
+			task ("Return to the open DPT tab") {
+				Navigator.closeWindow();
+			}
+
+			task ("Navigate to the content page at view mode") {
+				ContentPagesNavigator.openViewContentPage(
+					pageName = "Test Page Name",
+					siteName = "Test Site Name");
+			}
+
+			task ("Click on the first Heading (Draft)") {
+				Click(
+					key_text = "Heading Example",
+					locator1 = "Link#ANY");
+			}
+
+			task ("Write "TestDraft" in the placeholder") {
+				Type(
+					key_text = "Name",
+					locator1 = "TextInput#ANY",
+					value1 = "TestApproved");
+
+				Button.clickSubmitButton();
+			}
+
+			task ("An error message appears: "An error occurred while sending the form information"") {
+				AssertElementPresent(
+					locator1 = "Message#ERROR",
+					value1 = "An error occurred while sending the form information.");
+			}
+
+			task ("In a new tab navigate to the object") {
+				Open.openInTheNewTab(value1 = ${portalURL});
+
+				ApplicationsMenu.gotoPortlet(
+					category = "Object",
+					panel = "Control Panel",
+					portlet = "Purchase Orders");
+			}
+
+			task (""TestDraft" is not saved and "TestApproved" is saved as Approved") {
+				AssertVisible(
+					key_entry = "TestApproved",
+					key_status = "Approved",
+					locator1 = "ObjectPortlet#ENTRY_STATUS");
+
+				AssertElementNotPresent(
+					key_entry = "TestDraft",
+					key_status = "Draft",
+					locator1 = "ObjectPortlet#ENTRY_STATUS");
+			}
+
+			task ("Return to the open DPT tab") {
+				Navigator.closeWindow();
+			}
+
+			task ("Navigate to the content page at view mode") {
+				ContentPagesNavigator.openViewContentPage(
+					pageName = "Test Page Name",
+					siteName = "Test Site Name");
+			}
+
+			task ("Click on the second Heading (Approved)") {
+				Click(
+					key_indexNumber = 2,
+					key_text = "Heading Example",
+					locator1 = "Link#ANY_N");
+			}
+
+			task ("Write "TestA" in the placeholder") {
+				Type(
+					key_text = "Name",
+					locator1 = "TextInput#ANY",
+					value1 = "TestA");
+
+				Button.clickSubmitButton();
+			}
+
+			task ("An error message appears: "An error occurred while sending the form information"") {
+				AssertElementPresent(
+					locator1 = "Message#ERROR",
+					value1 = "An error occurred while sending the form information.");
+			}
+
+			task ("In a new tab navigate to the object") {
+				Open.openInTheNewTab(value1 = ${portalURL});
+
+				ApplicationsMenu.gotoPortlet(
+					category = "Object",
+					panel = "Control Panel",
+					portlet = "Purchase Orders");
+			}
+
+			task (""TestA" is not saved and "2" is saved as Approved") {
+				AssertVisible(
+					key_entry = 2,
+					key_status = "Approved",
+					locator1 = "ObjectPortlet#ENTRY_STATUS");
+
+				AssertElementNotPresent(
+					key_entry = "TestA",
+					key_status = "Draft",
+					locator1 = "ObjectPortlet#ENTRY_STATUS");
+			}
+
+			task ("Return to the open DPT tab") {
+				Navigator.closeWindow();
+			}
+
+			task ("Navigate to the content page at view mode") {
+				ContentPagesNavigator.openViewContentPage(
+					pageName = "Test Page Name",
+					siteName = "Test Site Name");
+			}
+
+			task ("Click on the second Heading (Approved)") {
+				Click(
+					key_indexNumber = 2,
+					key_text = "Heading Example",
+					locator1 = "Link#ANY_N");
+			}
+
+			task ("Write "TestB" in the placeholder") {
+				Type(
+					key_text = "Name",
+					locator1 = "TextInput#ANY",
+					value1 = "TestB");
+
+				Click(
+					key_indexNumber = 2,
+					key_text = "Submit",
+					locator1 = "Button#ANY_N");
+			}
+
+			task ("In a new tab navigate to the object") {
+				Open.openInTheNewTab(value1 = ${portalURL});
+
+				ApplicationsMenu.gotoPortlet(
+					category = "Object",
+					panel = "Control Panel",
+					portlet = "Purchase Orders");
+			}
+
+			task (""TestB" is saved as Approved and has replaced "2"") {
+				AssertVisible(
+					key_entry = "TestB",
+					key_status = "Approved",
+					locator1 = "ObjectPortlet#ENTRY_STATUS");
+
+				AssertElementNotPresent(
+					key_entry = 2,
+					key_status = "Approved",
+					locator1 = "ObjectPortlet#ENTRY_STATUS");
+			}
+		}
+	}
+
 	@description = "This is a test for LPS-189534. The site administrater cannot select the form type fragments for Submit Button field type."
 	@priority = 3
 	test CannotSelectFormTypeFragmentsForSubmitButtonFieldType {
@@ -60,9 +534,9 @@ definition {
 
 			task ("Select the fragment from Form Components") {
 				Click(
-					key_class = "btn-secondary",
-					key_index = 11,
-					locator1 = "Button#ANY_WITH_CLASS_AND_INDEX");
+					key_tableEntry = "Submit Button",
+					key_text = "Select",
+					locator1 = "LexiconTable#TABLE_ENTRY_BUTTON");
 
 				SelectFrame(locator1 = "IFrame#MODAL_BODY");
 
@@ -112,9 +586,9 @@ definition {
 
 			task ("Open the Select Fragment modal for Submit Button field type") {
 				Click(
-					key_class = "btn-secondary",
-					key_index = 11,
-					locator1 = "Button#ANY_WITH_CLASS_AND_INDEX");
+					key_tableEntry = "Submit Button",
+					key_text = "Select",
+					locator1 = "LexiconTable#TABLE_ENTRY_BUTTON");
 			}
 
 			task ("Select the new fragment from current site") {
@@ -281,6 +755,222 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-191474. Using Keyboard navigation the toggle button Allow Users to Save Entries as Draft can be enabled and disabled. The Allow Users to Save Entries as Draft toggle button should comply with WCAG 2.1 AA standard."
+	@priority = 3
+	test EnableAndDisableAllowUsersToSaveEntriesAsDraftViaKeyboardAndViewAccessibility {
+		task ("When go to object admin and edit the object") {
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Purchase Order");
+		}
+
+		task ("Then it is able to enable and disbale Allow Users to Save Entries as Draft by keyboard") {
+			KeyPress(
+				key_toggleSwitchLabel = "Allow Users to Save Entries as Draft",
+				locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH",
+				value1 = "\SPACE");
+
+			AssertChecked.assertCheckedNotVisible(
+				key_toggleSwitchLabel = "Allow Users to Save Entries as Draft",
+				locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
+
+			// Comment out for LPS-202564
+
+			//AssertAccessible();
+
+			KeyPress(
+				key_toggleSwitchLabel = "Allow Users to Save Entries as Draft",
+				locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH",
+				value1 = "\SPACE");
+
+			AssertNotChecked.assertNotCheckedNotVisible(
+				key_toggleSwitchLabel = "Allow Users to Save Entries as Draft",
+				locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
+
+			// Comment out for LPS-202564
+
+			//AssertAccessible();
+
+		}
+	}
+
+	@description = "This is a test for LPS-191474. An option is added to the Submit Fragment that allows users to save entries as draft."
+	@priority = 5
+	test EnableSaveAsDraftOptionAndViewTheEntryIsSavedAsDraft {
+		task ("Given an object entry is enable 'Allow Users to Save Entries as Draft'") {
+			task ("Enable 'Allow Users to Save Entries as Draft' in object") {
+				ObjectAdmin.openObjectAdmin();
+
+				ObjectPortlet.selectCustomObject(label = "Purchase Order");
+
+				Check.checkToggleSwitch(
+					key_toggleSwitchLabel = "Allow Users to Save Entries as Draft",
+					locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
+
+				CreateObject.saveObject();
+			}
+		}
+
+		task ("When adding a form container and change the submit button to draft") {
+			task ("Add a Form Container framgment to content page") {
+				JSONLayout.addPublicLayout(
+					groupName = "Test Site Name",
+					layoutName = "Test Page Name",
+					type = "content");
+
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Page Name",
+					siteName = "Test Site Name");
+
+				PageEditor.addFragment(
+					collectionName = "Form Components",
+					fragmentName = "Form Container");
+			}
+
+			task ("Map the Form Container to the object") {
+				PageEditor.editFormContainer(
+					contentType = "Purchase Order",
+					panel = "General");
+			}
+
+			task ("Change the submit button to draft") {
+				PageEditor.gotoConfiguration(fragmentName = "Submit Button");
+
+				Select(
+					key_fieldLabel = "Submitted Entry Status",
+					locator1 = "Select#GENERIC_SELECT_FIELD",
+					value1 = "Draft");
+
+				PageEditor.publish();
+			}
+		}
+
+		task ("Then the published entry is saved as draft in object") {
+			task ("Navigate to the content page at view mode") {
+				ContentPagesNavigator.openViewContentPage(
+					pageName = "Test Page Name",
+					siteName = "Test Site Name");
+			}
+
+			task ("Write “testDraft” on the placeholder and submit the form") {
+				Type(
+					key_text = "Name",
+					locator1 = "TextInput#ANY",
+					value1 = "testDraft");
+
+				Button.clickSubmitButton();
+
+				AssertTextPresent(value1 = "Thank you. Your information was successfully received.");
+			}
+
+			task ("View the published entry is saved as draft in object") {
+				ApplicationsMenu.gotoPortlet(
+					category = "Object",
+					panel = "Control Panel",
+					portlet = "Purchase Orders");
+
+				AssertVisible(
+					key_entry = "testDraft",
+					key_status = "Draft",
+					locator1 = "ObjectPortlet#ENTRY_STATUS");
+			}
+		}
+	}
+
+	@description = "This is a test for LPS-191474. It is possible to navigate the warning pop up message via the keyboard. The warning pop up message should comply with WCAG 2.1 AA standard."
+	@priority = 3
+	test NavigateWarningPopUpMessageAndPublishContentPageViaKeyboardAndViewAccessibility {
+		task ("When adding a form container and change the submit button to draft") {
+			task ("Add a Form Container framgment to content page") {
+				JSONLayout.addPublicLayout(
+					groupName = "Test Site Name",
+					layoutName = "Test Page Name",
+					type = "content");
+
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Page Name",
+					siteName = "Test Site Name");
+
+				PageEditor.addFragment(
+					collectionName = "Form Components",
+					fragmentName = "Form Container");
+			}
+
+			task ("Map the Form Container to the object") {
+				PageEditor.editFormContainer(
+					contentType = "Purchase Order",
+					panel = "General");
+			}
+
+			task ("Change the submit button to draft") {
+				PageEditor.gotoConfiguration(fragmentName = "Submit Button");
+
+				Select(
+					key_fieldLabel = "Submitted Entry Status",
+					locator1 = "Select#GENERIC_SELECT_FIELD",
+					value1 = "Draft");
+
+				Button.click(button = "Publish");
+			}
+		}
+
+		task ("Then it is possible to navigate the warning pop up message via the keyboard") {
+			AssertTextEquals(
+				index = 1,
+				locator1 = "Modal#BODY_MESSAGE",
+				value1 = "Purchase Order form does not allow creating entries as draft. Review the button configuration and set it to approved to generate valid entries.");
+
+			AssertElementAccessible(locator1 = "//div[contains(@class,'modal-content')]");
+
+			KeyPress(
+				key_modalTitle = "Save as Draft Not Available",
+				locator1 = "Button#CLOSE_MODAL",
+				value1 = "\TAB");
+
+			KeyPress(
+				key_text = "Cancel",
+				locator1 = "Button#ANY",
+				value1 = "\TAB");
+
+			KeyPress(
+				key_text = "Cancel",
+				locator1 = "Button#ANY",
+				value1 = "\ENTER");
+
+			WaitForVisible(
+				key_sidebarButton = "Fragments and Widgets",
+				locator1 = "PageEditor#FRAGMENT_SIDEBAR_TITLE");
+
+			Button.click(button = "Publish");
+
+			KeyPress(
+				key_modalTitle = "Save as Draft Not Available",
+				locator1 = "Button#CLOSE_MODAL",
+				value1 = "\TAB");
+
+			KeyPress(
+				key_text = "Cancel",
+				locator1 = "Button#ANY",
+				value1 = "\TAB");
+
+			KeyPress(
+				key_indexNumber = 2,
+				key_text = "Publish",
+				locator1 = "Button#ANY_N",
+				value1 = "\TAB");
+
+			KeyPress(
+				key_indexNumber = 2,
+				key_text = "Publish",
+				locator1 = "Button#ANY_N",
+				value1 = "\ENTER");
+
+			Alert.viewSuccessMessage();
+
+			WaitForVisible(locator1 = "Icon#EDIT_PENCIL");
+		}
+	}
+
 	@description = "This is a test for LPS-189534. The site administrator cannot see empty fragment sets in Select Fragment modal of Submit Button field type."
 	@priority = 3
 	test ViewEmptyFragmentSetsAreNotShownWhenConfiguringDefaultSubmitButtonInFragmentAdmin {
@@ -299,9 +989,9 @@ definition {
 
 			task ("Select the fragment from Form Components") {
 				Click(
-					key_class = "btn-secondary",
-					key_index = 11,
-					locator1 = "Button#ANY_WITH_CLASS_AND_INDEX");
+					key_tableEntry = "Submit Button",
+					key_text = "Select",
+					locator1 = "LexiconTable#TABLE_ENTRY_BUTTON");
 
 				SelectFrame(locator1 = "IFrame#MODAL_BODY");
 			}
@@ -438,6 +1128,98 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-191474. The Save Draft option is disabled on the object so a warning pop up message appears when trying to publish the page."
+	@priority = 5
+	test ViewWarningMessageWhenPublishingContentPageWithSaveAsDraftOptionDisabled {
+		task ("Given an object entry is disable 'Allow Users to Save Entries as Draft'") {
+			task ("View 'Allow Users to Save Entries as Draft' in object") {
+				ObjectAdmin.openObjectAdmin();
+
+				ObjectPortlet.selectCustomObject(label = "Purchase Order");
+
+				AssertNotChecked(
+					key_toggleSwitchLabel = "Allow Users to Save Entries as Draft",
+					locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
+
+				CreateObject.saveObject();
+			}
+		}
+
+		task ("When adding a form container and change the submit button to draft") {
+			task ("Add a Form Container framgment to content page") {
+				JSONLayout.addPublicLayout(
+					groupName = "Test Site Name",
+					layoutName = "Test Page Name",
+					type = "content");
+
+				ContentPagesNavigator.openEditContentPage(
+					pageName = "Test Page Name",
+					siteName = "Test Site Name");
+
+				PageEditor.addFragment(
+					collectionName = "Form Components",
+					fragmentName = "Form Container");
+			}
+
+			task ("Map the Form Container to the object") {
+				PageEditor.editFormContainer(
+					contentType = "Purchase Order",
+					panel = "General");
+			}
+
+			task ("Change the submit button to draft") {
+				PageEditor.gotoConfiguration(fragmentName = "Submit Button");
+
+				Select(
+					key_fieldLabel = "Submitted Entry Status",
+					locator1 = "Select#GENERIC_SELECT_FIELD",
+					value1 = "Draft");
+			}
+		}
+
+		task ("Then the published entry is not saved as draft in object") {
+			task ("Publish and view the warning message") {
+				Button.click(button = "Publish");
+
+				AssertTextEquals(
+					locator1 = "Modal#HEADER",
+					value1 = "Save as Draft Not Available");
+
+				Modal.publish(
+					action = "Cancel",
+					warningMessage = "Purchase Order form does not allow creating entries as draft. Review the button configuration and set it to approved to generate valid entries.");
+
+				Button.click(button = "Publish");
+
+				Modal.publish(warningMessage = "Purchase Order form does not allow creating entries as draft. Review the button configuration and set it to approved to generate valid entries.");
+			}
+
+			task ("Write “testDraft2” on the placeholder and submit the form") {
+				Type(
+					key_text = "Name",
+					locator1 = "TextInput#ANY",
+					value1 = "testDraft2");
+
+				Button.clickSubmitButton();
+
+				AssertElementPresent(
+					locator1 = "Message#ERROR",
+					value1 = "An error occurred while sending the form information.");
+
+				task ("View the no entry in object") {
+					ApplicationsMenu.gotoPortlet(
+						category = "Object",
+						panel = "Control Panel",
+						portlet = "Purchase Orders");
+
+					AssertTextEquals(
+						locator1 = "Message#EMPTY_STATE_INFO",
+						value1 = "No Results Found");
+				}
+			}
+		}
+	}
+
 	@description = "This is a test for LPS-189534. The site administrator should see warning message when publishing form content page without submit type fragment."
 	@priority = 3
 	test ViewWarningMessageWhenPublishingFormContentPageWithoutSubmitTypeFragment {
@@ -450,9 +1232,9 @@ definition {
 
 			task ("Select the heading fragment from Basic Components") {
 				Click(
-					key_class = "btn-secondary",
-					key_index = 11,
-					locator1 = "Button#ANY_WITH_CLASS_AND_INDEX");
+					key_tableEntry = "Submit Button",
+					key_text = "Select",
+					locator1 = "LexiconTable#TABLE_ENTRY_BUTTON");
 
 				SelectFrame(locator1 = "IFrame#MODAL_BODY");
 

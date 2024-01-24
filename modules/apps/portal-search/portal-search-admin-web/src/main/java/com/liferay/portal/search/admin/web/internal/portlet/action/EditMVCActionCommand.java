@@ -73,14 +73,21 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 		PermissionChecker permissionChecker =
 			themeDisplay.getPermissionChecker();
 
+		long[] companyIds = ParamUtil.getLongValues(
+			actionRequest, "companyIds");
+
 		if (!permissionChecker.isOmniadmin()) {
-			SessionErrors.add(
-				actionRequest,
-				PrincipalException.MustBeOmniadmin.class.getName());
+			for (long companyId : companyIds) {
+				if (!permissionChecker.isCompanyAdmin(companyId)) {
+					SessionErrors.add(
+						actionRequest,
+						PrincipalException.MustHavePermission.class.getName());
 
-			actionResponse.setRenderParameter("mvcPath", "/error.jsp");
+					actionResponse.setRenderParameter("mvcPath", "/error.jsp");
 
-			return;
+					return;
+				}
+			}
 		}
 
 		String cmd = ParamUtil.getString(actionRequest, Constants.CMD);
@@ -105,8 +112,7 @@ public class EditMVCActionCommand extends BaseMVCActionCommand {
 
 		redirect = HttpComponentsUtil.setParameter(
 			redirect, actionResponse.getNamespace() + "companyIds",
-			StringUtil.merge(
-				ParamUtil.getLongValues(actionRequest, "companyIds")));
+			StringUtil.merge(companyIds));
 		redirect = HttpComponentsUtil.setParameter(
 			redirect, actionResponse.getNamespace() + "executionMode",
 			ParamUtil.getString(actionRequest, "executionMode"));

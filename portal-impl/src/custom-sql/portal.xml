@@ -198,7 +198,7 @@
 				ResourcePermission ON
 					ResourcePermission.roleId = Roles.roleId
 			WHERE
-			(? = true) OR
+			(? = 1) OR
 			(
 				(Roles.userId = ?) AND
 				(
@@ -1273,6 +1273,19 @@
 					Groups_UserGroups.userGroupId = Users_UserGroups.userGroupId
 			WHERE
 				Groups_UserGroups.groupId = ?
+		]]>
+	</sql>
+	<sql id="com.liferay.portal.kernel.service.persistence.UserFinder.joinByNoAccountEntriesAndNoOrganizations">
+		<![CDATA[
+			LEFT JOIN
+				AccountEntryUserRel ON
+					User_.userId = AccountEntryUserRel.accountUserId
+			LEFT JOIN
+				Users_Orgs ON
+					User_.userId = Users_Orgs.userId
+			WHERE
+				(AccountEntryUserRel.accountEntryId IS NULL) AND
+				(Users_Orgs.organizationId IS NULL)
 		]]>
 	</sql>
 	<sql id="com.liferay.portal.kernel.service.persistence.UserFinder.joinByNoOrganizations">

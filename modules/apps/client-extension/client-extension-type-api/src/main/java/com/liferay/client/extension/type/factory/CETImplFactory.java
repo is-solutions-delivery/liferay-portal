@@ -5,11 +5,11 @@
 
 package com.liferay.client.extension.type.factory;
 
-import com.liferay.client.extension.model.ClientExtensionEntry;
 import com.liferay.client.extension.type.CET;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 
+import java.util.Date;
 import java.util.Properties;
 
 import javax.portlet.PortletRequest;
@@ -22,21 +22,17 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface CETImplFactory<T extends CET> {
 
-	public T create(ClientExtensionEntry clientExtensionEntry)
-		throws PortalException;
-
-	public T create(PortletRequest portletRequest) throws PortalException;
-
 	public T create(
-			String baseURL, long companyId, String description,
-			String externalReferenceCode, String name, Properties properties,
-			String sourceCodeURL,
-			UnicodeProperties toTypeSettingsUnicodeProperties)
-		throws PortalException;
+		String baseURL, long companyId, Date createDate, String description,
+		String externalReferenceCode, Date modifiedDate, String name,
+		Properties properties, boolean readOnly, String sourceCodeURL,
+		int status, UnicodeProperties typeSettingsUnicodeProperties);
 
-	public void validate(
-			UnicodeProperties newTypeSettingsUnicodeProperties,
-			UnicodeProperties oldTypeSettingsUnicodeProperties)
-		throws PortalException;
+	public UnicodeProperties getUnicodeProperties(
+		PortletRequest portletRequest);
+
+	public boolean isURLCETPropertyName(String name);
+
+	public void validate(T newCET, T oldCET) throws PortalException;
 
 }

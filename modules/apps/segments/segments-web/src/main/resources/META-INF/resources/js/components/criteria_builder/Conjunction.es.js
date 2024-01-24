@@ -17,13 +17,21 @@ function Conjunction({className, conjunctionName, editing, onSelect}) {
 
 	const classnames = classNames(
 		{
-			'conjunction-button': editing,
+			'conjunction-button py-2': editing,
 			'conjunction-label': !editing,
 		},
 		className
 	);
 
-	const [activeLabel, setActiveLabel] = useState(null);
+	const [activeLabel, setActiveLabel] = useState(
+		() =>
+			SUPPORTED_CONJUNCTIONS.find(
+				(conjunction) =>
+					conjunction.name.toLowerCase() ===
+					conjunctionName.toLowerCase()
+			)?.label
+	);
+
 	useEffect(() => {
 		const selectedConjunction = SUPPORTED_CONJUNCTIONS.find(
 			(conjunction) =>

@@ -22,6 +22,7 @@ page import="com.liferay.portal.kernel.servlet.SessionErrors" %><%@
 page import="com.liferay.portal.kernel.util.Constants" %><%@
 page import="com.liferay.portal.kernel.util.HashMapBuilder" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.portal.search.tuning.rankings.web.internal.constants.ResultRankingsConstants" %><%@
 page import="com.liferay.portal.search.tuning.rankings.web.internal.exception.DuplicateQueryStringException" %>
 
 <liferay-frontend:defineObjects />
@@ -40,13 +41,14 @@ String resultActionUid = ParamUtil.getString(request, "resultActionUid");
 
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(redirect);
+portletDisplay.setURLBackTitle(portletDisplay.getPortletDisplayName());
 
 renderResponse.setTitle(LanguageUtil.get(request, "new-ranking"));
 %>
 
 <c:if test="<%= !SessionErrors.isEmpty(renderRequest) %>">
 	<div class="result-rankings-alert-container">
-		<liferay-ui:error exception="<%= DuplicateQueryStringException.class %>" message="ranking-with-that-search-query-already-exists" />
+		<liferay-ui:error exception="<%= DuplicateQueryStringException.class %>" message="ranking-with-the-same-search-query-and-scope-already-exists" />
 		<liferay-ui:error exception="<%= Exception.class %>" message="an-unexpected-error-occurred" />
 
 		<liferay-ui:error-principal />
@@ -63,6 +65,7 @@ renderResponse.setTitle(LanguageUtil.get(request, "new-ranking"));
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.ADD %>" />
 	<aui:input name="resultActionCmd" type="hidden" value="<%= resultActionCmd %>" />
 	<aui:input name="resultActionUid" type="hidden" value="<%= resultActionUid %>" />
+	<aui:input name="status" type="hidden" value="<%= ResultRankingsConstants.STATUS_ACTIVE %>" />
 
 	<div>
 		<div class="loading-animation-container">

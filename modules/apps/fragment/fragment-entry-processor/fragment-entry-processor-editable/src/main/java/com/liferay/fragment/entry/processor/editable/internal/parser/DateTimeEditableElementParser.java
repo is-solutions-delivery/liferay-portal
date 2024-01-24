@@ -6,7 +6,6 @@
 package com.liferay.fragment.entry.processor.editable.internal.parser;
 
 import com.liferay.fragment.entry.processor.editable.parser.EditableElementParser;
-import com.liferay.fragment.entry.processor.editable.parser.util.EditableElementParserUtil;
 import com.liferay.fragment.exception.FragmentEntryContentException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
@@ -24,7 +23,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Diego Hu
  */
 @Component(property = "type=date-time", service = EditableElementParser.class)
-public class DateTimeEditableElementParser implements EditableElementParser {
+public class DateTimeEditableElementParser extends BaseEditableElementParser {
 
 	@Override
 	public String getValue(Element element) {
@@ -42,9 +41,7 @@ public class DateTimeEditableElementParser implements EditableElementParser {
 
 	@Override
 	public void replace(Element element, String value) {
-		Element bodyElement = EditableElementParserUtil.getDocumentBody(value);
-
-		element.html(bodyElement.html());
+		element.html(value);
 	}
 
 	@Override

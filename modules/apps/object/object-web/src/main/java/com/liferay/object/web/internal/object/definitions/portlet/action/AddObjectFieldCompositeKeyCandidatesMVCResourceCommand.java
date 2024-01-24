@@ -17,6 +17,8 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
@@ -91,6 +93,8 @@ public class AddObjectFieldCompositeKeyCandidatesMVCResourceCommand
 			}
 			catch (PortalException portalException) {
 				SessionErrors.add(resourceRequest, portalException.getClass());
+
+				_log.error(portalException);
 			}
 		}
 
@@ -130,6 +134,9 @@ public class AddObjectFieldCompositeKeyCandidatesMVCResourceCommand
 				}
 			));
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		AddObjectFieldCompositeKeyCandidatesMVCResourceCommand.class);
 
 	@Reference
 	private Language _language;

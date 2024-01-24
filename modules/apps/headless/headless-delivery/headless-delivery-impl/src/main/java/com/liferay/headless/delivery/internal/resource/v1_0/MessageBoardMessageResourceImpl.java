@@ -145,6 +145,8 @@ public class MessageBoardMessageResourceImpl
 				Pagination pagination, Sort[] sorts)
 		throws Exception {
 
+		flatten = GetterUtil.getBoolean(flatten);
+
 		MBMessage mbMessage = _mbMessageService.getMessage(
 			parentMessageBoardMessageId);
 
@@ -165,9 +167,7 @@ public class MessageBoardMessageResourceImpl
 					mbMessage.getGroupId())
 			).build();
 
-		if ((search == null) && (filter == null)) {
-			flatten = GetterUtil.getBoolean(flatten);
-
+		if ((search == null) && (filter == null) && !flatten) {
 			int status = WorkflowConstants.STATUS_APPROVED;
 
 			PermissionChecker permissionChecker =

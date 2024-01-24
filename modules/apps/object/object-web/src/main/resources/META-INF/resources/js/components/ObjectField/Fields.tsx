@@ -6,10 +6,9 @@
 import {Text} from '@clayui/core';
 import {FrontendDataSet} from '@liferay/frontend-data-set-web';
 import {API, getLocalizableLabel} from '@liferay/object-js-components-web';
-import {createResourceURL, sub} from 'frontend-js-web';
+import {sub} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
-import {defaultLanguageId} from '../../utils/constants';
 import {
 	IFDSTableProps,
 	defaultDataSetProps,
@@ -17,10 +16,11 @@ import {
 	formatActionURL,
 } from '../../utils/fds';
 import FDSSourceDataRenderer from '../FDSPropsTransformer/FDSSourceDataRenderer';
-import ModalDeletionNotAllowed from '../ModalDeletionNotAllowed';
+import LabelRenderer from '../LabelRenderer';
+import ModalObjectFieldDeletionNotAllowed from '../ModalObjectFieldDeletionNotAllowed';
 import {ModalAddObjectField} from './ModalAddObjectField';
 import {ModalDeleteObjectField} from './ModalDeleteObjectField';
-import {deleteObjectField} from './deleteObjectFieldUtil';
+import {handleTriggerDeleteObjectField} from './deleteObjectFieldUtil';
 
 interface ItemData {
 	id: number;
@@ -55,12 +55,14 @@ export default function Fields({
 
 	const [showAddFieldModal, setShowAddFieldModal] = useState(false);
 
-	const [showDeletionModal, setShowDeletionModal] = useState<boolean>(false);
-
-	const [
-		showDeletionNotAllowedModal,
-		setShowDeletionNotAllowedModal,
-	] = useState<DeletionNotAllowedModal>();
+	const [objectFieldDeleteInfo, setObjectFieldDeleteInfo] = useState<
+		ObjectFieldDeleteInfoProps
+	>({
+		deleteLastPublishedObjectDefinitionObjectField: false,
+		deleteObjectFieldObjectValidationRuleSetting: false,
+		showObjectFieldDeletionConfirmationModal: false,
+		showObjectFieldDeletionNotAllowedModal: false,
+	});
 
 	useEffect(() => {
 		Liferay.on('addObjectField', () => setShowAddFieldModal(true));
@@ -85,18 +87,15 @@ export default function Fields({
 		openSidePanel,
 		value,
 	}: fdsItem<ItemData>) {
-		const handleEditField = () => {
-			openSidePanel({
-				url: formatActionURL(url, itemData.id),
-			});
-		};
-
 		return (
-			<div className="table-list-title">
-				<a href="#" onClick={handleEditField}>
-					{value}
-				</a>
-			</div>
+			<LabelRenderer
+				onClick={() => {
+					openSidePanel({
+						url: formatActionURL(url, itemData.id),
+					});
+				}}
+				value={value}
+			/>
 		);
 	}
 
@@ -144,53 +143,21 @@ export default function Fields({
 		}) {
 			if (action.data.id === 'deleteObjectField') {
 				const makeFetch = async () => {
-					const url = createResourceURL(baseResourceURL, {
-						objectFieldId: itemData.id,
-						p_p_resource_id:
-							'/object_definitions/get_object_field_delete_info',
-					}).href;
-
-					const showModalResponse = await API.fetchJSON<{
-						deleteLastPublishedObjectDefinitionObjectField: boolean;
-						deleteObjectFieldObjectValidationRuleSetting: boolean;
-						showDeletionModal: boolean;
-					}>(url);
+					handleTriggerDeleteObjectField({
+						baseResourceURL,
+						objectFieldId: itemData?.id,
+						objectFieldLabel: getLocalizableLabel(
+							creationLanguageId!,
+							itemData.label,
+							itemData.name
+						),
+						onAfterDelete: () => {
+							setTimeout(() => window.location.reload(), 1500);
+						},
+						setObjectFieldDeleteInfo,
+					});
 
 					setDeletedObjectField(itemData);
-
-					if (showModalResponse.showDeletionModal) {
-						setShowDeletionModal(
-							showModalResponse.showDeletionModal
-						);
-
-						return;
-					}
-					else if (
-						!showModalResponse.deleteObjectFieldObjectValidationRuleSetting ||
-						!showModalResponse.deleteLastPublishedObjectDefinitionObjectField
-					) {
-						setShowDeletionNotAllowedModal({
-							deleteLastPublishedObjectDefinitionObjectField:
-								showModalResponse.deleteLastPublishedObjectDefinitionObjectField,
-							deleteObjectFieldObjectValidationRuleSetting:
-								showModalResponse.deleteObjectFieldObjectValidationRuleSetting,
-							showModal:
-								!showModalResponse.deleteObjectFieldObjectValidationRuleSetting ||
-								!showModalResponse.deleteLastPublishedObjectDefinitionObjectField,
-						});
-
-						return;
-					}
-
-					await deleteObjectField(
-						defaultLanguageId,
-						itemData.id,
-						itemData
-					);
-
-					setTimeout(() => window.location.reload(), 1500);
-
-					return;
 				};
 
 				makeFetch();
@@ -273,49 +240,64 @@ export default function Fields({
 				/>
 			)}
 
-			{showDeletionModal && (
+			{objectFieldDeleteInfo.showObjectFieldDeletionConfirmationModal && (
 				<ModalDeleteObjectField
+					handleOnClose={() =>
+						setObjectFieldDeleteInfo(
+							(prevState: ObjectFieldDeleteInfoProps) => ({
+								...prevState,
+								showObjectFieldDeletionConfirmationModal: false,
+							})
+						)
+					}
 					objectField={deletedObjectField as ObjectField}
 					onAfterSubmit={() => {
 						setTimeout(() => window.location.reload(), 1500);
 					}}
-					setModalVisibility={setShowDeletionModal}
 					setObjectField={setDeletedObjectField}
 				/>
 			)}
 
-			{!!deletedObjectField && showDeletionNotAllowedModal?.showModal && (
-				<ModalDeletionNotAllowed
-					content={
-						showDeletionNotAllowedModal?.deleteObjectFieldObjectValidationRuleSetting ? (
-							<Text>
-								{sub(
-									Liferay.Language.get(
-										'x-is-the-only-field-of-the-published-object-definition-and-cannot-be-deleted'
-									),
-									`${getLocalizableLabel(
-										creationLanguageId as Liferay.Language.Locale,
-										deletedObjectField.label,
-										deletedObjectField.name
-									)}`
-								)}
-							</Text>
-						) : (
-							<Text>
-								{Liferay.Language.get(
-									'this-field-cannot-be-deleted-because-it-is-used-in-a-unique-composite-key-validation'
-								)}
-							</Text>
-						)
-					}
-					onVisibilityChange={() =>
-						setShowDeletionNotAllowedModal({
-							...showDeletionNotAllowedModal,
-							showModal: false,
-						})
-					}
-				/>
-			)}
+			{!!deletedObjectField &&
+				objectFieldDeleteInfo.showObjectFieldDeletionNotAllowedModal && (
+					<ModalObjectFieldDeletionNotAllowed
+						content={
+							objectFieldDeleteInfo.deleteObjectFieldObjectValidationRuleSetting ? (
+								<Text>
+									{sub(
+										Liferay.Language.get(
+											'the-object-field-x-cannot-be-deleted-because-it-is-the-only-custom-object-field-of-the-published-object-definition'
+										),
+										`${getLocalizableLabel(
+											creationLanguageId as Liferay.Language.Locale,
+											deletedObjectField.label,
+											deletedObjectField.name
+										)}`
+									)}
+								</Text>
+							) : (
+								<Text>
+									{sub(
+										Liferay.Language.get(
+											'the-object-field-x-cannot-be-deleted-because-it-is-used-in-a-unique-composite-key-validation'
+										),
+										`${getLocalizableLabel(
+											creationLanguageId as Liferay.Language.Locale,
+											deletedObjectField.label,
+											deletedObjectField.name
+										)}`
+									)}
+								</Text>
+							)
+						}
+						onVisibilityChange={() =>
+							setObjectFieldDeleteInfo({
+								...objectFieldDeleteInfo,
+								showObjectFieldDeletionNotAllowedModal: false,
+							})
+						}
+					/>
+				)}
 		</>
 	);
 }

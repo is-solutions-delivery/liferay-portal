@@ -20,7 +20,7 @@ import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.users.admin.demo.data.creator.OmniAdminUserDemoDataCreator;
+import com.liferay.users.admin.demo.data.creator.OmniadminUserDemoDataCreator;
 
 import java.io.IOException;
 
@@ -36,7 +36,7 @@ public class AMImageDemo extends BasePortalInstanceLifecycleListener {
 
 	@Override
 	public void portalInstanceRegistered(Company company) throws Exception {
-		User user = _omniAdminUserDemoDataCreator.create(
+		User user = _omniadminUserDemoDataCreator.create(
 			company.getCompanyId(), "alejandro.hernandez@liferay.com");
 		Group group = _groupLocalService.getGroup(
 			company.getCompanyId(), "Guest");
@@ -77,7 +77,7 @@ public class AMImageDemo extends BasePortalInstanceLifecycleListener {
 		_amImageConfigurationDemoDataCreator.delete();
 		_fileEntryDemoDataCreator.delete();
 		_rootFolderDemoDataCreator.delete();
-		_omniAdminUserDemoDataCreator.delete();
+		_omniadminUserDemoDataCreator.delete();
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(AMImageDemo.class);
@@ -96,7 +96,7 @@ public class AMImageDemo extends BasePortalInstanceLifecycleListener {
 	private ModuleServiceLifecycle _moduleServiceLifecycle;
 
 	@Reference
-	private OmniAdminUserDemoDataCreator _omniAdminUserDemoDataCreator;
+	private OmniadminUserDemoDataCreator _omniadminUserDemoDataCreator;
 
 	@Reference
 	private RootFolderDemoDataCreator _rootFolderDemoDataCreator;

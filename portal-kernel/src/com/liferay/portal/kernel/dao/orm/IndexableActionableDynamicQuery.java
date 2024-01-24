@@ -11,11 +11,11 @@ import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.change.tracking.sql.CTSQLModeThreadLocal;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.change.tracking.CTModel;
+import com.liferay.portal.kernel.module.service.Snapshot;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.IndexWriterHelper;
 import com.liferay.portal.kernel.search.background.task.ReindexStatusMessageSenderUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.ServiceProxyFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,10 +64,6 @@ public class IndexableActionableDynamicQuery
 		}
 	}
 
-	public void setIndexWriterHelper(IndexWriterHelper indexWriterHelper) {
-		_indexWriterHelper = indexWriterHelper;
-	}
-
 	@Override
 	public void setParallel(boolean parallel) {
 		if (isParallel() == parallel) {
@@ -83,7 +79,10 @@ public class IndexableActionableDynamicQuery
 
 	@Override
 	protected void actionsCompleted() throws PortalException {
-		_indexWriterHelper.commit(getCompanyId());
+		IndexWriterHelper indexWriterHelper =
+			_indexWriterHelperProxySnapshot.get();
+
+		indexWriterHelper.commit(getCompanyId());
 	}
 
 	@Override
@@ -103,7 +102,10 @@ public class IndexableActionableDynamicQuery
 			return;
 		}
 
-		_indexWriterHelper.updateDocuments(
+		IndexWriterHelper indexWriterHelper =
+			_indexWriterHelperProxySnapshot.get();
+
+		indexWriterHelper.updateDocuments(
 			getCompanyId(), new ArrayList<>(_documents), false);
 
 		_count += _documents.size();
@@ -151,14 +153,12 @@ public class IndexableActionableDynamicQuery
 
 	private static final long _STATUS_INTERVAL = 100;
 
-	private static volatile IndexWriterHelper _indexWriterHelperProxy =
-		ServiceProxyFactory.newServiceTrackedInstance(
-			IndexWriterHelper.class, IndexableActionableDynamicQuery.class,
-			"_indexWriterHelperProxy", false);
+	private static final Snapshot<IndexWriterHelper>
+		_indexWriterHelperProxySnapshot = new Snapshot<>(
+			IndexableActionableDynamicQuery.class, IndexWriterHelper.class);
 
 	private long _count;
 	private Collection<Document> _documents = new ArrayList<>();
-	private IndexWriterHelper _indexWriterHelper = _indexWriterHelperProxy;
 	private long _total;
 
 }

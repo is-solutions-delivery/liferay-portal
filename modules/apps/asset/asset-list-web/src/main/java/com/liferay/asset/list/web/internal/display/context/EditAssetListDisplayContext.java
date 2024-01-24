@@ -65,6 +65,7 @@ import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CollatorUtil;
@@ -528,8 +529,7 @@ public class EditAssetListDisplayContext {
 		}
 
 		_availableSegmentsEntries = ListUtil.filter(
-			SegmentsEntryServiceUtil.getSegmentsEntries(
-				group.getGroupId(), true),
+			SegmentsEntryServiceUtil.getSegmentsEntries(group.getGroupId()),
 			segmentsEntry -> !ArrayUtil.contains(
 				getSelectedSegmentsEntryIds(),
 				segmentsEntry.getSegmentsEntryId()));
@@ -1262,6 +1262,14 @@ public class EditAssetListDisplayContext {
 				).setParameter(
 					"assetListEntryId",
 					assetListEntrySegmentsEntryRel.getAssetListEntryId()
+				).setParameter(
+					"backURLTitle",
+					() -> {
+						PortletDisplay portletDisplay =
+							_themeDisplay.getPortletDisplay();
+
+						return portletDisplay.getPortletDisplayName();
+					}
 				).setParameter(
 					"segmentsEntryId",
 					assetListEntrySegmentsEntryRel.getSegmentsEntryId()

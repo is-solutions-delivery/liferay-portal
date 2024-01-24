@@ -9,9 +9,10 @@ import ClayForm from '@clayui/form';
 import ClayLabel from '@clayui/label';
 import ClayLayout from '@clayui/layout';
 import ClayModal from '@clayui/modal';
+import {IClientExtensionRenderer} from '@liferay/frontend-data-set-web';
 import classNames from 'classnames';
 import {InputLocalized} from 'frontend-js-components-web';
-import {IClientExtensionRenderer, fetch, openModal, sub} from 'frontend-js-web';
+import {fetch, openModal, sub} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
 import {API_URL, OBJECT_RELATIONSHIP} from '../Constants';
@@ -24,6 +25,7 @@ import DateRangeFilterModalContent from '../components/modal_content/DateRangeFi
 import SelectionFilterModalContent from '../components/modal_content/SelectionFilter';
 import {
 	EFieldFormat,
+	EFieldType,
 	EFilterType,
 	IClientExtensionFilter,
 	IDateFilter,
@@ -69,8 +71,8 @@ function AddFDSFilterModalContent({
 	>(
 		filter && filterType === EFilterType.CLIENT_EXTENSION
 			? fdsFilterClientExtensions.find(
-					(cx: IClientExtensionRenderer) =>
-						cx.externalReferenceCode ===
+					(clientExtensionRenderer: IClientExtensionRenderer) =>
+						clientExtensionRenderer.externalReferenceCode ===
 						(filter as IClientExtensionFilter)
 							.fdsFilterClientExtensionERC
 			  )
@@ -592,7 +594,8 @@ function Filters({fdsFilterClientExtensions, fdsView, namespace}: IProps) {
 			(item) =>
 				filterType === EFilterType.CLIENT_EXTENSION ||
 				(filterType === EFilterType.SELECTION &&
-					item.format === EFieldFormat.STRING) ||
+					item.type === EFieldType.STRING &&
+					!item.format) ||
 				(filterType === EFilterType.DATE_RANGE &&
 					item.format === EFieldFormat.DATE)
 		);

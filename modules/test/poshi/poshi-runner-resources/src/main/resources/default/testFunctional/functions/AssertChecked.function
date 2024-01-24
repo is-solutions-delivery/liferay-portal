@@ -1,16 +1,16 @@
 @default = "assertChecked"
 definition {
 
-	function assertChecked {
-		selenium.waitForVisible();
+	function assertChecked(locator1) {
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.assertChecked();
+		selenium.assertChecked(${locator1});
 	}
 
-	function assertCheckedNotVisible {
-		selenium.waitForElementPresent();
+	function assertCheckedNotVisible(locator1) {
+		selenium.waitForElementPresent(${locator1}, "true");
 
-		selenium.assertChecked();
+		selenium.assertChecked(${locator1});
 	}
 
 }

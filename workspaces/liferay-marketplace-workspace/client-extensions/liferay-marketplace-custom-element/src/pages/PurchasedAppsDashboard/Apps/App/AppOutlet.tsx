@@ -6,26 +6,36 @@
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
-import {useMemo} from 'react';
-import {NavLink, Outlet, useLocation, useParams} from 'react-router-dom';
-import useSWR from 'swr';
-
-import circleFullIcon from '../../../../assets/icons/circle_fill_icon.svg';
-import i18n from '../../../../i18n';
-import HeadlessCommerceAdminCatalogImpl from '../../../../services/rest/HeadlessCommerceAdminCatalog';
 import {
-	getProductVersionFromSpecifications,
-	getThumbnailByProductAttachment,
-	showAppImage,
-} from '../../../../utils/util';
+	NavLink,
+	Outlet,
+	useLocation,
+	useNavigate,
+	useParams,
+} from 'react-router-dom';
 
-const AppNavbar = () => {
+import useGetProductByOrderId from '../../../../hooks/useGetProductByOrderId';
+import i18n from '../../../../i18n';
+import {getThumbnailByProductAttachment} from '../../../../utils/util';
+import OrderDetailsHeader from '../components/OrderDetailsHeader';
+
+import './App.scss';
+
+import ClayLoadingIndicator from '@clayui/loading-indicator';
+
+import getProductPriceModel from '../../../GetAppPage/utils/getProductPriceModel';
+
+type AppNavbarProps = {
+	showLicenseTab: boolean;
+};
+
+const AppNavbar: React.FC<AppNavbarProps> = ({showLicenseTab}) => {
 	const location = useLocation();
 
 	const routeParams = location.pathname.split('/').filter(Boolean);
 
 	return (
-		<div className="mb-4 navbar navbar-expand-md navbar-underline navigation-bar navigation-bar-light">
+		<div className="navbar navbar-expand-md navbar-underline navigation-bar navigation-bar-light">
 			<ul className="navbar-nav">
 				<NavLink
 					className={({isActive}) =>
@@ -38,111 +48,77 @@ const AppNavbar = () => {
 					Details
 				</NavLink>
 
-				<NavLink
-					className={({isActive}) =>
-						classNames('nav-link', {
-							active: isActive,
-						})
-					}
-					to="licenses"
-				>
-					Licenses
-				</NavLink>
+				{showLicenseTab && (
+					<NavLink
+						className={({isActive}) =>
+							classNames('nav-link', {
+								active: isActive,
+							})
+						}
+						to="licenses"
+					>
+						Licenses
+					</NavLink>
+				)}
 			</ul>
 		</div>
 	);
 };
 
-const AppHeader = ({productSpecifications, selectedApp = {}}: any) => {
-	const appVersion = useMemo(
-		() => getProductVersionFromSpecifications(productSpecifications as []),
-		[productSpecifications]
-	);
-
-	const thumbnail = getThumbnailByProductAttachment(selectedApp?.attachments);
-
-	return (
-		<div className="d-flex justify-content-between my-4 w-100">
-			<div className="d-flex">
-				<img
-					alt="App Logo"
-					className="app-details-page-app-info-logo"
-					src={showAppImage(thumbnail)}
-				/>
-
-				<div className="ml-2">
-					<span className="app-details-page-app-info-title">
-						{selectedApp.name?.en_US}
-					</span>
-
-					<div className="app-details-page-app-info-subtitle-container">
-						<span className="app-details-page-app-info-subtitle-text">
-							{appVersion}
-						</span>
-
-						<img
-							alt="status icon"
-							className={classNames(
-								'app-details-page-app-info-subtitle-icon',
-								{
-									'app-details-page-app-info-subtitle-icon-hidden':
-										selectedApp.status === 'Draft',
-									'app-details-page-app-info-subtitle-icon-pending':
-										selectedApp.status === 'Pending',
-									'app-details-page-app-info-subtitle-icon-published':
-										selectedApp.status === 'Approved',
-								}
-							)}
-							src={circleFullIcon}
-						/>
-
-						<span className="app-details-page-app-info-subtitle-text">
-							{selectedApp.status}
-						</span>
-					</div>
-				</div>
-			</div>
-
-			<div>
-				<ClayButton className="ml-4" displayType="secondary">
-					Manage App
-					<ClayIcon className="ml-2" symbol="caret-bottom-l" />
-				</ClayButton>
-			</div>
-		</div>
-	);
-};
-
 const AppOutlet = () => {
-	const {appId: productId} = useParams();
+	const navigate = useNavigate();
 
-	const {data = []} = useSWR(`/apps/app/${productId}/product`, () =>
-		Promise.all([
-			HeadlessCommerceAdminCatalogImpl.getProduct(productId as string),
-			HeadlessCommerceAdminCatalogImpl.getProductSpecifications(
-				productId as string
-			),
-		])
-	);
+	const {orderId} = useParams();
 
-	const [selectedApp, productSpecifications = []] = data ?? [];
+	const {data, error, isLoading} = useGetProductByOrderId(orderId as string);
+
+	const appImage = getThumbnailByProductAttachment(data?.product?.images);
+
+	const productCreatorAccountName = data?.product?.catalogName || '';
+
+	if (isLoading) {
+		return <ClayLoadingIndicator />;
+	}
+
+	if (error) {
+		return <div>Error: {error.message}</div>;
+	}
+
+	const placedOrderItems = data?.placedOrder.placedOrderItems ?? [];
+
+	const {isFreeApp} = getProductPriceModel(data?.product);
 
 	return (
-		<div className="d-flex flex-column w-100">
-			<NavLink className="font-weight-bold small text-dark" to="..">
+		<div className="app-details-header d-flex flex-column w-100">
+			<ClayButton
+				className="align-items-center d-flex"
+				displayType="unstyled"
+				onClick={() => navigate('..')}
+			>
 				<ClayIcon className="mr-2" symbol="order-arrow-left" />
-				{i18n.translate('back-to-my-apps')}
-			</NavLink>
+				<h5 className="mt-1">{i18n.translate('back-to-my-apps')}</h5>
+			</ClayButton>
 
-			<AppHeader
-				productSpecifications={productSpecifications}
-				selectedApp={selectedApp}
+			<OrderDetailsHeader
+				className="d-flex flex-row justify-content-between pb-3 pt-5"
+				hasOrderDetails
+				image={appImage}
+				name={data?.product?.name}
+				order={data?.placedOrder}
+				productOwner={productCreatorAccountName}
 			/>
-			<AppNavbar />
 
-			<hr />
+			<AppNavbar
+				showLicenseTab={
+					!(
+						isFreeApp ||
+						(placedOrderItems[0]?.price?.price === 0 &&
+							placedOrderItems[0]?.sku !== 'TRIAL')
+					)
+				}
+			/>
 
-			<Outlet context={{productSpecifications, selectedApp}} />
+			<Outlet context={data} />
 		</div>
 	);
 };

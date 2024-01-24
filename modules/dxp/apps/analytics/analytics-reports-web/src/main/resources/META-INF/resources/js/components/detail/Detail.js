@@ -11,7 +11,6 @@ import React, {useContext} from 'react';
 
 import {ChartDispatchContext} from '../../context/ChartStateContext';
 import {StoreDispatchContext} from '../../context/StoreContext';
-import CountriesDetail from './CountriesDetail';
 import KeywordsDetail from './KeywordsDetail';
 import ReferralDetail from './ReferralDetail';
 import SocialDetail from './SocialDetail';
@@ -101,6 +100,7 @@ export default function Detail({
 				<>
 					<div className="c-pt-3 c-px-3 d-flex" ref={refProp}>
 						<ClayButton
+							aria-label={Liferay.Language.get('back')}
 							displayType="unstyled"
 							onClick={() => {
 								onCurrentPageChange({view: 'main'});
@@ -123,25 +123,7 @@ export default function Detail({
 
 					{(currentPage.view === TRAFFIC_CHANNELS.ORGANIC ||
 						currentPage.view === TRAFFIC_CHANNELS.PAID) &&
-						!!currentPageMocked.data.countrySearch.length &&
-						(Liferay.FeatureFlags['LPS-149256'] ? (
-							<CountriesDetail
-								currentPage={currentPageMocked}
-								handleDetailPeriodChange={
-									handleDetailPeriodChange
-								}
-								timeSpanOptions={timeSpanOptions}
-								trafficShareDataProvider={
-									trafficShareDataProvider
-								}
-								trafficSourcesDataProvider={
-									trafficSourcesDataProvider
-								}
-								trafficVolumeDataProvider={
-									trafficVolumeDataProvider
-								}
-							/>
-						) : (
+						!!currentPageMocked.data.countrySearch.length && (
 							<KeywordsDetail
 								currentPage={currentPage}
 								trafficShareDataProvider={
@@ -151,7 +133,7 @@ export default function Detail({
 									trafficVolumeDataProvider
 								}
 							/>
-						))}
+						)}
 
 					{currentPage.view === TRAFFIC_CHANNELS.REFERRAL && (
 						<ReferralDetail

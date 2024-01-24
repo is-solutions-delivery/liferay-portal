@@ -226,6 +226,9 @@ public class LayoutActionDropdownItemsProvider {
 						return portletDisplay.getId();
 					}
 				).setParameter(
+					"backURLTitle",
+					LanguageUtil.get(_themeDisplay.getLocale(), "pages")
+				).setParameter(
 					"segmentsExperienceId",
 					SegmentsExperienceLocalServiceUtil.
 						fetchDefaultSegmentsExperienceId(layout.getPlid())
@@ -496,6 +499,9 @@ public class LayoutActionDropdownItemsProvider {
 
 						return portletDisplay.getId();
 					}
+				).setParameter(
+					"backURLTitle",
+					LanguageUtil.get(_themeDisplay.getLocale(), "pages")
 				).buildString());
 			dropdownItem.setIcon("upload");
 			dropdownItem.setLabel(
@@ -527,6 +533,9 @@ public class LayoutActionDropdownItemsProvider {
 
 						return portletDisplay.getId();
 					}
+				).setParameter(
+					"backURLTitle",
+					LanguageUtil.get(_themeDisplay.getLocale(), "pages")
 				).buildString());
 			dropdownItem.setIcon("download");
 			dropdownItem.setLabel(
@@ -549,8 +558,8 @@ public class LayoutActionDropdownItemsProvider {
 	private String _getOrphanPortletsURL(Layout layout) {
 		return PortletURLBuilder.createRenderURL(
 			_liferayPortletResponse
-		).setMVCPath(
-			"/orphan_portlets.jsp"
+		).setMVCRenderCommandName(
+			"/layout_admin/view_orphan_portlets"
 		).setBackURL(
 			_getBackURL()
 		).setParameter(
@@ -715,7 +724,8 @@ public class LayoutActionDropdownItemsProvider {
 	}
 
 	private boolean _isShowConvertToPageTemplateAction(Layout layout) {
-		if (LayoutPageTemplatePermission.contains(
+		if (layout.isTypeContent() &&
+			LayoutPageTemplatePermission.contains(
 				_themeDisplay.getPermissionChecker(), layout.getGroupId(),
 				LayoutPageTemplateActionKeys.
 					ADD_LAYOUT_PAGE_TEMPLATE_COLLECTION) &&

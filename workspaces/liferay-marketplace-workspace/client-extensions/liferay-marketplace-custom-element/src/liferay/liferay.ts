@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {LiferayStorage} from '../core/Storage';
+
 export interface IOAuth2ClientAgentApplication {
 	authorizeURL: string;
 	clientId: string;
@@ -20,10 +22,17 @@ export interface IOAuth2Client {
 }
 
 interface ILiferay {
+	CommerceContext: {
+		account?: {
+			accountId: number | string | null;
+		};
+		commerceChannelId: string;
+	};
 	MarketplaceCustomerFlow: {appId: number};
 	OAuth2Client: IOAuth2Client;
 	Service: Function;
 	ThemeDisplay: {
+		getBCP47LanguageId: () => string;
 		getCanonicalURL: () => string;
 		getCompanyGroupId: () => string;
 		getCompanyId: () => string;
@@ -34,10 +43,13 @@ interface ILiferay {
 		getPathContext: () => string;
 		getPathThemeImages: () => string;
 		getPortalURL: () => string;
+		getScopeGroupId: () => number;
 		getUserId: () => string;
 		isSignedIn: () => boolean;
 	};
 	Util: {
+		LocalStorage: LiferayStorage;
+		SessionStorage: LiferayStorage;
 		navigate: (path: string) => void;
 		openToast: (options?: {
 			message: string;
@@ -57,6 +69,7 @@ declare global {
 }
 
 export const Liferay = window.Liferay || {
+	CommerceContext: {},
 	MarketplaceCustomerFlow: 0,
 	Service: {},
 	ThemeDisplay: {
@@ -74,6 +87,10 @@ export const Liferay = window.Liferay || {
 		isSignedIn: () => {
 			return false;
 		},
+	},
+	Util: {
+		LocalStorage: localStorage,
+		SessionStorage: sessionStorage,
 	},
 	detach: (
 		type: keyof WindowEventMap,

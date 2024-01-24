@@ -9,13 +9,12 @@ import {
 	Input,
 	REQUIRED_MSG,
 	SingleSelect,
-	filterArrayByQuery,
 	getLocalizableLabel,
 	invalidateRequired,
 	useForm,
 } from '@liferay/object-js-components-web';
 import {createResourceURL} from 'frontend-js-web';
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {defaultLanguageId} from '../../utils/constants';
 import CurrentObjectDefinition from './CurrentObjectDefinition';
@@ -23,6 +22,7 @@ import SelectObjectDefinition from './SelectObjectDefinition';
 
 interface ObjectRelationshipFormBaseProps {
 	baseResourceURL: string;
+	className?: string;
 	errors: FormError<ObjectRelationship>;
 	handleChange: React.ChangeEventHandler<HTMLInputElement>;
 	hasDefinedObjectDefinitionTarget?: boolean;
@@ -39,11 +39,7 @@ interface UseObjectRelationshipFormProps {
 	parameterRequired: boolean;
 }
 
-export enum ObjectRelationshipType {
-	MANY_TO_MANY = 'manyToMany',
-	ONE_TO_MANY = 'oneToMany',
-	ONE_TO_ONE = 'oneToOne',
-}
+export type ObjectRelationshipType = 'manyToMany' | 'oneToMany' | 'oneToOne';
 
 type ObjectRelationshipTypeInfo = {
 	description: string;
@@ -60,8 +56,9 @@ const MANY_TO_MANY = {
 	label: Liferay.Language.get('many-to-many'),
 	objectInputLabel1: Liferay.Language.get('many-records-of'),
 	objectInputLabel2: Liferay.Language.get('many-records-of'),
-	value: ObjectRelationshipType.MANY_TO_MANY,
-};
+	value: 'manyToMany',
+} as ObjectRelationshipTypeInfo;
+
 const ONE_TO_MANY = {
 	description: Liferay.Language.get(
 		"one-object's-entry-interacts-with-many-others-object's-entries"
@@ -69,8 +66,9 @@ const ONE_TO_MANY = {
 	label: Liferay.Language.get('one-to-many'),
 	objectInputLabel1: Liferay.Language.get('one-record-of'),
 	objectInputLabel2: Liferay.Language.get('many-records-of'),
-	value: ObjectRelationshipType.ONE_TO_MANY,
-};
+	value: 'oneToMany',
+} as ObjectRelationshipTypeInfo;
+
 const ONE_TO_ONE = {
 	description: Liferay.Language.get(
 		"one-object's-entry-interacts-only-with-one-other-object's-entry"
@@ -78,8 +76,8 @@ const ONE_TO_ONE = {
 	label: Liferay.Language.get('one-to-one'),
 	objectInputLabel1: Liferay.Language.get('one-record-of'),
 	objectInputLabel2: Liferay.Language.get('one-record-of'),
-	value: ObjectRelationshipType.ONE_TO_ONE,
-};
+	value: 'oneToOne',
+} as ObjectRelationshipTypeInfo;
 
 export const OBJECT_RELATIONSHIP_TYPES = [
 	MANY_TO_MANY,
@@ -119,7 +117,7 @@ export function useObjectRelationshipForm({
 
 		if (
 			parameterRequired &&
-			relationship.type === ObjectRelationshipType.ONE_TO_MANY &&
+			relationship.type === 'oneToMany' &&
 			!relationship.parameterObjectFieldName
 		) {
 			errors.parameterObjectFieldName = REQUIRED_MSG;
@@ -153,6 +151,7 @@ export function useObjectRelationshipForm({
 
 export function ObjectRelationshipFormBase({
 	baseResourceURL,
+	className,
 	errors,
 	handleChange,
 	hasDefinedObjectDefinitionTarget,
@@ -178,19 +177,9 @@ export function ObjectRelationshipFormBase({
 		Partial<ObjectDefinition>[]
 	>([]);
 	const [objectRelationshipTypes, setObjectRelationshipTypes] = useState<
-		ObjectRelationshipTypeInfo[] | undefined
-	>();
-	const [query, setQuery] = useState<string>('');
+		ObjectRelationshipTypeInfo[]
+	>([ONE_TO_MANY]);
 	const [reverseOrder, setReverseOrder] = useState<boolean>(false);
-
-	const filteredRelationships = useMemo(() => {
-		return filterArrayByQuery({
-			array: objectDefinitions,
-			creationLanguageId,
-			query,
-			str: 'label',
-		});
-	}, [creationLanguageId, objectDefinitions, query]);
 
 	const switchObjects = () => {
 		const previousObjectDefinition1 = {
@@ -300,7 +289,7 @@ export function ObjectRelationshipFormBase({
 
 	useEffect(() => {
 		const fetchObjectDefinitions = async () => {
-			const items = await API.getAllObjectDefinitions();
+			const {items} = await API.getAllObjectDefinitions();
 
 			const objectDefinition = items.find(
 				({externalReferenceCode}) =>
@@ -354,10 +343,12 @@ export function ObjectRelationshipFormBase({
 			/>
 
 			<SingleSelect
+				className={className}
 				disabled={readonly}
 				error={errors.type}
+				items={objectRelationshipTypes}
 				label={Liferay.Language.get('type')}
-				onChange={({value}) => {
+				onSelectionChange={(value) => {
 					if (
 						(value === 'manyToMany' || value === 'oneToOne') &&
 						currentObjectDefinition?.id !== objectDefinition1?.id
@@ -382,17 +373,12 @@ export function ObjectRelationshipFormBase({
 							objectDefinitionExternalReferenceCode1:
 								objectDefinition1?.externalReferenceCode,
 							objectDefinitionId1: objectDefinition1?.id,
-							type: value,
+							type: value as ObjectRelationshipType,
 						});
 					}
 				}}
-				options={objectRelationshipTypes ?? [ONE_TO_MANY]}
 				required
-				value={
-					OBJECT_RELATIONSHIP_TYPES.find(
-						({value}) => value === values.type
-					)?.label
-				}
+				selectedKey={values.type}
 			/>
 
 			{values.type &&
@@ -437,7 +423,6 @@ export function ObjectRelationshipFormBase({
 								}
 								disabled={readonly}
 								error={errors.objectDefinitionId2}
-								filteredRelationships={filteredRelationships}
 								label={
 									OBJECT_RELATIONSHIP_TYPES.find(
 										({value}) => value === values.type
@@ -447,11 +432,10 @@ export function ObjectRelationshipFormBase({
 								objectDefinitionExternalReferenceCode={
 									values.objectDefinitionExternalReferenceCode2
 								}
-								query={query}
+								objectDefinitions={objectDefinitions}
 								readOnly={readonly}
 								reverseOrder={reverseOrder}
 								setObjectDefinition={setObjectDefinition2}
-								setQuery={setQuery}
 								setValues={setValues}
 							/>
 						)}
@@ -482,7 +466,6 @@ export function ObjectRelationshipFormBase({
 								}
 								disabled={readonly}
 								error={errors.objectDefinitionId1}
-								filteredRelationships={filteredRelationships}
 								label={
 									OBJECT_RELATIONSHIP_TYPES.find(
 										({value}) => value === values.type
@@ -492,11 +475,10 @@ export function ObjectRelationshipFormBase({
 								objectDefinitionExternalReferenceCode={
 									values.objectDefinitionExternalReferenceCode1
 								}
-								query={query}
+								objectDefinitions={objectDefinitions}
 								readOnly={readonly}
 								reverseOrder={reverseOrder}
 								setObjectDefinition={setObjectDefinition1}
-								setQuery={setQuery}
 								setValues={setValues}
 							/>
 						)}

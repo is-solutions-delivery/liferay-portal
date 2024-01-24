@@ -8,9 +8,9 @@ package com.liferay.document.library.internal.util;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileEntryConstants;
 import com.liferay.document.library.kernel.model.DLProcessorConstants;
+import com.liferay.document.library.kernel.processor.DLProcessor;
+import com.liferay.document.library.kernel.processor.RawMetadataProcessor;
 import com.liferay.document.library.kernel.service.DLFileEntryMetadataLocalService;
-import com.liferay.document.library.kernel.util.DLProcessor;
-import com.liferay.document.library.kernel.util.RawMetadataProcessor;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructure;
 import com.liferay.dynamic.data.mapping.kernel.DDMStructureManager;
@@ -54,10 +54,6 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class RawMetadataProcessorImpl
 	implements DLProcessor, RawMetadataProcessor {
-
-	@Override
-	public void afterPropertiesSet() {
-	}
 
 	@Override
 	public void cleanUp(FileEntry fileEntry) {

@@ -12,23 +12,6 @@ definition {
 		User.firstLoginPG();
 	}
 
-	tearDown {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			Organization.tearDownCP();
-
-			Site.tearDownCP();
-
-			UserGroup.tearDownCP();
-
-			JSONUser.tearDownNonAdminUsers();
-		}
-	}
-
 	@description = "Assert could assign user to new site in site memberships admin."
 	@priority = 4
 	test AddMember {
@@ -363,29 +346,15 @@ definition {
 		}
 
 		task ("Assign created user to organization in user admin") {
-			User.openUsersAdmin();
-
-			UsersAndOrganizationsNavigator.gotoOrganizations();
-
-			Organization.assignUser(
-				orgName = "Organization Name 1",
-				userFirstName = "userfn",
-				userLastName = "userln",
-				userName = "userfn userln",
-				userScreenName = "usersn");
+			JSONOrganization.assignUserToOrganization(
+				organizationName = "Organization Name 1",
+				userEmailAddress = "userea@liferay.com");
 		}
 
 		task ("Assign default user to organization in user admin") {
-			User.openUsersAdmin();
-
-			UsersAndOrganizationsNavigator.gotoOrganizations();
-
-			Organization.assignUser(
-				orgName = "Organization Name 1",
-				userFirstName = "Test",
-				userLastName = "Test",
-				userName = "Test Test",
-				userScreenName = "test");
+			JSONOrganization.assignUserToOrganization(
+				organizationName = "Organization Name 1",
+				userEmailAddress = "test@liferay.com");
 		}
 
 		task ("Allow manual memebership management for Organization Name 1") {
@@ -1083,6 +1052,105 @@ definition {
 				userLastName = "Three",
 				userLastNameSearchValue = "Three",
 				userScreenName = "member3");
+		}
+	}
+
+	@description = "This is a test for LPS-177717. The tooltip of the back button of Reply Membership, Membership Request, and Approved users is Go to Memberships."
+	@priority = 3
+	test ViewBackButtonTooltipForMembershipsAdmin {
+		property custom.properties = "jsonws.web.service.paths.excludes=";
+
+		task ("Given a site administrator accesses to view membersip requests") {
+			JSONUser.addUser(
+				userEmailAddress = "userea@liferay.com",
+				userFirstName = "userfn",
+				userLastName = "userln",
+				userScreenName = "usersn");
+
+			JSONUser.setFirstPassword(
+				agreeToTermsAndAnswerReminderQuery = "true",
+				requireReset = "false",
+				userEmailAddress = "userea@liferay.com");
+
+			HeadlessSite.addSite(
+				membershipType = "Restricted",
+				siteName = "Test Site Name");
+
+			User.logoutAndLoginPG(userLoginEmailAddress = "userea@liferay.com");
+
+			UserBar.gotoDropdownItem(dropdownItem = "My Dashboard");
+
+			NavItem.gotoAvailableSites();
+
+			LexiconList.clickEllipsisItem(
+				item = "Request Membership",
+				listEntry = "Test Site Name");
+
+			Type(
+				key_text = "comments",
+				locator1 = "TextArea#ANY",
+				value1 = "Request Membership for Test Site Name");
+
+			PortletEntry.save();
+
+			User.logoutAndLoginPG(userLoginEmailAddress = "test@liferay.com");
+
+			Site.openSiteMembershipsAdmin(siteURLKey = "test-site-name");
+
+			Click.waitForMenuToggleJSClick(locator1 = "Icon#HEADER_VERTICAL_ELLIPSIS");
+
+			MenuItem.click(menuItem = "View Membership Requests");
+
+			ControlMenu.viewHeaderTitle(headerTitle = "Membership Requests");
+		}
+
+		task ("When the site administrator hovers over the back button") {
+			MouseOver(locator1 = "Icon#BACK");
+		}
+
+		task ("Then the site administrator could see the tooltip message") {
+			AssertVisible(
+				key_content = "Go to Memberships",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
+		}
+
+		task ("Given a site administrator replies a membersip request") {
+			LexiconCard.clickEllipsisItem(
+				card = "userfn userln",
+				item = "Reply");
+
+			WaitForElementPresent(
+				key_text = "replyComments",
+				locator1 = "TextArea#ANY");
+		}
+
+		task ("When the site administrator hovers over the back button") {
+			MouseOver(locator1 = "Icon#BACK");
+		}
+
+		task ("Then the site administrator could see the tooltip message") {
+			AssertVisible(
+				key_content = "Go to Membership Requests",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
+		}
+
+		task ("Given a site administrator approves the membersip request") {
+			Type(
+				key_text = "replyComments",
+				locator1 = "TextArea#ANY",
+				value1 = "Approved");
+
+			PortletEntry.save();
+		}
+
+		task ("When the site administrator hovers over the back button") {
+			MouseOver(locator1 = "Icon#BACK");
+		}
+
+		task ("Then the site administrator could see the tooltip message") {
+			AssertVisible(
+				key_content = "Go to Memberships",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
 		}
 	}
 

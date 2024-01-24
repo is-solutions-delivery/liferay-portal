@@ -11,23 +11,30 @@
 AICreatorOpenAICompanyConfigurationDisplayContext aiCreatorOpenAICompanyConfigurationDisplayContext = (AICreatorOpenAICompanyConfigurationDisplayContext)request.getAttribute(AICreatorOpenAICompanyConfigurationDisplayContext.class.getName());
 %>
 
-<clay:content-row
-	cssClass="c-mt-5"
+<liferay-util:html-top
+	outputKey="ai_creator_openai_css"
 >
-	<clay:content-col
-		expand="<%= true %>"
-	>
-		<clay:checkbox
-			checked="<%= aiCreatorOpenAICompanyConfigurationDisplayContext.isEnabled() %>"
-			id='<%= liferayPortletResponse.getNamespace() + "enableOpenAI" %>'
-			label='<%= LanguageUtil.get(request, "enable-openai-to-create-content") %>'
-			name='<%= liferayPortletResponse.getNamespace() + "enableOpenAI" %>'
-		/>
+	<link href="<%= PortalUtil.getStaticResourceURL(request, PortalUtil.getPathProxy() + application.getContextPath() + "/css/configuration.css") %>" rel="stylesheet" type="text/css" />
+</liferay-util:html-top>
+
+<clay:content-row
+	cssClass="c-mt-4"
+>
+	<clay:content-col>
+		<span>
+			<liferay-ui:message key="set-the-api-key-for-authentication" />
+
+			<clay:link
+				href="https://platform.openai.com/docs/api-reference/authentication"
+				label="how-do-i-get-an-api-key"
+				target="_blank"
+			/>
+		</span>
 	</clay:content-col>
 </clay:content-row>
 
 <clay:content-row
-	cssClass="c-mt-2"
+	cssClass="c-my-4"
 >
 	<clay:content-col
 		expand="<%= true %>"
@@ -36,16 +43,35 @@ AICreatorOpenAICompanyConfigurationDisplayContext aiCreatorOpenAICompanyConfigur
 	</clay:content-col>
 </clay:content-row>
 
-<clay:content-row
-	cssClass="c-mb-5"
->
-	<clay:content-col>
-		<clay:link
-			href="https://platform.openai.com/docs/api-reference/authentication"
-			label="how-do-i-get-an-api-key"
-			target="_blank"
+<clay:content-row>
+	<clay:content-col
+		cssClass="ai-creator-config-checkbox"
+		expand="<%= true %>"
+	>
+		<clay:checkbox
+			checked="<%= aiCreatorOpenAICompanyConfigurationDisplayContext.isChatGPTEnabled() %>"
+			id='<%= liferayPortletResponse.getNamespace() + "enableChatGPT" %>'
+			label='<%= LanguageUtil.get(request, "enable-chatgpt-to-create-content") %>'
+			name='<%= liferayPortletResponse.getNamespace() + "enableChatGPT" %>'
 		/>
 	</clay:content-col>
 </clay:content-row>
+
+<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPD-10793") %>'>
+	<clay:content-row
+		cssClass="ai-creator-config-checkbox c-my-5"
+	>
+		<clay:content-col
+			expand="<%= true %>"
+		>
+			<clay:checkbox
+				checked="<%= aiCreatorOpenAICompanyConfigurationDisplayContext.isDALLEEnabled() %>"
+				id='<%= liferayPortletResponse.getNamespace() + "enableDALLE" %>'
+				label='<%= LanguageUtil.get(request, "enable-dalle-to-create-images") %>'
+				name='<%= liferayPortletResponse.getNamespace() + "enableDALLE" %>'
+			/>
+		</clay:content-col>
+	</clay:content-row>
+</c:if>
 
 <%@ include file="/configuration/error_ai_creator_openai_client_exception.jspf" %>

@@ -14,7 +14,12 @@ definition {
 
 	setUp {
 		task ("Set up instance and create a new Marketplace Site") {
-			MP2Configuration.marketplaceSetUp(clientExtensionDeploy = "true");
+
+			// This addition should be reverted when the issue ISSD-1572 is completed and the macro HeadlessSite.addSite() is usable.
+
+			MP2Configuration.marketplaceSetUp(
+				clientExtensionDeploy = "true",
+				viaFrontEnd = "true");
 		}
 
 		task ("Create a New Account and assign a user") {
@@ -173,7 +178,7 @@ definition {
 			MP2Navigator.gotoNavItem(navItem = "Members");
 
 			var table = '''
-				| Name    | QA Test             |
+				| Name    | Test QA             |
 				| Email   | test.mp@liferay.com |
 				| Role    | App Editor          |
 			''';
@@ -378,7 +383,7 @@ definition {
 
 		task ("Then I should be able to assert that the invited user's status is now Active") {
 			var table = '''
-				| Name    | QA Test             |
+				| Name    | Test QA             |
 				| Email   | test.mp@liferay.com |
 				| Role    | Account Buyer       |
 			''';
@@ -425,7 +430,7 @@ definition {
 			MP2Utils.firstLoginMKT(
 				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
-				recipient = "da@administrator.com",
+				recipient = "dashboard@adm.com",
 				route = "loading",
 				userEmailAddress = "test.mp@liferay.com");
 
@@ -463,7 +468,7 @@ definition {
 			MP2Utils.firstLoginMKT(
 				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
-				recipient = "da@administrator.com",
+				recipient = "dashboard@adm.com",
 				route = "customer-gate",
 				userEmailAddress = "test.mp@liferay.com");
 		}

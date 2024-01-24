@@ -1799,128 +1799,6 @@ definition {
 			kfStatus = "Approved");
 	}
 
-	@ignore = "true"
-	@priority = 4
-	test CompleteProcessWithEditedSingleApproverWorkflow {
-		property ci.retries.disabled = "true";
-		property test.liferay.virtual.instance = "false";
-		property test.run.type = "single";
-
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Kaleo Forms Admin");
-
-		KaleoFormsAdmin.addFieldSet(
-			kfFieldSetName = ${kfFieldSetName},
-			kfProcessName = "Kaleo Forms Process");
-
-		DynamicDataMapping.addField(
-			field = "Text",
-			fieldFieldLabel = "Text",
-			fieldName = "Text");
-
-		KaleoFormsAdmin.saveFieldSet();
-
-		KaleoFormsAdmin.addProcess();
-
-		KaleoFormsAdmin.addProcessDetails(
-			kfProcessDescription = "Kaleo Forms Process Description",
-			kfProcessName = "Kaleo Forms Process");
-
-		KaleoFormsAdmin.next();
-
-		KaleoFormsAdmin.chooseFieldSet(
-			kfFieldSetName = ${kfFieldSetName},
-			kfProcessName = "Kaleo Forms Process");
-
-		KaleoFormsAdmin.next();
-
-		KaleoFormsAdmin.editWorkflow(
-			kfProcessName = "Kaleo Forms Process",
-			workflowDefinitionTitle = "Single Approver",
-			workflowDefinitionTitleEdit = "Edited Workflow Definition");
-
-		KaleoDesigner.deleteNodeInKaleoForms(nodeNodeLabel = "update");
-
-		KaleoFormsAdmin.updateWorkflow();
-
-		KaleoFormsAdmin.chooseWorkflow(
-			edit = "true",
-			kfProcessName = "Kaleo Forms Process",
-			workflowDefinitionTitle = "Edited Workflow Definition");
-
-		KaleoFormsAdmin.next();
-
-		KaleoFormsAdmin.assignForm(
-			kfProcessName = "Kaleo Forms Process",
-			workflowTask = "create");
-
-		KaleoFormsAdmin.addForm(kfFormName = "Created Task Form");
-
-		KaleoFormsAdmin.saveForm();
-
-		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
-
-		KaleoFormsAdmin.viewTaskNotPresent(
-			kfFormName = " ",
-			workflowTask = "update");
-
-		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Kaleo Forms Admin");
-
-		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
-
-		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
-
-		Workflow.viewDefaultMyWorkflowTasksCP();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Kaleo Forms Admin");
-
-		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
-
-		KaleoFormsAdmin.populateFieldText(
-			fieldName = "Text",
-			kfProcessFieldData = "Test");
-
-		KaleoFormsAdmin.saveProcessRecord();
-
-		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
-
-		Workflow.assignToMeTaskByActions(
-			workflowAssetTitle = "Kaleo Forms Process",
-			workflowAssetType = ${workflowAssetType},
-			workflowTask = "Review");
-
-		Workflow.viewCannotRejectTaskByActions(
-			workflowAssetTitle = "Kaleo Forms Process",
-			workflowTask = "Review");
-
-		Workflow.approveTaskByActions(
-			workflowAssetTitle = "Kaleo Forms Process",
-			workflowAssetType = ${workflowAssetType},
-			workflowTask = "Review");
-
-		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
-
-		Workflow.viewCompletedTask(
-			workflowAssetTitle = "Kaleo Forms Process",
-			workflowAssetType = ${workflowAssetType},
-			workflowTask = "Review");
-
-		Workflow.gotoCompletedTaskAssignedToMePreview(workflowAssetTitle = "Kaleo Forms Process");
-
-		WorkflowAsset.previewViewContent(
-			fieldLabel = "Text",
-			fieldValue = "Test");
-	}
-
 	@priority = 5
 	test CompleteProcessWithUploadedDefinition {
 		property ci.retries.disabled = "true";
@@ -1928,10 +1806,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Workflow.addNewDefinition(workflowDefinitionTitle = "Uploaded Definition");
 
@@ -2871,10 +2746,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Workflow.addNewDefinition(workflowDefinitionTitle = "Uploaded Definition");
 
@@ -3037,10 +2909,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Workflow.addNewDefinition(workflowDefinitionTitle = "Uploaded Definition");
 
@@ -4140,10 +4009,7 @@ definition {
 
 		KaleoFormsAdmin.viewProcessNoRecords(kfProcessName = "Kaleo Forms Process");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.addCP(
 			userEmailAddress = "userea@liferay.com",
@@ -4151,19 +4017,13 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.editPasswordCP(
 			userEmailAddress = "userea@liferay.com",
 			userScreenName = "usersn");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		Role.addAssignee(
 			assigneeName = "userfn userln",

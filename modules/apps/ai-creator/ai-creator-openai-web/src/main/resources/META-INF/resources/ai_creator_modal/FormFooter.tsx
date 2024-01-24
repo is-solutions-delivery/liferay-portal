@@ -8,6 +8,9 @@ import ClayIcon from '@clayui/icon';
 import React from 'react';
 
 interface Props {
+	addButtonLabel?: string;
+	disableAddButton?: boolean;
+	disableRetryButton?: boolean;
 	onAdd: () => void;
 	onClose: () => void;
 	showAddButton: boolean;
@@ -16,6 +19,9 @@ interface Props {
 }
 
 export function FormFooter({
+	addButtonLabel = Liferay.Language.get('add'),
+	disableAddButton = false,
+	disableRetryButton = false,
 	onAdd,
 	onClose,
 	showAddButton,
@@ -36,7 +42,12 @@ export function FormFooter({
 
 	if (showRetryButton) {
 		children.push(
-			<ClayButton displayType="secondary" key="try-again" type="submit">
+			<ClayButton
+				disabled={disableRetryButton}
+				displayType="secondary"
+				key="try-again"
+				type="submit"
+			>
 				{Liferay.Language.get('try-again')}
 			</ClayButton>
 		);
@@ -44,8 +55,13 @@ export function FormFooter({
 
 	if (showAddButton) {
 		children.push(
-			<ClayButton displayType="primary" key="add" onClick={onAdd}>
-				{Liferay.Language.get('add')}
+			<ClayButton
+				disabled={disableAddButton}
+				displayType="primary"
+				key="add"
+				onClick={onAdd}
+			>
+				{addButtonLabel}
 			</ClayButton>
 		);
 	}

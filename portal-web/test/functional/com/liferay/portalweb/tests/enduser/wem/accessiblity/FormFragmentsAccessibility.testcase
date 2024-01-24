@@ -2,7 +2,6 @@
 definition {
 
 	property ci.retries.disabled = "true";
-	property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
 	property portal.accessibility = "true";
 	property portal.release = "true";
 	property portal.upstream = "true";
@@ -283,7 +282,11 @@ definition {
 		}
 
 		task ("Then the rich text field should have correct accessibility") {
-			AssertElementAccessible(locator1 = "//div[contains(@class,'lfr-layout-structure-item-inputs-rich-text-input')]");
+			AssertElementAccessible(locator1 = "//label[contains(@class,'sr-only')][normalize-space()='Description']");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CKEditor#BODY_FIELD_IFRAME");
+
+			AssertElementAccessible(locator1 = "//body//p[normalize-space()='Create custom digital experiences without sacrificing speed, flexibility, or cost.']");
 		}
 	}
 

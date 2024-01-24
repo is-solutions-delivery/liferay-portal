@@ -144,7 +144,7 @@ definition {
 
 		task ("When adding BLUE to the cart with filled option values") {
 			FrontStore.addToCartFromProductDetails(
-				boolean = "enabled",
+				boolean = "enabled:checkbox",
 				date = "10/23/2023",
 				multipleSelectionValuesChecked = "value1,value2",
 				numeric = 10,
@@ -154,26 +154,27 @@ definition {
 				singleSelectionValueChecked = "value2",
 				text = "Text Content");
 
-			var cartItemOption1 = '''blue, option-checkbox-key, 2023-10-23, 10, Text Content, value1,value2, value2''';
+			var cartItemOption1 = '''Color:Blue,checkbox:option-checkbox-key,date:2023-10-23,numeric:10,text:Text Content,checkbox_multiple:value1,checkbox_multiple:value2,radio:value2''';
 		}
 
 		task ("Then can view the filled option values for the order item shown in the mini-cart") {
 			CommerceNavigator.gotoMiniCart();
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × ABS Sensor",
+				bundledItems = "Blue(1 × ABS Sensor )",
 				cartItemName = "Bundled Product",
 				cartItemOption = ${cartItemOption1},
 				cartItemPriceValue = "20.00",
 				cartItemQuantity = 1,
-				cartItemSku = "BLUE");
+				cartItemSku = "BLUE",
+				optionName = "Color");
 		}
 
 		task ("And can view the option values set in the Edit Bundled Product panel") {
-			FrontStore.gotoEditMiniCartItemBundledProduct(cartItemSku = "BLUE");
+			FrontStore.gotoEditMiniCartItemProductOption(cartItemSku = "BLUE");
 
-			FrontStore.viewMiniCartEditBundledProduct(
-				boolean = "enabled",
+			FrontStore.viewMiniCartEditProductOption(
+				boolean = "enabled:checkbox",
 				cartItemOptionName = "Color",
 				cartItemOptionValue = "Blue",
 				cartItemPriceAsConfiguredValue = "$ 20.00",
@@ -187,7 +188,7 @@ definition {
 		}
 
 		task ("When editing the option values in the Edit Bundled Product panel") {
-			FrontStore.editMiniCartItemBundledProduct(
+			FrontStore.editMiniCartItemProductOption(
 				cartItemOptionName = "Color",
 				cartItemOptionValue = "Blue",
 				date = "10/20/2023",
@@ -196,19 +197,20 @@ definition {
 				singleSelectionValueChecked = "value1",
 				text = "Text Content Edit");
 
-			var cartItemOption1 = '''blue, option-checkbox-key, 2023-10-20, 20, Text Content Edit, value1, value1''';
+			var cartItemOption1 = '''Color:Blue,checkbox:option-checkbox-key,date:2023-10-20,numeric:20,text:Text Content Edit,checkbox_multiple:value1,radio:value1''';
 		}
 
 		task ("Then can view the option values saved in the mini-cart") {
 			CommerceNavigator.gotoMiniCart();
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × ABS Sensor",
+				bundledItems = "Blue(1 × ABS Sensor )",
 				cartItemName = "Bundled Product",
 				cartItemOption = ${cartItemOption1},
 				cartItemPriceValue = "20.00",
 				cartItemQuantity = 1,
-				cartItemSku = "BLUE");
+				cartItemSku = "BLUE",
+				optionName = "Color");
 		}
 
 		task ("When adding BLUE to the cart with filled the same option values again in the bundled product details") {
@@ -216,19 +218,20 @@ definition {
 
 			Click(locator1 = "CommerceAccelerators#ADD_TO_CART_BUTTON_PRODUCT_DETAILS_PAGE");
 
-			var cartItemOption2 = '''blue, option-checkbox-key, 2023-10-23, 10, Text Content, value1,value2, value2''';
+			var cartItemOption2 = '''Color:Blue,checkbox:option-checkbox-key,date:2023-10-23,numeric:10,text:Text Content,checkbox_multiple:value1,checkbox_multiple:value2,radio:value2''';
 		}
 
 		task ("Then can view the option values saved and shown as another item in the mini-cart") {
 			CommerceNavigator.gotoMiniCart();
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × ABS Sensor",
+				bundledItems = "Blue(1 × ABS Sensor )",
 				cartItemName = "Bundled Product",
 				cartItemOption = ${cartItemOption1},
 				cartItemPriceValue = "20.00",
 				cartItemQuantity = 1,
-				cartItemSku = "BLUE");
+				cartItemSku = "BLUE",
+				optionName = "Color");
 
 			Click(
 				key_cartItemSku = "BLUE",
@@ -236,13 +239,14 @@ definition {
 				locator1 = "CommerceAccelerators#MINI_CART_SPECIFIC_ITEM_BUNDLED_ITEM_HIDE_OPTIONS_PANEL_EXPANDED");
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × ABS Sensor",
+				bundledItems = "Blue(1 × ABS Sensor )",
 				cartItemName = "Bundled Product",
 				cartItemOption = ${cartItemOption2},
 				cartItemPriceValue = "20.00",
 				cartItemQuantity = 1,
 				cartItemSku = "BLUE",
-				index = 2);
+				index = 2,
+				optionName = "Color");
 		}
 
 		task ("And can view the order items with filled option values in the pending order page") {
@@ -386,6 +390,13 @@ definition {
 
 			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/p/bundled-product");
 
+			Select(
+				key_optionName = "Color",
+				locator1 = "CommerceFrontStore#FS_PRODUCT_OPTIONS_SELECT",
+				value1 = "Black - $ 10.00");
+
+			AssertElementPresent(locator1 = "CommerceAccelerators#PRODUCT_DETAILS_PRICE_ON_APPLICATION");
+
 			FrontStore.addToCartFromProductDetails(
 				optionNamesAndValues = "Color:Blue",
 				productName = "Bundled Product",
@@ -396,16 +407,16 @@ definition {
 			CommerceNavigator.gotoMiniCart();
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × ABS Sensor",
+				bundledItems = "Blue(1 × ABS Sensor )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "blue",
 				cartItemPriceValue = "50.00",
 				cartItemQuantity = 1,
-				cartItemSku = "BLUE");
+				cartItemSku = "BLUE",
+				optionName = "Color");
 		}
 
 		task ("When the buyer edits WHITE as the bundled product option") {
-			FrontStore.gotoEditMiniCartItemBundledProduct(cartItemSku = "BLUE");
+			FrontStore.gotoEditMiniCartItemProductOption(cartItemSku = "BLUE");
 
 			Select(
 				key_optionName = "Color",
@@ -414,7 +425,7 @@ definition {
 		}
 
 		task ("Then can view the order item updated for WHITE has the correct linked sku and promo price in both the Edit Bundled Product panel and the mini-cart") {
-			FrontStore.viewMiniCartEditBundledProduct(
+			FrontStore.viewMiniCartEditProductOption(
 				cartItemOptionName = "Color",
 				cartItemOptionValue = "White",
 				cartItemPriceAsConfiguredValue = "$ 100.00",
@@ -424,16 +435,16 @@ definition {
 			Button.clickSave();
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × Premium Brake Fluid",
+				bundledItems = "White(1 × Premium Brake Fluid )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "white",
 				cartItemPromoPriceValue = "90.00",
 				cartItemQuantity = 1,
-				cartItemSku = "WHITE");
+				cartItemSku = "WHITE",
+				optionName = "Color");
 		}
 
 		task ("When the buyer edits BLACK as the bundled product option") {
-			FrontStore.gotoEditMiniCartItemBundledProduct(cartItemSku = "WHITE");
+			FrontStore.gotoEditMiniCartItemProductOption(cartItemSku = "WHITE");
 
 			Select(
 				key_optionName = "Color",
@@ -442,21 +453,20 @@ definition {
 		}
 
 		task ("Then can view the order item updated for BLACK has the correct linked sku and price with POA in both the Edit Bundled Product panel and the mini-cart") {
-			FrontStore.viewMiniCartEditBundledProduct(
+			FrontStore.viewMiniCartEditProductOption(
 				cartItemOptionName = "Color",
 				cartItemOptionValue = "Black",
-				cartItemPriceAsConfiguredValue = "0.00",
-				cartItemPriceValue = "0.00");
+				cartItemPriceOnApplication = "true");
 
 			Button.clickSave();
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × Brake Rotors",
+				bundledItems = "Black(1 × Brake Rotors )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "black",
 				cartItemPriceOnApplication = "true",
 				cartItemQuantity = 1,
-				cartItemSku = "BLACK");
+				cartItemSku = "BLACK",
+				optionName = "Color");
 
 			AssertElementPresent(
 				key_text = "Request a Quote",
@@ -464,7 +474,7 @@ definition {
 		}
 
 		task ("When the buyer edits RED as the bundled product option") {
-			FrontStore.gotoEditMiniCartItemBundledProduct(cartItemSku = "BLACK");
+			FrontStore.gotoEditMiniCartItemProductOption(cartItemSku = "BLACK");
 
 			Select(
 				key_optionName = "Color",
@@ -473,7 +483,7 @@ definition {
 		}
 
 		task ("Then can view the order item updated for RED has the correct linked sku and discount in both the Edit Bundled Product panel and the mini-cart") {
-			FrontStore.viewMiniCartEditBundledProduct(
+			FrontStore.viewMiniCartEditProductOption(
 				cartItemDiscountValue = "-50%",
 				cartItemOptionName = "Color",
 				cartItemOptionValue = "Red",
@@ -485,16 +495,16 @@ definition {
 			// The discounted price for the order item needs to be updated after the COMMERCE-12493 is fixed
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × Calipers",
+				bundledItems = "Red(1 × Calipers )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "red",
 				cartItemPriceValue = "90.00",
 				cartItemQuantity = 1,
-				cartItemSku = "RED");
+				cartItemSku = "RED",
+				optionName = "Color");
 		}
 
 		task ("When the buyer edits GREEN as the bundled product option") {
-			FrontStore.gotoEditMiniCartItemBundledProduct(cartItemSku = "RED");
+			FrontStore.gotoEditMiniCartItemProductOption(cartItemSku = "RED");
 
 			Select(
 				key_optionName = "Color",
@@ -509,12 +519,12 @@ definition {
 			Button.clickSave();
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × Wear Sensors",
+				bundledItems = "Green(1 × Wear Sensors )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "green",
 				cartItemPriceInactiveValue = "160.00",
 				cartItemQuantity = 1,
-				cartItemSku = "GREEN");
+				cartItemSku = "GREEN",
+				optionName = "Color");
 
 			var i = 1;
 
@@ -639,12 +649,12 @@ definition {
 			CommerceNavigator.gotoMiniCart();
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × ABS Sensor",
+				bundledItems = "Blue(1 × ABS Sensor )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "blue",
 				cartItemPriceValue = "30.00",
 				cartItemQuantity = 1,
-				cartItemSku = "BLUE");
+				cartItemSku = "BLUE",
+				optionName = "Color");
 
 			AssertElementPresent(
 				key_cartItemSku = "BLUE",
@@ -652,12 +662,12 @@ definition {
 				locator1 = "CommerceAccelerators#MINI_CART_SPECIFIC_ITEM_BUNDLED_ITEM_BODY_VERTICAL_ELLIPSIS");
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × Brake Rotors",
+				bundledItems = "White(1 × Brake Rotors )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "white",
 				cartItemPriceValue = "50.00",
 				cartItemQuantity = 1,
-				cartItemSku = "WHITE");
+				cartItemSku = "WHITE",
+				optionName = "Color");
 
 			AssertElementPresent(
 				key_cartItemSku = "WHITE",
@@ -674,28 +684,28 @@ definition {
 				productSku = "MIN93016A");
 		}
 
-		task ("Then no 'Show Product Options' panel and the Edit action button for the non-bundled product") {
+		task ("Then there is 'Show Options' panel but no Edit action button for the non-bundled product") {
 			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/catalog");
 
 			CommerceNavigator.gotoMiniCart();
 
-			AssertElementNotPresent(
+			AssertElementPresent(
 				key_cartItemSku = "MIN93016A",
 				key_index = 1,
 				locator1 = "CommerceAccelerators#MINI_CART_SPECIFIC_ITEM_BUNDLED_ITEM_SHOW_OPTIONS_PANEL_COLLAPSED");
 
-			AssertElementNotPresent(
+			AssertElementPresent(
 				key_cartItemSku = "MIN93016A",
 				key_index = 1,
 				locator1 = "CommerceAccelerators#MINI_CART_SPECIFIC_ITEM_BUNDLED_ITEM_BODY_VERTICAL_ELLIPSIS");
 
-			AssertElementPresent(
+			AssertElementNotPresent(
 				key_cartItemSku = "MIN93016A",
 				locator1 = "CommerceAccelerators#MINI_CART_REMOVE_ITEM");
 		}
 
 		task ("When the Edit Bundled Product panel is opened for an order item") {
-			FrontStore.gotoEditMiniCartItemBundledProduct(cartItemSku = "BLUE");
+			FrontStore.gotoEditMiniCartItemProductOption(cartItemSku = "BLUE");
 
 			AssertVisible(
 				key_productName = "Bundled Product",
@@ -860,24 +870,24 @@ definition {
 			CommerceNavigator.gotoMiniCart();
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × ABS Sensor UOM1KEY",
+				bundledItems = "Blue(1 × ABS Sensor UOM1KEY)",
 				cartItemName = "Bundled Product",
-				cartItemOption = "blue",
 				cartItemPriceValue = "50.00",
 				cartItemQuantity = 1,
-				cartItemSku = "BLUE");
+				cartItemSku = "BLUE",
+				optionName = "Color");
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × ABS Sensor UOM2KEY",
+				bundledItems = "White(1 × ABS Sensor UOM2KEY)",
 				cartItemName = "Bundled Product",
-				cartItemOption = "white",
 				cartItemPromoPriceValue = "26.67",
 				cartItemQuantity = 1,
-				cartItemSku = "WHITE");
+				cartItemSku = "WHITE",
+				optionName = "Color");
 		}
 
 		task ("When the buyer edits BLUE as the bundled product option") {
-			FrontStore.gotoEditMiniCartItemBundledProduct(cartItemSku = "BLUE");
+			FrontStore.gotoEditMiniCartItemProductOption(cartItemSku = "BLUE");
 
 			// The assertion for the PriceAsConfigured price in the Edit Bundled Product panel needs to be added after the COMMERCE-12493 is fixed
 
@@ -886,7 +896,7 @@ definition {
 				locator1 = "CommerceAccelerators#MINI_CART_PRODUCT_OPTIONS_SELECT",
 				value1 = "White");
 
-			FrontStore.viewMiniCartEditBundledProduct(
+			FrontStore.viewMiniCartEditProductOption(
 				cartItemOptionName = "Color",
 				cartItemOptionValue = "White",
 				cartItemPriceAsConfiguredValue = "$ 33.33",
@@ -899,7 +909,7 @@ definition {
 
 			CommerceNavigator.gotoMiniCart();
 
-			FrontStore.gotoEditMiniCartItemBundledProduct(cartItemSku = "WHITE");
+			FrontStore.gotoEditMiniCartItemProductOption(cartItemSku = "WHITE");
 
 			// The assertion for the PriceAsConfigured price in the Edit Bundled Product panel needs to be added after the COMMERCE-12493 is fixed
 
@@ -908,7 +918,7 @@ definition {
 				locator1 = "CommerceAccelerators#MINI_CART_PRODUCT_OPTIONS_SELECT",
 				value1 = "Blue");
 
-			FrontStore.viewMiniCartEditBundledProduct(
+			FrontStore.viewMiniCartEditProductOption(
 				cartItemOptionName = "Color",
 				cartItemOptionValue = "Blue",
 				cartItemPriceAsConfiguredValue = "$ 50.00",
@@ -1027,12 +1037,12 @@ definition {
 			CommerceNavigator.gotoMiniCart();
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × ABS Sensor",
+				bundledItems = "Blue(1 × ABS Sensor )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "blue",
 				cartItemPriceValue = "150.00",
 				cartItemQuantity = "0.5",
-				cartItemSku = "BLUE");
+				cartItemSku = "BLUE",
+				optionName = "Color");
 		}
 
 		task ("And can view the correct updates for product option when using up/down keys to increase/decrease the quantity") {
@@ -1044,18 +1054,23 @@ definition {
 				var cartItemQuantity = StringUtil.extractFirst(${valueList}, ":");
 				var bundledItemQuantity = StringUtil.extractLast(${valueList}, ":");
 
+				Click(
+					key_cartItemSku = "BLUE",
+					key_index = 1,
+					locator1 = "CommerceAccelerators#MINI_CART_SPECIFIC_ITEM_BUNDLED_ITEM_HIDE_OPTIONS_PANEL_EXPANDED");
+
 				FrontStore.changeQuantityByUsingKeyArrows(
 					arrowAction = ${arrowAction},
 					productSKU = "BLUE",
 					quantitySelectorType = "Mini-cart");
 
 				FrontStore.viewMiniCartItem(
-					bundledItems = "${bundledItemQuantity} × ABS Sensor",
+					bundledItems = "Blue(${bundledItemQuantity} × ABS Sensor )",
 					cartItemName = "Bundled Product",
-					cartItemOption = "blue",
 					cartItemPriceValue = "150.00",
 					cartItemQuantity = ${cartItemQuantity},
-					cartItemSku = "BLUE");
+					cartItemSku = "BLUE",
+					optionName = "Color");
 			}
 		}
 	}
@@ -1169,7 +1184,7 @@ definition {
 		task ("And tries to edit the option value to BLUE in the Edit Bundled Product panel in the mini-cart of the order item sku White") {
 			CommerceNavigator.gotoMiniCart();
 
-			FrontStore.gotoEditMiniCartItemBundledProduct(cartItemSku = "WHITE");
+			FrontStore.gotoEditMiniCartItemProductOption(cartItemSku = "WHITE");
 
 			Select(
 				key_optionName = "Color",
@@ -1287,20 +1302,20 @@ definition {
 			CommerceNavigator.gotoMiniCart();
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × ABS Sensor",
+				bundledItems = "Blue(1 × ABS Sensor )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "blue",
 				cartItemPriceValue = "30.00",
 				cartItemQuantity = 1,
-				cartItemSku = "BLUE");
+				cartItemSku = "BLUE",
+				optionName = "Color");
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × Brake Rotors",
+				bundledItems = "White(1 × Brake Rotors )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "white",
 				cartItemPriceValue = "50.00",
 				cartItemQuantity = 1,
-				cartItemSku = "WHITE");
+				cartItemSku = "WHITE",
+				optionName = "Color");
 
 			FrontStore.viewMiniCart(
 				cartSummaryQuantity = 2,
@@ -1309,9 +1324,9 @@ definition {
 		}
 
 		task ("When the buyer selects Blue(itself) again and saves the change in the order item's Edit page") {
-			FrontStore.gotoEditMiniCartItemBundledProduct(cartItemSku = "BLUE");
+			FrontStore.gotoEditMiniCartItemProductOption(cartItemSku = "BLUE");
 
-			FrontStore.editMiniCartItemBundledProduct(
+			FrontStore.editMiniCartItemProductOption(
 				cartItemOptionName = "Color",
 				cartItemOptionValue = "Blue");
 		}
@@ -1322,20 +1337,20 @@ definition {
 			AssertVisible(locator1 = "CommerceAccelerators#MINI_CART_RESUME");
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × ABS Sensor",
+				bundledItems = "Blue(1 × ABS Sensor )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "blue",
 				cartItemPriceValue = "30.00",
 				cartItemQuantity = 1,
-				cartItemSku = "BLUE");
+				cartItemSku = "BLUE",
+				optionName = "Color");
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × Brake Rotors",
+				bundledItems = "White(1 × Brake Rotors )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "white",
 				cartItemPriceValue = "50.00",
 				cartItemQuantity = 1,
-				cartItemSku = "WHITE");
+				cartItemSku = "WHITE",
+				optionName = "Color");
 
 			FrontStore.viewMiniCart(
 				cartSummaryQuantity = 2,
@@ -1351,20 +1366,20 @@ definition {
 			CommerceNavigator.gotoMiniCart();
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "2 × ABS Sensor",
+				bundledItems = "Blue(2 × ABS Sensor )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "blue",
 				cartItemPriceValue = "30.00",
 				cartItemQuantity = 2,
-				cartItemSku = "BLUE");
+				cartItemSku = "BLUE",
+				optionName = "Color");
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × Brake Rotors",
+				bundledItems = "White(1 × Brake Rotors )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "white",
 				cartItemPriceValue = "50.00",
 				cartItemQuantity = 1,
-				cartItemSku = "WHITE");
+				cartItemSku = "WHITE",
+				optionName = "Color");
 
 			FrontStore.viewMiniCart(
 				cartSummaryQuantity = 3,
@@ -1373,21 +1388,21 @@ definition {
 		}
 
 		task ("But if the buyer edits the Blue to White in the edit bundled product panel and save") {
-			FrontStore.gotoEditMiniCartItemBundledProduct(cartItemSku = "BLUE");
+			FrontStore.gotoEditMiniCartItemProductOption(cartItemSku = "BLUE");
 
-			FrontStore.editMiniCartItemBundledProduct(
+			FrontStore.editMiniCartItemProductOption(
 				cartItemOptionName = "Color",
 				cartItemOptionValue = "White");
 		}
 
 		task ("Then the item for Blue has changed to White with price in the mini-cart") {
 			FrontStore.viewMiniCartItem(
-				bundledItems = "3 × Brake Rotors",
+				bundledItems = "White(3 × Brake Rotors )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "white",
 				cartItemPriceValue = "50.00",
 				cartItemQuantity = 3,
-				cartItemSku = "WHITE");
+				cartItemSku = "WHITE",
+				optionName = "Color");
 
 			AssertElementNotPresent(
 				key_cartItemSku = "BLUE",
@@ -1409,20 +1424,20 @@ definition {
 
 		task ("Then the cart items can be updated correctly after quick add to cart in the mini-cart") {
 			FrontStore.viewMiniCartItem(
-				bundledItems = "4 × Brake Rotors",
+				bundledItems = "White(4 × Brake Rotors )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "white",
 				cartItemPriceValue = "50.00",
 				cartItemQuantity = 4,
-				cartItemSku = "WHITE");
+				cartItemSku = "WHITE",
+				optionName = "Color");
 
 			FrontStore.viewMiniCartItem(
-				bundledItems = "1 × ABS Sensor",
+				bundledItems = "Blue(1 × ABS Sensor )",
 				cartItemName = "Bundled Product",
-				cartItemOption = "blue",
 				cartItemPriceValue = "30.00",
 				cartItemQuantity = 1,
-				cartItemSku = "BLUE");
+				cartItemSku = "BLUE",
+				optionName = "Color");
 
 			FrontStore.viewMiniCart(
 				cartSummaryQuantity = 5,
@@ -1431,9 +1446,9 @@ definition {
 		}
 
 		task ("And can see the List Price and Price as Configured fields are still the single prices, will not update with the quantities in the Edit Bundled Product panel") {
-			FrontStore.gotoEditMiniCartItemBundledProduct(cartItemSku = "WHITE");
+			FrontStore.gotoEditMiniCartItemProductOption(cartItemSku = "WHITE");
 
-			FrontStore.viewMiniCartEditBundledProduct(
+			FrontStore.viewMiniCartEditProductOption(
 				cartItemOptionName = "Color",
 				cartItemOptionValue = "White",
 				cartItemPriceAsConfiguredValue = "$ 50.00",

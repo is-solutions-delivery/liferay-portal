@@ -652,7 +652,6 @@ exports[`Field Checkbox Multiple is not required 1`] = `
     class="form-group hide"
   >
     <div
-      aria-required="false"
       class="lfr-ddm-checkbox-multiple"
     >
       <div
@@ -810,7 +809,7 @@ exports[`Field Checkbox Multiple is shown as checkbox 1`] = `
       class="lfr-ddm-checkbox-multiple"
     >
       <div
-        class="custom-control custom-checkbox"
+        class="custom-control custom-checkbox custom-control-outside"
       >
         <label>
           <input
@@ -831,7 +830,7 @@ exports[`Field Checkbox Multiple is shown as checkbox 1`] = `
         </label>
       </div>
       <div
-        class="custom-control custom-checkbox"
+        class="custom-control custom-checkbox custom-control-outside"
       >
         <label>
           <input

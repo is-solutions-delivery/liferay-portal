@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -55,11 +56,19 @@ public class RowViewportConfig implements Serializable {
 	@Schema
 	@Valid
 	public LandscapeMobile getLandscapeMobile() {
+		if (_landscapeMobileSupplier != null) {
+			landscapeMobile = _landscapeMobileSupplier.get();
+
+			_landscapeMobileSupplier = null;
+		}
+
 		return landscapeMobile;
 	}
 
 	public void setLandscapeMobile(LandscapeMobile landscapeMobile) {
 		this.landscapeMobile = landscapeMobile;
+
+		_landscapeMobileSupplier = null;
 	}
 
 	@JsonIgnore
@@ -67,29 +76,42 @@ public class RowViewportConfig implements Serializable {
 		UnsafeSupplier<LandscapeMobile, Exception>
 			landscapeMobileUnsafeSupplier) {
 
-		try {
-			landscapeMobile = landscapeMobileUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_landscapeMobileSupplier = () -> {
+			try {
+				return landscapeMobileUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected LandscapeMobile landscapeMobile;
 
+	@JsonIgnore
+	private Supplier<LandscapeMobile> _landscapeMobileSupplier;
+
 	@Schema
 	@Valid
 	public PortraitMobile getPortraitMobile() {
+		if (_portraitMobileSupplier != null) {
+			portraitMobile = _portraitMobileSupplier.get();
+
+			_portraitMobileSupplier = null;
+		}
+
 		return portraitMobile;
 	}
 
 	public void setPortraitMobile(PortraitMobile portraitMobile) {
 		this.portraitMobile = portraitMobile;
+
+		_portraitMobileSupplier = null;
 	}
 
 	@JsonIgnore
@@ -97,49 +119,67 @@ public class RowViewportConfig implements Serializable {
 		UnsafeSupplier<PortraitMobile, Exception>
 			portraitMobileUnsafeSupplier) {
 
-		try {
-			portraitMobile = portraitMobileUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_portraitMobileSupplier = () -> {
+			try {
+				return portraitMobileUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected PortraitMobile portraitMobile;
 
+	@JsonIgnore
+	private Supplier<PortraitMobile> _portraitMobileSupplier;
+
 	@Schema
 	@Valid
 	public Tablet getTablet() {
+		if (_tabletSupplier != null) {
+			tablet = _tabletSupplier.get();
+
+			_tabletSupplier = null;
+		}
+
 		return tablet;
 	}
 
 	public void setTablet(Tablet tablet) {
 		this.tablet = tablet;
+
+		_tabletSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setTablet(
 		UnsafeSupplier<Tablet, Exception> tabletUnsafeSupplier) {
 
-		try {
-			tablet = tabletUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_tabletSupplier = () -> {
+			try {
+				return tabletUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Tablet tablet;
+
+	@JsonIgnore
+	private Supplier<Tablet> _tabletSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -168,6 +208,8 @@ public class RowViewportConfig implements Serializable {
 
 		sb.append("{");
 
+		LandscapeMobile landscapeMobile = getLandscapeMobile();
+
 		if (landscapeMobile != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -178,6 +220,8 @@ public class RowViewportConfig implements Serializable {
 			sb.append(String.valueOf(landscapeMobile));
 		}
 
+		PortraitMobile portraitMobile = getPortraitMobile();
+
 		if (portraitMobile != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -187,6 +231,8 @@ public class RowViewportConfig implements Serializable {
 
 			sb.append(String.valueOf(portraitMobile));
 		}
+
+		Tablet tablet = getTablet();
 
 		if (tablet != null) {
 			if (sb.length() > 1) {

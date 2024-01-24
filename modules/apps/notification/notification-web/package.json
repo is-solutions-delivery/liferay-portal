@@ -1,13 +1,13 @@
 {
 	"dependencies": {
-		"@clayui/core": "3.104.0",
-		"@clayui/form": "3.104.0",
-		"@clayui/icon": "3.56.0",
-		"@clayui/loading-indicator": "3.60.0",
-		"@clayui/multi-select": "3.105.0",
-		"@clayui/panel": "3.104.0",
-		"@clayui/popover": "3.104.0",
-		"@clayui/tooltip": "3.104.0",
+		"@clayui/core": "3.108.0",
+		"@clayui/form": "3.107.0",
+		"@clayui/icon": "3.106.1",
+		"@clayui/loading-indicator": "3.106.1",
+		"@clayui/multi-select": "3.108.0",
+		"@clayui/panel": "3.108.0",
+		"@clayui/popover": "3.107.0",
+		"@clayui/tooltip": "3.108.0",
 		"@liferay/frontend-data-set-web": "*",
 		"@liferay/object-js-components-web": "*",
 		"classnames": "2.3.1",
@@ -22,5 +22,5 @@
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "1.0.66"
+	"version": "1.0.70"
 }

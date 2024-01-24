@@ -20,7 +20,7 @@ import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectFieldSettingLocalService;
-import com.liferay.object.service.test.util.ObjectDefinitionTestUtil;
+import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
@@ -110,7 +110,7 @@ public class ObjectEntryLocalServiceSearchObjectEntriesTest {
 
 		_addObjectEntry(
 			HashMapBuilder.<String, Serializable>put(
-				"alpha", new BigDecimal("45")
+				"alpha", new BigDecimal("45.25")
 			).build());
 		_addObjectEntry(
 			HashMapBuilder.<String, Serializable>put(
@@ -118,14 +118,15 @@ public class ObjectEntryLocalServiceSearchObjectEntriesTest {
 			).build());
 
 		_assertKeywords("[44 TO 46]", 1);
-		_assertKeywords("[44.9999 TO 45.1111]", 1);
+		_assertKeywords("[44.9999 TO 45.3333]", 1);
 		_assertKeywords("4", 0);
-		_assertKeywords("45", 1);
-		_assertKeywords("45.0000", 1);
-		_assertKeywords("45.0001", 0);
+		_assertKeywords("45", 0);
+		_assertKeywords("45.25", 1);
+		_assertKeywords("45.2500", 1);
+		_assertKeywords("45.2501", 0);
 		_assertKeywords("bravo 4 charlie", 0);
-		_assertKeywords("bravo 45 charlie", 1);
-		_assertKeywords("bravo 45.0 charlie", 1);
+		_assertKeywords("bravo 45 charlie", 0);
+		_assertKeywords("bravo 45.25 charlie", 1);
 		_assertKeywords("search from [ 44 TO 46 ]", 1);
 	}
 
@@ -139,7 +140,7 @@ public class ObjectEntryLocalServiceSearchObjectEntriesTest {
 
 		_addObjectEntry(
 			HashMapBuilder.<String, Serializable>put(
-				"alpha", new BigDecimal("45")
+				"alpha", new BigDecimal("45.25")
 			).build());
 		_addObjectEntry(
 			HashMapBuilder.<String, Serializable>put(
@@ -150,11 +151,12 @@ public class ObjectEntryLocalServiceSearchObjectEntriesTest {
 		_assertKeywords("[44.9999 TO 45.1111]", 0);
 		_assertKeywords("4", 1);
 		_assertKeywords("45", 1);
-		_assertKeywords("45.0000", 1);
-		_assertKeywords("45.0001", 0);
+		_assertKeywords("45.25", 1);
+		_assertKeywords("45.2500", 0);
+		_assertKeywords("45.2501", 0);
 		_assertKeywords("bravo 4 charlie", 1);
 		_assertKeywords("bravo 45 charlie", 1);
-		_assertKeywords("bravo 45.0 charlie", 1);
+		_assertKeywords("bravo 45.25 charlie", 1);
 		_assertKeywords("search from [ 44 TO 46 ]", 0);
 	}
 
@@ -221,17 +223,17 @@ public class ObjectEntryLocalServiceSearchObjectEntriesTest {
 	@Test
 	public void testClob() throws Exception {
 		_testCharacterDataType(
-			false, ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
-			ObjectFieldConstants.DB_TYPE_CLOB, false, false);
+			ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
+			ObjectFieldConstants.DB_TYPE_CLOB, false, false, null);
 		_testCharacterDataType(
-			false, ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
-			ObjectFieldConstants.DB_TYPE_CLOB, true, false);
+			ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
+			ObjectFieldConstants.DB_TYPE_CLOB, true, false, "en_US");
 		_testCharacterDataType(
-			false, ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
-			ObjectFieldConstants.DB_TYPE_CLOB, true, true);
+			ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
+			ObjectFieldConstants.DB_TYPE_CLOB, true, false, null);
 		_testCharacterDataType(
-			true, ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
-			ObjectFieldConstants.DB_TYPE_CLOB, true, false);
+			ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT,
+			ObjectFieldConstants.DB_TYPE_CLOB, true, true, null);
 	}
 
 	@Test
@@ -242,7 +244,7 @@ public class ObjectEntryLocalServiceSearchObjectEntriesTest {
 				ObjectFieldConstants.DB_TYPE_DATE, true, false, null, "Alpha",
 				"alpha", false));
 
-		long date = 1632335654272L;
+		long date = 1632268800000L;
 
 		_addObjectEntry(
 			HashMapBuilder.<String, Serializable>put(
@@ -497,17 +499,17 @@ public class ObjectEntryLocalServiceSearchObjectEntriesTest {
 	@Test
 	public void testString() throws Exception {
 		_testCharacterDataType(
-			false, ObjectFieldConstants.BUSINESS_TYPE_TEXT,
-			ObjectFieldConstants.DB_TYPE_STRING, false, false);
+			ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+			ObjectFieldConstants.DB_TYPE_STRING, false, false, null);
 		_testCharacterDataType(
-			false, ObjectFieldConstants.BUSINESS_TYPE_TEXT,
-			ObjectFieldConstants.DB_TYPE_STRING, true, false);
+			ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+			ObjectFieldConstants.DB_TYPE_STRING, true, false, "en_US");
 		_testCharacterDataType(
-			false, ObjectFieldConstants.BUSINESS_TYPE_TEXT,
-			ObjectFieldConstants.DB_TYPE_STRING, true, true);
+			ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+			ObjectFieldConstants.DB_TYPE_STRING, true, false, null);
 		_testCharacterDataType(
-			true, ObjectFieldConstants.BUSINESS_TYPE_TEXT,
-			ObjectFieldConstants.DB_TYPE_STRING, true, false);
+			ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+			ObjectFieldConstants.DB_TYPE_STRING, true, true, null);
 	}
 
 	private void _addObjectDefinition(ObjectField objectField)
@@ -612,8 +614,8 @@ public class ObjectEntryLocalServiceSearchObjectEntriesTest {
 	}
 
 	private void _testCharacterDataType(
-			boolean analyzed, String businessType, String dbType,
-			boolean indexed, boolean indexedAsKeyword)
+			String businessType, String dbType, boolean indexed,
+			boolean indexedAsKeyword, String indexedLanguageId)
 		throws Exception {
 
 		if (_objectDefinition != null) {
@@ -624,7 +626,7 @@ public class ObjectEntryLocalServiceSearchObjectEntriesTest {
 		_addObjectDefinition(
 			ObjectFieldUtil.createObjectField(
 				businessType, dbType, indexed, indexedAsKeyword,
-				analyzed ? "en_US" : null, "Alpha", "alpha", false));
+				indexedLanguageId, "Alpha", "alpha", false));
 
 		String text = "The quick brown fox jumps over the lazy dog";
 
@@ -648,7 +650,7 @@ public class ObjectEntryLocalServiceSearchObjectEntriesTest {
 		}
 		else if (indexed) {
 			_assertKeywords("fox", 1);
-			_assertKeywords("jump", analyzed ? 1 : 0);
+			_assertKeywords("jump", indexedAsKeyword ? 0 : 1);
 			_assertKeywords("jumps", 1);
 			_assertKeywords("LAZY dog", 1);
 			_assertKeywords("lazy dog", 1);

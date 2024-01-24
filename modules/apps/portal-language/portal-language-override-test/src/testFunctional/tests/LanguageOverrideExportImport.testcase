@@ -1,4 +1,4 @@
-@component-name = "portal-platform-experience-and-design-system"
+@component-name = "portal-platform-experience"
 definition {
 
 	property portal.release = "true";
@@ -266,9 +266,9 @@ this-is-a-language-key=This is a language key''',
 
 			Search.searchCP(searchTerm = "newkey");
 
-			AssertTextEquals(
+			AssertTextEquals.assertPartialText(
 				locator1 = "Search#SEARCH_INFO",
-				value1 = "0 Results for \"newkey\"");
+				value1 = "0 Results Found for \"newkey\"");
 		}
 	}
 

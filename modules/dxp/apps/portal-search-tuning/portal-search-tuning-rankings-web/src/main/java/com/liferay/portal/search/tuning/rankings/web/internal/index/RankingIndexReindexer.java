@@ -16,9 +16,11 @@ import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.module.service.Snapshot;
 import com.liferay.portal.kernel.search.background.task.ReindexStatusMessageSenderUtil;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.capabilities.SearchCapabilities;
 import com.liferay.portal.search.index.SyncReindexManager;
 import com.liferay.portal.search.spi.reindexer.IndexReindexer;
+import com.liferay.portal.search.tuning.rankings.web.internal.constants.ResultRankingsConstants;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexName;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexNameBuilder;
 
@@ -139,8 +141,6 @@ public class RankingIndexReindexer implements IndexReindexer {
 			JSONUtil.toStringList(jsonObject.getJSONArray("hiddenDocumentIds"))
 		).rankingDocumentId(
 			jsonObject.getString("rankingDocumentId")
-		).inactive(
-			jsonObject.getBoolean("inactive")
 		).indexName(
 			jsonObject.getString("indexName")
 		).name(
@@ -149,6 +149,8 @@ public class RankingIndexReindexer implements IndexReindexer {
 			_getPins(jsonObject.getJSONArray("pins"))
 		).queryString(
 			jsonObject.getString("queryString")
+		).status(
+			_getStatus(jsonObject)
 		).sxpBlueprintExternalReferenceCode(
 			jsonObject.getString("sxpBlueprintExternalReferenceCode")
 		);
@@ -167,6 +169,20 @@ public class RankingIndexReindexer implements IndexReindexer {
 					jsonObject.getString("documentId"))));
 
 		return pins;
+	}
+
+	private String _getStatus(JSONObject jsonObject) {
+		String status = jsonObject.getString(RankingFields.STATUS);
+
+		if (!Validator.isBlank(status)) {
+			return status;
+		}
+
+		if (jsonObject.getBoolean("inactive")) {
+			return ResultRankingsConstants.STATUS_INACTIVE;
+		}
+
+		return ResultRankingsConstants.STATUS_ACTIVE;
 	}
 
 	private boolean _isExecuteSyncReindex(String executionMode) {

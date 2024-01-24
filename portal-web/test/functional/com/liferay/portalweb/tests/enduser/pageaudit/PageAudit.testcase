@@ -25,18 +25,6 @@ definition {
 		}
 	}
 
-	tearDown {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		TestUtils.hardRefresh();
-
-		JSONGroup.deleteGroupByName(groupName = "Test Site Name");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-	}
-
 	@description = "LPS-132234 Given the detail view of the page audit panel Then the checks related to Low contrast ratio, Missing image-alt and Missing input-image-alt will appear under the Accessibility section"
 	@priority = 3
 	test AccessibilityFailures {
@@ -642,7 +630,7 @@ definition {
 		task ("Open Content Performance panel") {
 			PageAudit.openPageAuditSidebar();
 
-			AssertVisible(locator1 = "PageAudit#SIDEBAR");
+			AssertElementPresent(locator1 = "PageAudit#SIDEBAR");
 		}
 
 		task ("Logout and login") {
@@ -652,7 +640,7 @@ definition {
 		}
 
 		task ("Check if panel is closed") {
-			AssertNotVisible(locator1 = "PageAudit#SIDEBAR");
+			AssertElementNotPresent(locator1 = "PageAudit#SIDEBAR");
 		}
 	}
 
@@ -804,6 +792,44 @@ definition {
 			Button.click(button = "View More");
 
 			PageAudit.assertFailingElementCount(expectedLabels = 12);
+		}
+	}
+
+	@description = "This is a test for LPS-192049. The page creator could access to details view of item on Performance list."
+	@priority = 4
+	test GoToDetailsOfItemOnPerformancePanel {
+		property custom.properties = "feature.flag.LPS-187284=true${line.separator}feature.flag.LPS-187285=true";
+
+		task ("Given a page creator has a Heading fragment on a content page") {
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Content Page",
+				siteName = "Test Site Name");
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Heading");
+
+			PageEditor.publish();
+		}
+
+		task ("When the page creator opens the Page Audit sidebar") {
+			PageAudit.openPageAuditSidebar();
+		}
+
+		task ("Then the page creator could go to the details of Heading fragment") {
+			PageAudit.goToElementDetails(elementName = "Heading");
+
+			AssertTextEquals(
+				key_panel = "Warnings",
+				locator1 = "Panel#PANEL_ALERT_FEEDBACK",
+				value1 = "No issues found in this component.");
+
+			for (var itemName : list "Server Render Time,Component Type,Origin,Cache Status") {
+				AssertVisible(
+					key_itemName = ${itemName},
+					key_panel = "Basic Information",
+					locator1 = "Panel#PANEL_INFO_ITEM");
+			}
 		}
 	}
 
@@ -981,17 +1007,11 @@ definition {
 
 			PageAudit.goToDetailView(failingCheckName = "Low Contrast Ratio");
 
-			AssertTextPresent(
-				locator1 = "PageAudit#FAILING_CHECK_TITLE",
-				value1 = "Low Contrast Ratio");
+			AssertTextPresent(value1 = "Low Contrast Ratio");
 
-			AssertTextPresent(
-				locator1 = "PageAudit#PANEL_TITLE",
-				value1 = "DESCRIPTION");
+			AssertTextPresent(value1 = "DESCRIPTION");
 
-			AssertTextPresent(
-				locator1 = "PageAudit#PANEL_TITLE",
-				value1 = "TIPS");
+			AssertTextPresent(value1 = "TIPS");
 
 			AssertElementPresent(
 				badgeValue = 1,
@@ -1297,15 +1317,55 @@ definition {
 		}
 	}
 
-	@description = "This is a test for LPS-196044. View improvement in page audit when adding a Button fragment. Check the accessibility in page audit improvement when adding a Button fragment."
+	@description = "This is a test for LPS-198257. View the Experience Selector on the Page Audit is on the Performance Tab."
 	@priority = 3
-	test ViewImprovementWhenAddingAButtonFragment {
+	test SwitchExperienceOnPageAudit {
+		property custom.properties = "feature.flag.LPS-187284=true${line.separator}feature.flag.LPS-187285=true";
+
+		task ("Given a content page with an experience") {
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Content Page",
+				siteName = "Test Site Name");
+
+			PageEditor.addExperience(
+				experienceName = "Experience",
+				segmentName = "Anyone");
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+
+			PageEditor.publish();
+		}
+
+		task ("When accessing the page audit performance tab") {
+			ContentPagesNavigator.openViewContentPage(
+				pageName = "Content Page",
+				siteName = "Test Site Name");
+
+			PageEditor.viewFragmentNotPresent(fragmentName = "Button");
+
+			PageAudit.openPageAuditSidebar();
+		}
+
+		task ("Then it is possible to select the experience through the performance tab") {
+			Click(locator1 = "PageAudit#PAGE_AUDIT_EXPERIENCE_SELECTOR");
+
+			MenuItem.click(menuItem = "Experience");
+
+			PageEditor.viewFragmentNotPresent(fragmentName = "Button");
+		}
+	}
+
+	@description = "This is a test for LPS-196044. View improvement in page audit when adding a Button fragment."
+	@priority = 3
+	test ViewStylesImprovementOfButtonFragment {
 		property custom.properties = "feature.flag.LPS-187284=true${line.separator}feature.flag.LPS-187285=true";
 
 		task ("Given a button fragment added in content page") {
 			task ("Add a Button fragment to content page") {
 				ContentPagesNavigator.openEditContentPage(
-					pageName = "Test Page Name",
+					pageName = "Content Page",
 					siteName = "Test Site Name");
 
 				PageEditor.addFragment(
@@ -1319,75 +1379,75 @@ definition {
 		}
 
 		task ("When go to a Page Audit sidebar") {
-			task ("Open Page Audit sidebar") {
-				Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
-
-				Click(
-					key_text = "search-experiences",
-					locator1 = "Icon#ANY");
-			}
+			PageAudit.openPageAuditSidebar();
 		}
 
-		task ("Then there's improvement in page audit and fragment admin") {
-			task ("View improvement") {
-				AssertCssValue(
-					locator1 = "PageAudit#PAGE_AUDIT_NAME",
-					locator2 = "height",
-					value1 = "21px");
+		task ("Then view styles improvement of Button fragment") {
+			AssertCssValue(
+				locator1 = "PageAudit#PAGE_AUDIT_NAME",
+				locator2 = "height",
+				value1 = "21px");
 
-				AssertCssValue(
-					locator1 = "PageAudit#PAGE_AUDIT_TIME",
-					locator2 = "height",
-					value1 = "21px");
-			}
+			AssertCssValue(
+				locator1 = "PageAudit#PAGE_AUDIT_TIME",
+				locator2 = "height",
+				value1 = "21px");
+		}
 
-			task ("View no accessibility issue found") {
-				AssertAccessible();
-			}
+		task ("When go to the details of Button fragment") {
+			PageAudit.goToElementDetails(elementName = "Button");
+		}
 
-			task ("Go to Fragment Admin > Basic Components") {
-				FragmentsAdminNavigator.openFragmentsAdmin(siteURLKey = "test-site-name");
+		task ("Then view the distance between feedback indicator and “Basic information” accordion is 24 px") {
+			AssertCssValue(
+				locator1 = "//div[contains(@class,'panel-collapse')]//div[contains(@class,'panel-body')]",
+				locator2 = "padding-top",
+				value1 = "16px");
 
-				FragmentsAdminNavigator.gotoCollection(collectionName = "Basic Components");
-			}
+			AssertCssValue(
+				key_panel = "Basic Information",
+				locator1 = "Panel#PANEL",
+				locator2 = "padding-top",
+				value1 = "8px");
+		}
 
-			task ("View “CACHED” label color is in blue") {
-				AssertCssValue(
-					index = 1,
-					key_card = "Button",
-					locator1 = "Card#CARD_LABEL",
-					locator2 = "color",
-					value1 = "rgba(46, 90, 172, 1)");
-			}
+		task ("When Go to Fragment Admin > Basic Components") {
+			FragmentsAdminNavigator.openFragmentsAdmin(siteURLKey = "test-site-name");
+
+			FragmentsAdminNavigator.gotoCollection(collectionName = "Basic Components");
+		}
+
+		task ("The view “CACHED” label color is in blue") {
+			AssertCssValue(
+				index = 1,
+				key_card = "Button",
+				locator1 = "Card#CARD_LABEL",
+				locator2 = "color",
+				value1 = "rgba(46, 90, 172, 1)");
 		}
 	}
 
-	@description = "This is a test for LPS-196044. View improvement in page audit when adding an Image fragment. Check the accessibility in page audit improvement when adding an Image fragment."
+	@description = "This is a test for LPS-196044. View improvement in page audit when adding an Image fragment."
 	@priority = 3
-	test ViewImprovementWhenAddingAnImageFragment {
+	test ViewStylesImprovementOfImageFragment {
 		property custom.properties = "feature.flag.LPS-187284=true${line.separator}feature.flag.LPS-187285=true";
 
-		task ("Given a button fragment and an image fragment added in content page") {
-			task ("Add a Button fragment to content page") {
+		task ("Given an image fragment added in content page") {
+			task ("Add a Image fragment to content page") {
 				ContentPagesNavigator.openEditContentPage(
-					pageName = "Test Page Name",
+					pageName = "Content Page",
 					siteName = "Test Site Name");
 
 				PageEditor.addFragment(
 					collectionName = "Basic Components",
-					fragmentName = "Button");
-
-				PageEditor.addFragment(
-					collectionName = "Basic Components",
-					fragmentName = "Image",
-					targetFragmentName = "Button");
+					fragmentName = "Image");
 			}
 
 			task ("Enable big image file size and add a big size image") {
 				PageEditor.editFragmentImage(
 					fragmentName = "Image",
 					id = "image-square",
-					imageFileName = "More than 500k size image",
+					imageFileName = "high_resolution_photo.jpg",
 					uploadFileName = "high_resolution_photo.jpg");
 			}
 
@@ -1396,25 +1456,13 @@ definition {
 			}
 		}
 
-		task ("When go to a Page Audit sidebar") {
-			task ("Open Page Audit sidebar") {
-				Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
+		task ("When go to the details of Image fragment on Page Audit sidebar") {
+			PageAudit.openPageAuditSidebar();
 
-				Click(
-					key_text = "search-experiences",
-					locator1 = "Icon#ANY");
-			}
+			PageAudit.goToElementDetails(elementName = "Image");
 		}
 
 		task ("Then there's improvement in page audit") {
-			task ("Click into the Image card") {
-				WaitForPageLoad();
-
-				Click(
-					cardName = "Image",
-					locator1 = "PageAudit#PAGE_AUDIT_CARD");
-			}
-
 			task ("View the first sentence of the warning indicator is semi-bold. And the rest is regular.") {
 				AssertCssValue(
 					errorTitle = "Big image file size used.",
@@ -1441,44 +1489,9 @@ definition {
 					value1 = "8px");
 			}
 
-			// Failed for "Certain ARIA roles must contain particular children", comment out until LPS-193447 implemented
-
-			//task ("View no accessibility issue found") {
-			//	AssertAccessible();
-			//}
-
-			task ("Click back and click into the button card") {
-				Click(
-					key_text = "angle-left",
-					locator1 = "Icon#ANY");
-
-				Click(
-					cardName = "Button",
-					locator1 = "PageAudit#PAGE_AUDIT_CARD");
-			}
-
-			task ("View the distance between feedback indicator and “Basic information” accordion is 24 px") {
-				AssertCssValue(
-					locator1 = "//div[contains(@class,'panel-collapse')]//div[contains(@class,'panel-body')]",
-					locator2 = "padding-top",
-					value1 = "16px");
-
-				AssertCssValue(
-					key_panel = "Basic Information",
-					locator1 = "Panel#PANEL",
-					locator2 = "padding-top",
-					value1 = "8px");
-			}
-
-			// Failed for "Certain ARIA roles must contain particular children", comment out until LPS-193447 implemented
-
-			//task ("View no accessibility issue found") {
-			//	AssertAccessible();
-			//}
-
 			task ("Go to content page edit mode") {
 				ContentPagesNavigator.openEditContentPage(
-					pageName = "Test Page Name",
+					pageName = "Content Page",
 					siteName = "Test Site Name");
 			}
 
@@ -1500,6 +1513,71 @@ definition {
 					locator1 = "PageAudit#PAGE_AUDIT_ANY_ITEM",
 					value1 = "Image Description");
 			}
+		}
+	}
+
+	@description = "This is a test for LPS-191483. View warning message displays for big image file size used in page audit."
+	@priority = 4
+	test ViewWarningMessageOfImageFragment {
+		property custom.properties = "feature.flag.LPS-187284=true${line.separator}feature.flag.LPS-187285=true";
+
+		task ("Given a user has an Image fragment with a big image on a content page") {
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Content Page",
+				siteName = "Test Site Name");
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Image");
+
+			PageEditor.editFragmentImage(
+				fragmentName = "Image",
+				id = "image-square",
+				imageFileName = "high_resolution_photo.jpg",
+				uploadFileName = "high_resolution_photo.jpg");
+
+			PageEditor.publish();
+		}
+
+		task ("When the user goes to the details of Image fragment on Page Audit panel") {
+			PageAudit.openPageAuditSidebar();
+
+			PageAudit.goToElementDetails(elementName = "Image");
+		}
+
+		task ("Then the user should see the warning message") {
+			AssertVisible(
+				errorTitle = "Big image file size used.",
+				locator1 = "PageAudit#ERROR_WARNING_TITLE");
+
+			AssertTextEquals(
+				locator1 = "PageAudit#WARNING_TEXT",
+				value1 = "Please consider configuring adaptive media, lazy loading, or reducing the image size.");
+		}
+
+		task ("When the user enables the lazy loading") {
+			ContentPages.gotoPageEditor();
+
+			PageEditor.clickEditableField(
+				fragmentName = "Image",
+				id = "image");
+
+			Navigator.gotoNavTab(navTab = "Image Source");
+
+			PageEditor.configureFragment(enableLazyLoading = "true");
+
+			PageEditor.publish();
+		}
+
+		task ("Then the user cannot see the warning message on the details of Image fragment") {
+			WaitForElementPresent(locator1 = "PageAudit#SIDEBAR");
+
+			PageAudit.goToElementDetails(elementName = "Image");
+
+			AssertTextEquals(
+				key_panel = "Warnings",
+				locator1 = "Panel#PANEL_ALERT_FEEDBACK",
+				value1 = "No issues found in this component.");
 		}
 	}
 

@@ -47,17 +47,10 @@ List<CommerceAddress> shippingAddresses = commerceOrderContentDisplayContext.get
 List<CommerceAddress> billingAddresses = commerceOrderContentDisplayContext.getBillingCommerceAddresses(accountEntry.getAccountEntryId());
 
 List<String> errorMessages = (List<String>)request.getAttribute(CommerceWebKeys.COMMERCE_ORDER_ERROR_MESSAGES);
-
-String backURL = ParamUtil.getString(request, "backURL", null);
-
-if (backURL != null) {
-	portletDisplay.setShowBackIcon(true);
-	portletDisplay.setURLBack(backURL);
-}
 %>
 
 <c:if test="<%= (errorMessages != null) && !errorMessages.isEmpty() %>">
-	<script>
+	<aui:script>
 		Liferay.Util.openModal({
 			bodyHTML: '<%= errorMessages.get(0) %>',
 			title: '<liferay-ui:message key="warning" />',
@@ -65,7 +58,7 @@ if (backURL != null) {
 			size: 'm',
 			status: 'warning',
 		});
-	</script>
+	</aui:script>
 </c:if>
 
 <portlet:actionURL name="/commerce_open_order_content/edit_commerce_order" var="editCommerceOrderActionURL">
@@ -464,6 +457,7 @@ if (backURL != null) {
 			itemsPerPage="<%= 10 %>"
 			nestedItemsKey="orderItemId"
 			nestedItemsReferenceKey="orderItems"
+			propsTransformer="js/PendingOrderItemActionDropdownPropsTransformer"
 			style="stacked"
 		/>
 	</div>

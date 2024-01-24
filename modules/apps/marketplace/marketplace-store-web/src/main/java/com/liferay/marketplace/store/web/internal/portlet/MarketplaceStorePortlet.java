@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.patcher.PatcherValues;
+import com.liferay.portal.kernel.portlet.LiferayActionResponse;
 import com.liferay.portal.kernel.portlet.PortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
@@ -116,6 +117,9 @@ public class MarketplaceStorePortlet extends MVCPortlet {
 	public void authorize(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
+
+		actionResponse.addProperty(
+			LiferayActionResponse.SKIP_ESCAPE_REDIRECT, "true");
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -290,7 +294,7 @@ public class MarketplaceStorePortlet extends MVCPortlet {
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws IOException, PortletException {
 
-		_checkOmniAdmin();
+		_checkOmniadmin();
 
 		try {
 			String actionName = ParamUtil.getString(
@@ -325,7 +329,7 @@ public class MarketplaceStorePortlet extends MVCPortlet {
 		throws IOException, PortletException {
 
 		try {
-			_checkOmniAdmin();
+			_checkOmniadmin();
 
 			HttpServletRequest httpServletRequest =
 				portal.getHttpServletRequest(renderRequest);
@@ -370,7 +374,7 @@ public class MarketplaceStorePortlet extends MVCPortlet {
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
 		throws IOException, PortletException {
 
-		_checkOmniAdmin();
+		_checkOmniadmin();
 
 		try {
 			_remoteServeResource(resourceRequest, resourceResponse);
@@ -703,7 +707,7 @@ public class MarketplaceStorePortlet extends MVCPortlet {
 	@Reference
 	protected Portal portal;
 
-	private void _checkOmniAdmin() throws PortletException {
+	private void _checkOmniadmin() throws PortletException {
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
 

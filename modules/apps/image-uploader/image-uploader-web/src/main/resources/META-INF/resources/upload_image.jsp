@@ -50,7 +50,7 @@ String tempImageFileName = ParamUtil.getString(request, "tempImageFileName");
 				}
 			</c:if>
 
-			Liferay.Util.getWindow().hide();
+			Liferay.Util.getOpener().Liferay.fire('closeModal');
 		</aui:script>
 	</c:when>
 	<c:otherwise>
@@ -134,7 +134,7 @@ String tempImageFileName = ParamUtil.getString(request, "tempImageFileName");
 			</aui:button-row>
 		</aui:form>
 
-		<script>
+		<aui:script>
 			(function () {
 				var uploadImageButton = document.getElementById(
 					'<portlet:namespace />uploadImage'
@@ -150,7 +150,7 @@ String tempImageFileName = ParamUtil.getString(request, "tempImageFileName");
 					});
 				}
 			})();
-		</script>
+		</aui:script>
 
 		<aui:script use="liferay-logo-editor">
 			<portlet:actionURL name="/image_uploader/upload_image" var="addTempImageURL">

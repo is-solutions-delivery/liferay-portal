@@ -17,14 +17,13 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
-import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionFactory;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionRegistryUtil;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
-import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermissionFactory;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
-import com.liferay.portlet.documentlibrary.constants.DLConstants;
 import com.liferay.portlet.documentlibrary.service.base.DLFileEntryTypeServiceBaseImpl;
+import com.liferay.portlet.documentlibrary.util.DLPortletResourcePermissionUtil;
 import com.liferay.util.dao.orm.CustomSQLUtil;
 
 import java.util.ArrayList;
@@ -48,7 +47,10 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		_portletResourcePermission.check(
+		PortletResourcePermission portletResourcePermission =
+			DLPortletResourcePermissionUtil.getPortletResourcePermission();
+
+		portletResourcePermission.check(
 			getPermissionChecker(), groupId, ActionKeys.ADD_DOCUMENT_TYPE);
 
 		return dlFileEntryTypeLocalService.addFileEntryType(
@@ -60,7 +62,12 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 	public void deleteFileEntryType(long fileEntryTypeId)
 		throws PortalException {
 
-		_dlFileEntryTypeModelResourcePermission.check(
+		ModelResourcePermission<DLFileEntryType>
+			dlFileEntryTypeModelResourcePermission =
+				ModelResourcePermissionRegistryUtil.getModelResourcePermission(
+					DLFileEntryType.class.getName());
+
+		dlFileEntryTypeModelResourcePermission.check(
 			getPermissionChecker(), fileEntryTypeId, ActionKeys.DELETE);
 
 		dlFileEntryTypeLocalService.deleteFileEntryType(fileEntryTypeId);
@@ -73,7 +80,13 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 		if (fileEntryTypeId !=
 				DLFileEntryTypeConstants.FILE_ENTRY_TYPE_ID_BASIC_DOCUMENT) {
 
-			_dlFileEntryTypeModelResourcePermission.check(
+			ModelResourcePermission<DLFileEntryType>
+				dlFileEntryTypeModelResourcePermission =
+					ModelResourcePermissionRegistryUtil.
+						getModelResourcePermission(
+							DLFileEntryType.class.getName());
+
+			dlFileEntryTypeModelResourcePermission.check(
 				getPermissionChecker(), fileEntryTypeId, ActionKeys.VIEW);
 		}
 
@@ -198,7 +211,12 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 			Map<Locale, String> descriptionMap)
 		throws PortalException {
 
-		_dlFileEntryTypeModelResourcePermission.check(
+		ModelResourcePermission<DLFileEntryType>
+			dlFileEntryTypeModelResourcePermission =
+				ModelResourcePermissionRegistryUtil.getModelResourcePermission(
+					DLFileEntryType.class.getName());
+
+		dlFileEntryTypeModelResourcePermission.check(
 			getPermissionChecker(), fileEntryTypeId, ActionKeys.UPDATE);
 
 		return dlFileEntryTypeLocalService.updateFileEntryType(
@@ -216,10 +234,16 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 		Iterator<DLFileEntryType> iterator = fileEntryTypes.iterator();
 
 		while (iterator.hasNext()) {
+			ModelResourcePermission<DLFileEntryType>
+				dlFileEntryTypeModelResourcePermission =
+					ModelResourcePermissionRegistryUtil.
+						getModelResourcePermission(
+							DLFileEntryType.class.getName());
+
 			DLFileEntryType fileEntryType = iterator.next();
 
 			if ((fileEntryType.getFileEntryTypeId() > 0) &&
-				!_dlFileEntryTypeModelResourcePermission.contains(
+				!dlFileEntryTypeModelResourcePermission.contains(
 					permissionChecker, fileEntryType, ActionKeys.VIEW)) {
 
 				iterator.remove();
@@ -309,17 +333,5 @@ public class DLFileEntryTypeServiceImpl extends DLFileEntryTypeServiceBaseImpl {
 			}
 		);
 	}
-
-	private static volatile ModelResourcePermission<DLFileEntryType>
-		_dlFileEntryTypeModelResourcePermission =
-			ModelResourcePermissionFactory.getInstance(
-				DLFileEntryTypeServiceImpl.class,
-				"_dlFileEntryTypeModelResourcePermission",
-				DLFileEntryType.class);
-	private static volatile PortletResourcePermission
-		_portletResourcePermission =
-			PortletResourcePermissionFactory.getInstance(
-				DLFileEntryTypeServiceImpl.class, "_portletResourcePermission",
-				DLConstants.RESOURCE_NAME);
 
 }

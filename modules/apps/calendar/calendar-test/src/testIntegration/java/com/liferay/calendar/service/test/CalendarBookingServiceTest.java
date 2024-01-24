@@ -64,7 +64,7 @@ public class CalendarBookingServiceTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_omnidminUser = UserTestUtil.addOmniAdminUser();
+		_omnidminUser = UserTestUtil.addOmniadminUser();
 		_user1 = UserTestUtil.addUser();
 		_user2 = UserTestUtil.addUser();
 	}

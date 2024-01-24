@@ -7,13 +7,16 @@ package com.liferay.object.admin.rest.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.object.admin.rest.client.dto.v1_0.ObjectField;
+import com.liferay.object.admin.rest.client.dto.v1_0.ObjectFieldSetting;
 import com.liferay.object.admin.rest.client.pagination.Page;
 import com.liferay.object.admin.rest.client.pagination.Pagination;
 import com.liferay.object.admin.rest.resource.v1_0.test.util.ObjectDefinitionTestUtil;
+import com.liferay.object.constants.ObjectFieldSettingConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.test.rule.Inject;
 
@@ -293,10 +296,50 @@ public class ObjectFieldResourceTest extends BaseObjectFieldResourceTestCase {
 		assertContains(objectField3, (List<ObjectField>)page3.getItems());
 	}
 
+	@Override
+	@Test
+	public void testGetObjectField() throws Exception {
+		super.testGetObjectField();
+
+		// Unique
+
+		ObjectField objectField = _addUniqueObjectField();
+
+		Assert.assertTrue(objectField.getUnique());
+
+		Page<ObjectField> page1 =
+			objectFieldResource.getObjectDefinitionObjectFieldsPage(
+				_objectDefinition.getObjectDefinitionId(), null,
+				"unique eq true", Pagination.of(1, 2), null);
+
+		assertEquals(
+			Collections.singletonList(objectField),
+			(List<ObjectField>)page1.getItems());
+
+		Page<ObjectField> page2 =
+			objectFieldResource.getObjectDefinitionObjectFieldsPage(
+				_objectDefinition.getObjectDefinitionId(), null,
+				"unique eq false", Pagination.of(1, 2), null);
+
+		Assert.assertFalse(
+			ListUtil.exists(
+				(List<ObjectField>)page2.getItems(), ObjectField::getUnique));
+	}
+
 	@Ignore
 	@Override
 	@Test
 	public void testGraphQLGetObjectFieldNotFound() {
+	}
+
+	@Override
+	@Test
+	public void testPatchObjectField() throws Exception {
+		super.testPatchObjectField();
+
+		_testPatchObjectField(_addObjectField(), true);
+		_testPatchObjectField(_addUniqueObjectField(), true);
+		_testPatchObjectField(_addUniqueObjectField(), false);
 	}
 
 	@Override
@@ -403,6 +446,42 @@ public class ObjectFieldResourceTest extends BaseObjectFieldResourceTestCase {
 			_objectDefinition.getObjectDefinitionId(), randomObjectField());
 
 		return _objectField;
+	}
+
+	private ObjectField _addUniqueObjectField() throws Exception {
+		ObjectField objectField = randomObjectField();
+
+		_setUnique(objectField, true);
+
+		return objectFieldResource.postObjectDefinitionObjectField(
+			_objectDefinition.getObjectDefinitionId(), objectField);
+	}
+
+	private void _setUnique(ObjectField objectField, boolean unique) {
+		objectField.setObjectFieldSettings(
+			new ObjectFieldSetting[] {
+				new ObjectFieldSetting() {
+					{
+						name = ObjectFieldSettingConstants.NAME_UNIQUE_VALUES;
+						value = String.valueOf(unique);
+					}
+				}
+			});
+	}
+
+	private void _testPatchObjectField(ObjectField objectField, boolean unique)
+		throws Exception {
+
+		ObjectField randomObjectField = randomObjectField();
+
+		_setUnique(randomObjectField, unique);
+
+		ObjectField patchObjectField = objectFieldResource.patchObjectField(
+			objectField.getId(), randomObjectField);
+
+		assertEquals(randomObjectField, patchObjectField);
+
+		Assert.assertEquals(unique, patchObjectField.getUnique());
 	}
 
 	private ObjectDefinition _objectDefinition;

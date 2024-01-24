@@ -22,14 +22,14 @@ String displayStyle = viewFlatUsersDisplayContext.getDisplayStyle();
 <clay:management-toolbar
 	itemsType="users"
 	managementToolbarDisplayContext="<%= viewFlatUsersDisplayContext.getManagementToolbarDisplayContext() %>"
-	propsTransformer="js/ViewFlatOrganizationsAndUsersManagementToolbarPropsTransformer"
+	propsTransformer="{ViewFlatOrganizationsAndUsersManagementToolbarPropsTransformer} from users-admin-web"
 />
 
 <aui:form action="<%= currentURLObj.toString() %>" cssClass="container-fluid container-fluid-max-xl" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + liferayPortletResponse.getNamespace() + "search();" %>'>
 	<liferay-portlet:renderURLParams varImpl="portletURL" />
-	<aui:input name="toolbarItem" type="hidden" value="<%= viewFlatUsersDisplayContext.getToolbarItem() %>" />
-	<aui:input name="usersListView" type="hidden" value="<%= viewFlatUsersDisplayContext.getUsersListView() %>" />
 	<aui:input name="redirect" type="hidden" value="<%= currentURLObj.toString() %>" />
+	<aui:input name="screenNavigationCategoryKey" type="hidden" value="<%= viewFlatUsersDisplayContext.getScreenNavigationCategoryKey() %>" />
+	<aui:input name="usersListView" type="hidden" value="<%= viewFlatUsersDisplayContext.getUsersListView() %>" />
 
 	<liferay-ui:error exception="<%= RequiredUserException.class %>" message="you-cannot-delete-or-deactivate-a-required-user" />
 
@@ -56,6 +56,7 @@ String displayStyle = viewFlatUsersDisplayContext.getDisplayStyle();
 				<portlet:param name="p_u_i_d" value="<%= String.valueOf(user2.getUserId()) %>" />
 				<portlet:param name="mvcRenderCommandName" value="/users_admin/edit_user" />
 				<portlet:param name="backURL" value="<%= currentURL %>" />
+				<portlet:param name="screenNavigationCategoryKey" value="<%= UserScreenNavigationEntryConstants.CATEGORY_KEY_GENERAL %>" />
 			</liferay-portlet:renderURL>
 
 			<%

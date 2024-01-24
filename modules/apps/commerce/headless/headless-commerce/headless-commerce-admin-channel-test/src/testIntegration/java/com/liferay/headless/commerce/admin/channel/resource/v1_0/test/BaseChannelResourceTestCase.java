@@ -28,8 +28,6 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -191,6 +189,95 @@ public abstract class BaseChannelResourceTestCase {
 		Assert.assertEquals(regex, channel.getExternalReferenceCode());
 		Assert.assertEquals(regex, channel.getName());
 		Assert.assertEquals(regex, channel.getType());
+	}
+
+	@Test
+	public void testGetAccountAddressChannelChannel() throws Exception {
+		Channel postChannel = testGetAccountAddressChannelChannel_addChannel();
+
+		Channel getChannel = channelResource.getAccountAddressChannelChannel(
+			testGetAccountAddressChannelChannel_getAccountAddressChannelId());
+
+		assertEquals(postChannel, getChannel);
+		assertValid(getChannel);
+	}
+
+	protected Long
+			testGetAccountAddressChannelChannel_getAccountAddressChannelId()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	protected Channel testGetAccountAddressChannelChannel_addChannel()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testGraphQLGetAccountAddressChannelChannel() throws Exception {
+		Channel channel =
+			testGraphQLGetAccountAddressChannelChannel_addChannel();
+
+		Assert.assertTrue(
+			equals(
+				channel,
+				ChannelSerDes.toDTO(
+					JSONUtil.getValueAsString(
+						invokeGraphQLQuery(
+							new GraphQLField(
+								"accountAddressChannelChannel",
+								new HashMap<String, Object>() {
+									{
+										put(
+											"accountAddressChannelId",
+											testGraphQLGetAccountAddressChannelChannel_getAccountAddressChannelId());
+									}
+								},
+								getGraphQLFields())),
+						"JSONObject/data",
+						"Object/accountAddressChannelChannel"))));
+	}
+
+	protected Long
+			testGraphQLGetAccountAddressChannelChannel_getAccountAddressChannelId()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testGraphQLGetAccountAddressChannelChannelNotFound()
+		throws Exception {
+
+		Long irrelevantAccountAddressChannelId = RandomTestUtil.randomLong();
+
+		Assert.assertEquals(
+			"Not Found",
+			JSONUtil.getValueAsString(
+				invokeGraphQLQuery(
+					new GraphQLField(
+						"accountAddressChannelChannel",
+						new HashMap<String, Object>() {
+							{
+								put(
+									"accountAddressChannelId",
+									irrelevantAccountAddressChannelId);
+							}
+						},
+						getGraphQLFields())),
+				"JSONArray/errors", "Object/0", "JSONObject/extensions",
+				"Object/code"));
+	}
+
+	protected Channel testGraphQLGetAccountAddressChannelChannel_addChannel()
+		throws Exception {
+
+		return testGraphQLChannel_addChannel();
 	}
 
 	@Test
@@ -1568,9 +1655,9 @@ public abstract class BaseChannelResourceTestCase {
 	}
 
 	protected ChannelResource channelResource;
-	protected Group irrelevantGroup;
-	protected Company testCompany;
-	protected Group testGroup;
+	protected com.liferay.portal.kernel.model.Group irrelevantGroup;
+	protected com.liferay.portal.kernel.model.Company testCompany;
+	protected com.liferay.portal.kernel.model.Group testGroup;
 
 	protected static class BeanTestUtil {
 

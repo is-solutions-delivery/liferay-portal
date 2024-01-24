@@ -42,10 +42,11 @@ import com.liferay.portal.kernel.util.MethodKey;
 public class AddressServiceHttp {
 
 	public static com.liferay.portal.kernel.model.Address addAddress(
-			HttpPrincipal httpPrincipal, String className, long classPK,
+			HttpPrincipal httpPrincipal, String externalReferenceCode,
+			String className, long classPK, String name, String description,
 			String street1, String street2, String street3, String city,
 			String zip, long regionId, long countryId, long listTypeId,
-			boolean mailing, boolean primary,
+			boolean mailing, boolean primary, String phoneNumber,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
@@ -55,8 +56,9 @@ public class AddressServiceHttp {
 				_addAddressParameterTypes0);
 
 			MethodHandler methodHandler = new MethodHandler(
-				methodKey, className, classPK, street1, street2, street3, city,
-				zip, regionId, countryId, listTypeId, mailing, primary,
+				methodKey, externalReferenceCode, className, classPK, name,
+				description, street1, street2, street3, city, zip, regionId,
+				countryId, listTypeId, mailing, primary, phoneNumber,
 				serviceContext);
 
 			Object returnObj = null;
@@ -206,10 +208,11 @@ public class AddressServiceHttp {
 	}
 
 	public static com.liferay.portal.kernel.model.Address updateAddress(
-			HttpPrincipal httpPrincipal, long addressId, String street1,
-			String street2, String street3, String city, String zip,
-			long regionId, long countryId, long listTypeId, boolean mailing,
-			boolean primary)
+			HttpPrincipal httpPrincipal, long addressId, String name,
+			String description, String street1, String street2, String street3,
+			String city, String zip, long regionId, long countryId,
+			long listTypeId, boolean mailing, boolean primary,
+			String phoneNumber)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		try {
@@ -218,8 +221,9 @@ public class AddressServiceHttp {
 				_updateAddressParameterTypes4);
 
 			MethodHandler methodHandler = new MethodHandler(
-				methodKey, addressId, street1, street2, street3, city, zip,
-				regionId, countryId, listTypeId, mailing, primary);
+				methodKey, addressId, name, description, street1, street2,
+				street3, city, zip, regionId, countryId, listTypeId, mailing,
+				primary, phoneNumber);
 
 			Object returnObj = null;
 
@@ -252,10 +256,10 @@ public class AddressServiceHttp {
 	private static Log _log = LogFactoryUtil.getLog(AddressServiceHttp.class);
 
 	private static final Class<?>[] _addAddressParameterTypes0 = new Class[] {
-		String.class, long.class, String.class, String.class, String.class,
-		String.class, String.class, long.class, long.class, long.class,
-		boolean.class, boolean.class,
-		com.liferay.portal.kernel.service.ServiceContext.class
+		String.class, String.class, long.class, String.class, String.class,
+		String.class, String.class, String.class, String.class, String.class,
+		long.class, long.class, long.class, boolean.class, boolean.class,
+		String.class, com.liferay.portal.kernel.service.ServiceContext.class
 	};
 	private static final Class<?>[] _deleteAddressParameterTypes1 =
 		new Class[] {long.class};
@@ -268,8 +272,8 @@ public class AddressServiceHttp {
 	private static final Class<?>[] _updateAddressParameterTypes4 =
 		new Class[] {
 			long.class, String.class, String.class, String.class, String.class,
-			String.class, long.class, long.class, long.class, boolean.class,
-			boolean.class
+			String.class, String.class, String.class, long.class, long.class,
+			long.class, boolean.class, boolean.class, String.class
 		};
 
 }

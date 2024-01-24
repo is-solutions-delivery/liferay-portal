@@ -4,12 +4,11 @@ exports[`ImportTranslationResultsPanelSuccess renders closed (default) 1`] = `
 <DocumentFragment>
   <div
     class="panel"
-    role="tablist"
   >
     <button
+      aria-controls="clay-id-1"
       aria-expanded="false"
       class="panel-header panel-header-link collapse-icon collapse-icon-middle collapsed btn btn-unstyled"
-      role="tab"
       type="button"
     >
       <div
@@ -23,7 +22,7 @@ exports[`ImportTranslationResultsPanelSuccess renders closed (default) 1`] = `
             role="presentation"
           >
             <use
-              xlink:href="#check-circle-full"
+              href="#check-circle-full"
             />
           </svg>
         </span>
@@ -37,7 +36,7 @@ exports[`ImportTranslationResultsPanelSuccess renders closed (default) 1`] = `
           role="presentation"
         >
           <use
-            xlink:href="#angle-right"
+            href="#angle-right"
           />
         </svg>
       </span>
@@ -49,14 +48,16 @@ exports[`ImportTranslationResultsPanelSuccess renders closed (default) 1`] = `
           role="presentation"
         >
           <use
-            xlink:href="#angle-down"
+            href="#angle-down"
           />
         </svg>
       </span>
     </button>
     <div
+      aria-labelledby="clay-id-1"
       class="panel-collapse collapse"
-      role="tabpanel"
+      id="clay-id-1"
+      role="region"
     >
       <div
         class="panel-body"
@@ -183,12 +184,11 @@ exports[`ImportTranslationResultsPanelSuccess renders expanded 1`] = `
 <DocumentFragment>
   <div
     class="panel"
-    role="tablist"
   >
     <button
+      aria-controls="clay-id-2"
       aria-expanded="true"
       class="panel-header panel-header-link collapse-icon collapse-icon-middle show btn btn-unstyled"
-      role="tab"
       type="button"
     >
       <div
@@ -202,7 +202,7 @@ exports[`ImportTranslationResultsPanelSuccess renders expanded 1`] = `
             role="presentation"
           >
             <use
-              xlink:href="#check-circle-full"
+              href="#check-circle-full"
             />
           </svg>
         </span>
@@ -216,7 +216,7 @@ exports[`ImportTranslationResultsPanelSuccess renders expanded 1`] = `
           role="presentation"
         >
           <use
-            xlink:href="#angle-right"
+            href="#angle-right"
           />
         </svg>
       </span>
@@ -228,14 +228,16 @@ exports[`ImportTranslationResultsPanelSuccess renders expanded 1`] = `
           role="presentation"
         >
           <use
-            xlink:href="#angle-down"
+            href="#angle-down"
           />
         </svg>
       </span>
     </button>
     <div
+      aria-labelledby="clay-id-2"
       class="panel-collapse"
-      role="tabpanel"
+      id="clay-id-2"
+      role="region"
     >
       <div
         class="panel-body"

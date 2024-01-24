@@ -7,9 +7,11 @@ definition {
 
 		selenium.waitForVisible(${locator1}, "false");
 
-		selenium.waitForPartialTextCaseInsensitive(${locator1}, ${value1});
+		var regex = RegexUtil.escapeRegexChars(${value1});
 
-		selenium.assertPartialTextCaseInsensitive(${locator1}, ${value1});
+		selenium.waitForTextMatches(${locator1}, "(?iu).*${regex}.*");
+
+		selenium.assertTextMatches(${locator1}, "(?iu).*${regex}.*");
 
 		selenium.assertJavaScriptErrors("true");
 
@@ -33,9 +35,11 @@ definition {
 	function assertPartialTextCaseSensitive(locator1, value1) {
 		selenium.waitForVisible(${locator1}, "false");
 
-		selenium.waitForPartialText(${locator1}, ${value1});
+		var regex = RegexUtil.escapeRegexChars(${value1});
 
-		selenium.assertPartialText(${locator1}, ${value1});
+		selenium.waitForTextMatches(${locator1}, ".*${regex}.*");
+
+		selenium.assertTextMatches(${locator1}, ".*${regex}.*");
 	}
 
 	function assertText(locator1, value1) {
@@ -43,9 +47,11 @@ definition {
 
 		selenium.waitForVisible(${locator1}, "false");
 
-		selenium.waitForTextCaseInsensitive(${locator1}, ${value1});
+		var regex = RegexUtil.escapeRegexChars(${value1});
 
-		selenium.assertTextCaseInsensitive(${locator1}, ${value1});
+		selenium.waitForTextMatches(${locator1}, "(?iu)${regex}");
+
+		selenium.assertTextMatches(${locator1}, "(?iu)${regex}");
 
 		selenium.assertJavaScriptErrors("true");
 

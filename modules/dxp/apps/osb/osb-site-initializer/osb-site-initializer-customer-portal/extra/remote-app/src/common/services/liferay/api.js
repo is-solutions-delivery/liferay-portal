@@ -4,6 +4,7 @@
  */
 
 import {Liferay} from '.';
+import {fetcher} from '../../services/liferay/fetcher';
 
 const HEADLESS_DELIVERY_BASE_URL_ = `${window.location.origin}/o/headless-delivery/v1.0`;
 const HEADLESS_BASE_URL = `${window.location.origin}/o/`;
@@ -41,4 +42,36 @@ const getHighPriorityContacts = async (filter) => {
 	return response.json();
 };
 
-export {getHighPriorityContacts, fetchHeadless};
+const getTicketAttachments = async (search) => {
+	return fetcher(
+		`${HEADLESS_BASE_URL}${`c/ticketattachments/?search=${search}`}`,
+		{
+			headers: {
+				'Accept-Language': Liferay.ThemeDisplay.getBCP47LanguageId(),
+				'Cache-Control': 'max-age=30, stale-while-revalidate=30',
+				'x-csrf-token': Liferay.authToken,
+			},
+			method: 'GET',
+		}
+	);
+};
+
+const deleteTicketAttachment = async (ticketAttachmentId) => {
+	return fetcher(
+		`${HEADLESS_BASE_URL}${`c/ticketattachments/${ticketAttachmentId}`}`,
+		{
+			headers: {
+				'Accept-Language': Liferay.ThemeDisplay.getBCP47LanguageId(),
+				'Cache-Control': 'max-age=30, stale-while-revalidate=30',
+				'x-csrf-token': Liferay.authToken,
+			},
+			method: 'DELETE',
+		}
+	);
+};
+export {
+	getHighPriorityContacts,
+	getTicketAttachments,
+	fetchHeadless,
+	deleteTicketAttachment,
+};

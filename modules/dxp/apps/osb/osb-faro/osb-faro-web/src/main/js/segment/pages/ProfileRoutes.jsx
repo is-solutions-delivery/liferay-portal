@@ -1,6 +1,9 @@
 import * as breadcrumbs from 'shared/util/breadcrumbs';
 import BasePage from 'shared/components/base-page';
 import BundleRouter from 'route-middleware/BundleRouter';
+import DownloadPDFReport, {
+	Containers
+} from 'shared/components/download-report/DownloadPDFReport';
 import EmbeddedAlertList from 'shared/components/EmbeddedAlertList';
 import getCN from 'classnames';
 import Label from 'shared/components/Label';
@@ -134,6 +137,8 @@ export class SegmentProfileRoutes extends React.Component {
 
 		const {selectedChannel} = this.context;
 
+		const title = segment.name || Liferay.Language.get('unknown');
+
 		return (
 			<BasePage
 				className={getCN(
@@ -157,11 +162,7 @@ export class SegmentProfileRoutes extends React.Component {
 					groupId={groupId}
 				>
 					<BasePage.Row>
-						<BasePage.Header.TitleSection
-							title={
-								segment.name || Liferay.Language.get('unknown')
-							}
-						>
+						<BasePage.Header.TitleSection title={title}>
 							<Label display='secondary' size='lg' uppercase>
 								{this.getPageTitleLabel()}
 							</Label>
@@ -196,6 +197,28 @@ export class SegmentProfileRoutes extends React.Component {
 						routeParams={{channelId, groupId, id}}
 					/>
 				</BasePage.Header>
+
+				{getMatchedRoute(NAV_ITEMS) === Routes.CONTACTS_SEGMENT && (
+					<BasePage.SubHeader>
+						<div className='d-flex justify-content-end w-100'>
+							<DownloadPDFReport
+								containers={[
+									Containers.SegmentMembershipCard,
+									Containers.SegmentCompositionCard,
+									segment.segmentType ===
+										SegmentTypes.Dynamic &&
+										Containers.SegmentCriteriaCard,
+									Containers.TopInterestsCard,
+									Containers.DistributionBreakdownCard
+								].filter(Boolean)}
+								disabled={false}
+								showDateRange={false}
+								subtitle={selectedChannel?.name}
+								title={title}
+							/>
+						</div>
+					</BasePage.SubHeader>
+				)}
 
 				<EmbeddedAlertList alerts={this.getAlerts()} />
 

@@ -5,7 +5,7 @@
  */
 --%>
 
-<c:if test='<%= !journalDisplayContext.isNavigationMine() && !journalDisplayContext.isNavigationRecent() && (!FeatureFlagManagerUtil.isEnabled("LPS-194763") || (FeatureFlagManagerUtil.isEnabled("LPS-194763") && (journalDisplayContext.getDDMStructureId() == 0))) %>'>
+<c:if test='<%= !journalDisplayContext.isSearch() && (!FeatureFlagManagerUtil.isEnabled("LPS-194763") || (FeatureFlagManagerUtil.isEnabled("LPS-194763") && !journalDisplayContext.isHighlightedDDMStructure())) %>'>
 	<liferay-site-navigation:breadcrumb
 		breadcrumbEntries="<%= JournalPortletUtil.getPortletBreadcrumbEntries(journalDisplayContext.getFolder(), request, false, liferayPortletResponse) %>"
 	/>
@@ -18,26 +18,61 @@
 	<aui:input name="newFolderId" type="hidden" />
 
 	<c:choose>
-		<c:when test="<%= !journalDisplayContext.isSearch() %>">
+		<c:when test="<%= !journalDisplayContext.isSearch() && !journalDisplayContext.isFilterApplied() %>">
 			<liferay-util:include page="/view_entries.jsp" servletContext="<%= application %>" />
 		</c:when>
 		<c:otherwise>
 			<div>
-				<react:component
-					module="js/SearchOptions"
-					props="<%= journalDisplayContext.getSearchProps() %>"
-				/>
+				<div class="cadmin row">
+					<div class="col d-flex">
+						<c:choose>
+							<c:when test='<%= !FeatureFlagManagerUtil.isEnabled("LPS-196768") %>'>
+								<div class="c-mr-2 d-inline-flex form-group">
+									<button class="btn btn-secondary btn-sm form-control-select">
+										<%= journalDisplayContext.getSearchResultsLabel() %>
+									</button>
+								</div>
+							</c:when>
+						</c:choose>
+
+						<%
+						String searchLocationLabel = journalDisplayContext.getSearchLocationLabel();
+						%>
+
+						<c:if test="<%= journalDisplayContext.isSearch() && (searchLocationLabel != null) %>">
+							<div class="c-mr-2 d-inline-flex form-group">
+								<button class="align-items-center btn btn-secondary btn-sm form-control-select">
+									<svg class="lexicon-icon lexicon-icon-folder mr-2" role="presentation">
+										<use xlink:href="/o/admin-theme/images/clay/icons.svg#folder">
+									</svg><%= searchLocationLabel %>
+								</button>
+							</div>
+						</c:if>
+
+						<c:if test="<%= journalDisplayContext.isSearch() %>">
+							<div class="d-inline-flex form-group">
+								<button class="btn btn-secondary btn-sm form-control-select">
+									<%= journalDisplayContext.getSearchInLabel() %>
+								</button>
+							</div>
+						</c:if>
+					</div>
+				</div>
+
+				<c:if test='<%= !FeatureFlagManagerUtil.isEnabled("LPS-196768") || (FeatureFlagManagerUtil.isEnabled("LPS-196768") && journalDisplayContext.isSearch()) %>'>
+					<react:component
+						module="js/SearchOptions"
+						props="<%= journalDisplayContext.getSearchProps() %>"
+					/>
+				</c:if>
 			</div>
 
 			<c:choose>
-				<c:when test="<%= journalDisplayContext.isWebContentTabSelected() %>">
-					<liferay-util:include page="/view_entries.jsp" servletContext="<%= application %>" />
-				</c:when>
-				<c:when test="<%= journalDisplayContext.isVersionsTabSelected() %>">
-					<liferay-util:include page="/view_versions.jsp" servletContext="<%= application %>" />
-				</c:when>
-				<c:when test="<%= journalDisplayContext.isCommentsTabSelected() %>">
+				<c:when test="<%= journalDisplayContext.isShowComments() %>">
 					<liferay-util:include page="/view_comments.jsp" servletContext="<%= application %>" />
+				</c:when>
+				<c:when test="<%= journalDisplayContext.isShowVersions() %>">
+					<liferay-util:include page="/view_versions.jsp" servletContext="<%= application %>" />
 				</c:when>
 				<c:otherwise>
 					<liferay-util:include page="/view_entries.jsp" servletContext="<%= application %>" />

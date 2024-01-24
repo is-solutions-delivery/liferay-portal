@@ -14,8 +14,6 @@ import com.liferay.portal.kernel.model.Region;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 
-import java.util.Locale;
-
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -39,49 +37,53 @@ public class PlacedOrderAddressDTOConverter
 		throws Exception {
 
 		CommerceAddress commerceAddress =
-			_commerceAddressService.getCommerceAddress(
+			_commerceAddressService.fetchCommerceAddress(
 				(Long)dtoConverterContext.getId());
+
+		if (commerceAddress == null) {
+			return new PlacedOrderAddress();
+		}
 
 		Country addressCountry = commerceAddress.getCountry();
 
 		Region addressRegion = commerceAddress.getRegion();
 
-		Locale locale = dtoConverterContext.getLocale();
-
-		PlacedOrderAddress placedOrderAddress = new PlacedOrderAddress() {
+		return new PlacedOrderAddress() {
 			{
-				city = commerceAddress.getCity();
-				country = addressCountry.getTitle(locale);
-				countryISOCode = addressCountry.getA2();
-				description = commerceAddress.getDescription();
-				id = commerceAddress.getCommerceAddressId();
-				latitude = commerceAddress.getLatitude();
-				longitude = commerceAddress.getLongitude();
-				name = commerceAddress.getName();
-				phoneNumber = commerceAddress.getPhoneNumber();
-				street1 = commerceAddress.getStreet1();
-				street2 = commerceAddress.getStreet2();
-				street3 = commerceAddress.getStreet3();
-				typeId = commerceAddress.getType();
-				zip = commerceAddress.getZip();
+				setCity(commerceAddress::getCity);
+				setCountry(
+					() -> addressCountry.getTitle(
+						dtoConverterContext.getLocale()));
+				setCountryISOCode(addressCountry::getA2);
+				setDescription(commerceAddress::getDescription);
+				setId(commerceAddress::getCommerceAddressId);
+				setLatitude(commerceAddress::getLatitude);
+				setLongitude(commerceAddress::getLongitude);
+				setName(commerceAddress::getName);
+				setPhoneNumber(commerceAddress::getPhoneNumber);
+				setRegion(
+					() -> {
+						if (addressRegion == null) {
+							return null;
+						}
+
+						return addressRegion.getName();
+					});
+				setRegionISOCode(
+					() -> {
+						if (addressRegion == null) {
+							return StringPool.BLANK;
+						}
+
+						return addressRegion.getRegionCode();
+					});
+				setStreet1(commerceAddress::getStreet1);
+				setStreet2(commerceAddress::getStreet2);
+				setStreet3(commerceAddress::getStreet3);
+				setTypeId(commerceAddress::getType);
+				setZip(commerceAddress::getZip);
 			}
 		};
-
-		if (addressRegion != null) {
-			placedOrderAddress.setRegion(addressRegion.getName());
-			placedOrderAddress.setRegionISOCode(
-				_getRegionISOCode(addressRegion));
-		}
-
-		return placedOrderAddress;
-	}
-
-	private String _getRegionISOCode(Region region) {
-		if (region == null) {
-			return StringPool.BLANK;
-		}
-
-		return region.getRegionCode();
 	}
 
 	@Reference

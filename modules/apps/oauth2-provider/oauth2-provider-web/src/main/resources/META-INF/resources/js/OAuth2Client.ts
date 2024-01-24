@@ -22,6 +22,15 @@ interface IOAuth2ClientOptions {
 	tokenURL: string;
 }
 
+interface IOAuth2ClientTokenResponse {
+	access_token: string;
+	expires_after_ms: number;
+	expires_in: number;
+	refresh_token: string;
+	scope: string;
+	token_type: string;
+}
+
 class OAuth2Client {
 	private authorizeURL: string;
 	private clientId: string;
@@ -60,7 +69,10 @@ class OAuth2Client {
 		});
 	}
 
-	private _createIframe(challenge: any, sessionKey: string): Promise<any> {
+	private _createIframe(
+		challenge: ReturnType<typeof pkceChallenge>,
+		sessionKey: string
+	): Promise<any> {
 		const oauth2Client = this;
 
 		const ifrm = document.createElement('iframe');
@@ -94,7 +106,12 @@ class OAuth2Client {
 					tokenResponse.then((response) =>
 						Liferay.Util.SessionStorage.setItem(
 							sessionKey,
-							JSON.stringify(response),
+							JSON.stringify({
+								...response,
+								expires_after_ms:
+									new Date().getTime() +
+									response.expires_in * 1000,
+							}),
 							Liferay.Util.SessionStorage.TYPES.NECESSARY
 						)
 					);
@@ -112,7 +129,7 @@ class OAuth2Client {
 
 	private async _fetch(
 		resource: RequestInfo | URL,
-		options: any = {}
+		options: RequestInit = {}
 	): Promise<any> {
 		const oauth2Client = this;
 
@@ -147,10 +164,11 @@ class OAuth2Client {
 		// to perform OAuth2 token authentication instead
 		// eslint-disable-next-line @liferay/portal/no-global-fetch
 		return await fetch(resource, {
+			...options,
 			headers: {
+				...options?.headers,
 				Authorization: `Bearer ${tokenData.access_token}`,
 			},
-			...options,
 		});
 	}
 
@@ -165,9 +183,15 @@ class OAuth2Client {
 			);
 
 			if (cachedTokenData !== null && cachedTokenData !== undefined) {
-				resolve(JSON.parse(cachedTokenData));
+				const cachedToken = JSON.parse(
+					cachedTokenData
+				) as IOAuth2ClientTokenResponse;
 
-				return;
+				if (new Date().getTime() < cachedToken.expires_after_ms) {
+					resolve(cachedToken);
+
+					return;
+				}
 			}
 
 			resolve(oauth2Client._requestTokenSilently(sessionKey));
@@ -184,7 +208,7 @@ class OAuth2Client {
 	private async _requestToken(
 		codeVerifier: string,
 		code: string
-	): Promise<any> {
+	): Promise<IOAuth2ClientTokenResponse> {
 		const oauth2Client = this;
 
 		// This client must avoid using @liferay/portal/no-global-fetch in order

@@ -7,6 +7,9 @@ package com.liferay.headless.commerce.admin.channel.internal.graphql.servlet.v1_
 
 import com.liferay.headless.commerce.admin.channel.internal.graphql.mutation.v1_0.Mutation;
 import com.liferay.headless.commerce.admin.channel.internal.graphql.query.v1_0.Query;
+import com.liferay.headless.commerce.admin.channel.internal.resource.v1_0.AccountAddressChannelResourceImpl;
+import com.liferay.headless.commerce.admin.channel.internal.resource.v1_0.AccountResourceImpl;
+import com.liferay.headless.commerce.admin.channel.internal.resource.v1_0.ChannelAccountResourceImpl;
 import com.liferay.headless.commerce.admin.channel.internal.resource.v1_0.ChannelResourceImpl;
 import com.liferay.headless.commerce.admin.channel.internal.resource.v1_0.OrderTypeResourceImpl;
 import com.liferay.headless.commerce.admin.channel.internal.resource.v1_0.PaymentMethodGroupRelOrderTypeResourceImpl;
@@ -16,6 +19,9 @@ import com.liferay.headless.commerce.admin.channel.internal.resource.v1_0.Shippi
 import com.liferay.headless.commerce.admin.channel.internal.resource.v1_0.ShippingMethodResourceImpl;
 import com.liferay.headless.commerce.admin.channel.internal.resource.v1_0.TaxCategoryResourceImpl;
 import com.liferay.headless.commerce.admin.channel.internal.resource.v1_0.TermResourceImpl;
+import com.liferay.headless.commerce.admin.channel.resource.v1_0.AccountAddressChannelResource;
+import com.liferay.headless.commerce.admin.channel.resource.v1_0.AccountResource;
+import com.liferay.headless.commerce.admin.channel.resource.v1_0.ChannelAccountResource;
 import com.liferay.headless.commerce.admin.channel.resource.v1_0.ChannelResource;
 import com.liferay.headless.commerce.admin.channel.resource.v1_0.OrderTypeResource;
 import com.liferay.headless.commerce.admin.channel.resource.v1_0.PaymentMethodGroupRelOrderTypeResource;
@@ -50,8 +56,12 @@ public class ServletDataImpl implements ServletData {
 
 	@Activate
 	public void activate(BundleContext bundleContext) {
+		Mutation.setAccountAddressChannelResourceComponentServiceObjects(
+			_accountAddressChannelResourceComponentServiceObjects);
 		Mutation.setChannelResourceComponentServiceObjects(
 			_channelResourceComponentServiceObjects);
+		Mutation.setChannelAccountResourceComponentServiceObjects(
+			_channelAccountResourceComponentServiceObjects);
 		Mutation.
 			setPaymentMethodGroupRelOrderTypeResourceComponentServiceObjects(
 				_paymentMethodGroupRelOrderTypeResourceComponentServiceObjects);
@@ -66,8 +76,14 @@ public class ServletDataImpl implements ServletData {
 		Mutation.setTaxCategoryResourceComponentServiceObjects(
 			_taxCategoryResourceComponentServiceObjects);
 
+		Query.setAccountResourceComponentServiceObjects(
+			_accountResourceComponentServiceObjects);
+		Query.setAccountAddressChannelResourceComponentServiceObjects(
+			_accountAddressChannelResourceComponentServiceObjects);
 		Query.setChannelResourceComponentServiceObjects(
 			_channelResourceComponentServiceObjects);
+		Query.setChannelAccountResourceComponentServiceObjects(
+			_channelAccountResourceComponentServiceObjects);
 		Query.setOrderTypeResourceComponentServiceObjects(
 			_orderTypeResourceComponentServiceObjects);
 		Query.setPaymentMethodGroupRelOrderTypeResourceComponentServiceObjects(
@@ -121,6 +137,26 @@ public class ServletDataImpl implements ServletData {
 			new HashMap<String, ObjectValuePair<Class<?>, String>>() {
 				{
 					put(
+						"mutation#deleteAccountAddressChannel",
+						new ObjectValuePair<>(
+							AccountAddressChannelResourceImpl.class,
+							"deleteAccountAddressChannel"));
+					put(
+						"mutation#deleteAccountAddressChannelBatch",
+						new ObjectValuePair<>(
+							AccountAddressChannelResourceImpl.class,
+							"deleteAccountAddressChannelBatch"));
+					put(
+						"mutation#createAccountAddressByExternalReferenceCodeAccountAddressChannel",
+						new ObjectValuePair<>(
+							AccountAddressChannelResourceImpl.class,
+							"postAccountAddressByExternalReferenceCodeAccountAddressChannel"));
+					put(
+						"mutation#createAccountAddressIdAccountAddressChannel",
+						new ObjectValuePair<>(
+							AccountAddressChannelResourceImpl.class,
+							"postAccountAddressIdAccountAddressChannel"));
+					put(
 						"mutation#createChannelsPageExportBatch",
 						new ObjectValuePair<>(
 							ChannelResourceImpl.class,
@@ -168,6 +204,26 @@ public class ServletDataImpl implements ServletData {
 						"mutation#updateChannelBatch",
 						new ObjectValuePair<>(
 							ChannelResourceImpl.class, "putChannelBatch"));
+					put(
+						"mutation#deleteChannelAccount",
+						new ObjectValuePair<>(
+							ChannelAccountResourceImpl.class,
+							"deleteChannelAccount"));
+					put(
+						"mutation#deleteChannelAccountBatch",
+						new ObjectValuePair<>(
+							ChannelAccountResourceImpl.class,
+							"deleteChannelAccountBatch"));
+					put(
+						"mutation#createChannelByExternalReferenceCodeChannelAccount",
+						new ObjectValuePair<>(
+							ChannelAccountResourceImpl.class,
+							"postChannelByExternalReferenceCodeChannelAccount"));
+					put(
+						"mutation#createChannelIdChannelAccount",
+						new ObjectValuePair<>(
+							ChannelAccountResourceImpl.class,
+							"postChannelIdChannelAccount"));
 					put(
 						"mutation#deletePaymentMethodGroupRelOrderType",
 						new ObjectValuePair<>(
@@ -240,6 +296,26 @@ public class ServletDataImpl implements ServletData {
 							"postTaxCategoriesPageExportBatch"));
 
 					put(
+						"query#channelAccountAccount",
+						new ObjectValuePair<>(
+							AccountResourceImpl.class,
+							"getChannelAccountAccount"));
+					put(
+						"query#accountAddressByExternalReferenceCodeAccountAddressChannels",
+						new ObjectValuePair<>(
+							AccountAddressChannelResourceImpl.class,
+							"getAccountAddressByExternalReferenceCodeAccountAddressChannelsPage"));
+					put(
+						"query#accountAddressIdAccountAddressChannels",
+						new ObjectValuePair<>(
+							AccountAddressChannelResourceImpl.class,
+							"getAccountAddressIdAccountAddressChannelsPage"));
+					put(
+						"query#accountAddressChannelChannel",
+						new ObjectValuePair<>(
+							ChannelResourceImpl.class,
+							"getAccountAddressChannelChannel"));
+					put(
 						"query#channels",
 						new ObjectValuePair<>(
 							ChannelResourceImpl.class, "getChannelsPage"));
@@ -252,6 +328,16 @@ public class ServletDataImpl implements ServletData {
 						"query#channel",
 						new ObjectValuePair<>(
 							ChannelResourceImpl.class, "getChannel"));
+					put(
+						"query#channelByExternalReferenceCodeChannelAccounts",
+						new ObjectValuePair<>(
+							ChannelAccountResourceImpl.class,
+							"getChannelByExternalReferenceCodeChannelAccountsPage"));
+					put(
+						"query#channelIdChannelAccounts",
+						new ObjectValuePair<>(
+							ChannelAccountResourceImpl.class,
+							"getChannelIdChannelAccountsPage"));
 					put(
 						"query#paymentMethodGroupRelOrderTypeOrderType",
 						new ObjectValuePair<>(
@@ -308,16 +394,38 @@ public class ServletDataImpl implements ServletData {
 							"getShippingFixedOptionTermTerm"));
 
 					put(
+						"query#Channel.accountAddressByExternalReferenceCodeAccountAddressChannels",
+						new ObjectValuePair<>(
+							AccountAddressChannelResourceImpl.class,
+							"getAccountAddressByExternalReferenceCodeAccountAddressChannelsPage"));
+					put(
 						"query#Channel.shippingMethods",
 						new ObjectValuePair<>(
 							ShippingMethodResourceImpl.class,
 							"getChannelShippingMethodsPage"));
+					put(
+						"query#ChannelAccount.channel",
+						new ObjectValuePair<>(
+							ChannelResourceImpl.class, "getChannel"));
+					put(
+						"query#Channel.byExternalReferenceCodeChannelAccounts",
+						new ObjectValuePair<>(
+							ChannelAccountResourceImpl.class,
+							"getChannelByExternalReferenceCodeChannelAccountsPage"));
 				}
 			};
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<AccountAddressChannelResource>
+		_accountAddressChannelResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<ChannelResource>
 		_channelResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<ChannelAccountResource>
+		_channelAccountResourceComponentServiceObjects;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<PaymentMethodGroupRelOrderTypeResource>
@@ -342,6 +450,10 @@ public class ServletDataImpl implements ServletData {
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<TaxCategoryResource>
 		_taxCategoryResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<AccountResource>
+		_accountResourceComponentServiceObjects;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<OrderTypeResource>

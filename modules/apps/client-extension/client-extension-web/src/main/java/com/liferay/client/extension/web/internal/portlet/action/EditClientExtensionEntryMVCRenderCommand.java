@@ -50,18 +50,17 @@ public class EditClientExtensionEntryMVCRenderCommand
 				_fetchClientExtensionEntry(renderRequest);
 
 			if (clientExtensionEntry != null) {
-				cet = _cetFactory.create(clientExtensionEntry);
+				cet = _cetFactory.create(clientExtensionEntry, false);
 			}
 			else {
-				cet = _cetFactory.create(
-					renderRequest, ParamUtil.getString(renderRequest, "type"));
+				cet = _cetFactory.create(renderRequest);
 			}
 
 			renderRequest.setAttribute(
 				ClientExtensionAdminWebKeys.
 					EDIT_CLIENT_EXTENSION_ENTRY_DISPLAY_CONTEXT,
 				new EditClientExtensionEntryDisplayContext(
-					cet, clientExtensionEntry, renderRequest));
+					clientExtensionEntry == null, cet, renderRequest));
 
 			return "/admin/edit_client_extension_entry.jsp";
 		}

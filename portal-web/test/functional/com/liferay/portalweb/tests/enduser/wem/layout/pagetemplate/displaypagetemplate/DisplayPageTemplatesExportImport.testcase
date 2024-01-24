@@ -357,7 +357,7 @@ definition {
 
 			PageEditorEditableLink.mapURLToAsset(
 				entryTitle = ${objectEntryId},
-				field = "Display Page URL",
+				field = "Default",
 				navItem = "${labelName}2s");
 
 			PageEditor.publish();
@@ -390,7 +390,7 @@ definition {
 				key_text = "Heading Example",
 				locator1 = "Link#ANY");
 
-			ControlMenu.viewHeaderTitle(headerTitle = "Liferay");
+			ControlMenu.viewHeaderTitle(headerTitle = ${objectEntryId});
 
 			Button.click(button = "Go Somewhere");
 
@@ -500,7 +500,7 @@ definition {
 
 			PageEditorEditableLink.mapURLToAsset(
 				entryTitle = ${objectEntryId},
-				field = "Display Page URL",
+				field = "Default",
 				navItem = "${labelName}2s");
 
 			PageEditor.publish();
@@ -533,7 +533,7 @@ definition {
 				key_text = "Heading Example",
 				locator1 = "Link#ANY");
 
-			ControlMenu.viewHeaderTitle(headerTitle = "Liferay");
+			ControlMenu.viewHeaderTitle(headerTitle = ${objectEntryId});
 
 			Button.click(button = "Go Somewhere");
 
@@ -644,7 +644,7 @@ definition {
 
 			PageEditorEditableLink.mapURLToAsset(
 				entryTitle = ${objectEntryId},
-				field = "Display Page URL",
+				field = "Default",
 				navItem = "${labelName}2s");
 
 			PageEditor.publish();
@@ -677,7 +677,7 @@ definition {
 				key_text = "Heading Example",
 				locator1 = "Link#ANY");
 
-			ControlMenu.viewHeaderTitle(headerTitle = "Liferay");
+			ControlMenu.viewHeaderTitle(headerTitle = ${objectEntryId});
 
 			Button.click(button = "Go Somewhere");
 

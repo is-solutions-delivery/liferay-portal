@@ -64,6 +64,7 @@ import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.util.RepositoryUtil;
 import com.liferay.staging.StagingGroupHelper;
 
 import java.util.ArrayList;
@@ -299,8 +300,8 @@ public class DLItemSelectorViewDisplayContext<T extends ItemSelectorCriterion> {
 		}
 
 		return DLAppServiceUtil.getFoldersAndFileEntriesAndFileShortcutsCount(
-			_getStagingAwareGroupId(), getFolderId(),
-			WorkflowConstants.STATUS_APPROVED, _getMimeTypes(), false, false);
+			_repository.getRepositoryId(), getFolderId(),
+			WorkflowConstants.STATUS_APPROVED, _getMimeTypes(), true, false);
 	}
 
 	public String getTitle() {
@@ -329,7 +330,8 @@ public class DLItemSelectorViewDisplayContext<T extends ItemSelectorCriterion> {
 
 			for (AssetVocabulary assetVocabulary : assetVocabularies) {
 				if (assetVocabulary.isRequired(
-						classNameId, defaultFileEntryTypeId)) {
+						classNameId, defaultFileEntryTypeId,
+						_themeDisplay.getScopeGroupId())) {
 
 					return null;
 				}
@@ -359,7 +361,9 @@ public class DLItemSelectorViewDisplayContext<T extends ItemSelectorCriterion> {
 			_showDragAndDropZone = false;
 		}
 		else {
-			if (DLUtil.hasWorkflowDefinitionLink(
+			if (RepositoryUtil.isExternalRepository(
+					_repository.getRepositoryId()) ||
+				DLUtil.hasWorkflowDefinitionLink(
 					_themeDisplay.getCompanyId(),
 					_themeDisplay.getScopeGroupId(), getFolderId(),
 					DLFileEntryTypeLocalServiceUtil.getDefaultFileEntryTypeId(

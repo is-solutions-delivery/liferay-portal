@@ -60,7 +60,6 @@ import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.portlet.asset.service.permission.AssetEntryPermission;
 import com.liferay.portlet.configuration.kernel.util.PortletConfigurationUtil;
-import com.liferay.segments.SegmentsEntryRetriever;
 import com.liferay.segments.configuration.provider.SegmentsConfigurationProvider;
 import com.liferay.segments.constants.SegmentsEntryConstants;
 import com.liferay.subscription.model.Subscription;
@@ -86,10 +85,7 @@ import org.osgi.service.component.annotations.Reference;
 /**
  * @author Eudaldo Alonso
  */
-@Component(
-	configurationPid = "com.liferay.asset.publisher.web.internal.configuration.AssetPublisherWebConfiguration",
-	service = AssetEntriesCheckerHelper.class
-)
+@Component(service = AssetEntriesCheckerHelper.class)
 public class AssetEntriesCheckerHelper {
 
 	public void checkAssetEntries() throws Exception {
@@ -567,9 +563,6 @@ public class AssetEntriesCheckerHelper {
 
 	@Reference
 	private SegmentsConfigurationProvider _segmentsConfigurationProvider;
-
-	@Reference
-	private SegmentsEntryRetriever _segmentsEntryRetriever;
 
 	@Reference
 	private SubscriptionLocalService _subscriptionLocalService;

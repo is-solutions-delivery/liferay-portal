@@ -26,7 +26,6 @@ import com.liferay.info.item.renderer.InfoItemTemplatedRenderer;
 import com.liferay.layout.display.page.LayoutDisplayPageProvider;
 import com.liferay.layout.display.page.constants.LayoutDisplayPageWebKeys;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
@@ -102,10 +101,6 @@ public class ContentObjectFragmentRenderer implements FragmentRenderer {
 		FragmentRendererContext fragmentRendererContext,
 		HttpServletRequest httpServletRequest) {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-169923")) {
-			return true;
-		}
-
 		JSONObject jsonObject = _getFieldValueJSONObject(
 			fragmentRendererContext);
 
@@ -168,7 +163,7 @@ public class ContentObjectFragmentRenderer implements FragmentRenderer {
 		if ((infoItemReference == null) &&
 			((jsonObject == null) || (jsonObject.length() == 0))) {
 
-			if (FragmentRendererUtil.isEditMode(httpServletRequest)) {
+			if (fragmentRendererContext.isEditMode()) {
 				FragmentRendererUtil.printPortletMessageInfo(
 					httpServletRequest, httpServletResponse,
 					"the-selected-content-will-be-shown-here");
@@ -193,7 +188,7 @@ public class ContentObjectFragmentRenderer implements FragmentRenderer {
 		}
 
 		if (displayObject == null) {
-			if (FragmentRendererUtil.isEditMode(httpServletRequest)) {
+			if (fragmentRendererContext.isEditMode()) {
 				FragmentRendererUtil.printPortletMessageInfo(
 					httpServletRequest, httpServletResponse,
 					"the-selected-content-is-no-longer-available.-please-" +
@@ -211,7 +206,7 @@ public class ContentObjectFragmentRenderer implements FragmentRenderer {
 			className, displayObject.getClass(), fragmentRendererContext);
 
 		if ((tuple == null) || (tuple.getObject(0) == null)) {
-			if (FragmentRendererUtil.isEditMode(httpServletRequest)) {
+			if (fragmentRendererContext.isEditMode()) {
 				FragmentRendererUtil.printPortletMessageInfo(
 					httpServletRequest, httpServletResponse,
 					"there-are-no-available-renderers-for-the-selected-" +
@@ -222,16 +217,7 @@ public class ContentObjectFragmentRenderer implements FragmentRenderer {
 		}
 
 		if (!_hasPermission(httpServletRequest, className, displayObject)) {
-			if (!FeatureFlagManagerUtil.isEnabled("LPS-169923")) {
-				FragmentRendererUtil.printPortletMessageInfo(
-					httpServletRequest, httpServletResponse,
-					"you-do-not-have-permission-to-access-the-requested-" +
-						"resource");
-
-				return;
-			}
-
-			if (FragmentRendererUtil.isEditMode(httpServletRequest)) {
+			if (fragmentRendererContext.isEditMode()) {
 				FragmentRendererUtil.printRestrictedContentMessage(
 					httpServletRequest, httpServletResponse);
 			}

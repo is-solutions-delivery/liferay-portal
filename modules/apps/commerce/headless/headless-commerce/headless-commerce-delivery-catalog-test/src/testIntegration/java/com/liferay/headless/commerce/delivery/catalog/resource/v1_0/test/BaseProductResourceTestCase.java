@@ -27,8 +27,6 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -175,6 +173,7 @@ public abstract class BaseProductResourceTestCase {
 
 		Product product = randomProduct();
 
+		product.setCatalogName(regex);
 		product.setDescription(regex);
 		product.setExternalReferenceCode(regex);
 		product.setMetaDescription(regex);
@@ -192,6 +191,7 @@ public abstract class BaseProductResourceTestCase {
 
 		product = ProductSerDes.toDTO(json);
 
+		Assert.assertEquals(regex, product.getCatalogName());
 		Assert.assertEquals(regex, product.getDescription());
 		Assert.assertEquals(regex, product.getExternalReferenceCode());
 		Assert.assertEquals(regex, product.getMetaDescription());
@@ -711,6 +711,14 @@ public abstract class BaseProductResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("catalogName", additionalAssertFieldName)) {
+				if (product.getCatalogName() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("categories", additionalAssertFieldName)) {
 				if (product.getCategories() == null) {
 					valid = false;
@@ -721,6 +729,14 @@ public abstract class BaseProductResourceTestCase {
 
 			if (Objects.equals("createDate", additionalAssertFieldName)) {
 				if (product.getCreateDate() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("customFields", additionalAssertFieldName)) {
+				if (product.getCustomFields() == null) {
 					valid = false;
 				}
 
@@ -1045,6 +1061,16 @@ public abstract class BaseProductResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("catalogName", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						product1.getCatalogName(), product2.getCatalogName())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("categories", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
 						product1.getCategories(), product2.getCategories())) {
@@ -1058,6 +1084,17 @@ public abstract class BaseProductResourceTestCase {
 			if (Objects.equals("createDate", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
 						product1.getCreateDate(), product2.getCreateDate())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("customFields", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						product1.getCustomFields(),
+						product2.getCustomFields())) {
 
 					return false;
 				}
@@ -1428,6 +1465,52 @@ public abstract class BaseProductResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("catalogName")) {
+			Object object = product.getCatalogName();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
+		}
+
 		if (entityFieldName.equals("categories")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
@@ -1462,6 +1545,11 @@ public abstract class BaseProductResourceTestCase {
 			}
 
 			return sb.toString();
+		}
+
+		if (entityFieldName.equals("customFields")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
 		}
 
 		if (entityFieldName.equals("description")) {
@@ -2065,6 +2153,8 @@ public abstract class BaseProductResourceTestCase {
 	protected Product randomProduct() throws Exception {
 		return new Product() {
 			{
+				catalogName = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
 				createDate = RandomTestUtil.nextDate();
 				description = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
@@ -2103,9 +2193,9 @@ public abstract class BaseProductResourceTestCase {
 	}
 
 	protected ProductResource productResource;
-	protected Group irrelevantGroup;
-	protected Company testCompany;
-	protected Group testGroup;
+	protected com.liferay.portal.kernel.model.Group irrelevantGroup;
+	protected com.liferay.portal.kernel.model.Company testCompany;
+	protected com.liferay.portal.kernel.model.Group testGroup;
 
 	protected static class BeanTestUtil {
 

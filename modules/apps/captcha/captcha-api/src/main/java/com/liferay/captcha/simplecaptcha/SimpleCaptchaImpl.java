@@ -21,6 +21,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -128,6 +129,15 @@ public class SimpleCaptchaImpl implements Captcha {
 
 		CaptchaServletUtil.writeImage(
 			httpServletResponse.getOutputStream(), simpleCaptcha.getImage());
+	}
+
+	@Override
+	public String serveImage(OutputStream outputStream) throws IOException {
+		nl.captcha.Captcha simpleCaptcha = getSimpleCaptcha();
+
+		CaptchaServletUtil.writeImage(outputStream, simpleCaptcha.getImage());
+
+		return simpleCaptcha.getAnswer();
 	}
 
 	@Override

@@ -46,19 +46,6 @@ definition {
 		}
 	}
 
-	tearDown {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			JSONGroup.deleteGroupByName(groupName = "Test Site Name");
-
-			JSONUser.tearDownNonAdminUsers();
-		}
-	}
-
 	@description = "When a new user subscribes a web content they should receive an email notification when the web content has a modification."
 	@priority = 4
 	test ViewEditWebContentEmailNotification {
@@ -160,12 +147,10 @@ definition {
 			task ("Enable Granted Email with Article diffs") {
 				LexiconEntry.gotoHeaderMenuItem(menuItem = "Configuration");
 
-				SelectFrame(locator1 = "IFrame#CONFIGURATION");
-
 				WebContentAdmin.configureEmailNotifications(
 					enabled = "true",
 					fieldName = "Granted",
-					navTab = "Web Content Granted Email",
+					navTab = "Web Content Granted",
 					notificationsBody = "Article diff is [$ARTICLE_DIFFS$]");
 			}
 

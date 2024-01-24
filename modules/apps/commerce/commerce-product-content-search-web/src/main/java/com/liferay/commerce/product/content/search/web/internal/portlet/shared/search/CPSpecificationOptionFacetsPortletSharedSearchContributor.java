@@ -88,11 +88,14 @@ public class CPSpecificationOptionFacetsPortletSharedSearchContributor
 				portletSharedSearchSettings.getPortletPreferences();
 
 			int frequencyThreshold = 1;
+			int maxSpecifications = 10;
 			int maxTerms = 10;
 
 			if (portletPreferences != null) {
 				frequencyThreshold = GetterUtil.getInteger(
 					portletPreferences.getValue("frequencyThreshold", null), 1);
+				maxSpecifications = GetterUtil.getInteger(
+					portletPreferences.getValue("maxSpecifications", null), 10);
 				maxTerms = GetterUtil.getInteger(
 					portletPreferences.getValue("maxTerms", null), 10);
 			}
@@ -100,12 +103,13 @@ public class CPSpecificationOptionFacetsPortletSharedSearchContributor
 			serializableFacet.setFacetConfiguration(
 				_buildFacetConfiguration(
 					serializableFacet.getFieldName(), frequencyThreshold,
-					maxTerms));
+					maxSpecifications));
 
 			portletSharedSearchSettings.addFacet(serializableFacet);
 
 			for (Facet facet :
-					getFacets(frequencyThreshold, maxTerms, renderRequest)) {
+					getFacets(
+						frequencyThreshold, maxSpecifications, renderRequest)) {
 
 				String cpSpecificationOptionKey =
 					CPSpecificationOptionFacetsUtil.
@@ -172,6 +176,8 @@ public class CPSpecificationOptionFacetsPortletSharedSearchContributor
 					_portal.getHttpServletRequest(renderRequest));
 
 			if (accountEntry != null) {
+				searchContext.setAttribute(
+					"accountEntryId", accountEntry.getAccountEntryId());
 				searchContext.setAttribute(
 					"commerceAccountGroupIds",
 					_accountGroupLocalService.getAccountGroupIds(

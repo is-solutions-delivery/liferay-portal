@@ -9,7 +9,11 @@ import {openToast} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React, {useCallback, useEffect, useState} from 'react';
 
-import {SCHEMA_SELECTED_EVENT} from '../constants';
+import {
+	DISALLOWED_CSV_ENTITY_TYPES,
+	EXPORT_FILE_FORMAT_SELECTED_EVENT,
+	SCHEMA_SELECTED_EVENT,
+} from '../constants';
 import ExportModal from './ExportModal';
 
 function Export({
@@ -48,14 +52,37 @@ function Export({
 	);
 
 	useEffect(() => {
+		const handleExportFileFormatUpdated = ({
+			selectedExportFileFormat,
+			selectedSchema,
+		}) => {
+			if (
+				selectedExportFileFormat === 'CSV' &&
+				DISALLOWED_CSV_ENTITY_TYPES.includes(selectedSchema)
+			) {
+				setDisable(true);
+			}
+		};
+
 		function handleSchemaChange(event) {
 			if (event.schema) {
 				setDisable(false);
 			}
 		}
+
+		Liferay.on(
+			EXPORT_FILE_FORMAT_SELECTED_EVENT,
+			handleExportFileFormatUpdated
+		);
 		Liferay.on(SCHEMA_SELECTED_EVENT, handleSchemaChange);
 
-		return () => Liferay.detach(SCHEMA_SELECTED_EVENT, handleSchemaChange);
+		return () => {
+			Liferay.detach(
+				EXPORT_FILE_FORMAT_SELECTED_EVENT,
+				handleExportFileFormatUpdated
+			);
+			Liferay.detach(SCHEMA_SELECTED_EVENT, handleSchemaChange);
+		};
 	}, [portletNamespace]);
 
 	return (

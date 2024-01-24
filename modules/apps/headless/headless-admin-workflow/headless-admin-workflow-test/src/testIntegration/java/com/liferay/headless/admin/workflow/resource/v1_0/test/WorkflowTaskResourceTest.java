@@ -23,6 +23,7 @@ import com.liferay.headless.admin.workflow.resource.v1_0.test.util.ObjectReviewe
 import com.liferay.headless.admin.workflow.resource.v1_0.test.util.WorkflowDefinitionTestUtil;
 import com.liferay.headless.admin.workflow.resource.v1_0.test.util.WorkflowInstanceTestUtil;
 import com.liferay.headless.admin.workflow.resource.v1_0.test.util.WorkflowTaskTestUtil;
+import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.role.RoleConstants;
@@ -35,6 +36,7 @@ import com.liferay.portal.kernel.test.rule.DataGuard;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.workflow.WorkflowTaskManager;
 import com.liferay.portal.test.rule.Inject;
 
@@ -122,6 +124,18 @@ public class WorkflowTaskResourceTest extends BaseWorkflowTaskResourceTestCase {
 
 	@Override
 	@Test
+	public void testGetWorkflowInstanceWorkflowTasksAssignedToUserPageWithPagination()
+		throws Exception {
+
+		_testGetWorkflowInstanceWorkflowTasksPageWithPagination(
+			pagination ->
+				workflowTaskResource.
+					getWorkflowInstanceWorkflowTasksAssignedToUserPage(
+						_workflowInstance.getId(), null, null, pagination));
+	}
+
+	@Override
+	@Test
 	public void testGetWorkflowInstanceWorkflowTasksPage() throws Exception {
 		Page<WorkflowTask> page =
 			workflowTaskResource.getWorkflowInstanceWorkflowTasksPage(
@@ -154,6 +168,17 @@ public class WorkflowTaskResourceTest extends BaseWorkflowTaskResourceTestCase {
 				}),
 			(List<WorkflowTask>)page.getItems());
 		assertValid(page);
+	}
+
+	@Override
+	@Test
+	public void testGetWorkflowInstanceWorkflowTasksPageWithPagination()
+		throws Exception {
+
+		_testGetWorkflowInstanceWorkflowTasksPageWithPagination(
+			pagination ->
+				workflowTaskResource.getWorkflowInstanceWorkflowTasksPage(
+					_workflowInstance.getId(), null, pagination));
 	}
 
 	@Override
@@ -989,6 +1014,42 @@ public class WorkflowTaskResourceTest extends BaseWorkflowTaskResourceTestCase {
 		throws Exception {
 
 		return testGetWorkflowTask_addWorkflowTask();
+	}
+
+	private void _testGetWorkflowInstanceWorkflowTasksPageWithPagination(
+			UnsafeFunction<Pagination, Page<WorkflowTask>, Exception>
+				unsafeFunction)
+		throws Exception {
+
+		Page<WorkflowTask> workflowTaskPage = unsafeFunction.apply(null);
+
+		int totalCount = GetterUtil.getInteger(
+			workflowTaskPage.getTotalCount());
+
+		Page<WorkflowTask> page1 = unsafeFunction.apply(
+			Pagination.of(1, totalCount));
+
+		List<WorkflowTask> workflowTasks1 =
+			(List<WorkflowTask>)page1.getItems();
+
+		Assert.assertEquals(
+			workflowTasks1.toString(), totalCount, workflowTasks1.size());
+
+		Page<WorkflowTask> page2 = unsafeFunction.apply(
+			Pagination.of(2, totalCount - 1));
+
+		Assert.assertEquals(totalCount, page2.getTotalCount());
+
+		List<WorkflowTask> workflowTasks2 =
+			(List<WorkflowTask>)page2.getItems();
+
+		Assert.assertEquals(
+			workflowTasks2.toString(), 1, workflowTasks2.size());
+
+		Page<WorkflowTask> page3 = unsafeFunction.apply(
+			Pagination.of(1, totalCount));
+
+		assertEquals(_workflowTasks, (List<WorkflowTask>)page3.getItems());
 	}
 
 	private static WorkflowDefinition _workflowDefinition;

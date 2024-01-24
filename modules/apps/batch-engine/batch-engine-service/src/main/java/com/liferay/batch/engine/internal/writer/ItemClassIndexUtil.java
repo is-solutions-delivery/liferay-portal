@@ -11,8 +11,11 @@ import com.liferay.petra.concurrent.ConcurrentReferenceKeyHashMap;
 import com.liferay.petra.concurrent.ConcurrentReferenceValueHashMap;
 import com.liferay.petra.memory.FinalizeManager;
 import com.liferay.petra.string.CharPool;
+import com.liferay.portal.kernel.util.ObjectValuePair;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -26,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.function.Supplier;
 
 /**
  * @author Shuyang Zhou
@@ -33,18 +37,21 @@ import java.util.Queue;
  */
 public class ItemClassIndexUtil {
 
-	public static Map<String, Field> index(Class<?> itemClass) {
+	public static Map<String, ObjectValuePair<Field, Method>> index(
+		Class<?> itemClass) {
+
 		Queue<Class<?>> queue = new LinkedList<>();
 
-		Map<String, Field> fieldsMap = _fieldsMap.computeIfAbsent(
-			itemClass, clazz -> _index(clazz, queue));
+		Map<String, ObjectValuePair<Field, Method>> fieldNameObjectValuePairs =
+			_fieldNameObjectValuePairs.computeIfAbsent(
+				itemClass, clazz -> _index(clazz, queue));
 
 		while ((itemClass = queue.poll()) != null) {
-			_fieldsMap.computeIfAbsent(
+			_fieldNameObjectValuePairs.computeIfAbsent(
 				itemClass, clazz -> _index(clazz, queue));
 		}
 
-		return fieldsMap;
+		return fieldNameObjectValuePairs;
 	}
 
 	public static boolean isIterable(Class<?> valueClass) {
@@ -87,7 +94,15 @@ public class ItemClassIndexUtil {
 		return true;
 	}
 
-	public static boolean isObjectEntryProperties(Field field) {
+	public static boolean isObjectEntryProperties(
+		ObjectValuePair<Field, Method> objectValuePair) {
+
+		if (objectValuePair == null) {
+			return false;
+		}
+
+		Field field = objectValuePair.getKey();
+
 		if ((field == null) ||
 			!Objects.equals(field.getDeclaringClass(), ObjectEntry.class) ||
 			!Objects.equals(field.getType(), Map.class)) {
@@ -120,14 +135,43 @@ public class ItemClassIndexUtil {
 		return true;
 	}
 
-	private static Map<String, Field> _index(
+	private static Method _getGetterMethod(
+		Class<?> clazz, Field field, String name) {
+
+		Class<?> fieldClass = field.getType();
+
+		String methodName = null;
+
+		if (fieldClass.isEnum()) {
+			methodName = "get" + fieldClass.getSimpleName();
+		}
+		else {
+			methodName = "get" + StringUtil.upperCaseFirstLetter(name);
+		}
+
+		for (Method method : clazz.getMethods()) {
+			if (StringUtil.equals(method.getName(), methodName) &&
+				(method.getParameterCount() == 0) &&
+				Objects.equals(fieldClass, method.getReturnType())) {
+
+				return method;
+			}
+		}
+
+		return null;
+	}
+
+	private static Map<String, ObjectValuePair<Field, Method>> _index(
 		Class<?> clazz, Queue<Class<?>> queue) {
 
-		Map<String, Field> fieldsMap = new HashMap<>();
+		Map<String, ObjectValuePair<Field, Method>> fieldNameObjectValuePairs =
+			new HashMap<>();
 
 		while (clazz != Object.class) {
 			for (Field field : clazz.getDeclaredFields()) {
-				if (isMultidimensionalArray(field.getType())) {
+				if (isMultidimensionalArray(field.getType()) ||
+					Objects.equals(field.getType(), Supplier.class)) {
+
 					continue;
 				}
 
@@ -143,7 +187,10 @@ public class ItemClassIndexUtil {
 					continue;
 				}
 
-				fieldsMap.put(name, field);
+				fieldNameObjectValuePairs.put(
+					name,
+					new ObjectValuePair<>(
+						field, _getGetterMethod(clazz, field, name)));
 
 				Class<?> fieldClass = field.getType();
 
@@ -165,14 +212,15 @@ public class ItemClassIndexUtil {
 			clazz = clazz.getSuperclass();
 		}
 
-		return fieldsMap;
+		return fieldNameObjectValuePairs;
 	}
 
-	private static final Map<Class<?>, Map<String, Field>> _fieldsMap =
-		new ConcurrentReferenceKeyHashMap<>(
-			new ConcurrentReferenceValueHashMap<>(
-				FinalizeManager.WEAK_REFERENCE_FACTORY),
-			FinalizeManager.WEAK_REFERENCE_FACTORY);
+	private static final Map
+		<Class<?>, Map<String, ObjectValuePair<Field, Method>>>
+			_fieldNameObjectValuePairs = new ConcurrentReferenceKeyHashMap<>(
+				new ConcurrentReferenceValueHashMap<>(
+					FinalizeManager.WEAK_REFERENCE_FACTORY),
+				FinalizeManager.WEAK_REFERENCE_FACTORY);
 	private static final List<Class<?>> _objectTypes = Arrays.asList(
 		Boolean.class, BigDecimal.class, BigInteger.class, Byte.class,
 		Date.class, Double.class, Float.class, Integer.class, Long.class,

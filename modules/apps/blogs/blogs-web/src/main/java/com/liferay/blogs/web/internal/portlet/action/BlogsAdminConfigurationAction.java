@@ -32,7 +32,7 @@ public class BlogsAdminConfigurationAction
 
 	@Override
 	public String getJspPath(HttpServletRequest httpServletRequest) {
-		return "/blogs_admin/configuration.jsp";
+		return "/blogs_admin/configuration_browse.jsp";
 	}
 
 	@Override
@@ -46,7 +46,6 @@ public class BlogsAdminConfigurationAction
 		if (Validator.isNotNull(cmd)) {
 			validateEmail(actionRequest, "emailEntryAdded");
 			validateEmail(actionRequest, "emailEntryUpdated");
-			validateEmailFrom(actionRequest);
 		}
 
 		super.processAction(portletConfig, actionRequest, actionResponse);

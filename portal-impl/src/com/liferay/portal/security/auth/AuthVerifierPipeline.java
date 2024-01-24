@@ -327,19 +327,44 @@ public class AuthVerifierPipeline {
 			User user = UserLocalServiceUtil.fetchUser(
 				authVerifierResult.getUserId());
 
-			if ((user != null) && !user.isActive()) {
+			if ((user != null) &&
+				(!user.isActive() ||
+				 !user.isEmailAddressVerificationComplete() ||
+				 user.isPasswordReset())) {
+
+				long userId = authVerifierResult.getUserId();
+
 				if (_log.isDebugEnabled()) {
 					Class<?> authVerifierClass = authVerifier.getClass();
 
-					_log.debug(
-						StringBundler.concat(
-							"Auth verifier ", authVerifierClass.getName(),
-							" returned inactive user",
-							authVerifierResult.getUserId()));
+					if (!user.isActive()) {
+						_log.debug(
+							StringBundler.concat(
+								"Auth verifier ", authVerifierClass.getName(),
+								" returned inactive user ", userId));
+					}
+					else if (!user.isEmailAddressVerificationComplete()) {
+						_log.debug(
+							StringBundler.concat(
+								"Auth verifier ", authVerifierClass.getName(),
+								" returned user ", userId,
+								" who must verify his email address"));
+					}
+					else {
+						_log.debug(
+							StringBundler.concat(
+								"Auth verifier ", authVerifierClass.getName(),
+								" returned user ", userId,
+								" who must reset his password"));
+					}
 				}
+
+				authVerifierResult = new AuthVerifierResult();
 
 				authVerifierResult.setState(
 					AuthVerifierResult.State.UNSUCCESSFUL);
+
+				authVerifierResult.setUserId(userId);
 			}
 
 			Map<String, Object> settings = _mergeSettings(

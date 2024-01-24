@@ -12,10 +12,12 @@ import com.liferay.commerce.constants.CommerceWebKeys;
 import com.liferay.commerce.context.CommerceContext;
 import com.liferay.commerce.currency.model.CommerceCurrency;
 import com.liferay.commerce.model.CommerceOrder;
+import com.liferay.commerce.product.configuration.CPDefinitionOptionRelConfiguration;
 import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.content.security.policy.ContentSecurityPolicyNonceProviderUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -80,8 +82,11 @@ public class CommerceFrontendJsDynamicInclude extends BaseDynamicInclude {
 		throws PortalException {
 
 		return StringBundler.concat(
-			"<script data-senna-track=\"temporary\">var Liferay = ",
-			"window.Liferay || {}; Liferay.CommerceContext = ",
+			"<script",
+			ContentSecurityPolicyNonceProviderUtil.getNonceAttribute(
+				httpServletRequest),
+			" data-senna-track=\"temporary\">var Liferay = window.Liferay || ",
+			"{}; Liferay.CommerceContext = ",
 			JSONUtil.put(
 				"account",
 				() -> {
@@ -162,6 +167,18 @@ public class CommerceFrontendJsDynamicInclude extends BaseDynamicInclude {
 
 					return commerceOrderCheckoutConfiguration.
 						showSeparateOrderItems();
+				}
+			).put(
+				"showUnselectableOptions",
+				() -> {
+					CPDefinitionOptionRelConfiguration
+						cpDefinitionOptionRelConfiguration =
+							_configurationProvider.getCompanyConfiguration(
+								CPDefinitionOptionRelConfiguration.class,
+								_portal.getCompanyId(httpServletRequest));
+
+					return cpDefinitionOptionRelConfiguration.
+						showUnselectableOptions();
 				}
 			),
 			";</script><link href=\"",

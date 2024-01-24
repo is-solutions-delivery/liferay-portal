@@ -38,6 +38,12 @@ class HeadlessCommerceAdminCatalog {
 		);
 	}
 
+	async getCatalogs(searchParams = new URLSearchParams()) {
+		return fetcher<APIResponse<Catalog>>(
+			`/o/headless-commerce-admin-catalog/v1.0/catalogs?${searchParams.toString()}`
+		);
+	}
+
 	async getProductSpecifications(productId: string | number) {
 		const response = await fetcher(
 			`/o/headless-commerce-admin-catalog/v1.0/products/${productId}/productSpecifications`
@@ -46,20 +52,25 @@ class HeadlessCommerceAdminCatalog {
 		return (response?.items ?? []) as ProductSpecification[];
 	}
 
-	async getProduct(productId: string) {
+	async getProduct(
+		productId: string | number,
+		searchParams = new URLSearchParams()
+	) {
 		return fetcher(
-			`/o/headless-commerce-admin-catalog/v1.0/products/${productId}`
+			`/o/headless-commerce-admin-catalog/v1.0/products/${productId}?${searchParams.toString()}`
 		);
 	}
 
-	async getProducts(nestedFields?: string) {
-		let url = `/o/headless-commerce-admin-catalog/v1.0/products?pageSize=-1`;
+	async getProducts(searchParams = new URLSearchParams()) {
+		return fetcher(
+			`/o/headless-commerce-admin-catalog/v1.0/products?${searchParams.toString()}`
+		);
+	}
 
-		if (nestedFields) {
-			url = url + `&nestedFields=${nestedFields}`;
-		}
-
-		return fetcher(url);
+	async getProductSkus(productId: string | number) {
+		return fetcher<APIResponse<SKU>>(
+			`/o/headless-commerce-admin-catalog/v1.0/products/${productId}/skus`
+		);
 	}
 
 	async updateProductByExternalReferenceCode(
@@ -81,8 +92,6 @@ class HeadlessCommerceAdminCatalog {
 		);
 	}
 }
-
-export {HeadlessCommerceAdminCatalog};
 
 const HeadlessCommerceAdminCatalogImpl = new HeadlessCommerceAdminCatalog();
 

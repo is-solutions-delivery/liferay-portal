@@ -56,7 +56,10 @@ public class LayoutStructureCommonStylesCSSTopHeadDynamicInclude
 
 		Layout layout = themeDisplay.getLayout();
 
-		if (!layout.isTypeAssetDisplay() && !layout.isTypeContent()) {
+		if (!layout.isTypeAssetDisplay() && !layout.isTypeCollection() &&
+			!layout.isTypeContent() &&
+			((layout.getMasterLayoutPlid() == 0) || !layout.isTypePortlet())) {
+
 			return;
 		}
 

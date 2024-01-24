@@ -15,24 +15,21 @@ import org.json.JSONObject;
 public class SFPortalPullRequestJobEntity
 	extends BasePortalPullRequestJobEntity {
 
-	@Override
-	public String getTestSuiteName() {
-		return "sf";
-	}
-
 	protected SFPortalPullRequestJobEntity(JSONObject jsonObject) {
 		super(jsonObject);
 	}
 
 	@Override
 	protected Map<String, String> getInitialBuildParameters() {
-		Map<String, String> initialBuildParamaters =
+		Map<String, String> initialBuildParameters =
 			super.getInitialBuildParameters();
 
-		initialBuildParamaters.put(
+		initialBuildParameters.put(
+			"CI_FORWARD_RECEIVER_USERNAME", getForwardReceiverUserName());
+		initialBuildParameters.put(
 			"PULL_REQUEST_URL", String.valueOf(getPortalPullRequestURL()));
 
-		return initialBuildParamaters;
+		return initialBuildParameters;
 	}
 
 	@Override

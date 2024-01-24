@@ -76,73 +76,8 @@ public class OrderDTOConverter implements DTOConverter<CommerceOrder, Order> {
 		ResourceBundle resourceBundle = LanguageResources.getResourceBundle(
 			locale);
 
-		Order order = new Order() {
+		return new Order() {
 			{
-				accountId = commerceOrder.getCommerceAccountId();
-				actions = dtoConverterContext.getActions();
-				advanceStatus = commerceOrder.getAdvanceStatus();
-				billingAddressId = commerceOrder.getBillingAddressId();
-				channelExternalReferenceCode =
-					commerceChannel.getExternalReferenceCode();
-				channelId = commerceChannel.getCommerceChannelId();
-				couponCode = commerceOrder.getCouponCode();
-				createDate = commerceOrder.getCreateDate();
-				currencyCode = commerceCurrency.getCode();
-				deliveryTermDescription =
-					commerceOrder.getDeliveryCommerceTermEntryDescription();
-				deliveryTermId = commerceOrder.getDeliveryCommerceTermEntryId();
-				deliveryTermName =
-					commerceOrder.getDeliveryCommerceTermEntryName();
-				externalReferenceCode =
-					commerceOrder.getExternalReferenceCode();
-				id = commerceOrder.getCommerceOrderId();
-				lastPriceUpdateDate = commerceOrder.getLastPriceUpdateDate();
-				modifiedDate = commerceOrder.getModifiedDate();
-				orderDate = commerceOrder.getOrderDate();
-				orderStatus = commerceOrder.getOrderStatus();
-				orderStatusInfo = _getOrderStatusInfo(
-					commerceOrder.getOrderStatus(),
-					_getCommerceOrderStatusLabel(
-						commerceOrder.getOrderStatus(), locale),
-					_getCommerceOrderStatusLabelI18n(
-						commerceOrder.getOrderStatus(), locale));
-				orderTypeExternalReferenceCode =
-					_getOrderTypeExternalReferenceCode(
-						commerceOrder.getCommerceOrderTypeId());
-				orderTypeId = commerceOrder.getCommerceOrderTypeId();
-				paymentMethod = commerceOrder.getCommercePaymentMethodKey();
-				paymentStatus = commerceOrder.getPaymentStatus();
-				paymentStatusInfo = _getPaymentStatusInfo(
-					commerceOrder.getPaymentStatus(),
-					CommerceOrderPaymentConstants.getOrderPaymentStatusLabel(
-						commerceOrder.getPaymentStatus()),
-					_language.get(
-						resourceBundle,
-						CommerceOrderPaymentConstants.
-							getOrderPaymentStatusLabel(
-								commerceOrder.getPaymentStatus())));
-				paymentTermDescription =
-					commerceOrder.getPaymentCommerceTermEntryDescription();
-				paymentTermId = commerceOrder.getPaymentCommerceTermEntryId();
-				paymentTermName =
-					commerceOrder.getPaymentCommerceTermEntryName();
-				printedNote = commerceOrder.getPrintedNote();
-				purchaseOrderNumber = commerceOrder.getPurchaseOrderNumber();
-				requestedDeliveryDate =
-					commerceOrder.getRequestedDeliveryDate();
-				shippingAddressId = commerceOrder.getShippingAddressId();
-				shippingMethod = _getShippingMethodEngineKey(
-					commerceOrder.getCommerceShippingMethod());
-				shippingOption = commerceOrder.getShippingOptionName();
-				transactionId = commerceOrder.getTransactionId();
-				workflowStatusInfo = _toStatus(
-					commerceOrder.getStatus(),
-					WorkflowConstants.getStatusLabel(commerceOrder.getStatus()),
-					_language.get(
-						resourceBundle,
-						WorkflowConstants.getStatusLabel(
-							commerceOrder.getStatus())));
-
 				setAccountExternalReferenceCode(
 					() -> {
 						AccountEntry accountEntry =
@@ -150,6 +85,15 @@ public class OrderDTOConverter implements DTOConverter<CommerceOrder, Order> {
 
 						return accountEntry.getExternalReferenceCode();
 					});
+				setAccountId(commerceOrder::getCommerceAccountId);
+				setActions(dtoConverterContext::getActions);
+				setAdvanceStatus(commerceOrder::getAdvanceStatus);
+				setBillingAddressId(commerceOrder::getBillingAddressId);
+				setChannelExternalReferenceCode(
+					commerceChannel::getExternalReferenceCode);
+				setChannelId(commerceChannel::getCommerceChannelId);
+				setCouponCode(commerceOrder::getCouponCode);
+				setCreateDate(commerceOrder::getCreateDate);
 				setCreatorEmailAddress(
 					() -> {
 						User user = _userLocalService.getUser(
@@ -157,6 +101,7 @@ public class OrderDTOConverter implements DTOConverter<CommerceOrder, Order> {
 
 						return user.getEmailAddress();
 					});
+				setCurrencyCode(commerceCurrency::getCode);
 				setCustomFields(
 					() -> {
 						ExpandoBridge expandoBridge =
@@ -164,25 +109,650 @@ public class OrderDTOConverter implements DTOConverter<CommerceOrder, Order> {
 
 						return expandoBridge.getAttributes();
 					});
+				setDeliveryTermDescription(
+					commerceOrder::getDeliveryCommerceTermEntryDescription);
+				setDeliveryTermId(
+					commerceOrder::getDeliveryCommerceTermEntryId);
+				setDeliveryTermName(
+					commerceOrder::getDeliveryCommerceTermEntryName);
+				setExternalReferenceCode(
+					commerceOrder::getExternalReferenceCode);
+				setId(commerceOrder::getCommerceOrderId);
+				setLastPriceUpdateDate(commerceOrder::getLastPriceUpdateDate);
+				setModifiedDate(commerceOrder::getModifiedDate);
+				setOrderDate(commerceOrder::getOrderDate);
+				setOrderStatus(commerceOrder::getOrderStatus);
+				setOrderStatusInfo(
+					() -> _getOrderStatusInfo(
+						commerceOrder.getOrderStatus(),
+						_getCommerceOrderStatusLabel(
+							commerceOrder.getOrderStatus(), locale),
+						_getCommerceOrderStatusLabelI18n(
+							commerceOrder.getOrderStatus(), locale)));
+				setOrderTypeExternalReferenceCode(
+					() -> _getOrderTypeExternalReferenceCode(
+						commerceOrder.getCommerceOrderTypeId()));
+				setOrderTypeId(commerceOrder::getCommerceOrderTypeId);
+				setPaymentMethod(commerceOrder::getCommercePaymentMethodKey);
+				setPaymentStatus(commerceOrder::getPaymentStatus);
+				setPaymentStatusInfo(
+					() -> _getPaymentStatusInfo(
+						commerceOrder.getPaymentStatus(),
+						CommerceOrderPaymentConstants.
+							getOrderPaymentStatusLabel(
+								commerceOrder.getPaymentStatus()),
+						_language.get(
+							resourceBundle,
+							CommerceOrderPaymentConstants.
+								getOrderPaymentStatusLabel(
+									commerceOrder.getPaymentStatus()))));
+				setPaymentTermDescription(
+					commerceOrder::getPaymentCommerceTermEntryDescription);
+				setPaymentTermId(commerceOrder::getPaymentCommerceTermEntryId);
+				setPaymentTermName(
+					commerceOrder::getPaymentCommerceTermEntryName);
+				setPrintedNote(commerceOrder::getPrintedNote);
+				setPurchaseOrderNumber(commerceOrder::getPurchaseOrderNumber);
+				setRequestedDeliveryDate(
+					commerceOrder::getRequestedDeliveryDate);
+				setShippingAddressId(commerceOrder::getShippingAddressId);
+
+				setShippingAmountFormatted(
+					() -> {
+						CommerceMoney commerceOrderShippingAmountCommerceMoney =
+							commerceOrder.getShippingMoney();
+
+						return commerceOrderShippingAmountCommerceMoney.format(
+							locale);
+					});
+				setShippingAmountValue(
+					() -> {
+						CommerceMoney commerceOrderShippingAmountCommerceMoney =
+							commerceOrder.getShippingMoney();
+
+						BigDecimal commerceOrderShippingValue =
+							commerceOrderShippingAmountCommerceMoney.getPrice();
+
+						if (commerceOrderShippingValue == null) {
+							return null;
+						}
+
+						return commerceOrderShippingValue.doubleValue();
+					});
+				setShippingDiscountAmount(
+					commerceOrder::getShippingDiscountAmount);
+				setShippingDiscountAmountFormatted(
+					() -> {
+						BigDecimal shippingDiscountAmount =
+							getShippingDiscountAmount();
+
+						if (shippingDiscountAmount == null) {
+							return null;
+						}
+
+						return _formatPrice(
+							shippingDiscountAmount, commerceCurrency, locale);
+					});
+				setShippingDiscountPercentageLevel1(
+					() -> {
+						BigDecimal shippingDiscountAmount =
+							getShippingDiscountAmount();
+
+						if (shippingDiscountAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getShippingDiscountPercentageLevel1();
+					});
+				setShippingDiscountPercentageLevel1WithTaxAmount(
+					() -> {
+						BigDecimal shippingDiscountWithTaxAmount =
+							getShippingDiscountWithTaxAmount();
+
+						if (shippingDiscountWithTaxAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getShippingDiscountPercentageLevel1WithTaxAmount();
+					});
+				setShippingDiscountPercentageLevel2(
+					() -> {
+						BigDecimal shippingDiscountAmount =
+							getShippingDiscountAmount();
+
+						if (shippingDiscountAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getShippingDiscountPercentageLevel2();
+					});
+				setShippingDiscountPercentageLevel2WithTaxAmount(
+					() -> {
+						BigDecimal shippingDiscountWithTaxAmount =
+							getShippingDiscountWithTaxAmount();
+
+						if (shippingDiscountWithTaxAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getShippingDiscountPercentageLevel2WithTaxAmount();
+					});
+				setShippingDiscountPercentageLevel3(
+					() -> {
+						BigDecimal shippingDiscountAmount =
+							getShippingDiscountAmount();
+
+						if (shippingDiscountAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getShippingDiscountPercentageLevel3();
+					});
+				setShippingDiscountPercentageLevel3WithTaxAmount(
+					() -> {
+						BigDecimal shippingDiscountWithTaxAmount =
+							getShippingDiscountWithTaxAmount();
+
+						if (shippingDiscountWithTaxAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getShippingDiscountPercentageLevel3WithTaxAmount();
+					});
+				setShippingDiscountPercentageLevel4(
+					() -> {
+						BigDecimal shippingDiscountAmount =
+							getShippingDiscountAmount();
+
+						if (shippingDiscountAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getShippingDiscountPercentageLevel4();
+					});
+				setShippingDiscountPercentageLevel4WithTaxAmount(
+					() -> {
+						BigDecimal shippingDiscountWithTaxAmount =
+							getShippingDiscountWithTaxAmount();
+
+						if (shippingDiscountWithTaxAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getShippingDiscountPercentageLevel4WithTaxAmount();
+					});
+				setShippingDiscountWithTaxAmount(
+					commerceOrder::getShippingDiscountWithTaxAmount);
+				setShippingDiscountWithTaxAmountFormatted(
+					() -> {
+						BigDecimal shippingDiscountWithTaxAmount =
+							getShippingDiscountWithTaxAmount();
+
+						if (shippingDiscountWithTaxAmount == null) {
+							return null;
+						}
+
+						return _formatPrice(
+							shippingDiscountWithTaxAmount, commerceCurrency,
+							locale);
+					});
+				setShippingMethod(
+					() -> _getShippingMethodEngineKey(
+						commerceOrder.getCommerceShippingMethod()));
+				setShippingOption(commerceOrder::getShippingOptionName);
+				setShippingWithTaxAmountFormatted(
+					() -> {
+						CommerceMoney
+							commerceOrderShippingWithTaxAmountCommerceMoney =
+								commerceOrder.getShippingWithTaxAmountMoney();
+
+						if (commerceOrderShippingWithTaxAmountCommerceMoney ==
+								null) {
+
+							return null;
+						}
+
+						return commerceOrderShippingWithTaxAmountCommerceMoney.
+							format(locale);
+					});
+				setShippingWithTaxAmountValue(
+					() -> {
+						CommerceMoney
+							commerceOrderShippingWithTaxAmountCommerceMoney =
+								commerceOrder.getShippingWithTaxAmountMoney();
+
+						if (commerceOrderShippingWithTaxAmountCommerceMoney ==
+								null) {
+
+							return null;
+						}
+
+						BigDecimal commerceOrderShippingWithTaxAmountValue =
+							commerceOrderShippingWithTaxAmountCommerceMoney.
+								getPrice();
+
+						if (commerceOrderShippingWithTaxAmountValue == null) {
+							return null;
+						}
+
+						return commerceOrderShippingWithTaxAmountValue.
+							doubleValue();
+					});
+				setSubtotalAmount(
+					() -> {
+						CommerceMoney commerceOrderSubtotalCommerceMoney =
+							commerceOrder.getSubtotalMoney();
+
+						if (commerceOrderSubtotalCommerceMoney == null) {
+							return null;
+						}
+
+						BigDecimal commerceOrderSubtotalValue =
+							commerceOrderSubtotalCommerceMoney.getPrice();
+
+						if (commerceOrderSubtotalValue == null) {
+							return null;
+						}
+
+						return commerceOrderSubtotalValue.doubleValue();
+					});
+				setSubtotalDiscountAmount(
+					commerceOrder::getSubtotalDiscountAmount);
+				setSubtotalDiscountAmountFormatted(
+					() -> {
+						BigDecimal subtotalDiscountAmount =
+							getSubtotalDiscountAmount();
+
+						if (subtotalDiscountAmount == null) {
+							return null;
+						}
+
+						return _formatPrice(
+							subtotalDiscountAmount, commerceCurrency, locale);
+					});
+				setSubtotalDiscountPercentageLevel1(
+					() -> {
+						BigDecimal subtotalDiscountAmount =
+							getSubtotalDiscountAmount();
+
+						if (subtotalDiscountAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getSubtotalDiscountPercentageLevel1();
+					});
+				setSubtotalDiscountPercentageLevel1WithTaxAmount(
+					() -> {
+						BigDecimal subtotalDiscountWithTaxAmount =
+							getSubtotalDiscountWithTaxAmount();
+
+						if (subtotalDiscountWithTaxAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getSubtotalDiscountPercentageLevel1WithTaxAmount();
+					});
+				setSubtotalDiscountPercentageLevel2(
+					() -> {
+						BigDecimal subtotalDiscountAmount =
+							getSubtotalDiscountAmount();
+
+						if (subtotalDiscountAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getSubtotalDiscountPercentageLevel2();
+					});
+				setSubtotalDiscountPercentageLevel2WithTaxAmount(
+					() -> {
+						BigDecimal subtotalDiscountWithTaxAmount =
+							getSubtotalDiscountWithTaxAmount();
+
+						if (subtotalDiscountWithTaxAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getSubtotalDiscountPercentageLevel2WithTaxAmount();
+					});
+				setSubtotalDiscountPercentageLevel3(
+					() -> {
+						BigDecimal subtotalDiscountAmount =
+							getSubtotalDiscountAmount();
+
+						if (subtotalDiscountAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getSubtotalDiscountPercentageLevel3();
+					});
+				setSubtotalDiscountPercentageLevel3WithTaxAmount(
+					() -> {
+						BigDecimal subtotalDiscountWithTaxAmount =
+							getSubtotalDiscountWithTaxAmount();
+
+						if (subtotalDiscountWithTaxAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getSubtotalDiscountPercentageLevel3WithTaxAmount();
+					});
+				setSubtotalDiscountPercentageLevel4(
+					() -> {
+						BigDecimal subtotalDiscountAmount =
+							getSubtotalDiscountAmount();
+
+						if (subtotalDiscountAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getSubtotalDiscountPercentageLevel4();
+					});
+				setSubtotalDiscountPercentageLevel4WithTaxAmount(
+					() -> {
+						BigDecimal subtotalDiscountWithTaxAmount =
+							getSubtotalDiscountWithTaxAmount();
+
+						if (subtotalDiscountWithTaxAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getSubtotalDiscountPercentageLevel4WithTaxAmount();
+					});
+				setSubtotalDiscountWithTaxAmount(
+					commerceOrder::getSubtotalDiscountWithTaxAmount);
+				setSubtotalDiscountWithTaxAmountFormatted(
+					() -> {
+						BigDecimal subtotalDiscountWithTaxAmount =
+							getSubtotalDiscountWithTaxAmount();
+
+						if (subtotalDiscountWithTaxAmount == null) {
+							return null;
+						}
+
+						return _formatPrice(
+							subtotalDiscountWithTaxAmount, commerceCurrency,
+							locale);
+					});
+				setSubtotalFormatted(
+					() -> {
+						CommerceMoney commerceOrderSubtotalCommerceMoney =
+							commerceOrder.getSubtotalMoney();
+
+						if (commerceOrderSubtotalCommerceMoney == null) {
+							return null;
+						}
+
+						return commerceOrderSubtotalCommerceMoney.format(
+							locale);
+					});
+				setSubtotalWithTaxAmountFormatted(
+					() -> {
+						CommerceMoney
+							commerceOrderSubtotalWithTaxAmountCommerceMoney =
+								commerceOrder.getSubtotalWithTaxAmountMoney();
+
+						if (commerceOrderSubtotalWithTaxAmountCommerceMoney ==
+								null) {
+
+							return null;
+						}
+
+						return commerceOrderSubtotalWithTaxAmountCommerceMoney.
+							format(locale);
+					});
+				setSubtotalWithTaxAmountValue(
+					() -> {
+						CommerceMoney
+							commerceOrderSubtotalWithTaxAmountCommerceMoney =
+								commerceOrder.getSubtotalWithTaxAmountMoney();
+
+						if (commerceOrderSubtotalWithTaxAmountCommerceMoney ==
+								null) {
+
+							return null;
+						}
+
+						BigDecimal commerceOrderSubtotalWithTaxAmountValue =
+							commerceOrderSubtotalWithTaxAmountCommerceMoney.
+								getPrice();
+
+						if (commerceOrderSubtotalWithTaxAmountValue == null) {
+							return null;
+						}
+
+						return commerceOrderSubtotalWithTaxAmountValue.
+							doubleValue();
+					});
+				setTaxAmount(commerceOrder::getTaxAmount);
+				setTaxAmountFormatted(
+					() -> {
+						BigDecimal taxAmount = getTaxAmount();
+
+						if (taxAmount == null) {
+							return null;
+						}
+
+						return _formatPrice(
+							taxAmount, commerceCurrency, locale);
+					});
+				setTaxAmountValue(
+					() -> {
+						BigDecimal taxAmount = getTaxAmount();
+
+						if (taxAmount == null) {
+							return null;
+						}
+
+						return taxAmount.doubleValue();
+					});
+				setTotalAmount(
+					() -> {
+						CommerceMoney commerceOrderTotalCommerceMoney =
+							commerceOrder.getTotalMoney();
+
+						if (commerceOrderTotalCommerceMoney == null) {
+							return null;
+						}
+
+						BigDecimal commerceOrderTotalValue =
+							commerceOrderTotalCommerceMoney.getPrice();
+
+						if (commerceOrderTotalValue == null) {
+							return null;
+						}
+
+						return commerceOrderTotalValue.doubleValue();
+					});
+				setTotalDiscountAmount(commerceOrder::getTotalDiscountAmount);
+				setTotalDiscountAmountFormatted(
+					() -> {
+						BigDecimal totalDiscountAmount =
+							getTotalDiscountAmount();
+
+						if (totalDiscountAmount == null) {
+							return null;
+						}
+
+						return _formatPrice(
+							totalDiscountAmount, commerceCurrency, locale);
+					});
+				setTotalDiscountPercentageLevel1(
+					() -> {
+						BigDecimal totalDiscountAmount =
+							getTotalDiscountAmount();
+
+						if (totalDiscountAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.getTotalDiscountPercentageLevel1();
+					});
+				setTotalDiscountPercentageLevel1WithTaxAmount(
+					() -> {
+						BigDecimal totalDiscountWithTaxAmount =
+							getTotalDiscountWithTaxAmount();
+
+						if (totalDiscountWithTaxAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getTotalDiscountPercentageLevel1WithTaxAmount();
+					});
+				setTotalDiscountPercentageLevel2(
+					() -> {
+						BigDecimal totalDiscountAmount =
+							getTotalDiscountAmount();
+
+						if (totalDiscountAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.getTotalDiscountPercentageLevel2();
+					});
+				setTotalDiscountPercentageLevel2WithTaxAmount(
+					() -> {
+						BigDecimal totalDiscountWithTaxAmount =
+							getTotalDiscountWithTaxAmount();
+
+						if (totalDiscountWithTaxAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getTotalDiscountPercentageLevel2WithTaxAmount();
+					});
+				setTotalDiscountPercentageLevel3(
+					() -> {
+						BigDecimal totalDiscountAmount =
+							getTotalDiscountAmount();
+
+						if (totalDiscountAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.getTotalDiscountPercentageLevel3();
+					});
+				setTotalDiscountPercentageLevel3WithTaxAmount(
+					() -> {
+						BigDecimal totalDiscountWithTaxAmount =
+							getTotalDiscountWithTaxAmount();
+
+						if (totalDiscountWithTaxAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getTotalDiscountPercentageLevel3WithTaxAmount();
+					});
+				setTotalDiscountPercentageLevel4(
+					() -> {
+						BigDecimal totalDiscountAmount =
+							getTotalDiscountAmount();
+
+						if (totalDiscountAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.getTotalDiscountPercentageLevel4();
+					});
+				setTotalDiscountPercentageLevel4WithTaxAmount(
+					() -> {
+						BigDecimal totalDiscountWithTaxAmount =
+							getTotalDiscountWithTaxAmount();
+
+						if (totalDiscountWithTaxAmount == null) {
+							return null;
+						}
+
+						return commerceOrder.
+							getTotalDiscountPercentageLevel4WithTaxAmount();
+					});
+				setTotalDiscountWithTaxAmount(
+					commerceOrder::getTotalDiscountWithTaxAmount);
+				setTotalDiscountWithTaxAmountFormatted(
+					() -> {
+						BigDecimal totalDiscountWithTaxAmount =
+							getTotalDiscountWithTaxAmount();
+
+						if (totalDiscountWithTaxAmount == null) {
+							return null;
+						}
+
+						return _formatPrice(
+							totalDiscountWithTaxAmount, commerceCurrency,
+							locale);
+					});
+				setTotalFormatted(
+					() -> {
+						CommerceMoney commerceOrderTotalCommerceMoney =
+							commerceOrder.getTotalMoney();
+
+						if (commerceOrderTotalCommerceMoney == null) {
+							return null;
+						}
+
+						return commerceOrderTotalCommerceMoney.format(locale);
+					});
+				setTotalWithTaxAmountFormatted(
+					() -> {
+						CommerceMoney commerceOrderTotalWithTaxAmountMoney =
+							commerceOrder.getTotalWithTaxAmountMoney();
+
+						if (commerceOrderTotalWithTaxAmountMoney == null) {
+							return null;
+						}
+
+						return commerceOrderTotalWithTaxAmountMoney.format(
+							locale);
+					});
+				setTotalWithTaxAmountValue(
+					() -> {
+						CommerceMoney commerceOrderTotalWithTaxAmountMoney =
+							commerceOrder.getTotalWithTaxAmountMoney();
+
+						if (commerceOrderTotalWithTaxAmountMoney == null) {
+							return null;
+						}
+
+						BigDecimal commerceOrderTotalWithTaxAmountValue =
+							commerceOrderTotalWithTaxAmountMoney.getPrice();
+
+						if (commerceOrderTotalWithTaxAmountValue == null) {
+							return null;
+						}
+
+						return commerceOrderTotalWithTaxAmountValue.
+							doubleValue();
+					});
+				setTransactionId(commerceOrder::getTransactionId);
+				setWorkflowStatusInfo(
+					() -> _toStatus(
+						commerceOrder.getStatus(),
+						WorkflowConstants.getStatusLabel(
+							commerceOrder.getStatus()),
+						_language.get(
+							resourceBundle,
+							WorkflowConstants.getStatusLabel(
+								commerceOrder.getStatus()))));
 			}
 		};
-
-		_setOrderSubtotal(commerceCurrency, commerceOrder, order, locale);
-
-		_setOrderShipping(commerceCurrency, commerceOrder, order, locale);
-
-		BigDecimal taxAmount = commerceOrder.getTaxAmount();
-
-		if (taxAmount != null) {
-			order.setTaxAmount(taxAmount);
-			order.setTaxAmountFormatted(
-				_formatPrice(taxAmount, commerceCurrency, locale));
-			order.setTaxAmountValue(taxAmount.doubleValue());
-		}
-
-		_setOrderTotal(commerceCurrency, commerceOrder, order, locale);
-
-		return order;
 	}
 
 	private String _formatPrice(
@@ -256,9 +826,9 @@ public class OrderDTOConverter implements DTOConverter<CommerceOrder, Order> {
 
 		return new Status() {
 			{
-				code = orderStatus;
-				label = commerceOrderStatusLabel;
-				label_i18n = commerceOrderStatusLabelI18n;
+				setCode(() -> orderStatus);
+				setLabel(() -> commerceOrderStatusLabel);
+				setLabel_i18n(() -> commerceOrderStatusLabelI18n);
 			}
 		};
 	}
@@ -283,9 +853,9 @@ public class OrderDTOConverter implements DTOConverter<CommerceOrder, Order> {
 
 		return new Status() {
 			{
-				code = paymentStatus;
-				label = commerceOrderPaymentStatusLabel;
-				label_i18n = commerceOrderPaymentStatusLabelI18n;
+				setCode(() -> paymentStatus);
+				setLabel(() -> commerceOrderPaymentStatusLabel);
+				setLabel_i18n(() -> commerceOrderPaymentStatusLabelI18n);
 			}
 		};
 	}
@@ -300,240 +870,15 @@ public class OrderDTOConverter implements DTOConverter<CommerceOrder, Order> {
 		return commerceShippingMethod.getEngineKey();
 	}
 
-	private void _setOrderShipping(
-			CommerceCurrency commerceCurrency, CommerceOrder commerceOrder,
-			Order order, Locale locale)
-		throws Exception {
-
-		CommerceMoney commerceOrderShippingAmountCommerceMoney =
-			commerceOrder.getShippingMoney();
-
-		order.setShippingAmountFormatted(
-			commerceOrderShippingAmountCommerceMoney.format(locale));
-
-		BigDecimal commerceOrderShippingValue =
-			commerceOrderShippingAmountCommerceMoney.getPrice();
-
-		if (commerceOrderShippingValue != null) {
-			order.setShippingAmountValue(
-				commerceOrderShippingValue.doubleValue());
-		}
-
-		CommerceMoney commerceOrderShippingWithTaxAmountCommerceMoney =
-			commerceOrder.getShippingWithTaxAmountMoney();
-
-		if (commerceOrderShippingWithTaxAmountCommerceMoney != null) {
-			order.setShippingWithTaxAmountFormatted(
-				commerceOrderShippingWithTaxAmountCommerceMoney.format(locale));
-
-			BigDecimal commerceOrderShippingWithTaxAmountValue =
-				commerceOrderShippingWithTaxAmountCommerceMoney.getPrice();
-
-			if (commerceOrderShippingWithTaxAmountValue != null) {
-				order.setShippingWithTaxAmountValue(
-					commerceOrderShippingWithTaxAmountValue.doubleValue());
-			}
-		}
-
-		BigDecimal shippingDiscountAmount =
-			commerceOrder.getShippingDiscountAmount();
-
-		if (shippingDiscountAmount != null) {
-			order.setShippingDiscountAmount(shippingDiscountAmount);
-			order.setShippingDiscountAmountFormatted(
-				_formatPrice(shippingDiscountAmount, commerceCurrency, locale));
-			order.setShippingDiscountPercentageLevel1(
-				commerceOrder.getShippingDiscountPercentageLevel1());
-			order.setShippingDiscountPercentageLevel2(
-				commerceOrder.getShippingDiscountPercentageLevel2());
-			order.setShippingDiscountPercentageLevel3(
-				commerceOrder.getShippingDiscountPercentageLevel3());
-			order.setShippingDiscountPercentageLevel4(
-				commerceOrder.getShippingDiscountPercentageLevel4());
-		}
-
-		BigDecimal shippingDiscountWithTaxAmount =
-			commerceOrder.getShippingDiscountWithTaxAmount();
-
-		if (shippingDiscountWithTaxAmount != null) {
-			order.setShippingDiscountWithTaxAmount(
-				shippingDiscountWithTaxAmount);
-			order.setShippingDiscountWithTaxAmountFormatted(
-				_formatPrice(
-					shippingDiscountWithTaxAmount, commerceCurrency, locale));
-			order.setShippingDiscountPercentageLevel1WithTaxAmount(
-				commerceOrder.
-					getShippingDiscountPercentageLevel1WithTaxAmount());
-			order.setShippingDiscountPercentageLevel2WithTaxAmount(
-				commerceOrder.
-					getShippingDiscountPercentageLevel2WithTaxAmount());
-			order.setShippingDiscountPercentageLevel3WithTaxAmount(
-				commerceOrder.
-					getShippingDiscountPercentageLevel3WithTaxAmount());
-			order.setShippingDiscountPercentageLevel4WithTaxAmount(
-				commerceOrder.
-					getShippingDiscountPercentageLevel4WithTaxAmount());
-		}
-	}
-
-	private void _setOrderSubtotal(
-			CommerceCurrency commerceCurrency, CommerceOrder commerceOrder,
-			Order order, Locale locale)
-		throws Exception {
-
-		CommerceMoney commerceOrderSubtotalCommerceMoney =
-			commerceOrder.getSubtotalMoney();
-
-		if (commerceOrderSubtotalCommerceMoney != null) {
-			order.setSubtotalFormatted(
-				commerceOrderSubtotalCommerceMoney.format(locale));
-
-			BigDecimal commerceOrderSubtotalValue =
-				commerceOrderSubtotalCommerceMoney.getPrice();
-
-			if (commerceOrderSubtotalValue != null) {
-				order.setSubtotalAmount(
-					commerceOrderSubtotalValue.doubleValue());
-			}
-		}
-
-		CommerceMoney commerceOrderSubtotalWithTaxAmountCommerceMoney =
-			commerceOrder.getSubtotalWithTaxAmountMoney();
-
-		if (commerceOrderSubtotalWithTaxAmountCommerceMoney != null) {
-			order.setSubtotalWithTaxAmountFormatted(
-				commerceOrderSubtotalWithTaxAmountCommerceMoney.format(locale));
-
-			BigDecimal commerceOrderSubtotalWithTaxAmountValue =
-				commerceOrderSubtotalWithTaxAmountCommerceMoney.getPrice();
-
-			if (commerceOrderSubtotalWithTaxAmountValue != null) {
-				order.setSubtotalWithTaxAmountValue(
-					commerceOrderSubtotalWithTaxAmountValue.doubleValue());
-			}
-		}
-
-		BigDecimal subtotalDiscountAmount =
-			commerceOrder.getSubtotalDiscountAmount();
-
-		if (subtotalDiscountAmount != null) {
-			order.setSubtotalDiscountAmount(subtotalDiscountAmount);
-			order.setSubtotalDiscountAmountFormatted(
-				_formatPrice(subtotalDiscountAmount, commerceCurrency, locale));
-			order.setSubtotalDiscountPercentageLevel1(
-				commerceOrder.getSubtotalDiscountPercentageLevel1());
-			order.setSubtotalDiscountPercentageLevel2(
-				commerceOrder.getSubtotalDiscountPercentageLevel2());
-			order.setSubtotalDiscountPercentageLevel3(
-				commerceOrder.getSubtotalDiscountPercentageLevel3());
-			order.setSubtotalDiscountPercentageLevel4(
-				commerceOrder.getSubtotalDiscountPercentageLevel4());
-		}
-
-		BigDecimal subtotalDiscountWithTaxAmount =
-			commerceOrder.getSubtotalDiscountWithTaxAmount();
-
-		if (subtotalDiscountWithTaxAmount != null) {
-			order.setSubtotalDiscountWithTaxAmount(
-				subtotalDiscountWithTaxAmount);
-			order.setSubtotalDiscountWithTaxAmountFormatted(
-				_formatPrice(
-					subtotalDiscountWithTaxAmount, commerceCurrency, locale));
-			order.setSubtotalDiscountPercentageLevel1WithTaxAmount(
-				commerceOrder.
-					getSubtotalDiscountPercentageLevel1WithTaxAmount());
-			order.setSubtotalDiscountPercentageLevel2WithTaxAmount(
-				commerceOrder.
-					getSubtotalDiscountPercentageLevel2WithTaxAmount());
-			order.setSubtotalDiscountPercentageLevel3WithTaxAmount(
-				commerceOrder.
-					getSubtotalDiscountPercentageLevel3WithTaxAmount());
-			order.setSubtotalDiscountPercentageLevel4WithTaxAmount(
-				commerceOrder.
-					getSubtotalDiscountPercentageLevel4WithTaxAmount());
-		}
-	}
-
-	private void _setOrderTotal(
-			CommerceCurrency commerceCurrency, CommerceOrder commerceOrder,
-			Order order, Locale locale)
-		throws Exception {
-
-		CommerceMoney commerceOrderTotalCommerceMoney =
-			commerceOrder.getTotalMoney();
-
-		if (commerceOrderTotalCommerceMoney != null) {
-			order.setTotalFormatted(
-				commerceOrderTotalCommerceMoney.format(locale));
-
-			BigDecimal commerceOrderTotalValue =
-				commerceOrderTotalCommerceMoney.getPrice();
-
-			if (commerceOrderTotalValue != null) {
-				order.setTotalAmount(commerceOrderTotalValue.doubleValue());
-			}
-		}
-
-		CommerceMoney commerceOrderTotalWithTaxAmountMoney =
-			commerceOrder.getTotalWithTaxAmountMoney();
-
-		if (commerceOrderTotalWithTaxAmountMoney != null) {
-			order.setTotalWithTaxAmountFormatted(
-				commerceOrderTotalWithTaxAmountMoney.format(locale));
-
-			BigDecimal commerceOrderTotalWithTaxAmountValue =
-				commerceOrderTotalWithTaxAmountMoney.getPrice();
-
-			if (commerceOrderTotalWithTaxAmountValue != null) {
-				order.setTotalWithTaxAmountValue(
-					commerceOrderTotalWithTaxAmountValue.doubleValue());
-			}
-		}
-
-		BigDecimal totalDiscountAmount = commerceOrder.getTotalDiscountAmount();
-
-		if (totalDiscountAmount != null) {
-			order.setTotalDiscountAmount(totalDiscountAmount);
-			order.setTotalDiscountAmountFormatted(
-				_formatPrice(totalDiscountAmount, commerceCurrency, locale));
-			order.setTotalDiscountPercentageLevel1(
-				commerceOrder.getTotalDiscountPercentageLevel1());
-			order.setTotalDiscountPercentageLevel2(
-				commerceOrder.getTotalDiscountPercentageLevel2());
-			order.setTotalDiscountPercentageLevel3(
-				commerceOrder.getTotalDiscountPercentageLevel3());
-			order.setTotalDiscountPercentageLevel4(
-				commerceOrder.getTotalDiscountPercentageLevel4());
-		}
-
-		BigDecimal totalDiscountWithTaxAmount =
-			commerceOrder.getTotalDiscountWithTaxAmount();
-
-		if (totalDiscountWithTaxAmount != null) {
-			order.setTotalDiscountWithTaxAmount(totalDiscountWithTaxAmount);
-			order.setTotalDiscountWithTaxAmountFormatted(
-				_formatPrice(
-					totalDiscountWithTaxAmount, commerceCurrency, locale));
-			order.setSubtotalDiscountPercentageLevel1WithTaxAmount(
-				commerceOrder.getTotalDiscountPercentageLevel1WithTaxAmount());
-			order.setSubtotalDiscountPercentageLevel2WithTaxAmount(
-				commerceOrder.getTotalDiscountPercentageLevel2WithTaxAmount());
-			order.setSubtotalDiscountPercentageLevel3WithTaxAmount(
-				commerceOrder.getTotalDiscountPercentageLevel3WithTaxAmount());
-			order.setSubtotalDiscountPercentageLevel4WithTaxAmount(
-				commerceOrder.getTotalDiscountPercentageLevel4WithTaxAmount());
-		}
-	}
-
 	private Status _toStatus(
 		int orderStatus, String commerceOrderWorkflowStatusLabel,
 		String commerceOrderWorkflowStatusLabelI18n) {
 
 		return new Status() {
 			{
-				code = orderStatus;
-				label = commerceOrderWorkflowStatusLabel;
-				label_i18n = commerceOrderWorkflowStatusLabelI18n;
+				setCode(() -> orderStatus);
+				setLabel(() -> commerceOrderWorkflowStatusLabel);
+				setLabel_i18n(() -> commerceOrderWorkflowStatusLabelI18n);
 			}
 		};
 	}

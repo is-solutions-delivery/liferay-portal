@@ -32,6 +32,16 @@ public class SavedContentEntryLocalServiceWrapper
 		_savedContentEntryLocalService = savedContentEntryLocalService;
 	}
 
+	@Override
+	public SavedContentEntry addSavedContentEntry(
+			long userId, long groupId, String className, long classPK,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _savedContentEntryLocalService.addSavedContentEntry(
+			userId, groupId, className, classPK, serviceContext);
+	}
+
 	/**
 	 * Adds the saved content entry to the database. Also notifies the appropriate model listeners.
 	 *
@@ -84,6 +94,20 @@ public class SavedContentEntryLocalServiceWrapper
 
 		return _savedContentEntryLocalService.deletePersistedModel(
 			persistedModel);
+	}
+
+	@Override
+	public void deleteSavedContentEntries(
+		long groupId, long classNameId, long classPK) {
+
+		_savedContentEntryLocalService.deleteSavedContentEntries(
+			groupId, classNameId, classPK);
+	}
+
+	@Override
+	public void deleteSavedContentEntriesByUserId(long userId) {
+		_savedContentEntryLocalService.deleteSavedContentEntriesByUserId(
+			userId);
 	}
 
 	/**
@@ -232,6 +256,14 @@ public class SavedContentEntryLocalServiceWrapper
 			savedContentEntryId);
 	}
 
+	@Override
+	public SavedContentEntry fetchSavedContentEntry(
+		long userId, long groupId, String className, long classPK) {
+
+		return _savedContentEntryLocalService.fetchSavedContentEntry(
+			userId, groupId, className, classPK);
+	}
+
 	/**
 	 * Returns the saved content entry matching the UUID and group.
 	 *
@@ -372,6 +404,16 @@ public class SavedContentEntryLocalServiceWrapper
 
 		return _savedContentEntryLocalService.getSavedContentEntry(
 			savedContentEntryId);
+	}
+
+	@Override
+	public SavedContentEntry getSavedContentEntry(
+			long userId, long groupId, String className, long classPK)
+		throws com.liferay.saved.content.exception.
+			NoSuchSavedContentEntryException {
+
+		return _savedContentEntryLocalService.getSavedContentEntry(
+			userId, groupId, className, classPK);
 	}
 
 	/**

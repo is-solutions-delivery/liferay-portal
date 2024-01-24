@@ -38,16 +38,21 @@ public class CategoryDTOConverter
 		AssetCategory assetCategory = _assetCategoryService.getCategory(
 			(Long)dtoConverterContext.getId());
 
-		AssetVocabulary assetVocabulary =
-			_assetVocabularyLocalService.getAssetVocabulary(
-				assetCategory.getVocabularyId());
-
 		return new Category() {
 			{
-				id = assetCategory.getCategoryId();
-				name = assetCategory.getName();
-				path = assetCategory.getPath(dtoConverterContext.getLocale());
-				vocabulary = assetVocabulary.getName();
+				setId(assetCategory::getCategoryId);
+				setName(assetCategory::getName);
+				setPath(
+					() -> assetCategory.getPath(
+						dtoConverterContext.getLocale()));
+				setVocabulary(
+					() -> {
+						AssetVocabulary assetVocabulary =
+							_assetVocabularyLocalService.getAssetVocabulary(
+								assetCategory.getVocabularyId());
+
+						return assetVocabulary.getName();
+					});
 			}
 		};
 	}

@@ -339,7 +339,7 @@ AUI.add(
 			getFieldNodes() {
 				const instance = this;
 
-				return instance.get('container').all('> .field-wrapper');
+				return instance.get('container').all('.field-wrapper');
 			},
 
 			getForm() {
@@ -776,26 +776,26 @@ AUI.add(
 				},
 
 				getFieldByNameInFieldDefinition(name) {
+					let field;
+
+					const findField = (definitionFields) => {
+						definitionFields?.forEach((definitionField) => {
+							if (definitionField.name === name) {
+								field = definitionField;
+							}
+							else {
+								findField(definitionField.nestedFields);
+							}
+						});
+					};
+
 					const instance = this;
 
 					const definition = instance.get('definition');
 
-					const fields = [];
+					findField(definition?.fields);
 
-					if (definition && definition.fields) {
-						definition.fields.forEach((field) => {
-							fields.push(field);
-							if (field.nestedFields) {
-								field.nestedFields.forEach((nestedField) => {
-									fields.push(nestedField);
-								});
-							}
-						});
-					}
-
-					return AArray.find(fields, (item) => {
-						return item.name === name;
-					});
+					return field;
 				},
 
 				getFieldDefinition() {
@@ -2678,25 +2678,30 @@ AUI.add(
 						.getInputNode()
 						.all('option')
 						.val();
-					const predefinedValues = JSON.parse(
-						instance.getFieldByNameInFieldDefinition(
-							instance.get('name')
-						).predefinedValue[instance.get('displayLocale')]
-					);
 
-					if (Lang.isString(values)) {
-						if (values !== '') {
-							values = JSON.parse(values);
+					const parseValues = (values) => {
+						if (values) {
+							return JSON.parse(values);
 						}
 						else {
-							values = [''];
+							return [''];
 						}
-					}
+					};
 
 					let resultValues = [];
 
+					if (Lang.isString(values)) {
+						values = parseValues(values);
+					}
+
 					values.forEach((value) => {
 						if (!currentlyAvailableValues.includes(value)) {
+							const predefinedValues = parseValues(
+								instance.getFieldByNameInFieldDefinition(
+									instance.get('name')
+								).predefinedValue[instance.get('displayLocale')]
+							);
+
 							resultValues.push(...predefinedValues);
 						}
 						else {

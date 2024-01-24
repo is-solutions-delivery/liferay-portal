@@ -38,6 +38,7 @@ public class CommercePaymentEntryWrapper
 		Map<String, Object> attributes = new HashMap<String, Object>();
 
 		attributes.put("mvccVersion", getMvccVersion());
+		attributes.put("externalReferenceCode", getExternalReferenceCode());
 		attributes.put("commercePaymentEntryId", getCommercePaymentEntryId());
 		attributes.put("companyId", getCompanyId());
 		attributes.put("userId", getUserId());
@@ -49,12 +50,19 @@ public class CommercePaymentEntryWrapper
 		attributes.put("commerceChannelId", getCommerceChannelId());
 		attributes.put("amount", getAmount());
 		attributes.put("callbackURL", getCallbackURL());
+		attributes.put("cancelURL", getCancelURL());
 		attributes.put("currencyCode", getCurrencyCode());
+		attributes.put("errorMessages", getErrorMessages());
+		attributes.put("languageId", getLanguageId());
+		attributes.put("note", getNote());
 		attributes.put("paymentIntegrationKey", getPaymentIntegrationKey());
 		attributes.put("paymentIntegrationType", getPaymentIntegrationType());
 		attributes.put("paymentStatus", getPaymentStatus());
+		attributes.put("reasonKey", getReasonKey());
+		attributes.put("reasonName", getReasonName());
 		attributes.put("redirectURL", getRedirectURL());
 		attributes.put("transactionCode", getTransactionCode());
+		attributes.put("type", getType());
 
 		return attributes;
 	}
@@ -65,6 +73,13 @@ public class CommercePaymentEntryWrapper
 
 		if (mvccVersion != null) {
 			setMvccVersion(mvccVersion);
+		}
+
+		String externalReferenceCode = (String)attributes.get(
+			"externalReferenceCode");
+
+		if (externalReferenceCode != null) {
+			setExternalReferenceCode(externalReferenceCode);
 		}
 
 		Long commercePaymentEntryId = (Long)attributes.get(
@@ -134,10 +149,34 @@ public class CommercePaymentEntryWrapper
 			setCallbackURL(callbackURL);
 		}
 
+		String cancelURL = (String)attributes.get("cancelURL");
+
+		if (cancelURL != null) {
+			setCancelURL(cancelURL);
+		}
+
 		String currencyCode = (String)attributes.get("currencyCode");
 
 		if (currencyCode != null) {
 			setCurrencyCode(currencyCode);
+		}
+
+		String errorMessages = (String)attributes.get("errorMessages");
+
+		if (errorMessages != null) {
+			setErrorMessages(errorMessages);
+		}
+
+		String languageId = (String)attributes.get("languageId");
+
+		if (languageId != null) {
+			setLanguageId(languageId);
+		}
+
+		String note = (String)attributes.get("note");
+
+		if (note != null) {
+			setNote(note);
 		}
 
 		String paymentIntegrationKey = (String)attributes.get(
@@ -160,6 +199,18 @@ public class CommercePaymentEntryWrapper
 			setPaymentStatus(paymentStatus);
 		}
 
+		String reasonKey = (String)attributes.get("reasonKey");
+
+		if (reasonKey != null) {
+			setReasonKey(reasonKey);
+		}
+
+		String reasonName = (String)attributes.get("reasonName");
+
+		if (reasonName != null) {
+			setReasonName(reasonName);
+		}
+
 		String redirectURL = (String)attributes.get("redirectURL");
 
 		if (redirectURL != null) {
@@ -170,6 +221,12 @@ public class CommercePaymentEntryWrapper
 
 		if (transactionCode != null) {
 			setTransactionCode(transactionCode);
+		}
+
+		Integer type = (Integer)attributes.get("type");
+
+		if (type != null) {
+			setType(type);
 		}
 	}
 
@@ -188,6 +245,11 @@ public class CommercePaymentEntryWrapper
 		return model.getAmount();
 	}
 
+	@Override
+	public String[] getAvailableLanguageIds() {
+		return model.getAvailableLanguageIds();
+	}
+
 	/**
 	 * Returns the callback url of this commerce payment entry.
 	 *
@@ -196,6 +258,16 @@ public class CommercePaymentEntryWrapper
 	@Override
 	public String getCallbackURL() {
 		return model.getCallbackURL();
+	}
+
+	/**
+	 * Returns the cancel url of this commerce payment entry.
+	 *
+	 * @return the cancel url of this commerce payment entry
+	 */
+	@Override
+	public String getCancelURL() {
+		return model.getCancelURL();
 	}
 
 	/**
@@ -278,6 +350,41 @@ public class CommercePaymentEntryWrapper
 		return model.getCurrencyCode();
 	}
 
+	@Override
+	public String getDefaultLanguageId() {
+		return model.getDefaultLanguageId();
+	}
+
+	/**
+	 * Returns the error messages of this commerce payment entry.
+	 *
+	 * @return the error messages of this commerce payment entry
+	 */
+	@Override
+	public String getErrorMessages() {
+		return model.getErrorMessages();
+	}
+
+	/**
+	 * Returns the external reference code of this commerce payment entry.
+	 *
+	 * @return the external reference code of this commerce payment entry
+	 */
+	@Override
+	public String getExternalReferenceCode() {
+		return model.getExternalReferenceCode();
+	}
+
+	/**
+	 * Returns the language ID of this commerce payment entry.
+	 *
+	 * @return the language ID of this commerce payment entry
+	 */
+	@Override
+	public String getLanguageId() {
+		return model.getLanguageId();
+	}
+
 	/**
 	 * Returns the modified date of this commerce payment entry.
 	 *
@@ -296,6 +403,16 @@ public class CommercePaymentEntryWrapper
 	@Override
 	public long getMvccVersion() {
 		return model.getMvccVersion();
+	}
+
+	/**
+	 * Returns the note of this commerce payment entry.
+	 *
+	 * @return the note of this commerce payment entry
+	 */
+	@Override
+	public String getNote() {
+		return model.getNote();
 	}
 
 	/**
@@ -339,6 +456,92 @@ public class CommercePaymentEntryWrapper
 	}
 
 	/**
+	 * Returns the reason key of this commerce payment entry.
+	 *
+	 * @return the reason key of this commerce payment entry
+	 */
+	@Override
+	public String getReasonKey() {
+		return model.getReasonKey();
+	}
+
+	/**
+	 * Returns the reason name of this commerce payment entry.
+	 *
+	 * @return the reason name of this commerce payment entry
+	 */
+	@Override
+	public String getReasonName() {
+		return model.getReasonName();
+	}
+
+	/**
+	 * Returns the localized reason name of this commerce payment entry in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the locale of the language
+	 * @return the localized reason name of this commerce payment entry
+	 */
+	@Override
+	public String getReasonName(java.util.Locale locale) {
+		return model.getReasonName(locale);
+	}
+
+	/**
+	 * Returns the localized reason name of this commerce payment entry in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param locale the local of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized reason name of this commerce payment entry. If <code>useDefault</code> is <code>false</code> and no localization exists for the requested language, an empty string will be returned.
+	 */
+	@Override
+	public String getReasonName(java.util.Locale locale, boolean useDefault) {
+		return model.getReasonName(locale, useDefault);
+	}
+
+	/**
+	 * Returns the localized reason name of this commerce payment entry in the language. Uses the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @return the localized reason name of this commerce payment entry
+	 */
+	@Override
+	public String getReasonName(String languageId) {
+		return model.getReasonName(languageId);
+	}
+
+	/**
+	 * Returns the localized reason name of this commerce payment entry in the language, optionally using the default language if no localization exists for the requested language.
+	 *
+	 * @param languageId the ID of the language
+	 * @param useDefault whether to use the default language if no localization exists for the requested language
+	 * @return the localized reason name of this commerce payment entry
+	 */
+	@Override
+	public String getReasonName(String languageId, boolean useDefault) {
+		return model.getReasonName(languageId, useDefault);
+	}
+
+	@Override
+	public String getReasonNameCurrentLanguageId() {
+		return model.getReasonNameCurrentLanguageId();
+	}
+
+	@Override
+	public String getReasonNameCurrentValue() {
+		return model.getReasonNameCurrentValue();
+	}
+
+	/**
+	 * Returns a map of the locales and localized reason names of this commerce payment entry.
+	 *
+	 * @return the locales and localized reason names of this commerce payment entry
+	 */
+	@Override
+	public Map<java.util.Locale, String> getReasonNameMap() {
+		return model.getReasonNameMap();
+	}
+
+	/**
 	 * Returns the redirect url of this commerce payment entry.
 	 *
 	 * @return the redirect url of this commerce payment entry
@@ -356,6 +559,16 @@ public class CommercePaymentEntryWrapper
 	@Override
 	public String getTransactionCode() {
 		return model.getTransactionCode();
+	}
+
+	/**
+	 * Returns the type of this commerce payment entry.
+	 *
+	 * @return the type of this commerce payment entry
+	 */
+	@Override
+	public int getType() {
+		return model.getType();
 	}
 
 	/**
@@ -393,6 +606,21 @@ public class CommercePaymentEntryWrapper
 		model.persist();
 	}
 
+	@Override
+	public void prepareLocalizedFieldsForImport()
+		throws com.liferay.portal.kernel.exception.LocaleException {
+
+		model.prepareLocalizedFieldsForImport();
+	}
+
+	@Override
+	public void prepareLocalizedFieldsForImport(
+			java.util.Locale defaultImportLocale)
+		throws com.liferay.portal.kernel.exception.LocaleException {
+
+		model.prepareLocalizedFieldsForImport(defaultImportLocale);
+	}
+
 	/**
 	 * Sets the amount of this commerce payment entry.
 	 *
@@ -411,6 +639,16 @@ public class CommercePaymentEntryWrapper
 	@Override
 	public void setCallbackURL(String callbackURL) {
 		model.setCallbackURL(callbackURL);
+	}
+
+	/**
+	 * Sets the cancel url of this commerce payment entry.
+	 *
+	 * @param cancelURL the cancel url of this commerce payment entry
+	 */
+	@Override
+	public void setCancelURL(String cancelURL) {
+		model.setCancelURL(cancelURL);
 	}
 
 	@Override
@@ -489,6 +727,36 @@ public class CommercePaymentEntryWrapper
 	}
 
 	/**
+	 * Sets the error messages of this commerce payment entry.
+	 *
+	 * @param errorMessages the error messages of this commerce payment entry
+	 */
+	@Override
+	public void setErrorMessages(String errorMessages) {
+		model.setErrorMessages(errorMessages);
+	}
+
+	/**
+	 * Sets the external reference code of this commerce payment entry.
+	 *
+	 * @param externalReferenceCode the external reference code of this commerce payment entry
+	 */
+	@Override
+	public void setExternalReferenceCode(String externalReferenceCode) {
+		model.setExternalReferenceCode(externalReferenceCode);
+	}
+
+	/**
+	 * Sets the language ID of this commerce payment entry.
+	 *
+	 * @param languageId the language ID of this commerce payment entry
+	 */
+	@Override
+	public void setLanguageId(String languageId) {
+		model.setLanguageId(languageId);
+	}
+
+	/**
 	 * Sets the modified date of this commerce payment entry.
 	 *
 	 * @param modifiedDate the modified date of this commerce payment entry
@@ -506,6 +774,16 @@ public class CommercePaymentEntryWrapper
 	@Override
 	public void setMvccVersion(long mvccVersion) {
 		model.setMvccVersion(mvccVersion);
+	}
+
+	/**
+	 * Sets the note of this commerce payment entry.
+	 *
+	 * @param note the note of this commerce payment entry
+	 */
+	@Override
+	public void setNote(String note) {
+		model.setNote(note);
 	}
 
 	/**
@@ -549,6 +827,81 @@ public class CommercePaymentEntryWrapper
 	}
 
 	/**
+	 * Sets the reason key of this commerce payment entry.
+	 *
+	 * @param reasonKey the reason key of this commerce payment entry
+	 */
+	@Override
+	public void setReasonKey(String reasonKey) {
+		model.setReasonKey(reasonKey);
+	}
+
+	/**
+	 * Sets the reason name of this commerce payment entry.
+	 *
+	 * @param reasonName the reason name of this commerce payment entry
+	 */
+	@Override
+	public void setReasonName(String reasonName) {
+		model.setReasonName(reasonName);
+	}
+
+	/**
+	 * Sets the localized reason name of this commerce payment entry in the language.
+	 *
+	 * @param reasonName the localized reason name of this commerce payment entry
+	 * @param locale the locale of the language
+	 */
+	@Override
+	public void setReasonName(String reasonName, java.util.Locale locale) {
+		model.setReasonName(reasonName, locale);
+	}
+
+	/**
+	 * Sets the localized reason name of this commerce payment entry in the language, and sets the default locale.
+	 *
+	 * @param reasonName the localized reason name of this commerce payment entry
+	 * @param locale the locale of the language
+	 * @param defaultLocale the default locale
+	 */
+	@Override
+	public void setReasonName(
+		String reasonName, java.util.Locale locale,
+		java.util.Locale defaultLocale) {
+
+		model.setReasonName(reasonName, locale, defaultLocale);
+	}
+
+	@Override
+	public void setReasonNameCurrentLanguageId(String languageId) {
+		model.setReasonNameCurrentLanguageId(languageId);
+	}
+
+	/**
+	 * Sets the localized reason names of this commerce payment entry from the map of locales and localized reason names.
+	 *
+	 * @param reasonNameMap the locales and localized reason names of this commerce payment entry
+	 */
+	@Override
+	public void setReasonNameMap(Map<java.util.Locale, String> reasonNameMap) {
+		model.setReasonNameMap(reasonNameMap);
+	}
+
+	/**
+	 * Sets the localized reason names of this commerce payment entry from the map of locales and localized reason names, and sets the default locale.
+	 *
+	 * @param reasonNameMap the locales and localized reason names of this commerce payment entry
+	 * @param defaultLocale the default locale
+	 */
+	@Override
+	public void setReasonNameMap(
+		Map<java.util.Locale, String> reasonNameMap,
+		java.util.Locale defaultLocale) {
+
+		model.setReasonNameMap(reasonNameMap, defaultLocale);
+	}
+
+	/**
 	 * Sets the redirect url of this commerce payment entry.
 	 *
 	 * @param redirectURL the redirect url of this commerce payment entry
@@ -566,6 +919,16 @@ public class CommercePaymentEntryWrapper
 	@Override
 	public void setTransactionCode(String transactionCode) {
 		model.setTransactionCode(transactionCode);
+	}
+
+	/**
+	 * Sets the type of this commerce payment entry.
+	 *
+	 * @param type the type of this commerce payment entry
+	 */
+	@Override
+	public void setType(int type) {
+		model.setType(type);
 	}
 
 	/**

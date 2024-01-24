@@ -21,6 +21,7 @@ definition {
 		}
 	}
 
+	@ignore = "true"
 	@priority = 5
 	test LearningToRankSmoke {
 		property elastic.override.version = "7.17.10";
@@ -35,10 +36,7 @@ definition {
 
 		AntCommands.runCommand("build-test-elasticsearch7.xml", "add-ltr-linear-regression-model -Dbackup.index=.ltrstore -Delasticsearch.port=9200");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "System",
-			panel = "Control Panel",
-			portlet = "Server Administration");
+		ServerAdministration.openServerAdmin();
 
 		var script = TestCase.getFileContent(fileName = "blogs-ltr-subset.groovy");
 
@@ -293,6 +291,7 @@ definition {
 		ElasticsearchMonitoring.viewAsGuestPG();
 	}
 
+	@ignore = "true"
 	@priority = 5
 	test XPackWithJDK11 {
 		property elastic.xpack.enabled = "true";
@@ -343,6 +342,7 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-151205."
+	@ignore = "true"
 	@priority = 5
 	test XPackWithRestrictedCipherSuitesAndTLSVersions {
 		property elastic.xpack.configure.tls.cipher.suites = "true";

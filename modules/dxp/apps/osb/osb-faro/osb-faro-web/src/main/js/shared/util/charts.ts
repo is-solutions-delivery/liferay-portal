@@ -24,20 +24,42 @@ export enum MetricValueType {
 	Ratings = 'ratings'
 }
 
+export const CHART_COLORS = [
+	'#4B9BFF',
+	'#FFB46E',
+	'#FF5F5F',
+	'#50D2A0',
+	'#FF73C3',
+	'#9CE269',
+	'#B077FF',
+	'#FFD76E',
+	'#5FC8FF'
+];
+
+export const CHART_COLOR_NAMES = {
+	greyjoy: '#000000',
+	lannister: '#FF5F5F',
+	martell: '#50D2A0',
+	martellD2: '#31BE88',
+	martellD4: '#26966B',
+	martellL1: '#64D7AB',
+	martellL2: '#79DCB6',
+	martellL4: '#A1E7CC',
+	mormont: '#FFB46E',
+	mormontD2: '#FF9A3B',
+	mormontL2: '#FFCEA1',
+	mormontL4: '#FFE9D4',
+	stark: '#4B9BFF',
+	starkD2: '#187FFF',
+	starkL2: '#7EB7FF',
+	starkL4: '#B1D4FF'
+};
+
 export const Colors = {
 	gray: '#AEB0BB',
-	mapBluePallete: [
-		'#B1D4FF',
-		'#95C5FF',
-		'#7EB7FF',
-		'#64A9FF',
-		'#4B9BFF',
-		'#318DFF',
-		'#187FFF',
-		'#0071FD',
-		'#0065E4'
-	],
 	mapEmpty: '#E1E1E1',
+	mapMax: '#0065E4',
+	mapMin: '#B1D4FF',
 	mapSelected: '#4B9BFF',
 	negative: '#DA1414',
 	neutral: '#AEB0BB',
@@ -215,27 +237,6 @@ export const getAxisMeasures = (value: number) => {
 };
 
 /**
- * Return the chart max value from composite data.
- * @param {Array}
- * @returns {Object}
- */
-export const getAxisMeasuresFromCompositeData = ([
-	data1,
-	data2,
-	dataPrevious
-]: number[][]) => {
-	const maxStackedData = d3.max(data1) + d3.max(data2);
-
-	return getAxisMeasures(
-		Math.max(
-			dataPrevious
-				? Math.max(maxStackedData, d3.max(dataPrevious))
-				: maxStackedData
-		)
-	);
-};
-
-/**
  * Return the chart max value from a data
  * @param {Array} data
  */
@@ -406,31 +407,3 @@ export const getMetricFormatter = type => {
 		return value => value;
 	}
 };
-
-export const getLegendLineDashed = color =>
-	`<div class="legend-icon line line-dashed" style="background-image: linear-gradient(90deg, ${color} 28.3%, transparent 28.3% 38.3%, ${color} 38.3% 61.6%, transparent 61.6% 71.6%, ${color} 71.6% 100%);"></div>`;
-
-export const getLegendCircle = (color: string): string =>
-	`<div class="legend-icon circle" style="background-color: ${color};"></div>`;
-
-/**
- * Return a svg line icon
- * @param {color} string
- * @returns {string} svg HTML element
- */
-export const getLegendLine = color =>
-	`<div class="legend-icon line" style="background-color: ${color};"></div>`;
-
-/**
- * is Empty Data
- * @param {array} data
- * @returns {boolean}
- */
-export function isEmptyData(data) {
-	return d3.sum(d3.merge(data)) === 0;
-}
-
-/**
- * Return the color based on index
- */
-export const nextColor = d3.scaleOrdinal().range(Colors.pallete);

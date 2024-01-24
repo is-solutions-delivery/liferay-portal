@@ -10,6 +10,8 @@ import com.liferay.segments.asah.rest.client.http.HttpInvoker;
 import com.liferay.segments.asah.rest.client.problem.Problem;
 import com.liferay.segments.asah.rest.client.serdes.v1_0.ExperimentRunSerDes;
 
+import java.net.URL;
+
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -89,6 +91,10 @@ public interface ExperimentRunResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {

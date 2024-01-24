@@ -11,6 +11,7 @@ import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.odata.filter.expression.BinaryExpression;
@@ -125,11 +126,22 @@ public class SOSQLExpressionVisitorImpl implements ExpressionVisitor<Object> {
 		throws ExpressionVisitException {
 
 		if (!Objects.equals(
+				LiteralExpression.Type.BOOLEAN, literalExpression.getType()) &&
+			!Objects.equals(
 				LiteralExpression.Type.DATE, literalExpression.getType()) &&
+			!Objects.equals(
+				LiteralExpression.Type.DATE_TIME,
+				literalExpression.getType()) &&
 			!Objects.equals(
 				LiteralExpression.Type.STRING, literalExpression.getType())) {
 
 			throw new UnsupportedOperationException();
+		}
+
+		if (Objects.equals(
+				LiteralExpression.Type.BOOLEAN, literalExpression.getType())) {
+
+			return GetterUtil.getBoolean(literalExpression.getText());
 		}
 
 		if (Objects.equals(

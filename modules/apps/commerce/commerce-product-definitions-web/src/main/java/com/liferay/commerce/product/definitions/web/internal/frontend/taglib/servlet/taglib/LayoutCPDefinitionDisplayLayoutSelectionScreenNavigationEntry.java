@@ -7,9 +7,7 @@ package com.liferay.commerce.product.definitions.web.internal.frontend.taglib.se
 
 import com.liferay.commerce.product.definitions.web.internal.display.context.CPDefinitionDisplayLayoutDisplayContext;
 import com.liferay.commerce.product.model.CPDisplayLayout;
-import com.liferay.commerce.product.model.CommerceCatalog;
 import com.liferay.commerce.product.portlet.action.ActionHelper;
-import com.liferay.commerce.product.service.CPDefinitionService;
 import com.liferay.commerce.product.service.CPDisplayLayoutService;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.frontend.taglib.servlet.taglib.ScreenNavigationEntry;
@@ -24,7 +22,6 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
-import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.permission.LayoutPermission;
@@ -96,9 +93,9 @@ public class LayoutCPDefinitionDisplayLayoutSelectionScreenNavigationEntry
 			cpDefinitionDisplayLayoutDisplayContext =
 				new CPDefinitionDisplayLayoutDisplayContext(
 					_actionHelper, httpServletRequest,
-					_commerceChannelLocalService, _cpDefinitionService,
-					_cpDisplayLayoutService, _groupLocalService, _itemSelector,
-					_layoutLocalService, _layoutPageTemplateEntryLocalService);
+					_commerceChannelLocalService, _cpDisplayLayoutService,
+					_groupLocalService, _itemSelector, _layoutLocalService,
+					_layoutPageTemplateEntryLocalService);
 
 		httpServletRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT,
@@ -115,17 +112,8 @@ public class LayoutCPDefinitionDisplayLayoutSelectionScreenNavigationEntry
 	@Reference
 	private ActionHelper _actionHelper;
 
-	@Reference(
-		target = "(model.class.name=com.liferay.commerce.product.model.CommerceCatalog)"
-	)
-	private ModelResourcePermission<CommerceCatalog>
-		_commerceCatalogModelResourcePermission;
-
 	@Reference
 	private CommerceChannelLocalService _commerceChannelLocalService;
-
-	@Reference
-	private CPDefinitionService _cpDefinitionService;
 
 	@Reference
 	private CPDisplayLayoutService _cpDisplayLayoutService;

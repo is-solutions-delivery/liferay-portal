@@ -40,8 +40,10 @@ definition {
 	@description = "Story: LRAC-12019 | Automation ID: LRAC-12584 | Test Summary: Can paginate the list of properties"
 	@priority = 3
 	test CanPaginatePropertyListInDXP {
-		var firstPageList = "AC Property Pagination 2,AC Property Pagination 3,AC Property Pagination 4,AC Property Pagination 5,AC Property Pagination 6";
-		var secondPageList = "AC Property Pagination 1";
+		property test.run.type = "single";
+
+		var firstPageList = "AC Property Pagination 6,AC Property Pagination 5,AC Property Pagination 4,AC Property Pagination 3";
+		var secondPageList = "AC Property Pagination 2,AC Property Pagination 1";
 
 		task ("Connect DXP to AC and get the first property name from the list") {
 			ACDXPSettings.connectAnalyticsCloud();
@@ -254,7 +256,7 @@ definition {
 		}
 
 		task ("Sort the list by the Create Date column (Ascending)") {
-			ManagementBar.setFilterAndOrder(orderBy = "Create Date");
+			KaleoFormsManageFieldSets.clickFilterAndOrderBy(filterOption = "Create Date");
 
 			ACDXPSettings.setSortDirection(sortDirection = "up");
 		}
@@ -276,7 +278,7 @@ definition {
 		}
 
 		task ("Sort the list by the Available Properties column (Ascending)") {
-			ManagementBar.setFilterAndOrder(orderBy = "Available Properties");
+			KaleoFormsManageFieldSets.clickFilterAndOrderBy(filterOption = "Available Properties");
 
 			ACDXPSettings.setSortDirection(sortDirection = "up");
 		}
@@ -310,7 +312,7 @@ definition {
 		}
 
 		task ("Sort the list by the Create Date column (Ascending)") {
-			ManagementBar.setFilterAndOrder(orderBy = "Create Date");
+			KaleoFormsManageFieldSets.clickFilterAndOrderBy(filterOption = "Create Date");
 
 			ACDXPSettings.setSortDirection(sortDirection = "up");
 		}
@@ -332,7 +334,7 @@ definition {
 		}
 
 		task ("Sort the list by the Available Properties column (Ascending)") {
-			ManagementBar.setFilterAndOrder(orderBy = "Available Properties");
+			KaleoFormsManageFieldSets.clickFilterAndOrderBy(filterOption = "Available Properties");
 
 			ACDXPSettings.setSortDirection(sortDirection = "up");
 		}
@@ -589,8 +591,6 @@ definition {
 		}
 
 		task ("Set up instance and sign in DXP") {
-			TestCase.setUpPortalInstance();
-
 			ACUtils.launchDXP();
 
 			ACUtils.addSiteAndPage();

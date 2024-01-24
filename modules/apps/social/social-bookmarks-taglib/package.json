@@ -1,12 +1,12 @@
 {
 	"dependencies": {
 	},
-	"main": "index.js",
+	"main": "js/index.js",
 	"name": "social-bookmarks-taglib",
 	"scripts": {
 		"build": "liferay-npm-scripts build",
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "4.1.13"
+	"version": "4.1.14"
 }

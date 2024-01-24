@@ -5,22 +5,50 @@
 
 import {useEffect, useState} from 'react';
 
+import {Filters} from '../../../common/utils/constants/filters';
 import {getCamelCase} from '../../../common/utils/getCamelCase';
 import getSearchFilterTerm from '../../../common/utils/getSearchFilterTerm';
 import {INITIAL_FILTER} from '../utils/constants/initialFilter';
 import getActivityPeriodFilterTerm from '../utils/getActivityPeriodFilterTerm';
 
-export default function useFilters() {
-	const [filters, setFilters] = useState(INITIAL_FILTER);
+export default function useFilters(
+	openRequestFilter: boolean,
+	isChannel?: boolean
+) {
+	const [filters, setFilters] = useState(
+		(JSON.parse(
+			sessionStorage.getItem('requestFilters')!
+		) as typeof INITIAL_FILTER) || INITIAL_FILTER
+	);
 
 	const [filtersTerm, setFilterTerm] = useState('');
+
+	const mdfRequestRoleFilter = isChannel
+		? openRequestFilter
+			? Filters.MDF_REQUEST_LISTING.channelsOpen
+			: Filters.MDF_REQUEST_LISTING.channelsCompleted
+		: openRequestFilter
+		? Filters.MDF_REQUEST_LISTING.partnersOpen
+		: Filters.MDF_REQUEST_LISTING.partnersCompleted;
 
 	const onFilter = (newFilters: Partial<typeof INITIAL_FILTER>) =>
 		setFilters((previousFilters) => ({...previousFilters, ...newFilters}));
 
+	sessionStorage.setItem('requestFilters', JSON.stringify(filters));
+	sessionStorage.setItem(
+		'openRequestFilter',
+		JSON.stringify(openRequestFilter)
+	);
+
 	useEffect(() => {
 		let initialFilter = '';
 		let hasFilter = false;
+
+		if (mdfRequestRoleFilter) {
+			initialFilter = initialFilter
+				? initialFilter.concat(mdfRequestRoleFilter)
+				: `${mdfRequestRoleFilter}`;
+		}
 
 		if (
 			filters.activityPeriod.dates.endDate ||
@@ -62,7 +90,9 @@ export default function useFilters() {
 		}
 
 		if (filters.searchTerm) {
-			initialFilter = getSearchFilterTerm(filters.searchTerm);
+			initialFilter = initialFilter.concat(
+				getSearchFilterTerm(filters.searchTerm)
+			);
 		}
 
 		onFilter({
@@ -76,6 +106,7 @@ export default function useFilters() {
 		filters.status,
 		filters.partner,
 		setFilters,
+		mdfRequestRoleFilter,
 	]);
 
 	return {filters, filtersTerm, onFilter, setFilters};

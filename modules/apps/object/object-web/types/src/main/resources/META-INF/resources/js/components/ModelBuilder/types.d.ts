@@ -5,6 +5,7 @@
 
 /// <reference types="react" />
 
+import {ILearnResourceContext} from 'frontend-js-components-web';
 import {Edge, Elements, Node} from 'react-flow-renderer';
 import {TYPES} from './ModelBuilderContext/typesEnum';
 declare type TDropDownType =
@@ -33,9 +34,15 @@ export declare type DropDownItems = {
 export declare type TAction =
 	| {
 			payload: {
+				dbTableName: string;
+				dispatch: React.Dispatch<TAction>;
+				elements: Elements<
+					ObjectDefinitionNodeData | ObjectRelationshipEdgeData
+				>;
+				leftSidebarItems: LeftSidebarItem[];
 				newObjectDefinition: ObjectDefinition;
-				objectDefinitionNodes: Node<ObjectDefinitionNodeData>[];
-				selectedObjectFolderName: string;
+				objectFolders: ObjectFolder[];
+				selectedObjectFolder: ObjectFolder;
 			};
 			type: TYPES.ADD_OBJECT_DEFINITION_TO_OBJECT_FOLDER;
 	  }
@@ -82,12 +89,19 @@ export declare type TAction =
 	  }
 	| {
 			payload: {
+				dispatch: React.Dispatch<TAction>;
 				objectFolders: ObjectFolder[];
 				rightSidebarType?: RightSidebarType;
-				selectedObjectFolder: ObjectFolder;
-				selectedObjectRelationshipEdgeId?: number;
+				selectedObjectFolderName: string;
+				selectedObjectRelationshipId?: number;
 			};
 			type: TYPES.UPDATE_MODEL_BUILDER_STRUCTURE;
+	  }
+	| {
+			payload: {
+				deletedObjectDefinition: DeletedObjectDefinition | null;
+			};
+			type: TYPES.SET_DELETE_OBJECT_DEFINITION;
 	  }
 	| {
 			payload: {
@@ -96,6 +110,12 @@ export declare type TAction =
 				>;
 			};
 			type: TYPES.SET_ELEMENTS;
+	  }
+	| {
+			payload: {
+				nodeHandleConnectable: boolean;
+			};
+			type: TYPES.SET_NODE_HANDLE_CONNECTION;
 	  }
 	| {
 			payload: {
@@ -126,6 +146,7 @@ export declare type TAction =
 				objectDefinitionNodes: Node<ObjectDefinitionNodeData>[];
 				objectRelationshipEdges: Edge<ObjectRelationshipEdgeData>[];
 				updatedObjectDefinitionNodeId: number;
+				updatedObjectFolder: ObjectFolder;
 			};
 			type: TYPES.SET_SELECTED_OBJECT_DEFINITION_NODE_POSITION;
 	  }
@@ -141,11 +162,16 @@ export declare type TAction =
 	  }
 	| {
 			payload: {
-				objectDefinitionNodes: Node<ObjectDefinitionNodeData>[];
-				objectRelationshipEdges?: Edge<ObjectRelationshipEdgeData>[];
 				selectedObjectRelationshipId: number;
 			};
 			type: TYPES.SET_SELECTED_OBJECT_RELATIONSHIP_EDGE;
+	  }
+	| {
+			payload: {
+				objectDefinitionExternalReferenceCode: string;
+				showAllObjectFields: boolean;
+			};
+			type: TYPES.SET_SHOW_ALL_OBJECT_FIELDS;
 	  }
 	| {
 			payload: {
@@ -180,9 +206,16 @@ export declare type TAction =
 				updatedObjectField: ObjectField;
 			};
 			type: TYPES.UPDATE_OBJECT_FIELD_NODE_ROW;
+	  }
+	| {
+			payload: {
+				updatedModelBuilderModals: Partial<ModelBuilderModals>;
+			};
+			type: TYPES.UPDATE_VISIBILITY_MODEL_BUILDER_MODALS;
 	  };
 export declare type TState = {
 	baseResourceURL: string;
+	deletedObjectDefinition: DeletedObjectDefinition | null;
 	editObjectDefinitionURL: string;
 	elements: Elements<ObjectDefinitionNodeData | ObjectRelationshipEdgeData>;
 	filterOperators: TFilterOperators;
@@ -190,21 +223,24 @@ export declare type TState = {
 	forbiddenLastChars: string[];
 	forbiddenNames: string[];
 	isLoadingObjectFolder: boolean;
+	isRootDescendantNode: boolean;
+	learnResourceContext: ILearnResourceContext;
 	leftSidebarItems: LeftSidebarItem[];
+	modelBuilderModals: ModelBuilderModals;
+	nodeHandleConnectable: boolean;
 	objectDefinitionPermissionsURL: string;
 	objectDefinitions: ObjectDefinition[];
 	objectDefinitionsStorageTypes: LabelValueObject[];
 	objectFolderName: string;
 	objectFolders: ObjectFolder[];
-	objectWebLearnResources: ObjectWebLearnResources;
 	rightSidebarType: RightSidebarType;
 	selectedObjectDefinitionNode: Node<ObjectDefinitionNodeData> | null;
 	selectedObjectField?: ObjectFieldNodeRow;
 	selectedObjectFolder: ObjectFolder;
-	selectedObjectRelationship?: Edge<ObjectRelationshipEdgeData>;
+	selectedObjectRelationship?: Edge<ObjectRelationshipEdgeData> | null;
 	showChangesSaved: boolean;
 	showSidebars: boolean;
-	workflowStatusJSONArray: LabelValueObject[];
+	workflowStatuses: LabelValueObject[];
 };
 export interface LeftSidebarItem {
 	hiddenObjectFolderObjectDefinitionNodes: boolean;
@@ -214,15 +250,33 @@ export interface LeftSidebarItem {
 	objectFolderName: string;
 	type: 'objectFolder' | 'objectDefinition';
 }
+export declare type LeftSidebarKebabOption = {
+	label?: string;
+	onClick?: (event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+	symbolLeft?: string;
+	symbolRight?: string;
+	type?:
+		| 'checkbox'
+		| 'contextual'
+		| 'group'
+		| 'item'
+		| 'radio'
+		| 'radiogroup'
+		| 'divider';
+};
 export interface LeftSidebarObjectDefinitionItem {
 	externalReferenceCode?: string;
 	hiddenObjectDefinitionNode: boolean;
 	id: number;
+	kebabOptions: LeftSidebarKebabOption[];
 	label: string;
 	linked?: boolean;
 	name: string;
 	selected: boolean;
-	type: 'linkedObjectDefinition' | 'objectDefinition';
+	type:
+		| 'dummyObjectDefinition'
+		| 'linkedObjectDefinition'
+		| 'objectDefinition';
 }
 export interface ObjectRelationshipEdgeData {
 	defaultLanguageId?: Liferay.Language.Locale;

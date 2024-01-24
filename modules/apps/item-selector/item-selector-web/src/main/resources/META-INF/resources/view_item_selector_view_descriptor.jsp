@@ -74,7 +74,10 @@ SearchContainer<Object> searchContainer = itemSelectorViewDescriptorRendererDisp
 
 							<liferay-ui:search-container-column-text>
 								<clay:horizontal-card
+									aria-label='<%= LanguageUtil.format(request, "select-x", horizontalCard.getTitle()) %>'
 									horizontalCard="<%= horizontalCard %>"
+									role="button"
+									tabIndex="0"
 								/>
 							</liferay-ui:search-container-column-text>
 						</c:when>
@@ -203,5 +206,5 @@ SearchContainer<Object> searchContainer = itemSelectorViewDescriptorRendererDisp
 			"itemSelectorSelectedEvent", HtmlUtil.escapeJS(itemSelectorViewDescriptorRendererDisplayContext.getItemSelectedEventName())
 		).build()
 	%>'
-	module='<%= itemSelectorViewDescriptorRendererDisplayContext.isMultipleSelection() ? "js/ViewItemSelectorViewDescriptorMultiple" : "js/ViewItemSelectorViewDescriptor" %>'
+	module='<%= itemSelectorViewDescriptorRendererDisplayContext.isMultipleSelection() ? "{ViewItemSelectorViewDescriptorMultiple} from item-selector-web" : "{ViewItemSelectorViewDescriptor} from item-selector-web" %>'
 />

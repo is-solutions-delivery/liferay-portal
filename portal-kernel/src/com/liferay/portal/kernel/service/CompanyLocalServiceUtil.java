@@ -79,6 +79,14 @@ public class CompanyLocalServiceUtil {
 			defaultAdminMiddleName, defaultAdminLastName);
 	}
 
+	public static Company addDBPartitionCompany(
+			long companyId, String name, String virtualHostName, String webId)
+		throws PortalException {
+
+		return getService().addDBPartitionCompany(
+			companyId, name, virtualHostName, webId);
+	}
+
 	/**
 	 * Returns the company with the web domain.
 	 *
@@ -257,6 +265,12 @@ public class CompanyLocalServiceUtil {
 		com.liferay.portal.kernel.dao.orm.Projection projection) {
 
 		return getService().dynamicQueryCount(dynamicQuery, projection);
+	}
+
+	public static Company extractDBPartitionCompany(long companyId)
+		throws PortalException {
+
+		return getService().extractDBPartitionCompany(companyId);
 	}
 
 	public static Company fetchCompany(long companyId) {

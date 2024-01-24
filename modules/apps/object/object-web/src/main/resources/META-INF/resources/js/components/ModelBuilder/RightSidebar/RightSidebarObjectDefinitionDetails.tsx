@@ -8,13 +8,13 @@ import {
 	getLocalizableLabel,
 	openToast,
 } from '@liferay/object-js-components-web';
-import {createResourceURL, sub} from 'frontend-js-web';
+import {sub} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 import {useStore} from 'react-flow-renderer';
 
 import {AccountRestrictionContainer} from '../../ObjectDetails/AccountRestrictionContainer';
 import {ConfigurationContainer} from '../../ObjectDetails/ConfigurationContainer';
-import {KeyValuePair} from '../../ObjectDetails/EditObjectDetails';
+import {Scope} from '../../ObjectDetails/EditObjectDetails';
 import {EntryDisplayContainer} from '../../ObjectDetails/EntryDisplayContainer';
 import {ObjectDataContainer} from '../../ObjectDetails/ObjectDataContainer';
 import {ScopeContainer} from '../../ObjectDetails/ScopeContainer';
@@ -27,8 +27,8 @@ import {nonRelationshipObjectFieldsInfo} from '../types';
 import './RightSidebarObjectDefinitionDetails.scss';
 
 interface RightSidebarObjectDefinitionDetailsProps {
-	companyKeyValuePairs: KeyValuePair[];
-	siteKeyValuePairs: KeyValuePair[];
+	companies: Scope[];
+	sites: Scope[];
 }
 
 function setAccountRelationshipFieldMandatory(
@@ -54,20 +54,16 @@ function setAccountRelationshipFieldMandatory(
 }
 
 export function RightSidebarObjectDefinitionDetails({
-	companyKeyValuePairs,
-	siteKeyValuePairs,
+	companies,
+	sites,
 }: RightSidebarObjectDefinitionDetailsProps) {
 	const [
 		nonRelationshipObjectFieldsInfo,
 		setNonRelationshipObjectFieldsInfo,
 	] = useState<nonRelationshipObjectFieldsInfo[]>();
-	const [
-		objectDefinitionDBTableName,
-		setObjectDefinitionDBTableName,
-	] = useState('');
 
 	const [
-		{baseResourceURL, selectedObjectDefinitionNode, selectedObjectFolder},
+		{selectedObjectDefinitionNode, selectedObjectFolder},
 		dispatch,
 	] = useObjectFolderContext();
 
@@ -105,24 +101,6 @@ export function RightSidebarObjectDefinitionDetails({
 						?.externalReferenceCode as string
 				);
 
-				const objectDefinitionInfoURL = createResourceURL(
-					baseResourceURL,
-					{
-						objectDefinitionId:
-							selectedObjectDefinitionNode.data?.id,
-						p_p_resource_id:
-							'/object_definitions/get_object_definition_info',
-					}
-				).href;
-
-				const objectDefinitionInfoResponse = await API.fetchJSON<{
-					tableName: string;
-				}>(objectDefinitionInfoURL);
-
-				setObjectDefinitionDBTableName(
-					objectDefinitionInfoResponse.tableName
-				);
-
 				const newNonRelationshipObjectFieldsInfo = selectedObjectDefinition.objectFields
 					.filter(
 						(objectField) =>
@@ -142,7 +120,7 @@ export function RightSidebarObjectDefinitionDetails({
 
 		makeFetch();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [selectedObjectDefinitionNode?.id]);
 
 	const onSubmit = async (
 		editedObjectDefinition?: Partial<ObjectDefinition>
@@ -166,7 +144,7 @@ export function RightSidebarObjectDefinitionDetails({
 			}
 
 			try {
-				const updatedObjectDefinitionResponse = await API.putObjectDefinitionByExternalReferenceCode(
+				const updatedObjectDefinitionResponse = await API.patchObjectDefinitionById(
 					objectDefinition
 				);
 
@@ -221,7 +199,9 @@ export function RightSidebarObjectDefinitionDetails({
 
 			<div className="lfr-objects__model-builder-right-sidebar-object-definition-node-content">
 				<ObjectDataContainer
-					dbTableName={objectDefinitionDBTableName}
+					dbTableName={
+						selectedObjectDefinitionNode?.data?.dbTableName
+					}
 					errors={errors}
 					handleChange={handleChange}
 					hasUpdateObjectDefinitionPermission={
@@ -240,6 +220,7 @@ export function RightSidebarObjectDefinitionDetails({
 
 			<div className="lfr-objects__model-builder-right-sidebar-object-definition-node-content">
 				<EntryDisplayContainer
+					className="lfr-objects__model-builder-right-sidebar-object-definition-entry-display-container"
 					errors={errors}
 					isLinkedObjectDefinition={
 						selectedObjectDefinitionNode?.data
@@ -255,7 +236,8 @@ export function RightSidebarObjectDefinitionDetails({
 				/>
 
 				<ScopeContainer
-					companyKeyValuePairs={companyKeyValuePairs}
+					className="lfr-objects__model-builder-right-sidebar-object-definition-entry-display-container"
+					companies={companies}
 					errors={errors}
 					hasUpdateObjectDefinitionPermission={true}
 					isApproved={values.status?.label === 'approved'}
@@ -266,7 +248,7 @@ export function RightSidebarObjectDefinitionDetails({
 					isRootDescendantNode={isRootDescendantNode}
 					onSubmit={onSubmit}
 					setValues={setValues}
-					siteKeyValuePairs={siteKeyValuePairs}
+					sites={sites}
 					values={values as ObjectDefinition}
 				/>
 			</div>

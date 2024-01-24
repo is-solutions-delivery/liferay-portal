@@ -86,11 +86,7 @@ public class DispatchConfigurator {
 
 			try {
 				_dispatchTriggerHelper.addSchedulerJob(
-					dispatchTrigger.getDispatchTriggerId(),
-					dispatchTrigger.getCronExpression(),
-					dispatchTrigger.getStartDate(),
-					dispatchTrigger.getEndDate(),
-					dispatchTaskClusterMode.getStorageType(),
+					dispatchTrigger, dispatchTaskClusterMode.getStorageType(),
 					dispatchTrigger.getTimeZoneId());
 			}
 			catch (DispatchTriggerSchedulerException
@@ -111,8 +107,7 @@ public class DispatchConfigurator {
 					true, dispatchTaskClusterMode)) {
 
 			_dispatchTriggerHelper.deleteSchedulerJob(
-				dispatchTrigger.getDispatchTriggerId(),
-				dispatchTaskClusterMode.getStorageType());
+				dispatchTrigger, dispatchTaskClusterMode.getStorageType());
 		}
 
 		_serviceRegistration.unregister();

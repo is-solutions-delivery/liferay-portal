@@ -13,15 +13,32 @@ SegmentsExperiment segmentsExperiment = (SegmentsExperiment)request.getAttribute
 
 <aui:script sandbox="<%= true %>">
 	<c:if test='<%= (segmentsExperiment != null) && Objects.equals(segmentsExperiment.getGoal(), "click") && Validator.isNotNull(segmentsExperiment.getGoalTarget()) %>'>
-		var element = document.querySelector(
-			'<%= segmentsExperiment.getGoalTarget() %>'
+		var elements = [];
+
+		var targetableCollectionElements = document.querySelectorAll(
+			'[id^=analytics-targetable-collection]'
 		);
 
-		if (element) {
-			element.addEventListener('click', (event) => {
-				if (window.Analytics) {
-					Analytics.send('ctaClicked', 'Page', {elementId: event.target.id});
+		if (targetableCollectionElements.length) {
+			targetableCollectionElements.forEach((element, index) => {
+				if ('#' + element.id === '<%= segmentsExperiment.getGoalTarget() %>') {
+					elements.push(element);
 				}
+			});
+		}
+		else {
+			elements.push(
+				document.querySelector('<%= segmentsExperiment.getGoalTarget() %>')
+			);
+		}
+
+		if (elements.length) {
+			elements.forEach((element) => {
+				element.addEventListener('click', () => {
+					if (window.Analytics) {
+						Analytics.send('ctaClicked', 'Page', {elementId: element.id});
+					}
+				});
 			});
 		}
 	</c:if>

@@ -90,7 +90,7 @@ Tabs.propTypes = propTypes;
  */
 const withDevicesCard = (
 	withDevices,
-	{documentationTitle = '', documentationUrl = '', title = ''} = {}
+	{documentationTitle, documentationUrl, id, title} = {}
 ) => {
 	const TabsWithDevices = compose(
 		withDevices(),
@@ -145,6 +145,7 @@ const withDevicesCard = (
 		return (
 			<BaseCard
 				className={className}
+				id={id}
 				label={label}
 				legacyDropdownRangeKey={legacyDropdownRangeKey}
 				minHeight={536}

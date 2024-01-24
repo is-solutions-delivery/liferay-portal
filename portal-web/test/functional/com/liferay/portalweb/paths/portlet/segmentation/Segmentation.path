@@ -10,6 +10,7 @@
 </thead>
 
 <tbody>
+
 <tr>
 	<td>ADD_FIELD_POSITION</td>
 	<td>//*[contains(@class, 'criteria-group-item-root')]/div[1] | //*[contains(@class, 'edit-container')]</td>
@@ -32,12 +33,17 @@
 </tr>
 <tr>
 	<td>ADD_FIELD_TYPE</td>
-	<td>//*[contains(@class, 'criteria-sidebar-item-root') and (text()='${key_propertyOption}')]</td>
+	<td>//li[contains(@class, 'criteria-sidebar-item-root')][normalize-space()='${key_propertyOption}']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>ADD_FIELD_TYPE_VISIBLE</td>
-	<td>//button[contains(@class,'panel-header')][contains(@class,'show')]//following-sibling::div//*[contains(@class, 'criteria-sidebar-item-root') and (text()='${key_propertyOption}')]</td>
+	<td>//button[contains(@class,'panel-header')][contains(@class,'show')]//following-sibling::div//*[contains(@class, 'criteria-sidebar-item-root')][normalize-space()='${key_propertyOption}']//div[@draggable='true']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ASSERTIVE</td>
+	<td>//span[@aria-live='assertive'][contains(@class,'sr-only')]/p[normalize-space(text())='${key_assertive}']</td>
 	<td></td>
 </tr>
 <tr>
@@ -58,6 +64,11 @@
 <tr>
 	<td>CONDITIONS_PROPERTY_NAME</td>
 	<td>//div[contains(@class,'criterion')]//span[contains(.,'${propertyName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CONDITIONS_PROPERTY_NAME_BY_INDEX</td>
+	<td>xpath=(//div[contains(@class,'criterion-row')]//span[contains(@class,'criterion')])[${index}][normalize-space()='${propertyName}']</td>
 	<td></td>
 </tr>
 <tr>
@@ -86,6 +97,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>CRITERION_DRAG_ICON</td>
+	<td>//div[contains(@class,'criterion-row')][.//span[contains(@class,'criterion')][normalize-space()='${propertyName}']]//button[(contains(@class,'drag-icon'))]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>CRITERION_VIEW_MODE</td>
 	<td>//span[contains(@class, 'criterion-string')] //b[contains(text(), '${propertyValue}')]</td>
 	<td></td>
@@ -106,6 +122,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>EMPTY_DROP_ZONE_TARGET</td>
+	<td>//div[contains(@class,'empty-drop-zone--target')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>ENABLE_ASSIGN_ROLES_SEGMENTS_CHECKBOX</td>
 	<td>//input[contains(@class, 'custom-control-input') and contains(@name, 'roleSegmentation')]</td>
 	<td></td>
@@ -113,6 +134,11 @@
 <tr>
 	<td>ENABLE_SEGMENTS_INSTANCE_SETTINGS</td>
 	<td>//div[@role='alert']//a[text()='To enable, go to Instance Settings.']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>KEYBOARD_MOVEMENT_PREVIEW</td>
+	<td>//div[contains(@class,'keyboard-movement-preview')]</td>
 	<td></td>
 </tr>
 <tr>

@@ -17,6 +17,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.util.BundleUtil;
 import com.liferay.portal.kernel.security.permission.ResourceActions;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.xml.Document;
@@ -42,6 +43,7 @@ import java.util.Queue;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.wiring.BundleWiring;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -55,10 +57,12 @@ import org.osgi.util.tracker.BundleTrackerCustomizer;
  */
 @Component(service = {})
 public class PortletConfigurationExtender
-	implements BundleTrackerCustomizer<Configuration> {
+	implements BundleTrackerCustomizer<ServiceRegistration<Configuration>> {
 
 	@Override
-	public Configuration addingBundle(Bundle bundle, BundleEvent bundleEvent) {
+	public ServiceRegistration<Configuration> addingBundle(
+		Bundle bundle, BundleEvent bundleEvent) {
+
 		if (!BundleUtil.isLiferayServiceBundle(bundle)) {
 			return null;
 		}
@@ -98,19 +102,27 @@ public class PortletConfigurationExtender
 				exception);
 		}
 
-		return portletConfiguration;
+		return _bundleContext.registerService(
+			Configuration.class, portletConfiguration,
+			HashMapDictionaryBuilder.<String, Object>put(
+				"name", "portlet"
+			).put(
+				"origin.bundle.symbolic.name", bundle.getSymbolicName()
+			).build());
 	}
 
 	@Override
 	public void modifiedBundle(
 		Bundle bundle, BundleEvent bundleEvent,
-		Configuration portletConfiguration) {
+		ServiceRegistration<Configuration> serviceRegistration) {
 	}
 
 	@Override
 	public void removedBundle(
 		Bundle bundle, BundleEvent bundleEvent,
-		Configuration portletConfiguration) {
+		ServiceRegistration<Configuration> serviceRegistration) {
+
+		serviceRegistration.unregister();
 	}
 
 	@Activate

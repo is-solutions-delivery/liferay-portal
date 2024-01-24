@@ -7,8 +7,6 @@ package com.liferay.segments.simulation.web.internal.application.list;
 
 import com.liferay.application.list.BaseJSPPanelApp;
 import com.liferay.application.list.PanelApp;
-import com.liferay.item.selector.ItemSelector;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Portlet;
@@ -54,11 +52,7 @@ public class SegmentsSimulationPanelApp extends BaseJSPPanelApp {
 
 	@Override
 	public String getLabel(Locale locale) {
-		if (FeatureFlagManagerUtil.isEnabled("LPS-186558")) {
-			return _language.get(locale, "page-content");
-		}
-
-		return _language.get(locale, "segments");
+		return _language.get(locale, "page-content");
 	}
 
 	@Override
@@ -80,9 +74,8 @@ public class SegmentsSimulationPanelApp extends BaseJSPPanelApp {
 		httpServletRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT,
 			new SegmentsSimulationDisplayContext(
-				httpServletRequest, _itemSelector, _language,
-				_segmentsConfigurationProvider, _segmentsEntryLocalService,
-				_segmentsExperienceLocalService));
+				httpServletRequest, _language, _segmentsConfigurationProvider,
+				_segmentsEntryLocalService, _segmentsExperienceLocalService));
 
 		return super.include(httpServletRequest, httpServletResponse);
 	}
@@ -102,9 +95,6 @@ public class SegmentsSimulationPanelApp extends BaseJSPPanelApp {
 	protected ServletContext getServletContext() {
 		return _servletContext;
 	}
-
-	@Reference
-	private ItemSelector _itemSelector;
 
 	@Reference
 	private Language _language;

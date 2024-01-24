@@ -6,6 +6,7 @@
 package com.liferay.headless.commerce.admin.catalog.internal.dto.v1_0.converter;
 
 import com.liferay.commerce.product.model.CPDefinitionOptionValueRel;
+import com.liferay.commerce.product.model.CPInstance;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductOptionValue;
 import com.liferay.headless.commerce.core.util.LanguageUtils;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
@@ -36,13 +37,30 @@ public class ProductOptionValueDTOConverter
 
 		return new ProductOptionValue() {
 			{
-				id =
-					cpDefinitionOptionValueRel.
-						getCPDefinitionOptionValueRelId();
-				key = cpDefinitionOptionValueRel.getKey();
-				name = LanguageUtils.getLanguageIdMap(
-					cpDefinitionOptionValueRel.getNameMap());
-				priority = cpDefinitionOptionValueRel.getPriority();
+				setDeltaPrice(cpDefinitionOptionValueRel::getPrice);
+				setId(
+					cpDefinitionOptionValueRel::
+						getCPDefinitionOptionValueRelId);
+				setKey(cpDefinitionOptionValueRel::getKey);
+				setName(
+					() -> LanguageUtils.getLanguageIdMap(
+						cpDefinitionOptionValueRel.getNameMap()));
+				setPreselected(cpDefinitionOptionValueRel::isPreselected);
+				setPriority(cpDefinitionOptionValueRel::getPriority);
+				setQuantity(cpDefinitionOptionValueRel::getQuantity);
+				setSkuId(
+					() -> {
+						CPInstance cpInstance =
+							cpDefinitionOptionValueRel.fetchCPInstance();
+
+						if (cpInstance == null) {
+							return null;
+						}
+
+						return cpInstance.getCPInstanceId();
+					});
+				setUnitOfMeasureKey(
+					cpDefinitionOptionValueRel::getUnitOfMeasureKey);
 			}
 		};
 	}

@@ -111,6 +111,22 @@ public class CIForwardProcessor {
 							_getCIForwardBranchName(), senderUsername,
 							_gitRepositoryDir);
 
+						if (_force) {
+							GitHubRemoteGitRepository
+								gitHubRemoteGitRepository =
+									_pullRequest.getGitHubRemoteGitRepository();
+
+							gitHubRemoteGitRepository.addLabel(
+								"bcf5db", "", "ci:forward:force");
+
+							GitHubRemoteGitRepository.Label
+								ciForwardForceLabel =
+									gitHubRemoteGitRepository.getLabel(
+										"ci:forward:force");
+
+							_pullRequest.addLabel(ciForwardForceLabel);
+						}
+
 						_pullRequest.close();
 
 						StringBuilder sb = new StringBuilder();
@@ -205,10 +221,10 @@ public class CIForwardProcessor {
 			forwardedPullRequestURL);
 
 		try {
-			for (String suiteTestResultGitHubComment :
+			for (PullRequest.Comment comment :
 					_getSuiteTestResultGitHubComments()) {
 
-				forwardedPullRequest.addComment(suiteTestResultGitHubComment);
+				forwardedPullRequest.addComment(comment.getBody());
 			}
 		}
 		catch (IOException ioException) {
@@ -219,6 +235,34 @@ public class CIForwardProcessor {
 			_pullRequest.addComment(
 				_getSuccessCommentBody(forwardedPullRequestURL));
 		}
+	}
+
+	private PullRequest.Comment _findMostRecentTestResultComment(
+		String testSuiteName, boolean requiredPassing,
+		List<PullRequest.Comment> comments) {
+
+		StringBuilder sb = new StringBuilder();
+
+		if (requiredPassing) {
+			sb.append("heavy_check_mark: ci:test:");
+		}
+		else {
+			sb.append(": ci:test:");
+		}
+
+		sb.append(testSuiteName);
+
+		String testSuiteString = sb.toString();
+
+		for (PullRequest.Comment comment : comments) {
+			String commentBody = comment.getBody();
+
+			if (commentBody.contains(testSuiteString)) {
+				return comment;
+			}
+		}
+
+		return null;
 	}
 
 	private String[] _getBuildPropertyAsArray(String propertyName)
@@ -334,7 +378,7 @@ public class CIForwardProcessor {
 		throws IOException {
 
 		List<String> passingTestSuiteNames =
-			_pullRequest.getPassingTestSuites();
+			_pullRequest.getPassingTestSuiteNames();
 
 		String joinedPassingTestSuiteNames = JenkinsResultsParserUtil.join(
 			",", passingTestSuiteNames);
@@ -398,6 +442,31 @@ public class CIForwardProcessor {
 		return JenkinsResultsParserUtil.getGitHubApiSearchUrl(filters);
 	}
 
+	private List<PullRequest.Comment> _getGitHubCIComments() {
+		try {
+			List<PullRequest.Comment> comments = _pullRequest.getComments();
+
+			Collections.reverse(comments);
+
+			String gitHubCIUsername = JenkinsResultsParserUtil.getBuildProperty(
+				"github.ci.username");
+
+			List<PullRequest.Comment> gitHubCIComments = new ArrayList<>(
+				comments.size());
+
+			for (PullRequest.Comment comment : comments) {
+				if (gitHubCIUsername.equals(comment.getUserLogin())) {
+					gitHubCIComments.add(comment);
+				}
+			}
+
+			return gitHubCIComments;
+		}
+		catch (IOException ioException) {
+			throw new RuntimeException(ioException);
+		}
+	}
+
 	private String _getHasOpenForwardedPullRequestCommentBody(
 		List<String> openForwardedPullRequestURLs) {
 
@@ -428,7 +497,7 @@ public class CIForwardProcessor {
 		throws IOException {
 
 		List<String> completedTestSuiteNames =
-			_pullRequest.getCompletedTestSuites();
+			_pullRequest.getCompletedTestSuiteNames();
 
 		String joinedCompletedTestSuiteNames = JenkinsResultsParserUtil.join(
 			",", completedTestSuiteNames);
@@ -559,56 +628,41 @@ public class CIForwardProcessor {
 		return sb.toString();
 	}
 
-	private Set<String> _getSuiteTestResultGitHubComments() throws IOException {
-		Set<String> suiteTestResultGitHubComments = new HashSet<>();
+	private List<PullRequest.Comment> _getSuiteTestResultGitHubComments()
+		throws IOException {
 
 		Set<String> testSuiteNames = new HashSet<>();
 
-		Collections.addAll(
-			testSuiteNames, _getRequiredCompletedTestSuiteNames());
-		Collections.addAll(testSuiteNames, _getRequiredPassingTestSuiteNames());
+		List<String> requiredCompletedTestSuiteNames = Arrays.asList(
+			_getRequiredCompletedTestSuiteNames());
 
-		List<PullRequest.Comment> comments = _pullRequest.getComments();
+		testSuiteNames.addAll(requiredCompletedTestSuiteNames);
 
-		String githubCIUsername = JenkinsResultsParserUtil.getBuildProperty(
-			"github.ci.username");
+		List<String> requiredPassingTestSuiteNames = Arrays.asList(
+			_getRequiredPassingTestSuiteNames());
 
-		for (String ciForwardRequiredSuite : testSuiteNames) {
-			if (ciForwardRequiredSuite.equals("stable") &&
-				testSuiteNames.contains("relevant")) {
+		testSuiteNames.addAll(requiredPassingTestSuiteNames);
 
-				continue;
-			}
+		List<PullRequest.Comment> filteredComments = new ArrayList<>(
+			testSuiteNames.size());
 
-			String failingTestSuiteString =
-				":x: ci:test:" + ciForwardRequiredSuite;
-			String passingTestSuiteString =
-				":heavy_check_mark: ci:test:" + ciForwardRequiredSuite;
+		List<PullRequest.Comment> comments = _getGitHubCIComments();
 
-			for (int i = comments.size() - 1; i >= 0; i--) {
-				PullRequest.Comment comment = comments.get(i);
+		for (String testSuiteName : testSuiteNames) {
+			boolean requiredPassing = requiredPassingTestSuiteNames.contains(
+				testSuiteName);
 
-				String commentUserLogin = comment.getUserLogin();
+			PullRequest.Comment comment = _findMostRecentTestResultComment(
+				testSuiteName, requiredPassing, comments);
 
-				if (!commentUserLogin.equals(githubCIUsername)) {
-					continue;
-				}
-
-				String commentBody = comment.getBody();
-
-				if (!commentBody.contains(failingTestSuiteString) &&
-					!commentBody.contains(passingTestSuiteString)) {
-
-					continue;
-				}
-
-				suiteTestResultGitHubComments.add(commentBody);
-
-				break;
+			if ((comment != null) && !filteredComments.contains(comment)) {
+				filteredComments.add(comment);
 			}
 		}
 
-		return suiteTestResultGitHubComments;
+		Collections.sort(filteredComments);
+
+		return filteredComments;
 	}
 
 	private String _getUnsuccessfulCommentBody() throws IOException {

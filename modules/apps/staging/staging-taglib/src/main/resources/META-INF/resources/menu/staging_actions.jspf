@@ -74,9 +74,7 @@
 				<portlet:param name="localPublishing" value="<%= String.valueOf(localPublishing) %>" />
 				<portlet:param name="privateLayout" value="<%= String.valueOf(privateLayout) %>" />
 				<portlet:param name="quickPublish" value="<%= Boolean.TRUE.toString() %>" />
-				<portlet:param name="remoteAddress" value='<%= liveGroupTypeSettingsUnicodeProperties.getProperty("remoteAddress") %>' />
 				<portlet:param name="remotePathContext" value='<%= liveGroupTypeSettingsUnicodeProperties.getProperty("remotePathContext") %>' />
-				<portlet:param name="remotePort" value='<%= liveGroupTypeSettingsUnicodeProperties.getProperty("remotePort") %>' />
 				<portlet:param name="remoteGroupId" value='<%= liveGroupTypeSettingsUnicodeProperties.getProperty("remoteGroupId") %>' />
 				<portlet:param name="secureConnection" value='<%= liveGroupTypeSettingsUnicodeProperties.getProperty("secureConnection") %>' />
 				<portlet:param name="sourceGroupId" value="<%= String.valueOf(stagingGroupId) %>" />
@@ -93,9 +91,7 @@
 				<portlet:param name="localPublishing" value="<%= String.valueOf(localPublishing) %>" />
 				<portlet:param name="privateLayout" value="<%= String.valueOf(privateLayout) %>" />
 				<portlet:param name="quickPublish" value="<%= Boolean.TRUE.toString() %>" />
-				<portlet:param name="remoteAddress" value='<%= liveGroupTypeSettingsUnicodeProperties.getProperty("remoteAddress") %>' />
 				<portlet:param name="remotePathContext" value='<%= liveGroupTypeSettingsUnicodeProperties.getProperty("remotePathContext") %>' />
-				<portlet:param name="remotePort" value='<%= liveGroupTypeSettingsUnicodeProperties.getProperty("remotePort") %>' />
 				<portlet:param name="remoteGroupId" value='<%= liveGroupTypeSettingsUnicodeProperties.getProperty("remoteGroupId") %>' />
 				<portlet:param name="secureConnection" value='<%= liveGroupTypeSettingsUnicodeProperties.getProperty("secureConnection") %>' />
 				<portlet:param name="sourceGroupId" value="<%= String.valueOf(stagingGroupId) %>" />
@@ -162,7 +158,7 @@
 				var="publishOnLayoutLink"
 			>
 				<div class="btn-group dropdown">
-					<button class="btn btn-primary btn-sm" href="<%= (exportImportServiceConfiguration.showAdvancedStagingConfigurationByDefault() && FeatureFlagManagerUtil.isEnabled("LPS-189187")) ? advancedPublishLayoutsURL : simplePublishLayoutsURL %>" id="<%= layoutSetBranchId %>publishToLiveLink" type="button">
+					<button class="btn btn-primary btn-sm" href="<%= exportImportServiceConfiguration.showAdvancedStagingConfigurationByDefault() ? advancedPublishLayoutsURL : simplePublishLayoutsURL %>" id="<%= layoutSetBranchId %>publishToLiveLink" type="button">
 						<liferay-ui:message key="publish-to-live" />
 					</button>
 

@@ -5,11 +5,15 @@
 
 package com.liferay.frontend.taglib.servlet.taglib;
 
+import com.liferay.frontend.js.loader.modules.extender.esm.ESImportUtil;
 import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolvedPackageNameUtil;
+import com.liferay.frontend.taglib.internal.util.ServicesProvider;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONSerializer;
+import com.liferay.portal.kernel.servlet.taglib.aui.ESImport;
+import com.liferay.portal.kernel.servlet.taglib.aui.JSFragment;
 import com.liferay.portal.kernel.servlet.taglib.aui.ScriptData;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -20,10 +24,13 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
+import com.liferay.portal.url.builder.AbsolutePortalURLBuilderFactory;
 import com.liferay.taglib.util.ParamAndPropertyAncestorTagImpl;
 
 import java.io.IOException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -39,7 +46,14 @@ public class ComponentTag extends ParamAndPropertyAncestorTagImpl {
 	@Override
 	public int doEndTag() throws JspException {
 		try {
-			_renderJavaScript();
+			String module = getModule();
+
+			if (ESImportUtil.isESImport(module)) {
+				_renderESM(module);
+			}
+			else {
+				_renderJavaScript(module);
+			}
 		}
 		catch (Exception exception) {
 			throw new JspException(exception);
@@ -65,6 +79,10 @@ public class ComponentTag extends ParamAndPropertyAncestorTagImpl {
 	}
 
 	public String getModule() {
+		if (ESImportUtil.isESImport(_module)) {
+			return _module;
+		}
+
 		return StringBundler.concat(getNamespace(), "/", _module);
 	}
 
@@ -186,9 +204,7 @@ public class ComponentTag extends ParamAndPropertyAncestorTagImpl {
 		sb.append(componentId);
 
 		sb.append("', new ");
-
 		sb.append(variableName);
-
 		sb.append(".default(");
 
 		HttpServletRequest httpServletRequest = getRequest();
@@ -233,9 +249,96 @@ public class ComponentTag extends ParamAndPropertyAncestorTagImpl {
 		return StringUtil.removeChars(moduleName, _UNSAFE_MODULE_NAME_CHARS);
 	}
 
-	private void _renderJavaScript() throws IOException {
-		String module = getModule();
+	private void _renderESM(String module) throws IOException {
+		List<ESImport> esImports = new ArrayList<>();
 
+		AbsolutePortalURLBuilderFactory absolutePortalURLBuilderFactory =
+			ServicesProvider.getAbsolutePortalURLBuilderFactory();
+
+		HttpServletRequest httpServletRequest =
+			(HttpServletRequest)pageContext.getRequest();
+
+		esImports.add(
+			ESImportUtil.getESImport(
+				absolutePortalURLBuilderFactory.getAbsolutePortalURLBuilder(
+					httpServletRequest),
+				"ComponentModule", module));
+
+		StringBundler contentSB = new StringBundler(12);
+
+		contentSB.append("Liferay.component('");
+
+		String componentId = getComponentId();
+
+		if (componentId == null) {
+			componentId = _UNNAMED_COMPONENT_NAME + PortalUUIDUtil.generate();
+		}
+
+		contentSB.append(componentId);
+
+		contentSB.append("', new ComponentModule(");
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
+
+		contentSB.append(
+			_jsonSerializer.serializeDeep(
+				HashMapBuilder.putAll(
+					getContext()
+				).put(
+					"namespace", portletDisplay.getNamespace()
+				).put(
+					"spritemap", themeDisplay.getPathThemeSpritemap()
+				).build()));
+
+		String containerId = getContainerId();
+
+		if (Validator.isNotNull(containerId)) {
+			contentSB.append(", '");
+			contentSB.append(containerId);
+			contentSB.append("'");
+		}
+
+		contentSB.append("), { destroyOnNavigate: ");
+		contentSB.append(_destroyOnNavigate);
+		contentSB.append(", portletId: '");
+		contentSB.append(portletDisplay.getId());
+		contentSB.append("'});");
+
+		String portletId = portletDisplay.getId();
+
+		if (isPositionInline()) {
+			ScriptData scriptData = new ScriptData();
+
+			scriptData.append(
+				portletId,
+				new JSFragment(null, contentSB.toString(), esImports));
+
+			JspWriter jspWriter = pageContext.getOut();
+
+			scriptData.writeTo(jspWriter);
+		}
+		else {
+			ScriptData scriptData = (ScriptData)httpServletRequest.getAttribute(
+				WebKeys.AUI_SCRIPT_DATA);
+
+			if (scriptData == null) {
+				scriptData = new ScriptData();
+
+				httpServletRequest.setAttribute(
+					WebKeys.AUI_SCRIPT_DATA, scriptData);
+			}
+
+			scriptData.append(
+				portletId,
+				new JSFragment(null, contentSB.toString(), esImports));
+		}
+	}
+
+	private void _renderJavaScript(String module) throws IOException {
 		String variableName = _getVariableName(module);
 
 		String javaScriptCode = _getRenderInvocation(variableName);

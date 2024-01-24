@@ -15,7 +15,9 @@ import {CheckboxField} from '../../../../../../app/components/fragment_configura
 import {SelectField} from '../../../../../../app/components/fragment_configuration_fields/SelectField';
 import {EDITABLE_FRAGMENT_ENTRY_PROCESSOR} from '../../../../../../app/config/constants/editableFragmentEntryProcessor';
 import {EDITABLE_TYPES} from '../../../../../../app/config/constants/editableTypes';
+import {LAYOUT_TYPES} from '../../../../../../app/config/constants/layoutTypes';
 import {config} from '../../../../../../app/config/index';
+import {useCollectionConfig} from '../../../../../../app/contexts/CollectionItemContext';
 import {
 	useDispatch,
 	useSelector,
@@ -31,6 +33,7 @@ import isMapped from '../../../../../../app/utils/editable_value/isMapped';
 import {updateIn} from '../../../../../../app/utils/updateIn';
 import useCache from '../../../../../../app/utils/useCache';
 import CurrentLanguageFlag from '../../../../../../common/components/CurrentLanguageFlag';
+import DisplayPageSelector from '../../../../../../common/components/DisplayPageSelector';
 import {LayoutSelector} from '../../../../../../common/components/LayoutSelector';
 import MappingSelector from '../../../../../../common/components/MappingSelector';
 import {getEditableItemPropTypes} from '../../../../../../prop_types/index';
@@ -39,8 +42,9 @@ const INTERACTION_NONE = 'none';
 const INTERACTION_NOTIFICATION = 'notification';
 const INTERACTION_PAGE = 'page';
 const INTERACTION_URL = 'url';
+const INTERACTION_DISPLAY_PAGE = 'displayPage';
 
-const INTERACTION_OPTIONS = [
+const ERROR_INTERACTION_OPTIONS = [
 	{
 		label: Liferay.Language.get('none'),
 		value: INTERACTION_NONE,
@@ -56,6 +60,14 @@ const INTERACTION_OPTIONS = [
 	{
 		label: Liferay.Language.get('go-to-external-url'),
 		value: INTERACTION_URL,
+	},
+];
+
+const SUCCESS_INTERACTION_OPTIONS = [
+	...ERROR_INTERACTION_OPTIONS,
+	{
+		label: Liferay.Language.get('go-to-entry-display-page'),
+		value: INTERACTION_DISPLAY_PAGE,
 	},
 ];
 
@@ -90,7 +102,6 @@ export default function EditableActionPanel({item}) {
 			),
 		[item.fragmentEntryLinkId]
 	);
-
 	const onValueSelect = (name, value) => {
 		dispatch(
 			updateEditableValues({
@@ -136,19 +147,21 @@ export default function EditableActionPanel({item}) {
 			{isMapped(mappedAction) && (
 				<>
 					<InteractionSelector
-						config={editableValue.config}
 						data={INTERACTION_DATA.success}
 						fragmentId={item.parentId}
+						interactionOptions={SUCCESS_INTERACTION_OPTIONS}
+						itemConfig={editableValue.config}
 						onValueSelect={onValueSelect}
 					/>
 
 					<InteractionSelector
-						config={editableValue.config}
 						data={{
 							...INTERACTION_DATA.error,
 							defaultMessage: defaultError,
 						}}
 						fragmentId={item.parentId}
+						interactionOptions={ERROR_INTERACTION_OPTIONS}
+						itemConfig={editableValue.config}
 						onValueSelect={onValueSelect}
 					/>
 				</>
@@ -161,17 +174,26 @@ EditableActionPanel.propTypes = {
 	item: getEditableItemPropTypes(),
 };
 
-function InteractionSelector({config, data, fragmentId, onValueSelect}) {
+function InteractionSelector({
+	data,
+	fragmentId,
+	interactionOptions,
+	itemConfig,
+	onValueSelect,
+}) {
 	const {defaultMessage, field, label, type} = data;
 
-	const interactionConfig = config[field];
+	const interactionConfig = itemConfig[field];
 
-	const {interaction, page, reload, text, url} = interactionConfig || {};
+	const {displayPageUniqueFieldId, interaction, page, reload, text, url} =
+		interactionConfig || {};
 
 	const languageId = useSelector(selectLanguageId);
 	const fragmentConfig = useSelector(
 		({layoutData}) => layoutData.items[fragmentId].config
 	);
+
+	const collectionConfig = useCollectionConfig();
 
 	const dispatch = useDispatch();
 	const previewId = useId();
@@ -215,6 +237,24 @@ function InteractionSelector({config, data, fragmentId, onValueSelect}) {
 		previewElement?.remove();
 	};
 
+	let mappingIds = null;
+
+	if (
+		config.layoutType === LAYOUT_TYPES.display &&
+		itemConfig.mappedAction.mappedField
+	) {
+		const {selectedMappingTypes} = config;
+		mappingIds = {
+			classNameId: selectedMappingTypes.type.id,
+			classTypeId: selectedMappingTypes.subtype.id,
+		};
+	}
+	else {
+		mappingIds = collectionConfig
+			? collectionConfig.collection
+			: itemConfig.mappedAction;
+	}
+
 	return (
 		<>
 			<SelectField
@@ -222,7 +262,7 @@ function InteractionSelector({config, data, fragmentId, onValueSelect}) {
 					label: sub(Liferay.Language.get('x-interaction'), label),
 					name: 'interaction',
 					typeOptions: {
-						validValues: INTERACTION_OPTIONS,
+						validValues: interactionOptions,
 					},
 				}}
 				onValueSelect={(name, value) => {
@@ -230,6 +270,19 @@ function InteractionSelector({config, data, fragmentId, onValueSelect}) {
 				}}
 				value={interaction}
 			/>
+
+			{interaction === INTERACTION_DISPLAY_PAGE && (
+				<DisplayPageSelector
+					mappingIds={mappingIds}
+					onConfigChange={(layout) => {
+						onConfigChange(
+							'displayPageUniqueFieldId',
+							layout.displayPage
+						);
+					}}
+					selectedValue={displayPageUniqueFieldId}
+				/>
+			)}
 
 			{(!interaction ||
 				[INTERACTION_NONE, INTERACTION_NOTIFICATION].includes(
@@ -365,8 +418,8 @@ function InteractionSelector({config, data, fragmentId, onValueSelect}) {
 }
 
 InteractionSelector.propTypes = {
-	config: PropTypes.object.isRequired,
 	data: PropTypes.object.isRequired,
 	fragmentId: PropTypes.string.isRequired,
+	itemConfig: PropTypes.object.isRequired,
 	onValueSelect: PropTypes.func.isRequired,
 };

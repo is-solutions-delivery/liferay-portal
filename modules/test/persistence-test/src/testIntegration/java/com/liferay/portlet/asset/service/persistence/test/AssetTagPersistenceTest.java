@@ -230,15 +230,6 @@ public class AssetTagPersistenceTest {
 	}
 
 	@Test
-	public void testCountByG_N() throws Exception {
-		_persistence.countByG_N(RandomTestUtil.nextLong(), "");
-
-		_persistence.countByG_N(0L, "null");
-
-		_persistence.countByG_N(0L, (String)null);
-	}
-
-	@Test
 	public void testCountByG_LikeN() throws Exception {
 		_persistence.countByG_LikeN(RandomTestUtil.nextLong(), "");
 
@@ -546,17 +537,6 @@ public class AssetTagPersistenceTest {
 			ReflectionTestUtil.<Long>invoke(
 				assetTag, "getColumnOriginalValue",
 				new Class<?>[] {String.class}, "groupId"));
-
-		Assert.assertEquals(
-			Long.valueOf(assetTag.getGroupId()),
-			ReflectionTestUtil.<Long>invoke(
-				assetTag, "getColumnOriginalValue",
-				new Class<?>[] {String.class}, "groupId"));
-		Assert.assertEquals(
-			assetTag.getName(),
-			ReflectionTestUtil.invoke(
-				assetTag, "getColumnOriginalValue",
-				new Class<?>[] {String.class}, "name"));
 	}
 
 	protected AssetTag addAssetTag() throws Exception {

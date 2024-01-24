@@ -6,7 +6,6 @@
 import ClayIcon from '@clayui/icon';
 import ClayTable from '@clayui/table';
 
-import './PublishedAppsDashboardTableRow.scss';
 import {useAppContext} from '../../manage-app-state/AppManageState';
 import {MemberProps} from '../../pages/PublishedAppsDashboard/PublishedDashboardPageUtil';
 import {Avatar} from '../Avatar/Avatar';
@@ -25,7 +24,7 @@ export function DashboardMemberTableRow({
 	onSelectedMemberChange,
 }: DashboardMemberTableRowProps) {
 	const {email, image, name, role} = item;
-	const [{gravatarAPI}, _] = useAppContext();
+	const [{gravatarAPI}] = useAppContext();
 	const isInvitedMember = role.includes('Invited Member');
 
 	return (

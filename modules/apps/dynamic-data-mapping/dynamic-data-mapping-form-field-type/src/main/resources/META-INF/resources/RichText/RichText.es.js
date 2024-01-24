@@ -168,9 +168,10 @@ const RichText = ({
 			style={readOnly ? {pointerEvents: 'none'} : null}
 			visible={visible}
 		>
-			<ClayInput.Group aria-required={otherProps.required}>
+			<ClayInput.Group>
 				<ClayInput.GroupItem>
 					<ClassicEditor
+						aria-required={otherProps.required}
 						className="w-100"
 						contents={
 							currentValue
@@ -182,12 +183,20 @@ const RichText = ({
 						onBlur={onBlur}
 						onChange={(content) => handleContentChange(content)}
 						onFocus={onFocus}
-						onSetData={({
-							data: {dataValue: value},
-							editor: {mode},
-						}) => {
-							if (mode === 'source') {
-								handleContentChange(value);
+						onSetData={(event) => {
+							const editor = event.editor;
+
+							if (editor.mode === 'source') {
+								const value = event.data.dataValue;
+
+								const sanitizedValue = value.replace(
+									/onerror="[^"]+"/gi,
+									''
+								);
+
+								handleContentChange(sanitizedValue);
+
+								event.data.dataValue = sanitizedValue;
 							}
 						}}
 						readOnly={readOnly}

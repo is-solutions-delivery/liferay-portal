@@ -6,19 +6,24 @@
 package com.liferay.client.extension.web.internal.portlet;
 
 import com.liferay.client.extension.type.IFrameCET;
-import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
+import com.liferay.frontend.js.loader.modules.extender.esm.ESImportUtil;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.servlet.taglib.aui.JSFragment;
 import com.liferay.portal.kernel.servlet.taglib.aui.ScriptData;
 import com.liferay.portal.kernel.servlet.taglib.util.OutputData;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.url.builder.AbsolutePortalURLBuilder;
+import com.liferay.portal.url.builder.AbsolutePortalURLBuilderFactory;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.Map;
 import java.util.Properties;
@@ -32,11 +37,15 @@ import javax.portlet.RenderResponse;
 public class IFrameCETPortlet extends BaseCETPortlet<IFrameCET> {
 
 	public IFrameCETPortlet(
-		IFrameCET iFrameCET, NPMResolver npmResolver, String portletId) {
+		IFrameCET iFrameCET,
+		AbsolutePortalURLBuilderFactory absolutePortalURLBuilderFactory,
+		String portletId, Portal portal) {
 
-		super(iFrameCET, npmResolver);
+		super(iFrameCET);
 
+		_absolutePortalURLBuilderFactory = absolutePortalURLBuilderFactory;
 		_portletId = portletId;
+		_portal = portal;
 	}
 
 	@Override
@@ -71,13 +80,18 @@ public class IFrameCETPortlet extends BaseCETPortlet<IFrameCET> {
 
 		ScriptData scriptData = new ScriptData();
 
-		String moduleName = npmResolver.resolveModuleName(
-			"@liferay/client-extension-web/remote_protocol/bridge");
+		AbsolutePortalURLBuilder absolutePortalURLBuilder =
+			_absolutePortalURLBuilderFactory.getAbsolutePortalURLBuilder(
+				_portal.getHttpServletRequest(renderRequest));
 
 		scriptData.append(
-			null, "RemoteProtocolBridge.default()",
-			moduleName + " as RemoteProtocolBridge",
-			ScriptData.ModulesType.ES6);
+			null,
+			new JSFragment(
+				"remoteProtocol();",
+				Arrays.asList(
+					ESImportUtil.getESImport(
+						absolutePortalURLBuilder,
+						"{remoteProtocol} from client-extension-web"))));
 
 		StringWriter stringWriter = new StringWriter();
 
@@ -109,6 +123,9 @@ public class IFrameCETPortlet extends BaseCETPortlet<IFrameCET> {
 		printWriter.flush();
 	}
 
+	private final AbsolutePortalURLBuilderFactory
+		_absolutePortalURLBuilderFactory;
+	private final Portal _portal;
 	private final String _portletId;
 
 }

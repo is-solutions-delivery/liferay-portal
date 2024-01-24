@@ -468,7 +468,7 @@ definition {
 				value1 = "Cancel");
 		}
 		else if (${includeThumbnailsAndPreviewsDuringStaging} == "false") {
-			AssertTextNotEquals.assertNotPartialText(
+			AssertTextNotEquals.assertNotPartialMatch(
 				locator1 = "Staging#STAGING_CONTENT_INFO",
 				value1 = "Previews and Thumbnails");
 
@@ -521,6 +521,10 @@ definition {
 
 		if (isSet(checkPublicPages)) {
 			ContentConfiguration.checkPublicPages(checkPublicPages = ${checkPublicPages});
+		}
+
+		if (isSet(checkPublishPermission)) {
+			Click(locator1 = "Checkbox#PERMISSIONS");
 		}
 	}
 
@@ -1156,6 +1160,33 @@ definition {
 	}
 
 	@summary = "Default summary"
+	macro publishWithMultiPublishOption() {
+		if (!(isSet(index))) {
+			var index = 1;
+		}
+
+		Click(locator1 = "ManagementBar#MORE_ACTIONS_ELLIPSIS");
+
+		MenuItem.clickNoError(menuItem = "Publish Selected Elements");
+
+		AssertTextEquals(
+			index = ${index},
+			locator1 = "Modal#BODY_MESSAGE",
+			value1 = "Are you sure you want to publish the selected entities?");
+
+		AssertClick(
+			buttonName = "Publish to Live",
+			locator1 = "Modal#PRIMARY_BUTTON",
+			value1 = "Publish to Live");
+
+		WaitForElementPresent(locator1 = "Staging#PROCESS_RESULT");
+
+		AssertTextEquals(
+			locator1 = "Staging#PROCESS_RESULT",
+			value1 = "SUCCESSFUL");
+	}
+
+	@summary = "Default summary"
 	macro redoStagingPageVersioningPG() {
 		while (IsElementNotPresent(locator1 = "Staging#STAGING_MENU_REDO_BUTTON")) {
 			Click(locator1 = "Icon#STAGING_BAR_VERTICAL_ELLIPSIS");
@@ -1393,6 +1424,8 @@ definition {
 		}
 
 		AssertElementNotPresent(locator1 = "Staging#STAGING_MENU_SUBMIT_FOR_WORKFLOW");
+
+		Refresh();
 
 		if (IsTextEqual(locator1 = "Message#WORKFLOW_STATUS", value1 = "Pending (Created)")) {
 			AssertTextEquals(

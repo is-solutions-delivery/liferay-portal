@@ -11,6 +11,8 @@ import com.liferay.batch.planner.rest.client.pagination.Page;
 import com.liferay.batch.planner.rest.client.problem.Problem;
 import com.liferay.batch.planner.rest.client.serdes.v1_0.StrategySerDes;
 
+import java.net.URL;
+
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -91,6 +93,10 @@ public interface StrategyResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {

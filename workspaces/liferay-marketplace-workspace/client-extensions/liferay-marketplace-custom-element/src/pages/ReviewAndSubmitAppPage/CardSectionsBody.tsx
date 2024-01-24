@@ -5,9 +5,11 @@
 
 import brightnessEmptyIcon from '../../assets/icons/brightness_empty_icon.svg';
 import calendarMonthIcon from '../../assets/icons/calendar_month_icon.svg';
+import cancelIcon from '../../assets/icons/cancel_icon.svg';
 import creditCardIcon from '../../assets/icons/credit_card_icon.svg';
 import documentIcon from '../../assets/icons/document_icon.svg';
 import scheduleIcon from '../../assets/icons/schedule_icon.svg';
+import taskCheckedIcon from '../../assets/icons/task_checked_icon.svg';
 import {CardLink} from '../../components/Card/CardLink';
 import {CardView} from '../../components/Card/CardView';
 import {LicensePriceChildren} from '../../components/LicensePriceCard/LicensePriceChildren';
@@ -17,6 +19,7 @@ import {CardSection} from './CardSection';
 import {App} from './ReviewAndSubmitAppPageUtil';
 
 import './CardSectionsBody.scss';
+import i18n from '../../i18n';
 
 interface CardSectionsBodyProps {
 	app: App;
@@ -67,6 +70,52 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 				enableEdit={!readonly}
 				localized
 				required
+				sectionName="Cloud Compatible"
+			>
+				<div className="card-section-body-cloud-compatible">
+					<CardView
+						description={
+							app?.type === 'cloud'
+								? i18n.translate(
+										'create-a-cloud-app-using-client-extensions'
+								  )
+								: i18n.translate(
+										'create-a-dxp-app-using-a-plugin-package'
+								  )
+						}
+						icon={
+							app?.type === 'cloud' ? taskCheckedIcon : cancelIcon
+						}
+						title={app?.type === 'cloud' ? 'Yes' : 'No'}
+					/>
+				</div>
+			</CardSection>
+
+			<CardSection
+				enableEdit={readonly}
+				localized
+				required
+				sectionName="Resource Requirements"
+			>
+				<div className="card-section-body-section-requirements d-flex justify-content-between">
+					<CardView
+						description={app?.resourceRequirements?.cpu}
+						title={i18n.translate('number-of-cpus')}
+						tooltip={readonly ? '' : i18n.translate('more-info')}
+					/>
+
+					<CardView
+						description={`${app?.resourceRequirements?.ram} GB`}
+						title="Ram in GB"
+						tooltip={readonly ? '' : i18n.translate('more-info')}
+					/>
+				</div>
+			</CardSection>
+
+			<CardSection
+				enableEdit={!readonly}
+				localized
+				required
 				sectionName="Build"
 			>
 				<div className="card-section-body-section-file">
@@ -98,16 +147,16 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 			>
 				<CardView
 					description={
-						app?.priceModel === 'Free'
+						app?.['price-model'] === 'Free'
 							? 'The app is offered in the Marketplace with no charge.'
 							: 'To enable paid apps, you must be a business and enter payment information in your Marketplace account profile.'
 					}
 					icon={
-						app?.priceModel === 'Free'
+						app?.['price-model'] === 'Free'
 							? brightnessEmptyIcon
 							: creditCardIcon
 					}
-					title={app?.priceModel as string}
+					title={app?.['price-model'] as string}
 				/>
 			</CardSection>
 
@@ -119,22 +168,22 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 			>
 				<CardView
 					description={
-						app?.licenseType === 'Perpetual'
+						app?.['license-type'] === 'Perpetual'
 							? 'License never expires.'
 							: 'License must be renewed annually.'
 					}
 					icon={
-						app?.licenseType === 'Perpetual'
+						app?.['license-type'] === 'Perpetual'
 							? scheduleIcon
 							: calendarMonthIcon
 					}
 					title={
-						app?.licenseType === 'Perpetual'
+						app?.['license-type'] === 'Perpetual'
 							? 'Perpetual License'
 							: 'Non-perpetual License'
 					}
 				>
-					{app?.priceModel === 'Paid' && (
+					{app?.['price-model'] === 'Paid' && (
 						<LicensePriceChildren
 							currency="USD"
 							quantity={{

@@ -4,6 +4,7 @@
  */
 
 import {SidebarCategory} from '@liferay/object-js-components-web';
+import {ILearnResourceContext} from 'frontend-js-components-web';
 import React, {ElementType} from 'react';
 
 import {ObjectFieldErrors} from '../../ObjectFieldFormBase';
@@ -15,7 +16,8 @@ interface AdvancedTabProps {
 	creationLanguageId: Liferay.Language.Locale;
 	errors: ObjectFieldErrors;
 	isDefaultStorageType: boolean;
-	learnResources: ObjectWebLearnResources;
+	isRootDescendantNode: boolean;
+	learnResources: ILearnResourceContext;
 	modelBuilder?: boolean;
 	onSubmit?: () => void;
 	readOnlySidebarElements: SidebarCategory[];
@@ -29,6 +31,7 @@ export function AdvancedTab({
 	creationLanguageId,
 	errors,
 	isDefaultStorageType,
+	isRootDescendantNode,
 	learnResources,
 	modelBuilder = false,
 	onSubmit,
@@ -41,6 +44,8 @@ export function AdvancedTab({
 		values.businessType === 'Aggregation' ||
 		values.businessType === 'AutoIncrement' ||
 		values.businessType === 'Formula' ||
+		(values.businessType === 'Relationship' && isRootDescendantNode) ||
+		values.required ||
 		values.system;
 
 	return (

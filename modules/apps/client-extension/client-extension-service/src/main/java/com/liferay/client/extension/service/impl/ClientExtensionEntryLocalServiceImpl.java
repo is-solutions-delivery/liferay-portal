@@ -182,7 +182,8 @@ public class ClientExtensionEntryLocalServiceImpl
 
 		_serviceRegistrationsMap.put(
 			clientExtensionEntry.getClientExtensionEntryId(),
-			_cetDeployer.deploy(_cetFactory.create(clientExtensionEntry)));
+			_cetDeployer.deploy(
+				_cetFactory.create(clientExtensionEntry, true)));
 	}
 
 	@Override
@@ -335,19 +336,10 @@ public class ClientExtensionEntryLocalServiceImpl
 			clientExtensionEntryPersistence.findByPrimaryKey(
 				clientExtensionEntryId);
 
-		if (status == clientExtensionEntry.getStatus()) {
+		int oldStatus = clientExtensionEntry.getStatus();
+
+		if (status == oldStatus) {
 			return clientExtensionEntry;
-		}
-
-		if (status == WorkflowConstants.STATUS_APPROVED) {
-			clientExtensionEntryLocalService.deployClientExtensionEntry(
-				clientExtensionEntry);
-		}
-		else if (clientExtensionEntry.getStatus() ==
-					WorkflowConstants.STATUS_APPROVED) {
-
-			clientExtensionEntryLocalService.undeployClientExtensionEntry(
-				clientExtensionEntry);
 		}
 
 		User user = _userLocalService.getUser(userId);
@@ -357,7 +349,19 @@ public class ClientExtensionEntryLocalServiceImpl
 		clientExtensionEntry.setStatusByUserName(user.getFullName());
 		clientExtensionEntry.setStatusDate(new Date());
 
-		return clientExtensionEntryPersistence.update(clientExtensionEntry);
+		clientExtensionEntry = clientExtensionEntryPersistence.update(
+			clientExtensionEntry);
+
+		if (status == WorkflowConstants.STATUS_APPROVED) {
+			clientExtensionEntryLocalService.deployClientExtensionEntry(
+				clientExtensionEntry);
+		}
+		else if (oldStatus == WorkflowConstants.STATUS_APPROVED) {
+			clientExtensionEntryLocalService.undeployClientExtensionEntry(
+				clientExtensionEntry);
+		}
+
+		return clientExtensionEntry;
 	}
 
 	private void _addResources(ClientExtensionEntry clientExtensionEntry)

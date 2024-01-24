@@ -221,6 +221,14 @@ public class OrganizationServiceUtil {
 		return getService().fetchOrganization(organizationId);
 	}
 
+	public static Organization fetchOrganizationByExternalReferenceCode(
+			String externalReferenceCode, long companyId)
+		throws PortalException {
+
+		return getService().fetchOrganizationByExternalReferenceCode(
+			externalReferenceCode, companyId);
+	}
+
 	public static List<Organization> getGtOrganizations(
 		long gtOrganizationId, long companyId, long parentOrganizationId,
 		int size) {

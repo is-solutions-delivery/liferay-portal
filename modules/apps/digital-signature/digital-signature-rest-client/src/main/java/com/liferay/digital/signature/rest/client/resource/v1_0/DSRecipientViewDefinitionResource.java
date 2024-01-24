@@ -11,6 +11,8 @@ import com.liferay.digital.signature.rest.client.http.HttpInvoker;
 import com.liferay.digital.signature.rest.client.problem.Problem;
 import com.liferay.digital.signature.rest.client.serdes.v1_0.DSEnvelopeSignatureURLSerDes;
 
+import java.net.URL;
+
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -93,6 +95,10 @@ public interface DSRecipientViewDefinitionResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {

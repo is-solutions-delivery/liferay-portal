@@ -17,6 +17,7 @@ import com.liferay.portal.kernel.test.util.HTTPTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.TextFormatter;
 import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
@@ -47,6 +48,8 @@ public class APIFilterRelevantObjectEntryModelListenerTest
 		super.setUp();
 
 		_objectDefinitionJSONObject = _addObjectDefinition();
+
+		_objectEntryJSONObject = _addObjectEntry();
 	}
 
 	@Test
@@ -92,7 +95,7 @@ public class APIFilterRelevantObjectEntryModelListenerTest
 	}
 
 	@Test
-	public void testGetEndpointsWithApiEndpointToAPIFiltersAsNestedFields()
+	public void testGetEndpointsWithAPIEndpointToAPIFiltersAsNestedFields()
 		throws Exception {
 
 		_addAPIApplication(
@@ -151,24 +154,6 @@ public class APIFilterRelevantObjectEntryModelListenerTest
 			JSONUtil.put(
 				"status", "BAD_REQUEST"
 			).put(
-				"title", "An API filter must be related to an API endpoint."
-			).toString(),
-			HTTPTestUtil.invokeToJSONObject(
-				JSONUtil.put(
-					"objectFieldERC", RandomTestUtil.randomString()
-				).put(
-					"oDataFilter", "test ne 1"
-				).put(
-					"r_apiEndpointToAPIFilters_c_apiEndpointId",
-					RandomTestUtil.randomLong()
-				).toString(),
-				"headless-builder/filters", Http.Method.POST
-			).toString(),
-			JSONCompareMode.LENIENT);
-		JSONAssert.assertEquals(
-			JSONUtil.put(
-				"status", "BAD_REQUEST"
-			).put(
 				"title",
 				"Object entry value exceeds the maximum length of 1000 " +
 					"characters for object field \"oDataFilter\""
@@ -204,13 +189,79 @@ public class APIFilterRelevantObjectEntryModelListenerTest
 				"headless-builder/filters", Http.Method.POST
 			).toString(),
 			JSONCompareMode.LENIENT);
+
+		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
+			JSONUtil.put(
+				"description", "description"
+			).put(
+				"externalReferenceCode", RandomTestUtil.randomString()
+			).put(
+				"httpMethod", "get"
+			).put(
+				"name", "name"
+			).put(
+				"path",
+				StringBundler.concat(
+					StringPool.FORWARD_SLASH,
+					StringUtil.toLowerCase(RandomTestUtil.randomString()),
+					"/{pathParameterId}")
+			).put(
+				"pathParameter", "id"
+			).put(
+				"r_apiApplicationToAPIEndpoints_c_apiApplicationERC",
+				_API_APPLICATION_ERC
+			).put(
+				"r_responseAPISchemaToAPIEndpoints_c_apiSchemaERC",
+				_API_SCHEMA_ERC
+			).put(
+				"retrieveType", "singleElement"
+			).put(
+				"scope", APIApplication.Endpoint.Scope.COMPANY.getValue()
+			).toString(),
+			"headless-builder/endpoints", Http.Method.POST);
+
+		JSONAssert.assertEquals(
+			JSONUtil.put(
+				"status", "BAD_REQUEST"
+			).put(
+				"title",
+				"The API filter can only be associated to API endpoints with " +
+					"a retrieve type of \"collection.\""
+			).toString(),
+			HTTPTestUtil.invokeToJSONObject(
+				JSONUtil.put(
+					"oDataFilter", "test:desc"
+				).put(
+					"r_apiEndpointToAPIFilters_c_apiEndpointId",
+					jsonObject.get("id")
+				).toString(),
+				"headless-builder/filters", Http.Method.POST
+			).toString(),
+			JSONCompareMode.LENIENT);
+
+		JSONAssert.assertEquals(
+			JSONUtil.put(
+				"status", "BAD_REQUEST"
+			).put(
+				"title", "The API filter must be related to an API endpoint."
+			).toString(),
+			HTTPTestUtil.invokeToJSONObject(
+				JSONUtil.put(
+					"objectFieldERC", RandomTestUtil.randomString()
+				).put(
+					"oDataFilter", "test ne 1"
+				).put(
+					"r_apiEndpointToAPIFilters_c_apiEndpointId",
+					_objectEntryJSONObject.getLong("id")
+				).toString(),
+				"headless-builder/filters", Http.Method.POST
+			).toString(),
+			JSONCompareMode.LENIENT);
 	}
 
 	private void _addAPIApplication(
 			String objectDefinitionExternalReferenceCode)
 		throws Exception {
-
-		String apiSchemaExternalReferenceCode = RandomTestUtil.randomString();
 
 		HTTPTestUtil.invokeToHttpCode(
 			JSONUtil.put(
@@ -248,7 +299,7 @@ public class APIFilterRelevantObjectEntryModelListenerTest
 					).put(
 						"description", "description"
 					).put(
-						"externalReferenceCode", apiSchemaExternalReferenceCode
+						"externalReferenceCode", _API_SCHEMA_ERC
 					).put(
 						"mainObjectDefinitionERC",
 						objectDefinitionExternalReferenceCode
@@ -260,7 +311,7 @@ public class APIFilterRelevantObjectEntryModelListenerTest
 			).put(
 				"baseURL", StringUtil.toLowerCase(RandomTestUtil.randomString())
 			).put(
-				"externalReferenceCode", RandomTestUtil.randomString()
+				"externalReferenceCode", _API_APPLICATION_ERC
 			).put(
 				"title", RandomTestUtil.randomString()
 			).toString(),
@@ -270,15 +321,15 @@ public class APIFilterRelevantObjectEntryModelListenerTest
 			null,
 			StringBundler.concat(
 				"headless-builder/schemas/by-external-reference-code/",
-				apiSchemaExternalReferenceCode,
-				"/requestAPISchemaToAPIEndpoints/", _API_ENDPOINT_ERC),
+				_API_SCHEMA_ERC, "/requestAPISchemaToAPIEndpoints/",
+				_API_ENDPOINT_ERC),
 			Http.Method.PUT);
 		HTTPTestUtil.invokeToHttpCode(
 			null,
 			StringBundler.concat(
 				"headless-builder/schemas/by-external-reference-code/",
-				apiSchemaExternalReferenceCode,
-				"/responseAPISchemaToAPIEndpoints/", _API_ENDPOINT_ERC),
+				_API_SCHEMA_ERC, "/responseAPISchemaToAPIEndpoints/",
+				_API_ENDPOINT_ERC),
 			Http.Method.PUT);
 	}
 
@@ -299,7 +350,7 @@ public class APIFilterRelevantObjectEntryModelListenerTest
 			).put(
 				"label", JSONUtil.put("en-US", RandomTestUtil.randomString())
 			).put(
-				"name", "A" + RandomTestUtil.randomString()
+				"name", _OBJECT_NAME
 			).put(
 				"objectFields",
 				JSONUtil.put(
@@ -318,7 +369,7 @@ public class APIFilterRelevantObjectEntryModelListenerTest
 					).put(
 						"listTypeDefinitionId", 0
 					).put(
-						"name", "x" + RandomTestUtil.randomString()
+						"name", _OBJECT_FIELD_NAME
 					).put(
 						"required", false
 					).put(
@@ -337,6 +388,20 @@ public class APIFilterRelevantObjectEntryModelListenerTest
 			"object-admin/v1.0/object-definitions", Http.Method.POST);
 	}
 
+	private JSONObject _addObjectEntry() throws Exception {
+		String pluralObjectName = TextFormatter.formatPlural(
+			StringUtil.toLowerCase(_OBJECT_NAME));
+
+		return HTTPTestUtil.invokeToJSONObject(
+			JSONUtil.put(
+				_OBJECT_FIELD_NAME, RandomTestUtil.randomString()
+			).toString(),
+			"c/" + pluralObjectName, Http.Method.POST);
+	}
+
+	private static final String _API_APPLICATION_ERC =
+		RandomTestUtil.randomString();
+
 	private static final String _API_APPLICATION_PATH =
 		StringPool.SLASH +
 			StringUtil.toLowerCase(RandomTestUtil.randomString());
@@ -344,9 +409,18 @@ public class APIFilterRelevantObjectEntryModelListenerTest
 	private static final String _API_ENDPOINT_ERC =
 		RandomTestUtil.randomString();
 
+	private static final String _API_SCHEMA_ERC = RandomTestUtil.randomString();
+
 	private static final String _OBJECT_FIELD_ERC =
 		RandomTestUtil.randomString();
 
+	private static final String _OBJECT_FIELD_NAME =
+		"x" + RandomTestUtil.randomString();
+
+	private static final String _OBJECT_NAME = StringUtil.upperCaseFirstLetter(
+		RandomTestUtil.randomString());
+
 	private static JSONObject _objectDefinitionJSONObject;
+	private static JSONObject _objectEntryJSONObject;
 
 }

@@ -771,7 +771,7 @@
 																	"federatedSearchKey": "",
 																	"fieldsToDisplay": "",
 																	"highlightEnabled": "true",
-																	"paginationDelta": "20",
+																	"paginationDelta": "15",
 																	"paginationDeltaParameterName": "delta",
 																	"paginationStartParameterName": "start",
 																	"showEmptyResultMessage": "true",
@@ -779,6 +779,21 @@
 																	"viewInContext": "true"
 																},
 																"widgetName": "com_liferay_portal_search_web_search_results_portlet_SearchResultsPortlet"
+															}
+														},
+														"type": "Widget"
+													},
+													{
+														"definition": {
+															"fragmentStyle": {
+																"hidden": true
+															},
+															"widgetInstance": {
+																"widgetConfig": {
+																	"displayStyle": "default",
+																	"fields": "[{\"field\":\"displayDate-\",\"label\":\"display-date\"}]"
+																},
+																"widgetName": "com_liferay_portal_search_web_internal_sort_portlet_SortPortlet"
 															}
 														},
 														"type": "Widget"

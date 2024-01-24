@@ -6,7 +6,7 @@
 import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import ClayDropDown from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 
 import ViewsContext from '../../views/ViewsContext';
 import Filter from './filters/Filter';
@@ -30,6 +30,10 @@ const FiltersDropdown = () => {
 				: initialFilters
 		);
 	};
+
+	useEffect(() => {
+		setFilters(initialFilters);
+	}, [initialFilters]);
 
 	return (
 		<ClayDropDown
@@ -75,7 +79,12 @@ const FiltersDropdown = () => {
 				</>
 			) : (
 				<ClayDropDown.Group header={Liferay.Language.get('filters')}>
-					<ClayDropDown.Search onChange={onSearch} value={query} />
+					<ClayDropDown.Search
+						aria-label={Liferay.Language.get('search')}
+						onChange={onSearch}
+						role="none"
+						value={query}
+					/>
 
 					<ClayDropDown.Divider className="m-0" />
 
@@ -83,7 +92,6 @@ const FiltersDropdown = () => {
 						<ClayDropDown.ItemList>
 							{filters.map((filter) => (
 								<ClayDropDown.Item
-									active={filter.value !== undefined}
 									key={filter.id}
 									onClick={() => {
 										setActiveFilter(filter);

@@ -36,7 +36,8 @@ definition {
 
 					AssertClick(
 						buttonId = "LoginPortlet",
-						locator1 = "Button#BUTTON_ID",
+						key_text = "Sign In",
+						locator1 = "Button#ANY_WITH_SPAN",
 						value1 = "Sign In");
 				}
 			}
@@ -174,9 +175,7 @@ definition {
 
 	@summary = "Default summary"
 	macro activateCP(userScreenName = null, userName = null) {
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
-
-		MenuItem.click(menuItem = "Inactive");
+		ManagementBar.setFilterAndOrder(filterBy = "Inactive");
 
 		LexiconEntry.gotoEntryMenuItem(
 			menuItem = "Activate",
@@ -1106,7 +1105,7 @@ definition {
 				locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_CHECKBOX");
 		}
 
-		Click(locator1 = "Icon#TOOLBAR_ELLIPSIS");
+		Click(locator1 = "ManagementBar#ELLIPSIS");
 
 		MenuItem.clickNoError(menuItem = "Activate");
 
@@ -1135,12 +1134,14 @@ definition {
 		}
 
 		if (${deactivateType} == "Management Toolbar") {
-			Click(locator1 = "Icon#TOOLBAR_ELLIPSIS");
+			Click(locator1 = "ManagementBar#ELLIPSIS");
 
 			MenuItem.clickNoError(menuItem = "Deactivate");
 		}
 		else {
-			ClickNoError(locator1 = "Icon#DEACTIVATE");
+			ClickNoError(
+				key_text = "hidden",
+				locator1 = "ManagementBar#ANY_ICON");
 		}
 
 		AssertConfirm(value1 = "Are you sure you want to deactivate the selected users?");
@@ -1160,12 +1161,14 @@ definition {
 		}
 
 		if (${deactivateType} == "Management Toolbar") {
-			Click(locator1 = "Icon#TOOLBAR_ELLIPSIS");
+			Click(locator1 = "ManagementBar#ELLIPSIS");
 
 			MenuItem.clickNoError(menuItem = "Delete");
 		}
 		else {
-			ClickNoError(locator1 = "Icon#DELETE");
+			ClickNoError(
+				key_text = "times-circle",
+				locator1 = "ManagementBar#ANY_ICON");
 		}
 
 		AssertConfirm.waitForConfirmation(value1 = "Are you sure you want to permanently delete the selected users?");
@@ -1348,6 +1351,19 @@ definition {
 	}
 
 	@summary = "Default summary"
+	macro createMultipleUsers(letter = null) {
+		for (var letter : list ${letter}) {
+			User.createUser(
+				userEmailAddress = "${letter}@liferay.com",
+				userFirstName = ${letter},
+				userLastName = ${letter},
+				userScreenName = ${letter});
+
+			Navigator.gotoBack();
+		}
+	}
+
+	@summary = "Default summary"
 	macro createUser(lng = null, userEmailAddress = null, userFirstName = null, userJobTitle = null, userComment = null, userTag = null, userLastName = null, userScreenName = null, userMiddleName = null, userGender = null, lat = null, userBirthday = null,) {
 		LexiconEntry.gotoAdd();
 
@@ -1390,6 +1406,15 @@ definition {
 			User.bulkDeactivateCP(
 				deactivateType = ${deactivateType},
 				userFirstNameList = ${userFirstNameList});
+		}
+	}
+
+	@summary = "Default summary"
+	macro deactivateMultipleUsers(letter = null) {
+		for (var letter : list ${letter}) {
+			User.deactivateCP(
+				deactivateType = "Actions",
+				userFirstName = ${letter});
 		}
 	}
 
@@ -1935,6 +1960,17 @@ definition {
 	}
 
 	@summary = "Default summary"
+	macro fillResetPasswordFields(password = null) {
+		Type(
+			locator1 = "TextInput#PASSWORD_1",
+			value1 = ${password});
+
+		Type(
+			locator1 = "TextInput#PASSWORD_2",
+			value1 = ${password});
+	}
+
+	@summary = "Default summary"
 	macro firstLoginByScreenNamePG(virtualHostsURL = null, userScreenName = null, userEmailAddress = null, newPassword = null) {
 		if (isSet(virtualHostsURL)) {
 			Navigator.openSpecificURL(url = ${virtualHostsURL});
@@ -2046,7 +2082,7 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro firstLoginUI(localization = null, idpName = null, localizedAgree = null, localizedSaveButton = null, samlMultiIdPs = null, userEmailAddress = null, newPassword = null, userId = null, password = null, authenticationMethod = null, domain = null, userScreenName = null, specificURL = null, rememberMeChecked = null, localizedAnswer = null) {
+	macro firstLoginUI(localization = null, idpName = null, localizedAgree = null, localizedSaveButton = null, samlMultiIdPs = null, userEmailAddress = null, newPassword = null, userId = null, password = null, authenticationMethod = null, domain = null, userScreenName = null, specificURL = null, rememberMeChecked = null, localizedAnswer = null, successful = null) {
 		if (isSet(specificURL)) {
 			Navigator.openSpecificURL(
 				domain = ${domain},
@@ -2098,7 +2134,8 @@ definition {
 		if (IsElementPresent(locator1 = "TextInput#PASSWORD_2")) {
 			User.resetPassword(
 				localizedSaveButton = ${localizedSaveButton},
-				newPassword = ${newPassword});
+				newPassword = ${newPassword},
+				successful = ${successful});
 		}
 
 		if (isSet(localizedAnswer)) {
@@ -2471,34 +2508,42 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro resetPassword(localizedSaveButton = null, newPassword = null) {
+	macro RequestPasswordResetLink(userEmailAddress = null) {
+		ACUtils.clickGenericHyperlink(hyperlinkText = "Request a new password reset link.");
+
+		Type(
+			locator1 = "TextInput#EMAIL_ADDRESS",
+			value1 = ${userEmailAddress});
+
+		Button.clickNext();
+
+		AssertClick(
+			locator1 = "Button#SEND_PASSWORD_RESET_LINK",
+			value1 = "Send Password Reset Link");
+
+		Alert.viewSuccessMessageText(successMessage = "Your request completed successfully.");
+	}
+
+	@summary = "Default summary"
+	macro resetPassword(localizedSaveButton = null, newPassword = null, successful = null) {
 		if (IsElementPresent.pauseIsElementPresent(locator1 = "TextInput#PASSWORD")) {
 			if (isSet(newPassword)) {
-				Type(
-					locator1 = "TextInput#PASSWORD_1",
-					value1 = ${newPassword});
-
-				Type(
-					locator1 = "TextInput#PASSWORD_2",
-					value1 = ${newPassword});
+				User.fillResetPasswordFields(password = ${newPassword});
 			}
 			else {
-				Type(
-					locator1 = "TextInput#PASSWORD_1",
-					value1 = "test");
-
-				Type(
-					locator1 = "TextInput#PASSWORD_2",
-					value1 = "test");
+				User.fillResetPasswordFields(password = "test");
 			}
 
 			if (isSet(localizedSaveButton)) {
 				Button.click(button = ${localizedSaveButton});
 			}
-			else {
+			else if (isSet(successful) && (${successful} == "true")) {
 				Button.clickSubmitButton();
 
 				AssertElementNotPresent(locator1 = "TextInput#REENTER_PASSWORD");
+			}
+			else {
+				Button.clickSubmitButton();
 			}
 		}
 	}
@@ -2677,14 +2722,9 @@ definition {
 
 	@summary = "Default summary"
 	macro tearDownCP() {
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
-
-		MenuItem.click(menuItem = "Active");
+		ManagementBar.setFilterAndOrder(filterBy = "Active");
 
 		while (IsElementPresent(key_rowNumber = 2, locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER")) {
 			Click.waitForMenuToggleJSClick(
@@ -2696,14 +2736,14 @@ definition {
 			AssertConfirm(value1 = "Are you sure you want to deactivate this?");
 		}
 
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
-
-		MenuItem.click(menuItem = "Inactive");
+		ManagementBar.setFilterAndOrder(filterBy = "Inactive");
 
 		if (IsElementPresent(locator1 = "ContentRow#ENTRY_CONTENT_ROW_1")) {
 			PortletEntry.selectAll();
 
-			ClickNoError(locator1 = "Icon#DELETE");
+			ClickNoError(
+				key_text = "trash",
+				locator1 = "ManagementBar#ANY_ICON");
 
 			AssertConfirm(value1 = "Are you sure you want to permanently delete the selected users?");
 
@@ -2715,14 +2755,9 @@ definition {
 
 	@summary = "Default summary"
 	macro tearDownSpecificUser(userScreenName = null) {
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
-
-		MenuItem.click(menuItem = "Active");
+		ManagementBar.setFilterAndOrder(filterBy = "Active");
 
 		User.searchCP(searchTerm = ${userScreenName});
 
@@ -2736,9 +2771,7 @@ definition {
 			Alert.viewSuccessMessage();
 		}
 
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
-
-		MenuItem.click(menuItem = "Inactive");
+		ManagementBar.setFilterAndOrder(filterBy = "Inactive");
 
 		if (IsElementPresent(locator1 = "ContentRow#ENTRY_CONTENT_ROW_1")) {
 			PortletEntry.selectAll();

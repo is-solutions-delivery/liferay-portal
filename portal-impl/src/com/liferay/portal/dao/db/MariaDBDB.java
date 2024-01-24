@@ -55,4 +55,9 @@ public class MariaDBDB extends MySQLDB {
 		super.alterTableDropColumn(connection, tableName, columnName);
 	}
 
+	@Override
+	public boolean isSupportsDBPartition() {
+		return false;
+	}
+
 }

@@ -137,10 +137,7 @@ definition {
 	@priority = 4
 	test MapCustomFieldToTextFragment {
 		task ("Add a custom field for Document") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "Custom Fields");
+			CustomFields.openCustomFieldAdmin();
 
 			CustomFields.addCP(
 				customFieldName = "Short Description",
@@ -622,7 +619,7 @@ definition {
 		task ("Map multiple fields to editable fields") {
 			var n = 1;
 
-			for (var fieldName : list "Title,Content,Author Name,Display Page URL,Tags") {
+			for (var fieldName : list "Title,Content,Author Name,Default,Tags") {
 				PageEditorMapping.mapEditableTextToField(
 					contributed = "false",
 					field = ${fieldName},
@@ -753,17 +750,13 @@ definition {
 
 			PageEditorEditableLink.mapURLToAsset(
 				entryTitle = ${objectEntryId},
-				field = "Display Page URL",
+				field = "Default",
 				navItem = "${labelName}s");
 
 			PageEditor.publish();
 		}
 
 		task ("Then the page designer should see the mapped image shown on associated display page template") {
-			ContentPagesNavigator.openViewContentPage(
-				pageName = "Test Page Name",
-				siteName = ${randomSiteName});
-
 			Button.click(button = "Go Somewhere");
 
 			ControlMenu.viewHeaderTitle(headerTitle = ${objectEntryId});
@@ -875,7 +868,7 @@ definition {
 
 			PageEditorEditableLink.mapURLToAsset(
 				entryTitle = ${objectEntryId},
-				field = "Display Page URL",
+				field = "Default",
 				navItem = "${labelName}2s");
 
 			PageEditor.publish();
@@ -890,7 +883,7 @@ definition {
 				key_text = "Heading Example",
 				locator1 = "Link#ANY");
 
-			ControlMenu.viewHeaderTitle(headerTitle = "Liferay");
+			ControlMenu.viewHeaderTitle(headerTitle = ${objectEntryId});
 
 			Button.click(button = "Go Somewhere");
 
@@ -1006,7 +999,7 @@ definition {
 
 			PageEditorEditableLink.mapURLToAsset(
 				entryTitle = ${objectEntryId},
-				field = "Display Page URL",
+				field = "Default",
 				navItem = "${labelName}2s");
 
 			PageEditor.publish();
@@ -1021,7 +1014,7 @@ definition {
 				key_text = "Heading Example",
 				locator1 = "Link#ANY");
 
-			ControlMenu.viewHeaderTitle(headerTitle = "Liferay");
+			ControlMenu.viewHeaderTitle(headerTitle = ${objectEntryId});
 
 			Button.click(button = "Go Somewhere");
 
@@ -1142,7 +1135,7 @@ definition {
 
 			PageEditorEditableLink.mapURLToAsset(
 				entryTitle = ${objectEntryId1},
-				field = "Display Page URL",
+				field = "Default",
 				navItem = "${labelName}1s");
 
 			PageEditor.publish();
@@ -1157,7 +1150,7 @@ definition {
 				key_text = "Heading Example",
 				locator1 = "Link#ANY");
 
-			ControlMenu.viewHeaderTitle(headerTitle = "Google");
+			ControlMenu.viewHeaderTitle(headerTitle = ${objectEntryId1});
 
 			Button.click(button = "Go Somewhere");
 
@@ -1557,7 +1550,7 @@ definition {
 			AssertElementPresent(
 				key_fieldLabel = "Field",
 				key_groupLabel = "Display Page",
-				key_value = "Display Page URL",
+				key_value = "Default",
 				locator1 = "Select#GROUPED_SELECT_VALUE");
 
 			for (var field : list "All Categories,Topic,Tags") {
@@ -1621,7 +1614,7 @@ definition {
 					locator1 = "Select#GROUPED_SELECT_VALUE");
 			}
 
-			for (var field : list "Display Page URL,Description,Display Date") {
+			for (var field : list "Description,Display Date") {
 				AssertElementPresent(
 					key_fieldLabel = "Field",
 					key_groupLabel = "Configuration",
@@ -1636,6 +1629,12 @@ definition {
 					key_value = ${field},
 					locator1 = "Select#GROUPED_SELECT_VALUE");
 			}
+
+			AssertElementPresent(
+				key_fieldLabel = "Field",
+				key_groupLabel = "Display Page",
+				key_value = "Default",
+				locator1 = "Select#GROUPED_SELECT_VALUE");
 		}
 
 		task ("Add a display page template based on Document and new document type") {
@@ -1802,7 +1801,7 @@ definition {
 		}
 
 		task ("Reverse Sort Direction in Documents and Media") {
-			Click(locator1 = "ManagementBar#ORDER_ICON_GENERIC");
+			ManagementBar.sortAssets(sortDirection = "Ascending");
 		}
 
 		task ("Assert the order of documents in Documents and Media") {

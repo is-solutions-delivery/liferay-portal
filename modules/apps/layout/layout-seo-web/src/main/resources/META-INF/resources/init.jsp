@@ -20,7 +20,6 @@ taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
 <%@ page import="com.liferay.configuration.admin.constants.ConfigurationAdminPortletKeys" %><%@
 page import="com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidationException" %><%@
-page import="com.liferay.layout.admin.kernel.model.LayoutTypePortletConstants" %><%@
 page import="com.liferay.layout.seo.model.LayoutSEOEntry" %><%@
 page import="com.liferay.layout.seo.model.LayoutSEOSite" %><%@
 page import="com.liferay.layout.seo.web.internal.constants.LayoutSEOWebKeys" %><%@
@@ -30,23 +29,18 @@ page import="com.liferay.petra.string.StringPool" %><%@
 page import="com.liferay.portal.kernel.exception.SitemapChangeFrequencyException" %><%@
 page import="com.liferay.portal.kernel.exception.SitemapIncludeException" %><%@
 page import="com.liferay.portal.kernel.exception.SitemapPagePriorityException" %><%@
-page import="com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.model.Layout" %><%@
 page import="com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder" %><%@
-page import="com.liferay.portal.kernel.util.GetterUtil" %><%@
 page import="com.liferay.portal.kernel.util.HashMapBuilder" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
 page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
-page import="com.liferay.portal.kernel.util.StringUtil" %><%@
 page import="com.liferay.portal.kernel.util.UnicodeProperties" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %><%@
 page import="com.liferay.portal.util.PropsValues" %><%@
 page import="com.liferay.redirect.configuration.CrawlerUserAgentsConfiguration" %>
-
-<%@ page import="java.util.Collections" %>
 
 <%@ page import="javax.portlet.PortletRequest" %>
 

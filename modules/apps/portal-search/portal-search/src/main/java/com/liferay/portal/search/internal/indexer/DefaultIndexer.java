@@ -103,6 +103,11 @@ public class DefaultIndexer<T extends BaseModel<?>> implements Indexer<T> {
 	}
 
 	@Override
+	public long getCompanyId() {
+		return _modelSearchSettings.getCompanyId();
+	}
+
+	@Override
 	public Document getDocument(T baseModel) throws SearchException {
 		return _indexerDocumentBuilder.getDocument(baseModel);
 	}
@@ -138,6 +143,13 @@ public class DefaultIndexer<T extends BaseModel<?>> implements Indexer<T> {
 	@Override
 	public String getSortField(String orderByCol) {
 		return StringPool.BLANK;
+	}
+
+	@Override
+	public Summary getSummary(Document document, Locale locale, String snippet)
+		throws SearchException {
+
+		return _indexerSummaryBuilder.getSummary(document, snippet, locale);
 	}
 
 	@Override

@@ -21,13 +21,13 @@ export default function Toolbar({
 	title,
 }) {
 	return (
-		<ClayToolbar className="subnav-tbar-light">
+		<ClayToolbar className="management-bar management-bar-light navbar navbar-expand-md">
 			<ClayLayout.ContainerFluid>
 				<ClayToolbar.Nav>
 					<ClayToolbar.Item expand>
 						<ClayToolbar.Section className="pl-2 text-left">
 							<h2
-								className="h4 text-truncate-inline"
+								className="h4 mb-0 text-truncate-inline"
 								title={title}
 							>
 								<span className="text-truncate">{title}</span>

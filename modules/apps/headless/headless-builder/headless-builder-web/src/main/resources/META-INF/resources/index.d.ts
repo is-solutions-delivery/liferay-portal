@@ -21,8 +21,12 @@ interface APIEndpointItem extends BaseItem {
 	apiEndpointToAPISorts: APIEndpointSort[];
 	httpMethod: APIListType;
 	path: string;
+	pathParameter: string;
+	pathParameterDescription: string;
 	r_apiApplicationToAPIEndpoints_c_apiApplicationId: string;
+	r_requestAPISchemaToAPIEndpoints_c_apiSchemaId?: number;
 	r_responseAPISchemaToAPIEndpoints_c_apiSchemaId?: number;
+	retrieveType: APIListType;
 	scope: APIListType;
 }
 
@@ -274,9 +278,14 @@ type APIEndpointUIData = {
 	apiEndpointToAPISorts: Partial<APIEndpointSort>[];
 	description: string;
 	httpMethod: APIListType;
+	parameter: string;
 	path: string;
+	pathParameter: string;
+	pathParameterDescription: string;
 	r_apiApplicationToAPIEndpoints_c_apiApplicationId: string;
+	r_requestAPISchemaToAPIEndpoints_c_apiSchemaId: number;
 	r_responseAPISchemaToAPIEndpoints_c_apiSchemaId: number;
+	retrieveType: APIListType;
 	scope: APIListType;
 };
 
@@ -290,7 +299,12 @@ type ApplicationDataError = {
 type ApplicationStatusKeys = 'published' | 'unpublished';
 
 type EndpointDataError = {
+	httpMethod: boolean;
+	parameter: boolean;
 	path: boolean;
+	pathParameter: boolean;
+	r_requestAPISchemaToAPIEndpoints_c_apiSchemaId: boolean;
+	retrieveType: boolean;
 	scope: boolean;
 };
 

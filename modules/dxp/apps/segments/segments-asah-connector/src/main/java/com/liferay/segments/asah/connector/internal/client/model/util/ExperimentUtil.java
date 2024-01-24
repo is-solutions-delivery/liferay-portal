@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.segments.asah.connector.internal.client.model.Experiment;
 import com.liferay.segments.asah.connector.internal.client.model.ExperimentStatus;
+import com.liferay.segments.asah.connector.internal.client.model.ExperimentType;
 import com.liferay.segments.asah.connector.internal.client.model.Goal;
 import com.liferay.segments.asah.connector.internal.client.model.GoalMetric;
 import com.liferay.segments.constants.SegmentsEntryConstants;
@@ -110,6 +111,8 @@ public class ExperimentUtil {
 
 		experiment.setExperimentStatus(
 			_toExperimentStatus(segmentsExperiment.getStatus()));
+		experiment.setExperimentType(
+			ExperimentType.parse(segmentsExperiment.getType()));
 		experiment.setGoal(_toExperimentGoal(segmentsExperiment));
 		experiment.setId(segmentsExperiment.getSegmentsExperimentKey());
 		experiment.setModifiedDate(segmentsExperiment.getModifiedDate());

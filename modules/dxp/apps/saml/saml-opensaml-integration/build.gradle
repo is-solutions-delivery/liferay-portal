@@ -1,5 +1,5 @@
 dependencies {
-	compileInclude group: "com.liferay", name: "org.apache.velocity", version: "1.6.4.LIFERAY-PATCHED-2"
+	compileInclude group: "com.liferay", name: "org.apache.velocity", version: "1.6.4.LIFERAY-PATCHED-3"
 	compileInclude group: "commons-collections", name: "commons-collections", version: "3.2.2"
 	compileInclude group: "commons-lang", name: "commons-lang", version: "2.6"
 	compileInclude group: "io.dropwizard.metrics", name: "metrics-core", version: "3.1.2"
@@ -26,7 +26,7 @@ dependencies {
 	compileOnly group: "org.apache.httpcomponents", name: "httpclient", version: "4.5.13"
 	compileOnly group: "org.apache.httpcomponents", name: "httpcore", version: "4.4.14"
 	compileOnly group: "org.apache.httpcomponents", name: "httpmime", version: "4.5.13"
-	compileOnly group: "org.apache.santuario", name: "xmlsec", version: "2.1.7"
+	compileOnly group: "org.apache.santuario", name: "xmlsec", version: "3.0.3"
 	compileOnly group: "org.joda", name: "joda-convert", version: "2.2.1"
 	compileOnly group: "org.opensaml", name: "opensaml-core", version: "3.3.0"
 	compileOnly group: "org.opensaml", name: "opensaml-messaging-api", version: "3.3.0"
@@ -54,13 +54,13 @@ dependencies {
 	compileOnly project(":core:osgi-service-tracker-collections")
 	compileOnly project(":core:petra:petra-concurrent")
 	compileOnly project(":core:petra:petra-function")
+	compileOnly project(":core:petra:petra-lang")
 	compileOnly project(":core:petra:petra-string")
 	compileOnly project(":dxp:apps:saml:saml-api")
 	compileOnly project(":dxp:apps:saml:saml-persistence-api")
 
 	testImplementation group: "com.liferay.portal", name: "com.liferay.portal.impl", version: "default"
 	testImplementation project(":apps:static:portal-configuration:portal-configuration-persistence-api")
-	testImplementation project(":core:petra:petra-lang")
 	testImplementation project(":dxp:apps:saml:saml-persistence-service")
 }
 

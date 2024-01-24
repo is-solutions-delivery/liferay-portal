@@ -10,13 +10,13 @@
 <%
 JournalManagementToolbarDisplayContext journalManagementToolbarDisplayContext = null;
 
-if (!journalDisplayContext.isSearch() || journalDisplayContext.isWebContentTabSelected()) {
+if (!journalDisplayContext.isSearch() || journalDisplayContext.isShowWebContent()) {
 	journalManagementToolbarDisplayContext = new JournalManagementToolbarDisplayContext(request, liferayPortletRequest, liferayPortletResponse, journalDisplayContext, trashHelper);
 }
-else if (journalDisplayContext.isIndexAllArticleVersions() && journalDisplayContext.isVersionsTabSelected()) {
+else if (journalDisplayContext.isIndexAllArticleVersions() && journalDisplayContext.isShowVersions()) {
 	journalManagementToolbarDisplayContext = new JournalArticleVersionsManagementToolbarDisplayContext(request, liferayPortletRequest, liferayPortletResponse, journalDisplayContext, trashHelper);
 }
-else if (journalDisplayContext.isCommentsTabSelected()) {
+else if (journalDisplayContext.isShowComments()) {
 	journalManagementToolbarDisplayContext = new JournalArticleCommentsManagementToolbarDisplayContext(request, liferayPortletRequest, liferayPortletResponse, journalDisplayContext, trashHelper);
 }
 else {
@@ -25,6 +25,71 @@ else {
 %>
 
 <liferay-ui:success key='<%= portletDisplay.getId() + "requestProcessed" %>' message="your-request-completed-successfully" />
+
+<c:if test='<%= MultiSessionMessages.contains(renderRequest, "articleCreated") || MultiSessionMessages.contains(renderRequest, "articleUpdated") %>'>
+
+	<%
+	long id = GetterUtil.getLong(MultiSessionMessages.get(renderRequest, "articleCreated"));
+
+	if (MultiSessionMessages.contains(renderRequest, "articleUpdated")) {
+		id = GetterUtil.getLong(MultiSessionMessages.get(renderRequest, "articleUpdated"));
+	}
+
+	JournalArticle article = JournalArticleLocalServiceUtil.fetchJournalArticle(id);
+	%>
+
+	<c:if test="<%= article != null %>">
+		<liferay-util:buffer
+			var="alertMessage"
+		>
+			<liferay-util:buffer
+				var="articleLink"
+			>
+				<clay:link
+					cssClass="alert-link"
+					href='<%=
+						PortletURLBuilder.createRenderURL(
+							liferayPortletResponse
+						).setMVCRenderCommandName(
+							"/journal/edit_article"
+						).setRedirect(
+							currentURL
+						).setParameter(
+							"articleId", article.getArticleId()
+						).setParameter(
+							"backURLTitle", portletDisplay.getPortletDisplayName()
+						).setParameter(
+							"folderId", article.getFolderId()
+						).setParameter(
+							"groupId", article.getGroupId()
+						).setParameter(
+							"version", article.getVersion()
+						).buildString()
+					%>'
+					label="<%= article.getTitle(locale) %>"
+				/>
+			</liferay-util:buffer>
+
+			<c:choose>
+				<c:when test='<%= MultiSessionMessages.contains(renderRequest, "articleCreated") %>'>
+					<liferay-ui:message arguments="<%= articleLink %>" key="x-was-created-successfully" />
+				</c:when>
+				<c:otherwise>
+					<liferay-ui:message arguments="<%= articleLink %>" key="x-was-updated-successfully" />
+				</c:otherwise>
+			</c:choose>
+		</liferay-util:buffer>
+
+		<liferay-frontend:component
+			context='<%=
+				HashMapBuilder.<String, Object>put(
+					"alertMessage", alertMessage
+				).build()
+			%>'
+			module="js/SuccessMessageWithLink"
+		/>
+	</c:if>
+</c:if>
 
 <portlet:actionURL name="/journal/restore_trash_entries" var="restoreTrashEntriesURL" />
 

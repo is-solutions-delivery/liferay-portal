@@ -28,6 +28,16 @@ import {
 import renderApp from '../renderApp.es';
 
 jest.mock(
+	'../../../src/main/resources/META-INF/resources/js/util/navigation.es',
+	() => {
+		return {
+			getSegmentsExperimentAction: jest.fn(),
+			navigateToExperience: jest.fn(),
+		};
+	}
+);
+
+jest.mock(
 	'../../../src/main/resources/META-INF/resources/js/util/toasts.es',
 	() => {
 		return {
@@ -38,6 +48,15 @@ jest.mock(
 );
 
 describe('SegmentsExperimentsSidebar', () => {
+	beforeAll(() => {
+		window.Liferay = {
+			...Liferay,
+			FeatureFlags: {
+				'LRAC-15017': true,
+			},
+		};
+	});
+
 	it('Renders info message ab testing panel only available for content pages', () => {
 		const {getByText} = renderApp({
 			type: 'widget',
@@ -144,6 +163,15 @@ describe('SegmentsExperimentsSidebar', () => {
 });
 
 describe('Variants', () => {
+	beforeAll(() => {
+		window.Liferay = {
+			...Liferay,
+			FeatureFlags: {
+				'LRAC-15017': true,
+			},
+		};
+	});
+
 	it('Renders no variants message', () => {
 		const {getByText} = renderApp({
 			initialSegmentsExperiment: segmentsExperiment,
@@ -271,7 +299,9 @@ describe('Review and Run test', () => {
 		window.Liferay = {
 			...Liferay,
 			CustomDialogs: {},
-			FeatureFlags: {},
+			FeatureFlags: {
+				'LRAC-15017': true,
+			},
 		};
 	});
 
@@ -415,6 +445,15 @@ describe('Review and Run test', () => {
 });
 
 describe('No Winner Declared', () => {
+	beforeAll(() => {
+		window.Liferay = {
+			...Liferay,
+			FeatureFlags: {
+				'LRAC-15017': true,
+			},
+		};
+	});
+
 	it('Experiment has basic no winner declared elements', () => {
 		const {getByTestId, getByText} = renderApp({
 			initialSegmentsExperiment: {
@@ -505,6 +544,15 @@ describe('No Winner Declared', () => {
 });
 
 describe('Winner declared', () => {
+	beforeAll(() => {
+		window.Liferay = {
+			...Liferay,
+			FeatureFlags: {
+				'LRAC-15017': true,
+			},
+		};
+	});
+
 	it('Experiment has basic winner declared elements', () => {
 		const {getByTestId, getByText} = renderApp({
 			initialSegmentsExperiment: {
@@ -622,6 +670,15 @@ describe('Winner declared', () => {
 });
 
 describe('Terminated', () => {
+	beforeAll(() => {
+		window.Liferay = {
+			...Liferay,
+			FeatureFlags: {
+				'LRAC-15017': true,
+			},
+		};
+	});
+
 	it('check if it is possible to create new test in a terminated status', async () => {
 		const {findByRole, getByTestId, getByText} = renderApp({
 			initialSegmentsExperiment: {

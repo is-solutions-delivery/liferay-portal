@@ -5,22 +5,49 @@
 
 import {useEffect, useState} from 'react';
 
+import {Filters} from '../../../common/utils/constants/filters';
 import {getCamelCase} from '../../../common/utils/getCamelCase';
 import getSearchFilterTerm from '../../../common/utils/getSearchFilterTerm';
 import {INITIAL_FILTER} from '../utils/constants/initialFilter';
 import getDateCreatedFilterTerm from '../utils/getDateCreatedFilterTerm';
 
-export default function useFilters() {
-	const [filters, setFilters] = useState(INITIAL_FILTER);
-
+export default function useFilters(
+	openClaimsFilter: boolean,
+	isChannel?: boolean
+) {
+	const [filters, setFilters] = useState(
+		(JSON.parse(
+			sessionStorage.getItem('claimFilters')!
+		) as typeof INITIAL_FILTER) || INITIAL_FILTER
+	);
 	const [filtersTerm, setFilterTerm] = useState('');
+
+	const mdfClaimRoleFilter = isChannel
+		? openClaimsFilter
+			? Filters.MDF_CLAIM_LISTING.channelsOpen
+			: Filters.MDF_CLAIM_LISTING.channelsCompleted
+		: openClaimsFilter
+		? Filters.MDF_CLAIM_LISTING.partnersOpen
+		: Filters.MDF_CLAIM_LISTING.partnersCompleted;
 
 	const onFilter = (newFilters: Partial<typeof INITIAL_FILTER>) =>
 		setFilters((previousFilters) => ({...previousFilters, ...newFilters}));
 
+	sessionStorage.setItem('claimFilters', JSON.stringify(filters));
+	sessionStorage.setItem(
+		'openClaimsFilter',
+		JSON.stringify(openClaimsFilter)
+	);
+
 	useEffect(() => {
 		let initialFilter = '';
 		let hasFilter = false;
+
+		if (mdfClaimRoleFilter) {
+			initialFilter = initialFilter
+				? initialFilter.concat(mdfClaimRoleFilter)
+				: `${mdfClaimRoleFilter}`;
+		}
 
 		if (
 			filters.submitDate.dates.endDate ||
@@ -76,7 +103,9 @@ export default function useFilters() {
 		}
 
 		if (filters.searchTerm) {
-			initialFilter = getSearchFilterTerm(filters.searchTerm);
+			initialFilter = initialFilter.concat(
+				getSearchFilterTerm(filters.searchTerm)
+			);
 		}
 
 		onFilter({
@@ -90,8 +119,9 @@ export default function useFilters() {
 		filters.searchTerm,
 		filters.status,
 		filters.type,
-
 		setFilters,
+		openClaimsFilter,
+		mdfClaimRoleFilter,
 	]);
 
 	return {filters, filtersTerm, onFilter, setFilters};

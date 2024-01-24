@@ -10,7 +10,7 @@ import com.liferay.document.library.kernel.model.DLFileShortcut;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.document.library.kernel.service.DLFileShortcutLocalService;
 import com.liferay.document.library.kernel.service.DLFolderLocalService;
-import com.liferay.document.library.uad.test.DLFileShortcutUADTestUtil;
+import com.liferay.document.library.uad.test.util.DLFileShortcutUADTestUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -62,11 +62,6 @@ public class DLFileShortcutUADExporterTest
 		return DLFileShortcutUADTestUtil.addDLFileShortcut(
 			_dlFileEntryLocalService, _dlFileShortcutLocalService,
 			_dlFolderLocalService, userId, _group.getGroupId());
-	}
-
-	@Override
-	protected String getPrimaryKeyName() {
-		return "fileShortcutId";
 	}
 
 	@Override

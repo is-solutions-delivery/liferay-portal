@@ -195,6 +195,38 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-110227. Categories Navigation portlet can be seen within the Section where it was placed and can be opened/configured."
+	@priority = 4
+	test ConfigureCategoryFilterInNewExperience {
+		task ("Given a user has a content page with Category Filter") {
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addWidget(portletName = "Asset Publisher");
+
+			PageEditor.addWidget(
+				portletName = "Category Filter",
+				targetFragmentName = "Asset Publisher");
+		}
+
+		task ("When the user adds a new experience") {
+			PageEditor.addExperience(
+				experienceName = "New Experience",
+				segmentName = "Anyone");
+		}
+
+		task ("Then the category filter configuration modal can be opened in new experience") {
+			Portlet.gotoPortletOptions(
+				portletName = "Category Filter",
+				portletOption = "Configuration");
+
+			AssertTextEquals(
+				locator1 = "Modal#HEADER",
+				value1 = "Category Filter - Configuration");
+		}
+	}
+
 	@description = "This is a test for LPS-140483. The site admin could create page template from content page based on non-default experience."
 	@priority = 4
 	test CreatePageTemplateFromContentPageBasedOnNonDefaultExperience {
@@ -248,6 +280,8 @@ definition {
 	@description = "This is a test for LPS-143321. After clicking on discard draft the page continues to run."
 	@priority = 5
 	test DiscardContentPageDraft {
+		property portal.acceptance = "true";
+
 		task ("Given a page designer has a content page with draft and experience") {
 			ContentPagesNavigator.openEditContentPage(
 				pageName = "Test Page Name",
@@ -615,6 +649,59 @@ definition {
 				fragmentName = "button",
 				id = "link",
 				text = "Go Somewhere");
+		}
+	}
+
+	@description = "This is a test for LPS-127109. Segments with both context and model criteria are correctly evaluated with guest users."
+	@priority = 4
+	test ViewContentFromCorrectExperienceAsGuestUser {
+		task ("Given create Segments with two properties") {
+			JSONSegmentsentry.addSegmentWithProperties(
+				contentTypeList = "Session,User",
+				filterStringList = "(languageId eq 'en_US'):(contains(emailAddress, 'liferay.com'))",
+				groupName = ${randomSiteName},
+				segmentName = "Test Segment Name");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Heading");
+
+			PageEditor.editFragmentText(
+				fragmentName = "Heading",
+				id = "element-text",
+				text = "Default");
+
+			PageEditor.addExperience(
+				experienceName = "New Experience",
+				segmentName = "Test Segment Name");
+
+			PageEditor.editFragmentText(
+				fragmentName = "Heading",
+				id = "element-text",
+				text = "EMEA Guild");
+
+			PageEditor.prioritizeExperience(experienceName = "New Experience");
+
+			PageEditor.publish();
+		}
+
+		task ("When the guest user accesses to the content page") {
+			User.logoutPG();
+
+			ContentPagesNavigator.openViewContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+		}
+
+		task ("Then the guest user should view the content from Default experience") {
+			ContentPages.viewFragmentText(
+				fragmentName = "heading",
+				id = "element-text",
+				text = "Default");
 		}
 	}
 

@@ -13,10 +13,8 @@ import com.liferay.portal.kernel.util.StringUtil;
  */
 public class ObjectFolderImpl extends ObjectFolderBaseImpl {
 
-	public boolean isUncategorized() {
-		if (StringUtil.equals(
-				getName(), ObjectFolderConstants.NAME_UNCATEGORIZED)) {
-
+	public boolean isDefault() {
+		if (StringUtil.equals(getName(), ObjectFolderConstants.NAME_DEFAULT)) {
 			return true;
 		}
 

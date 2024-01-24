@@ -6,12 +6,17 @@
 package com.liferay.journal.service.impl;
 
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMStructureLink;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLinkService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureService;
+import com.liferay.dynamic.data.mapping.util.comparator.StructureLinkStructureModifiedDateComparator;
+import com.liferay.dynamic.data.mapping.util.comparator.StructureLinkStructureNameComparator;
 import com.liferay.journal.constants.JournalFolderConstants;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalFolder;
 import com.liferay.journal.service.base.JournalFolderServiceBaseImpl;
 import com.liferay.journal.service.persistence.JournalArticleFinder;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
@@ -22,6 +27,7 @@ import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermi
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionUtil;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -417,22 +423,26 @@ public class JournalFolderServiceImpl extends JournalFolderServiceBaseImpl {
 				JournalFolderConstants.
 					RESTRICTION_TYPE_DDM_STRUCTURES_AND_WORKFLOW) {
 
-			return _ddmStructureService.search(
-				companyId, groupIds,
-				_classNameLocalService.getClassNameId(JournalFolder.class),
-				folderId, keywords, WorkflowConstants.STATUS_ANY, start, end,
-				orderByComparator);
+			return TransformUtil.transform(
+				_ddmStructureLinkService.getStructureLinks(
+					_classNameLocalService.getClassNameId(JournalFolder.class),
+					folderId, groupIds, keywords,
+					JournalArticle.class.getName(), start, end,
+					_getDDMStructureLinkOrderByComparator(orderByComparator)),
+				structureLink -> structureLink.getStructure());
 		}
 
 		folderId = journalFolderLocalService.getOverridedDDMStructuresFolderId(
 			folderId);
 
 		if (folderId != JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
-			return _ddmStructureService.search(
-				companyId, groupIds,
-				_classNameLocalService.getClassNameId(JournalFolder.class),
-				folderId, keywords, WorkflowConstants.STATUS_ANY, start, end,
-				orderByComparator);
+			return TransformUtil.transform(
+				_ddmStructureLinkService.getStructureLinks(
+					_classNameLocalService.getClassNameId(JournalFolder.class),
+					folderId, groupIds, keywords,
+					JournalArticle.class.getName(), start, end,
+					_getDDMStructureLinkOrderByComparator(orderByComparator)),
+				structureLink -> structureLink.getStructure());
 		}
 
 		return _ddmStructureService.search(
@@ -452,20 +462,18 @@ public class JournalFolderServiceImpl extends JournalFolderServiceBaseImpl {
 				JournalFolderConstants.
 					RESTRICTION_TYPE_DDM_STRUCTURES_AND_WORKFLOW) {
 
-			return _ddmStructureService.searchCount(
-				companyId, groupIds,
+			return _ddmStructureLinkService.getStructureLinksCount(
 				_classNameLocalService.getClassNameId(JournalFolder.class),
-				folderId, keywords, WorkflowConstants.STATUS_ANY);
+				folderId, groupIds, keywords, JournalArticle.class.getName());
 		}
 
 		folderId = journalFolderLocalService.getOverridedDDMStructuresFolderId(
 			folderId);
 
 		if (folderId != JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
-			return _ddmStructureService.searchCount(
-				companyId, groupIds,
+			return _ddmStructureLinkService.getStructureLinksCount(
 				_classNameLocalService.getClassNameId(JournalFolder.class),
-				folderId, keywords, WorkflowConstants.STATUS_ANY);
+				folderId, groupIds, keywords, JournalArticle.class.getName());
 		}
 
 		return _ddmStructureService.searchCount(
@@ -550,8 +558,34 @@ public class JournalFolderServiceImpl extends JournalFolderServiceBaseImpl {
 		return ddmStructures;
 	}
 
+	private OrderByComparator<DDMStructureLink>
+		_getDDMStructureLinkOrderByComparator(
+			OrderByComparator<DDMStructure> orderByComparator) {
+
+		if (orderByComparator == null) {
+			return null;
+		}
+
+		if (ArrayUtil.contains(
+				orderByComparator.getOrderByFields(), "modifiedDate")) {
+
+			return new StructureLinkStructureModifiedDateComparator(
+				orderByComparator.isAscending());
+		}
+
+		if (ArrayUtil.contains(orderByComparator.getOrderByFields(), "name")) {
+			return new StructureLinkStructureNameComparator(
+				orderByComparator.isAscending());
+		}
+
+		return null;
+	}
+
 	@Reference
 	private ClassNameLocalService _classNameLocalService;
+
+	@Reference
+	private DDMStructureLinkService _ddmStructureLinkService;
 
 	@Reference(
 		target = "(model.class.name=com.liferay.dynamic.data.mapping.model.DDMStructure)"

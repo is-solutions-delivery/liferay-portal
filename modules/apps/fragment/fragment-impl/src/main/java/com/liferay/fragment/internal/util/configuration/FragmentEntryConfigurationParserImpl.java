@@ -9,6 +9,7 @@ import com.liferay.fragment.constants.FragmentConfigurationFieldDataType;
 import com.liferay.fragment.entry.processor.constants.FragmentEntryProcessorConstants;
 import com.liferay.fragment.util.configuration.FragmentConfigurationField;
 import com.liferay.fragment.util.configuration.FragmentEntryConfigurationParser;
+import com.liferay.fragment.util.configuration.FragmentEntryMenuDisplayConfiguration;
 import com.liferay.frontend.token.definition.FrontendToken;
 import com.liferay.frontend.token.definition.FrontendTokenDefinition;
 import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
@@ -46,6 +47,7 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.site.navigation.taglib.servlet.taglib.util.NavItemUtil;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -216,6 +218,19 @@ public class FragmentEntryConfigurationParserImpl
 				if (contextListObject != null) {
 					contextObjects.put(
 						name + _CONTEXT_OBJECT_LIST_SUFFIX, contextListObject);
+				}
+			}
+
+			if (StringUtil.equalsIgnoreCase(
+					fragmentConfigurationField.getType(),
+					"navigationMenuSelector")) {
+
+				Object contextObject = _getNavItemsContextObject(
+					configurationValuesJSONObject.getString(name));
+
+				if (contextObject != null) {
+					contextObjects.put(
+						name + _CONTEXT_OBJECT_SUFFIX, contextObject);
 				}
 			}
 		}
@@ -759,6 +774,23 @@ public class FragmentEntryConfigurationParserImpl
 		}
 
 		return null;
+	}
+
+	private Object _getNavItemsContextObject(String value) {
+		ServiceContext serviceContext =
+			ServiceContextThreadLocal.getServiceContext();
+
+		FragmentEntryMenuDisplayConfiguration
+			fragmentEntryMenuDisplayConfiguration =
+				new FragmentEntryMenuDisplayConfiguration(value);
+
+		return NavItemUtil.getNavigationMenuContext(
+			1, "auto", serviceContext.getRequest(),
+			fragmentEntryMenuDisplayConfiguration.getNavigationMenuMode(),
+			false, fragmentEntryMenuDisplayConfiguration.getRootItemId(),
+			fragmentEntryMenuDisplayConfiguration.getRootItemLevel(),
+			fragmentEntryMenuDisplayConfiguration.getRootItemType(),
+			fragmentEntryMenuDisplayConfiguration.getSiteNavigationMenuId());
 	}
 
 	private Object _getURLValue(String value) {

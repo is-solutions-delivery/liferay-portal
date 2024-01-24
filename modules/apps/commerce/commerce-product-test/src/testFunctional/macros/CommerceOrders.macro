@@ -20,29 +20,54 @@ definition {
 
 		Button.clickSubmitButton();
 
-		if (isSet(amount)) {
-			Type(
-				key_text = ${orderRuleType},
-				locator1 = "TextInput#ANY",
-				value1 = ${amount});
-		}
+		if (${orderRuleType} == "Minimum Order Amount") {
+			if (isSet(amount)) {
+				Type(
+					key_text = ${orderRuleType},
+					locator1 = "TextInput#ANY",
+					value1 = ${amount});
+			}
 
-		if (isSet(orderRuleCurrency)) {
-			Select(
-				key_selectFieldLabel = "Currency",
-				locator1 = "Select#ANY",
-				value1 = ${orderRuleCurrency});
-		}
+			if (isSet(orderRuleCurrency)) {
+				Select(
+					key_selectFieldLabel = "Currency",
+					locator1 = "Select#ANY",
+					value1 = ${orderRuleCurrency});
+			}
 
-		if (isSet(applyTo)) {
-			Select(
-				key_selectFieldLabel = "Apply To",
-				locator1 = "Select#ANY",
-				value1 = ${applyTo});
+			if (isSet(applyTo)) {
+				Select(
+					key_selectFieldLabel = "Apply To",
+					locator1 = "Select#ANY",
+					value1 = ${applyTo});
+			}
+		}
+		else if (${orderRuleType} == "Products Limit") {
+			if (isSet(quantity)) {
+				Type(
+					key_fieldLabel = "Quantity",
+					locator1 = "TextInput#GENERIC_TEXT_INPUT",
+					value1 = ${quantity});
+			}
+
+			if (isSet(productNames)) {
+				for (var productName : list ${productNames}) {
+					CommerceRelations.assignSingleRelationToProductsEntry(
+						entryName = ${productName},
+						title = "Add Products");
+				}
+			}
 		}
 
 		if (${active} == "true") {
 			ClickNoError(locator1 = "ToggleSwitch#ACTIVE");
+		}
+
+		if (isSet(priority)) {
+			Type(
+				key_fieldLabel = "Priority",
+				locator1 = "TextInput#GENERIC_TEXT_INPUT",
+				value1 = ${priority});
 		}
 
 		Button.clickPublish();
@@ -350,6 +375,13 @@ definition {
 			Click(
 				buttonId = "requestQuote",
 				locator1 = "Button#BUTTON_ID");
+		}
+
+		if (isSet(quoteRequestEmail)) {
+			Type(
+				key_placeHolder = "Enter an email address.",
+				locator1 = "TextInput#ANY_PLACEHOLDER",
+				value1 = ${quoteRequestEmail});
 		}
 
 		if (isSet(quoteRequestValue)) {
@@ -927,7 +959,7 @@ definition {
 			for (var eligiblePaymentMethod : list ${eligiblePaymentMethods}) {
 				AssertElementPresent(
 					key_radioOption = ${eligiblePaymentMethod},
-					locator1 = "CommerceEntry#RADIO_BUTTON");
+					locator1 = "CommerceEntry#RADIO_BUTTON_SPECIFIC");
 			}
 		}
 
@@ -935,13 +967,13 @@ definition {
 			for (var notEligiblePaymentMethod : list ${notEligiblePaymentMethods}) {
 				AssertElementNotPresent(
 					key_radioOption = ${notEligiblePaymentMethod},
-					locator1 = "CommerceEntry#RADIO_BUTTON");
+					locator1 = "CommerceEntry#RADIO_BUTTON_SPECIFIC");
 			}
 		}
 
 		Click.clickAtNotVisible(
 			key_radioOption = ${paymentMethod},
-			locator1 = "CommerceEntry#RADIO_BUTTON");
+			locator1 = "CommerceEntry#RADIO_BUTTON_SPECIFIC");
 
 		Click(locator1 = "Button#MODAL_IFRAME_FOOTER_SUBMIT");
 
@@ -977,7 +1009,7 @@ definition {
 
 	@summary = "Default summary"
 	macro importFromOrder(productImportStatuses = null, productSkus = null, orderId = null, productTotalPrices = null, productUnitPrices = null, productNames = null, productQuantities = null, productRequestedDeliveryDates = null) {
-		Click(locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS_ORDER");
+		Click(locator1 = "CommerceFrontStore#SF_ORDER_BODY_VERTICAL_ELLIPSIS");
 
 		MenuItem.click(menuItem = "Import from Orders");
 
@@ -1005,7 +1037,7 @@ definition {
 
 	@summary = "Default summary"
 	macro importOrderFromType(orderType = null) {
-		Click(locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS_ORDER");
+		Click(locator1 = "CommerceFrontStore#SF_ORDER_BODY_VERTICAL_ELLIPSIS");
 
 		MenuItem.viewPresent(menuItem = "Import from ${orderType}");
 

@@ -67,7 +67,7 @@
 </tr>
 <tr>
 	<td>ACCOUNT_MANAGEMENT_REVERSE_SORT_DIRECTION_BUTTON_ICON</td>
-	<td>//nav[contains(@class,'management-bar')]//*[*[name()='svg'][contains(@class,'${key_icon}')] and contains(@title,'Reverse Sort Direction')]</td>
+	<td>//nav[contains(@class,'management-bar')]//*[*[name()='svg'][contains(@class,'${key_icon}')] and contains(@title,'Reverse Order Direction')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -595,13 +595,43 @@
 	<td></td>
 </tr>
 <tr>
+	<td>MINI_CART_ITEM_NAME_H6</td>
+	<td>//h6[@class='item-name' and contains(.,'${key_cartItemName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MINI_CART_ITEM_NAME_H6_ACCORDION_SHOW</td>
+	<td>//div[contains(@class,'panel-collapse show')]//h6[@class='item-name' and contains(.,'${key_cartItemName}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>MINI_CART_ITEM_SKU</td>
 	<td>//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]</td>
 	<td></td>
 </tr>
 <tr>
+	<td>MINI_CART_ITEM_SKU_ACCORDION_SHOW</td>
+	<td>//div[contains(@class,'panel-collapse show')]//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MINI_CART_ITEM_NAME_SKU</td>
+	<td>//h6[@class='item-name' and contains(.,'${key_cartItemName}')]/..//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MINI_CART_ITEM_NAME_SKU_INDEX</td>
+	<td>//div[contains(@class,'mini-cart-item align-items-start')][${key_index}]//h6[@class='item-name' and contains(.,'${key_cartItemName}')]/..//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>MINI_CART_ITEM_QUANTITY</td>
 	<td>//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]/../../../../div[contains(@class,'mini-cart-item-quantity')]//input</td>
+	<td></td>
+</tr>
+<tr>
+	<td>MINI_CART_EDIT_ITEM_PRICE_ON_APPLICATION</td>
+	<td>//div[contains(@class,'mini-cart-prices mt-4')]//span[contains(@class,'price-on-application price-value')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -711,12 +741,12 @@
 </tr>
 <tr>
 	<td>MINI_CART_SPECIFIC_ITEM_BUNDLED_ITEM_HIDE_OPTIONS_PANEL_EXPANDED</td>
-	<td>xpath=(//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]//../..//*[contains(@class,'panel')]//*[normalize-space()='Hide Product Options'][@aria-expanded='true'])[${key_index}]</td>
+	<td>xpath=(//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]//../..//*[contains(@class,'panel')]//*[normalize-space()='Hide Options'][@aria-expanded='true'])[${key_index}]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>MINI_CART_SPECIFIC_ITEM_BUNDLED_ITEM_SHOW_OPTIONS_PANEL_COLLAPSED</td>
-	<td>xpath=(//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]//../..//*[contains(@class,'panel')]//*[normalize-space()='Show Product Options'][@aria-expanded='false'])[${key_index}]</td>
+	<td>xpath=(//p[@class='item-sku' and contains(.,'${key_cartItemSku}')]//../..//*[contains(@class,'panel')]//*[normalize-space()='Show Options'][@aria-expanded='false'])[${key_index}]</td>
 	<td></td>
 </tr>
 <tr>
@@ -731,7 +761,7 @@
 </tr>
 <tr>
 	<td>MINI_CART_PRODUCT_OPTIONS_SELECT</td>
-	<td>//div[contains(@class,'mini-cart-edit-item')]//div/label[text()='${key_optionName}']/..//select</td>
+	<td>//div[contains(@class,'mini-cart-edit-item')]//div/label[text()='${key_optionName}']/..//select | //div[contains(@class,'mini-cart-edit-item')]//div/label[text()='${key_optionName}']/..//button</td>
 	<td></td>
 </tr>
 <tr>

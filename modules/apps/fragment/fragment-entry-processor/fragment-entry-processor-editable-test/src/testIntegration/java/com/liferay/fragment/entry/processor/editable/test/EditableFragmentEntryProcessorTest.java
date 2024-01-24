@@ -48,6 +48,7 @@ import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
+import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.petra.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -762,6 +763,15 @@ public class EditableFragmentEntryProcessorTest {
 	}
 
 	@Test
+	public void testFragmentEntryProcessorEditableLinkWithNestedEditablesInHtml()
+		throws Exception {
+
+		_addFragmentEntry(
+			"fragment_entry_with_editable_link_with_nested_editable_in_html." +
+				"html");
+	}
+
+	@Test
 	public void testFragmentEntryProcessorEditableMappedAssetField()
 		throws Exception {
 
@@ -1039,10 +1049,31 @@ public class EditableFragmentEntryProcessorTest {
 	}
 
 	@Test(expected = FragmentEntryContentException.class)
-	public void testFragmentEntryProcessorEditableWithNestedEditablesInHTML()
+	public void testFragmentEntryProcessorEditableWithNestedDropZonesInHTML()
 		throws Exception {
 
-		_addFragmentEntry("fragment_entry_with_nested_editable_in_html.html");
+		_addFragmentEntry("fragment_entry_with_nested_drop_zones_in_html.html");
+	}
+
+	@Test(expected = FragmentEntryContentException.class)
+	public void testFragmentEntryProcessorEditableWithNestedEditablesInHTML1()
+		throws Exception {
+
+		_addFragmentEntry("fragment_entry_with_nested_editable_in_html_1.html");
+	}
+
+	@Test(expected = FragmentEntryContentException.class)
+	public void testFragmentEntryProcessorEditableWithNestedEditablesInHTML2()
+		throws Exception {
+
+		_addFragmentEntry("fragment_entry_with_nested_editable_in_html_2.html");
+	}
+
+	@Test(expected = FragmentEntryContentException.class)
+	public void testFragmentEntryProcessorEditableWithNestedWidgetsInHTML()
+		throws Exception {
+
+		_addFragmentEntry("fragment_entry_with_nested_widgets_in_html.html");
 	}
 
 	@Test
@@ -1188,7 +1219,7 @@ public class EditableFragmentEntryProcessorTest {
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				TestPropsValues.getUserId(), 0, false, false, false,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-				"A" + RandomTestUtil.randomString(), null,
+				ObjectDefinitionTestUtil.getRandomName(), null,
 				"control_panel.sites",
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				false, ObjectDefinitionConstants.SCOPE_SITE,

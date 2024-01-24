@@ -11,6 +11,7 @@ import com.liferay.commerce.currency.util.CommercePriceFormatter;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.order.rule.constants.COREntryConstants;
 import com.liferay.commerce.order.rule.entry.type.COREntryType;
+import com.liferay.commerce.order.rule.entry.type.COREntryTypeItem;
 import com.liferay.commerce.order.rule.model.COREntry;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
@@ -22,6 +23,7 @@ import com.liferay.portal.kernel.util.Validator;
 
 import java.math.BigDecimal;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -35,7 +37,7 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	property = {
 		"commerce.order.rule.entry.type.key=" + COREntryConstants.TYPE_MINIMUM_ORDER_AMOUNT,
-		"commerce.order.rule.entry.type.order:Integer=1"
+		"commerce.order.rule.entry.type.order:Integer=100"
 	},
 	service = COREntryType.class
 )
@@ -91,6 +93,13 @@ public class MinimumAmountCOREntryTypeImpl implements COREntryType {
 		}
 
 		return true;
+	}
+
+	@Override
+	public boolean evaluate(
+		COREntry corEntry, List<COREntryTypeItem> corEntryTypeItems) {
+
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -166,6 +175,11 @@ public class MinimumAmountCOREntryTypeImpl implements COREntryType {
 			"content.Language", locale, getClass());
 
 		return _language.get(resourceBundle, "minimum-order-amount");
+	}
+
+	@Override
+	public boolean isActive() {
+		return true;
 	}
 
 	@Reference

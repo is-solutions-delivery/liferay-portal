@@ -8,11 +8,11 @@ package com.liferay.document.library.internal.model.listener;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileEntryConstants;
 import com.liferay.document.library.kernel.model.DLFileVersion;
+import com.liferay.document.library.kernel.processor.DLProcessor;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.document.library.kernel.service.DLFileVersionLocalService;
 import com.liferay.document.library.kernel.store.DLStoreUtil;
-import com.liferay.document.library.kernel.util.DLProcessor;
 import com.liferay.document.library.model.DLFileVersionPreview;
 import com.liferay.document.library.service.DLFileVersionPreviewLocalService;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
@@ -70,6 +70,35 @@ public class DLFileVersionModelListener
 	}
 
 	@Override
+	public void onAfterUpdate(DLFileVersion originalModel, DLFileVersion model)
+		throws ModelListenerException {
+
+		if (Objects.equals(originalModel.getVersion(), model.getVersion()) &&
+			!Objects.equals(
+				DLFileEntryConstants.PRIVATE_WORKING_COPY_VERSION,
+				originalModel.getVersion()) &&
+			!Objects.equals(
+				originalModel.getStoreFileName(), model.getStoreFileName())) {
+
+			try {
+				DLFileEntry fileEntry = originalModel.getFileEntry();
+
+				DLStoreUtil.deleteFile(
+					originalModel.getCompanyId(),
+					originalModel.getRepositoryId(), fileEntry.getName(),
+					originalModel.getStoreFileName());
+				DLStoreUtil.deleteFile(
+					originalModel.getCompanyId(),
+					originalModel.getRepositoryId(), fileEntry.getName(),
+					originalModel.getStoreFileName() + ".index");
+			}
+			catch (PortalException portalException) {
+				_log.error(portalException);
+			}
+		}
+	}
+
+	@Override
 	public void onBeforeRemove(DLFileVersion dlFileVersion)
 		throws ModelListenerException {
 
@@ -103,9 +132,8 @@ public class DLFileVersionModelListener
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
-		_dlProcessorServiceTrackerMap =
-			ServiceTrackerMapFactory.openSingleValueMap(
-				bundleContext, DLProcessor.class, "type");
+		_serviceTrackerMap = ServiceTrackerMapFactory.openSingleValueMap(
+			bundleContext, DLProcessor.class, "type");
 	}
 
 	private void _cleanUpFileVersion(long fileVersionId)
@@ -114,7 +142,7 @@ public class DLFileVersionModelListener
 		FileVersion fileVersion = _dlAppLocalService.getFileVersion(
 			fileVersionId);
 
-		for (DLProcessor dlProcessor : _dlProcessorServiceTrackerMap.values()) {
+		for (DLProcessor dlProcessor : _serviceTrackerMap.values()) {
 			if (dlProcessor.isSupported(fileVersion)) {
 				dlProcessor.cleanUp(fileVersion);
 			}
@@ -136,7 +164,6 @@ public class DLFileVersionModelListener
 	@Reference
 	private DLFileVersionPreviewLocalService _dlFileVersionPreviewLocalService;
 
-	private ServiceTrackerMap<String, DLProcessor>
-		_dlProcessorServiceTrackerMap;
+	private ServiceTrackerMap<String, DLProcessor> _serviceTrackerMap;
 
 }

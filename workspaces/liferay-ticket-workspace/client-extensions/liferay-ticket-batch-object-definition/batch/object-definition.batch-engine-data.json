@@ -1,22 +1,13 @@
 {
-	"actions": {
-		"createBatch": {
-			"href": "/o/headless-batch-engine/v1.0/import-task/com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition",
-			"method": "POST"
-		}
-	},
 	"configuration": {
 		"className": "com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition",
-		"companyId": 0,
 		"parameters": {
 			"containsHeaders": "true",
 			"createStrategy": "UPSERT",
 			"onErrorFail": "false",
 			"taskItemDelegateName": "DEFAULT",
 			"updateStrategy": "UPDATE"
-		},
-		"userId": 0,
-		"version": "v1.0"
+		}
 	},
 	"items": [
 		{
@@ -33,6 +24,36 @@
 			"name": "J3Y7Ticket",
 			"objectActions": [
 				{
+					"active": true,
+					"errorMessage": {
+						"en_US": "Unable to assign ticket."
+					},
+					"label": {
+						"en_US": "Assign Ticket to Me"
+					},
+					"name": "AssignTicketToMe",
+					"objectActionExecutorKey": "update-object-entry",
+					"objectActionTriggerKey": "standalone",
+					"parameters": {
+						"objectDefinitionExternalReferenceCode": "J3Y7_TICKET",
+						"predefinedValues": [
+							{
+								"inputAsValue": false,
+								"label": {
+									"en_US": "User to J3Y7 Ticket"
+								},
+								"name": "r_userToJ3Y7Ticket_userId",
+								"value": "currentUserId"
+							}
+						]
+					},
+					"status": {
+						"code": 1,
+						"label": "success",
+						"label_i18n": "Success"
+					}
+				},
+				{
 					"active": false,
 					"conditionExpression": "ticketStatus == 'open'",
 					"description": "",
@@ -41,7 +62,7 @@
 					"label": {
 						"en_US": "Liferay Ticket Etc Spring Boot Object Action Ticket"
 					},
-					"name": "LiferayTicketEtcDocumentationReferral",
+					"name": "SpringBootObjectActionTicket",
 					"objectActionExecutorKey": "function#liferay-ticket-etc-spring-boot-object-action-ticket",
 					"objectActionTriggerKey": "onAfterAdd",
 					"parameters": {
@@ -80,11 +101,7 @@
 						},
 						{
 							"name": "showFilesInDocumentsAndMedia",
-							"value": "true"
-						},
-						{
-							"name": "storageDLFolderPath",
-							"value": "/J3Y7Ticket"
+							"value": "false"
 						}
 					],
 					"required": false,

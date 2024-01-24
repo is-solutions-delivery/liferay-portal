@@ -288,7 +288,7 @@ public class KaleoDesignerPortlet extends MVCPortlet {
 			}
 
 			jsonObject.put(
-				"content", kaleoDefinitionVersion.getContent()
+				"content", kaleoDefinitionVersion.getContentAsXML()
 			).put(
 				"draftVersion", kaleoDefinitionVersion.getVersion()
 			).put(

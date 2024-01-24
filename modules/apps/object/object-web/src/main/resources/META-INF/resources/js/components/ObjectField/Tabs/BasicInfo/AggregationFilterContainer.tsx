@@ -52,7 +52,7 @@ interface AggregationFilterProps {
 	setCreationLanguageId2: (values: Liferay.Language.Locale) => void;
 	setValues: (values: Partial<ObjectField>) => void;
 	values: Partial<ObjectField>;
-	workflowStatusJSONArray: LabelValueObject[];
+	workflowStatuses: LabelValueObject[];
 }
 
 interface CustomWindow extends Window {
@@ -73,7 +73,7 @@ export function AggregationFilterContainer({
 	setCreationLanguageId2,
 	setValues,
 	values,
-	workflowStatusJSONArray,
+	workflowStatuses,
 }: AggregationFilterProps) {
 	const [editingFilter, setEditingFilter] = useState(false);
 	const [editingObjectFieldName, setEditingObjectFieldName] = useState<
@@ -231,7 +231,7 @@ export function AggregationFilterContainer({
 
 						const workflowStatusValueList = statusFilterValues.map(
 							(statusValue) => {
-								const currentStatus = workflowStatusJSONArray.find(
+								const currentStatus = workflowStatuses.find(
 									(workflowStatus) =>
 										Number(workflowStatus.value) ===
 										statusValue
@@ -269,7 +269,7 @@ export function AggregationFilterContainer({
 			checkedItems,
 			items,
 			selectedFilterBy,
-			selectedFilterType,
+			selectedFilterTypeValue,
 			setErrors,
 			value,
 		}: FilterValidation) => {
@@ -280,7 +280,7 @@ export function AggregationFilterContainer({
 				currentErrors.selectedFilterBy = REQUIRED_MSG;
 			}
 
-			if (!selectedFilterType) {
+			if (!selectedFilterTypeValue) {
 				currentErrors.selectedFilterType = REQUIRED_MSG;
 			}
 
@@ -294,7 +294,7 @@ export function AggregationFilterContainer({
 
 			if (
 				selectedFilterBy?.businessType === 'Date' &&
-				selectedFilterType?.value === 'range'
+				selectedFilterTypeValue === 'range'
 			) {
 				const startDate = items.find((date) => date.value === 'ge');
 				const endDate = items.find((date) => date.value === 'le');
@@ -605,7 +605,7 @@ export function AggregationFilterContainer({
 					onClose={onClose}
 					onSave={handleSaveFilterColumn}
 					validate={validateFilters}
-					workflowStatusJSONArray={workflowStatusJSONArray}
+					workflowStatuses={workflowStatuses}
 				/>
 			)}
 		</>

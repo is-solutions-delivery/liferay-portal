@@ -1,7 +1,7 @@
 import Card from 'shared/components/Card';
-import DropdownRangeKey from 'shared/hoc/DropdownRangeKey';
 import React from 'react';
 import {compose} from 'redux';
+import {DropdownRangeKey} from 'shared/components/dropdown-range-key/DropdownRangeKey';
 import {RangeKeyTimeRanges} from 'shared/util/constants';
 import {withRangeKey} from 'shared/hoc';
 import {WithRangeKeyProps} from 'shared/hoc/WithRangeKey';
@@ -19,6 +19,7 @@ const CardWithRangeKey = compose(withRangeKey)(
 	({
 		children,
 		className,
+		id,
 		label,
 		legacyDropdownRangeKey = true,
 		onRangeSelectorsChange,
@@ -26,13 +27,13 @@ const CardWithRangeKey = compose(withRangeKey)(
 		rangeSelectors,
 		...otherProps
 	}: ICardWithRangeKeyProps) => (
-		<Card className={className}>
+		<Card className={className} id={id}>
 			<Card.Header className='align-items-center d-flex justify-content-between'>
 				<Card.Title>{label}</Card.Title>
 
 				<DropdownRangeKey
 					legacy={legacyDropdownRangeKey}
-					onChange={onRangeSelectorsChange}
+					onRangeSelectorChange={onRangeSelectorsChange}
 					rangeKeys={rangeKeys}
 					rangeSelectors={rangeSelectors}
 				/>

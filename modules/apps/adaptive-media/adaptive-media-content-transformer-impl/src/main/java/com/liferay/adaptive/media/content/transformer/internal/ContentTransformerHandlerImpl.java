@@ -6,25 +6,24 @@
 package com.liferay.adaptive.media.content.transformer.internal;
 
 import com.liferay.adaptive.media.content.transformer.ContentTransformer;
-import com.liferay.adaptive.media.content.transformer.ContentTransformerContentType;
 import com.liferay.adaptive.media.content.transformer.ContentTransformerHandler;
-import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
-import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
+import com.liferay.adaptive.media.image.html.AMImageHTMLTagFactory;
+import com.liferay.document.library.kernel.service.DLAppLocalService;
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-
-import java.util.List;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 
 /**
- * Transforms the content by invoking the {@link ContentTransformer} available
- * for a specific {@link ContentTransformerContentType}. There can be more than
- * one content transformer available for a particular content type, and they
- * will all be executed, but the order is not guaranteed.
+ * Transforms the content by invoking all available {@link ContentTransformer}.
+ * There can be more than one content transformer available, and they will all
+ * be executed, but the order is not guaranteed.
  *
  * @author Alejandro Tardín
  */
@@ -33,26 +32,21 @@ public class ContentTransformerHandlerImpl
 	implements ContentTransformerHandler {
 
 	@Override
-	public <T> T transform(
-		ContentTransformerContentType<T> contentTransformerContentType,
-		T originalContent) {
+	public String transform(String originalContent) {
+		String transformedContent = originalContent;
 
-		List<ContentTransformer<?>> contentTransformers =
-			_serviceTrackerMap.getService(contentTransformerContentType);
-
-		if (contentTransformers == null) {
-			return originalContent;
+		try {
+			transformedContent = _htmlContentTransformer.transform(
+				originalContent);
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception);
+			}
 		}
 
-		T transformedContent = originalContent;
-
-		for (ContentTransformer<?> curContentTransformer :
-				contentTransformers) {
-
+		for (ContentTransformer contentTransformer : _serviceTrackerList) {
 			try {
-				ContentTransformer<T> contentTransformer =
-					(ContentTransformer<T>)curContentTransformer;
-
 				transformedContent = contentTransformer.transform(
 					transformedContent);
 			}
@@ -68,39 +62,34 @@ public class ContentTransformerHandlerImpl
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
-		_serviceTrackerMap = ServiceTrackerMapFactory.openMultiValueMap(
-			bundleContext,
-			(Class<ContentTransformer<?>>)(Class<?>)ContentTransformer.class,
-			null,
-			(serviceReference, emitter) -> {
-				ContentTransformer<?> contentTransformer =
-					bundleContext.getService(serviceReference);
+		_serviceTrackerList = ServiceTrackerListFactory.open(
+			bundleContext, ContentTransformer.class);
 
-				emitter.emit(
-					contentTransformer.getContentTransformerContentType());
-
-				bundleContext.ungetService(serviceReference);
-			});
+		_htmlContentTransformer = new HtmlContentTransformerImpl(
+			_amImageHTMLTagFactory, _dlAppLocalService);
 	}
 
 	@Deactivate
 	protected void deactivate() {
-		_serviceTrackerMap.close();
+		_serviceTrackerList.close();
 	}
 
-	protected final void setServiceTrackerMap(
-		ServiceTrackerMap
-			<ContentTransformerContentType<?>, List<ContentTransformer<?>>>
-				serviceTrackerMap) {
+	protected final void setServiceTrackerList(
+		ServiceTrackerList<ContentTransformer> serviceTrackerList) {
 
-		_serviceTrackerMap = serviceTrackerMap;
+		_serviceTrackerList = serviceTrackerList;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ContentTransformerHandlerImpl.class);
 
-	private ServiceTrackerMap
-		<ContentTransformerContentType<?>, List<ContentTransformer<?>>>
-			_serviceTrackerMap;
+	@Reference
+	private AMImageHTMLTagFactory _amImageHTMLTagFactory;
+
+	@Reference
+	private DLAppLocalService _dlAppLocalService;
+
+	private ContentTransformer _htmlContentTransformer;
+	private ServiceTrackerList<ContentTransformer> _serviceTrackerList;
 
 }

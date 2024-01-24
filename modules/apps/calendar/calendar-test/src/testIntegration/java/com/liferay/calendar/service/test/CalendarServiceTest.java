@@ -67,7 +67,7 @@ public class CalendarServiceTest {
 
 		Group stagingGroup = _liveGroup.getStagingGroup();
 
-		_adminUser = UserTestUtil.addOmniAdminUser();
+		_adminUser = UserTestUtil.addOmniadminUser();
 
 		try (ContextUserReplace contextUserReplace = new ContextUserReplace(
 				_adminUser)) {

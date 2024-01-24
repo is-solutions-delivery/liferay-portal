@@ -2,7 +2,6 @@
 definition {
 
 	property custom.properties = "feature.flag.LPS-164563=true${line.separator}feature.flag.LPS-172904=true${line.separator}feature.flag.LPS-184016=true${line.separator}feature.flag.LPS-188645=true";
-	property portal.acceptance = "true";
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.component.names = "Frontend Data Set";
@@ -35,9 +34,9 @@ definition {
 		property test.run.type = "single";
 
 		task ("Given a client extension zip file deployed") {
-			FileInstall.deployFileOnServer(jarFile = "liferay-sample-fds-cell-renderer.zip");
+			var clientExtensionSamples = "liferay-sample-fds-cell-renderer";
 
-			WaitForConsoleTextPresent(value1 = "STARTED liferaysamplefdscellrenderer_7.4.13");
+			AntCommands.runCommand("build-test-liferay-sample-workspace.xml", "deploy-workspace-client-extension -Dworkspace.client.extension.name=${clientExtensionSamples}");
 
 			Refresh();
 		}
@@ -95,16 +94,16 @@ definition {
 	}
 
 	@description = "LPS-185873 Confirm that the Client Extension label is displayed on the drop-down item"
-	@priority = 5
+	@priority = 3
 	test CanAssertClientExtensionInDropdown {
 		property osgi.modules.includes = "frontend-data-set-sample-web";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
 		task ("Given a client extension zip file deployed") {
-			FileInstall.deployFileOnServer(jarFile = "liferay-sample-fds-cell-renderer.zip");
+			var clientExtensionSamples = "liferay-sample-fds-cell-renderer";
 
-			WaitForConsoleTextPresent(value1 = "STARTED liferaysamplefdscellrenderer_7.4.13");
+			AntCommands.runCommand("build-test-liferay-sample-workspace.xml", "deploy-workspace-client-extension -Dworkspace.client.extension.name=${clientExtensionSamples}");
 
 			Refresh();
 		}
@@ -162,7 +161,7 @@ definition {
 	}
 
 	@description = "LPS-185873 Confirm that the Renderer column is present on the fields creation page"
-	@priority = 5
+	@priority = 4
 	test CanAssertTheRendererColumn {
 		task ("Given the creation of a new data set") {
 			DataSetAdmin.goToDataSetAdminPage();
@@ -203,16 +202,17 @@ definition {
 	}
 
 	@description = "LPS-176807. Verify if the apple icon appears when file is deployed"
-	@priority = 4
+	@priority = 5
 	test CanChangeFilterWithClientExtension {
 		property osgi.modules.includes = "frontend-data-set-sample-web";
+		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
 		task ("Given Sample FDS portlet deployed") {
-			FileInstall.deployFileOnServer(jarFile = "liferay-sample-fds-cell-renderer.zip");
+			var clientExtensionSamples = "liferay-sample-fds-cell-renderer";
 
-			WaitForConsoleTextPresent(value1 = "STARTED liferay-sample-fds-cell-renderer_1.0.0");
+			AntCommands.runCommand("build-test-liferay-sample-workspace.xml", "deploy-workspace-client-extension -Dworkspace.client.extension.name=${clientExtensionSamples}");
 		}
 
 		task ("When entering on a page which uses FDS") {
@@ -251,13 +251,10 @@ definition {
 	}
 
 	@description = "LPS-176807. Verify if is not possible to see an client extension deployed"
-	@priority = 4
+	@priority = 3
 	test CannotSeeClientExtensionNotDeployed {
 		task ("When you access the Client Extension admin page") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Custom Apps",
-				panel = "Applications",
-				portlet = "Client Extensions");
+			ClientExtension.openClientExtensionsAdmin();
 		}
 
 		task ("Then the client extension is not present") {
@@ -278,9 +275,9 @@ definition {
 		property test.liferay.virtual.instance = "false";
 
 		task ("Given a new Client Extension Frontend Data Set filter deployed") {
-			FileInstall.deployFileOnServer(jarFile = "liferay-sample-fds-filter.zip");
+			var clientExtensionSamples = "liferay-sample-fds-filter";
 
-			WaitForConsoleTextPresent(value1 = "STARTED liferaysamplefdsfilter_7.4.13");
+			AntCommands.runCommand("build-test-liferay-sample-workspace.xml", "deploy-workspace-client-extension -Dworkspace.client.extension.name=${clientExtensionSamples}");
 		}
 
 		task ("And a new data set entry") {
@@ -386,9 +383,10 @@ definition {
 	}
 
 	@description = "LPS-176807. Verify if the Client Extension are visible when deploys"
-	@priority = 4
+	@priority = 5
 	test CanViewDeployedFile {
 		property osgi.modules.includes = "frontend-data-set-sample-web";
+		property portal.acceptance = "true";
 
 		task ("When create a page") {
 			JSONLayout.addPublicLayout(
@@ -414,7 +412,7 @@ definition {
 	}
 
 	@description = "LPS-190457. Verify if the is possible to see the CX filters in the Data Set fragment"
-	@priority = 5
+	@priority = 4
 	test CanViewFiltersCXInDataSetFragment {
 		task ("Given a new Client Extension Frontend Data Set filter") {
 			ClientExtensionGeneral.goToRemoteAppsPortlet();

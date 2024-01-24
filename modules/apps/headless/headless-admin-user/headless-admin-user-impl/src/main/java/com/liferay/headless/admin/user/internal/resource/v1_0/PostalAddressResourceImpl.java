@@ -5,6 +5,7 @@
 
 package com.liferay.headless.admin.user.internal.resource.v1_0;
 
+import com.liferay.account.constants.AccountListTypeConstants;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryService;
 import com.liferay.headless.admin.user.dto.v1_0.PostalAddress;
@@ -12,16 +13,18 @@ import com.liferay.headless.admin.user.internal.dto.v1_0.converter.constants.DTO
 import com.liferay.headless.admin.user.internal.dto.v1_0.util.PostalAddressUtil;
 import com.liferay.headless.admin.user.resource.v1_0.PostalAddressResource;
 import com.liferay.portal.kernel.model.Address;
+import com.liferay.portal.kernel.model.ClassName;
 import com.liferay.portal.kernel.model.Contact;
 import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.ListType;
+import com.liferay.portal.kernel.model.ListTypeConstants;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.Region;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
-import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.AddressService;
+import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.CountryService;
 import com.liferay.portal.kernel.service.ListTypeLocalService;
 import com.liferay.portal.kernel.service.RegionService;
@@ -52,7 +55,7 @@ public class PostalAddressResourceImpl extends BasePostalAddressResourceImpl {
 
 	@Override
 	public void deletePostalAddress(Long postalAddressId) throws Exception {
-		_addressLocalService.deleteAddress(postalAddressId);
+		_addressService.deleteAddress(postalAddressId);
 	}
 
 	@Override
@@ -63,9 +66,8 @@ public class PostalAddressResourceImpl extends BasePostalAddressResourceImpl {
 
 		return Page.of(
 			transform(
-				_addressLocalService.getAddresses(
-					contextCompany.getCompanyId(), AccountEntry.class.getName(),
-					accountId),
+				_addressService.getAddresses(
+					AccountEntry.class.getName(), accountId),
 				address -> PostalAddressUtil.toPostalAddress(
 					contextAcceptLanguage.isAcceptAllLanguages(), address,
 					contextCompany.getCompanyId(),
@@ -82,8 +84,7 @@ public class PostalAddressResourceImpl extends BasePostalAddressResourceImpl {
 
 		return Page.of(
 			transform(
-				_addressLocalService.getAddresses(
-					contextCompany.getCompanyId(),
+				_addressService.getAddresses(
 					organization.getModelClassName(),
 					organization.getOrganizationId()),
 				address -> PostalAddressUtil.toPostalAddress(
@@ -116,9 +117,8 @@ public class PostalAddressResourceImpl extends BasePostalAddressResourceImpl {
 
 		return Page.of(
 			transform(
-				_addressLocalService.getAddresses(
-					user.getCompanyId(), Contact.class.getName(),
-					user.getContactId()),
+				_addressService.getAddresses(
+					Contact.class.getName(), user.getContactId()),
 				address -> PostalAddressUtil.toPostalAddress(
 					contextAcceptLanguage.isAcceptAllLanguages(), address,
 					contextCompany.getCompanyId(),
@@ -130,7 +130,7 @@ public class PostalAddressResourceImpl extends BasePostalAddressResourceImpl {
 			Long postalAddressId, PostalAddress postalAddress)
 		throws Exception {
 
-		Address address = _addressLocalService.getAddress(postalAddressId);
+		Address address = _addressService.getAddress(postalAddressId);
 
 		Country country = null;
 
@@ -152,7 +152,7 @@ public class PostalAddressResourceImpl extends BasePostalAddressResourceImpl {
 		}
 
 		if (postalAddress.getAddressType() != null) {
-			ListType listType = _getListType(postalAddress);
+			ListType listType = _getListType(address, postalAddress);
 
 			address.setListTypeId(listType.getListTypeId());
 		}
@@ -187,7 +187,7 @@ public class PostalAddressResourceImpl extends BasePostalAddressResourceImpl {
 			address.setStreet3(postalAddress.getStreetAddressLine3());
 		}
 
-		address = _addressLocalService.updateAddress(
+		address = _addressService.updateAddress(
 			address.getAddressId(), address.getName(), address.getDescription(),
 			address.getStreet1(), address.getStreet2(), address.getStreet3(),
 			address.getCity(), address.getZip(), address.getRegionId(),
@@ -209,11 +209,11 @@ public class PostalAddressResourceImpl extends BasePostalAddressResourceImpl {
 
 		long regionId = _getRegionId(postalAddress, country);
 
-		ListType listType = _getListType(postalAddress);
+		ListType listType = _getListType(null, postalAddress);
 
-		Address address = _addressLocalService.addAddress(
-			null, contextUser.getUserId(), AccountEntry.class.getName(),
-			accountId, postalAddress.getName(), null,
+		Address address = _addressService.addAddress(
+			null, AccountEntry.class.getName(), accountId,
+			postalAddress.getName(), null,
 			postalAddress.getStreetAddressLine1(),
 			postalAddress.getStreetAddressLine2(),
 			postalAddress.getStreetAddressLine3(),
@@ -233,15 +233,15 @@ public class PostalAddressResourceImpl extends BasePostalAddressResourceImpl {
 			Long postalAddressId, PostalAddress postalAddress)
 		throws Exception {
 
-		Address address = _addressLocalService.getAddress(postalAddressId);
+		Address address = _addressService.getAddress(postalAddressId);
 
 		Country country = _getCountryByTitle(postalAddress);
 
 		long regionId = _getRegionId(postalAddress, country);
 
-		ListType listType = _getListType(postalAddress);
+		ListType listType = _getListType(address, postalAddress);
 
-		address = _addressLocalService.updateAddress(
+		address = _addressService.updateAddress(
 			address.getAddressId(), postalAddress.getName(),
 			address.getDescription(), postalAddress.getStreetAddressLine1(),
 			postalAddress.getStreetAddressLine2(),
@@ -287,10 +287,21 @@ public class PostalAddressResourceImpl extends BasePostalAddressResourceImpl {
 		return country;
 	}
 
-	private ListType _getListType(PostalAddress postalAddress) {
+	private ListType _getListType(Address address, PostalAddress postalAddress)
+		throws Exception {
+
+		String type = AccountListTypeConstants.ACCOUNT_ENTRY_ADDRESS;
+
+		if (address != null) {
+			ClassName className = _classNameLocalService.getClassName(
+				address.getClassNameId());
+
+			type = className.getClassName() + ListTypeConstants.ADDRESS;
+		}
+
 		ListType listType = _listTypeLocalService.getListType(
 			contextCompany.getCompanyId(), postalAddress.getAddressType(),
-			"com.liferay.account.model.AccountEntry.address");
+			type);
 
 		if (listType == null) {
 			throw new BadRequestException("Type not found");
@@ -342,10 +353,10 @@ public class PostalAddressResourceImpl extends BasePostalAddressResourceImpl {
 	private AccountEntryService _accountEntryService;
 
 	@Reference
-	private AddressLocalService _addressLocalService;
+	private AddressService _addressService;
 
 	@Reference
-	private AddressService _addressService;
+	private ClassNameLocalService _classNameLocalService;
 
 	@Reference
 	private CountryService _countryService;

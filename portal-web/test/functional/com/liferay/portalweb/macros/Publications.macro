@@ -2,13 +2,6 @@ definition {
 
 	@summary = "Default summary"
 	macro assertDiscardIsUnavailableForInactivePublication(changeCategory = null, changeTitle = null, publicationName = null) {
-		if (isSet(changeOrder)) {
-			var changeOrder = ${changeOrder};
-		}
-		else {
-			var changeOrder = 1;
-		}
-
 		Click(
 			key_publicationName = ${publicationName},
 			locator1 = "Publications#PUBLICATION_NAME_VIEW");
@@ -323,6 +316,8 @@ definition {
 				menuItem = "Review Changes",
 				publicationName = ${publicationName});
 
+			WaitForElementPresent(locator1 = "PublicationsChanges#INVITE_USERS_ICON");
+
 			Click.javaScriptClick(locator1 = "PublicationsChanges#INVITE_USERS_ICON");
 		}
 		else {
@@ -379,6 +374,12 @@ definition {
 		Alert.viewSuccessMessage();
 
 		PublicationsNavigator.openPublicationsHistory();
+
+		if (!(IsElementPresent(locator1 = "Publications#PUBLISHED_STATUS", value1 = "Published"))) {
+			WaitForElementPresent(
+				locator1 = "Publications#PUBLISHED_STATUS",
+				value1 = "Published");
+		}
 
 		AssertTextEquals(
 			locator1 = "Publications#PUBLISHED_STATUS",
@@ -477,21 +478,35 @@ definition {
 			var publishTimeMinutes = ${publishTimeMinutes} + 2;
 		}
 
-		Click(locator1 = "Publications#PUBLISH_TIME_HOURS");
+		var publishTimeAMPM = MathUtil.isLessThan(${publishTimeHours}, 12);
 
-		DoubleClick.javaScriptDoubleClick(locator1 = "Publications#PUBLISH_TIME_HOURS");
+		if (${publishTimeAMPM} == "true") {
+			var publishTimeAMPM = "AM";
+		}
+		else {
+			var publishTimeAMPM = "PM";
+			var publishTimeHours = ${publishTimeHours} - 12;
+		}
+
+		var hours = MathUtil.isLessThan(${publishTimeHours}, 10);
+
+		if (${hours} == "true") {
+			var publishTimeHours = "0${publishTimeHours}";
+		}
+
+		var minutes = MathUtil.isLessThan(${publishTimeMinutes}, 10);
+
+		if (${minutes} == "true") {
+			var publishTimeMinutes = "0${publishTimeMinutes}";
+		}
+
+		if (${publishTimeHours} == 00) {
+			var publishTimeHours = 12;
+		}
 
 		Type.sendKeys(
-			locator1 = "Publications#PUBLISH_TIME_HOURS",
-			value1 = ${publishTimeHours});
-
-		Click(locator1 = "Publications#PUBLISH_TIME_MINUTES");
-
-		DoubleClick.javaScriptDoubleClick(locator1 = "Publications#PUBLISH_TIME_MINUTES");
-
-		Type.sendKeys(
-			locator1 = "Publications#PUBLISH_TIME_MINUTES",
-			value1 = ${publishTimeMinutes});
+			locator1 = "Publications#PUBLISH_TIME",
+			value1 = "${publishTimeHours}${publishTimeMinutes}${publishTimeAMPM}");
 
 		if (${reschedule} == "true") {
 			Click(locator1 = "Publications#RESCHEDULE_BUTTON");

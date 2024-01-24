@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {STR_BLANK} from './constants';
+
 /**
  * If string does not start with a forward slash, add it.
  */
@@ -25,6 +27,28 @@ export function endStringWithForwardSlash(str?: string) {
 	return str;
 }
 
+/*
+ * Takes all the path without the last parameter
+ */
+export function getAllButLastParameterFromPath(path: string) {
+	if (path) {
+		return path.lastIndexOf('/{') > 0
+			? path.slice(0, path.lastIndexOf('/{'))
+			: path;
+	}
+
+	return STR_BLANK;
+}
+
+/*
+ * Takes the last parameter of a path
+ */
+export function getLastParameterFromPath(path: string) {
+	return path?.includes('/')
+		? path.substring(path.lastIndexOf('/'))
+		: STR_BLANK;
+}
+
 /**
  * Returns a substring of the received one, capped at maxLengh.
  */
@@ -34,6 +58,13 @@ export function limitStringInputLengh(str: string, maxLengh: number) {
 	}
 
 	return str;
+}
+
+/**
+ * Make valid url path parameter string (Only numbers, letters and curly braces).
+ */
+export function makeURLPathParameterString(str: string) {
+	return str.replace(/[^0-9A-Za-z{}]/g, STR_BLANK);
 }
 
 /**
@@ -70,6 +101,21 @@ export function removeLeadingForwardSlash(str: string) {
  */
 export function replaceSpacesWithDash(str: string) {
 	return str.replace(/\s+/g, '-');
+}
+
+/**
+ * Ensures that the string is between curly braces, if not, adds it.
+ */
+export function stringBetweenCurlyBraces(str?: string | undefined) {
+	if (str && str?.[0] !== '{') {
+		str = '{' + str;
+	}
+
+	if (str && str.slice(-1) !== '}') {
+		str = str + '}';
+	}
+
+	return str;
 }
 
 /**

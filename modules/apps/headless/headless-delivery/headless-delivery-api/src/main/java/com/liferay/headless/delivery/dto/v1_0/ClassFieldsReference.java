@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -55,26 +56,36 @@ public class ClassFieldsReference implements Serializable {
 
 	@Schema
 	public String getClassName() {
+		if (_classNameSupplier != null) {
+			className = _classNameSupplier.get();
+
+			_classNameSupplier = null;
+		}
+
 		return className;
 	}
 
 	public void setClassName(String className) {
 		this.className = className;
+
+		_classNameSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setClassName(
 		UnsafeSupplier<String, Exception> classNameUnsafeSupplier) {
 
-		try {
-			className = classNameUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_classNameSupplier = () -> {
+			try {
+				return classNameUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
@@ -82,35 +93,51 @@ public class ClassFieldsReference implements Serializable {
 	@NotEmpty
 	protected String className;
 
+	@JsonIgnore
+	private Supplier<String> _classNameSupplier;
+
 	@Schema(description = "The list of fields for the reference.")
 	@Valid
 	public Field[] getFields() {
+		if (_fieldsSupplier != null) {
+			fields = _fieldsSupplier.get();
+
+			_fieldsSupplier = null;
+		}
+
 		return fields;
 	}
 
 	public void setFields(Field[] fields) {
 		this.fields = fields;
+
+		_fieldsSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setFields(
 		UnsafeSupplier<Field[], Exception> fieldsUnsafeSupplier) {
 
-		try {
-			fields = fieldsUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_fieldsSupplier = () -> {
+			try {
+				return fieldsUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField(description = "The list of fields for the reference.")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	@NotNull
 	protected Field[] fields;
+
+	@JsonIgnore
+	private Supplier<Field[]> _fieldsSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -140,6 +167,8 @@ public class ClassFieldsReference implements Serializable {
 
 		sb.append("{");
 
+		String className = getClassName();
+
 		if (className != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -153,6 +182,8 @@ public class ClassFieldsReference implements Serializable {
 
 			sb.append("\"");
 		}
+
+		Field[] fields = getFields();
 
 		if (fields != null) {
 			if (sb.length() > 1) {

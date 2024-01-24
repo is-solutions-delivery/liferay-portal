@@ -106,7 +106,7 @@ public class CommerceCatalogServiceTest {
 			_commerceCatalogService.getCommerceCatalog(
 				commerceCatalog1.getCommerceCatalogId()));
 
-		User user4 = UserTestUtil.addOmniAdminUser();
+		User user4 = UserTestUtil.addOmniadminUser();
 
 		UserTestUtil.setUser(user4);
 

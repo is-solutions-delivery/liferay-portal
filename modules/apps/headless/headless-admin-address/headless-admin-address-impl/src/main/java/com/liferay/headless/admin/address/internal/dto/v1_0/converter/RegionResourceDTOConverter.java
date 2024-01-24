@@ -6,12 +6,10 @@
 package com.liferay.headless.admin.address.internal.dto.v1_0.converter;
 
 import com.liferay.headless.admin.address.dto.v1_0.Region;
-import com.liferay.portal.kernel.service.RegionService;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Pei-Jung Lan
@@ -36,18 +34,15 @@ public class RegionResourceDTOConverter
 
 		return new Region() {
 			{
-				active = serviceBuilderRegion.getActive();
-				countryId = serviceBuilderRegion.getCountryId();
-				id = serviceBuilderRegion.getRegionId();
-				name = serviceBuilderRegion.getName();
-				position = serviceBuilderRegion.getPosition();
-				regionCode = serviceBuilderRegion.getRegionCode();
-				title_i18n = serviceBuilderRegion.getLanguageIdToTitleMap();
+				setActive(serviceBuilderRegion::isActive);
+				setCountryId(serviceBuilderRegion::getCountryId);
+				setId(serviceBuilderRegion::getRegionId);
+				setName(serviceBuilderRegion::getName);
+				setPosition(serviceBuilderRegion::getPosition);
+				setRegionCode(serviceBuilderRegion::getRegionCode);
+				setTitle_i18n(serviceBuilderRegion::getLanguageIdToTitleMap);
 			}
 		};
 	}
-
-	@Reference
-	private RegionService _regionService;
 
 }

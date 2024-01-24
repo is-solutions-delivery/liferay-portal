@@ -5,10 +5,13 @@
 
 package com.liferay.commerce.order.content.web.internal.portlet.action;
 
+import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.exception.NoSuchEntryException;
 import com.liferay.account.model.AccountEntry;
+import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.commerce.constants.CommerceAddressConstants;
 import com.liferay.commerce.constants.CommerceOrderConstants;
+import com.liferay.commerce.constants.CommerceOrderWebKeys;
 import com.liferay.commerce.constants.CommercePortletKeys;
 import com.liferay.commerce.constants.CommerceWebKeys;
 import com.liferay.commerce.context.CommerceContext;
@@ -51,6 +54,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.Calendar;
 import java.util.List;
@@ -59,6 +63,8 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -211,9 +217,15 @@ public class EditCommerceOrderMVCActionCommand extends BaseMVCActionCommand {
 			ActionRequest actionRequest, long commerceOrderId)
 		throws Exception {
 
+		HttpServletRequest httpServletRequest = _portal.getHttpServletRequest(
+			actionRequest);
+
+		httpServletRequest.setAttribute(
+			CommerceOrderWebKeys.MERGE_GUEST_ORDER, Boolean.FALSE);
+
 		CommerceOrder currentCommerceOrder =
 			_commerceOrderHttpHelper.getCurrentCommerceOrder(
-				_portal.getHttpServletRequest(actionRequest));
+				httpServletRequest);
 
 		if ((currentCommerceOrder == null) ||
 			(commerceOrderId != currentCommerceOrder.getCommerceOrderId())) {
@@ -542,6 +554,28 @@ public class EditCommerceOrderMVCActionCommand extends BaseMVCActionCommand {
 		CommerceOrder commerceOrder = _commerceOrderService.getCommerceOrder(
 			commerceOrderId);
 
+		if (commerceOrder.isGuestOrder()) {
+			String emailAddress = ParamUtil.getString(
+				actionRequest, "emailAddress");
+
+			ServiceContext serviceContext = ServiceContextFactory.getInstance(
+				CommerceOrder.class.getName(), actionRequest);
+
+			AccountEntry accountEntry =
+				_accountEntryLocalService.addAccountEntry(
+					serviceContext.getUserId(),
+					AccountConstants.PARENT_ACCOUNT_ENTRY_ID_DEFAULT,
+					emailAddress, null, null, emailAddress, null, null,
+					AccountConstants.ACCOUNT_ENTRY_TYPE_GUEST,
+					WorkflowConstants.STATUS_APPROVED, serviceContext);
+
+			commerceOrder.setCommerceAccountId(
+				accountEntry.getAccountEntryId());
+
+			commerceOrder = _commerceOrderService.updateCommerceOrder(
+				commerceOrder);
+		}
+
 		_commerceOrderEngine.transitionCommerceOrder(
 			commerceOrder, CommerceOrderConstants.ORDER_STATUS_QUOTE_REQUESTED,
 			_portal.getUserId(actionRequest), true);
@@ -767,6 +801,9 @@ public class EditCommerceOrderMVCActionCommand extends BaseMVCActionCommand {
 			commerceOrderId, name, description, street1, street2, street3, city,
 			zip, regionId, countryId, phoneNumber, serviceContext);
 	}
+
+	@Reference
+	private AccountEntryLocalService _accountEntryLocalService;
 
 	@Reference
 	private CommerceAccountHelper _commerceAccountHelper;

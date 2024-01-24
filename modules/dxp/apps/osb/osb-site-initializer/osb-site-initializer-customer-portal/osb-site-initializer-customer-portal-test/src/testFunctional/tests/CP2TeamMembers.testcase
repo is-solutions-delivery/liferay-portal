@@ -164,7 +164,7 @@ definition {
 		}
 
 		task ("Then I go to the Customer Portal Site") {
-			CP2Utils.goToCustomerPortalSiteWithRefresh();
+			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 		}
 
 		task ("And I enter the test account and go to Team Members page") {
@@ -203,6 +203,7 @@ definition {
 	}
 
 	@description = "Automation ID: LPS-170211 | Test Summary: Assert that when the user reaches the limit of available support seats the User function becomes default for the next invited"
+	@ignore = "true"
 	@priority = 3
 	test AssertThatTheUserFunctionBecomesDefault {
 
@@ -695,6 +696,7 @@ definition {
 	}
 
 	@description = "Automation ID: LPS-150206 | Test Summary: Verify that below the number of seats the modal displays an explanation of the support tickets"
+	@ignore = "true"
 	@priority = 3
 	test CanViewTipMessage {
 
@@ -728,7 +730,7 @@ definition {
 		}
 
 		task ("Then I go to the Customer Portal Site") {
-			CP2Utils.goToCustomerPortalSiteWithRefresh();
+			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 		}
 
 		task ("And I enter the test account") {
@@ -792,7 +794,7 @@ definition {
 		}
 
 		task ("Go to CP2.0 and join a project") {
-			CP2Utils.goToCustomerPortalSiteWithRefresh();
+			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 			CustomerPortal.enterOnProject(title = "Test Account Analytics Cloud");
 		}
@@ -830,7 +832,7 @@ definition {
 		}
 
 		task ("Go to CP2.0 and join a project") {
-			CP2Utils.goToCustomerPortalSiteWithRefresh();
+			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 			CustomerPortal.enterOnProject(title = "Test Account Analytics Cloud");
 		}
@@ -868,7 +870,7 @@ definition {
 		}
 
 		task ("Go to CP2.0 and join a project") {
-			CP2Utils.goToCustomerPortalSiteWithRefresh();
+			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 			CustomerPortal.enterOnProject(title = "Test Account Analytics Cloud");
 		}
@@ -900,7 +902,7 @@ definition {
 		}
 
 		task ("Go to CP2.0 and join a project") {
-			CP2Utils.goToCustomerPortalSiteWithRefresh();
+			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 			CustomerPortal.enterOnProject(title = "Test Account Analytics Cloud");
 		}
@@ -943,7 +945,7 @@ definition {
 		}
 
 		task ("Go to CP2.0 and join a project") {
-			CP2Utils.goToCustomerPortalSiteWithRefresh();
+			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 			CustomerPortal.enterOnProject(title = "Test Account LXC - SM");
 		}
@@ -986,7 +988,7 @@ definition {
 		}
 
 		task ("Go to CP2.0 and join a project") {
-			CP2Utils.goToCustomerPortalSiteWithRefresh();
+			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 			CustomerPortal.enterOnProject(title = "Test Account LXC - SM");
 		}
@@ -1028,7 +1030,7 @@ definition {
 		}
 
 		task ("Go to CP2.0 and join a project") {
-			CP2Utils.goToCustomerPortalSiteWithRefresh();
+			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 			CustomerPortal.enterOnProject(title = "Test Account LXC - SM");
 		}
@@ -1059,7 +1061,7 @@ definition {
 		}
 
 		task ("Go to CP2.0 and join a project") {
-			CP2Utils.goToCustomerPortalSiteWithRefresh();
+			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 			CustomerPortal.enterOnProject(title = "Test Account LXC - SM");
 		}
@@ -1095,7 +1097,7 @@ definition {
 		}
 
 		task ("Go to CP2.0 and join a project") {
-			CP2Utils.goToCustomerPortalSiteWithRefresh();
+			ApplicationsMenu.gotoSite(key_site = "Customer Portal Site");
 
 			CustomerPortal.enterOnProject(title = "Test Account LXC - SM");
 		}

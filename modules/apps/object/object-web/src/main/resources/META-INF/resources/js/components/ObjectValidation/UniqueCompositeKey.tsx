@@ -7,6 +7,7 @@ import {
 	API,
 	BuilderScreen,
 	Card,
+	MultiSelectItem,
 	MultipleSelect,
 	getLocalizableLabel,
 } from '@liferay/object-js-components-web';
@@ -32,13 +33,6 @@ interface ModalSelectObjectFieldItem extends ObjectField {
 	checked: boolean;
 	disableCheckbox: boolean;
 }
-
-interface MultipleSelectOption {
-	checked: boolean;
-	externalReferenceCode: string;
-	label: string;
-}
-
 export interface UniqueCompositeKeyProps {
 	baseResourceURL: string;
 	creationLanguageId: Liferay.Language.Locale;
@@ -86,7 +80,7 @@ export function UniqueCompositeKey({
 		setModalSelectObjectFieldsItems,
 	] = useState<ModalSelectObjectFieldItem[]>([]);
 	const [multipleSelectOptions, setMultipleSelectOptions] = useState<
-		MultipleSelectOption[]
+		MultiSelectItem[]
 	>([]);
 	const [objectDefinition, setObjectDefinition] = useState<
 		ObjectDefinition
@@ -286,7 +280,7 @@ export function UniqueCompositeKey({
 
 		const newBuilderScreenItems: TBuilderScreenItem[] = [];
 		const newModalSelectObjectFieldsItems: ModalSelectObjectFieldItem[] = [];
-		const newMultipleSelectOptions: MultipleSelectOption[] = [];
+		const newMultipleSelectOptions: MultiSelectItem[] = [];
 
 		values.objectValidationRuleSettings.forEach(
 			(objectValidationRuleSetting) => {
@@ -331,9 +325,9 @@ export function UniqueCompositeKey({
 									}
 								)
 						),
-						externalReferenceCode:
-							filteredObjectFieldObjectValidationRuleSetting.externalReferenceCode,
 						label,
+						value:
+							filteredObjectFieldObjectValidationRuleSetting.externalReferenceCode,
 					});
 				}
 			}
@@ -397,7 +391,7 @@ export function UniqueCompositeKey({
 					emptyState={{
 						buttonText: Liferay.Language.get('add-fields'),
 						description: Liferay.Language.get(
-							'add-a-minimum-of-two-fields-to-create-unique-composite-keys'
+							'add-a-minimum-of-two-object-fields-to-create-unique-composite-keys'
 						),
 						title: Liferay.Language.get('no-fields-added-yet'),
 					}}
@@ -421,12 +415,12 @@ export function UniqueCompositeKey({
 							const parentWindow = Liferay.Util.getOpener();
 
 							parentWindow.Liferay.fire(
-								'openModalDeletionNotAllowed',
+								'openModalObjectFieldDeletionNotAllowed',
 								{
 									contentLiferayFire: (
 										<span>
 											{Liferay.Language.get(
-												'fields-cannot-be-deleted-from-unique-composite-keys-after-definition-publication'
+												'fields-cannot-be-deleted-from-unique-composite-keys-after-the-definition-is-published'
 											)}
 										</span>
 									),
@@ -470,7 +464,7 @@ export function UniqueCompositeKey({
 				setValues={setValues}
 				values={values}
 			>
-				<MultipleSelect<MultipleSelectOption>
+				<MultipleSelect
 					disabled={!builderScreenItems.length}
 					label={Liferay.Language.get('field')}
 					options={multipleSelectOptions}
@@ -487,8 +481,7 @@ export function UniqueCompositeKey({
 									objectValidationRuleSettings?.push({
 										name:
 											'outputObjectFieldExternalReferenceCode',
-										value:
-											newOutputObjectFieldOption.externalReferenceCode,
+										value: newOutputObjectFieldOption.value,
 									});
 								}
 							}

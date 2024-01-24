@@ -158,7 +158,7 @@ definition {
 			var index = 1;
 		}
 
-		Click(
+		Click.clickNoMouseOver(
 			index = ${index},
 			locator1 = "ACIndividualsDashboard#INDIVIDUALS_ACTIVITIES_CHART_RECHARTS_BAR");
 	}
@@ -259,13 +259,19 @@ definition {
 			var index = 1;
 		}
 
+		ACUtils.waitForChartLoad();
+
 		while (IsElementNotPresent(index = ${index}, locator1 = "ACIndividualsDashboard#INDIVIDUALS_ACTIVITIES_CHART_RECHARTS_BAR")) {
 			TestUtils.hardRefresh();
 
 			ACUtils.waitForChartLoad();
 		}
 
-		MouseUp.mouseUp(
+		Click(
+			key_cardTitle = "Distribution by attribute",
+			locator1 = "ACCards#CARD_TITLE");
+
+		MouseOver.mouseOverInvisible(
 			index = ${index},
 			locator1 = "ACIndividualsDashboard#INDIVIDUALS_ACTIVITIES_CHART_RECHARTS_BAR");
 
@@ -331,7 +337,7 @@ definition {
 
 			// The pause is necessary because the bar takes a while to load into the chart. For more information about pause see LRAC-9517
 
-			Pause(value1 = 2000);
+			Pause(value1 = 5000);
 		}
 
 		AssertVisible(

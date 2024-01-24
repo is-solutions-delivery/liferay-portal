@@ -465,6 +465,29 @@ definition {
 			value1 = ${content});
 	}
 
+	@summary = "Create a new key inside Customer Portal Site"
+	macro fullFlowGenerateKey(keyType = null,option = null,fieldText = null,fieldType = null,hostName = null,numberOfActivationKeys = null) {
+		CP2ActivationKeys.generateNewKey();
+
+		CP2ActivationKeys.selectGenerateActivationKeyOptionByField(
+			field = ${keyType},
+			option = ${option});
+
+		CP2ActivationKeys.selectFirstActiveSubscriptionInput(index = ${optionIndex});
+
+		CustomerPortal.clickAtButton(text = "Next");
+
+		CP2ActivationKeys.fulfillGenerateActivationKeyTextField(
+			content = ${fieldText},
+			field = ${fieldType});
+
+		CP2ActivationKeys.fulfillActivationKey(
+			hostName = ${hostName},
+			numberOfActivationKeys = ${numberOfActivationKeys});
+
+		CustomerPortal.clickAtButton(text = "Generate ${numberOfActivationKeys} Key");
+	}
+
 	@summary = "Default summary"
 	macro generateKeyFlow(product = null,project = null) {
 		CustomerPortal.search(searchItem = ${project});
@@ -565,8 +588,8 @@ definition {
 		Click(locator1 = "CP2ActivationKeys#COMPLIMENTARY_KEY");
 	}
 
-	@summary = "Default summary"
-	macro selectFistActiveSubscriptionInput(index = null) {
+	@summary = "Select the First Active Subscription on the generate new key modal"
+	macro selectFirstActiveSubscriptionInput(index = null) {
 		if (isSet(index)) {
 			var key_position = ${index};
 

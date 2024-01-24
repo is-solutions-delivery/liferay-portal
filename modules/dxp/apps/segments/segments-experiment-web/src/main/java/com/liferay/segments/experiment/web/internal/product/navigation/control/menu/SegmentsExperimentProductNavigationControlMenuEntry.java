@@ -12,6 +12,7 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.IconTag;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.content.security.policy.ContentSecurityPolicyNonceProviderUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
@@ -51,7 +52,6 @@ import com.liferay.taglib.util.BodyBottomTag;
 import java.io.IOException;
 import java.io.Writer;
 
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -120,44 +120,52 @@ public class SegmentsExperimentProductNavigationControlMenuEntry
 			HttpServletResponse httpServletResponse)
 		throws IOException {
 
-		Map<String, String> values = new HashMap<>();
-
-		if (isPanelStateOpen(
-				httpServletRequest,
-				ProductNavigationControlMenuEntryConstants.
-					SESSION_CLICKS_KEY)) {
-
-			values.put("cssClass", "active");
-		}
-		else {
-			values.put("cssClass", StringPool.BLANK);
-		}
-
-		ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
-			_portal.getLocale(httpServletRequest), getClass());
-
-		values.put(
-			"title", HtmlUtil.escape(_language.get(resourceBundle, "ab-test")));
-
-		IconTag iconTag = new IconTag();
-
-		iconTag.setCssClass("icon-monospaced");
-		iconTag.setSymbol("test");
-
 		try {
-			values.put(
-				"iconTag",
-				iconTag.doTagAsString(httpServletRequest, httpServletResponse));
+			Writer writer = httpServletResponse.getWriter();
+
+			IconTag iconTag = new IconTag();
+
+			iconTag.setCssClass("icon-monospaced");
+			iconTag.setSymbol("test");
+
+			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+				_portal.getLocale(httpServletRequest), getClass());
+
+			writer.write(
+				StringUtil.replace(
+					_ICON_TMPL_CONTENT, "${", "}",
+					HashMapBuilder.put(
+						"cssClass",
+						() -> {
+							if (isPanelStateOpen(
+									httpServletRequest,
+									ProductNavigationControlMenuEntryConstants.
+										SESSION_CLICKS_KEY)) {
+
+								return "active";
+							}
+
+							return StringPool.BLANK;
+						}
+					).put(
+						"iconTag",
+						iconTag.doTagAsString(
+							httpServletRequest, httpServletResponse)
+					).put(
+						"nonceAttribute",
+						ContentSecurityPolicyNonceProviderUtil.
+							getNonceAttribute(httpServletRequest)
+					).put(
+						"portletNamespace", _portletNamespace
+					).put(
+						"title",
+						HtmlUtil.escape(
+							_language.get(resourceBundle, "ab-test"))
+					).build()));
 		}
 		catch (JspException jspException) {
-			ReflectionUtil.throwException(jspException);
+			throw new IOException(jspException);
 		}
-
-		values.put("portletNamespace", _portletNamespace);
-
-		Writer writer = httpServletResponse.getWriter();
-
-		writer.write(StringUtil.replace(_ICON_TMPL_CONTENT, "${", "}", values));
 
 		return true;
 	}
@@ -423,10 +431,10 @@ public class SegmentsExperimentProductNavigationControlMenuEntry
 			sb.append("<div class=\"d-flex justify-content-between p-3 ");
 			sb.append("sidebar-header\">");
 			sb.append("<h1 class=\"sr-only\">");
-			sb.append(_language.get(httpServletRequest, "ab-test-panel"));
+			sb.append(_language.get(httpServletRequest, "tests-panel"));
 			sb.append("</h1>");
 			sb.append("<span class=\"font-weight-bold\">");
-			sb.append(_language.get(httpServletRequest, "ab-test"));
+			sb.append(_language.get(httpServletRequest, "tests"));
 			sb.append("</span>");
 
 			ButtonTag buttonTag = new ButtonTag();

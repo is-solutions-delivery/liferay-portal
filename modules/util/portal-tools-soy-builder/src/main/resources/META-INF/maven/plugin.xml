@@ -7,7 +7,7 @@
 	<description/>
 	<groupId>com.liferay</groupId>
 	<artifactId>com.liferay.portal.tools.soy.builder</artifactId>
-	<version>3.0.5</version>
+	<version>3.0.6</version>
 	<goalPrefix>soy-builder</goalPrefix>
 	<isolatedRealm>false</isolatedRealm>
 	<inheritedByDefault>true</inheritedByDefault>
@@ -290,7 +290,7 @@
 			<groupId>org.codehaus.plexus</groupId>
 			<artifactId>plexus-utils</artifactId>
 			<type>jar</type>
-			<version>3.0.16</version>
+			<version>3.0.24</version>
 		</dependency>
 		<dependency>
 			<groupId>org.sonatype.plexus</groupId>

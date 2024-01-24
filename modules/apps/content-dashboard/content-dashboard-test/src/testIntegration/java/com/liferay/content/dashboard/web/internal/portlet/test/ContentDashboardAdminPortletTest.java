@@ -33,12 +33,14 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.constants.LanguageConstants;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.portlet.bridges.mvc.constants.MVCRenderConstants;
 import com.liferay.portal.kernel.repository.model.FileEntry;
-import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.template.TemplateConstants;
@@ -65,6 +67,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portlet.test.MockLiferayPortletContext;
 
 import java.time.LocalDateTime;
@@ -97,12 +100,12 @@ public class ContentDashboardAdminPortletTest {
 	@ClassRule
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
-		new LiferayIntegrationTestRule();
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(),
+			PermissionCheckerMethodTestRule.INSTANCE);
 
 	@Before
 	public void setUp() throws Exception {
-		UserTestUtil.setUser(TestPropsValues.getUser());
-
 		_group = GroupTestUtil.addGroup();
 
 		_company = _companyLocalService.fetchCompany(_group.getCompanyId());
@@ -236,8 +239,7 @@ public class ContentDashboardAdminPortletTest {
 	public void testGetSearchContainer() throws Exception {
 		User user = UserTestUtil.addGroupAdminUser(_group);
 
-		Group group = GroupTestUtil.addGroup(
-			_company.getCompanyId(), TestPropsValues.getUserId(), 0);
+		Group group = GroupTestUtil.addGroup();
 
 		try {
 			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
@@ -547,44 +549,30 @@ public class ContentDashboardAdminPortletTest {
 	public void testGetSearchContainerWithExpiredJournalArticle()
 		throws Exception {
 
-		User user = UserTestUtil.addGroupAdminUser(_group);
+		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+			_getMockLiferayPortletRenderRequest();
 
-		Group group = GroupTestUtil.addGroup(
-			_company.getCompanyId(), TestPropsValues.getUserId(), 0);
+		SearchContainer<Object> searchContainer = _getSearchContainer(
+			mockLiferayPortletRenderRequest);
 
-		try {
-			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
-				_getMockLiferayPortletRenderRequest();
+		int initialCount = searchContainer.getTotal();
 
-			SearchContainer<Object> searchContainer = _getSearchContainer(
-				mockLiferayPortletRenderRequest);
+		JournalArticle journalArticle = JournalTestUtil.addArticle(
+			_group.getGroupId(),
+			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
 
-			int initialCount = searchContainer.getTotal();
+		JournalArticle updateJournalArticle = JournalTestUtil.updateArticle(
+			journalArticle, journalArticle.getTitleMap(),
+			journalArticle.getContent(), true, true,
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId()));
 
-			JournalArticle journalArticle = JournalTestUtil.addArticle(
-				_group.getGroupId(),
-				JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID);
+		JournalTestUtil.expireArticle(
+			_group.getGroupId(), updateJournalArticle,
+			updateJournalArticle.getVersion());
 
-			JournalArticle updateJournalArticle = JournalTestUtil.updateArticle(
-				journalArticle, journalArticle.getTitleMap(),
-				journalArticle.getContent(), true, true,
-				ServiceContextTestUtil.getServiceContext());
+		searchContainer = _getSearchContainer(mockLiferayPortletRenderRequest);
 
-			JournalTestUtil.expireArticle(
-				_group.getGroupId(), updateJournalArticle,
-				updateJournalArticle.getVersion());
-
-			searchContainer = _getSearchContainer(
-				mockLiferayPortletRenderRequest);
-
-			int actualCount = searchContainer.getTotal();
-
-			Assert.assertEquals(initialCount + 1, actualCount);
-		}
-		finally {
-			GroupTestUtil.deleteGroup(group);
-			_userLocalService.deleteUser(user);
-		}
+		Assert.assertEquals(initialCount + 1, searchContainer.getTotal());
 	}
 
 	@Test
@@ -1004,68 +992,56 @@ public class ContentDashboardAdminPortletTest {
 	public void testGetSearchContainerWithoutGoogleDriveShortcut()
 		throws Exception {
 
-		User user = UserTestUtil.addGroupAdminUser(_group);
+		MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
+			_getMockLiferayPortletRenderRequest();
 
-		Group group = GroupTestUtil.addGroup(
-			_company.getCompanyId(), TestPropsValues.getUserId(), 0);
+		SearchContainer<Object> searchContainer = _getSearchContainer(
+			mockLiferayPortletRenderRequest);
 
-		try {
-			MockLiferayPortletRenderRequest mockLiferayPortletRenderRequest =
-				_getMockLiferayPortletRenderRequest();
+		int initialCount = searchContainer.getTotal();
 
-			SearchContainer<Object> searchContainer = _getSearchContainer(
-				mockLiferayPortletRenderRequest);
+		JournalTestUtil.addArticle(
+			TestPropsValues.getUserId(), _group.getGroupId(), 0);
 
-			int initialCount = searchContainer.getTotal();
+		FileEntry gifFileEntry = _addFileEntry("gif");
+		FileEntry jpgFileEntry = _addFileEntry("jpg");
 
-			JournalTestUtil.addArticle(
-				TestPropsValues.getUserId(), _group.getGroupId(), 0);
+		FileEntry futureGoogleDriveShortCutFileEntry = _addFileEntry("pdf");
 
-			FileEntry gifFileEntry = _addFileEntry("gif");
-			FileEntry jpgFileEntry = _addFileEntry("jpg");
+		Object futureGoogleDriveShortModel =
+			futureGoogleDriveShortCutFileEntry.getModel();
 
-			FileEntry futureGoogleDriveShortCutFileEntry = _addFileEntry("pdf");
+		DLFileEntry googleDriveShortcutFileEntry =
+			(DLFileEntry)futureGoogleDriveShortModel;
 
-			Object futureGoogleDriveShortModel =
-				futureGoogleDriveShortCutFileEntry.getModel();
+		DLFileEntryType googleDocsDLFileEntryType =
+			DLFileEntryTypeLocalServiceUtil.getFileEntryType(
+				_company.getGroupId(), "GOOGLE_DOCS");
 
-			DLFileEntry googleDriveShortcutFileEntry =
-				(DLFileEntry)futureGoogleDriveShortModel;
+		googleDriveShortcutFileEntry.setFileEntryTypeId(
+			googleDocsDLFileEntryType.getFileEntryTypeId());
 
-			DLFileEntryType googleDocsDLFileEntryType =
-				DLFileEntryTypeLocalServiceUtil.getFileEntryType(
-					_company.getGroupId(), "GOOGLE_DOCS");
+		DLFileEntryLocalServiceUtil.updateDLFileEntry(
+			googleDriveShortcutFileEntry);
 
-			googleDriveShortcutFileEntry.setFileEntryTypeId(
-				googleDocsDLFileEntryType.getFileEntryTypeId());
+		searchContainer = _getSearchContainer(mockLiferayPortletRenderRequest);
 
-			DLFileEntryLocalServiceUtil.updateDLFileEntry(
-				googleDriveShortcutFileEntry);
+		int actualCount = searchContainer.getTotal();
 
-			searchContainer = _getSearchContainer(
-				mockLiferayPortletRenderRequest);
+		Assert.assertEquals(initialCount + 3, actualCount);
 
-			int actualCount = searchContainer.getTotal();
+		List<Object> results = searchContainer.getResults();
 
-			Assert.assertEquals(initialCount + 3, actualCount);
-
-			List<Object> results = searchContainer.getResults();
-
-			Assert.assertEquals(
-				jpgFileEntry.getFileName(),
-				ReflectionTestUtil.invoke(
-					results.get(0), "getTitle", new Class<?>[] {Locale.class},
-					LocaleUtil.US));
-			Assert.assertEquals(
-				gifFileEntry.getFileName(),
-				ReflectionTestUtil.invoke(
-					results.get(1), "getTitle", new Class<?>[] {Locale.class},
-					LocaleUtil.US));
-		}
-		finally {
-			GroupTestUtil.deleteGroup(group);
-			_userLocalService.deleteUser(user);
-		}
+		Assert.assertEquals(
+			jpgFileEntry.getFileName(),
+			ReflectionTestUtil.invoke(
+				results.get(0), "getTitle", new Class<?>[] {Locale.class},
+				LocaleUtil.US));
+		Assert.assertEquals(
+			gifFileEntry.getFileName(),
+			ReflectionTestUtil.invoke(
+				results.get(1), "getTitle", new Class<?>[] {Locale.class},
+				LocaleUtil.US));
 	}
 
 	@Test
@@ -1095,8 +1071,7 @@ public class ContentDashboardAdminPortletTest {
 
 	@Test
 	public void testGetSearchContainerWithScope() throws Exception {
-		Group group = GroupTestUtil.addGroup(
-			_company.getCompanyId(), TestPropsValues.getUserId(), 0);
+		Group group = GroupTestUtil.addGroup();
 
 		try {
 			JournalArticle journalArticle = JournalTestUtil.addArticle(
@@ -1269,7 +1244,13 @@ public class ContentDashboardAdminPortletTest {
 
 		try {
 			JournalArticle journalArticle = JournalTestUtil.addArticle(
-				TestPropsValues.getUserId(), _group.getGroupId(), 0);
+				_group.getGroupId(),
+				JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+				JournalArticleConstants.CLASS_NAME_ID_DEFAULT, StringPool.BLANK,
+				true, RandomTestUtil.randomLocaleStringMap(LocaleUtil.US),
+				RandomTestUtil.randomLocaleStringMap(LocaleUtil.US),
+				RandomTestUtil.randomLocaleStringMap(LocaleUtil.US), null,
+				LocaleUtil.US, null, false, true, serviceContext);
 
 			serviceContext = ServiceContextTestUtil.getServiceContext(
 				_company.getCompanyId(), _group.getGroupId(),
@@ -1280,7 +1261,7 @@ public class ContentDashboardAdminPortletTest {
 
 			JournalTestUtil.updateArticle(
 				journalArticle, RandomTestUtil.randomString(),
-				journalArticle.getContent(), true, false, serviceContext);
+				journalArticle.getContent(), false, false, serviceContext);
 
 			searchContainer = _getSearchContainer(
 				_getMockLiferayPortletRenderRequest());
@@ -1666,6 +1647,10 @@ public class ContentDashboardAdminPortletTest {
 			new MockLiferayPortletContext(path));
 
 		mockLiferayPortletRenderRequest.setAttribute(
+			WebKeys.PORTLET_ID,
+			"com_liferay_content_dashboard_web_portlet_" +
+				"ContentDashboardAdminPortlet");
+		mockLiferayPortletRenderRequest.setAttribute(
 			WebKeys.THEME_DISPLAY, _getThemeDisplay(locale));
 
 		PortletPreferences portletPreferences =
@@ -1698,10 +1683,15 @@ public class ContentDashboardAdminPortletTest {
 
 		themeDisplay.setCompany(_company);
 		themeDisplay.setLanguageId(_language.getLanguageId(locale));
+
+		Group group = _groupLocalService.getGroup(
+			TestPropsValues.getCompanyId(), GroupConstants.CONTROL_PANEL);
+
+		themeDisplay.setLayout(
+			_layoutLocalService.fetchDefaultLayout(group.getGroupId(), true));
+
 		themeDisplay.setLocale(locale);
-		themeDisplay.setPermissionChecker(
-			PermissionThreadLocal.getPermissionChecker());
-		themeDisplay.setUser(_company.getGuestUser());
+		themeDisplay.setUser(TestPropsValues.getUser());
 
 		return themeDisplay;
 	}
@@ -1741,10 +1731,16 @@ public class ContentDashboardAdminPortletTest {
 	private Group _group;
 
 	@Inject
+	private GroupLocalService _groupLocalService;
+
+	@Inject
 	private JournalArticleLocalService _journalArticleLocalService;
 
 	@Inject
 	private Language _language;
+
+	@Inject
+	private LayoutLocalService _layoutLocalService;
 
 	@Inject(
 		filter = "component.name=com.liferay.content.dashboard.web.internal.portlet.ContentDashboardAdminPortlet"

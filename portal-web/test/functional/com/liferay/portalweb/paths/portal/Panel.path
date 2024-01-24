@@ -36,8 +36,23 @@
 	<td></td>
 </tr>
 <tr>
+	<td>PANEL_ALERT_FEEDBACK</td>
+	<td>//div[contains(@class,'panel')][.//div[contains(@class,'panel-title')][normalize-space()='${key_panel}']]//div[contains(@class,'alert-feedback')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PANEL_HEADER</td>
+	<td>//button[contains(@class,'panel-header')][normalize-space()='${key_panel}']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PANEL_HELP_TEXT</td>
 	<td>//div[contains(@class,'panel')][.//*[normalize-space()='${key_panel}'][contains(@class,'collapse')][not(contains(@data-qa-id,'app'))]]//p</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PANEL_INFO_ITEM</td>
+	<td>//div[contains(@class,'panel')][.//div[contains(@class,'panel-title')][normalize-space()='${key_panel}']]//p[contains(@class,'semi-bold')][normalize-space()='${key_itemName}']</td>
 	<td></td>
 </tr>
 <tr>

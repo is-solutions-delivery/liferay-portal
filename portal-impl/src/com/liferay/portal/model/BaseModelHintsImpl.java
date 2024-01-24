@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,10 +48,18 @@ import org.dom4j.io.SAXReader;
  */
 public abstract class BaseModelHintsImpl implements ModelHints {
 
+	public BaseModelHintsImpl() {
+		this(false);
+	}
+
+	public BaseModelHintsImpl(boolean productionMode) {
+		_productionMode = productionMode;
+	}
+
 	public void afterPropertiesSet() {
 		_hintCollections = new ConcurrentHashMap<>();
 		_defaultHints = new ConcurrentHashMap<>();
-		_modelFields = new ConcurrentHashMap<>();
+		_fieldDataBagsMap = new ConcurrentHashMap<>();
 		_models = new ConcurrentSkipListSet<>();
 
 		try {
@@ -81,9 +89,9 @@ public abstract class BaseModelHintsImpl implements ModelHints {
 									"Loading ", name, " from ", url));
 						}
 
-						InputStream inputStream = url.openStream();
-
-						read(classLoader, url.toString(), inputStream);
+						try (InputStream inputStream = url.openStream()) {
+							read(classLoader, url.toString(), inputStream);
+						}
 					}
 				}
 				else {
@@ -124,32 +132,36 @@ public abstract class BaseModelHintsImpl implements ModelHints {
 
 	@Override
 	public Object getFieldsElement(String model, String field) {
-		Map<String, Object> fields = (Map<String, Object>)_modelFields.get(
-			model);
+		Map<String, FieldDataBag> fieldDataBags = _fieldDataBagsMap.get(model);
 
-		if (fields == null) {
+		if (fieldDataBags == null) {
 			return null;
 		}
 
-		Element fieldsEl = (Element)fields.get(field + _ELEMENTS_SUFFIX);
+		FieldDataBag fieldDataBag = fieldDataBags.get(field);
 
-		if (fieldsEl == null) {
+		if (fieldDataBag == null) {
 			return null;
 		}
 
-		return fieldsEl;
+		return fieldDataBag._element;
 	}
 
 	@Override
 	public Map<String, String> getHints(String model, String field) {
-		Map<String, Object> fields = (Map<String, Object>)_modelFields.get(
-			model);
+		Map<String, FieldDataBag> fieldDataBags = _fieldDataBagsMap.get(model);
 
-		if (fields == null) {
+		if (fieldDataBags == null) {
 			return null;
 		}
 
-		return (Map<String, String>)fields.get(field + _HINTS_SUFFIX);
+		FieldDataBag fieldDataBag = fieldDataBags.get(field);
+
+		if (fieldDataBag == null) {
+			return null;
+		}
+
+		return fieldDataBag._hints;
 	}
 
 	@Override
@@ -177,34 +189,36 @@ public abstract class BaseModelHintsImpl implements ModelHints {
 
 	@Override
 	public Tuple getSanitizeTuple(String model, String field) {
-		Map<String, Object> fields = (Map<String, Object>)_modelFields.get(
-			model);
+		Map<String, FieldDataBag> fieldDataBags = _fieldDataBagsMap.get(model);
 
-		if (fields == null) {
+		if (fieldDataBags == null) {
 			return null;
 		}
 
-		return (Tuple)fields.get(field + _SANITIZE_SUFFIX);
+		FieldDataBag fieldDataBag = fieldDataBags.get(field);
+
+		if (fieldDataBag == null) {
+			return null;
+		}
+
+		return fieldDataBag._sanitize;
 	}
 
 	@Override
 	public List<Tuple> getSanitizeTuples(String model) {
-		Map<String, Object> fields = (Map<String, Object>)_modelFields.get(
-			model);
+		Map<String, FieldDataBag> fieldDataBags = _fieldDataBagsMap.get(model);
 
-		if (fields == null) {
+		if (fieldDataBags == null) {
 			return Collections.emptyList();
 		}
 
 		List<Tuple> sanitizeTuples = new ArrayList<>();
 
-		for (Map.Entry<String, Object> entry : fields.entrySet()) {
-			String key = entry.getKey();
+		for (FieldDataBag fieldDataBag : fieldDataBags.values()) {
+			Tuple tuple = fieldDataBag._sanitize;
 
-			if (key.endsWith(_SANITIZE_SUFFIX)) {
-				Tuple sanitizeTuple = (Tuple)entry.getValue();
-
-				sanitizeTuples.add(sanitizeTuple);
+			if (tuple != null) {
+				sanitizeTuples.add(tuple);
 			}
 		}
 
@@ -215,28 +229,36 @@ public abstract class BaseModelHintsImpl implements ModelHints {
 
 	@Override
 	public String getType(String model, String field) {
-		Map<String, Object> fields = (Map<String, Object>)_modelFields.get(
-			model);
+		Map<String, FieldDataBag> fieldDataBags = _fieldDataBagsMap.get(model);
 
-		if (fields == null) {
+		if (fieldDataBags == null) {
 			return null;
 		}
 
-		return (String)fields.get(field + _TYPE_SUFFIX);
+		FieldDataBag fieldDataBag = fieldDataBags.get(field);
+
+		if (fieldDataBag == null) {
+			return null;
+		}
+
+		return fieldDataBag._type;
 	}
 
 	@Override
 	public List<Tuple> getValidators(String model, String field) {
-		Map<String, Object> fields = (Map<String, Object>)_modelFields.get(
-			model);
+		Map<String, FieldDataBag> fieldDataBags = _fieldDataBagsMap.get(model);
 
-		if ((fields == null) ||
-			(fields.get(field + _VALIDATORS_SUFFIX) == null)) {
-
+		if (fieldDataBags == null) {
 			return null;
 		}
 
-		return (List<Tuple>)fields.get(field + _VALIDATORS_SUFFIX);
+		FieldDataBag fieldDataBag = fieldDataBags.get(field);
+
+		if (fieldDataBag == null) {
+			return null;
+		}
+
+		return fieldDataBag._validators;
 	}
 
 	@Override
@@ -254,14 +276,19 @@ public abstract class BaseModelHintsImpl implements ModelHints {
 
 	@Override
 	public boolean hasField(String model, String field) {
-		Map<String, Object> fields = (Map<String, Object>)_modelFields.get(
-			model);
+		Map<String, FieldDataBag> fieldDataBags = _fieldDataBagsMap.get(model);
 
-		if (fields == null) {
+		if (fieldDataBags == null) {
 			return false;
 		}
 
-		return fields.containsKey(field + _ELEMENTS_SUFFIX);
+		FieldDataBag fieldDataBag = fieldDataBags.get(field);
+
+		if (fieldDataBag == null) {
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override
@@ -275,20 +302,19 @@ public abstract class BaseModelHintsImpl implements ModelHints {
 
 	@Override
 	public boolean isLocalized(String model, String field) {
-		Map<String, Object> fields = (Map<String, Object>)_modelFields.get(
-			model);
+		Map<String, FieldDataBag> fieldDataBags = _fieldDataBagsMap.get(model);
 
-		if (fields == null) {
+		if (fieldDataBags == null) {
 			return false;
 		}
 
-		Boolean localized = (Boolean)fields.get(field + _LOCALIZATION_SUFFIX);
+		FieldDataBag fieldDataBag = fieldDataBags.get(field);
 
-		if (localized != null) {
-			return localized;
+		if (fieldDataBag == null) {
+			return false;
 		}
 
-		return false;
+		return fieldDataBag._localized;
 	}
 
 	@Override
@@ -359,29 +385,32 @@ public abstract class BaseModelHintsImpl implements ModelHints {
 
 			Map<String, String> defaultHints = new HashMap<>();
 
-			_defaultHints.put(name, defaultHints);
+			if (!_productionMode) {
+				_defaultHints.put(name, defaultHints);
 
-			Element defaultHintsElement = modelElement.element("default-hints");
+				Element defaultHintsElement = modelElement.element(
+					"default-hints");
 
-			if (defaultHintsElement != null) {
-				List<Element> hintElements = defaultHintsElement.elements(
-					"hint");
+				if (defaultHintsElement != null) {
+					List<Element> hintElements = defaultHintsElement.elements(
+						"hint");
 
-				for (Element hintElement : hintElements) {
-					String hintName = hintElement.attributeValue("name");
-					String hintValue = hintElement.getText();
+					for (Element hintElement : hintElements) {
+						String hintName = hintElement.attributeValue("name");
+						String hintValue = hintElement.getText();
 
-					defaultHints.put(hintName, hintValue);
+						defaultHints.put(hintName, hintValue);
+					}
 				}
 			}
 
-			Map<String, Object> fields = (Map<String, Object>)_modelFields.get(
+			Map<String, FieldDataBag> fieldDataBags = _fieldDataBagsMap.get(
 				name);
 
-			if (fields == null) {
-				fields = new LinkedHashMap<>();
+			if (fieldDataBags == null) {
+				fieldDataBags = new HashMap<>();
 
-				_modelFields.put(name, fields);
+				_fieldDataBagsMap.put(name, fieldDataBags);
 			}
 
 			_models.add(name);
@@ -390,6 +419,11 @@ public abstract class BaseModelHintsImpl implements ModelHints {
 
 			for (Element fieldElement : modelElements) {
 				String fieldName = fieldElement.attributeValue("name");
+
+				FieldDataBag fieldDataBag = new FieldDataBag();
+
+				fieldDataBags.put(fieldName, fieldDataBag);
+
 				String fieldType = fieldElement.attributeValue("type");
 				boolean fieldLocalized = GetterUtil.getBoolean(
 					fieldElement.attributeValue("localized"));
@@ -459,19 +493,38 @@ public abstract class BaseModelHintsImpl implements ModelHints {
 					fieldValidators.put(validatorName, fieldValidator);
 				}
 
-				fields.put(fieldName + _ELEMENTS_SUFFIX, fieldElement);
-				fields.put(fieldName + _TYPE_SUFFIX, fieldType);
-				fields.put(fieldName + _LOCALIZATION_SUFFIX, fieldLocalized);
-				fields.put(fieldName + _HINTS_SUFFIX, fieldHints);
+				if (_productionMode) {
+					fieldElement = null;
+				}
+
+				fieldDataBag._element = fieldElement;
+				fieldDataBag._localized = fieldLocalized;
+				fieldDataBag._type = fieldType;
+
+				if (fieldHints.isEmpty()) {
+					fieldHints = Collections.emptyMap();
+				}
+				else if (fieldHints.size() == 1) {
+					Set<Map.Entry<String, String>> set = fieldHints.entrySet();
+
+					Iterator<Map.Entry<String, String>> iterator =
+						set.iterator();
+
+					Map.Entry<String, String> entry = iterator.next();
+
+					fieldHints = Collections.singletonMap(
+						entry.getKey(), entry.getValue());
+				}
+
+				fieldDataBag._hints = fieldHints;
 
 				if (fieldSanitize != null) {
-					fields.put(fieldName + _SANITIZE_SUFFIX, fieldSanitize);
+					fieldDataBag._sanitize = fieldSanitize;
 				}
 
 				if (!fieldValidators.isEmpty()) {
-					fields.put(
-						fieldName + _VALIDATORS_SUFFIX,
-						ListUtil.fromMapValues(fieldValidators));
+					fieldDataBag._validators = ListUtil.fromMapValues(
+						fieldValidators);
 				}
 			}
 		}
@@ -492,24 +545,24 @@ public abstract class BaseModelHintsImpl implements ModelHints {
 		return value;
 	}
 
-	private static final String _ELEMENTS_SUFFIX = "_ELEMENTS";
-
-	private static final String _HINTS_SUFFIX = "_HINTS";
-
-	private static final String _LOCALIZATION_SUFFIX = "_LOCALIZATION";
-
-	private static final String _SANITIZE_SUFFIX = "_SANITIZE_SUFFIX";
-
-	private static final String _TYPE_SUFFIX = "_TYPE";
-
-	private static final String _VALIDATORS_SUFFIX = "_VALIDATORS";
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		BaseModelHintsImpl.class);
 
 	private Map<String, Map<String, String>> _defaultHints;
+	private Map<String, Map<String, FieldDataBag>> _fieldDataBagsMap;
 	private Map<String, Map<String, String>> _hintCollections;
-	private Map<String, Object> _modelFields;
 	private Set<String> _models;
+	private final boolean _productionMode;
+
+	private static class FieldDataBag {
+
+		private Element _element;
+		private Map<String, String> _hints;
+		private boolean _localized;
+		private Tuple _sanitize;
+		private String _type;
+		private List<Tuple> _validators;
+
+	}
 
 }

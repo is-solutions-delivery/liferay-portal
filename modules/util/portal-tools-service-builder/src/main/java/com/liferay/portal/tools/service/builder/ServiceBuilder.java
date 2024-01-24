@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ClearThreadLocalUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -390,11 +391,11 @@ public class ServiceBuilder {
 				while (enumeration.hasMoreElements()) {
 					URL url = enumeration.nextElement();
 
-					InputStream inputStream = url.openStream();
-
-					_readResourceActionModels(
-						implDirName, resourcesDirName, inputStream,
-						resourceActionModels);
+					try (InputStream inputStream = url.openStream()) {
+						_readResourceActionModels(
+							implDirName, resourcesDirName, inputStream,
+							resourceActionModels);
+					}
 				}
 			}
 			else {
@@ -710,6 +711,9 @@ public class ServiceBuilder {
 
 			_mvccEnabled = GetterUtil.getBoolean(
 				rootElement.attributeValue("mvcc-enabled"));
+			_optimizeDBIndexes = GetterUtil.getBoolean(
+				rootElement.attributeValue("optimize-db-indexes"),
+				isVersionGTE_7_4_0());
 			_shortNoSuchExceptionEnabled = GetterUtil.getBoolean(
 				rootElement.attributeValue("short-no-such-exception-enabled"),
 				true);
@@ -2203,6 +2207,35 @@ public class ServiceBuilder {
 	}
 
 	private void _addIndexMetadata(
+		List<IndexMetadata> indexMetadatas, IndexMetadata indexMetadata) {
+
+		Iterator<IndexMetadata> iterator = indexMetadatas.iterator();
+
+		while (iterator.hasNext()) {
+			IndexMetadata currentIndexMetadata = iterator.next();
+
+			Boolean redundant = currentIndexMetadata.redundantTo(indexMetadata);
+
+			if (redundant == null) {
+				continue;
+			}
+
+			if (redundant) {
+				iterator.remove();
+			}
+			else {
+				indexMetadata = null;
+
+				break;
+			}
+		}
+
+		if (indexMetadata != null) {
+			indexMetadatas.add(indexMetadata);
+		}
+	}
+
+	private void _addIndexMetadata(
 		Map<String, List<IndexMetadata>> indexMetadatasMap, String tableName,
 		List<String> pkEntityColumnDBNames, IndexMetadata indexMetadata) {
 
@@ -2249,37 +2282,14 @@ public class ServiceBuilder {
 			}
 		}
 
-		List<IndexMetadata> indexMetadatas = indexMetadatasMap.get(tableName);
+		List<IndexMetadata> indexMetadatas = indexMetadatasMap.computeIfAbsent(
+			tableName, key -> new ArrayList<>());
 
-		if (indexMetadatas == null) {
-			indexMetadatas = new ArrayList<>();
-
-			indexMetadatasMap.put(tableName, indexMetadatas);
-		}
-
-		Iterator<IndexMetadata> iterator = indexMetadatas.iterator();
-
-		while (iterator.hasNext()) {
-			IndexMetadata currentIndexMetadata = iterator.next();
-
-			Boolean redundant = currentIndexMetadata.redundantTo(indexMetadata);
-
-			if (redundant == null) {
-				continue;
-			}
-
-			if (redundant) {
-				iterator.remove();
-			}
-			else {
-				indexMetadata = null;
-
-				break;
-			}
-		}
-
-		if (indexMetadata != null) {
+		if (_optimizeDBIndexes) {
 			indexMetadatas.add(indexMetadata);
+		}
+		else {
+			_addIndexMetadata(indexMetadatas, indexMetadata);
 		}
 	}
 
@@ -4135,6 +4145,10 @@ public class ServiceBuilder {
 			List<IndexMetadata> indexMetadatas = indexMetadatasMap.get(
 				entity.getTable());
 
+			if ((indexMetadatas != null) && _optimizeDBIndexes) {
+				indexMetadatas.clear();
+			}
+
 			List<EntityFinder> entityFinders = entity.getEntityFinders();
 
 			for (EntityFinder entityFinder : entityFinders) {
@@ -4152,41 +4166,44 @@ public class ServiceBuilder {
 				List<String> dbNames = new ArrayList<>();
 
 				for (EntityColumn entityColumn : entityColumns) {
-					dbNames.add(entityColumn.getDBName());
+					if (entityColumn.isIndexable()) {
+						dbNames.add(entityColumn.getDBName());
+					}
 				}
 
 				if (dbNames.isEmpty()) {
 					continue;
 				}
 
-				if (entity.isChangeTrackingEnabled() &&
+				boolean unique = entityFinder.isUnique();
+
+				if (unique && entity.isChangeTrackingEnabled() &&
 					!dbNames.contains("ctCollectionId")) {
-
-					if (indexMetadatas != null) {
-						Iterator<IndexMetadata> iterator =
-							indexMetadatas.iterator();
-
-						while (iterator.hasNext()) {
-							IndexMetadata indexMetadata = iterator.next();
-
-							if (indexMetadata.isUnique() &&
-								dbNames.equals(
-									Arrays.asList(
-										indexMetadata.getColumnNames()))) {
-
-								iterator.remove();
-
-								break;
-							}
-						}
-					}
 
 					dbNames.add("ctCollectionId");
 				}
 
+				if (_optimizeDBIndexes) {
+					for (String highCardinalityColumnName :
+							_highCardinalityColumnNames) {
+
+						if (dbNames.contains(highCardinalityColumnName) &&
+							(dbNames.size() > 1)) {
+
+							dbNames.clear();
+
+							dbNames.add(highCardinalityColumnName);
+
+							unique = false;
+
+							break;
+						}
+					}
+				}
+
 				IndexMetadata indexMetadata =
 					IndexMetadataFactoryUtil.createIndexMetadata(
-						entityFinder.isUnique(), entity.getTable(),
+						unique, entity.getTable(),
 						dbNames.toArray(new String[0]));
 
 				_addIndexMetadata(
@@ -4206,6 +4223,10 @@ public class ServiceBuilder {
 		StringBundler sb = new StringBundler();
 
 		for (List<IndexMetadata> indexMetadatas : indexMetadatasMap.values()) {
+			if (_optimizeDBIndexes) {
+				indexMetadatas = _optimizeForBTreeIndexes(indexMetadatas);
+			}
+
 			Collections.sort(indexMetadatas);
 
 			for (IndexMetadata indexMetadata : indexMetadatas) {
@@ -6106,6 +6127,44 @@ public class ServiceBuilder {
 			fileName, CharPool.BACK_SLASH, CharPool.SLASH);
 	}
 
+	private List<IndexMetadata> _optimizeForBTreeIndexes(
+		List<IndexMetadata> indexMetadatas) {
+
+		while (true) {
+			Map<String, IntegerWrapper> frequencyMap = new HashMap<>();
+
+			for (IndexMetadata indexMetadata : indexMetadatas) {
+				for (String columnName : indexMetadata.getColumnNames()) {
+					IntegerWrapper count = frequencyMap.computeIfAbsent(
+						columnName, key -> new IntegerWrapper());
+
+					if (columnName.endsWith("Date")) {
+						count.setValue(0);
+					}
+					else {
+						count.increment();
+					}
+				}
+			}
+
+			for (IndexMetadata indexMetadata : indexMetadatas) {
+				indexMetadata.optimizeColumns(frequencyMap);
+			}
+
+			List<IndexMetadata> optimizedIndexMetadatas = new ArrayList<>();
+
+			for (IndexMetadata indexMetadata : indexMetadatas) {
+				_addIndexMetadata(optimizedIndexMetadatas, indexMetadata);
+			}
+
+			if (optimizedIndexMetadatas.size() == indexMetadatas.size()) {
+				return optimizedIndexMetadatas;
+			}
+
+			indexMetadatas = optimizedIndexMetadatas;
+		}
+	}
+
 	private Entity _parseEntity(Element entityElement) throws Exception {
 		String entityName = entityElement.attributeValue("name");
 		String humanName = entityElement.attributeValue("human-name");
@@ -6758,6 +6817,8 @@ public class ServiceBuilder {
 					finderColumnElement.attributeValue("arrayable-operator"));
 				boolean finderColArrayablePagination = GetterUtil.getBoolean(
 					finderColumnElement.attributeValue("arrayable-pagination"));
+				boolean finderColIndexable = GetterUtil.getBoolean(
+					finderColumnElement.attributeValue("indexable"), true);
 
 				EntityColumn entityColumn = Entity.getEntityColumn(
 					finderColumnName, entityColumns);
@@ -6773,6 +6834,7 @@ public class ServiceBuilder {
 				entityColumn.setArrayableOperator(finderColArrayableOperator);
 				entityColumn.setArrayablePagination(
 					finderColArrayablePagination);
+				entityColumn.setIndexable(finderColIndexable);
 
 				entityColumn.validate();
 
@@ -8067,6 +8129,8 @@ public class ServiceBuilder {
 		StringBundler.concat(
 			"public .* get.*", Pattern.quote("("), "|public boolean is.*",
 			Pattern.quote("(")));
+	private static final List<String> _highCardinalityColumnNames =
+		Arrays.asList("externalReferenceCode", "uuid_");
 	private static final Pattern _setterPattern = Pattern.compile(
 		"public void set.*" + Pattern.quote("("));
 
@@ -8099,6 +8163,7 @@ public class ServiceBuilder {
 	private final Set<String> _modifiedFileNames = new HashSet<>();
 	private boolean _mvccEnabled;
 	private String _oldServiceOutputPath;
+	private boolean _optimizeDBIndexes;
 	private boolean _osgiModule;
 	private String _outputPath;
 	private String _packagePath;

@@ -17,10 +17,9 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
-import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.URLUtil;
 import com.liferay.portal.kernel.util.Validator;
-
-import java.io.InputStream;
 
 import java.net.URL;
 
@@ -156,8 +155,8 @@ public class JSPortletExtender {
 			return null;
 		}
 
-		try (InputStream inputStream = url.openStream()) {
-			return _jsonFactory.createJSONObject(StringUtil.read(inputStream));
+		try {
+			return _jsonFactory.createJSONObject(URLUtil.toString(url));
 		}
 		catch (Exception exception) {
 			_log.error("Unable to parse " + url, exception);
@@ -216,7 +215,7 @@ public class JSPortletExtender {
 				ManagedService.class.getName(), Portlet.class.getName()
 			},
 			new JSPortlet(
-				_jsonFactory, packageName, packageVersion,
+				_jsonFactory, packageName, packageVersion, _portal,
 				portletPreferencesFieldNames),
 			properties);
 	}
@@ -306,5 +305,8 @@ public class JSPortletExtender {
 
 	@Reference
 	private JSONFactory _jsonFactory;
+
+	@Reference
+	private Portal _portal;
 
 }

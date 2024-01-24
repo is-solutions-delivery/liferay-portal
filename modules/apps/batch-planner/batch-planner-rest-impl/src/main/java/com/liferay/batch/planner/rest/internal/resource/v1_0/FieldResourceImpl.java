@@ -6,8 +6,11 @@
 package com.liferay.batch.planner.rest.internal.resource.v1_0;
 
 import com.liferay.batch.planner.rest.dto.v1_0.Field;
-import com.liferay.batch.planner.rest.internal.vulcan.batch.engine.FieldProvider;
+import com.liferay.batch.planner.rest.internal.vulcan.batch.engine.util.FieldProviderUtil;
+import com.liferay.batch.planner.rest.internal.vulcan.yaml.openapi.OpenAPIYAMLProvider;
 import com.liferay.batch.planner.rest.resource.v1_0.FieldResource;
+import com.liferay.object.rest.openapi.v1_0.ObjectEntryOpenAPIResourceProvider;
+import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.vulcan.pagination.Page;
 
@@ -33,17 +36,19 @@ public class FieldResourceImpl extends BaseFieldResourceImpl {
 		throws Exception {
 
 		List<com.liferay.portal.vulcan.batch.engine.Field> vulcanFields =
-			_fieldProvider.getFields(
+			FieldProviderUtil.getFields(
 				contextCompany.getCompanyId(), internalClassNameKey,
+				_objectDefinitionLocalService,
+				_objectEntryOpenAPIResourceProvider, _openAPIYAMLProvider,
 				contextUriInfo);
 
 		if (GetterUtil.getBoolean(export)) {
-			vulcanFields = _fieldProvider.filter(
+			vulcanFields = FieldProviderUtil.filter(
 				vulcanFields,
 				com.liferay.portal.vulcan.batch.engine.Field.AccessType.WRITE);
 		}
 		else {
-			vulcanFields = _fieldProvider.filter(
+			vulcanFields = FieldProviderUtil.filter(
 				vulcanFields,
 				com.liferay.portal.vulcan.batch.engine.Field.AccessType.READ);
 		}
@@ -58,15 +63,23 @@ public class FieldResourceImpl extends BaseFieldResourceImpl {
 
 		return new Field() {
 			{
-				description = vulcanField.getDescription();
-				name = vulcanField.getName();
-				required = vulcanField.isRequired();
-				type = vulcanField.getType();
+				setDescription(vulcanField::getDescription);
+				setName(vulcanField::getName);
+				setRequired(vulcanField::isRequired);
+				setType(vulcanField::getType);
+				setUnsupportedFormats(vulcanField::getUnsupportedFormats);
 			}
 		};
 	}
 
 	@Reference
-	private FieldProvider _fieldProvider;
+	private ObjectDefinitionLocalService _objectDefinitionLocalService;
+
+	@Reference
+	private ObjectEntryOpenAPIResourceProvider
+		_objectEntryOpenAPIResourceProvider;
+
+	@Reference
+	private OpenAPIYAMLProvider _openAPIYAMLProvider;
 
 }

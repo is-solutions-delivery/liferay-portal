@@ -8,7 +8,6 @@ package com.liferay.object.rest.internal.manager.v1_0;
 import com.liferay.object.constants.ObjectActionKeys;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.rest.dto.v1_0.ObjectEntry;
-import com.liferay.object.rest.dto.v1_0.Status;
 import com.liferay.object.rest.internal.configuration.FunctionObjectEntryManagerConfiguration;
 import com.liferay.object.rest.manager.v1_0.BaseObjectEntryManager;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
@@ -22,7 +21,6 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.CompanyLocalService;
@@ -33,14 +31,16 @@ import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.aggregation.Aggregation;
+import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
+import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -82,8 +82,9 @@ public class FunctionObjectEntryManagerImpl
 					StringPool.SLASH,
 					HttpComponentsUtil.encodePath(
 						objectDefinition.getExternalReferenceCode())),
-				dtoConverterContext.getUserId()),
-			objectDefinition, scopeKey, dtoConverterContext.getUser());
+				dtoConverterContext.getUserId()
+			).get(),
+			dtoConverterContext, objectDefinition, scopeKey);
 	}
 
 	@Override
@@ -142,9 +143,9 @@ public class FunctionObjectEntryManagerImpl
 		return _toObjectEntries(
 			_launch(
 				Http.Method.GET, null, resourcePath,
-				dtoConverterContext.getUserId()),
-			objectDefinition, pagination, scopeKey,
-			dtoConverterContext.getUser());
+				dtoConverterContext.getUserId()
+			).get(),
+			dtoConverterContext, objectDefinition, pagination, scopeKey);
 	}
 
 	@Override
@@ -174,8 +175,9 @@ public class FunctionObjectEntryManagerImpl
 				Http.Method.GET, null,
 				_appendBaseParameters(
 					dtoConverterContext, resourcePath, scopeKey),
-				dtoConverterContext.getUserId()),
-			objectDefinition, scopeKey, dtoConverterContext.getUser());
+				dtoConverterContext.getUserId()
+			).get(),
+			dtoConverterContext, objectDefinition, scopeKey);
 	}
 
 	@Override
@@ -213,8 +215,9 @@ public class FunctionObjectEntryManagerImpl
 					HttpComponentsUtil.encodePath(
 						objectDefinition.getExternalReferenceCode()),
 					StringPool.SLASH, externalReferenceCode),
-				dtoConverterContext.getUserId()),
-			objectDefinition, scopeKey, dtoConverterContext.getUser());
+				dtoConverterContext.getUserId()
+			).get(),
+			dtoConverterContext, objectDefinition, scopeKey);
 	}
 
 	@Activate
@@ -295,7 +298,7 @@ public class FunctionObjectEntryManagerImpl
 		return resourcePath;
 	}
 
-	private byte[] _launch(
+	private Future<byte[]> _launch(
 			Http.Method method, JSONObject payloadJSONObject,
 			String resourcePath, long userId)
 		throws Exception {
@@ -352,8 +355,9 @@ public class FunctionObjectEntryManagerImpl
 	}
 
 	private Page<ObjectEntry> _toObjectEntries(
-			byte[] bytes, ObjectDefinition objectDefinition,
-			Pagination pagination, String scopeKey, User user)
+			byte[] bytes, DTOConverterContext dtoConverterContext,
+			ObjectDefinition objectDefinition, Pagination pagination,
+			String scopeKey)
 		throws Exception {
 
 		JSONObject jsonObject = _jsonFactory.createJSONObject(
@@ -363,49 +367,41 @@ public class FunctionObjectEntryManagerImpl
 			JSONUtil.toList(
 				(JSONArray)jsonObject.get("items"),
 				itemJSONObject -> _toObjectEntry(
-					itemJSONObject.toString(), objectDefinition, scopeKey,
-					user)),
+					dtoConverterContext, itemJSONObject.toString(),
+					objectDefinition, scopeKey)),
 			pagination, (Integer)jsonObject.get("totalCount"));
 	}
 
 	private ObjectEntry _toObjectEntry(
-		byte[] bytes, ObjectDefinition objectDefinition, String scopeKey,
-		User user) {
+			byte[] bytes, DTOConverterContext dtoConverterContext,
+			ObjectDefinition objectDefinition, String scopeKey)
+		throws Exception {
 
 		return _toObjectEntry(
-			new String(bytes), objectDefinition, scopeKey, user);
+			dtoConverterContext, new String(bytes), objectDefinition, scopeKey);
 	}
 
 	private ObjectEntry _toObjectEntry(
-		String json, ObjectDefinition objectDefinition, String scopeKey,
-		User user) {
+			DTOConverterContext dtoConverterContext, String json,
+			ObjectDefinition objectDefinition, String scopeKey)
+		throws Exception {
 
-		ObjectEntry objectEntry = ObjectEntry.unsafeToDTO(json);
-
-		objectEntry.setActions(
+		dtoConverterContext = new DefaultDTOConverterContext(
+			dtoConverterContext.isAcceptAllLanguages(),
 			HashMapBuilder.put(
-				"delete", addDeleteAction(objectDefinition, scopeKey, user)
-			).build());
-		objectEntry.setExternalReferenceCode(
-			() -> {
-				Map<String, Object> properties = objectEntry.getProperties();
+				"delete",
+				addDeleteAction(
+					objectDefinition, scopeKey, dtoConverterContext.getUser())
+			).build(),
+			dtoConverterContext.getDTOConverterRegistry(),
+			dtoConverterContext.getHttpServletRequest(),
+			dtoConverterContext.getId(), dtoConverterContext.getLocale(),
+			dtoConverterContext.getUriInfo(), dtoConverterContext.getUser());
 
-				return String.valueOf(properties.get("externalReferenceCode"));
-			});
+		dtoConverterContext.setAttribute("objectDefinition", objectDefinition);
+		dtoConverterContext.setAttribute("payload", json);
 
-		if (objectEntry.getStatus() == null) {
-			objectEntry.setStatus(
-				new Status() {
-					{
-						code = WorkflowConstants.STATUS_APPROVED;
-						label = WorkflowConstants.LABEL_APPROVED;
-						label_i18n = language.get(
-							user.getLocale(), WorkflowConstants.LABEL_APPROVED);
-					}
-				});
-		}
-
-		return objectEntry;
+		return _objectEntryDTOConverter.toDTO(dtoConverterContext);
 	}
 
 	private long _companyId;
@@ -418,6 +414,12 @@ public class FunctionObjectEntryManagerImpl
 
 	@Reference
 	private JSONFactory _jsonFactory;
+
+	@Reference(
+		target = "(component.name=com.liferay.object.rest.internal.dto.v1_0.converter.ObjectEntryDTOConverter)"
+	)
+	private DTOConverter<com.liferay.object.model.ObjectEntry, ObjectEntry>
+		_objectEntryDTOConverter;
 
 	@Reference
 	private PortalCatapult _portalCatapult;

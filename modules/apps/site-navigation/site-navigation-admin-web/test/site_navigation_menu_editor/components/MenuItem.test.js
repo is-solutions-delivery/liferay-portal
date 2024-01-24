@@ -6,7 +6,7 @@
 import {
 	getDownPosition,
 	getUpPosition,
-} from '../../../src/main/resources/META-INF/resources/site_navigation_menu_editor/components/MenuItem';
+} from '../../../src/main/resources/META-INF/resources/js/site_navigation_menu_editor/components/MenuItem';
 
 describe('MenuItem', () => {
 

@@ -42,7 +42,6 @@ import com.liferay.journal.configuration.JournalServiceConfiguration;
 import com.liferay.journal.constants.JournalArticleConstants;
 import com.liferay.journal.constants.JournalConstants;
 import com.liferay.journal.constants.JournalFolderConstants;
-import com.liferay.journal.internal.exportimport.creation.strategy.JournalCreationStrategy;
 import com.liferay.journal.internal.util.JournalUtil;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleResource;
@@ -622,13 +621,6 @@ public class JournalArticleStagedModelDataHandler
 
 		long userId = portletDataContext.getUserId(article.getUserUuid());
 
-		long authorId = _journalCreationStrategy.getAuthorUserId(
-			portletDataContext, article);
-
-		if (authorId != JournalCreationStrategy.USE_DEFAULT_USER_ID_STRATEGY) {
-			userId = authorId;
-		}
-
 		User user = _userLocalService.getUser(userId);
 
 		Map<Long, Long> folderIds =
@@ -1076,16 +1068,6 @@ public class JournalArticleStagedModelDataHandler
 					replaceImportContentReferences(
 						portletDataContext, article, content);
 
-			String newContent = _journalCreationStrategy.getTransformedContent(
-				portletDataContext, article);
-
-			if (!Objects.equals(
-					newContent,
-					JournalCreationStrategy.ARTICLE_CONTENT_UNCHANGED)) {
-
-				replacedContent = newContent;
-			}
-
 			if (!StringUtil.equals(replacedContent, content)) {
 				importedArticle = _journalArticleLocalService.updateArticle(
 					userId, importedArticle.getGroupId(), folderId,
@@ -1104,11 +1086,18 @@ public class JournalArticleStagedModelDataHandler
 					serviceContext);
 			}
 
-			_journalArticleLocalService.updateAsset(
-				userId, importedArticle, serviceContext.getAssetCategoryIds(),
-				serviceContext.getAssetTagNames(),
-				serviceContext.getAssetLinkEntryIds(),
-				serviceContext.getAssetPriority());
+			if (_isUpdateAsset(
+					importedArticle.getGroupId(),
+					importedArticle.getArticleId(),
+					importedArticle.getVersion())) {
+
+				_journalArticleLocalService.updateAsset(
+					userId, importedArticle,
+					serviceContext.getAssetCategoryIds(),
+					serviceContext.getAssetTagNames(),
+					serviceContext.getAssetLinkEntryIds(),
+					serviceContext.getAssetPriority());
+			}
 
 			if (article.isExpired() || importedArticle.isExpired()) {
 				_journalArticleLocalService.expireArticle(
@@ -1541,6 +1530,19 @@ public class JournalArticleStagedModelDataHandler
 		return false;
 	}
 
+	private boolean _isUpdateAsset(
+		long groupId, String articleId, double version) {
+
+		JournalArticle article = _journalArticleLocalService.fetchLatestArticle(
+			groupId, articleId, WorkflowConstants.STATUS_APPROVED);
+
+		if ((article == null) || (version >= article.getVersion())) {
+			return true;
+		}
+
+		return false;
+	}
+
 	private void _sendUndeliveredUserNotificationEvents(
 		JournalArticle article, JournalArticle importedArticle,
 		ServiceContext serviceContext) {
@@ -1812,9 +1814,6 @@ public class JournalArticleStagedModelDataHandler
 	@Reference
 	private JournalArticleResourceLocalService
 		_journalArticleResourceLocalService;
-
-	@Reference
-	private JournalCreationStrategy _journalCreationStrategy;
 
 	@Reference
 	private JSONFactory _jsonFactory;

@@ -61,7 +61,7 @@ public class UserSearchFacetDisplayContextBuilder {
 			new UserSearchFacetDisplayContext();
 
 		userSearchFacetDisplayContext.setBucketDisplayContexts(
-			buildBucketDisplayContexts(termCollectors));
+			_buildBucketDisplayContexts(termCollectors));
 		userSearchFacetDisplayContext.setDisplayStyleGroupId(
 			getDisplayStyleGroupId());
 		userSearchFacetDisplayContext.setNothingSelected(nothingSelected);
@@ -142,38 +142,6 @@ public class UserSearchFacetDisplayContextBuilder {
 		return bucketDisplayContext;
 	}
 
-	protected List<BucketDisplayContext> buildBucketDisplayContexts(
-		List<TermCollector> termCollectors) {
-
-		if (termCollectors.isEmpty()) {
-			return getEmptyBucketDisplayContexts();
-		}
-
-		List<BucketDisplayContext> bucketDisplayContexts = new ArrayList<>(
-			termCollectors.size());
-
-		for (int i = 0; i < termCollectors.size(); i++) {
-			TermCollector termCollector = termCollectors.get(i);
-
-			if (((_maxTerms > 0) && (i >= _maxTerms)) ||
-				((_frequencyThreshold > 0) &&
-				 (_frequencyThreshold > termCollector.getFrequency()))) {
-
-				break;
-			}
-
-			bucketDisplayContexts.add(buildBucketDisplayContext(termCollector));
-		}
-
-		if (_order != null) {
-			bucketDisplayContexts.sort(
-				BucketDisplayContextComparatorFactoryUtil.
-					getBucketDisplayContextComparator(_order));
-		}
-
-		return bucketDisplayContexts;
-	}
-
 	protected long getDisplayStyleGroupId() {
 		long displayStyleGroupId =
 			_userFacetPortletInstanceConfiguration.displayStyleGroupId();
@@ -230,6 +198,38 @@ public class UserSearchFacetDisplayContextBuilder {
 		}
 
 		return false;
+	}
+
+	private List<BucketDisplayContext> _buildBucketDisplayContexts(
+		List<TermCollector> termCollectors) {
+
+		if (termCollectors.isEmpty()) {
+			return getEmptyBucketDisplayContexts();
+		}
+
+		List<BucketDisplayContext> bucketDisplayContexts = new ArrayList<>(
+			termCollectors.size());
+
+		for (int i = 0; i < termCollectors.size(); i++) {
+			TermCollector termCollector = termCollectors.get(i);
+
+			if (((_maxTerms > 0) && (i >= _maxTerms)) ||
+				((_frequencyThreshold > 0) &&
+				 (_frequencyThreshold > termCollector.getFrequency()))) {
+
+				break;
+			}
+
+			bucketDisplayContexts.add(buildBucketDisplayContext(termCollector));
+		}
+
+		if (_order != null) {
+			bucketDisplayContexts.sort(
+				BucketDisplayContextComparatorFactoryUtil.
+					getBucketDisplayContextComparator(_order));
+		}
+
+		return bucketDisplayContexts;
 	}
 
 	private String _getDisplayName(long userId) {

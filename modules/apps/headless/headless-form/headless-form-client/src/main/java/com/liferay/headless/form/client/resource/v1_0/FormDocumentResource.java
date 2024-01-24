@@ -10,6 +10,8 @@ import com.liferay.headless.form.client.http.HttpInvoker;
 import com.liferay.headless.form.client.problem.Problem;
 import com.liferay.headless.form.client.serdes.v1_0.FormDocumentSerDes;
 
+import java.net.URL;
+
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -100,6 +102,10 @@ public interface FormDocumentResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {

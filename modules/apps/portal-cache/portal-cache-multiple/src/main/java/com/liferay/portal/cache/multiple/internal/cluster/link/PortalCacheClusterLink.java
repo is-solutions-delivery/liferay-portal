@@ -8,11 +8,12 @@ package com.liferay.portal.cache.multiple.internal.cluster.link;
 import com.liferay.portal.cache.multiple.configuration.PortalCacheClusterConfiguration;
 import com.liferay.portal.cache.multiple.internal.PortalCacheClusterEvent;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.cluster.ClusterLink;
 import com.liferay.portal.kernel.cluster.Priority;
-import com.liferay.portal.kernel.module.service.Snapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
@@ -30,14 +31,12 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class PortalCacheClusterLink {
 
-	public long getSubmittedEventNumber() {
-		return _portalCacheClusterChannelSelector.getSelectedNumber();
-	}
-
 	public void sendEvent(PortalCacheClusterEvent portalCacheClusterEvent) {
+		long count = _eventCounter.getAndIncrement();
+		int size = _portalCacheClusterChannels.size();
+
 		PortalCacheClusterChannel portalCacheClusterChannel =
-			_portalCacheClusterChannelSelector.select(
-				_portalCacheClusterChannels, portalCacheClusterEvent);
+			_portalCacheClusterChannels.get((int)(count % size));
 
 		portalCacheClusterChannel.sendEvent(portalCacheClusterEvent);
 	}
@@ -56,18 +55,12 @@ public class PortalCacheClusterLink {
 
 		for (Priority priority : priorities) {
 			PortalCacheClusterChannel portalCacheClusterChannel =
-				_portalCacheClusterChannelFactory.
-					createPortalCacheClusterChannel(priority);
+				PortalCacheClusterChannelFactory.
+					createPortalCacheClusterChannel(
+						_clusterLink, priority,
+						portalCacheClusterConfiguration.usingCoalescedPipe());
 
 			_portalCacheClusterChannels.add(portalCacheClusterChannel);
-		}
-
-		_portalCacheClusterChannelSelector =
-			_portalCacheClusterChannelSelectorSnapshot.get();
-
-		if (_portalCacheClusterChannelSelector == null) {
-			_portalCacheClusterChannelSelector =
-				new UniformPortalCacheClusterChannelSelector();
 		}
 	}
 
@@ -84,17 +77,11 @@ public class PortalCacheClusterLink {
 		_portalCacheClusterChannels = null;
 	}
 
-	private static final Snapshot<PortalCacheClusterChannelSelector>
-		_portalCacheClusterChannelSelectorSnapshot = new Snapshot<>(
-			PortalCacheClusterLink.class,
-			PortalCacheClusterChannelSelector.class, null, true);
-
 	@Reference
-	private PortalCacheClusterChannelFactory _portalCacheClusterChannelFactory;
+	private ClusterLink _clusterLink;
 
+	private final AtomicLong _eventCounter = new AtomicLong(0);
 	private volatile List<PortalCacheClusterChannel>
 		_portalCacheClusterChannels;
-	private volatile PortalCacheClusterChannelSelector
-		_portalCacheClusterChannelSelector;
 
 }

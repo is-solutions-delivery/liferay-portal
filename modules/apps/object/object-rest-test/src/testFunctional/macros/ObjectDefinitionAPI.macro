@@ -65,14 +65,16 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro _createObjectEntryWithName(keywords = null, taxonomyCategoryIds = null, name = null, virtualHost = null, en_US_plural_label = null, token = null) {
+	macro _createObjectEntryWithName(keywords = null, taxonomyCategoryIds = null, name = null, scopeKey = null, virtualHost = null, en_US_plural_label = null, externalReferenceCode = null, token = null) {
 		Variables.assertDefined(parameterList = ${name});
 
 		var response = CustomObjectAPI.createObjectEntryWithFields(
 			en_US_plural_label = ${en_US_plural_label},
+			externalReferenceCode = ${externalReferenceCode},
 			fieldName = "name",
 			fieldValue = ${name},
 			keywords = ${keywords},
+			scopeKey = ${scopeKey},
 			taxonomyCategoryIds = ${taxonomyCategoryIds},
 			token = ${token},
 			virtualHost = ${virtualHost});
@@ -526,6 +528,17 @@ definition {
 	}
 
 	@summary = "Default summary"
+	macro assertObjectDefinitionInResponse(expectedValue = null) {
+		var response = ObjectDefinitionAPI.getObjectDefinitions();
+
+		var actual = JSONUtil.getWithJSONPath(${response}, "$..name");
+
+		TestUtils.assertContain(
+			actual = ${actual},
+			expected = ${expectedValue});
+	}
+
+	@summary = "Default summary"
 	macro assertResponseHasCorrectObjectEntryName(responseToParse = null, expectedValue = null, objectEntryId = null) {
 		var actual = JSONUtil.getWithJSONPath(${responseToParse}, "$.items[?(@.id==${objectEntryId})].name");
 
@@ -826,11 +839,41 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro createObjectEntryWithName(keywords = null, taxonomyCategoryIds = null, name = null, secondFieldValue = null, virtualHost = null, en_US_plural_label = null, token = null) {
+	macro createObjectDefinitionWithMultipleCustomFields(picklistId = null, objectDefinitionName = null, en_US_label = null, requiredStringFieldName = null, en_US_plural_label = null) {
+		Variables.assertDefined(parameterList = "${en_US_label},${en_US_plural_label},${objectDefinitionName},${picklistId},${requiredStringFieldName}");
+
+		var objectDefinitionId = ObjectDefinitionAPI.createAndPublishObjectDefinition(
+			en_US_label = ${en_US_label},
+			en_US_plural_label = ${en_US_plural_label},
+			name = ${objectDefinitionName},
+			requiredStringFieldName = ${requiredStringFieldName});
+
+		ObjectDefinitionAPI.postObjectDefinitionObjectField(
+			businessType = "Picklist",
+			dBType = "String",
+			listTypeDefinitionId = ${picklistId},
+			name = "testPicklist",
+			objectDefinitionName = ${objectDefinitionName});
+
+		for (var typeList : list "DateTime:DateAndTime,Date:Date,Double:Decimal,Integer:Integer,Long:LongInteger,BigDecimal:PrecissionDecimal,Clob:RichText,Clob:LongText") {
+			var dbType = StringUtil.extractFirst(${typeList}, ":");
+			var name = StringUtil.extractLast(${typeList}, ":");
+
+			ObjectFieldAPI.createObjectFieldByObjectDefinitionId(
+				dbType = ${dbType},
+				name = "test${name}",
+				objectDefinitionId = ${objectDefinitionId});
+		}
+	}
+
+	@summary = "Default summary"
+	macro createObjectEntryWithName(keywords = null, taxonomyCategoryIds = null, name = null, scopeKey = null, secondFieldValue = null, virtualHost = null, en_US_plural_label = null, externalReferenceCode = null, token = null) {
 		var objectId = ObjectDefinitionAPI._createObjectEntryWithName(
 			en_US_plural_label = ${en_US_plural_label},
+			externalReferenceCode = ${externalReferenceCode},
 			keywords = ${keywords},
 			name = ${name},
+			scopeKey = ${scopeKey},
 			secondFieldValue = ${secondFieldValue},
 			taxonomyCategoryIds = ${taxonomyCategoryIds},
 			token = ${token},
@@ -1031,6 +1074,20 @@ definition {
 		if (isSet(parameter)) {
 			var curl = '''
 				${portalURL}/o/c/${en_US_plural_label_lowercase}?${parameter} \
+					-u test@liferay.com:test
+			''';
+		}
+		else if (isSet(scopeKey)) {
+			if (!(isSet(groupName))) {
+				var groupName = "Guest";
+			}
+
+			var scopeKey = JSONGroupAPI._getSiteIdByGroupKeyNoSelenium(
+				groupName = ${groupName},
+				token = ${token});
+
+			var curl = '''
+				${portalURL}/o/c/${en_US_plural_label_lowercase}/scopes/${scopeKey} \
 					-u test@liferay.com:test
 			''';
 		}

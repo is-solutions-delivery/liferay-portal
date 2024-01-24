@@ -37,6 +37,7 @@ import com.liferay.object.scripting.validator.ObjectScriptingValidator;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.base.ObjectActionLocalServiceBaseImpl;
 import com.liferay.object.service.persistence.ObjectDefinitionPersistence;
+import com.liferay.object.tree.TreeFactory;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.aop.AopService;
@@ -96,7 +97,7 @@ public class ObjectActionLocalServiceImpl
 		throws PortalException {
 
 		_validateInvokerBundle(
-			"Only allowed bundles can create system object actions", system);
+			"Only allowed bundles can add system object actions", system);
 
 		ObjectDefinition objectDefinition =
 			_objectDefinitionPersistence.findByPrimaryKey(objectDefinitionId);
@@ -153,9 +154,16 @@ public class ObjectActionLocalServiceImpl
 				ObjectActionTriggerConstants.KEY_STANDALONE)) {
 
 			try {
+				if (objectDefinition.isRootDescendantNode()) {
+					objectDefinition =
+						_objectDefinitionPersistence.findByPrimaryKey(
+							objectDefinition.getRootObjectDefinitionId());
+				}
+
 				ObjectDefinitionResourcePermissionUtil.populateResourceActions(
 					objectActionLocalService, objectDefinition,
-					_portletLocalService, _resourceActions);
+					_objectDefinitionPersistence, _portletLocalService,
+					_resourceActions, _treeFactory);
 			}
 			catch (Exception exception) {
 				ReflectionUtil.throwException(exception);
@@ -768,7 +776,10 @@ public class ObjectActionLocalServiceImpl
 			ObjectField objectField = _objectFieldLocalService.fetchObjectField(
 				objectDefinitionId, name);
 
-			if (objectField == null) {
+			if ((objectField == null) ||
+				objectField.compareBusinessType(
+					ObjectFieldConstants.BUSINESS_TYPE_AUTO_INCREMENT)) {
+
 				predefinedValuesErrorMessageKeys.put(name, "invalid");
 
 				continue;
@@ -877,6 +888,9 @@ public class ObjectActionLocalServiceImpl
 
 	@Reference
 	private ResourceActions _resourceActions;
+
+	@Reference
+	private TreeFactory _treeFactory;
 
 	@Reference
 	private UserLocalService _userLocalService;

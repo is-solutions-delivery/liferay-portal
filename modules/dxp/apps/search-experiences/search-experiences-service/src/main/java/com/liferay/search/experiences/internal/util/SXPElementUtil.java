@@ -5,14 +5,15 @@
 
 package com.liferay.search.experiences.internal.util;
 
-import com.liferay.petra.io.StreamUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.URLUtil;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.search.experiences.internal.model.listener.CompanyModelListener;
 import com.liferay.search.experiences.rest.dto.v1_0.SXPElement;
@@ -43,11 +44,11 @@ public class SXPElementUtil {
 
 		Set<String> externalReferenceCodes = new HashSet<>();
 
-		for (com.liferay.search.experiences.model.SXPElement sxpPElement :
+		for (com.liferay.search.experiences.model.SXPElement sxpElement :
 				sxpElementLocalService.getSXPElements(
 					company.getCompanyId(), true)) {
 
-			externalReferenceCodes.add(sxpPElement.getExternalReferenceCode());
+			externalReferenceCodes.add(sxpElement.getExternalReferenceCode());
 		}
 
 		for (SXPElement sxpElement : _getOrCreateSXPElements()) {
@@ -67,8 +68,16 @@ public class SXPElementUtil {
 				sxpElement.getExternalReferenceCode(), user.getUserId(),
 				LocalizedMapUtil.getLocalizedMap(
 					sxpElement.getDescription_i18n()),
-				String.valueOf(sxpElement.getElementDefinition()), true,
-				_SCHEMA_VERSION,
+				String.valueOf(sxpElement.getElementDefinition()),
+				sxpElement.getDescription_i18n(
+				).get(
+					LocaleUtil.US.toString()
+				),
+				sxpElement.getTitle_i18n(
+				).get(
+					LocaleUtil.US.toString()
+				),
+				true, _SCHEMA_VERSION,
 				LocalizedMapUtil.getLocalizedMap(sxpElement.getTitle_i18n()), 0,
 				new ServiceContext() {
 					{
@@ -96,12 +105,10 @@ public class SXPElementUtil {
 
 		try {
 			while (enumeration.hasMoreElements()) {
-				URL url = enumeration.nextElement();
-
 				sxpElements.add(
 					com.liferay.search.experiences.rest.dto.v1_0.util.
 						SXPElementUtil.toSXPElement(
-							StreamUtil.toString(url.openStream())));
+							URLUtil.toString(enumeration.nextElement())));
 			}
 		}
 		catch (IOException ioException) {

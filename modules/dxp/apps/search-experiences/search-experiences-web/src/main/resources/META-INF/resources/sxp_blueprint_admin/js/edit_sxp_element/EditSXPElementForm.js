@@ -34,6 +34,7 @@ import {CONFIG_PREFIX} from '../utils/constants';
 import {DEFAULT_ERROR} from '../utils/errorMessages';
 import {DEFAULT_HEADERS} from '../utils/fetch/fetch_data';
 import isDefined from '../utils/functions/is_defined';
+import traverseAndEncodeJSONStrings from '../utils/functions/traverse_and_encode_json_strings';
 import formatLocaleWithDashes from '../utils/language/format_locale_with_dashes';
 import formatLocaleWithUnderscores from '../utils/language/format_locale_with_underscores';
 import renameKeys from '../utils/language/rename_keys';
@@ -395,7 +396,7 @@ function EditSXPElementForm({
 			}
 
 			if (!sxpElementJSONObjectNew.title_i18n[defaultLocale]) {
-				throw Liferay.Language.get('error.default-locale-title-empty');
+				throw Liferay.Language.get('error.default-locale-title-blank');
 			}
 		}
 		catch (error) {
@@ -451,8 +452,9 @@ function EditSXPElementForm({
 					body: JSON.stringify({
 						description_i18n:
 							sxpElementJSONObjectNew.description_i18n,
-						elementDefinition:
-							sxpElementJSONObjectNew.elementDefinition,
+						elementDefinition: traverseAndEncodeJSONStrings(
+							sxpElementJSONObjectNew.elementDefinition
+						),
 						externalReferenceCode,
 						title_i18n: sxpElementJSONObjectNew.title_i18n,
 						type,

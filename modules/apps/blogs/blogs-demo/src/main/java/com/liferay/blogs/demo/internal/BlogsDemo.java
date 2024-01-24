@@ -20,7 +20,7 @@ import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.security.RandomUtil;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.users.admin.demo.data.creator.BasicUserDemoDataCreator;
-import com.liferay.users.admin.demo.data.creator.OmniAdminUserDemoDataCreator;
+import com.liferay.users.admin.demo.data.creator.OmniadminUserDemoDataCreator;
 import com.liferay.users.admin.demo.data.creator.SiteAdminUserDemoDataCreator;
 
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class BlogsDemo extends BasePortalInstanceLifecycleListener {
 
 		_multipleCommentDemoDataCreator.create(blogsEntry1);
 
-		User user2 = _omniAdminUserDemoDataCreator.create(
+		User user2 = _omniadminUserDemoDataCreator.create(
 			company.getCompanyId(), "sergio.gonzalez@liferay.com");
 
 		BlogsEntry blogsEntry2 = randomBlogsEntryDemoDataCreator.create(
@@ -106,7 +106,7 @@ public class BlogsDemo extends BasePortalInstanceLifecycleListener {
 
 		_basicUserDemoDataCreator.delete();
 		_multipleCommentDemoDataCreator.delete();
-		_omniAdminUserDemoDataCreator.delete();
+		_omniadminUserDemoDataCreator.delete();
 		_siteAdminUserDemoDataCreator.delete();
 	}
 
@@ -127,7 +127,7 @@ public class BlogsDemo extends BasePortalInstanceLifecycleListener {
 	private MultipleCommentDemoDataCreator _multipleCommentDemoDataCreator;
 
 	@Reference
-	private OmniAdminUserDemoDataCreator _omniAdminUserDemoDataCreator;
+	private OmniadminUserDemoDataCreator _omniadminUserDemoDataCreator;
 
 	private ServiceTrackerList<BlogsEntryDemoDataCreator> _serviceTrackerList;
 

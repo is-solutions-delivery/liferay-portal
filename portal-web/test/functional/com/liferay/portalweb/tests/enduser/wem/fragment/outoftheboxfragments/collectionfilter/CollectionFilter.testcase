@@ -736,6 +736,8 @@ definition {
 	@description = "This is a test for LPS-167949. The page designer could filter collection by contains all tags."
 	@priority = 5
 	test FilterResultsOfCollectionDisplayByContainsAllTags {
+		property portal.acceptance = "true";
+
 		task ("Given a page designer has a Collection Display and two Collection Filter on page") {
 			HeadlessWebcontent.addBasicWebContent(
 				assetTagNames = "huawei",
@@ -865,6 +867,8 @@ definition {
 	@description = "This is a test for LPS-167949. The page designer could filter collection by contains any tags."
 	@priority = 5
 	test FilterResultsOfCollectionDisplayByContainsAnyTags {
+		property portal.acceptance = "true";
+
 		task ("Given a page designer has a Collection Display and Collection Filter on page") {
 			HeadlessWebcontent.addBasicWebContent(
 				assetTagNames = "huawei",
@@ -1039,10 +1043,11 @@ definition {
 		}
 
 		task ("Add a dynamic collection with All Types") {
-			JSONAssetlist.addDynamicAssetListEntryWithItemType(
-				groupName = ${randomSiteName},
-				itemType = "All Types",
-				title = "Dynamic Collection");
+			AssetListsAdmin.openAssetListsAdmin(siteURLKey = ${siteURLKey});
+
+			AssetListsAdmin.addDynamicSelection(assetListTitle = "Dynamic Collection");
+
+			AssetListsAdmin.configureItemTypeInDynamicCollection(itemType = "All Types");
 		}
 
 		task ("Add a content page") {
@@ -1101,19 +1106,13 @@ definition {
 		}
 
 		task ("View the Collection Filter doesn't appear at view mode") {
-			ContentPagesNavigator.openViewContentPage(
-				pageName = "Test Page Name",
-				siteName = ${randomSiteName});
-
 			AssertElementNotPresent(
 				index = 1,
 				locator1 = "PageEditor#COLLECTION_FILTER_SEARCH_FIELD");
 		}
 
 		task ("Select the Keywords type in Collection Filter") {
-			ContentPagesNavigator.openEditContentPage(
-				pageName = "Test Page Name",
-				siteName = ${randomSiteName});
+			ContentPages.gotoPageEditor();
 
 			PageEditor.editCollectionFilter(
 				filter = "Keywords",
@@ -1123,14 +1122,10 @@ definition {
 		task ("Filter results of Collection Display by keywords at Preview mode") {
 			PageEditor.previewInANewTab();
 
-			var n = 1;
-
 			for (var content : list "AirPods,LeBron VIII,Levis 501") {
-				ContentPages.viewFragmentTextInCollectionDisplay(
-					row = ${n},
-					text = ${content});
-
-				var n = ${n} + 1;
+				AssertVisible(
+					key_text = ${content},
+					locator1 = "PageEditor#COLLECTION_ITEM_CONTENT");
 			}
 
 			Page.searchInCollectionFilter(searchTerm = "Levis");
@@ -1143,18 +1138,10 @@ definition {
 		}
 
 		task ("Filter results of Collection Display by keywords at View mode") {
-			ContentPagesNavigator.openViewContentPage(
-				pageName = "Test Page Name",
-				siteName = ${randomSiteName});
-
-			var n = 1;
-
 			for (var content : list "AirPods,LeBron VIII,Levis 501") {
-				ContentPages.viewFragmentTextInCollectionDisplay(
-					row = ${n},
-					text = ${content});
-
-				var n = ${n} + 1;
+				AssertVisible(
+					key_text = ${content},
+					locator1 = "PageEditor#COLLECTION_ITEM_CONTENT");
 			}
 
 			Page.searchInCollectionFilter(searchTerm = "LeBron");
@@ -1482,7 +1469,7 @@ definition {
 
 			AssertTextEquals.assertPartialText(
 				key_columnNumber = 1,
-				key_elementHeader = "//div[@aria-label='Collection Filter']//div[contains(@class,'page-editor__topper__content')]",
+				key_elementHeader = "//div[@data-name='Collection Filter']//div[contains(@class,'page-editor__topper__content')]",
 				key_position = 1,
 				locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT",
 				value1 = "Vocabulary A");
@@ -1499,7 +1486,7 @@ definition {
 
 			AssertTextEquals.assertPartialText(
 				key_columnNumber = 2,
-				key_elementHeader = "//div[@aria-label='Collection Filter']//div[contains(@class,'page-editor__topper__content')]",
+				key_elementHeader = "//div[@data-name='Collection Filter']//div[contains(@class,'page-editor__topper__content')]",
 				key_position = 1,
 				locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT",
 				value1 = "Vocabulary B");
@@ -1516,16 +1503,8 @@ definition {
 		}
 
 		task ("View Contains All Categories works in preview modal") {
-			var n = 1;
-
 			for (var title : list "Document Title With Both Categories,Document Title With Category A,Blogs Entry Title With Both Categories,Blogs Entry Title With Category A,Web Content Title With Both Categories,Web Content Title With Category A") {
-				AssertVisible(
-					key_entryContent = "[normalize-space(text())='${title}']",
-					key_fragmentName = "Collection Display",
-					key_position = ${n},
-					locator1 = "PageEditor#COLLECTION_ITEM_CONTENT_IN_INLINE_LIST_AT_VIEW_MODE");
-
-				var n = ${n} + 1;
+				AssertVisible(locator1 = "//div[contains(@class,'lfr-layout-structure-item-collection')]//li[normalize-space()='${title}']");
 			}
 
 			Page.selectFilterInCollectionFilter(
@@ -1534,16 +1513,8 @@ definition {
 				selectedName = "Category A",
 				title = "Vocabulary A");
 
-			var n = 1;
-
 			for (var title : list "Document Title With Both Categories,Document Title With Category A,Blogs Entry Title With Both Categories,Blogs Entry Title With Category A,Web Content Title With Both Categories,Web Content Title With Category A") {
-				AssertVisible(
-					key_entryContent = "[normalize-space(text())='${title}']",
-					key_fragmentName = "Collection Display",
-					key_position = ${n},
-					locator1 = "PageEditor#COLLECTION_ITEM_CONTENT_IN_INLINE_LIST_AT_VIEW_MODE");
-
-				var n = ${n} + 1;
+				AssertVisible(locator1 = "//div[contains(@class,'lfr-layout-structure-item-collection')]//li[normalize-space()='${title}']");
 			}
 
 			Page.selectFilterInCollectionFilter(
@@ -1553,16 +1524,8 @@ definition {
 				selectedName = "Category B",
 				title = "Vocabulary B");
 
-			var n = 1;
-
 			for (var title : list "Document Title With Both Categories,Blogs Entry Title With Both Categories,Web Content Title With Both Categories") {
-				AssertVisible(
-					key_entryContent = "[normalize-space(text())='${title}']",
-					key_fragmentName = "Collection Display",
-					key_position = ${n},
-					locator1 = "PageEditor#COLLECTION_ITEM_CONTENT_IN_INLINE_LIST_AT_VIEW_MODE");
-
-				var n = ${n} + 1;
+				AssertVisible(locator1 = "//div[contains(@class,'lfr-layout-structure-item-collection')]//li[normalize-space()='${title}']");
 			}
 
 			AssertElementNotPresent(
@@ -1589,16 +1552,8 @@ definition {
 		}
 
 		task ("Assert Contains All Categories works in view mode") {
-			var n = 1;
-
 			for (var title : list "Document Title With Both Categories,Document Title With Category A,Blogs Entry Title With Both Categories,Blogs Entry Title With Category A,Web Content Title With Both Categories,Web Content Title With Category A") {
-				AssertVisible(
-					key_entryContent = "[normalize-space(text())='${title}']",
-					key_fragmentName = "Collection Display",
-					key_position = ${n},
-					locator1 = "PageEditor#COLLECTION_ITEM_CONTENT_IN_INLINE_LIST_AT_VIEW_MODE");
-
-				var n = ${n} + 1;
+				AssertVisible(locator1 = "//div[contains(@class,'lfr-layout-structure-item-collection')]//li[normalize-space()='${title}']");
 			}
 
 			Page.selectFilterInCollectionFilter(
@@ -1607,16 +1562,8 @@ definition {
 				selectedName = "Category A",
 				title = "Vocabulary A");
 
-			var n = 1;
-
 			for (var title : list "Document Title With Both Categories,Document Title With Category A,Blogs Entry Title With Both Categories,Blogs Entry Title With Category A,Web Content Title With Both Categories,Web Content Title With Category A") {
-				AssertVisible(
-					key_entryContent = "[normalize-space(text())='${title}']",
-					key_fragmentName = "Collection Display",
-					key_position = ${n},
-					locator1 = "PageEditor#COLLECTION_ITEM_CONTENT_IN_INLINE_LIST_AT_VIEW_MODE");
-
-				var n = ${n} + 1;
+				AssertVisible(locator1 = "//div[contains(@class,'lfr-layout-structure-item-collection')]//li[normalize-space()='${title}']");
 			}
 
 			Page.selectFilterInCollectionFilter(
@@ -1626,16 +1573,8 @@ definition {
 				selectedName = "Category B",
 				title = "Vocabulary B");
 
-			var n = 1;
-
 			for (var title : list "Document Title With Both Categories,Blogs Entry Title With Both Categories,Web Content Title With Both Categories") {
-				AssertVisible(
-					key_entryContent = "[normalize-space(text())='${title}']",
-					key_fragmentName = "Collection Display",
-					key_position = ${n},
-					locator1 = "PageEditor#COLLECTION_ITEM_CONTENT_IN_INLINE_LIST_AT_VIEW_MODE");
-
-				var n = ${n} + 1;
+				AssertVisible(locator1 = "//div[contains(@class,'lfr-layout-structure-item-collection')]//li[normalize-space()='${title}']");
 			}
 
 			AssertElementNotPresent(
@@ -2300,7 +2239,7 @@ definition {
 
 			AssertTextEquals.assertPartialText(
 				key_columnNumber = 1,
-				key_elementHeader = "//div[@aria-label='Collection Filter']//div[contains(@class,'page-editor__topper__content')]",
+				key_elementHeader = "//div[@data-name='Collection Filter']//div[contains(@class,'page-editor__topper__content')]",
 				key_position = 1,
 				locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT",
 				value1 = "Vocabulary A");
@@ -2317,7 +2256,7 @@ definition {
 
 			AssertTextEquals.assertPartialText(
 				key_columnNumber = 2,
-				key_elementHeader = "//div[@aria-label='Collection Filter']//div[contains(@class,'page-editor__topper__content')]",
+				key_elementHeader = "//div[@data-name='Collection Filter']//div[contains(@class,'page-editor__topper__content')]",
 				key_position = 1,
 				locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT",
 				value1 = "Vocabulary B");
@@ -3398,28 +3337,12 @@ definition {
 		task ("Filter results of multiple Collection Displays by multiple Collection Filters at Preview mode") {
 			PageEditor.previewInANewTab();
 
-			var n = 1;
-
-			for (var style : list "512,510,501") {
-				AssertVisible(
-					key_entryContent = "[normalize-space()='${style}']",
-					key_fragmentName = "Collection Display",
-					key_position = ${n},
-					locator1 = "PageEditor#COLLECTION_ITEM_CONTENT_IN_BORDERED_LIST_AT_VIEW_MODE");
-
-				var n = ${n} + 1;
+			for (var title : list "512,510,501") {
+				AssertVisible(locator1 = "xpath=(//div[contains(@class,'lfr-layout-structure-item-collection')])[1]//ul[contains(@class,'list-group')]/li[contains(@class,'list-group-item')][normalize-space()='${title}']");
 			}
 
-			var n = 4;
-
-			for (var style : list "S,Y,X") {
-				AssertVisible(
-					key_entryContent = "[normalize-space()='Model ${style}']",
-					key_fragmentName = "Collection Display",
-					key_position = ${n},
-					locator1 = "PageEditor#COLLECTION_ITEM_CONTENT_IN_BORDERED_LIST_AT_VIEW_MODE");
-
-				var n = ${n} + 1;
+			for (var title : list "Model S,Model Y,Model X") {
+				AssertVisible(locator1 = "xpath=(//div[contains(@class,'lfr-layout-structure-item-collection')])[2]//ul[contains(@class,'list-group')]/li[contains(@class,'list-group-item')][normalize-space()='${title}']");
 			}
 
 			Page.searchInCollectionFilter(searchTerm = 501);
@@ -3456,28 +3379,12 @@ definition {
 				pageName = "Test Page Name",
 				siteName = ${randomSiteName});
 
-			var n = 1;
-
-			for (var style : list "512,510,501") {
-				AssertVisible(
-					key_entryContent = "[normalize-space()='${style}']",
-					key_fragmentName = "Collection Display",
-					key_position = ${n},
-					locator1 = "PageEditor#COLLECTION_ITEM_CONTENT_IN_BORDERED_LIST_AT_VIEW_MODE");
-
-				var n = ${n} + 1;
+			for (var title : list "512,510,501") {
+				AssertVisible(locator1 = "xpath=(//div[contains(@class,'lfr-layout-structure-item-collection')])[1]//ul[contains(@class,'list-group')]/li[contains(@class,'list-group-item')][normalize-space()='${title}']");
 			}
 
-			var n = 4;
-
-			for (var style : list "S,Y,X") {
-				AssertVisible(
-					key_entryContent = "[normalize-space()='Model ${style}']",
-					key_fragmentName = "Collection Display",
-					key_position = ${n},
-					locator1 = "PageEditor#COLLECTION_ITEM_CONTENT_IN_BORDERED_LIST_AT_VIEW_MODE");
-
-				var n = ${n} + 1;
+			for (var title : list "Model S,Model Y,Model X") {
+				AssertVisible(locator1 = "xpath=(//div[contains(@class,'lfr-layout-structure-item-collection')])[2]//ul[contains(@class,'list-group')]/li[contains(@class,'list-group-item')][normalize-space()='${title}']");
 			}
 
 			Page.searchInCollectionFilter(searchTerm = 501);
@@ -3665,7 +3572,7 @@ definition {
 
 			AssertTextEquals.assertPartialText(
 				key_columnNumber = 1,
-				key_elementHeader = "//div[@aria-label='Collection Filter']//div[contains(@class,'page-editor__topper__content')]",
+				key_elementHeader = "//div[@data-name='Collection Filter']//div[contains(@class,'page-editor__topper__content')]",
 				key_position = 1,
 				locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT",
 				value1 = "Size");
@@ -3699,7 +3606,7 @@ definition {
 
 			AssertTextEquals.assertPartialText(
 				key_columnNumber = 2,
-				key_elementHeader = "//div[@aria-label='Collection Filter']//div[contains(@class,'page-editor__topper__content')]",
+				key_elementHeader = "//div[@data-name='Collection Filter']//div[contains(@class,'page-editor__topper__content')]",
 				key_position = 1,
 				locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT",
 				value1 = "Pure Color");

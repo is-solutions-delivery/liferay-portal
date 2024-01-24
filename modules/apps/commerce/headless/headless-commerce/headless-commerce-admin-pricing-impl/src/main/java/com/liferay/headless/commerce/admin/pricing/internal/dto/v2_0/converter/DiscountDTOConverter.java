@@ -23,7 +23,6 @@ import java.math.BigDecimal;
 
 import java.util.Locale;
 import java.util.Objects;
-import java.util.ResourceBundle;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -51,44 +50,48 @@ public class DiscountDTOConverter
 			_commerceDiscountService.getCommerceDiscount(
 				(Long)dtoConverterContext.getId());
 
-		ExpandoBridge expandoBridge = commerceDiscount.getExpandoBridge();
-
-		Locale locale = dtoConverterContext.getLocale();
-
-		ResourceBundle resourceBundle = LanguageResources.getResourceBundle(
-			locale);
-
 		return new Discount() {
 			{
-				actions = dtoConverterContext.getActions();
-				active = commerceDiscount.isActive();
-				amountFormatted = _getAmountFormatted(commerceDiscount, locale);
-				couponCode = commerceDiscount.getCouponCode();
-				customFields = expandoBridge.getAttributes();
-				displayDate = commerceDiscount.getDisplayDate();
-				expirationDate = commerceDiscount.getExpirationDate();
-				externalReferenceCode =
-					commerceDiscount.getExternalReferenceCode();
-				id = commerceDiscount.getCommerceDiscountId();
-				level = commerceDiscount.getLevel();
-				limitationTimes = commerceDiscount.getLimitationTimes();
-				limitationTimesPerAccount =
-					commerceDiscount.getLimitationTimesPerAccount();
-				limitationType = commerceDiscount.getLimitationType();
-				maximumDiscountAmount =
-					commerceDiscount.getMaximumDiscountAmount();
-				modifiedDate = commerceDiscount.getModifiedDate();
-				numberOfUse = commerceDiscount.getNumberOfUse();
-				percentageLevel1 = commerceDiscount.getLevel1();
-				percentageLevel2 = commerceDiscount.getLevel2();
-				percentageLevel3 = commerceDiscount.getLevel3();
-				percentageLevel4 = commerceDiscount.getLevel4();
-				rulesConjunction = commerceDiscount.isRulesConjunction();
-				target = _language.get(
-					resourceBundle, commerceDiscount.getTarget());
-				title = commerceDiscount.getTitle();
-				useCouponCode = commerceDiscount.isUseCouponCode();
-				usePercentage = commerceDiscount.isUsePercentage();
+				setActions(dtoConverterContext::getActions);
+				setActive(commerceDiscount::isActive);
+				setAmountFormatted(
+					() -> _getAmountFormatted(
+						commerceDiscount, dtoConverterContext.getLocale()));
+				setCouponCode(commerceDiscount::getCouponCode);
+				setCustomFields(
+					() -> {
+						ExpandoBridge expandoBridge =
+							commerceDiscount.getExpandoBridge();
+
+						return expandoBridge.getAttributes();
+					});
+				setDisplayDate(commerceDiscount::getDisplayDate);
+				setExpirationDate(commerceDiscount::getExpirationDate);
+				setExternalReferenceCode(
+					commerceDiscount::getExternalReferenceCode);
+				setId(commerceDiscount::getCommerceDiscountId);
+				setLevel(commerceDiscount::getLevel);
+				setLimitationTimes(commerceDiscount::getLimitationTimes);
+				setLimitationTimesPerAccount(
+					commerceDiscount::getLimitationTimesPerAccount);
+				setLimitationType(commerceDiscount::getLimitationType);
+				setMaximumDiscountAmount(
+					commerceDiscount::getMaximumDiscountAmount);
+				setModifiedDate(commerceDiscount::getModifiedDate);
+				setNumberOfUse(commerceDiscount::getNumberOfUse);
+				setPercentageLevel1(commerceDiscount::getLevel1);
+				setPercentageLevel2(commerceDiscount::getLevel2);
+				setPercentageLevel3(commerceDiscount::getLevel3);
+				setPercentageLevel4(commerceDiscount::getLevel4);
+				setRulesConjunction(commerceDiscount::isRulesConjunction);
+				setTarget(
+					() -> _language.get(
+						LanguageResources.getResourceBundle(
+							dtoConverterContext.getLocale()),
+						commerceDiscount.getTarget()));
+				setTitle(commerceDiscount::getTitle);
+				setUseCouponCode(commerceDiscount::isUseCouponCode);
+				setUsePercentage(commerceDiscount::isUsePercentage);
 			}
 		};
 	}

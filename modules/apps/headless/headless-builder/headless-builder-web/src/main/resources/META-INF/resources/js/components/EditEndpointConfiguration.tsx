@@ -3,19 +3,23 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import ClayAlert from '@clayui/alert';
 import {Text} from '@clayui/core';
 import ClayForm from '@clayui/form';
 import ClayIcon from '@clayui/icon';
-import {ClayTooltipProvider} from '@clayui/tooltip';
-import {sub} from 'frontend-js-web';
+import classNames from 'classnames';
 import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
 
+import FiltersAndSorting from './endpointComponents/FiltersAndSorting';
+import PathParameterConfiguration from './endpointComponents/PathParameterConfiguration';
 import {Select} from './fieldComponents/Select';
+import {HTTP_METHODS, RETRIEVE_TYPES} from './utils/constants';
 import {getAllItems} from './utils/fetchUtil';
 
 interface EditEndpointConfigurationProps {
 	currentAPIApplicationId: string;
 	data: Partial<APIEndpointUIData>;
+	displayError: EndpointDataError;
 	schemaAPIURLPath: string;
 	setData: Dispatch<SetStateAction<Partial<APIEndpointUIData>>>;
 }
@@ -23,12 +27,14 @@ interface EditEndpointConfigurationProps {
 export default function EditEndpointConfiguration({
 	currentAPIApplicationId,
 	data,
+	displayError,
 	schemaAPIURLPath,
 	setData,
 }: EditEndpointConfigurationProps) {
-	const [responseBodySchemaOptions, setResponseBodySchemaOptions] = useState<
-		SelectOption[]
-	>([]);
+	const [schemaOptions, setSchemaOptions] = useState<SelectOption[]>([]);
+	const [selectedRequestBodySchema, setSelectedRequestBodySchema] = useState<
+		SelectOption
+	>();
 	const [
 		selectedResponseBodySchema,
 		setSelectedResponseBodySchema,
@@ -47,48 +53,110 @@ export default function EditEndpointConfiguration({
 				: [];
 
 			if (options.length) {
-				setResponseBodySchemaOptions(options);
+				setSchemaOptions(options);
 			}
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
-		if (
-			data.r_responseAPISchemaToAPIEndpoints_c_apiSchemaId &&
-			responseBodySchemaOptions.length
-		) {
-			setSelectedResponseBodySchema(
-				responseBodySchemaOptions.find(
-					(option) =>
-						option.value ===
-						data.r_responseAPISchemaToAPIEndpoints_c_apiSchemaId?.toString()
-				)
-			);
+		if (schemaOptions.length) {
+			if (data.r_responseAPISchemaToAPIEndpoints_c_apiSchemaId) {
+				setSelectedResponseBodySchema(
+					schemaOptions.find(
+						(option) =>
+							option.value ===
+							data.r_responseAPISchemaToAPIEndpoints_c_apiSchemaId?.toString()
+					)
+				);
+			}
+			if (data.r_requestAPISchemaToAPIEndpoints_c_apiSchemaId) {
+				setSelectedRequestBodySchema(
+					schemaOptions.find(
+						(option) =>
+							option.value ===
+							data.r_requestAPISchemaToAPIEndpoints_c_apiSchemaId?.toString()
+					)
+				);
+			}
 		}
-	}, [data, responseBodySchemaOptions]);
+	}, [data, schemaOptions]);
 
-	const handleSelectResponseBodySchema = (value: string) => {
+	const handleSelectBodySchema = (
+		onChangeFn: Dispatch<SetStateAction<SelectOption | undefined>>,
+		property: string,
+		value: string
+	) => {
 		setData((previousValue) => ({
 			...previousValue,
-			r_responseAPISchemaToAPIEndpoints_c_apiSchemaId: Number(value),
+			[property]: Number(value),
 		}));
 
-		setSelectedResponseBodySchema(
-			responseBodySchemaOptions.find((option) => option.value === value)
-		);
+		onChangeFn(schemaOptions.find((option) => option.value === value));
 	};
-
-	const endpointFiltersInstruction = Liferay.Language.get(
-		'add-a-filter-using-odata'
-	);
-
-	const endpointSortInstruction = Liferay.Language.get(
-		'add-a-sort-using-odata'
-	);
 
 	return (
 		<ClayForm>
+			{data.httpMethod?.key === HTTP_METHODS.POST && (
+				<ClayForm.Group
+					className={classNames('mb-4', {
+						'has-error':
+							displayError.r_requestAPISchemaToAPIEndpoints_c_apiSchemaId,
+					})}
+				>
+					<>
+						<label htmlFor="selectTrigger">
+							{Liferay.Language.get('request-body-schema')}
+
+							<span className="ml-1 reference-mark text-warning">
+								<ClayIcon symbol="asterisk" />
+							</span>
+						</label>
+
+						<Select
+							disabled={false}
+							dropDownSearchAriaLabel={Liferay.Language.get(
+								'search-for-a-schema-or-use-the-arrow-keys-to-navigate-and-select-a-schema-from-the-list'
+							)}
+							onClick={(value) =>
+								handleSelectBodySchema(
+									setSelectedRequestBodySchema,
+									'r_requestAPISchemaToAPIEndpoints_c_apiSchemaId',
+									value
+								)
+							}
+							options={schemaOptions}
+							placeholder={Liferay.Language.get(
+								'select-a-schema'
+							)}
+							searchable
+							selectedOption={selectedRequestBodySchema}
+						/>
+
+						{displayError.r_requestAPISchemaToAPIEndpoints_c_apiSchemaId && (
+							<ClayAlert
+								className="mt-2"
+								displayType="danger"
+								title={Liferay.Language.get(
+									'please-select-a-request-body-schema'
+								)}
+								variant="feedback"
+							></ClayAlert>
+						)}
+					</>
+					<Text
+						as="p"
+						color="secondary"
+						id="hostTextPreview"
+						size={3}
+					>
+						{Liferay.Language.get(
+							'request-body-can-only-contain-properies-from-the-main-object'
+						)}
+					</Text>
+				</ClayForm.Group>
+			)}
+
 			<ClayForm.Group>
 				<label htmlFor="selectTrigger">
 					{Liferay.Language.get('response-body-schema')}
@@ -99,129 +167,34 @@ export default function EditEndpointConfiguration({
 					dropDownSearchAriaLabel={Liferay.Language.get(
 						'search-for-a-schema-or-use-the-arrow-keys-to-navigate-and-select-a-schema-from-the-list'
 					)}
-					onClick={handleSelectResponseBodySchema}
-					options={responseBodySchemaOptions}
+					onClick={(value) =>
+						handleSelectBodySchema(
+							setSelectedResponseBodySchema,
+							'r_responseAPISchemaToAPIEndpoints_c_apiSchemaId',
+							value
+						)
+					}
+					options={schemaOptions}
 					placeholder={Liferay.Language.get('select-a-schema')}
 					searchable
 					selectedOption={selectedResponseBodySchema}
 				/>
 			</ClayForm.Group>
 
-			<ClayForm.Group>
-				<label htmlFor="endpointFiltersField">
-					{Liferay.Language.get('filters')}
+			{data.httpMethod?.key === HTTP_METHODS.GET &&
+				data.retrieveType?.key === RETRIEVE_TYPES.SINGLE_ELEMENT && (
+					<PathParameterConfiguration
+						data={data}
+						displayError={displayError}
+						selectedResponseBodySchema={selectedResponseBodySchema}
+						setData={setData}
+					/>
+				)}
 
-					<ClayTooltipProvider>
-						<span
-							data-tooltip-align="top"
-							title={`${Liferay.Language.get(
-								'odata-cannot-exceed-1000-characters'
-							)} ${sub(
-								Liferay.Language.get(
-									'remember-not-to-include-x'
-								),
-								'?filter='
-							)}`}
-						>
-							&nbsp;
-							<ClayIcon symbol="question-circle-full" />
-						</span>
-					</ClayTooltipProvider>
-				</label>
-
-				<Text as="p" id="hostTextPreview" size={2} weight="lighter">
-					/?filter=
-				</Text>
-
-				<textarea
-					aria-label={endpointFiltersInstruction}
-					autoComplete="off"
-					className="form-control"
-					id="endpointFiltersField"
-					onChange={({target: {value}}) =>
-						setData((previousData) => ({
-							...previousData,
-							...(value !== ''
-								? {
-										apiEndpointToAPIFilters: [
-											{
-												...(previousData
-													.apiEndpointToAPIFilters?.[0]
-													?.id && {
-													id:
-														previousData
-															.apiEndpointToAPIFilters?.[0]
-															.id,
-												}),
-												oDataFilter: value,
-											},
-										],
-								  }
-								: {apiEndpointToAPIFilters: []}),
-						}))
-					}
-					placeholder={endpointFiltersInstruction}
-					value={data.apiEndpointToAPIFilters?.[0]?.oDataFilter}
-				/>
-			</ClayForm.Group>
-
-			<ClayForm.Group>
-				<label htmlFor="endpointSortingField">
-					{Liferay.Language.get('sorting')}
-
-					<ClayTooltipProvider>
-						<span
-							data-tooltip-align="top"
-							title={`${Liferay.Language.get(
-								'odata-cannot-exceed-1000-characters'
-							)} ${sub(
-								Liferay.Language.get(
-									'remember-not-to-include-x'
-								),
-								'?sort='
-							)}`}
-						>
-							&nbsp;
-							<ClayIcon symbol="question-circle-full" />
-						</span>
-					</ClayTooltipProvider>
-				</label>
-
-				<Text as="p" id="hostTextPreview" size={2} weight="lighter">
-					/?sort=
-				</Text>
-
-				<textarea
-					aria-label={endpointSortInstruction}
-					autoComplete="off"
-					className="form-control"
-					id="endpointSortingField"
-					onChange={({target: {value}}) =>
-						setData((previousData) => ({
-							...previousData,
-							...(value !== ''
-								? {
-										apiEndpointToAPISorts: [
-											{
-												...(previousData
-													.apiEndpointToAPISorts?.[0]
-													?.id && {
-													id:
-														previousData
-															.apiEndpointToAPISorts?.[0]
-															.id,
-												}),
-												oDataSort: value,
-											},
-										],
-								  }
-								: {apiEndpointToAPISorts: []}),
-						}))
-					}
-					placeholder={endpointSortInstruction}
-					value={data.apiEndpointToAPISorts?.[0]?.oDataSort}
-				/>
-			</ClayForm.Group>
+			{data.httpMethod?.key === HTTP_METHODS.GET &&
+				data.retrieveType?.key === RETRIEVE_TYPES.COLLECTION && (
+					<FiltersAndSorting data={data} setData={setData} />
+				)}
 		</ClayForm>
 	);
 }

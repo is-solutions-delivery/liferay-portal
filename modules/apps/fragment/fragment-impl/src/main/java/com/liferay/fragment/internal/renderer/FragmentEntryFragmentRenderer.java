@@ -28,7 +28,9 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.cache.MultiVMPool;
 import com.liferay.portal.kernel.cache.PortalCache;
+import com.liferay.portal.kernel.content.security.policy.ContentSecurityPolicyNonceProviderUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -132,6 +134,8 @@ public class FragmentEntryFragmentRenderer implements FragmentRenderer {
 			fragmentEntryLink.setCss(fragmentEntry.getCss());
 			fragmentEntryLink.setHtml(fragmentEntry.getHtml());
 			fragmentEntryLink.setJs(fragmentEntry.getJs());
+			fragmentEntryLink.setConfiguration(
+				fragmentEntry.getConfiguration());
 			fragmentEntryLink.setType(fragmentEntry.getType());
 		}
 
@@ -160,9 +164,10 @@ public class FragmentEntryFragmentRenderer implements FragmentRenderer {
 	}
 
 	private JSONObject _getInputJSONObject(
-		FragmentEntryLink fragmentEntryLink,
-		HttpServletRequest httpServletRequest, InfoForm infoForm,
-		Locale locale) {
+			FragmentEntryLink fragmentEntryLink,
+			HttpServletRequest httpServletRequest, InfoForm infoForm,
+			Locale locale)
+		throws JSONException {
 
 		FragmentEntryInputTemplateNodeContextHelper
 			fragmentEntryInputTemplateNodeContextHelper =
@@ -225,11 +230,12 @@ public class FragmentEntryFragmentRenderer implements FragmentRenderer {
 	}
 
 	private String _renderFragmentEntry(
-		String configuration, String css,
-		FragmentRendererContext fragmentRendererContext, String html,
-		HttpServletRequest httpServletRequest) {
+			String configuration, String css,
+			FragmentRendererContext fragmentRendererContext, String html,
+			HttpServletRequest httpServletRequest)
+		throws JSONException {
 
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(26);
 
 		sb.append("<div id=\"");
 
@@ -293,8 +299,11 @@ public class FragmentEntryFragmentRenderer implements FragmentRenderer {
 		}
 
 		if (Validator.isNotNull(fragmentEntryLink.getJs())) {
-			sb.append("<script>(function() {");
-			sb.append("const configuration = ");
+			sb.append("<script type=\"module\"");
+			sb.append(
+				ContentSecurityPolicyNonceProviderUtil.getNonceAttribute(
+					httpServletRequest));
+			sb.append(">const configuration = ");
 			sb.append(configuration);
 			sb.append("; const fragmentElement = document.querySelector('#");
 			sb.append(fragmentRendererContext.getFragmentElementId());
@@ -322,7 +331,7 @@ public class FragmentEntryFragmentRenderer implements FragmentRenderer {
 						"p_l_mode", Constants.VIEW)));
 			sb.append("';");
 			sb.append(fragmentEntryLink.getJs());
-			sb.append(";}());</script>");
+			sb.append(";</script>");
 		}
 
 		return sb.toString();

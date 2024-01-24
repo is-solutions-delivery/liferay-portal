@@ -165,6 +165,8 @@ components:
                     format: int64
                     minimum: 0
                     type: integer
+                galleryEnabled:
+                    type: boolean
                 id:
                     example: 30130
                     format: int64
@@ -189,6 +191,14 @@ components:
                     description:
                         URL of the location
                     type: string
+                tags:
+                    example:
+                        - tag1
+                        - tag2
+                        - tag3
+                    items:
+                        type: string
+                    type: array
                 title:
                     additionalProperties:
                         type: string
@@ -227,6 +237,8 @@ components:
                 externalReferenceCode:
                     example: AB-34098-789-N
                     type: string
+                galleryEnabled:
+                    type: boolean
                 id:
                     example: 30130
                     format: int64
@@ -252,6 +264,14 @@ components:
                     description:
                         URL of the location
                     type: string
+                tags:
+                    example:
+                        - tag1
+                        - tag2
+                        - tag3
+                    items:
+                        type: string
+                    type: array
                 title:
                     additionalProperties:
                         type: string
@@ -286,6 +306,8 @@ components:
                 externalReferenceCode:
                     example: AB-34098-789-N
                     type: string
+                galleryEnabled:
+                    type: boolean
                 id:
                     example: 30130
                     format: int64
@@ -311,6 +333,14 @@ components:
                     description:
                         URL of the location
                     type: string
+                tags:
+                    example:
+                        - tag1
+                        - tag2
+                        - tag3
+                    items:
+                        type: string
+                    type: array
                 title:
                     additionalProperties:
                         type: string
@@ -388,6 +418,65 @@ components:
             required:
                 - id
             type: object
+        Currency:
+            properties:
+                active:
+                    example: true
+                    type: boolean
+                code:
+                    example: USD
+                    type: string
+                formatPattern:
+                    additionalProperties:
+                        type: string
+                    example:
+                        en_US: Hand Saw
+                        hr_HR: Product Name HR
+                        hu_HU: Product Name HU
+                    type: object
+                id:
+                    example: 30130
+                    format: int64
+                    minimum: 0
+                    type: integer
+                maxFractionDigits:
+                    format: int32
+                    minimum: 0
+                    type: integer
+                minFractionDigits:
+                    format: int32
+                    minimum: 0
+                    type: integer
+                name:
+                    additionalProperties:
+                        type: string
+                    example:
+                        en_US: Hand Saw
+                        hr_HR: Product Name HR
+                        hu_HU: Product Name HU
+                    type: object
+                primary:
+                    example: true
+                    type: boolean
+                priority:
+                    example: 1.2
+                    format: double
+                    type: number
+                rate:
+                    example: 33.54
+                    format: bigdecimal
+                    type: number
+                roundingMode:
+                    enum: [UP, DOWN, CEILING, FLOOR, HALF_UP, HALF_DOWN, HALF_EVEN, UNNECESSARY]
+                    example: HALF_EVEN
+                    type: string
+                symbol:
+                    example: $
+                    type: string
+            required:
+                - code
+                - name
+            type: object
         CustomField:
             # @review
             description:
@@ -416,8 +505,7 @@ components:
                         type: string
                     type: object
                 geo:
-                    allOf:
-                        - $ref: "#/components/schemas/Geo"
+                    $ref: "#/components/schemas/Geo"
                     description:
                         A point determined by latitude and longitude.
             type: object
@@ -663,6 +751,10 @@ components:
                 catalogId:
                     format: int64
                     type: integer
+                customFields:
+                    items:
+                        $ref: "#/components/schemas/CustomField"
+                    type: array
                 description:
                     type: object
                     additionalProperties:
@@ -1037,8 +1129,7 @@ components:
                     readOnly: true
                     type: integer
                 workflowStatusInfo:
-                    allOf:
-                        - $ref: "#/components/schemas/Status"
+                    $ref: "#/components/schemas/Status"
                     readOnly: true
             required:
                 - active
@@ -1226,6 +1317,13 @@ components:
                 catalogId:
                     format: int64
                     type: integer
+                customFields:
+                    items:
+                        $ref: "#/components/schemas/CustomField"
+                    type: array
+                definedExternally:
+                    example: true
+                    type: boolean
                 description:
                     type: object
                     additionalProperties:
@@ -1246,6 +1344,9 @@ components:
                     minimum: 0
                     readOnly: true
                     type: integer
+                infoItemServiceKey:
+                    example:
+                    type: string
                 key:
                     example: color
                     type: string
@@ -1262,6 +1363,9 @@ components:
                     format: int64
                     minimum: 0
                     type: integer
+                priceType:
+                    example: dynamic, static
+                    type: string
                 priority:
                     example: 1.2
                     format: double
@@ -1276,6 +1380,9 @@ components:
                 skuContributor:
                     example: true
                     type: boolean
+                typeSettings:
+                    example: "22.50"
+                    type: string
             required:
                 - fieldType
                 - key
@@ -1284,6 +1391,11 @@ components:
             type: object
         ProductOptionValue:
             properties:
+                deltaPrice:
+                    example: 10
+                    format: bigdecimal
+                    minimum: 0
+                    type: number
                 id:
                     example: 30130
                     format: int64
@@ -1301,10 +1413,27 @@ components:
                         hr_HR: Black HR
                         hu_HU: Black HU
                     type: object
+                preselected:
+                    example: true
+                    type: boolean
                 priority:
                     example: 1.2
                     format: double
                     type: number
+                quantity:
+                    example: 10
+                    format: bigdecimal
+                    minimum: 0
+                    type: number
+                skuId:
+                    example: 30129
+                    format: int64
+                    minimum: 0
+                    type: integer
+                unitOfMeasureKey:
+                    example: pl
+                    readOnly: true
+                    type: string
             required:
                 - key
                 - name
@@ -1489,6 +1618,10 @@ components:
                     description:
                         Number of downloads available for attachment
                     type: integer
+                productVirtualSettingsFileEntries:
+                    items:
+                        $ref: "#/components/schemas/ProductVirtualSettingsFileEntry"
+                    type: array
                 sampleAttachment:
                     description:
                         Base64 encoded sample file
@@ -1534,6 +1667,26 @@ components:
                     description:
                         Enable sample file
                     type: boolean
+            type: object
+        ProductVirtualSettingsFileEntry:
+            properties:
+                attachment:
+                    description:
+                        Base64 encoded file
+                    type: string
+                src:
+                    description:
+                        URL to download the file
+                    readOnly: true
+                    type: string
+                url:
+                    description:
+                        URL of the file
+                    type: string
+                version:
+                    description:
+                        The version of the file
+                    type: string
             type: object
         RelatedProduct:
             properties:
@@ -1892,6 +2045,10 @@ components:
                     description:
                         URL of the sample file
                     type: string
+                skuVirtualSettingsFileEntries:
+                    items:
+                        $ref: "#/components/schemas/SkuVirtualSettingsFileEntry"
+                    type: array
                 src:
                     description:
                         URL to download the file
@@ -1924,6 +2081,26 @@ components:
                     description:
                         Enable sample file
                     type: boolean
+            type: object
+        SkuVirtualSettingsFileEntry:
+            properties:
+                attachment:
+                    description:
+                        Base64 encoded file
+                    type: string
+                src:
+                    description:
+                        URL to download the file
+                    readOnly: true
+                    type: string
+                url:
+                    description:
+                        URL of the file
+                    type: string
+                version:
+                    description:
+                        The version of the file
+                    type: string
             type: object
         Specification:
             properties:
@@ -1997,7 +2174,7 @@ info:
         name: Commerce Team
     description:
         "Liferay Commerce Admin Catalog API. A Java client JAR is available for use with the group ID 'com.liferay',
-        artifact ID 'com.liferay.headless.commerce.admin.catalog.client', and version '4.0.47'."
+        artifact ID 'com.liferay.headless.commerce.admin.catalog.client', and version '4.0.51'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -2574,6 +2751,341 @@ paths:
                       - HeadlessCommerceAdminCatalog.write
             summary: Creates or updates a catalog.
             tags: ["Catalog"]
+    "/currencies":
+        get:
+            operationId: getCurrenciesPage
+            parameters:
+                - in: query
+                  name: filter
+                  required: false
+                  schema:
+                      type: string
+                - in: query
+                  name: page
+                  required: false
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  required: false
+                  schema:
+                      type: integer
+                - in: query
+                  name: search
+                  required: false
+                  schema:
+                      type: string
+                - in: query
+                  name: sort
+                  required: false
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Currency"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Currency"
+                                type: array
+                    description:
+                        Successful operation
+                401:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
+                404:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
+                500:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
+            security:
+                - BasicAuth: []
+                - BearerAuth: []
+                - OAuth2:
+                      - HeadlessCommerceAdminCatalog.read
+            summary: Gets a list of currencies.
+            tags: ["Currency"]
+        post:
+            operationId: postCurrency
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Currency"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Currency"
+                required: true
+            responses:
+                201:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Currency"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Currency"
+                    description:
+                        Created
+                202:
+                    description:
+                        Accepted - Async
+                204:
+                    description:
+                        Updated
+                400:
+                    description:
+                        Invalid input
+                401:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
+                404:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
+                500:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
+            security:
+                - BasicAuth: []
+                - BearerAuth: []
+                - OAuth2:
+                      - HeadlessCommerceAdminCatalog.write
+            summary: Creates or updates a currency.
+            tags: ["Currency"]
+    "/currencies/{id}":
+        delete:
+            operationId: deleteCurrency
+            parameters:
+                - in: path
+                  explode: false
+                  name: id
+                  required: true
+                  schema:
+                      description:
+                          The resource Id
+                      example: 30130
+                      format: int64
+                      minimum: 0
+                      type: integer
+                  style: simple
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+                401:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
+            security:
+                - BasicAuth: []
+                - BearerAuth: []
+                - OAuth2:
+                      - HeadlessCommerceAdminCatalog.write
+            summary: Deletes a currency by ID.
+            tags: ["Currency"]
+        get:
+            operationId: getCurrency
+            parameters:
+                - in: path
+                  explode: false
+                  name: id
+                  required: true
+                  schema:
+                      description:
+                          The resource Id
+                      example: 30130
+                      format: int64
+                      minimum: 0
+                      type: integer
+                  style: simple
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Currency"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Currency"
+                    description:
+                        Successful operation
+                400:
+                    description:
+                        Invalid input
+                401:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
+                404:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
+                500:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
+            security:
+                - BasicAuth: []
+                - BearerAuth: []
+                - OAuth2:
+                      - HeadlessCommerceAdminCatalog.read
+            summary: Gets a currency by ID.
+            tags: ["Currency"]
+        patch:
+            operationId: patchCurrency
+            parameters:
+                - in: path
+                  explode: false
+                  name: id
+                  required: true
+                  schema:
+                      description:
+                          The resource Id
+                      example: 30130
+                      format: int64
+                      minimum: 0
+                      type: integer
+                  style: simple
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Currency"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Currency"
+                required: true
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Currency"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Currency"
+                    description:
+                        Updated
+                400:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Invalid input
+                401:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Authentication information is missing or invalid
+                404:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        The specified resource was not found
+                500:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Error"
+                    description:
+                        Unexpected error
+            security:
+                - BasicAuth: []
+                - BearerAuth: []
+                - OAuth2:
+                      - HeadlessCommerceAdminCatalog.write
+            summary: Updates a currency by ID.
+            tags: ["Currency"]
     "/diagrams/{diagramId}":
         patch:
             operationId: patchDiagram

@@ -241,10 +241,10 @@ export function FieldBase({
 		type === 'numeric' ||
 		type === 'image' ||
 		type === 'rich_text' ||
-		type === 'search_location' ||
-		type === 'select';
+		type === 'search_location';
 	const readFieldDetails = !showFor;
-	const hasFieldDetails = accessible && fieldDetails && readFieldDetails;
+	const hasFieldDetails =
+		accessible && fieldDetails && readFieldDetails && type !== 'select';
 
 	const accessiblePropsGroup = {
 		...(!renderLabel && {'aria-labelledby': fieldDetailsId}),
@@ -334,10 +334,12 @@ export function FieldBase({
 						)}
 						disabled={readOnly}
 						onClick={() =>
-							dispatch({
-								payload: name,
-								type: CORE_EVENT_TYPES.FIELD.REPEATED,
-							})
+							setTimeout(() => {
+								dispatch({
+									payload: name,
+									type: CORE_EVENT_TYPES.FIELD.REPEATED,
+								});
+							}, 200)
 						}
 						small
 						title={Liferay.Language.get('duplicate')}
@@ -379,6 +381,7 @@ export function FieldBase({
 									'ddm-label': showLabel || required,
 									'ddm-repeatable': repeatable,
 								})}
+								{...(type === 'select' && {id: id ?? name})}
 							>
 								{showLabel && label && (
 									<LabelProperty

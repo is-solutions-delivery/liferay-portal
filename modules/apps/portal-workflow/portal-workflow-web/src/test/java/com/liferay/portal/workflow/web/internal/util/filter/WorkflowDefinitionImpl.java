@@ -55,6 +55,11 @@ public class WorkflowDefinitionImpl implements WorkflowDefinition {
 	}
 
 	@Override
+	public String getContentAsXML() {
+		return null;
+	}
+
+	@Override
 	public String getDescription() {
 		return _description;
 	}

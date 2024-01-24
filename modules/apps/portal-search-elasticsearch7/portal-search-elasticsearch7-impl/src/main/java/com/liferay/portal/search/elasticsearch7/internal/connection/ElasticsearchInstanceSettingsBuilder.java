@@ -6,6 +6,7 @@
 package com.liferay.portal.search.elasticsearch7.internal.connection;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.util.JavaDetector;
 import com.liferay.portal.kernel.util.PortalRunMode;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
@@ -91,14 +92,6 @@ public class ElasticsearchInstanceSettingsBuilder {
 		HttpPortRange httpPortRange) {
 
 		_httpPortRange = httpPortRange;
-
-		return this;
-	}
-
-	public ElasticsearchInstanceSettingsBuilder localBindInetAddressSupplier(
-		Supplier<InetAddress> localBindInetAddressSupplier) {
-
-		_localBindInetAddressSupplier = localBindInetAddressSupplier;
 
 		return this;
 	}
@@ -199,21 +192,8 @@ public class ElasticsearchInstanceSettingsBuilder {
 		if (!Validator.isBlank(_networkHost)) {
 			put("network.host", _networkHost);
 		}
-		else {
-			if (Validator.isNull(networkBindHost) &&
-				Validator.isNull(networkHost) &&
-				Validator.isNull(networkPublishHost)) {
-
-				InetAddress inetAddress = _localBindInetAddressSupplier.get();
-
-				if (inetAddress != null) {
-					networkHost = inetAddress.getHostAddress();
-				}
-			}
-
-			if (Validator.isNotNull(networkHost)) {
-				put("network.host", networkHost);
-			}
+		else if (Validator.isNotNull(networkHost)) {
+			put("network.host", networkHost);
 		}
 
 		if (Validator.isNotNull(networkPublishHost)) {
@@ -295,6 +275,10 @@ public class ElasticsearchInstanceSettingsBuilder {
 
 		_configureTestMode();
 
+		if (JavaDetector.isJDK21()) {
+			put("thread_pool.warmer.max", "20");
+		}
+
 		_disableGeoipDownloader();
 
 		_disableXpack();
@@ -313,7 +297,6 @@ public class ElasticsearchInstanceSettingsBuilder {
 		_elasticsearchConfigurationWrapper;
 	private ElasticsearchInstancePaths _elasticsearchInstancePaths;
 	private HttpPortRange _httpPortRange;
-	private Supplier<InetAddress> _localBindInetAddressSupplier;
 	private String _networkHost;
 	private String _nodeName;
 	private final SettingsBuilder _settingsBuilder = new SettingsBuilder(

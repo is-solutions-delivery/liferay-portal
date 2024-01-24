@@ -520,7 +520,6 @@ definition {
 	test CanEditAnalysisReport {
 		var attributeName1 = "price";
 		var attributeName2 = "like";
-		var filterName = "birthdate";
 
 		task ("Fill fields and create custom event") {
 			var customEventName = ACCustomEvents.generateCustomEventName();
@@ -578,15 +577,6 @@ definition {
 			ACEventAnalysis.addBreakdown(attributeNameList = ${attributeName2});
 		}
 
-		task ("Add the filter to analysis") {
-			ACEventAnalysis.addFilter(
-				filterName = ${filterName},
-				inputValue = 25,
-				month = "November",
-				optionValue = "is",
-				year = 2021);
-		}
-
 		task ("Check the analysis result appears") {
 			ACEventAnalysis.viewAnalysisInformation(informationValueList = "260 - 269,true,1");
 		}
@@ -602,8 +592,7 @@ definition {
 		task ("Check that the analysis dashboard contains the event,attribute and filter") {
 			ACEventAnalysis.viewAnalysisDashboard(
 				attributeNameList = "${attributeName1},${attributeName2}",
-				eventName = ${customEventName},
-				filterNameList = ${filterName});
+				eventName = ${customEventName});
 		}
 
 		task ("Check the analysis result appears") {
@@ -879,14 +868,11 @@ definition {
 	}
 
 	@description = "Feature ID: LRAC-6280 | Automation ID: LRAC-10569 | Test Summary: Viewing the newly created analysis report with member permission"
-	@ignore = "true"
 	@priority = 4
 	test UserWithMemberPermissionCanViewAndCreateAnalysisReport {
 		var attributeName = "category";
 		var filterName = "like";
 		var defaultEventName = "webContentViewed";
-
-		// The default AC users do not appear in Users and Organizations. The bug will be resolved after LRAC-14468
 
 		task ("Fill fields and create custom event") {
 			var customEventName = ACCustomEvents.generateCustomEventName();

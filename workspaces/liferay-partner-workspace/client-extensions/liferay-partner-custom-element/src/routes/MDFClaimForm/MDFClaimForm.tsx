@@ -93,8 +93,6 @@ const MDFClaimForm = () => {
 	const siteURL = useLiferayNavigate();
 
 	const onCancel = () =>
-		mdfRequestId &&
-		siteURL &&
 		Liferay.Util.navigate(`${siteURL}/l/${mdfRequestId}`);
 
 	const mdfClaim =
@@ -168,6 +166,7 @@ const MDFClaimForm = () => {
 			}
 		>
 			<MDFClaimPage
+				hasPermissionShowForm={hasPermissionShowForm}
 				mdfRequest={mdfRequest}
 				onCancel={onCancel}
 				onSaveAsDraft={(values, formikHelpers) =>

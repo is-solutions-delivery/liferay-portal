@@ -1,7 +1,7 @@
 import MetricValue from './MetricValue';
 import React, {Fragment} from 'react';
 import Trend from 'shared/components/Trend';
-import {CHART_COLOR_NAMES} from 'shared/components/Chart';
+import {CHART_COLOR_NAMES} from 'shared/util/charts';
 import {get, last} from 'lodash';
 import {
 	getAxisFormatter,
@@ -163,7 +163,7 @@ export const getPreviousValueFromCompositeData = (
 	const data = get(compositeData, dataName);
 
 	if (data) {
-		return data.find(val => toUnix(val.key) === dateKey).previousValue;
+		return data.find(val => toUnix(val.key) === dateKey)?.previousValue;
 	}
 };
 

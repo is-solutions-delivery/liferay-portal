@@ -60,8 +60,13 @@ public class SearchBarPortletSharedSearchContributor
 		}
 
 		searchRequestBuilder.withSearchContext(
-			searchContext -> searchContext.setIncludeInternalAssetCategories(
-				false));
+			searchContext -> {
+				searchContext.setAttribute(
+					SearchContextAttributes.
+						ATTRIBUTE_KEY_CONTRIBUTE_TUNING_RANKINGS,
+					Boolean.TRUE);
+				searchContext.setIncludeInternalAssetCategories(false);
+			});
 
 		_setKeywords(
 			searchRequestBuilder, searchBarPortletPreferences,

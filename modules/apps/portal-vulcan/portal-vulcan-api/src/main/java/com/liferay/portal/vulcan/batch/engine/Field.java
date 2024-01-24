@@ -12,11 +12,12 @@ public class Field {
 
 	public static Field of(
 		String description, String name, boolean readOnly, String ref,
-		boolean required, String type, boolean writeOnly) {
+		boolean required, String type, String[] unsupportedFormats,
+		boolean writeOnly) {
 
 		return new Field(
 			_toAccessType(readOnly, writeOnly), description, name, ref,
-			required, type);
+			required, type, unsupportedFormats);
 	}
 
 	public AccessType getAccessType() {
@@ -37,6 +38,10 @@ public class Field {
 
 	public String getType() {
 		return _type;
+	}
+
+	public String[] getUnsupportedFormats() {
+		return _unsupportedFormats;
 	}
 
 	public boolean isRequired() {
@@ -64,7 +69,7 @@ public class Field {
 
 	private Field(
 		AccessType accessType, String description, String name, String ref,
-		boolean required, String type) {
+		boolean required, String type, String[] unsupportedFormats) {
 
 		_accessType = accessType;
 		_description = description;
@@ -72,6 +77,7 @@ public class Field {
 		_ref = ref;
 		_required = required;
 		_type = type;
+		_unsupportedFormats = unsupportedFormats;
 	}
 
 	private final AccessType _accessType;
@@ -80,5 +86,6 @@ public class Field {
 	private final String _ref;
 	private final boolean _required;
 	private final String _type;
+	private final String[] _unsupportedFormats;
 
 }

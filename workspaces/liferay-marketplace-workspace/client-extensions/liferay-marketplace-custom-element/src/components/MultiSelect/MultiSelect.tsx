@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import Select, {StylesConfig} from 'react-select';
+import Select, {MultiValue, StylesConfig} from 'react-select';
 import makeAnimated from 'react-select/animated';
 
 import './MultiSelect.scss';
@@ -12,7 +12,7 @@ import classNames from 'classnames';
 
 import {FieldBase} from '../FieldBase';
 
-interface MultiSelectProps<T> {
+type MultiSelectProps<T> = {
 	className?: string;
 	helpMessage?: string;
 	hideFeedback?: boolean;
@@ -23,29 +23,31 @@ interface MultiSelectProps<T> {
 	placeholder?: string;
 	required?: boolean;
 	tooltip?: string;
-}
+	value?: MultiValue<any>;
+};
 
 const colourStyles: StylesConfig<any, true> = {
-	control: (styles) => ({
-		...styles,
-		border: '2px solid #B1B2B9',
-		borderRadius: '8px',
-	}),
-	multiValue: (styles) => {
-		return {
+	control: (styles) =>
+		({
+			...styles,
+			border: '2px solid #B1B2B9',
+			borderRadius: '8px',
+		} as any),
+	multiValue: (styles) =>
+		({
 			...styles,
 			backgroundColor: '#E6EBF5',
 			color: '#1C3667',
-		};
-	},
-	multiValueRemove: (styles) => ({
-		...styles,
-		':hover': {
-			backgroundColor: '#1C3667',
-			color: 'white',
-		},
-		'color': '#1C3667',
-	}),
+		} as any),
+	multiValueRemove: (styles) =>
+		({
+			...styles,
+			':hover': {
+				backgroundColor: '#1C3667',
+				color: 'white',
+			},
+			'color': '#1C3667',
+		} as any),
 };
 
 export function MultiSelect<T>({
@@ -59,6 +61,7 @@ export function MultiSelect<T>({
 	placeholder,
 	required,
 	tooltip,
+	value,
 }: MultiSelectProps<T>) {
 	const animatedComponents = makeAnimated();
 
@@ -79,6 +82,7 @@ export function MultiSelect<T>({
 				options={items}
 				placeholder={placeholder}
 				styles={colourStyles}
+				value={value}
 			/>
 		</FieldBase>
 	);

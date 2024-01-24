@@ -14,10 +14,18 @@ import React, {Key} from 'react';
 
 const Trigger = React.forwardRef<HTMLButtonElement, any>(
 	(
-		{children, className: _className, onClick, triggerIcon, ...otherProps},
+		{
+			'aria-label': ariaLabel,
+			children,
+			'className': _className,
+			onClick,
+			triggerIcon,
+			...otherProps
+		},
 		ref
 	) => (
 		<ClayButton
+			aria-label={ariaLabel}
 			className="form-control-select"
 			displayType="secondary"
 			onClick={onClick}
@@ -40,6 +48,7 @@ type Option = {
 type Props = {
 	portletNamespace: string;
 	searchIn: Key;
+	searchInCommentsURL: string;
 	searchInOptions: Option[];
 	searchLocation: Key;
 	searchLocationOptions: Option[];
@@ -51,6 +60,7 @@ type Props = {
 const SearchOptions = ({
 	portletNamespace: namespace,
 	searchIn: initialSearchIn,
+	searchInCommentsURL,
 	searchInOptions,
 	searchLocation: initialLocation,
 	searchLocationOptions,
@@ -67,13 +77,19 @@ const SearchOptions = ({
 		results?: Key;
 		searchIn?: Key;
 	}) => {
+		const baseURL =
+			searchIn === 'comments' ? searchInCommentsURL : searchURL;
+		const parsedBaseURL = new URL(baseURL);
+		const searchParams = parsedBaseURL.searchParams;
+		searchParams.delete(`${namespace}tab`);
+
 		const url = addParams(
 			{
 				[`${namespace}searchIn`]: searchIn || initialSearchIn,
 				[`${namespace}searchLocation`]: location || initialLocation,
 				[`${namespace}tab`]: results || initialResults,
 			},
-			searchURL
+			parsedBaseURL.toString()
 		);
 
 		navigate(url);
@@ -82,29 +98,35 @@ const SearchOptions = ({
 	return (
 		<ClayLayout.Row className="cadmin">
 			<ClayLayout.Col>
-				<ClayForm.Group className="c-mr-2 d-inline-flex">
-					<Picker
-						as={Trigger}
-						id={`${namespace}searchResults`}
-						onSelectionChange={(key: Key) =>
-							onChange({results: key})
-						}
-						selectedKey={initialResults}
-					>
-						<DropDown.Group
-							header={Liferay.Language.get('results')}
-							items={searchResultsOptions}
+				{!Liferay.FeatureFlags['LPS-196768'] && (
+					<ClayForm.Group className="c-mr-2 d-inline-flex">
+						<Picker
+							aria-label={Liferay.Language.get('results')}
+							as={Trigger}
+							id={`${namespace}searchResults`}
+							onSelectionChange={(key: Key) =>
+								onChange({results: key})
+							}
+							selectedKey={initialResults}
 						>
-							{(item) => (
-								<Option key={item.value}>{item.label}</Option>
-							)}
-						</DropDown.Group>
-					</Picker>
-				</ClayForm.Group>
+							<DropDown.Group
+								header={Liferay.Language.get('results')}
+								items={searchResultsOptions}
+							>
+								{(item) => (
+									<Option key={item.value}>
+										{item.label}
+									</Option>
+								)}
+							</DropDown.Group>
+						</Picker>
+					</ClayForm.Group>
+				)}
 
 				{searchLocationOptions ? (
 					<ClayForm.Group className="c-mr-2 d-inline-flex">
 						<Picker
+							aria-label={Liferay.Language.get('location')}
 							as={Trigger}
 							id={`${namespace}searchLocation`}
 							onSelectionChange={(key: Key) =>
@@ -127,25 +149,30 @@ const SearchOptions = ({
 					</ClayForm.Group>
 				) : null}
 
-				<ClayForm.Group className="d-inline-flex">
-					<Picker
-						as={Trigger}
-						id={`${namespace}searchIn`}
-						onSelectionChange={(key: Key) =>
-							onChange({searchIn: key})
-						}
-						selectedKey={initialSearchIn}
-					>
-						<DropDown.Group
-							header={Liferay.Language.get('search-in')}
-							items={searchInOptions}
+				{searchInOptions ? (
+					<ClayForm.Group className="d-inline-flex">
+						<Picker
+							aria-label={Liferay.Language.get('search-in')}
+							as={Trigger}
+							id={`${namespace}searchIn`}
+							onSelectionChange={(key: Key) =>
+								onChange({searchIn: key})
+							}
+							selectedKey={initialSearchIn}
 						>
-							{(item) => (
-								<Option key={item.value}>{item.label}</Option>
-							)}
-						</DropDown.Group>
-					</Picker>
-				</ClayForm.Group>
+							<DropDown.Group
+								header={Liferay.Language.get('search-in')}
+								items={searchInOptions}
+							>
+								{(item) => (
+									<Option key={item.value}>
+										{item.label}
+									</Option>
+								)}
+							</DropDown.Group>
+						</Picker>
+					</ClayForm.Group>
+				) : null}
 			</ClayLayout.Col>
 		</ClayLayout.Row>
 	);

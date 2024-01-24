@@ -685,7 +685,7 @@ definition {
 	}
 
 	@description = "This ensures that all redirect entries can be deleted simultaneously."
-	@priority = 5
+	@priority = 4
 	@refactordone
 	test CanDeleteMultipleEntries {
 		var portalURL = PropsUtil.get("portal.url");
@@ -860,9 +860,7 @@ definition {
 			ignoreURL = "${portalURL}/web/test-site-name/test-destination-page1",
 			skipNavigation = "true");
 
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
-
-		MenuItem.click(menuItem = "Ignored URLs");
+		ManagementBar.setFilterAndOrder(filterBy = "Ignored URLs");
 
 		Redirect.view404URLs(
 			ignoreURL = "${portalURL}/web/test-site-name/test-destination-page1",
@@ -870,7 +868,7 @@ definition {
 	}
 
 	@description = "This ensures that a user cannot create more than one redirection with the same sourceURL."
-	@priority = 5
+	@priority = 4
 	@refactordone
 	test CannotAddEntryWithDuplicateSourceURL {
 		var portalURL = PropsUtil.get("portal.url");
@@ -905,8 +903,24 @@ definition {
 			sourceURLVariation = "LengthLimit");
 	}
 
+	@description = "This test covers LPS-202129. It ensures that users can not add source URL including a valid locale keyword."
+	@priority = 4
+	test CannotAddSourceURLIncludingValidLocaleKeyword {
+		var portalURL = PropsUtil.get("portal.url");
+
+		Redirect.openRedirectAdmin(siteURLKey = "test-site-name");
+
+		Redirect.addEntry(
+			destinationURL = "${portalURL}/web/test-site-name/test-destination-page",
+			localeKeyword = "/es",
+			redirectType = "Permanent (301)",
+			siteName = "test-site-name",
+			sourceURL = "es/test-source-page",
+			sourceURLVariation = "LocaleKeyword");
+	}
+
 	@description = "This ensures that a user cannot create a redirect if the sourceURL has invalid characters."
-	@priority = 5
+	@priority = 4
 	@refactordone
 	test CannotPublishWithInvalidSourceURL {
 		var portalURL = PropsUtil.get("portal.url");
@@ -927,7 +941,7 @@ definition {
 	}
 
 	@description = "This ensures that the 404 tab is not shown and no new 404 tracking is performed when 404 tracking is disabled. Also covers LPS-121346, it ensures that the home page is not shown when accessing a not existing page."
-	@priority = 5
+	@priority = 4
 	test CannotView404ByDefault {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
@@ -961,7 +975,7 @@ definition {
 	}
 
 	@description = "This ensures that the 404 URLs can be ordered by requests."
-	@priority = 5
+	@priority = 4
 	@refactordone
 	test CanOrder404URLsByRequests {
 		property portal.acceptance = "false";
@@ -1008,7 +1022,7 @@ definition {
 			ignoreURL = "${portalURL}/web/test-site-name/test-destination-page2",
 			requestNumber = 2);
 
-		Click(locator1 = "ManagementBar#ORDER_ICON_GENERIC");
+		ManagementBar.setFilterAndOrder(orderBy = "Descending");
 
 		Redirect.viewOrderedURLs(
 			entry1 = 1,
@@ -1375,9 +1389,7 @@ definition {
 
 		Redirect.view404URLsDefault();
 
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
-
-		MenuItem.click(menuItem = "Ignored URLs");
+		ManagementBar.setFilterAndOrder(filterBy = "Ignored URLs");
 
 		Redirect.view404URLs(
 			ignoreURL = "${portalURL}/web/test-site-name/test-destination-page1",
@@ -1408,31 +1420,6 @@ definition {
 			destinationURL = "${portalURL}/web/test-site-name/test-destination-page",
 			redirectType = "Permanent",
 			sourceURL = "${portalURL}/web/test-site-name/test-source-page");
-	}
-
-	@description = "This test covers LPS-152732 and LPS-152154. It ensures that the default redirect can not override localized redirect and the redirect will occur when there is a locale in the URL"
-	@priority = 4
-	test DefaultRedirectCanNotOverrideLocalizedRedirect {
-		var portalURL = PropsUtil.get("portal.url");
-
-		JSONRedirect.addRedirect(
-			destinationURL = "https://google.hu",
-			groupName = "Test Site Name",
-			permanent = "true",
-			sourceURL = "hu/google");
-
-		Navigator.openSpecificURL(url = "${portalURL}/web/test-site-name/hu/google");
-
-		AssertLocation(value1 = "https://www.google.hu/");
-
-		JSONRedirect.addRedirect(
-			destinationURL = "https://google.com",
-			groupName = "Test Site Name",
-			sourceURL = "google");
-
-		Navigator.openSpecificURL(url = "${portalURL}/web/test-site-name/hu/google");
-
-		AssertLocation(value1 = "https://www.google.hu/");
 	}
 
 }

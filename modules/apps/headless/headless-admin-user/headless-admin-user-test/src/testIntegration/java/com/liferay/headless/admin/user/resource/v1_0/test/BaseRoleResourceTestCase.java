@@ -26,8 +26,6 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -301,6 +299,21 @@ public abstract class BaseRoleResourceTestCase {
 
 	protected Role testGraphQLGetRolesPage_addRole() throws Exception {
 		return testGraphQLRole_addRole();
+	}
+
+	@Test
+	public void testPostRole() throws Exception {
+		Role randomRole = randomRole();
+
+		Role postRole = testPostRole_addRole(randomRole);
+
+		assertEquals(randomRole, postRole);
+		assertValid(postRole);
+	}
+
+	protected Role testPostRole_addRole(Role role) throws Exception {
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
 	}
 
 	@Test
@@ -681,6 +694,14 @@ public abstract class BaseRoleResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("rolePermissions", additionalAssertFieldName)) {
+				if (role.getRolePermissions() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("roleType", additionalAssertFieldName)) {
 				if (role.getRoleType() == null) {
 					valid = false;
@@ -908,6 +929,17 @@ public abstract class BaseRoleResourceTestCase {
 			if (Objects.equals("name_i18n", additionalAssertFieldName)) {
 				if (!equals(
 						(Map)role1.getName_i18n(), (Map)role2.getName_i18n())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("rolePermissions", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						role1.getRolePermissions(),
+						role2.getRolePermissions())) {
 
 					return false;
 				}
@@ -1258,6 +1290,11 @@ public abstract class BaseRoleResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("rolePermissions")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("roleType")) {
 			Object object = role.getRoleType();
 
@@ -1373,9 +1410,9 @@ public abstract class BaseRoleResourceTestCase {
 	}
 
 	protected RoleResource roleResource;
-	protected Group irrelevantGroup;
-	protected Company testCompany;
-	protected Group testGroup;
+	protected com.liferay.portal.kernel.model.Group irrelevantGroup;
+	protected com.liferay.portal.kernel.model.Company testCompany;
+	protected com.liferay.portal.kernel.model.Group testGroup;
 
 	protected static class BeanTestUtil {
 

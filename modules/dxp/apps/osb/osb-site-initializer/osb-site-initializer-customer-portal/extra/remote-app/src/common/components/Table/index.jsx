@@ -8,12 +8,15 @@ import classNames from 'classnames';
 import {useEffect, useState} from 'react';
 import TablePagination from './Pagination';
 import TableSkeleton from './Skeleton';
+import {FilterIcon} from '../../../../src/common/icons/filter_icon';
 
 const Table = ({
 	checkboxConfig,
 	columns,
+	handleSortChange,
 	hasCheckbox,
 	hasPagination,
+	hasSorting,
 	isLoading = false,
 	paginationConfig,
 	rows,
@@ -112,7 +115,21 @@ const Table = ({
 										</p>
 									</div>
 								) : (
-									column.header.name
+									<div className="d-flex">
+										{column.header.name}
+
+										{hasSorting &&
+											column.filterIdentifier && (
+												<FilterIcon
+													columnName={
+														column.filterIdentifier
+													}
+													handleSortChange={
+														handleSortChange
+													}
+												/>
+											)}
+									</div>
 								)}
 							</ClayTable.Cell>
 						))}

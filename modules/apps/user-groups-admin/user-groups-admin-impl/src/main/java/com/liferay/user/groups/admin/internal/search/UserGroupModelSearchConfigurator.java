@@ -7,10 +7,15 @@ package com.liferay.user.groups.admin.internal.search;
 
 import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.service.UserGroupLocalService;
+import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchConfigurator;
 import com.liferay.portal.search.spi.model.result.contributor.ModelSummaryContributor;
+import com.liferay.user.groups.admin.internal.search.spi.model.index.contributor.UserGroupModelIndexerWriterContributor;
+import com.liferay.user.groups.admin.internal.search.spi.model.result.contributor.UserGroupModelSummaryContributor;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -46,15 +51,24 @@ public class UserGroupModelSearchConfigurator
 		return _modelSummaryContributor;
 	}
 
-	@Reference(
-		target = "(indexer.class.name=com.liferay.portal.kernel.model.UserGroup)"
-	)
+	@Activate
+	protected void activate() {
+		_modelIndexWriterContributor =
+			new UserGroupModelIndexerWriterContributor(
+				_dynamicQueryBatchIndexingActionableFactory,
+				_userGroupLocalService);
+	}
+
+	@Reference
+	private DynamicQueryBatchIndexingActionableFactory
+		_dynamicQueryBatchIndexingActionableFactory;
+
 	private ModelIndexerWriterContributor<UserGroup>
 		_modelIndexWriterContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new UserGroupModelSummaryContributor();
 
-	@Reference(
-		target = "(indexer.class.name=com.liferay.portal.kernel.model.UserGroup)"
-	)
-	private ModelSummaryContributor _modelSummaryContributor;
+	@Reference
+	private UserGroupLocalService _userGroupLocalService;
 
 }

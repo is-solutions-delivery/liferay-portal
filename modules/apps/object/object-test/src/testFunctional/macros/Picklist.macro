@@ -162,17 +162,6 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro assertEntryRelationshipFieldPicklist(newEntry = null, selectField = null) {
-		Click(
-			key_selectField = ${selectField},
-			locator1 = "Picklist#SELECT_FIELD_RELATIONSHIP_OBJECT");
-
-		AssertElementPresent(
-			key_entry = ${newEntry},
-			locator1 = "CreateObject#ENTRY_RELATIONSHIP_FIELD_OPTION");
-	}
-
-	@summary = "Default summary"
 	macro assertItemNameAndItemKeyOnModal(itemName = null, itemKey = null) {
 		if (IsElementPresent(locator1 = "Picklist#VIEW_PICKLIST_ITEM_NAME")) {
 			AssertElementPresent(
@@ -377,6 +366,8 @@ definition {
 		SelectFrameTop();
 
 		SelectFrame(locator1 = "Picklist#IFRAME_PICKLIST_MODAL");
+
+		ScrollWebElementIntoView(locator1 = "Picklist#PICKLIST_ITEM_KEBAB_MENU");
 
 		Click.javaScriptClick(locator1 = "Picklist#PICKLIST_ITEM_KEBAB_MENU");
 

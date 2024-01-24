@@ -5,11 +5,16 @@
 
 package com.liferay.commerce.payment.internal.search;
 
+import com.liferay.commerce.payment.internal.search.spi.model.index.contributor.CommercePaymentEntryAuditModelIndexerWriterContributor;
+import com.liferay.commerce.payment.internal.search.spi.model.result.contributor.CommercePaymentEntryAuditModelSummaryContributor;
 import com.liferay.commerce.payment.model.CommercePaymentEntryAudit;
+import com.liferay.commerce.payment.service.CommercePaymentEntryAuditLocalService;
+import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchConfigurator;
 import com.liferay.portal.search.spi.model.result.contributor.ModelSummaryContributor;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -37,15 +42,27 @@ public class CommercePaymentEntryAuditModelSearchConfigurator
 		return _modelSummaryContributor;
 	}
 
-	@Reference(
-		target = "(indexer.class.name=com.liferay.commerce.payment.model.CommercePaymentEntryAudit)"
-	)
+	@Activate
+	protected void activate() {
+		_modelIndexWriterContributor =
+			new CommercePaymentEntryAuditModelIndexerWriterContributor(
+				_commercePaymentEntryAuditLocalService,
+				_dynamicQueryBatchIndexingActionableFactory);
+
+		_modelSummaryContributor =
+			new CommercePaymentEntryAuditModelSummaryContributor();
+	}
+
+	@Reference
+	private CommercePaymentEntryAuditLocalService
+		_commercePaymentEntryAuditLocalService;
+
+	@Reference
+	private DynamicQueryBatchIndexingActionableFactory
+		_dynamicQueryBatchIndexingActionableFactory;
+
 	private ModelIndexerWriterContributor<CommercePaymentEntryAudit>
 		_modelIndexWriterContributor;
-
-	@Reference(
-		target = "(indexer.class.name=com.liferay.commerce.payment.model.CommercePaymentEntryAudit)"
-	)
 	private ModelSummaryContributor _modelSummaryContributor;
 
 }

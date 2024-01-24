@@ -200,7 +200,7 @@ definition {
 		if (${navTab} == "Fragments") {
 			AssertElementPresent(
 				key_columnNumber = ${columnNumber},
-				key_elementHeader = "//div[@aria-label='${fragmentName}']",
+				key_elementHeader = "//div[@data-name='${fragmentName}']",
 				key_position = ${position},
 				locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT");
 		}
@@ -208,7 +208,7 @@ definition {
 		if (${navTab} == "Widgets") {
 			AssertElementPresent(
 				key_columnNumber = ${columnNumber},
-				key_elementHeader = "//div[@aria-label='${portletName}']",
+				key_elementHeader = "//div[@data-name='${portletName}']",
 				key_position = ${position},
 				locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT");
 
@@ -294,7 +294,7 @@ definition {
 
 			if (${navTab} == "Fragments") {
 				AssertElementPresent(
-					key_elementHeader = "//div[@aria-label='${fragmentName}']",
+					key_elementHeader = "//div[@data-name='${fragmentName}']",
 					key_elementType = "Container",
 					key_position = ${position},
 					locator1 = "PageEditor#CONTAINER_CONTAINER_NESTED_ELEMENT");
@@ -302,7 +302,7 @@ definition {
 
 			if (${navTab} == "Widgets") {
 				AssertElementPresent(
-					key_elementHeader = "//div[@aria-label='${portletName}']",
+					key_elementHeader = "//div[@data-name='${portletName}']",
 					key_elementType = "Container",
 					key_position = ${position},
 					locator1 = "PageEditor#CONTAINER_CONTAINER_NESTED_ELEMENT");
@@ -1055,6 +1055,59 @@ definition {
 		PageEditor.waitForAutoSave();
 	}
 
+	@summary = "Add a page rule"
+	macro addPageRule(selectActionValue = null, selectItemForTheCondition = null, selectConditionValue = null, ruleName = null, selectItemForTheAction = null, selectAction = null, selectCondition = null) {
+		Button.click(button = "New Rule");
+
+		AssertTextEquals(
+			locator1 = "Modal#HEADER",
+			value1 = "New Rule");
+
+		if (isSet(ruleName)) {
+			InputField.editText(
+				fieldLabel = "Rule Name",
+				text = ${ruleName});
+		}
+
+		Click(
+			index = 1,
+			locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM");
+
+		DropdownMenuItem.click(menuItem = ${selectItemForTheCondition});
+
+		Click(
+			index = 2,
+			locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM");
+
+		DropdownMenuItem.click(menuItem = ${selectCondition});
+
+		Click(
+			index = 3,
+			locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM");
+
+		DropdownMenuItem.click(menuItem = ${selectConditionValue});
+
+		Click(
+			index = 1,
+			locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM");
+
+		DropdownMenuItem.click(menuItem = ${selectAction});
+
+		Click(
+			index = 2,
+			locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM");
+
+		DropdownMenuItem.click(menuItem = ${selectItemForTheAction});
+
+		Click(
+			index = 3,
+			locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM");
+
+		DropdownMenuItem.click(menuItem = ${selectActionValue});
+
+		Modal.save();
+	}
+
 	@summary = "Default summary"
 	macro addVideoFragmentURL(videoLink = null) {
 		Type(
@@ -1679,7 +1732,7 @@ definition {
 		if (isSet(opacity)) {
 			Type(
 				ariaLabel = "Opacity",
-				locator1 = "TextInput#ANY_WITH_AIRA_LABEL",
+				locator1 = "TextInput#ANY_WITH_ARIA_LABEL",
 				value1 = ${opacity});
 
 			Click(
@@ -1752,6 +1805,13 @@ definition {
 				key_fieldLabel = "Success Interaction",
 				locator1 = "Select#GENERIC_SELECT_FIELD",
 				value1 = ${successInteraction});
+
+			if (isSet(displayPage)) {
+				Select(
+					key_fieldLabel = "Display Page",
+					locator1 = "Select#GENERIC_SELECT_FIELD",
+					value1 = ${displayPage});
+			}
 
 			if (isSet(successText)) {
 				Type(
@@ -1910,6 +1970,47 @@ definition {
 		Confirm.dismissAlert();
 	}
 
+	@summary = "Delete the page rule"
+	macro deletePageRule(ruleName = null) {
+		Click(
+			key_ruleName = ${ruleName},
+			locator1 = "PageEditor#PAGE_RULE_LIST_ITEM_ELLIPSIS");
+
+		DropdownMenuItem.click(menuItem = "Delete");
+
+		Alert.viewSuccessMessage();
+	}
+
+	@summary = "Delete a page rule action"
+	macro deletePageRuleAction() {
+		if (!(isSet(index))) {
+			var index = 1;
+		}
+
+		MouseOver.mouseOverNotVisible(
+			index = ${index},
+			locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_DELETE_BUTTON");
+
+		Click(
+			index = ${index},
+			locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_DELETE_BUTTON");
+	}
+
+	@summary = "Delete a page rule condition"
+	macro deletePageRuleCondition() {
+		if (!(isSet(index))) {
+			var index = 1;
+		}
+
+		MouseOver.mouseOverNotVisible(
+			index = ${index},
+			locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_DELETE_BUTTON");
+
+		Click(
+			index = ${index},
+			locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_DELETE_BUTTON");
+	}
+
 	@summary = "Default summary"
 	macro deprioritizeExperience(experienceName = null) {
 		var key_experienceName = ${experienceName};
@@ -1959,7 +2060,7 @@ definition {
 		if (isSet(columnNumber)) {
 			Click.clickNoWaitForVisible(
 				key_columnNumber = ${columnNumber},
-				key_elementHeader = "//div[@aria-label='${key_fragmentName}']",
+				key_elementHeader = "//div[@data-name='${key_fragmentName}']",
 				key_position = 1,
 				locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT");
 		}
@@ -2026,7 +2127,7 @@ definition {
 		if (isSet(columnNumber)) {
 			Click.clickNoWaitForVisible(
 				key_columnNumber = ${columnNumber},
-				key_elementHeader = "//div[@aria-label='${key_fragmentName}']",
+				key_elementHeader = "//div[@data-name='${key_fragmentName}']",
 				key_position = 1,
 				locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT");
 		}
@@ -2425,7 +2526,7 @@ definition {
 		if (isSet(columnNumber)) {
 			Click.clickNoWaitForVisible(
 				key_columnNumber = ${columnNumber},
-				key_elementHeader = "//div[@aria-label='${key_fragmentName}']",
+				key_elementHeader = "//div[@data-name='${key_fragmentName}']",
 				key_position = 1,
 				locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT");
 		}
@@ -2899,7 +3000,7 @@ definition {
 		if (isSet(columnNumber)) {
 			Click.clickNoWaitForVisible(
 				key_columnNumber = ${columnNumber},
-				key_elementHeader = "//div[@aria-label='Form Container']",
+				key_elementHeader = "//div[@data-name='Form Container']",
 				key_position = 1,
 				locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT");
 		}
@@ -3137,6 +3238,10 @@ definition {
 				key_fieldLabel = "Source Selection",
 				locator1 = "Select#GENERIC_SELECT_FIELD",
 				value1 = "Direct");
+		}
+
+		if (${enableLazyLoading} == "true") {
+			PageEditor.configureFragment(enableLazyLoading = "true");
 		}
 
 		if (IsTextEqual(key_fieldLabel = "Image", locator1 = "PageEditor#ITEM_SELECTOR_CONTENT_INPUT", value1 = "")) {
@@ -3483,6 +3588,16 @@ definition {
 			key_sidebarButton = "Browser",
 			locator1 = "PageEditor#FRAGMENT_SIDEBAR_TITLE");
 
+		if (${enableLazyLoading} == "true") {
+			Navigator.gotoNavTab(navTab = "Advanced");
+
+			Check.checkNotVisible(
+				checkboxName = "Set Content Visibility to Auto",
+				locator1 = "Checkbox#ANY_CHECKBOX");
+
+			PageEditor.waitForAutoSave();
+		}
+
 		if (${panel} == "Styles") {
 			Navigator.gotoNavTab(navTab = "Styles");
 
@@ -3639,7 +3754,7 @@ definition {
 			if (isSet(opacity)) {
 				Type(
 					ariaLabel = "Opacity",
-					locator1 = "TextInput#ANY_WITH_AIRA_LABEL",
+					locator1 = "TextInput#ANY_WITH_ARIA_LABEL",
 					value1 = ${opacity});
 
 				Click(
@@ -3650,7 +3765,7 @@ definition {
 
 				AssertTextEquals(
 					ariaLabel = "Opacity",
-					locator1 = "TextInput#ANY_WITH_AIRA_LABEL",
+					locator1 = "TextInput#ANY_WITH_ARIA_LABEL",
 					value1 = ${opacity});
 			}
 		}
@@ -3993,7 +4108,7 @@ definition {
 			if (isSet(opacity)) {
 				Type(
 					ariaLabel = "Opacity",
-					locator1 = "TextInput#ANY_WITH_AIRA_LABEL",
+					locator1 = "TextInput#ANY_WITH_ARIA_LABEL",
 					value1 = ${opacity});
 
 				Click(
@@ -4004,7 +4119,7 @@ definition {
 
 				AssertTextEquals(
 					ariaLabel = "Opacity",
-					locator1 = "TextInput#ANY_WITH_AIRA_LABEL",
+					locator1 = "TextInput#ANY_WITH_ARIA_LABEL",
 					value1 = ${opacity});
 			}
 		}
@@ -4172,6 +4287,75 @@ definition {
 		}
 	}
 
+	@summary = "Edit the page rule"
+	macro editPageRule(newRuleName = null, selectActionValue = null, selectItemForTheCondition = null, selectConditionValue = null, ruleName = null, selectItemForTheAction = null, selectAction = null, selectCondition = null) {
+		Click(
+			key_ruleName = ${ruleName},
+			locator1 = "PageEditor#PAGE_RULE_LIST_ITEM_ELLIPSIS");
+
+		DropdownMenuItem.click(menuItem = "Edit");
+
+		AssertTextEquals(
+			locator1 = "Modal#HEADER",
+			value1 = "Edit Rule");
+
+		if (isSet(newRuleName)) {
+			InputField.editText(
+				fieldLabel = "Rule Name",
+				text = ${newRuleName});
+		}
+
+		if (isSet(selectItemForTheCondition)) {
+			Click(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_EXISTING_CONDITION_ITEM");
+
+			DropdownMenuItem.click(menuItem = ${selectItemForTheCondition});
+		}
+
+		if (isSet(selectCondition)) {
+			Click(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_EXISTING_CONDITION_ITEM");
+
+			DropdownMenuItem.click(menuItem = ${selectCondition});
+		}
+
+		if (isSet(selectConditionValue)) {
+			Click(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_EXISTING_CONDITION_ITEM");
+
+			DropdownMenuItem.click(menuItem = ${selectConditionValue});
+		}
+
+		if (isSet(selectAction)) {
+			Click(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_EXISTING_ACTION_ITEM");
+
+			DropdownMenuItem.click(menuItem = ${selectAction});
+		}
+
+		if (isSet(selectItemForTheAction)) {
+			Click(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_EXISTING_ACTION_ITEM");
+
+			DropdownMenuItem.click(menuItem = ${selectItemForTheAction});
+		}
+
+		if (isSet(selectActionValue)) {
+			Click(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_EXISTING_ACTION_ITEM");
+
+			DropdownMenuItem.click(menuItem = ${selectActionValue});
+		}
+
+		Modal.save();
+	}
+
 	@summary = "Default summary"
 	macro editTabs(persistSelectedTab = null, panel = null, numberOfTabs = null) {
 		PageEditor.clickConfigurableField(fragmentName = "Tabs");
@@ -4251,7 +4435,7 @@ function getWebElement(locator) {
   return document.evaluate(locator, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 }
 
-return	Array.from(getWebElement("(//div[@aria-label='${fragmentName}'])[${index}]").classList).filter(className => className.includes('lfr-layout-structure-item'))[0];
+return	Array.from(getWebElement("(//div[@data-name='${fragmentName}'])[${index}]").classList).filter(className => className.includes('lfr-layout-structure-item'))[0];
 		''';
 
 		var className = selenium.getEval(${javascript});
@@ -4289,7 +4473,7 @@ function getWebElement(locator) {
   return document.evaluate(locator, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
 }
 
-return	Array.from(getWebElement("(//div[@aria-label='${fragmentName}'])[${index}]").classList).filter(className => className.includes('lfr-layout-structure-item'))[0];
+return	Array.from(getWebElement("(//div[@data-name='${fragmentName}'])[${index}]").classList).filter(className => className.includes('lfr-layout-structure-item'))[0];
 		''';
 
 		var topperStylesClass = selenium.getEval(${javascript});
@@ -4528,7 +4712,7 @@ return	Array.from(getWebElement("(//div[@aria-label='${fragmentName}'])[${index}
 		else {
 			WaitForVisible(locator1 = "Sidebar#PANEL_OPEN");
 
-			if (IsElementNotPresent(key_sidebarButton = ${tabName}, locator1 = "PageEditor#FRAGMENT_SIDEBAR_TITLE")) {
+			if ((IsElementPresent.isElementPresentAfterWait(locator1 = "//div[contains(@class,'content--open')]//*[contains(@class,'page-editor__sidebar__panel-header')]")) && (IsElementNotPresent(key_sidebarButton = ${tabName}, locator1 = "PageEditor#FRAGMENT_SIDEBAR_TITLE"))) {
 				Click(
 					key_tabName = ${tabName},
 					locator1 = "PageEditor#FRAGMENT_SIDEBAR_TAB_BUTTON");
@@ -4825,11 +5009,38 @@ return	Array.from(getWebElement("(//div[@aria-label='${fragmentName}'])[${index}
 
 		Modal.gotoNavTab(navTab = ${navTab});
 
-		Click.waitForMenuToggleJSClick(
+		KeyPress(
 			key_card = ${setName},
-			locator1 = "Card#CARD_ELLIPSIS");
+			locator1 = "Card#CARD_DRAG_ICON",
+			value1 = "\ENTER");
 
-		DropdownMenuItem.click(menuItem = ${action});
+		if (${action} == "Move Up") {
+			KeyPress(
+				key_card = ${setName},
+				locator1 = "Card#CARD_DRAG_ICON",
+				value1 = "\UP");
+
+			KeyPress(
+				key_card = ${setName},
+				locator1 = "Card#CARD_DRAG_ICON",
+				value1 = "\ENTER");
+		}
+		else if (${action} == "Move Down") {
+			KeyPress(
+				key_card = ${setName},
+				locator1 = "Card#CARD_DRAG_ICON",
+				value1 = "\DOWN");
+
+			KeyPress(
+				key_card = ${setName},
+				locator1 = "Card#CARD_DRAG_ICON",
+				value1 = "\DOWN");
+
+			KeyPress(
+				key_card = ${setName},
+				locator1 = "Card#CARD_DRAG_ICON",
+				value1 = "\ENTER");
+		}
 
 		Button.click(button = "Save");
 	}
@@ -5480,7 +5691,7 @@ return	Array.from(getWebElement("(//div[@aria-label='${fragmentName}'])[${index}
 
 		AssertElementPresent(
 			key_columnNumber = ${moduleNumber},
-			key_elementHeader = "//div[@aria-label='${elementName}']",
+			key_elementHeader = "//div[@data-name='${elementName}']",
 			key_position = ${position},
 			locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT");
 	}
@@ -5493,7 +5704,7 @@ return	Array.from(getWebElement("(//div[@aria-label='${fragmentName}'])[${index}
 
 		AssertElementNotPresent(
 			key_columnNumber = ${moduleNumber},
-			key_elementHeader = "//div[@aria-label='${elementName}']",
+			key_elementHeader = "//div[@data-name='${elementName}']",
 			key_position = ${position},
 			locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT");
 	}
@@ -6178,6 +6389,8 @@ return	Array.from(getWebElement("(//div[@aria-label='${fragmentName}'])[${index}
 	@summary = "Default summary"
 	macro waitForAutoSave() {
 		SelectFrameTop();
+
+		Pause(value1 = 1000);
 
 		WaitForVisible(locator1 = "PageEditor#AUTOSAVE_MESSAGE");
 	}

@@ -7,6 +7,7 @@ package com.liferay.headless.commerce.admin.catalog.dto.v1_0;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -26,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -55,6 +57,13 @@ public class ProductSubscriptionConfiguration implements Serializable {
 
 	@Schema(example = "true")
 	public Boolean getDeliverySubscriptionEnable() {
+		if (_deliverySubscriptionEnableSupplier != null) {
+			deliverySubscriptionEnable =
+				_deliverySubscriptionEnableSupplier.get();
+
+			_deliverySubscriptionEnableSupplier = null;
+		}
+
 		return deliverySubscriptionEnable;
 	}
 
@@ -62,6 +71,8 @@ public class ProductSubscriptionConfiguration implements Serializable {
 		Boolean deliverySubscriptionEnable) {
 
 		this.deliverySubscriptionEnable = deliverySubscriptionEnable;
+
+		_deliverySubscriptionEnableSupplier = null;
 	}
 
 	@JsonIgnore
@@ -69,24 +80,35 @@ public class ProductSubscriptionConfiguration implements Serializable {
 		UnsafeSupplier<Boolean, Exception>
 			deliverySubscriptionEnableUnsafeSupplier) {
 
-		try {
-			deliverySubscriptionEnable =
-				deliverySubscriptionEnableUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_deliverySubscriptionEnableSupplier = () -> {
+			try {
+				return deliverySubscriptionEnableUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Boolean deliverySubscriptionEnable;
 
+	@JsonIgnore
+	private Supplier<Boolean> _deliverySubscriptionEnableSupplier;
+
 	@Schema(example = "2")
 	public Integer getDeliverySubscriptionLength() {
+		if (_deliverySubscriptionLengthSupplier != null) {
+			deliverySubscriptionLength =
+				_deliverySubscriptionLengthSupplier.get();
+
+			_deliverySubscriptionLengthSupplier = null;
+		}
+
 		return deliverySubscriptionLength;
 	}
 
@@ -94,6 +116,8 @@ public class ProductSubscriptionConfiguration implements Serializable {
 		Integer deliverySubscriptionLength) {
 
 		this.deliverySubscriptionLength = deliverySubscriptionLength;
+
+		_deliverySubscriptionLengthSupplier = null;
 	}
 
 	@JsonIgnore
@@ -101,24 +125,35 @@ public class ProductSubscriptionConfiguration implements Serializable {
 		UnsafeSupplier<Integer, Exception>
 			deliverySubscriptionLengthUnsafeSupplier) {
 
-		try {
-			deliverySubscriptionLength =
-				deliverySubscriptionLengthUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_deliverySubscriptionLengthSupplier = () -> {
+			try {
+				return deliverySubscriptionLengthUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Integer deliverySubscriptionLength;
 
+	@JsonIgnore
+	private Supplier<Integer> _deliverySubscriptionLengthSupplier;
+
 	@Schema(example = "12")
 	public Long getDeliverySubscriptionNumberOfLength() {
+		if (_deliverySubscriptionNumberOfLengthSupplier != null) {
+			deliverySubscriptionNumberOfLength =
+				_deliverySubscriptionNumberOfLengthSupplier.get();
+
+			_deliverySubscriptionNumberOfLengthSupplier = null;
+		}
+
 		return deliverySubscriptionNumberOfLength;
 	}
 
@@ -127,6 +162,8 @@ public class ProductSubscriptionConfiguration implements Serializable {
 
 		this.deliverySubscriptionNumberOfLength =
 			deliverySubscriptionNumberOfLength;
+
+		_deliverySubscriptionNumberOfLengthSupplier = null;
 	}
 
 	@JsonIgnore
@@ -134,30 +171,44 @@ public class ProductSubscriptionConfiguration implements Serializable {
 		UnsafeSupplier<Long, Exception>
 			deliverySubscriptionNumberOfLengthUnsafeSupplier) {
 
-		try {
-			deliverySubscriptionNumberOfLength =
-				deliverySubscriptionNumberOfLengthUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_deliverySubscriptionNumberOfLengthSupplier = () -> {
+			try {
+				return deliverySubscriptionNumberOfLengthUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Long deliverySubscriptionNumberOfLength;
 
+	@JsonIgnore
+	private Supplier<Long> _deliverySubscriptionNumberOfLengthSupplier;
+
+	@JsonGetter("deliverySubscriptionType")
 	@Schema(example = "monthly")
 	@Valid
 	public DeliverySubscriptionType getDeliverySubscriptionType() {
+		if (_deliverySubscriptionTypeSupplier != null) {
+			deliverySubscriptionType = _deliverySubscriptionTypeSupplier.get();
+
+			_deliverySubscriptionTypeSupplier = null;
+		}
+
 		return deliverySubscriptionType;
 	}
 
 	@JsonIgnore
 	public String getDeliverySubscriptionTypeAsString() {
+		DeliverySubscriptionType deliverySubscriptionType =
+			getDeliverySubscriptionType();
+
 		if (deliverySubscriptionType == null) {
 			return null;
 		}
@@ -169,6 +220,8 @@ public class ProductSubscriptionConfiguration implements Serializable {
 		DeliverySubscriptionType deliverySubscriptionType) {
 
 		this.deliverySubscriptionType = deliverySubscriptionType;
+
+		_deliverySubscriptionTypeSupplier = null;
 	}
 
 	@JsonIgnore
@@ -176,25 +229,37 @@ public class ProductSubscriptionConfiguration implements Serializable {
 		UnsafeSupplier<DeliverySubscriptionType, Exception>
 			deliverySubscriptionTypeUnsafeSupplier) {
 
-		try {
-			deliverySubscriptionType =
-				deliverySubscriptionTypeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_deliverySubscriptionTypeSupplier = () -> {
+			try {
+				return deliverySubscriptionTypeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected DeliverySubscriptionType deliverySubscriptionType;
 
+	@JsonIgnore
+	private Supplier<DeliverySubscriptionType>
+		_deliverySubscriptionTypeSupplier;
+
 	@Schema(example = "{deliveryMonthDay=1, deliveryMonthlyMode=0}")
 	@Valid
 	public Map<String, String> getDeliverySubscriptionTypeSettings() {
+		if (_deliverySubscriptionTypeSettingsSupplier != null) {
+			deliverySubscriptionTypeSettings =
+				_deliverySubscriptionTypeSettingsSupplier.get();
+
+			_deliverySubscriptionTypeSettingsSupplier = null;
+		}
+
 		return deliverySubscriptionTypeSettings;
 	}
 
@@ -203,6 +268,8 @@ public class ProductSubscriptionConfiguration implements Serializable {
 
 		this.deliverySubscriptionTypeSettings =
 			deliverySubscriptionTypeSettings;
+
+		_deliverySubscriptionTypeSettingsSupplier = null;
 	}
 
 	@JsonIgnore
@@ -210,114 +277,167 @@ public class ProductSubscriptionConfiguration implements Serializable {
 		UnsafeSupplier<Map<String, String>, Exception>
 			deliverySubscriptionTypeSettingsUnsafeSupplier) {
 
-		try {
-			deliverySubscriptionTypeSettings =
-				deliverySubscriptionTypeSettingsUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_deliverySubscriptionTypeSettingsSupplier = () -> {
+			try {
+				return deliverySubscriptionTypeSettingsUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Map<String, String> deliverySubscriptionTypeSettings;
 
+	@JsonIgnore
+	private Supplier<Map<String, String>>
+		_deliverySubscriptionTypeSettingsSupplier;
+
 	@Schema(example = "true")
 	public Boolean getEnable() {
+		if (_enableSupplier != null) {
+			enable = _enableSupplier.get();
+
+			_enableSupplier = null;
+		}
+
 		return enable;
 	}
 
 	public void setEnable(Boolean enable) {
 		this.enable = enable;
+
+		_enableSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setEnable(
 		UnsafeSupplier<Boolean, Exception> enableUnsafeSupplier) {
 
-		try {
-			enable = enableUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_enableSupplier = () -> {
+			try {
+				return enableUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Boolean enable;
 
+	@JsonIgnore
+	private Supplier<Boolean> _enableSupplier;
+
 	@Schema(example = "2")
 	public Integer getLength() {
+		if (_lengthSupplier != null) {
+			length = _lengthSupplier.get();
+
+			_lengthSupplier = null;
+		}
+
 		return length;
 	}
 
 	public void setLength(Integer length) {
 		this.length = length;
+
+		_lengthSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setLength(
 		UnsafeSupplier<Integer, Exception> lengthUnsafeSupplier) {
 
-		try {
-			length = lengthUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_lengthSupplier = () -> {
+			try {
+				return lengthUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Integer length;
 
+	@JsonIgnore
+	private Supplier<Integer> _lengthSupplier;
+
 	@Schema(example = "12")
 	public Long getNumberOfLength() {
+		if (_numberOfLengthSupplier != null) {
+			numberOfLength = _numberOfLengthSupplier.get();
+
+			_numberOfLengthSupplier = null;
+		}
+
 		return numberOfLength;
 	}
 
 	public void setNumberOfLength(Long numberOfLength) {
 		this.numberOfLength = numberOfLength;
+
+		_numberOfLengthSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setNumberOfLength(
 		UnsafeSupplier<Long, Exception> numberOfLengthUnsafeSupplier) {
 
-		try {
-			numberOfLength = numberOfLengthUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_numberOfLengthSupplier = () -> {
+			try {
+				return numberOfLengthUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Long numberOfLength;
 
+	@JsonIgnore
+	private Supplier<Long> _numberOfLengthSupplier;
+
+	@JsonGetter("subscriptionType")
 	@Schema(example = "monthly")
 	@Valid
 	public SubscriptionType getSubscriptionType() {
+		if (_subscriptionTypeSupplier != null) {
+			subscriptionType = _subscriptionTypeSupplier.get();
+
+			_subscriptionTypeSupplier = null;
+		}
+
 		return subscriptionType;
 	}
 
 	@JsonIgnore
 	public String getSubscriptionTypeAsString() {
+		SubscriptionType subscriptionType = getSubscriptionType();
+
 		if (subscriptionType == null) {
 			return null;
 		}
@@ -327,6 +447,8 @@ public class ProductSubscriptionConfiguration implements Serializable {
 
 	public void setSubscriptionType(SubscriptionType subscriptionType) {
 		this.subscriptionType = subscriptionType;
+
+		_subscriptionTypeSupplier = null;
 	}
 
 	@JsonIgnore
@@ -334,24 +456,35 @@ public class ProductSubscriptionConfiguration implements Serializable {
 		UnsafeSupplier<SubscriptionType, Exception>
 			subscriptionTypeUnsafeSupplier) {
 
-		try {
-			subscriptionType = subscriptionTypeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_subscriptionTypeSupplier = () -> {
+			try {
+				return subscriptionTypeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected SubscriptionType subscriptionType;
 
+	@JsonIgnore
+	private Supplier<SubscriptionType> _subscriptionTypeSupplier;
+
 	@Schema(example = "{monthDay=1, monthlyMode=0}")
 	@Valid
 	public Map<String, String> getSubscriptionTypeSettings() {
+		if (_subscriptionTypeSettingsSupplier != null) {
+			subscriptionTypeSettings = _subscriptionTypeSettingsSupplier.get();
+
+			_subscriptionTypeSettingsSupplier = null;
+		}
+
 		return subscriptionTypeSettings;
 	}
 
@@ -359,6 +492,8 @@ public class ProductSubscriptionConfiguration implements Serializable {
 		Map<String, String> subscriptionTypeSettings) {
 
 		this.subscriptionTypeSettings = subscriptionTypeSettings;
+
+		_subscriptionTypeSettingsSupplier = null;
 	}
 
 	@JsonIgnore
@@ -366,21 +501,25 @@ public class ProductSubscriptionConfiguration implements Serializable {
 		UnsafeSupplier<Map<String, String>, Exception>
 			subscriptionTypeSettingsUnsafeSupplier) {
 
-		try {
-			subscriptionTypeSettings =
-				subscriptionTypeSettingsUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_subscriptionTypeSettingsSupplier = () -> {
+			try {
+				return subscriptionTypeSettingsUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Map<String, String> subscriptionTypeSettings;
+
+	@JsonIgnore
+	private Supplier<Map<String, String>> _subscriptionTypeSettingsSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -411,6 +550,8 @@ public class ProductSubscriptionConfiguration implements Serializable {
 
 		sb.append("{");
 
+		Boolean deliverySubscriptionEnable = getDeliverySubscriptionEnable();
+
 		if (deliverySubscriptionEnable != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -420,6 +561,8 @@ public class ProductSubscriptionConfiguration implements Serializable {
 
 			sb.append(deliverySubscriptionEnable);
 		}
+
+		Integer deliverySubscriptionLength = getDeliverySubscriptionLength();
 
 		if (deliverySubscriptionLength != null) {
 			if (sb.length() > 1) {
@@ -431,6 +574,9 @@ public class ProductSubscriptionConfiguration implements Serializable {
 			sb.append(deliverySubscriptionLength);
 		}
 
+		Long deliverySubscriptionNumberOfLength =
+			getDeliverySubscriptionNumberOfLength();
+
 		if (deliverySubscriptionNumberOfLength != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -440,6 +586,9 @@ public class ProductSubscriptionConfiguration implements Serializable {
 
 			sb.append(deliverySubscriptionNumberOfLength);
 		}
+
+		DeliverySubscriptionType deliverySubscriptionType =
+			getDeliverySubscriptionType();
 
 		if (deliverySubscriptionType != null) {
 			if (sb.length() > 1) {
@@ -455,6 +604,9 @@ public class ProductSubscriptionConfiguration implements Serializable {
 			sb.append("\"");
 		}
 
+		Map<String, String> deliverySubscriptionTypeSettings =
+			getDeliverySubscriptionTypeSettings();
+
 		if (deliverySubscriptionTypeSettings != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -464,6 +616,8 @@ public class ProductSubscriptionConfiguration implements Serializable {
 
 			sb.append(_toJSON(deliverySubscriptionTypeSettings));
 		}
+
+		Boolean enable = getEnable();
 
 		if (enable != null) {
 			if (sb.length() > 1) {
@@ -475,6 +629,8 @@ public class ProductSubscriptionConfiguration implements Serializable {
 			sb.append(enable);
 		}
 
+		Integer length = getLength();
+
 		if (length != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -485,6 +641,8 @@ public class ProductSubscriptionConfiguration implements Serializable {
 			sb.append(length);
 		}
 
+		Long numberOfLength = getNumberOfLength();
+
 		if (numberOfLength != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -494,6 +652,8 @@ public class ProductSubscriptionConfiguration implements Serializable {
 
 			sb.append(numberOfLength);
 		}
+
+		SubscriptionType subscriptionType = getSubscriptionType();
 
 		if (subscriptionType != null) {
 			if (sb.length() > 1) {
@@ -508,6 +668,9 @@ public class ProductSubscriptionConfiguration implements Serializable {
 
 			sb.append("\"");
 		}
+
+		Map<String, String> subscriptionTypeSettings =
+			getSubscriptionTypeSettings();
 
 		if (subscriptionTypeSettings != null) {
 			if (sb.length() > 1) {

@@ -23,7 +23,7 @@ import {
 	XAxis,
 	YAxis
 } from 'recharts';
-import {CHART_COLOR_NAMES} from 'shared/components/Chart';
+import {CHART_COLOR_NAMES} from 'shared/util/charts';
 import {
 	formatXAxisDate,
 	getBarColor,
@@ -97,6 +97,8 @@ const ActiveIndividualsChart: React.FC<IActiveIndividualsChartProps> = ({
 				/>
 			);
 		}
+
+		return null;
 	};
 
 	const yAxisWidth = getYAxisWidth(data, 'knownVisitors');
@@ -165,6 +167,7 @@ const ActiveIndividualsChart: React.FC<IActiveIndividualsChartProps> = ({
 						tickLine={false}
 						tickMargin={12}
 						ticks={intervals}
+						type='number'
 					/>
 
 					<XAxis

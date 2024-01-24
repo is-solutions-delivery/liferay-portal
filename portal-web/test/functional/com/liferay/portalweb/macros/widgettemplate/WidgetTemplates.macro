@@ -1,0 +1,232 @@
+definition {
+
+	@summary = "Default summary"
+	macro addADTWithFieldEntryCP(fieldName = null, portletName = null) {
+		AssertVisible(locator1 = "Button#PLUS");
+
+		LexiconEntry.gotoAdd();
+
+		MenuItem.click(menuItem = "${portletName} Template");
+
+		SiteAdmin.viewPortletTitle(portletTitle = "Add ${portletName} Template");
+
+		PortletEntry.inputName(name = "${portletName} Test ADT");
+
+		Click(
+			key_fieldName = ${fieldName},
+			locator1 = "DDMEditTemplate#SCRIPT_FIELD");
+
+		PortletEntry.save();
+
+		Refresh();
+	}
+
+	@summary = "Default summary"
+	macro addCP(adtType = null, templateScript = null, widgetTemplateName = null, adtFile = null, fieldNameList = null) {
+		var key_adtType = ${adtType};
+
+		Portlet.viewEmptyMessage(message = "There are no templates.");
+
+		LexiconEntry.gotoAdd();
+
+		if (IsElementPresent(key_text = "More", locator1 = "Button#ANY")) {
+			Button.clickMore();
+
+			ScrollWebElementIntoView(
+				key_menuItem = "${adtType} Template",
+				locator1 = "MenuItem#ANY_MENU_ITEM");
+
+			MenuItem.click(menuItem = "${adtType} Template");
+		}
+		else {
+			MenuItem.click(menuItem = "${adtType} Template");
+		}
+
+		SiteAdmin.viewPortletTitle(portletTitle = "Add ${adtType} Template");
+
+		if (isSet(widgetTemplateName)) {
+			PortletEntry.inputName(name = ${widgetTemplateName});
+		}
+		else {
+			PortletEntry.inputName(name = "${adtType} Test ADT");
+		}
+
+		if (isSet(templateScript)) {
+			Type.sendKeys(
+				locator1 = "DDMEditTemplate#CODE_MIRROR_EDITOR_CONTENT",
+				value1 = "keys=CONTROL,m");
+
+			Type.sendKeysAceEditor(
+				locator1 = "DDMEditTemplate#CODE_MIRROR_EDITOR_CONTENT",
+				value1 = ${templateScript});
+		}
+		else if (isSet(fieldNameList)) {
+			for (var fieldName : list ${fieldNameList}) {
+				AssertClick(
+					key_panelTitle = "Fields",
+					key_variableName = ${fieldName},
+					locator1 = "DDMEditTemplate#WEB_CONTENT_SCRIPT_VARIABLE",
+					value1 = ${fieldName});
+			}
+		}
+		else {
+			Click(locator1 = "Icon#HEADER_VERTICAL_ELLIPSIS");
+
+			var filePath = TestCase.getDependenciesDirPath(fileName = ${adtFile});
+
+			UploadFile(
+				inputFieldId = "importScript",
+				locator1 = "TextInput#INPUT_ID",
+				value1 = ${filePath});
+
+			Click(locator1 = "Icon#HEADER_VERTICAL_ELLIPSIS");
+		}
+
+		PortletEntry.save();
+
+		if (isSet(widgetTemplateName)) {
+			AssertVisible(
+				key_tableEntry = ${widgetTemplateName},
+				locator1 = "LexiconTable#TABLE_ENTRY_TITLE");
+		}
+		else {
+			AssertVisible(
+				key_tableEntry = "${adtType} Test ADT",
+				locator1 = "LexiconTable#TABLE_ENTRY_TITLE");
+		}
+	}
+
+	@summary = "Default summary"
+	macro deleteCP(widgetTemplateName = null) {
+		WidgetTemplates.gotoWidgetTemplatesEllipsisItem(
+			item = "Delete",
+			widgetTemplateName = ${widgetTemplateName});
+
+		AssertTextEquals(
+			locator1 = "Modal#BODY",
+			value1 = "Are you sure you want to delete this? It will be deleted immediately.");
+
+		Click(
+			key_text = "Delete",
+			locator1 = "Modal#MODAL_FOOTER_BUTTON");
+
+		Alert.viewSuccessMessage();
+	}
+
+	@summary = "Default summary"
+	macro editADTScript(adtScript = null) {
+		Type.sendKeys(
+			locator1 = "DDMEditTemplate#CODE_MIRROR_EDITOR_CONTENT",
+			value1 = "keys=CONTROL,m");
+
+		Type.sendKeysAceEditor(
+			locator1 = "DDMEditTemplate#CODE_MIRROR_EDITOR_CONTENT",
+			value1 = ${adtScript});
+
+		PortletEntry.save();
+	}
+
+	@summary = "Default summary"
+	macro editWidgetTemplate(oldWidgetTemplateName = null, adtFile = null, newWidgetTemplateName = null) {
+		SiteAdmin.viewPortletTitle(portletTitle = "Edit ${oldWidgetTemplateName}");
+
+		if (isSet(newWidgetTemplateName)) {
+			PortletEntry.inputName(name = ${newWidgetTemplateName});
+		}
+
+		if (isSet(adtFile)) {
+			Click(locator1 = "Icon#HEADER_VERTICAL_ELLIPSIS");
+
+			var filePath = TestCase.getDependenciesDirPath(fileName = ${adtFile});
+
+			UploadFile(
+				inputFieldId = "importScript",
+				locator1 = "TextInput#INPUT_ID",
+				value1 = ${filePath});
+		}
+
+		PortletEntry.save();
+	}
+
+	@summary = "Default summary"
+	macro getWidgetTemplateKey(templateID = null) {
+		var portalURL = JSONCompany.getPortalURL();
+		var userLoginInfo = JSONUtil2.formatJSONUser();
+
+		var curl = '''
+			${portalURL}/api/jsonws/ddm.ddmtemplate/get-template \
+				-u ${userLoginInfo} \
+				-d templateId=${templateID}
+		''';
+
+		var templateKey = JSONCurlUtil.post(${curl}, "$.templateKey");
+
+		return ${templateKey};
+	}
+
+	@summary = "Default summary"
+	macro gotoWidgetTemplatesEllipsisItem(item = null, widgetTemplateName = null) {
+		Click.waitForMenuToggleJSClick(
+			key_tableEntry = ${widgetTemplateName},
+			locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS");
+
+		MenuItem.click(menuItem = ${item});
+	}
+
+	@summary = "Default summary"
+	macro openWidgetTemplatesAdmin(siteURLKey = null) {
+		Navigator.openWithAppendToBaseURL(urlAppend = "group/${siteURLKey}/~/control_panel/manage?p_p_id=com_liferay_template_web_internal_portlet_TemplatePortlet&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_com_liferay_template_web_internal_portlet_TemplatePortlet_tabs1=widget-templates");
+	}
+
+	@summary = "Default summary"
+	macro searchGlobalADT(templateName = null) {
+		Search.searchCP(searchTerm = ${templateName});
+
+		AssertVisible(
+			key_tableEntry = ${templateName},
+			locator1 = "LexiconTable#TABLE_ENTRY_TITLE");
+	}
+
+	@summary = "Default summary"
+	macro selectPortletADT(templateName = null, portletName = null) {
+		Portlet.gotoPortletOptions(
+			portletName = ${portletName},
+			portletOption = "Configuration");
+
+		SelectFrame(locator1 = "IFrame#CONFIGURATION");
+
+		var key_tab = "Display Settings";
+
+		if (IsElementPresent(locator1 = "NavTab#TAB_LINK")) {
+			Navigator.gotoNavTab(navTab = "Display Settings");
+		}
+
+		Click(
+			key_class = "display-template-selector",
+			key_index = 1,
+			locator1 = "Button#ANY_WITH_CLASS_AND_INDEX");
+
+		MenuItem.click(menuItem = ${templateName});
+
+		PortletEntry.save();
+
+		SelectFrameTop();
+	}
+
+	@summary = "Default summary"
+	macro viewTemplate(adtType = null) {
+		AssertVisible(
+			key_tableEntry = "${adtType} Test ADT",
+			locator1 = "LexiconTable#TABLE_ENTRY_TITLE");
+	}
+
+	@summary = "Default summary"
+	macro viewUsage(usageAmount = null, tableEntry = null) {
+		AssertTextEquals(
+			key_columnName = "usages",
+			key_tableEntry = ${tableEntry},
+			locator1 = "LexiconTable#TABLE_ENTRY_INFO",
+			value1 = ${usageAmount});
+	}
+
+}

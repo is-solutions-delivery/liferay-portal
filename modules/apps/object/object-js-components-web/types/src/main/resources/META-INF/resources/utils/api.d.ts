@@ -4,10 +4,14 @@
  */
 
 interface Actions {
-	delete: HTTPMethod;
-	get: HTTPMethod;
-	permissions: HTTPMethod;
-	update: HTTPMethod;
+	delete?: HTTPMethod;
+	get?: HTTPMethod;
+	permissions?: HTTPMethod;
+	update?: HTTPMethod;
+}
+export interface ErrorDetails extends Error {
+	detail?: string;
+	type?: string;
 }
 interface HTTPMethod {
 	href: string;
@@ -61,6 +65,10 @@ export interface NotificationTemplate {
 	to: LocalizedValue<string>;
 	type: NotificationTemplateType;
 }
+interface ObjectDefinitions {
+	actions: Actions;
+	items: ObjectDefinition[];
+}
 interface ObjectFolderItem {
 	linkedObjectDefinition: boolean;
 	objectDefinitionExternalReferenceCode: string;
@@ -76,6 +84,10 @@ interface ObjectFolder {
 	label: LocalizedValue<string>;
 	name: string;
 	objectFolderItems: ObjectFolderItem[];
+}
+interface ObjectFolderRequestInfo {
+	actions: Actions;
+	items: ObjectFolder[];
 }
 declare type ObjectRelationshipType = 'manyToMany' | 'oneToMany' | 'oneToOne';
 interface ObjectRelationship {
@@ -114,8 +126,8 @@ export declare function fetchJSON<T>(
 	input: RequestInfo,
 	init?: RequestInit
 ): Promise<T>;
-export declare function getAllObjectDefinitions(): Promise<ObjectDefinition[]>;
-export declare function getAllObjectFolders(): Promise<ObjectFolder[]>;
+export declare function getAllObjectDefinitions(): Promise<ObjectDefinitions>;
+export declare function getAllObjectFolders(): Promise<ObjectFolderRequestInfo>;
 export declare function getList<T>(url: string): Promise<T[]>;
 export declare function getListTypeDefinition(
 	listTypeDefinitionId: number
@@ -163,6 +175,9 @@ export declare function getObjectRelationship<T>(
 export declare function getObjectValidationRuleById<T>(
 	objectValidationRuleId: number
 ): Promise<T>;
+export declare function patchObjectDefinitionById(
+	objectDefinition: Partial<ObjectDefinition>
+): Promise<Response>;
 export declare function postListTypeEntry({
 	key,
 	listTypeDefinitionId,

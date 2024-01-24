@@ -13,7 +13,6 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.segments.constants.SegmentsActionKeys;
@@ -109,58 +108,25 @@ public class SegmentsEntryServiceImpl extends SegmentsEntryServiceBaseImpl {
 	}
 
 	@Override
-	public List<SegmentsEntry> getSegmentsEntries(
-		long groupId, boolean includeAncestorSegmentsEntries) {
-
-		if (!includeAncestorSegmentsEntries) {
-			return segmentsEntryPersistence.filterFindByGroupId(groupId);
-		}
-
+	public List<SegmentsEntry> getSegmentsEntries(long groupId) {
 		return segmentsEntryPersistence.filterFindByGroupId(
-			ArrayUtil.append(
-				_portal.getAncestorSiteGroupIds(groupId), groupId));
+			_portal.getCurrentAndAncestorSiteGroupIds(groupId));
 	}
 
 	@Override
 	public List<SegmentsEntry> getSegmentsEntries(
-		long groupId, boolean includeAncestorSegmentsEntries, int start,
-		int end, OrderByComparator<SegmentsEntry> orderByComparator) {
-
-		if (!includeAncestorSegmentsEntries) {
-			return segmentsEntryPersistence.filterFindByGroupId(
-				groupId, start, end, orderByComparator);
-		}
-
-		return segmentsEntryPersistence.filterFindByGroupId(
-			ArrayUtil.append(_portal.getAncestorSiteGroupIds(groupId), groupId),
-			start, end, orderByComparator);
-	}
-
-	@Override
-	public List<SegmentsEntry> getSegmentsEntries(
-		long companyId, int start, int end,
+		long groupId, int start, int end,
 		OrderByComparator<SegmentsEntry> orderByComparator) {
 
-		return segmentsEntryPersistence.findByCompanyId(
-			companyId, start, end, orderByComparator);
+		return segmentsEntryPersistence.filterFindByGroupId(
+			_portal.getCurrentAndAncestorSiteGroupIds(groupId), start, end,
+			orderByComparator);
 	}
 
 	@Override
-	public int getSegmentsEntriesCount(long companyId) {
-		return segmentsEntryPersistence.countByCompanyId(companyId);
-	}
-
-	@Override
-	public int getSegmentsEntriesCount(
-		long groupId, boolean includeAncestorSegmentsEntries) {
-
-		if (!includeAncestorSegmentsEntries) {
-			return segmentsEntryPersistence.filterCountByGroupId(groupId);
-		}
-
+	public int getSegmentsEntriesCount(long groupId) {
 		return segmentsEntryPersistence.filterCountByGroupId(
-			ArrayUtil.append(
-				_portal.getAncestorSiteGroupIds(groupId), groupId));
+			_portal.getCurrentAndAncestorSiteGroupIds(groupId));
 	}
 
 	@Override
@@ -178,8 +144,7 @@ public class SegmentsEntryServiceImpl extends SegmentsEntryServiceBaseImpl {
 
 	@Override
 	public BaseModelSearchResult<SegmentsEntry> searchSegmentsEntries(
-			long companyId, long groupId, String keywords,
-			boolean includeAncestorSegmentsEntries, int start, int end,
+			long companyId, long groupId, String keywords, int start, int end,
 			Sort sort)
 		throws PortalException {
 
@@ -187,17 +152,8 @@ public class SegmentsEntryServiceImpl extends SegmentsEntryServiceBaseImpl {
 			getPermissionChecker(), groupId, ActionKeys.VIEW);
 
 		return segmentsEntryLocalService.searchSegmentsEntries(
-			companyId, groupId, keywords, includeAncestorSegmentsEntries,
-			new LinkedHashMap<>(), start, end, sort);
-	}
-
-	@Override
-	public BaseModelSearchResult<SegmentsEntry> searchSegmentsEntries(
-			long companyId, String keywords, int start, int end, Sort sort)
-		throws PortalException {
-
-		return segmentsEntryLocalService.searchSegmentsEntries(
-			companyId, keywords, new LinkedHashMap<>(), start, end, sort);
+			companyId, groupId, keywords, new LinkedHashMap<>(), start, end,
+			sort);
 	}
 
 	@Override

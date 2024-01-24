@@ -136,10 +136,14 @@ public class CPSpecificationOptionsFacetDisplayContextBuilder
 		_portletSharedSearchResponse = _portletSharedSearchRequest.search(
 			_renderRequest);
 
-		List<Facet> filledFacets = new ArrayList<>();
-
 		Facet facet = _portletSharedSearchResponse.getFacet(
 			CPField.SPECIFICATION_NAMES);
+
+		if (facet == null) {
+			return Collections.emptyList();
+		}
+
+		List<Facet> filledFacets = new ArrayList<>();
 
 		FacetCollector facetCollector = facet.getFacetCollector();
 
@@ -168,11 +172,17 @@ public class CPSpecificationOptionsFacetDisplayContextBuilder
 					themeDisplay.getCompanyId(), termCollector.getTerm());
 
 			if (cpSpecificationOption.isFacetable()) {
-				filledFacets.add(
+				Facet cpSpecificationOptionFacet =
 					_portletSharedSearchResponse.getFacet(
 						CPSpecificationOptionFacetsUtil.getIndexFieldName(
 							termCollector.getTerm(),
-							themeDisplay.getLanguageId())));
+							themeDisplay.getLanguageId()));
+
+				if (cpSpecificationOptionFacet == null) {
+					continue;
+				}
+
+				filledFacets.add(cpSpecificationOptionFacet);
 			}
 		}
 
@@ -192,8 +202,17 @@ public class CPSpecificationOptionsFacetDisplayContextBuilder
 						filledFacet, _portletSharedSearchResponse,
 						_renderRequest);
 
-			cpSpecificationOptionsSearchFacetDisplayContexts.add(
-				cpSpecificationOptionsSearchFacetDisplayContext);
+			List<CPSpecificationOptionsSearchFacetTermDisplayContext>
+				cpSpecificationOptionsSearchFacetTermDisplayContexts =
+					cpSpecificationOptionsSearchFacetDisplayContext.
+						getTermDisplayContexts();
+
+			if (!cpSpecificationOptionsSearchFacetTermDisplayContexts.
+					isEmpty()) {
+
+				cpSpecificationOptionsSearchFacetDisplayContexts.add(
+					cpSpecificationOptionsSearchFacetDisplayContext);
+			}
 		}
 
 		return cpSpecificationOptionsSearchFacetDisplayContexts;

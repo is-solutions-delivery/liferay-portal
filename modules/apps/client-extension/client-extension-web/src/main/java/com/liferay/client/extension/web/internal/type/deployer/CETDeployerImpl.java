@@ -7,25 +7,32 @@ package com.liferay.client.extension.web.internal.type.deployer;
 
 import com.liferay.client.extension.constants.ClientExtensionEntryConstants;
 import com.liferay.client.extension.type.CET;
+import com.liferay.client.extension.type.CommerceCheckoutStepCET;
 import com.liferay.client.extension.type.CustomElementCET;
+import com.liferay.client.extension.type.EditorConfigContributorCET;
 import com.liferay.client.extension.type.IFrameCET;
 import com.liferay.client.extension.type.JSImportMapsEntryCET;
 import com.liferay.client.extension.type.deployer.CETDeployer;
+import com.liferay.client.extension.type.deployer.CommerceCETDeployer;
+import com.liferay.client.extension.util.CETUtil;
 import com.liferay.client.extension.web.internal.frontend.js.importmaps.extender.ClientExtensionJSImportMapsContributor;
 import com.liferay.client.extension.web.internal.portlet.CETPortletFriendlyURLMapper;
 import com.liferay.client.extension.web.internal.portlet.CustomElementCETPortlet;
 import com.liferay.client.extension.web.internal.portlet.IFrameCETPortlet;
 import com.liferay.client.extension.web.internal.portlet.action.CETPortletConfigurationAction;
-import com.liferay.client.extension.web.internal.util.CETUtil;
+import com.liferay.client.extension.web.internal.portlet.editor.config.contributor.CETEditorConfigContributor;
 import com.liferay.frontend.js.importmaps.extender.JSImportMapsContributor;
-import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.editor.configuration.EditorConfigContributor;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.model.Release;
+import com.liferay.portal.kernel.module.service.Snapshot;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.FriendlyURLMapper;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.url.builder.AbsolutePortalURLBuilderFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,9 +58,22 @@ public class CETDeployerImpl implements CETDeployer {
 	public List<ServiceRegistration<?>> deploy(CET cet) {
 		if (Objects.equals(
 				cet.getType(),
-				ClientExtensionEntryConstants.TYPE_CUSTOM_ELEMENT)) {
+				ClientExtensionEntryConstants.TYPE_COMMERCE_CHECKOUT_STEP)) {
+
+			return _deploy((CommerceCheckoutStepCET)cet);
+		}
+		else if (Objects.equals(
+					cet.getType(),
+					ClientExtensionEntryConstants.TYPE_CUSTOM_ELEMENT)) {
 
 			return _deploy((CustomElementCET)cet);
+		}
+		else if (Objects.equals(
+					cet.getType(),
+					ClientExtensionEntryConstants.
+						TYPE_EDITOR_CONFIG_CONTRIBUTOR)) {
+
+			return _deploy((EditorConfigContributorCET)cet);
 		}
 		else if (Objects.equals(
 					cet.getType(), ClientExtensionEntryConstants.TYPE_IFRAME)) {
@@ -73,6 +93,19 @@ public class CETDeployerImpl implements CETDeployer {
 	@Activate
 	protected void activate(BundleContext bundleContext) {
 		_bundleContext = bundleContext;
+	}
+
+	private List<ServiceRegistration<?>> _deploy(
+		CommerceCheckoutStepCET commerceCheckoutStepCET) {
+
+		CommerceCETDeployer commerceCETDeployer =
+			_commerceCETDeployerSnapshot.get();
+
+		if (commerceCETDeployer == null) {
+			return Collections.emptyList();
+		}
+
+		return commerceCETDeployer.deploy(commerceCheckoutStepCET);
 	}
 
 	private List<ServiceRegistration<?>> _deploy(
@@ -103,10 +136,22 @@ public class CETDeployerImpl implements CETDeployer {
 		serviceRegistrations.add(
 			_register(
 				Portlet.class,
-				new CustomElementCETPortlet(
-					customElementCET, _npmResolver, portletId)));
+				new CustomElementCETPortlet(customElementCET, portletId)));
 
 		return serviceRegistrations;
+	}
+
+	private List<ServiceRegistration<?>> _deploy(
+		EditorConfigContributorCET editorConfigContributorCET) {
+
+		return Arrays.asList(
+			_register(
+				EditorConfigContributor.class,
+				new CETEditorConfigContributor(
+					editorConfigContributorCET.getEditorConfigKeys(),
+					editorConfigContributorCET.getEditorNames(),
+					editorConfigContributorCET.getPortletNames(),
+					editorConfigContributorCET.getURL())));
 	}
 
 	private List<ServiceRegistration<?>> _deploy(IFrameCET iFrameCET) {
@@ -135,7 +180,9 @@ public class CETDeployerImpl implements CETDeployer {
 		serviceRegistrations.add(
 			_register(
 				Portlet.class,
-				new IFrameCETPortlet(iFrameCET, _npmResolver, portletId)));
+				new IFrameCETPortlet(
+					iFrameCET, _absolutePortalURLBuilderFactory, portletId,
+					_portal)));
 
 		return serviceRegistrations;
 	}
@@ -167,13 +214,20 @@ public class CETDeployerImpl implements CETDeployer {
 			clazz, registrable, registrable.getDictionary());
 	}
 
+	private static final Snapshot<CommerceCETDeployer>
+		_commerceCETDeployerSnapshot = new Snapshot<>(
+			CETDeployer.class, CommerceCETDeployer.class);
+
+	@Reference
+	private AbsolutePortalURLBuilderFactory _absolutePortalURLBuilderFactory;
+
 	private BundleContext _bundleContext;
 
 	@Reference
 	private JSONFactory _jsonFactory;
 
 	@Reference
-	private NPMResolver _npmResolver;
+	private Portal _portal;
 
 	@Reference(
 		target = "(&(release.bundle.symbolic.name=com.liferay.client.extension.web)(release.schema.version>=2.0.0))"

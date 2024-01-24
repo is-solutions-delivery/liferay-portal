@@ -49,6 +49,12 @@ public class ImportTranslationPortletConfigurationIcon
 		PortletRequest portletRequest, PortletResponse portletResponse) {
 
 		try {
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)portletRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
+
+			PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
+
 			return PortletURLBuilder.create(
 				_translationURLProvider.getImportTranslationURL(
 					_getGroupId(portletRequest),
@@ -57,16 +63,9 @@ public class ImportTranslationPortletConfigurationIcon
 			).setRedirect(
 				_portal.getCurrentURL(portletRequest)
 			).setPortletResource(
-				() -> {
-					ThemeDisplay themeDisplay =
-						(ThemeDisplay)portletRequest.getAttribute(
-							WebKeys.THEME_DISPLAY);
-
-					PortletDisplay portletDisplay =
-						themeDisplay.getPortletDisplay();
-
-					return portletDisplay.getId();
-				}
+				portletDisplay.getId()
+			).setParameter(
+				"backURLTitle", portletDisplay.getPortletDisplayName()
 			).buildString();
 		}
 		catch (PortalException portalException) {

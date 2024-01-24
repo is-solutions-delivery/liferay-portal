@@ -11,6 +11,7 @@ import com.liferay.commerce.inventory.service.CommerceInventoryWarehouseItemServ
 import com.liferay.commerce.inventory.service.CommerceInventoryWarehouseService;
 import com.liferay.commerce.inventory.web.internal.display.context.CommerceInventoryDisplayContext;
 import com.liferay.commerce.product.constants.CPPortletKeys;
+import com.liferay.commerce.util.CommerceQuantityFormatter;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.util.Portal;
@@ -62,9 +63,9 @@ public class CommerceInventoryPortlet extends MVCPortlet {
 		CommerceInventoryDisplayContext commerceInventoryDisplayContext =
 			new CommerceInventoryDisplayContext(
 				_commerceInventoryReplenishmentItemService,
-				_commerceInventoryWarehouseService,
 				_commerceInventoryWarehouseItemService,
 				_commerceInventoryWarehouseModelResourcePermission,
+				_commerceInventoryWarehouseService, _commerceQuantityFormatter,
 				_portal.getHttpServletRequest(renderRequest));
 
 		renderRequest.setAttribute(
@@ -90,6 +91,9 @@ public class CommerceInventoryPortlet extends MVCPortlet {
 	@Reference
 	private CommerceInventoryWarehouseService
 		_commerceInventoryWarehouseService;
+
+	@Reference
+	private CommerceQuantityFormatter _commerceQuantityFormatter;
 
 	@Reference
 	private Portal _portal;

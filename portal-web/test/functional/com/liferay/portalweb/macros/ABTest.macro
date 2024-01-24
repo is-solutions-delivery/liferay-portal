@@ -1,7 +1,33 @@
 definition {
 
 	@summary = "Default summary"
-	macro checkAnalyticsCloudInfo(abTestTitle = null) {
+	macro assertDXPABTestEmptyState() {
+		AssertVisible(
+			key_title = "No active tests were found for the selected experience.",
+			locator1 = "Header#H4_TITLE");
+
+		AssertVisible(
+			key_message = "Create a new A/B test to optimize your page or experience.",
+			locator1 = "ABTest#SIDEBAR_MESSAGE");
+
+		AssertElementPresent(
+			key_text = "Create Test",
+			locator1 = "Button#ANY");
+	}
+
+	@summary = "Default summary"
+	macro assertTerminateTest() {
+		AssertTextEquals.assertPartialText(
+			locator1 = "Modal#MODAL_CONTENT",
+			value1 = "Are you sure you want to terminate this test?");
+
+		Click(locator1 = "ACSettings#CONFIRMATION_BUTTON");
+
+		Alert.viewSuccessMessageText(successMessage = "Success:Your request completed successfully.");
+	}
+
+	@summary = "Default summary"
+	macro checkAnalyticsCloudInfo(abTestTitle) {
 		if (IsElementPresent(key_text = "Review and Run Test", locator1 = "Button#ANY")) {
 			ABTest.runTest();
 		}
@@ -25,7 +51,7 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro checkVariantAnalyticsCloud() {
+	macro checkVariantAnalyticsCloud(variantNames) {
 		var index = 1;
 
 		if (IsElementPresent(key_text = "Review and Run Test", locator1 = "Button#ANY")) {
@@ -55,12 +81,17 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro createABTest(goal = null, testTitle = null) {
-		while (IsElementNotPresent(key_text = "Create Test", locator1 = "Button#ANY")) {
+	macro createABTest(goal, testTitle) {
+		if (IsElementPresent(locator1 = "ABTest#CLOSED_ADMIN_PANEL")) {
 			Click(locator1 = "ABTest#AB_TEST_BUTTON");
 		}
 
-		Button.click(button = "Create Test");
+		if (IsElementPresent(key_text = "Create Test", locator1 = "Button#ANY")) {
+			Button.click(button = "Create Test");
+		}
+		else {
+			Button.click(button = "Create New Test");
+		}
 
 		ABTest.fillInput(
 			key_testTitle = ${testTitle},
@@ -72,7 +103,7 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro createVariant(variantName = null) {
+	macro createVariant(variantName) {
 		Button.click(button = "Create Variant");
 
 		ABTest.fillInput(
@@ -82,38 +113,30 @@ definition {
 		Click(
 			key_name = "Save",
 			locator1 = "Button#GENERAL_BUTTON_MODAL_FOOTER");
+
+		WaitForElementNotPresent(locator1 = "Modal#MODAL_CONTENT");
 	}
 
 	@summary = "Default summary"
 	macro deleteABTest() {
-		Click(locator1 = "ABTest#KEBAB_AB_TEST");
+		if (IsElementNotPresent(locator1 = "Modal#MODAL_CONTENT")) {
+			if (IsElementPresent(locator1 = "ABTest#KEBAB_AB_TEST")) {
+				Click(locator1 = "ABTest#KEBAB_AB_TEST");
 
-		MenuItem.clickNoError(menuItem = "Delete");
+				MenuItem.clickNoError(menuItem = "Delete");
+			}
+			else {
+				Click(locator1 = "Button#TRASH_ENABLED");
+			}
+		}
 
-		AssertTextEquals.assertPartialText(
-			locator1 = "Modal#BODY",
-			value1 = "Are you sure you want to delete this? It will be deleted immediately.");
+		Click(locator1 = "ACSettings#CONFIRMATION_BUTTON");
 
-		Click(
-			key_text = "Delete",
-			locator1 = "Modal#MODAL_FOOTER_BUTTON");
-
-		Alert.viewSuccessMessage();
+		Alert.viewSuccessMessageText(successMessage = "Success:Your request completed successfully.");
 	}
 
 	@summary = "Default summary"
-	macro deleteABTestInAC() {
-		Click(
-			key_text = "ellipsis-v",
-			locator1 = "Icon#ANY");
-
-		MenuItem.clickNoError(menuItem = "Delete Test");
-
-		Button.clickDelete();
-	}
-
-	@summary = "Default summary"
-	macro deleteVariant() {
+	macro deleteVariant(key_index = null) {
 		if (!(isSet(key_index))) {
 			var key_index = 1;
 		}
@@ -134,14 +157,14 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro editVariant(variantName = null) {
+	macro editVariant(variantName) {
 		Click(
 			key_variantName = ${variantName},
 			locator1 = "ABTest#EDIT_VARIANT_BUTTON");
 	}
 
 	@summary = "Default summary"
-	macro editVariantName() {
+	macro editVariantName(key_index = null) {
 		if (!(isSet(key_index))) {
 			var key_index = 1;
 		}
@@ -152,7 +175,7 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro fillInput(labelValue = null, key_testTitle = null) {
+	macro fillInput(labelValue, key_testTitle) {
 		Click(
 			key_fieldLabel = ${labelValue},
 			locator1 = "Modal#INPUT_WITH_LABEL");
@@ -161,6 +184,14 @@ definition {
 			key_fieldLabel = ${labelValue},
 			locator1 = "Modal#INPUT_WITH_LABEL",
 			value1 = ${key_testTitle});
+	}
+
+	@summary = "Default summary"
+	macro getVariantImprovementNumberInDXP(variantName) {
+		var key_variantName = ${variantName};
+		var improvementNumber = selenium.getText("ABTest#IMPROVEMENT_NUMBER");
+
+		return ${improvementNumber};
 	}
 
 	@summary = "Default summary"
@@ -173,6 +204,12 @@ definition {
 			AnalyticsCloud.loginAnalyticsCloud(
 				emailAddress = "test@liferay.com",
 				password = "test");
+
+			Close.closeWindow();
+
+			ABTest.viewDataInAnalyticsCloud();
+
+			SelectWindow(locator1 = "name=undefined");
 		}
 	}
 
@@ -195,10 +232,16 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro openTab(tabValue = null) {
+	macro publishVariant(variantName) {
 		Click(
-			locator1 = "ABTest#TAB",
-			tabValue = ${tabValue});
+			key_variantName = ${variantName},
+			locator1 = "ABTest#PUBLISH_VARIANT");
+
+		Click(
+			key_text = "Publish",
+			locator1 = "Button#ANY");
+
+		Alert.viewSuccessMessageText(successMessage = "Success:${variantName} was published successfully.");
 	}
 
 	@summary = "Default summary"
@@ -251,10 +294,10 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro statusABTestInAC(status = null) {
-		AssertTextEquals(
-			locator1 = "ACTests#SUMMARY_CARD_TEXT",
-			value1 = ${status});
+	macro statusABTestInDXP(status) {
+		AssertElementPresent(
+			key_status = ${status},
+			locator1 = "ImportExport#IMPORT_EXPORT_STATUS");
 	}
 
 	@summary = "Default summary"
@@ -298,13 +341,9 @@ definition {
 			Button.clickNoError(button = "Terminate Test");
 		}
 
-		AssertTextEquals(
-			locator1 = "Modal#BODY",
-			value1 = "Are you sure you want to terminate this test?");
+		WaitForElementPresent(locator1 = "Modal#MODAL_CONTENT");
 
-		Click(
-			key_text = "Terminate",
-			locator1 = "Modal#MODAL_FOOTER_BUTTON");
+		Click(locator1 = "ACSettings#CONFIRMATION_BUTTON");
 
 		Alert.viewSuccessMessage();
 	}
@@ -332,7 +371,16 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro writeId(elementId = null) {
+	macro viewVariantImprovementNumberInDXP(improvementNumber, variantName) {
+		var key_variantName = ${variantName};
+
+		AssertTextEquals(
+			locator1 = "ABTest#IMPROVEMENT_NUMBER",
+			value1 = ${improvementNumber});
+	}
+
+	@summary = "Default summary"
+	macro writeId(elementId) {
 		Click(locator1 = "ABTest#ELEMENT_ID_INPUT");
 
 		Type(

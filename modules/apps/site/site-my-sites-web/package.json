@@ -1,11 +1,12 @@
 {
 	"dependencies": {
 	},
+	"main": "js/index.js",
 	"name": "my-sites-web",
 	"scripts": {
 		"build": "liferay-npm-scripts build",
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "6.0.36"
+	"version": "6.0.37"
 }

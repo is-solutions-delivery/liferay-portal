@@ -175,12 +175,8 @@ DLPortletInstanceSettingsHelper dlPortletInstanceSettingsHelper = new DLPortletI
 							rootFolderNotFoundWarning.classList.add('hide');
 						},
 						title: '<liferay-ui:message arguments="folder" key="select-x" />',
-
-						<%
-						PortletURL selectFolderURL = dlAdminDisplayContext.getSelectFolderURL(request);
-						%>
-
-						url: '<%= HtmlUtil.escapeJS(selectFolderURL.toString()) %>',
+						url:
+							'<%= HtmlUtil.escapeJS(dlAdminDisplayContext.getSelectRootFolderURL()) %>',
 					});
 				});
 			}
@@ -225,7 +221,7 @@ DLPortletInstanceSettingsHelper dlPortletInstanceSettingsHelper = new DLPortletI
 	</liferay-frontend:edit-form-footer>
 </liferay-frontend:edit-form>
 
-<script>
+<aui:script>
 	function <portlet:namespace />saveConfiguration() {
 		var form = document.<portlet:namespace />fm;
 
@@ -242,4 +238,4 @@ DLPortletInstanceSettingsHelper dlPortletInstanceSettingsHelper = new DLPortletI
 			},
 		});
 	}
-</script>
+</aui:script>

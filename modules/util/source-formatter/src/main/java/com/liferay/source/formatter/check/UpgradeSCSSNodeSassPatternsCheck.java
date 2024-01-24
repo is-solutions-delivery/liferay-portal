@@ -8,6 +8,7 @@ package com.liferay.source.formatter.check;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.petra.string.StringUtil;
+import com.liferay.portal.tools.ToolsUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +29,10 @@ public class UpgradeSCSSNodeSassPatternsCheck extends BaseUpgradeCheck {
 		boolean replaced = false;
 
 		while (divisionMatcher.find()) {
+			if (ToolsUtil.isInsideQuotes(content, divisionMatcher.start())) {
+				continue;
+			}
+
 			StringBuilder sb = new StringBuilder();
 
 			sb.append("math.div(");
@@ -76,30 +81,32 @@ public class UpgradeSCSSNodeSassPatternsCheck extends BaseUpgradeCheck {
 		String interpolation = matcher.group(3);
 
 		if (!interpolation.isEmpty()) {
-			if (interpolation.contains("#{")) {
-				String variableName = StringUtil.replace(
-					interpolation, "#{", "' + ");
+			String[] interpolationParts = interpolation.split(
+				"((\\#\\{)|(\\}))");
 
-				sb.append(" + '");
-				sb.append(variableName);
-			}
-			else {
-				sb.append(" + '");
-				sb.append(interpolation);
-				sb.append("'}");
+			for (String interpolationPart : interpolationParts) {
+				if (interpolationPart.contains("$")) {
+					sb.append(" + ");
+					sb.append(interpolationPart);
+				}
+				else if (!interpolationPart.isEmpty()) {
+					sb.append(" + '");
+					sb.append(interpolationPart);
+					sb.append("'");
+				}
 			}
 		}
-		else {
-			sb.append(StringPool.CLOSE_CURLY_BRACE);
-		}
+
+		sb.append(StringPool.CLOSE_CURLY_BRACE);
 
 		return sb.toString();
 	}
 
 	private static final Pattern _divisionPattern = Pattern.compile(
-		"(\\$\\w+|[0-9.]+)\\s*\\/\\s*(\\$\\w+|[0-9.]+)");
+		"(\\w+\\(.+,.+\\)|\\$\\w+|[0-9]+[.]*[0-9]*)\\s*\\/\\s*" +
+			"(\\w+\\(.+,.+\\)|\\$\\w+|[0-9]+[.]*[0-9]*)");
 	private static final Pattern _interpolationPattern = Pattern.compile(
 		"([\\w-\\.]+)\\#\\{([\\w\\.\\$\\(\\), \\&]+)" +
-			"\\}([\\w-\\.\\#\\{\\.\\$\\(\\)\\}]*)");
+			"\\}([\\w-\\.\\#\\{\\.\\$\\}]*)");
 
 }

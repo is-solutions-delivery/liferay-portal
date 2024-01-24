@@ -7,7 +7,6 @@ package com.liferay.jenkins.results.parser.jethr0;
 
 import com.liferay.jenkins.results.parser.JenkinsMaster;
 import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
-import com.liferay.jenkins.results.parser.Jethr0BuildUpdater;
 
 import java.io.IOException;
 
@@ -17,11 +16,14 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
+import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.Queue;
 import javax.jms.Session;
@@ -29,6 +31,7 @@ import javax.jms.TextMessage;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -37,16 +40,47 @@ import org.json.JSONObject;
 public abstract class BaseJethr0Client implements Jethr0Client {
 
 	@Override
+	public synchronized void close() throws IOException {
+		if (_connection == null) {
+			return;
+		}
+
+		synchronized (_messageConsumers) {
+			try {
+				for (MessageConsumer messageConsumer :
+						_messageConsumers.values()) {
+
+					if (messageConsumer != null) {
+						messageConsumer.close();
+					}
+				}
+
+				if (_connection != null) {
+					_connection.close();
+				}
+			}
+			catch (JMSException jmsException) {
+				throw new IOException(jmsException);
+			}
+			finally {
+				_connection = null;
+				_messageConsumers.clear();
+			}
+		}
+	}
+
+	@Override
 	public synchronized void connect() {
 		if (_connection != null) {
 			return;
 		}
 
 		ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
-			getActiveMQBrokerURL());
+			getJMSBrokerURL());
 
 		try {
-			_connection = connectionFactory.createConnection();
+			_connection = connectionFactory.createConnection(
+				getJMSUserName(), getJMSUserPassword());
 
 			_connection.start();
 		}
@@ -73,28 +107,31 @@ public abstract class BaseJethr0Client implements Jethr0Client {
 
 		jobJSONObject.put("id", Long.valueOf(jobId));
 
-		JSONObject parametersJSONObject = new JSONObject();
+		JSONArray parametersJSONArray = new JSONArray();
 
-		for (Map.Entry<String, String> jenkinsBuildParameter :
-				jenkinsBuildParameters.entrySet()) {
+		Set<String> parameterNames = new TreeSet<>(
+			jenkinsBuildParameters.keySet());
 
-			String jenkinsBuildParameterName = jenkinsBuildParameter.getKey();
-
-			if (!jenkinsBuildParameterName.matches("[A-Z0-9_]+")) {
+		for (String parameterName : parameterNames) {
+			if (!parameterName.matches("[A-Z0-9_]+")) {
 				continue;
 			}
 
-			String jobInvocationParameterValue =
-				jenkinsBuildParameter.getValue();
+			String parameterValue = jenkinsBuildParameters.get(parameterName);
 
-			if (JenkinsResultsParserUtil.isNullOrEmpty(
-					jobInvocationParameterValue)) {
-
+			if (JenkinsResultsParserUtil.isNullOrEmpty(parameterValue)) {
 				continue;
 			}
 
-			parametersJSONObject.put(
-				jenkinsBuildParameterName, jobInvocationParameterValue);
+			JSONObject parameterJSONObject = new JSONObject();
+
+			parameterJSONObject.put(
+				"name", parameterName
+			).put(
+				"value", parameterValue
+			);
+
+			parametersJSONArray.put(parameterJSONObject);
 		}
 
 		JSONObject buildJSONObject = new JSONObject();
@@ -108,7 +145,7 @@ public abstract class BaseJethr0Client implements Jethr0Client {
 		).put(
 			"name", buildName
 		).put(
-			"parameters", parametersJSONObject
+			"parameters", parametersJSONArray.toString()
 		);
 
 		JSONObject jsonObject = new JSONObject();
@@ -116,38 +153,29 @@ public abstract class BaseJethr0Client implements Jethr0Client {
 		jsonObject.put(
 			"build", buildJSONObject
 		).put(
-			"eventTrigger", EventTrigger.CREATE_BUILD
+			"eventType", EventType.CREATE_BUILD
 		).put(
 			"job", jobJSONObject
 		);
 
-		sendMessageToJethr0(jsonObject.toString());
+		sendJRPMessageToJethr0(jsonObject.toString());
 	}
 
 	@Override
-	public synchronized void disconnect() {
-		if (_connection == null) {
-			return;
-		}
+	public void createBuildRun(long buildId) {
+		JSONObject buildJSONObject = new JSONObject();
 
-		try {
-			for (MessageConsumer messageConsumer : _messageConsumers.values()) {
-				if (messageConsumer != null) {
-					messageConsumer.close();
-				}
-			}
+		buildJSONObject.put("id", buildId);
 
-			if (_connection != null) {
-				_connection.close();
-			}
-		}
-		catch (JMSException jmsException) {
-			throw new RuntimeException(jmsException);
-		}
-		finally {
-			_connection = null;
-			_messageConsumers.clear();
-		}
+		JSONObject jsonObject = new JSONObject();
+
+		jsonObject.put(
+			"build", buildJSONObject
+		).put(
+			"eventType", EventType.CREATE_BUILD_RUN
+		);
+
+		sendJRPMessageToJethr0(jsonObject.toString());
 	}
 
 	@Override
@@ -178,15 +206,33 @@ public abstract class BaseJethr0Client implements Jethr0Client {
 	}
 
 	@Override
-	public void sendMessageToJethr0(String message) {
+	public void sendGitHubMessageToJethr0(String message) {
 		connect();
 
 		try {
 			Session session = _connection.createSession(
 				false, Session.AUTO_ACKNOWLEDGE);
 
-			Queue queue = session.createQueue(
-				getActiveMQJRPToJethr0QueueName());
+			Queue queue = session.createQueue(getJMSGitHubToJethr0QueueName());
+
+			MessageProducer messageProducer = session.createProducer(queue);
+
+			messageProducer.send(session.createTextMessage(message));
+		}
+		catch (JMSException jmsException) {
+			throw new RuntimeException(jmsException);
+		}
+	}
+
+	@Override
+	public void sendJRPMessageToJethr0(String message) {
+		connect();
+
+		try {
+			Session session = _connection.createSession(
+				false, Session.AUTO_ACKNOWLEDGE);
+
+			Queue queue = session.createQueue(getJMSJRPToJethr0QueueName());
 
 			MessageProducer messageProducer = session.createProducer(queue);
 
@@ -215,66 +261,63 @@ public abstract class BaseJethr0Client implements Jethr0Client {
 	}
 
 	@Override
-	public void subscribe(Jethr0BuildUpdater jethr0BuildUpdater) {
-		String jenkinsBuildID = jethr0BuildUpdater.getJenkinsBuildID();
+	public void subscribe(
+			MessageListener messageListener, String messageSelector)
+		throws JMSException {
 
-		if (JenkinsResultsParserUtil.isNullOrEmpty(jenkinsBuildID) ||
-			_messageConsumers.containsKey(jenkinsBuildID)) {
+		synchronized (_messageConsumers) {
+			if (_messageConsumers.containsKey(messageSelector)) {
+				return;
+			}
 
-			return;
-		}
+			ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
+				getJMSBrokerURL());
 
-		ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(
-			getActiveMQBrokerURL());
-
-		try {
-			Connection connection = connectionFactory.createConnection();
+			Connection connection = connectionFactory.createConnection(
+				getJMSUserName(), getJMSUserPassword());
 
 			connection.start();
 
 			Session session = connection.createSession(
 				false, Session.AUTO_ACKNOWLEDGE);
 
-			Queue queue = session.createQueue(
-				getActiveMQJethr0ToJRPQueueName());
+			Queue queue = session.createQueue(getJMSJethr0ToJRPQueueName());
 
 			MessageConsumer messageConsumer = session.createConsumer(
-				queue, jethr0BuildUpdater.getMessageSelector());
+				queue, messageSelector);
 
-			messageConsumer.setMessageListener(jethr0BuildUpdater);
+			messageConsumer.setMessageListener(messageListener);
 
-			_messageConsumers.put(jenkinsBuildID, messageConsumer);
-		}
-		catch (JMSException jmsException) {
-			throw new RuntimeException(jmsException);
+			_messageConsumers.put(messageSelector, messageConsumer);
+
+			System.out.println(
+				"Subscribed with selector \"" + messageSelector + "\"");
 		}
 	}
 
 	@Override
-	public void unsubscribe(Jethr0BuildUpdater jethr0BuildUpdater) {
-		String jenkinsBuildID = jethr0BuildUpdater.getJenkinsBuildID();
+	public void unsubscribe(
+			MessageListener messageListener, String messageSelector)
+		throws JMSException {
 
-		if (JenkinsResultsParserUtil.isNullOrEmpty(jenkinsBuildID) ||
-			!_messageConsumers.containsKey(jenkinsBuildID)) {
+		synchronized (_messageConsumers) {
+			if (!_messageConsumers.containsKey(messageSelector)) {
+				return;
+			}
 
-			return;
-		}
-
-		try {
 			MessageConsumer messageConsumer = _messageConsumers.get(
-				jenkinsBuildID);
+				messageSelector);
 
 			if (messageConsumer == null) {
 				return;
 			}
 
 			messageConsumer.close();
-		}
-		catch (JMSException jmsException) {
-			throw new RuntimeException(jmsException);
-		}
-		finally {
-			_messageConsumers.remove(jenkinsBuildID);
+
+			_messageConsumers.remove(messageSelector);
+
+			System.out.println(
+				"Unsubscribed with selector \"" + messageSelector + "\"");
 		}
 	}
 
@@ -283,18 +326,6 @@ public abstract class BaseJethr0Client implements Jethr0Client {
 
 		_environment = _getEnvironment();
 	}
-
-	protected abstract String getActiveMQBrokerURL();
-
-	protected abstract String getActiveMQJethr0ToJRPQueueName();
-
-	protected abstract String getActiveMQJRPToJethr0QueueName();
-
-	protected abstract URL getActiveMQURL();
-
-	protected abstract String getActiveMQUserName();
-
-	protected abstract String getActiveMQUserPassword();
 
 	protected String getBuildPropertyString(String buildPropertyName) {
 		Environment environment = getEnvironment();
@@ -316,6 +347,18 @@ public abstract class BaseJethr0Client implements Jethr0Client {
 			throw new RuntimeException(malformedURLException);
 		}
 	}
+
+	protected abstract String getJMSBrokerURL();
+
+	protected abstract String getJMSGitHubToJethr0QueueName();
+
+	protected abstract String getJMSJethr0ToJRPQueueName();
+
+	protected abstract String getJMSJRPToJethr0QueueName();
+
+	protected abstract String getJMSUserName();
+
+	protected abstract String getJMSUserPassword();
 
 	protected abstract URL getLiferayDXPURL();
 

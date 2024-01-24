@@ -1,6 +1,6 @@
 {
 	"dependencies": {
-		"@clayui/pagination": "3.105.0",
+		"@clayui/pagination": "3.108.0",
 		"frontend-js-web": "*",
 		"react": "16.12.0"
 	},
@@ -10,5 +10,5 @@
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "6.2.6"
+	"version": "6.2.9"
 }

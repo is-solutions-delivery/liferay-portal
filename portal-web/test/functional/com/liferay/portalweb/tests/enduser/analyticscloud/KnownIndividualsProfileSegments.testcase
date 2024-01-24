@@ -25,10 +25,6 @@ definition {
 			ACUtils.addSiteAndPage();
 		}
 
-		task ("Connect the DXP to AC") {
-			ACDXPSettings.connectDXPtoAnalyticsCloud(siteName = "Site Name");
-		}
-
 		task ("Add 2 new users") {
 			for (var n : list "1,2") {
 				JSONUser.addUser(
@@ -39,8 +35,8 @@ definition {
 			}
 		}
 
-		task ("Sync the Contact Data") {
-			ACDXPSettings.syncNewContactData();
+		task ("Connect the DXP to AC") {
+			ACDXPSettings.connectDXPtoAnalyticsCloud(siteName = "Site Name");
 		}
 	}
 
@@ -130,11 +126,14 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8993 | Test Summary: Selecting a Segment in Individuals"
+	@ignore = "true"
 	@priority = 3
 	test AssertIndividualsSegmentSelected {
 		property test.run.type = "single";
 
-		var emailList = "user1@liferay.com,user2@liferay.com";
+		// AC Bug ticket: LRAC-14840
+
+		var emailList = "user1@liferay.com";
 
 		task ("View the page as different users") {
 			ACUtils.navigateToSitePageWithUser(
@@ -159,13 +158,7 @@ definition {
 
 				ACUtils.setItemName(itemName = ${segmentName});
 
-				if (${segmentName} == "Static Segment Test1") {
-					ACSegments.addStaticMultiMember(tableMember = "user1 user1,user2 user2");
-				}
-
-				if (${segmentName} == "Static Segment Test2") {
-					ACSegments.addStaticMultiMember(tableMember = "user1 user1");
-				}
+				ACSegments.addStaticMember(tableMember = "user1 user1");
 
 				ACSegments.saveSegment();
 			}
@@ -199,23 +192,9 @@ definition {
 	test OrderIndividualsAssociatedSegments {
 		property test.run.type = "single";
 
-		var emailList = "user1@liferay.com,user2@liferay.com,user3@liferay.com";
-
-		task ("Add one more new user") {
-			JSONUser.addUser(
-				userEmailAddress = "user3@liferay.com",
-				userFirstName = "user3",
-				userLastName = "user3",
-				userScreenName = "user3");
-		}
-
-		task ("Sync the Contact Data") {
-			ACDXPSettings.syncNewContactData();
-		}
-
 		task ("View the page as different users") {
 			ACUtils.navigateToSitePageWithUser(
-				emailList = ${emailList},
+				emailList = "user1@liferay.com",
 				pageName = "AC Page",
 				siteName = "Site Name");
 
@@ -236,17 +215,7 @@ definition {
 
 				ACUtils.setItemName(itemName = ${segmentName});
 
-				if (${segmentName} == "Static Segment Test1") {
-					ACSegments.addStaticMultiMember(tableMember = "user1 user1,user2 user2,user3 user3");
-				}
-
-				if (${segmentName} == "Static Segment Test2") {
-					ACSegments.addStaticMultiMember(tableMember = "user1 user1,user2 user2");
-				}
-
-				if (${segmentName} == "Static Segment Test3") {
-					ACSegments.addStaticMultiMember(tableMember = "user1 user1");
-				}
+				ACSegments.addStaticMember(tableMember = "user1 user1");
 
 				ACSegments.saveSegment();
 			}
@@ -300,16 +269,16 @@ definition {
 				name = "Static Segment Test1");
 		}
 
-		task ("Go to Segments and filter by "Membership"") {
+		task ("Go to Segments and filter by "Date Created"") {
 			ACSegments.filterAndOrderForSegLists(
-				filterName = "Members",
+				filterName = "Date Created",
 				key_dropdownName = "Order");
 		}
 
-		task ("Assert 3 segments in order filter by membership display") {
+		task ("Assert 3 segments in order filter by date created display") {
 			ACUtils.viewNameListInOrder(
 				index = 1,
-				name = "Static Segment Test1");
+				name = "Static Segment Test3");
 
 			ACUtils.viewNameListInOrder(
 				index = 2,
@@ -317,17 +286,17 @@ definition {
 
 			ACUtils.viewNameListInOrder(
 				index = 3,
-				name = "Static Segment Test3");
+				name = "Static Segment Test1");
 		}
 
-		task ("Check descending arrow descending of table title of Membership") {
+		task ("Check descending arrow descending of the Date Created column") {
 			ACUtils.orderTableTitleArrow(type = "up");
 		}
 
-		task ("Assert 3 segments in order filter by membership display") {
+		task ("Assert 3 segments in order filter by date created display") {
 			ACUtils.viewNameListInOrder(
 				index = 1,
-				name = "Static Segment Test3");
+				name = "Static Segment Test1");
 
 			ACUtils.viewNameListInOrder(
 				index = 2,
@@ -335,7 +304,7 @@ definition {
 
 			ACUtils.viewNameListInOrder(
 				index = 3,
-				name = "Static Segment Test1");
+				name = "Static Segment Test3");
 		}
 	}
 

@@ -38,6 +38,442 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-182022. The content page shouldn’t be locked when change the master page or style book."
+	@priority = 4
+	test CannotLockContentPageWhenChangeMasterPageOrStyleBook {
+		task ("Given a page designer has a content page") {
+			var siteName = selenium.getText("Home#SITE_NAME");
+
+			JSONLayoutpagetemplate.addMasterPageTemplateEntry(
+				groupName = "Test Site Name",
+				masterPageTemplateEntryName = "Master Page Template",
+				masterPageTemplateStatus = "Approved");
+
+			JSONStylebooks.addStyleBookEntry(
+				groupName = "Test Site Name",
+				styleBookEntryName = "Test Style Book Name");
+
+			JSONLayout.addPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = "Test Site Name");
+		}
+
+		task ("When the page designer changes the master page") {
+			PageEditor.gotoTab(tabName = "Page Design Options");
+
+			MastersPageTemplates.selectMasterViaPageDesignOptions(masterLayoutName = "Master Page Template");
+		}
+
+		task ("Then the content page shouldn't be locked") {
+			var baseURL = PropsUtil.get("portal.url");
+
+			Open.openInTheNewTab(value1 = "${baseURL}/group/control_panel/manage?p_p_id=com_liferay_users_admin_web_portlet_UsersAdminPortlet");
+
+			User.impersonateCP(
+				siteName = ${siteName},
+				userScreenName = "usersn");
+
+			UserBar.gotoMySite(siteName = "Test Site Name");
+
+			ContentPages.gotoPageEditor();
+
+			PageEditor.gotoTab(tabName = "Page Design Options");
+
+			AssertElementPresent(
+				key_card = "Master Page Template",
+				locator1 = "Card#CARD_SELECTED");
+
+			Close.closeWindow();
+		}
+
+		task ("When the page designer changes the style book") {
+			PageEditor.gotoTab(tabName = "Page Design Options");
+
+			StyleBooks.selectStyleBookViaPageDesignOptions(styleBookName = "Test Style Book Name");
+		}
+
+		task ("Then the content page shouldn't be locked") {
+			SelectWindow.selectPopUp(value1 = "null");
+
+			User.impersonateCP(
+				siteName = ${siteName},
+				userScreenName = "usersn");
+
+			UserBar.gotoMySite(siteName = "Test Site Name");
+
+			ContentPages.gotoPageEditor();
+
+			PageEditor.gotoTab(tabName = "Page Design Options");
+
+			Navigator.gotoNavTab(navTab = "Style Book");
+
+			AssertElementPresent(
+				key_card = "Test Style Book Name",
+				locator1 = "Card#CARD_SELECTED");
+		}
+	}
+
+	@description = "This is a test for LPS-182022. The content page shouldn’t be locked when edit the displayed content."
+	@priority = 4
+	test CannotLockContentPageWhenEditDisplayedContent {
+		task ("Given a page designer has a content page with displayed content") {
+			var siteName = selenium.getText("Home#SITE_NAME");
+
+			JSONWebcontent.addWebContent(
+				content = "Web Content Content",
+				groupName = "Test Site Name",
+				title = "Web Content Title");
+
+			JSONLayout.addPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = "Test Site Name");
+
+			PageEditor.addFragment(
+				collectionName = "Content Display",
+				fragmentName = "Content Display");
+
+			PageEditor.editContentDisplay(
+				fragmentName = "Content Display",
+				webcontent = "true",
+				webContentContent = "Web Content Content",
+				webContentTitle = "Web Content Title");
+
+			PageEditor.publish();
+		}
+
+		task ("When the page designer edit the displayed content") {
+			ContentPages.gotoPageEditor();
+
+			PageEditor.gotoEllipsisMenuItemInPageContentPanel(
+				itemName = "Web Content Title",
+				menuItem = "Edit");
+
+			WebContent.addCP(webContentTitle = "Welcome to Liferay");
+		}
+
+		task ("Then the content page shouldn't be locked") {
+			var baseURL = PropsUtil.get("portal.url");
+
+			Open.openInTheNewTab(value1 = "${baseURL}/group/control_panel/manage?p_p_id=com_liferay_users_admin_web_portlet_UsersAdminPortlet");
+
+			User.impersonateCP(
+				siteName = ${siteName},
+				userScreenName = "usersn");
+
+			UserBar.gotoMySite(siteName = "Test Site Name");
+
+			ContentPages.gotoPageEditor();
+
+			ContentPages.viewFragmentText(
+				assetType = "journal",
+				fragmentName = "Content Display",
+				text = "Web Content Content");
+		}
+	}
+
+	@description = "This is a test for LPS-182022. The user could edit the master page or style book used by a locked content page."
+	@priority = 4
+	test EditMasterPageOrStyleBookUsedByLockedContentPage {
+		task ("Given a page designer has a locked content page using master page and style book") {
+			var siteName = selenium.getText("Home#SITE_NAME");
+
+			JSONLayoutpagetemplate.addMasterPageTemplateEntry(
+				groupName = "Test Site Name",
+				masterPageTemplateEntryName = "Master Page Template",
+				masterPageTemplateStatus = "Approved");
+
+			JSONStylebooks.addStyleBookEntry(
+				groupName = "Test Site Name",
+				styleBookEntryName = "Test Style Book Name");
+
+			JSONLayout.addPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = "Test Site Name");
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+
+			PageEditor.gotoTab(tabName = "Page Design Options");
+
+			MastersPageTemplates.selectMasterViaPageDesignOptions(masterLayoutName = "Master Page Template");
+
+			StyleBooks.selectStyleBookViaPageDesignOptions(styleBookName = "Test Style Book Name");
+		}
+
+		task ("When the page designer navigates to the Masters admin") {
+			var baseURL = PropsUtil.get("portal.url");
+
+			Open.openInTheNewTab(value1 = "${baseURL}/group/control_panel/manage?p_p_id=com_liferay_users_admin_web_portlet_UsersAdminPortlet");
+
+			User.impersonateCP(
+				siteName = ${siteName},
+				userScreenName = "usersn");
+
+			UserBar.gotoMySite(siteName = "Test Site Name");
+
+			ProductMenu.gotoPortlet(
+				category = "Design",
+				portlet = "Page Templates");
+		}
+
+		task ("Then the page designer could edit the master page") {
+			MastersPageTemplatesAdmin.gotoMasters(masterLayoutName = "Master Page Template");
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				dropTarget = "Header",
+				fragmentName = "Heading",
+				scope = "Master");
+
+			MastersPageTemplates.propagateChange();
+		}
+
+		task ("When the page designer navigates to the Style Books admin") {
+			ProductMenu.gotoPortlet(
+				category = "Design",
+				portlet = "Style Books");
+		}
+
+		task ("Then the page designer could edit the style book") {
+			StyleBooksAdmin.gotoStyleBook(styleBookName = "Test Style Book Name");
+
+			StyleBooks.selectForm(formName = "Buttons");
+
+			StyleBooks.expandSection(sectionName = "Button Primary");
+
+			Type(
+				key_fieldLabel = "Background Color",
+				key_groupLabel = "Button Primary",
+				locator1 = "TextInput#GROUPED_TEXT_INPUT",
+				value1 = "#00FF00");
+
+			StyleBooks.clickManagementBar();
+
+			StyleBooks.waitForAutoSave();
+
+			StyleBooks.clickPublish();
+		}
+	}
+
+	@description = "This is a test for LPS-182022. The user could overwrite the locked master page by import."
+	@priority = 4
+	test OverwriteLockedMasterPageByImport {
+		task ("Given a page designer has a locked master page") {
+			var siteName = selenium.getText("Home#SITE_NAME");
+
+			JSONLayoutpagetemplate.addMasterPageTemplateEntry(
+				groupName = "Test Site Name",
+				masterPageTemplateEntryName = "Master Page Template",
+				masterPageTemplateStatus = "Approved");
+
+			MastersPageTemplatesAdmin.openMastersAdmin(siteURLKey = "test-site-name");
+
+			MastersPageTemplatesAdmin.gotoMastersEllipsisItem(
+				item = "Export",
+				masterLayoutName = "Master Page Template");
+
+			DownloadTempFile();
+
+			MastersPageTemplatesAdmin.gotoMasters(masterLayoutName = "Master Page Template");
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				dropTarget = "Header",
+				fragmentName = "Button",
+				scope = "Master");
+		}
+
+		task ("When the page designer navigates to the Masters admin") {
+			var baseURL = PropsUtil.get("portal.url");
+
+			Open.openInTheNewTab(value1 = "${baseURL}/group/control_panel/manage?p_p_id=com_liferay_users_admin_web_portlet_UsersAdminPortlet");
+
+			User.impersonateCP(
+				siteName = ${siteName},
+				userScreenName = "usersn");
+
+			UserBar.gotoMySite(siteName = "Test Site Name");
+
+			ProductMenu.gotoPortlet(
+				category = "Design",
+				portlet = "Page Templates");
+		}
+
+		task ("Then the page designer could overwrite the locked master page by import") {
+			MastersPageTemplatesAdmin.importMastersFromTempFolder(importOption = "Overwrite Existing Items");
+
+			MastersPageTemplatesAdmin.viewMastersPresent(masterLayoutName = "Master Page Template");
+		}
+	}
+
+	@description = "This is a test for LPS-182022. The user could propagate the changes of fragment to a locked content page."
+	@priority = 4
+	test PropagateChangesOfFragmentToLockedContentPage {
+		task ("Given a page designer has a locked content page with custom fragment") {
+			var siteName = selenium.getText("Home#SITE_NAME");
+
+			JSONFragment.addFragmentCollection(
+				groupName = "Test Site Name",
+				name = "Fragment Set Name");
+
+			var newLine = '''
+''';
+			var htmlSnippet = '''
+<div class="fragment-name">
+	Fragment Example
+</div>''';
+
+			var htmlSnippet = StringUtil.regexReplaceAll(${htmlSnippet}, ${newLine}, "");
+			var jsonSnippet = '''
+{
+    "fieldSets": [
+        {
+            "fields" : [
+                {
+                    "label": "Link",
+                    "name": "Link",
+                    "type": "url"
+                }
+            ]
+        }
+    ]
+}''';
+
+			var jsonSnippet = StringUtil.regexReplaceAll(${jsonSnippet}, ${newLine}, "");
+
+			JSONFragment.addSection(
+				collectionName = "Fragment Set Name",
+				configuration = ${jsonSnippet},
+				fragmentStatus = "Approved",
+				groupName = "Test Site Name",
+				html = ${htmlSnippet},
+				name = "Fragment Name");
+
+			JSONLayout.addPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = "Test Site Name");
+
+			PageEditor.addFragment(
+				collectionName = "Fragment Set Name",
+				fragmentName = "Fragment Name");
+		}
+
+		task ("When the page designer makes some changes to custom fragment") {
+			var baseURL = PropsUtil.get("portal.url");
+
+			Open.openInTheNewTab(value1 = "${baseURL}/group/control_panel/manage?p_p_id=com_liferay_users_admin_web_portlet_UsersAdminPortlet");
+
+			User.impersonateCP(
+				siteName = ${siteName},
+				userScreenName = "usersn");
+
+			UserBar.gotoMySite(siteName = "Test Site Name");
+
+			ProductMenu.gotoPortlet(
+				category = "Design",
+				portlet = "Fragments");
+
+			FragmentsAdminNavigator.gotoCollection(collectionName = "Fragment Set Name");
+
+			FragmentsAdminNavigator.gotoEntryEllipsisItem(
+				entry = "Fragment Name",
+				item = "Edit");
+
+			var htmlSnippet = '''
+<div class="fragment-name">
+	Heading Example
+</div>''';
+
+			FragmentsEditor.typeHtmlEditor(content = ${htmlSnippet});
+
+			FragmentsEditor.waitForAutoSave();
+
+			FragmentsEditor.publish();
+		}
+
+		task ("Then the page designer could propagate changes of custom fragment to locked content page") {
+			FragmentsAdminNavigator.gotoEntryEllipsisItem(
+				entry = "Fragment Name",
+				item = "View Usages");
+
+			FragmentsAdmin.propagateChanges();
+		}
+	}
+
+	@description = "This is a test for LPS-182022. The user should be redirected to the Page In Use when back to page editor of a locked content page."
+	@priority = 4
+	test RedirectToPageInUseWhenBackToPageEditorOfLockedContentPage {
+		task ("Given a page designer accesses to the configuration page via page editor") {
+			var siteName = selenium.getText("Home#SITE_NAME");
+
+			JSONLayout.addPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = "Test Site Name");
+
+			var baseURL = PropsUtil.get("portal.url");
+
+			Open.openInTheNewTab(value1 = "${baseURL}/group/control_panel/manage?p_p_id=com_liferay_users_admin_web_portlet_UsersAdminPortlet");
+
+			User.impersonateCP(
+				siteName = ${siteName},
+				userScreenName = "usersn");
+
+			UserBar.gotoMySite(siteName = "Test Site Name");
+
+			ContentPages.gotoPageEditor();
+
+			LexiconEntry.gotoHeaderMenuItem(menuItem = "Configure");
+		}
+
+		task ("When the content page is locked") {
+			SelectWindow(value1 = "title=Test Page Name - Test Site Name - ${siteName} (Editing)");
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+		}
+
+		task ("Then the page designer should be redirected to the Page in Use after back to page editor") {
+			SelectWindow(value1 = "title=General - General - Test Page Name - Test Site Name - ${siteName} (Configuring)");
+
+			Navigator.gotoBack();
+
+			AssertVisible(
+				key_title = "Page in Use",
+				locator1 = "Header#H1_TITLE");
+
+			Button.click(button = "Go to Test Page Name");
+
+			ControlMenu.viewHeaderDraftTitle(headerTitle = "Test Page Name");
+		}
+	}
+
 	@description = "This is a test for LPS-182022. The user should be redirected to the Page In Use when discard the draft of a locked content page."
 	@priority = 4
 	test RedirectToPageInUseWhenDiscardDraftOfLockedContentPage {
@@ -142,6 +578,8 @@ definition {
 	@description = "This is a test for LPS-182022. The user should be redirected to the Page In Use when access to edit mode of a locked content page."
 	@priority = 5
 	test RedirectToPageInUseWhenEditLockedContentPage {
+		property portal.acceptance = "true";
+
 		task ("Given a page designer has a locked content page") {
 			var siteName = selenium.getText("Home#SITE_NAME");
 

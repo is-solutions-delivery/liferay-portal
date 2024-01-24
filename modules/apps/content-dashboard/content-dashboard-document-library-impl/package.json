@@ -3,6 +3,7 @@
 		"@liferay/content-dashboard-web": "*",
 		"react": "16.12.0"
 	},
+	"main": "js/components/SelectFileExtensionWrapper.js",
 	"name": "@liferay/content-dashboard-document-library-impl",
 	"private": true,
 	"scripts": {
@@ -10,5 +11,5 @@
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "1.0.41"
+	"version": "1.0.42"
 }

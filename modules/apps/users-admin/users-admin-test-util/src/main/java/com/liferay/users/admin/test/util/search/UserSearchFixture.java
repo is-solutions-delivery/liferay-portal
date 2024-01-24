@@ -7,6 +7,7 @@ package com.liferay.users.admin.test.util.search;
 
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.service.AssetTagLocalServiceUtil;
+import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.Contact;
@@ -446,16 +447,24 @@ public class UserSearchFixture {
 		return map;
 	}
 
-	public Map<String, String> toMap(User user, String... tags) {
+	public Map<String, String> toMap(
+			User user, UnsafeFunction<String, String, Exception> unsafeFunction,
+			String... tags)
+		throws Exception {
+
 		return Collections.singletonMap(
-			user.getScreenName(), toStringTags(tags));
+			user.getScreenName(), toStringTags(tags, unsafeFunction));
 	}
 
-	public String toStringTags(String[] tags) {
+	public String toStringTags(
+			String[] tags,
+			UnsafeFunction<String, String, Exception> unsafeFunction)
+		throws Exception {
+
 		List<String> list = new ArrayList<>(tags.length);
 
 		for (String tag : tags) {
-			list.add(StringUtil.toLowerCase(tag));
+			list.add(unsafeFunction.apply(tag));
 		}
 
 		Collections.sort(list);

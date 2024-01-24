@@ -30,7 +30,7 @@ definition {
 	}
 
 	@priority = 4
-	test CanDeleteAPIFromApiBuilderAndApi {
+	test CanDeleteAPIFromAPIBuilderAndAPI {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
 
@@ -64,7 +64,7 @@ definition {
 	}
 
 	@priority = 4
-	test CanDeletePublishedApiAndAssociatedEntities {
+	test CanDeletePublishedAPIAndAssociatedEntities {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
 
@@ -74,14 +74,14 @@ definition {
 
 		task ("And Given with postAPISchema to create a Schema associate to the API application") {
 			SchemaAPI.createAPISchema(
-				externalReferenceCode = "test",
+				apiApplicationERC = "test",
 				mainObjectDefinitionERC = "L_API_APPLICATION",
 				name = "mySchema");
 		}
 
 		task ("And Given with postAPIEndpoint to create an Endpoint associate to API application and Schema") {
 			EndpointAPI.createAPIEndpoint(
-				externalReferenceCode = "test",
+				apiApplicationERC = "test",
 				name = "myEndpoint",
 				path = "/myEndpoint");
 		}
@@ -122,20 +122,20 @@ definition {
 	}
 
 	@priority = 4
-	test CanDeleteUnpublishedApiAndAssociatedEntities {
+	test CanDeleteUnpublishedAPIAndAssociatedEntities {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
 
 		task ("And Given with postAPISchema to create a Schema associate to the API application") {
 			SchemaAPI.createAPISchema(
-				externalReferenceCode = "test",
+				apiApplicationERC = "test",
 				mainObjectDefinitionERC = "L_API_APPLICATION",
 				name = "mySchema");
 		}
 
 		task ("And Given with postAPIEndpoint to create an Endpoint associate to API application and Schema") {
 			EndpointAPI.createAPIEndpoint(
-				externalReferenceCode = "test",
+				apiApplicationERC = "test",
 				name = "myEndpoint",
 				path = "/myEndpoint");
 		}
@@ -176,7 +176,7 @@ definition {
 	}
 
 	@priority = 4
-	test CannotDeleteApiWithIncorrectTitleValue {
+	test CannotDeleteAPIWithIncorrectTitleValue {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
 
@@ -205,7 +205,7 @@ definition {
 	}
 
 	@priority = 4
-	test CanSeeDeleteApiApplicationDialog {
+	test CanSeeDeleteAPIApplicationDialog {
 		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
 

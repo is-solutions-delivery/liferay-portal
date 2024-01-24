@@ -15,16 +15,13 @@ definition {
 	property testcase.url = "file:///opt/dev/projects/github/liferay-portal/";
 	property testray.main.component.name = "Upgrades Search";
 
+	setUp {
+		Upgrade.startReleasedBundle();
+	}
+
 	@priority = 5
 	test ViewSearchPortletsConfiguration {
 		property portal.suite.search.engine = "elasticsearch7,solr";
-
-		var releaseBundleVersion = PropsUtil.get("test.released.release.bundle.version");
-		var releaseBundleZipURL = PropsUtil.get("test.released.test.portal.bundle.zip.url");
-
-		AntCommands.runCommand("build-test.xml", "prepare-upgrade-released-bundle-test-environment -Dtest.released.release.bundle.version=${releaseBundleVersion} -Dtest.released.test.portal.bundle.zip.url=${releaseBundleZipURL}");
-
-		Portlet.startServer(keepOsGiState = "true");
 
 		User.firstLoginUI(
 			password = "test",
@@ -55,33 +52,9 @@ definition {
 			displayFrequencies = "disable",
 			portletName = "Type Facet");
 
-		Portlet.shutdownServer();
-
-		AntCommands.runCommand("build-test.xml", "prepare-upgrade-original-bundle-test-environment");
-
-		Portlet.startServer(deleteLiferayHome = "false");
+		Upgrade.restoreOriginalBundleAndUpgrade();
 
 		TestUtils.hardRefresh();
-
-		User.firstLoginUI(
-			password = "test",
-			specificURL = "http://localhost:8080",
-			userEmailAddress = "test@liferay.com");
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Configuration",
-			panel = "Control Panel",
-			portlet = "Search");
-
-		Click(
-			key_navItem = "Index Actions",
-			locator1 = "NavBar#NAV_ITEM_LINK");
-
-		SearchAdministration.startReindex(action = "All Search Indexes");
-
-		SearchAdministration.waitForReindexFinished(waitForReindexRequest = "true");
-
-		Navigator.openSpecificURL(url = "http://localhost:8080");
 
 		SearchPage.searchEmbedded(searchTerm = "WC Title");
 
@@ -130,13 +103,6 @@ definition {
 	@priority = 5
 	test ViewSXPBlueprintsAndElements {
 		property portal.suite.search.engine = "elasticsearch7";
-
-		var releaseBundleVersion = PropsUtil.get("test.released.release.bundle.version");
-		var releaseBundleZipURL = PropsUtil.get("test.released.test.portal.bundle.zip.url");
-
-		AntCommands.runCommand("build-test.xml", "prepare-upgrade-released-bundle-test-environment -Dtest.released.release.bundle.version=${releaseBundleVersion} -Dtest.released.test.portal.bundle.zip.url=${releaseBundleZipURL}");
-
-		Portlet.startServer(keepOsGiState = "true");
 
 		User.firstLoginUI(
 			password = "test",
@@ -388,33 +354,9 @@ definition {
 
 		PortletEntry.save();
 
-		Portlet.shutdownServer();
-
-		AntCommands.runCommand("build-test.xml", "prepare-upgrade-original-bundle-test-environment");
-
-		Portlet.startServer(deleteLiferayHome = "false");
-
-		Navigator.openSpecificURL(url = "http://localhost:8080");
+		Upgrade.restoreOriginalBundleAndUpgrade();
 
 		TestUtils.hardRefresh();
-
-		User.firstLoginUI(
-			password = "test",
-			specificURL = "http://localhost:8080",
-			userEmailAddress = "test@liferay.com");
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Configuration",
-			panel = "Control Panel",
-			portlet = "Search");
-
-		Click(
-			key_navItem = "Index Actions",
-			locator1 = "NavBar#NAV_ITEM_LINK");
-
-		SearchAdministration.startReindex(action = "All Search Indexes");
-
-		SearchAdministration.waitForReindexFinished(waitForReindexRequest = "true");
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Search Experiences",

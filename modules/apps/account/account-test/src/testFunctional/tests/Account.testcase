@@ -352,7 +352,7 @@ definition {
 				key_title = "Set Default Billing Address",
 				locator1 = "IFrame#MODAL_ANY");
 
-			ManagementBar.viewNoSubheaderInFilterAndOrder(subheadItem = "Filter by Type");
+			AssertElementNotPresent(locator1 = "ManagementBar#FILTER");
 
 			LexiconEntry.viewEntryName(rowEntry = "Liferay, Inc.");
 
@@ -368,7 +368,7 @@ definition {
 				key_title = "Set Default Shipping Address",
 				locator1 = "IFrame#MODAL_ANY");
 
-			ManagementBar.viewNoSubheaderInFilterAndOrder(subheadItem = "Filter by Type");
+			AssertElementNotPresent(locator1 = "ManagementBar#FILTER");
 
 			LexiconEntry.viewEntryName(rowEntry = "Liferay Dalian Software Co., Ltd.");
 
@@ -683,7 +683,7 @@ definition {
 
 		ClickNoError(
 			key_text = "times-circle",
-			locator1 = "Icon#ANY");
+			locator1 = "ManagementBar#ANY_ICON");
 
 		AssertConfirm(value1 = "Are you sure you want to remove the selected users?");
 
@@ -1018,7 +1018,7 @@ definition {
 
 			ClickNoError(
 				key_text = "times-circle",
-				locator1 = "Icon#ANY");
+				locator1 = "ManagementBar#ANY_ICON");
 
 			AssertConfirm.waitForConfirmation(value1 = "Are you sure you want to remove the selected users?");
 
@@ -1546,7 +1546,7 @@ definition {
 
 		ClickNoError(
 			key_text = "hidden",
-			locator1 = "Icon#ANY");
+			locator1 = "ManagementBar#ANY_ICON");
 
 		AssertConfirm.waitForConfirmation(value1 = "Are you sure you want to deactivate this?");
 
@@ -1572,7 +1572,7 @@ definition {
 
 		ClickNoError(
 			key_text = "undo",
-			locator1 = "Icon#ANY");
+			locator1 = "ManagementBar#ANY_ICON");
 
 		AssertTextEquals.assertPartialText(
 			locator1 = "Message#EMPTY_INFO",
@@ -1773,7 +1773,7 @@ definition {
 
 		ClickNoError(
 			key_text = "times-circle",
-			locator1 = "Icon#ANY");
+			locator1 = "ManagementBar#ANY_ICON");
 
 		AssertConfirm.waitForConfirmation(value1 = "Are you sure you want to delete this? It will be deleted immediately.");
 
@@ -1904,7 +1904,7 @@ definition {
 
 		ClickNoError(
 			key_text = "times-circle",
-			locator1 = "Icon#ANY");
+			locator1 = "ManagementBar#ANY_ICON");
 
 		AssertConfirm.waitForConfirmation(value1 = "Are you sure you want to delete this? It will be deleted immediately.");
 
@@ -1949,10 +1949,7 @@ definition {
 	@description = "This test adds a custom field for an account entry and asserts field can be updated."
 	@priority = 4
 	test CanEditAccountCustomField {
-		ApplicationsMenu.gotoPortlet(
-			category = "Configuration",
-			panel = "Control Panel",
-			portlet = "Custom Fields");
+		CustomFields.openCustomFieldAdmin();
 
 		CustomFields.addCP(
 			customFieldName = "Text Field",
@@ -2981,7 +2978,7 @@ definition {
 
 		ClickNoError(
 			key_text = "times-circle",
-			locator1 = "Icon#ANY");
+			locator1 = "ManagementBar#ANY_ICON");
 
 		AssertConfirm.waitForConfirmation(value1 = "Are you sure you want to remove the selected users?");
 
@@ -3618,6 +3615,83 @@ definition {
 		}
 	}
 
+	@description = "Automation for LPS-199518. This ticket is about XSS. Role and Organization data should be escaped and rendered as a string."
+	@priority = 5
+	test CanViewRoleAndOrganizationsPrintedAsScript {
+		property portal.acceptance = "true";
+
+		task ("Given an account with a Role as a script and an user") {
+			JSONAccountEntry.addAccountEntry(
+				accountEntryName = "A1",
+				accountEntryType = "Business");
+
+			Account.openAccountsAdmin();
+
+			LexiconEntry.gotoEntry(rowEntry = "A1");
+
+			var scriptRole = '''My title<script>confirm("compromised")</script>''';
+			var scriptOrg = '''My org1<script>confirm("compromised")</script>''';
+
+			Account.addOwnedAccountRole(accountRoleTitle = ${scriptRole});
+
+			Account.openAccountsAdmin();
+
+			JSONUser.addUser(
+				userEmailAddress = "U1@liferay.com",
+				userFirstName = "U1fn",
+				userLastName = "U1ln",
+				userScreenName = "U1sn");
+		}
+
+		task ("And assign the user to the new account and a role") {
+			LexiconEntry.gotoEntry(rowEntry = "A1");
+
+			Account.assignUsers(
+				accountName = "A1",
+				assigneeName = "U1fn");
+
+			Account.addAssigneeToRoleViaUsersTab(
+				accountRoleTitle = ${scriptRole},
+				accountUserName = "U1fn U1ln");
+		}
+
+		task ("Then check that the Account role is rendered as a string") {
+			AssertTextEquals(
+				key_columnName = "lfr-account-roles-column",
+				key_rowEntry = "U1fn U1ln",
+				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER_TD",
+				value1 = ${scriptRole});
+		}
+
+		task ("And given a new organization with a title as a script") {
+			JSONOrganization.addOrganization(organizationName = ${scriptOrg});
+		}
+
+		task ("And add the organization to the new account") {
+			Account.openAccountsAdmin();
+
+			LexiconEntry.gotoEntry(rowEntry = "A1");
+
+			Account.assignOrganizations(
+				accountName = "A1",
+				assigneeName = ${scriptOrg});
+		}
+
+		task ("Then check that the Organizations name assigned to the new account is rendered as a script") {
+			Account.openAccountsAdmin();
+
+			AssertTextEquals(
+				key_columnName = "lfr-organizations-column",
+				key_rowEntry = "A1",
+				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER_TD",
+				value1 = ${scriptOrg});
+		}
+
+		JSONUser.tearDownNonAdminUsers();
+
+		Organization.tearDownCP(orgName = ${scriptOrg});
+	}
+
 	@description = "This tests canceling account creation will not save it."
 	@priority = 4
 	test ClickingCancelOrBackWillNotSaveAccount {
@@ -3973,6 +4047,167 @@ definition {
 		}
 	}
 
+	@description = "This is a use case for LPS-188650 (TC-2). Headless Admin User can list the ACTIVE Users on a certain API page sorted by given name"
+	@priority = 4
+	test HeadlessAdminCanListActiveUsersWithPagingAndSortingByGivenName {
+		task ("Given: Multiple Users are created") {
+			ApplicationsMenu.gotoPortlet(
+				category = "Users",
+				panel = "Control Panel",
+				portlet = "Users and Organizations");
+
+			User.createMultipleUsers(letter = "a,b,c,d,e,f,g,h,i,j,k,l");
+		}
+
+		task ("When: Every other one is deactivated") {
+			User.deactivateMultipleUsers(letter = "b,d,f,h,j,l");
+		}
+
+		task ("Then: The new endpoint lists the User on a required page by the required sorting") {
+			APIExplorer.executeAPIMethodCompact(
+				api = "headless-admin-user",
+				assertValue = "i@liferay.com",
+				direction = "p",
+				method = "getUserAccountsByStatusPage",
+				parameter = "status",
+				parameter_four = "sort",
+				parameter_three = "pageSize",
+				parameter_two = "page",
+				service = "UserAccount",
+				value = "active",
+				value_four = "givenName",
+				value_three = 1,
+				value_two = 5,
+				version = "v1.0");
+		}
+	}
+
+	@description = "This is a use case for LPS-188650 (TC-4). Headless Admin User can list a specific User by email address"
+	@priority = 4
+	test HeadlessAdminCanListASpecificUserByEmailAddress {
+		task ("Given: Multiple Users are created") {
+			ApplicationsMenu.gotoPortlet(
+				category = "Users",
+				panel = "Control Panel",
+				portlet = "Users and Organizations");
+
+			User.createMultipleUsers(letter = "a,b,c,d,e,f,g,h,i,j,k,l");
+		}
+
+		task ("When: Every other one is deactivated") {
+			User.deactivateMultipleUsers(letter = "b,d,f,h,j,l");
+		}
+
+		task ("Then: The new endpoint lists the required User by email address") {
+			APIExplorer.executeAPIMethodCompact(
+				api = "headless-admin-user",
+				assertValue = "f@liferay.com",
+				direction = "p",
+				method = "getUserAccountByEmailAddress",
+				parameter = "emailAddress",
+				service = "UserAccount",
+				value = "f@liferay.com",
+				version = "v1.0");
+		}
+	}
+
+	@description = "This is a use case for LPS-188650 (TC-3). Headless Admin User can list a specific inactive User by name"
+	@priority = 4
+	test HeadlessAdminCanListASpecificUserByName {
+		task ("Given: Multiple Users are created") {
+			ApplicationsMenu.gotoPortlet(
+				category = "Users",
+				panel = "Control Panel",
+				portlet = "Users and Organizations");
+
+			User.createMultipleUsers(letter = "a,b,c,d,e,f,g,h,i,j,k,l");
+		}
+
+		task ("When: Every other one is deactivated") {
+			User.deactivateMultipleUsers(letter = "b,d,f,h,j,l");
+		}
+
+		task ("Then: The new endpoint lists the required User") {
+			APIExplorer.executeAPIMethodCompact(
+				api = "headless-admin-user",
+				assertValue = "l@liferay.com",
+				direction = "p",
+				method = "getUserAccountsByStatusPage",
+				parameter = "status",
+				parameter_two = "search",
+				service = "UserAccount",
+				value = "inactive",
+				value_two = "l",
+				version = "v1.0");
+		}
+	}
+
+	@description = "This is a use case for LPS-188650 (TC-5). Headless Admin User can list a specific User by User ID"
+	@priority = 4
+	test HeadlessAdminCanListASpecificUserByUserID {
+		task ("Given: Multiple Users are created") {
+			ApplicationsMenu.gotoPortlet(
+				category = "Users",
+				panel = "Control Panel",
+				portlet = "Users and Organizations");
+
+			User.createMultipleUsers(letter = "a,b,c,d,e,f,g,h,i,j,k,l");
+		}
+
+		task ("When: Every other one is deactivated") {
+			User.deactivateMultipleUsers(letter = "b,d,f,h,j,l");
+		}
+
+		task ("Then: The new endpoint lists the required User by email address") {
+			var userId = JSONUserSetter.setUserId(userEmailAddress = "g@liferay.com");
+
+			APIExplorer.executeAPIMethodCompact(
+				api = "headless-admin-user",
+				assertValue = "g@liferay.com",
+				direction = "p",
+				method = "getUserAccount",
+				parameter = "userAccountId",
+				service = "UserAccount",
+				value = ${userId},
+				version = "v1.0");
+		}
+	}
+
+	@description = "This is a use case for LPS-188650 (TC-1). Headless Admin User can list the INACTIVE Users on a certain API page sorted by family name"
+	@priority = 4
+	test HeadlessAdminCanListInactiveUsersWithPagingAndSortingByFamilyName {
+		task ("Given: Multiple Users are created") {
+			ApplicationsMenu.gotoPortlet(
+				category = "Users",
+				panel = "Control Panel",
+				portlet = "Users and Organizations");
+
+			User.createMultipleUsers(letter = "a,b,c,d,e,f,g,h,i,j,k,l");
+		}
+
+		task ("When: Every other one is deactivated") {
+			User.deactivateMultipleUsers(letter = "b,d,f,h,j,l");
+		}
+
+		task ("Then: The new endpoint lists the User on a required page by the required sorting") {
+			APIExplorer.executeAPIMethodCompact(
+				api = "headless-admin-user",
+				assertValue = "h@liferay.com",
+				direction = "p",
+				method = "getUserAccountsByStatusPage",
+				parameter = "status",
+				parameter_four = "sort",
+				parameter_three = "pageSize",
+				parameter_two = "page",
+				service = "UserAccount",
+				value = "inactive",
+				value_four = "familyName",
+				value_three = 1,
+				value_two = 4,
+				version = "v1.0");
+		}
+	}
+
 	@description = "This is a use case for LPS-117171. It asserts that Filter By Navigation does not display when assigning a user to a Person Account since domains are not applicable for this type of account."
 	@priority = 4
 	test NoFilterByNavigationForPersonAccount {
@@ -4005,7 +4240,7 @@ definition {
 
 		SelectFrame(locator1 = "IFrame#ASSIGN_USER");
 
-		ManagementBar.viewNoSubheaderInFilterAndOrder(subheaderItem = "Filter by Navigation");
+		AssertElementNotPresent(locator1 = "ManagementBar#FILTER");
 	}
 
 	@description = "This test sets a valid domain for a business account. It adds a user with a same domain and asserts no warning displays."

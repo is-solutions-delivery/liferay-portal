@@ -34,7 +34,8 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	property = {
 		"class.name=com.liferay.portal.kernel.search.facet.RangeFacet",
-		"class.name=com.liferay.portal.search.internal.facet.ModifiedFacetImpl"
+		"class.name=com.liferay.portal.search.internal.facet.ModifiedFacetImpl",
+		"class.name=com.liferay.portal.search.internal.facet.RangeFacetImpl"
 	},
 	service = FacetProcessor.class
 )

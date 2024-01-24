@@ -53,7 +53,7 @@ page import="com.liferay.commerce.model.CommerceOrderPayment" %><%@
 page import="com.liferay.commerce.model.CommerceShippingMethod" %><%@
 page import="com.liferay.commerce.model.CommerceShippingOption" %><%@
 page import="com.liferay.commerce.order.CommerceOrderValidatorResult" %><%@
-page import="com.liferay.commerce.payment.method.CommercePaymentMethod" %><%@
+page import="com.liferay.commerce.payment.model.CommercePaymentMethodGroupRel" %><%@
 page import="com.liferay.commerce.price.CommerceOrderPrice" %><%@
 page import="com.liferay.commerce.price.CommerceProductPrice" %><%@
 page import="com.liferay.commerce.pricing.constants.CommercePricingConstants" %><%@
@@ -74,6 +74,7 @@ page import="com.liferay.portal.kernel.util.HashMapBuilder" %><%@
 page import="com.liferay.portal.kernel.util.HtmlUtil" %><%@
 page import="com.liferay.portal.kernel.util.KeyValuePair" %><%@
 page import="com.liferay.portal.kernel.util.ParamUtil" %><%@
+page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
 page import="com.liferay.portal.kernel.util.Validator" %><%@
 page import="com.liferay.portal.kernel.util.WebKeys" %>
 

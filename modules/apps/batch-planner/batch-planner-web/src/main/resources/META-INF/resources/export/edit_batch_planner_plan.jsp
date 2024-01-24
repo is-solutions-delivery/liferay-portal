@@ -24,6 +24,7 @@ renderResponse.setTitle(editable ? LanguageUtil.get(request, "edit-template") : 
 	<form id="<portlet:namespace />fm" name="<portlet:namespace />fm">
 		<input id="<portlet:namespace />batchPlannerPlanId" name="<portlet:namespace />batchPlannerPlanId" type="hidden" value="<%= batchPlannerPlanId %>" />
 		<input id="<portlet:namespace />export" name="<portlet:namespace />export" type="hidden" value="<%= true %>" />
+		<input id="<portlet:namespace />containsHeaders" name="<portlet:namespace />containsHeaders" type="hidden" value="<%= true %>" />
 
 		<div class="card">
 			<h4 class="card-header"><liferay-ui:message key="export-settings" /></h4>
@@ -33,27 +34,28 @@ renderResponse.setTitle(editable ? LanguageUtil.get(request, "edit-template") : 
 					<div id="<portlet:namespace />templateSelect"></div>
 
 					<clay:row>
-						<clay:col
-							md="6"
-						>
-							<clay:select
-								id='<%= liferayPortletResponse.getNamespace() + "internalClassNameKey" %>'
-								label="entity-type"
-								name="internalClassNameKey"
-								options="<%= editBatchPlannerPlanDisplayContext.getInternalClassNameKeySelectOptions() %>"
-							/>
-						</clay:col>
-
-						<clay:col
-							md="6"
-						>
-							<clay:select
-								id='<%= liferayPortletResponse.getNamespace() + "externalType" %>'
-								label="export-file-format"
-								name="externalType"
-								options="<%= editBatchPlannerPlanDisplayContext.getExternalTypeSelectOptions() %>"
-							/>
-						</clay:col>
+						<react:component
+							module="{ExportSettings} from batch-planner-web"
+							props='<%=
+								HashMapBuilder.<String, Object>put(
+									"externalTypeId", liferayPortletResponse.getNamespace() + "externalType"
+								).put(
+									"externalTypeInitialOptions", editBatchPlannerPlanDisplayContext.getExternalTypeSelectOptions()
+								).put(
+									"externalTypeLabel", LanguageUtil.get(request, "export-file-format")
+								).put(
+									"externalTypeName", liferayPortletResponse.getNamespace() + "externalType"
+								).put(
+									"internalClassNameKeyId", liferayPortletResponse.getNamespace() + "internalClassNameKey"
+								).put(
+									"internalClassNameKeyInitialOptions", editBatchPlannerPlanDisplayContext.getInternalClassNameKeySelectOptions()
+								).put(
+									"internalClassNameKeyLabel", LanguageUtil.get(request, "entity-type")
+								).put(
+									"internalClassNameKeyName", liferayPortletResponse.getNamespace() + "internalClassNameKey"
+								).build()
+							%>'
+						/>
 					</clay:row>
 
 					<clay:row>
@@ -61,22 +63,10 @@ renderResponse.setTitle(editable ? LanguageUtil.get(request, "edit-template") : 
 							md="6"
 						>
 							<react:component
-								module="js/components/Scope"
+								module="{Scope} from batch-planner-web"
 							/>
 						</clay:col>
 					</clay:row>
-
-					<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPS-173135") %>'>
-						<div class="contains-headers-wrapper d-none">
-							<clay:checkbox
-								checked="<%= true %>"
-								disabled="<%= true %>"
-								id='<%= liferayPortletResponse.getNamespace() + "containsHeaders" %>'
-								label="include-headers"
-								name='<%= liferayPortletResponse.getNamespace() + "containsHeaders" %>'
-							/>
-						</div>
-					</c:if>
 				</liferay-frontend:edit-form-body>
 			</div>
 		</div>
@@ -84,7 +74,7 @@ renderResponse.setTitle(editable ? LanguageUtil.get(request, "edit-template") : 
 		<liferay-frontend:edit-form-body>
 			<div>
 				<react:component
-					module="js/FieldsTable"
+					module="{FieldsTable} from batch-planner-web"
 				/>
 			</div>
 
@@ -116,7 +106,7 @@ renderResponse.setTitle(editable ? LanguageUtil.get(request, "edit-template") : 
 			<liferay-frontend:edit-form-footer>
 				<span>
 					<react:component
-						module="js/SaveTemplate"
+						module="{SaveTemplate} from batch-planner-web"
 						props='<%=
 							HashMapBuilder.<String, Object>put(
 								"formSaveAsTemplateDataQuerySelector", "#" + liferayPortletResponse.getNamespace() + "fm"
@@ -141,7 +131,7 @@ renderResponse.setTitle(editable ? LanguageUtil.get(request, "edit-template") : 
 				</span>
 				<span>
 					<react:component
-						module="js/export/Export"
+						module="{Export} from batch-planner-web"
 						props='<%=
 							HashMapBuilder.<String, Object>put(
 								"formExportDataQuerySelector", "#" + liferayPortletResponse.getNamespace() + "fm"
@@ -177,5 +167,5 @@ renderResponse.setTitle(editable ? LanguageUtil.get(request, "edit-template") : 
 			"templatesOptions", editBatchPlannerPlanDisplayContext.getTemplateSelectOptions()
 		).build()
 	%>'
-	module="js/edit_batch_planner_plan"
+	module="{editBatchPlannerPlan} from batch-planner-web"
 />

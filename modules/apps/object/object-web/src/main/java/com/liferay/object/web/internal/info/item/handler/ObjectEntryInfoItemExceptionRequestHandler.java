@@ -10,6 +10,7 @@ import com.liferay.info.exception.NoSuchFormVariationException;
 import com.liferay.info.field.InfoField;
 import com.liferay.info.form.InfoForm;
 import com.liferay.info.item.provider.InfoItemFormProvider;
+import com.liferay.object.exception.ObjectEntryCountException;
 import com.liferay.object.exception.ObjectEntryValuesException;
 import com.liferay.object.exception.ObjectValidationRuleEngineException;
 import com.liferay.object.model.ObjectDefinition;
@@ -78,6 +79,15 @@ public class ObjectEntryInfoItemExceptionRequestHandler {
 			}
 
 			throw new InfoFormException();
+		}
+
+		if (exception instanceof ObjectEntryCountException) {
+			ObjectEntryCountException objectEntryCountException =
+				(ObjectEntryCountException)exception;
+
+			throw new InfoFormValidationException.ExceedsMaxEntries(
+				objectEntryCountException.getObjectDefinitionLabel(),
+				objectEntryCountException.getMessageKey());
 		}
 
 		if (exception instanceof
@@ -169,9 +179,11 @@ public class ObjectEntryInfoItemExceptionRequestHandler {
 				throw new InfoFormException();
 			}
 
+			long maxFileSize =
+				objectEntryValuesException.getMaxFileSize() / _FILE_LENGTH_MB;
+
 			throw new InfoFormValidationException.FileSize(
-				infoFieldUniqueId,
-				objectEntryValuesException.getMaxFileSize() + " MB");
+				infoFieldUniqueId, maxFileSize + " MB");
 		}
 
 		if (exception instanceof
@@ -314,6 +326,8 @@ public class ObjectEntryInfoItemExceptionRequestHandler {
 
 		return null;
 	}
+
+	private static final long _FILE_LENGTH_MB = 1024 * 1024;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ObjectEntryInfoItemExceptionRequestHandler.class);

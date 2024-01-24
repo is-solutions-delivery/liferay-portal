@@ -1,0 +1,19 @@
+{
+	"author": "",
+	"dependencies": {
+		"spatial-navigation-js": "^1.0.0"
+	},
+	"description": "",
+	"devDependencies": {
+		"webpack": "^5.76.0",
+		"webpack-cli": "^5.0.0"
+	},
+	"keywords": [
+	],
+	"license": "ISC",
+	"name": "@liferay/liferay-dotcom-js-import-maps-entry",
+	"scripts": {
+		"build": "webpack"
+	},
+	"version": "1.0.0"
+}

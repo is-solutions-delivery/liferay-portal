@@ -47,6 +47,10 @@ public class InputTag extends IncludeTag {
 		return _classPK;
 	}
 
+	public String getDefaultLanguageId() {
+		return _defaultLanguageId;
+	}
+
 	public String getHelpMessage() {
 		return _helpMessage;
 	}
@@ -61,6 +65,10 @@ public class InputTag extends IncludeTag {
 
 	public boolean isDisabled() {
 		return _disabled;
+	}
+
+	public boolean isLanguagesDropdownVisible() {
+		return _languagesDropdownVisible;
 	}
 
 	public boolean isLocalizable() {
@@ -83,6 +91,10 @@ public class InputTag extends IncludeTag {
 		_classPK = classPK;
 	}
 
+	public void setDefaultLanguageId(String defaultLanguageId) {
+		_defaultLanguageId = defaultLanguageId;
+	}
+
 	public void setDisabled(boolean disabled) {
 		_disabled = disabled;
 	}
@@ -93,6 +105,10 @@ public class InputTag extends IncludeTag {
 
 	public void setInputAddon(String inputAddon) {
 		_inputAddon = inputAddon;
+	}
+
+	public void setLanguagesDropdownVisible(boolean languagesDropdownVisible) {
+		_languagesDropdownVisible = languagesDropdownVisible;
 	}
 
 	public void setLocalizable(boolean localizable) {
@@ -124,9 +140,11 @@ public class InputTag extends IncludeTag {
 
 		_className = null;
 		_classPK = 0;
+		_defaultLanguageId = null;
 		_disabled = false;
 		_helpMessage = null;
 		_inputAddon = null;
+		_languagesDropdownVisible = true;
 		_localizable = true;
 		_name = _DEFAULT_NAME;
 		_showHistory = true;
@@ -147,6 +165,9 @@ public class InputTag extends IncludeTag {
 		httpServletRequest.setAttribute(
 			"liferay-friendly-url:input:classPK", getClassPK());
 		httpServletRequest.setAttribute(
+			"liferay-friendly-url:input:defaultLanguageId",
+			getDefaultLanguageId());
+		httpServletRequest.setAttribute(
 			"liferay-friendly-url:input:disabled", isDisabled());
 		httpServletRequest.setAttribute(
 			"liferay-friendly-url:input:friendlyURLMaxLength",
@@ -155,6 +176,9 @@ public class InputTag extends IncludeTag {
 			"liferay-friendly-url:input:helpMessage", getHelpMessage());
 		httpServletRequest.setAttribute(
 			"liferay-friendly-url:input:inputAddon", getInputAddon());
+		httpServletRequest.setAttribute(
+			"liferay-friendly-url:input:languagesDropdownVisible",
+			isLanguagesDropdownVisible());
 		httpServletRequest.setAttribute(
 			"liferay-friendly-url:input:localizable", isLocalizable());
 		httpServletRequest.setAttribute(
@@ -209,8 +233,13 @@ public class InputTag extends IncludeTag {
 				return urlTitle;
 			}
 
-			String languageId = LanguageUtil.getLanguageId(
-				LocaleUtil.getDefault());
+			String languageId = BeanPropertiesUtil.getString(
+				_getModel(), "defaultLanguageId");
+
+			if (languageId == null) {
+				languageId = LanguageUtil.getLanguageId(
+					LocaleUtil.getDefault());
+			}
 
 			return LocalizationUtil.getXml(
 				HashMapBuilder.put(
@@ -295,9 +324,11 @@ public class InputTag extends IncludeTag {
 
 	private String _className;
 	private long _classPK;
+	private String _defaultLanguageId;
 	private boolean _disabled;
 	private String _helpMessage;
 	private String _inputAddon;
+	private boolean _languagesDropdownVisible = true;
 	private boolean _localizable = true;
 	private String _name = _DEFAULT_NAME;
 	private boolean _showHistory = true;

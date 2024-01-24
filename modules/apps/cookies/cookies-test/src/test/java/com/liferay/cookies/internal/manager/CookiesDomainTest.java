@@ -9,9 +9,11 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.cookies.CookiesManager;
 import com.liferay.portal.kernel.cookies.CookiesManagerUtil;
+import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -19,6 +21,9 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import org.mockito.Mockito;
+
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -41,14 +46,42 @@ public class CookiesDomainTest {
 			cookiesManager, "_configurationProvider",
 			Mockito.mock(ConfigurationProvider.class));
 
-		ReflectionTestUtil.setFieldValue(
-			CookiesManagerUtil.class, "_cookiesManager", cookiesManager);
+		_cookiesManagerServiceRegistration = _bundleContext.registerService(
+			CookiesManager.class, cookiesManager, null);
+	}
+
+	@AfterClass
+	public static void tearDownClass() {
+		_cookiesManagerServiceRegistration.unregister();
 	}
 
 	@Test
 	public void testDomain1() throws Exception {
 		Assert.assertEquals(
+			".cdn.liferay.com",
+			CookiesManagerUtil.getDomain("www.cdn.liferay.com"));
+		Assert.assertEquals(
+			".cdn.liferay.qld.gov.au",
+			CookiesManagerUtil.getDomain("www.cdn.liferay.qld.gov.au"));
+		Assert.assertEquals(
+			".liferay.com", CookiesManagerUtil.getDomain("liferay.com"));
+		Assert.assertEquals(
 			".liferay.com", CookiesManagerUtil.getDomain("www.liferay.com"));
+		Assert.assertEquals(
+			".liferay.qld.gov.au",
+			CookiesManagerUtil.getDomain("liferay.qld.gov.au"));
+		Assert.assertEquals(
+			".liferay.qld.gov.au",
+			CookiesManagerUtil.getDomain("www.liferay.qld.gov.au"));
+		Assert.assertEquals(
+			".liferay.test", CookiesManagerUtil.getDomain("liferay.test"));
+		Assert.assertEquals(
+			".liferay.test", CookiesManagerUtil.getDomain("www.liferay.test"));
+		Assert.assertEquals(
+			"127.0.0.1", CookiesManagerUtil.getDomain("127.0.0.1"));
+		Assert.assertNull(CookiesManagerUtil.getDomain("com"));
+		Assert.assertNull(CookiesManagerUtil.getDomain("localhost"));
+		Assert.assertNull(CookiesManagerUtil.getDomain((String)null));
 	}
 
 	@Test
@@ -130,5 +163,10 @@ public class CookiesDomainTest {
 				value);
 		}
 	}
+
+	private static final BundleContext _bundleContext =
+		SystemBundleUtil.getBundleContext();
+	private static ServiceRegistration<CookiesManager>
+		_cookiesManagerServiceRegistration;
 
 }

@@ -1,0 +1,15 @@
+assemble:
+    - from: batch
+      into: batch
+batch:
+    name: Batch
+    oAuthApplicationHeadlessServer: oauth
+    type: batch
+oauth:
+    .serviceAddress: localhost:8080
+    .serviceScheme: http
+    name: Oauth
+    scopes:
+        - C_FooModel.everything
+        - Liferay.Headless.Batch.Engine.everything
+    type: oAuthApplicationHeadlessServer

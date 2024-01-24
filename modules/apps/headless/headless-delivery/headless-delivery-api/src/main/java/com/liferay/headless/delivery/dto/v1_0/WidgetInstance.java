@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -54,11 +55,19 @@ public class WidgetInstance implements Serializable {
 	@Schema
 	@Valid
 	public Map<String, Object> getWidgetConfig() {
+		if (_widgetConfigSupplier != null) {
+			widgetConfig = _widgetConfigSupplier.get();
+
+			_widgetConfigSupplier = null;
+		}
+
 		return widgetConfig;
 	}
 
 	public void setWidgetConfig(Map<String, Object> widgetConfig) {
 		this.widgetConfig = widgetConfig;
+
+		_widgetConfigSupplier = null;
 	}
 
 	@JsonIgnore
@@ -66,85 +75,124 @@ public class WidgetInstance implements Serializable {
 		UnsafeSupplier<Map<String, Object>, Exception>
 			widgetConfigUnsafeSupplier) {
 
-		try {
-			widgetConfig = widgetConfigUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_widgetConfigSupplier = () -> {
+			try {
+				return widgetConfigUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Map<String, Object> widgetConfig;
 
+	@JsonIgnore
+	private Supplier<Map<String, Object>> _widgetConfigSupplier;
+
 	@Schema(description = "The widget instance's ID.")
 	public String getWidgetInstanceId() {
+		if (_widgetInstanceIdSupplier != null) {
+			widgetInstanceId = _widgetInstanceIdSupplier.get();
+
+			_widgetInstanceIdSupplier = null;
+		}
+
 		return widgetInstanceId;
 	}
 
 	public void setWidgetInstanceId(String widgetInstanceId) {
 		this.widgetInstanceId = widgetInstanceId;
+
+		_widgetInstanceIdSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setWidgetInstanceId(
 		UnsafeSupplier<String, Exception> widgetInstanceIdUnsafeSupplier) {
 
-		try {
-			widgetInstanceId = widgetInstanceIdUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_widgetInstanceIdSupplier = () -> {
+			try {
+				return widgetInstanceIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField(description = "The widget instance's ID.")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String widgetInstanceId;
 
+	@JsonIgnore
+	private Supplier<String> _widgetInstanceIdSupplier;
+
 	@Schema(description = "The widget instance's name.")
 	public String getWidgetName() {
+		if (_widgetNameSupplier != null) {
+			widgetName = _widgetNameSupplier.get();
+
+			_widgetNameSupplier = null;
+		}
+
 		return widgetName;
 	}
 
 	public void setWidgetName(String widgetName) {
 		this.widgetName = widgetName;
+
+		_widgetNameSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setWidgetName(
 		UnsafeSupplier<String, Exception> widgetNameUnsafeSupplier) {
 
-		try {
-			widgetName = widgetNameUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_widgetNameSupplier = () -> {
+			try {
+				return widgetNameUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField(description = "The widget instance's name.")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String widgetName;
 
+	@JsonIgnore
+	private Supplier<String> _widgetNameSupplier;
+
 	@Schema(description = "The widget instance's permissions.")
 	@Valid
 	public WidgetPermission[] getWidgetPermissions() {
+		if (_widgetPermissionsSupplier != null) {
+			widgetPermissions = _widgetPermissionsSupplier.get();
+
+			_widgetPermissionsSupplier = null;
+		}
+
 		return widgetPermissions;
 	}
 
 	public void setWidgetPermissions(WidgetPermission[] widgetPermissions) {
 		this.widgetPermissions = widgetPermissions;
+
+		_widgetPermissionsSupplier = null;
 	}
 
 	@JsonIgnore
@@ -152,20 +200,25 @@ public class WidgetInstance implements Serializable {
 		UnsafeSupplier<WidgetPermission[], Exception>
 			widgetPermissionsUnsafeSupplier) {
 
-		try {
-			widgetPermissions = widgetPermissionsUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_widgetPermissionsSupplier = () -> {
+			try {
+				return widgetPermissionsUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField(description = "The widget instance's permissions.")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected WidgetPermission[] widgetPermissions;
+
+	@JsonIgnore
+	private Supplier<WidgetPermission[]> _widgetPermissionsSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -194,6 +247,8 @@ public class WidgetInstance implements Serializable {
 
 		sb.append("{");
 
+		Map<String, Object> widgetConfig = getWidgetConfig();
+
 		if (widgetConfig != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -203,6 +258,8 @@ public class WidgetInstance implements Serializable {
 
 			sb.append(_toJSON(widgetConfig));
 		}
+
+		String widgetInstanceId = getWidgetInstanceId();
 
 		if (widgetInstanceId != null) {
 			if (sb.length() > 1) {
@@ -218,6 +275,8 @@ public class WidgetInstance implements Serializable {
 			sb.append("\"");
 		}
 
+		String widgetName = getWidgetName();
+
 		if (widgetName != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -231,6 +290,8 @@ public class WidgetInstance implements Serializable {
 
 			sb.append("\"");
 		}
+
+		WidgetPermission[] widgetPermissions = getWidgetPermissions();
 
 		if (widgetPermissions != null) {
 			if (sb.length() > 1) {

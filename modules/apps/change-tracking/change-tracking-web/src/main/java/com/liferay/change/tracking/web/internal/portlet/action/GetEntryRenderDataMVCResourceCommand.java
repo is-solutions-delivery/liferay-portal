@@ -189,22 +189,26 @@ public class GetEntryRenderDataMVCResourceCommand
 				ctEntry.getModelClassPK());
 
 			if (rightModel != null) {
-				String editURL = _ctDisplayRendererRegistry.getEditURL(
-					ctCollectionId, ctSQLMode, httpServletRequest, rightModel,
-					ctEntry.getModelClassNameId());
+				if (ctCollection.getStatus() ==
+						WorkflowConstants.STATUS_DRAFT) {
 
-				if (Validator.isNotNull(editURL)) {
-					editInPublicationJSONObject = _getEditJSONObject(
-						_language.format(
-							httpServletRequest,
-							"you-are-currently-working-on-production.-work-" +
-								"on-x",
-							new Object[] {ctCollection.getName()}, false),
-						ctCollection.getCtCollectionId(), editURL,
-						_language.format(
-							httpServletRequest, "edit-in-x",
-							new Object[] {ctCollection.getName()}, false),
-						resourceRequest, resourceResponse);
+					String editURL = _ctDisplayRendererRegistry.getEditURL(
+						ctCollectionId, ctSQLMode, httpServletRequest,
+						rightModel, ctEntry.getModelClassNameId());
+
+					if (Validator.isNotNull(editURL)) {
+						editInPublicationJSONObject = _getEditJSONObject(
+							_language.format(
+								httpServletRequest,
+								"you-are-currently-working-on-production.-" +
+									"work-on-x",
+								new Object[] {ctCollection.getName()}, false),
+							ctCollection.getCtCollectionId(), editURL,
+							_language.format(
+								httpServletRequest, "edit-in-x",
+								new Object[] {ctCollection.getName()}, false),
+							resourceRequest, resourceResponse);
+					}
 				}
 
 				if (localize) {
@@ -667,7 +671,12 @@ public class GetEntryRenderDataMVCResourceCommand
 		if (ctEntry.getModelClassNameId() ==
 				_classNameLocalService.getClassNameId(Layout.class)) {
 
-			_getSegmentExperiences(ctEntry, httpServletRequest, jsonObject);
+			try (SafeCloseable safeCloseable =
+					CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
+						ctEntry.getCtCollectionId())) {
+
+				_getSegmentExperiences(ctEntry, httpServletRequest, jsonObject);
+			}
 		}
 
 		return jsonObject;

@@ -56,8 +56,6 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.RoleConstants;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
@@ -162,7 +160,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 		GroupTestUtil.deleteGroup(testGroup);
 	}
 
-	<#assign properties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, schema) />
+	<#assign properties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, schema, allSchemas) />
 
 	<#if javaDataTypeMap?keys?seq_contains(schemaName)>
 		@Test
@@ -239,7 +237,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 	</#if>
 
 	<#assign
-		enumSchemas = freeMarkerTool.getDTOEnumSchemas(openAPIYAML, schema)
+		enumSchemas = freeMarkerTool.getDTOEnumSchemas(configYAML, openAPIYAML, schema)
 		generateGetMultipartFilesMethod = false
 		generateSearchTestRule = false
 		randomDataTypes = ["Boolean", "Double", "Integer", "Long", "String"]
@@ -248,7 +246,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 	<#list javaMethodSignatures as javaMethodSignature>
 		<#assign
 			arguments = freeMarkerTool.getResourceTestCaseArguments(javaMethodSignature.javaMethodParameters)
-			parameters = freeMarkerTool.getResourceTestCaseParameters(javaMethodSignature.javaMethodParameters, openAPIYAML, javaMethodSignature.operation, false)
+			parameters = freeMarkerTool.getResourceTestCaseParameters(configYAML, javaMethodSignature.javaMethodParameters, javaMethodSignature.operation, allSchemas, false)
 		/>
 
 		<#if stringUtil.endsWith(javaMethodSignature.methodName, schemaName + "Batch") || stringUtil.endsWith(javaMethodSignature.methodName, schemaNames + "PageExportBatch")>
@@ -1963,7 +1961,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 
 	<#list relatedSchemaNames as relatedSchemaName>
 		<#assign
-			relatedSchemaProperties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, relatedSchemaName)
+			relatedSchemaProperties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, relatedSchemaName, allSchemas)
 			relatedSchemaVarName = freeMarkerTool.getSchemaVarName(relatedSchemaName)
 		/>
 
@@ -2202,7 +2200,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 
 	<#list relatedSchemaNames as relatedSchemaName>
 		<#assign
-			relatedSchemaProperties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, relatedSchemaName)
+			relatedSchemaProperties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, relatedSchemaName, allSchemas)
 			relatedSchemaVarName = freeMarkerTool.getSchemaVarName(relatedSchemaName)
 		/>
 
@@ -2252,7 +2250,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 
 		<#if properties?keys?seq_contains("siteId")>
 			<#if generateDepotEntry>
-				Group group = testDepotEntry.getGroup();
+				com.liferay.portal.kernel.model.Group group = testDepotEntry.getGroup();
 
 				if (!Objects.equals(${schemaVarName}.getAssetLibraryKey(), group.getGroupKey()) && !Objects.equals(${schemaVarName}.getSiteId(), testGroup.getGroupId())) {
 					valid = false;
@@ -2336,7 +2334,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 
 	<#list relatedSchemaNames as relatedSchemaName>
 		<#assign
-			relatedSchemaProperties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, relatedSchemaName)
+			relatedSchemaProperties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, relatedSchemaName, allSchemas)
 			relatedSchemaVarName = freeMarkerTool.getSchemaVarName(relatedSchemaName)
 		/>
 
@@ -2520,7 +2518,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 
 	<#list relatedSchemaNames as relatedSchemaName>
 		<#assign
-			relatedSchemaProperties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, relatedSchemaName)
+			relatedSchemaProperties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, relatedSchemaName, allSchemas)
 			relatedSchemaVarName = freeMarkerTool.getSchemaVarName(relatedSchemaName)
 		/>
 
@@ -2775,7 +2773,7 @@ public abstract class Base${schemaName}ResourceTestCase {
 		protected ${relatedSchemaName} random${relatedSchemaName}() throws Exception {
 			return new ${relatedSchemaName}() {
 				{
-					<#assign relatedSchemaProperties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, relatedSchemaName) />
+					<#assign relatedSchemaProperties = freeMarkerTool.getDTOProperties(configYAML, openAPIYAML, relatedSchemaName, allSchemas) />
 
 					<#list relatedSchemaProperties?keys as propertyName>
 						<#if randomDataTypes?seq_contains(relatedSchemaProperties[propertyName])>
@@ -2790,14 +2788,14 @@ public abstract class Base${schemaName}ResourceTestCase {
 	</#list>
 
 	protected ${schemaName}Resource ${schemaVarName}Resource;
-	protected Group irrelevantGroup;
-	protected Company testCompany;
+	protected com.liferay.portal.kernel.model.Group irrelevantGroup;
+	protected com.liferay.portal.kernel.model.Company testCompany;
 
 	<#if generateDepotEntry>
 		protected DepotEntry testDepotEntry;
 	</#if>
 
-	protected Group testGroup;
+	protected com.liferay.portal.kernel.model.Group testGroup;
 
 	protected static class BeanTestUtil {
 

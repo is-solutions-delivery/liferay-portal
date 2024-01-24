@@ -14,6 +14,7 @@ import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.list.renderer.InfoListRendererRegistry;
 import com.liferay.layout.adaptive.media.LayoutAdaptiveMediaProcessor;
 import com.liferay.layout.display.page.LayoutDisplayPageProviderRegistry;
+import com.liferay.layout.helper.structure.LayoutStructureRulesHelper;
 import com.liferay.layout.list.permission.provider.LayoutListPermissionProviderRegistry;
 import com.liferay.layout.list.retriever.LayoutListRetrieverRegistry;
 import com.liferay.layout.list.retriever.ListObjectReferenceFactoryRegistry;
@@ -102,6 +103,10 @@ public class ServletContextUtil {
 		return _layoutStructureProviderSnapshot.get();
 	}
 
+	public static LayoutStructureRulesHelper getLayoutStructureRulesHelper() {
+		return _layoutStructureRulesHelperSnapshot.get();
+	}
+
 	public static ListObjectReferenceFactoryRegistry
 		getListObjectReferenceFactoryRegistry() {
 
@@ -168,6 +173,9 @@ public class ServletContextUtil {
 	private static final Snapshot<LayoutStructureProvider>
 		_layoutStructureProviderSnapshot = new Snapshot<>(
 			ServletContextUtil.class, LayoutStructureProvider.class);
+	private static final Snapshot<LayoutStructureRulesHelper>
+		_layoutStructureRulesHelperSnapshot = new Snapshot<>(
+			ServletContextUtil.class, LayoutStructureRulesHelper.class);
 	private static final Snapshot<ListObjectReferenceFactoryRegistry>
 		_listObjectReferenceFactoryRegistrySnapshot = new Snapshot<>(
 			ServletContextUtil.class, ListObjectReferenceFactoryRegistry.class);

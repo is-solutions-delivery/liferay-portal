@@ -90,7 +90,7 @@ const AssignSegments: React.FC<IAssignSegmentsProps> = ({groupId, onClose}) => {
 		<td>
 			<Picker
 				data-testid={`select-${id}`}
-				items={options}
+				items={options as {label: string; value: string}[]}
 				onSelectionChange={selectedValue =>
 					updateSegment(id, selectedValue)
 				}

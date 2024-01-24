@@ -5,16 +5,16 @@
 
 import ClayDropDown from '@clayui/drop-down';
 import getCN from 'classnames';
+import {LearnMessage, LearnResourcesContext} from 'frontend-js-components-web';
 import React, {useMemo} from 'react';
 
-import LearnMessage from '../../shared/LearnMessage';
-import SearchContext from '../../shared/SearchContext';
 import InputSets, {useInputSets} from '../../shared/input_sets/index';
 import {ITEM_ID_PROPERTY} from '../../shared/input_sets/useInputSets';
 import cleanSuggestionsContributorConfiguration from '../../utils/clean_suggestions_contributor_configuration';
 import {
 	CONTRIBUTOR_TYPES,
 	CONTRIBUTOR_TYPES_ASAH_DEFAULT_DISPLAY_GROUP_NAMES,
+	CONTRIBUTOR_TYPES_DEFAULT_ATTRIBUTES,
 } from '../../utils/types/contributorTypes';
 import SuggestionContributorAddButton from './SuggestionContributorAddButton';
 import ContributorInputSetItem from './contributor_input_set_item/index';
@@ -44,7 +44,7 @@ function SearchBarConfigurationSuggestions({
 	initialSuggestionsContributorConfiguration = '[]',
 	isDXP = false,
 	isSearchExperiencesSupported = true,
-	learnMessages,
+	learnResources,
 	namespace = '',
 	suggestionsContributorConfigurationName = '',
 }) {
@@ -88,7 +88,7 @@ function SearchBarConfigurationSuggestions({
 
 					<LearnMessage
 						className="c-ml-1"
-						learnMessages={learnMessages}
+						resource="portal-search-web"
 						resourceKey="search-bar-suggestions-blueprints"
 					/>
 				</>
@@ -97,7 +97,7 @@ function SearchBarConfigurationSuggestions({
 		};
 
 		const SITE_ACTIVITIES_OPTION = {
-			contributorName: CONTRIBUTOR_TYPES.ASAH_TOP_SEARCH_KEYWORDS,
+			contributorName: CONTRIBUTOR_TYPES.ASAH_TOP_SEARCH_SITE_ACTIVITY,
 			description: (
 				<>
 					{Liferay.Language.get(
@@ -106,7 +106,7 @@ function SearchBarConfigurationSuggestions({
 
 					<LearnMessage
 						className="c-ml-1"
-						learnMessages={learnMessages}
+						resource="portal-search-web"
 						resourceKey="search-bar-suggestions-site-activities"
 					/>
 				</>
@@ -139,24 +139,35 @@ function SearchBarConfigurationSuggestions({
 	const _handleInputSetAdd = (contributorName) => () => {
 		if (contributorName === CONTRIBUTOR_TYPES.BASIC) {
 			onInputSetsAdd({
-				attributes: {
-					characterThreshold: '',
-				},
+				attributes:
+					CONTRIBUTOR_TYPES_DEFAULT_ATTRIBUTES[contributorName],
 				contributorName,
 				displayGroupName: 'suggestions',
 				size: '5',
 			});
 		}
+		else if (contributorName === CONTRIBUTOR_TYPES.SXP_BLUEPRINT) {
+			onInputSetsAdd({
+				attributes:
+					CONTRIBUTOR_TYPES_DEFAULT_ATTRIBUTES[contributorName],
+				contributorName,
+				displayGroupName: '',
+				size: '',
+			});
+		}
 		else if (
-			contributorName === CONTRIBUTOR_TYPES.ASAH_RECENT_SEARCH_KEYWORDS ||
-			contributorName === CONTRIBUTOR_TYPES.ASAH_TOP_SEARCH_KEYWORDS
+			[
+				CONTRIBUTOR_TYPES.ASAH_RECENT_ASSETS_USER_ACTIVITY,
+				CONTRIBUTOR_TYPES.ASAH_RECENT_PAGES_USER_ACTIVITY,
+				CONTRIBUTOR_TYPES.ASAH_RECENT_SEARCH_SITE_ACTIVITY,
+				CONTRIBUTOR_TYPES.ASAH_RECENT_SEARCHES_USER_ACTIVITY,
+				CONTRIBUTOR_TYPES.ASAH_RECENT_SITES_USER_ACTIVITY,
+				CONTRIBUTOR_TYPES.ASAH_TOP_SEARCH_SITE_ACTIVITY,
+			].includes(contributorName)
 		) {
 			onInputSetsAdd({
-				attributes: {
-					characterThreshold: '0',
-					matchDisplayLanguageId: true,
-					minCounts: '5',
-				},
+				attributes:
+					CONTRIBUTOR_TYPES_DEFAULT_ATTRIBUTES[contributorName],
 				contributorName,
 				displayGroupName:
 					CONTRIBUTOR_TYPES_ASAH_DEFAULT_DISPLAY_GROUP_NAMES[
@@ -166,24 +177,10 @@ function SearchBarConfigurationSuggestions({
 				size: '3',
 			});
 		}
-		else if (contributorName === CONTRIBUTOR_TYPES.SXP_BLUEPRINT) {
-			onInputSetsAdd({
-				attributes: {
-					characterThreshold: '',
-					fields: [],
-					includeAssetSearchSummary: true,
-					includeAssetURL: true,
-					sxpBlueprintExternalReferenceCode: '',
-				},
-				contributorName,
-				displayGroupName: '',
-				size: '',
-			});
-		}
 	};
 
 	return (
-		<SearchContext.Provider value={{learnMessages}}>
+		<LearnResourcesContext.Provider value={learnResources}>
 			<div className="search-bar-configuration-suggestions-root">
 				{removeEmptyFields(suggestionsContributorConfiguration)
 					.length ? (
@@ -249,7 +246,7 @@ function SearchBarConfigurationSuggestions({
 					)}
 				</InputSets>
 			</div>
-		</SearchContext.Provider>
+		</LearnResourcesContext.Provider>
 	);
 }
 

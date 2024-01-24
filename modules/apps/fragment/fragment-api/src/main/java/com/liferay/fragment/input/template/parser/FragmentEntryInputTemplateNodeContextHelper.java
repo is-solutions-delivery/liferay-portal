@@ -41,7 +41,7 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.InfoFormException;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -52,6 +52,7 @@ import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -96,9 +97,10 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 	}
 
 	public InputTemplateNode toInputTemplateNode(
-		FragmentEntryLink fragmentEntryLink,
-		HttpServletRequest httpServletRequest, InfoForm infoForm,
-		Locale locale) {
+			FragmentEntryLink fragmentEntryLink,
+			HttpServletRequest httpServletRequest, InfoForm infoForm,
+			Locale locale)
+		throws JSONException {
 
 		String errorMessage = StringPool.BLANK;
 
@@ -272,9 +274,19 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 			value = infoFormParameterMap.get(infoField.getName());
 		}
 		else {
-			value = _getValue(
+			Object infoFieldValue = _getValue(
 				value, httpServletRequest, infoField, infoForm.getName(),
 				locale);
+
+			if (infoFieldValue instanceof KeyValuePair) {
+				KeyValuePair keyValuePair = (KeyValuePair)infoFieldValue;
+
+				label = keyValuePair.getValue();
+				value = keyValuePair.getKey();
+			}
+			else {
+				value = String.valueOf(infoFieldValue);
+			}
 		}
 
 		InputTemplateNode inputTemplateNode = new InputTemplateNode(
@@ -436,9 +448,7 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 				infoField, inputTemplateNode);
 		}
 
-		if (FeatureFlagManagerUtil.isEnabled("LPS-183727")) {
-			inputTemplateNode.addAttribute("readOnly", infoField.isReadOnly());
-		}
+		inputTemplateNode.addAttribute("readOnly", infoField.isReadOnly());
 	}
 
 	private void _addLongTextInfoFieldTypeInputTemplateNodeAttributes(
@@ -616,7 +626,7 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 	}
 
 	private List<String> _getSelectedOptions(
-		Locale locale, List<OptionInfoFieldType> optionInfoFieldTypes,
+		List<OptionInfoFieldType> optionInfoFieldTypes,
 		List<KeyLocalizedLabelPair> values) {
 
 		List<String> selectedOptions = new ArrayList<>();
@@ -626,8 +636,8 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 					optionInfoFieldTypes) {
 
 				if (Objects.equals(
-						keyLocalizedLabelPair.getLabel(locale),
-						optionInfoFieldType.getLabel(locale))) {
+						keyLocalizedLabelPair.getKey(),
+						optionInfoFieldType.getValue())) {
 
 					selectedOptions.add(optionInfoFieldType.getValue());
 				}
@@ -654,7 +664,7 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 			"1");
 	}
 
-	private String _getValue(
+	private Object _getValue(
 		String defaultValue, HttpServletRequest httpServletRequest,
 		InfoField infoField, String infoFormName, Locale locale) {
 
@@ -696,7 +706,7 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 				layoutDisplayPageObjectProvider.getDisplayObject());
 
 		InfoFieldValue<?> infoFieldValue =
-			infoItemFieldValues.getInfoFieldValue(infoField.getName());
+			infoItemFieldValues.getInfoFieldValue(infoField.getUniqueId());
 
 		if (infoFieldValue == null) {
 			return defaultValue;
@@ -759,7 +769,7 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 					MultiselectInfoFieldType.OPTIONS);
 
 			return ListUtil.toString(
-				_getSelectedOptions(locale, optionInfoFieldTypes, values),
+				_getSelectedOptions(optionInfoFieldTypes, values),
 				StringPool.BLANK);
 		}
 
@@ -771,6 +781,12 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 			if (Objects.equals(bigDecimal.signum(), 0)) {
 				return "0";
 			}
+		}
+
+		if (infoField.getInfoFieldType() ==
+				RelationshipInfoFieldType.INSTANCE) {
+
+			return infoFieldValue.getValue();
 		}
 
 		if (infoField.getInfoFieldType() == SelectInfoFieldType.INSTANCE) {
@@ -790,7 +806,7 @@ public class FragmentEntryInputTemplateNodeContextHelper {
 					SelectInfoFieldType.OPTIONS);
 
 			return ListUtil.toString(
-				_getSelectedOptions(locale, optionInfoFieldTypes, values),
+				_getSelectedOptions(optionInfoFieldTypes, values),
 				StringPool.BLANK);
 		}
 

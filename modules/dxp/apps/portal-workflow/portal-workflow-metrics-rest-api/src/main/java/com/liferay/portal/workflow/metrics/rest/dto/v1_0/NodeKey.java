@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -49,57 +50,83 @@ public class NodeKey implements Serializable {
 
 	@Schema
 	public String getExecutionType() {
+		if (_executionTypeSupplier != null) {
+			executionType = _executionTypeSupplier.get();
+
+			_executionTypeSupplier = null;
+		}
+
 		return executionType;
 	}
 
 	public void setExecutionType(String executionType) {
 		this.executionType = executionType;
+
+		_executionTypeSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setExecutionType(
 		UnsafeSupplier<String, Exception> executionTypeUnsafeSupplier) {
 
-		try {
-			executionType = executionTypeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_executionTypeSupplier = () -> {
+			try {
+				return executionTypeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String executionType;
 
+	@JsonIgnore
+	private Supplier<String> _executionTypeSupplier;
+
 	@Schema
 	public String getId() {
+		if (_idSupplier != null) {
+			id = _idSupplier.get();
+
+			_idSupplier = null;
+		}
+
 		return id;
 	}
 
 	public void setId(String id) {
 		this.id = id;
+
+		_idSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setId(UnsafeSupplier<String, Exception> idUnsafeSupplier) {
-		try {
-			id = idUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_idSupplier = () -> {
+			try {
+				return idUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String id;
+
+	@JsonIgnore
+	private Supplier<String> _idSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -128,6 +155,8 @@ public class NodeKey implements Serializable {
 
 		sb.append("{");
 
+		String executionType = getExecutionType();
+
 		if (executionType != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -141,6 +170,8 @@ public class NodeKey implements Serializable {
 
 			sb.append("\"");
 		}
+
+		String id = getId();
 
 		if (id != null) {
 			if (sb.length() > 1) {

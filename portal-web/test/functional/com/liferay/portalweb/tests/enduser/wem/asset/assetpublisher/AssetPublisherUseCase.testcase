@@ -81,13 +81,13 @@ definition {
 				privateVirtualHosts = "true");
 		}
 
-		task ("Sign in the prviate virtual host") {
+		task ("Sign in the private virtual host") {
 			User.logoutPG();
 
 			User.firstLoginUI(specificURL = "http://www.baker.com:8080");
 		}
 
-		task ("View prviate pages") {
+		task ("View private pages") {
 			for (var sitePageName : list "Welcome,Documents and Media,News") {
 				AssertElementPresent(
 					key_pageName = ${sitePageName},
@@ -1267,7 +1267,7 @@ definition {
 
 			AssetPublisherPortlet.configureManualAssetSelectionPG(
 				assetType = "Basic Web Content",
-				searchInfo = "3 Results for \"Web Content\"",
+				searchInfo = "3 Results Found for \"Web Content\"",
 				searchTerm = "Web Content");
 		}
 

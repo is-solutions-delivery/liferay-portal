@@ -3,6 +3,10 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {
+	FDS_NESTED_FIELD_NAME_DELIMITER,
+	FDS_NESTED_FIELD_NAME_PARENT_SUFFIX,
+} from '../constants';
 interface ILocalizedItemDetails {
 	rootPropertyName: string;
 	value: string;
@@ -32,6 +36,34 @@ function getLanguageKey(data: any): string {
 	return languageKey;
 }
 
+function resolveField(path: string | Array<string>, item: any) {
+	if (
+		Array.isArray(path) ||
+		!path.includes(FDS_NESTED_FIELD_NAME_DELIMITER)
+	) {
+		const rootPropertyName = typeof path === 'string' ? path : path[0];
+
+		return {resolvedFieldname: path, resolvedItem: item, rootPropertyName};
+	}
+
+	const itemPath = path.split(FDS_NESTED_FIELD_NAME_DELIMITER);
+
+	if (path.includes(FDS_NESTED_FIELD_NAME_PARENT_SUFFIX)) {
+		itemPath.pop();
+	}
+
+	return {
+		resolvedFieldname: itemPath[itemPath.length - 1],
+		resolvedItem:
+			itemPath.length > 1
+				? itemPath
+						.slice(0, -1)
+						.reduce((prev, curr) => prev?.[curr], item) || {}
+				: item,
+		rootPropertyName: itemPath[0],
+	};
+}
+
 export function getLocalizedValue(
 	item: any,
 	fieldName: string | Array<string>
@@ -40,14 +72,17 @@ export function getLocalizedValue(
 		return null;
 	}
 
-	const i18nFieldName = `${fieldName}_i18n`;
-	const rootPropertyName =
-		typeof fieldName === 'string' ? fieldName : fieldName[0];
-	let navigatedValue = item;
+	const {resolvedFieldname, resolvedItem, rootPropertyName} = resolveField(
+		fieldName,
+		item
+	);
+
+	const i18nFieldName = `${resolvedFieldname}_i18n`;
+	let navigatedValue = resolvedItem;
 	const valuePath = [];
 
-	if (Array.isArray(fieldName)) {
-		fieldName.forEach((property) => {
+	if (Array.isArray(resolvedFieldname)) {
+		resolvedFieldname.forEach((property) => {
 			let formattedProperty = property;
 
 			if (property === 'LANG') {
@@ -70,30 +105,38 @@ export function getLocalizedValue(
 		});
 	}
 	else if (
-		typeof fieldName === 'string' &&
-		item[i18nFieldName] &&
+		typeof resolvedFieldname === 'string' &&
+		resolvedItem[i18nFieldName] &&
 		Object.keys(Liferay.Language.available).includes(
-			Object.keys(item[i18nFieldName])[0]
+			Object.keys(resolvedItem[i18nFieldName])[0]
 		)
 	) {
-		valuePath.push(fieldName);
+		valuePath.push(resolvedFieldname);
 		navigatedValue =
-			navigatedValue[i18nFieldName][getLanguageKey(item[i18nFieldName])];
+			navigatedValue[i18nFieldName][
+				getLanguageKey(resolvedItem[i18nFieldName])
+			];
 	}
 	else if (
-		typeof fieldName === 'string' &&
-		item[fieldName] &&
+		typeof resolvedFieldname === 'string' &&
+		resolvedItem[resolvedFieldname] &&
 		Object.keys(Liferay.Language.available).includes(
-			Object.keys(item[fieldName])[0]
+			Object.keys(resolvedItem[resolvedFieldname])[0]
 		)
 	) {
-		valuePath.push(fieldName);
+		valuePath.push(resolvedFieldname);
 		navigatedValue =
-			navigatedValue[fieldName][getLanguageKey(item[fieldName])];
+			navigatedValue[resolvedFieldname][
+				getLanguageKey(resolvedItem[resolvedFieldname])
+			];
 	}
 	else {
-		valuePath.push(fieldName);
-		navigatedValue = navigatedValue[fieldName];
+		valuePath.push(resolvedFieldname);
+		navigatedValue = navigatedValue[resolvedFieldname];
+	}
+
+	if (fieldName !== resolvedFieldname) {
+		valuePath.unshift(rootPropertyName);
 	}
 
 	return {

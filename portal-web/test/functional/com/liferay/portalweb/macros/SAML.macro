@@ -195,10 +195,7 @@ definition {
 
 		// Add new virtual instance to be the SP site
 
-		ApplicationsMenu.gotoPortlet(
-			category = "System",
-			panel = "Control Panel",
-			portlet = "Virtual Instances");
+		PortalInstances.openVirtualInstancesAdmin();
 
 		for (var virtualHostName : list ${virtualHosts}) {
 			PortalInstances.addCP(
@@ -485,6 +482,11 @@ definition {
 		User.logoutPG(specificURL = ${specificURL});
 
 		User.viewLoggedOutPG();
+	}
+
+	@summary = "Default summary"
+	macro deployConfigFile(osgiConfigFileName = null) {
+		AntCommands.runCommand("build-test-saml.xml", "prepare-saml-keystore-osgi-configuration -Dosgi.config.file.name=${osgiConfigFileName}");
 	}
 
 	@summary = "Default summary"
@@ -890,6 +892,19 @@ definition {
 	}
 
 	@summary = "Default summary"
+	macro validateFolderExist() {
+		var liferayHome = PropsUtil.get("liferay.home.dir.name");
+
+		AntCommands.runCommand("build-test-saml.xml", "check-keystore-path");
+
+		var result = FileUtil.read("${liferayHome}/result.txt");
+
+		if (contains(${result}, "isn't saved")) {
+			fail("The certificate file isn't saved to DL root folder.");
+		}
+	}
+
+	@summary = "Default summary"
 	macro viewAllAttributeMappingsMustSpecifyASAMLAttributeErrorMessage() {
 		AssertTextEquals.assertPartialText(
 			locator1 = "Message#ERROR_DISMISSIBLE",
@@ -960,9 +975,9 @@ definition {
 		AssertTextEquals.assertPartialText(
 			locator1 = "OAuth2#OAUTH2_TESTER_REQUEST_RESULTS",
 			value1 = ${entry1},
-			value2 = ${entry},
-			value3 = ${entry},
-			value4 = ${entry});
+			value2 = ${entry2},
+			value3 = ${entry3},
+			value4 = ${entry4});
 	}
 
 	@summary = "Default summary"

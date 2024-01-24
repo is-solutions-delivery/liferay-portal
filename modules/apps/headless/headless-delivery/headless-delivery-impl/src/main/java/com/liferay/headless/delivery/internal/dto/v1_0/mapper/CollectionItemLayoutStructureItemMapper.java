@@ -15,38 +15,37 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.osgi.service.component.annotations.Component;
-
 /**
  * @author Jürgen Kappler
  */
-@Component(service = LayoutStructureItemMapper.class)
 public class CollectionItemLayoutStructureItemMapper
 	implements LayoutStructureItemMapper {
-
-	@Override
-	public String getClassName() {
-		return CollectionItemLayoutStructureItem.class.getName();
-	}
 
 	@Override
 	public PageElement getPageElement(
 		long groupId, LayoutStructureItem layoutStructureItem,
 		boolean saveInlineContent, boolean saveMappingConfiguration) {
 
-		CollectionItemLayoutStructureItem collectionItemLayoutStructureItem =
-			(CollectionItemLayoutStructureItem)layoutStructureItem;
-
 		return new PageElement() {
 			{
-				definition = new PageCollectionItemDefinition() {
-					{
-						collectionItemConfig = _getConfigAsMap(
-							collectionItemLayoutStructureItem.
-								getItemConfigJSONObject());
-					}
-				};
-				type = Type.COLLECTION_ITEM;
+				setDefinition(
+					() -> new PageCollectionItemDefinition() {
+						{
+							setCollectionItemConfig(
+								() -> {
+									CollectionItemLayoutStructureItem
+										collectionItemLayoutStructureItem =
+											(CollectionItemLayoutStructureItem)
+												layoutStructureItem;
+
+									return _getConfigAsMap(
+										collectionItemLayoutStructureItem.
+											getItemConfigJSONObject());
+								});
+						}
+					});
+				setId(layoutStructureItem::getItemId);
+				setType(() -> Type.COLLECTION_ITEM);
 			}
 		};
 	}

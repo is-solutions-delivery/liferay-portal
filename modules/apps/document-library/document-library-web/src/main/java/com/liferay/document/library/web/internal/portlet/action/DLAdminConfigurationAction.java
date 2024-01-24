@@ -36,7 +36,7 @@ public class DLAdminConfigurationAction
 
 	@Override
 	public String getJspPath(HttpServletRequest httpServletRequest) {
-		return "/document_library_admin/configuration.jsp";
+		return "/document_library_admin/configuration_browse.jsp";
 	}
 
 	@Override
@@ -69,7 +69,6 @@ public class DLAdminConfigurationAction
 	private void _validate(ActionRequest actionRequest) {
 		validateEmail(actionRequest, "emailFileEntryAdded");
 		validateEmail(actionRequest, "emailFileEntryUpdated");
-		validateEmailFrom(actionRequest);
 	}
 
 	@Reference

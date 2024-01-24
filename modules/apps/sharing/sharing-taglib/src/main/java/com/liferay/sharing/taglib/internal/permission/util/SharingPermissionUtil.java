@@ -1,0 +1,24 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+package com.liferay.sharing.taglib.internal.permission.util;
+
+import com.liferay.portal.kernel.module.service.Snapshot;
+import com.liferay.sharing.security.permission.SharingPermission;
+
+/**
+ * @author Alejandro Tardín
+ */
+public class SharingPermissionUtil {
+
+	public static SharingPermission getSharingPermission() {
+		return _sharingPermissionSnapshot.get();
+	}
+
+	private static final Snapshot<SharingPermission>
+		_sharingPermissionSnapshot = new Snapshot<>(
+			SharingPermissionUtil.class, SharingPermission.class);
+
+}

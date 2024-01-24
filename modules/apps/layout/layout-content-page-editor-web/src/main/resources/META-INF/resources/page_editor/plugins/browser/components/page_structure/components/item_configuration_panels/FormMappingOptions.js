@@ -21,15 +21,17 @@ export default function FormMappingOptions({
 			label: Liferay.Language.get('none'),
 			value: '0',
 		},
-		...(Liferay.FeatureFlags['LPS-169923']
-			? config.formTypes.filter((formType) => !formType?.isRestricted)
-			: config.formTypes),
+		...config.formTypes
+			.filter((formType) => !formType.isRestricted)
+			.map((formType) => ({
+				...formType,
+				subtypes: formType.subtypes.filter(
+					(subtype) => !subtype.isRestricted
+				),
+			})),
 	];
 
-	if (
-		Liferay.FeatureFlags['LPS-183727'] &&
-		config.layoutType === LAYOUT_TYPES.display
-	) {
+	if (config.layoutType === LAYOUT_TYPES.display) {
 		formTypes = formTypes.map((formType) => {
 			if (formType.value === config.selectedMappingTypes.type.id) {
 				return {

@@ -3,29 +3,55 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import {
+	FDS_NESTED_FIELD_NAME_DELIMITER,
+	FDS_NESTED_FIELD_NAME_PARENT_SUFFIX,
+} from '@liferay/frontend-data-set-web';
 import {fetch} from 'frontend-js-web';
 
 import {OBJECT_RELATIONSHIP} from './Constants';
 import {FDSViewType} from './FDSViews';
-import {IField, IPickList} from './types';
+import {EFieldFormat, EFieldType, IField, IPickList} from './types';
 import openDefaultFailureToast from './utils/openDefaultFailureToast';
+
+const INVALID_FIELDS = ['actions', 'scopeKey', 'x-class-name', 'x-schema-name'];
 
 const LOCALIZABLE_PROPERTY_SUFFIX = '_i18n';
 
-const NOT_ALLOWED_KEYS_AS_FIELD_NAME = [
-	'actions',
-	'scopeKey',
-	'x-class-name',
-	'x-schema-name',
-];
+interface IProperty {
+	$ref?: string;
+	format?: EFieldFormat;
+	type: EFieldType;
+}
 
-function getValidFields(properties: any): Array<IField> {
+interface IProperties {
+	[key: string]: IProperty;
+}
+
+interface ISchemas {
+	[key: string]: {
+		properties: IProperties;
+		type: string;
+	};
+}
+
+function getValidFields({
+	contextPath,
+	schemaName,
+	schemas,
+}: {
+	contextPath: string;
+	schemaName: string;
+	schemas: ISchemas;
+}): Array<IField> {
 	const fields: Array<IField> = [];
+
+	const properties: IProperties = schemas[schemaName]?.properties;
 
 	Object.keys(properties).map((propertyKey) => {
 		const propertyValue = properties[propertyKey];
 
-		if (NOT_ALLOWED_KEYS_AS_FIELD_NAME.includes(propertyKey)) {
+		if (INVALID_FIELDS.includes(propertyKey)) {
 			return;
 		}
 
@@ -35,18 +61,31 @@ function getValidFields(properties: any): Array<IField> {
 
 		const type = propertyValue.type;
 
-		if (type === 'array') {
+		if (type === EFieldType.ARRAY) {
 			return;
 		}
 
 		if (propertyValue.$ref) {
+			if (Liferay.FeatureFlags['LPS-186871']) {
+				fields.push({
+					children: getValidFields({
+						contextPath: `${contextPath}${propertyKey}${FDS_NESTED_FIELD_NAME_DELIMITER}`,
+						schemaName: propertyValue.$ref.replace(/^.*\//, ''),
+						schemas,
+					}),
+					label: propertyKey,
+					name: `${contextPath}${propertyKey}${FDS_NESTED_FIELD_NAME_PARENT_SUFFIX}`,
+					type: type ? type : 'object',
+				});
+			}
+
 			return;
 		}
 
 		fields.push({
-			format: properties[propertyKey].format || type,
+			format: propertyValue.format,
 			label: propertyKey,
-			name: propertyKey,
+			name: `${contextPath}${propertyKey}`,
 			type,
 		});
 	});
@@ -69,18 +108,19 @@ export async function getFields(fdsView: FDSViewType) {
 
 	const responseJSON = await response.json();
 
-	const properties =
-		responseJSON?.components?.schemas[restSchema]?.properties;
+	const schemas = responseJSON?.components?.schemas;
 
-	if (!properties) {
+	if (!schemas?.[restSchema]?.properties) {
 		openDefaultFailureToast();
 
 		return [];
 	}
 
-	const fieldsArray: Array<IField> = getValidFields(properties);
-
-	return fieldsArray;
+	return getValidFields({
+		contextPath: '',
+		schemaName: restSchema,
+		schemas,
+	});
 }
 
 export async function getAllPicklists(

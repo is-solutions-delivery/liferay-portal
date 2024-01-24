@@ -370,9 +370,11 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro assertRequestLog(jobType = null) {
-		if (${jobType} == "Delete") {
+	macro assertRequestLog(key_jobType = null) {
+		if (${key_jobType} == "Delete") {
 			AssertElementPresent(locator1 = "ACDataControlAndPrivacy#REQUEST_LOG_TABLE");
+
+			var key_jobType = "Suppress";
 
 			AssertElementPresent(locator1 = "ACDataControlAndPrivacy#REQUEST_LOG_TABLE");
 		}
@@ -460,7 +462,7 @@ definition {
 			locator1 = "ACSettings#RETENTION_PERIOD",
 			value1 = "\ENTER");
 
-		Click(locator1 = "ACSettings#DELETE_CONFIRMATION_BUTTON");
+		Click(locator1 = "ACSettings#CONFIRMATION_BUTTON");
 	}
 
 	@summary = "Default summary"
@@ -519,7 +521,7 @@ definition {
 			locator1 = "ACSettings#DELETE_CONFIRMATION_INPUT",
 			value1 = ${confirmMessage});
 
-		Click(locator1 = "ACSettings#DELETE_CONFIRMATION_BUTTON");
+		Click(locator1 = "ACSettings#CONFIRMATION_BUTTON");
 
 		Alert.viewSuccessMessage();
 
@@ -644,7 +646,7 @@ definition {
 				locator1 = "ACSettings#DELETE_CONFIRMATION_INPUT",
 				value1 = ${confirmMessage});
 
-			Click(locator1 = "ACSettings#DELETE_CONFIRMATION_BUTTON");
+			Click(locator1 = "ACSettings#CONFIRMATION_BUTTON");
 		}
 	}
 
@@ -698,7 +700,7 @@ definition {
 	//		Type(
 	//			locator1 = "ACSettings#DELETE_CONFIRMATION_INPUT",
 	//			value1 = ${confirmMessage});
-	//		Click(locator1 = "ACSettings#DELETE_CONFIRMATION_BUTTON");
+	//		Click(locator1 = "ACSettings#CONFIRMATION_BUTTON");
 	//}
 	//}
 
@@ -756,7 +758,7 @@ definition {
 			locator1 = "ACSettings#DELETE_CONFIRMATION_INPUT",
 			value1 = ${confirmMessage});
 
-		Click(locator1 = "ACSettings#DELETE_CONFIRMATION_BUTTON");
+		Click(locator1 = "ACSettings#CONFIRMATION_BUTTON");
 
 		Alert.viewSuccessMessage();
 	}
@@ -777,7 +779,7 @@ definition {
 			locator1 = "ACSettings#DELETE_CONFIRMATION_INPUT",
 			value1 = ${confirmMessage});
 
-		Click(locator1 = "ACSettings#DELETE_CONFIRMATION_BUTTON");
+		Click(locator1 = "ACSettings#CONFIRMATION_BUTTON");
 
 		Alert.viewSuccessMessage();
 	}

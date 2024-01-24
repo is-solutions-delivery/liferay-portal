@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-export {default as AutoComplete} from './components/AutoComplete/index';
-export {BetaButton} from './components/BetaButton';
 export {BuilderScreen} from './components/BuilderScreen/BuilderScreen';
 export {Card} from './components/Card';
 export {
@@ -20,16 +18,15 @@ export * from './components/ExpressionBuilder';
 export {Input} from './components/Input';
 export {ManagementToolbar} from './components/ManagementToolbar/index';
 export {ManagementToolbarSearch} from './components/ManagementToolbar/ManagementToolbarSearch';
-export {ModalEditExternalReferenceCode} from './components/ManagementToolbar/ModalEditExternalReferenceCode';
+export {ModalEditObjectDefinitionExternalReferenceCode} from './components/ManagementToolbar/ModalEditObjectDefinitionExternalReferenceCode';
 export {CustomVerticalBar} from './components/VerticalBar/CustomVerticalBar';
 export {ListTypeEntryBaseField} from './components/BaseEntryFields/ListTypeEntryBaseField';
 export {RadioField} from './components/RadioField/RadioField';
 export {RichTextLocalized} from './components/RichTextLocalized';
-export {Select} from './components/Select';
-export {CustomItem} from './components/Select/BaseSelect';
-export {CheckboxItem} from './components/Select/CheckBoxItem';
-export {MultipleSelect} from './components/Select/MultipleSelect';
-export {SelectWithOption} from './components/Select/SelectWithOption';
+export {
+	MultipleSelect,
+	MultiSelectItem,
+} from './components/Select/MultipleSelect';
 export {SingleSelect} from './components/Select/SingleSelect';
 
 export {

@@ -706,7 +706,7 @@ definition {
 	}
 
 	@description = "This test covers LPS-72443. It validates that a user can navigate to the remote site using the staging toolbar."
-	@priority = 5
+	@priority = 4
 	test CanNavigateToRemoteLiveViaToolbar {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
@@ -753,10 +753,7 @@ definition {
 			specificURL = "http://localhost:9080",
 			userEmailAddress = "test@liferay.com");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin(baseURL = "http://localhost:9080");
 
 		User.addCP(
 			userEmailAddress = "userea@liferay.com",
@@ -764,10 +761,7 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin(baseURL = "http://localhost:9080");
 
 		User.assignRegularRoleCP(
 			roleTitle = "Administrator",
@@ -974,12 +968,11 @@ definition {
 			videoShortcutTitle = "Test YouTube Video",
 			videoURL = "https://www.youtube.com/watch?v=HOdbzGCI5ME");
 
-		Refresh();
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "site-name");
 
-		DMNavigator.openToEditEntryInSite(
-			dmDocumentTitle = "Test YouTube Video",
-			groupName = "Site Name",
-			siteURLKey = "site-name");
+		LexiconEntry.gotoEntryMenuItem(
+			menuItem = "Edit",
+			rowEntry = "Test YouTube Video");
 
 		DMDocument.editFriendlyURL(
 			dmDocumentTitle = "Test YouTube Video",
@@ -1024,6 +1017,8 @@ definition {
 			password = "test",
 			specificURL = "http://localhost:9080",
 			userEmailAddress = "test@liferay.com");
+
+		Refresh();
 
 		Navigator.openSitePage(
 			baseURL = "http://localhost:9080",
@@ -1609,7 +1604,7 @@ definition {
 	}
 
 	@description = "This ensures that the document info is displayed correctly after publishing and republishing."
-	@priority = 5
+	@priority = 4
 	@refactordone
 	test CanViewRepublishedDocumentInfo {
 		property portal.acceptance = "true";
@@ -1866,7 +1861,7 @@ definition {
 	}
 
 	@description = "This test covers LPS-155795. It ensures that an image that was published on a site can still be accessed after remote staging is disabled."
-	@priority = 5
+	@priority = 4
 	test ImageIsStillAccessibleAfterDisablingStaging {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";

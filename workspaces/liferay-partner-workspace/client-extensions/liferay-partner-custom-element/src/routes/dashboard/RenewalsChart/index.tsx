@@ -15,6 +15,7 @@ import {status} from '../../../common/components/dashboard/utils/constants/statu
 import getFilteredRenewals from '../../../common/components/dashboard/utils/getFilteredRenewalsData';
 import {siteURL} from '../../../common/components/dashboard/utils/siteURL';
 import {Liferay} from '../../../common/services/liferay';
+import {Filters} from '../../../common/utils/constants/filters';
 import {retry} from '../../../common/utils/retry';
 
 export default function () {
@@ -24,16 +25,10 @@ export default function () {
 	const getRenewalsData = async () => {
 		setIsLoading(true);
 
-		const todayDate = new Date();
-		const todayDateISO = todayDate.toISOString().split('T')[0];
-
-		todayDate.setDate(todayDate.getDate() + 30);
-		const todayDate30Days = todayDate.toISOString().split('T')[0];
-
 		// eslint-disable-next-line @liferay/portal/no-global-fetch
-		const response = await retry<Response>(() =>
+		const opportunities = await retry<any>(() =>
 			fetch(
-				`/o/c/opportunitysfs?pageSize=200&sort=closeDate:asc&filter=type eq 'Existing Business' and stage ne 'Closed Lost' and stage ne 'Disqualified' and stage ne 'Rejected' and stage ne 'Rolled into another opportunity' and closeDate ge ${todayDateISO} and closeDate le ${todayDate30Days}`,
+				`/o/c/opportunitysfs?pageSize=200&sort=closeDate:asc&filter=${Filters.RENEWAL_DASHBOARD.renewals}`,
 				{
 					headers: {
 						'accept': 'application/json',
@@ -43,10 +38,8 @@ export default function () {
 			)
 		);
 
-		if (response.ok) {
-			const renewalsData = await response.json();
-
-			setData(renewalsData);
+		if (opportunities) {
+			setData(opportunities);
 			setIsLoading(false);
 
 			return;
@@ -83,13 +76,13 @@ export default function () {
 					displayType="info"
 					title="Info:"
 				>
-					No Data Available
+					You have no expiring renewals at this time
 				</ClayAlert>
 			);
 		}
 
 		return (
-			<div className="align-items-center d-flex flex-column justify-content-center">
+			<div className="align-items-baseline d-flex flex-column justify-content-center px-2">
 				{renewalsData?.map((item, index) => {
 					getCurrentStatusColor(item);
 
@@ -111,14 +104,23 @@ export default function () {
 								</div>
 
 								<div>
-									Expires &nbsp;
-									<span className="font-weight-semi-bold">
-										{item.expirationDays === 0
-											? 'today'
-											: item.expirationDays === 1
-											? `in ${item.expirationDays} day`
-											: `in ${item.expirationDays} days`}
-									</span>
+									{item.expirationDays &&
+									item.expirationDays >= 0 ? (
+										<span className="font-weight-semi-bold">
+											{item.expirationDays === 0
+												? 'Expires today'
+												: item.expirationDays === 1
+												? `Expires in ${item.expirationDays} day`
+												: `Expires in ${item.expirationDays} days`}
+										</span>
+									) : (
+										<span className="font-weight-semi-bold">
+											{`Expired ${
+												item.expirationDays &&
+												item.expirationDays * -1
+											} days ago`}
+										</span>
+									)}
 									&nbsp;
 									<span className="ml-2">
 										{item.closeDate}

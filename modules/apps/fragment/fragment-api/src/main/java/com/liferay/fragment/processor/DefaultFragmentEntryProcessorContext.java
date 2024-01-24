@@ -10,6 +10,7 @@ import com.liferay.fragment.constants.FragmentEntryLinkConstants;
 import com.liferay.info.form.InfoForm;
 import com.liferay.info.item.InfoItemIdentifier;
 import com.liferay.info.item.InfoItemReference;
+import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 
 import java.util.Locale;
 import java.util.Objects;
@@ -31,6 +32,8 @@ public class DefaultFragmentEntryProcessorContext
 		_httpServletResponse = httpServletResponse;
 		_mode = mode;
 		_locale = locale;
+
+		_fragmentElementId = "fragment-" + PortalUUIDUtil.generate();
 	}
 
 	@Override
@@ -105,6 +108,15 @@ public class DefaultFragmentEntryProcessorContext
 	@Override
 	public boolean isIndexMode() {
 		if (Objects.equals(getMode(), FragmentEntryLinkConstants.INDEX)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean isPreviewMode() {
+		if (Objects.equals(getMode(), FragmentEntryLinkConstants.PREVIEW)) {
 			return true;
 		}
 

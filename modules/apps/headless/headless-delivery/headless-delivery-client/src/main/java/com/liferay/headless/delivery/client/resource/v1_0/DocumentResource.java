@@ -17,6 +17,8 @@ import com.liferay.headless.delivery.client.serdes.v1_0.RatingSerDes;
 
 import java.io.File;
 
+import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -429,6 +431,10 @@ public interface DocumentResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {

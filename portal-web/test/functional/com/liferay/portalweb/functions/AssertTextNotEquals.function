@@ -2,14 +2,18 @@
 @summary = "Assert that '${locator1}' does not equal the value '${value1}'"
 definition {
 
-	function assertNotPartialText(locator1, value1) {
+	function assertNotPartialMatch(locator1, value1) {
 		WaitForSPARefresh();
 
 		selenium.waitForVisible(${locator1}, "false");
 
-		selenium.waitForNotPartialText(${locator1}, ${value1});
+		var value = GetterUtil.getString(${value1});
 
-		selenium.assertNotPartialText(${locator1}, ${value1});
+		var regex = RegexUtil.escapeRegexChars(${value});
+
+		selenium.waitForTextMatches(${locator1}, "^((?!${regex}).)*$");
+
+		selenium.assertTextMatches(${locator1}, "^((?!${regex}).)*$");
 
 		selenium.assertJavaScriptErrors("true");
 

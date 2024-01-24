@@ -111,6 +111,7 @@ import org.osgi.service.component.annotations.Reference;
 		"javax.portlet.name=" + AssetPublisherPortletKeys.ASSET_PUBLISHER,
 		"javax.portlet.resource-bundle=content.Language",
 		"javax.portlet.security-role-ref=power-user,user",
+		"javax.portlet.supported-public-render-parameter=assetEntryId",
 		"javax.portlet.supported-public-render-parameter=categoryId",
 		"javax.portlet.supported-public-render-parameter=resetCur",
 		"javax.portlet.supported-public-render-parameter=tag",
@@ -361,6 +362,9 @@ public class AssetPublisherPortlet extends MVCPortlet {
 		assetPublisherWebConfiguration = ConfigurableUtil.createConfigurable(
 			AssetPublisherWebConfiguration.class, properties);
 
+		assetPublisherCustomizerRegistry = new AssetPublisherCustomizerRegistry(
+			assetPublisherHelper, assetPublisherWebConfiguration);
+
 		portletRegistry.registerAlias(
 			_ALIAS, AssetPublisherPortletKeys.ASSET_PUBLISHER);
 	}
@@ -390,7 +394,7 @@ public class AssetPublisherPortlet extends MVCPortlet {
 			PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
 
 			if (portletDisplay != null) {
-				portletPreferences = portletDisplay.getPortletSetup();
+				portletPreferences = portletDisplay.getPortletPreferences();
 			}
 
 			AssetPublisherDisplayContext assetPublisherDisplayContext =
@@ -452,8 +456,8 @@ public class AssetPublisherPortlet extends MVCPortlet {
 	protected AssetListEntrySegmentsEntryRelLocalService
 		assetListEntrySegmentsEntryRelLocalService;
 
-	@Reference
-	protected AssetPublisherCustomizerRegistry assetPublisherCustomizerRegistry;
+	protected volatile AssetPublisherCustomizerRegistry
+		assetPublisherCustomizerRegistry;
 
 	@Reference
 	protected AssetPublisherHelper assetPublisherHelper;

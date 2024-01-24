@@ -6,14 +6,22 @@
 import fetcher from '../fetcher';
 
 class HeadlessCommerceDeliveryCatalog {
+	async getProduct(
+		channelId: number | string,
+		productId: number | string,
+		searchParams = new URLSearchParams()
+	) {
+		return fetcher<DeliveryProduct>(
+			`o/headless-commerce-delivery-catalog/v1.0/channels/${channelId}/products/${productId}?${searchParams.toString()}`
+		);
+	}
+
 	async getProductsByChannelId(
 		channelId: number,
 		searchParams = new URLSearchParams()
 	) {
 		return fetcher<APIResponse<Product>>(
-			`o/headless-commerce-delivery-catalog/v1.0/channels/${channelId}/products?${encodeURI(
-				searchParams.toString()
-			)}`
+			`o/headless-commerce-delivery-catalog/v1.0/channels/${channelId}/products?${searchParams.toString()}`
 		);
 	}
 

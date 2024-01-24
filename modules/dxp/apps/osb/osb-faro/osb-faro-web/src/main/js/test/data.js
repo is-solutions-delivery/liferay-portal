@@ -811,8 +811,7 @@ export function mockAddOns() {
 				individuals: 5000,
 				pageViews: 0
 			},
-			name: 'Liferay Analytics Cloud Enterprise Contacts',
-			price: 500
+			name: 'Liferay Analytics Cloud Enterprise Contacts'
 		},
 		{
 			baseSubscriptionPlan: 'Liferay Analytics Cloud Enterprise',
@@ -820,8 +819,7 @@ export function mockAddOns() {
 				individuals: 0,
 				pageViews: 5000000
 			},
-			name: 'Liferay Analytics Cloud Enterprise Tracked Pages',
-			price: 250
+			name: 'Liferay Analytics Cloud Enterprise Tracked Pages'
 		}
 	];
 }
@@ -893,7 +891,7 @@ export function mockPlan({data = {}, individuals = {}, pageViews = {}} = {}) {
 		},
 		name: 'Liferay Analytics Cloud Enterprise',
 		startDate: getTimestamp(-2),
-		...{data}
+		...data
 	};
 }
 

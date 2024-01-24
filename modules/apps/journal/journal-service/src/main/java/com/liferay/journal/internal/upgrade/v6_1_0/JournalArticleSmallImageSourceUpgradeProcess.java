@@ -21,6 +21,14 @@ public class JournalArticleSmallImageSourceUpgradeProcess
 			"update JournalArticle set smallImageSource = " +
 				JournalArticleConstants.SMALL_IMAGE_SOURCE_NONE +
 					" where smallImage = [$FALSE$]");
+
+		runSQL(
+			StringBundler.concat(
+				"update JournalArticle set smallImageSource = ",
+				JournalArticleConstants.SMALL_IMAGE_SOURCE_URL,
+				" where smallImage = [$TRUE$] and not (smallImageURL is null ",
+				"or smallImageURL = '')"));
+
 		runSQL(
 			"update JournalArticle set smallImageSource = " +
 				JournalArticleConstants.SMALL_IMAGE_SOURCE_USER_COMPUTER +

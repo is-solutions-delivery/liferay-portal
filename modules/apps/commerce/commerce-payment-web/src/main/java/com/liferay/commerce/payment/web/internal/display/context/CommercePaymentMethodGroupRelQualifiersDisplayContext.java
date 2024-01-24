@@ -6,6 +6,7 @@
 package com.liferay.commerce.payment.web.internal.display.context;
 
 import com.liferay.commerce.model.CommerceOrderType;
+import com.liferay.commerce.payment.integration.CommercePaymentIntegrationRegistry;
 import com.liferay.commerce.payment.method.CommercePaymentMethodRegistry;
 import com.liferay.commerce.payment.service.CommercePaymentMethodGroupRelQualifierService;
 import com.liferay.commerce.payment.service.CommercePaymentMethodGroupRelService;
@@ -42,11 +43,13 @@ public class CommercePaymentMethodGroupRelQualifiersDisplayContext
 		CommercePaymentMethodGroupRelQualifierService
 			commercePaymentMethodGroupRelQualifierService,
 		CommercePaymentMethodRegistry commercePaymentMethodRegistry,
+		CommercePaymentIntegrationRegistry commercePaymentIntegrationRegistry,
 		CountryService countryService, HttpServletRequest httpServletRequest) {
 
 		super(
 			commerceChannelLocalService, commercePaymentMethodGroupRelService,
-			commercePaymentMethodRegistry, countryService, httpServletRequest);
+			commercePaymentMethodRegistry, commercePaymentIntegrationRegistry,
+			countryService, httpServletRequest);
 
 		_commerceChannelModelResourcePermission =
 			commerceChannelModelResourcePermission;
@@ -96,13 +99,13 @@ public class CommercePaymentMethodGroupRelQualifiersDisplayContext
 		return _getFDSActionTemplates(
 			PortletURLBuilder.create(
 				PortletProviderUtil.getPortletURL(
-					commercePaymentMethodRequestHelper.getRequest(),
+					commercePaymentRequestHelper.getRequest(),
 					CommerceOrderType.class.getName(),
 					PortletProvider.Action.MANAGE)
 			).setMVCRenderCommandName(
 				"/commerce_order_type/edit_commerce_order_type"
 			).setRedirect(
-				commercePaymentMethodRequestHelper.getCurrentURL()
+				commercePaymentRequestHelper.getCurrentURL()
 			).setParameter(
 				"commerceOrderTypeId", "{orderType.id}"
 			).buildString(),
@@ -125,13 +128,13 @@ public class CommercePaymentMethodGroupRelQualifiersDisplayContext
 		return _getFDSActionTemplates(
 			PortletURLBuilder.create(
 				PortletProviderUtil.getPortletURL(
-					commercePaymentMethodRequestHelper.getRequest(),
+					commercePaymentRequestHelper.getRequest(),
 					CommerceTermEntry.class.getName(),
 					PortletProvider.Action.MANAGE)
 			).setMVCRenderCommandName(
 				"/commerce_term_entry/edit_commerce_term_entry"
 			).setRedirect(
-				commercePaymentMethodRequestHelper.getCurrentURL()
+				commercePaymentRequestHelper.getCurrentURL()
 			).setParameter(
 				"commerceTermEntryId", "{term.id}"
 			).buildString(),
@@ -140,7 +143,7 @@ public class CommercePaymentMethodGroupRelQualifiersDisplayContext
 
 	public boolean hasPermission(String actionId) throws PortalException {
 		return _commerceChannelModelResourcePermission.contains(
-			commercePaymentMethodRequestHelper.getPermissionChecker(),
+			commercePaymentRequestHelper.getPermissionChecker(),
 			getCommerceChannelId(), actionId);
 	}
 
@@ -151,8 +154,7 @@ public class CommercePaymentMethodGroupRelQualifiersDisplayContext
 
 		FDSActionDropdownItem fdsActionDropdownItem = new FDSActionDropdownItem(
 			portletURL, "pencil", "edit",
-			LanguageUtil.get(
-				commercePaymentMethodRequestHelper.getRequest(), "edit"),
+			LanguageUtil.get(commercePaymentRequestHelper.getRequest(), "edit"),
 			"get", null, null);
 
 		if (sidePanel) {
@@ -165,7 +167,7 @@ public class CommercePaymentMethodGroupRelQualifiersDisplayContext
 			new FDSActionDropdownItem(
 				null, "trash", "remove",
 				LanguageUtil.get(
-					commercePaymentMethodRequestHelper.getRequest(), "remove"),
+					commercePaymentRequestHelper.getRequest(), "remove"),
 				"delete", "delete", "headless"));
 
 		return fdsActionDropdownItems;

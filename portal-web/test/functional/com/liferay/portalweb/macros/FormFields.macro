@@ -637,11 +637,13 @@ definition {
 
 	@summary = "Default summary"
 	macro editValidation(validationErrorMessage = null, validationArgument = null, validationInput = null) {
-		ScrollWebElementIntoView(locator1 = "FormFields#VALIDATION_ARGUMENT_2");
+		ScrollWebElementIntoView(locator1 = "FormFields#VALIDATION_ARGUMENT");
 
-		Click(locator1 = "FormFields#VALIDATION_ARGUMENT_2");
+		Click(locator1 = "FormFields#VALIDATION_ARGUMENT");
 
-		MenuItem.click(menuItem = ${validationArgument});
+		Click.javaScriptClick(
+			key_validationArgument = ${validationArgument},
+			locator1 = "FormFields#VALIDATION_ARGUMENT_OPTION_TARGET_INPUT");
 
 		if (isSet(validationInput)) {
 			Type(
@@ -658,10 +660,9 @@ definition {
 	macro editValidationTargetArgument(validationErrorMessage = null, validationArgument = null, validationInput = null) {
 		Click(locator1 = "FormFields#VALIDATION_ARGUMENT");
 
-		AssertClick(
+		Click.javaScriptClick(
 			key_validationArgument = ${validationArgument},
-			locator1 = "FormFields#VALIDATION_ARGUMENT_OPTION_TARGET_INPUT",
-			value1 = ${validationArgument});
+			locator1 = "FormFields#VALIDATION_ARGUMENT_OPTION_TARGET_INPUT");
 
 		if (isSet(validationInput)) {
 			Type(
@@ -781,7 +782,11 @@ definition {
 
 		Click(locator1 = "FormFields#SELECT_FIELD_MULTIPLE_OPTION_REMOVE");
 
-		AssertElementNotPresent(
+		Click(
+			key_fieldName = ${fieldName},
+			locator1 = "FormFields#SELECT_FIELD");
+
+		IsElementNotPresent.isNotVisible(
 			locator1 = "FormFields#SELECT_FIELD_MULTIPLE_OPTION",
 			value1 = ${selectOption});
 	}
@@ -997,20 +1002,21 @@ definition {
 	@summary = "Default summary"
 	macro selectSelectOption(fieldName = null, selectOption = null) {
 		var key_fieldName = ${fieldName};
+		var key_menuItem = ${selectOption};
 		var key_selectOption = ${selectOption};
 
 		Click(
 			locator1 = "FormFields#SELECT_FIELD",
 			value1 = ${selectOption});
 
-		if ((${fieldName} == "Choose a Data Provider") || (${fieldName} == "Output Parameter")) {
+		if ((${fieldName} == "Choose a Data Provider") || (${fieldName} == "Choose an Output Parameter")) {
 			Click.javaScriptClick(
 				locator1 = "FormFields#SELECT_FIELD_DATA_PROVIDER_LIST",
 				value1 = ${selectOption});
 		}
 		else {
-			AssertClick(
-				locator1 = "FormFields#SELECT_FIELD_OPTIONS_LIST",
+			Click.javaScriptClick(
+				locator1 = "MenuItem#DROPDOWN_MENU_ITEM",
 				value1 = ${selectOption});
 		}
 	}
@@ -1044,14 +1050,22 @@ definition {
 		}
 
 		for (var selectOption : list ${selectOptionsList}) {
-			FormFields.enableCheckbox(fieldName = ${selectOption});
+			Click(locator1 = "FormFields#SELECT_FIELD");
+
+			if (IsElementNotPresent(key_fieldName = ${fieldName}, locator1 = "FormFields#CHECKBOX_ENTRY")) {
+				Click(
+					key_menuItem = ${selectOption},
+					locator1 = "MenuItem#ANY_MENU_ITEM");
+			}
 		}
 
-		FormFields.viewSelectMultipleOptions(
-			fieldName = "Select",
-			selectOptionsList = ${selectOptionsList});
-
 		Click(locator1 = "FormFields#SELECT_FIELD");
+
+		for (var selectOption : list ${selectOptionsList}) {
+			AssertElementPresent(
+				checkboxName = ${selectOption},
+				locator1 = "FormFields#ANY_CHECKBOX_CHECKED");
+		}
 	}
 
 	@summary = "Default summary"
@@ -1149,19 +1163,23 @@ definition {
 	@summary = "Default summary"
 	macro setInputMaskOnDecimal(decimalPlaces = null, decimalSeparator = null, prefix = null, suffix = null, thousandsSeparator = null) {
 		if (isSet(thousandsSeparator)) {
-			Click(
+			Click.javaScriptClick(
 				key_fieldName = "Thousands Separator",
 				locator1 = "FormFields#SELECT_FIELD");
 
-			MenuItem.click(menuItem = ${thousandsSeparator});
+			Click.javaScriptClick(
+				key_menuItem = ${thousandsSeparator},
+				locator1 = "MenuItem#ANY_MENU_ITEM");
 		}
 
 		if (isSet(decimalSeparator)) {
-			Click(
+			Click.javaScriptClick(
 				key_fieldName = "Decimal Separator",
 				locator1 = "FormFields#SELECT_FIELD");
 
-			MenuItem.click(menuItem = ${decimalSeparator});
+			Click.javaScriptClick(
+				key_menuItem = ${decimalSeparator},
+				locator1 = "MenuItem#ANY_MENU_ITEM");
 		}
 
 		if (isSet(decimalPlaces)) {
@@ -1800,28 +1818,6 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro viewOptionsPositionHorizontal(key_text2 = null, key_text1 = null) {
-		AssertElementPresent(
-			key_text = ${key_text1},
-			locator1 = "FormFields#OPTIONS_HORIZONTALY_POSITIONED");
-
-		AssertElementPresent(
-			key_text = ${key_text2},
-			locator1 = "FormFields#OPTIONS_HORIZONTALY_POSITIONED");
-	}
-
-	@summary = "Default summary"
-	macro viewOptionsPositionNotHorizontal(key_text2 = null, key_text1 = null) {
-		AssertElementNotPresent(
-			key_text = ${key_text1},
-			locator1 = "FormFields#OPTIONS_HORIZONTALY_POSITIONED");
-
-		AssertElementNotPresent(
-			key_text = ${key_text2},
-			locator1 = "FormFields#OPTIONS_HORIZONTALY_POSITIONED");
-	}
-
-	@summary = "Default summary"
 	macro viewOptionsRowFieldName(fieldName = null, rowNumber = null) {
 		AssertTextEquals(
 			key_rowNumber = ${rowNumber},
@@ -1935,13 +1931,6 @@ definition {
 		AssertVisible(
 			locator1 = "FormFields#PARAGRAPH_BODY_TEXT_PAGES",
 			value1 = ${fieldValue});
-	}
-
-	@summary = "Default summary"
-	macro viewPredefinedValueDropdownContent(key_textContent = null) {
-		AssertElementPresent(
-			key_textContent = ${key_textContent},
-			locator1 = "FormFields#SIDEBAR_ADVANCED_PREDEFINED_SELECT_FROM_LIST_DROPDOWN_CONTENT");
 	}
 
 	@summary = "Default summary"
@@ -2137,10 +2126,10 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro viewSelectFromListOption(optionValue = null) {
+	macro viewSelectFromListOption(optionValue) {
 		AssertElementPresent(
-			key_value = ${optionValue},
-			locator1 = "FormFields#OPTION_FROM_SELECTED_LIST");
+			key_menuItem = ${optionValue},
+			locator1 = "MenuItem#MENU_ITEM_SPECIFIC");
 	}
 
 	@summary = "Default summary"
@@ -2185,9 +2174,9 @@ definition {
 
 		Click(locator1 = "FormFields#SELECT_FIELD");
 
-		var key_selectOption = ${selectOption};
+		var key_menuItem = ${selectOption};
 
-		AssertElementPresent(locator1 = "FormFields#SELECT_FIELD_OPTIONS_LIST");
+		AssertElementPresent(locator1 = "MenuItem#DROPDOWN_MENU_ITEM");
 	}
 
 	@summary = "Default summary"

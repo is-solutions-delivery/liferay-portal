@@ -5,11 +5,17 @@
 
 import ClayAlert from '@clayui/alert';
 import {ClayCheckbox} from '@clayui/form';
+import ClayIcon from '@clayui/icon';
+import ClayLabel from '@clayui/label';
 import ClayTable from '@clayui/table';
+import {ClayTooltipProvider} from '@clayui/tooltip';
 import {sub} from 'frontend-js-web';
 import React, {useEffect, useRef, useState} from 'react';
 
 import {
+	CSV_FORMAT,
+	DISALLOWED_CSV_ENTITY_TYPES,
+	EXPORT_FILE_FORMAT_SELECTED_EVENT,
 	SCHEMA_SELECTED_EVENT,
 	TEMPLATE_SELECTED_EVENT,
 	TEMPLATE_SOILED_EVENT,
@@ -18,8 +24,14 @@ import getFieldsFromSchema from './getFieldsFromSchema';
 
 function FieldsTable({portletNamespace}) {
 	const [fields, setFields] = useState([]);
+	const [selectedExportFileFormat, setSelectedExportFileFormat] = useState(
+		''
+	);
 	const [selectedFields, setSelectedFields] = useState([]);
 	const useTemplateMappingRef = useRef();
+
+	const isForbidden = (field) =>
+		field.unsupportedFormats?.includes(selectedExportFileFormat);
 
 	useEffect(() => {
 		const handleSchemaUpdated = (event) => {
@@ -65,11 +77,33 @@ function FieldsTable({portletNamespace}) {
 			useTemplateMappingRef.current = false;
 		};
 
+		const handleExportFileFormatUpdated = ({
+			selectedExportFileFormat,
+			selectedSchema,
+		}) => {
+			setSelectedExportFileFormat(selectedExportFileFormat);
+			if (
+				selectedExportFileFormat === CSV_FORMAT.toUpperCase() &&
+				DISALLOWED_CSV_ENTITY_TYPES.includes(selectedSchema)
+			) {
+				setFields([]);
+				setSelectedFields([]);
+			}
+		};
+
+		Liferay.on(
+			EXPORT_FILE_FORMAT_SELECTED_EVENT,
+			handleExportFileFormatUpdated
+		);
 		Liferay.on(SCHEMA_SELECTED_EVENT, handleSchemaUpdated);
 		Liferay.on(TEMPLATE_SELECTED_EVENT, handleTemplateUpdate);
 		Liferay.on(TEMPLATE_SOILED_EVENT, handleTemplateSoiled);
 
 		return () => {
+			Liferay.detach(
+				EXPORT_FILE_FORMAT_SELECTED_EVENT,
+				handleExportFileFormatUpdated
+			);
 			Liferay.detach(SCHEMA_SELECTED_EVENT, handleSchemaUpdated);
 			Liferay.detach(TEMPLATE_SELECTED_EVENT, handleTemplateUpdate);
 			Liferay.detach(TEMPLATE_SOILED_EVENT, handleTemplateSoiled);
@@ -131,15 +165,22 @@ function FieldsTable({portletNamespace}) {
 							>
 								{Liferay.Language.get('attribute-code')}
 							</ClayTable.Cell>
+
+							<ClayTable.Cell
+								className="table-cell-expand-small"
+								headingCell
+							/>
 						</ClayTable.Row>
 					</ClayTable.Head>
 
 					<ClayTable.Body id="fieldsTableBody">
 						{fields.map((field) => {
-							const included = selectedFields.some(
-								(selectedField) =>
-									selectedField.name === field.name
-							);
+							const included =
+								!isForbidden(field) &&
+								selectedFields.some(
+									(selectedField) =>
+										selectedField.name === field.name
+								);
 
 							return (
 								<ClayTable.Row key={field.name}>
@@ -152,6 +193,7 @@ function FieldsTable({portletNamespace}) {
 												field.name
 											)}
 											checked={included}
+											disabled={isForbidden(field)}
 											id={`${portletNamespace}fieldName_${field.name}`}
 											name={`${portletNamespace}fieldName`}
 											onChange={() => {
@@ -181,10 +223,40 @@ function FieldsTable({portletNamespace}) {
 
 									<ClayTable.Cell>
 										<label
+											className={
+												isForbidden(field)
+													? 'disabled'
+													: ''
+											}
 											htmlFor={`${portletNamespace}fieldName_${field.name}`}
 										>
 											{field.name}
 										</label>
+									</ClayTable.Cell>
+
+									<ClayTable.Cell className="pr-5 text-right">
+										{isForbidden(field) && (
+											<>
+												<ClayLabel displayType="info">
+													{Liferay.Language.get(
+														'not-supported'
+													)}
+												</ClayLabel>
+												<ClayTooltipProvider>
+													<span
+														className="inline-item-after"
+														title={Liferay.Language.get(
+															'exporting-this-field-type-will-be-supported-in-a-future-release'
+														)}
+													>
+														<ClayIcon
+															className="text-secondary"
+															symbol="question-circle-full"
+														/>
+													</span>
+												</ClayTooltipProvider>
+											</>
+										)}
 									</ClayTable.Cell>
 								</ClayTable.Row>
 							);

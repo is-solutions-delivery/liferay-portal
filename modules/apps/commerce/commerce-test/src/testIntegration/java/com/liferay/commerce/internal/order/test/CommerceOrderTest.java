@@ -369,7 +369,7 @@ public class CommerceOrderTest {
 	}
 
 	@Test
-	public void testGetCommerceOrdersForOmniAdmin() throws Exception {
+	public void testGetCommerceOrdersForOmniadmin() throws Exception {
 		frutillaRule.scenario(
 			"Ensure that the Omni-Admin is able to pull all orders"
 		).given(

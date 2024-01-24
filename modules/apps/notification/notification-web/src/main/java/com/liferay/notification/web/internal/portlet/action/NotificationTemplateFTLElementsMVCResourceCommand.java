@@ -73,19 +73,19 @@ public class NotificationTemplateFTLElementsMVCResourceCommand
 
 		Locale locale = _portal.getLocale(resourceRequest);
 
-		Map<String, TemplateVariableGroup> templateVariableGroupsMap =
-			TemplateContextHelper.getTemplateVariableGroups(
-				_classNameLocalService.getClassNameId(
-					InfoItemFormProvider.class.getName()),
-				0L, TemplateConstants.LANG_TYPE_FTL, locale);
+		_fillTemplateContextTemplateVariables(jsonArray, locale);
 
-		for (TemplateVariableGroup templateVariableGroup :
-				templateVariableGroupsMap.values()) {
+		_fillObjectDefinitionTemplateVariables(
+			jsonArray, locale, objectDefinition, resourceRequest);
 
-			jsonArray.put(
-				_getTemplateVariableGroupJSONObject(
-					false, locale, templateVariableGroup));
-		}
+		JSONPortletResponseUtil.writeJSON(
+			resourceRequest, resourceResponse, jsonArray);
+	}
+
+	private void _fillObjectDefinitionTemplateVariables(
+			JSONArray jsonArray, Locale locale,
+			ObjectDefinition objectDefinition, ResourceRequest resourceRequest)
+		throws Exception {
 
 		InfoItemFormProvider<?> infoItemFormProvider =
 			_infoItemServiceRegistry.getFirstInfoItemService(
@@ -125,9 +125,33 @@ public class NotificationTemplateFTLElementsMVCResourceCommand
 				_getTemplateVariableGroupJSONObject(
 					true, locale, templateVariableGroup));
 		}
+	}
 
-		JSONPortletResponseUtil.writeJSON(
-			resourceRequest, resourceResponse, jsonArray);
+	private void _fillTemplateContextTemplateVariables(
+			JSONArray jsonArray, Locale locale)
+		throws Exception {
+
+		Map<String, TemplateVariableGroup> templateVariableGroupsMap =
+			TemplateContextHelper.getTemplateVariableGroups(
+				_classNameLocalService.getClassNameId(
+					InfoItemFormProvider.class.getName()),
+				0L, TemplateConstants.LANG_TYPE_FTL, locale);
+
+		TemplateVariableGroup generalVariablesTemplateVariableGroup =
+			templateVariableGroupsMap.get("general-variables");
+
+		String label = _language.get(locale, "portal-url");
+
+		generalVariablesTemplateVariableGroup.addFieldVariable(
+			label, TemplateNode.class, "portalURL", label, "text", false, null);
+
+		for (TemplateVariableGroup templateVariableGroup :
+				templateVariableGroupsMap.values()) {
+
+			jsonArray.put(
+				_getTemplateVariableGroupJSONObject(
+					false, locale, templateVariableGroup));
+		}
 	}
 
 	private JSONObject _getTemplateVariableGroupJSONObject(

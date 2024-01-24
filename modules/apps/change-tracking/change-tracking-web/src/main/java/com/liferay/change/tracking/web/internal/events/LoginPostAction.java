@@ -6,8 +6,6 @@
 package com.liferay.change.tracking.web.internal.events;
 
 import com.liferay.change.tracking.constants.CTPortletKeys;
-import com.liferay.change.tracking.model.CTCollection;
-import com.liferay.change.tracking.service.CTCollectionLocalService;
 import com.liferay.change.tracking.service.CTPreferencesLocalService;
 import com.liferay.change.tracking.web.internal.configuration.helper.CTSettingsConfigurationHelper;
 import com.liferay.change.tracking.web.internal.helper.SandboxHelper;
@@ -19,7 +17,6 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactory;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
-import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
 import com.liferay.portal.kernel.util.Portal;
 
@@ -79,15 +76,6 @@ public class LoginPostAction extends Action {
 			throw new ActionException(exception);
 		}
 	}
-
-	@Reference
-	private CTCollectionLocalService _ctCollectionLocalService;
-
-	@Reference(
-		target = "(model.class.name=com.liferay.change.tracking.model.CTCollection)"
-	)
-	private ModelResourcePermission<CTCollection>
-		_ctCollectionModelResourcePermission;
 
 	@Reference
 	private CTPreferencesLocalService _ctPreferencesLocalService;

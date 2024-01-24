@@ -4,25 +4,34 @@
  */
 
 import ClayButton from '@clayui/button';
+import {useModal} from '@clayui/modal';
 
-import infoCircleIcon from '../../../assets/icons/info_circle_icon.svg';
+import {Checkbox} from '../../../components/Checkbox/Checkbox';
+import {ContentModal} from '../../../components/ContentModal/ContentModal';
 import {getSiteURL} from '../../../components/InviteMemberModal/services';
+import {useMarketplaceContext} from '../../../context/MarketplaceContext';
 import useCart from '../../../hooks/useCart';
+import i18n from '../../../i18n';
 import {Liferay} from '../../../liferay/liferay';
+import {useAppContext} from '../../../manage-app-state/AppManageState';
 import {PaymentMethod} from '../enums/paymentMethod';
 import {StepType} from '../enums/stepType';
+
+import './Footer.scss';
+import {TYPES} from '../../../manage-app-state/actionTypes';
 
 interface ProductFooterProps {
 	addresses: BillingAddress[];
 	cartId?: number;
 	cartUtil: ReturnType<typeof useCart>;
+	disabled: boolean;
 	enablePurchaseButton: boolean;
 	handleGetApp: (orderId?: number) => void;
 	isFreeApp: boolean;
 	licenseSelected: boolean;
 	selectedAccount?: Account;
 	selectedPaymentMethod: PaymentMethodSelector;
-	selectedSKU?: SKU;
+	selectedSKU?: DeliverySKU;
 	setStep: (nextStep: StepType) => void;
 	step: StepType;
 	stepsNavigation: StepsNavigation;
@@ -42,6 +51,7 @@ const onCancel = () => {
 const ProductFooter = ({
 	addresses,
 	cartUtil,
+	disabled,
 	enablePurchaseButton,
 	handleGetApp,
 	isFreeApp,
@@ -52,6 +62,10 @@ const ProductFooter = ({
 	step,
 	stepsNavigation,
 }: ProductFooterProps) => {
+	const {properties} = useMarketplaceContext();
+
+	const [{eula, eulaCheckbox}, dispatch] = useAppContext();
+
 	const getButtonText = () => {
 		if (isFreeApp) {
 			return 'Get App';
@@ -80,6 +94,13 @@ const ProductFooter = ({
 		const isAccountStep = step === StepType.ACCOUNT;
 		const isLicenseStep = step === StepType.LICENSES;
 
+		if (
+			selectedPaymentMethod === PaymentMethod.TRIAL &&
+			cartUtil?.cart?.id
+		) {
+			await cartUtil.removeCart(cartUtil?.cart?.id);
+		}
+
 		if ((!isFreeApp && isAccountStep && selectedAccount) || isLicenseStep) {
 			return setStep(nextStep);
 		}
@@ -90,75 +111,101 @@ const ProductFooter = ({
 			(isFreeApp && selectedAccount) ||
 			(enablePurchaseButton && addresses && isPaymentStep)
 		) {
-			handleGetApp(cartUtil.cart?.id);
+			await handleGetApp(cartUtil.cart?.id);
 		}
 	};
 
-	return (
-		<div className="mt-5 pt-2 text-black-50">
-			<div className="d-flex justify-content-between">
-				<ClayButton
-					displayType={null}
-					onClick={() => {
-						if (cartUtil?.cart?.id) {
-							cartUtil.removeCart(cartUtil.cart.id);
-						}
+	const eulaModal = useModal();
 
-						onCancel();
-					}}
-				>
-					Cancel
-				</ClayButton>
-				<div>
-					{stepsNavigation[step].backStep !== step && (
-						<ClayButton
-							displayType="secondary"
-							onClick={() =>
-								onPrevious(stepsNavigation[step].backStep)
-							}
-						>
-							Back
-						</ClayButton>
+	return (
+		<>
+			<div>
+				{!isFreeApp &&
+					step === StepType.PAYMENT &&
+					selectedPaymentMethod === PaymentMethod.PAY && (
+						<div className="align-items-start d-flex eula-container mt-4">
+							<Checkbox
+								checked={eulaCheckbox}
+								onChange={() =>
+									dispatch({
+										payload: {value: !eulaCheckbox},
+										type: TYPES.UPDATE_EULA_CHECKBOX,
+									})
+								}
+							/>
+							I have read and agree to the
+							<a onClick={() => eulaModal.onOpenChange(true)}>
+								&nbsp;End User License Agreement&nbsp;
+							</a>
+							and the
+							<a
+								onClick={() =>
+									window.open(properties.eulaBaseURL)
+								}
+							>
+								&nbsp;Terms&nbsp;
+							</a>
+							of Service.
+						</div>
 					)}
-					{stepsNavigation[step].nextStep && (
-						<ClayButton
-							className="ml-5"
-							disabled={
-								(step === StepType.ACCOUNT &&
-									!selectedAccount) ||
-								(step === StepType.LICENSES && !licenseSelected)
+				{eulaModal.open && (
+					<ContentModal
+						description={eula}
+						header={i18n.translate('end-user-license-agreement')}
+						{...eulaModal}
+					/>
+				)}
+			</div>
+			<div className="mt-5 pt-2 text-black-50">
+				<div className="d-flex justify-content-between">
+					<ClayButton
+						displayType={null}
+						onClick={() => {
+							if (cartUtil?.cart?.id) {
+								cartUtil.removeCart(cartUtil.cart.id);
 							}
-							onClick={() =>
-								onContinue(stepsNavigation[step].nextStep)
-							}
-						>
-							{getButtonText()}
-						</ClayButton>
-					)}
+
+							onCancel();
+						}}
+					>
+						Cancel
+					</ClayButton>
+					<div>
+						{stepsNavigation[step].backStep !== step && (
+							<ClayButton
+								displayType="secondary"
+								onClick={() =>
+									onPrevious(stepsNavigation[step].backStep)
+								}
+							>
+								Back
+							</ClayButton>
+						)}
+						{stepsNavigation[step].nextStep && (
+							<ClayButton
+								className="ml-5"
+								disabled={
+									disabled ||
+									(step === StepType.ACCOUNT &&
+										!eulaCheckbox &&
+										isFreeApp) ||
+									(step === StepType.ACCOUNT &&
+										!selectedAccount) ||
+									(step === StepType.LICENSES &&
+										!licenseSelected) ||
+									(step === StepType.PAYMENT && !eulaCheckbox)
+								}
+								onClick={() =>
+									onContinue(stepsNavigation[step].nextStep)
+								}
+							>
+								{getButtonText()}
+							</ClayButton>
+						)}
+					</div>
 				</div>
 			</div>
-
-			{!isFreeApp &&
-				step === StepType.PAYMENT &&
-				selectedPaymentMethod === PaymentMethod.PAY && (
-					<div className="align-items-end d-flex flex-column mt-4">
-						<span>
-							You will be redirected to PayPal to complete payment
-						</span>
-						<div className="mt-1">
-							<img
-								alt="Account icon"
-								className="mr-2"
-								src={infoCircleIcon}
-							/>
-							<span>
-								Terms, privacy, returns, or contact support. All
-								costs are in US Dollars
-							</span>
-						</div>
-					</div>
-				)}
-		</div>
+		</>
 	);
 };
 

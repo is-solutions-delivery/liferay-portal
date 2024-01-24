@@ -107,7 +107,9 @@ definition {
 
 		ObjectAdmin.goToCustomObject(objectName = "CustomObject204");
 
-		ObjectAdmin.addObjectPicklistFieldEntryViaUI(picklistOption = "Entry Test");
+		ObjectAdmin.addObjectPicklistFieldEntryViaUI(
+			labelName = "Field Picklist",
+			picklistOption = "Entry Test");
 
 		PagesAdmin.openPagesAdmin(siteURLKey = "guest");
 

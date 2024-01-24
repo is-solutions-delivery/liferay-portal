@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -57,11 +58,19 @@ public class AccountRole implements Serializable {
 	)
 	@Valid
 	public Map<String, String> getDescription() {
+		if (_descriptionSupplier != null) {
+			description = _descriptionSupplier.get();
+
+			_descriptionSupplier = null;
+		}
+
 		return description;
 	}
 
 	public void setDescription(Map<String, String> description) {
 		this.description = description;
+
+		_descriptionSupplier = null;
 	}
 
 	@JsonIgnore
@@ -69,41 +78,56 @@ public class AccountRole implements Serializable {
 		UnsafeSupplier<Map<String, String>, Exception>
 			descriptionUnsafeSupplier) {
 
-		try {
-			description = descriptionUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_descriptionSupplier = () -> {
+			try {
+				return descriptionUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Map<String, String> description;
 
+	@JsonIgnore
+	private Supplier<Map<String, String>> _descriptionSupplier;
+
 	@Schema(example = "Role Name")
 	public String getName() {
+		if (_nameSupplier != null) {
+			name = _nameSupplier.get();
+
+			_nameSupplier = null;
+		}
+
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
+
+		_nameSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setName(UnsafeSupplier<String, Exception> nameUnsafeSupplier) {
-		try {
-			name = nameUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_nameSupplier = () -> {
+			try {
+				return nameUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
@@ -111,65 +135,94 @@ public class AccountRole implements Serializable {
 	@NotEmpty
 	protected String name;
 
+	@JsonIgnore
+	private Supplier<String> _nameSupplier;
+
 	@DecimalMin("0")
 	@Schema(example = "30130")
 	public Long getRoleId() {
+		if (_roleIdSupplier != null) {
+			roleId = _roleIdSupplier.get();
+
+			_roleIdSupplier = null;
+		}
+
 		return roleId;
 	}
 
 	public void setRoleId(Long roleId) {
 		this.roleId = roleId;
+
+		_roleIdSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setRoleId(
 		UnsafeSupplier<Long, Exception> roleIdUnsafeSupplier) {
 
-		try {
-			roleId = roleIdUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_roleIdSupplier = () -> {
+			try {
+				return roleIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Long roleId;
 
+	@JsonIgnore
+	private Supplier<Long> _roleIdSupplier;
+
 	@Schema(
 		example = "{en_US=Role Title US, hr_HR=Role Title HR, hu_HU=Role Title HU}"
 	)
 	@Valid
 	public Map<String, String> getTitle() {
+		if (_titleSupplier != null) {
+			title = _titleSupplier.get();
+
+			_titleSupplier = null;
+		}
+
 		return title;
 	}
 
 	public void setTitle(Map<String, String> title) {
 		this.title = title;
+
+		_titleSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setTitle(
 		UnsafeSupplier<Map<String, String>, Exception> titleUnsafeSupplier) {
 
-		try {
-			title = titleUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_titleSupplier = () -> {
+			try {
+				return titleUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Map<String, String> title;
+
+	@JsonIgnore
+	private Supplier<Map<String, String>> _titleSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -198,6 +251,8 @@ public class AccountRole implements Serializable {
 
 		sb.append("{");
 
+		Map<String, String> description = getDescription();
+
 		if (description != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -207,6 +262,8 @@ public class AccountRole implements Serializable {
 
 			sb.append(_toJSON(description));
 		}
+
+		String name = getName();
 
 		if (name != null) {
 			if (sb.length() > 1) {
@@ -222,6 +279,8 @@ public class AccountRole implements Serializable {
 			sb.append("\"");
 		}
 
+		Long roleId = getRoleId();
+
 		if (roleId != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -231,6 +290,8 @@ public class AccountRole implements Serializable {
 
 			sb.append(roleId);
 		}
+
+		Map<String, String> title = getTitle();
 
 		if (title != null) {
 			if (sb.length() > 1) {

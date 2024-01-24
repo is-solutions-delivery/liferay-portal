@@ -207,6 +207,8 @@ public class KaleoDefinitionVersionCacheModel
 
 		kaleoDefinitionVersionImpl.resetOriginalValues();
 
+		kaleoDefinitionVersionImpl.setContentAsXML(_contentAsXML);
+
 		return kaleoDefinitionVersionImpl;
 	}
 
@@ -243,6 +245,8 @@ public class KaleoDefinitionVersionCacheModel
 		statusByUserId = objectInput.readLong();
 		statusByUserName = objectInput.readUTF();
 		statusDate = objectInput.readLong();
+
+		_contentAsXML = (String)objectInput.readObject();
 	}
 
 	@Override
@@ -320,6 +324,8 @@ public class KaleoDefinitionVersionCacheModel
 		}
 
 		objectOutput.writeLong(statusDate);
+
+		objectOutput.writeObject(_contentAsXML);
 	}
 
 	public long mvccVersion;
@@ -342,5 +348,6 @@ public class KaleoDefinitionVersionCacheModel
 	public long statusByUserId;
 	public String statusByUserName;
 	public long statusDate;
+	public String _contentAsXML;
 
 }

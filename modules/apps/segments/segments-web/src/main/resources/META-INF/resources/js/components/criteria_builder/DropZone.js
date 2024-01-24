@@ -5,10 +5,16 @@
 
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import {DropTarget as dropTarget} from 'react-dnd';
 
-import {DragTypes} from '../../utils/drag-types';
+import {
+	POSITIONS,
+	useMovementSource,
+	useMovementTarget,
+} from '../../contexts/KeyboardMovementContext';
+import {DragTypes} from '../../utils/dragTypes';
+import getDropZoneElementClassName from '../../utils/getDropZoneElementClassName';
 
 const {CRITERIA_GROUP, CRITERIA_ROW, PROPERTY} = DragTypes;
 
@@ -23,11 +29,9 @@ const acceptedDragTypes = [CRITERIA_GROUP, CRITERIA_ROW, PROPERTY];
  * @returns {boolean} True if the target should accept the item.
  */
 function canDrop(props, monitor) {
-	const {
-		dropIndex: destIndex,
-		groupId: destGroupId,
-		propertyKey: destPropertyKey,
-	} = props;
+	const {groupId: destGroupId, index, propertyKey: destPropertyKey} = props;
+
+	const destIndex = props.before ? index : index + 1;
 
 	const {
 		childGroupIds = [],
@@ -62,12 +66,9 @@ function canDrop(props, monitor) {
  * @param {DropTargetMonitor} monitor
  */
 function drop(props, monitor) {
-	const {
-		dropIndex: destIndex,
-		groupId: destGroupId,
-		onCriterionAdd,
-		onMove,
-	} = props;
+	const {groupId: destGroupId, index, onCriterionAdd, onMove} = props;
+
+	const destIndex = props.before ? index : index + 1;
 
 	const {
 		criterion,
@@ -85,18 +86,81 @@ function drop(props, monitor) {
 	}
 }
 
-function DropZone({before, canDrop, connectDropTarget, hover}) {
+function isKeyboardTarget(before, groupId, index, propertyKey, source, target) {
+	if (!source || !target) {
+		return false;
+	}
+
+	if (
+		source.propertyKey !== propertyKey ||
+		target.groupId !== groupId ||
+		target.index !== index
+	) {
+		return false;
+	}
+
+	if (
+		(before && target.position === POSITIONS.top) ||
+		(!before && target.position === POSITIONS.bottom)
+	) {
+		return true;
+	}
+
+	return false;
+}
+
+function DropZone({
+	before,
+	canDrop,
+	connectDropTarget,
+	groupId,
+	hover,
+	index,
+	propertyKey,
+}) {
+	const movementSource = useMovementSource();
+	const movementTarget = useMovementTarget();
+	const ref = useRef();
+
+	const isTarget = isKeyboardTarget(
+		before,
+		groupId,
+		index,
+		propertyKey,
+		movementSource,
+		movementTarget
+	);
+
+	const dropZoneClassName = getDropZoneElementClassName(
+		propertyKey,
+		groupId,
+		index,
+		before ? POSITIONS.top : POSITIONS.bottom
+	);
+
+	useEffect(() => {
+		if (isTarget) {
+			ref.current?.scrollIntoView?.({
+				behavior: 'smooth',
+				block: 'nearest',
+				inline: 'nearest',
+			});
+		}
+	}, [isTarget]);
+
 	return (
-		<div className="drop-zone-root position-relative">
+		<div
+			className={classNames(
+				'drop-zone-root position-relative',
+				dropZoneClassName
+			)}
+			ref={ref}
+		>
 			{connectDropTarget(
-				<div
-					className={classNames('drop-zone-target', {
-						'drop-zone-target-before': before,
-					})}
-				>
-					{canDrop && hover && (
+				<div className="drop-zone-target">
+					{(canDrop && hover) || isTarget ? (
 						<div className="drop-zone-indicator w-100" />
-					)}
+					) : null}
 				</div>
 			)}
 		</div>

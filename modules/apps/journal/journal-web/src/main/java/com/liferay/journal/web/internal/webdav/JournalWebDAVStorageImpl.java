@@ -16,12 +16,12 @@ import com.liferay.journal.service.JournalFolderService;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.webdav.BaseWebDAVStorageImpl;
 import com.liferay.portal.kernel.webdav.Resource;
 import com.liferay.portal.kernel.webdav.WebDAVException;
 import com.liferay.portal.kernel.webdav.WebDAVRequest;
 import com.liferay.portal.kernel.webdav.WebDAVStorage;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.webdav.BaseWebDAVStorageImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +87,11 @@ public class JournalWebDAVStorageImpl extends BaseWebDAVStorageImpl {
 		catch (Exception exception) {
 			throw new WebDAVException(exception);
 		}
+	}
+
+	@Override
+	public String getToken() {
+		return "journal";
 	}
 
 	@Override

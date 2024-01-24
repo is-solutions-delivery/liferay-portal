@@ -169,7 +169,7 @@ components:
                     readOnly: true
                     type: object
                 businessType:
-                    enum: [Aggregation, Attachment, Boolean, Date, DateTime, Decimal, Encrypted, Formula, Integer, LongInteger, LongText, MultiselectPicklist, Picklist, PrecisionDecimal, Relationship, RichText, Text]
+                    enum: [Aggregation, Attachment, AutoIncrement, Boolean, Date, DateTime, Decimal, Encrypted, Formula, Integer, LongInteger, LongText, MultiselectPicklist, Picklist, PrecisionDecimal, Relationship, RichText, Text]
                     type: string
                 defaultValue:
                     deprecated: true
@@ -222,6 +222,9 @@ components:
                     deprecated: true
                     enum: [BigDecimal, Boolean, Clob, Date, DateTime, Double, Integer, Long, String]
                     type: string
+                unique:
+                    readOnly: true
+                    type: boolean
         ObjectFieldSetting:
             properties:
                 id:
@@ -271,8 +274,9 @@ components:
         ObjectFolderItem:
             properties:
                 linkedObjectDefinition:
-                    readOnly: true
                     type: boolean
+                objectDefinition:
+                    $ref: "#/components/schemas/ObjectDefinition"
                 objectDefinitionExternalReferenceCode:
                     type: string
                 positionX:
@@ -380,6 +384,8 @@ components:
                     items:
                         $ref: "#/components/schemas/ObjectLayoutBox"
                     type: array
+                objectRelationshipExternalReferenceCode:
+                    type: string
                 objectRelationshipId:
                     format: int64
                     type: integer
@@ -400,6 +406,8 @@ components:
                     type: string
                 edge:
                     type: boolean
+                externalReferenceCode:
+                    type: string
                 id:
                     format: int64
                     readOnly: true
@@ -426,6 +434,8 @@ components:
                     type: string
                 objectDefinitionSystem2:
                     type: boolean
+                objectField:
+                    $ref: "#/components/schemas/ObjectField"
                 parameterObjectFieldId:
                     format: int64
                     type: integer
@@ -627,7 +637,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.object.admin.rest.client', and version '1.0.61'."
+        'com.liferay.object.admin.rest.client', and version '1.0.63'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -2116,6 +2126,33 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/ObjectLayout"
             tags: ["ObjectLayout"]
+    "/object-relationships/by-external-reference-code/{externalReferenceCode}":
+        put:
+            operationId: putObjectRelationshipByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: externalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ObjectRelationship"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/ObjectRelationship"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ObjectRelationship"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ObjectRelationship"
+            tags: ["ObjectRelationship"]
     "/object-relationships/{objectRelationshipId}":
         delete:
             operationId: deleteObjectRelationship

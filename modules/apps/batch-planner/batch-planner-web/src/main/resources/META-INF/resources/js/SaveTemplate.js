@@ -10,6 +10,10 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 
 import SaveTemplateModal from './SaveTemplateModal';
 import {
+	CSV_FORMAT,
+	DISALLOWED_CSV_ENTITY_TYPES,
+	EXPORT_FILE_FORMAT_SELECTED_EVENT,
+	FILE_EXTENSION_EVENT,
 	SCHEMA_SELECTED_EVENT,
 	TEMPLATE_SELECTED_EVENT,
 	TEMPLATE_SOILED_EVENT,
@@ -46,6 +50,27 @@ function SaveTemplate({
 	}, [evaluateForm, formIsValid, type]);
 
 	useEffect(() => {
+		const handleExportFileFormatUpdated = ({
+			selectedExportFileFormat,
+			selectedSchema,
+		}) => {
+			if (
+				selectedExportFileFormat === CSV_FORMAT.toUpperCase() &&
+				DISALLOWED_CSV_ENTITY_TYPES.includes(selectedSchema)
+			) {
+				setDisable(true);
+			}
+		};
+
+		function handleFileExtensionUpdate({entityType, fileExtension}) {
+			if (
+				fileExtension === CSV_FORMAT &&
+				DISALLOWED_CSV_ENTITY_TYPES.includes(entityType)
+			) {
+				setDisable(true);
+			}
+		}
+
 		function handleSchemaChange({schema}) {
 			if (schema && !useTemplateMappingRef.current) {
 				setDisable(false);
@@ -67,11 +92,21 @@ function SaveTemplate({
 			setDisable(false);
 		}
 
+		Liferay.on(
+			EXPORT_FILE_FORMAT_SELECTED_EVENT,
+			handleExportFileFormatUpdated
+		);
 		Liferay.on(SCHEMA_SELECTED_EVENT, handleSchemaChange);
+		Liferay.on(FILE_EXTENSION_EVENT, handleFileExtensionUpdate);
 		Liferay.on(TEMPLATE_SELECTED_EVENT, handleTemplateSelection);
 		Liferay.on(TEMPLATE_SOILED_EVENT, handleTemplateSoiled);
 
 		return () => {
+			Liferay.detach(
+				EXPORT_FILE_FORMAT_SELECTED_EVENT,
+				handleExportFileFormatUpdated
+			);
+			Liferay.detach(FILE_EXTENSION_EVENT, handleFileExtensionUpdate);
 			Liferay.detach(SCHEMA_SELECTED_EVENT, handleSchemaChange);
 			Liferay.detach(TEMPLATE_SELECTED_EVENT, handleTemplateSelection);
 			Liferay.detach(TEMPLATE_SOILED_EVENT, handleTemplateSoiled);

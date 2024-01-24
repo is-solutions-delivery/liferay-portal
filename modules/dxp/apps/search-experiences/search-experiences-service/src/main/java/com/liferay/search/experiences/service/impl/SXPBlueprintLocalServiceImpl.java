@@ -189,16 +189,14 @@ public class SXPBlueprintLocalServiceImpl
 			Map<Locale, String> titleMap, ServiceContext serviceContext)
 		throws SXPBlueprintTitleException {
 
-		if (!GetterUtil.getBoolean(
+		if (GetterUtil.getBoolean(
 				serviceContext.getAttribute(
 					SXPBlueprintLocalServiceImpl.class.getName() +
 						"#_validate"),
 				true)) {
 
-			return;
+			_sxpBlueprintValidator.validate(titleMap);
 		}
-
-		_sxpBlueprintValidator.validate(titleMap);
 	}
 
 	@Reference

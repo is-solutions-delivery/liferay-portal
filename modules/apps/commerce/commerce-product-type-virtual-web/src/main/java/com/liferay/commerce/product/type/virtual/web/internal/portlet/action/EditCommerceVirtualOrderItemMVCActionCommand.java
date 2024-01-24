@@ -84,20 +84,17 @@ public class EditCommerceVirtualOrderItemMVCActionCommand
 		long commerceVirtualOrderItemId = ParamUtil.getLong(
 			actionRequest, "commerceVirtualOrderItemId");
 
-		long fileEntryId = ParamUtil.getLong(actionRequest, "fileEntryId");
-		String url = ParamUtil.getString(actionRequest, "url");
 		int activationStatus = ParamUtil.getInteger(
 			actionRequest, "activationStatus");
 		long durationDays = ParamUtil.getLong(actionRequest, "durationDays");
-		int usages = ParamUtil.getInteger(actionRequest, "usages");
 		int maxUsages = ParamUtil.getInteger(actionRequest, "maxUsages");
 		boolean active = ParamUtil.getBoolean(actionRequest, "active");
 
 		long duration = TimeUnit.DAYS.toMillis(durationDays);
 
 		_commerceVirtualOrderItemService.updateCommerceVirtualOrderItem(
-			commerceVirtualOrderItemId, fileEntryId, url, activationStatus,
-			duration, usages, maxUsages, active);
+			commerceVirtualOrderItemId, activationStatus, duration, maxUsages,
+			active);
 	}
 
 	@Reference

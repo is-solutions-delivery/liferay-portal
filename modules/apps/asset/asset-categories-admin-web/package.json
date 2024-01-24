@@ -5,11 +5,12 @@
 		"prop-types": "15.7.2",
 		"react": "16.12.0"
 	},
+	"main": "js/index.js",
 	"name": "asset-categories-admin-web",
 	"scripts": {
 		"build": "liferay-npm-scripts build",
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "5.0.95"
+	"version": "5.0.98"
 }

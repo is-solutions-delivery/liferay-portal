@@ -180,6 +180,14 @@ public class CommerceShippingMethodServiceUtil {
 	}
 
 	public static CommerceShippingMethod updateCommerceShippingMethod(
+			CommerceShippingMethod commerceShippingMethod)
+		throws PortalException {
+
+		return getService().updateCommerceShippingMethod(
+			commerceShippingMethod);
+	}
+
+	public static CommerceShippingMethod updateCommerceShippingMethod(
 			long commerceShippingMethodId,
 			Map<java.util.Locale, String> nameMap,
 			Map<java.util.Locale, String> descriptionMap, boolean active,

@@ -5,6 +5,8 @@
 
 package com.liferay.portal.spring.extender.internal.context;
 
+import com.liferay.petra.lang.SafeCloseable;
+import com.liferay.petra.lang.ThreadContextClassLoaderUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.bean.BeanLocatorImpl;
@@ -13,6 +15,7 @@ import com.liferay.portal.kernel.util.AggregateClassLoader;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.PortalClassLoaderUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.spring.aop.AopConfigurableApplicationContextConfigurator;
 import com.liferay.portal.spring.configurator.ConfigurableApplicationContextConfigurator;
 import com.liferay.portal.spring.extender.internal.bean.ApplicationContextServicePublisherUtil;
 import com.liferay.portal.spring.extender.internal.loader.ModuleAggregareClassLoader;
@@ -39,12 +42,8 @@ import org.springframework.beans.CachedIntrospectionResults;
 public class ModuleApplicationContextRegistrator {
 
 	public ModuleApplicationContextRegistrator(
-		ConfigurableApplicationContextConfigurator
-			configurableApplicationContextConfigurator,
 		Bundle extendeeBundle, Bundle extenderBundle) {
 
-		_configurableApplicationContextConfigurator =
-			configurableApplicationContextConfigurator;
 		_extendeeBundle = extendeeBundle;
 		_extenderBundle = extenderBundle;
 
@@ -104,11 +103,11 @@ public class ModuleApplicationContextRegistrator {
 
 		ClassLoader contextClassLoader = currentThread.getContextClassLoader();
 
-		currentThread.setContextClassLoader(
-			AggregateClassLoader.getAggregateClassLoader(
-				PortalClassLoaderUtil.getClassLoader(), contextClassLoader));
+		try (SafeCloseable safeCloseable = ThreadContextClassLoaderUtil.swap(
+				AggregateClassLoader.getAggregateClassLoader(
+					PortalClassLoaderUtil.getClassLoader(),
+					contextClassLoader))) {
 
-		try {
 			_moduleApplicationContext.refresh();
 
 			_registerDataSource();
@@ -145,8 +144,6 @@ public class ModuleApplicationContextRegistrator {
 				extenderBundleWiring.getClassLoader());
 
 			Introspector.flushCaches();
-
-			currentThread.setContextClassLoader(contextClassLoader);
 		}
 	}
 
@@ -176,7 +173,8 @@ public class ModuleApplicationContextRegistrator {
 
 	private final ClassLoader _classLoader;
 	private final ConfigurableApplicationContextConfigurator
-		_configurableApplicationContextConfigurator;
+		_configurableApplicationContextConfigurator =
+			new AopConfigurableApplicationContextConfigurator();
 	private volatile ServiceRegistration<DataSource>
 		_dataSourceServiceRegistration;
 	private final Bundle _extendeeBundle;

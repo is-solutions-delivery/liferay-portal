@@ -33,10 +33,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "User Groups");
+		UserGroup.openUserGroupsAdmin();
 
 		UserGroup.addCP(userGroupName = "User Group1");
 
@@ -44,10 +41,7 @@ definition {
 			userGroupName = "User Group1",
 			userScreenName = "test");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		var browserIPAddress = PropsUtil.get("browser.ip.address");
 
@@ -60,19 +54,13 @@ definition {
 			resourceName = "User",
 			userName = "Test Test");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "User Groups");
+		UserGroup.openUserGroupsAdmin();
 
 		UserGroup.removeMemberCP(
 			userGroupName = "User Group1",
 			userScreenName = "test");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.viewAuditDetails(
 			additionalInformation = "User Group1",
@@ -83,27 +71,18 @@ definition {
 			resourceName = "User",
 			userName = "Test Test");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		Role.add(roleTitle = "Role1 Name");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		Role.addAssignee(
 			assigneeName = "Test Test",
 			assigneeType = "Users",
 			roleTitle = "Role1 Name");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.viewAuditDetails(
 			additionalInformation = "Role1 Name",
@@ -114,20 +93,14 @@ definition {
 			resourceName = "User",
 			userName = "Test Test");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		Role.removeAssignee(
 			assigneeName = "Test Test",
 			assigneeType = "Users",
 			roleTitle = "Role1 Name");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.viewAuditDetails(
 			additionalInformation = "Role1 Name",
@@ -146,10 +119,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.addCP(
 			userEmailAddress = "test1@liferay.com",
@@ -157,10 +127,7 @@ definition {
 			userLastName = "test1",
 			userScreenName = "test1");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		var browserIPAddress = PropsUtil.get("browser.ip.address");
 
@@ -173,19 +140,13 @@ definition {
 			resourceName = "User",
 			userName = "Test Test");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		UserNavigator.gotoUser(userScreenName = "test1");
 
 		User.editUserInformation(userMiddleNameEdit = "test1");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.viewAuditDetails(
 			additionalInformation = "middleName",
@@ -196,10 +157,7 @@ definition {
 			resourceName = "User",
 			userName = "Test Test");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.impersonateCP(
 			siteName = ${siteName},
@@ -207,12 +165,9 @@ definition {
 
 		Close.closeWindow(locator1 = "title=Home - ${siteName}");
 
-		Navigator.selectSpecificWindow(windowTitle = "Users and Organizations - Liferay DXP");
+		Navigator.selectSpecificWindow(windowTitle = "Users - Users - Users and Organizations - Liferay DXP");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.viewAuditDetails(
 			additionalInformation = "test1 test1 test1",
@@ -223,10 +178,7 @@ definition {
 			resourceName = "User",
 			userName = "Test Test");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.deactivateCP(
 			deactivateType = "Actions",
@@ -236,10 +188,7 @@ definition {
 			deactivateType = "Actions",
 			userFirstName = "test1");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.viewAuditDetails(
 			additionalInformation = "test1@liferay.com",
@@ -257,17 +206,11 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "User Groups");
+		UserGroup.openUserGroupsAdmin();
 
 		UserGroup.addCP(userGroupName = "User Group1");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		var browserIPAddress = PropsUtil.get("browser.ip.address");
 
@@ -280,19 +223,13 @@ definition {
 			resourceName = "UserGroup",
 			userName = "Test Test");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "User Groups");
+		UserGroup.openUserGroupsAdmin();
 
 		UserGroup.editCP(
 			userGroupDescriptionEdit = "This is only for test",
 			userGroupName = "User Group1");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.viewAuditDetails(
 			additionalInformation = "This is only for test",
@@ -303,17 +240,11 @@ definition {
 			resourceName = "UserGroup",
 			userName = "Test Test");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "User Groups");
+		UserGroup.openUserGroupsAdmin();
 
 		UserGroup.deleteCP(userGroupName = "User Group1");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.viewAuditDetails(
 			additionalInformation = "",
@@ -324,17 +255,11 @@ definition {
 			resourceName = "UserGroup",
 			userName = "Test Test");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		Role.add(roleTitle = "Role1 Name");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.viewAuditDetails(
 			additionalInformation = "",
@@ -345,10 +270,7 @@ definition {
 			resourceName = "Role",
 			userName = "Test Test");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		Search.searchCP(searchTerm = "Role1 Name");
 
@@ -364,10 +286,7 @@ definition {
 
 		Alert.viewSuccessMessage();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.viewAuditDetails(
 			additionalInformation = "Role2 Name",
@@ -378,17 +297,11 @@ definition {
 			resourceName = "Role",
 			userName = "Test Test");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		LexiconEntry.delete(rowEntry = "Role1 Name");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.viewAuditDetails(
 			additionalInformation = "",
@@ -407,10 +320,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		var browserIPAddress = PropsUtil.get("browser.ip.address");
 
@@ -425,10 +335,7 @@ definition {
 
 		Navigator.openURL();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.viewAuditDetails(
 			additionalInformation = "",
@@ -445,10 +352,7 @@ definition {
 			password = "test",
 			userEmailAddress = "test@liferay.com");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.viewAuditDetails(
 			additionalInformation = "",
@@ -469,10 +373,7 @@ definition {
 			password = "test",
 			userEmailAddress = "test@liferay.com");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.viewAuditDetails(
 			additionalInformation = "Failed to authenticate by email address",
@@ -490,10 +391,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		AssertTextEquals(
 			key_resourceAction = "LOGIN",
@@ -501,10 +399,7 @@ definition {
 			locator1 = "AuditReports#REPORTS_TABLE_RESOURCE_ACTION",
 			value1 = "LOGIN");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.searchCP(
 			match = "All",
@@ -518,10 +413,7 @@ definition {
 			locator1 = "AuditReports#REPORTS_TABLE_RESOURCE_ACTION",
 			value1 = "LOGIN");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.searchCP(
 			match = "Any",
@@ -535,10 +427,7 @@ definition {
 			locator1 = "AuditReports#REPORTS_TABLE_RESOURCE_ACTION",
 			value1 = "LOGIN");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Security",
-			panel = "Control Panel",
-			portlet = "Audit");
+		Audit.openAuditAdmin();
 
 		Audit.searchCP(
 			match = "All",

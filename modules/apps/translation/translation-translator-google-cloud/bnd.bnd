@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Translation Translator Google Cloud
 Bundle-SymbolicName: com.liferay.translation.translator.google.cloud
-Bundle-Version: 1.0.17
+Bundle-Version: 1.0.18
 Import-Package:\
 	!com.aayushatharva.brotli4j.*,\
 	\
@@ -22,6 +22,7 @@ Import-Package:\
 	\
 	!org.apache.avalon.framework.*,\
 	!org.apache.log.*,\
+	!org.apache.log4j.*,\
 	\
 	!org.bouncycastle.*,\
 	\

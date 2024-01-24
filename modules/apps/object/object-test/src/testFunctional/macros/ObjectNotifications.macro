@@ -16,17 +16,19 @@ definition {
 
 	@summary = "Default summary"
 	macro addNotificationTemplateAttachment(objectLabel = null) {
-		Click(
-			key_dataSource = "Select a Data Source",
-			locator1 = "ObjectNotifications#DATA_SOURCE_ATTACHMENTS");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Data Source",
+			optionName = ${objectLabel});
 
-		Click(
-			key_optionName = ${objectLabel},
-			locator1 = "ObjectAdmin#LAYOUT_ADD_FIELD_OPTION");
+		if (!(isSet(fieldLabel))) {
+			var fieldLabel = "";
+		}
 
 		Click(locator1 = "ObjectNotifications#FIELD_ATTACHMENTS_OBJECT");
 
-		Click(locator1 = "ObjectNotifications#FIELD_ATTACHMENTS_OBJECT_SELECT_FIELD");
+		Click(
+			key_fieldLabel = ${fieldLabel},
+			locator1 = "ObjectNotifications#FIELD_ATTACHMENTS_OBJECT_SELECT_FIELD");
 	}
 
 	@summary = "Default summary"
@@ -98,7 +100,7 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro configureUserNotificationTemplate(recipientType = null, subject = null, name = null, description = null, userName = null) {
+	macro configureUserNotificationTemplate(recipientType = null, subject = null, name = null, description = null, userName = null, indexRecipient = null) {
 		Type(
 			key_text = "Name",
 			locator1 = "TextInput#ANY",
@@ -117,11 +119,14 @@ definition {
 		}
 
 		if (isSet(recipientType)) {
-			Click(locator1 = "ObjectAction#SELECT_OPTION_TYPE");
+			Click(
+				key_labelName = "Recipients",
+				locator1 = "ObjectAdmin#CLAY_GENERIC_BUTTON");
 
 			Click(
-				key_recipientType = ${recipientType},
-				locator1 = "ObjectNotifications#RECIPIENT_TYPE");
+				index = ${indexRecipient},
+				locator1 = "MenuItem#DROPDOWN_MENU_ITEM_SPECIFIC",
+				value1 = ${recipientType});
 
 			if (${recipientType} == "User") {
 				Type(
@@ -238,15 +243,6 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro selectEntity(entityName = null) {
-		Click(locator1 = "ObjectCustomViews#SELECT_AUTO_COMPLETE");
-
-		Click(
-			key_optionName = ${entityName},
-			locator1 = "ObjectAdmin#LAYOUT_ADD_FIELD_OPTION");
-	}
-
-	@summary = "Default summary"
 	macro viewEmailNotificationTemplateDetails(cc = null, bcc = null, emailBody = null, subject = null, name = null, fromName = null, description = null, fromAddress = null, notificationType = null, entryTo = null, externalReferenceCode = null) {
 		Click(
 			key_name = ${name},
@@ -344,9 +340,10 @@ definition {
 			locator1 = "TextArea#ANY",
 			value1 = ${subject});
 
-		AssertElementPresent(
-			key_recipientType = ${recipientType},
-			locator1 = "ObjectNotifications#RECIPIENT_TYPE");
+		AssertTextEquals(
+			key_labelName = "Recipients",
+			locator1 = "ObjectAdmin#CLAY_GENERIC_BUTTON",
+			value1 = ${recipientType});
 
 		if (isSet(externalReferenceCode)) {
 			AssertElementPresent(

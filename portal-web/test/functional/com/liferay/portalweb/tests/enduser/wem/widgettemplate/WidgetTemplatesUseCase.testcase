@@ -1,0 +1,628 @@
+@component-name = "portal-wcm"
+definition {
+
+	property ci.retries.disabled = "true";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Templates";
+
+	setUp {
+		TestCase.setUpPortalInstance();
+
+		User.firstLoginPG();
+
+		HeadlessSite.addSite(siteName = "Test Site Name");
+
+		JSONLayout.addPublicLayout(
+			groupName = "Test Site Name",
+			layoutName = "ADT Test Page");
+
+		JSONLayout.updateLayoutTemplateOfPublicLayout(
+			groupName = "Test Site Name",
+			layoutName = "ADT Test Page",
+			layoutTemplate = "1 Column");
+	}
+
+	@description = "View the widget template applied to Asset Publisher widget."
+	@priority = 3
+	test ViewWidgetTemplateAppliedToAssetPublisher {
+		property portal.acceptance = "true";
+		property testray.component.names = "Asset Publisher,Templates";
+
+		task ("Add an Asset Publisher to page") {
+			JSONLayout.addWidgetToPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "ADT Test Page",
+				widgetName = "Asset Publisher");
+		}
+
+		task ("Add a web content based on Basic Web Content") {
+			JSONWebcontent.addWebContent(
+				content = "Web Content Content",
+				groupName = "Test Site Name",
+				title = "Web Content Title");
+		}
+
+		task ("Add a widget template for Asset Publisher") {
+			var newLine = '''
+''';
+			var script = TestCase.getFileContent(fileName = "adt_asset_publisher_rich_summary.ftl");
+
+			var script = StringUtil.regexReplaceAll(${script}, ${newLine}, "%0A");
+
+			var script = StringUtil.regexReplaceAll(${script}, " ", "%20");
+
+			var script = StringUtil.regexReplaceAll(${script}, "	", "%09");
+
+			var script = StringUtil.regexReplaceAll(${script}, "&", "%26");
+
+			var script = StringUtil.regexReplaceAll(${script}, "\+", "%2B");
+
+			JSONDDMtemplate.addWidgetTemplate(
+				groupName = "Test Site Name",
+				itemType = "Asset Publisher Template",
+				name = "Asset Publisher Test ADT",
+				script = ${script});
+		}
+
+		task ("Configure the display setttings of Asset Publisher") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			AssetPublisherPortlet.configureDisplaySettings(
+				displaySettings = "Comments,Comment Ratings,Flags,Print,Ratings,Related Assets",
+				enableSocialBookmarkSites = "Facebook,LinkedIn,Twitter");
+		}
+
+		task ("Select the widget template in Asset Publisher") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			AssetPublisherPortlet.viewDefaultWithAllDisplaySettingsCheckboxesPG(
+				assetDescription = "Web Content Content",
+				assetTitle = "Web Content Title");
+
+			WidgetTemplates.selectPortletADT(templateName = "Asset Publisher Test ADT");
+		}
+
+		task ("View the widget template applied to Asset Publisher") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			AssetPublisherPortlet.viewCustomADTRichSummaryPG(
+				assetContent = "Web Content Content",
+				assetTitle = "Web Content Title");
+		}
+	}
+
+	@description = "View the widget template applied to Breadcrumb widget."
+	@priority = 5
+	test ViewWidgetTemplateAppliedToBreadcrumb {
+		property portal.acceptance = "true";
+		property testray.component.names = "Breadcrumb,Templates";
+
+		task ("Add a Breadcrumb to page") {
+			JSONLayout.addWidgetToPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "ADT Test Page",
+				widgetName = "Breadcrumb");
+		}
+
+		task ("Select the Arrows widget template in Breadcrumb") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			AssertVisible(locator1 = "BreadcrumbPortlet#BREADCRUMB");
+
+			Portlet.gotoPortletOptions(
+				portletName = "Breadcrumb",
+				portletOption = "Configuration");
+
+			Breadcrumb.configureBreadcrumb(selectAdtType = "Arrows");
+		}
+
+		task ("View the widget template applied to Breadcrumb") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			Breadcrumb.viewADTApplied(breadcrumbAdtType = "arrows");
+		}
+	}
+
+	@description = "View the widget template applied to Categories Navigation widget."
+	@priority = 5
+	test ViewWidgetTemplateAppliedToCategoriesNavigation {
+		property portal.acceptance = "true";
+		property testray.component.names = "Categories,Templates";
+
+		task ("Add three vocabularies") {
+			for (var n : list "1,2,3") {
+				JSONCategory.addVocabulary(
+					groupName = "Test Site Name",
+					title = "Vocabulary Name ${n}");
+			}
+		}
+
+		task ("Add a category to last two vocabularies") {
+			for (var n : list "2,3") {
+				JSONCategory.addCategory(
+					groupName = "Test Site Name",
+					title = "Category Name ${n}",
+					vocabularyName = "Vocabulary Name ${n}");
+			}
+		}
+
+		task ("Add a Categories Navigation to page") {
+			JSONLayout.addWidgetToPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "ADT Test Page",
+				widgetName = "Category Filter");
+		}
+
+		task ("View the displayed content in Categories Navigation") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			CategoriesNavigationPortlet.viewDefaultPG(
+				categoryName = "Category Name 2",
+				vocabularyName = "Vocabulary Name 2");
+
+			CategoriesNavigationPortlet.viewDefaultPG(
+				categoryName = "Category Name 3",
+				vocabularyName = "Vocabulary Name 3");
+		}
+
+		task ("Add a widget template for Categories Navigation") {
+			WidgetTemplates.openWidgetTemplatesAdmin(siteURLKey = "test-site-name");
+
+			WidgetTemplates.addCP(
+				adtFile = "adt_categories_navigation_multi_column.ftl",
+				adtType = "Category Filter");
+		}
+
+		task ("Select the widget template in Categories Navigation") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			WidgetTemplates.selectPortletADT(templateName = "Category Filter Test ADT");
+		}
+
+		task ("View the widget template applied to Categories Navigation") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			CategoriesNavigationPortlet.viewCustomADTMultiColumnPG(
+				categoryNameList = "Null,Null,Category Name 2,Category Name 3",
+				columnList = "1,2,3,4",
+				vocabularyNameList = "Topic,Vocabulary Name 1,Vocabulary Name 2,Vocabulary Name 3");
+		}
+	}
+
+	@description = "View the widget template applied to RSS Publisher widget."
+	@priority = 5
+	test ViewWidgetTemplateAppliedToRSSPublisher {
+		property portal.acceptance = "true";
+		property testray.component.names = "Templates,RSS";
+
+		task ("Add a RSS Publisher to page") {
+			JSONLayout.addWidgetToPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "ADT Test Page",
+				widgetName = "RSS Publisher");
+		}
+
+		task ("Add a RSS Feed") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			RSSPortlet.addFeed(
+				feedRowIndexNumber = 0,
+				feedTitle = "Latimes > Technology News",
+				feedType = "file",
+				feedURLLink = "rss2.0.xml");
+		}
+
+		task ("Add a widget template for RSS Publisher") {
+			WidgetTemplates.openWidgetTemplatesAdmin(siteURLKey = "test-site-name");
+
+			WidgetTemplates.addCP(
+				adtType = "RSS Publisher",
+				fieldNameList = "RSS Feeds*");
+		}
+
+		task ("Select the widget template in RSS Publisher") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			RSSPortlet.waitForRSSLoad();
+
+			WidgetTemplates.selectPortletADT(templateName = "RSS Publisher Test ADT");
+		}
+
+		task ("View the widget template applied to RSS Publisher") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			RSSPortlet.waitForRSSLoad();
+
+			RSSPortlet.viewCustomADT(feedContentTitle = "Technology");
+		}
+	}
+
+	@description = "View the widget template applied to Site Map widget."
+	@priority = 3
+	test ViewWidgetTemplateAppliedToSiteMap {
+		property testray.component.names = "Templates,Sitemap";
+
+		task ("Add a Site Map widget to page") {
+			JSONLayout.addWidgetToPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "ADT Test Page",
+				widgetName = "Site Map");
+		}
+
+		task ("Add two widget pages") {
+			for (var n : list "2,3") {
+				JSONLayout.addPublicLayout(
+					groupName = "Test Site Name",
+					layoutName = "ADT Test Page ${n}");
+			}
+		}
+
+		task ("Add a child widget page") {
+			JSONLayout.addPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "ADT Child Page Name",
+				parentLayoutName = "ADT Test Page");
+		}
+
+		task ("View the displayed content in Site Map") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			SiteMapPortlet.viewPageItem(pageNameList = "ADT Test Page,ADT Test Page 2,ADT Test Page 3,ADT Child Page Name");
+		}
+
+		task ("Add a widget template for Site Map") {
+			WidgetTemplates.openWidgetTemplatesAdmin(siteURLKey = "test-site-name");
+
+			WidgetTemplates.addCP(
+				adtFile = "adt_sitemap_multi_column.ftl",
+				adtType = "Site Map");
+		}
+
+		task ("Select the widget template in Site Map") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			WidgetTemplates.selectPortletADT(templateName = "Site Map Test ADT");
+		}
+
+		task ("View the widget template applied to Site Map") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			SiteMapPortlet.viewPageItem(pageNameList = "ADT Test Page,ADT Test Page 2,ADT Test Page 3,ADT Child Page Name");
+		}
+	}
+
+	@description = "View the widget template applied to Tags Navigation widget."
+	@priority = 5
+	test ViewWidgetTemplateAppliedToTagsNavigation {
+		property portal.acceptance = "true";
+		property testray.component.names = "Templates,Tags";
+
+		task ("Add a Tags Navigation to page") {
+			JSONLayout.addWidgetToPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "ADT Test Page",
+				widgetName = "Tag Filter");
+		}
+
+		task ("Add a widget page") {
+			JSONLayout.addPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "Blogs Test Page");
+		}
+
+		task ("Add a Blogs widget to new page") {
+			JSONLayout.addWidgetToPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "Blogs Test Page",
+				widgetName = "Blogs");
+		}
+
+		task ("Add three blogs entry with tag") {
+			HeadlessBlog.addBlogEntry(
+				assetTagNames = "tag name 1,tag name 2,tag name 3",
+				content = "Blogs Entry Content",
+				groupName = "Test Site Name",
+				title = "Blogs Entry Title");
+
+			HeadlessBlog.addBlogEntry(
+				assetTagNames = "tag name 2,tag name 3",
+				content = "Blogs Entry Content",
+				groupName = "Test Site Name",
+				title = "Blogs Entry Title");
+
+			HeadlessBlog.addBlogEntry(
+				assetTagNames = "tag name 3",
+				content = "Blogs Entry Content",
+				groupName = "Test Site Name",
+				title = "Blogs Entry Title");
+		}
+
+		task ("View the displayed content in Tags Navigation") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			TagsNavigationPortlet.viewDefaultPG(tagNameList = "tag name 1,tag name 2,tag name 3");
+		}
+
+		task ("Add a widget template for Tags Navigation") {
+			WidgetTemplates.openWidgetTemplatesAdmin(siteURLKey = "test-site-name");
+
+			WidgetTemplates.addCP(
+				adtFile = "adt_tags_color.ftl",
+				adtType = "Tag Cloud");
+		}
+
+		task ("Select the widget template in Tags Navigation") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			WidgetTemplates.selectPortletADT(templateName = "Tag Cloud Test ADT");
+		}
+
+		task ("View the widget template applied to Tags Navigation") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			TagsNavigationPortlet.viewADTColorByPopularityPG(
+				adtTagColor = "green",
+				tagName = "tag name 1");
+
+			TagsNavigationPortlet.viewADTColorByPopularityPG(
+				adtTagColor = "orange",
+				tagName = "tag name 2");
+
+			TagsNavigationPortlet.viewADTColorByPopularityPG(
+				adtTagColor = "red",
+				tagName = "tag name 3");
+		}
+	}
+
+	@description = "View the widget template applied to Wiki widget."
+	@priority = 3
+	test ViewWidgetTemplateAppliedToWiki {
+		property app.server.types = "tomcat,websphere";
+		property testray.component.names = "Templates,Wiki";
+
+		task ("Add a Wiki to page") {
+			JSONLayout.addWidgetToPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "ADT Test Page",
+				widgetName = "Wiki");
+		}
+
+		task ("Add content to FrontPage") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			JSONWiki.updateWikiPage(
+				groupName = "Test Site Name",
+				wikiNodeName = "Main",
+				wikiPageContent = "Test Wiki Content",
+				wikiPageName = "FrontPage");
+		}
+
+		task ("Add a Wiki type widget template") {
+			WidgetTemplates.openWidgetTemplatesAdmin(siteURLKey = "test-site-name");
+
+			WidgetTemplates.addCP(
+				adtFile = "adt_wiki_social.ftl",
+				adtType = "Wiki");
+		}
+
+		task ("Select the widget template in Wiki widget") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			WidgetTemplates.selectPortletADT(
+				portletName = "Wiki",
+				templateName = "Wiki Test ADT");
+		}
+
+		task ("View the widget template is applied to Wiki widget") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			WikiPage.viewCustomADTSocialPG(wikiPageContent = "Test Wiki Content");
+		}
+	}
+
+	@description = "View the widget template based on script file applied to RSS Publisher widget."
+	@priority = 3
+	test ViewWidgetTemplateBasedOnScriptFileAppliedToRSSPublisher {
+		property testray.component.names = "Templates,RSS";
+
+		task ("Add a RSS Publisher to page") {
+			JSONLayout.addWidgetToPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "ADT Test Page",
+				widgetName = "RSS Publisher");
+		}
+
+		task ("Add a RSS Feed") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			RSSPortlet.addFeed(
+				feedRowIndexNumber = 0,
+				feedTitle = "Technology",
+				feedType = "file",
+				feedURLLink = "Technology.xml");
+		}
+
+		task ("Add a widget template based on script file for RSS Publisher") {
+			WidgetTemplates.openWidgetTemplatesAdmin(siteURLKey = "test-site-name");
+
+			WidgetTemplates.addCP(
+				adtFile = "adt_rss_navigation.ftl",
+				adtType = "RSS Publisher");
+		}
+
+		task ("Select the widget template") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			WidgetTemplates.selectPortletADT(templateName = "RSS Publisher Test ADT");
+		}
+
+		task ("View the widget template applied to RSS Publisher") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			RSSPortlet.viewNavigationDisplayFeedTitle(
+				feedTitle = "Technology",
+				navigationNullAdt = "true");
+		}
+	}
+
+	@description = "This is a use case for LPS-71944."
+	@priority = 5
+	test ViewWidgetTemplateEmbeddedWidgetAppliedToAssetPublisher {
+		property portal.acceptance = "true";
+		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
+		property testray.component.names = "Asset Publisher,Templates";
+
+		task ("Execute reindex all search indexes") {
+			SearchAdministration.executeReindex();
+		}
+
+		task ("Edit Rich Summary widget template") {
+			WidgetTemplates.openWidgetTemplatesAdmin(siteURLKey = "global");
+
+			WidgetTemplates.searchGlobalADT(templateName = "Rich Summary");
+
+			WidgetTemplates.gotoWidgetTemplatesEllipsisItem(
+				item = "Edit",
+				widgetTemplateName = "Rich Summary");
+
+			var script = '''
+	<@liferay_portlet["runtime"]
+		defaultPreferences="${freeMarkerPortletPreferences}"
+		instanceId="whateverV1"
+		portletProviderAction=portletProviderAction.VIEW
+		portletProviderClassName="com.liferay.portal.kernel.servlet.taglib.ui.BreadcrumbEntry"/>
+					''';
+
+			WidgetTemplates.editADTScript(adtScript = ${script});
+		}
+
+		task ("Add an Asset Publisher to page") {
+			JSONLayout.addWidgetToPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "ADT Test Page",
+				widgetName = "Asset Publisher");
+		}
+
+		task ("Select the Rich Summary widget template in Asset Publisher") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			Portlet.gotoPortletOptions(
+				portletName = "Asset Publisher",
+				portletOption = "Configuration");
+
+			AssetPublisherPortlet.configureDisplayTemplatePG(displayTemplate = "Rich Summary");
+		}
+
+		task ("View the widget template applied to Asset Publisher") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			AssertElementPresent(
+				key_portletName = "Breadcrumb",
+				locator1 = "Portlet#TITLE");
+
+			AssertConsoleTextNotPresent(value1 = "UnexpectedCharException");
+		}
+	}
+
+	@description = "View the widget template with corrupt script applied to RSS Publisher widget."
+	@priority = 3
+	test ViewWidgetTemplateWithCorruptScriptAppliedToRSSPublisher {
+		property testray.component.names = "Templates,RSS";
+
+		task ("Add a RSS Publisher to page") {
+			JSONLayout.addWidgetToPublicLayout(
+				groupName = "Test Site Name",
+				layoutName = "ADT Test Page",
+				widgetName = "RSS Publisher");
+		}
+
+		task ("Add a RSS Feed") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			RSSPortlet.addFeed(
+				feedRowIndexNumber = 0,
+				feedTitle = "Latimes > Technology News",
+				feedType = "file",
+				feedURLLink = "rss2.0.xml");
+		}
+
+		task ("Add a widget template for RSS Publisher") {
+			WidgetTemplates.openWidgetTemplatesAdmin(siteURLKey = "test-site-name");
+
+			WidgetTemplates.addCP(
+				adtFile = "adt_rss_navigation_corrupt.ftl",
+				adtType = "RSS Publisher");
+		}
+
+		task ("Select the widget template in RSS Publisher") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			WidgetTemplates.selectPortletADT(templateName = "RSS Publisher Test ADT");
+		}
+
+		task ("View the widget template with corrupt script applied to RSS Publisher widget") {
+			Navigator.gotoSitePage(
+				pageName = "ADT Test Page",
+				siteName = "Test Site Name");
+
+			RSSPortlet.viewCorruptScript();
+		}
+	}
+
+}

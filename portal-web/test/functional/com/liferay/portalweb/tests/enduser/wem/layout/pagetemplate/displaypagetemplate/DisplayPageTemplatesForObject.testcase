@@ -34,8 +34,6 @@ definition {
 	@description = "This is a test for LPS-191357. The administrator cannot clear object entry’s mandatory attached file via associated display page."
 	@priority = 3
 	test CannotClearMandatoryAttachmentOnAssociatedDisplayPage {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
-
 		task ("Given a site administrater has a display page template for Object with mandatory attachment") {
 			ObjectAdmin.addObjectFieldViaAPI(
 				fieldBusinessType = "Attachment",
@@ -132,11 +130,246 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-192722. Default object changes automatically when changing the content type between objects."
+	@priority = 3
+	test ChangeContentTypeBetweenObjects {
+		task ("Given a site administrator has a display page template for object") {
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Text",
+				fieldLabelName = "Name",
+				fieldName = "name",
+				fieldType = "String",
+				isRequired = "false",
+				objectName = "PurchaseOrder");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "PurchaseOrder");
+
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Department",
+				objectName = "Department",
+				pluralLabelName = "Departments");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Integer",
+				fieldLabelName = "Count",
+				fieldName = "count",
+				fieldType = "Integer",
+				isRequired = "false",
+				objectName = "Department");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "Department");
+
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = ${siteURLKey});
+
+			DisplayPageTemplatesAdmin.addDisplayPage(
+				contentType = "Purchase Order",
+				displayPageName = "Display Page Name");
+
+			PageEditor.addFragment(
+				collectionName = "Form Components",
+				fragmentName = "Form Container");
+
+			PageEditor.mapFormContainerToObject(contentType = "Purchase Order (Default)");
+
+			PageEditor.publish();
+		}
+
+		task ("When the site administrator changes the content type to another object") {
+			LexiconCard.viewCardSubtitle(
+				card = "Display Page Name",
+				cardSubtitle = "Purchase Order");
+
+			DisplayPageTemplatesAdmin.changeContentType(
+				contentType = "Department",
+				displayPageName = "Display Page Name");
+		}
+
+		task ("Then the site administrator could see the Form Container mapped to that object") {
+			LexiconCard.viewCardSubtitle(
+				card = "Display Page Name",
+				cardSubtitle = "Department");
+
+			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
+
+			PageEditor.viewInputStyle(
+				label = "Count",
+				showLabel = "true",
+				type = "numeric-input");
+
+			PageEditor.viewFragmentEditableText(
+				className = "button",
+				editableText = "Submit",
+				fragmentName = "Submit Button",
+				id = "submit-button");
+
+			PageEditor.gotoConfiguration(fragmentName = "Form Container");
+
+			AssertSelectedLabel(
+				key_fieldLabel = "Content Type",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "Department (Default)");
+		}
+	}
+
+	@description = "This is a test for LPS-192722. Can change object content type to Web Content Article content type in display page template."
+	@priority = 4
+	test ChangeContentTypeFromObjectToWebContentArticle {
+		task ("Given a site administrator has a display page template for object") {
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Text",
+				fieldLabelName = "Name",
+				fieldName = "name",
+				fieldType = "String",
+				isRequired = "false",
+				objectName = "PurchaseOrder");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "PurchaseOrder");
+
+			var objectEntryId = ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+				fieldName = "name",
+				objectName = "PurchaseOrder",
+				value = "LeBron");
+
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = ${siteURLKey});
+
+			DisplayPageTemplatesAdmin.addDisplayPage(
+				contentType = "Purchase Order",
+				displayPageName = "Display Page Name");
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Heading");
+
+			PageEditorMapping.mapEditableTextToField(
+				field = "Name",
+				fragmentName = "Heading",
+				id = "element-text");
+
+			PageEditor.publish();
+
+			JSONLayout.addPublicLayout(
+				groupName = ${randomSiteName},
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+
+			PageEditorEditableLink.gotoEditableFieldLink(
+				fragmentName = "Button",
+				id = "link");
+
+			PageEditorEditableLink.mapURLToAsset(
+				entryTitle = ${objectEntryId},
+				field = "Display Page Name",
+				navItem = "Purchase Orders");
+
+			PageEditor.publish();
+
+			JSONWebcontent.addWebContent(
+				content = "Web Content Content",
+				groupName = ${randomSiteName},
+				title = "Web Content Title");
+		}
+
+		task ("When the site administrator navigates to the Display Page Templates admin") {
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = ${siteURLKey});
+		}
+
+		task ("Then the site administrator could change content type to Web Content Article") {
+			LexiconCard.viewCardSubtitle(
+				card = "Display Page Name",
+				cardSubtitle = "Purchase Order");
+
+			DisplayPageTemplatesAdmin.gotoDisplayPageEllipsisItem(
+				displayPageName = "Display Page Name",
+				item = "Change Content Type");
+
+			AssertTextEquals.assertPartialText(
+				locator1 = "Modal#MODAL_WARNING",
+				value1 = "Changing the content type may cause some elements of the display page template to lose their previous mapping.");
+
+			DisplayPageTemplatesAdmin._selectMappingTypes(
+				contentType = "Web Content Article",
+				subType = "Basic Web Content");
+
+			PortletEntry.save();
+
+			LexiconCard.viewCardSubtitle(
+				card = "Display Page Name",
+				cardSubtitle = "Web Content Article - Basic Web Content");
+		}
+
+		task ("When the site administrator accesses to the Mapping panel of Heading fragment in display page template") {
+			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
+
+			PageEditorMapping.gotoEditableFieldMapping(
+				fragmentName = "Heading",
+				id = "element-text");
+		}
+
+		task ("Then the site administrator sees unmapped field") {
+			AssertSelectedLabel(
+				key_fieldLabel = "Field",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "-- Unmapped --");
+
+			Select(
+				key_fieldLabel = "Field",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "Content");
+
+			PageEditor.waitForAutoSave();
+
+			PageEditor.publish();
+		}
+
+		task ("When the site administrator accesses to the Link panel of Button fragment in content page") {
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditorEditableLink.gotoEditableFieldLink(
+				fragmentName = "Button",
+				id = "link");
+		}
+
+		task ("Then the site administrator sees unmapped field") {
+			AssertSelectedLabel(
+				key_fieldLabel = "Field",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "-- Unmapped --");
+		}
+
+		task ("When the site administrator maps the display page template for Web Content Article") {
+			PageEditorEditableLink.mapURLToAsset(
+				entryTitle = "Web Content Title",
+				field = "Display Page Name",
+				navItem = "Web Content");
+
+			PageEditor.publish();
+		}
+
+		task ("Then the site administrator could see mapped content on associated display page") {
+			Button.click(button = "Go Somewhere");
+
+			ControlMenu.viewHeaderTitle(headerTitle = "Web Content Title");
+
+			ContentPages.viewFragmentText(
+				fragmentName = "heading",
+				id = "element-text",
+				text = "Web Content Content");
+		}
+	}
+
 	@description = "This is a test for LPS-191554. The administrator could display related object entries inside of form on associated display page."
 	@priority = 4
 	test DisplayRelatedObjectEntiresInsideFormOnAssociatedDisplayPage {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
-
 		task ("Given a site administrator has two objects with one to many relationship") {
 			ObjectAdmin.addObjectFieldViaAPI(
 				fieldBusinessType = "Text",
@@ -275,8 +508,6 @@ definition {
 	@description = "This is a test for LPS-191554. The administrator could display related object entries outside of form on associated display page."
 	@priority = 4
 	test DisplayRelatedObjectEntiresOutsideFormOnAssociatedDisplayPage {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
-
 		task ("Given a site administrator has two objects with one to many relationship") {
 			ObjectAdmin.addObjectFieldViaAPI(
 				fieldBusinessType = "Text",
@@ -411,8 +642,6 @@ definition {
 	@description = "This is a test for LPS-191312. The administrator could edit date and time field of object entry via associated display page."
 	@priority = 4
 	test EditDateAndTimeFieldOnAssociatedDisplayPage {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
-
 		task ("Given a site administrater has a display page template for Object with date and time field") {
 			ObjectAdmin.addObjectFieldViaAPI(
 				fieldBusinessType = "DateTime",
@@ -526,8 +755,6 @@ definition {
 	@description = "This is a test for LPS-191362. The administrator could edit multiple picklist field of object entry via associated display page."
 	@priority = 4
 	test EditMultipleselectPicklistFieldOnAssociatedDisplayPage {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
-
 		task ("Given a site administrater has a display page template for Object with multipleselect picklist field") {
 			Picklist.addPicklistViaAPI(picklistName = "Fruits");
 
@@ -549,17 +776,11 @@ definition {
 
 			ObjectAdmin.publishObjectViaAPI(objectName = "PurchaseOrder");
 
-			ObjectAdmin.goToCustomObject(objectName = "PurchaseOrder");
-
-			ObjectAdmin.addObjectMultiPicklistFieldEntryViaUI(picklistOptionList = "Apple,Peach");
-
-			PortletEntry.save();
-
-			Navigator.gotoBack();
-
-			ObjectPortlet.viewEntry(entry = "Apple, Peach");
-
-			var objectEntryId = selenium.getText("ObjectPortlet#ENTRY_ID");
+			var objectEntryId = ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+				fieldName = "favorite",
+				fieldType = "MultiselectPicklist",
+				objectName = "PurchaseOrder",
+				valueList = "Apple,Peach");
 
 			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = ${siteURLKey});
 
@@ -664,8 +885,6 @@ definition {
 	@description = "This is a test for LPS-191275. The administrator could edit picklist field of object entry via associated display page."
 	@priority = 4
 	test EditPicklistFieldOnAssociatedDisplayPage {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
-
 		task ("Given a site administrater has a display page template for Object with picklist field") {
 			Picklist.addPicklistViaAPI(picklistName = "Fruits");
 
@@ -689,9 +908,9 @@ definition {
 
 			ObjectAdmin.goToCustomObject(objectName = "PurchaseOrder");
 
-			ObjectAdmin.addObjectPicklistFieldEntryViaUI(picklistOption = "Apple");
-
-			PortletEntry.save();
+			ObjectAdmin.addObjectPicklistFieldEntryViaUI(
+				labelName = "Type",
+				picklistOption = "Apple");
 
 			Navigator.gotoBack();
 
@@ -789,8 +1008,6 @@ definition {
 	@description = "This is a test for LPS-184193. Allow selecting specific display page in the page editor for object entry."
 	@priority = 4
 	test MapSpecificDisplayPageForObject {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
-
 		task ("Given a page designer has a display page template for Object") {
 			ObjectAdmin.addObjectFieldViaAPI(
 				fieldBusinessType = "Text",
@@ -858,7 +1075,7 @@ definition {
 
 			Button.click(button = "Go Somewhere");
 
-			ControlMenu.viewHeaderTitle(headerTitle = "Liferay");
+			ControlMenu.viewHeaderTitle(headerTitle = ${objectEntryId});
 
 			ContentPages.viewFragmentText(
 				fragmentName = "heading",
@@ -870,8 +1087,6 @@ definition {
 	@description = "This is a test for LPS-191389. The administrator could only update value of object entry’s field displayed on associated display page."
 	@priority = 4
 	test OnlyUpdateFieldOnAssociatedDisplayPage {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
-
 		task ("Given a site administrater has a display page template for Object with fields") {
 			ObjectAdmin.addObjectFieldViaAPI(
 				fieldBusinessType = "Text",
@@ -989,8 +1204,6 @@ definition {
 	@description = "This is a test for LPS-191389. The administrator could only update value of object entry’s mandatory field displayed on associated display page."
 	@priority = 4
 	test OnlyUpdateMandatoryFieldOnAssociatedDisplayPage {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
-
 		task ("Given a site administrater has a display page template for Object with mandatory fields") {
 			ObjectAdmin.addObjectFieldViaAPI(
 				fieldBusinessType = "Text",
@@ -1108,8 +1321,6 @@ definition {
 	@description = "This is a test for LPS-191532. The administrator could submit form on associated display page of another object."
 	@priority = 4
 	test SubmitFormOnAssociatedDisplayPageOfAnotherObject {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
-
 		task ("Given a site administrater has a display page template for Object with two forms") {
 			ObjectAdmin.addObjectFieldViaAPI(
 				fieldBusinessType = "Text",
@@ -1222,6 +1433,230 @@ definition {
 			ObjectAdmin.goToCustomObject(objectName = "Customer");
 
 			ObjectPortlet.viewEntry(entry = "Possibility to add two form containers inside the same DPT.");
+		}
+	}
+
+	@description = "This is a test for LPS-198511. View Multiselect List fragment display success in a Display Page when entry field is empty."
+	@priority = 5
+	test ViewMultiselectListWithEntryFieldEmptyOnAssociatedDisplayPageTemplate {
+		task ("Given a content page with a Multiselect From List fragment mapped to an object") {
+			Picklist.addPicklistViaAPI(picklistName = "Fruits");
+
+			for (var fruit : list "Apple,Banana") {
+				Picklist.addPicklistItemViaAPI(
+					itemKey = ${fruit},
+					itemName = ${fruit},
+					picklistName = "Fruits");
+			}
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "MultiselectPicklist",
+				fieldLabelName = "Favorite Fruit",
+				fieldName = "favoriteFruit",
+				fieldType = "String",
+				isRequired = "false",
+				objectName = "PurchaseOrder",
+				picklistName = "Fruits");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "PurchaseOrder");
+
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = ${siteURLKey});
+
+			DisplayPageTemplatesAdmin.addDisplayPage(
+				contentType = "Purchase Order",
+				displayPageName = "Display Page Name");
+
+			PageEditor.addFragment(
+				collectionName = "Form Components",
+				fragmentName = "Form Container");
+
+			PageEditor.mapFormContainerToObject(contentType = "Purchase Order (Default)");
+
+			PageEditor.publish();
+
+			JSONLayout.addPublicLayout(
+				groupName = ${randomSiteName},
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Form Components",
+				fragmentName = "Form Container");
+
+			PageEditor.mapFormContainerToObject(contentType = "Purchase Order");
+
+			PageEditor.editFormContainer(
+				contentType = "Purchase Order",
+				displayPageName = "Display Page Name",
+				panel = "General",
+				successMessage = "Go to Entry Display Page");
+
+			PageEditor.publish();
+		}
+
+		task ("When a new submission is created with a entry field empty") {
+			Button.clickSubmitButton();
+		}
+
+		task ("Then the Success Interaction will be completed") {
+			var objectEntryId = JSONObject.getObjectEntryId(
+				entryValue = "",
+				fieldName = "favoriteFruit",
+				objectName = "PurchaseOrder");
+
+			ControlMenu.viewHeaderTitle(headerTitle = ${objectEntryId});
+
+			PageEditor.viewInputStyle(
+				label = "Favorite Fruit",
+				showLabel = "true",
+				type = "multiselect-list");
+		}
+	}
+
+	@description = "This is a test for LPS-192722. View select content type modal when edit display page template without content type."
+	@priority = 4
+	test ViewSelectContentTypeModalWhenEditDisplayPageTemplateWithoutContentType {
+		task ("Given a site administrator has a display page template without content type") {
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Text",
+				fieldLabelName = "Name",
+				fieldName = "name",
+				fieldType = "String",
+				isRequired = "false",
+				objectName = "PurchaseOrder");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "PurchaseOrder");
+
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = ${siteURLKey});
+
+			DisplayPageTemplatesAdmin.addDisplayPage(
+				contentType = "Purchase Order",
+				displayPageName = "Display Page Name");
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Heading");
+
+			PageEditorMapping.mapEditableTextToField(
+				field = "Name",
+				fragmentName = "Heading",
+				id = "element-text");
+
+			PageEditor.publish();
+
+			ObjectAdmin.deleteObjectViaAPI(objectName = "PurchaseOrder");
+		}
+
+		task ("When the site administrator edits the display page template") {
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = ${siteURLKey});
+
+			LexiconCard.viewCardSubtitle(
+				card = "Display Page Name",
+				cardSubtitle = "-");
+
+			AssertElementNotPresent(
+				key_card = "Display Page Name",
+				locator1 = "Card#CARD_TITLE_LINK");
+
+			DisplayPageTemplatesAdmin.gotoDisplayPageEllipsisItem(
+				displayPageName = "Display Page Name",
+				item = "Edit");
+		}
+
+		task ("Then the site administrator sees select content type modal") {
+			AssertTextEquals(
+				locator1 = "Modal#HEADER",
+				value1 = "Select Content Type");
+
+			AssertTextEquals(
+				index = 1,
+				locator1 = "Modal#BODY_MESSAGE",
+				value1 = "This display page template does not have any content type assigned, you must select one to edit it.");
+
+			AssertSelectedLabel(
+				locator1 = "//div[contains(.,'Content Type')]/select",
+				value1 = "-- Not Selected --");
+		}
+	}
+
+	@description = "This is a test for LPS-199013. View Select From List fragment display success in a Display Page when entry field is empty."
+	@priority = 5
+	test ViewSelectFromListWithEntryFieldEmptyOnAssociatedDisplayPageTemplate {
+		task ("Given a content page with a Select From List fragment mapped to an object") {
+			Picklist.addPicklistViaAPI(picklistName = "Fruits");
+
+			for (var fruit : list "Apple,Banana") {
+				Picklist.addPicklistItemViaAPI(
+					itemKey = ${fruit},
+					itemName = ${fruit},
+					picklistName = "Fruits");
+			}
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Picklist",
+				fieldLabelName = "Favorite Fruit",
+				fieldName = "favoriteFruit",
+				fieldType = "String",
+				isRequired = "false",
+				objectName = "PurchaseOrder",
+				picklistName = "Fruits");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "PurchaseOrder");
+
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = ${siteURLKey});
+
+			DisplayPageTemplatesAdmin.addDisplayPage(
+				contentType = "Purchase Order",
+				displayPageName = "Display Page Name");
+
+			PageEditor.addFragment(
+				collectionName = "Form Components",
+				fragmentName = "Form Container");
+
+			PageEditor.mapFormContainerToObject(contentType = "Purchase Order (Default)");
+
+			PageEditor.publish();
+
+			JSONLayout.addPublicLayout(
+				groupName = ${randomSiteName},
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Form Components",
+				fragmentName = "Form Container");
+
+			PageEditor.mapFormContainerToObject(contentType = "Purchase Order");
+
+			PageEditor.editFormContainer(
+				contentType = "Purchase Order",
+				displayPageName = "Display Page Name",
+				panel = "General",
+				successMessage = "Go to Entry Display Page");
+
+			PageEditor.publish();
+		}
+
+		task ("When a new submission is created with a entry field empty") {
+			Button.clickSubmitButton();
+		}
+
+		task ("Then the Success Interaction will be completed") {
+			var objectEntryId = JSONObject.getObjectEntryIdByIndex(objectName = "PurchaseOrder");
+
+			ControlMenu.viewHeaderTitle(headerTitle = ${objectEntryId});
+
+			PageEditor.viewInputStyle(
+				placeholder = "Choose an Option",
+				type = "select-from-list");
 		}
 	}
 

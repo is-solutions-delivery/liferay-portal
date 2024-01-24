@@ -31,7 +31,6 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
-import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
@@ -125,7 +124,7 @@ public class FaroUserLocalServiceImpl extends FaroUserLocalServiceBaseImpl {
 
 			faroUser.setRoleId(roleId);
 			faroUser.setEmailAddress(emailAddress);
-			faroUser.setKey(_portalUUIDUtil.generate());
+			faroUser.setKey(PortalUUIDUtil.generate());
 			faroUser.setStatus(status);
 
 			faroUser = faroUserPersistence.update(faroUser);
@@ -447,9 +446,6 @@ public class FaroUserLocalServiceImpl extends FaroUserLocalServiceBaseImpl {
 	private GroupLocalService _groupLocalService;
 
 	@Reference
-	private Http _http;
-
-	@Reference
 	private Language _language;
 
 	@Reference
@@ -457,9 +453,6 @@ public class FaroUserLocalServiceImpl extends FaroUserLocalServiceBaseImpl {
 
 	@Reference
 	private Portal _portal;
-
-	@Reference
-	private PortalUUIDUtil _portalUUIDUtil;
 
 	@Reference
 	private RoleLocalService _roleLocalService;

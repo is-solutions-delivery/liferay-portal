@@ -374,6 +374,8 @@ definition {
 	@description = "Feature ID: Legacy | Automation ID: LRAC-9103 | Test Summary: [AC] Properties created when no data source was connected, and then the admin connect data sources to workspace"
 	@priority = 3
 	test CreatePropertiesWhenNoDataSourceIsConnected {
+		property test.run.type = "single";
+
 		task ("Add a new property on AC") {
 			ACUtils.launchAC();
 
@@ -492,12 +494,8 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8145 | Test Summary: Owner can create a new property"
-	@ignore = "true"
 	@priority = 5
 	test OwnerCanCreateNewProperty {
-
-		// The default AC users do not appear in Users and Organizations. The bug will be resolved after LRAC-14468
-
 		ACUtils.launchAC();
 
 		ACNavigation.goToSettings();

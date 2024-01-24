@@ -40,6 +40,7 @@ import com.liferay.object.model.ObjectFieldSetting;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldSettingLocalService;
+import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.petra.io.unsync.UnsyncStringWriter;
 import com.liferay.petra.memory.DeleteFileFinalizeAction;
 import com.liferay.petra.memory.FinalizeManager;
@@ -247,7 +248,6 @@ public class EditInfoItemStrutsActionTest {
 			WorkflowConstants.STATUS_APPROVED, null, null);
 	}
 
-	@FeatureFlags({"LPS-183727", "LPS-195205"})
 	@Test
 	public void testAddInfoItemWithDisplayPageSuccessMessage()
 		throws Exception {
@@ -281,7 +281,7 @@ public class EditInfoItemStrutsActionTest {
 			null, null);
 	}
 
-	@FeatureFlags({"LPS-183727", "LPS-187754", "LPS-181663", "LPS-195205"})
+	@FeatureFlags("LPS-187754")
 	@Test
 	public void testAddInfoItemWithDraftStatus() throws Exception {
 		_testAddInfoItem(
@@ -305,7 +305,6 @@ public class EditInfoItemStrutsActionTest {
 			"http://localhost:8080/home");
 	}
 
-	@FeatureFlags("LPS-183727")
 	@Test
 	public void testUpdateInfoItem() throws Exception {
 		MockHttpServletResponse mockHttpServletResponse =
@@ -417,7 +416,6 @@ public class EditInfoItemStrutsActionTest {
 			"<p>SUBTITLE</p>", String.valueOf(values.get("myRichText")));
 	}
 
-	@FeatureFlags("LPS-183727")
 	@Test
 	public void testUpdateInfoItemWithCheckboxNames() throws Exception {
 		MockMultipartHttpServletRequest mockMultipartHttpServletRequest =
@@ -506,7 +504,6 @@ public class EditInfoItemStrutsActionTest {
 			Boolean.FALSE.toString(), String.valueOf(values.get("myBoolean")));
 	}
 
-	@FeatureFlags("LPS-183727")
 	@Test
 	public void testUpdateInfoItemWithEmptyValues() throws Exception {
 		MockHttpServletResponse mockHttpServletResponse =
@@ -710,7 +707,7 @@ public class EditInfoItemStrutsActionTest {
 			_objectDefinitionLocalService.addCustomObjectDefinition(
 				_user.getUserId(), 0, false, false, true,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-				"A" + RandomTestUtil.randomString(), null,
+				ObjectDefinitionTestUtil.getRandomName(), null,
 				"control_panel.sites",
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				true, ObjectDefinitionConstants.SCOPE_COMPANY,

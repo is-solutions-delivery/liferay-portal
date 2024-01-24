@@ -37,7 +37,6 @@
 	<classpathentry kind="lib" path="lib/development/ant-compress.jar"/>
 	<classpathentry kind="lib" path="lib/development/ant-contrib.jar"/>
 	<classpathentry kind="lib" path="lib/development/antelope.jar"/>
-	<classpathentry kind="lib" path="lib/development/appium.jar"/>
 	<classpathentry kind="lib" path="lib/development/asm-commons.jar"/>
 	<classpathentry kind="lib" path="lib/development/asm-tree.jar"/>
 	<classpathentry kind="lib" path="lib/development/asm.jar"/>
@@ -141,7 +140,6 @@
 	<classpathentry kind="lib" path="lib/portal/jodd-util.jar"/>
 	<classpathentry kind="lib" path="lib/portal/json-java.jar"/>
 	<classpathentry kind="lib" path="lib/portal/jws-api.jar"/>
-	<classpathentry kind="lib" path="lib/portal/log4j-1.2-api.jar"/>
 	<classpathentry kind="lib" path="lib/portal/log4j-api.jar"/>
 	<classpathentry kind="lib" path="lib/portal/log4j-core.jar"/>
 	<classpathentry kind="lib" path="lib/portal/persistence.jar"/>

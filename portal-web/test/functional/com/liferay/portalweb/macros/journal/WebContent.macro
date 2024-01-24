@@ -333,8 +333,6 @@ definition {
 			webContentTitle = ${webContentTitle});
 
 		Button.clickPublish();
-
-		WaitForPageLoad();
 	}
 
 	@summary = "Default summary"
@@ -660,10 +658,12 @@ definition {
 				var webContentMultipleSelectionFieldLabel = "Multiple Selection";
 			}
 
-			Click.javaScriptClick(
-				key_fieldFieldLabel = ${webContentMultipleSelectionFieldLabel},
-				key_optionValue = ${webContentMultipleSelection},
-				locator1 = "WCEditWebContent#SELECTION_OPTION");
+			if (IsNotChecked(key_fieldFieldLabel = ${webContentMultipleSelectionFieldLabel}, key_optionValue = ${webContentMultipleSelection}, locator1 = "WCEditWebContent#SELECTION_OPTION")) {
+				Click.javaScriptClick(
+					key_fieldFieldLabel = ${webContentMultipleSelectionFieldLabel},
+					key_optionValue = ${webContentMultipleSelection},
+					locator1 = "WCEditWebContent#SELECTION_OPTION");
+			}
 		}
 
 		if (isSet(webContentNumeric)) {
@@ -1337,7 +1337,7 @@ definition {
 			else {
 				AssertTextEquals(
 					ariaLabel = "Display Page Name",
-					locator1 = "TextInput#ANY_WITH_AIRA_LABEL",
+					locator1 = "TextInput#ANY_WITH_ARIA_LABEL",
 					value1 = ${pageName});
 			}
 		}
@@ -1611,7 +1611,9 @@ definition {
 				locator1 = "WC#ENTRY_LIST_CHECKBOX");
 		}
 
-		Click(locator1 = "Icon#MOVE");
+		Click(
+			key_text = "move",
+			locator1 = "ManagementBar#ANY_ICON");
 
 		AssertTextEquals(
 			locator1 = "Portlet#HEADER",
@@ -1642,7 +1644,9 @@ definition {
 				locator1 = "ContentRow#ENTRY_CONTENT_ENTRY_CHECKBOX");
 		}
 
-		Click(locator1 = "Icon#MOVE");
+		Click(
+			key_text = "move",
+			locator1 = "ManagementBar#ANY_ICON");
 
 		AssertClick(
 			locator1 = "Button#SELECT",
@@ -2319,46 +2323,6 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro viewEmailConfigurationCP(webContentWorkflowEnabled = null) {
-		SiteAdmin.gotoPortletConfiguration();
-
-		Navigator.gotoNavTab(navTab = "Email From");
-
-		AssertTextEquals(
-			locator1 = "WCConfiguration#NAVIGATION_WEB_CONTENT_ADDED_EMAIL",
-			value1 = "Web Content Added Email");
-
-		AssertTextEquals(
-			locator1 = "WCConfiguration#NAVIGATION_WEB_CONTENT_REVIEW_EMAIL",
-			value1 = "Web Content Review Email");
-
-		AssertTextEquals(
-			locator1 = "WCConfiguration#NAVIGATION_WEB_CONTENT_UPDATED_EMAIL",
-			value1 = "Web Content Updated Email");
-
-		if (${webContentWorkflowEnabled} == "true") {
-			AssertTextEquals(
-				locator1 = "WCConfiguration#NAVIGATION_WEB_CONTENT_DENIED_EMAIL",
-				value1 = "Web Content Denied Email");
-
-			AssertTextEquals(
-				locator1 = "WCConfiguration#NAVIGATION_WEB_CONTENT_GRANTED_EMAIL",
-				value1 = "Web Content Granted Email");
-
-			AssertTextEquals(
-				locator1 = "WCConfiguration#NAVIGATION_WEB_CONTENT_REQUESTED_EMAIL",
-				value1 = "Web Content Requested Email");
-		}
-		else {
-			AssertElementNotPresent(locator1 = "WCConfiguration#NAVIGATION_WEB_CONTENT_DENIED_EMAIL");
-
-			AssertElementNotPresent(locator1 = "WCConfiguration#NAVIGATION_WEB_CONTENT_GRANTED_EMAIL");
-
-			AssertElementNotPresent(locator1 = "WCConfiguration#NAVIGATION_WEB_CONTENT_REQUESTED_EMAIL");
-		}
-	}
-
-	@summary = "Default summary"
 	macro viewEntryAsWorkflowAsset(webContentTitle = null, webContentContent = null) {
 		SiteAdmin.viewPortletTitle(portletTitle = ${webContentTitle});
 
@@ -2602,7 +2566,7 @@ definition {
 				if (${displayPageTemplateType} == "Default") {
 					AssertTextEquals(
 						ariaLabel = "Display Page Name",
-						locator1 = "TextInput#ANY_WITH_AIRA_LABEL",
+						locator1 = "TextInput#ANY_WITH_ARIA_LABEL",
 						value1 = ${displayPageTemplateName});
 				}
 				else {

@@ -112,7 +112,7 @@
 </tr>
 <tr>
 	<td>OUT_OF_DATE_STATUS</td>
-	<td>//div[contains(.,'${key_publicationName}')]//following-sibling::div//strong[contains(.,'Out of Date')]</td>
+	<td>//div[contains(.,'${key_publicationName}')]//div[(@class="dnd-td") and contains(.,'Out of Date')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -221,18 +221,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>PUBLISH_TIME_HOURS</td>
-	<td>//input[contains(@class,'clay-time-hours') and @type='text']</td>
-	<td></td>
-</tr>
-<tr>
-	<td>PUBLISH_TIME_MINUTES</td>
-	<td>//input[contains(@class,'clay-time-minutes') and @type='text']</td>
+	<td>PUBLISH_TIME</td>
+	<td>//input[@class='form-control' and @type='time']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PUBLISHED_STATUS</td>
-	<td>//div[contains(.,'${key_publicationName}')]//following-sibling::div//strong[contains(.,'Published')]</td>
+	<td>//div[contains(.,'${key_publicationName}')]//div[(@class="dnd-td") and contains(.,'Published')]</td>
 	<td></td>
 </tr>
 <tr>

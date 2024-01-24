@@ -1,4 +1,4 @@
-@component-name = "portal-platform-experience-and-design-system"
+@component-name = "portal-platform-experience"
 definition {
 
 	property portal.release = "true";
@@ -16,6 +16,8 @@ definition {
 		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
 
 		if (${testLiferayVirtualInstance} == "true") {
+			PortalSettings.tearDownCP();
+
 			PortalInstances.tearDownCP();
 		}
 		else {
@@ -105,10 +107,7 @@ definition {
 
 		Button.clickVerifyButton();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.viewCP(
 			userEmailAddress = "edit@liferay.com",
@@ -258,21 +257,19 @@ definition {
 
 		User.logoutPG();
 
-		Navigator.openURL();
+		AssertClick(
+			locator1 = "UserBar#USER_SIGN_IN",
+			value1 = "Sign In");
 
-		Navigator.gotoLoginPage();
-
-		Type(
+		Type.typePause(
 			locator1 = "TextInput#EMAIL_ADDRESS",
 			value1 = "userea@liferay.com");
 
-		Type(
+		Type.typePause(
 			locator1 = "TextInput#PASSWORD",
 			value1 = "test");
 
-		AssertClick(
-			locator1 = "Button#SIGN_IN",
-			value1 = "Sign In");
+		User._clickSignInButton(localization = ${localization});
 
 		AssertElementNotPresent(locator1 = "Button#SIGN_IN");
 
@@ -488,10 +485,7 @@ definition {
 
 		PortletEntry.save();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.addCP(
 			userEmailAddress = "userea@liferay.com",
@@ -563,10 +557,7 @@ definition {
 		}
 
 		task ("And two new Virtual Instance are created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "System",
-				panel = "Control Panel",
-				portlet = "Virtual Instances");
+			PortalInstances.openVirtualInstancesAdmin();
 
 			PortalInstances.addCP(
 				mailDomain = "www.able.com",
@@ -661,21 +652,19 @@ definition {
 
 		User.logoutPG();
 
-		Navigator.openURL();
+		AssertClick(
+			locator1 = "UserBar#USER_SIGN_IN",
+			value1 = "Sign In");
 
-		Navigator.gotoLoginPage();
-
-		Type(
+		Type.typePause(
 			locator1 = "TextInput#EMAIL_ADDRESS",
 			value1 = "userea@liferay.com");
 
-		Type(
+		Type.typePause(
 			locator1 = "TextInput#PASSWORD",
 			value1 = "test");
 
-		AssertClick(
-			locator1 = "Button#SIGN_IN",
-			value1 = "Sign In");
+		User._clickSignInButton(localization = ${localization});
 
 		AssertElementNotPresent(locator1 = "Button#SIGN_IN");
 
@@ -800,10 +789,7 @@ definition {
 		}
 
 		task ("And a new Virtual Instance is created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "System",
-				panel = "Control Panel",
-				portlet = "Virtual Instances");
+			PortalInstances.openVirtualInstancesAdmin();
 
 			PortalInstances.addCP(
 				mailDomain = "www.able.com",
@@ -872,10 +858,7 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		UserNavigator.gotoUser(userScreenName = "usersn");
 
@@ -898,10 +881,7 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		UserNavigator.gotoUser(userScreenName = "usersn");
 
@@ -910,10 +890,7 @@ definition {
 
 	@priority = 4
 	test EditDefaultUserAssociationsSites {
-		ApplicationsMenu.gotoPortlet(
-			category = "Sites",
-			panel = "Control Panel",
-			portlet = "Sites");
+		Site.openSitesAdmin();
 
 		Site.addBlankCP(siteName = "Site Name");
 
@@ -925,10 +902,7 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		UserNavigator.gotoUser(userScreenName = "usersn");
 
@@ -939,10 +913,7 @@ definition {
 
 	@priority = 4
 	test EditDefaultUserAssociationsUserGroups {
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "User Groups");
+		UserGroup.openUserGroupsAdmin();
 
 		UserGroup.addCP(userGroupName = "UG UserGroup Name");
 
@@ -954,10 +925,7 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		UserNavigator.gotoUser(userScreenName = "usersn");
 
@@ -972,10 +940,7 @@ definition {
 
 		PortalSettings.enterReservedEmailAddressCP(userEmailAddress = "userea@liferay.com");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.addReservedEmailAddressCP(
 			userEmailAddress = "userea@liferay.com",
@@ -992,10 +957,7 @@ definition {
 
 		PortalSettings.enterReservedScreenNameCP(userScreenName = "usersn");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.addReservedScreenNameCP(
 			userEmailAddress = "userea@liferay.com",
@@ -1098,10 +1060,7 @@ definition {
 			openIdConnectClientSecret = ${openIdConnectClientSecret},
 			providerName = "Google");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "System",
-			panel = "Control Panel",
-			portlet = "Virtual Instances");
+		PortalInstances.openVirtualInstancesAdmin();
 
 		PortalInstances.addCP(
 			mailDomain = "www.able.com",
@@ -1598,10 +1557,7 @@ definition {
 				''',
 				notificationsSubject = "[$PORTAL_URL$]: Dear [$TO_FIRST_NAME$], please reset Your Password");
 
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Users and Organizations");
+			User.openUsersAdmin();
 
 			User.addCP(
 				userEmailAddress = "userea@liferay.com",

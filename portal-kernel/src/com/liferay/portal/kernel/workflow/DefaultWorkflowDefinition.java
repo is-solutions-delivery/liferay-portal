@@ -33,6 +33,10 @@ public class DefaultWorkflowDefinition
 		return _content;
 	}
 
+	public String getContentAsXML() {
+		return _contentAsXML;
+	}
+
 	@Override
 	public Date getCreateDate() {
 		return _createDate;
@@ -128,6 +132,10 @@ public class DefaultWorkflowDefinition
 		_content = content;
 	}
 
+	public void setContentAsXML(String contentAsXML) {
+		_contentAsXML = contentAsXML;
+	}
+
 	public void setCreateDate(Date createDate) {
 		_createDate = createDate;
 	}
@@ -185,6 +193,7 @@ public class DefaultWorkflowDefinition
 	private boolean _active;
 	private long _companyId;
 	private String _content;
+	private String _contentAsXML;
 	private Date _createDate;
 	private String _description;
 	private InputStream _inputStream;

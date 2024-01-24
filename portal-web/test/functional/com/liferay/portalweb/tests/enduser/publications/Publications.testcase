@@ -306,15 +306,17 @@ definition {
 	@description = "Filter Publications Changes."
 	@priority = 4
 	test CanFilterChangesInReview {
+		HeadlessSite.addSite(siteName = "Site Name");
+
 		JSONWebcontent.addWebContent(
 			content = "WC WebContent Content 1",
-			groupName = "Guest",
+			groupName = "Site Name",
 			title = "WC WebContent Title 1");
 
 		JSONDocument.addFileWithUploadedFile(
 			dmDocumentDescription = "DM Document Description",
 			dmDocumentTitle = "DM Document Title",
-			groupName = "Guest",
+			groupName = "Site Name",
 			guestPermissions = "false",
 			mimeType = "image/jpeg",
 			sourceFileName = "Document_1.jpg");
@@ -325,11 +327,11 @@ definition {
 
 		JSONPublications.selectPublication(publicationName = "Publication Name");
 
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "site-name");
 
 		WebContent.moveToRecycleBinCP(webContentTitle = "WC WebContent Title 1");
 
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "site-name");
 
 		DMDocument.editCP(
 			dmDocumentDescription = "DM Document Description",
@@ -346,7 +348,7 @@ definition {
 
 		PublicationsChanges.filterChangesByItem(
 			checkboxName = "Added",
-			menuItem = "Change Types");
+			menuItem = "Changed");
 
 		PublicationsChanges.viewChanges(
 			changeCategory = "Web Content Article",
@@ -363,33 +365,40 @@ definition {
 			changeCategory = "Document",
 			changeTitle = "DM Document Title Edit");
 
+		// Workaround LPS-201510
+
+		PublicationsNavigator.gotoReviewChanges();
+
 		PublicationsChanges.filterChangesByItem(
 			checkboxName = "Deleted",
-			menuItem = "Change Types");
+			menuItem = "Changed");
 
 		PublicationsChanges.viewChanges(
 			changeCategory = "Web Content Article",
-			changeSite = "Guest",
+			changeSite = "Site Name",
 			changeTitle = "WC WebContent Title 1",
 			changeType = "Deleted",
 			changeUser = "Test Test");
 
 		PublicationsChanges.viewChangesResultNotPresent(
 			changeCategory = "Web Content Article",
-			changeOrder = 2,
 			changeTitle = "WC WebContent Title 2");
 
 		PublicationsChanges.viewChangesResultNotPresent(
 			changeCategory = "Document",
 			changeTitle = "DM Document Title Edit");
 
+		// Workaround LPS-201510
+
+		PublicationsNavigator.gotoReviewChanges();
+
 		PublicationsChanges.filterChangesByItem(
 			checkboxName = "Modified",
-			menuItem = "Change Types");
+			menuItem = "Changed");
 
 		PublicationsChanges.viewChanges(
 			changeCategory = "Document",
-			changeSite = "Guest",
+			changeSite = "Site Name",
 			changeTitle = "DM Document Title Edit",
 			changeType = "Modified",
 			changeUser = "Test Test");
@@ -400,31 +409,37 @@ definition {
 
 		PublicationsChanges.viewChangesResultNotPresent(
 			changeCategory = "Web Content Article",
-			changeOrder = 2,
 			changeTitle = "WC WebContent Title 2");
 
+		// Workaround LPS-201510
+
+		PublicationsNavigator.gotoReviewChanges();
+
 		PublicationsChanges.filterChangesByItem(
-			checkboxName = "Guest",
+			checkboxName = "Site Name",
 			menuItem = "Sites");
 
 		PublicationsChanges.viewChanges(
 			changeCategory = "Document",
-			changeSite = "Guest",
+			changeSite = "Site Name",
 			changeTitle = "DM Document Title Edit",
 			changeType = "Modified",
 			changeUser = "Test Test");
 
 		PublicationsChanges.viewChanges(
 			changeCategory = "Web Content Article",
-			changeSite = "Guest",
+			changeSite = "Site Name",
 			changeTitle = "WC WebContent Title 1",
 			changeType = "Deleted",
 			changeUser = "Test Test");
 
 		PublicationsChanges.viewChangesResultNotPresent(
 			changeCategory = "Web Content Article",
-			changeOrder = 2,
 			changeTitle = "WC WebContent Title 2");
+
+		// Workaround LPS-201510
+
+		PublicationsNavigator.gotoReviewChanges();
 
 		PublicationsChanges.filterChangesByItem(
 			checkboxName = "Test Site Name",
@@ -445,13 +460,17 @@ definition {
 			changeCategory = "Document",
 			changeTitle = "DM Document Title Edit");
 
+		// Workaround LPS-201510
+
+		PublicationsNavigator.gotoReviewChanges();
+
 		PublicationsChanges.filterChangesByItem(
 			checkboxName = "Document",
 			menuItem = "Types");
 
 		PublicationsChanges.viewChanges(
 			changeCategory = "Document",
-			changeSite = "Guest",
+			changeSite = "Site Name",
 			changeTitle = "DM Document Title Edit",
 			changeType = "Modified",
 			changeUser = "Test Test");
@@ -462,8 +481,11 @@ definition {
 
 		PublicationsChanges.viewChangesResultNotPresent(
 			changeCategory = "Web Content Article",
-			changeOrder = 2,
 			changeTitle = "WC WebContent Title 2");
+
+		// Workaround LPS-201510
+
+		PublicationsNavigator.gotoReviewChanges();
 
 		PublicationsChanges.filterChangesByItem(
 			checkboxName = "Web Content Article",
@@ -471,14 +493,13 @@ definition {
 
 		PublicationsChanges.viewChanges(
 			changeCategory = "Web Content Article",
-			changeSite = "Guest",
+			changeSite = "Site Name",
 			changeTitle = "WC WebContent Title 1",
 			changeType = "Deleted",
 			changeUser = "Test Test");
 
 		PublicationsChanges.viewChanges(
 			changeCategory = "Web Content Article",
-			changeOrder = 2,
 			changeSite = "Test Site Name",
 			changeTitle = "WC WebContent Title 2",
 			changeType = "Added",
@@ -498,9 +519,11 @@ definition {
 			JSONPublications.selectPublication(publicationName = "Publication Name");
 		}
 
+		HeadlessSite.addSite(siteName = "Site Name");
+
 		JSONWebcontent.addWebContent(
 			content = "WC Content Title",
-			groupName = "Guest",
+			groupName = "Site Name",
 			title = "WC Title Title");
 
 		task ("Publish the Publication") {
@@ -549,10 +572,7 @@ definition {
 	@priority = 3
 	test CanHideApplicationThatShouldnotBeUsedInPublication {
 		task ("Go to Publications Instance Settings") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "Instance Settings");
+			PortalSettings.openInstanceSettingsAdmin();
 
 			SystemSettings.gotoConfiguration(
 				configurationCategory = "Publications",
@@ -710,87 +730,6 @@ definition {
 		}
 	}
 
-	@description = "LPS-136380 - Add localization for translated titles and content."
-	@priority = 4
-	test CanPublishLocalizedContent {
-		JSONPublications.addPublication(publicationName = "Publication Name");
-
-		JSONPublications.selectPublication(publicationName = "Publication Name");
-
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "Guest");
-
-		WebContentNavigator.gotoAddCP();
-
-		PortletEntry.viewLocale(locale = "en-US");
-
-		WebContent.addCP(
-			webContentContent = "Web Content",
-			webContentTitle = "Web Content Title");
-
-		PortletEntry.changeLocale(locale = "zh-CN");
-
-		WebContent.addCP(
-			webContentContent = "网页内容",
-			webContentTitle = "网页内容标题");
-
-		PortletEntry.publish();
-
-		PublicationsNavigator.gotoReviewChanges();
-
-		PublicationsChanges.viewChanges(
-			changeCategory = "Web Content Translation",
-			changeSite = "Guest",
-			changeTitle = "Web Content Title",
-			changeType = "Added",
-			changeUser = "Test Test");
-
-		PublicationsChanges.viewChanges(
-			changeCategory = "Web Content Translation",
-			changeOrder = 2,
-			changeSite = "Guest",
-			changeTitle = "网页内容标题",
-			changeType = "Added",
-			changeUser = "Test Test");
-
-		PublicationsNavigator.gotoViewChangeDetails(
-			changeCategory = "Web Content Article",
-			changeTitle = "Web Content Title");
-
-		PublicationsChangeDetails.viewChangeDetailsInDisplay(
-			changeType = "Added",
-			contentValueInPublication = "Web Content",
-			publicationName = "Publication Name");
-
-		PublicationsNavigator.gotoNavbar(navBarTitle = "Data");
-
-		PublicationsChangeDetails.viewChangeDetailsInData(
-			changeType = "Added",
-			columnName = "Name",
-			columnValueInPublication = "Web Content Title",
-			publicationName = "Publication Name");
-
-		Click(
-			key_currentLocale = StringUtil.lowerCase("en-US"),
-			locator1 = "Button#TRANSLATIONS_LOCALIZATION");
-
-		Click(
-			key_locale = "zh_CN",
-			locator1 = "Translation#DROPDOWN_MENU_ITEM");
-
-		PublicationsChangeDetails.viewChangeDetailsInData(
-			changeType = "Added",
-			columnName = "名称",
-			columnValueInPublication = "网页内容标题",
-			publicationName = "Publication Name");
-
-		PublicationsNavigator.gotoNavbar(navBarTitle = "Display");
-
-		PublicationsChangeDetails.viewChangeDetailsInDisplay(
-			changeType = "Added",
-			contentValueInPublication = "网页内容",
-			publicationName = "Publication Name");
-	}
-
 	@description = "This is the use case for LPS-181668."
 	@priority = 3
 	test CanPublishPublicationAfterPageHasBeenDeleted {
@@ -878,10 +817,7 @@ definition {
 
 		var siteName = TestCase.getSiteName(siteName = ${siteName});
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.impersonateCP(
 			siteName = ${siteName},
@@ -962,8 +898,8 @@ definition {
 			var ctCollectionId = JSONPublicationsAPI._getCTCollectionId(publicationName = "Test Publication");
 
 			PublicationsChangeDetails.viewFragmentChangePreviewInDisplay(
-				fragmentPreviewInProduction = "previewCTCollectionId=0",
-				fragmentPreviewInPublication = "previewCTCollectionId=${ctCollectionId}");
+				fragmentPreviewInProduction = "previewCTCollectionId%3D0",
+				fragmentPreviewInPublication = "previewCTCollectionId%3D${ctCollectionId}");
 		}
 	}
 
@@ -975,10 +911,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "System",
-			panel = "Control Panel",
-			portlet = "Server Administration");
+		ServerAdministration.openServerAdmin();
 
 		var script = TestCase.getFileContent(fileName = "AddManyDocuments.groovy");
 
@@ -990,7 +923,9 @@ definition {
 
 		JSONPublications.selectPublication(publicationName = "Publication Name");
 
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "Guest");
+		HeadlessSite.addSite(siteName = "Site Name");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "site-name");
 
 		DMDocument.addCP(
 			dmDocumentDescription = "Document Description",
@@ -1001,7 +936,7 @@ definition {
 
 		PublicationsChanges.viewChanges(
 			changeCategory = "Document",
-			changeSite = "Guest",
+			changeSite = "Site Name",
 			changeTitle = "DM Document Title",
 			changeType = "Added",
 			changeUser = "Test Test");
@@ -1042,7 +977,7 @@ definition {
 
 			PublicationsChanges.viewChanges(
 				changeCategory = "Address",
-				changeSite = "Global",
+				changeSite = "",
 				changeTitle = "Address",
 				changeType = "Added",
 				changeUser = "Test Test");
@@ -1063,7 +998,7 @@ definition {
 
 			PublicationsChanges.viewChanges(
 				changeCategory = "Address",
-				changeSite = "Global",
+				changeSite = "",
 				changeTitle = "Address",
 				changeType = "Deleted",
 				changeUser = "Test Test");
@@ -1114,7 +1049,7 @@ definition {
 
 			PublicationsChanges.viewChanges(
 				changeCategory = "Email Address",
-				changeSite = "Global",
+				changeSite = "",
 				changeTitle = "organization@liferay.com",
 				changeType = "Added",
 				changeUser = "Test Test");
@@ -1135,7 +1070,7 @@ definition {
 
 			PublicationsChanges.viewChanges(
 				changeCategory = "Email Address",
-				changeSite = "Global",
+				changeSite = "",
 				changeTitle = "organization@liferay.com",
 				changeType = "Deleted",
 				changeUser = "Test Test");
@@ -1188,7 +1123,7 @@ definition {
 
 			PublicationsChanges.viewChanges(
 				changeCategory = "Phone",
-				changeSite = "Global",
+				changeSite = "",
 				changeTitle = "1-877-543-3729",
 				changeType = "Added",
 				changeUser = "Test Test");
@@ -1209,7 +1144,7 @@ definition {
 
 			PublicationsChanges.viewChanges(
 				changeCategory = "Phone",
-				changeSite = "Global",
+				changeSite = "",
 				changeTitle = "1-877-543-3729",
 				changeType = "Deleted",
 				changeUser = "Test Test");
@@ -1266,85 +1201,30 @@ definition {
 			locator1 = "Permissions#CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX");
 	}
 
-	@description = "This is a use case for LPS-186677 - As a publication user, I would like to configure the context view to display production entities."
-	@priority = 4
-	test ConfigureContextViewToDisplayProductionEntities {
-		property test.liferay.virtual.instance = "false";
-		property test.run.type = "single";
+	@description = "LPS-197275 - Assert client extension changes can display in publications"
+	@priority = 3
+	test ClientExtensionChangesCanDisplayInPublications {
+		JSONPublications.addPublication(publicationName = "Publication Name");
 
-		task ("Create a Publication and make a change to the Home Page") {
-			JSONPublications.addPublication(publicationName = "Publication Name");
+		JSONPublications.selectPublication(publicationName = "Publication Name");
 
-			JSONPublications.selectPublication(publicationName = "Publication Name");
+		ClientExtensionGeneral.goToRemoteAppsPortlet();
 
-			ContentPagesNavigator.openEditContentPage(
-				pageName = "Home Page",
-				siteName = "Guest");
+		ClientExtensionGeneral.addCustomElement(
+			entryHtmlName = "vanilla-counter",
+			entryName = "Vanilla Counter",
+			entryURL = " http://remote-component-test.wincent.com/packages/vanilla-counter/index.js");
 
-			PageEditor.addFragment(
-				collectionName = "Basic Components",
-				fragmentName = "Button",
-				targetFragmentName = "Image");
+		PublicationsNavigator.gotoReviewChanges(
+			gotoPublicationsAdmin = "true",
+			publicationName = "Publication Name");
 
-			PageEditor.publish();
-		}
-
-		task ("Go to review changes and view change to Home Page") {
-			PublicationsNavigator.gotoReviewChanges(
-				gotoPublicationsAdmin = "true",
-				publicationName = "Publication Name");
-
-			PublicationsChanges.viewChanges(
-				changeCategory = "Page",
-				changeSite = "Guest",
-				changeTitle = "Home",
-				changeType = "Modified",
-				changeUser = "Test Test");
-		}
-
-		task ("View Parents is available to view") {
-			PublicationsNavigator.gotoViewChangeDetails(
-				changeCategory = "Page",
-				changeTitle = "Home");
-
-			AssertElementPresent(
-				key_navBarTitle = "Parents",
-				locator1 = "Publications#MANAGE_PUBLICATIONS_NAVBAR_TITLE");
-		}
-
-		task ("Go to Publications System Settings and uncheck the Context View checkbox") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "System Settings");
-
-			SystemSettings.gotoConfiguration(
-				configurationCategory = "Publications",
-				configurationName = "Publications View Changes",
-				configurationScope = "Virtual Instance Scope");
-
-			FormFields.disableCheckbox(fieldName = "Context View Include Production");
-
-			SystemSettings.saveConfiguration();
-		}
-
-		task ("Assert that the Show All Items toggle shows up and Parents not") {
-			PublicationsNavigator.gotoReviewChanges(
-				gotoPublicationsAdmin = "true",
-				publicationName = "Publication Name");
-
-			PublicationsNavigator.gotoViewChangeDetails(
-				changeCategory = "Page",
-				changeTitle = "Home");
-
-			AssertElementPresent(
-				key_toggleSwitchLabel = "Show All Items",
-				locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
-
-			AssertElementNotPresent(
-				key_navBarTitle = "Parents",
-				locator1 = "Publications#MANAGE_PUBLICATIONS_NAVBAR_TITLE");
-		}
+		PublicationsChanges.viewChanges(
+			changeCategory = "Client Extension Entry",
+			changeSite = "",
+			changeTitle = "Vanilla Counter",
+			changeType = "Added",
+			changeUser = "Test Test");
 	}
 
 	@description = "This is a use case for LPS-179997 - Content Page Editor Control Panel Preferences is not created in Production."
@@ -1489,10 +1369,9 @@ definition {
 
 		Masterclass.goBackUsingBrowserHistory();
 
-		AssertTextEquals(
-			key_publicationName = "Publication Name",
-			locator1 = "Publications#PUBLISHED_STATUS",
-			value1 = "Published");
+		AssertElementPresent(
+			key_tab = "Ongoing",
+			locator1 = "NavTab#ACTIVE_TAB_LINK");
 	}
 
 	@priority = 4
@@ -1564,6 +1443,11 @@ definition {
 
 		Navigator.gotoAccountSettings();
 
+		AssertTextPresent(
+			key_publicationName = "Publication Name (Editing in Production)",
+			locator1 = "Publications#PUBLICATIONS_INDICATOR_TITLE",
+			value1 = "Publication Name (Editing in Production)");
+
 		User.editUserInformation(userScreenNameEdit = "testscreen");
 
 		User.viewUserInformation(
@@ -1571,6 +1455,8 @@ definition {
 			userFirstName = "Test",
 			userLastName = "Test",
 			userScreenName = "testscreen");
+
+		PublicationsNavigator.openPublicationsAdmin();
 
 		Publications.workOnProduction();
 
@@ -1621,30 +1507,32 @@ definition {
 	@description = "This is a use case for LPS-191376 - As a Publication Reviewer I do not want to see information related to portlet preferences on the Review Changes screen."
 	@priority = 3
 	test PortletPreferenceChangesCannotAppearWhenChangedOnContentPage {
+		HeadlessSite.addSite(siteName = "Site Name");
+
 		task ("Create two Web Contents") {
 			for (var order : list "1,2") {
 				JSONWebcontent.addWebContent(
 					content = "WC${order} content",
-					groupName = "Guest",
+					groupName = "Site Name",
 					title = "WC${order}");
 			}
 		}
 
 		task ("Create a Content Page") {
 			JSONLayout.addPublicLayout(
-				groupName = "Guest",
+				groupName = "Site Name",
 				layoutName = "Test Content Page",
 				type = "content");
 
 			JSONLayout.publishLayout(
-				groupName = "Guest",
+				groupName = "Site Name",
 				layoutName = "Test Content Page");
 		}
 
 		task ("Add Web Content widget to content page and configure it to display WC1") {
 			ContentPagesNavigator.openEditContentPage(
 				pageName = "Test Content Page",
-				siteName = "Guest");
+				siteName = "Site Name");
 
 			PageEditor.addWidget(
 				collectionName = "Content Management",
@@ -1664,7 +1552,7 @@ definition {
 
 			ContentPagesNavigator.openEditContentPage(
 				pageName = "Test Content Page",
-				siteName = "Guest");
+				siteName = "Site Name");
 
 			WebContentDisplayPortlet.selectWebContent(webContentTitle = "WC2");
 
@@ -1683,12 +1571,18 @@ definition {
 				changeTitle = "Preferences for Web Content Display on Test Content Page");
 		}
 
-		task ("Turn on Show All Items and assert assert portlet preference change are displayed") {
-			Check.checkToggleSwitch(locator1 = "PublicationsChanges#SHOW_ALL_ITEMS_TOGGLE_SWITCH");
+		task ("Turn on Show system changes and assert assert portlet preference change are displayed") {
+			Click(locator1 = "PublicationsChanges#ELLIPSIS_IN_PUBLICATION");
+
+			MenuItem.click(menuItem = "Show System Changes");
+
+			PublicationsChanges.filterChangesByItem(
+				checkboxName = "Portlet Preference Value",
+				menuItem = "Types");
 
 			PublicationsChanges.viewChanges(
 				changeCategory = "Portlet Preference Value",
-				changeSite = "Guest",
+				changeSite = "",
 				changeTitle = "Preferences for Web Content Display on Test Content Page",
 				changeType = "Modified",
 				changeUser = "Test Test");
@@ -1698,28 +1592,30 @@ definition {
 	@description = "This is a use case for LPS-191376 - As a Publication Reviewer I do not want to see information related to portlet preferences on the Review Changes screen."
 	@priority = 3
 	test PortletPreferenceChangesCannotAppearWhenChangedOnWidgetPage {
+		HeadlessSite.addSite(siteName = "Site Name");
+
 		task ("Create two Web Contents") {
 			for (var order : list "1,2") {
 				JSONWebcontent.addWebContent(
 					content = "WC${order} content",
-					groupName = "Guest",
+					groupName = "Site Name",
 					title = "WC${order}");
 			}
 		}
 
 		task ("Create a Widget Page, add Web Content Display and configure it to display WC1") {
 			JSONLayout.addPublicLayout(
-				groupName = "Guest",
+				groupName = "Site Name",
 				layoutName = "Test Widget Page");
 
 			JSONLayout.addWidgetToPublicLayout(
-				groupName = "Guest",
+				groupName = "Site Name",
 				layoutName = "Test Widget Page",
 				widgetName = "Web Content Display");
 
 			Navigator.openSitePage(
 				pageName = "Test Widget Page",
-				siteName = "Guest");
+				siteName = "Site Name");
 
 			WebContentDisplayPortlet.selectWebContent(webContentTitle = "WC1");
 
@@ -1733,7 +1629,7 @@ definition {
 
 			Navigator.openSitePage(
 				pageName = "Test Widget Page",
-				siteName = "Guest");
+				siteName = "Site Name");
 
 			WebContentDisplayPortlet.selectWebContent(webContentTitle = "WC2");
 
@@ -1750,12 +1646,14 @@ definition {
 				changeTitle = "Preferences for Web Content Display on Test Widget Page");
 		}
 
-		task ("Turn on Show All Items and assert assert portlet preference change are displayed") {
-			Check.checkToggleSwitch(locator1 = "PublicationsChanges#SHOW_ALL_ITEMS_TOGGLE_SWITCH");
+		task ("Turn on Show system changes and assert assert portlet preference change are displayed") {
+			Click(locator1 = "PublicationsChanges#ELLIPSIS_IN_PUBLICATION");
+
+			MenuItem.click(menuItem = "Show System Changes");
 
 			PublicationsChanges.viewChanges(
 				changeCategory = "Portlet Preference Value",
-				changeSite = "Guest",
+				changeSite = "",
 				changeTitle = "Preferences for Web Content Display on Test Widget Page",
 				changeType = "Modified",
 				changeUser = "Test Test");
@@ -1788,12 +1686,10 @@ definition {
 
 		PublicationsChanges.viewChangesResultNotPresent(
 			changeCategory = "Web Content Article",
-			changeOrder = 2,
 			changeTitle = "WC Title 2");
 
 		PublicationsChanges.viewChangesResultNotPresent(
 			changeCategory = "Web Content Article",
-			changeOrder = 3,
 			changeTitle = "WC Title 3");
 
 		Search.searchCP(searchTerm = "WC");
@@ -1977,15 +1873,25 @@ definition {
 			JSONPublications.selectPublication(publicationName = "Publication Name");
 		}
 
-		task ("Make a change to the Home Page by adding a button fragment in it") {
+		task ("Add a content Page by adding a button fragment in it") {
+			HeadlessSite.addSite(siteName = "Site Name");
+
+			JSONLayout.addPublicLayout(
+				groupName = "Site Name",
+				layoutName = "Test Page Name",
+				type = "content");
+
+			JSONLayout.publishLayout(
+				groupName = "Site Name",
+				layoutName = "Test Page Name");
+
 			ContentPagesNavigator.openEditContentPage(
-				pageName = "Home Page",
-				siteName = "Guest");
+				pageName = "Test Page Name",
+				siteName = "Site Name");
 
 			PageEditor.addFragment(
 				collectionName = "Basic Components",
-				fragmentName = "Button",
-				targetFragmentName = "Image");
+				fragmentName = "Button");
 
 			PageEditor.publish();
 		}
@@ -2005,21 +1911,23 @@ definition {
 
 			PublicationsChanges.viewChanges(
 				changeCategory = "Page",
-				changeSite = "Guest",
-				changeTitle = "Home",
-				changeType = "Modified",
+				changeSite = "Site Name",
+				changeTitle = "Test Page Name",
+				changeType = "Added",
 				changeUser = "Test Test");
 
 			PublicationsChanges.viewChanges(
 				changeCategory = "Fragment Entry Link",
-				changeSite = "Guest",
-				changeTitle = "Button for Home.",
+				changeSite = "Site Name",
+				changeTitle = "Button for Test Page Name.",
 				changeType = "Added",
 				changeUser = "Test Test");
 		}
 
-		task ("Assert that the fragment button is present at the home page") {
-			Navigator.gotoPage(pageName = "Home");
+		task ("Assert that the fragment button is present at the content page") {
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = "Site Name");
 
 			AssertTextEquals(
 				fragmentName = "button",
@@ -2037,7 +1945,9 @@ definition {
 
 		JSONPublications.selectPublication(publicationName = "Publication Name");
 
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "Guest");
+		HeadlessSite.addSite(siteName = "Site Name");
+
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "site-name");
 
 		WebContentNavigator.gotoAddCP();
 
@@ -2240,10 +2150,7 @@ definition {
 		}
 
 		task ("Clear database cache and excute reindex") {
-			ApplicationsMenu.gotoPortlet(
-				category = "System",
-				panel = "Control Panel",
-				portlet = "Server Administration");
+			ServerAdministration.openServerAdmin();
 
 			ServerAdministration.executeServerResourcesActions(actionsDescription = "Clear the database cache.");
 
@@ -2351,6 +2258,68 @@ definition {
 		Pagination.viewResults(results = "Showing 5 to 7 of 7 entries.");
 
 		Publications.viewPublicationOrderInHistory(publicationList = "Publication Name 5,Publication Name 6,Publication Name 7");
+	}
+
+	@description = "This is a use case for LPS-200858"
+	@priority = 3
+	test ViewRelatedEntryDetails {
+		task ("Create and select a new publication") {
+			JSONPublications.addPublication(publicationName = "Test Publication");
+
+			JSONPublications.selectPublication(publicationName = "Test Publication");
+		}
+
+		task ("Make a change in the publication and go to review changes") {
+			JSONWebcontent.addWebContent(
+				content = "Test Web Content",
+				groupName = "Guest",
+				title = "Test Web Content");
+
+			PublicationsNavigator.gotoReviewChanges(
+				gotoPublicationsAdmin = "true",
+				publicationName = "Test Publication");
+		}
+
+		task ("Select a change's details and navigate to a related entry via the parents/children tab") {
+			PublicationsNavigator.gotoViewChangeDetails(
+				changeCategory = "Web Content Translation",
+				changeTitle = "Test Web Content");
+
+			PublicationsNavigator.gotoNavbar(navBarTitle = "Parents");
+
+			PublicationsChangeDetails.viewChangeDetailsInParents(
+				changeParentsCategory = "Web Content Article",
+				changeParentsTitle = "Test Web Content");
+
+			Click(
+				key_changeChildrenCategory = "Web Content Article",
+				key_changeChildrenTitle = "Test Web Content",
+				locator1 = "PublicationsChangeDetails#CHANGE_CHILDREN_TITLE");
+		}
+
+		task ("Assert that the details page changes to display the related entry's details") {
+			AssertElementPresent(
+				key_changeTitle = "Test Web Content",
+				locator1 = "PublicationsChanges#CHANGE_TITLE");
+
+			PublicationsNavigator.gotoNavbar(navBarTitle = "Data");
+
+			PublicationsChangeDetails.viewChangeDetailsInData(
+				changeType = "Added",
+				columnName = "Name",
+				columnValueInPublication = "Test Web Content",
+				publicationName = "Test Publication");
+
+			PublicationsNavigator.gotoNavbar(navBarTitle = "Children");
+
+			PublicationsChangeDetails.viewChangeDetailsInChildren(
+				changeChildrenCategory = "Asset",
+				changeChildrenTitle = "Test Web Content");
+
+			PublicationsChangeDetails.viewChangeDetailsInChildren(
+				changeChildrenCategory = "Web Content Translation",
+				changeChildrenTitle = "Test Web Content");
+		}
 	}
 
 }

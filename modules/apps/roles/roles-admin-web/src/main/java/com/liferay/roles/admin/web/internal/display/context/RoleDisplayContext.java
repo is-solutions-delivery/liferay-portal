@@ -11,7 +11,6 @@ import com.liferay.application.list.display.context.logic.PanelCategoryHelper;
 import com.liferay.application.list.display.context.logic.PersonalMenuEntryHelper;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItemList;
-import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItemListBuilder;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
@@ -31,7 +30,9 @@ import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.RoleServiceUtil;
 import com.liferay.portal.kernel.service.permission.RolePermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Constants;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
@@ -43,8 +44,10 @@ import com.liferay.roles.admin.web.internal.role.type.contributor.util.RoleTypeC
 import com.liferay.segments.service.SegmentsEntryRoleLocalServiceUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.portlet.PortletURL;
 import javax.portlet.RenderResponse;
@@ -186,43 +189,35 @@ public class RoleDisplayContext {
 			PortletURL portletURL)
 		throws Exception {
 
+		Role role = _getSelectedRole();
+
+		if (role == null) {
+			return Collections.emptyList();
+		}
+
 		String tabs2 = ParamUtil.getString(
 			_httpServletRequest, "tabs2", "users");
 
 		return new NavigationItemList() {
 			{
-				for (String assigneeTypeName : _ASSIGNEE_TYPE_NAMES) {
-					add(
-						navigationItem -> {
-							navigationItem.setActive(
-								assigneeTypeName.equals(tabs2));
-							navigationItem.setHref(
-								portletURL, "tabs2", assigneeTypeName);
-							navigationItem.setLabel(
-								LanguageUtil.get(
-									_httpServletRequest, assigneeTypeName));
-						});
+				for (String assigneeTypeName :
+						_getAssigneeTypeNamesByRoleId(portletURL)) {
+
+					if (_isAssigneeTypeVisible(role, assigneeTypeName)) {
+						add(
+							navigationItem -> {
+								navigationItem.setActive(
+									assigneeTypeName.equals(tabs2));
+								navigationItem.setHref(
+									portletURL, "tabs2", assigneeTypeName);
+								navigationItem.setLabel(
+									LanguageUtil.get(
+										_httpServletRequest, assigneeTypeName));
+							});
+					}
 				}
 			}
 		};
-	}
-
-	public List<NavigationItem> getSelectAssigneesNavigationItems(
-			PortletURL portletURL)
-		throws Exception {
-
-		return NavigationItemListBuilder.add(
-			navigationItem -> {
-				navigationItem.setActive(true);
-				navigationItem.setHref(portletURL, "tabs2", "users");
-
-				String tabs2 = ParamUtil.getString(
-					_httpServletRequest, "tabs2", "users");
-
-				navigationItem.setLabel(
-					LanguageUtil.get(_httpServletRequest, tabs2));
-			}
-		).build();
 	}
 
 	public List<NavigationItem> getViewRoleNavigationItems(
@@ -367,6 +362,42 @@ public class RoleDisplayContext {
 		return false;
 	}
 
+	private String[] _getAssigneeTypeNamesByRoleId(PortletURL portletURL)
+		throws Exception {
+
+		String[] assigneeTypeNames = _ASSIGNEE_TYPE_NAMES;
+
+		Map<String, String[]> parameterMap = portletURL.getParameterMap();
+
+		String[] roleIds = parameterMap.get("roleId");
+
+		if (roleIds.length > 0) {
+			long roleId = GetterUtil.getLong(roleIds[0]);
+
+			Role role = RoleServiceUtil.fetchRole(roleId);
+
+			if ((role != null) &&
+				Objects.equals(RoleConstants.ADMINISTRATOR, role.getName())) {
+
+				assigneeTypeNames = ArrayUtil.filter(
+					assigneeTypeNames, name -> !name.equals("segments"));
+			}
+		}
+
+		return assigneeTypeNames;
+	}
+
+	private Role _getSelectedRole() throws Exception {
+		if (_role != null) {
+			return _role;
+		}
+
+		_role = RoleServiceUtil.fetchRole(
+			ParamUtil.getLong(_httpServletRequest, "roleId"));
+
+		return _role;
+	}
+
 	private List<String> _getTabsNames() throws Exception {
 		List<String> tabsNames = new ArrayList<>();
 
@@ -377,9 +408,7 @@ public class RoleDisplayContext {
 		PermissionChecker permissionChecker =
 			themeDisplay.getPermissionChecker();
 
-		long roleId = ParamUtil.getLong(_httpServletRequest, "roleId");
-
-		Role role = RoleServiceUtil.fetchRole(roleId);
+		Role role = _getSelectedRole();
 
 		if (RolePermissionUtil.contains(
 				permissionChecker, role.getRoleId(), ActionKeys.UPDATE)) {
@@ -416,9 +445,7 @@ public class RoleDisplayContext {
 		String backURL = ParamUtil.getString(
 			_httpServletRequest, "backURL", redirect);
 
-		long roleId = ParamUtil.getLong(_httpServletRequest, "roleId");
-
-		Role role = RoleServiceUtil.fetchRole(roleId);
+		Role role = _getSelectedRole();
 
 		return HashMapBuilder.put(
 			"assignees",
@@ -489,6 +516,16 @@ public class RoleDisplayContext {
 		).build();
 	}
 
+	private boolean _isAssigneeTypeVisible(Role role, String assigneeTypeName) {
+		if (StringUtil.equals("segments", assigneeTypeName) &&
+			StringUtil.equals(RoleConstants.ADMINISTRATOR, role.getName())) {
+
+			return false;
+		}
+
+		return true;
+	}
+
 	private static final String[] _ASSIGNEE_TYPE_NAMES = {
 		"users", "sites", "organizations", "user-groups", "segments"
 	};
@@ -498,6 +535,7 @@ public class RoleDisplayContext {
 	private final RoleTypeContributor _currentRoleTypeContributor;
 	private final HttpServletRequest _httpServletRequest;
 	private final RenderResponse _renderResponse;
+	private Role _role;
 	private final ThemeDisplay _themeDisplay;
 
 }

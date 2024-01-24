@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -53,56 +54,79 @@ public class RowViewportDefinition implements Serializable {
 
 	@Schema(description = "The number of modules per row.")
 	public Integer getModulesPerRow() {
+		if (_modulesPerRowSupplier != null) {
+			modulesPerRow = _modulesPerRowSupplier.get();
+
+			_modulesPerRowSupplier = null;
+		}
+
 		return modulesPerRow;
 	}
 
 	public void setModulesPerRow(Integer modulesPerRow) {
 		this.modulesPerRow = modulesPerRow;
+
+		_modulesPerRowSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setModulesPerRow(
 		UnsafeSupplier<Integer, Exception> modulesPerRowUnsafeSupplier) {
 
-		try {
-			modulesPerRow = modulesPerRowUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_modulesPerRowSupplier = () -> {
+			try {
+				return modulesPerRowUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField(description = "The number of modules per row.")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Integer modulesPerRow;
 
+	@JsonIgnore
+	private Supplier<Integer> _modulesPerRowSupplier;
+
 	@Schema(
 		description = "A flag that indicates whether the row viewport has reverse order."
 	)
 	public Boolean getReverseOrder() {
+		if (_reverseOrderSupplier != null) {
+			reverseOrder = _reverseOrderSupplier.get();
+
+			_reverseOrderSupplier = null;
+		}
+
 		return reverseOrder;
 	}
 
 	public void setReverseOrder(Boolean reverseOrder) {
 		this.reverseOrder = reverseOrder;
+
+		_reverseOrderSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setReverseOrder(
 		UnsafeSupplier<Boolean, Exception> reverseOrderUnsafeSupplier) {
 
-		try {
-			reverseOrder = reverseOrderUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_reverseOrderSupplier = () -> {
+			try {
+				return reverseOrderUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField(
@@ -111,28 +135,41 @@ public class RowViewportDefinition implements Serializable {
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Boolean reverseOrder;
 
+	@JsonIgnore
+	private Supplier<Boolean> _reverseOrderSupplier;
+
 	@Schema(description = "The vertical aligment property of the row viewport.")
 	public String getVerticalAlignment() {
+		if (_verticalAlignmentSupplier != null) {
+			verticalAlignment = _verticalAlignmentSupplier.get();
+
+			_verticalAlignmentSupplier = null;
+		}
+
 		return verticalAlignment;
 	}
 
 	public void setVerticalAlignment(String verticalAlignment) {
 		this.verticalAlignment = verticalAlignment;
+
+		_verticalAlignmentSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setVerticalAlignment(
 		UnsafeSupplier<String, Exception> verticalAlignmentUnsafeSupplier) {
 
-		try {
-			verticalAlignment = verticalAlignmentUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_verticalAlignmentSupplier = () -> {
+			try {
+				return verticalAlignmentUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField(
@@ -140,6 +177,9 @@ public class RowViewportDefinition implements Serializable {
 	)
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String verticalAlignment;
+
+	@JsonIgnore
+	private Supplier<String> _verticalAlignmentSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -169,6 +209,8 @@ public class RowViewportDefinition implements Serializable {
 
 		sb.append("{");
 
+		Integer modulesPerRow = getModulesPerRow();
+
 		if (modulesPerRow != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -179,6 +221,8 @@ public class RowViewportDefinition implements Serializable {
 			sb.append(modulesPerRow);
 		}
 
+		Boolean reverseOrder = getReverseOrder();
+
 		if (reverseOrder != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -188,6 +232,8 @@ public class RowViewportDefinition implements Serializable {
 
 			sb.append(reverseOrder);
 		}
+
+		String verticalAlignment = getVerticalAlignment();
 
 		if (verticalAlignment != null) {
 			if (sb.length() > 1) {

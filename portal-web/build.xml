@@ -3,7 +3,7 @@
 <project basedir="." default="war" name="portal-web" xmlns:antelope="antlib:ise.antelope.tasks" xmlns:if="ant:if">
 	<import file="../build-common-web.xml" />
 
-	<property name="artifact.version" value="5.0.198" />
+	<property name="artifact.version" value="5.0.202" />
 	<property name="war.file" value="${ant.project.name}" />
 
 	<path id="jspc.common.classpath">
@@ -24,7 +24,6 @@
 		<pathelement location="${project.dir}/lib/portal/commons-logging.jar" />
 		<pathelement location="${project.dir}/lib/portal/dom4j.jar" />
 		<pathelement location="${project.dir}/lib/portal/jabsorb.jar" />
-		<pathelement location="${project.dir}/lib/portal/log4j-1.2-api.jar" />
 		<pathelement location="${project.dir}/lib/portal/log4j-api.jar" />
 		<pathelement location="${project.dir}/lib/portal/log4j-core.jar" />
 		<pathelement location="${project.dir}/lib/portal/openid4java.jar" />

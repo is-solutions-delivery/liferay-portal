@@ -25,16 +25,12 @@ definition {
 		task ("Go to DXP portal, login and create site") {
 			TestCase.setUpPortalInstance();
 
-			User.firstLoginPG();
+			User.firstLoginUI();
 
-			Navigator.openURL();
-
-			HeadlessSite.addSite(siteName = "Test Site Name");
-
-			JSONLayout.addPublicLayout(
-				groupName = "Test Site Name",
-				layoutName = "Content Page",
-				type = "content");
+			HeadlessSite.addSite(
+				siteName = "Test Site Name",
+				templateName = "Welcome",
+				templateType = "Site Initializer");
 		}
 
 		task ("Conect DXP to AC") {
@@ -42,7 +38,9 @@ definition {
 		}
 
 		task ("Navigate to Page and Blog") {
-			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
+			ContentPagesNavigator.openViewContentPage(
+				pageName = "Home",
+				siteName = "Test Site Name");
 		}
 
 		task ("Close all sessions and wait") {
@@ -78,7 +76,9 @@ definition {
 				password = "test",
 				userEmailAddress = "test@liferay.com");
 
-			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
+			ContentPagesNavigator.openViewContentPage(
+				pageName = "Home",
+				siteName = "Test Site Name");
 		}
 	}
 
@@ -88,20 +88,32 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		task ("Update Segments Analytics Cloud in System Settings") {
-			Segmentation.updateSegmentsInterval(interval = 1);
+		task ("Run individual segments scheduler job") {
+			ApplicationsMenu.gotoPortlet(
+				category = "Configuration",
+				panel = "Control Panel",
+				portlet = "Job Scheduler");
+
+			Navigator.gotoNavTab(navTab = "Scheduled Jobs");
+
+			Pagination.changePagination(itemsPerPage = 60);
+
+			Click(
+				key_tableEntry = "CheckIndividualSegmentsSchedulerJobConfiguration",
+				key_text = "Run Now",
+				locator1 = "LexiconTable#TABLE_ENTRY_BUTTON");
+
+			Alert.viewSuccessMessage();
 		}
 
 		task ("Go to segmentats page and assert that not possible Edit/Delete ") {
-			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
+			ContentPagesNavigator.openViewContentPage(
+				pageName = "Home",
+				siteName = "Test Site Name");
 
 			ProductMenu.gotoPortlet(
 				category = "People",
 				portlet = "Segments");
-
-			while ((IsElementNotPresent(key_tableEntry = "Dynamic Segment Test", locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS")) && (maxIterations = "40")) {
-				Refresh();
-			}
 
 			Click.waitForMenuToggleJSClick(
 				key_tableEntry = "Dynamic Segment Test",
@@ -134,19 +146,14 @@ definition {
 		}
 
 		task ("Go to Virtual Instance Created") {
-			User.firstLoginUI(
+			User.firstLoginPG(
 				password = "test",
-				specificURL = "http://www.able.com:8080",
-				userEmailAddress = "test@www.able.com");
-
-			Navigator.openSpecificURL(url = "http://www.able.com:8080");
+				userEmailAddress = "test@www.able.com",
+				virtualHostsURL = "http://www.able.com:8080");
 		}
 
 		task ("Assert that the Virtual Instance is not connected with AC") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "Instance Settings");
+			PortalSettings.openInstanceSettingsAdmin(baseURL = "http://www.able.com:8080");
 
 			Click(locator1 = "AnalyticsCloudConnection#ANALYTICS_CLOUD_DXP_BUTTON");
 
@@ -175,90 +182,38 @@ definition {
 
 	}
 
-	@description = "LPS-96574 Given I have edit, delete and permission permissions for segments And I have connected my DXP instance with AC When I create an Individual Segment in AC and it shows in the DXP Segments administration And I delete the segment Then in the next sync time, the segment will appear again"
-	@priority = 4
-	test PersistSegmentFromACAtDXP {
-		property portal.acceptance = "quarantine";
+	@description = "LPS-94938 Validate if the user is redirected to the segment page details when he tries to see the detail of the imported segment from Analytics Cloud into DXP	"
+	@priority = 5
+	test RedirectToSegmentPageAC {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		task ("Change 'Check Interval' at Segment Analytics Cloud in System Settings") {
-			Segmentation.updateSegmentsInterval(interval = 1);
-		}
-
-		task ("Go to segmentats page and assert that the segment created is preset") {
-			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
-
-			ProductMenu.gotoPortlet(
-				category = "People",
-				portlet = "Segments");
-
-			while ((IsElementNotPresent(key_tableEntry = "Dynamic Segment Test", locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS")) && (maxIterations = "40")) {
-				Refresh();
-			}
-
-			AssertElementPresent(
-				key_tableEntry = "Dynamic Segment Test",
-				locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS");
-		}
-
-		task ("Assert that 'Check Interval' it's one at Segment Analytics Cloud in System Settings") {
+		task ("Run individual segments scheduler job") {
 			ApplicationsMenu.gotoPortlet(
 				category = "Configuration",
 				panel = "Control Panel",
-				portlet = "System Settings");
+				portlet = "Job Scheduler");
 
-			SystemSettings.gotoConfiguration(
-				configurationCategory = "Segments",
-				configurationName = "Analytics Cloud Segments",
-				configurationScope = "System Scope");
+			Navigator.gotoNavTab(navTab = "Scheduled Jobs");
 
-			AssertElementPresent(
-				key_value = 1,
-				locator1 = "SystemSettings#UPDATE_INTERVAL_SEGMENTS_VALUE");
+			Pagination.changePagination(itemsPerPage = 60);
 
-			AssertClick(
-				key_text = "Update",
-				locator1 = "Button#ANY",
-				value1 = "Update");
+			Click(
+				key_tableEntry = "CheckIndividualSegmentsSchedulerJobConfiguration",
+				key_text = "Run Now",
+				locator1 = "LexiconTable#TABLE_ENTRY_BUTTON");
 
 			Alert.viewSuccessMessage();
 		}
 
-		task ("Go to segments page and assert that the segment created is preset again") {
-			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
-
-			ProductMenu.gotoPortlet(
-				category = "People",
-				portlet = "Segments");
-
-			AssertElementPresent(
-				key_tableEntry = "Dynamic Segment Test",
-				locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS");
-		}
-	}
-
-	@description = "LPS-94938 Validate if the user is redirected to the segment page details when he tries to see the detail of the imported segment from Analytics Cloud into DXP	"
-	@priority = 5
-	test RedirectToSegmentPageAC {
-		property portal.acceptance = "quarantine";
-		property test.liferay.virtual.instance = "false";
-		property test.run.type = "single";
-
-		task ("Update Segments Analytics Cloud in System Settings") {
-			Segmentation.updateSegmentsInterval(interval = 1);
-		}
-
 		task ("Go to segmentats page and click at segment crieted in AC") {
-			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
+			ContentPagesNavigator.openViewContentPage(
+				pageName = "Home",
+				siteName = "Test Site Name");
 
 			ProductMenu.gotoPortlet(
 				category = "People",
 				portlet = "Segments");
-
-			while ((IsElementNotPresent(key_tableEntry = "Dynamic Segment Test", locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS")) && (maxIterations = "40")) {
-				Refresh();
-			}
 
 			Click(
 				key_tableEntry = "Dynamic Segment Test",
@@ -281,24 +236,35 @@ definition {
 	@description = "LPS-94938 Validate if the user is redirected to the not found Analytics Cloud page, when he tries to see the detail of the imported segment from Analytics Cloud into DXP, one time that the segment does not exist in Analytics Cloud anymore"
 	@priority = 4
 	test RedirectToSegmentPageErrorAC {
-		property portal.acceptance = "quarantine";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		task ("Update Segments Analytics Cloud in System Settings") {
-			Segmentation.updateSegmentsInterval(interval = 1);
+		task ("Run individual segments scheduler job") {
+			ApplicationsMenu.gotoPortlet(
+				category = "Configuration",
+				panel = "Control Panel",
+				portlet = "Job Scheduler");
+
+			Navigator.gotoNavTab(navTab = "Scheduled Jobs");
+
+			Pagination.changePagination(itemsPerPage = 60);
+
+			Click(
+				key_tableEntry = "CheckIndividualSegmentsSchedulerJobConfiguration",
+				key_text = "Run Now",
+				locator1 = "LexiconTable#TABLE_ENTRY_BUTTON");
+
+			Alert.viewSuccessMessage();
 		}
 
 		task ("Go to segmentats page and at segment created in AC") {
-			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
+			ContentPagesNavigator.openViewContentPage(
+				pageName = "Home",
+				siteName = "Test Site Name");
 
 			ProductMenu.gotoPortlet(
 				category = "People",
 				portlet = "Segments");
-
-			while ((IsElementNotPresent(key_tableEntry = "Dynamic Segment Test", locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS")) && (maxIterations = "40")) {
-				Refresh();
-			}
 
 			AssertElementPresent(
 				key_tableEntry = "Dynamic Segment Test",
@@ -330,7 +296,9 @@ definition {
 		}
 
 		task ("Go to segmentats page and click at segment created in AC") {
-			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
+			ContentPagesNavigator.openViewContentPage(
+				pageName = "Home",
+				siteName = "Test Site Name");
 
 			ProductMenu.gotoPortlet(
 				category = "People",
@@ -368,20 +336,35 @@ definition {
 	@description = "LPS-94938 Validate if the user have the text unlinked when he tries to see the detail of the imported segment from Analytics Cloud into DXP, one time that the connection with Analytics Cloud does not exist anymore"
 	@priority = 4
 	test ShoudNotRedirectToSegmentPageAC {
-		property portal.acceptance = "quarantine";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		task ("Update Segments Analytics Cloud in System Settings") {
-			Segmentation.updateSegmentsInterval();
+		task ("Disconnect AC") {
+			ACDXPSettings.disconnectDXPFromAnalyticsCloud();
 		}
 
-		task ("Disconnect AC") {
-			ACUtils.tearDownDXP();
+		task ("Run individual segments scheduler job") {
+			ApplicationsMenu.gotoPortlet(
+				category = "Configuration",
+				panel = "Control Panel",
+				portlet = "Job Scheduler");
+
+			Navigator.gotoNavTab(navTab = "Scheduled Jobs");
+
+			Pagination.changePagination(itemsPerPage = 60);
+
+			Click(
+				key_tableEntry = "CheckIndividualSegmentsSchedulerJobConfiguration",
+				key_text = "Run Now",
+				locator1 = "LexiconTable#TABLE_ENTRY_BUTTON");
+
+			Alert.viewSuccessMessage();
 		}
 
 		task ("Go to segments admin and Assert is not possible to click on the segment previously created ") {
-			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
+			ContentPagesNavigator.openViewContentPage(
+				pageName = "Home",
+				siteName = "Test Site Name");
 
 			ProductMenu.gotoPortlet(
 				category = "People",
@@ -390,12 +373,6 @@ definition {
 			AssertElementNotPresent(
 				key_segmentName = "Dynamic Segment Test",
 				locator1 = "Segmentation#CLICKABLE_SEGMENT_NAME");
-		}
-
-		task ("Conect DXP to AC and navigate to Page") {
-			ACDXPSettings.connectDXPtoAnalyticsCloud(siteName = "Test Site Name");
-
-			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
 		}
 	}
 

@@ -26,12 +26,13 @@ import com.liferay.object.scope.ObjectScopeProvider;
 import com.liferay.object.scope.ObjectScopeProviderRegistry;
 import com.liferay.object.service.ObjectEntryLocalServiceUtil;
 import com.liferay.object.service.ObjectRelationshipLocalServiceUtil;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.object.web.internal.model.ProxyObjectEntry;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.KeyValuePair;
 
 import java.text.Format;
 
@@ -45,7 +46,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.TimeZone;
 
 /**
  * @author Eudaldo Alonso
@@ -74,8 +74,7 @@ public class ObjectEntryUtil {
 	}
 
 	public static Object getValue(
-			Locale locale, ObjectField objectField, TimeZone timeZone,
-			Map<String, Object> values)
+			Locale locale, ObjectField objectField, Map<String, Object> values)
 		throws Exception {
 
 		Object value = values.get(objectField.getName());
@@ -154,8 +153,10 @@ public class ObjectEntryUtil {
 					fetchObjectRelationshipByObjectFieldId2(
 						objectField.getObjectFieldId());
 
-			return ObjectEntryLocalServiceUtil.getTitleValue(
-				objectRelationship.getObjectDefinitionId1(), primaryKey);
+			return new KeyValuePair(
+				String.valueOf(primaryKey),
+				ObjectEntryLocalServiceUtil.getTitleValue(
+					objectRelationship.getObjectDefinitionId1(), primaryKey));
 		}
 
 		return value;
@@ -174,7 +175,7 @@ public class ObjectEntryUtil {
 			GetterUtil.getLong(objectEntry.getId()));
 		serviceBuilderObjectEntry.setObjectDefinitionId(objectDefinitionId);
 
-		return serviceBuilderObjectEntry;
+		return new ProxyObjectEntry(serviceBuilderObjectEntry, objectEntry);
 	}
 
 	public static Map<String, Object> toProperties(
@@ -201,8 +202,7 @@ public class ObjectEntryUtil {
 			else if (Objects.equals(
 						DateTimeInfoFieldType.INSTANCE,
 						infoField.getInfoFieldType()) &&
-					 (value instanceof LocalDateTime) &&
-					 FeatureFlagManagerUtil.isEnabled("LPS-183727")) {
+					 (value instanceof LocalDateTime)) {
 
 				DateTimeFormatter dateTimeFormatter =
 					DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");

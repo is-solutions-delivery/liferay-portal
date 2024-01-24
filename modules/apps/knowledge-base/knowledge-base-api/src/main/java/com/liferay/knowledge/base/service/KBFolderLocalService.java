@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.dao.orm.Projection;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.model.PersistedModel;
+import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
@@ -25,6 +26,7 @@ import com.liferay.portal.kernel.service.PersistedModelLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.change.tracking.CTService;
 import com.liferay.portal.kernel.service.persistence.change.tracking.CTPersistence;
+import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
@@ -104,9 +106,18 @@ public interface KBFolderLocalService
 	 *
 	 * @param kbFolder the kb folder
 	 * @return the kb folder that was removed
+	 * @throws PortalException
 	 */
 	@Indexable(type = IndexableType.DELETE)
-	public KBFolder deleteKBFolder(KBFolder kbFolder);
+	public KBFolder deleteKBFolder(KBFolder kbFolder) throws PortalException;
+
+	@SystemEvent(
+		action = SystemEventConstants.ACTION_SKIP,
+		type = SystemEventConstants.TYPE_DELETE
+	)
+	public KBFolder deleteKBFolder(
+			KBFolder kbFolder, boolean includeTrashedEntries)
+		throws PortalException;
 
 	/**
 	 * Deletes the kb folder with the primary key from the database. Also notifies the appropriate model listeners.
@@ -121,6 +132,10 @@ public interface KBFolderLocalService
 	 */
 	@Indexable(type = IndexableType.DELETE)
 	public KBFolder deleteKBFolder(long kbFolderId) throws PortalException;
+
+	public KBFolder deleteKBFolder(
+			long kbFolderId, boolean includeTrashedEntries)
+		throws PortalException;
 
 	public void deleteKBFolders(long groupId) throws PortalException;
 
@@ -301,6 +316,14 @@ public interface KBFolderLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<Object> getKBFoldersAndKBArticles(
+		long groupId, long parentResourcePrimKey);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Object> getKBFoldersAndKBArticles(
+		long groupId, long parentResourcePrimKey, int status);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<Object> getKBFoldersAndKBArticles(
 		long groupId, long parentResourcePrimKey, int status, int start,
 		int end, OrderByComparator<?> orderByComparator);
 
@@ -346,6 +369,11 @@ public interface KBFolderLocalService
 	public int getKBFoldersCount(long groupId, long parentKBFolderId)
 		throws PortalException;
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getKBFoldersCount(
+			long groupId, long parentKBFolderId, int status)
+		throws PortalException;
+
 	/**
 	 * Returns the OSGi service identifier.
 	 *
@@ -361,7 +389,17 @@ public interface KBFolderLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
-	public void moveKBFolder(long kbFolderId, long parentKBFolderId)
+	public KBFolder moveKBFolder(long kbFolderId, long parentKBFolderId)
+		throws PortalException;
+
+	public KBFolder moveKBFolderFromTrash(
+			long userId, long kbFolderId, long parentKBFolderId)
+		throws PortalException;
+
+	public KBFolder moveKBFolderToTrash(long userId, long kbFolderId)
+		throws PortalException;
+
+	public KBFolder restoreKBFolderFromTrash(long userId, long kbFolderId)
 		throws PortalException;
 
 	/**
@@ -381,6 +419,9 @@ public interface KBFolderLocalService
 			long parentResourceClassNameId, long parentResourcePrimKey,
 			long kbFolderId, String name, String description,
 			ServiceContext serviceContext)
+		throws PortalException;
+
+	public KBFolder updateStatus(long userId, KBFolder kbFolder, int status)
 		throws PortalException;
 
 	@Override

@@ -56,7 +56,7 @@ portletDisplay.setShowBackIcon(true);
 	%>
 
 	<react:component
-		module="publications/js/views/PublicationTemplateEditView"
+		module="{PublicationTemplateEditView} from change-tracking-web"
 		props='<%=
 			HashMapBuilder.<String, Object>put(
 				"actionUrl", actionURL
@@ -70,6 +70,8 @@ portletDisplay.setShowBackIcon(true);
 				"defaultSandboxCTCollectionTemplate", defaultSandboxCTCollectionTemplate
 			).put(
 				"description", description
+			).put(
+				"descriptionFieldMaxLength", ModelHintsUtil.getMaxLength(CTCollectionTemplate.class.getName(), "description")
 			).put(
 				"getTemplateCollaboratorsURL",
 				() -> {
@@ -87,6 +89,8 @@ portletDisplay.setShowBackIcon(true);
 				}
 			).put(
 				"name", name
+			).put(
+				"nameFieldMaxLength", ModelHintsUtil.getMaxLength(CTCollectionTemplate.class.getName(), "name")
 			).put(
 				"namespace", liferayPortletResponse.getNamespace()
 			).put(

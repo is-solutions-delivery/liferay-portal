@@ -29,7 +29,6 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
@@ -75,13 +74,11 @@ public class DisplayPageInfoItemFieldSetProviderImpl
 	@Override
 	public List<InfoFieldValue<Object>> getInfoFieldValues(
 			InfoItemReference infoItemReference,
-			String infoItemFormVariationKey, String namespace,
+			String infoItemFormVariationKey, String namespace, Object object,
 			ThemeDisplay themeDisplay)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-195205") ||
-			(themeDisplay == null)) {
-
+		if (themeDisplay == null) {
 			return Collections.emptyList();
 		}
 
@@ -98,7 +95,8 @@ public class DisplayPageInfoItemFieldSetProviderImpl
 				).labelInfoLocalizedValue(
 					InfoLocalizedValue.localize(getClass(), "default")
 				).build(),
-				_getDefaultDisplayPageURL(infoItemReference, themeDisplay)));
+				_getDefaultDisplayPageURL(
+					infoItemReference, object, themeDisplay)));
 
 		Group group = themeDisplay.getScopeGroup();
 
@@ -158,7 +156,8 @@ public class DisplayPageInfoItemFieldSetProviderImpl
 	}
 
 	private String _getDefaultDisplayPageURL(
-			InfoItemReference infoItemReference, ThemeDisplay themeDisplay)
+			InfoItemReference infoItemReference, Object object,
+			ThemeDisplay themeDisplay)
 		throws Exception {
 
 		AssetRendererFactory<?> assetRendererFactory =
@@ -167,7 +166,7 @@ public class DisplayPageInfoItemFieldSetProviderImpl
 
 		if (assetRendererFactory == null) {
 			return _assetDisplayPageFriendlyURLProvider.getFriendlyURL(
-				infoItemReference, themeDisplay);
+				infoItemReference, object, themeDisplay);
 		}
 
 		try {
@@ -186,7 +185,7 @@ public class DisplayPageInfoItemFieldSetProviderImpl
 
 			if (assetRenderer == null) {
 				return _assetDisplayPageFriendlyURLProvider.getFriendlyURL(
-					infoItemReference, themeDisplay);
+					infoItemReference, object, themeDisplay);
 			}
 
 			String viewInContextURL = assetRenderer.getURLViewInContext(
@@ -203,7 +202,7 @@ public class DisplayPageInfoItemFieldSetProviderImpl
 		}
 
 		return _assetDisplayPageFriendlyURLProvider.getFriendlyURL(
-			infoItemReference, themeDisplay);
+			infoItemReference, object, themeDisplay);
 	}
 
 	private InfoField<InfoFieldType> _getDefaultDisplayPageURLInfoField(

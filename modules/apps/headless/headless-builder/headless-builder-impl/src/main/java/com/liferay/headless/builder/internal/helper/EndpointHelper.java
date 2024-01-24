@@ -13,12 +13,14 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -123,6 +125,35 @@ public class EndpointHelper {
 			responseEntityMaps, pagination, objectEntriesPage.getTotalCount());
 	}
 
+	public Map<String, Object> postObjectEntry(
+			long companyId, Map<String, Object> properties,
+			APIApplication.Schema requestSchema,
+			APIApplication.Schema responseSchema, String scopeKey)
+		throws Exception {
+
+		ObjectEntry objectEntry = new ObjectEntry();
+
+		Map<String, Object> objectEntryProperties = new HashMap<>();
+
+		for (APIApplication.Property property : requestSchema.getProperties()) {
+			Object object = properties.get(property.getName());
+
+			if (Validator.isNotNull(object)) {
+				objectEntryProperties.put(
+					property.getSourceFieldName(), object);
+			}
+		}
+
+		objectEntry.setProperties(objectEntryProperties);
+
+		return _getResponseEntityMap(
+			_objectEntryHelper.addObjectEntry(
+				companyId,
+				requestSchema.getMainObjectDefinitionExternalReferenceCode(),
+				objectEntry, scopeKey),
+			responseSchema);
+	}
+
 	private Map<String, Object> _getObjectEntryProperties(
 		ObjectEntry objectEntry) {
 
@@ -131,7 +162,11 @@ public class EndpointHelper {
 		).put(
 			"createDate", objectEntry.getDateCreated()
 		).put(
+			"creator", objectEntry.getCreator()
+		).put(
 			"externalReferenceCode", objectEntry.getExternalReferenceCode()
+		).put(
+			"id", objectEntry.getId()
 		).put(
 			"modifiedDate", objectEntry.getDateModified()
 		).build();
@@ -140,6 +175,10 @@ public class EndpointHelper {
 	private Object _getRelatedObjectValue(
 		ObjectEntry objectEntry, APIApplication.Property property,
 		List<String> relationshipsNames) {
+
+		if (objectEntry == null) {
+			return Collections.emptyList();
+		}
 
 		if (relationshipsNames.isEmpty()) {
 			return objectEntry.getPropertyValue(property.getSourceFieldName());
@@ -180,8 +219,11 @@ public class EndpointHelper {
 	}
 
 	private Map<String, Object> _getResponseEntityMap(
-			ObjectEntry objectEntry, APIApplication.Schema schema)
-		throws Exception {
+		ObjectEntry objectEntry, APIApplication.Schema schema) {
+
+		if (schema == null) {
+			return null;
+		}
 
 		Map<String, Object> responseEntityMap = new HashMap<>();
 

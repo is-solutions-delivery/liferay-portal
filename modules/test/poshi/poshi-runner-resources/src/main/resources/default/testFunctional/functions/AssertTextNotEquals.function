@@ -3,32 +3,35 @@
 definition {
 
 	@summary = "Assert that '${locator1}' does not contain the value '${value1}'"
-	function assertNotPartialText {
-		selenium.waitForVisible();
+	function assertNotPartialText(locator1, value1) {
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.waitForNotPartialText();
+		var value = GetterUtil.getString(${value1});
+        var regex = RegexUtil.escapeRegexChars(${value});
 
-		selenium.assertNotPartialText();
+		selenium.waitForTextMatches(${locator1}, "^((?!${regex}).)*$"); 
+
+		selenium.assertTextMatches(${locator1}, "^((?!${regex}).)*$"); 
 	}
 
-	function assertNotText {
-		selenium.waitForVisible();
+	function assertNotText(locator1, value1) {
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.waitForNotText();
+		selenium.waitForNotText(${locator1}, ${value1});
 
-		selenium.assertNotText();
+		selenium.assertNotText(${locator1}, ${value1});
 	}
 
-	function assertNotValue {
-		selenium.waitForVisible();
+	function assertNotValue(locator1, value1) {
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.waitForNotValue();
+		selenium.waitForNotValue(${locator1}, ${value1});
 
-		selenium.assertNotValue();
+		selenium.assertNotValue(${locator1}, ${value1});
 	}
 
-	function assertTextNotEquals {
-		if (contains("${locator1}", "/input")) {
+	function assertTextNotEquals(locator1) {
+		if (contains(${locator1}, "/input")) {
 			AssertTextNotEquals.assertNotValue();
 		}
 		else {

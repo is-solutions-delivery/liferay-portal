@@ -183,6 +183,7 @@
 		<!-- Other fields -->
 
 		<column name="objectDefinitionId" type="long" />
+		<column name="rootObjectEntryId" type="long" />
 		<column name="lastPublishDate" type="Date" />
 		<column name="status" type="int" />
 		<column name="statusByUserId" type="long" />
@@ -581,6 +582,10 @@
 	</entity>
 	<entity local-service="true" name="ObjectRelationship" remote-service="true" uuid="true">
 
+		<!-- External reference code -->
+
+		<column name="externalReferenceCode" type="String" />
+
 		<!-- PK fields -->
 
 		<column name="objectRelationshipId" primary="true" type="long" />
@@ -641,6 +646,11 @@
 		<finder name="DTN_R" return-type="ObjectRelationship">
 			<finder-column name="dbTableName" />
 			<finder-column name="reverse" />
+		</finder>
+		<finder name="ERC_C_ODI1" return-type="ObjectRelationship">
+			<finder-column name="externalReferenceCode" />
+			<finder-column name="companyId" />
+			<finder-column name="objectDefinitionId1" />
 		</finder>
 		<finder name="ODI1_ODI2_T" return-type="Collection">
 			<finder-column name="objectDefinitionId1" />
@@ -845,6 +855,10 @@
 			<finder-column name="objectValidationRuleId" />
 			<finder-column name="name" />
 		</finder>
+		<finder name="N_V" return-type="ObjectValidationRuleSetting">
+			<finder-column name="name" />
+			<finder-column name="value" />
+		</finder>
 		<finder name="OVRI_N_V" return-type="ObjectValidationRuleSetting" unique="true">
 			<finder-column name="objectValidationRuleId" />
 			<finder-column name="name" />
@@ -979,6 +993,7 @@
 		<exception>DefaultObjectView</exception>
 		<exception>DuplicateObjectFieldExternalReferenceCode</exception>
 		<exception>DuplicateObjectRelationship</exception>
+		<exception>DuplicateObjectRelationshipExternalReferenceCode</exception>
 		<exception>ObjectActionConditionExpression</exception>
 		<exception>ObjectActionErrorMessage</exception>
 		<exception>ObjectActionExecutorKey</exception>
@@ -1023,6 +1038,7 @@
 		<exception>ObjectFieldState</exception>
 		<exception>ObjectFieldSystem</exception>
 		<exception>ObjectFilter</exception>
+		<exception>ObjectFolderItemObjectDefinitionId</exception>
 		<exception>ObjectFolderLabel</exception>
 		<exception>ObjectFolderName</exception>
 		<exception>ObjectLayoutBoxCategorizationType</exception>
@@ -1048,5 +1064,6 @@
 		<exception>RequiredObjectDefinition</exception>
 		<exception>RequiredObjectField</exception>
 		<exception>RequiredObjectRelationship</exception>
+		<exception>RequiredObjectValidationRuleSetting</exception>
 	</exceptions>
 </service-builder>

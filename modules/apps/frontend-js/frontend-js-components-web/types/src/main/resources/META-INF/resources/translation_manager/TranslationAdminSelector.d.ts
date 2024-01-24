@@ -6,13 +6,26 @@
 /// <reference types="react" />
 
 import {Translations} from './TranslationAdminContent';
+declare const DISPLAY_TYPE: {
+	readonly DEFAULT: 'DEFAULT';
+	readonly HORIZONTAL: 'HORIZONTAL';
+};
+declare type DisplayType = typeof DISPLAY_TYPE[keyof typeof DISPLAY_TYPE];
 interface IProps extends Translations {
 	adminMode?: boolean;
-	onActiveLanguageIdsChange?: (languageIds: string[]) => void;
-	onSelectedLanguageIdChange?: (languageId: string) => void;
-	selectedLanguageId: string;
+	displayType?: DisplayType;
+	onActiveLanguageIdsChange?: (
+		languageIds: Liferay.Language.Locale[]
+	) => void;
+	onSelectedLanguageIdChange?: (languageId: Liferay.Language.Locale) => void;
+	selectedLanguageId: Liferay.Language.Locale;
 	showOnlyFlags?: boolean;
 	small?: boolean;
+	translationProgress?: TranslationProgress | null;
+}
+export interface TranslationProgress {
+	totalItems: number;
+	translatedItems: Record<string, number>;
 }
 export default function TranslationAdminSelector({
 	activeLanguageIds: initialActiveLanguageIds,
@@ -20,11 +33,13 @@ export default function TranslationAdminSelector({
 	ariaLabels,
 	availableLocales,
 	defaultLanguageId,
+	displayType,
 	onActiveLanguageIdsChange,
 	onSelectedLanguageIdChange,
 	selectedLanguageId: initialSelectedLanguageId,
 	showOnlyFlags,
 	small,
 	translations,
+	translationProgress,
 }: IProps): JSX.Element;
 export {};

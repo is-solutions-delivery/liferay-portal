@@ -8,15 +8,19 @@ package com.liferay.portal.db.partition.upgrade.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.db.partition.DBPartitionUtil;
 import com.liferay.portal.db.partition.test.util.BaseDBPartitionTestCase;
+import com.liferay.portal.db.partition.util.DBPartitionUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
+import com.liferay.portal.kernel.util.InfrastructureUtil;
 import com.liferay.portal.upgrade.util.UpgradePartitionedControlTable;
 import com.liferay.portal.util.PortalInstances;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+
+import javax.sql.DataSource;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -44,7 +48,7 @@ public class UpgradePartitionedControlTableTest
 	public static void tearDownClass() throws Exception {
 		deletePartitionRequiredData();
 
-		removeDBPartitions(false);
+		removeDBPartitions();
 
 		disableDBPartition();
 	}
@@ -61,37 +65,42 @@ public class UpgradePartitionedControlTableTest
 
 			upgradeProcess.upgrade();
 
+			DataSource dataSource = InfrastructureUtil.getDataSource();
+
 			DBPartitionUtil.forEachCompanyId(
 				companyId -> {
 					Assert.assertTrue(dbInspector.hasTable(TEST_TABLE_NAME));
 
-					try (PreparedStatement preparedStatement =
-							connection.prepareStatement(
-								"select count(1) from " + TEST_TABLE_NAME);
-						ResultSet resultSet =
-							preparedStatement.executeQuery()) {
-
-						int count = 0;
-
-						if (resultSet.next()) {
-							count = resultSet.getInt(1);
-						}
-
-						Assert.assertEquals(1, count);
-					}
-
-					try (PreparedStatement preparedStatement =
-							connection.prepareStatement(
-								StringBundler.concat(
-									"select testColumn from ", TEST_TABLE_NAME,
-									" where testColumn = ?"))) {
-
-						preparedStatement.setLong(1, 1L);
-
-						try (ResultSet resultSet =
+					try (Connection connection = dataSource.getConnection()) {
+						try (PreparedStatement preparedStatement =
+								connection.prepareStatement(
+									"select count(1) from " + TEST_TABLE_NAME);
+							ResultSet resultSet =
 								preparedStatement.executeQuery()) {
 
-							Assert.assertTrue(resultSet.next());
+							int count = 0;
+
+							if (resultSet.next()) {
+								count = resultSet.getInt(1);
+							}
+
+							Assert.assertEquals(1, count);
+						}
+
+						try (PreparedStatement preparedStatement =
+								connection.prepareStatement(
+									StringBundler.concat(
+										"select testColumn from ",
+										TEST_TABLE_NAME,
+										" where testColumn = ?"))) {
+
+							preparedStatement.setLong(1, 1L);
+
+							try (ResultSet resultSet =
+									preparedStatement.executeQuery()) {
+
+								Assert.assertTrue(resultSet.next());
+							}
 						}
 					}
 				});
@@ -103,8 +112,13 @@ public class UpgradePartitionedControlTableTest
 	}
 
 	private void _createViewSQL(String viewName) throws Exception {
-		try (Statement statement = connection.createStatement()) {
-			String defaultSchemaName = connection.getCatalog();
+		DataSource dataSource = InfrastructureUtil.getDataSource();
+
+		try (Connection connection = dataSource.getConnection();
+			Statement statement = connection.createStatement()) {
+
+			String defaultSchemaName = dbPartitionDB.getDefaultPartitionName(
+				connection);
 
 			DBPartitionUtil.forEachCompanyId(
 				companyId -> {
@@ -116,9 +130,10 @@ public class UpgradePartitionedControlTableTest
 
 					statement.execute(
 						StringBundler.concat(
-							"create or replace view ", getSchemaName(companyId),
-							StringPool.PERIOD, viewName, " as select * from ",
-							defaultSchemaName, StringPool.PERIOD, viewName));
+							"create or replace view ",
+							getPartitionName(companyId), StringPool.PERIOD,
+							viewName, " as select * from ", defaultSchemaName,
+							StringPool.PERIOD, viewName));
 				});
 		}
 	}

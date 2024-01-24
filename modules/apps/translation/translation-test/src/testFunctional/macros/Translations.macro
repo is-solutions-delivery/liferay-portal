@@ -261,12 +261,14 @@ definition {
 		}
 
 		if (isSet(options)) {
-			Click(locator1 = "Icon#TOOLBAR_ELLIPSIS");
+			Click(locator1 = "ManagementBar#ELLIPSIS");
 
 			MenuItem.clickNoError(menuItem = "Export for Translations");
 		}
 		else {
-			Click(locator1 = "Icon#EXPORT_FOR_TRANSLATION");
+			Click(
+				key_text = "upload",
+				locator1 = "ManagementBar#ANY_ICON");
 		}
 	}
 
@@ -547,7 +549,7 @@ definition {
 			var pageNameTranslation = "false";
 		}
 
-		AntCommands.runCommand("build-test-translation.xml", "update-translation-file -Dcontentpage.translation.file=${contentPageTranslation} -Dcontentpage.translation.fragment.target=<![CDATA[${fragmentContentTranslation}]]></target> -Dcontentpage.translation.fragment.target.original=<![CDATA[${fragmentContent}]]></target> -Dcontentpage.translation.title.target=<![CDATA[${pageNameTranslation}]]></target> -Dcontentpage.translation.title.target.original=<![CDATA[${pageName}]]></target> -Doperation=${operation} -Dtranslation.file.encoding=${encoding} -Dtranslation.file.name=${translationFileName} -Dtranslation.zip.file.name=${translationZipFileName}");
+		AntCommands.runCommand("build-test-translation.xml", "update-translation-file -Dcontentpage.translation.file=${contentPageTranslation} -Dcontentpage.translation.fragment.target=${fragmentContentTranslation} -Dcontentpage.translation.fragment.target.original=${fragmentContent} -Dcontentpage.translation.title.target=<![CDATA[${pageNameTranslation}]]></target> -Dcontentpage.translation.title.target.original=<![CDATA[${pageName}]]></target> -Doperation=${operation} -Dtranslation.file.encoding=${encoding} -Dtranslation.file.name=${translationFileName} -Dtranslation.zip.file.name=${translationZipFileName}");
 	}
 
 	@summary = "Default summary"

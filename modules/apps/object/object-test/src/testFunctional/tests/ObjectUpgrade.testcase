@@ -82,8 +82,6 @@ definition {
 		}
 
 		task ("And when user edits Custom Action name and Expression Builder condition and asserts action ran and received notification") {
-			Navigator.openURL();
-
 			ObjectAdmin.openObjectAdmin();
 
 			ObjectPortlet.selectCustomObject(label = "Custom Object1");
@@ -140,7 +138,6 @@ definition {
 
 	@priority = 5
 	test ViewObjectDefinitionDetailsAfterUpgrade7413U33 {
-		property custom.properties = "feature.flag.LPS-181663=true";
 		property data.archive.type = "data-archive-object";
 		property database.types = "mariadb,mysql,postgresql,sqlserver";
 		property portal.version = "7.4.13.u33";
@@ -158,17 +155,14 @@ definition {
 				locator1 = "CreateObject#OBJECT_PLURAL_LABEL",
 				value1 = "Custom Objects1");
 
-			AssertElementPresent(
-				locator1 = "CreateObject#TITLE_FIELD",
+			AssertTextEquals(
+				key_labelName = "Entry Title Field",
+				locator1 = "ObjectAdmin#CLAY_GENERIC_BUTTON",
 				value1 = "Custom Field Text");
 
-			AssertTextEquals(
-				locator1 = "ObjectAdmin#SELECT_OBJECT_SCOPE",
-				value1 = "Site");
-
-			AssertTextEquals(
-				locator1 = "CreateObject#PANEL_LINK",
-				value1 = "Site Administration > Content & Data");
+			CreateObject.assertValuesOnScope(
+				valuePanelCategory = "Content & Data",
+				valueScope = "Site");
 
 			AssertChecked.assertCheckedNotVisible(locator1 = "ObjectPortlet#VIEW_WIDGET_IN_PAGE_BUILDER_TOGGLE");
 
@@ -297,9 +291,9 @@ definition {
 				fieldName = "customFieldDate",
 				fieldValue = "06/15/2023");
 
-			ObjectAdmin.changePicklistFieldEntry(
-				entrySelected = "Picklist Item 1",
-				newPicklistOption = "Picklist Item 2");
+			ObjectAdmin.selectDropdownItem(
+				labelName = "Custom Field Picklist",
+				optionName = "Picklist Item 2");
 
 			Type(
 				locator1 = "CKEditor#BODY_FIELD_IFRAME",
@@ -553,7 +547,6 @@ definition {
 		}
 	}
 
-	@ignore = "true"
 	@priority = 5
 	test ViewPicklistAfterUpgrade7413U33 {
 		property data.archive.type = "data-archive-object";
@@ -561,6 +554,8 @@ definition {
 		property portal.version = "7.4.13.u33";
 
 		task ("View a Picklist after Upgrade") {
+			SetWindowSize.maximizeWindow();
+
 			Picklist.gotoPicklists();
 
 			WaitForElementPresent(

@@ -286,6 +286,32 @@
 			"name": "subscriptionArr",
 			"required": false,
 			"type": "String"
+		},
+		{
+			"DBType": "Boolean",
+			"businessType": "Boolean",
+			"externalReferenceCode": "Has_Renewal_Indicator__c",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Has Renewal"
+			},
+			"name": "hasRenewal",
+			"required": false,
+			"type": "Boolean"
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"externalReferenceCode": "Fiscal",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Fiscal Period"
+			},
+			"name": "fiscalPeriod",
+			"required": false,
+			"type": "String"
 		}
 	],
 	"objectDefinitionId": "[$OBJECT_DEFINITION_ID:OpportunitySF$]"

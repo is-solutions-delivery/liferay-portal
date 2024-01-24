@@ -1,12 +1,12 @@
 @default = "assertValue"
 definition {
 
-	function assertValue {
-		selenium.waitForVisible();
+	function assertValue(locator1, value1) {
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.waitForValue();
+		selenium.waitForValue(${locator1}, ${value1});
 
-		selenium.assertValue();
+		selenium.assertValue(${locator1}, ${value1});
 	}
 
 }

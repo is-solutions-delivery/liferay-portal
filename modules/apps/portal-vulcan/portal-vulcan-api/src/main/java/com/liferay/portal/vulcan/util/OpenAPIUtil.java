@@ -6,6 +6,8 @@
 package com.liferay.portal.vulcan.util;
 
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.batch.engine.Field;
@@ -31,6 +33,20 @@ import java.util.Map;
  * @author Javier de Arcos
  */
 public class OpenAPIUtil {
+
+	public static String[] getBatchUnsupportedFormats(
+		Map<String, Object> extensions) {
+
+		if (MapUtil.isNotEmpty(extensions) &&
+			extensions.containsKey("x-batch-unsupported-formats")) {
+
+			return StringUtil.split(
+				GetterUtil.getString(
+					extensions.get("x-batch-unsupported-formats")));
+		}
+
+		return null;
+	}
 
 	public static List<String> getCreateEntityScopes(
 		String entityName, OpenAPIYAML openAPIYAML) {
@@ -90,7 +106,9 @@ public class OpenAPIUtil {
 					propertySchema.getDescription(), propertyName,
 					propertySchema.isReadOnly(), null,
 					requiredPropertySchemaNames.contains(propertyName),
-					propertySchema.getType(), propertySchema.isWriteOnly()));
+					propertySchema.getType(),
+					getBatchUnsupportedFormats(Collections.emptyMap()),
+					propertySchema.isWriteOnly()));
 		}
 
 		return fields;

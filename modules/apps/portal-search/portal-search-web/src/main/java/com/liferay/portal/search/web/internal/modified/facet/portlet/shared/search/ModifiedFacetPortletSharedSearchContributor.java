@@ -5,17 +5,21 @@
 
 package com.liferay.portal.search.web.internal.modified.facet.portlet.shared.search;
 
-import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.kernel.search.facet.Facet;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
+import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.search.facet.Facet;
 import com.liferay.portal.search.facet.modified.ModifiedFacetFactory;
-import com.liferay.portal.search.web.internal.modified.facet.builder.ModifiedFacetBuilder;
+import com.liferay.portal.search.web.internal.date.range.BaseDateRangeFacetPortletSharedSearchContributor;
 import com.liferay.portal.search.web.internal.modified.facet.constants.ModifiedFacetPortletKeys;
 import com.liferay.portal.search.web.internal.modified.facet.portlet.ModifiedFacetPortletPreferences;
 import com.liferay.portal.search.web.internal.modified.facet.portlet.ModifiedFacetPortletPreferencesImpl;
-import com.liferay.portal.search.web.internal.util.DateRangeFactoryUtil;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchContributor;
 import com.liferay.portal.search.web.portlet.shared.search.PortletSharedSearchSettings;
+
+import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -24,12 +28,14 @@ import org.osgi.service.component.annotations.Reference;
  * @author Lino Alves
  * @author Adam Brandizzi
  * @author André de Oliveira
+ * @author Petteri Karttunen
  */
 @Component(
 	property = "javax.portlet.name=" + ModifiedFacetPortletKeys.MODIFIED_FACET,
 	service = PortletSharedSearchContributor.class
 )
 public class ModifiedFacetPortletSharedSearchContributor
+	extends BaseDateRangeFacetPortletSharedSearchContributor
 	implements PortletSharedSearchContributor {
 
 	@Override
@@ -40,42 +46,58 @@ public class ModifiedFacetPortletSharedSearchContributor
 			new ModifiedFacetPortletPreferencesImpl(
 				portletSharedSearchSettings.getPortletPreferences());
 
-		portletSharedSearchSettings.addFacet(
-			_buildFacet(
-				modifiedFacetPortletPreferences, portletSharedSearchSettings));
-	}
+		JSONArray rangesJSONArray = getRangesJSONArray(
+			CalendarFactoryUtil.getCalendar(),
+			modifiedFacetPortletPreferences.getRangesJSONArray());
 
-	private Facet _buildFacet(
-		ModifiedFacetPortletPreferences modifiedFacetPortletPreferences,
-		PortletSharedSearchSettings portletSharedSearchSettings) {
+		List<String> selectedRangeStrings = getSelectedRangeStrings(
+			modifiedFacetPortletPreferences.getParameterName(),
+			portletSharedSearchSettings, rangesJSONArray);
 
-		ModifiedFacetBuilder modifiedFacetBuilder = new ModifiedFacetBuilder(
-			_modifiedFacetFactory, _jsonFactory);
+		String selectedCustomRangeString = getSelectedCustomRangeString(
+			modifiedFacetPortletPreferences.getParameterName(),
+			portletSharedSearchSettings);
 
-		modifiedFacetBuilder.setOrder(
-			modifiedFacetPortletPreferences.getOrder());
-		modifiedFacetBuilder.setRangesJSONArray(
-			DateRangeFactoryUtil.replaceAliases(
-				modifiedFacetPortletPreferences.getRangesJSONArray(),
-				CalendarFactoryUtil.getCalendar(), _jsonFactory));
-		modifiedFacetBuilder.setSearchContext(
+		if (!Validator.isBlank(selectedCustomRangeString)) {
+			addCustomRange(
+				rangesJSONArray, selectedCustomRangeString,
+				selectedRangeStrings);
+		}
+
+		Facet facet = _modifiedFacetFactory.newInstance(
 			portletSharedSearchSettings.getSearchContext());
 
-		String parameterName =
-			modifiedFacetPortletPreferences.getParameterName();
+		facet.setFacetConfiguration(
+			_buildFacetConfiguration(
+				facet.getFieldName(), modifiedFacetPortletPreferences,
+				rangesJSONArray));
 
-		modifiedFacetBuilder.setCustomRangeFrom(
-			portletSharedSearchSettings.getParameter(parameterName + "From"));
-		modifiedFacetBuilder.setCustomRangeTo(
-			portletSharedSearchSettings.getParameter(parameterName + "To"));
-		modifiedFacetBuilder.setSelectedRanges(
-			portletSharedSearchSettings.getParameterValues(parameterName));
+		if (!selectedRangeStrings.isEmpty()) {
+			facet.select(selectedRangeStrings.toArray(new String[0]));
+		}
 
-		return modifiedFacetBuilder.build();
+		portletSharedSearchSettings.addFacet(facet);
 	}
 
-	@Reference
-	private JSONFactory _jsonFactory;
+	private FacetConfiguration _buildFacetConfiguration(
+		String fieldName,
+		ModifiedFacetPortletPreferences modifiedFacetPortletPreferences,
+		JSONArray rangesJSONArray) {
+
+		FacetConfiguration facetConfiguration = new FacetConfiguration();
+
+		facetConfiguration.setFieldName(fieldName);
+		facetConfiguration.setLabel("any-time");
+		facetConfiguration.setOrder(modifiedFacetPortletPreferences.getOrder());
+		facetConfiguration.setStatic(false);
+		facetConfiguration.setWeight(1.0);
+
+		JSONObject jsonObject = facetConfiguration.getData();
+
+		jsonObject.put("ranges", rangesJSONArray);
+
+		return facetConfiguration;
+	}
 
 	@Reference
 	private ModifiedFacetFactory _modifiedFacetFactory;

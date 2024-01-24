@@ -9,6 +9,7 @@ import com.liferay.asset.auto.tagger.configuration.AssetAutoTaggerConfiguration;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetEntryServiceUtil;
 import com.liferay.asset.kernel.service.persistence.AssetEntryQuery;
+import com.liferay.depot.util.SiteConnectedGroupGroupProviderUtil;
 import com.liferay.document.library.configuration.DLFileOrderConfigurationProvider;
 import com.liferay.document.library.constants.DLPortletKeys;
 import com.liferay.document.library.kernel.exception.NoSuchFolderException;
@@ -27,10 +28,10 @@ import com.liferay.document.library.web.internal.display.context.helper.DLPortle
 import com.liferay.document.library.web.internal.display.context.helper.DLRequestHelper;
 import com.liferay.document.library.web.internal.settings.DLPortletInstanceSettings;
 import com.liferay.document.library.web.internal.util.DLFolderUtil;
+import com.liferay.document.library.web.internal.util.FolderItemSelectorURLProvider;
 import com.liferay.item.selector.ItemSelector;
-import com.liferay.item.selector.criteria.FolderItemSelectorReturnType;
-import com.liferay.item.selector.criteria.folder.criterion.FolderItemSelectorCriterion;
 import com.liferay.petra.lang.SafeCloseable;
+import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -48,7 +49,6 @@ import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
-import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.repository.capabilities.TrashCapability;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -401,45 +401,17 @@ public class DLAdminDisplayContext {
 		return _selectedRepositoryId;
 	}
 
-	public PortletURL getSelectFolderURL(HttpServletRequest httpServletRequest)
-		throws PortalException {
-
+	public String getSelectRootFolderURL() throws PortalException {
 		ItemSelector itemSelector =
-			(ItemSelector)httpServletRequest.getAttribute(
+			(ItemSelector)_httpServletRequest.getAttribute(
 				ItemSelector.class.getName());
 
-		FolderItemSelectorCriterion folderItemSelectorCriterion =
-			new FolderItemSelectorCriterion();
+		FolderItemSelectorURLProvider folderItemSelectorURLProvider =
+			new FolderItemSelectorURLProvider(
+				_httpServletRequest, itemSelector);
 
-		folderItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
-			new FolderItemSelectorReturnType());
-		folderItemSelectorCriterion.setFolderId(getRootFolderId());
-		folderItemSelectorCriterion.setIgnoreRootFolder(true);
-		folderItemSelectorCriterion.setRepositoryId(getSelectedRepositoryId());
-		folderItemSelectorCriterion.setSelectedFolderId(getRootFolderId());
-		folderItemSelectorCriterion.setSelectedRepositoryId(
-			getSelectedRepositoryId());
-		folderItemSelectorCriterion.setShowGroupSelector(true);
-		folderItemSelectorCriterion.setShowMountFolder(false);
-
-		PortletDisplay portletDisplay = _themeDisplay.getPortletDisplay();
-
-		long groupId = getSelectedRepositoryId();
-
-		Repository repository = RepositoryLocalServiceUtil.fetchRepository(
-			getSelectedRepositoryId());
-
-		if (repository != null) {
-			groupId = repository.getGroupId();
-		}
-
-		return itemSelector.getItemSelectorURL(
-			RequestBackedPortletURLFactoryUtil.create(httpServletRequest),
-			GroupLocalServiceUtil.getGroup(
-				GetterUtil.getLong(groupId, _themeDisplay.getScopeGroupId())),
-			_themeDisplay.getScopeGroupId(),
-			portletDisplay.getNamespace() + "folderSelected",
-			folderItemSelectorCriterion);
+		return folderItemSelectorURLProvider.getSelectRootFolderURL(
+			getSelectedRepositoryId(), getRootFolderId());
 	}
 
 	public PortletURL getViewRenderURL() {
@@ -561,9 +533,19 @@ public class DLAdminDisplayContext {
 					}
 				}
 			}
+
+			if ((_folder != null) && (_folderId != _rootFolderId) &&
+				(_rootFolderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID)) {
+
+				List<Long> ancestorFolderIds = _folder.getAncestorFolderIds();
+
+				if (!ancestorFolderIds.contains(_rootFolderId)) {
+					throw new NoSuchFolderException();
+				}
+			}
 		}
 		catch (PortalException portalException) {
-			throw new SystemException(portalException);
+			ReflectionUtil.throwException(portalException);
 		}
 	}
 
@@ -731,9 +713,25 @@ public class DLAdminDisplayContext {
 		dlSearchContainer.setOrderByCol(getOrderByCol());
 		dlSearchContainer.setOrderByType(getOrderByType());
 
+		long repositoryId = getRepositoryId();
+
 		if (hasFilterParameters()) {
 			SearchContext searchContext = _getSearchContext(
 				dlSearchContainer, "none");
+
+			Repository repository = RepositoryLocalServiceUtil.fetchRepository(
+				repositoryId);
+
+			if ((repository == null) &&
+				(_themeDisplay.getScopeGroupId() != repositoryId) &&
+				ArrayUtil.contains(
+					SiteConnectedGroupGroupProviderUtil.
+						getCurrentAndAncestorSiteAndDepotGroupIds(
+							_themeDisplay.getScopeGroupId()),
+					repositoryId)) {
+
+				searchContext.setGroupIds(new long[] {repositoryId});
+			}
 
 			_initializeFilterSearchContext(searchContext);
 
@@ -753,7 +751,6 @@ public class DLAdminDisplayContext {
 				getOrderByCol(), getOrderByType(), true));
 
 		long folderId = getFolderId();
-		long repositoryId = getRepositoryId();
 
 		long categoryId = ParamUtil.getLong(_httpServletRequest, "categoryId");
 		String tagName = ParamUtil.getString(_httpServletRequest, "tag");
@@ -1012,6 +1009,13 @@ public class DLAdminDisplayContext {
 			_searchFolderId = ParamUtil.getLong(
 				_httpServletRequest, "searchFolderId",
 				ParamUtil.getLong(_httpServletRequest, "folderId"));
+
+			if ((_rootFolderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) &&
+				(_searchFolderId ==
+					DLFolderConstants.DEFAULT_PARENT_FOLDER_ID)) {
+
+				_searchFolderId = _rootFolderId;
+			}
 		}
 
 		return _searchFolderId;
@@ -1151,7 +1155,8 @@ public class DLAdminDisplayContext {
 				getAssetCategoryIds(), getAssetTagIds(), getExtensions(),
 				getFileEntryTypeId(), userId));
 
-		long folderId = ParamUtil.getLong(_httpServletRequest, "folderId");
+		long folderId = ParamUtil.getLong(
+			_httpServletRequest, "folderId", getFolderId());
 
 		if (folderId != DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
 			searchContext.setFolderIds(new long[] {folderId});

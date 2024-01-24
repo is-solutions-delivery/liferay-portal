@@ -11,6 +11,8 @@ import com.liferay.petra.concurrent.ThreadPoolHandlerAdapter;
 import com.liferay.petra.executor.PortalExecutorConfig;
 import com.liferay.petra.executor.PortalExecutorManager;
 import com.liferay.petra.lang.ClassLoaderPool;
+import com.liferay.petra.lang.SafeCloseable;
+import com.liferay.petra.lang.ThreadContextClassLoaderUtil;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
@@ -29,6 +31,8 @@ import com.liferay.portal.kernel.template.TemplateManager;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.template.TemplateResourceCache;
 import com.liferay.portal.kernel.template.TemplateResourceLoader;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.JavaDetector;
 import com.liferay.portal.kernel.util.NamedThreadFactory;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
@@ -379,9 +383,10 @@ public class FreeMarkerManager extends BaseTemplateManager {
 				(Callable<Void>)() -> {
 					Thread thread = Thread.currentThread();
 
-					thread.setContextClassLoader(contextClassLoader);
+					try (SafeCloseable safeCloseable =
+							ThreadContextClassLoaderUtil.swap(
+								contextClassLoader)) {
 
-					try {
 						ThreadLocalUtil._setThreadLocals(thread, threadLocals);
 
 						callable.call();
@@ -439,6 +444,19 @@ public class FreeMarkerManager extends BaseTemplateManager {
 		if (_isEnableDebuggerService()) {
 			//DebuggerService.shutdown();
 		}
+	}
+
+	private String[] _filterRestrictedClasses(String[] restrictedClasses) {
+		if (JavaDetector.isJDK21()) {
+
+			// TODO Remove java.lang.Compiler from
+			// FreeMarkerEngineConfiguration#restrictedClasses and this method
+			// once we fully upgrade to JDK 21
+
+			return ArrayUtil.remove(restrictedClasses, "java.lang.Compiler");
+		}
+
+		return restrictedClasses;
 	}
 
 	private String _getMacroLibrary() {
@@ -549,7 +567,8 @@ public class FreeMarkerManager extends BaseTemplateManager {
 		_defaultBeansWrapper = new LiferayObjectWrapper();
 		_restrictedBeansWrapper = new RestrictedLiferayObjectWrapper(
 			_freeMarkerEngineConfiguration.allowedClasses(),
-			_freeMarkerEngineConfiguration.restrictedClasses(),
+			_filterRestrictedClasses(
+				_freeMarkerEngineConfiguration.restrictedClasses()),
 			_freeMarkerEngineConfiguration.restrictedMethods());
 
 		if (_isEnableDebuggerService()) {
@@ -868,9 +887,8 @@ public class FreeMarkerManager extends BaseTemplateManager {
 				return null;
 			}
 
-			try (InputStream inputStream = url.openStream()) {
-				Properties properties = PropertiesUtil.load(
-					inputStream, StringPool.UTF8);
+			try {
+				Properties properties = PropertiesUtil.load(url);
 
 				@SuppressWarnings("unchecked")
 				Map<String, String> map = PropertiesUtil.toMap(properties);
@@ -933,19 +951,11 @@ public class FreeMarkerManager extends BaseTemplateManager {
 			TemplateModel templateModel = _templateModels.get(uri);
 
 			if (templateModel == null) {
-				Thread currentThread = Thread.currentThread();
-
-				ClassLoader contextClassLoader =
-					currentThread.getContextClassLoader();
-
-				try {
-					currentThread.setContextClassLoader(
-						_freeMarkerBundleClassloader);
+				try (SafeCloseable safeCloseable =
+						ThreadContextClassLoaderUtil.swap(
+							_freeMarkerBundleClassloader)) {
 
 					templateModel = _taglibFactory.get(uri);
-				}
-				finally {
-					currentThread.setContextClassLoader(contextClassLoader);
 				}
 
 				_templateModels.put(uri, templateModel);

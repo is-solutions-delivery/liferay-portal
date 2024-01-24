@@ -13,6 +13,8 @@ import com.liferay.headless.delivery.client.serdes.v1_0.MessageBoardAttachmentSe
 
 import java.io.File;
 
+import java.net.URL;
+
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -228,6 +230,10 @@ public interface MessageBoardAttachmentResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {

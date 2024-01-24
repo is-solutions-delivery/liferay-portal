@@ -4,14 +4,20 @@
  */
 
 import ClayTabs from '@clayui/tabs';
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 
-const Panel = ({children}) => {
+const Panel = ({children: tabPanel}) => {
 	const ref = useRef();
 
 	useEffect(() => {
-		ref.current.appendChild(children);
-	}, [children]);
+		const fragment = document.createDocumentFragment();
+
+		while (tabPanel.firstChild) {
+			fragment.appendChild(tabPanel.firstChild);
+		}
+
+		ref.current.appendChild(fragment);
+	}, [tabPanel]);
 
 	return <div ref={ref}></div>;
 };
@@ -31,20 +37,26 @@ export default function Tabs({
 	tabsItems,
 	...otherProps
 }) {
+	const activeIndex = tabsItems.findIndex((item) => item.active);
+
+	const [active, setActive] = useState(activeIndex === -1 ? 0 : activeIndex);
+
 	return (
 		<>
 			<ClayTabs
 				activation={activation}
+				active={active}
 				className={cssClass}
 				displayType={displayType}
 				fade={fade}
 				justified={justified}
+				onActiveChange={setActive}
 				{...otherProps}
 			>
 				<ClayTabs.List>
-					{tabsItems.map(({active, disabled, href, label}, i) => (
+					{tabsItems.map(({disabled, href, label}, i) => (
 						<ClayTabs.Item
-							active={active}
+							active={i === active}
 							disabled={disabled}
 							href={href}
 							key={i}

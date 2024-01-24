@@ -82,9 +82,10 @@ export {default as createPortletURL} from './liferay/util/portlet_url/create_por
 export {default as createRenderURL} from './liferay/util/portlet_url/create_render_url.es';
 export {default as createResourceURL} from './liferay/util/portlet_url/create_resource_url.es';
 
-// Renderer API
+// Client Extensions API
 
-export {default as getRenderer} from './renderer/getRenderer';
+export {default as loadClientExtensions} from './utils/client_extensions/loadClientExtensions';
+export {loadModule} from './utils/client_extensions/loadModule';
 
 // Session API
 

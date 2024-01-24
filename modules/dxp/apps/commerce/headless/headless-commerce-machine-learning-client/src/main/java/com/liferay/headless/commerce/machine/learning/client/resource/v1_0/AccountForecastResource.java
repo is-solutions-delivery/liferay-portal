@@ -12,6 +12,8 @@ import com.liferay.headless.commerce.machine.learning.client.pagination.Paginati
 import com.liferay.headless.commerce.machine.learning.client.problem.Problem;
 import com.liferay.headless.commerce.machine.learning.client.serdes.v1_0.AccountForecastSerDes;
 
+import java.net.URL;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -99,6 +101,10 @@ public interface AccountForecastResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {

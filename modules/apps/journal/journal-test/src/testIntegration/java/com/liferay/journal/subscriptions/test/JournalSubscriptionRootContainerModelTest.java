@@ -68,7 +68,7 @@ public class JournalSubscriptionRootContainerModelTest
 
 	@Override
 	protected User addUser() throws Exception {
-		return UserTestUtil.addOmniAdminUser();
+		return UserTestUtil.addOmniadminUser();
 	}
 
 	@Override

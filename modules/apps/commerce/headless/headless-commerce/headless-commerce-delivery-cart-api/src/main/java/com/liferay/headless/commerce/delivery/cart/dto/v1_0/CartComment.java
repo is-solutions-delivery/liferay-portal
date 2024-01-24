@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -49,141 +50,206 @@ public class CartComment implements Serializable {
 
 	@Schema
 	public String getAuthor() {
+		if (_authorSupplier != null) {
+			author = _authorSupplier.get();
+
+			_authorSupplier = null;
+		}
+
 		return author;
 	}
 
 	public void setAuthor(String author) {
 		this.author = author;
+
+		_authorSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setAuthor(
 		UnsafeSupplier<String, Exception> authorUnsafeSupplier) {
 
-		try {
-			author = authorUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_authorSupplier = () -> {
+			try {
+				return authorUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected String author;
 
+	@JsonIgnore
+	private Supplier<String> _authorSupplier;
+
 	@Schema
 	public String getContent() {
+		if (_contentSupplier != null) {
+			content = _contentSupplier.get();
+
+			_contentSupplier = null;
+		}
+
 		return content;
 	}
 
 	public void setContent(String content) {
 		this.content = content;
+
+		_contentSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setContent(
 		UnsafeSupplier<String, Exception> contentUnsafeSupplier) {
 
-		try {
-			content = contentUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_contentSupplier = () -> {
+			try {
+				return contentUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String content;
 
+	@JsonIgnore
+	private Supplier<String> _contentSupplier;
+
 	@Schema
 	public Long getId() {
+		if (_idSupplier != null) {
+			id = _idSupplier.get();
+
+			_idSupplier = null;
+		}
+
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+
+		_idSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setId(UnsafeSupplier<Long, Exception> idUnsafeSupplier) {
-		try {
-			id = idUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_idSupplier = () -> {
+			try {
+				return idUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Long id;
 
+	@JsonIgnore
+	private Supplier<Long> _idSupplier;
+
 	@Schema
 	public Long getOrderId() {
+		if (_orderIdSupplier != null) {
+			orderId = _orderIdSupplier.get();
+
+			_orderIdSupplier = null;
+		}
+
 		return orderId;
 	}
 
 	public void setOrderId(Long orderId) {
 		this.orderId = orderId;
+
+		_orderIdSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setOrderId(
 		UnsafeSupplier<Long, Exception> orderIdUnsafeSupplier) {
 
-		try {
-			orderId = orderIdUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_orderIdSupplier = () -> {
+			try {
+				return orderIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Long orderId;
 
+	@JsonIgnore
+	private Supplier<Long> _orderIdSupplier;
+
 	@Schema
 	public Boolean getRestricted() {
+		if (_restrictedSupplier != null) {
+			restricted = _restrictedSupplier.get();
+
+			_restrictedSupplier = null;
+		}
+
 		return restricted;
 	}
 
 	public void setRestricted(Boolean restricted) {
 		this.restricted = restricted;
+
+		_restrictedSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setRestricted(
 		UnsafeSupplier<Boolean, Exception> restrictedUnsafeSupplier) {
 
-		try {
-			restricted = restrictedUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_restrictedSupplier = () -> {
+			try {
+				return restrictedUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Boolean restricted;
+
+	@JsonIgnore
+	private Supplier<Boolean> _restrictedSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -212,6 +278,8 @@ public class CartComment implements Serializable {
 
 		sb.append("{");
 
+		String author = getAuthor();
+
 		if (author != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -225,6 +293,8 @@ public class CartComment implements Serializable {
 
 			sb.append("\"");
 		}
+
+		String content = getContent();
 
 		if (content != null) {
 			if (sb.length() > 1) {
@@ -240,6 +310,8 @@ public class CartComment implements Serializable {
 			sb.append("\"");
 		}
 
+		Long id = getId();
+
 		if (id != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -250,6 +322,8 @@ public class CartComment implements Serializable {
 			sb.append(id);
 		}
 
+		Long orderId = getOrderId();
+
 		if (orderId != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -259,6 +333,8 @@ public class CartComment implements Serializable {
 
 			sb.append(orderId);
 		}
+
+		Boolean restricted = getRestricted();
 
 		if (restricted != null) {
 			if (sb.length() > 1) {

@@ -91,10 +91,7 @@ definition {
 		}
 
 		task ("Disable segmentation by roles from instance settings") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "Instance Settings");
+			PortalSettings.openInstanceSettingsAdmin();
 
 			SystemSettings.gotoConfiguration(
 				configurationCategory = "Segments",
@@ -105,10 +102,7 @@ definition {
 		}
 
 		task ("Assign the segment to the role created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Roles");
+			Role.openRolesAdmin();
 
 			Role.addAssignee(
 				assigneeName = "Segment global usersn",
@@ -238,10 +232,7 @@ definition {
 		}
 
 		task ("Enable segmentation by roles from instance settings") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "Instance Settings");
+			PortalSettings.openInstanceSettingsAdmin();
 
 			SystemSettings.gotoConfiguration(
 				configurationCategory = "Segments",
@@ -252,10 +243,7 @@ definition {
 		}
 
 		task ("Assign the segment to the role created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Roles");
+			Role.openRolesAdmin();
 
 			Role.addAssignee(
 				assigneeName = "Segment global usersn",
@@ -324,10 +312,7 @@ definition {
 		}
 
 		task ("Disable segmentation by roles from instance settings") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "Instance Settings");
+			PortalSettings.openInstanceSettingsAdmin();
 
 			SystemSettings.gotoConfiguration(
 				configurationCategory = "Segments",
@@ -355,10 +340,7 @@ definition {
 		property test.run.type = "single";
 
 		task ("Disable segmentation by roles from instance settings") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "Instance Settings");
+			PortalSettings.openInstanceSettingsAdmin();
 
 			SystemSettings.gotoConfiguration(
 				configurationCategory = "Segments",
@@ -369,10 +351,7 @@ definition {
 		}
 
 		task ("Go to the role segments assignee's section") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Roles");
+			Role.openRolesAdmin();
 
 			Role._goToRoleAssigneeType(
 				assigneeType = "Segments",
@@ -419,10 +398,7 @@ definition {
 		}
 
 		task ("Assign the segment to the role created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Roles");
+			Role.openRolesAdmin();
 
 			Role.addAssignee(
 				assigneeName = "Segment global usersn",
@@ -490,10 +466,7 @@ definition {
 		}
 
 		task ("Go to the role segments assignee's section") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Roles");
+			Role.openRolesAdmin();
 
 			Role._goToRoleAssigneeType(
 				assigneeType = "Segments",
@@ -539,10 +512,7 @@ definition {
 		}
 
 		task ("Disable segmentation by roles from instance settings") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "Instance Settings");
+			PortalSettings.openInstanceSettingsAdmin();
 
 			SystemSettings.gotoConfiguration(
 				configurationCategory = "Segments",
@@ -635,10 +605,7 @@ definition {
 		}
 
 		task ("Assign the segment to the role created") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Roles");
+			Role.openRolesAdmin();
 
 			Role.addAssignee(
 				assigneeName = "Segment global usersn",
@@ -713,10 +680,7 @@ definition {
 		}
 
 		task ("Go to the role segments assignee's section") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Roles");
+			Role.openRolesAdmin();
 
 			Role._goToRoleAssigneeType(
 				assigneeType = "Segments",

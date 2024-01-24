@@ -283,6 +283,12 @@ public class KBArticleServiceUtil {
 			groupId, resourcePrimKey, status);
 	}
 
+	public static KBArticle getLatestKBArticle(long resourcePrimKey)
+		throws PortalException {
+
+		return getService().getLatestKBArticle(resourcePrimKey);
+	}
+
 	public static KBArticle getLatestKBArticle(long resourcePrimKey, int status)
 		throws PortalException {
 
@@ -342,6 +348,12 @@ public class KBArticleServiceUtil {
 		getService().moveKBArticle(
 			resourcePrimKey, parentResourceClassNameId, parentResourcePrimKey,
 			priority);
+	}
+
+	public static KBArticle moveKBArticleToTrash(long resourcePrimKey)
+		throws PortalException {
+
+		return getService().moveKBArticleToTrash(resourcePrimKey);
 	}
 
 	public static KBArticle revertKBArticle(

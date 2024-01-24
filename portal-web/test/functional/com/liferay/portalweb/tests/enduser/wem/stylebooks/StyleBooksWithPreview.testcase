@@ -425,7 +425,7 @@ definition {
 
 			Type(
 				ariaLabel = "Heading 1 Font Size",
-				locator1 = "TextInput#ANY_WITH_AIRA_LABEL",
+				locator1 = "TextInput#ANY_WITH_ARIA_LABEL",
 				value1 = 2);
 
 			StyleBooks.clickManagementBar();
@@ -584,7 +584,7 @@ definition {
 
 			Type(
 				ariaLabel = "Heading 1 Font Size",
-				locator1 = "TextInput#ANY_WITH_AIRA_LABEL",
+				locator1 = "TextInput#ANY_WITH_ARIA_LABEL",
 				value1 = 2);
 
 			StyleBooks.clickManagementBar();
@@ -660,7 +660,7 @@ definition {
 
 		task ("Map the Display Page URL field to a Heading fragment then publish") {
 			PageEditorMapping.mapEditableTextToField(
-				field = "Display Page URL",
+				field = "Default",
 				fragmentName = "Heading",
 				id = "element-text");
 
@@ -1448,7 +1448,7 @@ definition {
 
 			Type(
 				ariaLabel = "Heading 1 Font Size",
-				locator1 = "TextInput#ANY_WITH_AIRA_LABEL",
+				locator1 = "TextInput#ANY_WITH_ARIA_LABEL",
 				value1 = 2);
 
 			StyleBooks.clickManagementBar();
@@ -1517,10 +1517,7 @@ definition {
 		property test.run.type = "single";
 
 		task ("Deactivate the Default fragment sets") {
-			ApplicationsMenu.gotoPortlet(
-				category = "System",
-				panel = "Control Panel",
-				portlet = "App Manager");
+			AppManager.openAppManagerAdmin();
 
 			for (var collectionName : list "Basic Component,Cookie Banner,Dialect,Featured Content,Footers,Inputs,Navigation Bars") {
 				Search.searchCP(searchTerm = "Fragment Collection Contributor");
@@ -1577,10 +1574,6 @@ definition {
 			StyleBooksAdmin.openStyleBooksAdmin(siteURLKey = "test-site-name");
 
 			StyleBooksAdmin.addStyleBooks(styleBookName = "Test Style Book Name");
-		}
-
-		task ("View the private page is shown in preview item selector") {
-			StyleBooks.viewCurrentPreviewItem(previewItem = "Test Private Page Name");
 		}
 
 		task ("View the Public Pages and Private Pages nav items are not shown in select preview item modal") {

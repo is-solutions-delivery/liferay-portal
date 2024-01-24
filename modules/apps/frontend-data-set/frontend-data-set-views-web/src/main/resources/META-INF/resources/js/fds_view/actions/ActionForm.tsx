@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayButton from '@clayui/button';
+import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import ClayForm, {ClayInput, ClaySelectWithOption} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import ClayLayout from '@clayui/layout';
@@ -11,12 +11,13 @@ import ClayPanel from '@clayui/panel';
 import ClayTabs from '@clayui/tabs';
 import classNames from 'classnames';
 import {InputLocalized} from 'frontend-js-components-web';
-import {fetch} from 'frontend-js-web';
+import {fetch, openModal} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
 import {API_URL, OBJECT_RELATIONSHIP} from '../../Constants';
 import {FDSViewType} from '../../FDSViews';
 import RequiredMark from '../../components/RequiredMark';
+import Search from '../../components/Search';
 import ValidationFeedback from '../../components/ValidationFeedback';
 import openDefaultFailureToast from '../../utils/openDefaultFailureToast';
 import openDefaultSuccessToast from '../../utils/openDefaultSuccessToast';
@@ -180,6 +181,17 @@ const ActionForm = ({
 		url: initialValues?.url ?? '',
 	});
 
+	const handleActionTypeChange = (event: any) => {
+		const type = event.target.value;
+
+		setActionData({
+			...actionData,
+			method: type === ACTION_TYPE.ASYNC ? ACTION_METHOD.DELETE : '',
+			modalSize: type === ACTION_TYPE.MODAL ? MODAL_SIZES[0].value : '',
+			type,
+		});
+	};
+
 	const saveFDSAction = async () => {
 		setSaveButtonDisabled(true);
 
@@ -337,6 +349,61 @@ const ActionForm = ({
 	const typeFormElementId = `${namespace}Type`;
 	const urlFormElementId = `${namespace}URL`;
 
+	const ModalBody = ({closeModal}: {closeModal: Function}) => {
+		const [filteredIconSymbols, setFilteredIconSymbols] = useState<
+			Array<{label: string; value: string}>
+		>(availableIconSymbols);
+		const [query, setQuery] = useState('');
+
+		const onSearch = (query: string) => {
+			setQuery(query);
+
+			const regexp = new RegExp(query, 'i');
+
+			setFilteredIconSymbols(
+				query
+					? availableIconSymbols.filter((item) =>
+							String(item.value).match(regexp)
+					  )
+					: availableIconSymbols
+			);
+		};
+
+		return (
+			<>
+				<Search onSearch={onSearch} query={query} />
+
+				<ClayLayout.SheetSection>
+					<ul className="list-unstyled mt-4 row">
+						{filteredIconSymbols.map((item) => {
+							return (
+								<li
+									className="col-md-4"
+									key={item.value}
+									onClick={() => {
+										setActionData({
+											...actionData,
+											iconSymbol: item.value,
+										});
+										closeModal();
+									}}
+								>
+									<ClayIcon
+										className="mr-2"
+										spritemap={spritemap}
+										symbol={item.value}
+									/>
+
+									<span>{item.label}</span>
+								</li>
+							);
+						})}
+					</ul>
+				</ClayLayout.SheetSection>
+			</>
+		);
+	};
+
 	return (
 		<>
 			<h2 className="mb-0 p-4">
@@ -388,39 +455,84 @@ const ActionForm = ({
 							/>
 						</ClayLayout.Col>
 
-						<ClayLayout.Col
-							className="align-items-center d-flex justify-content-end"
-							size={4}
-						>
-							<ClayIcon
-								className="mr-4"
-								symbol={actionData.iconSymbol}
-							/>
-
+						<ClayLayout.Col size={4}>
 							<ClayForm.Group>
 								<label htmlFor={iconFormElementId}>
 									{Liferay.Language.get('icon')}
 								</label>
 
-								<ClaySelectWithOption
-									id={iconFormElementId}
-									onChange={(event) =>
-										setActionData({
-											...actionData,
-											iconSymbol: event.target.value,
-										})
-									}
-									options={[
-										{
-											label: Liferay.Language.get(
-												'select'
-											),
-											value: '',
-										},
-										...availableIconSymbols,
-									]}
-									value={actionData.iconSymbol || ''}
-								/>
+								<ClayInput.Group>
+									<ClayInput.GroupItem prepend shrink>
+										<ClayInput.GroupText>
+											<ClayIcon
+												spritemap={spritemap}
+												symbol={actionData.iconSymbol}
+											/>
+										</ClayInput.GroupText>
+									</ClayInput.GroupItem>
+
+									<ClayInput.GroupItem append>
+										<ClayInput
+											onChange={({target: {value}}) =>
+												setActionData({
+													...actionData,
+													iconSymbol: value,
+												})
+											}
+											placeholder={Liferay.Language.get(
+												'no-icon-selected'
+											)}
+											type="text"
+											value={actionData.iconSymbol}
+										/>
+									</ClayInput.GroupItem>
+
+									<ClayButtonWithIcon
+										aria-label={Liferay.Language.get(
+											actionData.iconSymbol !== ''
+												? 'change-icon'
+												: 'add-icon'
+										)}
+										className="ml-2"
+										displayType="secondary"
+										id={iconFormElementId}
+										onClick={() =>
+											openModal({
+												bodyComponent: ModalBody,
+												containerProps: {
+													className:
+														'dsm-actions-icon-selection-modal',
+												},
+												size: 'lg',
+												title: Liferay.Language.get(
+													'select-an-icon'
+												),
+											})
+										}
+										symbol={
+											actionData.iconSymbol !== ''
+												? 'change'
+												: 'plus'
+										}
+									/>
+
+									{actionData.iconSymbol !== '' && (
+										<ClayButtonWithIcon
+											aria-label={Liferay.Language.get(
+												'remove-icon'
+											)}
+											className="ml-2"
+											displayType="secondary"
+											onClick={() =>
+												setActionData({
+													...actionData,
+													iconSymbol: '',
+												})
+											}
+											symbol="trash"
+										/>
+									)}
+								</ClayInput.Group>
 							</ClayForm.Group>
 						</ClayLayout.Col>
 					</ClayLayout.Row>
@@ -447,10 +559,7 @@ const ActionForm = ({
 									disabled={editing}
 									id={typeFormElementId}
 									onChange={(event) =>
-										setActionData({
-											...actionData,
-											type: event.target.value,
-										})
+										handleActionTypeChange(event)
 									}
 									options={
 										activeTab === 0

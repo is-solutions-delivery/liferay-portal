@@ -196,9 +196,7 @@ definition {
 			reportsDefinitionName = "Reports Definition Name",
 			templateFile = "reports_admin_template_source_sample_class_name.jrxml");
 
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
-
-		MenuItem.click(menuItem = "All");
+		Click(locator1 = "ManagementBar#ORDER_ICON_GENERIC");
 
 		ReportsAdmin.assertReportEntryPresent(reportsDefinitionName = "Reports Definition Name");
 	}
@@ -576,10 +574,7 @@ definition {
 		var portalURL = PropsUtil.get("portal.url");
 		var siteName = TestCase.getSiteName(siteName = ${siteName});
 
-		ApplicationsMenu.gotoPortlet(
-			category = "System",
-			panel = "Control Panel",
-			portlet = "Server Administration");
+		ServerAdministration.openServerAdmin();
 
 		ServerAdministration.configureMailServerSettings(
 			userName = PropsUtil.get("email.address.2"),
@@ -610,20 +605,7 @@ definition {
 			userEmailAddress = PropsUtil.get("email.address.4"),
 			userPassword = PropsUtil.get("email.password.4"));
 
-		Gmail.gotoHtmlMode();
-
-		Gmail.viewMail(
-			emailFromUserName = "Joe Bloggs",
-			gmailAssetType = "New Report: Custom Report Name.pdf",
-			gmailMessageBody = "You have a new report.",
-			gmailMessageTitle = "New Report: Custom Report Name.pdf");
-
-		var key_gmailAssetType = "New Report: Custom Report Name.pdf";
-		var key_pageNameURL = "report";
-
-		AssertClick.assertPartialTextClickAt(
-			locator1 = "Gmail#GMAIL_HTML_MODE_MESSAGE_BODY_LINK",
-			value1 = "report");
+		Gmail.gotoMail(gmailMessageTitle = "New Report: Custom Report Name.pdf");
 
 		SelectWindow(value1 = "title=Reports Definition Name - ${siteName}");
 
@@ -633,8 +615,6 @@ definition {
 			reportsDefinitionName = "Reports Definition Name",
 			reportsFileName = "Custom Report Name.pdf",
 			userName = "Test Test");
-
-		Gmail.gotoHtmlMode();
 
 		Gmail.deleteSpecificMail(gmailMessageTitleList = "New Report: Custom Report Name.pdf,Your New Account,Your New Password");
 
@@ -650,10 +630,7 @@ definition {
 
 		var portalURL = PropsUtil.get("portal.url");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "System",
-			panel = "Control Panel",
-			portlet = "Server Administration");
+		ServerAdministration.openServerAdmin();
 
 		ServerAdministration.configureMailServerSettings(
 			userName = PropsUtil.get("email.address.2"),
@@ -683,21 +660,7 @@ definition {
 			userEmailAddress = PropsUtil.get("email.address.4"),
 			userPassword = PropsUtil.get("email.password.4"));
 
-		Gmail.gotoHtmlMode();
-
-		Gmail.viewMail(
-			emailFromUserName = "Joe Bloggs",
-			gmailAssetType = "New Report: reports_admin_template_source_sample_class_name.pdf",
-			gmailMessageAttachment = "reports_admin_template_source_sample_class_name.pdf",
-			gmailMessageBody = "Please review the attached report.",
-			gmailMessageTitle = "New Report: reports_admin_template_source_sample_class_name.pdf");
-
-		var key_gmailAssetType = "New Report: reports_admin_template_source_sample_class_name.pdf";
-		var key_pageNameURL = "report";
-
-		AssertElementNotPresent(locator1 = "Gmail#GMAIL_HTML_MODE_MESSAGE_BODY_LINK");
-
-		Gmail.gotoHtmlMode();
+		Gmail.gotoMail(gmailMessageTitle = "New Report: reports_admin_template_source_sample_class_name.pdf");
 
 		Gmail.deleteSpecificMail(gmailMessageTitleList = "New Report: reports_admin_template_source_sample_class_name.pdf,Your New Account,Your New Password");
 

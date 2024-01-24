@@ -14,16 +14,22 @@ import com.liferay.portal.spring.aop.AopInvocationHandler;
 
 import java.lang.reflect.InvocationHandler;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+
 /**
  * @author Raymond Augé
  */
 public class ServiceBag<V> {
 
 	public ServiceBag(
-		ClassLoader classLoader, AopInvocationHandler aopInvocationHandler,
-		Class<?> serviceTypeClass, ServiceWrapper<V> serviceWrapper) {
+		AopInvocationHandler aopInvocationHandler, Class<?> serviceTypeClass,
+		ServiceWrapper<V> serviceWrapper, BundleContext bundleContext,
+		ServiceReference<?> serviceReference) {
 
 		_aopInvocationHandler = aopInvocationHandler;
+		_bundleContext = bundleContext;
+		_serviceReference = serviceReference;
 
 		Object previousService = serviceWrapper.getWrappedService();
 
@@ -46,18 +52,17 @@ public class ServiceBag<V> {
 			serviceWrapper.setWrappedService((V)previousService);
 		}
 
-		ClassLoader newServiceAggregateClassLoader =
-			AggregateClassLoader.getAggregateClassLoader(
-				serviceTypeClass.getClassLoader(),
-				IdentifiableOSGiService.class.getClassLoader());
+		Class<?> clazz = serviceWrapper.getClass();
 
 		Object nextTarget = ProxyUtil.newProxyInstance(
-			newServiceAggregateClassLoader,
+			AggregateClassLoader.getAggregateClassLoader(
+				serviceTypeClass.getClassLoader(),
+				IdentifiableOSGiService.class.getClassLoader()),
 			new Class<?>[] {
 				serviceTypeClass, ServiceWrapper.class,
 				IdentifiableOSGiService.class
 			},
-			new ClassLoaderBeanHandler(serviceWrapper, classLoader));
+			new ClassLoaderBeanHandler(serviceWrapper, clazz.getClassLoader()));
 
 		_aopInvocationHandler.setTarget(nextTarget);
 
@@ -65,7 +70,7 @@ public class ServiceBag<V> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> void replace() throws Exception {
+	public <T> void replace() {
 		Object currentService = _aopInvocationHandler.getTarget();
 
 		ServiceWrapper<T> previousService = null;
@@ -128,9 +133,15 @@ public class ServiceBag<V> {
 
 			currentService = previousService.getWrappedService();
 		}
+
+		if (_serviceReference != null) {
+			_bundleContext.ungetService(_serviceReference);
+		}
 	}
 
 	private final AopInvocationHandler _aopInvocationHandler;
+	private final BundleContext _bundleContext;
+	private final ServiceReference<?> _serviceReference;
 	private final ServiceWrapper<?> _serviceWrapper;
 
 }

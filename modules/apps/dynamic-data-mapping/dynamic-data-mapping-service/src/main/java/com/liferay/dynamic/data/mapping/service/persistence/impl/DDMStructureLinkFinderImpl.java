@@ -7,6 +7,7 @@ package com.liferay.dynamic.data.mapping.service.persistence.impl;
 
 import com.liferay.dynamic.data.mapping.model.DDMStructureLink;
 import com.liferay.dynamic.data.mapping.model.impl.DDMStructureLinkImpl;
+import com.liferay.dynamic.data.mapping.security.permission.DDMPermissionSupport;
 import com.liferay.dynamic.data.mapping.service.persistence.DDMStructureLinkFinder;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.dao.orm.custom.sql.CustomSQL;
@@ -16,6 +17,7 @@ import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.security.permission.InlineSQLHelperUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -42,20 +44,28 @@ public class DDMStructureLinkFinderImpl
 	public int countByKeywords(
 		long classNameId, long classPK, String keywords) {
 
-		String[] names = null;
-		String[] descriptions = null;
-		boolean andOperator = false;
+		return _countByKeywords(
+			classNameId, classPK, null, keywords, null, false);
+	}
 
-		if (Validator.isNotNull(keywords)) {
-			names = _customSQL.keywords(keywords);
-			descriptions = _customSQL.keywords(keywords, false);
-		}
-		else {
-			andOperator = true;
-		}
+	@Override
+	public int filterCountByKeywords(
+		long classNameId, long classPK, long[] groupIds, String keywords,
+		String resourceClassName) {
 
-		return doCountByC_C_N_D(
-			classNameId, classPK, names, descriptions, andOperator);
+		return _countByKeywords(
+			classNameId, classPK, groupIds, keywords, resourceClassName, true);
+	}
+
+	@Override
+	public List<DDMStructureLink> filterFindByKeywords(
+		long classNameId, long classPK, long[] groupIds, String keywords,
+		String resourceClassName, int start, int end,
+		OrderByComparator<DDMStructureLink> orderByComparator) {
+
+		return _findByKeywords(
+			classNameId, classPK, groupIds, keywords, resourceClassName, start,
+			end, orderByComparator, true);
 	}
 
 	@Override
@@ -63,26 +73,15 @@ public class DDMStructureLinkFinderImpl
 		long classNameId, long classPK, String keywords, int start, int end,
 		OrderByComparator<DDMStructureLink> orderByComparator) {
 
-		String[] names = null;
-		String[] descriptions = null;
-		boolean andOperator = false;
-
-		if (Validator.isNotNull(keywords)) {
-			names = _customSQL.keywords(keywords);
-			descriptions = _customSQL.keywords(keywords, false);
-		}
-		else {
-			andOperator = true;
-		}
-
-		return doFindByC_C_N_D(
-			classNameId, classPK, names, descriptions, andOperator, start, end,
-			orderByComparator);
+		return _findByKeywords(
+			classNameId, classPK, null, keywords, null, start, end,
+			orderByComparator, false);
 	}
 
 	protected int doCountByC_C_N_D(
-		long classNameId, long classPK, String[] names, String[] descriptions,
-		boolean andOperator) {
+		long classNameId, long classPK, long[] groupIds, String[] names,
+		String[] descriptions, String resourceClassName, boolean andOperator,
+		boolean inlineSQLHelper) {
 
 		names = _customSQL.keywords(names);
 		descriptions = _customSQL.keywords(descriptions, false);
@@ -93,6 +92,14 @@ public class DDMStructureLinkFinderImpl
 			session = openSession();
 
 			String sql = _customSQL.get(getClass(), COUNT_BY_C_C_N_D);
+
+			if (inlineSQLHelper) {
+				sql = InlineSQLHelperUtil.replacePermissionCheck(
+					sql,
+					_ddmPermissionSupport.getStructureModelResourceName(
+						resourceClassName),
+					"DDMStructure.structureId", groupIds);
+			}
 
 			sql = _customSQL.replaceKeywords(
 				sql, "LOWER(CAST_TEXT(DDMStructure.name))", StringPool.LIKE,
@@ -136,9 +143,11 @@ public class DDMStructureLinkFinderImpl
 	}
 
 	protected List<DDMStructureLink> doFindByC_C_N_D(
-		long classNameId, long classPK, String[] names, String[] descriptions,
-		boolean andOperator, int start, int end,
-		OrderByComparator<DDMStructureLink> orderByComparator) {
+		long classNameId, long classPK, long[] groupIds, String[] names,
+		String[] descriptions, String resourceClassName, boolean andOperator,
+		int start, int end,
+		OrderByComparator<DDMStructureLink> orderByComparator,
+		boolean inlineSQLHelper) {
 
 		names = _customSQL.keywords(names);
 		descriptions = _customSQL.keywords(descriptions, false);
@@ -149,6 +158,14 @@ public class DDMStructureLinkFinderImpl
 			session = openSession();
 
 			String sql = _customSQL.get(getClass(), FIND_BY_C_C_N_D);
+
+			if (inlineSQLHelper) {
+				sql = InlineSQLHelperUtil.replacePermissionCheck(
+					sql,
+					_ddmPermissionSupport.getStructureModelResourceName(
+						resourceClassName),
+					"DDMStructure.structureId", groupIds);
+			}
 
 			sql = _customSQL.replaceKeywords(
 				sql, "LOWER(CAST_TEXT(DDMStructure.name))", StringPool.LIKE,
@@ -184,7 +201,55 @@ public class DDMStructureLinkFinderImpl
 		}
 	}
 
+	private int _countByKeywords(
+		long classNameId, long classPK, long[] groupIds, String keywords,
+		String resourceClassName, boolean inlineSQLHelper) {
+
+		String[] names = null;
+		String[] descriptions = null;
+		boolean andOperator = false;
+
+		if (Validator.isNotNull(keywords)) {
+			names = _customSQL.keywords(keywords);
+			descriptions = _customSQL.keywords(keywords, false);
+		}
+		else {
+			andOperator = true;
+		}
+
+		return doCountByC_C_N_D(
+			classNameId, classPK, groupIds, names, descriptions,
+			resourceClassName, andOperator, inlineSQLHelper);
+	}
+
+	private List<DDMStructureLink> _findByKeywords(
+		long classNameId, long classPK, long[] groupIds, String keywords,
+		String resourceClassName, int start, int end,
+		OrderByComparator<DDMStructureLink> orderByComparator,
+		boolean inlineSQLHelper) {
+
+		String[] names = null;
+		String[] descriptions = null;
+		boolean andOperator = false;
+
+		if (Validator.isNotNull(keywords)) {
+			names = _customSQL.keywords(keywords);
+			descriptions = _customSQL.keywords(keywords, false);
+		}
+		else {
+			andOperator = true;
+		}
+
+		return doFindByC_C_N_D(
+			classNameId, classPK, groupIds, names, descriptions,
+			resourceClassName, andOperator, start, end, orderByComparator,
+			inlineSQLHelper);
+	}
+
 	@Reference
 	private CustomSQL _customSQL;
+
+	@Reference
+	private DDMPermissionSupport _ddmPermissionSupport;
 
 }

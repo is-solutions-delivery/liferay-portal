@@ -7,11 +7,11 @@ package com.liferay.portal.db.partition.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.db.partition.DBPartitionUtil;
 import com.liferay.portal.db.partition.test.util.BaseDBPartitionTestCase;
-import com.liferay.portal.kernel.dao.jdbc.DataAccess;
+import com.liferay.portal.db.partition.util.DBPartitionUtil;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.ClassName;
 import com.liferay.portal.kernel.model.ResourceAction;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -19,17 +19,14 @@ import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.ResourceActionLocalService;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
-import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.ProxyUtil;
+import com.liferay.portal.kernel.util.InfrastructureUtil;
 import com.liferay.portal.model.DefaultModelHintsImpl;
 import com.liferay.portal.model.impl.ClassNameImpl;
 import com.liferay.portal.model.impl.ResourceActionImpl;
 import com.liferay.portal.service.impl.ClassNameLocalServiceImpl;
-import com.liferay.portal.service.impl.CompanyLocalServiceImpl;
 import com.liferay.portal.service.impl.ResourceActionLocalServiceImpl;
-import com.liferay.portal.spring.aop.AopInvocationHandler;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.util.PortalInstances;
 
@@ -44,6 +41,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
+
+import javax.sql.DataSource;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -87,7 +86,7 @@ public class DBPartitionTest extends BaseDBPartitionTestCase {
 	public static void tearDownClass() throws Exception {
 		deletePartitionRequiredData();
 
-		removeDBPartitions(false);
+		removeDBPartitions();
 
 		dropTable(TEST_CONTROL_TABLE_NAME);
 
@@ -318,6 +317,20 @@ public class DBPartitionTest extends BaseDBPartitionTestCase {
 		}
 	}
 
+	@Test(expected = PortalException.class)
+	public void testIllegalDatabasePartitionSchemaNamePrefix()
+		throws Exception {
+
+		try (AutoCloseable autoCloseable =
+				ReflectionTestUtil.setFieldValueWithAutoCloseable(
+					DBPartitionUtil.class,
+					"_DATABASE_PARTITION_SCHEMA_NAME_PREFIX",
+					"VeryLongIdentifier")) {
+
+			DBPartitionUtil.checkDatabasePartitionSchemaNamePrefix();
+		}
+	}
+
 	@Test
 	public void testRegenerateViews() throws Exception {
 		try {
@@ -351,54 +364,9 @@ public class DBPartitionTest extends BaseDBPartitionTestCase {
 	}
 
 	@Test
-	public void testRemoveDBPartitionWhenCompanyCreationFails()
-		throws Exception {
-
-		AopInvocationHandler aopInvocationHandler =
-			ProxyUtil.fetchInvocationHandler(
-				_companyLocalService, AopInvocationHandler.class);
-
-		CompanyLocalServiceImpl companyLocalServiceImpl =
-			(CompanyLocalServiceImpl)aopInvocationHandler.getTarget();
-
-		ReflectionTestUtil.setFieldValue(
-			companyLocalServiceImpl, "_dlFileEntryTypeLocalService", null);
-
-		long companyId = RandomTestUtil.randomLong();
-		boolean orphanedDBPartition = false;
-		String webId = "test.com";
-
-		try {
-			_companyLocalService.addCompany(
-				companyId, webId, webId, webId, 0, true, null, null, null, null,
-				null, null);
-		}
-		catch (Exception exception) {
-			try (Connection connection = DataAccess.getConnection();
-				PreparedStatement preparedStatement =
-					connection.prepareStatement(
-						StringBundler.concat(
-							"select schema_name from ",
-							"information_schema.schemata where schema_name = '",
-							_DB_PARTITION_SCHEMA_NAME_PREFIX + companyId, "'"));
-				ResultSet resultSet = preparedStatement.executeQuery()) {
-
-				orphanedDBPartition = resultSet.next();
-
-				Assert.assertFalse(
-					"The database partition was not removed",
-					orphanedDBPartition);
-			}
-		}
-		finally {
-			if (orphanedDBPartition) {
-				removeDBPartitions(new long[] {companyId}, false);
-			}
-		}
-	}
-
-	@Test
 	public void testUpdateIndexes() throws Exception {
+		DataSource dataSource = InfrastructureUtil.getDataSource();
+
 		try {
 			DBPartitionUtil.forEachCompanyId(
 				companyId -> {
@@ -407,9 +375,11 @@ public class DBPartitionTest extends BaseDBPartitionTestCase {
 					Assert.assertFalse(
 						dbInspector.hasIndex(TEST_TABLE_NAME, TEST_INDEX_NAME));
 
-					db.updateIndexes(
-						connection, getCreateTableSQL(TEST_TABLE_NAME),
-						getCreateIndexSQL(TEST_TABLE_NAME), true);
+					try (Connection connection = dataSource.getConnection()) {
+						db.updateIndexes(
+							connection, TEST_TABLE_NAME,
+							getCreateIndexSQL(TEST_TABLE_NAME), true);
+					}
 
 					Assert.assertTrue(
 						dbInspector.hasIndex(TEST_TABLE_NAME, TEST_INDEX_NAME));
@@ -461,9 +431,6 @@ public class DBPartitionTest extends BaseDBPartitionTestCase {
 	protected static FinderCache finderCache;
 
 	private static final String _CLASS_NAME_VALUE = "class.name.test";
-
-	private static final String _DB_PARTITION_SCHEMA_NAME_PREFIX =
-		"lpartitiontest_";
 
 	@Inject
 	private static ResourceActionLocalService _resourceActionLocalService;

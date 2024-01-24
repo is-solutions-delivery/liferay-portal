@@ -12,6 +12,7 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.search.experiences.blueprint.parameter.SXPParameter;
+import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributor;
 import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributorDefinition;
 import com.liferay.search.experiences.configuration.SemanticSearchConfiguration;
 import com.liferay.search.experiences.configuration.SemanticSearchConfigurationProvider;
@@ -20,7 +21,6 @@ import com.liferay.search.experiences.internal.blueprint.parameter.IntegerSXPPar
 import com.liferay.search.experiences.internal.web.cache.TextEmbeddingProviderWebCacheItem;
 import com.liferay.search.experiences.ml.embedding.text.TextEmbeddingRetriever;
 import com.liferay.search.experiences.rest.dto.v1_0.EmbeddingProviderConfiguration;
-import com.liferay.search.experiences.rest.dto.v1_0.SXPBlueprint;
 
 import java.beans.ExceptionListener;
 
@@ -49,7 +49,7 @@ public class MLSXPParameterContributor implements SXPParameterContributor {
 	@Override
 	public void contribute(
 		ExceptionListener exceptionListener, SearchContext searchContext,
-		SXPBlueprint sxpBlueprint, Set<SXPParameter> sxpParameters) {
+		Set<SXPParameter> sxpParameters) {
 
 		_addTextEmbeddingParameters(
 			exceptionListener, searchContext, sxpParameters);

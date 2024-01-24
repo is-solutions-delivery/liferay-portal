@@ -1,10 +1,11 @@
 {
 	"dependencies": {
-		"@clayui/button": "3.100.0",
+		"@clayui/button": "3.107.0",
 		"@liferay/cookies-banner-web": "*",
 		"frontend-js-web": "*",
 		"react": "16.12.0"
 	},
+	"main": "js/Cookies.js",
 	"name": "@liferay/cookies-sample-web",
 	"private": true,
 	"scripts": {

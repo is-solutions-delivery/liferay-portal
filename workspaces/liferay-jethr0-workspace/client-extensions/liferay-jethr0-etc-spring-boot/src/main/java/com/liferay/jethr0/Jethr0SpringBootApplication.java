@@ -8,8 +8,9 @@ package com.liferay.jethr0;
 import com.liferay.client.extension.util.spring.boot.ClientExtensionUtilSpringBootComponentScan;
 import com.liferay.jethr0.bui1d.queue.BuildQueue;
 import com.liferay.jethr0.entity.EntityInitializer;
-import com.liferay.jethr0.event.controller.EventJmsController;
-import com.liferay.jethr0.event.handler.EventHandlerContext;
+import com.liferay.jethr0.event.EventHandlerContext;
+import com.liferay.jethr0.event.jenkins.JenkinsEventProcessor;
+import com.liferay.jethr0.event.jrp.JRPEventProcessor;
 import com.liferay.jethr0.jenkins.JenkinsQueue;
 import com.liferay.jethr0.job.queue.JobQueue;
 
@@ -42,8 +43,11 @@ public class Jethr0SpringBootApplication {
 		EventHandlerContext eventHandlerContext =
 			configurableApplicationContext.getBean(EventHandlerContext.class);
 
-		eventHandlerContext.setEventJmsController(
-			configurableApplicationContext.getBean(EventJmsController.class));
+		eventHandlerContext.setJenkinsEventProcessor(
+			configurableApplicationContext.getBean(
+				JenkinsEventProcessor.class));
+		eventHandlerContext.setJRPEventProcessor(
+			configurableApplicationContext.getBean(JRPEventProcessor.class));
 
 		EntityInitializer entityInitializer =
 			configurableApplicationContext.getBean(EntityInitializer.class);
@@ -69,8 +73,9 @@ public class Jethr0SpringBootApplication {
 		JenkinsQueue jenkinsQueue = configurableApplicationContext.getBean(
 			JenkinsQueue.class);
 
-		jenkinsQueue.setEventJmsController(
-			configurableApplicationContext.getBean(EventJmsController.class));
+		jenkinsQueue.setJenkinsEventProcessor(
+			configurableApplicationContext.getBean(
+				JenkinsEventProcessor.class));
 
 		jenkinsQueue.initialize();
 	}
@@ -110,13 +115,13 @@ public class Jethr0SpringBootApplication {
 		return jmsTemplate;
 	}
 
-	@Value("${jethr0-jms-broker-url:tcp://localhost:61616}")
+	@Value("${JETHR0_JMS_BROKER_URL:tcp://localhost:61616}")
 	private String _jmsBrokerURL;
 
-	@Value("${jethr0-jms-user-name:admin}")
+	@Value("${JETHR0_JMS_USER_NAME:admin}")
 	private String _jmsUserName;
 
-	@Value("${jethr0-jms-user-password:admin}")
+	@Value("${JETHR0_JMS_USER_PASSWORD:admin}")
 	private String _jmsUserPassword;
 
 }

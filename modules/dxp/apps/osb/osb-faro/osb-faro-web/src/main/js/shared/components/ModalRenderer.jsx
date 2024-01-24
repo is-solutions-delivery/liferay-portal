@@ -8,7 +8,6 @@ import CreateMappingModal from './modals/CreateMappingModal';
 import CSVPreviewModal from './modals/CSVPreviewModal';
 import DeleteChannelModal from './modals/DeleteChannelModal';
 import DeleteConfirmationModal from './modals/DeleteConfirmationModal';
-import dom from 'metal-dom';
 import EditAttributeEventModal from './modals/EditAttributeEventModal';
 import EditEmailReportsModal from './modals/EditEmailReportsModal';
 import ExportLogModal from './modals/ExportLogModal';
@@ -114,7 +113,7 @@ export class ModalRenderer extends React.Component {
 
 		if (
 			currentModalIMap.get('closeOnBlur', true) &&
-			dom.match(event.target, '.modal-container')
+			event.target.matches('.modal-container')
 		) {
 			this.props.close();
 		}

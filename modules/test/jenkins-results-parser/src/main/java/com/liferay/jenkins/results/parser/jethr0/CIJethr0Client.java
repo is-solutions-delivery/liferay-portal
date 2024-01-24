@@ -17,21 +17,22 @@ import java.net.URL;
 public class CIJethr0Client extends BaseJethr0Client {
 
 	@Override
-	public String getActiveMQBrokerURL() {
-		return _activeMQBrokerURL;
+	public String getJMSBrokerURL() {
+		return _jmsBrokerURL;
 	}
 
 	protected CIJethr0Client(JenkinsMaster jenkinsMaster) {
 		super(jenkinsMaster);
 
-		_activeMQBrokerURL = _getSecretString("activemq.broker.url");
-		_activeMQJethr0ToJRPQueueName = _getSecretString(
-			"activemq.jethr0.jrp.queue.name");
-		_activeMQJRPToJethr0QueueName = _getSecretString(
-			"activemq.jrp.jethr0.queue.name");
-		_activeMQURL = _getSecretURL("activemq.url");
-		_activeMQUserName = _getSecretString("activemq.user.name");
-		_activeMQUserPassword = _getSecretString("activemq.user.password");
+		_jmsBrokerURL = _getSecretString("jms.broker.url");
+		_jmsGitHubToJethr0QueueName = _getSecretString(
+			"jms.github.jethr0.queue.name");
+		_jmsJethr0ToJRPQueueName = _getSecretString(
+			"jms.jethr0.jrp.queue.name");
+		_jmsJRPToJethr0QueueName = _getSecretString(
+			"jms.jrp.jethr0.queue.name");
+		_jmsUserName = _getSecretString("jms.user.name");
+		_jmsUserPassword = _getSecretString("jms.user.password");
 		_liferayDXPURL = _getSecretURL("liferay.dxp.url");
 		_oAuthExternalReferenceCode = _getSecretString(
 			"liferay.oauth.external.reference.code");
@@ -42,28 +43,28 @@ public class CIJethr0Client extends BaseJethr0Client {
 	}
 
 	@Override
-	protected String getActiveMQJethr0ToJRPQueueName() {
-		return _activeMQJethr0ToJRPQueueName;
+	protected String getJMSGitHubToJethr0QueueName() {
+		return _jmsGitHubToJethr0QueueName;
 	}
 
 	@Override
-	protected String getActiveMQJRPToJethr0QueueName() {
-		return _activeMQJRPToJethr0QueueName;
+	protected String getJMSJethr0ToJRPQueueName() {
+		return _jmsJethr0ToJRPQueueName;
 	}
 
 	@Override
-	protected URL getActiveMQURL() {
-		return _activeMQURL;
+	protected String getJMSJRPToJethr0QueueName() {
+		return _jmsJRPToJethr0QueueName;
 	}
 
 	@Override
-	protected String getActiveMQUserName() {
-		return _activeMQUserName;
+	protected String getJMSUserName() {
+		return _jmsUserName;
 	}
 
 	@Override
-	protected String getActiveMQUserPassword() {
-		return _activeMQUserPassword;
+	protected String getJMSUserPassword() {
+		return _jmsUserPassword;
 	}
 
 	@Override
@@ -127,12 +128,12 @@ public class CIJethr0Client extends BaseJethr0Client {
 
 	private String _1PasswordItemTitle;
 	private String _1PasswordVaultName;
-	private final String _activeMQBrokerURL;
-	private final String _activeMQJethr0ToJRPQueueName;
-	private final String _activeMQJRPToJethr0QueueName;
-	private final URL _activeMQURL;
-	private final String _activeMQUserName;
-	private final String _activeMQUserPassword;
+	private final String _jmsBrokerURL;
+	private final String _jmsGitHubToJethr0QueueName;
+	private final String _jmsJethr0ToJRPQueueName;
+	private final String _jmsJRPToJethr0QueueName;
+	private final String _jmsUserName;
+	private final String _jmsUserPassword;
 	private final URL _liferayDXPURL;
 	private final String _oAuthClientSecret;
 	private final String _oAuthExternalReferenceCode;

@@ -5,12 +5,20 @@
 
 package com.liferay.dynamic.data.mapping.internal.search;
 
+import com.liferay.dynamic.data.mapping.internal.search.spi.model.index.contributor.DDMFormInstanceRecordModelIndexerWriterContributor;
+import com.liferay.dynamic.data.mapping.internal.search.spi.model.result.contributor.DDMFormInstanceRecordModelSummaryContributor;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord;
+import com.liferay.dynamic.data.mapping.service.DDMFormInstanceLocalService;
+import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordLocalService;
+import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordVersionLocalService;
+import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchConfigurator;
 import com.liferay.portal.search.spi.model.result.contributor.ModelSummaryContributor;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -51,15 +59,40 @@ public class DDMFormInstanceRecordModelSearchConfigurator
 		return _modelSummaryContributor;
 	}
 
-	@Reference(
-		target = "(indexer.class.name=com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord)"
-	)
+	@Activate
+	protected void activate() {
+		_modelIndexWriterContributor =
+			new DDMFormInstanceRecordModelIndexerWriterContributor(
+				_ddmFormInstanceLocalService,
+				_ddmFormInstanceRecordLocalService,
+				_ddmFormInstanceRecordVersionLocalService,
+				_dynamicQueryBatchIndexingActionableFactory);
+
+		_modelSummaryContributor =
+			new DDMFormInstanceRecordModelSummaryContributor(
+				_ddmFormInstanceLocalService, _language);
+	}
+
+	@Reference
+	private DDMFormInstanceLocalService _ddmFormInstanceLocalService;
+
+	@Reference
+	private DDMFormInstanceRecordLocalService
+		_ddmFormInstanceRecordLocalService;
+
+	@Reference
+	private DDMFormInstanceRecordVersionLocalService
+		_ddmFormInstanceRecordVersionLocalService;
+
+	@Reference
+	private DynamicQueryBatchIndexingActionableFactory
+		_dynamicQueryBatchIndexingActionableFactory;
+
+	@Reference
+	private Language _language;
+
 	private ModelIndexerWriterContributor<DDMFormInstanceRecord>
 		_modelIndexWriterContributor;
-
-	@Reference(
-		target = "(indexer.class.name=com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord)"
-	)
 	private ModelSummaryContributor _modelSummaryContributor;
 
 }

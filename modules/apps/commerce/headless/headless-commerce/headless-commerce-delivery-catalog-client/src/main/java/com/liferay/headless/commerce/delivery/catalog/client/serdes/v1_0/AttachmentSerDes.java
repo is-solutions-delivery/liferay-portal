@@ -6,6 +6,7 @@
 package com.liferay.headless.commerce.delivery.catalog.client.serdes.v1_0;
 
 import com.liferay.headless.commerce.delivery.catalog.client.dto.v1_0.Attachment;
+import com.liferay.headless.commerce.delivery.catalog.client.dto.v1_0.CustomField;
 import com.liferay.headless.commerce.delivery.catalog.client.json.BaseJSONParser;
 
 import java.text.DateFormat;
@@ -64,6 +65,26 @@ public class AttachmentSerDes {
 			sb.append("\"");
 		}
 
+		if (attachment.getCustomFields() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"customFields\": ");
+
+			sb.append("[");
+
+			for (int i = 0; i < attachment.getCustomFields().length; i++) {
+				sb.append(String.valueOf(attachment.getCustomFields()[i]));
+
+				if ((i + 1) < attachment.getCustomFields().length) {
+					sb.append(", ");
+				}
+			}
+
+			sb.append("]");
+		}
+
 		if (attachment.getDisplayDate() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -92,6 +113,16 @@ public class AttachmentSerDes {
 				liferayToJSONDateFormat.format(attachment.getExpirationDate()));
 
 			sb.append("\"");
+		}
+
+		if (attachment.getGalleryEnabled() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"galleryEnabled\": ");
+
+			sb.append(attachment.getGalleryEnabled());
 		}
 
 		if (attachment.getId() != null) {
@@ -148,6 +179,30 @@ public class AttachmentSerDes {
 			sb.append("\"");
 		}
 
+		if (attachment.getTags() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"tags\": ");
+
+			sb.append("[");
+
+			for (int i = 0; i < attachment.getTags().length; i++) {
+				sb.append("\"");
+
+				sb.append(_escape(attachment.getTags()[i]));
+
+				sb.append("\"");
+
+				if ((i + 1) < attachment.getTags().length) {
+					sb.append(", ");
+				}
+			}
+
+			sb.append("]");
+		}
+
 		if (attachment.getTitle() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -200,6 +255,14 @@ public class AttachmentSerDes {
 			map.put("attachment", String.valueOf(attachment.getAttachment()));
 		}
 
+		if (attachment.getCustomFields() == null) {
+			map.put("customFields", null);
+		}
+		else {
+			map.put(
+				"customFields", String.valueOf(attachment.getCustomFields()));
+		}
+
 		if (attachment.getDisplayDate() == null) {
 			map.put("displayDate", null);
 		}
@@ -216,6 +279,15 @@ public class AttachmentSerDes {
 			map.put(
 				"expirationDate",
 				liferayToJSONDateFormat.format(attachment.getExpirationDate()));
+		}
+
+		if (attachment.getGalleryEnabled() == null) {
+			map.put("galleryEnabled", null);
+		}
+		else {
+			map.put(
+				"galleryEnabled",
+				String.valueOf(attachment.getGalleryEnabled()));
 		}
 
 		if (attachment.getId() == null) {
@@ -251,6 +323,13 @@ public class AttachmentSerDes {
 		}
 		else {
 			map.put("src", String.valueOf(attachment.getSrc()));
+		}
+
+		if (attachment.getTags() == null) {
+			map.put("tags", null);
+		}
+		else {
+			map.put("tags", String.valueOf(attachment.getTags()));
 		}
 
 		if (attachment.getTitle() == null) {
@@ -293,6 +372,22 @@ public class AttachmentSerDes {
 					attachment.setAttachment((String)jsonParserFieldValue);
 				}
 			}
+			else if (Objects.equals(jsonParserFieldName, "customFields")) {
+				if (jsonParserFieldValue != null) {
+					Object[] jsonParserFieldValues =
+						(Object[])jsonParserFieldValue;
+
+					CustomField[] customFieldsArray =
+						new CustomField[jsonParserFieldValues.length];
+
+					for (int i = 0; i < customFieldsArray.length; i++) {
+						customFieldsArray[i] = CustomFieldSerDes.toDTO(
+							(String)jsonParserFieldValues[i]);
+					}
+
+					attachment.setCustomFields(customFieldsArray);
+				}
+			}
 			else if (Objects.equals(jsonParserFieldName, "displayDate")) {
 				if (jsonParserFieldValue != null) {
 					attachment.setDisplayDate(
@@ -303,6 +398,11 @@ public class AttachmentSerDes {
 				if (jsonParserFieldValue != null) {
 					attachment.setExpirationDate(
 						toDate((String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "galleryEnabled")) {
+				if (jsonParserFieldValue != null) {
+					attachment.setGalleryEnabled((Boolean)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "id")) {
@@ -332,6 +432,12 @@ public class AttachmentSerDes {
 			else if (Objects.equals(jsonParserFieldName, "src")) {
 				if (jsonParserFieldValue != null) {
 					attachment.setSrc((String)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "tags")) {
+				if (jsonParserFieldValue != null) {
+					attachment.setTags(
+						toStrings((Object[])jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "title")) {

@@ -4,6 +4,7 @@ exports[`TopPagesCard renders 1`] = `
 <div>
   <div
     class="card card-root"
+    id="topPagesCardRoot"
   >
     <div
       class="card-header align-items-center d-flex justify-content-between"
@@ -29,7 +30,7 @@ exports[`TopPagesCard renders 1`] = `
             role="presentation"
           >
             <use
-              xlink:href="#caret-bottom"
+              href="#caret-bottom"
             />
           </svg>
         </button>
@@ -194,7 +195,7 @@ exports[`TopPagesCard renders 1`] = `
     >
       <a
         class="button-root btn btn-outline-borderless btn-sm btn-outline-secondary"
-        href="/?rangeKey=30"
+        href="/link-to-the-next-page?rangeKey=30&field=visitorsMetric&sortOrder=DESC"
       >
         view pages
         <svg
@@ -202,7 +203,7 @@ exports[`TopPagesCard renders 1`] = `
           role="presentation"
         >
           <use
-            xlink:href="#angle-right-small"
+            href="#angle-right-small"
           />
         </svg>
       </a>

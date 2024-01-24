@@ -5,13 +5,20 @@
 
 package com.liferay.blogs.internal.search;
 
+import com.liferay.blogs.internal.search.spi.model.index.contributor.BlogsEntryModelIndexerWriterContributor;
+import com.liferay.blogs.internal.search.spi.model.result.contributor.BlogsEntryModelSummaryContributor;
+import com.liferay.blogs.internal.search.spi.model.result.contributor.BlogsEntryModelVisibilityContributor;
 import com.liferay.blogs.model.BlogsEntry;
+import com.liferay.blogs.service.BlogsEntryLocalService;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.util.Localization;
+import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchConfigurator;
 import com.liferay.portal.search.spi.model.result.contributor.ModelSummaryContributor;
 import com.liferay.portal.search.spi.model.result.contributor.ModelVisibilityContributor;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -58,20 +65,31 @@ public class BlogsEntryModelSearchConfigurator
 		return _modelVisibilityContributor;
 	}
 
-	@Reference(
-		target = "(indexer.class.name=com.liferay.blogs.model.BlogsEntry)"
-	)
+	@Activate
+	protected void activate() {
+		_modelIndexWriterContributor =
+			new BlogsEntryModelIndexerWriterContributor(
+				_blogsEntryLocalService,
+				_dynamicQueryBatchIndexingActionableFactory);
+		_modelSummaryContributor = new BlogsEntryModelSummaryContributor(
+			_localization);
+		_modelVisibilityContributor = new BlogsEntryModelVisibilityContributor(
+			_blogsEntryLocalService);
+	}
+
+	@Reference
+	private BlogsEntryLocalService _blogsEntryLocalService;
+
+	@Reference
+	private DynamicQueryBatchIndexingActionableFactory
+		_dynamicQueryBatchIndexingActionableFactory;
+
+	@Reference
+	private Localization _localization;
+
 	private ModelIndexerWriterContributor<BlogsEntry>
 		_modelIndexWriterContributor;
-
-	@Reference(
-		target = "(indexer.class.name=com.liferay.blogs.model.BlogsEntry)"
-	)
 	private ModelSummaryContributor _modelSummaryContributor;
-
-	@Reference(
-		target = "(indexer.class.name=com.liferay.blogs.model.BlogsEntry)"
-	)
 	private ModelVisibilityContributor _modelVisibilityContributor;
 
 }

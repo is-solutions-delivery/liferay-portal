@@ -27,7 +27,7 @@ const TransLateActionBar = ({
 	translateLanguagesSelectorData,
 }) => {
 	return (
-		<nav className="component-tbar subnav-tbar-light tbar">
+		<nav className="management-bar management-bar-light navbar navbar-expand-md">
 			<ClayLayout.ContainerFluid view>
 				<ul className="tbar-nav">
 					{experienceSelectorData && (
@@ -77,7 +77,7 @@ const TransLateActionBar = ({
 								disabled={saveButtonDisabled}
 								displayType="secondary"
 								onClick={onSaveButtonClick}
-								small
+								size="sm"
 								type="submit"
 							>
 								{saveButtonLabel}
@@ -86,7 +86,7 @@ const TransLateActionBar = ({
 							<ClayButton
 								disabled={publishButtonDisabled}
 								displayType="primary"
-								small
+								size="sm"
 								type="submit"
 							>
 								{publishButtonLabel}

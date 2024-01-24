@@ -50,18 +50,21 @@ public class CategoryDTOConverter
 			return null;
 		}
 
-		AssetVocabulary assetVocabulary =
-			_assetVocabularyLocalService.getAssetVocabulary(
-				assetCategory.getVocabularyId());
-
 		return new Category() {
 			{
-				externalReferenceCode =
-					assetCategory.getExternalReferenceCode();
-				id = assetCategory.getCategoryId();
-				name = assetCategory.getName();
-				siteId = assetCategory.getGroupId();
-				vocabulary = assetVocabulary.getName();
+				setExternalReferenceCode(
+					assetCategory::getExternalReferenceCode);
+				setId(assetCategory::getCategoryId);
+				setName(assetCategory::getName);
+				setSiteId(assetCategory::getGroupId);
+				setVocabulary(
+					() -> {
+						AssetVocabulary assetVocabulary =
+							_assetVocabularyLocalService.getAssetVocabulary(
+								assetCategory.getVocabularyId());
+
+						return assetVocabulary.getName();
+					});
 			}
 		};
 	}

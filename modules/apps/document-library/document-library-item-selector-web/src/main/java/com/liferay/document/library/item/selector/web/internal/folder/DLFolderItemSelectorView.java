@@ -141,12 +141,13 @@ public class DLFolderItemSelectorView
 				_getGroupConnectedDepotEntries(themeDisplay);
 
 			if (!groupConnectedDepotEntries.contains(group.getGroupId())) {
-				folderId = DLFolderConstants.DEFAULT_PARENT_FOLDER_ID;
-
 				repositoryId = themeDisplay.getRefererGroupId();
 
 				if (repositoryId == 0) {
 					repositoryId = themeDisplay.getScopeGroupId();
+				}
+				else {
+					folderId = DLFolderConstants.DEFAULT_PARENT_FOLDER_ID;
 				}
 			}
 		}
@@ -154,8 +155,8 @@ public class DLFolderItemSelectorView
 		servletRequest.setAttribute(
 			DLSelectFolderDisplayContext.class.getName(),
 			new DLSelectFolderDisplayContext(
-				_dlAppService, _fetchFolder(folderId),
-				_folderModelResourcePermission,
+				itemSelectorCriterion.getBlockedFolderId(), _dlAppService,
+				_fetchFolder(folderId), _folderModelResourcePermission,
 				(HttpServletRequest)servletRequest, portletURL, repositoryId,
 				itemSelectorCriterion.getSelectedFolderId(),
 				itemSelectorCriterion.getSelectedRepositoryId(),

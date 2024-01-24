@@ -19,10 +19,8 @@ import com.liferay.portal.kernel.exception.PortalException;
  *
  * @author Alejandro Tardín
  */
-public interface ContentTransformer<T> {
+public interface ContentTransformer {
 
-	public ContentTransformerContentType<T> getContentTransformerContentType();
-
-	public T transform(T content) throws PortalException;
+	public String transform(String content) throws PortalException;
 
 }

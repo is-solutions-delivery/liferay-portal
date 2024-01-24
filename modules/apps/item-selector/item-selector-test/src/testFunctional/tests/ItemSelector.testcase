@@ -536,9 +536,7 @@ definition {
 
 		SelectFrame(locator1 = "ItemSelector#ITEM_SELECTOR_IFRAME");
 
-		for (var subheaderItem : list "Everywhere,Current Site") {
-			ManagementBar.viewNoSubheaderInFilterAndOrder(subheaderItem = ${subheaderItem});
-		}
+		AssertElementNotPresent(locator1 = "ManagementBar#FILTER");
 	}
 
 	@description = "It ensures that the web content draft in an Asset Library cannot be found when searching in an Item Selector in that Library."
@@ -1048,7 +1046,7 @@ definition {
 
 	@description = "This ensures that the location info of depot web content can be viewed through WCD on a connected site."
 	@ignore = "true"
-	@priority = 5
+	@priority = 4
 	@refactordone
 	test CanViewCorrectWCLocationInfo {
 		HeadlessSite.addSite(siteName = "Site Name");
@@ -1093,7 +1091,7 @@ definition {
 	}
 
 	@description = "This ensures that the location info of the documents can be viewed through Blogs on a connected site."
-	@priority = 5
+	@priority = 4
 	@refactordone
 	test CanViewDocumentsCorrectLocationInfo {
 		HeadlessSite.addSite(siteName = "Site Name");

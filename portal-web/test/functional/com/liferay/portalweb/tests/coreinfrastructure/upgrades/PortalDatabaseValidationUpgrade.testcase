@@ -14,21 +14,13 @@ definition {
 	test CompareLatest7413PartitionedUpgradedAndFreshDBSchemas {
 		property database.bare.enabled = "true";
 		property database.partition.enabled = "true";
+		property portal.acceptance = "true";
 		property portal.smoke.upgrades = "false";
 		property skip.start.app.server = "true";
 		property testcase.url = "file:///opt/dev/projects/github/liferay-portal/";
 
-		var releaseBundleVersion = PropsUtil.get("test.released.release.bundle.version");
-		var releaseBundleZipURL = PropsUtil.get("test.released.test.portal.bundle.zip.url");
-
 		task ("Given the user is using the latest 7413 portal version") {
-			AntCommands.runCommand("build-test.xml", "prepare-upgrade-released-bundle-test-environment -Dtest.released.release.bundle.version=${releaseBundleVersion} -Dtest.released.test.portal.bundle.zip.url=${releaseBundleZipURL}");
-
-			Portlet.startServer(keepOsGiState = "true");
-
-			AntCommands.runCommand("build-test.xml", "wait-for-license-activation");
-
-			Navigator.openSpecificURL(url = "http://localhost:8080");
+			Upgrade.startReleasedBundle();
 		}
 
 		task ("And a partitioned is present") {
@@ -41,11 +33,7 @@ definition {
 		}
 
 		task ("And the server is upgraded to a new version") {
-			Portlet.shutdownServer();
-
-			AntCommands.runCommand("build-test.xml", "prepare-upgrade-original-bundle-test-environment");
-
-			Portlet.startServer(deleteLiferayHome = "false");
+			Upgrade.restoreOriginalBundleAndUpgrade();
 
 			User.firstLoginPG(
 				password = "test",
@@ -68,7 +56,7 @@ definition {
 				newProperty = "upgrade.database.auto.run=false",
 				oldProperty = "upgrade.database.auto.run=true");
 
-			SQL.executeMySQLStatement(mysqlStatement = "DROP DATABASE lpartition_${upgradedCompanyId};");
+			SQL.executeSQLStatement(sqlStatement = "DROP DATABASE lpartition_${upgradedCompanyId};");
 
 			Portlet.startServer();
 
@@ -131,9 +119,9 @@ definition {
 		task ("When the user rebuild the database And clean the missing partitions") {
 			AntCommands.runCommand("build-test.xml", "rebuild-database -Ddatabase.type=mysql -Dsql.dir=sql/create-bare/ -Dsql.file=create-bare-mysql.sql");
 
-			SQL.executeMySQLStatement(mysqlStatement = "DROP DATABASE lpartition_42638;");
+			SQL.executeSQLStatement(sqlStatement = "DROP DATABASE lpartition_42638;");
 
-			SQL.executeMySQLStatement(mysqlStatement = "DROP DATABASE lpartition_44913;");
+			SQL.executeSQLStatement(sqlStatement = "DROP DATABASE lpartition_44913;");
 		}
 
 		task ("And the user start the server again to have a fresh and clean base") {
@@ -260,6 +248,7 @@ definition {
 	@priority = 4
 	test CompareUpgradedAndFreshDatabaseSchemas7413 {
 		property data.archive.type = "data-archive-portal";
+		property portal.acceptance = "true";
 		property portal.smoke.upgrades = "true";
 		property portal.version = "7.4.13";
 
@@ -327,6 +316,7 @@ definition {
 	@priority = 4
 	test CompareUpgradedAndFreshDatabaseSchemas621021 {
 		property data.archive.type = "data-archive-portal";
+		property portal.acceptance = "true";
 		property portal.smoke.upgrades = "true";
 		property portal.version = "6.2.10.21";
 

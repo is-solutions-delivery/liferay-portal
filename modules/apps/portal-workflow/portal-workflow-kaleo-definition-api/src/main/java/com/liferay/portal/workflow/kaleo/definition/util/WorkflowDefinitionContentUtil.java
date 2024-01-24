@@ -36,7 +36,13 @@ import org.xml.sax.InputSource;
  */
 public class WorkflowDefinitionContentUtil {
 
-	public static String toJSON(String xml) throws WorkflowException {
+	public static String toJSON(String content) throws WorkflowException {
+		if (Validator.isNull(content) ||
+			content.startsWith(StringPool.OPEN_CURLY_BRACE)) {
+
+			return content;
+		}
+
 		try {
 			DocumentBuilderFactory documentBuilderFactory =
 				SecureXMLFactoryProviderUtil.newDocumentBuilderFactory();
@@ -45,7 +51,7 @@ public class WorkflowDefinitionContentUtil {
 				documentBuilderFactory.newDocumentBuilder();
 
 			Document document = documentBuilder.parse(
-				new InputSource(new StringReader(xml)));
+				new InputSource(new StringReader(content)));
 
 			JSONObject jsonObject = _toJSONObject(
 				document.getDocumentElement());
@@ -58,13 +64,19 @@ public class WorkflowDefinitionContentUtil {
 		}
 	}
 
-	public static String toXML(String json) throws WorkflowException {
+	public static String toXML(String content) throws WorkflowException {
+		if (Validator.isNull(content) ||
+			content.startsWith(StringPool.LESS_THAN)) {
+
+			return content;
+		}
+
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("<?xml version=\"1.0\"?>");
 
 		try {
-			_toNode(JSONFactoryUtil.createJSONObject(json), sb);
+			_toNode(JSONFactoryUtil.createJSONObject(content), sb);
 		}
 		catch (JSONException jsonException) {
 			throw new WorkflowException(

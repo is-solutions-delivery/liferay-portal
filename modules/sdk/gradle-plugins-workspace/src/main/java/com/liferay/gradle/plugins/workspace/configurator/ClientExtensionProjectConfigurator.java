@@ -477,7 +477,7 @@ public class ClientExtensionProjectConfigurator
 		_configureConfigurationDefault(project);
 		_configureTaskCheck(project);
 		_configureTaskClean(project);
-		_configureTaskDeploy(project);
+		_configureTaskDeploy(project, buildClientExtensionZipTaskProvider);
 
 		_configureClientExtensionTasks(
 			project, assembleClientExtensionTaskProvider,
@@ -680,6 +680,28 @@ public class ClientExtensionProjectConfigurator
 				taskInputs.file(clientExtensionYamlFile);
 
 				copy.into(clientExtensionBuildDir);
+
+				copy.doLast(
+					new Action<Task>() {
+
+						@Override
+						public void execute(Task copy1) {
+							if (!copy1.getDidWork()) {
+								return;
+							}
+
+							CreateClientExtensionConfigTask
+								createClientExtensionConfigTask =
+									createClientExtensionConfigTaskProvider.
+										get();
+
+							TaskOutputs taskOutputs =
+								createClientExtensionConfigTask.getOutputs();
+
+							taskOutputs.upToDateWhen(task1 -> false);
+						}
+
+					});
 			});
 
 		buildClientExtensionZipTaskProvider.configure(
@@ -705,6 +727,10 @@ public class ClientExtensionProjectConfigurator
 							}
 
 						}));
+
+				Property<String> archiveVersion = zip.getArchiveVersion();
+
+				archiveVersion.set("");
 
 				zip.from(clientExtensionBuildDir);
 				zip.include("**/*");
@@ -982,13 +1008,14 @@ public class ClientExtensionProjectConfigurator
 		delete.delete("build", "dist");
 	}
 
-	private void _configureTaskDeploy(Project project) {
+	private void _configureTaskDeploy(
+		Project project,
+		TaskProvider<Zip> buildClientExtensionZipTaskProvider) {
+
 		Copy copy = (Copy)GradleUtil.getTask(
 			project, LiferayBasePlugin.DEPLOY_TASK_NAME);
 
-		copy.dependsOn(BasePlugin.ASSEMBLE_TASK_NAME);
-
-		copy.from(_getZipFile(project));
+		copy.from(buildClientExtensionZipTaskProvider);
 	}
 
 	private String _getClassification(String id, String type) {
@@ -1053,11 +1080,6 @@ public class ClientExtensionProjectConfigurator
 				StringBundler.concat("Unable to parse ", file.getName(), "."),
 				ioException);
 		}
-	}
-
-	private File _getZipFile(Project project) {
-		return project.file(
-			"dist/" + GradleUtil.getArchivesBaseName(project) + ".zip");
 	}
 
 	private boolean _isActiveProfile(Project project, String profileName) {

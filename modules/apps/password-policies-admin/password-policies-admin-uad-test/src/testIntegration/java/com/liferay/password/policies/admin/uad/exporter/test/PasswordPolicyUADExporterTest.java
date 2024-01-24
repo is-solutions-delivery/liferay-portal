@@ -6,7 +6,7 @@
 package com.liferay.password.policies.admin.uad.exporter.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.password.policies.admin.uad.test.PasswordPolicyUADTestUtil;
+import com.liferay.password.policies.admin.uad.test.util.PasswordPolicyUADTestUtil;
 import com.liferay.portal.kernel.model.PasswordPolicy;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -42,11 +42,6 @@ public class PasswordPolicyUADExporterTest
 		_passwordPolicies.add(passwordPolicy);
 
 		return passwordPolicy;
-	}
-
-	@Override
-	protected String getPrimaryKeyName() {
-		return "passwordPolicyId";
 	}
 
 	@Override

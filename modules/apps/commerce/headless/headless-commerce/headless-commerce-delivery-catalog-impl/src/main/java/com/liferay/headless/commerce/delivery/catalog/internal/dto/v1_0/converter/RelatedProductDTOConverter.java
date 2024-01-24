@@ -37,14 +37,17 @@ public class RelatedProductDTOConverter
 			_cpDefinitionLinkLocalService.getCPDefinitionLink(
 				(Long)dtoConverterContext.getId());
 
-		CProduct cProduct = cpDefinitionLink.getCProduct();
-
 		return new RelatedProduct() {
 			{
-				id = cpDefinitionLink.getCPDefinitionLinkId();
-				priority = cpDefinitionLink.getPriority();
-				productId = cProduct.getCProductId();
-				type = cpDefinitionLink.getType();
+				setId(cpDefinitionLink::getCPDefinitionLinkId);
+				setPriority(cpDefinitionLink::getPriority);
+				setProductId(
+					() -> {
+						CProduct cProduct = cpDefinitionLink.getCProduct();
+
+						return cProduct.getCProductId();
+					});
+				setType(cpDefinitionLink::getType);
 			}
 		};
 	}

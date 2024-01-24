@@ -65,7 +65,6 @@ public class AddAssetListEntryMVCActionCommand extends BaseMVCActionCommand {
 
 				assetListEntry =
 					_assetListEntryService.addDynamicAssetListEntry(
-						serviceContext.getUserId(),
 						serviceContext.getScopeGroupId(), title,
 						UnicodePropertiesBuilder.create(
 							true
@@ -124,6 +123,8 @@ public class AddAssetListEntryMVCActionCommand extends BaseMVCActionCommand {
 			}
 		).setParameter(
 			"assetListEntryId", assetListEntry.getAssetListEntryId()
+		).setParameter(
+			"backURLTitle", ParamUtil.getString(actionRequest, "backURLTitle")
 		).buildString();
 	}
 

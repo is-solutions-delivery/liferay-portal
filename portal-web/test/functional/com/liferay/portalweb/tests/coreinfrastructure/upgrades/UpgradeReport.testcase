@@ -157,6 +157,67 @@ definition {
 		}
 	}
 
+	@description = "LPS-193985: The upgrade report is genenerated in the default path when the directory specified is write protected"
+	@ignore = "true"
+	@priority = 3
+	test ReportGeneratedInDefaultPathWhenWriteProtectedDirectory {
+		property custom.properties = "upgrade.report.dir=${liferay.home}/tools/portal-tools-db-upgrade-client/temp";
+		property database.auto.upgrade.enabled = "true";
+		property skip.upgrade-legacy-database = "true";
+
+		task ("Given a write protected directory") {
+			AntCommands.runCommand("modules/util/portal-tools-db-upgrade-client/src/testFunctional/ant/build-test-db-upgrade-client.xml", "create-write-protected-directory");
+		}
+
+		task ("When upgrade is complete") {
+			Portlet.startServer(deleteLiferayHome = "false");
+		}
+
+		task ("Then the upgrade report is generated in the default directory") {
+			var liferayHome = PropsUtil.get("liferay.home.dir.name");
+			var upgradeLogContent = Log.getLogFileContent();
+
+			if (!(contains(${upgradeLogContent}, "Unable to generate the upgrade report at ${liferayHome}/tools/portal-tools-db-upgrade-client/temp"))) {
+				fail("Unable to generate upgrade report file message not present");
+			}
+
+			var upgradeReportExists = FileUtil.exists("${liferayHome}/reports/upgrade_report.info");
+
+			if (${upgradeReportExists} == "false") {
+				fail("Upgrade report is not generated in default directory: ${liferayHome}/reports");
+			}
+		}
+
+		task ("Clean up write protected directory") {
+			AntCommands.runCommand("modules/util/portal-tools-db-upgrade-client/src/testFunctional/ant/build-test-db-upgrade-client.xml", "delete-write-protected-directory");
+		}
+	}
+
+	@description = "LPS-193985: The upgrade report will create the nonexistent directory and generate the report"
+	@priority = 3
+	test ReportGeneratedInNonExistentDirectory {
+		property custom.upgrade.properties = "upgrade.report.dir=${liferay.home}/tools/portal-tools-db-upgrade-client/temp";
+
+		task ("Then the upgrade report is generated in the specified nonexistent directory") {
+			var liferayHome = PropsUtil.get("liferay.home.dir.name");
+
+			var upgradeReportExists = FileUtil.exists("${liferayHome}/tools/portal-tools-db-upgrade-client/temp/upgrade_report.info");
+
+			if (${upgradeReportExists} == "false") {
+				fail("Upgrade report is not generated in specified directory: ${liferayHome}/tools/portal-tools-db-upgrade-client/temp");
+			}
+		}
+
+		task ("And the upgrade report trace line matches the specified path") {
+			var upgradeLogContent = Log.getUpgradeLogFileContent();
+			var liferayHome = PropsUtil.get("liferay.home.dir.name");
+
+			if (!(contains(${upgradeLogContent}, "Upgrade report generated in ${liferayHome}/tools/portal-tools-db-upgrade-client/temp/upgrade_report.info"))) {
+				fail("Upgrade report file path message not present");
+			}
+		}
+	}
+
 	@description = "LPS-154683: Upgrade Report is created when property is set to true"
 	@priority = 4
 	test ReportGeneratedWhenEnabled {
@@ -176,11 +237,9 @@ definition {
 	@description = "LPS-158740: Upgrade Report is created and populated when using auto-upgrade"
 	@priority = 4
 	test ReportGeneratedWithAutoUpgrade {
-		property custom.properties = "upgrade.report.enabled=true";
 		property database.auto.upgrade.enabled = "true";
 		property skip.start.app.server = "false";
 		property skip.upgrade-legacy-database = "true";
-		property upgrade.reports.enabled = "false";
 
 		task ("Look for the upgrade report") {
 			var liferayHome = PropsUtil.get("liferay.home.dir.name");
@@ -349,12 +408,11 @@ definition {
 	@description = "LPS-158743: Upgrade report is generated in the console using log context format"
 	@priority = 4
 	test ReportGeneratedWithLogContext {
-		property custom.properties = "upgrade.log.context.enabled=true${line.separator}upgrade.report.enabled=true";
+		property custom.properties = "upgrade.log.context.enabled=true";
 		property database.auto.upgrade.enabled = "true";
 		property log.context.enabled = "true";
 		property skip.start.app.server = "false";
 		property skip.upgrade-legacy-database = "true";
-		property upgrade.reports.enabled = "false";
 
 		task ("Check report is generated console") {
 			var logContent = Log.getLogFileContent();
@@ -460,8 +518,12 @@ definition {
 	@description = "LPS-154683: The Upgrade Report should not be deleted on additional upgrade runs."
 	@priority = 4
 	test ReportPersistThroughAdditionalUpgradeRuns {
+		property custom.upgrade.properties = "upgrade.report.dir=${liferay.home}/tools/portal-tools-db-upgrade-client/temp";
+
+		var liferayHome = PropsUtil.get("liferay.home.dir.name");
+
 		task ("Look for the upgrade report") {
-			var upgradeReportOriginal = UpgradeReport.getUpgradeReportFileContent();
+			var upgradeReportOriginal = UpgradeReport.getUpgradeReportFileContent(directory = "${liferayHome}/tools/portal-tools-db-upgrade-client/temp");
 		}
 
 		task ("Read the report. All upgrade processes and type defined as 'major' are expected") {
@@ -485,7 +547,7 @@ definition {
 		}
 
 		task ("Look for the upgrade report") {
-			var upgradeReportNew = UpgradeReport.getUpgradeReportFileContent();
+			var upgradeReportNew = UpgradeReport.getUpgradeReportFileContent(directory = "${liferayHome}/tools/portal-tools-db-upgrade-client/temp");
 		}
 
 		task ("Read the new report. No upgrade processes and type defined as 'no upgrade' are expected ") {
@@ -506,7 +568,7 @@ definition {
 			var liferayHome = PropsUtil.get("liferay.home.dir.name");
 			var upgradeReportFilePattern = StringUtil.split("**/upgrade_report.info.[0-9]*");
 
-			var upgradeReportRenamedFilePath = FileUtil.getIncludedResourceURLs(${upgradeReportFilePattern}, "${liferayHome}/tools/portal-tools-db-upgrade-client/reports");
+			var upgradeReportRenamedFilePath = FileUtil.getIncludedResourceURLs(${upgradeReportFilePattern}, "${liferayHome}/tools/portal-tools-db-upgrade-client/temp");
 
 			var upgradeReportRenamedFilePath = StringUtil.valueOf(${upgradeReportRenamedFilePath});
 
@@ -683,15 +745,49 @@ definition {
 		}
 	}
 
+	@description = "LPS-193985: Upgrade report directory can be specified with auto-upgrade"
+	@priority = 4
+	test UserCanSpecifyUpgradeReportDirectoryWithAutoUpgrade {
+		property custom.properties = "upgrade.report.dir=${liferay.home}/logs";
+		property database.auto.upgrade.enabled = "true";
+		property skip.start.app.server = "false";
+		property skip.upgrade-legacy-database = "true";
+
+		task ("Then the upgrade report is generated in the specified directory") {
+			var liferayHome = PropsUtil.get("liferay.home.dir.name");
+
+			var upgradeReportExists = FileUtil.exists("${liferayHome}/logs/upgrade_report.info");
+
+			if (${upgradeReportExists} == "false") {
+				fail("Upgrade report is not generated in specified directory: ${liferayHome}/logs");
+			}
+		}
+	}
+
+	@description = "LPS-193985: Upgrade report directory can be specified with upgrade tool"
+	@priority = 4
+	test UserCanSpecifyUpgradeReportDirectoryWithUpgradeTool {
+		property custom.upgrade.properties = "upgrade.report.dir=${liferay.home}/tools/portal-tools-db-upgrade-client/logs";
+
+		task ("Then the upgrade report is generated in the specified directory") {
+			var liferayHome = PropsUtil.get("liferay.home.dir.name");
+
+			var upgradeReportExists = FileUtil.exists("${liferayHome}/tools/portal-tools-db-upgrade-client/logs/upgrade_report.info");
+
+			if (${upgradeReportExists} == "false") {
+				fail("Upgrade report is not generated in specified directory: ${liferayHome}/tools/portal-tools-db-upgrade-client/logs");
+			}
+		}
+	}
+
 	@description = "LPS-158743: Upgrade report trace line is generated in the console"
 	@priority = 3
 	test UserNotifiedWhereToFindUpgradeReportAfterAutoUpgrade {
-		property custom.properties = "upgrade.log.context.enabled=true${line.separator}upgrade.report.enabled=true";
+		property custom.properties = "upgrade.log.context.enabled=true";
 		property database.auto.upgrade.enabled = "true";
 		property log.context.enabled = "true";
 		property skip.start.app.server = "false";
 		property skip.upgrade-legacy-database = "true";
-		property upgrade.reports.enabled = "false";
 
 		task ("When the upgrade report is finished generating, Then the user is notified in the Portal log file where to find the upgrade report") {
 			var liferayHome = PropsUtil.get("liferay.home.dir.name");
@@ -738,7 +834,7 @@ definition {
 		}
 
 		task ("Wait for upgrade to complete") {
-			AntCommands.runCommand("modules/util/portal-tools-db-upgrade-client/src/testFunctional/ant/build-test-db-upgrade-client.xml", "check-upgrade-status -Dupgrade.status=warning");
+			AntCommands.runCommand("modules/util/portal-tools-db-upgrade-client/src/testFunctional/ant/build-test-db-upgrade-client.xml", "check-upgrade-status -Dupgrade.status=success");
 		}
 
 		task ("Given upgrade.report is set When the portal gets upgraded and an warn was captured during the upgrade") {
@@ -758,15 +854,15 @@ definition {
 				fail("Upgrade report does not contain the warning class name.");
 			}
 
-			if (!(contains(${upgradeReportContent}, "1 occurrences of the following event: null"))) {
+			if (!(contains(${upgradeReportContent}, "2 occurrences of the following event: null"))) {
 				echo(${upgradeReportContent});
 
 				fail("Upgrade report does not contain the warning message.");
 			}
 		}
 
-		task ("and the user can check the upgrade result as Warning") {
-			if (!(contains(${upgradeReportContent}, "Result: warning"))) {
+		task ("and the user can check the upgrade result as success") {
+			if (!(contains(${upgradeReportContent}, "Result: success"))) {
 				echo(${upgradeReportContent});
 
 				fail("Warning upgrade result not present in upgrade report");

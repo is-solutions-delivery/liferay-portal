@@ -4,6 +4,7 @@
  */
 
 import ClayButton from '@clayui/button';
+import {ClayRadio, ClayRadioGroup} from '@clayui/form';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import ClayModal from '@clayui/modal';
 import {sub} from 'frontend-js-web';
@@ -122,6 +123,8 @@ function ReviewExperimentModal({modalObserver, onModalClose, onRun, variants}) {
 		[setHeight, success]
 	);
 
+	const [selectedTestType, setSelectedTestType] = useState('AB');
+
 	return (
 		<ClayModal observer={modalObserver} size="lg">
 			<ClayModal.Header>
@@ -134,7 +137,7 @@ function ReviewExperimentModal({modalObserver, onModalClose, onRun, variants}) {
 				{success ? (
 					<div
 						className="text-center"
-						style={{height: height + 'px'}}
+						style={{maxHeight: height + 'px'}}
 					>
 						<img
 							alt=""
@@ -147,24 +150,68 @@ function ReviewExperimentModal({modalObserver, onModalClose, onRun, variants}) {
 					</div>
 				) : (
 					<div ref={measureHeight}>
-						<h3 className="border-bottom-0 sheet-subtitle text-secondary">
-							{Liferay.Language.get('traffic-split')}
-						</h3>
+						{!Liferay.FeatureFlags['LRAC-15017'] && (
+							<h3 className="border-bottom-0 sheet-subtitle text-secondary">
+								{Liferay.Language.get('traffic-split')}
+							</h3>
+						)}
+
+						{Liferay.FeatureFlags['LRAC-15017'] && (
+							<>
+								<h3 className="sheet-subtitle text-secondary">
+									{Liferay.Language.get('test-type')}
+								</h3>
+
+								<p className="small">
+									{Liferay.Language.get(
+										'choose-how-your-experiment-is-going-to-be-measured'
+									)}
+								</p>
+
+								<label>
+									{Liferay.Language.get('standard')}
+								</label>
+
+								<p className="small">
+									{Liferay.Language.get(
+										'use-the-ab-test-methodology-to-determine-which-variant-performs-better-based-on-statistical-significance'
+									)}
+								</p>
+
+								<ClayRadioGroup
+									inline
+									onChange={setSelectedTestType}
+									value={selectedTestType}
+								>
+									<ClayRadio
+										label={Liferay.Language.get(
+											'enable-standard-test-type'
+										)}
+										value="AB"
+									/>
+								</ClayRadioGroup>
+
+								<h3 className="border-bottom-0 mt-3 sheet-subtitle text-secondary">
+									{Liferay.Language.get('traffic-split')}
+								</h3>
+							</>
+						)}
 
 						<SplitPicker
+							disabled={selectedTestType === 'MAB'}
 							onChange={(variants) => {
 								setDraftVariants(variants);
 							}}
+							selectedTestType={selectedTestType}
 							variants={draftVariants}
 						/>
-
-						<hr />
 
 						<h3 className="border-bottom-0 sheet-subtitle text-secondary">
 							{Liferay.Language.get('confidence-level')}
 						</h3>
 
 						<SliderWithLabel
+							disabled={selectedTestType === 'MAB'}
 							label={Liferay.Language.get(
 								'confidence-level-required'
 							)}
@@ -173,6 +220,31 @@ function ReviewExperimentModal({modalObserver, onModalClose, onRun, variants}) {
 							onValueChange={setConfidenceLevel}
 							value={confidenceLevel}
 						/>
+
+						{Liferay.FeatureFlags['LRAC-15017'] && (
+							<>
+								<label>{Liferay.Language.get('Dynamic')}</label>
+
+								<p className="small">
+									{Liferay.Language.get(
+										'use-the-multiarmed-bandit-method-to-determine-which-variant-performs-better-by-adapting-dynamically'
+									)}
+								</p>
+
+								<ClayRadioGroup
+									inline
+									onChange={setSelectedTestType}
+									value={selectedTestType}
+								>
+									<ClayRadio
+										label={Liferay.Language.get(
+											'enable-dynamic-test-type'
+										)}
+										value="MAB"
+									/>
+								</ClayRadioGroup>
+							</>
+						)}
 
 						<hr />
 
@@ -260,6 +332,7 @@ function ReviewExperimentModal({modalObserver, onModalClose, onRun, variants}) {
 
 		onRun({
 			confidenceLevel: percentageNumberToIndex(confidenceLevel),
+			segmentsExperimentType: selectedTestType,
 			splitVariantsMap,
 		}).then(() => {
 			if (mountedRef.current) {

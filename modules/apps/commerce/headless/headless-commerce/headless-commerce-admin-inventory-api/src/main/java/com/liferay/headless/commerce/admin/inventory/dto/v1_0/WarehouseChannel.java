@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -55,11 +56,19 @@ public class WarehouseChannel implements Serializable {
 	@Schema
 	@Valid
 	public Map<String, Map<String, String>> getActions() {
+		if (_actionsSupplier != null) {
+			actions = _actionsSupplier.get();
+
+			_actionsSupplier = null;
+		}
+
 		return actions;
 	}
 
 	public void setActions(Map<String, Map<String, String>> actions) {
 		this.actions = actions;
+
+		_actionsSupplier = null;
 	}
 
 	@JsonIgnore
@@ -67,52 +76,77 @@ public class WarehouseChannel implements Serializable {
 		UnsafeSupplier<Map<String, Map<String, String>>, Exception>
 			actionsUnsafeSupplier) {
 
-		try {
-			actions = actionsUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_actionsSupplier = () -> {
+			try {
+				return actionsUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Map<String, Map<String, String>> actions;
 
+	@JsonIgnore
+	private Supplier<Map<String, Map<String, String>>> _actionsSupplier;
+
 	@Schema
 	@Valid
 	public Channel getChannel() {
+		if (_channelSupplier != null) {
+			channel = _channelSupplier.get();
+
+			_channelSupplier = null;
+		}
+
 		return channel;
 	}
 
 	public void setChannel(Channel channel) {
 		this.channel = channel;
+
+		_channelSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setChannel(
 		UnsafeSupplier<Channel, Exception> channelUnsafeSupplier) {
 
-		try {
-			channel = channelUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_channelSupplier = () -> {
+			try {
+				return channelUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Channel channel;
 
+	@JsonIgnore
+	private Supplier<Channel> _channelSupplier;
+
 	@Schema(example = "PAB-34098-789-N")
 	public String getChannelExternalReferenceCode() {
+		if (_channelExternalReferenceCodeSupplier != null) {
+			channelExternalReferenceCode =
+				_channelExternalReferenceCodeSupplier.get();
+
+			_channelExternalReferenceCodeSupplier = null;
+		}
+
 		return channelExternalReferenceCode;
 	}
 
@@ -120,6 +154,8 @@ public class WarehouseChannel implements Serializable {
 		String channelExternalReferenceCode) {
 
 		this.channelExternalReferenceCode = channelExternalReferenceCode;
+
+		_channelExternalReferenceCodeSupplier = null;
 	}
 
 	@JsonIgnore
@@ -127,45 +163,59 @@ public class WarehouseChannel implements Serializable {
 		UnsafeSupplier<String, Exception>
 			channelExternalReferenceCodeUnsafeSupplier) {
 
-		try {
-			channelExternalReferenceCode =
-				channelExternalReferenceCodeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_channelExternalReferenceCodeSupplier = () -> {
+			try {
+				return channelExternalReferenceCodeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String channelExternalReferenceCode;
 
+	@JsonIgnore
+	private Supplier<String> _channelExternalReferenceCodeSupplier;
+
 	@DecimalMin("0")
 	@Schema(example = "30130")
 	public Long getChannelId() {
+		if (_channelIdSupplier != null) {
+			channelId = _channelIdSupplier.get();
+
+			_channelIdSupplier = null;
+		}
+
 		return channelId;
 	}
 
 	public void setChannelId(Long channelId) {
 		this.channelId = channelId;
+
+		_channelIdSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setChannelId(
 		UnsafeSupplier<Long, Exception> channelIdUnsafeSupplier) {
 
-		try {
-			channelId = channelIdUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_channelIdSupplier = () -> {
+			try {
+				return channelIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
@@ -173,37 +223,60 @@ public class WarehouseChannel implements Serializable {
 	@NotNull
 	protected Long channelId;
 
+	@JsonIgnore
+	private Supplier<Long> _channelIdSupplier;
+
 	@DecimalMin("0")
 	@Schema(example = "30643")
 	public Long getWarehouseChannelId() {
+		if (_warehouseChannelIdSupplier != null) {
+			warehouseChannelId = _warehouseChannelIdSupplier.get();
+
+			_warehouseChannelIdSupplier = null;
+		}
+
 		return warehouseChannelId;
 	}
 
 	public void setWarehouseChannelId(Long warehouseChannelId) {
 		this.warehouseChannelId = warehouseChannelId;
+
+		_warehouseChannelIdSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setWarehouseChannelId(
 		UnsafeSupplier<Long, Exception> warehouseChannelIdUnsafeSupplier) {
 
-		try {
-			warehouseChannelId = warehouseChannelIdUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_warehouseChannelIdSupplier = () -> {
+			try {
+				return warehouseChannelIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Long warehouseChannelId;
 
+	@JsonIgnore
+	private Supplier<Long> _warehouseChannelIdSupplier;
+
 	@Schema(example = "DAB-34098-789-N")
 	public String getWarehouseExternalReferenceCode() {
+		if (_warehouseExternalReferenceCodeSupplier != null) {
+			warehouseExternalReferenceCode =
+				_warehouseExternalReferenceCodeSupplier.get();
+
+			_warehouseExternalReferenceCodeSupplier = null;
+		}
+
 		return warehouseExternalReferenceCode;
 	}
 
@@ -211,6 +284,8 @@ public class WarehouseChannel implements Serializable {
 		String warehouseExternalReferenceCode) {
 
 		this.warehouseExternalReferenceCode = warehouseExternalReferenceCode;
+
+		_warehouseExternalReferenceCodeSupplier = null;
 	}
 
 	@JsonIgnore
@@ -218,51 +293,68 @@ public class WarehouseChannel implements Serializable {
 		UnsafeSupplier<String, Exception>
 			warehouseExternalReferenceCodeUnsafeSupplier) {
 
-		try {
-			warehouseExternalReferenceCode =
-				warehouseExternalReferenceCodeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_warehouseExternalReferenceCodeSupplier = () -> {
+			try {
+				return warehouseExternalReferenceCodeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String warehouseExternalReferenceCode;
 
+	@JsonIgnore
+	private Supplier<String> _warehouseExternalReferenceCodeSupplier;
+
 	@DecimalMin("0")
 	@Schema(example = "30324")
 	public Long getWarehouseId() {
+		if (_warehouseIdSupplier != null) {
+			warehouseId = _warehouseIdSupplier.get();
+
+			_warehouseIdSupplier = null;
+		}
+
 		return warehouseId;
 	}
 
 	public void setWarehouseId(Long warehouseId) {
 		this.warehouseId = warehouseId;
+
+		_warehouseIdSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setWarehouseId(
 		UnsafeSupplier<Long, Exception> warehouseIdUnsafeSupplier) {
 
-		try {
-			warehouseId = warehouseIdUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_warehouseIdSupplier = () -> {
+			try {
+				return warehouseIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	@NotNull
 	protected Long warehouseId;
+
+	@JsonIgnore
+	private Supplier<Long> _warehouseIdSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -291,6 +383,8 @@ public class WarehouseChannel implements Serializable {
 
 		sb.append("{");
 
+		Map<String, Map<String, String>> actions = getActions();
+
 		if (actions != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -301,6 +395,8 @@ public class WarehouseChannel implements Serializable {
 			sb.append(_toJSON(actions));
 		}
 
+		Channel channel = getChannel();
+
 		if (channel != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -310,6 +406,8 @@ public class WarehouseChannel implements Serializable {
 
 			sb.append(String.valueOf(channel));
 		}
+
+		String channelExternalReferenceCode = getChannelExternalReferenceCode();
 
 		if (channelExternalReferenceCode != null) {
 			if (sb.length() > 1) {
@@ -325,6 +423,8 @@ public class WarehouseChannel implements Serializable {
 			sb.append("\"");
 		}
 
+		Long channelId = getChannelId();
+
 		if (channelId != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -335,6 +435,8 @@ public class WarehouseChannel implements Serializable {
 			sb.append(channelId);
 		}
 
+		Long warehouseChannelId = getWarehouseChannelId();
+
 		if (warehouseChannelId != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -344,6 +446,9 @@ public class WarehouseChannel implements Serializable {
 
 			sb.append(warehouseChannelId);
 		}
+
+		String warehouseExternalReferenceCode =
+			getWarehouseExternalReferenceCode();
 
 		if (warehouseExternalReferenceCode != null) {
 			if (sb.length() > 1) {
@@ -358,6 +463,8 @@ public class WarehouseChannel implements Serializable {
 
 			sb.append("\"");
 		}
+
+		Long warehouseId = getWarehouseId();
 
 		if (warehouseId != null) {
 			if (sb.length() > 1) {

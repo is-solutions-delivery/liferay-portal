@@ -133,7 +133,7 @@ definition {
 		ObjectAdmin.goToFieldsTab();
 
 		ObjectAdmin.addObjectFieldViaUI(
-			fieldAttachment = "Upload Directly from the User's Computer",
+			fieldAttachment = "Upload Directly from the User",
 			fieldLabel = "Custom Attachment",
 			fieldType = "Attachment");
 
@@ -291,7 +291,9 @@ definition {
 
 		ObjectAdmin.goToCustomObject(objectName = "CustomObject199");
 
-		ObjectAdmin.addObjectPicklistFieldEntryViaUI(picklistOption = "Entry Test");
+		ObjectAdmin.addObjectPicklistFieldEntryViaUI(
+			labelName = "Field Picklist",
+			picklistOption = "Entry Test");
 
 		ObjectAdmin.goToCustomObject(objectName = "CustomObject199");
 

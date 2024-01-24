@@ -5,6 +5,9 @@
 
 package com.liferay.commerce.site.initializer;
 
+import com.liferay.account.settings.AccountEntryGroupSettings;
+import com.liferay.commerce.configuration.CommerceAccountGroupServiceConfiguration;
+import com.liferay.commerce.constants.CommerceConstants;
 import com.liferay.commerce.currency.service.CommerceCurrencyLocalService;
 import com.liferay.commerce.initializer.util.CPDefinitionsImporter;
 import com.liferay.commerce.initializer.util.CPOptionCategoriesImporter;
@@ -34,6 +37,7 @@ import com.liferay.commerce.product.service.CommerceCatalogLocalService;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.product.service.CommerceChannelService;
 import com.liferay.commerce.service.CommerceOrderTypeLocalService;
+import com.liferay.commerce.util.AccountEntryAllowedTypesUtil;
 import com.liferay.commerce.util.CommerceAccountRoleHelper;
 import com.liferay.headless.commerce.admin.account.dto.v1_0.AdminAccountGroup;
 import com.liferay.headless.commerce.admin.account.resource.v1_0.AdminAccountGroupResource;
@@ -49,6 +53,7 @@ import com.liferay.headless.commerce.admin.order.dto.v1_0.OrderType;
 import com.liferay.headless.commerce.admin.order.resource.v1_0.OrderTypeResource;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -63,7 +68,6 @@ import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.permission.ModelPermissionsFactory;
-import com.liferay.portal.kernel.settings.ArchivedSettingsFactory;
 import com.liferay.portal.kernel.settings.FallbackKeysSettingsUtil;
 import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
 import com.liferay.portal.kernel.settings.ModifiableSettings;
@@ -74,6 +78,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.URLUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
@@ -232,6 +237,10 @@ public class CommerceSiteInitializerImpl implements CommerceSiteInitializer {
 
 			modifiableSettings.store();
 		}
+
+		_accountEntryGroupSettings.setAllowedTypes(
+			commerceChannel.getSiteGroupId(),
+			_getAllowedTypes(commerceChannel.getGroupId()));
 	}
 
 	private List<CommerceInventoryWarehouse> _addCommerceInventoryWarehouses(
@@ -280,7 +289,7 @@ public class CommerceSiteInitializerImpl implements CommerceSiteInitializer {
 					FileUtil.getShortFileName(
 						FileUtil.stripExtension(url.getPath())),
 					StringUtil.replace(
-						StringUtil.read(url.openStream()), "[$", "$]",
+						URLUtil.toString(url), "[$", "$]",
 						stringUtilReplaceValues));
 			}
 		}
@@ -367,11 +376,12 @@ public class CommerceSiteInitializerImpl implements CommerceSiteInitializer {
 			ProductSpecification productSpecification =
 				new ProductSpecification() {
 					{
-						productId = cpDefinition.getCPDefinitionId();
-						specificationKey = jsonObject.getString("key");
-						value = JSONUtil.toStringMap(
-							jsonObject.getJSONObject(
-								"productSpecificationValue"));
+						setProductId(cpDefinition::getCPDefinitionId);
+						setSpecificationKey(() -> jsonObject.getString("key"));
+						setValue(
+							() -> JSONUtil.toStringMap(
+								jsonObject.getJSONObject(
+									"productSpecificationValue")));
 					}
 				};
 
@@ -399,10 +409,11 @@ public class CommerceSiteInitializerImpl implements CommerceSiteInitializer {
 				QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 		for (CPDefinition cpDefinition : existingCPDefinitions) {
+			String externalReferenceCode = cpDefinition.getCProduct(
+			).getExternalReferenceCode();
+
 			stringUtilReplaceValues.put(
-				"CP_DEFINITION_ID:" +
-					cpDefinition.getCProduct(
-					).getExternalReferenceCode(),
+				"CP_DEFINITION_ID:" + externalReferenceCode,
 				String.valueOf(cpDefinition.getCPDefinitionId()));
 		}
 
@@ -431,10 +442,11 @@ public class CommerceSiteInitializerImpl implements CommerceSiteInitializer {
 		}
 
 		for (CPDefinition cpDefinition : cpDefinitions) {
+			String externalReferenceCode = cpDefinition.getCProduct(
+			).getExternalReferenceCode();
+
 			stringUtilReplaceValues.put(
-				"CP_DEFINITION_ID:" +
-					cpDefinition.getCProduct(
-					).getExternalReferenceCode(),
+				"CP_DEFINITION_ID:" + externalReferenceCode,
 				String.valueOf(cpDefinition.getCPDefinitionId()));
 
 			List<CPInstance> cpInstances = cpDefinition.getCPInstances();
@@ -499,14 +511,15 @@ public class CommerceSiteInitializerImpl implements CommerceSiteInitializer {
 				new ProductOption[] {
 					new ProductOption() {
 						{
-							facetable = cpOption.isFacetable();
-							fieldType = cpOption.getCommerceOptionTypeKey();
-							key = cpOption.getKey();
-							name = LocalizedMapUtil.getI18nMap(
-								cpOption.getNameMap());
-							optionId = cpOption.getCPOptionId();
-							required = cpOption.isRequired();
-							skuContributor = cpOption.isSkuContributor();
+							setFacetable(cpOption::isFacetable);
+							setFieldType(cpOption::getCommerceOptionTypeKey);
+							setKey(cpOption::getKey);
+							setName(
+								() -> LocalizedMapUtil.getI18nMap(
+									cpOption.getNameMap()));
+							setOptionId(cpOption::getCPOptionId);
+							setRequired(cpOption::isRequired);
+							setSkuContributor(cpOption::isSkuContributor);
 						}
 					}
 				});
@@ -907,6 +920,21 @@ public class CommerceSiteInitializerImpl implements CommerceSiteInitializer {
 			serviceContext.getUserId());
 	}
 
+	private String[] _getAllowedTypes(long commerceChannelGroupId)
+		throws Exception {
+
+		CommerceAccountGroupServiceConfiguration
+			commerceAccountGroupServiceConfiguration =
+				_configurationProvider.getConfiguration(
+					CommerceAccountGroupServiceConfiguration.class,
+					new GroupServiceSettingsLocator(
+						commerceChannelGroupId,
+						CommerceConstants.SERVICE_NAME_COMMERCE_ACCOUNT));
+
+		return AccountEntryAllowedTypesUtil.getAllowedTypes(
+			commerceAccountGroupServiceConfiguration.commerceSiteType());
+	}
+
 	private void _updateCPInstanceProperties(
 			CPDefinition cpDefinition,
 			JSONObject cpInstancePropertiesJSONObject,
@@ -971,10 +999,10 @@ public class CommerceSiteInitializerImpl implements CommerceSiteInitializer {
 		CommerceSiteInitializerImpl.class);
 
 	@Reference
-	private AdminAccountGroupResource.Factory _adminAccountGroupResourceFactory;
+	private AccountEntryGroupSettings _accountEntryGroupSettings;
 
 	@Reference
-	private ArchivedSettingsFactory _archivedSettingsFactory;
+	private AdminAccountGroupResource.Factory _adminAccountGroupResourceFactory;
 
 	@Reference
 	private CatalogResource.Factory _catalogResourceFactory;
@@ -1013,6 +1041,9 @@ public class CommerceSiteInitializerImpl implements CommerceSiteInitializer {
 
 	@Reference
 	private CommercePriceListLocalService _commercePriceListLocalService;
+
+	@Reference
+	private ConfigurationProvider _configurationProvider;
 
 	@Reference
 	private CPDefinitionLocalService _cpDefinitionLocalService;

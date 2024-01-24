@@ -1470,6 +1470,17 @@ public class VerifyProperties {
 			"com.liferay.search.web"
 		},
 
+		// Session
+
+		{
+			"session.timeout.auto.extend", "auto-extend",
+			"com.liferay.frontend.js.web"
+		},
+		{
+			"session.timeout.auto.extend.offset", "auto-extend-offset",
+			"com.liferay.frontend.js.web"
+		},
+
 		// Site Map
 
 		{
@@ -1704,8 +1715,8 @@ public class VerifyProperties {
 		"com.liferay.portal.servlet.filters.validhtml.ValidHtmlFilter",
 		"com.liferay.portal.upload.UploadServletRequestImpl.max.size",
 		"com.liferay.portal.upload.UploadServletRequestImpl.temp.dir",
-		"commons.pool.enabled", "company.security.send.password",
-		"company.settings.form.configuration",
+		"commons.pool.enabled", "company.security.auth.requires.https",
+		"company.security.send.password", "company.settings.form.configuration",
 		"company.settings.form.identification",
 		"company.settings.form.miscellaneous", "company.settings.form.social",
 		"control.panel.home.portlet.id",
@@ -1735,7 +1746,7 @@ public class VerifyProperties {
 		"dl.file.entry.preview.auto.create.on.upgrade",
 		"dl.file.entry.preview.document.depth",
 		"dl.file.entry.previewable.processor.max.size",
-		"dl.file.entry.read.count.enabled",
+		"dl.file.entry.processors", "dl.file.entry.read.count.enabled",
 		"dl.file.entry.thumbnail.video.frame.percentage",
 		"dl.file.entry.type.ig.image.auto.create.on.upgrade",
 		"dl.file.entry.version.policy", "dl.file.extensions",
@@ -1816,6 +1827,7 @@ public class VerifyProperties {
 		"icq.login", "icq.password", "image.hook.impl",
 		"image.hook.file.system.root.dir", "index.dump.compression.enabled",
 		"index.filter.search.limit", "index.on.upgrade",
+		"index.permission.filter.search.amplification.factor",
 		"index.portal.field.analyzer.enabled", "index.search.engine.id",
 		"index.search.highlight.enabled", "index.search.writer.max.queue.size",
 		"index.read.only", "index.with.thread", "intraband.impl",
@@ -2009,6 +2021,7 @@ public class VerifyProperties {
 		"sites.form.add.miscellaneous", "sites.form.add.seo",
 		"sites.form.update.advanced", "sites.form.update.main",
 		"sites.form.update.miscellaneous", "sites.form.update.seo",
+		"spring.infrastructure.configs",
 		"sql.data.com.liferay.portal.kernel.model.Country.country.id",
 		"sql.data.com.liferay.portal.kernel.model.ListType.account.address",
 		"sql.data.com.liferay.portal.kernel.model.ListType.account.email." +
@@ -2067,6 +2080,7 @@ public class VerifyProperties {
 	private static final String[] _OBSOLETE_SYSTEM_KEYS = {
 		"com.liferay.petra.memory.FinalizeManager.thread.enabled",
 		"com.liferay.portal.kernel.memory.FinalizeManager.thread.enabled",
+		"com.liferay.portal.kernel.util.ServiceProxyFactory.timeout",
 		"com.liferay.util.axis.SimpleHTTPSender.regexp.pattern",
 		"com.liferay.util.Http.proxy.host", "com.liferay.util.Http.proxy.port",
 		"com.liferay.util.XSSUtil.regexp.pattern",

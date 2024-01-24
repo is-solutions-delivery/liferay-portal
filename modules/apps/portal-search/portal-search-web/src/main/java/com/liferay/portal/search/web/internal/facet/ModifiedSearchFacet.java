@@ -153,7 +153,7 @@ public class ModifiedSearchFacet extends BaseJSPSearchFacet {
 
 	private JSONArray _replaceAliases(JSONArray rangesJSONArray) {
 		return DateRangeFactoryUtil.replaceAliases(
-			rangesJSONArray, CalendarFactoryUtil.getCalendar(), _jsonFactory);
+			rangesJSONArray, CalendarFactoryUtil.getCalendar());
 	}
 
 	private static final String[] _LABELS = {

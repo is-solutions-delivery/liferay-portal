@@ -5,28 +5,42 @@
 
 package com.liferay.fragment.internal.processor;
 
+import com.liferay.fragment.constants.FragmentWebKeys;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.processor.CSSFragmentEntryProcessor;
+import com.liferay.fragment.processor.DefaultEditableValuesFragmentEntryProcessor;
 import com.liferay.fragment.processor.DocumentFragmentEntryProcessor;
+import com.liferay.fragment.processor.DocumentFragmentEntryValidator;
 import com.liferay.fragment.processor.FragmentEntryAutocompleteContributor;
 import com.liferay.fragment.processor.FragmentEntryProcessor;
 import com.liferay.fragment.processor.FragmentEntryProcessorContext;
 import com.liferay.fragment.processor.FragmentEntryProcessorRegistry;
 import com.liferay.fragment.processor.FragmentEntryValidator;
+import com.liferay.fragment.renderer.FragmentPortletRenderer;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
 import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerListFactory;
 import com.liferay.osgi.service.tracker.collections.map.PropertyServiceReferenceComparator;
 import com.liferay.petra.lang.CentralizedThreadLocal;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.model.impl.DefaultLayoutTypeAccessPolicyImpl;
+import com.liferay.portal.kernel.portlet.PortletIdCodec;
+import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -114,6 +128,25 @@ public class FragmentEntryProcessorRegistryImpl
 			}
 		}
 
+		Document document = _getDocument(html);
+
+		for (DefaultEditableValuesFragmentEntryProcessor
+				defaultEditableValuesFragmentEntryProcessor :
+					_defaultEditableValuesFragmentEntryProcessors) {
+
+			JSONObject defaultEditableValuesJSONObject =
+				defaultEditableValuesFragmentEntryProcessor.
+					getDefaultEditableValuesJSONObject(configuration, document);
+
+			if ((defaultEditableValuesJSONObject != null) &&
+				(defaultEditableValuesJSONObject.length() > 0)) {
+
+				jsonObject.put(
+					defaultEditableValuesFragmentEntryProcessor.getKey(),
+					defaultEditableValuesJSONObject);
+			}
+		}
+
 		return jsonObject;
 	}
 
@@ -140,6 +173,11 @@ public class FragmentEntryProcessorRegistryImpl
 			FragmentEntryLink fragmentEntryLink,
 			FragmentEntryProcessorContext fragmentEntryProcessorContext)
 		throws PortalException {
+
+		if (fragmentEntryLink.isTypePortlet()) {
+			return _renderWidgetHTML(
+				fragmentEntryLink, fragmentEntryProcessorContext);
+		}
 
 		String html = fragmentEntryLink.getHtml();
 
@@ -185,6 +223,15 @@ public class FragmentEntryProcessorRegistryImpl
 				html, configuration, LocaleUtil.getDefault());
 		}
 
+		Document document = _getDocument(html);
+
+		for (DocumentFragmentEntryValidator documentFragmentEntryValidator :
+				_documentFragmentEntryValidators) {
+
+			documentFragmentEntryValidator.validateFragmentEntryHTML(
+				document, configuration, LocaleUtil.getDefault());
+		}
+
 		validHTMLs.add(html);
 	}
 
@@ -195,8 +242,20 @@ public class FragmentEntryProcessorRegistryImpl
 			Collections.reverseOrder(
 				new PropertyServiceReferenceComparator<>(
 					"fragment.entry.processor.priority")));
+		_defaultEditableValuesFragmentEntryProcessors =
+			ServiceTrackerListFactory.open(
+				bundleContext,
+				DefaultEditableValuesFragmentEntryProcessor.class,
+				Collections.reverseOrder(
+					new PropertyServiceReferenceComparator<>(
+						"fragment.entry.processor.priority")));
 		_documentFragmentEntryProcessors = ServiceTrackerListFactory.open(
 			bundleContext, DocumentFragmentEntryProcessor.class,
+			Collections.reverseOrder(
+				new PropertyServiceReferenceComparator<>(
+					"fragment.entry.processor.priority")));
+		_documentFragmentEntryValidators = ServiceTrackerListFactory.open(
+			bundleContext, DocumentFragmentEntryValidator.class,
 			Collections.reverseOrder(
 				new PropertyServiceReferenceComparator<>(
 					"fragment.entry.processor.priority")));
@@ -220,7 +279,9 @@ public class FragmentEntryProcessorRegistryImpl
 	@Deactivate
 	protected void deactivate() {
 		_cssFragmentEntryProcessors.close();
+		_defaultEditableValuesFragmentEntryProcessors.close();
 		_documentFragmentEntryProcessors.close();
+		_documentFragmentEntryValidators.close();
 		_fragmentEntryAutocompleteContributors.close();
 		_fragmentEntryProcessors.close();
 		_fragmentEntryValidators.close();
@@ -238,6 +299,52 @@ public class FragmentEntryProcessorRegistryImpl
 		return document;
 	}
 
+	private String _renderWidgetHTML(
+			FragmentEntryLink fragmentEntryLink,
+			FragmentEntryProcessorContext fragmentEntryProcessorContext)
+		throws PortalException {
+
+		JSONObject jsonObject = _jsonFactory.createJSONObject(
+			fragmentEntryLink.getEditableValues());
+
+		String portletId = jsonObject.getString("portletId");
+
+		if (Validator.isNull(portletId)) {
+			return StringPool.BLANK;
+		}
+
+		HttpServletRequest httpServletRequest =
+			fragmentEntryProcessorContext.getHttpServletRequest();
+
+		String instanceId = jsonObject.getString("instanceId");
+
+		String encodedPortletId = PortletIdCodec.encode(portletId, instanceId);
+
+		String html = _fragmentPortletRenderer.renderPortlet(
+			fragmentEntryLink, httpServletRequest,
+			fragmentEntryProcessorContext.getHttpServletResponse(), portletId,
+			instanceId,
+			PortletPreferencesFactoryUtil.toXML(
+				PortletPreferencesFactoryUtil.getPortletPreferences(
+					httpServletRequest, encodedPortletId)));
+
+		String checkAccessAllowedToPortletCacheKey = StringBundler.concat(
+			"LIFERAY_SHARED_",
+			DefaultLayoutTypeAccessPolicyImpl.class.getName(), "#",
+			ParamUtil.getLong(httpServletRequest, "p_l_id"), "#",
+			encodedPortletId);
+
+		httpServletRequest.setAttribute(
+			FragmentWebKeys.ACCESS_ALLOWED_TO_FRAGMENT_ENTRY_LINK_ID +
+				fragmentEntryLink.getFragmentEntryLinkId(),
+			GetterUtil.getBoolean(
+				httpServletRequest.getAttribute(
+					checkAccessAllowedToPortletCacheKey),
+				true));
+
+		return html;
+	}
+
 	private static final ThreadLocal<Set<String>> _validHTMLsThreadLocal =
 		new CentralizedThreadLocal(
 			FragmentEntryProcessorRegistryImpl.class.getName() +
@@ -246,12 +353,19 @@ public class FragmentEntryProcessorRegistryImpl
 
 	private ServiceTrackerList<CSSFragmentEntryProcessor>
 		_cssFragmentEntryProcessors;
+	private ServiceTrackerList<DefaultEditableValuesFragmentEntryProcessor>
+		_defaultEditableValuesFragmentEntryProcessors;
 	private ServiceTrackerList<DocumentFragmentEntryProcessor>
 		_documentFragmentEntryProcessors;
+	private ServiceTrackerList<DocumentFragmentEntryValidator>
+		_documentFragmentEntryValidators;
 	private ServiceTrackerList<FragmentEntryAutocompleteContributor>
 		_fragmentEntryAutocompleteContributors;
 	private ServiceTrackerList<FragmentEntryProcessor> _fragmentEntryProcessors;
 	private ServiceTrackerList<FragmentEntryValidator> _fragmentEntryValidators;
+
+	@Reference
+	private FragmentPortletRenderer _fragmentPortletRenderer;
 
 	@Reference
 	private JSONFactory _jsonFactory;

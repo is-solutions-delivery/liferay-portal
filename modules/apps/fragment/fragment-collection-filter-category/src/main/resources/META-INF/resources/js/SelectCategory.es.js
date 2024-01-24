@@ -19,6 +19,7 @@ export default function SelectCategory({
 	fragmentEntryLinkId,
 	showSearch,
 	singleSelection = false,
+	targetCollections,
 }) {
 	const [selectedCategoryIds, setSelectedCategoryIds] = useState(() => {
 		const value = getCollectionFilterValue('category', fragmentEntryLinkId);
@@ -111,13 +112,14 @@ export default function SelectCategory({
 			footerContent={
 				singleSelection ? null : (
 					<ClayButton
-						onClick={() =>
+						onClick={() => {
 							setCollectionFilterValue(
 								'category',
 								fragmentEntryLinkId,
-								selectedCategoryIds
-							)
-						}
+								selectedCategoryIds,
+								targetCollections
+							);
+						}}
 						size="sm"
 					>
 						{Liferay.Language.get('apply')}

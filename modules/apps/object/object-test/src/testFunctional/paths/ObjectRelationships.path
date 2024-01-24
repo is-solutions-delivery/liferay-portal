@@ -21,11 +21,6 @@
 		<td></td>
 	</tr>
 	<tr>
-		<td>OPTIONS_TAB_RELATIONSHIPS</td>
-		<td>//button[@role='menuitem']//div[contains(.,'Relationship')]//span[contains(@class,'label-item') and contains(.,'${key_relationType}')]</td>
-		<td></td>
-	</tr>
-	<tr>
 		<td>OPTIONS_TAB_RELATIONSHIPS_LABEL_AND_RELATED_OBJECT</td>
 		<td>//div[contains(@class,'dnd-tr') and contains(.,'${key_label}')and contains(.,'${key_relatedObject}')]</td>
 		<td></td>
@@ -42,7 +37,7 @@
 	</tr>
 	<tr>
 		<td>OPTIONS_TAB_RELATIONSHIPS_DISABLED_NAME_OR_TYPE</td>
-		<td>//input[@disabled][contains(@class,'form-control') and contains(@value,'${key_relation}')]</td>
+		<td>//button[@disabled][contains(@class,'form-control') and contains(.,'${key_relation}')]</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -68,6 +63,16 @@
 	<tr>
 		<td>RELATIONSHIPS_FIELD</td>
 		<td>//*[contains(text(),'${field} Type')]/..//input</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>SELECTED_OBJECT_IN_MODAL</td>
+		<td>//label[contains(.,'${key_relationType}')]/../button[.='${key_relationObject}'] | //label[contains(.,'${key_relationType}')]//..//input[@value='${key_relationObject}']</td>
+		<td></td>
+	</tr>
+	<tr>
+		<td>VIEW_VALUE_DISABLED</td>
+		<td>//input[@disabled and contains(@value,'${key_valueName}')]</td>
 		<td></td>
 	</tr>
 </tbody>

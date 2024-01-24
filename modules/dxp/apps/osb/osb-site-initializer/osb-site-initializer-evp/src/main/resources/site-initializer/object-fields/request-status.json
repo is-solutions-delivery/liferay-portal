@@ -3,7 +3,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Picklist",
-			"defaultValue": "awaitingApprovalOnEvp",
+			"defaultValue": "awaitingApprovalOnEVP",
 			"externalReferenceCode": "EVP-REQUEST-STATUS-DEFAULT",
 			"indexed": true,
 			"indexedAsKeyword": false,
@@ -25,13 +25,13 @@
 										"key": "closed"
 									},
 									{
-										"key": "awaitingApprovalOnEvp"
+										"key": "awaitingApprovalOnEVP"
 									},
 									{
 										"key": "awaitingApprovalOnManager"
 									},
 									{
-										"key": "awaitCompanyVerification"
+										"key": "awaitOrganizationReview"
 									},
 									{
 										"key": "awaitingFinanceReview"
@@ -54,13 +54,13 @@
 										"key": "rejected"
 									},
 									{
-										"key": "awaitingApprovalOnEvp"
+										"key": "awaitingApprovalOnEVP"
 									},
 									{
 										"key": "awaitingApprovalOnManager"
 									},
 									{
-										"key": "awaitCompanyVerification"
+										"key": "awaitOrganizationReview"
 									},
 									{
 										"key": "awaitingFinanceReview"
@@ -77,7 +77,7 @@
 								]
 							},
 							{
-								"key": "awaitingApprovalOnEvp",
+								"key": "awaitingApprovalOnEVP",
 								"objectStateTransitions": [
 									{
 										"key": "rejected"
@@ -89,7 +89,7 @@
 										"key": "awaitingApprovalOnManager"
 									},
 									{
-										"key": "awaitCompanyVerification"
+										"key": "awaitOrganizationReview"
 									},
 									{
 										"key": "awaitingFinanceReview"
@@ -115,10 +115,10 @@
 										"key": "closed"
 									},
 									{
-										"key": "awaitingApprovalOnEvp"
+										"key": "awaitingApprovalOnEVP"
 									},
 									{
-										"key": "awaitCompanyVerification"
+										"key": "awaitOrganizationReview"
 									},
 									{
 										"key": "awaitingFinanceReview"
@@ -135,7 +135,7 @@
 								]
 							},
 							{
-								"key": "awaitCompanyVerification",
+								"key": "awaitOrganizationReview",
 								"objectStateTransitions": [
 									{
 										"key": "rejected"
@@ -144,7 +144,7 @@
 										"key": "closed"
 									},
 									{
-										"key": "awaitingApprovalOnEvp"
+										"key": "awaitingApprovalOnEVP"
 									},
 									{
 										"key": "awaitingApprovalOnManager"
@@ -173,13 +173,13 @@
 										"key": "closed"
 									},
 									{
-										"key": "awaitingApprovalOnEvp"
+										"key": "awaitingApprovalOnEVP"
 									},
 									{
 										"key": "awaitingApprovalOnManager"
 									},
 									{
-										"key": "awaitCompanyVerification"
+										"key": "awaitOrganizationReview"
 									},
 									{
 										"key": "awaitingPaymentConfirmation"
@@ -202,13 +202,13 @@
 										"key": "closed"
 									},
 									{
-										"key": "awaitingApprovalOnEvp"
+										"key": "awaitingApprovalOnEVP"
 									},
 									{
 										"key": "awaitingApprovalOnManager"
 									},
 									{
-										"key": "awaitCompanyVerification"
+										"key": "awaitOrganizationReview"
 									},
 									{
 										"key": "awaitingFinanceReview"
@@ -231,13 +231,13 @@
 										"key": "closed"
 									},
 									{
-										"key": "awaitingApprovalOnEvp"
+										"key": "awaitingApprovalOnEVP"
 									},
 									{
 										"key": "awaitingApprovalOnManager"
 									},
 									{
-										"key": "awaitCompanyVerification"
+										"key": "awaitOrganizationReview"
 									},
 									{
 										"key": "awaitingFinanceReview"
@@ -260,10 +260,10 @@
 										"key": "closed"
 									},
 									{
-										"key": "awaitingApprovalOnEvp"
+										"key": "awaitingApprovalOnEVP"
 									},
 									{
-										"key": "awaitCompanyVerification"
+										"key": "awaitOrganizationReview"
 									},
 									{
 										"key": "awaitingFinanceReview"

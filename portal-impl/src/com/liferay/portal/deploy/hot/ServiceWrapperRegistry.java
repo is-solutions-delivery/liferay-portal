@@ -5,14 +5,15 @@
 
 package com.liferay.portal.deploy.hot;
 
-import com.liferay.portal.kernel.bean.BeanLocatorException;
-import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.service.ServiceWrapper;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.spring.aop.AopInvocationHandler;
+
+import java.io.Closeable;
+import java.io.IOException;
 
 import java.lang.reflect.Method;
 
@@ -43,14 +44,13 @@ public class ServiceWrapperRegistry {
 
 	private final BundleContext _bundleContext =
 		SystemBundleUtil.getBundleContext();
-	private final ServiceTracker<ServiceWrapper<?>, ServiceBag<?>>
-		_serviceTracker;
+	private final ServiceTracker<ServiceWrapper<?>, Closeable> _serviceTracker;
 
 	private class ServiceWrapperServiceTrackerCustomizer
-		implements ServiceTrackerCustomizer<ServiceWrapper<?>, ServiceBag<?>> {
+		implements ServiceTrackerCustomizer<ServiceWrapper<?>, Closeable> {
 
 		@Override
-		public ServiceBag<?> addingService(
+		public Closeable addingService(
 			ServiceReference<ServiceWrapper<?>> serviceReference) {
 
 			ServiceWrapper<?> serviceWrapper = _bundleContext.getService(
@@ -72,52 +72,27 @@ public class ServiceWrapperRegistry {
 		@Override
 		public void modifiedService(
 			ServiceReference<ServiceWrapper<?>> serviceReference,
-			ServiceBag<?> serviceHolder) {
+			Closeable closeable) {
 		}
 
 		@Override
 		public void removedService(
 			ServiceReference<ServiceWrapper<?>> serviceReference,
-			ServiceBag<?> serviceBag) {
+			Closeable closeable) {
 
 			_bundleContext.ungetService(serviceReference);
 
 			try {
-				serviceBag.replace();
+				closeable.close();
 			}
-			catch (Exception exception) {
-				_log.error(exception);
+			catch (IOException ioException) {
+				_log.error(ioException);
 			}
 		}
 
-		private <T> ServiceBag<?> _getServiceBag(
-				ServiceWrapper<T> serviceWrapper)
-			throws NoSuchMethodException {
-
-			Class<?> clazz = serviceWrapper.getClass();
-
-			Method method = clazz.getMethod(
-				"getWrappedService", new Class<?>[0]);
-
-			Class<?> serviceTypeClass = method.getReturnType();
-
-			Object service = null;
-			ServiceReference<?> serviceReference = null;
-
-			try {
-				service = PortalBeanLocatorUtil.locate(
-					serviceTypeClass.getName());
-			}
-			catch (BeanLocatorException beanLocatorException) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(beanLocatorException);
-				}
-
-				serviceReference = _bundleContext.getServiceReference(
-					serviceTypeClass);
-
-				service = _bundleContext.getService(serviceReference);
-			}
+		private <T> ServiceBag<?> _createServiceBag(
+			Object service, ServiceWrapper<T> serviceWrapper,
+			Class<?> serviceTypeClass, ServiceReference<?> serviceReference) {
 
 			Object serviceProxy = service;
 
@@ -133,25 +108,66 @@ public class ServiceWrapperRegistry {
 				return null;
 			}
 
-			ClassLoader classLoader = clazz.getClassLoader();
+			AopInvocationHandler aopInvocationHandler =
+				ProxyUtil.fetchInvocationHandler(
+					serviceProxy, AopInvocationHandler.class);
 
-			try {
-				AopInvocationHandler aopInvocationHandler =
-					ProxyUtil.fetchInvocationHandler(
-						serviceProxy, AopInvocationHandler.class);
+			serviceWrapper.setWrappedService(
+				(T)aopInvocationHandler.getTarget());
 
-				serviceWrapper.setWrappedService(
-					(T)aopInvocationHandler.getTarget());
+			return new ServiceBag<>(
+				aopInvocationHandler, serviceTypeClass, serviceWrapper,
+				_bundleContext, serviceReference);
+		}
 
-				return new ServiceBag<>(
-					classLoader, aopInvocationHandler, serviceTypeClass,
-					serviceWrapper);
+		private <T> Closeable _getServiceBag(ServiceWrapper<T> serviceWrapper)
+			throws NoSuchMethodException {
+
+			Class<?> clazz = serviceWrapper.getClass();
+
+			Method method = clazz.getMethod(
+				"getWrappedService", new Class<?>[0]);
+
+			Class<T> serviceTypeClass = (Class<T>)method.getReturnType();
+
+			ServiceReference<?> serviceReference =
+				_bundleContext.getServiceReference(serviceTypeClass);
+
+			if (serviceReference == null) {
+				ServiceTracker<T, ServiceBag<?>> serviceTracker =
+					new ServiceTracker<T, ServiceBag<?>>(
+						_bundleContext, serviceTypeClass, null) {
+
+						@Override
+						public ServiceBag<?> addingService(
+							ServiceReference<T> serviceReference) {
+
+							return _createServiceBag(
+								_bundleContext.getService(serviceReference),
+								serviceWrapper, serviceTypeClass,
+								serviceReference);
+						}
+
+						@Override
+						public void removedService(
+							ServiceReference<T> serviceReference,
+							ServiceBag<?> serviceBag) {
+
+							serviceBag.replace();
+						}
+
+					};
+
+				serviceTracker.open();
+
+				return serviceTracker::close;
 			}
-			finally {
-				if (serviceReference != null) {
-					_bundleContext.ungetService(serviceReference);
-				}
-			}
+
+			ServiceBag<?> serviceBag = _createServiceBag(
+				_bundleContext.getService(serviceReference), serviceWrapper,
+				serviceTypeClass, serviceReference);
+
+			return serviceBag::replace;
 		}
 
 	}

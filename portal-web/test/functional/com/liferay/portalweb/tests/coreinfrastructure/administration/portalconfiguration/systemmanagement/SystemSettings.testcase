@@ -1,4 +1,4 @@
-@component-name = "portal-platform-experience-and-design-system"
+@component-name = "portal-platform-experience"
 definition {
 
 	property portal.release = "true";
@@ -293,10 +293,7 @@ definition {
 		}
 
 		task ("And a new Virtual Instance is created and login to add the new site") {
-			ApplicationsMenu.gotoPortlet(
-				category = "System",
-				panel = "Control Panel",
-				portlet = "Virtual Instances");
+			PortalInstances.openVirtualInstancesAdmin();
 
 			PortalInstances.addCP(
 				mailDomain = "www.able.com",
@@ -308,10 +305,7 @@ definition {
 				specificURL = "http://www.able.com:8080",
 				userEmailAddress = "test@www.able.com");
 
-			ApplicationsMenu.gotoPortlet(
-				category = "Sites",
-				panel = "Control Panel",
-				portlet = "Sites");
+			Site.openSitesAdmin(baseURL = "http://www.able.com:8080");
 
 			Site.addCP(
 				siteName = "Site Name",
@@ -393,10 +387,7 @@ definition {
 		}
 
 		task ("Naviagte to Instance Settings") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "Instance Settings");
+			PortalSettings.openInstanceSettingsAdmin();
 		}
 
 		task ("Disable OpenSSO Configuration") {

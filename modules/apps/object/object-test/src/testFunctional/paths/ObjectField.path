@@ -13,13 +13,13 @@
 		<td></td>
 	</tr>
 	<tr>
-		<td>DOCUMENT_NAME</td>
-		<td>//p[contains(@class,'card-title text-truncate')]//a</td>
+		<td>BUTTON_FIELD_ENTRY_LANGUAGE</td>
+		<td>//button[contains(@class, 'dropdown-toggle btn btn-monospaced btn-secondary')]//span[contains(.,'${key_buttonFieldEntryLanguage}')]</td>
 		<td></td>
 	</tr>
 	<tr>
-		<td>FIELD_TYPE_DESCRIPTION</td>
-		<td>//div[text() = "${key_type}"]/..//span[@class = 'text-small']</td>
+		<td>DOCUMENT_NAME</td>
+		<td>//p[contains(@class,'card-title text-truncate')]//a</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -113,28 +113,13 @@
 		<td></td>
 	</tr>
 	<tr>
-		<td>SEARCHABLE_LANGUAGE_SELECT</td>
-		<td>//div[@class="lfr-objects__card"]//input[@value="${selected}"]</td>
-		<td></td>
-	</tr>
-	<tr>
-		<td>SEARCHABLE_LANGUAGE_OPTION</td>
-		<td>//select[@name="indexedLanguageId"]//option[contains(., '${key_language}')]</td>
-		<td></td>
-	</tr>
-	<tr>
-		<td>TYPE_FIELD</td>
-		<td>//input[(@placeholder='Choose an Option' or @placeholder='Escolha uma Opção')]</td>
+		<td>INPUT_GENERIC_LABEL</td>
+		<td>//label[contains(text(),'${key_labelName}')]/following-sibling::input[contains(@class,'form-control')]</td>
 		<td></td>
 	</tr>
 	<tr>
 		<td>TYPE_FIELD_DISABLED</td>
-		<td>//input[@placeholder='Choose an Option' and @disabled]</td>
-		<td></td>
-	</tr>
-	<tr>
-		<td>TYPE_OPTION</td>
-		<td>//button[@class='dropdown-item']//div[(text()="${key_fieldType}")]</td>
+		<td>//div[contains(@class,'form-group') and contains(label,'Type') and //@disabled]</td>
 		<td></td>
 	</tr>
 	<tr>

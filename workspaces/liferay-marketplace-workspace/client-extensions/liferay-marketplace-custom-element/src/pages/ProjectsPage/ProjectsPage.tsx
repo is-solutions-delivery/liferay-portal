@@ -8,10 +8,10 @@ import {useEffect, useState} from 'react';
 
 import {CreateProjectModal} from '../../components/CreateProjectModal/CreateProjectModal';
 import {ProjectDetailsCard} from '../../components/CreateProjectModal/ProjectDetailsCard';
+import {DashboardPage} from '../../components/DashBoardPage/DashboardPage';
 import {DashboardTable} from '../../components/DashboardTable/DashboardTable';
 import {getPlacedOrders} from '../../utils/api';
-import {DashboardPage} from '../DashBoardPage/DashboardPage';
-import {NextStepPage} from '../NextStepPage/NextStepPage';
+import {NextSteps} from '../NextSteps';
 import {ProjectsTableRow} from './ProjectsTableRow';
 
 import './ProjectsPage.scss';
@@ -20,11 +20,10 @@ import ClayIcon from '@clayui/icon';
 
 import {useMarketplaceContext} from '../../context/MarketplaceContext';
 
-interface ProjectsPageProps {
+type ProjectsPageProps = {
 	icon: string;
 	selectedAccount: Account;
-	setShowDashboardNavigation: (value: boolean) => void;
-}
+};
 
 const projectsTableHeaders = [
 	{
@@ -47,11 +46,7 @@ const projectsTableHeaders = [
 	},
 ];
 
-export function ProjectsPage({
-	icon,
-	selectedAccount,
-	setShowDashboardNavigation,
-}: ProjectsPageProps) {
+export function ProjectsPage({icon, selectedAccount}: ProjectsPageProps) {
 	const {channel} = useMarketplaceContext();
 	const [visible, setVisible] = useState(false);
 	const [showNextStepsPage, setShowNextStepsPage] = useState(false);
@@ -93,7 +88,7 @@ export function ProjectsPage({
 
 	if (showNextStepsPage) {
 		return (
-			<NextStepPage
+			<NextSteps
 				continueButtonText="Go to Dashboard"
 				header={{
 					description:
@@ -102,7 +97,6 @@ export function ProjectsPage({
 				}}
 				linkText="Learn more about Projects"
 				onClickContinue={() => {
-					setShowDashboardNavigation(true);
 					setShowNextStepsPage(false);
 				}}
 				showBackButton={false}
@@ -110,7 +104,7 @@ export function ProjectsPage({
 				size="lg"
 			>
 				<ProjectDetailsCard showHeader />
-			</NextStepPage>
+			</NextSteps>
 		);
 	}
 
@@ -167,7 +161,7 @@ export function ProjectsPage({
 								projectName={
 									projectOrder.customFields['Project Name']
 								}
-								status={projectOrder.orderStatusInfo.label_i18n}
+								status={projectOrder.orderStatusInfo.label}
 							/>
 						);
 					}}

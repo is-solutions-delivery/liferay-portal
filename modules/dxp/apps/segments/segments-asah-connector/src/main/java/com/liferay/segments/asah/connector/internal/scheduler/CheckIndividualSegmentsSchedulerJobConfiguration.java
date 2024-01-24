@@ -27,6 +27,7 @@ import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.segments.asah.connector.internal.cache.AsahSegmentsEntryCache;
 import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClient;
 import com.liferay.segments.asah.connector.internal.client.AsahFaroBackendClientImpl;
@@ -105,8 +106,8 @@ public class CheckIndividualSegmentsSchedulerJobConfiguration
 
 			SegmentsEntry segmentsEntry =
 				_segmentsEntryLocalService.fetchSegmentsEntry(
-					serviceContext.getScopeGroupId(), individualSegment.getId(),
-					true);
+					serviceContext.getScopeGroupId(),
+					individualSegment.getId());
 
 			Map<Locale, String> nameMap = Collections.singletonMap(
 				_portal.getSiteDefaultLocale(serviceContext.getScopeGroupId()),
@@ -270,10 +271,17 @@ public class CheckIndividualSegmentsSchedulerJobConfiguration
 					companyId, 1, _DELTA,
 					Collections.singletonList(
 						OrderByField.desc("dateModified")));
+
+			_deleteSegmentsEntries(individualSegmentResults);
 		}
 		catch (RuntimeException runtimeException) {
 			_log.error(
 				"Unable to retrieve individual segments", runtimeException);
+
+			return;
+		}
+		catch (PortalException portalException) {
+			_log.error("Unable to delete segments", portalException);
 
 			return;
 		}
@@ -304,6 +312,30 @@ public class CheckIndividualSegmentsSchedulerJobConfiguration
 
 		for (SegmentsEntry segmentsEntry : segmentsEntries) {
 			_checkIndividualSegmentMemberships(segmentsEntry);
+		}
+	}
+
+	private void _deleteSegmentsEntries(
+			Results<IndividualSegment> individualSegmentResults)
+		throws PortalException {
+
+		List<SegmentsEntry> segmentsEntries =
+			_segmentsEntryLocalService.getSegmentsEntriesBySource(
+				SegmentsEntryConstants.SOURCE_ASAH_FARO_BACKEND, 0, _DELTA,
+				null);
+
+		if (individualSegmentResults.getTotal() > 0) {
+			segmentsEntries = ListUtil.filter(
+				segmentsEntries,
+				segmentsEntry -> !ListUtil.exists(
+					individualSegmentResults.getItems(),
+					individualSegment -> StringUtil.equals(
+						individualSegment.getId(),
+						segmentsEntry.getSegmentsEntryKey())));
+		}
+
+		for (SegmentsEntry segmentsEntry : segmentsEntries) {
+			_segmentsEntryLocalService.deleteSegmentsEntry(segmentsEntry);
 		}
 	}
 
@@ -402,8 +434,7 @@ public class CheckIndividualSegmentsSchedulerJobConfiguration
 			individualSegmentId -> {
 				SegmentsEntry curSegmentsEntry =
 					_segmentsEntryLocalService.fetchSegmentsEntry(
-						serviceContext.getScopeGroupId(), individualSegmentId,
-						true);
+						serviceContext.getScopeGroupId(), individualSegmentId);
 
 				if (curSegmentsEntry != null) {
 					return curSegmentsEntry.getSegmentsEntryId();

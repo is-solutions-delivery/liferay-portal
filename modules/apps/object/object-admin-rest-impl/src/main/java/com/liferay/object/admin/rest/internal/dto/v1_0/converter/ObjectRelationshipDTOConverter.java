@@ -6,6 +6,7 @@
 package com.liferay.object.admin.rest.internal.dto.v1_0.converter;
 
 import com.liferay.object.admin.rest.dto.v1_0.ObjectRelationship;
+import com.liferay.object.admin.rest.internal.dto.v1_0.converter.constants.DTOConverterConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectDefinitionLocalService;
@@ -15,6 +16,7 @@ import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
+import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import org.osgi.service.component.annotations.Component;
@@ -57,32 +59,10 @@ public class ObjectRelationshipDTOConverter
 
 		return new ObjectRelationship() {
 			{
-				actions = dtoConverterContext.getActions();
-				deletionType = ObjectRelationship.DeletionType.create(
-					serviceBuilderObjectRelationship.getDeletionType());
-				id = serviceBuilderObjectRelationship.getObjectRelationshipId();
-				label = LocalizedMapUtil.getLanguageIdMap(
-					serviceBuilderObjectRelationship.getLabelMap());
-				name = serviceBuilderObjectRelationship.getName();
-				objectDefinitionExternalReferenceCode1 =
-					objectDefinition1.getExternalReferenceCode();
-				objectDefinitionExternalReferenceCode2 =
-					objectDefinition2.getExternalReferenceCode();
-				objectDefinitionId1 =
-					serviceBuilderObjectRelationship.getObjectDefinitionId1();
-				objectDefinitionId2 =
-					serviceBuilderObjectRelationship.getObjectDefinitionId2();
-				objectDefinitionModifiable2 = objectDefinition2.isModifiable();
-				objectDefinitionName2 = objectDefinition2.getShortName();
-				objectDefinitionSystem2 = objectDefinition2.isSystem();
-				parameterObjectFieldId =
-					serviceBuilderObjectRelationship.
-						getParameterObjectFieldId();
-				reverse = serviceBuilderObjectRelationship.isReverse();
-				system = serviceBuilderObjectRelationship.isSystem();
-				type = ObjectRelationship.Type.create(
-					serviceBuilderObjectRelationship.getType());
-
+				setActions(dtoConverterContext::getActions);
+				setDeletionType(
+					() -> ObjectRelationship.DeletionType.create(
+						serviceBuilderObjectRelationship.getDeletionType()));
 				setEdge(
 					() -> {
 						if (!FeatureFlagManagerUtil.isEnabled("LPS-187142")) {
@@ -91,6 +71,54 @@ public class ObjectRelationshipDTOConverter
 
 						return serviceBuilderObjectRelationship.isEdge();
 					});
+				setExternalReferenceCode(
+					() ->
+						serviceBuilderObjectRelationship.
+							getExternalReferenceCode());
+				setId(
+					() ->
+						serviceBuilderObjectRelationship.
+							getObjectRelationshipId());
+				setLabel(
+					() -> LocalizedMapUtil.getLanguageIdMap(
+						serviceBuilderObjectRelationship.getLabelMap()));
+				setName(serviceBuilderObjectRelationship::getName);
+				setObjectDefinitionExternalReferenceCode1(
+					objectDefinition1::getExternalReferenceCode);
+				setObjectDefinitionExternalReferenceCode2(
+					objectDefinition2::getExternalReferenceCode);
+				setObjectDefinitionId1(
+					() ->
+						serviceBuilderObjectRelationship.
+							getObjectDefinitionId1());
+				setObjectDefinitionId2(
+					() ->
+						serviceBuilderObjectRelationship.
+							getObjectDefinitionId2());
+				setObjectDefinitionModifiable2(objectDefinition2::isModifiable);
+				setObjectDefinitionName2(objectDefinition2::getShortName);
+				setObjectDefinitionSystem2(objectDefinition2::isSystem);
+				setObjectField(
+					() -> {
+						ObjectField objectField =
+							_objectFieldLocalService.fetchObjectField(
+								serviceBuilderObjectRelationship.
+									getObjectFieldId2());
+
+						if (objectField == null) {
+							return null;
+						}
+
+						return _objectFieldDTOConverter.toDTO(
+							new DefaultDTOConverterContext(
+								false, null, null, null,
+								dtoConverterContext.getLocale(), null, null),
+							objectField);
+					});
+				setParameterObjectFieldId(
+					() ->
+						serviceBuilderObjectRelationship.
+							getParameterObjectFieldId());
 				setParameterObjectFieldName(
 					() -> {
 						if (Validator.isNull(
@@ -107,12 +135,22 @@ public class ObjectRelationshipDTOConverter
 
 						return objectField.getName();
 					});
+				setReverse(serviceBuilderObjectRelationship::isReverse);
+				setSystem(serviceBuilderObjectRelationship::isSystem);
+				setType(
+					() -> ObjectRelationship.Type.create(
+						serviceBuilderObjectRelationship.getType()));
 			}
 		};
 	}
 
 	@Reference
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;
+
+	@Reference(target = DTOConverterConstants.OBJECT_FIELD_DTO_CONVERTER)
+	private DTOConverter
+		<ObjectField, com.liferay.object.admin.rest.dto.v1_0.ObjectField>
+			_objectFieldDTOConverter;
 
 	@Reference
 	private ObjectFieldLocalService _objectFieldLocalService;

@@ -6,7 +6,7 @@ definition {
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.component.names = "Echo Accessibility";
-	property testray.main.component.name = "Content Pages";
+	property testray.main.component.name = "Page Editor";
 
 	static var randomSiteName = StringUtil.randomString(8);
 
@@ -210,7 +210,7 @@ definition {
 
 		task ("Then the focus goes to the Product Menu") {
 			KeyPress(
-				locator1 = "//div[@aria-label='Product Menu']",
+				locator1 = "//nav[@aria-label='Product Menu']",
 				value1 = "\TAB");
 
 			AssertElementFocused(locator1 = "//button[contains(@aria-label,'Go to Other Site')]");
@@ -307,6 +307,10 @@ definition {
 				locator1 = "//div[contains(@data-qa-id,'Container') and contains(@role,'treeitem') and @aria-expanded='true']",
 				value1 = "\DOWN");
 
+			KeyPress(
+				locator1 = "//div[contains(@data-qa-id,'Grid') and contains(@role,'treeitem')]",
+				value1 = "\ENTER");
+
 			AssertCssValue(
 				locator1 = "//div[contains(@data-qa-id,'Grid') and contains(@role,'treeitem')]",
 				locator2 = "background-color",
@@ -323,18 +327,8 @@ definition {
 				locator1 = "Treeview#PAGE_STRUCTURE_TREE_VERTICAL_ELLIPSIS");
 
 			KeyPress(
-				key_nodeName = "Grid",
-				locator1 = "Treeview#PAGE_STRUCTURE_TREE_NODE_COLLAPSED",
-				value1 = "\RIGHT");
-
-			KeyPress(
 				locator1 = "//div[contains(@data-qa-id,'Grid') and contains(@role,'treeitem') and @aria-expanded='true']",
 				value1 = "\DOWN");
-
-			AssertCssValue(
-				locator1 = "//div[contains(@data-qa-id,'Module') and contains(@role,'treeitem')]",
-				locator2 = "background-color",
-				value1 = "rgba(240, 245, 255, 1)");
 
 			KeyPress(
 				key_nodeName = "Module",
@@ -344,6 +338,10 @@ definition {
 			KeyPress(
 				locator1 = "//div[contains(@data-qa-id,'Module') and contains(@role,'treeitem') and @aria-expanded='true']",
 				value1 = "\DOWN");
+
+			KeyPress(
+				locator1 = "//div[contains(@data-qa-id,'Heading') and contains(@role,'treeitem')]",
+				value1 = "\ENTER");
 
 			AssertCssValue(
 				locator1 = "//div[contains(@data-qa-id,'Heading') and contains(@role,'treeitem')]",
@@ -444,6 +442,51 @@ definition {
 				value1 = "keys=SHIFT,TAB");
 
 			AssertElementFocused(locator1 = "//*[*[name()='svg'][contains(@class,'lexicon-icon-times')]]");
+		}
+	}
+
+	@description = "This is a test for LPS-191827. Check the accessibility when warning message displays in a Collection Display with configuration can cause performance issues in page edit mode."
+	@priority = 3
+	test ViewAccessibilityOfCollectionDisplayPagePerformanceWarningMessageInPageEditor {
+		property custom.properties = "feature.flag.LPS-187284=true${line.separator}feature.flag.LPS-187285=true";
+
+		task ("Given a user has a Collection Display with None pagination on a content page") {
+			AssetListsAdmin.openAssetListsAdmin(siteURLKey = ${siteURLKey});
+
+			AssetListsAdmin.addDynamicSelection(assetListTitle = "Dynamic Collection");
+
+			AssetListsAdmin.configureItemTypeInDynamicCollection(itemType = "All Types");
+
+			JSONLayout.addPublicLayout(
+				groupName = ${randomSiteName},
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Content Display",
+				fragmentName = "Collection Display");
+
+			PageEditor.editCollectionDisplay(
+				assetListName = "Dynamic Collection",
+				fragmentName = "Collection Display",
+				pagination = "None");
+		}
+
+		task ("When the user enables the Display All Collection Items") {
+			PageEditor.editCollectionDisplay(
+				displayAllCollectionItems = "true",
+				fragmentName = "Collection Display",
+				selectedName = "Dynamic Collection");
+		}
+
+		task ("Then the warning message should have correct accessibility") {
+			AssertElementAccessible(
+				fieldLabel = "Display All Collection Items",
+				locator1 = "Message#WARNING_WITH_LABEL");
 		}
 	}
 
@@ -756,6 +799,33 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-196462. The New Rule Modal complies with WCAG 2.1 AA standard."
+	@priority = 2
+	test ViewAccessibilityOfNewRuleModal {
+		property custom.properties = "feature.flag.LPS-169837=true";
+
+		task ("Given a page designer has a Button fragment on a content page") {
+			JSONLayout.addPublicLayout(
+				groupName = ${randomSiteName},
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+		}
+
+		task ("When the page designer opens the New Rule modal") {
+			PageEditor.gotoTab(tabName = "Page Rules");
+
+			Button.click(button = "New Rule");
+		}
+
+		task ("Then the New Rule modal should have correct accessibility") {
+			AssertElementAccessible(locator1 = "Modal#MODAL_CONTENT");
+		}
+	}
+
 	@description = "This is a test for LPS-165288. The Page Design Options panel should have correct accessibility."
 	@priority = 3
 	test ViewAccessibilityOfPageDesignOptionsPanel {
@@ -806,6 +876,111 @@ definition {
 			AssertElementAccessible(locator1 = "//div[contains(@class,'dropdown-menu-select')][contains(@class,'show')]//li");
 
 			AssertElementAccessible(locator1 = "xpath=(//div[contains(@class,'dropdown-menu-select')][contains(@class,'show')]//li)[2]");
+		}
+	}
+
+	@description = "This is a test for LPS-182022. The Page In Use should comply with the WCAG 2.1 AA standard."
+	@priority = 4
+	test ViewAccessibilityOfPageInUse {
+		property custom.properties = "feature.flag.LPS-180328=true";
+
+		task ("Given a page designer has a locked content page") {
+			var siteName = selenium.getText("Home#SITE_NAME");
+
+			JSONUser.addUser(
+				userEmailAddress = "userea@liferay.com",
+				userFirstName = "userfn",
+				userLastName = "userln",
+				userScreenName = "usersn");
+
+			JSONUser.addUserToSite(
+				groupName = ${randomSiteName},
+				userEmailAddress = "userea@liferay.com");
+
+			JSONRole.assignSiteRoleToUser(
+				groupName = ${randomSiteName},
+				roleTitle = "Site Administrator",
+				userEmailAddress = "userea@liferay.com");
+
+			JSONLayout.addPublicLayout(
+				groupName = ${randomSiteName},
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+		}
+
+		task ("When the page designer redirects to the Page in Use") {
+			var baseURL = PropsUtil.get("portal.url");
+
+			Open.openInTheNewTab(value1 = "${baseURL}/group/control_panel/manage?p_p_id=com_liferay_users_admin_web_portlet_UsersAdminPortlet");
+
+			User.impersonateCP(
+				siteName = ${siteName},
+				userScreenName = "usersn");
+
+			UserBar.gotoMySite(siteName = ${randomSiteName});
+
+			WaitForPageLoad();
+
+			Click(locator1 = "Icon#EDIT_PENCIL");
+
+			AssertVisible(
+				key_title = "Page in Use",
+				locator1 = "Header#H1_TITLE");
+		}
+
+		task ("Then the Page in Use should have correct accessibility") {
+			AssertAccessible();
+		}
+	}
+
+	@description = "This is a test for LPS-196461. The Page Rules section complies with WCAG 2.1 AA standard."
+	@priority = 2
+	test ViewAccessibilityOfPageRulesPanel {
+		property custom.properties = "feature.flag.LPS-169837=true";
+
+		task ("Given a page designer has a Button fragment on a content page") {
+			JSONLayout.addPublicLayout(
+				groupName = ${randomSiteName},
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+		}
+
+		task ("When the page designer opens the Page Rules panel") {
+			PageEditor.gotoTab(tabName = "Page Rules");
+		}
+
+		task ("Then the Page Rules panel should have correct accessibility") {
+			AssertElementAccessible(locator1 = "//div[@aria-label='Page Rules Panel']");
+		}
+
+		task ("When the page designer adds a page rule") {
+			PageEditor.addPageRule(
+				selectAction = "Hide",
+				selectActionValue = "Button",
+				selectCondition = "Is the User",
+				selectConditionValue = "test",
+				selectItemForTheAction = "Fragment",
+				selectItemForTheCondition = "User");
+		}
+
+		task ("Then the Page Rules panel should have correct accessibility") {
+			AssertElementAccessible(locator1 = "//div[@aria-label='Page Rules Panel']");
 		}
 	}
 

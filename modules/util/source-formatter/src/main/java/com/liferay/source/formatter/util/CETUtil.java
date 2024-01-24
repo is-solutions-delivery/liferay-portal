@@ -119,6 +119,15 @@ public class CETUtil {
 			}
 		}
 
+		Collections.sort(
+			cetProperties,
+			(cetProperty1, cetProperty2) -> {
+				String cetPropertyName1 = cetProperty1.getName();
+				String cetPropertyName2 = cetProperty2.getName();
+
+				return cetPropertyName1.compareTo(cetPropertyName2);
+			});
+
 		return new CET(cetProperties, description, name);
 	}
 

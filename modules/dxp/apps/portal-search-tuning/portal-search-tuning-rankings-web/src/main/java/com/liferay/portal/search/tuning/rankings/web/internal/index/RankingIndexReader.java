@@ -14,10 +14,22 @@ import java.util.List;
  */
 public interface RankingIndexReader {
 
+	public List<Ranking> fetch(
+		boolean excludeInactiveStatus, String groupExternalReferenceCode,
+		String queryString, RankingIndexName rankingIndexName,
+		String sxpBlueprintExternalReferenceCode);
+
 	public Ranking fetch(String id, RankingIndexName rankingIndexName);
 
 	public List<Ranking> fetch(
 		String groupExternalReferenceCode, String queryString,
+		RankingIndexName rankingIndexName,
+		String sxpBlueprintExternalReferenceCode);
+
+	public List<Ranking> fetchByGroupExternalReferenceCode(
+		String groupExternalReferenceCode, RankingIndexName rankingIndexName);
+
+	public List<Ranking> fetchBySXPBlueprintExternalReferenceCode(
 		RankingIndexName rankingIndexName,
 		String sxpBlueprintExternalReferenceCode);
 

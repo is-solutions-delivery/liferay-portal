@@ -12,6 +12,8 @@ import com.liferay.headless.delivery.client.pagination.Pagination;
 import com.liferay.headless.delivery.client.problem.Problem;
 import com.liferay.headless.delivery.client.serdes.v1_0.ContentElementSerDes;
 
+import java.net.URL;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -130,6 +132,10 @@ public interface ContentElementResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {

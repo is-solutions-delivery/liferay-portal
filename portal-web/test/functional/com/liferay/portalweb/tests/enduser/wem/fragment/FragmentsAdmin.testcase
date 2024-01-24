@@ -49,21 +49,23 @@ definition {
 		}
 
 		task ("View resource") {
-			FragmentsAdmin.viewEntryPresent(entry = "Document_1.png");
+			FragmentsAdmin.viewEntryPresent(entry = "Document_1");
 		}
 
 		task ("Delete resource") {
-			FragmentsAdmin.deleteResource(entry = "Document_1.png");
+			FragmentsAdmin.deleteResource(entry = "Document_1");
 		}
 
 		task ("View no resource") {
-			FragmentsAdmin.viewEntryNotPresent(entry = "Document_1.png");
+			FragmentsAdmin.viewEntryNotPresent(entry = "Document_1");
 		}
 	}
 
 	@description = "This is a test for LPS-166203. The site designer could add fragment set during copy OOTB fragment when the site doesn't have fragment set."
 	@priority = 5
 	test AddFirstFragmentSetWhenCopyContributedFragment {
+		property portal.acceptance = "true";
+
 		task ("Given a site designer navigates to the Fragments admin of a new site") {
 			FragmentsAdminNavigator.openFragmentsAdmin(siteURLKey = ${siteURLKey});
 		}
@@ -99,8 +101,6 @@ definition {
 	@description = "This is a test for LPS-159235. Add folders to fragment resource and check hints."
 	@priority = 4
 	test AddFoldersToResourceAndCheckHints {
-		property custom.properties = "feature.flag.LPS-158675=true";
-
 		task ("When user is in resources tab") {
 			task ("Add a fragment collection") {
 				JSONFragment.addFragmentCollection(
@@ -258,6 +258,8 @@ definition {
 	@description = "This is a test for LPS-166203. The site designer could save in new set during copy OOTB fragment when the site has fragment sets."
 	@priority = 5
 	test AddNewFragmentSetWhenCopyContributedFragment {
+		property portal.acceptance = "true";
+
 		task ("Given a site designer has a fragment set") {
 			JSONFragment.addFragmentCollection(
 				groupName = ${randomSiteName},
@@ -885,6 +887,81 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-177682. The tooltip of the back button of fragments entry is Go to Fragments."
+	@priority = 3
+	test ViewBackButtonTooltipInFragmentEditor {
+		task ("Given access to the Fragment editor page") {
+			JSONFragment.addFragmentCollection(
+				groupName = ${randomSiteName},
+				name = "Fragment Set Name");
+
+			FragmentsAdminNavigator.openFragmentsAdmin(siteURLKey = ${siteURLKey});
+
+			FragmentsAdminNavigator.gotoCollection(collectionName = "Fragment Set Name");
+
+			FragmentsAdmin.addFragment(fragmentName = "Fragment Name");
+
+			WaitForVisible(locator1 = "FragmentEditor#HTML_EDITOR");
+		}
+
+		task ("When hover over the back button") {
+			MouseOver.javaScriptFocus(locator1 = "Icon#BACK");
+		}
+
+		task ("Then see the tooltip message") {
+			AssertVisible(
+				key_content = "Go to Fragments",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
+		}
+	}
+
+	@description = "This is a test for LPS-177682. The tooltip of the back button of usages is Go to Fragments."
+	@priority = 3
+	test ViewBackButtonTooltipInViewUsages {
+		task ("Given the View Usages page of a fragment") {
+			JSONFragment.addFragmentCollection(
+				groupName = ${randomSiteName},
+				name = "Fragment Set Name");
+
+			JSONFragment.addSection(
+				collectionName = "Fragment Set Name",
+				fragmentStatus = "Approved",
+				groupName = ${randomSiteName},
+				name = "Fragment Name");
+
+			JSONLayout.addPublicLayout(
+				groupName = ${randomSiteName},
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Fragment Set Name",
+				fragmentName = "Fragment Name");
+
+			FragmentsAdminNavigator.openFragmentsAdmin(siteURLKey = ${siteURLKey});
+
+			FragmentsAdminNavigator.gotoCollection(collectionName = "Fragment Set Name");
+
+			FragmentsAdminNavigator.gotoEntryEllipsisItem(
+				entry = "Fragment Name",
+				item = "View Usages");
+		}
+
+		task ("When hover over the back button") {
+			MouseOver.javaScriptFocus(locator1 = "Icon#BACK");
+		}
+
+		task ("Then see the tooltip message") {
+			AssertVisible(
+				key_content = "Go to Fragments",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
+		}
+	}
+
 	@description = "This is a test for LPS-89115. Can see contributed fragment collections in fragment administration"
 	@priority = 5
 	@uitest
@@ -939,9 +1016,9 @@ definition {
 
 			task ("Open the Select Fragment modal for Text field type") {
 				Click(
-					key_class = "btn-secondary",
-					key_index = 10,
-					locator1 = "Button#ANY_WITH_CLASS_AND_INDEX");
+					key_tableEntry = "Text",
+					key_text = "Select",
+					locator1 = "LexiconTable#TABLE_ENTRY_BUTTON");
 			}
 
 			task ("View two tabs shown on modal, Default, Global") {
@@ -1045,9 +1122,9 @@ definition {
 
 			task ("Open the Select Fragment modal for Text field type") {
 				Click(
-					key_class = "btn-secondary",
-					key_index = 10,
-					locator1 = "Button#ANY_WITH_CLASS_AND_INDEX");
+					key_tableEntry = "Text",
+					key_text = "Select",
+					locator1 = "LexiconTable#TABLE_ENTRY_BUTTON");
 			}
 
 			task ("View three tabs shown on modal, Default, Global and current site") {
@@ -1333,9 +1410,9 @@ definition {
 
 			task ("Open the Select Fragment modal for Text field type") {
 				Click(
-					key_class = "btn-secondary",
-					key_index = 10,
-					locator1 = "Button#ANY_WITH_CLASS_AND_INDEX");
+					key_tableEntry = "Text",
+					key_text = "Select",
+					locator1 = "LexiconTable#TABLE_ENTRY_BUTTON");
 			}
 
 			task ("View only the copy of fragment is available in form fragment selector") {
@@ -1401,9 +1478,9 @@ definition {
 		task ("Then view only same type form fragments display in form fragment selector") {
 			task ("Open the Select Fragment modal for Text field type") {
 				Click(
-					key_class = "btn-secondary",
-					key_index = 10,
-					locator1 = "Button#ANY_WITH_CLASS_AND_INDEX");
+					key_tableEntry = "Text",
+					key_text = "Select",
+					locator1 = "LexiconTable#TABLE_ENTRY_BUTTON");
 			}
 
 			task ("Select the copy of fragment from current site") {

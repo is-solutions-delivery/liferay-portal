@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -573,32 +574,34 @@ public class GitWorkingDirectory {
 		for (final Map.Entry<String, Set<String>> remoteURLBranchNamesEntry :
 				remoteURLGitBranchNameMap.entrySet()) {
 
-			Callable<Boolean> callable = new Callable<Boolean>() {
+			ParallelExecutor.SequentialCallable<Boolean> callable =
+				new ParallelExecutor.SequentialCallable<Boolean>(
+					remoteURLBranchNamesEntry.getKey()) {
 
-				@Override
-				public Boolean call() throws Exception {
-					Set<String> allBranchNames =
-						remoteURLBranchNamesEntry.getValue();
+					@Override
+					public Boolean call() throws Exception {
+						Set<String> allBranchNames =
+							remoteURLBranchNamesEntry.getValue();
 
-					if (allBranchNames.isEmpty()) {
+						if (allBranchNames.isEmpty()) {
+							return true;
+						}
+
+						String remoteURL = remoteURLBranchNamesEntry.getKey();
+
+						for (List<String> branchNames :
+								Lists.partition(
+									new ArrayList<String>(allBranchNames),
+									_BRANCHES_DELETE_BATCH_SIZE)) {
+
+							_deleteRemoteGitBranches(
+								remoteURL, branchNames.toArray(new String[0]));
+						}
+
 						return true;
 					}
 
-					String remoteURL = remoteURLBranchNamesEntry.getKey();
-
-					for (List<String> branchNames :
-							Lists.partition(
-								new ArrayList<String>(allBranchNames),
-								_BRANCHES_DELETE_BATCH_SIZE)) {
-
-						_deleteRemoteGitBranches(
-							remoteURL, branchNames.toArray(new String[0]));
-					}
-
-					return true;
-				}
-
-			};
+				};
 
 			callables.add(callable);
 		}
@@ -606,9 +609,15 @@ public class GitWorkingDirectory {
 		ParallelExecutor<Boolean> parallelExecutor = new ParallelExecutor<>(
 			callables, true,
 			JenkinsResultsParserUtil.getNewThreadPoolExecutor(
-				callables.size(), true));
+				callables.size(), true),
+			"deleteRemoteGitBranches");
 
-		parallelExecutor.execute();
+		try {
+			parallelExecutor.execute();
+		}
+		catch (TimeoutException timeoutException) {
+			throw new RuntimeException(timeoutException);
+		}
 	}
 
 	public void displayLog() {
@@ -944,6 +953,44 @@ public class GitWorkingDirectory {
 
 		return createLocalGitBranch(
 			localGitBranch.getName(), true, localGitBranch.getSHA());
+	}
+
+	public Set<File> findFiles(String fileName, String fileContentSnippet) {
+		if (JenkinsResultsParserUtil.isNullOrEmpty(fileName) ||
+			JenkinsResultsParserUtil.isNullOrEmpty(fileContentSnippet)) {
+
+			return null;
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("git grep ");
+		sb.append(fileContentSnippet);
+		sb.append(" | grep ");
+		sb.append(fileName);
+
+		GitUtil.ExecutionResult result = executeBashCommands(
+			5, 1000, 30 * 1000, sb.toString());
+
+		if (result.getExitValue() != 0) {
+			throw new GitWorkingDirectoryRuntimeException(
+				this, "Unable to run: git grep");
+		}
+
+		Pattern pattern = Pattern.compile(
+			JenkinsResultsParserUtil.combine(
+				"(?<filePath>.+/", fileName, ")\\:.+"));
+
+		Matcher matcher = pattern.matcher(result.getStandardOut());
+
+		Set<File> files = new HashSet<>();
+
+		while (matcher.find()) {
+			files.add(
+				new File(getWorkingDirectory(), matcher.group("filePath")));
+		}
+
+		return files;
 	}
 
 	public void gc() {
@@ -1379,6 +1426,14 @@ public class GitWorkingDirectory {
 		return null;
 	}
 
+	public String getLatestCommitSHA() {
+		List<LocalGitCommit> localGitCommits = log(1);
+
+		LocalGitCommit latestLocalGitCommit = localGitCommits.get(0);
+
+		return latestLocalGitCommit.getSHA();
+	}
+
 	public LocalGitBranch getLocalGitBranch(String branchName) {
 		return getLocalGitBranch(branchName, false);
 	}
@@ -1495,6 +1550,35 @@ public class GitWorkingDirectory {
 		return executionResult.getStandardOut();
 	}
 
+	public String getMergeBaseCommitSHA(String... refNames) {
+		if (refNames.length < 2) {
+			throw new GitWorkingDirectoryIllegalArgumentException(
+				this,
+				"Unable to perform merge-base with less than two commits");
+		}
+
+		StringBuilder sb = new StringBuilder("git merge-base");
+
+		for (String refName : refNames) {
+			sb.append(" ");
+			sb.append(refName);
+		}
+
+		GitUtil.ExecutionResult executionResult = executeBashCommands(
+			GitUtil.RETRIES_SIZE_MAX, GitUtil.MILLIS_RETRY_DELAY,
+			GitUtil.MILLIS_TIMEOUT, sb.toString());
+
+		if (executionResult.getExitValue() != 0) {
+			throw new GitWorkingDirectoryRuntimeException(
+				this,
+				JenkinsResultsParserUtil.combine(
+					"Unable to get merge base commit SHA\n",
+					executionResult.getStandardError()));
+		}
+
+		return executionResult.getStandardOut();
+	}
+
 	public List<File> getModifiedDirsList(
 		boolean checkUnstagedFiles, List<PathMatcher> excludesPathMatchers,
 		List<PathMatcher> includesPathMatchers) {
@@ -1514,6 +1598,41 @@ public class GitWorkingDirectory {
 
 		return JenkinsResultsParserUtil.getIncludedFiles(
 			excludesPathMatchers, includesPathMatchers, subdirectories);
+	}
+
+	public Set<File> getModifiedFilesInCommitRange(
+		String startingCommitSHA, String endingCommitSHA) {
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("git log --name-status --no-renames --pretty=\"format:\" \"");
+		sb.append(startingCommitSHA);
+		sb.append("..");
+		sb.append(endingCommitSHA);
+		sb.append("\" | tr '\\t' ' ' | sed 's/^[^ ]* *//'");
+
+		GitUtil.ExecutionResult executionResult = executeBashCommands(
+			GitUtil.RETRIES_SIZE_MAX, GitUtil.MILLIS_RETRY_DELAY,
+			GitUtil.MILLIS_TIMEOUT, sb.toString());
+
+		if (executionResult.getExitValue() != 0) {
+			throw new GitWorkingDirectoryRuntimeException(
+				this,
+				JenkinsResultsParserUtil.combine(
+					"Unable to get modified files\n",
+					executionResult.getStandardError()));
+		}
+
+		String standardOut = executionResult.getStandardOut();
+
+		Set<File> modifiedFiles = new HashSet<>();
+
+		for (String modifiedFilePath : standardOut.split("\\s+")) {
+			modifiedFiles.add(
+				new File(getWorkingDirectory(), modifiedFilePath));
+		}
+
+		return modifiedFiles;
 	}
 
 	public List<File> getModifiedFilesList() {

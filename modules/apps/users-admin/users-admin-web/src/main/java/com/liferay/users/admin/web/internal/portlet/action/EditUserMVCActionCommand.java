@@ -305,6 +305,10 @@ public class EditUserMVCActionCommand
 						return;
 					}
 				}
+
+				actionResponse.setRenderParameter("mvcPath", mvcPath);
+
+				throw exception;
 			}
 			else if (exception instanceof ModelListenerException) {
 				if (exception.getCause() instanceof PortalException) {
@@ -503,7 +507,7 @@ public class EditUserMVCActionCommand
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			User.class.getName(), actionRequest);
 
-		User user = _userService.addUser(
+		User user = _userService.addUserWithWorkflow(
 			themeDisplay.getCompanyId(), true, null, null, autoScreenName,
 			screenName, emailAddress, LocaleUtil.fromLanguageId(languageId),
 			firstName, middleName, lastName, prefixListTypeId, suffixListTypeId,
@@ -554,6 +558,10 @@ public class EditUserMVCActionCommand
 
 		String parameterValue = ParamUtil.getString(
 			portletRequest, parameterName);
+
+		if (Validator.isNull(parameterValue)) {
+			return 0;
+		}
 
 		ListType listType = _listTypeLocalService.addListType(
 			companyId, parameterValue, type);

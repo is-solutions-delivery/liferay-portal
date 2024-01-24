@@ -5,6 +5,8 @@
 
 package com.liferay.layout.internal.importer;
 
+import com.liferay.headless.delivery.dto.v1_0.PageElement;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Layout;
 
 /**
@@ -14,13 +16,22 @@ public class LayoutStructureItemImporterContext {
 
 	public LayoutStructureItemImporterContext(
 		Layout layout, double pageDefinitionVersion, String parentItemId,
-		int position, long segmentsExperienceId) {
+		int position, boolean preserveItemIds, long segmentsExperienceId) {
 
 		_layout = layout;
 		_pageDefinitionVersion = pageDefinitionVersion;
 		_parentItemId = parentItemId;
 		_position = position;
+		_preserveItemIds = preserveItemIds;
 		_segmentsExperienceId = segmentsExperienceId;
+	}
+
+	public String getItemId(PageElement pageElement) {
+		if (isPreserveItemIds()) {
+			return pageElement.getId();
+		}
+
+		return StringPool.BLANK;
 	}
 
 	public Layout getLayout() {
@@ -43,10 +54,15 @@ public class LayoutStructureItemImporterContext {
 		return _segmentsExperienceId;
 	}
 
+	public boolean isPreserveItemIds() {
+		return _preserveItemIds;
+	}
+
 	private final Layout _layout;
 	private final double _pageDefinitionVersion;
 	private final String _parentItemId;
 	private final int _position;
+	private final boolean _preserveItemIds;
 	private final long _segmentsExperienceId;
 
 }

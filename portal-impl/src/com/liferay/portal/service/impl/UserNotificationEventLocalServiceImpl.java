@@ -548,6 +548,14 @@ public class UserNotificationEventLocalServiceImpl
 
 	@Override
 	public int getUserNotificationEventsCount(
+		long userId, String type, long timestamp, boolean delivered) {
+
+		return userNotificationEventPersistence.countByU_T_GteT_D(
+			userId, type, timestamp, delivered);
+	}
+
+	@Override
+	public int getUserNotificationEventsCount(
 		long userId, String type, Map<String, String> payloadParameters) {
 
 		DynamicQuery dynamicQuery = DynamicQueryFactoryUtil.forClass(

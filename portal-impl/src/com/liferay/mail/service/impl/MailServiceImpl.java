@@ -10,6 +10,7 @@ import com.liferay.mail.kernel.auth.token.provider.MailAuthTokenProviderRegistry
 import com.liferay.mail.kernel.model.Account;
 import com.liferay.mail.kernel.model.MailMessage;
 import com.liferay.mail.kernel.service.MailService;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.change.tracking.CTAware;
 import com.liferay.portal.kernel.cluster.Clusterable;
 import com.liferay.portal.kernel.log.Log;
@@ -26,6 +27,7 @@ import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropertiesUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.PropsUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.IOException;
@@ -75,12 +77,10 @@ public class MailServiceImpl implements IdentifiableOSGiService, MailService {
 	public Session getSession(Account account) {
 		Session session = Session.getInstance(_getProperties(account));
 
+		_debug(session.getProperties());
+
 		if (_log.isDebugEnabled()) {
 			session.setDebug(true);
-
-			Properties sessionProperties = session.getProperties();
-
-			sessionProperties.list(System.out);
 		}
 
 		return session;
@@ -252,10 +252,10 @@ public class MailServiceImpl implements IdentifiableOSGiService, MailService {
 			session = Session.getInstance(properties);
 		}
 
+		_debug(properties);
+
 		if (_log.isDebugEnabled()) {
 			session.setDebug(true);
-
-			properties.list(System.out);
 		}
 
 		if (!oAuth2AuthEnable) {
@@ -277,6 +277,24 @@ public class MailServiceImpl implements IdentifiableOSGiService, MailService {
 
 				return null;
 			});
+	}
+
+	private void _debug(Properties properties) {
+		if (!_log.isDebugEnabled()) {
+			return;
+		}
+
+		_log.debug("Properties:");
+
+		for (String name : properties.stringPropertyNames()) {
+			String value = properties.getProperty(name);
+
+			if (name.contains("password")) {
+				value = "***";
+			}
+
+			_log.debug(StringBundler.concat(name, StringPool.EQUAL, value));
+		}
 	}
 
 	private Properties _getProperties(Account account) {

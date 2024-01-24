@@ -14,7 +14,6 @@ import com.liferay.object.field.filter.parser.ObjectFieldFilterContributor;
 import com.liferay.object.field.filter.parser.ObjectFieldFilterContributorRegistry;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.service.ObjectDefinitionLocalService;
-import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
@@ -51,38 +50,45 @@ public class ObjectViewDTOConverter
 			return null;
 		}
 
-		ObjectDefinition objectDefinition =
-			_objectDefinitionLocalService.getObjectDefinition(
-				objectView.getObjectDefinitionId());
-
 		return new ObjectView() {
 			{
-				actions = dtoConverterContext.getActions();
-				dateCreated = objectView.getCreateDate();
-				dateModified = objectView.getModifiedDate();
-				defaultObjectView = objectView.getDefaultObjectView();
-				id = objectView.getObjectViewId();
-				name = LocalizedMapUtil.getLanguageIdMap(
-					objectView.getNameMap());
-				objectDefinitionExternalReferenceCode =
-					objectDefinition.getExternalReferenceCode();
-				objectDefinitionId = objectView.getObjectDefinitionId();
-				objectViewColumns = TransformUtil.transformToArray(
-					objectView.getObjectViewColumns(),
-					objectViewColumn -> _toObjectViewColumn(objectViewColumn),
-					ObjectViewColumn.class);
-				objectViewFilterColumns = TransformUtil.transformToArray(
-					objectView.getObjectViewFilterColumns(),
-					objectViewFilterColumn -> _toObjectViewFilterColumn(
-						dtoConverterContext.getLocale(),
-						objectView.getObjectDefinitionId(),
-						objectViewFilterColumn),
-					ObjectViewFilterColumn.class);
-				objectViewSortColumns = TransformUtil.transformToArray(
-					objectView.getObjectViewSortColumns(),
-					objectViewSortColumn -> _toObjectViewSortColumn(
-						objectViewSortColumn),
-					ObjectViewSortColumn.class);
+				setActions(dtoConverterContext::getActions);
+				setDateCreated(objectView::getCreateDate);
+				setDateModified(objectView::getModifiedDate);
+				setDefaultObjectView(objectView::isDefaultObjectView);
+				setId(objectView::getObjectViewId);
+				setName(
+					() -> LocalizedMapUtil.getLanguageIdMap(
+						objectView.getNameMap()));
+				setObjectDefinitionExternalReferenceCode(
+					() -> {
+						ObjectDefinition objectDefinition =
+							_objectDefinitionLocalService.getObjectDefinition(
+								objectView.getObjectDefinitionId());
+
+						return objectDefinition.getExternalReferenceCode();
+					});
+				setObjectDefinitionId(objectView::getObjectDefinitionId);
+				setObjectViewColumns(
+					() -> TransformUtil.transformToArray(
+						objectView.getObjectViewColumns(),
+						objectViewColumn -> _toObjectViewColumn(
+							objectViewColumn),
+						ObjectViewColumn.class));
+				setObjectViewFilterColumns(
+					() -> TransformUtil.transformToArray(
+						objectView.getObjectViewFilterColumns(),
+						objectViewFilterColumn -> _toObjectViewFilterColumn(
+							dtoConverterContext.getLocale(),
+							objectView.getObjectDefinitionId(),
+							objectViewFilterColumn),
+						ObjectViewFilterColumn.class));
+				setObjectViewSortColumns(
+					() -> TransformUtil.transformToArray(
+						objectView.getObjectViewSortColumns(),
+						objectViewSortColumn -> _toObjectViewSortColumn(
+							objectViewSortColumn),
+						ObjectViewSortColumn.class));
 			}
 		};
 	}
@@ -96,11 +102,12 @@ public class ObjectViewDTOConverter
 
 		return new ObjectViewColumn() {
 			{
-				id = objectViewColumn.getObjectViewColumnId();
-				label = LocalizedMapUtil.getLanguageIdMap(
-					objectViewColumn.getLabelMap());
-				objectFieldName = objectViewColumn.getObjectFieldName();
-				priority = objectViewColumn.getPriority();
+				setId(objectViewColumn::getObjectViewColumnId);
+				setLabel(
+					() -> LocalizedMapUtil.getLanguageIdMap(
+						objectViewColumn.getLabelMap()));
+				setObjectFieldName(objectViewColumn::getObjectFieldName);
+				setPriority(objectViewColumn::getPriority);
 			}
 		};
 	}
@@ -117,12 +124,14 @@ public class ObjectViewDTOConverter
 		ObjectViewFilterColumn objectViewFilterColumn =
 			new ObjectViewFilterColumn() {
 				{
-					id =
-						serviceBuilderObjectViewFilterColumn.
-							getObjectViewFilterColumnId();
-					objectFieldName =
-						serviceBuilderObjectViewFilterColumn.
-							getObjectFieldName();
+					setId(
+						() ->
+							serviceBuilderObjectViewFilterColumn.
+								getObjectViewFilterColumnId());
+					setObjectFieldName(
+						() ->
+							serviceBuilderObjectViewFilterColumn.
+								getObjectFieldName());
 				}
 			};
 
@@ -161,11 +170,12 @@ public class ObjectViewDTOConverter
 
 		return new ObjectViewSortColumn() {
 			{
-				id = objectViewSortColumn.getObjectViewSortColumnId();
-				objectFieldName = objectViewSortColumn.getObjectFieldName();
-				priority = objectViewSortColumn.getPriority();
-				sortOrder = ObjectViewSortColumn.SortOrder.create(
-					objectViewSortColumn.getSortOrder());
+				setId(objectViewSortColumn::getObjectViewSortColumnId);
+				setObjectFieldName(objectViewSortColumn::getObjectFieldName);
+				setPriority(objectViewSortColumn::getPriority);
+				setSortOrder(
+					() -> ObjectViewSortColumn.SortOrder.create(
+						objectViewSortColumn.getSortOrder()));
 			}
 		};
 	}
@@ -176,8 +186,5 @@ public class ObjectViewDTOConverter
 	@Reference
 	private ObjectFieldFilterContributorRegistry
 		_objectFieldFilterContributorRegistry;
-
-	@Reference
-	private ObjectFieldLocalService _objectFieldLocalService;
 
 }

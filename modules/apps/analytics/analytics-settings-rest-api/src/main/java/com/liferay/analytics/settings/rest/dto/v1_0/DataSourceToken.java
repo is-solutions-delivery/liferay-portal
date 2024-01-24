@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -49,31 +50,44 @@ public class DataSourceToken implements Serializable {
 
 	@Schema
 	public String getToken() {
+		if (_tokenSupplier != null) {
+			token = _tokenSupplier.get();
+
+			_tokenSupplier = null;
+		}
+
 		return token;
 	}
 
 	public void setToken(String token) {
 		this.token = token;
+
+		_tokenSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setToken(
 		UnsafeSupplier<String, Exception> tokenUnsafeSupplier) {
 
-		try {
-			token = tokenUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_tokenSupplier = () -> {
+			try {
+				return tokenUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String token;
+
+	@JsonIgnore
+	private Supplier<String> _tokenSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -101,6 +115,8 @@ public class DataSourceToken implements Serializable {
 		StringBundler sb = new StringBundler();
 
 		sb.append("{");
+
+		String token = getToken();
 
 		if (token != null) {
 			if (sb.length() > 1) {

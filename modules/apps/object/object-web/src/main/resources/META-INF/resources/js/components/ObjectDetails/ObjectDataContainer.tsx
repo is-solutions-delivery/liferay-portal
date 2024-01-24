@@ -12,7 +12,7 @@ import React, {ChangeEventHandler, useState} from 'react';
 import {defaultLanguageId} from '../../utils/constants';
 
 interface ObjectDataContainerProps {
-	dbTableName: string;
+	dbTableName: string | undefined;
 	errors: FormError<ObjectDefinition>;
 	handleChange: ChangeEventHandler<HTMLInputElement>;
 	hasUpdateObjectDefinitionPermission: boolean;
@@ -48,6 +48,7 @@ export function ObjectDataContainer({
 			<Input
 				disabled={isApproved || noPermissionOrLinked}
 				error={errors.name}
+				id="lfr-objects__object-data-container-name"
 				label={Liferay.Language.get('name')}
 				name="name"
 				onBlur={(event) => {

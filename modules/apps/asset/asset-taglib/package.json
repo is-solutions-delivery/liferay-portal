@@ -1,12 +1,12 @@
 {
 	"dependencies": {
-		"@clayui/button": "3.100.0",
-		"@clayui/core": "3.104.0",
-		"@clayui/data-provider": "3.104.0",
-		"@clayui/form": "3.104.0",
-		"@clayui/icon": "3.56.0",
-		"@clayui/link": "3.88.0",
-		"@clayui/multi-select": "3.105.0",
+		"@clayui/button": "3.107.0",
+		"@clayui/core": "3.108.0",
+		"@clayui/data-provider": "3.107.0",
+		"@clayui/form": "3.107.0",
+		"@clayui/icon": "3.106.1",
+		"@clayui/link": "3.106.1",
+		"@clayui/multi-select": "3.108.0",
 		"@liferay/frontend-js-react-web": "*",
 		"classnames": "2.3.1",
 		"frontend-js-components-web": "*",
@@ -15,12 +15,12 @@
 		"prop-types": "15.7.2",
 		"react": "16.12.0"
 	},
-	"main": "index.es.js",
+	"main": "js/index.js",
 	"name": "asset-taglib",
 	"scripts": {
 		"build": "liferay-npm-scripts build",
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "10.0.7"
+	"version": "10.0.11"
 }

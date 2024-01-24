@@ -1,9 +1,9 @@
 {
 	"dependencies": {
-		"@clayui/button": "3.100.0",
-		"@clayui/drop-down": "3.105.0",
-		"@clayui/icon": "3.56.0",
-		"@clayui/layout": "3.93.0",
+		"@clayui/button": "3.107.0",
+		"@clayui/drop-down": "3.108.0",
+		"@clayui/icon": "3.106.1",
+		"@clayui/layout": "3.106.1",
 		"@liferay/frontend-js-react-web": "*",
 		"classnames": "2.3.1",
 		"frontend-js-web": "*",
@@ -17,6 +17,7 @@
 			"<rootDir>/test/utils.js"
 		]
 	},
+	"main": "js/index.js",
 	"name": "ratings-taglib",
 	"private": true,
 	"scripts": {
@@ -25,5 +26,5 @@
 		"format": "liferay-npm-scripts fix",
 		"test": "liferay-npm-scripts test"
 	},
-	"version": "3.1.16"
+	"version": "3.1.19"
 }

@@ -350,6 +350,15 @@ public class ObjectStateFlowLocalServiceUtil {
 			newObjectField, oldObjectField);
 	}
 
+	public static void updateObjectStateFlow(
+			long userId, long objectStateFlowId,
+			List<com.liferay.object.model.ObjectState> objectStates)
+		throws PortalException {
+
+		getService().updateObjectStateFlow(
+			userId, objectStateFlowId, objectStates);
+	}
+
 	/**
 	 * Updates the object state flow in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *

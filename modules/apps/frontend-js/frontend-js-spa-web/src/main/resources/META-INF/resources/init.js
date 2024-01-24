@@ -34,6 +34,14 @@ const initSPA = function (config) {
 
 				if (app.isLinkSameOrigin_(host)) {
 					match = uri.searchParams.get('p_p_lifecycle') === '1';
+
+					if (match) {
+						const id = uri.searchParams.get('p_p_id');
+
+						if (id && config.excludedTargetPortlets) {
+							match = !config.excludedTargetPortlets.includes(id);
+						}
+					}
 				}
 
 				return match;

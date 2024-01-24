@@ -8,17 +8,19 @@ package com.liferay.asset.auto.tagger.internal.osgi.commands;
 import com.liferay.asset.auto.tagger.AssetAutoTagger;
 import com.liferay.asset.auto.tagger.configuration.AssetAutoTaggerConfiguration;
 import com.liferay.asset.auto.tagger.configuration.AssetAutoTaggerConfigurationFactory;
-import com.liferay.asset.auto.tagger.internal.helper.AssetAutoTaggerHelper;
+import com.liferay.asset.auto.tagger.internal.util.AssetAutoTaggerUtil;
 import com.liferay.asset.auto.tagger.model.AssetAutoTaggerEntry;
 import com.liferay.asset.auto.tagger.service.AssetAutoTaggerEntryLocalService;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.service.AssetEntryLocalService;
 import com.liferay.osgi.util.osgi.commands.OSGiCommands;
 import com.liferay.petra.function.UnsafeConsumer;
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -80,7 +82,7 @@ public class AssetAutoTaggerOSGiCommands implements OSGiCommands {
 
 		if (ArrayUtil.isEmpty(classNames)) {
 			Set<String> classNamesSet = new HashSet<>(
-				_assetAutoTaggerHelper.getClassNames());
+				AssetAutoTaggerUtil.getClassNames());
 
 			classNamesSet.remove("*");
 
@@ -143,7 +145,14 @@ public class AssetAutoTaggerOSGiCommands implements OSGiCommands {
 			}
 
 			actionableDynamicQuery.setPerformActionMethod(
-				(AssetEntry assetEntry) -> consumer.accept(assetEntry));
+				(AssetEntry assetEntry) -> {
+					try (SafeCloseable safeCloseable =
+							CompanyThreadLocal.setWithSafeCloseable(
+								assetEntry.getCompanyId())) {
+
+						consumer.accept(assetEntry);
+					}
+				});
 
 			actionableDynamicQuery.performActions();
 		}
@@ -164,9 +173,6 @@ public class AssetAutoTaggerOSGiCommands implements OSGiCommands {
 
 	@Reference
 	private AssetAutoTaggerEntryLocalService _assetAutoTaggerEntryLocalService;
-
-	@Reference
-	private AssetAutoTaggerHelper _assetAutoTaggerHelper;
 
 	@Reference
 	private AssetEntryLocalService _assetEntryLocalService;

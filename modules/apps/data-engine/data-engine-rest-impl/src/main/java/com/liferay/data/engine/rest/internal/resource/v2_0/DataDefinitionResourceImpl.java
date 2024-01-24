@@ -22,6 +22,7 @@ import com.liferay.data.engine.rest.dto.v2_0.DataListView;
 import com.liferay.data.engine.rest.dto.v2_0.DataRecordCollection;
 import com.liferay.data.engine.rest.dto.v2_0.util.DataDefinitionDDMFormUtil;
 import com.liferay.data.engine.rest.internal.content.type.DataDefinitionContentTypeRegistryUtil;
+import com.liferay.data.engine.rest.internal.dto.v2_0.util.DataDefinitionFieldUtil;
 import com.liferay.data.engine.rest.internal.dto.v2_0.util.DataDefinitionUtil;
 import com.liferay.data.engine.rest.internal.dto.v2_0.util.DataLayoutUtil;
 import com.liferay.data.engine.rest.internal.odata.entity.v2_0.DataDefinitionEntityModel;
@@ -32,7 +33,6 @@ import com.liferay.data.engine.rest.resource.v2_0.DataLayoutResource;
 import com.liferay.data.engine.rest.resource.v2_0.DataListViewResource;
 import com.liferay.data.engine.rest.resource.v2_0.DataRecordCollectionResource;
 import com.liferay.data.engine.service.DEDataDefinitionFieldLinkLocalService;
-import com.liferay.data.engine.service.DEDataListViewLocalService;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetLocalService;
 import com.liferay.dynamic.data.mapping.constants.DDMStructureConstants;
 import com.liferay.dynamic.data.mapping.exception.RequiredStructureException;
@@ -78,16 +78,12 @@ import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.change.tracking.CTAware;
-import com.liferay.portal.kernel.editor.configuration.EditorConfiguration;
-import com.liferay.portal.kernel.editor.configuration.EditorConfigurationFactoryUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
@@ -96,7 +92,6 @@ import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.service.ResourceLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -128,8 +123,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
-
-import javax.validation.ValidationException;
 
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -268,7 +261,8 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 		return DataDefinitionUtil.toDataDefinition(
 			_ddmFormFieldTypeServicesRegistry,
 			_ddmStructureLocalService.getStructure(dataDefinitionId),
-			_ddmStructureLayoutLocalService, _spiDDMFormRuleConverter);
+			_ddmStructureLayoutLocalService, contextHttpServletRequest,
+			_spiDDMFormRuleConverter);
 	}
 
 	@Override
@@ -349,7 +343,8 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 
 		return DataDefinitionUtil.toDataDefinition(
 			_ddmFormFieldTypeServicesRegistry, ddmStructure,
-			_ddmStructureLayoutLocalService, _spiDDMFormRuleConverter);
+			_ddmStructureLayoutLocalService, contextHttpServletRequest,
+			_spiDDMFormRuleConverter);
 	}
 
 	@Override
@@ -358,13 +353,6 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 				Long siteId, String contentType, String keywords,
 				Pagination pagination, Sort[] sorts)
 		throws Exception {
-
-		if (pagination.getPageSize() > 250) {
-			throw new ValidationException(
-				_language.format(
-					contextAcceptLanguage.getPreferredLocale(),
-					"page-size-is-greater-than-x", 250));
-		}
 
 		if (ArrayUtil.isEmpty(sorts)) {
 			sorts = new Sort[] {
@@ -415,7 +403,8 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 				_ddmFormFieldTypeServicesRegistry,
 				_ddmStructureLocalService.getStructure(
 					GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK))),
-				_ddmStructureLayoutLocalService, _spiDDMFormRuleConverter));
+				_ddmStructureLayoutLocalService, contextHttpServletRequest,
+				_spiDDMFormRuleConverter));
 	}
 
 	@Override
@@ -435,7 +424,8 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 		DataDefinition dataDefinition = DataDefinitionUtil.toDataDefinition(
 			_ddmFormFieldTypeServicesRegistry,
 			_ddmStructureLocalService.getStructure(dataDefinitionId),
-			_ddmStructureLayoutLocalService, _spiDDMFormRuleConverter);
+			_ddmStructureLayoutLocalService, contextHttpServletRequest,
+			_spiDDMFormRuleConverter);
 
 		_uniquifyDataDefinitionFields(dataDefinition);
 
@@ -522,7 +512,8 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 				DataDefinitionUtil.toDataDefinition(
 					_ddmFormFieldTypeServicesRegistry,
 					_ddmStructureLocalService.getStructure(classPK),
-					_ddmStructureLayoutLocalService, _spiDDMFormRuleConverter);
+					_ddmStructureLayoutLocalService, contextHttpServletRequest,
+					_spiDDMFormRuleConverter);
 
 			putDataDefinition(
 				existingDataDefinition.getId(), existingDataDefinition);
@@ -775,7 +766,8 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 	}
 
 	private JSONObject _getFieldTypeMetadataJSONObject(
-		String ddmFormFieldName, ResourceBundle resourceBundle) {
+			String ddmFormFieldName, ResourceBundle resourceBundle)
+		throws Exception {
 
 		Map<String, Object> ddmFormFieldTypeProperties =
 			_ddmFormFieldTypeServicesRegistry.getDDMFormFieldTypeProperties(
@@ -830,22 +822,14 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 				ddmFormFieldTypeProperties, "ddm.form.field.type.system")
 		);
 
-		ThemeDisplay themeDisplay = _getThemeDisplay();
+		if (StringUtil.equals(
+				ddmFormFieldType.getName(),
+				DDMFormFieldTypeConstants.RICH_TEXT)) {
 
-		if ((themeDisplay != null) &&
-			StringUtil.equals(ddmFormFieldType.getName(), "rich_text")) {
-
-			EditorConfiguration editorConfiguration =
-				EditorConfigurationFactoryUtil.getEditorConfiguration(
-					StringPool.BLANK, ddmFormFieldType.getName(),
-					"ckeditor_classic", new HashMap<String, Object>(),
-					themeDisplay,
-					RequestBackedPortletURLFactoryUtil.create(
-						contextHttpServletRequest));
-
-			Map<String, Object> data = editorConfiguration.getData();
-
-			jsonObject.put("editorConfig", data.get("editorConfig"));
+			jsonObject.put(
+				"editorConfig",
+				DataDefinitionFieldUtil.getEditorConfig(
+					ddmFormFieldType.getName(), contextHttpServletRequest));
 		}
 
 		return jsonObject;
@@ -870,7 +854,8 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 			DataDefinitionUtil.toDataDefinition(
 				_ddmFormFieldTypeServicesRegistry,
 				_ddmStructureLocalService.getStructure(dataDefinitionId),
-				_ddmStructureLayoutLocalService, _spiDDMFormRuleConverter);
+				_ddmStructureLayoutLocalService, contextHttpServletRequest,
+				_spiDDMFormRuleConverter);
 
 		DDMForm existingDDMForm = DataDefinitionDDMFormUtil.toDDMForm(
 			existingDataDefinition, _ddmFormFieldTypeServicesRegistry);
@@ -927,15 +912,6 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 			_portal.getResourceBundle(locale));
 	}
 
-	private ThemeDisplay _getThemeDisplay() {
-		if (contextHttpServletRequest == null) {
-			return null;
-		}
-
-		return (ThemeDisplay)contextHttpServletRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
-	}
-
 	private void _normalizeDataDefinitionFields(
 			DataDefinitionField[] dataDefinitionFields,
 			long structureArticlesCount)
@@ -957,7 +933,8 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 			DataDefinition dataDefinition = DataDefinitionUtil.toDataDefinition(
 				_ddmFormFieldTypeServicesRegistry,
 				_ddmStructureLocalService.getDDMStructure(entry.getKey()),
-				_ddmStructureLayoutLocalService, _spiDDMFormRuleConverter);
+				_ddmStructureLayoutLocalService, contextHttpServletRequest,
+				_spiDDMFormRuleConverter);
 
 			DDMStructureLayout ddmStructureLayout =
 				_ddmStructureLayoutLocalService.fetchDDMStructureLayout(
@@ -1180,7 +1157,8 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 
 		dataDefinition = DataDefinitionUtil.toDataDefinition(
 			_ddmFormFieldTypeServicesRegistry, ddmStructure,
-			_ddmStructureLayoutLocalService, _spiDDMFormRuleConverter);
+			_ddmStructureLayoutLocalService, contextHttpServletRequest,
+			_spiDDMFormRuleConverter);
 
 		if (copyPermissions) {
 			_resourceLocalService.copyModelResources(
@@ -1208,12 +1186,14 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 			dataDefinition.getId(),
 			new DataRecordCollection() {
 				{
-					dataDefinitionId = ddmStructure.getStructureId();
-					dataRecordCollectionKey = ddmStructure.getStructureKey();
-					description = LocalizedValueUtil.toStringObjectMap(
-						ddmStructure.getDescriptionMap());
-					name = LocalizedValueUtil.toStringObjectMap(
-						ddmStructure.getNameMap());
+					setDataDefinitionId(ddmStructure::getStructureId);
+					setDataRecordCollectionKey(ddmStructure::getStructureKey);
+					setDescription(
+						() -> LocalizedValueUtil.toStringObjectMap(
+							ddmStructure.getDescriptionMap()));
+					setName(
+						() -> LocalizedValueUtil.toStringObjectMap(
+							ddmStructure.getNameMap()));
 				}
 			});
 
@@ -1467,7 +1447,8 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 
 		return DataDefinitionUtil.toDataDefinition(
 			_ddmFormFieldTypeServicesRegistry, ddmStructure,
-			_ddmStructureLayoutLocalService, _spiDDMFormRuleConverter);
+			_ddmStructureLayoutLocalService, contextHttpServletRequest,
+			_spiDDMFormRuleConverter);
 	}
 
 	private DataDefinitionValidationException
@@ -1778,7 +1759,8 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 					dataDefinition.getDescription()),
 				ddmFormSerializerSerializeResponse.getContent(),
 				new ServiceContext()),
-			_ddmStructureLayoutLocalService, _spiDDMFormRuleConverter);
+			_ddmStructureLayoutLocalService, contextHttpServletRequest,
+			_spiDDMFormRuleConverter);
 	}
 
 	private void _updateDataLayout(DataLayout dataLayout) {
@@ -1906,16 +1888,10 @@ public class DataDefinitionResourceImpl extends BaseDataDefinitionResourceImpl {
 		_deDataDefinitionFieldLinkLocalService;
 
 	@Reference
-	private DEDataListViewLocalService _deDataListViewLocalService;
-
-	@Reference
 	private JournalArticleLocalService _journalArticleLocalService;
 
 	@Reference
 	private JSONFactory _jsonFactory;
-
-	@Reference
-	private Language _language;
 
 	@Reference
 	private NPMResolver _npmResolver;

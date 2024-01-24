@@ -34,7 +34,7 @@ public class RequiredUserGroupExceptionMapper
 
 		return new Problem(
 			Response.Status.BAD_REQUEST,
-			"Remove all users before deleting this user group.");
+			"Remove all users before deleting this user group");
 	}
 
 }

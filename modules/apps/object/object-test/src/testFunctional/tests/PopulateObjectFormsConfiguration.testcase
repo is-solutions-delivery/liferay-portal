@@ -47,9 +47,15 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 303");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 303");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Text");
 
@@ -80,9 +86,15 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 304");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 304");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Text");
 
@@ -111,9 +123,15 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 305");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 305");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Numeric");
 
@@ -124,234 +142,6 @@ definition {
 			key_fieldName = "Text");
 
 		PopulateObjectFormsConfiguration.viewUnmappedFormField(fieldLabelName = "There are no compatible object fields to map.");
-	}
-
-	@description = "LPS-133365 - Verify if it's not possible to publish the Form when a required Object field is not mapped to a Form field"
-	@ignore = "true"
-	@priority = 5
-	test CannotPublishWhenRequiredFieldNotMapped {
-		property portal.acceptance = "true";
-
-		ObjectAdmin.addObjectViaAPI(
-			labelName = "Custom Object 306",
-			objectName = "CustomObject306",
-			pluralLabelName = "Custom Objects 306");
-
-		ObjectAdmin.addObjectFieldViaAPI(
-			fieldBusinessType = "Text",
-			fieldLabelName = "Required Field",
-			fieldName = "text",
-			fieldType = "String",
-			isRequired = "true",
-			objectName = "CustomObject306");
-
-		ObjectAdmin.addObjectFieldViaAPI(
-			fieldBusinessType = "Date",
-			fieldLabelName = "Not Required Field",
-			fieldName = "date",
-			fieldType = "Date",
-			isRequired = "false",
-			objectName = "CustomObject306");
-
-		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject306");
-
-		FormsAdmin.addForm();
-
-		PopulateObjectFormsConfiguration.openFormSettings();
-
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
-
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 306");
-
-		Form.gotoAddField(fieldType = "Date");
-
-		PopulateObjectFormsConfiguration.mapFormField(fieldLabelName = "Not Required Field");
-
-		PopulateObjectFormsConfiguration.publishFormObject();
-
-		PopulateObjectFormsConfiguration.viewUnmappedObjectRequiredFieldsError(
-			fieldLabelName = "Required Field",
-			fieldType = "String");
-
-		PopulateObjectFormsConfiguration.closeUnmappedError();
-
-		PopulateObjectFormsConfiguration.saveFormObject();
-
-		PopulateObjectFormsConfiguration.viewUnmappedObjectRequiredFieldsError(
-			fieldLabelName = "Required Field",
-			fieldType = "String");
-	}
-
-	@description = "LPS-133365 - Verify if is not possible to publish the Form when required Object field is not mapped to a Form Field in a Field Group"
-	@ignore = "true"
-	@priority = 4
-	test CannotPublishWhenRequiredFieldNotMappedForFieldGroup {
-		ObjectAdmin.addObjectViaAPI(
-			labelName = "Custom Object 307",
-			objectName = "CustomObject307",
-			pluralLabelName = "Custom Objects 307");
-
-		ObjectAdmin.addObjectFieldViaAPI(
-			fieldBusinessType = "Text",
-			fieldLabelName = "Required Field",
-			fieldName = "text",
-			fieldType = "String",
-			isRequired = "true",
-			objectName = "CustomObject307");
-
-		ObjectAdmin.addObjectFieldViaAPI(
-			fieldBusinessType = "Date",
-			fieldLabelName = "Not Required Field",
-			fieldName = "date",
-			fieldType = "Date",
-			isRequired = "false",
-			objectName = "CustomObject307");
-
-		ObjectAdmin.addObjectFieldViaAPI(
-			fieldBusinessType = "Integer",
-			fieldLabelName = "Not Required Field",
-			fieldName = "integer",
-			fieldType = "Integer",
-			isRequired = "false",
-			objectName = "CustomObject307");
-
-		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject307");
-
-		FormsAdmin.addForm();
-
-		PopulateObjectFormsConfiguration.openFormSettings();
-
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
-
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 307");
-
-		Form.gotoAddField(fieldType = "Date");
-
-		Form.closeSidebar();
-
-		Form.addFieldFromSidebarToFieldsGroup(
-			key_fieldLabel = "Date",
-			key_fieldName = "Numeric");
-
-		PopulateObjectFormsConfiguration.mapFormField(fieldLabelName = "Not Required Field");
-
-		Form.closeSidebar();
-
-		PopulateObjectFormsConfiguration.gotoFormField(formFieldName = "Date");
-
-		PopulateObjectFormsConfiguration.mapFormField(fieldLabelName = "Not Required Field");
-
-		PopulateObjectFormsConfiguration.publishFormObject();
-
-		PopulateObjectFormsConfiguration.viewUnmappedObjectRequiredFieldsError(
-			fieldLabelName = "Required Field",
-			fieldType = "String");
-
-		PopulateObjectFormsConfiguration.closeUnmappedError();
-
-		PopulateObjectFormsConfiguration.saveFormObject();
-
-		PopulateObjectFormsConfiguration.viewUnmappedObjectRequiredFieldsError(
-			fieldLabelName = "Required Field",
-			fieldType = "String");
-	}
-
-	@description = "LPS-133365 - Verify if it's not possible to save or publish the Form if a added Form field is not mapped to a Object field"
-	@ignore = "true"
-	@priority = 4
-	test CannotSaveOrPublishWhenAddedFieldNotMapped {
-		property portal.acceptance = "true";
-
-		ObjectAdmin.addObjectViaAPI(
-			labelName = "Custom Object 308",
-			objectName = "CustomObject308",
-			pluralLabelName = "Custom Objects 308");
-
-		ObjectAdmin.addObjectFieldViaAPI(
-			fieldBusinessType = "Text",
-			fieldLabelName = "Custom Field",
-			fieldName = "customObjectField",
-			fieldType = "String",
-			isRequired = "false",
-			objectName = "CustomObject308");
-
-		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject308");
-
-		FormsAdmin.addForm();
-
-		PopulateObjectFormsConfiguration.openFormSettings();
-
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
-
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 308");
-
-		Form.gotoAddField(fieldType = "Text");
-
-		PopulateObjectFormsConfiguration.publishFormObject();
-
-		PopulateObjectFormsConfiguration.viewUnmappedFormFieldsError(
-			fieldLabel = "Text",
-			fieldType = "Text");
-
-		PopulateObjectFormsConfiguration.closeUnmappedError();
-
-		PopulateObjectFormsConfiguration.saveFormObject();
-
-		PopulateObjectFormsConfiguration.viewUnmappedFormFieldsError(
-			fieldLabel = "Text",
-			fieldType = "Text");
-	}
-
-	@description = "LPS-133365 - Verify if it's not possible to save or publish the Form if a added Form field is not mapped to a Object field in a Field Group"
-	@ignore = "true"
-	@priority = 4
-	test CannotSaveOrPublishWhenAddedFieldNotMappedForFieldGroup {
-		property portal.acceptance = "true";
-
-		ObjectAdmin.addObjectViaAPI(
-			labelName = "Custom Object 309",
-			objectName = "CustomObject309",
-			pluralLabelName = "Custom Objects 309");
-
-		ObjectAdmin.addObjectFieldViaAPI(
-			fieldBusinessType = "Date",
-			fieldLabelName = "Not Required Field",
-			fieldName = "date",
-			fieldType = "Date",
-			isRequired = "false",
-			objectName = "CustomObject309");
-
-		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject309");
-
-		FormsAdmin.addForm();
-
-		PopulateObjectFormsConfiguration.openFormSettings();
-
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
-
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 309");
-
-		Form.gotoAddField(fieldType = "Date");
-
-		Form.closeSidebar();
-
-		Form.addFieldFromSidebarToFieldsGroup(
-			key_fieldLabel = "Date",
-			key_fieldName = "Date");
-
-		PopulateObjectFormsConfiguration.publishFormObject();
-
-		PopulateObjectFormsConfiguration.viewUnmappedFormFieldsError(
-			fieldLabel = "Date",
-			fieldType = "Date");
-
-		PopulateObjectFormsConfiguration.closeUnmappedError();
-
-		PopulateObjectFormsConfiguration.saveFormObject();
-
-		PopulateObjectFormsConfiguration.viewUnmappedFormFieldsError(
-			fieldLabel = "Date",
-			fieldType = "Date");
 	}
 
 	@description = "LPS-136456 - Verify that it is not possible to view forms entries when it is mapped to an object"
@@ -378,15 +168,21 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 310");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 310");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Text");
 
 		PopulateObjectFormsConfiguration.mapFormField(fieldLabelName = "Custom Field");
 
-		PopulateObjectFormsConfiguration.saveFormObject();
+		Form.save();
 
 		AssertElementNotPresent(
 			locator1 = "FormsAdmin#FORMS_NAVIGATION_BAR_ITEM",
@@ -397,41 +193,6 @@ definition {
 		LexiconEntry.openEntryMenu(rowEntry = "Form 1");
 
 		MenuItem.viewNotPresent(menuItem = "View Entries");
-	}
-
-	@description = "LPS-133365 - Verify if it's possible to select Object as a Storage Type"
-	@priority = 5
-	test CanSelectObjectStorageType {
-		property portal.acceptance = "true";
-
-		ObjectAdmin.addObjectViaAPI(
-			labelName = "Custom Object 311",
-			objectName = "CustomObject311",
-			pluralLabelName = "Custom Objects 311");
-
-		ObjectAdmin.addObjectFieldViaAPI(
-			fieldBusinessType = "Text",
-			fieldLabelName = "Field",
-			fieldName = "customObjectField",
-			fieldType = "String",
-			isRequired = "false",
-			objectName = "CustomObject311");
-
-		ObjectAdmin.publishObjectViaAPI(objectName = "CustomObject311");
-
-		FormsAdmin.addForm();
-
-		PopulateObjectFormsConfiguration.openFormSettings();
-
-		AssertElementPresent(
-			key_label = "Object",
-			locator1 = "PopulateObjectFormsConfiguration#DISPLAY_SELECT_OBJECT");
-
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
-
-		AssertElementPresent(
-			key_label = "Custom Object 311",
-			locator1 = "PopulateObjectFormsConfiguration#DISPLAY_SELECT_OBJECT");
 	}
 
 	@description = "LPS-136456 - Verify that the Repeatable option is not available on a form when it is mapped to an object"
@@ -460,9 +221,15 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 312");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 312");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Text");
 
@@ -497,17 +264,21 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 313");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 313");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Text");
 
-		PopulateObjectFormsConfiguration.mapFormField(fieldLabelName = "Custom Field");
-
 		Form.gotoAdvancedTab();
 
-		AssertElementNotPresent(locator1 = "PopulateObjectFormsConfiguration#ANY_SEARCHABLE_SECTION_TITLE");
+		AssertNotVisible(locator1 = "PopulateObjectFormsConfiguration#ANY_SEARCHABLE_SECTION_TITLE");
 	}
 
 }

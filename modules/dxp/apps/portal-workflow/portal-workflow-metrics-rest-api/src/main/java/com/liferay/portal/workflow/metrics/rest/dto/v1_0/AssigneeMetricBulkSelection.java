@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -58,199 +59,290 @@ public class AssigneeMetricBulkSelection implements Serializable {
 
 	@Schema
 	public Boolean getCompleted() {
+		if (_completedSupplier != null) {
+			completed = _completedSupplier.get();
+
+			_completedSupplier = null;
+		}
+
 		return completed;
 	}
 
 	public void setCompleted(Boolean completed) {
 		this.completed = completed;
+
+		_completedSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setCompleted(
 		UnsafeSupplier<Boolean, Exception> completedUnsafeSupplier) {
 
-		try {
-			completed = completedUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_completedSupplier = () -> {
+			try {
+				return completedUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Boolean completed;
 
+	@JsonIgnore
+	private Supplier<Boolean> _completedSupplier;
+
 	@Schema
 	public Date getDateEnd() {
+		if (_dateEndSupplier != null) {
+			dateEnd = _dateEndSupplier.get();
+
+			_dateEndSupplier = null;
+		}
+
 		return dateEnd;
 	}
 
 	public void setDateEnd(Date dateEnd) {
 		this.dateEnd = dateEnd;
+
+		_dateEndSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setDateEnd(
 		UnsafeSupplier<Date, Exception> dateEndUnsafeSupplier) {
 
-		try {
-			dateEnd = dateEndUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_dateEndSupplier = () -> {
+			try {
+				return dateEndUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Date dateEnd;
 
+	@JsonIgnore
+	private Supplier<Date> _dateEndSupplier;
+
 	@Schema
 	public Date getDateStart() {
+		if (_dateStartSupplier != null) {
+			dateStart = _dateStartSupplier.get();
+
+			_dateStartSupplier = null;
+		}
+
 		return dateStart;
 	}
 
 	public void setDateStart(Date dateStart) {
 		this.dateStart = dateStart;
+
+		_dateStartSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setDateStart(
 		UnsafeSupplier<Date, Exception> dateStartUnsafeSupplier) {
 
-		try {
-			dateStart = dateStartUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_dateStartSupplier = () -> {
+			try {
+				return dateStartUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Date dateStart;
 
+	@JsonIgnore
+	private Supplier<Date> _dateStartSupplier;
+
 	@Schema
 	public Long[] getInstanceIds() {
+		if (_instanceIdsSupplier != null) {
+			instanceIds = _instanceIdsSupplier.get();
+
+			_instanceIdsSupplier = null;
+		}
+
 		return instanceIds;
 	}
 
 	public void setInstanceIds(Long[] instanceIds) {
 		this.instanceIds = instanceIds;
+
+		_instanceIdsSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setInstanceIds(
 		UnsafeSupplier<Long[], Exception> instanceIdsUnsafeSupplier) {
 
-		try {
-			instanceIds = instanceIdsUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_instanceIdsSupplier = () -> {
+			try {
+				return instanceIdsUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Long[] instanceIds;
 
+	@JsonIgnore
+	private Supplier<Long[]> _instanceIdsSupplier;
+
 	@Schema
 	public String getKeywords() {
+		if (_keywordsSupplier != null) {
+			keywords = _keywordsSupplier.get();
+
+			_keywordsSupplier = null;
+		}
+
 		return keywords;
 	}
 
 	public void setKeywords(String keywords) {
 		this.keywords = keywords;
+
+		_keywordsSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setKeywords(
 		UnsafeSupplier<String, Exception> keywordsUnsafeSupplier) {
 
-		try {
-			keywords = keywordsUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_keywordsSupplier = () -> {
+			try {
+				return keywordsUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String keywords;
 
+	@JsonIgnore
+	private Supplier<String> _keywordsSupplier;
+
 	@Schema
 	public Long[] getRoleIds() {
+		if (_roleIdsSupplier != null) {
+			roleIds = _roleIdsSupplier.get();
+
+			_roleIdsSupplier = null;
+		}
+
 		return roleIds;
 	}
 
 	public void setRoleIds(Long[] roleIds) {
 		this.roleIds = roleIds;
+
+		_roleIdsSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setRoleIds(
 		UnsafeSupplier<Long[], Exception> roleIdsUnsafeSupplier) {
 
-		try {
-			roleIds = roleIdsUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_roleIdsSupplier = () -> {
+			try {
+				return roleIdsUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Long[] roleIds;
 
+	@JsonIgnore
+	private Supplier<Long[]> _roleIdsSupplier;
+
 	@Schema
 	public String[] getTaskNames() {
+		if (_taskNamesSupplier != null) {
+			taskNames = _taskNamesSupplier.get();
+
+			_taskNamesSupplier = null;
+		}
+
 		return taskNames;
 	}
 
 	public void setTaskNames(String[] taskNames) {
 		this.taskNames = taskNames;
+
+		_taskNamesSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setTaskNames(
 		UnsafeSupplier<String[], Exception> taskNamesUnsafeSupplier) {
 
-		try {
-			taskNames = taskNamesUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_taskNamesSupplier = () -> {
+			try {
+				return taskNamesUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String[] taskNames;
+
+	@JsonIgnore
+	private Supplier<String[]> _taskNamesSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -284,6 +376,8 @@ public class AssigneeMetricBulkSelection implements Serializable {
 		DateFormat liferayToJSONDateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss'Z'");
 
+		Boolean completed = getCompleted();
+
 		if (completed != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -293,6 +387,8 @@ public class AssigneeMetricBulkSelection implements Serializable {
 
 			sb.append(completed);
 		}
+
+		Date dateEnd = getDateEnd();
 
 		if (dateEnd != null) {
 			if (sb.length() > 1) {
@@ -308,6 +404,8 @@ public class AssigneeMetricBulkSelection implements Serializable {
 			sb.append("\"");
 		}
 
+		Date dateStart = getDateStart();
+
 		if (dateStart != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -321,6 +419,8 @@ public class AssigneeMetricBulkSelection implements Serializable {
 
 			sb.append("\"");
 		}
+
+		Long[] instanceIds = getInstanceIds();
 
 		if (instanceIds != null) {
 			if (sb.length() > 1) {
@@ -342,6 +442,8 @@ public class AssigneeMetricBulkSelection implements Serializable {
 			sb.append("]");
 		}
 
+		String keywords = getKeywords();
+
 		if (keywords != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -355,6 +457,8 @@ public class AssigneeMetricBulkSelection implements Serializable {
 
 			sb.append("\"");
 		}
+
+		Long[] roleIds = getRoleIds();
 
 		if (roleIds != null) {
 			if (sb.length() > 1) {
@@ -375,6 +479,8 @@ public class AssigneeMetricBulkSelection implements Serializable {
 
 			sb.append("]");
 		}
+
+		String[] taskNames = getTaskNames();
 
 		if (taskNames != null) {
 			if (sb.length() > 1) {

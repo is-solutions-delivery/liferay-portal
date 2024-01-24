@@ -30,6 +30,7 @@ import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.ResourceConstants;
@@ -368,6 +369,7 @@ public class ObjectRelatedModelsProviderTest {
 		// Object relationship deletion type disassociate
 
 		ObjectRelationshipTestUtil.updateObjectRelationship(
+			_objectRelationship.getExternalReferenceCode(),
 			_objectRelationship.getObjectRelationshipId(),
 			ObjectRelationshipConstants.DELETION_TYPE_DISASSOCIATE,
 			_objectRelationship.getLabelMap());
@@ -402,6 +404,7 @@ public class ObjectRelatedModelsProviderTest {
 		// Object relationship deletion type prevent
 
 		ObjectRelationshipTestUtil.updateObjectRelationship(
+			_objectRelationship.getExternalReferenceCode(),
 			_objectRelationship.getObjectRelationshipId(),
 			ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
 			_objectRelationship.getLabelMap());
@@ -494,11 +497,11 @@ public class ObjectRelatedModelsProviderTest {
 
 		_objectRelationship =
 			_objectRelationshipLocalService.addObjectRelationship(
-				TestPropsValues.getUserId(),
+				null, TestPropsValues.getUserId(),
 				objectDefinition1.getObjectDefinitionId(),
 				objectDefinition2.getObjectDefinitionId(), 0, deletionType,
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
-				StringUtil.randomId(), false, relationshipType);
+				StringUtil.randomId(), false, relationshipType, null);
 
 		if (!StringUtil.equals(
 				relationshipType,
@@ -569,9 +572,9 @@ public class ObjectRelatedModelsProviderTest {
 
 		Assert.assertNotNull(user);
 
-		String originalName = PrincipalThreadLocal.getName();
 		PermissionChecker originalPermissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
+		String originalName = PrincipalThreadLocal.getName();
 
 		try (SafeCloseable safeCloseable =
 				CompanyThreadLocal.setWithSafeCloseable(companyId)) {
@@ -612,7 +615,8 @@ public class ObjectRelatedModelsProviderTest {
 				_objectRelatedModelsProvider.getUnrelatedModels(
 					companyId, 0, systemObjectDefinition,
 					objectEntry.getObjectEntryId(),
-					_objectRelationship.getObjectRelationshipId());
+					_objectRelationship.getObjectRelationshipId(),
+					QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 			Assert.assertEquals(
 				unrelatedObjectEntries.toString(), 1,
@@ -632,7 +636,8 @@ public class ObjectRelatedModelsProviderTest {
 				_objectRelatedModelsProvider.getUnrelatedModels(
 					companyId, 0, systemObjectDefinition,
 					objectEntry.getObjectEntryId(),
-					_objectRelationship.getObjectRelationshipId());
+					_objectRelationship.getObjectRelationshipId(),
+					QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
 			Assert.assertEquals(
 				unrelatedObjectEntries.toString(), 0,
@@ -736,6 +741,7 @@ public class ObjectRelatedModelsProviderTest {
 		// Object relationship deletion type cascade
 
 		ObjectRelationshipTestUtil.updateObjectRelationship(
+			_objectRelationship.getExternalReferenceCode(),
 			_objectRelationship.getObjectRelationshipId(),
 			ObjectRelationshipConstants.DELETION_TYPE_CASCADE,
 			_objectRelationship.getLabelMap());
@@ -766,6 +772,7 @@ public class ObjectRelatedModelsProviderTest {
 		// Object relationship deletion type disassociate
 
 		ObjectRelationshipTestUtil.updateObjectRelationship(
+			_objectRelationship.getExternalReferenceCode(),
 			_objectRelationship.getObjectRelationshipId(),
 			ObjectRelationshipConstants.DELETION_TYPE_DISASSOCIATE,
 			_objectRelationship.getLabelMap());
@@ -799,6 +806,7 @@ public class ObjectRelatedModelsProviderTest {
 		// Object relationship deletion type prevent
 
 		ObjectRelationshipTestUtil.updateObjectRelationship(
+			_objectRelationship.getExternalReferenceCode(),
 			_objectRelationship.getObjectRelationshipId(),
 			ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
 			_objectRelationship.getLabelMap());

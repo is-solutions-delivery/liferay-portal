@@ -18,6 +18,7 @@ import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.portlet.render.PortletRenderParts;
 import com.liferay.portal.kernel.portlet.render.PortletRenderUtil;
 import com.liferay.portal.kernel.service.PortletLocalService;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -28,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,7 +50,7 @@ public class PortletRegistryImpl implements PortletRegistry {
 
 	@Override
 	public List<String> getFragmentEntryLinkPortletIds(
-		FragmentEntryLink fragmentEntryLink) {
+		Document document, FragmentEntryLink fragmentEntryLink) {
 
 		List<String> portletIds = new ArrayList<>();
 
@@ -72,14 +75,9 @@ public class PortletRegistryImpl implements PortletRegistry {
 			return portletIds;
 		}
 
-		Document document = Jsoup.parseBodyFragment(
-			fragmentEntryLink.getHtml());
-
-		Document.OutputSettings outputSettings = new Document.OutputSettings();
-
-		outputSettings.prettyPrint(false);
-
-		document.outputSettings(outputSettings);
+		if (document == null) {
+			document = _getDocument(fragmentEntryLink.getHtml());
+		}
 
 		for (Element element : document.select("*")) {
 			String tagName = element.tagName();
@@ -104,7 +102,43 @@ public class PortletRegistryImpl implements PortletRegistry {
 			portletIds.add(portletId);
 		}
 
+		Matcher liferayPortletRuntimeMatcher =
+			_liferayPortletRuntimePattern.matcher(fragmentEntryLink.getHtml());
+
+		while (liferayPortletRuntimeMatcher.find()) {
+			String portletName = _getAttributeValue(
+				"portletName", liferayPortletRuntimeMatcher.group(2));
+
+			if (Validator.isNull(portletName)) {
+				continue;
+			}
+
+			String instanceId = _getAttributeValue(
+				"instanceId", liferayPortletRuntimeMatcher.group(1));
+
+			if (Validator.isNull(instanceId)) {
+				instanceId = _getAttributeValue(
+					"instanceId", liferayPortletRuntimeMatcher.group(3));
+			}
+
+			String portletId = PortletIdCodec.encode(
+				PortletIdCodec.decodePortletName(portletName),
+				PortletIdCodec.decodeUserId(portletName),
+				StringUtil.replace(
+					instanceId, "fragmentEntryLinkNamespace",
+					fragmentEntryLink.getNamespace()));
+
+			portletIds.add(portletId);
+		}
+
 		return portletIds;
+	}
+
+	@Override
+	public List<String> getFragmentEntryLinkPortletIds(
+		FragmentEntryLink fragmentEntryLink) {
+
+		return getFragmentEntryLinkPortletIds(null, fragmentEntryLink);
 	}
 
 	@Override
@@ -176,8 +210,46 @@ public class PortletRegistryImpl implements PortletRegistry {
 		}
 	}
 
+	private String _getAttributeValue(String attributeName, String string) {
+		String s = StringUtil.extractLast(
+			string, attributeName + StringPool.EQUAL);
+
+		if (Validator.isNull(s)) {
+			return s;
+		}
+
+		if (s.startsWith(StringPool.QUOTE)) {
+			return StringUtil.extractFirst(s.substring(1), StringPool.QUOTE);
+		}
+
+		String[] strings = s.split("\\s+");
+
+		if (!ArrayUtil.isEmpty(strings)) {
+			return strings[0];
+		}
+
+		return null;
+	}
+
+	private Document _getDocument(String html) {
+		Document document = Jsoup.parseBodyFragment(html);
+
+		Document.OutputSettings outputSettings = new Document.OutputSettings();
+
+		outputSettings.prettyPrint(false);
+
+		document.outputSettings(outputSettings);
+
+		return document;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		PortletRegistryImpl.class);
+
+	private static final Pattern _liferayPortletRuntimePattern =
+		Pattern.compile(
+			"\\[@liferay_portlet\\[\"runtime\"\\]([\\s\\S]*)?" +
+				"(portletName=\"\\w+\")([\\s\\S]*)?\\/\\]");
 
 	private final Map<String, String> _aliasPortletNames =
 		new ConcurrentHashMap<>();

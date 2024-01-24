@@ -22,7 +22,6 @@ definition {
 	}
 
 	@description = "LPS-133365 - Verify if it's possible to map an Object field and view its entries in a Field Group"
-	@ignore = "true"
 	@priority = 4
 	test CanMapAndViewEntriesForFieldGroup {
 		ObjectAdmin.addObjectViaAPI(
@@ -54,9 +53,15 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 214");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 214");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Numeric");
 
@@ -123,9 +128,15 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 215");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 215");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Numeric");
 
@@ -178,9 +189,15 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 216");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 216");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Boolean");
 
@@ -229,9 +246,15 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 217");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 217");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Date");
 
@@ -280,9 +303,15 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 218");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 218");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Numeric");
 
@@ -335,9 +364,15 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 219");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 219");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Numeric");
 
@@ -386,9 +421,15 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 220");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 220");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Numeric");
 
@@ -451,15 +492,19 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 221");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 221");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Select from List");
 
-		PopulateObjectFormsConfiguration.mapFormObjectField(
-			fieldLabelName = "Field Picklist",
-			formObjectField = "Choose an Option");
+		PopulateObjectFormsConfiguration.mapFormField(fieldLabelName = "Field Picklist");
 
 		Form.save();
 
@@ -467,7 +512,15 @@ definition {
 
 		FormsAdminNavigator.gotoPublishedForm();
 
-		PopulateObjectFormsConfiguration.selectPicklistObject(picklistItem = "Item Test 1");
+		Click(
+			key_labelName = "Select from List",
+			locator1 = "ObjectAdmin#CLAY_GENERIC_BUTTON");
+
+		Click(
+			key_optionName = "Item Test 1",
+			locator1 = "ObjectAdmin#CLAY_GENERIC_DROPDOWN_ITEM");
+
+		IFrame.selectTopFrame();
 
 		PortletEntry.submitForWorkflow();
 
@@ -504,9 +557,15 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 222");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 222");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Text");
 
@@ -520,7 +579,7 @@ definition {
 
 		FormViewBuilder.editText(
 			fieldName = "Text",
-			fieldValue = "Test Text Test Text Test Text Test Text Test Text Test Text Test Text  Test");
+			fieldValue = "Work hard. Dream big. Never give up.");
 
 		PortletEntry.submitForWorkflow();
 
@@ -528,7 +587,7 @@ definition {
 
 		ObjectAdmin.goToCustomObject(objectName = "CustomObject222");
 
-		ObjectPortlet.viewEntry(entry = "Test Text Test Text Test Text Test Text Test Text Test Text Test Text  Test");
+		ObjectPortlet.viewEntry(entry = "Work hard. Dream big. Never give up.");
 	}
 
 	@description = "LPS-137865 - Verify that it is possible to submit an entry with a Double field blank that is not required"
@@ -563,9 +622,15 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 223");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 223");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Text");
 
@@ -577,9 +642,7 @@ definition {
 
 		FormFields.editNumericType(numericType = "Decimal");
 
-		PopulateObjectFormsConfiguration.mapFormObjectField(
-			fieldLabelName = "Double",
-			formObjectField = "Choose an Option");
+		PopulateObjectFormsConfiguration.mapFormField(fieldLabelName = "Double");
 
 		Form.save();
 
@@ -628,9 +691,15 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 224");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 224");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Text");
 
@@ -644,7 +713,7 @@ definition {
 
 		FormViewBuilder.editText(
 			fieldName = "Text",
-			fieldValue = "Test text");
+			fieldValue = "Do not worry, be happy.");
 
 		PortletEntry.submitForWorkflow();
 
@@ -656,7 +725,7 @@ definition {
 
 		ObjectAdmin.goToCustomObject(objectName = "CustomObject224");
 
-		ObjectPortlet.viewEntry(entry = "Test text");
+		ObjectPortlet.viewEntry(entry = "Do not worry, be happy.");
 	}
 
 	@description = "LPS-136451 - Verify if it's possible to see the entries of a field with capitalized letters in the name"
@@ -683,9 +752,15 @@ definition {
 
 		PopulateObjectFormsConfiguration.openFormSettings();
 
-		PopulateObjectFormsConfiguration.selectObject(label = "Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select a Storage Type",
+			optionName = "Object");
 
-		PopulateObjectFormsConfiguration.selectCustomObject(label = "Custom Object 225");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select Object",
+			optionName = "Custom Object 225");
+
+		Click(locator1 = "PopulateObjectFormsConfiguration#BUTTON_SETTINGS_FORM");
 
 		Form.gotoAddField(fieldType = "Date");
 

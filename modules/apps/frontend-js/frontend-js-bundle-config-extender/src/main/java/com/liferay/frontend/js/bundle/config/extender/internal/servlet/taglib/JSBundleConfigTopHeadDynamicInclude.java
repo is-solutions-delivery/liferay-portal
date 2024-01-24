@@ -8,7 +8,9 @@ package com.liferay.frontend.js.bundle.config.extender.internal.servlet.taglib;
 import com.liferay.frontend.js.bundle.config.extender.internal.JSBundleConfigRegistry;
 import com.liferay.frontend.js.loader.modules.extender.npm.ModuleNameUtil;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.content.security.policy.ContentSecurityPolicyNonceProvider;
+import com.liferay.portal.kernel.content.security.policy.ContentSecurityPolicyNonceProviderUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
@@ -19,10 +21,10 @@ import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.URLUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -52,27 +54,50 @@ public class JSBundleConfigTopHeadDynamicInclude extends BaseDynamicInclude {
 			HttpServletResponse httpServletResponse, String key)
 		throws IOException {
 
-		if (!_isStale(httpServletRequest)) {
+		String nonce = ContentSecurityPolicyNonceProviderUtil.getNonceAttribute(
+			httpServletRequest);
+
+		if (Validator.isNotNull(nonce)) {
+			_writeResponse(httpServletResponse, _getBundleConfig(nonce));
+
+			return;
+		}
+
+		if (!_isStale()) {
 			_writeResponse(httpServletResponse, _objectValuePair.getValue());
 
 			return;
 		}
 
+		String bundleConfig = _getBundleConfig(StringPool.BLANK);
+
+		_objectValuePair = new ObjectValuePair<>(
+			_jsBundleConfigRegistry.getLastModified(), bundleConfig);
+
+		_writeResponse(httpServletResponse, bundleConfig);
+	}
+
+	@Override
+	public void register(DynamicIncludeRegistry dynamicIncludeRegistry) {
+		dynamicIncludeRegistry.register(
+			"/html/common/themes/top_js.jspf#resources");
+	}
+
+	private String _getBundleConfig(String nonce) {
 		StringWriter stringWriter = new StringWriter();
 
 		Collection<JSBundleConfigRegistry.JSConfig> jsConfigs =
 			_jsBundleConfigRegistry.getJSConfigs();
 
 		if (!jsConfigs.isEmpty()) {
-			stringWriter.write("<script data-senna-track=\"temporary\" ");
-			stringWriter.write("type=\"");
+			stringWriter.write("<script");
+			stringWriter.write(nonce);
+			stringWriter.write(" data-senna-track=\"temporary\" type=\"");
 			stringWriter.write(ContentTypes.TEXT_JAVASCRIPT);
 			stringWriter.write("\">");
 
 			for (JSBundleConfigRegistry.JSConfig jsConfig : jsConfigs) {
-				URL url = jsConfig.getURL();
-
-				try (InputStream inputStream = url.openStream()) {
+				try {
 					stringWriter.write("try {");
 
 					ServletContext servletContext =
@@ -90,7 +115,7 @@ public class JSBundleConfigTopHeadDynamicInclude extends BaseDynamicInclude {
 
 					stringWriter.write(
 						StringUtil.removeSubstring(
-							StringUtil.read(inputStream),
+							URLUtil.toString(jsConfig.getURL()),
 							"//# sourceMappingURL=config.js.map"));
 
 					stringWriter.write(
@@ -104,18 +129,7 @@ public class JSBundleConfigTopHeadDynamicInclude extends BaseDynamicInclude {
 			stringWriter.write("</script>");
 		}
 
-		String bundleConfig = stringWriter.toString();
-
-		_objectValuePair = new ObjectValuePair<>(
-			_jsBundleConfigRegistry.getLastModified(), bundleConfig);
-
-		_writeResponse(httpServletResponse, bundleConfig);
-	}
-
-	@Override
-	public void register(DynamicIncludeRegistry dynamicIncludeRegistry) {
-		dynamicIncludeRegistry.register(
-			"/html/common/themes/top_js.jspf#resources");
+		return stringWriter.toString();
 	}
 
 	private String _getModuleMain(JSBundleConfigRegistry.JSConfig jsConfig) {
@@ -133,35 +147,30 @@ public class JSBundleConfigTopHeadDynamicInclude extends BaseDynamicInclude {
 				return null;
 			}
 
-			try (InputStream inputStream = url.openStream()) {
-				JSONObject jsonObject = _jsonFactory.createJSONObject(
-					StringUtil.read(inputStream));
+			JSONObject jsonObject = _jsonFactory.createJSONObject(
+				URLUtil.toString(url));
 
-				String moduleName = jsonObject.getString("name");
-				String moduleVersion = jsonObject.getString("version");
+			String moduleName = jsonObject.getString("name");
+			String moduleVersion = jsonObject.getString("version");
 
-				String moduleMain = jsonObject.getString("main");
+			String moduleMain = jsonObject.getString("main");
 
-				if (Validator.isNull(moduleMain)) {
-					moduleMain = "index.js";
-				}
-
-				return StringBundler.concat(
-					moduleName, "@", moduleVersion, "/",
-					ModuleNameUtil.toModuleName(moduleMain));
+			if (Validator.isNull(moduleMain)) {
+				moduleMain = "index.js";
 			}
+
+			return StringBundler.concat(
+				moduleName, "@", moduleVersion, "/",
+				ModuleNameUtil.toModuleName(moduleMain));
 		}
 		catch (Exception exception) {
 			throw new RuntimeException(exception);
 		}
 	}
 
-	private boolean _isStale(HttpServletRequest httpServletRequest) {
-		if ((_jsBundleConfigRegistry.getLastModified() >
-				_objectValuePair.getKey()) ||
-			Validator.isNotNull(
-				_contentSecurityPolicyNonceProvider.getNonce(
-					httpServletRequest))) {
+	private boolean _isStale() {
+		if (_jsBundleConfigRegistry.getLastModified() >
+				_objectValuePair.getKey()) {
 
 			return true;
 		}

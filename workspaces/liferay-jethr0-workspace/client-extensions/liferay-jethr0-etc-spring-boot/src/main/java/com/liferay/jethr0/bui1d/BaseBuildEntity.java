@@ -5,7 +5,6 @@
 
 package com.liferay.jethr0.bui1d;
 
-import com.liferay.jethr0.bui1d.parameter.BuildParameterEntity;
 import com.liferay.jethr0.bui1d.run.BuildRunEntity;
 import com.liferay.jethr0.entity.BaseEntity;
 import com.liferay.jethr0.environment.EnvironmentEntity;
@@ -17,11 +16,19 @@ import com.liferay.jethr0.util.StringUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -29,20 +36,6 @@ import org.json.JSONObject;
  */
 public abstract class BaseBuildEntity
 	extends BaseEntity implements BuildEntity {
-
-	@Override
-	public void addBuildParameterEntities(
-		Set<BuildParameterEntity> buildParameterEntities) {
-
-		addRelatedEntities(buildParameterEntities);
-	}
-
-	@Override
-	public void addBuildParameterEntity(
-		BuildParameterEntity buildParameterEntity) {
-
-		addRelatedEntity(buildParameterEntity);
-	}
 
 	@Override
 	public void addBuildRunEntities(Set<BuildRunEntity> buildRunEntities) {
@@ -77,21 +70,13 @@ public abstract class BaseBuildEntity
 	}
 
 	@Override
-	public Set<BuildParameterEntity> getBuildParameterEntities() {
-		return getRelatedEntities(BuildParameterEntity.class);
+	public Map<String, String> getBuildParameters() {
+		return _parameters;
 	}
 
 	@Override
-	public BuildParameterEntity getBuildParameterEntity(String name) {
-		for (BuildParameterEntity buildParameterEntity :
-				getBuildParameterEntities()) {
-
-			if (Objects.equals(name, buildParameterEntity.getName())) {
-				return buildParameterEntity;
-			}
-		}
-
-		return null;
+	public String getBuildParameterValue(String name) {
+		return _parameters.get(name);
 	}
 
 	@Override
@@ -128,18 +113,17 @@ public abstract class BaseBuildEntity
 
 	@Override
 	public JenkinsNodeEntity.Type getJenkinsNodeType() {
-		BuildParameterEntity buildParameterEntity = getBuildParameterEntity(
-			"NODE_TYPE");
+		String nodeTypeValue = getBuildParameterValue("NODE_TYPE");
 
-		if (buildParameterEntity == null) {
-			return null;
+		if (StringUtil.isNullOrEmpty(nodeTypeValue)) {
+			return JenkinsNodeEntity.Type.SLAVE;
 		}
 
 		JenkinsNodeEntity.Type type = JenkinsNodeEntity.Type.getByKey(
-			buildParameterEntity.getValue());
+			nodeTypeValue);
 
 		if (type == null) {
-			return null;
+			return JenkinsNodeEntity.Type.SLAVE;
 		}
 
 		return type;
@@ -168,6 +152,8 @@ public abstract class BaseBuildEntity
 		).put(
 			"name", getName()
 		).put(
+			"parameters", String.valueOf(_getBuildParametersJSONArray())
+		).put(
 			"r_jobToBuilds_c_jobId", getJobEntityId()
 		).put(
 			"state", state.getJSONObject()
@@ -177,39 +163,49 @@ public abstract class BaseBuildEntity
 	}
 
 	@Override
+	public BuildRunEntity getLatestBuildRunEntity() {
+		List<BuildRunEntity> historyBuildRunEntities =
+			getHistoryBuildRunEntities();
+
+		if (historyBuildRunEntities.isEmpty()) {
+			return null;
+		}
+
+		return historyBuildRunEntities.get(historyBuildRunEntities.size() - 1);
+	}
+
+	@Override
 	public int getMaxNodeCount() {
-		BuildParameterEntity buildParameterEntity = getBuildParameterEntity(
-			"MAX_NODE_COUNT");
+		String maxNodeCount = getBuildParameterValue("MAX_NODE_COUNT");
 
-		if (buildParameterEntity == null) {
+		if (StringUtil.isNullOrEmpty(maxNodeCount)) {
+			maxNodeCount = getBuildParameterValue("MAXIMUM_SLAVES_PER_HOST");
+		}
+
+		if (StringUtil.isNullOrEmpty(maxNodeCount) ||
+			!maxNodeCount.matches("\\d+")) {
+
 			return _DEFAULT_MAX_NODE_COUNT;
 		}
 
-		String value = buildParameterEntity.getValue();
-
-		if ((value == null) || !value.matches("\\d+")) {
-			return _DEFAULT_MAX_NODE_COUNT;
-		}
-
-		return Integer.valueOf(value);
+		return Integer.valueOf(maxNodeCount);
 	}
 
 	@Override
 	public int getMinNodeRAM() {
-		BuildParameterEntity buildParameterEntity = getBuildParameterEntity(
-			"MIN_NODE_RAM");
+		String minNodeRAM = getBuildParameterValue("MIN_NODE_RAM");
 
-		if (buildParameterEntity == null) {
+		if (StringUtil.isNullOrEmpty(minNodeRAM)) {
+			minNodeRAM = getBuildParameterValue("MINIMUM_SLAVE_RAM");
+		}
+
+		if (StringUtil.isNullOrEmpty(minNodeRAM) ||
+			!minNodeRAM.matches("\\d+")) {
+
 			return _DEFAULT_MIN_NODE_RAM;
 		}
 
-		String value = buildParameterEntity.getValue();
-
-		if ((value == null) || !value.matches("\\d+")) {
-			return _DEFAULT_MIN_NODE_RAM;
-		}
-
-		return Integer.valueOf(value);
+		return Integer.valueOf(minNodeRAM);
 	}
 
 	@Override
@@ -251,20 +247,6 @@ public abstract class BaseBuildEntity
 	}
 
 	@Override
-	public void removeBuildParameterEntities(
-		Set<BuildParameterEntity> buildParameterEntities) {
-
-		removeRelatedEntities(buildParameterEntities);
-	}
-
-	@Override
-	public void removeBuildParameterEntity(
-		BuildParameterEntity buildParameterEntity) {
-
-		removeRelatedEntity(buildParameterEntity);
-	}
-
-	@Override
 	public void removeBuildRunEntities(Set<BuildRunEntity> buildRunEntities) {
 		removeRelatedEntities(buildRunEntities);
 	}
@@ -298,16 +280,10 @@ public abstract class BaseBuildEntity
 
 	@Override
 	public boolean requiresGoodBattery() {
-		BuildParameterEntity buildParameterEntity = getBuildParameterEntity(
+		String requiresGoodBattery = getBuildParameterValue(
 			"REQUIRES_GOOD_BATTERY");
 
-		if (buildParameterEntity == null) {
-			return false;
-		}
-
-		String requiresGoodBattery = buildParameterEntity.getValue();
-
-		if ((requiresGoodBattery == null) ||
+		if (StringUtil.isNullOrEmpty(requiresGoodBattery) ||
 			!Objects.equals(
 				StringUtil.toLowerCase(requiresGoodBattery), "true")) {
 
@@ -347,6 +323,30 @@ public abstract class BaseBuildEntity
 		_jobEntityId = jsonObject.optLong("r_jobToBuilds_c_jobId");
 		_name = jsonObject.getString("name");
 		_state = State.get(jsonObject.getJSONObject("state"));
+
+		String paramaters = jsonObject.getString("parameters");
+
+		if (StringUtil.isNullOrEmpty(paramaters)) {
+			return;
+		}
+
+		try {
+			JSONArray parametersJSONArray = new JSONArray(paramaters);
+
+			for (int i = 0; i < parametersJSONArray.length(); i++) {
+				JSONObject parameterJSONObject =
+					parametersJSONArray.getJSONObject(i);
+
+				_parameters.put(
+					parameterJSONObject.getString("name"),
+					parameterJSONObject.getString("value"));
+			}
+		}
+		catch (JSONException jsonException) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(jsonException);
+			}
+		}
 	}
 
 	private Set<BuildEntity> _getAllChildBuildEntities() {
@@ -372,9 +372,45 @@ public abstract class BaseBuildEntity
 		return parentBuildEntities;
 	}
 
+	private JSONArray _getBuildParametersJSONArray() {
+		JSONArray buildParametersJSONArray = new JSONArray();
+
+		if (_parameters.isEmpty()) {
+			return buildParametersJSONArray;
+		}
+
+		Set<String> parameterNames = new TreeSet<>(_parameters.keySet());
+
+		for (String parameterName : parameterNames) {
+			if (!parameterName.matches("[A-Z0-9_]+")) {
+				continue;
+			}
+
+			String parameterValue = _parameters.get(parameterName);
+
+			if (StringUtil.isNullOrEmpty(parameterValue)) {
+				continue;
+			}
+
+			JSONObject buildParameterJSONObject = new JSONObject();
+
+			buildParameterJSONObject.put(
+				"name", parameterName
+			).put(
+				"value", parameterValue
+			);
+
+			buildParametersJSONArray.put(buildParameterJSONObject);
+		}
+
+		return buildParametersJSONArray;
+	}
+
 	private static final int _DEFAULT_MAX_NODE_COUNT = 2;
 
 	private static final int _DEFAULT_MIN_NODE_RAM = 12;
+
+	private static final Log _log = LogFactory.getLog(BaseBuildEntity.class);
 
 	private final Set<BuildEntity> _childBuildEntities = new HashSet<>();
 	private final boolean _initialBuild;
@@ -382,6 +418,7 @@ public abstract class BaseBuildEntity
 	private JobEntity _jobEntity;
 	private long _jobEntityId;
 	private final String _name;
+	private final Map<String, String> _parameters = new HashMap<>();
 	private final Set<BuildEntity> _parentBuildEntities = new HashSet<>();
 	private State _state;
 

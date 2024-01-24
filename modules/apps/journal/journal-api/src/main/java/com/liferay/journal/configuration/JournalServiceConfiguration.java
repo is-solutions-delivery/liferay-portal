@@ -67,13 +67,6 @@ public interface JournalServiceConfiguration {
 	public boolean articleCommentsEnabled();
 
 	@Meta.AD(
-		deflt = "true",
-		description = "journal-article-database-search-content-keywords",
-		name = "database-content-keyword-search-enabled", required = false
-	)
-	public boolean databaseContentKeywordSearchEnabled();
-
-	@Meta.AD(
 		deflt = "true", description = "journal-article-expire-all-versions",
 		name = "expire-all-article-versions-enabled", required = false
 	)
@@ -111,12 +104,6 @@ public interface JournalServiceConfiguration {
 		name = "journal-article-page-break-token", required = false
 	)
 	public String journalArticlePageBreakToken();
-
-	@Meta.AD(
-		deflt = "json", description = "journal-article-storage-type-help",
-		name = "journal-article-storage-type", required = false
-	)
-	public String journalArticleStorageType();
 
 	@Meta.AD(
 		deflt = "0", name = "journal-article-max-version-count",

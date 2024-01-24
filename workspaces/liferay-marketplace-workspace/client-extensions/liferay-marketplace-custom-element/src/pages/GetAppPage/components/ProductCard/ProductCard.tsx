@@ -6,21 +6,21 @@
 import './ProductCard.scss';
 import {
 	getThumbnailByProductAttachment,
-	getValueFromSpecifications,
+	getValueFromDeliverySpecifications,
 } from '../../../../utils/util';
 
 interface ProductCardProps {
 	ExtendBanner: React.FC;
 	RightSideBanner: React.FC;
-	creatorAccount?: Account;
-	product?: Product;
+	creatorAccountName?: string;
+	product?: DeliveryProduct;
 	showExtendBanner?: boolean;
 }
 
 const ProductCard = ({
 	ExtendBanner,
 	RightSideBanner,
-	creatorAccount,
+	creatorAccountName,
 	product,
 	showExtendBanner = false,
 }: ProductCardProps) => {
@@ -30,7 +30,7 @@ const ProductCard = ({
 
 	const getIconUrl = () => {
 		const iconURL = product
-			? getThumbnailByProductAttachment(product.attachments)?.split('/o/')
+			? getThumbnailByProductAttachment(product.images)?.split('/o/')
 			: '';
 
 		return iconURL ? `/o/${iconURL[1]}` : '';
@@ -42,23 +42,23 @@ const ProductCard = ({
 				<div className="d-flex flex-row">
 					<img
 						alt="App Icon"
-						className="rounded"
+						className="object-fit-cover rounded"
 						height="64px"
 						src={getIconUrl()}
 						width="64px"
 					/>
 
 					<div className="align-items-center ml-4">
-						<h1 className="text-weight-bold">
-							{product.name?.en_US}
+						<h1 className="product-banner-title text-weight-bold">
+							{product?.name}
 						</h1>
 
 						<div className="sub-text">
-							{getValueFromSpecifications(
-								product.productSpecifications,
+							{getValueFromDeliverySpecifications(
+								product?.productSpecifications,
 								'latest-version'
 							)}{' '}
-							by {creatorAccount?.name}
+							by {creatorAccountName}
 						</div>
 					</div>
 				</div>

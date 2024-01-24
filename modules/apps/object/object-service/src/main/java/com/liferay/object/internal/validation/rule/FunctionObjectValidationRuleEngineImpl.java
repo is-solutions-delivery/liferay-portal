@@ -64,7 +64,8 @@ public class FunctionObjectValidationRuleEngineImpl
 						payloadJSONObject,
 						_functionObjectValidationRuleEngineImplConfiguration.
 							resourcePath(),
-						creatorJSONObject.getLong("id"))));
+						creatorJSONObject.getLong("id")
+					).get()));
 
 			results.put(
 				"validationCriteriaMet",

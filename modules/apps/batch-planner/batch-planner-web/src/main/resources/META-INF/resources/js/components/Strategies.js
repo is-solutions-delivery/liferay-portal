@@ -9,6 +9,9 @@ import React, {useEffect, useState} from 'react';
 
 import {
 	CREATE_STRATEGIES,
+	CSV_FORMAT,
+	DISALLOWED_CSV_ENTITY_TYPES,
+	FILE_EXTENSION_EVENT,
 	HEADLESS_BATCH_PLANNER_URL,
 	SCHEMA_SELECTED_EVENT,
 	UPDATE_STRATEGIES,
@@ -18,6 +21,15 @@ function StrategyItems({portletNamespace}) {
 	const [strategies, setStrategies] = useState([]);
 
 	useEffect(() => {
+		function handleFileExtensionUpdate({entityType, fileExtension}) {
+			if (
+				fileExtension === CSV_FORMAT &&
+				DISALLOWED_CSV_ENTITY_TYPES.includes(entityType)
+			) {
+				setStrategies([]);
+			}
+		}
+
 		const handleSchemaUpdated = (event) => {
 			if (event.schemaName) {
 				fetch(
@@ -36,9 +48,11 @@ function StrategyItems({portletNamespace}) {
 			}
 		};
 
+		Liferay.on(FILE_EXTENSION_EVENT, handleFileExtensionUpdate);
 		Liferay.on(SCHEMA_SELECTED_EVENT, handleSchemaUpdated);
 
 		return () => {
+			Liferay.detach(FILE_EXTENSION_EVENT, handleFileExtensionUpdate);
 			Liferay.detach(SCHEMA_SELECTED_EVENT, handleSchemaUpdated);
 		};
 	}, []);

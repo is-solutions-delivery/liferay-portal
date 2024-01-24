@@ -37,14 +37,19 @@ public class AdminAccountGroupDTOConverter
 		AccountGroup accountGroup = _accountGroupService.getAccountGroup(
 			(Long)dtoConverterContext.getId());
 
-		ExpandoBridge expandoBridge = accountGroup.getExpandoBridge();
-
 		return new AdminAccountGroup() {
 			{
-				customFields = expandoBridge.getAttributes();
-				externalReferenceCode = accountGroup.getExternalReferenceCode();
-				id = accountGroup.getAccountGroupId();
-				name = accountGroup.getName();
+				setCustomFields(
+					() -> {
+						ExpandoBridge expandoBridge =
+							accountGroup.getExpandoBridge();
+
+						return expandoBridge.getAttributes();
+					});
+				setExternalReferenceCode(
+					accountGroup::getExternalReferenceCode);
+				setId(accountGroup::getAccountGroupId);
+				setName(accountGroup::getName);
 			}
 		};
 	}

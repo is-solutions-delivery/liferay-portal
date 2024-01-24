@@ -42,14 +42,10 @@ definition {
 				fieldValue = "Stock Entry");
 		}
 
-		task ("Given in Import/Export center") {
+		task ("When Exporting File with JSONT format in Import/Export center") {
 			BatchEngine.setUpGlobalIds();
 
-			ImportExport.openImportExportAdmin();
-		}
-
-		task ("When Exporting File with JSONT format") {
-			ImportExport.exportFile(
+			ImportExport.exportAndUnzipFile(
 				entityType = "C_Stock (v1_0 - Liferay Object REST)",
 				exportFields = "name",
 				exportFileFormat = "JSONT");
@@ -81,8 +77,6 @@ definition {
 		property portal.acceptance = "true";
 
 		task ("Given a completed import") {
-			ImportExport.openImportExportAdmin();
-
 			ImportExport.importFile(
 				entityType = "Account (v1_0 - Liferay Headless Admin User)",
 				fieldMappings = "name:Account Name,type:Account Type,description:Account Description,externalReferenceCode:External Reference Code",
@@ -146,7 +140,6 @@ definition {
 	@ignore = "true"
 	@priority = 3
 	test CanExcludeCSVFieldsFromExport {
-		property custom.properties = "feature.flag.LPS-173135=true";
 		property portal.acceptance = "true";
 
 		task ("Given several channels") {
@@ -164,9 +157,7 @@ definition {
 		}
 
 		task ("When the user selects specific channel fields for export and exports the channels in CSV format") {
-			ImportExport.openImportExportAdmin();
-
-			ImportExport.exportFile(
+			ImportExport.exportAndUnzipFile(
 				entityType = "Channel (v1_0 - Liferay Headless Commerce Admin Channel)",
 				exportFields = "name,type,currencyCode",
 				exportFileFormat = "CSV");
@@ -253,9 +244,7 @@ definition {
 		}
 
 		task ("When the user selects specific channel fields in JSON format") {
-			ImportExport.openImportExportAdmin();
-
-			ImportExport.exportFile(
+			ImportExport.exportAndUnzipFile(
 				entityType = "C_Stock (v1_0 - Liferay Object REST)",
 				exportFields = "name",
 				exportFileFormat = "JSON");
@@ -288,16 +277,10 @@ definition {
 				fieldValue = "Stock Entry");
 		}
 
-		task ("Given in Import/Export center") {
+		task ("When the user selects specific channel fields in JSONL format in Import/Export center") {
 			BatchEngine.setUpGlobalIds();
 
-			ImportExport.openImportExportAdmin();
-		}
-
-		task ("When the user selects specific channel fields in JSONL format") {
-			ImportExport.openImportExportAdmin();
-
-			ImportExport.exportFile(
+			ImportExport.exportAndUnzipFile(
 				entityType = "C_Stock (v1_0 - Liferay Object REST)",
 				exportFields = "name",
 				exportFileFormat = "JSONL");
@@ -314,7 +297,6 @@ definition {
 	@ignore = "true"
 	@priority = 3
 	test CanExportCSVFiles {
-		property custom.properties = "feature.flag.LPS-173135=true";
 		property portal.acceptance = "true";
 
 		task ("Given several accounts") {
@@ -338,9 +320,7 @@ definition {
 		}
 
 		task ("When the user selects CSV as Export File Format and exports the accounts") {
-			ImportExport.openImportExportAdmin();
-
-			ImportExport.exportFile(
+			ImportExport.exportAndUnzipFile(
 				entityType = "Account (v1_0 - Liferay Headless Admin User)",
 				exportFields = "name,type,description,externalReferenceCode",
 				exportFileFormat = "CSV");
@@ -357,7 +337,6 @@ definition {
 	@ignore = "true"
 	@priority = 3
 	test CanExportCSVFileWithoutHeaders {
-		property custom.properties = "feature.flag.LPS-173135=true";
 		property portal.acceptance = "true";
 
 		task ("Given several accounts") {
@@ -381,9 +360,7 @@ definition {
 		}
 
 		task ("When the user exports the accounts in CSV format with Contains Headers not checked") {
-			ImportExport.openImportExportAdmin();
-
-			ImportExport.exportFile(
+			ImportExport.exportAndUnzipFile(
 				containsHeaders = "false",
 				entityType = "Account (v1_0 - Liferay Headless Admin User)",
 				exportFields = "name,type,description,externalReferenceCode",
@@ -400,19 +377,14 @@ definition {
 	@description = "Verify users can filter Import/Export executions by Action."
 	@priority = 3
 	test CanFilterExecutionsByAction {
-		property custom.properties = "feature.flag.LPS-173135=true";
 		property portal.acceptance = "true";
 
 		task ("Given Object Definition import and export") {
-			ImportExport.openImportExportAdmin();
-
 			ImportExport.importFile(
 				entityType = "ObjectDefinition (v1_0 - Liferay Object Admin REST)",
 				fileName = "json_objectDefinition_import_approved.json");
 
-			ImportExport.openImportExportAdmin();
-
-			ImportExport.exportFile(
+			ImportExport.exportAndUnzipFile(
 				entityType = "ObjectDefinition (v1_0 - Liferay Object Admin REST)",
 				exportFileFormat = "JSON");
 		}
@@ -676,19 +648,14 @@ definition {
 	@description = "Verify users can order Import/Export executions by Create Date."
 	@priority = 3
 	test CanOrderExecutionsByCreateDate {
-		property custom.properties = "feature.flag.LPS-173135=true";
 		property portal.acceptance = "true";
 
 		task ("Given Object Definition import and export") {
-			ImportExport.openImportExportAdmin();
-
 			ImportExport.importFile(
 				entityType = "ObjectDefinition (v1_0 - Liferay Object Admin REST)",
 				fileName = "json_objectDefinition_import_approved.json");
 
-			ImportExport.openImportExportAdmin();
-
-			ImportExport.exportFile(
+			ImportExport.exportAndUnzipFile(
 				entityType = "ObjectDefinition (v1_0 - Liferay Object Admin REST)",
 				exportFileFormat = "JSON");
 		}
@@ -696,17 +663,17 @@ definition {
 		task ("When I go to the Import/Export Center and order by create date") {
 			ImportExport.openImportExportAdmin();
 
-			ManagementBar.setFilterAndOrder(orderBy = "Create Date");
+			Click(locator1 = "ManagementBar#ORDER_ICON_GENERIC");
 		}
 
-		task ("Then the executions should be ordered by create date in descending order") {
+		task ("Then the executions should be ordered by create date in ascending order") {
 			AssertTextEquals.assertPartialText(
-				key_rowNumber = 1,
+				key_rowNumber = 2,
 				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER",
 				value1 = "ObjectDefinition Plan Execution");
 
 			AssertTextEquals.assertPartialText(
-				key_rowNumber = 2,
+				key_rowNumber = 1,
 				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER",
 				value1 = "json_objectDefinition_import_approved");
 		}
@@ -715,12 +682,12 @@ definition {
 			ManagementBar.toggleViewOrder();
 
 			AssertTextEquals.assertPartialText(
-				key_rowNumber = 1,
+				key_rowNumber = 2,
 				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER",
 				value1 = "json_objectDefinition_import_approved");
 
 			AssertTextEquals.assertPartialText(
-				key_rowNumber = 2,
+				key_rowNumber = 1,
 				locator1 = "ContentRow#ENTRY_CONTENT_ROW_NUMBER",
 				value1 = "ObjectDefinition Plan Execution");
 		}
@@ -911,15 +878,11 @@ definition {
 	@priority = 3
 	test CanSearchExecutions {
 		task ("Given object definition import and export") {
-			ImportExport.openImportExportAdmin();
-
 			ImportExport.importFile(
 				entityType = "ObjectDefinition (v1_0 - Liferay Object Admin REST)",
 				fileName = "json_objectDefinition_import_approved.json");
 
-			ImportExport.openImportExportAdmin();
-
-			ImportExport.exportFile(
+			ImportExport.exportAndUnzipFile(
 				entityType = "ObjectDefinition (v1_0 - Liferay Object Admin REST)",
 				exportFileFormat = "JSON");
 		}
@@ -966,7 +929,6 @@ definition {
 	@description = "Verify users can search Import/Exports templates by name and action."
 	@priority = 3
 	test CanSearchTemplates {
-		property custom.properties = "feature.flag.LPS-173135=true";
 		property portal.acceptance = "true";
 
 		task ("Given object definition import and export templates") {
@@ -1103,7 +1065,6 @@ definition {
 	@description = "Verify users receive a notification when an export is triggered."
 	@priority = 3
 	test CanViewExportNotifications {
-		property custom.properties = "feature.flag.LPS-173135=true";
 		property portal.acceptance = "true";
 
 		task ("Given a failed export") {
@@ -1155,7 +1116,9 @@ definition {
 
 			PortletEntry.selectAll();
 
-			ClickNoError(locator1 = "Icon#DELETE");
+			ClickNoError(
+				key_text = "times-circle",
+				locator1 = "ManagementBar#ANY_ICON");
 		}
 	}
 
@@ -1233,8 +1196,6 @@ definition {
 		}
 
 		task ("And given a succesful import") {
-			ImportExport.openImportExportAdmin();
-
 			ImportExport.importFile(
 				entityType = "Account (v1_0 - Liferay Headless Admin User)",
 				fieldMappings = "name:Account Name,type:Account Type,description:Account Description,externalReferenceCode:External Reference Code",
@@ -1274,7 +1235,9 @@ definition {
 
 			PortletEntry.selectAll();
 
-			ClickNoError(locator1 = "Icon#DELETE");
+			ClickNoError(
+				key_text = "times-circle",
+				locator1 = "ManagementBar#ANY_ICON");
 		}
 	}
 
@@ -1364,6 +1327,11 @@ definition {
 
 		task ("When new export file") {
 			ImportExport.gotoExport();
+
+			Select(
+				key_selectFieldLabel = "Export File Format",
+				locator1 = "ImportExport#SELECT",
+				value1 = "JSON");
 		}
 
 		task ("Then I can see all available entity types to export") {
@@ -1543,8 +1511,6 @@ definition {
 		property portal.acceptance = "true";
 
 		task ("Given a failed account import in which one of 3 rows was skipped due to an error in the second row") {
-			ImportExport.openImportExportAdmin();
-
 			ImportExport.importFile(
 				entityType = "Account (v1_0 - Liferay Headless Admin User)",
 				fieldMappings = "name:Account Name,type:Account Type,description:Account Description,externalReferenceCode:External Reference Code",

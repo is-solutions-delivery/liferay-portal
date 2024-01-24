@@ -2,7 +2,7 @@ definition {
 
 	@summary = "Default summary"
 	macro addColumnsViaUI(addColumns = null) {
-		LexiconEntry.gotoAdd();
+		Click(locator1 = "ObjectCustomViews#ADD_COLUMN");
 
 		SelectFrame(locator1 = "ObjectCustomViews#VIEW_MODAL_CONTENT");
 
@@ -26,17 +26,13 @@ definition {
 			Click(locator1 = "ObjectCustomViews#DEFAULT_SORT_ADD_BUTTON");
 		}
 
-		Click(locator1 = "ObjectCustomViews#SELECT_AUTO_COMPLETE");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Columns",
+			optionName = ${columnOption});
 
-		Click(
-			key_columnOption = ${columnOption},
-			locator1 = "ObjectCustomViews#SELECT_AUTO_COMPLETE_OPTION");
-
-		Click(locator1 = "ObjectCustomViews#SELECT_SORTING_ON_DEFAULT_SORT");
-
-		Click(
-			key_sortOption = ${sortOption},
-			locator1 = "ObjectCustomViews#SORT_OPTION");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Sorting",
+			optionName = ${sortOption});
 
 		Click(
 			key_tab = "Save",
@@ -45,21 +41,17 @@ definition {
 
 	@summary = "Default summary"
 	macro addNewAggregationFilterViaUI(dateValueList = null, filterValue = null, filterBy = null, filterType = null) {
-		Click(locator1 = "ObjectCustomViews#ADD_BUTTON_FILTERS");
+		Click(locator1 = "ObjectCustomViews#ADD_NEW_FILTER");
 
 		Click(locator1 = "ObjectCustomViews#VIEW_MODAL_CONTENT");
 
 		Click(
-			key_picklistOption = ${filterBy},
-			locator1 = "ObjectCustomViews#FIELD_VIEW_FILTER_DROPDOWN_OPTION");
+			key_optionName = ${filterBy},
+			locator1 = "ObjectAdmin#CLAY_GENERIC_DROPDOWN_ITEM");
 
-		Click(
-			key_filterLabel = "Filter Type",
-			locator1 = "ObjectCustomViews#SELECT_FILTER_GENERIC");
-
-		Click(
-			key_fieldType = ${filterType},
-			locator1 = "ObjectField#TYPE_OPTION");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Filter Type",
+			optionName = ${filterType});
 
 		if (${filterType} == "Range") {
 			var dateIndex = 1;
@@ -90,26 +82,22 @@ definition {
 
 	@summary = "Default summary"
 	macro addNewFilterViaUI(filterValue = null, filterBy = null, filterType = null) {
-		Click(locator1 = "ObjectCustomViews#ADD_BUTTON_FILTERS");
+		Click(locator1 = "ObjectCustomViews#ADD_NEW_FILTER");
 
 		Click(locator1 = "ObjectCustomViews#VIEW_MODAL_CONTENT");
 
 		MenuItem.clickNoError(menuItem = ${filterBy});
 
 		if (isSet(filterType)) {
-			Click(
-				key_filterLabel = "Filter Type",
-				locator1 = "ObjectCustomViews#SELECT_FILTER_GENERIC");
-
-			Click(
-				key_fieldType = ${filterType},
-				locator1 = "ObjectField#TYPE_OPTION");
+			ObjectAdmin.selectDropdownItem(
+				labelName = "Filter Type",
+				optionName = ${filterType});
 		}
 
 		if (isSet(filterValue)) {
 			Click(
-				key_filterLabel = "Value",
-				locator1 = "ObjectCustomViews#SELECT_FILTER_GENERIC");
+				key_labelName = "Value",
+				locator1 = "ObjectAdmin#CLAY_MULTI_SELECT_INPUT");
 
 			for (var filterValueList : list ${filterValue}) {
 				Click.clickAtNotVisible(
@@ -155,22 +143,13 @@ definition {
 
 	@summary = "Default summary"
 	macro assertFilterPresent(filterBy = null) {
-		Click(locator1 = "ObjectCustomViews#ADD_BUTTON_FILTERS");
+		Click(locator1 = "ObjectCustomViews#ADD_NEW_FILTER");
 
 		Click(locator1 = "ObjectCustomViews#VIEW_MODAL_CONTENT");
 
 		AssertElementPresent(
 			key_menuItem = ${filterBy},
 			locator1 = "MenuItem#ANY_MENU_ITEM");
-	}
-
-	@summary = "Default summary"
-	macro assertNoColumnPresentInDefaultSort() {
-		ObjectCustomViews.addNewDefaultSort();
-
-		Click(locator1 = "ObjectCustomViews#SELECT_AUTO_COMPLETE");
-
-		AssertElementPresent(locator1 = "ObjectCustomViews#DEFAULT_SORT_NO_COLUMN_OPTION");
 	}
 
 	@summary = "Default summary"
@@ -275,13 +254,10 @@ definition {
 
 		DropdownMenuItem.click(menuItem = "Edit");
 
-		Click(
-			key_sorting = ${actualSort},
-			locator1 = "ObjectCustomViews#EDIT_SORTING");
-
-		Click(
-			key_sortOption = ${newSortOption},
-			locator1 = "ObjectCustomViews#SORT_OPTION");
+		ObjectAdmin.selectDropdownItem(
+			currentOption = ${actualSort},
+			labelName = "Sorting",
+			optionName = ${newSortOption});
 
 		Click(
 			key_tab = "Save",
@@ -351,21 +327,6 @@ definition {
 		Click(
 			key_tab = "Save",
 			locator1 = "Button#TAB_SUBMIT_BTN");
-	}
-
-	@summary = "Default summary"
-	macro searchColumnsOnModalDefaultSort(columnName = null) {
-		Click(locator1 = "ObjectCustomViews#SELECT_AUTO_COMPLETE");
-
-		Type(
-			locator1 = "ObjectPortlet#COLUMN_SEARCH_FIELD",
-			value1 = ${columnName});
-
-		Click(locator1 = "ObjectCustomViews#VIEW_DROPDOWN_MENU_ON_MODAL_DEFAULT_SORT");
-
-		AssertElementPresent(
-			key_columnName = ${columnName},
-			locator1 = "ObjectCustomViews#VIEW_FIELDS_ON_DROPDOWN_ITEM");
 	}
 
 	@summary = "Default summary"

@@ -31,7 +31,7 @@ interface IPropsPartnershipLevel {
 	headcount: {
 		[keys: string]: number;
 	};
-	newProjectExistingBusiness: number;
+	opportunitiesCount: number;
 	partnerLevel: PartnerLevel;
 }
 
@@ -55,8 +55,7 @@ const PartnershipLevel = ({
 	aRRResults,
 	checkedProperties,
 	currency,
-	headcount,
-	newProjectExistingBusiness,
+	opportunitiesCount,
 	partnerLevel,
 }: IPropsPartnershipLevel) => {
 	const getTotalARR = () => {
@@ -69,13 +68,13 @@ const PartnershipLevel = ({
 				.goalARR;
 		}
 
-		return aRRResults.aRRAmountTotal;
+		return aRRResults.growthArrTotal;
 	};
 
 	const getHeadcount = (partnerLevelKey: PartnershipLevels) => {
 		if (partnerLevel.partnerLevelType) {
-			return `${headcount.partnerMarketingUser}/${partnerLevelProperties[partnerLevelKey].partnerMarketingUser}
-             Marketing / ${headcount.partnerSalesUser}/${partnerLevelProperties[partnerLevelKey].partnerSalesUser} Sales`;
+			return `0/${partnerLevelProperties[partnerLevelKey].partnerMarketingUser}
+				Marketing & 0/${partnerLevelProperties[partnerLevelKey].partnerSalesUser} Sales`;
 		}
 
 		return '';
@@ -87,10 +86,14 @@ const PartnershipLevel = ({
 				className={classNames('d-flex', {
 					'mb-4':
 						partnerLevel.partnerLevelType.key ===
-						PartnershipLevels.AUTHORIZED,
+							PartnershipLevels.AUTHORIZED ||
+						partnerLevel.partnerLevelType.key ===
+							PartnershipLevels.GLOBAL,
 					'mb-5':
 						partnerLevel.partnerLevelType.key !==
-						PartnershipLevels.AUTHORIZED,
+							PartnershipLevels.AUTHORIZED &&
+						partnerLevel.partnerLevelType.key !==
+							PartnershipLevels.GLOBAL,
 				})}
 			>
 				<PartnerIcon level={partnerLevel.partnerLevelType.key} />
@@ -118,68 +121,68 @@ const PartnershipLevel = ({
 			</h3>
 
 			{partnerLevel.partnerLevelType.key !==
-				PartnershipLevels.AUTHORIZED && (
-				<div>
-					{partnerLevel.partnerLevelType.key !==
-						PartnershipLevels.SILVER && (
-						<CheckBoxItem
-							completed={checkedProperties.arr}
-							title="ARR"
-						>
-							<LevelProgressBar
-								currency={currency}
-								currentValue={aRRResults.aRRAmountTotal}
-								total={getTotalARR()}
-								type={ChartTypes.ARR}
-							/>
+				PartnershipLevels.AUTHORIZED &&
+				partnerLevel.partnerLevelType.key !==
+					PartnershipLevels.GLOBAL && (
+					<div>
+						{partnerLevel.partnerLevelType.key !==
+							PartnershipLevels.SILVER && (
+							<CheckBoxItem
+								completed={checkedProperties.arr}
+								title="ARR"
+							>
+								<LevelProgressBar
+									currency={currency}
+									currentValue={aRRResults.growthArrTotal}
+									total={getTotalARR()}
+									type={ChartTypes.ARR}
+								/>
 
-							{partnerLevel.partnerLevelType.key ===
-								PartnershipLevels.GOLD && (
-								<>
-									<div className="font-weight-bold text-center text-neutral-5 text-paragraph-sm">
-										or
-									</div>
+								{partnerLevel.partnerLevelType.key ===
+									PartnershipLevels.GOLD && (
+									<>
+										<div className="font-weight-bold text-center text-neutral-5 text-paragraph-sm">
+											or
+										</div>
 
-									<LevelProgressBar
-										currency={currency}
-										currentValue={
-											newProjectExistingBusiness
-										}
-										total={
-											partnerLevelProperties[
-												partnerLevel.partnerLevelType
-													.key
-											].newProjectExistingBusiness
-										}
-										type={ChartTypes.NP_OR_NB}
-									/>
-								</>
-							)}
-						</CheckBoxItem>
-					)}
-
-					<CheckBoxItem
-						completed={checkedProperties.headcount}
-						text={getHeadcount(
-							partnerLevel.partnerLevelType
-								.key as PartnershipLevels
+										<LevelProgressBar
+											currency={currency}
+											currentValue={opportunitiesCount}
+											total={
+												partnerLevelProperties[
+													partnerLevel
+														.partnerLevelType.key
+												].opportunitiesCount
+											}
+											type={ChartTypes.NP_OR_NB}
+										/>
+									</>
+								)}
+							</CheckBoxItem>
 						)}
-						title="Headcount"
-					/>
 
-					<CheckBoxItem
-						completed={checkedProperties.marketingPlan}
-						title="Marketing Plan"
-					/>
+						<CheckBoxItem
+							completed={checkedProperties.headcount}
+							text={getHeadcount(
+								partnerLevel.partnerLevelType
+									.key as PartnershipLevels
+							)}
+							title="Headcount"
+						/>
 
-					<CheckBoxItem
-						completed={
-							checkedProperties.solutionDeliveryCertification
-						}
-						title="Solution Delivery Certification"
-					/>
-				</div>
-			)}
+						<CheckBoxItem
+							completed={checkedProperties.marketingPlan}
+							title="Marketing Plan"
+						/>
+
+						<CheckBoxItem
+							completed={
+								checkedProperties.solutionDeliveryCertification
+							}
+							title="Solution Delivery Certification"
+						/>
+					</div>
+				)}
 		</div>
 	);
 };

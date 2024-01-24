@@ -11,6 +11,8 @@ export const CART_PRODUCT_QUANTITY_CHANGED = 'quantity-changed-from-cart';
 export const CLOSE_MODAL = 'close-modal';
 export const CLOSE_SIDE_PANEL = 'close-side-panel';
 export const CP_INSTANCE_CHANGED = 'product-instance-changed';
+
+export const CP_OPTION_CHANGED = 'product-option-changed';
 export const CP_QUANTITY_SELECTOR_CHANGED =
 	'quantity-changed-from-quantity-selector';
 export const CP_UNIT_OF_MEASURE_SELECTOR_CHANGED =
@@ -22,6 +24,7 @@ export const CURRENT_PRODUCT_UPDATED = 'current-product-updated';
 export const IFRAME_LOADED = 'iframe-loaded';
 export const IS_LOADING_MODAL = 'is-loading-modal';
 export const ITEM_REMOVED_FROM_COMPARE = 'item-removed-from-compare';
+export const OPEN_MINICART_FOR_EDITING = 'open-minicart-for-editing';
 export const OPEN_MODAL = 'open-modal';
 export const OPEN_SIDE_PANEL = 'open-side-panel';
 export const PRODUCT_COMPARISON_TOGGLED = 'product-comparison-toggled';

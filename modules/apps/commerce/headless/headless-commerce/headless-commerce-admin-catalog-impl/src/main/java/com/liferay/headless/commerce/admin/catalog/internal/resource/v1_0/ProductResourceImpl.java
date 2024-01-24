@@ -43,6 +43,7 @@ import com.liferay.commerce.product.service.CommerceChannelService;
 import com.liferay.commerce.product.type.CPType;
 import com.liferay.commerce.product.type.CPTypeRegistry;
 import com.liferay.commerce.product.type.virtual.constants.VirtualCPTypeConstants;
+import com.liferay.commerce.product.type.virtual.service.CPDVirtualSettingFileEntryService;
 import com.liferay.commerce.product.type.virtual.service.CPDefinitionVirtualSettingService;
 import com.liferay.commerce.service.CPDAvailabilityEstimateService;
 import com.liferay.commerce.service.CPDefinitionInventoryService;
@@ -72,7 +73,6 @@ import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductVirtualSettin
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.RelatedProduct;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.Sku;
 import com.liferay.headless.commerce.admin.catalog.internal.dto.v1_0.util.CustomFieldsUtil;
-import com.liferay.headless.commerce.admin.catalog.internal.helper.v1_0.ProductHelper;
 import com.liferay.headless.commerce.admin.catalog.internal.odata.entity.v1_0.ProductEntityModel;
 import com.liferay.headless.commerce.admin.catalog.internal.util.v1_0.AttachmentUtil;
 import com.liferay.headless.commerce.admin.catalog.internal.util.v1_0.DiagramUtil;
@@ -95,6 +95,7 @@ import com.liferay.headless.commerce.core.util.ExpandoUtil;
 import com.liferay.headless.commerce.core.util.LanguageUtils;
 import com.liferay.headless.commerce.core.util.ServiceContextHelper;
 import com.liferay.headless.common.spi.odata.entity.EntityFieldsUtil;
+import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.change.tracking.CTAware;
@@ -102,7 +103,9 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
@@ -124,6 +127,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.upload.UniqueFileNameProvider;
 
 import java.io.Serializable;
@@ -135,6 +139,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -173,7 +178,7 @@ public class ProductResourceImpl extends BaseProductResourceImpl {
 
 		if (cpDefinition == null) {
 			throw new NoSuchCPDefinitionException(
-				"Unable to find Product with ID: " + id);
+				"Unable to find product with ID " + id);
 		}
 
 		_cpDefinitionService.deleteCPDefinition(
@@ -252,7 +257,7 @@ public class ProductResourceImpl extends BaseProductResourceImpl {
 
 		if (cpDefinition == null) {
 			throw new NoSuchCPDefinitionException(
-				"Unable to find Product with ID: " + id);
+				"Unable to find product with ID " + id);
 		}
 
 		return _toProduct(cpDefinition.getCPDefinitionId());
@@ -314,7 +319,7 @@ public class ProductResourceImpl extends BaseProductResourceImpl {
 			String search, Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception {
 
-		return _productHelper.getProductsPage(
+		return _getProductsPage(
 			contextCompany.getCompanyId(), search, filter, pagination, sorts,
 			document -> _toProduct(
 				GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK))),
@@ -328,7 +333,7 @@ public class ProductResourceImpl extends BaseProductResourceImpl {
 
 		if (cpDefinition == null) {
 			throw new NoSuchCPDefinitionException(
-				"Unable to find Product with ID: " + id);
+				"Unable to find product with ID " + id);
 		}
 
 		_updateProduct(cpDefinition, product);
@@ -426,7 +431,7 @@ public class ProductResourceImpl extends BaseProductResourceImpl {
 
 		if (cpDefinition == null) {
 			throw new NoSuchCPDefinitionException(
-				"Unable to find Product with ID: " + id);
+				"Unable to find product with ID " + id);
 		}
 
 		CommerceCatalog commerceCatalog = cpDefinition.getCommerceCatalog();
@@ -808,6 +813,44 @@ public class ProductResourceImpl extends BaseProductResourceImpl {
 		return new ProductShippingConfiguration();
 	}
 
+	private Page<Product> _getProductsPage(
+			long companyId, String search, Filter filter, Pagination pagination,
+			Sort[] sorts,
+			UnsafeFunction<Document, Product, Exception>
+				transformUnsafeFunction,
+			Locale preferredLocale)
+		throws Exception {
+
+		return SearchUtil.search(
+			null, booleanQuery -> booleanQuery.getPreBooleanFilter(), filter,
+			CPDefinition.class.getName(), search, pagination,
+			queryConfig -> queryConfig.setSelectedFieldNames(
+				Field.ENTRY_CLASS_PK),
+			object -> {
+				SearchContext searchContext = (SearchContext)object;
+
+				searchContext.setCompanyId(companyId);
+
+				long[] commerceCatalogGroupIds = transformToLongArray(
+					_commerceCatalogLocalService.search(companyId),
+					CommerceCatalog::getGroupId);
+
+				if ((commerceCatalogGroupIds != null) &&
+					(commerceCatalogGroupIds.length > 0)) {
+
+					searchContext.setGroupIds(commerceCatalogGroupIds);
+				}
+
+				searchContext.setAttribute(
+					Field.STATUS, WorkflowConstants.STATUS_ANY);
+
+				if (preferredLocale != null) {
+					searchContext.setLocale(preferredLocale);
+				}
+			},
+			sorts, transformUnsafeFunction);
+	}
+
 	private ProductTaxConfiguration _getProductTaxConfiguration(
 		Product product) {
 
@@ -920,11 +963,20 @@ public class ProductResourceImpl extends BaseProductResourceImpl {
 
 		if (productOptions != null) {
 			for (ProductOption productOption : productOptions) {
+				serviceContext.setExpandoBridgeAttributes(
+					CustomFieldsUtil.toMap(
+						CPDefinitionOptionRel.class.getName(),
+						contextCompany.getCompanyId(),
+						productOption.getCustomFields(),
+						contextAcceptLanguage.getPreferredLocale()));
+
 				CPDefinitionOptionRel cpDefinitionOptionRel =
 					ProductOptionUtil.addOrUpdateCPDefinitionOptionRel(
 						_cpDefinitionOptionRelService, _cpOptionService,
 						productOption, cpDefinition.getCPDefinitionId(),
 						serviceContext);
+
+				serviceContext.setExpandoBridgeAttributes(null);
 
 				ProductOptionValue[] productOptionValues =
 					productOption.getProductOptionValues();
@@ -996,6 +1048,10 @@ public class ProductResourceImpl extends BaseProductResourceImpl {
 
 		if (images != null) {
 			for (Attachment attachment : images) {
+				if (attachment.getTags() != null) {
+					serviceContext.setAssetTagNames(attachment.getTags());
+				}
+
 				serviceContext.setExpandoBridgeAttributes(
 					_getExpandoBridgeAttributes(attachment));
 
@@ -1018,6 +1074,10 @@ public class ProductResourceImpl extends BaseProductResourceImpl {
 
 		if (attachments != null) {
 			for (Attachment attachment : attachments) {
+				if (attachment.getTags() != null) {
+					serviceContext.setAssetTagNames(attachment.getTags());
+				}
+
 				serviceContext.setExpandoBridgeAttributes(
 					_getExpandoBridgeAttributes(attachment));
 
@@ -1216,7 +1276,8 @@ public class ProductResourceImpl extends BaseProductResourceImpl {
 			if (VirtualCPTypeConstants.NAME.equals(cpType.getName())) {
 				ProductVirtualSettingsUtil.addOrUpdateProductVirtualSettings(
 					cpDefinition, productVirtualSettings,
-					_cpDefinitionVirtualSettingService, _uniqueFileNameProvider,
+					_cpDefinitionVirtualSettingService,
+					_cpdVirtualSettingFileEntryService, _uniqueFileNameProvider,
 					serviceContext);
 			}
 			else {
@@ -1462,6 +1523,10 @@ public class ProductResourceImpl extends BaseProductResourceImpl {
 		_cpDefinitionVirtualSettingService;
 
 	@Reference
+	private CPDVirtualSettingFileEntryService
+		_cpdVirtualSettingFileEntryService;
+
+	@Reference
 	private CPInstanceService _cpInstanceService;
 
 	@Reference
@@ -1510,9 +1575,6 @@ public class ProductResourceImpl extends BaseProductResourceImpl {
 		target = "(component.name=com.liferay.headless.commerce.admin.catalog.internal.dto.v1_0.converter.ProductDTOConverter)"
 	)
 	private DTOConverter<CPDefinition, Product> _productDTOConverter;
-
-	@Reference
-	private ProductHelper _productHelper;
 
 	@Reference
 	private ServiceContextHelper _serviceContextHelper;

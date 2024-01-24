@@ -68,7 +68,7 @@ CustomElementCET customElementCET = editClientExtensionEntryDisplayContext.getCE
 </div>
 
 <c:choose>
-	<c:when test="<%= editClientExtensionEntryDisplayContext.isNew() %>">
+	<c:when test="<%= editClientExtensionEntryDisplayContext.isAdding() %>">
 		<aui:input label="instanceable" name="instanceable" type="checkbox" value="<%= customElementCET.isInstanceable() %>" />
 	</c:when>
 	<c:otherwise>

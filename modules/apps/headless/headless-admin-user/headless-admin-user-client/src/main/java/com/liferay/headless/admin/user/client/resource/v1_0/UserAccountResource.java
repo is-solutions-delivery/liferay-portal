@@ -14,6 +14,8 @@ import com.liferay.headless.admin.user.client.serdes.v1_0.UserAccountSerDes;
 
 import java.io.File;
 
+import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -448,6 +450,10 @@ public interface UserAccountResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {

@@ -4,17 +4,29 @@
  */
 
 import {SetStateAction} from 'react';
+import {ModalImportProperties} from './ViewObjectDefinitions';
 interface ObjectFoldersSidebarProps {
-	objectFolders: ObjectFolder[];
+	baseResourceURL: string;
+	importObjectFolderURL: string;
+	objectDefinitionsActions: Actions;
+	objectFoldersRequestInfo: ObjectFoldersRequestInfo;
+	portletNamespace: string;
 	selectedObjectFolder: ObjectFolder;
+	setModalImportProperties: (
+		value: SetStateAction<ModalImportProperties>
+	) => void;
 	setSelectedObjectFolder: (
 		value: SetStateAction<Partial<ObjectFolder>>
 	) => void;
 	setShowModal: (value: SetStateAction<ViewObjectDefinitionsModals>) => void;
 }
 export default function ObjectFoldersSideBar({
-	objectFolders,
+	baseResourceURL,
+	importObjectFolderURL,
+	objectDefinitionsActions,
+	objectFoldersRequestInfo,
 	selectedObjectFolder,
+	setModalImportProperties,
 	setSelectedObjectFolder,
 	setShowModal,
 }: ObjectFoldersSidebarProps): JSX.Element;

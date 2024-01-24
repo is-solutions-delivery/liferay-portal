@@ -31,7 +31,6 @@ import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
-import com.liferay.portal.util.PortalInstances;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.batch.engine.VulcanBatchEngineTaskItemDelegate;
 
@@ -63,9 +62,7 @@ public class ObjectDefinitionVulcanBatchEngineTaskItemDelegateTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_company = CompanyTestUtil.addCompany();
-
-		PortalInstances.initCompany(_company);
+		_company = CompanyTestUtil.addCompany(true);
 
 		User user = UserTestUtil.addCompanyAdminUser(_company);
 
@@ -150,7 +147,7 @@ public class ObjectDefinitionVulcanBatchEngineTaskItemDelegateTest {
 						_company.getCompanyId());
 
 		Assert.assertNotNull(serviceBuilderObjectDefinition);
-		Assert.assertTrue(serviceBuilderObjectDefinition.getActive());
+		Assert.assertTrue(serviceBuilderObjectDefinition.isActive());
 
 		serviceBuilderObjectDefinition =
 			_objectDefinitionLocalService.
@@ -159,7 +156,7 @@ public class ObjectDefinitionVulcanBatchEngineTaskItemDelegateTest {
 					_company.getCompanyId());
 
 		Assert.assertNotNull(serviceBuilderObjectDefinition);
-		Assert.assertFalse(serviceBuilderObjectDefinition.getActive());
+		Assert.assertFalse(serviceBuilderObjectDefinition.isActive());
 	}
 
 	private ObjectDefinition _createObjectDefinition(String name) {

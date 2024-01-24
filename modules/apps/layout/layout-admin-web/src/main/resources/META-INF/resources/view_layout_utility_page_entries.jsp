@@ -11,6 +11,8 @@
 LayoutUtilityPageEntryDisplayContext layoutUtilityPageEntryDisplayContext = new LayoutUtilityPageEntryDisplayContext(renderRequest, renderResponse);
 %>
 
+<liferay-ui:success key="layoutUpdated" message="the-page-was-updated-successfully" />
+
 <clay:management-toolbar
 	managementToolbarDisplayContext="<%= new LayoutUtilityPageEntryManagementToolbarDisplayContext(request, layoutUtilityPageEntryDisplayContext, liferayPortletRequest, liferayPortletResponse) %>"
 	propsTransformer="js/LayoutUtilityPageEntriesManagementToolbarPropsTransformer"

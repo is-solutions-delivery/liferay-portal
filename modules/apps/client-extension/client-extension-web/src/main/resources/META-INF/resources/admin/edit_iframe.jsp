@@ -22,7 +22,7 @@ IFrameCET iFrameCET = editClientExtensionEntryDisplayContext.getCET();
 </aui:field-wrapper>
 
 <c:choose>
-	<c:when test="<%= editClientExtensionEntryDisplayContext.isNew() %>">
+	<c:when test="<%= editClientExtensionEntryDisplayContext.isAdding() %>">
 		<aui:input label="instanceable" name="instanceable" type="checkbox" value="<%= iFrameCET.isInstanceable() %>" />
 	</c:when>
 	<c:otherwise>

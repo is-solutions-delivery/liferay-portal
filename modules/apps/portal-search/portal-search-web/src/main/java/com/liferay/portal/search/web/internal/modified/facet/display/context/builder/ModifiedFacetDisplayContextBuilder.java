@@ -10,6 +10,7 @@ import com.liferay.portal.configuration.module.configuration.ConfigurationProvid
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
@@ -62,14 +63,12 @@ public class ModifiedFacetDisplayContextBuilder implements Serializable {
 		ModifiedFacetDisplayContext modifiedFacetDisplayContext =
 			new ModifiedFacetDisplayContext();
 
+		modifiedFacetDisplayContext.setBucketDisplayContexts(
+			_buildBucketDisplayContexts());
 		modifiedFacetDisplayContext.setCalendarDisplayContext(
 			_buildCalendarDisplayContext());
-
 		modifiedFacetDisplayContext.setCustomRangeBucketDisplayContext(
-			_buildCustomRangeModifiedTermDisplayContext());
-
-		modifiedFacetDisplayContext.setBucketDisplayContexts(
-			_buildTermDisplayContexts());
+			_buildCustomRangeBucketDisplayContext());
 		modifiedFacetDisplayContext.setDefaultBucketDisplayContext(
 			_buildDefaultBucketDisplayContext());
 		modifiedFacetDisplayContext.setDisplayStyleGroupId(
@@ -191,6 +190,59 @@ public class ModifiedFacetDisplayContextBuilder implements Serializable {
 		return isNothingSelected();
 	}
 
+	private BucketDisplayContext _buildBucketDisplayContext(
+		String label, String range) {
+
+		BucketDisplayContext bucketDisplayContext = new BucketDisplayContext();
+
+		bucketDisplayContext.setBucketText(label);
+		bucketDisplayContext.setFilterValue(_getLabeledRangeURL(label));
+		bucketDisplayContext.setFrequency(
+			getFrequency(getTermCollector(range)));
+		bucketDisplayContext.setFrequencyVisible(_frequenciesVisible);
+		bucketDisplayContext.setSelected(_selectedRanges.contains(label));
+
+		return bucketDisplayContext;
+	}
+
+	private List<BucketDisplayContext> _buildBucketDisplayContexts() {
+		JSONArray rangesJSONArray = _getRangesJSONArray();
+
+		if (rangesJSONArray == null) {
+			return null;
+		}
+
+		List<BucketDisplayContext> bucketDisplayContexts = new ArrayList<>();
+
+		for (int i = 0; i < rangesJSONArray.length(); i++) {
+			JSONObject jsonObject = rangesJSONArray.getJSONObject(i);
+
+			String label = jsonObject.getString("label");
+
+			if (label.equals("custom-range")) {
+				continue;
+			}
+
+			String range = jsonObject.getString("range");
+
+			if ((_frequencyThreshold > 0) &&
+				(_frequencyThreshold > getFrequency(getTermCollector(range)))) {
+
+				continue;
+			}
+
+			bucketDisplayContexts.add(_buildBucketDisplayContext(label, range));
+		}
+
+		if (!_order.equals("rangesConfiguration")) {
+			bucketDisplayContexts.sort(
+				BucketDisplayContextComparatorFactoryUtil.
+					getBucketDisplayContextComparator(_order));
+		}
+
+		return bucketDisplayContexts;
+	}
+
 	private ModifiedFacetCalendarDisplayContext _buildCalendarDisplayContext() {
 		ModifiedFacetCalendarDisplayContextBuilder
 			modifiedFacetCalendarDisplayContextBuilder =
@@ -211,7 +263,7 @@ public class ModifiedFacetDisplayContextBuilder implements Serializable {
 		return modifiedFacetCalendarDisplayContextBuilder.build();
 	}
 
-	private BucketDisplayContext _buildCustomRangeModifiedTermDisplayContext() {
+	private BucketDisplayContext _buildCustomRangeBucketDisplayContext() {
 		boolean selected = _isCustomRangeSelected();
 
 		BucketDisplayContext bucketDisplayContext = new BucketDisplayContext();
@@ -243,63 +295,17 @@ public class ModifiedFacetDisplayContextBuilder implements Serializable {
 		return bucketDisplayContext;
 	}
 
-	private BucketDisplayContext _buildTermDisplayContext(
-		String label, String range) {
-
-		BucketDisplayContext bucketDisplayContext = new BucketDisplayContext();
-
-		bucketDisplayContext.setBucketText(label);
-		bucketDisplayContext.setFilterValue(_getLabeledRangeURL(label));
-		bucketDisplayContext.setFrequency(
-			getFrequency(getTermCollector(range)));
-		bucketDisplayContext.setFrequencyVisible(_frequenciesVisible);
-		bucketDisplayContext.setSelected(_selectedRanges.contains(label));
-
-		return bucketDisplayContext;
-	}
-
-	private List<BucketDisplayContext> _buildTermDisplayContexts() {
-		JSONArray rangesJSONArray = _getRangesJSONArray();
-
-		if (rangesJSONArray == null) {
-			return null;
-		}
-
-		List<BucketDisplayContext> bucketDisplayContexts = new ArrayList<>();
-
-		for (int i = 0; i < rangesJSONArray.length(); i++) {
-			JSONObject jsonObject = rangesJSONArray.getJSONObject(i);
-
-			String range = jsonObject.getString("range");
-
-			if ((_frequencyThreshold > 0) &&
-				(_frequencyThreshold > getFrequency(getTermCollector(range)))) {
-
-				continue;
-			}
-
-			bucketDisplayContexts.add(
-				_buildTermDisplayContext(jsonObject.getString("label"), range));
-		}
-
-		if (!_order.equals("OrderHitsDesc")) {
-			bucketDisplayContexts.sort(
-				BucketDisplayContextComparatorFactoryUtil.
-					getBucketDisplayContextComparator(_order));
-		}
-
-		return bucketDisplayContexts;
-	}
-
 	private TermCollector _getCustomRangeTermCollector(boolean selected) {
 		if (!selected) {
 			return null;
 		}
 
 		FacetCollector facetCollector = _facet.getFacetCollector();
+		SearchContext searchContext = _facet.getSearchContext();
 
 		return facetCollector.getTermCollector(
-			DateRangeFactoryUtil.getRangeString(_from, _to));
+			DateRangeFactoryUtil.getRangeString(
+				_from, _to, searchContext.getTimeZone()));
 	}
 
 	private String _getCustomRangeURL() {

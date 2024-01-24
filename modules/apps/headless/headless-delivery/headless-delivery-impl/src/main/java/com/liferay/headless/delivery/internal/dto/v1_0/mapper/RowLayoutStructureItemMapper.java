@@ -10,28 +10,28 @@ import com.liferay.headless.delivery.dto.v1_0.PageRowDefinition;
 import com.liferay.headless.delivery.dto.v1_0.RowViewport;
 import com.liferay.headless.delivery.dto.v1_0.RowViewportDefinition;
 import com.liferay.headless.delivery.internal.dto.v1_0.mapper.util.StyledLayoutStructureItemUtil;
+import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.layout.responsive.ViewportSize;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 import com.liferay.layout.util.structure.RowStyledLayoutStructureItem;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.Portal;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.osgi.service.component.annotations.Component;
-
 /**
  * @author Jürgen Kappler
  */
-@Component(service = LayoutStructureItemMapper.class)
 public class RowLayoutStructureItemMapper
 	extends BaseStyledLayoutStructureItemMapper {
 
-	@Override
-	public String getClassName() {
-		return RowStyledLayoutStructureItem.class.getName();
+	public RowLayoutStructureItemMapper(
+		InfoItemServiceRegistry infoItemServiceRegistry, Portal portal) {
+
+		super(infoItemServiceRegistry, portal);
 	}
 
 	@Override
@@ -44,81 +44,96 @@ public class RowLayoutStructureItemMapper
 
 		return new PageElement() {
 			{
-				definition = new PageRowDefinition() {
-					{
-						cssClasses =
-							StyledLayoutStructureItemUtil.getCssClasses(
-								rowStyledLayoutStructureItem);
-						customCSS = StyledLayoutStructureItemUtil.getCustomCSS(
-							rowStyledLayoutStructureItem);
-						customCSSViewports =
-							StyledLayoutStructureItemUtil.getCustomCSSViewports(
-								rowStyledLayoutStructureItem);
-						gutters = rowStyledLayoutStructureItem.isGutters();
-						indexed = rowStyledLayoutStructureItem.isIndexed();
-						modulesPerRow =
-							rowStyledLayoutStructureItem.getModulesPerRow();
-						name = rowStyledLayoutStructureItem.getName();
-						numberOfColumns =
-							rowStyledLayoutStructureItem.getNumberOfColumns();
-						reverseOrder =
-							rowStyledLayoutStructureItem.isReverseOrder();
-						verticalAlignment =
-							rowStyledLayoutStructureItem.getVerticalAlignment();
-
-						setFragmentStyle(
-							() -> {
-								JSONObject itemConfigJSONObject =
-									rowStyledLayoutStructureItem.
-										getItemConfigJSONObject();
-
-								return toFragmentStyle(
-									itemConfigJSONObject.getJSONObject(
-										"styles"),
-									saveMappingConfiguration);
-							});
-						setFragmentViewports(
-							() -> getFragmentViewPorts(
-								rowStyledLayoutStructureItem.
-									getItemConfigJSONObject()));
-						setRowViewports(
-							() -> {
-								Map<String, JSONObject>
-									rowViewportConfigurationJSONObjects =
+				setDefinition(
+					() -> new PageRowDefinition() {
+						{
+							setCssClasses(
+								() ->
+									StyledLayoutStructureItemUtil.getCssClasses(
+										rowStyledLayoutStructureItem));
+							setCustomCSS(
+								() ->
+									StyledLayoutStructureItemUtil.getCustomCSS(
+										rowStyledLayoutStructureItem));
+							setCustomCSSViewports(
+								() ->
+									StyledLayoutStructureItemUtil.
+										getCustomCSSViewports(
+											rowStyledLayoutStructureItem));
+							setFragmentStyle(
+								() -> {
+									JSONObject itemConfigJSONObject =
 										rowStyledLayoutStructureItem.
-											getViewportConfigurationJSONObjects();
+											getItemConfigJSONObject();
 
-								if (MapUtil.isEmpty(
-										rowViewportConfigurationJSONObjects)) {
+									return toFragmentStyle(
+										itemConfigJSONObject.getJSONObject(
+											"styles"),
+										saveMappingConfiguration);
+								});
+							setFragmentViewports(
+								() -> getFragmentViewPorts(
+									rowStyledLayoutStructureItem.
+										getItemConfigJSONObject()));
+							setGutters(rowStyledLayoutStructureItem::isGutters);
+							setIndexed(rowStyledLayoutStructureItem::isIndexed);
+							setModulesPerRow(
+								() ->
+									rowStyledLayoutStructureItem.
+										getModulesPerRow());
+							setName(rowStyledLayoutStructureItem::getName);
+							setNumberOfColumns(
+								() ->
+									rowStyledLayoutStructureItem.
+										getNumberOfColumns());
+							setReverseOrder(
+								() ->
+									rowStyledLayoutStructureItem.
+										isReverseOrder());
+							setRowViewports(
+								() -> {
+									Map<String, JSONObject>
+										rowViewportConfigurationJSONObjects =
+											rowStyledLayoutStructureItem.
+												getViewportConfigurationJSONObjects();
 
-									return null;
-								}
+									if (MapUtil.isEmpty(
+											rowViewportConfigurationJSONObjects)) {
 
-								List<RowViewport> rowViewports =
-									new ArrayList<RowViewport>() {
-										{
-											add(
-												_toRowViewport(
-													rowViewportConfigurationJSONObjects,
-													ViewportSize.
-														MOBILE_LANDSCAPE));
-											add(
-												_toRowViewport(
-													rowViewportConfigurationJSONObjects,
-													ViewportSize.
-														PORTRAIT_MOBILE));
-											add(
-												_toRowViewport(
-													rowViewportConfigurationJSONObjects,
-													ViewportSize.TABLET));
-										}
-									};
+										return null;
+									}
 
-								return rowViewports.toArray(new RowViewport[0]);
-							});
-					}
-				};
-				type = Type.ROW;
+									List<RowViewport> rowViewports =
+										new ArrayList<RowViewport>() {
+											{
+												add(
+													_toRowViewport(
+														rowViewportConfigurationJSONObjects,
+														ViewportSize.
+															MOBILE_LANDSCAPE));
+												add(
+													_toRowViewport(
+														rowViewportConfigurationJSONObjects,
+														ViewportSize.
+															PORTRAIT_MOBILE));
+												add(
+													_toRowViewport(
+														rowViewportConfigurationJSONObjects,
+														ViewportSize.TABLET));
+											}
+										};
+
+									return rowViewports.toArray(
+										new RowViewport[0]);
+								});
+							setVerticalAlignment(
+								() ->
+									rowStyledLayoutStructureItem.
+										getVerticalAlignment());
+						}
+					});
+				setId(layoutStructureItem::getItemId);
+				setType(() -> Type.ROW);
 			}
 		};
 	}
@@ -129,9 +144,10 @@ public class RowLayoutStructureItemMapper
 
 		return new RowViewport() {
 			{
-				id = viewportSize.getViewportSizeId();
-				rowViewportDefinition = _toRowViewportDefinition(
-					rowViewportConfigurationJSONObjects, viewportSize);
+				setId(viewportSize::getViewportSizeId);
+				setRowViewportDefinition(
+					() -> _toRowViewportDefinition(
+						rowViewportConfigurationJSONObjects, viewportSize));
 			}
 		};
 	}

@@ -1,0 +1,550 @@
+@component-name = "portal-analytics-cloud"
+definition {
+
+	property analytics.cloud.release = "true";
+	property analytics.cloud.upstream = "true";
+	property portal.release = "false";
+	property portal.upstream = "true";
+	property property.group = "analytics.cloud.profile";
+	property testray.main.component.name = "Analytics Cloud";
+
+	static var nameABTest = "AB Test";
+
+	setUp {
+		task ("Copy the token from AC") {
+			ACUtils.launchAC();
+
+			ACSettings.takeTokenFromAnalyticsCloud();
+		}
+
+		task ("Set up instance and sign in DXP") {
+			TestCase.setUpPortalInstance();
+
+			ACUtils.launchDXP();
+		}
+
+		task ("Add a new site with a public widget page") {
+			ACUtils.addSiteAndPage(type = "content");
+		}
+
+		task ("Connect DXP to Analytics Cloud") {
+			ACDXPSettings.connectDXPtoAnalyticsCloud(siteName = "Site Name");
+		}
+
+		task ("Go to Site Page") {
+			Navigator.openSiteURL(siteName = "Site Name");
+		}
+
+		task ("Edit the Content page to add a button fragment") {
+			ContentPages.gotoPageEditor();
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+
+			Button.clickPublish();
+		}
+	}
+
+	tearDown {
+		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
+
+		ACUtils.tearDownABTest();
+
+		ACUtils.tearDownDXP();
+
+		if (${testLiferayVirtualInstance} == "true") {
+			PortalInstances.tearDownCP();
+		}
+		else {
+			JSONGroup.deleteGroupByName(groupName = "Site Name");
+		}
+
+		ACUtils.tearDownAC();
+	}
+
+	@description = "Bug: LRAC-8084 | Automation ID: LRAC-11512 | Test Summary: It is possible to create an AB test"
+	@priority = 5
+	test CanCreateStartABTest {
+		task ("Start an AB test") {
+			ABTest.createABTest(
+				goal = "Bounce Rate",
+				testTitle = ${nameABTest});
+
+			ABTest.createVariant(variantName = "Variant name");
+
+			ABTest.runTest();
+		}
+
+		task ("Go to Tests") {
+			ACUtils.launchAC();
+
+			ACProperties.switchProperty(propertyName = ${assignedPropertyName});
+
+			ACNavigation.goToTests();
+		}
+
+		task ("Assert AB test") {
+			ACUtils.viewGenericText(textValueList = ${nameABTest});
+		}
+	}
+
+	@description = "Bug: LRAC-7750 | Automation ID: LRAC-11513 | Test Summary: It is possible to delete an AB test"
+	@priority = 5
+	test CanDeleteABTest {
+		task ("Start an AB test") {
+			ABTest.createABTest(
+				goal = "Bounce Rate",
+				testTitle = ${nameABTest});
+
+			ABTest.createVariant(variantName = "Variant name");
+
+			ABTest.runTest();
+		}
+
+		task ("Go to Tests") {
+			ACUtils.launchAC();
+
+			ACProperties.switchProperty(propertyName = ${assignedPropertyName});
+
+			ACNavigation.goToTests();
+		}
+
+		task ("Assert AB test Running") {
+			ACUtils.viewGenericText(textValueList = ${nameABTest});
+
+			ACTests.statusABTest(status = "RUNNING");
+		}
+
+		task ("Terminate AB Test") {
+			ACTests.terminateABTest(testName = ${nameABTest});
+		}
+
+		task ("Go to Tests") {
+			ACUtils.launchAC();
+
+			ACProperties.switchProperty(propertyName = ${assignedPropertyName});
+
+			ACNavigation.goToTests();
+		}
+
+		task ("Assert AB test Terminated") {
+			ACUtils.viewGenericText(textValueList = ${nameABTest});
+
+			ACTests.statusABTest(status = "TERMINATED");
+		}
+
+		task ("Delete AB Test") {
+			ACTests.deleteABTest(testName = ${nameABTest});
+		}
+
+		task ("Go to Tests") {
+			ACUtils.launchAC();
+
+			ACProperties.switchProperty(propertyName = ${assignedPropertyName});
+
+			ACNavigation.goToTests();
+		}
+
+		task ("Assert AB test Deleted") {
+			ACUtils.viewGenericText(textValueList = "There are no tests found.");
+		}
+	}
+
+	@description = "Story: LRAC-14101 | Automation ID: LRAC-14544 | Test Summary: Delete a terminated test in DXP"
+	@priority = 4
+	test CanDeleteTerminatedTestOnDXP {
+		task ("Create AB test") {
+			ABTest.createABTest(
+				goal = "Click",
+				testTitle = ${nameABTest});
+		}
+
+		task ("Select the button element added to the page for AB test") {
+			ABTest.selectElementID();
+		}
+
+		task ("Create variable") {
+			ABTest.createVariant(variantName = "Variant name");
+		}
+
+		task ("Click on Review and Run test") {
+			ABTest.runTest();
+		}
+
+		task ("Go to AC > Tests") {
+			ACUtils.launchAC();
+
+			ACProperties.switchProperty(propertyName = ${assignedPropertyName});
+
+			ACNavigation.goToTests();
+		}
+
+		task ("Check that the created AB test appears in the list") {
+			ACUtils.viewNameList(nameList = ${nameABTest});
+		}
+
+		task ("Go to DXP > Go to AB Test Side Panel") {
+			Navigator.openSiteURL(siteName = "Site Name");
+
+			ABTest.openABTestPanel();
+		}
+
+		task ("Terminate the test") {
+			ABTest.terminateTest();
+		}
+
+		task ("Delete AB Test") {
+			ABTest.deleteABTest();
+		}
+
+		task ("Assert the empty state after the test is deleted") {
+			ABTest.assertDXPABTestEmptyState();
+		}
+
+		task ("Go to AC > Tests") {
+			ACUtils.launchAC();
+
+			ACProperties.switchProperty(propertyName = ${assignedPropertyName});
+
+			ACNavigation.goToTests();
+		}
+
+		task ("Check that the empty state message appears in the list") {
+			ACUtils.viewNoResultsMessage(noResultMessage = "There are no tests found.");
+		}
+	}
+
+	@description = "Story: LRAC-14070 | Automation ID: LRAC-14574 | Test Summary: Can publish control from a terminated test"
+	@priority = 5
+	test CanPublishControlFromTerminatedTest {
+		task ("Create an AB test") {
+			ABTest.createABTest(
+				goal = "Bounce Rate",
+				testTitle = ${nameABTest});
+
+			ABTest.createVariant(variantName = "Variant name");
+		}
+
+		task ("Edit the variant created") {
+			ABTest.editVariant(variantName = "Variant name");
+		}
+
+		task ("Add a heading to the page to diferentiate from the control") {
+			PageEditor.editFragmentText(
+				fragmentName = "Button",
+				id = "link",
+				text = "New text");
+		}
+
+		task ("Click to save the variant") {
+			ABTest.saveVariant();
+		}
+
+		task ("Click to open the AB test panel") {
+			ABTest.openABTestPanel();
+		}
+
+		task ("Click to review and run the test") {
+			ABTest.runTest();
+		}
+
+		task ("Click to terminate the test") {
+			ABTest.terminateTest();
+		}
+
+		task ("Click to publish the control") {
+			ABTest.publishVariant(variantName = "Control");
+		}
+
+		task ("Assert the control is published") {
+			ContentPages.viewFragmentText(
+				fragmentName = "button",
+				id = "link",
+				text = "Go Somewhere");
+		}
+
+		task ("Click to edit the page then click save") {
+			ContentPages.gotoPageEditor();
+
+			PageEditor.editFragmentText(
+				fragmentName = "Button",
+				id = "link",
+				text = "Text test");
+
+			PageEditor.publish();
+		}
+
+		task ("Assert if the page is published with the modifications") {
+			ContentPages.viewFragmentText(
+				fragmentName = "button",
+				id = "link",
+				text = "Text test");
+		}
+
+		task ("Go to AC and open the AB test") {
+			ACUtils.launchAC();
+
+			ACProperties.switchProperty(propertyName = ${assignedPropertyName});
+
+			ACNavigation.goToTests();
+
+			ACNavigation.openItem(itemName = ${nameABTest});
+		}
+
+		task ("Assert the AB Test") {
+			ACUtils.viewGenericTextInOrder(textValueList = ${nameABTest});
+		}
+	}
+
+	@description = "Story: LRAC-14070 | Automation ID: LRAC-14573 | Test Summary: Can publish variant from a terminated test and delete test in AC"
+	@priority = 5
+	test CanPublishVariantFromTerminatedTestAndDeleteTest {
+		task ("Create an AB test") {
+			ABTest.createABTest(
+				goal = "Bounce Rate",
+				testTitle = ${nameABTest});
+
+			ABTest.createVariant(variantName = "Variant name");
+		}
+
+		task ("Edit the variant created") {
+			ABTest.editVariant(variantName = "Variant name");
+		}
+
+		task ("Add a heading to the page to diferentiate from the control") {
+			PageEditor.editFragmentText(
+				fragmentName = "Button",
+				id = "link",
+				text = "New text");
+		}
+
+		task ("Click to save the variant") {
+			ABTest.saveVariant();
+		}
+
+		task ("Click to open the AB test panel") {
+			ABTest.openABTestPanel();
+		}
+
+		task ("Click to review and run the test") {
+			ABTest.runTest();
+		}
+
+		task ("Terminate the test") {
+			ABTest.terminateTest();
+		}
+
+		task ("Click to publish the variant") {
+			ABTest.publishVariant(variantName = "Variant name");
+		}
+
+		task ("Assert the variant published") {
+			ContentPages.viewFragmentText(
+				fragmentName = "button",
+				id = "link",
+				text = "New text");
+		}
+
+		task ("Click to edit the page then click save") {
+			ContentPages.gotoPageEditor();
+
+			PageEditor.editFragmentText(
+				fragmentName = "Button",
+				id = "link",
+				text = "Text test");
+
+			PageEditor.publish();
+		}
+
+		task ("Assert if the page is published with the modifications") {
+			ContentPages.viewFragmentText(
+				fragmentName = "button",
+				id = "link",
+				text = "Text test");
+		}
+
+		task ("Go to AC > Tests") {
+			ACUtils.launchAC();
+
+			ACProperties.switchProperty(propertyName = ${assignedPropertyName});
+
+			ACNavigation.goToTests();
+		}
+
+		task ("Open the AB test") {
+			ACNavigation.openItem(itemName = ${nameABTest});
+		}
+
+		task ("Delete the test in AC") {
+			Button.clickDelete();
+
+			AssertTextEquals.assertPartialText(
+				locator1 = "Modal#MODAL_CONTENT",
+				value1 = "Are you sure you want to delete this test? You will permanently lose all test data and results collected from this test. You will not be able to run this test. You will not be able to undo this operation.");
+
+			Click(locator1 = "ACSettings#CONFIRMATION_BUTTON");
+
+			Alert.viewSuccessMessageText(successMessage = "Success:The test has been deleted.");
+		}
+
+		task ("Assert the test is no longer present in the list") {
+			ACUtils.assertItemsNameNotPresent(itemList = ${nameABTest});
+		}
+	}
+
+	@description = "Story: LRAC-14101 | Automation ID: LRAC-14543 | Test Summary: Terminate an AB Test and create a new one"
+	@priority = 4
+	test CanTerminateABTestAndCreateNewOne {
+		task ("Create AB test") {
+			ABTest.createABTest(
+				goal = "Click",
+				testTitle = ${nameABTest});
+		}
+
+		task ("Select the button element added to the page for AB test") {
+			ABTest.selectElementID();
+		}
+
+		task ("Create variable") {
+			ABTest.createVariant(variantName = "Variant name");
+		}
+
+		task ("Click on Review and Run test") {
+			ABTest.runTest();
+		}
+
+		task ("Terminate the test") {
+			ABTest.terminateTest();
+		}
+
+		task ("Click on the Create New Test button on the side panel") {
+			Button.click(button = "Create New Test");
+		}
+
+		task ("Fill in the information for the new AB test") {
+			ABTest.fillInput(
+				key_testTitle = "AB Test 2",
+				labelValue = "Test Name");
+
+			ABTest.selectGoal(key_goal = "Bounce Rate");
+
+			Click(locator1 = "Modal#SAVE_BUTTON");
+		}
+
+		task ("Create variable") {
+			ABTest.createVariant(variantName = "Variant name 2");
+		}
+
+		task ("Click on Review and Run test") {
+			ABTest.runTest();
+		}
+
+		task ("Go to AC > Tests") {
+			ACUtils.launchAC();
+
+			ACProperties.switchProperty(propertyName = ${assignedPropertyName});
+
+			ACNavigation.goToTests();
+		}
+
+		task ("Check that an AB test appears with the status terminated and another with the status running in the AC list") {
+			ACTests.viewABTestStatusInACList(
+				abTestTitle = ${nameABTest},
+				status = "TERMINATED");
+
+			ACTests.viewABTestStatusInACList(
+				abTestTitle = "AB Test 2",
+				status = "RUNNING");
+		}
+
+		task ("Select the first created test") {
+			ACNavigation.openItem(itemName = ${nameABTest});
+		}
+
+		task ("Assert the publish button is no longer shown") {
+			AssertElementNotPresent(
+				key_text = "Publish",
+				locator1 = "Button#ANY");
+		}
+
+		task ("Delete the test and assert the test is no longer shown in the list") {
+			ACTests.deleteABTestACSide();
+
+			ACNavigation.goToTests();
+
+			ACUtils.assertItemsNameNotPresent(itemList = ${nameABTest});
+		}
+	}
+
+	@description = "Story: LRAC-14101 | Automation ID: LRAC-14545 | Test Summary: Assert the details of a terminated test on the DXP side panel (no clear winner)"
+	@priority = 4
+	test CheckABTestSidePanelWhenNoDeclaredWinner {
+		var variantName = "Variant name";
+
+		task ("Create AB test") {
+			ABTest.createABTest(
+				goal = "Click",
+				testTitle = ${nameABTest});
+		}
+
+		task ("Select the button element added to the page for AB test") {
+			ABTest.selectElementID();
+		}
+
+		task ("Create variable") {
+			ABTest.createVariant(variantName = ${variantName});
+		}
+
+		task ("Click on Review and Run test") {
+			ABTest.runTest();
+		}
+
+		task ("Terminate the test") {
+			ABTest.terminateTest();
+		}
+
+		task ("Check that the test status is terminated") {
+			ABTest.statusABTestInDXP(status = "Terminated");
+		}
+
+		task ("Check that the alert explaining that the AB test was terminated manually appears") {
+			Alert.viewWarningSpecific(warningMessage = "The test has not gathered sufficient data to confidently determine a winner. However, variants can still be published.");
+		}
+
+		task ("Get the Control improvement number") {
+			var improvementNumberControl = ABTest.getVariantImprovementNumberInDXP(variantName = "Control");
+		}
+
+		task ("Get the Variant improvement number") {
+			var improvementNumberVariant = ABTest.getVariantImprovementNumberInDXP(variantName = ${variantName});
+		}
+
+		task ("Click on the View Data in Analytics Cloud button to be redirected to AB Test in AC") {
+			ABTest.openABTestInAC();
+		}
+
+		task ("Check the AB Test status summary") {
+			ACTests.viewABTestStatusSummary(abTestSummaryText = "Test Was Terminated");
+		}
+
+		task ("Check the AB Test result alert message") {
+			ACTests.viewABTestResultAlertMessage(
+				messageDescription = "While some improvement was observed, the current test has not gathered sufficient data to confidently determine a winner.",
+				messageTitle = "There is no clear winner.");
+		}
+
+		task ("Compare the Control improvement number obtained in DXP with the number present in AC") {
+			ACTests.viewVariantImprovementNumberInAC(
+				improvementNumber = ${improvementNumberControl},
+				variantName = "Control");
+		}
+
+		task ("Compare the Variant improvement number obtained in DXP with the number present in AC") {
+			ACTests.viewVariantImprovementNumberInAC(
+				improvementNumber = ${improvementNumberVariant},
+				variantName = ${variantName});
+		}
+	}
+
+}

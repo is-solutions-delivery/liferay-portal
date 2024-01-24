@@ -14,9 +14,11 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.CSVUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.ObjectValuePair;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,10 +36,11 @@ import java.util.Set;
 public class ColumnValuesExtractor {
 
 	public ColumnValuesExtractor(
-		Map<String, Field> fieldsMap, List<String> fieldNames) {
+		Map<String, ObjectValuePair<Field, Method>> fieldNameObjectValuePairs,
+		List<String> fieldNames) {
 
 		_columnDescriptors = _getColumnDescriptors(
-			fieldsMap, fieldNames, 0, null);
+			fieldNameObjectValuePairs, fieldNames, 0, null);
 	}
 
 	public List<Object[]> extractValues(Object item)
@@ -112,29 +115,35 @@ public class ColumnValuesExtractor {
 	}
 
 	private ColumnDescriptor[] _getColumnDescriptors(
-		Map<String, Field> fieldsMap, Collection<String> fieldNames,
-		int masterIndex, ColumnDescriptor parentColumnDescriptor) {
+		Map<String, ObjectValuePair<Field, Method>> fieldNameObjectValuePairs,
+		Collection<String> fieldNames, int masterIndex,
+		ColumnDescriptor parentColumnDescriptor) {
 
 		ColumnDescriptor[] columnDescriptors =
 			new ColumnDescriptor[fieldNames.size()];
 		int localIndex = 0;
 
 		for (String fieldName : fieldNames) {
-			Field field = fieldsMap.get(fieldName);
+			ObjectValuePair<Field, Method> objectValuePair =
+				fieldNameObjectValuePairs.get(fieldName);
 
-			if (field == null) {
+			if (objectValuePair == null) {
 				columnDescriptors[localIndex] = ColumnDescriptor._from(
-					null, fieldName, masterIndex++, parentColumnDescriptor,
-					_getUnsafeFunction(fieldsMap, fieldName));
+					null, fieldName, masterIndex++, null,
+					parentColumnDescriptor,
+					_getUnsafeFunction(fieldNameObjectValuePairs, fieldName));
 
 				localIndex++;
 
 				continue;
 			}
 
+			Field field = objectValuePair.getKey();
+
 			columnDescriptors[localIndex] = ColumnDescriptor._from(
-				field, field.getName(), masterIndex++, parentColumnDescriptor,
-				_getUnsafeFunction(fieldsMap, fieldName));
+				field, field.getName(), masterIndex++,
+				objectValuePair.getValue(), parentColumnDescriptor,
+				_getUnsafeFunction(fieldNameObjectValuePairs, fieldName));
 
 			Class<?> fieldClass = field.getType();
 
@@ -161,12 +170,13 @@ public class ColumnValuesExtractor {
 				continue;
 			}
 
-			Map<String, Field> childFieldsMap = ItemClassIndexUtil.index(
-				fieldClass);
+			Map<String, ObjectValuePair<Field, Method>>
+				childFieldMethodPairsMap = ItemClassIndexUtil.index(fieldClass);
 
 			ColumnDescriptor[] childFieldColumnDescriptors =
 				_getColumnDescriptors(
-					childFieldsMap, _sort(childFieldsMap.keySet()), localIndex,
+					childFieldMethodPairsMap,
+					_sort(childFieldMethodPairsMap.keySet()), localIndex,
 					columnDescriptors[localIndex]);
 
 			columnDescriptors = _combine(
@@ -194,11 +204,17 @@ public class ColumnValuesExtractor {
 	}
 
 	private UnsafeFunction<Object, Object, ReflectiveOperationException>
-		_getUnsafeFunction(Map<String, Field> fieldsMap, String fieldName) {
+		_getUnsafeFunction(
+			Map<String, ObjectValuePair<Field, Method>>
+				fieldNameObjectValuePairs,
+			String fieldName) {
 
-		Field field = fieldsMap.get(fieldName);
+		ObjectValuePair<Field, Method> objectValuePair =
+			fieldNameObjectValuePairs.get(fieldName);
 
-		if (field != null) {
+		if (objectValuePair != null) {
+			Field field = objectValuePair.getKey();
+
 			Class<?> fieldClass = field.getType();
 
 			if (ItemClassIndexUtil.isSingleColumnAdoptableValue(fieldClass)) {
@@ -209,11 +225,13 @@ public class ColumnValuesExtractor {
 					public Object apply(Object object)
 						throws ReflectiveOperationException {
 
-						if (field.get(object) == null) {
+						Object value = _getValue(object, objectValuePair);
+
+						if (value == null) {
 							return StringPool.BLANK;
 						}
 
-						return field.get(object);
+						return value;
 					}
 
 				};
@@ -227,13 +245,14 @@ public class ColumnValuesExtractor {
 					public Object apply(Object object)
 						throws ReflectiveOperationException {
 
-						if (field.get(object) == null) {
+						Object value = _getValue(object, objectValuePair);
+
+						if (value == null) {
 							return StringPool.BLANK;
 						}
 
 						return StringUtil.merge(
-							(Object[])field.get(object), CSVUtil::encode,
-							StringPool.COMMA);
+							(Object[])value, CSVUtil::encode, StringPool.COMMA);
 					}
 
 				};
@@ -247,7 +266,8 @@ public class ColumnValuesExtractor {
 					public Object apply(Object object)
 						throws ReflectiveOperationException {
 
-						Map<?, ?> map = (Map<?, ?>)field.get(object);
+						Map<?, ?> map = (Map<?, ?>)_getValue(
+							object, objectValuePair);
 
 						if (map == null) {
 							return StringPool.BLANK;
@@ -292,7 +312,7 @@ public class ColumnValuesExtractor {
 				public Object apply(Object object)
 					throws ReflectiveOperationException {
 
-					if (field.get(object) == null) {
+					if (_getValue(object, objectValuePair) == null) {
 						return StringPool.BLANK;
 					}
 
@@ -302,9 +322,12 @@ public class ColumnValuesExtractor {
 			};
 		}
 
-		Field propertiesField = fieldsMap.get("properties");
+		ObjectValuePair<Field, Method> propertiesObjectValuePair =
+			fieldNameObjectValuePairs.get("properties");
 
-		if (!ItemClassIndexUtil.isObjectEntryProperties(propertiesField)) {
+		if (!ItemClassIndexUtil.isObjectEntryProperties(
+				propertiesObjectValuePair)) {
+
 			throw new IllegalArgumentException(
 				"Invalid field name: " + fieldName);
 		}
@@ -316,7 +339,8 @@ public class ColumnValuesExtractor {
 			public Object apply(Object object)
 				throws ReflectiveOperationException {
 
-				Map<?, ?> map = (Map<?, ?>)propertiesField.get(object);
+				Map<?, ?> map = (Map<?, ?>)_getValue(
+					object, propertiesObjectValuePair);
 
 				Object value = map.get(fieldName);
 
@@ -336,6 +360,21 @@ public class ColumnValuesExtractor {
 			}
 
 		};
+	}
+
+	private Object _getValue(
+			Object object, ObjectValuePair<Field, Method> objectValuePair)
+		throws ReflectiveOperationException {
+
+		Method method = objectValuePair.getValue();
+
+		if (method == null) {
+			Field field = objectValuePair.getKey();
+
+			return field.get(object);
+		}
+
+		return method.invoke(object);
 	}
 
 	private Collection<String> _sort(Collection<String> collection) {
@@ -379,13 +418,13 @@ public class ColumnValuesExtractor {
 		}
 
 		private static ColumnDescriptor _from(
-			Field field, String fieldName, int index,
+			Field field, String fieldName, int index, Method method,
 			ColumnDescriptor parentColumnDescriptor,
 			UnsafeFunction<Object, Object, ReflectiveOperationException>
 				unsafeFunction) {
 
 			ColumnDescriptor columnDescriptor = new ColumnDescriptor(
-				field, fieldName, index, unsafeFunction);
+				field, fieldName, index, method, unsafeFunction);
 
 			if (parentColumnDescriptor == null) {
 				return columnDescriptor;
@@ -397,13 +436,14 @@ public class ColumnValuesExtractor {
 		}
 
 		private ColumnDescriptor(
-			Field field, String fieldName, int index,
+			Field field, String fieldName, int index, Method method,
 			UnsafeFunction<Object, Object, ReflectiveOperationException>
 				unsafeFunction) {
 
 			_field = field;
 			_fieldName = fieldName;
 			_index = index;
+			_method = method;
 			_unsafeFunction = unsafeFunction;
 		}
 
@@ -459,7 +499,12 @@ public class ColumnValuesExtractor {
 			Object result = object;
 
 			for (ColumnDescriptor columnDescriptor : _parentColumnDescriptors) {
-				result = columnDescriptor._field.get(result);
+				if (columnDescriptor._method == null) {
+					result = columnDescriptor._field.get(result);
+				}
+				else {
+					result = columnDescriptor._method.invoke(result);
+				}
 
 				if (result == null) {
 					return StringPool.BLANK;
@@ -480,6 +525,7 @@ public class ColumnValuesExtractor {
 		private final Field _field;
 		private final String _fieldName;
 		private final int _index;
+		private final Method _method;
 		private final List<ColumnDescriptor> _parentColumnDescriptors =
 			new ArrayList<>();
 		private final UnsafeFunction

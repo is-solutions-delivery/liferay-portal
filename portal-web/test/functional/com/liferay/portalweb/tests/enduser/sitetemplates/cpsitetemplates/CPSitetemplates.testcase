@@ -97,7 +97,7 @@ definition {
 		task ("And: Verify the propagation background task is deleted") {
 			var mysqlStatement = "SELECT * FROM BackgroundTask WHERE taskExecutorClassName = 'com.liferay.exportimport.internal.background.task.LayoutSetPrototypeImportBackgroundTaskExecutor' AND STATUS NOT IN (0, 1, 4);";
 
-			var sqlResults = SQL.executeMySQLStatement(mysqlStatement = ${mysqlStatement});
+			var sqlResults = SQL.executeSQLStatement(sqlStatement = ${mysqlStatement});
 
 			var getHeader = StringUtil.regexReplaceAll(${sqlResults}, "[\r\n]", "");
 
@@ -274,7 +274,7 @@ definition {
 		}
 
 		task ("Then: The propagation will be triggered and the page on the Site will be present in the SQL database") {
-			var sqlResults = SQL.executeMySQLStatement(mysqlStatement = ${sQLStatement});
+			var sqlResults = SQL.executeSQLStatement(sqlStatement = ${sQLStatement});
 
 			TestUtils.assertPartialEquals(
 				actual = ${sqlResults},
@@ -323,7 +323,9 @@ definition {
 				key_itemName = "Home",
 				locator1 = "PagesAdmin#LIST_GROUP_ITEM");
 
-			AssertElementNotPresent(locator1 = "Button#NEW");
+			AssertElementNotPresent(
+				key_text = "New",
+				locator1 = "Button#ANY");
 		}
 
 		task ("And: But should be able to add child page to Test Page") {
@@ -331,7 +333,9 @@ definition {
 				key_itemName = "Test Page",
 				locator1 = "PagesAdmin#LIST_GROUP_ITEM");
 
-			Click(locator1 = "Button#NEW");
+			Click(
+				key_text = "New",
+				locator1 = "Button#ANY");
 
 			AssertElementPresent(
 				key_menuItem = "Add Child Page of Test Page",
@@ -672,7 +676,7 @@ definition {
 				pageName = "Home",
 				siteTemplateName = "Site Template Name");
 
-			var sqlResults = SQL.executeMySQLStatement(mysqlStatement = ${sQLStatement});
+			var sqlResults = SQL.executeSQLStatement(sqlStatement = ${sQLStatement});
 
 			TestUtils.assertNotEquals(
 				actual = ${sqlResults},
@@ -688,7 +692,7 @@ definition {
 		task ("Then: The page will not be visible on the website but it is present in the database") {
 			Page.viewNoPG(pageName = "Test");
 
-			var sqlResults = SQL.executeMySQLStatement(mysqlStatement = ${sQLStatement});
+			var sqlResults = SQL.executeSQLStatement(sqlStatement = ${sQLStatement});
 
 			TestUtils.assertPartialEquals(
 				actual = ${sqlResults},
@@ -1154,10 +1158,7 @@ definition {
 				userLastName = "userln",
 				userScreenName = "usersn");
 
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Users and Organizations");
+			User.openUsersAdmin();
 
 			User.editPasswordCP(
 				userEmailAddress = "userea@liferay.com",

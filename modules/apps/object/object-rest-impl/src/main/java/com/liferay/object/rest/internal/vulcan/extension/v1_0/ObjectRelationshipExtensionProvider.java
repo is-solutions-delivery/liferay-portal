@@ -18,7 +18,6 @@ import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManagerRegistry;
 import com.liferay.object.rest.manager.v1_0.ObjectRelationshipElementsParser;
 import com.liferay.object.rest.manager.v1_0.ObjectRelationshipElementsParserRegistry;
-import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.service.ObjectRelationshipService;
 import com.liferay.petra.string.StringBundler;
@@ -60,7 +59,7 @@ public class ObjectRelationshipExtensionProvider
 
 	@Override
 	public Map<String, Serializable> getExtendedProperties(
-			long companyId, String className, Object entity)
+			long companyId, long userId, String className, Object entity)
 		throws Exception {
 
 		ObjectDefinition objectDefinition = fetchObjectDefinition(
@@ -105,7 +104,7 @@ public class ObjectRelationshipExtensionProvider
 					return defaultObjectEntryManager.
 						fetchRelatedManyToOneObjectEntry(
 							_getDefaultDTOConverterContext(
-								objectDefinition, primaryKey, null, null),
+								objectDefinition, primaryKey, null, userId),
 							objectDefinition, primaryKey,
 							objectRelationship.getName());
 				}
@@ -119,7 +118,7 @@ public class ObjectRelationshipExtensionProvider
 					defaultObjectEntryManager.
 						getObjectEntryRelatedObjectEntries(
 							_getDefaultDTOConverterContext(
-								objectDefinition, primaryKey, null, null),
+								objectDefinition, primaryKey, null, userId),
 							objectDefinition, primaryKey,
 							objectRelationship.getName(),
 							Pagination.of(
@@ -334,9 +333,6 @@ public class ObjectRelationshipExtensionProvider
 
 	@Reference
 	private DTOConverterRegistry _dtoConverterRegistry;
-
-	@Reference
-	private ObjectDefinitionLocalService _objectDefinitionLocalService;
 
 	@Reference
 	private ObjectEntryManagerRegistry _objectEntryManagerRegistry;

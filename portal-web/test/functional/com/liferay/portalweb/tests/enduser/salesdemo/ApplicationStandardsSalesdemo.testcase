@@ -2,6 +2,7 @@
 @ignore = "true"
 definition {
 
+	property ci.retries.disabled = "true";
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.main.component.name = "Application Standards";
@@ -10,17 +11,6 @@ definition {
 		TestCase.setUpPortalInstance();
 
 		User.firstLoginPG();
-	}
-
-	tearDown {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			PagesAdmin.tearDownCP();
-		}
 	}
 
 	@priority = 4

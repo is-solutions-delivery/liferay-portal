@@ -172,25 +172,24 @@ public class FriendlyURLServletTest {
 		_resourcePermissionLocalService.updateResourcePermission(
 			resourcePermission);
 
-		Layout layout2 = LayoutTestUtil.addTypePortletLayout(group);
+		_user = UserTestUtil.addUser();
 
-		layout2.setHidden(true);
-
-		layout2 = _layoutLocalService.updateLayout(layout2);
+		PermissionThreadLocal.setPermissionChecker(
+			PermissionCheckerFactoryUtil.create(_user));
 
 		MockHttpServletRequest mockHttpServletRequest =
 			new MockHttpServletRequest();
 
 		mockHttpServletRequest.setPathInfo(StringPool.SLASH);
 
-		_user = UserTestUtil.addUser();
-
-		PermissionThreadLocal.setPermissionChecker(
-			PermissionCheckerFactoryUtil.create(_user));
+		MockHttpServletResponse mockHttpServletResponse =
+			new MockHttpServletResponse();
 
 		testGetRedirect(
-			mockHttpServletRequest, group.getFriendlyURL(), Portal.PATH_MAIN,
-			_redirectConstructor1.newInstance(getURL(layout2)));
+			mockHttpServletRequest, mockHttpServletResponse,
+			group.getFriendlyURL(), Portal.PATH_MAIN,
+			_redirectConstructor1.newInstance(getURL(layout1)));
+		Assert.assertEquals(404, mockHttpServletResponse.getStatus());
 	}
 
 	@Test
@@ -584,7 +583,6 @@ public class FriendlyURLServletTest {
 
 	@Test
 	public void testServiceRedirectWithRedirectEntry() throws Exception {
-		_testServiceRedirectWithRedirectEntry("hu/path", true, 301);
 		_testServiceRedirectWithRedirectEntry("path", true, 301);
 		_testServiceRedirectWithRedirectEntry("path", false, 302);
 	}

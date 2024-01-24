@@ -1,17 +1,36 @@
+import client from 'shared/apollo/client';
 import HeaderDefault from '../HeaderDefault';
+import mockStore from 'test/mock-store';
 import React from 'react';
+import {ApolloProvider} from '@apollo/react-hooks';
+import {createMemoryHistory} from 'history';
 import {fireEvent, render} from '@testing-library/react';
 import {INTERVAL_KEY_MAP} from 'shared/util/time';
 import {MockedProvider} from '@apollo/react-testing';
-import {mockTimeRangeReq} from 'test/graphql-data';
+import {mockPreferenceReq, mockTimeRangeReq} from 'test/graphql-data';
+import {Provider} from 'react-redux';
+import {Router} from 'react-router-dom';
 
 jest.unmock('react-dom');
 
-const DefaultComponent = props => (
-	<MockedProvider mocks={[mockTimeRangeReq()]}>
-		<HeaderDefault label='Title' {...props} />
-	</MockedProvider>
-);
+const DefaultComponent = props => {
+	const history = createMemoryHistory();
+
+	return (
+		<ApolloProvider client={client}>
+			<Provider store={mockStore()}>
+				<Router history={history}>
+					<MockedProvider
+						mocks={[mockTimeRangeReq(), mockPreferenceReq()]}
+					>
+						<HeaderDefault label='Title' {...props} />
+					</MockedProvider>
+				</Router>
+			</Provider>
+		</ApolloProvider>
+	);
+};
+
 describe('HeaderDefault', () => {
 	it('should render', () => {
 		const {container} = render(<DefaultComponent />);

@@ -31,6 +31,7 @@ export interface AggregationFilters {
 }
 
 interface BasicInfoTabProps {
+	baseResourceURL: string;
 	containerWrapper: ElementType;
 	errors: ObjectFieldErrors;
 	filterOperators: TFilterOperators;
@@ -46,10 +47,11 @@ interface BasicInfoTabProps {
 	setValues: (values: Partial<ObjectField>) => void;
 	sidebarElements: SidebarCategory[];
 	values: Partial<ObjectField>;
-	workflowStatusJSONArray: LabelValueObject[];
+	workflowStatuses: LabelValueObject[];
 }
 
 export function BasicInfoTab({
+	baseResourceURL,
 	containerWrapper: ContainerWrapper,
 	errors,
 	filterOperators,
@@ -65,7 +67,7 @@ export function BasicInfoTab({
 	setValues,
 	sidebarElements,
 	values,
-	workflowStatusJSONArray,
+	workflowStatuses,
 }: BasicInfoTabProps) {
 	const [objectDefinition, setObjectDefinition] = useState<
 		Partial<ObjectDefinition>
@@ -106,6 +108,7 @@ export function BasicInfoTab({
 				title={Liferay.Language.get('basic-info')}
 			>
 				<BasicInfoContainer
+					baseResourceURL={baseResourceURL}
 					creationLanguageId2={creationLanguageId2}
 					errors={errors}
 					handleChange={handleChange}
@@ -168,7 +171,7 @@ export function BasicInfoTab({
 						setCreationLanguageId2={setCreationLanguageId2}
 						setValues={setValues}
 						values={values}
-						workflowStatusJSONArray={workflowStatusJSONArray}
+						workflowStatuses={workflowStatuses}
 					/>
 				)}
 
@@ -205,10 +208,10 @@ export function BasicInfoTab({
 					<SearchableContainer
 						isApproved={isApproved}
 						modelBuilder={modelBuilder}
-						objectField={values}
 						onSubmit={onSubmit}
 						readOnly={readOnly}
 						setValues={setValues}
+						values={values}
 					/>
 				</ContainerWrapper>
 			)}

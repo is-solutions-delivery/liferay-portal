@@ -8,6 +8,7 @@ import ClayButton from '@clayui/button';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {useModal} from '@clayui/modal';
 import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
+import ClayTabs from '@clayui/tabs';
 import {useState} from 'react';
 import {CSVLink} from 'react-csv';
 
@@ -32,21 +33,34 @@ export type DealRegistrationItem = {
 	[key in DealRegistrationColumnKey]?: any;
 };
 interface IProps {
-	dealRegistrationFilter?: string;
+	getFilteredItems: (
+		items: DealRegistrationItem[],
+		submittedDealsFilter: boolean
+	) => DealRegistrationItem[];
 	sort: string;
 }
 
 const BASE_PAGE = 1;
 const MAX_ITEMS = 200;
 
-const DealRegistrationList = ({dealRegistrationFilter, sort}: IProps) => {
-	const {filters, filtersTerm, onFilter} = useFilters(dealRegistrationFilter);
+const DealRegistrationList = ({getFilteredItems, sort}: IProps) => {
+	const [submittedDealsFilter, setSubmittedDealsFilter] = useState(
+		JSON.parse(sessionStorage.getItem('submittedDealsFilter')!) === null
+			? true
+			: (JSON.parse(
+					sessionStorage.getItem('submittedDealsFilter')!
+			  ) as boolean)
+	);
+
+	const {filters, filtersTerm, onFilter} = useFilters(submittedDealsFilter);
 
 	const [isVisibleModal, setIsVisibleModal] = useState(false);
 	const [modalContent, setModalContent] = useState<DealRegistrationItem>({});
 
 	const {observer, onClose} = useModal({
-		onClose: () => setIsVisibleModal(false),
+		onClose: () => {
+			setIsVisibleModal(false);
+		},
 	});
 
 	const pagination = usePagination();
@@ -69,8 +83,10 @@ const DealRegistrationList = ({dealRegistrationFilter, sort}: IProps) => {
 
 	const actions = usePermissionActions(ObjectActionName.DEAL_REGISTRATION);
 
-	const filteredData = data.items;
-	const filteredCSVData = dataCSV.items;
+	const filteredData =
+		data.items && getFilteredItems(data.items, submittedDealsFilter);
+	const filteredCSVData =
+		dataCSV.items && getFilteredItems(dataCSV.items, submittedDealsFilter);
 
 	const columns = [
 		{
@@ -156,12 +172,31 @@ const DealRegistrationList = ({dealRegistrationFilter, sort}: IProps) => {
 
 	return (
 		<div className="border-0 my-4">
-			<h1>Partner Deal Registration</h1>
+			<div className="align-items-center d-md-flex justify-content-between mb-3 mr-4">
+				<h1>Partner Deal Registration</h1>
+				<ClayTabs className="h-100 nav nav-segment nav-tabs">
+					<ClayTabs.Item
+						active={submittedDealsFilter}
+						className="nav-item"
+						onClick={() => setSubmittedDealsFilter(true)}
+					>
+						Submitted
+					</ClayTabs.Item>
+					<ClayTabs.Item
+						active={!submittedDealsFilter}
+						className="nav-item"
+						onClick={() => setSubmittedDealsFilter(false)}
+					>
+						Rejected
+					</ClayTabs.Item>
+				</ClayTabs>
+			</div>
 
 			<TableHeader>
 				<div className="d-flex">
 					<div>
 						<Search
+							initialSearchTerm={filters.searchTerm}
 							onSearchSubmit={(searchTerm: string) =>
 								onFilter({
 									searchTerm,

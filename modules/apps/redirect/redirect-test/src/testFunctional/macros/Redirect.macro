@@ -66,6 +66,11 @@ definition {
 				locator1 = "Message#ERROR",
 				value1 = "Error: The source URL is too long.");
 		}
+		else if (${sourceURLVariation} == "LocaleKeyword") {
+			AssertTextEquals.assertPartialText(
+				locator1 = "Message#ERROR",
+				value1 = "Error: Please enter a source URL that does not conflict with the keyword ${localeKeyword}.");
+		}
 		else if ((${destinationURLVariation} == "Space") || (${destinationURLVariation} == "RelativeURL")) {
 			AssertTextEquals.assertPartialText(
 				locator1 = "TextInput#ALERT",
@@ -95,7 +100,7 @@ definition {
 				value1 = "404 URLs");
 		}
 
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
+		Click(locator1 = "ManagementBar#FILTER");
 
 		if (isSet(ignoredURL)) {
 			MenuItem.click(menuItem = "Ignored URLs");
@@ -242,7 +247,7 @@ definition {
 		DropdownMenuItem.click(menuItem = ${redirectionType});
 
 		AssertTextEquals(
-			locator1 = "Dropdown#SELECTED_VALUE",
+			locator1 = "Dropdown#TRIGGER",
 			value1 = ${redirectionType});
 
 		SystemSettings.saveConfiguration();
@@ -285,7 +290,9 @@ definition {
 	@summary = "Default summary"
 	macro deleteEntry(sourceURL = null) {
 		if (isSet(deletions)) {
-			ClickNoError(locator1 = "Icon#DELETE");
+			ClickNoError(
+				key_text = "trash",
+				locator1 = "ManagementBar#ANY_ICON");
 		}
 		else {
 			Redirect.gotoEntryMenuItem(
@@ -403,7 +410,7 @@ definition {
 				value1 = "404 URLs");
 		}
 
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
+		Click(locator1 = "ManagementBar#FILTER");
 
 		if (${unignore} == "true") {
 			MenuItem.click(menuItem = "Ignored URLs");
@@ -411,7 +418,9 @@ definition {
 			if (${unignoreAllEntries} == "true") {
 				PortletEntry.selectAll();
 
-				Click(locator1 = "Button#UNIGNORE_REDIRECT_URLS");
+				Click(
+					key_text = "view",
+					locator1 = "ManagementBar#ANY_ICON");
 			}
 			else {
 				Redirect.gotoEntryMenuItem(
@@ -427,7 +436,9 @@ definition {
 			if (${ignoreAllEntries} == "true") {
 				PortletEntry.selectAll();
 
-				Click(locator1 = "Button#IGNORE_REDIRECT_URLS");
+				Click(
+					key_text = "hidden",
+					locator1 = "ManagementBar#ANY_ICON");
 			}
 			else {
 				Redirect.gotoEntryMenuItem(

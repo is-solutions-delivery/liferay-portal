@@ -3,12 +3,26 @@
 .segment-edit-page-root {
 	display: flex;
 	flex-direction: column;
-	height: calc(100vh - #{$topHeaderHeight});
+
 	margin-bottom: -35px;
 	width: 100%;
 
-	&--with-warning {
-		height: calc(100vh - #{$topHeaderHeightWithWarning});
+	.input-localized-input .input-group-item .language-value {
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+
+		@include media-breakpoint-up(sm) {
+			padding-left: 1rem;
+			padding-right: 1rem;
+		}
+	}
+
+	@include media-breakpoint-up(md) {
+		height: calc(100vh - #{$topHeaderHeight});
+
+		&--with-warning {
+			height: calc(100vh - #{$topHeaderHeightWithWarning});
+		}
 	}
 
 	.contributor-conjunction {
@@ -34,7 +48,11 @@
 		.form-header-section-left {
 			display: flex;
 			flex: 1;
-			padding-right: 40px;
+			padding-right: 8px;
+
+			@include media-breakpoint-up(sm) {
+				padding-right: 40px;
+			}
 		}
 
 		.form-header-section-right {

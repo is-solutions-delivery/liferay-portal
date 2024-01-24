@@ -34,21 +34,7 @@ import org.osgi.service.component.annotations.Reference;
 public class DDMStructureModelListener extends BaseModelListener<DDMStructure> {
 
 	@Override
-	public void onBeforeRemove(DDMStructure ddmStructure)
-		throws ModelListenerException {
-
-		try {
-			_journalArticleLocalService.deleteArticles(
-				ddmStructure.getGroupId(), DDMStructure.class.getName(),
-				ddmStructure.getStructureId());
-		}
-		catch (Exception exception) {
-			throw new ModelListenerException(exception);
-		}
-	}
-
-	@Override
-	public void onBeforeUpdate(
+	public void onAfterUpdate(
 			DDMStructure originalDDMStructure, DDMStructure ddmStructure)
 		throws ModelListenerException {
 
@@ -108,6 +94,7 @@ public class DDMStructureModelListener extends BaseModelListener<DDMStructure> {
 							ddmStructure, journalArticle.getContent())));
 		}
 
+		actionableDynamicQuery.setParallel(true);
 		actionableDynamicQuery.setPerformActionMethod(performActionMethod);
 
 		try {
@@ -115,6 +102,20 @@ public class DDMStructureModelListener extends BaseModelListener<DDMStructure> {
 		}
 		catch (PortalException portalException) {
 			throw new ModelListenerException(portalException);
+		}
+	}
+
+	@Override
+	public void onBeforeRemove(DDMStructure ddmStructure)
+		throws ModelListenerException {
+
+		try {
+			_journalArticleLocalService.deleteArticles(
+				ddmStructure.getGroupId(), DDMStructure.class.getName(),
+				ddmStructure.getStructureId());
+		}
+		catch (Exception exception) {
+			throw new ModelListenerException(exception);
 		}
 	}
 

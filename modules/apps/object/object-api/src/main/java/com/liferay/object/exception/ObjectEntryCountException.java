@@ -7,6 +7,8 @@ package com.liferay.object.exception;
 
 import com.liferay.portal.kernel.exception.PortalException;
 
+import java.util.List;
+
 /**
  * @author Marco Leo
  */
@@ -15,8 +17,19 @@ public class ObjectEntryCountException extends PortalException {
 	public ObjectEntryCountException() {
 	}
 
-	public ObjectEntryCountException(String msg) {
-		super(msg);
+	public ObjectEntryCountException(
+		List<Object> arguments, String message, String messageKey,
+		String objectDefinitionLabel) {
+
+		super(message);
+
+		_arguments = arguments;
+		_messageKey = messageKey;
+		_objectDefinitionLabel = objectDefinitionLabel;
+	}
+
+	public ObjectEntryCountException(String message) {
+		super(message);
 	}
 
 	public ObjectEntryCountException(String msg, Throwable throwable) {
@@ -26,5 +39,21 @@ public class ObjectEntryCountException extends PortalException {
 	public ObjectEntryCountException(Throwable throwable) {
 		super(throwable);
 	}
+
+	public List<Object> getArguments() {
+		return _arguments;
+	}
+
+	public String getMessageKey() {
+		return _messageKey;
+	}
+
+	public String getObjectDefinitionLabel() {
+		return _objectDefinitionLabel;
+	}
+
+	private List<Object> _arguments;
+	private String _messageKey;
+	private String _objectDefinitionLabel;
 
 }

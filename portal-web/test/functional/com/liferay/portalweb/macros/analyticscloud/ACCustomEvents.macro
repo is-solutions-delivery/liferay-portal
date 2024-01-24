@@ -43,9 +43,11 @@ definition {
 
 		MouseOver(locator1 = "ACUtils#NAME_LIST");
 
-		Click(locator1 = "ACCustomEvents#BLOCK_UNBLOCK_EVENT_BUTTON");
+		Click.clickNoMouseOver(locator1 = "ACCustomEvents#BLOCK_UNBLOCK_EVENT_BUTTON");
 
 		ACUtils.clickAnyButton(button = ${key_actionButton});
+
+		WaitForElementNotPresent(locator1 = "ACUtils#NAME_LIST");
 	}
 
 	@summary = "Default summary"
@@ -187,6 +189,8 @@ definition {
 			value1 = ${attributesValue});
 
 		Click(locator1 = "ACCustomEvents#INPUT_BUTTON");
+
+		ACUtils.waitForSendingRequest();
 	}
 
 	@summary = "Default summary"
@@ -276,7 +280,7 @@ definition {
 
 		MouseOver(locator1 = "ACUtils#NAME_LIST");
 
-		Click(locator1 = "ACDefinitions#HIDE_UNHIDE_EVENT_BUTTON");
+		Click.clickNoMouseOver(locator1 = "ACDefinitions#HIDE_UNHIDE_EVENT_BUTTON");
 
 		ACUtils.clickAnyButton(button = ${key_actionButton});
 	}
@@ -310,7 +314,7 @@ definition {
 
 		MouseOver(locator1 = "ACUtils#NAME_LIST");
 
-		Click(locator1 = "ACCustomEvents#BLOCK_UNBLOCK_EVENT_BUTTON");
+		Click.clickNoMouseOver(locator1 = "ACCustomEvents#BLOCK_UNBLOCK_EVENT_BUTTON");
 	}
 
 	@summary = "Default summary"

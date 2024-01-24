@@ -77,6 +77,8 @@ DLViewDisplayContext dlViewDisplayContext = new DLViewDisplayContext(dlAdminDisp
 				).put(
 					"openViewMoreFileEntryTypesURL", dlViewDisplayContext.getViewMoreFileEntryTypesURL()
 				).put(
+					"redirect", dlViewDisplayContext.getRedirect()
+				).put(
 					"selectAssetCategoriesURL", dlViewDisplayContext.getSelectAssetCategoriesURL()
 				).put(
 					"selectAssetTagsURL", dlViewDisplayContext.getSelectAssetTagsURL()
@@ -273,8 +275,6 @@ DLViewDisplayContext dlViewDisplayContext = new DLViewDisplayContext(dlAdminDisp
 				).put(
 					"searchContainerId", "entries"
 				).put(
-					"selectFolderURL", dlViewDisplayContext.getSelectFolderURL()
-				).put(
 					"uploadable", dlViewDisplayContext.isUploadable()
 				).put(
 					"uploadURL", dlViewDisplayContext.getUploadURL()
@@ -348,6 +348,12 @@ DLViewDisplayContext dlViewDisplayContext = new DLViewDisplayContext(dlAdminDisp
 						"redirectURL", currentURL
 					).build()
 				%>'
+			/>
+		</div>
+
+		<div>
+			<react:component
+				module="document_library/js/ai/ConfigureAIModal"
 			/>
 		</div>
 

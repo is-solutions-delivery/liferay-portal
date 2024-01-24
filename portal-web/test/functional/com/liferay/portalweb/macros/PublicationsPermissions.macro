@@ -136,25 +136,9 @@ definition {
 
 	@summary = "Default summary"
 	macro assertViewerPermissions(publicationName = null) {
-		Click(
-			key_publicationName = ${publicationName},
-			locator1 = "Publications#PUBLICATION_ELLIPSIS");
+		AssertElementPresent(locator1 = "Publications#REVIEW_CHANGES_BUTTON");
 
-		AssertElementNotPresent(
-			key_menuItem = "Publish",
-			locator1 = "MenuItem#ANY_MENU_ITEM");
-
-		AssertElementNotPresent(
-			key_menuItem = "Edit",
-			locator1 = "MenuItem#ANY_MENU_ITEM");
-
-		AssertElementNotPresent(
-			key_menuItem = "Invite Users",
-			locator1 = "MenuItem#ANY_MENU_ITEM");
-
-		PublicationsNavigator.gotoReviewChanges(
-			gotoPublicationsAdmin = "true",
-			publicationName = ${publicationName});
+		Click(locator1 = "Publications#REVIEW_CHANGES_BUTTON");
 
 		PublicationsChanges.assertPublicationsCommentsCRUDPermissions();
 	}

@@ -142,3 +142,13 @@ cb9b78074b7624d81f0fa9241e1e647a4d9a8998^..4b962d782b6fe0beaf5d22d11b7c6db8ef079
 # Bundle Version 1.0.33
 #
 afaeee11bfadec031e5d7d4d1840501a75e76e00^..0ce3df69d8e51a0f1251be9f5befcd9fca6dcbba=LPS-200028
+
+#
+# Bundle Version 1.0.34
+#
+0ce3df69d8e51a0f1251be9f5befcd9fca6dcbba^..12e5fcfc2eaee34c062e783ea2bc98500800cedd=COMMERCE-12306 COMMERCE-12307 COMMERCE-12589
+
+#
+# Bundle Version 1.0.35
+#
+12e5fcfc2eaee34c062e783ea2bc98500800cedd^..85adc6e4c9bdc81f37c76f750096574a2e161db3=COMMERCE-12309

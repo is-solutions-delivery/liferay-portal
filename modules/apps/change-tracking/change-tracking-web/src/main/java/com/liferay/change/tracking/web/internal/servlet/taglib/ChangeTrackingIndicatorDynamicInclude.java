@@ -27,7 +27,6 @@ import com.liferay.change.tracking.web.internal.configuration.helper.CTSettingsC
 import com.liferay.change.tracking.web.internal.security.permission.resource.CTPermission;
 import com.liferay.change.tracking.web.internal.timeline.CTCollectionHistoryDataProvider;
 import com.liferay.change.tracking.web.internal.timeline.DefaultCTCollectionHistoryProvider;
-import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
 import com.liferay.petra.reflect.ReflectionUtil;
@@ -214,12 +213,11 @@ public class ChangeTrackingIndicatorDynamicInclude extends BaseDynamicInclude {
 			String componentId =
 				_portal.getPortletNamespace(CTPortletKeys.PUBLICATIONS) +
 					"IndicatorComponent";
-			String module =
-				_npmResolver.resolveModuleName("change-tracking-web") +
-					"/publications/js/components/ChangeTrackingIndicator";
 
 			_reactRenderer.renderReact(
-				new ComponentDescriptor(module, componentId, null, true),
+				new ComponentDescriptor(
+					"{ChangeTrackingIndicator} from change-tracking-web",
+					componentId, null, true),
 				_getReactData(
 					httpServletRequest, ctCollection, ctPreferences,
 					productionOnlyApplication,
@@ -243,25 +241,24 @@ public class ChangeTrackingIndicatorDynamicInclude extends BaseDynamicInclude {
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
-		_ctCollectionHistoryProviderServiceTrackerMap =
-			ServiceTrackerMapFactory.openSingleValueMap(
-				bundleContext,
-				(Class<CTCollectionHistoryProvider<?>>)
-					(Class<?>)CTCollectionHistoryProvider.class,
-				null,
-				(serviceReference, emitter) -> {
-					CTCollectionHistoryProvider<?> ctCollectionHistoryProvider =
-						bundleContext.getService(serviceReference);
+		_serviceTrackerMap = ServiceTrackerMapFactory.openSingleValueMap(
+			bundleContext,
+			(Class<CTCollectionHistoryProvider<?>>)
+				(Class<?>)CTCollectionHistoryProvider.class,
+			null,
+			(serviceReference, emitter) -> {
+				CTCollectionHistoryProvider<?> ctCollectionHistoryProvider =
+					bundleContext.getService(serviceReference);
 
-					try {
-						emitter.emit(
-							_classNameLocalService.getClassNameId(
-								ctCollectionHistoryProvider.getModelClass()));
-					}
-					finally {
-						bundleContext.ungetService(serviceReference);
-					}
-				});
+				try {
+					emitter.emit(
+						_classNameLocalService.getClassNameId(
+							ctCollectionHistoryProvider.getModelClass()));
+				}
+				finally {
+					bundleContext.ungetService(serviceReference);
+				}
+			});
 
 		_defaultCTCollectionHistoryProvider =
 			new DefaultCTCollectionHistoryProvider<>();
@@ -390,6 +387,8 @@ public class ChangeTrackingIndicatorDynamicInclude extends BaseDynamicInclude {
 
 				return getSelectPublicationsURL.toString();
 			}
+		).put(
+			"namespace", _portal.getPortletNamespace(CTPortletKeys.PUBLICATIONS)
 		).put(
 			"orderByAscending",
 			portalPreferences.getValue(
@@ -686,8 +685,7 @@ public class ChangeTrackingIndicatorDynamicInclude extends BaseDynamicInclude {
 			long classNameId = _portal.getClassNameId(className);
 
 			CTCollectionHistoryProvider<?> ctCollectionHistoryProvider =
-				_ctCollectionHistoryProviderServiceTrackerMap.getService(
-					classNameId);
+				_serviceTrackerMap.getService(classNameId);
 
 			if (ctCollectionHistoryProvider == null) {
 				ctCollectionHistoryProvider =
@@ -778,9 +776,6 @@ public class ChangeTrackingIndicatorDynamicInclude extends BaseDynamicInclude {
 	@Reference
 	private ConfigurationProvider _configurationProvider;
 
-	private ServiceTrackerMap<Long, CTCollectionHistoryProvider<?>>
-		_ctCollectionHistoryProviderServiceTrackerMap;
-
 	@Reference
 	private CTCollectionLocalService _ctCollectionLocalService;
 
@@ -812,13 +807,13 @@ public class ChangeTrackingIndicatorDynamicInclude extends BaseDynamicInclude {
 	private Language _language;
 
 	@Reference
-	private NPMResolver _npmResolver;
-
-	@Reference
 	private Portal _portal;
 
 	@Reference
 	private ReactRenderer _reactRenderer;
+
+	private ServiceTrackerMap<Long, CTCollectionHistoryProvider<?>>
+		_serviceTrackerMap;
 
 	@Reference(
 		target = "(osgi.web.symbolicname=com.liferay.change.tracking.web)"

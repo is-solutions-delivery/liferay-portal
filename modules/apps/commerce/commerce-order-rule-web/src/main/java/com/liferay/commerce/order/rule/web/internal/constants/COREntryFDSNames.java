@@ -15,6 +15,9 @@ public class COREntryFDSNames {
 	public static final String COR_ENTRIES =
 		COREntryPortletKeys.COR_ENTRY + "-corEntries";
 
+	public static final String COR_ENTRY_PRODUCTS_LIMITS =
+		COREntryPortletKeys.COR_ENTRY + "-corEntryProductsLimits";
+
 	public static final String COR_ENTRY_QUALIFIER_ACCOUNT_ENTRIES =
 		COREntryPortletKeys.COR_ENTRY + "-corEntryQualifierAccountEntries";
 

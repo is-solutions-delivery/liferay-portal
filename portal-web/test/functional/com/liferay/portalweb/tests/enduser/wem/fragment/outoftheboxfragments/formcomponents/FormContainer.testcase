@@ -25,21 +25,6 @@ definition {
 		}
 	}
 
-	tearDown {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			JSONGroup.deleteGroupByName(groupName = "Test Site Name");
-
-			ObjectAdmin.deleteAllCustomObjectsViaAPI();
-
-			Picklist.deleteAllPicklistsViaAPI();
-		}
-	}
-
 	@description = "This is a test for LPS-149984. The page editor cannot add fragment into Form Container without mapping entity."
 	@priority = 4
 	test CannotAddFragmentToFormContainerWithoutMappingEntity {
@@ -170,11 +155,9 @@ definition {
 		}
 	}
 
-	@description = "This is a test for LPS-190586. Even with the option to be redirected to a DPT, if there are validation errors on the object entry the page creator will remain on the same page and get a validation error message."
+	@description = "This is a test for LPS-190586 and LPS-182728. Even with the option to be redirected to a DPT, if there are validation errors on the object entry the page creator will remain on the same page and get a validation error message. The user should see the general error on the top of form."
 	@priority = 4
-	test CannotRedirectToAssociatedDisplayPageTemplateWhenValidationFailed {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
-
+	test CannotRedirectToAssociatedDisplayPageTemplateWhenValidationFailure {
 		task ("Given a page creator has a Form Container with redirection option to a DPT") {
 			ObjectAdmin.addObjectFieldViaAPI(
 				fieldBusinessType = "Text",
@@ -186,29 +169,14 @@ definition {
 
 			ObjectAdmin.publishObjectViaAPI(objectName = "PurchaseOrder");
 
-			ObjectAdmin.openObjectAdmin();
-
-			ObjectPortlet.selectCustomObject(label = "Purchase Order");
-
-			ObjectAdmin.goToValidationsTab();
-
-			ObjectCustomValidation.addObjectValidation(
-				validationName = "Custom Validation",
-				validationType = "Expression Builder");
-
-			ObjectCustomValidation.gotoCustomValidation(validationName = "Custom Validation");
-
-			ObjectCustomValidation.activeValidation();
-
-			ObjectCustomValidation.gotoTab(tabName = "Conditions");
-
-			ObjectCustomValidation.insertScriptOnValidation(scriptValidation = "isInteger(age)");
-
-			ObjectCustomValidation.addErrorMessage(errorMessage = "The Age should be an integer.");
-
-			Button.clickSave();
-
-			WaitForElementNotPresent(locator1 = "ObjectAdmin#SIDE_PANEL");
+			JSONObject.addObjectValidation(
+				errorMessage = "The Age should be an integer.",
+				fieldName = "age",
+				labelName = "Form Validation",
+				objectName = "PurchaseOrder",
+				outputValidationType = "fullValidation",
+				script = "isInteger(age)",
+				validationType = "ddm");
 
 			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
 
@@ -255,47 +223,11 @@ definition {
 		}
 
 		task ("Then the page creator will not be redirected and will see a validation error message") {
-			Alert.viewErrorMessage(errorMessage = "The Age should be an integer.");
+			AssertTextEquals(
+				locator1 = "Message#ERROR_FORM",
+				value1 = "The Age should be an integer.");
 
 			Page.viewCurrentPage(pageName = "Test Page Name");
-		}
-	}
-
-	@description = "This is a test for LPS-164125. Form Components should not be available on Display Page Template."
-	@priority = 4
-	test CannotViewFormComponentsOnDisplayPageTemplate {
-		task ("Given a site creator has a display page template") {
-			ObjectAdmin.addObjectFieldViaAPI(
-				fieldBusinessType = "Text",
-				fieldLabelName = "Region",
-				fieldName = "region",
-				fieldType = "String",
-				isRequired = "false",
-				objectName = "PurchaseOrder");
-
-			ObjectAdmin.publishObjectViaAPI(objectName = "PurchaseOrder");
-
-			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
-				contentType = "Web Content Article",
-				displayPageTemplateEntryName = "Display Page Name",
-				groupName = "Test Site Name",
-				subType = "Basic Web Content");
-		}
-
-		task ("When the site creator searches for the Form Components on Fragments and Widgets sidebar of display page template") {
-			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
-
-			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
-
-			PageEditor.searchFragmentViaSidebar(fragmentName = "Form Components");
-		}
-
-		task ("Then the site creator should not see the Input fragments") {
-			for (var fragmentName : list "Form Container,CAPTCHA,Checkbox,Date,File Upload,Numeric Input,Select from List,Submit Button,Text Input") {
-				AssertElementNotPresent(
-					key_fragmentName = ${fragmentName},
-					locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_SEARCH_RESULTS");
-			}
 		}
 	}
 
@@ -1412,7 +1344,7 @@ definition {
 			Type(
 				key_text = "Price",
 				locator1 = "TextInput#ANY",
-				value1 = 3000);
+				value1 = "3000.345");
 
 			Type.sendKeys(
 				key_text = "Purchase Date",
@@ -1489,7 +1421,7 @@ definition {
 			ObjectAdmin.assertObjectEntryFieldValueViaAPI(
 				attribute = "address",
 				attributeValue = "Dalian",
-				expectedValue = "3000.0000000000000000",
+				expectedValue = "3000.345",
 				fieldName = "price",
 				objectName = "PurchaseOrder");
 
@@ -1535,10 +1467,6 @@ definition {
 				fieldName = "type",
 				objectName = "PurchaseOrder",
 				type = "Picklist");
-
-			var objectDefinitionId = ObjectDefinitionAPI.getObjectDefinitionIdByName(name = "Preference");
-
-			ObjectDefinitionAPI.deleteRelationship(objectDefinitionId = ${objectDefinitionId});
 		}
 	}
 
@@ -2033,8 +1961,6 @@ definition {
 	@description = "This is a test for LPS-188036. Success notification with toast message must be compatible with Go to Entry Display Page redirect option."
 	@priority = 4
 	test ViewSuccessNotificationOfGoToEntryDisplayPage {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
-
 		task ("Given a page creator has a mapped Form Container on a content page") {
 			ObjectAdmin.addObjectFieldViaAPI(
 				fieldBusinessType = "Text",
@@ -2102,7 +2028,12 @@ definition {
 
 			Alert.viewSuccessMessageText(successMessage = "Your form was successfully submitted.");
 
-			ControlMenu.viewHeaderTitle(headerTitle = "Jack");
+			var objectEntryId = JSONObject.getObjectEntryId(
+				entryValue = "Jack",
+				fieldName = "name",
+				objectName = "PurchaseOrder");
+
+			ControlMenu.viewHeaderTitle(headerTitle = ${objectEntryId});
 
 			InputField.viewText(
 				fieldLabel = "Name",

@@ -6,28 +6,24 @@
 package com.liferay.source.formatter.dependencies.upgrade;
 
 import com.liferay.commerce.constants.CommerceOrderPaymentConstants;
-
+import com.liferay.document.library.kernel.model.DLVersionNumberIncrease;
+import com.liferay.document.library.util.DLURLHelperUtil;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProviderUtil;
+import com.liferay.portal.kernel.cookies.CookiesManagerUtil;
+import com.liferay.portal.kernel.cookies.constants.CookiesConstants;
+import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
+import com.liferay.portal.kernel.util.HtmlParser;
 import com.liferay.portal.kernel.util.PortalUtil;
 
-import com.liferay.document.library.kernel.model.DLVersionNumberIncrease;
-import java.util.Date;
-
-import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
-
 import java.util.ArrayList;
-
-import com.liferay.portal.kernel.util.HtmlParser;
-
-import com.liferay.portal.kernel.search.Sort;
-
-import com.liferay.document.library.util.DLURLHelperUtil;
 
 import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Nícolas Moura
  */
-public class UpgradeCatchAllCheck {
+public class UpgradeCatchAllCheck implements ConfigurationBeanDeclaration {
 
 	public void method() {
 		AccountPortletKeys.ACCOUNT_USERS_ADMIN;
@@ -59,11 +55,42 @@ public class UpgradeCatchAllCheck {
 		_htmlParser.extractText(null);
 
 		new ArrayList<>(LanguageUtil.getAvailableLocales());
+
+		CookiesConstants.NAME_COMMERCE_CONTINUE_AS_GUEST;
+		CookiesConstants.NAME_ID;
+		CookiesConstants.NAME_USER_UUID;
+
+		PortletDisplayTemplateConstants.DISPLAY_STYLE_PREFIX;
+		PortletDisplayTemplateConstants.ENTRIES;
+
+		ServiceTrackerList<Class<E>> serviceTrackerList = ServiceTrackerListFactory.open(null, null);
+	}
+
+	public void method(
+		Address address, EmailAddress emailAddress, OrgLabor orgLabor,
+		Phone phone, Website website) {
+
+		address.getListTypeId();
+		address.setListTypeId();
+		emailAddress.getListTypeId();
+		emailAddress.setListTypeId();
+		orgLabor.getListTypeId();
+		orgLabor.setListTypeId();
+		phone.getListTypeId();
+		phone.setListTypeId();
+		website.getListTypeId();
+		website.setListTypeId();
 	}
 
 	public void method(AssetCategory<?> assetCategory) {
 		AssetCategory::getCategoryId;
 		assetCategory.getCategoryId;
+	}
+
+	public void method(CommerceAddress commerceAddress) {
+		CommerceAddressLocalServiceUtil.updateCommerceAddress(commerceAddress.getCommerceAddressId(), commerceAddress.getName(), commerceAddress.getDescription(), commerceAddress.getStreet1(), commerceAddress.getStreet2(), commerceAddress.getStreet3(), commerceAddress.getCity(), commerceAddress.getZip(), commerceAddress.getRegionId(), commerceAddress.getCountryId(), commerceAddress.getPhoneNumber(), commerceAddress.getType(), ServiceContextThreadLocal.getServiceContext());
+		CommerceAddressLocalServiceUtil.updateCommerceAddress(null);
+		_commerceAddressLocalService.updateCommerceAddress(commerceAddress.getCommerceAddressId(), commerceAddress.getName(), commerceAddress.getDescription(), commerceAddress.getStreet1(), commerceAddress.getStreet2(), commerceAddress.getStreet3(), commerceAddress.getCity(), commerceAddress.getZip(), commerceAddress.getRegionId(), commerceAddress.getCountryId(), commerceAddress.getPhoneNumber(), commerceAddress.getType(), ServiceContextThreadLocal.getServiceContext());
 	}
 
 	public void method(
@@ -79,9 +106,36 @@ public class UpgradeCatchAllCheck {
 		region.getRegionCode();
 	}
 
+	public void method(Contact contact) {
+		contact.getPrefixListTypeId();
+		contact.getSuffixListTypeId();
+		contact.setPrefixListTypeId();
+		contact.setSuffixListTypeId();
+	}
+
 	public void method(HttpServletRequest httpServletRequest) {
 		_commerceAccountHelper.getCurrentAccountEntry(0, httpServletRequest);
 		_commerceAccountHelper.getCurrentCommerceAccount(null);
+	}
+
+	public void method(HttpServletRequest httpServletRequest, String name) {
+		CookieKeys.getCookie(httpServletRequest, "test123");
+		CookiesManagerUtil.getCookieValue(name, httpServletRequest);
+
+		CookieUtil.get(httpServletRequest, "test123");
+		CookiesManagerUtil.getCookieValue(name, httpServletRequest);
+	}
+
+	public void method(
+		HttpServletRequest httpServletRequest, String name,
+		boolean toUpperCase) {
+
+		CookieUtil.get(httpServletRequest, "test123", toUpperCase);
+		CookiesManagerUtil.getCookieValue(name, httpServletRequest, toUpperCase);
+	}
+
+	public void method(Indexer<?> indexer) {
+		indexer.getSearchClassNames();
 	}
 
 	public void method(
@@ -89,10 +143,6 @@ public class UpgradeCatchAllCheck {
 
 		Map<Indexer<?>, Indexer<?>> indexerRequests = new LinkedHashMap<>();
 		List<Indexer<?>> indexers = portlet.getIndexerInstances();
-	}
-
-	public void method(Indexer<?> indexer) {
-		indexer.getSearchClassNames();
 	}
 
 	public void method(long commerceOrderId) {
@@ -269,6 +319,18 @@ public class UpgradeCatchAllCheck {
 	}
 
 	public void method(
+		long userId, long repositoryId, long parentFolderId, String name,
+		String description, com.liferay.portal.kernel.service.ServiceContext
+		serviceContext) {
+
+		DLAppLocalServiceUtil.addFolder(null, userId, repositoryId, parentFolderId, name, description, serviceContext);
+		DLAppServiceUtil.addFolder(123, repositoryId, parentFolderId, name, description, serviceContext);
+		DLAppServiceUtil.addFolder(null, userId, repositoryId, parentFolderId, name, description, serviceContext);
+		_dlAppLocalService.addFolder(null, userId, repositoryId, parentFolderId, name, description, serviceContext);
+		_dlAppService.addFolder(null, userId, repositoryId, parentFolderId, name, description, serviceContext);
+	}
+
+	public void method(
 		long userId, long groupId, long parentFolderId, String name,
 		String description, ServiceContext serviceContext) {
 
@@ -343,6 +405,20 @@ public class UpgradeCatchAllCheck {
 		_dlAppLocalService.updateFileEntry(userId, fileEntryId, sourceFileName, mimeType, title, null, description, changeLog, dlVersionNumberIncrease, bytes, null, null, serviceContext);
 	}
 
+	public void method(
+		long companyId, long[] groupIds, long[] calendarIds,
+		long[] calendarResourceIds, long parentCalendarBookingId,
+		String keywords, long startTime, long endTime, boolean recurring,
+		int[] statuses, int start, int end,
+		OrderByComparator<CalendarBooking> orderByComparator) {
+
+		CalendarBookingLocalServiceUtil.search(companyId, groupIds, calendarIds, calendarResourceIds, parentCalendarBookingId, keywords, startTime, endTime, null, recurring, statuses, start, end, orderByComparator);
+		CalendarBookingServiceUtil.search(123, groupIds, calendarIds, calendarResourceIds, parentCalendarBookingId, keywords, startTime, endTime, recurring, statuses, start, end, orderByComparator);
+		CalendarBookingServiceUtil.search(companyId, groupIds, calendarIds, calendarResourceIds, parentCalendarBookingId, keywords, startTime, endTime, null, recurring, statuses, start, end, orderByComparator);
+		_calendarBookingLocalService.search(companyId, groupIds, calendarIds, calendarResourceIds, parentCalendarBookingId, keywords, startTime, endTime, null, recurring, statuses, start, end, orderByComparator);
+		_calendarBookingService.search(companyId, groupIds, calendarIds, calendarResourceIds, parentCalendarBookingId, keywords, startTime, endTime, null, recurring, statuses, start, end, orderByComparator);
+	}
+
 	public void method(long companyId, String externalReferenceCode) {
 		AccountGroupLocalServiceUtil.fetchAccountGroupByExternalReferenceCode(externalReferenceCode, companyId);
 		_accountGroupLocalService.fetchCommerceAccountGroupByExternalReferenceCode(123, "test123");
@@ -368,6 +444,14 @@ public class UpgradeCatchAllCheck {
 		_cpInstanceLocalService.fetchByExternalReferenceCode(externalReferenceCode, companyId);
 		_cpInstanceLocalService.fetchCPInstanceByExternalReferenceCode(externalReferenceCode, companyId);
 		_cpInstanceService.fetchByExternalReferenceCode(externalReferenceCode, companyId);
+	}
+
+	public void method(
+		long companyId, String externalReferenceCode, long groupId) {
+
+		AssetCategoryLocalServiceUtil.fetchAssetCategoryByExternalReferenceCode(companyId, externalReferenceCode);
+		AssetCategoryLocalServiceUtil.fetchAssetCategoryByExternalReferenceCode(externalReferenceCode, groupId);
+		_assetCategoryLocalService.fetchAssetCategoryByExternalReferenceCode(companyId, externalReferenceCode);
 	}
 
 	public void method(
@@ -401,6 +485,28 @@ public class UpgradeCatchAllCheck {
 		AddressServiceUtil.addAddress(null, userId, className, classPK, null, null, street1, street2, street3, city, zip, regionId, countryId, typeId, mailing, primary, null, serviceContext);
 		_addressLocalService.addAddress(null, userId, className, classPK, null, null, street1, street2, street3, city, zip, regionId, countryId, typeId, mailing, primary, null, serviceContext);
 		_addressService.addAddress(null, userId, className, classPK, null, null, street1, street2, street3, city, zip, regionId, countryId, typeId, mailing, primary, null, serviceContext);
+	}
+
+	public void method(long[] segmentsExperienceIds) {
+		DefaultFragmentRendererContext defaultFragmentRendererContext = new DefaultFragmentRendererContext(null);
+
+		defaultFragmentRendererContext.setSegmentsExperienceIds(new long[0]);
+	}
+
+	public void method(Map<String, Object> fieldValues) {
+		DefaultFragmentRendererContext defaultFragmentRendererContext = new DefaultFragmentRendererContext(null);
+
+		defaultFragmentRendererContext.setFieldValues(new HashMap<String, Object>());
+	}
+
+	public void method(Organization organization) {
+		organization.getStatusListTypeId();
+		organization.setStatusListTypeId();
+	}
+
+	public void method(PortletDisplay portletDisplay, Class<T> clazz) {
+		ConfigurationProviderUtil.getPortletInstanceConfiguration(clazz, ServiceContextThreadLocal.getServiceContext().getThemeDisplay());
+		portletDisplay.getPortletInstanceConfiguration(null);
 	}
 
 	public void method(
@@ -465,7 +571,16 @@ public class UpgradeCatchAllCheck {
 	private AssetVocabularyService _assetVocabularyService;
 
 	@Reference
+	private CalendarBookingLocalService _calendarBookingLocalService;
+
+	@Reference
+	private CalendarBookingService _calendarBookingService;
+
+	@Reference
 	private CommerceAccountHelper _commerceAccountHelper;
+
+	@Reference
+	private CommerceAddressLocalService _commerceAddressLocalService;
 
 	@Reference
 	private CommerceOrderItemLocalService _commerceOrderItemLocalService;
@@ -504,6 +619,9 @@ public class UpgradeCatchAllCheck {
 	private DLAppLocalService _dlAppLocalService;
 
 	@Reference
+	private DLAppService _dlAppService;
+
+	@Reference
 	private DLFolderLocalService _dlFolderLocalService;
 
 	@Reference
@@ -511,6 +629,9 @@ public class UpgradeCatchAllCheck {
 
 	@Reference
 	private FDSTableSchemaBuilderFactory _fDSTableSchemaBuilderFactory;
+
+	@Reference
+	private HtmlParser _htmlParser;
 
 	@Reference
 	private JournalFolderLocalService _journalFolderLocalService;
@@ -521,13 +642,12 @@ public class UpgradeCatchAllCheck {
 	@Reference
 	private LayoutService _layoutService;
 
+	private ServiceTrackerList<Class<E>> _serviceTrackerList;
+
 	@Reference
 	private UserLocalService _userLocalService;
 
 	@Reference
 	private UserService _userService;
-
-	@Reference
-	private HtmlParser _htmlParser;
 
 }

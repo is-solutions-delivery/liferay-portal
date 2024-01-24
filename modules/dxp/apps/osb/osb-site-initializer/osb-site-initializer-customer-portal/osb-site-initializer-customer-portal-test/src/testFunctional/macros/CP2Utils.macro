@@ -54,6 +54,15 @@ definition {
 			locator1 = "CP2Subscription#DROPDOWN_OPTIONS");
 	}
 
+	@summary = "Assert home page logged out on Customer Portal Site"
+	macro assertHomePageLoggedOutCP(navTab = null) {
+		AssertElementPresent(
+			key_tab = ${navTab},
+			locator1 = "NavTab#TAB_LINK");
+
+		AssertElementPresent(locator1 = "CP2Utils#USER_SIGN_IN");
+	}
+
 	@summary = "Default summary"
 	macro assertNotChangeRole(role = null) {
 		AssertVisible(
@@ -161,6 +170,13 @@ definition {
 		Click(locator1 = "CP2Utils#BUTTON_MANAGE_USERS");
 	}
 
+	@summary = "Click on user avatar"
+	macro clickAtDropdownUserAvatar() {
+		Click(locator1 = "CP2Utils#USER_AVATAR_DROPDOWN");
+
+		AssertVisible(locator1 = "UserBar#USER_AVATAR_DROPDOWN_PORTAL_OPEN");
+	}
+
 	@summary = "Default summary"
 	macro clickAtFilterMenu(checkbox = null,text = null,menu = null) {
 		Click.pauseClickAt(
@@ -183,6 +199,14 @@ definition {
 		Click(
 			key_text = ${keyName},
 			locator1 = "CP2ActivationKeys#RESPONSIVE_TABLE");
+	}
+
+	@summary = "Click on text link"
+	macro clickInTextLink(key_text = null,key_indexNumber = null) {
+		Click(
+			key_indexNumber = ${key_indexNumber},
+			key_text = ${key_text},
+			locator1 = "Link#ANY_N");
 	}
 
 	@summary = "Default summary"
@@ -505,6 +529,15 @@ definition {
 		}
 	}
 
+	@summary = "Select item in the User avatar Bar"
+	macro selectProfileMenuOption(dropdownItem = null) {
+		CP2Utils.clickAtDropdownUserAvatar();
+
+		Click(
+			key_dropdownItem = ${dropdownItem},
+			locator1 = "CP2Utils#USER_AVATAR_DROPDOWN_ITEM");
+	}
+
 	@summary = "Default summary"
 	macro tearDownForCloudEntries(status = null) {
 		if (!(isSet(entry))) {
@@ -594,6 +627,15 @@ definition {
 
 			Alert.viewSuccessMessage();
 		}
+	}
+
+	@summary = "View Login Okta page"
+	macro viewLoginOktaPage() {
+		AssertElementPresent(locator1 = "CustomerPortalSite#OKTA_USERNAME");
+
+		AssertElementPresent(locator1 = "CustomerPortalSite#OKTA_PASSWORD");
+
+		AssertElementPresent(locator1 = "CustomerPortalSite#OKTA_SUBMIT");
 	}
 
 }

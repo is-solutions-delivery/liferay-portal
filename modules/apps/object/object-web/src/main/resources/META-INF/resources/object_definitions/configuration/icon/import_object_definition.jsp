@@ -9,10 +9,12 @@
 
 <div>
 	<react:component
-		module="js/components/ModalImportObjectDefinition"
+		module="js/components/ModalImport/ModalImport"
 		props='<%=
 			HashMapBuilder.<String, Object>put(
-				"importObjectDefinitionURL",
+				"apiURL", "/o/object-admin/v1.0/object-definitions/by-external-reference-code/"
+			).put(
+				"importURL",
 				PortletURLBuilder.createActionURL(
 					renderResponse
 				).setActionName(
@@ -21,23 +23,29 @@
 					currentURL
 				).buildString()
 			).put(
+				"JSONInputId", "objectDefinitionJSON"
+			).put(
+				"modalImportKey", "objectDefinition"
+			).put(
 				"nameMaxLength", ModelHintsConstants.TEXT_MAX_LENGTH
+			).put(
+				"portletNamespace", liferayPortletResponse.getNamespace()
 			).build()
 		%>'
 	/>
 </div>
 
 <aui:script>
-	function <portlet:namespace />openImportObjectDefinitionModal() {}
+	function <portlet:namespace />openImportModal() {}
 
 	Liferay.Util.setPortletConfigurationIconAction(
 		'<portlet:namespace />importObjectDefinition',
 		() => {
-			Liferay.componentReady(
-				'<portlet:namespace />importObjectDefinitionModal'
-			).then((importObjectDefinitionModal) => {
-				importObjectDefinitionModal.open();
-			});
+			Liferay.componentReady('<portlet:namespace />importModal').then(
+				(importModal) => {
+					importModal.open();
+				}
+			);
 		}
 	);
 </aui:script>

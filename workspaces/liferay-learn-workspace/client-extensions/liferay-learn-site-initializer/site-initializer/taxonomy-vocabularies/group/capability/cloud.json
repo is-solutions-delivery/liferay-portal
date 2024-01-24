@@ -1,0 +1,17 @@
+{
+	"description": "Use Liferay's Cloud infrastructure to launch your solutions more quickly and securely.",
+	"description_i18n": {
+		"en_US": "Use Liferay's Cloud infrastructure to launch your solutions more quickly and securely."
+	},
+	"name": "Cloud",
+	"name_i18n": {
+		"en_US": "Cloud"
+	},
+	"taxonomyCategoryProperties": [
+		{
+			"key": "icon",
+			"value": "[$DOCUMENT_URL:/site-initializer/documents/group/icons/cloud.svg$]"
+		}
+	],
+	"viewableBy": "Anyone"
+}

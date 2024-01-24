@@ -115,6 +115,8 @@ public interface DB {
 
 	public boolean isSupportsAlterColumnType();
 
+	public boolean isSupportsDBPartition();
+
 	public boolean isSupportsInlineDistinct();
 
 	public default boolean isSupportsNewUuidFunction() {
@@ -184,7 +186,7 @@ public interface DB {
 		throws Exception;
 
 	public void updateIndexes(
-			Connection connection, String tablesSQL, String indexesSQL,
+			Connection connection, String tableName, String indexesSQL,
 			boolean dropStaleIndexes)
 		throws Exception;
 

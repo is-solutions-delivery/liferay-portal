@@ -196,6 +196,15 @@ public class KBArticleLocalServiceUtil {
 		getService().deleteKBArticles(groupId, parentResourcePrimKey);
 	}
 
+	public static void deleteKBArticles(
+			long groupId, long parentResourcePrimKey,
+			boolean includeTrashedEntries)
+		throws PortalException {
+
+		getService().deleteKBArticles(
+			groupId, parentResourcePrimKey, includeTrashedEntries);
+	}
+
 	public static void deleteKBArticles(long[] resourcePrimKeys)
 		throws PortalException {
 
@@ -601,6 +610,12 @@ public class KBArticleLocalServiceUtil {
 			groupId, kbFolderId, status);
 	}
 
+	public static KBArticle getLatestKBArticle(long resourcePrimKey)
+		throws PortalException {
+
+		return getService().getLatestKBArticle(resourcePrimKey);
+	}
+
 	public static KBArticle getLatestKBArticle(long resourcePrimKey, int status)
 		throws PortalException {
 
@@ -684,6 +699,21 @@ public class KBArticleLocalServiceUtil {
 		getService().incrementViewCount(userId, resourcePrimKey, increment);
 	}
 
+	public static void moveDependentKBArticlesToTrash(
+			long parentResourcePrimKey, long trashEntryId)
+		throws PortalException {
+
+		getService().moveDependentKBArticlesToTrash(
+			parentResourcePrimKey, trashEntryId);
+	}
+
+	public static void moveDependentKBArticleToTrash(
+			KBArticle kbArticle, long trashEntryId)
+		throws PortalException {
+
+		getService().moveDependentKBArticleToTrash(kbArticle, trashEntryId);
+	}
+
 	public static void moveKBArticle(
 			long userId, long resourcePrimKey, long parentResourceClassNameId,
 			long parentResourcePrimKey, double priority)
@@ -692,6 +722,43 @@ public class KBArticleLocalServiceUtil {
 		getService().moveKBArticle(
 			userId, resourcePrimKey, parentResourceClassNameId,
 			parentResourcePrimKey, priority);
+	}
+
+	public static void moveKBArticleFromTrash(
+			long userId, long resourcePrimKey, long parentResourceClassNameId,
+			long parentResourcePrimKey)
+		throws PortalException {
+
+		getService().moveKBArticleFromTrash(
+			userId, resourcePrimKey, parentResourceClassNameId,
+			parentResourcePrimKey);
+	}
+
+	public static KBArticle moveKBArticleToTrash(
+			long userId, long resourcePrimKey)
+		throws PortalException {
+
+		return getService().moveKBArticleToTrash(userId, resourcePrimKey);
+	}
+
+	public static void restoreDependentKBArticleFromTrash(KBArticle kbArticle)
+		throws PortalException {
+
+		getService().restoreDependentKBArticleFromTrash(kbArticle);
+	}
+
+	public static void restoreDependentKBArticlesFromTrash(
+			long parentResourcePrimKey)
+		throws PortalException {
+
+		getService().restoreDependentKBArticlesFromTrash(parentResourcePrimKey);
+	}
+
+	public static void restoreKBArticleFromTrash(
+			long userId, long resourcePrimKey)
+		throws PortalException {
+
+		getService().restoreKBArticleFromTrash(userId, resourcePrimKey);
 	}
 
 	public static KBArticle revertKBArticle(

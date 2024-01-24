@@ -3,17 +3,22 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayButton from '@clayui/button';
+import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import {ClaySelectWithOption} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
+import classNames from 'classnames';
 import {PropTypes} from 'prop-types';
 import React from 'react';
 
 import {
-	PROPERTY_TYPES,
-	SUPPORTED_OPERATORS,
-	SUPPORTED_PROPERTY_TYPES,
-} from '../../utils/constants';
+	useDisableKeyboardMovement,
+	useMovementSource,
+	useSetMovementSource,
+} from '../../contexts/KeyboardMovementContext';
+import useDragSource from '../../hooks/useDragSource';
+import {PROPERTY_TYPES} from '../../utils/constants';
+import {DragTypes} from '../../utils/dragTypes';
+import {TYPE_ICONS} from '../../utils/typeIcons';
 import {createNewGroup, getSupportedOperatorsFromType} from '../../utils/utils';
 import BooleanInput from '../inputs/BooleanInput';
 import CollectionInput from '../inputs/CollectionInput';
@@ -24,17 +29,33 @@ import SelectEntityInput from '../inputs/SelectEntityInput';
 import StringInput from '../inputs/StringInput';
 
 export default function CriteriaRowEditable({
-	connectDragSource,
 	criterion = {},
 	error,
+	groupId,
 	index,
+	item,
 	onAdd,
 	onChange,
 	onDelete,
+	propertyKey,
 	renderEmptyValuesErrors,
 	selectedOperator,
 	selectedProperty,
 }) {
+	const itemIcon = item.icon || TYPE_ICONS[item.type] || 'text';
+
+	const {handlerRef, isDragging} = useDragSource({
+		item: {
+			criterion,
+			groupId,
+			icon: itemIcon,
+			index,
+			name: item.label,
+			propertyKey,
+			type: DragTypes.CRITERIA_ROW,
+		},
+	});
+
 	const _handleDelete = (event) => {
 		event.preventDefault();
 
@@ -91,8 +112,6 @@ export default function CriteriaRowEditable({
 		const propertyType = selectedProperty ? selectedProperty.type : '';
 
 		const filteredSupportedOperators = getSupportedOperatorsFromType(
-			SUPPORTED_OPERATORS,
-			SUPPORTED_PROPERTY_TYPES,
 			propertyType
 		);
 
@@ -170,13 +189,37 @@ export default function CriteriaRowEditable({
 
 	const propertyLabel = selectedProperty ? selectedProperty.label : '';
 
+	const setMovementSource = useSetMovementSource();
+	const movementSource = useMovementSource();
+	const disableMovement = useDisableKeyboardMovement();
+
+	const isKeyboardSource =
+		movementSource?.groupId === groupId && movementSource?.index === index;
+
 	return (
-		<div className="edit-container">
-			{connectDragSource(
-				<div className="drag-icon">
-					<ClayIcon symbol="drag" />
-				</div>
-			)}
+		<div
+			className={classNames('edit-container', {
+				'dnd-drag': isDragging || isKeyboardSource,
+			})}
+		>
+			<ClayButtonWithIcon
+				borderless
+				className="drag-icon text-secondary"
+				displayType="unstyled"
+				onBlur={disableMovement}
+				onClick={() =>
+					setMovementSource({
+						groupId,
+						icon: itemIcon,
+						index,
+						label: item.label,
+						propertyKey,
+					})
+				}
+				ref={handlerRef}
+				size="sm"
+				symbol="drag"
+			/>
 
 			{_renderEditableProperty({
 				error,
@@ -230,7 +273,6 @@ export default function CriteriaRowEditable({
 }
 
 CriteriaRowEditable.propTypes = {
-	connectDragSource: PropTypes.func,
 	criterion: PropTypes.object.isRequired,
 	error: PropTypes.bool,
 	index: PropTypes.number.isRequired,

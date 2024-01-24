@@ -209,7 +209,7 @@ definition {
 		task ("Then only one result is displayed and the result is the newly created role") {
 			AssertTextEquals(
 				locator1 = "Search#SEARCH_INFO",
-				value1 = "1 Result for \"Role1 Name\"");
+				value1 = "1 Result Found for \"Role1 Name\"");
 
 			LexiconEntry.viewEntryName(rowEntry = "Role1 Name");
 		}
@@ -223,7 +223,7 @@ definition {
 		task ("Then only one result is displayed and the result is the newly created role") {
 			AssertTextEquals(
 				locator1 = "Search#SEARCH_INFO",
-				value1 = "1 Result for \"Role2 Key\"");
+				value1 = "1 Result Found for \"Role2 Key\"");
 
 			LexiconEntry.viewEntryName(rowEntry = "Role1 Name");
 		}
@@ -548,6 +548,28 @@ definition {
 		Role.viewDefaultCP(roleTitle = "Roles Regrole Name");
 	}
 
+	@description = "This is a test for LPS-202614."
+	@priority = 3
+	test RemoveSegmentsOptionInAdministratorRole {
+		task ("When navigates to administrator role -> Assignees tab") {
+			Role.openRolesAdmin();
+
+			LexiconEntry.gotoEntryMenuItem(
+				menuItem = "Edit",
+				rowEntry = "Administrator");
+
+			Click(
+				key_tabName = "Assignees",
+				locator1 = "ObjectAdmin#ENTRY_RELATIONSHIP_TAB");
+		}
+
+		task ("Then the Segments tab is removed") {
+			AssertElementNotPresent(
+				key_tabName = "Segments",
+				locator1 = "ObjectAdmin#ENTRY_RELATIONSHIP_TAB");
+		}
+	}
+
 	@priority = 4
 	test RolesCanBeOrderedByTitle {
 		Role.openRolesAdmin();
@@ -566,7 +588,7 @@ definition {
 
 		ManagementBar.setFilterAndOrder(orderBy = "Title");
 
-		Click(locator1 = "ManagementBar#ORDER_ICON_GENERIC");
+		ManagementBar.sortAssets(sortDirection = "Descending");
 
 		AssertElementPresent(
 			key_itemName = "User",

@@ -16,7 +16,10 @@ import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.search.Indexer;
 import com.liferay.portal.kernel.search.IndexerRegistryUtil;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -24,6 +27,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.admin.web.internal.display.context.IndexActionsDisplayContext;
 import com.liferay.portal.search.capabilities.SearchCapabilities;
 import com.liferay.portal.search.cluster.StatsInformation;
@@ -62,6 +66,12 @@ public class IndexActionsDisplayContextBuilder {
 		_searchCapabilities = searchCapabilities;
 
 		_httpServletRequest = portal.getHttpServletRequest(renderRequest);
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)_httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		_permissionChecker = themeDisplay.getPermissionChecker();
 	}
 
 	public IndexActionsDisplayContext build() {
@@ -118,6 +128,8 @@ public class IndexActionsDisplayContextBuilder {
 			"initialExecutionMode", _getInitialExecutionMode()
 		).put(
 			"initialScope", _getInitialScope()
+		).put(
+			"omniadmin", _permissionChecker.isOmniadmin()
 		).put(
 			"virtualInstances", _getVirtualInstancesJSONArray()
 		).build();
@@ -199,14 +211,24 @@ public class IndexActionsDisplayContextBuilder {
 			List<Object> indexersData = new ArrayList<>();
 
 			for (Indexer<?> indexer : indexers) {
+				String className = indexer.getClassName();
+
+				if (className.contains(
+						"com.liferay.object.model.ObjectDefinition") &&
+					!_permissionChecker.isOmniadmin() &&
+					(indexer.getCompanyId() !=
+						CompanyThreadLocal.getCompanyId())) {
+
+					continue;
+				}
+
 				indexersData.add(
 					HashMapBuilder.<String, Object>put(
-						"className", indexer.getClassName()
+						"className", className
 					).put(
 						"displayName",
 						_language.get(
-							_httpServletRequest,
-							"model.resource." + indexer.getClassName())
+							_httpServletRequest, "model.resource." + className)
 					).put(
 						"enabled", indexer.isIndexerEnabled()
 					).build());
@@ -320,6 +342,7 @@ public class IndexActionsDisplayContextBuilder {
 	private final HttpServletRequest _httpServletRequest;
 	private List<String> _indexReindexerClassNames;
 	private final Language _language;
+	private final PermissionChecker _permissionChecker;
 	private final Portal _portal;
 	private final ReindexConfiguration _reindexConfiguration;
 	private final RenderRequest _renderRequest;

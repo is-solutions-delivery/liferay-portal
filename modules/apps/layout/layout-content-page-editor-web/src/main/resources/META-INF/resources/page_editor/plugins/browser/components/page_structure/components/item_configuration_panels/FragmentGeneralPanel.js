@@ -70,10 +70,7 @@ export function FragmentGeneralPanel({item}) {
 		[dispatch, fragmentEntryLink, languageId]
 	);
 
-	if (
-		Liferay.FeatureFlags['LPS-169923'] &&
-		restrictedItemIds.has(item.itemId)
-	) {
+	if (restrictedItemIds.has(item.itemId)) {
 		return (
 			<ClayAlert displayType="secondary" role={null}>
 				{Liferay.Language.get(
@@ -87,17 +84,7 @@ export function FragmentGeneralPanel({item}) {
 		<>
 			{selectedViewportSize === VIEWPORT_SIZES.desktop &&
 				fieldSets.map((fieldSet, index) => {
-					let fields = fieldSet.fields;
-
-					if (
-						!Liferay.FeatureFlags['LPS-181663'] &&
-						fragmentEntryLink.fragmentEntryKey ===
-							'INPUTS-submit-button'
-					) {
-						fields = fields.filter(
-							(field) => field.name !== 'submittedEntryStatus'
-						);
-					}
+					const fields = fieldSet.fields;
 
 					return (
 						<div className="mb-1 panel-group-sm" key={index}>

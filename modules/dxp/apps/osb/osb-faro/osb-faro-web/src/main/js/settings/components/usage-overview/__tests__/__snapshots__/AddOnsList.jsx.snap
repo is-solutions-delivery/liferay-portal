@@ -23,7 +23,7 @@ exports[`AddOnsList should render 1`] = `
                 role="presentation"
               >
                 <use
-                  xlink:href="#ac-individual"
+                  href="#ac-individual"
                 />
               </svg>
               <span
@@ -56,20 +56,6 @@ exports[`AddOnsList should render 1`] = `
               2X
             </span>
           </div>
-          <div
-            class="annual-price"
-          >
-            <div>
-              <strong>
-                500 USD
-              </strong>
-              <span
-                class="text-secondary small"
-              >
-                 / year
-              </span>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -91,7 +77,7 @@ exports[`AddOnsList should render 1`] = `
                 role="presentation"
               >
                 <use
-                  xlink:href="#faro-page-views"
+                  href="#faro-page-views"
                 />
               </svg>
               <span
@@ -123,20 +109,6 @@ exports[`AddOnsList should render 1`] = `
             >
               1X
             </span>
-          </div>
-          <div
-            class="annual-price"
-          >
-            <div>
-              <strong>
-                250 USD
-              </strong>
-              <span
-                class="text-secondary small"
-              >
-                 / year
-              </span>
-            </div>
           </div>
         </div>
       </div>

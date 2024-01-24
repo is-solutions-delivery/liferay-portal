@@ -5,38 +5,46 @@
 
 import {useEffect, useState} from 'react';
 
+import {useMarketplaceContext} from '../../../../../../context/MarketplaceContext';
 import useCart from '../../../../../../hooks/useCart';
+import {Liferay} from '../../../../../../liferay/liferay';
 import {getLicenseDescription, getTierPrice} from '../../../../../../utils/api';
+import {SkuOptions} from '../../../../enums/skuOptions';
 import LicenseCard from '../../LicenseCard';
 
 interface PaidTimelineProps {
 	cartUtil: ReturnType<typeof useCart>;
-	product?: Product;
+	product?: DeliveryProduct;
 }
 
 export function PaidTimeline({cartUtil, product}: PaidTimelineProps) {
+	const {channel} = useMarketplaceContext();
 	const [skuInfo, setSkuInfo] = useState({});
 	const [tierPrices, setTierPrices] = useState<any[]>([]);
 
 	const {id: productId, skus} = product || {};
+	const accountId = Liferay.CommerceContext.account?.accountId;
 
 	useEffect(() => {
 		(async () => {
-			const catalogName = product?.catalog?.name;
-
 			const [tierpriceData, skuDescription] = await Promise.all([
-				getTierPrice(catalogName as string),
+				getTierPrice(channel.id, product?.productId, Number(accountId)),
 				getLicenseDescription(),
 			]);
 
 			setTierPrices(tierpriceData);
-			setSkuInfo(skuDescription?.items[0]);
+			setSkuInfo(skuDescription?.items[0] || {});
 		})();
-	}, [product?.catalog?.name]);
+	}, [accountId, channel.id, product?.productId]);
 
 	const purchasebleSkus = skus?.filter((sku) =>
 		sku?.skuOptions.find(
-			(skuOption) => skuOption?.value.toLocaleLowerCase() !== 'trial'
+			(skuOption) =>
+				skuOption.skuOptionValueKey.toLocaleLowerCase() !==
+					SkuOptions.TRIAL ||
+				(skuOption.skuOptionValueKey.toLocaleLowerCase() ===
+					SkuOptions.TRIAL &&
+					skuOption.skuOptionValueKey === 'no')
 		)
 	);
 
@@ -54,7 +62,8 @@ export function PaidTimeline({cartUtil, product}: PaidTimelineProps) {
 
 						const skuOption = sku.skuOptions.find(
 							(skuOption) =>
-								skuOption.key === 'dxp-license-usage-type'
+								skuOption.skuOptionKey ===
+								'dxp-license-usage-type'
 						);
 
 						return (
@@ -63,11 +72,13 @@ export function PaidTimeline({cartUtil, product}: PaidTimelineProps) {
 									cartUtil={cartUtil}
 									licenseDescription={
 										skuInfo[
-											skuOption?.value?.toLocaleLowerCase() as keyof typeof skuInfo
+											skuOption?.skuOptionValueKey?.toLocaleLowerCase() as keyof typeof skuInfo
 										]
 									}
 									licensetiers={tierPricesFiltered}
-									lisenceType={skuOption?.value ?? sku.sku}
+									lisenceType={
+										skuOption?.skuOptionValueKey ?? sku.sku
+									}
 									productId={productId}
 									sku={sku}
 								/>

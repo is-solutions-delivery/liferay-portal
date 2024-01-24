@@ -12,6 +12,7 @@ import com.liferay.commerce.configuration.CommerceOrderCheckoutConfiguration;
 import com.liferay.commerce.constants.CommerceCheckoutWebKeys;
 import com.liferay.commerce.constants.CommerceConstants;
 import com.liferay.commerce.constants.CommerceOrderConstants;
+import com.liferay.commerce.constants.CommerceOrderWebKeys;
 import com.liferay.commerce.constants.CommercePortletKeys;
 import com.liferay.commerce.constants.CommerceWebKeys;
 import com.liferay.commerce.context.CommerceContext;
@@ -55,6 +56,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -542,6 +544,15 @@ public class CommerceOrderHttpHelperImpl implements CommerceOrderHttpHelper {
 			return commerceOrder;
 		}
 
+		boolean mergeGuestOrder = GetterUtil.getBoolean(
+			httpServletRequest.getAttribute(
+				CommerceOrderWebKeys.MERGE_GUEST_ORDER),
+			true);
+
+		if (!mergeGuestOrder) {
+			return commerceOrder;
+		}
+
 		HttpServletRequest originalHttpServletRequest =
 			_portal.getOriginalServletRequest(httpServletRequest);
 
@@ -570,6 +581,10 @@ public class CommerceOrderHttpHelperImpl implements CommerceOrderHttpHelper {
 
 		if (userCommerceOrder == null) {
 			httpSession.removeAttribute(cookieName);
+
+			commerceOrder =
+				_commerceOrderLocalService.resetCommerceOrderAddresses(
+					commerceOrder.getCommerceOrderId(), true, true);
 
 			return _commerceOrderLocalService.updateAccount(
 				commerceOrder.getCommerceOrderId(), user.getUserId(),

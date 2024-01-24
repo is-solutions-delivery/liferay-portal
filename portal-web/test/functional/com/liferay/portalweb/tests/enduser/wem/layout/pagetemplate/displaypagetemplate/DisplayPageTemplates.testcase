@@ -59,8 +59,10 @@ definition {
 
 			DisplayPageTemplatesAdmin.deleteDisplayPage(displayPageName = "Display Page Name");
 
+			Alert.viewErrorMessage(errorMessage = "Error:One or more entries could not be deleted.");
+
 			AssertTextEquals.assertPartialText(
-				locator1 = "Message#ERROR",
+				locator1 = "Message#ERROR_2",
 				value1 = "Error:You cannot delete display page templates that are used by one or more items. Please view the usages and try to unassign them.");
 
 			DisplayPageTemplatesAdmin.viewDisplayPagePresent(displayPageName = "Display Page Name");
@@ -151,8 +153,6 @@ definition {
 	@description = "This is a test for LPS-193213. It is possible to access the configuration of an existing Display Page Template from the ellipsis menu of the card."
 	@priority = 4
 	test ConfigureDisplayPageTemplateInPageTemplatesAdmin {
-		property custom.properties = "feature.flag.LPS-195263=true";
-
 		task ("Given a user has a display page template") {
 			PageEditor.addFragment(
 				collectionName = "Basic Components",
@@ -169,6 +169,8 @@ definition {
 			DisplayPageTemplatesAdmin.gotoDisplayPageEllipsisItem(
 				displayPageName = "Display Page Name",
 				item = "Configure");
+
+			Navigator.gotoNavTab(navTab = "Design");
 
 			Theme.configureLookAndFeelSpecificLook();
 
@@ -192,7 +194,153 @@ definition {
 
 			SelectWindow.selectPopUp(value1 = "null");
 
+			Navigator.gotoNavTab(navTab = "Design Draft");
+
 			PagesAdmin.viewCurrentTheme(themeName = "Speedwell");
+		}
+	}
+
+	@description = "This is a test for LPS-191986. Can configure friendly URL for default display page template."
+	@priority = 3
+	test ConfigureFriendlyURLOfDefaultDisplayPageTemplate {
+		task ("Given a user has a default display page template") {
+			PageEditor.publish();
+
+			DisplayPageTemplatesAdmin.markDisplayPageAsDefault(displayPageName = "Display Page Name");
+		}
+
+		task ("When the user accesses to the configuration page of display page template") {
+			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
+
+			LexiconEntry.gotoHeaderMenuItem(menuItem = "Configure");
+		}
+
+		task ("Then the user could configure the friendly URL of display page template") {
+			Navigator.viewActivatedNavTab(navTab = "General");
+
+			AssertTextEquals(
+				key_text = "Friendly URL",
+				locator1 = "TextInput#ANY",
+				value1 = "/display-page-name");
+
+			PagesAdmin.editFriendlyURL(friendlyURLEdit = "/welcome");
+
+			AssertTextEquals(
+				key_text = "Friendly URL",
+				locator1 = "TextInput#ANY",
+				value1 = "/welcome");
+		}
+
+		task ("When the user accesses to the SEO sheet") {
+			Navigator.gotoNavTab(navTab = "SEO");
+		}
+
+		task ("Then the user could configure the Robots and Sitemap settings") {
+			AssertEditable(
+				key_label = "Robots",
+				locator1 = "TextArea#ANY_LABELED");
+
+			AssertAttributeValue(
+				key_label = "Robots",
+				locator1 = "TextArea#ANY_LABELED",
+				value1 = "placeholder",
+				value2 = "Robots");
+
+			AssertEditable(
+				key_fieldLabel = "Include",
+				locator1 = "Select#GENERIC_SELECT_FIELD");
+
+			AssertSelectedLabel(
+				key_fieldLabel = "Include",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "Yes");
+
+			AssertEditable(
+				key_text = "Page Priority",
+				locator1 = "TextInput#ANY");
+
+			AssertAttributeValue(
+				key_text = "Page Priority",
+				locator1 = "TextInput#ANY",
+				value1 = "placeholder",
+				value2 = "0.0");
+
+			AssertEditable(
+				key_fieldLabel = "Change Frequency",
+				locator1 = "Select#GENERIC_SELECT_FIELD");
+
+			AssertSelectedLabel(
+				key_fieldLabel = "Change Frequency",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "Daily");
+		}
+	}
+
+	@description = "This is a test for LPS-191986. Can configure friendly URL for non-default display page template."
+	@priority = 4
+	test ConfigureFriendlyURLOfDisplayPageTemplate {
+		task ("When the user accesses to the configuration page of display page template") {
+			LexiconEntry.gotoHeaderMenuItem(menuItem = "Configure");
+		}
+
+		task ("Then the user could configure the friendly URL of display page template") {
+			Navigator.viewActivatedNavTab(navTab = "General");
+
+			AssertTextEquals(
+				key_text = "Friendly URL",
+				locator1 = "TextInput#ANY",
+				value1 = "/display-page-name");
+
+			PagesAdmin.editFriendlyURL(friendlyURLEdit = "/welcome");
+
+			AssertTextEquals(
+				key_text = "Friendly URL",
+				locator1 = "TextInput#ANY",
+				value1 = "/welcome");
+		}
+
+		task ("When the user accesses to the SEO sheet") {
+			Navigator.gotoNavTab(navTab = "SEO");
+		}
+
+		task ("Then the user could configure the Robots and Sitemap settings") {
+			AssertEditable(
+				key_label = "Robots",
+				locator1 = "TextArea#ANY_LABELED");
+
+			AssertAttributeValue(
+				key_label = "Robots",
+				locator1 = "TextArea#ANY_LABELED",
+				value1 = "placeholder",
+				value2 = "Robots");
+
+			AssertEditable(
+				key_fieldLabel = "Include",
+				locator1 = "Select#GENERIC_SELECT_FIELD");
+
+			AssertSelectedLabel(
+				key_fieldLabel = "Include",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "Yes");
+
+			AssertEditable(
+				key_text = "Page Priority",
+				locator1 = "TextInput#ANY");
+
+			AssertAttributeValue(
+				key_text = "Page Priority",
+				locator1 = "TextInput#ANY",
+				value1 = "placeholder",
+				value2 = "0.0");
+
+			AssertEditable(
+				key_fieldLabel = "Change Frequency",
+				locator1 = "Select#GENERIC_SELECT_FIELD");
+
+			AssertSelectedLabel(
+				key_fieldLabel = "Change Frequency",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "Daily");
 		}
 	}
 
@@ -260,10 +408,7 @@ definition {
 		}
 
 		task ("Import a theme") {
-			ApplicationsMenu.gotoPortlet(
-				category = "System",
-				panel = "Control Panel",
-				portlet = "App Manager");
+			AppManager.openAppManagerAdmin();
 
 			AppManager.uploadApp(
 				appName = "test-theme",
@@ -329,7 +474,7 @@ definition {
 	@description = "This is a test for LPS-192724. It is possible to copy an existing Display Page Template from the ellipsis menu of the card."
 	@priority = 5
 	test CopyDisplayPageTemplate {
-		property custom.properties = "feature.flag.LPS-195263=true";
+		property portal.acceptance = "true";
 
 		task ("When the page creator navigates to the Display Page Templates admin") {
 			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
@@ -419,8 +564,6 @@ definition {
 	@description = "This is a test for LPS-192724. When copying a published DPT, the copy is the same as the published one. The copy of a DPT is the same as the last version."
 	@priority = 4
 	test CopyDisplayPageTemplateWithContent {
-		property custom.properties = "feature.flag.LPS-195263=true";
-
 		task ("Given a page creator has a published display page template with content") {
 			PageEditor.addFragment(
 				collectionName = "Basic Components",
@@ -476,8 +619,6 @@ definition {
 	@description = "This is a test for LPS-192724. The site administrator could copy a display page template with mapping."
 	@priority = 4
 	test CopyDisplayPageTemplateWithMapping {
-		property custom.properties = "feature.flag.LPS-195263=true";
-
 		task ("Given a page creator has a published display page template with mapping") {
 			PageEditor.addFragment(
 				collectionName = "Basic Components",
@@ -518,8 +659,6 @@ definition {
 	@description = "This is a test for LPS-192724. The site administrator could copy a display page template with permissions."
 	@priority = 4
 	test CopyDisplayPageTemplateWithPermissions {
-		property custom.properties = "feature.flag.LPS-195263=true";
-
 		task ("Given a page creator has a published display page template with permissions") {
 			PageEditor.publish();
 
@@ -900,8 +1039,6 @@ definition {
 	@description = "This is a test for LPS-192724. The copied pages are now separate entities."
 	@priority = 4
 	test ViewCopyOfDisplayPageTemplateAndOriginCannotAffectEachOther {
-		property custom.properties = "feature.flag.LPS-195263=true";
-
 		task ("Given a page creator has a copy of display page template") {
 			PageEditor.addFragment(
 				collectionName = "Basic Components",
@@ -956,6 +1093,77 @@ definition {
 				id = "element-text");
 
 			PageEditor.viewFragmentNotPresent(fragmentName = "Button");
+		}
+	}
+
+	@description = "This is a test for LPS-189857. View the display page info in folder."
+	@priority = 3
+	test ViewInfoPanelOfDisplayPageTemplateInsideFolder {
+		property custom.properties = "feature.flag.LPS-189856=true";
+
+		task ("Given a site administrator has a default display page template inside a folder") {
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
+
+			DisplayPageTemplatesAdmin.addFolder(folderName = "Test Folder Name");
+
+			DisplayPageTemplatesAdmin.gotoFolder(folderName = "Test Folder Name");
+
+			DisplayPageTemplatesAdmin.addDisplayPage(
+				contentType = "Web Content Article",
+				displayPageName = "Liferay DXP",
+				subType = "Basic Web Content");
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Heading");
+
+			PageEditor.publish();
+		}
+
+		task ("When the site administrator opens the info panel of display page template") {
+			DisplayPageTemplatesAdmin.markDisplayPageAsDefault(displayPageName = "Liferay DXP");
+
+			LexiconCard.checkCardCheckbox(card = "Liferay DXP");
+
+			ManagementBar.clickInfo();
+		}
+
+		task ("Then the site administrator could see the relevant information") {
+			AssertTextEquals(
+				locator1 = "Sidebar#COMPONENT_TITLE",
+				value1 = "Liferay DXP");
+
+			AssertTextEquals(
+				locator1 = "Sidebar#COMPONENT_SUBTITLE",
+				value1 = "Display Page Template");
+
+			AssertVisible(
+				key_labelName = "Default",
+				locator1 = "Sidebar#HEADER_LABEL");
+
+			AssertVisible(
+				key_labelName = "Approved",
+				locator1 = "Sidebar#HEADER_LABEL");
+
+			AssertTextEquals(
+				locator1 = "Sidebar#LOCALTION",
+				value1 = "Home > Test Folder Name");
+
+			AssertTextEquals(
+				locator1 = "Sidebar#CONTENT_TYPE",
+				value1 = "Web Content Article");
+
+			AssertTextEquals(
+				locator1 = "Sidebar#SUBTYPE",
+				value1 = "Basic Web Content");
+
+			AssertTextMatches(
+				locator1 = "Sidebar#CREATED",
+				value1 = "^\w\w\w\s[0-9]{1,2},\s\d\d\d\d\s[0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}\s\w\w\sby\sTest\sTest$");
+
+			AssertTextMatches(
+				locator1 = "Sidebar#MODIFIED",
+				value1 = "^\w\w\w\s[0-9]{1,2},\s\d\d\d\d\s[0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}\s\w\w\sby\sTest\sTest$");
 		}
 	}
 

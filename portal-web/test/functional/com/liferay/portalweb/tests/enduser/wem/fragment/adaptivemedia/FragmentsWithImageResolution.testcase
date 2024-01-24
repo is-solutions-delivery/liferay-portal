@@ -25,33 +25,6 @@ definition {
 		}
 	}
 
-	tearDown {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			JSONGroup.deleteGroupByName(groupName = "Test Site Name");
-
-			Navigator.openSiteURL(siteName = "Guest");
-
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "Adaptive Media");
-
-			if (IsElementPresent(key_imageName = "Image Resolution", locator1 = "AdaptiveMediaTable#NAME")) {
-				AdaptiveMedia.disableImageResolution(
-					imageName = "Image Resolution",
-					imageState = "Disabled",
-					percentAdapted = 0);
-
-				AdaptiveMedia.deleteImageResolution(imageName = "Image Resolution");
-			}
-		}
-	}
-
 	@description = "This is a test for LPS-114283. Can select an image resolution manually in the desktop viewport."
 	@priority = 5
 	@uitest
@@ -81,8 +54,6 @@ definition {
 		}
 
 		task ("Take down the File Size of image resolution") {
-			PageEditor.gotoConfiguration(fragmentName = "Image");
-
 			PageEditor.gotoImageSource(
 				fragmentName = "Image",
 				id = "image-square");
@@ -215,6 +186,13 @@ definition {
 		property portal.acceptance = "true";
 
 		task ("Add a Container element to page") {
+			var groupId = JSONGroupSetter.setGroupId(groupName = "Test Site Name");
+
+			DocumentAPI.addDocumentWithFileInSite(
+				dmDocumentTitle = "high_resolution_photo.jpg",
+				siteId = ${groupId},
+				sourceFileName = "high_resolution_photo.jpg");
+
 			ContentPagesNavigator.openEditContentPage(
 				pageName = "Test Page Name",
 				siteName = "Test Site Name");
@@ -225,14 +203,21 @@ definition {
 		}
 
 		task ("Directly select an image with width greater than 2000px as background image of Container") {
+			SetWindowSize.maximizeWindow();
+
 			PageEditor.editLayoutContainer(
 				backgroundImage = "Direct",
-				panel = "Styles",
-				uploadFileName = "high_resolution_photo.jpg");
+				enableLazyLoading = "true",
+				entryTitle = "high_resolution_photo.jpg",
+				panel = "Styles");
 
 			PageEditor.viewContainerStyle(
 				backgroundImage = "high_resolution_photo-jpg",
 				position = 1);
+
+			WaitForElementPresent(
+				key_resolutionLabel = "File Size",
+				locator1 = "PageEditor#IMAGE_RESOLUTION_LABEL");
 		}
 
 		task ("Take down the Width and File Size of image resolution in Desktop viewport") {
@@ -294,6 +279,7 @@ definition {
 		task ("Directly select an image with width greater than 2000px as background image of Banner Center") {
 			PageEditor.editLayoutContainer(
 				backgroundImage = "Direct",
+				enableLazyLoading = "true",
 				entryTitle = "high_resolution_photo.jpg",
 				panel = "Styles",
 				position = 2);
@@ -444,6 +430,13 @@ definition {
 		property portal.acceptance = "true";
 
 		task ("Add a Banner Center fragment to page") {
+			var groupId = JSONGroupSetter.setGroupId(groupName = "Test Site Name");
+
+			DocumentAPI.addDocumentWithFileInSite(
+				dmDocumentTitle = "high_resolution_photo.jpg",
+				siteId = ${groupId},
+				sourceFileName = "high_resolution_photo.jpg");
+
 			ContentPagesNavigator.openEditContentPage(
 				pageName = "Test Page Name",
 				siteName = "Test Site Name");
@@ -459,13 +452,17 @@ definition {
 
 			PageEditor.editLayoutContainer(
 				backgroundImage = "Mapping",
+				enableLazyLoading = "true",
 				entryTitle = "high_resolution_photo.jpg",
 				fieldName = "File URL",
 				navItem = "Documents and Media",
-				panel = "Styles",
-				uploadFileName = "high_resolution_photo.jpg");
+				panel = "Styles");
 
 			PageEditor.viewContainerStyle(backgroundImage = "high_resolution_photo\.jpg");
+
+			WaitForElementPresent(
+				key_resolutionLabel = "File Size",
+				locator1 = "PageEditor#IMAGE_RESOLUTION_LABEL");
 		}
 
 		task ("Take down the Width and File Size of image resolution in Desktop viewport") {
@@ -599,6 +596,13 @@ definition {
 		property portal.acceptance = "true";
 
 		task ("Add a Container fragment to page") {
+			var groupId = JSONGroupSetter.setGroupId(groupName = "Test Site Name");
+
+			DocumentAPI.addDocumentWithFileInSite(
+				dmDocumentTitle = "high_resolution_photo.jpg",
+				siteId = ${groupId},
+				sourceFileName = "high_resolution_photo.jpg");
+
 			ContentPagesNavigator.openEditContentPage(
 				pageName = "Test Page Name",
 				siteName = "Test Site Name");
@@ -613,19 +617,23 @@ definition {
 
 			PageEditor.editLayoutContainer(
 				backgroundImage = "Mapping",
+				enableLazyLoading = "true",
 				entryTitle = "high_resolution_photo.jpg",
 				fieldName = "File URL",
 				navItem = "Documents and Media",
 				paddingBottom = 3,
 				paddingTop = 3,
-				panel = "Styles",
-				uploadFileName = "high_resolution_photo.jpg");
+				panel = "Styles");
 
 			PageEditor.viewContainerStyle(
 				backgroundImage = "high_resolution_photo\.jpg",
 				paddingBottom = 3,
 				paddingTop = 3,
 				position = 1);
+
+			WaitForElementPresent(
+				key_resolutionLabel = "File Size",
+				locator1 = "PageEditor#IMAGE_RESOLUTION_LABEL");
 		}
 
 		task ("Take down the Width and File Size of image resolution in Desktop viewport") {
@@ -958,6 +966,13 @@ definition {
 	@priority = 4
 	test ViewAutoImageResolutionWhenOriginalImageIsGreaterThanViewportAndViewportIsGreaterThanImageResolution {
 		task ("Add an Image fragment to page") {
+			var groupId = JSONGroupSetter.setGroupId(groupName = "Test Site Name");
+
+			DocumentAPI.addDocumentWithFileInSite(
+				dmDocumentTitle = "high_resolution_photo.jpg",
+				siteId = ${groupId},
+				sourceFileName = "high_resolution_photo.jpg");
+
 			ContentPagesNavigator.openEditContentPage(
 				pageName = "Test Page Name",
 				siteName = "Test Site Name");
@@ -968,10 +983,13 @@ definition {
 		}
 
 		task ("Select an Image with width greater than 2000px") {
+			SetWindowSize.maximizeWindow();
+
 			PageEditor.editFragmentImage(
-				fileName = "high_resolution_photo.jpg",
+				enableLazyLoading = "true",
 				fragmentName = "Image",
-				id = "image-square");
+				id = "image-square",
+				imageFileName = "high_resolution_photo.jpg");
 
 			PageEditor.viewFragmentEditableImage(
 				id = "image-square",

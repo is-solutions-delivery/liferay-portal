@@ -5,92 +5,104 @@
 
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
+import {sub} from 'frontend-js-web';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {DragSource as dragSource} from 'react-dnd';
 
-import {PROPERTY_TYPES} from '../../utils/constants';
-import {DragTypes} from '../../utils/drag-types';
+import {
+	useDisableKeyboardMovement,
+	useMovementSource,
+	useSetMovementSource,
+} from '../../contexts/KeyboardMovementContext';
+import useDragSource from '../../hooks/useDragSource';
+import useKeyboardNavigation from '../../hooks/useKeyboardNavigation';
+import {DragTypes} from '../../utils/dragTypes';
+import {LIST_ITEM_TYPES} from '../../utils/listItemTypes';
+import {TYPE_ICONS} from '../../utils/typeIcons';
 
-const TYPE_ICON_MAP = {
-	[PROPERTY_TYPES.BOOLEAN]: 'check-circle',
-	[PROPERTY_TYPES.COLLECTION]: 'table',
-	[PROPERTY_TYPES.DATE]: 'date',
-	[PROPERTY_TYPES.DATE_TIME]: 'date',
-	[PROPERTY_TYPES.DOUBLE]: 'decimal',
-	[PROPERTY_TYPES.ID]: 'diagram',
-	[PROPERTY_TYPES.INTEGER]: 'integer',
-	[PROPERTY_TYPES.STRING]: 'text',
-};
-
-function CriteriaSidebarItem({
+export default function CriteriaSidebarItem({
 	className,
-	connectDragSource,
-	dragging,
+	defaultValue,
 	icon,
 	label,
+	name: propertyName,
+	propertyKey,
 	type,
 }) {
-	return connectDragSource(
+	const {isTarget, setElement} = useKeyboardNavigation({
+		type: LIST_ITEM_TYPES.listItem,
+	});
+
+	const itemIcon = icon || TYPE_ICONS[type] || 'text';
+
+	const {handlerRef, isDragging} = useDragSource({
+		item: {
+			criterion: {
+				defaultValue,
+				propertyName,
+				type,
+			},
+			icon: itemIcon,
+			name: label,
+			propertyKey,
+			type: DragTypes.PROPERTY,
+		},
+	});
+
+	const setMovementSource = useSetMovementSource();
+	const movementSource = useMovementSource();
+	const disableMovement = useDisableKeyboardMovement();
+
+	const isKeyboardSource =
+		movementSource?.propertyKey === propertyKey &&
+		movementSource?.propertyName === propertyName;
+
+	return (
 		<li
+			aria-label={sub(Liferay.Language.get('drag-x'), label)}
 			className={classNames(
-				'align-items-center criteria-sidebar-item-root c-py-2 c-pr-3 c-pl-3 c-my-1 c-mx-n4 d-flex ',
-				{dragging},
-				className
+				'align-items-center criteria-sidebar-item-root c-gap-2 c-my-2 c-p-2 d-flex',
+				className,
+				{
+					dragging: isDragging || isKeyboardSource,
+				}
 			)}
-			tabIndex="0"
+			onBlur={disableMovement}
+			onKeyDown={(event) => {
+				if (event.key === 'Enter') {
+					setMovementSource({
+						defaultValue,
+						icon: itemIcon,
+						label,
+						propertyKey,
+						propertyName,
+						type,
+					});
+				}
+			}}
+			ref={setElement}
+			role="menuitem"
+			tabIndex={isTarget ? 0 : -1}
 		>
-			<span className="inline-item">
-				<ClayIcon symbol="drag" />
-			</span>
+			<div className="h-100 w-100" ref={handlerRef}>
+				<ClayIcon className="mt-0" symbol="drag" />
 
-			<span className="c-mx-2 c-my-0 criteria-sidebar-item-type sticker sticker-dark">
-				<span className="inline-item">
-					<ClayIcon symbol={icon || TYPE_ICON_MAP[type] || 'text'} />
+				<span className="sticker">
+					<ClayIcon symbol={icon || TYPE_ICONS[type] || 'text'} />
 				</span>
-			</span>
 
-			{label}
+				{label}
+			</div>
 		</li>
 	);
 }
 
 CriteriaSidebarItem.propTypes = {
 	className: PropTypes.string,
-	connectDragSource: PropTypes.func,
 	defaultValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-	dragging: PropTypes.bool,
 	icon: PropTypes.string,
 	label: PropTypes.string,
 	name: PropTypes.string,
 	propertyKey: PropTypes.string.isRequired,
 	type: PropTypes.string,
 };
-
-/**
- * Passes the required values to the drop target.
- * This method must be called `beginDrag`.
- * @param {Object} props Component's current props
- * @returns {Object} The props to be passed to the drop target.
- */
-function beginDrag({defaultValue, name, propertyKey, type}) {
-	return {
-		criterion: {
-			defaultValue,
-			propertyName: name,
-			type,
-		},
-		propertyKey,
-	};
-}
-
-export default dragSource(
-	DragTypes.PROPERTY,
-	{
-		beginDrag,
-	},
-	(connect, monitor) => ({
-		connectDragSource: connect.dragSource(),
-		dragging: monitor.isDragging(),
-	})
-)(CriteriaSidebarItem);

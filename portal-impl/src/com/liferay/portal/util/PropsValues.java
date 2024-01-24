@@ -338,6 +338,9 @@ public class PropsValues {
 		GetterUtil.getLong(
 			PropsUtil.get(PropsKeys.COMBO_CHECK_TIMESTAMP_INTERVAL));
 
+	public static final int COMBO_MAX_FILES = GetterUtil.getInteger(
+		PropsUtil.get(PropsKeys.COMBO_MAX_FILES), -1);
+
 	public static final String COMPANY_DEFAULT_HOME_URL = PropsUtil.get(
 		PropsKeys.COMPANY_DEFAULT_HOME_URL);
 
@@ -356,16 +359,17 @@ public class PropsValues {
 	public static String COMPANY_DEFAULT_VIRTUAL_HOST_NAME = PropsUtil.get(
 		PropsKeys.COMPANY_DEFAULT_VIRTUAL_HOST_NAME);
 
+	public static boolean COMPANY_DEFAULT_VIRTUAL_HOST_SYNC_ON_STARTUP =
+		GetterUtil.getBoolean(
+			PropsUtil.get(
+				PropsKeys.COMPANY_DEFAULT_VIRTUAL_HOST_SYNC_ON_STARTUP));
+
 	public static String COMPANY_DEFAULT_WEB_ID = PropsUtil.get(
 		PropsKeys.COMPANY_DEFAULT_WEB_ID);
 
 	public static final boolean COMPANY_LOGIN_PREPOPULATE_DOMAIN =
 		GetterUtil.getBoolean(
 			PropsUtil.get(PropsKeys.COMPANY_LOGIN_PREPOPULATE_DOMAIN));
-
-	public static final boolean COMPANY_SECURITY_AUTH_REQUIRES_HTTPS =
-		GetterUtil.getBoolean(
-			PropsUtil.get(PropsKeys.COMPANY_SECURITY_AUTH_REQUIRES_HTTPS));
 
 	public static final String COMPANY_SECURITY_AUTH_TYPE = PropsUtil.get(
 		PropsKeys.COMPANY_SECURITY_AUTH_TYPE);
@@ -2091,14 +2095,6 @@ public class PropsValues {
 	public static int SESSION_TIMEOUT = GetterUtil.getInteger(
 		PropsUtil.get(PropsKeys.SESSION_TIMEOUT));
 
-	public static final boolean SESSION_TIMEOUT_AUTO_EXTEND =
-		GetterUtil.getBoolean(
-			PropsUtil.get(PropsKeys.SESSION_TIMEOUT_AUTO_EXTEND));
-
-	public static final int SESSION_TIMEOUT_AUTO_EXTEND_OFFSET =
-		GetterUtil.getInteger(
-			PropsUtil.get(PropsKeys.SESSION_TIMEOUT_AUTO_EXTEND_OFFSET));
-
 	public static final boolean SESSION_TIMEOUT_REDIRECT_ON_EXPIRE =
 		GetterUtil.getBoolean(
 			PropsUtil.get(PropsKeys.SESSION_TIMEOUT_REDIRECT_ON_EXPIRE));
@@ -2220,9 +2216,6 @@ public class PropsValues {
 	public static final boolean SPRING_HIBERNATE_SESSION_FACTORY_VERIFY =
 		GetterUtil.getBoolean(
 			PropsUtil.get(PropsKeys.SPRING_HIBERNATE_SESSION_FACTORY_VERIFY));
-
-	public static final String[] SPRING_INFRASTRUCTURE_CONFIGS =
-		PropsUtil.getArray(PropsKeys.SPRING_INFRASTRUCTURE_CONFIGS);
 
 	public static int STAGING_DRAFT_EXPORT_IMPORT_CONFIGURATION_CHECK_INTERVAL =
 		GetterUtil.getInteger(
@@ -2575,6 +2568,9 @@ public class PropsValues {
 	public static final boolean WORK_DIR_OVERRIDE_ENABLED =
 		GetterUtil.getBoolean(
 			PropsUtil.get(PropsKeys.WORK_DIR_OVERRIDE_ENABLED));
+
+	public static final int XML_RPC_MAX_PARAMETERS = GetterUtil.getInteger(
+		PropsUtil.get(PropsKeys.XML_RPC_MAX_PARAMETERS), 50);
 
 	public static final boolean XML_SECURITY_ENABLED = GetterUtil.getBoolean(
 		PropsUtil.get(PropsKeys.XML_SECURITY_ENABLED));

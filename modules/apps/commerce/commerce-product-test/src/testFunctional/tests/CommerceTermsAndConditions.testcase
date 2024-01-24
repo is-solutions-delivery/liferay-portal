@@ -42,9 +42,7 @@ definition {
 		var deliveryTermsEligibility = "Delivery Term 1,Delivery Term 2";
 		var paymentTermsEligibility = "Payment Term 1,Payment Term 2";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoTableListEntry(entryName = "Minium Portal");
 
@@ -86,10 +84,7 @@ definition {
 
 		Refresh();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		for (var termType : list "Delivery,Payment") {
 			CommercePermissions.removeAccountRolePermission(
@@ -142,9 +137,7 @@ definition {
 		var deliveryTermsEligibility = "Delivery Term 1,Delivery Term 2";
 		var paymentTermsEligibility = "Payment Term 1,Payment Term 2";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoTableListEntry(entryName = "Minium Portal");
 
@@ -228,19 +221,13 @@ definition {
 			urlAppend = "web/minium",
 			userEmailAddress = "test@liferay.com");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.assignRegularRoleCP(
 			roleTitle = "Operations Manager",
 			userScreenName = "buyeruser");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		CommercePermissions.removeRegularRolePermission(
 			permission = "Manage Order Delivery Terms",
@@ -253,9 +240,7 @@ definition {
 			urlAppend = "web/minium",
 			userEmailAddress = "buyer@liferay.com");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Order Management",
-			portlet = "Orders");
+		CommerceOrders.openOrdersAdmin();
 
 		CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
 
@@ -278,9 +263,7 @@ definition {
 		var deliveryTermsEligibility = "Delivery Term 1,Delivery Term 2";
 		var paymentTermsEligibility = "Payment Term 1,Payment Term 2";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoTableListEntry(entryName = "Minium Portal");
 
@@ -364,19 +347,13 @@ definition {
 			urlAppend = "web/minium",
 			userEmailAddress = "test@liferay.com");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.assignRegularRoleCP(
 			roleTitle = "Operations Manager",
 			userScreenName = "buyeruser");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		CommercePermissions.removeRegularRolePermission(
 			permission = "Manage Order Payment Terms",
@@ -389,9 +366,7 @@ definition {
 			urlAppend = "web/minium",
 			userEmailAddress = "buyer@liferay.com");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Order Management",
-			portlet = "Orders");
+		CommerceOrders.openOrdersAdmin();
 
 		CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
 
@@ -414,9 +389,7 @@ definition {
 		var deliveryTermsEligibility = "Delivery Term 1,Delivery Term 2";
 		var paymentTermsEligibility = "Payment Term 1,Payment Term 2";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoTableListEntry(entryName = "Minium Portal");
 
@@ -516,9 +489,7 @@ definition {
 
 		var deliveryTermsEligibility = "Delivery Term 1,Delivery Term 2";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoTableListEntry(entryName = "Minium Portal");
 
@@ -638,9 +609,7 @@ definition {
 
 		var paymentTermsEligibility = "Payment Term 1,Payment Term 2";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoTableListEntry(entryName = "Minium Portal");
 
@@ -755,9 +724,7 @@ definition {
 		var deliveryTermsEligibility = "Delivery Term 1,Delivery Term 2";
 		var paymentTermsEligibility = "Payment Term 1,Payment Term 2";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoTableListEntry(entryName = "Minium Portal");
 
@@ -840,9 +807,7 @@ definition {
 			urlAppend = "web/minium",
 			userEmailAddress = "test@liferay.com");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Order Management",
-			portlet = "Orders");
+		CommerceOrders.openOrdersAdmin();
 
 		CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
 
@@ -884,9 +849,7 @@ definition {
 
 		var deliveryTermsEligibility = "Delivery Term 1,Delivery Term 2";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoTableListEntry(entryName = "Minium Portal");
 
@@ -993,9 +956,7 @@ definition {
 
 		var paymentTermsEligibility = "Payment Term 1,Payment Term 2";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoTableListEntry(entryName = "Minium Portal");
 
@@ -1094,9 +1055,7 @@ definition {
 	test ViewDeliveryTermAttachedToOrder {
 		property portal.acceptance = "false";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoTableListEntry(entryName = "Minium Portal");
 
@@ -1162,9 +1121,7 @@ definition {
 			urlAppend = "web/minium",
 			userEmailAddress = "test@liferay.com");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Order Management",
-			portlet = "Orders");
+		CommerceOrders.openOrdersAdmin();
 
 		CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
 
@@ -1185,9 +1142,7 @@ definition {
 	test ViewPaymentTermAttachedToOrder {
 		property portal.acceptance = "false";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoTableListEntry(entryName = "Minium Portal");
 
@@ -1248,9 +1203,7 @@ definition {
 			urlAppend = "web/minium",
 			userEmailAddress = "test@liferay.com");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Order Management",
-			portlet = "Orders");
+		CommerceOrders.openOrdersAdmin();
 
 		CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
 

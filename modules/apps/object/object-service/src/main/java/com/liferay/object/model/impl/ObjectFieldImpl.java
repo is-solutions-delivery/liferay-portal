@@ -5,11 +5,16 @@
 
 package com.liferay.object.model.impl;
 
+import com.liferay.object.constants.ObjectFieldConstants;
+import com.liferay.object.constants.ObjectFieldSettingConstants;
+import com.liferay.object.field.setting.util.ObjectFieldSettingUtil;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectFieldSetting;
 import com.liferay.object.service.ObjectDefinitionLocalServiceUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.List;
@@ -44,6 +49,51 @@ public class ObjectFieldImpl extends ObjectFieldBaseImpl {
 	@Override
 	public List<ObjectFieldSetting> getObjectFieldSettings() {
 		return _objectFieldSettings;
+	}
+
+	@Override
+	public String getSortableDBColumnName() {
+		return getDBColumnName() + Field.SORTABLE_FIELD_SUFFIX;
+	}
+
+	@Override
+	public boolean hasInsertValues() {
+		if (compareBusinessType(
+				ObjectFieldConstants.BUSINESS_TYPE_AGGREGATION) ||
+			compareBusinessType(ObjectFieldConstants.BUSINESS_TYPE_FORMULA)) {
+
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public boolean hasUniqueValues() {
+		if (compareBusinessType(
+				ObjectFieldConstants.BUSINESS_TYPE_AUTO_INCREMENT) ||
+			GetterUtil.getBoolean(
+				ObjectFieldSettingUtil.getValue(
+					ObjectFieldSettingConstants.NAME_UNIQUE_VALUES,
+					_objectFieldSettings))) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean hasUpdateValues() {
+		if (compareBusinessType(
+				ObjectFieldConstants.BUSINESS_TYPE_AGGREGATION) ||
+			compareBusinessType(
+				ObjectFieldConstants.BUSINESS_TYPE_AUTO_INCREMENT) ||
+			compareBusinessType(ObjectFieldConstants.BUSINESS_TYPE_FORMULA)) {
+
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override

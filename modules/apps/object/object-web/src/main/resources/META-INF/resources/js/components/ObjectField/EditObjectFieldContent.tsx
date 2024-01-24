@@ -44,6 +44,7 @@ export function EditObjectFieldContent({
 	handleChange,
 	isApproved,
 	isDefaultStorageType,
+	isRootDescendantNode,
 	learnResources,
 	modelBuilder = false,
 	objectDefinitionExternalReferenceCode,
@@ -51,7 +52,7 @@ export function EditObjectFieldContent({
 	readOnly,
 	setValues,
 	values,
-	workflowStatusJSONArray,
+	workflowStatuses,
 }: EditObjectFieldContentProps) {
 	const [activeIndex, setActiveIndex] = useState(0);
 	const [objectFieldTypes, setObjectFieldTypes] = useState<ObjectFieldType[]>(
@@ -133,6 +134,7 @@ export function EditObjectFieldContent({
 							})}
 						>
 							<BasicInfoTab
+								baseResourceURL={baseResourceURL}
 								containerWrapper={containerWrapper}
 								errors={errors}
 								filterOperators={filterOperators}
@@ -150,9 +152,7 @@ export function EditObjectFieldContent({
 								setValues={setValues}
 								sidebarElements={sidebarElements}
 								values={values}
-								workflowStatusJSONArray={
-									workflowStatusJSONArray
-								}
+								workflowStatuses={workflowStatuses}
 							/>
 						</ClayTabs.TabPane>
 
@@ -166,6 +166,7 @@ export function EditObjectFieldContent({
 								creationLanguageId={creationLanguageId}
 								errors={errors}
 								isDefaultStorageType={isDefaultStorageType}
+								isRootDescendantNode={isRootDescendantNode}
 								learnResources={learnResources}
 								modelBuilder={modelBuilder}
 								onSubmit={onSubmit}
@@ -181,6 +182,7 @@ export function EditObjectFieldContent({
 				</>
 			) : (
 				<BasicInfoTab
+					baseResourceURL={baseResourceURL}
 					containerWrapper={containerWrapper}
 					errors={errors}
 					filterOperators={filterOperators}
@@ -198,7 +200,7 @@ export function EditObjectFieldContent({
 					setValues={setValues}
 					sidebarElements={sidebarElements}
 					values={values}
-					workflowStatusJSONArray={workflowStatusJSONArray}
+					workflowStatuses={workflowStatuses}
 				/>
 			)}
 		</>

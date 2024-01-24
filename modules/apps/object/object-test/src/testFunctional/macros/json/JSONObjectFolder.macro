@@ -33,7 +33,7 @@ definition {
 
 	@summary = "Default summary"
 	macro deleteObjectFolder(folderName = null) {
-		var portalURL = JSONCompany.getDefaultPortalURL();
+		var portalURL = JSONCompany.getPortalURL();
 		var userLoginInfo = JSONUtil2.formatJSONSuperAdminUser();
 
 		if (!(isSet(folderId))) {
@@ -51,7 +51,7 @@ definition {
 
 	@summary = "Default summary"
 	macro getAllCustomObjectFolderId() {
-		var portalURL = JSONCompany.getDefaultPortalURL();
+		var portalURL = JSONCompany.getPortalURL();
 		var userLoginInfo = JSONUtil2.formatJSONSuperAdminUser();
 
 		var curl = '''
@@ -60,14 +60,14 @@ definition {
 				-H Content-Type: application/json
 		''';
 
-		var folderIdList = JSONCurlUtil.get(${curl}, "$.items[?(@['name'] != 'Uncategorized')]['id']");
+		var folderIdList = JSONCurlUtil.get(${curl}, "$.items[?(@['name'] != 'Default')]['id']");
 
 		return ${folderIdList};
 	}
 
 	@summary = "Default summary"
 	macro getObjectFolderERC(folderName = null) {
-		var portalURL = JSONCompany.getDefaultPortalURL();
+		var portalURL = JSONCompany.getPortalURL();
 		var userLoginInfo = JSONUtil2.formatJSONSuperAdminUser();
 
 		var curl = '''
@@ -83,7 +83,7 @@ definition {
 
 	@summary = "Default summary"
 	macro getObjectFolderId(folderName = null) {
-		var portalURL = JSONCompany.getDefaultPortalURL();
+		var portalURL = JSONCompany.getPortalURL();
 		var userLoginInfo = JSONUtil2.formatJSONSuperAdminUser();
 
 		var curl = '''

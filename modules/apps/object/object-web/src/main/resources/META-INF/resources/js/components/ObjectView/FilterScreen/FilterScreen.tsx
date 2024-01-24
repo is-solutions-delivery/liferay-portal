@@ -25,7 +25,7 @@ export function FilterScreen() {
 			filterOperators,
 			objectFields,
 			objectView,
-			workflowStatusJSONArray,
+			workflowStatuses,
 		},
 		dispatch,
 	] = useViewContext();
@@ -86,7 +86,7 @@ export function FilterScreen() {
 		checkedItems,
 		disableDateValues,
 		selectedFilterBy,
-		selectedFilterType,
+		selectedFilterTypeValue,
 		setErrors,
 	}: FilterValidation) => {
 		setErrors({});
@@ -97,7 +97,7 @@ export function FilterScreen() {
 		}
 
 		if (
-			!selectedFilterType &&
+			!selectedFilterTypeValue &&
 			!disableDateValues &&
 			(selectedFilterBy?.name !== 'status' ||
 				selectedFilterBy?.businessType !== 'Picklist')
@@ -106,7 +106,7 @@ export function FilterScreen() {
 		}
 
 		if (
-			selectedFilterType &&
+			selectedFilterTypeValue &&
 			(selectedFilterBy?.name === 'status' ||
 				selectedFilterBy?.businessType === 'Picklist' ||
 				selectedFilterBy?.businessType === 'Relationship') &&
@@ -198,7 +198,7 @@ export function FilterScreen() {
 					onClose={onClose}
 					onSave={saveFilterColumn}
 					validate={validateFilters}
-					workflowStatusJSONArray={workflowStatusJSONArray}
+					workflowStatuses={workflowStatuses}
 				/>
 			)}
 		</>

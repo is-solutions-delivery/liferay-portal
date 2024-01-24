@@ -161,6 +161,11 @@ definition {
 				key_text = "Done",
 				locator1 = "Modal#MODAL_FOOTER_BUTTON");
 		}
+		else if (IsElementPresent(key_text = "Select", locator1 = "Modal#MODAL_FOOTER_BUTTON")) {
+			Click(
+				key_text = "Select",
+				locator1 = "Modal#MODAL_FOOTER_BUTTON");
+		}
 	}
 
 	@summary = "Default summary"
@@ -225,6 +230,21 @@ definition {
 			key_tagName = ${tagName},
 			locator1 = "AssetCategorization#TAG",
 			value1 = ${tagName});
+	}
+
+	@summary = "Select tags"
+	macro selectTags(tagNameList = null) {
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+		for (var tagName : list ${tagNameList}) {
+			LexiconTable.checkTableCheckbox(tableEntry = ${tagName});
+		}
+
+		SelectFrame(value1 = "relative=top");
+
+		Click(
+			key_text = "Select",
+			locator1 = "Modal#MODAL_FOOTER_BUTTON");
 	}
 
 	@summary = "Default summary"

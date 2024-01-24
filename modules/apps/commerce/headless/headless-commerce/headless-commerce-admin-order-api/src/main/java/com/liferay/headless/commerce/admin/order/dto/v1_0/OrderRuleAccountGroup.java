@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -56,11 +57,19 @@ public class OrderRuleAccountGroup implements Serializable {
 	@Schema
 	@Valid
 	public OrderAccountGroup getAccountGroup() {
+		if (_accountGroupSupplier != null) {
+			accountGroup = _accountGroupSupplier.get();
+
+			_accountGroupSupplier = null;
+		}
+
 		return accountGroup;
 	}
 
 	public void setAccountGroup(OrderAccountGroup accountGroup) {
 		this.accountGroup = accountGroup;
+
+		_accountGroupSupplier = null;
 	}
 
 	@JsonIgnore
@@ -68,23 +77,35 @@ public class OrderRuleAccountGroup implements Serializable {
 		UnsafeSupplier<OrderAccountGroup, Exception>
 			accountGroupUnsafeSupplier) {
 
-		try {
-			accountGroup = accountGroupUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_accountGroupSupplier = () -> {
+			try {
+				return accountGroupUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected OrderAccountGroup accountGroup;
 
+	@JsonIgnore
+	private Supplier<OrderAccountGroup> _accountGroupSupplier;
+
 	@Schema(example = "DAB-34098-789-N")
 	public String getAccountGroupExternalReferenceCode() {
+		if (_accountGroupExternalReferenceCodeSupplier != null) {
+			accountGroupExternalReferenceCode =
+				_accountGroupExternalReferenceCodeSupplier.get();
+
+			_accountGroupExternalReferenceCodeSupplier = null;
+		}
+
 		return accountGroupExternalReferenceCode;
 	}
 
@@ -93,6 +114,8 @@ public class OrderRuleAccountGroup implements Serializable {
 
 		this.accountGroupExternalReferenceCode =
 			accountGroupExternalReferenceCode;
+
+		_accountGroupExternalReferenceCodeSupplier = null;
 	}
 
 	@JsonIgnore
@@ -100,45 +123,59 @@ public class OrderRuleAccountGroup implements Serializable {
 		UnsafeSupplier<String, Exception>
 			accountGroupExternalReferenceCodeUnsafeSupplier) {
 
-		try {
-			accountGroupExternalReferenceCode =
-				accountGroupExternalReferenceCodeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_accountGroupExternalReferenceCodeSupplier = () -> {
+			try {
+				return accountGroupExternalReferenceCodeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String accountGroupExternalReferenceCode;
 
+	@JsonIgnore
+	private Supplier<String> _accountGroupExternalReferenceCodeSupplier;
+
 	@DecimalMin("0")
 	@Schema(example = "30324")
 	public Long getAccountGroupId() {
+		if (_accountGroupIdSupplier != null) {
+			accountGroupId = _accountGroupIdSupplier.get();
+
+			_accountGroupIdSupplier = null;
+		}
+
 		return accountGroupId;
 	}
 
 	public void setAccountGroupId(Long accountGroupId) {
 		this.accountGroupId = accountGroupId;
+
+		_accountGroupIdSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setAccountGroupId(
 		UnsafeSupplier<Long, Exception> accountGroupIdUnsafeSupplier) {
 
-		try {
-			accountGroupId = accountGroupIdUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_accountGroupIdSupplier = () -> {
+			try {
+				return accountGroupIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
@@ -146,14 +183,25 @@ public class OrderRuleAccountGroup implements Serializable {
 	@NotNull
 	protected Long accountGroupId;
 
+	@JsonIgnore
+	private Supplier<Long> _accountGroupIdSupplier;
+
 	@Schema
 	@Valid
 	public Map<String, Map<String, String>> getActions() {
+		if (_actionsSupplier != null) {
+			actions = _actionsSupplier.get();
+
+			_actionsSupplier = null;
+		}
+
 		return actions;
 	}
 
 	public void setActions(Map<String, Map<String, String>> actions) {
 		this.actions = actions;
+
+		_actionsSupplier = null;
 	}
 
 	@JsonIgnore
@@ -161,53 +209,77 @@ public class OrderRuleAccountGroup implements Serializable {
 		UnsafeSupplier<Map<String, Map<String, String>>, Exception>
 			actionsUnsafeSupplier) {
 
-		try {
-			actions = actionsUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_actionsSupplier = () -> {
+			try {
+				return actionsUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Map<String, Map<String, String>> actions;
 
+	@JsonIgnore
+	private Supplier<Map<String, Map<String, String>>> _actionsSupplier;
+
 	@DecimalMin("0")
 	@Schema(example = "30643")
 	public Long getOrderRuleAccountGroupId() {
+		if (_orderRuleAccountGroupIdSupplier != null) {
+			orderRuleAccountGroupId = _orderRuleAccountGroupIdSupplier.get();
+
+			_orderRuleAccountGroupIdSupplier = null;
+		}
+
 		return orderRuleAccountGroupId;
 	}
 
 	public void setOrderRuleAccountGroupId(Long orderRuleAccountGroupId) {
 		this.orderRuleAccountGroupId = orderRuleAccountGroupId;
+
+		_orderRuleAccountGroupIdSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setOrderRuleAccountGroupId(
 		UnsafeSupplier<Long, Exception> orderRuleAccountGroupIdUnsafeSupplier) {
 
-		try {
-			orderRuleAccountGroupId =
-				orderRuleAccountGroupIdUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_orderRuleAccountGroupIdSupplier = () -> {
+			try {
+				return orderRuleAccountGroupIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Long orderRuleAccountGroupId;
 
+	@JsonIgnore
+	private Supplier<Long> _orderRuleAccountGroupIdSupplier;
+
 	@Schema(example = "PAB-34098-789-N")
 	public String getOrderRuleExternalReferenceCode() {
+		if (_orderRuleExternalReferenceCodeSupplier != null) {
+			orderRuleExternalReferenceCode =
+				_orderRuleExternalReferenceCodeSupplier.get();
+
+			_orderRuleExternalReferenceCodeSupplier = null;
+		}
+
 		return orderRuleExternalReferenceCode;
 	}
 
@@ -215,6 +287,8 @@ public class OrderRuleAccountGroup implements Serializable {
 		String orderRuleExternalReferenceCode) {
 
 		this.orderRuleExternalReferenceCode = orderRuleExternalReferenceCode;
+
+		_orderRuleExternalReferenceCodeSupplier = null;
 	}
 
 	@JsonIgnore
@@ -222,51 +296,68 @@ public class OrderRuleAccountGroup implements Serializable {
 		UnsafeSupplier<String, Exception>
 			orderRuleExternalReferenceCodeUnsafeSupplier) {
 
-		try {
-			orderRuleExternalReferenceCode =
-				orderRuleExternalReferenceCodeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_orderRuleExternalReferenceCodeSupplier = () -> {
+			try {
+				return orderRuleExternalReferenceCodeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String orderRuleExternalReferenceCode;
 
+	@JsonIgnore
+	private Supplier<String> _orderRuleExternalReferenceCodeSupplier;
+
 	@DecimalMin("0")
 	@Schema(example = "30130")
 	public Long getOrderRuleId() {
+		if (_orderRuleIdSupplier != null) {
+			orderRuleId = _orderRuleIdSupplier.get();
+
+			_orderRuleIdSupplier = null;
+		}
+
 		return orderRuleId;
 	}
 
 	public void setOrderRuleId(Long orderRuleId) {
 		this.orderRuleId = orderRuleId;
+
+		_orderRuleIdSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setOrderRuleId(
 		UnsafeSupplier<Long, Exception> orderRuleIdUnsafeSupplier) {
 
-		try {
-			orderRuleId = orderRuleIdUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_orderRuleIdSupplier = () -> {
+			try {
+				return orderRuleIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	@NotNull
 	protected Long orderRuleId;
+
+	@JsonIgnore
+	private Supplier<Long> _orderRuleIdSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -296,6 +387,8 @@ public class OrderRuleAccountGroup implements Serializable {
 
 		sb.append("{");
 
+		OrderAccountGroup accountGroup = getAccountGroup();
+
 		if (accountGroup != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -305,6 +398,9 @@ public class OrderRuleAccountGroup implements Serializable {
 
 			sb.append(String.valueOf(accountGroup));
 		}
+
+		String accountGroupExternalReferenceCode =
+			getAccountGroupExternalReferenceCode();
 
 		if (accountGroupExternalReferenceCode != null) {
 			if (sb.length() > 1) {
@@ -320,6 +416,8 @@ public class OrderRuleAccountGroup implements Serializable {
 			sb.append("\"");
 		}
 
+		Long accountGroupId = getAccountGroupId();
+
 		if (accountGroupId != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -329,6 +427,8 @@ public class OrderRuleAccountGroup implements Serializable {
 
 			sb.append(accountGroupId);
 		}
+
+		Map<String, Map<String, String>> actions = getActions();
 
 		if (actions != null) {
 			if (sb.length() > 1) {
@@ -340,6 +440,8 @@ public class OrderRuleAccountGroup implements Serializable {
 			sb.append(_toJSON(actions));
 		}
 
+		Long orderRuleAccountGroupId = getOrderRuleAccountGroupId();
+
 		if (orderRuleAccountGroupId != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -349,6 +451,9 @@ public class OrderRuleAccountGroup implements Serializable {
 
 			sb.append(orderRuleAccountGroupId);
 		}
+
+		String orderRuleExternalReferenceCode =
+			getOrderRuleExternalReferenceCode();
 
 		if (orderRuleExternalReferenceCode != null) {
 			if (sb.length() > 1) {
@@ -363,6 +468,8 @@ public class OrderRuleAccountGroup implements Serializable {
 
 			sb.append("\"");
 		}
+
+		Long orderRuleId = getOrderRuleId();
 
 		if (orderRuleId != null) {
 			if (sb.length() > 1) {

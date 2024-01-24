@@ -63,6 +63,8 @@ const ProductOptionCheckboxMultiple = ({
 			: null;
 		let preselected = false;
 
+		let skuOptionValueNames = [];
+
 		let value = option?.value || [];
 
 		const newProductOptionValues = productOptionValues.map(
@@ -80,6 +82,7 @@ const ProductOptionCheckboxMultiple = ({
 					if (productOptionValue.preselected) {
 						preselected = true;
 						selected = true;
+						skuOptionValueNames = [productOptionValue.name];
 						value = [productOptionValue.key];
 					}
 				}
@@ -115,6 +118,8 @@ const ProductOptionCheckboxMultiple = ({
 						{
 							key: productOption.key,
 							skuOptionKey: productOption.key,
+							skuOptionName: productOption.name,
+							skuOptionValueNames,
 							value,
 						},
 				  ],
@@ -149,12 +154,30 @@ const ProductOptionCheckboxMultiple = ({
 			(skuOption) => skuOption.skuOptionKey === productOption.key
 		)[0];
 
+		const curProductOptionValue =
+			productOptionValues.find(
+				(productOptionValue) => productOptionValue.key === value
+			) || {};
+
 		if (currentSkuOption) {
 			currentSkuOptions = currentSkuOptions.map((skuOption) => {
 				if (skuOption.skuOptionKey === productOption.key) {
 					return {
 						key: productOption.key,
 						skuOptionKey: productOption.key,
+						skuOptionName: productOption.name,
+						skuOptionValueNames: checked
+							? [
+									...currentSkuOptions[curSkuOptionIndex]
+										.skuOptionValueNames,
+									curProductOptionValue.name,
+							  ]
+							: currentSkuOptions[
+									curSkuOptionIndex
+							  ].skuOptionValueNames.filter(
+									(curVal) =>
+										curVal !== curProductOptionValue.name
+							  ),
 						value: checked
 							? [
 									...currentSkuOptions[curSkuOptionIndex]
@@ -176,6 +199,8 @@ const ProductOptionCheckboxMultiple = ({
 				{
 					key: productOption.key,
 					skuOptionKey: productOption.key,
+					skuOptionName: productOption.name,
+					skuOptionValueNames: [curProductOptionValue.name],
 					value: [value],
 				},
 			];

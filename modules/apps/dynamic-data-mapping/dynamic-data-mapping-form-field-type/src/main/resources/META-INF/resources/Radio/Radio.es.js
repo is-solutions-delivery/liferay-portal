@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {ClayRadio} from '@clayui/form';
+import {ClayRadio, ClayRadioGroup} from '@clayui/form';
 import React, {useMemo} from 'react';
 
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
@@ -11,6 +11,10 @@ import {useSyncValue} from '../hooks/useSyncValue.es';
 import {setJSONArrayValue} from '../util/setters.es';
 
 import './Radio.scss';
+
+const KEYCODES = {
+	TAB: 9,
+};
 
 const Radio = ({
 	editingLanguageId,
@@ -57,28 +61,37 @@ const Radio = ({
 
 	return (
 		<FieldBase {...otherProps} name={name} readOnly={disabled}>
-			<div
-				aria-required={otherProps.required}
-				className="ddm__radio"
-				onBlur={onBlur}
-				onFocus={onFocus}
-			>
-				{options.map((option, index) => (
-					<ClayRadio
-						checked={currentValue === option.value}
-						disabled={disabled}
-						inline={inline}
-						key={option.value}
-						label={option.label}
-						name={`${name}_${index}`}
-						onChange={(event) => {
-							setCurrentValue(option.value);
+			<div className="ddm__radio" onBlur={onBlur} onFocus={onFocus}>
+				<ClayRadioGroup
+					inline={inline}
+					onChange={(value) => {
+						setCurrentValue(value);
+						onChange({target: {value}});
+					}}
+					onKeyUp={(event) => {
+						if (!currentValue && event.keyCode === KEYCODES.TAB) {
+							const value = options[0].value;
 
-							onChange(event);
-						}}
-						value={option.value}
-					/>
-				))}
+							setCurrentValue(value);
+							onChange({target: {value}});
+						}
+					}}
+					value={currentValue}
+				>
+					{options.map((option, index) => (
+						<ClayRadio
+							aria-required={otherProps.required}
+							containerProps={{
+								'data-checked': currentValue === option.value,
+							}}
+							disabled={disabled}
+							key={option.value}
+							label={option.label}
+							name={`${name}_${index}`}
+							value={option.value}
+						/>
+					))}
+				</ClayRadioGroup>
 			</div>
 
 			<input name={name} type="hidden" value={currentValue} />

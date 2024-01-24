@@ -68,7 +68,7 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskMan
 					<aui:input name="stagingGroupId" type="hidden" value="<%= stagingGroupId %>" />
 					<aui:input name="forceDisable" type="hidden" value="<%= false %>" />
 
-					<c:if test="<%= !privateLayoutSet.isLayoutSetPrototypeLinkActive() && !publicLayoutSet.isLayoutSetPrototypeLinkActive() %>">
+					<c:if test="<%= !privateLayoutSet.isLayoutSetReadyForPropagation() && !publicLayoutSet.isLayoutSetReadyForPropagation() %>">
 						<clay:sheet-header>
 							<div class="sheet-title">
 								<liferay-ui:message key="javax.portlet.title.com_liferay_staging_configuration_web_portlet_StagingConfigurationPortlet" />
@@ -160,7 +160,7 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskMan
 	</c:otherwise>
 </c:choose>
 
-<script>
+<aui:script>
 	function <portlet:namespace />saveGroup(forceDisable) {
 		var form = document.<portlet:namespace />fm;
 		var ok = true;
@@ -261,4 +261,4 @@ BackgroundTask lastCompletedInitialPublicationBackgroundTask = BackgroundTaskMan
 			});
 		}
 	})();
-</script>
+</aui:script>

@@ -268,9 +268,9 @@ public class FreeMarkerTool {
 	}
 
 	public Map<String, Schema> getDTOEnumSchemas(
-		OpenAPIYAML openAPIYAML, Schema schema) {
+		ConfigYAML configYAML, OpenAPIYAML openAPIYAML, Schema schema) {
 
-		return DTOOpenAPIParser.getEnumSchemas(openAPIYAML, schema);
+		return DTOOpenAPIParser.getEnumSchemas(configYAML, openAPIYAML, schema);
 	}
 
 	public String getDTOParentClassName(
@@ -303,20 +303,27 @@ public class FreeMarkerTool {
 	}
 
 	public Map<String, String> getDTOProperties(
-		ConfigYAML configYAML, OpenAPIYAML openAPIYAML, Schema schema) {
+		ConfigYAML configYAML, OpenAPIYAML openAPIYAML, Schema schema,
+		Map<String, Schema> schemas) {
 
-		return DTOOpenAPIParser.getProperties(configYAML, openAPIYAML, schema);
+		return DTOOpenAPIParser.getProperties(
+			configYAML, false, openAPIYAML, schema, schemas);
 	}
 
 	public Map<String, String> getDTOProperties(
-		ConfigYAML configYAML, OpenAPIYAML openAPIYAML, String schemaName) {
+		ConfigYAML configYAML, OpenAPIYAML openAPIYAML, String schemaName,
+		Map<String, Schema> schemas) {
 
 		return DTOOpenAPIParser.getProperties(
-			configYAML, openAPIYAML, schemaName);
+			configYAML, openAPIYAML, schemaName, schemas);
 	}
 
-	public Schema getDTOPropertySchema(String propertyName, Schema schema) {
-		return DTOOpenAPIParser.getPropertySchema(propertyName, schema);
+	public Schema getDTOPropertySchema(
+		ConfigYAML configYAML, String propertyName, Schema schema,
+		Map<String, Schema> schemas) {
+
+		return DTOOpenAPIParser.getPropertySchema(
+			configYAML, propertyName, schema, schemas);
 	}
 
 	public String getEnumFieldName(String value) {
@@ -391,10 +398,10 @@ public class FreeMarkerTool {
 
 	public String getGraphQLJavaParameterName(
 		ConfigYAML configYAML, OpenAPIYAML openAPIYAML, String schemaName,
-		JavaMethodParameter javaMethodParameter) {
+		Map<String, Schema> schemas, JavaMethodParameter javaMethodParameter) {
 
 		Map<String, String> properties = getDTOProperties(
-			configYAML, openAPIYAML, schemaName);
+			configYAML, openAPIYAML, schemaName, schemas);
 
 		return _getParentProperty(
 			schemaName, javaMethodParameter, properties.keySet());
@@ -745,11 +752,11 @@ public class FreeMarkerTool {
 	}
 
 	public String getResourceParameters(
-		List<JavaMethodParameter> javaMethodParameters, OpenAPIYAML openAPIYAML,
-		Operation operation, boolean annotation) {
+		ConfigYAML configYAML, List<JavaMethodParameter> javaMethodParameters,
+		Operation operation, Map<String, Schema> schemas, boolean annotation) {
 
 		return ResourceOpenAPIParser.getParameters(
-			javaMethodParameters, openAPIYAML, operation, annotation);
+			configYAML, javaMethodParameters, operation, schemas, annotation);
 	}
 
 	public String getResourceTestCaseArguments(
@@ -766,11 +773,11 @@ public class FreeMarkerTool {
 	}
 
 	public String getResourceTestCaseParameters(
-		List<JavaMethodParameter> javaMethodParameters, OpenAPIYAML openAPIYAML,
-		Operation operation, boolean annotation) {
+		ConfigYAML configYAML, List<JavaMethodParameter> javaMethodParameters,
+		Operation operation, Map<String, Schema> schemas, boolean annotation) {
 
 		return ResourceTestCaseOpenAPIParser.getParameters(
-			javaMethodParameters, openAPIYAML, operation, annotation);
+			configYAML, javaMethodParameters, operation, schemas, annotation);
 	}
 
 	public String getRESTMethodJavadoc(
@@ -839,10 +846,11 @@ public class FreeMarkerTool {
 	}
 
 	public Map<String, String> getWritableDTOProperties(
-		ConfigYAML configYAML, OpenAPIYAML openAPIYAML, Schema schema) {
+		ConfigYAML configYAML, OpenAPIYAML openAPIYAML, Schema schema,
+		Map<String, Schema> schemas) {
 
 		return DTOOpenAPIParser.getProperties(
-			configYAML, true, openAPIYAML, schema);
+			configYAML, true, openAPIYAML, schema, schemas);
 	}
 
 	public boolean hasHTTPMethod(
@@ -997,10 +1005,11 @@ public class FreeMarkerTool {
 	}
 
 	public boolean isDTOSchemaProperty(
-		OpenAPIYAML openAPIYAML, String propertyName, Schema schema) {
+		ConfigYAML configYAML, String propertyName, Schema schema,
+		Map<String, Schema> schemas) {
 
 		return DTOOpenAPIParser.isSchemaProperty(
-			openAPIYAML, propertyName, schema);
+			configYAML, propertyName, schema, schemas);
 	}
 
 	public boolean isParameter(

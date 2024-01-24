@@ -25,17 +25,9 @@ public class CreatorStatisticsUtil {
 			User user)
 		throws PortalException {
 
-		String[] ranks = mbStatsUserLocalService.getUserRank(
-			groupId, languageId, user.getUserId());
-
 		return new CreatorStatistics() {
 			{
-				joinDate = user.getCreateDate();
-				postsNumber = Math.toIntExact(
-					mbStatsUserLocalService.getMessageCountByUserId(
-						user.getUserId()));
-				rank = ranks[1].equals(StringPool.BLANK) ? ranks[0] : ranks[1];
-
+				setJoinDate(user::getCreateDate);
 				setLastPostDate(
 					() -> {
 						if (uriInfo != null) {
@@ -55,6 +47,21 @@ public class CreatorStatisticsUtil {
 						}
 
 						return null;
+					});
+				setPostsNumber(
+					() -> Math.toIntExact(
+						mbStatsUserLocalService.getMessageCountByUserId(
+							user.getUserId())));
+				setRank(
+					() -> {
+						String[] ranks = mbStatsUserLocalService.getUserRank(
+							groupId, languageId, user.getUserId());
+
+						if (ranks[1].equals(StringPool.BLANK)) {
+							return ranks[0];
+						}
+
+						return ranks[1];
 					});
 			}
 		};

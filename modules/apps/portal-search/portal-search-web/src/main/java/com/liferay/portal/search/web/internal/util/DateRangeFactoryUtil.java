@@ -1,5 +1,5 @@
 /**
- * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-FileCopyrightText: (c) 2023 Liferay, Inc. https://liferay.com
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
@@ -9,13 +9,14 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
-import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.TimeZoneUtil;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -23,6 +24,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * @author Adam Brandizzi
@@ -30,14 +32,49 @@ import java.util.Map;
  */
 public class DateRangeFactoryUtil {
 
+	public static JSONArray getDefaultRangesJSONArray(Calendar calendar) {
+		JSONArray rangesJSONArray = JSONFactoryUtil.createJSONArray();
+
+		Map<String, String> map = getRangeStrings(calendar);
+
+		map.forEach(
+			(key, value) -> rangesJSONArray.put(
+				JSONUtil.put(
+					"label", key
+				).put(
+					"range", value
+				)));
+
+		return rangesJSONArray;
+	}
+
 	public static String getRangeString(String label, Calendar calendar) {
 		return replaceAliases(_rangeMap.get(label), calendar);
 	}
 
-	public static String getRangeString(String from, String to) {
-		return StringBundler.concat(
-			"[", _normalizeRangeBoundary(from, "000000"), " TO ",
-			_normalizeRangeBoundary(to, "235959"), "]");
+	public static String getRangeString(
+		String from, String to, TimeZone timeZone) {
+
+		DateFormat dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
+			"yyyyMMddHHmmss", TimeZoneUtil.GMT);
+		DateFormat userTimeZoneDateFormat =
+			DateFormatFactoryUtil.getSimpleDateFormat(
+				"yyyyMMddHHmmss", timeZone);
+
+		String normalizedFrom = _normalizeRangeBoundary(from, "000000");
+		String normalizedTo = _normalizeRangeBoundary(to, "235959");
+
+		try {
+			String fromUTC = dateFormat.format(
+				userTimeZoneDateFormat.parse(normalizedFrom));
+			String toUTC = dateFormat.format(
+				userTimeZoneDateFormat.parse(normalizedTo));
+
+			return StringBundler.concat("[", fromUTC, " TO ", toUTC, "]");
+		}
+		catch (ParseException parseException) {
+			throw new RuntimeException(parseException);
+		}
 	}
 
 	public static Map<String, String> getRangeStrings(Calendar calendar) {
@@ -51,23 +88,20 @@ public class DateRangeFactoryUtil {
 	}
 
 	public static JSONArray replaceAliases(
-		JSONArray rangesJSONArray, Calendar calendar, JSONFactory jsonFactory) {
+		JSONArray rangesJSONArray, Calendar calendar) {
 
-		JSONArray normalizedRangesJSONArray = jsonFactory.createJSONArray();
+		JSONArray normalizedRangesJSONArray = JSONFactoryUtil.createJSONArray();
 
 		for (int i = 0; i < rangesJSONArray.length(); i++) {
 			JSONObject rangeJSONObject = rangesJSONArray.getJSONObject(i);
 
-			JSONObject normalizedJSONObject = jsonFactory.createJSONObject();
-
-			normalizedJSONObject.put(
-				"label", rangeJSONObject.getString("label")
-			).put(
-				"range",
-				replaceAliases(rangeJSONObject.getString("range"), calendar)
-			);
-
-			normalizedRangesJSONArray.put(normalizedJSONObject);
+			normalizedRangesJSONArray.put(
+				JSONUtil.put(
+					"label", rangeJSONObject.getString("label")
+				).put(
+					"range",
+					replaceAliases(rangeJSONObject.getString("range"), calendar)
+				));
 		}
 
 		return normalizedRangesJSONArray;
@@ -112,7 +146,7 @@ public class DateRangeFactoryUtil {
 			});
 	}
 
-	public static void validateRange(String ranges)
+	public static void validateRanges(String ranges)
 		throws JSONException, ParseException {
 
 		JSONArray rangesJSONArray = JSONFactoryUtil.createJSONArray(ranges);
@@ -123,6 +157,13 @@ public class DateRangeFactoryUtil {
 			).getString(
 				"range"
 			);
+
+			if (!range.contains(" TO ") || !StringUtil.startsWith(range, "[") ||
+				!StringUtil.endsWith(range, "]")) {
+
+				throw new IllegalArgumentException(
+					"Invalid range syntax " + range);
+			}
 
 			String from = range.split("TO")[0].trim();
 
@@ -147,7 +188,7 @@ public class DateRangeFactoryUtil {
 	}
 
 	private static void _validateDateFormat(String date) throws ParseException {
-		if (!ArrayUtil.contains(_ALIASES, date)) {
+		if (!ArrayUtil.contains(_ALIASES, date) && !date.contains("now")) {
 			DateFormat dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
 				"yyyyMMddHHmmss");
 

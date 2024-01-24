@@ -7,18 +7,16 @@ package com.liferay.portal.search.elasticsearch7.internal.facet;
 
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.bucket.range.RangeAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.range.AbstractRangeBuilder;
 import org.elasticsearch.search.aggregations.bucket.range.RangeAggregator;
 
 import org.osgi.service.component.annotations.Component;
@@ -31,7 +29,8 @@ import org.osgi.service.component.annotations.Component;
 @Component(
 	property = {
 		"class.name=com.liferay.portal.kernel.search.facet.RangeFacet",
-		"class.name=com.liferay.portal.search.internal.facet.ModifiedFacetImpl"
+		"class.name=com.liferay.portal.search.internal.facet.ModifiedFacetImpl",
+		"class.name=com.liferay.portal.search.internal.facet.RangeFacetImpl"
 	},
 	service = FacetProcessor.class
 )
@@ -42,25 +41,44 @@ public class RangeFacetProcessor
 	public AggregationBuilder processFacet(Facet facet) {
 		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
 
-		RangeAggregationBuilder rangeAggregationBuilder =
-			AggregationBuilders.range(FacetUtil.getAggregationName(facet));
+		AbstractRangeBuilder abstractRangeBuilder = getRangeBuilder(
+			FacetUtil.getAggregationName(facet));
 
-		rangeAggregationBuilder.field(facetConfiguration.getFieldName());
+		abstractRangeBuilder.field(facetConfiguration.getFieldName());
 
-		_addConfigurationRanges(facetConfiguration, rangeAggregationBuilder);
+		JSONObject jsonObject = facetConfiguration.getData();
 
-		_addCustomRange(facet, rangeAggregationBuilder);
+		String format = jsonObject.getString("format");
 
-		if (ListUtil.isEmpty(rangeAggregationBuilder.ranges())) {
+		if (Validator.isNotNull(format)) {
+			abstractRangeBuilder.format(format);
+		}
+
+		_addRanges(facetConfiguration, abstractRangeBuilder);
+
+		if (ListUtil.isEmpty(abstractRangeBuilder.ranges())) {
 			return null;
 		}
 
-		return rangeAggregationBuilder;
+		return abstractRangeBuilder;
 	}
 
-	private void _addConfigurationRanges(
+	protected AbstractRangeBuilder getRangeBuilder(String name) {
+		return AggregationBuilders.range(name);
+	}
+
+	private void _addRange(
+		AbstractRangeBuilder abstractRangeBuilder, String range) {
+
+		String[] rangeParts = RangeParserUtil.parserRange(range);
+
+		abstractRangeBuilder.addRange(
+			new RangeAggregator.Range(range, rangeParts[0], rangeParts[1]));
+	}
+
+	private void _addRanges(
 		FacetConfiguration facetConfiguration,
-		RangeAggregationBuilder rangeAggregationBuilder) {
+		AbstractRangeBuilder abstractRangeBuilder) {
 
 		JSONObject jsonObject = facetConfiguration.getData();
 
@@ -73,33 +91,8 @@ public class RangeFacetProcessor
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject rangeJSONObject = jsonArray.getJSONObject(i);
 
-			String rangeString = rangeJSONObject.getString("range");
-
-			String[] range = RangeParserUtil.parserRange(rangeString);
-
-			rangeAggregationBuilder.addRange(_createRange(rangeString, range));
+			_addRange(abstractRangeBuilder, rangeJSONObject.getString("range"));
 		}
-	}
-
-	private void _addCustomRange(
-		Facet facet, RangeAggregationBuilder rangeAggregationBuilder) {
-
-		SearchContext searchContext = facet.getSearchContext();
-
-		String rangeString = GetterUtil.getString(
-			searchContext.getAttribute(facet.getFieldId()));
-
-		if (Validator.isNull(rangeString)) {
-			return;
-		}
-
-		String[] range = RangeParserUtil.parserRange(rangeString);
-
-		rangeAggregationBuilder.addRange(_createRange(rangeString, range));
-	}
-
-	private RangeAggregator.Range _createRange(String key, String[] range) {
-		return new RangeAggregator.Range(key, range[0], range[1]);
 	}
 
 }

@@ -337,11 +337,11 @@ public class AddGroupMVCActionCommand extends BaseMVCActionCommand {
 		Map<Locale, String> descriptionMap = _localization.getLocalizationMap(
 			actionRequest, "description");
 		int type = ParamUtil.getInteger(
-			actionRequest, "type", GroupConstants.TYPE_SITE_OPEN);
+			actionRequest, "type", GroupConstants.TYPE_SITE_RESTRICTED);
 		String friendlyURL = ParamUtil.getString(
 			actionRequest, "groupFriendlyURL");
 		boolean manualMembership = ParamUtil.getBoolean(
-			actionRequest, "manualMembership");
+			actionRequest, "manualMembership", true);
 		boolean inheritContent = ParamUtil.getBoolean(
 			actionRequest, "inheritContent");
 		boolean active = ParamUtil.getBoolean(actionRequest, "active", true);

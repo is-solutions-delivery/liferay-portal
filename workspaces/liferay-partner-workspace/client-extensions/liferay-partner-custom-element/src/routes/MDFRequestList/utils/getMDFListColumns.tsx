@@ -26,7 +26,8 @@ export default function getMDFListColumns(
 	) => boolean | undefined,
 	siteURL: string,
 	actions?: PermissionActionType[],
-	mutated?: KeyedMutator<LiferayItems<MDFRequestDTO[]>>
+	mutated?: KeyedMutator<LiferayItems<MDFRequestDTO[]>>,
+	isChannel?: boolean
 ): TableColumn<MDFRequestListItem>[] | undefined {
 	const getDropdownOptions = (row: MDFRequestListItem, index: number) => {
 		const isUserAssociated = hasUserAccountSameAccountEntryCurrentMDFRequest(
@@ -39,8 +40,13 @@ export default function getMDFListColumns(
 					row[MDFColumnKey.STATUS] === Status.DRAFT.name ||
 					row[MDFColumnKey.STATUS] === Status.REQUEST_MORE_INFO.name;
 
-				const currentMDFRequestHasValidStatusToDelete =
-					row[MDFColumnKey.STATUS] === Status.DRAFT.name;
+				const currentMDFRequestHasValidStatusToRemove =
+					(isChannel &&
+						currentValue === PermissionActionType.DELETE &&
+						row.STATUS === 'Approved') ||
+					(!isChannel &&
+						currentValue === PermissionActionType.DELETE &&
+						row.STATUS === 'Draft');
 
 				if (currentValue === PermissionActionType.VIEW) {
 					previousValue.push({
@@ -74,11 +80,7 @@ export default function getMDFListColumns(
 					});
 				}
 
-				if (
-					currentValue === PermissionActionType.DELETE &&
-					currentMDFRequestHasValidStatusToDelete &&
-					row.STATUS === 'Approved'
-				) {
+				if (currentMDFRequestHasValidStatusToRemove) {
 					previousValue.push({
 						icon: 'trash',
 						key: 'delete',

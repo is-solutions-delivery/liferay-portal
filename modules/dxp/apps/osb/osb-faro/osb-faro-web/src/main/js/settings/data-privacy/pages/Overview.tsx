@@ -2,13 +2,24 @@ import BasePage from 'settings/components/BasePage';
 import Card from 'shared/components/Card';
 import ClayButton from '@clayui/button';
 import ClayLink from '@clayui/link';
-import fetch from 'shared/util/fetch';
 import PreferenceMutation from '../queries/PreferenceMutation';
-import PreferenceQuery from '../queries/PreferenceQuery';
+import PreferenceQuery from 'shared/queries/PreferenceQuery';
 import React from 'react';
 import {close, modalTypes, open} from 'shared/actions/modals';
 import {compose} from 'redux';
 import {connect} from 'react-redux';
+import {
+	convertMillisecondsToDays,
+	convertMillisecondsToMonths
+} from 'shared/util/date';
+import {
+	DATA_RETENTION_PERIOD_KEY,
+	ONE_DAY,
+	ONE_MONTH,
+	SEVEN_MONTHS,
+	THIRTEEN_MONTHS,
+	TWO_DAYS
+} from 'shared/util/constants';
 import {get} from 'lodash';
 import {Option, Picker} from '@clayui/core';
 import {Routes, toRoute} from 'shared/util/router';
@@ -17,28 +28,31 @@ import {useMutation, useQuery} from '@apollo/react-hooks';
 import {User} from 'shared/util/records';
 import {withCurrentUser} from 'shared/hoc';
 
-const DATA_RETENTION_PERIOD_KEY = 'data-retention-period';
+let RETENTION_OPTIONS = [SEVEN_MONTHS, THIRTEEN_MONTHS];
 
-const SEVEN_MONTHS = '18144000000';
-const THIRTEEN_MONTHS = '33696000000';
+if (FARO_ENV === 'uat') {
+	RETENTION_OPTIONS = [ONE_DAY, TWO_DAYS, SEVEN_MONTHS, THIRTEEN_MONTHS];
+}
 
-const RETENTION_OPTIONS = [SEVEN_MONTHS, THIRTEEN_MONTHS];
+const getRetentionLabel = (milliseconds: number): string => {
+	if (milliseconds < parseInt(ONE_MONTH)) {
+		return sub(Liferay.Language.get('x-days'), [
+			convertMillisecondsToDays(milliseconds)
+		]) as string;
+	}
 
-const convertMillisecondsToMonths = (milliseconds: number): number =>
-	Math.round(milliseconds / 1000 / 60 / 60 / 24 / 30);
-
-const getRetentionLabel = (milliseconds: number): string =>
-	sub(Liferay.Language.get('x-months'), [
+	return sub(Liferay.Language.get('x-months'), [
 		convertMillisecondsToMonths(milliseconds)
 	]) as string;
+};
 
 const fetchDownload = ({fromDate, groupId, toDate, type}) =>
 	fetch(
 		`/o/proxy/download/${type}/logs?projectGroupId=${groupId}&fromDate=${fromDate}&toDate=${toDate}`,
 		{method: 'GET'}
-	).then(({response, status}) => {
-		if (status === 200) {
-			return response;
+	).then(response => {
+		if (response.status === 200) {
+			return response.json();
 		}
 
 		throw new Error('Request Error');
@@ -160,8 +174,6 @@ export const Overview: React.FC<IOverviewProps> = ({
 			title: Liferay.Language.get('export-suppression-list')
 		});
 
-	const authorized = currentUser.isAdmin();
-
 	return (
 		<BasePage
 			className='data-privacy-overview-root'
@@ -277,14 +289,10 @@ export const Overview: React.FC<IOverviewProps> = ({
 											button
 											className='button-root mb-2'
 											displayType='secondary'
-											href={
-												authorized
-													? toRoute(
-															Routes.SETTINGS_DATA_PRIVACY_SUPPRESSED_USERS,
-															{groupId}
-													  )
-													: undefined
-											}
+											href={toRoute(
+												Routes.SETTINGS_DATA_PRIVACY_SUPPRESSED_USERS,
+												{groupId}
+											)}
 										>
 											{Liferay.Language.get('manage')}
 										</ClayLink>

@@ -10,7 +10,7 @@ import React, {useEffect, useState} from 'react';
 import parseFile from '../FileParsers';
 import {
 	CSV_ENCLOSING_CHARACTERS,
-	CSV_FORMAT,
+	FILE_EXTENSION_EVENT,
 	FILE_EXTENSION_INPUT_PARTIAL_NAME,
 	FILE_SCHEMA_EVENT,
 	IMPORT_FILE_FORMATS,
@@ -37,13 +37,6 @@ function updateNameInput(namespace, fileName) {
 function getAcceptedExtensions() {
 	let acceptedExtensions = '';
 	for (const i in IMPORT_FILE_FORMATS) {
-		if (
-			IMPORT_FILE_FORMATS[i] === CSV_FORMAT &&
-			!Liferay.FeatureFlags['LPS-173135']
-		) {
-			continue;
-		}
-
 		acceptedExtensions += ', .' + IMPORT_FILE_FORMATS[i];
 	}
 
@@ -87,6 +80,14 @@ function FileUpload({portletNamespace}) {
 		const onComplete = ({extension, fileContent, schema}) => {
 			updateExtensionInputValue(portletNamespace, extension);
 
+			const internalClassNameKeySelect = document.querySelector(
+				`#${portletNamespace}internalClassNameKey`
+			);
+
+			Liferay.fire(FILE_EXTENSION_EVENT, {
+				entityType: internalClassNameKeySelect?.value,
+				fileExtension,
+			});
 			Liferay.fire(FILE_SCHEMA_EVENT, {
 				fileContent,
 				schema,

@@ -13,19 +13,21 @@ import com.liferay.commerce.currency.util.CommercePriceFormatter;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.model.CommerceOrderType;
 import com.liferay.commerce.model.CommerceShippingMethod;
-import com.liferay.commerce.payment.engine.CommercePaymentEngine;
+import com.liferay.commerce.payment.model.CommercePaymentMethodGroupRel;
+import com.liferay.commerce.payment.service.CommercePaymentMethodGroupRelLocalService;
 import com.liferay.commerce.pricing.constants.CommercePricingConstants;
 import com.liferay.commerce.product.model.CommerceChannel;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.service.CommerceOrderItemService;
 import com.liferay.commerce.service.CommerceOrderService;
-import com.liferay.commerce.service.CommerceOrderTypeService;
+import com.liferay.commerce.service.CommerceOrderTypeLocalService;
 import com.liferay.expando.kernel.model.ExpandoBridge;
 import com.liferay.headless.commerce.delivery.order.dto.v1_0.PlacedOrder;
 import com.liferay.headless.commerce.delivery.order.dto.v1_0.Status;
 import com.liferay.headless.commerce.delivery.order.dto.v1_0.Summary;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.util.BigDecimalUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.language.LanguageResources;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
@@ -64,77 +66,96 @@ public class PlacedOrderDTOConverter
 		CommerceOrder commerceOrder = _commerceOrderService.getCommerceOrder(
 			(Long)dtoConverterContext.getId());
 
-		ExpandoBridge expandoBridge = commerceOrder.getExpandoBridge();
-
 		Locale locale = dtoConverterContext.getLocale();
 
 		ResourceBundle resourceBundle = LanguageResources.getResourceBundle(
 			locale);
 
-		String commerceOrderStatusLabel =
-			CommerceOrderConstants.getOrderStatusLabel(
-				commerceOrder.getOrderStatus());
-
-		String commerceOrderStatusLabelI18n = _language.get(
-			resourceBundle,
-			CommerceOrderConstants.getOrderStatusLabel(
-				commerceOrder.getOrderStatus()));
-
-		String commerceOrderWorkflowStatusLabel =
-			WorkflowConstants.getStatusLabel(commerceOrder.getStatus());
-
-		String commerceOrderWorkflowStatusLabelI18n = _language.get(
-			resourceBundle,
-			WorkflowConstants.getStatusLabel(commerceOrder.getStatus()));
-
-		String commerceOrderPaymentStatusLabel =
-			CommerceOrderPaymentConstants.getOrderPaymentStatusLabel(
-				commerceOrder.getPaymentStatus());
-
-		String commerceOrderPaymentStatusLabelI18n = _language.get(
-			resourceBundle,
-			CommerceOrderPaymentConstants.getOrderPaymentStatusLabel(
-				commerceOrder.getPaymentStatus()));
-
-		PlacedOrder placedOrder = new PlacedOrder() {
+		return new PlacedOrder() {
 			{
-				account = commerceOrder.getCommerceAccountName();
-				accountId = commerceOrder.getCommerceAccountId();
-				author = commerceOrder.getUserName();
-				couponCode = commerceOrder.getCouponCode();
-				createDate = commerceOrder.getCreateDate();
-				customFields = expandoBridge.getAttributes();
-				id = commerceOrder.getCommerceOrderId();
-				lastPriceUpdateDate = commerceOrder.getLastPriceUpdateDate();
-				modifiedDate = commerceOrder.getModifiedDate();
-				orderStatusInfo = _getOrderStatusInfo(
-					commerceOrder.getOrderStatus(), commerceOrderStatusLabel,
-					commerceOrderStatusLabelI18n);
-				orderTypeExternalReferenceCode =
-					_getOrderTypeExternalReferenceCode(
-						commerceOrder.getCommerceOrderTypeId());
-				orderTypeId = commerceOrder.getCommerceOrderTypeId();
-				orderUUID = commerceOrder.getUuid();
-				paymentMethod = commerceOrder.getCommercePaymentMethodKey();
-				paymentStatus = commerceOrder.getPaymentStatus();
-				paymentStatusInfo = _getPaymentStatusInfo(
-					commerceOrder.getPaymentStatus(),
-					commerceOrderPaymentStatusLabel,
-					commerceOrderPaymentStatusLabelI18n);
-				paymentStatusLabel = commerceOrderPaymentStatusLabel;
-				placedOrderBillingAddressId =
-					commerceOrder.getBillingAddressId();
-				placedOrderShippingAddressId =
-					commerceOrder.getShippingAddressId();
-				printedNote = commerceOrder.getPrintedNote();
-				purchaseOrderNumber = commerceOrder.getPurchaseOrderNumber();
-				shippingOption = commerceOrder.getShippingOptionName();
-				status = commerceOrderWorkflowStatusLabel;
-				summary = _getSummary(commerceOrder, locale);
-				workflowStatusInfo = _toStatus(
-					commerceOrder.getStatus(), commerceOrderWorkflowStatusLabel,
-					commerceOrderWorkflowStatusLabelI18n);
+				setAccount(commerceOrder::getCommerceAccountName);
+				setAccountId(commerceOrder::getCommerceAccountId);
+				setAuthor(commerceOrder::getUserName);
+				setCouponCode(commerceOrder::getCouponCode);
+				setCreateDate(commerceOrder::getCreateDate);
+				setCustomFields(
+					() -> {
+						ExpandoBridge expandoBridge =
+							commerceOrder.getExpandoBridge();
 
+						return expandoBridge.getAttributes();
+					});
+				setId(commerceOrder::getCommerceOrderId);
+				setLastPriceUpdateDate(commerceOrder::getLastPriceUpdateDate);
+				setModifiedDate(commerceOrder::getModifiedDate);
+				setOrderStatusInfo(
+					() -> {
+						String commerceOrderStatusLabel =
+							CommerceOrderConstants.getOrderStatusLabel(
+								commerceOrder.getOrderStatus());
+
+						String commerceOrderStatusLabelI18n = _language.get(
+							resourceBundle,
+							CommerceOrderConstants.getOrderStatusLabel(
+								commerceOrder.getOrderStatus()));
+
+						return _getOrderStatusInfo(
+							commerceOrder.getOrderStatus(),
+							commerceOrderStatusLabel,
+							commerceOrderStatusLabelI18n);
+					});
+				setOrderTypeExternalReferenceCode(
+					() -> _getOrderTypeExternalReferenceCode(
+						commerceOrder.getCommerceOrderTypeId()));
+				setOrderTypeId(commerceOrder::getCommerceOrderTypeId);
+				setOrderUUID(commerceOrder::getUuid);
+				setPaymentMethod(commerceOrder::getCommercePaymentMethodKey);
+				setPaymentMethodLabel(
+					() -> {
+						String paymentMethodKey =
+							commerceOrder.getCommercePaymentMethodKey();
+
+						if (Validator.isNotNull(paymentMethodKey)) {
+							CommercePaymentMethodGroupRel
+								commercePaymentMethodGroupRel =
+									_commercePaymentMethodGroupRelLocalService.
+										getCommercePaymentMethodGroupRel(
+											commerceOrder.getGroupId(),
+											paymentMethodKey);
+
+							if (commercePaymentMethodGroupRel != null) {
+								return commercePaymentMethodGroupRel.getName();
+							}
+						}
+
+						return null;
+					});
+				setPaymentStatus(commerceOrder::getPaymentStatus);
+				setPaymentStatusInfo(
+					() -> {
+						String commerceOrderPaymentStatusLabelI18n =
+							_language.get(
+								resourceBundle,
+								CommerceOrderPaymentConstants.
+									getOrderPaymentStatusLabel(
+										commerceOrder.getPaymentStatus()));
+
+						return _getPaymentStatusInfo(
+							commerceOrder.getPaymentStatus(),
+							getPaymentStatusLabel(),
+							commerceOrderPaymentStatusLabelI18n);
+					});
+				setPaymentStatusLabel(
+					() ->
+						CommerceOrderPaymentConstants.
+							getOrderPaymentStatusLabel(
+								commerceOrder.getPaymentStatus()));
+				setPlacedOrderBillingAddressId(
+					commerceOrder::getBillingAddressId);
+				setPlacedOrderShippingAddressId(
+					commerceOrder::getShippingAddressId);
+				setPrintedNote(commerceOrder::getPrintedNote);
+				setPurchaseOrderNumber(commerceOrder::getPurchaseOrderNumber);
 				setShippingMethod(
 					() -> {
 						CommerceShippingMethod commerceShippingMethod =
@@ -146,20 +167,25 @@ public class PlacedOrderDTOConverter
 
 						return commerceShippingMethod.getEngineKey();
 					});
+				setShippingOption(commerceOrder::getShippingOptionName);
+				setStatus(
+					() -> WorkflowConstants.getStatusLabel(
+						commerceOrder.getStatus()));
+				setSummary(() -> _getSummary(commerceOrder, locale));
+				setWorkflowStatusInfo(
+					() -> {
+						String commerceOrderWorkflowStatusLabelI18n =
+							_language.get(
+								resourceBundle,
+								WorkflowConstants.getStatusLabel(
+									commerceOrder.getStatus()));
+
+						return _toStatus(
+							commerceOrder.getStatus(), getStatus(),
+							commerceOrderWorkflowStatusLabelI18n);
+					});
 			}
 		};
-
-		String paymentMethodKey = commerceOrder.getCommercePaymentMethodKey();
-
-		if ((paymentMethodKey != null) && !paymentMethodKey.isEmpty()) {
-			String commerceOrderPaymentMethodName =
-				_commercePaymentEngine.getPaymentMethodName(
-					paymentMethodKey, locale);
-
-			placedOrder.setPaymentMethodLabel(commerceOrderPaymentMethodName);
-		}
-
-		return placedOrder;
 	}
 
 	private String _formatPrice(
@@ -193,9 +219,9 @@ public class PlacedOrderDTOConverter
 
 		return new Status() {
 			{
-				code = orderStatus;
-				label = commerceOrderStatusLabel;
-				label_i18n = commerceOrderStatusLabelI18n;
+				setCode(() -> orderStatus);
+				setLabel(() -> commerceOrderStatusLabel);
+				setLabel_i18n(() -> commerceOrderStatusLabelI18n);
 			}
 		};
 	}
@@ -204,7 +230,7 @@ public class PlacedOrderDTOConverter
 		throws Exception {
 
 		CommerceOrderType commerceOrderType =
-			_commerceOrderTypeService.fetchCommerceOrderType(
+			_commerceOrderTypeLocalService.fetchCommerceOrderType(
 				commerceOrderTypeId);
 
 		if (commerceOrderType == null) {
@@ -220,9 +246,9 @@ public class PlacedOrderDTOConverter
 
 		return new Status() {
 			{
-				code = paymentStatus;
-				label = commerceOrderPaymentStatusLabel;
-				label_i18n = commerceOrderPaymentStatusLabelI18n;
+				setCode(() -> paymentStatus);
+				setLabel(() -> commerceOrderPaymentStatusLabel);
+				setLabel_i18n(() -> commerceOrderPaymentStatusLabelI18n);
 			}
 		};
 	}
@@ -280,27 +306,30 @@ public class PlacedOrderDTOConverter
 
 		Summary summary = new Summary() {
 			{
-				currency = commerceCurrency.getName(locale);
-				itemsQuantity = BigDecimalUtil.stripTrailingZeros(
-					_commerceOrderItemService.getCommerceOrderItemsQuantity(
-						commerceOrder.getCommerceOrderId()));
-				shippingValue =
-					commerceOrderPriceShippingValuePrice.doubleValue();
-				shippingValueFormatted =
-					commerceOrderPriceShippingValueCommerceMoney.format(locale);
-				shippingValueWithTaxAmount =
-					finalOrderPriceShippingValueWithTaxAmountPrice.
-						doubleValue();
-				shippingValueWithTaxAmountFormatted =
-					commerceOrderShippingValueWithTaxAmountCommerceMoney.format(
-						locale);
-				subtotal = finalOrderPriceSubtotalPrice.doubleValue();
-				subtotalFormatted =
-					commerceOrderPriceSubtotalCommerceMoney.format(locale);
-
-				total = finalOrderPriceTotalPrice.doubleValue();
-				totalFormatted = commerceOrderPriceTotalCommerceMoney.format(
-					locale);
+				setCurrency(() -> commerceCurrency.getName(locale));
+				setItemsQuantity(
+					() -> BigDecimalUtil.stripTrailingZeros(
+						_commerceOrderItemService.getCommerceOrderItemsQuantity(
+							commerceOrder.getCommerceOrderId())));
+				setShippingValue(
+					commerceOrderPriceShippingValuePrice::doubleValue);
+				setShippingValueFormatted(
+					() -> commerceOrderPriceShippingValueCommerceMoney.format(
+						locale));
+				setShippingValueWithTaxAmount(
+					finalOrderPriceShippingValueWithTaxAmountPrice::
+						doubleValue);
+				setShippingValueWithTaxAmountFormatted(
+					() ->
+						commerceOrderShippingValueWithTaxAmountCommerceMoney.
+							format(locale));
+				setSubtotal(finalOrderPriceSubtotalPrice::doubleValue);
+				setSubtotalFormatted(
+					() -> commerceOrderPriceSubtotalCommerceMoney.format(
+						locale));
+				setTotal(finalOrderPriceTotalPrice::doubleValue);
+				setTotalFormatted(
+					() -> commerceOrderPriceTotalCommerceMoney.format(locale));
 			}
 		};
 
@@ -494,9 +523,9 @@ public class PlacedOrderDTOConverter
 
 		return new Status() {
 			{
-				code = orderStatus;
-				label = commerceOrderWorkflowStatusLabel;
-				label_i18n = commerceOrderWorkflowStatusLabelI18n;
+				setCode(() -> orderStatus);
+				setLabel(() -> commerceOrderWorkflowStatusLabel);
+				setLabel_i18n(() -> commerceOrderWorkflowStatusLabelI18n);
 			}
 		};
 	}
@@ -511,10 +540,11 @@ public class PlacedOrderDTOConverter
 	private CommerceOrderService _commerceOrderService;
 
 	@Reference
-	private CommerceOrderTypeService _commerceOrderTypeService;
+	private CommerceOrderTypeLocalService _commerceOrderTypeLocalService;
 
 	@Reference
-	private CommercePaymentEngine _commercePaymentEngine;
+	private CommercePaymentMethodGroupRelLocalService
+		_commercePaymentMethodGroupRelLocalService;
 
 	@Reference
 	private CommercePriceFormatter _commercePriceFormatter;

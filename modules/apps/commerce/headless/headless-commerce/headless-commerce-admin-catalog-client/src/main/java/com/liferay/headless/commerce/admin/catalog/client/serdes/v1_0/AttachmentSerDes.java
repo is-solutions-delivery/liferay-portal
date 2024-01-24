@@ -177,6 +177,16 @@ public class AttachmentSerDes {
 			sb.append(attachment.getFileEntryId());
 		}
 
+		if (attachment.getGalleryEnabled() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"galleryEnabled\": ");
+
+			sb.append(attachment.getGalleryEnabled());
+		}
+
 		if (attachment.getId() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -229,6 +239,30 @@ public class AttachmentSerDes {
 			sb.append(_escape(attachment.getSrc()));
 
 			sb.append("\"");
+		}
+
+		if (attachment.getTags() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"tags\": ");
+
+			sb.append("[");
+
+			for (int i = 0; i < attachment.getTags().length; i++) {
+				sb.append("\"");
+
+				sb.append(_escape(attachment.getTags()[i]));
+
+				sb.append("\"");
+
+				if ((i + 1) < attachment.getTags().length) {
+					sb.append(", ");
+				}
+			}
+
+			sb.append("]");
 		}
 
 		if (attachment.getTitle() != null) {
@@ -342,6 +376,15 @@ public class AttachmentSerDes {
 			map.put("fileEntryId", String.valueOf(attachment.getFileEntryId()));
 		}
 
+		if (attachment.getGalleryEnabled() == null) {
+			map.put("galleryEnabled", null);
+		}
+		else {
+			map.put(
+				"galleryEnabled",
+				String.valueOf(attachment.getGalleryEnabled()));
+		}
+
 		if (attachment.getId() == null) {
 			map.put("id", null);
 		}
@@ -375,6 +418,13 @@ public class AttachmentSerDes {
 		}
 		else {
 			map.put("src", String.valueOf(attachment.getSrc()));
+		}
+
+		if (attachment.getTags() == null) {
+			map.put("tags", null);
+		}
+		else {
+			map.put("tags", String.valueOf(attachment.getTags()));
 		}
 
 		if (attachment.getTitle() == null) {
@@ -474,6 +524,11 @@ public class AttachmentSerDes {
 						Long.valueOf((String)jsonParserFieldValue));
 				}
 			}
+			else if (Objects.equals(jsonParserFieldName, "galleryEnabled")) {
+				if (jsonParserFieldValue != null) {
+					attachment.setGalleryEnabled((Boolean)jsonParserFieldValue);
+				}
+			}
 			else if (Objects.equals(jsonParserFieldName, "id")) {
 				if (jsonParserFieldValue != null) {
 					attachment.setId(
@@ -501,6 +556,12 @@ public class AttachmentSerDes {
 			else if (Objects.equals(jsonParserFieldName, "src")) {
 				if (jsonParserFieldValue != null) {
 					attachment.setSrc((String)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "tags")) {
+				if (jsonParserFieldValue != null) {
+					attachment.setTags(
+						toStrings((Object[])jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "title")) {

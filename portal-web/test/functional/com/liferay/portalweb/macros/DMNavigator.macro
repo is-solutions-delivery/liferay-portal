@@ -8,9 +8,9 @@ definition {
 			Check(locator1 = "DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_CHECKBOX");
 		}
 
-		AssertElementPresent.assertVisible(locator1 = "Icon#EDIT_CATEGORIES");
-
-		Click(locator1 = "Icon#EDIT_CATEGORIES");
+		Click(
+			key_text = "Edit Categories",
+			locator1 = "Button#ANY");
 	}
 
 	@summary = "Default summary"
@@ -71,6 +71,20 @@ definition {
 		AssertClick(
 			locator1 = "DocumentsAndMedia#DESCRIPTIVE_LIST_DOCUMENT_TITLE",
 			value1 = ${dmCheckedOutDocumentTitle});
+	}
+
+	@summary = "Default summary"
+	macro gotoCreateAIImage(portletName = null) {
+		WaitForPageLoad();
+
+		if (${portletName} == "Documents and Media") {
+			Portlet.clickPortletPlusIconPG(portletName = "Documents and Media");
+		}
+		else {
+			Click(locator1 = "Button#PLUS");
+		}
+
+		MenuItem.click(menuItem = "Create AI Image");
 	}
 
 	@summary = "Default summary"
@@ -223,7 +237,9 @@ definition {
 	@summary = "Default summary"
 	macro gotoItemViaManagementBar(item = null, menuItem = null) {
 		if (${item} == "Edit Tags") {
-			Click(locator1 = "Icon#EDIT_TAGS");
+			Click(
+				key_text = "Edit Tags",
+				locator1 = "Button#ANY");
 		}
 
 		if (${item} == "dropdownMenu") {
@@ -457,7 +473,7 @@ definition {
 		else if (${portlet} == "File Order") {
 			Open(value1 = "${baseURL}/group/control_panel/manage?p_p_id=com_liferay_configuration_admin_web_portlet_InstanceSettingsPortlet&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_com_liferay_configuration_admin_web_portlet_InstanceSettingsPortlet_factoryPid=com.liferay.document.library.internal.configuration.DLFileOrderConfiguration&_com_liferay_configuration_admin_web_portlet_InstanceSettingsPortlet_mvcRenderCommandName=%2Fconfiguration_admin%2Fedit_configuration&_com_liferay_configuration_admin_web_portlet_InstanceSettingsPortlet_pid=com.liferay.document.library.internal.configuration.DLFileOrderConfiguration");
 		}
-		else if (${portlet} == "PDF Preview") {
+		else if (${portlet} == "File Preview Limits") {
 			Open(value1 = "${baseURL}/group/control_panel/manage?p_p_id=com_liferay_configuration_admin_web_portlet_InstanceSettingsPortlet&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_com_liferay_configuration_admin_web_portlet_InstanceSettingsPortlet_mvcRenderCommandName=%2Fconfiguration_admin%2Fview_configuration_screen&_com_liferay_configuration_admin_web_portlet_InstanceSettingsPortlet_configurationScreenKey=dl-file-entry-configuration-company");
 		}
 		else {
@@ -514,7 +530,7 @@ definition {
 		else if (${portlet} == "File Order") {
 			Open(value1 = "${baseURL}/group/control_panel/manage?p_p_id=com_liferay_configuration_admin_web_portlet_SystemSettingsPortlet&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_com_liferay_configuration_admin_web_portlet_SystemSettingsPortlet_factoryPid=com.liferay.document.library.internal.configuration.DLFileOrderConfiguration&_com_liferay_configuration_admin_web_portlet_SystemSettingsPortlet_mvcRenderCommandName=%2Fconfiguration_admin%2Fedit_configuration&_com_liferay_configuration_admin_web_portlet_SystemSettingsPortlet_pid=com.liferay.document.library.internal.configuration.DLFileOrderConfiguration");
 		}
-		else if (${portlet} == "PDF Preview") {
+		else if (${portlet} == "File Preview Limits") {
 			Open(value1 = "${baseURL}/group/control_panel/manage?p_p_id=com_liferay_configuration_admin_web_portlet_SystemSettingsPortlet&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_com_liferay_configuration_admin_web_portlet_SystemSettingsPortlet_mvcRenderCommandName=%2Fconfiguration_admin%2Fview_configuration_screen&_com_liferay_configuration_admin_web_portlet_SystemSettingsPortlet_configurationScreenKey=dl-file-entry-configuration-system");
 		}
 		else {
@@ -566,6 +582,18 @@ definition {
 		}
 
 		WaitForPageLoad();
+	}
+
+	@summary = "Default summary"
+	macro openToConfigureOpenAI(configurationScope = null, siteURLKey = null) {
+		var baseURL = JSONCompany.getPortalURL();
+
+		if (${configurationScope} == "Site Settings") {
+			Open(value1 = "${baseURL}/group/${siteURLKey}/~/control_panel/manage/-/site/settings?_com_liferay_site_admin_web_portlet_SiteSettingsPortlet_mvcRenderCommandName=%2Fconfiguration_admin%2Fview_configuration_screen&_com_liferay_site_admin_web_portlet_SiteSettingsPortlet_configurationScreenKey=ai-creator-openai-group-configuration");
+		}
+		else {
+			Open(value1 = "${baseURL}/group/control_panel/manage?p_p_id=com_liferay_configuration_admin_web_portlet_InstanceSettingsPortlet&_com_liferay_configuration_admin_web_portlet_InstanceSettingsPortlet_mvcRenderCommandName=%2Fconfiguration_admin%2Fview_configuration_screen&_com_liferay_configuration_admin_web_portlet_InstanceSettingsPortlet_configurationScreenKey=ai-creator-openai-company-configuration");
+		}
 	}
 
 	@summary = "Default summary"

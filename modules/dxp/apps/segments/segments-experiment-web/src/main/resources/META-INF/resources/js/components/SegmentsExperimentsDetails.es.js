@@ -16,6 +16,7 @@ function SegmentsExperimentsDetails({segmentsExperiment}) {
 		goal,
 		segmentsEntryName,
 		status,
+		type,
 	} = segmentsExperiment;
 
 	return (
@@ -28,7 +29,7 @@ function SegmentsExperimentsDetails({segmentsExperiment}) {
 				{description && (
 					<div className="c-my-2">
 						<dt className="d-inline-block">
-							{Liferay.Language.get('description') + ':' + ' '}
+							{`${Liferay.Language.get('description')}:`}
 						</dt>
 
 						<dd className="d-inline inline-item-after text-secondary">
@@ -39,7 +40,7 @@ function SegmentsExperimentsDetails({segmentsExperiment}) {
 
 				<div className="c-my-2">
 					<dt className="d-inline-block">
-						{Liferay.Language.get('segment') + ':' + ' '}
+						{`${Liferay.Language.get('segment')}:`}
 					</dt>
 
 					<dd className="d-inline inline-item-after text-secondary">
@@ -49,7 +50,7 @@ function SegmentsExperimentsDetails({segmentsExperiment}) {
 
 				<div className="c-my-2">
 					<dt className="d-inline-block">
-						{Liferay.Language.get('goal') + ':' + ' '}
+						{`${Liferay.Language.get('goal')}:`}
 					</dt>
 
 					<dd className="d-inline inline-item-after text-secondary">
@@ -57,19 +58,43 @@ function SegmentsExperimentsDetails({segmentsExperiment}) {
 					</dd>
 				</div>
 
-				{status.value !== STATUS_DRAFT && (
+				{status.value !== STATUS_DRAFT && type.value === 'AB' && (
 					<div className="c-my-2">
 						<dt className="d-inline-block">
-							{Liferay.Language.get('confidence-level') +
-								':' +
-								' '}
+							{`${Liferay.Language.get('confidence-level')}:`}
 						</dt>
 
 						<dd className="d-inline inline-item-after text-secondary">
 							{indexToPercentageString(confidenceLevel)}
 						</dd>
+
+						{Liferay.FeatureFlags['LRAC-15017'] && (
+							<div className="c-my-2">
+								<dt className="d-inline-block">
+									{`${Liferay.Language.get('test-type')}:`}
+								</dt>
+
+								<dd className="d-inline inline-item-after text-secondary">
+									{Liferay.Language.get('standard')}
+								</dd>
+							</div>
+						)}
 					</div>
 				)}
+
+				{Liferay.FeatureFlags['LRAC-15017'] &&
+					status.value !== STATUS_DRAFT &&
+					type.value === 'MAB' && (
+						<div className="c-my-2">
+							<dt className="d-inline-block">
+								{`${Liferay.Language.get('test-type')}:`}
+							</dt>
+
+							<dd className="d-inline inline-item-after text-secondary">
+								{Liferay.Language.get('dynamic')}
+							</dd>
+						</div>
+					)}
 			</dl>
 		</>
 	);

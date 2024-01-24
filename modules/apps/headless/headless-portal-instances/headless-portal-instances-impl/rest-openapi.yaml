@@ -29,8 +29,7 @@ components:
                     readOnly: true
                     type: boolean
                 admin:
-                    allOf:
-                        - $ref: "#/components/schemas/Admin"
+                    $ref: "#/components/schemas/Admin"
                     # @review
                     description:
                         The portal instance's administrator. This field is optional and is only used in the portal
@@ -58,7 +57,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.portal.instances.client', and version '1.0.16'."
+        'com.liferay.headless.portal.instances.client', and version '1.0.17'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html

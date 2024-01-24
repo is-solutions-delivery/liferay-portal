@@ -30,6 +30,7 @@ import com.liferay.commerce.product.test.util.CPTestUtil;
 import com.liferay.commerce.product.type.virtual.constants.VirtualCPTypeConstants;
 import com.liferay.commerce.product.type.virtual.model.CPDefinitionVirtualSetting;
 import com.liferay.commerce.product.type.virtual.order.model.CommerceVirtualOrderItem;
+import com.liferay.commerce.product.type.virtual.order.model.CommerceVirtualOrderItemFileEntry;
 import com.liferay.commerce.product.type.virtual.order.service.CommerceVirtualOrderItemLocalService;
 import com.liferay.commerce.product.type.virtual.order.util.CommerceVirtualOrderItemChecker;
 import com.liferay.commerce.product.type.virtual.service.CPDefinitionVirtualSettingLocalService;
@@ -175,7 +176,7 @@ public class CommerceMediaResolverTest {
 					fileEntry.getFileEntryId(), null,
 					CommerceOrderConstants.ORDER_STATUS_PENDING, 0,
 					RandomTestUtil.randomInt(), true, 0, "https://liferay.com",
-					false, null, 0, _serviceContext);
+					false, null, 0, false, _serviceContext);
 
 		CommerceTestUtil.updateBackOrderCPDefinitionInventory(cpDefinition);
 
@@ -202,9 +203,18 @@ public class CommerceMediaResolverTest {
 				fetchCommerceVirtualOrderItemByCommerceOrderItemId(
 					commerceOrderItem.getCommerceOrderItemId());
 
+		List<CommerceVirtualOrderItemFileEntry>
+			commerceVirtualOrderItemFileEntries =
+				commerceVirtualOrderItem.
+					getCommerceVirtualOrderItemFileEntries();
+
+		CommerceVirtualOrderItemFileEntry commerceVirtualOrderItemFileEntry =
+			commerceVirtualOrderItemFileEntries.get(0);
+
 		String downloadVirtualOrderItemURL =
 			_commerceMediaResolver.getDownloadVirtualOrderItemURL(
-				commerceVirtualOrderItem.getCommerceVirtualOrderItemId());
+				commerceVirtualOrderItem.getCommerceVirtualOrderItemId(),
+				commerceVirtualOrderItemFileEntry.getFileEntryId());
 
 		String expectedVirtualOrderItemURL = StringBundler.concat(
 			_portal.getPathModule(), StringPool.SLASH,
@@ -284,7 +294,7 @@ public class CommerceMediaResolverTest {
 				false, null, displayDateMonth, displayDateDay, displayDateYear,
 				displayDateHour, displayDateMinute, expirationDateMonth,
 				expirationDateDay, expirationDateYear, expirationDateHour,
-				expirationDateMinute, true,
+				expirationDateMinute, true, true,
 				RandomTestUtil.randomLocaleStringMap(), null, 0D,
 				CPAttachmentFileEntryConstants.TYPE_IMAGE, _serviceContext);
 

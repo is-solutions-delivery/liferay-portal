@@ -26,8 +26,6 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -683,6 +681,14 @@ public abstract class BasePlacedOrderItemResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("virtualItems", additionalAssertFieldName)) {
+				if (placedOrderItem.getVirtualItems() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			throw new IllegalArgumentException(
 				"Invalid additional assert field name " +
 					additionalAssertFieldName);
@@ -1042,6 +1048,17 @@ public abstract class BasePlacedOrderItemResourceTestCase {
 				if (!Objects.deepEquals(
 						placedOrderItem1.getVirtualItemURLs(),
 						placedOrderItem2.getVirtualItemURLs())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("virtualItems", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						placedOrderItem1.getVirtualItems(),
+						placedOrderItem2.getVirtualItems())) {
 
 					return false;
 				}
@@ -1550,6 +1567,11 @@ public abstract class BasePlacedOrderItemResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("virtualItems")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		throw new IllegalArgumentException(
 			"Invalid entity field " + entityFieldName);
 	}
@@ -1629,9 +1651,9 @@ public abstract class BasePlacedOrderItemResourceTestCase {
 	}
 
 	protected PlacedOrderItemResource placedOrderItemResource;
-	protected Group irrelevantGroup;
-	protected Company testCompany;
-	protected Group testGroup;
+	protected com.liferay.portal.kernel.model.Group irrelevantGroup;
+	protected com.liferay.portal.kernel.model.Company testCompany;
+	protected com.liferay.portal.kernel.model.Group testGroup;
 
 	protected static class BeanTestUtil {
 

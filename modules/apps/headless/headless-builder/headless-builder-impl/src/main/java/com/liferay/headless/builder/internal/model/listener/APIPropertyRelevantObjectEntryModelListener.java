@@ -6,6 +6,7 @@
 package com.liferay.headless.builder.internal.model.listener;
 
 import com.liferay.headless.builder.internal.helper.ObjectEntryHelper;
+import com.liferay.headless.builder.internal.helper.ValidationHelper;
 import com.liferay.object.exception.ObjectEntryValuesException;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
@@ -16,7 +17,6 @@ import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.portal.kernel.exception.ModelListenerException;
 import com.liferay.portal.kernel.model.BaseModelListener;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
@@ -102,11 +102,11 @@ public class APIPropertyRelevantObjectEntryModelListener
 		try {
 			Map<String, Serializable> values = objectEntry.getValues();
 
-			long apiSchemaId = GetterUtil.getLong(
-				values.get("r_apiSchemaToAPIProperties_c_apiSchemaId"));
+			long apiSchemaId = (long)values.get(
+				"r_apiSchemaToAPIProperties_c_apiSchemaId");
 
-			if (!_objectEntryHelper.isValidObjectEntry(
-					apiSchemaId, "L_API_SCHEMA")) {
+			if (!_validationHelper.isValidObjectEntry(
+					"L_API_SCHEMA", apiSchemaId)) {
 
 				throw new ObjectEntryValuesException.InvalidObjectField(
 					null, "An API property must be related to an API schema",
@@ -141,5 +141,8 @@ public class APIPropertyRelevantObjectEntryModelListener
 
 	@Reference
 	private ObjectFieldLocalService _objectFieldLocalService;
+
+	@Reference
+	private ValidationHelper _validationHelper;
 
 }

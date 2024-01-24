@@ -5,13 +5,19 @@
 
 package com.liferay.commerce.term.internal.search;
 
+import com.liferay.commerce.term.internal.search.spi.model.index.contributor.CommerceTermEntryModelIndexerWriterContributor;
+import com.liferay.commerce.term.internal.search.spi.model.result.contributor.CommerceTermEntryModelSummaryContributor;
+import com.liferay.commerce.term.internal.search.spi.model.result.contributor.CommerceTermEntryModelVisibilityContributor;
 import com.liferay.commerce.term.model.CommerceTermEntry;
+import com.liferay.commerce.term.service.CommerceTermEntryLocalService;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchConfigurator;
 import com.liferay.portal.search.spi.model.result.contributor.ModelSummaryContributor;
 import com.liferay.portal.search.spi.model.result.contributor.ModelVisibilityContributor;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -52,20 +58,30 @@ public class CommerceTermEntryModelSearchConfigurator
 		return _modelVisibilityContributor;
 	}
 
-	@Reference(
-		target = "(indexer.class.name=com.liferay.commerce.term.model.CommerceTermEntry)"
-	)
+	@Activate
+	protected void activate() {
+		_modelIndexWriterContributor =
+			new CommerceTermEntryModelIndexerWriterContributor(
+				_commerceTermEntryLocalService,
+				_dynamicQueryBatchIndexingActionableFactory);
+
+		_modelSummaryContributor =
+			new CommerceTermEntryModelSummaryContributor();
+		_modelVisibilityContributor =
+			new CommerceTermEntryModelVisibilityContributor(
+				_commerceTermEntryLocalService);
+	}
+
+	@Reference
+	private CommerceTermEntryLocalService _commerceTermEntryLocalService;
+
+	@Reference
+	private DynamicQueryBatchIndexingActionableFactory
+		_dynamicQueryBatchIndexingActionableFactory;
+
 	private ModelIndexerWriterContributor<CommerceTermEntry>
 		_modelIndexWriterContributor;
-
-	@Reference(
-		target = "(indexer.class.name=com.liferay.commerce.term.model.CommerceTermEntry)"
-	)
 	private ModelSummaryContributor _modelSummaryContributor;
-
-	@Reference(
-		target = "(indexer.class.name=com.liferay.commerce.term.model.CommerceTermEntry)"
-	)
 	private ModelVisibilityContributor _modelVisibilityContributor;
 
 }

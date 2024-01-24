@@ -85,7 +85,7 @@ public class UserTestUtil {
 		return groupUser;
 	}
 
-	public static User addOmniAdminUser() throws Exception {
+	public static User addOmniadminUser() throws Exception {
 		Company company = CompanyLocalServiceUtil.getCompanyByWebId(
 			PropsUtil.get(PropsKeys.COMPANY_DEFAULT_WEB_ID));
 

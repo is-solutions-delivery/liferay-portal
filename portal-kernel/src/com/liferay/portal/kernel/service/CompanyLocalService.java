@@ -95,6 +95,10 @@ public interface CompanyLocalService
 			String defaultAdminLastName)
 		throws PortalException;
 
+	public Company addDBPartitionCompany(
+			long companyId, String name, String virtualHostName, String webId)
+		throws PortalException;
+
 	/**
 	 * Returns the company with the web domain.
 	 *
@@ -243,6 +247,9 @@ public interface CompanyLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public long dynamicQueryCount(
 		DynamicQuery dynamicQuery, Projection projection);
+
+	public Company extractDBPartitionCompany(long companyId)
+		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Company fetchCompany(long companyId);

@@ -51,27 +51,13 @@ public class CountryResourceDTOConverter
 
 		return new Country() {
 			{
-				a2 = serviceBuilderCountry.getA2();
-				a3 = serviceBuilderCountry.getA3();
-				active = serviceBuilderCountry.getActive();
-				billingAllowed = serviceBuilderCountry.getBillingAllowed();
-				groupFilterEnabled =
-					serviceBuilderCountry.getGroupFilterEnabled();
-				id = serviceBuilderCountry.getCountryId();
-				name = serviceBuilderCountry.getName();
-				number = Integer.valueOf(serviceBuilderCountry.getNumber());
-				position = serviceBuilderCountry.getPosition();
-				regions = TransformUtil.transformToArray(
-					_regionService.getRegions(
-						serviceBuilderCountry.getCountryId()),
-					serviceBuilderRegion -> _regionResourceDTOConverter.toDTO(
-						serviceBuilderRegion),
-					Region.class);
-				shippingAllowed = serviceBuilderCountry.getShippingAllowed();
-				subjectToVAT = serviceBuilderCountry.getSubjectToVAT();
-				title_i18n = serviceBuilderCountry.getLanguageIdToTitleMap();
-				zipRequired = serviceBuilderCountry.getZipRequired();
-
+				setA2(serviceBuilderCountry::getA2);
+				setA3(serviceBuilderCountry::getA3);
+				setActive(serviceBuilderCountry::isActive);
+				setBillingAllowed(serviceBuilderCountry::isBillingAllowed);
+				setGroupFilterEnabled(
+					serviceBuilderCountry::isGroupFilterEnabled);
+				setId(serviceBuilderCountry::getCountryId);
 				setIdd(
 					() -> {
 						if (Validator.isNull(serviceBuilderCountry.getIdd())) {
@@ -80,6 +66,22 @@ public class CountryResourceDTOConverter
 
 						return Integer.valueOf(serviceBuilderCountry.getIdd());
 					});
+				setName(serviceBuilderCountry::getName);
+				setNumber(
+					() -> Integer.valueOf(serviceBuilderCountry.getNumber()));
+				setPosition(serviceBuilderCountry::getPosition);
+				setRegions(
+					() -> TransformUtil.transformToArray(
+						_regionService.getRegions(
+							serviceBuilderCountry.getCountryId()),
+						serviceBuilderRegion ->
+							_regionResourceDTOConverter.toDTO(
+								serviceBuilderRegion),
+						Region.class));
+				setShippingAllowed(serviceBuilderCountry::isShippingAllowed);
+				setSubjectToVAT(serviceBuilderCountry::isSubjectToVAT);
+				setTitle_i18n(serviceBuilderCountry::getLanguageIdToTitleMap);
+				setZipRequired(serviceBuilderCountry::isZipRequired);
 			}
 		};
 	}

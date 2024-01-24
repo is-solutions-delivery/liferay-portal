@@ -51,9 +51,9 @@ public class BlogsStatsUserLocalServiceTest {
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
 
-		_user1 = UserTestUtil.addOmniAdminUser();
-		_user2 = UserTestUtil.addOmniAdminUser();
-		_user3 = UserTestUtil.addOmniAdminUser();
+		_user1 = UserTestUtil.addOmniadminUser();
+		_user2 = UserTestUtil.addOmniadminUser();
+		_user3 = UserTestUtil.addOmniadminUser();
 	}
 
 	@Test

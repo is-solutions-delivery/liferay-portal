@@ -9,19 +9,6 @@ import membersIcon from '../../assets/icons/person_fill_icon.svg';
 import {DashboardListItems} from '../../components/DashboardNavigation/DashboardNavigation';
 import {AppProps} from '../../components/DashboardTable/DashboardTable';
 
-export const appList: AppProps[] = [];
-
-export const initialAccountState: Account[] = [
-	{
-		description: '',
-		emailAddress: '',
-		externalReferenceCode: '',
-		id: 0,
-		name: '',
-		type: '',
-	},
-];
-
 export const initialAppState: AppProps = {
 	attachments: [
 		{
@@ -33,6 +20,14 @@ export const initialAppState: AppProps = {
 	],
 	catalogId: 0,
 	externalReferenceCode: '',
+	images: [
+		{
+			externalReferenceCode: '',
+			id: 0,
+			src: '',
+			title: {},
+		},
+	],
 	lastUpdatedBy: '',
 	name: '',
 	productId: 0,
@@ -106,7 +101,7 @@ export const initialDashboardNavigationItems: DashboardListItems[] = [
 		itemIcon: appsIcon,
 		itemName: 'myApps',
 		itemTitle: 'My Apps',
-		items: appList,
+		items: [],
 		path: '/',
 	},
 	{

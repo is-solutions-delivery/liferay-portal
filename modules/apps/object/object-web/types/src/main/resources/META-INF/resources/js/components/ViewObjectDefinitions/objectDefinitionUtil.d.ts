@@ -4,42 +4,29 @@
  */
 
 import {SetStateAction} from 'react';
-import {DropDownItems} from '../ModelBuilder/types';
-import {DeletedObjectDefinition} from './ViewObjectDefinitions';
+import {DropDownItems, TAction} from '../ModelBuilder/types';
+import {ModalImportProperties} from './ViewObjectDefinitions';
 declare type DeleteObjectDefinitionProps = {
 	baseResourceURL: string;
-	handleShowDeleteObjectDefinitionModal: () => void;
+	handleDeleteObjectDefinition?: (value: DeletedObjectDefinition) => void;
+	handleShowDeleteObjectDefinitionModal?: () => void;
 	objectDefinitionId: number;
 	objectDefinitionName: string;
-	setDeletedObjectDefinition: (value: DeletedObjectDefinition) => void;
-	status: string;
+	onAfterDeleteObjectDefinition?: () => void;
 };
 declare type ObjectDefinitionNodeActionsProps = {
 	baseResourceURL: string;
-	handleShowDeleteObjectDefinitionModal: () => void;
-	handleShowEditObjectDefinitionExternalReferenceCodeModal: () => void;
-	handleShowRedirectObjectDefinitionModal: () => void;
+	dispatch: React.Dispatch<TAction>;
 	hasObjectDefinitionDeleteResourcePermission: boolean;
 	hasObjectDefinitionManagePermissionsResourcePermission: boolean;
 	objectDefinitionId: number;
 	objectDefinitionName: string;
 	objectDefinitionPermissionsURL: string;
-	setDeletedObjectDefinition: (value: DeletedObjectDefinition) => void;
 	status: {
 		code: number;
 		label: string;
 		label_i18n: string;
 	};
-};
-declare type ObjectFolderAction = {
-	href: string;
-	method: string;
-};
-declare type ObjectFolderActions = {
-	delete?: ObjectFolderAction;
-	get?: ObjectFolderAction;
-	permissions?: ObjectFolderAction;
-	update?: ObjectFolderAction;
 };
 export declare function deleteObjectFolder(
 	id: number,
@@ -51,39 +38,67 @@ export declare function deleteObjectDefinitionToast(
 ): Promise<void>;
 export declare function deleteObjectDefinition({
 	baseResourceURL,
+	handleDeleteObjectDefinition,
 	handleShowDeleteObjectDefinitionModal,
 	objectDefinitionId,
 	objectDefinitionName,
-	setDeletedObjectDefinition,
-	status,
-}: DeleteObjectDefinitionProps): Promise<void>;
-export declare function deleteRelationship(id: number): Promise<void>;
+	onAfterDeleteObjectDefinition,
+}: DeleteObjectDefinitionProps): Promise<
+	| {
+			hasObjectRelationship: boolean;
+			id: number;
+			name: string;
+			objectEntriesCount: number;
+	  }
+	| undefined
+>;
+export declare function deleteRelationship(
+	id: number,
+	reloadAfterDeletion?: boolean
+): Promise<void>;
+export declare function getDbTableName({
+	baseResourceURL,
+	objectDefinitionId,
+}: {
+	baseResourceURL: string;
+	objectDefinitionId: number;
+}): Promise<string>;
 export declare function getObjectDefinitionNodeActions({
 	baseResourceURL,
-	handleShowDeleteObjectDefinitionModal,
-	handleShowEditObjectDefinitionExternalReferenceCodeModal,
-	handleShowRedirectObjectDefinitionModal,
+	dispatch,
 	hasObjectDefinitionDeleteResourcePermission,
 	hasObjectDefinitionManagePermissionsResourcePermission,
 	objectDefinitionId,
 	objectDefinitionName,
 	objectDefinitionPermissionsURL,
-	setDeletedObjectDefinition,
-	status,
 }: ObjectDefinitionNodeActionsProps): DropDownItems[];
-export declare function getObjectFolderActions(
-	id: number,
-	objectFolderPermissionsURL: string,
-	setShowModal: (value: SetStateAction<ViewObjectDefinitionsModals>) => void,
-	actions?: ObjectFolderActions
-): (
-	| {
-			type: string;
-			label?: undefined;
-			onClick?: undefined;
-			symbolLeft?: undefined;
-			value?: undefined;
-	  }
+interface GetObjectFolderActionsProps {
+	actions?: {
+		objectDefinitionActions: Actions;
+		objectFolderActions: Actions;
+	};
+	baseResourceURL: string;
+	importObjectDefinitionURL: string;
+	objectFolderExternalReferenceCode: string;
+	objectFolderId: number;
+	objectFolderPermissionsURL: string;
+	portletNamespace: string;
+	setModalImportProperties: (
+		value: SetStateAction<ModalImportProperties>
+	) => void;
+	setShowModal: (value: SetStateAction<ViewObjectDefinitionsModals>) => void;
+}
+export declare function getObjectFolderActions({
+	actions,
+	baseResourceURL,
+	importObjectDefinitionURL,
+	objectFolderExternalReferenceCode,
+	objectFolderId,
+	objectFolderPermissionsURL,
+	portletNamespace,
+	setModalImportProperties,
+	setShowModal,
+}: GetObjectFolderActionsProps): (
 	| {
 			label: string;
 			onClick: () => void;
@@ -91,12 +106,20 @@ export declare function getObjectFolderActions(
 			value: string;
 			type?: undefined;
 	  }
+	| {
+			type: string;
+			label?: undefined;
+			onClick?: undefined;
+			symbolLeft?: undefined;
+			value?: undefined;
+	  }
 )[];
 export declare function getUpdatedModelBuilderStructurePayload(
+	baseResourceURL: string,
 	currentObjectFolderName: string
 ): Promise<{
 	objectFolders: ObjectFolder[];
-	selectedObjectFolder: ObjectFolder;
+	selectedObjectFolderName: string;
 }>;
 export declare function normalizeName(str: string): string;
 export {};

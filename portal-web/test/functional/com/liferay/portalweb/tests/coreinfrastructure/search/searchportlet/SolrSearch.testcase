@@ -114,7 +114,7 @@ definition {
 	@description = "This is a use case for LPS-95670."
 	@priority = 4
 	test AssertSuggestionsCannotOfferInvalidWordsAsSuggestion {
-		property custom.properties = "index.search.spell.checker.dictionary[de_DE]=spellchecker/dictionary_de_DE.txt${line.separator}index.search.spell.checker.supported.locales=en_US,es_ES,de_DE${line.separator}locales=de_DE,en_US${line.separator}locales.enabled=de_DE,en_US";
+		property custom.properties = "locales.enabled=de_DE,en_US${line.separator}locales=de_DE,en_US${line.separator}index.search.spell.checker.dictionary[de_DE]=spellchecker/dictionary_de_DE.txt${line.separator}index.search.spell.checker.supported.locales=en_US,es_ES,de_DE";
 		property index.search.spell.checker.enabled = "true";
 		property search.environment.suite.exclude = "true";
 		property test.liferay.virtual.instance = "false";
@@ -242,9 +242,13 @@ definition {
 
 		AssertVisible(locator1 = "WCEditWebContent#SIDEBAR");
 
+		SelectFrame.selectFrameNoLoading(
+			key_fieldLabel = "Content",
+			locator1 = "CKEditor#BODY_FIELD_IFRAME_WEB_CONTENT_ARTICLE");
+
 		AssertTextEquals.assertPartialText(
-			locator1 = "Portlet#HEADER",
-			value1 = "WC Title");
+			locator1 = "CKEditor#BODY",
+			value1 = "WC Content");
 	}
 
 	@priority = 4
@@ -1026,10 +1030,7 @@ definition {
 
 		Site.manageMembershipOptions(allowManualMembershipManagement = "true");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.editUserSiteCP(
 			siteName = ${siteName},
@@ -1104,10 +1105,7 @@ definition {
 
 		Site.manageMembershipOptions(allowManualMembershipManagement = "true");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.editUserSiteCP(
 			siteName = ${siteName},

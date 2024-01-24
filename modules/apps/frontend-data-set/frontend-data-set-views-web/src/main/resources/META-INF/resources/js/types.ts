@@ -14,14 +14,25 @@ export enum EFilterType {
 export enum EFieldFormat {
 	DATE = 'date',
 	DATE_TIME = 'date-time',
+	INT64 = 'int64',
+}
+
+export enum EFieldType {
+	ARRAY = 'array',
+	INTEGER = 'integer',
+	OBJECT = 'object',
 	STRING = 'string',
 }
 
 export interface IField {
-	format: EFieldFormat;
-	label: string;
+	children?: Array<IField>;
+	format?: EFieldFormat;
+	id?: string;
+	label?: string;
 	name: string;
+	selected?: boolean;
 	type: string;
+	visible?: boolean;
 }
 
 export interface IFilter {

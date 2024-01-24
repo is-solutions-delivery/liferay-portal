@@ -7,6 +7,7 @@ package com.liferay.search.experiences.rest.dto.v1_0;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -27,6 +28,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -55,122 +57,183 @@ public class Parameter implements Serializable {
 	@Schema
 	@Valid
 	public Object getDefaultValue() {
+		if (_defaultValueSupplier != null) {
+			defaultValue = _defaultValueSupplier.get();
+
+			_defaultValueSupplier = null;
+		}
+
 		return defaultValue;
 	}
 
 	public void setDefaultValue(Object defaultValue) {
 		this.defaultValue = defaultValue;
+
+		_defaultValueSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setDefaultValue(
 		UnsafeSupplier<Object, Exception> defaultValueUnsafeSupplier) {
 
-		try {
-			defaultValue = defaultValueUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_defaultValueSupplier = () -> {
+			try {
+				return defaultValueUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Object defaultValue;
 
+	@JsonIgnore
+	private Supplier<Object> _defaultValueSupplier;
+
 	@Schema
 	public String getFormat() {
+		if (_formatSupplier != null) {
+			format = _formatSupplier.get();
+
+			_formatSupplier = null;
+		}
+
 		return format;
 	}
 
 	public void setFormat(String format) {
 		this.format = format;
+
+		_formatSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setFormat(
 		UnsafeSupplier<String, Exception> formatUnsafeSupplier) {
 
-		try {
-			format = formatUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_formatSupplier = () -> {
+			try {
+				return formatUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String format;
 
+	@JsonIgnore
+	private Supplier<String> _formatSupplier;
+
 	@Schema
 	@Valid
 	public Object getMax() {
+		if (_maxSupplier != null) {
+			max = _maxSupplier.get();
+
+			_maxSupplier = null;
+		}
+
 		return max;
 	}
 
 	public void setMax(Object max) {
 		this.max = max;
+
+		_maxSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setMax(UnsafeSupplier<Object, Exception> maxUnsafeSupplier) {
-		try {
-			max = maxUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_maxSupplier = () -> {
+			try {
+				return maxUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Object max;
 
+	@JsonIgnore
+	private Supplier<Object> _maxSupplier;
+
 	@Schema
 	@Valid
 	public Object getMin() {
+		if (_minSupplier != null) {
+			min = _minSupplier.get();
+
+			_minSupplier = null;
+		}
+
 		return min;
 	}
 
 	public void setMin(Object min) {
 		this.min = min;
+
+		_minSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setMin(UnsafeSupplier<Object, Exception> minUnsafeSupplier) {
-		try {
-			min = minUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_minSupplier = () -> {
+			try {
+				return minUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Object min;
 
+	@JsonIgnore
+	private Supplier<Object> _minSupplier;
+
+	@JsonGetter("type")
 	@Schema
 	@Valid
 	public Type getType() {
+		if (_typeSupplier != null) {
+			type = _typeSupplier.get();
+
+			_typeSupplier = null;
+		}
+
 		return type;
 	}
 
 	@JsonIgnore
 	public String getTypeAsString() {
+		Type type = getType();
+
 		if (type == null) {
 			return null;
 		}
@@ -180,24 +243,31 @@ public class Parameter implements Serializable {
 
 	public void setType(Type type) {
 		this.type = type;
+
+		_typeSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setType(UnsafeSupplier<Type, Exception> typeUnsafeSupplier) {
-		try {
-			type = typeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_typeSupplier = () -> {
+			try {
+				return typeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Type type;
+
+	@JsonIgnore
+	private Supplier<Type> _typeSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -226,6 +296,8 @@ public class Parameter implements Serializable {
 
 		sb.append("{");
 
+		Object defaultValue = getDefaultValue();
+
 		if (defaultValue != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -247,6 +319,8 @@ public class Parameter implements Serializable {
 			}
 		}
 
+		String format = getFormat();
+
 		if (format != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -260,6 +334,8 @@ public class Parameter implements Serializable {
 
 			sb.append("\"");
 		}
+
+		Object max = getMax();
 
 		if (max != null) {
 			if (sb.length() > 1) {
@@ -281,6 +357,8 @@ public class Parameter implements Serializable {
 			}
 		}
 
+		Object min = getMin();
+
 		if (min != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -300,6 +378,8 @@ public class Parameter implements Serializable {
 				sb.append(min);
 			}
 		}
+
+		Type type = getType();
 
 		if (type != null) {
 			if (sb.length() > 1) {

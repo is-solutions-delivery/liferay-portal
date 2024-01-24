@@ -194,10 +194,7 @@ definition {
 		task ("Login and go to control panel - roles") {
 			User.firstLoginUI();
 
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Roles");
+			Role.openRolesAdmin();
 		}
 	}
 
@@ -224,18 +221,16 @@ definition {
 		}
 	}
 
-	@description = "This is a use case for LPS-150234. Login page not breaks visually when user enters his credentials incorrectly and one MFA verifier is enabled. Blocked by LPS-150234."
+	@description = "This is a use case for LPS-150234. Login page not breaks visually when user enters his credentials incorrectly and one MFA verifier is enabled."
 	@priority = 5
 	test LoginWithUIUsingWrongCredentialsAndMFAIsEnabled {
 		property app.server.types = "jboss,tcserver,tomcat,weblogic,websphere,wildfly";
 		property database.types = "db2,hypersonic,mariadb,mysql,oracle,postgresql,sqlserver,sybase";
-		property portal.release = "false";
-		property portal.upstream = "quarantine";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
 		task ("Given: Login and enable OTP and Sign Out as Instance Admin") {
-			User.firstLoginUI();
+			User.firstLoginPG();
 
 			MultiFactorAuthentication.openToConfigInInstanceSettings();
 
@@ -389,6 +384,10 @@ definition {
 
 		task ("Enable and save configuration") {
 			FormFields.enableCheckbox(fieldName = "Enabled");
+
+			FormFields.selectSelectOption(
+				fieldName = "Token Location",
+				selectOption = "Request Header");
 
 			SystemSettings.saveConfiguration();
 
@@ -546,14 +545,11 @@ definition {
 		property test.run.type = "single";
 
 		task ("Given: User opens the portal with a set admin password and logs in") {
-			User.firstLoginUI();
+			User.firstLoginPG();
 		}
 
 		task ("When: User start to create a virtuali instance") {
-			ApplicationsMenu.gotoPortlet(
-				category = "System",
-				panel = "Control Panel",
-				portlet = "Virtual Instances");
+			PortalInstances.openVirtualInstancesAdmin();
 
 			LexiconEntry.gotoAdd();
 		}

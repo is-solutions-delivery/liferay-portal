@@ -224,8 +224,7 @@ public class DDLDisplayContext {
 
 			if (Validator.isNull(_ddlRecordDisplayStyle)) {
 				_ddlRecordDisplayStyle = portalPreferences.getValue(
-					DDLPortletKeys.DYNAMIC_DATA_LISTS, "display-style",
-					_ddlWebConfiguration.defaultDisplayView());
+					DDLPortletKeys.DYNAMIC_DATA_LISTS, "display-style", "list");
 			}
 			else if (ArrayUtil.contains(
 						getDisplayViews(), _ddlRecordDisplayStyle)) {
@@ -276,26 +275,6 @@ public class DDLDisplayContext {
 			recordSet.getDDMStructure(), _fetchFormDDMTemplate(), getLocale());
 	}
 
-	public List<DropdownItem> getFilterItemsDropdownItems() {
-		HttpServletRequest httpServletRequest = _ddlRequestHelper.getRequest();
-
-		return DropdownItemListBuilder.addGroup(
-			dropdownGroupItem -> {
-				dropdownGroupItem.setDropdownItems(
-					getFilterNavigationDropdownItems());
-				dropdownGroupItem.setLabel(
-					LanguageUtil.get(
-						httpServletRequest, "filter-by-navigation"));
-			}
-		).addGroup(
-			dropdownGroupItem -> {
-				dropdownGroupItem.setDropdownItems(getOrderByDropdownItems());
-				dropdownGroupItem.setLabel(
-					LanguageUtil.get(httpServletRequest, "order-by"));
-			}
-		).build();
-	}
-
 	public long getFormDDMTemplateId() {
 		return PrefsParamUtil.getLong(
 			_ddlRequestHelper.getPortletPreferences(),
@@ -337,6 +316,16 @@ public class DDLDisplayContext {
 			_renderRequest, DDLPortletKeys.DYNAMIC_DATA_LISTS, "asc");
 
 		return _orderByType;
+	}
+
+	public List<DropdownItem> getOrderItemsDropdownItems() {
+		return DropdownItemListBuilder.add(
+			getOrderByDropdownItem("create-date")
+		).add(
+			getOrderByDropdownItem("modified-date")
+		).add(
+			getOrderByDropdownItem("name")
+		).build();
 	}
 
 	public PortletURL getPortletURL() {
@@ -750,16 +739,6 @@ public class DDLDisplayContext {
 			dropdownItem.setLabel(
 				LanguageUtil.get(_ddlRequestHelper.getRequest(), orderByCol));
 		};
-	}
-
-	protected List<DropdownItem> getOrderByDropdownItems() {
-		return DropdownItemListBuilder.add(
-			getOrderByDropdownItem("create-date")
-		).add(
-			getOrderByDropdownItem("modified-date")
-		).add(
-			getOrderByDropdownItem("name")
-		).build();
 	}
 
 	protected PermissionChecker getPermissionChecker() {

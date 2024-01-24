@@ -266,10 +266,7 @@ definition {
 
 		CrossClusterReplication.cleanWorkflowIndex(workflowIndexName = "workflow-metrics-processes");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Metrics");
+		Workflow.openWorkflowMetrics();
 
 		AssertTextEquals.assertPartialText(
 			locator1 = "Message#EMPTY_INFO",
@@ -290,10 +287,7 @@ definition {
 
 		CrossClusterReplication.cleanWorkflowIndex(workflowIndexName = "workflow-metrics-sla-instance-results");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Metrics");
+		Workflow.openWorkflowMetrics();
 
 		AssertElementNotPresent(
 			key_workflowProcessName = "Single Approver",
@@ -431,17 +425,11 @@ definition {
 
 		CrossClusterReplication.setupCrossClusterReplication();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Workflow.duplicateSingleApproverWorkflow(workflowName = "Copy of Single Approver");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -527,7 +515,11 @@ definition {
 
 		Navigator.openURL();
 
+		SearchPage.configureEmbeddedSearchBar(searchScope = "Everything");
+
 		SearchPage.searchEmbedded(searchTerm = "WC Title");
+
+		Refresh();
 
 		SearchResults.viewSearchResultsSpecificOrder(resultsList = "WC Title 3,WC Title 1");
 
@@ -546,10 +538,7 @@ definition {
 			dmDocumentTitle = "Apple 1",
 			groupName = "Guest");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "System",
-			panel = "Control Panel",
-			portlet = "Virtual Instances");
+		PortalInstances.openVirtualInstancesAdmin();
 
 		PortalInstances.addCP(
 			mailDomain = "www.able.com",
@@ -589,23 +578,19 @@ definition {
 
 	@priority = 5
 	test Smoke {
-		property osgi.module.configuration.file.names = "com.liferay.portal.bundle.blacklist.internal.configuration.BundleBlacklistConfiguration.config";
-		property osgi.module.configurations = "blacklistBundleSymbolicNames=\"com.liferay.portal.search.tuning.rankings.web\"";
+		property app.server.bundles.size = "1";
+		property cluster.enabled = "true";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
+
+		CrossClusterReplication.setupCrossClusterReplication(portalCluster = "true");
 
 		JSONDocument.addFile(
 			dmDocumentDescription = "DM Description",
 			dmDocumentTitle = "DM Title 1",
 			groupName = "Guest");
 
-		CrossClusterReplication.setupCrossClusterReplication();
-
 		SearchAdministration.openSearchAdmin();
-
-		AssertTextEquals(
-			locator1 = "Portlet#HEADER",
-			value1 = "Search");
 
 		AssertTextEquals.assertPartialText(
 			key_connectionId = "__REMOTE__",
@@ -613,9 +598,21 @@ definition {
 			value1 = "LiferayElasticsearchCluster");
 
 		AssertTextEquals.assertPartialText(
+			key_clusterMode = "Write",
+			key_connectionId = "__REMOTE__",
+			locator1 = "SearchAdmin#CLUSTER_MODE",
+			value1 = "Write");
+
+		AssertTextEquals.assertPartialText(
 			key_connectionId = "localcluster",
 			locator1 = "SearchAdmin#CLUSTER_NAME",
 			value1 = "LiferayElasticsearchClusterTwo");
+
+		AssertTextEquals.assertPartialText(
+			key_clusterMode = "Read",
+			key_connectionId = "localcluster",
+			locator1 = "SearchAdmin#CLUSTER_MODE",
+			value1 = "Read");
 
 		Navigator.openURL();
 
@@ -625,63 +622,20 @@ definition {
 			searchAssetTitle = "DM Title 1",
 			searchAssetType = "Document");
 
-		AntCommands.runCommand("build-test-elasticsearch7.xml", "stop-elasticsearch -Delasticsearch.bundle.number=1");
+		User.logoutPG(
+			password = "test",
+			userEmailAddress = "test@liferay.com");
 
-		SearchAdministration.openSearchAdmin();
-
-		AssertTextEquals(
-			locator1 = "Portlet#HEADER",
-			value1 = "Search");
-
-		AssertTextEquals.assertPartialText(
-			key_connectionId = "localcluster",
-			locator1 = "SearchAdmin#CLUSTER_NAME",
-			value1 = "LiferayElasticsearchClusterTwo");
-
-		AssertTextEquals.assertPartialText(
-			locator1 = "Message#ERROR",
-			value1 = "Connection refused");
-
-		AssertElementNotPresent(
-			key_connectionId = "__REMOTE__",
-			locator1 = "SearchAdmin#CLUSTER_NAME");
-
-		Navigator.openURL();
+		User.loginPG(
+			nodePort = 9080,
+			password = "test",
+			userEmailAddress = "test@liferay.com");
 
 		SearchPage.searchEmbedded(searchTerm = "DM");
 
 		SearchResults.viewSearchResults(
 			searchAssetTitle = "DM Title 1",
 			searchAssetType = "Document");
-
-		AntCommands.runCommand("build-test-elasticsearch7.xml", "start-elasticsearch-node -Delasticsearch.bundle.number=1");
-
-		AntCommands.runCommand("build-test-elasticsearch7.xml", "stop-elasticsearch -Delasticsearch.bundle.number=2");
-
-		SearchAdministration.openSearchAdmin();
-
-		AssertTextEquals(
-			locator1 = "Portlet#HEADER",
-			value1 = "Search");
-
-		AssertTextEquals.assertPartialText(
-			key_connectionId = "__REMOTE__",
-			locator1 = "SearchAdmin#CLUSTER_NAME",
-			value1 = "LiferayElasticsearchCluster");
-
-		AssertTextEquals.assertPartialText(
-			locator1 = "Message#ERROR",
-			value1 = "Connection refused");
-
-		AssertElementNotPresent(
-			key_connectionId = "localcluster",
-			locator1 = "SearchAdmin#CLUSTER_NAME");
-
-		Navigator.openURL();
-
-		SearchPage.searchEmbedded(searchTerm = "DM");
-
-		SearchResults.viewSearchResultNotPresent(searchTerm = "DM");
 	}
 
 }

@@ -21,8 +21,10 @@ export default function PublicationTemplateEditView({
 	defaultCTCollectionTemplate,
 	defaultSandboxCTCollectionTemplate,
 	description,
+	descriptionFieldMaxLength,
 	getTemplateCollaboratorsURL,
 	name,
+	nameFieldMaxLength,
 	namespace,
 	publicationDescription,
 	publicationName,
@@ -128,6 +130,7 @@ export default function PublicationTemplateEditView({
 				componentType="input"
 				fieldValue={nameField}
 				label={Liferay.Language.get('name')}
+				maxLength={nameFieldMaxLength}
 				onChange={(event) => {
 					setNameField(event.target.value);
 				}}
@@ -145,6 +148,7 @@ export default function PublicationTemplateEditView({
 				componentType="textarea"
 				fieldValue={descriptionField}
 				label={Liferay.Language.get('description')}
+				maxLength={descriptionFieldMaxLength}
 				onChange={(event) => {
 					setDescriptionField(event.target.value);
 				}}
@@ -152,6 +156,7 @@ export default function PublicationTemplateEditView({
 					'publication-template-description-placeholder'
 				)}
 				required={false}
+				validateLength={true}
 			/>
 
 			<ClayCheckbox
@@ -205,6 +210,7 @@ export default function PublicationTemplateEditView({
 						'publication-name-placeholder'
 					)}
 					required={true}
+					validateLength={true}
 				/>
 
 				<TextField
@@ -214,6 +220,7 @@ export default function PublicationTemplateEditView({
 					componentType="textarea"
 					fieldValue={publicationDescriptionField}
 					label={Liferay.Language.get('publication-description')}
+					maxLength={descriptionFieldMaxLength}
 					onChange={(event) => {
 						setPublicationDescriptionField(event.target.value);
 					}}
@@ -221,6 +228,7 @@ export default function PublicationTemplateEditView({
 						'publication-description-placeholder'
 					)}
 					required={false}
+					validateLength={true}
 				/>
 			</CollapsablePanel>
 
@@ -259,7 +267,14 @@ export default function PublicationTemplateEditView({
 					disabled={
 						!nameField.length ||
 						!publicationNameField.length ||
-						nameField.length > 75
+						nameField.length > nameFieldMaxLength ||
+						publicationNameField.length > nameFieldMaxLength ||
+						(descriptionField &&
+							descriptionField.length >
+								descriptionFieldMaxLength) ||
+						(publicationDescriptionField &&
+							publicationDescriptionField.length >
+								descriptionFieldMaxLength)
 					}
 					displayType="primary"
 					id="saveButton"

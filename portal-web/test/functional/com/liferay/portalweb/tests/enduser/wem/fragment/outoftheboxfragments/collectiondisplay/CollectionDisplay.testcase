@@ -211,7 +211,7 @@ definition {
 				key_collectionName = "Basic Components",
 				key_fragmentName = "Heading",
 				locator1 = "PageEditor#FRAGMENTS_AND_WIDGETS_TAB_FRAGMENT",
-				locator2 = "//div[@aria-label='Collection Display']//div[contains(@class,'page-editor__collection__message')]");
+				locator2 = "//div[@data-name='Collection Display']//div[contains(@class,'page-editor__collection__message')]");
 		}
 
 		task ("Then the page creator should see an error message") {
@@ -1601,7 +1601,7 @@ definition {
 		task ("Access to the mapping panel of Heading") {
 			Click.clickNoWaitForVisible(
 				key_colPosition = 1,
-				key_element = "//div[@aria-label='Heading']",
+				key_element = "//div[@data-name='Heading']",
 				key_fragmentName = "Collection Display",
 				key_rowPosition = 1,
 				locator1 = "PageEditor#COLLECTION_CELL_NESTED_ELEMENT");
@@ -1647,7 +1647,7 @@ definition {
 			AssertElementPresent(
 				key_fieldLabel = "Field",
 				key_groupLabel = "Display Page",
-				key_value = "Display Page URL",
+				key_value = "Default",
 				locator1 = "Select#GROUPED_SELECT_VALUE");
 
 			for (var field : list "All Categories,Topic,Tags") {
@@ -1676,7 +1676,7 @@ definition {
 		task ("Access to the mapping panel of Heading") {
 			Click.clickNoWaitForVisible(
 				key_colPosition = 1,
-				key_element = "//div[@aria-label='Heading']",
+				key_element = "//div[@data-name='Heading']",
 				key_fragmentName = "Collection Display",
 				key_rowPosition = 1,
 				locator1 = "PageEditor#COLLECTION_CELL_NESTED_ELEMENT");
@@ -1715,7 +1715,7 @@ definition {
 					locator1 = "Select#GROUPED_SELECT_VALUE");
 			}
 
-			for (var field : list "Display Page URL,Description,Display Date") {
+			for (var field : list "Description,Display Date") {
 				AssertElementPresent(
 					key_fieldLabel = "Field",
 					key_groupLabel = "Configuration",
@@ -1730,6 +1730,12 @@ definition {
 					key_value = ${field},
 					locator1 = "Select#GROUPED_SELECT_VALUE");
 			}
+
+			AssertElementPresent(
+				key_fieldLabel = "Field",
+				key_groupLabel = "Display Page",
+				key_value = "Default",
+				locator1 = "Select#GROUPED_SELECT_VALUE");
 		}
 
 		task ("Select the Manual Collection") {
@@ -1741,7 +1747,7 @@ definition {
 		task ("Access to the mapping panel of Heading") {
 			Click.clickNoWaitForVisible(
 				key_colPosition = 1,
-				key_element = "//div[@aria-label='Heading']",
+				key_element = "//div[@data-name='Heading']",
 				key_fragmentName = "Collection Display",
 				key_rowPosition = 1,
 				locator1 = "PageEditor#COLLECTION_CELL_NESTED_ELEMENT");
@@ -2336,7 +2342,7 @@ definition {
 				pageName = "Content Page Name",
 				siteName = "Test Site Name");
 
-			var fragmentId = selenium.getText("//div[@aria-label='Fragment Name']");
+			var fragmentId = selenium.getText("//div[@data-name='Fragment Name']");
 
 			AssertTextNotEquals(
 				key_columnNumber = 1,
@@ -2358,16 +2364,16 @@ definition {
 				pageName = "Content Page Name 2",
 				siteName = "Test Site Name");
 
-			var fragmentId2 = selenium.getText("//div[@aria-label='Fragment Name']//div[contains(@id,'fragment-')]");
+			var fragmentId2 = selenium.getText("//div[@data-name='Fragment Name']//div[contains(@id,'fragment-')]");
 
-			AssertTextNotEquals.assertNotPartialText(
+			AssertTextNotEquals.assertNotPartialMatch(
 				key_columnNumber = 1,
 				key_position = 1,
 				key_rowNumber = 2,
 				locator1 = "PageEditor#COLLECTION_DISPLAY_COLUMN",
 				value1 = ${fragmentId2});
 
-			AssertTextNotEquals.assertNotPartialText(
+			AssertTextNotEquals.assertNotPartialMatch(
 				key_columnNumber = 1,
 				key_position = 1,
 				key_rowNumber = 3,
@@ -2412,13 +2418,13 @@ definition {
 				locator1 = "PageEditor#COLLECTION_ITEM",
 				value1 = ${fragmentElementId});
 
-			AssertTextNotEquals.assertNotPartialText(
+			AssertTextNotEquals.assertNotPartialMatch(
 				key_colPosition = 1,
 				key_rowPosition = 2,
 				locator1 = "PageEditor#COLLECTION_ITEM",
 				value1 = ${fragmentElementId});
 
-			AssertTextNotEquals.assertNotPartialText(
+			AssertTextNotEquals.assertNotPartialMatch(
 				key_colPosition = 1,
 				key_rowPosition = 3,
 				locator1 = "PageEditor#COLLECTION_ITEM",

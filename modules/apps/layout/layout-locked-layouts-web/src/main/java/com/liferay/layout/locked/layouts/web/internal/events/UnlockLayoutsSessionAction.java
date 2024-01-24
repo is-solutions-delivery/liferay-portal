@@ -48,8 +48,13 @@ public class UnlockLayoutsSessionAction extends SessionAction {
 			return;
 		}
 
-		_layoutLockManager.unlockLayoutsByUserId(
-			user.getCompanyId(), user.getUserId());
+		try {
+			_layoutLockManager.unlockLayoutsByUserId(
+				user.getCompanyId(), user.getUserId());
+		}
+		catch (Exception exception) {
+			throw new ActionException(exception);
+		}
 	}
 
 	@Reference

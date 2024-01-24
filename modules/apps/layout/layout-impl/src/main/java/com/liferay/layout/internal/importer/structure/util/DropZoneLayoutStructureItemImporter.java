@@ -58,6 +58,7 @@ public class DropZoneLayoutStructureItemImporter
 		DropZoneLayoutStructureItem dropZoneLayoutStructureItem =
 			(DropZoneLayoutStructureItem)
 				layoutStructure.addDropZoneLayoutStructureItem(
+					layoutStructureItemImporterContext.getItemId(pageElement),
 					layoutStructureItemImporterContext.getParentItemId(),
 					layoutStructureItemImporterContext.getPosition());
 

@@ -59,8 +59,6 @@ import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * @author Inácio Nery
  */
@@ -200,27 +198,6 @@ public class KaleoFormsViewRecordsDisplayContext {
 		return "list";
 	}
 
-	public List<DropdownItem> getFilterItemsDropdownItems() {
-		HttpServletRequest httpServletRequest =
-			PortalUtil.getHttpServletRequest(_renderRequest);
-
-		return DropdownItemListBuilder.addGroup(
-			dropdownGroupItem -> {
-				dropdownGroupItem.setDropdownItems(
-					getFilterNavigationDropdownItems());
-				dropdownGroupItem.setLabel(
-					LanguageUtil.get(
-						httpServletRequest, "filter-by-navigation"));
-			}
-		).addGroup(
-			dropdownGroupItem -> {
-				dropdownGroupItem.setDropdownItems(getOrderByDropdownItems());
-				dropdownGroupItem.setLabel(
-					LanguageUtil.get(httpServletRequest, "order-by"));
-			}
-		).build();
-	}
-
 	public List<String> getHeaderNames() throws PortalException {
 		List<String> headerNames = new ArrayList<>();
 
@@ -284,6 +261,32 @@ public class KaleoFormsViewRecordsDisplayContext {
 			"view-order-by-type", "asc");
 
 		return _orderByType;
+	}
+
+	public List<DropdownItem> getOrderItemsDropdownItems() {
+		return DropdownItemListBuilder.add(
+			dropdownItem -> {
+				String orderByCol = "create-date";
+
+				dropdownItem.setActive(orderByCol.equals(getOrderByCol()));
+				dropdownItem.setHref(getPortletURL(), "orderByCol", orderByCol);
+				dropdownItem.setLabel(
+					LanguageUtil.get(
+						_kaleoFormsAdminRequestHelper.getRequest(),
+						orderByCol));
+			}
+		).add(
+			dropdownItem -> {
+				String orderByCol = "modified-date";
+
+				dropdownItem.setActive(orderByCol.equals(getOrderByCol()));
+				dropdownItem.setHref(getPortletURL(), "orderByCol", orderByCol);
+				dropdownItem.setLabel(
+					LanguageUtil.get(
+						_kaleoFormsAdminRequestHelper.getRequest(),
+						orderByCol));
+			}
+		).build();
 	}
 
 	public PortletURL getPortletURL() {
@@ -439,46 +442,8 @@ public class KaleoFormsViewRecordsDisplayContext {
 			ActionKeys.SUBMIT);
 	}
 
-	protected List<DropdownItem> getFilterNavigationDropdownItems() {
-		return DropdownItemListBuilder.add(
-			dropdownItem -> {
-				dropdownItem.setActive(true);
-				dropdownItem.setHref(getPortletURL(), "navigation", "all");
-				dropdownItem.setLabel(
-					LanguageUtil.get(
-						_kaleoFormsAdminRequestHelper.getRequest(), "all"));
-			}
-		).build();
-	}
-
 	protected String getKeywords() {
 		return ParamUtil.getString(_renderRequest, "keywords");
-	}
-
-	protected List<DropdownItem> getOrderByDropdownItems() {
-		return DropdownItemListBuilder.add(
-			dropdownItem -> {
-				String orderByCol = "create-date";
-
-				dropdownItem.setActive(orderByCol.equals(getOrderByCol()));
-				dropdownItem.setHref(getPortletURL(), "orderByCol", orderByCol);
-				dropdownItem.setLabel(
-					LanguageUtil.get(
-						_kaleoFormsAdminRequestHelper.getRequest(),
-						orderByCol));
-			}
-		).add(
-			dropdownItem -> {
-				String orderByCol = "modified-date";
-
-				dropdownItem.setActive(orderByCol.equals(getOrderByCol()));
-				dropdownItem.setHref(getPortletURL(), "orderByCol", orderByCol);
-				dropdownItem.setLabel(
-					LanguageUtil.get(
-						_kaleoFormsAdminRequestHelper.getRequest(),
-						orderByCol));
-			}
-		).build();
 	}
 
 	protected boolean hasResults() throws Exception {

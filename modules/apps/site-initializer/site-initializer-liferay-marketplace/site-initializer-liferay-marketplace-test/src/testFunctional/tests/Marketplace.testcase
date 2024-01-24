@@ -11,7 +11,12 @@ definition {
 	var testSiteURL = "marketplace-site";
 
 	setUp {
-		MP2Configuration.marketplaceSetUp();
+
+		// This addition should be reverted when the issue ISSD-1572 is completed and the macro HeadlessSite.addSite() is usable.
+
+		MP2Configuration.marketplaceSetUp(
+			clientExtensionDeploy = "true",
+			viaFrontEnd = "true");
 	}
 
 	tearDown {
@@ -26,7 +31,7 @@ definition {
 		}
 
 		task ("Then I should be able to assert that Account Users was created") {
-			for (var accountName : list "Jane Acme,Dashboard ADM,Customer Account Buyer,Publisher App Editor") {
+			for (var accountName : list "Dashboard ADM,Customer Account Buyer,Publisher App Editor") {
 				LexiconEntry.viewEntryName(rowEntry = ${accountName});
 			}
 		}
@@ -73,9 +78,7 @@ definition {
 	@priority = 4
 	test ChannelsAreCreatedForMP20 {
 		task ("Given that I go to the Channels page") {
-			CommerceNavigator.gotoPortlet(
-				category = "Store Management",
-				portlet = "Channels");
+			CommerceChannels.openChannelsAdmin();
 
 			// Workaround
 

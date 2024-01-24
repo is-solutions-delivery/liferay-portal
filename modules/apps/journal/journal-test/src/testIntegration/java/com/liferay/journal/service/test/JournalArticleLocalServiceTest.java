@@ -520,6 +520,61 @@ public class JournalArticleLocalServiceTest {
 	}
 
 	@Test
+	public void testCopyArticleWithSpecialCharacters() throws Exception {
+		JournalArticle oldArticle = JournalTestUtil.addArticle(
+			_group.getGroupId(),
+			JournalFolderConstants.DEFAULT_PARENT_FOLDER_ID, "hatékony",
+			RandomTestUtil.randomString());
+
+		JournalArticle newArticle = _journalArticleLocalService.copyArticle(
+			oldArticle.getUserId(), oldArticle.getGroupId(),
+			oldArticle.getArticleId(), null, true, oldArticle.getVersion());
+
+		Assert.assertNotEquals(oldArticle, newArticle);
+		Assert.assertEquals("hat%C3%A9kony-copy-", newArticle.getUrlTitle());
+
+		List<ResourcePermission> oldResourcePermissions =
+			_resourcePermissionLocalService.getResourcePermissions(
+				oldArticle.getCompanyId(), JournalArticle.class.getName(),
+				ResourceConstants.SCOPE_INDIVIDUAL,
+				String.valueOf(oldArticle.getResourcePrimKey()));
+
+		List<ResourcePermission> newResourcePermissions =
+			_resourcePermissionLocalService.getResourcePermissions(
+				newArticle.getCompanyId(), JournalArticle.class.getName(),
+				ResourceConstants.SCOPE_INDIVIDUAL,
+				String.valueOf(newArticle.getResourcePrimKey()));
+
+		Assert.assertEquals(
+			StringBundler.concat(
+				"Old resource permissions: ", oldResourcePermissions,
+				", new resource permissions: ", newResourcePermissions),
+			oldResourcePermissions.size(), newResourcePermissions.size());
+
+		for (int i = 0; i < oldResourcePermissions.size(); i++) {
+			ResourcePermission oldResourcePermission =
+				oldResourcePermissions.get(i);
+			ResourcePermission newResourcePermission =
+				newResourcePermissions.get(i);
+
+			Assert.assertNotEquals(
+				oldResourcePermission, newResourcePermission);
+			Assert.assertEquals(
+				oldResourcePermission.getRoleId(),
+				newResourcePermission.getRoleId());
+			Assert.assertEquals(
+				oldResourcePermission.getOwnerId(),
+				newResourcePermission.getOwnerId());
+			Assert.assertEquals(
+				oldResourcePermission.getActionIds(),
+				newResourcePermission.getActionIds());
+			Assert.assertEquals(
+				oldResourcePermission.isViewActionId(),
+				newResourcePermission.isViewActionId());
+		}
+	}
+
+	@Test
 	public void testCopyDraftJournalArticleWithAssetCategories()
 		throws Exception {
 
@@ -579,7 +634,7 @@ public class JournalArticleLocalServiceTest {
 				draftJournalArticle.getVersion());
 
 		Assert.assertEquals(
-			_getNewTitle(locale, draftJournalArticle.getTitle(locale)),
+			_getNewTitle(draftJournalArticle.getTitle(locale)),
 			newJournalArticle.getTitle(locale));
 
 		_assertAssetCategoryIds(
@@ -660,7 +715,7 @@ public class JournalArticleLocalServiceTest {
 				draftJournalArticle.getVersion());
 
 		Assert.assertEquals(
-			_getNewTitle(locale, draftJournalArticle.getTitle(locale)),
+			_getNewTitle(draftJournalArticle.getTitle(locale)),
 			newJournalArticle.getTitle(locale));
 
 		_assertAssetLinkEntryId(
@@ -715,7 +770,7 @@ public class JournalArticleLocalServiceTest {
 				draftJournalArticle.getVersion());
 
 		Assert.assertEquals(
-			_getNewTitle(locale, draftJournalArticle.getTitle(locale)),
+			_getNewTitle(draftJournalArticle.getTitle(locale)),
 			newJournalArticle.getTitle(locale));
 
 		_assertAssetTagIds(
@@ -764,7 +819,7 @@ public class JournalArticleLocalServiceTest {
 				sourceJournalArticle.getVersion());
 
 		Assert.assertEquals(
-			_getNewTitle(locale, sourceJournalArticle.getTitle(locale)),
+			_getNewTitle(sourceJournalArticle.getTitle(locale)),
 			newJournalArticle.getTitle(locale));
 
 		_assertAssetCategoryIds(
@@ -818,7 +873,7 @@ public class JournalArticleLocalServiceTest {
 				sourceJournalArticle.getVersion());
 
 		Assert.assertEquals(
-			_getNewTitle(locale, sourceJournalArticle.getTitle(locale)),
+			_getNewTitle(sourceJournalArticle.getTitle(locale)),
 			newJournalArticle.getTitle(locale));
 
 		_assertAssetLinkEntryId(
@@ -860,7 +915,7 @@ public class JournalArticleLocalServiceTest {
 				sourceJournalArticle.getVersion());
 
 		Assert.assertEquals(
-			_getNewTitle(locale, sourceJournalArticle.getTitle(locale)),
+			_getNewTitle(sourceJournalArticle.getTitle(locale)),
 			newJournalArticle.getTitle(locale));
 
 		_assertAssetTagIds(
@@ -1438,6 +1493,71 @@ public class JournalArticleLocalServiceTest {
 	}
 
 	@Test
+	public void testTrashArticleExternalReferenceCode() throws Exception {
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(_group.getGroupId());
+
+		JournalArticle originalJournalArticle =
+			JournalTestUtil.addArticleWithWorkflow(
+				_group.getGroupId(), 0, RandomTestUtil.randomString(),
+				RandomTestUtil.randomString(), true, serviceContext);
+
+		JournalArticle latestJournalArticle =
+			_journalArticleLocalService.updateArticle(
+				originalJournalArticle.getUserId(),
+				originalJournalArticle.getGroupId(),
+				originalJournalArticle.getFolderId(),
+				originalJournalArticle.getArticleId(),
+				originalJournalArticle.getVersion(),
+				originalJournalArticle.getTitleMap(),
+				originalJournalArticle.getDescriptionMap(),
+				originalJournalArticle.getContent(),
+				originalJournalArticle.getLayoutUuid(), serviceContext);
+
+		Map<Double, String> externalReferenceCodeMap = HashMapBuilder.put(
+			originalJournalArticle.getVersion(),
+			originalJournalArticle.getExternalReferenceCode()
+		).put(
+			latestJournalArticle.getVersion(),
+			latestJournalArticle.getExternalReferenceCode()
+		).build();
+
+		latestJournalArticle = _journalArticleLocalService.moveArticleToTrash(
+			TestPropsValues.getUserId(), latestJournalArticle);
+
+		for (Map.Entry<Double, String> entry :
+				externalReferenceCodeMap.entrySet()) {
+
+			JournalArticle persistedJournalArticle =
+				_journalArticleLocalService.fetchArticleByUrlTitle(
+					originalJournalArticle.getGroupId(),
+					originalJournalArticle.getUrlTitle(), entry.getKey());
+
+			Assert.assertTrue(persistedJournalArticle.isInTrash());
+			Assert.assertEquals(
+				entry.getValue(),
+				persistedJournalArticle.getExternalReferenceCode());
+		}
+
+		_journalArticleLocalService.restoreArticleFromTrash(
+			TestPropsValues.getUserId(), latestJournalArticle);
+
+		for (Map.Entry<Double, String> entry :
+				externalReferenceCodeMap.entrySet()) {
+
+			JournalArticle persistedJournalArticle =
+				_journalArticleLocalService.fetchArticleByUrlTitle(
+					originalJournalArticle.getGroupId(),
+					originalJournalArticle.getUrlTitle(), entry.getKey());
+
+			Assert.assertFalse(persistedJournalArticle.isInTrash());
+			Assert.assertEquals(
+				entry.getValue(),
+				persistedJournalArticle.getExternalReferenceCode());
+		}
+	}
+
+	@Test
 	public void testUpdateArticleByNonownerUser() throws Exception {
 		User ownerUser = UserTestUtil.addGroupUser(
 			_group, RoleConstants.ADMINISTRATOR);
@@ -1727,10 +1847,11 @@ public class JournalArticleLocalServiceTest {
 		return new Tuple(article, ddmStructure);
 	}
 
-	private String _getNewTitle(Locale locale, String title) {
+	private String _getNewTitle(String title) {
 		return StringBundler.concat(
 			title, StringPool.SPACE, StringPool.OPEN_PARENTHESIS,
-			_language.get(locale, "copy"), StringPool.CLOSE_PARENTHESIS);
+			_language.get(LocaleUtil.getSiteDefault(), "copy"),
+			StringPool.CLOSE_PARENTHESIS);
 	}
 
 	private ThemeDisplay _getThemeDisplay() throws Exception {

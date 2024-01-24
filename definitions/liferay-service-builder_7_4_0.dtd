@@ -68,6 +68,13 @@ entities to prevent lost updates. The default value is false.
 >
 
 <!--
+The default value is true.
+-->
+<!ATTLIST service-builder
+	optimize-db-indexes CDATA #IMPLIED
+>
+
+<!--
 The short-no-such-exception-enabled value specifies whether to try to shorten
 the no such exception class names when possible.
 
@@ -913,6 +920,13 @@ the entity column can be paginated.
 -->
 <!ATTLIST finder-column
 	arrayable-pagination CDATA #IMPLIED
+>
+
+<!--
+The default value is true.
+-->
+<!ATTLIST finder-column
+	indexable CDATA #IMPLIED
 >
 
 <!--

@@ -105,6 +105,7 @@ import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -274,11 +275,15 @@ public class ServicePreAction extends Action {
 			long userId, long groupId)
 		throws Exception {
 
-		Map<Locale, String> nameMap = Collections.singletonMap(
-			LocaleUtil.getSiteDefault(),
-			LanguageUtil.get(
-				LocaleUtil.getSiteDefault(),
-				PropsValues.DEFAULT_USER_PRIVATE_LAYOUT_NAME));
+		Map<Locale, String> nameMap = new HashMap<>();
+
+		for (Locale locale : LanguageUtil.getAvailableLocales(groupId)) {
+			nameMap.put(
+				locale,
+				LanguageUtil.get(
+					locale, PropsValues.DEFAULT_USER_PRIVATE_LAYOUT_NAME));
+		}
+
 		Map<Locale, String> friendlyURLMap = Collections.singletonMap(
 			LocaleUtil.getSiteDefault(),
 			_getFriendlyURL(
@@ -356,11 +361,15 @@ public class ServicePreAction extends Action {
 			long userId, long groupId)
 		throws Exception {
 
-		Map<Locale, String> nameMap = Collections.singletonMap(
-			LocaleUtil.getSiteDefault(),
-			LanguageUtil.get(
-				LocaleUtil.getSiteDefault(),
-				PropsValues.DEFAULT_USER_PUBLIC_LAYOUT_NAME));
+		Map<Locale, String> nameMap = new HashMap<>();
+
+		for (Locale locale : LanguageUtil.getAvailableLocales(groupId)) {
+			nameMap.put(
+				locale,
+				LanguageUtil.get(
+					locale, PropsValues.DEFAULT_USER_PUBLIC_LAYOUT_NAME));
+		}
+
 		Map<Locale, String> friendlyURLMap = Collections.singletonMap(
 			LocaleUtil.getSiteDefault(),
 			_getFriendlyURL(
@@ -1776,10 +1785,6 @@ public class ServicePreAction extends Action {
 
 		themeDisplay.setURLPortal(portalURL.concat(contextPath));
 
-		if (!secure && PropsValues.COMPANY_SECURITY_AUTH_REQUIRES_HTTPS) {
-			secure = true;
-		}
-
 		String securePortalURL = PortalUtil.getPortalURL(
 			httpServletRequest, secure);
 
@@ -1991,61 +1996,68 @@ public class ServicePreAction extends Action {
 		httpServletResponse.setHeader(
 			"X-Liferay-Request-Company",
 			String.valueOf(themeDisplay.getCompanyId()));
-		httpServletResponse.setHeader(
-			"X-Liferay-Request-Group",
+
+		List<String> liferayRequestGroupHeaderValues = new ArrayList<>();
+
+		liferayRequestGroupHeaderValues.add(
 			String.valueOf(themeDisplay.getScopeGroupId()));
 
 		Group group = themeDisplay.getScopeGroup();
 
-		httpServletResponse.addHeader(
-			"X-Liferay-Request-Group", group.getType() + "t");
+		liferayRequestGroupHeaderValues.add(group.getType() + "t");
 
 		Layout layout = themeDisplay.getLayout();
 
 		if (group.getGroupId() == themeDisplay.getCompanyGroupId()) {
-			httpServletResponse.addHeader("X-Liferay-Request-Group", "1x");
+			liferayRequestGroupHeaderValues.add("1x");
 		}
 
 		if (group.getParentGroupId() != 0) {
-			httpServletResponse.addHeader("X-Liferay-Request-Group", "2x");
+			liferayRequestGroupHeaderValues.add("2x");
 		}
 
 		if (group.isStaged()) {
-			httpServletResponse.addHeader("X-Liferay-Request-Group", "3x");
+			liferayRequestGroupHeaderValues.add("3x");
 		}
 
 		if (group.isControlPanel() || layout.isTypeControlPanel()) {
-			httpServletResponse.addHeader("X-Liferay-Request-Group", "4x");
+			liferayRequestGroupHeaderValues.add("4x");
 		}
 
 		if (group.isUser()) {
 			if (layout.isPrivateLayout()) {
-				httpServletResponse.addHeader("X-Liferay-Request-Group", "5x");
+				liferayRequestGroupHeaderValues.add("5x");
 			}
 			else {
-				httpServletResponse.addHeader("X-Liferay-Request-Group", "10x");
+				liferayRequestGroupHeaderValues.add("10x");
 			}
 
 			if (layout instanceof VirtualLayout) {
-				httpServletResponse.addHeader("X-Liferay-Request-Group", "6x");
+				liferayRequestGroupHeaderValues.add("6x");
 			}
 		}
 
 		if (group.isLayoutSetPrototype()) {
-			httpServletResponse.addHeader("X-Liferay-Request-Group", "7x");
+			liferayRequestGroupHeaderValues.add("7x");
 		}
 
 		if (group.isLayoutPrototype() || (layout.getMasterLayoutPlid() > 0)) {
-			httpServletResponse.addHeader("X-Liferay-Request-Group", "8x");
+			liferayRequestGroupHeaderValues.add("8x");
 		}
 
 		if (group.isOrganization()) {
-			httpServletResponse.addHeader("X-Liferay-Request-Group", "9x");
+			liferayRequestGroupHeaderValues.add("9x");
 		}
 
 		if (group.isSite()) {
-			httpServletResponse.addHeader("X-Liferay-Request-Group", "s");
+			liferayRequestGroupHeaderValues.add("s");
 		}
+
+		httpServletResponse.setHeader(
+			"X-Liferay-Request-Group",
+			ListUtil.toString(
+				liferayRequestGroupHeaderValues, (String)null,
+				StringPool.SPACE));
 
 		User user = themeDisplay.getUser();
 

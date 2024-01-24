@@ -7,24 +7,4 @@
 
 <%@ include file="/init.jsp" %>
 
-<%
-CPDefinitionVirtualSettingDisplayContext cpDefinitionVirtualSettingDisplayContext = (CPDefinitionVirtualSettingDisplayContext)request.getAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT);
-
-CPDefinitionVirtualSetting cpDefinitionVirtualSetting = cpDefinitionVirtualSettingDisplayContext.getCPDefinitionVirtualSetting();
-
-FileEntry fileEntry = cpDefinitionVirtualSettingDisplayContext.getFileEntry();
-
-long fileEntryId = BeanParamUtil.getLong(cpDefinitionVirtualSetting, request, "fileEntryId");
-
-String textCssClass = "text-default ";
-
-boolean useFileEntry = false;
-
-if (fileEntryId > 0) {
-	textCssClass += "hide";
-
-	useFileEntry = true;
-}
-%>
-
 <%@ include file="/details.jspf" %>

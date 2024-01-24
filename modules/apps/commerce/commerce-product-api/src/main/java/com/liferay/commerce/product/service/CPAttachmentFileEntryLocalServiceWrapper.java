@@ -59,7 +59,7 @@ public class CPAttachmentFileEntryLocalServiceWrapper
 			int displayDateMinute, int expirationDateMonth,
 			int expirationDateDay, int expirationDateYear,
 			int expirationDateHour, int expirationDateMinute,
-			boolean neverExpire,
+			boolean neverExpire, boolean galleryEnabled,
 			java.util.Map<java.util.Locale, String> titleMap, String json,
 			double priority, int type,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
@@ -70,8 +70,8 @@ public class CPAttachmentFileEntryLocalServiceWrapper
 			fileEntryId, cdnEnabled, cdnURL, displayDateMonth, displayDateDay,
 			displayDateYear, displayDateHour, displayDateMinute,
 			expirationDateMonth, expirationDateDay, expirationDateYear,
-			expirationDateHour, expirationDateMinute, neverExpire, titleMap,
-			json, priority, type, serviceContext);
+			expirationDateHour, expirationDateMinute, neverExpire,
+			galleryEnabled, titleMap, json, priority, type, serviceContext);
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class CPAttachmentFileEntryLocalServiceWrapper
 			int displayDateHour, int displayDateMinute, int expirationDateMonth,
 			int expirationDateDay, int expirationDateYear,
 			int expirationDateHour, int expirationDateMinute,
-			boolean neverExpire,
+			boolean neverExpire, boolean galleryEnabled,
 			java.util.Map<java.util.Locale, String> titleMap, String json,
 			double priority, int type,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
@@ -96,8 +96,8 @@ public class CPAttachmentFileEntryLocalServiceWrapper
 				displayDateMonth, displayDateDay, displayDateYear,
 				displayDateHour, displayDateMinute, expirationDateMonth,
 				expirationDateDay, expirationDateYear, expirationDateHour,
-				expirationDateMinute, neverExpire, titleMap, json, priority,
-				type, serviceContext);
+				expirationDateMinute, neverExpire, galleryEnabled, titleMap,
+				json, priority, type, serviceContext);
 	}
 
 	@Override
@@ -393,6 +393,27 @@ public class CPAttachmentFileEntryLocalServiceWrapper
 
 	@Override
 	public java.util.List<CPAttachmentFileEntry> getCPAttachmentFileEntries(
+			long cpDefinitionId, Boolean galleryEnabled,
+			String serializedDDMFormValues, int type, int start, int end)
+		throws Exception {
+
+		return _cpAttachmentFileEntryLocalService.getCPAttachmentFileEntries(
+			cpDefinitionId, galleryEnabled, serializedDDMFormValues, type,
+			start, end);
+	}
+
+	@Override
+	public java.util.List<CPAttachmentFileEntry> getCPAttachmentFileEntries(
+			long classNameId, long classPK, boolean galleryEnabled, int type,
+			int status, int start, int end)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _cpAttachmentFileEntryLocalService.getCPAttachmentFileEntries(
+			classNameId, classPK, galleryEnabled, type, status, start, end);
+	}
+
+	@Override
+	public java.util.List<CPAttachmentFileEntry> getCPAttachmentFileEntries(
 			long classNameId, long classPK, int type, int status, int start,
 			int end)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -421,16 +442,6 @@ public class CPAttachmentFileEntryLocalServiceWrapper
 
 		return _cpAttachmentFileEntryLocalService.getCPAttachmentFileEntries(
 			classNameId, classPK, keywords, type, status, start, end);
-	}
-
-	@Override
-	public java.util.List<CPAttachmentFileEntry> getCPAttachmentFileEntries(
-			long cpDefinitionId, String serializedDDMFormValues, int type,
-			int start, int end)
-		throws Exception {
-
-		return _cpAttachmentFileEntryLocalService.getCPAttachmentFileEntries(
-			cpDefinitionId, serializedDDMFormValues, type, start, end);
 	}
 
 	/**
@@ -585,6 +596,18 @@ public class CPAttachmentFileEntryLocalServiceWrapper
 			primaryKeyObj);
 	}
 
+	@Override
+	public void updateAsset(
+			long userId, CPAttachmentFileEntry cpAttachmentFileEntry,
+			long[] assetCategoryIds, String[] assetTagNames,
+			long[] assetLinkEntryIds, Double priority)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_cpAttachmentFileEntryLocalService.updateAsset(
+			userId, cpAttachmentFileEntry, assetCategoryIds, assetTagNames,
+			assetLinkEntryIds, priority);
+	}
+
 	/**
 	 * Updates the cp attachment file entry in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -611,7 +634,7 @@ public class CPAttachmentFileEntryLocalServiceWrapper
 			int displayDateMinute, int expirationDateMonth,
 			int expirationDateDay, int expirationDateYear,
 			int expirationDateHour, int expirationDateMinute,
-			boolean neverExpire,
+			boolean neverExpire, boolean galleryEnabled,
 			java.util.Map<java.util.Locale, String> titleMap, String json,
 			double priority, int type,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
@@ -622,7 +645,8 @@ public class CPAttachmentFileEntryLocalServiceWrapper
 			displayDateMonth, displayDateDay, displayDateYear, displayDateHour,
 			displayDateMinute, expirationDateMonth, expirationDateDay,
 			expirationDateYear, expirationDateHour, expirationDateMinute,
-			neverExpire, titleMap, json, priority, type, serviceContext);
+			neverExpire, galleryEnabled, titleMap, json, priority, type,
+			serviceContext);
 	}
 
 	@Override

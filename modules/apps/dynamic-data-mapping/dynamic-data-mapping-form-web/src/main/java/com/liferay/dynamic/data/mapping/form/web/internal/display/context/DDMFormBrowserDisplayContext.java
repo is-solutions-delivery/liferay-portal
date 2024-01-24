@@ -129,27 +129,6 @@ public class DDMFormBrowserDisplayContext {
 		return _eventName;
 	}
 
-	public List<DropdownItem> getFilterItemsDropdownItems() {
-		HttpServletRequest httpServletRequest =
-			_formWebRequestHelper.getRequest();
-
-		return DropdownItemListBuilder.addGroup(
-			dropdownGroupItem -> {
-				dropdownGroupItem.setDropdownItems(
-					getFilterNavigationDropdownItems());
-				dropdownGroupItem.setLabel(
-					LanguageUtil.get(
-						httpServletRequest, "filter-by-navigation"));
-			}
-		).addGroup(
-			dropdownGroupItem -> {
-				dropdownGroupItem.setDropdownItems(getOrderByDropdownItems());
-				dropdownGroupItem.setLabel(
-					LanguageUtil.get(httpServletRequest, "order-by"));
-			}
-		).build();
-	}
-
 	public String getKeywords() {
 		if (Validator.isNotNull(_keywords)) {
 			return _keywords;
@@ -199,6 +178,12 @@ public class DDMFormBrowserDisplayContext {
 			DDMPortletKeys.DYNAMIC_DATA_MAPPING_FORM_BROWSER, "asc");
 
 		return _orderByType;
+	}
+
+	public List<DropdownItem> getOrderItemsDropdownItems() {
+		return DropdownItemListBuilder.add(
+			getOrderByDropdownItem("modified-date")
+		).build();
 	}
 
 	public PortletURL getPortletURL() {
@@ -330,18 +315,6 @@ public class DDMFormBrowserDisplayContext {
 		return false;
 	}
 
-	protected List<DropdownItem> getFilterNavigationDropdownItems() {
-		return DropdownItemListBuilder.add(
-			dropdownItem -> {
-				dropdownItem.setActive(true);
-				dropdownItem.setHref(getPortletURL(), "navigation", "all");
-				dropdownItem.setLabel(
-					LanguageUtil.get(
-						_formWebRequestHelper.getRequest(), "all"));
-			}
-		).build();
-	}
-
 	protected UnsafeConsumer<DropdownItem, Exception> getOrderByDropdownItem(
 		String orderByCol) {
 
@@ -352,12 +325,6 @@ public class DDMFormBrowserDisplayContext {
 				LanguageUtil.get(
 					_formWebRequestHelper.getRequest(), orderByCol));
 		};
-	}
-
-	protected List<DropdownItem> getOrderByDropdownItems() {
-		return DropdownItemListBuilder.add(
-			getOrderByDropdownItem("modified-date")
-		).build();
 	}
 
 	private OrderByComparator<DDMFormInstance>

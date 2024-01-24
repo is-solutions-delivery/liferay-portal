@@ -89,9 +89,9 @@ definition {
 			mimeType = "image/jpeg",
 			sourceFileName = "Document_2.jpeg");
 
-		ApplicationDisplayTemplates.openWidgetTemplatesAdmin(siteURLKey = "guest");
+		WidgetTemplates.openWidgetTemplatesAdmin(siteURLKey = "guest");
 
-		ApplicationDisplayTemplates.addCP(
+		WidgetTemplates.addCP(
 			adtFile = "adt_media_gallery_carousel.ftl",
 			adtType = "Media Gallery");
 
@@ -99,7 +99,7 @@ definition {
 
 		MGPortlet.viewFolderItemsPG(mgFolderName = "DM Folder Name");
 
-		ApplicationDisplayTemplates.selectPortletADT(templateName = "Media Gallery Test ADT");
+		WidgetTemplates.selectPortletADT(templateName = "Media Gallery Test ADT");
 
 		Navigator.gotoPage(pageName = "Media Gallery Page");
 
@@ -107,7 +107,7 @@ definition {
 	}
 
 	@e2etest
-	@priority = 5
+	@priority = 4
 	@refactordone
 	test CanAddMultipleFolders {
 		Navigator.gotoPage(pageName = "Media Gallery Page");
@@ -163,7 +163,7 @@ definition {
 			mgDocumentTitleEdit = "DM Document Title Edit");
 	}
 
-	@priority = 5
+	@priority = 4
 	@refactordone
 	test CanEditSubfolder {
 		JSONFolder.addFolder(

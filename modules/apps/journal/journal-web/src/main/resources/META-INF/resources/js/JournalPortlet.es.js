@@ -135,7 +135,7 @@ export default function _JournalPortlet({
 		updateContextualSidebarAriaAttributes();
 
 		if (isContextualSidebarOpen()) {
-			contextualSidebarContainer.focus();
+			contextualSidebarContainer.focus({preventScroll: true});
 		}
 	};
 
@@ -222,6 +222,10 @@ export default function _JournalPortlet({
 	};
 
 	const handlePublishButtonClick = (event) => {
+		if (Liferay.FeatureFlags['LPS-141392']) {
+			return;
+		}
+
 		publishingLock.lock();
 
 		document

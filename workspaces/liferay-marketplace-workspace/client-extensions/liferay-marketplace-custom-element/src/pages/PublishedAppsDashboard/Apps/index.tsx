@@ -3,68 +3,36 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayIcon from '@clayui/icon';
 import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
-import {useState} from 'react';
-import {useOutletContext} from 'react-router-dom';
+import {useNavigate, useOutletContext} from 'react-router-dom';
 
-import appsIcon from '../../../assets/icons/apps_fill_icon.svg';
-import {
-	AppProps,
-	DashboardTable,
-} from '../../../components/DashboardTable/DashboardTable';
-import {PublishedAppsDashboardTableRow} from '../../../components/DashboardTable/PublishedAppsDashboardTableRow';
-import {getSiteURL} from '../../../components/InviteMemberModal/services';
-import {DashboardPage} from '../../DashBoardPage/DashboardPage';
-import {appTableHeaders} from '../PublishedDashboardPageUtil';
-
-const appMessages = {
-	description: 'Manage and publish apps on the Marketplace',
-	emptyStateMessage: {
-		description1: 'Publish apps and they will show up here.',
-		description2: 'Click on “New App” to start.',
-		title: 'No Apps Yet',
-	},
-	title: 'Apps',
-};
+import {DashboardPage} from '../../../components/DashBoardPage/DashboardPage';
+import PublishedAppsTable from './components/PublishedAppsTable';
 
 const Apps = () => {
-	const [page, setPage] = useState(1);
-
-	const {catalogId, publishedAppTable} = useOutletContext<any>();
+	const {catalogId, page, publishedProductTable, setPage} = useOutletContext<
+		any
+	>();
+	const navigate = useNavigate();
 
 	return (
 		<DashboardPage
-			buttonMessage={
-				<>
-					<ClayIcon className="mr-1" symbol="plus" />
-					New App
-				</>
-			}
-			messages={appMessages}
+			buttonDisabled={!(catalogId && catalogId > 0)}
+			buttonMessage="New App"
+			messages={{
+				description: 'Manage and publish apps on the Marketplace',
+				title: 'Apps',
+			}}
 			onButtonClick={() => {
-				window.location.href =
-					getSiteURL() + `/create-new-app?catalogId=${catalogId}`;
+				navigate(`/app/create?catalogId=${catalogId}`);
 			}}
 		>
-			<DashboardTable<AppProps>
-				emptyStateMessage={appMessages.emptyStateMessage}
-				icon={appsIcon}
-				items={publishedAppTable.items}
-				tableHeaders={appTableHeaders}
-			>
-				{(item) => (
-					<PublishedAppsDashboardTableRow
-						item={item}
-						key={item.name}
-					/>
-				)}
-			</DashboardTable>
+			<PublishedAppsTable items={publishedProductTable?.items ?? []} />
 
-			{!!publishedAppTable.items.length && (
+			{!!publishedProductTable?.items?.length && (
 				<ClayPaginationBarWithBasicItems
 					active={page}
-					activeDelta={publishedAppTable.pageSize}
+					activeDelta={publishedProductTable.pageSize}
 					defaultActive={1}
 					ellipsisBuffer={3}
 					ellipsisProps={{
@@ -73,7 +41,7 @@ const Apps = () => {
 					}}
 					onActiveChange={setPage}
 					showDeltasDropDown={false}
-					totalItems={publishedAppTable.totalCount}
+					totalItems={publishedProductTable.totalCount}
 				/>
 			)}
 		</DashboardPage>

@@ -1,7 +1,12 @@
+@import 'cadmin-variables';
 @import 'mixins';
 @import 'variables';
 
 @import 'globals';
+
+html#{$cadmin-selector} .portlet-layout .cadmin.control-menu-container {
+	position: static;
+}
 
 .segments-root {
 	@import 'conjunction';
@@ -12,6 +17,7 @@
 	@import 'criteria_sidebar';
 	@import 'drop_zone';
 	@import 'empty_drop_zone';
+	@import 'keyboard_movement_preview';
 	@import 'localized_title';
 	@import 'segment_edit';
 }

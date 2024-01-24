@@ -30,8 +30,6 @@ import java.io.IOException;
 
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Alan Huang
@@ -70,10 +68,18 @@ public class InstanceInitializerCheck extends BaseCheck {
 			_checkAttributeOrder(exprDetailASTList);
 		}
 
+		String absolutePath = getAbsolutePath();
+
+		if (absolutePath.contains("/test/") ||
+			absolutePath.contains("/testIntegration/")) {
+
+			return;
+		}
+
 		JavaClass javaClass = null;
 
 		try {
-			javaClass = _getJavaClass(detailAST, parentDetailAST);
+			javaClass = _getJavaClass(absolutePath, detailAST, parentDetailAST);
 		}
 		catch (IOException | ParseException exception) {
 			if (_log.isDebugEnabled()) {
@@ -87,13 +93,24 @@ public class InstanceInitializerCheck extends BaseCheck {
 			return;
 		}
 
-		_checkSetCall(firstChildDetailAST, exprDetailASTList, javaClass);
+		List<DetailAST> childDetailASTList = getAllChildTokens(
+			firstChildDetailAST, false, TokenTypes.EXPR, TokenTypes.LITERAL_IF);
 
-		for (DetailAST literalIfDetailAST :
-				getAllChildTokens(
-					firstChildDetailAST, false, TokenTypes.LITERAL_IF)) {
+		for (DetailAST childDetailAST : childDetailASTList) {
+			if (childDetailAST.getType() == TokenTypes.LITERAL_IF) {
+				DetailAST slistDetailAST = childDetailAST.findFirstToken(
+					TokenTypes.SLIST);
 
-			_checkIfStatement(literalIfDetailAST, javaClass);
+				for (DetailAST exprDetailAST :
+						getAllChildTokens(
+							slistDetailAST, false, TokenTypes.EXPR)) {
+
+					_checkExprStatement(exprDetailAST, javaClass, true);
+				}
+			}
+			else {
+				_checkExprStatement(childDetailAST, javaClass, false);
+			}
 		}
 	}
 
@@ -157,8 +174,68 @@ public class InstanceInitializerCheck extends BaseCheck {
 		}
 	}
 
+	private void _checkExprStatement(
+		DetailAST exprDetailAST, JavaClass javaClass,
+		boolean insideIfStatement) {
+
+		DetailAST firstChildDetailAST = exprDetailAST.getFirstChild();
+
+		if (firstChildDetailAST == null) {
+			return;
+		}
+
+		if (firstChildDetailAST.getType() == TokenTypes.ASSIGN) {
+			firstChildDetailAST = firstChildDetailAST.getFirstChild();
+
+			if (firstChildDetailAST.getType() != TokenTypes.IDENT) {
+				return;
+			}
+
+			String variableName = firstChildDetailAST.getText();
+
+			String methodName =
+				"set" + StringUtil.upperCaseFirstLetter(variableName);
+
+			_checkHasReplacableMethodSignature(
+				firstChildDetailAST, methodName, javaClass, insideIfStatement);
+		}
+		else if (firstChildDetailAST.getType() == TokenTypes.METHOD_CALL) {
+			DetailAST dotDetailAST = firstChildDetailAST.findFirstToken(
+				TokenTypes.DOT);
+
+			if (dotDetailAST != null) {
+				return;
+			}
+
+			String methodName = getMethodName(firstChildDetailAST);
+
+			if (!methodName.startsWith("set")) {
+				return;
+			}
+
+			if (!insideIfStatement) {
+				DetailAST elistDetailAST = firstChildDetailAST.findFirstToken(
+					TokenTypes.ELIST);
+
+				DetailAST childDetailAST = elistDetailAST.getFirstChild();
+
+				if ((childDetailAST == null) ||
+					(childDetailAST.getType() == TokenTypes.LAMBDA) ||
+					(childDetailAST.findFirstToken(TokenTypes.METHOD_REF) !=
+						null)) {
+
+					return;
+				}
+			}
+
+			_checkHasReplacableMethodSignature(
+				firstChildDetailAST, methodName, javaClass, insideIfStatement);
+		}
+	}
+
 	private void _checkHasReplacableMethodSignature(
-		DetailAST detailAST, String methodName, JavaClass javaClass) {
+		DetailAST detailAST, String methodName, JavaClass javaClass,
+		boolean insideIfStatement) {
 
 		for (JavaTerm javaTerm : javaClass.getChildJavaTerms()) {
 			if (!javaTerm.isJavaMethod() || javaTerm.isPrivate()) {
@@ -184,8 +261,10 @@ public class InstanceInitializerCheck extends BaseCheck {
 			String parameterType = javaParameter.getParameterType();
 
 			if (parameterType.startsWith("UnsafeSupplier")) {
-				if (detailAST.getType() == TokenTypes.METHOD_CALL) {
-					log(detailAST, _MSG_INLINE_IF_STATEMENT, methodName);
+				if (insideIfStatement) {
+					log(
+						detailAST, _MSG_INLINE_IF_STATEMENT, methodName,
+						parameterType);
 				}
 				else {
 					log(
@@ -194,124 +273,6 @@ public class InstanceInitializerCheck extends BaseCheck {
 				}
 
 				return;
-			}
-		}
-	}
-
-	private void _checkIfStatement(
-		DetailAST literalIfDetailAST, JavaClass javaClass) {
-
-		DetailAST slistDetailAST = literalIfDetailAST.findFirstToken(
-			TokenTypes.SLIST);
-
-		List<DetailAST> exprDetailASTList = getAllChildTokens(
-			slistDetailAST, false, TokenTypes.EXPR);
-
-		for (DetailAST exprDetailAST : exprDetailASTList) {
-			DetailAST firstChildDetailAST = exprDetailAST.getFirstChild();
-
-			if (firstChildDetailAST == null) {
-				continue;
-			}
-
-			if (firstChildDetailAST.getType() == TokenTypes.ASSIGN) {
-				firstChildDetailAST = firstChildDetailAST.getFirstChild();
-
-				if (firstChildDetailAST.getType() != TokenTypes.IDENT) {
-					continue;
-				}
-
-				String variableName = firstChildDetailAST.getText();
-
-				String methodName =
-					"set" + StringUtil.upperCaseFirstLetter(variableName);
-
-				_checkHasReplacableMethodSignature(
-					firstChildDetailAST, methodName, javaClass);
-			}
-			else if (firstChildDetailAST.getType() == TokenTypes.METHOD_CALL) {
-				DetailAST dotDetailAST = firstChildDetailAST.findFirstToken(
-					TokenTypes.DOT);
-
-				if (dotDetailAST != null) {
-					continue;
-				}
-
-				String methodName = getMethodName(firstChildDetailAST);
-
-				if (!methodName.startsWith("set")) {
-					continue;
-				}
-
-				_checkHasReplacableMethodSignature(
-					firstChildDetailAST, methodName, javaClass);
-			}
-		}
-	}
-
-	private void _checkSetCall(
-		DetailAST detailAST, List<DetailAST> exprDetailASTList,
-		JavaClass javaClass) {
-
-		for (DetailAST exprDetailAST : exprDetailASTList) {
-			DetailAST firstChildDetailAST = exprDetailAST.getFirstChild();
-
-			if (firstChildDetailAST.getType() != TokenTypes.METHOD_CALL) {
-				continue;
-			}
-
-			DetailAST dotDetailAST = firstChildDetailAST.findFirstToken(
-				TokenTypes.DOT);
-
-			if (dotDetailAST != null) {
-				continue;
-			}
-
-			int startLineNumber = getStartLineNumber(firstChildDetailAST);
-
-			String methodName = getMethodName(firstChildDetailAST);
-
-			if (!methodName.matches("set[A-Z]\\w*")) {
-				continue;
-			}
-
-			DetailAST elistDetailAST = firstChildDetailAST.findFirstToken(
-				TokenTypes.ELIST);
-
-			firstChildDetailAST = elistDetailAST.getFirstChild();
-
-			if ((firstChildDetailAST == null) ||
-				(firstChildDetailAST.getType() != TokenTypes.EXPR)) {
-
-				continue;
-			}
-
-			String variableName = StringUtil.lowerCaseFirstLetter(
-				methodName.substring(3));
-
-			List<String> names = getNames(detailAST, true);
-
-			if (names.contains(variableName)) {
-				continue;
-			}
-
-			Pattern pattern = Pattern.compile(
-				"\\s(\\S+)\\s+(\\S+\\.)?" + variableName);
-
-			for (JavaTerm javaTerm : javaClass.getChildJavaTerms()) {
-				if (!javaTerm.isJavaVariable() || javaTerm.isPrivate()) {
-					continue;
-				}
-
-				Matcher matcher = pattern.matcher(javaTerm.getContent());
-
-				if (matcher.find()) {
-					log(
-						startLineNumber, _MSG_USE_ASSIGN_INSTEAD,
-						javaTerm.getName(), methodName);
-
-					break;
-				}
 			}
 		}
 	}
@@ -328,7 +289,7 @@ public class InstanceInitializerCheck extends BaseCheck {
 	}
 
 	private JavaClass _getJavaClass(
-			DetailAST detailAST, DetailAST parentDetailAST)
+			String absolutePath, DetailAST detailAST, DetailAST parentDetailAST)
 		throws IOException, ParseException {
 
 		String fullyQualifiedTypeName = null;
@@ -349,8 +310,6 @@ public class InstanceInitializerCheck extends BaseCheck {
 		if (fullyQualifiedTypeName == null) {
 			return null;
 		}
-
-		String absolutePath = getAbsolutePath();
 
 		File javaFile = JavaSourceUtil.getJavaFile(
 			fullyQualifiedTypeName, _getRootDirName(absolutePath),
@@ -385,8 +344,6 @@ public class InstanceInitializerCheck extends BaseCheck {
 
 	private static final String _MSG_MOVE_ASSIGN_BEFORE_METHOD_CALL =
 		"assign.move.before.method.call";
-
-	private static final String _MSG_USE_ASSIGN_INSTEAD = "assign.use.instead";
 
 	private static final String _MSG_USE_SET_METHOD_INSTEAD =
 		"set.method.use.instead";

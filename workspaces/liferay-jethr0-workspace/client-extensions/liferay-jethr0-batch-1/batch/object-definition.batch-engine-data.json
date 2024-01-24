@@ -1,22 +1,6 @@
 {
-	"actions": {
-		"createBatch": {
-			"href": "/o/headless-batch-engine/v1.0/import-task/com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition",
-			"method": "POST"
-		},
-		"deleteBatch": {
-			"href": "/o/headless-batch-engine/v1.0/import-task/com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition",
-			"method": "DELETE"
-		},
-		"updateBatch": {
-			"href": "/o/headless-batch-engine/v1.0/import-task/com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition",
-			"method": "PUT"
-		}
-	},
 	"configuration": {
-		"callbackURL": null,
 		"className": "com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition",
-		"companyId": 0,
 		"multiCompany": false,
 		"parameters": {
 			"containsHeaders": "false",
@@ -24,51 +8,9 @@
 			"importStrategy": "ON_ERROR_FAIL",
 			"taskItemDelegateName": "DEFAULT",
 			"updateStrategy": "UPDATE"
-		},
-		"userId": 0,
-		"version": "v1.0"
+		}
 	},
 	"items": [
-		{
-			"externalReferenceCode": "BuildParameter",
-			"label": {
-				"en_US": "Build Parameter"
-			},
-			"name": "BuildParameter",
-			"objectFields": [
-				{
-					"DBType": "String",
-					"businessType": "Text",
-					"label": {
-						"en_US": "Name"
-					},
-					"name": "name",
-					"required": true,
-					"type": "String"
-				},
-				{
-					"DBType": "Clob",
-					"businessType": "LongText",
-					"label": {
-						"en_US": "Value"
-					},
-					"name": "value",
-					"required": true,
-					"type": "Clob"
-				}
-			],
-			"panelCategoryKey": "",
-			"pluralLabel": {
-				"en_US": "Build Parameters"
-			},
-			"portlet": false,
-			"scope": "company",
-			"status": {
-				"code": 0,
-				"label": "approved",
-				"label_i18n": "Approved"
-			}
-		},
 		{
 			"externalReferenceCode": "Environment",
 			"label": {
@@ -184,18 +126,31 @@
 					"DBType": "String",
 					"businessType": "Text",
 					"label": {
-						"en_US": "Branch Name"
+						"en_US": "Branch SHA"
 					},
-					"name": "branchName",
+					"name": "branchSHA",
 					"type": "String"
 				},
 				{
 					"DBType": "String",
 					"businessType": "Text",
 					"label": {
-						"en_US": "Branch SHA"
+						"en_US": "Branch URL"
 					},
-					"name": "branchSHA",
+					"name": "branchURL",
+					"required": true,
+					"type": "String"
+				},
+				{
+					"DBType": "String",
+					"businessType": "Picklist",
+					"label": {
+						"en_US": "Type"
+					},
+					"listTypeDefinitionExternalReferenceCode": "gitHubBranchType",
+					"name": "type",
+					"required": true,
+					"state": false,
 					"type": "String"
 				},
 				{
@@ -211,24 +166,6 @@
 					"DBType": "String",
 					"businessType": "Text",
 					"label": {
-						"en_US": "Repository Name"
-					},
-					"name": "repositoryName",
-					"type": "String"
-				},
-				{
-					"DBType": "String",
-					"businessType": "Text",
-					"label": {
-						"en_US": "Upstream Branch Name"
-					},
-					"name": "upstreamBranchName",
-					"type": "String"
-				},
-				{
-					"DBType": "String",
-					"businessType": "Text",
-					"label": {
 						"en_US": "Upstream Branch SHA"
 					},
 					"name": "upstreamBranchSHA",
@@ -238,9 +175,9 @@
 					"DBType": "String",
 					"businessType": "Text",
 					"label": {
-						"en_US": "URL"
+						"en_US": "Upstream Branch URL"
 					},
-					"name": "url",
+					"name": "upstreamBranchURL",
 					"required": true,
 					"type": "String"
 				}
@@ -786,6 +723,16 @@
 					"type": "String"
 				},
 				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"indexed": false,
+					"label": {
+						"en_US": "Parameters"
+					},
+					"name": "parameters",
+					"type": "Clob"
+				},
+				{
 					"DBType": "String",
 					"businessType": "Picklist",
 					"defaultValue": "opened",
@@ -800,16 +747,6 @@
 				}
 			],
 			"objectRelationships": [
-				{
-					"deletionType": "cascade",
-					"label": {
-						"en_US": "Build to Build Parameters"
-					},
-					"name": "buildToBuildParameters",
-					"objectDefinitionExternalReferenceCode1": "Build",
-					"objectDefinitionExternalReferenceCode2": "BuildParameter",
-					"type": "oneToMany"
-				},
 				{
 					"deletionType": "cascade",
 					"label": {
@@ -879,6 +816,16 @@
 					"name": "name",
 					"required": true,
 					"type": "String"
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"indexed": false,
+					"label": {
+						"en_US": "Parameters"
+					},
+					"name": "parameters",
+					"type": "Clob"
 				},
 				{
 					"DBType": "Integer",

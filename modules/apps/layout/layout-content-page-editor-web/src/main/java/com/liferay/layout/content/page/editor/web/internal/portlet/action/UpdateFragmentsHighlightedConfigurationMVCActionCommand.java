@@ -13,11 +13,10 @@ import com.liferay.fragment.renderer.FragmentRenderer;
 import com.liferay.fragment.renderer.FragmentRendererRegistry;
 import com.liferay.fragment.service.FragmentCompositionService;
 import com.liferay.fragment.service.FragmentEntryLocalService;
-import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.layout.content.page.editor.constants.ContentPageEditorPortletKeys;
 import com.liferay.layout.content.page.editor.web.internal.constants.ContentPageEditorConstants;
-import com.liferay.layout.content.page.editor.web.internal.util.FragmentEntryLinkManager;
-import com.liferay.layout.content.page.editor.web.internal.util.ObjectUtil;
+import com.liferay.layout.content.page.editor.web.internal.manager.FragmentCollectionManager;
+import com.liferay.layout.content.page.editor.web.internal.manager.FragmentEntryLinkManager;
 import com.liferay.layout.content.page.editor.web.internal.util.layout.structure.LayoutStructureUtil;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
@@ -99,9 +98,7 @@ public class UpdateFragmentsHighlightedConfigurationMVCActionCommand
 			WebKeys.THEME_DISPLAY);
 
 		Map<String, Map<String, Object>> layoutElementMaps =
-			_getLayoutElementMaps(
-				themeDisplay.getCompanyId(),
-				themeDisplay.getPermissionChecker());
+			_getLayoutElementMaps(themeDisplay.getPermissionChecker());
 
 		if (layoutElementMaps.containsKey(fragmentEntryKey)) {
 			return fragmentEntryKey;
@@ -201,9 +198,7 @@ public class UpdateFragmentsHighlightedConfigurationMVCActionCommand
 			}
 
 			Map<String, Map<String, Object>> layoutElementMaps =
-				_getLayoutElementMaps(
-					themeDisplay.getCompanyId(),
-					themeDisplay.getPermissionChecker());
+				_getLayoutElementMaps(themeDisplay.getPermissionChecker());
 
 			if (layoutElementMaps.containsKey(key)) {
 				Map<String, Object> layoutElementMap = layoutElementMaps.get(
@@ -324,7 +319,7 @@ public class UpdateFragmentsHighlightedConfigurationMVCActionCommand
 	}
 
 	private Map<String, Map<String, Object>> _getLayoutElementMaps(
-		long companyId, PermissionChecker permissionChecker) {
+		PermissionChecker permissionChecker) {
 
 		if (_layoutElementMaps != null) {
 			return _layoutElementMaps;
@@ -333,8 +328,8 @@ public class UpdateFragmentsHighlightedConfigurationMVCActionCommand
 		Map<String, Map<String, Object>> layoutElementMaps = new HashMap<>();
 
 		Map<String, List<Map<String, Object>>> layoutElementMapsListMap =
-			ObjectUtil.getLayoutElementMapsListMap(
-				companyId, _infoItemServiceRegistry, permissionChecker);
+			_fragmentCollectionManager.getLayoutElementMapsListMap(
+				permissionChecker);
 
 		for (Map.Entry<String, List<Map<String, Object>>> entry :
 				layoutElementMapsListMap.entrySet()) {
@@ -474,6 +469,9 @@ public class UpdateFragmentsHighlightedConfigurationMVCActionCommand
 		_fragmentCollectionContributorRegistry;
 
 	@Reference
+	private FragmentCollectionManager _fragmentCollectionManager;
+
+	@Reference
 	private FragmentCompositionService _fragmentCompositionService;
 
 	@Reference
@@ -487,9 +485,6 @@ public class UpdateFragmentsHighlightedConfigurationMVCActionCommand
 
 	@Reference
 	private GroupLocalService _groupLocalService;
-
-	@Reference
-	private InfoItemServiceRegistry _infoItemServiceRegistry;
 
 	@Reference
 	private Language _language;

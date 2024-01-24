@@ -26,7 +26,6 @@ if (Validator.isNotNull(backURL)) {
 	actionDropdownItems="<%= oAuth2ConnectedApplicationsManagementToolbarDisplayContext.getActionDropdownItems() %>"
 	additionalProps="<%= oAuth2ConnectedApplicationsManagementToolbarDisplayContext.getAdditionalProps() %>"
 	disabled="<%= userOAuth2AuthorizationsCount == 0 %>"
-	filterDropdownItems="<%= oAuth2ConnectedApplicationsManagementToolbarDisplayContext.getFilterDropdownItems() %>"
 	itemsTotal="<%= userOAuth2AuthorizationsCount %>"
 	orderDropdownItems="<%= oAuth2ConnectedApplicationsManagementToolbarDisplayContext.getOrderByDropdownItems() %>"
 	propsTransformer="connected_applications/js/oAuth2ConnectedApplicationsManagementToolbarPropsTransformer"
@@ -103,6 +102,6 @@ if (Validator.isNotNull(backURL)) {
 	</aui:form>
 </clay:container-fluid>
 
-<script>
+<aui:script>
 	function <portlet:namespace />removeAccess() {}
-</script>
+</aui:script>

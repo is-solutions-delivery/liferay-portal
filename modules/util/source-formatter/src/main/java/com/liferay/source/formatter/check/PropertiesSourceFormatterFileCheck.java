@@ -113,7 +113,7 @@ public class PropertiesSourceFormatterFileCheck extends BaseFileCheck {
 
 		int pos = absolutePath.lastIndexOf(CharPool.SLASH);
 
-		String fileLocation = fileName.substring(0, pos);
+		String fileLocation = absolutePath.substring(0, pos);
 
 		String rootDirName = SourceUtil.getRootDirName(absolutePath);
 
@@ -232,7 +232,9 @@ public class PropertiesSourceFormatterFileCheck extends BaseFileCheck {
 				content = _sortPropertyValues(content, key, propertyValues);
 			}
 
-			if (!key.endsWith("excludes") && !key.endsWith("FileNames")) {
+			if (!key.endsWith("DirNames") && !key.endsWith("FileNames") &&
+				!key.endsWith("excludes")) {
+
 				continue;
 			}
 
@@ -262,8 +264,10 @@ public class PropertiesSourceFormatterFileCheck extends BaseFileCheck {
 				if (file == null) {
 					addMessage(
 						fileName,
-						"Property value '" + propertyFileName +
-							"' points to file that does not exist");
+						StringBundler.concat(
+							"Property value '", propertyFileName,
+							"' points to file or directory that does not ",
+							"exist"));
 				}
 			}
 		}

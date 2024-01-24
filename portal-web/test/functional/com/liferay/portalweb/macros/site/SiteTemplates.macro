@@ -265,7 +265,9 @@ definition {
 			key_siteTemplateName = ${siteTemplateName},
 			locator1 = "Checkbox#SITE_TEMPLATE");
 
-		ClickNoError(locator1 = "Icon#DELETE");
+		ClickNoError(
+			key_text = "times-circle",
+			locator1 = "ManagementBar#ANY_ICON");
 
 		AssertConfirm(value1 = "Are you sure you want to delete this? It will be deleted immediately.");
 
@@ -443,7 +445,7 @@ definition {
 
 		var mysqlStatement = "SELECT modifiedDate FROM Layout WHERE name LIKE '${pageNameFilter}' AND groupId = '${groupId}' AND hidden_ = 0;";
 
-		var sqlResults = SQL.executeMySQLStatement(mysqlStatement = ${mysqlStatement});
+		var sqlResults = SQL.executeSQLStatement(sqlStatement = ${mysqlStatement});
 
 		echo("## * SQL Query Result is: ${sqlResults}");
 

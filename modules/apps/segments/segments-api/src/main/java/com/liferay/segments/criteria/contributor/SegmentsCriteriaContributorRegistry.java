@@ -5,8 +5,6 @@
 
 package com.liferay.segments.criteria.contributor;
 
-import com.liferay.segments.criteria.Criteria;
-
 import java.util.List;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -20,10 +18,6 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface SegmentsCriteriaContributorRegistry {
 
-	public List<SegmentsCriteriaContributor> getSegmentsCriteriaContributors(
-		String className);
-
-	public List<SegmentsCriteriaContributor> getSegmentsCriteriaContributors(
-		String className, Criteria.Type type);
+	public List<SegmentsCriteriaContributor> getSegmentsCriteriaContributors();
 
 }

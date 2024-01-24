@@ -96,6 +96,11 @@
 		<td></td>
 	</tr>
 	<tr>
+		<td>ADD_COLUMN</td>
+		<td>//button[contains(text(),'Add Column')]</td>
+		<td></td>
+	</tr>
+	<tr>
 		<td>ADD_COLUMNS_COLUMN_LABEL</td>
 		<td>//span[@class="custom-control-label-text" and contains(text(),'${key_columnName}')]</td>
 		<td></td>
@@ -128,11 +133,6 @@
 	<tr>
 		<td>DEFAULT_SORT_TAB</td>
 		<td>//button[@class=('nav-link btn btn-unstyled') and contains(.,'Default Sort')]</td>
-		<td></td>
-	</tr>
-	<tr>
-		<td>SELECT_AUTO_COMPLETE</td>
-		<td>//div[contains(@class, 'select__content')]//span[contains(text(),'Choose an Option')]</td>
 		<td></td>
 	</tr>
 	<tr>
@@ -236,13 +236,8 @@
 		<td></td>
 	</tr>
 	<tr>
-		<td>ADD_BUTTON_FILTERS</td>
-		<td>//h3[(@class='lfr-objects__card-title') and text()='Filters']/../..//button[contains(@class,'nav-btn nav-btn-monospaced btn btn-monospaced btn-primary')]</td>
-		<td></td>
-	</tr>
-	<tr>
-		<td>SELECT_FILTER_GENERIC</td>
-		<td>//label[contains(.,'${key_filterLabel}')]//..//input[@placeholder='Choose an Option']</td>
+		<td>ADD_NEW_FILTER</td>
+		<td>//button[contains(text(),'New Filter')]</td>
 		<td></td>
 	</tr>
 	<tr>

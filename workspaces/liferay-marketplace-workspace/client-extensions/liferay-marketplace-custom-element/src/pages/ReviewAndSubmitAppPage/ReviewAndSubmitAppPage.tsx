@@ -10,11 +10,7 @@ import {Checkbox} from '../../components/Checkbox/Checkbox';
 import {Header} from '../../components/Header/Header';
 import {NewAppPageFooterButtons} from '../../components/NewAppPageFooterButtons/NewAppPageFooterButtons';
 import {Section} from '../../components/Section/Section';
-import {
-	getProduct,
-	getProductSKU,
-	getProductSpecifications,
-} from '../../utils/api';
+import {getProduct} from '../../utils/api';
 import {getThumbnailByProductAttachment, showAppImage} from '../../utils/util';
 import {CardSectionsBody} from './CardSectionsBody';
 import {App, supportAndHelpMap} from './ReviewAndSubmitAppPageUtil';
@@ -24,8 +20,8 @@ import './ReviewAndSubmitAppPage.scss';
 interface ReviewAndSubmitAppPageProps {
 	onClickBack: () => void;
 	onClickContinue: () => void;
-	productERC: string;
-	productId: number;
+	productERC?: string;
+	productId?: number;
 	readonly?: boolean;
 }
 
@@ -46,7 +42,7 @@ export function ReviewAndSubmitAppPage({
 
 			const productResponse = await getProduct({
 				appERC: productERC,
-				nestedFields: 'images,attachments',
+				nestedFields: 'attachments,images,skus,productSpecifications',
 			});
 
 			const productCategories: string[] = [];
@@ -61,29 +57,31 @@ export function ReviewAndSubmitAppPage({
 				}
 			});
 
-			const skuResponse = await getProductSKU({
-				appProductId: productId,
-			});
+			const productSpecifications =
+				productResponse.productSpecifications || [];
+			const skus = productResponse.skus || [];
 
-			const productSpecificationsResponse = await getProductSpecifications(
-				{
-					appProductId: productId,
-				}
+			const nonTrialSKU = skus.find(
+				({skuOptions: [trialOption]}) => trialOption?.value === 'no'
 			);
 
-			const nonTrialSKU = skuResponse.items.find(
-				({skuOptions: [trialOption]}) => trialOption.value === 'no'
-			);
-			let version = '';
-			let versionDescription = '';
+			const dataProduct = {
+				'cpu': '',
+				'license-type': '',
+				'price-model': '',
+				'ram': '',
+				'type': '',
+				'version': '',
+				'versionDescription': '',
+			};
 
 			nonTrialSKU?.customFields?.forEach(({customValue, name}) => {
 				if (name === 'version') {
-					version = customValue.data as string;
+					dataProduct.version = customValue.data as string;
 				}
 
 				if (name === 'Version Description') {
-					versionDescription = customValue.data as string;
+					dataProduct.versionDescription = customValue.data as string;
 				}
 			});
 
@@ -92,68 +90,61 @@ export function ReviewAndSubmitAppPage({
 				link: string;
 				title: string;
 			}[] = [];
-			let licenseType = '';
-			let priceModel = '';
 
-			productSpecificationsResponse.forEach((specification) => {
+			productSpecifications.forEach((specification) => {
 				const {specificationKey, value} = specification;
 				const localizedValue = value['en_US'];
 
 				if (
-					specificationKey === 'supporturl' ||
-					specificationKey === 'publisherwebsiteurl' ||
-					specificationKey === 'appusagetermsurl' ||
-					specificationKey === 'appdocumentationurl' ||
-					specificationKey === 'appinstallationguideurl'
+					[
+						'supporturl',
+						'publisherwebsiteurl',
+						'ppusagetermsurl',
+						'appdocumentationurl',
+						'appinstallationguideurl',
+					].includes(specificationKey)
 				) {
-					const supportAndHelItem = supportAndHelpMap.get(
-						specificationKey
-					);
 					supportAndHelpCardInfos.push({
-						...(supportAndHelItem as {icon: string; title: string}),
+						...(supportAndHelpMap.get(specificationKey) as {
+							icon: string;
+							title: string;
+						}),
 						link: localizedValue,
 					});
 				}
 
-				if (specificationKey === 'price-model') {
-					priceModel = localizedValue;
-				}
-
-				if (specificationKey === 'license-type') {
-					licenseType = localizedValue;
-				}
+				(dataProduct as any)[
+					specificationKey as string
+				] = localizedValue;
 			});
 
 			const attachment = productResponse.attachments.find(
-				({customFields}) =>
-					customFields?.find(
-						({
-							customValue: {
-								data: [value],
-							},
-							name,
-						}) => name === 'App Icon' && value === 'No'
-					)
+				(attachment) => {
+					return (attachment.tags || []).indexOf('app icon') < 0;
+				}
 			);
 
 			const thumbnail = showAppImage(
-				getThumbnailByProductAttachment(productResponse.attachments)
+				getThumbnailByProductAttachment(productResponse.images)
 			);
 
-			const newApp: App = {
+			const newApp = {
 				attachmentTitle: attachment?.title['en_US'] as string,
 				categories: productCategories,
 				description: productResponse.description['en_US'],
-				licenseType,
 				name: productResponse.name['en_US'],
 				price: nonTrialSKU?.price as number,
-				priceModel,
-				storefront: productResponse.images,
+				resourceRequirements: {
+					cpu: dataProduct.cpu,
+					ram: dataProduct.ram,
+				},
+				storefront: (productResponse.images || []).filter((image) => {
+					return image.galleryEnabled;
+				}),
 				supportAndHelp: supportAndHelpCardInfos,
 				tags: productTags,
 				thumbnail,
-				version,
-				versionDescription,
+				...dataProduct,
 			};
 
 			setApp(newApp);

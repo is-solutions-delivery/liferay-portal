@@ -32,6 +32,9 @@ export const PLAN_TYPES = {
 	['LXC - CSP - Up to 500 Users - Extra User']: 'lxcCspUpTo500UsersExtraUser',
 	['LXC - CSP - Up to 5K Users']: 'lxcCspUpTo5kUsers',
 	['LXC - CSP - Up to 5K Users - Extra User']: 'lxcCspUpTo5kUsersExtraUser',
+	['LXC Business']: 'lxcBusiness',
+	['LXC Enterprise']: 'lxcEnterprise',
+	['LXC Pro']: 'lxcBasic',
 	['LXC Subscription - Engage Site']: 'lxcSubscriptionEngageSite',
 	['LXC Subscription - Support Site']: 'lxcSubscriptionSupportSite',
 	['LXC Subscription - Transact Site']: 'lxcSubscriptionTransactSite'
@@ -65,8 +68,7 @@ function formatSubscriptions(allPlans) {
 				baseSubscriptionPlan,
 				individualsLimit,
 				name,
-				pageViewsLimit,
-				price
+				pageViewsLimit
 			} = allPlans[key];
 
 			const planType = PLAN_TYPES[key];
@@ -77,8 +79,7 @@ function formatSubscriptions(allPlans) {
 					[INDIVIDUALS]: individualsLimit,
 					[PAGEVIEWS]: pageViewsLimit
 				},
-				name,
-				price
+				name
 			};
 
 			const parentPlanType = PLAN_TYPES[baseSubscriptionPlan];
@@ -251,7 +252,9 @@ export function formatPlanData(subscriptionIMap) {
 			metrics: {
 				individuals: new Metric({
 					count: subscriptionIMap.get(
-						'individualsCountSinceLastAnniversary',
+						PLAN_TYPES[subscriptionIMap.get('name')] === 'basic'
+							? 'individualsCount'
+							: 'individualsCountSinceLastAnniversary',
 						0
 					),
 					limit: subscriptionIMap.get('individualsLimit', 0),
@@ -262,7 +265,9 @@ export function formatPlanData(subscriptionIMap) {
 				}),
 				pageViews: new Metric({
 					count: subscriptionIMap.get(
-						'pageViewsCountSinceLastAnniversary',
+						PLAN_TYPES[subscriptionIMap.get('name')] === 'basic'
+							? 'pageViewsCount'
+							: 'pageViewsCountSinceLastAnniversary',
 						0
 					),
 					limit: subscriptionIMap.get('pageViewsLimit', 0),

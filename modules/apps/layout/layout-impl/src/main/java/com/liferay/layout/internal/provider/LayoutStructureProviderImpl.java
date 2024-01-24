@@ -36,6 +36,19 @@ public class LayoutStructureProviderImpl implements LayoutStructureProvider {
 		try {
 			Layout layout = _getLayout(plid);
 
+			if (!layout.isTypeAssetDisplay() && !layout.isTypeCollection() &&
+				!layout.isTypeContent()) {
+
+				String masterLayoutData = _getMasterLayoutData(
+					layout.getMasterLayoutPlid());
+
+				if (Validator.isNotNull(masterLayoutData)) {
+					return LayoutStructure.of(masterLayoutData);
+				}
+
+				return null;
+			}
+
 			LayoutPageTemplateStructure layoutPageTemplateStructure =
 				_layoutPageTemplateStructureLocalService.
 					fetchLayoutPageTemplateStructure(

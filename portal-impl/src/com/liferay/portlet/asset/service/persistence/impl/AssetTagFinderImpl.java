@@ -10,6 +10,7 @@ import com.liferay.asset.kernel.model.AssetEntryTable;
 import com.liferay.asset.kernel.model.AssetTag;
 import com.liferay.asset.kernel.model.AssetTagTable;
 import com.liferay.asset.kernel.service.persistence.AssetTagFinder;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.sql.dsl.DSLFunctionFactoryUtil;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.sql.dsl.expression.Predicate;
@@ -19,13 +20,12 @@ import com.liferay.portal.kernel.dao.orm.SQLQuery;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.Type;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portlet.asset.model.impl.AssetTagImpl;
-import com.liferay.social.kernel.model.SocialActivityCounterTable;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -37,106 +37,25 @@ public class AssetTagFinderImpl
 	extends AssetTagFinderBaseImpl implements AssetTagFinder {
 
 	@Override
-	public int countByG_N(long groupId, String name) {
-		Session session = null;
-
-		try {
-			session = openSession();
-
-			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(
-				DSLQueryFactoryUtil.countDistinct(
-					AssetEntries_AssetTagsTable.INSTANCE.entryId
-				).from(
-					AssetTagTable.INSTANCE
-				).innerJoinON(
-					AssetEntries_AssetTagsTable.INSTANCE,
-					AssetEntries_AssetTagsTable.INSTANCE.tagId.eq(
-						AssetTagTable.INSTANCE.tagId)
-				).where(
-					AssetEntries_AssetTagsTable.INSTANCE.entryId.in(
-						DSLQueryFactoryUtil.select(
-							AssetEntryTable.INSTANCE.entryId
-						).from(
-							AssetEntryTable.INSTANCE
-						).where(
-							AssetEntryTable.INSTANCE.groupId.eq(
-								groupId
-							).and(
-								AssetEntryTable.INSTANCE.visible.eq(true)
-							)
-						)
-					).and(
-						AssetTagTable.INSTANCE.name.like(
-							StringUtil.toLowerCase(name))
-					)
-				));
-
-			sqlQuery.addScalar(COUNT_COLUMN_NAME, Type.LONG);
-
-			Iterator<Long> iterator = sqlQuery.iterate();
-
-			if (iterator.hasNext()) {
-				Long count = iterator.next();
-
-				if (count != null) {
-					return count.intValue();
-				}
-			}
-
-			return 0;
-		}
-		catch (Exception exception) {
-			throw new SystemException(exception);
-		}
-		finally {
-			closeSession(session);
-		}
-	}
-
-	@Override
 	public int countByG_C_N(long groupId, long classNameId, String name) {
 		Session session = null;
 
 		try {
 			session = openSession();
 
+			Long[] assetTagIds = _getAssetTagIds(groupId, classNameId, name);
+
+			if (ArrayUtil.isEmpty(assetTagIds)) {
+				return 0;
+			}
+
 			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(
 				DSLQueryFactoryUtil.countDistinct(
 					AssetEntries_AssetTagsTable.INSTANCE.entryId
 				).from(
-					AssetTagTable.INSTANCE
-				).innerJoinON(
-					AssetEntries_AssetTagsTable.INSTANCE,
-					AssetEntries_AssetTagsTable.INSTANCE.tagId.eq(
-						AssetTagTable.INSTANCE.tagId)
+					AssetEntries_AssetTagsTable.INSTANCE
 				).where(
-					() -> {
-						Predicate predicate =
-							AssetEntries_AssetTagsTable.INSTANCE.entryId.in(
-								DSLQueryFactoryUtil.select(
-									AssetEntryTable.INSTANCE.entryId
-								).from(
-									AssetEntryTable.INSTANCE
-								).where(
-									AssetEntryTable.INSTANCE.groupId.eq(
-										groupId
-									).and(
-										AssetEntryTable.INSTANCE.classNameId.eq(
-											classNameId)
-									).and(
-										AssetEntryTable.INSTANCE.visible.eq(
-											true)
-									)
-								));
-
-						if (name == null) {
-							return predicate;
-						}
-
-						return predicate.and(
-							AssetTagTable.INSTANCE.name.like(
-								StringUtil.toLowerCase(name)));
-					}
+					AssetEntries_AssetTagsTable.INSTANCE.tagId.in(assetTagIds)
 				));
 
 			sqlQuery.addScalar(COUNT_COLUMN_NAME, Type.LONG);
@@ -203,8 +122,11 @@ public class AssetTagFinderImpl
 					}
 
 					return predicate.and(
-						AssetTagTable.INSTANCE.name.like(
-							StringUtil.toLowerCase(name)));
+						DSLFunctionFactoryUtil.lower(
+							AssetTagTable.INSTANCE.name
+						).like(
+							StringUtil.toLowerCase(name)
+						));
 				}
 			).orderBy(
 				orderByStep -> {
@@ -233,10 +155,8 @@ public class AssetTagFinderImpl
 		}
 	}
 
-	@Override
-	public List<AssetTag> findByG_N_S_E(
-		long groupId, String name, int startPeriod, int endPeriod,
-		int periodLength) {
+	private Long[] _getAssetTagIds(
+		long groupId, long classNameId, String name) {
 
 		Session session = null;
 
@@ -244,10 +164,8 @@ public class AssetTagFinderImpl
 			session = openSession();
 
 			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(
-				DSLQueryFactoryUtil.select(
-					AssetTagTable.INSTANCE.tagId, AssetTagTable.INSTANCE.name,
-					DSLFunctionFactoryUtil.sum(
-						SocialActivityCounterTable.INSTANCE.currentValue)
+				DSLQueryFactoryUtil.selectDistinct(
+					AssetTagTable.INSTANCE
 				).from(
 					AssetTagTable.INSTANCE
 				).innerJoinON(
@@ -255,53 +173,59 @@ public class AssetTagFinderImpl
 					AssetEntries_AssetTagsTable.INSTANCE.tagId.eq(
 						AssetTagTable.INSTANCE.tagId)
 				).innerJoinON(
-					SocialActivityCounterTable.INSTANCE,
-					SocialActivityCounterTable.INSTANCE.classNameId.eq(
-						AssetEntryTable.INSTANCE.classNameId
-					).and(
-						SocialActivityCounterTable.INSTANCE.classPK.eq(
-							AssetEntryTable.INSTANCE.classPK)
-					)
+					AssetEntryTable.INSTANCE,
+					AssetEntryTable.INSTANCE.entryId.eq(
+						AssetEntries_AssetTagsTable.INSTANCE.entryId)
 				).where(
-					SocialActivityCounterTable.INSTANCE.groupId.eq(
+					AssetEntryTable.INSTANCE.groupId.eq(
 						groupId
 					).and(
-						SocialActivityCounterTable.INSTANCE.name.eq(name)
+						() -> {
+							if (classNameId <= 0) {
+								return null;
+							}
+
+							return AssetEntryTable.INSTANCE.classNameId.eq(
+								classNameId);
+						}
 					).and(
-						SocialActivityCounterTable.INSTANCE.startPeriod.gte(
-							startPeriod)
+						AssetEntryTable.INSTANCE.visible.eq(true)
 					).and(
-						SocialActivityCounterTable.INSTANCE.startPeriod.lte(
-							endPeriod)
-					).and(
-						DSLFunctionFactoryUtil.add(
-							SocialActivityCounterTable.INSTANCE.startPeriod,
-							periodLength
-						).lte(
-							endPeriod
-						)
+						() -> {
+							if (name == null) {
+								return null;
+							}
+
+							return AssetTagTable.INSTANCE.name.like(
+								_getName(name));
+						}
 					)
-				).groupBy(
-					AssetTagTable.INSTANCE.tagId, AssetTagTable.INSTANCE.name
 				));
 
-			List<AssetTag> assetTags = new ArrayList<>();
+			sqlQuery.addEntity("AssetTag", AssetTagImpl.class);
 
-			Iterator<Object[]> iterator = sqlQuery.iterate();
+			List<AssetTag> assetTags = (List<AssetTag>)QueryUtil.list(
+				sqlQuery, getDialect(), QueryUtil.ALL_POS, QueryUtil.ALL_POS);
 
-			while (iterator.hasNext()) {
-				Object[] array = iterator.next();
+			List<Long> assetTagIds;
 
-				AssetTag assetTag = new AssetTagImpl();
+			if (!FeatureFlagManagerUtil.isEnabled("LPS-194362")) {
+				assetTagIds = TransformUtil.unsafeTransform(
+					assetTags, AssetTag::getTagId);
+			}
+			else {
+				assetTagIds = TransformUtil.unsafeTransform(
+					assetTags,
+					assetTag -> {
+						if (!StringUtil.equals(assetTag.getName(), name)) {
+							return null;
+						}
 
-				assetTag.setTagId(GetterUtil.getLong(array[0]));
-				assetTag.setName(GetterUtil.getString(array[1]));
-				assetTag.setAssetCount(GetterUtil.getInteger(array[2]));
-
-				assetTags.add(assetTag);
+						return Long.valueOf(assetTag.getTagId());
+					});
 			}
 
-			return assetTags;
+			return assetTagIds.toArray(new Long[0]);
 		}
 		catch (Exception exception) {
 			throw new SystemException(exception);
@@ -309,6 +233,14 @@ public class AssetTagFinderImpl
 		finally {
 			closeSession(session);
 		}
+	}
+
+	private String _getName(String name) {
+		if (!FeatureFlagManagerUtil.isEnabled("LPS-194362")) {
+			name = StringUtil.toLowerCase(name);
+		}
+
+		return name;
 	}
 
 }

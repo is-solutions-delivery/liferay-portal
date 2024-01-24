@@ -626,7 +626,7 @@ definition {
 			LAR.openExportAdmin(siteScopeName = ${siteScopeName});
 		}
 
-		Click(locator1 = "Icon#PLUS");
+		Click(locator1 = "Button#PLUS");
 
 		Alert.viewWarningSpecific(warningMessage = "Export process and export LAR file will be deleted after 30 days.");
 
@@ -675,9 +675,7 @@ definition {
 	macro filterCompletedProcesses() {
 		WaitForElementPresent(locator1 = "Staging#PROCESS_SUCCESSFUL");
 
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
-
-		MenuItem.click(menuItem = "Completed");
+		ManagementBar.setFilterAndOrder(filterBy = "Completed");
 	}
 
 	@summary = "Default summary"

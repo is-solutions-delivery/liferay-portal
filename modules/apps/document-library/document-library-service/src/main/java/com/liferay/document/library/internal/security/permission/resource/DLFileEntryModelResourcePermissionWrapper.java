@@ -88,10 +88,8 @@ public class DLFileEntryModelResourcePermissionWrapper
 					new DLFileEntryWorkflowedModelResourcePermissionLogic(
 						modelResourcePermission));
 
-				if (_sharingModelResourcePermissionConfigurator != null) {
-					_sharingModelResourcePermissionConfigurator.configure(
-						modelResourcePermission, consumer);
-				}
+				_sharingModelResourcePermissionConfigurator.configure(
+					modelResourcePermission, consumer);
 
 				consumer.accept(
 					(permissionChecker, name, fileEntry, actionId) -> {
@@ -132,10 +130,21 @@ public class DLFileEntryModelResourcePermissionWrapper
 					});
 
 				if (PropsValues.PERMISSIONS_VIEW_DYNAMIC_INHERITANCE) {
+					DynamicInheritancePermissionLogic<DLFileEntry, DLFolder>
+						dynamicInheritancePermissionLogic =
+							new DynamicInheritancePermissionLogic<>(
+								_dlFolderModelResourcePermission,
+								_getFetchParentFunction(), true);
+
 					consumer.accept(
-						new DynamicInheritancePermissionLogic<>(
-							_dlFolderModelResourcePermission,
-							_getFetchParentFunction(), true));
+						(permissionChecker, name, model, actionId) -> {
+							if (actionId.equals(ActionKeys.DOWNLOAD)) {
+								actionId = ActionKeys.VIEW;
+							}
+
+							return dynamicInheritancePermissionLogic.contains(
+								permissionChecker, name, model, actionId);
+						});
 				}
 			});
 	}

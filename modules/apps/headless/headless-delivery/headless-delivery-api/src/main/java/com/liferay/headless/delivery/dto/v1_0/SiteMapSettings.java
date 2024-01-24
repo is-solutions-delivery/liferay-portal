@@ -7,6 +7,7 @@ package com.liferay.headless.delivery.dto.v1_0;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -26,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -56,14 +58,23 @@ public class SiteMapSettings implements Serializable {
 		return ObjectMapperUtil.unsafeReadValue(SiteMapSettings.class, json);
 	}
 
+	@JsonGetter("changeFrequency")
 	@Schema(description = "Indicates how often a page is updated.")
 	@Valid
 	public ChangeFrequency getChangeFrequency() {
+		if (_changeFrequencySupplier != null) {
+			changeFrequency = _changeFrequencySupplier.get();
+
+			_changeFrequencySupplier = null;
+		}
+
 		return changeFrequency;
 	}
 
 	@JsonIgnore
 	public String getChangeFrequencyAsString() {
+		ChangeFrequency changeFrequency = getChangeFrequency();
+
 		if (changeFrequency == null) {
 			return null;
 		}
@@ -73,6 +84,8 @@ public class SiteMapSettings implements Serializable {
 
 	public void setChangeFrequency(ChangeFrequency changeFrequency) {
 		this.changeFrequency = changeFrequency;
+
+		_changeFrequencySupplier = null;
 	}
 
 	@JsonIgnore
@@ -80,45 +93,60 @@ public class SiteMapSettings implements Serializable {
 		UnsafeSupplier<ChangeFrequency, Exception>
 			changeFrequencyUnsafeSupplier) {
 
-		try {
-			changeFrequency = changeFrequencyUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_changeFrequencySupplier = () -> {
+			try {
+				return changeFrequencyUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField(description = "Indicates how often a page is updated.")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected ChangeFrequency changeFrequency;
 
+	@JsonIgnore
+	private Supplier<ChangeFrequency> _changeFrequencySupplier;
+
 	@Schema(
 		description = "Whether search engines should crawl and index the page."
 	)
 	public Boolean getInclude() {
+		if (_includeSupplier != null) {
+			include = _includeSupplier.get();
+
+			_includeSupplier = null;
+		}
+
 		return include;
 	}
 
 	public void setInclude(Boolean include) {
 		this.include = include;
+
+		_includeSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setInclude(
 		UnsafeSupplier<Boolean, Exception> includeUnsafeSupplier) {
 
-		try {
-			include = includeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_includeSupplier = () -> {
+			try {
+				return includeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField(
@@ -127,32 +155,45 @@ public class SiteMapSettings implements Serializable {
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Boolean include;
 
+	@JsonIgnore
+	private Supplier<Boolean> _includeSupplier;
+
 	@DecimalMax("1")
 	@DecimalMin("0")
 	@Schema(
 		description = "How the page should be prioritized relative to other pages."
 	)
 	public Double getPagePriority() {
+		if (_pagePrioritySupplier != null) {
+			pagePriority = _pagePrioritySupplier.get();
+
+			_pagePrioritySupplier = null;
+		}
+
 		return pagePriority;
 	}
 
 	public void setPagePriority(Double pagePriority) {
 		this.pagePriority = pagePriority;
+
+		_pagePrioritySupplier = null;
 	}
 
 	@JsonIgnore
 	public void setPagePriority(
 		UnsafeSupplier<Double, Exception> pagePriorityUnsafeSupplier) {
 
-		try {
-			pagePriority = pagePriorityUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_pagePrioritySupplier = () -> {
+			try {
+				return pagePriorityUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField(
@@ -160,6 +201,9 @@ public class SiteMapSettings implements Serializable {
 	)
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Double pagePriority;
+
+	@JsonIgnore
+	private Supplier<Double> _pagePrioritySupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -188,6 +232,8 @@ public class SiteMapSettings implements Serializable {
 
 		sb.append("{");
 
+		ChangeFrequency changeFrequency = getChangeFrequency();
+
 		if (changeFrequency != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -202,6 +248,8 @@ public class SiteMapSettings implements Serializable {
 			sb.append("\"");
 		}
 
+		Boolean include = getInclude();
+
 		if (include != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -211,6 +259,8 @@ public class SiteMapSettings implements Serializable {
 
 			sb.append(include);
 		}
+
+		Double pagePriority = getPagePriority();
 
 		if (pagePriority != null) {
 			if (sb.length() > 1) {

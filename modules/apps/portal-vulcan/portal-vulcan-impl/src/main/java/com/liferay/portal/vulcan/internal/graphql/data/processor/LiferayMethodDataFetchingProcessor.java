@@ -8,6 +8,7 @@ package com.liferay.portal.vulcan.internal.graphql.data.processor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.liferay.depot.service.DepotEntryLocalService;
+import com.liferay.osgi.service.tracker.collections.list.ServiceTrackerList;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -35,9 +36,7 @@ import com.liferay.portal.vulcan.aggregation.Aggregation;
 import com.liferay.portal.vulcan.batch.engine.resource.VulcanBatchEngineImportTaskResource;
 import com.liferay.portal.vulcan.batch.engine.resource.VulcanBatchEngineImportTaskResourceFactory;
 import com.liferay.portal.vulcan.graphql.contributor.GraphQLContributor;
-import com.liferay.portal.vulcan.graphql.servlet.ServletData;
 import com.liferay.portal.vulcan.internal.accept.language.AcceptLanguageImpl;
-import com.liferay.portal.vulcan.internal.graphql.servlet.ServletDataAdapter;
 import com.liferay.portal.vulcan.internal.graphql.util.GraphQLUtil;
 import com.liferay.portal.vulcan.internal.jaxrs.context.provider.AggregationContextProvider;
 import com.liferay.portal.vulcan.internal.jaxrs.context.provider.ContextProviderUtil;
@@ -65,7 +64,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
 import javax.servlet.http.HttpServletRequest;
@@ -88,19 +86,46 @@ import org.apache.cxf.message.MessageImpl;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
-import org.osgi.service.component.annotations.Reference;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
 /**
  * @author Carlos Correa
  */
-@Component(service = LiferayMethodDataFetchingProcessor.class)
 public class LiferayMethodDataFetchingProcessor {
+
+	public LiferayMethodDataFetchingProcessor(
+		BundleContext bundleContext, CompanyLocalService companyLocalService,
+		DepotEntryLocalService depotEntryLocalService,
+		ExpressionConvert<Filter> expressionConvert,
+		FilterParserProvider filterParserProvider,
+		ServiceTrackerList<GraphQLContributor>
+			graphQLContributorServiceTrackerList,
+		GroupLocalService groupLocalService, Language language,
+		PaginationProvider paginationProvider, Portal portal,
+		ResourceActionLocalService resourceActionLocalService,
+		ResourcePermissionLocalService resourcePermissionLocalService,
+		RoleLocalService roleLocalService,
+		SortParserProvider sortParserProvider,
+		VulcanBatchEngineImportTaskResourceFactory
+			vulcanBatchEngineImportTaskResourceFactory) {
+
+		_bundleContext = bundleContext;
+		_companyLocalService = companyLocalService;
+		_depotEntryLocalService = depotEntryLocalService;
+		_expressionConvert = expressionConvert;
+		_filterParserProvider = filterParserProvider;
+		_graphQLContributorServiceTrackerList =
+			graphQLContributorServiceTrackerList;
+		_groupLocalService = groupLocalService;
+		_language = language;
+		_paginationProvider = paginationProvider;
+		_portal = portal;
+		_resourceActionLocalService = resourceActionLocalService;
+		_resourcePermissionLocalService = resourcePermissionLocalService;
+		_roleLocalService = roleLocalService;
+		_sortParserProvider = sortParserProvider;
+		_vulcanBatchEngineImportTaskResourceFactory =
+			vulcanBatchEngineImportTaskResourceFactory;
+	}
 
 	public Object process(
 			Map<String, Object> arguments, String fieldName,
@@ -282,22 +307,6 @@ public class LiferayMethodDataFetchingProcessor {
 		ValidationUtil.validateArguments(instance, method, argumentArray);
 
 		return method.invoke(instance, argumentArray);
-	}
-
-	@Activate
-	protected void activate(BundleContext bundleContext) {
-		_bundleContext = bundleContext;
-
-		_graphQLContributorServiceTracker = new ServiceTracker<>(
-			bundleContext, GraphQLContributor.class,
-			new GraphQLContributorServiceTrackerCustomizer());
-
-		_graphQLContributorServiceTracker.open();
-	}
-
-	@Deactivate
-	protected void deactivate() {
-		_graphQLContributorServiceTracker.close();
 	}
 
 	private Message _createMessage(
@@ -660,7 +669,7 @@ public class LiferayMethodDataFetchingProcessor {
 	}
 
 	private Object _getService(Class<?> clazz) {
-		for (Object service : _graphQLContributorServiceTracker.getServices()) {
+		for (Object service : _graphQLContributorServiceTrackerList) {
 			if (clazz.isAssignableFrom(service.getClass())) {
 				return service;
 			}
@@ -685,104 +694,28 @@ public class LiferayMethodDataFetchingProcessor {
 	private static final Log _log = LogFactoryUtil.getLog(
 		LiferayMethodDataFetchingProcessor.class);
 
-	private BundleContext _bundleContext;
-
-	@Reference
-	private CompanyLocalService _companyLocalService;
-
-	@Reference
-	private DepotEntryLocalService _depotEntryLocalService;
-
-	@Reference(
-		target = "(result.class.name=com.liferay.portal.kernel.search.filter.Filter)"
-	)
-	private ExpressionConvert<Filter> _expressionConvert;
-
-	@Reference
-	private FilterParserProvider _filterParserProvider;
-
-	private ServiceTracker<GraphQLContributor, GraphQLContributor>
-		_graphQLContributorServiceTracker;
-
-	@Reference
-	private GroupLocalService _groupLocalService;
-
-	@Reference
-	private Language _language;
-
-	@Reference
-	private PaginationProvider _paginationProvider;
-
-	@Reference
-	private Portal _portal;
-
-	@Reference
-	private ResourceActionLocalService _resourceActionLocalService;
-
-	@Reference
-	private ResourcePermissionLocalService _resourcePermissionLocalService;
-
-	@Reference
-	private RoleLocalService _roleLocalService;
-
-	@Reference
-	private SortParserProvider _sortParserProvider;
-
-	@Reference
-	private VulcanBatchEngineImportTaskResourceFactory
+	private final BundleContext _bundleContext;
+	private final CompanyLocalService _companyLocalService;
+	private final DepotEntryLocalService _depotEntryLocalService;
+	private final ExpressionConvert<Filter> _expressionConvert;
+	private final FilterParserProvider _filterParserProvider;
+	private final ServiceTrackerList<GraphQLContributor>
+		_graphQLContributorServiceTrackerList;
+	private final GroupLocalService _groupLocalService;
+	private final Language _language;
+	private final PaginationProvider _paginationProvider;
+	private final Portal _portal;
+	private final ResourceActionLocalService _resourceActionLocalService;
+	private final ResourcePermissionLocalService
+		_resourcePermissionLocalService;
+	private final RoleLocalService _roleLocalService;
+	private final SortParserProvider _sortParserProvider;
+	private final VulcanBatchEngineImportTaskResourceFactory
 		_vulcanBatchEngineImportTaskResourceFactory;
 
 	private static class ObjectMapperHolder {
 
 		private static final ObjectMapper _objectMapper = new ObjectMapper();
-
-	}
-
-	private class GraphQLContributorServiceTrackerCustomizer
-		implements ServiceTrackerCustomizer
-			<GraphQLContributor, GraphQLContributor> {
-
-		@Override
-		public GraphQLContributor addingService(
-			ServiceReference<GraphQLContributor> serviceReference) {
-
-			GraphQLContributor graphQLContributor = _bundleContext.getService(
-				serviceReference);
-
-			ServiceRegistration<ServletData> servletDataServiceRegistration =
-				_bundleContext.registerService(
-					ServletData.class,
-					ServletDataAdapter.of(graphQLContributor), null);
-
-			_servletDataServiceRegistrations.put(
-				graphQLContributor, servletDataServiceRegistration);
-
-			return graphQLContributor;
-		}
-
-		@Override
-		public void modifiedService(
-			ServiceReference<GraphQLContributor> serviceReference,
-			GraphQLContributor graphQLContributor) {
-		}
-
-		@Override
-		public void removedService(
-			ServiceReference<GraphQLContributor> serviceReference,
-			GraphQLContributor graphQLContributor) {
-
-			ServiceRegistration<ServletData> serviceRegistration =
-				_servletDataServiceRegistrations.remove(graphQLContributor);
-
-			if (serviceRegistration != null) {
-				serviceRegistration.unregister();
-			}
-
-			_bundleContext.ungetService(serviceReference);
-		}
-
-		private final Map<GraphQLContributor, ServiceRegistration<ServletData>>
-			_servletDataServiceRegistrations = new ConcurrentHashMap<>();
 
 	}
 

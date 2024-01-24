@@ -5,11 +5,10 @@
 
 package com.liferay.portal.search.internal.facet;
 
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.search.BooleanClause;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.SearchContext;
-import com.liferay.portal.kernel.search.facet.RangeFacet;
+import com.liferay.portal.kernel.search.facet.DateRangeFacet;
 import com.liferay.portal.kernel.search.facet.util.RangeParserUtil;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
@@ -23,7 +22,7 @@ import com.liferay.portal.search.filter.FilterBuilders;
 /**
  * @author Petteri Karttunen
  */
-public class DateRangeFacetImpl extends RangeFacet implements Facet {
+public class DateRangeFacetImpl extends DateRangeFacet implements Facet {
 
 	public DateRangeFacetImpl(
 		SearchContext searchContext, FilterBuilders filterBuilders) {
@@ -64,25 +63,20 @@ public class DateRangeFacetImpl extends RangeFacet implements Facet {
 
 	@Override
 	protected BooleanClause<Filter> doGetFacetFilterBooleanClause() {
-		if (ArrayUtil.isEmpty(_selections)) {
+		if (ArrayUtil.isEmpty(_selections) || isStatic()) {
 			return null;
 		}
 
 		BooleanFilter booleanFilter = new BooleanFilter();
 
 		for (String selection : _selections) {
-			String start = StringPool.BLANK;
-			String end = StringPool.BLANK;
+			String[] rangeParts = RangeParserUtil.parserRange(selection);
 
-			if (!isStatic() && Validator.isNotNull(selection)) {
-				String[] range = RangeParserUtil.parserRange(selection);
+			String from = rangeParts[0];
+			String to = rangeParts[1];
 
-				start = range[0];
-				end = range[1];
-			}
-
-			if (Validator.isNull(start) && Validator.isNull(end)) {
-				return null;
+			if (Validator.isNull(from) && Validator.isNull(to)) {
+				continue;
 			}
 
 			DateRangeFilterBuilder dateRangeFilterBuilder =
@@ -90,16 +84,10 @@ public class DateRangeFacetImpl extends RangeFacet implements Facet {
 
 			dateRangeFilterBuilder.setFieldName(getFieldName());
 
-			if (Validator.isNotNull(start)) {
-				dateRangeFilterBuilder.setFrom(start);
-			}
-
+			dateRangeFilterBuilder.setFrom(from);
 			dateRangeFilterBuilder.setIncludeLower(true);
 			dateRangeFilterBuilder.setIncludeUpper(true);
-
-			if (Validator.isNotNull(end)) {
-				dateRangeFilterBuilder.setTo(end);
-			}
+			dateRangeFilterBuilder.setTo(to);
 
 			booleanFilter.add(
 				dateRangeFilterBuilder.build(), BooleanClauseOccur.SHOULD);

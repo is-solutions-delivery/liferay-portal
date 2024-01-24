@@ -8,8 +8,6 @@ package com.liferay.search.experiences.rest.internal.dto.v1_0.converter;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.Localization;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
@@ -19,10 +17,12 @@ import com.liferay.search.experiences.rest.dto.v1_0.SXPBlueprint;
 import com.liferay.search.experiences.rest.dto.v1_0.SXPElement;
 import com.liferay.search.experiences.rest.dto.v1_0.util.ConfigurationUtil;
 import com.liferay.search.experiences.rest.dto.v1_0.util.ElementInstanceUtil;
+import com.liferay.search.experiences.rest.internal.dto.v1_0.converter.util.SXPDTOConverterUtil;
 import com.liferay.search.experiences.service.SXPBlueprintLocalService;
 import com.liferay.search.experiences.service.SXPElementLocalService;
 
 import java.util.Locale;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -63,31 +63,40 @@ public class SXPBlueprintDTOConverter
 
 		return new SXPBlueprint() {
 			{
-				configuration = _toConfiguration(
-					sxpBlueprint.getConfigurationJSON());
-				createDate = sxpBlueprint.getCreateDate();
-				description = _language.get(
-					dtoConverterContext.getLocale(),
-					sxpBlueprint.getDescription(
+				setConfiguration(
+					() -> _toConfiguration(
+						sxpBlueprint.getConfigurationJSON()));
+				setCreateDate(sxpBlueprint::getCreateDate);
+				setDescription(
+					() -> _language.get(
+						dtoConverterContext.getLocale(),
+						sxpBlueprint.getDescription(
+							dtoConverterContext.getLocale())));
+				setDescription_i18n(
+					() -> LocalizedMapUtil.getI18nMap(
+						dtoConverterContext.isAcceptAllLanguages(),
+						sxpBlueprint.getDescriptionMap()));
+				setElementInstances(
+					() -> _translateElementInstances(
+						_toElementInstances(
+							sxpBlueprint.getElementInstancesJSON()),
 						dtoConverterContext.getLocale()));
-				description_i18n = LocalizedMapUtil.getI18nMap(
-					dtoConverterContext.isAcceptAllLanguages(),
-					sxpBlueprint.getDescriptionMap());
-				elementInstances = _translateElementInstances(
-					_toElementInstances(sxpBlueprint.getElementInstancesJSON()),
-					dtoConverterContext.getLocale());
-				externalReferenceCode = sxpBlueprint.getExternalReferenceCode();
-				id = sxpBlueprint.getSXPBlueprintId();
-				modifiedDate = sxpBlueprint.getModifiedDate();
-				schemaVersion = sxpBlueprint.getSchemaVersion();
-				title = _language.get(
-					dtoConverterContext.getLocale(),
-					sxpBlueprint.getTitle(dtoConverterContext.getLocale()));
-				title_i18n = LocalizedMapUtil.getI18nMap(
-					dtoConverterContext.isAcceptAllLanguages(),
-					sxpBlueprint.getTitleMap());
-				userName = sxpBlueprint.getUserName();
-				version = sxpBlueprint.getVersion();
+				setExternalReferenceCode(
+					sxpBlueprint::getExternalReferenceCode);
+				setId(sxpBlueprint::getSXPBlueprintId);
+				setModifiedDate(sxpBlueprint::getModifiedDate);
+				setSchemaVersion(sxpBlueprint::getSchemaVersion);
+				setTitle(
+					() -> _language.get(
+						dtoConverterContext.getLocale(),
+						sxpBlueprint.getTitle(
+							dtoConverterContext.getLocale())));
+				setTitle_i18n(
+					() -> LocalizedMapUtil.getI18nMap(
+						dtoConverterContext.isAcceptAllLanguages(),
+						sxpBlueprint.getTitleMap()));
+				setUserName(sxpBlueprint::getUserName);
+				setVersion(sxpBlueprint::getVersion);
 			}
 		};
 	}
@@ -98,25 +107,43 @@ public class SXPBlueprintDTOConverter
 
 		return new SXPBlueprint() {
 			{
-				configuration = _toConfiguration(
-					sxpBlueprint.getConfigurationJSON());
-				createDate = sxpBlueprint.getCreateDate();
-				description = sxpBlueprint.getDescription();
-				description_i18n = LocalizedMapUtil.getI18nMap(
-					true, sxpBlueprint.getDescriptionMap());
-				elementInstances = _toElementInstances(
-					sxpBlueprint.getElementInstancesJSON());
-				externalReferenceCode = sxpBlueprint.getExternalReferenceCode();
-				id = sxpBlueprint.getSXPBlueprintId();
-				modifiedDate = sxpBlueprint.getModifiedDate();
-				schemaVersion = sxpBlueprint.getSchemaVersion();
-				title = sxpBlueprint.getTitle();
-				title_i18n = LocalizedMapUtil.getI18nMap(
-					true, sxpBlueprint.getTitleMap());
-				userName = sxpBlueprint.getUserName();
-				version = sxpBlueprint.getVersion();
+				setConfiguration(
+					() -> _toConfiguration(
+						sxpBlueprint.getConfigurationJSON()));
+				setCreateDate(sxpBlueprint::getCreateDate);
+				setDescription(sxpBlueprint::getDescription);
+				setDescription_i18n(
+					() -> LocalizedMapUtil.getI18nMap(
+						true, sxpBlueprint.getDescriptionMap()));
+				setElementInstances(
+					() -> _toElementInstances(
+						sxpBlueprint.getElementInstancesJSON()));
+				setExternalReferenceCode(
+					sxpBlueprint::getExternalReferenceCode);
+				setId(sxpBlueprint::getSXPBlueprintId);
+				setModifiedDate(sxpBlueprint::getModifiedDate);
+				setSchemaVersion(sxpBlueprint::getSchemaVersion);
+				setTitle(sxpBlueprint::getTitle);
+				setTitle_i18n(
+					() -> LocalizedMapUtil.getI18nMap(
+						true, sxpBlueprint.getTitleMap()));
+				setUserName(sxpBlueprint::getUserName);
+				setVersion(sxpBlueprint::getVersion);
 			}
 		};
+	}
+
+	private void _setLocalizedDescriptionAndTitle(
+		Map<Locale, String> descriptionMap, String fallbackDescription,
+		String fallbackTitle, Locale locale, SXPElement sxpElement,
+		Map<Locale, String> titleMap) {
+
+		sxpElement.setDescription(
+			SXPDTOConverterUtil.translate(
+				fallbackDescription, _language, locale, descriptionMap));
+		sxpElement.setTitle(
+			SXPDTOConverterUtil.translate(
+				fallbackTitle, _language, locale, titleMap));
 	}
 
 	private Configuration _toConfiguration(String json) {
@@ -148,58 +175,37 @@ public class SXPBlueprintDTOConverter
 	private ElementInstance[] _translateElementInstances(
 		ElementInstance[] elementInstances, Locale locale) {
 
-		try {
-			for (ElementInstance elementInstance : elementInstances) {
-				SXPElement sxpElement = elementInstance.getSxpElement();
-
-				Long sxpElementId = (Long)sxpElement.getId();
-
-				if (sxpElementId != null) {
-					com.liferay.search.experiences.model.SXPElement
-						serviceBuilderSXPElement =
-							_sxpElementLocalService.getSXPElement(sxpElementId);
-
-					sxpElement.setDescription(
-						_language.get(
-							locale,
-							serviceBuilderSXPElement.getDescription(locale)));
-					sxpElement.setTitle(
-						_language.get(
-							locale, serviceBuilderSXPElement.getTitle(locale)));
-				}
-				else {
-					String descriptionXml = _localization.getXml(
-						sxpElement.getDescription_i18n(),
-						LocaleUtil.toLanguageId(LocaleUtil.getDefault()),
-						"Description");
-					String titleXml = _localization.getXml(
-						sxpElement.getTitle_i18n(),
-						LocaleUtil.toLanguageId(LocaleUtil.getDefault()),
-						"Title");
-
-					sxpElement.setDescription(
-						_language.get(
-							locale,
-							_localization.getLocalization(
-								descriptionXml,
-								LocaleUtil.toLanguageId(locale))));
-					sxpElement.setTitle(
-						_language.get(
-							locale,
-							_localization.getLocalization(
-								titleXml, LocaleUtil.toLanguageId(locale))));
-				}
-			}
-
-			return elementInstances;
-		}
-		catch (Exception exception) {
-			if (_log.isWarnEnabled()) {
-				_log.warn(exception);
-			}
-
+		if (elementInstances == null) {
 			return null;
 		}
+
+		for (ElementInstance elementInstance : elementInstances) {
+			SXPElement sxpElement = elementInstance.getSxpElement();
+
+			sxpElement.setElementDefinition(
+				SXPDTOConverterUtil.translate(
+					sxpElement.getElementDefinition(), _language, locale));
+
+			try {
+				com.liferay.search.experiences.model.SXPElement
+					serviceBuilderSXPElement =
+						_sxpElementLocalService.getSXPElement(
+							(Long)sxpElement.getId());
+
+				_setLocalizedDescriptionAndTitle(
+					serviceBuilderSXPElement.getDescriptionMap(),
+					serviceBuilderSXPElement.getFallbackDescription(),
+					serviceBuilderSXPElement.getFallbackTitle(), locale,
+					sxpElement, serviceBuilderSXPElement.getTitleMap());
+			}
+			catch (Exception exception) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(exception);
+				}
+			}
+		}
+
+		return elementInstances;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -207,9 +213,6 @@ public class SXPBlueprintDTOConverter
 
 	@Reference
 	private Language _language;
-
-	@Reference
-	private Localization _localization;
 
 	@Reference
 	private SXPBlueprintLocalService _sxpBlueprintLocalService;

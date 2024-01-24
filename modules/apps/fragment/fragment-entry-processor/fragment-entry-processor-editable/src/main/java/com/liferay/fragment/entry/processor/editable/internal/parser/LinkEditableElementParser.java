@@ -6,7 +6,6 @@
 package com.liferay.fragment.entry.processor.editable.internal.parser;
 
 import com.liferay.fragment.entry.processor.editable.parser.EditableElementParser;
-import com.liferay.fragment.entry.processor.editable.parser.util.EditableElementParserUtil;
 import com.liferay.fragment.exception.FragmentEntryContentException;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -92,16 +91,17 @@ public class LinkEditableElementParser implements EditableElementParser {
 
 		Element replaceableElement = elements.get(0);
 
-		Element bodyElement = EditableElementParserUtil.getDocumentBody(value);
-
 		if (configJSONObject == null) {
-			replaceableElement.html(bodyElement.html());
+			replaceableElement.html(value);
 
 			return;
 		}
 
-		EditableElementParserUtil.addAttribute(
-			replaceableElement, configJSONObject, "href", "href");
+		String hrefValue = configJSONObject.getString("href");
+
+		if (Validator.isNotNull(hrefValue)) {
+			element.attr("href", hrefValue);
+		}
 
 		String target = configJSONObject.getString("target");
 
@@ -111,8 +111,11 @@ public class LinkEditableElementParser implements EditableElementParser {
 			configJSONObject.put("target", "_self");
 		}
 
-		EditableElementParserUtil.addAttribute(
-			replaceableElement, configJSONObject, "target", "target");
+		String targetValue = configJSONObject.getString("target");
+
+		if (Validator.isNotNull(targetValue)) {
+			element.attr("target", targetValue);
+		}
 
 		String buttonType = configJSONObject.getString("buttonType");
 
@@ -129,13 +132,16 @@ public class LinkEditableElementParser implements EditableElementParser {
 				replaceableElement.addClass("link");
 			}
 			else {
-				EditableElementParserUtil.addClass(
-					replaceableElement, configJSONObject, "btn btn-",
+				String buttonTypeValue = configJSONObject.getString(
 					"buttonType");
+
+				if (Validator.isNotNull(buttonTypeValue)) {
+					element.addClass("btn btn-" + buttonTypeValue);
+				}
 			}
 		}
 
-		replaceableElement.html(bodyElement.html());
+		replaceableElement.html(value);
 	}
 
 	@Override
@@ -151,6 +157,19 @@ public class LinkEditableElementParser implements EditableElementParser {
 					resourceBundle,
 					"each-editable-link-element-must-contain-an-a-tag",
 					new Object[] {"<em>", "</em>"}, false));
+		}
+
+		String html = element.html();
+
+		if (html.contains("<lfr-drop-zone") || html.contains("<lfr-widget-")) {
+			ResourceBundle resourceBundle = ResourceBundleUtil.getBundle(
+				"content.Language", getClass());
+
+			throw new FragmentEntryContentException(
+				_language.get(
+					resourceBundle,
+					"editable-link-element-cannot-include-drop-zones-or-" +
+						"widgets-in-it"));
 		}
 	}
 

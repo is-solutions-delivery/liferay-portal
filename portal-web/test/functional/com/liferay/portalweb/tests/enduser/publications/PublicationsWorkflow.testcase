@@ -114,6 +114,14 @@ definition {
 
 		JSONPublications.selectPublication(publicationName = "Publication Name");
 
+		HeadlessSite.addSite(siteName = "Site Name");
+
+		Workflow.openWorkflowAdmin(siteURLKey = "site-name");
+
+		Workflow.configureWorkflow(
+			workflowDefinition = "Single Approver",
+			workflowResourceValue = "Web Content Article");
+
 		User.logoutAndLoginPG(
 			userLoginEmailAddress = "userea@liferay.com",
 			userLoginFullName = "userfn userln");
@@ -124,7 +132,7 @@ definition {
 				publicationName = "Publication Name");
 		}
 
-		WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "site-name");
 
 		WebContentNavigator.gotoAddCP();
 
@@ -170,7 +178,7 @@ definition {
 
 		/*PublicationsChanges.viewChanges(
 			changeCategory = "Web Content Article",
-			changeSite = "Guest",
+			changeSite = "Site Name",
 			changeStatus = "Pending",
 			changeTitle = "WC WebContent Title",
 			changeType = "Added",
@@ -184,6 +192,42 @@ definition {
 			value1 = "This publication contains unapproved changes.");
 
 		Publications.publishPublication(publicationName = "Publication Name");
+	}
+
+	@description = "This is a use case for LPS-198982."
+	@priority = 3
+	test CannotPublishDraftsOfWorkflowEnabledEntities {
+		task ("Enable workflow for any change tracking enabled entity") {
+			Workflow.openWorkflowProcessBuilderConfiguration();
+
+			Workflow.configureWorkflow(
+				workflowDefinition = "Single Approver",
+				workflowResourceValue = "Web Content Article");
+		}
+
+		task ("Add and select a new publication") {
+			JSONPublications.addPublication(publicationName = "Test Publication");
+
+			JSONPublications.selectPublication(publicationName = "Test Publication");
+		}
+
+		task ("Create the entity and save it as a draft") {
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "guest");
+
+			WebContentNavigator.gotoAddCP();
+
+			WebContent.addDraft(
+				webContentContent = "Web Content Content",
+				webContentTitle = "Web Content Title");
+		}
+
+		task ("Attempt to publish the publication and assert it is blocked with an error message") {
+			PublicationsNavigator.gotoPublish(
+				gotoPublicationsAdmin = "true",
+				publicationName = "Test Publication");
+
+			Publications.viewConflictingChangesWarning(warningMessage = "This publication contains unapproved changes that must be approved before publishing.");
+		}
 	}
 
 	@description = "This is a use case for LPS-159649."
@@ -208,7 +252,9 @@ definition {
 			requireReset = "false",
 			userEmailAddress = "userea@liferay.com");
 
-		Workflow.openWorkflowAdmin(siteURLKey = "guest");
+		HeadlessSite.addSite(siteName = "Site Name");
+
+		Workflow.openWorkflowAdmin(siteURLKey = "site-name");
 
 		Workflow.configureWorkflow(
 			workflowDefinition = "Single Approver",
@@ -218,10 +264,7 @@ definition {
 
 		JSONPublications.selectPublication(publicationName = "Publication Name");
 
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			panel = "Site Administration",
-			portlet = "Web Content");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "site-name");
 
 		WebContentNavigator.gotoAddCP();
 
@@ -245,12 +288,7 @@ definition {
 				publicationName = "Publication Name");
 		}
 
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			panel = "Site Administration",
-			portlet = "Web Content");
+		WebContentNavigator.openWebContentAdmin(siteURLKey = "site-name");
 
 		WebContentNavigator.gotoAddCP();
 
@@ -284,8 +322,6 @@ definition {
 
 		Workflow.confirmWorkflowAction();
 
-		Alert.viewSuccessMessage();
-
 		LexiconEntry.gotoEllipsisMenuItem(menuItem = "Approve");
 
 		Workflow.confirmWorkflowAction();
@@ -296,7 +332,7 @@ definition {
 
 		PublicationsChanges.viewChanges(
 			changeCategory = "Web Content Article",
-			changeSite = "Guest",
+			changeSite = "Site Name",
 			changeStatus = "Pending",
 			changeTitle = "WC WebContent Title 1",
 			changeType = "Added",
@@ -306,8 +342,7 @@ definition {
 
 		/*PublicationsChanges.viewChanges(
 			changeCategory = "Web Content Article",
-			changeOrder = 2,
-			changeSite = "Guest",
+			changeSite = "Site Name",
 			changeStatus = "Approved",
 			changeTitle = "WC WebContent Title 2",
 			changeType = "Added",

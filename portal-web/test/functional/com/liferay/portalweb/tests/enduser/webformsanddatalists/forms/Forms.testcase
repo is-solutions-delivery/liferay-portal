@@ -130,12 +130,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		Navigator.openURL();
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.addCP(
 			userEmailAddress = "userea@liferay.com",
@@ -143,19 +138,13 @@ definition {
 			userLastName = "userln",
 			userScreenName = "usersn");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.editPasswordCP(
 			userEmailAddress = "userea@liferay.com",
 			userScreenName = "usersn");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Sites",
-			panel = "Control Panel",
-			portlet = "Sites");
+		Site.openSitesAdmin();
 
 		Site.addBlankCP(siteName = "Form Site");
 
@@ -206,10 +195,7 @@ definition {
 			roleTitle = "Forms Site Role Name",
 			roleType = "site");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.assignSiteRoleCP(
 			siteRoleName = "Forms Site Role Name",
@@ -1414,17 +1400,7 @@ definition {
 			fieldHelpText = "If checked, the default language of data definitions will be changeable. The default language of data definitions is inherited from the site settings.",
 			fieldName = "changeableDefaultLanguage");
 
-		FormFields.viewSelectLabel(
-			fieldLabel = "Default Display View",
-			fieldName = "defaultDisplayView");
-
-		FormFields.viewSelectValue(fieldName = "defaultDisplayView");
-
 		FormFields.enableCheckbox(fieldName = "changeableDefaultLanguage");
-
-		FormFields.selectSelectOption(
-			fieldName = "defaultDisplayView",
-			selectOption = "List");
 
 		SystemSettings.saveConfiguration();
 
@@ -1436,10 +1412,6 @@ definition {
 			configurationScope = "System Scope");
 
 		FormFields.viewCheckboxChecked(fieldName = "changeableDefaultLanguage");
-
-		FormFields.viewSelectOption(
-			fieldName = "defaultDisplayView",
-			selectOption = "List");
 
 		SystemSettings.resetConfiguration(configurationName = "Dynamic Data Lists");
 
@@ -1575,71 +1547,6 @@ definition {
 		}
 
 		SystemSettings.resetConfiguration(configurationName = "JavaScript Loader");
-	}
-
-	@description = "This is a use case for LPS-59749"
-	@priority = 3
-	test EditFormsConfigurationViaSystemSettings {
-		property portal.acceptance = "true";
-		property portal.upstream = "true";
-		property test.liferay.virtual.instance = "false";
-		property test.run.type = "single";
-
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Forms");
-
-		LexiconEntry.viewActiveDisplayStyle(displayStyle = "table");
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Configuration",
-			panel = "Control Panel",
-			portlet = "System Settings");
-
-		SystemSettings.gotoConfiguration(
-			configurationCategory = "Forms",
-			configurationName = "Forms",
-			configurationScope = "Site Scope");
-
-		FormFields.viewSelectOption(
-			fieldName = "Default Display View",
-			selectOption = "Table");
-
-		FormFields.selectSelectOption(
-			fieldName = "Default Display View",
-			selectOption = "List");
-
-		SystemSettings.saveConfiguration();
-
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Forms");
-
-		LexiconEntry.viewActiveDisplayStyle(displayStyle = "list");
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Configuration",
-			panel = "Control Panel",
-			portlet = "System Settings");
-
-		SystemSettings.gotoConfiguration(
-			configurationCategory = "Forms",
-			configurationName = "Forms",
-			configurationScope = "Site Scope");
-
-		SystemSettings.resetConfiguration(configurationName = "Forms");
-
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Forms");
-
-		LexiconEntry.viewActiveDisplayStyle(displayStyle = "table");
 	}
 
 	@description = "This is a use case for LPS-81578."

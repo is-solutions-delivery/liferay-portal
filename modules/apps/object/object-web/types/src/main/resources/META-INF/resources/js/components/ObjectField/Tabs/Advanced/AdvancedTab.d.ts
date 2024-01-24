@@ -4,6 +4,7 @@
  */
 
 import {SidebarCategory} from '@liferay/object-js-components-web';
+import {ILearnResourceContext} from 'frontend-js-components-web';
 import {ElementType} from 'react';
 import {ObjectFieldErrors} from '../../ObjectFieldFormBase';
 interface AdvancedTabProps {
@@ -11,7 +12,8 @@ interface AdvancedTabProps {
 	creationLanguageId: Liferay.Language.Locale;
 	errors: ObjectFieldErrors;
 	isDefaultStorageType: boolean;
-	learnResources: ObjectWebLearnResources;
+	isRootDescendantNode: boolean;
+	learnResources: ILearnResourceContext;
 	modelBuilder?: boolean;
 	onSubmit?: () => void;
 	readOnlySidebarElements: SidebarCategory[];
@@ -24,6 +26,7 @@ export declare function AdvancedTab({
 	creationLanguageId,
 	errors,
 	isDefaultStorageType,
+	isRootDescendantNode,
 	learnResources,
 	modelBuilder,
 	onSubmit,

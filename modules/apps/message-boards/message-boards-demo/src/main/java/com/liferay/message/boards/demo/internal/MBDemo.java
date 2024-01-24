@@ -18,7 +18,7 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.security.RandomUtil;
 import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.users.admin.demo.data.creator.OmniAdminUserDemoDataCreator;
+import com.liferay.users.admin.demo.data.creator.OmniadminUserDemoDataCreator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class MBDemo extends BasePortalInstanceLifecycleListener {
 		List<Long> userIds = new ArrayList<>();
 
 		for (int i = 0; i < 30; i++) {
-			User user = _omniAdminUserDemoDataCreator.create(
+			User user = _omniadminUserDemoDataCreator.create(
 				company.getCompanyId());
 
 			userIds.add(user.getUserId());
@@ -109,7 +109,7 @@ public class MBDemo extends BasePortalInstanceLifecycleListener {
 	@Deactivate
 	protected void deactivate() throws PortalException {
 		_mbCategoryDemoDataCreator.delete();
-		_omniAdminUserDemoDataCreator.delete();
+		_omniadminUserDemoDataCreator.delete();
 		_rootMBCategoryDemoDataCreator.delete();
 	}
 
@@ -130,7 +130,7 @@ public class MBDemo extends BasePortalInstanceLifecycleListener {
 	private ModuleServiceLifecycle _moduleServiceLifecycle;
 
 	@Reference
-	private OmniAdminUserDemoDataCreator _omniAdminUserDemoDataCreator;
+	private OmniadminUserDemoDataCreator _omniadminUserDemoDataCreator;
 
 	@Reference(target = "(source=liferay)")
 	private RootMBCategoryDemoDataCreator _rootMBCategoryDemoDataCreator;

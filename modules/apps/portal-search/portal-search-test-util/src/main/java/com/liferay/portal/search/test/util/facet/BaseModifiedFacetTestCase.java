@@ -109,16 +109,20 @@ public abstract class BaseModifiedFacetTestCase extends BaseFacetTestCase {
 		JSONArray jsonArray = jsonFactory.createJSONArray();
 
 		for (String range : ranges) {
-			jsonArray.put(createRangeArrayElement(range));
+			jsonArray.put(createRangeArrayElement(range, range));
 		}
 
 		return jsonArray;
 	}
 
-	protected JSONObject createRangeArrayElement(String range) {
+	protected JSONObject createRangeArrayElement(String label, String range) {
 		JSONObject jsonObject = jsonFactory.createJSONObject();
 
-		jsonObject.put("range", range);
+		jsonObject.put(
+			"label", label
+		).put(
+			"range", range
+		);
 
 		return jsonObject;
 	}
@@ -160,9 +164,19 @@ public abstract class BaseModifiedFacetTestCase extends BaseFacetTestCase {
 	}
 
 	protected void setCustomRange(Facet facet, String customRange) {
-		SearchContext searchContext = facet.getSearchContext();
+		FacetConfiguration facetConfiguration = facet.getFacetConfiguration();
 
-		searchContext.setAttribute(facet.getFieldId(), customRange);
+		JSONObject jsonObject = facetConfiguration.getData();
+
+		JSONArray jsonArray = jsonObject.getJSONArray("ranges");
+
+		if (jsonArray == null) {
+			jsonArray = jsonFactory.createJSONArray();
+		}
+
+		jsonArray.put(createRangeArrayElement("custom-range", customRange));
+
+		jsonObject.put("ranges", jsonArray);
 	}
 
 }

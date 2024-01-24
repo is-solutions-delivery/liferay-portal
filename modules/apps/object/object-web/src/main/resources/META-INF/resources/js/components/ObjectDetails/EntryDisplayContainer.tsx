@@ -8,9 +8,10 @@ import {
 	SingleSelect,
 	getLocalizableLabel,
 } from '@liferay/object-js-components-web';
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo} from 'react';
 
 interface EntryDisplayContainerProps {
+	className?: string;
 	errors: FormError<ObjectDefinition>;
 	isLinkedObjectDefinition?: boolean;
 	nonRelationshipObjectFieldsInfo: {
@@ -24,6 +25,7 @@ interface EntryDisplayContainerProps {
 }
 
 export function EntryDisplayContainer({
+	className,
 	errors,
 	isLinkedObjectDefinition,
 	nonRelationshipObjectFieldsInfo,
@@ -40,44 +42,33 @@ export function EntryDisplayContainer({
 					label,
 					name
 				),
-				name,
+				value: name,
 			};
 		});
 	}, [nonRelationshipObjectFieldsInfo, values.defaultLanguageId]);
 
-	const getEntryTitleObjectFieldValue = () => {
+	useEffect(() => {
 		const titleObjectField = objectFields.find(
 			(objectField) => objectField.name === values.titleObjectFieldName
 		);
 
-		if (titleFieldOptions) {
-			return getLocalizableLabel(
-				values.defaultLanguageId as Liferay.Language.Locale,
-				titleObjectField?.label,
-				titleObjectField?.name
-			);
+		if (!titleObjectField) {
+			const idField = objectFields.find((field) => field.name === 'id');
+
+			setValues({titleObjectFieldName: idField?.name});
 		}
-
-		const idField = objectFields.find((field) => field.name === 'id');
-
-		setValues({titleObjectFieldName: idField?.name});
-
-		return getLocalizableLabel(
-			values.defaultLanguageId as Liferay.Language.Locale,
-			idField?.label,
-			idField?.name
-		);
-	};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
-		<SingleSelect<{label: string; name: string}>
+		<SingleSelect<LabelValueObject>
+			className={className}
 			disabled={isLinkedObjectDefinition}
 			error={errors.titleObjectFieldId}
+			items={titleFieldOptions}
 			label={Liferay.Language.get('entry-title-field')}
-			onChange={(target: {label: string; name: string}) => {
-				const field = objectFields.find(
-					({name}) => name === target.name
-				);
+			onSelectionChange={(itemKey) => {
+				const field = objectFields.find(({name}) => name === itemKey);
 
 				setValues({
 					titleObjectFieldName: field?.name,
@@ -90,8 +81,7 @@ export function EntryDisplayContainer({
 					});
 				}
 			}}
-			options={titleFieldOptions}
-			value={getEntryTitleObjectFieldValue()}
+			selectedKey={values.titleObjectFieldName}
 		/>
 	);
 }

@@ -5,6 +5,7 @@
 
 /// <reference types="react" />
 
+import {ILearnResourceContext} from 'frontend-js-components-web';
 import './EditObjectField.scss';
 export interface EditObjectFieldProps {
 	baseResourceURL: string;
@@ -15,11 +16,12 @@ export interface EditObjectFieldProps {
 	forbiddenNames: string[];
 	isApproved: boolean;
 	isDefaultStorageType: boolean;
-	learnResources: ObjectWebLearnResources;
+	isRootDescendantNode: boolean;
+	learnResources: ILearnResourceContext;
 	objectDefinitionExternalReferenceCode: string;
 	objectFieldId: number;
 	readOnly: boolean;
-	workflowStatusJSONArray: LabelValueObject[];
+	workflowStatuses: LabelValueObject[];
 }
 export declare const objectFieldInitialValues: Partial<ObjectField>;
 export default function EditObjectField({
@@ -31,9 +33,10 @@ export default function EditObjectField({
 	forbiddenNames,
 	isApproved,
 	isDefaultStorageType,
+	isRootDescendantNode,
 	learnResources,
 	objectDefinitionExternalReferenceCode,
 	objectFieldId,
 	readOnly,
-	workflowStatusJSONArray,
+	workflowStatuses,
 }: EditObjectFieldProps): JSX.Element;

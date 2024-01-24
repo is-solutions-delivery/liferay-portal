@@ -12,12 +12,12 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.search.experiences.blueprint.parameter.SXPParameter;
+import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributor;
 import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributorDefinition;
 import com.liferay.search.experiences.internal.blueprint.parameter.DoubleSXPParameter;
 import com.liferay.search.experiences.internal.blueprint.parameter.StringSXPParameter;
 import com.liferay.search.experiences.internal.configuration.IpstackConfiguration;
 import com.liferay.search.experiences.internal.web.cache.IpstackWebCacheItem;
-import com.liferay.search.experiences.rest.dto.v1_0.SXPBlueprint;
 
 import java.beans.ExceptionListener;
 
@@ -41,7 +41,7 @@ public class IpstackSXPParameterContributor implements SXPParameterContributor {
 	@Override
 	public void contribute(
 		ExceptionListener exceptionListener, SearchContext searchContext,
-		SXPBlueprint sxpBlueprint, Set<SXPParameter> sxpParameters) {
+		Set<SXPParameter> sxpParameters) {
 
 		IpstackConfiguration ipstackConfiguration = _getIpstackConfiguration(
 			searchContext.getCompanyId());

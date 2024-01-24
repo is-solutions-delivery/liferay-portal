@@ -13,6 +13,7 @@ import com.liferay.fragment.internal.upgrade.v2_0_0.util.FragmentEntryTable;
 import com.liferay.fragment.internal.upgrade.v2_1_0.SchemaUpgradeProcess;
 import com.liferay.fragment.internal.upgrade.v2_4_0.FragmentEntryLinkUpgradeProcess;
 import com.liferay.fragment.internal.upgrade.v2_6_0.util.FragmentEntryVersionTable;
+import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.upgrade.BaseSQLServerDatetimeUpgradeProcess;
 import com.liferay.portal.kernel.upgrade.CTModelUpgradeProcess;
@@ -20,7 +21,6 @@ import com.liferay.portal.kernel.upgrade.DummyUpgradeStep;
 import com.liferay.portal.kernel.upgrade.MVCCVersionUpgradeProcess;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.upgrade.UpgradeProcessFactory;
-import com.liferay.portal.kernel.view.count.ViewCountManager;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 
 import org.osgi.service.component.annotations.Component;
@@ -180,7 +180,8 @@ public class FragmentServiceUpgradeStepRegistrator
 		registry.register(
 			"2.10.0", "2.10.1",
 			new com.liferay.fragment.internal.upgrade.v2_10_1.
-				FragmentCollectionUpgradeProcess(_dlFolderLocalService));
+				FragmentCollectionUpgradeProcess(
+					_dlFolderLocalService, _portletFileRepository));
 
 		registry.register(
 			"2.10.1", "2.10.2",
@@ -203,6 +204,6 @@ public class FragmentServiceUpgradeStepRegistrator
 	private LayoutLocalService _layoutLocalService;
 
 	@Reference
-	private ViewCountManager _viewCountManager;
+	private PortletFileRepository _portletFileRepository;
 
 }

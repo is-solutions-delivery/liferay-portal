@@ -54,6 +54,13 @@ definition {
 		SelectFrame(value1 = "relative=top");
 	}
 
+	@summary = "Go to breadcrumb entry"
+	macro gotoEntry(breadcrumbName = null) {
+		Click(
+			key_breadcrumbName = ${breadcrumbName},
+			locator1 = "Breadcrumb#BREADCRUMB_ENTRY_LINK");
+	}
+
 	@summary = "Default summary"
 	macro saveDisplayPreview() {
 		SelectFrame(locator1 = "IFrame#CONFIGURATION");

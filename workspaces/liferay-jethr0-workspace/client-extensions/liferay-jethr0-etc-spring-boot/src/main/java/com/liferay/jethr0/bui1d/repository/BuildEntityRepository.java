@@ -7,9 +7,7 @@ package com.liferay.jethr0.bui1d.repository;
 
 import com.liferay.jethr0.bui1d.BuildEntity;
 import com.liferay.jethr0.bui1d.dalo.BuildEntityDALO;
-import com.liferay.jethr0.bui1d.dalo.BuildToBuildParametersEntityRelationshipDALO;
 import com.liferay.jethr0.bui1d.dalo.BuildToBuildRunsEntityRelationshipDALO;
-import com.liferay.jethr0.bui1d.parameter.BuildParameterEntity;
 import com.liferay.jethr0.bui1d.run.BuildRunEntity;
 import com.liferay.jethr0.entity.dalo.EntityDALO;
 import com.liferay.jethr0.entity.repository.BaseEntityRepository;
@@ -17,6 +15,9 @@ import com.liferay.jethr0.job.JobEntity;
 import com.liferay.jethr0.job.dalo.JobToBuildsEntityRelationshipDALO;
 import com.liferay.jethr0.job.repository.JobEntityRepository;
 
+import java.util.Map;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,21 @@ public class BuildEntityRepository extends BaseEntityRepository<BuildEntity> {
 
 	public BuildEntity create(
 		JobEntity jobEntity, boolean initialBuild, String jenkinsJobName,
-		String name, BuildEntity.State state) {
+		String name, Map<String, String> parameters, BuildEntity.State state) {
+
+		JSONArray parametersJSONArray = new JSONArray();
+
+		for (Map.Entry<String, String> parameter : parameters.entrySet()) {
+			JSONObject parameterJSONObject = new JSONObject();
+
+			parameterJSONObject.put(
+				"name", parameter.getKey()
+			).put(
+				"value", parameter.getValue()
+			);
+
+			parametersJSONArray.put(parameterJSONObject);
+		}
 
 		JSONObject jsonObject = new JSONObject();
 
@@ -40,6 +55,8 @@ public class BuildEntityRepository extends BaseEntityRepository<BuildEntity> {
 			"jenkinsJobName", jenkinsJobName
 		).put(
 			"name", name
+		).put(
+			"parameters", parametersJSONArray.toString()
 		).put(
 			"state", state.getJSONObject()
 		);
@@ -66,26 +83,12 @@ public class BuildEntityRepository extends BaseEntityRepository<BuildEntity> {
 	public synchronized void initializeRelationships() {
 	}
 
-	public void relateBuildToBuildParameter(
-		BuildEntity buildEntity, BuildParameterEntity buildParameterEntity) {
-
-		buildEntity.addBuildParameterEntity(buildParameterEntity);
-
-		buildParameterEntity.setBuildEntity(buildEntity);
-	}
-
 	public void relateBuildToBuildRun(
 		BuildEntity buildEntity, BuildRunEntity buildRunEntity) {
 
 		buildEntity.addBuildRunEntity(buildRunEntity);
 
 		buildRunEntity.setBuildEntity(buildEntity);
-	}
-
-	public void setBuildParameterEntityRepository(
-		BuildParameterEntityRepository buildParameterEntityRepository) {
-
-		_buildParameterEntityRepository = buildParameterEntityRepository;
 	}
 
 	public void setBuildRunEntityRepository(
@@ -106,34 +109,15 @@ public class BuildEntityRepository extends BaseEntityRepository<BuildEntity> {
 			_jobEntityRepository.getById(buildEntity.getJobEntityId()),
 			buildEntity);
 
-		buildEntity = _updateBuildToBuildRunRelationshipsFromDALO(buildEntity);
-		buildEntity = _updateBuildToBuildParameterRelationshipsFromDALO(
-			buildEntity);
-
-		return buildEntity;
+		return _updateBuildToBuildRunRelationshipsFromDALO(buildEntity);
 	}
 
 	@Override
 	protected BuildEntity updateRelationshipsToDALO(BuildEntity buildEntity) {
-		_buildToBuildParametersEntityRelationshipDALO.updateChildEntities(
-			buildEntity);
 		_buildToBuildRunsEntityRelationshipDALO.updateChildEntities(
 			buildEntity);
 
 		return buildEntity;
-	}
-
-	private BuildEntity _updateBuildToBuildParameterRelationshipsFromDALO(
-		BuildEntity parentBuildEntity) {
-
-		return updateParentToChildRelationshipsFromDALO(
-			parentBuildEntity, _buildToBuildParametersEntityRelationshipDALO,
-			_buildParameterEntityRepository,
-			(buildEntity, buildParameterEntity) -> relateBuildToBuildParameter(
-				buildEntity, buildParameterEntity),
-			buildEntity -> buildEntity.getBuildParameterEntities(),
-			(buildEntity, buildParameterEntity) ->
-				buildEntity.removeBuildParameterEntity(buildParameterEntity));
 	}
 
 	private BuildEntity _updateBuildToBuildRunRelationshipsFromDALO(
@@ -152,12 +136,7 @@ public class BuildEntityRepository extends BaseEntityRepository<BuildEntity> {
 	@Autowired
 	private BuildEntityDALO _buildEntityDALO;
 
-	private BuildParameterEntityRepository _buildParameterEntityRepository;
 	private BuildRunEntityRepository _buildRunEntityRepository;
-
-	@Autowired
-	private BuildToBuildParametersEntityRelationshipDALO
-		_buildToBuildParametersEntityRelationshipDALO;
 
 	@Autowired
 	private BuildToBuildRunsEntityRelationshipDALO

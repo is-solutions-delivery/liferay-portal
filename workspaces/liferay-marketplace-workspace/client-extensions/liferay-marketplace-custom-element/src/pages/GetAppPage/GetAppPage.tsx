@@ -3,17 +3,19 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {useForm} from 'react-hook-form';
 
 import {useMarketplaceContext} from '../../context/MarketplaceContext';
+import {useDeliveryProduct} from '../../hooks/data/useProduct';
 import useCart from '../../hooks/useCart';
 import {
 	getPaymentMethodURL,
 	postCheckoutCart,
 	postEmailAppInformation,
 } from '../../utils/api';
-import {getValueFromSpecifications} from '../../utils/util';
+import {getUrlParam} from '../../utils/getUrlParam';
+import {getValueFromDeliverySpecifications} from '../../utils/util';
 import AccountEmailInfo from '../CreateLicense/AccountInfo';
 import AccountSelection from './components/AccountSelection';
 import ProductFooter from './components/Footer';
@@ -27,26 +29,73 @@ import {PaymentMethod} from './enums/paymentMethod';
 import {SkuOptions} from './enums/skuOptions';
 import {StepType} from './enums/stepType';
 import useGetAddresses from './hooks/useGetAddresses';
-import useGetProduct from './hooks/useGetProduct';
-import useGetProductCreatorAccount from './hooks/useGetProductCreatorAccount';
-import useGetProductSkus from './hooks/useGetProductSkus';
-import useProductPriceModel from './hooks/useProductPriceModel';
 import buildNewCart from './utils/buildNewCart';
 import {getProductOrderTypes} from './utils/getProductOrderTypes';
+import getProductPriceModel from './utils/getProductPriceModel';
 import {getProductSpecificationValues} from './utils/getProductSpecificationValues';
 import getReplaceCurrentURL from './utils/getReplaceCurrentURL';
 import {postCartByPaymentMethod} from './utils/postCartByPaymentMethod';
 
 export type GetAppForm = {
 	account?: Account;
-	product?: Product;
+	product?: DeliveryProduct;
 	selectedPaymentMethod: PaymentMethod;
-	selectedSKU?: SKU;
+	selectedSKU?: DeliverySKU;
 	selectedTimeline?: string;
 	userAccount?: UserAccount;
 };
 
+const getProductBasePriceAndTrial = (product: DeliveryProduct) => {
+	const baseValue = {
+		basePrice: 0,
+		firstSku: undefined,
+		isTrial: false,
+		trialSku: undefined,
+	};
+
+	if (!product) {
+		return baseValue;
+	}
+
+	const {isFreeApp} = getProductPriceModel(product);
+	const skus = (product.skus as unknown) as DeliverySKU[];
+
+	if (isFreeApp) {
+		return {
+			...baseValue,
+			firstSku: skus.find((sku) => sku.price.price === 0) ?? skus[0],
+		};
+	}
+
+	const skusLicenseUsageTypes = skus
+		.map(({skuOptions, ...sku}) => ({
+			...sku,
+			skuOptions: skuOptions.find((skuOption) =>
+				[SkuOptions.STANDARD, SkuOptions.TRIAL].includes(
+					skuOption.skuOptionValueKey as SkuOptions
+				)
+			),
+		}))
+		.filter(({skuOptions}) => skuOptions);
+
+	const standardSku = skusLicenseUsageTypes.find(
+		({skuOptions}) => skuOptions?.skuOptionValueKey === SkuOptions.STANDARD
+	);
+
+	const trialSku = skusLicenseUsageTypes.find(
+		({skuOptions}) => skuOptions?.skuOptionValueKey === SkuOptions.TRIAL
+	);
+
+	return {
+		basePrice: standardSku?.price?.price,
+		firstSku: skus[0],
+		standardSku,
+		trialSku,
+	};
+};
+
 const GetAppFlow = () => {
+	const [loading, setLoading] = useState(false);
 	const {channel, myUserAccount} = useMarketplaceContext();
 	const [billingAddress, setBillingAddress] = useState<BillingAddress>(
 		initialBillingAddress
@@ -55,130 +104,127 @@ const GetAppFlow = () => {
 	const [enablePurchaseButton, setEnablePurchaseButton] = useState<boolean>(
 		false
 	);
-	const [enableTrialMethod, setEnableTrialMethod] = useState<boolean>(false);
+
 	const [licenseSelected, setLicenseSelected] = useState<boolean>(false);
-	const [orderType, setOrderType] = useState<OrderType>();
 	const [purchaseOrderNumber, setPurchaseOrderNumber] = useState<string>('');
 	const [step, setStep] = useState<StepType>(StepType.ACCOUNT);
-	const [hasTrial, setHasTrial] = useState<boolean>(false);
-	const [basePrice, setBasePrice] = useState<number>(0);
 
 	const {setValue, watch} = useForm<GetAppForm>({
 		defaultValues: {
 			account: undefined,
-			product: undefined,
 			selectedPaymentMethod: PaymentMethod.PAY,
 			selectedSKU: undefined,
 			selectedTimeline: '',
 		},
 	});
 
-	const {account, product, selectedPaymentMethod, selectedSKU} = watch();
+	const {account, selectedPaymentMethod, selectedSKU} = watch();
 
-	const {productId} = useGetProduct(
-		product,
-		useCallback((value: Product) => setValue('product', value), [setValue])
+	const {data: product} = useDeliveryProduct(getUrlParam('productId') ?? '');
+
+	const {basePrice, firstSku, trialSku} = getProductBasePriceAndTrial(
+		(product as unknown) as DeliveryProduct
 	);
-	const {sku} = useGetProductSkus(setEnableTrialMethod, product);
+	const hasTrial = !!trialSku;
+	const sku = trialSku ?? firstSku;
 	const {addresses} = useGetAddresses(account?.id);
-	const {isFreeApp, priceModel} = useProductPriceModel(product);
+
+	const {isFreeApp, priceModel} = getProductPriceModel(product);
+
+	const productSpecificationValues = getProductSpecificationValues(
+		product?.productSpecifications || []
+	);
+
+	const orderType = getProductOrderTypes(productSpecificationValues);
+	const productCreatorAccountName = product?.catalogName || '';
+
 	const cartUtil = useCart({
 		accountId: account?.id!,
 		channelId: channel?.id,
 		orderType,
+		product: product as DeliveryProduct,
+		setValue,
 	});
-	const productCreatorAccount = useGetProductCreatorAccount(product);
 
 	useEffect(() => {
-		if (cartUtil?.cartItems?.length) {
-			setLicenseSelected(true);
-			setEnablePurchaseButton(true);
-		}
-		else {
-			setEnablePurchaseButton(false);
-			setLicenseSelected(false);
-		}
+		setLicenseSelected(!!cartUtil?.cartItems?.length);
+		setEnablePurchaseButton(!!cartUtil?.cartItems?.length);
 	}, [cartUtil?.cartItems?.length]);
 
-	useEffect(() => {
-		(async () => {
-			if (productId) {
-				const productSpecificationValues = await getProductSpecificationValues(
-					Number(productId)
-				);
-
-				const orderType = await getProductOrderTypes(
-					productSpecificationValues
-				);
-
-				setOrderType(orderType);
-			}
-		})();
-	}, [productId]);
-
 	async function handleGetApp(orderId?: number) {
-		const productSpecificationValues = await getProductSpecificationValues(
-			Number(productId)
-		);
+		setLoading(true);
 
-		const productType = productSpecificationValues?.en_US;
-
-		const orderType = await getProductOrderTypes(
-			productSpecificationValues
-		);
-
-		const cart = buildNewCart({
-			billingAddress,
-			channel,
-			email,
-			isFreeApp,
-			orderType,
-			product,
-			purchaseOrderNumber,
-			selectedAccount: account,
-			selectedPaymentMethod,
-			selectedSKU,
-			sku,
-		});
-
-		const cartResponse = orderId
-			? await cartUtil.updateCartItems(orderId, {
-					...cart,
-					cartItems: cartUtil.cartItems,
-			  })
-			: await postCartByPaymentMethod(cart, channel.id);
-
-		await postCheckoutCart({cartId: cartResponse.id});
-
-		await postEmailAppInformation({
-			dashboardLink: getReplaceCurrentURL(
-				'get-app',
-				'customer-dashboard'
-			),
-			orderID: cartResponse.id,
-			priceModel,
-			productName: product?.name.en_US,
-			productType,
-		});
-
-		const nextStepsCallbackURL = getReplaceCurrentURL(
-			'get-app',
-			'next-steps',
-			`${encodeURIComponent(cartResponse.id)}`
-		);
-
-		if (selectedPaymentMethod === PaymentMethod.PAY) {
-			const paymentMethodURL = await getPaymentMethodURL(
-				cartResponse.id,
-				nextStepsCallbackURL
+		try {
+			const productSpecificationValues = getProductSpecificationValues(
+				product?.productSpecifications || []
 			);
 
-			window.location.href = paymentMethodURL;
+			const productType = productSpecificationValues;
 
-			return;
+			const orderType = await getProductOrderTypes(
+				productSpecificationValues
+			);
+
+			const cart = buildNewCart({
+				billingAddress,
+				channel,
+				email,
+				isFreeApp,
+				orderType,
+				product,
+				purchaseOrderNumber,
+				selectedAccount: account,
+				selectedPaymentMethod,
+				selectedSKU,
+				sku: sku as any,
+			});
+
+			const cartResponse = orderId
+				? await cartUtil.updateCartItems(orderId, {
+						...cart,
+						cartItems: cartUtil.cartItems,
+				  })
+				: await postCartByPaymentMethod(cart, channel.id);
+
+			await postCheckoutCart({cartId: cartResponse.id});
+
+			await postEmailAppInformation({
+				dashboardLink: getReplaceCurrentURL(
+					'get-app',
+					'customer-dashboard'
+				),
+				orderID: cartResponse.id,
+				priceModel,
+				productName: product?.name,
+				productType,
+			});
+
+			const nextStepsCallbackURL = getReplaceCurrentURL(
+				'get-app',
+				'next-steps',
+				`${encodeURIComponent(cartResponse.id)}`
+			);
+
+			if (selectedPaymentMethod === PaymentMethod.PAY) {
+				const paymentMethodURL = await getPaymentMethodURL(
+					cartResponse.id,
+					nextStepsCallbackURL
+				);
+
+				window.location.href = paymentMethodURL;
+
+				return;
+			}
+
+			window.location.href = nextStepsCallbackURL;
+		}
+		catch (error) {
+
+			// console.error('Unable to handleGetApp', error);
+
 		}
 
-		window.location.href = nextStepsCallbackURL;
+		setLoading(false);
 	}
 
 	const StepsInformation = useMemo(
@@ -187,6 +233,7 @@ const GetAppFlow = () => {
 				backStep: StepType.ACCOUNT,
 				component: (
 					<AccountSelection
+						isFreeApp={isFreeApp}
 						onSelectAccount={(account: Account) => {
 							setValue('account', account);
 						}}
@@ -207,12 +254,13 @@ const GetAppFlow = () => {
 							setValue,
 							watch,
 						}}
-						onSelectLicense={(sku?: SKU) =>
+						onSelectLicense={(sku?: DeliverySKU) =>
 							setValue('selectedSKU', sku)
 						}
 						selectedProduct={product}
 						setLicenseSelected={setLicenseSelected}
-						sku={sku}
+						sku={sku as DeliverySKU}
+						trialSKU={trialSku}
 					/>
 				),
 				nextStep: StepType.PAYMENT,
@@ -226,7 +274,7 @@ const GetAppFlow = () => {
 						addresses={addresses}
 						billingAddress={billingAddress}
 						email={email}
-						enableTrialMethod={enableTrialMethod}
+						enableTrialMethod={hasTrial}
 						form={{
 							setValue,
 							watch,
@@ -251,7 +299,8 @@ const GetAppFlow = () => {
 			billingAddress,
 			cartUtil,
 			email,
-			enableTrialMethod,
+			hasTrial,
+			isFreeApp,
 			myUserAccount,
 			product,
 			purchaseOrderNumber,
@@ -259,38 +308,16 @@ const GetAppFlow = () => {
 			setValue,
 			sku,
 			step,
+			trialSku,
 			watch,
 		]
 	);
-
-	const getProductBasePriceAndTrial = (skus: SKU[]) => {
-		skus?.forEach((sku) => {
-			const licenseUsageTypes = sku?.skuOptions?.filter(
-				(skuOption) =>
-					skuOption?.value === SkuOptions.STANDARD.toLowerCase() ||
-					skuOption?.value === SkuOptions.TRIAL.toLowerCase()
-			);
-
-			licenseUsageTypes?.forEach((licenseUsageType) => {
-				switch (licenseUsageType?.value.toLowerCase()) {
-					case SkuOptions.STANDARD.toLowerCase():
-						setBasePrice(sku.price);
-						break;
-					case SkuOptions.TRIAL.toLowerCase():
-						setHasTrial(true);
-						break;
-					default:
-						break;
-				}
-			});
-		});
-	};
 
 	const FormattedValues = () => {
 		if (step === StepType.LICENSES || step === StepType.PAYMENT) {
 			return (
 				<span className="price-text-value">
-					{cartUtil?.cart?.id
+					{cartUtil?.cart?.id && watch('selectedTimeline') !== 'trial'
 						? `${cartUtil?.cart?.summary?.totalFormatted}`
 						: `$0`}
 				</span>
@@ -308,8 +335,8 @@ const GetAppFlow = () => {
 		return <span className="price-text-value">Free</span>;
 	};
 
-	const getLicenseTagText = (product: Product) => {
-		const licenseTypeSpecification = getValueFromSpecifications(
+	const getLicenseTagText = (product: DeliveryProduct) => {
+		const licenseTypeSpecification = getValueFromDeliverySpecifications(
 			product.productSpecifications,
 			'license-type'
 		).toLowerCase();
@@ -320,12 +347,6 @@ const GetAppFlow = () => {
 				: 'Annually';
 		}
 	};
-
-	useEffect(() => {
-		if (product) {
-			getProductBasePriceAndTrial(product.skus);
-		}
-	}, [product]);
 
 	if (!product) {
 		return null;
@@ -362,7 +383,7 @@ const GetAppFlow = () => {
 			<ProductCard
 				ExtendBanner={ExtendBanner}
 				RightSideBanner={PriceTypeInfo}
-				creatorAccount={productCreatorAccount}
+				creatorAccountName={productCreatorAccountName}
 				product={product}
 				showExtendBanner={!!account}
 			/>
@@ -388,7 +409,7 @@ const GetAppFlow = () => {
 					)}
 
 					<div className="align-self-center h1 mb-6">
-						{StepsInformation[step].title}
+						{StepsInformation[step]?.title}
 					</div>
 
 					<div>{StepsInformation[step].component}</div>
@@ -396,6 +417,7 @@ const GetAppFlow = () => {
 				<ProductFooter
 					addresses={addresses}
 					cartUtil={cartUtil}
+					disabled={loading}
 					enablePurchaseButton={enablePurchaseButton}
 					handleGetApp={handleGetApp}
 					isFreeApp={isFreeApp}

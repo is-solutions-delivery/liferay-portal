@@ -72,7 +72,6 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -558,7 +557,6 @@ public class RenderLayoutStructureTagTest {
 		}
 	}
 
-	@FeatureFlags("LPS-183727")
 	@Test
 	public void testRenderFormWithoutErrors() throws Exception {
 		InfoField<TextInfoFieldType> infoField = _getInfoField(false);
@@ -669,9 +667,9 @@ public class RenderLayoutStructureTagTest {
 				"thank-you.-your-information-was-successfully-received");
 
 			String expectedSuccessHTML = StringBundler.concat(
-				"<div class=\"font-weight-semi-bold bg-white",
-				"text-secondary text-center text-3 p-5\">",
-				expectedSuccessMessage, "</div>");
+				"<div class=\"bg-white font-weight-semi-bold p-5 text-3 ",
+				"text-center text-secondary\">", expectedSuccessMessage,
+				"</div>");
 
 			Assert.assertTrue(content.contains(expectedSuccessHTML));
 

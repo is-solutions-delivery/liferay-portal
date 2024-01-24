@@ -31,12 +31,12 @@ definition {
 	}
 
 	@priority = 4
-	test CanSeeNewApiEndpointAndApiSchemaInPublishedApiApplicationPage {
+	test CanSeeNewAPIEndpointAndAPISchemaInPublishedAPIApplicationPage {
 		property portal.acceptance = "true";
 
 		task ("And Given an API Schema 'AppTest' related to an Application by post request postAPISchema") {
 			var response = SchemaAPI.createAPISchema(
-				externalReferenceCode = "App-test",
+				apiApplicationERC = "App-test",
 				mainObjectDefinitionERC = "L_API_APPLICATION",
 				name = "AppTest");
 		}
@@ -45,7 +45,7 @@ definition {
 			var schemaId = JSONPathUtil.getIdValue(response = ${response});
 
 			EndpointAPI.createAPIEndpoint(
-				externalReferenceCode = "App-test",
+				apiApplicationERC = "App-test",
 				name = "apptest",
 				path = "/apptest",
 				responseSchemaId = ${schemaId});
@@ -72,12 +72,12 @@ definition {
 	}
 
 	@priority = 4
-	test CanSeeNewApiEndpointInPublishedApiApplcationPage {
+	test CanSeeNewAPIEndpointInPublishedAPIApplicationPage {
 		property portal.acceptance = "true";
 
 		task ("And Given an API endpoint 'AppTest' related to an Application by post request postAPIEndpoint") {
 			EndpointAPI.createAPIEndpoint(
-				externalReferenceCode = "App-test",
+				apiApplicationERC = "App-test",
 				name = "apptest",
 				path = "/apptest");
 		}
@@ -97,12 +97,12 @@ definition {
 	}
 
 	@priority = 4
-	test CanSeeNewSchemaInPublishedApiApplcationPage {
+	test CanSeeNewSchemaInPublishedAPIApplicationPage {
 		property portal.acceptance = "true";
 
 		task ("And Given an API Schema 'AppTest' related to an Application by post request postAPISchema") {
 			SchemaAPI.createAPISchema(
-				externalReferenceCode = "App-test",
+				apiApplicationERC = "App-test",
 				mainObjectDefinitionERC = "L_API_APPLICATION",
 				name = "AppTest");
 		}

@@ -7,6 +7,7 @@ package com.liferay.headless.commerce.delivery.catalog.internal.graphql.servlet.
 
 import com.liferay.headless.commerce.delivery.catalog.internal.graphql.mutation.v1_0.Mutation;
 import com.liferay.headless.commerce.delivery.catalog.internal.graphql.query.v1_0.Query;
+import com.liferay.headless.commerce.delivery.catalog.internal.resource.v1_0.AccountResourceImpl;
 import com.liferay.headless.commerce.delivery.catalog.internal.resource.v1_0.AttachmentResourceImpl;
 import com.liferay.headless.commerce.delivery.catalog.internal.resource.v1_0.CategoryResourceImpl;
 import com.liferay.headless.commerce.delivery.catalog.internal.resource.v1_0.ChannelResourceImpl;
@@ -21,6 +22,7 @@ import com.liferay.headless.commerce.delivery.catalog.internal.resource.v1_0.Rel
 import com.liferay.headless.commerce.delivery.catalog.internal.resource.v1_0.SkuResourceImpl;
 import com.liferay.headless.commerce.delivery.catalog.internal.resource.v1_0.WishListItemResourceImpl;
 import com.liferay.headless.commerce.delivery.catalog.internal.resource.v1_0.WishListResourceImpl;
+import com.liferay.headless.commerce.delivery.catalog.resource.v1_0.AccountResource;
 import com.liferay.headless.commerce.delivery.catalog.resource.v1_0.AttachmentResource;
 import com.liferay.headless.commerce.delivery.catalog.resource.v1_0.CategoryResource;
 import com.liferay.headless.commerce.delivery.catalog.resource.v1_0.ChannelResource;
@@ -60,8 +62,12 @@ public class ServletDataImpl implements ServletData {
 
 	@Activate
 	public void activate(BundleContext bundleContext) {
+		Mutation.setAccountResourceComponentServiceObjects(
+			_accountResourceComponentServiceObjects);
 		Mutation.setChannelResourceComponentServiceObjects(
 			_channelResourceComponentServiceObjects);
+		Mutation.setProductOptionValueResourceComponentServiceObjects(
+			_productOptionValueResourceComponentServiceObjects);
 		Mutation.setSkuResourceComponentServiceObjects(
 			_skuResourceComponentServiceObjects);
 		Mutation.setWishListResourceComponentServiceObjects(
@@ -69,6 +75,8 @@ public class ServletDataImpl implements ServletData {
 		Mutation.setWishListItemResourceComponentServiceObjects(
 			_wishListItemResourceComponentServiceObjects);
 
+		Query.setAccountResourceComponentServiceObjects(
+			_accountResourceComponentServiceObjects);
 		Query.setAttachmentResourceComponentServiceObjects(
 			_attachmentResourceComponentServiceObjects);
 		Query.setCategoryResourceComponentServiceObjects(
@@ -134,10 +142,19 @@ public class ServletDataImpl implements ServletData {
 			new HashMap<String, ObjectValuePair<Class<?>, String>>() {
 				{
 					put(
+						"mutation#createChannelAccount",
+						new ObjectValuePair<>(
+							AccountResourceImpl.class, "postChannelAccount"));
+					put(
 						"mutation#createChannelsPageExportBatch",
 						new ObjectValuePair<>(
 							ChannelResourceImpl.class,
 							"postChannelsPageExportBatch"));
+					put(
+						"mutation#createChannelProductProductOptionProductOptionValuesPage",
+						new ObjectValuePair<>(
+							ProductOptionValueResourceImpl.class,
+							"postChannelProductProductOptionProductOptionValuesPage"));
 					put(
 						"mutation#createChannelProductSku",
 						new ObjectValuePair<>(
@@ -179,6 +196,11 @@ public class ServletDataImpl implements ServletData {
 							WishListItemResourceImpl.class,
 							"postWishlistWishListWishListItem"));
 
+					put(
+						"query#channelAccounts",
+						new ObjectValuePair<>(
+							AccountResourceImpl.class,
+							"getChannelAccountsPage"));
 					put(
 						"query#channelProductAttachments",
 						new ObjectValuePair<>(
@@ -279,8 +301,16 @@ public class ServletDataImpl implements ServletData {
 			};
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<AccountResource>
+		_accountResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<ChannelResource>
 		_channelResourceComponentServiceObjects;
+
+	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
+	private ComponentServiceObjects<ProductOptionValueResource>
+		_productOptionValueResourceComponentServiceObjects;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<SkuResource>
@@ -321,10 +351,6 @@ public class ServletDataImpl implements ServletData {
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<ProductOptionResource>
 		_productOptionResourceComponentServiceObjects;
-
-	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
-	private ComponentServiceObjects<ProductOptionValueResource>
-		_productOptionValueResourceComponentServiceObjects;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
 	private ComponentServiceObjects<ProductSpecificationResource>

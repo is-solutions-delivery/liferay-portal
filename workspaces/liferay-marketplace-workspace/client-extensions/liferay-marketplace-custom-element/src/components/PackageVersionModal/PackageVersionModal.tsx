@@ -1,0 +1,179 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
+import ClayForm, {ClayCheckbox, ClayInput} from '@clayui/form';
+import ClayManagementToolbar from '@clayui/management-toolbar';
+import ClayModal, {useModal} from '@clayui/modal';
+import {useEffect, useState} from 'react';
+
+import './PackageVersionModal.scss';
+import i18n from '../../i18n';
+import {useAppContext} from '../../manage-app-state/AppManageState';
+import {TYPES} from '../../manage-app-state/actionTypes';
+import {getProductById} from '../../utils/api';
+import {getCustomFieldValue} from '../../utils/customFieldUtil';
+
+interface PackageVersionModal {
+	appProductId: number;
+	currentVersions: string[];
+	handleClose: () => void;
+}
+
+export function PackageVersionModal({
+	appProductId,
+	currentVersions,
+	handleClose,
+}: PackageVersionModal) {
+	const [, dispatch] = useAppContext();
+	const {observer, onClose} = useModal({
+		onClose: handleClose,
+	});
+
+	const [checkboxVersions, setCheckboxVersions] = useState<string[]>(
+		currentVersions
+	);
+
+	const [versionSelected, setVersionSelected] = useState('');
+	const [versions, setVersions] = useState<string[]>([]);
+
+	const handleConfirmation = (selectedVersion: string) => {
+		dispatch({
+			payload: {
+				versionName: selectedVersion,
+			},
+			type: TYPES.UPLOAD_BUILD_PACKAGE_FILES,
+		});
+	};
+
+	useEffect(() => {
+		const getProductVersions = async () => {
+			const product = await getProductById({
+				productId: appProductId,
+			});
+
+			setVersions(
+				getCustomFieldValue(
+					product.customFields ?? [],
+					'Liferay Version'
+				) as any
+			);
+		};
+
+		getProductVersions();
+	}, [appProductId]);
+
+	return (
+		<ClayModal
+			center
+			className="package-version-modal-container"
+			observer={observer}
+		>
+			<ClayModal.Header>
+				{i18n.translate('select-compatible-versions')}
+			</ClayModal.Header>
+
+			<ClayModal.Body>
+				<p>
+					{i18n.translate(
+						'select-the-versions-of-liferay-that-your-app-is-compatible-with'
+					)}
+				</p>
+
+				<ClayManagementToolbar>
+					<ClayManagementToolbar.Search onlySearch>
+						<ClayInput.Group>
+							<ClayInput.GroupItem>
+								<ClayInput
+									aria-label="Search"
+									className="form-control input-group-inset input-group-inset-after"
+									onChange={(event) =>
+										setVersionSelected(event.target.value)
+									}
+									type="text"
+									value={versionSelected}
+								/>
+								<ClayInput.GroupInsetItem after tag="span">
+									<ClayButtonWithIcon
+										aria-labelledby="search icon"
+										displayType="unstyled"
+										symbol="search"
+										type="submit"
+									/>
+								</ClayInput.GroupInsetItem>
+							</ClayInput.GroupItem>
+						</ClayInput.Group>
+					</ClayManagementToolbar.Search>
+				</ClayManagementToolbar>
+
+				<ClayForm className="modal-form">
+					<ClayForm.Group>
+						{versions
+							.filter((version: string) =>
+								version
+									.toLowerCase()
+									.match(versionSelected.toLowerCase())
+							)
+							.map((version, index) => (
+								<ClayCheckbox
+									checked={checkboxVersions.includes(version)}
+									key={index}
+									label={version}
+									name={`version-${index}`}
+									onChange={(event) =>
+										setCheckboxVersions(
+											(prevCheckboxVersion) => {
+												if (
+													prevCheckboxVersion.includes(
+														version
+													)
+												) {
+													return prevCheckboxVersion.filter(
+														(prevVersion) =>
+															prevVersion !==
+															version
+													);
+												}
+
+												return [
+													...prevCheckboxVersion,
+													event.target.value,
+												];
+											}
+										)
+									}
+									value={version}
+								/>
+							))}
+					</ClayForm.Group>
+				</ClayForm>
+			</ClayModal.Body>
+
+			<ClayModal.Footer
+				last={
+					<ClayButton.Group spaced>
+						<ClayButton
+							displayType="secondary"
+							onClick={() => onClose()}
+						>
+							{i18n.translate('cancel')}
+						</ClayButton>
+
+						<ClayButton
+							onClick={() => {
+								checkboxVersions.forEach((version) =>
+									handleConfirmation(version)
+								);
+								onClose();
+							}}
+						>
+							{i18n.translate('confirm')}
+						</ClayButton>
+					</ClayButton.Group>
+				}
+			/>
+		</ClayModal>
+	);
+}

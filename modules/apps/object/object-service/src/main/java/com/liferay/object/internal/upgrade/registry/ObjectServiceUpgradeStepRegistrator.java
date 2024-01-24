@@ -21,8 +21,12 @@ import com.liferay.object.internal.upgrade.v3_27_0.ObjectActionUpgradeProcess;
 import com.liferay.object.internal.upgrade.v3_3_0.util.ObjectViewFilterColumnTable;
 import com.liferay.object.internal.upgrade.v3_9_0.ObjectLayoutBoxUpgradeProcess;
 import com.liferay.object.internal.upgrade.v6_0_0.util.ObjectValidationRuleSettingTable;
+import com.liferay.object.internal.upgrade.v8_8_2.SchemaUpgradeProcess;
+import com.liferay.object.internal.upgrade.v9_0_1.ObjectFolderUpgradeProcess;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.ResourceLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.upgrade.BaseExternalReferenceCodeUpgradeProcess;
 import com.liferay.portal.kernel.upgrade.DummyUpgradeStep;
 import com.liferay.portal.kernel.upgrade.UpgradeProcessFactory;
@@ -323,8 +327,10 @@ public class ObjectServiceUpgradeStepRegistrator
 			UpgradeProcessFactory.alterColumnType(
 				"ObjectValidationRule", "engine", "VARCHAR(255) null"));
 
+		registry.register("7.1.1", "7.1.2", new DummyUpgradeStep());
+
 		registry.register(
-			"7.1.1", "8.0.0",
+			"7.1.2", "8.0.0",
 			new com.liferay.object.internal.upgrade.v8_0_0.
 				ObjectFolderItemUpgradeProcess());
 
@@ -367,6 +373,53 @@ public class ObjectServiceUpgradeStepRegistrator
 				ObjectActionUpgradeProcess());
 
 		registry.register("8.6.0", "8.6.1", new DummyUpgradeStep());
+
+		registry.register("8.6.1", "8.6.2", new DummyUpgradeStep());
+
+		registry.register(
+			"8.6.2", "8.7.0",
+			UpgradeProcessFactory.addColumns(
+				"ObjectEntry", "rootObjectEntryId LONG"));
+
+		registry.register(
+			"8.7.0", "8.8.0",
+			new BaseExternalReferenceCodeUpgradeProcess() {
+
+				@Override
+				protected String[][] getTableAndPrimaryKeyColumnNames() {
+					return new String[][] {
+						{"ObjectRelationship", "objectRelationshipId"}
+					};
+				}
+
+			});
+
+		registry.register(
+			"8.8.0", "8.8.1",
+			new com.liferay.object.internal.upgrade.v8_8_1.
+				ObjectFieldSettingUpgradeProcess());
+
+		registry.register("8.8.1", "8.8.2", new SchemaUpgradeProcess());
+
+		registry.register("8.8.2", "8.8.3", new DummyUpgradeStep());
+
+		registry.register("8.8.3", "8.8.4", new DummyUpgradeStep());
+
+		registry.register(
+			"8.8.4", "9.0.0",
+			new com.liferay.object.internal.upgrade.v9_0_0.
+				ObjectFieldUpgradeProcess());
+
+		registry.register(
+			"9.0.0", "9.0.1",
+			new ObjectFolderUpgradeProcess(
+				_companyLocalService, _resourcePermissionLocalService,
+				_roleLocalService));
+
+		registry.register(
+			"9.0.1", "9.0.2",
+			new com.liferay.object.internal.upgrade.v9_0_2.
+				ObjectFolderUpgradeProcess());
 	}
 
 	@Reference
@@ -374,5 +427,11 @@ public class ObjectServiceUpgradeStepRegistrator
 
 	@Reference
 	private ResourceLocalService _resourceLocalService;
+
+	@Reference
+	private ResourcePermissionLocalService _resourcePermissionLocalService;
+
+	@Reference
+	private RoleLocalService _roleLocalService;
 
 }

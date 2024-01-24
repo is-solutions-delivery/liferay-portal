@@ -32,6 +32,281 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-195827. Validation error on object action does not redirect to the Display Page Template."
+	@priority = 4
+	test CannotGoToEntryDisplayPageWhenStandaloneActionValidationFailure {
+		task ("Given a page creator has a content page with a Button fragment mapped to a standalone action") {
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Student",
+				objectName = "Student",
+				pluralLabelName = "Students");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Text",
+				fieldLabelName = "Name",
+				fieldName = "name",
+				fieldType = "String",
+				isRequired = "false",
+				objectName = "Student");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "Student");
+
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Teacher",
+				objectName = "Teacher",
+				pluralLabelName = "Teachers");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Integer",
+				fieldLabelName = "Age",
+				fieldName = "age",
+				fieldType = "Integer",
+				isRequired = "false",
+				objectName = "Teacher");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "Teacher");
+
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Student");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.addObjectActionViaUI(
+				actionLabel = "Vote",
+				active = "true",
+				errorMessage = "The Age should be an integer.",
+				fieldName = "Age",
+				inputExpressionValue = "name",
+				inputMethod = "false",
+				objectLabel = "Teacher",
+				thenAction = "Add an Object Entry",
+				whenAction = "Standalone");
+
+			var objectEntryId = ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+				fieldName = "name",
+				objectName = "Student",
+				value = "Jack");
+
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = ${siteURLKey});
+
+			DisplayPageTemplatesAdmin.addDisplayPage(
+				contentType = "Student",
+				displayPageName = "Display Page Name");
+
+			PageEditor.addFragment(
+				collectionName = "Form Components",
+				fragmentName = "Form Container");
+
+			PageEditor.mapFormContainerToObject(contentType = "Student (Default)");
+
+			PageEditor.publish();
+		}
+
+		task ("When the page creator selects the Go to Entry Display Page as success interaction") {
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Content Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+
+			PageEditorAction.gotoEditableFieldAction(
+				className = "btn",
+				fragmentName = "Button",
+				id = "action");
+
+			PageEditorMapping.mapEditableFieldToAsset(
+				entryTitle = ${objectEntryId},
+				navItem = "Students",
+				rowItem = "//*[@data-qa-id='row'][contains(.,'${objectEntryId}')]");
+
+			PageEditor.configureFragment(
+				action = "Vote",
+				displayPage = "Display Page Name",
+				successInteraction = "Go to Entry Display Page");
+		}
+
+		task ("Then the page creator could select the Show Notification as error interaction") {
+			PageEditor.configureFragment(errorInteraction = "Show Notification");
+
+			PageEditor.publish();
+		}
+
+		task ("When the page creator triggers the standalone action") {
+			Button.click(button = "Go Somewhere");
+		}
+
+		task ("Then the page creator should not be redirected but see a validation error message") {
+			Alert.viewErrorMessage(errorMessage = "The Age should be an integer.");
+
+			Page.viewCurrentPage(pageName = "Content Page Name");
+		}
+	}
+
+	@description = "This is a test for LPS-191986. View draft display page template is not shown in fragment display page mapping."
+	@priority = 3
+	test CannotMapDraftDisplayPageTemplateToFragment {
+		task ("Given a user has a draft display page template") {
+			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
+				contentType = "Web Content Article",
+				displayPageTemplateEntryName = "Display Page Name",
+				groupName = ${randomSiteName},
+				subType = "Basic Web Content");
+
+			JSONWebcontent.addWebContent(
+				content = "Web Content Content",
+				groupName = ${randomSiteName},
+				title = "Web Content Title");
+		}
+
+		task ("When the user adds a Button fragment to content page") {
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Content Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+		}
+
+		task ("Then the user cannot map the draft display page template to Button fragment") {
+			PageEditorEditableLink.gotoEditableFieldLink(
+				fragmentName = "Button",
+				id = "link");
+
+			Select(
+				key_fieldLabel = "Link",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "Mapped URL");
+
+			PageEditorMapping.mapEditableFieldToAsset(
+				entryTitle = "Web Content Title",
+				navItem = "Web Content");
+
+			AssertElementNotPresent(
+				key_fieldLabel = "Field",
+				locator1 = "Select#GENERIC_SELECT_VALUE",
+				value1 = "Display Page Name");
+		}
+	}
+
+	@description = "This is a test for LPS-195827. Success object action redirects to the Display Page Template."
+	@priority = 4
+	test GoToEntryDisplayPageViaStandaloneAction {
+		task ("Given a page creator has a standalone action") {
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Student",
+				objectName = "Student",
+				pluralLabelName = "Students");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Text",
+				fieldLabelName = "Name",
+				fieldName = "name",
+				fieldType = "String",
+				isRequired = "false",
+				objectName = "Student");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "Student");
+
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Teacher",
+				objectName = "Teacher",
+				pluralLabelName = "Teachers");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Text",
+				fieldLabelName = "Subject",
+				fieldName = "subject",
+				fieldType = "String",
+				isRequired = "false",
+				objectName = "Teacher");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "Teacher");
+
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Student");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.addObjectActionViaUI(
+				actionLabel = "Vote",
+				active = "true",
+				errorMessage = "You don't have permissions.",
+				fieldName = "Subject",
+				inputExpressionValue = "name",
+				inputMethod = "false",
+				objectLabel = "Teacher",
+				thenAction = "Add an Object Entry",
+				whenAction = "Standalone");
+
+			var objectEntryId = ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+				fieldName = "name",
+				objectName = "Student",
+				value = "Jack");
+
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = ${siteURLKey});
+
+			DisplayPageTemplatesAdmin.addDisplayPage(
+				contentType = "Student",
+				displayPageName = "Display Page Name");
+
+			PageEditor.addFragment(
+				collectionName = "Form Components",
+				fragmentName = "Form Container");
+
+			PageEditor.mapFormContainerToObject(contentType = "Student (Default)");
+
+			PageEditor.publish();
+		}
+
+		task ("When the page creator maps the standalone action to Button fragment") {
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Content Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+
+			PageEditorAction.gotoEditableFieldAction(
+				className = "btn",
+				fragmentName = "Button",
+				id = "action");
+		}
+
+		task ("Then the page creator could select the Go to Entry Display Page as success interaction") {
+			PageEditorMapping.mapEditableFieldToAsset(
+				entryTitle = ${objectEntryId},
+				navItem = "Students",
+				rowItem = "//*[@data-qa-id='row'][contains(.,'${objectEntryId}')]");
+
+			PageEditor.configureFragment(
+				action = "Vote",
+				displayPage = "Display Page Name",
+				successInteraction = "Go to Entry Display Page");
+
+			PageEditor.publish();
+		}
+
+		task ("When the page creator triggers the standalone action") {
+			Button.click(button = "Go Somewhere");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Then the page creator should be redirected to entry display page") {
+			ControlMenu.viewHeaderTitle(headerTitle = ${objectEntryId});
+
+			InputField.viewText(
+				fieldLabel = "Name",
+				text = "Jack");
+		}
+	}
+
 	@description = "This is a use case for LPS-116975. Map all categories from asset entry to editable field."
 	@priority = 4
 	test MapAllCategoriesFromAssetToEditableField {
@@ -407,6 +682,8 @@ definition {
 	@description = "This is a test for LPS-184799. The page creator can map the Link to Page field in a fragment from a content page."
 	@priority = 5
 	test MapLinkToPageFieldToFragment {
+		property portal.acceptance = "true";
+
 		task ("Given a page designer has content pages and a web content with the Link to Page field") {
 			JSONLayout.addPublicLayout(
 				groupName = ${randomSiteName},
@@ -1043,8 +1320,6 @@ definition {
 	@description = "This is a test for LPS-184193. Allow selecting specific display page in the page editor for blog entry."
 	@priority = 4
 	test MapSpecificDisplayPageForBlogsEntry {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
-
 		task ("Given a page designer has a display page template for Blogs Entry") {
 			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
 				contentType = "Blogs Entry",
@@ -1112,8 +1387,6 @@ definition {
 	@description = "This is a test for LPS-184193. Allow selecting specific display page in the page editor for category."
 	@priority = 3
 	test MapSpecificDisplayPageForCategory {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
-
 		task ("Given a page designer has a display page template for Category") {
 			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
 				contentType = "Category",
@@ -1185,8 +1458,6 @@ definition {
 	@description = "This is a test for LPS-184193. Allow selecting specific display page in the page editor for commerce product."
 	@priority = 3
 	test MapSpecificDisplayPageForCommerceProduct {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
-
 		var channelName = StringUtil.randomString(8);
 		var productName = StringUtil.randomString(8);
 
@@ -1266,8 +1537,6 @@ definition {
 	@description = "This is a test for LPS-184193. Allow selecting specific display page in the page editor for document."
 	@priority = 3
 	test MapSpecificDisplayPageForDocument {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
-
 		task ("Given a page designer has a display page template for Document") {
 			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
 				contentType = "Document",
@@ -1337,7 +1606,7 @@ definition {
 	@description = "This is a test for LPS-184193. Allow selecting specific display page in the page editor for web content."
 	@priority = 5
 	test MapSpecificDisplayPageForWebContentArticle {
-		property custom.properties = "feature.flag.LPS-183727=true${line.separator}feature.flag.LPS-195205=true";
+		property portal.acceptance = "true";
 
 		task ("Given a page designer has a display page template for Web Content Article") {
 			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
@@ -1401,6 +1670,125 @@ definition {
 				fragmentName = "heading",
 				id = "element-text",
 				text = "Web Content Title");
+		}
+	}
+
+	@description = "This is a test for LPS-191986. View rel added to mapped fragment."
+	@priority = 4
+	test MapSpecificDisplayPageTemplateToFragment {
+		var portalURL = PropsUtil.get("portal.url");
+		var assetTypeId = JSONClassname._getClassNameId(value = "com.liferay.journal.model.JournalArticle");
+
+		task ("Given a user has a default display page template and a normal display page template") {
+			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
+				contentType = "Web Content Article",
+				displayPageTemplateEntryName = "Display Page Name 1",
+				groupName = ${randomSiteName},
+				statusKey = "APPROVED",
+				subType = "Basic Web Content");
+
+			JSONLayoutpagetemplate.setLayoutPageTemplateEntryAsDefault(
+				groupName = ${randomSiteName},
+				layoutPageTemplateEntryName = "Display Page Name 1",
+				type = "Display Page Template");
+
+			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
+				contentType = "Web Content Article",
+				displayPageTemplateEntryName = "Display Page Name 2",
+				groupName = ${randomSiteName},
+				statusKey = "APPROVED",
+				subType = "Basic Web Content");
+
+			JSONWebcontent.addWebContent(
+				content = "Web Content Content",
+				groupName = ${randomSiteName},
+				title = "Web Content Title");
+
+			var assetId = JSONWebcontent.getResourcePrimKeyByURLTitle(
+				groupName = ${randomSiteName},
+				title = "Web Content Title");
+		}
+
+		task ("When the user maps the default display page template as specific to a Button fragment") {
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Content Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+
+			PageEditorEditableLink.gotoEditableFieldLink(
+				fragmentName = "Button",
+				id = "link");
+
+			PageEditorEditableLink.mapURLToAsset(
+				entryTitle = "Web Content Title",
+				field = "Display Page Name 1",
+				navItem = "Web Content");
+		}
+
+		task ("Then the nofollow is added to Button") {
+			InputField.viewText(
+				fieldLabel = "URL",
+				text = "${portalURL}/web/${siteURLKey}/e/display-page-name-1/${assetTypeId}/${assetId}");
+
+			AssertAttributeValue(
+				fragmentName = "button",
+				id = "link",
+				index = 1,
+				locator1 = "Fragment#CONTRIBUTED_FRAGMENT_TEXT",
+				value1 = "rel",
+				value2 = "nofollow");
+
+			PageEditor.publish();
+		}
+
+		task ("When the guest user accesses to the associated display page") {
+			UserBar.signOut();
+
+			ContentPagesNavigator.openViewContentPage(
+				pageName = "Content Page Name",
+				siteName = ${randomSiteName});
+
+			Button.click(button = "Go Somewhere");
+		}
+
+		task ("Then the canonical is added to an link element") {
+			AssertAttributeValue(
+				locator1 = "//link[contains(@href,'${siteURLKey}/w/web-content-title')]",
+				value1 = "rel",
+				value2 = "canonical");
+		}
+
+		task ("When the user maps the normal display page template as specific to a Button fragment") {
+			User.loginPG();
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Content Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditorEditableLink.gotoEditableFieldLink(
+				fragmentName = "Button",
+				id = "link");
+
+			Select(
+				locator1 = "PageEditorEditableLink#FIELD",
+				value1 = "Display Page Name 2");
+		}
+
+		task ("Then the nofollow is added to Button") {
+			InputField.viewText(
+				fieldLabel = "URL",
+				text = "${portalURL}/web/${siteURLKey}/e/display-page-name-2/${assetTypeId}/${assetId}");
+
+			AssertAttributeValue(
+				fragmentName = "button",
+				id = "link",
+				index = 1,
+				locator1 = "Fragment#CONTRIBUTED_FRAGMENT_TEXT",
+				value1 = "rel",
+				value2 = "nofollow");
 		}
 	}
 
@@ -2472,7 +2860,7 @@ definition {
 			AssertElementPresent(
 				key_fieldLabel = "Field",
 				key_groupLabel = "Display Page",
-				key_value = "Display Page URL",
+				key_value = "Default",
 				locator1 = "Select#GROUPED_SELECT_VALUE");
 
 			for (var field : list "All Categories,Topic,Tags") {
@@ -2515,7 +2903,7 @@ definition {
 					locator1 = "Select#GROUPED_SELECT_VALUE");
 			}
 
-			for (var field : list "Display Page URL,Description,Display Date") {
+			for (var field : list "Description,Display Date") {
 				AssertElementPresent(
 					key_fieldLabel = "Field",
 					key_groupLabel = "Configuration",
@@ -2530,6 +2918,12 @@ definition {
 					key_value = ${field},
 					locator1 = "Select#GROUPED_SELECT_VALUE");
 			}
+
+			AssertElementPresent(
+				key_fieldLabel = "Field",
+				key_groupLabel = "Display Page",
+				key_value = "Default",
+				locator1 = "Select#GROUPED_SELECT_VALUE");
 		}
 
 		task ("Map the document to editable field of Heading") {
@@ -2624,6 +3018,10 @@ definition {
 			MouseOver.javaScriptFocus(
 				key_nodeName = "Content Page Name",
 				locator1 = "Treeview#NODE_ITEM");
+
+			MouseOver.javaScriptFocus(
+				key_nodeName = "Content Page Name",
+				locator1 = "Treeview#NODE_ITEM");
 		}
 
 		task ("Then the page creator could view a tooltip with the page url") {
@@ -2640,6 +3038,10 @@ definition {
 			LexiconCard.clickCardTitle(card = ${defaultSiteName});
 
 			Portlet.expandTree();
+
+			MouseOver.javaScriptFocus(
+				key_nodeName = "Home",
+				locator1 = "Treeview#NODE_ITEM");
 
 			MouseOver.javaScriptFocus(
 				key_nodeName = "Home",

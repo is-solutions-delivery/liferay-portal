@@ -22,8 +22,6 @@ definition {
 
 			User.firstLoginPG();
 
-			Navigator.openURL();
-
 			HeadlessSite.addSite(siteName = "Test Site Name");
 		}
 
@@ -778,9 +776,7 @@ definition {
 		task ("Check the info is correct in Analytics Cloud") {
 			ABTest.openABTestInAC();
 
-			AssertTextEquals(
-				locator1 = "ACTests#SUMMARY_CARD_TEXT",
-				value1 = "Test Is Running");
+			ACTests.viewABTestStatusSummary(abTestSummaryText = "Test Is Running");
 		}
 	}
 
@@ -1087,9 +1083,7 @@ definition {
 		}
 
 		task ("Assert that does not exist ab test") {
-			AssertElementPresent(
-				key_text = "Create Test",
-				locator1 = "Button#ANY");
+			ABTest.assertDXPABTestEmptyState();
 		}
 	}
 
@@ -1138,13 +1132,21 @@ definition {
 		task ("Check the info is correct in Analytics Cloud") {
 			ABTest.openABTestInAC();
 
-			AssertTextEquals(
-				locator1 = "ACTests#SUMMARY_CARD_TEXT",
-				value1 = "Test Is in Draft Mode");
+			ACTests.viewABTestStatusSummary(abTestSummaryText = "Test Is in Draft Mode");
 		}
 
-		task ("Delete AB Test at AC") {
-			ABTest.deleteABTestInAC();
+		task ("Click on the delete button on the top") {
+			Button.clickDelete(button = "Delete");
+		}
+
+		task ("Get site assigned property name and get data source name") {
+			var dataSource = StringUtil.extractFirst(${assignedPropertyName}, " ");
+		}
+
+		task ("Click on the new tab open") {
+			SelectWindow(locator1 = "title=AC Page - Site Name - ${dataSource}");
+
+			ABTest.deleteABTest();
 		}
 
 		task ("Go back to DXP") {
@@ -1156,9 +1158,7 @@ definition {
 		task ("Assert that does not exist ab test") {
 			ABTest.openABTestPanel();
 
-			AssertElementPresent(
-				key_text = "Create Test",
-				locator1 = "Button#ANY");
+			ABTest.assertDXPABTestEmptyState();
 		}
 	}
 
@@ -1179,9 +1179,7 @@ definition {
 		task ("Check the info is correct in Analytics Cloud") {
 			ABTest.openABTestInAC();
 
-			AssertTextEquals(
-				locator1 = "ACTests#SUMMARY_CARD_TEXT",
-				value1 = "Test Is in Draft Mode");
+			ACTests.viewABTestStatusSummary(abTestSummaryText = "Test Is in Draft Mode");
 		}
 
 		task ("Go back to DXP") {
@@ -1298,44 +1296,6 @@ definition {
 			AssertTextEquals(
 				locator1 = "ABTest#ELEMENT_NEEDS_TO_BE_SELECTED_MESSAGE",
 				value1 = "An element needs to be selected.");
-		}
-	}
-
-	@description = "LPS-98829: Validate if the ab test in History tab can be deleted"
-	@ignore = "true"
-	@priority = 3
-	test DeleteHistoryTab {
-		task ("Create AB test, create variant, run test and terminate test") {
-			ABTest.createABTest(
-				goal = "Bounce Rate",
-				testTitle = "AB test title");
-
-			ABTest.createVariant(variantName = "Variant name");
-
-			ABTest.runTest();
-
-			ABTest.terminateTest();
-		}
-
-		task ("Click history AB Test") {
-			ABTest.openTab(tabValue = "History");
-		}
-
-		task ("Delete the History Tab and Assert is empty") {
-			Click(
-				key_index = 1,
-				key_name = "AB test title",
-				locator1 = "ABTest#VALUES_IN_LIST");
-
-			ClickNoError(locator1 = "Icon#REMOVE");
-
-			AssertConfirm(value1 = "Are you sure you want to delete this? It will be deleted immediately.");
-
-			Alert.viewSuccessMessage();
-
-			AssertTextEquals(
-				locator1 = "ABTest#NO_HAVE_HISTORY_AB_TEST_MESSAGE",
-				value1 = "There is no test history for this experience.");
 		}
 	}
 
@@ -1801,6 +1761,7 @@ definition {
 	}
 
 	@description = "LPS-97195: Validate if the user can edit a variant for A/B Test with success"
+	@ignore = "true"
 	@priority = 5
 	test EditVariant {
 		task ("Create AB test and create variant") {
@@ -1876,6 +1837,10 @@ definition {
 		}
 
 		task ("Edit variant page and add some fragment to the page") {
+			Click(
+				key_variantName = "Variant name",
+				locator1 = "ABTest#VARIANT_TITLE");
+
 			ContentPages.gotoPageEditor();
 
 			PageEditor.addFragment(
@@ -1913,6 +1878,10 @@ definition {
 		}
 
 		task ("Edit variant page and add some fragment to the page") {
+			Click(
+				key_variantName = "Variant name",
+				locator1 = "ABTest#VARIANT_TITLE");
+
 			ContentPages.gotoPageEditor();
 
 			PageEditor.addFragment(
@@ -2079,48 +2048,6 @@ definition {
 				key_idElement = ${idbutton},
 				locator1 = "ABTest#TARGET_ELEMENT",
 				value1 = ${idbutton});
-		}
-	}
-
-	@description = "LPS-98829: Validate if the History tab appears with the list ordered by modified date DESC"
-	@ignore = "true"
-	@priority = 3
-	test HistoryTabListedDescModifiedDate {
-		task ("Create AB test with a variant, run test and terminate test") {
-			ABTest.createABTest(
-				goal = "Bounce Rate",
-				testTitle = "AB test title");
-
-			ABTest.createVariant(variantName = "Variant name");
-
-			ABTest.runTest();
-
-			ABTest.terminateTest();
-		}
-
-		task ("Create AB test with two variants, run test and terminate test") {
-			ABTest.createABTest(
-				goal = "Bounce Rate",
-				testTitle = "AB test title 2");
-
-			ABTest.createVariant(variantName = "Variant name");
-
-			ABTest.createVariant(variantName = "Variant name 2");
-
-			ABTest.runTest();
-
-			ABTest.terminateTest();
-		}
-
-		task ("Click history AB Test") {
-			ABTest.openTab(tabValue = "History");
-		}
-
-		task ("Assert the second AB test appears first in the History Tab") {
-			AssertElementPresent(
-				key_index = 1,
-				key_name = "AB test title 2",
-				locator1 = "ABTest#VALUES_IN_LIST");
 		}
 	}
 
@@ -3133,6 +3060,38 @@ definition {
 			AssertTextEquals.assertValue(
 				locator1 = "ABTest#ELEMENT_ID_INPUT",
 				value1 = "");
+		}
+	}
+
+	@description = "This is a test for LPS-177714. When executing an A/B test with Analytics Cloud and you open the edit mode of the variant, the tooltip displayed for the Back button is "Go to [pageName]" where [pageName] is the name of the content page associated with the variant."
+	@priority = 3
+	test ViewBackButtonTooltipOfPageEditorFromVariant {
+		task ("Given a site administrator accesses to the page editor from variant") {
+			ContentPages.gotoPageEditor();
+
+			PageEditor.publish();
+
+			ABTest.openABTestPanel();
+
+			ABTest.createABTest(
+				goal = "Bounce Rate",
+				testTitle = "AB Test Name");
+
+			ABTest.createVariant(variantName = "New Variant Name");
+
+			ABTest.editVariant(variantName = "New Variant Name");
+
+			PageEditor.assertFragmentSidebarLoaded();
+		}
+
+		task ("When the site administrator hovers over the back button") {
+			MouseOver(locator1 = "Icon#BACK");
+		}
+
+		task ("Then the site administrator could see the tooltip message") {
+			AssertVisible(
+				key_content = "Go to Content Page",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
 		}
 	}
 

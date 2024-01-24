@@ -168,7 +168,7 @@ public class SystemObjectDefinitionManagerPortalInstanceLifecycleListener
 					systemObjectDefinitionManager.getVersion())) {
 
 				ObjectFolder objectFolder =
-					_objectFolderLocalService.getOrAddUncategorizedObjectFolder(
+					_objectFolderLocalService.getOrAddDefaultObjectFolder(
 						companyId);
 
 				objectDefinition =
@@ -183,7 +183,7 @@ public class SystemObjectDefinitionManagerPortalInstanceLifecycleListener
 				new SystemObjectEntryItemSelectorView(
 					_dtoConverterRegistry, _itemSelector,
 					_itemSelectorViewDescriptorRenderer, objectDefinition,
-					_objectFieldLocalService,
+					_objectDefinitionLocalService, _objectFieldLocalService,
 					_objectRelatedModelsProviderRegistry, _portal,
 					_systemObjectDefinitionManagerRegistry, _userLocalService),
 				HashMapDictionaryBuilder.<String, Object>put(

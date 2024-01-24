@@ -7,22 +7,19 @@ package com.liferay.site.navigation.taglib.servlet.taglib;
 
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.kernel.theme.NavItem;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portlet.display.template.PortletDisplayTemplate;
 import com.liferay.portlet.display.template.util.PortletDisplayTemplateUtil;
 import com.liferay.site.navigation.taglib.internal.servlet.ServletContextUtil;
-import com.liferay.site.navigation.taglib.internal.util.NavItemUtil;
+import com.liferay.site.navigation.taglib.servlet.taglib.util.NavItemUtil;
 import com.liferay.taglib.util.IncludeTag;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -80,45 +77,23 @@ public class NavigationTag extends IncludeTag {
 			return EVAL_PAGE;
 		}
 
-		List<NavItem> branchNavItems = null;
-		List<NavItem> navItems = null;
+		JspWriter jspWriter = pageContext.getOut();
 
 		HttpServletRequest httpServletRequest = getRequest();
 
-		try {
-			branchNavItems = getBranchNavItems(httpServletRequest);
+		Map<String, Object> navigationMenuContext =
+			NavItemUtil.getNavigationMenuContext(
+				_displayDepth, _includedLayouts, httpServletRequest,
+				NavigationMenuMode.DEFAULT, _preview, _rootLayoutUuid,
+				_rootLayoutLevel, _rootLayoutType, 0);
 
-			navItems = NavItemUtil.getNavItems(
-				NavigationMenuMode.DEFAULT, httpServletRequest, _rootLayoutType,
-				_rootLayoutLevel, _rootLayoutUuid, branchNavItems);
-		}
-		catch (Exception exception) {
-			_log.error(exception);
-		}
-
-		HttpServletResponse httpServletResponse =
-			(HttpServletResponse)pageContext.getResponse();
-
-		String result = PortletDisplayTemplateUtil.renderDDMTemplate(
-			httpServletRequest, httpServletResponse,
-			portletDisplayDDMTemplate.getTemplateId(), navItems,
-			HashMapBuilder.<String, Object>put(
-				"branchNavItems", branchNavItems
-			).put(
-				"displayDepth", _displayDepth
-			).put(
-				"includedLayouts", _includedLayouts
-			).put(
-				"preview", _preview
-			).put(
-				"rootLayoutLevel", _rootLayoutLevel
-			).put(
-				"rootLayoutType", _rootLayoutType
-			).build());
-
-		JspWriter jspWriter = pageContext.getOut();
-
-		jspWriter.write(result);
+		jspWriter.write(
+			PortletDisplayTemplateUtil.renderDDMTemplate(
+				httpServletRequest,
+				(HttpServletResponse)pageContext.getResponse(),
+				portletDisplayDDMTemplate.getTemplateId(),
+				(List<NavItem>)navigationMenuContext.get("navItems"),
+				navigationMenuContext));
 
 		return EVAL_PAGE;
 	}
@@ -176,13 +151,6 @@ public class NavigationTag extends IncludeTag {
 		_rootLayoutUuid = null;
 	}
 
-	protected List<NavItem> getBranchNavItems(
-			HttpServletRequest httpServletRequest)
-		throws PortalException {
-
-		return NavItemUtil.getBranchNavItems(httpServletRequest);
-	}
-
 	protected String getDisplayStyle() {
 		if (Validator.isNotNull(_ddmTemplateKey)) {
 			PortletDisplayTemplate portletDisplayTemplate =
@@ -218,8 +186,6 @@ public class NavigationTag extends IncludeTag {
 	}
 
 	private static final String _PAGE = "/navigation/page.jsp";
-
-	private static final Log _log = LogFactoryUtil.getLog(NavigationTag.class);
 
 	private long _ddmTemplateGroupId;
 	private String _ddmTemplateKey;

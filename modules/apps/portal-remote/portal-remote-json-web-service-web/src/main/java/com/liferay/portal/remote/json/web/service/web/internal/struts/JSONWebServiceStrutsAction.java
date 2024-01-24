@@ -66,6 +66,7 @@ public class JSONWebServiceStrutsAction implements StrutsAction {
 			Element bodyElement = document.body();
 
 			bodyElement.prepend(unsyncStringWriter.toString());
+			bodyElement.removeClass("product-menu-open");
 
 			ServletResponseUtil.write(httpServletResponse, document.html());
 		}

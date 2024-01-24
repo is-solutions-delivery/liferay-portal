@@ -25,6 +25,7 @@ definition {
 		property data.archive.type = "data-archive-portal";
 		property database.types = "mariadb,mysql,postgresql";
 		property portal.version = "7.3.0";
+		property test.assert.warning.exceptions = "false";
 
 		ValidateSmokeUpgrade.viewUpgrade();
 	}
@@ -78,6 +79,7 @@ definition {
 	@priority = 5
 	test ViewPortalSmokeArchiveAutoUpgrade7413 {
 		property data.archive.type = "data-archive-portal";
+		property portal.acceptance = "true";
 		property portal.version = "7.4.13";
 		property test.run.environment = "EE";
 
@@ -97,6 +99,7 @@ definition {
 	@priority = 5
 	test ViewPortalSmokeArchiveAutoUpgrade70106 {
 		property data.archive.type = "data-archive-portal";
+		property portal.acceptance = "true";
 		property portal.version = "7.0.10.6";
 
 		ValidateSmokeUpgrade.viewUpgrade();
@@ -113,6 +116,7 @@ definition {
 	@priority = 5
 	test ViewPortalSmokeArchiveAutoUpgrade621021 {
 		property data.archive.type = "data-archive-portal";
+		property portal.acceptance = "true";
 		property portal.version = "6.2.10.21";
 
 		ValidateSmokeUpgrade.viewUpgrade();

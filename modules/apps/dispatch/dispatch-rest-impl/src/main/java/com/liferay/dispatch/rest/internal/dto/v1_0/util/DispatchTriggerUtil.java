@@ -22,25 +22,27 @@ public class DispatchTriggerUtil {
 
 		return new DispatchTrigger() {
 			{
-				active = dispatchTrigger.getActive();
-				companyId = dispatchTrigger.getCompanyId();
-				cronExpression = dispatchTrigger.getCronExpression();
-				dispatchTaskClusterMode =
-					dispatchTrigger.getDispatchTaskClusterMode();
-				dispatchTaskExecutorType =
-					dispatchTrigger.getDispatchTaskExecutorType();
-				dispatchTaskSettings = toSettingsMap(
-					dispatchTrigger.getDispatchTaskSettingsUnicodeProperties());
-				endDate = dispatchTrigger.getEndDate();
-				externalReferenceCode =
-					dispatchTrigger.getExternalReferenceCode();
-				id = dispatchTrigger.getDispatchTriggerId();
-				name = dispatchTrigger.getName();
-				overlapAllowed = dispatchTrigger.getOverlapAllowed();
-				startDate = dispatchTrigger.getStartDate();
-				system = dispatchTrigger.getSystem();
-				timeZoneId = dispatchTrigger.getTimeZoneId();
-				userId = dispatchTrigger.getUserId();
+				setActive(dispatchTrigger::isActive);
+				setCompanyId(dispatchTrigger::getCompanyId);
+				setCronExpression(dispatchTrigger::getCronExpression);
+				setDispatchTaskClusterMode(
+					dispatchTrigger::getDispatchTaskClusterMode);
+				setDispatchTaskExecutorType(
+					dispatchTrigger::getDispatchTaskExecutorType);
+				setDispatchTaskSettings(
+					() -> toSettingsMap(
+						dispatchTrigger.
+							getDispatchTaskSettingsUnicodeProperties()));
+				setEndDate(dispatchTrigger::getEndDate);
+				setExternalReferenceCode(
+					dispatchTrigger::getExternalReferenceCode);
+				setId(dispatchTrigger::getDispatchTriggerId);
+				setName(dispatchTrigger::getName);
+				setOverlapAllowed(dispatchTrigger::isOverlapAllowed);
+				setStartDate(dispatchTrigger::getStartDate);
+				setSystem(dispatchTrigger::isSystem);
+				setTimeZoneId(dispatchTrigger::getTimeZoneId);
+				setUserId(dispatchTrigger::getUserId);
 			}
 		};
 	}

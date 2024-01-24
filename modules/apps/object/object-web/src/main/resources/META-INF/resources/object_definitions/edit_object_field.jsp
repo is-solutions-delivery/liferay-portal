@@ -35,6 +35,8 @@ ObjectField objectField = (ObjectField)request.getAttribute(ObjectWebKeys.OBJECT
 		).put(
 			"isDefaultStorageType", objectDefinition.isDefaultStorageType()
 		).put(
+			"isRootDescendantNode", objectDefinition.isRootDescendantNode()
+		).put(
 			"learnResources", LearnMessageUtil.getReactDataJSONObject("object-web")
 		).put(
 			"objectDefinitionExternalReferenceCode", objectDefinition.getExternalReferenceCode()
@@ -43,7 +45,7 @@ ObjectField objectField = (ObjectField)request.getAttribute(ObjectWebKeys.OBJECT
 		).put(
 			"readOnly", !objectDefinitionsFieldsDisplayContext.hasUpdateObjectDefinitionPermission()
 		).put(
-			"workflowStatusJSONArray", LocalizedJSONArrayUtil.getWorkflowStatusJSONArray(locale)
+			"workflowStatuses", LocalizedJSONArrayUtil.getWorkflowStatusJSONArray(locale)
 		).build()
 	%>'
 />

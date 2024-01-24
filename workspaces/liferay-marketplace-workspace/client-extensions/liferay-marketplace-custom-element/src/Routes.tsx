@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {Liferay} from './liferay/liferay';
-import {AppCreationFlow} from './pages/AppCreationFlow/AppCreationFlow';
 import {CustomerGatePage} from './pages/CustomerGatePage/CustomerGatePage';
 import GetAppPage from './pages/GetAppPage/GetAppPage';
-import {NextStepPage} from './pages/NextStepPage/NextStepPage';
+import {NextSteps} from './pages/NextSteps';
+import {AppCreationFlow} from './pages/PublishedAppsDashboard/Apps/AppCreationFlow/AppCreationFlow';
 import PublishedAppsDashboardRouter from './pages/PublishedAppsDashboard/PublishedAppsDashboardRouter';
+import PublisherGateRouter from './pages/PublisherGate/PublisheGateRouter';
 import PurchasedAppsDashboardRouter from './pages/PurchasedAppsDashboard/PurchasedAppsDashboardRouter';
 import PurchasedSolutions from './pages/PurchasedSolutions/PurchasedSolutions';
 
@@ -16,8 +16,9 @@ const Routes = {
 	'create-app': AppCreationFlow,
 	'customer-gate': CustomerGatePage,
 	'get-app': GetAppPage,
-	'next-steps': NextStepPage,
+	'next-steps': NextSteps,
 	'published-apps': PublishedAppsDashboardRouter,
+	'publisher-gate': PublisherGateRouter,
 	'purchased-apps': PurchasedAppsDashboardRouter,
 	'purchased-solutions': PurchasedSolutions,
 } as const;
@@ -25,14 +26,14 @@ const Routes = {
 export type RouteType = keyof typeof Routes;
 
 type AppRoutesProps = {
-	route: RouteType;
+	path: RouteType;
 };
 
-export default function AppRoutes({route}: AppRoutesProps) {
-	const Route = Routes[route];
+export default function AppRoutes({path}: AppRoutesProps) {
+	const Route = Routes[path];
 
-	if (!Liferay.ThemeDisplay.isSignedIn() || !Route) {
-		return null;
+	if (!Route) {
+		return <h1>Page not found</h1>;
 	}
 
 	return <Route />;

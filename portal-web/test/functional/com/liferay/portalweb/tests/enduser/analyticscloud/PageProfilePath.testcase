@@ -188,9 +188,313 @@ definition {
 		}
 
 		task ("Check if the page name is displayed correctly") {
+			Click.clickNoMouseOver(
+				key_pageName = "Snúið Vinsælar",
+				locator1 = "ACSites#PATH_PAGE_NAME_SANKEY");
+
 			AssertElementPresent(
 				key_pageName = "Snúið Vinsælar þú - Site Name - ${dataSourceName}",
-				locator1 = "ACSites#SITE_PATH");
+				locator1 = "ACSites#PATH_PAGE_NAME_POPOVER");
+		}
+	}
+
+	@description = "Feature ID: LRAC-14836 | Automation ID: LRAC-15060 | Test Summary: The dropdown is updated when a segment is deleted"
+	@priority = 4
+	test DeleteSegmentDropdownUpdated {
+		task ("Create a site and a blog and add to a page") {
+			ACUtils.addSiteAndPage();
+
+			ACUtils.createBlogsAndAddToPage(entryTitle = "Blog test");
+		}
+
+		task ("Connect AC to DXP") {
+			ACDXPSettings.connectDXPtoAnalyticsCloud(siteName = "Site Name");
+		}
+
+		task ("Visit the page, then close the sessions") {
+			ACUtils.navigateToSitePage(
+				actionType = "View Blog",
+				documentTitleList = "Blog test",
+				pageName = "AC Page",
+				siteName = "Site Name");
+
+			ACUtils.closeAllSessionsAndWait();
+		}
+
+		task ("Switch to new property in AC") {
+			ACUtils.launchAC();
+
+			ACProperties.switchProperty(propertyName = ${assignedPropertyName});
+		}
+
+		task ("Add a new dynamic segment") {
+			ACNavigation.goToSegments();
+
+			ACSegments.createDynamicSegment();
+
+			ACUtils.setItemName(itemName = "Dynamic Segment Test");
+		}
+
+		task ("Add an email field") {
+			ACSegments.goToSidebarAttributes(criterion = "Individual Attributes");
+
+			ACSegments.addSegmentField(segmentField = "email");
+
+			ACSegments.selectOperator(operator = "is known");
+		}
+
+		task ("Save the segment") {
+			ACSegments.saveSegment();
+		}
+
+		task ("Navigate to Pages tab") {
+			ACNavigation.goToSites();
+
+			ACNavigation.switchTab(tabName = "Pages");
+		}
+
+		task ("Set time filter use 24 hours") {
+			ACTimeFilter.clickTimeFilterButton();
+
+			ACTimeFilter.setLast24Hours();
+		}
+
+		task ("Navigate to page report entry") {
+			var dataSourceName = StringUtil.extractFirst(${assignedPropertyName}, " ");
+
+			ACNavigation.openItem(itemName = "AC Page - Site Name - ${dataSourceName}");
+		}
+
+		task ("Go to the Path tab") {
+			ACNavigation.switchTab(tabName = "Path");
+
+			ACUtils.waitForLoading();
+		}
+
+		task ("Click Filter button") {
+			Button.click(button = "Filter");
+		}
+
+		task ("Search for segment on the list") {
+			ACPagePath.searchSegmentFilterBar(searchItem = "Dynamic Segment Test");
+
+			ACPagePath.viewSegmentDropdown(nameList = "Dynamic Segment Test");
+		}
+
+		task ("Delete dynamic segment") {
+			ACNavigation.goToSegments();
+
+			ACSegments.deleteSegment(searchTerm = "Dynamic Segment Test");
+		}
+
+		task ("Navigate to Pages tab") {
+			ACNavigation.goToSites();
+
+			ACNavigation.switchTab(tabName = "Pages");
+		}
+
+		task ("Set time filter use 24 hours") {
+			ACTimeFilter.clickTimeFilterButton();
+
+			ACTimeFilter.setLast24Hours();
+		}
+
+		task ("Navigate to page report entry") {
+			ACNavigation.openItem(itemName = "AC Page - Site Name - ${dataSourceName}");
+		}
+
+		task ("Go to the Path tab") {
+			ACNavigation.switchTab(tabName = "Path");
+
+			ACUtils.waitForLoading();
+		}
+
+		task ("Click Filter button") {
+			Button.click(button = "Filter");
+		}
+
+		task ("Search for segment not on list") {
+			ACPagePath.searchSegmentFilterBar(searchItem = "Dynamic Segment Test");
+
+			ACUtils.viewNoResultsMessage(noResultMessage = "There are no segments.");
+		}
+	}
+
+	@description = "Feature ID: LRAC-14836 | Automation ID: LRAC-15062 | Test Summary: Remove segments from the filter"
+	@priority = 5
+	test RemoveSegmentFromFilter {
+		task ("Create a site and a blog and add to a page") {
+			ACUtils.addSiteAndPage();
+
+			ACUtils.createBlogsAndAddToPage(entryTitle = "Blog test");
+		}
+
+		task ("Connect AC to DXP") {
+			ACDXPSettings.connectDXPtoAnalyticsCloud(siteName = "Site Name");
+		}
+
+		task ("Visit the page, then close the sessions") {
+			ACUtils.navigateToSitePage(
+				actionType = "View Blog",
+				documentTitleList = "Blog test",
+				pageName = "AC Page",
+				siteName = "Site Name");
+
+			ACUtils.closeAllSessionsAndWait();
+		}
+
+		task ("Switch to new property in AC") {
+			ACUtils.launchAC();
+
+			ACProperties.switchProperty(propertyName = ${assignedPropertyName});
+		}
+
+		task ("Add a new dynamic segment") {
+			ACNavigation.goToSegments();
+
+			ACSegments.createDynamicSegment();
+
+			ACUtils.setItemName(itemName = "Dynamic Segment Test");
+		}
+
+		task ("Add an email field") {
+			ACSegments.goToSidebarAttributes(criterion = "Individual Attributes");
+
+			ACSegments.addSegmentField(segmentField = "email");
+
+			ACSegments.selectOperator(operator = "is unknown");
+		}
+
+		task ("Save the segment") {
+			ACSegments.saveSegment();
+		}
+
+		task ("Navigate to Pages tab") {
+			ACNavigation.goToSites();
+
+			ACNavigation.switchTab(tabName = "Pages");
+		}
+
+		task ("Set time filter use 24 hours") {
+			ACTimeFilter.clickTimeFilterButton();
+
+			ACTimeFilter.setLast24Hours();
+		}
+
+		task ("Navigate to page report entry") {
+			var dataSourceName = StringUtil.extractFirst(${assignedPropertyName}, " ");
+
+			ACNavigation.openItem(itemName = "AC Page - Site Name - ${dataSourceName}");
+		}
+
+		task ("Go to the Path tab") {
+			ACNavigation.switchTab(tabName = "Path");
+
+			ACUtils.waitForLoading();
+		}
+
+		task ("Observe page total") {
+			ACPagePath.viewPagePathTotal(pageTotal = 1);
+		}
+
+		task ("Click Filter button") {
+			Button.click(button = "Filter");
+		}
+
+		task ("Click Segment for filter") {
+			ACPagePath.clickFilterSegment(segmentName = "Dynamic Segment Test");
+		}
+
+		task ("Observe page total changes with filter") {
+			ACPagePath.viewPagePathTotal(pageTotal = 0);
+		}
+
+		task ("Remove segment from filter") {
+			ACPagePath.removeSegmentFilter();
+		}
+
+		task ("Observe page total changes with filter") {
+			ACPagePath.viewPagePathTotal(pageTotal = 1);
+		}
+	}
+
+	@description = "Feature ID: LRAC-14836 | Automation ID: LRAC-15061 | Test Summary: The filter shows all segments"
+	@priority = 5
+	test ViewSegmentDropdownList {
+		task ("Create a site and a blog and add to a page") {
+			ACUtils.addSiteAndPage();
+
+			ACUtils.createBlogsAndAddToPage(entryTitle = "Blog test");
+		}
+
+		task ("Connect AC to DXP") {
+			ACDXPSettings.connectDXPtoAnalyticsCloud(siteName = "Site Name");
+		}
+
+		task ("Visit the page, then close the sessions") {
+			ACUtils.navigateToSitePage(
+				actionType = "View Blog",
+				documentTitleList = "Blog test",
+				pageName = "AC Page",
+				siteName = "Site Name");
+
+			ACUtils.closeAllSessionsAndWait();
+		}
+
+		task ("Switch to new property in AC") {
+			ACUtils.launchAC();
+
+			ACProperties.switchProperty(propertyName = ${assignedPropertyName});
+		}
+
+		task ("Create four dynamic segments") {
+			for (var n : list "1,2,3,4") {
+				ACNavigation.goToSegments();
+
+				ACSegments.createDynamicSegment();
+
+				ACUtils.setItemName(itemName = "Dynamic Segment Test ${n}");
+
+				ACSegments.goToSidebarAttributes(criterion = "Individual Attributes");
+
+				ACSegments.addSegmentField(segmentField = "email");
+
+				ACSegments.editTextCriterion(textInput = "test@liferay.com");
+
+				ACSegments.saveSegment();
+			}
+		}
+
+		task ("Navigate to Pages tab") {
+			ACNavigation.goToSites();
+
+			ACNavigation.switchTab(tabName = "Pages");
+		}
+
+		task ("Set time filter use 24 hours") {
+			ACTimeFilter.clickTimeFilterButton();
+
+			ACTimeFilter.setLast24Hours();
+		}
+
+		task ("Navigate to page report entry") {
+			var dataSourceName = StringUtil.extractFirst(${assignedPropertyName}, " ");
+
+			ACNavigation.openItem(itemName = "Blog test - Site Name - ${dataSourceName}");
+		}
+
+		task ("Go to the Path tab") {
+			ACNavigation.switchTab(tabName = "Path");
+
+			ACUtils.waitForLoading();
+		}
+
+		task ("Click Filter button") {
+			Button.click(button = "Filter");
+		}
+
+		task ("View segments on the list") {
+			ACPagePath.viewSegmentDropdown(nameList = "Dynamic Segment Test 1,Dynamic Segment Test 2,Dynamic Segment Test 3,Dynamic Segment Test 4");
 		}
 	}
 

@@ -343,6 +343,24 @@ public class ContentLayoutTestUtil {
 				CompanyLocalServiceUtil.getCompany(layout.getCompanyId()),
 				GroupLocalServiceUtil.getGroup(layout.getGroupId()), layout);
 
+		long segmentsExperienceId =
+			SegmentsExperienceLocalServiceUtil.fetchDefaultSegmentsExperienceId(
+				layout.getPlid());
+
+		mockLiferayPortletActionRequest.addParameter(
+			"segmentsExperienceId", String.valueOf(segmentsExperienceId));
+
+		LayoutPageTemplateStructure layoutPageTemplateStructure =
+			LayoutPageTemplateStructureLocalServiceUtil.
+				fetchLayoutPageTemplateStructure(
+					layout.getGroupId(), layout.getPlid());
+
+		LayoutStructure layoutStructure = LayoutStructure.of(
+			layoutPageTemplateStructure.getData(segmentsExperienceId));
+
+		mockLiferayPortletActionRequest.addParameter(
+			"parentItemId", layoutStructure.getMainItemId());
+
 		mockLiferayPortletActionRequest.addParameter("portletId", portletId);
 
 		return ReflectionTestUtil.invoke(
@@ -497,15 +515,10 @@ public class ContentLayoutTestUtil {
 			ReflectionTestUtil.invoke(
 				publishLayoutMVCActionCommand, "_publishLayout",
 				new Class<?>[] {
-					ActionRequest.class, ActionResponse.class, Layout.class,
-					Layout.class, ServiceContext.class, long.class
+					Layout.class, Layout.class, ServiceContext.class, long.class
 				},
-				getMockLiferayPortletActionRequest(
-					CompanyLocalServiceUtil.getCompany(layout.getCompanyId()),
-					GroupLocalServiceUtil.getGroup(layout.getGroupId()),
-					layout),
-				new MockLiferayPortletActionResponse(), draftLayout, layout,
-				serviceContext, TestPropsValues.getUserId());
+				draftLayout, layout, serviceContext,
+				TestPropsValues.getUserId());
 		}
 		finally {
 			ServiceContextThreadLocal.popServiceContext();

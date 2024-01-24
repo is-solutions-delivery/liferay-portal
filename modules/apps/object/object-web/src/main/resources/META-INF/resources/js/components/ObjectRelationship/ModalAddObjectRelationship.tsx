@@ -14,7 +14,6 @@ import {defaultLanguageId} from '../../utils/constants';
 import {toCamelCase} from '../../utils/string';
 import {
 	ObjectRelationshipFormBase,
-	ObjectRelationshipType,
 	useObjectRelationshipForm,
 } from './ObjectRelationshipFormBase';
 import SelectObjectRelationship from './SelectObjectRelationship';
@@ -28,7 +27,9 @@ interface ModalAddObjectRelationshipProps {
 	objectDefinitionExternalReferenceCode1: string;
 	objectDefinitionExternalReferenceCode2?: string;
 	objectRelationshipParameterRequired: boolean;
-	onAfterSubmit?: (objectRelationshipId: number) => void;
+	onAfterAddObjectRelationship?: (
+		objectRelationship: ObjectRelationship
+	) => void;
 	reload?: boolean;
 }
 
@@ -39,7 +40,7 @@ export function ModalAddObjectRelationship({
 	objectDefinitionExternalReferenceCode1,
 	objectDefinitionExternalReferenceCode2,
 	objectRelationshipParameterRequired,
-	onAfterSubmit,
+	onAfterAddObjectRelationship,
 	reload = true,
 }: ModalAddObjectRelationshipProps) {
 	const {observer, onClose} = useModal({
@@ -62,7 +63,7 @@ export function ModalAddObjectRelationship({
 		...others
 	}: ObjectRelationship) => {
 		try {
-			const objectRelationship = await API.save({
+			const objectRelationship = await API.save<ObjectRelationship>({
 				item: {
 					objectDefinitionExternalReferenceCode1,
 					...others,
@@ -80,12 +81,9 @@ export function ModalAddObjectRelationship({
 				setTimeout(() => window.location.reload(), 1500);
 			}
 
-			if (onAfterSubmit) {
+			if (onAfterAddObjectRelationship && objectRelationship) {
 				setTimeout(
-					() =>
-						onAfterSubmit(
-							(objectRelationship as ObjectRelationship).id
-						),
+					() => onAfterAddObjectRelationship(objectRelationship),
 					200
 				);
 			}
@@ -134,6 +132,7 @@ export function ModalAddObjectRelationship({
 
 						<ObjectRelationshipFormBase
 							baseResourceURL={baseResourceURL}
+							className="lfr-objects__modal-add-object-relationship-form-base"
 							errors={errors}
 							handleChange={handleChange}
 							hasDefinedObjectDefinitionTarget={
@@ -158,8 +157,7 @@ export function ModalAddObjectRelationship({
 						/>
 
 						{objectRelationshipParameterRequired &&
-							values.type ===
-								ObjectRelationshipType.ONE_TO_MANY && (
+							values.type === 'oneToMany' && (
 								<SelectObjectRelationship
 									error={errors.parameterObjectFieldName}
 									objectDefinitionExternalReferenceCode1={

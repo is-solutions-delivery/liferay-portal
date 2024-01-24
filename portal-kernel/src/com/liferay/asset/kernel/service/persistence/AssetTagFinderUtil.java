@@ -13,10 +13,6 @@ import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
  */
 public class AssetTagFinderUtil {
 
-	public static int countByG_N(long groupId, String name) {
-		return getFinder().countByG_N(groupId, name);
-	}
-
 	public static int countByG_C_N(
 		long groupId, long classNameId, String name) {
 
@@ -31,15 +27,6 @@ public class AssetTagFinderUtil {
 
 		return getFinder().findByG_C_N(
 			groupId, classNameId, name, start, end, orderByComparator);
-	}
-
-	public static java.util.List<com.liferay.asset.kernel.model.AssetTag>
-		findByG_N_S_E(
-			long groupId, String name, int startPeriod, int endPeriod,
-			int periodLength) {
-
-		return getFinder().findByG_N_S_E(
-			groupId, name, startPeriod, endPeriod, periodLength);
 	}
 
 	public static AssetTagFinder getFinder() {

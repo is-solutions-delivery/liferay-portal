@@ -25,20 +25,6 @@ definition {
 		}
 	}
 
-	tearDown {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		TestUtils.hardRefresh();
-
-		PageAudit.tearDownSystemSettingsConfigurations();
-
-		JSONGroup.deleteGroupByName(groupName = "Test Site Name");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-	}
-
 	@description = "LPS-119066 Given the Page Audit Panel When the audit is launched (the API is called) Then a progress bar shows and moves forward while retrieving the data until they can be shown."
 	@priority = 3
 	@uitest
@@ -54,14 +40,18 @@ definition {
 			PageAudit.setAPIViaSystemSettings();
 		}
 
-		Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
-
 		task ("Open Page Audit panel and assert the progress bar") {
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/content-page");
+
 			PageAudit.openPageAuditSidebar();
 
-			Click.javaScriptClick(
-				key_title = "Relaunch",
-				locator1 = "Button#ANY_TITLE");
+			var map = MapUtil.newHashMap();
+
+			ExecuteCDPCommand(
+				value1 = "Fetch.enable",
+				value2 = ${map});
+
+			Button.click(button = "Launch Page Audit");
 
 			AssertVisible(locator1 = "PageAudit#PROGRESS_BAR");
 		}
@@ -383,10 +373,7 @@ definition {
 		}
 
 		task ("Go to Instance Settings") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "Instance Settings");
+			PortalSettings.openInstanceSettingsAdmin();
 
 			Click(
 				key_itemName = "Pages",

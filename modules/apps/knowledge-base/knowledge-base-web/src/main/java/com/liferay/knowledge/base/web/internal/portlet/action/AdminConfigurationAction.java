@@ -33,7 +33,7 @@ public class AdminConfigurationAction
 
 	@Override
 	public String getJspPath(HttpServletRequest httpServletRequest) {
-		return "/admin/configuration.jsp";
+		return "/admin/configuration_browse.jsp";
 	}
 
 	@Override
@@ -43,11 +43,12 @@ public class AdminConfigurationAction
 		throws Exception {
 
 		validateEmail(actionRequest, "emailKBArticleAdded");
+		validateEmail(actionRequest, "emailKBArticleExpired");
+		validateEmail(actionRequest, "emailKBArticleReview");
 		validateEmail(actionRequest, "emailKBArticleSuggestionInProgress");
 		validateEmail(actionRequest, "emailKBArticleSuggestionReceived");
 		validateEmail(actionRequest, "emailKBArticleSuggestionResolved");
 		validateEmail(actionRequest, "emailKBArticleUpdated");
-		validateEmailFrom(actionRequest);
 
 		super.processAction(portletConfig, actionRequest, actionResponse);
 	}

@@ -13,12 +13,13 @@ import com.liferay.headless.discovery.internal.dto.Resource;
 import com.liferay.headless.discovery.internal.dto.Resources;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
+import com.liferay.portal.kernel.module.service.Snapshot;
 import com.liferay.portal.kernel.module.util.BundleUtil;
 import com.liferay.portal.kernel.security.auth.AuthTokenUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.StreamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import java.net.URL;
@@ -96,39 +97,30 @@ public class HeadlessDiscoveryAPIApplication extends Application {
 				).build();
 			}
 
-			InputStream urlInputStream = url.openStream();
+			try (InputStream urlInputStream = url.openStream();
+				Scanner scanner = new Scanner(urlInputStream, "UTF-8")) {
 
-			Scanner scanner = new Scanner(urlInputStream, "UTF-8");
+				scanner.useDelimiter("\\A");
 
-			scanner.useDelimiter("\\A");
+				String html = StringUtil.replace(
+					scanner.next(), "%CSRF-TOKEN%",
+					AuthTokenUtil.getToken(httpServletRequest));
 
-			String html = StringUtil.replace(
-				scanner.next(), "%CSRF-TOKEN%",
-				AuthTokenUtil.getToken(httpServletRequest));
+				html = StringUtil.replace(
+					html, "href=\"main.css\"",
+					"href=\"" + _portal.getPathContext() + "/o/api/main.css\"");
+				html = StringUtil.replace(
+					html, "src=\"headless-discovery-web-min.js\"",
+					"src=\"" + _portal.getPathContext() +
+						"/o/api/headless-discovery-web-min.js\"");
 
-			html = StringUtil.replace(
-				html, "href=\"main.css\"",
-				"href=\"" + _portal.getPathContext() + "/o/api/main.css\"");
-			html = StringUtil.replace(
-				html, "src=\"headless-discovery-web-min.js\"",
-				"src=\"" + _portal.getPathContext() +
-					"/o/api/headless-discovery-web-min.js\"");
+				String finalHtml = html;
 
-			String finalHtml = html;
-
-			return Response.ok(
-				(StreamingOutput)streamingOutput -> {
-					InputStream htmlInputStream = new ByteArrayInputStream(
-						finalHtml.getBytes());
-
-					byte[] buffer = new byte[1024];
-					int read = 0;
-
-					while ((read = htmlInputStream.read(buffer)) != -1) {
-						streamingOutput.write(buffer, 0, read);
-					}
-				}
-			).build();
+				return Response.ok(
+					(StreamingOutput)outputStream -> outputStream.write(
+						finalHtml.getBytes())
+				).build();
+			}
 		}
 
 		Map<String, List<ResourceMethodInfoDTO>> resourceMethodInfoDTOsMap =
@@ -186,15 +178,10 @@ public class HeadlessDiscoveryAPIApplication extends Application {
 			).build();
 		}
 
-		InputStream urlInputStream = url.openStream();
-
 		Response.ResponseBuilder responseBuilder = Response.ok(
-			(StreamingOutput)streamingOutput -> {
-				byte[] buffer = new byte[1024];
-				int read = 0;
-
-				while ((read = urlInputStream.read(buffer)) != -1) {
-					streamingOutput.write(buffer, 0, read);
+			(StreamingOutput)outputStream -> {
+				try (InputStream urlInputStream = url.openStream()) {
+					StreamUtil.transfer(urlInputStream, outputStream);
 				}
 			});
 
@@ -257,7 +244,10 @@ public class HeadlessDiscoveryAPIApplication extends Application {
 
 		String serverURL = StringUtil.removeSubstring(absolutePath, "/api/");
 
-		RuntimeDTO runtimeDTO = _jaxrsServiceRuntime.getRuntimeDTO();
+		JaxrsServiceRuntime jaxrsServiceRuntime =
+			_jaxrsServiceRuntimeSnapshot.get();
+
+		RuntimeDTO runtimeDTO = jaxrsServiceRuntime.getRuntimeDTO();
 
 		for (ApplicationDTO applicationDTO : runtimeDTO.applicationDTOs) {
 			for (ResourceDTO resourceDTO : applicationDTO.resourceDTOs) {
@@ -297,12 +287,13 @@ public class HeadlessDiscoveryAPIApplication extends Application {
 		return bundle.getEntry("META-INF/resources/" + parameter);
 	}
 
+	private static final Snapshot<JaxrsServiceRuntime>
+		_jaxrsServiceRuntimeSnapshot = new Snapshot<>(
+			HeadlessDiscoveryAPIApplication.class, JaxrsServiceRuntime.class);
+
 	private volatile BundleContext _bundleContext;
 	private volatile HeadlessDiscoveryConfiguration
 		_headlessDiscoveryConfiguration;
-
-	@Reference
-	private JaxrsServiceRuntime _jaxrsServiceRuntime;
 
 	@Reference
 	private Portal _portal;

@@ -10,7 +10,7 @@ import com.liferay.message.boards.model.MBThread;
 import com.liferay.message.boards.service.MBCategoryLocalService;
 import com.liferay.message.boards.service.MBMessageLocalService;
 import com.liferay.message.boards.service.MBThreadLocalService;
-import com.liferay.message.boards.uad.test.MBThreadUADTestUtil;
+import com.liferay.message.boards.uad.test.util.MBThreadUADTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.test.rule.Inject;
@@ -69,11 +69,6 @@ public class MBThreadUADExporterTest
 		_mbThreads.add(mbThread);
 
 		return mbThread;
-	}
-
-	@Override
-	protected String getPrimaryKeyName() {
-		return "threadId";
 	}
 
 	@Override

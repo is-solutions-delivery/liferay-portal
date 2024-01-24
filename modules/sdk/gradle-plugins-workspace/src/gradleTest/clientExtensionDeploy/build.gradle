@@ -1,0 +1,19 @@
+import com.liferay.gradle.util.OSDetector
+
+task runGradleTest
+
+runGradleTest {
+	dependsOn ":with-version-client-extension:deploy", ":without-version-client-extension:deploy"
+
+	doLast {
+		FileTree fileTree = project.fileTree("bundles/osgi/client-extensions")
+
+		Set<File> files = fileTree.files
+
+		assert files.size() == 2
+
+		["with-version-client-extension.zip", "without-version-client-extension.zip"].each {
+			assert fileTree.contains(project.file("bundles/osgi/client-extensions/${it}"))
+		}
+	}
+}

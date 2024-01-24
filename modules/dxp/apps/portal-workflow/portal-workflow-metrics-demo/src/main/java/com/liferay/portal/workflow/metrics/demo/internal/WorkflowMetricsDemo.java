@@ -36,7 +36,7 @@ import com.liferay.portal.workflow.kaleo.demo.data.creator.WorkflowInstanceDemoD
 import com.liferay.portal.workflow.kaleo.demo.data.creator.WorkflowTaskDemoDataCreator;
 import com.liferay.portal.workflow.metrics.demo.data.creator.WorkflowMetricsSLADefinitionDemoDataCreator;
 import com.liferay.portal.workflow.metrics.search.background.task.WorkflowMetricsBackgroundTaskExecutorNames;
-import com.liferay.users.admin.demo.data.creator.OmniAdminUserDemoDataCreator;
+import com.liferay.users.admin.demo.data.creator.OmniadminUserDemoDataCreator;
 import com.liferay.users.admin.demo.data.creator.SiteMemberUserDemoDataCreator;
 
 import java.io.Serializable;
@@ -62,7 +62,7 @@ public class WorkflowMetricsDemo extends BasePortalInstanceLifecycleListener {
 
 	@Override
 	public void portalInstanceRegistered(Company company) throws Exception {
-		User omniAdminUser = _omniAdminUserDemoDataCreator.create(
+		User omniAdminUser = _omniadminUserDemoDataCreator.create(
 			company.getCompanyId());
 
 		LocalDateTime nowLocalDateTime = LocalDateTime.now();
@@ -286,7 +286,7 @@ public class WorkflowMetricsDemo extends BasePortalInstanceLifecycleListener {
 
 		_workflowDefinitionDemoDataCreator.delete();
 
-		_omniAdminUserDemoDataCreator.delete();
+		_omniadminUserDemoDataCreator.delete();
 		_siteMemberUserDemoDataCreator.delete();
 	}
 
@@ -408,7 +408,7 @@ public class WorkflowMetricsDemo extends BasePortalInstanceLifecycleListener {
 	private ModuleServiceLifecycle _moduleServiceLifecycle;
 
 	@Reference
-	private OmniAdminUserDemoDataCreator _omniAdminUserDemoDataCreator;
+	private OmniadminUserDemoDataCreator _omniadminUserDemoDataCreator;
 
 	@Reference
 	private RoleLocalService _roleLocalService;

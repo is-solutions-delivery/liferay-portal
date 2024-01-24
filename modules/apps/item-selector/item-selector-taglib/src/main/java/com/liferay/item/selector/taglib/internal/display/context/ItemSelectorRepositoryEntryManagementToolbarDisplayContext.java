@@ -34,7 +34,9 @@ import com.liferay.portal.kernel.portlet.PortletURLUtil;
 import com.liferay.portal.kernel.portlet.toolbar.contributor.PortletToolbarContributor;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.repository.model.Folder;
+import com.liferay.portal.kernel.servlet.taglib.ui.JavaScriptMenuItem;
 import com.liferay.portal.kernel.servlet.taglib.ui.Menu;
+import com.liferay.portal.kernel.servlet.taglib.ui.MenuItem;
 import com.liferay.portal.kernel.servlet.taglib.ui.URLMenuItem;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ArrayUtil;
@@ -117,12 +119,31 @@ public class ItemSelectorRepositoryEntryManagementToolbarDisplayContext {
 		}
 
 		for (Menu menu : menus) {
-			List<URLMenuItem> urlMenuItems =
-				(List<URLMenuItem>)(List<?>)menu.getMenuItems();
+			List<MenuItem> menuItems = menu.getMenuItems();
 
-			for (URLMenuItem urlMenuItem : urlMenuItems) {
-				if (allowedCreationMenuUIItemKeys.contains(
-						urlMenuItem.getKey())) {
+			for (MenuItem menuItem : menuItems) {
+				if (!allowedCreationMenuUIItemKeys.contains(
+						menuItem.getKey())) {
+
+					continue;
+				}
+
+				if (menuItem instanceof JavaScriptMenuItem) {
+					JavaScriptMenuItem javaScriptMenuItem =
+						(JavaScriptMenuItem)menuItem;
+
+					creationMenu.addDropdownItem(
+						dropdownItem -> {
+							dropdownItem.setData(javaScriptMenuItem.getData());
+							dropdownItem.setIcon(javaScriptMenuItem.getIcon());
+							dropdownItem.setLabel(
+								javaScriptMenuItem.getLabel());
+							dropdownItem.setSeparator(
+								javaScriptMenuItem.hasSeparator());
+						});
+				}
+				else if (menuItem instanceof URLMenuItem) {
+					URLMenuItem urlMenuItem = (URLMenuItem)menuItem;
 
 					creationMenu.addDropdownItem(
 						dropdownItem -> {
@@ -190,13 +211,6 @@ public class ItemSelectorRepositoryEntryManagementToolbarDisplayContext {
 				dropdownGroupItem.setLabel(
 					LanguageUtil.get(
 						_httpServletRequest, "filter-by-location"));
-			}
-		).addGroup(
-			() -> !FeatureFlagManagerUtil.isEnabled("LPS-144527"),
-			dropdownGroupItem -> {
-				dropdownGroupItem.setDropdownItems(getOrderByDropdownItems());
-				dropdownGroupItem.setLabel(
-					LanguageUtil.get(_httpServletRequest, "order-by"));
 			}
 		).build();
 	}
@@ -339,6 +353,12 @@ public class ItemSelectorRepositoryEntryManagementToolbarDisplayContext {
 					"allowedCreationMenuUIItemKeys");
 
 		if (allowedCreationMenuUIItemKeys == null) {
+			if (FeatureFlagManagerUtil.isEnabled("LPD-10793")) {
+				return SetUtil.fromArray(
+					DLUIItemKeys.ADD_FOLDER, DLUIItemKeys.AI_CREATOR,
+					DLUIItemKeys.UPLOAD);
+			}
+
 			return SetUtil.fromArray(
 				DLUIItemKeys.ADD_FOLDER, DLUIItemKeys.UPLOAD);
 		}

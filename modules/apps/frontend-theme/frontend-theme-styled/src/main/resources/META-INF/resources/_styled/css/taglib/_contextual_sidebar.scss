@@ -22,7 +22,7 @@ $transition-timing-function: ease;
 	}
 }
 
-@include media-breakpoint-up(sm) {
+@include media-breakpoint-up(md) {
 	$management-bar-height: 64px;
 
 	.contextual-sidebar {

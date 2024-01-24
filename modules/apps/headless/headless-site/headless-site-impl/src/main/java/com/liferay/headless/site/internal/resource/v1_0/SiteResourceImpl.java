@@ -10,6 +10,7 @@ import com.liferay.headless.site.resource.v1_0.SiteResource;
 import com.liferay.portal.events.ServicePreAction;
 import com.liferay.portal.events.ThemeServicePreAction;
 import com.liferay.portal.kernel.change.tracking.CTAware;
+import com.liferay.portal.kernel.exception.NoSuchGroupException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.LayoutSetPrototype;
@@ -63,17 +64,38 @@ import org.osgi.service.component.annotations.ServiceScope;
 public class SiteResourceImpl extends BaseSiteResourceImpl {
 
 	@Override
+	public void deleteSite(Long siteId) throws Exception {
+		_groupService.deleteGroup(siteId);
+	}
+
+	@Override
+	public void deleteSiteByExternalReferenceCode(String externalReferenceCode)
+		throws Exception {
+
+		Group group = _groupLocalService.fetchGroupByExternalReferenceCode(
+			externalReferenceCode, contextCompany.getCompanyId());
+
+		if (group == null) {
+			throw new NoSuchGroupException(
+				"No site exists with external reference code " +
+					externalReferenceCode);
+		}
+
+		_groupService.deleteGroup(group.getGroupId());
+	}
+
+	@Override
 	public Site postSite(Site site) throws Exception {
 		try {
 			Group group = _addGroup(site.getExternalReferenceCode(), site);
 
 			return new Site() {
 				{
-					externalReferenceCode = group.getExternalReferenceCode();
-					friendlyUrlPath = group.getFriendlyURL();
-					id = group.getGroupId();
-					key = group.getGroupKey();
-					name = group.getName(LocaleUtil.getDefault());
+					setExternalReferenceCode(group::getExternalReferenceCode);
+					setFriendlyUrlPath(group::getFriendlyURL);
+					setId(group::getGroupId);
+					setKey(group::getGroupKey);
+					setName(() -> group.getName(LocaleUtil.getDefault()));
 				}
 			};
 		}
@@ -157,11 +179,11 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 
 		return new Site() {
 			{
-				externalReferenceCode = finalGroup.getExternalReferenceCode();
-				friendlyUrlPath = finalGroup.getFriendlyURL();
-				id = finalGroup.getGroupId();
-				key = finalGroup.getGroupKey();
-				name = finalGroup.getName(LocaleUtil.getDefault());
+				setExternalReferenceCode(finalGroup::getExternalReferenceCode);
+				setFriendlyUrlPath(finalGroup::getFriendlyURL);
+				setId(finalGroup::getGroupId);
+				setKey(finalGroup::getGroupKey);
+				setName(() -> finalGroup.getName(LocaleUtil.getDefault()));
 			}
 		};
 	}

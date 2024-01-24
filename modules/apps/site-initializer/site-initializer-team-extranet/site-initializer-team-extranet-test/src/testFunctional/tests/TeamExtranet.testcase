@@ -1,6 +1,7 @@
 @component-name = "portal-liferay-online"
 definition {
 
+	property ci.retries.disabled = "true";
 	property osgi.modules.includes = "site-initializer-team-extranet";
 	property portal.release = "true";
 	property portal.upstream = "true";
@@ -22,17 +23,6 @@ definition {
 				siteName = ${testSiteName},
 				templateName = "Team Extranet",
 				templateType = "Site Initializer");
-		}
-	}
-
-	tearDown {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			JSONGroup.deleteGroupByName(groupName = ${testSiteName});
 		}
 	}
 
@@ -295,8 +285,6 @@ definition {
 	@description = "This is a test for LPS-144161. Can do a search in the Search bar"
 	@priority = 3
 	test CanDoASearchInTeamExtranetSearchBar {
-		property ci.retries.disabled = "true";
-
 		task ("Go to Team Extranet Site") {
 			ApplicationsMenu.gotoSite(site = ${testSiteName});
 		}

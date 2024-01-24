@@ -10,6 +10,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.document.Document;
+import com.liferay.portal.search.tuning.rankings.web.internal.constants.ResultRankingsConstants;
 
 import java.util.Collections;
 import java.util.List;
@@ -33,8 +34,6 @@ public class DocumentToRankingTranslatorImpl
 			document.getString(RankingFields.GROUP_EXTERNAL_REFERENCE_CODE)
 		).hiddenDocumentIds(
 			document.getStrings(RankingFields.BLOCKS)
-		).inactive(
-			document.getBoolean(RankingFields.INACTIVE)
 		).indexName(
 			document.getString("index")
 		).name(
@@ -45,6 +44,8 @@ public class DocumentToRankingTranslatorImpl
 			_getQueryString(document)
 		).rankingDocumentId(
 			rankingDocumentId
+		).status(
+			_getStatus(document)
 		).sxpBlueprintExternalReferenceCode(
 			document.getString(
 				RankingFields.SXP_BLUEPRINT_EXTERNAL_REFERENCE_CODE)
@@ -103,6 +104,20 @@ public class DocumentToRankingTranslatorImpl
 		}
 
 		return string;
+	}
+
+	private String _getStatus(Document document) {
+		String status = document.getString(RankingFields.STATUS);
+
+		if (!Validator.isBlank(status)) {
+			return status;
+		}
+
+		if (document.getBoolean("inactive")) {
+			return ResultRankingsConstants.STATUS_INACTIVE;
+		}
+
+		return ResultRankingsConstants.STATUS_ACTIVE;
 	}
 
 	private Ranking.Pin _toPin(Map<String, String> map) {

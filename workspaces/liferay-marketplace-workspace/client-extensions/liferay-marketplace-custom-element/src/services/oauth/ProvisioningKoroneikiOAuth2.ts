@@ -22,13 +22,13 @@ type LicenseTypePayload = {
 		ipAddresses: string;
 		macAddresses: string;
 		orderId: string;
+		productPurchaseKey: string;
 	};
-	productPurchaseKey: string;
 	skuId: number;
 	type: string;
 };
 
-type LicenseKey = {
+export type LicenseKey = {
 	active: boolean;
 	complimentary: boolean;
 	createDate: string;
@@ -38,6 +38,7 @@ type LicenseKey = {
 	id: number;
 	ipAddresses: string;
 	key: string;
+	keyType: string;
 	licenseType: string;
 	macAddresses: string;
 	modifiedDate: string;
@@ -67,10 +68,37 @@ class ProvisioningKoroneikiOAuth2 extends OAuth2Client {
 		return response.json();
 	}
 
-	async getOrderLicenseKeys(orderId: string) {
-		return this.oAuth2Client.fetch(
-			`/provisioning/order-license-keys/${orderId}`
+	async deactivateLicenseKey(licenseKey: number) {
+		await this.oAuth2Client.fetch(
+			`/provisioning/license-keys/${licenseKey}/deactivate`,
+			{
+				method: 'POST',
+			}
 		);
+	}
+
+	async getOrderLicenseKeys(
+		orderId: string,
+		searchParams: URLSearchParams = new URLSearchParams()
+	): Promise<APIResponse<any>> {
+		const response = (await (this.oAuth2Client.fetch(
+			`/provisioning/order-license-keys/${orderId}?${searchParams.toString()}`
+		) as unknown)) as Promise<APIResponse<any>>;
+
+		return response;
+	}
+
+	async syncKoroneikiProduct(productId: number) {
+		const response = await this.oAuth2Client.fetch(
+			`/koroneiki/product/${productId}`,
+			{
+				method: 'POST',
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error('Unable to Sync Product');
+		}
 	}
 
 	async createLicenseKey(payload: LicenseTypePayload): Promise<LicenseKey> {
@@ -83,14 +111,35 @@ class ProvisioningKoroneikiOAuth2 extends OAuth2Client {
 		}) as unknown) as Promise<LicenseKey>;
 	}
 
-	downloadLicenseKey(id: number) {
+	async downloadLicenseKey(id: number) {
+		const response = await this.oAuth2Client.fetch(
+			`/provisioning/license-keys/${id}/download`
+		);
+
+		const blob = await response.blob();
+
+		let filename = 'license.xml';
+
+		const contentDisposition = response.headers.get('content-disposition');
+
+		if (contentDisposition) {
+			filename = (
+				contentDisposition
+					.split(';')
+					.find((n) => n.includes('filename=')) ?? ''
+			)
+				.replace('filename=', '')
+				.replaceAll('"', '')
+				.trim();
+		}
+
 		const anchor = document.createElement('a');
 
-		anchor.href =
-			this.oAuth2Client.homePageURL +
-			`/provisioning/license-keys/${id}/download`;
+		anchor.download = filename;
+		anchor.href = URL.createObjectURL(blob);
 
 		document.body.appendChild(anchor);
+
 		anchor.click();
 		anchor.remove();
 	}

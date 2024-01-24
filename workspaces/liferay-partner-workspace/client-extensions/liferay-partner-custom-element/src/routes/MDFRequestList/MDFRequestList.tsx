@@ -8,7 +8,8 @@ import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
-import {useMemo} from 'react';
+import ClayTabs from '@clayui/tabs';
+import {useMemo, useState} from 'react';
 import {CSVLink} from 'react-csv';
 
 import Table from '../../common/components/Table';
@@ -17,11 +18,11 @@ import DropDownWithDrillDown from '../../common/components/TableHeader/Filter/co
 import DateFilter from '../../common/components/TableHeader/Filter/components/filters/DateFilter/DateFilter';
 import Search from '../../common/components/TableHeader/Search/Search';
 import TableHeader from '../../common/components/TableHeader/TableHeader';
-import {LiferayPicklistName} from '../../common/enums/liferayPicklistName';
 import {MDFColumnKey} from '../../common/enums/mdfColumnKey';
 import {ObjectActionName} from '../../common/enums/objectActionName';
 import {PermissionActionType} from '../../common/enums/permissionActionType';
 import {PRMPageRoute} from '../../common/enums/prmPageRoute';
+import useIsChannel from '../../common/hooks/useIsChannel';
 import useLiferayNavigate from '../../common/hooks/useLiferayNavigate';
 import usePagination from '../../common/hooks/usePagination';
 import usePermissionActions from '../../common/hooks/usePermissionActions';
@@ -32,6 +33,7 @@ import {Liferay} from '../../common/services/liferay';
 import {LiferayAPIs} from '../../common/services/liferay/common/enums/apis';
 import LiferayItems from '../../common/services/liferay/common/interfaces/liferayItems';
 import useGet from '../../common/services/liferay/object/useGet';
+import {Filters} from '../../common/utils/constants/filters';
 import getDropDownFilterMenus from '../../common/utils/getDropDownFilterMenus';
 import useDynamicFieldEntries from './hooks/useDynamicFieldEntries';
 import useFilters from './hooks/useFilters';
@@ -44,20 +46,32 @@ type MDFRequestItem = {
 };
 
 const MDFRequestList = () => {
-	const {fieldEntries, userAccount} = useDynamicFieldEntries();
+	const {isChannel} = useIsChannel();
+	const [openRequestFilter, setOpenRequestFilter] = useState(
+		JSON.parse(sessionStorage.getItem('openRequestFilter')!) === null
+			? true
+			: JSON.parse(sessionStorage.getItem('openRequestFilter')!)
+	);
+
+	const {userAccount} = useDynamicFieldEntries();
 	const actions = usePermissionActions(ObjectActionName.MDF_REQUEST);
 
-	const {filters, filtersTerm, onFilter, setFilters} = useFilters();
+	const {filters, filtersTerm, onFilter, setFilters} = useFilters(
+		openRequestFilter,
+		isChannel
+	);
 	const pagination = usePagination();
 
 	const {data, isValidating, mutate} = useGet<LiferayItems<MDFRequestDTO[]>>(
-		`/o/${LiferayAPIs.OBJECT}/mdfrequests?nestedFields=mdfReqToMDFClms&filter=${filtersTerm}&page=${pagination.activePage}&pageSize=${pagination.activeDelta}&sort=dateCreated:desc`
+		filtersTerm &&
+			`/o/${LiferayAPIs.OBJECT}/mdfrequests?nestedFields=mdfReqToMDFClms&filter=${filtersTerm}&page=${pagination.activePage}&pageSize=${pagination.activeDelta}&sort=dateCreated:desc`
 	);
 
 	const {data: dataCSV} = useGet<LiferayItems<MDFRequestDTO[]>>(
-		`/o/${
-			LiferayAPIs.OBJECT
-		}/mdfrequests?nestedFields=mdfReqToMDFClms&filter=${filtersTerm}&page=${1}&pageSize=${-1}&sort=dateCreated:desc`
+		filtersTerm &&
+			`/o/${
+				LiferayAPIs.OBJECT
+			}/mdfrequests?nestedFields=mdfReqToMDFClms&filter=${filtersTerm}&page=${1}&pageSize=${-1}&sort=dateCreated:desc`
 	);
 
 	const mdfRequestItemsCSV = dataCSV?.items;
@@ -89,7 +103,8 @@ const MDFRequestList = () => {
 			),
 		siteURL,
 		actions,
-		mutate
+		mutate,
+		isChannel
 	);
 
 	const getTable = (
@@ -140,6 +155,7 @@ const MDFRequestList = () => {
 							});
 						}}
 						filterDescription="Activity Date "
+						initialDates={filters.activityPeriod?.dates}
 					/>
 				),
 				name: 'Activity Period',
@@ -147,10 +163,13 @@ const MDFRequestList = () => {
 			{
 				component: (
 					<CheckboxFilter
-						availableItems={fieldEntries[
-							LiferayPicklistName.MDF_REQUEST_STATUS
-						]?.map<string>((status) => status.label as string)}
+						availableItems={
+							openRequestFilter
+								? Filters.MDF_REQUEST_LISTING.openList
+								: Filters.MDF_REQUEST_LISTING.completedList
+						}
 						clearCheckboxes={!filters.status.value?.length}
+						initialCheckedItems={filters.status.value}
 						updateFilters={(checkedItems) =>
 							setFilters((previousFilters) => ({
 								...previousFilters,
@@ -174,6 +193,7 @@ const MDFRequestList = () => {
 							(company) => company.label as string
 						)}
 						clearCheckboxes={!filters.partner.value?.length}
+						initialCheckedItems={filters.partner.value}
 						updateFilters={(checkedItems) =>
 							setFilters((previousFilters) => ({
 								...previousFilters,
@@ -194,12 +214,31 @@ const MDFRequestList = () => {
 
 	return (
 		<div className="border-0 my-4">
-			<h1>MDF Requests</h1>
+			<div className="align-items-center d-md-flex justify-content-between mb-3 mr-4">
+				<h1>MDF Requests</h1>
+				<ClayTabs className="h-100 nav nav-segment nav-tabs">
+					<ClayTabs.Item
+						active={openRequestFilter}
+						className="nav-item"
+						onClick={() => setOpenRequestFilter(true)}
+					>
+						Open
+					</ClayTabs.Item>
+					<ClayTabs.Item
+						active={!openRequestFilter}
+						className="nav-item"
+						onClick={() => setOpenRequestFilter(false)}
+					>
+						Completed
+					</ClayTabs.Item>
+				</ClayTabs>
+			</div>
 
 			<TableHeader>
 				<div className="d-flex">
 					<div>
 						<Search
+							initialSearchTerm={filters.searchTerm}
 							onSearchSubmit={(searchTerm: string) =>
 								onFilter({
 									searchTerm,

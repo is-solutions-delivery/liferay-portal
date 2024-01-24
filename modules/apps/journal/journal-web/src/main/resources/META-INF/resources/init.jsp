@@ -128,7 +128,6 @@ page import="com.liferay.journal.web.internal.display.context.JournalPreviewArti
 page import="com.liferay.journal.web.internal.display.context.JournalVersionTabDisplayContext" %><%@
 page import="com.liferay.journal.web.internal.display.context.JournalViewMoreMenuItemsDisplayContext" %><%@
 page import="com.liferay.journal.web.internal.display.context.JournalViewMoreMenuItemsManagementToolbarDisplayContext" %><%@
-page import="com.liferay.journal.web.internal.display.context.helper.JournalWebRequestHelper" %><%@
 page import="com.liferay.journal.web.internal.exception.DDMStructureValidationModelListenerException" %><%@
 page import="com.liferay.journal.web.internal.frontend.taglib.clay.servlet.taglib.JournalArticleCommentsVerticalCard" %><%@
 page import="com.liferay.journal.web.internal.frontend.taglib.clay.servlet.taglib.JournalArticleHistoryVerticalCard" %><%@
@@ -147,6 +146,7 @@ page import="com.liferay.journal.web.internal.servlet.taglib.util.DDMStructureAc
 page import="com.liferay.journal.web.internal.servlet.taglib.util.JournalFeedActionDropdownItemsProvider" %><%@
 page import="com.liferay.journal.web.internal.util.JournalPortletUtil" %><%@
 page import="com.liferay.journal.web.internal.util.JournalUtil" %><%@
+page import="com.liferay.petra.string.StringBundler" %><%@
 page import="com.liferay.petra.string.StringPool" %><%@
 page import="com.liferay.portal.kernel.bean.BeanParamUtil" %><%@
 page import="com.liferay.portal.kernel.dao.orm.QueryUtil" %><%@
@@ -164,6 +164,7 @@ page import="com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder" %>
 page import="com.liferay.portal.kernel.security.auth.PrincipalException" %><%@
 page import="com.liferay.portal.kernel.security.permission.ActionKeys" %><%@
 page import="com.liferay.portal.kernel.service.*" %><%@
+page import="com.liferay.portal.kernel.servlet.MultiSessionMessages" %><%@
 page import="com.liferay.portal.kernel.servlet.SessionMessages" %><%@
 page import="com.liferay.portal.kernel.theme.ThemeDisplay" %><%@
 page import="com.liferay.portal.kernel.upload.FileItem" %><%@
@@ -227,9 +228,7 @@ JournalWebConfiguration journalWebConfiguration = (JournalWebConfiguration)reque
 
 JournalDisplayContext journalDisplayContext = JournalDisplayContext.create(request, liferayPortletRequest, liferayPortletResponse, assetDisplayPageFriendlyURLProvider, trashHelper);
 
-JournalWebRequestHelper journalWebRequestHelper = new JournalWebRequestHelper(request);
-
-JournalGroupServiceConfiguration journalGroupServiceConfiguration = journalWebRequestHelper.getJournalGroupServiceConfiguration();
+JournalGroupServiceConfiguration journalGroupServiceConfiguration = journalDisplayContext.getJournalGroupServiceConfiguration();
 
 Format dateTimeFormat = FastDateFormatFactoryUtil.getDateTime(locale, timeZone);
 %>

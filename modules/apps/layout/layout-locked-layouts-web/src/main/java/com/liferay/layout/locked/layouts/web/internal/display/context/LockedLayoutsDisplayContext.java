@@ -9,6 +9,8 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemListBuilder;
 import com.liferay.layout.manager.LayoutLockManager;
 import com.liferay.layout.model.LockedLayout;
+import com.liferay.layout.model.LockedLayoutType;
+import com.liferay.layout.page.template.admin.constants.LayoutPageTemplateAdminPortletKeys;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
@@ -23,7 +25,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.CollatorUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -34,6 +36,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletURL;
+
 /**
  * @author Lourdes Fernández Besada
  */
@@ -43,13 +48,14 @@ public class LockedLayoutsDisplayContext {
 		Language language, LayoutLocalService layoutLocalService,
 		LayoutLockManager layoutLockManager,
 		LiferayPortletRequest liferayPortletRequest,
-		LiferayPortletResponse liferayPortletResponse) {
+		LiferayPortletResponse liferayPortletResponse, Portal portal) {
 
 		_language = language;
 		_layoutLocalService = layoutLocalService;
 		_layoutLockManager = layoutLockManager;
 		_liferayPortletRequest = liferayPortletRequest;
 		_liferayPortletResponse = liferayPortletResponse;
+		_portal = portal;
 
 		_themeDisplay = (ThemeDisplay)liferayPortletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -66,15 +72,52 @@ public class LockedLayoutsDisplayContext {
 	}
 
 	public String getLayoutType(LockedLayout lockedLayout) {
-		return lockedLayout.getType();
+		LockedLayoutType lockedLayoutType = lockedLayout.getLockedLayoutType();
+
+		if (lockedLayoutType == null) {
+			return StringPool.BLANK;
+		}
+
+		return _language.get(
+			_themeDisplay.getLocale(), lockedLayoutType.getValue());
 	}
 
 	public String getLayoutURL(LockedLayout lockedLayout)
 		throws PortalException {
 
+		if (lockedLayout.getLockedLayoutType() ==
+				LockedLayoutType.CONTENT_PAGE_TEMPLATE) {
+
+			return PortletURLBuilder.create(
+				_getLayoutPageTemplatesPortletURL()
+			).setTabs1(
+				"page-templates"
+			).buildString();
+		}
+
+		if (lockedLayout.getLockedLayoutType() ==
+				LockedLayoutType.DISPLAY_PAGE_TEMPLATE) {
+
+			return PortletURLBuilder.create(
+				_getLayoutPageTemplatesPortletURL()
+			).setTabs1(
+				"display-page-templates"
+			).buildString();
+		}
+
+		if (lockedLayout.getLockedLayoutType() ==
+				LockedLayoutType.MASTER_PAGE) {
+
+			return PortletURLBuilder.create(
+				_getLayoutPageTemplatesPortletURL()
+			).setTabs1(
+				"master-layouts"
+			).buildString();
+		}
+
 		Layout layout = _layoutLocalService.fetchLayout(lockedLayout.getPlid());
 
-		return PortalUtil.getLayoutFullURL(layout, _themeDisplay);
+		return _portal.getLayoutFullURL(layout, _themeDisplay);
 	}
 
 	public List<DropdownItem> getLockedLayoutDropdownItems(
@@ -242,39 +285,6 @@ public class LockedLayoutsDisplayContext {
 
 	}
 
-	public enum LockedLayoutType {
-
-		COLLECTION_PAGE("collection-page"), CONTENT_PAGE("content-page"),
-		CONTENT_PAGE_TEMPLATE("content-page-template"),
-		DISPLAY_PAGE_TEMPLATE("display-page-template"),
-		MASTER_PAGE("master-page"), UTILITY_PAGE("utility-page");
-
-		public static LockedLayoutType create(String value) {
-			if (Validator.isNull(value)) {
-				return null;
-			}
-
-			for (LockedLayoutType lockedLayoutType : values()) {
-				if (Objects.equals(lockedLayoutType.getValue(), value)) {
-					return lockedLayoutType;
-				}
-			}
-
-			return null;
-		}
-
-		public String getValue() {
-			return _value;
-		}
-
-		private LockedLayoutType(String value) {
-			_value = value;
-		}
-
-		private final String _value;
-
-	}
-
 	private List<LockedLayout> _getFilteredLockedLayouts() {
 		if (_filteredLockedLayouts != null) {
 			return _filteredLockedLayouts;
@@ -304,6 +314,20 @@ public class LockedLayoutsDisplayContext {
 		return _keywords;
 	}
 
+	private PortletURL _getLayoutPageTemplatesPortletURL() {
+		if (_layoutPageTemplatesPortletURL != null) {
+			return _layoutPageTemplatesPortletURL;
+		}
+
+		_layoutPageTemplatesPortletURL = _portal.getControlPanelPortletURL(
+			_portal.getHttpServletRequest(_liferayPortletRequest),
+			_themeDisplay.getScopeGroup(),
+			LayoutPageTemplateAdminPortletKeys.LAYOUT_PAGE_TEMPLATES, 0, 0,
+			PortletRequest.RENDER_PHASE);
+
+		return _layoutPageTemplatesPortletURL;
+	}
+
 	private List<LockedLayout> _getLockedLayouts() {
 		if (_lockedLayouts != null) {
 			return _lockedLayouts;
@@ -322,12 +346,10 @@ public class LockedLayoutsDisplayContext {
 		LockedLayoutType lockedLayoutType = getLockedLayoutType();
 
 		if (lockedLayoutType != null) {
-			String type = _language.get(
-				_themeDisplay.getLocale(), lockedLayoutType.getValue());
-
 			lockedLayouts = ListUtil.filter(
 				lockedLayouts,
-				lockedLayout -> Objects.equals(lockedLayout.getType(), type));
+				lockedLayout ->
+					lockedLayout.getLockedLayoutType() == lockedLayoutType);
 		}
 
 		String orderByCol = getOrderByCol();
@@ -387,6 +409,7 @@ public class LockedLayoutsDisplayContext {
 	private final Language _language;
 	private final LayoutLocalService _layoutLocalService;
 	private final LayoutLockManager _layoutLockManager;
+	private PortletURL _layoutPageTemplatesPortletURL;
 	private final LiferayPortletRequest _liferayPortletRequest;
 	private final LiferayPortletResponse _liferayPortletResponse;
 	private LockedLayoutOrder _lockedLayoutOrder;
@@ -394,6 +417,7 @@ public class LockedLayoutsDisplayContext {
 	private LockedLayoutType _lockedLayoutType;
 	private String _orderByCol;
 	private String _orderByType;
+	private final Portal _portal;
 	private SearchContainer<LockedLayout> _searchContainer;
 	private final ThemeDisplay _themeDisplay;
 

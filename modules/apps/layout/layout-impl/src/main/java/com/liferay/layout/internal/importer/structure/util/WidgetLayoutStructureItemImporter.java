@@ -68,6 +68,7 @@ public class WidgetLayoutStructureItemImporter
 			(FragmentStyledLayoutStructureItem)
 				layoutStructure.addFragmentStyledLayoutStructureItem(
 					fragmentEntryLink.getFragmentEntryLinkId(),
+					layoutStructureItemImporterContext.getItemId(pageElement),
 					layoutStructureItemImporterContext.getParentItemId(),
 					layoutStructureItemImporterContext.getPosition());
 

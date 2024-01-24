@@ -1,6 +1,6 @@
 definition {
 
-	@summary = "Default summary"
+	@summary = "Changes the display style in between list, table or cards"
 	macro changeDisplayStyle(displayStyle = null) {
 		task ("Change document view type but account for flakiness seen in test execution history") {
 			WaitForPageLoad();
@@ -19,11 +19,11 @@ definition {
 		}
 	}
 
-	@summary = "Default summary"
+	@summary = "Retrieves and returns the portal servlet build number available in the Release_ DB table"
 	macro getBuildNumber() {
 		var mysqlStatement = "SELECT buildNumber FROM Release_ WHERE servletContextName='portal';";
 
-		var sqlResults = SQL.executeMySQLStatement(mysqlStatement = ${mysqlStatement});
+		var sqlResults = SQL.executeSQLStatement(sqlStatement = ${mysqlStatement});
 
 		var portalBuildNumber = StringUtil.regexReplaceAll(${sqlResults}, "[buildNumber\n]", "");
 
@@ -32,11 +32,11 @@ definition {
 		return ${portalBuildNumber};
 	}
 
-	@summary = "Default summary"
+	@summary = "Retrieves and returns the desired servlet schema version available in the Release_ DB table"
 	macro getSchemaVersion() {
 		var mysqlStatement = ${mysqlStatement};
 
-		var sqlResults = SQL.executeMySQLStatement(mysqlStatement = ${mysqlStatement});
+		var sqlResults = SQL.executeSQLStatement(sqlStatement = ${mysqlStatement});
 
 		var portalSchemaVersion = StringUtil.regexReplaceAll(${sqlResults}, "[schemaVersion\n]", "");
 
@@ -45,7 +45,7 @@ definition {
 		return ${portalSchemaVersion};
 	}
 
-	@summary = "Default summary"
+	@summary = "Validates data persistence and that the basic portal functionalities are working correctly after an upgrade is executed"
 	macro viewUpgrade() {
 		Navigator.gotoPage(pageName = "Web Content");
 

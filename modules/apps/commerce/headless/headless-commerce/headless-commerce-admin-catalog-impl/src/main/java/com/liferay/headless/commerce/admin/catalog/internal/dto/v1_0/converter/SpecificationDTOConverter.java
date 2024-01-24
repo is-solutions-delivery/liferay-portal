@@ -42,30 +42,33 @@ public class SpecificationDTOConverter
 			_cpSpecificationOptionService.getCPSpecificationOption(
 				(Long)dtoConverterContext.getId());
 
-		CPOptionCategory cpOptionCategory =
-			cpSpecificationOption.getCPOptionCategory();
-
-		Specification specification = new Specification() {
+		return new Specification() {
 			{
-				description = LanguageUtils.getLanguageIdMap(
-					cpSpecificationOption.getDescriptionMap());
-				facetable = cpSpecificationOption.isFacetable();
-				id = cpSpecificationOption.getCPSpecificationOptionId();
-				key = cpSpecificationOption.getKey();
-				title = LanguageUtils.getLanguageIdMap(
-					cpSpecificationOption.getTitleMap());
+				setDescription(
+					() -> LanguageUtils.getLanguageIdMap(
+						cpSpecificationOption.getDescriptionMap()));
+				setFacetable(cpSpecificationOption::isFacetable);
+				setId(cpSpecificationOption::getCPSpecificationOptionId);
+				setKey(cpSpecificationOption::getKey);
+				setOptionCategory(
+					() -> {
+						CPOptionCategory cpOptionCategory =
+							cpSpecificationOption.getCPOptionCategory();
+
+						if (cpOptionCategory == null) {
+							return null;
+						}
+
+						return _optionCategoryDTOConverter.toDTO(
+							new DefaultDTOConverterContext(
+								cpOptionCategory.getCPOptionCategoryId(),
+								dtoConverterContext.getLocale()));
+					});
+				setTitle(
+					() -> LanguageUtils.getLanguageIdMap(
+						cpSpecificationOption.getTitleMap()));
 			}
 		};
-
-		if (cpOptionCategory != null) {
-			specification.setOptionCategory(
-				_optionCategoryDTOConverter.toDTO(
-					new DefaultDTOConverterContext(
-						cpOptionCategory.getCPOptionCategoryId(),
-						dtoConverterContext.getLocale())));
-		}
-
-		return specification;
 	}
 
 	@Reference

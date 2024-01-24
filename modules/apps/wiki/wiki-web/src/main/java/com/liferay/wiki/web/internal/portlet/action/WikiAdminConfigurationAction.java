@@ -29,7 +29,7 @@ public class WikiAdminConfigurationAction
 
 	@Override
 	public String getJspPath(HttpServletRequest httpServletRequest) {
-		return "/wiki_admin/configuration.jsp";
+		return "/wiki_admin/configuration_browse.jsp";
 	}
 
 	@Override
@@ -40,7 +40,6 @@ public class WikiAdminConfigurationAction
 
 		validateEmail(actionRequest, "emailPageAdded");
 		validateEmail(actionRequest, "emailPageUpdated");
-		validateEmailFrom(actionRequest);
 
 		super.processAction(portletConfig, actionRequest, actionResponse);
 	}

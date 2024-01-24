@@ -5,6 +5,7 @@
 
 import {
 	addParams,
+	createPortletURL,
 	navigate,
 	openCategorySelectionModal,
 	openConfirmModal,
@@ -26,6 +27,7 @@ export default function propsTransformer({
 		editEntryURL,
 		folderConfiguration,
 		openViewMoreFileEntryTypesURL,
+		redirect,
 		selectAssetCategoriesURL,
 		selectAssetTagsURL,
 		selectExtensionURL,
@@ -294,11 +296,48 @@ export default function propsTransformer({
 
 				submitForm(form, editEntryURL, false);
 			},
-			selectEventName: `${portletNamespace}selectFolder`,
+			selectEventName: `${portletNamespace}folderSelected`,
 			size: 'lg',
 			title: sub(dialogTitle, [selectedItems]),
 			url: selectFolderURL,
 		});
+	};
+
+	const openCreateAIImage = (aiImageCreatorURL, isAICreatorOpenAIAPIKey) => {
+		if (!isAICreatorOpenAIAPIKey) {
+			Liferay.componentReady(`${portletNamespace}ConfigueAIModal`).then(
+				(configureAIModal) => {
+					configureAIModal.open();
+				}
+			);
+		}
+		else {
+			openSelectionModal({
+				height: '70vh',
+				onSelect: ({selectedItems}) => {
+					if (selectedItems) {
+						openToast({
+							message: sub(
+								Liferay.Language.get(
+									'x-files-were-successfully-added'
+								),
+								[`<strong>${selectedItems.length}</strong>`]
+							),
+							title: Liferay.Language.get('success'),
+							type: 'success',
+						});
+
+						navigate(redirect);
+					}
+				},
+				selectEventName: `${portletNamespace}selectAIImages`,
+				size: 'lg',
+				title: Liferay.Language.get('create-ai-image'),
+				url: createPortletURL(aiImageCreatorURL, {
+					selectEventName: `${portletNamespace}selectAIImages`,
+				}).toString(),
+			});
+		}
 	};
 
 	const permissions = () => {
@@ -385,6 +424,14 @@ export default function propsTransformer({
 			}
 			else if (action === 'permissions') {
 				permissions();
+			}
+		},
+		onCreationMenuItemClick: (event, {item}) => {
+			if (item?.data?.action === 'openAICreateImage') {
+				openCreateAIImage(
+					item?.data?.aiCreatorURL,
+					item?.data?.isAICreatorOpenAIAPIKey
+				);
 			}
 		},
 		onFilterDropdownItemClick(event, {item}) {

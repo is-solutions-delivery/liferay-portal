@@ -20,7 +20,6 @@ import com.liferay.headless.commerce.admin.order.dto.v1_0.Order;
 import com.liferay.headless.commerce.admin.order.dto.v1_0.OrderItem;
 import com.liferay.headless.commerce.admin.order.internal.dto.v1_0.converter.constants.DTOConverterConstants;
 import com.liferay.headless.commerce.admin.order.internal.dto.v1_0.util.CustomFieldsUtil;
-import com.liferay.headless.commerce.admin.order.internal.helper.v1_0.OrderItemHelper;
 import com.liferay.headless.commerce.admin.order.internal.odata.entity.v1_0.OrderItemEntityModel;
 import com.liferay.headless.commerce.admin.order.internal.util.v1_0.OrderItemUtil;
 import com.liferay.headless.commerce.admin.order.resource.v1_0.OrderItemResource;
@@ -48,7 +47,10 @@ import java.io.Serializable;
 
 import java.math.BigDecimal;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -153,7 +155,7 @@ public class OrderItemResourceImpl extends BaseOrderItemResourceImpl {
 			commerceOrder.getCommerceOrderId());
 
 		return Page.of(
-			_orderItemHelper.toOrderItems(
+			_toOrderItems(
 				commerceOrderItems, contextAcceptLanguage.getPreferredLocale()),
 			pagination, totalItems);
 	}
@@ -164,8 +166,24 @@ public class OrderItemResourceImpl extends BaseOrderItemResourceImpl {
 			Long id, Pagination pagination)
 		throws Exception {
 
-		return _orderItemHelper.getOrderItemsPage(
-			id, contextAcceptLanguage.getPreferredLocale(), pagination);
+		CommerceOrder commerceOrder = _commerceOrderService.fetchCommerceOrder(
+			id);
+
+		if (commerceOrder == null) {
+			return Page.of(Collections.emptyList());
+		}
+
+		List<CommerceOrderItem> commerceOrderItems =
+			_commerceOrderItemService.getCommerceOrderItems(
+				id, pagination.getStartPosition(), pagination.getEndPosition());
+
+		int totalItems = _commerceOrderItemService.getCommerceOrderItemsCount(
+			id);
+
+		return Page.of(
+			_toOrderItems(
+				commerceOrderItems, contextAcceptLanguage.getPreferredLocale()),
+			pagination, totalItems);
 	}
 
 	@Override
@@ -592,6 +610,22 @@ public class OrderItemResourceImpl extends BaseOrderItemResourceImpl {
 				contextAcceptLanguage.getPreferredLocale()));
 	}
 
+	private List<OrderItem> _toOrderItems(
+			List<CommerceOrderItem> commerceOrderItems, Locale locale)
+		throws Exception {
+
+		List<OrderItem> orderItems = new ArrayList<>();
+
+		for (CommerceOrderItem commerceOrderItem : commerceOrderItems) {
+			orderItems.add(
+				_orderItemDTOConverter.toDTO(
+					new DefaultDTOConverterContext(
+						commerceOrderItem.getCommerceOrderItemId(), locale)));
+		}
+
+		return orderItems;
+	}
+
 	private OrderItem _updateOrderItem(
 			CommerceOrderItem commerceOrderItem, OrderItem orderItem)
 		throws Exception {
@@ -724,9 +758,6 @@ public class OrderItemResourceImpl extends BaseOrderItemResourceImpl {
 
 	@Reference(target = DTOConverterConstants.ORDER_ITEM_DTO_CONVERTER)
 	private DTOConverter<CommerceOrderItem, OrderItem> _orderItemDTOConverter;
-
-	@Reference
-	private OrderItemHelper _orderItemHelper;
 
 	@Reference
 	private Portal _portal;

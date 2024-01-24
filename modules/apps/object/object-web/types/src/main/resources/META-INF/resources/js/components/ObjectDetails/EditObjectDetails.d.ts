@@ -6,47 +6,49 @@
 /// <reference types="react" />
 
 import './ObjectDetails.scss';
-export declare type KeyValuePair = {
-	key: string;
-	value: string;
+export declare type Scope = {
+	items: LabelValueObject[];
+	label: string;
 };
 interface EditObjectDetailsProps {
 	backURL: string;
-	companyKeyValuePair: KeyValuePair[];
+	companies: Scope[];
 	dbTableName: string;
-	externalReferenceCode: string;
 	hasPublishObjectPermission: boolean;
 	hasUpdateObjectDefinitionPermission: boolean;
 	isApproved: boolean;
 	isRootDescendantNode: boolean;
 	label: LocalizedValue<string>;
+	learnResourceContext: any;
 	nonRelationshipObjectFieldsInfo: {
 		label: LocalizedValue<string>;
 		name: string;
 	}[];
+	objectDefinitionExternalReferenceCode: string;
 	objectDefinitionId: number;
 	pluralLabel: LocalizedValue<string>;
 	portletNamespace: string;
 	shortName: string;
-	siteKeyValuePair: KeyValuePair[];
+	sites: Scope[];
 	storageTypes: LabelValueObject[];
 }
 export default function EditObjectDetails({
 	backURL,
-	companyKeyValuePair,
+	companies,
 	dbTableName,
-	externalReferenceCode,
 	hasPublishObjectPermission,
 	hasUpdateObjectDefinitionPermission,
 	isApproved,
 	isRootDescendantNode,
 	label,
+	learnResourceContext,
 	nonRelationshipObjectFieldsInfo,
+	objectDefinitionExternalReferenceCode,
 	objectDefinitionId,
 	pluralLabel,
 	portletNamespace,
 	shortName,
-	siteKeyValuePair,
+	sites,
 	storageTypes,
 }: EditObjectDetailsProps): JSX.Element;
 export {};

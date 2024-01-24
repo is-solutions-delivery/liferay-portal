@@ -5,7 +5,6 @@
 
 package com.liferay.object.internal.upgrade.v7_0_0;
 
-import com.liferay.object.constants.ObjectFolderConstants;
 import com.liferay.object.internal.upgrade.v7_0_0.util.ObjectFolderTable;
 import com.liferay.object.model.ObjectFolder;
 import com.liferay.petra.string.StringBundler;
@@ -66,8 +65,7 @@ public class ObjectDefinitionUpgradeProcess extends UpgradeProcess {
 				"?, ?)"));
 
 		preparedStatement1.setString(1, PortalUUIDUtil.generate());
-		preparedStatement1.setString(
-			2, ObjectFolderConstants.EXTERNAL_REFERENCE_CODE_UNCATEGORIZED);
+		preparedStatement1.setString(2, "uncategorized");
 
 		long objectFolderId = increment();
 
@@ -91,12 +89,11 @@ public class ObjectDefinitionUpgradeProcess extends UpgradeProcess {
 							LocaleUtil.fromLanguageId(
 								UpgradeProcessUtil.getDefaultLanguageId(
 									companyId)),
-							ObjectFolderConstants.NAME_UNCATEGORIZED);
+							"Uncategorized");
 					}
 				},
 				"Label"));
-		preparedStatement1.setString(
-			10, ObjectFolderConstants.NAME_UNCATEGORIZED);
+		preparedStatement1.setString(10, "Uncategorized");
 
 		preparedStatement1.execute();
 

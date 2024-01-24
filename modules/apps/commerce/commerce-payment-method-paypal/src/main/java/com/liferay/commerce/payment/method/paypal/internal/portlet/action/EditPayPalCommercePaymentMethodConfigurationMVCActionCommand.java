@@ -62,7 +62,8 @@ public class EditPayPalCommercePaymentMethodConfigurationMVCActionCommand
 		Settings settings = FallbackKeysSettingsUtil.getSettings(
 			new GroupServiceSettingsLocator(
 				commerceChannel.getGroupId(),
-				PayPalCommercePaymentMethodConstants.SERVICE_NAME));
+				PayPalCommercePaymentMethodConstants.
+					COMMERCE_PAYMENT_ENGINE_SERVICE_NAME));
 
 		ModifiableSettings modifiableSettings =
 			settings.getModifiableSettings();

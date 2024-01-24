@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -54,6 +55,13 @@ public class WorkflowTaskAssignableUsers implements Serializable {
 	@Schema
 	@Valid
 	public WorkflowTaskAssignableUser[] getWorkflowTaskAssignableUsers() {
+		if (_workflowTaskAssignableUsersSupplier != null) {
+			workflowTaskAssignableUsers =
+				_workflowTaskAssignableUsersSupplier.get();
+
+			_workflowTaskAssignableUsersSupplier = null;
+		}
+
 		return workflowTaskAssignableUsers;
 	}
 
@@ -61,6 +69,8 @@ public class WorkflowTaskAssignableUsers implements Serializable {
 		WorkflowTaskAssignableUser[] workflowTaskAssignableUsers) {
 
 		this.workflowTaskAssignableUsers = workflowTaskAssignableUsers;
+
+		_workflowTaskAssignableUsersSupplier = null;
 	}
 
 	@JsonIgnore
@@ -68,21 +78,26 @@ public class WorkflowTaskAssignableUsers implements Serializable {
 		UnsafeSupplier<WorkflowTaskAssignableUser[], Exception>
 			workflowTaskAssignableUsersUnsafeSupplier) {
 
-		try {
-			workflowTaskAssignableUsers =
-				workflowTaskAssignableUsersUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_workflowTaskAssignableUsersSupplier = () -> {
+			try {
+				return workflowTaskAssignableUsersUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected WorkflowTaskAssignableUser[] workflowTaskAssignableUsers;
+
+	@JsonIgnore
+	private Supplier<WorkflowTaskAssignableUser[]>
+		_workflowTaskAssignableUsersSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -112,6 +127,9 @@ public class WorkflowTaskAssignableUsers implements Serializable {
 		StringBundler sb = new StringBundler();
 
 		sb.append("{");
+
+		WorkflowTaskAssignableUser[] workflowTaskAssignableUsers =
+			getWorkflowTaskAssignableUsers();
 
 		if (workflowTaskAssignableUsers != null) {
 			if (sb.length() > 1) {

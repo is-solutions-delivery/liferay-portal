@@ -62,9 +62,8 @@ public class ObjectFolderModelResourcePermission
 		ObjectFolder objectFolder;
 
 		if (objectFolderId == 0) {
-			objectFolder =
-				_objectFolderLocalService.getUncategorizedObjectFolder(
-					permissionChecker.getCompanyId());
+			objectFolder = _objectFolderLocalService.getDefaultObjectFolder(
+				permissionChecker.getCompanyId());
 		}
 		else {
 			objectFolder = _objectFolderLocalService.getObjectFolder(
@@ -80,7 +79,7 @@ public class ObjectFolderModelResourcePermission
 			String actionId)
 		throws PortalException {
 
-		if (objectFolder.isUncategorized() ||
+		if (objectFolder.isDefault() ||
 			permissionChecker.hasOwnerPermission(
 				permissionChecker.getCompanyId(), ObjectFolder.class.getName(),
 				objectFolder.getPrimaryKey(), objectFolder.getUserId(),

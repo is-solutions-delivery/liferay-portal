@@ -367,6 +367,7 @@ definition {
 			FrontStore.viewMiniCartItem(
 				bundledItems = "1 × ABS Sensor uom1",
 				cartItemName = "Bundled Product",
+				cartItemOption = "blue",
 				cartItemPriceValue = "70.00",
 				cartItemQuantity = 1,
 				cartItemSku = "BLUE");
@@ -374,6 +375,7 @@ definition {
 			FrontStore.viewMiniCartItem(
 				bundledItems = "1 × ABS Sensor uom2",
 				cartItemName = "Bundled Product",
+				cartItemOption = "white",
 				cartItemPriceValue = "60.00",
 				cartItemQuantity = 1,
 				cartItemSku = "WHITE");

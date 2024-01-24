@@ -14,13 +14,11 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.scheduler.CronTextUtil;
-import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.reports.engine.console.constants.ReportsEngineConsolePortletKeys;
 import com.liferay.portal.reports.engine.console.model.Definition;
@@ -62,23 +60,14 @@ public class AddSchedulerMVCActionCommand extends BaseMVCActionCommand {
 			WebKeys.THEME_DISPLAY);
 
 		long definitionId = ParamUtil.getLong(actionRequest, "definitionId");
-		String format = ParamUtil.getString(actionRequest, "format");
 		Calendar startCalendar = ReportsEngineConsoleUtil.getDate(
 			actionRequest, "schedulerStartDate", true);
-		String emailNotifications = ParamUtil.getString(
-			actionRequest, "emailNotifications");
-		String emailDelivery = ParamUtil.getString(
-			actionRequest, "emailDelivery");
-		String portletId = _portal.getPortletId(actionRequest);
-		String generatedReportsURL = ParamUtil.getString(
-			actionRequest, "generatedReportsURL");
-		String reportName = ParamUtil.getString(actionRequest, "reportName");
 
 		Date schedulerEndDate = null;
 
 		int endDateType = ParamUtil.getInteger(actionRequest, "endDateType");
 
-		if (endDateType == 1) {
+		if (endDateType == _END_DATE_TYPE_END_BY) {
 			Calendar endCalendar = ReportsEngineConsoleUtil.getDate(
 				actionRequest, "schedulerEndDate", true);
 
@@ -87,9 +76,6 @@ public class AddSchedulerMVCActionCommand extends BaseMVCActionCommand {
 
 		int recurrenceType = ParamUtil.getInteger(
 			actionRequest, "recurrenceType");
-
-		String cronText = CronTextUtil.getCronText(
-			actionRequest, startCalendar, true, recurrenceType);
 
 		JSONArray entryReportParametersJSONArray =
 			_jsonFactory.createJSONArray();
@@ -103,58 +89,78 @@ public class AddSchedulerMVCActionCommand extends BaseMVCActionCommand {
 			JSONObject definitionReportParameterJSONObject =
 				reportParametersJSONArray.getJSONObject(i);
 
-			String key = definitionReportParameterJSONObject.getString("key");
-
-			JSONObject entryReportParameterJSONObject = JSONUtil.put(
-				"key", key);
-
-			String value = StringPool.BLANK;
-
-			DateFormat dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
-				"yyyy-MM-dd");
-
-			String type = ParamUtil.getString(
-				actionRequest, "useVariable" + key);
-
-			if (type.equals("startDate")) {
-				value = dateFormat.format(startCalendar.getTime());
-			}
-			else if (type.equals("endDate")) {
-				if (schedulerEndDate != null) {
-					value = dateFormat.format(schedulerEndDate.getTime());
-				}
-				else {
-					value = StringPool.NULL;
-				}
-			}
-			else {
-				value = ParamUtil.getString(
-					actionRequest, "parameterValue" + key);
-
-				if (Validator.isNull(value)) {
-					Calendar calendar = ReportsEngineConsoleUtil.getDate(
-						actionRequest, key, false);
-
-					value = dateFormat.format(calendar.getTime());
-				}
-			}
-
-			entryReportParameterJSONObject.put("value", value);
-
-			entryReportParametersJSONArray.put(entryReportParameterJSONObject);
+			entryReportParametersJSONArray.put(
+				JSONUtil.put(
+					"key", definitionReportParameterJSONObject.getString("key")
+				).put(
+					"value",
+					_getEntryReportParameterValue(
+						actionRequest, definitionReportParameterJSONObject)
+				));
 		}
 
-		ServiceContext serviceContext = ServiceContextFactory.getInstance(
-			Entry.class.getName(), actionRequest);
-
 		_entryService.addEntry(
-			themeDisplay.getScopeGroupId(), definitionId, format, true,
+			themeDisplay.getScopeGroupId(), definitionId,
+			ParamUtil.getString(actionRequest, "format"), true,
 			startCalendar.getTime(), schedulerEndDate,
-			recurrenceType != Recurrence.NO_RECURRENCE, cronText,
-			emailNotifications, emailDelivery, portletId, generatedReportsURL,
-			reportName, entryReportParametersJSONArray.toString(),
-			serviceContext);
+			recurrenceType != Recurrence.NO_RECURRENCE,
+			CronTextUtil.getCronText(
+				actionRequest, startCalendar, true, recurrenceType),
+			ParamUtil.getString(actionRequest, "emailNotifications"),
+			ParamUtil.getString(actionRequest, "emailDelivery"),
+			_portal.getPortletId(actionRequest),
+			ParamUtil.getString(actionRequest, "generatedReportsURL"),
+			ParamUtil.getString(actionRequest, "reportName"),
+			entryReportParametersJSONArray.toString(),
+			ServiceContextFactory.getInstance(
+				Entry.class.getName(), actionRequest));
 	}
+
+	private String _getEntryReportParameterValue(
+		ActionRequest actionRequest,
+		JSONObject definitionReportParameterJSONObject) {
+
+		String key = definitionReportParameterJSONObject.getString("key");
+		String type = definitionReportParameterJSONObject.getString("type");
+
+		if (!type.equals("date")) {
+			return ParamUtil.getString(actionRequest, "parameterValue" + key);
+		}
+
+		String variable = ParamUtil.getString(
+			actionRequest, "useVariable" + key);
+
+		if (variable.equals("endDate")) {
+			if (ParamUtil.getInteger(actionRequest, "endDateType") ==
+					_END_DATE_TYPE_NO_END_DATE) {
+
+				return StringPool.NULL;
+			}
+
+			Calendar calendar = ReportsEngineConsoleUtil.getDate(
+				actionRequest, "schedulerEndDate", true);
+
+			return _dateFormat.format(calendar.getTime());
+		}
+		else if (variable.equals("startDate")) {
+			Calendar calendar = ReportsEngineConsoleUtil.getDate(
+				actionRequest, "schedulerStartDate", true);
+
+			return _dateFormat.format(calendar.getTime());
+		}
+
+		Calendar calendar = ReportsEngineConsoleUtil.getDate(
+			actionRequest, key, false);
+
+		return _dateFormat.format(calendar.getTime());
+	}
+
+	private static final int _END_DATE_TYPE_END_BY = 1;
+
+	private static final int _END_DATE_TYPE_NO_END_DATE = 0;
+
+	private final DateFormat _dateFormat =
+		DateFormatFactoryUtil.getSimpleDateFormat("yyyy-MM-dd");
 
 	@Reference
 	private DefinitionService _definitionService;

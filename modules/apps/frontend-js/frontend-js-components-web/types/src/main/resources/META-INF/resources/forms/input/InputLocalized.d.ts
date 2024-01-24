@@ -24,7 +24,11 @@ interface InputLocalizedProps {
 	resultFormatter?: (value: string) => React.ReactNode;
 	selectedLocale?: Liferay.Language.Locale;
 	tooltip?: string;
-	translations: Liferay.Language.LocalizedValue<string>;
+	translations: Liferay.Language.LocalizedValue<string> &
+		Partial<{
+			zh_Hans_CN: string;
+			zh_Hant_TW: string;
+		}>;
 }
 interface InputLocale {
 	label: Liferay.Language.Locale;
@@ -45,7 +49,7 @@ export default function InputLocalized({
 	resultFormatter,
 	selectedLocale,
 	tooltip,
-	translations,
+	translations: initialTranslations,
 	...otherProps
 }: InputLocalizedProps): JSX.Element;
 export {};

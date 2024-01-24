@@ -9,6 +9,9 @@ import com.liferay.asset.display.page.service.AssetDisplayPageEntryServiceUtil;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownContextItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemListBuilder;
+import com.liferay.info.item.InfoItemClassDetails;
+import com.liferay.info.item.InfoItemServiceRegistry;
+import com.liferay.info.item.provider.InfoItemDetailsProvider;
 import com.liferay.item.selector.ItemSelector;
 import com.liferay.item.selector.ItemSelectorCriterion;
 import com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType;
@@ -18,18 +21,17 @@ import com.liferay.layout.page.template.admin.constants.LayoutPageTemplateAdminP
 import com.liferay.layout.page.template.admin.web.internal.configuration.LayoutPageTemplateAdminWebConfiguration;
 import com.liferay.layout.page.template.admin.web.internal.constants.LayoutPageTemplateAdminWebKeys;
 import com.liferay.layout.page.template.admin.web.internal.security.permission.resource.LayoutPageTemplateEntryPermission;
-import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryServiceUtil;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
+import com.liferay.portal.kernel.portlet.url.builder.RenderURLBuilder;
 import com.liferay.portal.kernel.portlet.url.builder.ResourceURLBuilder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
@@ -44,7 +46,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.taglib.security.PermissionsURLTag;
 
 import java.util.List;
-import java.util.Objects;
 
 import javax.portlet.PortletRequest;
 import javax.portlet.RenderRequest;
@@ -58,13 +59,21 @@ import javax.servlet.http.HttpServletRequest;
 public class DisplayPageActionDropdownItemsProvider {
 
 	public DisplayPageActionDropdownItemsProvider(
+		boolean allowedMappedContentType, boolean existsMappedContentType,
 		LayoutPageTemplateEntry layoutPageTemplateEntry,
 		RenderRequest renderRequest, RenderResponse renderResponse) {
 
+		_allowedMappedContentType = allowedMappedContentType;
+		_existsMappedContentType = existsMappedContentType;
 		_layoutPageTemplateEntry = layoutPageTemplateEntry;
 		_renderResponse = renderResponse;
 
+		_draftLayout = LayoutLocalServiceUtil.fetchDraftLayout(
+			layoutPageTemplateEntry.getPlid());
 		_httpServletRequest = PortalUtil.getHttpServletRequest(renderRequest);
+		_infoItemServiceRegistry =
+			(InfoItemServiceRegistry)renderRequest.getAttribute(
+				InfoItemServiceRegistry.class.getName());
 
 		_itemSelector = (ItemSelector)_httpServletRequest.getAttribute(
 			LayoutPageTemplateAdminWebKeys.ITEM_SELECTOR);
@@ -74,9 +83,6 @@ public class DisplayPageActionDropdownItemsProvider {
 					LayoutPageTemplateAdminWebConfiguration.class.getName());
 		_themeDisplay = (ThemeDisplay)_httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
-
-		_draftLayout = LayoutLocalServiceUtil.fetchDraftLayout(
-			layoutPageTemplateEntry.getPlid());
 	}
 
 	public List<DropdownItem> getActionDropdownItems() throws Exception {
@@ -85,12 +91,19 @@ public class DisplayPageActionDropdownItemsProvider {
 				_themeDisplay.getPermissionChecker(), _layoutPageTemplateEntry,
 				ActionKeys.UPDATE);
 
+		int count =
+			AssetDisplayPageEntryServiceUtil.getAssetDisplayPageEntriesCount(
+				_layoutPageTemplateEntry.getClassNameId(),
+				_layoutPageTemplateEntry.getClassTypeId(),
+				_layoutPageTemplateEntry.getLayoutPageTemplateEntryId(),
+				_layoutPageTemplateEntry.isDefaultTemplate());
+
 		return DropdownItemListBuilder.addGroup(
 			dropdownGroupItem -> {
 				dropdownGroupItem.setDropdownItems(
 					DropdownItemListBuilder.add(
 						() -> hasUpdatePermission,
-						_getEditDisplayPageActionUnsafeConsumer()
+						_getEditDisplayPageActionUnsafeConsumer(count)
 					).build());
 				dropdownGroupItem.setSeparator(true);
 			}
@@ -99,9 +112,10 @@ public class DisplayPageActionDropdownItemsProvider {
 				dropdownGroupItem.setDropdownItems(
 					DropdownItemListBuilder.add(
 						() ->
-							FeatureFlagManagerUtil.isEnabled("LPS-195263") &&
+							(_allowedMappedContentType ||
+							 !_existsMappedContentType) &&
 							hasUpdatePermission,
-						_getChangeContentTypeActionUnsafeConsumer()
+						_getChangeContentTypeActionUnsafeConsumer(count)
 					).add(
 						() -> hasUpdatePermission,
 						_getUpdateLayoutPageTemplateEntryPreviewActionUnsafeConsumer()
@@ -118,10 +132,6 @@ public class DisplayPageActionDropdownItemsProvider {
 					).add(
 						() ->
 							_layoutPageTemplateEntry.isApproved() &&
-							Objects.equals(
-								_layoutPageTemplateEntry.getType(),
-								LayoutPageTemplateEntryTypeConstants.
-									DISPLAY_PAGE) &&
 							(_layoutPageTemplateEntry.getClassNameId() > 0) &&
 							hasUpdatePermission,
 						_getMarkAsDefaultDisplayPageActionUnsafeConsumer()
@@ -129,7 +139,7 @@ public class DisplayPageActionDropdownItemsProvider {
 						() -> hasUpdatePermission,
 						_getRenameDisplayPageActionUnsafeConsumer()
 					).add(
-						_getViewUsagesDisplayPageActionUnsafeConsumer()
+						_getViewUsagesDisplayPageActionUnsafeConsumer(count)
 					).build());
 				dropdownGroupItem.setSeparator(true);
 			}
@@ -137,9 +147,7 @@ public class DisplayPageActionDropdownItemsProvider {
 			dropdownGroupItem -> {
 				dropdownGroupItem.setDropdownItems(
 					DropdownItemListBuilder.addContext(
-						() ->
-							FeatureFlagManagerUtil.isEnabled("LPS-195263") &&
-							hasUpdatePermission,
+						() -> hasUpdatePermission,
 						_getCopyDisplayPageWithPermissionsActionUnsafeConsumer()
 					).add(
 						() ->
@@ -153,9 +161,7 @@ public class DisplayPageActionDropdownItemsProvider {
 			dropdownGroupItem -> {
 				dropdownGroupItem.setDropdownItems(
 					DropdownItemListBuilder.add(
-						() ->
-							FeatureFlagManagerUtil.isEnabled("LPS-195263") &&
-							hasUpdatePermission,
+						() -> hasUpdatePermission,
 						_getConfigureDisplayPageActionUnsafeConsumer()
 					).add(
 						() -> LayoutPageTemplateEntryPermission.contains(
@@ -180,13 +186,53 @@ public class DisplayPageActionDropdownItemsProvider {
 	}
 
 	private UnsafeConsumer<DropdownItem, Exception>
-		_getChangeContentTypeActionUnsafeConsumer() {
+		_getChangeContentTypeActionUnsafeConsumer(int count) {
 
 		return dropdownItem -> {
 			dropdownItem.putData("action", "changeContentType");
+			dropdownItem.putData("assetType", _getTypeLabel());
+
+			if (count > 0) {
+				dropdownItem.putData("viewUsagesURL", _getViewUsagesURL());
+			}
+			else {
+				dropdownItem.putData(
+					"changeContentTypeURL",
+					_getChangeContentTypeURL(_themeDisplay.getURLCurrent()));
+				dropdownItem.putData(
+					"classNameId",
+					String.valueOf(_layoutPageTemplateEntry.getClassNameId()));
+				dropdownItem.putData(
+					"classTypeId",
+					String.valueOf(_layoutPageTemplateEntry.getClassTypeId()));
+			}
+
 			dropdownItem.setLabel(
 				LanguageUtil.get(_httpServletRequest, "change-content-type"));
 		};
+	}
+
+	private String _getChangeContentTypeURL(String redirectURL) {
+		return PortletURLBuilder.createActionURL(
+			_renderResponse
+		).setActionName(
+			"/layout_page_template_admin/update_display_page_entry_content_type"
+		).setRedirect(
+			redirectURL
+		).setParameter(
+			"layoutPageTemplateEntryId",
+			_layoutPageTemplateEntry.getLayoutPageTemplateEntryId()
+		).setParameter(
+			"p_l_back_url", _themeDisplay.getURLCurrent()
+		).setParameter(
+			"p_l_back_url_title",
+			() -> {
+				PortletDisplay portletDisplay =
+					_themeDisplay.getPortletDisplay();
+
+				return portletDisplay.getPortletDisplayName();
+			}
+		).buildString();
 	}
 
 	private UnsafeConsumer<DropdownItem, Exception>
@@ -207,7 +253,7 @@ public class DisplayPageActionDropdownItemsProvider {
 		).setParameter(
 			"groupId", _layoutPageTemplateEntry.getGroupId()
 		).setParameter(
-			"selPlid", _draftLayout.getPlid()
+			"selPlid", _layoutPageTemplateEntry.getPlid()
 		).buildString();
 
 		return dropdownItem -> {
@@ -299,6 +345,8 @@ public class DisplayPageActionDropdownItemsProvider {
 						"/delete_layout_page_template_entry"
 				).setRedirect(
 					_themeDisplay.getURLCurrent()
+				).setTabs1(
+					"display-page-templates"
 				).setParameter(
 					"layoutPageTemplateEntryId",
 					_layoutPageTemplateEntry.getLayoutPageTemplateEntryId()
@@ -365,18 +413,38 @@ public class DisplayPageActionDropdownItemsProvider {
 	}
 
 	private UnsafeConsumer<DropdownItem, Exception>
-		_getEditDisplayPageActionUnsafeConsumer() {
+		_getEditDisplayPageActionUnsafeConsumer(int count) {
 
 		PortletDisplay portletDisplay = _themeDisplay.getPortletDisplay();
 
 		return dropdownItem -> {
-			dropdownItem.setHref(
-				HttpComponentsUtil.addParameters(
-					PortalUtil.getLayoutFullURL(_draftLayout, _themeDisplay),
-					"p_l_back_url", _themeDisplay.getURLCurrent(),
-					"p_l_back_url_title",
-					portletDisplay.getPortletDisplayName(), "p_l_mode",
-					Constants.EDIT));
+			String editDisplayPageURL = HttpComponentsUtil.addParameters(
+				PortalUtil.getLayoutFullURL(_draftLayout, _themeDisplay),
+				"p_l_back_url", _themeDisplay.getURLCurrent(),
+				"p_l_back_url_title", portletDisplay.getPortletDisplayName(),
+				"p_l_mode", Constants.EDIT);
+
+			if (!_existsMappedContentType && (count > 0)) {
+				dropdownItem.setDisabled(true);
+			}
+			else if (!_existsMappedContentType) {
+				dropdownItem.putData("action", "changeContentType");
+				dropdownItem.putData(
+					"changeContentTypeURL",
+					_getChangeContentTypeURL(editDisplayPageURL));
+				dropdownItem.putData(
+					"classNameId",
+					String.valueOf(_layoutPageTemplateEntry.getClassNameId()));
+				dropdownItem.putData(
+					"classTypeId",
+					String.valueOf(_layoutPageTemplateEntry.getClassTypeId()));
+				dropdownItem.putData("hasMissingType", Boolean.TRUE.toString());
+				dropdownItem.putData("hasUsages", Boolean.FALSE.toString());
+			}
+			else {
+				dropdownItem.setHref(editDisplayPageURL);
+			}
+
 			dropdownItem.setIcon("pencil");
 			dropdownItem.setLabel(
 				LanguageUtil.get(_httpServletRequest, "edit"));
@@ -560,6 +628,22 @@ public class DisplayPageActionDropdownItemsProvider {
 		};
 	}
 
+	private String _getTypeLabel() {
+		InfoItemDetailsProvider<?> infoItemDetailsProvider =
+			_infoItemServiceRegistry.getFirstInfoItemService(
+				InfoItemDetailsProvider.class,
+				_layoutPageTemplateEntry.getClassName());
+
+		if (infoItemDetailsProvider == null) {
+			return StringPool.BLANK;
+		}
+
+		InfoItemClassDetails infoItemClassDetails =
+			infoItemDetailsProvider.getInfoItemClassDetails();
+
+		return infoItemClassDetails.getLabel(_themeDisplay.getLocale());
+	}
+
 	private UnsafeConsumer<DropdownItem, Exception>
 		_getUpdateLayoutPageTemplateEntryPreviewActionUnsafeConsumer() {
 
@@ -578,35 +662,40 @@ public class DisplayPageActionDropdownItemsProvider {
 	}
 
 	private UnsafeConsumer<DropdownItem, Exception>
-		_getViewUsagesDisplayPageActionUnsafeConsumer() {
+		_getViewUsagesDisplayPageActionUnsafeConsumer(int count) {
 
 		return dropdownItem -> {
-			int count =
-				AssetDisplayPageEntryServiceUtil.
-					getAssetDisplayPageEntriesCount(
-						_layoutPageTemplateEntry.getClassNameId(),
-						_layoutPageTemplateEntry.getClassTypeId(),
-						_layoutPageTemplateEntry.getLayoutPageTemplateEntryId(),
-						_layoutPageTemplateEntry.isDefaultTemplate());
-
 			dropdownItem.setDisabled(count == 0);
-
-			dropdownItem.setHref(
-				_renderResponse.createRenderURL(), "mvcRenderCommandName",
-				"/layout_page_template_admin/view_asset_display_page_usages",
-				"redirect", _themeDisplay.getURLCurrent(), "classNameId",
-				String.valueOf(_layoutPageTemplateEntry.getClassNameId()),
-				"classTypeId",
-				String.valueOf(_layoutPageTemplateEntry.getClassTypeId()),
-				"layoutPageTemplateEntryId",
-				String.valueOf(
-					_layoutPageTemplateEntry.getLayoutPageTemplateEntryId()),
-				"defaultTemplate",
-				String.valueOf(_layoutPageTemplateEntry.isDefaultTemplate()));
+			dropdownItem.setHref(_getViewUsagesURL());
 			dropdownItem.setIcon("list-ul");
 			dropdownItem.setLabel(
 				LanguageUtil.get(_httpServletRequest, "view-usages"));
 		};
+	}
+
+	private String _getViewUsagesURL() {
+		if (_viewUsagesURL != null) {
+			return _viewUsagesURL;
+		}
+
+		_viewUsagesURL = RenderURLBuilder.createRenderURL(
+			_renderResponse
+		).setMVCRenderCommandName(
+			"/layout_page_template_admin/view_asset_display_page_usages"
+		).setRedirect(
+			_themeDisplay.getURLCurrent()
+		).setParameter(
+			"classNameId", _layoutPageTemplateEntry.getClassNameId()
+		).setParameter(
+			"classTypeId", _layoutPageTemplateEntry.getClassTypeId()
+		).setParameter(
+			"layoutPageTemplateEntryId",
+			_layoutPageTemplateEntry.getLayoutPageTemplateEntryId()
+		).setParameter(
+			"defaultTemplate", _layoutPageTemplateEntry.isDefaultTemplate()
+		).buildString();
+
+		return _viewUsagesURL;
 	}
 
 	private boolean _isShowDiscardDraftAction() {
@@ -621,13 +710,17 @@ public class DisplayPageActionDropdownItemsProvider {
 		return false;
 	}
 
+	private final boolean _allowedMappedContentType;
 	private final Layout _draftLayout;
+	private final boolean _existsMappedContentType;
 	private final HttpServletRequest _httpServletRequest;
+	private final InfoItemServiceRegistry _infoItemServiceRegistry;
 	private final ItemSelector _itemSelector;
 	private final LayoutPageTemplateAdminWebConfiguration
 		_layoutPageTemplateAdminWebConfiguration;
 	private final LayoutPageTemplateEntry _layoutPageTemplateEntry;
 	private final RenderResponse _renderResponse;
 	private final ThemeDisplay _themeDisplay;
+	private String _viewUsagesURL;
 
 }

@@ -116,7 +116,7 @@ Map<String, Map<String, String>> languagesTranslationsAriaLabelsMap = new HashMa
 			}
 		%>
 
-			<aui:input dir="<%= curLanguageDir %>" disabled="<%= disabled %>" id="<%= HtmlUtil.escapeAttribute(id + StringPool.UNDERLINE + curLanguageId) %>" name="<%= HtmlUtil.escapeAttribute(fieldNamePrefix + name + StringPool.UNDERLINE + curLanguageId + fieldNameSuffix) %>" type="hidden" value="<%= languageValue %>" />
+			<aui:input data-languageid="<%= curLanguageId %>" dir="<%= curLanguageDir %>" disabled="<%= disabled %>" id="<%= HtmlUtil.escapeAttribute(id + StringPool.UNDERLINE + curLanguageId) %>" name="<%= HtmlUtil.escapeAttribute(fieldNamePrefix + name + StringPool.UNDERLINE + curLanguageId + fieldNameSuffix) %>" type="hidden" value="<%= languageValue %>" />
 
 		<%
 		}
@@ -128,7 +128,7 @@ Map<String, Map<String, String>> languagesTranslationsAriaLabelsMap = new HashMa
 		}
 		%>
 
-		<div class="input-group-item input-group-item-shrink input-localized-content">
+		<div class="input-group-item input-group-item-shrink input-localized-content <%= languagesDropdownVisible ? "" : "hide" %>">
 
 			<%
 			String normalizedSelectedLanguageId = StringUtil.replace(selectedLanguageId, '_', '-');

@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -56,26 +57,36 @@ public class RenderedContent implements Serializable {
 		description = "The ID of the template or display page used to render the content."
 	)
 	public String getContentTemplateId() {
+		if (_contentTemplateIdSupplier != null) {
+			contentTemplateId = _contentTemplateIdSupplier.get();
+
+			_contentTemplateIdSupplier = null;
+		}
+
 		return contentTemplateId;
 	}
 
 	public void setContentTemplateId(String contentTemplateId) {
 		this.contentTemplateId = contentTemplateId;
+
+		_contentTemplateIdSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setContentTemplateId(
 		UnsafeSupplier<String, Exception> contentTemplateIdUnsafeSupplier) {
 
-		try {
-			contentTemplateId = contentTemplateIdUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_contentTemplateIdSupplier = () -> {
+			try {
+				return contentTemplateIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField(
@@ -84,30 +95,43 @@ public class RenderedContent implements Serializable {
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected String contentTemplateId;
 
+	@JsonIgnore
+	private Supplier<String> _contentTemplateIdSupplier;
+
 	@Schema(
 		description = "The name of the template or display page used to render the content."
 	)
 	public String getContentTemplateName() {
+		if (_contentTemplateNameSupplier != null) {
+			contentTemplateName = _contentTemplateNameSupplier.get();
+
+			_contentTemplateNameSupplier = null;
+		}
+
 		return contentTemplateName;
 	}
 
 	public void setContentTemplateName(String contentTemplateName) {
 		this.contentTemplateName = contentTemplateName;
+
+		_contentTemplateNameSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setContentTemplateName(
 		UnsafeSupplier<String, Exception> contentTemplateNameUnsafeSupplier) {
 
-		try {
-			contentTemplateName = contentTemplateNameUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_contentTemplateNameSupplier = () -> {
+			try {
+				return contentTemplateNameUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField(
@@ -116,11 +140,20 @@ public class RenderedContent implements Serializable {
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String contentTemplateName;
 
+	@JsonIgnore
+	private Supplier<String> _contentTemplateNameSupplier;
+
 	@Schema(
 		description = "The localized names of the template or display page used to render the content."
 	)
 	@Valid
 	public Map<String, String> getContentTemplateName_i18n() {
+		if (_contentTemplateName_i18nSupplier != null) {
+			contentTemplateName_i18n = _contentTemplateName_i18nSupplier.get();
+
+			_contentTemplateName_i18nSupplier = null;
+		}
+
 		return contentTemplateName_i18n;
 	}
 
@@ -128,6 +161,8 @@ public class RenderedContent implements Serializable {
 		Map<String, String> contentTemplateName_i18n) {
 
 		this.contentTemplateName_i18n = contentTemplateName_i18n;
+
+		_contentTemplateName_i18nSupplier = null;
 	}
 
 	@JsonIgnore
@@ -135,16 +170,17 @@ public class RenderedContent implements Serializable {
 		UnsafeSupplier<Map<String, String>, Exception>
 			contentTemplateName_i18nUnsafeSupplier) {
 
-		try {
-			contentTemplateName_i18n =
-				contentTemplateName_i18nUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_contentTemplateName_i18nSupplier = () -> {
+			try {
+				return contentTemplateName_i18nUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField(
@@ -153,30 +189,43 @@ public class RenderedContent implements Serializable {
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Map<String, String> contentTemplateName_i18n;
 
+	@JsonIgnore
+	private Supplier<Map<String, String>> _contentTemplateName_i18nSupplier;
+
 	@Schema(
 		description = "Specifies if the template or display page are marked as default to display the content."
 	)
 	public Boolean getMarkedAsDefault() {
+		if (_markedAsDefaultSupplier != null) {
+			markedAsDefault = _markedAsDefaultSupplier.get();
+
+			_markedAsDefaultSupplier = null;
+		}
+
 		return markedAsDefault;
 	}
 
 	public void setMarkedAsDefault(Boolean markedAsDefault) {
 		this.markedAsDefault = markedAsDefault;
+
+		_markedAsDefaultSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setMarkedAsDefault(
 		UnsafeSupplier<Boolean, Exception> markedAsDefaultUnsafeSupplier) {
 
-		try {
-			markedAsDefault = markedAsDefaultUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_markedAsDefaultSupplier = () -> {
+			try {
+				return markedAsDefaultUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField(
@@ -185,58 +234,84 @@ public class RenderedContent implements Serializable {
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Boolean markedAsDefault;
 
+	@JsonIgnore
+	private Supplier<Boolean> _markedAsDefaultSupplier;
+
 	@Schema(description = "An absolute URL to the rendered content.")
 	public String getRenderedContentURL() {
+		if (_renderedContentURLSupplier != null) {
+			renderedContentURL = _renderedContentURLSupplier.get();
+
+			_renderedContentURLSupplier = null;
+		}
+
 		return renderedContentURL;
 	}
 
 	public void setRenderedContentURL(String renderedContentURL) {
 		this.renderedContentURL = renderedContentURL;
+
+		_renderedContentURLSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setRenderedContentURL(
 		UnsafeSupplier<String, Exception> renderedContentURLUnsafeSupplier) {
 
-		try {
-			renderedContentURL = renderedContentURLUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_renderedContentURLSupplier = () -> {
+			try {
+				return renderedContentURLUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField(description = "An absolute URL to the rendered content.")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String renderedContentURL;
 
+	@JsonIgnore
+	private Supplier<String> _renderedContentURLSupplier;
+
 	@Schema(
 		description = "Optional field with the rendered content, can be embedded with nestedFields."
 	)
 	public String getRenderedContentValue() {
+		if (_renderedContentValueSupplier != null) {
+			renderedContentValue = _renderedContentValueSupplier.get();
+
+			_renderedContentValueSupplier = null;
+		}
+
 		return renderedContentValue;
 	}
 
 	public void setRenderedContentValue(String renderedContentValue) {
 		this.renderedContentValue = renderedContentValue;
+
+		_renderedContentValueSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setRenderedContentValue(
 		UnsafeSupplier<String, Exception> renderedContentValueUnsafeSupplier) {
 
-		try {
-			renderedContentValue = renderedContentValueUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_renderedContentValueSupplier = () -> {
+			try {
+				return renderedContentValueUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField(
@@ -244,6 +319,9 @@ public class RenderedContent implements Serializable {
 	)
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String renderedContentValue;
+
+	@JsonIgnore
+	private Supplier<String> _renderedContentValueSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -272,6 +350,8 @@ public class RenderedContent implements Serializable {
 
 		sb.append("{");
 
+		String contentTemplateId = getContentTemplateId();
+
 		if (contentTemplateId != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -285,6 +365,8 @@ public class RenderedContent implements Serializable {
 
 			sb.append("\"");
 		}
+
+		String contentTemplateName = getContentTemplateName();
 
 		if (contentTemplateName != null) {
 			if (sb.length() > 1) {
@@ -300,6 +382,9 @@ public class RenderedContent implements Serializable {
 			sb.append("\"");
 		}
 
+		Map<String, String> contentTemplateName_i18n =
+			getContentTemplateName_i18n();
+
 		if (contentTemplateName_i18n != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -310,6 +395,8 @@ public class RenderedContent implements Serializable {
 			sb.append(_toJSON(contentTemplateName_i18n));
 		}
 
+		Boolean markedAsDefault = getMarkedAsDefault();
+
 		if (markedAsDefault != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -319,6 +406,8 @@ public class RenderedContent implements Serializable {
 
 			sb.append(markedAsDefault);
 		}
+
+		String renderedContentURL = getRenderedContentURL();
 
 		if (renderedContentURL != null) {
 			if (sb.length() > 1) {
@@ -333,6 +422,8 @@ public class RenderedContent implements Serializable {
 
 			sb.append("\"");
 		}
+
+		String renderedContentValue = getRenderedContentValue();
 
 		if (renderedContentValue != null) {
 			if (sb.length() > 1) {

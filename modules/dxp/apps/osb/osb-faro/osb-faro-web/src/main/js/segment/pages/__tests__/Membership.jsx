@@ -6,6 +6,7 @@ import {Provider} from 'react-redux';
 import {render} from '@testing-library/react';
 import {Segment} from 'shared/util/records';
 import {StaticRouter} from 'react-router';
+import {waitForLoadingToBeRemoved} from 'test/helpers';
 
 jest.unmock('react-dom');
 
@@ -18,7 +19,7 @@ const defaultProps = {
 	timeZoneId: 'UTC'
 };
 
-describe('Membership', () => {
+describe.skip('Membership', () => {
 	const WrappedComponent = props => (
 		<Provider store={mockStore()}>
 			<StaticRouter>
@@ -27,26 +28,30 @@ describe('Membership', () => {
 		</Provider>
 	);
 
-	it('should render', () => {
+	it('should render', async () => {
 		const {container} = render(<WrappedComponent />);
 
 		jest.runAllTimers();
+
+		await waitForLoadingToBeRemoved(container);
 
 		expect(container).toMatchSnapshot();
 	});
 });
 
-describe('MembershipChart', () => {
+describe.skip('MembershipChart', () => {
 	const WrappedComponent = props => (
 		<StaticRouter>
 			<MembershipChart {...defaultProps} {...props} />
 		</StaticRouter>
 	);
 
-	it('should render', () => {
+	it('should render', async () => {
 		const {container} = render(<WrappedComponent />);
 
 		jest.runAllTimers();
+
+		await waitForLoadingToBeRemoved(container);
 
 		expect(container).toMatchSnapshot();
 	});

@@ -1,8 +1,27 @@
 import Constants, {DataSourceTypes, EntityTypes} from '../util/constants';
 import pathToRegexp from 'path-to-regexp';
-import Uri from 'metal-uri';
 import {invert, isEmpty, isString, memoize} from 'lodash';
-import {matchPath, useLocation} from 'react-router-dom';
+import {matchPath} from 'react-router-dom';
+
+function createURL(href) {
+	try {
+		return new URL(href);
+	} catch {
+		return new URL(href, document.baseURI);
+	}
+}
+
+function isDef(param) {
+	return param !== null && param !== undefined;
+}
+
+function addParam(url, key, value) {
+	url.searchParams.delete(key);
+
+	if (isDef(key) && isDef(value)) {
+		url.searchParams.append(key, value);
+	}
+}
 
 const {cur: defaultCur, orderDefault} = Constants.pagination;
 
@@ -450,31 +469,31 @@ export function getMatchedRoute(routes, pathname = location.pathname) {
  * @param {string} href - The url with filter params added.
  */
 export function setUriFilterValues(filterBy, href = window.location.href) {
-	const uri = new Uri(href);
+	const uri = createURL(href);
 
 	filterBy.forEach((valueISet, key) => {
-		uri.setParameterValue(key, valueISet.filter(Boolean).toArray());
+		addParam(uri, key, valueISet.filter(Boolean).toArray());
 	});
 
-	return `${uri.getPathname()}${uri.getSearch()}`;
+	return `${uri.pathname}${uri.search}`;
 }
 
 export function setUriQueryValue(href, name, value) {
-	const uri = new Uri(href);
+	const uri = createURL(href);
 
-	uri.setParameterValue(name, value);
+	addParam(uri, name, value);
 
-	return `${uri.getPathname()}${uri.getSearch()}`;
+	return `${uri.pathname}${uri.search}`;
 }
 
 export function setUriQueryValues(values, href = window.location.href) {
-	const uri = new Uri(href);
+	const uri = createURL(href);
 
 	for (const [name, value] of Object.entries(values)) {
-		uri.setParameterValue(name, value);
+		addParam(uri, name, value);
 	}
 
-	return `${uri.getPathname()}${uri.getSearch()}`;
+	return `${uri.pathname}${uri.search}`;
 }
 
 /**
@@ -483,51 +502,41 @@ export function setUriQueryValues(values, href = window.location.href) {
  * @param {string} names
  */
 export function removeUriQueryParam(href, ...names) {
-	const uri = new Uri(href);
+	const uri = createURL(href);
 
-	names.map(name => uri.removeParameter(name));
-
-	return `${uri.getPathname()}${uri.getSearch()}`;
-}
-
-export function removePageParam(newPath, currentUrl = window.location.href) {
-	const uri = new Uri(currentUrl);
-
-	if (newPath) {
-		uri.setPathname(newPath);
+	for (const name of names) {
+		uri.searchParams.delete(name);
 	}
 
-	uri.removeParameter('page');
-
-	return `${uri.getPathname()}${uri.getSearch()}`;
+	return `${uri.pathname}${uri.search}`;
 }
 
-export function resetPaginationParams(
-	newPath,
-	currentUrl = window.location.href
-) {
-	const uri = new Uri(currentUrl);
+export function removePageParam(newPath, href = window.location.href) {
+	const uri = createURL(href);
 
 	if (newPath) {
-		uri.setPathname(newPath);
+		uri.pathname = newPath;
 	}
 
-	uri.setParameterValue('page', defaultCur);
-	uri.setParameterValue('orderBy', orderDefault);
-	uri.setParameterValue('query', '');
+	uri.searchParams.delete('page');
 
-	return `${uri.getPathname()}${uri.getSearch()}`;
+	return `${uri.pathname}${uri.search}`;
+}
+
+export function resetPaginationParams(newPath, href = window.location.href) {
+	const uri = createURL(href);
+
+	if (newPath) {
+		uri.pathname = newPath;
+	}
+
+	addParam(uri, 'page', defaultCur);
+	addParam(uri, 'orderBy', orderDefault);
+	addParam(uri, 'query', '');
+
+	return `${uri.pathname}${uri.search}`;
 }
 
 export function reloadPage() {
 	window.location.reload();
-}
-
-/**
- * Custom hook to get a specific query param
- * @param {string} paramName
- */
-export function useRouteQuery(paramName) {
-	const query = new URLSearchParams(useLocation().search);
-	return query.get(paramName);
 }

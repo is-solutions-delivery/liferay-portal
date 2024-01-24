@@ -22,7 +22,7 @@
 </tr>
 <tr>
 	<td>PROFILE_BADGE_COUNT</td>
-	<td>//span[contains(@class,'notifications-count')]</td>
+	<td>//span[contains(@class,'badge-danger')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -43,6 +43,11 @@
 
 <!--NOTIFICATIONS-->
 
+<tr>
+	<td>DELETE</td>
+	<td>//button[contains(.,'Delete')]/span[1]</td>
+	<td></td>
+</tr>
 <tr>
 	<td>MARK_AS_READ</td>
 	<td>//a[contains(.,'Mark as Read')]/span[1]</td>
@@ -108,12 +113,12 @@
 
 <tr>
 	<td>NOTIFICATIONS_CONFIGURATION_EMAIL_SWITCH</td>
-	<td>//div[contains(@id,'${key_contentType}Content')]//td[contains(.,'${key_actionType}')]//following-sibling::td[contains(@class,'lfr-email-column')]//span</td>
+	<td>//div[contains(@id,'${key_contentType}Content')]//td[contains(.,'${key_actionType}')]//following-sibling::td[contains(@class,'lfr-email-column')]//input</td>
 	<td></td>
 </tr>
 <tr>
 	<td>NOTIFICATIONS_CONFIGURATION_WEBSITE_SWITCH</td>
-	<td>//div[contains(@id,'${key_contentType}Content')]//td[contains(.,'${key_actionType}')]//following-sibling::td/following-sibling::td[contains(@class,'lfr-website-column')]//span</td>
+	<td>//div[contains(@id,'${key_contentType}Content')]//td[contains(.,'${key_actionType}')]//following-sibling::td/following-sibling::td[contains(@class,'lfr-website-column')]//input</td>
 	<td></td>
 </tr>
 <tr>

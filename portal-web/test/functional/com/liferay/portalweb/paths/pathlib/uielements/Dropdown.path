@@ -31,6 +31,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>COMBOBOX_WITH_LABEL</td>
+	<td>//label[normalize-space()='${key_fieldLabel}']//following-sibling::div//button[@role='combobox']</td>
+	<td></td>
+</tr>
+<tr>
 	<td>DROPDOWN_SUBHEADER</td>
 	<td>//div[contains(@class,'dropdown-menu')]//li[contains(@class,'dropdown-subheader')][normalize-space() = '${subHeader}']</td>
 	<td></td>
@@ -81,18 +86,13 @@
 	<td></td>
 </tr>
 <tr>
-	<td>SELECTED_VALUE</td>
-	<td>//div[@class='option-selected']</td>
-	<td></td>
-</tr>
-<tr>
 	<td>TRIGGER</td>
-	<td>//a[*[name()='svg'][contains(@class,'icon-caret-double')]]</td>
+	<td>//div[contains(@class,'ddm-row')]//button[@role='combobox']</td>
 	<td></td>
 </tr>
 <tr>
 	<td>TRIGGER_2</td>
-	<td>xpath=(//a[*[name()='svg'][contains(@class,'icon-caret-double')]])[2]</td>
+	<td>xpath=(//div[contains(@class,'ddm-row')])[2]//button[@role='combobox']</td>
 	<td></td>
 </tr>
 <tr>
@@ -103,11 +103,6 @@
 
 <!--FILTER-->
 
-<tr>
-	<td>FILTER_AND_ORDER</td>
-	<td>//button[contains(.,'Filter and Order') or contains(@class,'Filter and Order')]</td>
-	<td></td>
-</tr>
 <tr>
 	<td>FILTER</td>
 	<td>//span[contains(text(), 'Filter')]</td>

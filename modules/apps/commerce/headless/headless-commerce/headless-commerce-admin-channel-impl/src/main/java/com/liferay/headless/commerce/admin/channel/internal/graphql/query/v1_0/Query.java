@@ -5,7 +5,10 @@
 
 package com.liferay.headless.commerce.admin.channel.internal.graphql.query.v1_0;
 
+import com.liferay.headless.commerce.admin.channel.dto.v1_0.Account;
+import com.liferay.headless.commerce.admin.channel.dto.v1_0.AccountAddressChannel;
 import com.liferay.headless.commerce.admin.channel.dto.v1_0.Channel;
+import com.liferay.headless.commerce.admin.channel.dto.v1_0.ChannelAccount;
 import com.liferay.headless.commerce.admin.channel.dto.v1_0.OrderType;
 import com.liferay.headless.commerce.admin.channel.dto.v1_0.PaymentMethodGroupRelOrderType;
 import com.liferay.headless.commerce.admin.channel.dto.v1_0.PaymentMethodGroupRelTerm;
@@ -14,6 +17,9 @@ import com.liferay.headless.commerce.admin.channel.dto.v1_0.ShippingFixedOptionT
 import com.liferay.headless.commerce.admin.channel.dto.v1_0.ShippingMethod;
 import com.liferay.headless.commerce.admin.channel.dto.v1_0.TaxCategory;
 import com.liferay.headless.commerce.admin.channel.dto.v1_0.Term;
+import com.liferay.headless.commerce.admin.channel.resource.v1_0.AccountAddressChannelResource;
+import com.liferay.headless.commerce.admin.channel.resource.v1_0.AccountResource;
+import com.liferay.headless.commerce.admin.channel.resource.v1_0.ChannelAccountResource;
 import com.liferay.headless.commerce.admin.channel.resource.v1_0.ChannelResource;
 import com.liferay.headless.commerce.admin.channel.resource.v1_0.OrderTypeResource;
 import com.liferay.headless.commerce.admin.channel.resource.v1_0.PaymentMethodGroupRelOrderTypeResource;
@@ -55,12 +61,36 @@ import org.osgi.service.component.ComponentServiceObjects;
 @Generated("")
 public class Query {
 
+	public static void setAccountResourceComponentServiceObjects(
+		ComponentServiceObjects<AccountResource>
+			accountResourceComponentServiceObjects) {
+
+		_accountResourceComponentServiceObjects =
+			accountResourceComponentServiceObjects;
+	}
+
+	public static void setAccountAddressChannelResourceComponentServiceObjects(
+		ComponentServiceObjects<AccountAddressChannelResource>
+			accountAddressChannelResourceComponentServiceObjects) {
+
+		_accountAddressChannelResourceComponentServiceObjects =
+			accountAddressChannelResourceComponentServiceObjects;
+	}
+
 	public static void setChannelResourceComponentServiceObjects(
 		ComponentServiceObjects<ChannelResource>
 			channelResourceComponentServiceObjects) {
 
 		_channelResourceComponentServiceObjects =
 			channelResourceComponentServiceObjects;
+	}
+
+	public static void setChannelAccountResourceComponentServiceObjects(
+		ComponentServiceObjects<ChannelAccountResource>
+			channelAccountResourceComponentServiceObjects) {
+
+		_channelAccountResourceComponentServiceObjects =
+			channelAccountResourceComponentServiceObjects;
 	}
 
 	public static void setOrderTypeResourceComponentServiceObjects(
@@ -134,6 +164,93 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {channelAccountAccount(channelAccountId: ___){id, name}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public Account channelAccountAccount(
+			@GraphQLName("channelAccountId") Long channelAccountId)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_accountResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			accountResource -> accountResource.getChannelAccountAccount(
+				channelAccountId));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {accountAddressByExternalReferenceCodeAccountAddressChannels(externalReferenceCode: ___, page: ___, pageSize: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public AccountAddressChannelPage
+			accountAddressByExternalReferenceCodeAccountAddressChannels(
+				@GraphQLName("externalReferenceCode") String
+					externalReferenceCode,
+				@GraphQLName("pageSize") int pageSize,
+				@GraphQLName("page") int page)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_accountAddressChannelResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			accountAddressChannelResource -> new AccountAddressChannelPage(
+				accountAddressChannelResource.
+					getAccountAddressByExternalReferenceCodeAccountAddressChannelsPage(
+						externalReferenceCode, Pagination.of(page, pageSize))));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {accountAddressIdAccountAddressChannels(addressId: ___, filter: ___, page: ___, pageSize: ___, search: ___, sorts: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public AccountAddressChannelPage accountAddressIdAccountAddressChannels(
+			@GraphQLName("addressId") Long addressId,
+			@GraphQLName("search") String search,
+			@GraphQLName("filter") String filterString,
+			@GraphQLName("pageSize") int pageSize,
+			@GraphQLName("page") int page,
+			@GraphQLName("sort") String sortsString)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_accountAddressChannelResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			accountAddressChannelResource -> new AccountAddressChannelPage(
+				accountAddressChannelResource.
+					getAccountAddressIdAccountAddressChannelsPage(
+						addressId, search,
+						_filterBiFunction.apply(
+							accountAddressChannelResource, filterString),
+						Pagination.of(page, pageSize),
+						_sortsBiFunction.apply(
+							accountAddressChannelResource, sortsString))));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {accountAddressChannelChannel(accountAddressChannelId: ___){accountId, currencyCode, externalReferenceCode, id, name, siteGroupId, type}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public Channel accountAddressChannelChannel(
+			@GraphQLName("accountAddressChannelId") Long
+				accountAddressChannelId)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_channelResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			channelResource -> channelResource.getAccountAddressChannelChannel(
+				accountAddressChannelId));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
 	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {channels(filter: ___, page: ___, pageSize: ___, search: ___, sorts: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField(description = "Retrieves channels.")
@@ -187,6 +304,54 @@ public class Query {
 			_channelResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			channelResource -> channelResource.getChannel(channelId));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {channelByExternalReferenceCodeChannelAccounts(externalReferenceCode: ___, page: ___, pageSize: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public ChannelAccountPage channelByExternalReferenceCodeChannelAccounts(
+			@GraphQLName("externalReferenceCode") String externalReferenceCode,
+			@GraphQLName("pageSize") int pageSize,
+			@GraphQLName("page") int page)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_channelAccountResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			channelAccountResource -> new ChannelAccountPage(
+				channelAccountResource.
+					getChannelByExternalReferenceCodeChannelAccountsPage(
+						externalReferenceCode, Pagination.of(page, pageSize))));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {channelIdChannelAccounts(filter: ___, id: ___, page: ___, pageSize: ___, search: ___, sorts: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public ChannelAccountPage channelIdChannelAccounts(
+			@GraphQLName("id") Long id, @GraphQLName("search") String search,
+			@GraphQLName("filter") String filterString,
+			@GraphQLName("pageSize") int pageSize,
+			@GraphQLName("page") int page,
+			@GraphQLName("sort") String sortsString)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_channelAccountResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			channelAccountResource -> new ChannelAccountPage(
+				channelAccountResource.getChannelIdChannelAccountsPage(
+					id, search,
+					_filterBiFunction.apply(
+						channelAccountResource, filterString),
+					Pagination.of(page, pageSize),
+					_sortsBiFunction.apply(
+						channelAccountResource, sortsString))));
 	}
 
 	/**
@@ -448,6 +613,37 @@ public class Query {
 	}
 
 	@GraphQLTypeExtension(Channel.class)
+	public class
+		GetAccountAddressByExternalReferenceCodeAccountAddressChannelsPageTypeExtension {
+
+		public GetAccountAddressByExternalReferenceCodeAccountAddressChannelsPageTypeExtension(
+			Channel channel) {
+
+			_channel = channel;
+		}
+
+		@GraphQLField
+		public AccountAddressChannelPage
+				accountAddressByExternalReferenceCodeAccountAddressChannels(
+					@GraphQLName("pageSize") int pageSize,
+					@GraphQLName("page") int page)
+			throws Exception {
+
+			return _applyComponentServiceObjects(
+				_accountAddressChannelResourceComponentServiceObjects,
+				Query.this::_populateResourceContext,
+				accountAddressChannelResource -> new AccountAddressChannelPage(
+					accountAddressChannelResource.
+						getAccountAddressByExternalReferenceCodeAccountAddressChannelsPage(
+							_channel.getExternalReferenceCode(),
+							Pagination.of(page, pageSize))));
+		}
+
+		private Channel _channel;
+
+	}
+
+	@GraphQLTypeExtension(Channel.class)
 	public class GetChannelShippingMethodsPageTypeExtension {
 
 		public GetChannelShippingMethodsPageTypeExtension(Channel channel) {
@@ -472,6 +668,122 @@ public class Query {
 
 	}
 
+	@GraphQLTypeExtension(ChannelAccount.class)
+	public class GetChannelTypeExtension {
+
+		public GetChannelTypeExtension(ChannelAccount channelAccount) {
+			_channelAccount = channelAccount;
+		}
+
+		@GraphQLField(description = "Retrive information of the given Channel.")
+		public Channel channel() throws Exception {
+			return _applyComponentServiceObjects(
+				_channelResourceComponentServiceObjects,
+				Query.this::_populateResourceContext,
+				channelResource -> channelResource.getChannel(
+					_channelAccount.getChannelId()));
+		}
+
+		private ChannelAccount _channelAccount;
+
+	}
+
+	@GraphQLTypeExtension(Channel.class)
+	public class
+		GetChannelByExternalReferenceCodeChannelAccountsPageTypeExtension {
+
+		public GetChannelByExternalReferenceCodeChannelAccountsPageTypeExtension(
+			Channel channel) {
+
+			_channel = channel;
+		}
+
+		@GraphQLField
+		public ChannelAccountPage byExternalReferenceCodeChannelAccounts(
+				@GraphQLName("pageSize") int pageSize,
+				@GraphQLName("page") int page)
+			throws Exception {
+
+			return _applyComponentServiceObjects(
+				_channelAccountResourceComponentServiceObjects,
+				Query.this::_populateResourceContext,
+				channelAccountResource -> new ChannelAccountPage(
+					channelAccountResource.
+						getChannelByExternalReferenceCodeChannelAccountsPage(
+							_channel.getExternalReferenceCode(),
+							Pagination.of(page, pageSize))));
+		}
+
+		private Channel _channel;
+
+	}
+
+	@GraphQLName("AccountPage")
+	public class AccountPage {
+
+		public AccountPage(Page accountPage) {
+			actions = accountPage.getActions();
+
+			items = accountPage.getItems();
+			lastPage = accountPage.getLastPage();
+			page = accountPage.getPage();
+			pageSize = accountPage.getPageSize();
+			totalCount = accountPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<Account> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
+	@GraphQLName("AccountAddressChannelPage")
+	public class AccountAddressChannelPage {
+
+		public AccountAddressChannelPage(Page accountAddressChannelPage) {
+			actions = accountAddressChannelPage.getActions();
+
+			items = accountAddressChannelPage.getItems();
+			lastPage = accountAddressChannelPage.getLastPage();
+			page = accountAddressChannelPage.getPage();
+			pageSize = accountAddressChannelPage.getPageSize();
+			totalCount = accountAddressChannelPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<AccountAddressChannel> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
 	@GraphQLName("ChannelPage")
 	public class ChannelPage {
 
@@ -490,6 +802,39 @@ public class Query {
 
 		@GraphQLField
 		protected java.util.Collection<Channel> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
+	@GraphQLName("ChannelAccountPage")
+	public class ChannelAccountPage {
+
+		public ChannelAccountPage(Page channelAccountPage) {
+			actions = channelAccountPage.getActions();
+
+			items = channelAccountPage.getItems();
+			lastPage = channelAccountPage.getLastPage();
+			page = channelAccountPage.getPage();
+			pageSize = channelAccountPage.getPageSize();
+			totalCount = channelAccountPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<ChannelAccount> items;
 
 		@GraphQLField
 		protected long lastPage;
@@ -794,6 +1139,35 @@ public class Query {
 		}
 	}
 
+	private void _populateResourceContext(AccountResource accountResource)
+		throws Exception {
+
+		accountResource.setContextAcceptLanguage(_acceptLanguage);
+		accountResource.setContextCompany(_company);
+		accountResource.setContextHttpServletRequest(_httpServletRequest);
+		accountResource.setContextHttpServletResponse(_httpServletResponse);
+		accountResource.setContextUriInfo(_uriInfo);
+		accountResource.setContextUser(_user);
+		accountResource.setGroupLocalService(_groupLocalService);
+		accountResource.setRoleLocalService(_roleLocalService);
+	}
+
+	private void _populateResourceContext(
+			AccountAddressChannelResource accountAddressChannelResource)
+		throws Exception {
+
+		accountAddressChannelResource.setContextAcceptLanguage(_acceptLanguage);
+		accountAddressChannelResource.setContextCompany(_company);
+		accountAddressChannelResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		accountAddressChannelResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		accountAddressChannelResource.setContextUriInfo(_uriInfo);
+		accountAddressChannelResource.setContextUser(_user);
+		accountAddressChannelResource.setGroupLocalService(_groupLocalService);
+		accountAddressChannelResource.setRoleLocalService(_roleLocalService);
+	}
+
 	private void _populateResourceContext(ChannelResource channelResource)
 		throws Exception {
 
@@ -805,6 +1179,22 @@ public class Query {
 		channelResource.setContextUser(_user);
 		channelResource.setGroupLocalService(_groupLocalService);
 		channelResource.setRoleLocalService(_roleLocalService);
+	}
+
+	private void _populateResourceContext(
+			ChannelAccountResource channelAccountResource)
+		throws Exception {
+
+		channelAccountResource.setContextAcceptLanguage(_acceptLanguage);
+		channelAccountResource.setContextCompany(_company);
+		channelAccountResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		channelAccountResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		channelAccountResource.setContextUriInfo(_uriInfo);
+		channelAccountResource.setContextUser(_user);
+		channelAccountResource.setGroupLocalService(_groupLocalService);
+		channelAccountResource.setRoleLocalService(_roleLocalService);
 	}
 
 	private void _populateResourceContext(OrderTypeResource orderTypeResource)
@@ -940,8 +1330,14 @@ public class Query {
 		termResource.setRoleLocalService(_roleLocalService);
 	}
 
+	private static ComponentServiceObjects<AccountResource>
+		_accountResourceComponentServiceObjects;
+	private static ComponentServiceObjects<AccountAddressChannelResource>
+		_accountAddressChannelResourceComponentServiceObjects;
 	private static ComponentServiceObjects<ChannelResource>
 		_channelResourceComponentServiceObjects;
+	private static ComponentServiceObjects<ChannelAccountResource>
+		_channelAccountResourceComponentServiceObjects;
 	private static ComponentServiceObjects<OrderTypeResource>
 		_orderTypeResourceComponentServiceObjects;
 	private static ComponentServiceObjects

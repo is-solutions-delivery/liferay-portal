@@ -55,6 +55,7 @@ import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.ratings.kernel.service.RatingsEntryLocalService;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -291,8 +292,8 @@ public class BlogPostingResourceImpl extends BaseBlogPostingResourceImpl {
 			existingBlogPosting.setImage(
 				new Image() {
 					{
-						caption = image.getCaption();
-						imageId = image.getImageId();
+						setCaption(image::getCaption);
+						setImageId(image::getImageId);
 					}
 				});
 		}
@@ -304,8 +305,7 @@ public class BlogPostingResourceImpl extends BaseBlogPostingResourceImpl {
 			blogPosting.setTaxonomyCategoryIds(
 				transform(
 					taxonomyCategoryBriefs,
-					TaxonomyCategoryBrief::getTaxonomyCategoryId,
-					Long[].class));
+					TaxonomyCategoryBrief::getTaxonomyCategoryId, Long.class));
 		}
 	}
 
@@ -314,7 +314,8 @@ public class BlogPostingResourceImpl extends BaseBlogPostingResourceImpl {
 		throws Exception {
 
 		LocalDateTime localDateTime = LocalDateTimeUtil.toLocalDateTime(
-			blogPosting.getDatePublished());
+			blogPosting.getDatePublished(), null,
+			ZoneId.of(contextUser.getTimeZoneId()));
 		Image image = blogPosting.getImage();
 
 		return _toBlogPosting(
@@ -443,7 +444,8 @@ public class BlogPostingResourceImpl extends BaseBlogPostingResourceImpl {
 		throws Exception {
 
 		LocalDateTime localDateTime = LocalDateTimeUtil.toLocalDateTime(
-			blogPosting.getDatePublished());
+			blogPosting.getDatePublished(), null,
+			ZoneId.of(contextUser.getTimeZoneId()));
 		Image image = blogPosting.getImage();
 
 		return _toBlogPosting(

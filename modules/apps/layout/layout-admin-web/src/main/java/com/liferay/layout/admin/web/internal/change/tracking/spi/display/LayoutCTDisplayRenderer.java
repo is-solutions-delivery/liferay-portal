@@ -20,6 +20,8 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.permission.LayoutPermission;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HttpComponentsUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -125,25 +127,40 @@ public class LayoutCTDisplayRenderer extends BaseCTDisplayRenderer<Layout> {
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
-		String url = null;
+		Layout previewLayout = layout;
 
-		if (!layout.isDenied() && !layout.isPending()) {
-			url = _portal.getLayoutFriendlyURL(layout, themeDisplay);
-		}
-		else {
-			url = _portal.getLayoutFriendlyURL(
-				layout.fetchDraftLayout(), themeDisplay);
+		if (layout.isDenied() || layout.isPending()) {
+			previewLayout = layout.fetchDraftLayout();
 		}
 
-		url = HttpComponentsUtil.addParameter(url, "p_l_mode", "preview");
+		String url = HttpComponentsUtil.addParameter(
+			themeDisplay.getPathMain() + "/portal/update_language", "p_l_id",
+			previewLayout.getPlid());
+
+		String redirect = HttpComponentsUtil.addParameter(
+			_portal.getLayoutFriendlyURL(previewLayout, themeDisplay),
+			"p_l_mode", "preview");
+
+		redirect = HttpComponentsUtil.addParameter(
+			redirect, "previewCTCollectionId", layout.getCtCollectionId());
+
+		long segmentsExperienceId = ParamUtil.getLong(
+			httpServletRequest, "segmentsExperienceId");
+
+		if (segmentsExperienceId > 0) {
+			redirect = HttpComponentsUtil.addParameter(
+				redirect, "segmentsExperienceId", segmentsExperienceId);
+		}
+
+		url = HttpComponentsUtil.addParameter(url, "redirect", redirect);
+
+		String languageId = LocaleUtil.toLanguageId(displayContext.getLocale());
+
+		url = HttpComponentsUtil.addParameter(url, "languageId", languageId);
+
+		url = HttpComponentsUtil.addParameter(url, "persistState", "false");
 		url = HttpComponentsUtil.addParameter(
-			url, "previewCTCollectionId", layout.getCtCollectionId());
-
-		if (httpServletRequest.getParameter("segmentsExperienceId") != null) {
-			url = HttpComponentsUtil.addParameter(
-				url, "segmentsExperienceId",
-				httpServletRequest.getParameter("segmentsExperienceId"));
-		}
+			url, "showUserLocaleOptionsMessage", "false");
 
 		return StringBundler.concat(
 			"<iframe frameborder=\"0\" onload=\"this.style.height = ",

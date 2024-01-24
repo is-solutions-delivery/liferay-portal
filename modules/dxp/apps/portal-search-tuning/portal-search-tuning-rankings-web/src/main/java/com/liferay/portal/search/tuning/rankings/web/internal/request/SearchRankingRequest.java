@@ -5,15 +5,18 @@
 
 package com.liferay.portal.search.tuning.rankings.web.internal.request;
 
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.portlet.SearchOrderByUtil;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchContextFactory;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.search.engine.adapter.SearchEngineAdapter;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchRequest;
 import com.liferay.portal.search.engine.adapter.search.SearchSearchResponse;
 import com.liferay.portal.search.hits.SearchHits;
+import com.liferay.portal.search.query.BooleanQuery;
 import com.liferay.portal.search.query.Queries;
 import com.liferay.portal.search.sort.Sort;
 import com.liferay.portal.search.sort.SortOrder;
@@ -23,8 +26,9 @@ import com.liferay.portal.search.tuning.rankings.web.internal.display.context.Ra
 import com.liferay.portal.search.tuning.rankings.web.internal.index.RankingFields;
 import com.liferay.portal.search.tuning.rankings.web.internal.index.name.RankingIndexName;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,11 +57,10 @@ public class SearchRankingRequest {
 	public SearchRankingResponse search() {
 		SearchSearchRequest searchSearchRequest = new SearchSearchRequest();
 
-		String keywords = _searchContext.getKeywords();
+		BooleanQuery booleanQuery = _getBooleanQuery();
 
-		if (!Validator.isBlank(keywords)) {
-			searchSearchRequest.setQuery(
-				_queries.match(RankingFields.NAME, keywords));
+		if (booleanQuery.hasClauses()) {
+			searchSearchRequest.setQuery(booleanQuery);
 		}
 		else {
 			searchSearchRequest.setQuery(_queries.matchAll());
@@ -83,6 +86,56 @@ public class SearchRankingRequest {
 		return searchRankingResponse;
 	}
 
+	private BooleanQuery _getBooleanQuery() {
+		BooleanQuery booleanQuery = _queries.booleanQuery();
+
+		String keywords = _searchContext.getKeywords();
+		String scope = GetterUtil.getString(
+			_httpServletRequest.getParameter("scope"), "all");
+		String status = GetterUtil.getString(
+			_httpServletRequest.getParameter("status"), "all");
+
+		if (!Validator.isBlank(keywords)) {
+			booleanQuery.addMustQueryClauses(
+				_queries.booleanQuery(
+				).addShouldQueryClauses(
+					_queries.term(RankingFields.NAME, keywords),
+					_queries.term(RankingFields.ALIASES, keywords)
+				));
+		}
+
+		if (!Objects.equals(scope, "all")) {
+			if (Objects.equals(scope, "blueprint")) {
+				booleanQuery.addMustNotQueryClauses(
+					_queries.term(
+						RankingFields.SXP_BLUEPRINT_EXTERNAL_REFERENCE_CODE,
+						StringPool.BLANK));
+			}
+			else if (Objects.equals(scope, "site")) {
+				booleanQuery.addMustNotQueryClauses(
+					_queries.term(
+						RankingFields.GROUP_EXTERNAL_REFERENCE_CODE,
+						StringPool.BLANK));
+			}
+			else {
+				booleanQuery.addFilterQueryClauses(
+					_queries.term(
+						RankingFields.SXP_BLUEPRINT_EXTERNAL_REFERENCE_CODE,
+						StringPool.BLANK),
+					_queries.term(
+						RankingFields.GROUP_EXTERNAL_REFERENCE_CODE,
+						StringPool.BLANK));
+			}
+		}
+
+		if (!Objects.equals(status, "all")) {
+			booleanQuery.addFilterQueryClauses(
+				_queries.term(RankingFields.STATUS, status));
+		}
+
+		return booleanQuery;
+	}
+
 	private String _getOrderByCol() {
 		return SearchOrderByUtil.getOrderByCol(
 			_httpServletRequest, ResultRankingsPortletKeys.RESULT_RANKINGS,
@@ -102,7 +155,33 @@ public class SearchRankingRequest {
 			sortOrder = SortOrder.DESC;
 		}
 
-		return Arrays.asList(_sorts.field(_getOrderByCol(), sortOrder));
+		List<Sort> sorts = new ArrayList<>();
+
+		String orderByCol = _getOrderByCol();
+
+		sorts.add(_sorts.field(orderByCol, sortOrder));
+
+		sorts.add(
+			_sorts.field(
+				RankingFields.GROUP_EXTERNAL_REFERENCE_CODE, SortOrder.ASC));
+		sorts.add(
+			_sorts.field(
+				RankingFields.SXP_BLUEPRINT_EXTERNAL_REFERENCE_CODE,
+				SortOrder.ASC));
+
+		if (orderByCol.equals(RankingFields.STATUS)) {
+			sorts.add(
+				_sorts.field(
+					RankingFields.QUERY_STRING_KEYWORD, SortOrder.ASC));
+		}
+		else if (orderByCol.equals(RankingFields.QUERY_STRING_KEYWORD)) {
+			sorts.add(_sorts.field(RankingFields.STATUS, SortOrder.ASC));
+		}
+
+		sorts.add(
+			_sorts.field(RankingFields.QUERY_STRINGS_KEYWORD, SortOrder.ASC));
+
+		return sorts;
 	}
 
 	private final HttpServletRequest _httpServletRequest;

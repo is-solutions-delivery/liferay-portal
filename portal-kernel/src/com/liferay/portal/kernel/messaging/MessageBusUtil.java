@@ -5,7 +5,7 @@
 
 package com.liferay.portal.kernel.messaging;
 
-import com.liferay.portal.kernel.util.ServiceProxyFactory;
+import com.liferay.portal.kernel.module.service.Snapshot;
 
 /**
  * @author Michael C. Han
@@ -14,27 +14,32 @@ import com.liferay.portal.kernel.util.ServiceProxyFactory;
 public class MessageBusUtil {
 
 	public static Destination getDestination(String destinationName) {
-		return _messageBus.getDestination(destinationName);
+		MessageBus messageBus = _messageBusSnapshot.get();
+
+		return messageBus.getDestination(destinationName);
 	}
 
 	public static MessageBus getMessageBus() {
-		return _messageBus;
+		return _messageBusSnapshot.get();
 	}
 
 	public static void sendMessage(String destinationName, Message message) {
-		_messageBus.sendMessage(destinationName, message);
+		MessageBus messageBus = _messageBusSnapshot.get();
+
+		messageBus.sendMessage(destinationName, message);
 	}
 
 	public static void sendMessage(String destinationName, Object payload) {
+		MessageBus messageBus = _messageBusSnapshot.get();
+
 		Message message = new Message();
 
 		message.setPayload(payload);
 
-		_messageBus.sendMessage(destinationName, message);
+		messageBus.sendMessage(destinationName, message);
 	}
 
-	private static volatile MessageBus _messageBus =
-		ServiceProxyFactory.newServiceTrackedInstance(
-			MessageBus.class, MessageBusUtil.class, "_messageBus", true);
+	private static final Snapshot<MessageBus> _messageBusSnapshot =
+		new Snapshot<>(MessageBusUtil.class, MessageBus.class);
 
 }

@@ -16,7 +16,6 @@ import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Luis Miguel Barcos
@@ -26,38 +25,42 @@ public class VersionUtil {
 	public static Version toVersion(
 		AcceptLanguage acceptLanguage, JournalArticle journalArticle) {
 
-		Set<Locale> availableLocales = LanguageUtil.getAvailableLocales(
-			journalArticle.getGroupId());
-
-		String statusLabel = WorkflowConstants.getStatusLabel(
-			journalArticle.getStatus());
-
 		return new Version() {
 			{
-				number = journalArticle.getVersion();
-				status = new Status() {
-					{
-						code = journalArticle.getStatus();
-						label = statusLabel;
+				setNumber(journalArticle::getVersion);
+				setStatus(
+					() -> new Status() {
+						{
+							setCode(journalArticle::getStatus);
+							setLabel(
+								() -> WorkflowConstants.getStatusLabel(
+									journalArticle.getStatus()));
+							setLabel_i18n(
+								() -> {
+									if (!acceptLanguage.
+											isAcceptAllLanguages()) {
 
-						setLabel_i18n(
-							() -> {
-								if (!acceptLanguage.isAcceptAllLanguages()) {
-									return null;
-								}
+										return null;
+									}
 
-								Map<String, String> map = new HashMap<>();
+									String label = getLabel();
 
-								for (Locale locale : availableLocales) {
-									map.put(
-										LocaleUtil.toBCP47LanguageId(locale),
-										LanguageUtil.get(locale, statusLabel));
-								}
+									Map<String, String> map = new HashMap<>();
 
-								return map;
-							});
-					}
-				};
+									for (Locale locale :
+											LanguageUtil.getAvailableLocales(
+												journalArticle.getGroupId())) {
+
+										map.put(
+											LocaleUtil.toBCP47LanguageId(
+												locale),
+											LanguageUtil.get(locale, label));
+									}
+
+									return map;
+								});
+						}
+					});
 			}
 		};
 	}

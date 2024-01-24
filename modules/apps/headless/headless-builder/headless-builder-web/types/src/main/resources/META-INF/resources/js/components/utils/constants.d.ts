@@ -22,3 +22,13 @@ export declare const BUSINESS_TYPES_TO_SYMBOLS: {
 	'Text': string;
 	'Workflow Status': string;
 };
+export declare const DEFAULT_LANGUAGE_ID: string;
+export declare const HTTP_METHODS: {
+	GET: string;
+	POST: string;
+};
+export declare const RETRIEVE_TYPES: {
+	COLLECTION: string;
+	SINGLE_ELEMENT: string;
+};
+export declare const STR_BLANK = '';

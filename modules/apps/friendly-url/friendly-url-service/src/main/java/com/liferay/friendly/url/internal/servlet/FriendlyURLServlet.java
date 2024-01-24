@@ -348,31 +348,13 @@ public class FriendlyURLServlet extends HttpServlet {
 		catch (LayoutPermissionException | NoSuchLayoutException exception) {
 			Layout redirectLayout = null;
 
-			if (layoutFriendlyURL == null) {
-				if (exception instanceof LayoutPermissionException) {
-					List<Layout> layouts = layoutService.getLayouts(
-						group.getGroupId(), _private,
-						LayoutConstants.DEFAULT_PARENT_LAYOUT_ID, 0, 1);
-
-					if (!layouts.isEmpty()) {
-						redirectLayout = layouts.get(0);
-					}
-				}
-				else {
+			if (!(exception instanceof LayoutPermissionException)) {
+				if (layoutFriendlyURL == null) {
 					redirectLayout = defaultLayout;
 				}
-			}
-			else {
-				List<Layout> layouts = layoutLocalService.getLayouts(
-					group.getGroupId(), _private,
-					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
-
-				for (Layout layout : layouts) {
-					if (layout.matches(httpServletRequest, layoutFriendlyURL)) {
-						redirectLayout = layout;
-
-						break;
-					}
+				else {
+					redirectLayout = _getLayoutFriendlyURLLayout(
+						group.getGroupId(), layoutFriendlyURL);
 				}
 			}
 
@@ -391,24 +373,20 @@ public class FriendlyURLServlet extends HttpServlet {
 					group, _normalizeFriendlyURL(layoutFriendlyURL));
 			}
 
-			if (exception instanceof LayoutPermissionException ||
-				exception instanceof NoSuchLayoutException) {
+			if (Validator.isNotNull(
+					PropsValues.LAYOUT_FRIENDLY_URL_PAGE_NOT_FOUND)) {
 
-				if (Validator.isNotNull(
-						PropsValues.LAYOUT_FRIENDLY_URL_PAGE_NOT_FOUND)) {
-
-					if (exception instanceof NoSuchLayoutException) {
-						throw exception;
-					}
-
-					throw new NoSuchLayoutException(exception);
+				if (exception instanceof NoSuchLayoutException) {
+					throw exception;
 				}
 
-				httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-
-				httpServletRequest.setAttribute(
-					NoSuchLayoutException.class.getName(), Boolean.TRUE);
+				throw new NoSuchLayoutException(exception);
 			}
+
+			httpServletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
+
+			httpServletRequest.setAttribute(
+				NoSuchLayoutException.class.getName(), Boolean.TRUE);
 
 			layoutFriendlyURL = null;
 		}
@@ -827,6 +805,20 @@ public class FriendlyURLServlet extends HttpServlet {
 			_friendlyURLPathPrefix, pathInfo,
 			HttpComponentsUtil.parameterMapToString(
 				httpServletRequest.getParameterMap()));
+	}
+
+	private Layout _getLayoutFriendlyURLLayout(
+		long groupId, String friendlyURL) {
+
+		LayoutFriendlyURL layoutFriendlyURL =
+			layoutFriendlyURLLocalService.fetchFirstLayoutFriendlyURL(
+				groupId, _private, friendlyURL);
+
+		if (layoutFriendlyURL != null) {
+			return layoutLocalService.fetchLayout(layoutFriendlyURL.getPlid());
+		}
+
+		return null;
 	}
 
 	private String _getPathInfo(HttpServletRequest httpServletRequest) {

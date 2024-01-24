@@ -8,7 +8,7 @@
 <%@ include file="/init.jsp" %>
 
 <%
-DisplayPageTemplateInfoPanelDisplayContext displayPageTemplateInfoPanelDisplayContext = new DisplayPageTemplateInfoPanelDisplayContext(request, renderRequest, renderResponse);
+DisplayPageTemplateInfoPanelDisplayContext displayPageTemplateInfoPanelDisplayContext = new DisplayPageTemplateInfoPanelDisplayContext(request, liferayPortletRequest, liferayPortletResponse);
 
 List<LayoutPageTemplateCollection> layoutPageTemplateCollections = displayPageTemplateInfoPanelDisplayContext.getLayoutPageTemplateCollections();
 List<LayoutPageTemplateEntry> layoutPageTemplateEntries = displayPageTemplateInfoPanelDisplayContext.getLayoutPageTemplateEntries();
@@ -70,7 +70,7 @@ Format dateTimeFormat = FastDateFormatFactoryUtil.getDateTime(DateFormat.MEDIUM,
 					<clay:icon
 						symbol="folder"
 					/>
-					<%= StringUtil.merge(displayPageTemplateInfoPanelDisplayContext.getLayoutPageTemplateCollectionPath(ParamUtil.getLong(request, "layoutPageTemplateCollectionId")), " > ") %>
+					<%= StringUtil.merge(displayPageTemplateInfoPanelDisplayContext.getLayoutPageTemplateCollectionPath(), " > ") %>
 				</p>
 			</div>
 
@@ -104,7 +104,7 @@ Format dateTimeFormat = FastDateFormatFactoryUtil.getDateTime(DateFormat.MEDIUM,
 				</p>
 
 				<p class="sidebar-dd text-secondary">
-					<%= dateTimeFormat.format(layoutPageTemplateEntry.getCreateDate()) %>
+					<liferay-ui:message arguments="<%= new Object[] {dateTimeFormat.format(layoutPageTemplateEntry.getCreateDate()), HtmlUtil.escape(layoutPageTemplateEntry.getUserName())} %>" key="x-by-x" translateArguments="<%= false %>" />
 				</p>
 			</div>
 
@@ -114,7 +114,7 @@ Format dateTimeFormat = FastDateFormatFactoryUtil.getDateTime(DateFormat.MEDIUM,
 				</p>
 
 				<p class="sidebar-dd text-secondary">
-					<liferay-ui:message arguments="<%= new Object[] {dateTimeFormat.format(layoutPageTemplateEntry.getModifiedDate()), HtmlUtil.escape(layoutPageTemplateEntry.getUserName())} %>" key="x-by-x" translateArguments="<%= false %>" />
+					<liferay-ui:message arguments="<%= new Object[] {dateTimeFormat.format(layoutPageTemplateEntry.getModifiedDate()), displayPageTemplateInfoPanelDisplayContext.getUserName(layoutPageTemplateEntry.getStatusByUserId())} %>" key="x-by-x" translateArguments="<%= false %>" />
 				</p>
 			</div>
 		</div>
@@ -173,7 +173,7 @@ Format dateTimeFormat = FastDateFormatFactoryUtil.getDateTime(DateFormat.MEDIUM,
 							symbol="folder"
 						/>
 
-						<%= StringUtil.merge(displayPageTemplateInfoPanelDisplayContext.getLayoutPageTemplateCollectionPath(layoutPageTemplateCollection.getParentLayoutPageTemplateCollectionId()), " > ") %>
+						<%= StringUtil.merge(displayPageTemplateInfoPanelDisplayContext.getLayoutPageTemplateCollectionPath(), " > ") %>
 					</p>
 				</div>
 
@@ -183,7 +183,7 @@ Format dateTimeFormat = FastDateFormatFactoryUtil.getDateTime(DateFormat.MEDIUM,
 					</p>
 
 					<p class="sidebar-dd text-secondary">
-						<%= dateTimeFormat.format(layoutPageTemplateCollection.getCreateDate()) %>
+						<liferay-ui:message arguments="<%= new Object[] {dateTimeFormat.format(layoutPageTemplateCollection.getCreateDate()), HtmlUtil.escape(layoutPageTemplateCollection.getUserName())} %>" key="x-by-x" translateArguments="<%= false %>" />
 					</p>
 				</div>
 
@@ -193,7 +193,7 @@ Format dateTimeFormat = FastDateFormatFactoryUtil.getDateTime(DateFormat.MEDIUM,
 					</p>
 
 					<p class="sidebar-dd text-secondary">
-						<liferay-ui:message arguments="<%= new Object[] {dateTimeFormat.format(layoutPageTemplateCollection.getCreateDate()), HtmlUtil.escape(layoutPageTemplateCollection.getUserName())} %>" key="x-by-x" translateArguments="<%= false %>" />
+						<liferay-ui:message arguments="<%= new Object[] {dateTimeFormat.format(layoutPageTemplateCollection.getModifiedDate()), HtmlUtil.escape(layoutPageTemplateCollection.getUserName())} %>" key="x-by-x" translateArguments="<%= false %>" />
 					</p>
 				</div>
 

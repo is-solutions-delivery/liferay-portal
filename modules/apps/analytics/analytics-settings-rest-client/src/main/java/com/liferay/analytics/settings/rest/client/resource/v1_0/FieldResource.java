@@ -12,6 +12,8 @@ import com.liferay.analytics.settings.rest.client.pagination.Pagination;
 import com.liferay.analytics.settings.rest.client.problem.Problem;
 import com.liferay.analytics.settings.rest.client.serdes.v1_0.FieldSerDes;
 
+import java.net.URL;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -139,6 +141,10 @@ public interface FieldResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {

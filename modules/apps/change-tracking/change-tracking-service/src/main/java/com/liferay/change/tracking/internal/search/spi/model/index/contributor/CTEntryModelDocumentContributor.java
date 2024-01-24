@@ -6,19 +6,30 @@
 package com.liferay.change.tracking.internal.search.spi.model.index.contributor;
 
 import com.liferay.change.tracking.constants.CTConstants;
+import com.liferay.change.tracking.model.CTCollection;
 import com.liferay.change.tracking.model.CTEntry;
-import com.liferay.change.tracking.service.CTEntryLocalService;
+import com.liferay.change.tracking.service.CTCollectionLocalService;
 import com.liferay.change.tracking.spi.display.CTDisplayRenderer;
 import com.liferay.change.tracking.spi.display.CTDisplayRendererRegistry;
+import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.model.JournalArticleLocalization;
+import com.liferay.journal.service.JournalArticleLocalService;
+import com.liferay.petra.lang.SafeCloseable;
+import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.change.tracking.sql.CTSQLModeThreadLocal;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupedModel;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -96,16 +107,83 @@ public class CTEntryModelDocumentContributor
 		return map;
 	}
 
+	private <T extends BaseModel<T>> Group _getGroup(
+		long ctCollectionId, T model) {
+
+		long groupId = 0;
+
+		if (model instanceof GroupedModel) {
+			GroupedModel groupedModel = (GroupedModel)model;
+
+			groupId = groupedModel.getGroupId();
+		}
+		else if (model instanceof JournalArticleLocalization) {
+			JournalArticleLocalization journalArticleLocalization =
+				(JournalArticleLocalization)model;
+
+			try (SafeCloseable safeCloseable =
+					CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
+						ctCollectionId)) {
+
+				JournalArticle journalArticle =
+					_journalArticleLocalService.getJournalArticle(
+						journalArticleLocalization.getArticlePK());
+
+				groupId = journalArticle.getGroupId();
+			}
+			catch (PortalException portalException) {
+				throw new RuntimeException(portalException);
+			}
+		}
+		else {
+			Map<String, Object> modelAttributes = model.getModelAttributes();
+
+			if (modelAttributes.containsKey("groupId")) {
+				groupId = (long)modelAttributes.get("groupId");
+			}
+			else if (modelAttributes.containsKey("plid")) {
+				long plid = (long)modelAttributes.get("plid");
+
+				try (SafeCloseable safeCloseable =
+						CTCollectionThreadLocal.
+							setCTCollectionIdWithSafeCloseable(
+								ctCollectionId)) {
+
+					Layout layout = _layoutLocalService.fetchLayout(plid);
+
+					if (layout != null) {
+						groupId = layout.getGroupId();
+					}
+				}
+			}
+		}
+
+		if (groupId == 0) {
+			return null;
+		}
+
+		try (SafeCloseable safeCloseable =
+				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
+					ctCollectionId)) {
+
+			return _groupLocalService.fetchGroup(groupId);
+		}
+	}
+
 	private <T extends BaseModel<T>> Map<Locale, String> _getTitleMap(
-		CTEntry ctEntry, Locale[] locales) {
+		long ctCollectionId, CTEntry ctEntry, Locale[] locales) {
 
 		Map<Locale, String> map = new HashMap<>();
+
+		if (ctEntry.getChangeType() == CTConstants.CT_CHANGE_TYPE_DELETION) {
+			ctCollectionId = CTConstants.CT_COLLECTION_ID_PRODUCTION;
+		}
 
 		for (Locale locale : locales) {
 			map.put(
 				locale,
 				_ctDisplayRendererRegistry.getTitle(
-					ctEntry.getCtCollectionId(), ctEntry, locale));
+					ctCollectionId, ctEntry, locale));
 		}
 
 		return map;
@@ -131,8 +209,19 @@ public class CTEntryModelDocumentContributor
 
 		long ctCollectionId = ctEntry.getCtCollectionId();
 
-		if (ctEntry.getChangeType() == CTConstants.CT_CHANGE_TYPE_DELETION) {
-			ctCollectionId = CTConstants.CT_COLLECTION_ID_PRODUCTION;
+		CTCollection ctCollection = _ctCollectionLocalService.fetchCTCollection(
+			ctCollectionId);
+
+		if (ctCollection != null) {
+			try {
+				ctCollectionId = _ctDisplayRendererRegistry.getCtCollectionId(
+					ctCollection, ctEntry);
+			}
+			catch (PortalException portalException) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(portalException);
+				}
+			}
 		}
 
 		T model = _ctDisplayRendererRegistry.fetchCTModel(
@@ -161,21 +250,30 @@ public class CTEntryModelDocumentContributor
 			return;
 		}
 
-		if (model instanceof GroupedModel) {
-			GroupedModel groupedModel = (GroupedModel)model;
+		Group group = _getGroup(ctCollectionId, model);
 
-			Group group = _groupLocalService.fetchGroup(
-				groupedModel.getGroupId());
+		if (group != null) {
+			document.addKeyword(Field.GROUP_ID, group.getGroupId());
 
-			if (group != null) {
-				document.addKeyword(Field.GROUP_ID, group.getGroupId());
-				document.addLocalizedKeyword(
-					"groupName", group.getNameMap(), true, true);
+			Map<Locale, String> groupNameMap = null;
+
+			try {
+				groupNameMap = group.getDescriptiveNameMap();
 			}
+			catch (PortalException portalException) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(portalException);
+				}
+
+				groupNameMap = group.getNameMap();
+			}
+
+			document.addLocalizedKeyword(
+				"groupName", groupNameMap, false, true);
 		}
 
 		document.addLocalizedText(
-			Field.TITLE, _getTitleMap(ctEntry, locales), true);
+			Field.TITLE, _getTitleMap(ctCollectionId, ctEntry, locales), true);
 
 		document.addKeyword(
 			"hideable",
@@ -197,17 +295,26 @@ public class CTEntryModelDocumentContributor
 		}
 	}
 
-	@Reference
-	private CTDisplayRendererRegistry _ctDisplayRendererRegistry;
+	private static final Log _log = LogFactoryUtil.getLog(
+		CTEntryModelDocumentContributor.class);
 
 	@Reference
-	private CTEntryLocalService _ctEntryLocalService;
+	private CTCollectionLocalService _ctCollectionLocalService;
+
+	@Reference
+	private CTDisplayRendererRegistry _ctDisplayRendererRegistry;
 
 	@Reference
 	private GroupLocalService _groupLocalService;
 
 	@Reference
+	private JournalArticleLocalService _journalArticleLocalService;
+
+	@Reference
 	private Language _language;
+
+	@Reference
+	private LayoutLocalService _layoutLocalService;
 
 	@Reference
 	private Localization _localization;

@@ -7,6 +7,7 @@ package com.liferay.product.navigation.product.menu.web.internal.product.navigat
 
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.content.security.policy.ContentSecurityPolicyNonceProviderUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
@@ -31,7 +32,6 @@ import java.io.IOException;
 import java.io.Writer;
 
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.portlet.PortletURL;
@@ -73,113 +73,125 @@ public class ProductMenuProductNavigationControlMenuEntry
 			HttpServletResponse httpServletResponse)
 		throws IOException {
 
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-		String productMenuState = SessionClicks.get(
-			httpServletRequest,
-			"com.liferay.product.navigation.product.menu.web_productMenuState",
-			"closed");
-
-		Map<String, String> values = HashMapBuilder.put(
-			"closeProductMenuTitle",
-			HtmlUtil.escape(
-				_language.get(httpServletRequest, "close-product-menu"))
-		).put(
-			"cssClass",
-			() -> {
-				if (Objects.equals(productMenuState, "open")) {
-					return "active";
-				}
-
-				return StringPool.BLANK;
-			}
-		).put(
-			"dataURL",
-			() -> {
-				PortletURL portletURL = PortletURLBuilder.create(
-					PortletURLFactoryUtil.create(
-						httpServletRequest,
-						ProductNavigationProductMenuPortletKeys.
-							PRODUCT_NAVIGATION_PRODUCT_MENU,
-						RenderRequest.RENDER_PHASE)
-				).setMVCPath(
-					"/portlet/product_menu.jsp"
-				).setRedirect(
-					themeDisplay.getURLCurrent()
-				).setBackURL(
-					themeDisplay.getURLCurrent()
-				).setParameter(
-					"selPpid",
-					() -> {
-						PortletDisplay portletDisplay =
-							themeDisplay.getPortletDisplay();
-
-						return portletDisplay.getId();
-					}
-				).setWindowState(
-					LiferayWindowState.EXCLUSIVE
-				).buildPortletURL();
-
-				return "data-url='" + portletURL + "'";
-			}
-		).put(
-			"isOpen",
-			() -> {
-				if (Objects.equals(productMenuState, "open")) {
-					return StringPool.TRUE;
-				}
-
-				return StringPool.FALSE;
-			}
-		).put(
-			"openProductMenuTitle",
-			HtmlUtil.escape(
-				_language.get(httpServletRequest, "open-product-menu"))
-		).put(
-			"portletNamespace",
-			_portal.getPortletNamespace(
-				ProductNavigationProductMenuPortletKeys.
-					PRODUCT_NAVIGATION_PRODUCT_MENU)
-		).put(
-			"title",
-			() -> {
-				if (Objects.equals(productMenuState, "open")) {
-					return HtmlUtil.escape(
-						_language.get(
-							httpServletRequest, "close-product-menu"));
-				}
-
-				return HtmlUtil.escape(
-					_language.get(httpServletRequest, "open-product-menu"));
-			}
-		).build();
-
 		try {
-			IconTag iconTag = new IconTag();
+			Writer writer = httpServletResponse.getWriter();
 
-			iconTag.setCssClass("icon-monospaced icon-product-menu-closed");
-			iconTag.setImage("product-menu-closed");
+			IconTag closedIconTag = new IconTag();
 
-			values.put(
-				"closedIcon",
-				iconTag.doTagAsString(httpServletRequest, httpServletResponse));
+			closedIconTag.setCssClass(
+				"icon-monospaced icon-product-menu-closed");
+			closedIconTag.setImage("product-menu-closed");
 
-			iconTag.setCssClass("icon-monospaced icon-product-menu-open");
-			iconTag.setImage("product-menu-open");
+			IconTag openIconTag = new IconTag();
 
-			values.put(
-				"openIcon",
-				iconTag.doTagAsString(httpServletRequest, httpServletResponse));
+			openIconTag.setCssClass("icon-monospaced icon-product-menu-open");
+			openIconTag.setImage("product-menu-open");
+
+			String productMenuState = SessionClicks.get(
+				httpServletRequest,
+				"com.liferay.product.navigation.product.menu." +
+					"web_productMenuState",
+				"closed");
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)httpServletRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
+
+			writer.write(
+				StringUtil.replace(
+					_TMPL_CONTENT, "${", "}",
+					HashMapBuilder.put(
+						"closedIcon",
+						closedIconTag.doTagAsString(
+							httpServletRequest, httpServletResponse)
+					).put(
+						"closeProductMenuTitle",
+						HtmlUtil.escape(
+							_language.get(
+								httpServletRequest, "close-product-menu"))
+					).put(
+						"cssClass",
+						() -> {
+							if (Objects.equals(productMenuState, "open")) {
+								return "active";
+							}
+
+							return StringPool.BLANK;
+						}
+					).put(
+						"dataURL",
+						() -> {
+							PortletURL portletURL = PortletURLBuilder.create(
+								PortletURLFactoryUtil.create(
+									httpServletRequest,
+									ProductNavigationProductMenuPortletKeys.
+										PRODUCT_NAVIGATION_PRODUCT_MENU,
+									RenderRequest.RENDER_PHASE)
+							).setMVCPath(
+								"/portlet/product_menu.jsp"
+							).setRedirect(
+								themeDisplay.getURLCurrent()
+							).setBackURL(
+								themeDisplay.getURLCurrent()
+							).setParameter(
+								"selPpid",
+								() -> {
+									PortletDisplay portletDisplay =
+										themeDisplay.getPortletDisplay();
+
+									return portletDisplay.getId();
+								}
+							).setWindowState(
+								LiferayWindowState.EXCLUSIVE
+							).buildPortletURL();
+
+							return "data-url='" + portletURL + "'";
+						}
+					).put(
+						"isOpen",
+						() -> {
+							if (Objects.equals(productMenuState, "open")) {
+								return StringPool.TRUE;
+							}
+
+							return StringPool.FALSE;
+						}
+					).put(
+						"nonceAttribute",
+						ContentSecurityPolicyNonceProviderUtil.
+							getNonceAttribute(httpServletRequest)
+					).put(
+						"openIcon",
+						openIconTag.doTagAsString(
+							httpServletRequest, httpServletResponse)
+					).put(
+						"openProductMenuTitle",
+						HtmlUtil.escape(
+							_language.get(
+								httpServletRequest, "open-product-menu"))
+					).put(
+						"portletNamespace",
+						_portal.getPortletNamespace(
+							ProductNavigationProductMenuPortletKeys.
+								PRODUCT_NAVIGATION_PRODUCT_MENU)
+					).put(
+						"title",
+						() -> {
+							if (Objects.equals(productMenuState, "open")) {
+								return HtmlUtil.escape(
+									_language.get(
+										httpServletRequest,
+										"close-product-menu"));
+							}
+
+							return HtmlUtil.escape(
+								_language.get(
+									httpServletRequest, "open-product-menu"));
+						}
+					).build()));
 		}
 		catch (JspException jspException) {
 			ReflectionUtil.throwException(jspException);
 		}
-
-		Writer writer = httpServletResponse.getWriter();
-
-		writer.write(StringUtil.replace(_TMPL_CONTENT, "${", "}", values));
 
 		return true;
 	}

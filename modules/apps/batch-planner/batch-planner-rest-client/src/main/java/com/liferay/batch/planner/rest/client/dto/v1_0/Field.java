@@ -105,6 +105,27 @@ public class Field implements Cloneable, Serializable {
 
 	protected String type;
 
+	public String[] getUnsupportedFormats() {
+		return unsupportedFormats;
+	}
+
+	public void setUnsupportedFormats(String[] unsupportedFormats) {
+		this.unsupportedFormats = unsupportedFormats;
+	}
+
+	public void setUnsupportedFormats(
+		UnsafeSupplier<String[], Exception> unsupportedFormatsUnsafeSupplier) {
+
+		try {
+			unsupportedFormats = unsupportedFormatsUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected String[] unsupportedFormats;
+
 	@Override
 	public Field clone() throws CloneNotSupportedException {
 		return (Field)super.clone();

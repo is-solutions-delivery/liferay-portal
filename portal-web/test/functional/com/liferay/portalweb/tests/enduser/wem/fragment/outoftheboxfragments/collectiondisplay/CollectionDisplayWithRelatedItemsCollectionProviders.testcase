@@ -25,17 +25,6 @@ definition {
 		}
 	}
 
-	tearDown {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			JSONGroup.deleteGroupByName(groupName = "Test Site Name");
-		}
-	}
-
 	@description = "This is a use case for LPS-127024. The user can add a Collection Display with Categories for This Item into another Collection Display with a dynamic collection."
 	@priority = 5
 	test AddCollectionDisplayWithCategoriesForThisItemToAnotherCollectionDisplayWithDynamicCollection {
@@ -88,10 +77,11 @@ definition {
 		}
 
 		task ("Add a dynamic collection for All Types") {
-			JSONAssetlist.addDynamicAssetListEntryWithItemType(
-				groupName = "Test Site Name",
-				itemType = "All Types",
-				title = "Dynamic Collection");
+			AssetListsAdmin.openAssetListsAdmin(siteURLKey = "test-site-name");
+
+			AssetListsAdmin.addDynamicSelection(assetListTitle = "Dynamic Collection");
+
+			AssetListsAdmin.configureItemTypeInDynamicCollection(itemType = "All Types");
 		}
 
 		task ("Add a Grid to page") {
@@ -183,93 +173,43 @@ definition {
 		}
 
 		task ("View the title of assets are shown in the first module") {
-			var n = 1;
-
 			for (var title : list "Document Title,Blogs Entry Title,Web Content Title") {
-				AssertTextEquals(
-					key_colPosition = 1,
-					key_element = "//div[@aria-label='Heading']//*[contains(@data-lfr-editable-id,'element-text')]",
-					key_fragmentName = "Collection Display",
-					key_rowPosition = ${n},
-					locator1 = "PageEditor#COLLECTION_CELL_NESTED_ELEMENT",
-					value1 = ${title});
-
-				var n = ${n} + 1;
+				AssertVisible(locator1 = "xpath=(//div[@data-name='Collection Display'])[1]//div[@data-name='Heading']//*[contains(@data-lfr-editable-id,'element-text')][normalize-space()='${title}']");
 			}
 		}
 
 		task ("View the name of associated categories are shown in the second module") {
-			var n = 1;
-
-			for (var title : list "Category Name 1,Category Name 2,Category Name 3") {
-				AssertTextEquals(
-					key_colPosition = 1,
-					key_element = "//div[contains(@class,'row')][${n}]//div[@aria-label='Button']//*[contains(@data-lfr-editable-id,'link')]",
-					key_fragmentName = "Collection Display",
-					key_rowPosition = 1,
-					locator1 = "PageEditor#COLLECTION_CELL_NESTED_ELEMENT",
-					value1 = ${title});
-
-				var n = ${n} + 1;
+			for (var n : list "1,2,3") {
+				AssertVisible(locator1 = "xpath=((//div[@data-name='Collection Display'])[2]//div[@data-name='Button']//*[contains(@data-lfr-editable-id,'link')][normalize-space()='Category Name 1'])[${n}]");
 			}
 
-			var n = 1;
-
-			for (var title : list "Category Name 1,Category Name 2") {
-				AssertTextEquals(
-					key_colPosition = 1,
-					key_element = "//div[contains(@class,'row')][${n}]//div[@aria-label='Button']//*[contains(@data-lfr-editable-id,'link')]",
-					key_fragmentName = "Collection Display",
-					key_rowPosition = 2,
-					locator1 = "PageEditor#COLLECTION_CELL_NESTED_ELEMENT",
-					value1 = ${title});
-
-				var n = ${n} + 1;
+			for (var n : list "1,2") {
+				AssertVisible(locator1 = "xpath=((//div[@data-name='Collection Display'])[2]//div[@data-name='Button']//*[contains(@data-lfr-editable-id,'link')][normalize-space()='Category Name 2'])[${n}]");
 			}
 
-			AssertTextEquals(
-				key_colPosition = 1,
-				key_element = "//div[contains(@class,'row')]//div[@aria-label='Button']//*[contains(@data-lfr-editable-id,'link')]",
-				key_fragmentName = "Collection Display",
-				key_rowPosition = 3,
-				locator1 = "PageEditor#COLLECTION_CELL_NESTED_ELEMENT",
-				value1 = "Category Name 1");
-
-			PageEditor.publish();
+			AssertVisible(locator1 = "xpath=(//div[@data-name='Collection Display'])[2]//div[@data-name='Button']//*[contains(@data-lfr-editable-id,'link')][normalize-space()='Category Name 3']");
 		}
 
 		task ("Navigate to page at view mode") {
-			ContentPagesNavigator.openViewContentPage(
-				pageName = "Content Page Name",
-				siteName = "Test Site Name");
+			PageEditor.publish();
 		}
 
 		task ("View the title of assets are shown in the first module") {
-			var n = 1;
-
 			for (var title : list "Document Title,Blogs Entry Title,Web Content Title") {
-				ContentPages.viewFragmentText(
-					fragmentName = "heading",
-					id = "element-text",
-					position = ${n},
-					text = ${title});
-
-				var n = ${n} + 1;
+				AssertVisible(locator1 = "xpath=(//div[contains(@class,'lfr-layout-structure-item-collection')])[1]//*[contains(@data-lfr-editable-id,'element-text')][normalize-space()='${title}']");
 			}
 		}
 
 		task ("View the name of associated categories are shown in the second module") {
-			var n = 1;
-
-			for (var title : list "Category Name 1,Category Name 2,Category Name 3,Category Name 1,Category Name 2,Category Name 1") {
-				ContentPages.viewFragmentText(
-					fragmentName = "button",
-					id = "link",
-					position = ${n},
-					text = ${title});
-
-				var n = ${n} + 1;
+			for (var n : list "1,2,3") {
+				AssertVisible(locator1 = "xpath=((//div[contains(@class,'lfr-layout-structure-item-collection')])[2]//*[contains(@data-lfr-editable-id,'link')][normalize-space()='Category Name 1'])[${n}]");
 			}
+
+			for (var n : list "1,2") {
+				AssertVisible(locator1 = "xpath=((//div[contains(@class,'lfr-layout-structure-item-collection')])[2]//*[contains(@data-lfr-editable-id,'link')][normalize-space()='Category Name 2'])[${n}]");
+			}
+
+			AssertVisible(locator1 = "xpath=(//div[contains(@class,'lfr-layout-structure-item-collection')])[2]//*[contains(@data-lfr-editable-id,'link')][normalize-space()='Category Name 3']");
 		}
 	}
 
@@ -602,7 +542,7 @@ definition {
 			for (var title : list "Document Title,Blogs Entry Title,Web Content Title") {
 				AssertTextEquals(
 					key_colPosition = 1,
-					key_element = "//div[@aria-label='Heading']//*[contains(@data-lfr-editable-id,'element-text')]",
+					key_element = "//div[@data-name='Heading']//*[contains(@data-lfr-editable-id,'element-text')]",
 					key_fragmentName = "Collection Display",
 					key_rowPosition = ${n},
 					locator1 = "PageEditor#COLLECTION_CELL_NESTED_ELEMENT",
@@ -618,7 +558,7 @@ definition {
 			for (var title : list "Blogs Entry Title,Web Content Title") {
 				AssertTextEquals(
 					key_colPosition = 1,
-					key_element = "//div[contains(@class,'row')][${n}]//div[@aria-label='Button']//*[contains(@data-lfr-editable-id,'link')]",
+					key_element = "//div[contains(@class,'row')][${n}]//div[@data-name='Button']//*[contains(@data-lfr-editable-id,'link')]",
 					key_fragmentName = "Collection Display",
 					key_rowPosition = 1,
 					locator1 = "PageEditor#COLLECTION_CELL_NESTED_ELEMENT",
@@ -632,7 +572,7 @@ definition {
 			for (var title : list "Document Title,Web Content Title") {
 				AssertTextEquals(
 					key_colPosition = 1,
-					key_element = "//div[contains(@class,'row')][${n}]//div[@aria-label='Button']//*[contains(@data-lfr-editable-id,'link')]",
+					key_element = "//div[contains(@class,'row')][${n}]//div[@data-name='Button']//*[contains(@data-lfr-editable-id,'link')]",
 					key_fragmentName = "Collection Display",
 					key_rowPosition = 2,
 					locator1 = "PageEditor#COLLECTION_CELL_NESTED_ELEMENT",
@@ -646,7 +586,7 @@ definition {
 			for (var title : list "Document Title,Blogs Entry Title") {
 				AssertTextEquals(
 					key_colPosition = 1,
-					key_element = "//div[contains(@class,'row')][${n}]//div[@aria-label='Button']//*[contains(@data-lfr-editable-id,'link')]",
+					key_element = "//div[contains(@class,'row')][${n}]//div[@data-name='Button']//*[contains(@data-lfr-editable-id,'link')]",
 					key_fragmentName = "Collection Display",
 					key_rowPosition = 3,
 					locator1 = "PageEditor#COLLECTION_CELL_NESTED_ELEMENT",
@@ -696,11 +636,13 @@ definition {
 	@description = "This is a use case for LPS-127024. The user can add a Collection Display with Related Assets into another Collection Display with Items with This Category."
 	@priority = 4
 	test AddCollectionDisplayWithRelatedAssetsToAnotherCollectionDisplayWithItemsWithThisCategory {
+		var groupId = JSONGroupSetter.setGroupId(groupName = "Test Site Name");
+
 		task ("Add a display page template for Category") {
 			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
 				contentType = "Category",
 				displayPageTemplateEntryName = "Display Page Name",
-				groupName = "Test Site Name");
+				groupId = ${groupId});
 		}
 
 		task ("Add a Grid to display page template") {
@@ -795,38 +737,39 @@ definition {
 
 		task ("Add a vocabulary") {
 			JSONCategory.addVocabulary(
-				groupName = "Test Site Name",
+				groupId = ${groupId},
 				title = "Vocabulary Name");
 		}
 
 		task ("Add a category in vocabulary") {
 			var categoryId = JSONCategory.addCategory(
-				groupName = "Test Site Name",
+				groupId = ${groupId},
 				title = "Category Name",
 				vocabularyName = "Vocabulary Name");
 		}
 
-		task ("Add a web content with category") {
-			JSONWebcontent.addWebContent(
-				assetCategoryIds = ${categoryId},
-				content = "Web Content Content",
-				groupName = "Test Site Name",
-				title = "Web Content Title");
-		}
-
 		task ("Add a blogs entry") {
-			HeadlessBlog.addBlogEntry(
+			var entryId = HeadlessBlog.addBlogEntry(
 				content = "Blogs Entry Content",
 				groupName = "Test Site Name",
 				title = "Blogs Entry Title");
 		}
 
 		task ("Add a document entry") {
-			JSONDocument.addFileWithUploadedFile(
+			var fileEntryId = JSONDocument.addFileWithUploadedFile(
 				dmDocumentTitle = "Document Title",
-				groupName = "Test Site Name",
 				mimeType = "image/jpeg",
+				repositoryId = ${groupId},
 				sourceFileName = "Document_1.jpg");
+		}
+
+		task ("Add a web content with category and related assets") {
+			HeadlessWebcontent.addBasicWebContent(
+				assetCategoryIds = ${categoryId},
+				content = "Web Content Content",
+				groupId = ${groupId},
+				relatedContents = "{\"contentType\": \"BlogPosting\", \"id\": ${entryId}},{\"contentType\": \"Document\", \"id\": ${fileEntryId}}",
+				title = "Web Content Title");
 		}
 
 		task ("Select the display page template in category") {
@@ -837,32 +780,6 @@ definition {
 				displayPageName = "Display Page Name",
 				displayPageTemplateType = "Specific",
 				vocabularyName = "Vocabulary Name");
-		}
-
-		task ("Select the web content as related assets in blogs entry") {
-			BlogsNavigator.openBlogsAdmin(siteURLKey = "test-site-name");
-
-			BlogsNavigator.gotoEditCP(entryTitle = "Blogs Entry Title");
-
-			RelatedAssets.selectAsset(
-				assetTitle = "Web Content Title",
-				assetType = "Basic Web Content");
-
-			PortletEntry.publish();
-		}
-
-		task ("Select the web content as related assets in document") {
-			DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "test-site-name");
-
-			LexiconEntry.gotoEntryMenuItem(
-				menuItem = "Edit",
-				rowEntry = "Document Title");
-
-			RelatedAssets.selectAsset(
-				assetTitle = "Web Content Title",
-				assetType = "Basic Web Content");
-
-			PortletEntry.publish();
 		}
 
 		task ("Navigate to associated display page template via View Display Page") {
@@ -883,16 +800,8 @@ definition {
 		}
 
 		task ("View the title of related assets are shown in the second module") {
-			var n = 1;
-
 			for (var title : list "Document Title,Blogs Entry Title") {
-				ContentPages.viewFragmentText(
-					fragmentName = "button",
-					id = "link",
-					position = ${n},
-					text = ${title});
-
-				var n = ${n} + 1;
+				AssertVisible(locator1 = "//*[contains(@data-lfr-editable-id,'link')][normalize-space(text())='${title}']");
 			}
 		}
 	}
@@ -1360,7 +1269,7 @@ definition {
 			AssertElementPresent(
 				key_fieldLabel = "Field",
 				key_groupLabel = "Display Page",
-				key_value = "Display Page URL",
+				key_value = "Default",
 				locator1 = "Select#GROUPED_SELECT_VALUE");
 
 			for (var field : list "All Categories,Topic,Tags") {
@@ -1424,7 +1333,7 @@ definition {
 					locator1 = "Select#GROUPED_SELECT_VALUE");
 			}
 
-			for (var field : list "Display Page URL,Description,Display Date") {
+			for (var field : list "Description,Display Date") {
 				AssertElementPresent(
 					key_fieldLabel = "Field",
 					key_groupLabel = "Configuration",
@@ -1439,6 +1348,12 @@ definition {
 					key_value = ${field},
 					locator1 = "Select#GROUPED_SELECT_VALUE");
 			}
+
+			AssertElementPresent(
+				key_fieldLabel = "Field",
+				key_groupLabel = "Display Page",
+				key_value = "Default",
+				locator1 = "Select#GROUPED_SELECT_VALUE");
 
 			for (var field : list "Reading Time (Simple),Reading Time (Descriptive)") {
 				AssertElementPresent(
@@ -1496,7 +1411,7 @@ definition {
 			AssertElementPresent(
 				key_fieldLabel = "Field",
 				key_groupLabel = "Display Page",
-				key_value = "Display Page URL",
+				key_value = "Default",
 				locator1 = "Select#GROUPED_SELECT_VALUE");
 
 			for (var field : list "All Categories,Topic,Tags") {
@@ -1553,7 +1468,7 @@ definition {
 			AssertElementPresent(
 				key_fieldLabel = "Field",
 				key_groupLabel = "Display Page",
-				key_value = "Display Page URL",
+				key_value = "Default",
 				locator1 = "Select#GROUPED_SELECT_VALUE");
 
 			for (var field : list "All Categories,Topic,Tags") {
@@ -1626,7 +1541,7 @@ definition {
 			AssertElementPresent(
 				key_fieldLabel = "Field",
 				key_groupLabel = "Display Page",
-				key_value = "Display Page URL",
+				key_value = "Default",
 				locator1 = "Select#GROUPED_SELECT_VALUE");
 
 			for (var field : list "All Categories,Topic,Tags") {

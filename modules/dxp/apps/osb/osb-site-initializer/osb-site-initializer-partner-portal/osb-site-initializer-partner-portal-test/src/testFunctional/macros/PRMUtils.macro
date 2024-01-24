@@ -171,7 +171,9 @@ definition {
 
 		ObjectPortlet.selectCustomObject(label = ${objectName});
 
-		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Control Panel > Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Panel Link",
+			optionName = "Object");
 
 		CreateObject.saveObject();
 	}

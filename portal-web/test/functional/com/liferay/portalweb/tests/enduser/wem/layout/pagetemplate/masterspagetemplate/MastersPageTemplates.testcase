@@ -27,17 +27,6 @@ definition {
 		}
 	}
 
-	tearDown {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			JSONGroup.deleteGroupByName(groupName = "Test Site Name");
-		}
-	}
-
 	@description = "This is a test for LPS-102566, LPS-109594, LPS-119634 and LPS-104629. Add a page based on custom master."
 	@priority = 5
 	test AddPageBasedOnCustomMaster {
@@ -110,22 +99,6 @@ definition {
 				locator1 = "PageEditor#FRAGMENT_INHERITED_FROM_CUSTOM_MASTERS",
 				locator2 = "background-color",
 				value1 = "rgba(231, 231, 237, 1)");
-		}
-	}
-
-	@description = "This is a test for LPS-102208. As a master pages administrator I can duplicate a masters template"
-	@priority = 5
-	test CanDuplicateMastersPageTemplate {
-		property portal.acceptance = "true";
-
-		task ("Make a copy of master page template") {
-			MastersPageTemplatesAdmin.gotoMastersEllipsisItem(
-				item = "Make a Copy",
-				masterLayoutName = "Custom Masters Page Template");
-		}
-
-		task ("Assert master page template's name") {
-			MastersPageTemplatesAdmin.viewMastersPresent(masterLayoutName = "Custom Masters Page Template (Copy)");
 		}
 	}
 
@@ -1411,6 +1384,28 @@ definition {
 			for (var portletName : list "Asset Publisher,Web Content Display") {
 				Portlet.viewPG(portletName = ${portletName});
 			}
+		}
+	}
+
+	@description = "This is a test for LPS-102208. As a master pages administrator I can duplicate a masters template"
+	@priority = 5
+	test DuplicateMastersPageTemplate {
+		property portal.acceptance = "true";
+
+		task ("Make a copy of master page template") {
+			MastersPageTemplatesAdmin.gotoMasters(masterLayoutName = "Custom Masters Page Template");
+
+			MastersPageTemplates.publishMaster();
+
+			MastersPageTemplatesAdmin.gotoMastersEllipsisItem(
+				item = "Make a Copy",
+				masterLayoutName = "Custom Masters Page Template");
+
+			MenuItem.click(menuItem = "Master Page");
+		}
+
+		task ("Assert master page template's name") {
+			MastersPageTemplatesAdmin.viewMastersPresent(masterLayoutName = "Custom Masters Page Template (Copy)");
 		}
 	}
 

@@ -2,20 +2,20 @@
 @summary = "Assert that '${locator1}' is available"
 definition {
 
-	function assertElementPresent {
-		selenium.waitForElementPresent();
+	function assertElementPresent(locator1) {
+		selenium.waitForElementPresent(${locator1}, "true");
 
-		selenium.assertElementPresent();
+		selenium.assertElementPresent(${locator1});
 	}
 
-	function assertVisible {
-		selenium.waitForVisible();
+	function assertVisible(locator1) {
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.assertVisible();
+		selenium.assertVisible(${locator1});
 	}
 
-	function pauseAssertVisible {
-		selenium.pause("2000");
+	function pauseAssertVisible() {
+		selenium.pause(2000);
 
 		AssertElementPresent.assertVisible();
 	}

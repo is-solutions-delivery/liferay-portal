@@ -9,6 +9,6 @@
 
 <div>
 	<react:component
-		module="js/Cookies"
+		module="{Cookies} from cookies-sample-web"
 	/>
 </div>

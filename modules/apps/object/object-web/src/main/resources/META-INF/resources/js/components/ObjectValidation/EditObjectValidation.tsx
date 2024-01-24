@@ -12,6 +12,7 @@ import {
 	openToast,
 	saveAndReload,
 } from '@liferay/object-js-components-web';
+import {ILearnResourceContext} from 'frontend-js-components-web';
 import React, {useEffect, useState} from 'react';
 
 import {BasicInfo, BasicInfoProps} from './BasicInfo';
@@ -28,7 +29,7 @@ import {
 interface EditObjectValidationProps {
 	baseResourceURL: string;
 	creationLanguageId: Liferay.Language.Locale;
-	learnResources: ObjectWebLearnResources;
+	learnResources: ILearnResourceContext;
 	objectDefinitionExternalReferenceCode: string;
 	objectDefinitionId: number;
 	objectValidationRuleElements: SidebarCategory[];
@@ -88,6 +89,10 @@ export default function EditObjectValidation({
 	const [customObjectFields, setCustomObjectFields] = useState<ObjectField[]>(
 		[]
 	);
+	const [
+		selectedPartialValidationField,
+		setSelectedPartialValidationField,
+	] = useState<string>();
 	const [
 		showUniqueCompositeKeyAlert,
 		setShowUniqueCompositeKeyAlert,
@@ -192,6 +197,29 @@ export default function EditObjectValidation({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [objectDefinitionId, objectValidationRuleId]);
 
+	useEffect(() => {
+		if (values.objectValidationRuleSettings?.length) {
+			const [
+				partialValidationField,
+			] = values.objectValidationRuleSettings;
+
+			const customObjectField = customObjectFields.find(
+				(currentCustomObjectField) =>
+					currentCustomObjectField.externalReferenceCode ===
+					partialValidationField.value
+			);
+
+			setSelectedPartialValidationField(
+				customObjectField?.externalReferenceCode ?? undefined
+			);
+
+			return;
+		}
+
+		setSelectedPartialValidationField(undefined);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [values.objectValidationRuleSettings]);
+
 	return (
 		<SidePanelForm
 			onSubmit={handleSubmit}
@@ -235,6 +263,9 @@ export default function EditObjectValidation({
 								}
 								objectValidationRuleElements={
 									objectValidationRuleElements
+								}
+								selectedPartialValidationField={
+									selectedPartialValidationField
 								}
 								setShowUniqueCompositeKeyAlert={
 									setShowUniqueCompositeKeyAlert

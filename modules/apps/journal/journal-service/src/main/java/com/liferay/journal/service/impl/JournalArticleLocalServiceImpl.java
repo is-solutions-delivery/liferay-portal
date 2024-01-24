@@ -145,7 +145,6 @@ import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
-import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ImageLocalService;
 import com.liferay.portal.kernel.service.ResourceLocalService;
@@ -1361,7 +1360,9 @@ public class JournalArticleLocalServiceImpl
 
 		// System event
 
-		if (FeatureFlagManagerUtil.isEnabled("LPS-165481")) {
+		if (FeatureFlagManagerUtil.isEnabled(
+				article.getCompanyId(), "LPS-165481")) {
+
 			if (articleResource != null) {
 				_systemEventLocalService.addSystemEvent(
 					0, article.getGroupId(), article.getModelClassName(),
@@ -4194,7 +4195,6 @@ public class JournalArticleLocalServiceImpl
 			trashEntry.getEntryId());
 
 		for (JournalArticle articleVersion : articleVersions) {
-			articleVersion.setExternalReferenceCode(trashArticleId);
 			articleVersion.setArticleId(trashArticleId);
 			articleVersion.setStatus(WorkflowConstants.STATUS_IN_TRASH);
 
@@ -4205,7 +4205,6 @@ public class JournalArticleLocalServiceImpl
 
 		_journalArticleResourcePersistence.update(articleResource);
 
-		article.setExternalReferenceCode(trashArticleId);
 		article.setArticleId(trashArticleId);
 
 		article = journalArticlePersistence.update(article);
@@ -4388,7 +4387,6 @@ public class JournalArticleLocalServiceImpl
 				article.getGroupId(), article.getArticleId());
 
 		for (JournalArticle articleVersion : articleVersions) {
-			articleVersion.setExternalReferenceCode(trashArticleId);
 			articleVersion.setArticleId(trashArticleId);
 
 			articleVersion = journalArticlePersistence.update(articleVersion);
@@ -4398,7 +4396,6 @@ public class JournalArticleLocalServiceImpl
 			}
 		}
 
-		article.setExternalReferenceCode(trashArticleId);
 		article.setArticleId(trashArticleId);
 
 		article = journalArticlePersistence.update(article);
@@ -6230,8 +6227,9 @@ public class JournalArticleLocalServiceImpl
 				article.getGroupId(), portletId, null);
 
 			articleURL = HttpComponentsUtil.addParameter(
-				articleURL, _portal.getPortletNamespace(portletId) + "mvcPath",
-				"/edit_article.jsp");
+				articleURL,
+				_portal.getPortletNamespace(portletId) + "mvcRenderCommandName",
+				"/journal/edit_article");
 
 			articleURL = buildArticleURL(
 				articleURL, article.getGroupId(), article.getFolderId(),
@@ -7821,7 +7819,7 @@ public class JournalArticleLocalServiceImpl
 	private String _getUniqueUrlTitle(
 		long groupId, String articleId, String urlTitle) {
 
-		String copy = _language.get(LocaleUtil.getMostRelevantLocale(), "copy");
+		String copy = _language.get(LocaleUtil.getSiteDefault(), "copy");
 		String prefix = urlTitle;
 		String title = urlTitle;
 
@@ -8107,9 +8105,6 @@ public class JournalArticleLocalServiceImpl
 
 	@Reference
 	private CommentManager _commentManager;
-
-	@Reference
-	private CompanyLocalService _companyLocalService;
 
 	private final Map<Long, Date> _companyPreviousCheckDate =
 		new ConcurrentHashMap<>();

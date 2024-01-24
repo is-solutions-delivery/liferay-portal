@@ -11,6 +11,7 @@ import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
@@ -69,6 +70,12 @@ public class ModifiedFacetDisplayContextBuilderTest
 		).when(
 			_facet
 		).getFacetConfiguration();
+
+		Mockito.doReturn(
+			new SearchContext()
+		).when(
+			_facet
+		).getSearchContext();
 	}
 
 	@Test
@@ -106,7 +113,7 @@ public class ModifiedFacetDisplayContextBuilderTest
 		String to = "2018-01-31";
 
 		TermCollector termCollector = _mockTermCollector(
-			DateRangeFactoryUtil.getRangeString(from, to));
+			DateRangeFactoryUtil.getRangeString(from, to, TimeZoneUtil.GMT));
 
 		int frequency = RandomTestUtil.randomInt();
 
@@ -322,7 +329,7 @@ public class ModifiedFacetDisplayContextBuilderTest
 	}
 
 	protected ModifiedFacetDisplayContextBuilder createDisplayContextBuilder() {
-		return createDisplayContextBuilder("OrderHitsDesc");
+		return createDisplayContextBuilder("rangesConfiguration");
 	}
 
 	protected ModifiedFacetDisplayContextBuilder createDisplayContextBuilder(

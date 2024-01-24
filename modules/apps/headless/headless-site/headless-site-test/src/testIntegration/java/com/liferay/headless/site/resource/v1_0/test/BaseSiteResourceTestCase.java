@@ -25,8 +25,6 @@ import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Company;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -193,6 +191,20 @@ public abstract class BaseSiteResourceTestCase {
 	}
 
 	@Test
+	public void testDeleteSite() throws Exception {
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		Site site = testDeleteSite_addSite();
+
+		assertHttpResponseStatusCode(
+			204, siteResource.deleteSiteHttpResponse(site.getId()));
+	}
+
+	protected Site testDeleteSite_addSite() throws Exception {
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
 	public void testPostSite() throws Exception {
 		Site randomSite = randomSite();
 
@@ -203,6 +215,24 @@ public abstract class BaseSiteResourceTestCase {
 	}
 
 	protected Site testPostSite_addSite(Site site) throws Exception {
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testDeleteSiteByExternalReferenceCode() throws Exception {
+		@SuppressWarnings("PMD.UnusedLocalVariable")
+		Site site = testDeleteSiteByExternalReferenceCode_addSite();
+
+		assertHttpResponseStatusCode(
+			204,
+			siteResource.deleteSiteByExternalReferenceCodeHttpResponse(
+				site.getExternalReferenceCode()));
+	}
+
+	protected Site testDeleteSiteByExternalReferenceCode_addSite()
+		throws Exception {
+
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
 	}
@@ -1085,9 +1115,9 @@ public abstract class BaseSiteResourceTestCase {
 	}
 
 	protected SiteResource siteResource;
-	protected Group irrelevantGroup;
-	protected Company testCompany;
-	protected Group testGroup;
+	protected com.liferay.portal.kernel.model.Group irrelevantGroup;
+	protected com.liferay.portal.kernel.model.Company testCompany;
+	protected com.liferay.portal.kernel.model.Group testGroup;
 
 	protected static class BeanTestUtil {
 

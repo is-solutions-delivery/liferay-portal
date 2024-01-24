@@ -697,9 +697,10 @@ definition {
 
 		FormsAdminNavigator.gotoPublishedForm();
 
-		FormViewBuilder.validatePredefinedSelectFromList(
-			fieldName = "Select from List",
-			fieldValue = "Choose an Option");
+		Click(
+			key_fieldName = "Select from List",
+			key_fieldValue = "Choose an Option",
+			locator1 = "FormViewBuilder#PREDEFINED_VALUE_AT_FORM_SELECTLIST");
 
 		FormFields.viewSelectFromListOption(optionValue = "Option 1");
 
@@ -1444,17 +1445,21 @@ definition {
 			optionName = "Option 2",
 			optionValue = 2);
 
-		FormFields.viewOptionsPositionNotHorizontal(
-			key_text1 = "Option 1",
-			key_text2 = "Option 2");
+		for (var optionValue : list "Option 1,Option 2") {
+			AssertElementNotPresent(
+				key_text = ${optionValue},
+				locator1 = "FormFields#OPTIONS_HORIZONTALY_POSITIONED");
+		}
 
 		Form.gotoAdvancedTab();
 
 		FormFields.enableSwitch(fieldName = "Inline");
 
-		FormFields.viewOptionsPositionHorizontal(
-			key_text1 = "Option 1",
-			key_text2 = "Option 2");
+		for (var optionValue : list "Option 1,Option 2") {
+			AssertElementPresent(
+				key_text = ${optionValue},
+				locator1 = "FormFields#OPTIONS_HORIZONTALY_POSITIONED");
+		}
 
 		Form.save();
 
@@ -1474,9 +1479,11 @@ definition {
 			fieldLabel = "Multiple Selection",
 			fieldName = "Multiple Selection");
 
-		FormFields.viewOptionsPositionHorizontal(
-			key_text1 = "Option 1",
-			key_text2 = "Option 2");
+		for (var optionValue : list "Option 1,Option 2") {
+			AssertElementPresent(
+				key_text = ${optionValue},
+				locator1 = "FormFields#OPTIONS_HORIZONTALY_POSITIONED");
+		}
 
 		Form.save();
 
@@ -1484,9 +1491,11 @@ definition {
 
 		FormsAdminNavigator.gotoPublishedForm();
 
-		FormFields.viewOptionsPositionHorizontal(
-			key_text1 = "Option 1",
-			key_text2 = "Option 2");
+		for (var optionValue : list "Option 1,Option 2") {
+			AssertElementPresent(
+				key_text = ${optionValue},
+				locator1 = "FormFields#OPTIONS_HORIZONTALY_POSITIONED");
+		}
 	}
 
 	@description = "Verify that an Allow Multiple Selections Property persists after being added to a Form via Fieldset"
@@ -1522,6 +1531,11 @@ definition {
 
 		FormFields.enableSwitch(fieldName = "Allow Multiple Selections");
 
+		AssertValue.assertValue(
+			key_fieldName = "Allow Multiple Selections",
+			locator1 = "FormFields#SWITCH",
+			value1 = "true");
+
 		Form.saveElementSet();
 
 		FormsAdmin.addForm();
@@ -1542,7 +1556,10 @@ definition {
 
 		Form.gotoAdvancedTab();
 
-		FormFields.viewSwitchChecked(fieldName = "Allow Multiple Selections");
+		AssertValue.assertValue(
+			key_fieldName = "Allow Multiple Selections",
+			locator1 = "FormFields#SWITCH",
+			value1 = "true");
 
 		Form.save();
 
@@ -1554,7 +1571,17 @@ definition {
 			fieldName = "Select from List",
 			selectOption = "Option 1");
 
-		FormFields.enableCheckbox(fieldName = "Option 2");
+		ClickNoError(locator1 = "FormFields#PORTLET_BODY");
+
+		FormFields.selectSelectOption(
+			fieldName = "Select from List",
+			selectOption = "Option 2");
+
+		ClickNoError(locator1 = "FormFields#PORTLET_BODY");
+
+		Click(
+			key_fieldName = "Select from List",
+			locator1 = "FormFields#SELECT_FIELD");
 
 		for (var option : list "Option 1,Option 2") {
 			FormFields.viewSelectFromListOption(optionValue = ${option});

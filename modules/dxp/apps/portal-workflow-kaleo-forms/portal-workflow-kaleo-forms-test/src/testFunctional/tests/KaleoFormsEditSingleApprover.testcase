@@ -106,24 +106,15 @@ definition {
 		property test.run.type = "single";
 		property test.smtp.server.enabled = "true";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		Role.add(roleTitle = "Reviewer Name");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		Role.add(roleTitle = "Updater Name");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.addCP(
 			userEmailAddress = "user1@liferay.com",
@@ -131,29 +122,20 @@ definition {
 			userLastName = "Creator",
 			userScreenName = "creator");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.editPasswordCP(
 			userEmailAddress = "user1@liferay.com",
 			userScreenName = "creator");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		Role.addAssigneeInKaleoForms(
 			assigneeName = "creator",
 			assigneeType = "Users",
 			roleTitle = "Administrator");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.addCP(
 			userEmailAddress = "user2@liferay.com",
@@ -161,39 +143,27 @@ definition {
 			userLastName = "Reviewer",
 			userScreenName = "reviewer");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.editPasswordCP(
 			userEmailAddress = "user2@liferay.com",
 			userScreenName = "reviewer");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		Role.addAssigneeInKaleoForms(
 			assigneeName = "reviewer",
 			assigneeType = "Users",
 			roleTitle = "Administrator");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		Role.addAssigneeInKaleoForms(
 			assigneeName = "reviewer",
 			assigneeType = "Users",
 			roleTitle = "Reviewer Name");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.addCP(
 			userEmailAddress = "user3@liferay.com",
@@ -201,29 +171,20 @@ definition {
 			userLastName = "Updater",
 			userScreenName = "updater");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.editPasswordCP(
 			userEmailAddress = "user3@liferay.com",
 			userScreenName = "updater");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		Role.addAssigneeInKaleoForms(
 			assigneeName = "updater",
 			assigneeType = "Users",
 			roleTitle = "Administrator");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		Role.addAssigneeInKaleoForms(
 			assigneeName = "updater",
@@ -256,8 +217,6 @@ definition {
 			nodeNotificationsRecipientType = "Role",
 			nodeNotificationsType = "Email",
 			roleTitle = "Reviewer Name");
-
-		//KaleoDesigner.selectNode(nodeNodeLabel = "update");
 
 		KaleoDesigner.editNodeAssignments(
 			nodeAssignmentType = "Role",
@@ -409,97 +368,6 @@ definition {
 		WorkflowAsset.previewViewContent(
 			fieldLabel = "Text",
 			fieldValue = "Test Test");
-	}
-
-	@ignore = "true"
-	@priority = 3
-	test ViewApprovedProcessNotificationWithComments {
-		property ci.retries.disabled = "true";
-		property test.liferay.virtual.instance = "false";
-		property test.run.type = "single";
-
-		Navigator.openURL();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Kaleo Forms Admin");
-
-		KaleoFormsAdmin.editProcess(kfProcessName = "Kaleo Forms Process");
-
-		KaleoFormsAdmin.gotoProgressStep(kfProgressName = "Workflow");
-
-		KaleoFormsAdmin.editWorkflow(
-			workflowDefinitionTitle = "Single Approver",
-			workflowDefinitionTitleEdit = "Edited Workflow Definition");
-
-		KaleoDesigner.selectNodeInKaleoForms(nodeNodeLabel = "review");
-
-		KaleoDesigner.editNodeNotifications(
-			nodeNotificationsDescription = "Review Notification Description",
-			nodeNotificationsExecutionType = "On Exit",
-			nodeNotificationsName = "Review Completed With Comments User Notification",
-			nodeNotificationsRecipientType = "Asset Creator",
-			nodeNotificationsTemplate = '''Submission reviewed. The reviewer left the following: $taskComments.''',
-			nodeNotificationsTemplateLanguage = "Velocity",
-			nodeNotificationsType = "User Notification");
-
-		KaleoFormsAdmin.updateWorkflow();
-
-		KaleoFormsAdmin.chooseWorkflow(
-			edit = "true",
-			kfProcessName = "Kaleo Forms Process",
-			workflowDefinitionTitle = "Edited Workflow Definition");
-
-		KaleoFormsAdmin.next();
-
-		KaleoFormsAdmin.assignForm(
-			kfProcessName = "Kaleo Forms Process",
-			workflowTask = "create");
-
-		KaleoFormsAdmin.chooseForm(kfFormName = "Created Task Form");
-
-		KaleoFormsAdmin.saveProcess(kfProcessName = "Kaleo Forms Process");
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Kaleo Forms Admin");
-
-		KaleoFormsAdmin.viewProcess(kfProcessName = "Kaleo Forms Process");
-
-		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
-
-		Workflow.viewDefaultMyWorkflowTasksCP();
-
-		ProductMenu.gotoPortlet(
-			category = "Content & Data",
-			portlet = "Kaleo Forms Admin");
-
-		KaleoFormsAdmin.submitNewProcess(kfProcessName = "Kaleo Forms Process");
-
-		KaleoFormsAdmin.populateFieldText(
-			fieldName = "Text",
-			kfProcessFieldData = "Test 1");
-
-		KaleoFormsAdmin.saveProcessRecord();
-
-		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
-
-		Workflow.assignToMeTaskByActions(
-			workflowAssetTitle = "Kaleo Forms Process",
-			workflowAssetType = ${workflowAssetType},
-			workflowTask = "Review");
-
-		Workflow.approveTaskByActions(
-			workflowActivityComment = "Process is approved",
-			workflowAssetTitle = "Kaleo Forms Process",
-			workflowAssetType = ${workflowAssetType},
-			workflowTask = "Review");
-
-		Navigator.openURL();
-
-		Navigator.gotoNotifications();
-
-		WorkflowAsset.viewNotification(contentBody = "Submission reviewed. The reviewer left the following: Process is approved.");
 	}
 
 }

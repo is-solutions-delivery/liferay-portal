@@ -21,8 +21,11 @@ import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.MapUtil;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -84,36 +87,8 @@ public class ObjectStateFlowLocalServiceImpl
 		ObjectStateFlow objectStateFlow = _addObjectStateFlow(
 			userId, objectFieldId);
 
-		List<ObjectState> sourceObjectStates = TransformUtil.transform(
-			objectStates,
-			objectState -> {
-				ObjectState sourceObjectState =
-					_objectStateLocalService.addObjectState(
-						userId, objectState.getListTypeEntryId(),
-						objectStateFlow.getObjectStateFlowId());
-
-				sourceObjectState.setObjectStateTransitions(
-					objectState.getObjectStateTransitions());
-
-				return sourceObjectState;
-			});
-
-		for (ObjectState sourceObjectState : sourceObjectStates) {
-			for (ObjectStateTransition objectStateTransition :
-					sourceObjectState.getObjectStateTransitions()) {
-
-				ObjectState targetObjectState =
-					_objectStateLocalService.getObjectStateFlowObjectState(
-						objectStateTransition.
-							getTargetObjectStateListTypeEntryId(),
-						objectStateFlow.getObjectStateFlowId());
-
-				_objectStateTransitionLocalService.addObjectStateTransition(
-					userId, objectStateFlow.getObjectStateFlowId(),
-					sourceObjectState.getObjectStateId(),
-					targetObjectState.getObjectStateId());
-			}
-		}
+		_addObjectStatesAndObjectStateTransitions(
+			userId, objectStateFlow.getObjectStateFlowId(), objectStates);
 
 		_addOrUpdateObjectFieldSetting(
 			userId, objectFieldId, objectStateFlow.getObjectStateFlowId());
@@ -183,6 +158,21 @@ public class ObjectStateFlowLocalServiceImpl
 		return null;
 	}
 
+	@Override
+	public void updateObjectStateFlow(
+			long userId, long objectStateFlowId, List<ObjectState> objectStates)
+		throws PortalException {
+
+		_objectStateTransitionLocalService.
+			deleteObjectStateFlowObjectStateTransitions(objectStateFlowId);
+
+		_objectStateLocalService.deleteObjectStateFlowObjectStates(
+			objectStateFlowId);
+
+		_addObjectStatesAndObjectStateTransitions(
+			userId, objectStateFlowId, objectStates);
+	}
+
 	private ObjectStateFlow _addObjectStateFlow(long userId, long objectFieldId)
 		throws PortalException {
 
@@ -198,6 +188,53 @@ public class ObjectStateFlowLocalServiceImpl
 		objectStateFlow.setObjectFieldId(objectFieldId);
 
 		return objectStateFlowPersistence.update(objectStateFlow);
+	}
+
+	private void _addObjectStatesAndObjectStateTransitions(
+			long userId, long objectStateFlowId, List<ObjectState> objectStates)
+		throws PortalException {
+
+		Map<Long, Long> listTypeEntryIds = new HashMap<>();
+
+		List<ObjectState> sourceObjectStates = TransformUtil.transform(
+			objectStates,
+			objectState -> {
+				ObjectState sourceObjectState =
+					_objectStateLocalService.addObjectState(
+						userId, objectState.getListTypeEntryId(),
+						objectStateFlowId);
+
+				sourceObjectState.setObjectStateTransitions(
+					objectState.getObjectStateTransitions());
+
+				if (objectState.getObjectStateId() != 0) {
+					listTypeEntryIds.put(
+						objectState.getObjectStateId(),
+						objectState.getListTypeEntryId());
+				}
+
+				return sourceObjectState;
+			});
+
+		for (ObjectState sourceObjectState : sourceObjectStates) {
+			for (ObjectStateTransition objectStateTransition :
+					sourceObjectState.getObjectStateTransitions()) {
+
+				ObjectState targetObjectState =
+					_objectStateLocalService.getObjectStateFlowObjectState(
+						MapUtil.getLong(
+							listTypeEntryIds,
+							objectStateTransition.getTargetObjectStateId(),
+							objectStateTransition.
+								getTargetObjectStateListTypeEntryId()),
+						objectStateFlowId);
+
+				_objectStateTransitionLocalService.addObjectStateTransition(
+					userId, objectStateFlowId,
+					sourceObjectState.getObjectStateId(),
+					targetObjectState.getObjectStateId());
+			}
+		}
 	}
 
 	private void _addOrUpdateObjectFieldSetting(

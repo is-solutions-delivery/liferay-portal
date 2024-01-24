@@ -10,40 +10,36 @@ import com.liferay.headless.delivery.dto.v1_0.PageFragmentDropZoneDefinition;
 import com.liferay.layout.util.structure.FragmentDropZoneLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructureItem;
 
-import org.osgi.service.component.annotations.Component;
-
 /**
  * @author Eudaldo Alonso
  */
-@Component(service = LayoutStructureItemMapper.class)
 public class FragmentDropZoneLayoutStructureItemMapper
 	implements LayoutStructureItemMapper {
-
-	@Override
-	public String getClassName() {
-		return FragmentDropZoneLayoutStructureItem.class.getName();
-	}
 
 	@Override
 	public PageElement getPageElement(
 		long groupId, LayoutStructureItem layoutStructureItem,
 		boolean saveInlineContent, boolean saveMappingConfiguration) {
 
-		FragmentDropZoneLayoutStructureItem
-			fragmentDropZoneLayoutStructureItem =
-				(FragmentDropZoneLayoutStructureItem)layoutStructureItem;
-
 		return new PageElement() {
 			{
-				definition = new PageFragmentDropZoneDefinition() {
-					{
-						fragmentDropZoneId =
-							fragmentDropZoneLayoutStructureItem.
-								getFragmentDropZoneId();
-					}
-				};
+				setDefinition(
+					() -> new PageFragmentDropZoneDefinition() {
+						{
+							setFragmentDropZoneId(
+								() -> {
+									FragmentDropZoneLayoutStructureItem
+										fragmentDropZoneLayoutStructureItem =
+											(FragmentDropZoneLayoutStructureItem)
+												layoutStructureItem;
 
-				type = Type.FRAGMENT_DROP_ZONE;
+									return fragmentDropZoneLayoutStructureItem.
+										getFragmentDropZoneId();
+								});
+						}
+					});
+				setId(layoutStructureItem::getItemId);
+				setType(() -> Type.FRAGMENT_DROP_ZONE);
 			}
 		};
 	}

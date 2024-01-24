@@ -37,7 +37,7 @@ public class BookmarksAdminConfigurationAction
 
 	@Override
 	public String getJspPath(HttpServletRequest httpServletRequest) {
-		return "/bookmarks_admin/configuration.jsp";
+		return "/bookmarks_admin/configuration_browse.jsp";
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class BookmarksAdminConfigurationAction
 
 		validateEmail(actionRequest, "emailMessageAdded");
 		validateEmail(actionRequest, "emailMessageUpdated");
-		validateEmailFrom(actionRequest);
+
 		_validateRootFolder(actionRequest);
 
 		super.processAction(portletConfig, actionRequest, actionResponse);

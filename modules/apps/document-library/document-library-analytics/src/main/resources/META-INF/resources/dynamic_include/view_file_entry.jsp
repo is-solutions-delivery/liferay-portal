@@ -11,14 +11,14 @@
 FileEntry fileEntry = (FileEntry)request.getAttribute(WebKeys.DOCUMENT_LIBRARY_FILE_ENTRY);
 %>
 
-<script data-senna-track="temporary" type="text/javascript">
+<aui:script senna="temporary" type="text/javascript">
 	if (window.Analytics) {
 		window.<%= DocumentLibraryAnalyticsConstants.JS_PREFIX %>isViewFileEntry = true;
 	}
-</script>
+</aui:script>
 
-<script>
-	function sendAnalyticsEvent() {
+<aui:script>
+	function <portlet:namespace />sendDocumentPreviewedAnalyticsEvent() {
 		if (window.Analytics) {
 			Analytics.send('documentPreviewed', 'Document', {
 				fileEntryId: '<%= fileEntry.getFileEntryId() %>',
@@ -31,8 +31,11 @@ FileEntry fileEntry = (FileEntry)request.getAttribute(WebKeys.DOCUMENT_LIBRARY_F
 	}
 
 	if (Liferay.SPA && document.readyState === 'complete') {
-		sendAnalyticsEvent();
+		<portlet:namespace />sendDocumentPreviewedAnalyticsEvent();
 	}
 
-	window.addEventListener('load', sendAnalyticsEvent);
-</script>
+	window.addEventListener(
+		'load',
+		<portlet:namespace />sendDocumentPreviewedAnalyticsEvent
+	);
+</aui:script>

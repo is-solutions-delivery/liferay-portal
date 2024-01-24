@@ -6,7 +6,12 @@
 import {format, isValid, parseISO} from 'date-fns';
 
 import {Criteria} from '../../types/Criteria';
-import {CONJUNCTIONS, PropertyType} from './constants';
+import {
+	CONJUNCTIONS,
+	PropertyType,
+	SUPPORTED_OPERATORS,
+	SUPPORTED_PROPERTY_TYPES,
+} from './constants';
 
 const GROUP_ID_NAMESPACE = 'group_';
 
@@ -53,6 +58,10 @@ export function getPluralMessage(
  * Example of returned value: ['group_02', 'group_03']
  */
 export function getChildGroupIds(criteria: Criteria) {
+	if (!criteria?.items) {
+		return [];
+	}
+
 	let childGroupIds: string[] = [];
 
 	if (criteria.items && criteria.items.length) {
@@ -70,18 +79,13 @@ export function getChildGroupIds(criteria: Criteria) {
  * Gets the list of operators for a supported type.
  * Used for displaying the operators available for each criteria row.
  */
-export function getSupportedOperatorsFromType<
-	Operator extends {name: string},
-	PropertyKey extends string
->(
-	operators: Operator[],
-	propertyTypes: Record<PropertyKey, PropertyType>,
-	type: PropertyKey
-) {
-	return operators.filter((operator) => {
-		const validOperators = propertyTypes[type];
+export function getSupportedOperatorsFromType(type: PropertyType) {
+	return SUPPORTED_OPERATORS.filter((operator) => {
+		const validOperators = SUPPORTED_PROPERTY_TYPES[type];
 
-		return validOperators && validOperators.includes(operator.name);
+		return validOperators?.some(
+			(validOperator) => validOperator === operator.name
+		);
 	});
 }
 

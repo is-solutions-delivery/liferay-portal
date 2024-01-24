@@ -2,7 +2,6 @@
 definition {
 
 	property custom.properties = "feature.flag.LPS-164563=true";
-	property portal.acceptance = "true";
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.component.names = "Frontend Data Set";
@@ -43,7 +42,7 @@ definition {
 	}
 
 	@description = "LPS-172396. Confirm that a data set view can be deleted"
-	@priority = 5
+	@priority = 3
 	test AssertNumberOfCharactersExceededInNameField {
 		task ("And Clicking add button") {
 			LexiconEntry.gotoAdd();
@@ -71,7 +70,7 @@ definition {
 	}
 
 	@description = "LPS-172396. Confirm that description field is trunked if exceed 100 characters"
-	@priority = 4
+	@priority = 3
 	test AssertNumberOfCharactersInDescriptionField {
 		task ("When go to add View with name View Test and description with 150 characters") {
 			DataSetAdmin.createDataSetView(
@@ -101,7 +100,7 @@ definition {
 	}
 
 	@description = "LPS-172396. Confirm that field is trunked if exceed 100 characters"
-	@priority = 4
+	@priority = 3
 	test CanAssertNameFieldIsTrunkedIfExceedCharacters {
 		task ("When Clicking add button, and a user types a name that is more than 100 characters until 280 characters, and Filling the description field with 'Test Description', and Clicking Save button") {
 			DataSetAdmin.createDataSetView(
@@ -117,6 +116,8 @@ definition {
 	@description = "LPS-172396. Confirm that the name field is required for creating a view"
 	@priority = 5
 	test CanAssertNameIsRequired {
+		property portal.acceptance = "true";
+
 		task ("When Clicking add button") {
 			LexiconEntry.gotoAdd();
 		}
@@ -139,7 +140,7 @@ definition {
 	}
 
 	@description = "LPS-176189. Confirm that when adding several views, pagination is displayed correctly when placing as 4 items"
-	@priority = 5
+	@priority = 3
 	test CanAssertPagination {
 		task ("And Adding a 6 view called 'View Test 1', 'View Test 2'... and Filling the description field with 'Test Description'") {
 			DataSetAdmin.createFDSViewViaAPI(
@@ -207,6 +208,8 @@ definition {
 	@description = "LPS-176189. Confirm that the data set view deletion is recoverable"
 	@priority = 5
 	test CanCancelDeletionOnCancelButton {
+		property portal.acceptance = "true";
+
 		task ("When Add a new view") {
 			DataSetAdmin.createDataSetView(
 				description = "Description Test",
@@ -263,7 +266,7 @@ definition {
 	}
 
 	@description = "LPS-172396. Confirm that the user can cancel a view criation by clicking on cancel button"
-	@priority = 5
+	@priority = 4
 	test CanCancelViewCreationOnCancelButton {
 		task ("When Add a view with the name 'View Test") {
 			LexiconEntry.gotoAdd();
@@ -289,7 +292,7 @@ definition {
 	}
 
 	@description = "LPS-181572 - Verify if is possible clicks on Data Set View Name and go to datail view page"
-	@priority = 5
+	@priority = 4
 	test CanClickOnCreatedDataViewName {
 		task ("And create a Dataset view") {
 			DataSetAdmin.createDataSetView(
@@ -319,6 +322,8 @@ definition {
 	@description = "LPS-181572 - Verify if is possible clicks on Data Set Test Name and go to view page"
 	@priority = 5
 	test CanClickOnDataSetNameCreated {
+		property portal.acceptance = "true";
+
 		task ("And go to Dataset admin Page") {
 			Navigator.gotoBack();
 		}
@@ -367,6 +372,8 @@ definition {
 	@description = "LPS-172396. Confirm that the user can create a view"
 	@priority = 5
 	test CanCreateView {
+		property portal.acceptance = "true";
+
 		task ("When Filling the name with 'View Test' And Clicking Save button") {
 			DataSetAdmin.createDataSetView(
 				description = "Test Description",
@@ -383,7 +390,7 @@ definition {
 	}
 
 	@description = "LPS-172396. Confirm that The user can create a view with no description"
-	@priority = 4
+	@priority = 3
 	test CanCreateViewWithNoDescription {
 		task ("When Clicking add button, And Filling the name with 'View Test', And Clicking the Save button") {
 			DataSetAdmin.createDataSetView(
@@ -399,6 +406,8 @@ definition {
 	@description = "LPS-176189. Confirm that a data set view can be deleted"
 	@priority = 5
 	test CanDeleteView {
+		property portal.acceptance = "true";
+
 		task ("When Add a new view") {
 			DataSetAdmin.createDataSetView(
 				description = "Description Test",
@@ -421,7 +430,7 @@ definition {
 	}
 
 	@description = "LPS-172396. Assert that the user can edit or delet view"
-	@priority = 5
+	@priority = 3
 	test CanEditOrDeleteView {
 		task ("When go to the View page of the data set created, and click save button") {
 			DataSetAdmin.createDataSetView(
@@ -445,6 +454,8 @@ definition {
 	@description = "LPS-172396. Confirm that the user can edit a view"
 	@priority = 5
 	test CanEditView {
+		property portal.acceptance = "true";
+
 		task ("When go to the View page of the data set created, and click save button") {
 			DataSetAdmin.createDataSetView(
 				description = "Description Test",
@@ -468,6 +479,8 @@ definition {
 	@description = "LPS-181575 - Verify if when users clicks on edit dataset view, they will be sent to the page to edit a dataset view."
 	@priority = 5
 	test CanGoToEditViewPage {
+		property portal.acceptance = "true";
+
 		task ("And a new view") {
 			DataSetAdmin.createDataSetView(
 				description = "Description Test",
@@ -502,6 +515,8 @@ definition {
 	@description = "LPS-181575 - Verify if when the user opens the 3 dots option menu of a Data Set, the “view” action is now called “edit”."
 	@priority = 5
 	test CanGoToViewPage {
+		property portal.acceptance = "true";
+
 		task ("When the user clicks on the data set entry 3 dots option button") {
 			Navigator.gotoBack();
 
@@ -579,8 +594,34 @@ definition {
 		}
 	}
 
+	@description = "LPS-188333 - Verify	if when the user goes to the Details page, there is not save and cancel button"
+	@priority = 3
+	test CanSeeSaveAndCancelButtonOnDetails {
+		task ("And add a new view") {
+			DataSetAdmin.createDataSetView(
+				description = "Description Test",
+				key_name = "View Test");
+		}
+
+		task ("When the user goes to the Details tab") {
+			DataSetAdmin.goToSpecificViewPage(
+				dataSetName = "Data Set Test",
+				key_viewName = "View Test");
+
+			AssertElementPresent(
+				key_title = "Details",
+				locator1 = "Header#H2_TITLE");
+		}
+
+		task ("Then the Save and Cancel button are not present") {
+			AssertElementPresent(locator1 = "Button#CANCEL");
+
+			AssertElementPresent(locator1 = "Button#SAVE");
+		}
+	}
+
 	@description = "LPS-176189. Confirm that the view was really deleted"
-	@priority = 5
+	@priority = 4
 	test CanUpdateNumberOfViews {
 		task ("When Add a new view") {
 			DataSetAdmin.createDataSetView(
@@ -640,7 +681,7 @@ definition {
 	}
 
 	@description = "LPS-181572 - Verify if when user create a new Data Set, the informations will appears corretly"
-	@priority = 3
+	@priority = 4
 	test CanViewCreatedDataSet {
 		task ("When go to Dataset admin Page") {
 			Navigator.gotoBack();
@@ -678,6 +719,8 @@ definition {
 	@description = "LPS-178860 Confirm that the user can view the rest information in the Details tab"
 	@priority = 5
 	test CanViewRestInformation {
+		property portal.acceptance = "true";
+
 		task ("And a new view") {
 			DataSetAdmin.createDataSetView(
 				description = "Test Description",

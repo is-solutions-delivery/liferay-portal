@@ -11,6 +11,7 @@ import com.liferay.object.constants.ObjectFieldSettingConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.definition.util.ObjectDefinitionUtil;
 import com.liferay.object.exception.DuplicateObjectRelationshipException;
+import com.liferay.object.exception.DuplicateObjectRelationshipExternalReferenceCodeException;
 import com.liferay.object.exception.NoSuchObjectRelationshipException;
 import com.liferay.object.exception.ObjectRelationshipDeletionTypeException;
 import com.liferay.object.exception.ObjectRelationshipEdgeException;
@@ -104,16 +105,16 @@ public class ObjectRelationshipLocalServiceImpl
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectRelationship addObjectRelationship(
-			long userId, long objectDefinitionId1, long objectDefinitionId2,
-			long parameterObjectFieldId, String deletionType,
-			Map<Locale, String> labelMap, String name, boolean system,
-			String type)
+			String externalReferenceCode, long userId, long objectDefinitionId1,
+			long objectDefinitionId2, long parameterObjectFieldId,
+			String deletionType, Map<Locale, String> labelMap, String name,
+			boolean system, String type, ObjectField objectField)
 		throws PortalException {
 
 		return _addObjectRelationship(
-			userId, objectDefinitionId1, objectDefinitionId2,
-			parameterObjectFieldId, deletionType, labelMap, name, false, system,
-			type);
+			externalReferenceCode, userId, objectDefinitionId1,
+			objectDefinitionId2, parameterObjectFieldId, deletionType, labelMap,
+			name, false, system, type, objectField);
 	}
 
 	@Override
@@ -513,6 +514,31 @@ public class ObjectRelationshipLocalServiceImpl
 	}
 
 	@Override
+	public ObjectRelationship fetchObjectRelationshipByExternalReferenceCode(
+		String externalReferenceCode, long objectDefinitionId1) {
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionPersistence.fetchByPrimaryKey(objectDefinitionId1);
+
+		if (objectDefinition == null) {
+			return null;
+		}
+
+		return objectRelationshipPersistence.fetchByERC_C_ODI1(
+			externalReferenceCode, objectDefinition.getCompanyId(),
+			objectDefinitionId1);
+	}
+
+	@Override
+	public ObjectRelationship fetchObjectRelationshipByExternalReferenceCode(
+		String externalReferenceCode, long companyId,
+		long objectDefinitionId1) {
+
+		return objectRelationshipPersistence.fetchByERC_C_ODI1(
+			externalReferenceCode, companyId, objectDefinitionId1);
+	}
+
+	@Override
 	public ObjectRelationship fetchObjectRelationshipByObjectDefinitionId(
 		long objectDefinitionId, String name) {
 
@@ -611,6 +637,16 @@ public class ObjectRelationshipLocalServiceImpl
 					objectDefinitionId1, name),
 				noSuchObjectRelationshipException);
 		}
+	}
+
+	@Override
+	public ObjectRelationship getObjectRelationshipByExternalReferenceCode(
+			String externalReferenceCode, long companyId,
+			long objectDefinitionId1)
+		throws PortalException {
+
+		return objectRelationshipPersistence.findByERC_C_ODI1(
+			externalReferenceCode, companyId, objectDefinitionId1);
 	}
 
 	@Override
@@ -752,8 +788,9 @@ public class ObjectRelationshipLocalServiceImpl
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectRelationship updateObjectRelationship(
-			long objectRelationshipId, long parameterObjectFieldId,
-			String deletionType, boolean edge, Map<Locale, String> labelMap)
+			String externalReferenceCode, long objectRelationshipId,
+			long parameterObjectFieldId, String deletionType, boolean edge,
+			Map<Locale, String> labelMap, ObjectField objectField)
 		throws PortalException {
 
 		if (Validator.isNull(deletionType)) {
@@ -772,9 +809,15 @@ public class ObjectRelationshipLocalServiceImpl
 			return objectRelationshipPersistence.update(objectRelationship);
 		}
 
+		_validateExternalReferenceCode(
+			externalReferenceCode, objectRelationshipId,
+			objectRelationship.getCompanyId(),
+			objectRelationship.getObjectDefinitionId1());
+
 		if (objectRelationship.isReverse()) {
-			throw new ObjectRelationshipReverseException(
-				"Reverse object relationships cannot be updated");
+			objectRelationship.setExternalReferenceCode(externalReferenceCode);
+
+			return objectRelationshipPersistence.update(objectRelationship);
 		}
 
 		_validateParameterObjectFieldId(
@@ -786,14 +829,14 @@ public class ObjectRelationshipLocalServiceImpl
 		_validateDeletionType(deletionType, edge);
 		_validateEdge(edge, objectRelationship);
 
-		if (Objects.equals(
-				objectRelationship.getType(),
+		if (objectRelationship.compareType(
 				ObjectRelationshipConstants.TYPE_MANY_TO_MANY)) {
 
 			ObjectRelationship reverseObjectRelationship =
 				fetchReverseObjectRelationship(objectRelationship, true);
 
 			_updateObjectRelationship(
+				reverseObjectRelationship.getExternalReferenceCode(),
 				parameterObjectFieldId, deletionType, false, labelMap,
 				reverseObjectRelationship);
 
@@ -803,10 +846,40 @@ public class ObjectRelationshipLocalServiceImpl
 
 			indexer.reindex(reverseObjectRelationship);
 		}
+		else if ((objectField != null) &&
+				 (objectRelationship.compareType(
+					 ObjectRelationshipConstants.TYPE_ONE_TO_ONE) ||
+				  objectRelationship.compareType(
+					  ObjectRelationshipConstants.TYPE_ONE_TO_MANY))) {
+
+			ObjectField existingObjectField =
+				_objectFieldLocalService.getObjectField(
+					objectRelationship.getObjectFieldId2());
+
+			_objectFieldLocalService.updateObjectField(
+				objectField.getExternalReferenceCode(),
+				existingObjectField.getObjectFieldId(),
+				existingObjectField.getUserId(),
+				existingObjectField.getListTypeDefinitionId(),
+				existingObjectField.getObjectDefinitionId(),
+				existingObjectField.getBusinessType(),
+				existingObjectField.getDBColumnName(),
+				existingObjectField.getDBTableName(),
+				existingObjectField.getDBType(),
+				existingObjectField.isIndexed(),
+				existingObjectField.isIndexedAsKeyword(),
+				existingObjectField.getIndexedLanguageId(),
+				objectField.getLabelMap(), existingObjectField.isLocalized(),
+				existingObjectField.getName(), objectField.getReadOnly(),
+				objectField.getReadOnlyConditionExpression(),
+				objectField.isRequired(), existingObjectField.isState(),
+				existingObjectField.isSystem(),
+				existingObjectField.getObjectFieldSettings());
+		}
 
 		objectRelationship = _updateObjectRelationship(
-			parameterObjectFieldId, deletionType, edge, labelMap,
-			objectRelationship);
+			externalReferenceCode, parameterObjectFieldId, deletionType, edge,
+			labelMap, objectRelationship);
 
 		if ((objectRelationship.getObjectFieldId2() != 0) &&
 			StringUtil.equals(
@@ -826,14 +899,26 @@ public class ObjectRelationshipLocalServiceImpl
 	}
 
 	private ObjectField _addObjectField(
-			User user, Map<Locale, String> labelMap, String name,
+			String externalReferenceCode, User user,
 			ObjectDefinition objectDefinition1,
-			ObjectDefinition objectDefinition2, boolean system, String type)
+			ObjectDefinition objectDefinition2, Map<Locale, String> labelMap,
+			String name, String readOnly, String readOnlyConditionExpression,
+			String relationshipType, boolean required, boolean system)
 		throws PortalException {
+
+		_objectFieldLocalService.validateExternalReferenceCode(
+			externalReferenceCode, 0, objectDefinition2.getCompanyId(),
+			objectDefinition2.getObjectDefinitionId());
+		_objectFieldLocalService.validateReadOnlyAndReadOnlyConditionExpression(
+			ObjectFieldConstants.BUSINESS_TYPE_RELATIONSHIP, readOnly,
+			readOnlyConditionExpression, required);
+		_objectFieldLocalService.validateRequired(
+			0, ObjectFieldConstants.BUSINESS_TYPE_RELATIONSHIP, required);
 
 		ObjectField objectField = _objectFieldPersistence.create(
 			counterLocalService.increment());
 
+		objectField.setExternalReferenceCode(externalReferenceCode);
 		objectField.setCompanyId(user.getCompanyId());
 		objectField.setUserId(user.getUserId());
 		objectField.setUserName(user.getFullName());
@@ -863,10 +948,10 @@ public class ObjectRelationshipLocalServiceImpl
 		objectField.setIndexedLanguageId(null);
 		objectField.setLabelMap(labelMap, LocaleUtil.getSiteDefault());
 		objectField.setName(dbColumnName);
-		objectField.setReadOnly(ObjectFieldConstants.READ_ONLY_FALSE);
-		objectField.setReadOnlyConditionExpression(StringPool.BLANK);
-		objectField.setRelationshipType(type);
-		objectField.setRequired(false);
+		objectField.setReadOnly(readOnly);
+		objectField.setReadOnlyConditionExpression(readOnlyConditionExpression);
+		objectField.setRelationshipType(relationshipType);
+		objectField.setRequired(required);
 
 		objectField = _objectFieldLocalService.updateObjectField(objectField);
 
@@ -887,7 +972,8 @@ public class ObjectRelationshipLocalServiceImpl
 
 		runSQL(
 			DynamicObjectDefinitionTableUtil.getAlterTableAddColumnSQL(
-				dbTableName, objectField.getDBColumnName(), "Long"));
+				dbTableName, objectField.getBusinessType(),
+				objectField.getDBColumnName(), "Long"));
 
 		ObjectDBManagerUtil.createIndexMetadata(
 			_currentConnection.getConnection(
@@ -922,22 +1008,28 @@ public class ObjectRelationshipLocalServiceImpl
 	}
 
 	private ObjectRelationship _addObjectRelationship(
-			long userId, long objectDefinitionId1, long objectDefinitionId2,
-			long parameterObjectFieldId, String deletionType,
-			Map<Locale, String> labelMap, String name, boolean reverse,
-			boolean system, String type)
+			String externalReferenceCode, long userId, long objectDefinitionId1,
+			long objectDefinitionId2, long parameterObjectFieldId,
+			String deletionType, Map<Locale, String> labelMap, String name,
+			boolean reverse, boolean system, String type,
+			ObjectField objectField)
 		throws PortalException {
-
-		ObjectDefinition objectDefinition1 =
-			_objectDefinitionPersistence.findByPrimaryKey(objectDefinitionId1);
 
 		_validateInvokerBundle(
 			"Only allowed bundles can add system object relationships", system);
-		_validateName(objectDefinitionId1, name);
 
+		User user = _userLocalService.getUser(userId);
+
+		_validateExternalReferenceCode(
+			externalReferenceCode, 0L, user.getCompanyId(),
+			objectDefinitionId1);
+
+		ObjectDefinition objectDefinition1 =
+			_objectDefinitionPersistence.findByPrimaryKey(objectDefinitionId1);
 		ObjectDefinition objectDefinition2 =
 			_objectDefinitionPersistence.findByPrimaryKey(objectDefinitionId2);
 
+		_validateName(objectDefinition1, objectDefinition2, name);
 		_validateType(
 			objectDefinition1, objectDefinition2, name, parameterObjectFieldId,
 			type);
@@ -946,12 +1038,10 @@ public class ObjectRelationshipLocalServiceImpl
 			objectRelationshipPersistence.create(
 				counterLocalService.increment());
 
-		User user = _userLocalService.getUser(userId);
-
+		objectRelationship.setExternalReferenceCode(externalReferenceCode);
 		objectRelationship.setCompanyId(user.getCompanyId());
 		objectRelationship.setUserId(user.getUserId());
 		objectRelationship.setUserName(user.getFullName());
-
 		objectRelationship.setObjectDefinitionId1(objectDefinitionId1);
 		objectRelationship.setObjectDefinitionId2(objectDefinitionId2);
 		objectRelationship.setParameterObjectFieldId(parameterObjectFieldId);
@@ -976,9 +1066,28 @@ public class ObjectRelationshipLocalServiceImpl
 			Objects.equals(
 				type, ObjectRelationshipConstants.TYPE_ONE_TO_MANY)) {
 
-			ObjectField objectField = _addObjectField(
-				user, objectRelationship.getLabelMap(), name, objectDefinition1,
-				objectDefinition2, system, type);
+			if (objectField != null) {
+				Map<Locale, String> objectFieldLabelMap =
+					objectField.getLabelMap();
+
+				if (objectFieldLabelMap.isEmpty()) {
+					objectFieldLabelMap = objectRelationship.getLabelMap();
+				}
+
+				objectField = _addObjectField(
+					objectField.getExternalReferenceCode(), user,
+					objectDefinition1, objectDefinition2, objectFieldLabelMap,
+					name, objectField.getReadOnly(),
+					objectField.getReadOnlyConditionExpression(), type,
+					objectField.isRequired(), system);
+			}
+			else {
+				objectField = _addObjectField(
+					null, user, objectDefinition1, objectDefinition2,
+					objectRelationship.getLabelMap(), name,
+					ObjectFieldConstants.READ_ONLY_FALSE, StringPool.BLANK,
+					type, false, system);
+			}
 
 			objectRelationship.setObjectFieldId2(
 				objectField.getObjectFieldId());
@@ -991,9 +1100,9 @@ public class ObjectRelationshipLocalServiceImpl
 				objectDefinition1, objectDefinition2, objectRelationship);
 
 			_addObjectRelationship(
-				userId, objectDefinitionId2, objectDefinitionId1,
+				null, userId, objectDefinitionId2, objectDefinitionId1,
 				parameterObjectFieldId, deletionType, labelMap, name, true,
-				system, type);
+				system, type, objectField);
 
 			return objectRelationshipLocalService.
 				createManyToManyObjectRelationshipTable(
@@ -1108,9 +1217,11 @@ public class ObjectRelationshipLocalServiceImpl
 	}
 
 	private ObjectRelationship _updateObjectRelationship(
-		long parameterObjectFieldId, String deletionType, boolean edge,
-		Map<Locale, String> labelMap, ObjectRelationship objectRelationship) {
+		String externalReferenceCode, long parameterObjectFieldId,
+		String deletionType, boolean edge, Map<Locale, String> labelMap,
+		ObjectRelationship objectRelationship) {
 
+		objectRelationship.setExternalReferenceCode(externalReferenceCode);
 		objectRelationship.setParameterObjectFieldId(parameterObjectFieldId);
 		objectRelationship.setDeletionType(deletionType);
 		objectRelationship.setEdge(edge);
@@ -1174,6 +1285,26 @@ public class ObjectRelationshipLocalServiceImpl
 		}
 	}
 
+	private void _validateExternalReferenceCode(
+		String externalReferenceCode, long objectRelationshipId, long companyId,
+		long objectDefinitionId1) {
+
+		if (Validator.isNull(externalReferenceCode)) {
+			return;
+		}
+
+		ObjectRelationship objectRelationship =
+			objectRelationshipPersistence.fetchByERC_C_ODI1(
+				externalReferenceCode, companyId, objectDefinitionId1);
+
+		if ((objectRelationship != null) &&
+			(objectRelationship.getObjectRelationshipId() !=
+				objectRelationshipId)) {
+
+			throw new DuplicateObjectRelationshipExternalReferenceCodeException();
+		}
+	}
+
 	private void _validateInvokerBundle(String message, boolean system)
 		throws PortalException {
 
@@ -1184,7 +1315,9 @@ public class ObjectRelationshipLocalServiceImpl
 		throw new ObjectRelationshipSystemException(message);
 	}
 
-	private void _validateName(long objectDefinitionId1, String name)
+	private void _validateName(
+			ObjectDefinition objectDefinition1,
+			ObjectDefinition objectDefinition2, String name)
 		throws PortalException {
 
 		if (Validator.isNull(name)) {
@@ -1211,12 +1344,67 @@ public class ObjectRelationshipLocalServiceImpl
 		}
 
 		int count = objectRelationshipPersistence.countByODI1_N(
-			objectDefinitionId1, name);
+			objectDefinition1.getObjectDefinitionId(), name);
 
 		if (count > 0) {
 			throw new DuplicateObjectRelationshipException(
-				"Duplicate name " + name);
+				StringBundler.concat(
+					"There is already an object relationship with this name ",
+					"in the object definition \"",
+					objectDefinition1.getShortName(), "\""));
 		}
+
+		_validateNameObjectFieldName(name, objectDefinition1);
+		_validateNameObjectFieldName(name, objectDefinition2);
+		_validateNameObjectRelationshipName(name, objectDefinition1);
+		_validateNameObjectRelationshipName(name, objectDefinition2);
+	}
+
+	private void _validateNameObjectFieldName(
+			String name, ObjectDefinition objectDefinition)
+		throws PortalException {
+
+		ObjectField objectField = _objectFieldLocalService.fetchObjectField(
+			objectDefinition.getObjectDefinitionId(), name);
+
+		if (objectField == null) {
+			return;
+		}
+
+		throw new ObjectRelationshipNameException(
+			StringBundler.concat(
+				"There is already an object field with this name in the ",
+				"object definition \"", objectDefinition.getShortName(),
+				".\" Object fields and object relationships cannot have the ",
+				"same name."));
+	}
+
+	private void _validateNameObjectRelationshipName(
+			String name, ObjectDefinition objectDefinition)
+		throws PortalException {
+
+		ObjectRelationship objectRelationship =
+			objectRelationshipLocalService.
+				fetchObjectRelationshipByObjectDefinitionId(
+					objectDefinition.getObjectDefinitionId(), name);
+
+		if (objectRelationship == null) {
+			return;
+		}
+
+		if (objectRelationship.getObjectDefinitionId1() !=
+				objectDefinition.getObjectDefinitionId()) {
+
+			objectDefinition = _objectDefinitionPersistence.findByPrimaryKey(
+				objectRelationship.getObjectDefinitionId1());
+		}
+
+		throw new ObjectRelationshipNameException(
+			StringBundler.concat(
+				"There is already an object relationship with this name in ",
+				"the object definition \"", objectDefinition.getShortName(),
+				".\" Parent and child object definitions cannot have the same ",
+				"name."));
 	}
 
 	private void _validateObjectEntryId(

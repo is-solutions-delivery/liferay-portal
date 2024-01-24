@@ -591,6 +591,8 @@ definition {
 
 		Button.clickPublish();
 
+		Alert.viewSuccessMessage();
+
 		ProcessBuilderKaleoDesignerReact.selectTranslationLanguage(key_locale = "pt_BR");
 
 		for (var nodeTypes : list "start,end") {
@@ -606,6 +608,10 @@ definition {
 			connectorLabelEdit = "pt_Start-End Connector");
 
 		ProcessBuilderKaleoDesignerReact.editWorkflowTitle(title = "pt_Workflow Definition");
+
+		Button.clickUpdate();
+
+		Alert.viewSuccessMessageText(successMessage = "Workflow updated successfully.");
 
 		ProcessBuilderKaleoDesignerReact.openTranslationLanguageDropdown();
 
@@ -4031,6 +4037,13 @@ definition {
 		ProcessBuilderKaleoDesignerReact.diagramSourceSwitchView();
 
 		ProcessBuilderKaleoDesignerReact.viewSourceEditor();
+
+		while (IsElementPresent(locator1 = "Home#LOADING_ANIMATION")) {
+
+			// We need this pause to wait for the diagram to fully load. See LPS-201066
+
+			Pause(value1 = 10);
+		}
 
 		ProcessBuilderKaleoDesignerReact.diagramSourceSwitchView();
 

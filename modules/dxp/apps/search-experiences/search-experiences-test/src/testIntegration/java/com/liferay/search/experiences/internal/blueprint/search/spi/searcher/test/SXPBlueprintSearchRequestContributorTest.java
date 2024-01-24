@@ -14,6 +14,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.test.util.ConfigurationTemporarySwapper;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.module.service.Snapshot;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -44,6 +45,7 @@ import com.liferay.search.experiences.service.SXPBlueprintLocalService;
 
 import java.util.Collections;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -110,39 +112,19 @@ public class SXPBlueprintSearchRequestContributorTest {
 				try (ConfigurationTemporarySwapper
 						configurationTemporarySwapper =
 							_getConfigurationTemporarySwapper(
-								"2345", "34.94.32.240", "true")) {
-
-					ReflectionTestUtil.setFieldValue(
-						HttpUtil.class, "_http",
-						_getHttp(
-							JSONUtil.put(
-								"city", "diamond bar"
-							).toString()));
+								"2345", "34.94.32.240", "true");
+					AutoCloseable autoCloseable = _setUpHttp("diamond bar")) {
 
 					_assertSearch("[diamond bar city]", "34.94.32.240", "city");
-				}
-				finally {
-					ReflectionTestUtil.setFieldValue(
-						HttpUtil.class, "_http", _http);
 				}
 
 				try (ConfigurationTemporarySwapper
 						configurationTemporarySwapper =
 							_getConfigurationTemporarySwapper(
-								"2345", "91.233.116.229", "true")) {
-
-					ReflectionTestUtil.setFieldValue(
-						HttpUtil.class, "_http",
-						_getHttp(
-							JSONUtil.put(
-								"city", "walnut"
-							).toString()));
+								"2345", "91.233.116.229", "true");
+					AutoCloseable autoCloseable = _setUpHttp("walnut")) {
 
 					_assertSearch("[walnut city]", "91.233.116.229", "city");
-				}
-				finally {
-					ReflectionTestUtil.setFieldValue(
-						HttpUtil.class, "_http", _http);
 				}
 			});
 	}
@@ -236,8 +218,15 @@ public class SXPBlueprintSearchRequestContributorTest {
 			).build());
 	}
 
-	private Http _getHttp(String urlResponse) {
-		return (Http)ProxyUtil.newProxyInstance(
+	private AutoCloseable _setUpHttp(String cityValue) {
+		Snapshot<Http> snapshot = ReflectionTestUtil.getFieldValue(
+			HttpUtil.class, "_httpSnapshot");
+
+		String urlResponse = JSONUtil.put(
+			"city", cityValue
+		).toString();
+
+		Http http = (Http)ProxyUtil.newProxyInstance(
 			Http.class.getClassLoader(), new Class<?>[] {Http.class},
 			(proxy, method, args) -> {
 				if (!Objects.equals(method.getName(), "URLtoString") ||
@@ -248,6 +237,12 @@ public class SXPBlueprintSearchRequestContributorTest {
 
 				return urlResponse;
 			});
+
+		Supplier<Http> serviceSupplier = ReflectionTestUtil.getAndSetFieldValue(
+			snapshot, "_serviceSupplier", () -> http);
+
+		return () -> ReflectionTestUtil.setFieldValue(
+			snapshot, "_serviceSupplier", serviceSupplier);
 	}
 
 	private void _test(

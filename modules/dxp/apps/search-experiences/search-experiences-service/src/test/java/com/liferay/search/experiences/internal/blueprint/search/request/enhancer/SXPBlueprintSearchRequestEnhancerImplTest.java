@@ -48,9 +48,9 @@ import com.liferay.search.experiences.blueprint.exception.InvalidElementInstance
 import com.liferay.search.experiences.blueprint.exception.InvalidParameterException;
 import com.liferay.search.experiences.blueprint.exception.InvalidQueryEntryException;
 import com.liferay.search.experiences.blueprint.exception.UnresolvedTemplateVariableException;
-import com.liferay.search.experiences.internal.blueprint.parameter.SXPParameterDataCreator;
+import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributor;
+import com.liferay.search.experiences.internal.blueprint.parameter.SXPParameterContributorProviderImpl;
 import com.liferay.search.experiences.internal.blueprint.parameter.contributor.ContextSXPParameterContributor;
-import com.liferay.search.experiences.internal.blueprint.parameter.contributor.SXPParameterContributor;
 import com.liferay.search.experiences.rest.dto.v1_0.AdvancedConfiguration;
 import com.liferay.search.experiences.rest.dto.v1_0.AggregationConfiguration;
 import com.liferay.search.experiences.rest.dto.v1_0.Configuration;
@@ -134,18 +134,20 @@ public class SXPBlueprintSearchRequestEnhancerImplTest {
 
 		Language language = Mockito.mock(Language.class);
 
-		SXPParameterDataCreator sxpParameterDataCreator =
-			new SXPParameterDataCreator();
+		SXPParameterContributorProviderImpl
+			sxpParameterContributorProviderImpl =
+				new SXPParameterContributorProviderImpl();
 
 		ReflectionTestUtil.setFieldValue(
-			sxpParameterDataCreator, "_sxpParameterContributors",
+			sxpParameterContributorProviderImpl, "_sxpParameterContributors",
 			new SXPParameterContributor[] {
 				new ContextSXPParameterContributor(null, language)
 			});
 
 		ReflectionTestUtil.setFieldValue(
-			_sxpBlueprintSearchRequestEnhancerImpl, "_sxpParameterDataCreator",
-			sxpParameterDataCreator);
+			_sxpBlueprintSearchRequestEnhancerImpl,
+			"_sxpParameterContributorProvider",
+			sxpParameterContributorProviderImpl);
 
 		_sxpBlueprintSearchRequestEnhancerImpl.activate();
 

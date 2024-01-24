@@ -1,17 +1,6 @@
-<#assign
-	globalGroupModel = dataFactory.newGlobalGroupModel()
-	guestGroupModel = dataFactory.newGuestGroupModel()
-/>
-
-<#include "guest_user.ftl">
+<#include "sample_user.ftl">
 
 <#include "commerce_groups.ftl">
-
-<@insertGroup _groupModel=globalGroupModel />
-
-<@insertGroup _groupModel=guestGroupModel />
-
-<@insertGroup _groupModel=dataFactory.newUserPersonalSiteGroupModel() />
 
 <#include "asset.ftl">
 
@@ -41,11 +30,11 @@
 	<@insertDLFolder
 		_ddmStructureId=dataFactory.defaultDLDDMStructureId
 		_dlFolderDepth=1
-		_groupId=groupId
+		_groupModel=groupModel
 		_parentDLFolderId=0
 	/>
 
-	<#assign homePageContentLayoutModels = dataFactory.newContentPageLayoutModels(groupId, "welcome") />
+	<#assign homePageContentLayoutModels = dataFactory.newContentPageLayoutModels(groupId, "home") />
 
 	<@insertContentPageLayout
 		_fragmentEntryLinkModels=dataFactory.newFragmentEntryLinkModels(homePageContentLayoutModels)
@@ -59,13 +48,28 @@
 
 	<@insertGroup _groupModel=groupModel />
 
-	${csvFileWriter.write("repository", groupId + ", " + groupModel.name + "\n")}
+	${csvFileWriter.write("repository", virtualHostModel.hostname + "," + groupModel.friendlyURL + "," + groupId + ", " + groupModel.name + "\n")}
 </#list>
 
-<#assign defaultSiteHomePageContentLayoutModels = dataFactory.newContentPageLayoutModels(guestGroupModel.groupId, "welcome") />
+<#assign defaultSiteHomePageContentLayoutModels = dataFactory.newContentPageLayoutModels(guestGroupModel.groupId, "home") />
 
 <@insertContentPageLayout
 	_fragmentEntryLinkModels=dataFactory.newFragmentEntryLinkModels(defaultSiteHomePageContentLayoutModels)
 	_layoutModels=defaultSiteHomePageContentLayoutModels
 	_templateFileName="default-homepage-layout-definition.json"
 />
+
+<#assign
+	searchLayoutModel = dataFactory.newSearchLayoutModel(guestGroupModel.groupId, true)
+	layoutPrototypeModel = dataFactory.newLayoutPrototypeModel(defaultAdminUserModel.userId)
+	searchTemplateGroupModel = dataFactory.newSearchTemplateGroupModel(layoutPrototypeModel.layoutPrototypeId, defaultAdminUserModel.userId)
+	searchGroupLayoutModel = dataFactory.newSearchGroupLayoutModel(searchTemplateGroupModel.groupId, searchLayoutModel)
+/>
+
+<@insertLayout _layoutModel=searchLayoutModel />
+
+<@insertLayout _layoutModel=searchGroupLayoutModel />
+
+${dataFactory.toInsertSQL(layoutPrototypeModel)}
+
+<@insertGroup _groupModel=searchTemplateGroupModel />

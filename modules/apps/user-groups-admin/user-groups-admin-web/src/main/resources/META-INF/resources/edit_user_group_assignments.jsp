@@ -61,10 +61,9 @@ SearchContainer<User> searchContainer = editUserGroupAssignmentsManagementToolba
 	additionalProps="<%= editUserGroupAssignmentsManagementToolbarDisplayContext.getAdditionalProps() %>"
 	clearResultsURL="<%= editUserGroupAssignmentsManagementToolbarDisplayContext.getClearResultsURL() %>"
 	creationMenu="<%= editUserGroupAssignmentsManagementToolbarDisplayContext.getCreationMenu() %>"
-	filterDropdownItems="<%= editUserGroupAssignmentsManagementToolbarDisplayContext.getFilterDropdownItems() %>"
 	itemsTotal="<%= searchContainer.getTotal() %>"
 	orderDropdownItems="<%= editUserGroupAssignmentsManagementToolbarDisplayContext.getOrderByDropdownItems() %>"
-	propsTransformer="js/EditUserGroupAssignmentsManagementToolbarPropsTransformer"
+	propsTransformer="{EditUserGroupAssignmentsManagementToolbarPropsTransformer} from user-groups-admin-web"
 	searchActionURL="<%= editUserGroupAssignmentsManagementToolbarDisplayContext.getSearchActionURL() %>"
 	searchContainerId="users"
 	searchFormName="searchFm"
@@ -126,7 +125,7 @@ SearchContainer<User> searchContainer = editUserGroupAssignmentsManagementToolba
 				<c:when test='<%= displayStyle.equals("icon") %>'>
 					<liferay-ui:search-container-column-text>
 						<clay:user-card
-							propsTransformer="js/UserDropdownDefaultPropsTransformer"
+							propsTransformer="{UserDropdownDefaultPropsTransformer} from user-groups-admin-web"
 							userCard="<%= new UserVerticalCard(renderRequest, renderResponse, userSearchContainer.getRowChecker(), user2) %>"
 						/>
 					</liferay-ui:search-container-column-text>

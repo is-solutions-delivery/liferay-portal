@@ -50,39 +50,51 @@ public class ProductSpecificationDTOConverter
 		CPSpecificationOption cpSpecificationOption =
 			cpDefinitionSpecificationOptionValue.getCPSpecificationOption();
 
-		CPOptionCategory cpOptionCategory =
-			cpSpecificationOption.getCPOptionCategory();
-
 		String languageId = _language.getLanguageId(
 			dtoConverterContext.getLocale());
 
-		ProductSpecification productSpecification = new ProductSpecification() {
+		return new ProductSpecification() {
 			{
-				id =
-					cpDefinitionSpecificationOptionValue.
-						getCPDefinitionSpecificationOptionValueId();
-				optionCategoryId =
-					cpDefinitionSpecificationOptionValue.
-						getCPOptionCategoryId();
-				priority = cpDefinitionSpecificationOptionValue.getPriority();
-				productId = cpDefinition.getCProductId();
-				specificationId =
-					cpSpecificationOption.getCPSpecificationOptionId();
-				specificationKey = cpSpecificationOption.getKey();
-				specificationTitle = cpSpecificationOption.getTitle(languageId);
-				value = cpDefinitionSpecificationOptionValue.getValue(
-					languageId);
+				setId(
+					cpDefinitionSpecificationOptionValue::
+						getCPDefinitionSpecificationOptionValueId);
+				setOptionCategoryId(
+					cpDefinitionSpecificationOptionValue::
+						getCPOptionCategoryId);
+				setPriority(cpDefinitionSpecificationOptionValue::getPriority);
+				setProductId(cpDefinition::getCProductId);
+				setSpecificationGroupKey(
+					() -> {
+						CPOptionCategory cpOptionCategory =
+							cpSpecificationOption.getCPOptionCategory();
+
+						if (cpOptionCategory == null) {
+							return null;
+						}
+
+						return cpOptionCategory.getKey();
+					});
+				setSpecificationGroupTitle(
+					() -> {
+						CPOptionCategory cpOptionCategory =
+							cpSpecificationOption.getCPOptionCategory();
+
+						if (cpOptionCategory == null) {
+							return null;
+						}
+
+						return cpOptionCategory.getTitle(languageId);
+					});
+				setSpecificationId(
+					cpSpecificationOption::getCPSpecificationOptionId);
+				setSpecificationKey(cpSpecificationOption::getKey);
+				setSpecificationTitle(
+					() -> cpSpecificationOption.getTitle(languageId));
+				setValue(
+					() -> cpDefinitionSpecificationOptionValue.getValue(
+						languageId));
 			}
 		};
-
-		if (cpOptionCategory != null) {
-			productSpecification.setSpecificationGroupKey(
-				cpOptionCategory.getKey());
-			productSpecification.setSpecificationGroupTitle(
-				cpOptionCategory.getTitle(languageId));
-		}
-
-		return productSpecification;
 	}
 
 	@Reference

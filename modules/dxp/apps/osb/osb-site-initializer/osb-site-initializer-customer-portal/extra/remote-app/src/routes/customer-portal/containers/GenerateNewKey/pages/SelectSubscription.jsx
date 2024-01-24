@@ -24,11 +24,10 @@ import getDateCustomFormat from '~/common/utils/getDateCustomFormat';
 import {useCustomerPortal} from '../../../context';
 import {has100YearsDifference} from '../../ActivationKeysTable/utils';
 import GenerateNewKeySkeleton from '../Skeleton';
-import {getLicenseKeyEndDatesByLicenseType} from '../utils/licenseKeyEndDateUtil';
+import {getLicenseKeyEndDatesByLicenseType} from '../utils/licenseKeyEndDate';
 
 const SelectSubscription = ({
 	accountKey,
-	deactivateKeysConfirm,
 	hasKeyComplimentary,
 	infoSelectedKey,
 	productGroupName,
@@ -52,6 +51,10 @@ const SelectSubscription = ({
 
 	const navigate = useNavigate();
 	const {state} = useLocation();
+	const [
+		availableActivationKeysTotal,
+		setAvailableActivationKeysTotal,
+	] = useState();
 
 	useEffect(() => {
 		const fetchGenerateFormData = async () => {
@@ -189,14 +192,23 @@ const SelectSubscription = ({
 
 	const productName = [...new Set(productNames)].join(', ');
 
-	const inputDisplayName = productGroupName + ' ' + productName;
+	const selectedProductName = state.activationKeys?.map((item) => {
+		return item.productName;
+	});
+
+	const uniqueSelectedProductName = [...new Set(selectedProductName)].join(
+		', '
+	);
 
 	const productKey = typesProduct?.find(
 		(item) =>
 			item.licenseEntryDisplayName
 				.toLowerCase()
 				.replace(/[- ]+/g, '-') ===
-			inputDisplayName.toString().toLowerCase().replace(/[- ]+/g, '-')
+			uniqueSelectedProductName
+				.toString()
+				.toLowerCase()
+				.replace(/[- ]+/g, '-')
 	)?.productKey;
 
 	const mockedValuesForComplimentaryKeysOfTheSelectedKeys = useMemo(() => {
@@ -271,13 +283,13 @@ const SelectSubscription = ({
 		const licenseEntryType =
 			licenseEntryTypes?.includes('virtual-cluster') ||
 			licenseEntryTypes?.includes('oem') ||
-			licenseEntryTypes?.includes('Enterprise');
+			licenseEntryTypes?.includes('enterprise');
 
 		const selectedProductNames = [...new Set(licenseEntryTypes)]
 			.join(', ')
 			.toLowerCase();
 
-		const selectedProductName = selectedSubscription.licenseKeyEndDates.find(
+		const selectedProductName = selectedSubscription?.licenseKeyEndDates?.find(
 			(item) => item.licenseEntryType.includes(selectedProductNames)
 		);
 
@@ -362,13 +374,13 @@ const SelectSubscription = ({
 							mutation: patchOrderItemByExternalReferenceCode,
 							variables: {
 								externalReferenceCode:
-									selectedSubscription.productPurchaseKey,
+									selectedSubscription?.productPurchaseKey,
 								orderItem: {
 									customFields: [
 										{
 											customValue: {
 												data:
-													selectedSubscription.provisionedCount +
+													selectedSubscription?.provisionedCount +
 													1,
 											},
 											name: 'provisionedCount',
@@ -410,20 +422,16 @@ const SelectSubscription = ({
 		navigate,
 		provisioningServerAPI,
 		provisioningService,
-		selectedSubscription,
+		selectedSubscription?.instanceSize,
+		selectedSubscription?.licenseKeyEndDates,
+		selectedSubscription?.productKey,
+		selectedSubscription?.productPurchaseKey,
+		selectedSubscription?.provisionedCount,
+		selectedSubscription?.startDate,
 		sessionId,
 		state.activationKeys,
 		urlPreviousPage,
 	]);
-
-	const handleSubmit = async () => {
-		const submitResult = await submitKey();
-
-		if (submitResult) {
-			deactivateKeysConfirm();
-			setIsLoadingGenerateKey(false);
-		}
-	};
 
 	const CustomComplimentaryKeyAlert = () => {
 		return (
@@ -460,15 +468,26 @@ const SelectSubscription = ({
 			);
 		}
 
+		const handleAlertFirstDate = () => {
+			if (subscriptionTerm.perpetual) {
+				return getDateCustomFormat(
+					new Date(),
+					FORMAT_DATE_TYPES.day2DMonthSYearN
+				);
+			}
+
+			return getDateCustomFormat(
+				subscriptionTerm.startDate,
+				FORMAT_DATE_TYPES.day2DMonthSYearN
+			);
+		};
+
 		return (
 			<ClayAlert className="px-4 py-3" displayType="info">
 				<span className="text-paragraph">
 					{hasNotPermanentLicence || doesNotAllowPermanentLicense
 						? i18n.sub('activation-keys-will-be-valid-x-x', [
-								getDateCustomFormat(
-									subscriptionTerm.startDate,
-									FORMAT_DATE_TYPES.day2DMonthSYearN
-								),
+								handleAlertFirstDate(),
 								getDateCustomFormat(
 									getLicenseKeyEndDatesByLicenseType({
 										...infoSelectedKey,
@@ -516,6 +535,9 @@ const SelectSubscription = ({
 					<Button
 						aria-label={i18n.translate('next')}
 						disabled={
+							(state.activationKeys.length >
+								availableActivationKeysTotal &&
+								!hasKeyComplimentary) ||
 							!selectedSubscription ||
 							isLoadingGenerateKey ||
 							!Object.keys(selectedSubscription).length
@@ -523,32 +545,22 @@ const SelectSubscription = ({
 						displayType="primary"
 						isLoading={isLoadingGenerateKey}
 						onClick={() => {
-							if (!hasKeyComplimentary && state.id === 'renew') {
-								handleSubmit();
+							const updatedInfoSelectedKey = {
+								doesNotAllowPermanentLicense,
+								hasNotPermanentLicence,
+								selectedSubscription: {...selectedSubscription},
+							};
 
-								setInfoSelectedKey(
-									(previousInfoSelectedKey) => ({
-										...previousInfoSelectedKey,
-										doesNotAllowPermanentLicense,
-										hasNotPermanentLicence,
-										selectedSubscription: {
-											...selectedSubscription,
-										},
-									})
-								);
+							if (!hasKeyComplimentary && state.id === 'renew') {
+								submitKey();
 							} else {
-								setInfoSelectedKey(
-									(previousInfoSelectedKey) => ({
-										...previousInfoSelectedKey,
-										doesNotAllowPermanentLicense,
-										hasNotPermanentLicence,
-										selectedSubscription: {
-											...selectedSubscription,
-										},
-									})
-								);
 								setStep(hasKeyComplimentary ? 1 : 2);
 							}
+
+							setInfoSelectedKey((previousInfoSelectedKey) => ({
+								...previousInfoSelectedKey,
+								...updatedInfoSelectedKey,
+							}));
 						}}
 					>
 						{!hasKeyComplimentary && state.id === 'renew'
@@ -693,8 +705,9 @@ const SelectSubscription = ({
 						{subscriptionTerms
 							?.filter((subscriptionTerm) => {
 								return (
-									new Date() <
-										new Date(subscriptionTerm.endDate) &&
+									(new Date() <
+										new Date(subscriptionTerm.endDate) ||
+										subscriptionTerm.perpetual) &&
 									subscriptionTerm
 								);
 							})
@@ -729,34 +742,6 @@ const SelectSubscription = ({
 									FORMAT_DATE_TYPES.day2DMonthSYearN
 								)} - ${getDateCustomFormat(
 									subscriptionTerm.endDate,
-									FORMAT_DATE_TYPES.day2DMonthSYearN
-								)}`;
-
-								const activationKeysStartDate = state.activationKeys?.map(
-									(item) => {
-										return item.startDate;
-									}
-								);
-
-								const uniqueVersionOfTheSelectedKey1 = [
-									...new Set(activationKeysStartDate),
-								].join(', ');
-
-								const activationKeysExpirationDate = state.activationKeys?.map(
-									(item) => {
-										return item.expirationDate;
-									}
-								);
-
-								const uniqueVersionOfTheSelectedKey2 = [
-									...new Set(activationKeysExpirationDate),
-								].join(', ');
-
-								const currentStartAndExpirationDate = `${getDateCustomFormat(
-									uniqueVersionOfTheSelectedKey1,
-									FORMAT_DATE_TYPES.day2DMonthSYearN
-								)} - ${getDateCustomFormat(
-									uniqueVersionOfTheSelectedKey2,
 									FORMAT_DATE_TYPES.day2DMonthSYearN
 								)}`;
 
@@ -809,8 +794,8 @@ const SelectSubscription = ({
 										}
 										key={index}
 										label={
-											state.id === 'renew'
-												? currentStartAndExpirationDate
+											subscriptionTerm?.perpetual
+												? i18n.sub('perpetual-duration')
 												: currentStartAndEndDate
 										}
 										onChange={(event) => {
@@ -818,6 +803,9 @@ const SelectSubscription = ({
 												...event.target.value,
 												index,
 											});
+											setAvailableActivationKeysTotal(
+												numberOfActivationKeysAvailable
+											);
 											setInfoSelectedKey(infoSelectedKey);
 											setHasKeyComplimentary(false);
 										}}

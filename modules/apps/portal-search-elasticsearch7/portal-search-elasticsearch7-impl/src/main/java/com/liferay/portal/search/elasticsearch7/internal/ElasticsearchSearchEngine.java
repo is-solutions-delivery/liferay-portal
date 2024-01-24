@@ -5,6 +5,8 @@
 
 package com.liferay.portal.search.elasticsearch7.internal;
 
+import com.liferay.petra.lang.SafeCloseable;
+import com.liferay.petra.lang.ThreadContextClassLoaderUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.events.StartupHelperUtil;
@@ -247,17 +249,21 @@ public class ElasticsearchSearchEngine
 	protected void activate(Map<String, Object> properties) {
 		_elasticsearchConfigurationWrapper.register(this);
 
-		_checkNodeVersions();
+		try (SafeCloseable safeCloseable = ThreadContextClassLoaderUtil.swap(
+				ElasticsearchSearchEngine.class.getClassLoader())) {
 
-		if (StartupHelperUtil.isDBNew()) {
-			for (long companyId : _getIndexedCompanyIds()) {
-				removeCompany(companyId);
+			_checkNodeVersions();
+
+			if (StartupHelperUtil.isDBNew()) {
+				for (long companyId : _getIndexedCompanyIds()) {
+					removeCompany(companyId);
+				}
 			}
+
+			_putTimestampPipeline();
+
+			initialize(CompanyConstants.SYSTEM);
 		}
-
-		_putTimestampPipeline();
-
-		initialize(CompanyConstants.SYSTEM);
 	}
 
 	protected void createBackupRepository() {
@@ -475,7 +481,7 @@ public class ElasticsearchSearchEngine
 			CrossClusterReplicationHelper.class, null, true);
 
 	@Reference
-	private volatile ElasticsearchConfigurationWrapper
+	private ElasticsearchConfigurationWrapper
 		_elasticsearchConfigurationWrapper;
 
 	@Reference

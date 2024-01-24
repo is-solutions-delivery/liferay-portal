@@ -24,7 +24,12 @@ import {hasEndpointDataChanged} from './utils/dataUtils';
 import {deleteData, fetchJSON, postData, updateData} from './utils/fetchUtil';
 
 import '../../css/main.scss';
-import {beginStringWithForwardSlash} from './utils/string';
+import {HTTP_METHODS, RETRIEVE_TYPES, STR_BLANK} from './utils/constants';
+import {
+	beginStringWithForwardSlash,
+	getAllButLastParameterFromPath,
+	getLastParameterFromPath,
+} from './utils/string';
 
 interface EditAPIEndpointProps {
 	apiApplicationBaseURL: string;
@@ -61,7 +66,12 @@ export default function EditAPIEndpoint({
 		{}
 	);
 	const [displayError, setDisplayError] = useState<EndpointDataError>({
+		httpMethod: false,
+		parameter: false,
 		path: false,
+		pathParameter: false,
+		r_requestAPISchemaToAPIEndpoints_c_apiSchemaId: false,
+		retrieveType: false,
 		scope: false,
 	});
 
@@ -87,11 +97,24 @@ export default function EditAPIEndpoint({
 				...(response.description && {
 					description: response.description,
 				}),
-				path: response.path,
+				httpMethod: response.httpMethod,
+				parameter: getLastParameterFromPath(response.path),
+				path: getAllButLastParameterFromPath(response.path),
+				...(response.pathParameter && {
+					pathParameter: response.pathParameter,
+				}),
+				...(response.pathParameterDescription && {
+					pathParameterDescription: response.pathParameterDescription,
+				}),
+				...(response.r_requestAPISchemaToAPIEndpoints_c_apiSchemaId && {
+					r_requestAPISchemaToAPIEndpoints_c_apiSchemaId:
+						response.r_requestAPISchemaToAPIEndpoints_c_apiSchemaId,
+				}),
 				...(response.r_responseAPISchemaToAPIEndpoints_c_apiSchemaId && {
 					r_responseAPISchemaToAPIEndpoints_c_apiSchemaId:
 						response.r_responseAPISchemaToAPIEndpoints_c_apiSchemaId,
 				}),
+				retrieveType: response.retrieveType,
 				scope: response.scope,
 			});
 		});
@@ -99,7 +122,25 @@ export default function EditAPIEndpoint({
 
 	function validateData() {
 		let isDataValid = true;
-		const mandatoryFields = ['path', 'scope'];
+
+		const mandatoryFields = ['httpMethod', 'path', 'retrieveType', 'scope'];
+
+		if (
+			localUIData.httpMethod?.key === HTTP_METHODS.GET &&
+			localUIData.retrieveType?.key === RETRIEVE_TYPES.SINGLE_ELEMENT
+		) {
+			mandatoryFields.push('parameter');
+
+			if (localUIData.r_responseAPISchemaToAPIEndpoints_c_apiSchemaId) {
+				mandatoryFields.push('pathParameter');
+			}
+		}
+
+		if (localUIData.httpMethod?.key === HTTP_METHODS.POST) {
+			mandatoryFields.push(
+				'r_requestAPISchemaToAPIEndpoints_c_apiSchemaId'
+			);
+		}
 
 		if (!Object.keys(localUIData!).length) {
 			const errors = mandatoryFields.reduce(
@@ -141,40 +182,75 @@ export default function EditAPIEndpoint({
 				Object.keys(localUIData).length &&
 				isDataValid
 			) {
-				handleModifyODataFields({
-					deleteSuccessMessage: Liferay.Language.get(
-						'the-filter-was-deleted'
-					),
-					fieldKey: 'Filter',
-					postSuccessMessage: Liferay.Language.get(
-						'the-filter-was-created'
-					),
-					updateSuccessMessage: Liferay.Language.get(
-						'the-filter-was-updated'
-					),
-				});
+				if (
+					localUIData.retrieveType?.key !==
+					RETRIEVE_TYPES.SINGLE_ELEMENT
+				) {
+					handleModifyODataFields({
+						deleteSuccessMessage: Liferay.Language.get(
+							'the-filter-was-deleted'
+						),
+						fieldKey: 'Filter',
+						postSuccessMessage: Liferay.Language.get(
+							'the-filter-was-created'
+						),
+						updateSuccessMessage: Liferay.Language.get(
+							'the-filter-was-updated'
+						),
+					});
 
-				handleModifyODataFields({
-					deleteSuccessMessage: Liferay.Language.get(
-						'the-sort-was-deleted'
-					),
-					fieldKey: 'Sort',
-					postSuccessMessage: Liferay.Language.get(
-						'the-sort-was-created'
-					),
-					updateSuccessMessage: Liferay.Language.get(
-						'the-sort-was-updated'
-					),
-				});
+					handleModifyODataFields({
+						deleteSuccessMessage: Liferay.Language.get(
+							'the-sort-was-deleted'
+						),
+						fieldKey: 'Sort',
+						postSuccessMessage: Liferay.Language.get(
+							'the-sort-was-created'
+						),
+						updateSuccessMessage: Liferay.Language.get(
+							'the-sort-was-updated'
+						),
+					});
+				}
+
+				let parameter: string | undefined = STR_BLANK;
+
+				if (
+					localUIData.httpMethod?.key === HTTP_METHODS.GET &&
+					localUIData.retrieveType?.key ===
+						RETRIEVE_TYPES.SINGLE_ELEMENT
+				) {
+					parameter = localUIData.parameter;
+				}
 
 				updateData<APIEndpointItem>({
 					dataToUpdate: {
 						description: localUIData.description,
 						...(localUIData.path && {
-							path: beginStringWithForwardSlash(localUIData.path),
+							path: beginStringWithForwardSlash(
+								localUIData.path +
+									beginStringWithForwardSlash(parameter)
+							),
 						}),
-						r_responseAPISchemaToAPIEndpoints_c_apiSchemaId:
-							localUIData.r_responseAPISchemaToAPIEndpoints_c_apiSchemaId,
+						httpMethod: {
+							key: localUIData.httpMethod?.key!,
+							name: localUIData.httpMethod?.name!,
+						},
+						pathParameter: localUIData.pathParameter
+							? localUIData.pathParameter
+							: STR_BLANK,
+						pathParameterDescription: localUIData.pathParameterDescription
+							? localUIData.pathParameterDescription
+							: STR_BLANK,
+						...(localUIData.r_requestAPISchemaToAPIEndpoints_c_apiSchemaId && {
+							r_requestAPISchemaToAPIEndpoints_c_apiSchemaId:
+								localUIData.r_requestAPISchemaToAPIEndpoints_c_apiSchemaId,
+						}),
+						...(localUIData.r_responseAPISchemaToAPIEndpoints_c_apiSchemaId && {
+							r_responseAPISchemaToAPIEndpoints_c_apiSchemaId:
+								localUIData.r_responseAPISchemaToAPIEndpoints_c_apiSchemaId,
+						}),
+						retrieveType: localUIData.retrieveType,
 						scope: localUIData.scope,
 					},
 					method: 'PATCH',
@@ -544,7 +620,6 @@ export default function EditAPIEndpoint({
 										basePath={basePath}
 										data={localUIData}
 										displayError={displayError}
-										editMode={true}
 										setData={setLocalUIData}
 									/>
 								</div>
@@ -566,6 +641,7 @@ export default function EditAPIEndpoint({
 											currentAPIApplicationId
 										}
 										data={localUIData}
+										displayError={displayError}
 										schemaAPIURLPath={apiURLPaths.schemas}
 										setData={setLocalUIData}
 									/>

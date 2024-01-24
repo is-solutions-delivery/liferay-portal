@@ -5,11 +5,13 @@
 
 package com.liferay.object.petra.sql.dsl;
 
+import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import java.math.BigDecimal;
 
@@ -30,11 +32,12 @@ public class DynamicObjectDefinitionTableUtil {
 	 *      java.sql.Connection, String, String, String)
 	 */
 	public static String getAlterTableAddColumnSQL(
-		String tableName, String columnName, String dbType) {
+		String tableName, String businessType, String columnName,
+		String dbType) {
 
 		String sql = StringBundler.concat(
 			"alter table ", tableName, " add ", columnName, StringPool.SPACE,
-			getDataType(dbType), getSQLColumnNull(dbType));
+			getDataType(businessType, dbType), getSQLColumnNull(dbType));
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("SQL: " + sql);
@@ -43,8 +46,22 @@ public class DynamicObjectDefinitionTableUtil {
 		return sql;
 	}
 
-	public static String getDataType(String dbType) {
-		return _dataTypes.get(dbType);
+	public static String getDataType(String businessType, String dbType) {
+		String dataType = _dataTypes.get(dbType);
+
+		if (!StringUtil.equals(dataType, "VARCHAR")) {
+			return dataType;
+		}
+
+		int size = 280;
+
+		if (StringUtil.equals(
+				businessType, ObjectFieldConstants.BUSINESS_TYPE_PICKLIST)) {
+
+			size = 75;
+		}
+
+		return StringBundler.concat(dataType, "(", size, ")");
 	}
 
 	public static Class<?> getJavaClass(String dbType) {
@@ -52,14 +69,16 @@ public class DynamicObjectDefinitionTableUtil {
 	}
 
 	public static String getSQLColumnNull(String dbType) {
-		if (dbType.equals("BigDecimal") || dbType.equals("Date") ||
-			dbType.equals("DateTime") || dbType.equals("Double") ||
+		if (dbType.equals("BigDecimal") || dbType.equals("Double") ||
 			dbType.equals("Integer") || dbType.equals("Long")) {
 
-			return " null";
+			return " default 0";
 		}
 		else if (dbType.equals("Boolean")) {
 			return " default FALSE";
+		}
+		else if (dbType.equals("Date") || dbType.equals("DateTime")) {
+			return " null";
 		}
 
 		return StringPool.BLANK;
@@ -91,7 +110,7 @@ public class DynamicObjectDefinitionTableUtil {
 	).put(
 		"Long", "LONG"
 	).put(
-		"String", "VARCHAR(280)"
+		"String", "VARCHAR"
 	).build();
 	private static final Map<String, Class<?>> _javaClasses =
 		HashMapBuilder.<String, Class<?>>put(

@@ -76,7 +76,9 @@ function CheckboxMultiSelect({
 					<div className="autofit-row autofit-row-center">
 						<div className="autofit-col mr-3">
 							<ClayCheckbox
+								aria-label={item.label}
 								checked={isChecked(items, item)}
+								className="invisible"
 								onClick={(event: any) => {
 									event.stopPropagation();
 

@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -52,31 +53,44 @@ public class UiConfiguration implements Serializable {
 	@Schema
 	@Valid
 	public FieldSet[] getFieldSets() {
+		if (_fieldSetsSupplier != null) {
+			fieldSets = _fieldSetsSupplier.get();
+
+			_fieldSetsSupplier = null;
+		}
+
 		return fieldSets;
 	}
 
 	public void setFieldSets(FieldSet[] fieldSets) {
 		this.fieldSets = fieldSets;
+
+		_fieldSetsSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setFieldSets(
 		UnsafeSupplier<FieldSet[], Exception> fieldSetsUnsafeSupplier) {
 
-		try {
-			fieldSets = fieldSetsUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_fieldSetsSupplier = () -> {
+			try {
+				return fieldSetsUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected FieldSet[] fieldSets;
+
+	@JsonIgnore
+	private Supplier<FieldSet[]> _fieldSetsSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -104,6 +118,8 @@ public class UiConfiguration implements Serializable {
 		StringBundler sb = new StringBundler();
 
 		sb.append("{");
+
+		FieldSet[] fieldSets = getFieldSets();
 
 		if (fieldSets != null) {
 			if (sb.length() > 1) {

@@ -389,8 +389,9 @@ definition {
 			ObjectPortlet.viewEntry(entry = "Entry Approved");
 
 			AssertElementPresent(
+				key_entry = "Entry Approved",
 				key_status = "Approved",
-				locator1 = "CommerceEntry#WORKFLOW_STATUS");
+				locator1 = "ObjectPortlet#ENTRY_STATUS");
 		}
 	}
 
@@ -1123,8 +1124,8 @@ definition {
 			Click(locator1 = "ObjectCustomViews#CLEAR_FILTER");
 
 			Click(
-				key_filterLabel = "Value",
-				locator1 = "ObjectCustomViews#SELECT_FILTER_GENERIC");
+				key_labelName = "Value",
+				locator1 = "ObjectAdmin#CLAY_MULTI_SELECT_INPUT");
 
 			for (var filterValueList : list "Approved,Pending") {
 				Click.clickAtNotVisible(
@@ -1521,33 +1522,6 @@ definition {
 		}
 	}
 
-	@description = "LPS-144472 - Verify it is not is possible to create a Default Sort when there isn't column"
-	@priority = 4
-	test CannotCreateDefaultSortWhenNoColumn {
-		ObjectAdmin.addObjectViaAPI(
-			labelName = "Custom Object 152054",
-			objectName = "CustomObject152054",
-			pluralLabelName = "Custom Objects 152054");
-
-		ObjectAdmin.openObjectAdmin();
-
-		ObjectPortlet.selectCustomObject(label = "Custom Object 152054");
-
-		ObjectCustomViews.goToViewsTab();
-
-		ObjectCustomViews.addObjectViewViaUI(viewName = "Custom View 152054");
-
-		ObjectCustomViews.goToViewsDetails(label = "Custom View 152054");
-
-		ObjectCustomViews.goToDefaultSortTab();
-
-		ObjectCustomViews.assertNoColumnPresentInDefaultSort();
-
-		AssertElementPresent(
-			key_text = "Save",
-			locator1 = "Button#ANY_DISABLED");
-	}
-
 	@description = "LPS-135394 - Verify the Name is required when creating a View"
 	@priority = 4
 	test CannotLeaveNameFieldEmpty {
@@ -1745,7 +1719,7 @@ definition {
 	}
 
 	@description = "LPS-135394 - Verify it is possible to search for a column on the Add Columns modal"
-	@priority = 4
+	@priority = 3
 	test CanSearchColumnAddColumnModal {
 		ObjectAdmin.addObjectViaAPI(
 			labelName = "Custom Object 147763",
@@ -1764,7 +1738,7 @@ definition {
 
 		ObjectCustomViews.goToViewsBuilderTab();
 
-		LexiconEntry.gotoAdd();
+		Click(locator1 = "ObjectCustomViews#ADD_COLUMN");
 
 		ObjectCustomViews.searchOnAddColumnModal(columnName = "Author");
 
@@ -1773,35 +1747,6 @@ definition {
 		AssertElementNotPresent(
 			key_columnName = "Create Date",
 			locator1 = "ObjectCustomViews#ADD_COLUMNS_COLUMN_LABEL");
-	}
-
-	@description = "LPS-144472 - Verify it is possible to search columns to a New Default Sort modal"
-	@priority = 4
-	test CanSearchColumnOnNewDefaultSortModal {
-		ObjectAdmin.addObjectViaAPI(
-			labelName = "Custom Object 152063",
-			objectName = "CustomObject152063",
-			pluralLabelName = "Custom Objects 152063");
-
-		ObjectAdmin.openObjectAdmin();
-
-		ObjectPortlet.selectCustomObject(label = "Custom Object 152063");
-
-		ObjectCustomViews.goToViewsTab();
-
-		ObjectCustomViews.addObjectViewViaUI(viewName = "Custom Views");
-
-		ObjectCustomViews.goToViewsDetails(label = "Custom Views");
-
-		ObjectCustomViews.goToViewsBuilderTab();
-
-		ObjectCustomViews.addColumnsViaUI(addColumns = "Author");
-
-		ObjectCustomViews.goToDefaultSortTab();
-
-		ObjectCustomViews.addNewDefaultSort();
-
-		ObjectCustomViews.searchColumnsOnModalDefaultSort(columnName = "Author");
 	}
 
 	@description = "LPS-144472 - Verify it is possible to search columns to Default Sort"
@@ -2989,7 +2934,7 @@ definition {
 
 		ObjectCustomViews.goToViewsBuilderTab();
 
-		LexiconEntry.gotoAdd();
+		Click(locator1 = "ObjectCustomViews#ADD_COLUMN");
 
 		for (var columnOption : list "Author,Create Date,Modified Date,Status,ID") {
 			ObjectCustomViews.assertColumnVisibleOnAddColumnModal(columnOption = ${columnOption});
@@ -3017,40 +2962,6 @@ definition {
 		AssertTextEquals(
 			locator1 = "Message#EMPTY_STATE_INFO",
 			value1 = "No Results Found");
-	}
-
-	@description = "LPS-135394 - Verify the no result message when searching for a column"
-	@ignore = "Test Stub"
-	@priority = 3
-	test NoResultMessageViewBuilder {
-		ObjectAdmin.addObjectViaAPI(
-			labelName = "Custom Object 147761",
-			objectName = "CustomObject147761",
-			pluralLabelName = "Custom Objects 147761");
-
-		ObjectAdmin.openObjectAdmin();
-
-		ObjectPortlet.selectCustomObject(label = "Custom Object 147761");
-
-		ObjectCustomViews.goToViewsTab();
-
-		ObjectCustomViews.addObjectViewViaUI(viewName = "Custom Views");
-
-		ObjectCustomViews.goToViewsDetails(label = "Custom Views");
-
-		ObjectCustomViews.goToViewsBuilderTab();
-
-		ObjectCustomViews.addColumnsViaUI(addColumns = "Author");
-
-		ObjectCustomViews.searchOnViewBuilder(columnName = "Teste");
-
-		AssertElementPresent(
-			key_text = "No Results Found",
-			locator1 = "ObjectCustomViews#VIEW_BUILDER_EMPTY_STATE_TEXT");
-
-		AssertElementPresent(
-			key_text = "Sorry, no results were found.",
-			locator1 = "ObjectCustomViews#VIEW_BUILDER_EMPTY_STATE_TEXT");
 	}
 
 }

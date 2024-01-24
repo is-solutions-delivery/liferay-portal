@@ -30,10 +30,6 @@ definition {
 			ACUtils.createBlogsAndAddToPage();
 		}
 
-		task ("Connect the DXP to AC") {
-			ACDXPSettings.connectDXPtoAnalyticsCloud(siteName = "Site Name");
-		}
-
 		task ("Add 3 more new users") {
 			for (var name : list ${usernameList}) {
 				JSONUser.addUser(
@@ -49,8 +45,8 @@ definition {
 			}
 		}
 
-		task ("Sync the Contact Data") {
-			ACDXPSettings.syncNewContactData();
+		task ("Connect the DXP to AC") {
+			ACDXPSettings.connectDXPtoAnalyticsCloud(siteName = "Site Name");
 		}
 	}
 
@@ -70,9 +66,12 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8523 | Test Summary: Assert segment membership list shows all known individuals"
+	@ignore = "true"
 	@priority = 4
 	test AssertSegmentMembershipListShowsAllKnownIndividuals {
 		property test.run.type = "single";
+
+		// AC Bug ticket: LRAC-14840
 
 		var emailList = "user1@liferay.com,user2@liferay.com,user3@liferay.com";
 		var nameList = "user1 user1,user2 user2,user3 user3";
@@ -122,9 +121,12 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8512 | Test Summary: Segment membership list is searchable"
+	@ignore = "true"
 	@priority = 5
 	test CanSearchMembershipList {
 		property test.run.type = "single";
+
+		// AC Bug ticket: LRAC-14840
 
 		var emailList = "user1@liferay.com,user2@liferay.com,user3@liferay.com";
 		var nameList = "user1 user1,user2 user2,user3 user3";
@@ -344,9 +346,12 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-8513 | Test Summary: Order the Segment Profile Membership List"
+	@ignore = "true"
 	@priority = 3
 	test OrderSegmentProfileMembershipList {
 		property test.run.type = "single";
+
+		// AC Bug ticket: LRAC-14840
 
 		var emailList = "user1@liferay.com,user2@liferay.com,user3@liferay.com";
 		var nameList = "user1 user1,user2 user2,user3 user3";
@@ -465,7 +470,7 @@ definition {
 
 			ACSegments.addSegmentField(segmentField = "givenName");
 
-			ACSegments.selectOperator(operator = "is unknown");
+			ACSegments.selectOperator(operator = "is known");
 		}
 
 		task ("View members of preview segment") {

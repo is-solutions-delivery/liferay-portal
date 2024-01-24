@@ -6,15 +6,15 @@
 package com.liferay.client.extension.type.internal.factory;
 
 import com.liferay.client.extension.exception.ClientExtensionEntryTypeSettingsException;
-import com.liferay.client.extension.model.ClientExtensionEntry;
 import com.liferay.client.extension.type.ThemeFaviconCET;
-import com.liferay.client.extension.type.factory.CETImplFactory;
 import com.liferay.client.extension.type.internal.ThemeFaviconCETImpl;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
+import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.Date;
 import java.util.Properties;
 
 import javax.portlet.PortletRequest;
@@ -23,42 +23,41 @@ import javax.portlet.PortletRequest;
  * @author Iván Zaera Avellón
  */
 public class ThemeFaviconCETImplFactoryImpl
-	implements CETImplFactory<ThemeFaviconCET> {
+	extends BaseCETImplFactoryImpl<ThemeFaviconCET> {
 
-	@Override
-	public ThemeFaviconCET create(ClientExtensionEntry clientExtensionEntry)
-		throws PortalException {
-
-		return new ThemeFaviconCETImpl(clientExtensionEntry);
-	}
-
-	@Override
-	public ThemeFaviconCET create(PortletRequest portletRequest)
-		throws PortalException {
-
-		return new ThemeFaviconCETImpl(portletRequest);
+	public ThemeFaviconCETImplFactoryImpl() {
+		super(ThemeFaviconCET.class);
 	}
 
 	@Override
 	public ThemeFaviconCET create(
-			String baseURL, long companyId, String description,
-			String externalReferenceCode, String name, Properties properties,
-			String sourceCodeURL, UnicodeProperties unicodeProperties)
-		throws PortalException {
+		String baseURL, long companyId, Date createDate, String description,
+		String externalReferenceCode, Date modifiedDate, String name,
+		Properties properties, boolean readOnly, String sourceCodeURL,
+		int status, UnicodeProperties typeSettingsUnicodeProperties) {
 
 		return new ThemeFaviconCETImpl(
-			baseURL, companyId, description, externalReferenceCode, name,
-			properties, sourceCodeURL, unicodeProperties);
+			baseURL, companyId, createDate, description, externalReferenceCode,
+			modifiedDate, name, properties, readOnly, sourceCodeURL, status,
+			typeSettingsUnicodeProperties);
+	}
+
+	@Override
+	public UnicodeProperties getUnicodeProperties(
+		PortletRequest portletRequest) {
+
+		return UnicodePropertiesBuilder.create(
+			true
+		).put(
+			"url", ParamUtil.getString(portletRequest, "url")
+		).build();
 	}
 
 	@Override
 	public void validate(
-			UnicodeProperties newTypeSettingsUnicodeProperties,
-			UnicodeProperties oldTypeSettingsUnicodeProperties)
+			ThemeFaviconCET newThemeFaviconCET,
+			ThemeFaviconCET oldThemeFaviconCET)
 		throws PortalException {
-
-		ThemeFaviconCET newThemeFaviconCET = new ThemeFaviconCETImpl(
-			StringPool.NEW_LINE, newTypeSettingsUnicodeProperties);
 
 		String url = newThemeFaviconCET.getURL();
 

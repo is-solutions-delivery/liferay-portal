@@ -81,7 +81,7 @@ definition {
 
 		CalendarResource.search(searchTerm = "Resource1");
 
-		CalendarResource.viewSearchSummaryResults(searchResults = '''1 Result for "Resource1"''');
+		CalendarResource.viewSearchSummaryResults(searchResults = '''1 Result Found for "Resource1"''');
 
 		CalendarResource.viewResourceName(calendarResourceName = "New Resource1");
 
@@ -201,7 +201,7 @@ definition {
 
 		CalendarResource.search(searchTerm = "Description");
 
-		CalendarResource.viewSearchSummaryResults(searchResults = "1 Result for \"Description\"");
+		CalendarResource.viewSearchSummaryResults(searchResults = "1 Result Found for \"Description\"");
 
 		CalendarResource.viewResourceName(calendarResourceName = "Resource Name");
 
@@ -209,7 +209,7 @@ definition {
 
 		CalendarResource.search(searchTerm = "Test Test");
 
-		CalendarResource.viewSearchSummaryResults(searchResults = "0 Results for \"Test Test\"");
+		CalendarResource.viewSearchSummaryResults(searchResults = "0 Results Found for \"Test Test\"");
 
 		CalendarResource.viewTableEmpty();
 	}
@@ -293,10 +293,7 @@ definition {
 	@description = "This is a use case for LPS-55171."
 	@priority = 3
 	test ViewInactive {
-		ApplicationsMenu.gotoPortlet(
-			category = "Sites",
-			panel = "Control Panel",
-			portlet = "Sites");
+		Site.openSitesAdmin();
 
 		Site.addBlankCP(siteName = "Site Name");
 

@@ -282,8 +282,8 @@ public class ResourceOpenAPIParser {
 	}
 
 	public static String getParameters(
-		List<JavaMethodParameter> javaMethodParameters, OpenAPIYAML openAPIYAML,
-		Operation operation, boolean annotation) {
+		ConfigYAML configYAML, List<JavaMethodParameter> javaMethodParameters,
+		Operation operation, Map<String, Schema> schemas, boolean annotation) {
 
 		StringBuilder sb = new StringBuilder();
 
@@ -292,7 +292,7 @@ public class ResourceOpenAPIParser {
 
 			if (annotation) {
 				parameterAnnotation = _getParameterAnnotation(
-					javaMethodParameter, openAPIYAML, operation);
+					configYAML, javaMethodParameter, operation, schemas);
 			}
 
 			sb.append(
@@ -357,7 +357,12 @@ public class ResourceOpenAPIParser {
 				parentSchemaName = "";
 			}
 
-			if (methodName.equals("post" + parentSchemaName + schemaName)) {
+			if (methodName.equals("post" + parentSchemaName + schemaName) ||
+				methodName.equals(
+					StringBundler.concat(
+						"post", parentSchemaName, "ByExternalReferenceCode",
+						schemaName))) {
+
 				createStrategies.add("INSERT");
 			}
 			else if ((methodName.equals("putByExternalReferenceCode") ||
@@ -686,15 +691,12 @@ public class ResourceOpenAPIParser {
 	}
 
 	private static String _getDefaultValue(
-		OpenAPIYAML openAPIYAML, Schema schema) {
+		ConfigYAML configYAML, Schema schema, Map<String, Schema> schemas) {
 
 		if (schema.getDefault() != null) {
 			return schema.getDefault();
 		}
 		else if (schema.getReference() != null) {
-			Map<String, Schema> schemas = OpenAPIUtil.getAllSchemas(
-				openAPIYAML);
-
 			String referenceName = OpenAPIParserUtil.getReferenceName(
 				schema.getReference());
 
@@ -702,7 +704,7 @@ public class ResourceOpenAPIParser {
 
 			if (referenceSchema == null) {
 				Map<String, Schema> enumSchemas =
-					OpenAPIUtil.getGlobalEnumSchemas(openAPIYAML);
+					OpenAPIUtil.getGlobalEnumSchemas(configYAML, schemas);
 
 				referenceSchema = enumSchemas.get(referenceName);
 			}
@@ -1058,8 +1060,8 @@ public class ResourceOpenAPIParser {
 	}
 
 	private static String _getParameterAnnotation(
-		JavaMethodParameter javaMethodParameter, OpenAPIYAML openAPIYAML,
-		Operation operation) {
+		ConfigYAML configYAML, JavaMethodParameter javaMethodParameter,
+		Operation operation, Map<String, Schema> schemas) {
 
 		List<Parameter> parameters = operation.getParameters();
 
@@ -1109,7 +1111,7 @@ public class ResourceOpenAPIParser {
 			StringBundler sb = new StringBundler(11);
 
 			String defaultValue = _getDefaultValue(
-				openAPIYAML, parameter.getSchema());
+				configYAML, parameter.getSchema(), schemas);
 
 			if (defaultValue != null) {
 				sb.append("@javax.ws.rs.DefaultValue(\"");

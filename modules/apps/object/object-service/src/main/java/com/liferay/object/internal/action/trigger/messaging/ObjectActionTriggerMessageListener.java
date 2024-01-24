@@ -9,6 +9,7 @@ import com.liferay.object.action.engine.ObjectActionEngine;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.messaging.BaseMessageListener;
 import com.liferay.portal.kernel.messaging.Message;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.util.GetterUtil;
 
 /**
@@ -30,8 +31,26 @@ public class ObjectActionTriggerMessageListener extends BaseMessageListener {
 	protected void doReceive(Message message) {
 		_objectActionEngine.executeObjectActions(
 			_className, GetterUtil.getLong(message.get("companyId")),
-			_objectActionTriggerKey, (JSONObject)message.getPayload(),
-			GetterUtil.getLong(message.get("principalName")));
+			_objectActionTriggerKey, () -> (JSONObject)message.getPayload(),
+			_getUserId(message));
+	}
+
+	private long _getUserId(Message message) {
+		long userId = GetterUtil.getLong(message.get("principalName"));
+
+		if (userId != 0L) {
+			return userId;
+		}
+
+		Object object = message.get("permissionChecker");
+
+		if (!(object instanceof PermissionChecker)) {
+			return 0L;
+		}
+
+		PermissionChecker permissionChecker = (PermissionChecker)object;
+
+		return permissionChecker.getUserId();
 	}
 
 	private final String _className;

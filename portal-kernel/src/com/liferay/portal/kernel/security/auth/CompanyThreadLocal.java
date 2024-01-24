@@ -100,18 +100,24 @@ public class CompanyThreadLocal {
 	}
 
 	public static SafeCloseable lock(long companyId) {
-		if (isLocked()) {
-			Long currentCompanyId = _companyId.get();
+		long currentCompanyId = _companyId.get();
 
-			if (companyId == currentCompanyId.longValue()) {
+		if (companyId == currentCompanyId) {
+			if (isLocked()) {
 				return () -> {
 				};
 			}
 
+			_locked.set(true);
+
+			return () -> _locked.set(false);
+		}
+
+		if (isLocked()) {
 			throw new UnsupportedOperationException(
 				StringBundler.concat(
 					"Company ID ", companyId, " and company ID ",
-					currentCompanyId.longValue(), " are different"));
+					currentCompanyId, " are different"));
 		}
 
 		_syncLastDBPartitionSessionState();

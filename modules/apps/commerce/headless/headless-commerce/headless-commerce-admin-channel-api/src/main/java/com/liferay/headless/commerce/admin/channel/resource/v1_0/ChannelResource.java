@@ -48,6 +48,9 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface ChannelResource {
 
+	public Channel getAccountAddressChannelChannel(Long accountAddressChannelId)
+		throws Exception;
+
 	public Page<Channel> getChannelsPage(
 			String search, Filter filter, Pagination pagination, Sort[] sorts)
 		throws Exception;

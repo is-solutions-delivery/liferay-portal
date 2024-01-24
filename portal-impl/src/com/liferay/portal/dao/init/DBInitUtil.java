@@ -7,7 +7,7 @@ package com.liferay.portal.dao.init;
 
 import com.liferay.petra.io.StreamUtil;
 import com.liferay.portal.dao.jdbc.util.DynamicDataSource;
-import com.liferay.portal.db.partition.DBPartitionUtil;
+import com.liferay.portal.db.partition.util.DBPartitionUtil;
 import com.liferay.portal.events.StartupHelperUtil;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
@@ -32,6 +32,8 @@ import java.util.Objects;
 import java.util.Properties;
 
 import javax.sql.DataSource;
+
+import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
 
 /**
  * @author Preston Crary
@@ -62,10 +64,14 @@ public class DBInitUtil {
 		try (Connection connection = _dataSource.getConnection()) {
 			_init(DBManagerUtil.getDB(), connection);
 
+			DBPartitionUtil.checkDatabasePartitionSchemaNamePrefix();
+
 			_dataSource = DBPartitionUtil.wrapDataSource(_dataSource);
 
 			DBPartitionUtil.setDefaultCompanyId(connection);
 		}
+
+		_dataSource = new LazyConnectionDataSourceProxy(_dataSource);
 	}
 
 	private static boolean _checkDefaultRelease(Connection connection) {

@@ -1,11 +1,12 @@
 {
 	"dependencies": {
-		"@clayui/button": "3.100.0",
-		"@clayui/form": "3.104.0",
-		"@clayui/icon": "3.56.0",
-		"@clayui/layout": "3.93.0",
-		"@clayui/link": "3.88.0",
-		"@clayui/loading-indicator": "3.60.0",
+		"@clayui/button": "3.107.0",
+		"@clayui/card": "3.108.0",
+		"@clayui/form": "3.107.0",
+		"@clayui/icon": "3.106.1",
+		"@clayui/layout": "3.106.1",
+		"@clayui/link": "3.106.1",
+		"@clayui/loading-indicator": "3.106.1",
 		"classnames": "2.3.1",
 		"frontend-js-components-web": "*",
 		"frontend-js-web": "*",
@@ -18,5 +19,5 @@
 		"format": "liferay-npm-scripts fix",
 		"test": "liferay-npm-scripts test"
 	},
-	"version": "1.0.11"
+	"version": "1.0.15"
 }

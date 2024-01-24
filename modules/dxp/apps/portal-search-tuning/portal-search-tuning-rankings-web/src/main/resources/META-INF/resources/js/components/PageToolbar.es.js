@@ -9,13 +9,15 @@ import {ManagementToolbar} from 'frontend-js-components-web';
 import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 
+import {STATUS_TYPES} from '../utils/constants.es';
+
 class PageToolbar extends Component {
 	static props = {
-		inactive: PropTypes.bool,
 		onCancel: PropTypes.string.isRequired,
 		onChangeActive: PropTypes.func,
 		onPublish: PropTypes.func.isRequired,
 		onSaveAsDraft: PropTypes.func,
+		status: PropTypes.string.isRequired,
 		submitDisabled: PropTypes.bool,
 	};
 
@@ -25,11 +27,11 @@ class PageToolbar extends Component {
 
 	render() {
 		const {
-			inactive,
 			onCancel,
 			onChangeActive,
 			onPublish,
 			onSaveAsDraft,
+			status,
 			submitDisabled,
 		} = this.props;
 
@@ -38,32 +40,34 @@ class PageToolbar extends Component {
 				aria-label={Liferay.Language.get('save')}
 				className="page-toolbar-root"
 			>
-				<ManagementToolbar.ItemList>
-					<ManagementToolbar.Item>
-						<label
-							className="toggle-switch"
-							htmlFor="active-switch-input"
-						>
-							<input
-								checked={!inactive}
-								className="toggle-switch-check"
-								id="active-switch-input"
-								onChange={onChangeActive}
-								type="checkbox"
-							/>
+				{status !== STATUS_TYPES.NOT_APPLICABLE && (
+					<ManagementToolbar.ItemList>
+						<ManagementToolbar.Item>
+							<label
+								className="toggle-switch"
+								htmlFor="active-switch-input"
+							>
+								<input
+									checked={status === STATUS_TYPES.ACTIVE}
+									className="toggle-switch-check"
+									id="active-switch-input"
+									onChange={onChangeActive}
+									type="checkbox"
+								/>
 
-							<span className="toggle-switch-bar">
-								<span className="toggle-switch-handle"></span>
-							</span>
+								<span className="toggle-switch-bar">
+									<span className="toggle-switch-handle"></span>
+								</span>
 
-							<span className="toggle-switch-text-right">
-								{inactive
-									? Liferay.Language.get('inactive')
-									: Liferay.Language.get('active')}
-							</span>
-						</label>
-					</ManagementToolbar.Item>
-				</ManagementToolbar.ItemList>
+								<span className="toggle-switch-text-right">
+									{status === STATUS_TYPES.ACTIVE
+										? Liferay.Language.get('active')
+										: Liferay.Language.get('inactive')}
+								</span>
+							</label>
+						</ManagementToolbar.Item>
+					</ManagementToolbar.ItemList>
+				)}
 
 				<ManagementToolbar.ItemList expand></ManagementToolbar.ItemList>
 
@@ -78,7 +82,7 @@ class PageToolbar extends Component {
 						</ClayLink>
 					</ManagementToolbar.Item>
 
-					{onSaveAsDraft && (
+					{onSaveAsDraft && status !== STATUS_TYPES.NOT_APPLICABLE && (
 						<ManagementToolbar.Item>
 							<ClayButton
 								displayType="secondary"
@@ -90,16 +94,30 @@ class PageToolbar extends Component {
 						</ManagementToolbar.Item>
 					)}
 
-					<ManagementToolbar.Item>
-						<ClayButton
-							disabled={submitDisabled}
-							onClick={onPublish}
-							small
-							type="submit"
-						>
-							{Liferay.Language.get('save')}
-						</ClayButton>
-					</ManagementToolbar.Item>
+					{status === STATUS_TYPES.NOT_APPLICABLE ? (
+						<ManagementToolbar.Item>
+							<ClayButton
+								className="link-outline-secondary"
+								displayType="secondary"
+								onClick={onPublish}
+								small
+								type="submit"
+							>
+								{Liferay.Language.get('delete')}
+							</ClayButton>
+						</ManagementToolbar.Item>
+					) : (
+						<ManagementToolbar.Item>
+							<ClayButton
+								disabled={submitDisabled}
+								onClick={onPublish}
+								small
+								type="submit"
+							>
+								{Liferay.Language.get('save')}
+							</ClayButton>
+						</ManagementToolbar.Item>
+					)}
 				</ManagementToolbar.ItemList>
 			</ManagementToolbar.Container>
 		);

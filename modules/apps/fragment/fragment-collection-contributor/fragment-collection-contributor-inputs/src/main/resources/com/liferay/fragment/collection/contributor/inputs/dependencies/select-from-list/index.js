@@ -51,25 +51,26 @@ window.addEventListener('scroll', handleWindowResizeOrScroll, {
 
 let lastSearchAbortController = new AbortController();
 let lastSearchQuery = null;
-valueInputElement.value = '';
 
 if (input.value) {
 	const selectedOption = (input.attributes.options || []).find(
 		(option) => option.value === input.value
 	);
 
-	lastSearchQuery = selectedOption.label;
-	valueInputElement.value = selectedOption.label;
+	if (selectedOption) {
+		lastSearchQuery = selectedOption.label.toLowerCase();
+		valueInputElement.value = selectedOption.value;
 
-	const selectedOptionElement = optionListElement.querySelector(
-		'.active.dropdown-item'
-	);
-
-	if (selectedOptionElement) {
-		optionListElement.setAttribute(
-			'aria-activedescendant',
-			selectedOption.id
+		const selectedOptionElement = optionListElement.querySelector(
+			'.active.dropdown-item'
 		);
+
+		if (selectedOptionElement) {
+			optionListElement.setAttribute(
+				'aria-activedescendant',
+				selectedOption.id
+			);
+		}
 	}
 }
 
@@ -391,6 +392,12 @@ function openDropdown() {
 	dropdownElement.classList.replace('d-none', 'show');
 	uiInputElement.setAttribute('aria-expanded', 'true');
 	buttonElement.setAttribute('aria-expanded', 'true');
+
+	const wrapperWidth = `${fragmentElement.getBoundingClientRect().width}px`;
+
+	dropdownElement.style.maxWidth = wrapperWidth;
+	dropdownElement.style.minWidth = wrapperWidth;
+	dropdownElement.style.width = wrapperWidth;
 
 	requestAnimationFrame(() => {
 		handleInputChange();

@@ -198,6 +198,10 @@ public interface KBArticleService extends BaseService {
 		long groupId, long resourcePrimKey, int status);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public KBArticle getLatestKBArticle(long resourcePrimKey)
+		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public KBArticle getLatestKBArticle(long resourcePrimKey, int status)
 		throws PortalException;
 
@@ -233,6 +237,9 @@ public interface KBArticleService extends BaseService {
 	public void moveKBArticle(
 			long resourcePrimKey, long parentResourceClassNameId,
 			long parentResourcePrimKey, double priority)
+		throws PortalException;
+
+	public KBArticle moveKBArticleToTrash(long resourcePrimKey)
 		throws PortalException;
 
 	public KBArticle revertKBArticle(

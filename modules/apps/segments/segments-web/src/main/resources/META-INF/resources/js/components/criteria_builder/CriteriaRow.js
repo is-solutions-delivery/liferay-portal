@@ -8,15 +8,17 @@ import classNames from 'classnames';
 import {fetch} from 'frontend-js-web';
 import {PropTypes} from 'prop-types';
 import React, {useCallback, useContext, useEffect} from 'react';
-import {DragSource as dragSource, DropTarget as dropTarget} from 'react-dnd';
+import {DropTarget as dropTarget} from 'react-dnd';
 
 import ThemeContext from '../../ThemeContext.es';
 import {
-	PROPERTY_TYPES,
-	SUPPORTED_OPERATORS,
-	SUPPORTED_PROPERTY_TYPES,
-} from '../../utils/constants';
-import {DragTypes} from '../../utils/drag-types';
+	POSITIONS,
+	useMovementSource,
+	useMovementTarget,
+} from '../../contexts/KeyboardMovementContext';
+import {PROPERTY_TYPES, SUPPORTED_OPERATORS} from '../../utils/constants';
+import {DragTypes} from '../../utils/dragTypes';
+import getDropZoneElementClassname from '../../utils/getDropZoneElementClassName';
 import {
 	createNewGroup,
 	getSupportedOperatorsFromType,
@@ -89,11 +91,7 @@ function drop(props, monitor) {
 
 	const droppedCriterionValue = value || defaultValue;
 
-	const operators = getSupportedOperatorsFromType(
-		SUPPORTED_OPERATORS,
-		SUPPORTED_PROPERTY_TYPES,
-		type
-	);
+	const operators = getSupportedOperatorsFromType(type);
 
 	const newCriterion = {
 		displayValue,
@@ -122,29 +120,40 @@ function drop(props, monitor) {
 }
 
 /**
- * Passes the required values to the drop target.
- * This method must be called `beginDrag`.
- * @param {Object} props Component's current props
- * @returns {Object} The props to be passed to the drop target.
+ * Gets the selected item object with a `name` and `label` property for a
+ * selection input. If one isn't found, a new object is returned using the
+ * idSelected for name and label.
+ * @param {Array} list The list of objects to search through.
+ * @param {string} idSelected The name to match in each object in the list.
+ * @return {object} An object with a `name`, `label` and `type` property.
  */
-function beginDrag({criterion, groupId, index, propertyKey}) {
-	return {criterion, groupId, index, propertyKey};
+function getSelectedItem(list, idSelected) {
+	const selectedItem = list.find((item) => item.name === idSelected);
+
+	return selectedItem
+		? selectedItem
+		: {
+				label: idSelected,
+				name: idSelected,
+				notFound: true,
+				type: PROPERTY_TYPES.STRING,
+		  };
 }
 
 function CriteriaRow({
 	canDrop,
-	connectDragPreview,
-	connectDragSource,
 	connectDropTarget,
 	criterion = {},
 	dragging,
 	editing = true,
 	entityName,
+	groupId,
 	hover,
 	index,
 	onAdd,
 	onChange,
 	onDelete,
+	propertyKey,
 	renderEmptyValuesErrors = false,
 	supportedProperties = [],
 }) {
@@ -186,7 +195,7 @@ function CriteriaRow({
 	}, [criterion, onChange, themeContext, entityName]);
 
 	useEffect(() => {
-		const _selectedProperty = _getSelectedItem(
+		const _selectedProperty = getSelectedItem(
 			supportedProperties,
 			criterion.propertyName
 		);
@@ -199,27 +208,6 @@ function CriteriaRow({
 			_fetchEntityName();
 		}
 	}, [criterion, supportedProperties, _fetchEntityName]);
-
-	/**
-	 * Gets the selected item object with a `name` and `label` property for a
-	 * selection input. If one isn't found, a new object is returned using the
-	 * idSelected for name and label.
-	 * @param {Array} list The list of objects to search through.
-	 * @param {string} idSelected The name to match in each object in the list.
-	 * @return {object} An object with a `name`, `label` and `type` property.
-	 */
-	const _getSelectedItem = (list, idSelected) => {
-		const selectedItem = list.find((item) => item.name === idSelected);
-
-		return selectedItem
-			? selectedItem
-			: {
-					label: idSelected,
-					name: idSelected,
-					notFound: true,
-					type: PROPERTY_TYPES.STRING,
-			  };
-	};
 
 	const _renderErrorMessages = ({errorOnProperty, unknownEntityError}) => {
 		const errors = [];
@@ -283,12 +271,12 @@ function CriteriaRow({
 
 	const {unknownEntity} = criterion;
 
-	const selectedOperator = _getSelectedItem(
+	const selectedOperator = getSelectedItem(
 		SUPPORTED_OPERATORS,
 		criterion.operatorName
 	);
 
-	const selectedProperty = _getSelectedItem(
+	const selectedProperty = getSelectedItem(
 		supportedProperties,
 		criterion.propertyName
 	);
@@ -323,42 +311,63 @@ function CriteriaRow({
 		});
 	}
 
+	const movementSource = useMovementSource();
+	const movementTarget = useMovementTarget();
+
+	const isKeyboardTarget =
+		movementSource?.propertyKey === propertyKey &&
+		movementTarget?.groupId === groupId &&
+		movementTarget?.index === index &&
+		movementTarget.position === POSITIONS.middle;
+
+	const dropZoneClassName = getDropZoneElementClassname(
+		propertyKey,
+		groupId,
+		index,
+		POSITIONS.middle
+	);
+
 	return (
 		<>
 			{connectDropTarget(
-				connectDragPreview(
-					<div
-						className={classNames('criterion-row-root', {
+				<div
+					className={classNames(
+						'criterion-row-root',
+						dropZoneClassName,
+						{
 							'criterion-row-root-error': error,
 							'criterion-row-root-warning': warning,
 							'dnd-drag': dragging,
-							'dnd-hover': hover && canDrop,
-						})}
-					>
-						{editing ? (
-							<CriteriaRowEditable
-								connectDragSource={connectDragSource}
-								criterion={criterion}
-								error={error}
-								index={index}
-								onAdd={onAdd}
-								onChange={onChange}
-								onDelete={onDelete}
-								renderEmptyValuesErrors={
-									renderEmptyValuesErrors
-								}
-								selectedOperator={selectedOperator}
-								selectedProperty={selectedProperty}
-							/>
-						) : (
-							<CriteriaRowReadable
-								criterion={criterion}
-								selectedOperator={selectedOperator}
-								selectedProperty={selectedProperty}
-							/>
-						)}
-					</div>
-				)
+							'dnd-hover': (hover && canDrop) || isKeyboardTarget,
+						}
+					)}
+				>
+					{editing ? (
+						<CriteriaRowEditable
+							criterion={criterion}
+							error={error}
+							groupId={groupId}
+							index={index}
+							item={getSelectedItem(
+								supportedProperties,
+								criterion.propertyName
+							)}
+							onAdd={onAdd}
+							onChange={onChange}
+							onDelete={onDelete}
+							propertyKey={propertyKey}
+							renderEmptyValuesErrors={renderEmptyValuesErrors}
+							selectedOperator={selectedOperator}
+							selectedProperty={selectedProperty}
+						/>
+					) : (
+						<CriteriaRowReadable
+							criterion={criterion}
+							selectedOperator={selectedOperator}
+							selectedProperty={selectedProperty}
+						/>
+					)}
+				</div>
 			)}
 			{error &&
 				_renderErrorMessages({
@@ -383,7 +392,6 @@ function CriteriaRow({
 CriteriaRow.propTypes = {
 	canDrop: PropTypes.bool,
 	connectDragPreview: PropTypes.func,
-	connectDragSource: PropTypes.func,
 	connectDropTarget: PropTypes.func,
 	criterion: PropTypes.object,
 	dragging: PropTypes.bool,
@@ -402,18 +410,6 @@ CriteriaRow.propTypes = {
 	supportedProperties: PropTypes.array,
 };
 
-const CriteriaRowWithDrag = dragSource(
-	DragTypes.CRITERIA_ROW,
-	{
-		beginDrag,
-	},
-	(connect, monitor) => ({
-		connectDragPreview: connect.dragPreview(),
-		connectDragSource: connect.dragSource(),
-		dragging: monitor.isDragging(),
-	})
-)(CriteriaRow);
-
 export default dropTarget(
 	acceptedDragTypes,
 	{
@@ -425,4 +421,4 @@ export default dropTarget(
 		connectDropTarget: connect.dropTarget(),
 		hover: monitor.isOver(),
 	})
-)(CriteriaRowWithDrag);
+)(CriteriaRow);

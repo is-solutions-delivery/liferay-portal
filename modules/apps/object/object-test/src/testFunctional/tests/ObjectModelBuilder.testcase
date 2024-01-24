@@ -132,6 +132,137 @@ definition {
 		}
 	}
 
+	@description = "LPS-185674 - Verify the user is able to search for a specific object definition in model builder view"
+	@priority = 4
+	test CanSearchForObjectDefinition {
+		task ("Given an user in model builder view") {
+			ObjectModelBuilder.openObjectFolderInModelBuilder();
+		}
+
+		task ("When the user searches for Account") {
+			Search.searchCP(searchTerm = "Account");
+		}
+
+		task ("Then only Account is seen") {
+			for (var objectLabel : list "Postal Address,Commerce Product,Organization,User,Commerce Order,Commerce Product") {
+				AssertElementNotPresent(
+					key_folderLabel = "Default",
+					key_objectLabel = ${objectLabel},
+					locator1 = "ObjectModelBuilder#SELECT_OBJECT_IN_LEFT_SIDEBAR");
+
+				AssertElementPresent(
+					key_folderLabel = "Default",
+					key_objectLabel = "Account",
+					locator1 = "ObjectModelBuilder#SELECT_OBJECT_IN_LEFT_SIDEBAR");
+			}
+		}
+	}
+
+	@description = "LPS-185676 - Verify when the user searches for an object definition, the current object folder is displayed first and other folders are in alphabetical order"
+	@priority = 3
+	test CanSearchForObjectDefinitionWithRelationship {
+		task ("Given an object definition called Employee in the Employee folder") {
+			var employeeFolderERC = JSONObjectFolder.addFolder(
+				folderLabel = "Employee",
+				folderName = "Employee");
+
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Employee",
+				objectName = "Employee",
+				pluralLabelName = "Employees");
+
+			JSONObject.updateObject(
+				configKey = "objectFolderExternalReferenceCode",
+				configValue = ${employeeFolderERC},
+				objectName = "Employee");
+		}
+
+		task ("and Given an object definition called Role in the Role folder") {
+			var roleFolderERC = JSONObjectFolder.addFolder(
+				folderLabel = "Role",
+				folderName = "Role");
+
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Role",
+				objectName = "Role",
+				pluralLabelName = "Roles");
+
+			JSONObject.updateObject(
+				configKey = "objectFolderExternalReferenceCode",
+				configValue = ${roleFolderERC},
+				objectName = "Role");
+		}
+
+		task ("and Given an object definition called Department in the Department folder") {
+			var departmentFolderERC = JSONObjectFolder.addFolder(
+				folderLabel = "Department",
+				folderName = "Department");
+
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Department",
+				objectName = "Department",
+				pluralLabelName = "Departments");
+
+			JSONObject.updateObject(
+				configKey = "objectFolderExternalReferenceCode",
+				configValue = ${departmentFolderERC},
+				objectName = "Department");
+		}
+
+		task ("and Given Employee is related to Role and Department") {
+			ObjectAdmin.addObjectRelationshipViaAPI(
+				objectName_1 = "Employee",
+				objectName_2 = "Role",
+				relationshipLabel = "EmployeeRoles",
+				relationshipName = "employeeRoles",
+				relationshipType = "manyToMany");
+
+			ObjectAdmin.addObjectRelationshipViaAPI(
+				objectName_1 = "Department",
+				objectName_2 = "Employee",
+				relationshipLabel = "DepartmentEmployees",
+				relationshipName = "departmentEmployees",
+				relationshipType = "oneToMany");
+		}
+
+		task ("and Given the user is in the Employee folder") {
+			ObjectModelBuilder.openObjectFolderInModelBuilder(objectFolderName = "Employee");
+		}
+
+		task ("When the user searches for Employee in the side panel") {
+			Search.searchCP(searchTerm = "Employee");
+		}
+
+		task ("Then the Employee folder is displayed as the first result") {
+			AssertElementPresent(
+				key_folderLabel = "Employee",
+				key_index = 1,
+				locator1 = "ObjectModelBuilder#SIDEBAR_FOLDER_BY_INDEX");
+		}
+
+		task ("And Then Department and Role are listed in alphabetical order with Employee listed in them with the link icon") {
+			AssertElementPresent(
+				key_index = 2,
+				locator1 = "ObjectModelBuilder#SIDEBAR_FOLDER_BY_INDEX",
+				value1 = "Department");
+
+			AssertElementPresent(
+				key_folderLabel = "Department",
+				key_objectLabel = "Employee",
+				locator1 = "ObjectModelBuilder#LINKED_OBJECT_IN_OTHER_FOLDERS");
+
+			AssertElementPresent(
+				key_index = 3,
+				locator1 = "ObjectModelBuilder#SIDEBAR_FOLDER_BY_INDEX",
+				value1 = "Role");
+
+			AssertElementPresent(
+				key_folderLabel = "Role",
+				key_objectLabel = "Employee",
+				locator1 = "ObjectModelBuilder#LINKED_OBJECT_IN_OTHER_FOLDERS");
+		}
+	}
+
 	@description = "LPS-185679 - Verify the user can update a field in model builder view"
 	@priority = 5
 	test CanUpdateField {
@@ -181,6 +312,113 @@ definition {
 			AssertElementPresent(
 				key_fieldValue = "Rich Text Field Updated",
 				locator1 = "FormFields#TEXT_FIELD_3");
+		}
+	}
+
+	@description = "LPS-185676 - Verify the object definition cards persist after the relationship is deleted"
+	@priority = 3
+	test CanViewCardAfterRelationshipDeletion {
+		task ("Given a relationship between two object definitions in the same folder") {
+			var objectFolderERC = JSONObjectFolder.addFolder(
+				folderLabel = "Custom Folder 198088",
+				folderName = "CustomFolder198088");
+
+			for (var object : list "981,088") {
+				ObjectAdmin.addObjectViaAPI(
+					labelName = "Custom Object ${object}",
+					objectName = "CustomObject${object}",
+					pluralLabelName = "Custom Objects ${object}");
+
+				JSONObject.updateObject(
+					configKey = "objectFolderExternalReferenceCode",
+					configValue = ${objectFolderERC},
+					objectName = "CustomObject${object}");
+			}
+
+			ObjectAdmin.addObjectRelationshipViaAPI(
+				objectName_1 = "CustomObject981",
+				objectName_2 = "CustomObject088",
+				relationshipLabel = "Relationship",
+				relationshipName = "relationship",
+				relationshipType = "oneToMany");
+		}
+
+		task ("When the user deletes the relationship") {
+			ObjectModelBuilder.openObjectFolderInModelBuilder(objectFolderName = "CustomFolder198088");
+
+			Click(
+				key_connectorLabel = "Relationship",
+				locator1 = "ProcessBuilderKaleoDesignerReact#DIAGRAM_CONNECTOR_LABEL");
+
+			ClickNoError(locator1 = "Button#TRASH_ENABLED");
+
+			Type(
+				locator1 = "ObjectAdmin#PLACEHOLDER_DELETE_RELATIONSHIP",
+				value1 = "relationship");
+
+			Click(locator1 = "Form#SIDEBAR_DELETE_FIELD_MODAL_DELETE_BUTTON");
+		}
+
+		task ("Then the relationship is deleted and the object definition cards persist") {
+			AssertElementNotPresent(
+				key_connectorLabel = "Relationship",
+				locator1 = "ProcessBuilderKaleoDesignerReact#DIAGRAM_CONNECTOR_LABEL");
+
+			AssertElementPresent(
+				locator1 = "ObjectModelBuilder#OBJECT_DEFINITION_NODE",
+				objectLabel = "Custom Object 981");
+
+			AssertElementPresent(
+				locator1 = "ObjectModelBuilder#OBJECT_DEFINITION_NODE",
+				objectLabel = "Custom Object 088");
+		}
+	}
+
+	@description = "LPS-185674 - Verify the user is able to view multiple object definitions in model builder view"
+	@priority = 4
+	test CanViewMultipleObjectDefinitions {
+		task ("Given several custom object definitions in a created folder") {
+			JSONObjectFolder.addFolder(
+				folderLabel = "Custom Folder 185674",
+				folderName = "CustomFolder185674");
+
+			ObjectAdmin.openObjectAdmin();
+
+			Click.javaScriptClick(
+				folderLabel = "Custom Folder 185674",
+				locator1 = "ObjectAdmin#SIDEBAR_ITEM");
+
+			for (var letter : list "A,B,C") {
+				ObjectAdmin.addNewObject(
+					fieldLabelName = "Custom Object 185674 ${letter}",
+					fieldName = "CustomObject185674${letter}",
+					pluralLabelName = "Custom Objects 185674 ${letter}");
+
+				CreateObject.saveObject();
+			}
+		}
+
+		task ("When the user switches to model builder view") {
+			Click.pauseClickAt(
+				key_text = "View in Model Builder",
+				locator1 = "CustomerPortalSite#ANY_BUTTON");
+		}
+
+		task ("Then the object definitions will be listed in left sidebar") {
+			for (var letter : list "A,B,C") {
+				AssertVisible(
+					key_folderLabel = "Custom Folder 185674",
+					key_objectLabel = "Custom Object 185674 ${letter}",
+					locator1 = "ObjectModelBuilder#SELECT_OBJECT_IN_LEFT_SIDEBAR");
+			}
+		}
+
+		task ("and Then the object definition cards will be visible on the page") {
+			for (var letter : list "A,B,C") {
+				AssertVisible(
+					locator1 = "ObjectModelBuilder#OBJECT_DEFINITION_NODE",
+					objectLabel = "Custom Object 185674 ${letter}");
+			}
 		}
 	}
 

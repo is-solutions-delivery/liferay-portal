@@ -8,6 +8,7 @@ package com.liferay.osb.faro.web.internal.application;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import com.liferay.osb.faro.web.internal.context.GroupInfoContextProvider;
+import com.liferay.osb.faro.web.internal.controller.api.GraphQLController;
 import com.liferay.osb.faro.web.internal.controller.api.RecommendationController;
 import com.liferay.osb.faro.web.internal.controller.api.ReportController;
 import com.liferay.osb.faro.web.internal.util.JSONUtil;
@@ -39,10 +40,11 @@ public class ApiApplication extends Application {
 	public Set<Object> getSingletons() {
 		Set<Object> singletons = new HashSet<>();
 
+		singletons.add(_graphQLController);
 		singletons.add(_groupInfoContextProvider);
 		singletons.add(new JacksonJsonProvider(JSONUtil.getObjectMapper()));
-		singletons.add(new RecommendationController());
-		singletons.add(new ReportController());
+		singletons.add(_recommendationController);
+		singletons.add(_reportController);
 
 		return singletons;
 	}
@@ -58,6 +60,15 @@ public class ApiApplication extends Application {
 	}
 
 	@Reference
+	private GraphQLController _graphQLController;
+
+	@Reference
 	private GroupInfoContextProvider _groupInfoContextProvider;
+
+	@Reference
+	private RecommendationController _recommendationController;
+
+	@Reference
+	private ReportController _reportController;
 
 }

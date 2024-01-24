@@ -50,6 +50,7 @@ definition {
 	@description = "This is a use case for LPS-176997. TC-1: Verify MALU, APV and Scope are enabled on default instance when a LXC environment is being set up."
 	@priority = 5
 	test AssertAuditHeadersOnDefaultInstance {
+		property database.types = "mysql, postgresql";
 		property liferay.online.properties = "true";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
@@ -97,6 +98,7 @@ definition {
 	@description = "This is a use case for LPS-176997. TC-2: Verify MALU, APV and Scope are enabled on virtual instance when a LXC environment is being set up."
 	@priority = 5
 	test AssertAuditHeadersOnVirtualInstance {
+		property database.types = "mysql, postgresql";
 		property liferay.online.properties = "true";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
@@ -441,17 +443,9 @@ definition {
 		task ("Given Login portal with wrong password login with correct password search LOGIN_FAILURE in Audit") {
 			User.logoutPG();
 
-			Navigator.gotoLoginPage();
-
-			Type.typePause(
-				locator1 = "TextInput#EMAIL_ADDRESS",
-				value1 = "test@liferay.com");
-
-			Type.typePause(
-				locator1 = "TextInput#PASSWORD",
-				value1 = "test1");
-
-			Click(locator1 = "Button#SIGN_IN");
+			User.firstLoginUI(
+				password = "invalidPassword",
+				userEmailAddress = "test@liferay.com");
 
 			AssertTextEquals.assertPartialText(
 				locator1 = "Message#ERROR_DISMISSIBLE",
@@ -528,10 +522,7 @@ definition {
 				specificURL = "http://www.able.com:8080",
 				userEmailAddress = "test@www.able.com");
 
-			ApplicationsMenu.gotoPortlet(
-				category = "Security",
-				panel = "Control Panel",
-				portlet = "Audit");
+			Audit.openAuditAdmin(baseURL = "http://www.able.com:8080");
 
 			Audit.searchViaKeywords(
 				resourceName = "com.liferay.portal.kernel.model.User",
@@ -827,6 +818,390 @@ definition {
 		}
 	}
 
+	@description = "This is a use case for LPS-159271. TC-4: The email address of impersonated user is not present in the server log after modifying user addresses."
+	@priority = 4
+	test VerifyAuditMessageAfterModifyImpersonatedUserAddresses {
+		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
+
+		task ("Given: Enable Logging Message Audit Message Processor and create a virtual instance with a user") {
+			Audit.gotoSystemSettings(portlet = "Logging Message Audit");
+
+			Click(locator1 = "Audit#AUDIT_LOG_CONTEXT_ENABLED_BUTTON");
+
+			Click(locator1 = "Audit#OUTPUT_LOG_TO_CONSOLE");
+
+			PortletEntry.save();
+
+			HeadlessPortalInstanceAPI.addPortalInstance(
+				domain = "www.able.com",
+				portalInstanceId = "www.able.com",
+				virtualHost = "www.able.com");
+
+			User.logoutPG();
+
+			User.firstLoginUI(
+				password = "test",
+				specificURL = "http://www.able.com:8080",
+				userEmailAddress = "test@www.able.com");
+
+			JSONUser.addUser(
+				creatorEmailAddress = "test@www.able.com",
+				creatorPassword = "test",
+				portalInstanceName = "www.able.com",
+				specificURL = "http://www.able.com:8080",
+				userEmailAddress = "userea@liferay.com",
+				userFirstName = "userfn",
+				userLastName = "userln",
+				userScreenName = "usersn");
+		}
+
+		task ("When: Define a new address") {
+			User.openUsersAdmin(baseURL = "http://www.able.com:8080");
+
+			User.impersonateCP(userScreenName = "usersn");
+
+			AssertClick(
+				key_dropdownItem = "Account Settings",
+				locator1 = "UserBar#USER_AVATAR_DROPDOWN_ITEM",
+				value1 = "Account Settings");
+
+			UserNavigator.gotoContact();
+
+			Click(locator1 = "Button#ADD_ADDRESS");
+
+			Type(
+				locator1 = "TextInput#STREET_1",
+				value1 = "Virtual Street");
+
+			Type(
+				locator1 = "TextInput#CITY",
+				value1 = "Virtual City");
+
+			PortletEntry.save();
+		}
+
+		task ("Then: Verify that the email address of impersonated user is not present in the server log") {
+			var companyId = JSONCompany.getCompanyId(portalInstanceName = "www.able.com");
+
+			var curl = '''
+				http://www.able.com:8080/api/jsonws/user/get-user-by-email-address/company-id/${companyId}/email-address/userea@liferay.com \
+					-u test@www.able.com:test
+			''';
+
+			var userId = JSONCurlUtil.get(${curl}, "$['userId']");
+
+			AssertConsoleTextNotPresent(value1 = "\"doAsUserEmailAddress\":\"userea@liferay.com\",\"doAsUserName\":\"userfn userln\",\"doAsUserId\":\"${userId}\",\"attributes\":\[\{\"newValue\"");
+		}
+	}
+
+	@description = "This is a use case for LPS-159271. TC-5: The email address of impersonated user is present in the server log after modifying user display settings."
+	@priority = 4
+	test VerifyAuditMessageAfterModifyImpersonatedUserDisplaySettings {
+		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
+
+		task ("Given: Enable Logging Message Audit Message Processor and create a virtual instance with a user") {
+			Audit.gotoSystemSettings(portlet = "Logging Message Audit");
+
+			Click(locator1 = "Audit#AUDIT_LOG_CONTEXT_ENABLED_BUTTON");
+
+			Click(locator1 = "Audit#OUTPUT_LOG_TO_CONSOLE");
+
+			PortletEntry.save();
+
+			HeadlessPortalInstanceAPI.addPortalInstance(
+				domain = "www.able.com",
+				portalInstanceId = "www.able.com",
+				virtualHost = "www.able.com");
+
+			User.logoutPG();
+
+			User.firstLoginUI(
+				password = "test",
+				specificURL = "http://www.able.com:8080",
+				userEmailAddress = "test@www.able.com");
+
+			JSONUser.addUser(
+				creatorEmailAddress = "test@www.able.com",
+				creatorPassword = "test",
+				portalInstanceName = "www.able.com",
+				specificURL = "http://www.able.com:8080",
+				userEmailAddress = "userea@liferay.com",
+				userFirstName = "userfn",
+				userLastName = "userln",
+				userScreenName = "usersn");
+		}
+
+		task ("When: Update display settings") {
+			User.openUsersAdmin(baseURL = "http://www.able.com:8080");
+
+			User.impersonateCP(userScreenName = "usersn");
+
+			AssertClick(
+				key_dropdownItem = "Account Settings",
+				locator1 = "UserBar#USER_AVATAR_DROPDOWN_ITEM",
+				value1 = "Account Settings");
+
+			UserNavigator.gotoDisplaySettings();
+
+			Select(
+				key_fieldLabel = "Time Zone",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "(UTC +01:00) Central European Time");
+
+			Click(locator1 = "Select#TIME_ZONE");
+
+			PortletEntry.save();
+		}
+
+		task ("Then: Verify that the email address of impersonated user is present in the server log") {
+			var companyId = JSONCompany.getCompanyId(portalInstanceName = "www.able.com");
+
+			var curl = '''
+				http://www.able.com:8080/api/jsonws/user/get-user-by-email-address/company-id/${companyId}/email-address/userea@liferay.com \
+					-u test@www.able.com:test
+			''';
+
+			var userId = JSONCurlUtil.get(${curl}, "$['userId']");
+
+			AssertConsoleTextPresent(value1 = "\"doAsUserEmailAddress\":\"userea@liferay.com\",\"doAsUserName\":\"userfn userln\",\"doAsUserId\":\"${userId}\",\"attributes\":\[\{\"newValue\":\"Europe\/Paris\",\"name\":\"timeZoneId\"");
+		}
+	}
+
+	@description = "This is a use case for LPS-159271. TC-1, 2, 3: The email addresses of impersonated users are present in the server log after modifying user general information."
+	@priority = 4
+	test VerifyAuditMessageAfterModifyImpersonatedUserGeneralInfo {
+		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
+
+		task ("Given: Enable Logging Message Audit Message Processor and create a virtual instance with 2 users") {
+			Audit.gotoSystemSettings(portlet = "Logging Message Audit");
+
+			Click(locator1 = "Audit#AUDIT_LOG_CONTEXT_ENABLED_BUTTON");
+
+			Click(locator1 = "Audit#OUTPUT_LOG_TO_CONSOLE");
+
+			PortletEntry.save();
+
+			HeadlessPortalInstanceAPI.addPortalInstance(
+				domain = "www.able.com",
+				portalInstanceId = "www.able.com",
+				virtualHost = "www.able.com");
+
+			User.logoutPG();
+
+			User.firstLoginUI(
+				password = "test",
+				specificURL = "http://www.able.com:8080",
+				userEmailAddress = "test@www.able.com");
+
+			for (var userNum : list "1,2") {
+				JSONUser.addUser(
+					creatorEmailAddress = "test@www.able.com",
+					creatorPassword = "test",
+					portalInstanceName = "www.able.com",
+					specificURL = "http://www.able.com:8080",
+					userEmailAddress = "userea${userNum}@liferay.com",
+					userFirstName = "userfn${userNum}",
+					userLastName = "userln${userNum}",
+					userScreenName = "usersn${userNum}");
+			}
+
+			User.openUsersAdmin(baseURL = "http://www.able.com:8080");
+
+			UserNavigator.gotoUser(userScreenName = "usersn1");
+
+			User.editPassword(newPassword = "test");
+		}
+
+		task ("When: Update all available information fields of user1") {
+			User.openUsersAdmin(baseURL = "http://www.able.com:8080");
+
+			User.impersonateCP(userScreenName = "usersn1");
+
+			AssertClick(
+				key_dropdownItem = "Account Settings",
+				locator1 = "UserBar#USER_AVATAR_DROPDOWN_ITEM",
+				value1 = "Account Settings");
+
+			Type(
+				locator1 = "UsersAndOrganizationsEditUser#DETAILS_SCREEN_NAME_FIELD",
+				value1 = "usersn1_changed");
+
+			Type(
+				locator1 = "UsersAndOrganizationsEditUser#DETAILS_EMAIL_ADDRESS_FIELD",
+				value1 = "userea1_changed@liferay.com");
+
+			Type(
+				locator1 = "UsersAndOrganizationsEditUser#DETAILS_JOB_TITLE_FIELD",
+				value1 = "JobTitle_changed");
+
+			Type(
+				locator1 = "UsersAndOrganizationsEditUser#DETAILS_FIRST_NAME_FIELD",
+				value1 = "userfn1_changed");
+
+			Type(
+				locator1 = "UsersAndOrganizationsEditUser#DETAILS_MIDDLE_NAME_FIELD",
+				value1 = "usermn1_changed");
+
+			Type(
+				locator1 = "UsersAndOrganizationsEditUser#DETAILS_LAST_NAME_FIELD",
+				value1 = "userln1_changed");
+
+			Type(
+				locator1 = "TextArea#COMMENTS",
+				value1 = "comment_changed");
+
+			Click(
+				key_text = "Save",
+				locator1 = "Button#ANY");
+
+			User.confirmPassword(password = "test");
+		}
+
+		task ("Then: Verify that the email address of impersonated user is present in the server log") {
+			AssertConsoleTextPresent(value1 = "\"doAsUserEmailAddress\":\"userea1@liferay.com\"");
+
+			AssertConsoleTextPresent(value1 = "\"doAsUserEmailAddress\":\"userea1_changed@liferay.com\"");
+
+			AssertConsoleTextPresent(value1 = "\"newValue\":\"JobTitle_changed\"");
+
+			AssertConsoleTextPresent(value1 = "\"newValue\":\"usersn1_changed\"");
+
+			AssertConsoleTextPresent(value1 = "\"newValue\":\"userfn1_changed\"");
+
+			AssertConsoleTextPresent(value1 = "\"newValue\":\"usermn1_changed\"");
+
+			AssertConsoleTextPresent(value1 = "\"newValue\":\"userln1_changed\"");
+
+			AssertConsoleTextPresent(value1 = "\"newValue\":\"comment_changed\"");
+		}
+
+		task ("And: Verify that the email address of impersonated user is present in the server log for additional users") {
+			User.openUsersAdmin(baseURL = "http://www.able.com:8080");
+
+			User.impersonateCP(userScreenName = "usersn2");
+
+			AssertClick(
+				key_dropdownItem = "Account Settings",
+				locator1 = "UserBar#USER_AVATAR_DROPDOWN_ITEM",
+				value1 = "Account Settings");
+
+			Type(
+				locator1 = "UsersAndOrganizationsEditUser#DETAILS_FIRST_NAME_FIELD",
+				value1 = "userfn2_changed");
+
+			Type(
+				locator1 = "UsersAndOrganizationsEditUser#DETAILS_LAST_NAME_FIELD",
+				value1 = "userln2_changed");
+
+			PortletEntry.save();
+
+			AssertConsoleTextPresent(value1 = "\"doAsUserEmailAddress\":\"userea2@liferay.com\"");
+
+			AssertConsoleTextPresent(value1 = "\"newValue\":\"userfn2_changed\"");
+
+			AssertConsoleTextPresent(value1 = "\"newValue\":\"userln2_changed\"");
+		}
+	}
+
+	@description = "This is a use case for LPS-159271. TC-6: The email address of impersonated user is present in the server log after modifying password."
+	@priority = 4
+	test VerifyAuditMessageAfterModifyImpersonatedUserPassword {
+		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
+
+		task ("Given: Enable Logging Message Audit Message Processor and create a virtual instance with a user") {
+			Audit.gotoSystemSettings(portlet = "Logging Message Audit");
+
+			Click(locator1 = "Audit#AUDIT_LOG_CONTEXT_ENABLED_BUTTON");
+
+			Click(locator1 = "Audit#OUTPUT_LOG_TO_CONSOLE");
+
+			PortletEntry.save();
+
+			HeadlessPortalInstanceAPI.addPortalInstance(
+				domain = "www.able.com",
+				portalInstanceId = "www.able.com",
+				virtualHost = "www.able.com");
+
+			User.logoutPG();
+
+			User.firstLoginUI(
+				password = "test",
+				specificURL = "http://www.able.com:8080",
+				userEmailAddress = "test@www.able.com");
+
+			JSONUser.addUser(
+				creatorEmailAddress = "test@www.able.com",
+				creatorPassword = "test",
+				portalInstanceName = "www.able.com",
+				specificURL = "http://www.able.com:8080",
+				userEmailAddress = "userea@liferay.com",
+				userFirstName = "userfn",
+				userLastName = "userln",
+				userScreenName = "usersn");
+
+			User.openUsersAdmin(baseURL = "http://www.able.com:8080");
+
+			UserNavigator.gotoUser(userScreenName = "usersn");
+
+			User.editPassword(newPassword = "test");
+		}
+
+		task ("When: Modify the Password reminder question and change the Password") {
+			User.openUsersAdmin(baseURL = "http://www.able.com:8080");
+
+			User.impersonateCP(userScreenName = "usersn");
+
+			AssertClick(
+				key_dropdownItem = "Account Settings",
+				locator1 = "UserBar#USER_AVATAR_DROPDOWN_ITEM",
+				value1 = "Account Settings");
+
+			UserNavigator.gotoPassword();
+
+			Type(
+				locator1 = "TextInput#CURRENT_PASSWORD",
+				value1 = "test");
+
+			Type(
+				locator1 = "UsersAndOrganizationsEditUser#PASSWORD_NEW_PASSWORD_FIELD",
+				value1 = "password");
+
+			Type(
+				locator1 = "TextInput#REENTER_PASSWORD",
+				value1 = "password");
+
+			Select(
+				key_fieldLabel = "Question",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "What is your library card number?");
+
+			Type(
+				locator1 = "TextInput#REMINDER_QUERY",
+				value1 = "test");
+
+			PortletEntry.save();
+		}
+
+		task ("Then: Verify that the email address of impersonated user is present in the server log") {
+			var companyId = JSONCompany.getCompanyId(portalInstanceName = "www.able.com");
+
+			var curl = '''
+				http://www.able.com:8080/api/jsonws/user/get-user-by-email-address/company-id/${companyId}/email-address/userea@liferay.com \
+					-u test@www.able.com:test
+			''';
+
+			var userId = JSONCurlUtil.get(${curl}, "$['userId']");
+
+			AssertConsoleTextPresent(value1 = "\"doAsUserEmailAddress\":\"userea@liferay.com\",\"doAsUserName\":\"userfn userln\",\"doAsUserId\":\"${userId}\",\"attributes\":\[\{\"newValue\":\"\",\"name\":\"password\"");
+
+			AssertConsoleTextPresent(value1 = "\"newValue\":\"test\",\"name\":\"reminderQueryAnswer\"");
+		}
+	}
+
 	@description = "This is a use case for LPS-150300. Verify that Console outputs the correct clientIP when reading of the X-Forwarded-For http header."
 	@priority = 5
 	test VerifyCorrectClientIP {
@@ -881,17 +1256,9 @@ definition {
 		task ("When: Login with a non-existing email address but an existing password") {
 			User.logoutPG();
 
-			Navigator.gotoLoginPage();
-
-			Type.typePause(
-				locator1 = "TextInput#EMAIL_ADDRESS",
-				value1 = "steve.jobs@liferay.com");
-
-			Type.typePause(
-				locator1 = "TextInput#PASSWORD",
-				value1 = "test");
-
-			Click(locator1 = "Button#SIGN_IN");
+			User.firstLoginUI(
+				password = "test",
+				userEmailAddress = "invalidAddress@liferay.com");
 
 			AssertTextEquals.assertPartialText(
 				locator1 = "Message#ERROR_DISMISSIBLE",
@@ -951,18 +1318,10 @@ definition {
 		task ("When: Login with a non-existing Screen Name but an existing password") {
 			User.logoutPG();
 
-			Navigator.gotoLoginPage();
-
-			Type.typePause(
-				key_text = "Screen Name",
-				locator1 = "TextInput#ANY",
-				value1 = "steve");
-
-			Type.typePause(
-				locator1 = "TextInput#PASSWORD",
-				value1 = "test");
-
-			Click(locator1 = "Button#SIGN_IN");
+			User.firstLoginUI(
+				authenticationMethod = "By Screen Name",
+				password = "test",
+				userScreenName = "inavlidScreenName");
 
 			AssertTextEquals.assertPartialText(
 				locator1 = "Message#ERROR_DISMISSIBLE",
@@ -1025,18 +1384,10 @@ definition {
 		task ("When: Login with a non-existing user ID but an existing password") {
 			User.logoutPG();
 
-			Navigator.gotoLoginPage();
-
-			Type.typePause(
-				key_text = "ID",
-				locator1 = "TextInput#ANY",
-				value1 = 12345);
-
-			Type.typePause(
-				locator1 = "TextInput#PASSWORD",
-				value1 = "test");
-
-			Click(locator1 = "Button#SIGN_IN");
+			User.firstLoginUI(
+				authenticationMethod = "By User ID",
+				password = "test",
+				userId = "inavlidUserId");
 
 			AssertTextEquals.assertPartialText(
 				locator1 = "Message#ERROR_DISMISSIBLE",
@@ -1088,17 +1439,9 @@ definition {
 		task ("When: Login with a valid email address but an invalid password") {
 			User.logoutPG();
 
-			Navigator.gotoLoginPage();
-
-			Type.typePause(
-				locator1 = "TextInput#EMAIL_ADDRESS",
-				value1 = "test@liferay.com");
-
-			Type.typePause(
-				locator1 = "TextInput#PASSWORD",
-				value1 = "test1");
-
-			Click(locator1 = "Button#SIGN_IN");
+			User.firstLoginUI(
+				password = "invalidPAssword",
+				userEmailAddress = "test@liferay.com");
 
 			AssertTextEquals.assertPartialText(
 				locator1 = "Message#ERROR_DISMISSIBLE",
@@ -1159,18 +1502,10 @@ definition {
 		task ("When: Login with a valid Screen Name but an invalid password") {
 			User.logoutPG();
 
-			Navigator.gotoLoginPage();
-
-			Type.typePause(
-				key_text = "Screen Name",
-				locator1 = "TextInput#ANY",
-				value1 = "test");
-
-			Type.typePause(
-				locator1 = "TextInput#PASSWORD",
-				value1 = "test1");
-
-			Click(locator1 = "Button#SIGN_IN");
+			User.firstLoginUI(
+				authenticationMethod = "By Screen Name",
+				password = "invalidPassword",
+				userScreenName = "test");
 
 			AssertTextEquals.assertPartialText(
 				locator1 = "Message#ERROR_DISMISSIBLE",
@@ -1234,18 +1569,10 @@ definition {
 		task ("When: Login with a valid user ID but an invalid password") {
 			User.logoutPG();
 
-			Navigator.gotoLoginPage();
-
-			Type.typePause(
-				key_text = "ID",
-				locator1 = "TextInput#ANY",
-				value1 = ${userId});
-
-			Type.typePause(
-				locator1 = "TextInput#PASSWORD",
-				value1 = "test1");
-
-			Click(locator1 = "Button#SIGN_IN");
+			User.firstLoginUI(
+				authenticationMethod = "By User ID",
+				password = "invalidPassword",
+				userId = ${userId});
 
 			AssertTextEquals.assertPartialText(
 				locator1 = "Message#ERROR_DISMISSIBLE",
@@ -1314,17 +1641,9 @@ definition {
 		task ("When: Login with a valid email address from LDAP but an invalid password") {
 			User.logoutPG();
 
-			Navigator.gotoLoginPage();
-
-			Type.typePause(
-				locator1 = "TextInput#EMAIL_ADDRESS",
-				value1 = "testUser2@liferay.com");
-
-			Type.typePause(
-				locator1 = "TextInput#PASSWORD",
-				value1 = "test1");
-
-			Click(locator1 = "Button#SIGN_IN");
+			User.firstLoginUI(
+				password = "invalidPassword",
+				userEmailAddress = "testUser2@liferay.com");
 
 			AssertTextEquals.assertPartialText(
 				locator1 = "Message#ERROR_DISMISSIBLE",

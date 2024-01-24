@@ -1,0 +1,71 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+import ClayButton from '@clayui/button';
+import ClayModal, {useModal} from '@clayui/modal';
+import React, {useEffect, useState} from 'react';
+
+interface ModalObjectFieldDeletionNotAllowedProps {
+	content: React.ReactNode;
+	onVisibilityChange: () => void;
+}
+
+function ModalObjectFieldDeletionNotAllowed({
+	content,
+	onVisibilityChange,
+}: ModalObjectFieldDeletionNotAllowedProps) {
+	const [bodyContent, setBodyContent] = useState<React.ReactNode>(content);
+	const [visibility, setVisibility] = useState(false);
+
+	const {observer, onClose} = useModal({
+		onClose: () => {
+			onVisibilityChange ? onVisibilityChange() : setVisibility(false);
+		},
+	});
+
+	useEffect(() => {
+		const openModal = ({contentLiferayFire = <></>}) => {
+			setVisibility(true);
+			setBodyContent(contentLiferayFire);
+		};
+
+		Liferay.on('openModalObjectFieldDeletionNotAllowed', openModal);
+
+		return () =>
+			Liferay.detach(
+				'openModalObjectFieldDeletionNotAllowed',
+				openModal as () => void
+			);
+	}, []);
+
+	return (
+		<>
+			{(visibility || !!content) && (
+				<ClayModal center observer={observer} status="warning">
+					<ClayModal.Header>
+						{Liferay.Language.get('deletion-not-allowed')}
+					</ClayModal.Header>
+
+					<ClayModal.Body>{bodyContent}</ClayModal.Body>
+
+					<ClayModal.Footer
+						last={
+							<ClayButton.Group key={1} spaced>
+								<ClayButton
+									displayType="warning"
+									onClick={() => onClose()}
+								>
+									{Liferay.Language.get('done')}
+								</ClayButton>
+							</ClayButton.Group>
+						}
+					/>
+				</ClayModal>
+			)}
+		</>
+	);
+}
+
+export default ModalObjectFieldDeletionNotAllowed;

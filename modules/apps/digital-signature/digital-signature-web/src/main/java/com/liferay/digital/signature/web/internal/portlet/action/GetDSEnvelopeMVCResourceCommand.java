@@ -9,10 +9,10 @@ import com.liferay.digital.signature.constants.DigitalSignaturePortletKeys;
 import com.liferay.digital.signature.manager.DSEnvelopeManager;
 import com.liferay.digital.signature.model.DSEnvelope;
 import com.liferay.document.library.kernel.model.DLProcessorConstants;
+import com.liferay.document.library.kernel.processor.DLProcessor;
+import com.liferay.document.library.kernel.processor.ImageProcessor;
+import com.liferay.document.library.kernel.processor.PDFProcessorUtil;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
-import com.liferay.document.library.kernel.util.DLProcessor;
-import com.liferay.document.library.kernel.util.ImageProcessor;
-import com.liferay.document.library.kernel.util.PDFProcessorUtil;
 import com.liferay.document.library.util.DLURLHelperUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -36,7 +36,6 @@ import javax.portlet.ResourceResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Keven Leone
@@ -122,10 +121,7 @@ public class GetDSEnvelopeMVCResourceCommand extends BaseMVCResourceCommand {
 	@Reference
 	private DLAppLocalService _dlAppLocalService;
 
-	@Reference(
-		policyOption = ReferencePolicyOption.GREEDY,
-		target = "(type=" + DLProcessorConstants.IMAGE_PROCESSOR + ")"
-	)
+	@Reference(target = "(type=" + DLProcessorConstants.IMAGE_PROCESSOR + ")")
 	private DLProcessor _dlProcessor;
 
 	@Reference

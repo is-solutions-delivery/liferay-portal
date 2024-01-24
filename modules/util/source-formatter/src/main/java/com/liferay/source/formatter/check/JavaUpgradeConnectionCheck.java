@@ -7,29 +7,20 @@ package com.liferay.source.formatter.check;
 
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.source.formatter.check.util.JavaSourceUtil;
-import com.liferay.source.formatter.check.util.SourceUtil;
 import com.liferay.source.formatter.parser.JavaClass;
 import com.liferay.source.formatter.parser.JavaMethod;
 import com.liferay.source.formatter.parser.JavaTerm;
 import com.liferay.source.formatter.util.FileUtil;
+import com.liferay.source.formatter.util.SourceFormatterUtil;
 
 import java.io.File;
 import java.io.IOException;
 
-import java.nio.file.FileVisitOption;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -183,7 +174,9 @@ public class JavaUpgradeConnectionCheck extends BaseJavaTermCheck {
 		return false;
 	}
 
-	private List<String> _getUpgradeAbsolutePaths() throws IOException {
+	private synchronized List<String> _getUpgradeAbsolutePaths()
+		throws IOException {
+
 		if (_upgradeAbsolutePaths != null) {
 			return _upgradeAbsolutePaths;
 		}
@@ -196,49 +189,31 @@ public class JavaUpgradeConnectionCheck extends BaseJavaTermCheck {
 			return _upgradeAbsolutePaths;
 		}
 
-		final List<String> upgradeAbsolutePaths = new ArrayList<>();
+		List<String> upgradeAbsolutePaths = new ArrayList<>();
 
-		Files.walkFileTree(
-			portalDir.toPath(), EnumSet.noneOf(FileVisitOption.class), 20,
-			new SimpleFileVisitor<Path>() {
+		List<String> fileNames = SourceFormatterUtil.scanForFileNames(
+			portalDir.getCanonicalPath(),
+			new String[] {"**/upgrade/**/*.java"});
 
-				@Override
-				public FileVisitResult preVisitDirectory(
-					Path dirPath, BasicFileAttributes basicFileAttributes) {
-
-					String dirName = String.valueOf(dirPath.getFileName());
-
-					if (ArrayUtil.contains(_SKIP_DIR_NAMES, dirName)) {
-						return FileVisitResult.SKIP_SUBTREE;
-					}
-
-					return FileVisitResult.CONTINUE;
+		outerLoop:
+		for (String fileName : fileNames) {
+			for (String skipDirName : _SKIP_DIR_NAMES) {
+				if (fileName.contains(skipDirName)) {
+					continue outerLoop;
 				}
+			}
 
-				@Override
-				public FileVisitResult visitFile(
-					Path filePath, BasicFileAttributes basicFileAttributes) {
-
-					String absolutePath = SourceUtil.getAbsolutePath(filePath);
-					String fileName = String.valueOf(filePath.getFileName());
-
-					if (absolutePath.contains("/upgrade/") &&
-						fileName.endsWith(".java")) {
-
-						upgradeAbsolutePaths.add(absolutePath);
-					}
-
-					return FileVisitResult.CONTINUE;
-				}
-
-			});
+			upgradeAbsolutePaths.add(fileName);
+		}
 
 		_upgradeAbsolutePaths = upgradeAbsolutePaths;
 
 		return _upgradeAbsolutePaths;
 	}
 
-	private String _getUpgradeContent(String absolutePath) throws IOException {
+	private synchronized String _getUpgradeContent(String absolutePath)
+		throws IOException {
+
 		if (_upgradeContentsMap.containsKey(absolutePath)) {
 			return _upgradeContentsMap.get(absolutePath);
 		}
@@ -255,9 +230,8 @@ public class JavaUpgradeConnectionCheck extends BaseJavaTermCheck {
 	}
 
 	private static final String[] _SKIP_DIR_NAMES = {
-		".git", ".gradle", ".idea", ".m2", ".settings", "bin", "build",
-		"classes", "dependencies", "node_modules", "node_modules_cache", "sdk",
-		"sql", "test", "test-classes", "test-coverage", "test-results", "tmp"
+		"/sdk/", "/sql/", "/test/", "/test-classes/", "/test-coverage/",
+		"/test-results/", "/tmp/"
 	};
 
 	private static final Pattern _extendedClassPattern = Pattern.compile(

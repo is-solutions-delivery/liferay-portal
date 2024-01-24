@@ -128,9 +128,15 @@ public class LayoutPageTemplateDisplayContext {
 					getLayoutPageTemplateCollectionId();
 		}
 
-		_layoutPageTemplateCollectionId = ParamUtil.getLong(
-			_httpServletRequest, "layoutPageTemplateCollectionId",
-			defaultLayoutPageTemplateCollectionId);
+		long layoutPageTemplateCollectionId = ParamUtil.getLong(
+			_httpServletRequest, "layoutPageTemplateCollectionId");
+
+		if (layoutPageTemplateCollectionId <= 0) {
+			layoutPageTemplateCollectionId =
+				defaultLayoutPageTemplateCollectionId;
+		}
+
+		_layoutPageTemplateCollectionId = layoutPageTemplateCollectionId;
 
 		return _layoutPageTemplateCollectionId;
 	}
@@ -221,7 +227,7 @@ public class LayoutPageTemplateDisplayContext {
 		}
 
 		_layoutPageTemplateEntry =
-			LayoutPageTemplateEntryServiceUtil.fetchLayoutPageTemplateEntry(
+			LayoutPageTemplateEntryServiceUtil.getLayoutPageTemplateEntry(
 				getLayoutPageTemplateEntryId());
 
 		return _layoutPageTemplateEntry;

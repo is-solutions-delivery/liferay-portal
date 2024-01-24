@@ -44,7 +44,6 @@ import com.liferay.layout.util.structure.LayoutStructureItemUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.captcha.CaptchaException;
 import com.liferay.portal.kernel.exception.InfoFormException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -189,13 +188,7 @@ public class EditInfoItemStrutsAction implements StrutsAction {
 				httpServletRequest, "status",
 				WorkflowConstants.STATUS_APPROVED);
 
-			if (!FeatureFlagManagerUtil.isEnabled("LPS-181663")) {
-				status = WorkflowConstants.STATUS_APPROVED;
-			}
-
-			if ((infoItemIdentifier != null) &&
-				FeatureFlagManagerUtil.isEnabled("LPS-183727")) {
-
+			if (infoItemIdentifier != null) {
 				InfoItemObjectProvider<Object> infoItemObjectProvider =
 					_infoItemServiceRegistry.getFirstInfoItemService(
 						InfoItemObjectProvider.class, className,

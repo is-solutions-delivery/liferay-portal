@@ -91,6 +91,19 @@
 			"type": "String"
 		},
 		{
+			"DBType": "Date",
+			"businessType": "Date",
+			"externalReferenceCode": "7b7fda60-92dd-11ee-b9d1-0242ac120002",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Payment Date"
+			},
+			"name": "paymentDate",
+			"required": false,
+			"type": "Date"
+		},
+		{
 			"DBType": "String",
 			"businessType": "Picklist",
 			"defaultValue": "pendingMarketingReview",
@@ -361,6 +374,12 @@
 				"en_US": "Submit Date"
 			},
 			"name": "submitDate",
+			"objectFieldSettings": [
+				{
+					"name": "timeStorage",
+					"value": "convertToUTC"
+				}
+			],
 			"required": false,
 			"type": "DateTime"
 		}

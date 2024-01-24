@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.google.common.collect.Sets;
 
@@ -23,7 +24,6 @@ import com.liferay.petra.string.StringPool;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -36,6 +36,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,18 +45,22 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
+import org.gradle.api.file.ConfigurableFileTree;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.ProjectLayout;
 import org.gradle.api.file.RegularFile;
+import org.gradle.api.logging.Logger;
 import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.TaskOutputs;
@@ -73,12 +78,17 @@ public class CreateClientExtensionConfigTask extends DefaultTask {
 		_lcpJsonFile = _addTaskOutputFile("LCP.json");
 		_pluginPackagePropertiesFile = _addTaskOutputFile(
 			_PLUGIN_PACKAGE_PROPERTIES_PATH);
-		_siteInitializerJsonFile = _addTaskOutputFile(
-			_SITE_INITIALIZER_JSON_PATH);
 	}
 
 	public void addClientExtension(ClientExtension clientExtension) {
 		_clientExtensions.add(clientExtension);
+
+		if (Objects.equals(clientExtension.type, "siteInitializer") &&
+			(_siteInitializerJsonFile == null)) {
+
+			_siteInitializerJsonFile = _addTaskOutputFile(
+				_SITE_INITIALIZER_JSON_PATH);
+		}
 	}
 
 	public void addClientExtensionProperties(
@@ -151,6 +161,10 @@ public class CreateClientExtensionConfigTask extends DefaultTask {
 
 		if (batchType != null) {
 			substitutionMap.put("__BATCH_TYPE__", batchType);
+
+			if (Objects.equals(batchType, "batch")) {
+				_processBatchJSONFiles();
+			}
 		}
 
 		String projectId = StringUtil.toAlphaNumericLowerCase(
@@ -216,6 +230,7 @@ public class CreateClientExtensionConfigTask extends DefaultTask {
 		return GradleUtil.toFile(_project, _pluginPackagePropertiesFile);
 	}
 
+	@Optional
 	@OutputFile
 	public File getSiteInitializerJsonFile() {
 		return GradleUtil.toFile(_project, _siteInitializerJsonFile);
@@ -247,8 +262,10 @@ public class CreateClientExtensionConfigTask extends DefaultTask {
 			if (jsonNode.has("dependencies")) {
 				List<String> dependencies = new ArrayList<>();
 
-				for (JsonNode dependency : jsonNode.get("dependencies")) {
-					dependencies.add(dependency.textValue());
+				for (JsonNode dependencyJsonNode :
+						jsonNode.get("dependencies")) {
+
+					dependencies.add(dependencyJsonNode.textValue());
 				}
 
 				pluginPackageProperties.put(
@@ -408,6 +425,17 @@ public class CreateClientExtensionConfigTask extends DefaultTask {
 	private List<String> _getMatchingPaths(Path basePath, String glob) {
 		FileSystem fileSystem = basePath.getFileSystem();
 
+		AtomicReference<String> queryStringAtomicReference =
+			new AtomicReference<>("");
+
+		int index = glob.indexOf("?");
+
+		if (index != -1) {
+			queryStringAtomicReference.set(glob.substring(index));
+
+			glob = glob.substring(0, index);
+		}
+
 		PathMatcher pathMatcher = fileSystem.getPathMatcher("glob:" + glob);
 
 		try (Stream<Path> files = Files.walk(basePath)) {
@@ -416,7 +444,7 @@ public class CreateClientExtensionConfigTask extends DefaultTask {
 			).filter(
 				pathMatcher::matches
 			).map(
-				String::valueOf
+				path -> path + queryStringAtomicReference.get()
 			).collect(
 				Collectors.toList()
 			);
@@ -461,6 +489,136 @@ public class CreateClientExtensionConfigTask extends DefaultTask {
 		}
 
 		return false;
+	}
+
+	private void _processBatchJSONFile(File file) throws IOException {
+		JsonNode rootJsonNode = _objectMapper.readTree(file);
+
+		File parentFile = file.getParentFile();
+
+		JsonNode configurationJsonNode = rootJsonNode.findValue(
+			"configuration");
+
+		JsonNode classNameJsonNode = configurationJsonNode.findValue(
+			"className");
+
+		if ((classNameJsonNode == null) ||
+			!Objects.equals(
+				classNameJsonNode.asText(),
+				"com.liferay.object.rest.dto.v1_0.ObjectEntry")) {
+
+			return;
+		}
+
+		JsonNode itemsJsonNode = rootJsonNode.findValue("items");
+
+		if (itemsJsonNode == null) {
+			return;
+		}
+
+		boolean modified = false;
+
+		for (JsonNode itemJsonNode : itemsJsonNode) {
+			JsonNode externalReferenceCodeJsonNode = itemJsonNode.findValue(
+				"externalReferenceCode");
+
+			if (externalReferenceCodeJsonNode == null) {
+				continue;
+			}
+
+			for (JsonNode childJsonNode : itemJsonNode) {
+				if (!childJsonNode.isObject()) {
+					continue;
+				}
+
+				JsonNode fileBase64JsonNode = childJsonNode.findValue(
+					"fileBase64");
+
+				if ((fileBase64JsonNode == null) ||
+					!Objects.equals(
+						_BATCH_OBJECT_FILE_TOKEN,
+						fileBase64JsonNode.asText())) {
+
+					continue;
+				}
+
+				JsonNode nameJsonNode = childJsonNode.findValue("name");
+
+				if (nameJsonNode == null) {
+					throw new GradleException(
+						String.format(
+							"No name field found with token %s",
+							_BATCH_OBJECT_FILE_TOKEN));
+				}
+
+				File attachmentFile = new File(
+					parentFile,
+					String.format(
+						"attachments/%s/%s",
+						externalReferenceCodeJsonNode.asText(),
+						nameJsonNode.asText()));
+
+				if (!attachmentFile.exists()) {
+					throw new GradleException(
+						String.format(
+							"Attachment file %s does not exist",
+							attachmentFile));
+				}
+
+				ObjectNode objectNode = (ObjectNode)childJsonNode;
+
+				objectNode.put(
+					"fileBase64",
+					_base64Encoder.encodeToString(
+						Files.readAllBytes(attachmentFile.toPath())));
+
+				modified = true;
+			}
+		}
+
+		if (!modified) {
+			return;
+		}
+
+		File projectDir = _project.getProjectDir();
+
+		Path projectDirPath = projectDir.toPath();
+
+		Path relativeTargetFilePath = projectDirPath.relativize(file.toPath());
+
+		Path cxBuildDirPath = Paths.get(
+			String.valueOf(_project.getBuildDir()),
+			ClientExtensionProjectConfigurator.CLIENT_EXTENSION_BUILD_DIR);
+
+		Path resolvedTargetPath = cxBuildDirPath.resolve(
+			relativeTargetFilePath);
+
+		ObjectWriter objectWriter = _objectMapper.writer();
+
+		Files.write(
+			resolvedTargetPath, objectWriter.writeValueAsBytes(rootJsonNode));
+
+		Logger logger = getLogger();
+
+		if (logger.isInfoEnabled()) {
+			logger.info("Replaced base64 tokens in {}", file);
+		}
+	}
+
+	private void _processBatchJSONFiles() {
+		ConfigurableFileTree fileTree = _project.fileTree("batch");
+
+		fileTree.include("**/*.json");
+
+		for (File file : fileTree.getFiles()) {
+			try {
+				_processBatchJSONFile(file);
+			}
+			catch (IOException ioException) {
+				throw new GradleException(
+					String.format("Unable to read file %s", file));
+			}
+		}
 	}
 
 	private void _storePluginPackageProperties(
@@ -552,39 +710,58 @@ public class CreateClientExtensionConfigTask extends DefaultTask {
 		String classificationGrouping, File inputFile, File outputFile,
 		Map<String, String> substitutionMap) {
 
-		String templatePath = String.format(
-			"dependencies/templates/%s/%s.tpl", classificationGrouping,
-			inputFile.getName());
+		InputStream inputStream1 = null;
 
 		try {
-			InputStream inputStream1 = null;
-
 			if (inputFile.exists()) {
-				inputStream1 = new FileInputStream(inputFile);
-			}
-			else {
-				inputStream1 =
-					CreateClientExtensionConfigTask.class.getResourceAsStream(
-						templatePath);
-			}
-
-			try (InputStream inputStream2 = inputStream1) {
-				String fileContent = StringUtil.read(inputStream2);
-
-				for (Map.Entry<String, String> entry :
-						substitutionMap.entrySet()) {
-
-					fileContent = fileContent.replace(
-						entry.getKey(), entry.getValue());
-				}
-
-				Files.write(outputFile.toPath(), fileContent.getBytes());
+				inputStream1 = Files.newInputStream(inputFile.toPath());
 			}
 		}
 		catch (IOException ioException) {
-			throw new GradleException(inputFile.getName() + " not specified");
+			throw new GradleException(
+				String.format(
+					"Unable to read file %s",
+					StringUtil.quote(inputFile.getName())),
+				ioException);
+		}
+
+		if (inputStream1 == null) {
+			inputStream1 =
+				CreateClientExtensionConfigTask.class.getResourceAsStream(
+					String.format(
+						"dependencies/templates/%s/%s.tpl",
+						classificationGrouping, inputFile.getName()));
+		}
+
+		if (inputStream1 == null) {
+			throw new GradleException(
+				String.format(
+					"Required file %s not found in project %s",
+					StringUtil.quote(inputFile.getName()),
+					StringUtil.quote(_project.getName())));
+		}
+
+		try (InputStream inputStream2 = inputStream1) {
+			String fileContent = StringUtil.read(inputStream2);
+
+			for (Map.Entry<String, String> entry : substitutionMap.entrySet()) {
+				fileContent = fileContent.replace(
+					entry.getKey(), entry.getValue());
+			}
+
+			Files.write(outputFile.toPath(), fileContent.getBytes());
+		}
+		catch (IOException ioException) {
+			throw new GradleException(
+				String.format(
+					"Unable to write file %s",
+					StringUtil.quote(outputFile.getName())),
+				ioException);
 		}
 	}
+
+	private static final String _BATCH_OBJECT_FILE_TOKEN =
+		"@batch_object_entry_file_base64@";
 
 	private static final String _CLIENT_EXTENSION_CONFIG_FILE_NAME =
 		".client-extension-config.json";
@@ -616,6 +793,7 @@ public class CreateClientExtensionConfigTask extends DefaultTask {
 				}
 			};
 
+	private final Base64.Encoder _base64Encoder = Base64.getEncoder();
 	private final Object _clientExtensionConfigFile;
 	private Properties _clientExtensionProperties;
 	private final Set<ClientExtension> _clientExtensions = new HashSet<>();
@@ -624,7 +802,7 @@ public class CreateClientExtensionConfigTask extends DefaultTask {
 	private final ObjectMapper _objectMapper = new ObjectMapper();
 	private final Object _pluginPackagePropertiesFile;
 	private final Project _project = getProject();
-	private final Object _siteInitializerJsonFile;
+	private Object _siteInitializerJsonFile;
 	private String _type = "frontend";
 
 }

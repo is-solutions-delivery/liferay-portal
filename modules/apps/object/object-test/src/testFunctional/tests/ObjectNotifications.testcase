@@ -52,7 +52,9 @@ definition {
 		}
 
 		task ("When an attachment is added to the notification template") {
-			ObjectNotifications.addNotificationTemplateAttachment(objectLabel = "Custom Object 161924");
+			ObjectNotifications.addNotificationTemplateAttachment(
+				fieldLabel = "From Computer And Show Files In DM",
+				objectLabel = "Custom Object 161924");
 
 			PortletEntry.save();
 		}
@@ -64,9 +66,10 @@ definition {
 
 			MenuItem.clickNoError(menuItem = "View");
 
-			AssertElementPresent(
-				key_dataSource = "Custom Object 161924",
-				locator1 = "ObjectNotifications#DATA_SOURCE_ATTACHMENTS");
+			AssertTextEquals(
+				key_labelName = "Data Source",
+				locator1 = "ObjectAdmin#CLAY_GENERIC_BUTTON",
+				value1 = "Custom Object 161924");
 
 			AssertElementPresent(locator1 = "ObjectNotifications#FIELD_ATTACHMENTS_OBJECT");
 		}
@@ -171,7 +174,9 @@ definition {
 				name = "Notification Template",
 				subject = "[%USER_AUTHOR_LAST_NAME%]");
 
-			ObjectNotifications.addNotificationTemplateAttachment(objectLabel = "Custom Object A 183441");
+			ObjectNotifications.addNotificationTemplateAttachment(
+				fieldLabel = "Custom Attachment Field A",
+				objectLabel = "Custom Object A 183441");
 
 			PortletEntry.save();
 		}
@@ -183,21 +188,17 @@ definition {
 
 			MenuItem.click(menuItem = "Email");
 
-			Click(
-				key_dataSource = "Select a Data Source",
-				locator1 = "ObjectNotifications#DATA_SOURCE_ATTACHMENTS");
-
-			Click(
-				key_optionName = "Custom Object B 183441",
-				locator1 = "ObjectAdmin#LAYOUT_ADD_FIELD_OPTION");
+			ObjectAdmin.selectDropdownItem(
+				labelName = "Data Source",
+				optionName = "Custom Object B 183441");
 
 			Click(locator1 = "ObjectNotifications#FIELD_ATTACHMENTS_OBJECT");
 		}
 
 		task ("Then the attachment field from Object B can be selected") {
 			AssertElementPresent(
-				locator1 = "ObjectNotifications#FIELD_ATTACHMENTS_OBJECT_SELECT_FIELD",
-				value1 = "Custom Attachment Field B");
+				key_fieldLabel = "Custom Attachment Field B",
+				locator1 = "ObjectNotifications#FIELD_ATTACHMENTS_OBJECT_SELECT_FIELD");
 		}
 	}
 
@@ -247,7 +248,9 @@ definition {
 				notificationType = "Email",
 				subject = "Subject");
 
-			ObjectNotifications.selectEntity(entityName = "User");
+			ObjectAdmin.selectDropdownItem(
+				labelName = "Entity",
+				optionName = "User");
 
 			var listOfTerms = "Middle Name,Screen Name,Create Date,First Name,Last Login Date,UUID";
 
@@ -276,7 +279,8 @@ definition {
 
 			ObjectNotifications.configureUserNotificationTemplate(
 				description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-				name = "Notification Template",
+				indexRecipient = 2,
+				name = "User Notification Template",
 				recipientType = "User",
 				subject = "Subject content",
 				userName = "Test");
@@ -291,12 +295,14 @@ definition {
 
 			ObjectNotifications.viewUserNotificationTemplateDetails(
 				description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-				name = "Notification Template",
+				name = "User Notification Template",
 				notificationType = "User Notification",
 				recipientType = "User",
 				subject = "Subject content");
 
-			ObjectNotifications.selectEntity(entityName = "User");
+			ObjectAdmin.selectDropdownItem(
+				labelName = "Entity",
+				optionName = "User");
 
 			var listOfTerms = "Middle Name,Screen Name,Create Date,First Name,Last Login Date,UUID";
 
@@ -339,7 +345,9 @@ definition {
 		}
 
 		task ("And given an attachment is added to the notification template") {
-			ObjectNotifications.addNotificationTemplateAttachment(objectLabel = "Custom Object 161928");
+			ObjectNotifications.addNotificationTemplateAttachment(
+				fieldLabel = "From Computer And Show Files In DM",
+				objectLabel = "Custom Object 161928");
 
 			PortletEntry.save();
 		}
@@ -355,7 +363,9 @@ definition {
 		}
 
 		task ("Then the attachment shouldn't be present in the notification template") {
-			AssertElementNotPresent(locator1 = "ObjectNotifications#FIELD_ATTACHMENTS_OBJECT");
+			AssertElementPresent(
+				key_placeHolder = "Select a Field",
+				locator1 = "TextInput#ANY_PLACEHOLDER");
 		}
 	}
 
@@ -484,6 +494,7 @@ definition {
 
 			ObjectNotifications.configureUserNotificationTemplate(
 				description = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+				indexRecipient = 2,
 				name = "User Notification Template",
 				recipientType = "User",
 				subject = "Subject content",
@@ -809,6 +820,8 @@ definition {
 			ObjectAdmin.goToCustomObject(objectName = "CustomObject178781");
 
 			ObjectPortlet.deleteEntry(entry = "Entry Test");
+
+			Alert.viewSuccessMessage();
 		}
 
 		task ("Then the email is received correctly on the email server") {

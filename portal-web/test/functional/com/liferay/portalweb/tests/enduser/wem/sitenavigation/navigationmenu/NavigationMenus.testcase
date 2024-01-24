@@ -34,6 +34,8 @@ definition {
 	@description = "This is a test for LPS-172782. The navigation menu creator could add child item."
 	@priority = 5
 	test AddChildNavigationMenuItem {
+		property portal.acceptance = "true";
+
 		task ("Given a navigation menu creator has a navigation menu") {
 			JSONCategory.addVocabulary(
 				groupName = ${randomSiteName},
@@ -468,6 +470,8 @@ definition {
 	@description = "This is a test for LPS-172782. The navigation menu creator could add sibling item."
 	@priority = 5
 	test AddSiblingNavigationMenuItems {
+		property portal.acceptance = "true";
+
 		task ("Given a navigation menu creator has a navigation menu with an item") {
 			JSONLayout.addPublicLayout(
 				groupName = ${randomSiteName},
@@ -1000,7 +1004,7 @@ definition {
 	@priority = 4
 	test EditNavigationMenuInVirtualInstanceWithDBPartitioning {
 		property database.partition.enabled = "true";
-		property database.types = "mysql";
+		property database.types = "mysql, postgresql";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
@@ -1501,6 +1505,26 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-177769. The tooltip of the back button in a new Navigation Menu is Go to Navigation Menus."
+	@priority = 3
+	test ViewBackButtonTooltipInNavigationMenuEditor {
+		task ("Given access to the navigation menu editor") {
+			NavigationMenusAdmin.openNavigationMenusAdmin(siteURLKey = ${siteURLKey});
+
+			NavigationMenusAdmin.addMenu(menuName = "Navigation Menu Name");
+		}
+
+		task ("When hover over the back button") {
+			MouseOver(locator1 = "Icon#BACK");
+		}
+
+		task ("Then see the tooltip message") {
+			AssertVisible(
+				key_content = "Go to Navigation Menus",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
+		}
+	}
+
 	@description = "This is a test for LPS-172780. View the new behaviors of navigation menu item creation."
 	@priority = 3
 	test ViewBehaviorsOfNavigationMenuItemCreation {
@@ -1911,6 +1935,10 @@ definition {
 		}
 
 		task ("When the navigation menu creator hovers on the content page item") {
+			MouseOver.javaScriptFocus(
+				key_nodeName = "Test Page Name",
+				locator1 = "Treeview#NODE_ITEM");
+
 			MouseOver.javaScriptFocus(
 				key_nodeName = "Test Page Name",
 				locator1 = "Treeview#NODE_ITEM");

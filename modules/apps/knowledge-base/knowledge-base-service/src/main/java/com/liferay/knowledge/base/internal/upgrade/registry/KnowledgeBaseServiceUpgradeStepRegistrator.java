@@ -12,7 +12,9 @@ import com.liferay.knowledge.base.internal.upgrade.v3_0_0.util.KBFolderTable;
 import com.liferay.knowledge.base.internal.upgrade.v3_0_0.util.KBTemplateTable;
 import com.liferay.knowledge.base.internal.upgrade.v4_4_0.KBGroupServiceConfigurationUpgradeProcess;
 import com.liferay.knowledge.base.model.KBArticle;
+import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
+import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.settings.SettingsLocatorHelper;
 import com.liferay.portal.kernel.upgrade.BaseExternalReferenceCodeUpgradeProcess;
@@ -23,7 +25,6 @@ import com.liferay.portal.kernel.upgrade.MVCCVersionUpgradeProcess;
 import com.liferay.portal.kernel.upgrade.UpgradeProcessFactory;
 import com.liferay.portal.kernel.upgrade.ViewCountUpgradeProcess;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
-import com.liferay.view.count.service.ViewCountEntryLocalService;
 
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Component;
@@ -74,7 +75,8 @@ public class KnowledgeBaseServiceUpgradeStepRegistrator
 		registry.register(
 			"1.2.0", "1.3.0",
 			new com.liferay.knowledge.base.internal.upgrade.v1_3_0.
-				KBAttachmentsUpgradeProcess(_companyLocalService, _store),
+				KBAttachmentsUpgradeProcess(
+					_companyLocalService, _portletFileRepository, _store),
 			new com.liferay.knowledge.base.internal.upgrade.v1_3_0.
 				UpgradePortletPreferences());
 
@@ -190,6 +192,11 @@ public class KnowledgeBaseServiceUpgradeStepRegistrator
 			"4.5.0", "4.6.0",
 			new com.liferay.knowledge.base.internal.upgrade.v4_6_0.
 				KBArticleUpgradeProcess());
+
+		registry.register(
+			"4.6.0", "4.7.0",
+			new com.liferay.knowledge.base.internal.upgrade.v4_7_0.
+				KBFolderUpgradeProcess());
 	}
 
 	@Reference
@@ -202,15 +209,17 @@ public class KnowledgeBaseServiceUpgradeStepRegistrator
 	private ModuleServiceLifecycle _moduleServiceLifecycle;
 
 	@Reference
+	private PortletFileRepository _portletFileRepository;
+
+	@Reference(
+		target = "(&(release.bundle.symbolic.name=com.liferay.view.count.service)(&(release.schema.version>=1.0.0)))"
+	)
+	private Release _release;
+
+	@Reference
 	private SettingsLocatorHelper _settingsLocatorHelper;
 
 	@Reference(target = "(default=true)")
 	private Store _store;
-
-	/**
-	 * See LPS-101085. The ViewCount table needs to exist.
-	 */
-	@Reference
-	private ViewCountEntryLocalService _viewCountEntryLocalService;
 
 }

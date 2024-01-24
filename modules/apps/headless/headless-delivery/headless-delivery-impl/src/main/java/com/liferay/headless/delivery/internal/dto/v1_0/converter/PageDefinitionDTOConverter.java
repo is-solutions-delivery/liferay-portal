@@ -15,10 +15,10 @@ import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.headless.delivery.dto.v1_0.ClientExtension;
 import com.liferay.headless.delivery.dto.v1_0.MasterPage;
 import com.liferay.headless.delivery.dto.v1_0.PageDefinition;
+import com.liferay.headless.delivery.dto.v1_0.PageElement;
 import com.liferay.headless.delivery.dto.v1_0.Settings;
 import com.liferay.headless.delivery.dto.v1_0.StyleBook;
 import com.liferay.headless.delivery.dto.v1_0.util.ContentDocumentUtil;
-import com.liferay.headless.delivery.internal.dto.v1_0.util.PageElementUtil;
 import com.liferay.headless.delivery.internal.dto.v1_0.util.PageRulesUtil;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
@@ -34,6 +34,7 @@ import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
@@ -79,24 +80,44 @@ public class PageDefinitionDTOConverter
 					layoutStructure.getMainItemId());
 		}
 
-		LayoutStructureItem mainLayoutStructureItem =
-			layoutStructure.getMainLayoutStructureItem();
-		boolean saveInlineContent = GetterUtil.getBoolean(
-			dtoConverterContext.getAttribute("saveInlineContent"), true);
-		boolean saveMappingConfiguration = GetterUtil.getBoolean(
-			dtoConverterContext.getAttribute("saveMappingConfiguration"), true);
-
 		return new PageDefinition() {
 			{
-				pageElement = PageElementUtil.toPageElement(
-					layout.getGroupId(), layoutStructure,
-					mainLayoutStructureItem, saveInlineContent,
-					saveMappingConfiguration);
-				pageRules = PageRulesUtil.toPageRules(
-					layoutStructure.getLayoutStructureRules());
-				settings = _toSettings(dtoConverterContext, layout);
-				version =
-					LayoutStructureConstants.LATEST_PAGE_DEFINITION_VERSION;
+				setPageElement(
+					() -> {
+						LayoutStructureItem mainLayoutStructureItem =
+							layoutStructure.getMainLayoutStructureItem();
+						boolean saveInlineContent = GetterUtil.getBoolean(
+							dtoConverterContext.getAttribute(
+								"saveInlineContent"),
+							true);
+						boolean saveMappingConfiguration =
+							GetterUtil.getBoolean(
+								dtoConverterContext.getAttribute(
+									"saveMappingConfiguration"),
+								true);
+
+						return _pageElementDTOConverter.toDTO(
+							new AttributesDTOConverterContext(
+								HashMapBuilder.put(
+									"groupId", (Object)layout.getGroupId()
+								).put(
+									"layoutStructure", layoutStructure
+								).put(
+									"saveInlineContent", saveInlineContent
+								).put(
+									"saveMappingConfiguration",
+									saveMappingConfiguration
+								).build()),
+							mainLayoutStructureItem);
+					});
+				setPageRules(
+					() -> PageRulesUtil.toPageRules(
+						layoutStructure.getLayoutStructureRules()));
+				setSettings(() -> _toSettings(dtoConverterContext, layout));
+				setVersion(
+					() ->
+						LayoutStructureConstants.
+							LATEST_PAGE_DEFINITION_VERSION);
 			}
 		};
 	}
@@ -158,10 +179,12 @@ public class PageDefinitionDTOConverter
 
 				return new ClientExtension() {
 					{
-						clientExtensionConfig = _getClientExtensionConfig(
-							clientExtensionEntryRel);
-						externalReferenceCode = cet.getExternalReferenceCode();
-						name = cet.getName(dtoConverterContext.getLocale());
+						setClientExtensionConfig(
+							() -> _getClientExtensionConfig(
+								clientExtensionEntryRel));
+						setExternalReferenceCode(cet::getExternalReferenceCode);
+						setName(
+							() -> cet.getName(dtoConverterContext.getLocale()));
 					}
 				};
 			},
@@ -188,8 +211,8 @@ public class PageDefinitionDTOConverter
 
 		return new ClientExtension() {
 			{
-				externalReferenceCode = cet.getExternalReferenceCode();
-				name = cet.getName(dtoConverterContext.getLocale());
+				setExternalReferenceCode(cet::getExternalReferenceCode);
+				setName(() -> cet.getName(dtoConverterContext.getLocale()));
 			}
 		};
 	}
@@ -203,15 +226,6 @@ public class PageDefinitionDTOConverter
 
 		return new Settings() {
 			{
-				globalCSSClientExtensions = _getClientExtensions(
-					classNameId, dtoConverterContext, layout,
-					ClientExtensionEntryConstants.TYPE_GLOBAL_CSS);
-				globalJSClientExtensions = _getClientExtensions(
-					classNameId, dtoConverterContext, layout,
-					ClientExtensionEntryConstants.TYPE_GLOBAL_JS);
-				themeCSSClientExtension = _getThemeCSSClientExtension(
-					classNameId, layout, dtoConverterContext);
-
 				setColorSchemeName(
 					() -> {
 						ColorScheme colorScheme = null;
@@ -249,10 +263,11 @@ public class PageDefinitionDTOConverter
 						if (cet != null) {
 							return new ClientExtension() {
 								{
-									externalReferenceCode =
-										cet.getExternalReferenceCode();
-									name = cet.getName(
-										dtoConverterContext.getLocale());
+									setExternalReferenceCode(
+										cet::getExternalReferenceCode);
+									setName(
+										() -> cet.getName(
+											dtoConverterContext.getLocale()));
 								}
 							};
 						}
@@ -269,6 +284,14 @@ public class PageDefinitionDTOConverter
 
 						return null;
 					});
+				setGlobalCSSClientExtensions(
+					() -> _getClientExtensions(
+						classNameId, dtoConverterContext, layout,
+						ClientExtensionEntryConstants.TYPE_GLOBAL_CSS));
+				setGlobalJSClientExtensions(
+					() -> _getClientExtensions(
+						classNameId, dtoConverterContext, layout,
+						ClientExtensionEntryConstants.TYPE_GLOBAL_JS));
 				setJavascript(
 					() -> {
 						for (Map.Entry<String, String> entry :
@@ -296,9 +319,10 @@ public class PageDefinitionDTOConverter
 
 						return new MasterPage() {
 							{
-								key =
-									layoutPageTemplateEntry.
-										getLayoutPageTemplateEntryKey();
+								setKey(
+									() ->
+										layoutPageTemplateEntry.
+											getLayoutPageTemplateEntryKey());
 							}
 						};
 					});
@@ -314,11 +338,16 @@ public class PageDefinitionDTOConverter
 
 						return new StyleBook() {
 							{
-								key = styleBookEntry.getStyleBookEntryKey();
-								name = styleBookEntry.getName();
+								setKey(
+									() ->
+										styleBookEntry.getStyleBookEntryKey());
+								setName(styleBookEntry::getName);
 							}
 						};
 					});
+				setThemeCSSClientExtension(
+					() -> _getThemeCSSClientExtension(
+						classNameId, layout, dtoConverterContext));
 				setThemeName(
 					() -> {
 						Theme theme = layout.getTheme();
@@ -375,10 +404,32 @@ public class PageDefinitionDTOConverter
 	private LayoutPageTemplateEntryLocalService
 		_layoutPageTemplateEntryLocalService;
 
+	@Reference(
+		target = "(dto.class.name=com.liferay.layout.util.structure.LayoutStructureItem)"
+	)
+	private DTOConverter<LayoutStructureItem, PageElement>
+		_pageElementDTOConverter;
+
 	@Reference
 	private Portal _portal;
 
 	@Reference
 	private StyleBookEntryLocalService _styleBookEntryLocalService;
+
+	private static class AttributesDTOConverterContext
+		implements DTOConverterContext {
+
+		@Override
+		public Object getAttribute(String name) {
+			return _attributes.get(name);
+		}
+
+		private AttributesDTOConverterContext(Map<String, Object> attributes) {
+			_attributes = attributes;
+		}
+
+		private final Map<String, Object> _attributes;
+
+	}
 
 }

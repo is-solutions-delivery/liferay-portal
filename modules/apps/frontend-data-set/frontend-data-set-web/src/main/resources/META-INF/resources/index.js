@@ -9,6 +9,10 @@ export {default as FrontendDataSet} from './FrontendDataSet';
 
 // Renderers API
 
+export {
+	IClientExtensionRenderer,
+	IInternalRenderer,
+} from './FrontendDataSetContext';
 export {INTERNAL_CELL_RENDERERS as FDS_INTERNAL_CELL_RENDERERS} from './cell_renderers/InternalCellRenderer';
 export {getInternalCellRenderer as getFDSInternalCellRenderer} from './cell_renderers/getInternalCellRenderer';
 export {default as DateTimeRenderer} from './cell_renderers/DateTimeRenderer';
@@ -17,3 +21,10 @@ export {default as StatusRenderer} from './cell_renderers/StatusRenderer';
 // Data Set Events API
 
 export {default as FDS_EVENT} from './utils/eventsDefinitions';
+
+// Frontend Data Set Constants
+
+export {
+	FDS_NESTED_FIELD_NAME_DELIMITER,
+	FDS_NESTED_FIELD_NAME_PARENT_SUFFIX,
+} from './constants';

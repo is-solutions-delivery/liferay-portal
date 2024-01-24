@@ -7,18 +7,33 @@ package com.liferay.jethr0.job;
 
 import com.liferay.jethr0.bui1d.BuildEntity;
 import com.liferay.jethr0.entity.BaseEntity;
-import com.liferay.jethr0.gitbranch.GitBranchEntity;
+import com.liferay.jethr0.git.branch.GitBranchEntity;
 import com.liferay.jethr0.jenkins.cohort.JenkinsCohortEntity;
+import com.liferay.jethr0.job.definition.JobDefinition;
+import com.liferay.jethr0.job.definition.JobDefinitionFactory;
 import com.liferay.jethr0.task.TaskEntity;
 import com.liferay.jethr0.testsuite.TestSuiteEntity;
 import com.liferay.jethr0.util.StringUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
+
+import java.net.URL;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -105,7 +120,18 @@ public abstract class BaseJobEntity extends BaseEntity implements JobEntity {
 
 	@Override
 	public List<JSONObject> getInitialBuildJSONObjects() {
-		return Collections.emptyList();
+		return Collections.singletonList(getInitialBuildJSONObject());
+	}
+
+	@Override
+	public URL getJenkinsBranchURL() {
+		String jenkinsBranchURL = getParameterValue("jenkinsBranchURL");
+
+		if (StringUtil.isNullOrEmpty(jenkinsBranchURL)) {
+			return null;
+		}
+
+		return StringUtil.toURL(jenkinsBranchURL);
 	}
 
 	@Override
@@ -118,10 +144,18 @@ public abstract class BaseJobEntity extends BaseEntity implements JobEntity {
 		JSONObject jsonObject = super.getJSONObject();
 
 		JobEntity.State state = getState();
+
 		JobEntity.Type type = getType();
 
+		JobDefinition jobDefinition = JobDefinitionFactory.newJobDefinition(
+			type);
+
 		jsonObject.put(
+			"definition", jobDefinition.getJSONObject()
+		).put(
 			"name", getName()
+		).put(
+			"parameters", String.valueOf(_getParametersJSONObject())
 		).put(
 			"priority", getPriority()
 		).put(
@@ -138,6 +172,16 @@ public abstract class BaseJobEntity extends BaseEntity implements JobEntity {
 	@Override
 	public String getName() {
 		return _name;
+	}
+
+	@Override
+	public Map<String, String> getParameters() {
+		return _parameters;
+	}
+
+	@Override
+	public String getParameterValue(String name) {
+		return _parameters.get(name);
 	}
 
 	@Override
@@ -228,8 +272,18 @@ public abstract class BaseJobEntity extends BaseEntity implements JobEntity {
 	}
 
 	@Override
+	public void setJenkinsBranchURL(URL jenkinsBranchURL) {
+		setParameterValue("jenkinsBranchURL", String.valueOf(jenkinsBranchURL));
+	}
+
+	@Override
 	public void setName(String name) {
 		_name = name;
+	}
+
+	@Override
+	public void setParameterValue(String name, String value) {
+		_parameters.put(name, value);
 	}
 
 	@Override
@@ -255,9 +309,203 @@ public abstract class BaseJobEntity extends BaseEntity implements JobEntity {
 		_startDate = StringUtil.toDate(jsonObject.optString("startDate"));
 		_state = State.get(jsonObject.getJSONObject("state"));
 		_type = Type.get(jsonObject.getJSONObject("type"));
+
+		String parameters = jsonObject.getString("parameters");
+
+		if (StringUtil.isNullOrEmpty(parameters)) {
+			return;
+		}
+
+		try {
+			JSONObject parametersJSONObject = new JSONObject(parameters);
+
+			for (String key : parametersJSONObject.keySet()) {
+				_parameters.put(key, parametersJSONObject.getString(key));
+			}
+		}
+		catch (JSONException jsonException) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(jsonException);
+			}
+		}
 	}
 
+	protected String getBranchURLGroupValue(URL branchURL, String groupName) {
+		if (branchURL == null) {
+			return null;
+		}
+
+		Matcher matcher = _branchURLPattern.matcher(String.valueOf(branchURL));
+
+		if (!matcher.find()) {
+			return null;
+		}
+
+		return matcher.group(groupName);
+	}
+
+	protected JSONObject getInitialBuildJSONObject() {
+		JSONObject initialBuildJSONObject = new JSONObject();
+
+		initialBuildJSONObject.put(
+			"initialBuild", true
+		).put(
+			"jenkinsJobName", getJenkinsJobName()
+		).put(
+			"name", "top-level"
+		).put(
+			"parameters", String.valueOf(_getInitialBuildParametersJSONArray())
+		).put(
+			"state", BuildEntity.State.OPENED
+		);
+
+		return initialBuildJSONObject;
+	}
+
+	protected Map<String, String> getInitialBuildParameters() {
+		return HashMapBuilder.put(
+			"BUILD_PRIORITY", String.valueOf(getPriority())
+		).put(
+			"JENKINS_GITHUB_BRANCH_NAME", getJenkinsBranchName()
+		).put(
+			"JENKINS_GITHUB_BRANCH_USERNAME", getJenkinsBranchUserName()
+		).build();
+	}
+
+	protected String getJenkinsBranchName() {
+		return getBranchURLGroupValue(getJenkinsBranchURL(), "branchName");
+	}
+
+	protected String getJenkinsBranchUserName() {
+		return getBranchURLGroupValue(getJenkinsBranchURL(), "userName");
+	}
+
+	protected abstract String getJenkinsJobName();
+
+	protected Boolean getParameterValueBoolean(String name) {
+		String valueBoolean = getParameterValue(name);
+
+		if (StringUtil.isNullOrEmpty(valueBoolean)) {
+			return null;
+		}
+
+		valueBoolean = StringUtil.toLowerCase(valueBoolean);
+
+		if (!valueBoolean.equals("false") && !valueBoolean.equals("true")) {
+			return null;
+		}
+
+		return Boolean.valueOf(valueBoolean);
+	}
+
+	protected Integer getParameterValueInteger(String name) {
+		String valueInteger = getParameterValue(name);
+
+		if (StringUtil.isNullOrEmpty(valueInteger)) {
+			return null;
+		}
+
+		return Integer.valueOf(valueInteger);
+	}
+
+	protected Long getParameterValueLong(String name) {
+		String valueLong = getParameterValue(name);
+
+		if (StringUtil.isNullOrEmpty(valueLong)) {
+			return null;
+		}
+
+		return Long.valueOf(valueLong);
+	}
+
+	protected URL getParameterValueURL(String name) {
+		String urlString = getParameterValue(name);
+
+		if (StringUtil.isNullOrEmpty(urlString)) {
+			return null;
+		}
+
+		return StringUtil.toURL(urlString);
+	}
+
+	protected void setParameterValueBoolean(String name, Boolean valueBoolean) {
+		setParameterValue(name, String.valueOf(valueBoolean));
+	}
+
+	protected void setParameterValueInteger(String name, Integer valueInteger) {
+		setParameterValue(name, String.valueOf(valueInteger));
+	}
+
+	protected void setParameterValueLong(String name, Long valueLong) {
+		setParameterValue(name, String.valueOf(valueLong));
+	}
+
+	protected void setParameterValueURL(String name, URL valueURL) {
+		if (valueURL == null) {
+			setParameterValue(name, null);
+		}
+
+		setParameterValue(name, String.valueOf(valueURL));
+	}
+
+	private JSONArray _getInitialBuildParametersJSONArray() {
+		JSONArray initialBuildParametersJSONArray = new JSONArray();
+
+		Map<String, String> initialBuildParameters =
+			getInitialBuildParameters();
+
+		for (Map.Entry<String, String> initialBuildParameter :
+				initialBuildParameters.entrySet()) {
+
+			String initialBuildParameterValue =
+				initialBuildParameter.getValue();
+
+			if (StringUtil.isNullOrEmpty(initialBuildParameterValue) ||
+				initialBuildParameterValue.equals("null")) {
+
+				continue;
+			}
+
+			JSONObject initialBuildParameterJSONObject = new JSONObject();
+
+			initialBuildParameterJSONObject.put(
+				"name", initialBuildParameter.getKey()
+			).put(
+				"value", initialBuildParameterValue
+			);
+
+			initialBuildParametersJSONArray.put(
+				initialBuildParameterJSONObject);
+		}
+
+		return initialBuildParametersJSONArray;
+	}
+
+	private JSONObject _getParametersJSONObject() {
+		JSONObject parametersJSONObject = new JSONObject();
+
+		if (_parameters.isEmpty()) {
+			return parametersJSONObject;
+		}
+
+		Set<String> parameterNames = new TreeSet<>(_parameters.keySet());
+
+		for (String parameterName : parameterNames) {
+			parametersJSONObject.put(
+				parameterName, _parameters.get(parameterName));
+		}
+
+		return parametersJSONObject;
+	}
+
+	private static final Log _log = LogFactory.getLog(BaseJobEntity.class);
+
+	private static final Pattern _branchURLPattern = Pattern.compile(
+		"https://github.com/(?<userName>[^/]+)/(?<repositoryName>[^/]+)/tree/" +
+			"(?<branchName>[^/]+)");
+
 	private String _name;
+	private final Map<String, String> _parameters = new HashMap<>();
 	private int _priority;
 	private Date _startDate;
 	private State _state;

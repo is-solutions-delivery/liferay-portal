@@ -27,7 +27,7 @@
 </tr>
 <tr>
 	<td>ASSERT_FRAGMENTS_TEXT_IN_SF_N</td>
-	<td>xpath=(//h1[(contains(@class,"component-heading")) and (contains(@data-lfr-editable-id,"${key_id}"))])[${index}][contains(text(),"${key_fragmentText}")]</td>
+	<td>xpath=(//h1[(contains(@class,"component-heading")) and (contains(@data-lfr-editable-id,"${key_id}"))])[${index}][contains(text(),"${key_fragmentText}")] | (//h1[(contains(@class,"component-heading")) and (contains(@data-lfr-editable-id,"${key_id}"))])[${index}]/p[contains(text(),"${key_fragmentText}")]</td>
 	<td></td>
 </tr>
 <tr>
@@ -83,6 +83,11 @@
 <tr>
 	<td>LABEL_GENERIC_SELECT</td>
 	<td>//label[contains(text(),'${key_fieldLabel}')]/..//select</td>
+	<td></td>
+</tr>
+<tr>
+	<td>LABEL_SELECT_BY_INDEX</td>
+	<td>xpath=(//label[contains(text(),'${key_fieldLabel}')]/..//select)[${key_index}]</td>
 	<td></td>
 </tr>
 <tr>
@@ -401,6 +406,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>PLUS_BUTTON</td>
+	<td>//a[contains(@class,'btn')][contains(@href,'new') or contains(@href,'redirect') or contains(@href,'mvc') or contains(@href,'javascript')][.//*[name()='svg'][contains(@class,'icon-plus')]][not(contains(@class,'borderless'))] | //button[not(contains(@class,'borderless'))][not(contains(@class,'btn-unstyled'))][*[contains(@class,'icon-plus')]]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PLUS_MENU</td>
 	<td>//div[contains (@class, 'dropdown')]//li/a[contains (.,'${key_plusMenu}')]</td>
 	<td></td>
@@ -446,6 +456,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>RADIO_BUTTON_SPECIFIC</td>
+	<td>//label[text()='${key_radioOption}']/input[@type='radio'] | //div[contains(@class,'justify')]//p[text()='${key_radioOption}']//preceding::input[@type='radio'][1]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>RADIO_BUTTON_WITH_VALUE</td>
 	<td>//span[contains(.,'${key_fieldValue}')]/../input[contains(@type,'radio')]</td>
 	<td></td>
@@ -468,6 +483,11 @@
 <tr>
 	<td>EDIT_ROW</td>
 	<td>//*[@data-qa-id='row']//*[normalize-space(text())='${key_rowEntry}']//..//..//*[normalize-space(text())='Edit']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ENTRY_CONTENT_ENTRY_NAME_INDEX</td>
+	<td>//*[@data-qa-id='row']//*[normalize-space(text())='${key_rowEntry}'][${key_index}]</td>
 	<td></td>
 </tr>
 <tr>
@@ -553,6 +573,21 @@
 <tr>
 	<td>WORKFLOW_STATUS</td>
 	<td>//span[@class='workflow-status']//*[contains(.,'${key_status}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>COMBOBOX_BUTTON</td>
+	<td>//div[normalize-space(text())='${key_objectName}']//button[@role='combobox']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>COMBOBOX_DROPDOWN_OPTION_NAME</td>
+	<td>//div[contains(@class, 'dropdown-menu dropdown-menu-indicator-start dropdown-menu-select show')]//*[contains(text(),'${key_optionName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DROPDOWN_OPTION_NAME_WITH_WARNING_MESSAGE</td>
+	<td>//div[contains(@class, 'dropdown-menu dropdown-menu-indicator-start dropdown-menu-select show')]//span[contains(text(),'${key_warning}')]/../../..//*[contains(text(),'${key_optionName}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -677,7 +712,17 @@
 </tr>
 <tr>
 	<td>BODY_VERTICAL_ELLIPSIS</td>
+	<td>//div[@class='table-list-title']/*[text()='${key_value}']/../../..//*[name()='svg'][contains(@class,'icon-ellipsis')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ORDERS_ENTRY_BODY_VERTICAL_ELLIPSIS</td>
 	<td>//div[@class='table-list-title']/../../../*[contains(.,'${key_value}')]//*[name()='svg'][contains(@class,'icon-ellipsis')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>BODY_VERTICAL_ELLIPSIS_ACCOUNT</td>
+	<td>//div[@class='data-set-wrapper' or @class='searchcontainer-content']//a[text()='${key_name}']/../../..//*[*[name()='svg'][contains(@class,'icon-ellipsis')]]</td>
 	<td></td>
 </tr>
 <tr>
@@ -742,7 +787,7 @@
 </tr>
 <tr>
 	<td>ENTRY_CONTENT_ROW_NUMBER_DATASET</td>
-	<td>//table[@class='table table-autofit']/tbody/tr[${key_rowNumber}]/td[text()="${key_entry}"]</td>
+	<td>//table/tbody/tr[${key_rowNumber}]/td[text()="${key_entry}"]</td>
 	<td></td>
 </tr>
 <tr>
@@ -808,6 +853,11 @@
 <tr>
 	<td>ELIGIBILITY_CARD_TITLE</td>
 	<td>//div/h4[contains(.,'${key_eligibilityCardTitle}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CHECK_ELIGIBILITY_CHECKBOX</td>
+	<td>//label[contains(.,'${key_entry}')]/input[(@checked='')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -877,7 +927,7 @@
 </tr>
 <tr>
 	<td>TABLE_ENTRY_EDIT_BUTTON</td>
-	<td>//h4[contains(.,'${key_table}')]//..//div/a[contains(.,'${key_entryName}')]//..//..//../div/*[contains(.,'Edit')] | //div[contains(.,'${key_table}')]//div[@class='dnd-tr'][contains(.,'${key_entryName}')]//*[contains(text(),'Edit')]</td>
+	<td>//h4[contains(.,'${key_table}')]//..//div/a[text()='${key_entryName}']//..//..//../div/*[contains(.,'Edit')] | //div[contains(.,'${key_table}')]//div[@class='dnd-tr']//*[text()='${key_entryName}']/..//*[contains(text(),'Edit')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -932,7 +982,7 @@
 </tr>
 <tr>
 	<td>ANY_FRAGMENT_DROP_TARGET_N</td>
-	<td>//div[@aria-label='${key_targetFragmentName}'][${key_index}]/div[contains(@class,'page-editor__topper__content')]</td>
+	<td>//div[@data-name='${key_targetFragmentName}'][${key_index}]/div[contains(@class,'page-editor__topper__content')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -979,6 +1029,11 @@
 <tr>
 	<td>PRODUCT_CARD_LIST_PRICE</td>
 	<td>//p[@title='${key_productName}']//following-sibling::p[@class='card-text']//span[@class='price-value']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CHANNEL_ADDRESS_TRASH_ICON</td>
+	<td>//div[contains(.,'${key_channelEntry}')]/../../..//button[*[name()='svg'][contains(@class,'lexicon-icon-trash')]]</td>
 	<td></td>
 </tr>
 
@@ -1124,6 +1179,21 @@
 <tr>
 	<td>PRODUCT_CARD_CUSTOM_IMAGE</td>
 	<td>//span[contains(text(),'${key_itemName}')]/../../../../../../..//div[contains(@class,'product-card')]//a//picture[@data-fileentryid="${key_fileEntryId}"]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>REMOVE_IMAGE_TAG</td>
+	<td>//span[contains(@class,'label label-secondary')]//span[contains(.,'${key_tagName}')]/..//*[name()='svg']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>IMAGE_TAG</td>
+	<td>//span[contains(@class,'label label-secondary')]//span[contains(.,'${key_tagName}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>REMOVE_ALL_IMAGE_TAG</td>
+	<td>//label[contains(.,'Tags')]/..//div[contains(@class,'input-group-item input-group-item-shrink')]//*[name()='svg']</td>
 	<td></td>
 </tr>
 

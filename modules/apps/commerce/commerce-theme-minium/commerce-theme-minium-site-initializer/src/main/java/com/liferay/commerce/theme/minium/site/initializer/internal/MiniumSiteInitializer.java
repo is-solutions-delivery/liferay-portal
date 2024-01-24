@@ -195,7 +195,7 @@ public class MiniumSiteInitializer implements SiteInitializer {
 
 			_configureB2BSite(commerceChannel.getGroup(), serviceContext);
 
-			_miniumLayoutsInitializer.initialize(serviceContext);
+			_createLayouts(serviceContext);
 
 			_importAssetCategories(serviceContext);
 
@@ -360,6 +360,32 @@ public class MiniumSiteInitializer implements SiteInitializer {
 			group.getName(serviceContext.getLanguageId()) + " Portal",
 			CommerceChannelConstants.CHANNEL_TYPE_SITE, null,
 			commerceCatalog.getCommerceCurrencyCode(), serviceContext);
+	}
+
+	private void _createLayouts(ServiceContext serviceContext)
+		throws Exception {
+
+		SiteInitializerDependencyResolver siteInitializerDependencyResolver =
+			SiteInitializerDependencyResolverThreadLocal.
+				getSiteInitializerDependencyResolver();
+
+		if (siteInitializerDependencyResolver != null) {
+			_siteInitializerDependencyResolver =
+				siteInitializerDependencyResolver;
+		}
+		else {
+			_siteInitializerDependencyResolver =
+				_defaultSiteInitializerDependencyResolver;
+		}
+
+		_cpFileImporter.cleanLayouts(serviceContext);
+
+		_cpFileImporter.createLayouts(
+			_jsonFactory.createJSONArray(
+				_siteInitializerDependencyResolver.getJSON("layouts.json")),
+			_siteInitializerDependencyResolver.getImageClassLoader(),
+			_siteInitializerDependencyResolver.getImageDependencyPath(),
+			serviceContext);
 	}
 
 	private void _createRoles(
@@ -1155,9 +1181,6 @@ public class MiniumSiteInitializer implements SiteInitializer {
 
 	@Reference
 	private Language _language;
-
-	@Reference
-	private MiniumLayoutsInitializer _miniumLayoutsInitializer;
 
 	@Reference
 	private OrganizationImporter _organizationImporter;

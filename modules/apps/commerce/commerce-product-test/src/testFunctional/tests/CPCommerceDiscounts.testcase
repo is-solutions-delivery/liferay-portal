@@ -29,9 +29,7 @@ definition {
 			siteName = "Minium 2",
 			siteTemplateName = "Minium");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		AssertElementPresent(
 			key_entryName = "Minium Portal",
@@ -89,12 +87,10 @@ definition {
 			locator1 = "CommerceAccelerators#PRODUCT_DETAILS_LIST_PRICE",
 			value1 = "24.00");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Pricing",
-			portlet = "Discounts");
+		CommerceNavigator.goToDiscountAdmin();
 
 		Click(
-			key_value = "",
+			key_value = "Test Discount",
 			locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
 
 		MenuItem.click(menuItem = "Edit");
@@ -134,12 +130,10 @@ definition {
 			locator1 = "CommerceAccelerators#PRODUCT_DETAILS_LIST_PRICE",
 			value1 = "24.00");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Pricing",
-			portlet = "Discounts");
+		CommerceNavigator.goToDiscountAdmin();
 
 		Click(
-			key_value = "",
+			key_value = "Test Discount",
 			locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
 
 		MenuItem.click(menuItem = "Delete");
@@ -167,9 +161,7 @@ definition {
 			siteName = "Minium 2",
 			siteTemplateName = "Minium");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		AssertElementPresent(
 			key_entryName = "Minium Portal",
@@ -179,9 +171,7 @@ definition {
 			key_entryName = "Minium 2 Portal",
 			locator1 = "CommerceNavigation#ENTRY_NAME");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Pricing",
-			portlet = "Discounts");
+		CommerceNavigator.goToDiscountAdmin();
 
 		Click(locator1 = "Button#PLUS");
 
@@ -226,6 +216,100 @@ definition {
 		AssertTextEquals.assertPartialText(
 			locator1 = "CommerceAccelerators#PRODUCT_DETAILS_LIST_PRICE",
 			value1 = "24.00");
+	}
+
+	@description = "This is a test for COMMERCE-12768. As a buyer, I want to use the coupon code discount applied with case insensitive"
+	@priority = 5
+	test CanApplyCaseInsensitiveCouponCodeDiscount {
+		property custom.properties = "jsonws.web.service.paths.excludes=";
+		property portal.acceptance = "true";
+
+		task ("Given a Minium site with a buyer user") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a discount with coupon code (Coupon50) is created") {
+			CommerceJSONDiscountsAPI._addDiscount(
+				active = "true",
+				couponCode = "Coupon50",
+				level = "L1",
+				percentageLevel1 = 50,
+				target = "total",
+				title = "Test Discount",
+				useCouponCode = "true",
+				usePercentage = "true");
+		}
+
+		task ("And Coupon Code Entry widget is deployed in the Pending Orders page") {
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/pending-orders");
+
+			CommerceAcceleratorsInitializer.addPortlet(portletName = "Coupon Code Entry");
+		}
+
+		task ("And the buyer adds U-Joint product to the cart") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			FrontStore.addInitializerProductToCart(
+				productName = "U-Joint",
+				productQuantity = 1);
+		}
+
+		task ("When the coupon code is applied with coupon50 (lowercase) in the Pending Orders page") {
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/minium/pending-orders");
+
+			AssertTextEquals(
+				key_cellName1 = "Commerce Account",
+				key_cellName2 = "Buyer User",
+				key_columnNumber = 8,
+				locator1 = "CommerceEntry#TABLE_CELL_BY_COLUMN_ORDER_NO_TITLE",
+				value1 = "$ 24.00");
+
+			FrontStore.applyCouponCode(discountCouponCode = "coupon50");
+		}
+
+		task ("Then can view the discount applied for the order entry") {
+			AssertTextEquals(
+				key_cellName1 = "Commerce Account",
+				key_cellName2 = "Buyer User",
+				key_columnNumber = 8,
+				locator1 = "CommerceEntry#TABLE_CELL_BY_COLUMN_ORDER_NO_TITLE",
+				value1 = "$ 12.00");
+		}
+
+		task ("And can view the discount applied in the order entry's details") {
+			Button.click(button = "View");
+
+			CommerceOrders.viewOrdersDetails(
+				productListPrice = "24.00",
+				productName = "U-Joint",
+				productQuantity = 1,
+				productSku = "MIN55861",
+				productTotalPrice = "24.00");
+
+			CommerceOrders.viewOrderPrices(
+				deliveryPrice = "0.00",
+				subTotalPrice = "24.00",
+				taxPrice = "0.00",
+				totalPrice = "12.00");
+		}
 	}
 
 	@description = "COMMERCE-11821 | Discount is applied correctly when a tax category is enabled"
@@ -503,9 +587,7 @@ definition {
 		}
 
 		task ("When a new discount is created") {
-			CommerceNavigator.gotoPortlet(
-				category = "Pricing",
-				portlet = "Discounts");
+			CommerceNavigator.goToDiscountAdmin();
 
 			Click(locator1 = "Button#PLUS");
 
@@ -804,9 +886,7 @@ definition {
 		}
 
 		task ("Then Discounts panel is shown") {
-			CommerceNavigator.gotoPortlet(
-				category = "Pricing",
-				portlet = "Discounts");
+			CommerceNavigator.goToDiscountAdmin();
 
 			AssertTextEquals(
 				locator1 = "ControlMenu#HEADING",
@@ -846,10 +926,7 @@ definition {
 		}
 
 		task ("When the admin navigates to the discount's entry") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Pricing",
-				panel = "Commerce",
-				portlet = "Discounts");
+			CommerceNavigator.goToDiscountAdmin();
 
 			CommerceNavigator.gotoEntry(entryName = "Test Discount");
 		}
@@ -1006,10 +1083,7 @@ definition {
 		}
 
 		task ("When the admin navigates to the discount's entry") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Pricing",
-				panel = "Commerce",
-				portlet = "Discounts");
+			CommerceNavigator.goToDiscountAdmin();
 
 			CommerceNavigator.gotoEntry(entryName = "Test Discount");
 		}
@@ -1176,9 +1250,7 @@ definition {
 		}
 
 		task ("And a discount of 10% applied to ABS Sensor product") {
-			CommerceNavigator.gotoPortlet(
-				category = "Pricing",
-				portlet = "Discounts");
+			CommerceNavigator.goToDiscountAdmin();
 
 			Click(locator1 = "Button#PLUS");
 
@@ -1306,9 +1378,7 @@ definition {
 		property portal.acceptance = "true";
 		property portal.upstream = "true";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		Click(locator1 = "Button#PLUS");
 
@@ -1318,9 +1388,7 @@ definition {
 			channelType = "Site",
 			siteName = "Guest");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Pricing",
-			portlet = "Discounts");
+		CommerceNavigator.goToDiscountAdmin();
 
 		Click(locator1 = "Button#PLUS");
 
@@ -1337,9 +1405,7 @@ definition {
 
 		AssertElementPresent(locator1 = "Message#SUCCESS");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Pricing",
-			portlet = "Discounts");
+		CommerceNavigator.goToDiscountAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Test Discount");
 
@@ -1375,9 +1441,7 @@ definition {
 
 		CommerceAcceleratorsInitializer.createNewAccountViaFront(accountName = "account3");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Pricing",
-			portlet = "Discounts");
+		CommerceNavigator.goToDiscountAdmin();
 
 		Click(locator1 = "Button#PLUS");
 
@@ -1592,9 +1656,7 @@ definition {
 
 		CommerceAcceleratorsInitializer.createNewAccountViaFront(accountName = "account2");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Pricing",
-			portlet = "Discounts");
+		CommerceNavigator.goToDiscountAdmin();
 
 		Click(locator1 = "Button#PLUS");
 
@@ -1698,9 +1760,7 @@ definition {
 
 		CommerceUtilities.checkSuccessAlertAppearsAndDisappears();
 
-		CommerceNavigator.gotoPortlet(
-			category = "Pricing",
-			portlet = "Discounts");
+		CommerceNavigator.goToDiscountAdmin();
 
 		Click(locator1 = "Button#PLUS");
 

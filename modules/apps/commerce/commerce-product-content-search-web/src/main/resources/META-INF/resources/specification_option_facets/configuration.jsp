@@ -24,7 +24,8 @@ CPSpecificationOptionFacetsDisplayContext cpSpecificationOptionFacetsDisplayCont
 	<aui:input name="redirect" type="hidden" value="<%= configurationRenderURL %>" />
 
 	<liferay-frontend:edit-form-body>
-		<liferay-ui:error key="exceededMaxTermsLimit" message="maximum-terms-cannot-exceed-100" />
+		<liferay-ui:error key="exceededMaxSpecificationsLimit" message='<%= LanguageUtil.format(request, "maximum-specifications-cannot-exceed-x", 100) %>' />
+		<liferay-ui:error key="exceededMaxTermsLimit" message='<%= LanguageUtil.format(request, "maximum-terms-cannot-exceed-x", 100) %>' />
 
 		<liferay-frontend:fieldset
 			collapsible="<%= true %>"
@@ -45,6 +46,7 @@ CPSpecificationOptionFacetsDisplayContext cpSpecificationOptionFacetsDisplayCont
 			collapsible="<%= true %>"
 			label="advanced-configuration"
 		>
+			<aui:input label="max-specifications" name="preferences--maxSpecifications--" value='<%= GetterUtil.getInteger(portletPreferences.getValue("maxSpecifications", null), 10) %>' />
 			<aui:input label="max-terms" name="preferences--maxTerms--" value='<%= GetterUtil.getInteger(portletPreferences.getValue("maxTerms", null), 10) %>' />
 			<aui:input label="frequency-threshold" name="preferences--frequencyThreshold--" value='<%= GetterUtil.getInteger(portletPreferences.getValue("frequencyThreshold", null), 1) %>' />
 			<aui:input label="display-frequencies" name="preferences--frequenciesVisible--" type="checkbox" value='<%= GetterUtil.getBoolean(portletPreferences.getValue("frequenciesVisible", null), true) %>' />

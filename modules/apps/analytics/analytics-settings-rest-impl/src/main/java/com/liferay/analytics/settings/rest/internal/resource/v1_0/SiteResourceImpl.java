@@ -5,17 +5,20 @@
 
 package com.liferay.analytics.settings.rest.internal.resource.v1_0;
 
+import com.liferay.analytics.settings.configuration.AnalyticsConfiguration;
 import com.liferay.analytics.settings.rest.dto.v1_0.Site;
 import com.liferay.analytics.settings.rest.internal.client.AnalyticsCloudClient;
 import com.liferay.analytics.settings.rest.internal.client.model.AnalyticsChannel;
 import com.liferay.analytics.settings.rest.internal.dto.v1_0.converter.SiteDTOConverterContext;
 import com.liferay.analytics.settings.rest.internal.util.SortUtil;
 import com.liferay.analytics.settings.rest.resource.v1_0.SiteResource;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.service.GroupService;
+import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
@@ -50,8 +53,10 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 		com.liferay.analytics.settings.rest.internal.client.pagination.Page
 			<AnalyticsChannel> page =
 				_analyticsCloudClient.getAnalyticsChannelsPage(
-					contextCompany.getCompanyId(), null, 0, QueryUtil.ALL_POS,
-					null);
+					_configurationProvider.getCompanyConfiguration(
+						AnalyticsConfiguration.class,
+						contextCompany.getCompanyId()),
+					null, 0, QueryUtil.ALL_POS, null);
 
 		for (AnalyticsChannel analyticsChannel : page.getItems()) {
 			analyticsChannelsMap.put(
@@ -84,6 +89,8 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 			_portal.getClassNameId(Group.class),
 			_portal.getClassNameId(Organization.class)
 		};
+
+		_analyticsCloudClient = new AnalyticsCloudClient(_http);
 	}
 
 	private LinkedHashMap<String, Object> _getParams() {
@@ -94,13 +101,17 @@ public class SiteResourceImpl extends BaseSiteResourceImpl {
 		).build();
 	}
 
-	@Reference
 	private AnalyticsCloudClient _analyticsCloudClient;
-
 	private long[] _classNameIds;
 
 	@Reference
+	private ConfigurationProvider _configurationProvider;
+
+	@Reference
 	private GroupService _groupService;
+
+	@Reference
+	private Http _http;
 
 	@Reference
 	private Portal _portal;

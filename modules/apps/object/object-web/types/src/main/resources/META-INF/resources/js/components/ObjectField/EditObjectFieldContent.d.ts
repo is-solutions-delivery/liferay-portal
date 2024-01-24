@@ -32,6 +32,7 @@ export declare function EditObjectFieldContent({
 	handleChange,
 	isApproved,
 	isDefaultStorageType,
+	isRootDescendantNode,
 	learnResources,
 	modelBuilder,
 	objectDefinitionExternalReferenceCode,
@@ -39,6 +40,6 @@ export declare function EditObjectFieldContent({
 	readOnly,
 	setValues,
 	values,
-	workflowStatusJSONArray,
+	workflowStatuses,
 }: EditObjectFieldContentProps): JSX.Element;
 export {};

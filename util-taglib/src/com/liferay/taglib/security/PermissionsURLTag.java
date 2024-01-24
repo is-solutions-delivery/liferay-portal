@@ -36,59 +36,16 @@ public class PermissionsURLTag extends TagSupport {
 			String windowState, HttpServletRequest httpServletRequest)
 		throws Exception {
 
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
+		redirect = _getRedirect(httpServletRequest, redirect, windowState);
 
-		resourceGroupId = _getResourceGroupId(resourceGroupId, themeDisplay);
-
-		if (Validator.isNull(redirect) &&
-			(Validator.isNull(windowState) ||
-			 !windowState.equals(LiferayWindowState.POP_UP.toString()))) {
-
-			redirect = PortalUtil.getCurrentURL(httpServletRequest);
-		}
-
-		if (Validator.isNull(windowState)) {
-			if (themeDisplay.isStatePopUp()) {
-				windowState = LiferayWindowState.POP_UP.toString();
-			}
-			else {
-				windowState = WindowState.MAXIMIZED.toString();
-			}
-		}
-
-		PortletURL portletURL = PortletURLBuilder.create(
-			PortletProviderUtil.getPortletURL(
-				httpServletRequest,
-				PortletConfigurationApplicationType.PortletConfiguration.
-					CLASS_NAME,
-				PortletProvider.Action.VIEW)
-		).setMVCPath(
-			"/edit_permissions.jsp"
-		).setPortletResource(
-			() -> {
-				PortletDisplay portletDisplay =
-					themeDisplay.getPortletDisplay();
-
-				return portletDisplay.getId();
-			}
+		return PortletURLBuilder.create(
+			_getPorletURL(
+				httpServletRequest, modelResource, resourceGroupId, windowState)
+		).setRedirect(
+			redirect
 		).setParameter(
-			"modelResource", modelResource
-		).setParameter(
-			"portletConfiguration", true
-		).setParameter(
-			"resourceGroupId", resourceGroupId
-		).setWindowState(
-			WindowStateFactory.getWindowState(windowState)
-		).buildPortletURL();
-
-		if (Validator.isNotNull(redirect)) {
-			portletURL.setParameter("redirect", redirect);
-			portletURL.setParameter("returnToFullPageURL", redirect);
-		}
-
-		return portletURL.toString();
+			"returnToFullPageURL", redirect
+		).buildString();
 	}
 
 	/**
@@ -124,64 +81,39 @@ public class PermissionsURLTag extends TagSupport {
 			HttpServletRequest httpServletRequest)
 		throws Exception {
 
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
+		return PortletURLBuilder.create(
+			_getPorletURL(
+				httpServletRequest, modelResource, resourceGroupId, windowState)
+		).setRedirect(
+			_getRedirect(httpServletRequest, redirect, windowState)
+		).setParameter(
+			"modelResourceDescription", modelResourceDescription
+		).setParameter(
+			"resourcePrimKey", resourcePrimKey
+		).setParameter(
+			"returnToFullPageURL",
+			() -> {
+				ThemeDisplay themeDisplay =
+					(ThemeDisplay)httpServletRequest.getAttribute(
+						WebKeys.THEME_DISPLAY);
 
-		resourceGroupId = _getResourceGroupId(resourceGroupId, themeDisplay);
+				if (!themeDisplay.isStateMaximized()) {
+					return _getRedirect(
+						httpServletRequest, redirect, windowState);
+				}
 
-		if (Validator.isNull(redirect) &&
-			(Validator.isNull(windowState) ||
-			 !windowState.equals(LiferayWindowState.POP_UP.toString()))) {
-
-			redirect = PortalUtil.getCurrentURL(httpServletRequest);
-		}
-
-		PortletURL portletURL = PortletProviderUtil.getPortletURL(
-			httpServletRequest,
-			PortletConfigurationApplicationType.PortletConfiguration.CLASS_NAME,
-			PortletProvider.Action.VIEW);
-
-		if (Validator.isNotNull(windowState)) {
-			portletURL.setWindowState(
-				WindowStateFactory.getWindowState(windowState));
-		}
-		else if (themeDisplay.isStatePopUp()) {
-			portletURL.setWindowState(LiferayWindowState.POP_UP);
-		}
-		else {
-			portletURL.setWindowState(WindowState.MAXIMIZED);
-		}
-
-		portletURL.setParameter("mvcPath", "/edit_permissions.jsp");
-
-		if (Validator.isNotNull(redirect)) {
-			portletURL.setParameter("redirect", redirect);
-
-			if (!themeDisplay.isStateMaximized()) {
-				portletURL.setParameter("returnToFullPageURL", redirect);
+				return null;
 			}
-		}
+		).setParameter(
+			"roleTypes",
+			() -> {
+				if (roleTypes != null) {
+					return StringUtil.merge(roleTypes);
+				}
 
-		portletURL.setParameter(
-			"portletConfiguration", Boolean.TRUE.toString());
-
-		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
-
-		portletURL.setParameter("portletResource", portletDisplay.getId());
-
-		portletURL.setParameter("modelResource", modelResource);
-		portletURL.setParameter(
-			"modelResourceDescription", modelResourceDescription);
-		portletURL.setParameter(
-			"resourceGroupId", String.valueOf(resourceGroupId));
-		portletURL.setParameter("resourcePrimKey", resourcePrimKey);
-
-		if (roleTypes != null) {
-			portletURL.setParameter("roleTypes", StringUtil.merge(roleTypes));
-		}
-
-		return portletURL.toString();
+				return null;
+			}
+		).buildString();
 	}
 
 	@Override
@@ -240,6 +172,57 @@ public class PermissionsURLTag extends TagSupport {
 		_windowState = windowState;
 	}
 
+	private static PortletURL _getPorletURL(
+			HttpServletRequest httpServletRequest, String modelResource,
+			Object resourceGroupId, String windowState)
+		throws Exception {
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		return PortletURLBuilder.create(
+			PortletProviderUtil.getPortletURL(
+				httpServletRequest,
+				PortletConfigurationApplicationType.PortletConfiguration.
+					CLASS_NAME,
+				PortletProvider.Action.VIEW)
+		).setMVCPath(
+			"/edit_permissions.jsp"
+		).setPortletResource(
+			() -> {
+				PortletDisplay portletDisplay =
+					themeDisplay.getPortletDisplay();
+
+				return portletDisplay.getId();
+			}
+		).setParameter(
+			"modelResource", modelResource
+		).setParameter(
+			"portletConfiguration", true
+		).setParameter(
+			"resourceGroupId",
+			_getResourceGroupId(resourceGroupId, themeDisplay)
+		).setWindowState(
+			_getWindowState(themeDisplay, windowState)
+		).buildPortletURL();
+	}
+
+	private static String _getRedirect(
+		HttpServletRequest httpServletRequest, String redirect,
+		String windowState) {
+
+		if (Validator.isNotNull(redirect) ||
+			(Validator.isNotNull(windowState) &&
+			 StringUtil.equals(
+				 windowState, LiferayWindowState.POP_UP.toString()))) {
+
+			return redirect;
+		}
+
+		return PortalUtil.getCurrentURL(httpServletRequest);
+	}
+
 	private static Object _getResourceGroupId(
 		Object resourceGroupId, ThemeDisplay themeDisplay) {
 
@@ -263,6 +246,20 @@ public class PermissionsURLTag extends TagSupport {
 		}
 
 		return resourceGroupId;
+	}
+
+	private static WindowState _getWindowState(
+		ThemeDisplay themeDisplay, String windowState) {
+
+		if (Validator.isNotNull(windowState)) {
+			return WindowStateFactory.getWindowState(windowState);
+		}
+
+		if (themeDisplay.isStatePopUp()) {
+			return LiferayWindowState.POP_UP;
+		}
+
+		return WindowState.MAXIMIZED;
 	}
 
 	private String _modelResource;

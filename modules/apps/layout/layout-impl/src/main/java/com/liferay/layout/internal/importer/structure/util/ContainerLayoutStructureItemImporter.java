@@ -58,6 +58,7 @@ public class ContainerLayoutStructureItemImporter
 		ContainerStyledLayoutStructureItem containerStyledLayoutStructureItem =
 			(ContainerStyledLayoutStructureItem)
 				layoutStructure.addContainerStyledLayoutStructureItem(
+					layoutStructureItemImporterContext.getItemId(pageElement),
 					layoutStructureItemImporterContext.getParentItemId(),
 					layoutStructureItemImporterContext.getPosition());
 

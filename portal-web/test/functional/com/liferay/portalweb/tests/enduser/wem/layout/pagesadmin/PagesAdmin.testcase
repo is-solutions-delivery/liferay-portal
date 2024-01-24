@@ -304,6 +304,64 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-194263. If the page has more than one Experience, the page template created is from the Default experience."
+	@priority = 2
+	test CreatePageTemplateFromContentPageWithExperiencesViaPagesAdmin {
+		task ("Given a page creator has a contenge page with experiences") {
+			JSONLayoutpagetemplate.addLayoutPageTemplateCollection(
+				groupName = ${randomSiteName},
+				layoutPageTemplateCollectionName = "Page Template Set");
+
+			JSONLayout.addPublicLayout(
+				groupName = ${randomSiteName},
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Heading");
+
+			PageEditor.addExperience(
+				experienceName = "New Experience",
+				segmentName = "Anyone");
+
+			PageEditor.editFragmentText(
+				fragmentName = "Heading",
+				id = "element-text",
+				text = "Welcome to Liferay");
+
+			PageEditor.publish();
+		}
+
+		task ("When the page creator navigates to the Pages admin") {
+			PagesAdmin.openPagesAdmin(siteURLKey = ${siteURLKey});
+		}
+
+		task ("Then the page creator could convert the content page to content page template based on the Default experience") {
+			PagesAdmin.createPageTemplate(
+				collectionName = "Page Template Set",
+				pageName = "Test Page Name");
+
+			PageTemplatesAdmin.openPageTemplatesAdmin(siteURLKey = ${siteURLKey});
+
+			Navigator.gotoNavNested(navNested = "Page Template Set");
+
+			PageTemplatesAdmin.viewPageTemplatePresent(pageTemplateName = "Test Page Name - Page Template");
+
+			PageTemplatesAdmin.viewEntryWorkflowStatus(
+				entry = "Test Page Name - Page Template",
+				workflowStatus = "Draft");
+
+			PageTemplatesAdmin.gotoPageTemplate(pageTemplateName = "Test Page Name - Page Template");
+
+			PageEditor.viewFragment(fragmentName = "Heading");
+		}
+	}
+
 	@description = "This is a test for LPS-145215. View alert message when delete a page."
 	@priority = 5
 	@uitest
@@ -1289,6 +1347,8 @@ definition {
 
 			Navigator.gotoBack();
 
+			WaitForPageLoad();
+
 			Navigator.ensureLocaleURL(locale = "es");
 
 			AssertVisible(
@@ -1357,7 +1417,7 @@ definition {
 		task ("Search for all three pages and order by Create Date") {
 			Search.searchCP(searchTerm = "page");
 
-			ManagementBar.setFilterAndOrder(filterBy = "Create Date");
+			ManagementBar.setFilterAndOrder(orderBy = "Create Date");
 
 			var i = 1;
 
@@ -1372,7 +1432,7 @@ definition {
 		}
 
 		task ("Order by Relevance") {
-			ManagementBar.setFilterAndOrder(filterBy = "Relevance");
+			ManagementBar.setFilterAndOrder(orderBy = "Relevance");
 		}
 
 		task ("View redirect to Pages admin after clear search results") {
@@ -1576,6 +1636,73 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-177675. The tooltip of the back button is Go to Pages in the view mode of a DPT related to a Web Content in a collection page from the Miller Columns."
+	@priority = 3
+	test ViewBackButtonTooltipInAssociatedDisplayPageTemplate {
+		task ("Given a site administrator accesses to the associated display page") {
+			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
+				contentType = "Web Content Article",
+				displayPageTemplateEntryName = "Display Page Name",
+				groupName = ${randomSiteName},
+				subType = "Basic Web Content");
+
+			JSONLayoutpagetemplate.setLayoutPageTemplateEntryAsDefault(
+				groupName = ${randomSiteName},
+				layoutPageTemplateEntryName = "Display Page Name",
+				type = "Display Page Template");
+
+			JSONWebcontent.addWebContent(
+				content = "Web Content Content",
+				groupName = ${randomSiteName},
+				title = "Web Content Title");
+
+			AssetListsAdmin.openAssetListsAdmin(siteURLKey = ${siteURLKey});
+
+			AssetListsAdmin.addManualSelection(assetListTitle = "Manual Collection");
+
+			AssetListsAdmin.configureItemTypeInManualCollection(
+				itemSubtype = "Basic Web Content",
+				itemType = "Web Content Article");
+
+			AssetListsAdmin.selectAsset(
+				assetType = "Basic Web Content",
+				entryList = "Web Content Title");
+
+			PagesAdmin.openPagesAdmin(siteURLKey = ${siteURLKey});
+
+			ContentPages.addCollectionPage(
+				collectionName = "Manual Collection",
+				pageName = "Test Page Name",
+				tabName = "Collections");
+
+			PagesAdmin.openPagesAdmin(siteURLKey = ${siteURLKey});
+
+			PagesAdmin.gotoPageEllipsisMenuItem(
+				menuItem = "View Collection Items",
+				pageName = "Test Page Name");
+
+			SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+			Page.gotoCollectionEntryEllipsisItem(
+				item = "View Display Page",
+				tableEntry = "Web Content Title");
+
+			SelectFrameTop();
+
+			ControlMenu.viewHeaderTitle(headerTitle = "Web Content Title");
+		}
+
+		task ("When the site administrator hovers over the back button") {
+			MouseOver.javaScriptFocus(locator1 = "Icon#BACK");
+		}
+
+		task ("Then the site administrator could see the tooltip message") {
+			AssertVisible(
+				key_content = "Go to Pages",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
+		}
+	}
+
 	@description = "This is a test for LPS-144559. The breadcrumb should be unavailable to Link to a Page of This Site."
 	@priority = 4
 	test ViewBreadcrumbUnavailableToLinkToAPageOfThisSite {
@@ -1727,14 +1854,8 @@ definition {
 		}
 
 		task ("View assets are shown in collection items via page tree") {
-			var n = 1;
-
 			for (var title : list "Document Title,Blogs Entry Title,Web Content Title") {
-				Page.viewCollectionItem(
-					itemName = ${title},
-					key_rowNumber = ${n});
-
-				var n = ${n} + 1;
+				LexiconTable.viewTableEntryTitle(tableEntry = ${title});
 			}
 		}
 
@@ -1757,14 +1878,8 @@ definition {
 		}
 
 		task ("View assets are shown in collection items via Pages admin") {
-			var n = 1;
-
 			for (var title : list "Document Title,Blogs Entry Title,Web Content Title") {
-				Page.viewCollectionItem(
-					itemName = ${title},
-					key_rowNumber = ${n});
-
-				var n = ${n} + 1;
+				LexiconTable.viewTableEntryTitle(tableEntry = ${title});
 			}
 		}
 	}
@@ -2100,11 +2215,13 @@ definition {
 	test ViewDisplayPageTemplateViaCollectionItems {
 		property portal.acceptance = "true";
 
+		var groupId = JSONGroupSetter.setGroupId(groupName = ${randomSiteName});
+
 		task ("Add a display page template for Web Content Article and Basic Web Content") {
 			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
 				contentType = "Web Content Article",
 				displayPageTemplateEntryName = "Web Content DPT",
-				groupName = ${randomSiteName},
+				groupId = ${groupId},
 				subType = "Basic Web Content");
 		}
 
@@ -2124,7 +2241,7 @@ definition {
 			for (var i : list "1,2,3") {
 				JSONWebcontent.addWebContent(
 					content = "Web Content Content ${i}",
-					groupName = ${randomSiteName},
+					groupId = ${groupId},
 					title = "Web Content Title ${i}");
 			}
 		}
@@ -2144,18 +2261,17 @@ definition {
 		}
 
 		task ("Add a manual collection with Web Content Article item type and Basic Web Content item subtype") {
-			JSONAssetlist.addManualAssetListEntryWithItemType(
-				groupName = ${randomSiteName},
+			AssetListsAdmin.openAssetListsAdmin(siteURLKey = ${siteURLKey});
+
+			AssetListsAdmin.addManualSelection(assetListTitle = "Manual Collection");
+
+			AssetListsAdmin.configureItemTypeInManualCollection(
 				itemSubtype = "Basic Web Content",
-				itemType = "Web Content Article",
-				title = "Manual Collection");
+				itemType = "Web Content Article");
 		}
 
 		task ("Select all web contents as collection item") {
-			AssetListsAdmin.openAssetListsAdmin(siteURLKey = ${siteURLKey});
-
 			AssetListsAdmin.selectAsset(
-				assetListName = "Manual Collection",
 				assetType = "Basic Web Content",
 				entryList = "Web Content Title 1,Web Content Title 2,Web Content Title 3");
 		}

@@ -370,6 +370,9 @@ public interface PropsKeys {
 
 	public static final String CDN_HOST_HTTPS = "cdn.host.https";
 
+	public static final String CLUSTER_LINK_AUTH_VALUE =
+		"cluster.link.auth.value";
+
 	public static final String CLUSTER_LINK_AUTODETECT_ADDRESS =
 		"cluster.link.autodetect.address";
 
@@ -407,6 +410,8 @@ public interface PropsKeys {
 	public static final String COMBO_CHECK_TIMESTAMP_INTERVAL =
 		"combo.check.timestamp.interval";
 
+	public static final String COMBO_MAX_FILES = "combo.max.files";
+
 	public static final String COMMUNITIES_CONTROL_PANEL_MEMBERS_VISIBLE =
 		"communities.control.panel.members.visible";
 
@@ -427,6 +432,9 @@ public interface PropsKeys {
 	public static final String COMPANY_DEFAULT_VIRTUAL_HOST_NAME =
 		"company.default.virtual.host.name";
 
+	public static final String COMPANY_DEFAULT_VIRTUAL_HOST_SYNC_ON_STARTUP =
+		"company.default.virtual.host.sync.on.startup";
+
 	public static final String COMPANY_DEFAULT_WEB_ID =
 		"company.default.web.id";
 
@@ -440,9 +448,6 @@ public interface PropsKeys {
 
 	public static final String COMPANY_LOGIN_PREPOPULATE_DOMAIN =
 		"company.login.prepopulate.domain";
-
-	public static final String COMPANY_SECURITY_AUTH_REQUIRES_HTTPS =
-		"company.security.auth.requires.https";
 
 	public static final String COMPANY_SECURITY_AUTH_TYPE =
 		"company.security.auth.type";
@@ -837,9 +842,6 @@ public interface PropsKeys {
 	public static final String DL_FILE_ENTRY_PREVIEW_VIDEO_WIDTH =
 		"dl.file.entry.preview.video.width";
 
-	public static final String DL_FILE_ENTRY_PROCESSORS =
-		"dl.file.entry.processors";
-
 	public static final String
 		DL_FILE_ENTRY_RAW_METADATA_PROCESSOR_EXCLUDED_MIME_TYPES =
 			"dl.file.entry.raw.metadata.processor.excluded.mime.types";
@@ -1102,10 +1104,6 @@ public interface PropsKeys {
 
 	public static final String INDEX_ON_STARTUP_DELAY =
 		"index.on.startup.delay";
-
-	public static final String
-		INDEX_PERMISSION_FILTER_SEARCH_AMPLIFICATION_FACTOR =
-			"index.permission.filter.search.amplification.factor";
 
 	public static final String
 		INDEX_SEARCH_COLLATED_SPELL_CHECK_RESULT_ENABLED =
@@ -2344,12 +2342,6 @@ public interface PropsKeys {
 
 	public static final String SESSION_TIMEOUT = "session.timeout";
 
-	public static final String SESSION_TIMEOUT_AUTO_EXTEND =
-		"session.timeout.auto.extend";
-
-	public static final String SESSION_TIMEOUT_AUTO_EXTEND_OFFSET =
-		"session.timeout.auto.extend.offset";
-
 	public static final String SESSION_TIMEOUT_REDIRECT_ON_EXPIRE =
 		"session.timeout.redirect.on.expire";
 
@@ -2538,9 +2530,6 @@ public interface PropsKeys {
 
 	public static final String SPRING_HIBERNATE_SESSION_FACTORY_VERIFY =
 		"spring.hibernate.session.factory.verify";
-
-	public static final String SPRING_INFRASTRUCTURE_CONFIGS =
-		"spring.infrastructure.configs";
 
 	public static final String
 		STAGING_DRAFT_EXPORT_IMPORT_CONFIGURATION_CHECK_INTERVAL =
@@ -2919,6 +2908,9 @@ public interface PropsKeys {
 
 	public static final String WORKFLOW_EMAIL_FROM_NAME =
 		"workflow.email.from.name";
+
+	public static final String XML_RPC_MAX_PARAMETERS =
+		"xml.rpc.max.parameters";
 
 	public static final String XML_SECURITY_ENABLED = "xml.security.enabled";
 

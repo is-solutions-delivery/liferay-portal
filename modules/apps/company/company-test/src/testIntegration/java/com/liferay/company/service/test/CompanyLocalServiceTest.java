@@ -7,6 +7,7 @@ package com.liferay.company.service.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.asset.link.model.adapter.StagedAssetLink;
+import com.liferay.counter.kernel.service.CounterLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
 import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.document.library.kernel.model.DLFileEntryTypeConstants;
@@ -25,6 +26,7 @@ import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.backgroundtask.BackgroundTaskThreadLocal;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.db.partition.DBPartition;
 import com.liferay.portal.kernel.exception.CompanyMxException;
 import com.liferay.portal.kernel.exception.CompanyNameException;
 import com.liferay.portal.kernel.exception.CompanyVirtualHostException;
@@ -82,7 +84,6 @@ import com.liferay.portal.kernel.util.HashMapDictionary;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.PrefsProps;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -667,9 +668,8 @@ public class CompanyLocalServiceTest {
 			_transactionConfig,
 			() -> {
 				Assert.assertNull(
-					_portalPreferencesLocalService.fetchPortalPreferences(
-						company.getCompanyId(),
-						PortletKeys.PREFS_OWNER_TYPE_COMPANY));
+					_portalPreferencesLocalService.
+						fetchCompanyPortalPreferences(company.getCompanyId()));
 
 				return null;
 			});
@@ -778,6 +778,43 @@ public class CompanyLocalServiceTest {
 	}
 
 	@Test
+	public void testExtractDBPartitionCompany() {
+		if (DBPartition.isPartitionEnabled()) {
+			return;
+		}
+
+		try {
+			_companyLocalService.extractDBPartitionCompany(1L);
+
+			Assert.fail();
+		}
+		catch (Exception exception) {
+			Assert.assertTrue(
+				exception instanceof UnsupportedOperationException);
+		}
+	}
+
+	@Test
+	public void testExtractDBPartitionCompanyDefaultCompany() {
+		try {
+			_companyLocalService.extractDBPartitionCompany(
+				PortalInstances.getDefaultCompanyId());
+
+			Assert.fail();
+		}
+		catch (Exception exception) {
+			if (DBPartition.isPartitionEnabled()) {
+				Assert.assertTrue(
+					exception instanceof RequiredCompanyException);
+			}
+			else {
+				Assert.assertTrue(
+					exception instanceof UnsupportedOperationException);
+			}
+		}
+	}
+
+	@Test
 	public void testGetCompanyByVirtualHost() throws Exception {
 		String virtualHostName = "::1";
 
@@ -800,7 +837,6 @@ public class CompanyLocalServiceTest {
 	@Test
 	public void testUpdateCompanyLocales() throws Exception {
 		Company company = addCompany();
-
 		String languageId = "ca_ES";
 
 		try {
@@ -970,7 +1006,14 @@ public class CompanyLocalServiceTest {
 	}
 
 	protected Company addCompany() throws Exception {
-		return addCompany(RandomTestUtil.randomString() + "test.com");
+		long counterCompanyId = _counterLocalService.increment() + 1;
+
+		Company company = addCompany(
+			RandomTestUtil.randomString() + "test.com");
+
+		_verifyRandomCompanyId(company.getCompanyId(), counterCompanyId);
+
+		return company;
 	}
 
 	protected Company addCompany(String webId) throws Exception {
@@ -1026,8 +1069,8 @@ public class CompanyLocalServiceTest {
 		deleteClassName(StagedAssetLink.class.getName());
 		deleteClassName(StagedExpandoColumn.class.getName());
 		deleteClassName(StagedExpandoTable.class.getName());
-		deleteClassName(StagedLayoutSet.class.getName());
 		deleteClassName(StagedGroup.class.getName());
+		deleteClassName(StagedLayoutSet.class.getName());
 		deleteClassName(StagedTheme.class.getName());
 	}
 
@@ -1194,6 +1237,11 @@ public class CompanyLocalServiceTest {
 		return list;
 	}
 
+	private void _verifyRandomCompanyId(long companyId, long counterCompanyId) {
+		Assert.assertTrue(companyId >= (long)Math.pow(10, 15));
+		Assert.assertNotEquals(counterCompanyId, companyId);
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		CompanyLocalServiceTest.class);
 
@@ -1216,6 +1264,9 @@ public class CompanyLocalServiceTest {
 
 	@Inject
 	private CompanyLocalService _companyLocalService;
+
+	@Inject
+	private CounterLocalService _counterLocalService;
 
 	@Inject
 	private DDMStructureLocalService _ddmStructureLocalService;

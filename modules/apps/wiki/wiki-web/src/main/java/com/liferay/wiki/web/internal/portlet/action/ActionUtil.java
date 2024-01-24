@@ -11,12 +11,14 @@ import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -143,12 +145,15 @@ public class ActionUtil {
 			themeDisplay.getScopeGroupId());
 
 		if (nodesCount == 0) {
-			Layout layout = themeDisplay.getLayout();
+			Group group = GroupLocalServiceUtil.fetchGroup(
+				themeDisplay.getScopeGroupId());
 
 			ServiceContext serviceContext = ServiceContextFactory.getInstance(
 				WikiNode.class.getName(), portletRequest);
 
 			serviceContext.setAddGroupPermissions(true);
+
+			Layout layout = themeDisplay.getLayout();
 
 			if (layout.isPublicLayout() || layout.isTypeControlPanel()) {
 				serviceContext.setAddGuestPermissions(true);
@@ -158,8 +163,8 @@ public class ActionUtil {
 			}
 
 			try (SafeCloseable safeCloseable =
-					CTCollectionThreadLocal.
-						setProductionModeWithSafeCloseable()) {
+					CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
+						group.getCtCollectionId())) {
 
 				node = WikiNodeLocalServiceUtil.addDefaultNode(
 					themeDisplay.getGuestUserId(), serviceContext);

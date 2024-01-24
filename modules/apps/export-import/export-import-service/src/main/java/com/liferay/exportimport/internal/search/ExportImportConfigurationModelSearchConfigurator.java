@@ -5,12 +5,17 @@
 
 package com.liferay.exportimport.internal.search;
 
+import com.liferay.exportimport.internal.search.spi.model.index.contributor.ExportImportConfigurationModelIndexerWriterContributor;
+import com.liferay.exportimport.internal.search.spi.model.result.contributor.ExportImportConfigurationModelSummaryContributor;
 import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
+import com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalService;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchConfigurator;
 import com.liferay.portal.search.spi.model.result.contributor.ModelSummaryContributor;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -48,15 +53,27 @@ public class ExportImportConfigurationModelSearchConfigurator
 		return _modelSummaryContributor;
 	}
 
-	@Reference(
-		target = "(indexer.class.name=com.liferay.exportimport.kernel.model.ExportImportConfiguration)"
-	)
+	@Activate
+	protected void activate() {
+		_modelIndexWriterContributor =
+			new ExportImportConfigurationModelIndexerWriterContributor(
+				_dynamicQueryBatchIndexingActionableFactory,
+				_exportImportConfigurationLocalService);
+
+		_modelSummaryContributor =
+			new ExportImportConfigurationModelSummaryContributor();
+	}
+
+	@Reference
+	private DynamicQueryBatchIndexingActionableFactory
+		_dynamicQueryBatchIndexingActionableFactory;
+
+	@Reference
+	private ExportImportConfigurationLocalService
+		_exportImportConfigurationLocalService;
+
 	private ModelIndexerWriterContributor<ExportImportConfiguration>
 		_modelIndexWriterContributor;
-
-	@Reference(
-		target = "(indexer.class.name=com.liferay.exportimport.kernel.model.ExportImportConfiguration)"
-	)
 	private ModelSummaryContributor _modelSummaryContributor;
 
 }

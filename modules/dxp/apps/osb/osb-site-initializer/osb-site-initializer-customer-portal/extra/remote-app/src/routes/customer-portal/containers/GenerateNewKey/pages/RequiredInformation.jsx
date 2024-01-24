@@ -22,28 +22,15 @@ import getInitialGenerateNewKey from '../../../../../common/utils/constants/getI
 import GenerateCardLayout from '../GenerateCardLayout';
 import KeyInputs from '../KeyInputs';
 import KeySelect from '../KeySelect';
-import {getLicenseKeyEndDatesByLicenseType} from '../utils/licenseKeyEndDateUtil';
-
-const getLicenseEntryTypeSelected = (infoSelectedKey) => {
-	if (infoSelectedKey?.licenseEntryType.includes('Virtual Cluster')) {
-		return 'virtual-cluster';
-	}
-
-	if (infoSelectedKey?.licenseEntryType.includes('OEM')) {
-		return 'oem';
-	}
-
-	if (infoSelectedKey?.licenseEntryType.includes('Enterprise')) {
-		return 'enterprise';
-	}
-
-	return 'production';
-};
+import {getLicenseEntryTypeSelected} from '../utils/licenseEntryType';
+import {getLicenseKeyEndDatesByLicenseType} from '../utils/licenseKeyEndDate';
 
 const RequiredInformation = ({
 	accountKey,
 	errors,
+	hasKeyComplimentary,
 	infoSelectedKey,
+	purposeDescription,
 	sessionId,
 	setErrors,
 	setStep,
@@ -82,7 +69,7 @@ const RequiredInformation = ({
 		return !!fieldValues.length;
 	});
 
-	const isComplementaryKey =
+	const isComplimentaryKey =
 		infoSelectedKey?.selectedSubscription.complimentary;
 
 	const newUsedKeys = usedKeysCount + values?.keys?.length;
@@ -206,6 +193,10 @@ const RequiredInformation = ({
 				}
 
 				setIsLoadingGenerateKey(false);
+
+				navigate(urlPreviousPage, {
+					state: {newKeyGeneratedAlert: true},
+				});
 			} else {
 				setIsLoadingGenerateKey(true);
 
@@ -230,13 +221,13 @@ const RequiredInformation = ({
 					)
 				);
 
-				if (checkedBoxSubscription && isComplementaryKey) {
+				if (checkedBoxSubscription && isComplimentaryKey) {
 					await saveSubscriptionKey(results[0]?.items[0]?.id);
 				}
 
 				setIsLoadingGenerateKey(false);
 
-				if (!isComplementaryKey) {
+				if (!isComplimentaryKey) {
 					await client.mutate({
 						context: {
 							displaySuccess: false,
@@ -286,7 +277,7 @@ const RequiredInformation = ({
 		hasFilledAtLeastOneField,
 		infoSelectedKey.hasNotPermanentLicence,
 		infoSelectedKey.selectedSubscription.provisionedCount,
-		isComplementaryKey,
+		isComplimentaryKey,
 		licenseKey,
 		navigate,
 		provisioningServerAPI,
@@ -301,7 +292,7 @@ const RequiredInformation = ({
 	const CheckboxSubscriptionNotification = () => {
 		if (
 			featureFlags.includes('LPS-180001') &&
-			(infoSelectedKey?.hasNotPermanentLicence || isComplementaryKey)
+			(infoSelectedKey?.hasNotPermanentLicence || isComplimentaryKey)
 		) {
 			return (
 				<>
@@ -326,10 +317,16 @@ const RequiredInformation = ({
 							)}
 						</label>
 					</div>
-
-					<div className="dropdown-divider"></div>
 				</>
 			);
+		}
+	};
+
+	const handleDescription = () => {
+		if (hasKeyComplimentary) {
+			values.description = purposeDescription;
+
+			return values.description;
 		}
 	};
 
@@ -354,7 +351,7 @@ const RequiredInformation = ({
 								className="btn btn-secondary mr-3"
 								displayType="secundary"
 								onClick={() =>
-									setStep(isComplementaryKey ? 1 : 0)
+									setStep(isComplimentaryKey ? 1 : 0)
 								}
 							>
 								{i18n.translate('previous')}
@@ -428,20 +425,25 @@ const RequiredInformation = ({
 								<div className="mb-3">
 									<div className="cp-input-generate-label">
 										<Input
+											component="textarea"
+											disabled={hasKeyComplimentary}
 											label={i18n.translate(
 												'description'
 											)}
 											name="description"
 											placeholder="e.g. Liferay Dev Environment – ECOM DXP 7.2 "
 											type="text"
+											value={handleDescription()}
 										/>
 									</div>
 
-									<h6 className="font-weight-normal ml-3 mr-0 mt-1">
-										{i18n.translate(
-											'include-a-description-to-uniquely-identify-this-environment-this-cannot-be-edited-later'
-										)}
-									</h6>
+									{!hasKeyComplimentary && (
+										<h6 className="font-weight-normal ml-3 mr-0 mt-1">
+											{i18n.translate(
+												'include-a-description-to-uniquely-identify-this-environment-this-cannot-be-edited-later'
+											)}
+										</h6>
+									)}
 								</div>
 							</div>
 
@@ -553,6 +555,8 @@ const RequiredInformation = ({
 									</ClayTooltipProvider>
 
 									<CheckboxSubscriptionNotification />
+
+									<div className="dropdown-divider"></div>
 								</div>
 							) : (
 								<div className="mx-6">

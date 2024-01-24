@@ -148,6 +148,17 @@
 									{
 										"key": "get",
 										"objectStateTransitions": [
+											{
+												"key": "post"
+											}
+										]
+									},
+									{
+										"key": "post",
+										"objectStateTransitions": [
+											{
+												"key": "get"
+											}
 										]
 									}
 								]
@@ -279,18 +290,18 @@
 							"value": {
 								"objectStates": [
 									{
-										"key": "group",
+										"key": "company",
 										"objectStateTransitions": [
 											{
-												"key": "company"
+												"key": "site"
 											}
 										]
 									},
 									{
-										"key": "company",
+										"key": "site",
 										"objectStateTransitions": [
 											{
-												"key": "group"
+												"key": "company"
 											}
 										]
 									}
@@ -307,6 +318,7 @@
 			"objectRelationships": [
 				{
 					"deletionType": "cascade",
+					"externalReferenceCode": "L_API_ENDPOINT_TO_API_FILTERS",
 					"label": {
 						"en_US": "API Endpoint to API Filters"
 					},
@@ -317,10 +329,12 @@
 					"parameterObjectFieldId": 0,
 					"parameterObjectFieldName": "",
 					"reverse": false,
+					"system": true,
 					"type": "oneToMany"
 				},
 				{
 					"deletionType": "cascade",
+					"externalReferenceCode": "L_API_ENDPOINT_TO_API_SORTS",
 					"label": {
 						"en_US": "API Endpoint API Sorts"
 					},
@@ -331,6 +345,7 @@
 					"parameterObjectFieldId": 0,
 					"parameterObjectFieldName": "",
 					"reverse": false,
+					"system": true,
 					"type": "oneToMany"
 				}
 			],
@@ -420,6 +435,7 @@
 			"objectRelationships": [
 				{
 					"deletionType": "cascade",
+					"externalReferenceCode": "L_API_PROPERTIES_TO_API_PROPERTIES",
 					"label": {
 						"en_US": "API Properties to API Properties"
 					},
@@ -430,6 +446,7 @@
 					"parameterObjectFieldId": 0,
 					"parameterObjectFieldName": "",
 					"reverse": false,
+					"system": true,
 					"type": "manyToMany"
 				}
 			],
@@ -503,6 +520,7 @@
 			"objectRelationships": [
 				{
 					"deletionType": "cascade",
+					"externalReferenceCode": "L_API_SCHEMA_TO_API_PROPERTIES",
 					"label": {
 						"en_US": "API Schema to API Properties"
 					},
@@ -513,10 +531,12 @@
 					"parameterObjectFieldId": 0,
 					"parameterObjectFieldName": "",
 					"reverse": false,
+					"system": true,
 					"type": "oneToMany"
 				},
 				{
 					"deletionType": "disassociate",
+					"externalReferenceCode": "L_REQUEST_API_SCHEMA_TO_API_ENDPOINTS",
 					"label": {
 						"en_US": "Request API Schema to API Endpoints"
 					},
@@ -527,10 +547,12 @@
 					"parameterObjectFieldId": 0,
 					"parameterObjectFieldName": "",
 					"reverse": false,
+					"system": true,
 					"type": "oneToMany"
 				},
 				{
 					"deletionType": "disassociate",
+					"externalReferenceCode": "L_RESPONSE_API_SCHEMA_TO_API_ENDPOINTS",
 					"label": {
 						"en_US": "Response API Schema to API Endpoints"
 					},
@@ -541,6 +563,7 @@
 					"parameterObjectFieldId": 0,
 					"parameterObjectFieldName": "",
 					"reverse": false,
+					"system": true,
 					"type": "oneToMany"
 				}
 			],
@@ -687,6 +710,7 @@
 			"objectRelationships": [
 				{
 					"deletionType": "cascade",
+					"externalReferenceCode": "L_API_APPLICATION_TO_API_ENDPOINTS",
 					"label": {
 						"en_US": "API Application to API Endpoints"
 					},
@@ -697,10 +721,12 @@
 					"parameterObjectFieldId": 0,
 					"parameterObjectFieldName": "",
 					"reverse": false,
+					"system": true,
 					"type": "oneToMany"
 				},
 				{
 					"deletionType": "cascade",
+					"externalReferenceCode": "L_API_APPLICATION_TO_API_SCHEMAS",
 					"label": {
 						"en_US": "API Application to API Schemas"
 					},
@@ -711,6 +737,7 @@
 					"parameterObjectFieldId": 0,
 					"parameterObjectFieldName": "",
 					"reverse": false,
+					"system": true,
 					"type": "oneToMany"
 				}
 			],

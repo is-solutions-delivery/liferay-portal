@@ -3,12 +3,27 @@
 		width: 37.5rem;
 	}
 
+	&-add-package-button {
+		background-color: #fbfcfe;
+		border-color: #e7efff;
+		color: #0b5fff;
+		margin-top: 1.5rem;
+
+		&:active,
+		&:hover {
+			background-color: #edf3fe;
+			border-color: #0053f0;
+			color: #0b5fff;
+		}
+	}
+
 	&-app-build {
 		&-container {
 			margin-bottom: 1.5rem;
 		}
 
-		&-radio-container {
+		&-radio-container,
+		&-checkbox-container {
 			display: flex;
 			flex-direction: column;
 			gap: 1.5rem;
@@ -20,5 +35,30 @@
 		display: flex;
 		gap: 1.5rem;
 		justify-content: flex-start;
+	}
+
+	&-dropzone-container {
+		border: 1px solid #e2e2e4;
+		border-radius: 0.5rem;
+
+		&-header {
+			background-color: #f7f7f8;
+		}
+
+		.dropzone-upload-container {
+			height: unset;
+			margin: 0.5rem;
+			padding: 1.5rem;
+			width: unset;
+		}
+
+		.file-list-container {
+			margin-bottom: 0;
+
+			.document-file-list-item-container {
+				border: none;
+				margin-bottom: 0;
+			}
+		}
 	}
 }

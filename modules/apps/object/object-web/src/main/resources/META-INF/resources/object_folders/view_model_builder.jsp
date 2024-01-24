@@ -28,7 +28,7 @@ renderResponse.setTitle(LanguageUtil.get(request, "object-model-builder"));
 			HashMapBuilder.<String, Object>put(
 				"baseResourceURL", String.valueOf(baseResourceURL)
 			).put(
-				"companyKeyValuePairs", objectDefinitionsDetailsDisplayContext.getScopeKeyValuePairs("company")
+				"companies", objectDefinitionsDetailsDisplayContext.getScopeJSONArray("company")
 			).put(
 				"editObjectDefinitionURL", objectDefinitionsDetailsDisplayContext.getEditObjectDefinitionURL()
 			).put(
@@ -40,19 +40,19 @@ renderResponse.setTitle(LanguageUtil.get(request, "object-model-builder"));
 			).put(
 				"forbiddenNames", PropsUtil.getArray(PropsKeys.DL_NAME_BLACKLIST)
 			).put(
+				"learnResourceContext", LearnMessageUtil.getReactDataJSONObject(new String[] {"frontend-js-components-web", "object-web"})
+			).put(
 				"objectDefinitionPermissionsURL", objectDefinitionsDetailsDisplayContext.getPermissionsURL(ObjectDefinition.class.getName())
 			).put(
 				"objectDefinitionsStorageTypes", objectDefinitionsDetailsDisplayContext.getStorageTypesJSONArray()
 			).put(
 				"objectRelationshipDeletionTypes", objectDefinitionsRelationshipsDisplayContext.getObjectRelationshipDeletionTypesJSONArray()
 			).put(
-				"objectWebLearnResources", LearnMessageUtil.getReactDataJSONObject("object-web")
-			).put(
-				"siteKeyValuePairs", objectDefinitionsDetailsDisplayContext.getScopeKeyValuePairs("site")
+				"sites", objectDefinitionsDetailsDisplayContext.getScopeJSONArray("site")
 			).put(
 				"viewApiURL", "/o/object-admin/v1.0/object-definitions"
 			).put(
-				"workflowStatusJSONArray", LocalizedJSONArrayUtil.getWorkflowStatusJSONArray(locale)
+				"workflowStatuses", LocalizedJSONArrayUtil.getWorkflowStatusJSONArray(locale)
 			).build()
 		%>'
 	/>

@@ -10,18 +10,17 @@ import com.liferay.account.model.AccountEntry;
 import com.liferay.account.model.AccountEntryOrganizationRel;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.account.service.AccountEntryOrganizationRelLocalService;
-import com.liferay.object.definition.tree.Edge;
-import com.liferay.object.definition.tree.Node;
-import com.liferay.object.definition.tree.Tree;
-import com.liferay.object.definition.tree.TreeFactory;
+import com.liferay.object.constants.ObjectActionTriggerConstants;
+import com.liferay.object.model.ObjectAction;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
-import com.liferay.object.model.ObjectRelationship;
+import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
+import com.liferay.object.tree.TreeFactory;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -61,6 +60,7 @@ public class ObjectEntryModelResourcePermission
 		AccountEntryOrganizationRelLocalService
 			accountEntryOrganizationRelLocalService,
 		GroupLocalService groupLocalService, String modelName,
+		ObjectActionLocalService objectActionLocalService,
 		ObjectDefinitionLocalService objectDefinitionLocalService,
 		ObjectEntryLocalService objectEntryLocalService,
 		ObjectFieldLocalService objectFieldLocalService,
@@ -75,6 +75,7 @@ public class ObjectEntryModelResourcePermission
 			accountEntryOrganizationRelLocalService;
 		_groupLocalService = groupLocalService;
 		_modelName = modelName;
+		_objectActionLocalService = objectActionLocalService;
 		_objectDefinitionLocalService = objectDefinitionLocalService;
 		_objectEntryLocalService = objectEntryLocalService;
 		_objectFieldLocalService = objectFieldLocalService;
@@ -127,9 +128,22 @@ public class ObjectEntryModelResourcePermission
 			String actionId)
 		throws PortalException {
 
-		User user = permissionChecker.getUser();
+		if ((objectEntry.getRootObjectEntryId() != 0) &&
+			!_isObjectActionName(
+				actionId, objectEntry.getObjectDefinitionId())) {
 
-		objectEntry = _getContextObjectEntry(objectEntry);
+			ObjectEntry rootObjectEntry =
+				_objectEntryLocalService.fetchObjectEntry(
+					objectEntry.getRootObjectEntryId());
+
+			if (rootObjectEntry == null) {
+				return true;
+			}
+
+			objectEntry = rootObjectEntry;
+		}
+
+		User user = permissionChecker.getUser();
 
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.getObjectDefinition(
@@ -175,10 +189,8 @@ public class ObjectEntryModelResourcePermission
 					_accountEntryLocalService.getUserAccountEntries(
 						permissionChecker.getUserId(),
 						AccountConstants.PARENT_ACCOUNT_ENTRY_ID_DEFAULT, null,
-						new String[] {
-							AccountConstants.ACCOUNT_ENTRY_TYPE_BUSINESS,
-							AccountConstants.ACCOUNT_ENTRY_TYPE_PERSON
-						},
+						AccountConstants.
+							ACCOUNT_ENTRY_TYPES_DEFAULT_ALLOWED_TYPES,
 						WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
 						QueryUtil.ALL_POS),
 					AccountEntry::getAccountEntryId),
@@ -258,40 +270,20 @@ public class ObjectEntryModelResourcePermission
 		return _portletResourcePermission;
 	}
 
-	private ObjectEntry _getContextObjectEntry(ObjectEntry objectEntry)
-		throws PortalException {
+	private boolean _isObjectActionName(
+		String actionId, long objectDefinitionId) {
 
-		ObjectDefinition objectDefinition =
-			_objectDefinitionLocalService.getObjectDefinition(
-				objectEntry.getObjectDefinitionId());
+		for (ObjectAction objectAction :
+				_objectActionLocalService.getObjectActions(
+					objectDefinitionId,
+					ObjectActionTriggerConstants.KEY_STANDALONE)) {
 
-		if (!objectDefinition.isRootDescendantNode()) {
-			return objectEntry;
+			if (Objects.equals(objectAction.getName(), actionId)) {
+				return true;
+			}
 		}
 
-		Tree tree = _treeFactory.create(
-			objectDefinition.getRootObjectDefinitionId());
-
-		Node node = tree.getNode(objectDefinition.getObjectDefinitionId());
-
-		while (!node.isRoot()) {
-			Edge edge = node.getEdge();
-
-			ObjectRelationship objectRelationship =
-				_objectRelationshipLocalService.getObjectRelationship(
-					edge.getObjectRelationshipId());
-
-			ObjectField objectField = _objectFieldLocalService.getObjectField(
-				objectRelationship.getObjectFieldId2());
-
-			objectEntry = _objectEntryLocalService.getObjectEntry(
-				MapUtil.getLong(
-					objectEntry.getValues(), objectField.getName()));
-
-			node = tree.getNode(objectEntry.getObjectDefinitionId());
-		}
-
-		return objectEntry;
+		return false;
 	}
 
 	private void _throwPrincipalException(
@@ -299,15 +291,14 @@ public class ObjectEntryModelResourcePermission
 			PermissionChecker permissionChecker)
 		throws PortalException {
 
-		objectEntry = _getContextObjectEntry(objectEntry);
-
-		ObjectDefinition objectDefinition =
-			_objectDefinitionLocalService.getObjectDefinition(
-				objectEntry.getObjectDefinitionId());
+		if (objectEntry.getRootObjectEntryId() != 0) {
+			objectEntry = _objectEntryLocalService.getObjectEntry(
+				objectEntry.getRootObjectEntryId());
+		}
 
 		throw new PrincipalException.MustHavePermission(
-			permissionChecker, objectDefinition.getClassName(),
-			objectEntry.getObjectEntryId(), actionId);
+			permissionChecker, _modelName, objectEntry.getObjectEntryId(),
+			actionId);
 	}
 
 	private final AccountEntryLocalService _accountEntryLocalService;
@@ -315,6 +306,7 @@ public class ObjectEntryModelResourcePermission
 		_accountEntryOrganizationRelLocalService;
 	private final GroupLocalService _groupLocalService;
 	private final String _modelName;
+	private final ObjectActionLocalService _objectActionLocalService;
 	private final ObjectDefinitionLocalService _objectDefinitionLocalService;
 	private final ObjectEntryLocalService _objectEntryLocalService;
 	private final ObjectFieldLocalService _objectFieldLocalService;

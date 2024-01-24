@@ -1,6 +1,5 @@
 [
 	{
-		"clientExtensionEntryKey": "RAYLIFE",
 		"cssURLs": [
 			"[$DOCUMENT_URL:/site-initializer/documents/company/remote-app/site-initializer-raylife-d2c/main.css$]"
 		],
@@ -9,12 +8,11 @@
 			"[$DOCUMENT_URL:/site-initializer/documents/company/remote-app/site-initializer-raylife-d2c/main.js$]",
 			"[$DOCUMENT_URL:/site-initializer/documents/company/remote-app/site-initializer-raylife-d2c/runtime-main.js$]"
 		],
-		"externalReferenceCode": "RAY001",
+		"externalReferenceCode": "RAYLIFE-D2C",
 		"htmlElementName": "liferay-remote-app-raylife",
 		"name_i18n": {
 			"en_US": "Raylife"
 		},
-		"portletCategoryName": "category.client-extensions",
-		"widgetName": "com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_[$CLIENT_EXTENSION_ENTRY_ID:RAYLIFE$]"
+		"portletCategoryName": "category.client-extensions"
 	}
 ]

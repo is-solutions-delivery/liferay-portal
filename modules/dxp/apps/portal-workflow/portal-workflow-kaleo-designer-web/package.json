@@ -1,18 +1,18 @@
 {
 	"dependencies": {
-		"@clayui/alert": "3.93.0",
-		"@clayui/autocomplete": "3.105.0",
-		"@clayui/button": "3.100.0",
-		"@clayui/data-provider": "3.104.0",
-		"@clayui/drop-down": "3.105.0",
-		"@clayui/form": "3.104.0",
-		"@clayui/icon": "3.56.0",
-		"@clayui/layout": "3.93.0",
-		"@clayui/link": "3.88.0",
-		"@clayui/loading-indicator": "3.60.0",
-		"@clayui/modal": "3.104.0",
-		"@clayui/tabs": "3.104.0",
-		"@clayui/toolbar": "3.104.0",
+		"@clayui/alert": "3.106.1",
+		"@clayui/autocomplete": "3.108.0",
+		"@clayui/button": "3.107.0",
+		"@clayui/data-provider": "3.107.0",
+		"@clayui/drop-down": "3.108.0",
+		"@clayui/form": "3.107.0",
+		"@clayui/icon": "3.106.1",
+		"@clayui/layout": "3.106.1",
+		"@clayui/link": "3.106.1",
+		"@clayui/loading-indicator": "3.106.1",
+		"@clayui/modal": "3.107.0",
+		"@clayui/tabs": "3.107.0",
+		"@clayui/toolbar": "3.107.0",
 		"@liferay/object-js-components-web": "*",
 		"dagre": "0.8.2",
 		"frontend-editor-ckeditor-web": "*",
@@ -43,5 +43,5 @@
 		"format": "liferay-npm-scripts fix",
 		"test": "liferay-npm-scripts test"
 	},
-	"version": "5.0.119"
+	"version": "5.0.123"
 }

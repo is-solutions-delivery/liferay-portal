@@ -10,7 +10,6 @@ import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.commerce.order.rule.model.COREntry;
 import com.liferay.commerce.order.rule.model.COREntryRel;
 import com.liferay.commerce.order.rule.service.COREntryRelService;
-import com.liferay.commerce.order.rule.service.COREntryService;
 import com.liferay.headless.commerce.admin.order.dto.v1_0.OrderRuleAccount;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
@@ -46,14 +45,14 @@ public class OrderRuleAccountDTOConverter
 
 		return new OrderRuleAccount() {
 			{
-				accountExternalReferenceCode =
-					accountEntry.getExternalReferenceCode();
-				accountId = accountEntry.getAccountEntryId();
-				actions = dtoConverterContext.getActions();
-				orderRuleAccountId = corEntryRel.getCOREntryRelId();
-				orderRuleExternalReferenceCode =
-					corEntry.getExternalReferenceCode();
-				orderRuleId = corEntry.getCOREntryId();
+				setAccountExternalReferenceCode(
+					accountEntry::getExternalReferenceCode);
+				setAccountId(accountEntry::getAccountEntryId);
+				setActions(dtoConverterContext::getActions);
+				setOrderRuleAccountId(corEntryRel::getCOREntryRelId);
+				setOrderRuleExternalReferenceCode(
+					corEntry::getExternalReferenceCode);
+				setOrderRuleId(corEntry::getCOREntryId);
 			}
 		};
 	}
@@ -63,8 +62,5 @@ public class OrderRuleAccountDTOConverter
 
 	@Reference
 	private COREntryRelService _corEntryRelService;
-
-	@Reference
-	private COREntryService _corEntryService;
 
 }

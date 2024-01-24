@@ -11,8 +11,8 @@ import com.liferay.asset.kernel.model.AssetRenderer;
 import com.liferay.asset.kernel.model.AssetRendererFactory;
 import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.document.library.kernel.model.DLFolderConstants;
+import com.liferay.document.library.kernel.processor.ImageProcessorUtil;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
-import com.liferay.document.library.kernel.util.ImageProcessorUtil;
 import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
@@ -25,7 +25,6 @@ import com.liferay.journal.exception.NoSuchFeedException;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.model.JournalArticleDisplay;
 import com.liferay.journal.model.JournalFeed;
-import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.service.JournalFeedLocalService;
 import com.liferay.journal.util.JournalContent;
 import com.liferay.journal.web.internal.util.JournalSearcherUtil;
@@ -349,7 +348,7 @@ public class JournalRSSHelper {
 
 		List<JournalArticle> articles =
 			JournalSearcherUtil.transformJournalArticles(
-				searchResponse.getDocuments71(), false);
+				searchResponse.getDocuments71());
 
 		if (_log.isDebugEnabled()) {
 			_log.debug("Syndicating " + articles.size() + " articles");
@@ -698,9 +697,6 @@ public class JournalRSSHelper {
 
 	@Reference
 	private ImageLocalService _imageLocalService;
-
-	@Reference
-	private JournalArticleLocalService _journalArticleLocalService;
 
 	@Reference
 	private JournalContent _journalContent;

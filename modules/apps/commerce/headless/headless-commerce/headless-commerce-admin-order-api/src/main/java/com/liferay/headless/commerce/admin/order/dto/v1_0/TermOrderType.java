@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -55,11 +56,19 @@ public class TermOrderType implements Serializable {
 	@Schema
 	@Valid
 	public Map<String, Map<String, String>> getActions() {
+		if (_actionsSupplier != null) {
+			actions = _actionsSupplier.get();
+
+			_actionsSupplier = null;
+		}
+
 		return actions;
 	}
 
 	public void setActions(Map<String, Map<String, String>> actions) {
 		this.actions = actions;
+
+		_actionsSupplier = null;
 	}
 
 	@JsonIgnore
@@ -67,52 +76,77 @@ public class TermOrderType implements Serializable {
 		UnsafeSupplier<Map<String, Map<String, String>>, Exception>
 			actionsUnsafeSupplier) {
 
-		try {
-			actions = actionsUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_actionsSupplier = () -> {
+			try {
+				return actionsUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Map<String, Map<String, String>> actions;
 
+	@JsonIgnore
+	private Supplier<Map<String, Map<String, String>>> _actionsSupplier;
+
 	@Schema
 	@Valid
 	public OrderType getOrderType() {
+		if (_orderTypeSupplier != null) {
+			orderType = _orderTypeSupplier.get();
+
+			_orderTypeSupplier = null;
+		}
+
 		return orderType;
 	}
 
 	public void setOrderType(OrderType orderType) {
 		this.orderType = orderType;
+
+		_orderTypeSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setOrderType(
 		UnsafeSupplier<OrderType, Exception> orderTypeUnsafeSupplier) {
 
-		try {
-			orderType = orderTypeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_orderTypeSupplier = () -> {
+			try {
+				return orderTypeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected OrderType orderType;
 
+	@JsonIgnore
+	private Supplier<OrderType> _orderTypeSupplier;
+
 	@Schema(example = "DAB-34098-789-N")
 	public String getOrderTypeExternalReferenceCode() {
+		if (_orderTypeExternalReferenceCodeSupplier != null) {
+			orderTypeExternalReferenceCode =
+				_orderTypeExternalReferenceCodeSupplier.get();
+
+			_orderTypeExternalReferenceCodeSupplier = null;
+		}
+
 		return orderTypeExternalReferenceCode;
 	}
 
@@ -120,6 +154,8 @@ public class TermOrderType implements Serializable {
 		String orderTypeExternalReferenceCode) {
 
 		this.orderTypeExternalReferenceCode = orderTypeExternalReferenceCode;
+
+		_orderTypeExternalReferenceCodeSupplier = null;
 	}
 
 	@JsonIgnore
@@ -127,45 +163,59 @@ public class TermOrderType implements Serializable {
 		UnsafeSupplier<String, Exception>
 			orderTypeExternalReferenceCodeUnsafeSupplier) {
 
-		try {
-			orderTypeExternalReferenceCode =
-				orderTypeExternalReferenceCodeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_orderTypeExternalReferenceCodeSupplier = () -> {
+			try {
+				return orderTypeExternalReferenceCodeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String orderTypeExternalReferenceCode;
 
+	@JsonIgnore
+	private Supplier<String> _orderTypeExternalReferenceCodeSupplier;
+
 	@DecimalMin("0")
 	@Schema(example = "30324")
 	public Long getOrderTypeId() {
+		if (_orderTypeIdSupplier != null) {
+			orderTypeId = _orderTypeIdSupplier.get();
+
+			_orderTypeIdSupplier = null;
+		}
+
 		return orderTypeId;
 	}
 
 	public void setOrderTypeId(Long orderTypeId) {
 		this.orderTypeId = orderTypeId;
+
+		_orderTypeIdSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setOrderTypeId(
 		UnsafeSupplier<Long, Exception> orderTypeIdUnsafeSupplier) {
 
-		try {
-			orderTypeId = orderTypeIdUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_orderTypeIdSupplier = () -> {
+			try {
+				return orderTypeIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
@@ -173,13 +223,25 @@ public class TermOrderType implements Serializable {
 	@NotNull
 	protected Long orderTypeId;
 
+	@JsonIgnore
+	private Supplier<Long> _orderTypeIdSupplier;
+
 	@Schema(example = "PAB-34098-789-N")
 	public String getTermExternalReferenceCode() {
+		if (_termExternalReferenceCodeSupplier != null) {
+			termExternalReferenceCode =
+				_termExternalReferenceCodeSupplier.get();
+
+			_termExternalReferenceCodeSupplier = null;
+		}
+
 		return termExternalReferenceCode;
 	}
 
 	public void setTermExternalReferenceCode(String termExternalReferenceCode) {
 		this.termExternalReferenceCode = termExternalReferenceCode;
+
+		_termExternalReferenceCodeSupplier = null;
 	}
 
 	@JsonIgnore
@@ -187,45 +249,59 @@ public class TermOrderType implements Serializable {
 		UnsafeSupplier<String, Exception>
 			termExternalReferenceCodeUnsafeSupplier) {
 
-		try {
-			termExternalReferenceCode =
-				termExternalReferenceCodeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_termExternalReferenceCodeSupplier = () -> {
+			try {
+				return termExternalReferenceCodeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String termExternalReferenceCode;
 
+	@JsonIgnore
+	private Supplier<String> _termExternalReferenceCodeSupplier;
+
 	@DecimalMin("0")
 	@Schema(example = "30130")
 	public Long getTermId() {
+		if (_termIdSupplier != null) {
+			termId = _termIdSupplier.get();
+
+			_termIdSupplier = null;
+		}
+
 		return termId;
 	}
 
 	public void setTermId(Long termId) {
 		this.termId = termId;
+
+		_termIdSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setTermId(
 		UnsafeSupplier<Long, Exception> termIdUnsafeSupplier) {
 
-		try {
-			termId = termIdUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_termIdSupplier = () -> {
+			try {
+				return termIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
@@ -233,34 +309,50 @@ public class TermOrderType implements Serializable {
 	@NotNull
 	protected Long termId;
 
+	@JsonIgnore
+	private Supplier<Long> _termIdSupplier;
+
 	@DecimalMin("0")
 	@Schema(example = "30643")
 	public Long getTermOrderTypeId() {
+		if (_termOrderTypeIdSupplier != null) {
+			termOrderTypeId = _termOrderTypeIdSupplier.get();
+
+			_termOrderTypeIdSupplier = null;
+		}
+
 		return termOrderTypeId;
 	}
 
 	public void setTermOrderTypeId(Long termOrderTypeId) {
 		this.termOrderTypeId = termOrderTypeId;
+
+		_termOrderTypeIdSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setTermOrderTypeId(
 		UnsafeSupplier<Long, Exception> termOrderTypeIdUnsafeSupplier) {
 
-		try {
-			termOrderTypeId = termOrderTypeIdUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_termOrderTypeIdSupplier = () -> {
+			try {
+				return termOrderTypeIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Long termOrderTypeId;
+
+	@JsonIgnore
+	private Supplier<Long> _termOrderTypeIdSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -289,6 +381,8 @@ public class TermOrderType implements Serializable {
 
 		sb.append("{");
 
+		Map<String, Map<String, String>> actions = getActions();
+
 		if (actions != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -299,6 +393,8 @@ public class TermOrderType implements Serializable {
 			sb.append(_toJSON(actions));
 		}
 
+		OrderType orderType = getOrderType();
+
 		if (orderType != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -308,6 +404,9 @@ public class TermOrderType implements Serializable {
 
 			sb.append(String.valueOf(orderType));
 		}
+
+		String orderTypeExternalReferenceCode =
+			getOrderTypeExternalReferenceCode();
 
 		if (orderTypeExternalReferenceCode != null) {
 			if (sb.length() > 1) {
@@ -323,6 +422,8 @@ public class TermOrderType implements Serializable {
 			sb.append("\"");
 		}
 
+		Long orderTypeId = getOrderTypeId();
+
 		if (orderTypeId != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -332,6 +433,8 @@ public class TermOrderType implements Serializable {
 
 			sb.append(orderTypeId);
 		}
+
+		String termExternalReferenceCode = getTermExternalReferenceCode();
 
 		if (termExternalReferenceCode != null) {
 			if (sb.length() > 1) {
@@ -347,6 +450,8 @@ public class TermOrderType implements Serializable {
 			sb.append("\"");
 		}
 
+		Long termId = getTermId();
+
 		if (termId != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -356,6 +461,8 @@ public class TermOrderType implements Serializable {
 
 			sb.append(termId);
 		}
+
+		Long termOrderTypeId = getTermOrderTypeId();
 
 		if (termOrderTypeId != null) {
 			if (sb.length() > 1) {

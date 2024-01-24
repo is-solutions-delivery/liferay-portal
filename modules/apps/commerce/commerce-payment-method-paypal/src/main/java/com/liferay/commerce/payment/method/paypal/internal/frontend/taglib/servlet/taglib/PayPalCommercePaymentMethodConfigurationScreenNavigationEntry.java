@@ -109,7 +109,7 @@ public class PayPalCommercePaymentMethodConfigurationScreenNavigationEntry
 						new GroupServiceSettingsLocator(
 							commerceChannel.getGroupId(),
 							PayPalCommercePaymentMethodConstants.
-								SERVICE_NAME)));
+								COMMERCE_PAYMENT_ENGINE_SERVICE_NAME)));
 
 			httpServletRequest.setAttribute(
 				PayPalGroupServiceConfiguration.class.getName(),

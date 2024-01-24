@@ -5,10 +5,10 @@
 
 package com.liferay.portal.kernel.workflow;
 
-import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.MapUtil;
 
 import java.util.Locale;
 import java.util.Map;
@@ -20,21 +20,23 @@ public abstract class BaseWorkflowNode implements WorkflowNode {
 
 	@Override
 	public String getLabel(Locale locale) {
-		String label = _labelMap.get(locale);
+		if (MapUtil.isNotEmpty(_labelMap) && (_labelMap.get(locale) != null)) {
+			return HtmlUtil.escape(_labelMap.get(locale));
+		}
+
+		String name = LanguageUtil.get(locale, _name, null);
+
+		if (name != null) {
+			return HtmlUtil.escape(name);
+		}
+
+		String label = _labelMap.get(LocaleUtil.getSiteDefault());
 
 		if (label != null) {
 			return HtmlUtil.escape(label);
 		}
 
-		label = _labelMap.get(LocaleUtil.getSiteDefault());
-
-		if (label != null) {
-			return HtmlUtil.escape(label);
-		}
-
-		Language language = LanguageUtil.getLanguage();
-
-		return HtmlUtil.escape(language.get(locale, _name));
+		return _name;
 	}
 
 	@Override

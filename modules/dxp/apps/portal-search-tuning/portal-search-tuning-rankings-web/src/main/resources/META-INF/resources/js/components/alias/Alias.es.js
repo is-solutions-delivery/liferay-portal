@@ -61,12 +61,37 @@ function trimListItems(list) {
 
 class Alias extends Component {
 	static propTypes = {
+		disabled: PropTypes.bool,
 		keywords: PropTypes.arrayOf(String),
 		onChange: PropTypes.func.isRequired,
 	};
 
+	static defaultProps = {
+		disabled: false,
+	};
+
 	state = {
 		inputValue: '',
+	};
+
+	/*
+	 * Any time the input is blurred, adds the current input value to the
+	 * list of aliases. This ensures that the user does not lose the value
+	 * if they save the Result Ranking without hitting enter or comma.
+	 */
+	_handleBlur = () => {
+		if (this.state.inputValue.trim()) {
+			this.props.onChange(
+				filterDuplicates(
+					transformListOfStringsToObjects([
+						...this.props.keywords,
+						this.state.inputValue,
+					])
+				)
+			);
+		}
+
+		this.setState({inputValue: ''});
 	};
 
 	_handleInputChange = (value) => {
@@ -78,7 +103,7 @@ class Alias extends Component {
 	};
 
 	render() {
-		const {keywords} = this.props;
+		const {disabled, keywords} = this.props;
 
 		const {inputValue} = this.state;
 
@@ -101,20 +126,24 @@ class Alias extends Component {
 				<ClayInput.Group>
 					<ClayInput.GroupItem>
 						<ClayMultiSelect
+							disabled={disabled}
 							id="aliases-input"
 							items={transformListOfStringsToObjects(keywords)}
+							onBlur={this._handleBlur}
 							onChange={this._handleInputChange}
 							onItemsChange={this._handleItemsChange}
 							value={inputValue}
 						/>
 
-						<ClayForm.FeedbackGroup>
-							<ClayForm.Text>
-								{Liferay.Language.get(
-									'add-an-alias-instruction'
-								)}
-							</ClayForm.Text>
-						</ClayForm.FeedbackGroup>
+						{!disabled && (
+							<ClayForm.FeedbackGroup>
+								<ClayForm.Text>
+									{Liferay.Language.get(
+										'add-an-alias-instruction'
+									)}
+								</ClayForm.Text>
+							</ClayForm.FeedbackGroup>
+						)}
 					</ClayInput.GroupItem>
 				</ClayInput.Group>
 			</ClayForm.Group>

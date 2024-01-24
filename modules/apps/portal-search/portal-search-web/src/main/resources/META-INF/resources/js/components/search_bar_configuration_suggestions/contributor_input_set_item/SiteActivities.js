@@ -5,66 +5,89 @@
 
 import ClayButton from '@clayui/button';
 import ClayDropDown from '@clayui/drop-down';
-import {ClayInput, ClaySelect} from '@clayui/form';
+import {ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
-import {ClayTooltipProvider} from '@clayui/tooltip';
-import React, {useContext} from 'react';
+import {LearnMessage} from 'frontend-js-components-web';
+import React, {useRef, useState} from 'react';
 
-import LearnMessage from '../../../shared/LearnMessage';
-import SearchContext from '../../../shared/SearchContext';
 import {
 	CONTRIBUTOR_TYPES,
 	CONTRIBUTOR_TYPES_ASAH_DEFAULT_DISPLAY_GROUP_NAMES,
+	CONTRIBUTOR_TYPES_DEFAULT_ATTRIBUTES,
 } from '../../../utils/types/contributorTypes';
 import InputSetItemHeader from './InputSetItemHeader';
 import CharacterThresholdInput from './inputs/CharacterThresholdInput';
+import ContentTypesInput from './inputs/ContentTypesInput';
 import DisplayGroupNameInput from './inputs/DisplayGroupNameInput';
+import MatchDisplayLanguageInput from './inputs/MatchDisplayLanguageInput';
 import MinimumSearchesInput from './inputs/MinimumSearchesInput';
 import SizeInput from './inputs/SizeInput';
+import TimeRangeInput from './inputs/TimeRangeInput';
 
-function getSiteActivitiesContributorActivityOptions(learnMessages) {
-	return [
+function getSiteActivitiesContributorActivityOptions() {
+	const options = [
 		{
-			contributorName: CONTRIBUTOR_TYPES.ASAH_TOP_SEARCH_KEYWORDS,
-			description: (
-				<>
-					{Liferay.Language.get('top-searches-help')}
-
-					<LearnMessage
-						className="c-ml-1"
-						learnMessages={learnMessages}
-						resourceKey="search-bar-suggestions-site-activities"
-					/>
-				</>
-			),
+			contributorName: CONTRIBUTOR_TYPES.ASAH_TOP_SEARCH_SITE_ACTIVITY,
+			description: Liferay.Language.get('top-searches-help'),
+			learnMessageResourceKey: 'search-bar-suggestions-site-activities',
 			title: Liferay.Language.get('top-searches'),
 		},
 		{
-			contributorName: CONTRIBUTOR_TYPES.ASAH_RECENT_SEARCH_KEYWORDS,
-			description: (
-				<>
-					{Liferay.Language.get('trending-searches-help')}
-
-					<LearnMessage
-						className="c-ml-1"
-						learnMessages={learnMessages}
-						resourceKey="search-bar-suggestions-site-activities"
-					/>
-				</>
-			),
+			contributorName: CONTRIBUTOR_TYPES.ASAH_RECENT_SEARCH_SITE_ACTIVITY,
+			description: Liferay.Language.get('trending-searches-help'),
+			learnMessageResourceKey: 'search-bar-suggestions-site-activities',
 			title: Liferay.Language.get('trending-searches'),
 		},
 	];
+
+	if (Liferay.FeatureFlags['LPS-176691']) {
+		return options.concat([
+			{
+				contributorName:
+					CONTRIBUTOR_TYPES.ASAH_RECENT_SEARCHES_USER_ACTIVITY,
+				description: Liferay.Language.get('recent-searches-help'),
+				learnMessageResourceKey:
+					'search-bar-suggestions-site-activities',
+				title: Liferay.Language.get('recent-searches'),
+			},
+			{
+				contributorName:
+					CONTRIBUTOR_TYPES.ASAH_RECENT_PAGES_USER_ACTIVITY,
+				description: Liferay.Language.get('recent-pages-help'),
+				learnMessageResourceKey:
+					'search-bar-suggestions-site-activities',
+				title: Liferay.Language.get('recent-pages'),
+			},
+			{
+				contributorName:
+					CONTRIBUTOR_TYPES.ASAH_RECENT_SITES_USER_ACTIVITY,
+				description: Liferay.Language.get('recent-sites-help'),
+				learnMessageResourceKey:
+					'search-bar-suggestions-site-activities',
+				title: Liferay.Language.get('recent-sites'),
+			},
+			{
+				contributorName:
+					CONTRIBUTOR_TYPES.ASAH_RECENT_ASSETS_USER_ACTIVITY,
+				description: Liferay.Language.get('recently-viewed-help'),
+				learnMessageResourceKey:
+					'search-bar-suggestions-site-activities',
+				title: Liferay.Language.get('recently-viewed'),
+			},
+		]);
+	}
+
+	return options;
 }
 
 function SiteActivities({index, onBlur, onInputSetItemChange, touched, value}) {
-	const {learnMessages} = useContext(SearchContext);
+	const [showActivityDropdown, setShowActivityDropdown] = useState(false);
 
-	const SITE_ACTIVITIES_CONTRIBUTOR_ACTIVITY_OPTIONS = getSiteActivitiesContributorActivityOptions(
-		learnMessages
-	);
+	const alignElementRef = useRef();
 
-	const _handleChangeAttribute = (property) => (event) => {
+	const SITE_ACTIVITIES_CONTRIBUTOR_ACTIVITY_OPTIONS = getSiteActivitiesContributorActivityOptions();
+
+	const _handleChangeAttributeInput = (property) => (event) => {
 		onInputSetItemChange(index, {
 			attributes: {
 				...value.attributes,
@@ -73,14 +96,31 @@ function SiteActivities({index, onBlur, onInputSetItemChange, touched, value}) {
 		});
 	};
 
+	const _handleChangeAttributeValue = (property) => (newValue) => {
+		onInputSetItemChange(index, {
+			attributes: {
+				...value.attributes,
+				[property]: newValue,
+			},
+		});
+	};
+
+	const _handleActivityDropdownClick = () => {
+		setShowActivityDropdown(!showActivityDropdown);
+	};
+
 	const _handleActivityInputClick = (contributorName) => () => {
 		onInputSetItemChange(index, {
+			attributes: CONTRIBUTOR_TYPES_DEFAULT_ATTRIBUTES[contributorName],
 			contributorName,
 			displayGroupName:
 				CONTRIBUTOR_TYPES_ASAH_DEFAULT_DISPLAY_GROUP_NAMES[
 					contributorName
 				] || '',
+			size: '3',
 		});
+
+		setShowActivityDropdown(false);
 	};
 
 	return (
@@ -99,7 +139,7 @@ function SiteActivities({index, onBlur, onInputSetItemChange, touched, value}) {
 
 					<LearnMessage
 						className="c-ml-1"
-						learnMessages={learnMessages}
+						resource="portal-search-web"
 						resourceKey="search-bar-suggestions-site-activities"
 					/>
 				</InputSetItemHeader.Description>
@@ -115,26 +155,33 @@ function SiteActivities({index, onBlur, onInputSetItemChange, touched, value}) {
 						</span>
 					</label>
 
-					<ClayDropDown
-						closeOnClick
-						menuWidth="sm"
-						trigger={
-							<ClayButton
-								aria-label={Liferay.Language.get(
-									'suggestion-contributor'
-								)}
-								className="form-control form-control-select"
-								displayType="unstyled"
-							>
-								{
-									SITE_ACTIVITIES_CONTRIBUTOR_ACTIVITY_OPTIONS.find(
-										({contributorName}) =>
-											contributorName ===
-											value.contributorName
-									).title
-								}
-							</ClayButton>
+					<ClayButton
+						aria-label={Liferay.Language.get(
+							'suggestion-contributor'
+						)}
+						className="form-control form-control-select"
+						displayType="unstyled"
+						onClick={_handleActivityDropdownClick}
+						ref={alignElementRef}
+					>
+						{
+							SITE_ACTIVITIES_CONTRIBUTOR_ACTIVITY_OPTIONS.find(
+								({contributorName}) =>
+									contributorName === value.contributorName
+							)?.title
 						}
+					</ClayButton>
+
+					<ClayDropDown.Menu
+						active={showActivityDropdown}
+						alignElementRef={alignElementRef}
+						closeOnClickOutside
+						onSetActive={setShowActivityDropdown}
+						style={{
+							maxWidth:
+								alignElementRef.current &&
+								alignElementRef.current.clientWidth + 'px',
+						}}
 					>
 						<ClayDropDown.ItemList
 							items={SITE_ACTIVITIES_CONTRIBUTOR_ACTIVITY_OPTIONS}
@@ -154,11 +201,19 @@ function SiteActivities({index, onBlur, onInputSetItemChange, touched, value}) {
 
 									<div className="text-2">
 										{item.description}
+
+										<LearnMessage
+											className="c-ml-1"
+											resource="portal-search-web"
+											resourceKey={
+												item.learnMessageResourceKey
+											}
+										/>
 									</div>
 								</ClayDropDown.Item>
 							)}
 						</ClayDropDown.ItemList>
-					</ClayDropDown>
+					</ClayDropDown.Menu>
 				</ClayInput.GroupItem>
 			</div>
 
@@ -178,59 +233,110 @@ function SiteActivities({index, onBlur, onInputSetItemChange, touched, value}) {
 				/>
 			</div>
 
-			<div className="c-mb-0 form-group-autofit">
-				<CharacterThresholdInput
-					onBlur={onBlur('attributes.characterThreshold')}
-					onChange={_handleChangeAttribute('characterThreshold')}
-					touched={touched['attributes.characterThreshold']}
-					value={value.attributes?.characterThreshold}
-				/>
-
-				<ClayInput.GroupItem>
-					<label>
-						{Liferay.Language.get('match-display-language')}
-
-						<ClayTooltipProvider>
-							<span
-								className="c-ml-2"
-								data-tooltip-align="top"
-								title={Liferay.Language.get(
-									'match-display-language-help'
-								)}
-							>
-								<ClayIcon symbol="question-circle-full" />
-							</span>
-						</ClayTooltipProvider>
-					</label>
-
-					<ClaySelect
-						aria-label={Liferay.Language.get(
-							'match-display-language'
+			{[
+				CONTRIBUTOR_TYPES.ASAH_TOP_SEARCH_SITE_ACTIVITY,
+				CONTRIBUTOR_TYPES.ASAH_RECENT_SEARCH_SITE_ACTIVITY,
+			].includes(value.contributorName) ? (
+				<div className="c-mb-0 form-group-autofit">
+					<CharacterThresholdInput
+						onBlur={onBlur('attributes.characterThreshold')}
+						onChange={_handleChangeAttributeInput(
+							'characterThreshold'
 						)}
-						onChange={_handleChangeAttribute(
+						touched={touched['attributes.characterThreshold']}
+						value={value.attributes?.characterThreshold}
+					/>
+
+					<MatchDisplayLanguageInput
+						onChange={_handleChangeAttributeInput(
 							'matchDisplayLanguageId'
 						)}
 						value={value.attributes?.matchDisplayLanguageId}
-					>
-						<ClaySelect.Option
-							label={Liferay.Language.get('true')}
-							value={true}
+					/>
+
+					<MinimumSearchesInput
+						onBlur={onBlur('attributes.minCounts')}
+						onChange={_handleChangeAttributeInput('minCounts')}
+						touched={touched['attributes.minCounts']}
+						value={value.attributes?.minCounts}
+					/>
+				</div>
+			) : [
+					CONTRIBUTOR_TYPES.ASAH_RECENT_PAGES_USER_ACTIVITY,
+					CONTRIBUTOR_TYPES.ASAH_RECENT_SITES_USER_ACTIVITY,
+			  ].includes(value.contributorName) ? (
+				<div className="c-mb-0 form-group-autofit">
+					<CharacterThresholdInput
+						onBlur={onBlur('attributes.characterThreshold')}
+						onChange={_handleChangeAttributeInput(
+							'characterThreshold'
+						)}
+						touched={touched['attributes.characterThreshold']}
+						value={value.attributes?.characterThreshold}
+					/>
+
+					<TimeRangeInput
+						onBlur={onBlur('attributes.rangeKey')}
+						onChange={_handleChangeAttributeValue('rangeKey')}
+						touched={touched['attributes.rangeKey']}
+						value={value.attributes?.rangeKey}
+					/>
+				</div>
+			) : (
+				<>
+					<div className="c-mb-3 form-group-autofit">
+						<CharacterThresholdInput
+							onBlur={onBlur('attributes.characterThreshold')}
+							onChange={_handleChangeAttributeInput(
+								'characterThreshold'
+							)}
+							touched={touched['attributes.characterThreshold']}
+							value={value.attributes?.characterThreshold}
 						/>
 
-						<ClaySelect.Option
-							label={Liferay.Language.get('false')}
-							value={false}
-						/>
-					</ClaySelect>
-				</ClayInput.GroupItem>
+						{value.contributorName ===
+							CONTRIBUTOR_TYPES.ASAH_RECENT_SEARCHES_USER_ACTIVITY && (
+							<MatchDisplayLanguageInput
+								onChange={_handleChangeAttributeInput(
+									'matchDisplayLanguageId'
+								)}
+								value={value.attributes?.matchDisplayLanguageId}
+							/>
+						)}
 
-				<MinimumSearchesInput
-					onBlur={onBlur('attributes.minCounts')}
-					onChange={_handleChangeAttribute('minCounts')}
-					touched={touched['attributes.minCounts']}
-					value={value.attributes?.minCounts}
-				/>
-			</div>
+						{value.contributorName ===
+							CONTRIBUTOR_TYPES.ASAH_RECENT_ASSETS_USER_ACTIVITY && (
+							<ContentTypesInput
+								onBlur={onBlur('attributes.contentTypes')}
+								onChange={_handleChangeAttributeValue(
+									'contentTypes'
+								)}
+								touched={touched['attributes.contentTypes']}
+								value={value.attributes?.contentTypes}
+							/>
+						)}
+					</div>
+
+					<div className="c-mb-0 form-group-autofit">
+						{value.contributorName ===
+							CONTRIBUTOR_TYPES.ASAH_RECENT_SEARCHES_USER_ACTIVITY && (
+							<MinimumSearchesInput
+								onBlur={onBlur('attributes.minCounts')}
+								onChange={_handleChangeAttributeInput(
+									'minCounts'
+								)}
+								touched={touched['attributes.minCounts']}
+								value={value.attributes?.minCounts}
+							/>
+						)}
+
+						<TimeRangeInput
+							onChange={_handleChangeAttributeValue('rangeKey')}
+							value={value.attributes?.rangeKey}
+						/>
+					</div>
+				</>
+			)}
 		</>
 	);
 }

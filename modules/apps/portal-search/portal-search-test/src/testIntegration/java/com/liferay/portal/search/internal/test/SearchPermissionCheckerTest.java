@@ -103,7 +103,7 @@ public class SearchPermissionCheckerTest {
 
 	@Test
 	public void testAdministratorRolePermissionFilter() throws Exception {
-		_user = UserTestUtil.addOmniAdminUser();
+		_user = UserTestUtil.addOmniadminUser();
 
 		PermissionThreadLocal.setPermissionChecker(
 			PermissionCheckerFactoryUtil.create(_user));

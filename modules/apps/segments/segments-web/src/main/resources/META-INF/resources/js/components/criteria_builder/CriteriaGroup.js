@@ -6,15 +6,11 @@
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
 import {PropTypes} from 'prop-types';
-import React, {Fragment, useMemo} from 'react';
-import {DragSource as dragSource} from 'react-dnd';
+import React, {Fragment} from 'react';
 
-import {
-	CONJUNCTIONS,
-	SUPPORTED_OPERATORS,
-	SUPPORTED_PROPERTY_TYPES,
-} from '../../utils/constants';
-import {DragTypes} from '../../utils/drag-types';
+import useDragSource from '../../hooks/useDragSource';
+import {CONJUNCTIONS} from '../../utils/constants';
+import {DragTypes} from '../../utils/dragTypes';
 import {
 	generateGroupId,
 	getChildGroupIds,
@@ -27,70 +23,39 @@ import CriteriaRow from './CriteriaRow';
 import DropZone from './DropZone';
 import EmptyDropZone from './EmptyDropZone';
 
-/**
- * Passes the required values to the drop target.
- * This method must be called `beginDrag`.
- * @param {Object} props Component's current props
- * @returns {Object} The props to be passed to the drop target.
- */
-function beginDrag({criteria, index, parentGroupId}) {
-	const childGroupIds = getChildGroupIds(criteria);
-
-	return {
-		childGroupIds,
-		criterion: criteria,
-		groupId: parentGroupId,
-		index,
-	};
-}
-
-/**
- * A function that decorates the passed in component with the drag source HOC.
- * This was separated out since this function needed to be called again for the
- * nested groups.
- * @param {React.Component} component The component to decorate.
- */
-const withDragSource = dragSource(
-	DragTypes.CRITERIA_GROUP,
-	{
-		beginDrag,
-	},
-	(connect, monitor) => ({
-		connectDragPreview: connect.dragPreview(),
-		connectDragSource: connect.dragSource(),
-		draggingItem: monitor.getItem(),
-		isDragging: monitor.isDragging(),
-	})
-);
-
-function CriteriaGroup({
-	connectDragPreview,
-	connectDragSource,
+export default function CriteriaGroup({
 	criteria,
 	draggingItem,
 	editing,
 	emptyContributors,
 	entityName,
 	groupId,
-	isDragging,
+	index,
 	modelLabel,
 	onChange,
 	onMove,
+	parentGroupId,
 	propertyKey,
 	renderEmptyValuesErrors = false,
 	root = false,
 	supportedProperties,
 }) {
-	const NestedCriteriaGroupWithDrag = useMemo(() => {
-		return withDragSource(CriteriaGroup);
-	}, []);
-
 	const _handleConjunctionSelect = (conjunctionName) => {
 		onChange({
 			...criteria,
 			conjunctionName,
 		});
 	};
+
+	const {handlerRef, isDragging} = useDragSource({
+		item: {
+			childGroupIds: getChildGroupIds(criteria),
+			criterion: criteria,
+			groupId: parentGroupId,
+			index,
+			type: DragTypes.CRITERIA_GROUP,
+		},
+	});
 
 	/**
 	 * Adds a new criterion in a group at the specified index. If the criteria
@@ -111,11 +76,7 @@ function CriteriaGroup({
 
 		const criterionValue = value || defaultValue;
 
-		const operators = getSupportedOperatorsFromType(
-			SUPPORTED_OPERATORS,
-			SUPPORTED_PROPERTY_TYPES,
-			type
-		);
+		const operators = getSupportedOperatorsFromType(type);
 
 		const newCriterion = {
 			operatorName: operatorName ? operatorName : operators[0].name,
@@ -160,14 +121,6 @@ function CriteriaGroup({
 	const _renderConjunction = (index) => {
 		return (
 			<>
-				<DropZone
-					dropIndex={index}
-					groupId={groupId}
-					onCriterionAdd={_handleCriterionAdd}
-					onMove={onMove}
-					propertyKey={propertyKey}
-				/>
-
 				<Conjunction
 					conjunctionName={criteria.conjunctionName}
 					editing={editing}
@@ -176,8 +129,8 @@ function CriteriaGroup({
 
 				<DropZone
 					before
-					dropIndex={index}
 					groupId={groupId}
+					index={index}
 					onCriterionAdd={_handleCriterionAdd}
 					onMove={onMove}
 					propertyKey={propertyKey}
@@ -194,7 +147,7 @@ function CriteriaGroup({
 				})}
 			>
 				{criterion.items ? (
-					<NestedCriteriaGroupWithDrag
+					<CriteriaGroup
 						criteria={criterion}
 						editing={editing}
 						entityName={entityName}
@@ -228,8 +181,8 @@ function CriteriaGroup({
 				)}
 
 				<DropZone
-					dropIndex={index + 1}
 					groupId={groupId}
+					index={index}
 					onCriterionAdd={_handleCriterionAdd}
 					onMove={onMove}
 					propertyKey={propertyKey}
@@ -244,11 +197,11 @@ function CriteriaGroup({
 		isDragging ||
 		(draggingItem && draggingItem.propertyKey !== propertyKey);
 
-	return connectDragPreview(
+	return (
 		<div
 			className={classNames(
 				{
-					'criteria-group-root w-100': criteria,
+					'criteria-group-root my-2 p-2 w-100': criteria,
 					disabled,
 				},
 				`color--${propertyKey} criteria-group-item${
@@ -266,21 +219,21 @@ function CriteriaGroup({
 				<>
 					<DropZone
 						before
-						dropIndex={0}
 						groupId={groupId}
+						index={0}
 						onCriterionAdd={_handleCriterionAdd}
 						onMove={onMove}
 						propertyKey={propertyKey}
 					/>
 
-					{editing &&
-						singleRow &&
-						!root &&
-						connectDragSource(
-							<div className="align-items-center d-flex drag-icon h-100 position-absolute top-0">
-								<ClayIcon symbol="drag" />
-							</div>
-						)}
+					{editing && singleRow && !root && (
+						<div
+							className="align-items-center d-flex drag-icon h-100 position-absolute top-0"
+							ref={handlerRef}
+						>
+							<ClayIcon symbol="drag" />
+						</div>
+					)}
 
 					{criteria.items &&
 						criteria.items.map((criterion, index) => {
@@ -300,7 +253,6 @@ function CriteriaGroup({
 
 CriteriaGroup.propTypes = {
 	connectDragPreview: PropTypes.func,
-	connectDragSource: PropTypes.func,
 	criteria: PropTypes.object,
 	dragging: PropTypes.bool,
 	editing: PropTypes.bool,
@@ -317,5 +269,3 @@ CriteriaGroup.propTypes = {
 	root: PropTypes.bool,
 	supportedProperties: PropTypes.array,
 };
-
-export default withDragSource(CriteriaGroup);

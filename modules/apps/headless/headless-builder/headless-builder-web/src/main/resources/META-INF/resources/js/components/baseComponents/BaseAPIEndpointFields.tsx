@@ -3,18 +3,22 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import ClayAlert from '@clayui/alert';
 import {Text} from '@clayui/core';
 import ClayForm, {ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
-import {sub} from 'frontend-js-web';
+import {openToast, sub} from 'frontend-js-web';
 import React, {Dispatch, SetStateAction, useEffect, useState} from 'react';
 
 import {Select} from '../fieldComponents/Select';
+import {HTTP_METHODS, RETRIEVE_TYPES, STR_BLANK} from '../utils/constants';
 import {fetchJSON} from '../utils/fetchUtil';
 import {
+	makeURLPathParameterString,
 	makeURLPathStringWithForwardSlashes,
 	removeLeadingForwardSlash,
+	stringBetweenCurlyBraces,
 } from '../utils/string';
 
 interface BaseAPIApplicationFieldsProps {
@@ -22,7 +26,6 @@ interface BaseAPIApplicationFieldsProps {
 	basePath: string;
 	data: Partial<APIEndpointUIData>;
 	displayError: EndpointDataError;
-	editMode?: boolean;
 	setData: Dispatch<SetStateAction<Partial<APIEndpointUIData>>>;
 }
 
@@ -31,11 +34,58 @@ export default function BaseAPIEndpointFields({
 	basePath,
 	data,
 	displayError,
-	editMode,
 	setData,
 }: BaseAPIApplicationFieldsProps) {
+	const [httpMethodOptions, setHttpMethodOptions] = useState<SelectOption[]>(
+		[]
+	);
+
+	const [pathErrorMessage, setPathErrorMessage] = useState<string>(STR_BLANK);
+	const [pathHasErrors, setPathHasErrors] = useState<boolean>(false);
+
+	const [retrieveTypeOptions, setRetrieveTypeOptions] = useState<
+		SelectOption[]
+	>([]);
 	const [scopeOptions, setScopeOptions] = useState<SelectOption[]>([]);
+
+	const [selectedHttpMethod, setSelectedHttpMethod] = useState<
+		SelectOption
+	>();
+	const [selectedRetrieveType, setSelectedRetrieveType] = useState<
+		SelectOption
+	>();
 	const [selectedScope, setSelectedScope] = useState<SelectOption>();
+
+	useEffect(() => {
+		setPathHasErrors(
+			displayError.path ||
+				(displayError.parameter &&
+					selectedRetrieveType?.value ===
+						RETRIEVE_TYPES.SINGLE_ELEMENT)
+		);
+
+		if (
+			displayError.path &&
+			displayError.parameter &&
+			selectedRetrieveType?.value === RETRIEVE_TYPES.SINGLE_ELEMENT
+		) {
+			setPathErrorMessage(
+				Liferay.Language.get('please-enter-a-path-and-a-parameter')
+			);
+		}
+		else if (displayError.parameter) {
+			setPathErrorMessage(
+				Liferay.Language.get('please-enter-a-parameter')
+			);
+		}
+		else if (displayError.path) {
+			setPathErrorMessage(Liferay.Language.get('please-enter-a-path'));
+		}
+	}, [
+		displayError.path,
+		displayError.parameter,
+		selectedRetrieveType?.value,
+	]);
 
 	useEffect(() => {
 		fetchJSON<FetchedListType>({
@@ -45,7 +95,7 @@ export default function BaseAPIEndpointFields({
 			const options = response.listTypeEntries
 				? response.listTypeEntries.map((entry) => ({
 						label:
-							entry.key === 'group'
+							entry.key === 'site'
 								? Liferay.Language.get('site')
 								: Liferay.Language.get('company'),
 						value: entry.key,
@@ -56,7 +106,72 @@ export default function BaseAPIEndpointFields({
 				setScopeOptions(options);
 			}
 		});
+
+		fetchJSON<FetchedListType>({
+			input:
+				'/o/headless-admin-list-type/v1.0/list-type-definitions/by-external-reference-code/RETRIEVE_TYPE_PICKLIST',
+		}).then((response) => {
+			const options = response.listTypeEntries
+				? response.listTypeEntries.map((entry) => ({
+						label:
+							entry.key === RETRIEVE_TYPES.SINGLE_ELEMENT
+								? Liferay.Language.get('single-element')
+								: Liferay.Language.get('collection'),
+						value: entry.key,
+				  }))
+				: [];
+
+			if (options.length) {
+				setRetrieveTypeOptions(options);
+			}
+		});
+
+		fetchJSON<FetchedListType>({
+			input:
+				'/o/headless-admin-list-type/v1.0/list-type-definitions/by-external-reference-code/HTTP_METHOD_PICKLIST',
+		}).then((response) => {
+			const options = response.listTypeEntries
+				? response.listTypeEntries.map((entry) => ({
+						label: Liferay.Language.get(entry.key).toUpperCase(),
+						value: entry.key,
+				  }))
+				: [];
+
+			if (options.length) {
+				setHttpMethodOptions(options);
+			}
+		});
 	}, []);
+
+	useEffect(() => {
+		displayError.r_requestAPISchemaToAPIEndpoints_c_apiSchemaId &&
+			openToast({
+				message: Liferay.Language.get(
+					'there-are-errors-on-the-form-please-check-if-any-mandatory-fields-have-not-been-completed'
+				),
+				type: 'danger',
+			});
+	}, [displayError.r_requestAPISchemaToAPIEndpoints_c_apiSchemaId]);
+
+	useEffect(() => {
+		if (data.retrieveType?.key && retrieveTypeOptions.length) {
+			setSelectedRetrieveType(
+				retrieveTypeOptions.find(
+					(option) => option.value === data.retrieveType?.key
+				)
+			);
+		}
+
+		if (data.retrieveType?.key === RETRIEVE_TYPES.COLLECTION) {
+			setData((previousValue) => {
+				delete previousValue.parameter;
+				delete previousValue.pathParameter;
+				delete previousValue.pathParameterDescription;
+
+				return previousValue;
+			});
+		}
+	}, [data.retrieveType, retrieveTypeOptions, setData]);
 
 	useEffect(() => {
 		if (data.scope?.key && scopeOptions.length) {
@@ -66,13 +181,63 @@ export default function BaseAPIEndpointFields({
 		}
 	}, [data, scopeOptions]);
 
-	const handleSelectScope = (value: string) => {
+	useEffect(() => {
+		if (data.httpMethod?.key && httpMethodOptions.length) {
+			setSelectedHttpMethod(
+				httpMethodOptions.find(
+					(option) => option.value === data.httpMethod?.key
+				)
+			);
+		}
+
+		if (data.httpMethod?.key === HTTP_METHODS.POST) {
+			setData((previousValue) => {
+				delete previousValue.parameter;
+				delete previousValue.pathParameter;
+				delete previousValue.pathParameterDescription;
+
+				return {
+					...previousValue,
+					retrieveType: {
+						key: RETRIEVE_TYPES.SINGLE_ELEMENT,
+						value: STR_BLANK,
+					},
+				};
+			});
+		}
+		else if (data.httpMethod?.key === HTTP_METHODS.GET) {
+			setData((previousValue) => {
+				delete previousValue.r_requestAPISchemaToAPIEndpoints_c_apiSchemaId;
+
+				return {
+					...previousValue,
+					...(!previousValue.parameter && {parameter: STR_BLANK}),
+					...(!previousValue.pathParameter && {
+						pathParameter: STR_BLANK,
+					}),
+					...(!previousValue.pathParameterDescription && {
+						pathParameterDescription: STR_BLANK,
+					}),
+				};
+			});
+		}
+	}, [data.httpMethod, httpMethodOptions, setData]);
+
+	const handleDropdownChange = (
+		itemKey: string,
+		value: string,
+		options: SelectOption[],
+		onChangeFn: Dispatch<SetStateAction<SelectOption | undefined>>
+	) => {
 		setData((previousValue) => ({
 			...previousValue,
-			scope: {key: value, name: ''},
+			[itemKey]: {key: value, value: STR_BLANK},
 		}));
 
-		setSelectedScope(scopeOptions.find((option) => option.value === value));
+		onChangeFn({
+			label: options.find((option) => option.value === value)?.label!,
+			value,
+		});
 	};
 
 	const endpointDescriptionLabel = Liferay.Language.get(
@@ -80,17 +245,64 @@ export default function BaseAPIEndpointFields({
 	);
 
 	const endpointPathHostTextPreview =
-		selectedScope?.value === 'group'
-			? `${window.location.origin}${basePath}${apiApplicationBaseURL}/scopes/${selectedScope.value}`
+		selectedScope?.value === 'site'
+			? `${window.location.origin}${basePath}${apiApplicationBaseURL}/scopes/{scopeKey}`
 			: `${window.location.origin}${basePath}${apiApplicationBaseURL}`;
 	const endpointPathLabel = Liferay.Language.get('enter-path');
+	const endpointParameterLabel = `{${Liferay.Language.get(
+		'enter-parameter'
+	)}}`;
 
 	return (
 		<ClayForm>
-			{(editMode ?? false) && (
-				<ClayForm.Group>
+			<ClayForm.Group
+				className={classNames({
+					'has-error': displayError.httpMethod,
+				})}
+			>
+				<label htmlFor="selectTrigger">
+					{Liferay.Language.get('method')}
+
+					<span className="ml-1 reference-mark text-warning">
+						<ClayIcon symbol="asterisk" />
+					</span>
+				</label>
+
+				<Select
+					invalid={displayError.httpMethod}
+					onClick={(value) =>
+						handleDropdownChange(
+							'httpMethod',
+							value,
+							httpMethodOptions,
+							setSelectedHttpMethod
+						)
+					}
+					options={httpMethodOptions}
+					placeholder={Liferay.Language.get('select-method')}
+					required
+					searchable={false}
+					selectedOption={selectedHttpMethod}
+				/>
+
+				{displayError.httpMethod && (
+					<ClayAlert
+						className="mt-2"
+						displayType="danger"
+						title={Liferay.Language.get('please-select-a-method')}
+						variant="feedback"
+					></ClayAlert>
+				)}
+			</ClayForm.Group>
+
+			{selectedHttpMethod?.value === HTTP_METHODS.GET && (
+				<ClayForm.Group
+					className={classNames({
+						'has-error': displayError.retrieveType,
+					})}
+				>
 					<label htmlFor="selectTrigger">
-						{Liferay.Language.get('method')}
+						{Liferay.Language.get('retrieve-type')}
 
 						<span className="ml-1 reference-mark text-warning">
 							<ClayIcon symbol="asterisk" />
@@ -98,13 +310,47 @@ export default function BaseAPIEndpointFields({
 					</label>
 
 					<Select
-						disabled={true}
-						onClick={() => {}}
-						options={[{label: 'GET', value: 'get'}]}
+						dropDownSearchAriaLabel={Liferay.Language.get(
+							'search-for-an-object-definition-or-use-the-arrow-keys-to-navigate-and-select-an-object-definition-from-the-list'
+						)}
+						invalid={displayError.retrieveType}
+						onClick={(value) =>
+							handleDropdownChange(
+								'retrieveType',
+								value,
+								retrieveTypeOptions,
+								setSelectedRetrieveType
+							)
+						}
+						options={retrieveTypeOptions}
+						placeholder={Liferay.Language.get('select-type')}
 						required
 						searchable={false}
-						selectedOption={{label: 'GET', value: 'get'}}
+						selectedOption={selectedRetrieveType}
+						triggerAriaLabel={
+							!selectedRetrieveType
+								? Liferay.Language.get(
+										Liferay.Language.get('select-type')
+								  )
+								: sub(
+										Liferay.Language.get(
+											'type-x-is-selected'
+										),
+										selectedRetrieveType.label
+								  )
+						}
 					/>
+
+					{displayError.retrieveType && (
+						<ClayAlert
+							className="mt-2"
+							displayType="danger"
+							title={Liferay.Language.get(
+								'please-select-a-retrieve-type'
+							)}
+							variant="feedback"
+						></ClayAlert>
+					)}
 				</ClayForm.Group>
 			)}
 
@@ -127,7 +373,14 @@ export default function BaseAPIEndpointFields({
 						'search-for-an-object-definition-or-use-the-arrow-keys-to-navigate-and-select-an-object-definition-from-the-list'
 					)}
 					invalid={displayError.scope}
-					onClick={handleSelectScope}
+					onClick={(value) =>
+						handleDropdownChange(
+							'scope',
+							value,
+							scopeOptions,
+							setSelectedScope
+						)
+					}
 					options={scopeOptions}
 					placeholder={Liferay.Language.get('select-scope')}
 					required
@@ -145,28 +398,17 @@ export default function BaseAPIEndpointFields({
 					}
 				/>
 
-				<div className="feedback-container">
-					<ClayForm.FeedbackGroup>
-						{displayError.scope && (
-							<ClayForm.FeedbackItem className="mt-2">
-								<ClayForm.FeedbackIndicator symbol="exclamation-full" />
-
-								<span id="selectScopeErrorMessage">
-									{Liferay.Language.get(
-										'please-select-a-scope'
-									)}
-								</span>
-							</ClayForm.FeedbackItem>
-						)}
-					</ClayForm.FeedbackGroup>
-				</div>
+				{displayError.scope && (
+					<ClayAlert
+						className="mt-2"
+						displayType="danger"
+						title={Liferay.Language.get('please-select-a-scope')}
+						variant="feedback"
+					></ClayAlert>
+				)}
 			</ClayForm.Group>
 
-			<ClayForm.Group
-				className={classNames({
-					'has-error': displayError.path,
-				})}
-			>
+			<ClayForm.Group>
 				<label htmlFor="endpointPathField">
 					{Liferay.Language.get('path')}
 
@@ -175,7 +417,7 @@ export default function BaseAPIEndpointFields({
 					</span>
 				</label>
 
-				<Text as="p" id="hostTextPreview" size={2} weight="lighter">
+				<Text as="p" color="secondary" id="hostTextPreview" size={3}>
 					{endpointPathHostTextPreview}
 				</Text>
 
@@ -184,7 +426,12 @@ export default function BaseAPIEndpointFields({
 						<ClayInput.GroupText>/</ClayInput.GroupText>
 					</ClayInput.GroupItem>
 
-					<ClayInput.GroupItem append>
+					<ClayInput.GroupItem
+						append
+						className={classNames({
+							'has-error': displayError.path,
+						})}
+					>
 						<ClayInput
 							aria-label={endpointPathLabel}
 							id="endpointPathField"
@@ -201,37 +448,73 @@ export default function BaseAPIEndpointFields({
 							value={
 								data.path
 									? removeLeadingForwardSlash(data.path)
-									: ''
+									: STR_BLANK
 							}
 						/>
 					</ClayInput.GroupItem>
+
+					{selectedHttpMethod?.value === HTTP_METHODS.GET &&
+						selectedRetrieveType?.value ===
+							RETRIEVE_TYPES.SINGLE_ELEMENT && (
+							<>
+								<ClayInput.GroupItem
+									prepend
+									shrink
+									style={{marginLeft: 0}}
+								>
+									<ClayInput.GroupText>/</ClayInput.GroupText>
+								</ClayInput.GroupItem>
+
+								<ClayInput.GroupItem
+									append
+									className={classNames({
+										'has-error': displayError.parameter,
+									})}
+								>
+									<ClayInput
+										aria-label={endpointParameterLabel}
+										id="endpointParameterField"
+										onBlur={() =>
+											setData((previousData) => ({
+												...previousData,
+												parameter: stringBetweenCurlyBraces(
+													removeLeadingForwardSlash(
+														previousData.parameter!
+													)
+												),
+											}))
+										}
+										onChange={({target: {value}}) =>
+											setData((previousData) => ({
+												...previousData,
+												parameter: makeURLPathParameterString(
+													value
+												),
+											}))
+										}
+										placeholder={endpointParameterLabel}
+										type="text"
+										value={
+											data.parameter
+												? removeLeadingForwardSlash(
+														data.parameter
+												  )
+												: STR_BLANK
+										}
+									/>
+								</ClayInput.GroupItem>
+							</>
+						)}
 				</ClayInput.Group>
 
-				{(editMode ?? false) && (
-					<ClayForm.FeedbackGroup>
-						<Text size={3} weight="lighter">
-							{Liferay.Language.get(
-								'the-url-can-be-modified-to-ensure-uniqueness'
-							)}
-						</Text>
-					</ClayForm.FeedbackGroup>
+				{pathHasErrors && (
+					<ClayAlert
+						className="mt-2"
+						displayType="danger"
+						title={pathErrorMessage}
+						variant="feedback"
+					></ClayAlert>
 				)}
-
-				<div className="feedback-container">
-					<ClayForm.FeedbackGroup>
-						{displayError.path && (
-							<ClayForm.FeedbackItem className="mt-2">
-								<ClayForm.FeedbackIndicator symbol="exclamation-full" />
-
-								<span id="selectScopeErrorMessage">
-									{Liferay.Language.get(
-										'please-enter-a-path'
-									)}
-								</span>
-							</ClayForm.FeedbackItem>
-						)}
-					</ClayForm.FeedbackGroup>
-				</div>
 			</ClayForm.Group>
 
 			<ClayForm.Group>
@@ -264,7 +547,11 @@ export default function BaseAPIEndpointFields({
 			</ClayForm.Group>
 
 			<div aria-live="assertive" className="sr-only">
-				{(displayError.scope || displayError.path) && (
+				{(displayError.httpMethod ||
+					displayError.r_requestAPISchemaToAPIEndpoints_c_apiSchemaId ||
+					displayError.retrieveType ||
+					displayError.scope ||
+					pathHasErrors) && (
 					<span>
 						{Liferay.Language.get(
 							'there-are-errors-on-the-form-please-check-if-any-mandatory-fields-have-not-been-completed'

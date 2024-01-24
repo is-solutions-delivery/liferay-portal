@@ -11,11 +11,19 @@
 String type = GetterUtil.getString((String)request.getAttribute("liferay-ratings:ratings:type"));
 %>
 
-<liferay-util:html-top
-	outputKey="com.liferay.ratings.taglib.servlet.taglib#/page.jsp"
->
-	<link href="<%= PortalUtil.getStaticResourceURL(request, PortalUtil.getPathProxy() + application.getContextPath() + "/css/main.css") %>" rel="stylesheet" type="text/css" />
-</liferay-util:html-top>
+<c:choose>
+	<c:when test="<%= themeDisplay.isIsolated() %>">
+		<div class="ratings-edit-page">
+			<link href="<%= PortalUtil.getStaticResourceURL(request, PortalUtil.getPathProxy() + application.getContextPath() + "/css/main.css") %>" rel="stylesheet" type="text/css" />
+	</c:when>
+	<c:otherwise>
+		<liferay-util:html-top
+			outputKey="com.liferay.ratings.taglib.servlet.taglib#/page.jsp"
+		>
+			<link href="<%= PortalUtil.getStaticResourceURL(request, PortalUtil.getPathProxy() + application.getContextPath() + "/css/main.css") %>" rel="stylesheet" type="text/css" />
+		</liferay-util:html-top>
+	</c:otherwise>
+</c:choose>
 
 <div class="ratings">
 	<c:choose>
@@ -155,7 +163,11 @@ String type = GetterUtil.getString((String)request.getAttribute("liferay-ratings
 	</c:choose>
 
 	<react:component
-		module="js/Ratings"
+		module="{Ratings} from ratings-taglib"
 		props='<%= (Map<String, Object>)request.getAttribute("liferay-ratings:ratings:data") %>'
 	/>
 </div>
+
+<c:if test="<%= themeDisplay.isIsolated() %>">
+	</div>
+</c:if>

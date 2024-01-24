@@ -1,0 +1,15 @@
+{
+	"dependencies": {
+		"clipboard": "2.0.4",
+		"frontend-js-web": "*"
+	},
+	"description": "",
+	"name": "@liferay/scim-configuration-web",
+	"private": true,
+	"scripts": {
+		"build": "liferay-npm-scripts build",
+		"checkFormat": "liferay-npm-scripts check",
+		"format": "liferay-npm-scripts fix"
+	},
+	"version": "1.0.2"
+}

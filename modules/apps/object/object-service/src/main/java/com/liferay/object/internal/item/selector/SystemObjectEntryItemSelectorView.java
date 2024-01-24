@@ -20,6 +20,7 @@ import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.related.models.ObjectRelatedModelsProvider;
 import com.liferay.object.related.models.ObjectRelatedModelsProviderRegistry;
+import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.system.SystemObjectDefinitionManagerRegistry;
 import com.liferay.petra.string.StringBundler;
@@ -30,9 +31,7 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
-import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
-import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.JavaConstants;
@@ -73,6 +72,7 @@ public class SystemObjectEntryItemSelectorView
 		ItemSelectorViewDescriptorRenderer<InfoItemItemSelectorCriterion>
 			itemSelectorViewDescriptorRenderer,
 		ObjectDefinition objectDefinition,
+		ObjectDefinitionLocalService objectDefinitionLocalService,
 		ObjectFieldLocalService objectFieldLocalService,
 		ObjectRelatedModelsProviderRegistry objectRelatedModelsProviderRegistry,
 		Portal portal,
@@ -85,6 +85,7 @@ public class SystemObjectEntryItemSelectorView
 		_itemSelectorViewDescriptorRenderer =
 			itemSelectorViewDescriptorRenderer;
 		_objectDefinition = objectDefinition;
+		_objectDefinitionLocalService = objectDefinitionLocalService;
 		_objectFieldLocalService = objectFieldLocalService;
 		_objectRelatedModelsProviderRegistry =
 			objectRelatedModelsProviderRegistry;
@@ -164,6 +165,7 @@ public class SystemObjectEntryItemSelectorView
 	private final ItemSelectorViewDescriptorRenderer
 		<InfoItemItemSelectorCriterion> _itemSelectorViewDescriptorRenderer;
 	private final ObjectDefinition _objectDefinition;
+	private final ObjectDefinitionLocalService _objectDefinitionLocalService;
 	private final ObjectFieldLocalService _objectFieldLocalService;
 	private final ObjectRelatedModelsProviderRegistry
 		_objectRelatedModelsProviderRegistry;
@@ -188,6 +190,9 @@ public class SystemObjectEntryItemSelectorView
 			_systemObjectDefinitionManagerRegistry =
 				systemObjectDefinitionManagerRegistry;
 			_userLocalService = userLocalService;
+
+			_themeDisplay = (ThemeDisplay)_httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
 		}
 
 		@Override
@@ -210,10 +215,6 @@ public class SystemObjectEntryItemSelectorView
 
 		@Override
 		public String getPayload() {
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay)_httpServletRequest.getAttribute(
-					WebKeys.THEME_DISPLAY);
-
 			return JSONUtil.put(
 				"className", _objectDefinition.getClassName()
 			).put(
@@ -224,8 +225,8 @@ public class SystemObjectEntryItemSelectorView
 			).put(
 				"title",
 				StringBundler.concat(
-					_objectDefinition.getLabel(themeDisplay.getLocale()),
-					StringPool.SPACE, _baseModel.getPrimaryKeyObj())
+					_objectDefinition.getLabel(_themeDisplay.getLocale()),
+					StringPool.SPACE, _getTitleFieldValue())
 			).toString();
 		}
 
@@ -236,29 +237,7 @@ public class SystemObjectEntryItemSelectorView
 
 		@Override
 		public String getTitle(Locale locale) {
-			ObjectField objectField = _objectFieldLocalService.fetchObjectField(
-				_objectDefinition.getTitleObjectFieldId());
-
-			if (objectField == null) {
-				return StringPool.BLANK;
-			}
-
-			User user = _userLocalService.fetchUser(
-				PrincipalThreadLocal.getUserId());
-
-			Object titleFieldValue = ObjectEntryValuesUtil.getTitleFieldValue(
-				objectField.getBusinessType(), _baseModel.getModelAttributes(),
-				objectField, user,
-				ObjectEntryDTOConverterUtil.toValues(
-					_baseModel, _dtoConverterRegistry,
-					_objectDefinition.getName(),
-					_systemObjectDefinitionManagerRegistry, user));
-
-			if (titleFieldValue == null) {
-				return StringPool.BLANK;
-			}
-
-			return titleFieldValue.toString();
+			return _getTitleFieldValue();
 		}
 
 		@Override
@@ -278,11 +257,44 @@ public class SystemObjectEntryItemSelectorView
 				(Long)modelAttributes.get("userId"), StringPool.BLANK);
 		}
 
+		private String _getTitleFieldValue() {
+			ObjectDefinition objectDefinition =
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					_objectDefinition.getObjectDefinitionId());
+
+			if (objectDefinition == null) {
+				return StringPool.BLANK;
+			}
+
+			ObjectField objectField = _objectFieldLocalService.fetchObjectField(
+				objectDefinition.getTitleObjectFieldId());
+
+			if (objectField == null) {
+				return StringPool.BLANK;
+			}
+
+			Object titleFieldValue = ObjectEntryValuesUtil.getTitleFieldValue(
+				objectField.getBusinessType(), _baseModel.getModelAttributes(),
+				objectField, _themeDisplay.getUser(),
+				ObjectEntryDTOConverterUtil.toValues(
+					_baseModel, _dtoConverterRegistry,
+					_objectDefinition.getName(),
+					_systemObjectDefinitionManagerRegistry,
+					_themeDisplay.getUser()));
+
+			if (titleFieldValue == null) {
+				return StringPool.BLANK;
+			}
+
+			return titleFieldValue.toString();
+		}
+
 		private final BaseModel<?> _baseModel;
 		private final DTOConverterRegistry _dtoConverterRegistry;
 		private final HttpServletRequest _httpServletRequest;
 		private final SystemObjectDefinitionManagerRegistry
 			_systemObjectDefinitionManagerRegistry;
+		private final ThemeDisplay _themeDisplay;
 		private final UserLocalService _userLocalService;
 
 	}
@@ -342,10 +354,13 @@ public class SystemObjectEntryItemSelectorView
 
 			SearchContainer<BaseModel<?>> searchContainer =
 				new SearchContainer<>(
-					_portletRequest, _portletURL, null,
-					"no-entries-were-found");
+					_portletRequest, null, null, "cur",
+					ParamUtil.getInteger(_portletRequest, "cur"),
+					ParamUtil.getInteger(_portletRequest, "delta"), _portletURL,
+					null, "no-entries-were-found");
 
-			searchContainer.setResultsAndTotal(ArrayList::new, 0);
+			searchContainer.setResultsAndTotal(
+				ArrayList::new, searchContainer.getEnd());
 
 			String objectRelationshipType = ParamUtil.getString(
 				_portletRequest, "objectRelationshipType");
@@ -368,10 +383,17 @@ public class SystemObjectEntryItemSelectorView
 						_themeDisplay.getScopeGroupId(), _objectDefinition,
 						ParamUtil.getLong(_portletRequest, "objectEntryId"),
 						ParamUtil.getLong(
-							_portletRequest, "objectRelationshipId"));
+							_portletRequest, "objectRelationshipId"),
+						searchContainer.getStart(), searchContainer.getEnd());
 
 				searchContainer.setResultsAndTotal(
-					() -> baseModels, baseModels.size());
+					() -> baseModels,
+					objectRelatedModelsProvider.getUnrelatedModelsCount(
+						_themeDisplay.getCompanyId(),
+						_themeDisplay.getScopeGroupId(), _objectDefinition,
+						ParamUtil.getLong(_portletRequest, "objectEntryId"),
+						ParamUtil.getLong(
+							_portletRequest, "objectRelationshipId")));
 			}
 			catch (Exception exception) {
 				_log.error(exception);

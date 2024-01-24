@@ -39,6 +39,16 @@ export function mergeFieldOptions(field, newField) {
 	return newValue;
 }
 
+const sanitizePagesCaptchaHTML = (pages) => {
+	const visitor = new PagesVisitor(pages);
+
+	visitor.mapFields((field) => {
+		if (field.fieldName === '_CAPTCHA_') {
+			delete field.html;
+		}
+	});
+};
+
 export function mergePages(
 	defaultLanguageId,
 	editingLanguageId,
@@ -132,6 +142,8 @@ const doEvaluate = debounce((fieldName, evaluatorContext, callback) => {
 		controller = new AbortController();
 	}
 
+	sanitizePagesCaptchaHTML(pages);
+
 	makeFetch({
 		body: convertToFormData({
 			languageId: editingLanguageId,
@@ -169,7 +181,7 @@ const doEvaluate = debounce((fieldName, evaluatorContext, callback) => {
 			callback(null, mergedPages);
 		})
 		.catch((error) => callback(error));
-}, 600);
+}, 200);
 
 export function evaluate(fieldName, evaluatorContext) {
 	return new Promise((resolve, reject) => {

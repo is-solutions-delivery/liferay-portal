@@ -591,7 +591,7 @@
 
 		<if>
 			<not>
-				<equals arg1="${upgrade.status}" arg2="warning" />
+				<equals arg1="${upgrade.status}" arg2="success" />
 			</not>
 			<then>
 				<antcall inheritAll="false" target="check-upgrade-client-gogoshell-connection" />
@@ -601,6 +601,26 @@
 
 	<target name="clean-database-upgrade-client">
 		<clean-database-upgrade-client />
+	</target>
+
+	<target name="create-write-protected-directory">
+		<get-database-upgrade-client-paths />
+
+		<mkdir dir="${db.upgrade.client.home}/temp" />
+
+		<if>
+			<os family="windows" />
+			<then>
+				<execute>
+					cacls ${db.upgrade.client.home}/temp /e /p everyone:n
+				</execute>
+			</then>
+			<else>
+				<execute>
+					chattr +i ${db.upgrade.client.home}/temp
+				</execute>
+			</else>
+		</if>
 	</target>
 
 	<target name="delete-indexes-sql">
@@ -619,6 +639,26 @@
 			basedir="${test.app.server.lib.portal.dir}/portal-impl"
 			destfile="${test.app.server.lib.portal.dir}/portal-impl.jar"
 		/>
+	</target>
+
+	<target name="delete-write-protected-directory">
+		<get-database-upgrade-client-paths />
+
+		<if>
+			<os family="windows" />
+			<then>
+				<execute>
+					cacls ${db.upgrade.client.home}/temp /e /p everyone:f
+				</execute>
+			</then>
+			<else>
+				<execute>
+					chattr -i ${db.upgrade.client.home}/temp
+				</execute>
+			</else>
+		</if>
+
+		<delete dir="${db.upgrade.client.home}/temp" />
 	</target>
 
 	<target name="execute-all-pending-upgrades-from-gogo-shell">
@@ -642,14 +682,6 @@ upgrade.database.auto.run=false</echo>
 			expect.file="check-upgrade-client-gogo-shell-connection.expect"
 			file.suffix.bat="${file.suffix.bat}"
 		/>
-	</target>
-
-	<target name="execute-upgrade-client-skip-gogoshell">
-		<prepare-database-upgrade-properties />
-
-		<antcall inheritAll="false" target="run-upgrade-client" />
-
-		<antcall inheritAll="false" target="check-upgrade-client-gogoshell-connection" />
 	</target>
 
 	<target name="run-upgrade-client">

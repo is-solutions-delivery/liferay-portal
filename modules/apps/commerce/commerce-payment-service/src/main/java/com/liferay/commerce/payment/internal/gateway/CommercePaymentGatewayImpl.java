@@ -5,7 +5,6 @@
 
 package com.liferay.commerce.payment.internal.gateway;
 
-import com.liferay.commerce.constants.CommercePaymentEntryConstants;
 import com.liferay.commerce.payment.audit.CommercePaymentEntryAuditType;
 import com.liferay.commerce.payment.audit.CommercePaymentEntryAuditTypeRegistry;
 import com.liferay.commerce.payment.configuration.CommercePaymentEntryAuditConfiguration;
@@ -18,14 +17,17 @@ import com.liferay.commerce.payment.service.CommercePaymentEntryLocalService;
 import com.liferay.commerce.payment.util.CommercePaymentHelper;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.module.configuration.ConfigurationException;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactory;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
-import com.liferay.portal.kernel.service.UserService;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.Portal;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -42,12 +44,9 @@ public class CommercePaymentGatewayImpl implements CommercePaymentGateway {
 		rollbackFor = Exception.class
 	)
 	public CommercePaymentEntry authorize(
+			HttpServletRequest httpServletRequest,
 			CommercePaymentEntry commercePaymentEntry)
 		throws PortalException {
-
-		if (!FeatureFlagManagerUtil.isEnabled("COMMERCE-11181")) {
-			throw new UnsupportedOperationException();
-		}
 
 		CommercePaymentIntegration commercePaymentIntegration =
 			_commercePaymentHelper.getCommercePaymentIntegration(
@@ -55,13 +54,33 @@ public class CommercePaymentGatewayImpl implements CommercePaymentGateway {
 				commercePaymentEntry.getPaymentIntegrationKey());
 
 		CommercePaymentEntry authorizedCommercePaymentEntry =
-			commercePaymentIntegration.authorize(commercePaymentEntry);
+			commercePaymentIntegration.authorize(
+				httpServletRequest, commercePaymentEntry);
+
+		User currentUser = _portal.getUser(httpServletRequest);
+
+		PermissionThreadLocal.setPermissionChecker(
+			_defaultPermissionCheckerFactory.create(currentUser));
 
 		commercePaymentEntry =
 			_commercePaymentEntryLocalService.updateCommercePaymentEntry(
+				commercePaymentEntry.getExternalReferenceCode(),
 				commercePaymentEntry.getCommercePaymentEntryId(),
-				CommercePaymentEntryConstants.STATUS_AUTHORIZED,
-				authorizedCommercePaymentEntry.getTransactionCode());
+				commercePaymentEntry.getCommerceChannelId(),
+				commercePaymentEntry.getAmount(),
+				commercePaymentEntry.getCallbackURL(),
+				commercePaymentEntry.getCancelURL(),
+				commercePaymentEntry.getCurrencyCode(),
+				authorizedCommercePaymentEntry.getErrorMessages(),
+				commercePaymentEntry.getLanguageId(),
+				commercePaymentEntry.getNote(),
+				commercePaymentEntry.getPaymentIntegrationKey(),
+				commercePaymentEntry.getPaymentIntegrationType(),
+				authorizedCommercePaymentEntry.getPaymentStatus(),
+				commercePaymentEntry.getReasonKey(),
+				authorizedCommercePaymentEntry.getRedirectURL(),
+				authorizedCommercePaymentEntry.getTransactionCode(),
+				commercePaymentEntry.getType());
 
 		CommercePaymentEntryAuditConfiguration
 			commercePaymentEntryAuditConfiguration =
@@ -74,8 +93,6 @@ public class CommercePaymentGatewayImpl implements CommercePaymentGateway {
 					getCommercePaymentEntryAuditType(
 						CommercePaymentEntryAuditConstants.
 							TYPE_AUTHORIZE_PAYMENT);
-
-			User currentUser = _userService.getCurrentUser();
 
 			_commercePaymentEntryAuditLocalService.addCommercePaymentEntryAudit(
 				currentUser.getUserId(),
@@ -103,12 +120,9 @@ public class CommercePaymentGatewayImpl implements CommercePaymentGateway {
 		rollbackFor = Exception.class
 	)
 	public CommercePaymentEntry cancel(
+			HttpServletRequest httpServletRequest,
 			CommercePaymentEntry commercePaymentEntry)
 		throws PortalException {
-
-		if (!FeatureFlagManagerUtil.isEnabled("COMMERCE-11181")) {
-			throw new UnsupportedOperationException();
-		}
 
 		CommercePaymentIntegration commercePaymentIntegration =
 			_commercePaymentHelper.getCommercePaymentIntegration(
@@ -116,13 +130,33 @@ public class CommercePaymentGatewayImpl implements CommercePaymentGateway {
 				commercePaymentEntry.getPaymentIntegrationKey());
 
 		CommercePaymentEntry cancelledCommercePaymentEntry =
-			commercePaymentIntegration.cancel(commercePaymentEntry);
+			commercePaymentIntegration.cancel(
+				httpServletRequest, commercePaymentEntry);
+
+		User currentUser = _portal.getUser(httpServletRequest);
+
+		PermissionThreadLocal.setPermissionChecker(
+			_defaultPermissionCheckerFactory.create(currentUser));
 
 		commercePaymentEntry =
 			_commercePaymentEntryLocalService.updateCommercePaymentEntry(
+				commercePaymentEntry.getExternalReferenceCode(),
 				commercePaymentEntry.getCommercePaymentEntryId(),
-				CommercePaymentEntryConstants.STATUS_CANCELLED,
-				cancelledCommercePaymentEntry.getTransactionCode());
+				commercePaymentEntry.getCommerceChannelId(),
+				commercePaymentEntry.getAmount(),
+				commercePaymentEntry.getCallbackURL(),
+				commercePaymentEntry.getCancelURL(),
+				commercePaymentEntry.getCurrencyCode(),
+				cancelledCommercePaymentEntry.getErrorMessages(),
+				commercePaymentEntry.getLanguageId(),
+				commercePaymentEntry.getNote(),
+				commercePaymentEntry.getPaymentIntegrationKey(),
+				commercePaymentEntry.getPaymentIntegrationType(),
+				cancelledCommercePaymentEntry.getPaymentStatus(),
+				commercePaymentEntry.getReasonKey(),
+				cancelledCommercePaymentEntry.getRedirectURL(),
+				cancelledCommercePaymentEntry.getTransactionCode(),
+				commercePaymentEntry.getType());
 
 		CommercePaymentEntryAuditConfiguration
 			commercePaymentEntryAuditConfiguration =
@@ -134,8 +168,6 @@ public class CommercePaymentGatewayImpl implements CommercePaymentGateway {
 				_commercePaymentEntryAuditTypeRegistry.
 					getCommercePaymentEntryAuditType(
 						CommercePaymentEntryAuditConstants.TYPE_CANCEL_PAYMENT);
-
-			User currentUser = _userService.getCurrentUser();
 
 			_commercePaymentEntryAuditLocalService.addCommercePaymentEntryAudit(
 				currentUser.getUserId(),
@@ -163,12 +195,9 @@ public class CommercePaymentGatewayImpl implements CommercePaymentGateway {
 		rollbackFor = Exception.class
 	)
 	public CommercePaymentEntry capture(
+			HttpServletRequest httpServletRequest,
 			CommercePaymentEntry commercePaymentEntry)
 		throws PortalException {
-
-		if (!FeatureFlagManagerUtil.isEnabled("COMMERCE-11181")) {
-			throw new UnsupportedOperationException();
-		}
 
 		CommercePaymentIntegration commercePaymentIntegration =
 			_commercePaymentHelper.getCommercePaymentIntegration(
@@ -176,13 +205,33 @@ public class CommercePaymentGatewayImpl implements CommercePaymentGateway {
 				commercePaymentEntry.getPaymentIntegrationKey());
 
 		CommercePaymentEntry capturedCommercePaymentEntry =
-			commercePaymentIntegration.capture(commercePaymentEntry);
+			commercePaymentIntegration.capture(
+				httpServletRequest, commercePaymentEntry);
+
+		User currentUser = _portal.getUser(httpServletRequest);
+
+		PermissionThreadLocal.setPermissionChecker(
+			_defaultPermissionCheckerFactory.create(currentUser));
 
 		commercePaymentEntry =
 			_commercePaymentEntryLocalService.updateCommercePaymentEntry(
+				commercePaymentEntry.getExternalReferenceCode(),
 				commercePaymentEntry.getCommercePaymentEntryId(),
-				CommercePaymentEntryConstants.STATUS_COMPLETED,
-				capturedCommercePaymentEntry.getTransactionCode());
+				commercePaymentEntry.getCommerceChannelId(),
+				commercePaymentEntry.getAmount(),
+				commercePaymentEntry.getCallbackURL(),
+				commercePaymentEntry.getCancelURL(),
+				commercePaymentEntry.getCurrencyCode(),
+				capturedCommercePaymentEntry.getErrorMessages(),
+				commercePaymentEntry.getLanguageId(),
+				commercePaymentEntry.getNote(),
+				commercePaymentEntry.getPaymentIntegrationKey(),
+				commercePaymentEntry.getPaymentIntegrationType(),
+				capturedCommercePaymentEntry.getPaymentStatus(),
+				commercePaymentEntry.getReasonKey(),
+				capturedCommercePaymentEntry.getRedirectURL(),
+				capturedCommercePaymentEntry.getTransactionCode(),
+				commercePaymentEntry.getType());
 
 		CommercePaymentEntryAuditConfiguration
 			commercePaymentEntryAuditConfiguration =
@@ -195,8 +244,6 @@ public class CommercePaymentGatewayImpl implements CommercePaymentGateway {
 					getCommercePaymentEntryAuditType(
 						CommercePaymentEntryAuditConstants.
 							TYPE_CAPTURE_PAYMENT);
-
-			User currentUser = _userService.getCurrentUser();
 
 			_commercePaymentEntryAuditLocalService.addCommercePaymentEntryAudit(
 				currentUser.getUserId(),
@@ -224,12 +271,9 @@ public class CommercePaymentGatewayImpl implements CommercePaymentGateway {
 		rollbackFor = Exception.class
 	)
 	public CommercePaymentEntry refund(
+			HttpServletRequest httpServletRequest,
 			CommercePaymentEntry commercePaymentEntry)
 		throws PortalException {
-
-		if (!FeatureFlagManagerUtil.isEnabled("COMMERCE-11181")) {
-			throw new UnsupportedOperationException();
-		}
 
 		CommercePaymentIntegration commercePaymentIntegration =
 			_commercePaymentHelper.getCommercePaymentIntegration(
@@ -237,13 +281,33 @@ public class CommercePaymentGatewayImpl implements CommercePaymentGateway {
 				commercePaymentEntry.getPaymentIntegrationKey());
 
 		CommercePaymentEntry refundedCommercePaymentEntry =
-			commercePaymentIntegration.refund(commercePaymentEntry);
+			commercePaymentIntegration.refund(
+				httpServletRequest, commercePaymentEntry);
+
+		User currentUser = _portal.getUser(httpServletRequest);
+
+		PermissionThreadLocal.setPermissionChecker(
+			_defaultPermissionCheckerFactory.create(currentUser));
 
 		commercePaymentEntry =
 			_commercePaymentEntryLocalService.updateCommercePaymentEntry(
+				commercePaymentEntry.getExternalReferenceCode(),
 				commercePaymentEntry.getCommercePaymentEntryId(),
-				CommercePaymentEntryConstants.STATUS_REFUND,
-				refundedCommercePaymentEntry.getTransactionCode());
+				commercePaymentEntry.getCommerceChannelId(),
+				commercePaymentEntry.getAmount(),
+				commercePaymentEntry.getCallbackURL(),
+				commercePaymentEntry.getCancelURL(),
+				commercePaymentEntry.getCurrencyCode(),
+				refundedCommercePaymentEntry.getErrorMessages(),
+				commercePaymentEntry.getLanguageId(),
+				commercePaymentEntry.getNote(),
+				commercePaymentEntry.getPaymentIntegrationKey(),
+				commercePaymentEntry.getPaymentIntegrationType(),
+				refundedCommercePaymentEntry.getPaymentStatus(),
+				commercePaymentEntry.getReasonKey(),
+				refundedCommercePaymentEntry.getRedirectURL(),
+				refundedCommercePaymentEntry.getTransactionCode(),
+				commercePaymentEntry.getType());
 
 		CommercePaymentEntryAuditConfiguration
 			commercePaymentEntryAuditConfiguration =
@@ -255,8 +319,6 @@ public class CommercePaymentGatewayImpl implements CommercePaymentGateway {
 				_commercePaymentEntryAuditTypeRegistry.
 					getCommercePaymentEntryAuditType(
 						CommercePaymentEntryAuditConstants.TYPE_REFUND_PAYMENT);
-
-			User currentUser = _userService.getCurrentUser();
 
 			_commercePaymentEntryAuditLocalService.addCommercePaymentEntryAudit(
 				currentUser.getUserId(),
@@ -278,6 +340,21 @@ public class CommercePaymentGatewayImpl implements CommercePaymentGateway {
 		return commercePaymentEntry;
 	}
 
+	@Override
+	public CommercePaymentEntry setUpPayment(
+			HttpServletRequest httpServletRequest,
+			CommercePaymentEntry commercePaymentEntry)
+		throws PortalException {
+
+		CommercePaymentIntegration commercePaymentIntegration =
+			_commercePaymentHelper.getCommercePaymentIntegration(
+				commercePaymentEntry.getCommerceChannelId(),
+				commercePaymentEntry.getPaymentIntegrationKey());
+
+		return commercePaymentIntegration.setUpPayment(
+			httpServletRequest, commercePaymentEntry);
+	}
+
 	private ServiceContext _createServiceContext(User user) {
 		return new ServiceContext() {
 			{
@@ -291,9 +368,8 @@ public class CommercePaymentGatewayImpl implements CommercePaymentGateway {
 			_getCommercePaymentEntryAuditConfiguration(long companyId)
 		throws ConfigurationException {
 
-		return (CommercePaymentEntryAuditConfiguration)
-			_configurationProvider.getCompanyConfiguration(
-				CommercePaymentEntryAuditConfiguration.class, companyId);
+		return _configurationProvider.getCompanyConfiguration(
+			CommercePaymentEntryAuditConfiguration.class, companyId);
 	}
 
 	@Reference
@@ -314,6 +390,9 @@ public class CommercePaymentGatewayImpl implements CommercePaymentGateway {
 	private ConfigurationProvider _configurationProvider;
 
 	@Reference
-	private UserService _userService;
+	private PermissionCheckerFactory _defaultPermissionCheckerFactory;
+
+	@Reference
+	private Portal _portal;
 
 }

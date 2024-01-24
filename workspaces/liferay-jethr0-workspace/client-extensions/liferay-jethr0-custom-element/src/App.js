@@ -5,12 +5,14 @@
 
 import {HashRouter, Route, Routes} from 'react-router-dom';
 
+import BuildPage from './pages/BuildPage/BuildPage';
 import CreateJobPage from './pages/CreateJobPage/CreateJobPage';
-import HomePage from './pages/HomePage/HomePage';
-import JobBuildPage from './pages/JobBuildPage/JobBuildPage';
 import JobPage from './pages/JobPage/JobPage';
+import JobQueuePage from './pages/JobQueuePage/JobQueuePage';
 import JobsPage from './pages/JobsPage/JobsPage';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
+import UpstreamBranchPage from './pages/UpstreamBranchPage/UpstreamBranchPage';
+import UpstreamBranchesPage from './pages/UpstreamBranchesPage/UpstreamBranchesPage';
 
 import './App.css';
 
@@ -18,12 +20,20 @@ function App() {
 	return (
 		<HashRouter>
 			<Routes>
+				<Route element={<BuildPage />} path="/builds/:id" />
 				<Route element={<CreateJobPage />} path="/jobs/create" />
-				<Route element={<HomePage />} path="/" />
-				<Route element={<JobBuildPage />} path="/jobs/builds/:id" />
 				<Route element={<JobPage />} path="/jobs/:id" />
+				<Route element={<JobQueuePage />} path="/" />
 				<Route element={<JobsPage />} path="/jobs" />
 				<Route element={<NotFoundPage />} path="*" />
+				<Route
+					element={<UpstreamBranchesPage />}
+					path="/upstream-branches"
+				/>
+				<Route
+					element={<UpstreamBranchPage />}
+					path="/upstream-branches/:id"
+				/>
 			</Routes>
 		</HashRouter>
 	);

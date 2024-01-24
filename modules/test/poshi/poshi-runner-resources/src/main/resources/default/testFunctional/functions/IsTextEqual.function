@@ -1,24 +1,24 @@
 @default = "isTextEqual"
 definition {
 
-	function isPartialText {
-		selenium.waitForElementPresent();
+	function isPartialText(locator1, value1) {
+		selenium.waitForElementPresent(${locator1}, "true");
 
-		selenium.waitForVisible();
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.isPartialTextCaseInsensitive();
+		selenium.isPartialTextCaseInsensitive(${locator1}, ${value1});
 	}
 
-	function isText {
-		selenium.waitForElementPresent();
+	function isText(locator1, value1) {
+		selenium.waitForElementPresent(${locator1}, "true");
 
-		selenium.waitForVisible();
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.isTextCaseInsensitive();
+		selenium.isTextCaseInsensitive(${locator1}, ${value1});
 	}
 
-	function isTextEqual {
-		if (contains("${locator1}", "/input")) {
+	function isTextEqual(locator1) {
+		if (contains(${locator1}, "/input")) {
 			IsTextEqual.isValue();
 		}
 		else {
@@ -26,12 +26,12 @@ definition {
 		}
 	}
 
-	function isValue {
-		selenium.waitForElementPresent();
+	function isValue(locator1, value1) {
+		selenium.waitForElementPresent(${locator1}, "true");
 
-		selenium.waitForVisible();
+		selenium.waitForVisible(${locator1}, "true");
 
-		selenium.isValue();
+		selenium.isValue(${locator1}, ${value1});
 	}
 
 }

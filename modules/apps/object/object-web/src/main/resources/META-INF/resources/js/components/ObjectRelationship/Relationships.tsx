@@ -20,7 +20,8 @@ import {
 	fdsItem,
 	formatActionURL,
 } from '../../utils/fds';
-import ModalDeletionNotAllowed from '../ModalDeletionNotAllowed';
+import LabelRenderer from '../LabelRenderer';
+import ModalObjectFieldDeletionNotAllowed from '../ModalObjectFieldDeletionNotAllowed';
 import {deleteRelationship} from '../ViewObjectDefinitions/objectDefinitionUtil';
 import {ModalAddObjectRelationship} from './ModalAddObjectRelationship';
 import {ModalDeleteObjectRelationship} from './ModalDeleteObjectRelationship';
@@ -124,18 +125,15 @@ export default function Relationships({
 		openSidePanel,
 		value,
 	}: fdsItem<ItemData>) {
-		const handleEditField = () => {
-			openSidePanel({
-				url: formatActionURL(url, itemData.id),
-			});
-		};
-
 		return (
-			<div className="table-list-title">
-				<a href="#" onClick={handleEditField}>
-					{value}
-				</a>
-			</div>
+			<LabelRenderer
+				onClick={() => {
+					openSidePanel({
+						url: formatActionURL(url, itemData.id),
+					});
+				}}
+				value={value}
+			/>
 		);
 	}
 
@@ -173,8 +171,7 @@ export default function Relationships({
 					setShowDeleteModal(true);
 				}
 				else {
-					deleteRelationship(itemData.id);
-					setTimeout(() => window.location.reload(), 1500);
+					deleteRelationship(itemData.id, true);
 				}
 			}
 		},
@@ -268,7 +265,7 @@ export default function Relationships({
 			)}
 
 			{showDeletionNotAllowedModal && Liferay.FeatureFlags['LPS-187142'] && (
-				<ModalDeletionNotAllowed
+				<ModalObjectFieldDeletionNotAllowed
 					content={
 						<span
 							dangerouslySetInnerHTML={{

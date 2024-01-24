@@ -56,9 +56,9 @@ definition {
 	@description = "This is a use case for LPS-169035."
 	@priority = 4
 	test AssertCustomSearchResultsDisplayTemplate {
-		ApplicationDisplayTemplates.openWidgetTemplatesAdmin(siteURLKey = "guest");
+		WidgetTemplates.openWidgetTemplatesAdmin(siteURLKey = "guest");
 
-		ApplicationDisplayTemplates.addCP(
+		WidgetTemplates.addCP(
 			adtFile = "custom_search_results_template.ftl",
 			adtType = "Search Results");
 
@@ -92,16 +92,16 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationDisplayTemplates.openWidgetTemplatesAdmin(siteURLKey = "guest");
+		WidgetTemplates.openWidgetTemplatesAdmin(siteURLKey = "guest");
 
-		ApplicationDisplayTemplates.addCP(
+		WidgetTemplates.addCP(
 			adtType = "Search Results",
 			fieldNameList = "Search Results Display Context");
 
 		var key_ddlTemplateName = "Search Results Test ADT";
 		var templateID = selenium.getText("DDMSelectTemplate#TEMPLATE_TABLE_ID");
 
-		var templateKey = ApplicationDisplayTemplates.getWidgetTemplateKey(templateID = ${templateID});
+		var templateKey = WidgetTemplates.getWidgetTemplateKey(templateID = ${templateID});
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Configuration",
@@ -422,10 +422,9 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-95670."
-	@ignore = "true"
 	@priority = 4
 	test AssertSuggestionsCannotOfferInvalidWordsAsSuggestion {
-		property custom.properties = "index.search.spell.checker.dictionary[de_DE]=spellchecker/dictionary_de_DE.txt${line.separator}index.search.spell.checker.supported.locales=en_US,es_ES,de_DE${line.separator}locales=de_DE,en_US${line.separator}locales.enabled=de_DE,en_US";
+		property custom.properties = "locales.enabled=de_DE,en_US${line.separator}locales=de_DE,en_US${line.separator}index.search.spell.checker.dictionary[de_DE]=spellchecker/dictionary_de_DE.txt${line.separator}index.search.spell.checker.supported.locales=en_US,es_ES,de_DE";
 		property index.search.spell.checker.enabled = "true";
 		property search.environment.suite.exclude = "true";
 		property test.liferay.virtual.instance = "false";
@@ -1344,9 +1343,13 @@ definition {
 
 		AssertVisible(locator1 = "WCEditWebContent#SIDEBAR");
 
+		SelectFrame.selectFrameNoLoading(
+			key_fieldLabel = "Content",
+			locator1 = "CKEditor#BODY_FIELD_IFRAME_WEB_CONTENT_ARTICLE");
+
 		AssertTextEquals.assertPartialText(
-			locator1 = "Portlet#HEADER",
-			value1 = "WC Title");
+			locator1 = "CKEditor#BODY",
+			value1 = "WC Content");
 	}
 
 	@priority = 4
@@ -1522,6 +1525,19 @@ definition {
 			portletName = "Category Facet");
 
 		Refresh();
+
+		SearchFacets.viewFacetTermsSpecificOrder(
+			facetName = "Category Facet",
+			termList = "Category Name");
+
+		Click(
+			key_facetName = "Category Facet",
+			key_termValue = "Category Name",
+			locator1 = "Search#FACET_CLOUD_LAYOUT_ITEM");
+
+		SearchResults.viewSearchResults(
+			searchAssetTitle = "Blogs Entry Title",
+			searchAssetType = "Blogs Entry");
 
 		AssertElementPresent(
 			key_facetName = "Category Facet",
@@ -1718,6 +1734,18 @@ definition {
 			portletName = "Tag Facet");
 
 		Refresh();
+
+		SearchFacets.viewFacetTermsSpecificOrder(
+			facetName = "Tag Facet",
+			termList = "tag name");
+
+		Click(
+			locator1 = "Search#TAG_FACET_CLOUD_LAYOUT",
+			tagName = "tag name");
+
+		SearchResults.viewSearchResults(
+			searchAssetTitle = "Blogs Entry Title",
+			searchAssetType = "Blogs Entry");
 
 		AssertElementPresent(
 			locator1 = "Search#TAG_FACET_CLOUD_LAYOUT",
@@ -2244,10 +2272,7 @@ definition {
 	@description = "This is a use case for LPS-186456 - SearchBar Instance Setting is not updating."
 	@priority = 3
 	test SearchInstanceSettingsAreUpdatedWhenSaved {
-		ApplicationsMenu.gotoPortlet(
-			category = "Configuration",
-			panel = "Control Panel",
-			portlet = "Instance Settings");
+		PortalSettings.openInstanceSettingsAdmin();
 
 		SystemSettings.gotoConfiguration(
 			configurationCategory = "Search",
@@ -2311,10 +2336,7 @@ definition {
 
 		Site.manageMembershipOptions(allowManualMembershipManagement = "true");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.editUserSiteCP(
 			siteName = ${siteName},
@@ -2405,10 +2427,7 @@ definition {
 
 		Site.manageMembershipOptions(allowManualMembershipManagement = "true");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.editUserSiteCP(
 			siteName = ${siteName},

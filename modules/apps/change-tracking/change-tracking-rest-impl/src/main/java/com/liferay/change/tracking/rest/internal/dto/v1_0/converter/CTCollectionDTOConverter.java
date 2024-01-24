@@ -8,6 +8,7 @@ package com.liferay.change.tracking.rest.internal.dto.v1_0.converter;
 import com.liferay.change.tracking.constants.CTDestinationNames;
 import com.liferay.change.tracking.rest.dto.v1_0.CTCollection;
 import com.liferay.change.tracking.rest.dto.v1_0.Status;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.scheduler.SchedulerEngineHelper;
@@ -51,17 +52,20 @@ public class CTCollectionDTOConverter
 
 		return new CTCollection() {
 			{
-				actions = dtoConverterContext.getActions();
-				dateCreated = ctCollection.getCreateDate();
-				dateModified = ctCollection.getModifiedDate();
-				dateScheduled = _getDateScheduled(ctCollection);
-				description = ctCollection.getDescription();
-				externalReferenceCode = ctCollection.getExternalReferenceCode();
-				id = ctCollection.getCtCollectionId();
-				name = ctCollection.getName();
-				ownerName = ctCollection.getUserName();
-				status = _toStatus(
-					dtoConverterContext.getLocale(), ctCollection.getStatus());
+				setActions(dtoConverterContext::getActions);
+				setDateCreated(ctCollection::getCreateDate);
+				setDateModified(ctCollection::getModifiedDate);
+				setDateScheduled(() -> _getDateScheduled(ctCollection));
+				setDescription(ctCollection::getDescription);
+				setExternalReferenceCode(
+					ctCollection::getExternalReferenceCode);
+				setId(ctCollection::getCtCollectionId);
+				setName(ctCollection::getName);
+				setOwnerName(ctCollection::getUserName);
+				setStatus(
+					() -> _toStatus(
+						dtoConverterContext.getLocale(),
+						ctCollection.getStatus()));
 			}
 		};
 	}
@@ -76,7 +80,9 @@ public class CTCollectionDTOConverter
 
 		SchedulerResponse schedulerResponse =
 			_schedulerEngineHelper.getScheduledJob(
-				String.valueOf(ctCollection.getCtCollectionId()),
+				StringBundler.concat(
+					ctCollection.getCtCollectionId(), StringPool.AT,
+					ctCollection.getCompanyId()),
 				CTDestinationNames.CT_COLLECTION_SCHEDULED_PUBLISH,
 				StorageType.PERSISTED);
 
@@ -111,9 +117,9 @@ public class CTCollectionDTOConverter
 
 		return new Status() {
 			{
-				code = status;
-				label = statusLabel;
-				label_i18n = _language.get(locale, statusLabel);
+				setCode(() -> status);
+				setLabel(() -> statusLabel);
+				setLabel_i18n(() -> _language.get(locale, statusLabel));
 			}
 		};
 	}

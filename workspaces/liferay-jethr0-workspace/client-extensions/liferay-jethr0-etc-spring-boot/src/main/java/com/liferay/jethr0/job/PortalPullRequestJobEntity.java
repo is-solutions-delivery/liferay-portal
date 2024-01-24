@@ -12,10 +12,40 @@ import java.net.URL;
  */
 public interface PortalPullRequestJobEntity extends JobEntity {
 
-	public URL getJenkinsGitHubURL();
+	public String getForwardReceiverUserName();
+
+	public String getOriginName();
 
 	public URL getPortalPullRequestURL();
 
+	public String getSenderBranchName();
+
+	public String getSenderBranchSHA();
+
+	public String getSenderUserName();
+
 	public String getTestSuiteName();
+
+	public String getUpstreamBranchName();
+
+	public String getUpstreamBranchSHA();
+
+	public void setForwardReceiverUserName(String forwardReceiverUserName);
+
+	public void setOriginName(String originName);
+
+	public void setPortalPullRequestURL(URL portalPullRequestURL);
+
+	public void setSenderBranchName(String senderBranchName);
+
+	public void setSenderBranchSHA(String senderBranchSHA);
+
+	public void setSenderUserName(String senderUserName);
+
+	public void setTestSuiteName(String testSuiteName);
+
+	public void setUpstreamBranchName(String upstreamBranchName);
+
+	public void setUpstreamBranchSHA(String upstreamBranchSHA);
 
 }

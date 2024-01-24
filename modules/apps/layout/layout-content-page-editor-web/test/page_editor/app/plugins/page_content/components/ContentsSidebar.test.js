@@ -191,7 +191,9 @@ describe('ContentsSidebar', () => {
 		});
 
 		expect(
-			screen.getByText('there-is-no-content-on-this-page')
+			screen.getByText(
+				'this-content-cannot-be-displayed-due-to-permission-restrictions'
+			)
 		).toBeInTheDocument();
 	});
 
@@ -267,17 +269,15 @@ describe('ContentsSidebar', () => {
 		});
 
 		expect(
-			screen.getByText('there-is-no-content-on-this-page')
+			screen.getByText(
+				'this-content-cannot-be-displayed-due-to-permission-restrictions'
+			)
 		).toBeInTheDocument();
 	});
 
 	it('does not show the inline text belonging to a form without permissions', () => {
-		Liferay.FeatureFlags['LPS-169923'] = true;
-
 		renderPageContent({});
 
 		expect(screen.queryByText('A paragraph')).not.toBeInTheDocument();
-
-		Liferay.FeatureFlags['LPS-169923'] = false;
 	});
 });

@@ -81,9 +81,6 @@ public class JournalPortletDataHandlerTest
 		portalPreferences.setValue(
 			"", "indexAllArticleVersionsEnabled", "true");
 		portalPreferences.setValue(
-			"", "databaseContentKeywordSearchEnabled", "true");
-		portalPreferences.setValue("", "journalArticleStorageType", "json");
-		portalPreferences.setValue(
 			"", "journalArticlePageBreakToken", "@page_break@");
 
 		PortalPreferencesLocalServiceUtil.updatePreferences(

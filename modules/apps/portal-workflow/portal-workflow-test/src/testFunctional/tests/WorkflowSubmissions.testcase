@@ -31,10 +31,7 @@ definition {
 	@description = "Verify can filter by completed tasks"
 	@priority = 3
 	test CanFilterByCompletedTasks {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -71,12 +68,9 @@ definition {
 
 		Workflow.confirmWorkflowAction();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Submissions");
+		ObjectAdmin.openSubmissions();
 
-		Click(locator1 = "AppBuilder#SEARCH_FILTER_AND_ORDER_MENU");
+		Click(locator1 = "ManagementBar#FILTER");
 
 		Click(
 			key_selectOption = "Completed",
@@ -92,7 +86,7 @@ definition {
 
 		UserBar.gotoDropdownItem(dropdownItem = "My Submissions");
 
-		Click(locator1 = "AppBuilder#SEARCH_FILTER_AND_ORDER_MENU");
+		Click(locator1 = "ManagementBar#FILTER");
 
 		Click(
 			key_selectOption = "Completed",
@@ -110,10 +104,7 @@ definition {
 	@description = "Verify can filter by pending tasks"
 	@priority = 3
 	test CanFilterByPendingTasks {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -131,14 +122,9 @@ definition {
 
 		Workflow.completeWorkflowBlogInstance(key_workflowInstanceTitle = "Blogs Entry Title 1");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Submissions");
+		ObjectAdmin.openSubmissions();
 
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
-
-		MenuItem.click(menuItem = "Pending");
+		ManagementBar.setFilterAndOrder(filterBy = "Pending");
 
 		AssertElementPresent(
 			key_taskName = "Blogs Entry Title 2",
@@ -150,9 +136,7 @@ definition {
 
 		UserBar.gotoDropdownItem(dropdownItem = "My Submissions");
 
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
-
-		MenuItem.click(menuItem = "Pending");
+		ManagementBar.setFilterAndOrder(filterBy = "Pending");
 
 		AssertElementPresent(
 			key_taskName = "Blogs Entry Title 2",
@@ -166,10 +150,7 @@ definition {
 	@description = "Verify if the Clear option cleans the search results"
 	@priority = 3
 	test ClearOptionCleanSearchResults {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -185,10 +166,7 @@ definition {
 			entryContent = "Test Content 2",
 			entryTitle = "Blogs Entry 2");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Submissions");
+		ObjectAdmin.openSubmissions();
 
 		WorkflowSubmissions.searchSubmissions(searchValue = 1);
 
@@ -226,10 +204,7 @@ definition {
 	@description = "Verify if the table is organized by Asset Title, Asset Type, Status, Definition, Last Activity Date and End Date columns"
 	@priority = 4
 	test ColumnsAreDisplayed {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -312,10 +287,7 @@ definition {
 	@description = "Verify the kebab menu is not displayed when task is completed"
 	@priority = 4
 	test CompletedTaskCannnotBeWithdrawn {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -329,10 +301,7 @@ definition {
 
 		Workflow.completeWorkflowBlogInstance(key_workflowInstanceTitle = "Blogs Entry Title");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Submissions");
+		ObjectAdmin.openSubmissions();
 
 		AssertElementNotPresent(locator1 = "WorkflowSubmissions#SUBMISSIONS_DETAILS_PAGE_ELLIPSIS");
 
@@ -344,10 +313,7 @@ definition {
 	@description = "Verify the kebab menu is not displayed on details page when task is completed"
 	@priority = 4
 	test CompletedTaskCannnotBeWithdrawnThroughDetailsPage {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -361,10 +327,7 @@ definition {
 
 		Workflow.completeWorkflowBlogInstance(key_workflowInstanceTitle = "Blogs Entry Title");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Submissions");
+		ObjectAdmin.openSubmissions();
 
 		Click(
 			key_taskName = "Blogs Entry Title",
@@ -376,10 +339,7 @@ definition {
 	@description = "Verify that clicking on the task name takes you to a details page"
 	@priority = 4
 	test DetailsPageIsDisplayeed {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -391,10 +351,7 @@ definition {
 			entryContent = "Blogs Entry",
 			entryTitle = "Blogs Entry Title");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Submissions");
+		ObjectAdmin.openSubmissions();
 
 		Click(
 			key_title = "Blogs Entry Title",
@@ -418,10 +375,7 @@ definition {
 	@description = "Verify if when the task is pending, the "End Date" field is blank"
 	@priority = 3
 	test EndDateIsBlankWhenTaskPending {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -433,10 +387,7 @@ definition {
 			entryContent = "Blogs Entry",
 			entryTitle = "Blogs Entry Title");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Submissions");
+		ObjectAdmin.openSubmissions();
 
 		AssertElementPresent(
 			key_text = "",
@@ -452,10 +403,7 @@ definition {
 	@description = "Verify if when the task is approved, the "End Date" field is filled"
 	@priority = 3
 	test EndDateIsFilledWhenTaskCompleted {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -485,10 +433,7 @@ definition {
 			key_submissionName = "Blogs Entry 1",
 			locator1 = "WorkflowSubmissions#SUBMISSION_END_DATE");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Submissions");
+		ObjectAdmin.openSubmissions();
 
 		AssertElementPresent(
 			key_submissionName = "Blogs Entry 1",
@@ -498,10 +443,7 @@ definition {
 	@description = "Verify that when having 5 tasks on the screen, a pagination bar is displayed"
 	@priority = 3
 	test PaginationBarIsDisplayed {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -519,10 +461,7 @@ definition {
 			var count = ${count} + 1;
 		}
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Submissions");
+		ObjectAdmin.openSubmissions();
 
 		AssertElementPresent(locator1 = "Pagination#PAGINATION_BAR");
 
@@ -534,10 +473,7 @@ definition {
 	@description = "Verify that a task can be withdrawn"
 	@priority = 4
 	test TaskCanBeWithdrawn {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -553,10 +489,7 @@ definition {
 			entryContent = "Test content",
 			entryTitle = "Test Blog 2");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Submissions");
+		ObjectAdmin.openSubmissions();
 
 		Click(
 			key_rowNumber = 1,
@@ -574,10 +507,7 @@ definition {
 	@description = "Verify that a task can be withdrawn through details page"
 	@priority = 4
 	test TaskCanBeWithdrawnThroughDetailsPage {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -593,10 +523,7 @@ definition {
 			entryContent = "Test content",
 			entryTitle = "Test Blog 2");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Submissions");
+		ObjectAdmin.openSubmissions();
 
 		Click(
 			key_taskName = "Test Blog 1",
@@ -614,10 +541,7 @@ definition {
 	@description = "Verify that the task changes to approved"
 	@priority = 4
 	test TaskIsApprovedOnTheTable {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -629,10 +553,7 @@ definition {
 			entryContent = "Test Content 1",
 			entryTitle = "Blogs Entry 1");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Submissions");
+		ObjectAdmin.openSubmissions();
 
 		AssertTextEquals(
 			key_submissionName = "Blogs Entry 1",
@@ -658,10 +579,7 @@ definition {
 			locator1 = "WorkflowSubmissions#SUBMISSION_BY_STATUS",
 			value1 = "Approved");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Submissions");
+		ObjectAdmin.openSubmissions();
 
 		AssertTextEquals(
 			key_submissionName = "Blogs Entry 1",
@@ -689,10 +607,7 @@ definition {
 
 		Navigator.openURL();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Submissions");
+		ObjectAdmin.openSubmissions();
 
 		AssertElementPresent(
 			key_workflowDefinitionTitle = "Blogs Entry Title",
@@ -710,10 +625,7 @@ definition {
 	@description = "Verify if the tasks are grouped into pending and completed"
 	@priority = 3
 	test TasksAreGroupedByPendingAndCompleted {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -741,10 +653,7 @@ definition {
 			workflowAssetType = "Blogs Entry",
 			workflowTask = "Review");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Submissions");
+		ObjectAdmin.openSubmissions();
 
 		WorkflowSubmissions.viewSubmissionStatus(
 			submissionStatus = "Completed",
@@ -768,10 +677,7 @@ definition {
 	@description = "Verify if clicking the arrow changes the order of the table (asc - desc)"
 	@priority = 3
 	test ViewAscDescSequenceSubmissions {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -789,7 +695,7 @@ definition {
 
 		UserBar.gotoDropdownItem(dropdownItem = "My Submissions");
 
-		Click(locator1 = "ManagementBar#ORDER_ICON_GENERIC");
+		ManagementBar.sortAssets(sortDirection = "Descending");
 
 		AssertElementPresent(
 			key_order = 2,
@@ -801,7 +707,7 @@ definition {
 			key_title = "Blogs Entry Title 1",
 			locator1 = "WorkflowSubmissionsTask#TABLE_ORDER_SUBMISSIONS");
 
-		Click(locator1 = "ManagementBar#ORDER_ICON_GENERIC");
+		ManagementBar.sortAssets(sortDirection = "Ascending");
 
 		AssertElementPresent(
 			key_order = 3,
@@ -831,10 +737,7 @@ definition {
 	test ViewNoPublicationRequestsMessage {
 		Navigator.openURL();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Submissions");
+		ObjectAdmin.openSubmissions();
 
 		AssertElementPresent(
 			key_emptyMessaage = "There are no publication requests.",

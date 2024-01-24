@@ -1,5 +1,5 @@
 {
-	"@generated": "03063c6420a880be385e51b35241acd0a8cf347a",
+	"@generated": "f74271c582b5e3f6430d545aeb9227eb00c16598",
 	"@overrides": {
 		"compilerOptions": {
 			"lib": [
@@ -23,6 +23,9 @@
 		"moduleResolution": "node",
 		"outDir": "./types",
 		"paths": {
+			"@liferay/cookies-banner-web": [
+				"../../cookies/cookies-banner-web/src/main/resources/META-INF/resources/js/index.d.ts"
+			],
 			"@liferay/frontend-icons-web": [
 				"../../frontend-icons/frontend-icons-web/src/main/resources/META-INF/resources/js/index.ts"
 			],
@@ -39,7 +42,7 @@
 				"../../frontend-js/frontend-js-web/src/main/resources/META-INF/resources/index.d.ts"
 			],
 			"item-selector-taglib": [
-				"../../item-selector/item-selector-taglib/src/main/resources/META-INF/resources/index.d.ts"
+				"../../item-selector/item-selector-taglib/src/main/resources/META-INF/resources/js/index.d.ts"
 			]
 		},
 		"sourceMap": false,
@@ -60,6 +63,9 @@
 		"../../../global.d.ts"
 	],
 	"references": [
+		{
+			"path": "../../cookies/cookies-banner-web"
+		},
 		{
 			"path": "../../frontend-icons/frontend-icons-web"
 		},

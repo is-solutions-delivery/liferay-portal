@@ -4,7 +4,7 @@ definition {
 	property ci.retries.disabled = "true";
 	property portal.release = "true";
 	property portal.upstream = "true";
-	property testray.main.component.name = "Fragments";
+	property testray.main.component.name = "Templates";
 
 	setUp {
 		task ("Set up instance and sign in") {
@@ -15,19 +15,6 @@ definition {
 
 		task ("Add a site") {
 			HeadlessSite.addSite(siteName = "Test Site Name");
-		}
-	}
-
-	tearDown {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			JSONGroup.deleteGroupByName(groupName = "Test Site Name");
-
-			ObjectAdmin.deleteAllCustomObjectsViaAPI();
 		}
 	}
 
@@ -815,6 +802,29 @@ definition {
 				editableText = "Blogs Entry Title Blogs Entry Description",
 				fragmentName = "Button",
 				id = "link");
+		}
+	}
+
+	@description = "This is a use case for LPS-177722. In the edit mode of Information Template the tooltip of the back button is 'Go to Templates'"
+	@priority = 3
+	test ViewBackButtonTooltipInInformationTemplateEditor {
+		task ("Given access to the Information Template editor") {
+			InformationTemplates.openInformationTemplatesAdmin(siteURLKey = "test-site-name");
+
+			InformationTemplates.addCP(
+				informationTemplateName = "Test Information Template",
+				itemSubtype = "Basic Web Content",
+				itemType = "Web Content Article");
+		}
+
+		task ("When hover over the back button") {
+			MouseOver(locator1 = "Icon#BACK");
+		}
+
+		task ("Then see the tooltip message") {
+			AssertVisible(
+				key_content = "Go to Templates",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
 		}
 	}
 

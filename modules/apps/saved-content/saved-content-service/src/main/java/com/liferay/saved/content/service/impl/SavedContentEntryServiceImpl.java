@@ -6,9 +6,23 @@
 package com.liferay.saved.content.service.impl;
 
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
+import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.saved.content.constants.SavedContentConstants;
+import com.liferay.saved.content.model.SavedContentEntry;
 import com.liferay.saved.content.service.base.SavedContentEntryServiceBaseImpl;
+import com.liferay.saved.content.util.comparator.SavedContentEntryClassNameIdComparator;
+
+import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Brian Wing Shun Chan
@@ -22,4 +36,102 @@ import org.osgi.service.component.annotations.Component;
 )
 public class SavedContentEntryServiceImpl
 	extends SavedContentEntryServiceBaseImpl {
+
+	@Override
+	public SavedContentEntry addSavedContentEntry(
+			long groupId, String className, long classPK,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		_portletResourcePermission.check(
+			getPermissionChecker(), groupId, ActionKeys.ADD_ENTRY);
+
+		return savedContentEntryLocalService.addSavedContentEntry(
+			getUserId(), groupId, className, classPK, serviceContext);
+	}
+
+	@Override
+	public void deleteSavedContentEntry(SavedContentEntry savedContentEntry)
+		throws PortalException {
+
+		_savedContentEntryModelResourcePermission.check(
+			getPermissionChecker(), savedContentEntry, ActionKeys.DELETE);
+
+		savedContentEntryLocalService.deleteSavedContentEntry(
+			savedContentEntry);
+	}
+
+	@Override
+	public SavedContentEntry fetchSavedContentEntry(
+			long groupId, String className, long classPK)
+		throws PortalException {
+
+		SavedContentEntry savedContentEntry =
+			savedContentEntryLocalService.fetchSavedContentEntry(
+				getUserId(), groupId, className, classPK);
+
+		if (savedContentEntry != null) {
+			_savedContentEntryModelResourcePermission.check(
+				getPermissionChecker(), savedContentEntry, ActionKeys.VIEW);
+		}
+
+		return savedContentEntry;
+	}
+
+	@Override
+	public List<SavedContentEntry> getGroupUserSavedContentEntries(
+			long groupId, int start, int end)
+		throws PortalException {
+
+		return savedContentEntryPersistence.findByG_U(
+			groupId, getUserId(), start, end,
+			new SavedContentEntryClassNameIdComparator());
+	}
+
+	@Override
+	public List<SavedContentEntry> getGroupUserSavedContentEntries(
+			long groupId, int start, int end,
+			OrderByComparator<SavedContentEntry> orderByComparator)
+		throws PortalException {
+
+		return savedContentEntryPersistence.findByG_U(
+			groupId, getUserId(), start, end, orderByComparator);
+	}
+
+	@Override
+	public int getGroupUserSavedContentEntriesCount(long groupId)
+		throws PortalException {
+
+		return savedContentEntryPersistence.filterCountByG_U(
+			groupId, getUserId());
+	}
+
+	@Override
+	public SavedContentEntry getSavedContentEntry(
+			long groupId, String className, long classPK)
+		throws PortalException {
+
+		SavedContentEntry savedContentEntry =
+			savedContentEntryLocalService.getSavedContentEntry(
+				getUserId(), groupId, className, classPK);
+
+		_savedContentEntryModelResourcePermission.check(
+			getPermissionChecker(), savedContentEntry, ActionKeys.VIEW);
+
+		return savedContentEntry;
+	}
+
+	@Reference(
+		target = "(resource.name=" + SavedContentConstants.RESOURCE_NAME + ")"
+	)
+	private PortletResourcePermission _portletResourcePermission;
+
+	@Reference(
+		policy = ReferencePolicy.DYNAMIC,
+		policyOption = ReferencePolicyOption.GREEDY,
+		target = "(model.class.name=com.liferay.saved.content.model.SavedContentEntry)"
+	)
+	private volatile ModelResourcePermission<SavedContentEntry>
+		_savedContentEntryModelResourcePermission;
+
 }

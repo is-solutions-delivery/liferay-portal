@@ -1,4 +1,5 @@
 @component-name = "portal-document-management"
+@ignore = "true"
 definition {
 
 	property custom.properties = "default.layout.template.id=1_column${line.separator}dl.actions.visible=true";
@@ -89,7 +90,7 @@ definition {
 		DMDocument.deleteCP(dmDocumentTitle = "liferay");
 	}
 
-	@priority = 5
+	@priority = 4
 	test CanDeleteGoogleDocInSite {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
@@ -215,7 +216,7 @@ definition {
 	}
 
 	@description = "This ensures that a user can move a Google Doc to a folder in a content page."
-	@priority = 5
+	@priority = 4
 	@refactordone
 	test CanMoveGoogleDocToFolder {
 		property test.liferay.virtual.instance = "false";

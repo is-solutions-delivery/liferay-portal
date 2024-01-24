@@ -9,6 +9,22 @@
 					"if": {
 						"properties": {
 							"type": {
+								"const": "DisplayPage"
+							}
+						}
+					},
+					"then": {
+						"properties": {
+							"value": {
+								"$ref": "#/definitions/DisplayPageActionExecutionResult"
+							}
+						}
+					}
+				},
+				{
+					"if": {
+						"properties": {
+							"type": {
 								"const": "None"
 							}
 						}
@@ -73,6 +89,7 @@
 			"properties": {
 				"type": {
 					"enum": [
+						"DisplayPage",
 						"None",
 						"Notification",
 						"Page",
@@ -348,6 +365,22 @@
 				"customCSS"
 			],
 			"title": "The CustomCSSViewport Schema",
+			"type": "object"
+		},
+		"DisplayPageActionExecutionResult": {
+			"additionalProperties": false,
+			"properties": {
+				"mapping": {
+					"additionalProperties": false,
+					"properties": {
+						"fieldKey": {
+							"title": "The fieldKey Schema",
+							"type": "string"
+						}
+					}
+				}
+			},
+			"title": "The DisplayPageActionExecutionResult Schema",
 			"type": "object"
 		},
 		"Fragment": {
@@ -1538,6 +1571,10 @@
 					"title": "The definition Schema",
 					"type": "object"
 				},
+				"id": {
+					"title": "The id Schema",
+					"type": "string"
+				},
 				"pageElements": {
 					"items": {
 						"$ref": "#/definitions/PageElement"
@@ -1912,6 +1949,14 @@
 		"PageRule": {
 			"additionalProperties": false,
 			"properties": {
+				"conditionType": {
+					"enum": [
+						"All",
+						"Any"
+					],
+					"title": "The condition type Schema",
+					"type": "string"
+				},
 				"id": {
 					"title": "The rule ID Schema",
 					"type": "string"
@@ -1919,12 +1964,72 @@
 				"name": {
 					"title": "The name Schema",
 					"type": "string"
+				},
+				"pageRuleActions": {
+					"items": {
+						"$ref": "#/definitions/PageRuleAction"
+					},
+					"title": "The actions Schema",
+					"type": "array"
+				},
+				"pageRuleConditions": {
+					"items": {
+						"$ref": "#/definitions/PageRuleCondition"
+					},
+					"title": "The conditions Schema",
+					"type": "array"
 				}
 			},
 			"required": [
 				"id"
 			],
 			"title": "The PageRule Schema",
+			"type": "object"
+		},
+		"PageRuleAction": {
+			"additionalProperties": false,
+			"properties": {
+				"action": {
+					"title": "The action Schema",
+					"type": "string"
+				},
+				"id": {
+					"title": "The id Schema",
+					"type": "string"
+				},
+				"itemId": {
+					"title": "The itemId Schema",
+					"type": "string"
+				},
+				"type": {
+					"title": "The type Schema",
+					"type": "string"
+				}
+			},
+			"title": "The PageRuleAction Schema",
+			"type": "object"
+		},
+		"PageRuleCondition": {
+			"additionalProperties": false,
+			"properties": {
+				"condition": {
+					"title": "The condition Schema",
+					"type": "string"
+				},
+				"id": {
+					"title": "The id Schema",
+					"type": "string"
+				},
+				"type": {
+					"title": "The type Schema",
+					"type": "string"
+				},
+				"value": {
+					"title": "The value Schema",
+					"type": "string"
+				}
+			},
+			"title": "The PageRuleAction Schema",
 			"type": "object"
 		},
 		"PageSectionDefinition": {

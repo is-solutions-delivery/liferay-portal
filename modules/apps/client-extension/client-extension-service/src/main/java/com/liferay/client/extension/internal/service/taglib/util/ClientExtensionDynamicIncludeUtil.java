@@ -10,10 +10,12 @@ import com.liferay.client.extension.service.ClientExtensionEntryRelLocalServiceU
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Eudaldo Alonso
@@ -23,30 +25,79 @@ public class ClientExtensionDynamicIncludeUtil {
 	public static List<ClientExtensionEntryRel> getClientExtensionEntryRels(
 		Layout layout, String type) {
 
+		List<ClientExtensionEntryRel> clientExtensionEntryRels =
+			new ArrayList<>();
+
 		LayoutSet layoutSet = layout.getLayoutSet();
 
-		List<ClientExtensionEntryRel> clientExtensionEntryRels =
-			new ArrayList<>(
-				ClientExtensionEntryRelLocalServiceUtil.
-					getClientExtensionEntryRels(
-						PortalUtil.getClassNameId(LayoutSet.class),
-						layoutSet.getLayoutSetId(), type));
+		List<ClientExtensionEntryRel> layoutSetClientExtensionEntryRels =
+			ClientExtensionEntryRelLocalServiceUtil.getClientExtensionEntryRels(
+				PortalUtil.getClassNameId(LayoutSet.class),
+				layoutSet.getLayoutSetId(), type);
+
+		for (ClientExtensionEntryRel layoutSetClientExtensionEntryRel :
+				layoutSetClientExtensionEntryRels) {
+
+			if (!ListUtil.exists(
+					clientExtensionEntryRels,
+					clientExtensionEntryRel -> Objects.equals(
+						layoutSetClientExtensionEntryRel.
+							getCETExternalReferenceCode(),
+						clientExtensionEntryRel.
+							getCETExternalReferenceCode()))) {
+
+				clientExtensionEntryRels.add(layoutSetClientExtensionEntryRel);
+			}
+		}
 
 		Layout masterLayout = LayoutLocalServiceUtil.fetchLayout(
 			layout.getMasterLayoutPlid());
 
 		if (masterLayout != null) {
-			clientExtensionEntryRels.addAll(
+			List<ClientExtensionEntryRel> masterLayoutClientExtensionEntryRels =
 				ClientExtensionEntryRelLocalServiceUtil.
 					getClientExtensionEntryRels(
 						PortalUtil.getClassNameId(Layout.class),
-						masterLayout.getPlid(), type));
+						masterLayout.getPlid(), type);
+
+			for (ClientExtensionEntryRel masterLayoutClientExtensionEntryRel :
+					masterLayoutClientExtensionEntryRels) {
+
+				if (!ListUtil.exists(
+						clientExtensionEntryRels,
+						clientExtensionEntryRel -> Objects.equals(
+							masterLayoutClientExtensionEntryRel.
+								getCETExternalReferenceCode(),
+							clientExtensionEntryRel.
+								getCETExternalReferenceCode()))) {
+
+					clientExtensionEntryRels.add(
+						masterLayoutClientExtensionEntryRel);
+				}
+			}
 		}
 
-		clientExtensionEntryRels.addAll(
-			ClientExtensionEntryRelLocalServiceUtil.getClientExtensionEntryRels(
-				PortalUtil.getClassNameId(Layout.class), layout.getPlid(),
-				type));
+		List<ClientExtensionEntryRel> layoutClientExtensionEntryRels =
+			new ArrayList<>(
+				ClientExtensionEntryRelLocalServiceUtil.
+					getClientExtensionEntryRels(
+						PortalUtil.getClassNameId(Layout.class),
+						layout.getPlid(), type));
+
+		for (ClientExtensionEntryRel layoutClientExtensionEntryRel :
+				layoutClientExtensionEntryRels) {
+
+			if (!ListUtil.exists(
+					clientExtensionEntryRels,
+					clientExtensionEntryRel -> Objects.equals(
+						layoutClientExtensionEntryRel.
+							getCETExternalReferenceCode(),
+						clientExtensionEntryRel.
+							getCETExternalReferenceCode()))) {
+
+				clientExtensionEntryRels.add(layoutClientExtensionEntryRel);
+			}
+		}
 
 		return clientExtensionEntryRels;
 	}

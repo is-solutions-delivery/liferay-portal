@@ -25,17 +25,6 @@ definition {
 		}
 	}
 
-	tearDown {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			JSONGroup.deleteGroupByName(groupName = "Test Site Name");
-		}
-	}
-
 	@description = "This is a test for LPS-140820. The user could decrease the Number of Slides in Banner Slider."
 	@priority = 5
 	test DecreaseNumberOfSlides {
@@ -88,7 +77,7 @@ definition {
 
 			PageEditorMapping.mapEditableTextToField(
 				className = "slider",
-				field = "Display Page URL",
+				field = "Default",
 				fragmentName = "Banner Slider",
 				id = "02-03-subtitle");
 		}

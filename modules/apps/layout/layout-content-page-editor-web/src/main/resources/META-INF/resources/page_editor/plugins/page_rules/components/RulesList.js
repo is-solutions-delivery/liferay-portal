@@ -6,35 +6,40 @@
 import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import ClayDropDown from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
+import ClayLabel from '@clayui/label';
 import ClayList from '@clayui/list';
 import classNames from 'classnames';
-import {sub} from 'frontend-js-web';
-import React, {useState} from 'react';
+import {openToast, sub} from 'frontend-js-web';
+import React, {useEffect, useState} from 'react';
 
-import {deleteRule} from '../../../app/actions/index';
 import {useDispatch, useSelector} from '../../../app/contexts/StoreContext';
+import selectLayoutDataItemLabel from '../../../app/selectors/selectLayoutDataItemLabel';
+import deleteRule from '../../../app/thunks/deleteRule';
+import useActionValues from '../../../app/utils/useActionValues';
+import useConditionValues from '../../../app/utils/useConditionValues';
 import RulesModal from './RulesModal';
 
 export default function RulesList() {
 	const [modalVisible, setModalVisible] = useState(false);
 	const [editingRule, setEditingRule] = useState(null);
+	const [savedRuleId, setSavedRuleId] = useState(null);
 
-	const layoutData = useSelector((state) => state.layoutData);
+	const rules = useSelector((state) => state.layoutData.pageRules);
 	const dispatch = useDispatch();
-
-	const {rules = []} = layoutData;
 
 	const onCreateRule = () => setModalVisible(true);
 
 	const onDeleteRule = (rule) => {
-		const nextLayoutData = {
-			...layoutData,
-			rules: rules.filter(({id}) => id !== rule.id),
-		};
-
 		dispatch(
 			deleteRule({
-				layoutData: nextLayoutData,
+				ruleId: rule.id,
+			})
+		).then(() =>
+			openToast({
+				message: Liferay.Language.get(
+					'the-rule-was-deleted-successfully'
+				),
+				type: 'success',
 			})
 		);
 	};
@@ -65,6 +70,8 @@ export default function RulesList() {
 						onDelete={onDeleteRule}
 						onEdit={onEditRule}
 						rule={rule}
+						savedRuleId={savedRuleId}
+						setSavedRuleId={setSavedRuleId}
 					/>
 				))}
 			</ClayList>
@@ -72,7 +79,11 @@ export default function RulesList() {
 			{modalVisible && (
 				<RulesModal
 					editingRule={editingRule}
-					onCloseModal={() => {
+					onCloseModal={(ruleId) => {
+						if (ruleId) {
+							setSavedRuleId(ruleId);
+						}
+
 						setEditingRule(null);
 
 						setModalVisible(false);
@@ -83,19 +94,41 @@ export default function RulesList() {
 	);
 }
 
-function Rule({onDelete, onEdit, rule}) {
-	const [hovered, setHovered] = useState(false);
+function Rule({onDelete, onEdit, rule, savedRuleId, setSavedRuleId}) {
+	const [triggerElement, setTriggerElement] = useState();
+
+	useEffect(() => {
+		if (savedRuleId === rule.id) {
+			triggerElement.focus();
+
+			setSavedRuleId(null);
+		}
+	}, [savedRuleId, triggerElement, rule, setSavedRuleId]);
+
+	const items = useSelector((state) =>
+		Object.values(state.layoutData.items).map((item) => ({
+			label: selectLayoutDataItemLabel(state, item),
+			value: item.itemId,
+		}))
+	);
+
+	const conditions = useConditionValues(rule);
+	const actions = useActionValues({...rule, items});
 
 	return (
 		<ClayList.Item
-			className={classNames({active: hovered})}
+			aria-label={getRuleAriaLabel(rule.name, conditions, actions)}
+			className="p-2 page-editor__rule"
 			key={rule.id}
-			onMouseLeave={() => setHovered(false)}
-			onMouseOver={() => setHovered(true)}
 		>
 			<ClayList.ItemField expand>
-				<ClayList.ItemTitle className="align-items-center d-flex">
-					<span className="flex-grow-1">{rule.name}</span>
+				<div className="align-items-center d-flex">
+					<span
+						aria-hidden="true"
+						className="flex-grow-1 font-weight-semi-bold"
+					>
+						{rule.name}
+					</span>
 
 					<ClayDropDown
 						onMouseOver={(event) => event.stopPropagation()}
@@ -107,6 +140,7 @@ function Rule({onDelete, onEdit, rule}) {
 								)}
 								borderless
 								displayType="secondary"
+								ref={setTriggerElement}
 								size="sm"
 								symbol="ellipsis-v"
 								title={sub(
@@ -123,6 +157,8 @@ function Rule({onDelete, onEdit, rule}) {
 								{Liferay.Language.get('edit')}
 							</ClayDropDown.Item>
 
+							<ClayDropDown.Divider />
+
 							<ClayDropDown.Item onClick={() => onDelete(rule)}>
 								<ClayIcon className="mr-2" symbol="trash" />
 
@@ -130,8 +166,83 @@ function Rule({onDelete, onEdit, rule}) {
 							</ClayDropDown.Item>
 						</ClayDropDown.ItemList>
 					</ClayDropDown>
-				</ClayList.ItemTitle>
+				</div>
+			</ClayList.ItemField>
+
+			<ClayList.ItemField className="mt-3" expand>
+				<p
+					aria-hidden="true"
+					className="align-items-center c-gap-2 d-flex flex-wrap"
+				>
+					{conditions.map((condition, index) => (
+						<Condition
+							condition={condition}
+							index={index}
+							key={condition.id}
+						/>
+					))}
+
+					{actions.map((action) => (
+						<Action action={action} key={action.id} />
+					))}
+				</p>
 			</ClayList.ItemField>
 		</ClayList.Item>
 	);
+}
+
+function Condition({condition, index}) {
+	return (
+		<>
+			<span
+				className={classNames('font-weight-semi-bold', {
+					'text-uppercase': index > 0,
+				})}
+			>
+				{condition.prefix}
+			</span>
+
+			<ClayLabel className="m-0" displayType="secondary">
+				{condition.type}
+			</ClayLabel>
+
+			{condition.condition}
+
+			<ClayLabel className="m-0" displayType="secondary">
+				{condition.value}
+			</ClayLabel>
+		</>
+	);
+}
+
+function Action({action}) {
+	return (
+		<>
+			{action.prefix ? (
+				<span className="font-weight-semi-bold text-uppercase">
+					{action.prefix}
+				</span>
+			) : null}
+
+			<span className="font-weight-semi-bold">{action.type}</span>
+
+			{action.action}
+
+			<ClayLabel className="m-0" displayType="secondary">
+				{action.item}
+			</ClayLabel>
+		</>
+	);
+}
+
+function getRuleAriaLabel(name, conditions, actions) {
+	const conditionsDescription = conditions
+		.map((condition) => condition.description)
+		.join(' ');
+
+	const actionsDescription = actions
+		.map((action) => action.description)
+		.join(' ');
+
+	return `${name}: ${conditionsDescription} ${actionsDescription}`;
 }

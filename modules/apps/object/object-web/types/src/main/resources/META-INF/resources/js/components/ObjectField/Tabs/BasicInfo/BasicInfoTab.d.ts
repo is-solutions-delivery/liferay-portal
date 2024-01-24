@@ -21,6 +21,7 @@ export interface AggregationFilters {
 	valueList?: LabelValueObject[];
 }
 interface BasicInfoTabProps {
+	baseResourceURL: string;
 	containerWrapper: ElementType;
 	errors: ObjectFieldErrors;
 	filterOperators: TFilterOperators;
@@ -36,9 +37,10 @@ interface BasicInfoTabProps {
 	setValues: (values: Partial<ObjectField>) => void;
 	sidebarElements: SidebarCategory[];
 	values: Partial<ObjectField>;
-	workflowStatusJSONArray: LabelValueObject[];
+	workflowStatuses: LabelValueObject[];
 }
 export declare function BasicInfoTab({
+	baseResourceURL,
 	containerWrapper: ContainerWrapper,
 	errors,
 	filterOperators,
@@ -54,6 +56,6 @@ export declare function BasicInfoTab({
 	setValues,
 	sidebarElements,
 	values,
-	workflowStatusJSONArray,
+	workflowStatuses,
 }: BasicInfoTabProps): JSX.Element;
 export {};

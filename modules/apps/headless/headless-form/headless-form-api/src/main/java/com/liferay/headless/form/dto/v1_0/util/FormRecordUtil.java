@@ -37,41 +37,51 @@ public class FormRecordUtil {
 			Portal portal, UserLocalService userLocalService)
 		throws Exception {
 
-		DDMFormValues ddmFormValues = ddmFormInstanceRecord.getDDMFormValues();
-
 		return new FormRecord() {
 			{
-				creator = CreatorUtil.toCreator(
-					portal,
-					userLocalService.fetchUser(
-						ddmFormInstanceRecord.getUserId()));
-				dateCreated = ddmFormInstanceRecord.getCreateDate();
-				dateModified = ddmFormInstanceRecord.getModifiedDate();
-				datePublished = ddmFormInstanceRecord.getLastPublishDate();
-				draft =
-					ddmFormInstanceRecord.getStatus() ==
-						WorkflowConstants.STATUS_DRAFT;
-				formFieldValues = TransformUtil.transformToArray(
-					ddmFormValues.getDDMFormFieldValues(),
-					ddmFormFieldValue -> {
-						Value localizedValue = ddmFormFieldValue.getValue();
+				setCreator(
+					() -> CreatorUtil.toCreator(
+						portal,
+						userLocalService.fetchUser(
+							ddmFormInstanceRecord.getUserId())));
+				setDateCreated(ddmFormInstanceRecord::getCreateDate);
+				setDateModified(ddmFormInstanceRecord::getModifiedDate);
+				setDatePublished(ddmFormInstanceRecord::getLastPublishDate);
+				setDraft(
+					() ->
+						ddmFormInstanceRecord.getStatus() ==
+							WorkflowConstants.STATUS_DRAFT);
+				setFormFieldValues(
+					() -> {
+						DDMFormValues ddmFormValues =
+							ddmFormInstanceRecord.getDDMFormValues();
 
-						if (localizedValue == null) {
-							return null;
-						}
+						return TransformUtil.transformToArray(
+							ddmFormValues.getDDMFormFieldValues(),
+							ddmFormFieldValue -> {
+								Value localizedValue =
+									ddmFormFieldValue.getValue();
 
-						return new FormFieldValue() {
-							{
-								formDocument = _toFormDocument(
-									dlAppService, dlurlHelper, locale,
-									localizedValue);
-								name = ddmFormFieldValue.getName();
-								value = localizedValue.getString(locale);
-							}
-						};
-					},
-					FormFieldValue.class);
-				id = ddmFormInstanceRecord.getFormInstanceRecordId();
+								if (localizedValue == null) {
+									return null;
+								}
+
+								return new FormFieldValue() {
+									{
+										setFormDocument(
+											() -> _toFormDocument(
+												dlAppService, dlurlHelper,
+												locale, localizedValue));
+										setName(ddmFormFieldValue::getName);
+										setValue(
+											() -> localizedValue.getString(
+												locale));
+									}
+								};
+							},
+							FormFieldValue.class);
+					});
+				setId(ddmFormInstanceRecord::getFormInstanceRecordId);
 			}
 		};
 	}

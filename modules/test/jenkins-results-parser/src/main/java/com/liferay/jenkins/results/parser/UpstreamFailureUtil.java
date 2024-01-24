@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 
 import org.json.JSONObject;
 
@@ -24,6 +25,21 @@ import org.json.JSONObject;
  * @author Kenji Heigel
  */
 public class UpstreamFailureUtil {
+
+	public static String getUpstreamComparison(String jobName) {
+		try {
+			Properties buildProperties =
+				JenkinsResultsParserUtil.getBuildProperties();
+
+			return buildProperties.getProperty(
+				"upstream.comparison[" + jobName + "]", "true");
+		}
+		catch (Exception exception) {
+			exception.printStackTrace();
+
+			return "true";
+		}
+	}
 
 	public static synchronized List<String> getUpstreamJobFailures(
 		String type, TopLevelBuild topLevelBuild) {
@@ -121,6 +137,8 @@ public class UpstreamFailureUtil {
 			return null;
 		}
 
+		int buildCount = 0;
+
 		String upstreamBranchName = topLevelBuild.getBranchName();
 
 		if (topLevelBuild instanceof PullRequestSubrepositoryTopLevelBuild) {
@@ -138,6 +156,12 @@ public class UpstreamFailureUtil {
 				upstreamBranchName, (File)null, "liferay-portal");
 
 		for (TestrayBuild testrayBuild : testrayRoutine.getTestrayBuilds()) {
+			if (buildCount > 25) {
+				break;
+			}
+
+			buildCount++;
+
 			if (!gitWorkingDirectory.refContainsSHA(
 					"HEAD", testrayBuild.getPortalSHA())) {
 
@@ -208,6 +232,14 @@ public class UpstreamFailureUtil {
 		}
 
 		if (!_upstreamComparisonAvailable) {
+			return null;
+		}
+
+		if (Objects.equals(
+				getUpstreamComparison(topLevelBuild.getJobName()), "false")) {
+
+			_upstreamComparisonAvailable = false;
+
 			return null;
 		}
 

@@ -200,35 +200,22 @@ if (commerceNotificationTemplate != null) {
 	</aui:form>
 </liferay-frontend:side-panel-content>
 
-<aui:script>
-	Liferay.provide(
-		window,
-		'<portlet:namespace />selectType',
-		() => {
-			var A = AUI();
+<aui:script require="frontend-js-web/index as frontendJsWeb">
+	const {createPortletURL} = frontendJsWeb;
 
-			var name = A.one('#<portlet:namespace />name').val();
-			var description = A.one('#<portlet:namespace />description').val();
-			var from = A.one('#<portlet:namespace />from').val();
-			var fromName = A.one('#<portlet:namespace />fromName').val();
-			var cc = A.one('#<portlet:namespace />cc').val();
-			var bcc = A.one('#<portlet:namespace />bcc').val();
-			var type = A.one('#<portlet:namespace />type').val();
+	Liferay.provide(window, '<portlet:namespace />selectType', () => {
+		const portletURL = createPortletURL('<%= currentURLObj %>', {
+			bcc: document.getElementById('<portlet:namespace />bcc').value,
+			cc: document.getElementById('<portlet:namespace />cc').value,
+			description: document.getElementById('<portlet:namespace />description')
+				.value,
+			from: document.getElementById('<portlet:namespace />from').value,
+			fromName: document.getElementById('<portlet:namespace />fromName')
+				.value,
+			name: document.getElementById('<portlet:namespace />name').value,
+			type: document.getElementById('<portlet:namespace />type').value,
+		});
 
-			var portletURL = new Liferay.PortletURL.createURL(
-				'<%= currentURLObj %>'
-			);
-
-			portletURL.setParameter('name', name);
-			portletURL.setParameter('description', description);
-			portletURL.setParameter('from', from);
-			portletURL.setParameter('fromName', fromName);
-			portletURL.setParameter('cc', cc);
-			portletURL.setParameter('bcc', bcc);
-			portletURL.setParameter('type', type);
-
-			window.location.replace(portletURL.toString());
-		},
-		['liferay-portlet-url']
-	);
+		window.location.replace(portletURL.toString());
+	});
 </aui:script>

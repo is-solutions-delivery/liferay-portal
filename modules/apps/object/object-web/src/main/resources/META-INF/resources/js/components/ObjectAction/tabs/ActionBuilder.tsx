@@ -4,9 +4,9 @@
  */
 
 import ClayAlert from '@clayui/alert';
+import {Option, Text} from '@clayui/core';
 import {
 	Card,
-	CustomItem,
 	SidebarCategory,
 	SingleSelect,
 	invalidateRequired,
@@ -18,12 +18,15 @@ import {defaultLanguageId} from '../../../utils/constants';
 import {ActionError} from '../index';
 import {ActionContainer} from './ActionContainer/ActionContainer';
 import {ConditionContainer} from './ConditionContainer';
+
+import './ActionBuilder.scss';
+
 interface ActionBuilderProps {
 	errors: ActionError;
 	isApproved: boolean;
 	objectActionCodeEditorElements: SidebarCategory[];
-	objectActionExecutors: CustomItem[];
-	objectActionTriggers: CustomItem[];
+	objectActionExecutors: ObjectActionTriggerExecutorItem[];
+	objectActionTriggers: ObjectActionTriggerExecutorItem[];
 	objectDefinitionExternalReferenceCode: string;
 	objectDefinitionId: number;
 	objectDefinitionsRelationshipsURL: string;
@@ -63,7 +66,7 @@ export default function ActionBuilder({
 	values,
 }: ActionBuilderProps) {
 	const [newObjectActionExecutors, setNewObjectActionExecutors] = useState<
-		CustomItem[]
+		ObjectActionTriggerExecutorItem[]
 	>(objectActionExecutors);
 
 	const [infoAlert, setInfoAlert] = useState(true);
@@ -79,16 +82,6 @@ export default function ActionBuilder({
 	] = useState<ObjectField[]>([]);
 
 	const [errorAlert, setErrorAlert] = useState(false);
-
-	const actionTriggers = useMemo(() => {
-		const triggers = new Map<string, string>();
-
-		objectActionTriggers.forEach(({label, value}) => {
-			value && triggers.set(value, label);
-		});
-
-		return triggers;
-	}, [objectActionTriggers]);
 
 	const objectFieldsMap = useMemo(() => {
 		const fields = new Map<string, ObjectField>();
@@ -246,18 +239,34 @@ export default function ActionBuilder({
 					<SingleSelect
 						disabled={isApproved || values.system}
 						error={errors.objectActionTriggerKey}
-						onChange={({value}) =>
+						items={objectActionTriggers}
+						onSelectionChange={(value) =>
 							setValues({
 								conditionExpression: undefined,
-								objectActionTriggerKey: value,
+								objectActionTriggerKey: value as string,
 							})
 						}
-						options={objectActionTriggers}
 						placeholder={Liferay.Language.get('choose-a-trigger')}
-						value={actionTriggers.get(
-							values.objectActionTriggerKey ?? ''
+						selectedKey={values.objectActionTriggerKey}
+					>
+						{(item) => (
+							<Option key={item.value} textValue={item.label}>
+								<div className="lfr-objects__object-action-builder-when-option">
+									<Text size={3} weight="semi-bold">
+										{item.label}
+									</Text>
+
+									<Text
+										aria-hidden
+										color="secondary"
+										size={2}
+									>
+										{item.description}
+									</Text>
+								</div>
+							</Option>
 						)}
-					/>
+					</SingleSelect>
 				</Card>
 			</Card>
 

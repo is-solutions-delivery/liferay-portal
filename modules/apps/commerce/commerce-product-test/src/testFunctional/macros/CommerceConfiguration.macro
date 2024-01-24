@@ -254,10 +254,7 @@ definition {
 
 	@summary = "Default summary"
 	macro commerceInitializersTearDown() {
-		ApplicationsMenu.gotoPortlet(
-			category = "Sites",
-			panel = "Control Panel",
-			portlet = "Sites");
+		Site.openSitesAdmin();
 
 		CommerceJSONSitesAPI._deleteCommerceSites();
 	}
@@ -306,9 +303,7 @@ definition {
 			}
 		}
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		Click(locator1 = "Button#PLUS");
 

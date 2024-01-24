@@ -38,9 +38,10 @@ definition {
 				name = "Notification Template",
 				subject = "Subject");
 
-			AssertElementPresent(
-				key_dataSource = "Custom Object2",
-				locator1 = "ObjectNotifications#DATA_SOURCE_ATTACHMENTS");
+			AssertTextEquals(
+				key_labelName = "Data Source",
+				locator1 = "ObjectAdmin#CLAY_GENERIC_BUTTON",
+				value1 = "Custom Object2");
 
 			AssertTextPresent(
 				locator1 = "ObjectNotifications#FIELD_ATTACHMENTS_OBJECT",

@@ -30,19 +30,6 @@ definition {
 		}
 	}
 
-	tearDown {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			JSONGroup.deleteGroupByName(groupName = "Test Site Name");
-
-			ObjectAdmin.deleteObjectViaAPI(objectName = "UploadObject");
-		}
-	}
-
 	@description = "This is a test for LPS-157806. Add custom text on Button Text field of File Upload fragment on content page."
 	@priority = 4
 	test AddCustomTextOnButtonTextFieldOnContentPage {
@@ -437,6 +424,201 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-194129. In drag&drop do not allow files that are not of that extension."
+	@priority = 4
+	test CannotDragAndDropInvalidFileTypeToDocumentsAndMediaModal {
+		task ("Given a user has a File Upload fragment mapped to an attachment from documents and media only accept pdf file extension") {
+			var groupId = JSONGroupSetter.setGroupId(groupName = "Test Site Name");
+
+			DocumentAPI.addDocumentWithFileInSite(
+				dmDocumentTitle = "Image Title",
+				siteId = ${groupId},
+				sourceFileName = "Document_1.jpg");
+
+			DocumentAPI.addDocumentWithFileInSite(
+				dmDocumentTitle = "PDF Title",
+				siteId = ${groupId},
+				sourceFileName = "Document_1.pdf");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Attachment",
+				fieldLabelName = "Custom Attachment From DM",
+				fieldName = "customAttachmentFromDM",
+				fieldType = "Long",
+				fileSource = "documentsAndMedia",
+				isRequired = "false",
+				objectName = "UploadObject");
+
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Upload Object");
+
+			ObjectAdmin.goToFieldsTab();
+
+			ObjectAdmin.goToFieldsDetails(label = "Custom Attachment From DM");
+
+			SystemSettings.editTextAreaSetting(
+				settingName = "Accepted File ExtensionsMandatory",
+				settingValue = "pdf");
+
+			ObjectField.save();
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "UploadObject");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = "Test Site Name");
+
+			PageEditor.addFragment(
+				collectionName = "Form Components",
+				fragmentName = "Form Container");
+
+			PageEditor.mapFormContainerToObject(contentType = "Upload Object");
+
+			PageEditor.publish();
+		}
+
+		task ("When the user opens the Select File modal at view mode") {
+			PageEditor.viewInputStyle(
+				helpText = "Upload a .pdf no larger than 100 MB.",
+				type = "file-upload");
+
+			Click(locator1 = "Button#SELECT_FILE");
+		}
+
+		task ("Then the user cannot drag and drop an image to modal") {
+			SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+			UploadDependencyFile.uploadFile(fileName = "Document_2.jpg");
+
+			AssertTextEquals(
+				locator1 = "Message#WARNING_FEEDBACK",
+				value1 = "Please enter a file with a valid extension (.pdf).");
+		}
+	}
+
+	@description = "This is a test for LPS-194129. Add the filter to the windows popup that opens for you to select from the PC."
+	@priority = 4
+	test FilterAttachmentFromComputerByFileType {
+		task ("Given a user has a File Upload fragment mapped to an attachment from user's computer only accept pdf file extension") {
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Attachment",
+				fieldLabelName = "Custom Attachment From Computer",
+				fieldName = "customAttachmentFromComputer",
+				fieldType = "Long",
+				fileSource = "userComputer",
+				isRequired = "false",
+				objectName = "UploadObject");
+
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Upload Object");
+
+			ObjectAdmin.goToFieldsTab();
+
+			ObjectAdmin.goToFieldsDetails(label = "Custom Attachment From Computer");
+
+			SystemSettings.editTextAreaSetting(
+				settingName = "Accepted File ExtensionsMandatory",
+				settingValue = "pdf");
+
+			ObjectField.save();
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "UploadObject");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = "Test Site Name");
+
+			PageEditor.addFragment(
+				collectionName = "Form Components",
+				fragmentName = "Form Container");
+
+			PageEditor.mapFormContainerToObject(contentType = "Upload Object");
+		}
+
+		task ("When the user accesses to the content page at view mode") {
+			PageEditor.publish();
+		}
+
+		task ("Then the user should see the File Upload only accept pdf file extension") {
+			PageEditor.viewInputStyle(
+				helpText = "Upload a .pdf no larger than 100 MB.",
+				type = "file-upload");
+		}
+	}
+
+	@description = "This is a test for LPS-194129. Filtering the Documents that are in Libraries."
+	@priority = 4
+	test FilterAttachmentFromDocumentsAndMediaByFileType {
+		task ("Given a user has a File Upload fragment mapped to an attachment from documents and media only accept pdf file extension") {
+			var groupId = JSONGroupSetter.setGroupId(groupName = "Test Site Name");
+
+			DocumentAPI.addDocumentWithFileInSite(
+				dmDocumentTitle = "Image Title",
+				siteId = ${groupId},
+				sourceFileName = "Document_1.jpg");
+
+			DocumentAPI.addDocumentWithFileInSite(
+				dmDocumentTitle = "PDF Title",
+				siteId = ${groupId},
+				sourceFileName = "Document_1.pdf");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Attachment",
+				fieldLabelName = "Custom Attachment From DM",
+				fieldName = "customAttachmentFromDM",
+				fieldType = "Long",
+				fileSource = "documentsAndMedia",
+				isRequired = "false",
+				objectName = "UploadObject");
+
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Upload Object");
+
+			ObjectAdmin.goToFieldsTab();
+
+			ObjectAdmin.goToFieldsDetails(label = "Custom Attachment From DM");
+
+			SystemSettings.editTextAreaSetting(
+				settingName = "Accepted File ExtensionsMandatory",
+				settingValue = "pdf");
+
+			ObjectField.save();
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "UploadObject");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = "Test Site Name");
+
+			PageEditor.addFragment(
+				collectionName = "Form Components",
+				fragmentName = "Form Container");
+
+			PageEditor.mapFormContainerToObject(contentType = "Upload Object");
+
+			PageEditor.publish();
+		}
+
+		task ("When the user opens the Select File modal at view mode") {
+			PageEditor.viewInputStyle(
+				helpText = "Upload a .pdf no larger than 100 MB.",
+				type = "file-upload");
+
+			Click(locator1 = "Button#SELECT_FILE");
+		}
+
+		task ("Then the user should only see file with pdf extension") {
+			SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+			LexiconCard.viewCardPresent(card = "PDF Title");
+
+			LexiconCard.viewCardNotPresent(card = "Image Title");
+		}
+	}
+
 	@description = "This is a test for LPS-151402. The user could see error message when submit a form with attached file size larger than allowed maximum upload size."
 	@priority = 4
 	test ViewErrorMessageWhenSubmitFormWithAttachedFileSizeLargerThanAllowedMaximumUploadSize {
@@ -450,7 +632,7 @@ definition {
 
 				ObjectAdmin.addObjectFieldViaUI(
 					enableShowFiles = "true",
-					fieldAttachment = "Upload Directly from the User's Computer",
+					fieldAttachment = "Upload Directly from the User",
 					fieldLabel = "Custom Attachment From Computer",
 					fieldType = "Attachment");
 			}
@@ -556,6 +738,49 @@ definition {
 
 		task ("Then the user should see an error message") {
 			Alert.viewErrorMessage(errorMessage = "Please enter a file with a valid extension (jpeg, jpg, pdf, png).");
+		}
+	}
+
+	@description = "This is a test for LPS-182728. The user should see the field error below the File Upload fragment."
+	@priority = 3
+	test ViewFileUploadFieldErrorMessageWhenPartialValidationFailure {
+		task ("Given a user has a content page where a File Upload fragment mapped to a mandatory Attachment field") {
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Attachment",
+				fieldLabelName = "Custom Attachment From Computer",
+				fieldName = "customAttachmentFromComputer",
+				fieldType = "Long",
+				fileSource = "userComputer",
+				isRequired = "true",
+				objectName = "UploadObject");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "UploadObject");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = "Test Site Name");
+
+			PageEditor.addFragment(
+				collectionName = "Form Components",
+				fragmentName = "Form Container");
+
+			PageEditor.mapFormContainerToObject(contentType = "Upload Object");
+
+			PageEditor.publish();
+		}
+
+		task ("When the user submits form without attachment") {
+			SetElementAttribute.removeElementAttribute(
+				attribute1 = "required",
+				locator1 = "TextInput#FILE");
+
+			Button.clickSubmitButton();
+		}
+
+		task ("Then the user should see a field error message below File Upload") {
+			Alert.viewFieldErrorMessage(
+				errorMessage = "This field is required.",
+				fieldLabel = "Custom Attachment From Computer");
 		}
 	}
 

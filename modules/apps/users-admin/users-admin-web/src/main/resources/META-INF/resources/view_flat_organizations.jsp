@@ -8,8 +8,6 @@
 <%@ include file="/init.jsp" %>
 
 <%
-String toolbarItem = ParamUtil.getString(request, "toolbarItem", "view-all-organizations");
-
 String displayStyle = ParamUtil.getString(request, "displayStyle");
 
 if (Validator.isNull(displayStyle)) {
@@ -27,6 +25,8 @@ PortletURL portletURL = PortletURLBuilder.create(
 	(PortletURL)request.getAttribute("view.jsp-portletURL")
 ).setParameter(
 	"displayStyle", displayStyle
+).setParameter(
+	"screenNavigationCategoryKey", UserScreenNavigationEntryConstants.CATEGORY_KEY_ORGANIZATIONS
 ).buildPortletURL();
 
 String keywords = ParamUtil.getString(request, "keywords");
@@ -62,10 +62,9 @@ if (filterManageableOrganizations) {
 			actionDropdownItems="<%= viewOrganizationsManagementToolbarDisplayContext.getActionDropdownItems() %>"
 			clearResultsURL="<%= viewOrganizationsManagementToolbarDisplayContext.getClearResultsURL() %>"
 			creationMenu="<%= viewOrganizationsManagementToolbarDisplayContext.getCreationMenu() %>"
-			filterDropdownItems="<%= viewOrganizationsManagementToolbarDisplayContext.getFilterDropdownItems() %>"
 			itemsTotal="<%= searchContainer.getTotal() %>"
 			orderDropdownItems="<%= viewOrganizationsManagementToolbarDisplayContext.getOrderByDropdownItems() %>"
-			propsTransformer="js/ViewFlatOrganizationsAndUsersManagementToolbarPropsTransformer"
+			propsTransformer="{ViewFlatOrganizationsAndUsersManagementToolbarPropsTransformer} from users-admin-web"
 			searchActionURL="<%= viewOrganizationsManagementToolbarDisplayContext.getSearchActionURL() %>"
 			searchContainerId="organizations"
 			searchFormName="searchFm"
@@ -80,13 +79,14 @@ if (filterManageableOrganizations) {
 		<aui:form action="<%= portletURL %>" cssClass="container-fluid container-fluid-max-xl" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + liferayPortletResponse.getNamespace() + "search();" %>'>
 			<liferay-portlet:renderURLParams varImpl="portletURL" />
 			<aui:input name="<%= Constants.CMD %>" type="hidden" />
-			<aui:input name="toolbarItem" type="hidden" value="<%= toolbarItem %>" />
 			<aui:input name="redirect" type="hidden" value="<%= portletURL.toString() %>" />
+			<aui:input name="screenNavigationCategoryKey" type="hidden" value="<%= UserScreenNavigationEntryConstants.CATEGORY_KEY_ORGANIZATIONS %>" />
 
 			<liferay-ui:error exception="<%= RequiredOrganizationException.class %>" message="you-cannot-delete-organizations-that-have-suborganizations-or-users" />
 
 			<liferay-ui:search-container
 				id="organizations"
+				iteratorURL="<%= portletURL %>"
 				searchContainer="<%= searchContainer %>"
 				var="organizationSearchContainer"
 			>
@@ -107,11 +107,11 @@ if (filterManageableOrganizations) {
 					modelVar="organization"
 				>
 					<liferay-portlet:renderURL varImpl="rowURL">
-						<portlet:param name="mvcRenderCommandName" value="/users_admin/view" />
-						<portlet:param name="toolbarItem" value="view-all-organizations" />
-						<portlet:param name="usersListView" value="<%= UserConstants.LIST_VIEW_TREE %>" />
+						<portlet:param name="mvcRenderCommandName" value="/users_admin/organizations_view_tree" />
 						<portlet:param name="redirect" value="<%= organizationSearchContainer.getIteratorURL().toString() %>" />
 						<portlet:param name="organizationId" value="<%= String.valueOf(organization.getOrganizationId()) %>" />
+						<portlet:param name="screenNavigationCategoryKey" value="<%= UserScreenNavigationEntryConstants.CATEGORY_KEY_ORGANIZATIONS %>" />
+						<portlet:param name="usersListView" value="<%= UserConstants.LIST_VIEW_TREE %>" />
 					</liferay-portlet:renderURL>
 
 					<%

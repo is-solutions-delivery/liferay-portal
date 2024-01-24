@@ -51,7 +51,6 @@ import com.liferay.layout.list.retriever.SegmentsEntryLayoutListRetriever;
 import com.liferay.layout.util.CollectionPaginationUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.io.unsync.UnsyncStringWriter;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -72,13 +71,10 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.segments.SegmentsEntryRetriever;
-import com.liferay.segments.context.RequestContextMapper;
 import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -512,22 +508,17 @@ public class GetCollectionFieldMVCResourceCommand
 
 			displayObjectJSONObject.put("fieldId", infoField.getUniqueId());
 
-			try {
-				Object value = _fragmentEntryProcessorHelper.getFieldValue(
-					displayObjectJSONObject, new HashMap<>(),
-					fragmentEntryProcessorContext);
+			Object value =
+				_fragmentEntryProcessorHelper.getMappedInfoItemFieldValue(
+					displayObjectJSONObject, infoField.getUniqueId(),
+					infoItemFieldValues,
+					fragmentEntryProcessorContext.getLocale());
 
-				displayObjectJSONObject.put(
-					infoField.getName(), value
-				).put(
-					infoField.getUniqueId(), value
-				);
-			}
-			catch (PortalException portalException) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(portalException);
-				}
-			}
+			displayObjectJSONObject.put(
+				infoField.getName(), value
+			).put(
+				infoField.getUniqueId(), value
+			);
 		}
 
 		return displayObjectJSONObject;
@@ -586,10 +577,6 @@ public class GetCollectionFieldMVCResourceCommand
 	private boolean _hasViewPermission(
 		HttpServletRequest httpServletRequest,
 		ListObjectReference listObjectReference) {
-
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-169923")) {
-			return true;
-		}
 
 		Class<? extends ListObjectReference> listObjectReferenceClass =
 			listObjectReference.getClass();
@@ -654,12 +641,6 @@ public class GetCollectionFieldMVCResourceCommand
 
 	@Reference
 	private Portal _portal;
-
-	@Reference
-	private RequestContextMapper _requestContextMapper;
-
-	@Reference
-	private SegmentsEntryRetriever _segmentsEntryRetriever;
 
 	@Reference
 	private SegmentsExperienceLocalService _segmentsExperienceLocalService;

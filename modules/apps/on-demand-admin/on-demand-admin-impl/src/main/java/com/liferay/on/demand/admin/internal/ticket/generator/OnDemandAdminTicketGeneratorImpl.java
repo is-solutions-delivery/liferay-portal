@@ -33,6 +33,7 @@ import com.liferay.portal.kernel.util.PwdGenerator;
 import com.liferay.portal.security.audit.event.generators.util.AuditMessageBuilder;
 
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import org.osgi.service.component.annotations.Component;
@@ -50,17 +51,27 @@ public class OnDemandAdminTicketGeneratorImpl
 			Company company, String justification, long requestorUserId)
 		throws PortalException {
 
+		return generate(
+			company, justification, _userLocalService.getUser(requestorUserId));
+	}
+
+	public Ticket generate(
+			Company company, String justification, User requestorUser)
+		throws PortalException {
+
 		_onDemandAdminHelper.checkRequestAdministratorAccessPermission(
-			company.getCompanyId(), requestorUserId);
+			company.getCompanyId(), requestorUser.getUserId());
 
-		User requestorUser = _userLocalService.getUser(requestorUserId);
-
-		User user = _addOnDemandAdminUser(company, requestorUser);
+		User user = _addOnDemandAdminUser(
+			requestorUser.getUserId(), company.getCompanyId(), company.getMx(),
+			requestorUser.getLocale(), requestorUser.getFirstName(),
+			requestorUser.getMiddleName(), requestorUser.getLastName(),
+			requestorUser.getMale());
 
 		AuditMessage auditMessage = AuditMessageBuilder.buildAuditMessage(
 			OnDemandAdminConstants.
 				AUDIT_EVENT_TYPE_ON_DEMAND_ADMIN_TICKET_GENERATED,
-			User.class.getName(), requestorUserId, null);
+			User.class.getName(), requestorUser.getUserId(), null);
 
 		auditMessage.setAdditionalInfo(
 			JSONUtil.put(
@@ -94,38 +105,36 @@ public class OnDemandAdminTicketGeneratorImpl
 		}
 	}
 
-	private User _addOnDemandAdminUser(Company company, User requestorUser)
+	private User _addOnDemandAdminUser(
+			long userId, long companyId, String mx, Locale locale,
+			String firstName, String middleName, String lastName, boolean male)
 		throws PortalException {
 
 		try (SafeCloseable safeCloseable =
-				CompanyThreadLocal.setWithSafeCloseable(
-					company.getCompanyId())) {
+				CompanyThreadLocal.setWithSafeCloseable(companyId)) {
 
 			String password = PwdGenerator.getPassword(20);
 
-			String screenName = _getScreenName(requestorUser.getUserId(), 0);
+			String screenName = _getScreenName(userId, 0);
 
-			String emailAddress = screenName + StringPool.AT + company.getMx();
+			String emailAddress = screenName + StringPool.AT + mx;
 
 			Date date = new Date();
 			Role role = _roleLocalService.getRole(
-				company.getCompanyId(), RoleConstants.ADMINISTRATOR);
+				companyId, RoleConstants.ADMINISTRATOR);
 
 			User user = _userLocalService.addUser(
-				0, company.getCompanyId(), false, password, password, true,
-				null, emailAddress, requestorUser.getLocale(),
-				requestorUser.getFirstName(), requestorUser.getMiddleName(),
-				requestorUser.getLastName(), 0, 0, requestorUser.isMale(),
-				date.getMonth(), date.getDay(), date.getYear(), null,
+				0, companyId, false, password, password, true, null,
+				emailAddress, locale, firstName, middleName, lastName, 0, 0,
+				male, date.getMonth(), date.getDay(), date.getYear(), null,
 				UserConstants.TYPE_REGULAR, null, null,
 				new long[] {role.getRoleId()}, null, false,
 				new ServiceContext());
 
-			screenName = _getScreenName(
-				requestorUser.getUserId(), user.getUserId());
+			screenName = _getScreenName(userId, user.getUserId());
 
 			user.setScreenName(screenName);
-			user.setEmailAddress(screenName + StringPool.AT + company.getMx());
+			user.setEmailAddress(screenName + StringPool.AT + mx);
 
 			user.setEmailAddressVerified(true);
 

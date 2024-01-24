@@ -25,6 +25,8 @@ definition {
 			PortalInstances.tearDownCP();
 		}
 		else {
+			JSONGroup.deleteGroupByName(groupName = "Test Site Name");
+
 			User.logoutPG();
 		}
 	}
@@ -173,6 +175,51 @@ definition {
 		Navigator.openSpecificURL(url = "${portalURL}/web/test-site-name/-/link-");
 
 		AssetPublisherPortlet.viewAssetPG(assetTitle = "WC WebContent Title");
+	}
+
+	@description = "This validates that the redirect URL message can be disabled in System Settings"
+	@priority = 3
+	test CanDisableLocalizedRedirectMessage {
+		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
+
+		var portalURL = PropsUtil.get("portal.url");
+
+		PagesAdmin.openToConfigurePublicPage(
+			groupName = "Test Site Name",
+			layoutName = "Test Source Page",
+			siteURLKey = "test-site-name");
+
+		PagesAdmin.addLocalizedFriendlyURL(
+			friendlyURLLocalizedList = "es-ES,es-ES",
+			localizedFriendlyURLList = "/pagina-de-prueba,/nueva-pagina-de-prueba",
+			localizedNameList = "Pagina de prueba,-");
+
+		ApplicationsMenu.gotoPortlet(
+			category = "Configuration",
+			panel = "Control Panel",
+			portlet = "System Settings");
+
+		SystemSettings.gotoConfiguration(
+			configurationCategory = "Pages",
+			configurationName = "Friendly URL Redirection",
+			configurationScope = "Virtual Instance Scope");
+
+		FormFields.disableCheckbox(fieldName = "Show Alternative Layout Friendly URL Message");
+
+		SystemSettings.saveConfiguration();
+
+		Navigator.openSpecificURL(url = "${portalURL}/es/web/test-site-name/test-source-page");
+
+		AssertLocation(value1 = "${portalURL}/es/web/test-site-name/nueva-pagina-de-prueba");
+
+		AssertVisible(
+			key_pageName = "Pagina de prueba",
+			locator1 = "Home#PAGE_ACTIVE");
+
+		AssertTextNotEquals.assertNotPartialMatch(
+			locator1 = "Message#INFO_2",
+			value1 = "Usted fue redirigido a ${portalURL}/es/web/test-site-name/nueva-pagina-de-prueba");
 	}
 
 	@description = "This ensures that Users can re-add the same friendly URL for different languages in a layout."
@@ -359,13 +406,48 @@ definition {
 			localizedFriendlyURLList = "/pagina-de-prueba,/nueva-pagina-de-prueba",
 			localizedNameList = "Pagina de prueba,-");
 
-		Navigator.openSpecificURL(url = "${portalURL}/es/web/test-site-name/pagina-de-prueba");
+		Navigator.openSpecificURL(url = "${portalURL}/es/web/test-site-name/test-source-page");
 
 		AssertLocation(value1 = "${portalURL}/es/web/test-site-name/nueva-pagina-de-prueba");
 
 		AssertVisible(
 			key_pageName = "Pagina de prueba",
 			locator1 = "Home#PAGE_ACTIVE");
+
+		AssertTextEquals.assertPartialText(
+			locator1 = "Message#INFO_2",
+			value1 = "Usted fue redirigido a ${portalURL}/es/web/test-site-name/nueva-pagina-de-prueba");
+	}
+
+	@description = "This case covers LPS-168805. This ensures that localized friendly uRL deleted and added to history."
+	@priority = 3
+	test CanRemoveLocalizedFriendlyURL {
+		PagesAdmin.openToConfigurePublicPage(
+			groupName = "Test Site Name",
+			layoutName = "Test Source Page",
+			siteURLKey = "test-site-name");
+
+		PagesAdmin.addLocalizedFriendlyURL(
+			friendlyURLLocalizedList = "es-ES",
+			localizedFriendlyURLList = "/pagina-de-prueba",
+			localizedNameList = "Pagina de prueba");
+
+		PagesAdmin.deleteFriendlyURL(locale = "es-ES");
+
+		PortletEntry.changeLocale(
+			fieldName = "Friendly URL",
+			locale = "es-ES");
+
+		AssertTextEquals(
+			inputFieldId = "friendlyURL",
+			locator1 = "TextInput#TEXT_INPUT_ID",
+			value1 = "");
+
+		PagesAdmin.gotoFriendlyURLHistory();
+
+		PagesAdmin.viewActiveURL(activeURL = "/test-source-page");
+
+		PagesAdmin.viewOldFriendlyURL(oldFriendlyURL = "/pagina-de-prueba");
 	}
 
 	@description = "This ensures that the old friendlyURL can be removed from the history."

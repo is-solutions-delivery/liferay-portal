@@ -8,15 +8,12 @@ package com.liferay.portal.db.partition.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.db.partition.DBPartitionUtil;
 import com.liferay.portal.db.partition.test.util.BaseDBPartitionTestCase;
+import com.liferay.portal.db.partition.util.DBPartitionUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
-import com.liferay.portal.test.log.LogCapture;
-import com.liferay.portal.test.log.LogEntry;
-import com.liferay.portal.test.log.LoggerTestUtil;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -59,8 +56,8 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 	public void setUp() throws Exception {
 		for (long companyId : COMPANY_IDS) {
 			db.runSQL(
-				"create schema if not exists " + getSchemaName(companyId) +
-					" character set utf8");
+				dbPartitionDB.getCreatePartitionSQL(
+					connection, getPartitionName(companyId)));
 		}
 	}
 
@@ -110,39 +107,12 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 		try (Statement statement = connection.createStatement()) {
 			for (long companyId : COMPANY_IDS) {
 				statement.execute(
-					"select 1 from " + getSchemaName(companyId) +
+					"select 1 from " + getPartitionName(companyId) +
 						".CompanyInfo");
 			}
 		}
 		finally {
-			removeDBPartitions(false);
-		}
-	}
-
-	@Test
-	public void testAddDBPartitionUsesDBCharacterSetEncoding()
-		throws Exception {
-
-		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
-				"com.liferay.portal.db.partition.DBPartitionUtil",
-				LoggerTestUtil.INFO)) {
-
-			addDBPartitions();
-
-			List<LogEntry> logEntries = logCapture.getLogEntries();
-
-			Assert.assertEquals(logEntries.toString(), 2, logEntries.size());
-
-			String message = String.valueOf(logEntries.get(0));
-
-			Assert.assertTrue(
-				message,
-				message.contains(
-					"Obtained character set encoding from session with " +
-						"value:"));
-		}
-		finally {
-			removeDBPartitions(false);
+			removeDBPartitions();
 		}
 	}
 
@@ -150,6 +120,96 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 	public void testAddDefaultDBPartition() throws PortalException {
 		Assert.assertFalse(
 			DBPartitionUtil.addDBPartition(portal.getDefaultCompanyId()));
+	}
+
+	@Test
+	public void testExtractAndInsertDBPartition() throws Exception {
+		try {
+			int companyCount = _getDefaultSchemaCount("Company");
+			int virtualHostCount = _getDefaultSchemaCount("VirtualHost");
+
+			addDBPartitions();
+			insertPartitionRequiredData();
+
+			HashMap<Long, List<String>> viewNames = new HashMap<>();
+			HashMap<Long, Integer> tablesCount = new HashMap<>();
+
+			for (long companyId : COMPANY_IDS) {
+				viewNames.put(companyId, _getObjectNames("VIEW", companyId));
+				tablesCount.put(companyId, _getTablesCount(companyId));
+			}
+
+			extractDBPartitions();
+
+			Assert.assertEquals(
+				companyCount, _getDefaultSchemaCount("Company"));
+			Assert.assertEquals(
+				virtualHostCount, _getDefaultSchemaCount("VirtualHost"));
+
+			insertDBPartitions();
+
+			Assert.assertEquals(
+				companyCount + COMPANY_IDS.length,
+				_getDefaultSchemaCount("Company"));
+			Assert.assertEquals(
+				virtualHostCount + COMPANY_IDS.length,
+				_getDefaultSchemaCount("VirtualHost"));
+
+			for (long companyId : COMPANY_IDS) {
+				Assert.assertEquals(
+					viewNames.get(companyId),
+					_getObjectNames("VIEW", companyId));
+				Assert.assertEquals(
+					(int)tablesCount.get(companyId),
+					_getTablesCount(companyId));
+			}
+		}
+		finally {
+			deletePartitionRequiredData();
+			removeDBPartitions();
+		}
+	}
+
+	@Test
+	public void testExtractDBPartition() throws Exception {
+		addDBPartitions();
+
+		try {
+			HashMap<Long, List<String>> viewNames = new HashMap<>();
+			HashMap<Long, Integer> tablesCount = new HashMap<>();
+
+			for (long companyId : COMPANY_IDS) {
+				List<String> views = _getObjectNames("VIEW", companyId);
+
+				viewNames.put(companyId, views);
+
+				Assert.assertNotEquals(0, views.size());
+
+				tablesCount.put(companyId, _getTablesCount(companyId));
+			}
+
+			extractDBPartitions();
+
+			for (long companyId : COMPANY_IDS) {
+				List<String> views = viewNames.get(companyId);
+
+				Assert.assertEquals(
+					tablesCount.get(companyId) + views.size(),
+					_getTablesCount(companyId));
+
+				Assert.assertEquals(0, _getViewsCount(companyId));
+
+				for (String viewName : viewNames.get(companyId)) {
+					Assert.assertEquals(
+						viewName + " count",
+						_getCount(viewName, true, companyId),
+						_getCount(viewName, false, companyId));
+				}
+			}
+		}
+		finally {
+			removeDBPartitions();
+		}
 	}
 
 	@Test
@@ -183,88 +243,7 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 		}
 		finally {
 			deletePartitionRequiredData();
-			removeDBPartitions(false);
-		}
-	}
-
-	@Test
-	public void testMigrateDBPartition() throws Exception {
-		addDBPartitions();
-
-		try {
-			HashMap<Long, List<String>> viewNames = new HashMap<>();
-			HashMap<Long, Integer> tablesCount = new HashMap<>();
-
-			for (long companyId : COMPANY_IDS) {
-				List<String> views = _getObjectNames("VIEW", companyId);
-
-				viewNames.put(companyId, views);
-
-				Assert.assertNotEquals(0, views.size());
-
-				tablesCount.put(companyId, _getTablesCount(companyId));
-			}
-
-			removeDBPartitions(true);
-
-			for (long companyId : COMPANY_IDS) {
-				List<String> views = viewNames.get(companyId);
-
-				Assert.assertEquals(
-					tablesCount.get(companyId) + views.size(),
-					_getTablesCount(companyId));
-
-				Assert.assertEquals(0, _getViewsCount(companyId));
-
-				for (String viewName : viewNames.get(companyId)) {
-					Assert.assertEquals(
-						viewName + " count",
-						_getCount(viewName, true, companyId),
-						_getCount(viewName, false, companyId));
-				}
-			}
-		}
-		finally {
-			removeDBPartitions(false);
-		}
-	}
-
-	@Test
-	public void testMigrateDBPartitionRollback() throws Exception {
-		addDBPartitions();
-
-		try {
-			for (long companyId : COMPANY_IDS) {
-				int tablesCount = _getTablesCount(companyId);
-				int viewsCount = _getViewsCount(companyId);
-
-				try {
-					String fullTestTableName =
-						getSchemaName(companyId) + "." +
-							TEST_CONTROL_TABLE_NAME;
-
-					createAndPopulateControlTable(TEST_CONTROL_TABLE_NAME);
-					createAndPopulateControlTable(fullTestTableName);
-
-					try {
-						removeDBPartitions(true);
-
-						Assert.fail("Should throw an exception");
-					}
-					catch (Exception exception) {
-						Assert.assertEquals(
-							tablesCount, _getTablesCount(companyId));
-						Assert.assertEquals(
-							viewsCount, _getViewsCount(companyId) - 1);
-					}
-				}
-				finally {
-					dropTable(TEST_CONTROL_TABLE_NAME);
-				}
-			}
-		}
-		finally {
-			removeDBPartitions(false);
+			removeDBPartitions();
 		}
 	}
 
@@ -272,17 +251,28 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 	public void testRemoveDBPartition() throws Exception {
 		addDBPartitions();
 
-		removeDBPartitions(false);
+		removeDBPartitions();
 
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
 
 		try (ResultSet resultSet = databaseMetaData.getCatalogs()) {
 			while (resultSet.next()) {
-				String schemaName = resultSet.getString("TABLE_CAT");
+				String catalogName = resultSet.getString("TABLE_CAT");
 
 				for (long companyId : COMPANY_IDS) {
 					Assert.assertNotEquals(
-						getSchemaName(companyId), schemaName);
+						getPartitionName(companyId), catalogName);
+				}
+			}
+		}
+
+		try (ResultSet resultSet = databaseMetaData.getSchemas()) {
+			while (resultSet.next()) {
+				String schemaName = resultSet.getString("TABLE_SCHEM");
+
+				for (long companyId : COMPANY_IDS) {
+					Assert.assertNotEquals(
+						getPartitionName(companyId), schemaName);
 				}
 			}
 		}
@@ -302,11 +292,24 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 
 		if (!defaultSchema) {
 			fullTableName =
-				getSchemaName(companyId) + StringPool.PERIOD + tableName;
+				getPartitionName(companyId) + StringPool.PERIOD + tableName;
 		}
 
 		try (PreparedStatement preparedStatement = connection.prepareStatement(
 				"select count(1) from " + fullTableName + whereClause);
+			ResultSet resultSet = preparedStatement.executeQuery()) {
+
+			if (resultSet.next()) {
+				return resultSet.getInt(1);
+			}
+		}
+
+		throw new Exception("Table does not exist");
+	}
+
+	private int _getDefaultSchemaCount(String tableName) throws Exception {
+		try (PreparedStatement preparedStatement = connection.prepareStatement(
+				"select count(1) from " + tableName);
 			ResultSet resultSet = preparedStatement.executeQuery()) {
 
 			if (resultSet.next()) {
@@ -324,8 +327,11 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 
 		List<String> objectNames = new ArrayList<>();
 
+		String partitionName = getPartitionName(companyId);
+
 		try (ResultSet resultSet = databaseMetaData.getTables(
-				getSchemaName(companyId), dbInspector.getSchema(), null,
+				dbPartitionDB.getCatalog(connection, partitionName),
+				dbPartitionDB.getSchema(connection, partitionName), null,
 				new String[] {objectType})) {
 
 			while (resultSet.next()) {

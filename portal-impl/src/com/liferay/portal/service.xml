@@ -1532,6 +1532,9 @@
 
 		<!-- Finder methods -->
 
+		<finder name="OwnerType" return-type="Collection">
+			<finder-column name="ownerType" />
+		</finder>
 		<finder name="O_O" return-type="PortalPreferences">
 			<finder-column name="ownerId" />
 			<finder-column name="ownerType" />
@@ -2840,6 +2843,12 @@
 			<finder-column name="userId" />
 			<finder-column name="actionRequired" />
 			<finder-column name="archived" />
+		</finder>
+		<finder name="U_T_GteT_D" return-type="Collection">
+			<finder-column name="userId" />
+			<finder-column name="type" />
+			<finder-column comparator="&gt;=" name="timestamp" />
+			<finder-column name="delivered" />
 		</finder>
 		<finder name="U_T_DT_D" return-type="Collection">
 			<finder-column name="userId" />

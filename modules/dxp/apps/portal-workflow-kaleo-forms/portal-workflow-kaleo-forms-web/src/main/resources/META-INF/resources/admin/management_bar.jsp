@@ -21,8 +21,8 @@
 	%>'
 	clearResultsURL="<%= kaleoFormsAdminDisplayContext.getClearResultsURL() %>"
 	creationMenu="<%= kaleoFormsAdminDisplayContext.getCreationMenu() %>"
-	filterDropdownItems="<%= kaleoFormsAdminDisplayContext.getFilterItemsDropdownItems() %>"
 	itemsTotal="<%= kaleoFormsAdminDisplayContext.getTotalItems() %>"
+	orderDropdownItems="<%= kaleoFormsAdminDisplayContext.getOrderItemsDropdownItems() %>"
 	propsTransformer="admin/js/KaleoFormsAdminManagementToolbarPropsTransformer"
 	searchActionURL="<%= kaleoFormsAdminDisplayContext.getSearchActionURL() %>"
 	searchContainerId="<%= kaleoFormsAdminDisplayContext.getSearchContainerId() %>"

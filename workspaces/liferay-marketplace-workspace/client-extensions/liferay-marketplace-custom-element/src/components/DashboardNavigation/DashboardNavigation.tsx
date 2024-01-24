@@ -5,12 +5,14 @@
 
 import ClayDropDown from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
-import {useNavigate, useSearchParams} from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 import {getAccountImage} from '../../utils/util';
 import {DashboardNavigationList} from './DashboardNavigationList';
 
 import './DashboardNavigation.scss';
+import {Liferay} from '../../liferay/liferay';
+import CommerceSelectAccountImpl from '../../services/rest/CommerceSelectAccount';
 import {AppProps} from '../DashboardTable/DashboardTable';
 export interface DashboardListItems {
 	itemIcon: string;
@@ -37,9 +39,6 @@ export function DashboardNavigation({
 	dashboardNavigationItems,
 }: DashboardNavigationProps) {
 	const navigate = useNavigate();
-	const [searchParams] = useSearchParams();
-
-	const accountId = searchParams.get('accountId');
 
 	return (
 		<div className="dashboard-navigation-container">
@@ -54,7 +53,10 @@ export function DashboardNavigation({
 							/>
 
 							<div className="dashboard-navigation-header-text-container">
-								<span className="dashboard-navigation-header-title">
+								<span
+									className="dashboard-navigation-header-title"
+									title={currentAccount?.name}
+								>
 									{currentAccount?.name}
 								</span>
 
@@ -74,8 +76,21 @@ export function DashboardNavigation({
 				<ClayDropDown.ItemList>
 					{accounts.map((account) => (
 						<ClayDropDown.Item
+							active={account.id === currentAccount?.id}
 							key={account.id}
-							onClick={() => navigate(`?accountId=${account.id}`)}
+							onClick={() =>
+								CommerceSelectAccountImpl.selectAccount(
+									account.id
+								).then(() => {
+									Liferay.CommerceContext.account = {
+										accountId: account.id,
+									};
+
+									navigate('/');
+
+									window.location.reload();
+								})
+							}
 						>
 							{account.name}
 						</ClayDropDown.Item>
@@ -86,7 +101,6 @@ export function DashboardNavigation({
 			<div className="dashboard-navigation-body">
 				{dashboardNavigationItems.map((navigationMock, index) => (
 					<DashboardNavigationList
-						accountId={accountId as string}
 						key={index}
 						navigationItemMock={navigationMock}
 					/>

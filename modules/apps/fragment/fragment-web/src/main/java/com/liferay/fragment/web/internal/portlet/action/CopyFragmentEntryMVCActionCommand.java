@@ -36,11 +36,10 @@ import com.liferay.portal.kernel.util.MimeTypesUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.URLUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-
-import java.io.InputStream;
 
 import java.net.URL;
 
@@ -152,7 +151,7 @@ public class CopyFragmentEntryMVCActionCommand extends BaseMVCActionCommand {
 			StringBundler.concat(
 				fragmentComposition.getName(), StringPool.SPACE,
 				StringPool.OPEN_PARENTHESIS,
-				_language.get(LocaleUtil.getMostRelevantLocale(), "copy"),
+				_language.get(LocaleUtil.getSiteDefault(), "copy"),
 				StringPool.CLOSE_PARENTHESIS),
 			null, fragmentComposition.getData(), previewFileEntryId,
 			WorkflowConstants.STATUS_APPROVED, serviceContext);
@@ -180,7 +179,7 @@ public class CopyFragmentEntryMVCActionCommand extends BaseMVCActionCommand {
 			StringBundler.concat(
 				fragmentEntry.getName(), StringPool.SPACE,
 				StringPool.OPEN_PARENTHESIS,
-				_language.get(LocaleUtil.getMostRelevantLocale(), "copy"),
+				_language.get(LocaleUtil.getSiteDefault(), "copy"),
 				StringPool.CLOSE_PARENTHESIS),
 			fragmentEntry.getCss(), fragmentEntry.getHtml(),
 			fragmentEntry.getJs(), fragmentEntry.isCacheable(),
@@ -195,13 +194,7 @@ public class CopyFragmentEntryMVCActionCommand extends BaseMVCActionCommand {
 		String imagePreviewURL) {
 
 		try {
-			URL url = new URL(imagePreviewURL);
-
-			byte[] bytes = null;
-
-			try (InputStream inputStream = url.openStream()) {
-				bytes = FileUtil.getBytes(inputStream);
-			}
+			byte[] bytes = URLUtil.toByteArray(new URL(imagePreviewURL));
 
 			String shortFileName = FileUtil.getShortFileName(imagePreviewURL);
 

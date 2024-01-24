@@ -188,6 +188,54 @@ public class ComboServletTest {
 	}
 
 	@Test
+	public void testMaxFiles() throws Exception {
+		MockHttpServletRequest mockHttpServletRequest =
+			new MockHttpServletRequest();
+
+		int comboMaxFiles = 10;
+
+		ReflectionTestUtil.setFieldValue(
+			PropsValues.class, "COMBO_MAX_FILES", comboMaxFiles);
+
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < comboMaxFiles; i++) {
+			if (i > 0) {
+				sb.append(StringPool.AMPERSAND);
+			}
+
+			sb.append("/js/javascript");
+			sb.append(i);
+			sb.append(".js");
+		}
+
+		mockHttpServletRequest.setQueryString(sb.toString());
+
+		MockHttpServletResponse mockHttpServletResponse =
+			new MockHttpServletResponse();
+
+		_comboServlet.service(mockHttpServletRequest, mockHttpServletResponse);
+
+		Assert.assertEquals(
+			HttpServletResponse.SC_OK, mockHttpServletResponse.getStatus());
+
+		sb.append(StringPool.AMPERSAND);
+		sb.append("/js/another_one.js");
+
+		mockHttpServletRequest = new MockHttpServletRequest();
+
+		mockHttpServletRequest.setQueryString(sb.toString());
+
+		mockHttpServletResponse = new MockHttpServletResponse();
+
+		_comboServlet.service(mockHttpServletRequest, mockHttpServletResponse);
+
+		Assert.assertEquals(
+			HttpServletResponse.SC_BAD_REQUEST,
+			mockHttpServletResponse.getStatus());
+	}
+
+	@Test
 	public void testMixedExtensionsRequest() throws Exception {
 		LanguageUtil languageUtil = new LanguageUtil();
 
@@ -207,6 +255,15 @@ public class ComboServletTest {
 		Assert.assertEquals(
 			HttpServletResponse.SC_BAD_REQUEST,
 			mockHttpServletResponse.getStatus());
+	}
+
+	@Test
+	public void testServiceWithNoncanonicalPaths() throws Exception {
+		_testService("/js/aui.js", "/./js/aui.js", _portalServletContext);
+		_testService("/js/aui.js", "/js/./aui.js", _portalServletContext);
+		_testService("/js/aui.js", "/js//aui.js", _portalServletContext);
+		_testService("/js/aui.js", "/js/down/../aui.js", _portalServletContext);
+		_testService(null, "/../js/aui.js", _portalServletContext);
 	}
 
 	@Test
@@ -391,7 +448,7 @@ public class ComboServletTest {
 			mockHttpServletRequest, new MockHttpServletResponse());
 
 		Mockito.verify(
-			servletContext
+			servletContext, Mockito.times((path == null) ? 0 : 1)
 		).getRequestDispatcher(
 			path
 		);

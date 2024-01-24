@@ -1,45 +1,82 @@
 definition {
 
-	@summary = "Default summary"
-	macro addActions(messageType = null, icon = null, headlessAction = null, type = null, url = null, actionName = null, confirmationMessage = null) {
-		if (isSet(actionName)) {
-			var key_actionNameList = ${actionName};
-		}
+	@summary = "Add a Item or Creation Action in Data Set"
+	macro addActions(messageType = null, icon = null, headlessAction = null, type = null,method = null, url = null, actionName = null,key_actionNameList = null, confirmationMessage = null, actionTab = null, successMessage = null, errorMessage = null, title = null, variant = null) {
+		var key_actionNameList = ${actionName};
 
-		if (isSet(icon)) {
-			var key_actionIcon = ${icon};
-		}
+		if (isSet(actionTab)) {
+			Button.click(button = ${actionTab});
 
-		if (isSet(type)) {
-			var key_actionType = ${type};
+			if (${actionTab} == "Creation Actions") {
+				Click.mouseOverClick(locator1 = "DataSet#PLUS_N");
+			}
 		}
-
-		if (isSet(messageType)) {
-			var key_actionMessageType = ${messageType};
-		}
-
-		for (var key_actionName : list ${key_actionNameList}) {
+		else {
 			LexiconEntry.gotoAdd();
+		}
 
+		for (var actionName : list ${key_actionNameList}) {
 			Type(
 				key_unnamedTitle = "",
 				locator1 = "TextInput#DEPOT_UNNAMED_DEFAULT_TITLE",
-				value1 = ${key_actionName});
+				value1 = ${actionName});
 
-			Select(
-				key_fieldLabel = "Icon",
-				locator1 = "Select#GENERIC_SELECT_FIELD",
-				value1 = ${key_actionIcon});
+			if (isSet(icon)) {
+				LexiconEntry.gotoAdd();
 
-			Select(
-				key_fieldLabel = "Type",
-				locator1 = "Select#GENERIC_SELECT_FIELD",
-				value1 = ${key_actionType});
+				SelectFrameTop();
 
-			Type(
-				key_fieldId = "URL",
-				locator1 = "TextArea#ANY_ID",
-				value1 = ${url});
+				Type(
+					locator1 = "DataSet#MODAL_SEARCH",
+					value1 = ${icon});
+
+				Click.mouseOverClick(
+					key_text = ${icon},
+					locator1 = "Modal#MODAL_ICON");
+			}
+
+			if (isSet(type)) {
+				Select(
+					key_fieldLabel = "Type",
+					locator1 = "Select#GENERIC_SELECT_FIELD",
+					value1 = ${type});
+			}
+
+			if (isSet(variant)) {
+				Select(
+					key_fieldLabel = "Variant",
+					locator1 = "Select#GENERIC_SELECT_FIELD",
+					value1 = ${variant});
+			}
+
+			if (isSet(title)) {
+				if (IsElementPresent(key_fieldName = "add-here-the-title-of-the-modal", locator1 = "DataSet#PRESELECT_VALUE_INPUT")) {
+					Type(
+						key_fieldName = "add-here-the-title-of-the-modal",
+						locator1 = "DataSet#PRESELECT_VALUE_INPUT",
+						value1 = ${title});
+				}
+				else {
+					Type(
+						key_fieldName = "add-here-the-title-of-the-side-panel",
+						locator1 = "DataSet#PRESELECT_VALUE_INPUT",
+						value1 = ${title});
+				}
+			}
+
+			if (isSet(method)) {
+				Select(
+					key_fieldLabel = "Method",
+					locator1 = "Select#GENERIC_SELECT_FIELD",
+					value1 = ${method});
+			}
+
+			if (isSet(url)) {
+				Type(
+					key_fieldId = "URL",
+					locator1 = "TextArea#ANY_ID",
+					value1 = ${url});
+			}
 
 			if (isSet(headlessAction)) {
 				Type(
@@ -55,19 +92,61 @@ definition {
 					value1 = ${confirmationMessage});
 			}
 
-			if (isSet(key_actionMessageType)) {
+			if (isSet(messageType)) {
 				Select(
 					key_fieldLabel = "Message Type",
 					locator1 = "Select#GENERIC_SELECT_FIELD",
-					value1 = ${key_actionMessageType});
+					value1 = ${messageType});
+			}
+
+			if (isSet(successMessage)) {
+				Type(
+					key_option = "Success",
+					locator1 = "DataSet#MESSAGE_FIELD",
+					value1 = ${successMessage});
+			}
+
+			if (isSet(errorMessage)) {
+				ClickNoError(
+					key_text = "Error",
+					locator1 = "Button#ANY");
+
+				Type(
+					key_option = "Error",
+					locator1 = "DataSet#MESSAGE_FIELD",
+					value1 = ${errorMessage});
 			}
 
 			Click(
-				key_fieldLabel = "Icon",
-				locator1 = "Select#GENERIC_SELECT_FIELD");
+				key_text = ${icon},
+				locator1 = "Icon#ANY");
 
 			PortletEntry.save();
 		}
+	}
+
+	@summary = "Default summary"
+	macro addAFDSFieldWithTranslation(selectLanguage = null, key_fieldName = null, dropdownMenuItem = null, key_newLabel = null) {
+		Click(
+			key_fieldName = ${key_fieldName},
+			locator1 = "DataSet#VERTICAL_ELLIPSIS_BY_FIELDS_NAME");
+
+		MenuItem.click(menuItem = ${dropdownMenuItem});
+
+		Click(
+			key_symbolName = "",
+			locator1 = "FormViewBuilder#BUTTON_LOCALIZATION");
+
+		Click(
+			key_menuItem = ${selectLanguage},
+			locator1 = "MenuItem#MENU_ITEM_SPECIFIC");
+
+		Type(
+			key_text = "Label",
+			locator1 = "TextInput#ANY",
+			value1 = ${key_newLabel});
+
+		Button.clickSave();
 	}
 
 	@summary = "Default summary"
@@ -210,6 +289,17 @@ definition {
 				checkboxName = ${key_fieldItem},
 				locator1 = "Checkbox#ANY_CHECKBOX");
 		}
+	}
+
+	@summary = "Default summary"
+	macro chooseFilterType(filterType = null) {
+		DataSetAdmin.goToTab(tabName = "Filters");
+
+		LexiconEntry.gotoAdd();
+
+		Click(
+			key_fieldName = ${filterType},
+			locator1 = "FormViewBuilder#OBJECT_FIELD_BUTTON_DROPDOWN");
 	}
 
 	@summary = "Default summary"
@@ -411,17 +501,85 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro createFilters(key_filterList = null) {
+	macro createFilters(key_filterList = null,filterType = null,filterName = null,key_text = null) {
 		for (var key_filterType : list ${key_filterList}) {
 			LexiconEntry.gotoAdd();
 
-			Select(
-				locator1 = "DataSet#FILTER_BY_SELECT",
-				value1 = ${key_filterType});
+			MenuItem.click(menuItem = ${filterType});
+
+			SelectFrameTop();
+
+			if (isSet(name)) {
+				Type(
+					key_text = "Name",
+					locator1 = "TextInput#ANY",
+					value1 = ${filterName});
+			}
+
+			Click(locator1 = "DataSet#FILTER_BY_SELECT");
+
+			MenuItem.click(menuItem = ${key_filterType});
 
 			Click(
 				key_text = "Save",
 				locator1 = "CP2ActivationKeys#KEY_DEACTIVATION_TERMS");
+		}
+	}
+
+	@summary = "Default summary"
+	macro createSelectionFilter(filterName = null, filterBy = null, picklistName = null, selection = null, preselectedValue = null) {
+		DataSetAdmin.selectFilterType(key_filterType = "Selection");
+
+		PortletEntry.inputText(
+			fieldLabel = "Name",
+			text = ${filterName});
+
+		Click(
+			dropdownLabel = "Select",
+			locator1 = "Dropdown#ANY_DROPDOWN_LABEL");
+
+		DropdownMenuItem.click(menuItem = ${filterBy});
+
+		Select(
+			locator1 = "DataSet#SOURCE_OPTIONS_SELECT",
+			value1 = ${picklistName});
+
+		if (isSet(selection)) {
+			Click(
+				locator1 = "Radio#ANY",
+				radioLabel = ${selection});
+		}
+
+		for (var preselectedValue : list ${preselectedValueList}) {
+			DataSetAdmin.selectPreselectedValue(preselectedValue = ${preselectedValue});
+		}
+
+		Click(locator1 = "DataSet#MODAL_SAVE_BUTTON");
+	}
+
+	@summary = "Delete a Item or Creation Action in Data Set"
+	macro deleteActionEntry(actionName = null, actionTab = null) {
+		if (isSet(actionTab)) {
+			Button.click(button = ${actionTab});
+
+			if (${actionTab} == "Creation Actions") {
+				Click(
+					key_tableEntry = ${actionName},
+					locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS");
+
+				MenuItem.click(menuItem = "Delete");
+
+				Button.clickDelete();
+			}
+		}
+		else {
+			Click(
+				key_tableEntry = ${actionName},
+				locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS");
+
+			MenuItem.click(menuItem = "Delete");
+
+			Button.clickDelete();
 		}
 	}
 
@@ -527,6 +685,133 @@ definition {
 		Alert.viewSuccessMessage();
 	}
 
+	@summary = "Edit a Item or Creation Action in Data Set"
+	macro editActions(newMessageType = null, newIcon = null, newHeadlessAction = null, newType = null,newMethod = null, newURL = null, newActionName = null,oldActionName = null, newConfirmationMessage = null, actionTab = null, newSuccessMessage = null, newErrorMessage = null) {
+		if (isSet(actionTab)) {
+			Button.click(button = ${actionTab});
+
+			if (${actionTab} == "Creation Actions") {
+				Click(
+					key_tableEntry = ${oldActionName},
+					locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS");
+
+				MenuItem.click(menuItem = "Edit");
+			}
+		}
+		else {
+			Click(
+				key_tableEntry = ${oldActionName},
+				locator1 = "LexiconTable#TABLE_ENTRY_ELLIPSIS");
+
+			MenuItem.click(menuItem = "Edit");
+		}
+
+		Type(
+			key_unnamedTitle = "",
+			locator1 = "TextInput#DEPOT_UNNAMED_DEFAULT_TITLE",
+			value1 = ${newActionName});
+
+		if (isSet(newIcon)) {
+			Click.mouseOverClick(
+				key_text = "change",
+				locator1 = "Icon#ANY");
+
+			SelectFrameTop();
+
+			Type(
+				locator1 = "DataSet#MODAL_SEARCH",
+				value1 = ${newIcon});
+
+			Click.mouseOverClick(
+				key_text = ${newIcon},
+				locator1 = "Modal#MODAL_ICON");
+		}
+
+		if (isSet(newType)) {
+			Select(
+				key_fieldLabel = "Type",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = ${newType});
+		}
+
+		if (isSet(newVariant)) {
+			Select(
+				key_fieldLabel = "Variant",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = ${newVariant});
+		}
+
+		if (isSet(newTitle)) {
+			if (IsElementPresent(key_fieldName = "add-here-the-title-of-the-modal", locator1 = "DataSet#PRESELECT_VALUE_INPUT")) {
+				Type(
+					key_fieldName = "add-here-the-title-of-the-modal",
+					locator1 = "DataSet#PRESELECT_VALUE_INPUT",
+					value1 = ${newTitle});
+			}
+			else {
+				Type(
+					key_fieldName = "add-here-the-title-of-the-side-panel",
+					locator1 = "DataSet#PRESELECT_VALUE_INPUT",
+					value1 = ${newTitle});
+			}
+		}
+
+		if (isSet(newMethod)) {
+			Select(
+				key_fieldLabel = "Method",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = ${newMethod});
+		}
+
+		if (isSet(newURL)) {
+			Type(
+				key_fieldId = "URL",
+				locator1 = "TextArea#ANY_ID",
+				value1 = ${newURL});
+		}
+
+		if (isSet(newHeadlessAction)) {
+			Type(
+				key_placeholder = "Add a value here.",
+				locator1 = "FrontendDataSet#PLACEHOLDER",
+				value1 = ${newHeadlessAction});
+		}
+
+		if (isSet(newConfirmationMessage)) {
+			Type(
+				key_placeholder = "Add a message here.",
+				locator1 = "FrontendDataSet#PLACEHOLDER",
+				value1 = ${newConfirmationMessage});
+		}
+
+		if (isSet(newMessageType)) {
+			Select(
+				key_fieldLabel = "Message Type",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = ${newMessageType});
+		}
+
+		if (isSet(newSuccessMessage)) {
+			Type(
+				key_option = "Success",
+				locator1 = "DataSet#MESSAGE_FIELD",
+				value1 = ${newSuccessMessage});
+		}
+
+		if (isSet(newErrorMessage)) {
+			ClickNoError(
+				key_text = "Error",
+				locator1 = "Button#ANY");
+
+			Type(
+				key_option = "Error",
+				locator1 = "DataSet#MESSAGE_FIELD",
+				value1 = ${newErrorMessage});
+		}
+
+		PortletEntry.save();
+	}
+
 	@summary = "Default summary"
 	macro editField(key_fieldItem = null, sortable = null, key_newLabel = null) {
 		Click(
@@ -557,6 +842,34 @@ definition {
 		Click(locator1 = "DataSet#MODAL_SAVE_BUTTON");
 
 		Alert.viewSuccessMessage();
+	}
+
+	@summary = "Default summary"
+	macro editFragmentFilter(newFilterValue = null, filterName = null) {
+		Click(locator1 = "FrontendDataSet#FILTER_BUTTON");
+
+		AssertVisible(
+			key_filter = ${filterName},
+			locator1 = "FrontendDataSet#FILTER_OPTION");
+
+		Click(
+			key_filter = ${filterName},
+			locator1 = "FrontendDataSet#FILTER_OPTION");
+
+		Click(
+			key_optionName = ${newFilterValue},
+			locator1 = "DataSet#RADIO_BUTTON_OPTION");
+
+		Click(locator1 = "FrontendDataSet#ADD_FILTER_BUTTON");
+	}
+
+	@summary = "Default summary"
+	macro editItem(itemName = null) {
+		Click(
+			key_fieldName = ${itemName},
+			locator1 = "DataSet#VERTICAL_ELLIPSIS_BY_FIELDS_NAME");
+
+		MenuItem.click(menuItem = "Edit");
 	}
 
 	@summary = "Default summary"
@@ -652,6 +965,25 @@ definition {
 	}
 
 	@summary = "Default summary"
+	macro openOrCloseCollapse(key_status = null, key_fieldName = null) {
+		if (${key_status} == "Open") {
+			if (IsVisible(locator1 = "DataSet#COLLAPSE_CLOSED", value1 = ${key_fieldName})) {
+				Click(
+					locator1 = "DataSet#COLLAPSE_CLOSED",
+					value1 = ${key_fieldName});
+			}
+		}
+
+		if (${key_status} == "Close") {
+			if (IsVisible(locator1 = "DataSet#COLLAPSE_OPEN", value1 = ${key_fieldName})) {
+				Click(
+					locator1 = "DataSet#COLLAPSE_OPEN",
+					value1 = ${key_fieldName});
+			}
+		}
+	}
+
+	@summary = "Default summary"
 	macro searchField(searchTerm = null) {
 		WaitForElementPresent(locator1 = "DataSet#FIELDS_TAB_SEARCH");
 
@@ -710,6 +1042,15 @@ definition {
 	}
 
 	@summary = "Default summary"
+	macro selectFilterBy(filterByField = null) {
+		Click(
+			dropdownLabel = "Select",
+			locator1 = "ObjectField#ANY_DROPDOWN_LABEL");
+
+		DropdownMenuItem.click(menuItem = ${filterByField});
+	}
+
+	@summary = "Default summary"
 	macro selectFilters(filterType = null) {
 		Select(
 			locator1 = "DataSet#FILTER_BY_SELECT",
@@ -724,24 +1065,22 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro selectPreselectedValue(picklist = null,preselectType = null,key_sortOption = null) {
-		Select(
-			locator1 = "DataSet#SOURCE_OPTIONS_SELECT",
-			value1 = ${picklist});
-
+	macro selectPreselectedValue(preselectType = null) {
 		Type(
-			key_fieldName = "Select a default value for your filter.",
-			locator1 = "ObjectCustomViews#FROM_DATE_INPUT",
-			value1 = ${preselectType});
+			ariaLabel = "Preselected Values",
+			locator1 = "TextInput#ANY_WITH_ARIA_LABEL",
+			value1 = ${preselectedValue});
+
+		DropdownMenuItem.click(menuItem = ${preselectedValue});
+	}
+
+	@summary = "Default summary"
+	macro selectPreSelectedValue(preSelectedValue = null) {
+		Click(locator1 = "DataSet#PRESELECT_VALUE_INPUT");
 
 		Click(
-			key_sortOption = ${key_sortOption},
-			locator1 = "ObjectCustomViews#SORT_OPTION",
-			value1 = ${key_sortOption});
-
-		Click(
-			key_text = "Save",
-			locator1 = "CP2ActivationKeys#KEY_DEACTIVATION_TERMS");
+			key_value = ${preSelectedValue},
+			locator1 = "DataSet#PRESELECT_VALUE_ITEM");
 	}
 
 	@summary = "Default summary"
@@ -753,6 +1092,44 @@ definition {
 		Click(
 			locator1 = "FrontendDataSet#SELECT_TYPE_PROVIDER",
 			value1 = ${key_type});
+	}
+
+	@summary = "Default summary"
+	macro selectRadioButtonOption(optionName = null) {
+		Click(
+			key_optionName = ${optionName},
+			locator1 = "DataSet#RADIO_BUTTON_OPTION");
+	}
+
+	@summary = "Creates and publishes an object with a field to be used in a data set entry "
+	macro setUpObjectForDataSet(labelName = null, objectName = null, pluralLabelName = null, scope = null, fieldBusinessType = null, fieldLabelName = null, fieldName = null, fieldType = null, ) {
+		ObjectAdmin.addObjectViaAPI(
+			labelName = ${labelName},
+			objectName = ${objectName},
+			pluralLabelName = ${pluralLabelName},
+			scope = ${scope});
+
+		ObjectAdmin.addObjectFieldViaAPI(
+			fieldBusinessType = ${fieldBusinessType},
+			fieldLabelName = ${fieldLabelName},
+			fieldName = ${fieldName},
+			fieldType = ${fieldType},
+			isRequired = "false",
+			objectName = ${objectName});
+
+		ObjectAdmin.publishObjectViaAPI(objectName = ${objectName});
+	}
+
+	@summary = "Default summary"
+	macro setUpPicklistforDataSet(picklistItemList = null) {
+		Picklist.addPicklistViaAPI(picklistName = ${picklistName});
+
+		for (var picklistItem : list ${picklistItemList}) {
+			Picklist.addPicklistItemViaAPI(
+				itemKey = ${picklistItem},
+				itemName = ${picklistItem},
+				picklistName = ${picklistName});
+		}
 	}
 
 	@summary = "Default summary"

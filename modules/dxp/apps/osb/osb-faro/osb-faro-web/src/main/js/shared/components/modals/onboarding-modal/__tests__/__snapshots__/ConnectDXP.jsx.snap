@@ -21,7 +21,7 @@ exports[`ConnectDXP renders 1`] = `
             role="presentation"
           >
             <use
-              xlink:href="#times"
+              href="#times"
             />
           </svg>
         </button>
@@ -38,7 +38,7 @@ exports[`ConnectDXP renders 1`] = `
           role="presentation"
         >
           <use
-            xlink:href="#dxp-icon"
+            href="#dxp-icon"
           />
         </svg>
         <svg
@@ -46,7 +46,7 @@ exports[`ConnectDXP renders 1`] = `
           role="presentation"
         >
           <use
-            xlink:href="#ac-horizontal-arrows"
+            href="#ac-horizontal-arrows"
           />
         </svg>
         <svg
@@ -54,7 +54,7 @@ exports[`ConnectDXP renders 1`] = `
           role="presentation"
         >
           <use
-            xlink:href="#ac-logo-grayscale"
+            href="#ac-logo-grayscale"
           />
         </svg>
       </div>
@@ -86,7 +86,6 @@ exports[`ConnectDXP renders 1`] = `
               aria-label="Click to Copy"
               class="copy-button btn btn-unstyled"
               data-clipboard-text=""
-              data-tooltip-response="Copied"
               title="Click to Copy"
               type="button"
             >
@@ -95,7 +94,7 @@ exports[`ConnectDXP renders 1`] = `
                 role="presentation"
               >
                 <use
-                  xlink:href="#copy"
+                  href="#copy"
                 />
               </svg>
             </button>
@@ -134,7 +133,7 @@ exports[`ConnectDXP renders 1`] = `
                   role="presentation"
                 >
                   <use
-                    xlink:href="#question-circle-full"
+                    href="#question-circle-full"
                   />
                 </svg>
               </span>
@@ -178,7 +177,7 @@ exports[`ConnectDXP renders 1`] = `
               role="presentation"
             >
               <use
-                xlink:href="#shortcut"
+                href="#shortcut"
               />
             </svg>
             Download

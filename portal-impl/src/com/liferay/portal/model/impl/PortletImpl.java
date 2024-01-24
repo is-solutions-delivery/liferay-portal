@@ -28,6 +28,7 @@ import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.notifications.UserNotificationHandler;
 import com.liferay.portal.kernel.plugin.PluginPackage;
 import com.liferay.portal.kernel.pop.MessageListener;
+import com.liferay.portal.kernel.portlet.BaseControlPanelEntry;
 import com.liferay.portal.kernel.portlet.ConfigurationAction;
 import com.liferay.portal.kernel.portlet.ControlPanelEntry;
 import com.liferay.portal.kernel.portlet.FriendlyURLMapper;
@@ -711,17 +712,15 @@ public class PortletImpl extends PortletBaseImpl {
 	public ControlPanelEntry getControlPanelEntryInstance() {
 		PortletBag portletBag = PortletBagPool.get(getRootPortletId());
 
-		ControlPanelEntry controlPanelEntry = _controlPanelEntrySnapshot.get();
-
 		if (portletBag == null) {
-			return controlPanelEntry;
+			return _getDefaultControlPanelEntry();
 		}
 
 		List<ControlPanelEntry> controlPanelEntryInstances =
 			portletBag.getControlPanelEntryInstances();
 
 		if (controlPanelEntryInstances.isEmpty()) {
-			return controlPanelEntry;
+			return _getDefaultControlPanelEntry();
 		}
 
 		return controlPanelEntryInstances.get(0);
@@ -4220,6 +4219,16 @@ public class PortletImpl extends PortletBaseImpl {
 		}
 	}
 
+	private ControlPanelEntry _getDefaultControlPanelEntry() {
+		ControlPanelEntry controlPanelEntry = _controlPanelEntrySnapshot.get();
+
+		if (controlPanelEntry == null) {
+			return _dummyControlPanelEntry;
+		}
+
+		return controlPanelEntry;
+	}
+
 	/**
 	 * Log instance for this class.
 	 */
@@ -4231,6 +4240,9 @@ public class PortletImpl extends PortletBaseImpl {
 			"(&(!(javax.portlet.name=*))(objectClass=" +
 				ControlPanelEntry.class.getName() + "))",
 			true);
+	private static final ControlPanelEntry _dummyControlPanelEntry =
+		new BaseControlPanelEntry() {
+		};
 
 	/**
 	 * Map of the ready states of all portlets keyed by their root portlet ID.

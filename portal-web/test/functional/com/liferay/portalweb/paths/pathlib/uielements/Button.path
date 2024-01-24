@@ -177,7 +177,7 @@
 </tr>
 <tr>
 	<td>BORDER_BOTTOM_PALETTE_ITEM</td>
-	<td>//label[normalize-space(text())='${key_borderBottom}']/following-sibling::div[1]//li[contains(@class,'palette-item')]//button[contains(@class,'bg-${key_paletteItem}')]</td>
+	<td>//label[normalize-space(text())='${key_borderBottom}']/following-sibling::div[1]//li[contains(@class,'palette-item')]//button[contains(@class,'palette-item')][@*='${key_paletteItem}']</td>
 	<td></td>
 </tr>
 <tr>
@@ -497,7 +497,7 @@
 </tr>
 <tr>
 	<td>INVITE_MEMBERS</td>
-	<td>//a[contains(@id,'InviteMembersPortlet') and contains(@class,'btn')]</td>
+	<td>//button[contains(.,'Invite Members')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -592,7 +592,7 @@
 </tr>
 <tr>
 	<td>NEW</td>
-	<td>//button[@*='New']</td>
+	<td>//button[contains(@class,'btn-secondary')][normalize-space()='New']</td>
 	<td></td>
 </tr>
 <tr>
@@ -637,7 +637,7 @@
 </tr>
 <tr>
 	<td>PLUS</td>
-	<td>//a[contains(@class,'btn')][contains(@href,'new') or contains(@href,'redirect') or contains(@href,'mvc') or contains(@href,'javascript')][.//*[name()='svg'][contains(@class,'icon-plus')]][not(contains(@class,'borderless'))] | //button[not(contains(@class,'borderless'))][not(contains(@class,'btn-unstyled'))][*[contains(@class,'icon-plus')]]</td>
+	<td>//button[not(contains(@class,'borderless'))][not(contains(@class,'btn-unstyled') or contains(@class,'none'))][*[contains(@class,'icon-plus')]] | //*[self::a or self::button][contains(@class,'btn-primary')][normalize-space()='New']</td>
 	<td></td>
 </tr>
 <tr>
@@ -862,7 +862,7 @@
 </tr>
 <tr>
 	<td>SEND_INVITATIONS</td>
-	<td>//button[contains(@id,'InviteMembersPortlet')]//span[contains(.,'Send Invitations')]</td>
+	<td>//button[contains(.,'Send Invitations')]</td>
 	<td></td>
 </tr>
 <tr>

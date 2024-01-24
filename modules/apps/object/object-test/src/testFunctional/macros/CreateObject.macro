@@ -127,16 +127,6 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro assertSelectedValueInDeletionType(deletionType = null) {
-		WaitForSPARefresh();
-
-		AssertElementPresent(
-			key_fieldLabel = "Deletion Type",
-			key_value = ${deletionType},
-			locator1 = "CreateObject#ASSERT_DELETION_TYPE_VALUE");
-	}
-
-	@summary = "Default summary"
 	macro assertValuesOnObjectData(fieldLabel = null) {
 		var key_fieldType = "form-control";
 
@@ -148,11 +138,13 @@ definition {
 	@summary = "Default summary"
 	macro assertValuesOnScope(valuePanelCategory = null, valueScope = null) {
 		AssertTextEquals(
-			locator1 = "CreateObject#VIEW_OBJECT_SCOPE",
+			key_labelName = "Scope",
+			locator1 = "ObjectAdmin#CLAY_GENERIC_BUTTON",
 			value1 = ${valueScope});
 
 		AssertTextEquals(
-			locator1 = "CreateObject#PANEL_LINK",
+			key_labelName = "Panel Link",
+			locator1 = "ObjectAdmin#CLAY_GENERIC_BUTTON",
 			value1 = ${valuePanelCategory});
 	}
 
@@ -278,15 +270,6 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro selectPanelCategoryKey(panelCategoryKey = null) {
-		Click(locator1 = "CreateObject#PANEL_LINK");
-
-		Click(
-			key_menuItem = ${panelCategoryKey},
-			locator1 = "MenuItem#ANY_MENU_ITEM");
-	}
-
-	@summary = "Default summary"
 	macro selectScope(fieldLabel = null) {
 		Click(locator1 = "CreateObject#SCOPE");
 
@@ -296,12 +279,10 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro selectTitleField(fieldLabel = null) {
-		Click(locator1 = "CreateObject#TITLE_FIELD");
-
-		Click(
-			key_menuItem = ${fieldLabel},
-			locator1 = "MenuItem#ANY_MENU_ITEM");
+	macro selectTitleField(currentOption = null,fieldLabel = null) {
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Entry Title Field",
+			optionName = ${fieldLabel});
 	}
 
 	@summary = "Default summary"

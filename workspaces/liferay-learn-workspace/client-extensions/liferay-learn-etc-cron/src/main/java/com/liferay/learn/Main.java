@@ -77,6 +77,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -94,6 +95,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
@@ -128,7 +130,61 @@ public class Main {
 			GetterUtil.getBoolean(
 				System.getenv("LIFERAY_LEARN_ETC_CRON_OFFLINE")));
 
-		main.uploadToLiferay();
+		String exceptionMessage = null;
+
+		try {
+			main.uploadToLiferay();
+		}
+		catch (Exception exception) {
+			exceptionMessage = exception.getMessage();
+		}
+
+		sendSlackMessage(exceptionMessage);
+	}
+
+	public static void sendSlackMessage(String exceptionMessage)
+		throws Exception {
+
+		HttpPost httpPost = new HttpPost(
+			System.getenv("LIFERAY_LEARN_ETC_CRON_SLACK_ENDPOINT"));
+
+		String slackMessage = StringBundler.concat(
+			new Date(), " *", System.getenv("LCP_PROJECT_ID"), "*->*",
+			System.getenv("LCP_SERVICE_ID"), "* <https://console.",
+			System.getenv("LCP_INFRASTRUCTURE_DOMAIN"), "/projects/",
+			System.getenv("LCP_PROJECT_ID"), "/services/",
+			System.getenv("LCP_SERVICE_ID"), "/logs?instanceId=",
+			System.getenv("HOSTNAME"), "&logServiceId=",
+			System.getenv("LCP_SERVICE_ID"), "|", System.getenv("HOSTNAME"),
+			"> \n>");
+
+		if (Validator.isNotNull(exceptionMessage)) {
+			slackMessage +=
+				":red-alert:Import job finished with return code 1\n>" +
+					exceptionMessage;
+		}
+		else {
+			slackMessage += ":sunflower:Import job finished with return code 0";
+		}
+
+		httpPost.setEntity(
+			new StringEntity(
+				StringBundler.concat(
+					"{\"channel\": \"",
+					System.getenv("LIFERAY_LEARN_ETC_CRON_SLACK_CHANNEL"),
+					"\", \"icon_emoji\": \":robot_face:\", \"text\": \"",
+					slackMessage, "\", \"username\": \"devopsbot\"}")));
+
+		httpPost.setHeader("Accept", "application/json");
+		httpPost.setHeader("Content-type", "application/json");
+
+		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+
+		try (CloseableHttpClient closeableHttpClient =
+				httpClientBuilder.build()) {
+
+			closeableHttpClient.execute(httpPost);
+		}
 	}
 
 	public Main(
@@ -178,9 +234,7 @@ public class Main {
 	}
 
 	public void uploadToLiferay() throws Exception {
-		if (!_validateUUIDs()) {
-			System.exit(1);
-		}
+		_validateUUIDs();
 
 		long start = System.currentTimeMillis();
 
@@ -375,7 +429,7 @@ public class Main {
 				System.out.println(errorMessage);
 			}
 
-			System.exit(1);
+			throw new Exception(_errorMessages.size() + " error messages");
 		}
 	}
 
@@ -469,7 +523,8 @@ public class Main {
 		TextCollectingVisitor textCollectingVisitor =
 			new TextCollectingVisitor();
 
-		return textCollectingVisitor.collectAndGetText(_parser.parse(text));
+		return StringUtil.shorten(
+			textCollectingVisitor.collectAndGetText(_parser.parse(text)), 300);
 	}
 
 	private String[] _getDirNames(String fileName) {
@@ -615,10 +670,9 @@ public class Main {
 		HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
 
 		try (CloseableHttpClient closeableHttpClient =
-				httpClientBuilder.build()) {
-
+				httpClientBuilder.build();
 			CloseableHttpResponse closeableHttpResponse =
-				closeableHttpClient.execute(httpPost);
+				closeableHttpClient.execute(httpPost)) {
 
 			StatusLine statusLine = closeableHttpResponse.getStatusLine();
 
@@ -716,8 +770,8 @@ public class Main {
 			permissions.add(
 				new Permission() {
 					{
-						actionIds = new String[] {"VIEW"};
-						roleName = "Guest";
+						setActionIds(new String[] {"VIEW"});
+						setRoleName("Guest");
 					}
 				});
 
@@ -738,8 +792,8 @@ public class Main {
 			permissions.add(
 				new Permission() {
 					{
-						actionIds = new String[] {"ADD_DISCUSSION", "VIEW"};
-						roleName = (String)object;
+						setActionIds(new String[] {"ADD_DISCUSSION", "VIEW"});
+						setRoleName((String)object);
 					}
 				});
 		}
@@ -751,8 +805,8 @@ public class Main {
 		permissions.add(
 			new Permission() {
 				{
-					actionIds = new String[0];
-					roleName = "Guest";
+					setActionIds(new String[0]);
+					setRoleName("Guest");
 				}
 			});
 
@@ -838,9 +892,9 @@ public class Main {
 							_liferaySiteId,
 							new StructuredContentFolder() {
 								{
-									description = "";
-									name = dirName;
-									viewableBy = ViewableBy.ANYONE;
+									setDescription(() -> "");
+									setName(() -> dirName);
+									setViewableBy(() -> ViewableBy.ANYONE);
 								}
 							});
 			}
@@ -861,9 +915,9 @@ public class Main {
 							parentStructuredContentFolderId,
 							new StructuredContentFolder() {
 								{
-									description = "";
-									name = dirName;
-									viewableBy = ViewableBy.ANYONE;
+									setDescription(() -> "");
+									setName(() -> dirName);
+									setViewableBy(() -> ViewableBy.ANYONE);
 								}
 							});
 			}
@@ -1016,8 +1070,7 @@ public class Main {
 		_dataDefinitionResource = dataDefinitionResourceBuilder.header(
 			"Authorization", authorization
 		).endpoint(
-			_liferayURL.getHost(), _liferayURL.getPort(),
-			_liferayURL.getProtocol()
+			_liferayURL
 		).build();
 
 		SiteResource.Builder siteResourceBuilder = SiteResource.builder();
@@ -1025,8 +1078,7 @@ public class Main {
 		_siteResource = siteResourceBuilder.header(
 			"Authorization", authorization
 		).endpoint(
-			_liferayURL.getHost(), _liferayURL.getPort(),
-			_liferayURL.getProtocol()
+			_liferayURL
 		).build();
 
 		StructuredContentFolderResource.Builder
@@ -1037,8 +1089,7 @@ public class Main {
 			structuredContentFolderResourceBuilder.header(
 				"Authorization", authorization
 			).endpoint(
-				_liferayURL.getHost(), _liferayURL.getPort(),
-				_liferayURL.getProtocol()
+				_liferayURL
 			).build();
 
 		StructuredContentResource.Builder structuredContentResourceBuilder =
@@ -1047,8 +1098,7 @@ public class Main {
 		_structuredContentResource = structuredContentResourceBuilder.header(
 			"Authorization", authorization
 		).endpoint(
-			_liferayURL.getHost(), _liferayURL.getPort(),
-			_liferayURL.getProtocol()
+			_liferayURL
 		).build();
 
 		TaxonomyCategoryResource.Builder taxonomyCategoryResourceBuilder =
@@ -1057,8 +1107,7 @@ public class Main {
 		_taxonomyCategoryResource = taxonomyCategoryResourceBuilder.header(
 			"Authorization", authorization
 		).endpoint(
-			_liferayURL.getHost(), _liferayURL.getPort(),
-			_liferayURL.getProtocol()
+			_liferayURL
 		).build();
 
 		TaxonomyVocabularyResource.Builder taxonomyVocabularyResourceBuilder =
@@ -1067,8 +1116,7 @@ public class Main {
 		_taxonomyVocabularyResource = taxonomyVocabularyResourceBuilder.header(
 			"Authorization", authorization
 		).endpoint(
-			_liferayURL.getHost(), _liferayURL.getPort(),
-			_liferayURL.getProtocol()
+			_liferayURL
 		).build();
 	}
 
@@ -1663,8 +1711,9 @@ public class Main {
 		ContentFieldValue englishBreadcrumbLinksContentFieldValue =
 			new ContentFieldValue() {
 				{
-					data = String.valueOf(
-						_getBreadcrumbLinksJSONArray(englishFile));
+					setData(
+						() -> String.valueOf(
+							_getBreadcrumbLinksJSONArray(englishFile)));
 				}
 			};
 
@@ -1675,28 +1724,31 @@ public class Main {
 		ContentFieldValue englishContentContentFieldValue =
 			new ContentFieldValue() {
 				{
-					data = _toHTML(englishFile, englishText);
+					setData(() -> _toHTML(englishFile, englishText));
 				}
 			};
 
 		ContentFieldValue englishLandingPageContentFieldValue =
 			new ContentFieldValue() {
 				{
-					data = String.valueOf(
-						_landingPageFiles.contains(englishFile));
+					setData(
+						() -> String.valueOf(
+							_landingPageFiles.contains(englishFile)));
 				}
 			};
 		ContentFieldValue englishNavigationLinksContentFieldValue =
 			new ContentFieldValue() {
 				{
-					data = String.valueOf(
-						_getNavigationLinksJSONArray(englishFile, englishText));
+					setData(
+						() -> String.valueOf(
+							_getNavigationLinksJSONArray(
+								englishFile, englishText)));
 				}
 			};
 		ContentFieldValue englishProductContentFieldValue =
 			new ContentFieldValue() {
 				{
-					data = _getProduct(englishFile);
+					setData(() -> _getProduct(englishFile));
 				}
 			};
 
@@ -1715,85 +1767,101 @@ public class Main {
 				new ContentField[] {
 					new ContentField() {
 						{
-							contentFieldValue =
-								englishBreadcrumbLinksContentFieldValue;
-							contentFieldValue_i18n = HashMapBuilder.put(
-								"en-US", englishBreadcrumbLinksContentFieldValue
-							).put(
-								"ja-JP",
-								new ContentFieldValue() {
-									{
-										data = String.valueOf(
-											_getBreadcrumbLinksJSONArray(
-												japaneseFile));
+							setContentFieldValue(
+								() -> englishBreadcrumbLinksContentFieldValue);
+							setContentFieldValue_i18n(
+								() -> HashMapBuilder.put(
+									"en-US",
+									englishBreadcrumbLinksContentFieldValue
+								).put(
+									"ja-JP",
+									new ContentFieldValue() {
+										{
+											setData(
+												() -> String.valueOf(
+													_getBreadcrumbLinksJSONArray(
+														japaneseFile)));
+										}
 									}
-								}
-							).build();
-							name = "breadcrumbLinks";
+								).build());
+							setName(() -> "breadcrumbLinks");
 						}
 					},
 					new ContentField() {
 						{
-							contentFieldValue = englishContentContentFieldValue;
-							contentFieldValue_i18n = HashMapBuilder.put(
-								"en-US", englishContentContentFieldValue
-							).put(
-								"ja-JP",
-								new ContentFieldValue() {
-									{
-										data = _toHTML(
-											japaneseFile, japaneseText);
+							setContentFieldValue(
+								() -> englishContentContentFieldValue);
+							setContentFieldValue_i18n(
+								() -> HashMapBuilder.put(
+									"en-US", englishContentContentFieldValue
+								).put(
+									"ja-JP",
+									new ContentFieldValue() {
+										{
+											setData(
+												() -> _toHTML(
+													japaneseFile,
+													japaneseText));
+										}
 									}
-								}
-							).build();
-							name = "content";
+								).build());
+							setName(() -> "content");
 						}
 					},
 					new ContentField() {
 						{
-							contentFieldValue =
-								englishLandingPageContentFieldValue;
-							contentFieldValue_i18n = HashMapBuilder.put(
-								"en-US", englishLandingPageContentFieldValue
-							).put(
-								"ja-JP", englishLandingPageContentFieldValue
-							).build();
-							name = "landingPage";
+							setContentFieldValue(
+								() -> englishLandingPageContentFieldValue);
+							setContentFieldValue_i18n(
+								() -> HashMapBuilder.put(
+									"en-US", englishLandingPageContentFieldValue
+								).put(
+									"ja-JP", englishLandingPageContentFieldValue
+								).build());
+							setName(() -> "landingPage");
 						}
 					},
 					new ContentField() {
 						{
-							contentFieldValue =
-								englishNavigationLinksContentFieldValue;
-							contentFieldValue_i18n = HashMapBuilder.put(
-								"en-US", englishNavigationLinksContentFieldValue
-							).put(
-								"ja-JP",
-								new ContentFieldValue() {
-									{
-										data = String.valueOf(
-											_getNavigationLinksJSONArray(
-												japaneseFile, japaneseText));
+							setContentFieldValue(
+								() -> englishNavigationLinksContentFieldValue);
+							setContentFieldValue_i18n(
+								() -> HashMapBuilder.put(
+									"en-US",
+									englishNavigationLinksContentFieldValue
+								).put(
+									"ja-JP",
+									new ContentFieldValue() {
+										{
+											setData(
+												() -> String.valueOf(
+													_getNavigationLinksJSONArray(
+														japaneseFile,
+														japaneseText)));
+										}
 									}
-								}
-							).build();
-							name = "navigationLinks";
+								).build());
+							setName(() -> "navigationLinks");
 						}
 					},
 					new ContentField() {
 						{
-							contentFieldValue = englishProductContentFieldValue;
-							contentFieldValue_i18n = HashMapBuilder.put(
-								"en-US", englishProductContentFieldValue
-							).put(
-								"ja-JP",
-								new ContentFieldValue() {
-									{
-										data = _getProduct(japaneseFile);
+							setContentFieldValue(
+								() -> englishProductContentFieldValue);
+							setContentFieldValue_i18n(
+								() -> HashMapBuilder.put(
+									"en-US", englishProductContentFieldValue
+								).put(
+									"ja-JP",
+									new ContentFieldValue() {
+										{
+											setData(
+												() -> _getProduct(
+													japaneseFile));
+										}
 									}
-								}
-							).build();
-							name = "product";
+								).build());
+							setName(() -> "product");
 						}
 					}
 				});
@@ -1822,35 +1890,37 @@ public class Main {
 				new ContentField[] {
 					new ContentField() {
 						{
-							contentFieldValue =
-								englishBreadcrumbLinksContentFieldValue;
-							name = "breadcrumbLinks";
+							setContentFieldValue(
+								() -> englishBreadcrumbLinksContentFieldValue);
+							setName(() -> "breadcrumbLinks");
 						}
 					},
 					new ContentField() {
 						{
-							contentFieldValue = englishContentContentFieldValue;
-							name = "content";
+							setContentFieldValue(
+								() -> englishContentContentFieldValue);
+							setName(() -> "content");
 						}
 					},
 					new ContentField() {
 						{
-							contentFieldValue =
-								englishLandingPageContentFieldValue;
-							name = "landingPage";
+							setContentFieldValue(
+								() -> englishLandingPageContentFieldValue);
+							setName(() -> "landingPage");
 						}
 					},
 					new ContentField() {
 						{
-							contentFieldValue =
-								englishNavigationLinksContentFieldValue;
-							name = "navigationLinks";
+							setContentFieldValue(
+								() -> englishNavigationLinksContentFieldValue);
+							setName(() -> "navigationLinks");
 						}
 					},
 					new ContentField() {
 						{
-							contentFieldValue = englishProductContentFieldValue;
-							name = "product";
+							setContentFieldValue(
+								() -> englishProductContentFieldValue);
+							setName(() -> "product");
 						}
 					}
 				});
@@ -1875,7 +1945,7 @@ public class Main {
 		return structuredContent;
 	}
 
-	private boolean _validateUUIDs() throws Exception {
+	private void _validateUUIDs() throws Exception {
 		Set<String> uuids = new HashSet<>();
 
 		for (String fileName : _fileNames) {
@@ -1891,17 +1961,13 @@ public class Main {
 			String uuid = _getUuid(englishText);
 
 			if (Validator.isNull(uuid)) {
-				System.out.println("Missing UUID in " + fileName);
-
-				return false;
+				throw new Exception("Missing UUID in " + fileName);
 			}
 
 			if (uuids.contains(uuid)) {
-				System.out.println(
+				throw new Exception(
 					StringBundler.concat(
 						"Duplicate UUID ", uuid, " in ", fileName));
-
-				return false;
 			}
 
 			uuids.add(uuid);
@@ -1914,15 +1980,11 @@ public class Main {
 					japaneseFile, StandardCharsets.UTF_8);
 
 				if (Validator.isNotNull(_getUuid(japaneseText))) {
-					System.out.println(
+					throw new Exception(
 						"Irrelevant UUID in " + japaneseFile.getPath());
-
-					return false;
 				}
 			}
 		}
-
-		return true;
 	}
 
 	private void _visit(Image image) throws Exception {

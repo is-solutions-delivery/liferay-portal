@@ -7,11 +7,12 @@ import SegmentGrowthWithList, {
 import {MemoryRouter, Route} from 'react-router-dom';
 import {render} from '@testing-library/react';
 import {Routes} from 'shared/util/router';
+import {waitForLoadingToBeRemoved} from 'test/helpers';
 
 jest.unmock('react-dom');
 
 describe('SegmentGrowthWithList', () => {
-	it('should render', () => {
+	it('should render', async () => {
 		const {container} = render(
 			<MemoryRouter
 				initialEntries={[
@@ -37,6 +38,8 @@ describe('SegmentGrowthWithList', () => {
 		);
 
 		jest.runAllTimers();
+
+		await waitForLoadingToBeRemoved(container);
 
 		expect(container).toMatchSnapshot();
 	});

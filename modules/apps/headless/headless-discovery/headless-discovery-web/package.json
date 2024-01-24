@@ -1,11 +1,12 @@
 {
 	"dependencies": {
-		"@clayui/button": "3.100.0",
-		"@clayui/css": "3.105.0",
-		"@clayui/drop-down": "3.105.0",
-		"@clayui/icon": "3.56.0",
-		"@clayui/layout": "3.93.0",
-		"@clayui/modal": "3.104.0",
+		"@clayui/alert": "3.106.1",
+		"@clayui/button": "3.107.0",
+		"@clayui/css": "3.108.0",
+		"@clayui/drop-down": "3.108.0",
+		"@clayui/icon": "3.106.1",
+		"@clayui/layout": "3.106.1",
+		"@clayui/modal": "3.107.0",
 		"graphiql": "1.4.7",
 		"graphql": "^15.0.0",
 		"html-webpack-plugin": "5.5.0",
@@ -21,5 +22,5 @@
 		"format": "liferay-npm-scripts fix",
 		"start": "liferay-npm-scripts webpack --env=development"
 	},
-	"version": "4.0.32"
+	"version": "4.0.36"
 }

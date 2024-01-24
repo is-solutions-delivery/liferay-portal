@@ -80,6 +80,56 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 
 	@Override
 	@Test
+	public void testDeleteSite() throws Exception {
+		super.testDeleteSite();
+
+		// Nonexistent site ID
+
+		long siteId = RandomTestUtil.randomLong();
+
+		try {
+			siteResource.deleteSite(siteId);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("NOT_FOUND", problem.getStatus());
+			Assert.assertEquals(
+				"Unable to get a valid site with ID " + siteId,
+				problem.getTitle());
+		}
+	}
+
+	@Override
+	@Test
+	public void testDeleteSiteByExternalReferenceCode() throws Exception {
+		super.testDeleteSiteByExternalReferenceCode();
+
+		// Nonexistent external reference code
+
+		String externalReferenceCode = RandomTestUtil.randomString(10);
+
+		try {
+			siteResource.deleteSiteByExternalReferenceCode(
+				externalReferenceCode);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("NOT_FOUND", problem.getStatus());
+			Assert.assertEquals(
+				"No site exists with external reference code " +
+					externalReferenceCode,
+				problem.getTitle());
+		}
+	}
+
+	@Override
+	@Test
 	public void testPostSite() throws Exception {
 		super.testPostSite();
 
@@ -121,6 +171,18 @@ public class SiteResourceTest extends BaseSiteResourceTestCase {
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 			}
 		};
+	}
+
+	@Override
+	protected Site testDeleteSite_addSite() throws Exception {
+		return testPutSiteByExternalReferenceCode_addSite();
+	}
+
+	@Override
+	protected Site testDeleteSiteByExternalReferenceCode_addSite()
+		throws Exception {
+
+		return testPutSiteByExternalReferenceCode_addSite();
 	}
 
 	@Override

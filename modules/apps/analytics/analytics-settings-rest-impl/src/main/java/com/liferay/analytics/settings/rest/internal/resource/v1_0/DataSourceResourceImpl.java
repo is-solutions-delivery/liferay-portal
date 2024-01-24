@@ -5,15 +5,20 @@
 
 package com.liferay.analytics.settings.rest.internal.resource.v1_0;
 
+import com.liferay.analytics.settings.configuration.AnalyticsConfiguration;
 import com.liferay.analytics.settings.rest.dto.v1_0.DataSourceToken;
 import com.liferay.analytics.settings.rest.internal.client.AnalyticsCloudClient;
 import com.liferay.analytics.settings.rest.manager.AnalyticsSettingsManager;
 import com.liferay.analytics.settings.rest.resource.v1_0.DataSourceResource;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.util.Http;
 
 import java.util.Map;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
@@ -31,7 +36,9 @@ public class DataSourceResourceImpl extends BaseDataSourceResourceImpl {
 	public void deleteDataSource() throws Exception {
 		try {
 			_analyticsCloudClient.disconnectAnalyticsDataSource(
-				contextCompany.getCompanyId());
+				_configurationProvider.getCompanyConfiguration(
+					AnalyticsConfiguration.class,
+					contextCompany.getCompanyId()));
 		}
 		catch (Exception exception) {
 			if (_log.isWarnEnabled()) {
@@ -49,7 +56,8 @@ public class DataSourceResourceImpl extends BaseDataSourceResourceImpl {
 
 		Map<String, Object> properties =
 			_analyticsCloudClient.connectAnalyticsDataSource(
-				contextUser.getCompanyId(), dataSourceToken.getToken());
+				_companyLocalService.getCompany(contextUser.getCompanyId()),
+				dataSourceToken.getToken());
 
 		properties.put("token", dataSourceToken.getToken());
 
@@ -57,13 +65,26 @@ public class DataSourceResourceImpl extends BaseDataSourceResourceImpl {
 			contextUser.getCompanyId(), properties);
 	}
 
+	@Activate
+	protected void activate() {
+		_analyticsCloudClient = new AnalyticsCloudClient(_http);
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		DataSourceResourceImpl.class);
 
-	@Reference
 	private AnalyticsCloudClient _analyticsCloudClient;
 
 	@Reference
 	private AnalyticsSettingsManager _analyticsSettingsManager;
+
+	@Reference
+	private CompanyLocalService _companyLocalService;
+
+	@Reference
+	private ConfigurationProvider _configurationProvider;
+
+	@Reference
+	private Http _http;
 
 }

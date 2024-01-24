@@ -17,6 +17,7 @@ import com.liferay.document.library.kernel.exception.InvalidFileVersionException
 import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
 import com.liferay.document.library.kernel.exception.NoSuchFileException;
 import com.liferay.document.library.kernel.exception.NoSuchFolderException;
+import com.liferay.document.library.kernel.expiration.ExpireAllVersions;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileEntryConstants;
 import com.liferay.document.library.kernel.model.DLFileEntryMetadata;
@@ -63,7 +64,9 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.comment.CommentManagerUtil;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
+import com.liferay.portal.kernel.dao.orm.ProjectionFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
@@ -165,6 +168,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1072,6 +1076,98 @@ public class DLFileEntryLocalServiceImpl
 		long groupId, long folderId, String name) {
 
 		return dlFileEntryPersistence.fetchByG_F_N(groupId, folderId, name);
+	}
+
+	@Override
+	public void forEachFileEntry(
+			long companyId, Consumer<DLFileEntry> consumer, long maximumSize,
+			String[] mimeTypes)
+		throws PortalException {
+
+		_performDynamicQueryActions(
+			dynamicQuery -> {
+				Property companyIdProperty = PropertyFactoryUtil.forName(
+					"companyId");
+
+				dynamicQuery.add(companyIdProperty.eq(companyId));
+
+				Property groupIdProperty = PropertyFactoryUtil.forName(
+					"groupId");
+				Property repositoryIdProperty = PropertyFactoryUtil.forName(
+					"repositoryId");
+
+				dynamicQuery.add(
+					groupIdProperty.eqProperty(repositoryIdProperty));
+
+				Property mimeTypeProperty = PropertyFactoryUtil.forName(
+					"mimeType");
+
+				dynamicQuery.add(mimeTypeProperty.in(mimeTypes));
+
+				if (maximumSize >= 0) {
+					Property sizeProperty = PropertyFactoryUtil.forName("size");
+
+					dynamicQuery.add(sizeProperty.le(maximumSize));
+				}
+
+				DynamicQuery dlFileVersionDynamicQuery =
+					_dlFileVersionLocalService.dynamicQuery();
+
+				dlFileVersionDynamicQuery.add(companyIdProperty.eq(companyId));
+				dlFileVersionDynamicQuery.add(
+					groupIdProperty.eqProperty(repositoryIdProperty));
+				dlFileVersionDynamicQuery.add(mimeTypeProperty.in(mimeTypes));
+
+				Property statusProperty = PropertyFactoryUtil.forName("status");
+
+				dlFileVersionDynamicQuery.add(
+					statusProperty.eq(WorkflowConstants.STATUS_IN_TRASH));
+
+				dlFileVersionDynamicQuery.setProjection(
+					ProjectionFactoryUtil.distinct(
+						ProjectionFactoryUtil.property("fileEntryId")));
+
+				Property fileEntryIdProperty = PropertyFactoryUtil.forName(
+					"fileEntryId");
+
+				dynamicQuery.add(
+					fileEntryIdProperty.notIn(dlFileVersionDynamicQuery));
+			},
+			consumer);
+	}
+
+	@Override
+	public void forEachFileEntry(
+			long companyId, long classNameId, Consumer<DLFileEntry> consumer,
+			long maximumSize, String[] mimeTypes)
+		throws PortalException {
+
+		_performDynamicQueryActions(
+			dynamicQuery -> {
+				Property companyIdProperty = PropertyFactoryUtil.forName(
+					"companyId");
+
+				dynamicQuery.add(companyIdProperty.eq(companyId));
+
+				if (classNameId > 0) {
+					Property classNameIdProperty = PropertyFactoryUtil.forName(
+						"classNameId");
+
+					dynamicQuery.add(classNameIdProperty.eq(classNameId));
+				}
+
+				Property mimeTypeProperty = PropertyFactoryUtil.forName(
+					"mimeType");
+
+				dynamicQuery.add(mimeTypeProperty.in(mimeTypes));
+
+				if (maximumSize >= 0) {
+					Property sizeProperty = PropertyFactoryUtil.forName("size");
+
+					dynamicQuery.add(sizeProperty.le(maximumSize));
+				}
+			},
+			consumer);
 	}
 
 	@Override
@@ -2241,15 +2337,8 @@ public class DLFileEntryLocalServiceImpl
 				_dlFileVersionLocalService.fetchLatestFileVersion(
 					fileEntry.getFileEntryId(), false);
 
-			_notifySubscribers(
-				fileEntry.getUserId(), _EMAIL_TYPE_REVIEW,
-				_buildEntryURL(latestFileVersion), latestFileVersion,
-				new ServiceContext());
-
-			_notifyOwner(
-				fileEntry.getUserId(), _EMAIL_TYPE_REVIEW,
-				_buildEntryURL(latestFileVersion), latestFileVersion,
-				new ServiceContext());
+			_notify(
+				fileEntry.getUserId(), _EMAIL_TYPE_REVIEW, latestFileVersion);
 		}
 	}
 
@@ -2565,34 +2654,57 @@ public class DLFileEntryLocalServiceImpl
 				continue;
 			}
 
+			ExpireAllVersions expireAllVersions =
+				_expireAllVersionsSnapshot.get();
+
 			DLFileVersion latestFileVersion =
 				_dlFileVersionLocalService.fetchLatestFileVersion(
 					fileEntry.getFileEntryId(), false);
 
-			if (latestFileVersion.isExpired()) {
-				continue;
+			if (expireAllVersions.isEnabled()) {
+				List<DLFileVersion> fileVersions = fileEntry.getFileVersions(
+					WorkflowConstants.STATUS_ANY);
+
+				for (DLFileVersion fileVersion : fileVersions) {
+					_expireFileVersion(
+						userId, fileEntry, fileVersion,
+						fileVersion.getFileVersionId() ==
+							latestFileVersion.getFileVersionId(),
+						workflowContext, serviceContext);
+				}
 			}
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(
-					StringBundler.concat(
-						"Expiring file entry ", fileEntry.getFileEntryId(),
-						" with expiration date ",
-						fileEntry.getExpirationDate()));
+			else {
+				_expireFileVersion(
+					userId, fileEntry, latestFileVersion, true, workflowContext,
+					serviceContext);
 			}
+		}
+	}
 
-			updateStatus(
-				userId, fileEntry, latestFileVersion,
-				WorkflowConstants.STATUS_EXPIRED, serviceContext,
-				workflowContext);
+	private void _expireFileVersion(
+			long userId, DLFileEntry fileEntry, DLFileVersion fileVersion,
+			boolean notify, Map<String, Serializable> workflowContext,
+			ServiceContext serviceContext)
+		throws PortalException {
 
-			_notifySubscribers(
-				userId, _EMAIL_TYPE_EXPIRED, _buildEntryURL(latestFileVersion),
-				latestFileVersion, new ServiceContext());
+		if (fileVersion.isExpired()) {
+			return;
+		}
 
-			_notifyOwner(
-				userId, _EMAIL_TYPE_EXPIRED, _buildEntryURL(latestFileVersion),
-				latestFileVersion, new ServiceContext());
+		if (_log.isDebugEnabled()) {
+			_log.debug(
+				StringBundler.concat(
+					"Expiring file entry ", fileEntry.getFileEntryId(),
+					" on version ", fileVersion.getVersion(),
+					" with expiration date ", fileEntry.getExpirationDate()));
+		}
+
+		updateStatus(
+			userId, fileEntry, fileVersion, WorkflowConstants.STATUS_EXPIRED,
+			serviceContext, workflowContext);
+
+		if (notify) {
+			_notify(userId, _EMAIL_TYPE_EXPIRED, fileVersion);
 		}
 	}
 
@@ -2869,6 +2981,18 @@ public class DLFileEntryLocalServiceImpl
 			dlFileEntry.getDataRepositoryId(), dlFileEntry.getName());
 
 		return dlFileEntry;
+	}
+
+	private void _notify(long userId, int emailType, DLFileVersion fileVersion)
+		throws PortalException {
+
+		_notifySubscribers(
+			userId, emailType, _buildEntryURL(fileVersion), fileVersion,
+			new ServiceContext());
+
+		_notifyOwner(
+			userId, emailType, _buildEntryURL(fileVersion), fileVersion,
+			new ServiceContext());
 	}
 
 	private void _notifyOwner(
@@ -3278,9 +3402,13 @@ public class DLFileEntryLocalServiceImpl
 
 		// File
 
+		DLFileVersion previousDLFileVersion =
+			_dlFileVersionLocalService.getLatestFileVersion(
+				dlFileEntry.getFileEntryId(), true);
+
 		_deleteFile(
 			user.getCompanyId(), dlFileEntry.getDataRepositoryId(),
-			dlFileEntry.getName(), lastDLFileVersion.getStoreFileName());
+			dlFileEntry.getName(), previousDLFileVersion.getStoreFileName());
 
 		DLStoreUtil.copyFileVersion(
 			user.getCompanyId(), dlFileEntry.getDataRepositoryId(),
@@ -3290,6 +3418,23 @@ public class DLFileEntryLocalServiceImpl
 		// Latest file version
 
 		_removeFileVersion(dlFileEntry, latestDLFileVersion);
+	}
+
+	private void _performDynamicQueryActions(
+			Consumer<DynamicQuery> addCriteriaMethodConsumer,
+			Consumer<DLFileEntry> performActionMethodConsumer)
+		throws PortalException {
+
+		ActionableDynamicQuery actionableDynamicQuery =
+			getActionableDynamicQuery();
+
+		actionableDynamicQuery.setAddCriteriaMethod(
+			addCriteriaMethodConsumer::accept);
+		actionableDynamicQuery.setPerformActionMethod(
+			(DLFileEntry dlFileEntry) -> performActionMethodConsumer.accept(
+				dlFileEntry));
+
+		actionableDynamicQuery.performActions();
 	}
 
 	private void _registerPWCDeletionCallback(
@@ -3668,6 +3813,9 @@ public class DLFileEntryLocalServiceImpl
 	private static final Log _log = LogFactoryUtil.getLog(
 		DLFileEntryLocalServiceImpl.class);
 
+	private static final Snapshot<ExpireAllVersions>
+		_expireAllVersionsSnapshot = new Snapshot<>(
+			DLFileEntryLocalServiceImpl.class, ExpireAllVersions.class);
 	private static final Pattern _fileVersionPattern = Pattern.compile(
 		"\\d+\\.\\d+");
 	private static final Snapshot<TrashHelper> _trashHelperSnapshot =

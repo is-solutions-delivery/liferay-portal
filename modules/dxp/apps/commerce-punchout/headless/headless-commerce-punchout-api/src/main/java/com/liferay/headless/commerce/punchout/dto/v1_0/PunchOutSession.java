@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -59,11 +60,20 @@ public class PunchOutSession implements Serializable {
 
 	@Schema
 	public String getBuyerAccountReferenceCode() {
+		if (_buyerAccountReferenceCodeSupplier != null) {
+			buyerAccountReferenceCode =
+				_buyerAccountReferenceCodeSupplier.get();
+
+			_buyerAccountReferenceCodeSupplier = null;
+		}
+
 		return buyerAccountReferenceCode;
 	}
 
 	public void setBuyerAccountReferenceCode(String buyerAccountReferenceCode) {
 		this.buyerAccountReferenceCode = buyerAccountReferenceCode;
+
+		_buyerAccountReferenceCodeSupplier = null;
 	}
 
 	@JsonIgnore
@@ -71,16 +81,17 @@ public class PunchOutSession implements Serializable {
 		UnsafeSupplier<String, Exception>
 			buyerAccountReferenceCodeUnsafeSupplier) {
 
-		try {
-			buyerAccountReferenceCode =
-				buyerAccountReferenceCodeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_buyerAccountReferenceCodeSupplier = () -> {
+			try {
+				return buyerAccountReferenceCodeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
@@ -88,29 +99,42 @@ public class PunchOutSession implements Serializable {
 	@NotEmpty
 	protected String buyerAccountReferenceCode;
 
+	@JsonIgnore
+	private Supplier<String> _buyerAccountReferenceCodeSupplier;
+
 	@Schema
 	@Valid
 	public Group getBuyerGroup() {
+		if (_buyerGroupSupplier != null) {
+			buyerGroup = _buyerGroupSupplier.get();
+
+			_buyerGroupSupplier = null;
+		}
+
 		return buyerGroup;
 	}
 
 	public void setBuyerGroup(Group buyerGroup) {
 		this.buyerGroup = buyerGroup;
+
+		_buyerGroupSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setBuyerGroup(
 		UnsafeSupplier<Group, Exception> buyerGroupUnsafeSupplier) {
 
-		try {
-			buyerGroup = buyerGroupUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_buyerGroupSupplier = () -> {
+			try {
+				return buyerGroupUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
@@ -118,14 +142,25 @@ public class PunchOutSession implements Serializable {
 	@NotNull
 	protected Group buyerGroup;
 
+	@JsonIgnore
+	private Supplier<Group> _buyerGroupSupplier;
+
 	@Schema
 	@Valid
 	public Organization getBuyerOrganization() {
+		if (_buyerOrganizationSupplier != null) {
+			buyerOrganization = _buyerOrganizationSupplier.get();
+
+			_buyerOrganizationSupplier = null;
+		}
+
 		return buyerOrganization;
 	}
 
 	public void setBuyerOrganization(Organization buyerOrganization) {
 		this.buyerOrganization = buyerOrganization;
+
+		_buyerOrganizationSupplier = null;
 	}
 
 	@JsonIgnore
@@ -133,44 +168,59 @@ public class PunchOutSession implements Serializable {
 		UnsafeSupplier<Organization, Exception>
 			buyerOrganizationUnsafeSupplier) {
 
-		try {
-			buyerOrganization = buyerOrganizationUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_buyerOrganizationSupplier = () -> {
+			try {
+				return buyerOrganizationUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Organization buyerOrganization;
 
+	@JsonIgnore
+	private Supplier<Organization> _buyerOrganizationSupplier;
+
 	@Schema
 	@Valid
 	public User getBuyerUser() {
+		if (_buyerUserSupplier != null) {
+			buyerUser = _buyerUserSupplier.get();
+
+			_buyerUserSupplier = null;
+		}
+
 		return buyerUser;
 	}
 
 	public void setBuyerUser(User buyerUser) {
 		this.buyerUser = buyerUser;
+
+		_buyerUserSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setBuyerUser(
 		UnsafeSupplier<User, Exception> buyerUserUnsafeSupplier) {
 
-		try {
-			buyerUser = buyerUserUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_buyerUserSupplier = () -> {
+			try {
+				return buyerUserUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
@@ -178,27 +228,40 @@ public class PunchOutSession implements Serializable {
 	@NotNull
 	protected User buyerUser;
 
+	@JsonIgnore
+	private Supplier<User> _buyerUserSupplier;
+
 	@Schema
 	@Valid
 	public Cart getCart() {
+		if (_cartSupplier != null) {
+			cart = _cartSupplier.get();
+
+			_cartSupplier = null;
+		}
+
 		return cart;
 	}
 
 	public void setCart(Cart cart) {
 		this.cart = cart;
+
+		_cartSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setCart(UnsafeSupplier<Cart, Exception> cartUnsafeSupplier) {
-		try {
-			cart = cartUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_cartSupplier = () -> {
+			try {
+				return cartUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
@@ -206,28 +269,41 @@ public class PunchOutSession implements Serializable {
 	@NotNull
 	protected Cart cart;
 
+	@JsonIgnore
+	private Supplier<Cart> _cartSupplier;
+
 	@Schema
 	public String getPunchOutReturnURL() {
+		if (_punchOutReturnURLSupplier != null) {
+			punchOutReturnURL = _punchOutReturnURLSupplier.get();
+
+			_punchOutReturnURLSupplier = null;
+		}
+
 		return punchOutReturnURL;
 	}
 
 	public void setPunchOutReturnURL(String punchOutReturnURL) {
 		this.punchOutReturnURL = punchOutReturnURL;
+
+		_punchOutReturnURLSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setPunchOutReturnURL(
 		UnsafeSupplier<String, Exception> punchOutReturnURLUnsafeSupplier) {
 
-		try {
-			punchOutReturnURL = punchOutReturnURLUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_punchOutReturnURLSupplier = () -> {
+			try {
+				return punchOutReturnURLUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
@@ -235,28 +311,41 @@ public class PunchOutSession implements Serializable {
 	@NotEmpty
 	protected String punchOutReturnURL;
 
+	@JsonIgnore
+	private Supplier<String> _punchOutReturnURLSupplier;
+
 	@Schema
 	public String getPunchOutSessionType() {
+		if (_punchOutSessionTypeSupplier != null) {
+			punchOutSessionType = _punchOutSessionTypeSupplier.get();
+
+			_punchOutSessionTypeSupplier = null;
+		}
+
 		return punchOutSessionType;
 	}
 
 	public void setPunchOutSessionType(String punchOutSessionType) {
 		this.punchOutSessionType = punchOutSessionType;
+
+		_punchOutSessionTypeSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setPunchOutSessionType(
 		UnsafeSupplier<String, Exception> punchOutSessionTypeUnsafeSupplier) {
 
-		try {
-			punchOutSessionType = punchOutSessionTypeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_punchOutSessionTypeSupplier = () -> {
+			try {
+				return punchOutSessionTypeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
@@ -264,33 +353,49 @@ public class PunchOutSession implements Serializable {
 	@NotEmpty
 	protected String punchOutSessionType;
 
+	@JsonIgnore
+	private Supplier<String> _punchOutSessionTypeSupplier;
+
 	@Schema
 	public String getPunchOutStartURL() {
+		if (_punchOutStartURLSupplier != null) {
+			punchOutStartURL = _punchOutStartURLSupplier.get();
+
+			_punchOutStartURLSupplier = null;
+		}
+
 		return punchOutStartURL;
 	}
 
 	public void setPunchOutStartURL(String punchOutStartURL) {
 		this.punchOutStartURL = punchOutStartURL;
+
+		_punchOutStartURLSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setPunchOutStartURL(
 		UnsafeSupplier<String, Exception> punchOutStartURLUnsafeSupplier) {
 
-		try {
-			punchOutStartURL = punchOutStartURLUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_punchOutStartURLSupplier = () -> {
+			try {
+				return punchOutStartURLUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String punchOutStartURL;
+
+	@JsonIgnore
+	private Supplier<String> _punchOutStartURLSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -319,6 +424,8 @@ public class PunchOutSession implements Serializable {
 
 		sb.append("{");
 
+		String buyerAccountReferenceCode = getBuyerAccountReferenceCode();
+
 		if (buyerAccountReferenceCode != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -333,6 +440,8 @@ public class PunchOutSession implements Serializable {
 			sb.append("\"");
 		}
 
+		Group buyerGroup = getBuyerGroup();
+
 		if (buyerGroup != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -342,6 +451,8 @@ public class PunchOutSession implements Serializable {
 
 			sb.append(String.valueOf(buyerGroup));
 		}
+
+		Organization buyerOrganization = getBuyerOrganization();
 
 		if (buyerOrganization != null) {
 			if (sb.length() > 1) {
@@ -353,6 +464,8 @@ public class PunchOutSession implements Serializable {
 			sb.append(String.valueOf(buyerOrganization));
 		}
 
+		User buyerUser = getBuyerUser();
+
 		if (buyerUser != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -363,6 +476,8 @@ public class PunchOutSession implements Serializable {
 			sb.append(String.valueOf(buyerUser));
 		}
 
+		Cart cart = getCart();
+
 		if (cart != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -372,6 +487,8 @@ public class PunchOutSession implements Serializable {
 
 			sb.append(String.valueOf(cart));
 		}
+
+		String punchOutReturnURL = getPunchOutReturnURL();
 
 		if (punchOutReturnURL != null) {
 			if (sb.length() > 1) {
@@ -387,6 +504,8 @@ public class PunchOutSession implements Serializable {
 			sb.append("\"");
 		}
 
+		String punchOutSessionType = getPunchOutSessionType();
+
 		if (punchOutSessionType != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -400,6 +519,8 @@ public class PunchOutSession implements Serializable {
 
 			sb.append("\"");
 		}
+
+		String punchOutStartURL = getPunchOutStartURL();
 
 		if (punchOutStartURL != null) {
 			if (sb.length() > 1) {

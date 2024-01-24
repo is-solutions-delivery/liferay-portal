@@ -19,6 +19,7 @@ import com.liferay.commerce.product.model.CPInstance;
 import com.liferay.commerce.product.service.CPDefinitionLocalService;
 import com.liferay.commerce.product.service.CPInstanceLocalService;
 import com.liferay.commerce.product.type.virtual.order.model.CommerceVirtualOrderItem;
+import com.liferay.commerce.product.type.virtual.order.model.CommerceVirtualOrderItemFileEntry;
 import com.liferay.commerce.product.type.virtual.order.service.CommerceVirtualOrderItemService;
 import com.liferay.commerce.product.util.CPInstanceHelper;
 import com.liferay.commerce.service.CPDefinitionInventoryLocalService;
@@ -29,6 +30,8 @@ import com.liferay.headless.commerce.core.util.LanguageUtils;
 import com.liferay.headless.commerce.delivery.order.dto.v1_0.PlacedOrderItem;
 import com.liferay.headless.commerce.delivery.order.dto.v1_0.Price;
 import com.liferay.headless.commerce.delivery.order.dto.v1_0.Settings;
+import com.liferay.headless.commerce.delivery.order.dto.v1_0.VirtualItem;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
@@ -41,6 +44,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 
 import java.math.BigDecimal;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -75,42 +79,81 @@ public class PlacedOrderItemDTOConverter
 
 		Locale locale = placedOrderItemDTOConverterContext.getLocale();
 
-		ExpandoBridge expandoBridge = commerceOrderItem.getExpandoBridge();
-
 		return new PlacedOrderItem() {
 			{
-				adaptiveMediaImageHTMLTag =
-					_cpInstanceHelper.getCPInstanceAdaptiveMediaImageHTMLTag(
-						placedOrderItemDTOConverterContext.getAccountId(),
-						commerceOrderItem.getCompanyId(),
-						commerceOrderItem.getCPInstanceId());
-				customFields = expandoBridge.getAttributes();
-				errorMessages = _getErrorMessages(commerceOrderItem, locale);
-				id = commerceOrderItem.getCommerceOrderItemId();
-				name = commerceOrderItem.getName(
-					_language.getLanguageId(locale));
-				options = commerceOrderItem.getJson();
-				parentOrderItemId =
-					commerceOrderItem.getParentCommerceOrderItemId();
-				price = _getPrice(commerceOrderItem, locale);
-				productId = commerceOrderItem.getCProductId();
-				productURLs = LanguageUtils.getLanguageIdMap(
-					_cpDefinitionLocalService.getUrlTitleMap(
-						commerceOrderItem.getCPDefinitionId()));
-				quantity = _commerceQuantityFormatter.format(
-					commerceOrderItem.getCPInstanceId(),
-					commerceOrderItem.getQuantity(),
-					commerceOrderItem.getUnitOfMeasureKey());
-				replacedSku = commerceOrderItem.getReplacedSku();
-				settings = _getSettings(commerceOrderItem.getCPInstanceId());
-				sku = commerceOrderItem.getSku();
-				skuId = commerceOrderItem.getCPInstanceId();
-				subscription = commerceOrderItem.isSubscription();
-				thumbnail = _cpInstanceHelper.getCPInstanceThumbnailSrc(
-					placedOrderItemDTOConverterContext.getAccountId(),
-					commerceOrderItem.getCPInstanceId());
-				unitOfMeasureKey = commerceOrderItem.getUnitOfMeasureKey();
+				setAdaptiveMediaImageHTMLTag(
+					() ->
+						_cpInstanceHelper.
+							getCPInstanceAdaptiveMediaImageHTMLTag(
+								placedOrderItemDTOConverterContext.
+									getAccountId(),
+								commerceOrderItem.getCompanyId(),
+								commerceOrderItem.getCPInstanceId()));
+				setCustomFields(
+					() -> {
+						ExpandoBridge expandoBridge =
+							commerceOrderItem.getExpandoBridge();
 
+						return expandoBridge.getAttributes();
+					});
+				setErrorMessages(
+					() -> _getErrorMessages(commerceOrderItem, locale));
+				setId(commerceOrderItem::getCommerceOrderItemId);
+				setName(
+					() -> commerceOrderItem.getName(
+						_language.getLanguageId(locale)));
+				setOptions(commerceOrderItem::getJson);
+				setParentOrderItemId(
+					commerceOrderItem::getParentCommerceOrderItemId);
+				setPrice(() -> _getPrice(commerceOrderItem, locale));
+				setProductId(commerceOrderItem::getCProductId);
+				setProductURLs(
+					() -> LanguageUtils.getLanguageIdMap(
+						_cpDefinitionLocalService.getUrlTitleMap(
+							commerceOrderItem.getCPDefinitionId())));
+				setQuantity(
+					() -> _commerceQuantityFormatter.format(
+						commerceOrderItem.getCPInstanceId(),
+						commerceOrderItem.getQuantity(),
+						commerceOrderItem.getUnitOfMeasureKey()));
+				setReplacedSku(commerceOrderItem::getReplacedSku);
+				setSettings(
+					() -> _getSettings(commerceOrderItem.getCPInstanceId()));
+				setSku(commerceOrderItem::getSku);
+				setSkuId(commerceOrderItem::getCPInstanceId);
+				setSubscription(commerceOrderItem::isSubscription);
+				setThumbnail(
+					() -> _cpInstanceHelper.getCPInstanceThumbnailSrc(
+						placedOrderItemDTOConverterContext.getAccountId(),
+						commerceOrderItem.getCPInstanceId()));
+				setUnitOfMeasureKey(commerceOrderItem::getUnitOfMeasureKey);
+
+				setVirtualItems(
+					() -> {
+						try {
+							CommerceVirtualOrderItem commerceVirtualOrderItem =
+								_commerceVirtualOrderItemService.
+									fetchCommerceVirtualOrderItemByCommerceOrderItemId(
+										commerceOrderItem.
+											getCommerceOrderItemId());
+
+							if (commerceVirtualOrderItem == null) {
+								return null;
+							}
+
+							return _toVirtualItems(
+								commerceVirtualOrderItem.
+									getCommerceVirtualOrderItemFileEntries(),
+								commerceVirtualOrderItem);
+						}
+						catch (PortalException portalException) {
+							if (_log.isDebugEnabled()) {
+								_log.debug(portalException);
+							}
+
+							return null;
+						}
+					});
 				setVirtualItemURLs(
 					() -> {
 						try {
@@ -124,14 +167,30 @@ public class PlacedOrderItemDTOConverter
 								return null;
 							}
 
-							String url = commerceVirtualOrderItem.getUrl();
+							List<CommerceVirtualOrderItemFileEntry>
+								commerceVirtualOrderItemFileEntries =
+									commerceVirtualOrderItem.
+										getCommerceVirtualOrderItemFileEntries();
+
+							if (commerceVirtualOrderItemFileEntries.isEmpty()) {
+								return null;
+							}
+
+							CommerceVirtualOrderItemFileEntry
+								commerceVirtualOrderItemFileEntry =
+									commerceVirtualOrderItemFileEntries.get(0);
+
+							String url =
+								commerceVirtualOrderItemFileEntry.getUrl();
 
 							if (Validator.isBlank(url)) {
 								url =
 									_commerceMediaResolver.
 										getDownloadVirtualOrderItemURL(
 											commerceVirtualOrderItem.
-												getCommerceVirtualOrderItemId());
+												getCommerceVirtualOrderItemId(),
+											commerceVirtualOrderItemFileEntry.
+												getFileEntryId());
 							}
 
 							return new String[] {url};
@@ -184,9 +243,9 @@ public class PlacedOrderItemDTOConverter
 
 		Price price = new Price() {
 			{
-				currency = commerceCurrency.getName(locale);
-				price = unitPrice.doubleValue();
-				priceFormatted = unitPriceCommerceMoney.format(locale);
+				setCurrency(() -> commerceCurrency.getName(locale));
+				setPrice(unitPrice::doubleValue);
+				setPriceFormatted(() -> unitPriceCommerceMoney.format(locale));
 			}
 		};
 
@@ -305,6 +364,49 @@ public class PlacedOrderItemDTOConverter
 		}
 
 		return settings;
+	}
+
+	private VirtualItem[] _toVirtualItems(
+		List<CommerceVirtualOrderItemFileEntry>
+			commerceVirtualOrderItemFileEntries,
+		CommerceVirtualOrderItem commerceVirtualOrderItem) {
+
+		return TransformUtil.transformToArray(
+			commerceVirtualOrderItemFileEntries,
+			commerceVirtualOrderItemFileEntry -> new VirtualItem() {
+				{
+					setUrl(
+						() -> {
+							if (Validator.isNull(
+									commerceVirtualOrderItemFileEntry.
+										getUrl())) {
+
+								return _commerceMediaResolver.
+									getDownloadVirtualOrderItemURL(
+										commerceVirtualOrderItem.
+											getCommerceVirtualOrderItemId(),
+										commerceVirtualOrderItemFileEntry.
+											getFileEntryId());
+							}
+
+							return commerceVirtualOrderItemFileEntry.getUrl();
+						});
+					setUsages(commerceVirtualOrderItemFileEntry::getUsages);
+					setVersion(
+						() -> {
+							if (Validator.isNull(
+									commerceVirtualOrderItemFileEntry.
+										getVersion())) {
+
+								return null;
+							}
+
+							return commerceVirtualOrderItemFileEntry.
+								getVersion();
+						});
+				}
+			},
+			VirtualItem.class);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

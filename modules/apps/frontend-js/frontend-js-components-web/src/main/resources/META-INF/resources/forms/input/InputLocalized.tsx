@@ -30,7 +30,11 @@ interface InputLocalizedProps {
 	resultFormatter?: (value: string) => React.ReactNode;
 	selectedLocale?: Liferay.Language.Locale;
 	tooltip?: string;
-	translations: Liferay.Language.LocalizedValue<string>;
+	translations: Liferay.Language.LocalizedValue<string> &
+		Partial<{
+			zh_Hans_CN: string;
+			zh_Hant_TW: string;
+		}>;
 }
 
 interface InputLocale {
@@ -47,6 +51,26 @@ const availableLocales = Object.keys(Liferay.Language.available)
 		symbol: language.replace(/_/g, '-').toLowerCase(),
 	}));
 
+const translationsNormalizer = (
+	translations: Liferay.Language.LocalizedValue<string> &
+		Partial<{
+			zh_Hans_CN: string;
+			zh_Hant_TW: string;
+		}>
+): Liferay.Language.LocalizedValue<string> => {
+	const {zh_Hans_CN, zh_Hant_TW, ...normalizedTranslations} = translations;
+
+	if (zh_Hans_CN) {
+		normalizedTranslations['zh_CN'] = zh_Hans_CN;
+	}
+
+	if (zh_Hant_TW) {
+		normalizedTranslations['zh_TW'] = zh_Hant_TW;
+	}
+
+	return normalizedTranslations;
+};
+
 export default function InputLocalized({
 	disableFlag,
 	disabled,
@@ -62,10 +86,11 @@ export default function InputLocalized({
 	resultFormatter = () => null,
 	selectedLocale,
 	tooltip,
-	translations,
+	translations: initialTranslations,
 	...otherProps
 }: InputLocalizedProps) {
 	const [locale, setLocale] = useState<InputLocale>(availableLocales[0]);
+	const translations = translationsNormalizer(initialTranslations);
 
 	useEffect(() => {
 		if (disableFlag) {

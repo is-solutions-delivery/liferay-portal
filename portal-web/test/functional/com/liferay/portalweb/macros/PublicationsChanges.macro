@@ -49,13 +49,6 @@ definition {
 
 	@summary = "Default summary"
 	macro discardChanges(conflictingChanges = null, changeCategory = null, changeTitle = null) {
-		if (isSet(changeOrder)) {
-			var changeOrder = ${changeOrder};
-		}
-		else {
-			var changeOrder = 1;
-		}
-
 		var key_changeCategory = ${changeCategory};
 		var key_changeTitle = ${changeTitle};
 
@@ -120,14 +113,16 @@ definition {
 
 	@summary = "Default summary"
 	macro filterChangesByItem(checkboxName = null, menuItem = null) {
-		if (IsElementPresent(key_text = "Clear", locator1 = "Button#ANY")) {
+		if (IsElementPresent(key_text = "Reset Filters", locator1 = "Button#ANY")) {
 			Click(
-				key_text = "Clear",
+				key_text = "Reset Filters",
 				locator1 = "Button#ANY");
 		}
 
+		WaitForElementPresent(locator1 = "PublicationsChanges#CHANGE_TYPE_BUTTON");
+
 		Click(
-			key_name = "Filter By",
+			key_name = "Filter",
 			locator1 = "PublicationsChanges#SORT_BUTTON");
 
 		MenuItem.clickNoError(menuItem = ${menuItem});
@@ -135,17 +130,12 @@ definition {
 		Check.checkNotVisible(
 			key_checkboxName = ${checkboxName},
 			locator1 = "MenuItem#ANY_CHECKBOX");
+
+		Click(locator1 = "Publications#ADD_FILTER_BUTTON");
 	}
 
 	@summary = "Default summary"
 	macro gotoEditChanges(changeCategory = null, changeTitle = null, editInLocation = null) {
-		if (isSet(changeOrder)) {
-			var changeOrder = ${changeOrder};
-		}
-		else {
-			var changeOrder = 1;
-		}
-
 		Click(
 			key_changeCategory = ${changeCategory},
 			key_changeTitle = ${changeTitle},
@@ -155,14 +145,13 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro gotoMoveChangeToAnotherPublication(changeCategory = null, targetPublicationName = null, changeTitle = null, changeOrder = null) {
+	macro gotoMoveChangeToAnotherPublication(changeCategory = null, targetPublicationName = null, changeTitle = null) {
 		Search.searchCP(searchTerm = ${changeTitle});
 
 		Click(
 			key_changeCategory = ${changeCategory},
-			key_changeOrder = ${changeOrder},
 			key_changeTitle = ${changeTitle},
-			locator1 = "PublicationsChanges#REVIEW_CHANGE_LISTING");
+			locator1 = "PublicationsChanges#PUBLICATIONS_CHANGE_TITLE");
 
 		Click(locator1 = "PublicationsChanges#REVIEW_CHANGE_DROPDOWN");
 
@@ -220,17 +209,19 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro viewChanges(changeCategory = null, changeUser = null, publishedPublication = null, changeType = null, changeSite = null, changeTitle = null, changeStatus = null, publicationName = null, showAllItems = null) {
+	macro viewChanges(changeCategory = null, changeUser = null, publishedPublication = null, changeType = null, changeSite = null, changeTitle = null, changeStatus = null, publicationName = null, showSystemChanges = null) {
 		if (${publishedPublication} == "true") {
 			Click(
 				key_publicationName = ${publicationName},
 				locator1 = "Publications#PUBLICATION_NAME_VIEW");
 		}
 
-		WaitForElementPresent(locator1 = "PublicationsChanges#CHANGE_HEADER");
+		WaitForElementPresent(locator1 = "PublicationsChanges#CHANGE_TYPE_BUTTON");
 
-		if (${showAllItems} == "true") {
-			Check.checkToggleSwitch(locator1 = "PublicationsChanges#SHOW_ALL_ITEMS_TOGGLE_SWITCH");
+		if (${showSystemChanges} == "true") {
+			Click(locator1 = "PublicationsChanges#ELLIPSIS_IN_PUBLICATION");
+
+			MenuItem.click(menuItem = "Show System Changes");
 		}
 
 		var key_changeCategory = ${changeCategory};
@@ -239,18 +230,13 @@ definition {
 		var key_changeTitle = ${changeTitle};
 		var key_changeType = ${changeType};
 
-		if (isSet(changeOrder)) {
-			var changeOrder = ${changeOrder};
-		}
-		else {
-			var changeOrder = 1;
-		}
+		WaitForElementPresent(locator1 = "PublicationsChanges#PUBLICATIONS_CHANGE_CATEGORY");
 
 		while (IsElementNotPresent(locator1 = "PublicationsChanges#PUBLICATIONS_CHANGE_CATEGORY")) {
 			Click(locator1 = "//*[contains(@class, 'page-link')]//*[contains(@class,'right')]");
 		}
 
-		AssertElementPresent(
+		AssertTextEquals.assertPartialText(
 			locator1 = "PublicationsChanges#PUBLICATIONS_CHANGE_USER",
 			value1 = ${changeUser});
 
@@ -289,13 +275,6 @@ definition {
 	macro viewChangesResultNotPresent(changeCategory = null, changeTitle = null) {
 		var key_changeCategory = ${changeCategory};
 		var key_changeTitle = ${changeTitle};
-
-		if (isSet(changeOrder)) {
-			var changeOrder = ${changeOrder};
-		}
-		else {
-			var changeOrder = 1;
-		}
 
 		AssertElementNotPresent(
 			locator1 = "PublicationsChanges#PUBLICATIONS_CHANGE_TITLE",

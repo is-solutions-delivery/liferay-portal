@@ -30,9 +30,7 @@ definition {
 		var shippingaddressCountry = "United States";
 
 		task ("Assert that the number of products after the Upgrade is correct (50)") {
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CommerceEntry.viewPaginationResults(results = "Showing 1 to 10 of 50 entries.");
 		}
@@ -50,9 +48,7 @@ definition {
 		}
 
 		task ("Assert that Minium Portal channel is present after the Upgrade") {
-			CommerceNavigator.gotoPortlet(
-				category = "Store Management",
-				portlet = "Channels");
+			CommerceChannels.openChannelsAdmin();
 
 			AssertElementPresent(
 				key_entryName = "Minium Portal",
@@ -60,9 +56,7 @@ definition {
 		}
 
 		task ("Assert that Master Base Price List and Minium Base Price List are present after the Upgrade") {
-			CommerceNavigator.gotoPortlet(
-				category = "Pricing",
-				portlet = "Price Lists");
+			CommerceNavigator.goToPriceListAdmin();
 
 			for (var priceLists : list "Master Base Price List,Minium Base Price List") {
 				AssertElementPresent(
@@ -72,9 +66,7 @@ definition {
 		}
 
 		task ("Review the 2 orders created before the Upgrade on 7.3.10") {
-			CommerceNavigator.gotoPortlet(
-				category = "Order Management",
-				portlet = "Orders");
+			CommerceOrders.openOrdersAdmin();
 
 			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Open");
 
@@ -85,9 +77,7 @@ definition {
 				productSku = "MIN93015",
 				productTotalPrice = "100.00");
 
-			CommerceNavigator.gotoPortlet(
-				category = "Order Management",
-				portlet = "Orders");
+			CommerceOrders.openOrdersAdmin();
 
 			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Processing");
 

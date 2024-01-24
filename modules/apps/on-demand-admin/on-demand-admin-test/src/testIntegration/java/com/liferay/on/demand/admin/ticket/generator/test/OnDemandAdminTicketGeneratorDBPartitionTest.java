@@ -8,12 +8,19 @@ package com.liferay.on.demand.admin.ticket.generator.test;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.on.demand.admin.ticket.generator.OnDemandAdminTicketGenerator;
 import com.liferay.portal.db.partition.test.util.BaseDBPartitionTestCase;
+import com.liferay.portal.db.partition.util.DBPartitionUtil;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Ticket;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.model.UserWrapper;
 import com.liferay.portal.kernel.search.IndexStatusManagerThreadLocal;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
+import com.liferay.portal.kernel.service.ResourceActionLocalServiceUtil;
 import com.liferay.portal.security.DefaultAdminUtil;
 import com.liferay.portal.test.rule.Inject;
+
+import java.util.Locale;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -34,6 +41,9 @@ public class OnDemandAdminTicketGeneratorDBPartitionTest
 
 		addDBPartitions();
 
+		DBPartitionUtil.forEachCompanyId(
+			company -> ResourceActionLocalServiceUtil.checkResourceActions());
+
 		insertPartitionRequiredData();
 
 		insertPartitionData();
@@ -43,7 +53,7 @@ public class OnDemandAdminTicketGeneratorDBPartitionTest
 	public static void tearDownClass() throws Exception {
 		deletePartitionRequiredData();
 
-		removeDBPartitions(false);
+		removeDBPartitions();
 
 		disableDBPartition();
 	}
@@ -52,7 +62,45 @@ public class OnDemandAdminTicketGeneratorDBPartitionTest
 	public void testOnDemandAdmin() throws Exception {
 		long companyId = portal.getDefaultCompanyId();
 
-		User user = DefaultAdminUtil.fetchDefaultAdmin(companyId);
+		User user = new UserWrapper(
+			DefaultAdminUtil.fetchDefaultAdmin(companyId)) {
+
+			@Override
+			public String getFirstName() {
+				_assertCompanyId(companyId);
+
+				return super.getFirstName();
+			}
+
+			@Override
+			public String getLastName() {
+				_assertCompanyId(companyId);
+
+				return super.getLastName();
+			}
+
+			@Override
+			public Locale getLocale() {
+				_assertCompanyId(companyId);
+
+				return super.getLocale();
+			}
+
+			@Override
+			public String getMiddleName() {
+				_assertCompanyId(companyId);
+
+				return super.getMiddleName();
+			}
+
+			@Override
+			public boolean isMale() throws PortalException {
+				_assertCompanyId(companyId);
+
+				return super.isMale();
+			}
+
+		};
 
 		IndexStatusManagerThreadLocal.setIndexReadOnly(true);
 
@@ -62,12 +110,15 @@ public class OnDemandAdminTicketGeneratorDBPartitionTest
 			}
 
 			Ticket ticket = _onDemandAdminTicketGenerator.generate(
-				_companyLocalService.getCompany(targetCompanyId), null,
-				user.getUserId());
+				_companyLocalService.getCompany(targetCompanyId), null, user);
 
 			Assert.assertNotNull(ticket);
 			Assert.assertNotEquals(user.getCompanyId(), ticket.getCompanyId());
 		}
+	}
+
+	private void _assertCompanyId(long companyId) {
+		Assert.assertEquals(companyId, (long)CompanyThreadLocal.getCompanyId());
 	}
 
 	@Inject

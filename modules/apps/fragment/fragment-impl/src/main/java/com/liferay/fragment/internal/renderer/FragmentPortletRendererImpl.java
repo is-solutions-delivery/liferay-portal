@@ -5,7 +5,6 @@
 
 package com.liferay.fragment.internal.renderer;
 
-import com.liferay.fragment.constants.FragmentWebKeys;
 import com.liferay.fragment.exception.FragmentEntryContentException;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.renderer.FragmentPortletRenderer;
@@ -31,6 +30,7 @@ public class FragmentPortletRendererImpl implements FragmentPortletRenderer {
 
 	@Override
 	public String renderPortlet(
+			FragmentEntryLink fragmentEntryLink,
 			HttpServletRequest httpServletRequest,
 			HttpServletResponse httpServletResponse, String portletName,
 			String instanceId, String defaultPreferences)
@@ -38,20 +38,13 @@ public class FragmentPortletRendererImpl implements FragmentPortletRenderer {
 
 		UnsyncStringWriter unsyncStringWriter = new UnsyncStringWriter();
 
-		PipingServletResponse pipingServletResponse = new PipingServletResponse(
-			httpServletResponse, unsyncStringWriter);
-
 		boolean inheritedFromMaster = false;
-
-		FragmentEntryLink fragmentEntryLink =
-			(FragmentEntryLink)httpServletRequest.getAttribute(
-				FragmentWebKeys.FRAGMENT_ENTRY_LINK);
 
 		ThemeDisplay themeDisplay =
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
-		if ((fragmentEntryLink != null) && (themeDisplay != null) &&
+		if ((themeDisplay != null) &&
 			(fragmentEntryLink.getPlid() != themeDisplay.getPlid())) {
 
 			inheritedFromMaster = true;
@@ -63,7 +56,9 @@ public class FragmentPortletRendererImpl implements FragmentPortletRenderer {
 				PortletPreferencesFactoryConstants.
 					SETTINGS_SCOPE_PORTLET_INSTANCE,
 				defaultPreferences, inheritedFromMaster, null,
-				httpServletRequest, pipingServletResponse);
+				httpServletRequest,
+				new PipingServletResponse(
+					httpServletResponse, unsyncStringWriter));
 		}
 		catch (Exception exception) {
 			throw new FragmentEntryContentException(exception);

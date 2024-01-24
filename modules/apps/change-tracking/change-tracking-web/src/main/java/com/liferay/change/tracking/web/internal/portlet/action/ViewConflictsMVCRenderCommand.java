@@ -21,10 +21,15 @@ import com.liferay.portal.kernel.dao.orm.ORMException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
+import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
+
+import java.io.IOException;
 
 import java.sql.SQLException;
 
@@ -34,6 +39,8 @@ import java.util.Map;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -75,6 +82,26 @@ public class ViewConflictsMVCRenderCommand implements MVCRenderCommand {
 			CTCollection ctCollection =
 				_ctCollectionLocalService.getCTCollection(ctCollectionId);
 
+			if (ctCollection.getStatus() == WorkflowConstants.STATUS_APPROVED) {
+				HttpServletResponse httpServletResponse =
+					_portal.getHttpServletResponse(renderResponse);
+
+				String redirect = ParamUtil.getString(
+					renderRequest, "redirect");
+
+				if (Validator.isNull(redirect)) {
+					redirect = PortletURLBuilder.createRenderURL(
+						renderResponse
+					).setMVCRenderCommandName(
+						"/change_tracking/view_changes"
+					).setParameter(
+						"ctCollectionId", ctCollectionId
+					).buildString();
+				}
+
+				httpServletResponse.sendRedirect(redirect);
+			}
+
 			Map<Long, List<ConflictInfo>> conflictInfoMap = null;
 
 			boolean hasUnapprovedChanges =
@@ -95,8 +122,8 @@ public class ViewConflictsMVCRenderCommand implements MVCRenderCommand {
 
 			return "/publications/view_conflicts.jsp";
 		}
-		catch (PortalException portalException) {
-			throw new PortletException(portalException);
+		catch (IOException | PortalException exception) {
+			throw new PortletException(exception);
 		}
 		catch (SQLException sqlException) {
 			throw new ORMException(sqlException);

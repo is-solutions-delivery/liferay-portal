@@ -14,12 +14,12 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.JavaConstants;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.osgi.web.http.servlet.internal.context.LiferayContextController;
 import com.liferay.portal.osgi.web.http.servlet.internal.context.ServletContextHelperDataContextImpl;
 
 import java.io.File;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -111,11 +111,6 @@ public class HttpServletEndpointControllerImpl
 		_serviceRegistration.unregister();
 
 		_contextControllers.close();
-	}
-
-	@Override
-	public Collection<ContextController> getContextControllers() {
-		return _contextControllers.toList();
 	}
 
 	@Override
@@ -257,7 +252,7 @@ public class HttpServletEndpointControllerImpl
 				DispatchTargets dispatchTargets =
 					contextController.getDispatchTargets(
 						null, requestURI, servletPath, pathInfo, extension,
-						queryString, match, null);
+						queryString, match);
 
 				if (dispatchTargets != null) {
 					return dispatchTargets;
@@ -344,8 +339,8 @@ public class HttpServletEndpointControllerImpl
 						DTOConstants.FAILURE_REASON_VALIDATION_FAILED);
 				}
 
-				return new ContextController(
-					_bundleContext, _bundleContext, serviceReference,
+				return new LiferayContextController(
+					_bundleContext, serviceReference,
 					new ServletContextHelperDataContextImpl(
 						contextName, _parentServletContext,
 						_parentServletContextTempDir),

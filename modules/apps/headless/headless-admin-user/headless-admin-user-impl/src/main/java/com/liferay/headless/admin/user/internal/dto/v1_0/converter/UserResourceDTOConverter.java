@@ -26,7 +26,6 @@ import com.liferay.headless.admin.user.dto.v1_0.UserAccount;
 import com.liferay.headless.admin.user.dto.v1_0.UserAccountContactInformation;
 import com.liferay.headless.admin.user.dto.v1_0.UserGroupBrief;
 import com.liferay.headless.admin.user.dto.v1_0.WebUrl;
-import com.liferay.headless.admin.user.internal.dto.v1_0.converter.constants.DTOConverterConstants;
 import com.liferay.headless.admin.user.internal.dto.v1_0.util.CustomFieldsUtil;
 import com.liferay.headless.admin.user.internal.dto.v1_0.util.EmailAddressUtil;
 import com.liferay.headless.admin.user.internal.dto.v1_0.util.PhoneUtil;
@@ -53,7 +52,9 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.security.permission.UserBagFactoryUtil;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
@@ -61,6 +62,7 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 
 import java.util.Collection;
+import java.util.Locale;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -108,84 +110,23 @@ public class UserResourceDTOConverter
 
 		return new UserAccount() {
 			{
-				accountBriefs = TransformUtil.transformToArray(
-					_accountEntryUserRelService.
-						getAccountEntryUserRelsByAccountUserId(
-							user.getUserId()),
-					accountEntryUserRel -> _toAccountBrief(
-						accountEntryUserRel, dtoConverterContext, user),
-					AccountBrief.class);
-				actions = dtoConverterContext.getActions();
-				additionalName = user.getMiddleName();
-				alternateName = user.getScreenName();
-				birthDate = user.getBirthday();
-				customFields = CustomFieldsUtil.toCustomFields(
-					dtoConverterContext.isAcceptAllLanguages(),
-					User.class.getName(), user.getUserId(), user.getCompanyId(),
-					dtoConverterContext.getLocale());
-				dateCreated = user.getCreateDate();
-				dateModified = user.getModifiedDate();
-				emailAddress = user.getEmailAddress();
-				externalReferenceCode = user.getExternalReferenceCode();
-				familyName = user.getLastName();
-				givenName = user.getFirstName();
-				honorificPrefix =
-					ServiceBuilderListTypeUtil.getServiceBuilderListTypeMessage(
-						contact.getPrefixListTypeId(),
-						dtoConverterContext.getLocale());
-				honorificSuffix =
-					ServiceBuilderListTypeUtil.getServiceBuilderListTypeMessage(
-						contact.getSuffixListTypeId(),
-						dtoConverterContext.getLocale());
-				id = user.getUserId();
-				jobTitle = user.getJobTitle();
-				keywords = ListUtil.toArray(
-					_assetTagLocalService.getTags(
-						User.class.getName(), user.getUserId()),
-					AssetTag.NAME_ACCESSOR);
-				lastLoginDate = user.getLastLoginDate();
-				name = user.getFullName();
-				organizationBriefs = TransformUtil.transformToArray(
-					user.getOrganizations(),
-					organization -> _toOrganizationBrief(
-						dtoConverterContext, organization, user),
-					OrganizationBrief.class);
-				siteBriefs = TransformUtil.transformToArray(
-					_groupLocalService.getUserSitesGroups(user.getUserId()),
-					group -> _toSiteBrief(dtoConverterContext, group, user),
-					SiteBrief.class);
-				userAccountContactInformation =
-					new UserAccountContactInformation() {
-						{
-							emailAddresses = TransformUtil.transformToArray(
-								user.getEmailAddresses(),
-								EmailAddressUtil::toEmailAddress,
-								EmailAddress.class);
-							facebook = contact.getFacebookSn();
-							jabber = contact.getJabberSn();
-							postalAddresses = TransformUtil.transformToArray(
-								user.getAddresses(),
-								address -> PostalAddressUtil.toPostalAddress(
-									dtoConverterContext.isAcceptAllLanguages(),
-									address, user.getCompanyId(),
-									dtoConverterContext.getLocale()),
-								PostalAddress.class);
-							skype = contact.getSkypeSn();
-							sms = contact.getSmsSn();
-							telephones = TransformUtil.transformToArray(
-								user.getPhones(), PhoneUtil::toPhone,
-								Phone.class);
-							twitter = contact.getTwitterSn();
-							webUrls = TransformUtil.transformToArray(
-								user.getWebsites(), WebUrlUtil::toWebUrl,
-								WebUrl.class);
-						}
-					};
-				userGroupBriefs = TransformUtil.transformToArray(
-					_userGroupLocalService.getUserUserGroups(user.getUserId()),
-					userGroup -> _toUserGroupBrief(userGroup),
-					UserGroupBrief.class);
-
+				setAccountBriefs(
+					() -> TransformUtil.transformToArray(
+						_accountEntryUserRelService.
+							getAccountEntryUserRelsByAccountUserId(
+								user.getUserId()),
+						accountEntryUserRel -> _toAccountBrief(
+							accountEntryUserRel, dtoConverterContext, user),
+						AccountBrief.class));
+				setActions(dtoConverterContext::getActions);
+				setAdditionalName(user::getMiddleName);
+				setAlternateName(user::getScreenName);
+				setBirthDate(user::getBirthday);
+				setCustomFields(
+					() -> CustomFieldsUtil.toCustomFields(
+						dtoConverterContext.isAcceptAllLanguages(),
+						User.class.getName(), user.getUserId(),
+						user.getCompanyId(), dtoConverterContext.getLocale()));
 				setDashboardURL(
 					() -> {
 						Group group = user.getGroup();
@@ -197,6 +138,25 @@ public class UserResourceDTOConverter
 						return group.getDisplayURL(
 							_getThemeDisplay(group), true);
 					});
+				setDateCreated(user::getCreateDate);
+				setDateModified(user::getModifiedDate);
+				setEmailAddress(user::getEmailAddress);
+				setExternalReferenceCode(user::getExternalReferenceCode);
+				setFamilyName(user::getLastName);
+				setGivenName(user::getFirstName);
+				setHonorificPrefix(
+					() ->
+						ServiceBuilderListTypeUtil.
+							getServiceBuilderListTypeMessage(
+								contact.getPrefixListTypeId(),
+								dtoConverterContext.getLocale()));
+				setHonorificSuffix(
+					() ->
+						ServiceBuilderListTypeUtil.
+							getServiceBuilderListTypeMessage(
+								contact.getSuffixListTypeId(),
+								dtoConverterContext.getLocale()));
+				setId(user::getUserId);
 				setImage(
 					() -> {
 						if (user.getPortraitId() == 0) {
@@ -211,6 +171,34 @@ public class UserResourceDTOConverter
 
 						return user.getPortraitURL(themeDisplay);
 					});
+				setImageId(user::getPortraitId);
+				setJobTitle(user::getJobTitle);
+				setKeywords(
+					() -> ListUtil.toArray(
+						_assetTagLocalService.getTags(
+							User.class.getName(), user.getUserId()),
+						AssetTag.NAME_ACCESSOR));
+				setLanguageDisplayName(
+					() -> {
+						if (Validator.isNull(user.getLanguageId())) {
+							return null;
+						}
+
+						Locale locale = LocaleUtil.fromLanguageId(
+							user.getLanguageId());
+
+						return locale.getDisplayName(
+							dtoConverterContext.getLocale());
+					});
+				setLanguageId(user::getLanguageId);
+				setLastLoginDate(user::getLastLoginDate);
+				setName(user::getFullName);
+				setOrganizationBriefs(
+					() -> TransformUtil.transformToArray(
+						user.getOrganizations(),
+						organization -> _toOrganizationBrief(
+							dtoConverterContext, organization, user),
+						OrganizationBrief.class));
 				setProfileURL(
 					() -> {
 						Group group = user.getGroup();
@@ -229,6 +217,11 @@ public class UserResourceDTOConverter
 						return _toRoleBriefs(
 							dtoConverterContext, userBag.getRoles());
 					});
+				setSiteBriefs(
+					() -> TransformUtil.transformToArray(
+						_groupLocalService.getUserSitesGroups(user.getUserId()),
+						group -> _toSiteBrief(dtoConverterContext, group, user),
+						SiteBrief.class));
 				setStatus(
 					() -> {
 						if (user.getStatus() ==
@@ -245,6 +238,45 @@ public class UserResourceDTOConverter
 
 						return null;
 					});
+				setUserAccountContactInformation(
+					() -> new UserAccountContactInformation() {
+						{
+							setEmailAddresses(
+								() -> TransformUtil.transformToArray(
+									user.getEmailAddresses(),
+									EmailAddressUtil::toEmailAddress,
+									EmailAddress.class));
+							setFacebook(contact::getFacebookSn);
+							setJabber(contact::getJabberSn);
+							setPostalAddresses(
+								() -> TransformUtil.transformToArray(
+									user.getAddresses(),
+									address ->
+										PostalAddressUtil.toPostalAddress(
+											dtoConverterContext.
+												isAcceptAllLanguages(),
+											address, user.getCompanyId(),
+											dtoConverterContext.getLocale()),
+									PostalAddress.class));
+							setSkype(contact::getSkypeSn);
+							setSms(contact::getSmsSn);
+							setTelephones(
+								() -> TransformUtil.transformToArray(
+									user.getPhones(), PhoneUtil::toPhone,
+									Phone.class));
+							setTwitter(contact::getTwitterSn);
+							setWebUrls(
+								() -> TransformUtil.transformToArray(
+									user.getWebsites(), WebUrlUtil::toWebUrl,
+									WebUrl.class));
+						}
+					});
+				setUserGroupBriefs(
+					() -> TransformUtil.transformToArray(
+						_userGroupLocalService.getUserUserGroups(
+							user.getUserId()),
+						userGroup -> _toUserGroupBrief(userGroup),
+						UserGroupBrief.class));
 			}
 		};
 	}
@@ -277,32 +309,34 @@ public class UserResourceDTOConverter
 
 		return new AccountBrief() {
 			{
-				externalReferenceCode = accountEntry.getExternalReferenceCode();
-				id = accountEntry.getAccountEntryId();
-				name = accountEntry.getName();
-				roleBriefs = TransformUtil.transformToArray(
-					_accountRoleLocalService.getAccountRoles(
-						accountEntry.getAccountEntryId(), user.getUserId()),
-					accountRole -> _toRoleBrief(
-						accountRole, dtoConverterContext),
-					RoleBrief.class);
+				setExternalReferenceCode(
+					accountEntry::getExternalReferenceCode);
+				setId(accountEntry::getAccountEntryId);
+				setName(accountEntry::getName);
+				setRoleBriefs(
+					() -> TransformUtil.transformToArray(
+						_accountRoleLocalService.getAccountRoles(
+							accountEntry.getAccountEntryId(), user.getUserId()),
+						accountRole -> _toRoleBrief(
+							accountRole, dtoConverterContext),
+						RoleBrief.class));
 			}
 		};
 	}
 
 	private OrganizationBrief _toOrganizationBrief(
-			DTOConverterContext dtoConverterContext, Organization organization,
-			User user)
-		throws Exception {
+		DTOConverterContext dtoConverterContext, Organization organization,
+		User user) {
 
 		return new OrganizationBrief() {
 			{
-				id = organization.getOrganizationId();
-				name = organization.getName();
-				roleBriefs = _toRoleBriefs(
-					dtoConverterContext,
-					_roleLocalService.getUserGroupRoles(
-						user.getUserId(), organization.getGroupId()));
+				setId(organization::getOrganizationId);
+				setName(organization::getName);
+				setRoleBriefs(
+					() -> _toRoleBriefs(
+						dtoConverterContext,
+						_roleLocalService.getUserGroupRoles(
+							user.getUserId(), organization.getGroupId())));
 			}
 		};
 	}
@@ -315,11 +349,12 @@ public class UserResourceDTOConverter
 
 		return new RoleBrief() {
 			{
-				id = accountRole.getAccountRoleId();
-				name = accountRole.getRoleName();
-				name_i18n = LocalizedMapUtil.getI18nMap(
-					dtoConverterContext.isAcceptAllLanguages(),
-					role.getTitleMap());
+				setId(accountRole::getAccountRoleId);
+				setName(accountRole::getRoleName);
+				setName_i18n(
+					() -> LocalizedMapUtil.getI18nMap(
+						dtoConverterContext.isAcceptAllLanguages(),
+						role.getTitleMap()));
 			}
 		};
 	}
@@ -329,18 +364,18 @@ public class UserResourceDTOConverter
 
 		return new RoleBrief() {
 			{
-				id = role.getRoleId();
-				name = role.getTitle(dtoConverterContext.getLocale());
-				name_i18n = LocalizedMapUtil.getI18nMap(
-					dtoConverterContext.isAcceptAllLanguages(),
-					role.getTitleMap());
+				setId(role::getRoleId);
+				setName(() -> role.getTitle(dtoConverterContext.getLocale()));
+				setName_i18n(
+					() -> LocalizedMapUtil.getI18nMap(
+						dtoConverterContext.isAcceptAllLanguages(),
+						role.getTitleMap()));
 			}
 		};
 	}
 
 	private RoleBrief[] _toRoleBriefs(
-			DTOConverterContext dtoConverterContext, Collection<Role> roles)
-		throws Exception {
+		DTOConverterContext dtoConverterContext, Collection<Role> roles) {
 
 		return TransformUtil.transformToArray(
 			roles,
@@ -358,37 +393,38 @@ public class UserResourceDTOConverter
 	}
 
 	private SiteBrief _toSiteBrief(
-			DTOConverterContext dtoConverterContext, Group group, User user)
-		throws Exception {
+		DTOConverterContext dtoConverterContext, Group group, User user) {
 
 		return new SiteBrief() {
 			{
-				descriptiveName = group.getDescriptiveName(
-					dtoConverterContext.getLocale());
-				descriptiveName_i18n = LocalizedMapUtil.getI18nMap(
-					dtoConverterContext.isAcceptAllLanguages(),
-					group.getDescriptiveNameMap());
-				id = group.getGroupId();
-				name = group.getName(dtoConverterContext.getLocale());
-				name_i18n = LocalizedMapUtil.getI18nMap(
-					dtoConverterContext.isAcceptAllLanguages(),
-					group.getNameMap());
-				roleBriefs = _toRoleBriefs(
-					dtoConverterContext,
-					_roleLocalService.getUserGroupRoles(
-						user.getUserId(), group.getGroupId()));
+				setDescriptiveName(
+					() -> group.getDescriptiveName(
+						dtoConverterContext.getLocale()));
+				setDescriptiveName_i18n(
+					() -> LocalizedMapUtil.getI18nMap(
+						dtoConverterContext.isAcceptAllLanguages(),
+						group.getDescriptiveNameMap()));
+				setId(group::getGroupId);
+				setName(() -> group.getName(dtoConverterContext.getLocale()));
+				setName_i18n(
+					() -> LocalizedMapUtil.getI18nMap(
+						dtoConverterContext.isAcceptAllLanguages(),
+						group.getNameMap()));
+				setRoleBriefs(
+					() -> _toRoleBriefs(
+						dtoConverterContext,
+						_roleLocalService.getUserGroupRoles(
+							user.getUserId(), group.getGroupId())));
 			}
 		};
 	}
 
-	private UserGroupBrief _toUserGroupBrief(UserGroup userGroup)
-		throws Exception {
-
+	private UserGroupBrief _toUserGroupBrief(UserGroup userGroup) {
 		return new UserGroupBrief() {
 			{
-				description = userGroup.getDescription();
-				id = userGroup.getGroupId();
-				name = userGroup.getName();
+				setDescription(userGroup::getDescription);
+				setId(userGroup::getGroupId);
+				setName(userGroup::getName);
 			}
 		};
 	}
@@ -421,11 +457,6 @@ public class UserResourceDTOConverter
 
 	@Reference
 	private UserGroupLocalService _userGroupLocalService;
-
-	@Reference(target = DTOConverterConstants.USER_GROUP_RESOURCE_DTO_CONVERTER)
-	private DTOConverter
-		<UserGroup, com.liferay.headless.admin.user.dto.v1_0.UserGroup>
-			_userGroupResourceDTOConverter;
 
 	@Reference
 	private UserLocalService _userLocalService;

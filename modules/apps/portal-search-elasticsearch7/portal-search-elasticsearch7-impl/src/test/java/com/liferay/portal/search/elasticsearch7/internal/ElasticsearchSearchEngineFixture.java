@@ -12,8 +12,8 @@ import com.liferay.portal.kernel.search.SearchEngine;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.search.elasticsearch7.configuration.ElasticsearchConfiguration;
 import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
-import com.liferay.portal.search.elasticsearch7.internal.configuration.OperationModeResolver;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchClientResolver;
+import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnection;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionFixture;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch7.internal.index.CompanyIdIndexNameBuilder;
@@ -174,12 +174,14 @@ public class ElasticsearchSearchEngineFixture implements SearchEngineFixture {
 						elasticsearchConnectionFixture.
 							getElasticsearchConfigurationProperties());
 
-				operationModeResolver = _createOperationModeResolver(
-					elasticsearchConfigurationWrapper);
-
-				addElasticsearchConnection(
+				ElasticsearchConnection elasticsearchConnection =
 					elasticsearchConnectionFixture.
-						createElasticsearchConnection());
+						createElasticsearchConnection();
+
+				addElasticsearchConnection(elasticsearchConnection);
+
+				getElasticsearchConnection(
+					elasticsearchConnection.getConnectionId());
 			}
 		};
 	}
@@ -233,17 +235,6 @@ public class ElasticsearchSearchEngineFixture implements SearchEngineFixture {
 		return new CompanyIdIndexNameBuilder() {
 			{
 				setIndexNamePrefix(null);
-			}
-		};
-	}
-
-	private OperationModeResolver _createOperationModeResolver(
-		ElasticsearchConfigurationWrapper elasticsearchConfigurationWrapper1) {
-
-		return new OperationModeResolver() {
-			{
-				elasticsearchConfigurationWrapper =
-					elasticsearchConfigurationWrapper1;
 			}
 		};
 	}

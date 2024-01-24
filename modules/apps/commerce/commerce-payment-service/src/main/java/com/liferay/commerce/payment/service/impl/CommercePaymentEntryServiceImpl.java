@@ -5,17 +5,24 @@
 
 package com.liferay.commerce.payment.service.impl;
 
+import com.liferay.commerce.constants.CommercePaymentEntryConstants;
+import com.liferay.commerce.payment.constants.CommercePaymentEntryActionKeys;
 import com.liferay.commerce.payment.model.CommercePaymentEntry;
 import com.liferay.commerce.payment.service.base.CommercePaymentEntryServiceBaseImpl;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
+import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
+import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.OrderByComparator;
+
+import java.math.BigDecimal;
 
 import java.util.List;
 
@@ -24,6 +31,7 @@ import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Luca Pellizzon
+ * @author Alessio Antonio Rendina
  */
 @Component(
 	property = {
@@ -34,6 +42,143 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class CommercePaymentEntryServiceImpl
 	extends CommercePaymentEntryServiceBaseImpl {
+
+	@Override
+	public CommercePaymentEntry addCommercePaymentEntry(
+			long classNameId, long classPK, long commerceChannelId,
+			BigDecimal amount, String callbackURL, String cancelURL,
+			String currencyCode, String languageId, String note,
+			String paymentIntegrationKey, int paymentIntegrationType,
+			String reasonKey, String transactionCode, int type,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		String actionId = CommercePaymentEntryActionKeys.ADD_PAYMENT;
+
+		if (type == CommercePaymentEntryConstants.TYPE_REFUND) {
+			actionId = CommercePaymentEntryActionKeys.ADD_REFUND;
+		}
+
+		_portletResourcePermission.check(
+			getPermissionChecker(), serviceContext.getScopeGroupId(), actionId);
+
+		return commercePaymentEntryLocalService.addCommercePaymentEntry(
+			getUserId(), classNameId, classPK, commerceChannelId, amount,
+			callbackURL, cancelURL, currencyCode, languageId, note,
+			paymentIntegrationKey, paymentIntegrationType, reasonKey,
+			transactionCode, type, serviceContext);
+	}
+
+	@Override
+	public CommercePaymentEntry addOrUpdateCommercePaymentEntry(
+			String externalReferenceCode, long classNameId, long classPK,
+			long commerceChannelId, BigDecimal amount, String callbackURL,
+			String cancelURL, String currencyCode, String errorMessages,
+			String languageId, String note, String paymentIntegrationKey,
+			int paymentIntegrationType, int paymentStatus, String reasonKey,
+			String redirectURL, String transactionCode, int type,
+			ServiceContext serviceContext)
+		throws PortalException {
+
+		CommercePaymentEntry commercePaymentEntry =
+			commercePaymentEntryLocalService.
+				fetchCommercePaymentEntryByExternalReferenceCode(
+					externalReferenceCode, serviceContext.getCompanyId());
+
+		if (commercePaymentEntry == null) {
+			String actionId = CommercePaymentEntryActionKeys.ADD_PAYMENT;
+
+			if (type == CommercePaymentEntryConstants.TYPE_REFUND) {
+				actionId = CommercePaymentEntryActionKeys.ADD_REFUND;
+			}
+
+			_portletResourcePermission.check(
+				getPermissionChecker(), serviceContext.getScopeGroupId(),
+				actionId);
+		}
+		else {
+			_commercePaymentEntryModelResourcePermission.check(
+				getPermissionChecker(), commercePaymentEntry,
+				ActionKeys.UPDATE);
+		}
+
+		return commercePaymentEntryLocalService.addOrUpdateCommercePaymentEntry(
+			externalReferenceCode, getUserId(), classNameId, classPK,
+			commerceChannelId, amount, callbackURL, cancelURL, currencyCode,
+			errorMessages, languageId, note, paymentIntegrationKey,
+			paymentIntegrationType, paymentStatus, reasonKey, redirectURL,
+			transactionCode, type, serviceContext);
+	}
+
+	@Override
+	public CommercePaymentEntry deleteCommercePaymentEntry(
+			long commercePaymentEntryId)
+		throws PortalException {
+
+		_commercePaymentEntryModelResourcePermission.check(
+			getPermissionChecker(), commercePaymentEntryId, ActionKeys.DELETE);
+
+		return commercePaymentEntryLocalService.deleteCommercePaymentEntry(
+			commercePaymentEntryId);
+	}
+
+	@Override
+	public CommercePaymentEntry fetchCommercePaymentEntry(
+			long commercePaymentEntryId)
+		throws PortalException {
+
+		CommercePaymentEntry commercePaymentEntry =
+			commercePaymentEntryLocalService.fetchCommercePaymentEntry(
+				commercePaymentEntryId);
+
+		if (commercePaymentEntry != null) {
+			_commercePaymentEntryModelResourcePermission.check(
+				getPermissionChecker(), commercePaymentEntry, ActionKeys.VIEW);
+		}
+
+		return commercePaymentEntry;
+	}
+
+	@Override
+	public CommercePaymentEntry
+			fetchCommercePaymentEntryByExternalReferenceCode(
+				String externalReferenceCode, long companyId)
+		throws PortalException {
+
+		CommercePaymentEntry commercePaymentEntry =
+			commercePaymentEntryLocalService.
+				fetchCommercePaymentEntryByExternalReferenceCode(
+					externalReferenceCode, companyId);
+
+		if (commercePaymentEntry != null) {
+			_commercePaymentEntryModelResourcePermission.check(
+				getPermissionChecker(), commercePaymentEntry, ActionKeys.VIEW);
+		}
+
+		return commercePaymentEntry;
+	}
+
+	@Override
+	public List<CommercePaymentEntry> getCommercePaymentEntries(
+			long companyId, long classNameId, long classPK, int type, int start,
+			int end, OrderByComparator<CommercePaymentEntry> orderByComparator)
+		throws PortalException {
+
+		PermissionChecker permissionChecker = getPermissionChecker();
+
+		if (!permissionChecker.hasPermission(
+				null, CommercePaymentEntry.class.getName(), companyId,
+				ActionKeys.VIEW)) {
+
+			throw new PrincipalException.MustHavePermission(
+				permissionChecker, CommercePaymentEntry.class.getName(), 0,
+				ActionKeys.VIEW);
+		}
+
+		return commercePaymentEntryLocalService.getCommercePaymentEntries(
+			companyId, classNameId, classPK, type, start, end,
+			orderByComparator);
+	}
 
 	@Override
 	public List<CommercePaymentEntry> getCommercePaymentEntries(
@@ -73,8 +218,7 @@ public class CommercePaymentEntryServiceImpl
 			long companyId, long[] classNameIds, long[] classPKs,
 			String[] currencyCodes, String keywords,
 			String[] paymentMethodNames, int[] paymentStatuses,
-			boolean excludeStatuses, int start, int end, String orderByField,
-			boolean reverse)
+			boolean excludeStatuses, int start, int end, Sort sort)
 		throws PortalException {
 
 		BaseModelSearchResult<CommercePaymentEntry> baseModelSearchResult =
@@ -95,9 +239,65 @@ public class CommercePaymentEntryServiceImpl
 				).put(
 					"excludeStatuses", excludeStatuses
 				).build(),
-				start, end, orderByField, reverse);
+				start, end, sort);
 
 		return baseModelSearchResult.getBaseModels();
+	}
+
+	@Override
+	public CommercePaymentEntry updateCommercePaymentEntry(
+			String externalReferenceCode, long commercePaymentEntryId,
+			long commerceChannelId, BigDecimal amount, String callbackURL,
+			String cancelURL, String currencyCode, String errorMessages,
+			String languageId, String note, String paymentIntegrationKey,
+			int paymentIntegrationType, int paymentStatus, String reasonKey,
+			String redirectURL, String transactionCode, int type)
+		throws PortalException {
+
+		_commercePaymentEntryModelResourcePermission.check(
+			getPermissionChecker(), commercePaymentEntryId, ActionKeys.UPDATE);
+
+		return commercePaymentEntryLocalService.updateCommercePaymentEntry(
+			externalReferenceCode, commercePaymentEntryId, commerceChannelId,
+			amount, callbackURL, cancelURL, currencyCode, errorMessages,
+			languageId, note, paymentIntegrationKey, paymentIntegrationType,
+			paymentStatus, reasonKey, redirectURL, transactionCode, type);
+	}
+
+	@Override
+	public CommercePaymentEntry updateExternalReferenceCode(
+			long commercePaymentEntryId, String externalReferenceCode)
+		throws PortalException {
+
+		_commercePaymentEntryModelResourcePermission.check(
+			getPermissionChecker(), commercePaymentEntryId, ActionKeys.UPDATE);
+
+		return commercePaymentEntryLocalService.updateExternalReferenceCode(
+			commercePaymentEntryId, externalReferenceCode);
+	}
+
+	@Override
+	public CommercePaymentEntry updateNote(
+			long commercePaymentEntryId, String note)
+		throws PortalException {
+
+		_commercePaymentEntryModelResourcePermission.check(
+			getPermissionChecker(), commercePaymentEntryId, ActionKeys.UPDATE);
+
+		return commercePaymentEntryLocalService.updateNote(
+			commercePaymentEntryId, note);
+	}
+
+	@Override
+	public CommercePaymentEntry updateReasonKey(
+			long commercePaymentEntryId, String reasonKey)
+		throws PortalException {
+
+		_commercePaymentEntryModelResourcePermission.check(
+			getPermissionChecker(), commercePaymentEntryId, ActionKeys.UPDATE);
+
+		return commercePaymentEntryLocalService.updateReasonKey(
+			commercePaymentEntryId, reasonKey);
 	}
 
 	@Reference(
@@ -105,5 +305,10 @@ public class CommercePaymentEntryServiceImpl
 	)
 	private ModelResourcePermission<CommercePaymentEntry>
 		_commercePaymentEntryModelResourcePermission;
+
+	@Reference(
+		target = "(resource.name=" + CommercePaymentEntryConstants.RESOURCE_NAME + ")"
+	)
+	private PortletResourcePermission _portletResourcePermission;
 
 }

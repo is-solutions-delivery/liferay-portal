@@ -162,10 +162,6 @@ definition {
 
 		MouseOver.mouseOverNotVisible(locator1 = "Button#PLUS");
 
-		AssertTextEquals.assertPartialText(
-			locator1 = "Message#TOOLTIP",
-			value1 = "Custom Publish Process");
-
 		Staging.publishCustomPublication(remoteStaging = "true");
 
 		Staging.publishCustomPublication(
@@ -207,6 +203,10 @@ definition {
 			publishTemplateName = "My Template Title",
 			scheduleProcess = "true");
 
+		// Pausing 300 seconds due to LRQA-83187
+
+		Pause(value1 = 300000);
+
 		Staging.openStagingAdmin(siteURLKey = "site-name");
 
 		Staging.viewPublishTask(publicationTitle = "My Publish Title");
@@ -234,6 +234,61 @@ definition {
 			failureExpected = "true",
 			remoteStaging = "true",
 			validateErrorMessage = "An unexpected error occurred with the publish process. Please check your portal and publishing configuration.");
+	}
+
+	@description = "This is a use case for LPS-190015, TC6. Canceling the multi publishing of several webcontents to remote site, stops them process properly and no webcontnts are published."
+	@priority = 3
+	test CanceledMultiPublishToRemoteDoesNotPublishAnyWebContent {
+		property custom.properties = "auth.verifier.TunnelAuthVerifier.hosts.allowed=${line.separator}feature.flag.LPS-165481=true${line.separator}tunneling.servlet.shared.secret=1234567890123456";
+		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
+
+		task ("Add web contents") {
+			for (var i : list "1,2,3,4,5") {
+				JSONWebcontent.addWebContent(
+					content = "WC Content ${i}",
+					groupName = "Site Name",
+					title = "WC Title ${i}");
+			}
+		}
+
+		task ("Cancele publication of all web contents") {
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "site-name");
+
+			PortletEntry.selectAll();
+
+			Click(locator1 = "ManagementBar#MORE_ACTIONS_ELLIPSIS");
+
+			MenuItem.click(menuItem = "Publish Selected Elements");
+
+			AssertTextEquals(
+				index = 1,
+				locator1 = "Modal#BODY_MESSAGE",
+				value1 = "Are you sure you want to publish the selected entities?");
+
+			Click(
+				buttonName = "Cancel",
+				locator1 = "Modal#SECONDARY_BUTTON");
+		}
+
+		task ("Assert webcontents are not published") {
+			User.logoutPG();
+
+			User.firstLoginUI(
+				password = "test",
+				specificURL = "http://localhost:9080",
+				userEmailAddress = "test@liferay.com");
+
+			WebContentNavigator.openWebContentAdmin(
+				baseURL = "http://localhost:9080",
+				siteURLKey = "remote-site");
+
+			for (var i : list "1,2,3,4,5") {
+				AssertElementNotPresent(
+					key_webContentTitle = "WC Title ${i}",
+					locator1 = "WC#ENTRY_LIST_TITLE_NAME");
+			}
+		}
 	}
 
 	@description = "This is a use case for LPS-52285. Verify that remote staging can be disabled after shutting down the remote site."
@@ -483,6 +538,104 @@ definition {
 			pagesNotToPublish = '''Staging Test Page 2''',
 			pagesToPublish = '''Staging Test Page 1''',
 			publicationTitle = "sumCheck");
+	}
+
+	@description = "This is a use case for LPS-190015, TC5. Publishing several webcontents from the first page of wcs by multi publish option to remote site."
+	@priority = 3
+	test PublishMoreWebContentsToRemoteWithMultiPublishOption {
+		property custom.properties = "auth.verifier.TunnelAuthVerifier.hosts.allowed=${line.separator}feature.flag.LPS-165481=true${line.separator}tunneling.servlet.shared.secret=1234567890123456";
+		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
+
+		task ("Add web contents") {
+			for (var i : list "1,2,3,4,5") {
+				JSONWebcontent.addWebContent(
+					content = "WC Content ${i}",
+					groupName = "Site Name",
+					title = "WC Title ${i}");
+			}
+		}
+
+		task ("Publish all web contents from first page") {
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "site-name");
+
+			Pagination.changePagination(itemsPerPage = 4);
+
+			PortletEntry.selectAll();
+
+			Staging.publishWithMultiPublishOption();
+		}
+
+		task ("Assert all selected webcontents are published") {
+			User.logoutPG();
+
+			User.firstLoginUI(
+				password = "test",
+				specificURL = "http://localhost:9080",
+				userEmailAddress = "test@liferay.com");
+
+			WebContentNavigator.openWebContentAdmin(
+				baseURL = "http://localhost:9080",
+				siteURLKey = "remote-site");
+
+			for (var i : list "2,3,4,5") {
+				AssertElementPresent(
+					key_webContentTitle = "WC Title ${i}",
+					locator1 = "WC#ENTRY_LIST_TITLE_NAME");
+			}
+
+			AssertElementNotPresent(
+				key_webContentTitle = "WC Title 1",
+				locator1 = "WC#ENTRY_LIST_TITLE_NAME");
+		}
+	}
+
+	@description = "This is a use case for LPS-190015, TC4. Publishing a single webcontent by multi publish option to remote site."
+	@priority = 3
+	test PublishOneWebContentToRemoteWithMultiPublishOption {
+		property custom.properties = "auth.verifier.TunnelAuthVerifier.hosts.allowed=${line.separator}feature.flag.LPS-165481=true${line.separator}tunneling.servlet.shared.secret=1234567890123456";
+		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
+
+		task ("Add web contents") {
+			for (var i : list "1,2") {
+				JSONWebcontent.addWebContent(
+					content = "WC Content ${i}",
+					groupName = "Site Name",
+					title = "WC Title ${i}");
+			}
+		}
+
+		task ("Publish one web content with multi publish option") {
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "site-name");
+
+			Click(
+				content_title = "WC Title 1",
+				locator1 = "Checkbox#ENTRY_BY_TITLE");
+
+			Staging.publishWithMultiPublishOption();
+		}
+
+		task ("Assert web content is published") {
+			User.logoutPG();
+
+			User.firstLoginUI(
+				password = "test",
+				specificURL = "http://localhost:9080",
+				userEmailAddress = "test@liferay.com");
+
+			WebContentNavigator.openWebContentAdmin(
+				baseURL = "http://localhost:9080",
+				siteURLKey = "remote-site");
+
+			AssertElementPresent(
+				key_webContentTitle = "WC Title 1",
+				locator1 = "WC#ENTRY_LIST_TITLE_NAME");
+
+			AssertElementNotPresent(
+				key_webContentTitle = "WC Title 2",
+				locator1 = "WC#ENTRY_LIST_TITLE_NAME");
+		}
 	}
 
 	@description = "This is a use case for LPS-80494. Documents can be published with link to page fields."
@@ -746,6 +899,8 @@ definition {
 	@description = "This is a use case for LPS-81950. Web contents can be published via their portlet."
 	@priority = 3
 	test StagingRemoteLiveWebContentViaPortletPG {
+		property osgi.module.configuration.file.names = "com.liferay.staging.configuration.StagingConfiguration.config";
+		property osgi.module.configurations = "publishDisplayedContent=\"true\"";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
@@ -1244,7 +1399,7 @@ definition {
 
 		task ("Then: The warning message should still display") {
 			AssertVisible(
-				key_warningMessage = "Please consider publishing all content or using a wide date range.",
+				key_warningMessage = "Publishing all content or using a wide date range will take some time.",
 				locator1 = "StagingPublishToLive#WARNING_SPECIFIC");
 		}
 
@@ -1254,7 +1409,7 @@ definition {
 
 		task ("Then: The warning message should not display") {
 			AssertElementNotPresent(
-				key_warningMessage = "Please consider publishing all content or using a wide date range.",
+				key_warningMessage = "Publishing all content or using a wide date range will take some time.",
 				locator1 = "StagingPublishToLive#WARNING_SPECIFIC");
 		}
 
@@ -1266,7 +1421,7 @@ definition {
 
 		task ("Then: The warning message should not display") {
 			AssertElementNotPresent(
-				key_warningMessage = "Please consider publishing all content or using a wide date range.",
+				key_warningMessage = "Publishing all content or using a wide date range will take some time.",
 				locator1 = "StagingPublishToLive#WARNING_SPECIFIC");
 		}
 	}
@@ -1294,7 +1449,7 @@ definition {
 
 		task ("Then: The warning message should still display") {
 			AssertVisible(
-				key_warningMessage = "Please consider publishing all content or using a wide date range.",
+				key_warningMessage = "Publishing all content or using a wide date range will take some time.",
 				locator1 = "StagingPublishToLive#WARNING_SPECIFIC");
 		}
 
@@ -1304,7 +1459,7 @@ definition {
 
 		task ("Then: The warning message should not display") {
 			AssertElementNotPresent(
-				key_warningMessage = "Please consider publishing all content or using a wide date range.",
+				key_warningMessage = "Publishing all content or using a wide date range will take some time.",
 				locator1 = "StagingPublishToLive#WARNING_SPECIFIC");
 		}
 
@@ -1316,7 +1471,7 @@ definition {
 
 		task ("Then: The warning message should not display") {
 			AssertElementNotPresent(
-				key_warningMessage = "Please consider publishing all content or using a wide date range.",
+				key_warningMessage = "Publishing all content or using a wide date range will take some time.",
 				locator1 = "StagingPublishToLive#WARNING_SPECIFIC");
 		}
 	}
@@ -1333,7 +1488,7 @@ definition {
 			Staging.addCustomPublication();
 
 			AssertElementNotPresent(
-				key_warningMessage = "Please consider publishing all content or using a wide date range.",
+				key_warningMessage = "Publishing all content or using a wide date range will take some time.",
 				locator1 = "StagingPublishToLive#WARNING_SPECIFIC");
 		}
 
@@ -1343,7 +1498,7 @@ definition {
 
 		task ("Then: The warning message should still display") {
 			AssertVisible(
-				key_warningMessage = "Please consider publishing all content or using a wide date range.",
+				key_warningMessage = "Publishing all content or using a wide date range will take some time.",
 				locator1 = "StagingPublishToLive#WARNING_SPECIFIC");
 		}
 
@@ -1355,7 +1510,7 @@ definition {
 
 		task ("Then: The warning message should still display") {
 			AssertVisible(
-				key_warningMessage = "Please consider publishing all content or using a wide date range.",
+				key_warningMessage = "Publishing all content or using a wide date range will take some time.",
 				locator1 = "StagingPublishToLive#WARNING_SPECIFIC");
 		}
 
@@ -1365,7 +1520,7 @@ definition {
 
 		task ("Then: The warning message should not display") {
 			AssertElementNotPresent(
-				key_warningMessage = "Please consider publishing all content or using a wide date range.",
+				key_warningMessage = "Publishing all content or using a wide date range will take some time.",
 				locator1 = "StagingPublishToLive#WARNING_SPECIFIC");
 		}
 	}

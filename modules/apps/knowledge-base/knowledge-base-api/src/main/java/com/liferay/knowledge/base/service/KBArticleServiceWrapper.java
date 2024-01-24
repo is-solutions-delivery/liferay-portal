@@ -318,6 +318,13 @@ public class KBArticleServiceWrapper
 	}
 
 	@Override
+	public KBArticle getLatestKBArticle(long resourcePrimKey)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _kbArticleService.getLatestKBArticle(resourcePrimKey);
+	}
+
+	@Override
 	public KBArticle getLatestKBArticle(long resourcePrimKey, int status)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
@@ -385,6 +392,13 @@ public class KBArticleServiceWrapper
 		_kbArticleService.moveKBArticle(
 			resourcePrimKey, parentResourceClassNameId, parentResourcePrimKey,
 			priority);
+	}
+
+	@Override
+	public KBArticle moveKBArticleToTrash(long resourcePrimKey)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _kbArticleService.moveKBArticleToTrash(resourcePrimKey);
 	}
 
 	@Override

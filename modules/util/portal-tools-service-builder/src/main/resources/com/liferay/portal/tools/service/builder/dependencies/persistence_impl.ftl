@@ -786,7 +786,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 	public ${entity.name} updateImpl(${apiPackagePath}.model.${entity.name} ${entity.variableName}) {
 		boolean isNew = ${entity.variableName}.isNew();
 
-		<#if entity.isHierarchicalTree() || (entity.collectionEntityFinders?size != 0) || (entity.uniqueEntityFinders?size &gt; 0) || entity.hasEntityColumn("createDate", "Date") || entity.hasEntityColumn("modifiedDate", "Date")>
+		<#if entity.isHierarchicalTree() || (entity.collectionEntityFinders?size != 0) || (entity.uniqueEntityFinders?size &gt; 0) || entity.hasEntityColumn("createDate", "Date") || entity.hasEntityColumn("externalReferenceCode") || entity.hasEntityColumn("modifiedDate", "Date")>
 			if (!(${entity.variableName} instanceof ${entity.name}ModelImpl)) {
 				InvocationHandler invocationHandler = null;
 
@@ -810,7 +810,7 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			}
 		</#if>
 
-		<#if entity.hasExternalReferenceCode() || entity.hasEntityColumn("externalReferenceCode")>
+		<#if entity.hasEntityColumn("externalReferenceCode")>
 			if (Validator.isNull(${entity.variableName}.getExternalReferenceCode())) {
 				<#if entity.hasUuid()>
 					${entity.variableName}.setExternalReferenceCode(${entity.variableName}.getUuid());
@@ -818,9 +818,44 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 					${entity.variableName}.setExternalReferenceCode(String.valueOf(${entity.variableName}.getPrimaryKey()));
 				</#if>
 			}
+			else {
+				<#if serviceBuilder.isVersionGTE_7_3_0()>
+					if (!Objects.equals(${entity.variableName}ModelImpl.getColumnOriginalValue("externalReferenceCode"), ${entity.variableName}.getExternalReferenceCode())) {
+				<#else>
+					if (!Objects.equals(${entity.variableName}ModelImpl.getOriginalExternalReferenceCode(), ${entity.variableName}.getExternalReferenceCode())) {
+				</#if>
 
-			<#if serviceBuilder.isVersionGTE_7_3_0() && entity.hasExternalReferenceCode()>
-				else {
+					long userId = GetterUtil.getLong(PrincipalThreadLocal.getName());
+
+					if (userId > 0) {
+						<#if entity.hasEntityColumn("companyId")>
+							long companyId = ${entity.variableName}.getCompanyId();
+						<#else>
+							long companyId = 0;
+						</#if>
+
+						<#if entity.hasEntityColumn("groupId")>
+							long groupId = ${entity.variableName}.getGroupId();
+						<#else>
+							long groupId = 0;
+						</#if>
+
+						long classPK = 0;
+
+						if (!isNew) {
+							classPK = ${entity.variableName}.getPrimaryKey();
+						}
+
+						try {
+							${entity.variableName}.setExternalReferenceCode(SanitizerUtil.sanitize(companyId, groupId, userId, ${apiPackagePath}.model.${entity.name}.class.getName(), classPK, ContentTypes.TEXT_HTML, Sanitizer.MODE_ALL, ${entity.variableName}.getExternalReferenceCode(), null));
+						}
+						catch (SanitizerException sanitizerException) {
+							throw new SystemException(sanitizerException);
+						}
+					}
+				}
+
+				<#if entity.hasExternalReferenceCode()>
 					<#if serviceBuilder.isVersionGTE_7_4_0()>
 						${entity.name} erc${entity.name} = fetchByERC_${entity.externalReferenceCode?cap_first[0..0]}(${entity.variableName}.getExternalReferenceCode(), ${entity.variableName}.get${entity.externalReferenceCode?cap_first}Id());
 					<#else>
@@ -838,8 +873,8 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 								throw new ${duplicateEntityExternalReferenceCode}Exception("Duplicate ${entity.humanName} with external reference code " + ${entity.variableName}.getExternalReferenceCode() + " and ${entity.externalReferenceCode} " + ${entity.variableName}.get${entity.externalReferenceCode?cap_first}Id());
 						}
 					}
-				}
-			</#if>
+				</#if>
+			}
 		</#if>
 
 		<#if entity.hasEntityColumn("createDate", "Date") && entity.hasEntityColumn("modifiedDate", "Date")>
@@ -890,8 +925,6 @@ public class ${entity.name}PersistenceImpl extends BasePersistenceImpl<${entity.
 			long userId = GetterUtil.getLong(PrincipalThreadLocal.getName());
 
 			if (userId > 0) {
-				<#assign companyId = 0 />
-
 				<#if entity.hasEntityColumn("companyId")>
 					long companyId = ${entity.variableName}.getCompanyId();
 				<#else>

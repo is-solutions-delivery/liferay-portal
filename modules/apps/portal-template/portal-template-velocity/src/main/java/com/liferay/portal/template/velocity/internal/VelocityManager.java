@@ -6,6 +6,8 @@
 package com.liferay.portal.template.velocity.internal;
 
 import com.liferay.petra.lang.ClassLoaderPool;
+import com.liferay.petra.lang.SafeCloseable;
+import com.liferay.petra.lang.ThreadContextClassLoaderUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
@@ -16,6 +18,8 @@ import com.liferay.portal.kernel.template.TemplateManager;
 import com.liferay.portal.kernel.template.TemplateResource;
 import com.liferay.portal.kernel.template.TemplateResourceCache;
 import com.liferay.portal.kernel.template.TemplateResourceLoader;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.JavaDetector;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.template.BaseTemplateResourceCache;
 import com.liferay.portal.template.BaseTemplateResourceLoader;
@@ -180,6 +184,19 @@ public class VelocityManager extends BaseTemplateManager {
 		_templateContextHelper.removeAllHelperUtilities();
 	}
 
+	private String[] _filterRestrictedClasses(String[] restrictedClasses) {
+		if (JavaDetector.isJDK21()) {
+
+			// TODO Remove java.lang.Compiler from
+			// VelocityEngineConfiguration#restrictedClasses and this method
+			// once we fully upgrade to JDK 21
+
+			return ArrayUtil.remove(restrictedClasses, "java.lang.Compiler");
+		}
+
+		return restrictedClasses;
+	}
+
 	private String _getVelocimacroLibrary(Class<?> clazz) {
 		String contextName = ClassLoaderPool.getContextName(
 			clazz.getClassLoader());
@@ -210,15 +227,9 @@ public class VelocityManager extends BaseTemplateManager {
 			return;
 		}
 
-		Thread currentThread = Thread.currentThread();
+		try (SafeCloseable safeCloseable = ThreadContextClassLoaderUtil.swap(
+				VelocityManager.class.getClassLoader())) {
 
-		ClassLoader contextClassLoader = currentThread.getContextClassLoader();
-
-		Class<?> clazz = getClass();
-
-		currentThread.setContextClassLoader(clazz.getClassLoader());
-
-		try {
 			_velocityEngine = new VelocityEngine();
 
 			ExtendedProperties extendedProperties =
@@ -235,7 +246,8 @@ public class VelocityManager extends BaseTemplateManager {
 			extendedProperties.setProperty(
 				RuntimeConstants.INTROSPECTOR_RESTRICT_CLASSES,
 				StringUtil.merge(
-					_velocityEngineConfiguration.restrictedClasses()));
+					_filterRestrictedClasses(
+						_velocityEngineConfiguration.restrictedClasses())));
 			extendedProperties.setProperty(
 				"liferay." + RuntimeConstants.INTROSPECTOR_RESTRICT_CLASSES +
 					".methods",
@@ -297,7 +309,8 @@ public class VelocityManager extends BaseTemplateManager {
 				RuntimeConstants.UBERSPECT_CLASSNAME,
 				LiferaySecureUberspector.class.getName());
 			extendedProperties.setProperty(
-				VelocityEngine.VM_LIBRARY, _getVelocimacroLibrary(clazz));
+				VelocityEngine.VM_LIBRARY,
+				_getVelocimacroLibrary(VelocityManager.class));
 			extendedProperties.setProperty(
 				VelocityEngine.VM_LIBRARY_AUTORELOAD,
 				String.valueOf(!cacheEnabled));
@@ -311,9 +324,6 @@ public class VelocityManager extends BaseTemplateManager {
 		}
 		catch (Exception exception) {
 			throw new TemplateException(exception);
-		}
-		finally {
-			currentThread.setContextClassLoader(contextClassLoader);
 		}
 	}
 

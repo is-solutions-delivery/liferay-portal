@@ -30,7 +30,6 @@ import com.liferay.portal.kernel.service.UserGroupLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
 import com.liferay.portal.kernel.service.permission.GroupPermissionUtil;
 import com.liferay.portal.kernel.service.permission.LayoutPermission;
-import com.liferay.portal.kernel.service.permission.LayoutPrototypePermissionUtil;
 import com.liferay.portal.kernel.service.permission.LayoutSetPrototypePermissionUtil;
 import com.liferay.portal.kernel.service.permission.OrganizationPermissionUtil;
 import com.liferay.portal.kernel.service.permission.UserPermissionUtil;
@@ -305,7 +304,9 @@ public class LayoutPermissionImpl implements LayoutPermission {
 			return false;
 		}
 
-		if (layout.isPending()) {
+		if (layout.isPending() &&
+			(!actionId.equals(ActionKeys.VIEW) || !layout.isPublished())) {
+
 			Boolean hasPermission = WorkflowPermissionUtil.hasPermission(
 				permissionChecker, layout.getGroupId(), Layout.class.getName(),
 				layout.getPlid(), actionId);

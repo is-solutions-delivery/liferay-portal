@@ -13,6 +13,29 @@ import com.liferay.petra.string.StringPool;
  */
 public class CSVUtil {
 
+	public static String decode(
+		String enclosingChar, String delimiter, String s) {
+
+		if (s == null) {
+			return null;
+		}
+
+		if ((s.indexOf(enclosingChar) < 0) && (s.indexOf(delimiter) < 0) &&
+			(s.indexOf(CharPool.NEW_LINE) < 0) &&
+			(s.indexOf(CharPool.RETURN) < 0)) {
+
+			return s;
+		}
+
+		if (s.startsWith(enclosingChar) && s.endsWith(enclosingChar)) {
+			return StringUtil.replace(
+				s.substring(1, s.length() - 1), enclosingChar + enclosingChar,
+				enclosingChar);
+		}
+
+		return s;
+	}
+
 	public static String encode(Object object) {
 		Class<?> clazz = object.getClass();
 
@@ -31,8 +54,8 @@ public class CSVUtil {
 		}
 
 		if ((s.indexOf(CharPool.COMMA) < 0) &&
-			(s.indexOf(CharPool.QUOTE) < 0) &&
 			(s.indexOf(CharPool.NEW_LINE) < 0) &&
+			(s.indexOf(CharPool.QUOTE) < 0) &&
 			(s.indexOf(CharPool.RETURN) < 0)) {
 
 			return s;

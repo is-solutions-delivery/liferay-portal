@@ -6,11 +6,14 @@
 package com.liferay.segments.experiment.web.internal.util;
 
 import com.liferay.analytics.settings.configuration.AnalyticsConfiguration;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
@@ -47,8 +50,8 @@ public class SegmentsExperimentUtil {
 	}
 
 	public static JSONObject toSegmentsExperimentJSONObject(
-			AnalyticsConfiguration analyticsConfiguration, Locale locale,
-			SegmentsExperiment segmentsExperiment)
+			AnalyticsConfiguration analyticsConfiguration, Group group,
+			Locale locale, SegmentsExperiment segmentsExperiment)
 		throws PortalException {
 
 		if (segmentsExperiment == null) {
@@ -62,7 +65,7 @@ public class SegmentsExperimentUtil {
 		).put(
 			"detailsURL",
 			_getViewSegmentsExperimentDetailsURL(
-				analyticsConfiguration, segmentsExperiment)
+				analyticsConfiguration, group, segmentsExperiment)
 		).put(
 			"editable", _isEditable(segmentsExperiment)
 		).put(
@@ -81,6 +84,8 @@ public class SegmentsExperimentUtil {
 			String.valueOf(segmentsExperiment.getSegmentsExperimentId())
 		).put(
 			"status", toStatusJSONObject(locale, segmentsExperiment.getStatus())
+		).put(
+			"type", toTypeJSONObject(locale, segmentsExperiment.getType())
 		);
 	}
 
@@ -129,8 +134,27 @@ public class SegmentsExperimentUtil {
 		);
 	}
 
+	public static JSONObject toTypeJSONObject(Locale locale, String type) {
+		SegmentsExperimentConstants.Type segmentsExperimentConstantsType =
+			SegmentsExperimentConstants.Type.parse(type);
+
+		if (segmentsExperimentConstantsType == null) {
+			return null;
+		}
+
+		return JSONUtil.put(
+			"label",
+			LanguageUtil.get(
+				ResourceBundleUtil.getBundle(
+					"content.Language", locale, SegmentsExperimentUtil.class),
+				segmentsExperimentConstantsType.getLabel())
+		).put(
+			"value", segmentsExperimentConstantsType.name()
+		);
+	}
+
 	private static String _getViewSegmentsExperimentDetailsURL(
-		AnalyticsConfiguration analyticsConfiguration,
+		AnalyticsConfiguration analyticsConfiguration, Group group,
 		SegmentsExperiment segmentsExperiment) {
 
 		if (segmentsExperiment == null) {
@@ -144,8 +168,22 @@ public class SegmentsExperimentUtil {
 			return StringPool.BLANK;
 		}
 
-		return liferayAnalyticsURL + "/tests/overview/" +
-			segmentsExperiment.getSegmentsExperimentKey();
+		StringBundler sb = new StringBundler(5);
+
+		sb.append(liferayAnalyticsURL);
+
+		String analyticsChannelId = GetterUtil.getString(
+			group.getTypeSettingsProperty("analyticsChannelId"));
+
+		if (Validator.isNotNull(analyticsChannelId)) {
+			sb.append(StringPool.SLASH);
+			sb.append(analyticsChannelId);
+		}
+
+		sb.append("/tests/overview/");
+		sb.append(segmentsExperiment.getSegmentsExperimentKey());
+
+		return sb.toString();
 	}
 
 	private static boolean _isEditable(SegmentsExperiment segmentsExperiment) {

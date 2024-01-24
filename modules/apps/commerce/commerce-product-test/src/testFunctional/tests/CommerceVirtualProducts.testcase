@@ -8,7 +8,7 @@ definition {
 	property testray.main.component.name = "Product Info Management";
 
 	setUp {
-		CommerceConfiguration.commerceSetUp();
+		CommerceConfiguration.commerceSetUp(storeFront = "true");
 	}
 
 	tearDown {
@@ -328,9 +328,17 @@ definition {
 
 			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
 
-			Click(locator1 = "FormFields#SELECT_UPLOAD_FIELD");
+			CommerceEntry.gotoMenuTab(menuTab = "Options");
 
-			SelectFrameTop();
+			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
+
+			Button.clickSave();
+
+			Click(locator1 = "Button#PLUS");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			Click(locator1 = "FormFields#SELECT_UPLOAD_FIELD");
 
 			SelectFrame(
 				key_frameTitle = "Select File",
@@ -343,6 +351,16 @@ definition {
 			Click(
 				key_filterOption = "Add",
 				locator1 = "AppBuilder#CHOOSE_SEARCH_FILTER_BY_OPTION");
+
+			SelectFrameTop();
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			Button.clickSave();
+
+			Click(locator1 = "Icon#CLOSE");
+
+			SelectFrameTop();
 
 			CommerceProducts.updateProductVirtualActivationStatus(
 				activationStatus = "Pending",
@@ -457,9 +475,7 @@ definition {
 		}
 
 		task ("And the admin selects a file for the virtual product along with the activation status") {
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CommerceNavigator.searchEntry(entryName = "Virtual");
 
@@ -467,9 +483,17 @@ definition {
 
 			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
 
-			Click(locator1 = "FormFields#SELECT_UPLOAD_FIELD");
+			CommerceEntry.gotoMenuTab(menuTab = "Options");
 
-			SelectFrameTop();
+			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
+
+			Button.clickSave();
+
+			Click(locator1 = "Button#PLUS");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			Click(locator1 = "FormFields#SELECT_UPLOAD_FIELD");
 
 			SelectFrame(
 				key_frameTitle = "Select File",
@@ -482,6 +506,14 @@ definition {
 			Click(
 				key_filterOption = "Add",
 				locator1 = "AppBuilder#CHOOSE_SEARCH_FILTER_BY_OPTION");
+
+			SelectFrameTop();
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			Button.clickSave();
+
+			Click(locator1 = "Icon#CLOSE");
 
 			SelectFrameTop();
 
@@ -550,9 +582,7 @@ definition {
 		}
 
 		task ("And the admin changes the order status to 'completed'") {
-			CommerceNavigator.gotoPortlet(
-				category = "Order Management",
-				portlet = "Orders");
+			CommerceOrders.openOrdersAdmin();
 
 			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
 
@@ -620,9 +650,7 @@ definition {
 		}
 
 		task ("And the admin selects a file for the virtual product along with the activation status") {
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CommerceNavigator.searchEntry(entryName = "Virtual");
 
@@ -630,9 +658,17 @@ definition {
 
 			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
 
-			Click(locator1 = "FormFields#SELECT_UPLOAD_FIELD");
+			CommerceEntry.gotoMenuTab(menuTab = "Options");
 
-			SelectFrameTop();
+			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
+
+			Button.clickSave();
+
+			Click(locator1 = "Button#PLUS");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			Click(locator1 = "FormFields#SELECT_UPLOAD_FIELD");
 
 			SelectFrame(
 				key_frameTitle = "Select File",
@@ -645,6 +681,14 @@ definition {
 			Click(
 				key_filterOption = "Add",
 				locator1 = "AppBuilder#CHOOSE_SEARCH_FILTER_BY_OPTION");
+
+			SelectFrameTop();
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			Button.clickSave();
+
+			Click(locator1 = "Icon#CLOSE");
 
 			SelectFrameTop();
 
@@ -749,9 +793,7 @@ definition {
 		}
 
 		task ("And the admin selects a file for the virtual product along with the activation status") {
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CommerceNavigator.searchEntry(entryName = "Virtual");
 
@@ -759,9 +801,17 @@ definition {
 
 			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
 
-			Click(locator1 = "FormFields#SELECT_UPLOAD_FIELD");
+			CommerceEntry.gotoMenuTab(menuTab = "Options");
 
-			SelectFrameTop();
+			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
+
+			Button.clickSave();
+
+			Click(locator1 = "Button#PLUS");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			Click(locator1 = "FormFields#SELECT_UPLOAD_FIELD");
 
 			SelectFrame(
 				key_frameTitle = "Select File",
@@ -774,6 +824,14 @@ definition {
 			Click(
 				key_filterOption = "Add",
 				locator1 = "AppBuilder#CHOOSE_SEARCH_FILTER_BY_OPTION");
+
+			SelectFrameTop();
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			Button.clickSave();
+
+			Click(locator1 = "Icon#CLOSE");
 
 			SelectFrameTop();
 
@@ -842,9 +900,7 @@ definition {
 		}
 
 		task ("And the admin changes the order status to 'Processing'") {
-			CommerceNavigator.gotoPortlet(
-				category = "Order Management",
-				portlet = "Orders");
+			CommerceOrders.openOrdersAdmin();
 
 			CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
 
@@ -963,6 +1019,10 @@ definition {
 
 			CommerceEntry.gotoMenuTab(menuTab = "Virtual Settings");
 
+			Button.clickEdit();
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
 			AssertTextEquals.assertPartialText(
 				locator1 = "CommerceOrders#ORDER_ITEMS_FILE_NAME",
 				value1 = "Commerce_White");
@@ -1057,9 +1117,15 @@ definition {
 
 			CommerceEntry.gotoMenuTab(menuTab = "Virtual Settings");
 
+			Button.clickEdit();
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
 			AssertTextEquals.assertPartialText(
 				locator1 = "CommerceOrders#ORDER_ITEMS_FILE_NAME",
 				value1 = "Commerce_Black");
+
+			SelectFrameParent();
 
 			var duration = selenium.getAttribute("//div[label[contains(.,'Duration')]]//input[not(contains(@type,'checkbox'))]@value");
 			var maxDownload = selenium.getAttribute("//div[label[contains(.,'Max Number of Downloads')]]//input[@type='text']@value");
@@ -1112,6 +1178,12 @@ definition {
 			CommerceNavigator.gotoEntry(entryName = "Virtual Product");
 
 			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Options");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
+
+			Button.clickSave();
 
 			CommerceProducts.updateProductVirtualConfiguration(
 				activationStatus = "Completed",
@@ -1167,9 +1239,9 @@ definition {
 
 			CommerceEntry.gotoMenuTab(menuTab = "Virtual Settings");
 
-			AssertTextEquals.assertPartialText(
-				locator1 = "CommerceOrders#ORDER_ITEMS_FILE_NAME",
-				value1 = "Commerce_White");
+			AssertElementPresent(
+				columnName = "Commerce_White",
+				locator1 = "FrontendDataSet#COLUMN_NAME");
 		}
 	}
 

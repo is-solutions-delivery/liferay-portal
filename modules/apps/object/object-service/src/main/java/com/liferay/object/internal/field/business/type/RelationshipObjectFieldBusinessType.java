@@ -91,7 +91,42 @@ public class RelationshipObjectFieldBusinessType
 				ObjectRelationshipConstants.TYPE_ONE_TO_MANY) ||
 			values.containsKey(objectField.getName())) {
 
-			return values.get(objectField.getName());
+			Object value = values.get(objectField.getName());
+
+			if (Validator.isNull(value)) {
+				return value;
+			}
+
+			ObjectRelationship objectRelationship =
+				_objectRelationshipLocalService.
+					fetchObjectRelationshipByObjectFieldId2(
+						objectField.getObjectFieldId());
+
+			ObjectDefinition objectDefinition =
+				_objectDefinitionLocalService.getObjectDefinition(
+					objectRelationship.getObjectDefinitionId1());
+
+			if (objectDefinition.isUnmodifiableSystemObject()) {
+				SystemObjectDefinitionManager systemObjectDefinitionManager =
+					_systemObjectDefinitionManagerRegistry.
+						getSystemObjectDefinitionManager(
+							objectDefinition.getName());
+
+				BaseModel<?> baseModel =
+					systemObjectDefinitionManager.
+						getBaseModelByExternalReferenceCode(
+							systemObjectDefinitionManager.
+								getBaseModelExternalReferenceCode(
+									GetterUtil.getLong(value)),
+							objectDefinition.getCompanyId());
+
+				return baseModel.getPrimaryKeyObj();
+			}
+
+			ObjectEntry objectEntry = _objectEntryLocalService.getObjectEntry(
+				GetterUtil.getLong(value));
+
+			return objectEntry.getObjectEntryId();
 		}
 
 		String objectRelationshipERCObjectFieldName =

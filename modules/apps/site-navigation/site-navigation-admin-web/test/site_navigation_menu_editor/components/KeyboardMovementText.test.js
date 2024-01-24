@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {getMovementText} from '../../../src/main/resources/META-INF/resources/site_navigation_menu_editor/components/KeyboardMovementText';
-import getFlatItems from '../../../src/main/resources/META-INF/resources/site_navigation_menu_editor/utils/getFlatItems';
+import {getMovementText} from '../../../src/main/resources/META-INF/resources/js/site_navigation_menu_editor/components/KeyboardMovementText';
+import getFlatItems from '../../../src/main/resources/META-INF/resources/js/site_navigation_menu_editor/utils/getFlatItems';
 
 jest.mock('frontend-js-web', () => ({
 	...jest.requireActual('frontend-js-web'),

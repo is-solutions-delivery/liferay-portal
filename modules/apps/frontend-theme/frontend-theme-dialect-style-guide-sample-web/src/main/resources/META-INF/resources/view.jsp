@@ -8,5 +8,5 @@
 <%@ include file="/init.jsp" %>
 
 <react:component
-	module="js/App"
+	module="{App} from frontend-theme-dialect-style-guide-sample-web"
 />

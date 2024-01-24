@@ -12,6 +12,8 @@ import com.liferay.headless.admin.workflow.client.pagination.Pagination;
 import com.liferay.headless.admin.workflow.client.problem.Problem;
 import com.liferay.headless.admin.workflow.client.serdes.v1_0.WorkflowDefinitionSerDes;
 
+import java.net.URL;
+
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -67,11 +69,11 @@ public interface WorkflowDefinitionResource {
 		throws Exception;
 
 	public WorkflowDefinition getWorkflowDefinitionByName(
-			String name, Integer version)
+			String name, String contentFormat, Integer version)
 		throws Exception;
 
 	public HttpInvoker.HttpResponse getWorkflowDefinitionByNameHttpResponse(
-			String name, Integer version)
+			String name, String contentFormat, Integer version)
 		throws Exception;
 
 	public WorkflowDefinition postWorkflowDefinitionDeploy(
@@ -194,6 +196,10 @@ public interface WorkflowDefinitionResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {
@@ -688,11 +694,12 @@ public interface WorkflowDefinitionResource {
 		}
 
 		public WorkflowDefinition getWorkflowDefinitionByName(
-				String name, Integer version)
+				String name, String contentFormat, Integer version)
 			throws Exception {
 
 			HttpInvoker.HttpResponse httpResponse =
-				getWorkflowDefinitionByNameHttpResponse(name, version);
+				getWorkflowDefinitionByNameHttpResponse(
+					name, contentFormat, version);
 
 			String content = httpResponse.getContent();
 
@@ -754,7 +761,7 @@ public interface WorkflowDefinitionResource {
 		}
 
 		public HttpInvoker.HttpResponse getWorkflowDefinitionByNameHttpResponse(
-				String name, Integer version)
+				String name, String contentFormat, Integer version)
 			throws Exception {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
@@ -777,6 +784,11 @@ public interface WorkflowDefinitionResource {
 			}
 
 			httpInvoker.httpMethod(HttpInvoker.HttpMethod.GET);
+
+			if (contentFormat != null) {
+				httpInvoker.parameter(
+					"contentFormat", String.valueOf(contentFormat));
+			}
 
 			if (version != null) {
 				httpInvoker.parameter("version", String.valueOf(version));

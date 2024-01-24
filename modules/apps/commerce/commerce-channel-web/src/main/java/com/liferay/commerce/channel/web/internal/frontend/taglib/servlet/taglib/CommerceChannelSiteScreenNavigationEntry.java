@@ -8,7 +8,6 @@ package com.liferay.commerce.channel.web.internal.frontend.taglib.servlet.taglib
 import com.liferay.account.service.AccountEntryService;
 import com.liferay.commerce.channel.web.internal.display.context.SiteCommerceChannelTypeDisplayContext;
 import com.liferay.commerce.currency.service.CommerceCurrencyLocalService;
-import com.liferay.commerce.inventory.method.CommerceInventoryMethodRegistry;
 import com.liferay.commerce.product.channel.CommerceChannelHealthStatusRegistry;
 import com.liferay.commerce.product.channel.CommerceChannelTypeRegistry;
 import com.liferay.commerce.product.constants.CommerceChannelConstants;
@@ -29,7 +28,6 @@ import com.liferay.portal.workflow.manager.WorkflowDefinitionManager;
 
 import java.io.IOException;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -113,9 +111,6 @@ public class CommerceChannelSiteScreenNavigationEntry
 	private CommerceCurrencyLocalService _commerceCurrencyLocalService;
 
 	@Reference
-	private CommerceInventoryMethodRegistry _commerceInventoryMethodRegistry;
-
-	@Reference
 	private ConfigurationProvider _configurationProvider;
 
 	@Reference
@@ -135,11 +130,6 @@ public class CommerceChannelSiteScreenNavigationEntry
 
 	@Reference
 	private Portal _portal;
-
-	@Reference(
-		target = "(osgi.web.symbolicname=com.liferay.commerce.channel.web)"
-	)
-	private ServletContext _servletContext;
 
 	@Reference
 	private WorkflowDefinitionLinkLocalService

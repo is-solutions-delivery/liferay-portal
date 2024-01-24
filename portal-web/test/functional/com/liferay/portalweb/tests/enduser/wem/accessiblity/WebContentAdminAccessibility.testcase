@@ -1,0 +1,259 @@
+@component-name = "portal-wcm"
+definition {
+
+	property ci.retries.disabled = "true";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.component.names = "Echo Accessibility";
+	property testray.main.component.name = "Web Content Administration";
+
+	setUp {
+		task ("Set up virtual instance") {
+			TestCase.setUpPortalInstance();
+		}
+
+		task ("Sign in") {
+			User.firstLoginPG();
+		}
+
+		task ("Add a site") {
+			HeadlessSite.addSite(siteName = "Test Site Name");
+		}
+	}
+
+	@description = "This is a test for LPS-199463. Assert screen reader announces the title with the copy in the same language as the website."
+	@priority = 3
+	test AnnounceCopyTitleInSiteLanguage {
+		property custom.properties = "jsonws.web.service.paths.excludes=";
+
+		task ("Given a user sets Spanish as default language") {
+			JSONUser.addUser(
+				preferredLocale = "es_ES",
+				userEmailAddress = "userea@liferay.com",
+				userFirstName = "userfn",
+				userLastName = "userln",
+				userScreenName = "usersn");
+
+			JSONUser.setFirstPassword(
+				agreeToTermsAndAnswerReminderQuery = "true",
+				requireReset = "false",
+				userEmailAddress = "userea@liferay.com");
+
+			JSONUser.addUserToSite(
+				groupName = "Test Site Name",
+				userEmailAddress = "userea@liferay.com");
+
+			JSONRole.assignSiteRoleToUser(
+				groupName = "Test Site Name",
+				roleTitle = "Site Administrator",
+				userEmailAddress = "userea@liferay.com");
+
+			HeadlessWebcontent.addBasicWebContent(
+				content = "Web Content Content",
+				groupName = "Test Site Name",
+				title = "Web Content Title");
+		}
+
+		task ("When the user makes a copy of web content") {
+			User.logoutAndLoginPG(userLoginEmailAddress = "userea@liferay.com");
+
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+			WebContentNavigator.gotoEntryMenuItem(
+				entry = "Web Content Title",
+				menuItem = "Realizar una copia");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Then the screen reader should announce the copy title in site language") {
+			AssertAttributeValue(
+				key_listEntry = "Web Content Title (Copy)",
+				locator1 = "LexiconList#LIST_ENTRY_TITLE_LINK",
+				value1 = "title",
+				value2 = "Web Content Title (Copy)");
+		}
+	}
+
+	@description = "This is a test for LPS-197159. Check the accessibility when filtering categories and tags filter for Web Content."
+	@priority = 3
+	test ViewAccessibilityOfFilterWebContentsByCategoriesAndTags {
+		property custom.properties = "feature.flag.LPS-196768=true";
+
+		task ("Given a site administrator has web contents") {
+			JSONCategory.addVocabulary(
+				groupName = "Test Site Name",
+				title = "Projects");
+
+			var categoryId = JSONCategory.addCategory(
+				groupName = "Test Site Name",
+				title = "Commerce",
+				vocabularyName = "Projects");
+
+			JSONAssettag.addTag(
+				groupName = "Test Site Name",
+				tagName = "Echo");
+
+			JSONAssettag.addTag(
+				groupName = "Test Site Name",
+				tagName = "Lima");
+
+			JSONWebcontent.addWebContent(
+				content = "Liferay DXP",
+				groupName = "Test Site Name",
+				title = "Liferay DXP");
+
+			JSONWebcontent.addWebContent(
+				assetCategoryIds = ${categoryId},
+				content = "Liferay Commerce",
+				groupName = "Test Site Name",
+				title = "Liferay Commerce");
+
+			JSONWebcontent.addWebContent(
+				assetTagNames = "Echo",
+				content = "Liferay LXC",
+				groupName = "Test Site Name",
+				title = "Liferay LXC");
+		}
+
+		task ("When the site administrator filters web content by categories") {
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+			ManagementBar.setFilterAndOrder(filterBy = "Categories...");
+
+			AssetCategorization.selectCategories(categoryNameList = "Commerce");
+
+			WaitForElementPresent(locator1 = "Search#SEARCH_INFO");
+		}
+
+		task ("Then the Search Results should have correct accessibility") {
+			AssertAccessible();
+		}
+
+		task ("When the site administrator filters web content by tags") {
+			Search.clearSearchResult();
+
+			ManagementBar.setFilterAndOrder(filterBy = "Tags...");
+
+			AssetCategorization.selectTags(tagNameList = "echo");
+
+			WaitForElementPresent(locator1 = "Search#SEARCH_INFO");
+		}
+
+		task ("Then the Search Results should have correct accessibility") {
+			AssertAccessible();
+		}
+	}
+
+	@description = "This is a test for LPS-196819. The Highlighted Structures should comply with WCAG 2.1 AA standard."
+	@priority = 3
+	test ViewAccessibilityOfHighlightedStructures {
+		property custom.properties = "feature.flag.LPS-194763=true${line.separator}feature.flag.LPS-197692=true";
+
+		task ("Given a site administrator has web contents") {
+			JSONWebcontent.addWebContent(
+				content = "EMEA Guild",
+				groupName = "Test Site Name",
+				title = "EMEA Guild");
+
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+			NavItem.gotoStructures();
+
+			WebContentStructures.addCP(structureName = "WC Structure Name");
+
+			DataEngine.addField(fieldName = "Text");
+
+			WebContentStructures.saveCP();
+
+			NavItem.click(navItem = "Web Content");
+
+			WebContentNavigator.gotoAddWithStructureCP(structureName = "WC Structure Name");
+
+			WebContent.addWithStructureCP(
+				webContentText = "LXC",
+				webContentTitle = "LXC");
+
+			PortletEntry.publish();
+		}
+
+		task ("When the site administrator navigates to the configuration page") {
+			Click.waitForMenuToggleJSClick(locator1 = "Icon#HEADER_VERTICAL_ELLIPSIS");
+
+			MenuItem.click(menuItem = "Configuration");
+
+			MenuBar.viewActive(menuBar = "Structures");
+		}
+
+		task ("Then the Structures sheet should have correct accessibility") {
+			AssertAccessible();
+		}
+
+		task ("When the site administrator opens the Select Structures modal") {
+			Click(
+				ariaLabel = "Select Highlighted Structures",
+				locator1 = "Button#ANY_WITH_ARIA_LABEL");
+		}
+
+		task ("Then the Select Structures modal should have correct accessibility") {
+			AssertElementAccessible(locator1 = "Modal#MODAL_CONTENT");
+		}
+
+		task ("When the site administrator select the new structure as highlighted structure") {
+			SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+			LexiconTable.checkTableCheckbox(tableEntry = "WC Structure Name");
+
+			SelectFrameTop();
+
+			Click(
+				key_text = "Add",
+				locator1 = "Modal#MODAL_FOOTER_BUTTON");
+
+			PortletEntry.save();
+		}
+
+		task ("Then the Structures sheet should have correct accessibility") {
+			AssertAccessible();
+		}
+
+		task ("When the site administrator navigates to the Content Library sheet") {
+			Navigator.gotoBack();
+
+			MenuBar.viewActive(menuBar = "Content Library");
+		}
+
+		task ("Then the Content Library sheet should have correct accessibility") {
+			AssertAccessible();
+		}
+
+		task ("When the site administrator navigates to the highlighted structure sheet") {
+			MenuBar.click(menuBar = "WC Structure Name");
+		}
+
+		task ("Then the highlighted structure sheet should have correct accessibility") {
+			AssertAccessible();
+		}
+	}
+
+	@description = "This is a test for LPS-197694. The configuration page of Web Content admin should comply with WCAG 2.1 AA standard"
+	@priority = 4
+	test ViewAccessibilityOfNotificationsConfiguration {
+		task ("Given a user accesses to the web content admin") {
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+		}
+
+		task ("When the user navigates to the notifications configuration") {
+			Click.waitForMenuToggleJSClick(locator1 = "Icon#HEADER_VERTICAL_ELLIPSIS");
+
+			MenuItem.click(menuItem = "Configuration");
+
+			MenuBar.click(menuBar = "Email From");
+		}
+
+		task ("Then the notifications configuration should have correct accessibility") {
+			AssertAccessible();
+		}
+	}
+
+}

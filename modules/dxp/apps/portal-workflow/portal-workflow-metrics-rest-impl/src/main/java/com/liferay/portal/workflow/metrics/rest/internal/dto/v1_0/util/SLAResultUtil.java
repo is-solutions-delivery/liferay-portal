@@ -117,17 +117,15 @@ public class SLAResultUtil {
 		Supplier<Long> slaDefinitionIdSupplier,
 		Supplier<SLAResult.Status> slaResultStatusSupplier) {
 
-		Long slaResultId = slaDefinitionIdSupplier.get();
-
 		return new SLAResult() {
 			{
-				dateModified = modifiedDateSupplier.get();
-				dateOverdue = overdueDateSupplier.get();
-				id = slaResultId;
-				name = nameFunction.apply(slaResultId);
-				onTime = onTimeSupplier.get();
-				remainingTime = remainingTimeSupplier.get();
-				status = slaResultStatusSupplier.get();
+				setDateModified(modifiedDateSupplier::get);
+				setDateOverdue(overdueDateSupplier::get);
+				setId(slaDefinitionIdSupplier::get);
+				setName(() -> nameFunction.apply(getId()));
+				setOnTime(onTimeSupplier::get);
+				setRemainingTime(remainingTimeSupplier::get);
+				setStatus(slaResultStatusSupplier::get);
 			}
 		};
 	}

@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -51,114 +52,166 @@ public class ObjectViewColumn implements Serializable {
 
 	@Schema
 	public Long getId() {
+		if (_idSupplier != null) {
+			id = _idSupplier.get();
+
+			_idSupplier = null;
+		}
+
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+
+		_idSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setId(UnsafeSupplier<Long, Exception> idUnsafeSupplier) {
-		try {
-			id = idUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_idSupplier = () -> {
+			try {
+				return idUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	protected Long id;
 
+	@JsonIgnore
+	private Supplier<Long> _idSupplier;
+
 	@Schema
 	@Valid
 	public Map<String, String> getLabel() {
+		if (_labelSupplier != null) {
+			label = _labelSupplier.get();
+
+			_labelSupplier = null;
+		}
+
 		return label;
 	}
 
 	public void setLabel(Map<String, String> label) {
 		this.label = label;
+
+		_labelSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setLabel(
 		UnsafeSupplier<Map<String, String>, Exception> labelUnsafeSupplier) {
 
-		try {
-			label = labelUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_labelSupplier = () -> {
+			try {
+				return labelUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Map<String, String> label;
 
+	@JsonIgnore
+	private Supplier<Map<String, String>> _labelSupplier;
+
 	@Schema
 	public String getObjectFieldName() {
+		if (_objectFieldNameSupplier != null) {
+			objectFieldName = _objectFieldNameSupplier.get();
+
+			_objectFieldNameSupplier = null;
+		}
+
 		return objectFieldName;
 	}
 
 	public void setObjectFieldName(String objectFieldName) {
 		this.objectFieldName = objectFieldName;
+
+		_objectFieldNameSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setObjectFieldName(
 		UnsafeSupplier<String, Exception> objectFieldNameUnsafeSupplier) {
 
-		try {
-			objectFieldName = objectFieldNameUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_objectFieldNameSupplier = () -> {
+			try {
+				return objectFieldNameUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String objectFieldName;
 
+	@JsonIgnore
+	private Supplier<String> _objectFieldNameSupplier;
+
 	@Schema
 	public Integer getPriority() {
+		if (_prioritySupplier != null) {
+			priority = _prioritySupplier.get();
+
+			_prioritySupplier = null;
+		}
+
 		return priority;
 	}
 
 	public void setPriority(Integer priority) {
 		this.priority = priority;
+
+		_prioritySupplier = null;
 	}
 
 	@JsonIgnore
 	public void setPriority(
 		UnsafeSupplier<Integer, Exception> priorityUnsafeSupplier) {
 
-		try {
-			priority = priorityUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_prioritySupplier = () -> {
+			try {
+				return priorityUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Integer priority;
+
+	@JsonIgnore
+	private Supplier<Integer> _prioritySupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -187,6 +240,8 @@ public class ObjectViewColumn implements Serializable {
 
 		sb.append("{");
 
+		Long id = getId();
+
 		if (id != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -197,6 +252,8 @@ public class ObjectViewColumn implements Serializable {
 			sb.append(id);
 		}
 
+		Map<String, String> label = getLabel();
+
 		if (label != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -206,6 +263,8 @@ public class ObjectViewColumn implements Serializable {
 
 			sb.append(_toJSON(label));
 		}
+
+		String objectFieldName = getObjectFieldName();
 
 		if (objectFieldName != null) {
 			if (sb.length() > 1) {
@@ -220,6 +279,8 @@ public class ObjectViewColumn implements Serializable {
 
 			sb.append("\"");
 		}
+
+		Integer priority = getPriority();
 
 		if (priority != null) {
 			if (sb.length() > 1) {

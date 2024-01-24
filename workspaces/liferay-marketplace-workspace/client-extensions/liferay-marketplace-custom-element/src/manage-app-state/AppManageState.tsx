@@ -13,7 +13,14 @@ type Specification = {
 	value: string;
 };
 
-export interface InitialStateProps {
+type LicenceTiersPrices = {
+	developer: LicensePrice[];
+	standard: LicensePrice[];
+};
+
+export type LicensePrice = {key: number; value: number};
+
+export type InitialStateProps = {
 	appBuild: string;
 	appCategories: Categories[];
 	appDescription: string;
@@ -22,7 +29,7 @@ export interface InitialStateProps {
 	appId: string;
 	appInstallationGuideURL: Specification;
 	appLicense: Specification;
-	appLicensePrice: string;
+	appLicensePrice: LicenceTiersPrices;
 	appLogo: UploadedFile;
 	appName: string;
 	appNotes: string;
@@ -33,27 +40,49 @@ export interface InitialStateProps {
 	appUsageTermsURL: Specification;
 	appVersion: string;
 	appWorkflowStatusInfo: string;
-	buildZIPFiles: UploadedFile[];
+	buildAppPackages: {[key: string]: UploadedFile[]};
 	catalogId: number;
 	dayTrial: string;
+	eula: string;
+	eulaCheckbox: boolean;
 	gravatarAPI: string;
 	optionId: number;
 	optionValuesId: {noOptionId: number; yesOptionId: number};
 	priceModel: Specification;
 	productOptionId: number;
 	publisherWebsiteURL: Specification;
+	resourceRequirements: {
+		cpu: number | string;
+		ram: number | string;
+	};
 	skuTrialId: number;
 	skuVersionId: number;
 	supportURL: Specification;
-}
+	versionName?: string;
+};
 
-const initialState = {
+export type Sku = {id: number; sku: string};
+
+export type PriceEntry = {priceEntryId: number; sku: {name: string}};
+
+const initialState = ({
 	appBuild: 'upload',
 	appLicense: {value: 'Perpetual'},
-	appType: {value: 'cloud'},
+	appLicensePrice: {
+		developer: [],
+		standard: [{key: 1, value: 0}],
+	},
+	appType: {value: ''},
+	buildAppPackages: {},
 	dayTrial: 'no',
+	eulaCheckbox: false,
+	optionValuesId: {},
 	priceModel: {value: 'Paid'},
-} as InitialStateProps;
+	resourceRequirements: {
+		cpu: '',
+		ram: '',
+	},
+} as unknown) as InitialStateProps;
 
 interface AppContextProps extends Array<InitialStateProps | Function> {
 	0: typeof initialState;

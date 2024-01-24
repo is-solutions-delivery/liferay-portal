@@ -29,7 +29,6 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.transaction.TransactionCommitCallbackUtil;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.GroupThreadLocal;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -261,8 +260,7 @@ public class SegmentsEntryLocalServiceImpl
 
 	@Override
 	public SegmentsEntry fetchSegmentsEntry(
-		long groupId, String segmentsEntryKey,
-		boolean includeAncestorSegmentsEntries) {
+		long groupId, String segmentsEntryKey) {
 
 		if (Validator.isNotNull(segmentsEntryKey)) {
 			segmentsEntryKey = StringUtil.toUpperCase(segmentsEntryKey.trim());
@@ -291,37 +289,22 @@ public class SegmentsEntryLocalServiceImpl
 
 	@Override
 	public List<SegmentsEntry> getSegmentsEntries(
-		long groupId, boolean includeAncestorSegmentsEntries, int start,
-		int end, OrderByComparator<SegmentsEntry> orderByComparator) {
-
-		if (!includeAncestorSegmentsEntries) {
-			return segmentsEntryPersistence.findByGroupId(
-				groupId, start, end, orderByComparator);
-		}
-
-		return segmentsEntryPersistence.findByGroupId(
-			ArrayUtil.append(_portal.getAncestorSiteGroupIds(groupId), groupId),
-			start, end, orderByComparator);
-	}
-
-	@Override
-	public List<SegmentsEntry> getSegmentsEntries(
-		long groupId, boolean active, String type, int start, int end,
+		long groupId, int start, int end,
 		OrderByComparator<SegmentsEntry> orderByComparator) {
 
-		return segmentsEntryPersistence.findByG_A_T(
-			ArrayUtil.append(_portal.getAncestorSiteGroupIds(groupId), groupId),
-			active, type, start, end, orderByComparator);
+		return segmentsEntryPersistence.findByGroupId(
+			_portal.getCurrentAndAncestorSiteGroupIds(groupId), start, end,
+			orderByComparator);
 	}
 
 	@Override
 	public List<SegmentsEntry> getSegmentsEntries(
-		long groupId, boolean active, String source, String type, int start,
-		int end, OrderByComparator<SegmentsEntry> orderByComparator) {
+		long groupId, String source, String type, int start, int end,
+		OrderByComparator<SegmentsEntry> orderByComparator) {
 
-		return segmentsEntryPersistence.findByG_A_S_T(
-			ArrayUtil.append(_portal.getAncestorSiteGroupIds(groupId), groupId),
-			active, source, type, start, end, orderByComparator);
+		return segmentsEntryPersistence.findByG_S_T(
+			_portal.getCurrentAndAncestorSiteGroupIds(groupId), source, type,
+			start, end, orderByComparator);
 	}
 
 	@Override
@@ -334,40 +317,19 @@ public class SegmentsEntryLocalServiceImpl
 	}
 
 	@Override
-	public int getSegmentsEntriesCount(
-		long groupId, boolean includeAncestorSegmentsEntries) {
-
-		if (!includeAncestorSegmentsEntries) {
-			return segmentsEntryPersistence.countByGroupId(groupId);
-		}
-
+	public int getSegmentsEntriesCount(long groupId) {
 		return segmentsEntryPersistence.countByGroupId(
-			ArrayUtil.append(
-				_portal.getAncestorSiteGroupIds(groupId), groupId));
+			_portal.getCurrentAndAncestorSiteGroupIds(groupId));
 	}
 
 	@Override
 	public BaseModelSearchResult<SegmentsEntry> searchSegmentsEntries(
 			long companyId, long groupId, String keywords,
-			boolean includeAncestorSegmentsEntries,
 			LinkedHashMap<String, Object> params, int start, int end, Sort sort)
 		throws PortalException {
 
 		SearchContext searchContext = _buildSearchContext(
-			companyId, groupId, keywords, includeAncestorSegmentsEntries,
-			params, start, end, sort);
-
-		return segmentsEntryLocalService.searchSegmentsEntries(searchContext);
-	}
-
-	@Override
-	public BaseModelSearchResult<SegmentsEntry> searchSegmentsEntries(
-			long companyId, String keywords,
-			LinkedHashMap<String, Object> params, int start, int end, Sort sort)
-		throws PortalException {
-
-		SearchContext searchContext = _buildSearchContext(
-			companyId, keywords, params, start, end, sort);
+			companyId, groupId, keywords, params, start, end, sort);
 
 		return segmentsEntryLocalService.searchSegmentsEntries(searchContext);
 	}
@@ -436,27 +398,7 @@ public class SegmentsEntryLocalServiceImpl
 
 	private SearchContext _buildSearchContext(
 		long companyId, long groupId, String keywords,
-		boolean includeAncestorSegmentsEntries,
 		LinkedHashMap<String, Object> params, int start, int end, Sort sort) {
-
-		SearchContext searchContext = _buildSearchContext(
-			companyId, keywords, params, start, end, sort);
-
-		long[] groupIds = {groupId};
-
-		if (includeAncestorSegmentsEntries) {
-			groupIds = ArrayUtil.append(
-				groupIds, _portal.getAncestorSiteGroupIds(groupId));
-		}
-
-		searchContext.setGroupIds(groupIds);
-
-		return searchContext;
-	}
-
-	private SearchContext _buildSearchContext(
-		long companyId, String keywords, LinkedHashMap<String, Object> params,
-		int start, int end, Sort sort) {
 
 		SearchContext searchContext = new SearchContext();
 
@@ -478,6 +420,8 @@ public class SegmentsEntryLocalServiceImpl
 
 		searchContext.setCompanyId(companyId);
 		searchContext.setEnd(end);
+		searchContext.setGroupIds(
+			_portal.getCurrentAndAncestorSiteGroupIds(groupId));
 
 		if (Validator.isNotNull(keywords)) {
 			searchContext.setKeywords(keywords);
@@ -605,7 +549,7 @@ public class SegmentsEntryLocalServiceImpl
 		throws PortalException {
 
 		SegmentsEntry segmentsEntry = fetchSegmentsEntry(
-			groupId, segmentsEntryKey, true);
+			groupId, segmentsEntryKey);
 
 		if ((segmentsEntry != null) &&
 			(segmentsEntry.getSegmentsEntryId() != segmentsEntryId)) {

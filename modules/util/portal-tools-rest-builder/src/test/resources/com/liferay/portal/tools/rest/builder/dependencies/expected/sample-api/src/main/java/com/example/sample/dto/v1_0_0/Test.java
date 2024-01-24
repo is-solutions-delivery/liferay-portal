@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -53,52 +54,75 @@ public class Test implements Serializable {
 
 	@Schema
 	public Long getId() {
+		if (_idSupplier != null) {
+			id = _idSupplier.get();
+
+			_idSupplier = null;
+		}
+
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
+
+		_idSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setId(UnsafeSupplier<Long, Exception> idUnsafeSupplier) {
-		try {
-			id = idUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_idSupplier = () -> {
+			try {
+				return idUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Long id;
 
+	@JsonIgnore
+	private Supplier<Long> _idSupplier;
+
 	@Schema
 	public String getJsonProperty() {
+		if (_jsonPropertySupplier != null) {
+			jsonProperty = _jsonPropertySupplier.get();
+
+			_jsonPropertySupplier = null;
+		}
+
 		return jsonProperty;
 	}
 
 	public void setJsonProperty(String jsonProperty) {
 		this.jsonProperty = jsonProperty;
+
+		_jsonPropertySupplier = null;
 	}
 
 	@JsonIgnore
 	public void setJsonProperty(
 		UnsafeSupplier<String, Exception> jsonPropertyUnsafeSupplier) {
 
-		try {
-			jsonProperty = jsonPropertyUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_jsonPropertySupplier = () -> {
+			try {
+				return jsonPropertyUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
@@ -106,28 +130,41 @@ public class Test implements Serializable {
 	@XmlElement(name = "xmlProperty")
 	protected String jsonProperty;
 
+	@JsonIgnore
+	private Supplier<String> _jsonPropertySupplier;
+
 	@Schema
 	public String getPropertyWithHyphens() {
+		if (_propertyWithHyphensSupplier != null) {
+			propertyWithHyphens = _propertyWithHyphensSupplier.get();
+
+			_propertyWithHyphensSupplier = null;
+		}
+
 		return propertyWithHyphens;
 	}
 
 	public void setPropertyWithHyphens(String propertyWithHyphens) {
 		this.propertyWithHyphens = propertyWithHyphens;
+
+		_propertyWithHyphensSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setPropertyWithHyphens(
 		UnsafeSupplier<String, Exception> propertyWithHyphensUnsafeSupplier) {
 
-		try {
-			propertyWithHyphens = propertyWithHyphensUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_propertyWithHyphensSupplier = () -> {
+			try {
+				return propertyWithHyphensUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
@@ -135,6 +172,9 @@ public class Test implements Serializable {
 		access = JsonProperty.Access.READ_WRITE, value = "property-with-hyphens"
 	)
 	protected String propertyWithHyphens;
+
+	@JsonIgnore
+	private Supplier<String> _propertyWithHyphensSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -163,6 +203,8 @@ public class Test implements Serializable {
 
 		sb.append("{");
 
+		Long id = getId();
+
 		if (id != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -172,6 +214,8 @@ public class Test implements Serializable {
 
 			sb.append(id);
 		}
+
+		String jsonProperty = getJsonProperty();
 
 		if (jsonProperty != null) {
 			if (sb.length() > 1) {
@@ -186,6 +230,8 @@ public class Test implements Serializable {
 
 			sb.append("\"");
 		}
+
+		String propertyWithHyphens = getPropertyWithHyphens();
 
 		if (propertyWithHyphens != null) {
 			if (sb.length() > 1) {

@@ -11,13 +11,13 @@
 
 <tbody>
 	<tr>
-		<td>LABEL_ON_ADD_VALIDATION</td>
-		<td>//input[contains(@id,'objectFieldLabel')]</td>
+		<td>ADD_COMPOSITE_KEY_FIELDS</td>
+		<td>//button[@class='btn btn-secondary' and contains(text(),'Add Fields')]</td>
 		<td></td>
 	</tr>
 	<tr>
-		<td>SELECT_TYPE_VALIDATION</td>
-		<td>//input[@placeholder='Choose an Option']</td>
+		<td>LABEL_ON_ADD_VALIDATION</td>
+		<td>//input[(@name='label') and contains(@class,'form-control')]</td>
 		<td></td>
 	</tr>
 	<tr>

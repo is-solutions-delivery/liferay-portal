@@ -270,6 +270,17 @@ public class CommerceShippingMethodServiceImpl
 
 	@Override
 	public CommerceShippingMethod updateCommerceShippingMethod(
+			CommerceShippingMethod commerceShippingMethod)
+		throws PortalException {
+
+		_checkCommerceChannel(commerceShippingMethod.getGroupId());
+
+		return commerceShippingMethodLocalService.updateCommerceShippingMethod(
+			commerceShippingMethod);
+	}
+
+	@Override
+	public CommerceShippingMethod updateCommerceShippingMethod(
 			long commerceShippingMethodId, Map<Locale, String> nameMap,
 			Map<Locale, String> descriptionMap, boolean active, File imageFile,
 			double priority, String trackingURL)

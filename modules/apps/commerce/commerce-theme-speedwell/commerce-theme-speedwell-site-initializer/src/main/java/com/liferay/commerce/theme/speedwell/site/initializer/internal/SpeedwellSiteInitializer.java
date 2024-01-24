@@ -182,7 +182,7 @@ public class SpeedwellSiteInitializer implements SiteInitializer {
 
 			_configureB2CSite(commerceChannel.getGroup(), serviceContext);
 
-			_speedwellLayoutsInitializer.initialize(serviceContext);
+			_createLayouts(serviceContext);
 
 			_importAssetCategories(serviceContext);
 
@@ -349,6 +349,20 @@ public class SpeedwellSiteInitializer implements SiteInitializer {
 			group.getName(serviceContext.getLanguageId()) + " Portal",
 			CommerceChannelConstants.CHANNEL_TYPE_SITE, null,
 			commerceCatalog.getCommerceCurrencyCode(), serviceContext);
+	}
+
+	private void _createLayouts(ServiceContext serviceContext)
+		throws Exception {
+
+		_cpFileImporter.cleanLayouts(serviceContext);
+
+		JSONArray jsonArray = _jsonFactory.createJSONArray(
+			SpeedwellDependencyResolverUtil.getJSON("layouts.json"));
+
+		_cpFileImporter.createLayouts(
+			jsonArray, SpeedwellDependencyResolverUtil.getImageClassLoader(),
+			SpeedwellDependencyResolverUtil.getImageDependencyPath(),
+			serviceContext);
 	}
 
 	private void _createRoles(ServiceContext serviceContext) throws Exception {
@@ -1123,9 +1137,6 @@ public class SpeedwellSiteInitializer implements SiteInitializer {
 		target = "(osgi.web.symbolicname=com.liferay.commerce.theme.speedwell.site.initializer)"
 	)
 	private ServletContext _servletContext;
-
-	@Reference
-	private SpeedwellLayoutsInitializer _speedwellLayoutsInitializer;
 
 	@Reference
 	private ThemeLocalService _themeLocalService;

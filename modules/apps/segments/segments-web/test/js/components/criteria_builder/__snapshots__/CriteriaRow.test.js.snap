@@ -3,23 +3,25 @@
 exports[`CriteriaRow renders 1`] = `
 <DocumentFragment>
   <div
-    class="criterion-row-root"
+    class="criterion-row-root drop-zone-user-group_01-0-middle"
   >
     <div
       class="edit-container"
     >
-      <div
-        class="drag-icon"
+      <button
+        class="drag-icon text-secondary btn btn-monospaced btn-outline-borderless btn-sm btn-outline-unstyled"
+        draggable="true"
+        type="button"
       >
         <svg
           class="lexicon-icon lexicon-icon-drag"
           role="presentation"
         >
           <use
-            xlink:href="#drag"
+            href="#drag"
           />
         </svg>
-      </div>
+      </button>
       <span
         class="c-ml-2 criterion-string"
       >
@@ -72,7 +74,7 @@ exports[`CriteriaRow renders 1`] = `
           role="presentation"
         >
           <use
-            xlink:href="#paste"
+            href="#paste"
           />
         </svg>
       </button>
@@ -87,7 +89,7 @@ exports[`CriteriaRow renders 1`] = `
           role="presentation"
         >
           <use
-            xlink:href="#times-circle"
+            href="#times-circle"
           />
         </svg>
       </button>
@@ -99,23 +101,25 @@ exports[`CriteriaRow renders 1`] = `
 exports[`CriteriaRow renders and inform there is an unknown property 1`] = `
 <DocumentFragment>
   <div
-    class="criterion-row-root criterion-row-root-error"
+    class="criterion-row-root drop-zone-user-group_01-0-middle criterion-row-root-error"
   >
     <div
       class="edit-container"
     >
-      <div
-        class="drag-icon"
+      <button
+        class="drag-icon text-secondary btn btn-monospaced btn-outline-borderless btn-sm btn-outline-unstyled"
+        draggable="true"
+        type="button"
       >
         <svg
           class="lexicon-icon lexicon-icon-drag"
           role="presentation"
         >
           <use
-            xlink:href="#drag"
+            href="#drag"
           />
         </svg>
-      </div>
+      </button>
       <span
         class="c-ml-2 criterion-string"
       >
@@ -188,7 +192,7 @@ exports[`CriteriaRow renders and inform there is an unknown property 1`] = `
               role="presentation"
             >
               <use
-                xlink:href="#exclamation-full"
+                href="#exclamation-full"
               />
             </svg>
           </span>

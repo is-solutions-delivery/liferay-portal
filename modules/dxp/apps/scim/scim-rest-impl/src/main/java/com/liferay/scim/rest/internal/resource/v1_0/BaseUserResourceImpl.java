@@ -9,7 +9,6 @@ import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.GroupLocalService;
@@ -72,7 +71,7 @@ public abstract class BaseUserResourceImpl implements UserResource {
 	@javax.ws.rs.Path("/v2/Users")
 	@javax.ws.rs.Produces("application/scim+json")
 	@Override
-	public Object getV2User(
+	public Object getV2Users(
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@javax.ws.rs.QueryParam("count")
 			Integer count,
@@ -87,7 +86,7 @@ public abstract class BaseUserResourceImpl implements UserResource {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/scim/v1.0/v2/Users'  -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/scim/v1.0/v2/Users' -d $'{"active": ___, "addresses": ___, "displayName": ___, "emails": ___, "entitlements": ___, "externalId": ___, "groups": ___, "ims": ___, "locale": ___, "meta": ___, "name": ___, "nickName": ___, "password": ___, "phoneNumbers": ___, "photos": ___, "preferredLanguage": ___, "profileUrl": ___, "roles": ___, "schemas": ___, "timezone": ___, "title": ___, "userName": ___, "userType": ___, "x509Certificates": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Operation(description = "Creates a user.")
 	@io.swagger.v3.oas.annotations.tags.Tags(
@@ -190,7 +189,7 @@ public abstract class BaseUserResourceImpl implements UserResource {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PUT' 'http://localhost:8080/o/scim/v1.0/v2/Users/{id}'  -u 'test@liferay.com:test'
+	 * curl -X 'PUT' 'http://localhost:8080/o/scim/v1.0/v2/Users/{id}' -d $'{"active": ___, "addresses": ___, "displayName": ___, "emails": ___, "entitlements": ___, "externalId": ___, "groups": ___, "ims": ___, "locale": ___, "meta": ___, "name": ___, "nickName": ___, "password": ___, "phoneNumbers": ___, "photos": ___, "preferredLanguage": ___, "profileUrl": ___, "roles": ___, "schemas": ___, "timezone": ___, "title": ___, "userName": ___, "userType": ___, "x509Certificates": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Operation(description = "Updates a user.")
 	@io.swagger.v3.oas.annotations.Parameters(
@@ -297,7 +296,9 @@ public abstract class BaseUserResourceImpl implements UserResource {
 	}
 
 	protected Map<String, String> addAction(
-		String actionName, GroupedModel groupedModel, String methodName) {
+		String actionName,
+		com.liferay.portal.kernel.model.GroupedModel groupedModel,
+		String methodName) {
 
 		return ActionUtil.addAction(
 			actionName, getClass(), groupedModel, methodName,
@@ -337,14 +338,15 @@ public abstract class BaseUserResourceImpl implements UserResource {
 	}
 
 	protected <T, R, E extends Throwable> R[] transform(
-		T[] array, UnsafeFunction<T, R, E> unsafeFunction, Class<?> clazz) {
+		T[] array, UnsafeFunction<T, R, E> unsafeFunction,
+		Class<? extends R> clazz) {
 
 		return TransformUtil.transform(array, unsafeFunction, clazz);
 	}
 
 	protected <T, R, E extends Throwable> R[] transformToArray(
 		Collection<T> collection, UnsafeFunction<T, R, E> unsafeFunction,
-		Class<?> clazz) {
+		Class<? extends R> clazz) {
 
 		return TransformUtil.transformToArray(
 			collection, unsafeFunction, clazz);
@@ -370,7 +372,8 @@ public abstract class BaseUserResourceImpl implements UserResource {
 	}
 
 	protected <T, R, E extends Throwable> R[] unsafeTransform(
-			T[] array, UnsafeFunction<T, R, E> unsafeFunction, Class<?> clazz)
+			T[] array, UnsafeFunction<T, R, E> unsafeFunction,
+			Class<? extends R> clazz)
 		throws E {
 
 		return TransformUtil.unsafeTransform(array, unsafeFunction, clazz);
@@ -378,7 +381,7 @@ public abstract class BaseUserResourceImpl implements UserResource {
 
 	protected <T, R, E extends Throwable> R[] unsafeTransformToArray(
 			Collection<T> collection, UnsafeFunction<T, R, E> unsafeFunction,
-			Class<?> clazz)
+			Class<? extends R> clazz)
 		throws E {
 
 		return TransformUtil.unsafeTransformToArray(

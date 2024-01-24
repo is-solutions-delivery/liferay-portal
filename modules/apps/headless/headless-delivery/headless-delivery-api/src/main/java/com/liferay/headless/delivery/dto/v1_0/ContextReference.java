@@ -7,6 +7,7 @@ package com.liferay.headless.delivery.dto.v1_0;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -26,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -53,14 +55,23 @@ public class ContextReference implements Serializable {
 		return ObjectMapperUtil.unsafeReadValue(ContextReference.class, json);
 	}
 
+	@JsonGetter("contextSource")
 	@Schema
 	@Valid
 	public ContextSource getContextSource() {
+		if (_contextSourceSupplier != null) {
+			contextSource = _contextSourceSupplier.get();
+
+			_contextSourceSupplier = null;
+		}
+
 		return contextSource;
 	}
 
 	@JsonIgnore
 	public String getContextSourceAsString() {
+		ContextSource contextSource = getContextSource();
+
 		if (contextSource == null) {
 			return null;
 		}
@@ -70,27 +81,34 @@ public class ContextReference implements Serializable {
 
 	public void setContextSource(ContextSource contextSource) {
 		this.contextSource = contextSource;
+
+		_contextSourceSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setContextSource(
 		UnsafeSupplier<ContextSource, Exception> contextSourceUnsafeSupplier) {
 
-		try {
-			contextSource = contextSourceUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_contextSourceSupplier = () -> {
+			try {
+				return contextSourceUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	@NotNull
 	protected ContextSource contextSource;
+
+	@JsonIgnore
+	private Supplier<ContextSource> _contextSourceSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -118,6 +136,8 @@ public class ContextReference implements Serializable {
 		StringBundler sb = new StringBundler();
 
 		sb.append("{");
+
+		ContextSource contextSource = getContextSource();
 
 		if (contextSource != null) {
 			if (sb.length() > 1) {

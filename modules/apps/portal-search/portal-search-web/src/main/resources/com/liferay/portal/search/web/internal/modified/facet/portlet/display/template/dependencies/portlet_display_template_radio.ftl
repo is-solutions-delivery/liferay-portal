@@ -28,14 +28,14 @@
 				<#list entries as entry>
 					<li class="facet-value">
 						<div class="custom-control custom-radio">
-							<label class="facet-checkbox-label" for="${entry.getBucketText()}">
+							<label class="facet-checkbox-label" for="${namespace}${entry.getBucketText()}">
 								<input
 									autocomplete="off"
 									${(entry.isSelected())?then("checked", "")}
 									class="custom-control-input facet-term"
 									disabled
-									id="${entry.getBucketText()}"
-									name="${entry.getBucketText()}"
+									id="${namespace}${entry.getBucketText()}"
+									name="${namespace}${entry.getBucketText()}"
 									onChange='${"window.location.href = \"${entry.getFilterValue()}\";"}'
 									role="radio"
 									type="radio"
@@ -62,14 +62,14 @@
 
 			<li class="facet-value">
 				<div class="custom-control custom-radio">
-					<label class="facet-checkbox-label" for="${customRangeBucketDisplayContext.getBucketText()}">
+					<label class="facet-checkbox-label" for="${namespace}${customRangeBucketDisplayContext.getBucketText()}">
 						<input
 							autocomplete="off"
 							${(customRangeBucketDisplayContext.isSelected())?then("checked", "")}
 							class="custom-control-input facet-term"
 							disabled
-							id="${customRangeBucketDisplayContext.getBucketText()}"
-							name="${customRangeBucketDisplayContext.getBucketText()}"
+							id="${namespace}${customRangeBucketDisplayContext.getBucketText()}"
+							name="${namespace}${customRangeBucketDisplayContext.getBucketText()}"
 							onChange='${"window.location.href = \"${customRangeBucketDisplayContext.getFilterValue()}\";"}'
 							role="radio"
 							type="radio"

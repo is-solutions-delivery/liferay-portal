@@ -22,3 +22,17 @@ export const BUSINESS_TYPES_TO_SYMBOLS = {
 	'Text': 'text',
 	'Workflow Status': 'text',
 };
+
+export const DEFAULT_LANGUAGE_ID: string = Liferay.ThemeDisplay.getDefaultLanguageId();
+
+export const HTTP_METHODS = {
+	GET: 'get',
+	POST: 'post',
+};
+
+export const RETRIEVE_TYPES = {
+	COLLECTION: 'collection',
+	SINGLE_ELEMENT: 'singleElement',
+};
+
+export const STR_BLANK = '';

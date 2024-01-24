@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {fetch, navigate} from 'frontend-js-web';
+import {createPortletURL, fetch, navigate} from 'frontend-js-web';
 import React from 'react';
 
 class ChangeTrackingBaseScheduleView extends React.Component {
@@ -73,30 +73,28 @@ class ChangeTrackingBaseScheduleView extends React.Component {
 			return;
 		}
 
-		AUI().use('liferay-portlet-url', () => {
-			const portletURL = Liferay.PortletURL.createURL(scheduleURL);
-
-			portletURL.setParameter('publishTime', publishDate.getTime());
-
-			fetch(portletURL.toString(), {
-				method: 'GET',
-			})
-				.then((response) => response.json())
-				.then((json) => {
-					if (json.redirect) {
-						navigate(json.redirect);
-					}
-					else if (json.validationError) {
-						this.setState({validationError: json.validationError});
-					}
-					else if (json.error) {
-						this.setState({formError: json.error});
-					}
-				})
-				.catch((response) => {
-					this.setState({formError: response.error});
-				});
+		const portletURL = createPortletURL(scheduleURL, {
+			publishTime: publishDate.getTime(),
 		});
+
+		fetch(portletURL, {
+			method: 'GET',
+		})
+			.then((response) => response.json())
+			.then((json) => {
+				if (json.redirect) {
+					navigate(json.redirect);
+				}
+				else if (json.validationError) {
+					this.setState({validationError: json.validationError});
+				}
+				else if (json.error) {
+					this.setState({formError: json.error});
+				}
+			})
+			.catch((response) => {
+				this.setState({formError: response.error});
+			});
 	}
 
 	getDateClassName() {
@@ -144,16 +142,12 @@ class ChangeTrackingBaseScheduleView extends React.Component {
 						'-' +
 						this.pad(split[2]) +
 						'T' +
-						time.hours +
-						':' +
-						time.minutes +
+						time +
 						':00'
 				);
 			}
 
-			return new Date(
-				date + 'T' + time.hours + ':' + time.minutes + ':00'
-			);
+			return new Date(date + 'T' + time + ':00');
 		}
 
 		return new Date(
@@ -163,9 +157,7 @@ class ChangeTrackingBaseScheduleView extends React.Component {
 				'-' +
 				this.pad(date.getDate()) +
 				'T' +
-				time.hours +
-				':' +
-				time.minutes +
+				time +
 				':00'
 		);
 	}
@@ -198,7 +190,7 @@ class ChangeTrackingBaseScheduleView extends React.Component {
 	}
 
 	getTimeClassName() {
-		const className = 'input-group-item';
+		const className = 'clay-time input-group-item input-group-item-shrink';
 
 		if (this.state.timeError || this.state.validationError) {
 			return className + ' has-error';
@@ -313,11 +305,11 @@ class ChangeTrackingBaseScheduleView extends React.Component {
 	}
 
 	isValidTime(time) {
-		if (time.hours !== '--' && time.minutes !== '--') {
-			return true;
+		if (time === undefined) {
+			return false;
 		}
 
-		return false;
+		return true;
 	}
 
 	pad(value) {

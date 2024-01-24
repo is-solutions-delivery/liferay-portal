@@ -186,7 +186,6 @@ const PurchasedSolutions: React.FC = () => {
 			],
 			orderStatus: 1,
 			orderTypeExternalReferenceCode: orderType?.externalReferenceCode,
-			orderTypeId: Number(orderType?.id),
 			shippingAmount: 0,
 			shippingWithTaxAmount: 0,
 		});
@@ -264,8 +263,9 @@ const PurchasedSolutions: React.FC = () => {
 									}}
 									wizardSteps={{
 										[StepType.ACCOUNT]:
-											!!account &&
-											step !== StepType.ACCOUNT,
+											!!accountForm.getValues(
+												'accountSelected'
+											) && step !== StepType.ACCOUNT,
 										[StepType.FORM]:
 											hasAllValidations &&
 											step !== StepType.FORM,

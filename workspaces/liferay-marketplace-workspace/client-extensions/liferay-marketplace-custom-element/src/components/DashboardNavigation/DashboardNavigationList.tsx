@@ -13,12 +13,10 @@ import {DashboardListItems} from './DashboardNavigation';
 import {DashboardNavigationListItem} from './DashboardNavigationListItem';
 
 interface DashboardNavigationListProps {
-	accountId: string;
 	navigationItemMock: DashboardListItems;
 }
 
 export function DashboardNavigationList({
-	accountId,
 	navigationItemMock,
 }: DashboardNavigationListProps) {
 	const {itemIcon, itemTitle, items, path} = navigationItemMock;
@@ -37,7 +35,7 @@ export function DashboardNavigationList({
 							isActive || (path === '/' && isAppRoute),
 					})
 				}
-				to={`${path}${accountId ? `?accountId=${accountId}` : ''}`}
+				to={path}
 			>
 				{({isActive}) => (
 					<>

@@ -76,6 +76,7 @@ import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.URLUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -88,6 +89,7 @@ import com.liferay.segments.service.SegmentsExperienceLocalService;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import java.net.URL;
 
@@ -196,7 +198,7 @@ public class PageTemplatesImporterTest {
 			List<LayoutsImporterResultEntry> layoutsImporterResultEntries =
 				_layoutsImporter.importFile(
 					TestPropsValues.getUserId(), _group.getGroupId(), 0, file,
-					LayoutsImportStrategy.DO_NOT_OVERWRITE);
+					LayoutsImportStrategy.DO_NOT_OVERWRITE, true);
 
 			Assert.assertEquals(
 				layoutsImporterResultEntries.toString(), 1,
@@ -223,7 +225,7 @@ public class PageTemplatesImporterTest {
 
 			layoutsImporterResultEntries = _layoutsImporter.importFile(
 				TestPropsValues.getUserId(), _group.getGroupId(), 0, file,
-				LayoutsImportStrategy.DO_NOT_OVERWRITE);
+				LayoutsImportStrategy.DO_NOT_OVERWRITE, true);
 
 			Assert.assertEquals(
 				layoutsImporterResultEntries.toString(), 1,
@@ -598,7 +600,7 @@ public class PageTemplatesImporterTest {
 
 			_layoutsImporter.importFile(
 				TestPropsValues.getUserId(), _group.getGroupId(), file,
-				LayoutsImportStrategy.DO_NOT_OVERWRITE);
+				LayoutsImportStrategy.DO_NOT_OVERWRITE, true);
 
 			_assertLayoutPageTemplateEntryFragmentDropZoneLayoutStructureItems(
 				new String[] {StringPool.BLANK, StringPool.BLANK},
@@ -685,7 +687,7 @@ public class PageTemplatesImporterTest {
 
 			_layoutsImporter.importFile(
 				TestPropsValues.getUserId(), _group.getGroupId(), file,
-				LayoutsImportStrategy.DO_NOT_OVERWRITE);
+				LayoutsImportStrategy.DO_NOT_OVERWRITE, true);
 
 			_assertLayoutPageTemplateEntryFragmentDropZoneLayoutStructureItems(
 				new String[] {dropZoneId1, dropZoneId2}, fragmentEntry,
@@ -786,7 +788,7 @@ public class PageTemplatesImporterTest {
 
 			_layoutsImporter.importFile(
 				TestPropsValues.getUserId(), _group.getGroupId(), file,
-				LayoutsImportStrategy.DO_NOT_OVERWRITE);
+				LayoutsImportStrategy.DO_NOT_OVERWRITE, true);
 
 			_assertLayoutPageTemplateEntryFragmentDropZoneLayoutStructureItems(
 				new String[] {dropZoneId1, dropZoneId3, dropZoneId2},
@@ -879,7 +881,7 @@ public class PageTemplatesImporterTest {
 
 			_layoutsImporter.importFile(
 				TestPropsValues.getUserId(), _group.getGroupId(), file,
-				LayoutsImportStrategy.DO_NOT_OVERWRITE);
+				LayoutsImportStrategy.DO_NOT_OVERWRITE, true);
 
 			_assertLayoutPageTemplateEntryFragmentDropZoneLayoutStructureItems(
 				new String[] {
@@ -1139,10 +1141,9 @@ public class PageTemplatesImporterTest {
 		String zipPath = StringUtil.removeSubstring(
 			entryPath, _LAYOUT_PATE_TEMPLATES_PATH);
 
-		String content = StringUtil.read(url.openStream());
-
 		zipWriter.addEntry(
-			zipPath, StringUtil.replace(content, "${", "}", valuesMap));
+			zipPath,
+			StringUtil.replace(URLUtil.toString(url), "${", "}", valuesMap));
 	}
 
 	private void
@@ -1319,7 +1320,7 @@ public class PageTemplatesImporterTest {
 		try {
 			layoutsImporterResultEntries = _layoutsImporter.importFile(
 				_user.getUserId(), _group.getGroupId(), 0, file,
-				LayoutsImportStrategy.DO_NOT_OVERWRITE);
+				LayoutsImportStrategy.DO_NOT_OVERWRITE, true);
 		}
 		finally {
 			ServiceContextThreadLocal.popServiceContext();
@@ -1393,7 +1394,7 @@ public class PageTemplatesImporterTest {
 		try {
 			layoutsImporterResultEntries = _layoutsImporter.importFile(
 				_user.getUserId(), _group.getGroupId(), 0, file,
-				LayoutsImportStrategy.DO_NOT_OVERWRITE);
+				LayoutsImportStrategy.DO_NOT_OVERWRITE, true);
 		}
 		finally {
 			ServiceContextThreadLocal.popServiceContext();
@@ -1428,7 +1429,9 @@ public class PageTemplatesImporterTest {
 		String zipPath = StringUtil.removeSubstring(
 			url.getFile(), _LAYOUT_PATE_TEMPLATES_PATH);
 
-		zipWriter.addEntry(zipPath, url.openStream());
+		try (InputStream inputStream = url.openStream()) {
+			zipWriter.addEntry(zipPath, inputStream);
+		}
 
 		String path = FileUtil.getPath(url.getPath());
 

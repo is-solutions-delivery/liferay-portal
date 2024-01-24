@@ -5,35 +5,36 @@
 
 /// <reference types="react" />
 
-import {KeyValuePair} from '../ObjectDetails/EditObjectDetails';
+import {ILearnResourceContext} from 'frontend-js-components-web';
+import {Scope} from '../ObjectDetails/EditObjectDetails';
 interface CustomObjectFolderWrapperProps {
 	baseResourceURL: string;
-	companyKeyValuePairs: KeyValuePair[];
+	companies: Scope[];
 	editObjectDefinitionURL: string;
 	filterOperators: TFilterOperators;
 	forbiddenChars: string[];
 	forbiddenLastChars: string[];
 	forbiddenNames: string[];
+	learnResourceContext: ILearnResourceContext;
 	objectDefinitionPermissionsURL: string;
 	objectDefinitionsStorageTypes: LabelValueObject[];
 	objectRelationshipDeletionTypes: LabelValueObject[];
-	objectWebLearnResources: ObjectWebLearnResources;
-	siteKeyValuePairs: KeyValuePair[];
-	workflowStatusJSONArray: LabelValueObject[];
+	sites: Scope[];
+	workflowStatuses: LabelValueObject[];
 }
 export default function CustomObjectFolderWrapper({
 	baseResourceURL,
-	companyKeyValuePairs,
+	companies,
 	editObjectDefinitionURL,
 	filterOperators,
 	forbiddenChars,
 	forbiddenLastChars,
 	forbiddenNames,
+	learnResourceContext,
 	objectDefinitionPermissionsURL,
 	objectDefinitionsStorageTypes,
 	objectRelationshipDeletionTypes,
-	objectWebLearnResources,
-	siteKeyValuePairs,
-	workflowStatusJSONArray,
+	sites,
+	workflowStatuses,
 }: CustomObjectFolderWrapperProps): JSX.Element;
 export {};

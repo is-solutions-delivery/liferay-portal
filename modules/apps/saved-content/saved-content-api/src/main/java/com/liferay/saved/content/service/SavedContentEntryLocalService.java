@@ -21,12 +21,14 @@ import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.service.PersistedModelLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.change.tracking.CTService;
 import com.liferay.portal.kernel.service.persistence.change.tracking.CTPersistence;
 import com.liferay.portal.kernel.transaction.Isolation;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.saved.content.exception.NoSuchSavedContentEntryException;
 import com.liferay.saved.content.model.SavedContentEntry;
 
 import java.io.Serializable;
@@ -60,6 +62,11 @@ public interface SavedContentEntryLocalService
 	 *
 	 * Never modify this interface directly. Add custom service methods to <code>com.liferay.saved.content.service.impl.SavedContentEntryLocalServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface. Consume the saved content entry local service via injection or a <code>org.osgi.util.tracker.ServiceTracker</code>. Use {@link SavedContentEntryLocalServiceUtil} if injection and service tracking are not available.
 	 */
+	@Indexable(type = IndexableType.REINDEX)
+	public SavedContentEntry addSavedContentEntry(
+			long userId, long groupId, String className, long classPK,
+			ServiceContext serviceContext)
+		throws PortalException;
 
 	/**
 	 * Adds the saved content entry to the database. Also notifies the appropriate model listeners.
@@ -96,6 +103,11 @@ public interface SavedContentEntryLocalService
 	@Override
 	public PersistedModel deletePersistedModel(PersistedModel persistedModel)
 		throws PortalException;
+
+	public void deleteSavedContentEntries(
+		long groupId, long classNameId, long classPK);
+
+	public void deleteSavedContentEntriesByUserId(long userId);
 
 	/**
 	 * Deletes the saved content entry with the primary key from the database. Also notifies the appropriate model listeners.
@@ -201,6 +213,10 @@ public interface SavedContentEntryLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public SavedContentEntry fetchSavedContentEntry(long savedContentEntryId);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public SavedContentEntry fetchSavedContentEntry(
+		long userId, long groupId, String className, long classPK);
+
 	/**
 	 * Returns the saved content entry matching the UUID and group.
 	 *
@@ -295,6 +311,11 @@ public interface SavedContentEntryLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public SavedContentEntry getSavedContentEntry(long savedContentEntryId)
 		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public SavedContentEntry getSavedContentEntry(
+			long userId, long groupId, String className, long classPK)
+		throws NoSuchSavedContentEntryException;
 
 	/**
 	 * Returns the saved content entry matching the UUID and group.

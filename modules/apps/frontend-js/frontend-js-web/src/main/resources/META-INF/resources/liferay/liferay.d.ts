@@ -42,7 +42,8 @@ declare module Liferay {
 			| 'ja_JP'
 			| 'pt_BR'
 			| 'sv_SE'
-			| 'zh_CN';
+			| 'zh_CN'
+			| 'zh_TW';
 
 		type FullyLocalizedValue<T> = {[key in Locale]: T};
 		type LocalizedValue<T> = Partial<FullyLocalizedValue<T>>;
@@ -227,10 +228,12 @@ declare module Liferay {
 
 	namespace ThemeDisplay {
 		export function getBCP47LanguageId(): string;
+		export function getCompanyId(): string;
 		export function getDefaultLanguageId(): Language.Locale;
 		export function getLanguageId(): Language.Locale;
 		export function getPathThemeImages(): string;
 		export function getPathThemeSpritemap(): string;
+		export function getPortalURL(): string;
 		export function getSiteGroupId(): number;
 		export function isControlPanel(): boolean;
 	}

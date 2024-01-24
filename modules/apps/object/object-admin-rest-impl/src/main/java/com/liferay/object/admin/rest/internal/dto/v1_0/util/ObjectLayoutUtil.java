@@ -12,8 +12,10 @@ import com.liferay.object.admin.rest.dto.v1_0.ObjectLayoutRow;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectLayoutTab;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectField;
+import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
@@ -29,6 +31,7 @@ public class ObjectLayoutUtil {
 			Map<String, Map<String, String>> actions,
 			ObjectDefinitionLocalService objectDefinitionLocalService,
 			ObjectFieldLocalService objectFieldLocalService,
+			ObjectRelationshipLocalService objectRelationshipLocalService,
 			com.liferay.object.model.ObjectLayout serviceBuilderObjectLayout)
 		throws PortalException {
 
@@ -36,28 +39,34 @@ public class ObjectLayoutUtil {
 			return null;
 		}
 
-		ObjectDefinition objectDefinition =
-			objectDefinitionLocalService.getObjectDefinition(
-				serviceBuilderObjectLayout.getObjectDefinitionId());
-
 		ObjectLayout objectLayout = new ObjectLayout() {
 			{
-				dateCreated = serviceBuilderObjectLayout.getCreateDate();
-				dateModified = serviceBuilderObjectLayout.getModifiedDate();
-				defaultObjectLayout =
-					serviceBuilderObjectLayout.getDefaultObjectLayout();
-				id = serviceBuilderObjectLayout.getObjectLayoutId();
-				name = LocalizedMapUtil.getLanguageIdMap(
-					serviceBuilderObjectLayout.getNameMap());
-				objectDefinitionExternalReferenceCode =
-					objectDefinition.getExternalReferenceCode();
-				objectDefinitionId =
-					serviceBuilderObjectLayout.getObjectDefinitionId();
-				objectLayoutTabs = TransformUtil.transformToArray(
-					serviceBuilderObjectLayout.getObjectLayoutTabs(),
-					objectLayoutTab -> toObjectLayoutTab(
-						objectFieldLocalService, objectLayoutTab),
-					ObjectLayoutTab.class);
+				setDateCreated(serviceBuilderObjectLayout::getCreateDate);
+				setDateModified(serviceBuilderObjectLayout::getModifiedDate);
+				setDefaultObjectLayout(
+					serviceBuilderObjectLayout::isDefaultObjectLayout);
+				setId(serviceBuilderObjectLayout::getObjectLayoutId);
+				setName(
+					() -> LocalizedMapUtil.getLanguageIdMap(
+						serviceBuilderObjectLayout.getNameMap()));
+				setObjectDefinitionExternalReferenceCode(
+					() -> {
+						ObjectDefinition objectDefinition =
+							objectDefinitionLocalService.getObjectDefinition(
+								serviceBuilderObjectLayout.
+									getObjectDefinitionId());
+
+						return objectDefinition.getExternalReferenceCode();
+					});
+				setObjectDefinitionId(
+					serviceBuilderObjectLayout::getObjectDefinitionId);
+				setObjectLayoutTabs(
+					() -> TransformUtil.transformToArray(
+						serviceBuilderObjectLayout.getObjectLayoutTabs(),
+						objectLayoutTab -> toObjectLayoutTab(
+							objectFieldLocalService, objectLayoutTab,
+							objectRelationshipLocalService),
+						ObjectLayoutTab.class));
 			}
 		};
 
@@ -68,7 +77,8 @@ public class ObjectLayoutUtil {
 
 	public static ObjectLayoutTab toObjectLayoutTab(
 		ObjectFieldLocalService objectFieldLocalService,
-		com.liferay.object.model.ObjectLayoutTab objectLayoutTab) {
+		com.liferay.object.model.ObjectLayoutTab objectLayoutTab,
+		ObjectRelationshipLocalService objectRelationshipLocalService) {
 
 		if (objectLayoutTab == null) {
 			return null;
@@ -76,17 +86,32 @@ public class ObjectLayoutUtil {
 
 		return new ObjectLayoutTab() {
 			{
-				id = objectLayoutTab.getObjectLayoutTabId();
-				name = LocalizedMapUtil.getLanguageIdMap(
-					objectLayoutTab.getNameMap());
-				objectLayoutBoxes = TransformUtil.transformToArray(
-					objectLayoutTab.getObjectLayoutBoxes(),
-					objectLayoutBox -> _toObjectLayoutBox(
-						objectFieldLocalService, objectLayoutBox),
-					ObjectLayoutBox.class);
-				objectRelationshipId =
-					objectLayoutTab.getObjectRelationshipId();
-				priority = objectLayoutTab.getPriority();
+				setId(objectLayoutTab::getObjectLayoutTabId);
+				setName(
+					() -> LocalizedMapUtil.getLanguageIdMap(
+						objectLayoutTab.getNameMap()));
+				setObjectLayoutBoxes(
+					() -> TransformUtil.transformToArray(
+						objectLayoutTab.getObjectLayoutBoxes(),
+						objectLayoutBox -> _toObjectLayoutBox(
+							objectFieldLocalService, objectLayoutBox),
+						ObjectLayoutBox.class));
+				setObjectRelationshipExternalReferenceCode(
+					() -> {
+						ObjectRelationship objectRelationship =
+							objectRelationshipLocalService.
+								fetchObjectRelationship(
+									objectLayoutTab.getObjectRelationshipId());
+
+						if (objectRelationship == null) {
+							return null;
+						}
+
+						return objectRelationship.getExternalReferenceCode();
+					});
+				setObjectRelationshipId(
+					objectLayoutTab::getObjectRelationshipId);
+				setPriority(objectLayoutTab::getPriority);
 			}
 		};
 	}
@@ -101,17 +126,21 @@ public class ObjectLayoutUtil {
 
 		return new ObjectLayoutBox() {
 			{
-				collapsable = objectLayoutBox.getCollapsable();
-				id = objectLayoutBox.getObjectLayoutBoxId();
-				name = LocalizedMapUtil.getLanguageIdMap(
-					objectLayoutBox.getNameMap());
-				objectLayoutRows = TransformUtil.transformToArray(
-					objectLayoutBox.getObjectLayoutRows(),
-					objectLayoutRow -> _toObjectLayoutRow(
-						objectFieldLocalService, objectLayoutRow),
-					ObjectLayoutRow.class);
-				priority = objectLayoutBox.getPriority();
-				type = ObjectLayoutBox.Type.create(objectLayoutBox.getType());
+				setCollapsable(objectLayoutBox::isCollapsable);
+				setId(objectLayoutBox::getObjectLayoutBoxId);
+				setName(
+					() -> LocalizedMapUtil.getLanguageIdMap(
+						objectLayoutBox.getNameMap()));
+				setObjectLayoutRows(
+					() -> TransformUtil.transformToArray(
+						objectLayoutBox.getObjectLayoutRows(),
+						objectLayoutRow -> _toObjectLayoutRow(
+							objectFieldLocalService, objectLayoutRow),
+						ObjectLayoutRow.class));
+				setPriority(objectLayoutBox::getPriority);
+				setType(
+					() -> ObjectLayoutBox.Type.create(
+						objectLayoutBox.getType()));
 			}
 		};
 	}
@@ -125,15 +154,23 @@ public class ObjectLayoutUtil {
 			return null;
 		}
 
-		ObjectField objectField = objectFieldLocalService.fetchObjectField(
-			serviceBuilderObjectLayoutColumn.getObjectFieldId());
-
 		return new ObjectLayoutColumn() {
 			{
-				id = serviceBuilderObjectLayoutColumn.getObjectLayoutColumnId();
-				objectFieldName = objectField.getName();
-				priority = serviceBuilderObjectLayoutColumn.getPriority();
-				size = serviceBuilderObjectLayoutColumn.getSize();
+				setId(
+					() ->
+						serviceBuilderObjectLayoutColumn.
+							getObjectLayoutColumnId());
+				setObjectFieldName(
+					() -> {
+						ObjectField objectField =
+							objectFieldLocalService.fetchObjectField(
+								serviceBuilderObjectLayoutColumn.
+									getObjectFieldId());
+
+						return objectField.getName();
+					});
+				setPriority(serviceBuilderObjectLayoutColumn::getPriority);
+				setSize(serviceBuilderObjectLayoutColumn::getSize);
 			}
 		};
 	}
@@ -149,13 +186,14 @@ public class ObjectLayoutUtil {
 
 		return new ObjectLayoutRow() {
 			{
-				id = serviceBuilderObjectLayoutRow.getObjectLayoutRowId();
-				objectLayoutColumns = TransformUtil.transformToArray(
-					serviceBuilderObjectLayoutRow.getObjectLayoutColumns(),
-					objectLayoutColumn -> _toObjectLayoutColumn(
-						objectFieldLocalService, objectLayoutColumn),
-					ObjectLayoutColumn.class);
-				priority = serviceBuilderObjectLayoutRow.getPriority();
+				setId(serviceBuilderObjectLayoutRow::getObjectLayoutRowId);
+				setObjectLayoutColumns(
+					() -> TransformUtil.transformToArray(
+						serviceBuilderObjectLayoutRow.getObjectLayoutColumns(),
+						objectLayoutColumn -> _toObjectLayoutColumn(
+							objectFieldLocalService, objectLayoutColumn),
+						ObjectLayoutColumn.class));
+				setPriority(serviceBuilderObjectLayoutRow::getPriority);
 			}
 		};
 	}

@@ -19,7 +19,7 @@ import {
 	XAxis,
 	YAxis
 } from 'recharts';
-import {CHART_COLOR_NAMES} from 'shared/components/Chart';
+import {CHART_COLOR_NAMES} from 'shared/util/charts';
 import {createDateKeysIMap} from 'shared/util/intervals';
 import {
 	formatXAxisDate,
@@ -119,6 +119,8 @@ const ActivitiesChart: React.FC<
 				/>
 			);
 		}
+
+		return null;
 	};
 
 	const intervals = getIntervals(
@@ -183,6 +185,7 @@ const ActivitiesChart: React.FC<
 					tickLine={false}
 					tickMargin={12}
 					ticks={intervals}
+					type='number'
 				/>
 
 				<XAxis

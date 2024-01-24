@@ -265,11 +265,11 @@ public class CompanyLogServletTest {
 	}
 
 	@Test
-	public void testListWithOmniAdminUser() throws Exception {
+	public void testListWithOmniadminUser() throws Exception {
 		User omniAdminUser = null;
 
 		try {
-			omniAdminUser = UserTestUtil.addOmniAdminUser();
+			omniAdminUser = UserTestUtil.addOmniadminUser();
 
 			MockHttpServletRequest mockHttpServletRequest =
 				_createMockHttpServletRequest("/", omniAdminUser);

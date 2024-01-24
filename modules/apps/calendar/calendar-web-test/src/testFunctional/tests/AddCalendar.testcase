@@ -84,10 +84,7 @@ definition {
 
 	@priority = 4
 	test AddUserCalendarToOtherCalendars {
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.addCP(
 			userEmailAddress = "userea@liferay.com",
@@ -415,10 +412,7 @@ definition {
 	@description = "LRQA-71601 - Verify that the translation icon has the Instance Language by default"
 	@priority = 4
 	test TranslationIconHasInstanceLanguageByDefault {
-		ApplicationsMenu.gotoPortlet(
-			category = "Configuration",
-			panel = "Control Panel",
-			portlet = "Instance Settings");
+		PortalSettings.openInstanceSettingsAdmin();
 
 		SystemSettings.gotoConfiguration(
 			configurationCategory = "Localization",
@@ -474,10 +468,7 @@ definition {
 
 		Navigator.openURL();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Roles");
+		Role.openRolesAdmin();
 
 		RoleNavigator.gotoViewNotHaveRolePermissions(
 			roleTitle = "Site Member",

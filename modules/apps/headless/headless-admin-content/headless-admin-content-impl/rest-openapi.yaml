@@ -34,8 +34,7 @@ components:
                     readOnly: true
                     type: array
                 creator:
-                    allOf:
-                        - $ref: "../../headless-delivery/headless-delivery-impl/rest-openapi.yaml#Creator"
+                    $ref: "../../headless-delivery/headless-delivery-impl/rest-openapi.yaml#Creator"
                     description:
                         The Display Page Template's creator.
                     readOnly: true
@@ -176,8 +175,7 @@ components:
                     readOnly: true
                     type: number
                 status:
-                    allOf:
-                        - $ref: "#/components/schemas/Status"
+                    $ref: "#/components/schemas/Status"
                     # @review
                     description:
                         Represents the status of a resource
@@ -186,7 +184,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.admin.content.client', and version '2.0.27'."
+        'com.liferay.headless.admin.content.client', and version '2.0.30'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"

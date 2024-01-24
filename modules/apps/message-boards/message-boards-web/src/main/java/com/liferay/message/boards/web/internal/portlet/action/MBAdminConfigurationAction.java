@@ -32,6 +32,8 @@ import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
 import javax.portlet.PortletConfig;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -46,6 +48,11 @@ public class MBAdminConfigurationAction
 	extends BaseJSPSettingsConfigurationAction {
 
 	@Override
+	public String getJspPath(HttpServletRequest httpServletRequest) {
+		return "/message_boards_admin/configuration_browse.jsp";
+	}
+
+	@Override
 	public void processAction(
 			PortletConfig portletConfig, ActionRequest actionRequest,
 			ActionResponse actionResponse)
@@ -53,7 +60,6 @@ public class MBAdminConfigurationAction
 
 		validateEmail(actionRequest, "emailMessageAdded");
 		validateEmail(actionRequest, "emailMessageUpdated");
-		validateEmailFrom(actionRequest);
 
 		super.processAction(portletConfig, actionRequest, actionResponse);
 	}

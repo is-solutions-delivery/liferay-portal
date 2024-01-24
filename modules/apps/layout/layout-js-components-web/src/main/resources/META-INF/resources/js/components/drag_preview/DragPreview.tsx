@@ -44,17 +44,9 @@ const getItemStyles = (
 	};
 };
 
-function getDefaultLabel(item: DragItem) {
-	if (item?.name) {
-		return item.name;
-	}
-
-	return Liferay.Language.get('element');
-}
-
 export default function DragPreview<T extends DragItem>({
-	getIcon,
-	getLabel = getDefaultLabel,
+	getIcon = (item) => item?.icon || '',
+	getLabel = (item) => item?.name || Liferay.Language.get('element'),
 }: Props<T>) {
 	const ref = useRef<HTMLDivElement>(null);
 
@@ -64,12 +56,7 @@ export default function DragPreview<T extends DragItem>({
 		item: monitor.getItem(),
 	}));
 
-	const icon = useMemo(() => {
-		if (getIcon) {
-			return item?.icon ?? getIcon(item);
-		}
-	}, [getIcon, item]);
-
+	const icon = useMemo(() => getIcon(item), [getIcon, item]);
 	const label = useMemo(() => getLabel(item), [getLabel, item]);
 
 	if (!isDragging) {

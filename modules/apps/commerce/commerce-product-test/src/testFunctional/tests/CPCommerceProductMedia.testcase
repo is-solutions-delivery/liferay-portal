@@ -19,9 +19,7 @@ definition {
 	test AddAnAttachment {
 		property portal.acceptance = "false";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -47,9 +45,7 @@ definition {
 	test AddAnImage {
 		property portal.acceptance = "false";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productName = "Simple T-Shirt",
@@ -87,9 +83,7 @@ definition {
 			optionEntryName = "Color",
 			optionValuesList = "Black:1");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -112,6 +106,348 @@ definition {
 			validationImage = "true");
 
 		Alert.viewSuccessMessage();
+	}
+
+	@description = "COMMERCE-12853 | Verify that is possible to add tags to the attachments and remove it"
+	@priority = 5
+	test CanAddAndRemoveTagsForAttachments {
+		property portal.acceptance = "true";
+
+		task ("Given a Minium Site") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+		}
+
+		task ("And the admin opens the product ABS Sensor") {
+			CommerceProducts.openProductsAdmin();
+
+			CommerceNavigator.gotoEntry(entryName = "ABS Sensor");
+		}
+
+		task ("And the admin adds some tags for an attachment") {
+			CommerceEntry.gotoMenuTab(menuTab = "Media");
+
+			CommerceProductImages.addAttachmentImages(
+				imageTitles = "Black",
+				tags = "featured,fnew_tag");
+		}
+
+		task ("Then the tags are correctly added") {
+			CommerceNavigator.gotoEntry(entryName = "Commerce_Black.jpg");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			for (var tagNameList : list "featured,fnew_tag") {
+				AssertElementPresent(
+					key_tagName = ${tagNameList},
+					locator1 = "CommerceEntry#IMAGE_TAG");
+			}
+		}
+
+		task ("But when the admin removes a tag") {
+			Click(
+				key_tagName = "fnew_tag",
+				locator1 = "CommerceEntry#REMOVE_IMAGE_TAG");
+
+			CommerceEntry.publishProductImage();
+
+			Click(locator1 = "Icon#CLOSE");
+
+			SelectFrame.selectFrameTop();
+		}
+
+		task ("Then the tag is removed") {
+			CommerceNavigator.gotoEntry(entryName = "Commerce_Black.jpg");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			AssertElementPresent(
+				key_tagName = "featured",
+				locator1 = "CommerceEntry#IMAGE_TAG");
+
+			AssertElementNotPresent(
+				key_tagName = "fnew_tag",
+				locator1 = "CommerceEntry#IMAGE_TAG");
+		}
+
+		task ("But if the admin tries to add a tag by using the 'Select' button") {
+			Click(
+				key_text = "Select",
+				locator1 = "Button#ANY");
+
+			SelectFrame.selectFrameNoLoading(
+				key_title = "Tags",
+				locator1 = "IFrame#MODAL_ANY");
+
+			task ("Then the admin can add a tag again") {
+				Click(
+					key_columnName = "name",
+					key_tableEntry = "fnew_tag",
+					locator1 = "LexiconTable#TABLE_ENTRY_INFO_CHECKBOX");
+
+				SelectFrameTop();
+
+				SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+				Button.click(button = "Done");
+
+				CommerceEntry.publishProductImage();
+
+				Click(locator1 = "Icon#CLOSE");
+
+				SelectFrame.selectFrameTop();
+
+				CommerceNavigator.gotoEntry(entryName = "Commerce_Black.jpg");
+
+				SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+				for (var tagNameList : list "featured,fnew_tag") {
+					AssertElementPresent(
+						key_tagName = ${tagNameList},
+						locator1 = "CommerceEntry#IMAGE_TAG");
+				}
+			}
+		}
+
+		task ("When the admin use the 'Clear all' button") {
+			Click(locator1 = "CommerceEntry#REMOVE_ALL_IMAGE_TAG");
+
+			CommerceEntry.publishProductImage();
+
+			Click(locator1 = "Icon#CLOSE");
+
+			SelectFrame.selectFrameTop();
+
+			CommerceNavigator.gotoEntry(entryName = "Commerce_Black.jpg");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			task ("Then all the tags will be removed") {
+				for (var tagNameList : list "featured,fnew_tag") {
+					AssertElementNotPresent(
+						key_tagName = ${tagNameList},
+						locator1 = "CommerceEntry#IMAGE_TAG");
+				}
+			}
+		}
+
+		task ("But if the admin uses the dropdown to add a tag") {
+			Type(
+				locator1 = "ACSettings#INVITE_USERS_INPUT",
+				value1 = "f");
+
+			for (var rowList : list "featured,fnew_tag") {
+				AssertElementPresent(
+					key_columnOption = ${rowList},
+					locator1 = "ObjectCustomViews#SELECT_AUTO_COMPLETE_OPTION");
+			}
+
+			Type(
+				locator1 = "ACSettings#INVITE_USERS_INPUT",
+				value1 = "fn");
+
+			AssertElementPresent(
+				key_columnOption = "fnew_tag",
+				locator1 = "ObjectCustomViews#SELECT_AUTO_COMPLETE_OPTION");
+
+			AssertElementNotPresent(
+				key_columnOption = "featured",
+				locator1 = "ObjectCustomViews#SELECT_AUTO_COMPLETE_OPTION");
+
+			Click(
+				key_columnOption = "fnew_tag",
+				locator1 = "ObjectCustomViews#SELECT_AUTO_COMPLETE_OPTION");
+
+			CommerceEntry.publishProductImage();
+
+			Click(locator1 = "Icon#CLOSE");
+
+			SelectFrame.selectFrameTop();
+
+			CommerceNavigator.gotoEntry(entryName = "Commerce_Black.jpg");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			task ("Then the tag 'fnew_tag' is present") {
+				AssertElementPresent(
+					key_tagName = "fnew_tag",
+					locator1 = "CommerceEntry#IMAGE_TAG");
+
+				AssertElementNotPresent(
+					key_tagName = "featured",
+					locator1 = "CommerceEntry#IMAGE_TAG");
+			}
+		}
+	}
+
+	@description = "COMMERCE-12852 | Verify that is possible to add tags to the images and remove it"
+	@priority = 5
+	test CanAddAndRemoveTagsForImages {
+		property portal.acceptance = "true";
+
+		task ("Given a Minium Site") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+		}
+
+		task ("And the admin opens the product ABS Sensor") {
+			CommerceProducts.openProductsAdmin();
+
+			CommerceNavigator.gotoEntry(entryName = "ABS Sensor");
+		}
+
+		task ("And the admin adds some tags for an image") {
+			CommerceEntry.gotoMenuTab(menuTab = "Media");
+
+			CommerceProductImages.addProductImages(
+				imageTitles = "Black",
+				tags = "featured,fnew_tag");
+		}
+
+		task ("Then the tags are correctly added") {
+			CommerceNavigator.gotoEntry(entryName = "Commerce_Black.jpg");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			for (var tagNameList : list "featured,fnew_tag") {
+				AssertElementPresent(
+					key_tagName = ${tagNameList},
+					locator1 = "CommerceEntry#IMAGE_TAG");
+			}
+		}
+
+		task ("But when the admin removes a tag") {
+			Click(
+				key_tagName = "fnew_tag",
+				locator1 = "CommerceEntry#REMOVE_IMAGE_TAG");
+
+			CommerceEntry.publishProductImage();
+
+			Click(locator1 = "Icon#CLOSE");
+
+			SelectFrame.selectFrameTop();
+		}
+
+		task ("Then the tag is removed") {
+			CommerceNavigator.gotoEntry(entryName = "Commerce_Black.jpg");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			AssertElementPresent(
+				key_tagName = "featured",
+				locator1 = "CommerceEntry#IMAGE_TAG");
+
+			AssertElementNotPresent(
+				key_tagName = "fnew_tag",
+				locator1 = "CommerceEntry#IMAGE_TAG");
+		}
+
+		task ("But if the admin tries to add a tag by using the 'Select' button") {
+			Click(
+				key_text = "Select",
+				locator1 = "Button#ANY");
+
+			SelectFrame.selectFrameNoLoading(
+				key_title = "Tags",
+				locator1 = "IFrame#MODAL_ANY");
+
+			task ("Then the admin can add a tag again") {
+				Click(
+					key_columnName = "name",
+					key_tableEntry = "fnew_tag",
+					locator1 = "LexiconTable#TABLE_ENTRY_INFO_CHECKBOX");
+
+				SelectFrameTop();
+
+				SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+				Button.click(button = "Done");
+
+				CommerceEntry.publishProductImage();
+
+				Click(locator1 = "Icon#CLOSE");
+
+				SelectFrame.selectFrameTop();
+
+				CommerceNavigator.gotoEntry(entryName = "Commerce_Black.jpg");
+
+				SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+				for (var tagNameList : list "featured,fnew_tag") {
+					AssertElementPresent(
+						key_tagName = ${tagNameList},
+						locator1 = "CommerceEntry#IMAGE_TAG");
+				}
+			}
+		}
+
+		task ("When the admin uses the 'Clear all' button") {
+			Click(locator1 = "CommerceEntry#REMOVE_ALL_IMAGE_TAG");
+
+			CommerceEntry.publishProductImage();
+
+			Click(locator1 = "Icon#CLOSE");
+
+			SelectFrame.selectFrameTop();
+
+			CommerceNavigator.gotoEntry(entryName = "Commerce_Black.jpg");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			task ("Then all the tags will be removed") {
+				for (var tagNameList : list "featured,fnew_tag") {
+					AssertElementNotPresent(
+						key_tagName = ${tagNameList},
+						locator1 = "CommerceEntry#IMAGE_TAG");
+				}
+			}
+		}
+
+		task ("But if the admin uses the dropdown to add a tag") {
+			Type(
+				locator1 = "ACSettings#INVITE_USERS_INPUT",
+				value1 = "f");
+
+			for (var rowList : list "featured,fnew_tag") {
+				AssertElementPresent(
+					key_columnOption = ${rowList},
+					locator1 = "ObjectCustomViews#SELECT_AUTO_COMPLETE_OPTION");
+			}
+
+			Type(
+				locator1 = "ACSettings#INVITE_USERS_INPUT",
+				value1 = "fn");
+
+			AssertElementPresent(
+				key_columnOption = "fnew_tag",
+				locator1 = "ObjectCustomViews#SELECT_AUTO_COMPLETE_OPTION");
+
+			AssertElementNotPresent(
+				key_columnOption = "featured",
+				locator1 = "ObjectCustomViews#SELECT_AUTO_COMPLETE_OPTION");
+
+			Click(
+				key_columnOption = "fnew_tag",
+				locator1 = "ObjectCustomViews#SELECT_AUTO_COMPLETE_OPTION");
+
+			CommerceEntry.publishProductImage();
+
+			Click(locator1 = "Icon#CLOSE");
+
+			SelectFrame.selectFrameTop();
+
+			CommerceNavigator.gotoEntry(entryName = "Commerce_Black.jpg");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			task ("Then the tag 'fnew_tag' is present") {
+				AssertElementPresent(
+					key_tagName = "fnew_tag",
+					locator1 = "CommerceEntry#IMAGE_TAG");
+
+				AssertElementNotPresent(
+					key_tagName = "featured",
+					locator1 = "CommerceEntry#IMAGE_TAG");
+			}
+		}
 	}
 
 	@description = "This is a test for COMMERCE-12305. The admin can delete a product's attachment via API"
@@ -320,15 +656,220 @@ definition {
 		}
 	}
 
+	@description = "COMMERCE-12773 | Verify that it is possible to use the toggle Shopping Experience Image Gallery to decide which image shows on the storefront product details"
+	@priority = 5
+	test CanViewImagesCorrectlyByUsingTheShoppingExperienceImageGalleryToggle {
+		property custom.properties = "jsonws.web.service.paths.excludes=";
+		property portal.acceptance = "true";
+
+		task ("Given a Minium Site") {
+			CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+		}
+
+		task ("Given an account with a buyer user is created") {
+			CommerceEntry.addAccountEntryUser(
+				accountName = "Commerce Account",
+				accountType = "Business",
+				agreeToTermsAndAnswerReminderQuery = "true",
+				createNewAccount = "true",
+				requireReset = "false",
+				userEmailAddress = "buyer@liferay.com",
+				userFirstName = "Buyer",
+				userLastName = "User",
+				userRole = "Buyer",
+				userScreenName = "buyeruser",
+				userSiteMembership = "Minium");
+		}
+
+		task ("And a new product with an option is created") {
+			CommerceJSONProductsAPI._addCommerceProduct(
+				catalogName = "Minium",
+				productName = "Simple_Product",
+				productType = "simple",
+				sku = "TESTSKU");
+
+			CommerceJSONOptionsAPI._assignOptionToCommerceProduct(
+				fieldType = "select",
+				optionKey = "package-quantity",
+				optionName = "Package Quantity",
+				productName = "Simple_Product");
+		}
+
+		task ("And open the product admin details") {
+			CommerceProducts.openProductsAdmin();
+
+			CommerceProducts.searchAndGoToProductEntry(entryProductName = "Simple_Product");
+		}
+
+		task ("And all SKUs are generated") {
+			CommerceEntry.gotoMenuTab(menuTab = "SKUs");
+
+			CommerceSKUs.generateAllSkuCombinations();
+		}
+
+		task ("And disable the toggle Shopping Experience Image Gallery for an image") {
+			CommerceEntry.gotoMenuTab(menuTab = "Media");
+
+			CommerceProductImages.addProductImages(
+				imageTitles = "Black",
+				optionValues = 6,
+				shoppingExperienceImageGallery = "false");
+
+			CommerceProductImages.addProductImages(
+				imageTitles = "White",
+				optionValues = 12,
+				shoppingExperienceImageGallery = "true");
+
+			CommerceProductImages.addProductImages(
+				imageTitles = "Blue",
+				optionValues = 24);
+		}
+
+		task ("And the buyer logs in") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+		}
+
+		task ("When the buyer opens the product details") {
+			CommerceAcceleratorsInitializer.gotoMiniumProductDetailsPage(productName = "Simple_Product");
+		}
+
+		task ("Then only two images are present into the gallery") {
+			for (var optionValues : list "6,12,24") {
+				FrontStore.selectAssociatedFSOptionsValue(
+					fsOptionName = "Package Quantity",
+					fsOptionValue = ${optionValues});
+
+				if (${optionValues} == 24) {
+					AssertElementPresent(
+						key_fsProductImage = "Blue",
+						locator1 = "CommerceFrontStore#FS_PRODUCT_MAIN_IMAGE");
+
+					for (var fsProductImage : list "White,Black") {
+						AssertElementNotPresent(
+							key_fsProductImage = ${fsProductImage},
+							locator1 = "CommerceFrontStore#FS_PRODUCT_MAIN_IMAGE");
+					}
+				}
+				else {
+					AssertElementPresent(
+						key_fsProductImage = "White",
+						locator1 = "CommerceFrontStore#FS_PRODUCT_MAIN_IMAGE");
+
+					for (var fsProductImage : list "Black,Blue") {
+						AssertElementNotPresent(
+							key_fsProductImage = ${fsProductImage},
+							locator1 = "CommerceFrontStore#FS_PRODUCT_MAIN_IMAGE");
+					}
+				}
+			}
+
+			for (var fsProductImage : list "White,Blue") {
+				AssertElementPresent(
+					key_fsProductImage = ${fsProductImage},
+					locator1 = "CommerceFrontStore#FS_PRODUCT_THUMBNAIL_IMAGE");
+			}
+
+			AssertElementNotPresent(
+				key_fsProductImage = "Black",
+				locator1 = "CommerceFrontStore#FS_PRODUCT_THUMBNAIL_IMAGE");
+		}
+
+		task ("But if the admin enable again the toggle Shopping Experience Image Gallery for all the images") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "test@liferay.com");
+
+			CommerceProducts.openProductsAdmin();
+
+			CommerceProducts.searchAndGoToProductEntry(entryProductName = "Simple_Product");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Media");
+
+			CommerceNavigator.gotoEntry(entryName = "Commerce_Black.jpg");
+
+			SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+			Check.checkToggleSwitch(
+				key_toggleSwitchLabel = "Use in Shopping Experience Image Gallery",
+				locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
+
+			CommerceEntry.publishProductImage();
+		}
+
+		task ("Then three images will be presented in the gallery") {
+			User.logoutPG();
+
+			CommerceLogin.miniumLogin(
+				password = "test",
+				urlAppend = "web/minium",
+				userEmailAddress = "buyer@liferay.com");
+
+			CommerceAcceleratorsInitializer.gotoMiniumProductDetailsPage(productName = "Simple_Product");
+
+			for (var optionValues : list "6,12,24") {
+				FrontStore.selectAssociatedFSOptionsValue(
+					fsOptionName = "Package Quantity",
+					fsOptionValue = ${optionValues});
+
+				if (${optionValues} == 6) {
+					AssertElementPresent(
+						key_fsProductImage = "Black",
+						locator1 = "CommerceFrontStore#FS_PRODUCT_MAIN_IMAGE");
+
+					for (var fsProductImage : list "White,Blue") {
+						AssertElementNotPresent(
+							key_fsProductImage = ${fsProductImage},
+							locator1 = "CommerceFrontStore#FS_PRODUCT_MAIN_IMAGE");
+					}
+				}
+				else {
+					if (${optionValues} == 12) {
+						AssertElementPresent(
+							key_fsProductImage = "White",
+							locator1 = "CommerceFrontStore#FS_PRODUCT_MAIN_IMAGE");
+
+						for (var fsProductImage : list "Black,Blue") {
+							AssertElementNotPresent(
+								key_fsProductImage = ${fsProductImage},
+								locator1 = "CommerceFrontStore#FS_PRODUCT_MAIN_IMAGE");
+						}
+					}
+					else {
+						AssertElementPresent(
+							key_fsProductImage = "Blue",
+							locator1 = "CommerceFrontStore#FS_PRODUCT_MAIN_IMAGE");
+
+						for (var fsProductImage : list "Black,White") {
+							AssertElementNotPresent(
+								key_fsProductImage = ${fsProductImage},
+								locator1 = "CommerceFrontStore#FS_PRODUCT_MAIN_IMAGE");
+						}
+					}
+				}
+			}
+
+			for (var fsProductImage : list "White,Black,White") {
+				AssertElementPresent(
+					key_fsProductImage = ${fsProductImage},
+					locator1 = "CommerceFrontStore#FS_PRODUCT_THUMBNAIL_IMAGE");
+			}
+		}
+	}
+
 	@description = "This is a test for COMMERCE-6031. EditAnAttachment"
 	@priority = 3
 	test EditAnAttachment {
 		property portal.acceptance = "false";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Configuration",
-			panel = "Control Panel",
-			portlet = "Custom Fields");
+		CustomFields.openCustomFieldAdmin();
 
 		CustomFields.addCP(
 			customFieldName = "Custom Field",
@@ -336,9 +877,7 @@ definition {
 			customInputDataType = "Text",
 			resourceName = "Product Attachment");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -375,9 +914,7 @@ definition {
 	test EditAnImage {
 		property portal.acceptance = "true";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -392,7 +929,7 @@ definition {
 
 		Click(
 			key_value = "Commerce_Black",
-			locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
+			locator1 = "CommerceEntry#ORDERS_ENTRY_BODY_VERTICAL_ELLIPSIS");
 
 		MenuItem.click(menuItem = "Edit");
 
@@ -430,9 +967,7 @@ definition {
 	test RemoveAnAttachment {
 		property portal.acceptance = "false";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -447,7 +982,7 @@ definition {
 
 		Click(
 			key_value = "Commerce_Black",
-			locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
+			locator1 = "CommerceEntry#ORDERS_ENTRY_BODY_VERTICAL_ELLIPSIS");
 
 		MenuItem.click(menuItem = "Delete");
 
@@ -466,9 +1001,7 @@ definition {
 	test RemoveAnImage {
 		property portal.acceptance = "false";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -483,7 +1016,7 @@ definition {
 
 		Click(
 			key_value = "Commerce_Black",
-			locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
+			locator1 = "CommerceEntry#ORDERS_ENTRY_BODY_VERTICAL_ELLIPSIS");
 
 		MenuItem.click(menuItem = "Delete");
 

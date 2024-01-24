@@ -1,0 +1,264 @@
+@component-name = "portal-wcm"
+definition {
+
+	property ci.retries.disabled = "true";
+	property custom.properties = "jsonws.web.service.paths.excludes=";
+	property portal.release = "true";
+	property portal.upstream = "true";
+	property testray.main.component.name = "Display Page Templates";
+
+	setUp {
+		task ("Set up instance and sign in") {
+			TestCase.setUpPortalInstance();
+
+			User.firstLoginPG();
+		}
+
+		task ("Add a site via JSON") {
+			HeadlessSite.addSite(siteName = "Test Site Name");
+		}
+
+		task ("Add a new user") {
+			JSONUser.addUser(
+				userEmailAddress = "userea@liferay.com",
+				userFirstName = "Userfn",
+				userLastName = "Userln",
+				userScreenName = "usersn");
+
+			JSONUser.setFirstPassword(
+				agreeToTermsAndAnswerReminderQuery = "true",
+				requireReset = "false",
+				userEmailAddress = "userea@liferay.com");
+		}
+	}
+
+	@description = "This is a test for LPS-192722. Can not view the content type if user doesn’t have permission to view it."
+	@priority = 3
+	test CannotViewContentTypeAsUserWithoutViewPermission {
+		task ("Given a content creator doesn't have view permission for new web content structure") {
+			JSONUser.addUserToSite(
+				groupName = "Test Site Name",
+				userEmailAddress = "userea@liferay.com");
+
+			JSONRole.addSiteRole(
+				roleKey = "Content Creator",
+				roleTitle = "Content Creator");
+
+			Permissions.definePermissionsViaJSONAPI(
+				resourceNameActionList = "com_liferay_layout_page_template_admin_web_portlet_LayoutPageTemplatesPortlet,ACCESS_IN_CONTROL_PANEL:com.liferay.layout.page.template,VIEW:com.liferay.layout.page.template.model.LayoutPageTemplateEntry,UPDATE,VIEW",
+				roleTitle = "Content Creator");
+
+			JSONRole.assignRoleToUser(
+				roleTitle = "Content Creator",
+				userEmailAddress = "userea@liferay.com");
+
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
+
+			DisplayPageTemplatesAdmin.addDisplayPage(
+				contentType = "Web Content Article",
+				displayPageName = "Display Page Name",
+				subType = "Basic Web Content");
+
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+			NavItem.gotoStructures();
+
+			WebContentStructures.addCP(structureName = "WC Structure Name");
+
+			DataEngine.addField(fieldName = "Text");
+
+			WebContentStructures.saveCP();
+		}
+
+		task ("When the content creator changes content type") {
+			User.logoutAndLoginPG(userLoginEmailAddress = "userea@liferay.com");
+
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
+
+			DisplayPageTemplatesAdmin.gotoDisplayPageEllipsisItem(
+				displayPageName = "Display Page Name",
+				item = "Change Content Type");
+		}
+
+		task ("Then the content creator cannot see new web content structure") {
+			AssertElementNotPresent(locator1 = "//div[contains(.,'Subtype')]/select//option[normalize-space(text())='WC Structure Name']");
+		}
+
+		task ("When the content creator has the view permission for new web content structure") {
+			User.logoutAndLoginPG(userLoginEmailAddress = "test@liferay.com");
+
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+			NavItem.gotoStructures();
+
+			LexiconEntry.gotoEntryMenuItem(
+				menuItem = "Permissions",
+				rowEntry = "WC Structure Name");
+
+			PermissionsInline.addOrRemoveAnyPermissionsFromSpecificRole(
+				addOrRemoveViewPermission = "Add",
+				permissionsKeyList = "CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX",
+				roleTitle = "Content Creator");
+		}
+
+		task ("Then the content creator can see new web content structure") {
+			User.logoutAndLoginPG(userLoginEmailAddress = "userea@liferay.com");
+
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
+
+			DisplayPageTemplatesAdmin.gotoDisplayPageEllipsisItem(
+				displayPageName = "Display Page Name",
+				item = "Change Content Type");
+
+			AssertElementPresent(locator1 = "//div[contains(.,'Subtype')]/select//option[normalize-space(text())='WC Structure Name']");
+		}
+	}
+
+	@description = "This is a test for LPS-136421. Logged users without permission cannot view the content of a Display Page\t"
+	@priority = 3
+	test LoggedUsersWithoutPermissionsCanNotSeeContentOfDisplayPageTemplate {
+		task ("Add a display page template for Web Content Article and Basic Web Content") {
+			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
+				contentType = "Web Content Article",
+				displayPageTemplateEntryName = "Display Page Name",
+				groupName = "Test Site Name",
+				subType = "Basic Web Content");
+		}
+
+		task ("Add a Heading fragment to display page template") {
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
+
+			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Heading");
+		}
+
+		task ("Map the Title field to editable field") {
+			PageEditorMapping.mapEditableTextToField(
+				field = "Title",
+				fragmentName = "Heading",
+				id = "element-text");
+
+			PageEditor.publish();
+		}
+
+		task ("Add a web content article") {
+			JSONWebcontent.addWebContent(
+				content = "Webcontent Content",
+				groupName = "Test Site Name",
+				title = "Webcontent Title");
+		}
+
+		task ("Select the display page template in web content") {
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+			WebContentNavigator.gotoEditCP(webContentTitle = "Webcontent Title");
+
+			WebContent.editDisplayPage(
+				pageName = "Display Page Name",
+				pageType = "Display Page Templates");
+
+			PortletEntry.publish();
+		}
+
+		task ("Remove permissions for guest users") {
+			PermissionsInline.gotoWCArticle(webContentTitle = "Webcontent Title");
+
+			Role.removePermissionPG(
+				permissionDefinitionKey = "CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX",
+				roleTitle = "Guest");
+		}
+
+		task ("Sign in as new user") {
+			User.logoutAndLoginPG(userLoginEmailAddress = "userea@liferay.com");
+		}
+
+		task ("Navigate to the display page template at view mode") {
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/w/webcontent-title");
+		}
+
+		task ("Assert error message is shown") {
+			AssertTextPresent(value1 = "You do not have the required permissions to view the content of this page.");
+		}
+	}
+
+	@description = "This is a test for LPS-136421. Unlogged users cannot view the content of a Display Page, and after login, they are redirected to the content page."
+	@priority = 4
+	test UnloggedUsersAreRedirecteedToWebContentAfterLoging {
+		task ("Add a display page template for Web Content Article and Basic Web Content") {
+			JSONLayoutpagetemplate.addDisplayPageTemplateEntry(
+				contentType = "Web Content Article",
+				displayPageTemplateEntryName = "Display Page Name",
+				groupName = "Test Site Name",
+				subType = "Basic Web Content");
+		}
+
+		task ("Add a Heading fragment to display page template") {
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = "test-site-name");
+
+			DisplayPageTemplatesAdmin.gotoDisplayPage(displayPageName = "Display Page Name");
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Heading");
+		}
+
+		task ("Map the Title field to editable field") {
+			PageEditorMapping.mapEditableTextToField(
+				field = "Title",
+				fragmentName = "Heading",
+				id = "element-text");
+
+			PageEditor.publish();
+		}
+
+		task ("Add a web content article") {
+			JSONWebcontent.addWebContent(
+				content = "Webcontent Content",
+				groupName = "Test Site Name",
+				title = "Webcontent Title");
+		}
+
+		task ("Select the display page template in web content") {
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+			WebContentNavigator.gotoEditCP(webContentTitle = "Webcontent Title");
+
+			WebContent.editDisplayPage(
+				pageName = "Display Page Name",
+				pageType = "Display Page Templates");
+
+			PortletEntry.publish();
+		}
+
+		task ("Remove permissions for guest users") {
+			PermissionsInline.gotoWCArticle(webContentTitle = "Webcontent Title");
+
+			Role.removePermissionPG(
+				permissionDefinitionKey = "CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX",
+				roleTitle = "Guest");
+		}
+
+		task ("Logout") {
+			User.logoutPG();
+		}
+
+		task ("Navigate to the display page template at view mode") {
+			Navigator.openWithAppendToBaseURL(urlAppend = "web/test-site-name/w/webcontent-title");
+		}
+
+		task ("Assert we are redirected to login page") {
+			User.signInPG(userEmailAddress = "test@liferay.com");
+		}
+
+		task ("Assert we are redirected to web content display") {
+			ContentPages.viewFragmentText(
+				fragmentName = "heading",
+				id = "element-text",
+				text = "Webcontent Title");
+		}
+	}
+
+}

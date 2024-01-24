@@ -12,6 +12,8 @@ import com.liferay.headless.commerce.admin.channel.client.pagination.Pagination;
 import com.liferay.headless.commerce.admin.channel.client.problem.Problem;
 import com.liferay.headless.commerce.admin.channel.client.serdes.v1_0.ShippingFixedOptionOrderTypeSerDes;
 
+import java.net.URL;
+
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -125,6 +127,10 @@ public interface ShippingFixedOptionOrderTypeResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {

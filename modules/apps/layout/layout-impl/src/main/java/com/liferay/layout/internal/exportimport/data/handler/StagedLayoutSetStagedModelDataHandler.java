@@ -5,6 +5,7 @@
 
 package com.liferay.layout.internal.exportimport.data.handler;
 
+import com.liferay.client.extension.constants.ClientExtensionEntryConstants;
 import com.liferay.client.extension.model.ClientExtensionEntryRel;
 import com.liferay.client.extension.service.ClientExtensionEntryRelLocalService;
 import com.liferay.document.library.kernel.model.DLFileEntry;
@@ -680,6 +681,15 @@ public class StagedLayoutSetStagedModelDataHandler
 			StagedLayoutSet stagedLayoutSet)
 		throws Exception {
 
+		LayoutSet layoutSet = stagedLayoutSet.getLayoutSet();
+
+		_clientExtensionEntryRelLocalService.deleteClientExtensionEntryRels(
+			_portal.getClassNameId(LayoutSet.class), layoutSet.getLayoutSetId(),
+			ClientExtensionEntryConstants.TYPE_GLOBAL_CSS);
+		_clientExtensionEntryRelLocalService.deleteClientExtensionEntryRels(
+			_portal.getClassNameId(LayoutSet.class), layoutSet.getLayoutSetId(),
+			ClientExtensionEntryConstants.TYPE_GLOBAL_JS);
+
 		List<Element> clientExtensionEntryRelsElements =
 			portletDataContext.getReferenceDataElements(
 				stagedLayoutSet, ClientExtensionEntryRel.class);
@@ -791,9 +801,13 @@ public class StagedLayoutSetStagedModelDataHandler
 						portletDataContext, stagedLayoutSet,
 						layoutSet.getCss());
 
-			layoutSet.setCss(css);
+			if (Validator.isNotNull(css) ||
+				!MergeLayoutPrototypesThreadLocal.isInProgress()) {
 
-			_themeImporter.importTheme(portletDataContext, layoutSet);
+				layoutSet.setCss(css);
+
+				_themeImporter.importTheme(portletDataContext, layoutSet);
+			}
 		}
 		catch (Exception exception) {
 			if (_log.isWarnEnabled()) {

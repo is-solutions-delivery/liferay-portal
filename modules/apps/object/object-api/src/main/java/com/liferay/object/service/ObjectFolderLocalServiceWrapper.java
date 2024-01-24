@@ -239,6 +239,13 @@ public class ObjectFolderLocalServiceWrapper
 	}
 
 	@Override
+	public com.liferay.object.model.ObjectFolder fetchDefaultObjectFolder(
+		long companyId) {
+
+		return _objectFolderLocalService.fetchDefaultObjectFolder(companyId);
+	}
+
+	@Override
 	public com.liferay.object.model.ObjectFolder fetchObjectFolder(
 		long objectFolderId) {
 
@@ -278,18 +285,18 @@ public class ObjectFolderLocalServiceWrapper
 	}
 
 	@Override
-	public com.liferay.object.model.ObjectFolder fetchUncategorizedObjectFolder(
-		long companyId) {
-
-		return _objectFolderLocalService.fetchUncategorizedObjectFolder(
-			companyId);
-	}
-
-	@Override
 	public com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 
 		return _objectFolderLocalService.getActionableDynamicQuery();
+	}
+
+	@Override
+	public com.liferay.object.model.ObjectFolder getDefaultObjectFolder(
+			long companyId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _objectFolderLocalService.getDefaultObjectFolder(companyId);
 	}
 
 	@Override
@@ -388,12 +395,16 @@ public class ObjectFolderLocalServiceWrapper
 	}
 
 	@Override
-	public com.liferay.object.model.ObjectFolder
-			getOrAddUncategorizedObjectFolder(long companyId)
+	public int getObjectFoldersCount(long companyId) {
+		return _objectFolderLocalService.getObjectFoldersCount(companyId);
+	}
+
+	@Override
+	public com.liferay.object.model.ObjectFolder getOrAddDefaultObjectFolder(
+			long companyId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
-		return _objectFolderLocalService.getOrAddUncategorizedObjectFolder(
-			companyId);
+		return _objectFolderLocalService.getOrAddDefaultObjectFolder(companyId);
 	}
 
 	/**
@@ -417,15 +428,6 @@ public class ObjectFolderLocalServiceWrapper
 		return _objectFolderLocalService.getPersistedModel(primaryKeyObj);
 	}
 
-	@Override
-	public com.liferay.object.model.ObjectFolder getUncategorizedObjectFolder(
-			long companyId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		return _objectFolderLocalService.getUncategorizedObjectFolder(
-			companyId);
-	}
-
 	/**
 	 * Updates the object folder in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -446,13 +448,11 @@ public class ObjectFolderLocalServiceWrapper
 	@Override
 	public com.liferay.object.model.ObjectFolder updateObjectFolder(
 			String externalReferenceCode, long objectFolderId,
-			java.util.Map<java.util.Locale, String> labelMap,
-			java.util.List<com.liferay.object.model.ObjectFolderItem>
-				objectFolderItems)
+			java.util.Map<java.util.Locale, String> labelMap)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _objectFolderLocalService.updateObjectFolder(
-			externalReferenceCode, objectFolderId, labelMap, objectFolderItems);
+			externalReferenceCode, objectFolderId, labelMap);
 	}
 
 	@Override

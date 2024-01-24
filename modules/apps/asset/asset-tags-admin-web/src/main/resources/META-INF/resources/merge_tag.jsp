@@ -55,7 +55,7 @@ renderResponse.setTitle(LanguageUtil.get(request, "merge-tags"));
 				for (String tagName : assetTagsDisplayContext.getMergeTagNames()) {
 				%>
 
-					<aui:option label="<%= tagName %>" />
+					<aui:option label="<%= tagName %>" localizeLabel="<%= false %>" />
 
 				<%
 				}
@@ -131,7 +131,7 @@ renderResponse.setTitle(LanguageUtil.get(request, "merge-tags"));
 
 			var mergeText = Liferay.Util.sub(
 				'<liferay-ui:message key="are-you-sure-you-want-to-merge-x-into-x" />',
-				mergeTagNames,
+				mergeTagNames.join(', '),
 				targetTagNameSelect.value
 			);
 

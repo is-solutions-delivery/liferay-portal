@@ -24,7 +24,7 @@ definition {
 
 	@summary = "Default summary"
 	macro configureEmailNotifications(navTab = null, fieldName = null, notificationsSubject = null, notificationsBody = null, enabled = null) {
-		Navigator.gotoNavTab(navTab = ${navTab});
+		MenuBar.click(menuBar = ${navTab});
 
 		if (${enabled} == "true") {
 			Check(
@@ -61,6 +61,25 @@ definition {
 			item = "Delete");
 
 		Confirm(value1 = "null");
+	}
+
+	@summary = "Select highlighted structures"
+	macro selectHighlightedStructures(structureNameList = null) {
+		Click(
+			ariaLabel = "Select Highlighted Structures",
+			locator1 = "Button#ANY_WITH_ARIA_LABEL");
+
+		SelectFrame(locator1 = "IFrame#MODAL_BODY");
+
+		for (var structureName : list ${structureNameList}) {
+			LexiconTable.checkTableCheckbox(tableEntry = ${structureName});
+		}
+
+		SelectFrameTop();
+
+		Click(
+			key_text = "Add",
+			locator1 = "Modal#MODAL_FOOTER_BUTTON");
 	}
 
 	@summary = "Default summary"

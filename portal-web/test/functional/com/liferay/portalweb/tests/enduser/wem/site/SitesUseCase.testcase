@@ -12,27 +12,6 @@ definition {
 		User.firstLoginPG();
 	}
 
-	tearDown {
-		var testLiferayVirtualInstance = PropsUtil.get("test.liferay.virtual.instance");
-
-		if (${testLiferayVirtualInstance} == "true") {
-			PortalInstances.tearDownCP();
-		}
-		else {
-			JSONUser.tearDownNonAdminUsers();
-
-			Site.tearDownCP();
-
-			Organization.tearDownCP();
-
-			Team.tearDownCP();
-
-			PagesAdmin.tearDownCP();
-
-			UserGroup.tearDownCP();
-		}
-	}
-
 	@description = "Export and import work in organization and add child site from imported site template."
 	@priority = 5
 	test AddChildSiteFromImportedSiteTemplate {
@@ -559,10 +538,7 @@ definition {
 		}
 
 		task ("Add a user and set require password reset") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Users and Organizations");
+			User.openUsersAdmin(baseURL = "http://www.baker.com:8080");
 
 			User.addCP(
 				userEmailAddress = "user1@liferay.com",
@@ -629,10 +605,7 @@ definition {
 		}
 
 		task ("Edit Email Verification Notification in instance settings") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Configuration",
-				panel = "Control Panel",
-				portlet = "Instance Settings");
+			PortalSettings.openInstanceSettingsAdmin(baseURL = "http://www.able.com:8080");
 
 			SystemSettings.gotoConfiguration(
 				configurationCategory = "Email",

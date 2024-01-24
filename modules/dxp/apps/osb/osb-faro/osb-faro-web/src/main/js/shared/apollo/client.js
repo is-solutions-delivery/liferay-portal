@@ -1,19 +1,11 @@
 import cache from './cache';
-import Uri from 'metal-uri';
 import {ApolloClient} from 'apollo-client';
-import {
-	CommerceAverageOrderValueResolver,
-	CommerceAverageRevenuePerAccountResolver,
-	CommerceIncompleteOrdersResolver,
-	CommerceTotalOrderValueResolver,
-	CustomAssetsListResolver,
-	EventAnalysisListResolver,
-	ExperimentResolver as Experiment
-} from './resolvers';
+import {DEVELOPER_MODE} from 'shared/util/constants';
 import {get} from 'lodash';
 import {HttpLink} from 'apollo-link-http';
 import {onError} from 'apollo-link-error';
 import {reloadPage} from 'shared/util/router';
+import {resolvers} from './resolvers/resolvers';
 
 const groupIdRegex = /^\/workspace\/([a-z0-9._-]+)/;
 
@@ -23,10 +15,9 @@ const groupIdRegex = /^\/workspace\/([a-z0-9._-]+)/;
  * @param {object} options
  */
 const fetchWithGroupId = (uri, options) => {
-	const currentUri = new Uri(window.location.href);
+	const currentUri = new URL(window.location.href);
 	const {operationName} = JSON.parse(options.body);
-	const pathname = currentUri.getPathname();
-	const matches = pathname.match(groupIdRegex);
+	const matches = currentUri.pathname.match(groupIdRegex);
 
 	if (matches !== null && matches.length > 1) {
 		const groupId = matches[1];
@@ -62,28 +53,13 @@ const client = new ApolloClient({
 			uri: '/o/cerebro/graphql'
 		})
 	]),
+
 	resolvers: {
-		Experiment,
-		Query: {
-			dashboards(_, params) {
-				return CustomAssetsListResolver(params);
-			},
-			eventAnalysisList(_, params) {
-				return EventAnalysisListResolver(params);
-			},
-			orderAccountAverageCurrencyValues(_, params) {
-				return CommerceAverageRevenuePerAccountResolver(params);
-			},
-			orderAverageCurrencyValues(_, params) {
-				return CommerceAverageOrderValueResolver(params);
-			},
-			orderIncompleteCurrencyValues(_, params) {
-				return CommerceIncompleteOrdersResolver(params);
-			},
-			orderTotalCurrencyValues(_, params) {
-				return CommerceTotalOrderValueResolver(params);
-			}
-		}
+		/**
+		 * Queries must render only in the dev mode to avoid
+		 * add unnecessary code in the final bundle
+		 */
+		Query: DEVELOPER_MODE ? resolvers : {}
 	}
 });
 

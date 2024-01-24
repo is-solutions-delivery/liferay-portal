@@ -7,7 +7,6 @@ package com.liferay.object.web.internal.object.definitions.portlet.action;
 
 import com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectDefinitionResource;
-import com.liferay.object.constants.ObjectFolderConstants;
 import com.liferay.object.constants.ObjectPortletKeys;
 import com.liferay.object.exception.ObjectDefinitionNameException;
 import com.liferay.object.exception.ObjectViewColumnFieldNameException;
@@ -84,14 +83,15 @@ public class ImportObjectDefinitionMVCActionCommand
 					"title",
 					_language.get(
 						_portal.getHttpServletRequest(actionRequest),
-						"the-structure-was-imported-without-a-custom-view"));
+						"the-object-definition-was-imported-without-a-custom-" +
+							"view"));
 			}
 			else {
 				jsonObject = JSONUtil.put(
 					"title",
 					_language.get(
 						_portal.getHttpServletRequest(actionRequest),
-						"the-structure-failed-to-import"));
+						"the-object-definition-failed-to-import"));
 			}
 
 			JSONPortletResponseUtil.writeJSON(
@@ -142,7 +142,8 @@ public class ImportObjectDefinitionMVCActionCommand
 
 		if (FeatureFlagManagerUtil.isEnabled("LPS-148856")) {
 			objectDefinition.setObjectFolderExternalReferenceCode(
-				ObjectFolderConstants.EXTERNAL_REFERENCE_CODE_UNCATEGORIZED);
+				ParamUtil.getString(
+					actionRequest, "objectFolderExternalReferenceCode"));
 		}
 
 		ObjectDefinition putObjectDefinition =

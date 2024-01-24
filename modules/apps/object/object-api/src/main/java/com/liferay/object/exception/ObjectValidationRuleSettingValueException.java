@@ -12,8 +12,34 @@ import com.liferay.portal.kernel.exception.PortalException;
  */
 public class ObjectValidationRuleSettingValueException extends PortalException {
 
-	public ObjectValidationRuleSettingValueException(String msg) {
-		super(msg);
+	public String getMessageKey() {
+		return _messageKey;
+	}
+
+	public static class CompositeKeyMustHaveMaxObjectFields
+		extends ObjectValidationRuleSettingValueException {
+
+		public CompositeKeyMustHaveMaxObjectFields() {
+			super(
+				"Add a maximum of five object fields to create unique " +
+					"composite keys",
+				"add-a-maximum-of-five-object-fields-to-create-unique-" +
+					"composite-keys");
+		}
+
+	}
+
+	public static class CompositeKeyMustHaveMinObjectFields
+		extends ObjectValidationRuleSettingValueException {
+
+		public CompositeKeyMustHaveMinObjectFields() {
+			super(
+				"Add a minimum of two object fields to create unique " +
+					"composite keys",
+				"add-a-minimum-of-two-object-fields-to-create-unique-" +
+					"composite-keys");
+		}
+
 	}
 
 	public static class InvalidValue
@@ -32,5 +58,19 @@ public class ObjectValidationRuleSettingValueException extends PortalException {
 		}
 
 	}
+
+	private ObjectValidationRuleSettingValueException(String message) {
+		super(message);
+	}
+
+	private ObjectValidationRuleSettingValueException(
+		String message, String messageKey) {
+
+		super(message);
+
+		_messageKey = messageKey;
+	}
+
+	private String _messageKey;
 
 }

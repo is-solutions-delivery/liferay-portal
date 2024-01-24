@@ -66,7 +66,13 @@ definition {
 
 		FormsAdminNavigator.gotoPublishedForm();
 
-		FormFields.viewSelectFromListOption(optionValue = "");
+		Click(
+			key_fieldName = "Select from List",
+			locator1 = "FormFields#SELECT_FIELD");
+
+		AssertElementPresent(
+			key_menuItem = "",
+			locator1 = "MenuItem#DROPDOWN_MENU_ITEM");
 	}
 
 	@description = "LPS-76079 - Verify that a Select From List Field can allow Multiple Selections"
@@ -112,21 +118,15 @@ definition {
 			fieldName = ${fieldSelectFromListField},
 			selectOptionsList = "Select 1,Select 2,Select 3");
 
-		FormFields.removeSelectOption(
-			fieldName = ${fieldSelectFromListField},
-			selectOption = "Select 1");
-
-		FormFields.removeSelectOptionViaDropdown(
-			fieldName = ${fieldSelectFromListField},
-			selectOption = "Select 2");
+		for (var i : list "Select 1,Select 2") {
+			FormFields.removeSelectOption(
+				fieldName = ${fieldSelectFromListField},
+				selectOption = ${i});
+		}
 
 		FormFields.selectSelectWithMultipleOptions(
 			fieldName = ${fieldSelectFromListField},
 			selectOptionsList = "Select 4");
-
-		FormFields.viewSelectMultipleOptions(
-			fieldName = ${fieldSelectFromListField},
-			selectOptionsList = "Select 3,Select 4");
 
 		FormPortlet.submitSuccessfully();
 
@@ -276,13 +276,14 @@ definition {
 
 		FormsAdminNavigator.gotoPublishedForm();
 
-		FormViewBuilder.validatePredefinedSelectFromList(
-			fieldName = "Select from List",
-			fieldValue = "Choose an Option");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Select from List",
+			optionName = "Option 2");
 
-		FormFields.viewSelectFromListOption(optionValue = "Option 2");
-
-		FormFields.viewDeletedSelectFromListOption(optionValue = "Option 1");
+		AssertTextEquals(
+			key_labelName = "Select from List",
+			locator1 = "ObjectAdmin#CLAY_GENERIC_BUTTON",
+			value1 = "Option 2");
 	}
 
 	@description = "Verify that a Select From List Field can be required"
@@ -457,9 +458,13 @@ definition {
 
 		FormsAdminNavigator.gotoPublishedForm();
 
+		Click(
+			key_fieldName = "Select from List",
+			locator1 = "FormFields#SELECT_FIELD");
+
 		AssertElementPresent(
-			key_itemName = " ",
-			locator1 = "FormFields#FIELD_DROPDOWN_ITEM");
+			key_menuItem = "",
+			locator1 = "MenuItem#DROPDOWN_MENU_ITEM");
 	}
 
 	@description = "Verify that a list can be created using Autofill"
@@ -492,6 +497,8 @@ definition {
 		Form.gotoAddField(
 			fieldPositionNumber = 0,
 			fieldType = "Single Selection");
+
+		var singleSelectionFieldName = FormFields.getFieldName();
 
 		FormFields.editOptionsRow(
 			optionValue = "United",
@@ -538,12 +545,20 @@ definition {
 		FormsAdminNavigator.gotoPublishedForm();
 
 		FormFields.selectRadioOption(
-			fieldName = "Single Selection",
+			fieldName = ${singleSelectionFieldName},
 			radioOption = "United");
 
-		FormFields.selectSelectOption(
-			fieldName = "Select from List",
-			selectOption = "Antarctica");
+		Click.javaScriptClick(
+			key_fieldName = "Select from List",
+			locator1 = "FormFields#SELECT_FIELD");
+
+		WaitForElementPresent(
+			key_menuItem = "Antarctica",
+			locator1 = "MenuItem#DROPDOWN_MENU_ITEM");
+
+		Click.javaScriptClick(
+			key_menuItem = "Antarctica",
+			locator1 = "MenuItem#DROPDOWN_MENU_ITEM");
 
 		FormPortlet.submitSuccessfullyAndViewSuccessPage();
 	}
@@ -663,6 +678,14 @@ definition {
 
 			Form.editName(formName = "Select country");
 
+			Form.addTextField(fieldPositionNumber = 0);
+
+			var fieldNameTextField = FormFields.getFieldName();
+
+			Form.editFieldLabelMetal(fieldValue = "Postal Code");
+
+			Form.closeSidebar();
+
 			Form.gotoAddField(
 				fieldPositionNumber = 0,
 				fieldType = "Select from List");
@@ -678,14 +701,6 @@ definition {
 			Form.editFieldDataProvider(
 				dataProvider = "Get Countries",
 				dataProviderOutput = "Country Names");
-
-			Form.closeSidebar();
-
-			Form.addTextField(fieldPositionNumber = 1);
-
-			var fieldNameTextField = FormFields.getFieldName();
-
-			Form.editFieldLabelMetal(fieldValue = "Postal Code");
 
 			Form.save();
 		}
@@ -736,8 +751,6 @@ definition {
 			FormPortletConfiguration.selectFormOnAPage(
 				formName = "Select country",
 				pageName = "Form Page");
-
-			Navigator.gotoPage(pageName = "Form Page");
 		}
 
 		task ("When an entry is submitted immediately") {
@@ -812,6 +825,20 @@ definition {
 
 			Form.editName(formName = "Select country");
 
+			Form.addTextField(fieldPositionNumber = 0);
+
+			var fieldNameTextField = FormFields.getFieldName();
+
+			Form.editFieldLabelMetal(fieldValue = "US Postal Code");
+
+			Form.closeSidebar();
+
+			Form.addTextField(fieldPositionNumber = 1);
+
+			Form.editFieldLabelMetal(fieldValue = "Non-US Postal Code");
+
+			Form.closeSidebar();
+
 			Form.gotoAddField(
 				fieldPositionNumber = 0,
 				fieldType = "Select from List");
@@ -827,20 +854,6 @@ definition {
 			Form.editFieldDataProvider(
 				dataProvider = "Get Countries",
 				dataProviderOutput = "Country Names");
-
-			Form.closeSidebar();
-
-			Form.addTextField(fieldPositionNumber = 1);
-
-			var fieldNameTextField = FormFields.getFieldName();
-
-			Form.editFieldLabelMetal(fieldValue = "US Postal Code");
-
-			Form.closeSidebar();
-
-			Form.addTextField(fieldPositionNumber = 2);
-
-			Form.editFieldLabelMetal(fieldValue = "Non-US Postal Code");
 
 			Form.save();
 		}
@@ -927,9 +940,9 @@ definition {
 				fieldName = ${fieldNameTextField},
 				fieldValue = 10004);
 
-			// Pause for 40 seconds for the entry to be automatically saved. See LPS-185648
+			// Pause for 60 seconds for the entry to be automatically saved. See LPS-185648
 
-			Pause(value1 = 40000);
+			Pause(value1 = 60000);
 
 			Open.openInTheNewTab(value1 = "http://localhost:8080");
 
@@ -955,10 +968,9 @@ definition {
 		}
 
 		task ("Then United States is selected in Country field and US Postal Code is displayed with the value entered") {
-			AssertTextEquals(
-				key_fieldName = "Country",
-				locator1 = "FormFields#SELECT_FIELD",
-				value1 = "United States");
+			AssertElementPresent(
+				key_fieldName = "United States",
+				locator1 = "FormFields#FIELD");
 
 			AssertValue(
 				key_labelName = "US Postal Code",
@@ -1212,13 +1224,15 @@ definition {
 
 		Navigator.selectSpecificWindow(windowTitle = "Form - Forms");
 
-		Form.viewSelectFromListOptionOnPreview(
-			optionValue = "Option 2",
-			rowPosition = 1);
+		Click(
+			key_fieldName = "Select from List",
+			locator1 = "FormFields#SELECT_FIELD");
 
-		Form.viewSelectFromListOptionOnPreview(
-			optionValue = "Option 1",
-			rowPosition = 2);
+		for (var options : list "Option 1,Option 2") {
+			AssertElementPresent(
+				key_menuItem = ${options},
+				locator1 = "MenuItem#DROPDOWN_MENU_ITEM");
+		}
 	}
 
 	@description = "Verify that options can be sorted alphabetically"
@@ -1261,14 +1275,10 @@ definition {
 			key_fieldName = "Select from List",
 			locator1 = "FormFields#SELECT_FIELD");
 
-		var iterator = 1;
-
-		for (var option : list "A,B,C") {
-			Form.viewSelectFromListOptionOnPreview(
-				optionValue = "Option ${option}",
-				rowPosition = ${iterator});
-
-			var iterator = ${iterator} + 1;
+		for (var options : list "A,B,C") {
+			AssertElementPresent(
+				key_menuItem = "Option ${options}",
+				locator1 = "MenuItem#DROPDOWN_MENU_ITEM");
 		}
 	}
 

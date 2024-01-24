@@ -79,16 +79,6 @@ public class UserSerDes {
 			sb.append("]");
 		}
 
-		if (user.getBaseScim() != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"baseScim\": ");
-
-			sb.append(String.valueOf(user.getBaseScim()));
-		}
-
 		if (user.getDisplayName() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -143,6 +133,20 @@ public class UserSerDes {
 			sb.append("]");
 		}
 
+		if (user.getExternalId() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"externalId\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(user.getExternalId()));
+
+			sb.append("\"");
+		}
+
 		if (user.getGroups() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -161,6 +165,20 @@ public class UserSerDes {
 			}
 
 			sb.append("]");
+		}
+
+		if (user.getId() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"id\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(user.getId()));
+
+			sb.append("\"");
 		}
 
 		if (user.getIms() != null) {
@@ -195,6 +213,16 @@ public class UserSerDes {
 			sb.append(_escape(user.getLocale()));
 
 			sb.append("\"");
+		}
+
+		if (user.getMeta() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"meta\": ");
+
+			sb.append(String.valueOf(user.getMeta()));
 		}
 
 		if (user.getName() != null) {
@@ -323,6 +351,30 @@ public class UserSerDes {
 			sb.append("]");
 		}
 
+		if (user.getSchemas() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"schemas\": ");
+
+			sb.append("[");
+
+			for (int i = 0; i < user.getSchemas().length; i++) {
+				sb.append("\"");
+
+				sb.append(_escape(user.getSchemas()[i]));
+
+				sb.append("\"");
+
+				if ((i + 1) < user.getSchemas().length) {
+					sb.append(", ");
+				}
+			}
+
+			sb.append("]");
+		}
+
 		if (user.getTimezone() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -431,13 +483,6 @@ public class UserSerDes {
 			map.put("addresses", String.valueOf(user.getAddresses()));
 		}
 
-		if (user.getBaseScim() == null) {
-			map.put("baseScim", null);
-		}
-		else {
-			map.put("baseScim", String.valueOf(user.getBaseScim()));
-		}
-
 		if (user.getDisplayName() == null) {
 			map.put("displayName", null);
 		}
@@ -459,11 +504,25 @@ public class UserSerDes {
 			map.put("entitlements", String.valueOf(user.getEntitlements()));
 		}
 
+		if (user.getExternalId() == null) {
+			map.put("externalId", null);
+		}
+		else {
+			map.put("externalId", String.valueOf(user.getExternalId()));
+		}
+
 		if (user.getGroups() == null) {
 			map.put("groups", null);
 		}
 		else {
 			map.put("groups", String.valueOf(user.getGroups()));
+		}
+
+		if (user.getId() == null) {
+			map.put("id", null);
+		}
+		else {
+			map.put("id", String.valueOf(user.getId()));
 		}
 
 		if (user.getIms() == null) {
@@ -478,6 +537,13 @@ public class UserSerDes {
 		}
 		else {
 			map.put("locale", String.valueOf(user.getLocale()));
+		}
+
+		if (user.getMeta() == null) {
+			map.put("meta", null);
+		}
+		else {
+			map.put("meta", String.valueOf(user.getMeta()));
 		}
 
 		if (user.getName() == null) {
@@ -536,6 +602,13 @@ public class UserSerDes {
 		}
 		else {
 			map.put("roles", String.valueOf(user.getRoles()));
+		}
+
+		if (user.getSchemas() == null) {
+			map.put("schemas", null);
+		}
+		else {
+			map.put("schemas", String.valueOf(user.getSchemas()));
 		}
 
 		if (user.getTimezone() == null) {
@@ -604,12 +677,6 @@ public class UserSerDes {
 					user.setAddresses((Object[])jsonParserFieldValue);
 				}
 			}
-			else if (Objects.equals(jsonParserFieldName, "baseScim")) {
-				if (jsonParserFieldValue != null) {
-					user.setBaseScim(
-						BaseScimSerDes.toDTO((String)jsonParserFieldValue));
-				}
-			}
 			else if (Objects.equals(jsonParserFieldName, "displayName")) {
 				if (jsonParserFieldValue != null) {
 					user.setDisplayName((String)jsonParserFieldValue);
@@ -647,6 +714,11 @@ public class UserSerDes {
 					user.setEntitlements(entitlementsArray);
 				}
 			}
+			else if (Objects.equals(jsonParserFieldName, "externalId")) {
+				if (jsonParserFieldValue != null) {
+					user.setExternalId((String)jsonParserFieldValue);
+				}
+			}
 			else if (Objects.equals(jsonParserFieldName, "groups")) {
 				if (jsonParserFieldValue != null) {
 					Object[] jsonParserFieldValues =
@@ -661,6 +733,11 @@ public class UserSerDes {
 					}
 
 					user.setGroups(groupsArray);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "id")) {
+				if (jsonParserFieldValue != null) {
+					user.setId((String)jsonParserFieldValue);
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "ims")) {
@@ -682,6 +759,12 @@ public class UserSerDes {
 			else if (Objects.equals(jsonParserFieldName, "locale")) {
 				if (jsonParserFieldValue != null) {
 					user.setLocale((String)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "meta")) {
+				if (jsonParserFieldValue != null) {
+					user.setMeta(
+						MetaSerDes.toDTO((String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "name")) {
@@ -756,6 +839,11 @@ public class UserSerDes {
 					}
 
 					user.setRoles(rolesArray);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "schemas")) {
+				if (jsonParserFieldValue != null) {
+					user.setSchemas(toStrings((Object[])jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(jsonParserFieldName, "timezone")) {

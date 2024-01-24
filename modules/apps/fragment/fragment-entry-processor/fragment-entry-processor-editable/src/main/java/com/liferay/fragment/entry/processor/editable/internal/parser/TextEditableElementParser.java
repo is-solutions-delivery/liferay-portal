@@ -6,9 +6,7 @@
 package com.liferay.fragment.entry.processor.editable.internal.parser;
 
 import com.liferay.fragment.entry.processor.editable.parser.EditableElementParser;
-import com.liferay.fragment.entry.processor.editable.parser.util.EditableElementParserUtil;
 import com.liferay.fragment.exception.FragmentEntryContentException;
-import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
@@ -26,7 +24,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Eudaldo Alonso
  */
 @Component(property = "type=text", service = EditableElementParser.class)
-public class TextEditableElementParser implements EditableElementParser {
+public class TextEditableElementParser extends BaseEditableElementParser {
 
 	@Override
 	public String getValue(Element element) {
@@ -51,22 +49,31 @@ public class TextEditableElementParser implements EditableElementParser {
 	public void replace(
 		Element element, String value, JSONObject configJSONObject) {
 
-		Element bodyElement = EditableElementParserUtil.getDocumentBody(value);
-
 		if (configJSONObject == null) {
-			element.html(bodyElement.html());
+			element.html(value);
 
 			return;
 		}
 
-		EditableElementParserUtil.addClass(
-			element, configJSONObject, "text-", "textAlignment");
-		EditableElementParserUtil.addClass(
-			element, configJSONObject, "text-", "textColor");
-		EditableElementParserUtil.addClass(
-			element, configJSONObject, StringPool.BLANK, "textStyle");
+		String textAlignmentValue = configJSONObject.getString("textAlignment");
 
-		element.html(bodyElement.html());
+		if (Validator.isNotNull(textAlignmentValue)) {
+			element.addClass("text-" + textAlignmentValue);
+		}
+
+		String textColorValue = configJSONObject.getString("textColor");
+
+		if (Validator.isNotNull(textColorValue)) {
+			element.addClass("text-" + textColorValue);
+		}
+
+		String textStyleValue = configJSONObject.getString("textStyle");
+
+		if (Validator.isNotNull(textStyleValue)) {
+			element.addClass(textStyleValue);
+		}
+
+		element.html(value);
 	}
 
 	@Override
@@ -84,6 +91,8 @@ public class TextEditableElementParser implements EditableElementParser {
 						new Object[] {getEditableElementType(), tag}, false));
 			}
 		}
+
+		super.validate(element);
 	}
 
 	protected String getEditableElementType() {

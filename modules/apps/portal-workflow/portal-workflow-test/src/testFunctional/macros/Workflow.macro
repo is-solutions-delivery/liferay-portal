@@ -2,9 +2,7 @@ definition {
 
 	@summary = "Default summary"
 	macro _gotoPendingFilter() {
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
-
-		MenuItem.click(menuItem = "Pending");
+		ManagementBar.setFilterAndOrder(filterBy = "Pending");
 	}
 
 	@summary = "Default summary"
@@ -167,6 +165,8 @@ definition {
 		LexiconEntry.gotoEllipsisMenuItem(menuItem = "Approve");
 
 		Workflow.confirmWorkflowAction();
+
+		Navigator.gotoBack();
 
 		Workflow.viewCompletedTask(
 			ddlDataDefinitionName = ${ddlDataDefinitionName},
@@ -502,6 +502,8 @@ definition {
 		AssertElementPresent(locator1 = "Button#DONE");
 
 		Click(locator1 = "Button#DONE");
+
+		Alert.viewSuccessMessage();
 	}
 
 	@summary = "Default summary"
@@ -558,10 +560,7 @@ definition {
 
 	@summary = "Default summary"
 	macro duplicateNotPublishedWorkflow(workflowName = null, workflowCopyName = null) {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Click(
 			key_workflowDefinitionTitle = ${workflowName},
@@ -576,10 +575,7 @@ definition {
 
 	@summary = "Default summary"
 	macro duplicateSingleApproverWorkflow(workflowName = null) {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Click(
 			key_workflowDefinitionTitle = "Single Approver",
@@ -609,9 +605,7 @@ definition {
 
 	@summary = "Default summary"
 	macro gotoCompletedFilter() {
-		Click(locator1 = "Dropdown#FILTER_AND_ORDER");
-
-		MenuItem.click(menuItem = "Completed");
+		ManagementBar.setFilterAndOrder(filterBy = "Completed");
 	}
 
 	@summary = "Default summary"
@@ -621,6 +615,8 @@ definition {
 		AssertClick(
 			locator1 = "MyWorkflowTasks#TABLE_GENERIC_ASSET_TITLE",
 			value1 = ${workflowAssetTitle});
+
+		WaitForElementPresent(locator1 = "WorkflowSubmissionsTask#PREVIEW_VIEW");
 
 		Workflow.gotoPreviewView();
 	}
@@ -645,28 +641,26 @@ definition {
 
 	@summary = "Default summary"
 	macro gotoPreviewView() {
-		AssertVisible(locator1 = "WorkflowSubmissionsTask#PREVIEW_VIEW");
-
+		var currentURL = selenium.getCurrentUrl();
 		var viewTitle = selenium.getTitle();
-		var portletTitle = selenium.getText("AppBuilder#WIDGET_DEPLOYED");
+
+		if (IsElementPresent(locator1 = "AppBuilder#WIDGET_DEPLOYED")) {
+			var portletTitle = selenium.getText("AppBuilder#WIDGET_DEPLOYED");
+		}
 
 		Click(locator1 = "WorkflowSubmissionsTask#PREVIEW_VIEW");
 
-		if (contains(${viewTitle}, "Review")) {
+		if (contains(${currentURL}, "/control_panel/manage")) {
+			var previewTitle = StringUtil.extractLast(${viewTitle}, "Review: ");
+
 			Navigator.closeSpecificWindow(
-				closeWindowTitle = "Review: ${viewTitle}",
-				selectWindowTitle = ${viewTitle});
-
-			AssertElementNotPresent(locator1 = "WorkflowSubmissionsTask#PREVIEW_VIEW");
+				closeWindowTitle = ${viewTitle},
+				selectWindowTitle = ${previewTitle});
 		}
+		else if (isSet(pageRevision)) {
+			var siteName = TestCase.getSiteName(siteName = ${siteName});
 
-		if (contains(${portletTitle}, "SINGLE APPROVER")) {
-			AssertElementNotPresent(locator1 = "WorkflowSubmissionsTask#PREVIEW_VIEW");
-		}
-		else {
-			Close.closeAndSelectWindow(value1 = "title=${viewTitle}");
-
-			AssertElementNotPresent(locator1 = "WorkflowSubmissionsTask#PREVIEW_VIEW");
+			Close.closeAndSelectWindow(value1 = "title=Page Revision Page - Site Name - ${siteName}");
 		}
 	}
 
@@ -724,8 +718,10 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro openWorkflowListView() {
-		Navigator.openSpecificURL(url = "/group/control_panel/manage?p_p_id=com_liferay_portal_workflow_web_portlet_ControlPanelWorkflowPortlet&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_com_liferay_portal_workflow_web_portlet_ControlPanelWorkflowPortlet_tab=workflows");
+	macro openWorkflowListView(baseURL = null) {
+		Navigator.openWithAppendToBaseURL(
+			baseURL = ${baseURL},
+			urlAppend = "group/control_panel/manage?p_p_id=com_liferay_portal_workflow_web_portlet_ControlPanelWorkflowPortlet&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_com_liferay_portal_workflow_web_portlet_ControlPanelWorkflowPortlet_tab=workflows");
 	}
 
 	@summary = "Default summary"
@@ -834,6 +830,8 @@ definition {
 
 		Workflow.confirmWorkflowAction();
 
+		Navigator.gotoBack();
+
 		Workflow.viewCompletedTask(
 			ddlDataDefinitionName = ${ddlDataDefinitionName},
 			workflowAssetTitle = ${workflowAssetTitle},
@@ -886,6 +884,8 @@ definition {
 
 		Alert.viewSuccessMessage();
 
+		Navigator.gotoBack();
+
 		Workflow.viewCompletedTask(
 			ddlDataDefinitionName = ${ddlDataDefinitionName},
 			workflowAssetTitle = ${workflowAssetTitle},
@@ -930,10 +930,7 @@ definition {
 
 	@summary = "Default summary"
 	macro tearDownPortalWorkflow() {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -965,20 +962,14 @@ definition {
 
 	@summary = "Default summary"
 	macro tearDownSpecificWorkflowDefinition(workflowDefinitionTitle = null) {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		var key_workflowDefinitionTitle = ${workflowDefinitionTitle};
 
 		while (IsElementPresent(locator1 = "WorkflowDefinition#DEFINITION_TABLE_SPECIFIC_DEFINITION_ELLIPSIS")) {
 			Workflow.unpublishWorkflowDefinition(workflowDefinitionTitle = ${workflowDefinitionTitle});
 
-			ApplicationsMenu.gotoPortlet(
-				category = "Workflow",
-				panel = "Applications",
-				portlet = "Process Builder");
+			Workflow.openWorkflowListView();
 
 			Workflow.deleteWorkflowDefinition(workflowDefinitionTitle = ${workflowDefinitionTitle});
 		}
@@ -986,10 +977,7 @@ definition {
 
 	@summary = "Default summary"
 	macro tearDownWorkflowDefinitions() {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		while (IsElementPresent(locator1 = "WorkflowDefinition#DEFINITION_TABLE_EXTRA")) {
 			if (IsElementPresent(locator1 = "WorkflowDefinition#DEFINITION_TABLE_DEFINITION_EXTRA_ELLIPSIS")) {

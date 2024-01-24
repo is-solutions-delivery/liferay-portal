@@ -8,15 +8,51 @@ import ClayButton from '@clayui/button';
 import ClayDatePicker from '@clayui/date-picker';
 import ClayModal from '@clayui/modal';
 import classnames from 'classnames';
-import {isAfter} from 'date-fns';
 import PropTypes from 'prop-types';
 import React, {useEffect, useState} from 'react';
 
+const DIFFERENCE_IN_YEARS = 1;
+
+export function isValidDate(dateString, userTimeZone) {
+
+	// Regular expression for the 'yyyy-MM-dd HH:mm' format
+
+	const dateRegex = /^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1]) (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/;
+
+	if (!dateRegex.test(dateString.trim())) {
+		return false;
+	}
+
+	const [, year, month, day, hour, minute] = dateString
+		.trim()
+		.match(dateRegex);
+	const date = new Date(year, month - 1, day, hour, minute);
+
+	const currenDate = new Date(
+		new Date().toLocaleString('en-US', {timeZone: userTimeZone})
+	);
+
+	if (date <= currenDate) {
+		return false;
+	}
+
+	const dateYear = date.getFullYear();
+	const currentYear = currenDate.getFullYear();
+
+	if (dateYear > currentYear + DIFFERENCE_IN_YEARS) {
+		return false;
+	}
+
+	return true;
+}
+
 const noop = () => {};
+
 export default function ScheduleModal({
 	callback = noop,
 	displayDate: initialDisplayDate,
 	scheduled,
+	timeZone,
 	observer,
 	onModalClose = noop,
 }) {
@@ -27,7 +63,7 @@ export default function ScheduleModal({
 
 	const handleScheduleButtonOnClick = () => {
 		onModalClose();
-		callback(displayDate);
+		callback(displayDate.trim());
 	};
 
 	const publisNowButtonOnClick = () => {
@@ -35,14 +71,13 @@ export default function ScheduleModal({
 		callback('');
 	};
 
+	const currentYear = new Date().getFullYear();
+
 	useEffect(() => {
 		setInvalidDate(
-			!(
-				isAfter(Date.parse(displayDate), Date.now()) ||
-				(Number.isNaN(Date.parse(displayDate)) && !displayDate)
-			)
+			displayDate !== '' && !isValidDate(displayDate, timeZone)
 		);
-	}, [displayDate]);
+	}, [displayDate, timeZone]);
 
 	return (
 		<ClayModal observer={observer} size="md">
@@ -67,10 +102,16 @@ export default function ScheduleModal({
 					<label>{Liferay.Language.get('date-and-time')}</label>
 
 					<ClayDatePicker
+						dateFormat="yyyy-MM-dd"
 						onChange={setDisplayDate}
-						placeholder="YYYY-MM-DD HH:mm"
+						placeholder="yyyy-MM-dd HH:mm"
 						time
+						timezone={timeZone}
 						value={displayDate}
+						years={{
+							end: currentYear + DIFFERENCE_IN_YEARS,
+							start: currentYear,
+						}}
 					/>
 				</div>
 
@@ -89,9 +130,10 @@ export default function ScheduleModal({
 
 			<ClayModal.Footer
 				last={
-					<ClayButton.Group spaced>
+					<>
 						<ClayButton
 							borderless="<%= true %>"
+							className="mr-3"
 							displayType="secondary"
 							onClick={onModalClose}
 						>
@@ -100,6 +142,7 @@ export default function ScheduleModal({
 
 						{scheduled && (
 							<ClayButton
+								className="mr-3"
 								displayType="secondary"
 								onClick={publisNowButtonOnClick}
 							>
@@ -114,7 +157,7 @@ export default function ScheduleModal({
 						>
 							{Liferay.Language.get('schedule')}
 						</ClayButton>
-					</ClayButton.Group>
+					</>
 				}
 			/>
 		</ClayModal>
@@ -127,4 +170,5 @@ ScheduleModal.propTypes = {
 	observer: PropTypes.object.isRequired,
 	onModalClose: PropTypes.func,
 	scheduled: PropTypes.bool,
+	timeZone: PropTypes.string,
 };

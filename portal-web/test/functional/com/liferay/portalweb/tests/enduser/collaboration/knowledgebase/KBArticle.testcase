@@ -312,7 +312,7 @@ definition {
 	}
 
 	@description = "This test ensures that users can delete article in the table view."
-	@priority = 5
+	@priority = 4
 	test CanDeleteArticleInTableView {
 		JSONKnowledgeBase.addkBArticle(
 			groupName = "Guest",
@@ -331,7 +331,7 @@ definition {
 	}
 
 	@description = "This test ensures that users can edit article in the table view."
-	@priority = 5
+	@priority = 4
 	test CanEditArticleInTableView {
 		JSONKnowledgeBase.addkBArticle(
 			groupName = "Guest",
@@ -352,7 +352,7 @@ definition {
 	}
 
 	@description = "This test ensures that a user can edit the kb entry permissions from the navigation pane."
-	@priority = 5
+	@priority = 4
 	test CanEditArticlePermissionsFromNavigationPane {
 		JSONKnowledgeBase.addkBArticle(
 			groupName = "Guest",
@@ -724,7 +724,7 @@ definition {
 	}
 
 	@description = "This test ensures that users can print the kb entry by clicking the ellipsis on the kb entry."
-	@priority = 5
+	@priority = 3
 	test CanPreviewPrintContent {
 		JSONKnowledgeBase.addkBArticle(
 			groupName = "Guest",
@@ -739,7 +739,7 @@ definition {
 	}
 
 	@description = "This test ensures that users can replace the attachment for an article via the new configuration pane."
-	@priority = 5
+	@priority = 4
 	test CanReplaceArticleAttachment {
 		JSONKnowledgeBase.addkBArticle(
 			groupName = "Guest",
@@ -771,13 +771,13 @@ definition {
 			kbArticleContent = "Knowledge Base Article Content",
 			kbArticleTitle = "Knowledge Base Article Title");
 
-		AssertTextNotEquals.assertNotPartialText(
+		AssertTextNotEquals.assertNotPartialMatch(
 			locator1 = "KnowledgeBaseArticle#ATTACHMENTS_SAVED_ATTACHMENTS_CONTAINER",
 			value1 = "Document_1.jpg");
 	}
 
 	@description = "This test ensures that users can replace the category for an article via the new configuration pane."
-	@priority = 5
+	@priority = 4
 	test CanReplaceArticleCategory {
 		JSONCategory.addVocabulary(
 			groupName = "Guest",
@@ -823,7 +823,7 @@ definition {
 	}
 
 	@description = "This test ensures that users can replace the related asset for an article via the new configuration pane."
-	@priority = 5
+	@priority = 4
 	test CanReplaceArticleRelatedAsset {
 		JSONBlog.addEntry(
 			entryContent = "Blogs Entry Content",
@@ -868,7 +868,7 @@ definition {
 	}
 
 	@description = "This test ensures that users can replace the tag for an article via the new configuration pane."
-	@priority = 5
+	@priority = 4
 	test CanReplaceArticleTag {
 		JSONKnowledgeBase.addkBArticle(
 			assetTagNames = "Tag1",
@@ -898,7 +898,7 @@ definition {
 	}
 
 	@description = "This test ensures that the KB article is expired when the user clicks the "Expire" in the ellipses drop-menu."
-	@priority = 5
+	@priority = 4
 	test CanRepublishAnExpiredArticle {
 		property custom.properties = "company.default.time.zone=America/Los_Angeles";
 		property test.liferay.virtual.instance = "false";
@@ -950,6 +950,260 @@ definition {
 			key_kbArticleStatus = "Expired",
 			key_kbArticleTitle = "Knowledge Base Article Title",
 			locator1 = "WorkflowKnowledgeBaseArticle#ARTICLE_TABLE_ARTICLE_STATUS");
+	}
+
+	@description = "This test ensures that users can restore the kb article from the recycle bin."
+	@priority = 5
+	test CanRestoreArticleFromRecycleBin {
+		property custom.properties = "feature.flag.LPS-188058=true";
+
+		JSONKnowledgeBase.addkBArticle(
+			groupName = "Guest",
+			kbArticleContent = "Knowledge Base Article Content",
+			kbArticleTitle = "Knowledge Base Article Title");
+
+		JSONKnowledgeBase.addkBChildArticle(
+			groupName = "Guest",
+			kbArticleTitle = "Knowledge Base Article Title",
+			kbChildArticleContent = "Knowledge Base Child Article Content",
+			kbChildArticleTitle = "Knowledge Base Child Article Title");
+
+		KBAdmin.openKBAdmin(siteURLKey = "guest");
+
+		KBArticle.deleteCP(
+			kbArticleTitle = "Knowledge Base Article Title",
+			moveToRecycleBin = "true");
+
+		KBArticle.viewDefaultCP();
+
+		RecycleBin.gotoEntryViaSuccessMessage(assetName = "Knowledge Base Article Title");
+
+		RecycleBin.restoreCP(
+			assetName = "Knowledge Base Article Title",
+			assetType = "Knowledge Base Article");
+
+		KBAdmin.openKBAdmin(siteURLKey = "guest");
+
+		LexiconList.viewListEntryTitle(listEntry = "Knowledge Base Article Title");
+
+		KBArticle.gotoChildArticleDescriptiveDetails(kbArticleTitle = "Knowledge Base Article Title");
+
+		LexiconList.viewListEntryTitle(listEntry = "Knowledge Base Child Article Title");
+	}
+
+	@description = "This test ensures that users can restore article from the recycle bin to existing folder."
+	@priority = 5
+	test CanRestoreArticleToExistingFolder {
+		property custom.properties = "feature.flag.LPS-188058=true";
+
+		JSONKnowledgeBase.addkBFolder(
+			groupName = "Guest",
+			kbFolderDescription = "KB Folder Description",
+			kbFolderName = "KB Folder");
+
+		JSONKnowledgeBase.addkBArticle(
+			folderName = "KB Folder",
+			groupName = "Guest",
+			kbArticleContent = "Knowledge Base Article Content",
+			kbArticleTitle = "Knowledge Base Article Title");
+
+		KBAdmin.openKBAdmin(siteURLKey = "guest");
+
+		KBFolder.deleteCP(
+			kbFolderName = "KB Folder",
+			moveToRecycleBin = "true");
+
+		RecycleBin.openRecycleBinAdmin(siteURLKey = "guest");
+
+		RecycleBin.restoreContentFromFolderCP(
+			assetName = "KB Folder",
+			assetRestoreLocation = "Home",
+			assetType = "Knowledge Base Folder",
+			assetType2 = "Knowledge Base Article",
+			breadcrumbName = "Home",
+			documentName = "Knowledge Base Article Title");
+
+		KBAdmin.openKBAdmin(siteURLKey = "guest");
+
+		LexiconList.viewListEntryTitle(listEntry = "Knowledge Base Article Title");
+	}
+
+	@description = "This test ensures that users can restore the child article from the recycle bin to the parent article."
+	@priority = 4
+	test CanRestoreChildArticleFromRecycleBin {
+		property custom.properties = "feature.flag.LPS-188058=true";
+
+		JSONKnowledgeBase.addkBArticle(
+			groupName = "Guest",
+			kbArticleContent = "Knowledge Base Article Content",
+			kbArticleTitle = "Knowledge Base Article Title");
+
+		JSONKnowledgeBase.addkBChildArticle(
+			groupName = "Guest",
+			kbArticleTitle = "Knowledge Base Article Title",
+			kbChildArticleContent = "Knowledge Base Child Article Content",
+			kbChildArticleTitle = "Knowledge Base Child Article Title");
+
+		KBAdmin.openKBAdmin(siteURLKey = "guest");
+
+		KBArticle.gotoChildArticleDescriptiveDetails(kbArticleTitle = "Knowledge Base Article Title");
+
+		KBArticle.deleteCP(
+			kbArticleTitle = "Knowledge Base Child Article Title",
+			moveToRecycleBin = "true");
+
+		KBAdmin.openKBAdmin(siteURLKey = "guest");
+
+		VerifyElementNotPresent(
+			key_kbArticleTitle = "Knowledge Base Article Title",
+			locator1 = "KnowledgeBase#DESCRIPTIVE_VIEW_CHILD_ARTICLE_LINK",
+			value1 = "Child Article");
+
+		RecycleBin.openRecycleBinAdmin(siteURLKey = "guest");
+
+		RecycleBin.restoreCP(
+			assetName = "Knowledge Base Child Article Title",
+			assetType = "Knowledge Base Article");
+
+		KBAdmin.openKBAdmin(siteURLKey = "guest");
+
+		KBArticle.gotoChildArticleDescriptiveDetails(kbArticleTitle = "Knowledge Base Article Title");
+
+		LexiconList.viewListEntryTitle(listEntry = "Knowledge Base Child Article Title");
+	}
+
+	@description = "This test ensures that users can restore the draft article from the recycle bin."
+	@priority = 4
+	test CanRestoreDraftArticleFromRecycleBin {
+		property custom.properties = "feature.flag.LPS-188058=true";
+
+		JSONKnowledgeBase.addkBArticle(
+			groupName = "Guest",
+			kbArticleContent = "Knowledge Base Article Content",
+			kbArticleTitle = "Knowledge Base Article Title",
+			workflowAction = "DRAFT");
+
+		KBAdmin.openKBAdmin(siteURLKey = "guest");
+
+		KBArticle.deleteCP(
+			kbArticleTitle = "Knowledge Base Article Title",
+			moveToRecycleBin = "true");
+
+		KBArticle.viewDefaultCP();
+
+		RecycleBin.undoMoveToRecycleBin();
+
+		KBAdmin.openKBAdmin(siteURLKey = "guest");
+
+		LexiconList.viewListEntryLabel(
+			listEntry = "Knowledge Base Article Title",
+			listEntryLabel = "Draft");
+	}
+
+	@description = "This test ensures that users can restore the expired article from the recycle bin."
+	@priority = 3
+	test CanRestoreExpiredArticleFromRecycleBin {
+		property custom.properties = "feature.flag.LPS-188058=true";
+
+		JSONKnowledgeBase.addkBArticle(
+			groupName = "Guest",
+			kbArticleContent = "Knowledge Base Article Content",
+			kbArticleTitle = "Knowledge Base Article Title");
+
+		KBAdmin.openKBAdmin(siteURLKey = "guest");
+
+		LexiconEntry.gotoEntryMenuItem(
+			menuItem = "Expire",
+			rowEntry = "Knowledge Base Article Title");
+
+		KBArticle.deleteCP(
+			kbArticleTitle = "Knowledge Base Article Title",
+			moveToRecycleBin = "true");
+
+		KBArticle.viewDefaultCP();
+
+		RecycleBin.openRecycleBinAdmin(siteURLKey = "guest");
+
+		RecycleBin.restoreCP(
+			assetName = "Knowledge Base Article Title",
+			assetType = "Knowledge Base Article");
+
+		KBAdmin.openKBAdmin(siteURLKey = "guest");
+
+		LexiconList.viewListEntryLabel(
+			listEntry = "Knowledge Base Article Title",
+			listEntryLabel = "Expired");
+	}
+
+	@description = "This test ensures that users can restore the kb folder from the recycle bin."
+	@priority = 5
+	test CanRestoreFolderWithContentsFromRecycleBin {
+		property custom.properties = "feature.flag.LPS-188058=true";
+
+		JSONKnowledgeBase.addkBFolder(
+			groupName = "Guest",
+			kbFolderDescription = "KB Folder Description",
+			kbFolderName = "KB Folder");
+
+		JSONKnowledgeBase.addkBArticle(
+			folderName = "KB Folder",
+			groupName = "Guest",
+			kbArticleContent = "Knowledge Base Article Content",
+			kbArticleTitle = "Knowledge Base Article Title");
+
+		KBAdmin.openKBAdmin(siteURLKey = "guest");
+
+		KBFolder.deleteCP(
+			kbFolderName = "KB Folder",
+			moveToRecycleBin = "true");
+
+		KBArticle.viewDefaultCP();
+
+		RecycleBin.openRecycleBinAdmin(siteURLKey = "guest");
+
+		RecycleBin.restoreCP(
+			assetName = "KB Folder",
+			assetType = "Knowledge Base Folder");
+
+		KBAdmin.openKBAdmin(siteURLKey = "guest");
+
+		LexiconList.viewListEntryTitle(listEntry = "KB Folder");
+
+		KBFolder.gotoCP(kbFolderName = "KB Folder");
+
+		LexiconList.viewListEntryTitle(listEntry = "Knowledge Base Article Title");
+	}
+
+	@description = "This test ensures that users can restore multiple articles after clicking the undo button on the success message."
+	@priority = 4
+	test CanRestoreMultipleArticlesFromRecycleBin {
+		property custom.properties = "feature.flag.LPS-188058=true";
+
+		JSONKnowledgeBase.addkBArticle(
+			groupName = "Guest",
+			kbArticleContent = "Knowledge Base Article Content1",
+			kbArticleTitle = "Knowledge Base Article Title1");
+
+		JSONKnowledgeBase.addkBArticle(
+			groupName = "Guest",
+			kbArticleContent = "Knowledge Base Article Content2",
+			kbArticleTitle = "Knowledge Base Article Title2");
+
+		KBAdmin.openKBAdmin(siteURLKey = "guest");
+
+		KBArticle.selectAllCP();
+
+		KBArticle.deleteCP(
+			itemsNumber = 2,
+			moveToRecycleBin = "multipleArticles");
+
+		KBArticle.viewDefaultCP();
+
+		RecycleBin.undoMoveToRecycleBin();
+
+		LexiconList.viewListEntryTitle(listEntry = "Knowledge Base Article Title1");
+
+		LexiconList.viewListEntryTitle(listEntry = "Knowledge Base Article Title2");
 	}
 
 	@description = "This test ensures that the owner of the kb article receives a notification once the review date is reached."
@@ -1147,7 +1401,7 @@ definition {
 	}
 
 	@description = "This test ensures that users can subscribe to a kb article by clicking the ellipsis on the kb entry."
-	@priority = 5
+	@priority = 4
 	test CanSubscribeToArticle {
 		JSONKnowledgeBase.addkBArticle(
 			groupName = "Guest",
@@ -1166,7 +1420,7 @@ definition {
 	}
 
 	@description = "This test ensures that a user can subscribe to a kb article from the navigation pane."
-	@priority = 5
+	@priority = 4
 	test CanSubscribeToArticleFromNavigationPane {
 		JSONKnowledgeBase.addkBArticle(
 			groupName = "Guest",
@@ -1191,7 +1445,7 @@ definition {
 	}
 
 	@description = "This test ensures that suggestion form is displayed on the KB article preview page when the KB article has suggestions."
-	@priority = 5
+	@priority = 4
 	test CanViewArticlesWithSuggestions {
 		JSONKnowledgeBase.addkBArticle(
 			groupName = "Guest",
@@ -1548,10 +1802,7 @@ definition {
 	@priority = 3
 	@refactorneeded
 	test EditKBArticleWithCustomField {
-		ApplicationsMenu.gotoPortlet(
-			category = "Configuration",
-			panel = "Control Panel",
-			portlet = "Custom Fields");
+		CustomFields.openCustomFieldAdmin();
 
 		CustomFields.addCP(
 			customFieldName = "Text Field",
@@ -1603,7 +1854,7 @@ definition {
 	}
 
 	@description = "This test ensures that some article info only display in panel."
-	@priority = 5
+	@priority = 3
 	test SomeArticleInfoOnlyDisplayInPanel {
 		JSONKnowledgeBase.addkBArticle(
 			groupName = "Guest",

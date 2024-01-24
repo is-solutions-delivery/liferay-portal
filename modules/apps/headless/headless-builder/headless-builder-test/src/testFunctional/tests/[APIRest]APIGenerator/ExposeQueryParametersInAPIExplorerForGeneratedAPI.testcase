@@ -65,20 +65,16 @@ definition {
 				status = "published",
 				title = "My-app");
 
-			SchemaAPI.relateRequestSchemaToEndpointByErc(
-				endpointErc = "testendpoint",
-				requestSchemaErc = "testSchema");
-
 			SchemaAPI.relateResponseSchemaToEndpointByErc(
-				endpointErc = "testendpoint",
-				responseSchemaErc = "testSchema");
+				endpointErc = "My-app_testendpoint",
+				responseSchemaErc = "My-app_testSchema");
 		}
 
 		task ("And Given I create schema a property with erc of name field") {
 			PropertyAPI.createAPIProperty(
 				name = "entryName",
 				objectFieldERC = "studentName",
-				schemaERC = "testSchema");
+				schemaERC = "My-app_testSchema");
 		}
 
 		task ("When execute get{Endpoint}Page with filter={property} eq 'Able' in API Explorer") {
@@ -115,25 +111,21 @@ definition {
 				status = "published",
 				title = "My-app");
 
-			SchemaAPI.relateRequestSchemaToEndpointByErc(
-				endpointErc = "testendpoint",
-				requestSchemaErc = "testSchema");
-
 			SchemaAPI.relateResponseSchemaToEndpointByErc(
-				endpointErc = "testendpoint",
-				responseSchemaErc = "testSchema");
+				endpointErc = "My-app_testendpoint",
+				responseSchemaErc = "My-app_testSchema");
 		}
 
 		task ("And Given I create schema a property with erc of name field") {
 			PropertyAPI.createAPIProperty(
 				name = "entryName",
 				objectFieldERC = "studentName",
-				schemaERC = "testSchema");
+				schemaERC = "My-app_testSchema");
 		}
 
 		task ("And Given I create endpoint a filter with name ne 'Test'") {
 			FilterAPI.createAPIFilter(
-				endpointERC = "testendpoint",
+				endpointERC = "My-app_testendpoint",
 				filterValue = "name ne '\''Test'\''");
 		}
 
@@ -159,38 +151,65 @@ definition {
 	test CanApplyFilterSortAndPreFilterWithSiteScopedEndpoint {
 		property portal.acceptance = "true";
 
-		task ("And Given an published API application with site scoped endpoint with related schema with Student as the main object") {
+		task ("Given site scoped custom object University with name text field is created and published") {
+			ObjectDefinitionAPI.createAndPublishObjectDefinition(
+				en_US_label = "University",
+				en_US_plural_label = "Universities",
+				name = "University",
+				objectDefinitionExternalReferenceCode = "University",
+				requiredStringFieldName = "name",
+				requiredStringFieldNameExternalReferenceCode = "univeristyName",
+				scope = "site");
+		}
+
+		task ("And Given Universities Able, Tom and Test are created") {
+			CustomObjectAPI.createObjectEntryWithFields(
+				en_US_plural_label = "universities",
+				fieldName = "name",
+				fieldValue = "Able",
+				scopeKey = "true");
+
+			CustomObjectAPI.createObjectEntryWithFields(
+				en_US_plural_label = "universities",
+				fieldName = "name",
+				fieldValue = "Tom",
+				scopeKey = "true");
+
+			CustomObjectAPI.createObjectEntryWithFields(
+				en_US_plural_label = "universities",
+				fieldName = "name",
+				fieldValue = "Test",
+				scopeKey = "true");
+		}
+
+		task ("And Given a published API application with site scoped endpoint with related schema with Student as the main object") {
 			ApplicationAPI.createAPIApplication(
 				baseURL = "my-app",
 				endpointName = "testendpoint",
 				endpointPath = "/testendpoint",
-				mainObjectDefinitionErc = "student",
+				mainObjectDefinitionErc = "University",
 				relatedEndpoint = "true",
 				relatedSchema = "true",
 				schemaName = "testSchema",
-				scopeKey = "group",
+				scopeKey = "site",
 				status = "published",
 				title = "My-app");
 
-			SchemaAPI.relateRequestSchemaToEndpointByErc(
-				endpointErc = "testendpoint",
-				requestSchemaErc = "testSchema");
-
 			SchemaAPI.relateResponseSchemaToEndpointByErc(
-				endpointErc = "testendpoint",
-				responseSchemaErc = "testSchema");
+				endpointErc = "My-app_testendpoint",
+				responseSchemaErc = "My-app_testSchema");
 		}
 
 		task ("And Given I create schema a property with erc of name field") {
 			PropertyAPI.createAPIProperty(
 				name = "entryName",
-				objectFieldERC = "studentName",
-				schemaERC = "testSchema");
+				objectFieldERC = "univeristyName",
+				schemaERC = "My-app_testSchema");
 		}
 
 		task ("And Given I create endpoint a filter with name ne 'Test'") {
 			FilterAPI.createAPIFilter(
-				endpointERC = "testendpoint",
+				endpointERC = "My-app_testendpoint",
 				filterValue = "name ne '\''Test'\''");
 		}
 
@@ -235,20 +254,16 @@ definition {
 				status = "published",
 				title = "My-app");
 
-			SchemaAPI.relateRequestSchemaToEndpointByErc(
-				endpointErc = "testendpoint",
-				requestSchemaErc = "testSchema");
-
 			SchemaAPI.relateResponseSchemaToEndpointByErc(
-				endpointErc = "testendpoint",
-				responseSchemaErc = "testSchema");
+				endpointErc = "My-app_testendpoint",
+				responseSchemaErc = "My-app_testSchema");
 		}
 
 		task ("And Given I create schema a property with erc of name field") {
 			PropertyAPI.createAPIProperty(
 				name = "entryName",
 				objectFieldERC = "studentName",
-				schemaERC = "testSchema");
+				schemaERC = "My-app_testSchema");
 		}
 
 		task ("When execute get{Endpoint}Page with sort={property}:desc in API Explorer") {
@@ -285,25 +300,21 @@ definition {
 				status = "published",
 				title = "My-app");
 
-			SchemaAPI.relateRequestSchemaToEndpointByErc(
-				endpointErc = "testendpoint",
-				requestSchemaErc = "testSchema");
-
 			SchemaAPI.relateResponseSchemaToEndpointByErc(
-				endpointErc = "testendpoint",
-				responseSchemaErc = "testSchema");
+				endpointErc = "My-app_testendpoint",
+				responseSchemaErc = "My-app_testSchema");
 		}
 
 		task ("And Given I create schema a property with erc of name field") {
 			PropertyAPI.createAPIProperty(
 				name = "entryName",
 				objectFieldERC = "studentName",
-				schemaERC = "testSchema");
+				schemaERC = "My-app_testSchema");
 		}
 
 		task ("And Given I create endpoint a sort with name:asc") {
 			SortAPI.createAPISort(
-				endpointERC = "testendpoint",
+				endpointERC = "My-app_testendpoint",
 				sortValue = "name:asc");
 		}
 
@@ -407,7 +418,7 @@ definition {
 				endpointName = "testendpoint",
 				endpointPath = "/testendpoint",
 				relatedEndpoint = "true",
-				scopeKey = "group",
+				scopeKey = "site",
 				status = "published",
 				title = "My-app");
 		}

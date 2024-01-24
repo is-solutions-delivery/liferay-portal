@@ -21,6 +21,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>CHANGE_TYPE_BUTTON</td>
+	<td>//button[contains(@class,'btn-sorting') and contains(.,'Change Type')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>COMMENT_ACTIONS</td>
 	<td>//div[contains(@class,'autofit-row') and contains(.,'${key_commentValue}')]/preceding-sibling::div//button[*[name()='svg'][contains(@class,'icon-ellipsis')]]</td>
 	<td></td>
@@ -87,12 +92,12 @@
 </tr>
 <tr>
 	<td>MESSAGE_NO_CHANGES</td>
-	<td>//div[contains(@class, 'c-empty-state-text') and contains(.,'No changes were found.')]</td>
+	<td>//div[contains(@class, 'c-empty-state-text') and contains(.,'No changes were found.')] | //div[contains(@class, 'c-empty-state-text') and contains(.,'Sorry, no results were found.')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PUBLICATIONS_CHANGE_CATEGORY</td>
-	<td>//tr[contains(@class,'table-divider')]/td[contains(.,'${key_changeCategory}')]</td>
+	<td>//div[contains(@class,'dnd-td') and contains(.,'${key_changeCategory}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -102,27 +107,27 @@
 </tr>
 <tr>
 	<td>PUBLICATIONS_CHANGE_SITE</td>
-	<td>//tr[contains(@class,'table-divider') and contains(.,'${key_changeCategory}')]//following-sibling::tr[${changeOrder}]/td[2][contains(.,'${key_changeSite}')]</td>
+	<td>//div[contains(@class,'dnd-td') and contains(.,'${key_changeCategory}')]//preceding-sibling::div[contains(.,'${key_changeSite}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PUBLICATIONS_CHANGE_STATUS</td>
-	<td>//tr[contains(@class,'table-divider') and contains(.,'${key_changeCategory}')]//following-sibling::tr[${changeOrder}]/td[4][contains(.,'${key_changeStatus}')]</td>
+	<td>//div[contains(@class,'dnd-td') and contains(.,'${key_changeCategory}')]//following-sibling::div[contains(.,'${key_changeStatus}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PUBLICATIONS_CHANGE_TITLE</td>
-	<td>//tr[contains(@class,'table-divider') and contains(.,'${key_changeCategory}')]//following-sibling::tr[${changeOrder}]/td[3][contains(.,'${key_changeTitle}')]</td>
+	<td>//div[contains(@class,'dnd-td') and contains(.,'${key_changeCategory}')]//preceding-sibling::div//a[contains(.,'${key_changeTitle}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PUBLICATIONS_CHANGE_TYPE</td>
-	<td>//tr[contains(@class,'table-divider') and contains(.,'${key_changeCategory}')]//following-sibling::tr[${changeOrder}]/td[5][contains(.,'${key_changeType}')]</td>
+	<td>//div[contains(@class,'dnd-td') and contains(.,'${key_changeCategory}')]//following-sibling::div[contains(.,'${key_changeType}')]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>PUBLICATIONS_CHANGE_USER</td>
-	<td>//tr[contains(@class,'table-divider') and contains(.,'${key_changeCategory}')]//following-sibling::tr[${changeOrder}]/td[1]/span[contains(@title,'${key_changeUser}')]</td>
+	<td>//div[contains(@class,'dnd-td') and contains(.,'${key_changeCategory}')]//preceding-sibling::div[contains(.,'${key_changeUser}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -133,6 +138,11 @@
 <tr>
 	<td>SHOW_ALL_ITEMS_TOGGLE_SWITCH</td>
 	<td>//input[contains(@class,'toggle-switch-check')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>ELLIPSIS_IN_PUBLICATION</td>
+	<td>//button[contains(@class, 'dropdown-toggle btn btn-monospaced btn-sm btn-unstyled')]</td>
 	<td></td>
 </tr>
 <tr>

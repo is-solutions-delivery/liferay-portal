@@ -12,6 +12,8 @@ import com.liferay.headless.commerce.admin.account.client.pagination.Pagination;
 import com.liferay.headless.commerce.admin.account.client.problem.Problem;
 import com.liferay.headless.commerce.admin.account.client.serdes.v1_0.AccountChannelShippingOptionSerDes;
 
+import java.net.URL;
+
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -168,6 +170,10 @@ public interface AccountChannelShippingOptionResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {

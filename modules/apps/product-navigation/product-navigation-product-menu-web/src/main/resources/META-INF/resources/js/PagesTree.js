@@ -7,15 +7,15 @@ import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import {TreeView as ClayTreeView} from '@clayui/core';
 import {ClayDropDownWithItems} from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
-import {fetch, navigate, openModal, openToast} from 'frontend-js-web';
+import {fetch, navigate, openModal, openToast, sub} from 'frontend-js-web';
 import PropTypes from 'prop-types';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 
 const ACTION_COPY_PAGE = 'copy-page';
 const ACTION_DELETE = 'delete';
+const ACTION_PERMISSIONS = 'permissions';
 const ENTER_KEYCODE = 13;
 const ROOT_ITEM_ID = '0';
-const NOT_DROPPABLE_TYPES = ['url', 'link_to_layout'];
 
 export default function PagesTree({
 	config,
@@ -68,7 +68,37 @@ export default function PagesTree({
 
 	const onItemMove = useCallback(
 		(item, parentItem, {next: priority}) => {
-			if (NOT_DROPPABLE_TYPES.includes(parentItem.type)) {
+			if (!parentItem.parentable) {
+				openErrorToast(
+					sub(
+						Liferay.Language.get(
+							'pages-of-type-x-cannot-have-child-pages'
+						),
+						parentItem.typeName
+					)
+				);
+
+				return false;
+			}
+			else if (priority === 0 && !item.firstPageable) {
+				openErrorToast(
+					sub(
+						Liferay.Language.get(
+							'the-first-page-cannot-be-of-type-x'
+						),
+						item.typeName
+					)
+				);
+
+				return false;
+			}
+			else if (priority === 0 && !item.hasGuestViewPermission) {
+				openErrorToast(
+					Liferay.Language.get(
+						'the-first-page-should-be-visible-for-guest-users'
+					)
+				);
+
 				return false;
 			}
 
@@ -79,7 +109,16 @@ export default function PagesTree({
 					priority,
 				}),
 				method: 'post',
-			}).catch(() => openErrorToast());
+			})
+				.then((response) => response.json())
+				.then(({message}) => {
+					if (message) {
+						openErrorToast(message);
+
+						navigate(window.location.href);
+					}
+				})
+				.catch(() => openErrorToast());
 		},
 		[moveItemURL]
 	);
@@ -147,9 +186,6 @@ function TreeItem({
 	namespace,
 	selectedLayoutId,
 }) {
-	const stackAnchorRef = useRef(null);
-	const itemAnchorRef = useRef(null);
-
 	const warningMessage = isSiteTemplate
 		? Liferay.Language.get(
 				'there-is-a-page-with-the-same-friendly-url-in-a-site-using-this-site-template'
@@ -183,7 +219,7 @@ function TreeItem({
 				draggable={item.id !== ROOT_ITEM_ID}
 				onKeyDown={(event) => {
 					if (event.keyCode === ENTER_KEYCODE && item.regularURL) {
-						stackAnchorRef.current.click();
+						navigate(item.regularURL);
 					}
 				}}
 			>
@@ -192,18 +228,62 @@ function TreeItem({
 				<div className="align-items-center d-flex pl-2">
 					{item.regularURL ? (
 						<a
-							className="flex-grow-1 text-decoration-none text-truncate w-100"
+							aria-label={(() => {
+								if (
+									Liferay.FeatureFlags['LPS-196847'] &&
+									!item.hasGuestViewPermission
+								) {
+									return `${
+										item.name
+									}. ${Liferay.Language.get(
+										'restricted-page'
+									)}`;
+								}
+
+								if (
+									Liferay.FeatureFlags['LPS-174417'] &&
+									item.hasDuplicatedFriendlyURL
+								) {
+									return `${item.name}. ${warningMessage}`;
+								}
+
+								return item.name;
+							})()}
+							className="align-items-center d-flex flex-grow-1 text-decoration-none text-truncate w-100"
 							data-tooltip-floating="true"
 							href={item.regularURL}
-							ref={stackAnchorRef}
 							tabIndex="-1"
 							target={item.target}
-							title={item.name}
 						>
-							{item.name}
+							<span
+								className="icon-tooltip lfr-portal-tooltip text-truncate"
+								data-title={item.name}
+							>
+								{item.name}
+							</span>
+
+							{Liferay.FeatureFlags['LPS-196847'] &&
+							!item.hasGuestViewPermission ? (
+								<ClayIcon
+									className="c-ml-2 c-mt-0 flex-shrink-0 icon-tooltip text-4"
+									data-title={Liferay.Language.get(
+										'restricted-page'
+									)}
+									symbol="lock"
+								/>
+							) : null}
+
+							{Liferay.FeatureFlags['LPS-174417'] &&
+							item.hasDuplicatedFriendlyURL ? (
+								<ClayIcon
+									className="align-self-center c-mt-0 flex-shrink-0 icon-tooltip icon-warning lfr-portal-tooltip"
+									data-title={warningMessage}
+									symbol="warning-full"
+								/>
+							) : null}
 						</a>
 					) : (
-						<span>{item.name}</span>
+						<span title={item.name}>{item.name}</span>
 					)}
 				</div>
 			</ClayTreeView.ItemStack>
@@ -238,7 +318,7 @@ function TreeItem({
 								event.keyCode === ENTER_KEYCODE &&
 								item.regularURL
 							) {
-								itemAnchorRef.current.click();
+								navigate(item.regularURL);
 							}
 						}}
 					>
@@ -247,36 +327,65 @@ function TreeItem({
 						<div className="align-items-center d-flex pl-2">
 							{item.regularURL ? (
 								<a
-									aria-label={
-										Liferay.FeatureFlags['LPS-174417'] &&
-										item.hasDuplicatedFriendlyURL
-											? `${item.name}. ${warningMessage}`
-											: item.name
-									}
-									className="flex-grow-1 text-decoration-none text-truncate-inline"
+									aria-label={(() => {
+										if (
+											Liferay.FeatureFlags[
+												'LPS-196847'
+											] &&
+											!item.hasGuestViewPermission
+										) {
+											return `${
+												item.name
+											}. ${Liferay.Language.get(
+												'restricted-page'
+											)}`;
+										}
+
+										if (
+											Liferay.FeatureFlags[
+												'LPS-174417'
+											] &&
+											item.hasDuplicatedFriendlyURL
+										) {
+											return `${item.name}. ${warningMessage}`;
+										}
+
+										return item.name;
+									})()}
+									className="align-items-center d-flex flex-grow-1 text-decoration-none text-truncate-inline"
 									href={item.regularURL}
-									ref={itemAnchorRef}
 									tabIndex="-1"
 									target={item.target}
 								>
 									<span
-										className="text-truncate"
+										className="icon-tooltip lfr-portal-tooltip text-truncate"
 										data-title={item.name}
 									>
 										{item.name}
 									</span>
 
+									{Liferay.FeatureFlags['LPS-196847'] &&
+									!item.hasGuestViewPermission ? (
+										<ClayIcon
+											className="c-ml-2 c-mt-0 flex-shrink-0 icon-tooltip text-4"
+											data-title={Liferay.Language.get(
+												'restricted-page'
+											)}
+											symbol="lock"
+										/>
+									) : null}
+
 									{Liferay.FeatureFlags['LPS-174417'] &&
 									item.hasDuplicatedFriendlyURL ? (
 										<ClayIcon
-											className="align-self-center flex-shrink-0 icon-warning lfr-portal-tooltip"
+											className="align-self-center flex-shrink-0 icon-tooltip icon-warning lfr-portal-tooltip"
 											data-title={warningMessage}
 											symbol="warning-full"
 										/>
 									) : null}
 								</a>
 							) : (
-								<span>{item.name}</span>
+								<span title={item.name}>{item.name}</span>
 							)}
 						</div>
 					</ClayTreeView.Item>
@@ -347,21 +456,32 @@ function normalizeActions(actions, namespace) {
 										fetch(item.data.url, {
 											method: 'post',
 										})
-											.then((response) => {
-												if (response.redirected) {
-													navigate(response.url);
-												}
+											.then((response) => response.json())
+											.then(
+												({
+													errorMessage,
+													redirectURL,
+												}) => {
+													if (errorMessage) {
+														openErrorToast(
+															errorMessage
+														);
+													}
+													else {
+														openToast({
+															message: Liferay.Language.get(
+																'your-request-processed-successfully'
+															),
+															toastProps: {
+																autoClose: 5000,
+															},
+															type: 'success',
+														});
 
-												openToast({
-													message: Liferay.Language.get(
-														'your-request-processed-successfully'
-													),
-													toastProps: {
-														autoClose: 5000,
-													},
-													type: 'success',
-												});
-											})
+														navigate(redirectURL);
+													}
+												}
+											)
 											.catch(() => openErrorToast());
 									},
 								},
@@ -379,6 +499,12 @@ function normalizeActions(actions, namespace) {
 							size: 'md',
 						};
 					}
+					else if (item.id === ACTION_PERMISSIONS) {
+						modalData = {
+							...modalData,
+							onClose: () => navigate(window.location.href),
+						};
+					}
 
 					openModal(modalData);
 				};
@@ -389,10 +515,14 @@ function normalizeActions(actions, namespace) {
 	}));
 }
 
-function openErrorToast() {
+function openErrorToast(message) {
 	openToast({
-		message: Liferay.Language.get('an-unexpected-error-occurred'),
+		message:
+			message || Liferay.Language.get('an-unexpected-error-occurred'),
 		title: Liferay.Language.get('error'),
+		toastProps: {
+			autoClose: 5000,
+		},
 		type: 'danger',
 	});
 }

@@ -18,14 +18,18 @@ public class EmailAddressUtil {
 				serviceBuilderEmailAddress)
 		throws Exception {
 
-		ListType listType = serviceBuilderEmailAddress.getListType();
-
 		return new EmailAddress() {
 			{
-				emailAddress = serviceBuilderEmailAddress.getAddress();
-				id = serviceBuilderEmailAddress.getEmailAddressId();
-				primary = serviceBuilderEmailAddress.isPrimary();
-				type = listType.getName();
+				setEmailAddress(serviceBuilderEmailAddress::getAddress);
+				setId(serviceBuilderEmailAddress::getEmailAddressId);
+				setPrimary(serviceBuilderEmailAddress::isPrimary);
+				setType(
+					() -> {
+						ListType listType =
+							serviceBuilderEmailAddress.getListType();
+
+						return listType.getName();
+					});
 			}
 		};
 	}

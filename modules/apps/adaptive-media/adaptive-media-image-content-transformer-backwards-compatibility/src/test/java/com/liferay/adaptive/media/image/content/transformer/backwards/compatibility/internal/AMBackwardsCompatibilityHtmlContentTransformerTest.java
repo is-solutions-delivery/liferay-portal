@@ -5,7 +5,6 @@
 
 package com.liferay.adaptive.media.image.content.transformer.backwards.compatibility.internal;
 
-import com.liferay.adaptive.media.content.transformer.constants.ContentTransformerContentTypes;
 import com.liferay.adaptive.media.image.html.AMImageHTMLTagFactory;
 import com.liferay.adaptive.media.image.mime.type.AMImageMimeTypeProvider;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
@@ -96,10 +95,9 @@ public class AMBackwardsCompatibilityHtmlContentTransformerTest {
 	}
 
 	@Test
-	public void testContentTransformerContentTypeIsHTML() throws Exception {
+	public void testLeavesPictureTagsAsIs() throws Exception {
 		Assert.assertEquals(
-			ContentTransformerContentTypes.HTML,
-			_contentTransformer.getContentTransformerContentType());
+			_PICTURE_TAG, _contentTransformer.transform(_PICTURE_TAG));
 	}
 
 	@Test
@@ -109,6 +107,18 @@ public class AMBackwardsCompatibilityHtmlContentTransformerTest {
 		Assert.assertEquals(
 			_CONTENT_PREFIX + "[REPLACED]" + _CONTENT_SUFFIX,
 			_contentTransformer.transform(_CONTENT_WITH_IMAGE_FRIENDLY_URL));
+	}
+
+	@Test
+	public void testReplacesImageTagsOutsidePictureTag() throws Exception {
+		Assert.assertEquals(
+			StringBundler.concat(
+				_CONTENT_PREFIX, "[REPLACED]", _PICTURE_TAG, _CONTENT_SUFFIX),
+			_contentTransformer.transform(_CONTENT_WITH_IMAGE_AND_PICTURE));
+		Assert.assertEquals(
+			StringBundler.concat(
+				_CONTENT_PREFIX, _PICTURE_TAG, "[REPLACED]", _CONTENT_SUFFIX),
+			_contentTransformer.transform(_CONTENT_WITH_PICTURE_AND_IMAGE));
 	}
 
 	@Test
@@ -199,6 +209,12 @@ public class AMBackwardsCompatibilityHtmlContentTransformerTest {
 			"/1710bfe2-2b7c-1f69-f8b7-23ff6bd5dd4b?t=1506075653544\"\n />",
 			_CONTENT_SUFFIX);
 
+	private static final String _CONTENT_WITH_IMAGE_AND_PICTURE =
+		StringBundler.concat(
+			_CONTENT_PREFIX, "<img src='/documents/d/site_name/sample' />",
+			AMBackwardsCompatibilityHtmlContentTransformerTest._PICTURE_TAG,
+			_CONTENT_SUFFIX);
+
 	private static final String _CONTENT_WITH_IMAGE_AND_SINGLE_QUOTES =
 		StringBundler.concat(
 			_CONTENT_PREFIX, "<img src='/documents/20138/0/sample.jpg",
@@ -210,10 +226,19 @@ public class AMBackwardsCompatibilityHtmlContentTransformerTest {
 			_CONTENT_PREFIX, "<img src=\"/documents/d/site_name/sample\" />",
 			_CONTENT_SUFFIX);
 
+	private static final String _CONTENT_WITH_PICTURE_AND_IMAGE =
+		StringBundler.concat(
+			_CONTENT_PREFIX,
+			AMBackwardsCompatibilityHtmlContentTransformerTest._PICTURE_TAG,
+			"<img src='/documents/d/site_name/sample' />", _CONTENT_SUFFIX);
+
 	private static final String _LEGACY_CONTENT_WITH_IMAGE_AND_SINGLE_QUOTES =
 		StringBundler.concat(
 			_CONTENT_PREFIX, "<img src='/documents/20138/0/sample.jpg?t=",
 			"1506075653544' />", _CONTENT_SUFFIX);
+
+	private static final String _PICTURE_TAG =
+		"<picture><img src='/documents/d/site_name/sample' /></picture>";
 
 	private final AMImageHTMLTagFactory _amImageHTMLTagFactory = Mockito.mock(
 		AMImageHTMLTagFactory.class);

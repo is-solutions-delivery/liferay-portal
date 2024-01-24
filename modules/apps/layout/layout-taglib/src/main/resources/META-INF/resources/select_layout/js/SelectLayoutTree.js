@@ -9,6 +9,7 @@ import ClayEmptyState from '@clayui/empty-state';
 import {ClayCheckbox} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
+import classNames from 'classnames';
 import {debounce, fetch, getOpener, openToast, sub} from 'frontend-js-web';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 
@@ -113,33 +114,33 @@ export function SelectLayoutTree({
 		}
 	};
 
-	const onClick = (event, item, selection, expand) => {
+	const onClick = (event, item, selection, expand, load) => {
 		event.preventDefault();
 
-		if (item.disabled) {
-			expand.toggle(item.id);
-
-			return;
-		}
-
-		if (multiSelection) {
-			handleMultipleSelectionChange(item, selection, event.shiftKey);
-		}
-		else {
-			handleSingleSelection(item, selection);
-		}
-	};
-
-	const onKeyDown = (event, item, selection) => {
-		if (event.key === ' ' || event.key === 'Enter') {
-			event.stopPropagation();
-
+		if (!item.disabled) {
 			if (multiSelection) {
 				handleMultipleSelectionChange(item, selection, event.shiftKey);
 			}
 			else {
 				handleSingleSelection(item, selection);
 			}
+		}
+
+		if (item.hasChildren) {
+			if (!item.children) {
+				load.loadMore(item.id, item).then(() => expand.toggle(item.id));
+			}
+			else {
+				expand.toggle(item.id);
+			}
+		}
+	};
+
+	const onKeyDown = (event, item, selection, expand, load) => {
+		if (event.key === ' ' || event.key === 'Enter') {
+			event.stopPropagation();
+
+			onClick(event, item, selection, expand, load);
 		}
 	};
 
@@ -251,15 +252,28 @@ export function SelectLayoutTree({
 							<ClayTreeView.ItemStack
 								active={false}
 								onClick={(event) =>
-									onClick(event, item, selection, expand)
+									onClick(
+										event,
+										item,
+										selection,
+										expand,
+										load
+									)
 								}
 								onKeyDown={(event) =>
-									onKeyDown(event, item, selection)
+									onKeyDown(
+										event,
+										item,
+										selection,
+										expand,
+										load
+									)
 								}
 							>
 								{multiSelection && !item.disabled && (
-									<Checkbox
+									<ClayCheckbox
 										checked={selection.has(item.id)}
+										containerProps={{className: 'my-0'}}
 										onChange={(event) =>
 											handleMultipleSelectionChange(
 												item,
@@ -276,32 +290,72 @@ export function SelectLayoutTree({
 
 								<ClayIcon symbol={item.icon} />
 
-								<div className="d-flex">
+								<div
+									className={classNames('d-flex', {
+										'align-items-center c-ml-1':
+											Liferay.FeatureFlags['LPS-196847'],
+									})}
+								>
 									<span
 										className="flex-grow-0"
 										title={item.url}
 									>
 										{item.name}
 									</span>
+
+									{Liferay.FeatureFlags['LPS-196847'] &&
+									item.id !== '0' &&
+									!item.hasGuestViewPermission ? (
+										<span
+											aria-label={Liferay.Language.get(
+												'restricted-page'
+											)}
+											className="c-ml-2 lfr-portal-tooltip"
+											title={Liferay.Language.get(
+												'restricted-page'
+											)}
+										>
+											<ClayIcon
+												className="c-mt-0 text-4"
+												symbol="lock"
+											/>
+										</span>
+									) : null}
 								</div>
 							</ClayTreeView.ItemStack>
 
 							<ClayTreeView.Group items={item.children}>
 								{(item) => (
 									<ClayTreeView.Item
-										disabled={item.disabled}
+										disabled={
+											item.disabled && !item.hasChildren
+										}
 										expandable={item.hasChildren}
-										expanderDisabled={false}
 										onClick={(event) =>
-											onClick(event, item, selection)
+											onClick(
+												event,
+												item,
+												selection,
+												expand,
+												load
+											)
 										}
 										onKeyDown={(event) =>
-											onKeyDown(event, item, selection)
+											onKeyDown(
+												event,
+												item,
+												selection,
+												expand,
+												load
+											)
 										}
 									>
 										{multiSelection && !item.disabled && (
-											<Checkbox
+											<ClayCheckbox
 												checked={selection.has(item.id)}
+												containerProps={{
+													className: 'my-0',
+												}}
 												onChange={(event) =>
 													handleMultipleSelectionChange(
 														item,
@@ -319,13 +373,41 @@ export function SelectLayoutTree({
 
 										<ClayIcon symbol={item.icon} />
 
-										<div className="d-flex">
+										<div
+											className={classNames('d-flex', {
+												'align-items-center c-ml-1':
+													Liferay.FeatureFlags[
+														'LPS-196847'
+													],
+											})}
+										>
 											<span
 												className="flex-grow-0"
 												title={item.url}
 											>
 												{item.name}
 											</span>
+
+											{Liferay.FeatureFlags[
+												'LPS-196847'
+											] &&
+												item.hasGuestViewPermission ===
+													false && (
+													<span
+														aria-label={Liferay.Language.get(
+															'restricted-page'
+														)}
+														className="c-ml-2 lfr-portal-tooltip"
+														title={Liferay.Language.get(
+															'restricted-page'
+														)}
+													>
+														<ClayIcon
+															className="c-mt-0 text-4"
+															symbol="lock"
+														/>
+													</span>
+												)}
 										</div>
 									</ClayTreeView.Item>
 								)}
@@ -363,8 +445,6 @@ export function SelectLayoutTree({
 		/>
 	);
 }
-
-const Checkbox = (props) => <ClayCheckbox {...props} />;
 
 function SearchResults({
 	checkDisplayPage,
@@ -428,7 +508,7 @@ function SearchResult({layout, multiSelection, onSelect, selection}) {
 	return (
 		<div className="align-items-center d-flex pb-2">
 			{multiSelection && (
-				<Checkbox
+				<ClayCheckbox
 					checked={selection.has(layout.id)}
 					containerProps={{className: 'mr-3 my-0'}}
 					disabled={layout.disabled}

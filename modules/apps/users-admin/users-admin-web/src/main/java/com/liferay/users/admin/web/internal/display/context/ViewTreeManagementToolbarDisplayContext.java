@@ -19,7 +19,6 @@ import com.liferay.item.selector.criteria.UUIDItemSelectorReturnType;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.User;
@@ -46,6 +45,7 @@ import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.users.admin.constants.UserScreenNavigationEntryConstants;
 import com.liferay.users.admin.constants.UsersAdminPortletKeys;
 import com.liferay.users.admin.item.selector.UserOrganizationItemSelectorCriterion;
 import com.liferay.users.admin.web.internal.search.OrganizationUserChecker;
@@ -291,13 +291,6 @@ public class ViewTreeManagementToolbarDisplayContext {
 				dropdownGroupItem.setLabel(
 					LanguageUtil.get(_httpServletRequest, "filter-by-status"));
 			}
-		).addGroup(
-			() -> !FeatureFlagManagerUtil.isEnabled("LPS-144527"),
-			dropdownGroupItem -> {
-				dropdownGroupItem.setDropdownItems(getOrderByDropdownItems());
-				dropdownGroupItem.setLabel(
-					LanguageUtil.get(_httpServletRequest, "order-by"));
-			}
 		).build();
 	}
 
@@ -381,7 +374,7 @@ public class ViewTreeManagementToolbarDisplayContext {
 		return PortletURLBuilder.createRenderURL(
 			_renderResponse
 		).setMVCRenderCommandName(
-			"/users_admin/view"
+			"/users_admin/organizations_view_tree"
 		).setKeywords(
 			() -> {
 				String[] keywords = ParamUtil.getStringValues(
@@ -404,9 +397,8 @@ public class ViewTreeManagementToolbarDisplayContext {
 		).setParameter(
 			"organizationId", _organization.getOrganizationId()
 		).setParameter(
-			"toolbarItem",
-			GetterUtil.getString(
-				_httpServletRequest.getAttribute("view.jsp-toolbarItem"))
+			"screenNavigationCategoryKey",
+			UserScreenNavigationEntryConstants.CATEGORY_KEY_ORGANIZATIONS
 		).setParameter(
 			"usersListView",
 			GetterUtil.getString(
@@ -453,69 +445,51 @@ public class ViewTreeManagementToolbarDisplayContext {
 
 		int navigationStatus = status;
 
-		if (Validator.isNotNull(getKeywords())) {
-			searchContainer.setResultsAndTotal(
-				() -> {
-					Hits hits =
-						OrganizationLocalServiceUtil.
-							searchOrganizationsAndUsers(
-								_themeDisplay.getCompanyId(),
-								_organization.getOrganizationId(),
-								getKeywords(), navigationStatus, null,
-								searchContainer.getStart(),
-								searchContainer.getEnd(),
-								new Sort[] {
-									new Sort(
-										"name",
-										Objects.equals(
-											searchContainer.getOrderByType(),
-											"desc")),
-									new Sort(
-										"lastName",
-										Objects.equals(
-											searchContainer.getOrderByType(),
-											"desc"))
-								});
+		searchContainer.setResultsAndTotal(
+			() -> {
+				Hits hits =
+					OrganizationLocalServiceUtil.searchOrganizationsAndUsers(
+						_themeDisplay.getCompanyId(),
+						_organization.getOrganizationId(), getKeywords(),
+						navigationStatus, null, searchContainer.getStart(),
+						searchContainer.getEnd(),
+						new Sort[] {
+							new Sort(
+								"name",
+								Objects.equals(
+									searchContainer.getOrderByType(), "desc")),
+							new Sort(
+								"lastName",
+								Objects.equals(
+									searchContainer.getOrderByType(), "desc"))
+						});
 
-					List<Object> results = new ArrayList<>(hits.getLength());
+				List<Object> results = new ArrayList<>(hits.getLength());
 
-					List<SearchResult> searchResults =
-						SearchResultUtil.getSearchResults(
-							hits, _themeDisplay.getLocale());
+				List<SearchResult> searchResults =
+					SearchResultUtil.getSearchResults(
+						hits, _themeDisplay.getLocale());
 
-					for (SearchResult searchResult : searchResults) {
-						String className = searchResult.getClassName();
+				for (SearchResult searchResult : searchResults) {
+					String className = searchResult.getClassName();
 
-						if (className.equals(Organization.class.getName())) {
-							results.add(
-								OrganizationLocalServiceUtil.fetchOrganization(
-									searchResult.getClassPK()));
-						}
-						else if (className.equals(User.class.getName())) {
-							results.add(
-								UserLocalServiceUtil.fetchUser(
-									searchResult.getClassPK()));
-						}
+					if (className.equals(Organization.class.getName())) {
+						results.add(
+							OrganizationLocalServiceUtil.fetchOrganization(
+								searchResult.getClassPK()));
 					}
+					else if (className.equals(User.class.getName())) {
+						results.add(
+							UserLocalServiceUtil.fetchUser(
+								searchResult.getClassPK()));
+					}
+				}
 
-					return results;
-				},
-				OrganizationLocalServiceUtil.searchOrganizationsAndUsersCount(
-					_themeDisplay.getCompanyId(),
-					_organization.getOrganizationId(), getKeywords(),
-					navigationStatus, null));
-		}
-		else {
-			searchContainer.setResultsAndTotal(
-				() -> OrganizationLocalServiceUtil.getOrganizationsAndUsers(
-					_themeDisplay.getCompanyId(),
-					_organization.getOrganizationId(), navigationStatus,
-					searchContainer.getStart(), searchContainer.getEnd(),
-					searchContainer.getOrderByComparator()),
-				OrganizationLocalServiceUtil.getOrganizationsAndUsersCount(
-					_themeDisplay.getCompanyId(),
-					_organization.getOrganizationId(), navigationStatus));
-		}
+				return results;
+			},
+			OrganizationLocalServiceUtil.searchOrganizationsAndUsersCount(
+				_themeDisplay.getCompanyId(), _organization.getOrganizationId(),
+				getKeywords(), navigationStatus, null));
 
 		searchContainer.setRowChecker(
 			new OrganizationUserChecker(_renderResponse));

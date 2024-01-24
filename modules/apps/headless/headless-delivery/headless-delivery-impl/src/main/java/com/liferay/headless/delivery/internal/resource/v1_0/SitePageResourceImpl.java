@@ -704,7 +704,7 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 
 		long[] segmentsEntryIds = _segmentsEntryRetriever.getSegmentsEntryIds(
 			layout.getGroupId(), contextUser.getUserId(),
-			_requestContextMapper.map(contextHttpServletRequest));
+			_requestContextMapper.map(contextHttpServletRequest), new long[0]);
 
 		long[] segmentsExperienceIds =
 			_segmentsExperienceRequestProcessorRegistry.
@@ -755,7 +755,7 @@ public class SitePageResourceImpl extends BaseSitePageResourceImpl {
 		try {
 			_layoutsImporter.importPageElement(
 				layout, layoutStructure, layoutStructure.getMainItemId(),
-				pageElement.toString(), 0);
+				pageElement.toString(), 0, true);
 		}
 		finally {
 			ServiceContextThreadLocal.popServiceContext();

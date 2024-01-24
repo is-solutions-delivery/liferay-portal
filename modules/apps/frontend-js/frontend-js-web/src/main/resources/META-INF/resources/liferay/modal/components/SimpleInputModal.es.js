@@ -5,7 +5,7 @@
 
 import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
-import {ClayCheckbox} from '@clayui/form';
+import ClayForm, {ClayCheckbox, ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import ClayModal, {useModal} from '@clayui/modal';
 import {useIsMounted} from '@liferay/frontend-js-react-web';
@@ -19,6 +19,8 @@ import navigate from '../../util/navigate.es';
  */
 const SimpleInputModal = ({
 	alert,
+	buttonSubmitLabel = Liferay.Language.get('save'),
+	center,
 	checkboxFieldLabel,
 	checkboxFieldName,
 	checkboxFieldValue,
@@ -28,6 +30,7 @@ const SimpleInputModal = ({
 	idFieldName,
 	idFieldValue,
 	initialVisible,
+	mainFieldComponent,
 	mainFieldLabel,
 	mainFieldName,
 	mainFieldValue = '',
@@ -35,6 +38,8 @@ const SimpleInputModal = ({
 	namespace,
 	onFormSuccess,
 	placeholder,
+	required = true,
+	size = 'md',
 }) => {
 	const isMounted = useIsMounted();
 	const [errorMessage, setErrorMessage] = useState();
@@ -55,8 +60,20 @@ const SimpleInputModal = ({
 		}
 	};
 
-	const _handleSubmit = (event) => {
+	const handleSubmit = (event) => {
 		event.preventDefault();
+
+		const error = inputValue
+			? ''
+			: Liferay.Language.get('this-field-is-required');
+
+		if (error && required) {
+			setErrorMessage(error);
+
+			return;
+		}
+
+		setLoadingResponse(true);
 
 		const formData = new FormData(
 			document.querySelector(`#${namespace}form`)
@@ -97,8 +114,6 @@ const SimpleInputModal = ({
 			.catch((response) => {
 				handleFormError(response);
 			});
-
-		setLoadingResponse(true);
 	};
 
 	const {observer, onClose} = useModal({
@@ -111,10 +126,14 @@ const SimpleInputModal = ({
 
 	return (
 		visible && (
-			<ClayModal observer={observer} size="md">
+			<ClayModal center={center} observer={observer} size={size}>
 				<ClayModal.Header>{dialogTitle}</ClayModal.Header>
 
-				<form id={`${namespace}form`} onSubmit={_handleSubmit}>
+				<ClayForm
+					id={`${namespace}form`}
+					noValidate
+					onSubmit={handleSubmit}
+				>
 					<ClayModal.Body>
 						{alert && alert.message && alert.title && (
 							<ClayAlert
@@ -142,29 +161,45 @@ const SimpleInputModal = ({
 							>
 								{mainFieldLabel}
 
-								<span className="reference-mark">
-									<ClayIcon symbol="asterisk" />
-								</span>
+								{required ? (
+									<span className="reference-mark">
+										<ClayIcon symbol="asterisk" />
+									</span>
+								) : null}
 							</label>
 
-							<input
+							<ClayInput
 								autoFocus
 								className="form-control"
+								component={mainFieldComponent}
 								disabled={loadingResponse}
 								id={`${namespace}${mainFieldName}`}
 								name={`${namespace}${mainFieldName}`}
-								onChange={(event) =>
-									setInputValue(event.target.value)
-								}
+								onChange={(event) => {
+									if (required) {
+										setErrorMessage(
+											event.target.value
+												? ''
+												: Liferay.Language.get(
+														'this-field-is-required'
+												  )
+										);
+									}
+
+									setInputValue(event.target.value);
+								}}
 								placeholder={placeholder}
 								ref={handleMainFieldRef}
-								required
+								required={required}
 								type="text"
 								value={inputValue}
 							/>
 
 							{errorMessage && (
-								<div className="form-feedback-item">
+								<div
+									className="form-feedback-item"
+									role="alert"
+								>
 									<ClayIcon
 										className="inline-item inline-item-before"
 										symbol="exclamation-full"
@@ -215,12 +250,12 @@ const SimpleInputModal = ({
 										</span>
 									)}
 
-									{Liferay.Language.get('save')}
+									{buttonSubmitLabel}
 								</ClayButton>
 							</ClayButton.Group>
 						}
 					/>
-				</form>
+				</ClayForm>
 			</ClayModal>
 		)
 	);

@@ -77,20 +77,42 @@ definition {
 		var userEmail = "dcp1@liferay.com";
 		var userName = "dcp1";
 
-		JSONUser.addUser(
-			userEmailAddress = ${userEmail},
-			userFirstName = ${userName},
-			userLastName = ${userName},
-			userScreenName = ${userName});
+		task ("Add a new user in DXP") {
+			JSONUser.addUser(
+				userEmailAddress = ${userEmail},
+				userFirstName = ${userName},
+				userLastName = ${userName},
+				userScreenName = ${userName});
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = ${userEmail});
+			JSONUser.setFirstPassword(
+				agreeToTermsAndAnswerReminderQuery = "true",
+				requireReset = "false",
+				userEmailAddress = ${userEmail});
+		}
 
-		var propertyName = ACDXPSettings.connectDXPtoAnalyticsCloud();
+		task ("Connect the DXP to AC") {
+			ACDXPSettings.connectDXPtoAnalyticsCloud();
+		}
 
-		ACUtils.launchAC();
+		task ("Sign in as new user") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = ${userEmail},
+				userLoginFullName = "${userName} ${userName}");
+		}
+
+		task ("Go to the Home Page") {
+			Navigator.openURL();
+
+			ACUtils.waitForSendingRequest();
+		}
+
+		task ("Close sessions") {
+			ACUtils.closeAllSessionsAndWait();
+		}
+
+		task ("Go to AC") {
+			ACUtils.launchAC();
+		}
 
 		task ("Create Access Request") {
 			ACNavigation.goToSettings();
@@ -110,9 +132,8 @@ definition {
 				optionValue = "Manage");
 
 			ACSettings.assertRequestLog(
-				jobType = "Access",
 				key_emailAdress = ${userEmail},
-				searchUser = ${userName});
+				key_jobType = "Access");
 		}
 	}
 
@@ -124,20 +145,42 @@ definition {
 		var userEmail = "dcp2@liferay.com";
 		var userName = "dcp2";
 
-		JSONUser.addUser(
-			userEmailAddress = ${userEmail},
-			userFirstName = ${userName},
-			userLastName = ${userName},
-			userScreenName = ${userName});
+		task ("Add a new user in DXP") {
+			JSONUser.addUser(
+				userEmailAddress = ${userEmail},
+				userFirstName = ${userName},
+				userLastName = ${userName},
+				userScreenName = ${userName});
 
-		JSONUser.setFirstPassword(
-			agreeToTermsAndAnswerReminderQuery = "true",
-			requireReset = "false",
-			userEmailAddress = ${userEmail});
+			JSONUser.setFirstPassword(
+				agreeToTermsAndAnswerReminderQuery = "true",
+				requireReset = "false",
+				userEmailAddress = ${userEmail});
+		}
 
-		var propertyName = ACDXPSettings.connectDXPtoAnalyticsCloud();
+		task ("Connect the DXP to AC") {
+			ACDXPSettings.connectDXPtoAnalyticsCloud();
+		}
 
-		ACUtils.launchAC();
+		task ("Sign in as new user") {
+			User.logoutAndLoginPG(
+				userLoginEmailAddress = ${userEmail},
+				userLoginFullName = "${userName} ${userName}");
+		}
+
+		task ("Go to the Home Page") {
+			Navigator.openURL();
+
+			ACUtils.waitForSendingRequest();
+		}
+
+		task ("Close sessions") {
+			ACUtils.closeAllSessionsAndWait();
+		}
+
+		task ("Go to AC") {
+			ACUtils.launchAC();
+		}
 
 		task ("Create Delete Request") {
 			ACNavigation.goToSettings();
@@ -157,9 +200,8 @@ definition {
 				optionValue = "Manage");
 
 			ACSettings.assertRequestLog(
-				jobType = "Delete",
 				key_emailAdress = ${userEmail},
-				searchUser = ${userName});
+				key_jobType = "Delete");
 		}
 	}
 
@@ -208,9 +250,8 @@ definition {
 				optionValue = "Manage");
 
 			ACSettings.assertRequestLog(
-				jobType = "Suppress",
 				key_emailAdress = ${userEmail},
-				searchUser = ${userName});
+				key_jobType = "Suppress");
 		}
 	}
 
@@ -281,14 +322,12 @@ definition {
 				optionValue = "Manage");
 
 			ACSettings.assertRequestLog(
-				jobType = "Unsuppress",
 				key_emailAdress = ${userEmail},
-				searchUser = ${userName});
+				key_jobType = "Unsuppress");
 
 			ACSettings.assertRequestLog(
-				jobType = "Access",
 				key_emailAdress = ${userEmail},
-				searchUser = ${userName});
+				key_jobType = "Access");
 		}
 	}
 

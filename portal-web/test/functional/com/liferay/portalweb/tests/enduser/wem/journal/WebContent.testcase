@@ -163,7 +163,7 @@ definition {
 	@description = "This is a test for LPS-192836. Assert can select feature image from Document and Media in web content creation."
 	@priority = 5
 	test AddWebContentWithFeaturedImageFromDocumentsAndMedia {
-		property custom.properties = "feature.flag.LPS-180855=true";
+		property portal.acceptance = "true";
 
 		task ("Given a user accesses to the web content editor") {
 			HeadlessSite.addSite(
@@ -228,6 +228,260 @@ definition {
 			LexiconCard.viewSpecificCardThumbnail(
 				card = "Web Content Title",
 				imageFileName = "moon.png");
+		}
+	}
+
+	@description = "This is a test for LPS-202016. Can configure required vocabulary in an asset library on the site connected."
+	@priority = 4
+	test CanConfigureRequiredVocabularyInAnAssetLibraryOnTheSiteConnected {
+		task ("When adding a vocabulary in asset libraray") {
+			task ("Add an asset library and connect it to the created site") {
+				JSONDepot.addDepot(depotName = "Test Depot Name");
+
+				JSONDepot.connectSite(
+					depotName = "Test Depot Name",
+					groupName = "Test Site Name");
+			}
+
+			task ("Add a vocabulary in asset library") {
+				DepotNavigator.openDepotCategoriesAdmin(depotName = "Test Depot Name");
+			}
+
+			task ("Add a name") {
+				Vocabulary.gotoAddVocabulary();
+
+				PortletEntry.inputName(name = "Vocabulary Name");
+			}
+		}
+
+		task ("Then can configure required vocabulary") {
+			task ("Expand Associated Asset Types") {
+				Panel.expandPanel(panel = "Associated Asset Types");
+			}
+
+			task ("View there's an explanatory text 'Choose the asset types this vocabulary is associated with and whether it is required.'") {
+				AssertTextEquals(
+					locator1 = "Message#SUBTITLE",
+					value1 = "Choose the asset types this vocabulary is associated with and whether it is required.");
+			}
+
+			task ("View Not Required is selected as default in radio") {
+				AssertElementPresent(
+					locator1 = "Radio#ANY_CHECKED",
+					radioLabel = "Not Required");
+			}
+
+			task ("View Choose Asset Type is changed to Asset Types and select 'Only Required in this Asset Library' and save") {
+				AssertElementPresent(
+					ariaLabel = "Asset Types",
+					locator1 = "Select#ANY_ARIA_LABEL",
+					value1 = "All Asset Types");
+
+				Check.checkNotVisible(
+					locator1 = "Radio#ANY",
+					radioLabel = "Only Required in This Asset Library");
+
+				Button.clickNoError(button = "Save");
+
+				AssertConfirm.assertPartialConfirmation(value1 = "Are you sure you want to create this vocabulary with public visibility?");
+
+				Alert.viewSuccessMessage();
+			}
+
+			task ("Add a category to the vocabulary") {
+				Category.addCP(
+					categoryName = "Category Name",
+					vocabularyName = "Vocabulary Name");
+			}
+
+			task ("Go to the created site > Categorization > Categories") {
+				Category.openCategoriesAdmin(siteURLKey = "test-site-name");
+			}
+
+			task ("View there's no asterisk on the created vocabulary") {
+				Navigator.gotoNavNested(navNested = "Vocabulary Name");
+
+				AssertVisible(
+					assetTitle = "Vocabulary Name",
+					info = "Asset Types: All Asset Types",
+					locator1 = "Message#ASSET_INFO");
+			}
+
+			task ("Add a web content with no category selected") {
+				WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+				WebContent.addArticleCP(
+					webContentContent = "Web Content Content Without Category",
+					webContentTitle = "Web Content Title Without Category");
+			}
+
+			task ("Assert the web content is added successfully") {
+				WebContent.viewTitle(webContentTitle = "Web Content Title Without Category");
+			}
+
+			task ("Go to Asset Library > Categories") {
+				DepotNavigator.openDepotCategoriesAdmin(depotName = "Test Depot Name");
+			}
+
+			task ("Edit the created vocabulary") {
+				Navigator.gotoNavNested(navNested = "Vocabulary Name");
+
+				Click.waitForMenuToggleJSClick(
+					key_headerName = "Vocabulary Name",
+					locator1 = "Portlet#H2_HEADER_VERTICAL_ELLIPSIS");
+
+				MenuItem.click(menuItem = "Edit");
+			}
+
+			task ("Select'Required in This Asset Library and Its Connected Sites' and save") {
+				Check.checkNotVisible(
+					locator1 = "Radio#ANY",
+					radioLabel = "Required in This Asset Library and Its Connected Sites");
+
+				PortletEntry.save();
+			}
+
+			task ("Go to the created site > Categorization > Categories") {
+				Category.openCategoriesAdmin(siteURLKey = "test-site-name");
+			}
+
+			task ("View there's asterisk on the created vocabulary") {
+				Navigator.gotoNavNested(navNested = "Vocabulary Name");
+
+				AssertVisible(
+					assetTitle = "Vocabulary Name",
+					info = "Asset Types: All Asset Types *(Required)",
+					locator1 = "Message#ASSET_INFO");
+			}
+
+			task ("Select the category and publish again") {
+				WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+				WebContentNavigator.gotoAddCP();
+
+				WebContent.addFailWithoutRequiredCategoryAssetTypeCP(vocabularyName = "Vocabulary Name");
+
+				WebContent.selectCategory(
+					categoryNameList = "Category Name",
+					vocabularyName = "Vocabulary Name");
+
+				PortletEntry.publish();
+			}
+
+			task ("Assert the web content is added successfully") {
+				WebContent.viewTitle(webContentTitle = "Web Content Title");
+			}
+		}
+	}
+
+	@description = "This is a test for LPS-202016. Disconnect and connect the site to the Asset Library when selecting 'Required in This Asset Library and Its Connected Sites'."
+	@priority = 4
+	test CanDisconnectAndConnectTheSiteToTheAssetLibraryInRequiredVocabulary {
+		task ("When adding a vocabulary in asset libraray") {
+			task ("Add an asset library and connect it to the created site") {
+				JSONDepot.addDepot(depotName = "Test Depot Name");
+
+				JSONDepot.connectSite(
+					depotName = "Test Depot Name",
+					groupName = "Test Site Name");
+			}
+
+			task ("Add a vocabulary in asset library") {
+				DepotNavigator.openDepotCategoriesAdmin(depotName = "Test Depot Name");
+			}
+
+			task ("Add a name") {
+				Vocabulary.gotoAddVocabulary();
+
+				PortletEntry.inputName(name = "Vocabulary Name");
+			}
+		}
+
+		task ("Then can disconnect and connect the site to the Asset Library when selecting 'Required in This Asset Library and Its Connected Sites") {
+			task ("Expand Associated Asset Types") {
+				Panel.expandPanel(panel = "Associated Asset Types");
+			}
+
+			task ("Select 'Required in This Asset Library and Its Connected Sites' and save") {
+				Check.checkNotVisible(
+					locator1 = "Radio#ANY",
+					radioLabel = "Required in This Asset Library and Its Connected Sites");
+
+				Button.clickNoError(button = "Save");
+
+				AssertConfirm.assertPartialConfirmation(value1 = "Are you sure you want to create this vocabulary with public visibility?");
+
+				Alert.viewSuccessMessage();
+			}
+
+			task ("Add a category to the vocabulary") {
+				Category.addCP(
+					categoryName = "Category Name",
+					vocabularyName = "Vocabulary Name");
+			}
+
+			task ("Disconnect the site to asset library") {
+				JSONDepot.disconnectSite(groupName = "Test Site Name");
+			}
+
+			task ("Go to the created site > Categorization > Categories") {
+				Category.openCategoriesAdmin(siteURLKey = "test-site-name");
+			}
+
+			task ("View the created vocabulary doesn’t display") {
+				AssertElementNotPresent(
+					key_tab = "Vocabulary Name",
+					locator1 = "NavTab#TAB_LINK");
+			}
+
+			task ("Add a web content with no category selected") {
+				WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+				WebContent.addArticleCP(
+					webContentContent = "Web Content Content Without Category",
+					webContentTitle = "Web Content Title Without Category");
+			}
+
+			task ("Assert the web content is added successfully") {
+				WebContent.viewTitle(webContentTitle = "Web Content Title Without Category");
+			}
+
+			task ("Reconnect the site to asset library") {
+				JSONDepot.connectSite(
+					depotName = "Test Depot Name",
+					groupName = "Test Site Name");
+			}
+
+			task ("Go to the created site > Categorization > Categories") {
+				Category.openCategoriesAdmin(siteURLKey = "test-site-name");
+			}
+
+			task ("View there's asterisk on the created vocabulary") {
+				Navigator.gotoNavNested(navNested = "Vocabulary Name");
+
+				AssertVisible(
+					assetTitle = "Vocabulary Name",
+					info = "Asset Types: All Asset Types *(Required)",
+					locator1 = "Message#ASSET_INFO");
+			}
+
+			task ("Select the category and publish again") {
+				WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+				WebContentNavigator.gotoAddCP();
+
+				WebContent.addFailWithoutRequiredCategoryAssetTypeCP(vocabularyName = "Vocabulary Name");
+
+				WebContent.selectCategory(
+					categoryNameList = "Category Name",
+					vocabularyName = "Vocabulary Name");
+
+				PortletEntry.publish();
+			}
+
+			task ("Assert the web content is added successfully") {
+				WebContent.viewTitle(webContentTitle = "Web Content Title");
+			}
 		}
 	}
 
@@ -452,13 +706,13 @@ definition {
 		}
 
 		task ("Select the first tab and edit Web Content Title") {
-			SelectWindow.selectPopUp(value1 = "null");
+			SelectWindow(value1 = "null");
 
 			WebContent.addCP(webContentTitle = "WC WebContent Title Edit");
 		}
 
 		task ("Publish Web Content and view the error message") {
-			PortletEntry.publish();
+			Button.clickPublish();
 
 			Alert.viewErrorMessage(errorMessage = "Another user has made changes since you started editing. Publish this article to save this version and overwrite the recent changes.");
 		}
@@ -1143,9 +1397,7 @@ definition {
 				webContentContent = "Web Content Content Edit",
 				webContentTitle = "Web Content Title Edit");
 
-			Button.clickSubmitForWorkflow();
-
-			Alert.viewSuccessMessage();
+			PortletEntry.submitForWorkflow();
 		}
 
 		task ("View the usages of the Web Content article") {
@@ -1445,6 +1697,51 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-177690. The tooltip of the back button should be Go to Web Content in the editor of Web Content."
+	@priority = 3
+	test ViewBackButtonTooltipOfWebContentEditor {
+		task ("Given a content creator adds a web content") {
+			WebContentNavigator.openWebContentAdmin(siteURLKey = "test-site-name");
+
+			WebContentNavigator.gotoAddCP();
+		}
+
+		task ("When the content creator hovers over the back button") {
+			MouseOver(locator1 = "Icon#BACK");
+		}
+
+		task ("Then the content creator could see the tooltip message") {
+			AssertVisible(
+				key_content = "Go to Web Content",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
+		}
+
+		task ("Given a content creator edits the copy of web content") {
+			JSONWebcontent.addWebContent(
+				content = "Web Content Content",
+				groupName = "Test Site Name",
+				title = "Web Content Title");
+
+			Navigator.gotoBack();
+
+			WebContent.copyCP(webContentTitle = "Web Content Title");
+
+			WebContentNavigator.gotoEditCP(webContentTitle = "Web Content Title (Copy)");
+
+			WaitForVisible(locator1 = "WCEditWebContent#SIDEBAR");
+		}
+
+		task ("When the content creator hovers over the back button") {
+			MouseOver(locator1 = "Icon#BACK");
+		}
+
+		task ("Then the content creator could see the tooltip message") {
+			AssertVisible(
+				key_content = "Go to Web Content",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
+		}
+	}
+
 	@description = "This is a use case for LPS-80445. View the categorization settings after delete the category of web content."
 	@priority = 5
 	test ViewCategorizationSettingsAfterDeleteCategoryOfWebContent {
@@ -1635,10 +1932,7 @@ definition {
 		}
 
 		task ("Impersonate the user") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Users and Organizations");
+			User.openUsersAdmin();
 
 			User.impersonateCP(userName = "userfn1");
 		}
@@ -2297,8 +2591,6 @@ definition {
 		}
 
 		task ("Then there's warning message inside Friendly URL section") {
-			Pause(value1 = 60000);
-
 			AssertTextEquals(
 				locator1 = "Message#ERROR_3",
 				value1 = "Warning:The URL used in English (United States), Chinese (China) and German (Germany) already exists in other sites or asset libraries.");

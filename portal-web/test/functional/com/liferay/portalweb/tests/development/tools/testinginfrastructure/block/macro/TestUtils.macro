@@ -1,6 +1,20 @@
 definition {
 
 	@summary = "Default summary"
+	macro assertContain(actual = null, expected = null) {
+		echo(${expected});
+
+		echo(${actual});
+
+		if (contains(${actual}, ${expected})) {
+			echo("PASSED");
+		}
+		else {
+			TestUtils.fail(message = "FAILED: '${actual}' doesn't contain expected text '${expected}'");
+		}
+	}
+
+	@summary = "Default summary"
 	macro assertElementNotFocused(element = null) {
 		var javascript = '''
 var e = document.evaluate("${element}", document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
@@ -182,10 +196,14 @@ return element.textContent;
 		var mac = OSDetector.isApple();
 
 		if (${mac} == "true") {
-			RobotType.robotTypeShortcut(locator1 = "Shift + Command + r");
+			Type.sendKeys(
+				locator1 = "//body",
+				value1 = "Shift + Command + r");
 		}
 		else {
-			RobotType.robotTypeShortcut(locator1 = "Ctrl + Shift + r");
+			Type.sendKeys(
+				locator1 = "//body",
+				value1 = "Ctrl + Shift + r");
 		}
 
 		WaitForPageLoad();

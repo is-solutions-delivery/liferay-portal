@@ -31,6 +31,7 @@ if (size != null) {
 <style type="text/css">
 	.dropdown-menu-personal-menu {
 		max-height: none;
+		z-index: 1021;
 	}
 
 	.dropdown-menu-personal-menu .dropdown-item-indicator {
@@ -110,7 +111,7 @@ if (size != null) {
 	%>
 
 	<react:component
-		module="personal_menu/js/PersonalMenu.es"
+		module="{PersonalMenu} from product-navigation-taglib"
 		props="<%= props %>"
 	/>
 </div>

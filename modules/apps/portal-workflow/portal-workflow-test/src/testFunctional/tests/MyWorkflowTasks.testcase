@@ -98,9 +98,7 @@ definition {
 
 		Alert.viewSuccessMessage();
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoTableListEntry(entryName = "Minium Portal");
 
@@ -137,22 +135,19 @@ definition {
 
 		Workflow.assignToMeTaskByActions(
 			workflowAssetTitle = "Order",
-			workflowAssetType = "Commerce Order",
+			workflowAssetType = "Order",
 			workflowTask = "Review");
 
 		Workflow.approveTaskByActions(
 			workflowAssetTitle = "Order",
-			workflowAssetType = "Commerce Order",
+			workflowAssetType = "Order",
 			workflowTask = "Review");
 
 		User.logoutAndLoginPG(
 			userLoginEmailAddress = "test@liferay.com",
 			userLoginFullName = "Test Test");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Order Management",
-			panel = "Commerce",
-			portlet = "Orders");
+		CommerceOrders.openOrdersAdmin();
 
 		AssertElementPresent(
 			key_status = "Approved",
@@ -183,9 +178,7 @@ definition {
 		}
 
 		task ("And the admin enabled the 'Buyer Order Approval Workflow' for Minium Portal") {
-			CommerceNavigator.gotoPortlet(
-				category = "Store Management",
-				portlet = "Channels");
+			CommerceChannels.openChannelsAdmin();
 
 			CommerceNavigator.gotoEntry(entryName = "Minium Portal");
 
@@ -222,6 +215,8 @@ definition {
 			ClickNoError(
 				key_text = "view",
 				locator1 = "Icon#ANY_LAST");
+
+			SelectWindow(value1 = "title=Pending Orders - Minium - Liferay DXP");
 
 			AssertLocation.assertPartialLocation(value1 = "web/minium/pending-orders");
 		}
@@ -554,9 +549,7 @@ definition {
 
 		Alert.viewSuccessMessage();
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoTableListEntry(entryName = "Minium Portal");
 
@@ -591,10 +584,7 @@ definition {
 
 		Navigator.openURL();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Order Management",
-			panel = "Commerce",
-			portlet = "Orders");
+		CommerceOrders.openOrdersAdmin();
 
 		AssertElementPresent(
 			key_status = "Pending",
@@ -763,7 +753,7 @@ definition {
 			workflowAssetType = "Blogs Entry",
 			workflowTask = "Review");
 
-		Notifications.goToFilterValues(filterValues = "Due Date");
+		ManagementBar.sortAssets(sortDirection = "Due Date");
 
 		if (IsElementPresent(key_text = "order-list-down", locator1 = "ManagementBar#ANY_ICON")) {
 			Click(
@@ -807,7 +797,7 @@ definition {
 			workflowAssetType = "BLogs Entry",
 			workflowTask = "Review");
 
-		Notifications.goToFilterValues(filterValues = "Last Activity Date");
+		ManagementBar.sortAssets(sortDirection = "Last Activity Date");
 
 		MyWorkflowTasks.viewMyWorkflowTaskItemPosition(
 			rowPosition = 1,
@@ -845,7 +835,7 @@ definition {
 			workflowDueDateTime = "2:45 PM",
 			workflowTask = "Review");
 
-		Notifications.goToFilterValues(filterValues = "Due Date");
+		ManagementBar.sortAssets(sortDirection = "Due Date");
 
 		MyWorkflowTasks.viewMyWorkflowTaskItemPosition(
 			rowPosition = 1,
@@ -871,7 +861,7 @@ definition {
 
 		Navigator.gotoNavTab(navTab = "Assigned to My Roles");
 
-		Notifications.goToFilterValues(filterValues = "Last Activity Date");
+		ManagementBar.sortAssets(sortDirection = "Last Activity Date");
 
 		MyWorkflowTasks.viewMyWorkflowTaskItemPosition(
 			rowPosition = 1,
@@ -880,29 +870,6 @@ definition {
 		MyWorkflowTasks.viewMyWorkflowTaskItemPosition(
 			rowPosition = 2,
 			title = "Blogs Entry 2");
-	}
-
-	@description = "Verify that the user is able to Reverse Sort Direction by clicking the icon"
-	@priority = 2
-	test CanReverseSortDirection {
-		JSONBlog.addEntry(
-			entryContent = "Blogs Entry Content",
-			entryTitle = "Blogs Entry Title 1");
-
-		JSONBlog.addEntry(
-			entryContent = "Blogs Entry Content",
-			entryTitle = "Blogs Entry Title 2");
-
-		UserBar.gotoDropdownItem(dropdownItem = "My Workflow Tasks");
-
-		Navigator.gotoNavTab(navTab = "Assigned to My Roles");
-
-		Workflow.clickRevertSortDirection();
-
-		AssertTextEquals(
-			key_rowNumber = 2,
-			locator1 = "MyWorkflowTasks#PROCESS_NAME_TABLE_ROW",
-			value1 = "Blogs Entry Title 2");
 	}
 
 	@description = "Verify that the user can search for results inside Assigned to My Roles by Asset Title"
@@ -921,9 +888,9 @@ definition {
 
 		MyWorkflowTasks.searchMyWorkflowTasks(searchTerm = "Blogs Entry Title");
 
-		AssertElementPresent(
-			key_resultBarMessage = "1 Result for \"Blogs Entry Title\"",
-			locator1 = "MyWorkflowTasks#MY_WORKFLOW_TASKS_SEARCH_RESULT_BAR");
+		AssertTextEquals.assertPartialText(
+			locator1 = "ManagementBar#SEARCH_RESULT_SUMMARY",
+			value1 = "1 Result Found for \"Blogs Entry Title\"");
 	}
 
 	@description = "Verify that the user can search for results inside Assigned to My Roles by Asset Type"
@@ -939,9 +906,9 @@ definition {
 
 		MyWorkflowTasks.searchMyWorkflowTasks(searchTerm = "Blogs Entry");
 
-		AssertElementPresent(
-			key_resultBarMessage = "1 Result for \"Blogs Entry\"",
-			locator1 = "MyWorkflowTasks#MY_WORKFLOW_TASKS_SEARCH_RESULT_BAR");
+		AssertTextEquals.assertPartialText(
+			locator1 = "ManagementBar#SEARCH_RESULT_SUMMARY",
+			value1 = "1 Result Found for \"Blogs Entry\"");
 	}
 
 	@description = "Verify that the user can search for Task on Assigned to My Roles page"
@@ -957,9 +924,9 @@ definition {
 
 		MyWorkflowTasks.searchMyWorkflowTasks(searchTerm = "Review");
 
-		AssertElementPresent(
-			key_resultBarMessage = "1 Result for \"Review\"",
-			locator1 = "MyWorkflowTasks#MY_WORKFLOW_TASKS_SEARCH_RESULT_BAR");
+		AssertTextEquals.assertPartialText(
+			locator1 = "ManagementBar#SEARCH_RESULT_SUMMARY",
+			value1 = "1 Result Found for \"Review\"");
 	}
 
 	@description = "Verify that the user can search for results inside Assigned to Me by Task"
@@ -978,9 +945,9 @@ definition {
 
 		MyWorkflowTasks.searchMyWorkflowTasks(searchTerm = "Review");
 
-		AssertElementPresent(
-			key_resultBarMessage = "1 Result for \"Review\"",
-			locator1 = "MyWorkflowTasks#MY_WORKFLOW_TASKS_SEARCH_RESULT_BAR");
+		AssertTextEquals.assertPartialText(
+			locator1 = "ManagementBar#SEARCH_RESULT_SUMMARY",
+			value1 = "1 Result Found for \"Review\"");
 	}
 
 	@description = "Verify that the user can search for results inside Assigned to Me by Asset Title"
@@ -996,9 +963,9 @@ definition {
 
 		MyWorkflowTasks.searchMyWorkflowTasks(searchTerm = "New Blog Title");
 
-		AssertElementPresent(
-			key_resultBarMessage = "1 Result for \"New Blog Title\"",
-			locator1 = "MyWorkflowTasks#MY_WORKFLOW_TASKS_SEARCH_RESULT_BAR");
+		AssertTextEquals.assertPartialText(
+			locator1 = "ManagementBar#SEARCH_RESULT_SUMMARY",
+			value1 = "1 Result Found for \"New Blog Title\"");
 	}
 
 	@description = "Verify that the user can search for results inside Assigned to Me by Asset Type"
@@ -1017,35 +984,9 @@ definition {
 
 		MyWorkflowTasks.searchMyWorkflowTasks(searchTerm = "Blogs Entry");
 
-		AssertElementPresent(
-			key_resultBarMessage = "1 Result for \"Blogs Entry\"",
-			locator1 = "MyWorkflowTasks#MY_WORKFLOW_TASKS_SEARCH_RESULT_BAR");
-	}
-
-	@description = "LPS-172352 - Verify if it is possible to specify the recipient type in a workflow task"
-	@priority = 4
-	test CanSpecifyTheRecipientTypeInWorkflowTask {
-		task ("Given that a user accesses the workflow") {
-			Workflow.openWorkflowListView();
-
-			Workflow.gotoEditWorkflowDefinition(workflowDefinitionTitle = "Single Approver");
-		}
-
-		task ("When changing the recipient to Task Assignees") {
-			KaleoDesigner.selectNode(nodeNodeLabel = "review");
-
-			KaleoDesigner.editNodeNotifications(nodeNotificationsRecipientType = "Task Assignees");
-		}
-
-		task ("and When exits editing and returns again") {
-			Navigator.gotoBack();
-
-			KaleoDesigner.selectNode(nodeNodeLabel = "review");
-		}
-
-		task ("Then the notification remains the one chosen by the user") {
-			KaleoDesigner.viewNodeNotifications(nodeNotificationsRecipientType = "Task Assignees");
-		}
+		AssertTextEquals.assertPartialText(
+			locator1 = "ManagementBar#SEARCH_RESULT_SUMMARY",
+			value1 = "1 Result Found for \"Blogs Entry\"");
 	}
 
 	@description = "Verify that, in the Assigned to Me table, users can hover over the Last Activity Date and the Due Date row to see the exact time of the action"
@@ -1224,9 +1165,13 @@ definition {
 			workflowAssetTitle = "Blogs Entry Title 1",
 			workflowTask = "Review");
 
-		MyWorkflowTasks.viewErrorRequestFailed();
+		AssertVisible(
+			key_alertMessage = "Your request failed to complete.",
+			locator1 = "Message#ERROR_ENTER_ANY");
 
-		MyWorkflowTasks.viewErrorValidDueDate();
+		AssertTextEquals.assertPartialText(
+			locator1 = "Message#ERROR_DISMISSIBLE",
+			value1 = "Please enter a valid due date.");
 	}
 
 	@description = "Verify that the pagination button indicates the selected page, even when there is only 1 page"
@@ -1639,12 +1584,11 @@ definition {
 	@description = "LPS-135888 - Verify that when the user delete the order, the task is not displayed under My Workflow Tasks"
 	@priority = 3
 	test TaskIsNotDisplayedAfterOrderIsDeleted {
-		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
+		CommerceAccelerators.initializeNewSiteViaAccelerator(
+			siteName = "Minium135888",
+			siteTemplateName = "Minium");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Accounts",
-			panel = "Control Panel",
-			portlet = "Accounts");
+		Account.openAccountsAdmin();
 
 		Account.addBusinessAccount(
 			accountDescription = "Account Description",
@@ -1662,11 +1606,9 @@ definition {
 			accountRoleTitle = "Account Administrator",
 			accountUserName = "userfn userln");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
-		CommerceNavigator.gotoEntry(entryName = "Minium Portal");
+		CommerceNavigator.gotoEntry(entryName = "Minium135888 Portal");
 
 		Select(
 			key_title = "Buyer Order Approval Workflow",
@@ -1675,7 +1617,7 @@ definition {
 
 		Button.clickSave();
 
-		ApplicationsMenu.gotoSite(site = "Minium");
+		ApplicationsMenu.gotoSite(site = "Minium135888");
 
 		FrontStore.addInitializerProductToCart(
 			productName = "U-Joint",
@@ -1693,16 +1635,14 @@ definition {
 
 		Workflow.viewTaskAssignedToMyRoles(
 			workflowAssetTitle = "Order",
-			workflowAssetType = "Commerce Order",
+			workflowAssetType = "Order",
 			workflowTask = "Review");
 
-		ApplicationsMenu.gotoSite(site = "Minium");
+		ApplicationsMenu.gotoSite(site = "Minium135888");
 
 		CommerceJSONOrdersAPI._deleteAllCommerceOrders();
 
-		CommerceNavigator.gotoPortlet(
-			category = "Order Management",
-			portlet = "Orders");
+		CommerceOrders.openOrdersAdmin();
 
 		IsElementPresent(locator1 = "CommerceNavigation#EMPTY_SEARCH_CONTAINER");
 

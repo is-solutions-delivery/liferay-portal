@@ -53,18 +53,22 @@ public class ProductOptionDTOConverter
 			return null;
 		}
 
-		CPOption cpOption = cpDefinitionOptionRel.getCPOption();
-
 		return new ProductOption() {
 			{
-				key = cpDefinitionOptionRel.getKey();
-				optionKey = cpOption.getKey();
-				values = TransformUtil.transformToArray(
-					cpDefinitionOptionRel.getCPDefinitionOptionValueRels(),
-					cpDefinitionOptionValueRel ->
-						LanguageUtils.getLanguageIdMap(
-							cpDefinitionOptionValueRel.getNameMap()),
-					Map.class);
+				setKey(cpDefinitionOptionRel::getKey);
+				setOptionKey(
+					() -> {
+						CPOption cpOption = cpDefinitionOptionRel.getCPOption();
+
+						return cpOption.getKey();
+					});
+				setValues(
+					() -> TransformUtil.transformToArray(
+						cpDefinitionOptionRel.getCPDefinitionOptionValueRels(),
+						cpDefinitionOptionValueRel ->
+							LanguageUtils.getLanguageIdMap(
+								cpDefinitionOptionValueRel.getNameMap()),
+						Map.class));
 			}
 		};
 	}

@@ -21,9 +21,7 @@ definition {
 
 		// TODO Review
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -70,9 +68,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -129,9 +125,7 @@ definition {
 
 		// TODO Review
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -184,9 +178,7 @@ definition {
 
 		Button.clickSave();
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -320,9 +312,7 @@ definition {
 		}
 
 		task ("And the admin goes into the Product and verifies if the Trash icon is not present in the header") {
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			AssertElementNotPresent(locator1 = "Button#TRASH_ENABLED");
 		}
@@ -368,9 +358,7 @@ definition {
 		// TODO Review
 
 		task ("Given a new virtual product is added") {
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CPCommerceCatalog.newProductsEntry(
 				productCatalog = "Master",
@@ -420,9 +408,7 @@ definition {
 			productStatusCode = 9,
 			productType = "simple");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
 			checkProductFields = "true",
@@ -438,9 +424,7 @@ definition {
 	test CanCheckApprovedProductDuplication {
 		property portal.acceptance = "true";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -464,9 +448,7 @@ definition {
 	test CanCheckApprovedProductSaveAsDraft {
 		property portal.acceptance = "false";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -514,9 +496,7 @@ definition {
 			productStatusCode = 0,
 			productType = "simple");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
 			checkProductFields = "true",
@@ -547,10 +527,7 @@ definition {
 			userScreenName = "categorymanager",
 			userSiteMembership = "Minium");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.assignRegularRoleCP(
 			roleTitle = "Category Manager",
@@ -565,9 +542,7 @@ definition {
 			urlAppend = "web/minium",
 			userEmailAddress = "categorymanager@liferay.com");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			compileDescription = "false",
@@ -598,9 +573,7 @@ definition {
 			urlAppend = "web/minium",
 			userEmailAddress = "categorymanager@liferay.com");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		AppBuilderAdmin.searchByItem(itemName = "Simple T-Shirt");
 
@@ -637,9 +610,7 @@ definition {
 			productStatusCode = 4,
 			productType = "simple");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
 			checkProductFields = "true",
@@ -655,9 +626,7 @@ definition {
 	test CanCheckDraftProductDuplication {
 		property portal.acceptance = "false";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			compileDescription = "false",
@@ -683,9 +652,7 @@ definition {
 	test CanCheckDraftProductSaveAsDraft {
 		property portal.acceptance = "false";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			compileDescription = "false",
@@ -716,9 +683,7 @@ definition {
 	test CanCheckDraftProductStatus {
 		property portal.acceptance = "true";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			compileDescription = "false",
@@ -741,10 +706,7 @@ definition {
 	test CanCheckDraftProductStatusWithWorkflow {
 		property portal.acceptance = "false";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		CommerceEntry.gotoMenuTab(menuTab = "Configuration");
 
@@ -752,9 +714,7 @@ definition {
 			workflowDefinition = "Single Approver",
 			workflowResourceValue = "Product");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			compileDescription = "false",
@@ -764,10 +724,7 @@ definition {
 			publishProduct = "false");
 
 		task ("Disable Single Approver for avoid issue on CI") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Workflow",
-				panel = "Applications",
-				portlet = "Process Builder");
+			Workflow.openWorkflowListView();
 
 			CommerceEntry.gotoMenuTab(menuTab = "Configuration");
 
@@ -800,9 +757,7 @@ definition {
 			userScreenName = "buyeruser",
 			userSiteMembership = "Minium");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Minium",
@@ -839,9 +794,7 @@ definition {
 
 		User.firstLoginPG();
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		AppBuilderAdmin.searchByItem(itemName = "Simple T-Shirt");
 
@@ -885,9 +838,7 @@ definition {
 			productStatusCode = 2,
 			productType = "simple");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
 			checkProductFields = "true",
@@ -918,10 +869,7 @@ definition {
 			userScreenName = "categorymanager",
 			userSiteMembership = "Minium");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.assignRegularRoleCP(
 			roleTitle = "Category Manager",
@@ -936,9 +884,7 @@ definition {
 			urlAppend = "web/minium",
 			userEmailAddress = "categorymanager@liferay.com");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			compileDescription = "false",
@@ -974,9 +920,7 @@ definition {
 			productStatusCode = 3,
 			productType = "simple");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
 			checkProductFields = "true",
@@ -997,9 +941,7 @@ definition {
 			productStatusCode = 5,
 			productType = "simple");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
 			checkProductFields = "true",
@@ -1020,9 +962,7 @@ definition {
 			productStatusCode = 6,
 			productType = "simple");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
 			checkProductFields = "true",
@@ -1043,9 +983,7 @@ definition {
 			productStatusCode = 8,
 			productType = "simple");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
 			checkProductFields = "true",
@@ -1066,9 +1004,7 @@ definition {
 			productStatusCode = 1,
 			productType = "simple");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
 			checkProductFields = "true",
@@ -1099,10 +1035,7 @@ definition {
 			userScreenName = "categorymanager",
 			userSiteMembership = "Minium");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.assignRegularRoleCP(
 			roleTitle = "Category Manager",
@@ -1117,9 +1050,7 @@ definition {
 			urlAppend = "web/minium",
 			userEmailAddress = "categorymanager@liferay.com");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			compileDescription = "false",
@@ -1149,9 +1080,7 @@ definition {
 			urlAppend = "web/minium",
 			userEmailAddress = "categorymanager@liferay.com");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		AppBuilderAdmin.searchByItem(itemName = "Simple T-Shirt");
 
@@ -1187,9 +1116,7 @@ definition {
 	test CanCheckProductPublication {
 		property portal.acceptance = "false";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -1207,9 +1134,7 @@ definition {
 			productStatusCode = 7,
 			productType = "simple");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceProducts.checkProductStatusAfterDuplicationAndConvertionToDraft(
 			checkProductFields = "true",
@@ -1338,6 +1263,12 @@ definition {
 				productType = "Virtual");
 
 			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Options");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
+
+			Button.clickSave();
 
 			CommerceProducts.configureVirtualProduct(
 				activationStatus = "Pending",
@@ -1491,6 +1422,12 @@ definition {
 
 			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
 
+			CommerceEntry.gotoMenuTab(menuTab = "Options");
+
+			CommerceEntry.gotoMenuTab(menuTab = "Virtual");
+
+			Button.clickSave();
+
 			CommerceProducts.configureVirtualProduct(
 				activationStatus = "Pending",
 				assertUploaded = "true",
@@ -1522,7 +1459,11 @@ definition {
 				productQuantity = 1);
 		}
 
-		task ("When the buyer call the Order API to retrieve the URL") {
+		task ("When the order status is updated from Processing to Completed via API") {
+			CommerceJSONOrdersAPI._patchCommerceOrder(orderStatus = 0);
+		}
+
+		task ("And the buyer call the Order API to retrieve the URL") {
 			var virtualItemURLs = CommerceJSONOrdersAPI.getOrderField(
 				email = "buyer@liferay.com",
 				jsonPath = "$..virtualItemURLs[:1]",
@@ -2406,9 +2347,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Minium",
@@ -2417,9 +2356,17 @@ definition {
 
 		CommerceEntry.gotoMenuTab(menuTab = "Virtual");
 
-		Click(locator1 = "FormFields#SELECT_UPLOAD_FIELD");
+		CommerceEntry.gotoMenuTab(menuTab = "Options");
 
-		SelectFrameTop();
+		CommerceEntry.gotoMenuTab(menuTab = "Virtual");
+
+		Button.clickSave();
+
+		Click(locator1 = "Button#PLUS");
+
+		SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+		Click(locator1 = "FormFields#SELECT_UPLOAD_FIELD");
 
 		SelectFrame(
 			key_frameTitle = "Select File",
@@ -2432,6 +2379,14 @@ definition {
 		Click(
 			key_filterOption = "Add",
 			locator1 = "AppBuilder#CHOOSE_SEARCH_FILTER_BY_OPTION");
+
+		SelectFrameTop();
+
+		SelectFrame.selectFrameNoLoading(locator1 = "CommerceEntry#IFRAME_SIDE_PANEL");
+
+		Button.clickSave();
+
+		Click(locator1 = "Icon#CLOSE");
 
 		SelectFrameTop();
 
@@ -2483,8 +2438,8 @@ definition {
 		Refresh();
 
 		AssertElementPresent(
-			key_index = "Commerce_Black.jpg",
-			locator1 = "WorkflowMetrics#SEARCH_FIELD_MAPPINGS_METRICS_INDEXES");
+			columnName = "Commerce_Black.jpg",
+			locator1 = "FrontendDataSet#COLUMN_NAME");
 
 		AssertElementPresent(
 			key_index = "Commerce_Black (1).jpg",
@@ -2522,9 +2477,7 @@ definition {
 			optionEntryName = "Color",
 			optionValuesList = "Black:1");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -2537,9 +2490,7 @@ definition {
 			noOption = "true",
 			optionValuesList = "Shoes:50.0");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -2617,9 +2568,7 @@ definition {
 
 		Button.clickSave();
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -2745,9 +2694,7 @@ definition {
 		}
 
 		task ("When I duplicate ABS Sensor") {
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CommerceNavigator.gotoEntry(entryName = "ABS Sensor");
 
@@ -2760,9 +2707,7 @@ definition {
 		}
 
 		task ("And if I change the SKU price of the original product") {
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CommerceNavigator.gotoEntry(entryName = "ABS Sensor");
 
@@ -2780,9 +2725,7 @@ definition {
 		}
 
 		task ("Then if I go back to the duplicate product the price hasn't changed") {
-			CommerceNavigator.gotoPortlet(
-				category = "Product Management",
-				portlet = "Products");
+			CommerceProducts.openProductsAdmin();
 
 			CommerceNavigator.searchEntry(entryName = "Copy of ABS Sensor");
 
@@ -2809,9 +2752,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "ABS Sensor");
 
@@ -2844,9 +2785,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceEntry.gotoMenuTab(menuTab = "SKUs");
 
@@ -2870,11 +2809,7 @@ definition {
 
 		CommerceNavigator.searchEntry(entryName = "MIN930178");
 
-		if (IsElementPresent(locator1 = "CommerceNavigation#ANY_ENTRY_NAME")) {
-			CommerceEntry.deleteCommerceEntry();
-
-			AssertVisible(locator1 = "Message#SUCCESS");
-		}
+		CommerceEntry.deleteCommerceEntry(entryName = "MIN930178");
 	}
 
 	@priority = 5
@@ -2885,9 +2820,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Minium",
@@ -2930,9 +2863,7 @@ definition {
 			specificationGroupTitle = "SpecificationGroups",
 			specificationTitle = "SpecificationLabel");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		WaitForElementPresent(locator1 = "CommerceNavigation#SEARCH_FIELD");
 
@@ -2961,9 +2892,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceNavigator.searchEntry(entryName = "Shock Absorber");
 
@@ -2997,9 +2926,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		Click(locator1 = "CommerceEntry#FILTER_DROPDOWN_MENU");
 
@@ -3097,9 +3024,7 @@ definition {
 	test UseFriendlyURL {
 		property portal.acceptance = "true";
 
-		CommerceNavigator.gotoPortlet(
-			category = "Store Management",
-			portlet = "Channels");
+		CommerceChannels.openChannelsAdmin();
 
 		CommerceNavigator.gotoEntry(entryName = "Test Channel");
 
@@ -3113,9 +3038,7 @@ definition {
 			}
 		}
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CPCommerceCatalog.newProductsEntry(
 			productCatalog = "Master",
@@ -3140,9 +3063,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		AppBuilderAdmin.searchByItem(itemName = '''"Brake Fluid"''');
 
@@ -3182,9 +3103,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		Click(locator1 = "ACUtils#NEXT_PAGES");
 
@@ -3210,9 +3129,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceEntry.gotoMenuTab(menuTab = "SKUs");
 
@@ -3234,9 +3151,7 @@ definition {
 
 		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
-		CommerceNavigator.gotoPortlet(
-			category = "Product Management",
-			portlet = "Products");
+		CommerceProducts.openProductsAdmin();
 
 		CommerceNavigator.sortField(sortFieldName = "Name");
 

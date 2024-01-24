@@ -12,6 +12,11 @@ import org.json.JSONObject;
  */
 public class DefaultJobEntity extends BaseJobEntity {
 
+	@Override
+	public String getJenkinsJobName() {
+		return getName();
+	}
+
 	protected DefaultJobEntity(JSONObject jsonObject) {
 		super(jsonObject);
 	}

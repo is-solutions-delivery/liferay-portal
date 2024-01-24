@@ -5,6 +5,8 @@
 
 package com.liferay.layout.type.controller.display.page.internal.layout.type.controller;
 
+import com.liferay.asset.display.page.layout.asset.entry.provider.LayoutAssetEntryProvider;
+import com.liferay.asset.display.page.layout.asset.entry.provider.LayoutAssetEntryProviderRegistry;
 import com.liferay.asset.display.page.portlet.AssetDisplayPageFriendlyURLProvider;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.info.display.request.attributes.contributor.InfoDisplayRequestAttributesContributor;
@@ -21,6 +23,7 @@ import com.liferay.layout.type.controller.display.page.internal.constants.Displa
 import com.liferay.layout.type.controller.display.page.internal.display.context.DisplayPageLayoutTypeControllerDisplayContext;
 import com.liferay.petra.io.unsync.UnsyncStringWriter;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.NoSuchLayoutException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -36,7 +39,6 @@ import com.liferay.portal.kernel.servlet.PipingServletResponse;
 import com.liferay.portal.kernel.servlet.TransferHeadersHelperUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
-import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -71,12 +73,33 @@ public class DisplayPageLayoutTypeController
 			return null;
 		}
 
-		Object object = httpServletRequest.getAttribute(
-			WebKeys.LAYOUT_ASSET_ENTRY);
+		AssetEntry assetEntry = null;
 
-		if ((object != null) && (object instanceof AssetEntry)) {
-			AssetEntry assetEntry = (AssetEntry)object;
+		try {
+			assetEntry = (AssetEntry)httpServletRequest.getAttribute(
+				WebKeys.LAYOUT_ASSET_ENTRY);
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug("Unable to get asset entry", exception);
+			}
+		}
 
+		if (assetEntry == null) {
+			String portletId = ParamUtil.getString(
+				httpServletRequest, "p_p_id");
+
+			LayoutAssetEntryProvider layoutAssetEntryProvider =
+				_layoutAssetEntryProviderRegistry.getLayoutAssetEntryProvider(
+					portletId);
+
+			if (layoutAssetEntryProvider != null) {
+				assetEntry = layoutAssetEntryProvider.getLayoutAssetEntry(
+					httpServletRequest, layout);
+			}
+		}
+
+		if (assetEntry != null) {
 			ThemeDisplay themeDisplay =
 				(ThemeDisplay)httpServletRequest.getAttribute(
 					WebKeys.THEME_DISPLAY);
@@ -120,6 +143,10 @@ public class DisplayPageLayoutTypeController
 				WebKeys.THEME_DISPLAY);
 
 		if (layout.isDraftLayout()) {
+			if (!themeDisplay.isSignedIn()) {
+				throw new NoSuchLayoutException();
+			}
+
 			Layout curLayout = _layoutLocalService.fetchLayout(
 				layout.getClassPK());
 
@@ -150,13 +177,19 @@ public class DisplayPageLayoutTypeController
 		DisplayPageLayoutTypeControllerDisplayContext
 			displayPageLayoutTypeControllerDisplayContext =
 				new DisplayPageLayoutTypeControllerDisplayContext(
-					_assetDisplayPageFriendlyURLProvider, httpServletRequest,
-					_infoItemServiceRegistry, _infoSearchClassMapperRegistry);
+					httpServletRequest, _infoItemServiceRegistry,
+					_infoSearchClassMapperRegistry);
 
 		httpServletRequest.setAttribute(
 			DisplayPageLayoutTypeControllerWebKeys.
 				DISPLAY_PAGE_LAYOUT_TYPE_CONTROLLER_DISPLAY_CONTEXT,
 			displayPageLayoutTypeControllerDisplayContext);
+
+		if (!displayPageLayoutTypeControllerDisplayContext.hasInfoItem() &&
+			!themeDisplay.isSignedIn()) {
+
+			throw new NoSuchLayoutException();
+		}
 
 		String page = getViewPage();
 
@@ -185,9 +218,7 @@ public class DisplayPageLayoutTypeController
 				httpServletResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			}
 			else if (!hasViewPermission) {
-				redirect = HttpComponentsUtil.setParameter(
-					themeDisplay.getURLSignIn(), "redirect",
-					themeDisplay.getURLCurrent());
+				throw new NoSuchLayoutException();
 			}
 
 			if (Validator.isNotNull(redirect)) {
@@ -360,6 +391,9 @@ public class DisplayPageLayoutTypeController
 
 	@Reference
 	private InfoSearchClassMapperRegistry _infoSearchClassMapperRegistry;
+
+	@Reference
+	private LayoutAssetEntryProviderRegistry _layoutAssetEntryProviderRegistry;
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;

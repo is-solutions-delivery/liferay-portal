@@ -7,14 +7,10 @@ package com.liferay.portal.search.elasticsearch7.internal.sidecar;
 
 import com.liferay.petra.process.ProcessExecutor;
 import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.cluster.ClusterExecutor;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.Props;
-import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationObserver;
 import com.liferay.portal.search.elasticsearch7.internal.configuration.ElasticsearchConfigurationWrapper;
-import com.liferay.portal.search.elasticsearch7.internal.configuration.OperationModeResolver;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionBuilder;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchConnectionManager;
 import com.liferay.portal.search.elasticsearch7.internal.connection.ElasticsearchInstancePaths;
@@ -22,6 +18,7 @@ import com.liferay.portal.search.elasticsearch7.internal.connection.Elasticsearc
 import com.liferay.portal.search.elasticsearch7.internal.connection.constants.ConnectionConstants;
 import com.liferay.portal.search.elasticsearch7.internal.index.constants.SidecarVersionConstants;
 import com.liferay.portal.search.elasticsearch7.internal.util.ResourceUtil;
+import com.liferay.portal.util.PropsValues;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,7 +61,7 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 	}
 
 	protected void applyConfigurations() {
-		if (operationModeResolver.isProductionModeEnabled()) {
+		if (elasticsearchConfigurationWrapper.isProductionModeEnabled()) {
 			elasticsearchConnectionManager.removeElasticsearchConnection(
 				ConnectionConstants.SIDECAR_CONNECTION_ID);
 		}
@@ -88,9 +85,8 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 			}
 
 			_sidecar = new Sidecar(
-				clusterExecutor, elasticsearchConfigurationWrapper,
-				_getElasticsearchInstancePaths(), processExecutor,
-				new ProcessExecutorPathsImpl(props), this);
+				elasticsearchConfigurationWrapper,
+				_getElasticsearchInstancePaths(), processExecutor, this);
 
 			ElasticsearchConnectionBuilder elasticsearchConnectionBuilder =
 				new ElasticsearchConnectionBuilder();
@@ -131,29 +127,20 @@ public class SidecarManager implements ElasticsearchConfigurationObserver {
 	}
 
 	@Reference
-	protected ClusterExecutor clusterExecutor;
-
-	@Reference
-	protected volatile ElasticsearchConfigurationWrapper
+	protected ElasticsearchConfigurationWrapper
 		elasticsearchConfigurationWrapper;
 
 	@Reference
 	protected ElasticsearchConnectionManager elasticsearchConnectionManager;
 
 	@Reference
-	protected OperationModeResolver operationModeResolver;
-
-	@Reference
 	protected ProcessExecutor processExecutor;
-
-	@Reference
-	protected Props props;
 
 	private ElasticsearchInstancePaths _getElasticsearchInstancePaths() {
 		ElasticsearchInstancePathsBuilder elasticsearchInstancePathsBuilder =
 			new ElasticsearchInstancePathsBuilder();
 
-		Path workPath = Paths.get(props.get(PropsKeys.LIFERAY_HOME));
+		Path workPath = Paths.get(PropsValues.LIFERAY_HOME);
 
 		Path dataPath = workPath.resolve("data/elasticsearch7");
 

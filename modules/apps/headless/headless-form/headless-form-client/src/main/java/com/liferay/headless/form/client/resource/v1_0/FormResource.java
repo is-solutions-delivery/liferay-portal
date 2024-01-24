@@ -18,6 +18,8 @@ import com.liferay.headless.form.client.serdes.v1_0.FormSerDes;
 
 import java.io.File;
 
+import java.net.URL;
+
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -127,6 +129,10 @@ public interface FormResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {

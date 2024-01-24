@@ -50,7 +50,7 @@ if (portletTitleBasedNavigation) {
 <c:if test="<%= portletTitleBasedNavigation %>">
 
 	<%
-	KBDropdownItemsProvider kbDropdownItemsProvider = new KBDropdownItemsProvider(liferayPortletRequest, liferayPortletResponse);
+	KBDropdownItemsProvider kbDropdownItemsProvider = new KBDropdownItemsProvider(liferayPortletRequest, liferayPortletResponse, trashHelper);
 	%>
 
 	<div class="management-bar management-bar-light navbar navbar-expand-md">
@@ -118,7 +118,7 @@ if (portletTitleBasedNavigation) {
 					<div class="autofit-col">
 
 						<%
-						KBDropdownItemsProvider kbDropdownItemsProvider = new KBDropdownItemsProvider(kbGroupServiceConfiguration, liferayPortletRequest, liferayPortletResponse);
+						KBDropdownItemsProvider kbDropdownItemsProvider = new KBDropdownItemsProvider(kbGroupServiceConfiguration, liferayPortletRequest, liferayPortletResponse, trashHelper);
 						%>
 
 						<clay:dropdown-actions
@@ -263,6 +263,23 @@ if (portletTitleBasedNavigation) {
 		</div>
 	</div>
 </div>
+
+<%
+String kbArticleSuccessMessage = GetterUtil.getString(MultiSessionMessages.get(renderRequest, "kbArticleSuccessMessage"));
+%>
+
+<c:if test="<%= Validator.isNotNull(kbArticleSuccessMessage) %>">
+	<liferay-frontend:component
+		context='<%=
+			HashMapBuilder.<String, Object>put(
+				"autoClose", 20000
+			).put(
+				"message", kbArticleSuccessMessage
+			).build()
+		%>'
+		module="admin/js/utils/openToast"
+	/>
+</c:if>
 
 <%
 List<AssetTag> assetTags = AssetTagLocalServiceUtil.getTags(KBArticle.class.getName(), kbArticle.getClassPK());

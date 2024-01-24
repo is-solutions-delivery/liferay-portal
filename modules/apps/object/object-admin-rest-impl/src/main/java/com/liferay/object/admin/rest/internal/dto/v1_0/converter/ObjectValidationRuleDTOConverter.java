@@ -51,39 +51,46 @@ public class ObjectValidationRuleDTOConverter
 			return null;
 		}
 
-		ObjectDefinition objectDefinition =
-			_objectDefinitionLocalService.getObjectDefinition(
-				serviceBuilderObjectValidationRule.getObjectDefinitionId());
-
 		return new ObjectValidationRule() {
 			{
-				actions = dtoConverterContext.getActions();
-				active = serviceBuilderObjectValidationRule.isActive();
-				dateCreated =
-					serviceBuilderObjectValidationRule.getCreateDate();
-				dateModified =
-					serviceBuilderObjectValidationRule.getModifiedDate();
-				engine = serviceBuilderObjectValidationRule.getEngine();
-				engineLabel = _language.get(
-					dtoConverterContext.getLocale(),
-					serviceBuilderObjectValidationRule.getEngine());
-				errorLabel = LocalizedMapUtil.getLanguageIdMap(
-					serviceBuilderObjectValidationRule.getErrorLabelMap());
-				externalReferenceCode =
-					serviceBuilderObjectValidationRule.
-						getExternalReferenceCode();
-				id =
-					serviceBuilderObjectValidationRule.
-						getObjectValidationRuleId();
-				name = LocalizedMapUtil.getLanguageIdMap(
-					serviceBuilderObjectValidationRule.getNameMap());
-				objectDefinitionExternalReferenceCode =
-					objectDefinition.getExternalReferenceCode();
-				objectDefinitionId =
-					serviceBuilderObjectValidationRule.getObjectDefinitionId();
-				script = serviceBuilderObjectValidationRule.getScript();
-				system = serviceBuilderObjectValidationRule.getSystem();
+				setActions(dtoConverterContext::getActions);
+				setActive(serviceBuilderObjectValidationRule::isActive);
+				setDateCreated(
+					serviceBuilderObjectValidationRule::getCreateDate);
+				setDateModified(
+					serviceBuilderObjectValidationRule::getModifiedDate);
+				setEngine(serviceBuilderObjectValidationRule::getEngine);
+				setEngineLabel(
+					() -> _language.get(
+						dtoConverterContext.getLocale(),
+						serviceBuilderObjectValidationRule.getEngine()));
+				setErrorLabel(
+					() -> LocalizedMapUtil.getLanguageIdMap(
+						serviceBuilderObjectValidationRule.getErrorLabelMap()));
+				setExternalReferenceCode(
+					() ->
+						serviceBuilderObjectValidationRule.
+							getExternalReferenceCode());
+				setId(
+					() ->
+						serviceBuilderObjectValidationRule.
+							getObjectValidationRuleId());
+				setName(
+					() -> LocalizedMapUtil.getLanguageIdMap(
+						serviceBuilderObjectValidationRule.getNameMap()));
+				setObjectDefinitionExternalReferenceCode(
+					() -> {
+						ObjectDefinition objectDefinition =
+							_objectDefinitionLocalService.getObjectDefinition(
+								serviceBuilderObjectValidationRule.
+									getObjectDefinitionId());
 
+						return objectDefinition.getExternalReferenceCode();
+					});
+				setObjectDefinitionId(
+					() ->
+						serviceBuilderObjectValidationRule.
+							getObjectDefinitionId());
 				setObjectValidationRuleSettings(
 					() -> TransformUtil.transformToArray(
 						serviceBuilderObjectValidationRule.
@@ -95,6 +102,8 @@ public class ObjectValidationRuleDTOConverter
 				setOutputType(
 					() -> ObjectValidationRule.OutputType.create(
 						serviceBuilderObjectValidationRule.getOutputType()));
+				setScript(serviceBuilderObjectValidationRule::getScript);
+				setSystem(serviceBuilderObjectValidationRule::isSystem);
 			}
 		};
 	}

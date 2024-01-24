@@ -393,10 +393,7 @@ definition {
 		}
 
 		task ("Edit the user custom field") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Users and Organizations");
+			User.openUsersAdmin();
 
 			UserNavigator.gotoUser(userScreenName = "user3");
 
@@ -521,10 +518,7 @@ definition {
 		}
 
 		task ("Edit job title field of one of the users") {
-			ApplicationsMenu.gotoPortlet(
-				category = "Users",
-				panel = "Control Panel",
-				portlet = "Users and Organizations");
+			User.openUsersAdmin();
 
 			UserNavigator.gotoUser(userScreenName = "user3");
 
@@ -878,8 +872,12 @@ definition {
 	}
 
 	@description = "Feature ID: Legacy | Automation ID: LRAC-7962 | Test Summary: Create a segment that contains anonymous individuals"
+	@ignore = "true"
 	@priority = 5
 	test CanCreateSegmentWithAnonymousIndividuals {
+
+		// AC Bug ticket: LRAC-14840
+
 		var usernameList = "ac,liferay,dxp";
 		var emailList = "ac@liferay.com,liferay@liferay.com,dxp@liferay.com";
 		var nameList = "ac ac,liferay liferay,dxp dxp";
@@ -1008,10 +1006,7 @@ definition {
 
 		task ("Edit the users age") {
 			for (var userName : list ${userScreenNames}) {
-				ApplicationsMenu.gotoPortlet(
-					category = "Users",
-					panel = "Control Panel",
-					portlet = "Users and Organizations");
+				User.openUsersAdmin();
 
 				UserNavigator.gotoUser(userScreenName = ${userName});
 
@@ -1093,9 +1088,12 @@ definition {
 	}
 
 	@description = "Create a static segment with individual"
+	@ignore = "true"
 	@priority = 5
 	test CanCreateStaticSegmentWithIndividuals {
 		property test.run.type = "single";
+
+		// AC Bug ticket: LRAC-14840
 
 		task ("Sign in as new user") {
 			User.logoutAndLoginPG(
@@ -1616,9 +1614,13 @@ definition {
 			value1 = "DYNAMIC SEGMENT");
 	}
 
-	@description = "Bug: LRAC-10972 | Automation ID: LRAC-11506 | Test Summary: Check Autocomplete Suggestions For All Criteria Types"
+	@description = "Bug: LRAC-10972 | Automation ID: LRAC-11506 | Test Summary: Check autocomplete suggestions for Session Attributes"
+	@ignore = "true"
 	@priority = 3
-	test CheckAutocompleteSuggestionsForAllCriteriaTypes {
+	test CheckAutocompleteSuggestionsForSessionAttributes {
+
+		// AC Ignored: Data doesn't appear on time (Need to wait for the session to close)
+
 		task ("Sign in as new user") {
 			User.logoutAndLoginPG(
 				userLoginEmailAddress = "userea@liferay.com",
@@ -1663,34 +1665,6 @@ definition {
 			ACSegments.viewAutocompleteSuggestions(
 				autocompleteText = ${myURL},
 				notPresent = "home");
-		}
-
-		task ("Cancel the creation") {
-			ACSegments.cancelSegment();
-
-			Button.click(button = "Leave Page");
-		}
-
-		task ("Add a new dynamic segment") {
-			ACNavigation.goToSegments();
-
-			ACSegments.createDynamicSegment();
-
-			ACUtils.setItemName(itemName = "Dynamic Segment Test");
-		}
-
-		task ("Check URL autocomplete from Session Attributes") {
-			ACSegments.goToSidebarAttributes(criterion = "Individual Attributes");
-
-			ACSegments.addSegmentField(segmentField = "givenName");
-
-			ACSegments.editTextCriterion(
-				skip = "true",
-				textInput = "user");
-
-			ACSegments.viewAutocompleteSuggestions(
-				autocompleteText = "userfn",
-				notPresent = "Abram");
 		}
 	}
 

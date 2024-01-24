@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -53,253 +54,370 @@ public class Field implements Serializable {
 	@Schema
 	@Valid
 	public Object getDefaultValue() {
+		if (_defaultValueSupplier != null) {
+			defaultValue = _defaultValueSupplier.get();
+
+			_defaultValueSupplier = null;
+		}
+
 		return defaultValue;
 	}
 
 	public void setDefaultValue(Object defaultValue) {
 		this.defaultValue = defaultValue;
+
+		_defaultValueSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setDefaultValue(
 		UnsafeSupplier<Object, Exception> defaultValueUnsafeSupplier) {
 
-		try {
-			defaultValue = defaultValueUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_defaultValueSupplier = () -> {
+			try {
+				return defaultValueUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Object defaultValue;
 
+	@JsonIgnore
+	private Supplier<Object> _defaultValueSupplier;
+
 	@Schema
 	@Valid
 	public FieldMapping[] getFieldMappings() {
+		if (_fieldMappingsSupplier != null) {
+			fieldMappings = _fieldMappingsSupplier.get();
+
+			_fieldMappingsSupplier = null;
+		}
+
 		return fieldMappings;
 	}
 
 	public void setFieldMappings(FieldMapping[] fieldMappings) {
 		this.fieldMappings = fieldMappings;
+
+		_fieldMappingsSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setFieldMappings(
 		UnsafeSupplier<FieldMapping[], Exception> fieldMappingsUnsafeSupplier) {
 
-		try {
-			fieldMappings = fieldMappingsUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_fieldMappingsSupplier = () -> {
+			try {
+				return fieldMappingsUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected FieldMapping[] fieldMappings;
 
+	@JsonIgnore
+	private Supplier<FieldMapping[]> _fieldMappingsSupplier;
+
 	@Schema
 	public String getHelpText() {
+		if (_helpTextSupplier != null) {
+			helpText = _helpTextSupplier.get();
+
+			_helpTextSupplier = null;
+		}
+
 		return helpText;
 	}
 
 	public void setHelpText(String helpText) {
 		this.helpText = helpText;
+
+		_helpTextSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setHelpText(
 		UnsafeSupplier<String, Exception> helpTextUnsafeSupplier) {
 
-		try {
-			helpText = helpTextUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_helpTextSupplier = () -> {
+			try {
+				return helpTextUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String helpText;
 
+	@JsonIgnore
+	private Supplier<String> _helpTextSupplier;
+
 	@Schema
 	public String getHelpTextLocalized() {
+		if (_helpTextLocalizedSupplier != null) {
+			helpTextLocalized = _helpTextLocalizedSupplier.get();
+
+			_helpTextLocalizedSupplier = null;
+		}
+
 		return helpTextLocalized;
 	}
 
 	public void setHelpTextLocalized(String helpTextLocalized) {
 		this.helpTextLocalized = helpTextLocalized;
+
+		_helpTextLocalizedSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setHelpTextLocalized(
 		UnsafeSupplier<String, Exception> helpTextLocalizedUnsafeSupplier) {
 
-		try {
-			helpTextLocalized = helpTextLocalizedUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_helpTextLocalizedSupplier = () -> {
+			try {
+				return helpTextLocalizedUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String helpTextLocalized;
 
+	@JsonIgnore
+	private Supplier<String> _helpTextLocalizedSupplier;
+
 	@Schema
 	public String getLabel() {
+		if (_labelSupplier != null) {
+			label = _labelSupplier.get();
+
+			_labelSupplier = null;
+		}
+
 		return label;
 	}
 
 	public void setLabel(String label) {
 		this.label = label;
+
+		_labelSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setLabel(
 		UnsafeSupplier<String, Exception> labelUnsafeSupplier) {
 
-		try {
-			label = labelUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_labelSupplier = () -> {
+			try {
+				return labelUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String label;
 
+	@JsonIgnore
+	private Supplier<String> _labelSupplier;
+
 	@Schema
 	public String getLabelLocalized() {
+		if (_labelLocalizedSupplier != null) {
+			labelLocalized = _labelLocalizedSupplier.get();
+
+			_labelLocalizedSupplier = null;
+		}
+
 		return labelLocalized;
 	}
 
 	public void setLabelLocalized(String labelLocalized) {
 		this.labelLocalized = labelLocalized;
+
+		_labelLocalizedSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setLabelLocalized(
 		UnsafeSupplier<String, Exception> labelLocalizedUnsafeSupplier) {
 
-		try {
-			labelLocalized = labelLocalizedUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_labelLocalizedSupplier = () -> {
+			try {
+				return labelLocalizedUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String labelLocalized;
 
+	@JsonIgnore
+	private Supplier<String> _labelLocalizedSupplier;
+
 	@Schema
 	public String getName() {
+		if (_nameSupplier != null) {
+			name = _nameSupplier.get();
+
+			_nameSupplier = null;
+		}
+
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
+
+		_nameSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setName(UnsafeSupplier<String, Exception> nameUnsafeSupplier) {
-		try {
-			name = nameUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_nameSupplier = () -> {
+			try {
+				return nameUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String name;
 
+	@JsonIgnore
+	private Supplier<String> _nameSupplier;
+
 	@Schema
 	public String getType() {
+		if (_typeSupplier != null) {
+			type = _typeSupplier.get();
+
+			_typeSupplier = null;
+		}
+
 		return type;
 	}
 
 	public void setType(String type) {
 		this.type = type;
+
+		_typeSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setType(UnsafeSupplier<String, Exception> typeUnsafeSupplier) {
-		try {
-			type = typeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_typeSupplier = () -> {
+			try {
+				return typeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String type;
 
+	@JsonIgnore
+	private Supplier<String> _typeSupplier;
+
 	@Schema
 	@Valid
 	public TypeOptions getTypeOptions() {
+		if (_typeOptionsSupplier != null) {
+			typeOptions = _typeOptionsSupplier.get();
+
+			_typeOptionsSupplier = null;
+		}
+
 		return typeOptions;
 	}
 
 	public void setTypeOptions(TypeOptions typeOptions) {
 		this.typeOptions = typeOptions;
+
+		_typeOptionsSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setTypeOptions(
 		UnsafeSupplier<TypeOptions, Exception> typeOptionsUnsafeSupplier) {
 
-		try {
-			typeOptions = typeOptionsUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_typeOptionsSupplier = () -> {
+			try {
+				return typeOptionsUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected TypeOptions typeOptions;
+
+	@JsonIgnore
+	private Supplier<TypeOptions> _typeOptionsSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -328,6 +446,8 @@ public class Field implements Serializable {
 
 		sb.append("{");
 
+		Object defaultValue = getDefaultValue();
+
 		if (defaultValue != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -349,6 +469,8 @@ public class Field implements Serializable {
 			}
 		}
 
+		FieldMapping[] fieldMappings = getFieldMappings();
+
 		if (fieldMappings != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -369,6 +491,8 @@ public class Field implements Serializable {
 			sb.append("]");
 		}
 
+		String helpText = getHelpText();
+
 		if (helpText != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -382,6 +506,8 @@ public class Field implements Serializable {
 
 			sb.append("\"");
 		}
+
+		String helpTextLocalized = getHelpTextLocalized();
 
 		if (helpTextLocalized != null) {
 			if (sb.length() > 1) {
@@ -397,6 +523,8 @@ public class Field implements Serializable {
 			sb.append("\"");
 		}
 
+		String label = getLabel();
+
 		if (label != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -410,6 +538,8 @@ public class Field implements Serializable {
 
 			sb.append("\"");
 		}
+
+		String labelLocalized = getLabelLocalized();
 
 		if (labelLocalized != null) {
 			if (sb.length() > 1) {
@@ -425,6 +555,8 @@ public class Field implements Serializable {
 			sb.append("\"");
 		}
 
+		String name = getName();
+
 		if (name != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -439,6 +571,8 @@ public class Field implements Serializable {
 			sb.append("\"");
 		}
 
+		String type = getType();
+
 		if (type != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -452,6 +586,8 @@ public class Field implements Serializable {
 
 			sb.append("\"");
 		}
+
+		TypeOptions typeOptions = getTypeOptions();
 
 		if (typeOptions != null) {
 			if (sb.length() > 1) {

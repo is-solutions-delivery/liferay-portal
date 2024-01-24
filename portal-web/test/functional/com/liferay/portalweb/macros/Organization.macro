@@ -107,9 +107,7 @@ definition {
 			}
 		}
 
-		Click(locator1 = "Button#SAVE");
-
-		Alert.viewSuccessMessage();
+		PortletEntry.save();
 	}
 
 	@summary = "Default summary"
@@ -241,7 +239,7 @@ definition {
 	macro addWithLocalizedCountryCP(navItem = null, localizedOption = null, orgName = null, countryName = null, saveButton = null) {
 		Navigator.gotoNavItem(navItem = ${navItem});
 
-		LexiconEntry.gotoAdd();
+		Button.click(button = ${newButton});
 
 		if (IsElementPresent(key_menuItem = ${localizedOption}, locator1 = "MenuItem#ANY_MENU_ITEM")) {
 			MenuItem.click(menuItem = ${localizedOption});
@@ -367,7 +365,7 @@ definition {
 	macro openOrganizationsAdmin(baseURL = null) {
 		Navigator.openWithAppendToBaseURL(
 			baseURL = ${baseURL},
-			urlAppend = "group/control_panel/manage?p_p_id=com_liferay_users_admin_web_portlet_UsersAdminPortlet&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_com_liferay_users_admin_web_portlet_UsersAdminPortlet_toolbarItem=view-all-organizations&_com_liferay_users_admin_web_portlet_UsersAdminPortlet_usersListView=flat-organizations");
+			urlAppend = "group/control_panel/manage?p_p_id=com_liferay_users_admin_web_portlet_UsersAdminPortlet&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_com_liferay_users_admin_web_portlet_UsersAdminPortlet_screenNavigationCategoryKey=organizations&_com_liferay_users_admin_web_portlet_UsersAdminPortlet_usersListView=flat-organizations");
 	}
 
 	@summary = "Default summary"
@@ -405,10 +403,7 @@ definition {
 
 	@summary = "Default summary"
 	macro tearDownCP(orgName = null) {
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		AssertClick(
 			locator1 = "NavBar#ORGANIZATIONS",
@@ -420,7 +415,9 @@ definition {
 
 				PortletEntry.selectAll();
 
-				ClickNoError(locator1 = "Icon#DELETE");
+				ClickNoError(
+					key_text = "times-circle",
+					locator1 = "ManagementBar#ANY_ICON");
 
 				AssertConfirm(value1 = "Are you sure you want to delete this? It will be deleted immediately.");
 

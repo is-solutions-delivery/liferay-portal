@@ -1,0 +1,148 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "span",
+					"label": "Tag",
+					"name": "tag",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "span",
+								"value": "span"
+							},
+							{
+								"label": "div",
+								"value": "div"
+							},
+							{
+								"label": "H1",
+								"value": "h1"
+							},
+							{
+								"label": "H2",
+								"value": "h2"
+							},
+							{
+								"label": "H3",
+								"value": "h3"
+							},
+							{
+								"label": "H4",
+								"value": "h4"
+							},
+							{
+								"label": "H5",
+								"value": "h5"
+							},
+							{
+								"label": "H6",
+								"value": "h6"
+							},
+							{
+								"label": "Paragraph",
+								"value": "p"
+							}
+						]
+					}
+				},
+				{
+					"defaultValue": "var(--color-brand-primary-darken-4)",
+					"label": "Color",
+					"name": "color",
+					"type": "colorPicker"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "paragraphBase",
+					"label": "Size",
+					"name": "size",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "Display Large",
+								"value": "displayLarge"
+							},
+							{
+								"label": "Display Small",
+								"value": "displaySmall"
+							},
+							{
+								"label": "Heading 1",
+								"value": "heading1"
+							},
+							{
+								"label": "Heading 2",
+								"value": "heading2"
+							},
+							{
+								"label": "Heading 3",
+								"value": "heading3"
+							},
+							{
+								"label": "Heading 4",
+								"value": "heading4"
+							},
+							{
+								"label": "Heading 5",
+								"value": "heading5"
+							},
+							{
+								"label": "Heading 6",
+								"value": "heading6"
+							},
+							{
+								"label": "Paragraph Large",
+								"value": "paragraphLarge"
+							},
+							{
+								"label": "Paragraph Base",
+								"value": "paragraphBase"
+							},
+							{
+								"label": "Paragraph Small",
+								"value": "paragraphSmall"
+							},
+							{
+								"label": "Paragraph XSmall",
+								"value": "paragraphXSmall"
+							},
+							{
+								"label": "Paragraph Tiny",
+								"value": "paragraphTiny"
+							}
+						]
+					}
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "var(--font-weight-semi-bold)",
+					"label": "Font Weight",
+					"name": "fontWeight",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "Bold",
+								"value": "var(--font-weight-bold)"
+							},
+							{
+								"label": "SemiBold",
+								"value": "var(--font-weight-semi-bold)"
+							},
+							{
+								"label": "Regular",
+								"value": "var(--font-weight-regular)"
+							}
+						]
+					}
+				}
+			],
+			"label": "Styles"
+		}
+	]
+}

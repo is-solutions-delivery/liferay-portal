@@ -72,16 +72,15 @@ definition {
 
 	@summary = "Default summary"
 	macro deleteDXPCloudEnvironments() {
-		ApplicationsMenu.gotoPortlet(
-			category = "Object",
-			panel = "Control Panel",
-			portlet = "Objects");
+		ObjectAdmin.openObjectAdmin();
 
 		CustomerPortal.viewCPObjectCustomInfo(position = 14);
 
 		CreateObject.checkToggleActive();
 
-		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Choose an Option");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Panel Link",
+			optionName = "Choose an Option");
 
 		CustomerPortal.checkToggleHideWidget();
 

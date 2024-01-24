@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import ClayAlert from '@clayui/alert';
 import ClayLayout from '@clayui/layout';
 import ClayTabs from '@clayui/tabs';
 import {openToast} from 'frontend-js-web';
@@ -12,7 +13,7 @@ import React, {Component} from 'react';
 import ThemeContext from '../ThemeContext.es';
 import FormValueDebugger from '../utils/FormValueDebugger.es';
 import {fetchDocuments, fetchResponse} from '../utils/api.es';
-import {DEFAULT_DELTA} from '../utils/constants.es';
+import {DEFAULT_DELTA, STATUS_TYPES} from '../utils/constants.es';
 import {
 	isNil,
 	move,
@@ -39,8 +40,8 @@ class ResultRankingsForm extends Component {
 		formName: PropTypes.string.isRequired,
 		initialAliases: PropTypes.arrayOf(String),
 		initialGroupExternalReferenceCode: PropTypes.string,
-		initialInactive: PropTypes.bool,
 		initialSXPBlueprintExternalReferenceCode: PropTypes.string,
+		initialStatus: PropTypes.string,
 		resultsRankingUid: PropTypes.string,
 		searchQuery: PropTypes.string.isRequired,
 		validateFormURL: PropTypes.string.isRequired,
@@ -116,12 +117,6 @@ class ResultRankingsForm extends Component {
 		hiddenCur: 0,
 
 		/**
-		 * Indicates whether ranking is active or inactive.
-		 * @type {boolean}
-		 */
-		inactive: this.props.initialInactive,
-
-		/**
 		 * A full list of IDs which include hidden and pinned items. This is
 		 * equivalent to the IDs in dataMap, but in a sorted order.
 		 * @type {Array}
@@ -151,6 +146,21 @@ class ResultRankingsForm extends Component {
 		 * @type {boolean}
 		 */
 		showDebugger: process.env.NODE_ENV === 'development',
+
+		/**
+		 * Indicates whether the 'not-applicable ranking' alert message is
+		 * visible. A result ranking is not applicable when it has a scoped
+		 * site or blueprint that has been deleted.
+		 * @type {boolean}
+		 */
+		showNotApplicableStatusAlert:
+			this.props.initialStatus === STATUS_TYPES.NOT_APPLICABLE,
+
+		/**
+		 * Indicates whether ranking is active, inactive or achived.
+		 * @type {string}
+		 */
+		status: this.props.initialStatus,
 
 		/**
 		 * Total number of hidden results returned from the fetch request.
@@ -224,11 +234,14 @@ class ResultRankingsForm extends Component {
 
 	/**
 	 * Handles what happens when the toggle switch is clicked. Changes the
-	 * state of the ranking to inactive or active (boolean value).
+	 * state of the ranking to inactive or active (string value).
 	 */
-	_handleActive = () => {
+	_handleActiveStatusChange = () => {
 		this.setState((state) => ({
-			inactive: !state.inactive,
+			status:
+				state.status === STATUS_TYPES.ACTIVE
+					? STATUS_TYPES.INACTIVE
+					: STATUS_TYPES.ACTIVE,
 		}));
 	};
 
@@ -551,7 +564,7 @@ class ResultRankingsForm extends Component {
 
 		fetchResponse(this.props.validateFormURL, {
 			[`${namespace}aliases`]: this.state.aliases,
-			[`${namespace}inactive`]: this.state.inactive,
+			[`${namespace}status`]: this.state.status,
 			[`${namespace}keywords`]: this.props.searchQuery,
 			[`${namespace}groupExternalReferenceCode`]: this.props
 				.initialGroupExternalReferenceCode,
@@ -577,6 +590,15 @@ class ResultRankingsForm extends Component {
 					}
 				);
 			}
+		});
+	};
+
+	/**
+	 * Handles what happens when the user clicks the close button on the alert message.
+	 */
+	_handleNotApplicableStatusAlertClose = () => {
+		this.setState({
+			showNotApplicableStatusAlert: false,
 		});
 	};
 
@@ -739,11 +761,12 @@ class ResultRankingsForm extends Component {
 			displayError,
 			displayErrorHidden,
 			hiddenCur,
-			inactive,
 			resultIdsHidden,
 			resultIdsPinned,
 			scopeDisplayName,
 			showDebugger,
+			showNotApplicableStatusAlert,
+			status,
 			totalResultsHiddenCount,
 			totalResultsVisibleCount,
 			visibleCur,
@@ -757,50 +780,64 @@ class ResultRankingsForm extends Component {
 						addedHiddenIds: this._getHiddenAdded(),
 						aliases,
 						groupExternalReferenceCode: initialGroupExternalReferenceCode,
-						inactive,
 						pinnedIds: resultIdsPinned,
 						pinnedIdsEndIndex: dataLoadIndex.pinned.end,
 						pinnedIdsStartIndex: dataLoadIndex.pinned.start,
 						removedHiddenIds: this._getHiddenRemoved(),
+						status,
 						sxpBlueprintExternalReferenceCode: initialSXPBlueprintExternalReferenceCode,
 						workflowAction,
 					}}
 				/>
 
 				<PageToolbar
-					inactive={inactive}
 					onCancel={cancelURL}
-					onChangeActive={this._handleActive}
+					onChangeActive={this._handleActiveStatusChange}
 					onPublish={this._handlePublish}
+					status={status}
 				/>
 
 				<ClayLayout.ContainerFluid
 					className="result-rankings-container"
 					formSize="lg"
 				>
+					{showNotApplicableStatusAlert && (
+						<ClayAlert
+							className="w-100"
+							displayType="warning"
+							hideCloseIcon={false}
+							onClose={this._handleNotApplicableStatusAlertClose}
+							title={Liferay.Language.get('warning')}
+							variant="inline"
+						>
+							{initialSXPBlueprintExternalReferenceCode
+								? Liferay.Language.get(
+										'this-ranking-is-no-longer-applicable-to-searches-because-the-blueprint-it-was-associated-with-was-deleted'
+								  )
+								: Liferay.Language.get(
+										'this-ranking-is-no-longer-applicable-to-searches-because-the-site-it-was-associated-with-was-deleted'
+								  )}
+						</ClayAlert>
+					)}
+
 					<ClayLayout.Sheet className="form-section-header">
 						<label>{Liferay.Language.get('query')}</label>
 
 						<h2 className="c-mb-1 sheet-title">{`${searchQuery}`}</h2>
 
 						<div className="c-mb-3">
-							{(Liferay.FeatureFlags['LPS-157988'] ||
-								Liferay.FeatureFlags['LPS-159650']) && (
-								<span className="text-3">
-									{`${Liferay.Language.get('scope')}: ${
-										this.props
-											.initialGroupExternalReferenceCode
-											? Liferay.Language.get('site')
-											: this.props
-													.initialSXPBlueprintExternalReferenceCode
-											? Liferay.Language.get('blueprint')
-											: Liferay.Language.get('everything')
-									}`}
+							<span className="text-3">
+								{`${Liferay.Language.get('scope')}: ${
+									this.props.initialGroupExternalReferenceCode
+										? Liferay.Language.get('site')
+										: this.props
+												.initialSXPBlueprintExternalReferenceCode
+										? Liferay.Language.get('blueprint')
+										: Liferay.Language.get('everything')
+								}`}
 
-									{!!scopeDisplayName &&
-										` (${scopeDisplayName})`}
-								</span>
-							)}
+								{!!scopeDisplayName && ` (${scopeDisplayName})`}
+							</span>
 						</div>
 
 						<ErrorBoundary
@@ -808,6 +845,9 @@ class ResultRankingsForm extends Component {
 							toast
 						>
 							<Alias
+								disabled={
+									status === STATUS_TYPES.NOT_APPLICABLE
+								}
 								keywords={aliases}
 								onChange={this._handleUpdateAliases}
 							/>
@@ -863,6 +903,10 @@ class ResultRankingsForm extends Component {
 										<List
 											dataLoading={dataLoadingVisible}
 											dataMap={dataMap}
+											disabled={
+												status ===
+												STATUS_TYPES.NOT_APPLICABLE
+											}
 											displayError={displayError}
 											fetchDocumentsSearchURL={
 												fetchDocumentsSearchURL
@@ -892,6 +936,10 @@ class ResultRankingsForm extends Component {
 										<List
 											dataLoading={dataLoadingHidden}
 											dataMap={dataMap}
+											disabled={
+												status ===
+												STATUS_TYPES.NOT_APPLICABLE
+											}
 											displayError={displayErrorHidden}
 											onClickHide={this._handleClickHide}
 											onClickPin={this._handleClickPin}

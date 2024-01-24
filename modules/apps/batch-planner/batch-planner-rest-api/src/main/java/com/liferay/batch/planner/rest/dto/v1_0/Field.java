@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -49,111 +50,204 @@ public class Field implements Serializable {
 
 	@Schema
 	public String getDescription() {
+		if (_descriptionSupplier != null) {
+			description = _descriptionSupplier.get();
+
+			_descriptionSupplier = null;
+		}
+
 		return description;
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
+
+		_descriptionSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setDescription(
 		UnsafeSupplier<String, Exception> descriptionUnsafeSupplier) {
 
-		try {
-			description = descriptionUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_descriptionSupplier = () -> {
+			try {
+				return descriptionUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String description;
 
+	@JsonIgnore
+	private Supplier<String> _descriptionSupplier;
+
 	@Schema
 	public String getName() {
+		if (_nameSupplier != null) {
+			name = _nameSupplier.get();
+
+			_nameSupplier = null;
+		}
+
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
+
+		_nameSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setName(UnsafeSupplier<String, Exception> nameUnsafeSupplier) {
-		try {
-			name = nameUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_nameSupplier = () -> {
+			try {
+				return nameUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String name;
 
+	@JsonIgnore
+	private Supplier<String> _nameSupplier;
+
 	@Schema
 	public Boolean getRequired() {
+		if (_requiredSupplier != null) {
+			required = _requiredSupplier.get();
+
+			_requiredSupplier = null;
+		}
+
 		return required;
 	}
 
 	public void setRequired(Boolean required) {
 		this.required = required;
+
+		_requiredSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setRequired(
 		UnsafeSupplier<Boolean, Exception> requiredUnsafeSupplier) {
 
-		try {
-			required = requiredUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_requiredSupplier = () -> {
+			try {
+				return requiredUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Boolean required;
 
+	@JsonIgnore
+	private Supplier<Boolean> _requiredSupplier;
+
 	@Schema
 	public String getType() {
+		if (_typeSupplier != null) {
+			type = _typeSupplier.get();
+
+			_typeSupplier = null;
+		}
+
 		return type;
 	}
 
 	public void setType(String type) {
 		this.type = type;
+
+		_typeSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setType(UnsafeSupplier<String, Exception> typeUnsafeSupplier) {
-		try {
-			type = typeUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_typeSupplier = () -> {
+			try {
+				return typeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String type;
+
+	@JsonIgnore
+	private Supplier<String> _typeSupplier;
+
+	@Schema
+	public String[] getUnsupportedFormats() {
+		if (_unsupportedFormatsSupplier != null) {
+			unsupportedFormats = _unsupportedFormatsSupplier.get();
+
+			_unsupportedFormatsSupplier = null;
+		}
+
+		return unsupportedFormats;
+	}
+
+	public void setUnsupportedFormats(String[] unsupportedFormats) {
+		this.unsupportedFormats = unsupportedFormats;
+
+		_unsupportedFormatsSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setUnsupportedFormats(
+		UnsafeSupplier<String[], Exception> unsupportedFormatsUnsafeSupplier) {
+
+		_unsupportedFormatsSupplier = () -> {
+			try {
+				return unsupportedFormatsUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String[] unsupportedFormats;
+
+	@JsonIgnore
+	private Supplier<String[]> _unsupportedFormatsSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -182,6 +276,8 @@ public class Field implements Serializable {
 
 		sb.append("{");
 
+		String description = getDescription();
+
 		if (description != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -195,6 +291,8 @@ public class Field implements Serializable {
 
 			sb.append("\"");
 		}
+
+		String name = getName();
 
 		if (name != null) {
 			if (sb.length() > 1) {
@@ -210,6 +308,8 @@ public class Field implements Serializable {
 			sb.append("\"");
 		}
 
+		Boolean required = getRequired();
+
 		if (required != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -219,6 +319,8 @@ public class Field implements Serializable {
 
 			sb.append(required);
 		}
+
+		String type = getType();
 
 		if (type != null) {
 			if (sb.length() > 1) {
@@ -232,6 +334,32 @@ public class Field implements Serializable {
 			sb.append(_escape(type));
 
 			sb.append("\"");
+		}
+
+		String[] unsupportedFormats = getUnsupportedFormats();
+
+		if (unsupportedFormats != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"unsupportedFormats\": ");
+
+			sb.append("[");
+
+			for (int i = 0; i < unsupportedFormats.length; i++) {
+				sb.append("\"");
+
+				sb.append(_escape(unsupportedFormats[i]));
+
+				sb.append("\"");
+
+				if ((i + 1) < unsupportedFormats.length) {
+					sb.append(", ");
+				}
+			}
+
+			sb.append("]");
 		}
 
 		sb.append("}");

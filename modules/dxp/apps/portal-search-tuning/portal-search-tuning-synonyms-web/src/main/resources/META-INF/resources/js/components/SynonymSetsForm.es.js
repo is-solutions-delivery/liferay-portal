@@ -77,6 +77,27 @@ class SynonymSetsForm extends Component {
 		}
 	}
 
+	/*
+	 * Any time the input is blurred, adds the current input value to the
+	 * list of synonyms. This ensures that the user does not lose the value
+	 * if they publish without hitting enter or comma.
+	 */
+	_handleBlur = () => {
+		if (this.state.inputValue.trim()) {
+			this.setState({
+				synonyms: filterDuplicates([
+					...this.state.synonyms,
+					{
+						label: this.state.inputValue,
+						value: this.state.inputValue,
+					},
+				]),
+			});
+		}
+
+		this.setState({inputValue: ''});
+	};
+
 	_handleCancel = () => {
 		window.history.back();
 	};
@@ -130,6 +151,7 @@ class SynonymSetsForm extends Component {
 							<ClayMultiSelect
 								id="synonym-sets-input"
 								items={synonyms}
+								onBlur={this._handleBlur}
 								onChange={this._handleInputChange}
 								onItemsChange={this._handleItemsChange}
 								value={inputValue}
@@ -148,7 +170,7 @@ class SynonymSetsForm extends Component {
 
 				<ClayLayout.SheetFooter>
 					<ClayButton
-						disabled={!synonyms.length}
+						disabled={!synonyms.length && !inputValue.trim()}
 						displayType="primary"
 						onClick={this._handleSubmit}
 						type="submit"

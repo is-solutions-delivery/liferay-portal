@@ -6,7 +6,12 @@
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
 import {useIsMounted, useThunk} from '@liferay/frontend-js-react-web';
-import {fetch, openToast} from 'frontend-js-web';
+import {
+	fetch,
+	loadClientExtensions,
+	loadModule,
+	openToast,
+} from 'frontend-js-web';
 import React, {
 	useCallback,
 	useEffect,
@@ -22,10 +27,7 @@ import ClayEmptyState from '@clayui/empty-state';
 import FrontendDataSetContext from './FrontendDataSetContext';
 import ManagementBar from './management_bar/ManagementBar';
 import CreationMenu from './management_bar/components/CreationMenu';
-import {
-	getFilterSelectedItemsLabel,
-	getOdataFilterString,
-} from './management_bar/components/filters/Filter';
+import {FILTER_IMPLEMENTATIONS} from './management_bar/components/filters/Filter';
 import Modal from './modal/Modal';
 import SidePanel from './side_panel/SidePanel';
 import filterCreationActions from './utils/actionItems/filterCreationActions';
@@ -37,7 +39,6 @@ import {
 	loadData,
 } from './utils/index';
 import {logError} from './utils/logError';
-import getJsModule from './utils/modules';
 import ViewsContext from './views/ViewsContext';
 import getViewComponent from './views/getViewComponent';
 import {VIEWS_ACTION_TYPES, viewsReducer} from './views/viewsReducer';
@@ -150,8 +151,13 @@ const FrontendDataSet = ({
 						filter.active = true;
 						filter.selectedData = preloadedData;
 
-						filter.odataFilterString = getOdataFilterString(filter);
-						filter.selectedItemsLabel = getFilterSelectedItemsLabel(
+						const filterImplementation =
+							FILTER_IMPLEMENTATIONS[filter.type];
+
+						filter.odataFilterString = filterImplementation.getOdataString(
+							filter
+						);
+						filter.selectedItemsLabel = filterImplementation.getSelectedItemsLabel(
 							filter
 						);
 					}
@@ -231,6 +237,74 @@ const FrontendDataSet = ({
 		setItems(dataSetData.items);
 		setTotal(dataSetData.totalCount);
 	}
+
+	useEffect(() => {
+		loadClientExtensions([
+			{
+				clientExtensionDefinitions: initialFilters
+					? initialFilters
+							.filter((filter) => filter.clientExtensionFilterURL)
+							.map((filter) => ({
+								context: filter,
+								importDeclaration: `default from ${filter.clientExtensionFilterURL}`,
+							}))
+					: [],
+				onLoad: (bindingContexts) => {
+					const newFilters = bindingContexts.map(
+						({
+							binding: clientExtensionFilterImplementation,
+							context: filter,
+						}) => ({
+							...filter,
+							clientExtensionFilterImplementation,
+						})
+					);
+
+					viewsDispatch({
+						type: VIEWS_ACTION_TYPES.UPDATE_FILTERS,
+						value: newFilters,
+					});
+				},
+			},
+			{
+				clientExtensionDefinitions: views.reduce(
+					(clientExtensionDefinitions, view) => {
+						if (!view.schema?.fields?.length) {
+							return clientExtensionDefinitions;
+						}
+
+						const clientExtensionFields = view.schema.fields.filter(
+							(field) => !!field.contentRendererClientExtension
+						);
+
+						for (const field of clientExtensionFields) {
+							clientExtensionDefinitions.push({
+								context: field,
+								importDeclaration:
+									field.contentRendererModuleURL,
+							});
+						}
+
+						return clientExtensionDefinitions;
+					},
+					[]
+				),
+				onLoad: (bindingContexts) => {
+					bindingContexts.forEach(
+						({binding: htmlElementBuilder, context: field}) => {
+							viewsDispatch({
+								type: VIEWS_ACTION_TYPES.UPDATE_FIELD,
+								value: {
+									htmlElementBuilder,
+									name: field.fieldName,
+								},
+							});
+						}
+					);
+				},
+			},
+		]);
+	}, [initialFilters, views, viewsDispatch]);
 
 	useEffect(() => {
 		if (itemsProp) {
@@ -352,7 +426,7 @@ const FrontendDataSet = ({
 
 		setComponentLoading(true);
 
-		getJsModule(contentRendererModuleURL)
+		loadModule(contentRendererModuleURL)
 			.then((component) => {
 				if (isMounted()) {
 					viewsDispatch({

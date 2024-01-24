@@ -10,10 +10,6 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
 import org.osgi.service.component.annotations.Component;
 
 /**
@@ -34,27 +30,15 @@ public class StylesFragmentEntryProcessor implements FragmentEntryProcessor {
 	public JSONObject getDefaultEditableValuesJSONObject(
 		String html, String configuration) {
 
-		Document document = _getDocument(html);
+		return JSONUtil.put(
+			"hasCommonStyles",
+			() -> {
+				if (!html.contains("data-lfr-styles")) {
+					return null;
+				}
 
-		Elements elements = document.select("[data-lfr-styles]");
-
-		if (elements.isEmpty()) {
-			return null;
-		}
-
-		return JSONUtil.put("hasCommonStyles", true);
-	}
-
-	private Document _getDocument(String html) {
-		Document document = Jsoup.parseBodyFragment(html);
-
-		Document.OutputSettings outputSettings = new Document.OutputSettings();
-
-		outputSettings.prettyPrint(false);
-
-		document.outputSettings(outputSettings);
-
-		return document;
+				return true;
+			});
 	}
 
 }

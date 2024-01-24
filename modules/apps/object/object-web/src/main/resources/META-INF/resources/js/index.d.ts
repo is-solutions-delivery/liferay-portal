@@ -4,10 +4,11 @@
  */
 
 interface Actions {
-	delete: HTTPMethod;
-	get: HTTPMethod;
-	permissions: HTTPMethod;
-	update: HTTPMethod;
+	create?: HTTPMethod;
+	delete?: HTTPMethod;
+	get?: HTTPMethod;
+	permissions?: HTTPMethod;
+	update?: HTTPMethod;
 }
 
 interface AddObjectEntryDefinitions {
@@ -16,6 +17,17 @@ interface AddObjectEntryDefinitions {
 	label: string;
 	related?: boolean;
 	system?: boolean;
+}
+
+interface ObjectActionTriggerExecutorItem {
+	checked?: boolean;
+	description?: string;
+	disabled?: boolean;
+	label: string;
+	name?: string;
+	popover?: {body: string; header: string};
+	type?: string;
+	value?: string;
 }
 
 type DefinitionAction = {
@@ -30,10 +42,18 @@ type DefinitionActions = {
 	update: DefinitionAction;
 };
 
-type DeletionNotAllowedModal = {
+interface DeletedObjectDefinition {
+	hasObjectRelationship: boolean;
+	id: number;
+	name: string;
+	objectEntriesCount: number;
+}
+
+type ObjectFieldDeleteInfoProps = {
 	deleteLastPublishedObjectDefinitionObjectField: boolean;
 	deleteObjectFieldObjectValidationRuleSetting: boolean;
-	showModal: boolean;
+	showObjectFieldDeletionConfirmationModal: boolean;
+	showObjectFieldDeletionNotAllowedModal: boolean;
 };
 
 type ExcludesFilterOperator = {
@@ -55,14 +75,19 @@ type IncludesFilterOperator = {
 	in: string[] | number[];
 };
 
+interface LabelKeyObject {
+	key: string;
+	label: string;
+}
+
 interface LabelNameObject {
 	label: string;
 	name: string;
 }
 
-interface LabelValueObject {
+interface LabelValueObject<T = string> {
 	label: string;
-	value: string;
+	value: T;
 }
 
 interface ListTypeDefinition {
@@ -91,7 +116,7 @@ interface ModelBuilderModals
 	extends Omit<
 		ViewObjectDefinitionsModals,
 		| 'bindToRootObjectDefinition'
-		| 'deletionNotAllowed'
+		| 'objectFieldDeletionNotAllowed'
 		| 'unbindFromRootObjectDefinition'
 	> {
 	addObjectField: boolean;
@@ -159,7 +184,7 @@ interface ObjectDefinition {
 	accountEntryRestricted: boolean;
 	accountEntryRestrictedObjectFieldId: string;
 	accountEntryRestrictedObjectFieldName: string;
-	actions: DefinitionActions;
+	actions: Actions;
 	active: boolean;
 	dateCreated: string;
 	dateModified: string;
@@ -199,6 +224,11 @@ interface ObjectDefinition {
 	titleObjectFieldName: string;
 }
 
+interface ObjectDefinitions {
+	actions: Actions;
+	items: ObjectDefinition[];
+}
+
 interface ObjectDefinitionNodeData
 	extends Omit<ObjectDefinition, 'objectFields'> {
 	hasObjectDefinitionDeleteResourcePermission: boolean;
@@ -208,6 +238,7 @@ interface ObjectDefinitionNodeData
 	linkedObjectDefinition: boolean;
 	objectFields: ObjectFieldNodeRow[];
 	selected: boolean;
+	showAllObjectFields: boolean;
 }
 
 interface ObjectEntry {
@@ -241,7 +272,7 @@ interface ObjectField {
 	id: number;
 	indexed: boolean;
 	indexedAsKeyword: boolean;
-	indexedLanguageId: Liferay.Language.Locale | null;
+	indexedLanguageId: Liferay.Language.Locale | string;
 	label: LocalizedValue<string>;
 	listTypeDefinitionExternalReferenceCode: string;
 	listTypeDefinitionId?: number;
@@ -381,6 +412,11 @@ interface ObjectFolderItem {
 	positionY: number;
 }
 
+interface ObjectFoldersRequestInfo {
+	actions: Actions;
+	items: ObjectFolder[];
+}
+
 interface ObjectRelationship {
 	deletionType: string;
 	edge?: boolean;
@@ -427,17 +463,6 @@ interface ObjectValidationRuleSetting {
 	value: string;
 }
 
-type ObjectWebLearnResources = {
-	'object-web': {
-		general: {
-			[key: string]: {
-				message: string;
-				url: string;
-			};
-		};
-	};
-};
-
 interface PickListItem {
 	externalReferenceCode: string;
 	id: number;
@@ -479,8 +504,9 @@ interface ViewObjectDefinitionsModals {
 	bindToRootObjectDefinition: boolean;
 	deleteObjectDefinition: boolean;
 	deleteObjectFolder: boolean;
-	deletionNotAllowed: boolean;
 	editObjectFolder: boolean;
+	importModal: boolean;
 	moveObjectDefinition: boolean;
+	objectFieldDeletionNotAllowed: boolean;
 	unbindFromRootObjectDefinition: boolean;
 }

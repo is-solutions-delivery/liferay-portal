@@ -5,11 +5,15 @@
 
 package com.liferay.journal.web.internal.display.context;
 
+import com.liferay.dynamic.data.mapping.item.selector.DDMStructureItemSelectorReturnType;
+import com.liferay.dynamic.data.mapping.item.selector.criterion.DDMStructureItemSelectorCriterion;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.VerticalNavItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.VerticalNavItemList;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.VerticalNavItemListBuilder;
+import com.liferay.item.selector.ItemSelector;
 import com.liferay.journal.configuration.JournalGroupServiceConfiguration;
 import com.liferay.journal.constants.JournalPortletKeys;
+import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.web.internal.util.JournalUtil;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.portal.kernel.language.LanguageUtil;
@@ -19,6 +23,7 @@ import com.liferay.portal.kernel.portlet.constants.PortletPreferencesFactoryCons
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
@@ -46,6 +51,8 @@ public class JournalConfigurationDisplayContext {
 		_renderRequest = renderRequest;
 		_renderResponse = renderResponse;
 
+		_itemSelector = (ItemSelector)httpServletRequest.getAttribute(
+			ItemSelector.class.getName());
 		_themeDisplay = (ThemeDisplay)httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 	}
@@ -101,47 +108,12 @@ public class JournalConfigurationDisplayContext {
 		}
 
 		_navigation = ParamUtil.getString(
-			_renderRequest, "navigation", "email-from");
+			_renderRequest, "navigation", "structures");
 
 		return _navigation;
 	}
 
-	public PortletURL getPortletURL() {
-		if (_portletURL != null) {
-			return _portletURL;
-		}
-
-		_portletURL = PortletURLBuilder.createRenderURL(
-			_renderResponse
-		).setActionName(
-			"editConfiguration"
-		).setMVCPath(
-			"/edit_configuration.jsp"
-		).setPortletResource(
-			ParamUtil.getString(_httpServletRequest, "portletResource")
-		).setParameter(
-			"portletConfiguration", Boolean.TRUE
-		).setParameter(
-			"settingsScope",
-			PortletPreferencesFactoryConstants.SETTINGS_SCOPE_PORTLET_INSTANCE
-		).buildPortletURL();
-
-		return _portletURL;
-	}
-
-	public PortletURL getRedirect() {
-		return PortletURLBuilder.create(
-			getPortletURL()
-		).setNavigation(
-			getNavigation()
-		).buildPortletURL();
-	}
-
-	public String getTitle() {
-		return LanguageUtil.get(_httpServletRequest, getNavigation());
-	}
-
-	public VerticalNavItemList getVerticalNavItemList() {
+	public VerticalNavItemList getNotificationsVerticalNavItemList() {
 		VerticalNavItemList verticalNavItemList =
 			VerticalNavItemListBuilder.add(
 				_getVerticalNavItemUnsafeConsumer("email-from")
@@ -175,6 +147,75 @@ public class JournalConfigurationDisplayContext {
 		return verticalNavItemList;
 	}
 
+	public PortletURL getPortletURL() {
+		if (_portletURL != null) {
+			return _portletURL;
+		}
+
+		_portletURL = PortletURLBuilder.createRenderURL(
+			_renderResponse
+		).setActionName(
+			"editConfiguration"
+		).setMVCPath(
+			"/edit_configuration.jsp"
+		).setPortletResource(
+			ParamUtil.getString(_httpServletRequest, "portletResource")
+		).setParameter(
+			"portletConfiguration", Boolean.TRUE
+		).setParameter(
+			"settingsScope",
+			PortletPreferencesFactoryConstants.SETTINGS_SCOPE_PORTLET_INSTANCE
+		).buildPortletURL();
+
+		return _portletURL;
+	}
+
+	public PortletURL getRedirect() {
+		return PortletURLBuilder.create(
+			getPortletURL()
+		).setNavigation(
+			getNavigation()
+		).buildPortletURL();
+	}
+
+	public String getSelectDDMStructureURL() {
+		RequestBackedPortletURLFactory requestBackedPortletURLFactory =
+			RequestBackedPortletURLFactoryUtil.create(_renderRequest);
+
+		DDMStructureItemSelectorCriterion ddmStructureItemSelectorCriterion =
+			new DDMStructureItemSelectorCriterion();
+
+		ddmStructureItemSelectorCriterion.setClassNameId(
+			PortalUtil.getClassNameId(JournalArticle.class));
+		ddmStructureItemSelectorCriterion.setMultiSelection(true);
+		ddmStructureItemSelectorCriterion.setDesiredItemSelectorReturnTypes(
+			new DDMStructureItemSelectorReturnType());
+
+		return String.valueOf(
+			_itemSelector.getItemSelectorURL(
+				requestBackedPortletURLFactory,
+				_renderResponse.getNamespace() + "selectDDMStructure",
+				ddmStructureItemSelectorCriterion));
+	}
+
+	public VerticalNavItemList getSettingsVerticalNavItemList() {
+		return VerticalNavItemListBuilder.add(
+			_getVerticalNavItemUnsafeConsumer("structures")
+		).build();
+	}
+
+	public String getSubtitle() {
+		if (Objects.equals(getNavigation(), "structures")) {
+			return LanguageUtil.get(_httpServletRequest, "highlighted");
+		}
+
+		return LanguageUtil.get(_httpServletRequest, "email");
+	}
+
+	public String getTitle() {
+		return LanguageUtil.get(_httpServletRequest, getNavigation());
+	}
+
 	private UnsafeConsumer<VerticalNavItem, Exception>
 		_getVerticalNavItemUnsafeConsumer(String key) {
 
@@ -197,6 +238,7 @@ public class JournalConfigurationDisplayContext {
 	private String _emailFromAddress;
 	private String _emailFromName;
 	private final HttpServletRequest _httpServletRequest;
+	private final ItemSelector _itemSelector;
 	private final JournalGroupServiceConfiguration
 		_journalGroupServiceConfiguration;
 	private String _navigation;

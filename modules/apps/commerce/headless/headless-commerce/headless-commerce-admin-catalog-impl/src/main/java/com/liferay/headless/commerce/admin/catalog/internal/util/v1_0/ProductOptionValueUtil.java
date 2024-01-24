@@ -6,15 +6,19 @@
 package com.liferay.headless.commerce.admin.catalog.internal.util.v1_0;
 
 import com.liferay.commerce.product.model.CPDefinitionOptionValueRel;
+import com.liferay.commerce.product.model.CPInstance;
 import com.liferay.commerce.product.service.CPDefinitionOptionValueRelService;
 import com.liferay.headless.commerce.admin.catalog.dto.v1_0.ProductOptionValue;
 import com.liferay.headless.commerce.core.util.LanguageUtils;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.util.BigDecimalUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 
 import java.math.BigDecimal;
+
+import java.util.Map;
 
 /**
  * @author Alessio Antonio Rendina
@@ -33,12 +37,41 @@ public class ProductOptionValueUtil {
 			cpDefinitionOptionValueRelService.fetchCPDefinitionOptionValueRel(
 				cpDefinitionOptionRelId, productOptionValue.getKey());
 
+		CPInstance cpInstance = null;
+
+		if (cpDefinitionOptionValueRel != null) {
+			cpInstance = cpDefinitionOptionValueRel.fetchCPInstance();
+		}
+
+		long cpInstanceId = 0;
+
+		if (cpInstance != null) {
+			cpInstanceId = cpInstance.getCPInstanceId();
+		}
+
+		Map<String, String> nameMap = productOptionValue.getName();
+
+		if ((cpDefinitionOptionValueRel != null) && (nameMap == null)) {
+			nameMap = LanguageUtils.getLanguageIdMap(
+				cpDefinitionOptionValueRel.getNameMap());
+		}
+
 		if (cpDefinitionOptionValueRel == null) {
 			cpDefinitionOptionValueRel =
 				cpDefinitionOptionValueRelService.addCPDefinitionOptionValueRel(
-					cpDefinitionOptionRelId, productOptionValue.getKey(),
-					LanguageUtils.getLocalizedMap(productOptionValue.getName()),
+					cpDefinitionOptionRelId,
+					GetterUtil.get(productOptionValue.getSkuId(), 0),
+					productOptionValue.getKey(),
+					LanguageUtils.getLocalizedMap(nameMap),
+					GetterUtil.get(productOptionValue.getPreselected(), false),
+					BigDecimalUtil.get(
+						productOptionValue.getDeltaPrice(), null),
 					GetterUtil.get(productOptionValue.getPriority(), 0D),
+					BigDecimalUtil.get(
+						productOptionValue.getQuantity(), BigDecimal.ONE),
+					GetterUtil.get(
+						productOptionValue.getUnitOfMeasureKey(),
+						StringPool.BLANK),
 					serviceContext);
 		}
 		else {
@@ -47,14 +80,28 @@ public class ProductOptionValueUtil {
 					updateCPDefinitionOptionValueRel(
 						cpDefinitionOptionValueRel.
 							getCPDefinitionOptionValueRelId(),
-						0, productOptionValue.getKey(),
-						LanguageUtils.getLocalizedMap(
-							productOptionValue.getName()),
-						false, null,
+						GetterUtil.get(
+							productOptionValue.getSkuId(), cpInstanceId),
+						GetterUtil.get(
+							productOptionValue.getKey(),
+							cpDefinitionOptionValueRel.getKey()),
+						LanguageUtils.getLocalizedMap(nameMap),
+						GetterUtil.get(
+							productOptionValue.getPreselected(),
+							cpDefinitionOptionValueRel.isPreselected()),
+						BigDecimalUtil.get(
+							productOptionValue.getDeltaPrice(),
+							cpDefinitionOptionValueRel.getPrice()),
 						GetterUtil.get(
 							productOptionValue.getPriority(),
 							cpDefinitionOptionValueRel.getPriority()),
-						BigDecimal.ZERO, StringPool.BLANK, serviceContext);
+						BigDecimalUtil.get(
+							productOptionValue.getQuantity(),
+							cpDefinitionOptionValueRel.getQuantity()),
+						GetterUtil.get(
+							productOptionValue.getUnitOfMeasureKey(),
+							cpDefinitionOptionValueRel.getUnitOfMeasureKey()),
+						serviceContext);
 		}
 
 		return cpDefinitionOptionValueRel;

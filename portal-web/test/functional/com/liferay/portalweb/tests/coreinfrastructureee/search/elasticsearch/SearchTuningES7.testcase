@@ -42,7 +42,11 @@ definition {
 
 		Navigator.openURL();
 
+		SearchPage.configureEmbeddedSearchBar(searchScope = "Everything");
+
 		SearchPage.searchEmbedded(searchTerm = "abc");
+
+		Refresh();
 
 		SearchResults.viewSearchResults(
 			searchAssetTitle = "WC Title",
@@ -74,7 +78,7 @@ definition {
 
 		Button.click(button = "Customize Results");
 
-		Alert.viewErrorMessage(errorMessage = "A ranking with that search query already exists.");
+		Alert.viewErrorMessage(errorMessage = "A ranking with the same search query and scope already exists.");
 
 		PortletEntry.inputText(
 			fieldLabel = "Search Query",
@@ -82,7 +86,7 @@ definition {
 
 		Button.click(button = "Customize Results");
 
-		Alert.viewErrorMessage(errorMessage = "A ranking with that search query already exists.");
+		Alert.viewErrorMessage(errorMessage = "A ranking with the same search query and scope already exists.");
 
 		SearchTuning.openResultRankingsAdmin();
 
@@ -100,7 +104,7 @@ definition {
 
 		Button.clickSave();
 
-		Alert.viewErrorMessage(errorMessage = "Active search queries and aliases must be unique across all rankings. The following ones already exist: Article.");
+		Alert.viewErrorMessage(errorMessage = "Search queries and aliases with a given scope must be unique across all active rankings. The following ones already exist: Article.");
 
 		SearchTuning.configureAliases(
 			addAlias = "Journal",
@@ -108,7 +112,7 @@ definition {
 
 		Button.clickSave();
 
-		Alert.viewErrorMessage(errorMessage = "Active search queries and aliases must be unique across all rankings. The following ones already exist: Journal.");
+		Alert.viewErrorMessage(errorMessage = "Search queries and aliases with a given scope must be unique across all active rankings. The following ones already exist: Journal.");
 
 		SearchTuning.openResultRankingsAdmin();
 
@@ -120,7 +124,7 @@ definition {
 
 		Button.clickSave();
 
-		Alert.viewErrorMessage(errorMessage = "Error:Active search queries and aliases must be unique across all rankings. The following ones already exist: Article, Web Content.");
+		Alert.viewErrorMessage(errorMessage = "Search queries and aliases with a given scope must be unique across all active rankings. The following ones already exist: Article, Web Content.");
 
 		Refresh();
 
@@ -152,7 +156,11 @@ definition {
 
 		Navigator.openURL();
 
+		SearchPage.configureEmbeddedSearchBar(searchScope = "Everything");
+
 		SearchPage.searchEmbedded(searchTerm = "Article");
+
+		Refresh();
 
 		SearchResults.viewSearchResultsSpecificOrder(resultsList = "Article 3,Article 1");
 
@@ -201,7 +209,7 @@ definition {
 				locator1 = "SearchTuning#RESULT_RANKINGS_ADD_RESULT_SEARCH_BAR",
 				value1 = "\RETURN");
 
-			AssertTextNotEquals.assertNotPartialText(
+			AssertTextNotEquals.assertNotPartialMatch(
 				locator1 = "SearchTuning#RESULT_RANKINGS_ADD_RESULT_RESULT_TITLE_SPECIFIC_ORDER",
 				resultOrder = 1,
 				value1 = "tree.png");
@@ -276,7 +284,9 @@ definition {
 
 		PortletEntry.selectAll();
 
-		ClickNoError(locator1 = "Icon#DELETE");
+		ClickNoError(
+			key_text = "times-circle",
+			locator1 = "ManagementBar#ANY_ICON");
 
 		AssertConfirm(value1 = "Are you sure you want to delete this? It will be deleted immediately.");
 
@@ -335,7 +345,11 @@ definition {
 
 		Navigator.openURL();
 
+		SearchPage.configureEmbeddedSearchBar(searchScope = "Everything");
+
 		SearchPage.searchEmbedded(searchTerm = "Article");
+
+		Refresh();
 
 		SearchResults.viewSearchResultsSpecificOrder(resultsList = "Journal 2");
 
@@ -353,7 +367,7 @@ definition {
 
 		SearchPage.searchEmbedded(searchTerm = "Journal");
 
-		AssertTextNotEquals.assertNotPartialText(
+		AssertTextNotEquals.assertNotPartialMatch(
 			locator1 = "SearchPage#RESULT_TITLE_SPECIFIC_ORDER",
 			resultOrder = 1,
 			value1 = "Journal 2");
@@ -519,7 +533,9 @@ definition {
 			locator1 = "ManagementBar#NAVBAR_TEXT",
 			value1 = "2 of 6 Items Selected");
 
-		ClickNoError(locator1 = "Icon#DELETE");
+		ClickNoError(
+			key_text = "times-circle",
+			locator1 = "ManagementBar#ANY_ICON");
 
 		Confirm(value1 = "null");
 
@@ -539,7 +555,9 @@ definition {
 
 		PortletEntry.selectAll();
 
-		ClickNoError(locator1 = "Icon#DELETE");
+		ClickNoError(
+			key_text = "times-circle",
+			locator1 = "ManagementBar#ANY_ICON");
 
 		Confirm(value1 = "null");
 
@@ -636,7 +654,11 @@ definition {
 
 		Navigator.openURL();
 
+		SearchPage.configureEmbeddedSearchBar(searchScope = "Everything");
+
 		SearchPage.searchEmbedded(searchTerm = "Article");
+
+		Refresh();
 
 		SearchResults.viewSearchResultsSpecificOrder(resultsList = "Article 3,Article 1,Article 4");
 
@@ -670,7 +692,7 @@ definition {
 
 		Button.clickSave();
 
-		Alert.viewErrorMessage(errorMessage = "Active search queries and aliases must be unique across all rankings. The following ones already exist");
+		Alert.viewErrorMessage(errorMessage = "Search queries and aliases with a given scope must be unique across all active rankings. The following ones already exist: Article.");
 
 		Navigator.gotoBack();
 
@@ -771,7 +793,11 @@ definition {
 
 		Navigator.openURL();
 
+		SearchPage.configureEmbeddedSearchBar(searchScope = "Everything");
+
 		SearchPage.searchEmbedded(searchTerm = "WC Title");
+
+		Refresh();
 
 		SearchResults.viewSearchResultsSpecificOrder(resultsList = "WC Title 3,WC Title 1");
 
@@ -1136,7 +1162,11 @@ definition {
 
 		Navigator.openURL();
 
+		SearchPage.configureEmbeddedSearchBar(searchScope = "Everything");
+
 		SearchPage.searchEmbedded(searchTerm = "Article");
+
+		Refresh();
 
 		SearchResults.viewSearchResultsSpecificOrder(resultsList = "Liferay Journal,New Site Article,New Site Journal,Liferay Article");
 

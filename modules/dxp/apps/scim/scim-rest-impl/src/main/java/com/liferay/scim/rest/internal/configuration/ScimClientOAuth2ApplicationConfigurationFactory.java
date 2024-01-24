@@ -13,15 +13,14 @@ import com.liferay.oauth2.provider.rest.spi.bearer.token.provider.BearerTokenPro
 import com.liferay.oauth2.provider.service.OAuth2ApplicationLocalService;
 import com.liferay.oauth2.provider.util.OAuth2SecureRandomGenerator;
 import com.liferay.osgi.util.configuration.ConfigurationFactoryUtil;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.framework.ModuleServiceLifecycle;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -29,10 +28,13 @@ import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.scim.rest.internal.provider.ScimClientBearerTokenProvider;
-import com.liferay.scim.rest.internal.util.ScimClientUtil;
+import com.liferay.scim.rest.util.ScimClientUtil;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+
+import javax.ws.rs.core.Application;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -42,6 +44,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.ConfigurationPolicy;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 /**
  * @author Olivér Kecskeméty
@@ -57,13 +60,13 @@ public class ScimClientOAuth2ApplicationConfigurationFactory {
 			BundleContext bundleContext, Map<String, Object> properties)
 		throws Exception {
 
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-96845")) {
-			return;
-		}
-
 		ConfigurationFactoryUtil.executeAsCompany(
 			_companyLocalService, properties,
 			companyId -> {
+				if (!FeatureFlagManagerUtil.isEnabled(companyId, "LPS-96845")) {
+					return;
+				}
+
 				ScimClientOAuth2ApplicationConfiguration
 					scimClientOAuth2ApplicationConfiguration =
 						ConfigurableUtil.createConfigurable(
@@ -81,29 +84,13 @@ public class ScimClientOAuth2ApplicationConfigurationFactory {
 					).put(
 						"companyId", companyId.toString()
 					).build());
-
-				JSONObject jsonObject = _jsonFactory.createJSONObject(
-					_localOAuthClient.requestTokens(
-						_oAuth2Application,
-						userLocalService.getGuestUser(
-							companyId
-						).getUserId()));
-
-				if (_log.isInfoEnabled()) {
-					_log.info(
-						StringBundler.concat(
-							"New access token for SCIM OAuth 2 application ",
-							_oAuth2Application.getName(), " generated: ",
-							jsonObject.getString("access_token")));
-				}
 			});
 	}
 
 	@Deactivate
 	protected void deactivate(Integer reason) throws PortalException {
-		if (!FeatureFlagManagerUtil.isEnabled("LPS-96845") ||
-			(reason !=
-				ComponentConstants.DEACTIVATION_REASON_CONFIGURATION_DELETED)) {
+		if (reason !=
+				ComponentConstants.DEACTIVATION_REASON_CONFIGURATION_DELETED) {
 
 			return;
 		}
@@ -123,22 +110,19 @@ public class ScimClientOAuth2ApplicationConfigurationFactory {
 		}
 	}
 
-	@Reference
-	protected UserLocalService userLocalService;
-
 	private OAuth2Application _getOrAddOAuth2Application(
 			long companyId,
 			ScimClientOAuth2ApplicationConfiguration
 				scimClientOAuth2ApplicationConfiguration)
 		throws Exception {
 
-		User user = userLocalService.getGuestUser(companyId);
+		User user = _userLocalService.getGuestUser(companyId);
 
-		User clientCredentialUser = userLocalService.getUserByScreenName(
+		User clientCredentialUser = _userLocalService.getUserByScreenName(
 			companyId, PropsValues.DEFAULT_ADMIN_SCREEN_NAME);
 
 		String clientId = ScimClientUtil.generateScimClientId(
-			scimClientOAuth2ApplicationConfiguration.applicationName());
+			scimClientOAuth2ApplicationConfiguration.oAuth2ApplicationName());
 
 		OAuth2Application oAuth2Application =
 			_oAuth2ApplicationLocalService.fetchOAuth2Application(
@@ -153,7 +137,8 @@ public class ScimClientOAuth2ApplicationConfigurationFactory {
 					clientId, ClientProfile.HEADLESS_SERVER.id(),
 					OAuth2SecureRandomGenerator.generateClientSecret(), null,
 					Collections.emptyList(), null, 0, null,
-					scimClientOAuth2ApplicationConfiguration.applicationName(),
+					scimClientOAuth2ApplicationConfiguration.
+						oAuth2ApplicationName(),
 					null, Collections.emptyList(), false, true, null,
 					new ServiceContext());
 
@@ -173,6 +158,9 @@ public class ScimClientOAuth2ApplicationConfigurationFactory {
 	private static final Log _log = LogFactoryUtil.getLog(
 		ScimClientOAuth2ApplicationConfigurationFactory.class);
 
+	@Reference(policyOption = ReferencePolicyOption.GREEDY)
+	private Collection<Application> _applications;
+
 	@Reference
 	private CompanyLocalService _companyLocalService;
 
@@ -182,6 +170,9 @@ public class ScimClientOAuth2ApplicationConfigurationFactory {
 	@Reference
 	private LocalOAuthClient _localOAuthClient;
 
+	@Reference(target = ModuleServiceLifecycle.PORTAL_INITIALIZED)
+	private ModuleServiceLifecycle _moduleServiceLifecycle;
+
 	private volatile OAuth2Application _oAuth2Application;
 
 	@Reference
@@ -189,5 +180,8 @@ public class ScimClientOAuth2ApplicationConfigurationFactory {
 
 	private volatile ServiceRegistration<BearerTokenProvider>
 		_serviceRegistration;
+
+	@Reference
+	private UserLocalService _userLocalService;
 
 }

@@ -20,6 +20,7 @@ if (Validator.isNull(redirect)) {
 
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(redirect);
+portletDisplay.setURLBackTitle(portletDisplay.getPortletDisplayName());
 
 renderResponse.setTitle(LanguageUtil.get(request, "edit-blueprint"));
 %>
@@ -36,6 +37,15 @@ renderResponse.setTitle(LanguageUtil.get(request, "edit-blueprint"));
 				"defaultLocale", LocaleUtil.toLanguageId(LocaleUtil.getDefault())
 			).put(
 				"featureFlagLps153813", FeatureFlagManagerUtil.isEnabled("LPS-153813")
+			).put(
+				"fetchSitesURL",
+				ResourceURLBuilder.createResourceURL(
+					renderResponse
+				).setCMD(
+					"getSitesJSONObject"
+				).setResourceID(
+					"/sxp_blueprint_admin/get_sites"
+				).buildString()
 			).put(
 				"isCompanyAdmin", permissionChecker.isCompanyAdmin()
 			).put(

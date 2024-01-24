@@ -46,11 +46,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>ITEMS_VIEW_MODE_BUTTON</td>
-	<td>//div[@class='dropdown']/parent::li[contains(@class,'nav-item')]//button[contains(@class,'nav-link')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>ITEMS_VIEW_TYPE_DROPDOWN</td>
 	<td>//div[@class='dropdown-menu show']//*[@class='dropdown-item' and text()='${key_viewMode}']</td>
 	<td></td>
@@ -223,7 +218,7 @@
 
 <tr>
 	<td>SELECT_CUSTOM_VIEW</td>
-	<td>//div[contains(@class,'custom-views-selection')]</td>
+	<td>//span[contains(@class,'navbar-text-truncate') and contains(text(),'${key_name}')]</td>
 	<td></td>
 </tr>
 <tr>

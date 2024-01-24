@@ -112,7 +112,7 @@
 </tr>
 <tr>
 	<td>FS_PRODUCT_OPTIONS_SELECT</td>
-	<td>//div/label[text()='${key_optionName}']/..//select</td>
+	<td>//div/label[text()='${key_optionName}']/..//select | //div/label[text()='${key_optionName}']/..//button</td>
 	<td></td>
 </tr>
 <tr>
@@ -153,6 +153,16 @@
 <tr>
 	<td>FS_PRODUCT_IMAGE</td>
 	<td>//div[@class='product-gallery']//source[contains(@srcset,'${key_fsProductImage}')]/..//img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FS_PRODUCT_MAIN_IMAGE</td>
+	<td>//div[@class='card main-image']//source[contains(@srcset,'${key_fsProductImage}')]/..//img</td>
+	<td></td>
+</tr>
+<tr>
+	<td>FS_PRODUCT_THUMBNAIL_IMAGE</td>
+	<td>//div[@class='gallery-thumbnails']//source[contains(@srcset,'${key_fsProductImage}')]/..//img</td>
 	<td></td>
 </tr>
 <tr>
@@ -223,6 +233,11 @@
 <tr>
 	<td>PRODUCT_DETAILS_OPTION_POSITION</td>
 	<td>//div[@class='product-detail-options']/form/div[${key_position}]//label[text()='${key_optionName}']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PRODUCT_DETAILS_OPTION_VALUE</td>
+	<td>//div/label[text()='${key_optionName}']/..//select/option[@value][text()='${key_optionValue}']</td>
 	<td></td>
 </tr>
 <tr>
@@ -343,6 +358,16 @@
 <tr>
 	<td>COLLECTION_DISPLAY_PRODUCT_SPECIFICATION_ENTRY</td>
 	<td>//li[contains(@class,'list-group-item')]//dt[contains(.,'${key_specification}')]/..//dd[contains(.,'${key_value}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>BOOLEAN_CHECKBOX</td>
+	<td>//label[contains(.,'${checkboxName}')]/..//input[@type='checkbox']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SF_ORDER_BODY_VERTICAL_ELLIPSIS</td>
+	<td>//div[contains(@class,'portlet') and contains(@class,'container')]//a[span/*[name()='svg'][contains(@class,'icon-ellipsis')]] | //*[contains(@class,'sheet-title')]//*[contains(@class,'dropdown-toggle')][.//*[name()='svg'][contains(@class,'icon-ellipsis')]]</td>
 	<td></td>
 </tr>
 

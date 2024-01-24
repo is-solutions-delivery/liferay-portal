@@ -10,6 +10,9 @@ import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 import SaveTemplate from '../SaveTemplate';
 import {
+	CSV_FORMAT,
+	DISALLOWED_CSV_ENTITY_TYPES,
+	FILE_EXTENSION_EVENT,
 	FILE_SCHEMA_EVENT,
 	SCHEMA_SELECTED_EVENT,
 	TEMPLATE_SELECTED_EVENT,
@@ -118,6 +121,26 @@ function ImportForm({
 			toggleDownloadTemplateAlert(schema);
 		}
 
+		function handleFileExtensionUpdate({entityType, fileExtension}) {
+			if (
+				fileExtension === CSV_FORMAT &&
+				DISALLOWED_CSV_ENTITY_TYPES.includes(entityType)
+			) {
+				setDbFields({
+					optional: [],
+					required: [],
+				});
+
+				const downloadTemplateAlert = document.getElementById(
+					`${portletNamespace}downloadTemplateAlert`
+				);
+
+				if (downloadTemplateAlert) {
+					downloadTemplateAlert.classList.add('hide');
+				}
+			}
+		}
+
 		function handleFileSchemaUpdate({fileContent, schema}) {
 			setFileContent(fileContent);
 
@@ -143,11 +166,13 @@ function ImportForm({
 			}
 		}
 
+		Liferay.on(FILE_EXTENSION_EVENT, handleFileExtensionUpdate);
 		Liferay.on(FILE_SCHEMA_EVENT, handleFileSchemaUpdate);
 		Liferay.on(SCHEMA_SELECTED_EVENT, handleSchemaUpdated);
 		Liferay.on(TEMPLATE_SELECTED_EVENT, handleTemplateSelect);
 
 		return () => {
+			Liferay.detach(FILE_EXTENSION_EVENT, handleFileExtensionUpdate);
 			Liferay.detach(FILE_SCHEMA_EVENT, handleFileSchemaUpdate);
 			Liferay.detach(SCHEMA_SELECTED_EVENT, handleSchemaUpdated);
 			Liferay.detach(TEMPLATE_SELECTED_EVENT, handleTemplateSelect);

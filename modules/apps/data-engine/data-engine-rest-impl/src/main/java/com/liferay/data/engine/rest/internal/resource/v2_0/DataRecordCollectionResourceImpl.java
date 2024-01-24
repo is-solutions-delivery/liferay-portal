@@ -22,7 +22,6 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
 import com.liferay.portal.kernel.change.tracking.CTAware;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.ResourceAction;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
@@ -44,10 +43,7 @@ import com.liferay.portal.vulcan.util.SearchUtil;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-
-import javax.validation.ValidationException;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -106,8 +102,7 @@ public class DataRecordCollectionResourceImpl
 			ActionKeys.VIEW);
 
 		return _getDataRecordCollections(
-			dataDefinitionId, keywords,
-			contextAcceptLanguage.getPreferredLocale(), pagination);
+			dataDefinitionId, keywords, pagination);
 	}
 
 	@Override
@@ -301,14 +296,8 @@ public class DataRecordCollectionResourceImpl
 	}
 
 	private Page<DataRecordCollection> _getDataRecordCollections(
-			long dataDefinitionId, String keywords, Locale locale,
-			Pagination pagination)
+			long dataDefinitionId, String keywords, Pagination pagination)
 		throws Exception {
-
-		if (pagination.getPageSize() > 250) {
-			throw new ValidationException(
-				_language.format(locale, "page-size-is-greater-than-x", 250));
-		}
 
 		DDMStructure ddmStructure = _ddmStructureLocalService.getStructure(
 			dataDefinitionId);
@@ -411,9 +400,6 @@ public class DataRecordCollectionResourceImpl
 
 	@Reference
 	private JSONFactory _jsonFactory;
-
-	@Reference
-	private Language _language;
 
 	@Reference
 	private Portal _portal;

@@ -156,15 +156,20 @@ definition {
 		Click(locator1 = "PageAudit#FAILING_CHECK_NAME");
 	}
 
+	@summary = "Go to element details on Performance panel"
+	macro goToElementDetails(elementName = null) {
+		Click(
+			ariaLabel = "Select ${elementName}",
+			locator1 = "PageAudit#PAGE_AUDIT_ELEMENT");
+	}
+
 	@summary = "Default summary"
 	macro openPageAuditSidebar() {
-		if (IsNotVisible(locator1 = "PageAudit#SIDEBAR")) {
+		if (IsElementNotPresent(locator1 = "PageAudit#SIDEBAR")) {
 			Click(locator1 = "PageAudit#PAGE_AUDIT_BUTTON");
 		}
 
-		while (IsNotVisible(locator1 = "PageAudit#SIDEBAR")) {
-			WaitForElementPresent(locator1 = "PageAudit#SIDEBAR");
-		}
+		WaitForElementPresent(locator1 = "PageAudit#SIDEBAR");
 	}
 
 	@summary = "Default summary"
@@ -265,7 +270,9 @@ definition {
 
 	@summary = "Default summary"
 	macro setPreferredStrategy(key_preferredStrategy = null) {
-		Click(locator1 = "Dropdown#TRIGGER");
+		Click(
+			key_fieldLabel = "Preferred Strategy",
+			locator1 = "Dropdown#COMBOBOX_WITH_LABEL");
 
 		DropdownMenuItem.click(menuItem = ${key_preferredStrategy});
 	}

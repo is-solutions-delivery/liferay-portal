@@ -5,13 +5,22 @@
 
 package com.liferay.journal.internal.search;
 
+import com.liferay.journal.internal.search.spi.model.index.contributor.JournalArticleModelIndexerWriterContributor;
+import com.liferay.journal.internal.search.spi.model.result.contributor.JournalArticleModelSummaryContributor;
+import com.liferay.journal.internal.search.spi.model.result.contributor.JournalArticleModelVisibilityContributor;
 import com.liferay.journal.model.JournalArticle;
+import com.liferay.journal.service.JournalArticleLocalService;
+import com.liferay.journal.service.JournalArticleResourceLocalService;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.search.batch.BatchIndexingHelper;
+import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchConfigurator;
 import com.liferay.portal.search.spi.model.result.contributor.ModelSummaryContributor;
 import com.liferay.portal.search.spi.model.result.contributor.ModelVisibilityContributor;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -64,20 +73,40 @@ public class JournalArticleModelSearchConfigurator
 		return true;
 	}
 
-	@Reference(
-		target = "(indexer.class.name=com.liferay.journal.model.JournalArticle)"
-	)
+	@Activate
+	protected void activate() {
+		_modelIndexerWriterContributor =
+			new JournalArticleModelIndexerWriterContributor(
+				_batchIndexingHelper, _configurationProvider,
+				_dynamicQueryBatchIndexingActionableFactory,
+				_journalArticleLocalService,
+				_journalArticleResourceLocalService);
+		_modelVisibilityContributor =
+			new JournalArticleModelVisibilityContributor(
+				_journalArticleLocalService);
+	}
+
+	@Reference
+	private BatchIndexingHelper _batchIndexingHelper;
+
+	@Reference
+	private ConfigurationProvider _configurationProvider;
+
+	@Reference
+	private DynamicQueryBatchIndexingActionableFactory
+		_dynamicQueryBatchIndexingActionableFactory;
+
+	@Reference
+	private JournalArticleLocalService _journalArticleLocalService;
+
+	@Reference
+	private JournalArticleResourceLocalService
+		_journalArticleResourceLocalService;
+
 	private ModelIndexerWriterContributor<JournalArticle>
 		_modelIndexerWriterContributor;
-
-	@Reference(
-		target = "(indexer.class.name=com.liferay.journal.model.JournalArticle)"
-	)
-	private ModelSummaryContributor _modelSummaryContributor;
-
-	@Reference(
-		target = "(indexer.class.name=com.liferay.journal.model.JournalArticle)"
-	)
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new JournalArticleModelSummaryContributor();
 	private ModelVisibilityContributor _modelVisibilityContributor;
 
 }

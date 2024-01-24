@@ -17,6 +17,8 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.search.experiences.exception.SXPElementTitleException;
 import com.liferay.search.experiences.model.SXPElement;
@@ -45,10 +47,18 @@ public class SXPElementLocalServiceImpl extends SXPElementLocalServiceBaseImpl {
 	public SXPElement addSXPElement(
 			String externalReferenceCode, long userId,
 			Map<Locale, String> descriptionMap, String elementDefinitionJSON,
-			boolean readOnly, String schemaVersion,
-			Map<Locale, String> titleMap, int type,
+			String fallbackDescription, String fallbackTitle, boolean readOnly,
+			String schemaVersion, Map<Locale, String> titleMap, int type,
 			ServiceContext serviceContext)
 		throws PortalException {
+
+		if (Validator.isNull(fallbackDescription)) {
+			fallbackDescription = descriptionMap.get(LocaleUtil.getDefault());
+		}
+
+		if (Validator.isNull(fallbackTitle)) {
+			fallbackTitle = titleMap.get(LocaleUtil.getDefault());
+		}
 
 		_validate(titleMap, type, serviceContext);
 
@@ -65,6 +75,8 @@ public class SXPElementLocalServiceImpl extends SXPElementLocalServiceBaseImpl {
 
 		sxpElement.setDescriptionMap(descriptionMap);
 		sxpElement.setElementDefinitionJSON(elementDefinitionJSON);
+		sxpElement.setFallbackDescription(fallbackDescription);
+		sxpElement.setFallbackTitle(fallbackTitle);
 		sxpElement.setHidden(false);
 		sxpElement.setReadOnly(readOnly);
 		sxpElement.setSchemaVersion(schemaVersion);
@@ -173,7 +185,7 @@ public class SXPElementLocalServiceImpl extends SXPElementLocalServiceBaseImpl {
 			ServiceContext serviceContext)
 		throws SXPElementTitleException {
 
-		if (!GetterUtil.getBoolean(
+		if (GetterUtil.getBoolean(
 				serviceContext.getAttribute(
 					SXPElementLocalServiceImpl.class.getName() + "#_validate"),
 				true)) {

@@ -14,11 +14,16 @@ import com.liferay.analytics.settings.rest.internal.client.model.AnalyticsDataSo
 import com.liferay.analytics.settings.rest.internal.dto.v1_0.converter.ChannelDTOConverterContext;
 import com.liferay.analytics.settings.rest.manager.AnalyticsSettingsManager;
 import com.liferay.analytics.settings.rest.resource.v1_0.ChannelResource;
+import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.Http;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.pagination.Page;
@@ -26,6 +31,7 @@ import com.liferay.portal.vulcan.pagination.Pagination;
 
 import java.util.Objects;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ServiceScope;
@@ -47,8 +53,11 @@ public class ChannelResourceImpl extends BaseChannelResourceImpl {
 		com.liferay.analytics.settings.rest.internal.client.pagination.Page
 			<AnalyticsChannel> analyticsChannelsPage =
 				_analyticsCloudClient.getAnalyticsChannelsPage(
-					contextCompany.getCompanyId(), keywords,
-					pagination.getPage() - 1, pagination.getPageSize(), sorts);
+					_configurationProvider.getCompanyConfiguration(
+						AnalyticsConfiguration.class,
+						contextCompany.getCompanyId()),
+					keywords, pagination.getPage() - 1,
+					pagination.getPageSize(), sorts);
 		AnalyticsConfiguration analyticsConfiguration =
 			_analyticsSettingsManager.getAnalyticsConfiguration(
 				contextCompany.getCompanyId());
@@ -118,14 +127,23 @@ public class ChannelResourceImpl extends BaseChannelResourceImpl {
 					contextAcceptLanguage.getPreferredLocale()),
 				_analyticsCloudClient.updateAnalyticsChannel(
 					channel.getChannelId(),
-					_analyticsSettingsManager.getCommerceChannelIds(
-						channel.getChannelId(), contextUser.getCompanyId()),
-					contextUser.getCompanyId(),
+					transform(
+						_analyticsSettingsManager.getCommerceChannelIds(
+							channel.getChannelId(), contextUser.getCompanyId()),
+						commerceChannelId -> _groupLocalService.fetchGroup(
+							contextUser.getCompanyId(),
+							_commerceChannelClassNameId, commerceChannelId),
+						Group.class),
+					_configurationProvider.getCompanyConfiguration(
+						AnalyticsConfiguration.class,
+						contextUser.getCompanyId()),
 					analyticsConfiguration.liferayAnalyticsDataSourceId(),
 					contextAcceptLanguage.getPreferredLocale(),
-					_analyticsSettingsManager.getSiteIds(
-						channel.getChannelId(),
-						contextCompany.getCompanyId())));
+					transform(
+						_analyticsSettingsManager.getSiteIds(
+							channel.getChannelId(),
+							contextCompany.getCompanyId()),
+						_groupLocalService::fetchGroup, Group.class)));
 		}
 
 		if (dataSources.length > 1) {
@@ -147,17 +165,29 @@ public class ChannelResourceImpl extends BaseChannelResourceImpl {
 
 		AnalyticsChannel analyticsChannel =
 			_analyticsCloudClient.updateAnalyticsChannel(
-				channel.getChannelId(), dataSource.getCommerceChannelIds(),
-				contextUser.getCompanyId(), dataSource.getDataSourceId(),
+				channel.getChannelId(),
+				transform(
+					dataSource.getCommerceChannelIds(),
+					commerceChannelId -> _groupLocalService.fetchGroup(
+						contextUser.getCompanyId(), _commerceChannelClassNameId,
+						commerceChannelId),
+					Group.class),
+				_configurationProvider.getCompanyConfiguration(
+					AnalyticsConfiguration.class, contextUser.getCompanyId()),
+				dataSource.getDataSourceId(),
 				contextAcceptLanguage.getPreferredLocale(),
-				dataSource.getSiteIds());
+				transform(
+					dataSource.getSiteIds(), _groupLocalService::fetchGroup,
+					Group.class));
 
 		AnalyticsDataSource analyticsDataSource = _getAnalyticsDataSource(
 			GetterUtil.getLong(dataSource.getDataSourceId()),
 			analyticsChannel.getAnalyticsDataSources());
 
 		_analyticsCloudClient.updateAnalyticsDataSourceDetails(
-			null, contextCompany.getCompanyId(),
+			null,
+			_configurationProvider.getCompanyConfiguration(
+				AnalyticsConfiguration.class, contextCompany.getCompanyId()),
 			ArrayUtil.isNotEmpty(analyticsDataSource.getCommerceChannelIds()),
 			null, ArrayUtil.isNotEmpty(analyticsDataSource.getSiteIds()));
 
@@ -197,7 +227,18 @@ public class ChannelResourceImpl extends BaseChannelResourceImpl {
 				channel.getChannelId(),
 				contextAcceptLanguage.getPreferredLocale()),
 			_analyticsCloudClient.addAnalyticsChannel(
-				contextCompany.getCompanyId(), channel.getName()));
+				_configurationProvider.getCompanyConfiguration(
+					AnalyticsConfiguration.class,
+					contextCompany.getCompanyId()),
+				channel.getName()));
+	}
+
+	@Activate
+	protected void activate() {
+		_commerceChannelClassNameId = _portal.getClassNameId(
+			"com.liferay.commerce.product.model.CommerceChannel");
+
+		_analyticsCloudClient = new AnalyticsCloudClient(_http);
 	}
 
 	@Reference
@@ -216,7 +257,6 @@ public class ChannelResourceImpl extends BaseChannelResourceImpl {
 		throw new RuntimeException("Unable to get analytics data source");
 	}
 
-	@Reference
 	private AnalyticsCloudClient _analyticsCloudClient;
 
 	@Reference
@@ -226,5 +266,19 @@ public class ChannelResourceImpl extends BaseChannelResourceImpl {
 		target = "(component.name=com.liferay.analytics.settings.rest.internal.dto.v1_0.converter.ChannelDTOConverter)"
 	)
 	private DTOConverter<AnalyticsChannel, Channel> _channelDTOConverter;
+
+	private long _commerceChannelClassNameId;
+
+	@Reference
+	private ConfigurationProvider _configurationProvider;
+
+	@Reference
+	private GroupLocalService _groupLocalService;
+
+	@Reference
+	private Http _http;
+
+	@Reference
+	private Portal _portal;
 
 }

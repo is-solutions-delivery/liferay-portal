@@ -15,10 +15,7 @@ definition {
 
 		Navigator.openURL();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Metrics");
+		Workflow.openWorkflowMetrics();
 	}
 
 	tearDown {
@@ -32,10 +29,7 @@ definition {
 	@description = "LPS-102664 - Verify that the user can reassign several tasks to a different users and All Items page is updated accordingly"
 	@priority = 4
 	test AllItemsPageIsUpdatedAfterReassignTasksToDifferentUser {
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.addCP(
 			userEmailAddress = "usertest@liferay.com",
@@ -43,10 +37,7 @@ definition {
 			userLastName = "Test",
 			userScreenName = "usertest");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Users",
-			panel = "Control Panel",
-			portlet = "Users and Organizations");
+		User.openUsersAdmin();
 
 		User.assignRegularRoleCP(
 			roleTitle = "Administrator",
@@ -113,10 +104,7 @@ definition {
 	@description = "LPS-106219 - Verify that, in the modal Select Tasks to Reassign, the Assignee filter contains only the options that are displayed in the modal"
 	@priority = 3
 	test AssigneeFilterContainsOnlyOptionDisplayedInModal {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -163,10 +151,7 @@ definition {
 	@description = "LPS-106219 - Verify that when all items are selected to be reassigned in a filtered All Items page, the bulk modal is considering the filter results"
 	@priority = 4
 	test BulkReassignConsiderFilteredResultsFromAllItemsPage {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -224,10 +209,7 @@ definition {
 	@description = "LPS-106219 - Verify that the user is able to select multiple filter options and combine filter queries"
 	@priority = 3
 	test CanSelectMultipleFilterOption {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -274,10 +256,7 @@ definition {
 
 		WorkflowMetrics.createUsersGroovy(numberOfUsers = 1);
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -341,10 +320,7 @@ definition {
 	@description = "LPS-106219 - Verify that, in the modal Select Tasks to Reassign, the filter query should only be applied after the user moves the cursor out of the dropdown card"
 	@priority = 3
 	test FilterQueryIsAppliedAfterMouseMovesOutTheCard {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -407,10 +383,7 @@ definition {
 	@description = "LPS-102664 - Verify that, in Select New Assignee table, there is a tooltip next to New Assignee title that says Possible assignees must have permissions to be assigned to the corresponding step"
 	@priority = 3
 	test InfoIconDisplaysMessageOnHover {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -455,10 +428,7 @@ definition {
 	@description = "LPS-102664 - Verify that tasks within a single instance with concurrent pending tasks can be reassigned using the bulk reassign task modal"
 	@priority = 5
 	test InstanceWithPendingTasksCanBeReassignedUsingBulkReassignModal {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -493,10 +463,7 @@ definition {
 	@description = "LPS-102664 - Verify that in Select Tasks to Reassign, the tasks are displayed in the same order rule displayed in All Items page"
 	@priority = 3
 	test TasksAreDisplayedInSameOrderRuleInAllItemsPage {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -537,10 +504,7 @@ definition {
 	@description = "LPS-102664 - Verify that the user is able to filter the info inside Select Tasks to Reassign by Step and Assignee, search for any of the available field values and the table is updated accordingly"
 	@priority = 4
 	test UserCanFilterbyStepAndAssignee {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -611,10 +575,7 @@ definition {
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Workflow.addNewDefinition(workflowDefinitionTitle = "Multi Task Process");
 
@@ -654,10 +615,7 @@ definition {
 	@description = "LPS-102664 - Verify that the Bulk Reassign is letting the user reassign only pending tasks"
 	@priority = 5
 	test UserCanReassignOnlyPendingTasks {
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 
@@ -695,6 +653,10 @@ definition {
 	@description = "LPS-102664 - Verify that the Bulk Reassign is letting the user reassign only pending tasks assigned to the user's role"
 	@priority = 5
 	test UserCanReassignOnlyTasksAssignedToHisRole {
+		Site.openSiteSettingsAdmin(siteURLKey = "guest");
+
+		Site.manageMembershipOptions(allowManualMembershipManagement = "true");
+
 		JSONUser.addUser(
 			userEmailAddress = "user1@liferay.com",
 			userFirstName = "user1",
@@ -710,12 +672,7 @@ definition {
 			roleTitle = "Administrator",
 			userEmailAddress = "user1@liferay.com");
 
-		Navigator.openURL();
-
-		ApplicationsMenu.gotoPortlet(
-			category = "Configuration",
-			panel = "Control Panel",
-			portlet = "Instance Settings");
+		PortalSettings.openInstanceSettingsAdmin();
 
 		PortalSettings.gotoConfiguration(
 			configurationCategory = "User Authentication",
@@ -736,10 +693,7 @@ definition {
 			userLastName = "user1",
 			userScreenName = "user1");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Workflow",
-			panel = "Applications",
-			portlet = "Process Builder");
+		Workflow.openWorkflowListView();
 
 		Navigator.gotoNavItem(navItem = "Configuration");
 

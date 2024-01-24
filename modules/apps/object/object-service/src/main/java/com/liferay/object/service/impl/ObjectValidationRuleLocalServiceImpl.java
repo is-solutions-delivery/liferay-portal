@@ -7,6 +7,7 @@ package com.liferay.object.service.impl;
 
 import com.liferay.dynamic.data.mapping.expression.CreateExpressionRequest;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
+import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectValidationRuleConstants;
 import com.liferay.object.constants.ObjectValidationRuleSettingConstants;
 import com.liferay.object.definition.util.ObjectDefinitionUtil;
@@ -18,6 +19,7 @@ import com.liferay.object.exception.ObjectValidationRuleScriptException;
 import com.liferay.object.exception.ObjectValidationRuleSettingNameException;
 import com.liferay.object.exception.ObjectValidationRuleSettingValueException;
 import com.liferay.object.exception.ObjectValidationRuleSystemException;
+import com.liferay.object.exception.RequiredObjectValidationRuleSettingException;
 import com.liferay.object.internal.action.util.ObjectEntryVariablesUtil;
 import com.liferay.object.internal.validation.rule.FunctionObjectValidationRuleEngineImpl;
 import com.liferay.object.internal.validation.rule.UniqueCompositeKeyObjectValidationRuleEngineImpl;
@@ -27,6 +29,8 @@ import com.liferay.object.model.ObjectValidationRule;
 import com.liferay.object.model.ObjectValidationRuleSetting;
 import com.liferay.object.scripting.exception.ObjectScriptingException;
 import com.liferay.object.scripting.validator.ObjectScriptingValidator;
+import com.liferay.object.service.ObjectEntryLocalService;
+import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectValidationRuleSettingLocalService;
 import com.liferay.object.service.base.ObjectValidationRuleLocalServiceBaseImpl;
 import com.liferay.object.service.persistence.ObjectDefinitionPersistence;
@@ -37,6 +41,7 @@ import com.liferay.object.validation.rule.ObjectValidationRuleEngine;
 import com.liferay.object.validation.rule.ObjectValidationRuleEngineRegistry;
 import com.liferay.object.validation.rule.ObjectValidationRuleResult;
 import com.liferay.petra.function.transform.TransformUtil;
+import com.liferay.petra.sql.dsl.Column;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
@@ -47,6 +52,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.model.SystemEventConstants;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.module.service.Snapshot;
 import com.liferay.portal.kernel.search.Indexable;
 import com.liferay.portal.kernel.search.IndexableType;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -61,6 +67,7 @@ import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -92,14 +99,15 @@ public class ObjectValidationRuleLocalServiceImpl
 		throws PortalException {
 
 		_validateInvokerBundle(
-			"Only allowed bundles can create system object validation rules",
+			"Only allowed bundles can add system object validation rules",
 			system);
 
 		User user = _userLocalService.getUser(userId);
 
 		_validate(
-			externalReferenceCode, 0, objectDefinitionId, user.getCompanyId(),
-			engine, nameMap, outputType, script, objectValidationRuleSettings);
+			externalReferenceCode, 0, user.getCompanyId(), objectDefinitionId,
+			active, engine, nameMap, outputType, script,
+			objectValidationRuleSettings);
 
 		ObjectValidationRule objectValidationRule =
 			objectValidationRulePersistence.create(
@@ -307,12 +315,19 @@ public class ObjectValidationRuleLocalServiceImpl
 			"Only allowed bundles can edit system object validation rules",
 			objectValidationRule.isSystem());
 
+		if (StringUtil.equals(
+				engine,
+				ObjectValidationRuleConstants.ENGINE_TYPE_COMPOSITE_KEY)) {
+
+			active = true;
+		}
+
 		_validate(
 			externalReferenceCode,
 			objectValidationRule.getObjectValidationRuleId(),
-			objectValidationRule.getObjectDefinitionId(),
-			objectValidationRule.getCompanyId(), engine, nameMap, outputType,
-			script, objectValidationRuleSettings);
+			objectValidationRule.getCompanyId(),
+			objectValidationRule.getObjectDefinitionId(), active, engine,
+			nameMap, outputType, script, objectValidationRuleSettings);
 
 		objectValidationRule.setExternalReferenceCode(externalReferenceCode);
 		objectValidationRule.setActive(active);
@@ -325,12 +340,12 @@ public class ObjectValidationRuleLocalServiceImpl
 		objectValidationRule = objectValidationRulePersistence.update(
 			objectValidationRule);
 
-		_objectValidationRuleSettingPersistence.removeByObjectValidationRuleId(
-			objectValidationRuleId);
-
 		objectValidationRule.setObjectValidationRuleSettings(
 			_updateObjectValidationRuleSettings(
-				objectValidationRuleSettings, objectValidationRule));
+				objectValidationRuleSettings,
+				_objectDefinitionPersistence.fetchByPrimaryKey(
+					objectValidationRule.getObjectDefinitionId()),
+				objectValidationRule));
 
 		return objectValidationRule;
 	}
@@ -480,11 +495,9 @@ public class ObjectValidationRuleLocalServiceImpl
 			_updateObjectValidationRuleSettings(
 				List<ObjectValidationRuleSetting>
 					newObjectValidationRuleSettings,
+				ObjectDefinition objectDefinition,
 				ObjectValidationRule objectValidationRule)
 		throws PortalException {
-
-		Set<ObjectValidationRuleSetting> objectValidationRuleSettings =
-			SetUtil.fromCollection(newObjectValidationRuleSettings);
 
 		for (ObjectValidationRuleSetting oldObjectValidationRuleSetting :
 				_objectValidationRuleSettingPersistence.
@@ -505,28 +518,47 @@ public class ObjectValidationRuleLocalServiceImpl
 
 					delete = false;
 
-					objectValidationRuleSettings.remove(
-						newObjectValidationRuleSetting);
-
 					break;
 				}
 			}
 
-			if (delete) {
-				_objectValidationRuleSettingPersistence.remove(
-					oldObjectValidationRuleSetting);
+			if (!delete) {
+				continue;
 			}
+
+			if (objectDefinition.isApproved() &&
+				oldObjectValidationRuleSetting.compareName(
+					ObjectValidationRuleSettingConstants.
+						NAME_COMPOSITE_KEY_OBJECT_FIELD_ID)) {
+
+				throw new RequiredObjectValidationRuleSettingException.
+					MustNotDeleteObjectValidationRuleSettingPublishedObjectDefinition(
+						oldObjectValidationRuleSetting.getName());
+			}
+
+			_objectValidationRuleSettingPersistence.remove(
+				oldObjectValidationRuleSetting);
 		}
 
-		for (ObjectValidationRuleSetting objectValidationRuleSetting :
-				objectValidationRuleSettings) {
+		for (ObjectValidationRuleSetting newObjectValidationRuleSetting :
+				newObjectValidationRuleSettings) {
+
+			ObjectValidationRuleSetting oldObjectValidationRuleSetting =
+				_objectValidationRuleSettingPersistence.fetchByOVRI_N_V(
+					objectValidationRule.getObjectValidationRuleId(),
+					newObjectValidationRuleSetting.getName(),
+					newObjectValidationRuleSetting.getValue());
+
+			if (oldObjectValidationRuleSetting != null) {
+				continue;
+			}
 
 			_objectValidationRuleSettingLocalService.
 				addObjectValidationRuleSetting(
 					objectValidationRule.getUserId(),
 					objectValidationRule.getObjectValidationRuleId(),
-					objectValidationRuleSetting.getName(),
-					objectValidationRuleSetting.getValue());
+					newObjectValidationRuleSetting.getName(),
+					newObjectValidationRuleSetting.getValue());
 		}
 
 		return newObjectValidationRuleSettings;
@@ -534,8 +566,9 @@ public class ObjectValidationRuleLocalServiceImpl
 
 	private void _validate(
 			String externalReferenceCode, long objectValidationRuleId,
-			long objectDefinitionId, long companyId, String engine,
-			Map<Locale, String> nameMap, String outputType, String script,
+			long companyId, long objectDefinitionId, boolean active,
+			String engine, Map<Locale, String> nameMap, String outputType,
+			String script,
 			List<ObjectValidationRuleSetting> objectValidationRuleSettings)
 		throws PortalException {
 
@@ -556,14 +589,6 @@ public class ObjectValidationRuleLocalServiceImpl
 			throw new ObjectValidationRuleEngineException.MustNotBeNull();
 		}
 
-		ObjectValidationRuleEngine objectValidationRuleEngine =
-			_objectValidationRuleEngineRegistry.getObjectValidationRuleEngine(
-				companyId, engine);
-
-		if (objectValidationRuleEngine == null) {
-			throw new ObjectValidationRuleEngineException.NoSuchEngine(engine);
-		}
-
 		Locale locale = LocaleUtil.getSiteDefault();
 
 		if ((nameMap == null) || Validator.isNull(nameMap.get(locale))) {
@@ -581,6 +606,10 @@ public class ObjectValidationRuleLocalServiceImpl
 			throw new ObjectValidationRuleOutputTypeException(
 				"Invalid output type " + outputType);
 		}
+
+		ObjectValidationRuleEngine objectValidationRuleEngine =
+			_objectValidationRuleEngineRegistry.getObjectValidationRuleEngine(
+				companyId, engine);
 
 		if (Validator.isNull(script) &&
 			!(objectValidationRuleEngine instanceof
@@ -637,29 +666,29 @@ public class ObjectValidationRuleLocalServiceImpl
 						NAME_OUTPUT_OBJECT_FIELD_ID);
 		}
 
+		Set<String> allowedObjectValidationRuleSettingNames = SetUtil.fromArray(
+			ObjectValidationRuleSettingConstants.NAME_OUTPUT_OBJECT_FIELD_ID);
+
+		if (FeatureFlagManagerUtil.isEnabled("LPS-187854")) {
+			allowedObjectValidationRuleSettingNames.add(
+				ObjectValidationRuleSettingConstants.
+					NAME_COMPOSITE_KEY_OBJECT_FIELD_ID);
+		}
+
+		int count = 0;
+
 		for (ObjectValidationRuleSetting objectValidationRuleSetting :
 				objectValidationRuleSettings) {
 
-			if (FeatureFlagManagerUtil.isEnabled("LPS-187854") &&
-				!(objectValidationRuleSetting.compareName(
+			if (!allowedObjectValidationRuleSettingNames.contains(
+					objectValidationRuleSetting.getName()) ||
+				(objectValidationRuleSetting.compareName(
 					ObjectValidationRuleSettingConstants.
-						NAME_COMPOSITE_KEY_OBJECT_FIELD_ID) ||
-				  objectValidationRuleSetting.compareName(
-					  ObjectValidationRuleSettingConstants.
-						  NAME_OUTPUT_OBJECT_FIELD_ID))) {
-
-				throw new ObjectValidationRuleSettingNameException.
-					NotAllowedName(objectValidationRuleSetting.getName());
-			}
-
-			if (!FeatureFlagManagerUtil.isEnabled("LPS-187854") &&
-				(StringUtil.equals(
-					outputType,
-					ObjectValidationRuleConstants.
-						OUTPUT_TYPE_FULL_VALIDATION) ||
-				 !objectValidationRuleSetting.compareName(
-					 ObjectValidationRuleSettingConstants.
-						 NAME_OUTPUT_OBJECT_FIELD_ID))) {
+						NAME_OUTPUT_OBJECT_FIELD_ID) &&
+				 !StringUtil.equals(
+					 outputType,
+					 ObjectValidationRuleConstants.
+						 OUTPUT_TYPE_PARTIAL_VALIDATION))) {
 
 				throw new ObjectValidationRuleSettingNameException.
 					NotAllowedName(objectValidationRuleSetting.getName());
@@ -668,11 +697,75 @@ public class ObjectValidationRuleLocalServiceImpl
 			ObjectField objectField = _objectFieldPersistence.fetchByPrimaryKey(
 				GetterUtil.getLong(objectValidationRuleSetting.getValue()));
 
-			if ((objectField == null) || objectField.isSystem()) {
+			if ((objectField == null) || objectField.isSystem() ||
+				(objectValidationRuleSetting.compareName(
+					ObjectValidationRuleSettingConstants.
+						NAME_COMPOSITE_KEY_OBJECT_FIELD_ID) &&
+				 !_compositeKeyObjectFieldBusinessTypes.contains(
+					 objectField.getBusinessType()))) {
+
 				throw new ObjectValidationRuleSettingValueException.
 					InvalidValue(
 						objectValidationRuleSetting.getName(),
 						objectValidationRuleSetting.getValue());
+			}
+
+			if (!objectValidationRuleSetting.compareName(
+					ObjectValidationRuleSettingConstants.
+						NAME_COMPOSITE_KEY_OBJECT_FIELD_ID)) {
+
+				continue;
+			}
+
+			ObjectDefinition objectDefinition =
+				_objectDefinitionPersistence.findByPrimaryKey(
+					objectDefinitionId);
+			ObjectValidationRuleSetting oldObjectValidationRuleSetting =
+				_objectValidationRuleSettingPersistence.fetchByOVRI_N_V(
+					objectValidationRuleId,
+					objectValidationRuleSetting.getName(),
+					objectValidationRuleSetting.getValue());
+
+			if ((oldObjectValidationRuleSetting == null) &&
+				objectDefinition.isApproved()) {
+
+				ObjectFieldLocalService objectFieldLocalService =
+					_objectFieldLocalServiceSnapshot.get();
+
+				Column<?, ?> column = objectFieldLocalService.getColumn(
+					objectDefinition.getObjectDefinitionId(),
+					objectField.getName());
+
+				ObjectEntryLocalService objectEntryLocalService =
+					_objectEntryLocalServiceSnapshot.get();
+
+				long objectEntriesCount =
+					objectEntryLocalService.getObjectEntriesCount(
+						0, objectDefinition, column.isNotNull());
+
+				if (objectEntriesCount > 0) {
+					throw new ObjectValidationRuleSettingValueException.
+						InvalidValue(
+							objectValidationRuleSetting.getName(),
+							objectValidationRuleSetting.getValue());
+				}
+			}
+
+			count++;
+		}
+
+		if (StringUtil.equals(
+				engine,
+				ObjectValidationRuleConstants.ENGINE_TYPE_COMPOSITE_KEY)) {
+
+			if (count > 5) {
+				throw new ObjectValidationRuleSettingValueException.
+					CompositeKeyMustHaveMaxObjectFields();
+			}
+
+			if (active && (count < 2)) {
+				throw new ObjectValidationRuleSettingValueException.
+					CompositeKeyMustHaveMinObjectFields();
 			}
 		}
 	}
@@ -689,6 +782,21 @@ public class ObjectValidationRuleLocalServiceImpl
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		ObjectValidationRuleLocalServiceImpl.class);
+
+	private static final List<String> _compositeKeyObjectFieldBusinessTypes =
+		Arrays.asList(
+			ObjectFieldConstants.BUSINESS_TYPE_INTEGER,
+			ObjectFieldConstants.BUSINESS_TYPE_PICKLIST,
+			ObjectFieldConstants.BUSINESS_TYPE_RELATIONSHIP,
+			ObjectFieldConstants.BUSINESS_TYPE_TEXT);
+	private static final Snapshot<ObjectEntryLocalService>
+		_objectEntryLocalServiceSnapshot = new Snapshot<>(
+			ObjectValidationRuleSettingLocalServiceImpl.class,
+			ObjectEntryLocalService.class, null, true);
+	private static final Snapshot<ObjectFieldLocalService>
+		_objectFieldLocalServiceSnapshot = new Snapshot<>(
+			ObjectValidationRuleSettingLocalServiceImpl.class,
+			ObjectFieldLocalService.class, null, true);
 
 	@Reference
 	private DDMExpressionFactory _ddmExpressionFactory;

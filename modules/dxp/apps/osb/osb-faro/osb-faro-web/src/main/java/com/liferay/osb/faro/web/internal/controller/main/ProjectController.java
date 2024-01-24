@@ -11,8 +11,6 @@ import com.liferay.osb.faro.constants.FaroUserConstants;
 import com.liferay.osb.faro.contacts.model.constants.JSONConstants;
 import com.liferay.osb.faro.contacts.service.ContactsCardTemplateLocalService;
 import com.liferay.osb.faro.contacts.service.ContactsLayoutTemplateLocalService;
-import com.liferay.osb.faro.engine.client.ContactsEngineClient;
-import com.liferay.osb.faro.engine.client.WorkspaceEngineClient;
 import com.liferay.osb.faro.engine.client.model.Workspace;
 import com.liferay.osb.faro.engine.client.util.EngineServiceURLUtil;
 import com.liferay.osb.faro.exception.EmailAddressDomainException;
@@ -39,7 +37,6 @@ import com.liferay.osb.faro.web.internal.model.display.contacts.ProjectDisplay;
 import com.liferay.osb.faro.web.internal.model.display.contacts.TimeZoneDisplay;
 import com.liferay.osb.faro.web.internal.model.display.main.FaroSubscriptionDisplay;
 import com.liferay.osb.faro.web.internal.param.FaroParam;
-import com.liferay.osb.faro.web.internal.util.ContactsLayoutHelper;
 import com.liferay.osb.faro.web.internal.util.JSONUtil;
 import com.liferay.osb.faro.web.internal.util.TimeZoneUtil;
 import com.liferay.petra.function.transform.TransformUtil;
@@ -1135,12 +1132,6 @@ public class ProjectController extends BaseFaroController {
 	private ContactsCardTemplateLocalService _contactsCardTemplateLocalService;
 
 	@Reference
-	private ContactsEngineClient _contactsEngineClient;
-
-	@Reference
-	private ContactsLayoutHelper _contactsLayoutHelper;
-
-	@Reference
 	private ContactsLayoutTemplateLocalService
 		_contactsLayoutTemplateLocalService;
 
@@ -1171,8 +1162,5 @@ public class ProjectController extends BaseFaroController {
 
 	@Reference
 	private RoleLocalService _roleLocalService;
-
-	@Reference
-	private WorkspaceEngineClient _workspaceEngineClient;
 
 }

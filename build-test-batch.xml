@@ -958,6 +958,13 @@ mariadb.executable=${mariadb.executable}]]></echo>
 					</if>
 				</then>
 			</if>
+
+			<if>
+				<contains string="${suite.search.engine}" substring="opensearch" />
+				<then>
+					<ant antfile="build-test-elasticsearch7.xml" target="start-opensearch" />
+				</then>
+			</if>
 		</sequential>
 	</macrodef>
 
@@ -1608,7 +1615,8 @@ app.server.type=@{app.server.type}]]></echo>
 		<attribute default="true" name="setup.proxy" />
 		<attribute default="true" name="setup.testable.jboss" />
 		<attribute default="true" name="setup.testable.tomcat" />
-		<attribute default="false" name="startup.testing" />
+		<attribute default="false" name="startup.testing.cold" />
+		<attribute default="false" name="startup.testing.warm" />
 		<attribute default="" name="test.build.fix.pack.zip.url" />
 		<attribute default="" name="test.fix.pack.base.url" />
 		<attribute default="" name="test.legacy.database.dump" />
@@ -1674,6 +1682,7 @@ app.server.type=@{app.server.type}]]></echo>
 										<ant antfile="build-test-${app.server.type}.xml" inheritAll="false" target="run-selenium-${app.server.type}">
 											<property name="app.server.start.executable.arg.line" value="${test.batch.app.server.start.executable.arg.line}" />
 											<property name="database.type" value="@{database.type}" />
+											<property name="startup.testing.warm" value="@{startup.testing.warm}" />
 											<property name="functional.test.type" value="@{functional.test.type}" />
 											<property name="liferay.portal.bundle" value="@{test.portal.bundle.version}" />
 											<property name="test.build.plugins.war.zip.url" value="@{test.plugins.war.zip.url}" />
@@ -1696,7 +1705,7 @@ app.server.type=@{app.server.type}]]></echo>
 										</if>
 
 										<if>
-											<equals arg1="@{startup.testing}" arg2="true" />
+											<equals arg1="@{startup.testing.cold}" arg2="true" />
 											<then>
 												<antcall inheritall="false" target="stop-app-server" />
 
@@ -1948,9 +1957,7 @@ ${poshi.runner.testsuite.testcase.name}</echo>
 								<param name="database.type" value="@{database.type}" />
 							</antcall>
 
-							<echo file="${app.server.classes.portal.dir}/system-ext.properties">log.sanitizer.enabled=false
-
-com.liferay.portal.kernel.util.ServiceProxyFactory.timeout=300000</echo>
+							<echo file="${app.server.classes.portal.dir}/system-ext.properties">log.sanitizer.enabled=false</echo>
 
 							<gradle-execute dir="modules/apps/static/portal-lpkg-deployer/portal-lpkg-deployer-test" task="test">
 								<arg value="test" />
@@ -2154,8 +2161,7 @@ com.liferay.portal.kernel.util.ServiceProxyFactory.timeout=300000</echo>
 								<param name="database.type" value="@{database.type}" />
 							</antcall>
 
-							<echo file="${app.server.classes.portal.dir}/system-ext.properties">com.liferay.portal.kernel.util.ServiceProxyFactory.timeout=300000
-log.sanitizer.enabled=false</echo>
+							<echo file="${app.server.classes.portal.dir}/system-ext.properties">log.sanitizer.enabled=false</echo>
 
 							<gradle-execute dir="modules/apps/static/portal-lpkg-deployer/portal-lpkg-deployer-test" task="test">
 								<arg value="test" />
@@ -2791,8 +2797,7 @@ log.sanitizer.enabled=false</echo>
 								<param name="database.type" value="@{database.type}" />
 							</antcall>
 
-							<echo file="${app.server.classes.portal.dir}/system-ext.properties">com.liferay.portal.kernel.util.ServiceProxyFactory.timeout=300000
-log.sanitizer.enabled=false</echo>
+							<echo file="${app.server.classes.portal.dir}/system-ext.properties">log.sanitizer.enabled=false</echo>
 
 							<antcall inheritall="false" target="start-app-server" />
 
@@ -2974,8 +2979,7 @@ log.sanitizer.enabled=false</echo>
 				<param name="database.type" value="@{database.type}" />
 			</antcall>
 
-			<echo file="${app.server.classes.portal.dir}/system-ext.properties">com.liferay.portal.kernel.util.ServiceProxyFactory.timeout=300000
-log.sanitizer.enabled=false</echo>
+			<echo file="${app.server.classes.portal.dir}/system-ext.properties">log.sanitizer.enabled=false</echo>
 
 			<ant dir="modules" inheritAll="false" target="build-app-lpkg-all">
 				<property name="app.server.parent.dir" value="${project.dir}/bundles" />
@@ -3247,6 +3251,13 @@ log.sanitizer.enabled=false</echo>
 				<equals arg1="${suite.search.engine}" arg2="solr" />
 				<then>
 					<ant antfile="build-test-solr.xml" target="stop-solr-core" />
+				</then>
+			</if>
+
+			<if>
+				<contains string="${suite.search.engine}" substring="opensearch" />
+				<then>
+					<ant antfile="build-test-elasticsearch7.xml" target="stop-opensearch" />
 				</then>
 			</if>
 		</sequential>
@@ -4932,7 +4943,20 @@ information. Make sure to commit in all format-javadoc results.
 	</target>
 
 	<target name="functional-smoke-bundle-tomcat-mysql57-jdk8">
-		<antcall target="functional-bundle-tomcat-mysql57-jdk8" />
+		<set-tomcat-version-number liferay.portal.bundle="${test.portal.bundle.version}" />
+
+		<run-functional-test
+			app.server.type="tomcat"
+			database.type="mysql"
+			database.version="5.7"
+			test.build.fix.pack.zip.url="${test.build.fix.pack.zip.url}"
+			test.fix.pack.base.url="${test.fix.pack.base.url}"
+			test.license.xml.url="${test.license.xml.url}"
+			test.portal.bundle.version="${test.portal.bundle.version}"
+			test.portal.bundle.zip.url="${test.portal.bundle.zip.url}"
+			test.portal.log.assert="true"
+			test.sql.zip.url="${test.sql.zip.url}"
+		/>
 	</target>
 
 	<target name="functional-smoke-bundle-tomcat-mysql57-jdk11_open">
@@ -5079,8 +5103,20 @@ information. Make sure to commit in all format-javadoc results.
 		<run-functional-test app.server.type="jboss" app.server.version="7.4.0" database.type="mysql" database.version="5.7" test.portal.log.assert="true" />
 	</target>
 
-	<target name="functional-smoke-startup-tomcat90-mysql57-jdk8">
-		<run-functional-test app.server.type="tomcat" database.type="mysql" database.version="5.7" startup.testing="true" test.portal.log.assert="true" />
+	<target name="functional-smoke-startup-cold-tomcat90-hypersonic20-jdk8">
+		<run-functional-test app.server.type="tomcat" database.type="hypersonic" startup.testing.cold="true" test.portal.log.assert="true" />
+	</target>
+
+	<target name="functional-smoke-startup-cold-tomcat90-mysql57-jdk8">
+		<run-functional-test app.server.type="tomcat" database.type="mysql" database.version="5.7" startup.testing.cold="true" test.portal.log.assert="true" />
+	</target>
+
+	<target name="functional-smoke-startup-warm-tomcat90-hypersonic20-jdk8">
+		<run-functional-test app.server.type="tomcat" database.type="hypersonic" startup.testing.warm="true" test.portal.log.assert="true" />
+	</target>
+
+	<target name="functional-smoke-startup-warm-tomcat90-mysql57-jdk8">
+		<run-functional-test app.server.type="tomcat" database.type="mysql" database.version="5.7" startup.testing.warm="true" test.portal.log.assert="true" />
 	</target>
 
 	<target name="functional-smoke-tcserver40-mysql57-jdk8">
@@ -7171,6 +7207,95 @@ ${output.content}</echo>
 									test.class.name="PatchingTool"
 									test.command.name="patchingTool"
 								/>
+							</finally>
+						</trycatch>
+					</test-action>
+				</database-test-run-test>
+			</test-action>
+
+			<test-set-up>
+				<setup-test-environment />
+			</test-set-up>
+		</run-batch-test>
+	</target>
+
+	<target name="playwright-js-tomcat90-mysql57-jdk8">
+		<run-batch-test>
+			<test-action>
+				<database-test-run-test database.type="mysql" stop.app.server="true">
+					<test-action>
+						<delete dir="${liferay.home}/work" />
+
+						<antcall inheritAll="false" target="prepare-log4j-ext-xml" />
+
+						<generate-jdbc-properties properties.file="portal-impl/src/portal-ext.properties" />
+
+						<apply-portal-ext-properties />
+
+						<condition else="portal" property="playwright.project.name" value="${env.PLAYWRIGHT_PROJECT_NAME}">
+							<isset property="env.PLAYWRIGHT_PROJECT_NAME" />
+						</condition>
+
+						<trycatch>
+							<try>
+								<ant antfile="build-test-playwright.xml" target="setup-playwright-environment">
+									<property name="playwright.project.name" value="${playwright.project.name}" />
+								</ant>
+
+								<start-docker-playwright />
+
+								<gradle-execute dir="${playwright.dir}" task="npmInstall" />
+
+								<local name="playwright.test.shard" />
+
+								<if>
+									<isset property="PLAYWRIGHT_ARGS_${axis.variable}" />
+									<then>
+										<propertycopy from="PLAYWRIGHT_ARGS_${axis.variable}" name="playwright.test.shard" />
+									</then>
+									<else>
+										<property name="playwright.test.shard" value="" />
+									</else>
+								</if>
+
+								<if>
+									<isset property="PLAYWRIGHT_PROJECT_NAME" />
+									<then>
+										<propertycopy from="PLAYWRIGHT_PROJECT_NAME" name="playwright.project.name" />
+									</then>
+									<else>
+										<property name="playwright.project.name" value="" />
+									</else>
+								</if>
+
+								<local name="playwright.command" />
+
+								<if>
+									<equals arg1="${playwright.project.name}" arg2="" />
+									<then>
+										<property name="playwright.command" value="npm run playwright test ${playwright.test.shard}" />
+									</then>
+									<else>
+										<property name="playwright.command" value="npm run playwright test --project ${playwright.project.name} ${playwright.test.shard}" />
+									</else>
+								</if>
+
+								<echo>Running "${playwright.command}" from ${playwright.dir}</echo>
+
+								<docker-execute container="${playwright.docker.host}">
+									cd ${playwright.dir}
+
+									${playwright.command}
+								</docker-execute>
+							</try>
+							<finally>
+								<stop-docker-playwright />
+
+								<ant antfile="build-test-playwright.xml" target="teardown-playwright-environment">
+									<property name="playwright.project.name" value="${playwright.project.name}" />
+								</ant>
+
+								<split-testsuites-junit-report test.suites.report.filepath="${playwright.dir}/test-results/TEST-playwright.xml" />
 							</finally>
 						</trycatch>
 					</test-action>

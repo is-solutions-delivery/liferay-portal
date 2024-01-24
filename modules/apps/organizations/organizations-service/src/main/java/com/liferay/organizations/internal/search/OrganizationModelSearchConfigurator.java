@@ -5,12 +5,17 @@
 
 package com.liferay.organizations.internal.search;
 
+import com.liferay.organizations.internal.search.spi.model.index.contributor.OrganizationModelIndexerWriterContributor;
+import com.liferay.organizations.internal.search.spi.model.result.contributor.OrganizationModelSummaryContributor;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.service.OrganizationLocalService;
+import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchConfigurator;
 import com.liferay.portal.search.spi.model.result.contributor.ModelSummaryContributor;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -52,15 +57,24 @@ public class OrganizationModelSearchConfigurator
 		return true;
 	}
 
-	@Reference(
-		target = "(indexer.class.name=com.liferay.portal.kernel.model.Organization)"
-	)
+	@Activate
+	protected void activate() {
+		_modelIndexWriterContributor =
+			new OrganizationModelIndexerWriterContributor(
+				_dynamicQueryBatchIndexingActionableFactory,
+				_organizationLocalService);
+	}
+
+	@Reference
+	private DynamicQueryBatchIndexingActionableFactory
+		_dynamicQueryBatchIndexingActionableFactory;
+
 	private ModelIndexerWriterContributor<Organization>
 		_modelIndexWriterContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new OrganizationModelSummaryContributor();
 
-	@Reference(
-		target = "(indexer.class.name=com.liferay.portal.kernel.model.Organization)"
-	)
-	private ModelSummaryContributor _modelSummaryContributor;
+	@Reference
+	private OrganizationLocalService _organizationLocalService;
 
 }

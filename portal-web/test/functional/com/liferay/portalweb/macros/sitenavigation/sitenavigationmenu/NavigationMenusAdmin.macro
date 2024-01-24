@@ -112,12 +112,14 @@ definition {
 			WaitForElementPresent(locator1 = "Icon#CURRENT_DISPLAY_STYLE");
 
 			if (IsElementPresent(key_displayStyle = "list", locator1 = "Icon#CURRENT_DISPLAY_STYLE_ACTIVE")) {
-				Click(
+				ClickNoError(
 					key_listEntry = ${assetTitle},
 					locator1 = "LexiconList#LIST_ENTRY_TITLE");
 			}
 			else {
-				LexiconCard.clickCard(card = ${assetTitle});
+				ClickNoError(
+					key_card = ${assetTitle},
+					locator1 = "Card#CARD");
 			}
 		}
 
@@ -220,12 +222,14 @@ definition {
 			WaitForElementPresent(locator1 = "Icon#CURRENT_DISPLAY_STYLE");
 
 			if (IsElementPresent(key_displayStyle = "list", locator1 = "Icon#CURRENT_DISPLAY_STYLE_ACTIVE")) {
-				Click(
+				ClickNoError(
 					key_listEntry = ${assetTitle},
 					locator1 = "LexiconList#LIST_ENTRY_TITLE");
 			}
 			else {
-				LexiconCard.clickCard(card = ${assetTitle});
+				ClickNoError(
+					key_card = ${assetTitle},
+					locator1 = "Card#CARD");
 			}
 		}
 
@@ -347,7 +351,9 @@ definition {
 					locator1 = "LexiconList#LIST_ENTRY_TITLE");
 			}
 			else {
-				LexiconCard.clickCard(card = ${assetTitle});
+				ClickNoError(
+					key_card = ${assetTitle},
+					locator1 = "Card#CARD");
 			}
 		}
 

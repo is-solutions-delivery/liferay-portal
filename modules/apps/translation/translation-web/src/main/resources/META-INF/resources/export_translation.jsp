@@ -8,11 +8,11 @@
 <%@ include file="/init.jsp" %>
 
 <%
-portletDisplay.setShowBackIcon(true);
-
 ExportTranslationDisplayContext exportTranslationDisplayContext = (ExportTranslationDisplayContext)request.getAttribute(ExportTranslationDisplayContext.class.getName());
 
+portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(exportTranslationDisplayContext.getRedirect());
+portletDisplay.setURLBackTitle(ParamUtil.getString(request, "backURLTitle"));
 
 renderResponse.setTitle(exportTranslationDisplayContext.getTitle());
 %>

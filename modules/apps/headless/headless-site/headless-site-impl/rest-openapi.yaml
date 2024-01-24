@@ -48,7 +48,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.site.client', and version '1.0.9'."
+        'com.liferay.headless.site.client', and version '1.0.10'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -56,6 +56,25 @@ info:
     version: v1.0
 openapi: 3.0.1
 paths:
+    "/sites/{siteId}":
+        delete:
+            description:
+                # @review
+                Deletes a site and all of its associated content.
+            operationId: deleteSite
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["Site"]
     /sites:
         post:
             description:
@@ -83,6 +102,23 @@ paths:
             # @review
             tags: ["Site"]
     /sites/by-external-reference-code/{externalReferenceCode}:
+        delete:
+            # @review
+            description:
+                Deletes a site and all of its associated content.
+            operationId: deleteSiteByExternalReferenceCode
+            parameters:
+                - in: path
+                  name: externalReferenceCode
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["Site"]
         put:
             description:
                 Adds or update a new site

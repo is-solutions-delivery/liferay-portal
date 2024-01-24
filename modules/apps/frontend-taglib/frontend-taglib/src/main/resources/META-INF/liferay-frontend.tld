@@ -184,6 +184,11 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>title</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<description>Whether to use the default portlet namespace to avoid name conflicts. The default value is <![CDATA[<code>true</code>]]>.</description>
 			<name>useNamespace</name>
 			<required>false</required>

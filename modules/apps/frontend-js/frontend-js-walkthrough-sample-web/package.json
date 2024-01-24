@@ -1,15 +1,15 @@
 {
 	"dependencies": {
-		"@clayui/button": "3.100.0",
-		"@clayui/form": "3.104.0",
+		"@clayui/button": "3.107.0",
+		"@clayui/form": "3.107.0",
 		"react": "16.12.0"
 	},
-	"main": "js/App.es",
+	"main": "js/App.js",
 	"name": "@liferay/frontend-js-walkthrough-sample-web",
 	"scripts": {
 		"build": "liferay-npm-scripts build",
 		"checkFormat": "liferay-npm-scripts check",
 		"format": "liferay-npm-scripts fix"
 	},
-	"version": "1.0.15"
+	"version": "1.0.17"
 }

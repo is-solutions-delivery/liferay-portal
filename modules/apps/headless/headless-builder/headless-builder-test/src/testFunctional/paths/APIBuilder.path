@@ -26,6 +26,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>ALERT_INDICATOR</td>
+	<td>//span[contains(@class,'alert-indicator')]/../strong</td>
+	<td></td>
+</tr>
+<tr>
 	<td>API_APPLICATION_TO_API_ENDPOINTS</td>
 	<td>//button[@class='dropdown-item' and text()='${applicationId}']</td>
 	<td></td>
@@ -67,7 +72,7 @@
 </tr>
 <tr>
 	<td>DESCRIPTION</td>
-	<td>//textarea[(@placeholder='Add a short description that describes this API.')]</td>
+	<td>//textarea[(@placeholder='Add a short description that describes this ${key_value}.')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -86,6 +91,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>DROPDOWN_TOGGLE</td>
+	<td>//button[@aria-controls='selectDropdown' and contains(.,'${key_value}')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>DROPDOWN_MENU</td>
 	<td>//div[contains(@class,'table-list-title') and contains(.,'${key_title}')]/../..//button[contains(.,'Action')]</td>
 	<td></td>
@@ -93,16 +103,6 @@
 <tr>
 	<td>EDIT_BUTTON</td>
 	<td>//div[@class='dropdown-menu show']//button[contains(text(),'Edit')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>ENDPOINT_DROPDOWN</td>
-	<td>//button[@aria-controls='selectDropdown' and contains(.,'${key_value}')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>ENTER_NAME</td>
-	<td>//input[(@placeholder='Enter name.')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -136,6 +136,31 @@
 	<td></td>
 </tr>
 <tr>
+	<td>PATH_PARAMETER_PROPERTY_PREVIEW</td>
+	<td>//label[contains(.,'Path Parameter Property')]/../p</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PROPERTY_CONTAINER</td>
+	<td>//button[(@class='property-container btn btn-unstyled') and contains(.,'${key_text}')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DISABLED_PROPERTY_CONTAINER</td>
+	<td>//button[(@class='property-container btn btn-unstyled') and contains(.,'${key_text}')]//div[contains(@class,'disabled')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>DELETE_BUTTON_FROM_PROPERTY_BOX</td>
+	<td>//div[@class='autofit-row' and contains(.,'${key_commentValue}')]//button[contains(@aria-label, 'Delete')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>LAST_ELEMENT_IN_PROPERTY_BOX</td>
+	<td>//div[@class='autofit-row'][last()]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>PUBLISH_BUTTON</td>
 	<td>//button[contains(text(),'Publish')]</td>
 	<td></td>
@@ -153,6 +178,11 @@
 <tr>
 	<td>STATUS_LIST</td>
 	<td>xpath=(//span[(@class='label-item label-item-expand')])[${index}]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>SLASH</td>
+	<td>//div[contains(@class,'input-group-text')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -186,8 +216,13 @@
 	<td></td>
 </tr>
 <tr>
+	<td>VIEW_RELATED_OBJECTS</td>
+	<td>//button[(@class='view-related-objects btn btn-secondary') and contains(.,'View Related Objects')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>WARNING_MESSAGE_IN_DIALOG</td>
-	<td>//div[@class='form-feedback-item mt-2' and contains(text(),'${key_text}')]</td>
+	<td>//div[@class='form-feedback-item mt-2' and contains(.,'${key_text}')]</td>
 	<td></td>
 </tr>
 </tbody>

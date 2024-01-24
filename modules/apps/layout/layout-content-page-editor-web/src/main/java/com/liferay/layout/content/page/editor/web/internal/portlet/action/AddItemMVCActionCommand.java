@@ -17,11 +17,10 @@ import com.liferay.layout.util.structure.RowStyledLayoutStructureItem;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.Objects;
@@ -62,6 +61,7 @@ public class AddItemMVCActionCommand
 					layoutStructure.addCollectionStyledLayoutStructureItem(
 						parentItemId, position);
 
+		collectionStyledLayoutStructureItem.setNamespace(StringUtil.randomId());
 		collectionStyledLayoutStructureItem.setViewportConfiguration(
 			ViewportSize.MOBILE_LANDSCAPE.getViewportSizeId(),
 			JSONUtil.put("numberOfColumns", 1));
@@ -167,11 +167,5 @@ public class AddItemMVCActionCommand
 
 	@Reference
 	private JSONFactory _jsonFactory;
-
-	@Reference
-	private Language _language;
-
-	@Reference
-	private Portal _portal;
 
 }

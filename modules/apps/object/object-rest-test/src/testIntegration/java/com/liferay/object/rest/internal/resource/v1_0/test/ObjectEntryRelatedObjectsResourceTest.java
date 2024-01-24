@@ -13,7 +13,6 @@ import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectRelationship;
-import com.liferay.object.rest.test.util.ObjectDefinitionTestUtil;
 import com.liferay.object.rest.test.util.ObjectEntryTestUtil;
 import com.liferay.object.rest.test.util.ObjectFieldTestUtil;
 import com.liferay.object.rest.test.util.ObjectRelationshipTestUtil;
@@ -23,6 +22,7 @@ import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.system.JaxRsApplicationDescriptor;
 import com.liferay.object.system.SystemObjectDefinitionManager;
 import com.liferay.object.system.SystemObjectDefinitionManagerRegistry;
+import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -291,6 +291,202 @@ public class ObjectEntryRelatedObjectsResourceTest {
 	}
 
 	@Test
+	public void testDeleteCustomObjectEntry() throws Exception {
+		Role role = RoleTestUtil.addRole(RoleConstants.TYPE_REGULAR);
+
+		String password = RandomTestUtil.randomString();
+
+		User user = UserTestUtil.addUser(
+			TestPropsValues.getCompanyId(), TestPropsValues.getUserId(),
+			password, RandomTestUtil.randomString() + "@liferay.com",
+			RandomTestUtil.randomString(), LocaleUtil.getDefault(),
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(), null,
+			ServiceContextTestUtil.getServiceContext());
+
+		user.setEmailAddressVerified(true);
+
+		user = UserLocalServiceUtil.updateUser(user);
+
+		UserLocalServiceUtil.addRoleUser(role.getRoleId(), user.getUserId());
+
+		// Relationship type cascade
+
+		_objectRelationship = ObjectRelationshipTestUtil.addObjectRelationship(
+			ObjectRelationshipConstants.DELETION_TYPE_CASCADE,
+			_objectDefinition1, _objectDefinition2, TestPropsValues.getUserId(),
+			ObjectRelationshipConstants.TYPE_ONE_TO_MANY);
+
+		ObjectRelationshipTestUtil.relateObjectEntries(
+			_objectEntry1.getPrimaryKey(), _objectEntry2.getPrimaryKey(),
+			_objectRelationship, TestPropsValues.getUserId());
+
+		HTTPTestUtil.customize(
+		).withCredentials(
+			user.getEmailAddress(), password
+		).apply(
+			() -> {
+				Assert.assertEquals(
+					403,
+					HTTPTestUtil.invokeToHttpCode(
+						null,
+						StringBundler.concat(
+							_objectDefinition1.getRESTContextPath(),
+							"/by-external-reference-code/",
+							_objectEntry1.getExternalReferenceCode()),
+						Http.Method.DELETE));
+				ResourcePermissionLocalServiceUtil.setResourcePermissions(
+					TestPropsValues.getCompanyId(),
+					_objectDefinition1.getClassName(),
+					ResourceConstants.SCOPE_COMPANY,
+					String.valueOf(TestPropsValues.getCompanyId()),
+					role.getRoleId(),
+					new String[] {
+						ActionKeys.DELETE, ActionKeys.PERMISSIONS,
+						ActionKeys.UPDATE, ActionKeys.VIEW
+					});
+				Assert.assertEquals(
+					204,
+					HTTPTestUtil.invokeToHttpCode(
+						null,
+						StringBundler.concat(
+							_objectDefinition1.getRESTContextPath(),
+							"/by-external-reference-code/",
+							_objectEntry1.getExternalReferenceCode()),
+						Http.Method.DELETE));
+				ResourcePermissionLocalServiceUtil.setResourcePermissions(
+					TestPropsValues.getCompanyId(),
+					_objectDefinition2.getClassName(),
+					ResourceConstants.SCOPE_COMPANY,
+					String.valueOf(TestPropsValues.getCompanyId()),
+					role.getRoleId(), new String[] {ActionKeys.VIEW});
+				Assert.assertEquals(
+					404,
+					HTTPTestUtil.invokeToHttpCode(
+						null,
+						StringBundler.concat(
+							_objectDefinition2.getRESTContextPath(),
+							"/by-external-reference-code/",
+							_objectEntry2.getExternalReferenceCode()),
+						Http.Method.GET));
+			}
+		);
+
+		// Relationship type disassociate
+
+		_objectRelationship =
+			ObjectRelationshipTestUtil.updateObjectRelationship(
+				ObjectRelationshipConstants.DELETION_TYPE_DISASSOCIATE,
+				_objectRelationship.getObjectRelationshipId());
+
+		_objectEntry1 = ObjectEntryTestUtil.addObjectEntry(
+			_objectDefinition1, _OBJECT_FIELD_NAME_1, _OBJECT_FIELD_VALUE_1);
+
+		_objectEntry2 = ObjectEntryTestUtil.addObjectEntry(
+			_objectDefinition2, _OBJECT_FIELD_NAME_2, _OBJECT_FIELD_VALUE_2);
+
+		ObjectRelationshipTestUtil.relateObjectEntries(
+			_objectEntry1.getPrimaryKey(), _objectEntry2.getPrimaryKey(),
+			_objectRelationship, TestPropsValues.getUserId());
+
+		HTTPTestUtil.customize(
+		).withCredentials(
+			user.getEmailAddress(), password
+		).apply(
+			() -> {
+				Assert.assertEquals(
+					204,
+					HTTPTestUtil.invokeToHttpCode(
+						null,
+						StringBundler.concat(
+							_objectDefinition1.getRESTContextPath(),
+							"/by-external-reference-code/",
+							_objectEntry1.getExternalReferenceCode()),
+						Http.Method.DELETE));
+				Assert.assertEquals(
+					404,
+					HTTPTestUtil.invokeToHttpCode(
+						null,
+						StringBundler.concat(
+							_objectDefinition1.getRESTContextPath(),
+							"/by-external-reference-code/",
+							_objectEntry1.getExternalReferenceCode()),
+						Http.Method.GET));
+				Assert.assertEquals(
+					200,
+					HTTPTestUtil.invokeToHttpCode(
+						null,
+						StringBundler.concat(
+							_objectDefinition2.getRESTContextPath(),
+							"/by-external-reference-code/",
+							_objectEntry2.getExternalReferenceCode()),
+						Http.Method.GET));
+			}
+		);
+
+		// Relationship type prevent
+
+		_objectRelationship =
+			ObjectRelationshipTestUtil.updateObjectRelationship(
+				ObjectRelationshipConstants.DELETION_TYPE_PREVENT,
+				_objectRelationship.getObjectRelationshipId());
+
+		_objectEntry1 = ObjectEntryTestUtil.addObjectEntry(
+			_objectDefinition1, _OBJECT_FIELD_NAME_1, _OBJECT_FIELD_VALUE_1);
+
+		ObjectRelationshipTestUtil.relateObjectEntries(
+			_objectEntry1.getPrimaryKey(), _objectEntry2.getPrimaryKey(),
+			_objectRelationship, TestPropsValues.getUserId());
+
+		HTTPTestUtil.customize(
+		).withCredentials(
+			user.getEmailAddress(), password
+		).apply(
+			() -> {
+				JSONAssert.assertEquals(
+					JSONUtil.put(
+						"status", "BAD_REQUEST"
+					).put(
+						"title",
+						StringBundler.concat(
+							"The prevent deletion type in the object ",
+							"relationship ", _objectRelationship.getName(),
+							" with object definition ",
+							_objectDefinition2.getShortName(),
+							" is preventing this object entry from being ",
+							"deleted.")
+					).toString(),
+					HTTPTestUtil.invokeToJSONObject(
+						null,
+						StringBundler.concat(
+							_objectDefinition1.getRESTContextPath(),
+							"/by-external-reference-code/",
+							_objectEntry1.getExternalReferenceCode()),
+						Http.Method.DELETE
+					).toString(),
+					JSONCompareMode.LENIENT);
+				Assert.assertEquals(
+					200,
+					HTTPTestUtil.invokeToHttpCode(
+						null,
+						StringBundler.concat(
+							_objectDefinition1.getRESTContextPath(),
+							"/by-external-reference-code/",
+							_objectEntry1.getExternalReferenceCode()),
+						Http.Method.GET));
+				Assert.assertEquals(
+					200,
+					HTTPTestUtil.invokeToHttpCode(
+						null,
+						StringBundler.concat(
+							_objectDefinition2.getRESTContextPath(),
+							"/by-external-reference-code/",
+							_objectEntry2.getExternalReferenceCode()),
+						Http.Method.GET));
+			}
+		);
+	}
+
+	@Test
 	public void testGetRelatedCustomObjectEntriesWhenRelationExists()
 		throws Exception {
 
@@ -343,6 +539,10 @@ public class ObjectEntryRelatedObjectsResourceTest {
 			RandomTestUtil.randomString(), LocaleUtil.getDefault(),
 			RandomTestUtil.randomString(), RandomTestUtil.randomString(), null,
 			ServiceContextTestUtil.getServiceContext());
+
+		user.setEmailAddressVerified(true);
+
+		user = UserLocalServiceUtil.updateUser(user);
 
 		UserLocalServiceUtil.addRoleUser(role.getRoleId(), user.getUserId());
 

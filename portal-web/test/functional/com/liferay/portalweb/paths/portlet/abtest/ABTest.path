@@ -32,12 +32,12 @@
 </tr>
 <tr>
 	<td>AB_TEST_SIDE_BAR</td>
-	<td>//div[contains(@class,'sidebar') and descendant::*[contains(.,'A/B Test')]]</td>
+	<td>//div[contains(@class,'segments-experiment-panel')][.//*[normalize-space()='Tests']]</td>
 	<td></td>
 </tr>
 <tr>
 	<td>CONNECTED_NOT_SYNC_BUTTON</td>
-	<td>//div[div[h1[contains(.,'A/B Test')]]] //h4[contains(.,'Sync to Liferay Analytics Cloud')]</td>
+	<td>//div[div[h1[contains(.,'Tests')]]] //h4[contains(.,'Sync to Liferay Analytics Cloud')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -76,8 +76,13 @@
 	<td></td>
 </tr>
 <tr>
+	<td>IMPROVEMENT_NUMBER</td>
+	<td>//button[@data-title='${key_variantName}']//ancestor::tr//td[text()]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>KEBAB_AB_TEST</td>
-	<td>//button[contains(@class, 'dropdown-toggle btn-monospaced btn btn-outline-borderless btn-outline-secondary')]</td>
+	<td>//div[@data-testid]//button[contains(@class, 'dropdown-toggle')][@aria-label='Show Actions']</td>
 	<td></td>
 </tr>
 <tr>
@@ -113,11 +118,6 @@
 <tr>
 	<td>SIDEBAR_MESSAGE</td>
 	<td>//div[contains(@class,'sidebar-body')]//p[contains(text(),'${key_message}')]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>TAB</td>
-	<td>//*[contains(@class,'sidebar-body')]//*[@role="tablist"]//button[contains(text(),'${tabValue}')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -176,11 +176,6 @@
 	<td></td>
 </tr>
 <tr>
-	<td>VIEW_TEST_STATUS_ANALYTICS_CLOUD</td>
-	<td>//h3[contains(.,'t') and contains(text(),'${status}')]</td>
-	<td></td>
-</tr>
-<tr>
 	<td>VALUES_IN_LIST</td>
 	<td>//ul[contains(@class,'list-group show-quick-actions-on-hover')]//li[${key_index}]//*[text()='${key_name}']</td>
 	<td></td>
@@ -193,6 +188,16 @@
 <tr>
 	<td>X_BUTTON_TARGET_ID_ELEMENT</td>
 	<td>//button[contains(@class, 'lfr-segments-experiment-click-goal-target-delete')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>PUBLISH_VARIANT</td>
+	<td>//button[@data-title='${key_variantName}']/../../following-sibling::td[2]//button[@data-title='Publish']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>CLOSED_ADMIN_PANEL</td>
+	<td>//div[contains(@id,'segmentsExperimentPanelId') and not(contains(@class,'open-admin-panel'))]</td>
 	<td></td>
 </tr>
 </tbody>

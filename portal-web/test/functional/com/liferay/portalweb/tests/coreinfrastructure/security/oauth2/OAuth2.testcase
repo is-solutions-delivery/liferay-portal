@@ -173,7 +173,9 @@ definition {
 		property test.run.type = "single";
 
 		task ("Add the OSGI configuration file") {
-			OAuth2.deployInstanceConfigFile(osgiConfigFileName = "com.liferay.oauth2.provider.rest.internal.configuration.OAuth2InAssertionConfiguration~instance.config");
+			OSGiConfig.copyOSGiConfigFile(
+				osgiConfigFileBaseDir = "test/functional/com/liferay/portalweb/tests/coreinfrastructure/security/oauth2/dependencies",
+				osgiConfigFileName = "com.liferay.oauth2.provider.rest.internal.configuration.OAuth2InAssertionConfiguration~instance.config");
 		}
 
 		task ("Add a new OAuth2 application") {
@@ -368,9 +370,7 @@ definition {
 		property test.run.type = "single";
 
 		task ("Add the OSGI configuration file to configure System Settings") {
-			OSGiConfig.copyOSGiConfigFile(
-				osgiConfigFileBaseDir = "test/functional/com/liferay/portalweb/tests/coreinfrastructure/security/oauth2/dependencies",
-				osgiConfigFileName = "com.liferay.oauth2.provider.rest.internal.configuration.OAuth2InAssertionConfiguration~default.config");
+			OAuth2.deployInstanceConfigFile(osgiConfigFileName = "com.liferay.oauth2.provider.rest.internal.configuration.OAuth2InAssertionConfiguration~default.config");
 		}
 
 		task ("Add the OSGI configuration file to configure Instance Settings") {
@@ -1283,7 +1283,9 @@ definition {
 		}
 
 		task ("Add the OSGI configuration file to configure Instance Settings") {
-			OAuth2.deployInstanceConfigFile(osgiConfigFileName = "com.liferay.oauth2.provider.rest.internal.configuration.OAuth2InAssertionConfiguration~instance~screenName.config");
+			OSGiConfig.copyOSGiConfigFile(
+				osgiConfigFileBaseDir = "test/functional/com/liferay/portalweb/tests/coreinfrastructure/security/oauth2/dependencies",
+				osgiConfigFileName = "com.liferay.oauth2.provider.rest.internal.configuration.OAuth2InAssertionConfiguration~instance~screenName.config");
 		}
 
 		task ("Add a new OAuth2 application") {
@@ -1349,7 +1351,9 @@ definition {
 		property test.run.type = "single";
 
 		task ("Add the OSGI configuration file") {
-			OAuth2.deployInstanceConfigFile(osgiConfigFileName = "com.liferay.oauth2.provider.rest.internal.configuration.OAuth2InAssertionConfiguration~instance.config");
+			OSGiConfig.copyOSGiConfigFile(
+				osgiConfigFileBaseDir = "test/functional/com/liferay/portalweb/tests/coreinfrastructure/security/oauth2/dependencies",
+				osgiConfigFileName = "com.liferay.oauth2.provider.rest.internal.configuration.OAuth2InAssertionConfiguration~instance.config");
 		}
 
 		task ("Add a new OAuth2 application") {
@@ -1464,7 +1468,9 @@ definition {
 		property test.run.type = "single";
 
 		task ("Add the OSGI configuration file") {
-			OAuth2.deployInstanceConfigFile(osgiConfigFileName = "com.liferay.oauth2.provider.rest.internal.configuration.OAuth2InAssertionConfiguration~instance~screenName.config");
+			OSGiConfig.copyOSGiConfigFile(
+				osgiConfigFileBaseDir = "test/functional/com/liferay/portalweb/tests/coreinfrastructure/security/oauth2/dependencies",
+				osgiConfigFileName = "com.liferay.oauth2.provider.rest.internal.configuration.OAuth2InAssertionConfiguration~instance~screenName.config");
 		}
 
 		task ("Add a new OAuth2 application") {
@@ -1536,7 +1542,7 @@ definition {
 		task ("When: Get the value of the application externalReferenceCode and look up clientId") {
 			var mysqlStatement = "SELECT externalReferenceCode FROM OAuth2Application WHERE name = 'OAuth2 Application';";
 
-			var sqlResults = SQL.executeMySQLStatement(mysqlStatement = ${mysqlStatement});
+			var sqlResults = SQL.executeSQLStatement(sqlStatement = ${mysqlStatement});
 
 			var externalReferenceCode = StringUtil.regexReplaceAll(${sqlResults}, "[\n]", "");
 

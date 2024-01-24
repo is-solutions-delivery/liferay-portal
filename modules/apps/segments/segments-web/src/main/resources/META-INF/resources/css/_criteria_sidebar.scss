@@ -5,7 +5,11 @@
 	border-left: 1px solid $gray-300;
 	min-height: 100%;
 	right: 0;
-	width: $sidebarWidth;
+	width: $sidebarWidthSmall;
+
+	@include media-breakpoint-up(sm) {
+		width: $sidebarWidth;
+	}
 
 	.sidebar-header,
 	.panel-header,
@@ -23,26 +27,24 @@
 		flex-basis: 0;
 		flex-grow: 1;
 		flex-shrink: 1;
-		overflow-x: hidden;
+
+		@include media-breakpoint-up(md) {
+			overflow-x: hidden;
+			overflow-y: auto;
+		}
 	}
 
 	.criteria-sidebar-item-root {
 		background-color: $white;
-		border-left: 3px solid transparent;
+		border-left: 4px solid transparent;
+		border-radius: 4px;
 		font-size: 0.875rem;
 		transition: $segmentsTransition;
-		transition-property: border-color, opacity;
-		will-change: border-color, opacity;
+		transition-property: border-color, box-shadow, opacity, transform;
+		will-change: border-color, box-shadow, opacity;
 
 		.lexicon-icon-drag {
 			color: $secondary-l1;
-			opacity: 0;
-			transition: opacity $segmentsTransition;
-			will-change: opacity;
-		}
-
-		&:hover .lexicon-icon-drag {
-			opacity: 1;
 		}
 
 		&.dragging {
@@ -53,15 +55,34 @@
 			cursor: grabbing;
 		}
 
-		&:hover {
+		&:hover,
+		&:focus-visible {
 			border-color: $blue;
+			box-shadow: 0 0 0 2px $primary-l1,
+				0 4px 8px fade_out($gray-900, 0.9);
 			cursor: grab;
+			outline: 0;
+			transform: translateX(-4px);
 
 			@include generatePropertyGroupLoop(
 				$propertyGroupsColors,
 				'border-left-color',
 				'color--'
 			);
+		}
+
+		&:focus-visible {
+			background-color: $primary-l3;
+
+			& > span:focus-visible {
+				border-radius: 4px;
+				box-shadow: 0 0 0 2px $primary-l1;
+				outline: 0;
+			}
+
+			.sticker-dark {
+				background-color: $primary-l3;
+			}
 		}
 	}
 }

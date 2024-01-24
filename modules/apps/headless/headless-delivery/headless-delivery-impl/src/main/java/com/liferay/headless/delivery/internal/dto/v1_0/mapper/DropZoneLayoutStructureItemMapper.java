@@ -16,37 +16,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.osgi.service.component.annotations.Component;
-
 /**
  * @author Jürgen Kappler
  */
-@Component(service = LayoutStructureItemMapper.class)
 public class DropZoneLayoutStructureItemMapper
 	implements LayoutStructureItemMapper {
-
-	@Override
-	public String getClassName() {
-		return DropZoneLayoutStructureItem.class.getName();
-	}
 
 	@Override
 	public PageElement getPageElement(
 		long groupId, LayoutStructureItem layoutStructureItem,
 		boolean saveInlineContent, boolean saveMappingConfiguration) {
 
-		DropZoneLayoutStructureItem dropZoneLayoutStructureItem =
-			(DropZoneLayoutStructureItem)layoutStructureItem;
-
 		return new PageElement() {
 			{
-				definition = new PageDropZoneDefinition() {
-					{
-						fragmentSettings = _toFragmentSettingsMap(
-							dropZoneLayoutStructureItem);
-					}
-				};
-				type = Type.DROP_ZONE;
+				setDefinition(
+					() -> new PageDropZoneDefinition() {
+						{
+							setFragmentSettings(
+								() -> _toFragmentSettingsMap(
+									(DropZoneLayoutStructureItem)
+										layoutStructureItem));
+						}
+					});
+				setId(layoutStructureItem::getItemId);
+				setType(() -> Type.DROP_ZONE);
 			}
 		};
 	}
@@ -58,7 +51,7 @@ public class DropZoneLayoutStructureItemMapper
 			fragments.add(
 				new Fragment() {
 					{
-						key = fragmentEntryKey;
+						setKey(() -> fragmentEntryKey);
 					}
 				});
 		}

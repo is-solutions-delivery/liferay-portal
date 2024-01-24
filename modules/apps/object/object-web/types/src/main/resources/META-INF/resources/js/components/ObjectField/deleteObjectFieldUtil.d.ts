@@ -4,7 +4,21 @@
  */
 
 export declare function deleteObjectField(
-	defaultLanguageId: Liferay.Language.Locale,
-	id: number,
-	objectField: ObjectField
+	objectFieldId: number,
+	objectFieldLabel: string
 ): Promise<void>;
+interface handleTriggerDeleteObjectFieldProps {
+	baseResourceURL: string;
+	objectFieldId: number;
+	objectFieldLabel: string;
+	onAfterDelete: () => void;
+	setObjectFieldDeleteInfo: (value: ObjectFieldDeleteInfoProps) => void;
+}
+export declare function handleTriggerDeleteObjectField({
+	baseResourceURL,
+	objectFieldId,
+	objectFieldLabel,
+	onAfterDelete,
+	setObjectFieldDeleteInfo,
+}: handleTriggerDeleteObjectFieldProps): Promise<void>;
+export {};

@@ -10,8 +10,6 @@ package com.liferay.adaptive.media.content.transformer;
  */
 public interface ContentTransformerHandler {
 
-	public <T> T transform(
-		ContentTransformerContentType<T> contentTransformerContentType,
-		T originalContent);
+	public String transform(String originalContent);
 
 }

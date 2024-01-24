@@ -7,6 +7,7 @@ package com.liferay.layout.page.template.admin.web.internal.portlet.action.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.layout.importer.LayoutsImportStrategy;
+import com.liferay.layout.manager.LayoutLockManager;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateCollectionTypeConstants;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateConstants;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
@@ -18,25 +19,32 @@ import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
+import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.kernel.zip.ZipWriter;
 import com.liferay.portal.kernel.zip.ZipWriterFactory;
+import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
 import java.io.File;
+import java.io.InputStream;
 
 import java.net.URL;
 
@@ -208,6 +216,50 @@ public class ImportMVCResourceCommandTest {
 			expectedLayout.getTypeSettings(), actualLayout.getTypeSettings());
 	}
 
+	@FeatureFlags("LPS-180328")
+	@Test
+	public void testImportFileWithOverwriteStrategyAndWithExistingLockedLayoutPageTemplateEntry()
+		throws Exception {
+
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			_creatLayoutPageTemplateEntry();
+
+		Layout expectedLayout = _layoutLocalService.getLayout(
+			layoutPageTemplateEntry.getPlid());
+
+		Layout draftLayout = expectedLayout.fetchDraftLayout();
+
+		Assert.assertNotNull(draftLayout);
+
+		User user = UserTestUtil.addCompanyAdminUser(
+			_companyLocalService.getCompany(_group.getCompanyId()));
+
+		_layoutLockManager.getLock(draftLayout, user.getUserId());
+
+		Assert.assertTrue(
+			draftLayout.isUnlocked(Constants.EDIT, user.getUserId()));
+
+		Assert.assertFalse(
+			draftLayout.isUnlocked(
+				Constants.EDIT, TestPropsValues.getUserId()));
+
+		_assertImportResultsJSONObject(
+			1, 3, _importFile(LayoutsImportStrategy.OVERWRITE));
+
+		Assert.assertTrue(
+			draftLayout.isUnlocked(Constants.EDIT, user.getUserId()));
+
+		Assert.assertTrue(
+			draftLayout.isUnlocked(
+				Constants.EDIT, TestPropsValues.getUserId()));
+
+		Layout actualLayout = _layoutLocalService.getLayout(
+			layoutPageTemplateEntry.getPlid());
+
+		Assert.assertNotEquals(
+			expectedLayout.getTypeSettings(), actualLayout.getTypeSettings());
+	}
+
 	private void _assertImportResultsJSONObject(
 		long expectedInvalidJSONArrayLength,
 		long expectedImportedJSONArrayLength, JSONObject jsonObject) {
@@ -278,9 +330,12 @@ public class ImportMVCResourceCommandTest {
 			String path = url.getPath();
 
 			if (!path.endsWith(StringPool.SLASH)) {
-				zipWriter.addEntry(
-					StringUtil.removeSubstring(url.getPath(), _RESOURCES_PATH),
-					url.openStream());
+				try (InputStream inputStream = url.openStream()) {
+					zipWriter.addEntry(
+						StringUtil.removeSubstring(
+							url.getPath(), _RESOURCES_PATH),
+						inputStream);
+				}
 			}
 		}
 
@@ -305,10 +360,18 @@ public class ImportMVCResourceCommandTest {
 			"/test/dependencies/import";
 
 	private Bundle _bundle;
+
+	@Inject
+	private CompanyLocalService _companyLocalService;
+
+	@DeleteAfterTestRun
 	private Group _group;
 
 	@Inject
 	private LayoutLocalService _layoutLocalService;
+
+	@Inject
+	private LayoutLockManager _layoutLockManager;
 
 	@Inject
 	private LayoutPageTemplateCollectionLocalService

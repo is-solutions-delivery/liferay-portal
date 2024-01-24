@@ -8,6 +8,7 @@ package com.liferay.portal.tools.rest.builder.internal.freemarker.util;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.tools.rest.builder.internal.freemarker.tool.java.parser.util.OpenAPIParserUtil;
+import com.liferay.portal.tools.rest.builder.internal.yaml.config.ConfigYAML;
 import com.liferay.portal.tools.rest.builder.internal.yaml.openapi.Components;
 import com.liferay.portal.tools.rest.builder.internal.yaml.openapi.Info;
 import com.liferay.portal.tools.rest.builder.internal.yaml.openapi.Items;
@@ -76,13 +77,13 @@ public class OpenAPIUtil {
 	}
 
 	public static Map<String, Schema> getAllExternalSchemas(
-			OpenAPIYAML openAPIYAML)
+			ConfigYAML configYAML, OpenAPIYAML openAPIYAML)
 		throws Exception {
 
 		Map<String, Schema> allExternalSchemas = new HashMap<>();
 
 		Map<String, Schema> externalSchemas =
-			OpenAPIParserUtil.getExternalSchemas(openAPIYAML);
+			OpenAPIParserUtil.getExternalSchemas(configYAML, openAPIYAML);
 
 		List<String> externalReferences =
 			OpenAPIParserUtil.getExternalReferences(openAPIYAML);
@@ -155,7 +156,9 @@ public class OpenAPIUtil {
 		return allExternalSchemas;
 	}
 
-	public static Map<String, Schema> getAllSchemas(OpenAPIYAML openAPIYAML) {
+	public static Map<String, Schema> getAllSchemas(
+		ConfigYAML configYAML, OpenAPIYAML openAPIYAML) {
+
 		Map<String, Schema> allSchemas = new TreeMap<>();
 
 		Components components = openAPIYAML.getComponents();
@@ -182,8 +185,23 @@ public class OpenAPIUtil {
 					propertySchemas = items.getPropertySchemas();
 				}
 				else if (schema.getAllOfSchemas() != null) {
+					if (_isAnyAllOfSchemasMissing(schema, allSchemas)) {
+						queue.add(
+							Collections.singletonMap(
+								entry.getKey(), entry.getValue()));
+
+						continue;
+					}
+
 					propertySchemas = OpenAPIParserUtil.getAllOfPropertySchemas(
-						schema);
+						configYAML, schema, allSchemas);
+
+					if (schema.isMergeProperties() &&
+						ConfigUtil.isVersionCompatible(configYAML, 4)) {
+
+						schema.setAllOfSchemas(null);
+						schema.setPropertySchemas(propertySchemas);
+					}
 				}
 				else {
 					propertySchemas = schema.getPropertySchemas();
@@ -230,17 +248,9 @@ public class OpenAPIUtil {
 	}
 
 	public static Map<String, Schema> getGlobalEnumSchemas(
-		OpenAPIYAML openAPIYAML) {
+		ConfigYAML configYAML, Map<String, Schema> schemas) {
 
 		Map<String, Schema> globalEnumSchemas = new TreeMap<>();
-
-		Components components = openAPIYAML.getComponents();
-
-		if (components == null) {
-			return globalEnumSchemas;
-		}
-
-		Map<String, Schema> schemas = components.getSchemas();
 
 		for (Map.Entry<String, Schema> entry : schemas.entrySet()) {
 			Schema schema = entry.getValue();
@@ -254,7 +264,7 @@ public class OpenAPIUtil {
 			}
 			else if (schema.getAllOfSchemas() != null) {
 				propertySchemas = OpenAPIParserUtil.getAllOfPropertySchemas(
-					schema);
+					configYAML, schema, schemas);
 			}
 			else {
 				propertySchemas = schema.getPropertySchemas();
@@ -291,6 +301,37 @@ public class OpenAPIUtil {
 			allExternalSchemas.putAll(externalSchemaMap);
 			queue.add(externalSchemaMap);
 		}
+	}
+
+	private static boolean _isAnyAllOfSchemasMissing(
+		Schema schema, Map<String, Schema> schemas) {
+
+		if (schema.getAllOfSchemas() != null) {
+			for (Schema allOfSchema : schema.getAllOfSchemas()) {
+				if (allOfSchema.getReference() == null) {
+					continue;
+				}
+
+				if (!schemas.containsKey(
+						OpenAPIParserUtil.getReferenceName(
+							allOfSchema.getReference()))) {
+
+					return true;
+				}
+			}
+		}
+
+		if (schema.getPropertySchemas() != null) {
+			Map<String, Schema> propertySchemas = schema.getPropertySchemas();
+
+			for (Schema propertySchema : propertySchemas.values()) {
+				if (_isAnyAllOfSchemasMissing(propertySchema, schemas)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	private static final Pattern _leadingUnderscorePattern = Pattern.compile(

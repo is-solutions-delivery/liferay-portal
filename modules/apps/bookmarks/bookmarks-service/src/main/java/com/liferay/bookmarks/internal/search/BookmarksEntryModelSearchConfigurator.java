@@ -5,12 +5,20 @@
 
 package com.liferay.bookmarks.internal.search;
 
+import com.liferay.bookmarks.internal.search.spi.model.index.contributor.BookmarksEntryModelIndexerWriterContributor;
+import com.liferay.bookmarks.internal.search.spi.model.result.contributor.BookmarksEntryModelSummaryContributor;
 import com.liferay.bookmarks.model.BookmarksEntry;
+import com.liferay.bookmarks.model.BookmarksFolder;
+import com.liferay.bookmarks.service.BookmarksEntryLocalService;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.search.batch.DynamicQueryBatchIndexingActionableFactory;
+import com.liferay.portal.search.indexer.IndexerDocumentBuilder;
+import com.liferay.portal.search.indexer.IndexerWriter;
 import com.liferay.portal.search.spi.model.index.contributor.ModelIndexerWriterContributor;
 import com.liferay.portal.search.spi.model.registrar.ModelSearchConfigurator;
 import com.liferay.portal.search.spi.model.result.contributor.ModelSummaryContributor;
 
+import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -47,15 +55,36 @@ public class BookmarksEntryModelSearchConfigurator
 		return _modelSummaryContributor;
 	}
 
-	@Reference(
-		target = "(indexer.class.name=com.liferay.bookmarks.model.BookmarksEntry)"
-	)
-	private ModelIndexerWriterContributor<BookmarksEntry>
-		_modelIndexWriterContributor;
+	@Activate
+	protected void activate() {
+		_modelIndexWriterContributor =
+			new BookmarksEntryModelIndexerWriterContributor(
+				_bookmarksEntryLocalService,
+				new BookmarksFolderBatchReindexer(
+					_indexerDocumentBuilder, _indexerWriter),
+				_dynamicQueryBatchIndexingActionableFactory);
+	}
+
+	@Reference
+	private BookmarksEntryLocalService _bookmarksEntryLocalService;
+
+	@Reference
+	private DynamicQueryBatchIndexingActionableFactory
+		_dynamicQueryBatchIndexingActionableFactory;
 
 	@Reference(
-		target = "(indexer.class.name=com.liferay.bookmarks.model.BookmarksEntry)"
+		target = "(indexer.class.name=com.liferay.bookmarks.model.BookmarksFolder)"
 	)
-	private ModelSummaryContributor _modelSummaryContributor;
+	private IndexerDocumentBuilder _indexerDocumentBuilder;
+
+	@Reference(
+		target = "(indexer.class.name=com.liferay.bookmarks.model.BookmarksFolder)"
+	)
+	private IndexerWriter<BookmarksFolder> _indexerWriter;
+
+	private ModelIndexerWriterContributor<BookmarksEntry>
+		_modelIndexWriterContributor;
+	private final ModelSummaryContributor _modelSummaryContributor =
+		new BookmarksEntryModelSummaryContributor();
 
 }

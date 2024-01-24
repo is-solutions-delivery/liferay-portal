@@ -17,9 +17,27 @@
 		creationMenu="<%= publicationsDisplayContext.getCreationMenu() %>"
 		fdsActionDropdownItems="<%= publicationsDisplayContext.getFDSActionDropdownItems() %>"
 		id="<%= PublicationsFDSNames.PUBLICATIONS_ONGOING %>"
-		style="stacked"
+		propsTransformer="{DeletePublicationsFDSPropsTransformer} from change-tracking-web"
 	/>
 </clay:container-fluid>
+
+<aui:script>
+	const sessionKey = 'com.liferay.change.tracking.web.successMessage';
+
+	const successMessage = Liferay.Util.SessionStorage.getItem(
+		sessionKey,
+		Liferay.Util.SessionStorage.TYPES.NECESSARY
+	);
+
+	if (successMessage) {
+		Liferay.Util.openToast({
+			message: successMessage,
+			type: 'success',
+		});
+
+		Liferay.Util.SessionStorage.removeItem(sessionKey);
+	}
+</aui:script>
 
 <%
 CTLocalizedException ctLocalizedException = null;

@@ -11,11 +11,14 @@ import com.liferay.commerce.frontend.internal.application.context.provider.Theme
 import com.liferay.commerce.frontend.internal.cart.CommerceCartResource;
 import com.liferay.commerce.frontend.internal.search.CommerceSearchResource;
 import com.liferay.commerce.frontend.internal.wishlist.CommerceWishListResource;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.ws.rs.core.Application;
+
+import org.apache.cxf.jaxrs.ext.ContextProvider;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -63,7 +66,7 @@ public class CommerceFrontEndApplication extends Application {
 	@Reference
 	private CommerceWishListResource _commerceWishListResource;
 
-	@Reference
-	private ThemeDisplayContextProvider _themeDisplayContextProvider;
+	private final ContextProvider<ThemeDisplay> _themeDisplayContextProvider =
+		new ThemeDisplayContextProvider();
 
 }

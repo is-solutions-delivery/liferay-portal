@@ -72,7 +72,7 @@ public class ExperimentRunResourceImpl extends BaseExperimentRunResourceImpl {
 				BigDecimalUtil.divide(
 					experimentRun.getConfidenceLevel(), 100, 2,
 					RoundingMode.HALF_DOWN),
-				segmentsExperienceKeySplitMap));
+				segmentsExperienceKeySplitMap, null));
 	}
 
 	private ExperimentVariant _toExperimentVariant(
@@ -80,8 +80,8 @@ public class ExperimentRunResourceImpl extends BaseExperimentRunResourceImpl {
 
 		return new ExperimentVariant() {
 			{
-				id = segmentsExperimentRel.getSegmentsExperienceKey();
-				trafficSplit = segmentsExperimentRel.getSplit();
+				setId(segmentsExperimentRel::getSegmentsExperienceKey);
+				setTrafficSplit(segmentsExperimentRel::getSplit);
 			}
 		};
 	}
@@ -117,10 +117,10 @@ public class ExperimentRunResourceImpl extends BaseExperimentRunResourceImpl {
 
 		return new ExperimentRun() {
 			{
-				confidenceLevel = segmentsExperiment.getConfidenceLevel();
-				experimentVariants = _toExperimentVariants(
-					segmentsExperimentRels);
-				status = segmentsExperimentConstantsStatus.toString();
+				setConfidenceLevel(segmentsExperiment::getConfidenceLevel);
+				setExperimentVariants(
+					() -> _toExperimentVariants(segmentsExperimentRels));
+				setStatus(segmentsExperimentConstantsStatus::toString);
 			}
 		};
 	}

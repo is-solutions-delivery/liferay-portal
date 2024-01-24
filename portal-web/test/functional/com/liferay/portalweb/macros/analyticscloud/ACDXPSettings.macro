@@ -19,6 +19,10 @@ definition {
 
 	@summary = "Default summary"
 	macro changeAssignModalPagination(itemsPerPage = null) {
+		if (IsElementPresent(locator1 = "Message#SUCCESS_DISMISSIBLE")) {
+			Click(locator1 = "Icon#CLOSE_ALERT");
+		}
+
 		Click(locator1 = "ACDXPSettings#ASSIGN_MODAL_PAGINATION");
 
 		MenuItem.click(menuItem = ${itemsPerPage});
@@ -80,6 +84,12 @@ definition {
 		WaitForElementNotPresent(locator1 = "ACDXPSettings#CONNECT_BUTTON_DISABLED");
 
 		Click(locator1 = "ACDXPSettings#CONNECT_BUTTON");
+
+		WaitForVisible(
+			key_text = "Next",
+			locator1 = "Button#ANY");
+
+		WaitForElementNotPresent(locator1 = "ACSettings#LOADING_ANIMATION");
 	}
 
 	@summary = "Default summary"
@@ -227,6 +237,8 @@ definition {
 			Click(
 				key_text = "Create",
 				locator1 = "Button#ANY");
+
+			WaitForElementNotPresent(locator1 = "Modal#MODAL_CONTENT");
 		}
 	}
 

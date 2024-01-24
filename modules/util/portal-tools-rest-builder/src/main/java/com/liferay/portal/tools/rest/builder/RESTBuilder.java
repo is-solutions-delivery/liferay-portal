@@ -24,7 +24,6 @@ import com.liferay.portal.kernel.util.Validator_IW;
 import com.liferay.portal.tools.rest.builder.internal.freemarker.tool.FreeMarkerTool;
 import com.liferay.portal.tools.rest.builder.internal.freemarker.tool.java.JavaMethodSignature;
 import com.liferay.portal.tools.rest.builder.internal.freemarker.tool.java.parser.util.OpenAPIParserUtil;
-import com.liferay.portal.tools.rest.builder.internal.freemarker.util.ConfigUtil;
 import com.liferay.portal.tools.rest.builder.internal.freemarker.util.FreeMarkerUtil;
 import com.liferay.portal.tools.rest.builder.internal.freemarker.util.OpenAPIUtil;
 import com.liferay.portal.tools.rest.builder.internal.util.FileUtil;
@@ -221,10 +220,10 @@ public class RESTBuilder {
 			OpenAPIYAML openAPIYAML = _loadOpenAPIYAML(yamlString);
 
 			Map<String, Schema> allSchemas = OpenAPIUtil.getAllSchemas(
-				openAPIYAML);
+				_configYAML, openAPIYAML);
 
 			Map<String, Schema> allExternalSchemas =
-				OpenAPIUtil.getAllExternalSchemas(openAPIYAML);
+				OpenAPIUtil.getAllExternalSchemas(_configYAML, openAPIYAML);
 
 			context.put("allExternalSchemas", allExternalSchemas);
 
@@ -235,7 +234,7 @@ public class RESTBuilder {
 			context.put("escapedVersion", escapedVersion);
 
 			Map<String, Schema> globalEnumSchemas =
-				OpenAPIUtil.getGlobalEnumSchemas(openAPIYAML);
+				OpenAPIUtil.getGlobalEnumSchemas(_configYAML, allSchemas);
 
 			context.put("globalEnumSchemas", globalEnumSchemas);
 
@@ -352,7 +351,7 @@ public class RESTBuilder {
 						context, escapedVersion, schemaName);
 				}
 
-				if (ConfigUtil.isVersionCompatible(_configYAML, 4)) {
+				if (_configYAML.isGenerateActionProviders()) {
 					_createBaseDTOActionMetadataProviderFile(
 						context, escapedVersion, schemaName);
 					_createDTOActionMetadataProviderFile(
@@ -464,7 +463,8 @@ public class RESTBuilder {
 		}
 
 		if (_configYAML.isForcePredictableOperationId()) {
-			yamlString = _fixOpenAPIOperationIds(freeMarkerTool, yamlString);
+			yamlString = _fixOpenAPIOperationIds(
+				_configYAML, freeMarkerTool, yamlString);
 		}
 
 		if (_configYAML.isForcePredictableContentApplicationXML()) {
@@ -1345,7 +1345,8 @@ public class RESTBuilder {
 	}
 
 	private String _fixOpenAPIOperationIds(
-			FreeMarkerTool freeMarkerTool, String yamlString)
+			ConfigYAML configYAML, FreeMarkerTool freeMarkerTool,
+			String yamlString)
 		throws Exception {
 
 		OpenAPIYAML openAPIYAML = _loadOpenAPIYAML(yamlString);
@@ -1353,7 +1354,7 @@ public class RESTBuilder {
 		yamlString = yamlString.replaceAll("\n\\s+operationId:.+", "");
 
 		Map<String, Schema> allExternalSchemas =
-			OpenAPIUtil.getAllExternalSchemas(openAPIYAML);
+			OpenAPIUtil.getAllExternalSchemas(configYAML, openAPIYAML);
 		Map<String, Schema> schemas = freeMarkerTool.getSchemas(openAPIYAML);
 
 		MapUtil.merge(allExternalSchemas, schemas);

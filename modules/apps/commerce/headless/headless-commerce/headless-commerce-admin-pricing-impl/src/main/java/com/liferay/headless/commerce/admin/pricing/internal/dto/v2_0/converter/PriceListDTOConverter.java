@@ -46,45 +46,57 @@ public class PriceListDTOConverter
 			_commercePriceListService.getCommercePriceList(
 				(Long)dtoConverterContext.getId());
 
-		CommerceCurrency commerceCurrency =
-			commercePriceList.getCommerceCurrency();
-
-		String priceListStatusLabel = WorkflowConstants.getStatusLabel(
-			commercePriceList.getStatus());
-
-		String priceListStatusLabelI18n = _language.get(
-			LanguageResources.getResourceBundle(
-				dtoConverterContext.getLocale()),
-			WorkflowConstants.getStatusLabel(commercePriceList.getStatus()));
-
-		ExpandoBridge expandoBridge = commercePriceList.getExpandoBridge();
-
 		return new PriceList() {
 			{
-				actions = dtoConverterContext.getActions();
-				active = !commercePriceList.isInactive();
-				author = commercePriceList.getUserName();
-				catalogBasePriceList =
-					commercePriceList.isCatalogBasePriceList();
-				catalogId = _getCatalogId(commercePriceList);
-				catalogName = _getCatalogName(commercePriceList);
-				createDate = commercePriceList.getCreateDate();
-				currencyCode = commerceCurrency.getCode();
-				customFields = expandoBridge.getAttributes();
-				displayDate = commercePriceList.getDisplayDate();
-				expirationDate = commercePriceList.getExpirationDate();
-				externalReferenceCode =
-					commercePriceList.getExternalReferenceCode();
-				id = commercePriceList.getCommercePriceListId();
-				name = commercePriceList.getName();
-				netPrice = commercePriceList.isNetPrice();
-				parentPriceListId =
-					commercePriceList.getParentCommercePriceListId();
-				priority = commercePriceList.getPriority();
-				type = Type.create(commercePriceList.getType());
-				workflowStatusInfo = _toStatus(
-					commercePriceList.getStatus(), priceListStatusLabel,
-					priceListStatusLabelI18n);
+				setActions(dtoConverterContext::getActions);
+				setActive(() -> !commercePriceList.isInactive());
+				setAuthor(commercePriceList::getUserName);
+				setCatalogBasePriceList(
+					commercePriceList::isCatalogBasePriceList);
+				setCatalogId(() -> _getCatalogId(commercePriceList));
+				setCatalogName(() -> _getCatalogName(commercePriceList));
+				setCreateDate(commercePriceList::getCreateDate);
+				setCurrencyCode(
+					() -> {
+						CommerceCurrency commerceCurrency =
+							commercePriceList.getCommerceCurrency();
+
+						return commerceCurrency.getCode();
+					});
+				setCustomFields(
+					() -> {
+						ExpandoBridge expandoBridge =
+							commercePriceList.getExpandoBridge();
+
+						return expandoBridge.getAttributes();
+					});
+				setDisplayDate(commercePriceList::getDisplayDate);
+				setExpirationDate(commercePriceList::getExpirationDate);
+				setExternalReferenceCode(
+					commercePriceList::getExternalReferenceCode);
+				setId(commercePriceList::getCommercePriceListId);
+				setName(commercePriceList::getName);
+				setNetPrice(commercePriceList::isNetPrice);
+				setParentPriceListId(
+					commercePriceList::getParentCommercePriceListId);
+				setPriority(commercePriceList::getPriority);
+				setType(() -> Type.create(commercePriceList.getType()));
+				setWorkflowStatusInfo(
+					() -> {
+						String priceListStatusLabel =
+							WorkflowConstants.getStatusLabel(
+								commercePriceList.getStatus());
+
+						String priceListStatusLabelI18n = _language.get(
+							LanguageResources.getResourceBundle(
+								dtoConverterContext.getLocale()),
+							WorkflowConstants.getStatusLabel(
+								commercePriceList.getStatus()));
+
+						return _toStatus(
+							commercePriceList.getStatus(), priceListStatusLabel,
+							priceListStatusLabelI18n);
+					});
 			}
 		};
 	}
@@ -123,9 +135,9 @@ public class PriceListDTOConverter
 
 		return new Status() {
 			{
-				code = statusCode;
-				label = priceListStatusLabel;
-				label_i18n = priceListStatusLabelI18n;
+				setCode(() -> statusCode);
+				setLabel(() -> priceListStatusLabel);
+				setLabel_i18n(() -> priceListStatusLabelI18n);
 			}
 		};
 	}

@@ -70,7 +70,7 @@ public class SharingEntryServiceTest {
 	@Before
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
-		_fromUser = UserTestUtil.addOmniAdminUser();
+		_fromUser = UserTestUtil.addOmniadminUser();
 		_toUser = UserTestUtil.addUser();
 		_user = UserTestUtil.addUser();
 

@@ -63,10 +63,10 @@ public class JavaServiceObjectCheck extends BaseJavaTermCheck {
 		}
 
 		String javaTermContent = _formatGetterMethodCalls(
-			javaTerm.getContent(), fileContent, importNames);
+			javaTerm, fileContent, fileName, importNames);
 
 		return _formatSetterMethodCalls(
-			javaTermContent, fileContent, importNames);
+			javaTerm, javaTermContent, fileContent, fileName, importNames);
 	}
 
 	@Override
@@ -75,8 +75,11 @@ public class JavaServiceObjectCheck extends BaseJavaTermCheck {
 	}
 
 	private String _formatGetterMethodCalls(
-			String content, String fileContent, List<String> importNames)
+			JavaTerm javaTerm, String fileContent, String fileName,
+			List<String> importNames)
 		throws IOException {
+
+		String content = javaTerm.getContent();
 
 		Matcher matcher = _getterCallPattern.matcher(content);
 
@@ -84,7 +87,8 @@ public class JavaServiceObjectCheck extends BaseJavaTermCheck {
 			String variableName = matcher.group(1);
 
 			String variableTypeName = getVariableTypeName(
-				content, fileContent, variableName);
+				content, javaTerm, fileContent, fileName, variableName, false,
+				true);
 
 			if (variableTypeName == null) {
 				continue;
@@ -105,7 +109,8 @@ public class JavaServiceObjectCheck extends BaseJavaTermCheck {
 	}
 
 	private String _formatSetterMethodCalls(
-			String content, String fileContent, List<String> importNames)
+			JavaTerm javaTerm, String content, String fileContent,
+			String fileName, List<String> importNames)
 		throws IOException {
 
 		Matcher matcher1 = _setterCallsPattern.matcher(content);
@@ -133,7 +138,12 @@ public class JavaServiceObjectCheck extends BaseJavaTermCheck {
 					previousVariableName = variableName;
 
 					variableTypeName = getVariableTypeName(
-						content, fileContent, variableName);
+						content, javaTerm, fileContent, fileName, variableName,
+						false, true);
+
+					if (variableTypeName == null) {
+						continue outerLoop;
+					}
 
 					continue;
 				}
@@ -169,6 +179,12 @@ public class JavaServiceObjectCheck extends BaseJavaTermCheck {
 					continue outerLoop;
 				}
 
+				int x = variableTypeName.lastIndexOf(StringPool.PERIOD);
+
+				if (x != -1) {
+					variableTypeName = variableTypeName.substring(x + 1);
+				}
+
 				String tableName = _getTableName(
 					variableTypeName, serviceXMLElement);
 
@@ -178,7 +194,7 @@ public class JavaServiceObjectCheck extends BaseJavaTermCheck {
 					tablesSQLContent, tableName, setterObjectName);
 
 				if ((index2 != -1) && (index1 > index2)) {
-					int x = matcher2.start();
+					x = matcher2.start();
 
 					int y = content.lastIndexOf(previousMatch, x);
 
@@ -246,6 +262,20 @@ public class JavaServiceObjectCheck extends BaseJavaTermCheck {
 	private String _getPackageName(
 		String variableTypeName, List<String> importNames) {
 
+		int x = variableTypeName.lastIndexOf(StringPool.PERIOD);
+
+		if (x != -1) {
+			String packageName = variableTypeName.substring(0, x);
+
+			if (packageName.startsWith("com.liferay.") &&
+				packageName.endsWith(".model")) {
+
+				return packageName;
+			}
+
+			return StringPool.BLANK;
+		}
+
 		for (String importName : importNames) {
 			if (importName.startsWith("com.liferay.") &&
 				importName.endsWith(".model." + variableTypeName)) {
@@ -308,6 +338,12 @@ public class JavaServiceObjectCheck extends BaseJavaTermCheck {
 
 		if (modelInformation == null) {
 			return false;
+		}
+
+		int x = variableTypeName.lastIndexOf(StringPool.PERIOD);
+
+		if (x != -1) {
+			variableTypeName = variableTypeName.substring(x + 1);
 		}
 
 		Element serviceXMLElement = (Element)modelInformation[0];

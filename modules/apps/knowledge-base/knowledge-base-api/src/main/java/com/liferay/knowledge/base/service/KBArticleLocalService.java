@@ -176,6 +176,11 @@ public interface KBArticleLocalService
 	public void deleteKBArticles(long groupId, long parentResourcePrimKey)
 		throws PortalException;
 
+	public void deleteKBArticles(
+			long groupId, long parentResourcePrimKey,
+			boolean includeTrashedEntries)
+		throws PortalException;
+
 	public void deleteKBArticles(long[] resourcePrimKeys)
 		throws PortalException;
 
@@ -459,6 +464,10 @@ public interface KBArticleLocalService
 		long groupId, long kbFolderId, int status);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public KBArticle getLatestKBArticle(long resourcePrimKey)
+		throws PortalException;
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public KBArticle getLatestKBArticle(long resourcePrimKey, int status)
 		throws PortalException;
 
@@ -516,9 +525,34 @@ public interface KBArticleLocalService
 			long userId, long resourcePrimKey, int increment)
 		throws PortalException;
 
+	public void moveDependentKBArticlesToTrash(
+			long parentResourcePrimKey, long trashEntryId)
+		throws PortalException;
+
+	public void moveDependentKBArticleToTrash(
+			KBArticle kbArticle, long trashEntryId)
+		throws PortalException;
+
 	public void moveKBArticle(
 			long userId, long resourcePrimKey, long parentResourceClassNameId,
 			long parentResourcePrimKey, double priority)
+		throws PortalException;
+
+	public void moveKBArticleFromTrash(
+			long userId, long resourcePrimKey, long parentResourceClassNameId,
+			long parentResourcePrimKey)
+		throws PortalException;
+
+	public KBArticle moveKBArticleToTrash(long userId, long resourcePrimKey)
+		throws PortalException;
+
+	public void restoreDependentKBArticleFromTrash(KBArticle kbArticle)
+		throws PortalException;
+
+	public void restoreDependentKBArticlesFromTrash(long parentResourcePrimKey)
+		throws PortalException;
+
+	public void restoreKBArticleFromTrash(long userId, long resourcePrimKey)
 		throws PortalException;
 
 	public KBArticle revertKBArticle(

@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
@@ -52,167 +53,245 @@ public class Range implements Serializable {
 
 	@Schema
 	public String getFormat() {
+		if (_formatSupplier != null) {
+			format = _formatSupplier.get();
+
+			_formatSupplier = null;
+		}
+
 		return format;
 	}
 
 	public void setFormat(String format) {
 		this.format = format;
+
+		_formatSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setFormat(
 		UnsafeSupplier<String, Exception> formatUnsafeSupplier) {
 
-		try {
-			format = formatUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_formatSupplier = () -> {
+			try {
+				return formatUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String format;
 
+	@JsonIgnore
+	private Supplier<String> _formatSupplier;
+
 	@Schema
 	@Valid
 	public Object getGt() {
+		if (_gtSupplier != null) {
+			gt = _gtSupplier.get();
+
+			_gtSupplier = null;
+		}
+
 		return gt;
 	}
 
 	public void setGt(Object gt) {
 		this.gt = gt;
+
+		_gtSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setGt(UnsafeSupplier<Object, Exception> gtUnsafeSupplier) {
-		try {
-			gt = gtUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_gtSupplier = () -> {
+			try {
+				return gtUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Object gt;
 
+	@JsonIgnore
+	private Supplier<Object> _gtSupplier;
+
 	@Schema
 	@Valid
 	public Object getGte() {
+		if (_gteSupplier != null) {
+			gte = _gteSupplier.get();
+
+			_gteSupplier = null;
+		}
+
 		return gte;
 	}
 
 	public void setGte(Object gte) {
 		this.gte = gte;
+
+		_gteSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setGte(UnsafeSupplier<Object, Exception> gteUnsafeSupplier) {
-		try {
-			gte = gteUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_gteSupplier = () -> {
+			try {
+				return gteUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Object gte;
 
+	@JsonIgnore
+	private Supplier<Object> _gteSupplier;
+
 	@Schema
 	@Valid
 	public Object getLt() {
+		if (_ltSupplier != null) {
+			lt = _ltSupplier.get();
+
+			_ltSupplier = null;
+		}
+
 		return lt;
 	}
 
 	public void setLt(Object lt) {
 		this.lt = lt;
+
+		_ltSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setLt(UnsafeSupplier<Object, Exception> ltUnsafeSupplier) {
-		try {
-			lt = ltUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_ltSupplier = () -> {
+			try {
+				return ltUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Object lt;
 
+	@JsonIgnore
+	private Supplier<Object> _ltSupplier;
+
 	@Schema
 	@Valid
 	public Object getLte() {
+		if (_lteSupplier != null) {
+			lte = _lteSupplier.get();
+
+			_lteSupplier = null;
+		}
+
 		return lte;
 	}
 
 	public void setLte(Object lte) {
 		this.lte = lte;
+
+		_lteSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setLte(UnsafeSupplier<Object, Exception> lteUnsafeSupplier) {
-		try {
-			lte = lteUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_lteSupplier = () -> {
+			try {
+				return lteUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Object lte;
 
+	@JsonIgnore
+	private Supplier<Object> _lteSupplier;
+
 	@Schema
 	public String getParameterName() {
+		if (_parameterNameSupplier != null) {
+			parameterName = _parameterNameSupplier.get();
+
+			_parameterNameSupplier = null;
+		}
+
 		return parameterName;
 	}
 
 	public void setParameterName(String parameterName) {
 		this.parameterName = parameterName;
+
+		_parameterNameSupplier = null;
 	}
 
 	@JsonIgnore
 	public void setParameterName(
 		UnsafeSupplier<String, Exception> parameterNameUnsafeSupplier) {
 
-		try {
-			parameterName = parameterNameUnsafeSupplier.get();
-		}
-		catch (RuntimeException re) {
-			throw re;
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		_parameterNameSupplier = () -> {
+			try {
+				return parameterNameUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
 	}
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String parameterName;
+
+	@JsonIgnore
+	private Supplier<String> _parameterNameSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -241,6 +320,8 @@ public class Range implements Serializable {
 
 		sb.append("{");
 
+		String format = getFormat();
+
 		if (format != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -254,6 +335,8 @@ public class Range implements Serializable {
 
 			sb.append("\"");
 		}
+
+		Object gt = getGt();
 
 		if (gt != null) {
 			if (sb.length() > 1) {
@@ -275,6 +358,8 @@ public class Range implements Serializable {
 			}
 		}
 
+		Object gte = getGte();
+
 		if (gte != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -294,6 +379,8 @@ public class Range implements Serializable {
 				sb.append(gte);
 			}
 		}
+
+		Object lt = getLt();
 
 		if (lt != null) {
 			if (sb.length() > 1) {
@@ -315,6 +402,8 @@ public class Range implements Serializable {
 			}
 		}
 
+		Object lte = getLte();
+
 		if (lte != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
@@ -334,6 +423,8 @@ public class Range implements Serializable {
 				sb.append(lte);
 			}
 		}
+
+		String parameterName = getParameterName();
 
 		if (parameterName != null) {
 			if (sb.length() > 1) {

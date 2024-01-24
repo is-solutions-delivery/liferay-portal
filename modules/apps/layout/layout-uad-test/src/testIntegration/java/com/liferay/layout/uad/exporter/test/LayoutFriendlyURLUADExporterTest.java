@@ -6,7 +6,7 @@
 package com.liferay.layout.uad.exporter.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.layout.uad.test.LayoutFriendlyURLUADTestUtil;
+import com.liferay.layout.uad.test.util.LayoutFriendlyURLUADTestUtil;
 import com.liferay.portal.kernel.model.LayoutFriendlyURL;
 import com.liferay.portal.kernel.service.LayoutFriendlyURLLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalService;
@@ -52,11 +52,6 @@ public class LayoutFriendlyURLUADExporterTest
 		_layoutFriendlyURLs.add(layoutFriendlyURL);
 
 		return layoutFriendlyURL;
-	}
-
-	@Override
-	protected String getPrimaryKeyName() {
-		return "layoutFriendlyURLId";
 	}
 
 	@Override

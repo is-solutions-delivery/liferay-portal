@@ -6,6 +6,10 @@
 package com.liferay.headless.delivery.resource.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.model.AssetVocabulary;
+import com.liferay.asset.kernel.service.AssetCategoryLocalService;
+import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.blogs.test.util.BlogsTestUtil;
 import com.liferay.document.library.kernel.model.DLFileEntry;
@@ -52,6 +56,7 @@ import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.RoleLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserGroupRoleLocalServiceUtil;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.UserLocalServiceUtil;
@@ -323,6 +328,76 @@ public class StructuredContentResourceTest
 
 	@Override
 	@Test
+	public void testGetSiteStructuredContentsPageWithSortInteger()
+		throws Exception {
+
+		super.testGetSiteStructuredContentsPageWithSortInteger();
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(testGroup.getGroupId());
+
+		AssetVocabulary assetVocabulary =
+			_assetVocabularyLocalService.addVocabulary(
+				TestPropsValues.getUserId(), testGroup.getGroupId(),
+				RandomTestUtil.randomString(), serviceContext);
+
+		AssetCategory assetCategory1 = _assetCategoryLocalService.addCategory(
+			TestPropsValues.getUserId(), testGroup.getGroupId(),
+			RandomTestUtil.randomString(), assetVocabulary.getVocabularyId(),
+			serviceContext);
+		AssetCategory assetCategory2 = _assetCategoryLocalService.addCategory(
+			TestPropsValues.getUserId(), testGroup.getGroupId(),
+			RandomTestUtil.randomString(), assetVocabulary.getVocabularyId(),
+			serviceContext);
+
+		Assert.assertTrue(
+			assetCategory1.getCategoryId() < assetCategory2.getCategoryId());
+
+		StructuredContent structuredContent1 = randomStructuredContent();
+
+		structuredContent1.setTaxonomyCategoryIds(
+			new Long[] {assetCategory2.getCategoryId()});
+
+		structuredContent1 =
+			testGetSiteStructuredContentsPage_addStructuredContent(
+				testGroup.getGroupId(), structuredContent1);
+
+		StructuredContent structuredContent2 = randomStructuredContent();
+
+		structuredContent2.setTaxonomyCategoryIds(
+			new Long[] {assetCategory1.getCategoryId()});
+
+		structuredContent2 =
+			testGetSiteStructuredContentsPage_addStructuredContent(
+				testGroup.getGroupId(), structuredContent2);
+
+		Page<StructuredContent> page =
+			structuredContentResource.getSiteStructuredContentsPage(
+				testGroup.getGroupId(), null, null, null,
+				String.format(
+					"taxonomyCategoryIds/any(k:k in (%d,%d))",
+					assetCategory1.getCategoryId(),
+					assetCategory2.getCategoryId()),
+				null, "taxonomyCategoryIds:asc");
+
+		assertEquals(
+			Arrays.asList(structuredContent2, structuredContent1),
+			(List<StructuredContent>)page.getItems());
+
+		page = structuredContentResource.getSiteStructuredContentsPage(
+			testGroup.getGroupId(), null, null, null,
+			String.format(
+				"taxonomyCategoryIds/any(k:k in (%d,%d))",
+				assetCategory1.getCategoryId(), assetCategory2.getCategoryId()),
+			null, "taxonomyCategoryIds:desc");
+
+		assertEquals(
+			Arrays.asList(structuredContent1, structuredContent2),
+			(List<StructuredContent>)page.getItems());
+	}
+
+	@Override
+	@Test
 	public void testGetStructuredContent() throws Exception {
 
 		// Get structured content
@@ -392,6 +467,47 @@ public class StructuredContentResourceTest
 			getStructuredContent.getId());
 
 		Assert.assertEquals(title, getStructuredContent.getTitle());
+
+		// Different time zone
+
+		User user = UserTestUtil.addGroupAdminUser(testGroup);
+
+		user.setTimeZoneId("America/Sao_Paulo");
+
+		user = _userLocalService.updateUser(user);
+
+		user = _userLocalService.updatePassword(
+			user.getUserId(), "test", "test", false, true);
+
+		try {
+			postStructuredContent =
+				structuredContentResource.postSiteStructuredContent(
+					testGroup.getGroupId(), randomStructuredContent());
+
+			StructuredContentResource structuredContentResource =
+				builder.authentication(
+					user.getEmailAddress(), "test"
+				).locale(
+					LocaleUtil.getDefault()
+				).build();
+
+			postStructuredContent.setDatePublished(new Date());
+
+			StructuredContent putStructuredContent =
+				structuredContentResource.putStructuredContent(
+					postStructuredContent.getId(), postStructuredContent);
+
+			JournalArticle journalArticle =
+				_journalArticleLocalService.fetchLatestArticle(
+					putStructuredContent.getId());
+
+			Assert.assertEquals(
+				journalArticle.getDisplayDate(),
+				putStructuredContent.getDatePublished());
+		}
+		finally {
+			_userLocalService.deleteUser(user);
+		}
 
 		// Role admin user
 
@@ -1699,6 +1815,12 @@ public class StructuredContentResourceTest
 
 	@Inject(filter = "ddm.form.deserializer.type=json")
 	private static DDMFormDeserializer _jsonDDMFormDeserializer;
+
+	@Inject
+	private AssetCategoryLocalService _assetCategoryLocalService;
+
+	@Inject
+	private AssetVocabularyLocalService _assetVocabularyLocalService;
 
 	private BlogsEntry _blogsEntry;
 	private DDMStructure _complexDDMStructure;

@@ -17,8 +17,18 @@
 	<td></td>
 </tr>
 <tr>
+	<td>AB_TEST_ALERT_MESSAGE</td>
+	<td>//div[contains(@class,'analytics-summary-card-alert')]</td>
+	<td></td>
+</tr>
+<tr>
 	<td>DELETE_TEST</td>
 	<td>//*[contains(@class,'dropdown-item')and text()='Delete Test']</td>
+	<td></td>
+</tr>
+<tr>
+	<td>IMPROVEMENT_NUMBER</td>
+	<td>//*[text()='${key_variantName}']//ancestor::tr//span[text()]</td>
 	<td></td>
 </tr>
 <tr>
@@ -28,7 +38,12 @@
 </tr>
 <tr>
 	<td>SUMMARY_CARD_TEXT</td>
-	<td>//div[contains(@class, 'analytics-summary-card')] //div[contains(@class,'card-header')] //h3</td>
+	<td>//div[contains(@class,'analytics-summary-card')]//div[contains(@class,'card-header')]//h3</td>
+	<td></td>
+</tr>
+<tr>
+	<td>VIEW_TEST_STATUS_ANALYTICS_CLOUD</td>
+	<td>//span[@title and text()='${key_abTestTitle}']//ancestor::tr//div[contains(@class,'experiment-status')]</td>
 	<td></td>
 </tr>
 </tbody>

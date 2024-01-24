@@ -15,13 +15,16 @@ import com.liferay.portal.kernel.model.Website;
 public class WebUrlUtil {
 
 	public static WebUrl toWebUrl(Website website) throws Exception {
-		ListType listType = website.getListType();
-
 		return new WebUrl() {
 			{
-				id = website.getWebsiteId();
-				url = website.getUrl();
-				urlType = listType.getName();
+				setId(website::getWebsiteId);
+				setUrl(website::getUrl);
+				setUrlType(
+					() -> {
+						ListType listType = website.getListType();
+
+						return listType.getName();
+					});
 			}
 		};
 	}

@@ -7,7 +7,6 @@ package com.liferay.object.service;
 
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
 import com.liferay.object.model.ObjectFolder;
-import com.liferay.object.model.ObjectFolderItem;
 import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
@@ -208,6 +207,9 @@ public interface ObjectFolderLocalService
 		DynamicQuery dynamicQuery, Projection projection);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ObjectFolder fetchDefaultObjectFolder(long companyId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ObjectFolder fetchObjectFolder(long objectFolderId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -229,10 +231,11 @@ public interface ObjectFolderLocalService
 		String uuid, long companyId);
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ObjectFolder fetchUncategorizedObjectFolder(long companyId);
+	public ActionableDynamicQuery getActionableDynamicQuery();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ActionableDynamicQuery getActionableDynamicQuery();
+	public ObjectFolder getDefaultObjectFolder(long companyId)
+		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public ExportActionableDynamicQuery getExportActionableDynamicQuery(
@@ -297,7 +300,10 @@ public interface ObjectFolderLocalService
 	public int getObjectFoldersCount();
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ObjectFolder getOrAddUncategorizedObjectFolder(long companyId)
+	public int getObjectFoldersCount(long companyId);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public ObjectFolder getOrAddDefaultObjectFolder(long companyId)
 		throws PortalException;
 
 	/**
@@ -313,10 +319,6 @@ public interface ObjectFolderLocalService
 	@Override
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
-		throws PortalException;
-
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public ObjectFolder getUncategorizedObjectFolder(long companyId)
 		throws PortalException;
 
 	/**
@@ -335,8 +337,7 @@ public interface ObjectFolderLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public ObjectFolder updateObjectFolder(
 			String externalReferenceCode, long objectFolderId,
-			Map<Locale, String> labelMap,
-			List<ObjectFolderItem> objectFolderItems)
+			Map<Locale, String> labelMap)
 		throws PortalException;
 
 }

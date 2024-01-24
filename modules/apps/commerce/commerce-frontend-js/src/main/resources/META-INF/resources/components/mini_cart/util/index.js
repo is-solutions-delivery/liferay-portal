@@ -209,23 +209,44 @@ export function hasErrors(cartItems) {
 	return cartItems.some(({errorMessages}) => Boolean(errorMessages?.length));
 }
 
+export function hasOptions(jsonString) {
+	let options = [];
+
+	try {
+		options = JSON.parse(jsonString) || [];
+	}
+	catch (ignore) {}
+
+	return options.length;
+}
+
 export function hasPriceOnApplication(cartItems) {
 	return cartItems.some(({price}) => price.priceOnApplication);
 }
 
-export function parseOptions(jsonString) {
-	let options;
-
-	try {
-		options = JSON.parse(jsonString) || '';
-	}
-	catch (ignore) {
-		options = '';
-	}
-
+export function parseOptions(options) {
 	return Array.isArray(options)
 		? options.map(({value}) => `${value}`).join(', ')
 		: options;
+}
+
+export function filterOptions(jsonString) {
+	let options;
+
+	try {
+		options = JSON.parse(jsonString) || [];
+	}
+	catch (ignore) {
+		options = [];
+	}
+
+	return options.filter((option) => !!option.value.length);
+}
+
+export function parseValue(value) {
+	return Array.isArray(value)
+		? value.filter((item) => item === 0 || item).join(', ')
+		: value;
 }
 
 export function regenerateOrderDetailURL(orderUUID, siteDefaultURL) {

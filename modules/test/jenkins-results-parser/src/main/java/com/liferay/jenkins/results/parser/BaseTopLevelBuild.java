@@ -654,7 +654,7 @@ public abstract class BaseTopLevelBuild
 
 		try {
 			JSONObject buildJSONObject = JenkinsResultsParserUtil.toJSONObject(
-				buildURL + "api/json?tree=result");
+				buildURL + "/api/json?tree=result");
 
 			if (!JenkinsResultsParserUtil.isNullOrEmpty(
 					buildJSONObject.optString("result", null))) {
@@ -951,43 +951,75 @@ public abstract class BaseTopLevelBuild
 	}
 
 	protected Element[] getBuildFailureElements() {
-		Map<Build, Element> downstreamBuildFailureMessages =
-			getDownstreamBuildMessages(getFailedDownstreamBuilds());
+		List<Build> failedDownstreamBuilds = getFailedDownstreamBuilds();
+
+		if (failedDownstreamBuilds != null) {
+			StringBuilder sb = new StringBuilder();
+
+			sb.append("\nUnique Failures:");
+
+			for (Build failedDownstreamBuild : failedDownstreamBuilds) {
+				if (failedDownstreamBuild.isUniqueFailure()) {
+					sb.append("\n");
+					sb.append(failedDownstreamBuild.getDisplayName());
+
+					for (TestResult testResult :
+							failedDownstreamBuild.
+								getUniqueFailureTestResults()) {
+
+						sb.append("\n\t");
+						sb.append(testResult.getDisplayName());
+					}
+				}
+			}
+
+			sb.append("\n\nUpstream Failures:");
+
+			for (Build failedDownstreamBuild : failedDownstreamBuilds) {
+				if (!failedDownstreamBuild.isUniqueFailure()) {
+					sb.append("\n");
+					sb.append(failedDownstreamBuild.getDisplayName());
+
+					for (TestResult testResult :
+							failedDownstreamBuild.
+								getUpstreamJobFailureTestResults()) {
+
+						sb.append("\n\t");
+						sb.append(testResult.getDisplayName());
+					}
+				}
+			}
+
+			System.out.println(sb.toString());
+		}
+
+		List<Element> downstreamBuildMessageElements =
+			getDownstreamBuildMessageElements(failedDownstreamBuilds);
+
+		System.out.println(
+			"Collected " + downstreamBuildMessageElements.size() +
+				" downstream failure messages");
 
 		List<Element> allCurrentBuildFailureElements = new ArrayList<>();
 		List<Element> upstreamBuildFailureElements = new ArrayList<>();
 
 		int maxFailureCount = 5;
 
-		for (Map.Entry<Build, Element> entry :
-				downstreamBuildFailureMessages.entrySet()) {
+		for (Build failedDownstreamBuild : failedDownstreamBuilds) {
+			Element gitHubMessageElement =
+				failedDownstreamBuild.getGitHubMessageElement();
 
-			Build failedDownstreamBuild = entry.getKey();
-
-			Element failureElement = entry.getValue();
-
-			if (failureElement != null) {
-				if (!failedDownstreamBuild.isUniqueFailure()) {
-					upstreamBuildFailureElements.add(failureElement);
-
-					continue;
-				}
-
-				if (isHighPriorityBuildFailureElement(failureElement)) {
-					allCurrentBuildFailureElements.add(0, failureElement);
-
-					continue;
-				}
-
-				allCurrentBuildFailureElements.add(failureElement);
+			if (gitHubMessageElement != null) {
+				allCurrentBuildFailureElements.add(gitHubMessageElement);
 			}
 
-			Element upstreamJobFailureElement =
+			Element gitHubMessageUpstreamJobFailureElement =
 				failedDownstreamBuild.
 					getGitHubMessageUpstreamJobFailureElement();
 
-			if (upstreamJobFailureElement != null) {
-				upstreamBuildFailureElements.add(upstreamJobFailureElement);
+			if (gitHubMessageUpstreamJobFailureElement != null) {
+				upstreamBuildFailureElements.add(
+					gitHubMessageUpstreamJobFailureElement);
 			}
 		}
 

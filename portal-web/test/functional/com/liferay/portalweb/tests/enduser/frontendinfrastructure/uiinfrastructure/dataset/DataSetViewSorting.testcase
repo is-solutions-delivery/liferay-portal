@@ -2,7 +2,6 @@
 definition {
 
 	property custom.properties = "feature.flag.LPS-164563=true${line.separator}feature.flag.LPS-188645=true";
-	property portal.acceptance = "true";
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.component.names = "Frontend Data Set";
@@ -52,7 +51,7 @@ definition {
 	}
 
 	@description = "LPS-182790. Confirms the sorting deletion message."
-	@priority = 5
+	@priority = 3
 	test AssertDeleteSortingMessage {
 		task ("When the user creates a new sorting") {
 			DataSetAdmin.createASort(
@@ -82,7 +81,7 @@ definition {
 	}
 
 	@description = "LPS-182790. Confirms the option of Edit a sorting appears."
-	@priority = 5
+	@priority = 3
 	test AssertEditOptionAppears {
 		task ("When the user creates a new sorting") {
 			DataSetAdmin.createASort(
@@ -106,7 +105,7 @@ definition {
 	}
 
 	@description = "LPS-182790. Confirms Ascending and Descending options appears when editing a sorting."
-	@priority = 5
+	@priority = 3
 	test AssertEditSortingOptions {
 		task ("When the user creates a new sorting") {
 			DataSetAdmin.createASort(
@@ -256,8 +255,10 @@ definition {
 	}
 
 	@description = "LPS-185326. Confirm that the Default Sort was created successfully."
-	@priority = 3
+	@priority = 5
 	test CanCreateDefaultSort {
+		property portal.acceptance = "true";
+
 		task ("And adding a new default sort ") {
 			DataSetAdmin.createASort(
 				key_field = "creator",
@@ -274,6 +275,8 @@ definition {
 	@description = "LPS-182790. Confirms it's possible to delete a sorting."
 	@priority = 5
 	test CanDeleteSorting {
+		property portal.acceptance = "true";
+
 		task ("When the user creates a new sorting") {
 			DataSetAdmin.createASort(
 				key_field = "creator",
@@ -315,7 +318,7 @@ definition {
 	}
 
 	@description = "LPS-185322. Confirm that the new default sorting modal is displayed."
-	@priority = 4
+	@priority = 3
 	test CanDisplayedDefaultSort {
 		task ("And adds a new default sort, on "+" button or "New Default Sort" button.") {
 			LexiconEntry.gotoAdd();
@@ -330,7 +333,7 @@ definition {
 
 	@description = "LPS-182790. Confirms it's posible to order a sorting. Blocked by LPS-186225."
 	@ignore = "true"
-	@priority = 5
+	@priority = 4
 	test CanOrderSorting {
 		task ("When the user creates 2 or more new sorting") {
 			DataSetAdmin.createASort(
@@ -378,6 +381,8 @@ definition {
 	@description = "LPS-182790. Confirms it's possible to save a sorting edition."
 	@priority = 5
 	test CanSaveEditSorting {
+		property portal.acceptance = "true";
+
 		task ("When the user creates a new sorting") {
 			DataSetAdmin.createASort(
 				key_field = "creator",
@@ -451,7 +456,7 @@ definition {
 	}
 
 	@description = "LPS-182790. Confirms it's possible to edit a sorting."
-	@priority = 5
+	@priority = 4
 	test CantEditField {
 		task ("When the user creates a new sorting") {
 			DataSetAdmin.createASort(
@@ -473,6 +478,62 @@ definition {
 			AssertElementPresent(
 				key_fieldName = "fdsSortFieldNameInput",
 				locator1 = "DataSet#INPUT_FIELD_DISABLED");
+		}
+	}
+
+	@description = "LPS-188333. Confirm that changes in the sorting are not autosaved when edit and delete an entry"
+	@priority = 3
+	test SortingChangesAreAutosaved {
+		task ("And the Save and Cancel button are not present") {
+			AssertElementNotPresent(locator1 = "Button#CANCEL");
+
+			AssertElementNotPresent(locator1 = "Button#SAVE");
+		}
+
+		task ("When the user adds 3 sortings") {
+			for (var key_fieldList : list "creator,id,status") {
+				DataSetAdmin.createASort(
+					key_field = ${key_fieldList},
+					key_sorting = "Descending");
+			}
+		}
+
+		task ("And edits one of them") {
+			DataSetAdmin.editSorting(
+				key_entryPosition = 1,
+				key_sortingOption = "Ascending");
+		}
+
+		task ("When the user deletes one of the sortings") {
+			Click(
+				key_fieldName = "status",
+				locator1 = "DataSet#VERTICAL_ELLIPSIS_BY_FIELDS_NAME");
+
+			MenuItem.click(menuItem = "Delete");
+
+			Click(locator1 = "Button#MODAL_DELETE");
+		}
+
+		task ("Then the sorting is deleted") {
+			AssertElementNotPresent(
+				key_rowPosition = 1,
+				key_text = "Descending",
+				locator1 = "DataSet#SORT_ENTRY_TABLE");
+		}
+
+		task ("When the user reorder the sortings") {
+			DragAndDrop.javaScriptDragAndDropToObject(
+				key_rowPosition = 1,
+				key_text = "Ascending",
+				locator1 = "DataSet#SORT_ENTRY_TABLE",
+				locator2 = "//tr[@class='orderable-table-row'][2]//*[contains(text(), 'id')]");
+		}
+
+		task ("Then the sortings are ordered accordingly to the changes") {
+			AssertElementPresent(
+				key_rowPosition = 2,
+				key_text = "Ascending",
+				locator1 = "DataSet#SORT_ENTRY_TABLE");
 		}
 	}
 

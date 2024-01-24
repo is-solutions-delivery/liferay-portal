@@ -127,7 +127,7 @@ definition {
 	@priority = 4
 	@refactordone
 	test CanEditEntryInCardViewViaADT {
-		ApplicationDisplayTemplates.selectPortletADT(
+		WidgetTemplates.selectPortletADT(
 			portletName = "Blogs",
 			templateName = "Card");
 
@@ -832,8 +832,6 @@ definition {
 
 			Portlet.gotoPortletOptions(portletOption = "Configuration");
 
-			BlogsConfiguration.selectConfigurationIFrame();
-
 			BlogsConfiguration.gotoRSS();
 
 			BlogsConfiguration.uncheckRSSSubscriptionCheckbox();
@@ -856,8 +854,6 @@ definition {
 
 			Portlet.gotoPortletOptions(portletOption = "Configuration");
 
-			BlogsConfiguration.selectConfigurationIFrame();
-
 			BlogsConfiguration.gotoRSS();
 
 			BlogsConfiguration.viewDefaultConfigurationRSS();
@@ -866,7 +862,7 @@ definition {
 
 	@description = "This test ensures that blogs widgets follow W3C accessibility standards."
 	@ignore = "true"
-	@priority = 4
+	@priority = 3
 	test WidgetsFollowAccessibilityStandards {
 		for (var widgetName : list "Blogs Aggregator,Recent Bloggers") {
 			JSONLayout.addWidgetToPublicLayout(

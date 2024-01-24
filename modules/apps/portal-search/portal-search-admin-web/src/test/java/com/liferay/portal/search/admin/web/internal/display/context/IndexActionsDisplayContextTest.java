@@ -9,8 +9,13 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.instances.service.PortalInstancesLocalService;
 import com.liferay.portal.instances.service.PortalInstancesLocalServiceUtil;
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.module.util.SystemBundleUtil;
+import com.liferay.portal.kernel.search.IndexerRegistry;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.admin.web.internal.display.context.builder.IndexActionsDisplayContextBuilder;
 import com.liferay.portal.search.capabilities.SearchCapabilities;
 import com.liferay.portal.search.cluster.StatsInformation;
@@ -22,12 +27,16 @@ import com.liferay.portletmvc4spring.test.mock.web.portlet.MockRenderRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.mockito.Mockito;
+
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 /**
  * @author Felipe Lorenz
@@ -40,10 +49,22 @@ public class IndexActionsDisplayContextTest {
 
 	@Before
 	public void setUp() {
+		_setUpHttpServletRequest();
 		_setUpIndexInformation();
 		_setUpLanguage();
 		_setUpPortalInstancesLocalServiceUtil();
 		_setUpPortalUtil();
+		_setUpThemeDisplay();
+
+		BundleContext bundleContext = SystemBundleUtil.getBundleContext();
+
+		_serviceRegistration = bundleContext.registerService(
+			IndexerRegistry.class, Mockito.mock(IndexerRegistry.class), null);
+	}
+
+	@After
+	public void tearDown() {
+		_serviceRegistration.unregister();
 	}
 
 	@Test
@@ -115,9 +136,17 @@ public class IndexActionsDisplayContextTest {
 		return statsInformationFactory;
 	}
 
-	private void _setUpIndexInformation() {
-		_indexInformation = Mockito.mock(IndexInformation.class);
+	private void _setUpHttpServletRequest() {
+		Mockito.doReturn(
+			_themeDisplay
+		).when(
+			_httpServletRequest
+		).getAttribute(
+			WebKeys.THEME_DISPLAY
+		);
+	}
 
+	private void _setUpIndexInformation() {
 		Mockito.when(
 			_indexInformation.getIndexNames()
 		).thenReturn(
@@ -132,8 +161,6 @@ public class IndexActionsDisplayContextTest {
 	}
 
 	private void _setUpLanguage() {
-		_language = Mockito.mock(Language.class);
-
 		Mockito.doReturn(
 			"name"
 		).when(
@@ -157,8 +184,6 @@ public class IndexActionsDisplayContextTest {
 	}
 
 	private void _setUpPortalUtil() {
-		_portal = Mockito.mock(Portal.class);
-
 		Mockito.doAnswer(
 			invocation -> new String[] {
 				invocation.getArgument(0, String.class), StringPool.BLANK
@@ -170,7 +195,7 @@ public class IndexActionsDisplayContextTest {
 		);
 
 		Mockito.doReturn(
-			Mockito.mock(HttpServletRequest.class)
+			_httpServletRequest
 		).when(
 			_portal
 		).getHttpServletRequest(
@@ -182,12 +207,36 @@ public class IndexActionsDisplayContextTest {
 		portalUtil.setPortal(_portal);
 	}
 
-	private IndexInformation _indexInformation;
-	private Language _language;
-	private Portal _portal;
+	private void _setUpThemeDisplay() {
+		PermissionChecker permissionChecker = Mockito.mock(
+			PermissionChecker.class);
+
+		Mockito.doReturn(
+			permissionChecker
+		).when(
+			_themeDisplay
+		).getPermissionChecker();
+
+		Mockito.doReturn(
+			true
+		).when(
+			permissionChecker
+		).isOmniadmin();
+	}
+
+	private static final ThemeDisplay _themeDisplay = Mockito.mock(
+		ThemeDisplay.class);
+
+	private final HttpServletRequest _httpServletRequest = Mockito.mock(
+		HttpServletRequest.class);
+	private final IndexInformation _indexInformation = Mockito.mock(
+		IndexInformation.class);
+	private final Language _language = Mockito.mock(Language.class);
+	private final Portal _portal = Mockito.mock(Portal.class);
 	private final ReindexConfiguration _reindexConfiguration = Mockito.mock(
 		ReindexConfiguration.class);
 	private final SearchCapabilities _searchCapabilities = Mockito.mock(
 		SearchCapabilities.class);
+	private ServiceRegistration<IndexerRegistry> _serviceRegistration;
 
 }

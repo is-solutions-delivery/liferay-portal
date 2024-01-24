@@ -2,16 +2,15 @@ definition {
 
 	@summary = "Default summary"
 	macro addProducts() {
-		ApplicationsMenu.gotoPortlet(
-			category = "Object",
-			panel = "Control Panel",
-			portlet = "Objects");
+		ObjectAdmin.openObjectAdmin();
 
 		ObjectPortlet.selectCustomObject(label = "Account Subscription Group");
 
 		CreateObject.checkToggleActive();
 
-		CreateObject.selectPanelCategoryKey(panelCategoryKey = "Control Panel > Object");
+		ObjectAdmin.selectDropdownItem(
+			labelName = "Panel Link",
+			optionName = "Object");
 
 		CustomerPortal.checkToggleHideWidget();
 

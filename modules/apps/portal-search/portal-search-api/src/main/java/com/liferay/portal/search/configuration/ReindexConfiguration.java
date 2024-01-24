@@ -7,6 +7,7 @@ package com.liferay.portal.search.configuration;
 
 import aQute.bnd.annotation.metatype.Meta;
 
+import com.liferay.portal.configuration.metatype.annotations.ExtendedAttributeDefinition;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 
 import org.osgi.annotation.versioning.ProviderType;
@@ -34,5 +35,22 @@ public interface ReindexConfiguration {
 		name = "indexing-batch-sizes", required = false
 	)
 	public String[] indexingBatchSizes();
+
+	@ExtendedAttributeDefinition(featureFlagKey = "LPS-183672")
+	@Meta.AD(
+		deflt = "false",
+		description = "index-actions-in-all-virtual-instances-enabled-help",
+		name = "index-actions-in-all-virtual-instances-enabled",
+		required = false
+	)
+	public boolean indexActionsInAllVirtualInstancesEnabled();
+
+	@ExtendedAttributeDefinition(featureFlagKey = "LPS-183672")
+	@Meta.AD(
+		deflt = "",
+		description = "enable-index-actions-in-a-virtual-instance-help",
+		name = "enable-index-actions-in-a-virtual-instance", required = false
+	)
+	public String[] indexActionsVirtualInstance();
 
 }

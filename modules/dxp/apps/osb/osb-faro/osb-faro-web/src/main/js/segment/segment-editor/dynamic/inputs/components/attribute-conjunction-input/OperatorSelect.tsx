@@ -32,7 +32,12 @@ const OperatorSelect: React.FC<IOperatorSelectProps> = ({
 		<Form.GroupItem shrink>
 			<Picker
 				className='operator-input'
-				items={getOperatorOptions(dataType)}
+				items={
+					getOperatorOptions(dataType) as {
+						label: string;
+						value: string;
+					}[]
+				}
 				onSelectionChange={newOperatorName => {
 					let criterion: Criterion = {
 						operatorName: newOperatorName as Criterion['operatorName']

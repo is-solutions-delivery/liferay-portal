@@ -12,6 +12,8 @@ import com.liferay.headless.commerce.admin.inventory.client.pagination.Paginatio
 import com.liferay.headless.commerce.admin.inventory.client.problem.Problem;
 import com.liferay.headless.commerce.admin.inventory.client.serdes.v1_0.WarehouseItemSerDes;
 
+import java.net.URL;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -199,6 +201,10 @@ public interface WarehouseItemResource {
 			_scheme = scheme;
 
 			return this;
+		}
+
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
 		}
 
 		public Builder header(String key, String value) {

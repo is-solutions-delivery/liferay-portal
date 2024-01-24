@@ -5,6 +5,7 @@
 
 package com.liferay.fragment.entry.processor.background.image;
 
+import com.liferay.fragment.entry.processor.constants.FragmentEntryProcessorConstants;
 import com.liferay.fragment.entry.processor.helper.FragmentEntryProcessorHelper;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.processor.DocumentFragmentEntryProcessor;
@@ -48,21 +49,24 @@ public class BackgroundImageDocumentFragmentEntryProcessor
 		JSONObject jsonObject = _jsonFactory.createJSONObject(
 			fragmentEntryLink.getEditableValues());
 
+		JSONObject editableValuesJSONObject = jsonObject.getJSONObject(
+			FragmentEntryProcessorConstants.
+				KEY_BACKGROUND_IMAGE_FRAGMENT_ENTRY_PROCESSOR);
+
+		if (editableValuesJSONObject == null) {
+			return;
+		}
+
 		Map<InfoItemReference, InfoItemFieldValues> infoDisplaysFieldValues =
 			new HashMap<>();
 
 		for (Element element :
-				document.select("[data-lfr-background-image-id]")) {
+				document.getElementsByAttribute(
+					"data-lfr-background-image-id")) {
 
 			String id = element.attr("data-lfr-background-image-id");
 
-			JSONObject editableValuesJSONObject = jsonObject.getJSONObject(
-				"com.liferay.fragment.entry.processor.background.image." +
-					"BackgroundImageFragmentEntryProcessor");
-
-			if ((editableValuesJSONObject == null) ||
-				!editableValuesJSONObject.has(id)) {
-
+			if (!editableValuesJSONObject.has(id)) {
 				continue;
 			}
 
@@ -145,11 +149,9 @@ public class BackgroundImageDocumentFragmentEntryProcessor
 
 				element.attr("style", sb.toString());
 			}
-		}
 
-		if (fragmentEntryProcessorContext.isViewMode()) {
-			for (Element element :
-					document.select("[data-lfr-background-image-id]")) {
+			if (fragmentEntryProcessorContext.isPreviewMode() ||
+				fragmentEntryProcessorContext.isViewMode()) {
 
 				element.removeAttr("data-lfr-background-image-id");
 			}

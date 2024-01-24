@@ -45,6 +45,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.util.PropsValues;
 import com.liferay.search.experiences.blueprint.parameter.SXPParameter;
+import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributor;
 import com.liferay.search.experiences.blueprint.parameter.contributor.SXPParameterContributorDefinition;
 import com.liferay.search.experiences.internal.blueprint.parameter.BooleanArraySXPParameter;
 import com.liferay.search.experiences.internal.blueprint.parameter.BooleanSXPParameter;
@@ -59,7 +60,6 @@ import com.liferay.search.experiences.internal.blueprint.parameter.LongArraySXPP
 import com.liferay.search.experiences.internal.blueprint.parameter.LongSXPParameter;
 import com.liferay.search.experiences.internal.blueprint.parameter.StringArraySXPParameter;
 import com.liferay.search.experiences.internal.blueprint.parameter.StringSXPParameter;
-import com.liferay.search.experiences.rest.dto.v1_0.SXPBlueprint;
 import com.liferay.segments.SegmentsEntryRetriever;
 import com.liferay.segments.context.Context;
 
@@ -112,7 +112,7 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 	@Override
 	public void contribute(
 		ExceptionListener exceptionListener, SearchContext searchContext,
-		SXPBlueprint sxpBlueprint, Set<SXPParameter> sxpParameters) {
+		Set<SXPParameter> sxpParameters) {
 
 		try {
 			_contribute(searchContext, sxpParameters);
@@ -442,7 +442,8 @@ public class UserSXPParameterContributor implements SXPParameterContributor {
 							_language.getLanguageId(searchContext.getLocale()));
 						put(Context.SIGNED_IN, !user.isGuestUser());
 					}
-				});
+				},
+				new long[0]);
 
 			segmentsEntryIds = ArrayUtil.filter(
 				segmentsEntryIds, segmentsEntryId -> segmentsEntryId > 0);

@@ -14,7 +14,12 @@ definition {
 
 	setUp {
 		task ("Set up instance and create a new Marketplace Site") {
-			MP2Configuration.marketplaceSetUp(clientExtensionDeploy = "true");
+
+			// This addition should be reverted when the issue ISSD-1572 is completed and the macro HeadlessSite.addSite() is usable.
+
+			MP2Configuration.marketplaceSetUp(
+				clientExtensionDeploy = "true",
+				viaFrontEnd = "true");
 		}
 
 		task ("Update the account with catalogId field") {
@@ -131,7 +136,7 @@ definition {
 
 		task ("Then I should be able to assert that the user has been invited") {
 			var table = '''
-				| Name    | QA Test             |
+				| Name    | Test QA             |
 				| Email   | test.mp@liferay.com |
 				| Role    | Invited Member      |
 			''';
@@ -181,6 +186,7 @@ definition {
 				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
 				recipient = "dashboard@adm.com",
+				route = "loading",
 				userEmailAddress = "test.mp@liferay.com");
 		}
 
@@ -233,6 +239,7 @@ definition {
 				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
 				recipient = "dashboard@adm.com",
+				route = "loading",
 				userEmailAddress = "test.mp@liferay.com");
 		}
 
@@ -381,6 +388,7 @@ definition {
 				asset = "Liferay Marketplace - Invitation from Dashboard ADM",
 				bodyLink = "Accept invitation",
 				recipient = "dashboard@adm.com",
+				route = "loading",
 				userEmailAddress = "test.mp@liferay.com");
 		}
 
@@ -392,7 +400,7 @@ definition {
 
 		task ("Then I should be able to assert that the invited user's status is now Active") {
 			var table = '''
-				| Name    | QA Test             |
+				| Name    | Test QA             |
 				| Email   | test.mp@liferay.com |
 				| Role    | App Editor          |
 			''';

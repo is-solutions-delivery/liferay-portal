@@ -223,13 +223,21 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro configureExport(containsHeaders = null, templateName = null, entityType = null, exportFields = null, exportFileFormat = null) {
-		ImportExport.selectEntity(entityType = ${entityType});
-
+	macro configureExport(containsHeaders = null, templateName = null, entityType = null, scope = null, exportFields = null, exportFileFormat = null) {
 		Select(
 			key_selectFieldLabel = "Export File Format",
 			locator1 = "ImportExport#SELECT",
 			value1 = ${exportFileFormat});
+
+		if (isSet(entityType)) {
+			ImportExport.selectEntity(entityType = ${entityType});
+		}
+
+		if (isSet(scope)) {
+			Select(
+				locator1 = "Select#SCOPE_CONFIGURATION",
+				value1 = ${scope});
+		}
 
 		if (${containsHeaders} == "false") {
 			Uncheck.uncheckNotVisible(
@@ -247,8 +255,15 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro configureImport(containsHeaders = null, fileName = null, templateName = null, entityType = null, importName = null, csvSeparator = null, fieldMappings = null, importStrategy = null, stopImportOnError = null) {
-		UploadDependencyFile.uploadFile(fileName = ${fileName});
+	macro configureImport(containsHeaders = null, fileName = null, templateName = null, entityType = null, scope = null, importName = null, csvSeparator = null, fieldMappings = null, importStrategy = null, stopImportOnError = null) {
+		if (isSet(tempFile)) {
+			UploadTempFile.uploadTempFileHiddenNoMouseOver(
+				locator1 = "TextInput#FILE",
+				value1 = ${tempFile});
+		}
+		else {
+			UploadDependencyFile.uploadFile(fileName = ${fileName});
+		}
 
 		if (isSet(importName)) {
 			Type(
@@ -271,10 +286,24 @@ definition {
 
 		ImportExport.selectEntity(entityType = ${entityType});
 
+		if (isSet(scope)) {
+			var scope = TestCase.getSiteName();
+
+			Select(
+				locator1 = "Select#SCOPE_CONFIGURATION",
+				value1 = ${scope});
+		}
+
 		if (isSet(importStrategy)) {
 			Select(
 				locator1 = "ImportExport#IMPORT_STRATEGY",
 				value1 = ${importStrategy});
+		}
+
+		if (isSet(updateStrategy)) {
+			Select(
+				locator1 = "ImportExport#UPDATE_STRATEGY",
+				value1 = ${updateStrategy});
 		}
 
 		if (${stopImportOnError} == "false") {
@@ -295,6 +324,26 @@ definition {
 	}
 
 	@summary = "Default summary"
+	macro exportAndUnzipFile(containsHeaders = null, entityType = null, exportFields = null, exportFileFormat = null) {
+		ImportExport.openImportExportAdmin();
+
+		ImportExport.gotoExport();
+
+		ImportExport.configureExport(
+			containsHeaders = ${containsHeaders},
+			entityType = ${entityType},
+			exportFields = ${exportFields},
+			exportFileFormat = ${exportFileFormat},
+			templateName = ${templateName});
+
+		Button.click(button = "Export");
+
+		WaitForElementPresent(locator1 = "ImportExport#EXECUTION_SUCCESS");
+
+		ImportExport.unzipDownloadedExportFile();
+	}
+
+	@summary = "Default summary"
 	macro exportEntityWithAllFieldsInJsontFormat(entityType = null) {
 		Variables.assertDefined(parameterList = ${entityType});
 
@@ -312,42 +361,6 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro exportFile(containsHeaders = null, entityType = null, exportFields = null, exportFileFormat = null) {
-		Click(locator1 = "Button#PLUS");
-
-		MenuItem.click(menuItem = "Export File");
-
-		ImportExport.selectEntity(entityType = ${entityType});
-
-		Select(
-			key_selectFieldLabel = "Export File Format",
-			locator1 = "ImportExport#SELECT",
-			value1 = ${exportFileFormat});
-
-		if (${containsHeaders} == "false") {
-			Uncheck.uncheckNotVisible(
-				checkboxName = "Headers",
-				locator1 = "Checkbox#ANY_CHECKBOX");
-		}
-
-		if (isSet(exportFields)) {
-			ImportExport.mapExport(exportFields = ${exportFields});
-		}
-
-		Button.click(button = "Export");
-
-		WaitForElementPresent(locator1 = "ImportExport#EXECUTION_SUCCESS");
-
-		Button.click(button = "Download");
-
-		DownloadTempFile();
-
-		DMDocument.assertFileNameFromTempFolder(fileName = "Export.zip");
-
-		AntCommands.runCommand("build-test.xml", "unzip-temp-file -DfileName=Export.zip");
-	}
-
-	@summary = "Default summary"
 	macro gotoExport() {
 		Click(locator1 = "Button#PLUS");
 
@@ -362,45 +375,25 @@ definition {
 	}
 
 	@summary = "Default summary"
-	macro importFile(containsHeaders = null, fileName = null, entityType = null, importName = null, csvSeparator = null, fieldMappings = null, stopImportOnError = null) {
-		Click(locator1 = "Button#PLUS");
+	macro importFile(containsHeaders = null, fileName = null, templateName = null, entityType = null, scope = null, importName = null, csvSeparator = null, fieldMappings = null, importStrategy = null, stopImportOnError = null) {
+		ImportExport.openImportExportAdmin();
 
-		MenuItem.click(menuItem = "Import File");
+		ImportExport.gotoImport();
 
-		UploadDependencyFile.uploadFile(fileName = ${fileName});
+		ImportExport.configureImport(
+			containsHeaders = ${containsHeaders},
+			csvSeparator = ${csvSeparator},
+			entityType = ${entityType},
+			fieldMappings = ${fieldMappings},
+			fileName = ${fileName},
+			importName = ${importName},
+			importStrategy = ${importStrategy},
+			scope = ${scope},
+			stopImportOnError = ${stopImportOnError},
+			tempFile = ${tempFile},
+			templateName = ${templateName});
 
-		if (isSet(importName)) {
-			Type(
-				locator1 = "TextInput#NAME",
-				value1 = ${importName});
-		}
-
-		if (isSet(csvSeparator)) {
-			Type(
-				key_text = "CSV Separator",
-				locator1 = "TextInput#ANY",
-				value1 = ${csvSeparator});
-		}
-
-		if (${containsHeaders} == "false") {
-			Uncheck.uncheckNotVisible(
-				checkboxName = "Headers",
-				locator1 = "Checkbox#ANY_CHECKBOX");
-		}
-
-		ImportExport.selectEntity(entityType = ${entityType});
-
-		if (${stopImportOnError} == "false") {
-			Uncheck.uncheckNotVisible(
-				checkboxName = "Stop the Import on Error",
-				locator1 = "Checkbox#ANY_CHECKBOX");
-		}
-
-		ImportExport.mapImport(fieldMappings = ${fieldMappings});
-
-		if (!(isSet(noExport))) {
-			var key_index = 1;
-
+		if (!(isSet(noImport))) {
 			ImportExport.startImportAndWaitForSuccess();
 
 			Click(locator1 = "Button#CLOSE");
@@ -446,6 +439,27 @@ definition {
 			urlAppend = "group/guest/~/control_panel/manage?p_p_id=com_liferay_batch_planner_web_internal_portlet_BatchPlannerPortlet");
 
 		WaitForVisible(locator1 = "Button#PLUS");
+	}
+
+	@summary = "Default summary"
+	macro replaceAttachmentIdAndHrefInFile(fileName = null, en_US_plural_label = null) {
+		Variables.assertDefined(parameterList = "${en_US_plural_label}, ${fileName}");
+
+		var filePath = TestCase.getDependenciesDirPath(fileName = ${fileName});
+		var response = ObjectDefinitionAPI.getObjectEntries(
+			en_US_plural_label = ${en_US_plural_label},
+			scopeKey = ${scopeKey});
+
+		var attachmenId = JSONPathUtil.getProperty(
+			property = "$.items..diploma.id",
+			response = ${response});
+		var attachmenHref = JSONPathUtil.getProperty(
+			property = "$.items..diploma.link.href",
+			response = ${response});
+
+		FileUtil.replaceStringInFile(${filePath}, 38589, ${attachmenId});
+
+		FileUtil.replaceStringInFile(${filePath}, "/documents/38586/38588/Document_1.jpg/b3a2213c-225f-fc83-fa10-4ea862e5005f?version=1.0&t=1701061267059", ${attachmenHref});
 	}
 
 	@summary = "Default summary"
@@ -498,6 +512,8 @@ definition {
 		Button.click(button = "Download");
 
 		DownloadTempFile();
+
+		DMDocument.assertFileNameFromTempFolder(fileName = "Export.zip");
 
 		AntCommands.runCommand("build-test.xml", "unzip-temp-file -DfileName=Export.zip");
 	}

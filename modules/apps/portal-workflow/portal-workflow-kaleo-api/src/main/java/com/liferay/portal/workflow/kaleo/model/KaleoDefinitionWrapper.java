@@ -194,6 +194,11 @@ public class KaleoDefinitionWrapper
 		return model.getContent();
 	}
 
+	@Override
+	public String getContentAsXML() {
+		return model.getContentAsXML();
+	}
+
 	/**
 	 * Returns the create date of this kaleo definition.
 	 *

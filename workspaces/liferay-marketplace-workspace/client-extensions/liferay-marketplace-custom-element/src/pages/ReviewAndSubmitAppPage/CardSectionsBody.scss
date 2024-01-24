@@ -97,6 +97,12 @@
 	&-paragraph {
 		margin-bottom: 0;
 		margin-top: 22px;
+		word-break: break-word;
+		word-wrap: break-word;
+	}
+
+	&-requirements {
+		gap: 24px;
 	}
 
 	&-tags {

@@ -15,7 +15,6 @@ import com.liferay.object.rest.filter.parser.ObjectDefinitionFilterParser;
 import com.liferay.object.rest.manager.v1_0.DefaultObjectEntryManager;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.service.ObjectDefinitionLocalService;
-import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.petra.function.UnsafeSupplier;
@@ -53,6 +52,21 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(service = ObjectEntryHelper.class)
 public class ObjectEntryHelper {
+
+	public ObjectEntry addObjectEntry(
+			long companyId, String objectDefinitionExternalReferenceCode,
+			ObjectEntry objectEntry, String scopeKey)
+		throws Exception {
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionLocalService.
+				getObjectDefinitionByExternalReferenceCode(
+					objectDefinitionExternalReferenceCode, companyId);
+
+		return _objectEntryManager.addObjectEntry(
+			_getDefaultDTOConverterContext(objectDefinition), objectDefinition,
+			objectEntry, scopeKey);
+	}
 
 	public List<ObjectEntry> getObjectEntries(
 			long companyId, String filterString, List<String> nestedFields,
@@ -243,35 +257,6 @@ public class ObjectEntryHelper {
 			this::_getUniqueFieldName);
 	}
 
-	public boolean isValidObjectEntry(
-			long objectEntryId, String externalReferenceCode)
-		throws Exception {
-
-		if (objectEntryId == 0) {
-			return false;
-		}
-
-		com.liferay.object.model.ObjectEntry objectEntry =
-			_objectEntryLocalService.fetchObjectEntry(objectEntryId);
-
-		if (objectEntry == null) {
-			return false;
-		}
-
-		ObjectDefinition objectDefinition =
-			_objectDefinitionLocalService.getObjectDefinition(
-				objectEntry.getObjectDefinitionId());
-
-		if (!Objects.equals(
-				objectDefinition.getExternalReferenceCode(),
-				externalReferenceCode)) {
-
-			return false;
-		}
-
-		return true;
-	}
-
 	private DTOConverterContext _getDefaultDTOConverterContext(
 			ObjectDefinition objectDefinition)
 		throws Exception {
@@ -352,9 +337,6 @@ public class ObjectEntryHelper {
 
 	@Reference
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;
-
-	@Reference
-	private ObjectEntryLocalService _objectEntryLocalService;
 
 	@Reference(target = "(object.entry.manager.storage.type=default)")
 	private ObjectEntryManager _objectEntryManager;

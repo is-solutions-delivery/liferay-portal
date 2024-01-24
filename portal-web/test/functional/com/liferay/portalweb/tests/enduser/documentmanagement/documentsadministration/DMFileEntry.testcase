@@ -39,8 +39,6 @@ definition {
 	@description = "This test ensures that bulk copy does not factor in document status."
 	@priority = 4
 	test BulkCopyDoesNotFactorInDocumentStatus {
-		property custom.properties = "feature.flag.LPS-182512=true";
-
 		HeadlessSite.addSite(siteName = "Site Name");
 
 		for (var entryCount : list "1,2,3") {
@@ -319,74 +317,9 @@ definition {
 	}
 
 	@description = "This test covers LPS-94657. It ensures that auto complete for edit categories."
-	@priority = 5
-	@refactordone
-	test CanAutocompleteCategory {
-		property portal.acceptance = "true";
-		property test.liferay.virtual.instance = "false";
-		property test.run.type = "single";
-
-		JSONCategory.addVocabulary(
-			groupName = "Guest",
-			title = "Topic");
-
-		JSONCategory.addCategory(
-			groupName = "Guest",
-			title = "category",
-			vocabularyName = "Topic");
-
-		JSONDocument.addFileWithUploadedFile(
-			dmDocumentDescription = "DM Document Description",
-			dmDocumentTitle = "DM Document Title",
-			groupName = "Guest",
-			mimeType = "text/plain",
-			sourceFileName = "Document_1.txt");
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
-
-		LexiconEntry.changeDisplayStyle(displayStyle = "list");
-
-		DMDocument.selectDocuments(dmDocumentTitle = "DM Document Title");
-
-		Click(locator1 = "Icon#EDIT_CATEGORIES");
-
-		SelectFrame(value1 = "relative=top");
-
-		AssertTextEquals(
-			locator1 = "Modal#HEADER",
-			value1 = "Edit Categories");
-
-		AssertTextEquals.assertPartialText(
-			locator1 = "Modal#BODY",
-			value1 = "You are editing the categories for the selected item.");
-
-		Type.sendKeys(
-			locator1 = "AssetCategorization#TAGS_FIELD",
-			value1 = "cat");
-
-		AssertClick(
-			locator1 = "AssetCategorization#TAG_AUTOCOMPLETE_CONTAINER",
-			value1 = "category");
-
-		Button.clickSave();
-
-		SelectFrame(value1 = "relative=top");
-
-		Alert.viewSuccessMessageText(successMessage = "Changes Saved");
-
-		DMNavigator.openToEditEntryInSite(
-			dmDocumentTitle = "DM Document Title",
-			groupName = "Guest",
-			siteURLKey = "guest");
-
-		DMDocument.viewCategories(categoryNameList = "category");
-	}
-
-	@description = "This test covers LPS-94657. It ensures that auto complete for edit categories."
-	@priority = 5
+	@priority = 4
 	@refactordone
 	test CanAutoCompleteCategory {
-		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
@@ -412,7 +345,9 @@ definition {
 
 		DMDocument.selectDocuments(dmDocumentTitle = "DM Document Title");
 
-		Click(locator1 = "Icon#EDIT_CATEGORIES");
+		Click(
+			key_text = "Edit Categories",
+			locator1 = "Button#ANY");
 
 		SelectFrame(value1 = "relative=top");
 
@@ -484,8 +419,6 @@ definition {
 	@description = "This test ensures that Users can copy multiple documents at the same time."
 	@priority = 5
 	test CanBulkCopyFiles {
-		property custom.properties = "feature.flag.LPS-182512=true";
-
 		HeadlessSite.addSite(siteName = "Site Name");
 
 		for (var entryCount : list "1,2,3") {
@@ -522,38 +455,23 @@ definition {
 	@description = "This test ensures that document permissions can be copied over correctly."
 	@priority = 4
 	test CanBulkCopyFilesPermission {
-		property custom.properties = "feature.flag.LPS-182512=true";
-
 		HeadlessSite.addSite(siteName = "Site Name");
 
 		for (var entryCount : list "1,2,3") {
 			JSONDocument.addFileWithUploadedFile(
 				dmDocumentDescription = "DM Document Description",
-				dmDocumentTitle = "Document_${entryCount}.jpg",
+				dmDocumentTitle = "Document_${entryCount}",
 				groupName = "Guest",
+				guestPermissions = "false",
 				mimeType = "image/jpeg",
 				sourceFileName = "Document_${entryCount}.jpg");
 		}
 
 		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
 
-		DMFolder.deleteCP(dmFolderName = "Provided by Liferay");
+		LexiconEntry.changeDisplayStyle(displayStyle = "list");
 
-		PortletEntry.selectAll();
-
-		DMNavigator.gotoItemViaManagementBar(
-			item = "dropdownMenu",
-			menuItem = "Permissions");
-
-		for (var permissionDefinitionKey : list "CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX,INLINE_PERMISSIONS_DOWNLOAD_CHECKBOX,INLINE_PERMISSIONS_ADD_DISCUSSION_CHECKBOX") {
-			PermissionsInline.addOrRemoveAnyPermissionsFromSpecificRole(
-				permissionDefinitionKey = ${permissionDefinitionKey},
-				roleTitle = "Guest");
-		}
-
-		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
-
-		PortletEntry.selectAll();
+		DMDocument.selectDocuments(dmDocumentTitle = "Document_1,Document_2,Document_3");
 
 		DMNavigator.gotoItemViaManagementBar(
 			item = "dropdownMenu",
@@ -571,6 +489,8 @@ definition {
 		DMNavigator.gotoItemViaManagementBar(
 			item = "dropdownMenu",
 			menuItem = "Permissions");
+
+		IFrame.selectPermissionsFrame();
 
 		for (var permissionDefinitionKey : list "CONFIGURATION_PERMISSIONS_VIEW_CHECKBOX,INLINE_PERMISSIONS_DOWNLOAD_CHECKBOX,INLINE_PERMISSIONS_ADD_DISCUSSION_CHECKBOX") {
 			PermissionsInline.viewPermissionsRemoved(
@@ -702,9 +622,7 @@ definition {
 
 		PortletEntry.selectAll();
 
-		Click(
-			key_text = "ellipsis",
-			locator1 = "ManagementBar#ANY_ICON");
+		Click(locator1 = "ManagementBar#ELLIPSIS");
 
 		MenuItem.click(menuItem = "Checkout");
 
@@ -884,11 +802,34 @@ definition {
 		DMDocument.viewDocumentVersionNumberCmdPG(dmDocumentVersionNumber = "1.0");
 	}
 
+	@description = "This test verifies that a basic document's URL can be copied through the actions dropdown."
+	@priority = 4
+	test CanCopyBasicDocumentLinkViaActionsDropdown {
+		property custom.properties = "feature.flag.LPS-197477=true";
+
+		var portalURL = PropsUtil.get("portal.url");
+
+		JSONDocument.addFileWithUploadedFile(
+			dmDocumentDescription = "DM Document Description",
+			dmDocumentTitle = "DM Document Title",
+			groupName = "Guest",
+			mimeType = "application/msword",
+			sourceFileName = "Document_1.doc");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		DMDocument.copyLink(rowEntry = "DM Document Title");
+
+		Search.searchWithPastedTerm();
+
+		AssertTextEquals.assertPartialText(
+			locator1 = "ManagementBar#SEARCH_RESULT_SUMMARY",
+			value1 = "${portalURL}/documents/d/guest/dm-document-title");
+	}
+
 	@description = "This test ensures that a document can be copied to the global site folder."
 	@priority = 5
 	test CanCopyDocumentToGlobalSite {
-		property custom.properties = "feature.flag.LPS-182512=true";
-
 		JSONDocument.addFileWithUploadedFile(
 			dmDocumentDescription = "DM Document Description1",
 			dmDocumentTitle = "DM Document Title",
@@ -916,8 +857,6 @@ definition {
 	@description = "This test ensures that a draft document can be copied to a site folder."
 	@priority = 4
 	test CanCopyDraftDocumentToOtherSite {
-		property custom.properties = "feature.flag.LPS-182512=true";
-
 		HeadlessSite.addSite(siteName = "Site Name");
 
 		JSONDocument.addFileWithUploadedFile(
@@ -952,8 +891,6 @@ definition {
 	@description = "This test ensures that a pending document can be copied to a site folder."
 	@priority = 4
 	test CanCopyPendingDocumentToOtherSite {
-		property custom.properties = "feature.flag.LPS-182512=true";
-
 		HeadlessSite.addSite(siteName = "Site Name");
 
 		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
@@ -991,8 +928,6 @@ definition {
 	@description = "This test ensures that a document's ratings can be copied from an asset library to a connected site."
 	@priority = 4
 	test CanCopyRatingFromDepotToConnectedSite {
-		property custom.properties = "feature.flag.LPS-182512=true";
-
 		HeadlessSite.addSite(siteName = "Site Name");
 
 		JSONDepot.addDepot(
@@ -1043,8 +978,6 @@ definition {
 	@description = "This test ensures that a document's ratings can be copied from a parent to child site."
 	@priority = 4
 	test CanCopyRatingFromParentToChildSite {
-		property custom.properties = "feature.flag.LPS-182512=true";
-
 		HeadlessSite.addSite(siteName = "Site Name");
 
 		HeadlessSite.addSite(
@@ -1119,7 +1052,9 @@ definition {
 
 		PortletEntry.selectAll();
 
-		Click(locator1 = "Icon#DELETE");
+		Click(
+			key_text = "trash",
+			locator1 = "ManagementBar#ANY_ICON");
 
 		Alert.viewSuccessMessage();
 
@@ -1209,8 +1144,6 @@ definition {
 	@description = "This ensures that users can delete a version entry from the Version History page."
 	@priority = 5
 	test CanDeleteSpecifiedFileVersionFromVersionsPage {
-		property custom.properties = "feature.flag.LPS-175915=true";
-
 		var documentId = JSONDocument.addFileWithUploadedFile(
 			dmDocumentDescription = "DM Document Description",
 			dmDocumentTitle = "Document Version 1.0",
@@ -1245,7 +1178,7 @@ definition {
 	@description = "This test ensures that users can download different document versions from the Versions tab in the info panel."
 	@priority = 4
 	test CanDownloadDifferentVersions {
-		property custom.properties = "dl.actions.visible=true${line.separator}feature.flag.LPS-175915=true";
+		property custom.properties = "dl.actions.visible=true";
 
 		var siteId = JSONGroupAPI._getGroupIdByNameNoSelenium(
 			groupName = "Guest",
@@ -1373,8 +1306,6 @@ definition {
 	@description = "This ensures that users can download a version entry from the Version History page."
 	@priority = 5
 	test CanDownloadSpecifiedFileVersionFromVersionsPage {
-		property custom.properties = "feature.flag.LPS-175915=true";
-
 		JSONDocument.addFileWithUploadedFile(
 			dmDocumentDescription = "DM Document Description",
 			dmDocumentTitle = "Document Version 1.0",
@@ -2403,8 +2334,6 @@ definition {
 	@description = "This test ensures that an error is displayed when copying a duplicated file."
 	@priority = 4
 	test CannotCopyDuplicatedDocument {
-		property custom.properties = "feature.flag.LPS-182512=true";
-
 		HeadlessSite.addSite(siteName = "Site Name");
 
 		JSONDocument.addFileWithUploadedFile(
@@ -2602,7 +2531,7 @@ definition {
 	}
 
 	@description = "This is a use case for LPS-114470. Validate crafted or corrupted files cannot cause out of memory errors."
-	@priority = 5
+	@priority = 4
 	test CannotUploadFileThatCausesOutOfMemoryErrors {
 		property testray.component.names = "Security";
 
@@ -2894,8 +2823,6 @@ definition {
 	@description = "This ensures that users can preview a version entry from the Version History page."
 	@priority = 5
 	test CanPreviewSpecifiedFileVersionFromVersionPage {
-		property custom.properties = "feature.flag.LPS-175915=true";
-
 		var documentId = JSONDocument.addFileWithUploadedFile(
 			dmDocumentDescription = "DM Document Description",
 			dmDocumentTitle = "Document Version 1.0",
@@ -2959,11 +2886,10 @@ definition {
 	}
 
 	@description = "This test ensures that a document with special characters in its title can be published successfully."
-	@priority = 5
+	@priority = 4
 	@refactordone
 	test CanPublishTitleWithSpecialCharacters {
 		property custom.properties = "dl.actions.visible=true";
-		property portal.acceptance = "true";
 
 		Navigator.gotoPage(pageName = "Documents and Media Page");
 
@@ -3073,11 +2999,70 @@ definition {
 		DMDocument.viewCardTitle(dmDocumentTitle = "DM Document Title");
 	}
 
+	@description = "This case covers LPS-177597. It ensures that the expired document can be restored."
+	@priority = 3
+	test CanRestoreExpiredDocument {
+		property custom.properties = "company.default.time.zone=America/Los_Angeles";
+		property test.liferay.virtual.instance = "false";
+		property test.run.type = "single";
+
+		DMDocument.updateCheckInterval(fieldValue = 1);
+
+		JSONDocument.addFileWithUploadedFile(
+			dmDocumentDescription = "DM Document Description",
+			dmDocumentTitle = "Document_1.txt",
+			groupName = "Guest",
+			mimeType = "text/plain",
+			sourceFileName = "Document_1.txt");
+
+		DMNavigator.openToEditEntryInSite(
+			dmDocumentTitle = "Document_1.txt",
+			groupName = "Guest",
+			siteURLKey = "guest");
+
+		DMDocument.setExpirationDate(
+			enableExpirationDate = "true",
+			increaseMinutes = 1);
+
+		// We need to wait for the system time to pass by 1 minute in order to verify the document is expired. There is currently no easy way to manipulate the system time in CI for automation. 2 minutes is the shortest value we can set while ensuring the stability of the test. See LPS-192588.
+
+		Pause(value1 = 60000);
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		DMDocument.viewStatus(
+			dmDocumentStatus = "Expired",
+			dmDocumentTitle = "Document_1.txt");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		DMDocument.deleteCP(dmDocumentTitle = "Document_1.txt");
+
+		// We need to wait for the system time to pass by 1 minute in order to verify the document is not restored automatically. There is currently no easy way to manipulate the system time in CI for automation. 2 minutes is the shortest value we can set while ensuring the stability of the test. See LPS-192588.
+
+		Pause(value1 = 60000);
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		LexiconEntry.viewNoEntry(rowEntry = "Document_1.txt");
+
+		RecycleBin.openRecycleBinAdmin(siteURLKey = "guest");
+
+		RecycleBin.restoreCP(
+			assetName = "Document_1.txt",
+			assetType = "Document");
+
+		DMNavigator.openDocumentsAndMediaAdmin(siteURLKey = "guest");
+
+		DMDocument.viewStatus(
+			dmDocumentStatus = "Expired",
+			dmDocumentTitle = "Document_1.txt");
+	}
+
 	@description = "This test checks if file uploads can be restricted to .doc format."
-	@priority = 5
+	@priority = 4
 	@refactordone
 	test CanRestrictFileExtensionToDoc {
-		property portal.acceptance = "true";
 		property test.liferay.virtual.instance = "false";
 		property test.run.type = "single";
 
@@ -3109,10 +3094,8 @@ definition {
 	}
 
 	@description = "This ensures that users can revert a version entry from the Version History page."
-	@priority = 5
+	@priority = 4
 	test CanRevertSpecifiedFileVersionFromVersionsPage {
-		property custom.properties = "feature.flag.LPS-175915=true";
-
 		var documentId = JSONDocument.addFileWithUploadedFile(
 			dmDocumentDescription = "DM Document Description",
 			dmDocumentTitle = "Document Version 1.0",
@@ -3372,11 +3355,9 @@ definition {
 	}
 
 	@description = "This ensures that the user can search for document file name using partial text."
-	@priority = 5
+	@priority = 4
 	@refactordone
 	test CanSearchForDocumentWithPartialText {
-		property portal.acceptance = "true";
-
 		JSONDocument.addFile(
 			dmDocumentDescription = "DM Document Description",
 			dmDocumentTitle = "DM Document Title",
@@ -3420,8 +3401,6 @@ definition {
 	@description = "This ensures that all action buttons are present in kebab menu of a document in DM."
 	@priority = 4
 	test CanViewAllActionsInKebabMenu {
-		property custom.properties = "feature.flag.LPS-175915=true";
-
 		JSONDocument.addFileWithUploadedFile(
 			dmDocumentDescription = "DM Document Description",
 			dmDocumentTitle = "Document_1.jpg",
@@ -3439,10 +3418,8 @@ definition {
 	}
 
 	@description = "This ensures that All the version entries are ordered by version with the latest version at the top in the version history page."
-	@priority = 5
+	@priority = 4
 	test CanViewAllFileVersionsFromVersionsPage {
-		property custom.properties = "feature.flag.LPS-175915=true";
-
 		var documentId = JSONDocument.addFileWithUploadedFile(
 			dmDocumentDescription = "DM Document Description",
 			dmDocumentTitle = "Document Version 1.0",
@@ -3611,7 +3588,7 @@ definition {
 	}
 
 	@description = "This test ensures that the user can view an expired document."
-	@priority = 5
+	@priority = 4
 	test CanViewExpiredDocument {
 		property custom.properties = "company.default.time.zone=America/Los_Angeles";
 		property test.liferay.virtual.instance = "false";
@@ -3711,8 +3688,6 @@ definition {
 	@description = "This test ensures that users can view generic error when bulk copy more than ten wrong files."
 	@priority = 4
 	test CanViewGenericErrorWhenBulkCopyMoreThanTenWrongFiles {
-		property custom.properties = "feature.flag.LPS-182512=true";
-
 		HeadlessSite.addSite(siteName = "Site Name");
 
 		for (var entryCount : list "1,2,3,4,5,6,7,8,9,10,11") {
@@ -3842,7 +3817,7 @@ definition {
 	@priority = 4
 	@refactordone
 	test CanViewOlderVersion {
-		property custom.properties = "dl.actions.visible=true${line.separator}feature.flag.LPS-175915=true";
+		property custom.properties = "dl.actions.visible=true";
 		property portal.acceptance = "true";
 
 		JSONDocument.addFileWithUploadedFile(
@@ -3921,8 +3896,6 @@ definition {
 	@description = "This test ensures that Users can view specify error when bulk copy less than ten wrong files."
 	@priority = 4
 	test CanViewSpecifyErrorWhenBulkCopyLessThanTenWrongFiles {
-		property custom.properties = "feature.flag.LPS-182512=true";
-
 		HeadlessSite.addSite(siteName = "Site Name");
 
 		for (var entryCount : list "1,2,3,4,5,6,7,8,9,10") {
@@ -4062,9 +4035,7 @@ definition {
 
 		ManagementBar.setFilterAndOrder(filterBy = "Tags...");
 
-		DMDocument.ViewSelectedTags(tagNameList = "tag1,tag2");
-
-		DMDocument.selectTags(tagName = "tag3");
+		DMDocument.selectTags(tagName = "tag1,tag2,tag3");
 
 		DMDocument.viewDefault();
 	}
@@ -4362,7 +4333,7 @@ definition {
 	@description = "This test covers LPS-144687. It validates that a temp zip is not created if NoSuchFileException occurs during a download."
 	@priority = 4
 	test NoZipFileIsCreatedIfDownloadResultsInError {
-		DMDocument.deleteTempFolder(appServer = "tomcat-9.0.82");
+		DMDocument.deleteTempFolder(appServer = "tomcat-9.0.83");
 
 		for (var num : list "1,2,3") {
 			JSONDocument.addFileWithUploadedFile(
@@ -4382,7 +4353,7 @@ definition {
 		AssertConsoleTextPresent(value1 = "com.liferay.document.library.kernel.exception.NoSuchFileException");
 
 		DMDocument.assertNoZipFileFromTempFolder(
-			appServer = "tomcat-9.0.82",
+			appServer = "tomcat-9.0.83",
 			fileNamePattern = "*.zip");
 	}
 
@@ -4474,7 +4445,7 @@ definition {
 	}
 
 	@description = "This test ensures that a document with forbidden characters in the filename can not be published successfully."
-	@priority = 5
+	@priority = 4
 	@refactordone
 	test WillRejectForbiddenCharactersInFileName {
 		property portal.acceptance = "true";

@@ -5,9 +5,11 @@ definition {
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.component.names = "Echo Accessibility";
-	property testray.main.component.name = "Content Pages";
+	property testray.main.component.name = "Page Editor";
 
 	static var randomSiteName = StringUtil.randomString(8);
+
+	var siteURLKey = StringUtil.toLowerCase(${randomSiteName});
 
 	setUp {
 		task ("Set up virtual instance") {
@@ -20,6 +22,472 @@ definition {
 
 		task ("Add a site") {
 			HeadlessSite.addSite(siteName = ${randomSiteName});
+		}
+	}
+
+	@description = "This is a test for LPS-196462. The New Rule Modal allows the user to create conditions and actions via keyboard."
+	@priority = 3
+	test AddConditionsAndActionsViaKeyboard {
+		property custom.properties = "feature.flag.LPS-169837=true";
+
+		task ("Given a page designer has fragments on a content page") {
+			JSONLayout.addPublicLayout(
+				groupName = ${randomSiteName},
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Heading",
+				targetFragmentName = "Button");
+		}
+
+		task ("When the page designer opens the New Rule modal") {
+			PageEditor.gotoTab(tabName = "Page Rules");
+
+			Button.click(button = "New Rule");
+
+			AssertTextEquals(
+				locator1 = "Modal#HEADER",
+				value1 = "New Rule");
+		}
+
+		task ("Then the page designer could add conditions and actions via keyboard") {
+			AssertAttributeValue(
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_SECTION_TITLE",
+				value1 = "aria-label",
+				value2 = "If all of the following conditions are met:");
+
+			KeyPress(
+				key_text = "Rule Name",
+				locator1 = "TextInput#ANY",
+				value1 = "\TAB");
+
+			KeyPress(
+				key_text = "All",
+				locator1 = "Button#ANY",
+				value1 = "\ENTER");
+
+			KeyPress(
+				key_text = "All",
+				locator1 = "Button#ANY",
+				value1 = "\UP");
+
+			KeyPress(
+				key_text = "All",
+				locator1 = "Button#ANY",
+				value1 = "\ENTER");
+
+			AssertAttributeValue(
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_SECTION_TITLE",
+				value1 = "aria-label",
+				value2 = "If any of the following conditions are met:");
+
+			AssertAttributeValue(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION",
+				value1 = "aria-label",
+				value2 = "Incomplete Condition");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION",
+				value1 = "\TAB");
+
+			AssertAttributeValue(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "aria-label",
+				value2 = "Select Item for the Condition");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			AssertAttributeValue(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "aria-label",
+				value2 = "Select Condition");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			AssertAttributeValue(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "aria-label",
+				value2 = "Select User");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			AssertAttributeValue(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION",
+				value1 = "aria-label",
+				value2 = "User Is the User test");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_DELETE_BUTTON",
+				value1 = "\TAB");
+
+			KeyPress(
+				key_text = "Add Condition",
+				locator1 = "Button#ANY",
+				value1 = "\ENTER");
+
+			AssertElementFocused(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\DOWN");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			AssertAttributeValue(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "aria-label",
+				value2 = "Select Role");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			AssertAttributeValue(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION",
+				value1 = "aria-label",
+				value2 = "User Has the Role Of Account Manager");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_DELETE_BUTTON",
+				value1 = "\TAB");
+
+			KeyPress(
+				key_text = "Add Condition",
+				locator1 = "Button#ANY",
+				value1 = "\ENTER");
+
+			AssertElementFocused(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\DOWN");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\DOWN");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			AssertAttributeValue(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "aria-label",
+				value2 = "Select Segment");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			AssertAttributeValue(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION",
+				value1 = "aria-label",
+				value2 = "User Belongs to Segment Anyone");
+
+			AssertAttributeValue(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION",
+				value1 = "aria-label",
+				value2 = "Incomplete Action");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION",
+				value1 = "\TAB");
+
+			AssertAttributeValue(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "aria-label",
+				value2 = "Select Action");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			AssertAttributeValue(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "aria-label",
+				value2 = "Select Item for the Action");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			AssertAttributeValue(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "aria-label",
+				value2 = "Select Fragment");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			var fragmentName = selenium.getText("xpath=(//div[contains(@class,'dropdown-menu')][contains(@class,'show')]//button)[1]");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			AssertAttributeValue(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION",
+				value1 = "aria-label",
+				value2 = "Show Fragment ${fragmentName}");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_DELETE_BUTTON",
+				value1 = "\TAB");
+
+			KeyPress(
+				key_text = "Add Action",
+				locator1 = "Button#ANY",
+				value1 = "\ENTER");
+
+			AssertElementFocused(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\DOWN");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			var fragmentName = selenium.getText("xpath=(//div[contains(@class,'dropdown-menu')][contains(@class,'show')]//button)[2]");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\DOWN");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			AssertAttributeValue(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION",
+				value1 = "aria-label",
+				value2 = "Hide Fragment ${fragmentName}");
+
+			for (var index : list "1,2,3") {
+				AssertVisible(
+					index = ${index},
+					locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION");
+			}
+
+			for (var index : list "1,2") {
+				AssertVisible(
+					index = ${index},
+					locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION");
+			}
 		}
 	}
 
@@ -52,7 +520,7 @@ definition {
 				upCount = 1);
 
 			AssertElementPresent(
-				key_elementHeader = "//div[@aria-label='Button']",
+				key_elementHeader = "//div[@data-name='Button']",
 				key_elementType = "Container",
 				key_position = 1,
 				locator1 = "PageEditor#CONTAINER_CONTAINER_NESTED_ELEMENT");
@@ -63,7 +531,7 @@ definition {
 				widgetName = "Web Content Display");
 
 			AssertElementPresent(
-				key_elementHeader = "//div[@aria-label='Web Content Display']",
+				key_elementHeader = "//div[@data-name='Web Content Display']",
 				key_elementType = "Container",
 				key_position = 1,
 				locator1 = "PageEditor#CONTAINER_CONTAINER_NESTED_ELEMENT");
@@ -100,7 +568,7 @@ definition {
 
 			AssertElementPresent(
 				key_columnNumber = 3,
-				key_elementHeader = "//div[@aria-label='Heading']",
+				key_elementHeader = "//div[@data-name='Heading']",
 				key_position = 1,
 				locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT");
 
@@ -111,7 +579,7 @@ definition {
 
 			AssertElementPresent(
 				key_columnNumber = 1,
-				key_elementHeader = "//div[@aria-label='Asset Publisher']",
+				key_elementHeader = "//div[@data-name='Asset Publisher']",
 				key_position = 1,
 				locator1 = "PageEditor#GRID_COLUMN_NESTED_ELEMENT");
 
@@ -292,6 +760,210 @@ definition {
 		}
 	}
 
+	@description = "This is a test for LPS-196462. The New Rule Modal allows the user to delete conditions and actions via keyboard."
+	@priority = 3
+	test DeleteConditionsAndActionsViaKeyboard {
+		property custom.properties = "feature.flag.LPS-169837=true";
+
+		task ("Given a page designer has fragments on a content page") {
+			JSONLayout.addPublicLayout(
+				groupName = ${randomSiteName},
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Heading",
+				targetFragmentName = "Button");
+		}
+
+		task ("When the page designer adds conditions and actions on the New Rule modal") {
+			PageEditor.gotoTab(tabName = "Page Rules");
+
+			Button.click(button = "New Rule");
+
+			AssertTextEquals(
+				locator1 = "Modal#HEADER",
+				value1 = "New Rule");
+
+			Click(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM");
+
+			DropdownMenuItem.click(menuItem = "User");
+
+			Click(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM");
+
+			DropdownMenuItem.click(menuItem = "Is the User");
+
+			Click(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM");
+
+			DropdownMenuItem.click(menuItem = "test");
+
+			Button.click(button = "Add Condition");
+
+			Click(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM");
+
+			DropdownMenuItem.click(menuItem = "User");
+
+			Click(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM");
+
+			DropdownMenuItem.click(menuItem = "Has the Role Of");
+
+			Click(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM");
+
+			DropdownMenuItem.click(menuItem = "Power User");
+
+			Click(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM");
+
+			DropdownMenuItem.click(menuItem = "Hide");
+
+			Click(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM");
+
+			DropdownMenuItem.click(menuItem = "Fragment");
+
+			Click(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM");
+
+			DropdownMenuItem.click(menuItem = "Button");
+
+			Button.click(button = "Add Action");
+
+			Click(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM");
+
+			DropdownMenuItem.click(menuItem = "Hide");
+
+			Click(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM");
+
+			DropdownMenuItem.click(menuItem = "Fragment");
+
+			Click(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM");
+
+			DropdownMenuItem.click(menuItem = "Heading");
+		}
+
+		task ("Then the page designer could delete conditions and actions") {
+			AssertAttributeValue(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_DELETE_BUTTON",
+				value1 = "aria-label",
+				value2 = "Delete Action: Hide Fragment Heading");
+
+			KeyPress(
+				index = 6,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_EXISTING_ACTION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_DELETE_BUTTON",
+				value1 = "\ENTER");
+
+			AssertAttributeValue(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_DELETE_BUTTON",
+				value1 = "aria-label",
+				value2 = "Delete Action: Hide Fragment Button");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_EXISTING_ACTION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_DELETE_BUTTON",
+				value1 = "\ENTER");
+
+			AssertAttributeValue(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_DELETE_BUTTON",
+				value1 = "aria-label",
+				value2 = "Delete Condition: User Has the Role Of Power User");
+
+			KeyPress(
+				index = 6,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_EXISTING_CONDITION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_DELETE_BUTTON",
+				value1 = "\ENTER");
+
+			AssertAttributeValue(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_DELETE_BUTTON",
+				value1 = "aria-label",
+				value2 = "Delete Condition: User Is the User test");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_EXISTING_CONDITION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_DELETE_BUTTON",
+				value1 = "\ENTER");
+
+			AssertElementNotPresent(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION");
+
+			AssertElementNotPresent(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION");
+
+			AssertVisible(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION");
+
+			AssertVisible(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION");
+
+			AssertTextEquals(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "Select");
+
+			AssertTextEquals(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "Select");
+		}
+	}
+
 	@description = "This is a test for LPS-194375. Using Keyboard navigation it is possible to access and use the Page Editor filter."
 	@priority = 3
 	test FilterDisplayedAssetsViaKeyboard {
@@ -419,6 +1091,342 @@ definition {
 					key_itemName = ${itemName},
 					locator1 = "PageEditor#PAGE_CONTENTS_ITEM");
 			}
+		}
+	}
+
+	@description = "This is a test for LPS-182022. The user could go back on the Page In Use by keyboard."
+	@priority = 4
+	test GoBackOnPageInUseViaKeyboard {
+		property custom.properties = "feature.flag.LPS-180328=true";
+
+		task ("Given a page designer has a locked content page") {
+			var siteName = selenium.getText("Home#SITE_NAME");
+
+			JSONUser.addUser(
+				userEmailAddress = "userea@liferay.com",
+				userFirstName = "userfn",
+				userLastName = "userln",
+				userScreenName = "usersn");
+
+			JSONUser.addUserToSite(
+				groupName = ${randomSiteName},
+				userEmailAddress = "userea@liferay.com");
+
+			JSONRole.assignSiteRoleToUser(
+				groupName = ${randomSiteName},
+				roleTitle = "Site Administrator",
+				userEmailAddress = "userea@liferay.com");
+
+			JSONLayout.addPublicLayout(
+				groupName = ${randomSiteName},
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+		}
+
+		task ("When the page designer redirects to the Page in Use") {
+			var baseURL = PropsUtil.get("portal.url");
+
+			Open.openInTheNewTab(value1 = "${baseURL}/group/control_panel/manage?p_p_id=com_liferay_users_admin_web_portlet_UsersAdminPortlet");
+
+			User.impersonateCP(
+				siteName = ${siteName},
+				userScreenName = "usersn");
+
+			UserBar.gotoMySite(siteName = ${randomSiteName});
+
+			WaitForPageLoad();
+
+			Click(locator1 = "Icon#EDIT_PENCIL");
+
+			AssertVisible(
+				key_title = "Page in Use",
+				locator1 = "Header#H1_TITLE");
+		}
+
+		task ("Then the page designer could go back to content page at view mode via keyboard") {
+			KeyPress(
+				key_text = "Skip to Main Content",
+				locator1 = "Link#ANY",
+				value1 = "\TAB");
+
+			KeyPress(
+				key_text = "Go to Test Page Name",
+				locator1 = "Button#ANY",
+				value1 = "\ENTER");
+
+			ControlMenu.viewHeaderDraftTitle(headerTitle = "Test Page Name");
+		}
+	}
+
+	@description = "This is a test for LPS-196462. The New Rule modal is accessible using Keyboard navigation and Screen Reader."
+	@priority = 4
+	test ManagePageRuleViaKeyboard {
+		property custom.properties = "feature.flag.LPS-169837=true";
+
+		task ("Given a page designer has a Button fragment on a content page") {
+			JSONLayout.addPublicLayout(
+				groupName = ${randomSiteName},
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+		}
+
+		task ("When the page designer navigates to the Page Rules panel") {
+			PageEditor.gotoTab(tabName = "Page Rules");
+		}
+
+		task ("Then the page designer could add a page rule via keyboard") {
+			KeyPress(
+				key_text = "times",
+				locator1 = "Icon#ANY",
+				value1 = "\TAB");
+
+			KeyPress(
+				key_text = "New Rule",
+				locator1 = "Button#ANY",
+				value1 = "\ENTER");
+
+			KeyPress(
+				locator1 = "Modal#CLOSE_BUTTON",
+				value1 = "\TAB");
+
+			Type.sendKeys(
+				key_text = "Rule Name",
+				locator1 = "TextInput#ANY",
+				value1 = "Test Page Rule");
+
+			KeyPress(
+				key_text = "Rule Name",
+				locator1 = "TextInput#ANY",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_CONDITION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\DOWN");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 1,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 2,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\TAB");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				index = 3,
+				locator1 = "PageEditor#PAGE_RULE_BUILDER_ACTION_ITEM",
+				value1 = "\ENTER");
+
+			KeyPress(
+				key_text = "Cancel",
+				locator1 = "Modal#MODAL_FOOTER_BUTTON",
+				value1 = "\TAB");
+
+			KeyPress(
+				key_text = "Save",
+				locator1 = "Modal#MODAL_FOOTER_BUTTON",
+				value1 = "\ENTER");
+
+			Alert.viewSuccessMessage();
+
+			AssertVisible(
+				key_rule = "Test Page RuleIfUserIs the UsertestHideFragmentButton",
+				key_ruleName = "Test Page Rule",
+				locator1 = "PageEditor#PAGE_RULE_LIST_ITEM");
+		}
+
+		task ("When the page designer focuses on the ellipsis button of page rule via keyboard") {
+			KeyPress(
+				key_text = "New Rule",
+				locator1 = "Button#ANY",
+				value1 = "\TAB");
+
+			AssertElementFocused(
+				key_ruleName = "Test Page Rule",
+				locator1 = "PageEditor#PAGE_RULE_LIST_ITEM_ELLIPSIS");
+		}
+
+		task ("Then the page designer could delete the page rule via keyboard") {
+			KeyPress(
+				key_ruleName = "Test Page Rule",
+				locator1 = "PageEditor#PAGE_RULE_LIST_ITEM_ELLIPSIS",
+				value1 = "\ENTER");
+
+			KeyPress(
+				key_menuItem = "Edit",
+				locator1 = "MenuItem#ANY_MENU_ITEM",
+				value1 = "\DOWN");
+
+			KeyPress(
+				key_menuItem = "Delete",
+				locator1 = "MenuItem#ANY_MENU_ITEM",
+				value1 = "\ENTER");
+
+			Alert.viewSuccessMessage();
+
+			AssertTextEquals(
+				locator1 = "Message#EMPTY_STATE_INFO",
+				value1 = "No Rules Yet");
+
+			AssertTextEquals(
+				locator1 = "Message#EMPTY_STATE_TEXT",
+				value1 = "Fortunately, it is very easy to add new ones.");
+		}
+	}
+
+	@description = "This is a test for LPS-196461. The Section “Page rules“is accessible via Keyboard and also everything inside that tab."
+	@priority = 3
+	test OpenPageRulesPanelViaKeyboard {
+		property custom.properties = "feature.flag.LPS-169837=true";
+
+		task ("Given a page designer has a content page") {
+			JSONLayout.addPublicLayout(
+				groupName = ${randomSiteName},
+				layoutName = "Test Page Name",
+				type = "content");
+		}
+
+		task ("When the page designer navigates to the page editor") {
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+		}
+
+		task ("Then the page designer could open the Page Rules panel via keyboard") {
+			KeyPress(
+				key_text = "format",
+				locator1 = "Icon#ANY",
+				value1 = "\DOWN");
+
+			AssertVisible(
+				key_content = "Page Rules",
+				locator1 = "Tooltip#FLOATING_TOOLTIP_CONTENT");
+
+			KeyPress(
+				key_text = "rules",
+				locator1 = "Icon#ANY",
+				value1 = "\ENTER");
+
+			AssertTextEquals(
+				locator1 = "Message#EMPTY_STATE_INFO",
+				value1 = "No Rules Yet");
+
+			AssertTextEquals(
+				locator1 = "Message#EMPTY_STATE_TEXT",
+				value1 = "Fortunately, it is very easy to add new ones.");
+
+			AssertVisible(
+				key_text = "New Rule",
+				locator1 = "Button#ANY");
+
+			KeyPress(
+				key_text = "rules",
+				locator1 = "Icon#ANY",
+				value1 = "\TAB");
+
+			AssertElementFocused(
+				key_text = "times",
+				locator1 = "Icon#ANY");
+
+			KeyPress(
+				key_text = "times",
+				locator1 = "Icon#ANY",
+				value1 = "\ENTER");
+
+			AssertElementNotPresent(locator1 = "Sidebar#PANEL_OPEN");
 		}
 	}
 
@@ -571,7 +1579,7 @@ definition {
 				upCount = 4);
 
 			AssertElementPresent(
-				key_elementHeader = "//div[@aria-label='Documents and Media']",
+				key_elementHeader = "//div[@data-name='Documents and Media']",
 				key_elementType = "Container",
 				key_position = 1,
 				locator1 = "PageEditor#CONTAINER_CONTAINER_NESTED_ELEMENT");
@@ -611,6 +1619,187 @@ definition {
 			PageEditor.viewFragmentOrder(
 				fragmentName = "Image",
 				position = 4);
+		}
+	}
+
+	@description = "This is a test for LPS-195827. Via keyboard navigation, it is possible to select redirect to Display Page Template as a successful object action."
+	@priority = 3
+	test SelectGoToEntryDisplayPageAsSuccessInteractionViaKeyboard {
+		task ("Given a page creator has a standalone action") {
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Student",
+				objectName = "Student",
+				pluralLabelName = "Students");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Text",
+				fieldLabelName = "Name",
+				fieldName = "name",
+				fieldType = "String",
+				isRequired = "false",
+				objectName = "Student");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "Student");
+
+			ObjectAdmin.addObjectViaAPI(
+				labelName = "Teacher",
+				objectName = "Teacher",
+				pluralLabelName = "Teachers");
+
+			ObjectAdmin.addObjectFieldViaAPI(
+				fieldBusinessType = "Text",
+				fieldLabelName = "Subject",
+				fieldName = "subject",
+				fieldType = "String",
+				isRequired = "false",
+				objectName = "Teacher");
+
+			ObjectAdmin.publishObjectViaAPI(objectName = "Teacher");
+
+			ObjectAdmin.openObjectAdmin();
+
+			ObjectPortlet.selectCustomObject(label = "Student");
+
+			ObjectAdmin.goToActionsTab();
+
+			ObjectAdmin.addObjectActionViaUI(
+				actionLabel = "Vote",
+				active = "true",
+				errorMessage = "You don't have permissions.",
+				fieldName = "Subject",
+				inputExpressionValue = "name",
+				inputMethod = "false",
+				objectLabel = "Teacher",
+				thenAction = "Add an Object Entry",
+				whenAction = "Standalone");
+
+			var objectEntryId = ObjectAdmin.addObjectSingleFieldEntryViaAPI(
+				fieldName = "name",
+				objectName = "Student",
+				value = "Jack");
+
+			DisplayPageTemplatesAdmin.openDisplayPagesAdmin(siteURLKey = ${siteURLKey});
+
+			DisplayPageTemplatesAdmin.addDisplayPage(
+				contentType = "Student",
+				displayPageName = "Display Page Name");
+
+			PageEditor.addFragment(
+				collectionName = "Form Components",
+				fragmentName = "Form Container");
+
+			PageEditor.mapFormContainerToObject(contentType = "Student (Default)");
+
+			PageEditor.publish();
+		}
+
+		task ("When the page creator maps the standalone action to Button fragment") {
+			JSONLayout.addPublicLayout(
+				groupName = ${randomSiteName},
+				layoutName = "Test Page Name",
+				type = "content");
+
+			ContentPagesNavigator.openEditContentPage(
+				pageName = "Test Page Name",
+				siteName = ${randomSiteName});
+
+			PageEditor.addFragment(
+				collectionName = "Basic Components",
+				fragmentName = "Button");
+
+			PageEditorAction.gotoEditableFieldAction(
+				className = "btn",
+				fragmentName = "Button",
+				id = "action");
+		}
+
+		task ("Then the page creator could select the Go to Entry Display Page as success interaction via keyboard") {
+			PageEditorMapping.mapEditableFieldToAsset(
+				entryTitle = ${objectEntryId},
+				navItem = "Students",
+				rowItem = "//*[@data-qa-id='row'][contains(.,'${objectEntryId}')]");
+
+			PageEditor.configureFragment(action = "Vote");
+
+			KeyPress(
+				key_fieldLabel = "Action",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "\TAB");
+
+			KeyPress(
+				key_fieldLabel = "Success Interaction",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "\ENTER");
+
+			KeyPress(
+				key_fieldLabel = "Success Interaction",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "\DOWN");
+
+			KeyPress(
+				key_fieldLabel = "Success Interaction",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "\DOWN");
+
+			KeyPress(
+				key_fieldLabel = "Success Interaction",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "\DOWN");
+
+			KeyPress(
+				key_fieldLabel = "Success Interaction",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "\DOWN");
+
+			KeyPress(
+				key_fieldLabel = "Success Interaction",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "\ENTER");
+
+			PageEditor.waitForAutoSave();
+
+			KeyPress(
+				key_fieldLabel = "Success Interaction",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "\TAB");
+
+			KeyPress(
+				key_fieldLabel = "Display Page",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "\ENTER");
+
+			KeyPress(
+				key_fieldLabel = "Display Page",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "\DOWN");
+
+			KeyPress(
+				key_fieldLabel = "Display Page",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "\DOWN");
+
+			KeyPress(
+				key_fieldLabel = "Display Page",
+				locator1 = "Select#GENERIC_SELECT_FIELD",
+				value1 = "\ENTER");
+
+			PageEditor.waitForAutoSave();
+
+			PageEditor.publish();
+		}
+
+		task ("When the page creator triggers the standalone action") {
+			Button.click(button = "Go Somewhere");
+
+			Alert.viewSuccessMessage();
+		}
+
+		task ("Then the page creator should be redirected to entry display page") {
+			ControlMenu.viewHeaderTitle(headerTitle = ${objectEntryId});
+
+			InputField.viewText(
+				fieldLabel = "Name",
+				text = "Jack");
 		}
 	}
 

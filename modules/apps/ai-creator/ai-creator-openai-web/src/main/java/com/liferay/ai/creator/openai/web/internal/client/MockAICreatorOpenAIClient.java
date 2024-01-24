@@ -24,6 +24,7 @@ import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Lourdes Fernández Besada
+ * @author Roberto Díaz
  */
 @Component(
 	enabled = false, property = "service.ranking:Integer=200",
@@ -51,6 +52,29 @@ public class MockAICreatorOpenAIClient implements AICreatorOpenAIClient {
 		}
 
 		throw _getAICreatorOpenAIClientException(content);
+	}
+
+	@Override
+	public String[] getGenerations(
+		String apiKey, String prompt, String size, int numberOfImages) {
+
+		if (Objects.equals(apiKey, "VALID_API_KEY") &&
+			Objects.equals(prompt, "USER_IMAGES")) {
+
+			return _getGenerations(
+				"http/localhost:8080/mock/url", numberOfImages);
+		}
+
+		if (Validator.isNotNull(prompt) &&
+			prompt.startsWith(_USER_IMAGES_URL_)) {
+
+			return _getGenerations(
+				GetterUtil.getString(
+					prompt.substring(_USER_IMAGES_URL_.length())),
+				numberOfImages);
+		}
+
+		throw _getAICreatorOpenAIClientException(prompt);
 	}
 
 	@Override
@@ -82,6 +106,21 @@ public class MockAICreatorOpenAIClient implements AICreatorOpenAIClient {
 			new UnsupportedOperationException("Unsupported key: " + key));
 	}
 
+	private String[] _getGenerations(String url, int numberOfImages) {
+		String[] generations = new String[numberOfImages];
+
+		if (numberOfImages > 1) {
+			for (int i = 0; i < numberOfImages; i++) {
+				generations[i] = url + "?t=" + i;
+			}
+		}
+		else {
+			generations[0] = url;
+		}
+
+		return generations;
+	}
+
 	private String _getSampleCompletion(long sleepMillis) {
 		if ((sleepMillis <= 0) || (sleepMillis > 10000)) {
 			return "OPENAI_API_COMPLETION_RESPONSE_CONTENT";
@@ -101,6 +140,8 @@ public class MockAICreatorOpenAIClient implements AICreatorOpenAIClient {
 
 	private static final String _USER_CONTENT_SLEEP_MILLIS_PREFIX =
 		"USER_CONTENT_SLEEP_MILLIS_";
+
+	private static final String _USER_IMAGES_URL_ = "USER_IMAGES_URL_";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		MockAICreatorOpenAIClient.class);

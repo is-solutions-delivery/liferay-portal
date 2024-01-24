@@ -1,4 +1,6 @@
 {
+	"accountEntryRestricted": true,
+	"accountEntryRestrictedObjectFieldName": "accountExternalReferenceCode",
 	"externalReferenceCode": "Opportunity",
 	"label": {
 		"en_US": "Opportunity SF"
@@ -8,7 +10,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Text",
-			"externalReferenceCode": "Partner_Account__c",
+			"externalReferenceCode": "Reseller__c",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {

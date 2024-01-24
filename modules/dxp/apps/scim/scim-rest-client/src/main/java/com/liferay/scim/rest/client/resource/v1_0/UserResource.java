@@ -10,6 +10,8 @@ import com.liferay.scim.rest.client.dto.v1_0.User;
 import com.liferay.scim.rest.client.http.HttpInvoker;
 import com.liferay.scim.rest.client.problem.Problem;
 
+import java.net.URL;
+
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -30,9 +32,10 @@ public interface UserResource {
 		return new Builder();
 	}
 
-	public Object getV2User(Integer count, Integer startIndex) throws Exception;
+	public Object getV2Users(Integer count, Integer startIndex)
+		throws Exception;
 
-	public HttpInvoker.HttpResponse getV2UserHttpResponse(
+	public HttpInvoker.HttpResponse getV2UsersHttpResponse(
 			Integer count, Integer startIndex)
 		throws Exception;
 
@@ -116,6 +119,10 @@ public interface UserResource {
 			return this;
 		}
 
+		public Builder endpoint(URL url) {
+			return endpoint(url.getHost(), url.getPort(), url.getProtocol());
+		}
+
 		public Builder header(String key, String value) {
 			_headers.put(key, value);
 
@@ -167,10 +174,10 @@ public interface UserResource {
 
 	public static class UserResourceImpl implements UserResource {
 
-		public Object getV2User(Integer count, Integer startIndex)
+		public Object getV2Users(Integer count, Integer startIndex)
 			throws Exception {
 
-			HttpInvoker.HttpResponse httpResponse = getV2UserHttpResponse(
+			HttpInvoker.HttpResponse httpResponse = getV2UsersHttpResponse(
 				count, startIndex);
 
 			String content = httpResponse.getContent();
@@ -232,7 +239,7 @@ public interface UserResource {
 			}
 		}
 
-		public HttpInvoker.HttpResponse getV2UserHttpResponse(
+		public HttpInvoker.HttpResponse getV2UsersHttpResponse(
 				Integer count, Integer startIndex)
 			throws Exception {
 
@@ -333,7 +340,7 @@ public interface UserResource {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
 
-			httpInvoker.body(user.toString(), "application/json");
+			httpInvoker.body(user.toString(), "application/scim+json");
 
 			if (_builder._locale != null) {
 				httpInvoker.header(
@@ -425,7 +432,8 @@ public interface UserResource {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
 
-			httpInvoker.body(queryAttributes.toString(), "application/json");
+			httpInvoker.body(
+				queryAttributes.toString(), "application/scim+json");
 
 			if (_builder._locale != null) {
 				httpInvoker.header(
@@ -704,7 +712,7 @@ public interface UserResource {
 
 			HttpInvoker httpInvoker = HttpInvoker.newHttpInvoker();
 
-			httpInvoker.body(user.toString(), "application/json");
+			httpInvoker.body(user.toString(), "application/scim+json");
 
 			if (_builder._locale != null) {
 				httpInvoker.header(

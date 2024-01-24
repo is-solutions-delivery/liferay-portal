@@ -300,7 +300,7 @@ renderResponse.setTitle(headerTitle);
 
 							<aui:button disabled="<%= folderId <= 0 %>" name="removeFolderButton" onClick="<%= taglibRemoveFolder %>" value="remove" />
 
-							<script>
+							<aui:script>
 								var selectFolderButton = document.getElementById(
 									'<portlet:namespace />selectFolderButton'
 								);
@@ -308,7 +308,6 @@ renderResponse.setTitle(headerTitle);
 								if (selectFolderButton) {
 									selectFolderButton.addEventListener('click', (event) => {
 										Liferay.Util.openSelectionModal({
-											eventName: '<portlet:namespace />folderSelected',
 											multiple: false,
 											onSelect: function (selectedItem) {
 												if (!selectedItem) {
@@ -324,24 +323,21 @@ renderResponse.setTitle(headerTitle);
 
 												Liferay.Util.selectFolder(folderData, '<portlet:namespace />');
 											},
+											selectEventName: '<portlet:namespace />folderSelected',
 											title: '<liferay-ui:message arguments="folder" key="select-x" />',
 
 											<%
 											ItemSelector itemSelector = (ItemSelector)request.getAttribute(ItemSelector.class.getName());
 
-											FolderItemSelectorCriterion folderItemSelectorCriterion = new FolderItemSelectorCriterion();
-
-											folderItemSelectorCriterion.setDesiredItemSelectorReturnTypes(new FolderItemSelectorReturnType());
-											folderItemSelectorCriterion.setFolderId(folderId);
-
-											PortletURL selectFolderURL = itemSelector.getItemSelectorURL(RequestBackedPortletURLFactoryUtil.create(request), portletDisplay.getNamespace() + "folderSelected", folderItemSelectorCriterion);
+											FolderItemSelectorURLProvider folderItemSelectorURLProvider = new FolderItemSelectorURLProvider(request, itemSelector);
 											%>
 
-											url: '<%= HtmlUtil.escapeJS(selectFolderURL.toString()) %>',
+											url:
+												'<%= HtmlUtil.escapeJS(folderItemSelectorURLProvider.getSelectAddFileEntryFolderURL(folderId)) %>',
 										});
 									});
 								}
-							</script>
+							</aui:script>
 						</c:if>
 					</div>
 
@@ -438,7 +434,7 @@ renderResponse.setTitle(headerTitle);
 												).put(
 													"languageIds", DDMStructureUtil.getAvailableLanguageIds(themeDisplay)
 												).put(
-													"selectedLanguageId", themeDisplay.getLanguageId()
+													"selectedLanguageId", defaultLanguageId
 												).put(
 													"translatedLanguageIds", DDMStructureUtil.getTranslatedLanguageIds(ddmStructures, dlEditFileEntryDisplayContext, fileVersionId)
 												).build()
@@ -666,7 +662,7 @@ renderResponse.setTitle(headerTitle);
 	<liferay-util:include page="/document_library/version_details.jsp" servletContext="<%= application %>" />
 </c:if>
 
-<script>
+<aui:script>
 	var form = document.<portlet:namespace />fm;
 
 	function <portlet:namespace />changeFileEntryType() {
@@ -801,7 +797,7 @@ renderResponse.setTitle(headerTitle);
 
 		formComponent.formValidator.validateField('<portlet:namespace />title');
 	}
-</script>
+</aui:script>
 
 <c:if test="<%= (fileEntry != null) && !checkedOut && dlAdminDisplayContext.isVersioningStrategyOverridable() %>">
 	<aui:script>

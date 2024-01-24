@@ -5,6 +5,7 @@
 
 package com.liferay.portal.db.index;
 
+import com.liferay.petra.concurrent.DCLSingleton;
 import com.liferay.portal.db.DBResourceUtil;
 import com.liferay.portal.kernel.dao.db.DB;
 import com.liferay.portal.kernel.dao.db.DBManagerUtil;
@@ -12,14 +13,27 @@ import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.dependency.manager.DependencyManagerSyncUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Release;
+import com.liferay.portal.kernel.model.ReleaseConstants;
 import com.liferay.portal.kernel.module.util.BundleUtil;
 import com.liferay.portal.kernel.module.util.SystemBundleUtil;
+import com.liferay.portal.kernel.service.ReleaseLocalServiceUtil;
 import com.liferay.portal.kernel.util.LoggingTimer;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
 import org.osgi.framework.Bundle;
@@ -33,7 +47,21 @@ import org.osgi.util.tracker.BundleTrackerCustomizer;
 public class IndexUpdaterUtil {
 
 	public static void updateAllIndexes() {
-		updatePortalIndexes();
+		LoggingTimer loggingTimer = new LoggingTimer(
+			"Updating database indexes");
+
+		if (!_processedServletContextNames.contains("portal")) {
+			try {
+				_addUpdateIndexesFutures(
+					"portal", DBResourceUtil.getPortalTablesSQL(),
+					DBResourceUtil.getPortalIndexesSQL());
+			}
+			catch (Exception exception) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(exception);
+				}
+			}
+		}
 
 		BundleTracker<Void> bundleTracker = new BundleTracker<>(
 			SystemBundleUtil.getBundleContext(), Bundle.ACTIVE,
@@ -45,7 +73,16 @@ public class IndexUpdaterUtil {
 
 					if (BundleUtil.isLiferayServiceBundle(bundle)) {
 						try {
-							updateIndexes(bundle);
+							if (!_processedServletContextNames.contains(
+									bundle.getSymbolicName()) &&
+								!_isSkipUpdateIndexes(
+									bundle.getSymbolicName())) {
+
+								_addUpdateIndexesFutures(
+									bundle.getSymbolicName(),
+									DBResourceUtil.getModuleTablesSQL(bundle),
+									DBResourceUtil.getModuleIndexesSQL(bundle));
+							}
 						}
 						catch (Exception exception) {
 							_log.error(exception);
@@ -76,6 +113,12 @@ public class IndexUpdaterUtil {
 						() -> {
 							bundleTracker.close();
 
+							_processedServletContextNames.clear();
+
+							_awaitFuturesTermination();
+
+							loggingTimer.close();
+
 							return null;
 						});
 
@@ -84,77 +127,153 @@ public class IndexUpdaterUtil {
 			IndexUpdaterUtil.class.getName() + "-BundleTrackerOpener");
 	}
 
-	public static void updateIndexes(Bundle bundle) throws Exception {
-		String indexesSQL = DBResourceUtil.getModuleIndexesSQL(bundle);
-		String tablesSQL = DBResourceUtil.getModuleTablesSQL(bundle);
+	public static void updateIndexes(Bundle bundle) {
+		try (LoggingTimer loggingTimer = new LoggingTimer(
+				"Updating database indexes for " + bundle.getSymbolicName())) {
 
-		if ((indexesSQL == null) || (tablesSQL == null)) {
-			return;
+			_addUpdateIndexesFutures(
+				bundle.getSymbolicName(),
+				DBResourceUtil.getModuleTablesSQL(bundle),
+				DBResourceUtil.getModuleIndexesSQL(bundle));
+
+			_awaitFuturesTermination();
 		}
-
-		DB db = DBManagerUtil.getDB();
-
-		db.process(
-			companyId -> {
-				String message = new String(
-					"Updating database indexes for " +
-						bundle.getSymbolicName());
-
-				if (Validator.isNotNull(companyId) && _log.isInfoEnabled()) {
-					message += " and company " + companyId;
-				}
-
-				try (Connection connection = DataAccess.getConnection();
-					LoggingTimer loggingTimer = new LoggingTimer(message)) {
-
-					db.updateIndexes(connection, tablesSQL, indexesSQL, true);
-				}
-			});
 	}
 
 	public static void updatePortalIndexes() {
-		DB db = DBManagerUtil.getDB();
+		LoggingTimer loggingTimer = new LoggingTimer(
+			"Updating database indexes for portal");
 
 		try {
-			db.process(
-				companyId -> {
-					String message = new String(
-						"Updating portal database indexes");
-
-					if (Validator.isNotNull(companyId) &&
-						_log.isInfoEnabled()) {
-
-						message += " for company " + companyId;
-					}
-
-					try (Connection connection = DataAccess.getConnection();
-						LoggingTimer loggingTimer = new LoggingTimer(message)) {
-
-						_updatePortalIndexes(db, connection);
-					}
-					catch (SQLException sqlException) {
-						if (_log.isWarnEnabled()) {
-							_log.warn(sqlException);
-						}
-					}
-				});
+			_addUpdateIndexesFutures(
+				"portal", DBResourceUtil.getPortalTablesSQL(),
+				DBResourceUtil.getPortalIndexesSQL());
 		}
 		catch (Exception exception) {
 			if (_log.isWarnEnabled()) {
 				_log.warn(exception);
 			}
 		}
+		finally {
+			_awaitFuturesTermination();
+
+			loggingTimer.close();
+		}
 	}
 
-	private static void _updatePortalIndexes(DB db, Connection connection)
+	private static void _addUpdateIndexesFutures(
+		String servletContextName, String tablesSQL, String indexesSQL) {
+
+		_processedServletContextNames.add(servletContextName);
+
+		if ((indexesSQL == null) || (tablesSQL == null)) {
+			return;
+		}
+
+		ExecutorService executorService = _getExecutorService();
+
+		Map<String, String> indexesSQLMap = _getIndexesSQLMap(indexesSQL);
+
+		for (Map.Entry<String, String> entry : indexesSQLMap.entrySet()) {
+			_futures.add(
+				executorService.submit(
+					() -> {
+						try {
+							_updateIndexes(entry.getKey(), entry.getValue());
+						}
+						catch (Exception exception) {
+							throw new RuntimeException(exception);
+						}
+					}));
+		}
+	}
+
+	private static void _awaitFuturesTermination() {
+		for (Future<?> future : _futures) {
+			try {
+				future.get();
+			}
+			catch (Exception exception) {
+				_log.error(exception);
+			}
+		}
+
+		_futures.clear();
+	}
+
+	private static ExecutorService _getExecutorService() {
+		return _executorServiceDCLSingleton.getSingleton(
+			Executors::newWorkStealingPool);
+	}
+
+	private static Map<String, String> _getIndexesSQLMap(String indexesSQL) {
+		String[] indexesSQLArray = StringUtil.split(indexesSQL, "\n\n");
+
+		Map<String, String> indexesSQLMap = new LinkedHashMap<>();
+
+		for (String element : indexesSQLArray) {
+			String tableName = element.substring(
+				element.indexOf("on ") + 3, element.indexOf(" ("));
+
+			indexesSQLMap.put(tableName, element);
+		}
+
+		return indexesSQLMap;
+	}
+
+	private static boolean _isSkipUpdateIndexes(String bundleSymbolicName) {
+		Release release = ReleaseLocalServiceUtil.fetchRelease(
+			bundleSymbolicName);
+
+		if ((release != null) &&
+			(release.getState() == ReleaseConstants.STATE_GOOD)) {
+
+			return false;
+		}
+
+		if (_log.isInfoEnabled()) {
+			_log.info(
+				"Skipped updating database indexes for " + bundleSymbolicName +
+					" since it is not upgraded");
+		}
+
+		return true;
+	}
+
+	private static void _updateIndexes(String tableName, String indexesSQL)
 		throws Exception {
 
-		db.updateIndexes(
-			connection, DBResourceUtil.getPortalTablesSQL(),
-			DBResourceUtil.getPortalIndexesSQL(), true);
+		DB db = DBManagerUtil.getDB();
+
+		db.process(
+			companyId -> {
+				try {
+					try (Connection connection = DataAccess.getConnection()) {
+						db.updateIndexes(
+							connection, tableName, indexesSQL, true);
+					}
+				}
+				catch (Exception exception) {
+					String message = new String(
+						"Unable to update database indexes for " + tableName);
+
+					if (Validator.isNotNull(companyId)) {
+						message += " and company " + companyId;
+					}
+
+					_log.error(message + " due to " + exception.getMessage());
+				}
+			});
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		IndexUpdaterUtil.class);
+
+	private static final DCLSingleton<ExecutorService>
+		_executorServiceDCLSingleton = new DCLSingleton<>();
+	private static final List<Future<?>> _futures =
+		Collections.synchronizedList(new ArrayList<Future<?>>());
+	private static final Set<String> _processedServletContextNames =
+		ConcurrentHashMap.newKeySet();
 
 }
