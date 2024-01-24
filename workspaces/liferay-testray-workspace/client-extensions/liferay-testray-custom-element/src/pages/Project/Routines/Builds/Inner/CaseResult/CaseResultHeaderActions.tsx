@@ -65,13 +65,7 @@ const CaseResultHeaderActions: React.FC<{
 				hidden={!hasCaseResultEditPermission}
 				spaced
 			>
-				<ClayButton
-					disabled={!buttonValidations.completeTest}
-					displayType={
-						!buttonValidations.completeTest ? 'unstyled' : undefined
-					}
-					onClick={() => modal.open()}
-				>
+				<ClayButton onClick={() => modal.open()}>
 					{i18n.translate('assign')}
 				</ClayButton>
 
@@ -125,16 +119,7 @@ const CaseResultHeaderActions: React.FC<{
 				</ClayButton>
 
 				<ClayButton
-					disabled={
-						buttonValidations.editValidation ||
-						!buttonValidations.completeTest
-					}
-					displayType={
-						buttonValidations.editValidation ||
-						!buttonValidations.completeTest
-							? 'unstyled'
-							: 'secondary'
-					}
+					displayType="secondary"
 					onClick={() => navigate(`edit/${caseResult.dueStatus.key}`)}
 				>
 					{i18n.translate('edit')}
