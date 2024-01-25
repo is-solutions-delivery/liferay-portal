@@ -8,8 +8,10 @@ export default {
 	'a-request-will-be-sent-to-deactivate-the-selected-activation-key-from-now-on-it-will-be-hidden-and-no-longer-be-visible':
 		'A request will be sent to deactivate the selected activation key. From now on It will be hidden and no longer be visible.',
 	'access-console': 'Access Console',
+	'account-name': 'Account Name',
 	'activation-status': 'Activation Status',
 	'add-packages': 'Add Package(s)',
+	'additional-apps-requested': 'Additional Apps Requested',
 	'address': 'Address',
 	'an-administrator-of-the-marketplace-will-review-your-request-shortly-if-you-have-questions-regarding-your-submission-please-email':
 		'An administrator of the Marketplace will review your request shortly. If you have questions regarding your submission, please email',
@@ -34,6 +36,7 @@ export default {
 		'Cloud apps must state resource requirements. If your app has no additional CPU or Ram requirements please enter 0',
 	'cloud-compatible': 'Cloud Compatible?',
 	'cloud-upload': 'Cloud Upload',
+	'comments': 'Comments',
 	'compatible-offering': 'Compatible Offering',
 	'complete-publisher-account-request': 'Complete Publisher Account Request',
 	'confirm': 'Confirm',
@@ -83,7 +86,7 @@ export default {
 	'free': 'Free',
 	'fully-managed': 'Fully-Managed',
 	'go-back-to-marketplace': 'Go Back to Marketplace',
-	'go-to-arketplace': 'Go to Marketplace',
+	'go-to-marketplace': 'Go to Marketplace',
 	'host-name': 'Host Name',
 	'i-certify-that-the-instances-activated-with-the-selected-activation-keys-have-been-shut-down-and-that-there-is-no-liferay-software-installed-deployed-used-or-executed-that-is-activated-with-the-selected-activation-key':
 		'I certify that the instances activated with the selected activation keys have been shut down and that there is no Liferay software installed, deployed, used or executed that is activated with the selected activation key.',
@@ -164,6 +167,7 @@ export default {
 		'Select the versions of Liferay that your app is compatible with.',
 	'self-hosted': 'Self-Hosted',
 	'self-managed': 'Self-Managed',
+	'send-request': 'Send Request',
 	'sorry-there-are-no-results-found': 'Sorry, there are no results found',
 	'start-date': 'Start Date',
 

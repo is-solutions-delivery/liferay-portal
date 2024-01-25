@@ -15,7 +15,7 @@ interface RadioCardListProps<T> {
 	showImage?: boolean;
 }
 
-export interface RadioCardContent<T> {
+export interface RadioCardContent<T = any> {
 	children?: ReactNode;
 	description?: ReactNode;
 	disabled?: boolean;

@@ -17,7 +17,7 @@ const GetAppRouter = () => {
 				<Route element={<GetAppPage />} index />
 				<Route
 					element={<InsuficientResources />}
-					path="insuficient-resources/:productId/:projectId"
+					path="insuficient-resources/:projectId"
 				>
 					<Route element={<ContatctSalesPage />} index />
 					<Route element={<ContactSalesForm />} path="form" />

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {useEffect, useState} from 'react';
+import {useMemo} from 'react';
 
 import RadioCardList from '../../../../components/RadioCardList/RadioCardList';
 import {
@@ -11,12 +11,12 @@ import {
 	ConsoleUserProject,
 } from '../../../../services/oauth/MarketplaceSpringBootOAuth2';
 
-interface ProjectSelectionProps {
+type ProjectSelectionProps = {
 	onSelectProject: (project: ConsoleUserProject) => void;
 	resourceRequest?: ConsoleProjectsUsage;
 	selectedProject: string | undefined;
 	userAccount?: UserAccount;
-}
+};
 
 const ProjectSelection: React.FC<ProjectSelectionProps> = ({
 	onSelectProject,
@@ -24,44 +24,12 @@ const ProjectSelection: React.FC<ProjectSelectionProps> = ({
 	selectedProject,
 	userAccount,
 }) => {
-	const [project, setProject] = useState<any>([]);
-
-	const projectList = resourceRequest?.userProjects;
-
-	useEffect(() => {
-		setProject(
-			projectList?.map((project, index) => ({
-				selected: projectList[index].rootProjectId === selectedProject,
-				title: (
-					<>
-						<h5 className="m-0">
-							{project.rootProjectId.toUpperCase()}
-						</h5>
-						<p className="m-0">{`${project.environments.length} Enviroments, ${project.rootProjectPlanUsage.cpu.used} CPU, ${project.rootProjectPlanUsage.memory.used} GB Ram`}</p>
-					</>
-				),
-				value: project.rootProjectId,
-			}))
-		);
-	}, [projectList, selectedProject]);
-
-	const handleSelectProject = (
-		radioOption: RadioOption<ConsoleUserProject>
-	) => {
-		onSelectProject(radioOption.value);
-
-		setProject((previousValue: ConsoleUserProject[]) => {
-			return previousValue.map((project, index) => {
-				return {
-					...project,
-					selected: index === radioOption.index,
-				};
-			});
-		});
-	};
+	const userProjects = useMemo(() => resourceRequest?.userProjects ?? [], [
+		resourceRequest?.userProjects,
+	]);
 
 	return (
-		<div>
+		<>
 			<div className="mb-4">
 				{`Accounts available for `}
 
@@ -71,12 +39,31 @@ const ProjectSelection: React.FC<ProjectSelectionProps> = ({
 			</div>
 
 			<RadioCardList
-				contentList={project}
+				contentList={
+					(resourceRequest?.userProjects ?? []).map(
+						(project, index) => ({
+							selected:
+								userProjects[index].rootProjectId ===
+								selectedProject,
+							title: (
+								<>
+									<h5 className="m-0">
+										{project.rootProjectId.toUpperCase()}
+									</h5>
+									<p className="m-0">{`${project.environments.length} Enviroments, ${project.rootProjectPlanUsage.cpu.used} CPU, ${project.rootProjectPlanUsage.memory.used} GB Ram`}</p>
+								</>
+							),
+							value: project.rootProjectId,
+						})
+					) as any
+				}
 				leftRadio
-				onSelect={handleSelectProject}
+				onSelect={(radioOption: RadioOption<ConsoleUserProject>) =>
+					onSelectProject(radioOption.value)
+				}
 				showImage={false}
 			/>
-		</div>
+		</>
 	);
 };
 

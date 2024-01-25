@@ -7,18 +7,16 @@ import ClayButton from '@clayui/button';
 import ClayForm from '@clayui/form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useForm} from 'react-hook-form';
+import {useNavigate} from 'react-router-dom';
 
 import {Header} from '../../../../components/Header/Header';
 import FormInput from '../../../../components/Input/formInput';
-import {getSiteURL} from '../../../../components/InviteMemberModal/services';
-import {useMarketplaceContext} from '../../../../context/MarketplaceContext';
 import i18n from '../../../../i18n';
 import {Liferay} from '../../../../liferay/liferay';
 import zodSchema from '../../../../schema/zod';
 
 const ContactSalesForm = () => {
-	const {myUserAccount} = useMarketplaceContext();
-
+	const navigate = useNavigate();
 	const {
 		formState: {errors},
 		handleSubmit,
@@ -28,8 +26,8 @@ const ContactSalesForm = () => {
 			accountName: '',
 			additionalApps: '',
 			comments: '',
-			email: myUserAccount.emailAddress,
-			name: myUserAccount.givenName,
+			email: Liferay.ThemeDisplay.getUserEmailAddress(),
+			name: Liferay.ThemeDisplay.getUserName(),
 		},
 		resolver: zodResolver(zodSchema.contactSales),
 	});
@@ -89,6 +87,7 @@ const ContactSalesForm = () => {
 
 					<div className="form-group mb-0 pl-2 w-50">
 						<FormInput
+							{...inputProps}
 							boldLabel
 							label={i18n.translate('email')}
 							name="email"
@@ -99,6 +98,7 @@ const ContactSalesForm = () => {
 
 				<div className="d-flex flex-column">
 					<FormInput
+						{...inputProps}
 						boldLabel
 						label={i18n.translate('additional-apps-requested')}
 						name="additionalApps"
@@ -106,6 +106,7 @@ const ContactSalesForm = () => {
 					/>
 
 					<FormInput
+						{...inputProps}
 						boldLabel
 						label={i18n.translate('comments')}
 						name="comments"
@@ -119,9 +120,7 @@ const ContactSalesForm = () => {
 							<ClayButton
 								className="p-3"
 								displayType="unstyled"
-								onClick={() => {
-									window.location.href = `${Liferay.ThemeDisplay.getPortalURL()}${getSiteURL()}/solutions-marketplace`;
-								}}
+								onClick={() => navigate('..')}
 							>
 								{i18n.translate('cancel')}
 							</ClayButton>
