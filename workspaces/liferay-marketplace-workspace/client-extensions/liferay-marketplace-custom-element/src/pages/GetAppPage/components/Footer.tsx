@@ -18,6 +18,9 @@ import {PaymentMethod} from '../enums/paymentMethod';
 import {StepType} from '../enums/stepType';
 
 import './Footer.scss';
+
+import {useNavigate} from 'react-router-dom';
+
 import {TYPES} from '../../../manage-app-state/actionTypes';
 
 interface ProductFooterProps {
@@ -27,10 +30,14 @@ interface ProductFooterProps {
 	disabled: boolean;
 	enablePurchaseButton: boolean;
 	handleGetApp: (orderId?: number) => void;
+	hasResource: boolean;
 	isFreeApp: boolean;
 	licenseSelected: boolean;
+	product: DeliveryProduct | undefined;
+	productSpecificationValues: any;
 	selectedAccount?: Account;
 	selectedPaymentMethod: PaymentMethodSelector;
+	selectedProject: string;
 	selectedSKU?: DeliverySKU;
 	setStep: (nextStep: StepType) => void;
 	step: StepType;
@@ -38,7 +45,7 @@ interface ProductFooterProps {
 }
 
 type StepsNavigation = {
-	[key in StepType]: {
+	[key in StepType]?: {
 		backStep: StepType;
 		nextStep: StepType;
 	};
@@ -54,15 +61,21 @@ const ProductFooter = ({
 	disabled,
 	enablePurchaseButton,
 	handleGetApp,
+	hasResource,
 	isFreeApp,
 	licenseSelected,
+	product,
+	productSpecificationValues,
 	selectedAccount,
 	selectedPaymentMethod,
+	selectedProject,
 	setStep,
 	step,
 	stepsNavigation,
 }: ProductFooterProps) => {
 	const {properties} = useMarketplaceContext();
+
+	const navigate = useNavigate();
 
 	const [{eula, eulaCheckbox}, dispatch] = useAppContext();
 
@@ -71,7 +84,11 @@ const ProductFooter = ({
 			return 'Get App';
 		}
 
-		if ([StepType.ACCOUNT, StepType.LICENSES].includes(step)) {
+		if (
+			[StepType.ACCOUNT, StepType.LICENSES, StepType.PROJECT].includes(
+				step
+			)
+		) {
 			return 'Continue';
 		}
 
@@ -93,6 +110,17 @@ const ProductFooter = ({
 	const onContinue = async (nextStep: StepType) => {
 		const isAccountStep = step === StepType.ACCOUNT;
 		const isLicenseStep = step === StepType.LICENSES;
+		const isProjectStep = step === StepType.PROJECT;
+		const isCloudApp = productSpecificationValues === 'cloud';
+
+		if (isProjectStep && !hasResource) {
+			navigate(
+				`insuficient-resources/${product?.productId}/${selectedProject}`,
+				{
+					replace: true,
+				}
+			);
+		}
 
 		if (
 			selectedPaymentMethod === PaymentMethod.TRIAL &&
@@ -101,7 +129,11 @@ const ProductFooter = ({
 			await cartUtil.removeCart(cartUtil?.cart?.id);
 		}
 
-		if ((!isFreeApp && isAccountStep && selectedAccount) || isLicenseStep) {
+		if (
+			(!isFreeApp && isAccountStep && selectedAccount) ||
+			isLicenseStep ||
+			(isProjectStep && hasResource)
+		) {
 			return setStep(nextStep);
 		}
 
@@ -171,17 +203,17 @@ const ProductFooter = ({
 						Cancel
 					</ClayButton>
 					<div>
-						{stepsNavigation[step].backStep !== step && (
+						{stepsNavigation[step]?.backStep !== step && (
 							<ClayButton
 								displayType="secondary"
 								onClick={() =>
-									onPrevious(stepsNavigation[step].backStep)
+									onPrevious(stepsNavigation[step]!.backStep)
 								}
 							>
 								Back
 							</ClayButton>
 						)}
-						{stepsNavigation[step].nextStep && (
+						{stepsNavigation[step]?.nextStep && (
 							<ClayButton
 								className="ml-5"
 								disabled={
@@ -196,7 +228,7 @@ const ProductFooter = ({
 									(step === StepType.PAYMENT && !eulaCheckbox)
 								}
 								onClick={() =>
-									onContinue(stepsNavigation[step].nextStep)
+									onContinue(stepsNavigation[step]!.nextStep)
 								}
 							>
 								{getButtonText()}

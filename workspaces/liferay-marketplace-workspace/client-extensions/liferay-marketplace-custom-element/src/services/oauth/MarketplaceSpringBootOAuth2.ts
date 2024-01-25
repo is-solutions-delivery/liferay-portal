@@ -10,13 +10,18 @@ export type ConsoleProjectsUsage = {
 	userProjects: ConsoleUserProject[];
 };
 
-type ConsoleUserProject = {
+export type ConsoleUserProject = {
 	environments: string[];
 	rootProjectId: string;
 	rootProjectPlanUsage: {
 		cpu: ConsoleCPU;
 		instance: ConsoleCPU;
 		memory: ConsoleCPU;
+		remaining: {
+			cpu: number;
+			instance: number;
+			memory: number;
+		};
 	};
 };
 
@@ -87,7 +92,6 @@ export default class MarketplaceSpringBootOAuth2 extends OAuth2Client {
 			method: 'POST',
 
 			// Necessary due the response comes resolved already, not necessary to parse to .json()
-
 		}) as unknown) as Promise<LicenseKey>;
 	}
 

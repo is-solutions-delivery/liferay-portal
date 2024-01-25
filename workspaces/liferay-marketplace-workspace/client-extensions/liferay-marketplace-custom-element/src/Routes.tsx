@@ -4,7 +4,7 @@
  */
 
 import {CustomerGatePage} from './pages/CustomerGatePage/CustomerGatePage';
-import GetAppPage from './pages/GetAppPage/GetAppPage';
+import GetAppRouter from './pages/GetAppPage/GetAppRouter';
 import {NextSteps} from './pages/NextSteps';
 import {AppCreationFlow} from './pages/PublishedAppsDashboard/Apps/AppCreationFlow/AppCreationFlow';
 import PublishedAppsDashboardRouter from './pages/PublishedAppsDashboard/PublishedAppsDashboardRouter';
@@ -13,9 +13,9 @@ import PurchasedAppsDashboardRouter from './pages/PurchasedAppsDashboard/Purchas
 import PurchasedSolutions from './pages/PurchasedSolutions/PurchasedSolutions';
 
 const Routes = {
-	'create-app': AppCreationFlow,
+	'app': AppCreationFlow,
 	'customer-gate': CustomerGatePage,
-	'get-app': GetAppPage,
+	'get-app': GetAppRouter,
 	'next-steps': NextSteps,
 	'published-apps': PublishedAppsDashboardRouter,
 	'publisher-gate': PublisherGateRouter,

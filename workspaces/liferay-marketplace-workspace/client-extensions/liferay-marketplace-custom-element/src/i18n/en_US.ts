@@ -39,6 +39,7 @@ export default {
 	'confirm': 'Confirm',
 	'confirm-deactivate-keys': 'Confirm & Deactivate Keys',
 	'confirm-deactivation-terms': 'Confirm Deactivation Terms',
+	'contact-sales': 'Contact Sales',
 	'content-policy': 'Content policy',
 	'continue': 'Continue',
 	'coupon-code': 'Coupon Code',
@@ -82,6 +83,7 @@ export default {
 	'free': 'Free',
 	'fully-managed': 'Fully-Managed',
 	'go-back-to-marketplace': 'Go Back to Marketplace',
+	'go-to-arketplace': 'Go to Marketplace',
 	'host-name': 'Host Name',
 	'i-certify-that-the-instances-activated-with-the-selected-activation-keys-have-been-shut-down-and-that-there-is-no-liferay-software-installed-deployed-used-or-executed-that-is-activated-with-the-selected-activation-key':
 		'I certify that the instances activated with the selected activation keys have been shut down and that there is no Liferay software installed, deployed, used or executed that is activated with the selected activation key.',
@@ -95,14 +97,18 @@ export default {
 	'in-the-future-you-will-be-able-to-submit-your-app-source-code-for-additional-support-and-partnership-opportunities-with-liferay':
 		'In the future, you will be able to submit your app source code for additional support and partnership opportunities with Liferay.',
 	'instance-size': 'Instance Size',
+	'insufficient-resource-requirements': 'Insufficient Resource Requirements',
 	'intl-code': 'Intl. code',
 	'ip-addresses': 'IP Addresses',
 	'key-activations-available-x-of-x': 'Key activations available: {0} of {1}',
 	'key-deactivation-requested-succesfully':
 		'Key deactivation requested successfully',
 	'key-type': 'Key Type',
+
 	'last-name': 'Last Name',
 	'learn-more': 'Learn More',
+	'learn-more-about-app-resource-requirements':
+		'Learn more about App Resource Requirements',
 	'license-price': 'License Price',
 	'licenses': 'Licenses',
 	'liferay-learn': 'Liferay Learn',
@@ -188,6 +194,8 @@ export default {
 		'The Liferay Marketplace is the premier place for Liferay customers to find pre-built, pre-approved app extensions to quickly extend the Liferay platform to new and legacy technologies.',
 	'the-order-must-be-completed-before-licensing-this-app.':
 		'The order must be completed before licensing this app.',
+	'the-selected-project-does-not-meet-the-necessary-resource-requirements-for-this-app-Please-contact-sales-to-request-additional-resources':
+		'The selected project does not meet the necessary resource requirements for this app. Please contact sales to request additional resources.',
 	'there-was-an-unexpected-error-while-attempting-to-deactivate-key-please-try-again-in-a-few-moments':
 		'There was an unexpected error while attempting to deactivate key. Please try again in a few moments.',
 	'this-key-is-expired-and-cannot-be-downloaded':

@@ -6,6 +6,8 @@
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 
+import i18n from '../i18n';
+
 const zodSchema = {
 	accountCreator: z.object({
 		accounts: z.any().array().optional(),
@@ -42,6 +44,16 @@ const zodSchema = {
 		requestDescription: z
 			.string()
 			.max(500, {message: 'Request Description is required'}),
+	}),
+
+	contactSales: z.object({
+		accountName: z
+			.string()
+			.min(3, i18n.translate('account-name-is-required')),
+		additionalApps: z.string().optional(),
+		comments: z.string().optional(),
+		email: z.string().email(i18n.translate('please-fill-in-valid-email')),
+		name: z.string().min(3, i18n.translate('name-is-required')),
 	}),
 
 	generateLicenseKey: z.object({
