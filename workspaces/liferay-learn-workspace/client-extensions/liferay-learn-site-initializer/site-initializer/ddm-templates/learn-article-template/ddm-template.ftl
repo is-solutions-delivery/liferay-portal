@@ -386,7 +386,7 @@
 							<span id="highlightTextMatch"></span>
 						</span>
 		  			</p>
-		<a class="remove-link" href="javascript:;" id="removeHighlightLink">
+					<a class="remove-link" href="javascript:;" id="removeHighlightLink">
 		  				${languageUtil.get(locale, "remove-highlighting", "Remove Highlighting")}
 		 			</a>
 				</div>
