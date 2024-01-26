@@ -1,0 +1,37 @@
+.project-selection-page {
+	&-info-button {
+		background-color: #e6ebf5;
+		border: none;
+		height: 22px;
+		padding: 0 6px 0 6px;
+
+		&:hover {
+			background-color: #6a8fea;
+		}
+
+		&:hover > .project-selection-page-info-button-icon {
+			fill: #ffffff;
+		}
+
+		&-icon {
+			width: 10px;
+			height: 10px;
+			position: relative;
+			fill: #2e5aac;
+			top: -1px;
+		}
+	}
+
+	&-title-text {
+		color: #282934 !important;
+	}
+
+	&-description-text {
+		font-size: 13px;
+		color: #54555f;
+	}
+
+	&-link {
+		cursor: pointer;
+	}
+}

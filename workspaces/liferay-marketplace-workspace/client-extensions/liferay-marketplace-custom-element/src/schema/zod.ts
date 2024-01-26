@@ -50,7 +50,7 @@ const zodSchema = {
 		accountName: z
 			.string()
 			.min(3, i18n.translate('account-name-is-required')),
-		additionalApps: z.string().optional(),
+		additionalAppsRequested: z.string().optional(),
 		comments: z.string().optional(),
 		email: z.string().email(i18n.translate('please-fill-in-valid-email')),
 		name: z.string().min(3, i18n.translate('name-is-required')),

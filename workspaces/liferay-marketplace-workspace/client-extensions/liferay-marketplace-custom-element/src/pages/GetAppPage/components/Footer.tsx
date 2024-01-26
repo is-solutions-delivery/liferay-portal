@@ -33,7 +33,6 @@ interface ProductFooterProps {
 	hasResource: boolean;
 	isFreeApp: boolean;
 	licenseSelected: boolean;
-	product: DeliveryProduct | undefined;
 	productSpecificationValues: any;
 	selectedAccount?: Account;
 	selectedPaymentMethod: PaymentMethodSelector;
@@ -64,8 +63,6 @@ const ProductFooter = ({
 	hasResource,
 	isFreeApp,
 	licenseSelected,
-	product,
-	productSpecificationValues,
 	selectedAccount,
 	selectedPaymentMethod,
 	selectedProject,
@@ -108,19 +105,19 @@ const ProductFooter = ({
 	const onPrevious = (previousStep: StepType) => setStep(previousStep);
 
 	const onContinue = async (nextStep: StepType) => {
-		const isAccountStep = step === StepType.ACCOUNT;
-		const isLicenseStep = step === StepType.LICENSES;
 		const isProjectStep = step === StepType.PROJECT;
-		const isCloudApp = productSpecificationValues === 'cloud';
 
 		if (isProjectStep && !hasResource) {
-			navigate(
-				`insuficient-resources/${product?.productId}/${selectedProject}`,
+			return navigate(
+				`/insuficient-resources/${selectedProject}/${selectedAccount?.id}`,
 				{
 					replace: true,
 				}
 			);
 		}
+
+		const isAccountStep = step === StepType.ACCOUNT;
+		const isLicenseStep = step === StepType.LICENSES;
 
 		if (
 			selectedPaymentMethod === PaymentMethod.TRIAL &&

@@ -260,9 +260,12 @@ const GetAppPage = () => {
 					backStep: StepType.ACCOUNT,
 					component: (
 						<ProjectSelection
-							onSelectProject={(project: any) => {
-								setValue('project', project);
-							}}
+							onSelectProject={(project) =>
+								setValue(
+									'project',
+									(project as unknown) as string
+								)
+							}
 							resourceRequest={resourceRequest}
 							selectedProject={project}
 							userAccount={myUserAccount}
@@ -458,10 +461,9 @@ const GetAppPage = () => {
 					disabled={loading}
 					enablePurchaseButton={enablePurchaseButton}
 					handleGetApp={handleGetApp}
-					hasResource={hasResources}
+					hasResource={hasResources as boolean}
 					isFreeApp={isFreeApp}
 					licenseSelected={licenseSelected}
-					product={product}
 					productSpecificationValues={productSpecificationValues}
 					selectedAccount={account}
 					selectedPaymentMethod={selectedPaymentMethod}

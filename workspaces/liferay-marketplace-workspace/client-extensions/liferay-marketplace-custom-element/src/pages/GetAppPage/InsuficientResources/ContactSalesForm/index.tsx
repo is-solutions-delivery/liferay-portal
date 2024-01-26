@@ -6,33 +6,51 @@
 import ClayButton from '@clayui/button';
 import ClayForm from '@clayui/form';
 import {zodResolver} from '@hookform/resolvers/zod';
+import {useEffect} from 'react';
 import {useForm} from 'react-hook-form';
+import {useNavigate, useParams} from 'react-router-dom';
+import {z} from 'zod';
 
 import {Header} from '../../../../components/Header/Header';
 import FormInput from '../../../../components/Input/formInput';
-import {getSiteURL} from '../../../../components/InviteMemberModal/services';
 import {useMarketplaceContext} from '../../../../context/MarketplaceContext';
 import i18n from '../../../../i18n';
 import {Liferay} from '../../../../liferay/liferay';
 import zodSchema from '../../../../schema/zod';
+import {createContactSales} from '../../../../utils/api';
+
+type ContactSalesForm = z.infer<typeof zodSchema.contactSales>;
 
 const ContactSalesForm = () => {
 	const {myUserAccount} = useMarketplaceContext();
+	const {accountId} = useParams();
+	const navigate = useNavigate();
 
 	const {
 		formState: {errors},
 		handleSubmit,
 		register,
-	} = useForm({
+		setValue,
+	} = useForm<ContactSalesForm>({
 		defaultValues: {
 			accountName: '',
-			additionalApps: '',
+			additionalAppsRequested: '',
 			comments: '',
-			email: myUserAccount.emailAddress,
-			name: myUserAccount.givenName,
+			email: Liferay.ThemeDisplay.getUserEmailAddress(),
+			name: Liferay.ThemeDisplay.getUserName(),
 		},
 		resolver: zodResolver(zodSchema.contactSales),
 	});
+
+	const selectedAccount = myUserAccount.accountBriefs.find(
+		(account) => account.id === Number(accountId)
+	);
+
+	useEffect(() => {
+		if (selectedAccount) {
+			setValue('accountName', selectedAccount?.name);
+		}
+	}, [selectedAccount, setValue]);
 
 	const inputProps = {
 		error: errors,
@@ -40,12 +58,28 @@ const ContactSalesForm = () => {
 		required: true,
 	};
 
-	const _submit = (form: any) => {
-		console.log(form);
+	const _submit = async (form: any) => {
+		try {
+			await createContactSales(form);
+
+			Liferay.Util.openToast({
+				message: i18n.translate('request-sent-successfully'),
+				type: 'success',
+			});
+
+			Liferay.Util.navigate(
+				Liferay.ThemeDisplay.getCanonicalURL().replace('/get-app', '')
+			);
+		} catch (error) {
+			Liferay.Util.openToast({
+				message: i18n.translate('request-sent-successfully'),
+				type: 'success',
+			});
+		}
 	};
 
 	return (
-		<div className="align-items-center border contact-sales-page d-flex flex-column justify-content-center py-6 rounded">
+		<div className="align-items-center contact-sales-page d-flex flex-column justify-content-center py-6">
 			<div className="col-11">
 				<Header
 					description={
@@ -89,6 +123,7 @@ const ContactSalesForm = () => {
 
 					<div className="form-group mb-0 pl-2 w-50">
 						<FormInput
+							{...inputProps}
 							boldLabel
 							label={i18n.translate('email')}
 							name="email"
@@ -99,16 +134,22 @@ const ContactSalesForm = () => {
 
 				<div className="d-flex flex-column">
 					<FormInput
+						{...inputProps}
 						boldLabel
 						label={i18n.translate('additional-apps-requested')}
-						name="additionalApps"
+						name="additionalAppsRequested"
+						placeholder={i18n.translate(
+							'Enter additional apps requested'
+						)}
 						type="textarea"
 					/>
 
 					<FormInput
+						{...inputProps}
 						boldLabel
 						label={i18n.translate('comments')}
 						name="comments"
+						placeholder={i18n.translate('Describe your request')}
 						type="textarea"
 					/>
 				</div>
@@ -119,9 +160,7 @@ const ContactSalesForm = () => {
 							<ClayButton
 								className="p-3"
 								displayType="unstyled"
-								onClick={() => {
-									window.location.href = `${Liferay.ThemeDisplay.getPortalURL()}${getSiteURL()}/solutions-marketplace`;
-								}}
+								onClick={() => navigate('..')}
 							>
 								{i18n.translate('cancel')}
 							</ClayButton>

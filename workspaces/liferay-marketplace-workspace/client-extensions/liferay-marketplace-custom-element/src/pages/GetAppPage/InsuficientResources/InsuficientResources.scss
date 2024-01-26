@@ -1,4 +1,7 @@
 .contact-sales-page {
+	border: solid 1px #e2e2e4;
+	border-radius: 10px;
+
 	&-cards {
 		align-items: center;
 		display: flex;
@@ -63,9 +66,15 @@
 		border-color: #ea7b7b !important;
 	}
 
-	&-no-resource-card {
+	&-required-resource-card {
+		font-size: 1rem;
 		font-weight: 400;
+	}
+
+	&-no-resource-card {
 		color: #da1414;
+		font-size: 1rem;
+		font-weight: 400;
 	}
 }
 
