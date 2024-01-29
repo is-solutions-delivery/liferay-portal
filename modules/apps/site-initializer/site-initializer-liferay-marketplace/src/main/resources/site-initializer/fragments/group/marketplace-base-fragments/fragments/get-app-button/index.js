@@ -8,6 +8,7 @@
 const contactPublisherButtonElement = fragmentElement.querySelector(
 	'button#contact-publisher'
 );
+
 const getAppButtonElement = fragmentElement.querySelector('button#get-app');
 const getAppDescriptionElement = fragmentElement.querySelector(
 	'#get-app-description'
@@ -18,6 +19,20 @@ const productId = fragmentElement
 	.querySelector('.product-id')
 	.innerText.replace(/[\n\r]+|[\s]{2,}/g, ' ')
 	.trim();
+
+const getUserConsoleProjects = async () => {
+	const oAuth2Client = await Liferay.OAuth2Client.FromUserAgentApplication(
+		'liferay-marketplace-etc-spring-boot-oauth-application-user-agent'
+	);
+
+	const userConsoleProjects = await oAuth2Client.fetch(
+		'/console/projects-usage'
+	);
+
+	const {userProjects = []} = await userConsoleProjects.json();
+
+	return userProjects;
+};
 
 const getSkuOptionValue = (sku, optionValue) =>
 	sku.toLowerCase() === optionValue ||
@@ -63,8 +78,34 @@ const getProductPrice = (product) => {
 	return `${price} ${licenseTypeText}`;
 };
 
+const modalContent = () => {
+	return Liferay.Util.openModal({
+		bodyHTML:
+			'<p>You currently do not have access to any Cloud Projects. Please login as a user that has access to a project or contact your project administrator to add you to a project.</p>',
+		buttons: [
+			{
+				displayType: 'unstyled',
+				label: 'Cancel',
+				type: 'cancel',
+			},
+			{
+				displayType: 'primary',
+				label: 'Sign in with a different Account',
+				type: 'button',
+			},
+		],
+		center: true,
+		headerHTML: 'No Cloud Projects Available',
+		id: 'get-app-button-id',
+		size: 'md',
+	});
+};
+
 const customizeGetAppButton = (product) => {
 	getAppButtonElement.onclick = () => {
+		if (getUserConsoleProjects()) {
+			return modalContent();
+		}
 		window.location.href = `${getSiteURL()}/get-app?productId=${productId}`;
 	};
 
@@ -80,8 +121,7 @@ const getCommerceProduct = async (channelId) => {
 		const product = await response.json();
 
 		return product ?? {skus: []};
-	}
-	catch {
+	} catch {
 		return {skus: []};
 	}
 };
