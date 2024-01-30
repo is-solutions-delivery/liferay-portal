@@ -129,7 +129,7 @@ const SuiteForm = () => {
 
 	const _onSubmit = (form: SuiteFormData) =>
 		onSubmit<TestraySuite>(
-			{...form, projectId},
+			{...form, projectId, type: smartSuite ? 'smart' : 'static'},
 			{
 				create: (data) => testraySuiteImpl.create(data),
 				update: (id, data) => testraySuiteImpl.update(id, data),

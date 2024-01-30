@@ -40,11 +40,8 @@ const Suites = () => {
 							value: i18n.translate('description'),
 						},
 						{
-							key: 'caseParameters',
-							render: (caseParameters) =>
-								i18n.translate(
-									caseParameters ? 'smart' : 'static'
-								),
+							key: 'type',
+							render: (type) => i18n.translate(type),
 							value: i18n.translate('type'),
 						},
 					],

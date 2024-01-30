@@ -242,7 +242,7 @@ const yupSchema = {
 		description: yup.string(),
 		id: yup.string(),
 		name: yup.string().required(),
-		smartSuite: yup.string(),
+		type: yup.string(),
 	}),
 	suiteCase: yup.object({
 		caseId: yup.number(),

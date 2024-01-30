@@ -22,7 +22,7 @@ class TestraySuiteImpl extends Rest<Suite, TestraySuite> {
 				id,
 				name,
 				projectId: r_projectToSuites_c_projectId,
-				smartSuite,
+				type,
 			}) => ({
 				autoanalyze,
 				caseParameters,
@@ -30,7 +30,7 @@ class TestraySuiteImpl extends Rest<Suite, TestraySuite> {
 				id,
 				name,
 				r_projectToSuites_c_projectId,
-				smartSuite,
+				type,
 			}),
 			uri: 'suites',
 		});
