@@ -15,8 +15,20 @@ import i18n from '../../../i18n';
 import {Liferay} from '../../../liferay/liferay';
 import {ConsoleUserProject} from '../../../services/oauth/MarketplaceSpringBootOAuth2';
 import {useGetAppContext} from '../GetAppContextProvider';
+import {convertMegabyteToGigabyte} from '../hooks/useGetResourceInfo';
 
 const ProjectSelection = () => {
+	const getCardContent = (project: ConsoleUserProject) => {
+		const enviroment = project.environments.length;
+		const cpu = project.rootProjectPlanUsage.cpu.limit;
+		const memory = convertMegabyteToGigabyte({
+			inverseOperation: true,
+			value: project.rootProjectPlanUsage.memory.limit,
+		});
+
+		return `${enviroment} Enviroments , ${cpu} CPUs, ${memory} GB Ram`;
+	};
+
 	const [
 		{
 			account,
@@ -62,7 +74,9 @@ const ProjectSelection = () => {
 										{project.rootProjectId.toUpperCase()}
 									</h5>
 
-									<p className="m-0 project-selection-page-description-text">{`${project.environments.length} Enviroments, ${project.rootProjectPlanUsage.cpu.used} CPU, ${project.rootProjectPlanUsage.memory.used} GB Ram`}</p>
+									<p className="m-0 project-selection-page-description-text">
+										{getCardContent(project)}
+									</p>
 								</div>
 								<div className="d-flex justify-content-end w-100">
 									<ClayButton className="project-selection-page-info-button">
