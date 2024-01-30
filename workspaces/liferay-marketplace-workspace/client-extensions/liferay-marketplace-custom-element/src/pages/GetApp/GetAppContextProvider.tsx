@@ -245,6 +245,12 @@ const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 				specificationKey === 'type' && value === 'cloud'
 		) ?? false;
 
+	const isFreeApp =
+		product?.productSpecifications.some(
+			({specificationKey, value}) =>
+				specificationKey === 'price-model' && value === 'Free'
+		) ?? false;
+
 	const steps = useMemo(
 		() =>
 			state.steps.filter(({id}) =>
@@ -256,6 +262,10 @@ const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 	const isValid = useMemo(() => {
 		const currentStep = steps[state.currentStep];
 		const currentStepId = currentStep.id;
+
+		if (StepType.ACCOUNT === currentStepId && isCloudApp && !!isFreeApp) {
+			return !!state.account && !!state.payment.eulaCheckbox;
+		}
 
 		if (StepType.ACCOUNT === currentStepId) {
 			return !!state.account;
