@@ -35,8 +35,8 @@ const App = () => {
 	const [loading, setLoading] = useState(false);
 	const {appId} = useParams();
 	const {myUserAccount} = useMarketplaceContext();
+	const marketplaceSpringBootOAuth2 = useMarketplaceSpringBootOAuth2();
 	const navigate = useNavigate();
-	const {syncKoroneikiProduct} = useMarketplaceSpringBootOAuth2();
 
 	const productId = Number(appId) + 1;
 
@@ -171,7 +171,8 @@ const App = () => {
 							onClick={() => {
 								setLoading(true);
 
-								syncKoroneikiProduct(productId)
+								marketplaceSpringBootOAuth2
+									.syncKoroneikiProduct(productId)
 									.then(() =>
 										Liferay.Util.openToast({
 											message:
@@ -179,13 +180,15 @@ const App = () => {
 											title: 'Success',
 										})
 									)
-									.catch(() =>
+									.catch((error) => {
+										console.error(error);
+
 										Liferay.Util.openToast({
 											message: 'Koroneiki Sync Failed',
 											title: 'Error',
 											type: 'danger',
-										})
-									)
+										});
+									})
 									.finally(() => setLoading(false));
 							}}
 						>

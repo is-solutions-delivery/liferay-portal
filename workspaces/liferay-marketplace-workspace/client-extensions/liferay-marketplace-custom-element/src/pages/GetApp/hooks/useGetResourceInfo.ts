@@ -38,11 +38,11 @@ const useGetResourceInfo = ({
 	selectedProject?: string;
 	shouldFetch: boolean;
 }) => {
-	const resource = useMarketplaceSpringBootOAuth2();
+	const marketplaceSpringBootOAuth2 = useMarketplaceSpringBootOAuth2();
 
 	const {data: productUsages} = useSWR(
 		shouldFetch ? '/product-usages' : null,
-		() => resource.getProductUsages()
+		() => marketplaceSpringBootOAuth2.getProductUsages()
 	);
 
 	const project = productUsages?.userProjects.find(
