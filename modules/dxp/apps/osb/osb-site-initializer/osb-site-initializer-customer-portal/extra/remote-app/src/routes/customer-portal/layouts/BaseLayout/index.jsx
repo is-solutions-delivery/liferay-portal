@@ -6,6 +6,7 @@
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {useEffect, useRef, useState} from 'react';
 import {Outlet, useParams} from 'react-router-dom';
+import {useGetKoroneikiAccounts} from '~/common/services/liferay/graphql/koroneiki-accounts';
 import {useProjectOrganizations} from '~/routes/home/hooks/useProjectCategoryItems';
 import ProjectBreadcrumb from '../../components/ProjectBreadcrumb/ProjectBreadcrumb';
 import ProjectErrorMessage from '../../components/ProjectErrorMessage';
@@ -22,6 +23,9 @@ const Layout = () => {
 			window.location.reload();
 		}
 	}, [accountKey]);
+
+	const {data} = useGetKoroneikiAccounts();
+	const koroneikiAccounts = data?.c?.koroneikiAccounts;
 
 	const {myUserAccount, organizations, swr} = useProjectOrganizations();
 
@@ -56,11 +60,16 @@ const Layout = () => {
 		(roleBrief) => roleBrief.name === 'Administrator'
 	);
 
+	const isUserProjectList = koroneikiAccounts.items?.some(
+		({externalReferenceCode}) => externalReferenceCode === accountKey
+	);
+
 	const accountPermission =
 		accountInsideOrganization ||
 		isAccountAdministrator ||
 		isLiferayContact ||
-		isTeamMember;
+		isTeamMember ||
+		isUserProjectList;
 
 	if (!accountPermission) {
 		return <ProjectErrorMessage />;
