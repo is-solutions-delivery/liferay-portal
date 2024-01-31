@@ -170,6 +170,18 @@ public class OpenSearchSearchEngine
 		}
 	}
 
+	public boolean meetsMinimumVersionRequirement(
+		Version minimumVersion, String versionString) {
+
+		if (minimumVersion.compareTo(Version.parseVersion(versionString)) <=
+				0) {
+
+			return true;
+		}
+
+		return false;
+	}
+
 	@Override
 	public void onOpenSearchConfigurationUpdate() {
 		_putTimestampPipeline();
@@ -276,18 +288,6 @@ public class OpenSearchSearchEngine
 				_BACKUP_REPOSITORY_NAME, "opensearch_backup");
 
 		_searchEngineAdapter.execute(createSnapshotRepositoryRequest);
-	}
-
-	protected boolean meetsMinimumVersionRequirement(
-		Version minimumVersion, String versionString) {
-
-		if (minimumVersion.compareTo(Version.parseVersion(versionString)) <=
-				0) {
-
-			return true;
-		}
-
-		return false;
 	}
 
 	private void _checkNodeVersions() {
