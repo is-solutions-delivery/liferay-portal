@@ -93,8 +93,7 @@ export function ProvideVersionDetailsPage({
 			newOptionId = await postOption(
 				isDXP ? getDxpOptionBody() : getTrialOptionBody()
 			);
-		}
-		else {
+		} else {
 			newOptionId = optionId ?? targetOption!.id;
 		}
 
@@ -183,11 +182,15 @@ export function ProvideVersionDetailsPage({
 			if (sku === 'DEVELOPER') {
 				value = skuProductOptions.developerOptionId;
 			}
-			else if (sku === 'STANDARD') {
+
+			if (sku === 'STANDARD') {
 				value = skuProductOptions.standardOptionId;
 			}
-		}
-		else {
+
+			if (sku === 'TRIAL') {
+				value = skuProductOptions.trialOptionId;
+			}
+		} else {
 			value = skuProductOptions.noOptionId;
 		}
 
