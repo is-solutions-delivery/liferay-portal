@@ -267,7 +267,7 @@ public class KoroneikiRestController extends BaseRestController {
 						"type", "marketplace-app"
 					).build());
 
-				_koroneikiProductResource.postProduct(
+				koroneikiProduct = _koroneikiProductResource.postProduct(
 					jwt.getClaim("username"), jwt.getClaim("sub"),
 					koroneikiProduct);
 
