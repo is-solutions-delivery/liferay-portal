@@ -93,7 +93,8 @@ export function ProvideVersionDetailsPage({
 			newOptionId = await postOption(
 				isDXP ? getDxpOptionBody() : getTrialOptionBody()
 			);
-		} else {
+		}
+		else {
 			newOptionId = optionId ?? targetOption!.id;
 		}
 
@@ -190,7 +191,8 @@ export function ProvideVersionDetailsPage({
 			if (sku === 'TRIAL') {
 				value = skuProductOptions.trialOptionId;
 			}
-		} else {
+		}
+		else {
 			value = skuProductOptions.noOptionId;
 		}
 
