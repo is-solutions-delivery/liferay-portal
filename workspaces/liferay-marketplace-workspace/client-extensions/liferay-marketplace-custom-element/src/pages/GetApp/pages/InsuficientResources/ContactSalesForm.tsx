@@ -63,8 +63,7 @@ const ContactSalesForm = () => {
 			Liferay.Util.navigate(
 				Liferay.ThemeDisplay.getCanonicalURL().replace('/get-app', '')
 			);
-		}
-		catch (error) {
+		} catch (error) {
 			Liferay.Util.openToast({
 				message: i18n.translate('an-unexpected-error-occurred'),
 				type: 'danger',
@@ -78,9 +77,9 @@ const ContactSalesForm = () => {
 				description={
 					<div className="d-flex flex-column justify-content-center text-center w-100">
 						<p className="m-0">
-							{i18n.translate(
-								'The selected project does not meet the necessary resource requirements for this app. Please contact sales to request additional resources.'
-							)}
+							The selected project does not meet the necessary
+							resource requirements for this app. Please contact
+							sales to request additional resources.
 						</p>
 					</div>
 				}
@@ -126,9 +125,7 @@ const ContactSalesForm = () => {
 						boldLabel
 						label={i18n.translate('additional-apps-requested')}
 						name="additionalAppsRequested"
-						placeholder={i18n.translate(
-							'Enter additional apps requested'
-						)}
+						placeholder="Enter additional apps requested"
 						required={false}
 						type="textarea"
 					/>
@@ -138,7 +135,7 @@ const ContactSalesForm = () => {
 						boldLabel
 						label={i18n.translate('comments')}
 						name="comments"
-						placeholder={i18n.translate('Describe your request')}
+						placeholder="Describe your request"
 						required={false}
 						type="textarea"
 					/>

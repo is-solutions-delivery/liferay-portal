@@ -23,7 +23,10 @@ export function translate(
 	return languageProperties[word] || word;
 }
 
-export function sub(word: Word, words: Word[] | Word): string {
+export function sub(
+	word: Word,
+	words: Word[] | Word | string | string[]
+): string {
 	if (!Array.isArray(words)) {
 		words = [words];
 	}
@@ -31,7 +34,7 @@ export function sub(word: Word, words: Word[] | Word): string {
 	let translatedWord = translate(word);
 
 	words.forEach((value, index) => {
-		const translatedKey = translate(value);
+		const translatedKey = translate(value as Word);
 		const key = `{${index}}`;
 		translatedWord = translatedWord.replace(key, translatedKey);
 	});

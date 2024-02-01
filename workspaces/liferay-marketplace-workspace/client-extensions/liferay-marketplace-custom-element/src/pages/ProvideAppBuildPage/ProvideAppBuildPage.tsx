@@ -314,8 +314,7 @@ export function ProvideAppBuildPage({
 			}
 
 			newCategories = [...categories.items, ...newCategories];
-		}
-		else {
+		} else {
 			newCategories = [
 				...categories.items.filter((category) => {
 					if (
@@ -371,8 +370,7 @@ export function ProvideAppBuildPage({
 						tableName: 'CUSTOM_FIELDS',
 					});
 				}
-			}
-			catch (error) {
+			} catch (error) {
 				console.error(
 					'Failed during the submitAppBuildPackages',
 					error
@@ -670,7 +668,7 @@ export function ProvideAppBuildPage({
 						tooltip={i18n.translate(
 							appType.value === ProductType.CLOUD
 								? 'you-can-upload-one-or-many-zip-files-max-total-size-is-500-mb'
-								: 'only-jar-war-files-are-allowed-max-file-size-is-500mb.'
+								: 'only-jar-war-files-are-allowed-max-file-size-is-500mb'
 						)}
 						tooltipText={i18n.translate('more-info')}
 					>
@@ -755,8 +753,7 @@ export function ProvideAppBuildPage({
 								bodySpecification
 							);
 						}
-					}
-					catch (error) {
+					} catch (error) {
 						console.error(
 							'Something went wrong to buildCategores | buildTypeSpecifications | buildPackages | buildClouldResourceRequirements'
 						);
