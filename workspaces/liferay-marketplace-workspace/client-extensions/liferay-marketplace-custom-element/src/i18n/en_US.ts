@@ -239,4 +239,4 @@ export default {
 		'Your request completed successfully',
 	'zip-files-must-be-in-universal-file-format-archive-uffa-the-specially-structured-zip-encoded-archive-used-to-package-client-extension-project-outputs-this-format-must-support-the-following-use-cases-deliver-batch-engine-data-files-compatible-with-all-deployment-targets-deliver-dxp-configuration-resource-compatible-with-all-deployment-targets-deliver-static-resources-compatible-with-all-deployment-targets-deliver-the-infrastructure-metadata-necessary-to-deploy-to-lxc-sm-for-more-information-see':
 		'ZIP Files must be in universal file format archive (UFFA) - the specially structured, ZIP encoded archive used to package client extension project outputs This format must support the following use cases: deliver batch engine data files compatible with all deployment targets deliver DXP configuration resource compatible with all deployment targets deliver static resources compatible with all deployment targets deliver the infrastructure metadata necessary to deploy to LXC-(SM) For more information see: ',
-};
+} as const;
