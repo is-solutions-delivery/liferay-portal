@@ -127,14 +127,6 @@ export function NewAppToolBar({
 							</span>
 						</ClayButton>
 					</Link>
-
-					<button className="new-app-tool-bar-button-save-draft">
-						Save as draft
-					</button>
-
-					<button className="new-app-tool-bar-button-preview-storefront">
-						Preview Storefront
-					</button>
 				</ClayButton.Group>
 
 				{enableDropdown && (
