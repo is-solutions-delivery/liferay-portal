@@ -28,6 +28,8 @@ import getReplaceCurrentURL from './utils/getReplaceCurrentURL';
 import {postCartByPaymentMethod} from './utils/postCartByPaymentMethod';
 
 import './styles/index.scss';
+import i18n from '../../i18n';
+import {Liferay} from '../../liferay/liferay';
 
 const getProductBasePriceAndTrial = (
 	product: DeliveryProduct,
@@ -73,8 +75,7 @@ const getProductBasePriceAndTrial = (
 					skuOption.skuOptionValueKey === 'no'
 			)
 		);
-	}
-	else {
+	} else {
 		const skusLicenseUsageTypes = skus
 			.map(({skuOptions, ...sku}) => ({
 				...sku,
@@ -109,7 +110,7 @@ const GetAppOutlet = () => {
 		{
 			account,
 			isCloudApp,
-			license: {selectedSKU},
+			license: {selectedSKU, type},
 			payment: {
 				billingAddress,
 				invoice: {email, purchaseOrderNumber},
@@ -167,7 +168,10 @@ const GetAppOutlet = () => {
 				project,
 				purchaseOrderNumber,
 				selectedAccount: account,
-				selectedPaymentMethod: paymentMethod,
+				selectedPaymentMethod:
+					type.toLowerCase() === PaymentMethod.TRIAL && selectedSKU
+						? 'trial'
+						: paymentMethod,
 				selectedSKU,
 				sku: sku as any,
 			});
@@ -210,9 +214,13 @@ const GetAppOutlet = () => {
 			}
 
 			window.location.href = nextStepsCallbackURL;
-		}
-		catch (error) {
+		} catch (error) {
 			console.error('Unable to handleGetApp', error);
+
+			Liferay.Util.openToast({
+				message: i18n.translate('an-unexpected-error-occurred'),
+				type: 'danger',
+			});
 		}
 
 		setLoading(false);

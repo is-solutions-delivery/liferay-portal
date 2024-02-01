@@ -36,6 +36,7 @@ const ProductFooter: React.FC<ProductFooterProps> = ({
 			appResourceInfo: {hasResources},
 			currentStep,
 			formState: {isValid},
+			license: {selectedSKU, type},
 			project,
 			steps,
 		},
@@ -53,6 +54,10 @@ const ProductFooter: React.FC<ProductFooterProps> = ({
 			return 'Get App';
 		}
 
+		if (type.toLowerCase() === PaymentMethod.TRIAL) {
+			return 'Start Free Trial';
+		}
+
 		if (
 			[StepType.ACCOUNT, StepType.LICENSES, StepType.PROJECT].includes(
 				step.id
@@ -63,10 +68,6 @@ const ProductFooter: React.FC<ProductFooterProps> = ({
 
 		if (selectedPaymentMethod === PaymentMethod.PAY) {
 			return `Pay ${cartUtil?.cart?.summary?.totalFormatted ?? 0} Now`;
-		}
-
-		if (selectedPaymentMethod === PaymentMethod.TRIAL) {
-			return 'Start Free Trial';
 		}
 
 		if (selectedPaymentMethod === PaymentMethod.ORDER) {
@@ -81,9 +82,15 @@ const ProductFooter: React.FC<ProductFooterProps> = ({
 	};
 
 	const onContinue = async () => {
+		const cartId = cartUtil.cart?.id;
+
 		if (nextStep) {
-			if (step.id === StepType.ACCOUNT && isFreeApp) {
-				return handleGetApp(cartUtil.cart?.id);
+			const earlyGetApp =
+				(step.id === StepType.ACCOUNT && isFreeApp) ||
+				(type.toLowerCase() === PaymentMethod.TRIAL && selectedSKU);
+
+			if (earlyGetApp) {
+				return handleGetApp(cartId);
 			}
 
 			if (step.id === StepType.PROJECT && !hasResources) {
@@ -106,7 +113,7 @@ const ProductFooter: React.FC<ProductFooterProps> = ({
 			await cartUtil.removeCart(cartUtil?.cart?.id);
 		}
 
-		await handleGetApp(cartUtil.cart?.id);
+		await handleGetApp(cartId);
 	};
 
 	const isPaymentStepType =

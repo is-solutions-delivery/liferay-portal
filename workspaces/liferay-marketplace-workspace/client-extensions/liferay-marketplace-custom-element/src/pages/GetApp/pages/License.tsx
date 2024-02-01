@@ -75,6 +75,7 @@ export default function LicenseSelector() {
 								type: 'SET_SELETED_SKU',
 							})
 						}
+						selectedSKU={license.selectedSKU}
 					/>
 				)}
 

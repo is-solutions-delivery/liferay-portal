@@ -66,7 +66,17 @@ const initialState: InitialState = {
 	isCloudApp: false,
 	license: {cart: undefined, cartItems: [], selectedSKU: undefined, type: ''},
 	payment: {
-		billingAddress: {} as BillingAddress,
+		billingAddress: {
+			city: 'LA',
+			country: 'US',
+			countryISOCode: 'US',
+			name: 'LA',
+			phoneNumber: '',
+			regionISOCode: 'CA',
+			street1: 'LA',
+			street2: '',
+			zip: '90001',
+		} as BillingAddress,
 		eula: '',
 		eulaCheckbox: false,
 		invoice: {
@@ -274,6 +284,10 @@ const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 		}
 
 		if (StepType.LICENSES === currentStepId) {
+			if (state.license.type === 'TRIAL') {
+				return state.license.selectedSKU;
+			}
+
 			return !!state.license.cart && !!state.license.cartItems.length;
 		}
 
@@ -281,16 +295,16 @@ const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 
 		const paymentMethod = state.payment.method;
 
+		if (paymentMethod === 'pay') {
+			return state.payment.eulaCheckbox;
+		}
+
 		const isAddressValid = zodSchema.billingAddress.safeParse(
 			state.payment.billingAddress
 		);
 
 		if (!isAddressValid.success) {
 			return false;
-		}
-
-		if (paymentMethod === 'pay') {
-			return state.payment.eulaCheckbox;
 		}
 
 		if (paymentMethod === 'order') {
