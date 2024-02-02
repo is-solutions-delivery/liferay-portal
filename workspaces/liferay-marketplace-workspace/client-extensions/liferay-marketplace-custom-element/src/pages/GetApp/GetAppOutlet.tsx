@@ -75,8 +75,7 @@ const getProductBasePriceAndTrial = (
 					skuOption.skuOptionValueKey === 'no'
 			)
 		);
-	}
-	else {
+	} else {
 		const skusLicenseUsageTypes = skus
 			.map(({skuOptions, ...sku}) => ({
 				...sku,
@@ -110,6 +109,7 @@ const GetAppOutlet = () => {
 	const [
 		{
 			account,
+			appResourceInfo,
 			isCloudApp,
 			license: {selectedSKU, type},
 			payment: {
@@ -215,8 +215,7 @@ const GetAppOutlet = () => {
 			}
 
 			window.location.href = nextStepsCallbackURL;
-		}
-		catch (error) {
+		} catch (error) {
 			console.error('Unable to handleGetApp', error);
 
 			Liferay.Util.openToast({
@@ -244,10 +243,13 @@ const GetAppOutlet = () => {
 				productBasePriceAndTrial={productBasePriceAndTrial}
 			/>
 
-			<main>
-				<div className="border d-flex flex-column mt-7 p-5 rounded">
+			<div className="border d-flex flex-column mt-7 p-5 rounded">
+				<main>
 					<div className="d-flex flex-column">
-						{!isFreeApp && <ProductStepWizard />}
+						{!isFreeApp &&
+							appResourceInfo.hasConsoleProjectsAvailable && (
+								<ProductStepWizard />
+							)}
 
 						<Outlet
 							context={{
@@ -257,16 +259,16 @@ const GetAppOutlet = () => {
 							}}
 						/>
 					</div>
-				</div>
-			</main>
+				</main>
 
-			<ProductFooter
-				cartUtil={cartUtil}
-				disabled={loading}
-				handleGetApp={handleGetApp}
-				isFreeApp={isFreeApp}
-				selectedPaymentMethod={paymentMethod}
-			/>
+				<ProductFooter
+					cartUtil={cartUtil}
+					disabled={loading}
+					handleGetApp={handleGetApp}
+					isFreeApp={isFreeApp}
+					selectedPaymentMethod={paymentMethod}
+				/>
+			</div>
 		</div>
 	);
 };

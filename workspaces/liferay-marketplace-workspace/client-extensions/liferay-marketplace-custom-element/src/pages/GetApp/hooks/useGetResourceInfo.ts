@@ -40,7 +40,7 @@ const useGetResourceInfo = ({
 }) => {
 	const marketplaceSpringBootOAuth2 = useMarketplaceSpringBootOAuth2();
 
-	const {data: productUsages} = useSWR(
+	const {data: productUsages, isLoading} = useSWR(
 		shouldFetch ? '/product-usages' : null,
 		() => marketplaceSpringBootOAuth2.getProductUsages()
 	);
@@ -88,7 +88,11 @@ const useGetResourceInfo = ({
 	}
 
 	return {
+		hasConsoleProjectsAvailable: !shouldFetch
+			? true
+			: productUsages?.userProjects.length && !isLoading,
 		hasResources: suficientInstances && validateRamAndCpu,
+		isLoading,
 		project,
 		resourceRequest: productUsages,
 	};

@@ -251,6 +251,14 @@ const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 				specificationKey === 'type' && value === 'cloud'
 		) ?? false;
 
+	const appResourceInfo = useGetResourceInfo({
+		product,
+		selectedProject: state.project,
+		shouldFetch: isCloudApp,
+	});
+
+	const {hasConsoleProjectsAvailable} = appResourceInfo;
+
 	const isFreeApp =
 		product?.productSpecifications.some(
 			({specificationKey, value}) =>
@@ -280,7 +288,7 @@ const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 		}
 
 		if (StepType.PROJECT === currentStepId) {
-			return !!state.project;
+			return !!state.project || hasConsoleProjectsAvailable;
 		}
 
 		if (StepType.LICENSES === currentStepId) {
@@ -317,13 +325,7 @@ const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 		}
 
 		return false;
-	}, [isFreeApp, state, steps]);
-
-	const appResourceInfo = useGetResourceInfo({
-		product,
-		selectedProject: state.project,
-		shouldFetch: isCloudApp,
-	});
+	}, [hasConsoleProjectsAvailable, isFreeApp, state, steps]);
 
 	return (
 		<GetAppContext.Provider

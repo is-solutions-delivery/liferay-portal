@@ -909,12 +909,13 @@ export async function updateApp({
 	appERC: string;
 	appName: string;
 }) {
-	return await fetch(
+	return fetch(
 		`${baseURL}/o/headless-commerce-admin-catalog/v1.0/products/by-externalReferenceCode/${appERC}`,
 		{
 			body: JSON.stringify({
 				description: {en_US: appDescription},
 				name: {en_US: appName},
+				productStatus: 2,
 			}),
 			headers,
 			method: 'PATCH',

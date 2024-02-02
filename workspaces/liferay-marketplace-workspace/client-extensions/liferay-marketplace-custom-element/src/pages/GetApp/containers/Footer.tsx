@@ -9,6 +9,7 @@ import {useNavigate} from 'react-router-dom';
 
 import {getSiteURL} from '../../../components/InviteMemberModal/services';
 import useCart from '../../../hooks/useCart';
+import i18n from '../../../i18n';
 import {Liferay} from '../../../liferay/liferay';
 import {useGetAppContext} from '../GetAppContextProvider';
 import {PaymentMethod} from '../enums/paymentMethod';
@@ -33,7 +34,7 @@ const ProductFooter: React.FC<ProductFooterProps> = ({
 	const [
 		{
 			account,
-			appResourceInfo: {hasResources},
+			appResourceInfo: {hasConsoleProjectsAvailable, hasResources},
 			currentStep,
 			formState: {isValid},
 			license: {selectedSKU, type},
@@ -50,6 +51,10 @@ const ProductFooter: React.FC<ProductFooterProps> = ({
 	const step = steps[currentStep];
 
 	const getButtonText = () => {
+		if (!hasConsoleProjectsAvailable && step.id === StepType.PROJECT) {
+			return `${i18n.translate('sign-in-with-a-different-account')}`;
+		}
+
 		if (isFreeApp) {
 			return 'Get App';
 		}
@@ -142,7 +147,7 @@ const ProductFooter: React.FC<ProductFooterProps> = ({
 					</ClayButton>
 
 					<div>
-						{previousStep && (
+						{previousStep && !hasConsoleProjectsAvailable && (
 							<ClayButton
 								displayType="secondary"
 								onClick={onPrevious}

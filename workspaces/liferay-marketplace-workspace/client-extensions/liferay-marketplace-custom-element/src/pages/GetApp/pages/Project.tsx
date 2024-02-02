@@ -16,6 +16,7 @@ import {Liferay} from '../../../liferay/liferay';
 import {ConsoleUserProject} from '../../../services/oauth/MarketplaceSpringBootOAuth2';
 import {useGetAppContext} from '../GetAppContextProvider';
 import {convertMegabyteToGigabyte} from '../hooks/useGetResourceInfo';
+import NoCloudProjects from './NoCloudProjects';
 
 const getCardContent = (project: ConsoleUserProject) => {
 	const cpu = project.rootProjectPlanUsage.cpu.limit;
@@ -32,7 +33,11 @@ const ProjectSelection = () => {
 	const [
 		{
 			account,
-			appResourceInfo: {resourceRequest},
+			appResourceInfo: {
+				hasConsoleProjectsAvailable,
+				isLoading,
+				resourceRequest,
+			},
 			project: selectedProject,
 		},
 		dispatch,
@@ -44,8 +49,12 @@ const ProjectSelection = () => {
 		resourceRequest?.userProjects,
 	]);
 
-	if (!resourceRequest) {
+	if (isLoading) {
 		return <ClayLoadingIndicator />;
+	}
+
+	if (!hasConsoleProjectsAvailable) {
+		return <NoCloudProjects />;
 	}
 
 	return (
@@ -79,7 +88,10 @@ const ProjectSelection = () => {
 									</p>
 								</div>
 								<div className="d-flex justify-content-end w-100">
-									<ClayButton className="project-selection-page-info-button">
+									<ClayButton
+										aria-label="info-button"
+										className="project-selection-page-info-button"
+									>
 										<ClayIcon
 											className="project-selection-page-info-button-icon"
 											symbol="question-circle"
