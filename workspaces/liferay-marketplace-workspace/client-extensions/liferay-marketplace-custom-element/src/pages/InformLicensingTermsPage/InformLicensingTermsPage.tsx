@@ -134,8 +134,7 @@ export function InformLicensingTermsPage({
 
 		if (trialSku) {
 			_skuTrialId = trialSku.id;
-		}
-		else if (!isDXP) {
+		} else if (!isDXP) {
 			const response = await createAppSKU({
 				appProductId,
 				body: {
@@ -266,13 +265,14 @@ export function InformLicensingTermsPage({
 
 			<NewAppPageFooterButtons
 				disableContinueButton={isProcessing}
+				isLoading={isProcessing}
 				onClickBack={() => onClickBack()}
 				onClickContinue={async () => {
 					setProcessing(true);
 
 					await submitLicenseTermsPage();
 
-					setProcessing(true);
+					setProcessing(false);
 
 					onClickContinue();
 				}}

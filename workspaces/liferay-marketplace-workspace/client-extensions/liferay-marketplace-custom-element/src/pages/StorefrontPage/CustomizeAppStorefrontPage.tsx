@@ -19,6 +19,7 @@ import './CustomizeAppStorefrontPage.scss';
 
 import {useState} from 'react';
 
+import i18n from '../../i18n';
 import {submitBase64EncodedFile} from '../../utils/util';
 
 const ACCEPT_FILE_TYPES = {
@@ -143,9 +144,12 @@ export function CustomizeAppStorefrontPage({
 
 			<NewAppPageFooterButtons
 				disableContinueButton={
-					!appStorefrontImages || !appStorefrontImages.length
+					isLoading ||
+					!appStorefrontImages ||
+					!appStorefrontImages.length
 				}
 				isLoading={isLoading}
+				loadingButtonText={i18n.translate('uploading-files')}
 				onClickBack={() => onClickBack()}
 				onClickContinue={async () => {
 					setIsLoading(true);

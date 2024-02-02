@@ -286,6 +286,7 @@ export function ProvideVersionDetailsPage({
 
 			<NewAppPageFooterButtons
 				disableContinueButton={!appVersion || !appNotes || isProcessing}
+				isLoading={isProcessing}
 				onClickBack={() => onClickBack()}
 				onClickContinue={async () => {
 					if (!productOptionId) {

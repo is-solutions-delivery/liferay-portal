@@ -21,10 +21,10 @@ interface NewAppPageFooterButtonsProps {
 
 export function NewAppPageFooterButtons({
 	backButtonText,
-	continueButtonText,
+	continueButtonText = 'Continue',
 	disableContinueButton,
 	isLoading = false,
-	loadingButtonText = 'Loading',
+	loadingButtonText = 'Continue',
 	onClickBack,
 	onClickContinue,
 	showBackButton = true,
@@ -56,7 +56,7 @@ export function NewAppPageFooterButtons({
 							/>
 						)}
 						{isLoading && loadingButtonText}
-						{!isLoading && (continueButtonText ?? 'Continue')}
+						{!isLoading && continueButtonText}
 					</span>
 				</button>
 			)}

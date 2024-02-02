@@ -89,6 +89,10 @@ const ProductFooter: React.FC<ProductFooterProps> = ({
 	const onContinue = async () => {
 		const cartId = cartUtil.cart?.id;
 
+		if (!hasConsoleProjectsAvailable && step.id === StepType.PROJECT) {
+			return Liferay.Util.navigate('/c/portal/logout');
+		}
+
 		if (nextStep) {
 			const earlyGetApp =
 				(step.id === StepType.ACCOUNT && isFreeApp) ||
@@ -147,7 +151,7 @@ const ProductFooter: React.FC<ProductFooterProps> = ({
 					</ClayButton>
 
 					<div>
-						{previousStep && !hasConsoleProjectsAvailable && (
+						{previousStep && hasConsoleProjectsAvailable && (
 							<ClayButton
 								displayType="secondary"
 								onClick={onPrevious}

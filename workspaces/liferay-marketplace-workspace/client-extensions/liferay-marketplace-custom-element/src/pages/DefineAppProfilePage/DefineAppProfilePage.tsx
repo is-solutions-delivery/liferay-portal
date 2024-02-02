@@ -30,7 +30,6 @@ import {submitBase64EncodedFile} from '../../utils/util';
 
 import './DefineAppProfilePage.scss';
 import {useMarketplaceContext} from '../../context/MarketplaceContext';
-import i18n from '../../i18n';
 
 type DefineAppProfilePageProps = {
 	onClickBack: () => void;
@@ -238,9 +237,7 @@ export function DefineAppProfilePage({
 	return (
 		<div className="profile-page-container">
 			<Header
-				description="Enter your new app details. 
-                                This information will be used for submission, 
-                                presentation, customer support, and search capabilities."
+				description="Enter your new app details. This information will be used for submission, presentation, customer support, and search capabilities."
 				title="Define the app profile"
 			/>
 
@@ -368,10 +365,13 @@ export function DefineAppProfilePage({
 
 			<NewAppPageFooterButtons
 				disableContinueButton={
-					!appCategories || !appDescription || !appName || !appTags
+					isLoading ||
+					!appCategories ||
+					!appDescription ||
+					!appName ||
+					!appTags
 				}
 				isLoading={isLoading}
-				loadingButtonText={i18n.translate('uploading-files')}
 				onClickBack={() => onClickBack()}
 				onClickContinue={onContinue}
 				showBackButton

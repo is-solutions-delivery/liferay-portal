@@ -288,7 +288,7 @@ const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 		}
 
 		if (StepType.PROJECT === currentStepId) {
-			return !!state.project || hasConsoleProjectsAvailable;
+			return state.project || !hasConsoleProjectsAvailable;
 		}
 
 		if (StepType.LICENSES === currentStepId) {

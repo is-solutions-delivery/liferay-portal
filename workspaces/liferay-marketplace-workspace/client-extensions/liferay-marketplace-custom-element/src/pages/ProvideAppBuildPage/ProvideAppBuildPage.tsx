@@ -483,7 +483,7 @@ export function ProvideAppBuildPage({
 				label={i18n.translate('cloud-compatible')}
 				required
 				tooltip={i18n.translate(
-					'a-liferay-cloud-app-is-a-collection-of-1-to-n-client-extension-artifacts-made-available-via-the-liferay-marketplace-it-is-installed-and-managed-as-a-single-atomic-unit-in-liferay-experience-cloud-a-dxp-app-is-a-jar-based-collection-meant-to-run-within-liferay-dxp-it-is-only-supported-on-self-hosted-or-self-managed-liferay-cloud-instances'
+					'a-cloud-app-is-a-client-extension-delivered-as-a-deployed-service-to-liferay-saas-and-liferay-paas-customers-dxp-apps-include-jar-based-collection-meant-to-run-within-liferay-dxp-fragments-client-extensions-that-do-not-require-dedicated-resources'
 				)}
 				tooltipText={i18n.translate('more-info')}
 			>
