@@ -30,6 +30,7 @@ import {submitBase64EncodedFile} from '../../utils/util';
 
 import './DefineAppProfilePage.scss';
 import {useMarketplaceContext} from '../../context/MarketplaceContext';
+import i18n from '../../i18n';
 
 type DefineAppProfilePageProps = {
 	onClickBack: () => void;
@@ -60,6 +61,7 @@ export function DefineAppProfilePage({
 	const [categories, setCategories] = useState<VocabDropdownItem[]>([]);
 	const [productType, setProductType] = useState<Categories>();
 	const [tags, setTags] = useState<VocabDropdownItem[]>([]);
+	const [isLoading, setLoading] = useState<boolean>(false);
 
 	const handleLogoUpload = (files: FileList) => {
 		const file = files[0];
@@ -96,14 +98,15 @@ export function DefineAppProfilePage({
 		let product;
 		let response;
 
+		setLoading(true);
+
 		if (appERC) {
 			response = await updateApp({
 				appDescription,
 				appERC,
 				appName,
 			});
-		}
-		else {
+		} else {
 			response = await createApp({
 				appCategories: [
 					...appCategories,
@@ -149,6 +152,8 @@ export function DefineAppProfilePage({
 				title: appLogo.fileName,
 			});
 		}
+
+		setLoading(false);
 
 		onClickContinue();
 	};
@@ -309,7 +314,6 @@ export function DefineAppProfilePage({
 						<Input
 							component="textarea"
 							label="Description"
-							localized
 							localizedTooltipText="Descriptions can be localized for each language your app supports.  Please choose the appropriate language and enter description in the language selected."
 							onChange={({target}) =>
 								dispatch({
@@ -366,8 +370,10 @@ export function DefineAppProfilePage({
 				disableContinueButton={
 					!appCategories || !appDescription || !appName || !appTags
 				}
+				isLoading={isLoading}
+				loadingButtonText={i18n.translate('uploading-files')}
 				onClickBack={() => onClickBack()}
-				onClickContinue={async () => await onContinue()}
+				onClickContinue={onContinue}
 				showBackButton
 			/>
 		</div>

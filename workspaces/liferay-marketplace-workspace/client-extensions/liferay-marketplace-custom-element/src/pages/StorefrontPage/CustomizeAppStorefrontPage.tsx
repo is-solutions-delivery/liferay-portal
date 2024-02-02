@@ -16,16 +16,20 @@ import {TYPES} from '../../manage-app-state/actionTypes';
 import {createImage} from '../../utils/api';
 
 import './CustomizeAppStorefrontPage.scss';
+
+import {useState} from 'react';
+
 import {submitBase64EncodedFile} from '../../utils/util';
 
-const acceptFileTypes = {
-	'image/*': ['.png', '.svg', '.jpg'],
+const ACCEPT_FILE_TYPES = {
+	'image/*': ['.png', '.svg', '.jpg', '.gif'],
 };
+const MAX_IMAGE_QUANTITY = 10;
 
-interface CustomizeAppStorefrontPageProps {
+type CustomizeAppStorefrontPageProps = {
 	onClickBack: () => void;
 	onClickContinue: () => void;
-}
+};
 
 export function CustomizeAppStorefrontPage({
 	onClickBack,
@@ -33,12 +37,20 @@ export function CustomizeAppStorefrontPage({
 }: CustomizeAppStorefrontPageProps) {
 	const [{appERC, appStorefrontImages}, dispatch] = useAppContext();
 
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+
 	const handleUpload = (files: File[]) => {
-		if (files.length > 5 || appStorefrontImages?.length > 5) {
+		if (
+			files.length > MAX_IMAGE_QUANTITY ||
+			appStorefrontImages?.length > MAX_IMAGE_QUANTITY
+		) {
 			return;
 		}
 
-		if ((appStorefrontImages?.length || 0) + files.length < 6) {
+		if (
+			(appStorefrontImages?.length || 0) + files.length <=
+			MAX_IMAGE_QUANTITY
+		) {
 			const newUploadedFiles: UploadedFile[] = files.map((file) => ({
 				error: false,
 				file,
@@ -50,22 +62,14 @@ export function CustomizeAppStorefrontPage({
 				uploaded: true,
 			}));
 
-			if (appStorefrontImages?.length) {
-				dispatch({
-					payload: {
-						files: [...appStorefrontImages, ...newUploadedFiles],
-					},
-					type: TYPES.UPLOAD_APP_STOREFRONT_IMAGES,
-				});
-			}
-			else {
-				dispatch({
-					payload: {
-						files: newUploadedFiles,
-					},
-					type: TYPES.UPLOAD_APP_STOREFRONT_IMAGES,
-				});
-			}
+			dispatch({
+				payload: {
+					files: appStorefrontImages?.length
+						? [...appStorefrontImages, ...newUploadedFiles]
+						: newUploadedFiles,
+				},
+				type: TYPES.UPLOAD_APP_STOREFRONT_IMAGES,
+			});
 		}
 	};
 
@@ -92,12 +96,12 @@ export function CustomizeAppStorefrontPage({
 			<Section
 				label="App Storefront"
 				required
-				tooltip="Screenshots for your app must not exceed 1080 pixels in width and 678 pixels in height and must be in JPG or PNG format.  The file site of each screenshot must not exceed 384KB.  Each screenshot should preferrably be the same size, but each will be automatically scaled to match the aspect ratio of the above dimensions. It is preferrable if they are named sequentially, but you can reorder them as needed."
+				tooltip={`Screenshots for your app must not exceed ${MAX_IMAGE_QUANTITY} 80 pixels in width and 678 pixels in height and must be in JPG or PNG format.  The file site of each screenshot must not exceed 384KB.  Each screenshot should preferrably be the same size, but each will be automatically scaled to match the aspect ratio of the above dimensions. It is preferrable if they are named sequentially, but you can reorder them as needed.`}
 				tooltipText="More Info"
 			>
 				<div className="storefront-page-info-container">
 					<span className="storefront-page-info-text">
-						Add up to 5 images
+						{`Add up to ${MAX_IMAGE_QUANTITY} images`}
 					</span>
 
 					{appStorefrontImages?.length > 0 && (
@@ -126,10 +130,10 @@ export function CustomizeAppStorefrontPage({
 				)}
 
 				<DropzoneUpload
-					acceptFileTypes={acceptFileTypes}
+					acceptFileTypes={ACCEPT_FILE_TYPES}
 					buttonText="Select a file"
 					description="Only gif, jpg, png are allowed. Max file size is 5MB "
-					maxFiles={5}
+					maxFiles={MAX_IMAGE_QUANTITY}
 					maxSize={5000000}
 					multiple={true}
 					onHandleUpload={handleUpload}
@@ -141,9 +145,14 @@ export function CustomizeAppStorefrontPage({
 				disableContinueButton={
 					!appStorefrontImages || !appStorefrontImages.length
 				}
+				isLoading={isLoading}
 				onClickBack={() => onClickBack()}
-				onClickContinue={() => {
-					appStorefrontImages?.forEach(async (image, index) => {
+				onClickContinue={async () => {
+					setIsLoading(true);
+
+					let index = 0;
+
+					for (const image of appStorefrontImages) {
 						await submitBase64EncodedFile({
 							appERC,
 							file: image.file,
@@ -152,9 +161,11 @@ export function CustomizeAppStorefrontPage({
 							requestFunction: createImage,
 							title: image.fileName,
 						});
-					});
+						index++;
+					}
 
 					onClickContinue();
+					setIsLoading(false);
 				}}
 			/>
 		</div>

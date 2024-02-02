@@ -126,6 +126,7 @@ export default {
 	'more-info': 'More Info',
 	'name': 'Name',
 	'no': 'No',
+	'no-cloud-projects-available': 'No Cloud Projects Available',
 	'no-licenses-yet': 'No Licenses yet',
 	'no-results-found': 'No results found',
 	'not-seeing-a-specific-project': 'Not seeing a specific Project?',
@@ -172,6 +173,7 @@ export default {
 	'self-hosted': 'Self-Hosted',
 	'self-managed': 'Self-Managed',
 	'send-request': 'Send Request',
+	'sign-in-with-a-different-account': 'Sign in with a different Account',
 	'sorry-there-are-no-results-found': 'Sorry, there are no results found',
 	'start-date': 'Start Date',
 	'status': 'Status',
@@ -216,6 +218,7 @@ export default {
 		'Unable to download your license file.  Please try again and/or contact support via the manage menu on the dashboard.',
 	'upload-liferay-plugin-packages': 'Upload Liferay Plugin Packages',
 	'upload-zip-files': 'Upload ZIP Files',
+	'uploading-files': 'Uploading Files',
 	'use-any-build-from-any-available-liferay-experience-cloud-account-requires-lxc-account':
 		'Use any build from any available Liferay Experience Cloud account (requires LXC account) ',
 	'use-any-build-from-your-computer-connecting-with-a-github-provider':

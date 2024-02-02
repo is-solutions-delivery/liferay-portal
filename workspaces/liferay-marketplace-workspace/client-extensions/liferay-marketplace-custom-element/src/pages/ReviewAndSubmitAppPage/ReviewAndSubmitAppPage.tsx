@@ -51,8 +51,7 @@ export function ReviewAndSubmitAppPage({
 			productResponse.categories.forEach((category: any) => {
 				if (category.vocabulary === 'marketplace app category') {
 					productCategories.push(category.name);
-				}
-				else if (category.vocabulary === 'marketplace app tags') {
+				} else if (category.vocabulary === 'marketplace app tags') {
 					productTags.push(category.name);
 				}
 			});
@@ -113,9 +112,8 @@ export function ReviewAndSubmitAppPage({
 					});
 				}
 
-				(dataProduct as any)[
-					specificationKey as string
-				] = localizedValue;
+				(dataProduct as any)[specificationKey as string] =
+					localizedValue;
 			});
 
 			const attachment = productResponse.attachments.find(
@@ -171,7 +169,6 @@ export function ReviewAndSubmitAppPage({
 			<Section
 				disabled={readonly}
 				label={!readonly ? 'App Submission' : ''}
-				required
 				tooltip={!readonly ? 'More info' : ''}
 				tooltipText={!readonly ? 'More Info' : ''}
 			>

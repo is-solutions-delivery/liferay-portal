@@ -93,8 +93,7 @@ export function ProvideVersionDetailsPage({
 			newOptionId = await postOption(
 				isDXP ? getDxpOptionBody() : getTrialOptionBody()
 			);
-		}
-		else {
+		} else {
 			newOptionId = optionId ?? targetOption!.id;
 		}
 
@@ -191,8 +190,7 @@ export function ProvideVersionDetailsPage({
 			if (sku === 'TRIAL') {
 				value = skuProductOptions.trialOptionId;
 			}
-		}
-		else {
+		} else {
 			value = skuProductOptions.noOptionId;
 		}
 
@@ -273,7 +271,6 @@ export function ProvideVersionDetailsPage({
 				<Input
 					component="textarea"
 					label="Notes"
-					localized
 					onChange={({target}) =>
 						dispatch({
 							payload: {value: target.value},
