@@ -93,8 +93,7 @@ export function ProvideVersionDetailsPage({
 			newOptionId = await postOption(
 				isDXP ? getDxpOptionBody() : getTrialOptionBody()
 			);
-		}
-		else {
+		} else {
 			newOptionId = optionId ?? targetOption!.id;
 		}
 
@@ -118,15 +117,18 @@ export function ProvideVersionDetailsPage({
 		});
 
 		if (isDXP) {
-			const [
-				standardOptionId,
-				developerOptionId,
-				trialOptionId,
-			] = await Promise.all([
-				postOptionValue(getOptionStandardBody(), newProductOptionId),
-				postOptionValue(getOptionDeveloperBody(), newProductOptionId),
-				postOptionValue(getOptionTrialBody(), newProductOptionId),
-			]);
+			const [standardOptionId, developerOptionId, trialOptionId] =
+				await Promise.all([
+					postOptionValue(
+						getOptionStandardBody(),
+						newProductOptionId
+					),
+					postOptionValue(
+						getOptionDeveloperBody(),
+						newProductOptionId
+					),
+					postOptionValue(getOptionTrialBody(), newProductOptionId),
+				]);
 
 			return {
 				developerOptionId,
@@ -182,12 +184,10 @@ export function ProvideVersionDetailsPage({
 		if (isDXP) {
 			if (sku === 'DEVELOPER') {
 				value = skuProductOptions.developerOptionId;
-			}
-			else if (sku === 'STANDARD') {
+			} else if (sku === 'STANDARD') {
 				value = skuProductOptions.standardOptionId;
 			}
-		}
-		else {
+		} else {
 			value = skuProductOptions.noOptionId;
 		}
 
@@ -268,7 +268,6 @@ export function ProvideVersionDetailsPage({
 				<Input
 					component="textarea"
 					label="Notes"
-					localized
 					onChange={({target}) =>
 						dispatch({
 							payload: {value: target.value},

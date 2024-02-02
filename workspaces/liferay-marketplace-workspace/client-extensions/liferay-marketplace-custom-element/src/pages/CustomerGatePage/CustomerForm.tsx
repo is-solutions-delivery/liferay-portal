@@ -139,8 +139,7 @@ const CreateCustomerAccountForm: React.FC<CreateCustomerAccountForm> = ({
 			await updateMyUserAccount(Number(user?.id), form);
 
 			window.location.href = `${origin}${getSiteURL()}/loading`;
-		}
-		catch (error) {
+		} catch (error) {
 			console.error(error);
 		}
 	};
@@ -248,11 +247,12 @@ const CreateCustomerAccountForm: React.FC<CreateCustomerAccountForm> = ({
 						)}
 
 						<input
+							title=""
 							accept={acceptedImageFormat.join()}
 							name="image"
 							onChange={handleFileChange}
 							ref={inputRef}
-							style={{display: 'none'}}
+							className="d-none"
 							type="file"
 						/>
 

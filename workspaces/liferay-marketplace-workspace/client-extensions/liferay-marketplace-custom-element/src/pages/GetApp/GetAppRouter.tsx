@@ -14,6 +14,7 @@ import ContactSalesForm from './pages/InsuficientResources/ContactSalesForm';
 import LicenseStep from './pages/License';
 import PaymentStep from './pages/Payment';
 import ProjectStep from './pages/Project';
+import NoCloudProjects from './pages/NoCloudProjects';
 
 const GetAppRouter = () => (
 	<GetAppContextProvider>

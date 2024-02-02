@@ -16,6 +16,7 @@ import {Liferay} from '../../../liferay/liferay';
 import {ConsoleUserProject} from '../../../services/oauth/MarketplaceSpringBootOAuth2';
 import {useGetAppContext} from '../GetAppContextProvider';
 import {convertMegabyteToGigabyte} from '../hooks/useGetResourceInfo';
+import NoCloudProjects from './NoCloudProjects';
 
 const getCardContent = (project: ConsoleUserProject) => {
 	const cpu = project.rootProjectPlanUsage.cpu.limit;
@@ -32,7 +33,7 @@ const ProjectSelection = () => {
 	const [
 		{
 			account,
-			appResourceInfo: {resourceRequest},
+			appResourceInfo: {resourceRequest, hasResources},
 			project: selectedProject,
 		},
 		dispatch,
@@ -40,12 +41,17 @@ const ProjectSelection = () => {
 
 	const {properties} = useContext(MarketplaceContext);
 
-	const userProjects = useMemo(() => resourceRequest?.userProjects ?? [], [
-		resourceRequest?.userProjects,
-	]);
+	const userProjects = useMemo(
+		() => resourceRequest?.userProjects ?? [],
+		[resourceRequest?.userProjects]
+	);
 
 	if (!resourceRequest) {
 		return <ClayLoadingIndicator />;
+	}
+
+	if (!resourceRequest.userProjects.length) {
+		return <NoCloudProjects />;
 	}
 
 	return (
@@ -79,7 +85,10 @@ const ProjectSelection = () => {
 									</p>
 								</div>
 								<div className="d-flex justify-content-end w-100">
-									<ClayButton className="project-selection-page-info-button">
+									<ClayButton
+										className="project-selection-page-info-button"
+										aria-label="info-button"
+									>
 										<ClayIcon
 											className="project-selection-page-info-button-icon"
 											symbol="question-circle"
@@ -94,7 +103,7 @@ const ProjectSelection = () => {
 				leftRadio
 				onSelect={(radioOption: RadioOption<ConsoleUserProject>) =>
 					dispatch({
-						payload: (radioOption.value as unknown) as string,
+						payload: radioOption.value as unknown as string,
 						type: 'SET_PROJECT',
 					})
 				}

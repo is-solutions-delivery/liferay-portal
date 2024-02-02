@@ -3,12 +3,15 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import ClayLoadingIndicator from '@clayui/loading-indicator';
 import './NewAppPageFooterButtons.scss';
 
 interface NewAppPageFooterButtonsProps {
 	backButtonText?: string;
 	continueButtonText?: string;
 	disableContinueButton?: boolean;
+	isLoading?: boolean;
+	loadingButtonText?: string;
 	onClickBack?: () => void;
 	onClickContinue: () => void;
 	showBackButton?: boolean;
@@ -19,6 +22,8 @@ export function NewAppPageFooterButtons({
 	backButtonText,
 	continueButtonText,
 	disableContinueButton,
+	isLoading = false,
+	loadingButtonText = 'Loading',
 	onClickBack,
 	onClickContinue,
 	showBackButton = true,
@@ -41,7 +46,17 @@ export function NewAppPageFooterButtons({
 					disabled={disableContinueButton}
 					onClick={() => onClickContinue()}
 				>
-					{continueButtonText ?? 'Continue'}
+					<span className="d-flex align-items-center">
+						{isLoading && (
+							<ClayLoadingIndicator
+								displayType="light"
+								className="m-0 mr-2"
+								size="sm"
+							/>
+						)}
+						{isLoading && loadingButtonText}
+						{!isLoading && (continueButtonText ?? 'Continue')}
+					</span>
 				</button>
 			)}
 		</div>

@@ -247,6 +247,12 @@ const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 				specificationKey === 'price-model' && value === 'Free'
 		) ?? false;
 
+	const appResourceInfo = useGetResourceInfo({
+		product,
+		selectedProject: state.project,
+		shouldFetch: isCloudApp,
+	});
+
 	const steps = useMemo(
 		() =>
 			state.steps.filter(({id}) =>
@@ -270,7 +276,10 @@ const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 		}
 
 		if (StepType.PROJECT === currentStepId) {
-			return !!state.project;
+			return (
+				!!state.project ||
+				!appResourceInfo.resourceRequest?.userProjects.length
+			);
 		}
 
 		if (StepType.LICENSES === currentStepId) {
@@ -304,12 +313,6 @@ const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 
 		return false;
 	}, [isFreeApp, state, steps]);
-
-	const appResourceInfo = useGetResourceInfo({
-		product,
-		selectedProject: state.project,
-		shouldFetch: isCloudApp,
-	});
 
 	return (
 		<GetAppContext.Provider

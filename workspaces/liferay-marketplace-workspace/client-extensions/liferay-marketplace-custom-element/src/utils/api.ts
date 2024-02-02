@@ -915,6 +915,7 @@ export async function updateApp({
 			body: JSON.stringify({
 				description: {en_US: appDescription},
 				name: {en_US: appName},
+				productStatus: 2,
 			}),
 			headers,
 			method: 'PATCH',
