@@ -17,11 +17,13 @@ import {createImage} from '../../utils/api';
 
 import './CustomizeAppStorefrontPage.scss';
 import {submitBase64EncodedFile} from '../../utils/util';
+import {useState} from 'react';
 
 const acceptFileTypes = {
-	'image/*': ['.png', '.svg', '.jpg'],
+	'image/*': ['.png', '.svg', '.jpg', '.gif'],
 };
 
+const maxImageQuantity = 10;
 interface CustomizeAppStorefrontPageProps {
 	onClickBack: () => void;
 	onClickContinue: () => void;
@@ -33,12 +35,17 @@ export function CustomizeAppStorefrontPage({
 }: CustomizeAppStorefrontPageProps) {
 	const [{appERC, appStorefrontImages}, dispatch] = useAppContext();
 
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+
 	const handleUpload = (files: File[]) => {
-		if (files.length > 5 || appStorefrontImages?.length > 5) {
+		if (
+			files.length > maxImageQuantity ||
+			appStorefrontImages?.length > maxImageQuantity
+		) {
 			return;
 		}
 
-		if ((appStorefrontImages?.length || 0) + files.length < 6) {
+		if ((appStorefrontImages?.length || 0) + files.length < 11) {
 			const newUploadedFiles: UploadedFile[] = files.map((file) => ({
 				error: false,
 				file,
@@ -57,8 +64,7 @@ export function CustomizeAppStorefrontPage({
 					},
 					type: TYPES.UPLOAD_APP_STOREFRONT_IMAGES,
 				});
-			}
-			else {
+			} else {
 				dispatch({
 					payload: {
 						files: newUploadedFiles,
@@ -92,12 +98,12 @@ export function CustomizeAppStorefrontPage({
 			<Section
 				label="App Storefront"
 				required
-				tooltip="Screenshots for your app must not exceed 1080 pixels in width and 678 pixels in height and must be in JPG or PNG format.  The file site of each screenshot must not exceed 384KB.  Each screenshot should preferrably be the same size, but each will be automatically scaled to match the aspect ratio of the above dimensions. It is preferrable if they are named sequentially, but you can reorder them as needed."
+				tooltip="Screenshots for your app must not exceed maxImageQuantity80 pixels in width and 678 pixels in height and must be in JPG or PNG format.  The file site of each screenshot must not exceed 384KB.  Each screenshot should preferrably be the same size, but each will be automatically scaled to match the aspect ratio of the above dimensions. It is preferrable if they are named sequentially, but you can reorder them as needed."
 				tooltipText="More Info"
 			>
 				<div className="storefront-page-info-container">
 					<span className="storefront-page-info-text">
-						Add up to 5 images
+						{`Add up to ${maxImageQuantity} images`}
 					</span>
 
 					{appStorefrontImages?.length > 0 && (
@@ -129,7 +135,7 @@ export function CustomizeAppStorefrontPage({
 					acceptFileTypes={acceptFileTypes}
 					buttonText="Select a file"
 					description="Only gif, jpg, png are allowed. Max file size is 5MB "
-					maxFiles={5}
+					maxFiles={maxImageQuantity}
 					maxSize={5000000}
 					multiple={true}
 					onHandleUpload={handleUpload}
@@ -143,6 +149,7 @@ export function CustomizeAppStorefrontPage({
 				}
 				onClickBack={() => onClickBack()}
 				onClickContinue={() => {
+					setIsLoading(true);
 					appStorefrontImages?.forEach(async (image, index) => {
 						await submitBase64EncodedFile({
 							appERC,
@@ -155,6 +162,7 @@ export function CustomizeAppStorefrontPage({
 					});
 
 					onClickContinue();
+					setIsLoading(true);
 				}}
 			/>
 		</div>

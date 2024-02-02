@@ -14,6 +14,7 @@ import {useGetAppContext} from '../GetAppContextProvider';
 import {PaymentMethod} from '../enums/paymentMethod';
 import {StepType} from '../enums/stepType';
 import LicenseTermsCheckbox from './LicenseTermsCheckbox';
+import i18n from '../../../i18n';
 
 type ProductFooterProps = {
 	cartUtil: ReturnType<typeof useCart>;
@@ -33,7 +34,7 @@ const ProductFooter: React.FC<ProductFooterProps> = ({
 	const [
 		{
 			account,
-			appResourceInfo: {hasResources},
+			appResourceInfo: {hasResources, resourceRequest},
 			currentStep,
 			formState: {isValid},
 			project,
@@ -49,6 +50,13 @@ const ProductFooter: React.FC<ProductFooterProps> = ({
 	const step = steps[currentStep];
 
 	const getButtonText = () => {
+		if (
+			!resourceRequest?.userProjects.length &&
+			step.id === StepType.PROJECT
+		) {
+			return `${i18n.translate('sign-in-with-a-different-account')}`;
+		}
+
 		if (isFreeApp) {
 			return 'Get App';
 		}
@@ -82,6 +90,13 @@ const ProductFooter: React.FC<ProductFooterProps> = ({
 
 	const onContinue = async () => {
 		if (nextStep) {
+			if (
+				step.id === StepType.PROJECT &&
+				!resourceRequest?.userProjects.length
+			) {
+				return Liferay.Util.navigate('/c/portal/logout');
+			}
+
 			if (step.id === StepType.ACCOUNT && isFreeApp) {
 				return handleGetApp(cartUtil.cart?.id);
 			}
@@ -135,14 +150,15 @@ const ProductFooter: React.FC<ProductFooterProps> = ({
 					</ClayButton>
 
 					<div>
-						{previousStep && (
-							<ClayButton
-								displayType="secondary"
-								onClick={onPrevious}
-							>
-								Back
-							</ClayButton>
-						)}
+						{previousStep &&
+							!!resourceRequest?.userProjects.length && (
+								<ClayButton
+									displayType="secondary"
+									onClick={onPrevious}
+								>
+									Back
+								</ClayButton>
+							)}
 
 						<ClayButton
 							className="ml-5"

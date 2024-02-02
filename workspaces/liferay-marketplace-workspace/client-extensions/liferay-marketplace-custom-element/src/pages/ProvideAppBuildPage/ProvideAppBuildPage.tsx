@@ -50,6 +50,7 @@ import {offeringTypesDescription} from './constants/offeringTypesDescriptions';
 
 import './ProvideAppBuildPage.scss';
 import ResourceRequirements from './ResourceRequirements';
+import {is} from 'date-fns/locale';
 
 type ProvideAppBuildPageProps = {
 	onClickBack: () => void;
@@ -166,6 +167,7 @@ export function ProvideAppBuildPage({
 	onClickContinue,
 }: ProvideAppBuildPageProps) {
 	const [isProcessing, setProcessing] = useState(false);
+	const [isLoading, setIsloading] = useState<boolean>(false);
 
 	const [
 		{
@@ -182,9 +184,8 @@ export function ProvideAppBuildPage({
 	const [selectedCheckboxValue, setSelectedCheckboxValue] = useState<
 		string[]
 	>([]);
-	const [visibleSelectVersionModal, setVisibleSelectVersionModal] = useState(
-		false
-	);
+	const [visibleSelectVersionModal, setVisibleSelectVersionModal] =
+		useState(false);
 
 	const bodySpecification = useMemo(
 		() => [
@@ -314,8 +315,7 @@ export function ProvideAppBuildPage({
 			}
 
 			newCategories = [...categories.items, ...newCategories];
-		}
-		else {
+		} else {
 			newCategories = [
 				...categories.items.filter((category) => {
 					if (
@@ -371,8 +371,7 @@ export function ProvideAppBuildPage({
 						tableName: 'CUSTOM_FIELDS',
 					});
 				}
-			}
-			catch (error) {
+			} catch (error) {
 				console.error(
 					'Failed during the submitAppBuildPackages',
 					error
@@ -540,9 +539,9 @@ export function ProvideAppBuildPage({
 							<OfferingTypeCheckbox
 								handleSelectCheckbox={handleSelectCheckbox}
 								offeringTypes={
-									(offeringTypesDescription[
+									offeringTypesDescription[
 										appType.value as ProductType
-									] as unknown) as OfferingType[]
+									] as unknown as OfferingType[]
 								}
 								selectedValue={selectedCheckboxValue}
 							/>
@@ -739,9 +738,12 @@ export function ProvideAppBuildPage({
 			)}
 
 			<NewAppPageFooterButtons
+				isLoading={isLoading}
+				loadingButtonText={i18n.translate('uploading')}
 				disableContinueButton={disableContinueButton}
 				onClickBack={() => onClickBack()}
 				onClickContinue={async () => {
+					setIsloading(true);
 					setProcessing(true);
 
 					try {
@@ -755,8 +757,7 @@ export function ProvideAppBuildPage({
 								bodySpecification
 							);
 						}
-					}
-					catch (error) {
+					} catch (error) {
 						console.error(
 							'Something went wrong to buildCategores | buildTypeSpecifications | buildPackages | buildClouldResourceRequirements'
 						);
@@ -765,6 +766,8 @@ export function ProvideAppBuildPage({
 					setProcessing(false);
 
 					onClickContinue();
+
+					setIsloading(false);
 				}}
 				showBackButton
 			/>

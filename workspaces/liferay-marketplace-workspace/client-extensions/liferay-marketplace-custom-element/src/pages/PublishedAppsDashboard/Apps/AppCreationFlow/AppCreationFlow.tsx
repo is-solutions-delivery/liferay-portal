@@ -30,12 +30,10 @@ type SetAppFlowListStateProps = {
 };
 
 export function AppCreationFlow() {
-	const [
-		{appERC, appLogo, appName, appProductId, priceModel},
-	] = useAppContext();
-	const [appFlowListItems, setAppFlowListItems] = useState(
-		initialFLowListItems
-	);
+	const [{appERC, appLogo, appName, appProductId, priceModel}] =
+		useAppContext();
+	const [appFlowListItems, setAppFlowListItems] =
+		useState(initialFLowListItems);
 	const [currentFlow, setCurrentFlow] = useState('create');
 	const {data: supplierAccount} = useSupplierAccount();
 
@@ -253,8 +251,7 @@ export function AppCreationFlow() {
 								});
 
 								setCurrentFlow('licensingPrice');
-							}
-							else {
+							} else {
 								setAppFlowListState({
 									checkedItems: [
 										'create',
@@ -327,8 +324,7 @@ export function AppCreationFlow() {
 								});
 
 								setCurrentFlow('licensingPrice');
-							}
-							else {
+							} else {
 								setAppFlowListState({
 									checkedItems: [
 										'create',

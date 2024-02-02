@@ -45,7 +45,7 @@ const getProductBasePriceAndTrial = (
 	}
 
 	const {isFreeApp} = getProductPriceModel(product);
-	const skus = (product.skus as unknown) as DeliverySKU[];
+	const skus = product.skus as unknown as DeliverySKU[];
 
 	if (isFreeApp) {
 		return {
@@ -73,8 +73,7 @@ const getProductBasePriceAndTrial = (
 					skuOption.skuOptionValueKey === 'no'
 			)
 		);
-	}
-	else {
+	} else {
 		const skusLicenseUsageTypes = skus
 			.map(({skuOptions, ...sku}) => ({
 				...sku,
@@ -107,6 +106,7 @@ const getProductBasePriceAndTrial = (
 const GetAppOutlet = () => {
 	const [
 		{
+			appResourceInfo,
 			account,
 			isCloudApp,
 			license: {selectedSKU},
@@ -117,6 +117,7 @@ const GetAppOutlet = () => {
 			},
 			product,
 			project = '',
+			steps,
 		},
 	] = useGetAppContext();
 
@@ -127,7 +128,7 @@ const GetAppOutlet = () => {
 	const navigate = useNavigate();
 
 	const productBasePriceAndTrial = getProductBasePriceAndTrial(
-		(product as unknown) as DeliveryProduct,
+		product as unknown as DeliveryProduct,
 		isCloudApp
 	);
 
@@ -210,8 +211,7 @@ const GetAppOutlet = () => {
 			}
 
 			window.location.href = nextStepsCallbackURL;
-		}
-		catch (error) {
+		} catch (error) {
 			console.error('Unable to handleGetApp', error);
 		}
 
@@ -234,10 +234,12 @@ const GetAppOutlet = () => {
 				productBasePriceAndTrial={productBasePriceAndTrial}
 			/>
 
-			<main>
-				<div className="border d-flex flex-column mt-7 p-5 rounded">
+			<div className="border d-flex flex-column mt-7 p-5 rounded">
+				<main>
 					<div className="d-flex flex-column">
-						{!isFreeApp && <ProductStepWizard />}
+						{!isFreeApp &&
+							!!appResourceInfo.resourceRequest?.userProjects
+								.length && <ProductStepWizard />}
 
 						<Outlet
 							context={{
@@ -247,16 +249,16 @@ const GetAppOutlet = () => {
 							}}
 						/>
 					</div>
-				</div>
-			</main>
+				</main>
 
-			<ProductFooter
-				cartUtil={cartUtil}
-				disabled={loading}
-				handleGetApp={handleGetApp}
-				isFreeApp={isFreeApp}
-				selectedPaymentMethod={paymentMethod}
-			/>
+				<ProductFooter
+					cartUtil={cartUtil}
+					disabled={loading}
+					handleGetApp={handleGetApp}
+					isFreeApp={isFreeApp}
+					selectedPaymentMethod={paymentMethod}
+				/>
+			</div>
 		</div>
 	);
 };

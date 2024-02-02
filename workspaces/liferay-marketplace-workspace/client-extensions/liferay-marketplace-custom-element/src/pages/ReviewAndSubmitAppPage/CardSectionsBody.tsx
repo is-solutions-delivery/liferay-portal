@@ -33,7 +33,6 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 		<>
 			<CardSection
 				enableEdit={!readonly}
-				localized
 				required
 				sectionName="Description"
 			>
@@ -44,7 +43,6 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 
 			<CardSection
 				enableEdit={!readonly}
-				localized
 				required
 				sectionName="Categories"
 			>
@@ -55,12 +53,7 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 				</div>
 			</CardSection>
 
-			<CardSection
-				enableEdit={!readonly}
-				localized
-				required
-				sectionName="Tags"
-			>
+			<CardSection enableEdit={!readonly} required sectionName="Tags">
 				<div className="card-section-body-section-tags">
 					{app?.tags.map((tag, index) => {
 						return <Tag key={index} label={tag}></Tag>;
@@ -70,7 +63,6 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 
 			<CardSection
 				enableEdit={!readonly}
-				localized
 				required
 				sectionName="Cloud Compatible"
 			>
@@ -94,7 +86,6 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 			{isCloud && (
 				<CardSection
 					enableEdit={readonly}
-					localized
 					required
 					sectionName={i18n.translate('resource-requirements')}
 				>
@@ -118,12 +109,7 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 				</CardSection>
 			)}
 
-			<CardSection
-				enableEdit={!readonly}
-				localized
-				required
-				sectionName="Build"
-			>
+			<CardSection enableEdit={!readonly} required sectionName="Build">
 				<div className="card-section-body-section-file">
 					<div className="card-section-body-section-file-container">
 						<img
@@ -145,12 +131,7 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 				</div>
 			</CardSection>
 
-			<CardSection
-				enableEdit={!readonly}
-				localized
-				required
-				sectionName="Pricing"
-			>
+			<CardSection enableEdit={!readonly} required sectionName="Pricing">
 				<CardView
 					description={
 						app?.['price-model'] === 'Free'
@@ -168,7 +149,6 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 
 			<CardSection
 				enableEdit={!readonly}
-				localized
 				required
 				sectionName="Licensing"
 			>
@@ -209,7 +189,6 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 
 			<CardSection
 				enableEdit={!readonly}
-				localized
 				required
 				sectionName="Storefront"
 			>
@@ -219,8 +198,10 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 							className="card-section-body-section-files"
 							key={id}
 						>
+							<div>{app?.storefront.length}</div>
 							<div className="card-section-body-section-files-container">
 								<img
+									alt="Image preview"
 									className="preview-image"
 									src={removeUnnecessaryURLString(src)}
 								/>
@@ -249,12 +230,7 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 				</div>
 			</CardSection>
 
-			<CardSection
-				enableEdit={!readonly}
-				localized
-				required
-				sectionName="Version"
-			>
+			<CardSection enableEdit={!readonly} required sectionName="Version">
 				<div className="card-section-body-section-version">
 					<div className="card-section-body-section-version-container">
 						<div className="card-section-body-section-version-container-icon">
@@ -276,7 +252,6 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 
 			<CardSection
 				enableEdit={!readonly}
-				localized
 				required
 				sectionName="Support & Help"
 			>

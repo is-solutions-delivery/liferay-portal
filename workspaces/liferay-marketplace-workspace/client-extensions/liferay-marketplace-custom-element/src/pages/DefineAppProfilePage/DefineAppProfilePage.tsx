@@ -60,8 +60,10 @@ export function DefineAppProfilePage({
 	const [categories, setCategories] = useState<VocabDropdownItem[]>([]);
 	const [productType, setProductType] = useState<Categories>();
 	const [tags, setTags] = useState<VocabDropdownItem[]>([]);
+	const [isLoading, setIsloading] = useState<boolean>(false);
 
 	const handleLogoUpload = (files: FileList) => {
+		setIsloading(true);
 		const file = files[0];
 
 		const newUploadedFile: UploadedFile = {
@@ -81,6 +83,7 @@ export function DefineAppProfilePage({
 			},
 			type: TYPES.UPDATE_APP_LOGO,
 		});
+		setIsloading(false);
 	};
 
 	const handleLogoDelete = () => {
@@ -102,8 +105,7 @@ export function DefineAppProfilePage({
 				appERC,
 				appName,
 			});
-		}
-		else {
+		} else {
 			response = await createApp({
 				appCategories: [
 					...appCategories,
@@ -117,7 +119,8 @@ export function DefineAppProfilePage({
 					{
 						channelId: channel?.id as number,
 						currencyCode: channel?.currencyCode as string,
-						externalReferenceCode: channel?.externalReferenceCode as string,
+						externalReferenceCode:
+							channel?.externalReferenceCode as string,
 						id: channel?.id as number,
 						name: channel?.name as string,
 						type: channel?.type as string,
@@ -271,6 +274,7 @@ export function DefineAppProfilePage({
 						<Input
 							component="input"
 							label="Name"
+							required
 							onChange={({target}) =>
 								dispatch({
 									payload: {
@@ -280,7 +284,6 @@ export function DefineAppProfilePage({
 								})
 							}
 							placeholder="Enter app name"
-							required
 							tooltip={ReactDOMServer.renderToString(
 								<span>
 									Customers of the marketplace will see this
@@ -309,7 +312,6 @@ export function DefineAppProfilePage({
 						<Input
 							component="textarea"
 							label="Description"
-							localized
 							localizedTooltipText="Descriptions can be localized for each language your app supports.  Please choose the appropriate language and enter description in the language selected."
 							onChange={({target}) =>
 								dispatch({
@@ -363,6 +365,8 @@ export function DefineAppProfilePage({
 			</div>
 
 			<NewAppPageFooterButtons
+				isLoading={isLoading}
+				loadingButtonText="Uploading Files"
 				disableContinueButton={
 					!appCategories || !appDescription || !appName || !appTags
 				}
