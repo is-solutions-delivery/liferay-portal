@@ -303,16 +303,16 @@ const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 
 		const paymentMethod = state.payment.method;
 
-		if (paymentMethod === 'pay') {
-			return state.payment.eulaCheckbox;
-		}
-
 		const isAddressValid = zodSchema.billingAddress.safeParse(
 			state.payment.billingAddress
 		);
 
 		if (!isAddressValid.success) {
 			return false;
+		}
+
+		if (paymentMethod === 'pay') {
+			return state.payment.eulaCheckbox;
 		}
 
 		if (paymentMethod === 'order') {
