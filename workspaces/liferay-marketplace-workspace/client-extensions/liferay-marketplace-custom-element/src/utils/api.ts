@@ -246,15 +246,6 @@ export async function getAccountGroup(accountId: number) {
 	return items as AccountGroup[];
 }
 
-export async function getAccountInfo({accountId}: {accountId: number}) {
-	const response = await fetch(
-		`${baseURL}/o/headless-admin-user/v1.0/accounts/${accountId}?nestedFields=accountUserAccounts`,
-		{headers, method: 'GET'}
-	);
-
-	return response.json();
-}
-
 export async function getAccountInfoFromCommerce(accountId?: number) {
 	const response = await fetch(
 		`${baseURL}/o/headless-commerce-admin-account/v1.0/accounts/${accountId}`,
