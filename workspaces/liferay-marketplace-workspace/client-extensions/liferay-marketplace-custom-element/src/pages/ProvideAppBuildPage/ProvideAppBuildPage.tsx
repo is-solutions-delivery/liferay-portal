@@ -6,7 +6,6 @@
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import {filesize} from 'filesize';
-import {uniqueId} from 'lodash';
 import {useCallback, useMemo, useState} from 'react';
 import ReactDOMServer from 'react-dom/server';
 
@@ -86,7 +85,7 @@ const UploadAppPackagesComponent = ({versionName}: {versionName: string}) => {
 			error: false,
 			file,
 			fileName: file.name,
-			id: uniqueId(),
+			id: crypto.randomUUID(),
 			preview: URL.createObjectURL(file),
 			progress: 0,
 			readableSize: filesize(file.size),
@@ -490,7 +489,7 @@ export function ProvideAppBuildPage({
 				<div className="provide-app-build-page-cloud-compatible-container">
 					<RadioCard
 						description={i18n.translate(
-							'create-a-cloud-app-using-client-extensions'
+							'create-a-cloud-app-to-be-delivered-as-a-live-service'
 						)}
 						icon={taskCheckedIcon}
 						onChange={() => handleAppTypeChange(ProductType.CLOUD)}
@@ -511,7 +510,7 @@ export function ProvideAppBuildPage({
 
 					<RadioCard
 						description={i18n.translate(
-							'create-a-dxp-app-using-a-plugin-package'
+							'create-a-dxp-app-to-be-delivered-as-a-download'
 						)}
 						icon={cancelIcon}
 						onChange={() => handleAppTypeChange(ProductType.DXP)}

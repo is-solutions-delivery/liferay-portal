@@ -30,10 +30,12 @@ type SetAppFlowListStateProps = {
 };
 
 export function AppCreationFlow() {
-	const [{appERC, appLogo, appName, appProductId, priceModel}] =
-		useAppContext();
-	const [appFlowListItems, setAppFlowListItems] =
-		useState(initialFLowListItems);
+	const [
+		{appERC, appLogo, appName, appProductId, priceModel},
+	] = useAppContext();
+	const [appFlowListItems, setAppFlowListItems] = useState(
+		initialFLowListItems
+	);
 	const [currentFlow, setCurrentFlow] = useState('create');
 	const {data: supplierAccount} = useSupplierAccount();
 
@@ -75,7 +77,6 @@ export function AppCreationFlow() {
 				accountName={supplierAccount?.name as string}
 				appImage={appLogo?.preview}
 				appName={appName}
-				enableDropdown={currentFlow === 'submit'}
 			/>
 
 			<div className="app-creation-flow-body">

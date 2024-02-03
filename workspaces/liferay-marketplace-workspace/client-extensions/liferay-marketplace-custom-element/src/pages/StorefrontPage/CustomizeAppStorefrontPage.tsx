@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import ClayButton from '@clayui/button';
 import {filesize} from 'filesize';
-import {uniqueId} from 'lodash';
 
 import {DropzoneUpload} from '../../components/DropzoneUpload/DropzoneUpload';
 import {FileList, UploadedFile} from '../../components/FileList/FileList';
@@ -56,7 +56,7 @@ export function CustomizeAppStorefrontPage({
 				error: false,
 				file,
 				fileName: file.name,
-				id: uniqueId(),
+				id: crypto.randomUUID(),
 				preview: URL.createObjectURL(file),
 				progress: 0,
 				readableSize: filesize(file.size),
@@ -106,8 +106,9 @@ export function CustomizeAppStorefrontPage({
 					</span>
 
 					{appStorefrontImages?.length > 0 && (
-						<button
-							className="storefront-page-info-button"
+						<ClayButton
+							className="font-weight-bold"
+							displayType="link"
 							onClick={() => {
 								dispatch({
 									payload: {
@@ -118,7 +119,7 @@ export function CustomizeAppStorefrontPage({
 							}}
 						>
 							Remove all
-						</button>
+						</ClayButton>
 					)}
 				</div>
 
@@ -149,7 +150,7 @@ export function CustomizeAppStorefrontPage({
 					!appStorefrontImages.length
 				}
 				isLoading={isLoading}
-				loadingButtonText={i18n.translate('uploading-files')}
+				loadingButtonText={i18n.translate('uploading-images')}
 				onClickBack={() => onClickBack()}
 				onClickContinue={async () => {
 					setIsLoading(true);

@@ -6,7 +6,6 @@
 /* eslint-disable react/no-unescaped-entities */
 
 import {filesize} from 'filesize';
-import {uniqueId} from 'lodash';
 import {useEffect, useState} from 'react';
 import ReactDOMServer from 'react-dom/server';
 
@@ -69,7 +68,7 @@ export function DefineAppProfilePage({
 			error: false,
 			file,
 			fileName: file.name,
-			id: uniqueId(),
+			id: crypto.randomUUID(),
 			preview: URL.createObjectURL(file),
 			progress: 0,
 			readableSize: filesize(file.size),

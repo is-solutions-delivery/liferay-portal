@@ -6,7 +6,6 @@
 import {useSearchParams} from 'react-router-dom';
 
 import documentIcon from '../../assets/icons/document_icon.svg';
-import downloadIcon from '../../assets/icons/download_icon.svg';
 import {Header} from '../../components/Header/Header';
 import {NewAppPageFooterButtons} from '../../components/NewAppPageFooterButtons/NewAppPageFooterButtons';
 import {useAppContext} from '../../manage-app-state/AppManageState';
@@ -14,9 +13,9 @@ import {TYPES} from '../../manage-app-state/actionTypes';
 
 import './CreateNewAppPage.scss';
 
-interface CreateNewAppPageProps {
+type CreateNewAppPageProps = {
 	onClickContinue: () => void;
-}
+};
 
 export function CreateNewAppPage({onClickContinue}: CreateNewAppPageProps) {
 	const [_, dispatch] = useAppContext();
@@ -49,15 +48,6 @@ export function CreateNewAppPage({onClickContinue}: CreateNewAppPageProps) {
 							Liferay Publisher License Agreement
 						</span>
 					</div>
-
-					<button className="create-new-app-card-header-button">
-						Download
-						<img
-							alt="Download Icon"
-							className="create-new-app-card-header-button-icon"
-							src={downloadIcon}
-						/>
-					</button>
 				</div>
 
 				<div className="create-new-app-card-body">

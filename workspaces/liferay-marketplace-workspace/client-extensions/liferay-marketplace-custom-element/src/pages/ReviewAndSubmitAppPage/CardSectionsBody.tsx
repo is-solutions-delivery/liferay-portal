@@ -31,21 +31,13 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 
 	return (
 		<>
-			<CardSection
-				enableEdit={!readonly}
-				required
-				sectionName="Description"
-			>
+			<CardSection required sectionName="Description">
 				<p className="card-section-body-section-paragraph">
 					{extractHTMLText(app?.description)}
 				</p>
 			</CardSection>
 
-			<CardSection
-				enableEdit={!readonly}
-				required
-				sectionName="Categories"
-			>
+			<CardSection required sectionName="Categories">
 				<div className="card-section-body-section-tags">
 					{app?.categories.map((tag, index) => {
 						return <Tag key={index} label={tag}></Tag>;
@@ -53,7 +45,7 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 				</div>
 			</CardSection>
 
-			<CardSection enableEdit={!readonly} required sectionName="Tags">
+			<CardSection required sectionName="Tags">
 				<div className="card-section-body-section-tags">
 					{app?.tags.map((tag, index) => {
 						return <Tag key={index} label={tag}></Tag>;
@@ -61,20 +53,16 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 				</div>
 			</CardSection>
 
-			<CardSection
-				enableEdit={!readonly}
-				required
-				sectionName="Cloud Compatible"
-			>
+			<CardSection required sectionName="Cloud Compatible">
 				<div className="card-section-body-cloud-compatible">
 					<CardView
 						description={
 							isCloud
 								? i18n.translate(
-										'create-a-cloud-app-using-client-extensions'
+										'create-a-cloud-app-to-be-delivered-as-a-live-service'
 								  )
 								: i18n.translate(
-										'create-a-dxp-app-using-a-plugin-package'
+										'create-a-dxp-app-to-be-delivered-as-a-download'
 								  )
 						}
 						icon={isCloud ? taskCheckedIcon : cancelIcon}
@@ -109,7 +97,7 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 				</CardSection>
 			)}
 
-			<CardSection enableEdit={!readonly} required sectionName="Build">
+			<CardSection required sectionName="Build">
 				<div className="card-section-body-section-file">
 					<div className="card-section-body-section-file-container">
 						<img
@@ -131,7 +119,7 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 				</div>
 			</CardSection>
 
-			<CardSection enableEdit={!readonly} required sectionName="Pricing">
+			<CardSection required sectionName="Pricing">
 				<CardView
 					description={
 						app?.['price-model'] === 'Free'
@@ -147,11 +135,7 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 				/>
 			</CardSection>
 
-			<CardSection
-				enableEdit={!readonly}
-				required
-				sectionName="Licensing"
-			>
+			<CardSection required sectionName="Licensing">
 				<CardView
 					description={
 						app?.['license-type'] === 'Perpetual'
@@ -187,11 +171,7 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 				</CardView>
 			</CardSection>
 
-			<CardSection
-				enableEdit={!readonly}
-				required
-				sectionName="Storefront"
-			>
+			<CardSection required sectionName="Storefront">
 				<div>
 					{app?.storefront?.map(({id, src, title}) => (
 						<div
@@ -230,7 +210,7 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 				</div>
 			</CardSection>
 
-			<CardSection enableEdit={!readonly} required sectionName="Version">
+			<CardSection required sectionName="Version">
 				<div className="card-section-body-section-version">
 					<div className="card-section-body-section-version-container">
 						<div className="card-section-body-section-version-container-icon">
@@ -250,11 +230,7 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 				</div>
 			</CardSection>
 
-			<CardSection
-				enableEdit={!readonly}
-				required
-				sectionName="Support & Help"
-			>
+			<CardSection required sectionName="Support & Help">
 				{app?.supportAndHelp.map(({icon, link, title}, index) => (
 					<CardLink
 						description={link as string}
