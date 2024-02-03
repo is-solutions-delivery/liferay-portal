@@ -15,7 +15,7 @@ import {
 	postEmailAppInformation,
 } from '../../utils/api';
 import {useGetAppContext} from './GetAppContextProvider';
-import ProductFooter from './containers/Footer';
+import ProductFooter from './containers/ProductFooter';
 import ProductHeader from './containers/ProductHeader';
 import ProductStepWizard from './containers/ProductStepWizard';
 import {PaymentMethod} from './enums/paymentMethod';
@@ -109,7 +109,6 @@ const GetAppOutlet = () => {
 	const [
 		{
 			account,
-			appResourceInfo,
 			isCloudApp,
 			license: {selectedSKU, type},
 			payment: {
@@ -246,10 +245,7 @@ const GetAppOutlet = () => {
 			<div className="border d-flex flex-column mt-7 p-5 rounded">
 				<main>
 					<div className="d-flex flex-column">
-						{!isFreeApp &&
-							appResourceInfo.hasConsoleProjectsAvailable && (
-								<ProductStepWizard />
-							)}
+						{!isFreeApp && <ProductStepWizard />}
 
 						<Outlet
 							context={{

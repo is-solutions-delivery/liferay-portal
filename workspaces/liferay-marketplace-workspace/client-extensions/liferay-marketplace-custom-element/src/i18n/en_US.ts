@@ -50,10 +50,10 @@ export default {
 	'content-policy': 'Content policy',
 	'continue': 'Continue',
 	'coupon-code': 'Coupon Code',
-	'create-a-cloud-app-using-client-extensions':
-		'Create a Cloud app using client extensions.',
-	'create-a-dxp-app-using-a-plugin-package':
-		'Create a DXP app using a plugin package.',
+	'create-a-cloud-app-to-be-delivered-as-a-live-service':
+		'Create a Cloud App to be delivered as a Live Service',
+	'create-a-dxp-app-to-be-delivered-as-a-download':
+		'Create a DXP App to be delivered as a download',
 	'create-license-key': 'Create License Key',
 	'create-new-licenses-and-they-will-show-up-here':
 		'Create new licenses and they will show up here.',
@@ -222,6 +222,7 @@ export default {
 	'upload-liferay-plugin-packages': 'Upload Liferay Plugin Packages',
 	'upload-zip-files': 'Upload ZIP Files',
 	'uploading-files': 'Uploading Files',
+	'uploading-images': 'Uploading Images',
 	'use-any-build-from-any-available-liferay-experience-cloud-account-requires-lxc-account':
 		'Use any build from any available Liferay SaaS account (requires Liferay SaaS account) ',
 	'use-any-build-from-your-computer-connecting-with-a-github-provider':
