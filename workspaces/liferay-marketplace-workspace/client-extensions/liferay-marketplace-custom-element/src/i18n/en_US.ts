@@ -89,6 +89,7 @@ export default {
 	'first-name': 'First Name',
 	'free': 'Free',
 	'fully-managed': 'Fully-Managed',
+	'get-app': 'Get App',
 	'go-back-to-marketplace': 'Go Back to Marketplace',
 	'go-to-marketplace': 'Go to Marketplace',
 	'host-name': 'Host Name',

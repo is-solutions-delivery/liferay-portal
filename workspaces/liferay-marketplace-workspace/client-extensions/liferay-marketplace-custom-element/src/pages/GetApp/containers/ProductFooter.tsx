@@ -4,186 +4,66 @@
  */
 
 import ClayButton from '@clayui/button';
-import ClayIcon from '@clayui/icon';
-import {useNavigate} from 'react-router-dom';
+import {useOutletContext} from 'react-router-dom';
 
 import {getSiteURL} from '../../../components/InviteMemberModal/services';
-import useCart from '../../../hooks/useCart';
 import i18n from '../../../i18n';
 import {Liferay} from '../../../liferay/liferay';
 import {useGetAppContext} from '../GetAppContextProvider';
-import {PaymentMethod} from '../enums/paymentMethod';
-import {StepType} from '../enums/stepType';
-import LicenseTermsCheckbox from './LicenseTermsCheckbox';
+import {GetAppOutletContext} from '../GetAppOutlet';
 
-type ProductFooterProps = {
-	cartUtil: ReturnType<typeof useCart>;
-	disabled: boolean;
-	handleGetApp: (orderId?: number) => void;
-	isFreeApp: boolean;
-	selectedPaymentMethod: PaymentMethodSelector;
+type ProductFooter = {
+	primaryButtonProps: React.ButtonHTMLAttributes<HTMLButtonElement>;
+	secondaryButtonProps?: {
+		visible?: boolean;
+	};
 };
 
-const ProductFooter: React.FC<ProductFooterProps> = ({
-	cartUtil,
-	disabled,
-	handleGetApp,
-	isFreeApp,
-	selectedPaymentMethod,
+const ProductFooter: React.FC<ProductFooter> = ({
+	primaryButtonProps = {},
+	secondaryButtonProps = {visible: true},
 }) => {
 	const [
 		{
-			account,
-			appResourceInfo: {hasConsoleProjectsAvailable, hasResources},
-			currentStep,
-			formState: {isValid},
-			license: {selectedSKU, type},
-			project,
-			steps,
+			stepState: {onNext, onPrevious},
 		},
-		dispatch,
 	] = useGetAppContext();
 
-	const navigate = useNavigate();
-
-	const nextStep = steps[currentStep + 1];
-	const previousStep = steps[currentStep - 1];
-	const step = steps[currentStep];
-
-	const getButtonText = () => {
-		if (!hasConsoleProjectsAvailable && step.id === StepType.PROJECT) {
-			return `${i18n.translate('sign-in-with-a-different-account')}`;
-		}
-
-		if (isFreeApp) {
-			return 'Get App';
-		}
-
-		if (type.toLowerCase() === PaymentMethod.TRIAL) {
-			return 'Start Free Trial';
-		}
-
-		if (
-			[StepType.ACCOUNT, StepType.LICENSES, StepType.PROJECT].includes(
-				step.id
-			)
-		) {
-			return 'Continue';
-		}
-
-		if (selectedPaymentMethod === PaymentMethod.PAY) {
-			return `Pay ${cartUtil?.cart?.summary?.totalFormatted ?? 0} Now`;
-		}
-
-		if (selectedPaymentMethod === PaymentMethod.ORDER) {
-			return `Create PO for ${cartUtil?.cart?.summary?.totalFormatted}`;
-		}
-	};
-
-	const onPrevious = () => {
-		dispatch({payload: currentStep - 1, type: 'SET_STEP'});
-
-		navigate(previousStep.path, {replace: true});
-	};
-
-	const onContinue = async () => {
-		const cartId = cartUtil.cart?.id;
-
-		if (!hasConsoleProjectsAvailable && step.id === StepType.PROJECT) {
-			return Liferay.Util.navigate('/c/portal/logout');
-		}
-
-		if (nextStep) {
-			const earlyGetApp =
-				(step.id === StepType.ACCOUNT && isFreeApp) ||
-				(type.toLowerCase() === PaymentMethod.TRIAL && selectedSKU);
-
-			if (earlyGetApp) {
-				return handleGetApp(cartId);
-			}
-
-			if (step.id === StepType.PROJECT && !hasResources) {
-				return navigate(
-					`/insuficient-resources/${project}/${
-						(account as Account).id
-					}`
-				);
-			}
-
-			dispatch({payload: currentStep + 1, type: 'SET_STEP'});
-
-			return navigate(nextStep.path, {replace: true});
-		}
-
-		if (
-			selectedPaymentMethod === PaymentMethod.TRIAL &&
-			cartUtil?.cart?.id
-		) {
-			await cartUtil.removeCart(cartUtil?.cart?.id);
-		}
-
-		await handleGetApp(cartId);
-	};
-
-	const isPaymentStepType =
-		StepType.PAYMENT === step.id &&
-		PaymentMethod.PAY === selectedPaymentMethod;
-
-	const displayTermsCheckbox = isPaymentStepType && !isFreeApp;
+	const {cartUtil} = useOutletContext<GetAppOutletContext>();
 
 	return (
-		<div>
-			{displayTermsCheckbox && <LicenseTermsCheckbox />}
+		<div className="mt-5 pt-2 text-black-50">
+			<div className="d-flex justify-content-between">
+				<ClayButton
+					displayType={null}
+					onClick={() => {
+						if (cartUtil?.cart?.id) {
+							cartUtil.removeCart(cartUtil.cart.id);
+						}
 
-			<div className="mt-5 pt-2 text-black-50">
-				<div className="d-flex justify-content-between">
-					<ClayButton
-						displayType={null}
-						onClick={() => {
-							if (cartUtil?.cart?.id) {
-								cartUtil.removeCart(cartUtil.cart.id);
-							}
+						Liferay.Util.navigate(getSiteURL());
+					}}
+				>
+					{i18n.translate('cancel')}
+				</ClayButton>
 
-							Liferay.Util.navigate(getSiteURL());
-						}}
-					>
-						Cancel
-					</ClayButton>
-
-					<div>
-						{previousStep && hasConsoleProjectsAvailable && (
-							<ClayButton
-								displayType="secondary"
-								onClick={onPrevious}
-							>
-								Back
-							</ClayButton>
-						)}
-
+				<div>
+					{secondaryButtonProps.visible && (
 						<ClayButton
-							className="ml-5"
-							disabled={!isValid || disabled}
-							onClick={onContinue}
+							displayType="secondary"
+							onClick={onPrevious}
 						>
-							{getButtonText()}
+							{i18n.translate('back')}
 						</ClayButton>
-					</div>
+					)}
+
+					<ClayButton
+						className="ml-5"
+						onClick={onNext}
+						{...primaryButtonProps}
+					/>
 				</div>
 			</div>
-
-			{isPaymentStepType && (
-				<div className="d-flex flex-column mt-5 text-gray text-right">
-					<span className="text-2">
-						You will be redirected to PayPal to complete payment
-					</span>
-
-					<span className="text-2">
-						<ClayIcon className="mr-2" symbol="info-panel-open" />
-						Terms, privacy, returns, or contact support. All costs
-						are in US Dollars
-					</span>
-				</div>
-			)}
 		</div>
 	);
 };

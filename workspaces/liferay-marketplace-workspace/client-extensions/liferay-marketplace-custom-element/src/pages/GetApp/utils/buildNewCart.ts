@@ -48,7 +48,10 @@ export default function buildNewCart({
 		],
 		currencyCode: channel.currencyCode,
 		...(project && {
-			customFields: {'Project Name': project},
+			customFields: {
+				'Cloud Project Name': project,
+				'Project Name': project,
+			},
 		}),
 		orderTypeExternalReferenceCode: orderType.externalReferenceCode,
 	};

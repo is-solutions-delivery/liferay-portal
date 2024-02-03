@@ -4,12 +4,12 @@
  */
 
 import ClayLink from '@clayui/link';
+import ClayLoadingIndicator from '@clayui/loading-indicator';
 import useSWR from 'swr';
 
-import RadioCardList, {
-	RadioCardContent,
-} from '../../../components/RadioCardList/RadioCardList';
-import {getAccountInfo} from '../../../utils/api';
+import RadioCardList from '../../../components/RadioCardList/RadioCardList';
+import {Liferay} from '../../../liferay/liferay';
+import headlessCommerceAdminUser from '../../../services/rest/HeadlessCommerceAdminUser';
 import LicenseTermsCheckbox from '../containers/LicenseTermsCheckbox';
 
 const enabledAccountRoles = ['Account Administrator', 'Account Buyer'];
@@ -27,32 +27,31 @@ const AccountSelection: React.FC<AccountSelectionProps> = ({
 	selectedAccount,
 	userAccount,
 }) => {
-	const {data: accounts = []} = useSWR('/accounts', async () => {
-		const radioAccountList: RadioCardContent<Account>[] = [];
+	const {data: accounts = [], isLoading} = useSWR(
+		`/get-app/accounts/${Liferay.ThemeDisplay.getUserId()}`,
+		async () => {
+			const accountBriefs = userAccount?.accountBriefs ?? [];
 
-		for (const accountBrief of userAccount?.accountBriefs ?? []) {
-			let displayAccount = false;
-			if (!accountBrief.roleBriefs.length) {
-				const accountInfo: Account = await getAccountInfo({
-					accountId: Number(accountBrief.id),
-				});
+			const accountsInfo = await Promise.all(
+				accountBriefs.map((accountBrief) =>
+					headlessCommerceAdminUser.getAccountInfo(accountBrief.id)
+				)
+			);
 
-				if (accountInfo.type === 'person') {
-					displayAccount = true;
+			return accountsInfo.map((accountInfo, index) => {
+				const accountBrief = accountBriefs[index];
+				let displayAccount = accountInfo.type === 'person';
+
+				if (accountBrief.roleBriefs.length) {
+					displayAccount = accountBriefs[
+						index
+					].roleBriefs.some((roleBrief) =>
+						enabledAccountRoles.includes(roleBrief.name)
+					);
 				}
-			}
-			else {
-				displayAccount = accountBrief.roleBriefs.some((roleBrief) =>
-					enabledAccountRoles.includes(roleBrief.name)
-				);
-			}
 
-			if (displayAccount) {
-				const accountInfo: Account = await getAccountInfo({
-					accountId: Number(accountBrief.id),
-				});
-
-				radioAccountList.push({
+				return {
+					displayAccount,
 					id: accountBrief.id,
 					imageURL: accountInfo.logoURL,
 					selected:
@@ -60,18 +59,21 @@ const AccountSelection: React.FC<AccountSelectionProps> = ({
 						accountInfo.externalReferenceCode,
 					title: accountInfo.name,
 					value: accountInfo,
-				});
-			}
-		}
-
-		return radioAccountList;
-	});
+				};
+			});
+		},
+		{revalidateIfStale: true}
+	);
 
 	const handleSelectAccount = (radioOption: RadioOption<Account>) => {
 		if (radioOption.value.id !== selectedAccount?.id) {
 			onSelectAccount(radioOption.value);
 		}
 	};
+
+	const accountsFiltered = accounts.filter(
+		({displayAccount}) => displayAccount
+	);
 
 	return (
 		<div>
@@ -83,16 +85,22 @@ const AccountSelection: React.FC<AccountSelectionProps> = ({
 				{` (you)`}
 			</p>
 
-			<RadioCardList
-				contentList={accounts.map((account) => ({
-					...account,
-					selected: selectedAccount?.id === account?.id,
-					title: <h5>{account.title}</h5>,
-				}))}
-				leftRadio
-				onSelect={handleSelectAccount}
-				showImage
-			/>
+			{isLoading ? (
+				<ClayLoadingIndicator />
+			) : accountsFiltered.length ? (
+				<RadioCardList
+					contentList={accountsFiltered.map((account) => ({
+						...account,
+						selected: selectedAccount?.id === account?.id,
+						title: <h5>{account.title}</h5>,
+					}))}
+					leftRadio
+					onSelect={handleSelectAccount}
+					showImage
+				/>
+			) : (
+				<p className="font-weight-bold my-5">No accounts available</p>
+			)}
 
 			{isFreeApp ? (
 				<LicenseTermsCheckbox />

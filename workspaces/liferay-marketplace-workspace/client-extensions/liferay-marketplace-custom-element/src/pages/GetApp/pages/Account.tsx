@@ -4,41 +4,47 @@
  */
 
 import {useMarketplaceContext} from '../../../context/MarketplaceContext';
+import i18n from '../../../i18n';
 import {useGetAppContext} from '../GetAppContextProvider';
 import AccountSelection from '../components/AccountSelection';
-import {PaymentMethod} from '../enums/paymentMethod';
+import Container from '../containers/Container';
 import getProductPriceModel from '../utils/getProductPriceModel';
 
-export type GetAppForm = {
-	account?: Account;
-	product?: DeliveryProduct;
-	project: string;
-	selectedPaymentMethod: PaymentMethod;
-	selectedSKU?: DeliverySKU;
-	selectedTimeline?: string;
-	userAccount?: UserAccount;
-};
-
 const GetAppPage = () => {
-	const [{account, product}, dispatch] = useGetAppContext();
+	const [
+		{
+			account,
+			formState: {isValid},
+			product,
+			stepState,
+		},
+		dispatch,
+	] = useGetAppContext();
 	const {isFreeApp} = getProductPriceModel(product);
 	const {myUserAccount} = useMarketplaceContext();
 
 	return (
-		<div className="d-flex flex-column">
-			<h1 className="my-4 text-center">Account Selection</h1>
-
-			<div className="mt-2">
-				<AccountSelection
-					isFreeApp={isFreeApp}
-					onSelectAccount={(account: Account) =>
-						dispatch({payload: account, type: 'SET_ACCOUNT'})
-					}
-					selectedAccount={account}
-					userAccount={myUserAccount}
-				/>
-			</div>
-		</div>
+		<Container
+			className="d-flex flex-column"
+			footerProps={{
+				primaryButtonProps: {
+					children: i18n.translate('continue'),
+					disabled: !isValid,
+					onClick: stepState.onNext,
+				},
+				secondaryButtonProps: {visible: false},
+			}}
+			title="Account Selection"
+		>
+			<AccountSelection
+				isFreeApp={isFreeApp}
+				onSelectAccount={(account: Account) =>
+					dispatch({payload: account, type: 'SET_ACCOUNT'})
+				}
+				selectedAccount={account}
+				userAccount={myUserAccount}
+			/>
+		</Container>
 	);
 };
 

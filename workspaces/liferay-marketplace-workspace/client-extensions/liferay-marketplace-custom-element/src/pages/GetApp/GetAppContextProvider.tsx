@@ -4,6 +4,7 @@
  */
 
 import {ReactNode, createContext, useContext, useMemo, useReducer} from 'react';
+import {useNavigate} from 'react-router-dom';
 
 import {useDeliveryProduct} from '../../hooks/data/useProduct';
 import zodSchema from '../../schema/zod';
@@ -41,6 +42,10 @@ type InitialState = {
 	};
 	product: DeliveryProduct;
 	project?: string;
+	stepState: {
+		onNext: () => void;
+		onPrevious: () => void;
+	};
 	steps: {id: StepType; path: string; title: string}[];
 };
 
@@ -86,6 +91,7 @@ const initialState: InitialState = {
 		method: 'pay',
 	},
 	product: {} as DeliveryProduct,
+	stepState: {} as InitialState['stepState'],
 	steps: [
 		{
 			id: StepType.ACCOUNT,
@@ -242,6 +248,7 @@ export const GetAppContext = createContext<
 const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 	children,
 }) => {
+	const navigate = useNavigate();
 	const [state, dispatch] = useReducer(reducer, initialState);
 	const {data: product} = useDeliveryProduct(getUrlParam('productId') ?? '');
 
@@ -327,6 +334,12 @@ const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 		return false;
 	}, [hasConsoleProjectsAvailable, isFreeApp, state, steps]);
 
+	const stepState = {
+		current: steps[state.currentStep],
+		next: steps[state.currentStep + 1],
+		previous: steps[state.currentStep - 1],
+	};
+
 	return (
 		<GetAppContext.Provider
 			value={[
@@ -338,6 +351,24 @@ const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 					},
 					isCloudApp,
 					product: product as DeliveryProduct,
+					stepState: {
+						onNext() {
+							dispatch({
+								payload: state.currentStep + 1,
+								type: 'SET_STEP',
+							});
+
+							navigate(stepState.next.path, {replace: true});
+						},
+						onPrevious() {
+							dispatch({
+								payload: state.currentStep - 1,
+								type: 'SET_STEP',
+							});
+
+							navigate(stepState.previous.path, {replace: true});
+						},
+					},
 					steps,
 				},
 				dispatch,

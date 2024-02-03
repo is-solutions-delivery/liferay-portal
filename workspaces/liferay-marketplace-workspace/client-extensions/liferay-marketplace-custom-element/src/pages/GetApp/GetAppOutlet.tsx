@@ -15,7 +15,6 @@ import {
 	postEmailAppInformation,
 } from '../../utils/api';
 import {useGetAppContext} from './GetAppContextProvider';
-import ProductFooter from './containers/ProductFooter';
 import ProductHeader from './containers/ProductHeader';
 import ProductStepWizard from './containers/ProductStepWizard';
 import {PaymentMethod} from './enums/paymentMethod';
@@ -148,7 +147,7 @@ const GetAppOutlet = () => {
 
 	const {isFreeApp, priceModel} = getProductPriceModel(product);
 
-	async function handleGetApp(orderId?: number) {
+	async function handleGetApp(orderId = cartUtil?.cart?.id) {
 		setLoading(true);
 
 		const productSpecificationValues = getProductSpecificationValues(
@@ -251,19 +250,15 @@ const GetAppOutlet = () => {
 							context={{
 								addresses,
 								cartUtil,
+								handleGetApp,
+								isFreeApp,
+								loading,
 								productBasePriceAndTrial,
+								selectedPaymentMethod: paymentMethod,
 							}}
 						/>
 					</div>
 				</main>
-
-				<ProductFooter
-					cartUtil={cartUtil}
-					disabled={loading}
-					handleGetApp={handleGetApp}
-					isFreeApp={isFreeApp}
-					selectedPaymentMethod={paymentMethod}
-				/>
 			</div>
 		</div>
 	);
@@ -272,7 +267,11 @@ const GetAppOutlet = () => {
 export type GetAppOutletContext = {
 	addresses: BillingAddress[];
 	cartUtil: ReturnType<typeof useCart>;
+	handleGetApp: (orderId?: number) => void;
+	isFreeApp: boolean;
+	loading: boolean;
 	productBasePriceAndTrial: ReturnType<typeof getProductBasePriceAndTrial>;
+	selectedPaymentMethod: PaymentMethod;
 };
 
 export {getProductBasePriceAndTrial};
