@@ -140,7 +140,7 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 					description={
 						app?.['license-type'] === 'Perpetual'
 							? 'License never expires.'
-							: 'License must be renewed annually.'
+							: 'App License must be renewed annually.'
 					}
 					icon={
 						app?.['license-type'] === 'Perpetual'
@@ -150,7 +150,7 @@ export function CardSectionsBody({app, readonly}: CardSectionsBodyProps) {
 					title={
 						app?.['license-type'] === 'Perpetual'
 							? 'Perpetual License'
-							: 'Non-perpetual License'
+							: 'Subscription License'
 					}
 				>
 					{app?.['price-model'] === 'Paid' && (

@@ -134,8 +134,7 @@ export function InformLicensingTermsPage({
 
 		if (trialSku) {
 			_skuTrialId = trialSku.id;
-		}
-		else if (!isDXP) {
+		} else if (!isDXP) {
 			const response = await createAppSKU({
 				appProductId,
 				body: {
@@ -190,7 +189,7 @@ export function InformLicensingTermsPage({
 			>
 				<div className="informing-licensing-terms-page-app-license-container">
 					<RadioCard
-						description="The app is offered in the Marketplace with no charge."
+						description="The app version is offered in perpetuity."
 						icon={scheduleIcon}
 						onChange={() => {
 							dispatch({
@@ -207,7 +206,7 @@ export function InformLicensingTermsPage({
 					/>
 
 					<RadioCard
-						description="License must be renewed annually."
+						description="App License must be renewed annually."
 						disabled={priceModel.value === 'Free'}
 						icon={pendingActionsIcon}
 						onChange={() => {
@@ -220,7 +219,7 @@ export function InformLicensingTermsPage({
 							});
 						}}
 						selected={appLicense.value === 'non-perpetual'}
-						title="Non-perpetual license"
+						title="Subscription License"
 						tooltip="A subscription license that must be renewed annually."
 					/>
 				</div>
