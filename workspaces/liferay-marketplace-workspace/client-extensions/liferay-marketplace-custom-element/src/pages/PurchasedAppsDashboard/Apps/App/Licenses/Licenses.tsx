@@ -68,7 +68,7 @@ const Licenses = () => {
 			: 'Cloud';
 
 	const {data: licenseKeysResponse, isLoading, mutate} = useSWR(
-		`/order-license-keys/${orderId}-${page}-${pageSize}`,
+		`/order-license-keys/${orderId}/${page}/${pageSize}`,
 		async () => {
 			try {
 				return marketplaceSpringBootOAuth2.getOrderLicenseKeys(
@@ -78,8 +78,7 @@ const Licenses = () => {
 						pageSize: pageSize.toString(),
 					})
 				);
-			}
-			catch (error) {
+			} catch (error) {
 				return {
 					items: [],
 					totalCount: 0,
