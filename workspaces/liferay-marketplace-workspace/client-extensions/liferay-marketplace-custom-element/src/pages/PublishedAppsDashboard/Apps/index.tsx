@@ -23,9 +23,7 @@ const Apps = () => {
 				description: 'Manage and publish apps on the Marketplace',
 				title: 'Apps',
 			}}
-			onButtonClick={() => {
-				navigate('/app/create');
-			}}
+			onButtonClick={() => navigate('/app/create')}
 		>
 			<PublishedAppsTable items={publishedProductTable?.items ?? []} />
 
