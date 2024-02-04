@@ -29,7 +29,11 @@ type SetAppFlowListStateProps = {
 	selectedItem: string;
 };
 
-export function AppCreationFlow() {
+type AppCreationFlowProps = {
+	catalogId: string;
+};
+
+export function AppCreationFlow({catalogId}: AppCreationFlowProps) {
 	const [
 		{appERC, appLogo, appName, appProductId, priceModel},
 	] = useAppContext();
@@ -84,6 +88,7 @@ export function AppCreationFlow() {
 
 				{currentFlow === 'create' && (
 					<CreateNewAppPage
+						catalogId={catalogId}
 						onClickContinue={() => {
 							setAppFlowListState({
 								checkedItems: ['create'],

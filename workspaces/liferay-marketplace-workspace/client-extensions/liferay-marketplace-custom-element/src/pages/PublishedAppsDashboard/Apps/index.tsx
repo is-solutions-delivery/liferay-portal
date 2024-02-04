@@ -24,7 +24,7 @@ const Apps = () => {
 				title: 'Apps',
 			}}
 			onButtonClick={() => {
-				navigate(`/app/create?catalogId=${catalogId}`);
+				navigate('/app/create');
 			}}
 		>
 			<PublishedAppsTable items={publishedProductTable?.items ?? []} />
@@ -33,14 +33,12 @@ const Apps = () => {
 				<ClayPaginationBarWithBasicItems
 					active={page}
 					activeDelta={publishedProductTable.pageSize}
-					defaultActive={1}
 					ellipsisBuffer={3}
 					ellipsisProps={{
 						'aria-label': 'More',
 						'title': 'More',
 					}}
 					onActiveChange={setPage}
-					showDeltasDropDown={false}
 					totalItems={publishedProductTable.totalCount}
 				/>
 			)}

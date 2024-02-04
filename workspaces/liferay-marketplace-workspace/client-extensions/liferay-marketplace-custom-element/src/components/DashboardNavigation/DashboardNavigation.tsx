@@ -5,7 +5,6 @@
 
 import ClayDropDown from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
-import {useNavigate} from 'react-router-dom';
 
 import {getAccountImage} from '../../utils/util';
 import {DashboardNavigationList} from './DashboardNavigationList';
@@ -14,22 +13,23 @@ import './DashboardNavigation.scss';
 import {Liferay} from '../../liferay/liferay';
 import CommerceSelectAccountImpl from '../../services/rest/CommerceSelectAccount';
 import {AppProps} from '../DashboardTable/DashboardTable';
-export interface DashboardListItems {
+
+export type DashboardListItems = {
 	itemIcon: string;
 	itemName: string;
 	itemSelected?: boolean;
 	itemTitle: string;
 	items?: AppProps[];
 	path: string;
-}
+};
 
-interface DashboardNavigationProps {
+type DashboardNavigationProps = {
 	accountAppsNumber: number;
 	accountIcon: string;
 	accounts: Account[];
 	currentAccount: Account;
 	dashboardNavigationItems: DashboardListItems[];
-}
+};
 
 export function DashboardNavigation({
 	accountAppsNumber,
@@ -38,8 +38,6 @@ export function DashboardNavigation({
 	currentAccount,
 	dashboardNavigationItems,
 }: DashboardNavigationProps) {
-	const navigate = useNavigate();
-
 	return (
 		<div className="dashboard-navigation-container">
 			<ClayDropDown
@@ -49,6 +47,7 @@ export function DashboardNavigation({
 							<img
 								alt="account logo"
 								className="dashboard-navigation-header-logo"
+								draggable={false}
 								src={getAccountImage(accountIcon)}
 							/>
 
@@ -60,9 +59,11 @@ export function DashboardNavigation({
 									{currentAccount?.name}
 								</span>
 
-								<span className="dashboard-navigation-header-apps">
-									{accountAppsNumber} apps
-								</span>
+								{!!accountAppsNumber && (
+									<span className="dashboard-navigation-header-apps">
+										{accountAppsNumber} apps
+									</span>
+								)}
 							</div>
 						</div>
 
@@ -86,8 +87,6 @@ export function DashboardNavigation({
 										accountId: account.id,
 									};
 
-									navigate('/');
-
 									window.location.reload();
 								})
 							}
@@ -99,10 +98,10 @@ export function DashboardNavigation({
 			</ClayDropDown>
 
 			<div className="dashboard-navigation-body">
-				{dashboardNavigationItems.map((navigationMock, index) => (
+				{dashboardNavigationItems.map((dashboardNavigation, index) => (
 					<DashboardNavigationList
+						dashboardNavigation={dashboardNavigation}
 						key={index}
-						navigationItemMock={navigationMock}
 					/>
 				))}
 			</div>
