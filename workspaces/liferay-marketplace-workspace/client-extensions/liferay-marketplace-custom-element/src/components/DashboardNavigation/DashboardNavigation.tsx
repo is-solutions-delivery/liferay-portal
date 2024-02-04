@@ -45,11 +45,9 @@ export function DashboardNavigation({
 }: DashboardNavigationProps) {
 	const [search, setSearch] = useState('');
 
-	const filteredAccounts = accounts
-		.filter(({name}) =>
-			search ? name.toLowerCase().includes(search.toLowerCase()) : true
-		)
-		.filter(({id}) => id !== currentAccount.id);
+	const filteredAccounts = accounts.filter(({name}) =>
+		search ? name.toLowerCase().includes(search.toLowerCase()) : true
+	);
 
 	const fewAccountsToSearch = accounts.length <= 5;
 
