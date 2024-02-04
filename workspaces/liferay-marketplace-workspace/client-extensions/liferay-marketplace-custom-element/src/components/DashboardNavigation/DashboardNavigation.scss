@@ -5,12 +5,12 @@
 		max-width: 17.5rem;
 
 		&-dropdown {
+			border-radius: 0.625rem;
 			max-width: 30.5rem;
 			min-width: 10.25rem;
+			overflow: hidden;
 			padding: 20px;
 			width: 17.5rem;
-			overflow: hidden;
-			border-radius: 0.625rem;
 
 			&-body {
 				padding: 1rem 0.5rem;
@@ -41,10 +41,10 @@
 		}
 
 		&-logo {
+			border-radius: 50%;
 			height: 3rem;
 			margin-right: 0.75rem;
 			width: 3rem;
-			border-radius: 50%;
 		}
 
 		&-text-container {
