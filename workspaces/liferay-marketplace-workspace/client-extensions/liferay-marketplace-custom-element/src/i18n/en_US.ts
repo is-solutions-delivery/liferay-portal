@@ -141,7 +141,6 @@ export default {
 	'order-date': 'Order Date',
 	'order-id': 'Order ID',
 	'phone': 'Phone',
-
 	'phone-number': 'Phone Number',
 	'please-be-sure-to-specify-liferay-compatibility-through-the-appropriate-properties-or-xml-files-in-your-plugin':
 		'Please be sure to specify Liferay compatibility through the appropriate properties or XML files in your plugin.',
@@ -167,6 +166,7 @@ export default {
 	'return-to-marketplace': 'Return to Marketplace',
 	'review-the-new-publisher-info-and-the-liferay-marketplace-terms-before-proceeding':
 		'Review the new publisher info and the Liferay Marketplace terms before proceeding',
+	'search': 'Search',
 	'select-a-file': 'Select a file',
 	'select-a-local-file-to-upload': 'Select a local file to upload',
 	'select-compatible-versions': 'Select Compatible Versions',

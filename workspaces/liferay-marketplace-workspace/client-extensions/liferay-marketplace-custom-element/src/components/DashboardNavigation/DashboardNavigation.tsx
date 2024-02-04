@@ -10,9 +10,14 @@ import {getAccountImage} from '../../utils/util';
 import {DashboardNavigationList} from './DashboardNavigationList';
 
 import './DashboardNavigation.scss';
+
+import classNames from 'classnames';
+import {useState} from 'react';
+
 import {Liferay} from '../../liferay/liferay';
 import CommerceSelectAccountImpl from '../../services/rest/CommerceSelectAccount';
 import {AppProps} from '../DashboardTable/DashboardTable';
+import Search from './Search';
 
 export type DashboardListItems = {
 	itemIcon: string;
@@ -38,9 +43,28 @@ export function DashboardNavigation({
 	currentAccount,
 	dashboardNavigationItems,
 }: DashboardNavigationProps) {
+	const [search, setSearch] = useState('');
+
+	const filteredAccounts = accounts
+		.filter(({name}) =>
+			search ? name.toLowerCase().includes(search.toLowerCase()) : true
+		)
+		.filter(({id}) => id !== currentAccount.id);
+
+	const fewAccountsToSearch = accounts.length <= 5;
+
 	return (
 		<div className="dashboard-navigation-container">
 			<ClayDropDown
+				menuElementAttrs={{
+					className: classNames(
+						'dashboard-navigation-container-dropdown p-0',
+						{
+							'cp-extended-dropdown': true,
+							'cp-short-dropdown': false,
+						}
+					),
+				}}
 				trigger={
 					<div className="dashboard-navigation-header">
 						<div className="dashboard-navigation-header-left-content">
@@ -74,27 +98,52 @@ export function DashboardNavigation({
 					</div>
 				}
 			>
-				<ClayDropDown.ItemList>
-					{accounts.map((account) => (
-						<ClayDropDown.Item
-							active={account.id === currentAccount?.id}
-							key={account.id}
-							onClick={() =>
-								CommerceSelectAccountImpl.selectAccount(
-									account.id
-								).then(() => {
-									Liferay.CommerceContext.account = {
-										accountId: account.id,
-									};
+				<div className="dashboard-navigation-container-dropdown-body">
+					{!fewAccountsToSearch && (
+						<Search search={search} setSearch={setSearch} />
+					)}
 
-									window.location.reload();
-								})
-							}
-						>
-							{account.name}
-						</ClayDropDown.Item>
-					))}
-				</ClayDropDown.ItemList>
+					<ClayDropDown.ItemList
+						className={classNames({
+							'overflow-auto': !fewAccountsToSearch,
+							'overflow-hidden': fewAccountsToSearch,
+						})}
+					>
+						{filteredAccounts.map((account) => (
+							<ClayDropDown.Item
+								active={account.id === currentAccount?.id}
+								className="mb-1"
+								key={account.id}
+								onClick={() =>
+									CommerceSelectAccountImpl.selectAccount(
+										account.id
+									).then(() => {
+										Liferay.CommerceContext.account = {
+											accountId: account.id,
+										};
+
+										window.location.reload();
+									})
+								}
+							>
+								<img
+									className="mr-4 rounded-circle"
+									height={32}
+									src={account.logoURL}
+									width={32}
+								/>
+
+								{account.name}
+							</ClayDropDown.Item>
+						))}
+
+						{!filteredAccounts.length && search && (
+							<span className="px-2">
+								No Accounts match that name
+							</span>
+						)}
+					</ClayDropDown.ItemList>
+				</div>
 			</ClayDropDown>
 
 			<div className="dashboard-navigation-body">
