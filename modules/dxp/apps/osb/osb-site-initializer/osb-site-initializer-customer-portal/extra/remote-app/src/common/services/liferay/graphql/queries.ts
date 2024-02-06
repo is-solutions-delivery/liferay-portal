@@ -595,12 +595,12 @@ export const getAccountUserAccountsByExternalReferenceCode = gql`
 `;
 
 export const getOrganizations = gql`
-	query getOrganizations($filter: String) {
+	query getOrganizations($accountPageSize: Int = 20, $filter: String) {
 		organizations(filter: $filter) {
 			items {
 				name
 				id
-				accounts {
+				accounts(pageSize: $accountPageSize) {
 					totalCount
 					items {
 						id

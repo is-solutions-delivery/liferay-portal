@@ -52,6 +52,7 @@ const getFLSOrganizationsAccounts = (client: ApolloClient<any>) => async ({
 	const response = await client.query({
 		query: getOrganizations,
 		variables: {
+			accountPageSize: -1,
 			filter: SearchBuilder.in('id', organizationIds),
 		},
 	});
