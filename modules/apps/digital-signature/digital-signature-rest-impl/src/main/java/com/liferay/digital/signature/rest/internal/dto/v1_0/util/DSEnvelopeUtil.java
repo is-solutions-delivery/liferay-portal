@@ -24,6 +24,13 @@ public class DSEnvelopeUtil {
 
 		return new DSEnvelope() {
 			{
+				emailBlurb = dsEnvelope.getEmailBlurb();
+				emailSubject = dsEnvelope.getEmailSubject();
+				id = dsEnvelope.getDSEnvelopeId();
+				name = dsEnvelope.getName();
+				senderEmailAddress = dsEnvelope.getSenderEmailAddress();
+				status = dsEnvelope.getStatus();
+
 				setDsDocument(
 					() -> TransformUtil.transformToArray(
 						dsEnvelope.getDSDocuments(),
@@ -34,12 +41,6 @@ public class DSEnvelopeUtil {
 						dsEnvelope.getDSRecipients(),
 						dsRecipient -> _toDSRecipient(dsRecipient),
 						DSRecipient.class));
-				setEmailBlurb(dsEnvelope::getEmailBlurb);
-				setEmailSubject(dsEnvelope::getEmailSubject);
-				setId(dsEnvelope::getDSEnvelopeId);
-				setName(dsEnvelope::getName);
-				setSenderEmailAddress(dsEnvelope::getSenderEmailAddress);
-				setStatus(dsEnvelope::getStatus);
 			}
 		};
 	}
@@ -70,14 +71,14 @@ public class DSEnvelopeUtil {
 
 		return new DSDocument() {
 			{
-				setAssignTabsToDSRecipientId(
-					dsDocument::getAssignTabsToDSRecipientId);
-				setData(dsDocument::getData);
-				setFileExtension(dsDocument::getFileExtension);
-				setId(dsDocument::getDSDocumentId);
-				setName(dsDocument::getName);
-				setTransformPDFFields(dsDocument::isTransformPDFFields);
-				setUri(dsDocument::getURI);
+				assignTabsToDSRecipientId =
+					dsDocument.getAssignTabsToDSRecipientId();
+				data = dsDocument.getData();
+				fileExtension = dsDocument.getFileExtension();
+				id = dsDocument.getDSDocumentId();
+				name = dsDocument.getName();
+				transformPDFFields = dsDocument.isTransformPDFFields();
+				uri = dsDocument.getURI();
 			}
 		};
 	}
@@ -105,11 +106,11 @@ public class DSEnvelopeUtil {
 
 		return new DSRecipient() {
 			{
-				setDsClientUserId(dsRecipient::getDSClientUserId);
-				setEmailAddress(dsRecipient::getEmailAddress);
-				setId(dsRecipient::getDSRecipientId);
-				setName(dsRecipient::getName);
-				setStatus(dsRecipient::getStatus);
+				dsClientUserId = dsRecipient.getDSClientUserId();
+				emailAddress = dsRecipient.getEmailAddress();
+				id = dsRecipient.getDSRecipientId();
+				name = dsRecipient.getName();
+				status = dsRecipient.getStatus();
 			}
 		};
 	}
