@@ -56,6 +56,9 @@ export type ListViewProps<T = any> = {
 		| 'onSelectAllRows'
 		| 'rowSelectable'
 	>;
+	normalizers?: {
+		onSelectRow?: (item: T) => number | number[];
+	};
 	onContextChange?: (context: ListViewContextState) => void;
 	pagination?: {
 		displayTop?: boolean;
@@ -63,10 +66,23 @@ export type ListViewProps<T = any> = {
 	resource: string;
 	tableProps: Omit<
 		TableProps,
-		'items' | 'mutate' | 'onSelectAllRows' | 'onSort'
+		| 'items'
+		| 'mutate'
+		| 'normalizers'
+		| 'onSelectAllRows'
+		| 'onSelectRow'
+		| 'onSort'
 	>;
 	transformData?: (data: T) => APIResponse<T>;
 	variables?: any;
+};
+
+const noop = (value: any) => {
+	if (Array.isArray(value)) {
+		return value;
+	}
+
+	return value.id;
 };
 
 const ListView: React.FC<ListViewProps> = ({
@@ -76,6 +92,7 @@ const ListView: React.FC<ListViewProps> = ({
 		visible: managementToolbarVisible = true,
 		...managementToolbarProps
 	} = {},
+	normalizers = {onSelectRow: noop},
 	onContextChange,
 	pagination = {displayTop: true},
 	resource,
@@ -84,6 +101,11 @@ const ListView: React.FC<ListViewProps> = ({
 	variables,
 }) => {
 	const [listViewContext, dispatch] = useContext(ListViewContext);
+
+	const onSelectRowNormalizer = useMemo(
+		() => normalizers.onSelectRow ?? noop,
+		[normalizers.onSelectRow]
+	);
 
 	const {
 		columns: columnsContext,
@@ -168,13 +190,13 @@ const ListView: React.FC<ListViewProps> = ({
 	);
 
 	const onSelectRow = useCallback(
-		(rowId: number | number[]) => {
+		(row: any) => {
 			dispatch({
-				payload: rowId,
+				payload: onSelectRowNormalizer(row),
 				type: ListViewTypes.SET_CHECKED_ROW,
 			});
 		},
-		[dispatch]
+		[dispatch, onSelectRowNormalizer]
 	);
 
 	const onSort = useCallback(
@@ -188,8 +210,8 @@ const ListView: React.FC<ListViewProps> = ({
 	);
 
 	const onSelectAllRows = useCallback(() => {
-		onSelectRow(itemsMemoized.map(({id}) => id));
-	}, [itemsMemoized, onSelectRow]);
+		onSelectRow(itemsMemoized.map((item) => onSelectRowNormalizer(item)));
+	}, [itemsMemoized, onSelectRow, onSelectRowNormalizer]);
 
 	useEffect(() => {
 		const shouldCurrentPageBeChanged =
@@ -214,13 +236,19 @@ const ListView: React.FC<ListViewProps> = ({
 	useEffect(() => {
 		if (tableProps.rowSelectable) {
 			dispatch({
-				payload: itemsMemoized.every(({id}) =>
-					selectedRows.includes(id)
+				payload: itemsMemoized.every((item) =>
+					selectedRows.includes(onSelectRowNormalizer(item))
 				),
 				type: ListViewTypes.SET_CHECKED_ALL_ROWS,
 			});
 		}
-	}, [itemsMemoized, tableProps, selectedRows, dispatch]);
+	}, [
+		dispatch,
+		itemsMemoized,
+		onSelectRowNormalizer,
+		selectedRows,
+		tableProps,
+	]);
 
 	if (loading) {
 		return <Loading />;
@@ -285,6 +313,9 @@ const ListView: React.FC<ListViewProps> = ({
 						columns={columns}
 						items={itemsMemoized}
 						mutate={mutate}
+						normalizers={{
+							onSelectRow: onSelectRowNormalizer,
+						}}
 						onSelectAllRows={onSelectAllRows}
 						onSelectRow={onSelectRow}
 						onSort={onSort}
