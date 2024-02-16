@@ -39,9 +39,12 @@ type OutletContext = {
 	testrayBuild?: TestrayBuild;
 };
 
+export const MAX_BUILD_CASES = 500;
+
 const BuildForm = () => {
 	const [caseIds, setCaseIds] = useState<number[]>([]);
-
+	const [fetchingNewCaseIds, setFetchingNewCaseIds] = useState(false);
+	const [totalCases, setTotalCases] = useState(0);
 	const {buildId, buildTemplateId, projectId, routineId} = useParams();
 
 	const [searchParams] = useSearchParams();
@@ -252,9 +255,13 @@ const BuildForm = () => {
 				<BuildFormRun control={control} register={register} />
 
 				<BuildFormCases
+					buildId={buildId}
 					caseIds={caseIds}
 					setCaseIds={setCaseIds}
+					setCaseIdsLoading={setFetchingNewCaseIds}
+					setTotalCases={setTotalCases}
 					title={i18n.translate('cases')}
+					totalCases={totalCases}
 				/>
 
 				<div className="mt-4">
@@ -262,7 +269,8 @@ const BuildForm = () => {
 						onClose={onClose}
 						onSubmit={handleSubmit(_onSubmit)}
 						primaryButtonProps={{
-							loading: submitting,
+							disabled: totalCases > MAX_BUILD_CASES,
+							loading: submitting || fetchingNewCaseIds,
 						}}
 					/>
 				</div>

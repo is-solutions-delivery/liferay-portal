@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ListView from '~/components/ListView';
+import ListView, {ListViewProps} from '~/components/ListView';
+import {TableProps} from '~/components/Table';
+import {ListViewContextProviderProps} from '~/context/ListViewContext';
 import i18n from '~/i18n';
 import {
 	APIResponse,
@@ -54,10 +56,20 @@ const transformData = (isSmartSuite: boolean) => (
 	};
 };
 
-type suiteCasesTableProps = {isSmartSuite: boolean; testraySuite: TestraySuite};
+type SuiteCasesTableProps = {
+	isSmartSuite: boolean;
+	testraySuite: TestraySuite;
+} & {
+	listViewProps?: Partial<ListViewProps> & {
+		initialContext?: Partial<ListViewContextProviderProps>;
+	};
+	tableProps?: Partial<TableProps>;
+};
 
-const SuitesCasesTable: React.FC<suiteCasesTableProps> = ({
+const SuitesCasesTable: React.FC<SuiteCasesTableProps> = ({
 	isSmartSuite,
+	listViewProps,
+	tableProps,
 	testraySuite,
 }) => {
 	const suiteCaseFilter = useSuiteCaseFilter(testraySuite);
@@ -98,11 +110,13 @@ const SuitesCasesTable: React.FC<suiteCasesTableProps> = ({
 				],
 				navigateTo: (suiteCase: TestraySuiteCase) =>
 					`/project/${suiteCase.case.project?.id}/cases/${suiteCase?.case?.id}`,
+				...tableProps,
 			}}
 			transformData={transformData(isSmartSuite)}
 			variables={{
 				filter: suiteCaseFilter,
 			}}
+			{...listViewProps}
 		/>
 	);
 };

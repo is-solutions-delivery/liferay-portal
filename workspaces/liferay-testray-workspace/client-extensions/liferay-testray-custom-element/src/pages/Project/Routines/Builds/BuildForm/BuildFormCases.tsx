@@ -5,9 +5,10 @@
 
 import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
-import {Dispatch, SetStateAction, useState} from 'react';
+import {Dispatch, SetStateAction} from 'react';
 import {useParams} from 'react-router-dom';
 
+import {MAX_BUILD_CASES} from '.';
 import Form from '../../../../../components/Form';
 import SearchBuilder from '../../../../../core/SearchBuilder';
 import {useFetch} from '../../../../../hooks/useFetch';
@@ -15,23 +16,28 @@ import useFormModal from '../../../../../hooks/useFormModal';
 import i18n from '../../../../../i18n';
 import {APIResponse, TestrayCase} from '../../../../../services/rest';
 import {CaseListView} from '../../../Cases';
-import SuiteFormSelectModal from '../../../Suites/modal';
+import SelectCasesModal from '../../../Suites/modal';
 import BuildSelectSuitesModal from '../BuildSelectSuitesModal';
+import useSuitesCasesHandler from '../useSuitesCasesHandler';
 
 type BuildFormCasesProps = {
+	buildId?: string;
 	caseIds: number[];
 	setCaseIds: Dispatch<SetStateAction<number[]>>;
+	setCaseIdsLoading: Dispatch<SetStateAction<boolean>>;
+	setTotalCases: Dispatch<SetStateAction<number>>;
 	title?: string;
-};
-
-type ModalType = {
-	type: 'select-cases' | 'select-suites';
+	totalCases: number;
 };
 
 const BuildFormCases: React.FC<BuildFormCasesProps> = ({
+	buildId,
 	caseIds,
 	setCaseIds,
+	setCaseIdsLoading,
+	setTotalCases,
 	title,
+	totalCases,
 }) => {
 	const {projectId} = useParams();
 
@@ -43,16 +49,25 @@ const BuildFormCases: React.FC<BuildFormCasesProps> = ({
 		},
 	});
 
-	const [modalType, setModalType] = useState<ModalType>({
-		type: 'select-cases',
-	});
+	const {
+		filter,
+		setModalContext,
+		suiteIds,
+		suitesCasesHandler,
+	} = useSuitesCasesHandler(
+		buildId,
+		caseIds,
+		setCaseIds,
+		setCaseIdsLoading,
+		setTotalCases
+	);
 
-	const {modal} = useFormModal({
-		onSave: setCaseIds,
+	const {modal} = useFormModal<number[]>({
+		onSave: suitesCasesHandler,
 	});
 
 	const {modal: buildSelectSuitesModal} = useFormModal({
-		onSave: setCaseIds,
+		onSave: suitesCasesHandler,
 	});
 
 	if (casesResponse?.totalCount === 0) {
@@ -78,7 +93,10 @@ const BuildFormCases: React.FC<BuildFormCasesProps> = ({
 			<ClayButton.Group className="mb-4">
 				<ClayButton
 					displayType="secondary"
-					onClick={() => modal.open(caseIds)}
+					onClick={() => {
+						setModalContext('cases');
+						modal.open(caseIds);
+					}}
 				>
 					{i18n.translate('add-cases')}
 				</ClayButton>
@@ -87,8 +105,7 @@ const BuildFormCases: React.FC<BuildFormCasesProps> = ({
 					className="ml-1"
 					displayType="secondary"
 					onClick={() => {
-						setModalType({type: 'select-suites'});
-
+						setModalContext('suites');
 						buildSelectSuitesModal.open(caseIds);
 					}}
 				>
@@ -96,7 +113,7 @@ const BuildFormCases: React.FC<BuildFormCasesProps> = ({
 				</ClayButton>
 			</ClayButton.Group>
 
-			{caseIds.length ? (
+			{filter ? (
 				<CaseListView
 					listViewProps={{
 						managementToolbarProps: {visible: false},
@@ -133,7 +150,7 @@ const BuildFormCases: React.FC<BuildFormCasesProps> = ({
 							],
 						},
 						variables: {
-							filter: SearchBuilder.in('id', caseIds),
+							filter,
 						},
 					}}
 				/>
@@ -143,12 +160,22 @@ const BuildFormCases: React.FC<BuildFormCasesProps> = ({
 				</ClayAlert>
 			)}
 
+			{totalCases > MAX_BUILD_CASES && (
+				<ClayAlert>
+					{i18n.sub(
+						'only-x-cases-can-be-added',
+						MAX_BUILD_CASES.toString()
+					)}
+				</ClayAlert>
+			)}
+
 			<BuildSelectSuitesModal
 				modal={buildSelectSuitesModal}
-				type={modalType.type}
+				setModalContext={setModalContext}
+				suiteIds={suiteIds}
 			/>
 
-			<SuiteFormSelectModal
+			<SelectCasesModal
 				modal={modal}
 				selectedCaseIds={caseIds}
 				type="select-cases"

@@ -22,7 +22,8 @@ const id = new Date().getTime();
 
 const ExportPage = () => {
 	const {setTabs} = useHeader();
-
+	const [caseIdsLoading, setCaseIdsLoading] = useState(false);
+	const [totalCases, setTotalCases] = useState(0);
 	const [caseIds, setCaseIds] = useState<number[]>([]);
 	const [, setExportCaseIds] = useStorage<number[]>(
 		`${STORAGE_KEYS.EXPORT_CASE_IDS}-${id}` as STORAGE_KEYS,
@@ -53,13 +54,19 @@ const ExportPage = () => {
 			title={i18n.translate('select-cases-to-export')}
 		>
 			<ClayForm className="container pt-2">
-				<BuildFormCases caseIds={caseIds} setCaseIds={setCaseIds} />
+				<BuildFormCases
+					caseIds={caseIds}
+					setCaseIds={setCaseIds}
+					setCaseIdsLoading={setCaseIdsLoading}
+					setTotalCases={setTotalCases}
+					totalCases={totalCases}
+				/>
 
 				<div className="mt-4">
 					<ClayButton.Group spaced>
 						<Link
 							className={classNames('btn btn-primary', {
-								disabled: !caseIds.length,
+								disabled: !caseIds.length || caseIdsLoading,
 							})}
 							target="_blank"
 							to={`/export/${id}`}

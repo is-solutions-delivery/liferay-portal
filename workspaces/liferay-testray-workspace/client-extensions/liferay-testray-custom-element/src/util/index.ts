@@ -7,7 +7,7 @@ export function isIncludingFormPage(pathname: string) {
 	return ['create', 'update'].some((path) => pathname.includes(path));
 }
 
-export function getUniqueList(items: number[]) {
+export function getUniqueList<T extends number | string>(items: T[]) {
 	return [...new Set([...items])];
 }
 
