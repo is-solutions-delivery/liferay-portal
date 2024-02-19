@@ -4,22 +4,15 @@
  */
 
 import Form from '..';
-import React, {
-	Dispatch,
-	memo,
-	useCallback,
-	useEffect,
-	useMemo,
-	useState,
-} from 'react';
+import React, {memo, useMemo, useState} from 'react';
 import {useParams} from 'react-router-dom';
+import useSWR from 'swr';
 
 import {Operators} from '../../../core/SearchBuilder';
 import i18n from '../../../i18n';
 import fetcher from '../../../services/fetcher';
 import {safeJSONParse} from '../../../util';
 import {AutoCompleteProps} from '../AutoComplete';
-import useSWR from 'swr';
 
 type RenderedFieldOptions = string[] | {label: string; value: string}[];
 
@@ -56,14 +49,13 @@ type RendererProps = {
 const Renderer: React.FC<RendererProps> = ({
 	fields,
 	filter,
-	form,
 	filterSchema,
+	form,
 	onChange,
 }) => {
 	const params = useParams();
 
 	const [fieldDisabled, setFieldDisabled] = useState({});
-	// const [isLoading, setIsLoading] = useState(true);
 
 	const paramsMemoized = useMemo(() => {
 		const testrayModalParams = document.getElementById(

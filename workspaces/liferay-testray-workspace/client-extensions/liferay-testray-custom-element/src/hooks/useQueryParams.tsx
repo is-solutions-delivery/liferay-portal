@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {useCallback, useEffect, useMemo, useState} from 'react';
+import {useMemo} from 'react';
 import {
 	useLocation,
 	useNavigate,
 	useParams,
 	useSearchParams,
 } from 'react-router-dom';
+import useSWR from 'swr';
 import SearchBuilder from '~/core/SearchBuilder';
 import i18n from '~/i18n';
 import fetcher from '~/services/fetcher';
@@ -19,7 +20,6 @@ import {
 	FilterSchema as FilterSchemaType,
 	filterSchema as filterSchemas,
 } from '../schema/filter';
-import useSWR from 'swr';
 
 type Options = {
 	label: string;
@@ -54,10 +54,9 @@ const useQueryParams = () => {
 	] as FilterSchemaType;
 	const filterFields = filterSchema?.fields;
 
-	const filterKeys = useMemo(
-		() => Object.keys(serializedFilter),
-		[serializedFilter]
-	);
+	const filterKeys = useMemo(() => Object.keys(serializedFilter), [
+		serializedFilter,
+	]);
 	const filteredFields = useMemo(
 		() => filterFields?.filter((field) => filterKeys.includes(field.name)),
 		[filterFields, filterKeys]
@@ -101,7 +100,8 @@ const useQueryParams = () => {
 
 						if (Array.isArray(parsedValue)) {
 							_resourceFieldOptions[field.name] = parsedValue;
-						} else {
+						}
+						else {
 							if (
 								filterKeys.every(
 									(key) => parsedValue && key in parsedValue
@@ -119,10 +119,11 @@ const useQueryParams = () => {
 										)
 								);
 
-								_resourceFieldOptions[field.name] =
-									filteredObjects.length
-										? filteredObjects
-										: parsedValue;
+								_resourceFieldOptions[
+									field.name
+								] = filteredObjects.length
+									? filteredObjects
+									: parsedValue;
 							}
 						}
 					}
@@ -148,15 +149,17 @@ const useQueryParams = () => {
 
 			Object.keys(_resourceFieldOptions).forEach((key) => {
 				if (Array.isArray(serializedFilter[key])) {
-					const filteredOptions = _resourceFieldOptions[key]?.filter(
-						(option: Options) =>
-							serializedFilter[key].includes(option.value)
+					const filteredOptions = _resourceFieldOptions[
+						key
+					]?.filter((option: Options) =>
+						serializedFilter[key].includes(option.value)
 					);
 
 					if (filteredOptions.length) {
 						updatedFilterOptions[key] = filteredOptions;
 					}
-				} else {
+				}
+				else {
 					const matchingValues = _resourceFieldOptions[key]?.filter(
 						(options: Options) =>
 							options.value === serializedFilter[key]

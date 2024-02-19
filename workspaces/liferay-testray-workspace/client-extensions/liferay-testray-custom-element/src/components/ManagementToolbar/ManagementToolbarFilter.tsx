@@ -24,7 +24,6 @@ import {FilterSchema} from '~/schema/filter';
 
 import Form from '../Form';
 import {RendererFields} from '../Form/Renderer';
-import {FieldOptions} from '../Form/Renderer/Renderer';
 type ManagementToolbarFilterProps = {
 	applyFilters?: boolean;
 	filterSchema?: FilterSchema;
@@ -64,10 +63,9 @@ const FilterBody: React.FC<FilterBodyProps> = ({
 		return () => clearTimeout(timeout);
 	}, [visible]);
 
-	const fields = useMemo(
-		() => filterSchema?.fields as RendererFields[],
-		[filterSchema?.fields]
-	);
+	const fields = useMemo(() => filterSchema?.fields as RendererFields[], [
+		filterSchema?.fields,
+	]);
 
 	useEffect(() => {
 		const container = document.querySelector('.tr-main__body__page');
@@ -141,7 +139,8 @@ const FilterBody: React.FC<FilterBodyProps> = ({
 						(options: Option) => options.value || options
 					),
 				};
-			} else {
+			}
+			else {
 				return {
 					name: key,
 					value: filterCleaned[key],
