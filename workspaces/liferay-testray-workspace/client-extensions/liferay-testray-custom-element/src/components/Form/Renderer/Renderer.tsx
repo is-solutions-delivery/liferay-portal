@@ -81,7 +81,7 @@ const Renderer: React.FC<RendererProps> = ({
 		[fieldsMemoized, filter]
 	);
 
-	const {data: filderOptions = {}, isLoading} = useSWR(
+	const {data: fieldOptions = {}, isLoading} = useSWR(
 		`/filter-${filterSchema}`,
 		async () => {
 			const parameters = safeJSONParse(paramsMemoized);
@@ -171,7 +171,7 @@ const Renderer: React.FC<RendererProps> = ({
 
 				const getOptions = () => {
 					const _options =
-						filderOptions[name] ||
+						fieldOptions[name] ||
 						(options || []).map((option) =>
 							typeof option === 'object'
 								? option
