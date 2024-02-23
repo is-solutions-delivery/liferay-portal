@@ -89,36 +89,36 @@ public class QueueListener {
 				JSONObject accountJSONObject = jsonObject.getJSONObject(
 					"account");
 
-				// JSONArray entitlementsJSONArray =
-				// 	accountJSONObject.getJSONArray("entitlements");
+				JSONArray entitlementsJSONArray =
+					accountJSONObject.getJSONArray("entitlements");
 
-				// if (entitlementsJSONArray == null) {
-				// 	channel.basicReject(deliveryTag, false);
+				if (entitlementsJSONArray == null) {
+					channel.basicReject(deliveryTag, false);
 
-				// 	return;
-				// }
+					return;
+				}
 
-				// boolean partner = false;
+				boolean partner = false;
 
-				// for (int i = 0; i < entitlementsJSONArray.length(); i++) {
-				// 	JSONObject entitlementJSONObject =
-				// 		entitlementsJSONArray.getJSONObject(i);
+				for (int i = 0; i < entitlementsJSONArray.length(); i++) {
+					JSONObject entitlementJSONObject =
+						entitlementsJSONArray.getJSONObject(i);
 
-				// 	if (StringUtil.equalsIgnoreCase(
-				// 			entitlementJSONObject.getString("name"),
-				// 			"Partner")) {
+					if (StringUtil.equalsIgnoreCase(
+							entitlementJSONObject.getString("name"),
+							"Partner")) {
 
-				// 		partner = true;
+						partner = true;
 
-				// 		break;
-				// 	}
-				// }
+						break;
+					}
+				}
 
-				// if (!partner) {
-				// 	channel.basicReject(deliveryTag, false);
+				if (!partner) {
+					channel.basicReject(deliveryTag, false);
 
-				// 	return;
-				// }
+					return;
+				}
 
 				JSONArray externalLinksJSONArray =
 					accountJSONObject.getJSONArray("externalLinks");
