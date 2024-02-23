@@ -73,7 +73,7 @@ public class PartnerCommandLineRunner implements CommandLineRunner {
 					_log.info(
 						StringBundler.concat(
 							"Activating activity ",
-							itemJSONObject.getString("id"), " with name ",
+							itemJSONObject.getLong("id"), " with name ",
 							itemJSONObject.getString("name")));
 				}
 			}
@@ -117,9 +117,8 @@ public class PartnerCommandLineRunner implements CommandLineRunner {
 				if (_log.isInfoEnabled()) {
 					_log.info(
 						StringBundler.concat(
-							"Expiring activity ",
-							itemJSONObject.getString("id"), " with name ",
-							itemJSONObject.getString("name")));
+							"Expiring activity ", itemJSONObject.getLong("id"),
+							" with name ", itemJSONObject.getString("name")));
 				}
 			}
 
@@ -316,7 +315,7 @@ public class PartnerCommandLineRunner implements CommandLineRunner {
 					StringBundler.concat(
 						"Triggering a ", plusDays,
 						" day notification for activity ",
-						activityJSONObject.getString("id"), " with name ",
+						activityJSONObject.getLong("id"), " with name ",
 						activityJSONObject.getString("name")));
 			}
 		}
