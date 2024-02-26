@@ -93,7 +93,7 @@ public class QueueListener {
 					accountJSONObject.getJSONArray("entitlements");
 
 				if (entitlementsJSONArray == null) {
-					channel.basicReject(deliveryTag, false);
+					channel.basicAck(deliveryTag, false);
 
 					return;
 				}
@@ -115,7 +115,7 @@ public class QueueListener {
 				}
 
 				if (!partner) {
-					channel.basicReject(deliveryTag, false);
+					channel.basicAck(deliveryTag, false);
 
 					return;
 				}
@@ -131,11 +131,11 @@ public class QueueListener {
 					}
 				};
 
+				String salesforceAccountKey = null;
+
 				for (int i = 0; i < externalLinksJSONArray.length(); i++) {
 					JSONObject externalLinkJSONObject =
 						externalLinksJSONArray.getJSONObject(i);
-
-					String salesforceAccountKey = null;
 
 					if ((StringUtil.equalsIgnoreCase(
 							externalLinkJSONObject.getString("domain"),
@@ -155,12 +155,12 @@ public class QueueListener {
 
 						break;
 					}
+				}
 
-					if (salesforceAccountKey == null) {
-						channel.basicReject(deliveryTag, false);
+				if (salesforceAccountKey == null) {
+					channel.basicAck(deliveryTag, false);
 
-						return;
-					}
+					return;
 				}
 
 				JSONArray postalAddressesJSONArray =
@@ -184,6 +184,8 @@ public class QueueListener {
 
 								partnerAccountJSONObject.put(
 									"partnerCountry", countryISOCode);
+
+								break;
 							}
 						}
 					}
@@ -207,48 +209,43 @@ public class QueueListener {
 						).build());
 
 					if (proxyAccountJSONObject.has("partnerLevelType")) {
-						JSONObject partnerLevelsResponseJSONObject = _get(
+						JSONObject partnerLevelsJSONObject = _get(
 							uriBuilder -> uriBuilder.path(
 								"/o/c/partnerlevels/"
 							).queryParam(
 								"pageSize", "-1"
 							).build());
 
-						Long partnerLevelResponseTotalCoult =
-							partnerLevelsResponseJSONObject.getLong(
-								"totalCount");
-
-						if (partnerLevelResponseTotalCoult > 0) {
-							JSONObject partnerLevelTypeJSONObject =
+						if (partnerLevelsJSONObject.getLong("totalCount") > 0) {
+							JSONObject proxyPartnerLevelTypeJSONObject =
 								proxyAccountJSONObject.getJSONObject(
 									"partnerLevelType");
 
-							JSONArray partnerLevelsResponseJSONArray =
-								partnerLevelsResponseJSONObject.getJSONArray(
-									"items");
+							JSONArray partnerLevelsJSONArray =
+								partnerLevelsJSONObject.getJSONArray("items");
 
-							for (int i = 0;
-								 i < partnerLevelsResponseJSONArray.length();
+							for (int i = 0; i < partnerLevelsJSONArray.length();
 								 i++) {
 
-								JSONObject partnerLevelResponseJSONObject =
-									partnerLevelsResponseJSONArray.
-										getJSONObject(i);
+								JSONObject partnerLevelJSONObject =
+									partnerLevelsJSONArray.getJSONObject(i);
 
-								JSONObject partnerLevelTypeResponseJSONObject =
-									partnerLevelResponseJSONObject.
-										getJSONObject("partnerLevelType");
+								JSONObject partnerLevelTypeJSONObject =
+									partnerLevelJSONObject.getJSONObject(
+										"partnerLevelType");
 
 								if (StringUtil.equalsIgnoreCase(
-										partnerLevelTypeResponseJSONObject.
-											getString("key"),
 										partnerLevelTypeJSONObject.getString(
-											"key"))) {
+											"key"),
+										proxyPartnerLevelTypeJSONObject.
+											getString("key"))) {
 
 									partnerAccountJSONObject.put(
 										"r_prtLvlToAcc_c_partnerLevelERC",
-										partnerLevelResponseJSONObject.
-											getString("externalReferenceCode"));
+										partnerLevelJSONObject.getString(
+											"externalReferenceCode"));
+
+									break;
 								}
 							}
 						}
@@ -258,31 +255,32 @@ public class QueueListener {
 						JSONObject accountCurrencyJSONObject =
 							proxyAccountJSONObject.getJSONObject("currency");
 
-						String accountCurrency =
+						String accountCurrencyKey =
 							accountCurrencyJSONObject.getString("key");
 
 						partnerAccountJSONObject.put(
-							"currency", accountCurrency);
+							"currency", accountCurrencyKey);
 					}
 
-					String updatedAccount = _put(
-						partnerAccountJSONObject.toString(),
-						StringBundler.concat(
-							"/o/headless-admin-user/v1.0/accounts",
-							"/by-external-reference-code/",
-							accountExternalReferenceCode));
+					JSONObject updatedAccountJSONObject = new JSONObject(
+						_put(
+							partnerAccountJSONObject.toString(),
+							StringBundler.concat(
+								"/o/headless-admin-user/v1.0/accounts",
+								"/by-external-reference-code/",
+								accountExternalReferenceCode)));
 
 					if (proxyAccountJSONObject.has("region")) {
-						JSONObject globalOrganizationResponseJSONObject = _get(
+						JSONObject globalOrganizationJSONObject = _get(
 							uriBuilder -> uriBuilder.path(
 								"/o/headless-admin-user/v1.0/organizations" +
 									"/by-external-reference-code/PRM-ORG-GLOBAL"
 							).build());
 
 						Long globalOrganizationId =
-							globalOrganizationResponseJSONObject.getLong("id");
+							globalOrganizationJSONObject.getLong("id");
 
-						JSONObject organizationsResponseJSONObject = _get(
+						JSONObject childOrganizationsJSONObject = _get(
 							uriBuilder -> uriBuilder.path(
 								"/o/headless-admin-user/v1.0/organizations/" +
 									globalOrganizationId +
@@ -291,16 +289,14 @@ public class QueueListener {
 								"pageSize", "-1"
 							).build());
 
-						Long organizationsResponseTotalCount =
-							organizationsResponseJSONObject.getLong(
-								"totalCount");
+						if (childOrganizationsJSONObject.getLong("totalCount") >
+								0) {
 
-						if (organizationsResponseTotalCount > 0) {
 							String accountRegion =
 								proxyAccountJSONObject.getString("region");
 
 							JSONArray organizationsJSONArray =
-								organizationsResponseJSONObject.getJSONArray(
+								childOrganizationsJSONObject.getJSONArray(
 									"items");
 
 							for (int i = 0; i < organizationsJSONArray.length();
@@ -321,9 +317,6 @@ public class QueueListener {
 											"Assigning Account to " +
 												accountRegion);
 									}
-
-									JSONObject updatedAccountJSONObject =
-										new JSONObject(updatedAccount);
 
 									JSONArray organizationIdsJSONArray =
 										updatedAccountJSONObject.getJSONArray(
@@ -361,6 +354,8 @@ public class QueueListener {
 												"/organizations/move-accounts/",
 												organizationId, "/", regionId,
 												"/by-external-reference-code"));
+
+										break;
 									}
 								}
 							}
