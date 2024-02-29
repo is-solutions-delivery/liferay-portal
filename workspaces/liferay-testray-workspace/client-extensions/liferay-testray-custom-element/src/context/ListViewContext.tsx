@@ -10,7 +10,7 @@ import TestrayStorage, {STORAGE_KEYS} from '~/core/Storage';
 import useQueryParams from '~/hooks/useQueryParams';
 import useStorage from '~/hooks/useStorage';
 import {ActionMap, SortDirection, SortOption} from '~/types';
-import {safeJSONParse} from '~/util';
+import {getUniqueList, safeJSONParse} from '~/util';
 import {PAGINATION_DELTA} from '~/util/constants';
 import {CONSENT_TYPE} from '~/util/enum';
 import isDeepEqual from '~/util/object';
@@ -125,11 +125,10 @@ const reducer = (state: InitialState, action: AppActions) => {
 			let selectedRows = [...state.selectedRows];
 
 			if (Array.isArray(rowIds)) {
-				selectedRows = state.checkAll ? [] : rowIds;
-
-				state.checkAll = !state.checkAll;
-			}
-			else {
+				selectedRows = state.checkAll
+					? selectedRows.filter((row) => !rowIds.includes(row))
+					: getUniqueList([...rowIds, ...selectedRows]);
+			} else {
 				const rowAlreadyInserted = state.selectedRows.includes(
 					rowIds as number
 				);
@@ -210,8 +209,7 @@ const reducer = (state: InitialState, action: AppActions) => {
 					JSON.stringify(action.payload),
 					CONSENT_TYPE.NECESSARY
 				);
-			}
-			else {
+			} else {
 				testrayStorage.removeItem(storageName);
 				testrayStorage.removeItem(schemaName);
 			}
