@@ -287,6 +287,7 @@ const TestFlowTasks = () => {
 				<ListView
 					forceRefetch={forceRefetch}
 					managementToolbarProps={{
+						applyFilters: true,
 						filterSchema: 'subtasks',
 						title: i18n.translate('subtasks'),
 					}}
