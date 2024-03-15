@@ -5,16 +5,21 @@
 
 package com.liferay.testray.service.impl;
 
+import com.liferay.object.entry.util.ObjectEntryDTOConverterUtil;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.rest.dto.v1_0.ObjectEntry;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
+import com.liferay.portal.vulcan.dto.converter.util.DTOConverterUtil;
 import com.liferay.testray.service.base.CompareRunsLocalServiceBaseImpl;
 
 import java.util.*;
@@ -32,7 +37,7 @@ import org.osgi.service.component.annotations.Reference;
 public class CompareRunsLocalServiceImpl
 	extends CompareRunsLocalServiceBaseImpl {
 
-	public Map<String, Map<String, Integer>> getComparison(
+	public List<Map<String, Map<String, Map<String, Integer>>>> getComparison(
 			long companyId, long testrayRun1Id, long testrayRun2Id)
 		throws Exception {
 
@@ -108,7 +113,14 @@ public class CompareRunsLocalServiceImpl
 				status2CountMap, String.valueOf(comparedEntry.get("status2")));
 		}
 
-		return map;
+		List<Map<String, Map<String, Map<String, Integer>>>> test = new ArrayList<>();
+
+		Map<String, Map<String, Map<String, Integer>>> map1 = new HashMap<>();
+
+		map1.put("Runs", map);
+
+		test.add(map1);
+		return test;
 	}
 
 	private Map<String, Object> _compare(
@@ -126,7 +138,7 @@ public class CompareRunsLocalServiceImpl
 			comparedPropertiesMap = objectEntry1.getProperties();
 		}
 
-		comparedPropertiesMap.remove("dueStatus");
+		//comparedPropertiesMap.remove("dueStatus");
 
 		//comparedPropertiesMap.put("priority", _getProperty("priority", comparedObjectEntry));
 
@@ -134,7 +146,8 @@ public class CompareRunsLocalServiceImpl
 		long caseResult1Id = 0;
 
 		if (objectEntry1 != null) {
-			status1 = _getProperty("dueStatus", objectEntry1);
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(_getProperty("dueStatus", objectEntry1).toString());
+			status1 = jsonObject.get("key");
 			caseResult1Id = objectEntry1.getId();
 		}
 
@@ -145,7 +158,8 @@ public class CompareRunsLocalServiceImpl
 		long caseResult2Id = 0;
 
 		if (objectEntry2 != null) {
-			status2 = _getProperty("dueStatus", objectEntry2);
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(_getProperty("dueStatus", objectEntry2).toString());
+			status2 = jsonObject.get("key");
 			caseResult2Id = objectEntry2.getId();
 		}
 

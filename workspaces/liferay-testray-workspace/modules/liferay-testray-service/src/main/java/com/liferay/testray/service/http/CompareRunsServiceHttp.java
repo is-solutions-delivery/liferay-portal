@@ -41,11 +41,13 @@ import com.liferay.testray.service.CompareRunsServiceUtil;
  */
 public class CompareRunsServiceHttp {
 
-	public static java.util.Map<String, java.util.Map<String, Integer>>
-			getComparison(
-				HttpPrincipal httpPrincipal, long companyId, long testrayRun1Id,
-				long testrayRun2Id)
-		throws Exception {
+	public static java.util.List
+		<java.util.Map
+			<String, java.util.Map<String, java.util.Map<String, Integer>>>>
+					getComparison(
+						HttpPrincipal httpPrincipal, long companyId,
+						long testrayRun1Id, long testrayRun2Id)
+				throws Exception {
 
 		try {
 			MethodKey methodKey = new MethodKey(
@@ -69,8 +71,11 @@ public class CompareRunsServiceHttp {
 					exception);
 			}
 
-			return (java.util.Map<String, java.util.Map<String, Integer>>)
-				returnObj;
+			return (java.util.List
+				<java.util.Map
+					<String,
+					 java.util.Map<String, java.util.Map<String, Integer>>>>)
+						 returnObj;
 		}
 		catch (com.liferay.portal.kernel.exception.SystemException
 					systemException) {

@@ -5,6 +5,7 @@
 
 package com.liferay.testray.service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,8 +27,9 @@ public class CompareRunsServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to <code>com.liferay.testray.service.impl.CompareRunsServiceImpl</code> and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static Map<String, Map<String, Integer>> getComparison(
-			long companyId, long testrayRun1Id, long testrayRun2Id)
+	public static List<Map<String, Map<String, Map<String, Integer>>>>
+			getComparison(
+				long companyId, long testrayRun1Id, long testrayRun2Id)
 		throws Exception {
 
 		return getService().getComparison(

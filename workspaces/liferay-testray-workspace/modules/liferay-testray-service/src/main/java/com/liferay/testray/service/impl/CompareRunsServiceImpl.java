@@ -8,6 +8,7 @@ package com.liferay.testray.service.impl;
 import com.liferay.portal.aop.AopService;
 import com.liferay.testray.service.base.CompareRunsServiceBaseImpl;
 
+import java.util.List;
 import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
@@ -24,7 +25,7 @@ import org.osgi.service.component.annotations.Component;
 )
 public class CompareRunsServiceImpl extends CompareRunsServiceBaseImpl {
 
-	public Map<String, Map<String, Integer>> getComparison(
+	public List<Map<String, Map<String, Map<String, Integer>>>> getComparison(
 			long companyId, long testrayRun1Id, long testrayRun2Id)
 		throws Exception {
 
