@@ -5,6 +5,8 @@
 
 package com.liferay.testray.service;
 
+import java.util.Map;
+
 /**
  * Provides the local service utility for CompareRuns. This utility wraps
  * <code>com.liferay.testray.service.impl.CompareRunsLocalServiceImpl</code> and
@@ -24,13 +26,20 @@ public class CompareRunsLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to <code>com.liferay.testray.service.impl.CompareRunsLocalServiceImpl</code> and rerun ServiceBuilder to regenerate this class.
 	 */
+	public static Map<String, Map<String, Integer>> getComparison(
+			long companyId, long testrayRun1Id, long testrayRun2Id)
+		throws Exception {
+
+		return getService().getComparison(
+			companyId, testrayRun1Id, testrayRun2Id);
+	}
 
 	/**
 	 * Returns the OSGi service identifier.
 	 *
 	 * @return the OSGi service identifier
 	 */
-	public static java.lang.String getOSGiServiceIdentifier() {
+	public static String getOSGiServiceIdentifier() {
 		return getService().getOSGiServiceIdentifier();
 	}
 

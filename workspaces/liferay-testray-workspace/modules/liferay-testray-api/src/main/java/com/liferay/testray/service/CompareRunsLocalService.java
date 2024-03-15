@@ -9,7 +9,10 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.service.BaseLocalService;
 import com.liferay.portal.kernel.transaction.Isolation;
+import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.Transactional;
+
+import java.util.*;
 
 import org.osgi.annotation.versioning.ProviderType;
 
@@ -35,6 +38,10 @@ public interface CompareRunsLocalService extends BaseLocalService {
 	 *
 	 * Never modify this interface directly. Add custom service methods to <code>com.liferay.testray.service.impl.CompareRunsLocalServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface. Consume the compare runs local service via injection or a <code>org.osgi.util.tracker.ServiceTracker</code>. Use {@link CompareRunsLocalServiceUtil} if injection and service tracking are not available.
 	 */
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public java.util.Map<String, java.util.Map<String, Integer>> getComparison(
+			long companyId, long testrayRun1Id, long testrayRun2Id)
+		throws Exception;
 
 	/**
 	 * Returns the OSGi service identifier.

@@ -28,6 +28,15 @@ public class CompareRunsLocalServiceWrapper
 		_compareRunsLocalService = compareRunsLocalService;
 	}
 
+	@Override
+	public java.util.Map<String, java.util.Map<String, Integer>> getComparison(
+			long companyId, long testrayRun1Id, long testrayRun2Id)
+		throws Exception {
+
+		return _compareRunsLocalService.getComparison(
+			companyId, testrayRun1Id, testrayRun2Id);
+	}
+
 	/**
 	 * Returns the OSGi service identifier.
 	 *
