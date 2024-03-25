@@ -8,7 +8,6 @@ import DropDown from '@clayui/drop-down/lib/DropDown';
 import ClayIcon from '@clayui/icon';
 import {addDays, format} from 'date-fns';
 
-import appsIcon from '../../../../assets/icons/apps_fill_icon.svg';
 import {DashboardEmptyTable} from '../../../../components/DashboardTable/DashboardEmptyTable';
 import OrderStatus from '../../../../components/OrderStatus';
 import Table from '../../../../components/Table/Table';
@@ -24,7 +23,7 @@ const SolutionsTable: React.FC<SolutionsTableProps> = ({items}) => {
 			<DashboardEmptyTable
 				description1="Purchase and install new apps and they will show up here."
 				description2="Click on “Add Apps” to start."
-				icon={appsIcon}
+				icon="grid"
 				title="No Apps Yet"
 			/>
 		);
