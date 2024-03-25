@@ -4,28 +4,24 @@
  */
 
 import {DashboardListItems} from '../../components/DashboardNavigation/DashboardNavigation';
-import {AppProps} from '../../components/DashboardTable/DashboardTable';
 import i18n from '../../i18n';
 
 export const initialAdministratorDashboardNavigationItems: DashboardListItems[] = [
 	{
 		itemIcon: 'polls',
-		itemName: 'metrics',
 		itemSelected: true,
 		itemTitle: i18n.translate('dashboard'),
-		items: [] as AppProps[],
+		items: [],
 		path: '/',
 	},
 	{
 		itemIcon: 'grid',
-		itemName: 'apps-administrator',
 		itemSelected: false,
 		itemTitle: i18n.translate('apps'),
-		path: '/apps-administrator',
+		path: '/apps',
 	},
 	{
 		itemIcon: 'envelope-closed',
-		itemName: 'publisher-request',
 		itemSelected: false,
 		itemTitle: i18n.translate('publisher-requests'),
 		path: '/publisher-request',

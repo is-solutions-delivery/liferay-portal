@@ -65,33 +65,27 @@ const useOrderAmountMetrics = (param: FilterType) => {
 		}
 
 		const requestsParams = [
-			{
-				searchParams: new URLSearchParams({
-					fields: 'id,totalAmount',
-					pageSize: '-1',
-				}),
-			},
-			{
-				searchParams: new URLSearchParams({
-					fields: 'id,totalAmount',
-					filter: SearchBuilder.gt('createDate', lastPeriod),
-				}),
-			},
-			{
-				searchParams: new URLSearchParams({
-					fields: 'id,totalAmount',
-					filter: new SearchBuilder()
-						.gt('createDate', lastPeriod)
-						.and()
-						.lt('createDate', beforeLastPeriod)
-						.build(),
-				}),
-			},
+			new URLSearchParams({
+				fields: 'id,totalAmount',
+				pageSize: '-1',
+			}),
+			new URLSearchParams({
+				fields: 'id,totalAmount',
+				filter: SearchBuilder.gt('createDate', lastPeriod),
+			}),
+			new URLSearchParams({
+				fields: 'id,totalAmount',
+				filter: new SearchBuilder()
+					.gt('createDate', lastPeriod)
+					.and()
+					.lt('createDate', beforeLastPeriod)
+					.build(),
+			}),
 		];
 
 		const response = await Promise.all(
-			requestsParams.map((request) =>
-				HeadlessCommerceAdminOrderImpl.getOrders(request.searchParams)
+			requestsParams.map((searchParam) =>
+				HeadlessCommerceAdminOrderImpl.getOrders(searchParam)
 			)
 		);
 
@@ -103,7 +97,7 @@ const useOrderAmountMetrics = (param: FilterType) => {
 		};
 	};
 
-	return useSWR(`metrics/donutOrder/${param}`, getOrderDonoutMetrics);
+	return useSWR(`metrics/order-ammount/${param}`, getOrderDonoutMetrics);
 };
 
 export default useOrderAmountMetrics;

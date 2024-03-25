@@ -9,6 +9,8 @@ import useSWR from 'swr';
 import SearchBuilder from '../../../core/SearchBuilder';
 import HeadlessAdminUserImpl from '../../../services/rest/HeadlessAdminUser';
 
+type UseOrderMetricsProps = 'month' | 'q1' | 'q2' | 'q3' | 'q4' | 'week';
+
 export const METRIC_PARAMETER = {
 	month: 30,
 	q1: 1,
@@ -18,9 +20,7 @@ export const METRIC_PARAMETER = {
 	week: 7,
 };
 
-type useOrderMetricsProps = 'month' | 'q1' | 'q2' | 'q3' | 'q4' | 'week';
-
-const useAccountsMetrics = (param: useOrderMetricsProps) => {
+const useAccountsMetrics = (param: UseOrderMetricsProps) => {
 	const getAccountsMetrics = async () => {
 		const currentTime = new Date();
 
@@ -35,33 +35,29 @@ const useAccountsMetrics = (param: useOrderMetricsProps) => {
 		).toISOString();
 
 		const requestsParams = [
-			{
-				searchParams: new URLSearchParams({
-					fields: 'id,',
-					pageSize: '-1',
-				}),
-			},
-			{
-				searchParams: new URLSearchParams({
-					fields: 'id,',
-					filter: SearchBuilder.gt('dateCreated', lastPeriod),
-				}),
-			},
-			{
-				searchParams: new URLSearchParams({
-					fields: 'id,',
-					filter: new SearchBuilder()
-						.gt('dateCreated', lastPeriod)
-						.and()
-						.lt('dateCreated', beforeLastPeriod)
-						.build(),
-				}),
-			},
+			new URLSearchParams({
+				fields: 'id,',
+				pageSize: '-1',
+			}),
+
+			new URLSearchParams({
+				fields: 'id,',
+				filter: SearchBuilder.gt('dateCreated', lastPeriod),
+			}),
+
+			new URLSearchParams({
+				fields: 'id,',
+				filter: new SearchBuilder()
+					.gt('dateCreated', lastPeriod)
+					.and()
+					.lt('dateCreated', beforeLastPeriod)
+					.build(),
+			}),
 		];
 
 		const response = await Promise.all(
-			requestsParams.map((request) =>
-				HeadlessAdminUserImpl.getAccounts(request.searchParams)
+			requestsParams.map((searchParam) =>
+				HeadlessAdminUserImpl.getAccounts(searchParam)
 			)
 		);
 

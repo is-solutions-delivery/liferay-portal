@@ -12,26 +12,21 @@ import AppAdministrator from './AppsAdministrator';
 import Metrics from './Metrics/Metrics';
 import PublisherRequest from './PublisherRequest';
 
-const AdministratorDashboardRouter = () => {
-	return (
-		<HashRouter>
-			<Routes>
-				<Route element={<AdministratorDashboardOutlet />}>
-					<Route element={<Metrics />} index />
+const AdministratorDashboardRouter = () => (
+	<HashRouter>
+		<Routes>
+			<Route element={<AdministratorDashboardOutlet />}>
+				<Route element={<Metrics />} index />
 
-					<Route
-						element={<PublisherRequest />}
-						path="publisher-request"
-					/>
+				<Route
+					element={<PublisherRequest />}
+					path="publisher-request"
+				/>
 
-					<Route
-						element={<AppAdministrator />}
-						path="apps-administrator"
-					/>
-				</Route>
-			</Routes>
-		</HashRouter>
-	);
-};
+				<Route element={<AppAdministrator />} path="apps" />
+			</Route>
+		</Routes>
+	</HashRouter>
+);
 
 export default AdministratorDashboardRouter;

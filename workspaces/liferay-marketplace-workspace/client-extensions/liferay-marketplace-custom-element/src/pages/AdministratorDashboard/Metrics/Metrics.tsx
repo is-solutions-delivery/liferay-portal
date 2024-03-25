@@ -10,34 +10,34 @@ import i18n from '../../../i18n';
 import HeadlessCommerceAdminOrderImpl from '../../../services/rest/HeadlessCommerceAdminOrder';
 import InfoCard from '../Components/InfoCard/InfoCard';
 import useAccountsMetrics from '../hooks/useAccountsMetrics';
-import useOrderDonoutMetrics from '../hooks/useOrderDonoutMetrics';
+import useOrderAmountMetrics from '../hooks/useOrderDonoutMetrics';
 import useOrderMetrics from '../hooks/useOrderMetrics';
 import {barChart, colors} from '../mock';
 import OrdersTable from './OrdersTab';
 
-const Metrics: React.FC<any> = () => {
+const Metrics = () => {
 	const {data: orderMetrics} = useOrderMetrics('week');
 	const {data: accounts} = useAccountsMetrics('week');
-	const {data: donout} = useOrderDonoutMetrics('week');
+	const {data: amount} = useOrderAmountMetrics('week');
 
-	const {data: orders} = useSWR<APIResponse<Order>>('orders', async () => {
-		const data = await HeadlessCommerceAdminOrderImpl.getOrders(
-			new URLSearchParams({
-				nestedFields: 'orderItems,account',
-				pageSize: '10',
-			})
-		);
-
-		return data;
-	});
+	const {data: orders} = useSWR<APIResponse<Order>>(
+		'administrator-dashboard/orders',
+		() =>
+			HeadlessCommerceAdminOrderImpl.getOrders(
+				new URLSearchParams({
+					nestedFields: 'account,orderItems',
+					pageSize: '10',
+				})
+			)
+	);
 
 	const infoCard = [
 		{
-			growth: donout?.growth,
-			growthContext: `+${donout?.lastPeriod}, last week `,
+			growth: amount?.growth,
+			growthContext: `+${amount?.lastPeriod}, last week `,
 			symbol: 'dollar-symbol',
 			title: i18n.translate('amount'),
-			value: donout?.totalCount,
+			value: amount?.totalCount,
 		},
 		{
 			growth: orderMetrics?.growth,
@@ -65,18 +65,16 @@ const Metrics: React.FC<any> = () => {
 	return (
 		<div className="d-flex flex-column">
 			<div className="d-flex flex-wrap info-container mb-4">
-				{infoCard.map((infoItem, index) => {
-					return (
-						<InfoCard
-							growth={infoItem.growth}
-							growthContext={infoItem.growthContext}
-							key={index}
-							symbol={infoItem.symbol}
-							title={infoItem.title}
-							value={infoItem.value}
-						/>
-					);
-				})}
+				{infoCard.map((infoItem, index) => (
+					<InfoCard
+						growth={infoItem.growth}
+						growthContext={infoItem.growthContext}
+						key={index}
+						symbol={infoItem.symbol}
+						title={infoItem.title}
+						value={infoItem.value}
+					/>
+				))}
 			</div>
 
 			<div className="d-flex flex-column metrics-container">

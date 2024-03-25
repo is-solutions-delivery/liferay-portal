@@ -173,7 +173,7 @@ export default {
 	'order-date': 'Order Date',
 	'order-id': 'Order ID',
 	'order-status': 'Order Status',
-	'orders': 'orders',
+	'orders': 'Orders',
 	'payment-status': 'Payment Status',
 	'phone': 'Phone',
 	'phone-number': 'Phone Number',

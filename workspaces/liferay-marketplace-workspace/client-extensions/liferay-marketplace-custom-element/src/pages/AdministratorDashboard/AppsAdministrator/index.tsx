@@ -6,20 +6,22 @@
 import useSWR from 'swr';
 
 import {DashboardPage} from '../../../components/DashBoardPage/DashboardPage';
+import SearchBuilder from '../../../core/SearchBuilder';
 import i18n from '../../../i18n';
-import fetcher from '../../../services/fetcher';
+import HeadlessCommerceAdminCatalogImpl from '../../../services/rest/HeadlessCommerceAdminCatalog';
 import AppAdministratorTable from './AppAdministratorTable';
 
 const AppAdministrator = () => {
 	const {data: apps} = useSWR<APIResponse<PublisherRequestInfo>>(
-		'appsAdministrator',
-		async () => {
-			const getAppsResponse = await fetcher(
-				'o/headless-commerce-admin-catalog/v1.0/products?nestedFields=productSpecifications&sort=createDate:desc'
-			);
-
-			return getAppsResponse;
-		}
+		'administrator-dashboard/apps',
+		() =>
+			HeadlessCommerceAdminCatalogImpl.getProducts(
+				new URLSearchParams({
+					filter: SearchBuilder.lambda('categoryNames', 'Project'),
+					nestedFields: 'productSpecifications',
+					sort: 'createDate:desc',
+				})
+			)
 	);
 
 	return (

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import Button from '@clayui/button';
+import {ClayButtonWithIcon} from '@clayui/button';
 import DropDown from '@clayui/drop-down/lib/DropDown';
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
@@ -46,15 +46,11 @@ const InfoCard: React.FC<InfoCard> = ({
 								closeOnClick
 								filterKey="name"
 								trigger={
-									<Button
-										aria-label="dropdown"
-										displayType="unstyled"
-									>
-										<ClayIcon
-											className="text-primary"
-											symbol="caret-bottom"
-										/>
-									</Button>
+									<ClayButtonWithIcon
+										aria-label="drop down"
+										symbol="caret-bottom"
+										title="Close"
+									/>
 								}
 							>
 								<DropDown.ItemList items={dropDownItems}>

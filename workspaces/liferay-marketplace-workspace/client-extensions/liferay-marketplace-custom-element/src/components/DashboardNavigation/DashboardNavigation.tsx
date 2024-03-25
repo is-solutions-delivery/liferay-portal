@@ -12,7 +12,6 @@ import AccountSearchDropdown from './AccountSearchDropdown';
 
 export type DashboardListItems = {
 	itemIcon: string;
-	itemName: string;
 	itemSelected?: boolean;
 	itemTitle: string;
 	items?: AppProps[];

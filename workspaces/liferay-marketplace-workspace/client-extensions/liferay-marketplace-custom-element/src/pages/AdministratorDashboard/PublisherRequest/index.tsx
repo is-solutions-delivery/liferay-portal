@@ -14,13 +14,9 @@ import PublisherRequestTable from './PublisherRequestTable';
 const PublisherRequest = () => {
 	const {data: publisherRequests, mutate} = useSWR<
 		APIResponse<PublisherRequestInfo>
-	>('requestpublisheraccounts', async () => {
-		const requestPublisherResponse = await fetcher(
-			'o/c/requestpublisheraccounts'
-		);
-
-		return requestPublisherResponse;
-	});
+	>('requestpublisheraccounts', () =>
+		fetcher('o/c/requestpublisheraccounts')
+	);
 
 	if (!publisherRequests) {
 		return (

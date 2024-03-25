@@ -37,7 +37,6 @@ const DropdownItems: React.FC<{
 						active={isActive}
 						autoFocus={isActive}
 						className="mb-1"
-						data-index={3}
 						key={account.id}
 						onClick={() =>
 							CommerceSelectAccountImpl.selectAccount(
