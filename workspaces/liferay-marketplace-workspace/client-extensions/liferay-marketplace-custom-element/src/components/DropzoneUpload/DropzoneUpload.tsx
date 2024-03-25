@@ -44,6 +44,7 @@ export function DropzoneUpload({
 			maxSize={maxSize}
 			multiple={multiple}
 			onDropAccepted={(file) => onHandleUpload(file, versionName)}
+			useFsAccessApi={false}
 		>
 			{({getInputProps, getRootProps, isDragActive, isDragReject}) => (
 				<div
