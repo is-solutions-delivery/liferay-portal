@@ -8,13 +8,15 @@ import {createReadStream} from 'fs';
 import {zipFolder} from '../utils/zip';
 import {ApiHelpers} from './ApiHelpers';
 
-type TSite = {
-	externalReferenceCode?: string;
-	id?: number;
+interface TSite {
+	externalReferenceCode: string;
+	id?: string;
+	membershipType: string;
 	name: string;
-	templateKey?: string;
-	templateType?: string;
-};
+	parentSiteKey: string;
+	templateKey: string;
+	templateType: string;
+}
 
 export class HeadlessSiteApiHelper {
 	apiHelpers: ApiHelpers;
@@ -25,10 +27,13 @@ export class HeadlessSiteApiHelper {
 		this.basePath = 'headless-site/v1.0';
 	}
 
-	async createSite(site: TSite): Promise<Site> {
+	async createSite(
+		name: string,
+		siteOptions: Partial<TSite> = {}
+	): Promise<Site> {
 		return this.apiHelpers.post(
 			`${this.apiHelpers.baseUrl}${this.basePath}/sites`,
-			{data: site}
+			{data: {name, ...siteOptions}}
 		);
 	}
 
