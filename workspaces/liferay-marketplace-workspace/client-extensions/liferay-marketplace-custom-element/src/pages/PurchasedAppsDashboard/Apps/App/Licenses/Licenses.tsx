@@ -16,11 +16,11 @@ import i18n from '../../../../../i18n';
 
 import './Licenses.scss';
 
+import ClayButton from '@clayui/button';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {useModal} from '@clayui/modal';
 import {ClayTooltipProvider} from '@clayui/tooltip';
 import classNames from 'classnames';
-import ClayButton from '@clayui/button';
 
 import DeactivateKeysModal from '../../../../../components/DeactivateKeysModal/DeactivateKeysModal';
 import Modal from '../../../../../components/Modal';
@@ -121,7 +121,7 @@ const Licenses = () => {
 			last: (
 				<>
 					<ClayButton
-						className="text-danger border-danger"
+						className="border-danger text-danger"
 						displayType="secondary"
 						onClick={() => {
 							licenseKeyModal.onClose();
@@ -134,10 +134,10 @@ const Licenses = () => {
 
 					<ClayButton
 						className="ml-4 mr-1"
-						displayType="primary"
 						disabled={isLicenseExpired(
 							modalData?.expirationDate as string
 						)}
+						displayType="primary"
 						onClick={() => {
 							licenseKeyModal.onClose();
 
@@ -338,7 +338,7 @@ const Licenses = () => {
 					last={buttonsInfo.last}
 					observer={licenseKeyModal.observer}
 					size="lg"
-					title={''}
+					title=""
 					visible={false}
 				>
 					<LicenceKeyModalContent

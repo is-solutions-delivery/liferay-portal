@@ -1,24 +1,30 @@
-import useSWR from 'swr';
+/**
+ * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
 import {
-	startOfQuarter,
-	endOfQuarter,
-	setQuarter,
-	format,
 	addDays,
+	endOfQuarter,
+	format,
+	setQuarter,
+	startOfQuarter,
 } from 'date-fns';
+import useSWR from 'swr';
+
 import SearchBuilder from '../../../core/SearchBuilder';
 import HeadlessCommerceAdminOrderImpl from '../../../services/rest/HeadlessCommerceAdminOrder';
 
 export const METRIC_PARAMETER = {
-	week: 7,
 	month: 30,
 	q1: 1,
 	q2: 2,
 	q3: 3,
 	q4: 4,
+	week: 7,
 };
 
-type FilterType = 'week' | 'month' | 'q1' | 'q2' | 'q3' | 'q4';
+type FilterType = 'month' | 'q1' | 'q2' | 'q3' | 'q4' | 'week';
 
 const useOrderAmountMetrics = (param: FilterType) => {
 	function getQuarterDates(year: number, quarter: number) {
@@ -29,13 +35,16 @@ const useOrderAmountMetrics = (param: FilterType) => {
 		const startDate = startOfQuarter(baseDate);
 		const endDate = endOfQuarter(baseDate);
 
-		return {startDate, endDate};
+		return {
+			endDate,
+			startDate,
+		};
 	}
 
 	const getOrderDonoutMetrics = async () => {
 		const currentTime = new Date();
 		const currentYear = format(currentTime, 'yyyy');
-		const {startDate, endDate} = getQuarterDates(
+		const {endDate, startDate} = getQuarterDates(
 			Number(currentYear),
 			METRIC_PARAMETER[param as keyof typeof METRIC_PARAMETER]
 		);

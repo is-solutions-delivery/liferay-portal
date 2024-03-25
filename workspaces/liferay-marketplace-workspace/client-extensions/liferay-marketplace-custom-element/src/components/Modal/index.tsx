@@ -21,13 +21,13 @@ type ModalProps = {
 
 const Modal = ({
 	children,
-	observer,
-	size,
-	title,
-	status,
 	first,
 	last,
+	observer,
+	size,
+	status,
 	subtitle,
+	title,
 	visible,
 }: ModalProps) => {
 	if (!visible) {

@@ -7,11 +7,11 @@ import classNames from 'classnames';
 
 import './DashboardNavigationList.scss';
 
+import ClayIcon from '@clayui/icon';
 import {NavLink, useLocation} from 'react-router-dom';
 
 import {DashboardListItems} from './DashboardNavigation';
 import {DashboardNavigationListItem} from './DashboardNavigationListItem';
-import ClayIcon from '@clayui/icon';
 
 type DashboardNavigationListProps = {
 	dashboardNavigation: DashboardListItems;
