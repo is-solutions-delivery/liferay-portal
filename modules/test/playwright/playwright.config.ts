@@ -43,6 +43,7 @@ import {config as productNavigationUserPersonalBarWebConfig} from './tests/produ
 import {config as stableConfig} from './tests/stable/config';
 import {config as stylebookConfig} from './tests/style-book-web/config';
 import {config as usersAdminWebConfig} from './tests/users-admin-web/config';
+import {config as marketplaceConfig} from './tests/workspaces/marketplace/config';
 
 const setupProjects = [wemSiteSetup, wemSiteTeardown];
 
@@ -77,6 +78,7 @@ export default defineConfig({
 		layoutTaglib,
 		lockedItemsConfig,
 		loginWebConfig,
+		marketplaceConfig,
 		objectWebConfig,
 		osbFaroWebConfig,
 		portalDefaultPermissionsWebConfig,
