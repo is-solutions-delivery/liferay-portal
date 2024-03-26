@@ -13,12 +13,10 @@ import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.petra.sql.dsl.expression.Predicate;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.aop.AopService;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.testray.service.base.TestrayLocalServiceBaseImpl;
 
 import java.io.Serializable;
@@ -45,8 +43,6 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 			long companyId, String testrayCasePriorities, long testrayRun1Id,
 			long testrayRun2Id, long testrayTeamId)
 		throws Exception {
-
-		_loadObjectDefinitions(companyId);
 
 		Set<Map<String, Serializable>> comparedTestrayCaseResultsSet =
 			new HashSet<>();
@@ -154,22 +150,6 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 		return sb.toString();
 	}
 
-	private ObjectDefinition _getObjectDefinition(
-			String objectDefinitionShortName)
-		throws Exception {
-
-		ObjectDefinition objectDefinition = _objectDefinitionsMap.get(
-			objectDefinitionShortName);
-
-		if (objectDefinition == null) {
-			throw new PortalException(
-				"No object definition found with short name " +
-					objectDefinitionShortName);
-		}
-
-		return objectDefinition;
-	}
-
 	private Map<String, Map<String, Serializable>>
 			_getTestrayCaseResultValuesMapByTestrayRun(
 				long companyId, String testrayCasePriorities, long testrayRunId,
@@ -178,16 +158,17 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 
 		Map<String, Map<String, Serializable>> map = new HashMap<>();
 
+		ObjectDefinition objectDefinition =
+			_objectDefinitionLocalService.getObjectDefinition(
+				companyId, "C_CaseResult");
+
 		for (Map<String, Serializable> valuesMap :
 				_objectEntryLocalService.getValuesList(
-					0, companyId, 0,
-					_getObjectDefinition(
-						"CaseResult"
-					).getObjectDefinitionId(),
+					0, companyId, 0, objectDefinition.getObjectDefinitionId(),
 					_filterFactory.create(
 						_getFilterString(
 							testrayCasePriorities, testrayRunId, testrayTeamId),
-						_getObjectDefinition("CaseResult")),
+						objectDefinition),
 					null, -1, -1, null)) {
 
 			map.put(
@@ -292,30 +273,6 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 
 		map.put(status, count + 1);
 	}
-
-	private void _loadObjectDefinitions(long companyId) {
-		List<ObjectDefinition> objectDefinitions =
-			_objectDefinitionLocalService.getObjectDefinitions(
-				companyId, true, WorkflowConstants.STATUS_APPROVED);
-
-		if (ListUtil.isEmpty(objectDefinitions)) {
-			return;
-		}
-
-		for (ObjectDefinition objectDefinition : objectDefinitions) {
-			if (_objectDefinitionsMap.get(objectDefinition.getShortName()) !=
-					null) {
-
-				continue;
-			}
-
-			_objectDefinitionsMap.put(
-				objectDefinition.getShortName(), objectDefinition);
-		}
-	}
-
-	private static final Map<String, ObjectDefinition> _objectDefinitionsMap =
-		new HashMap<>();
 
 	@Reference(
 		target = "(filter.factory.key=" + ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT + ")"
