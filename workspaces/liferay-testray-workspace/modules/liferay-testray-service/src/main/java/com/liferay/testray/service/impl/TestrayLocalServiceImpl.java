@@ -76,6 +76,36 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 			).build());
 	}
 
+	private void _compareResults(
+		Map<String, Map<String, Integer>> aggregatedResultsMap,
+		Map<String, Serializable> mergedTestrayCaseResultMap) {
+
+		Map<String, Integer> map = aggregatedResultsMap.get(
+			mergedTestrayCaseResultMap.get("testrayCaseResult1Status"));
+
+		if (map == null) {
+			map = new HashMap<>();
+
+			aggregatedResultsMap.put(
+				String.valueOf(
+					mergedTestrayCaseResultMap.get("testrayCaseResult1Status")),
+				map);
+		}
+
+		Integer count = map.get(
+			String.valueOf(
+				mergedTestrayCaseResultMap.get("testrayCaseResult2Status")));
+
+		if (count == null) {
+			count = 0;
+		}
+
+		map.put(
+			String.valueOf(
+				mergedTestrayCaseResultMap.get("testrayCaseResult2Status")),
+			count + 1);
+	}
+
 	private String _getFilterString(
 		String testrayCasePriorities, long testrayRunId, long testrayTeamId) {
 
@@ -138,89 +168,41 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 		_getTestrayComponentComparisons(Set<Map<String, Serializable>> set) {
 
 		Map<String, Map<String, Map<String, Integer>>>
-			testrayRunComparisonByTestrayComponentMap = new HashMap<>();
+			testrayComponentComparisonsMap = new HashMap<>();
 
 		for (Map<String, Serializable> mergedTestrayCaseResultMap : set) {
-			Map<String, Map<String, Integer>> testrayComponentSummaryMap =
-				testrayRunComparisonByTestrayComponentMap.get(
+			Map<String, Map<String, Integer>> map =
+				testrayComponentComparisonsMap.get(
 					String.valueOf(
 						mergedTestrayCaseResultMap.get(
 							"r_componentToCaseResult_c_componentId")));
 
-			if (testrayComponentSummaryMap == null) {
-				testrayComponentSummaryMap = new HashMap<>();
+			if (map == null) {
+				map = new HashMap<>();
 
-				testrayRunComparisonByTestrayComponentMap.put(
+				testrayComponentComparisonsMap.put(
 					String.valueOf(
 						mergedTestrayCaseResultMap.get(
 							"r_componentToCaseResult_c_componentId")),
-					testrayComponentSummaryMap);
+					map);
 			}
 
-			Map<String, Integer> testrayCaseResult2StatusCountMap =
-				testrayComponentSummaryMap.get(
-					mergedTestrayCaseResultMap.get("testrayCaseResult1Status"));
-
-			if (testrayCaseResult2StatusCountMap == null) {
-				testrayCaseResult2StatusCountMap = new HashMap<>();
-
-				testrayComponentSummaryMap.put(
-					String.valueOf(
-						mergedTestrayCaseResultMap.get(
-							"testrayCaseResult1Status")),
-					testrayCaseResult2StatusCountMap);
-			}
-
-			_incrementTestrayCaseResultStatusQuantity(
-				testrayCaseResult2StatusCountMap,
-				String.valueOf(
-					mergedTestrayCaseResultMap.get(
-						"testrayCaseResult2Status")));
+			_compareResults(map, mergedTestrayCaseResultMap);
 		}
 
-		return testrayRunComparisonByTestrayComponentMap;
+		return testrayComponentComparisonsMap;
 	}
 
 	private Map<String, Map<String, Integer>> _getTestrayRunComparison(
 		Set<Map<String, Serializable>> set) {
 
-		Map<String, Map<String, Integer>> testrayRunComparisonMap =
-			new HashMap<>();
+		Map<String, Map<String, Integer>> map = new HashMap<>();
 
 		for (Map<String, Serializable> mergedTestrayCaseResultMap : set) {
-			Map<String, Integer> map = testrayRunComparisonMap.get(
-				mergedTestrayCaseResultMap.get("testrayCaseResult1Status"));
-
-			if (map == null) {
-				map = new HashMap<>();
-
-				testrayRunComparisonMap.put(
-					String.valueOf(
-						mergedTestrayCaseResultMap.get(
-							"testrayCaseResult1Status")),
-					map);
-			}
-
-			_incrementTestrayCaseResultStatusQuantity(
-				map,
-				String.valueOf(
-					mergedTestrayCaseResultMap.get(
-						"testrayCaseResult2Status")));
+			_compareResults(map, mergedTestrayCaseResultMap);
 		}
 
-		return testrayRunComparisonMap;
-	}
-
-	private void _incrementTestrayCaseResultStatusQuantity(
-		Map<String, Integer> map, String status) {
-
-		Integer count = map.get(status);
-
-		if (count == null) {
-			count = 0;
-		}
-
-		map.put(status, count + 1);
+		return map;
 	}
 
 	private Map<String, Serializable> _mergeTestrayCaseResults(
