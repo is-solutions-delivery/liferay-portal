@@ -27,12 +27,12 @@ public class TestrayLocalServiceUtil {
 	 *
 	 * Never modify this class directly. Add custom service methods to <code>com.liferay.testray.service.impl.TestrayLocalServiceImpl</code> and rerun ServiceBuilder to regenerate this class.
 	 */
-	public static List<Map<String, Object>> compareResults(
+	public static List<Map<String, Object>> compareTestrayRuns(
 			long companyId, String testrayCasePriorities, long testrayRun1Id,
 			long testrayRun2Id, long testrayTeamId)
 		throws Exception {
 
-		return getService().compareResults(
+		return getService().compareTestrayRuns(
 			companyId, testrayCasePriorities, testrayRun1Id, testrayRun2Id,
 			testrayTeamId);
 	}

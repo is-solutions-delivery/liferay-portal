@@ -26,12 +26,12 @@ public class TestrayLocalServiceWrapper
 	}
 
 	@Override
-	public java.util.List<java.util.Map<String, Object>> compareResults(
+	public java.util.List<java.util.Map<String, Object>> compareTestrayRuns(
 			long companyId, String testrayCasePriorities, long testrayRun1Id,
 			long testrayRun2Id, long testrayTeamId)
 		throws Exception {
 
-		return _testrayLocalService.compareResults(
+		return _testrayLocalService.compareTestrayRuns(
 			companyId, testrayCasePriorities, testrayRun1Id, testrayRun2Id,
 			testrayTeamId);
 	}

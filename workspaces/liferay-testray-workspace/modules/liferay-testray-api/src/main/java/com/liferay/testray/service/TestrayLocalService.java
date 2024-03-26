@@ -38,7 +38,7 @@ public interface TestrayLocalService extends BaseLocalService {
 	 *
 	 * Never modify this interface directly. Add custom service methods to <code>com.liferay.testray.service.impl.TestrayLocalServiceImpl</code> and rerun ServiceBuilder to automatically copy the method declarations to this interface. Consume the testray local service via injection or a <code>org.osgi.util.tracker.ServiceTracker</code>. Use {@link TestrayLocalServiceUtil} if injection and service tracking are not available.
 	 */
-	public List<Map<String, Object>> compareResults(
+	public List<Map<String, Object>> compareTestrayRuns(
 			long companyId, String testrayCasePriorities, long testrayRun1Id,
 			long testrayRun2Id, long testrayTeamId)
 		throws Exception;

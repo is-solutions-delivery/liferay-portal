@@ -41,16 +41,17 @@ import com.liferay.testray.service.TestrayServiceUtil;
  */
 public class TestrayServiceHttp {
 
-	public static java.util.List<java.util.Map<String, Object>> compareResults(
-			HttpPrincipal httpPrincipal, long companyId,
-			String testrayCasePriorities, long testrayRun1Id,
-			long testrayRun2Id, long testrayTeamId)
+	public static java.util.List<java.util.Map<String, Object>>
+			compareTestrayRuns(
+				HttpPrincipal httpPrincipal, long companyId,
+				String testrayCasePriorities, long testrayRun1Id,
+				long testrayRun2Id, long testrayTeamId)
 		throws Exception {
 
 		try {
 			MethodKey methodKey = new MethodKey(
-				TestrayServiceUtil.class, "compareResults",
-				_compareResultsParameterTypes0);
+				TestrayServiceUtil.class, "compareTestrayRuns",
+				_compareTestrayRunsParameterTypes0);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, companyId, testrayCasePriorities, testrayRun1Id,
@@ -83,7 +84,7 @@ public class TestrayServiceHttp {
 
 	private static Log _log = LogFactoryUtil.getLog(TestrayServiceHttp.class);
 
-	private static final Class<?>[] _compareResultsParameterTypes0 =
+	private static final Class<?>[] _compareTestrayRunsParameterTypes0 =
 		new Class[] {
 			long.class, String.class, long.class, long.class, long.class
 		};
