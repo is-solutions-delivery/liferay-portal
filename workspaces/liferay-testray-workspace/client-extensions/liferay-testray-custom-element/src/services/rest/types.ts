@@ -110,6 +110,7 @@ export type TestrayBuild = {
 	creator: {
 		name: string;
 	};
+	dateArchived: string;
 	dateCreated: string;
 	description: string;
 	dueStatus: PickList;
