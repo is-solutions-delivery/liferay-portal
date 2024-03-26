@@ -39,7 +39,7 @@ import org.osgi.service.component.annotations.Reference;
 )
 public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 
-	public List<Map<String, Object>> compareResults(
+	public List<Map<String, Object>> compareTestrayRuns(
 			long companyId, String testrayCasePriorities, long testrayRun1Id,
 			long testrayRun2Id, long testrayTeamId)
 		throws Exception {

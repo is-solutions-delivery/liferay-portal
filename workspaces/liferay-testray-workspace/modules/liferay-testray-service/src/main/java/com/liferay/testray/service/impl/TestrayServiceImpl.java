@@ -25,12 +25,12 @@ import org.osgi.service.component.annotations.Component;
 )
 public class TestrayServiceImpl extends TestrayServiceBaseImpl {
 
-	public List<Map<String, Object>> compareResults(
+	public List<Map<String, Object>> compareTestrayRuns(
 			long companyId, String testrayCasePriorities, long testrayRun1Id,
 			long testrayRun2Id, long testrayTeamId)
 		throws Exception {
 
-		return testrayLocalService.compareResults(
+		return testrayLocalService.compareTestrayRuns(
 			companyId, testrayCasePriorities, testrayRun1Id, testrayRun2Id,
 			testrayTeamId);
 	}

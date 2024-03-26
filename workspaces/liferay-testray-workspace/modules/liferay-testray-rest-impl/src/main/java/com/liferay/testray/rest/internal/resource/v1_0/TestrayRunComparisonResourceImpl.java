@@ -33,7 +33,7 @@ public class TestrayRunComparisonResourceImpl
 		TestrayRunComparison testrayRunComparison = new TestrayRunComparison();
 
 		testrayRunComparison.setResults(
-			_testrayService.compareResults(
+			_testrayService.compareTestrayRuns(
 				contextCompany.getCompanyId(), testrayCasePriorities,
 				testrayRun1Id, testrayRun2Id, GetterUtil.getLong(testrayTeamId)
 			).toArray());
