@@ -70,7 +70,7 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 
 		return ListUtil.fromArray(
 			HashMapBuilder.<String, Object>put(
-				"Components", _getTestrayRunComparisonByTestrayComponent(set)
+				"Components", _getTestrayComponentComparisons(set)
 			).put(
 				"Runs", _getTestrayRunComparison(set)
 			).build());
@@ -134,39 +134,8 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 		return map;
 	}
 
-	private Map<String, Map<String, Integer>> _getTestrayRunComparison(
-		Set<Map<String, Serializable>> set) {
-
-		Map<String, Map<String, Integer>> testrayRunComparisonMap =
-			new HashMap<>();
-
-		for (Map<String, Serializable> mergedTestrayCaseResultMap : set) {
-			Map<String, Integer> map = testrayRunComparisonMap.get(
-				mergedTestrayCaseResultMap.get("testrayCaseResult1Status"));
-
-			if (map == null) {
-				map = new HashMap<>();
-
-				testrayRunComparisonMap.put(
-					String.valueOf(
-						mergedTestrayCaseResultMap.get(
-							"testrayCaseResult1Status")),
-					map);
-			}
-
-			_incrementTestrayCaseResultStatusQuantity(
-				map,
-				String.valueOf(
-					mergedTestrayCaseResultMap.get(
-						"testrayCaseResult2Status")));
-		}
-
-		return testrayRunComparisonMap;
-	}
-
 	private Map<String, Map<String, Map<String, Integer>>>
-		_getTestrayRunComparisonByTestrayComponent(
-			Set<Map<String, Serializable>> set) {
+		_getTestrayComponentComparisons(Set<Map<String, Serializable>> set) {
 
 		Map<String, Map<String, Map<String, Integer>>>
 			testrayRunComparisonByTestrayComponentMap = new HashMap<>();
@@ -210,6 +179,36 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 		}
 
 		return testrayRunComparisonByTestrayComponentMap;
+	}
+
+	private Map<String, Map<String, Integer>> _getTestrayRunComparison(
+		Set<Map<String, Serializable>> set) {
+
+		Map<String, Map<String, Integer>> testrayRunComparisonMap =
+			new HashMap<>();
+
+		for (Map<String, Serializable> mergedTestrayCaseResultMap : set) {
+			Map<String, Integer> map = testrayRunComparisonMap.get(
+				mergedTestrayCaseResultMap.get("testrayCaseResult1Status"));
+
+			if (map == null) {
+				map = new HashMap<>();
+
+				testrayRunComparisonMap.put(
+					String.valueOf(
+						mergedTestrayCaseResultMap.get(
+							"testrayCaseResult1Status")),
+					map);
+			}
+
+			_incrementTestrayCaseResultStatusQuantity(
+				map,
+				String.valueOf(
+					mergedTestrayCaseResultMap.get(
+						"testrayCaseResult2Status")));
+		}
+
+		return testrayRunComparisonMap;
 	}
 
 	private void _incrementTestrayCaseResultStatusQuantity(
