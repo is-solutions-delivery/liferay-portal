@@ -44,8 +44,7 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 			long testrayRun2Id, long testrayTeamId)
 		throws Exception {
 
-		Set<Map<String, Serializable>> comparedTestrayCaseResultsSet =
-			new HashSet<>();
+		Set<Map<String, Serializable>> set = new HashSet<>();
 
 		Map<String, Map<String, Serializable>> testrayCaseResultValuesMap1 =
 			_getTestrayCaseResultValuesMapByTestrayRun(
@@ -57,7 +56,7 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 		for (Map.Entry<String, Map<String, Serializable>> entry :
 				testrayCaseResultValuesMap1.entrySet()) {
 
-			comparedTestrayCaseResultsSet.add(
+			set.add(
 				_compareTestrayCaseResults(
 					entry.getValue(),
 					testrayCaseResultValuesMap2.remove(entry.getKey())));
@@ -66,16 +65,14 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 		for (Map.Entry<String, Map<String, Serializable>> entry :
 				testrayCaseResultValuesMap2.entrySet()) {
 
-			comparedTestrayCaseResultsSet.add(
-				_compareTestrayCaseResults(null, entry.getValue()));
+			set.add(_compareTestrayCaseResults(null, entry.getValue()));
 		}
 
 		return ListUtil.fromArray(
 			HashMapBuilder.<String, Object>put(
-				"Components",
-				_getTestrayComponentsSummaryMap(comparedTestrayCaseResultsSet)
+				"Components", _getTestrayComponentsSummaryMap(set)
 			).put(
-				"Runs", _getTestrayRunsSummaryMap(comparedTestrayCaseResultsSet)
+				"Runs", _getTestrayRunsSummaryMap(set)
 			).build());
 	}
 
