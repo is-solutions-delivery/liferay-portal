@@ -238,7 +238,7 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 					testrayCaseResult2StatusCountMap);
 			}
 
-			_incrementStatusCount(
+			_incrementTestrayCaseResultStatusQuantity(
 				testrayCaseResult2StatusCountMap,
 				String.valueOf(
 					comparedTestrayCaseResult.get("testrayCaseResult2Status")));
@@ -271,7 +271,7 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 					testrayCaseResult2StatusCountMap);
 			}
 
-			_incrementStatusCount(
+			_incrementTestrayCaseResultStatusQuantity(
 				testrayCaseResult2StatusCountMap,
 				String.valueOf(
 					comparedTestrayCaseResultMap.get(
@@ -281,7 +281,7 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 		return testrayRunsSummaryMap;
 	}
 
-	private void _incrementStatusCount(
+	private void _incrementTestrayCaseResultStatusQuantity(
 		Map<String, Integer> map, String status) {
 
 		Integer count = map.get(status);
