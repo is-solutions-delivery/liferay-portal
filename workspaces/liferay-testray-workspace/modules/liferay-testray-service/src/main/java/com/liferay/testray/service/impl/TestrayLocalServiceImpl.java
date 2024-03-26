@@ -57,7 +57,7 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 				testrayCaseResultsTestrayRun1.entrySet()) {
 
 			set.add(
-				_compareTestrayCaseResults(
+				_mergeTestrayCaseResults(
 					entry.getValue(),
 					testrayCaseResultsTestrayRun2.remove(entry.getKey())));
 		}
@@ -65,7 +65,7 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 		for (Map.Entry<String, Map<String, Serializable>> entry :
 				testrayCaseResultsTestrayRun2.entrySet()) {
 
-			set.add(_compareTestrayCaseResults(null, entry.getValue()));
+			set.add(_mergeTestrayCaseResults(null, entry.getValue()));
 		}
 
 		return ListUtil.fromArray(
@@ -74,45 +74,6 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 			).put(
 				"Runs", _getTestrayRunsSummaryMap(set)
 			).build());
-	}
-
-	private Map<String, Serializable> _compareTestrayCaseResults(
-		Map<String, Serializable> testrayCaseResultsTestrayRun1,
-		Map<String, Serializable> testrayCaseResultsTestrayRun2) {
-
-		Map<String, Serializable> map = testrayCaseResultsTestrayRun1;
-
-		if (testrayCaseResultsTestrayRun1 == null) {
-			map = testrayCaseResultsTestrayRun2;
-		}
-
-		Serializable testrayCaseResult1Id = 0;
-		Serializable testrayCaseResult1Status = "DIDNOTRUN";
-
-		if (testrayCaseResultsTestrayRun1 != null) {
-			testrayCaseResult1Id = testrayCaseResultsTestrayRun1.get(
-				"c_caseResultId");
-			testrayCaseResult1Status = testrayCaseResultsTestrayRun1.get(
-				"dueStatus");
-		}
-
-		map.put("testrayCaseResult1Id", testrayCaseResult1Id);
-		map.put("testrayCaseResult1Status", testrayCaseResult1Status);
-
-		Serializable testrayCaseResult2Id = 0;
-		Serializable testrayCaseResult2Status = "DIDNOTRUN";
-
-		if (testrayCaseResultsTestrayRun2 != null) {
-			testrayCaseResult2Id = testrayCaseResultsTestrayRun2.get(
-				"c_caseResultId");
-			testrayCaseResult2Status = testrayCaseResultsTestrayRun2.get(
-				"dueStatus");
-		}
-
-		map.put("testrayCaseResult2Id", testrayCaseResult2Id);
-		map.put("testrayCaseResult2Status", testrayCaseResult2Status);
-
-		return map;
 	}
 
 	private String _getFilterString(
@@ -266,6 +227,45 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 		}
 
 		map.put(status, count + 1);
+	}
+
+	private Map<String, Serializable> _mergeTestrayCaseResults(
+		Map<String, Serializable> testrayCaseResultsTestrayRun1,
+		Map<String, Serializable> testrayCaseResultsTestrayRun2) {
+
+		Map<String, Serializable> map = testrayCaseResultsTestrayRun1;
+
+		if (testrayCaseResultsTestrayRun1 == null) {
+			map = testrayCaseResultsTestrayRun2;
+		}
+
+		Serializable testrayCaseResult1Id = 0;
+		Serializable testrayCaseResult1Status = "DIDNOTRUN";
+
+		if (testrayCaseResultsTestrayRun1 != null) {
+			testrayCaseResult1Id = testrayCaseResultsTestrayRun1.get(
+				"c_caseResultId");
+			testrayCaseResult1Status = testrayCaseResultsTestrayRun1.get(
+				"dueStatus");
+		}
+
+		map.put("testrayCaseResult1Id", testrayCaseResult1Id);
+		map.put("testrayCaseResult1Status", testrayCaseResult1Status);
+
+		Serializable testrayCaseResult2Id = 0;
+		Serializable testrayCaseResult2Status = "DIDNOTRUN";
+
+		if (testrayCaseResultsTestrayRun2 != null) {
+			testrayCaseResult2Id = testrayCaseResultsTestrayRun2.get(
+				"c_caseResultId");
+			testrayCaseResult2Status = testrayCaseResultsTestrayRun2.get(
+				"dueStatus");
+		}
+
+		map.put("testrayCaseResult2Id", testrayCaseResult2Id);
+		map.put("testrayCaseResult2Status", testrayCaseResult2Status);
+
+		return map;
 	}
 
 	@Reference(
