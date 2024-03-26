@@ -70,9 +70,9 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 
 		return ListUtil.fromArray(
 			HashMapBuilder.<String, Object>put(
-				"Components", _getTestrayComponentsSummaryMap(set)
+				"Components", _getTestrayRunComparisonByTestrayComponent(set)
 			).put(
-				"Runs", _getTestrayRunsSummaryMap(set)
+				"Runs", _getTestrayRunComparison(set)
 			).build());
 	}
 
@@ -134,42 +134,70 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 		return map;
 	}
 
+	private Map<String, Map<String, Integer>> _getTestrayRunComparison(
+		Set<Map<String, Serializable>> set) {
+
+		Map<String, Map<String, Integer>> testrayRunComparisonMap =
+			new HashMap<>();
+
+		for (Map<String, Serializable> mergedTestrayCaseResultMap : set) {
+			Map<String, Integer> map = testrayRunComparisonMap.get(
+				mergedTestrayCaseResultMap.get("testrayCaseResult1Status"));
+
+			if (map == null) {
+				map = new HashMap<>();
+
+				testrayRunComparisonMap.put(
+					String.valueOf(
+						mergedTestrayCaseResultMap.get(
+							"testrayCaseResult1Status")),
+					map);
+			}
+
+			_incrementTestrayCaseResultStatusQuantity(
+				map,
+				String.valueOf(
+					mergedTestrayCaseResultMap.get(
+						"testrayCaseResult2Status")));
+		}
+
+		return testrayRunComparisonMap;
+	}
+
 	private Map<String, Map<String, Map<String, Integer>>>
-		_getTestrayComponentsSummaryMap(
-			Set<Map<String, Serializable>> comparedTestrayCaseResultsSet) {
+		_getTestrayRunComparisonByTestrayComponent(
+			Set<Map<String, Serializable>> set) {
 
 		Map<String, Map<String, Map<String, Integer>>>
-			testrayComponentsSummaryMap = new HashMap<>();
+			testrayRunComparisonByTestrayComponentMap = new HashMap<>();
 
-		for (Map<String, Serializable> comparedTestrayCaseResult :
-				comparedTestrayCaseResultsSet) {
-
+		for (Map<String, Serializable> mergedTestrayCaseResultMap : set) {
 			Map<String, Map<String, Integer>> testrayComponentSummaryMap =
-				testrayComponentsSummaryMap.get(
+				testrayRunComparisonByTestrayComponentMap.get(
 					String.valueOf(
-						comparedTestrayCaseResult.get(
+						mergedTestrayCaseResultMap.get(
 							"r_componentToCaseResult_c_componentId")));
 
 			if (testrayComponentSummaryMap == null) {
 				testrayComponentSummaryMap = new HashMap<>();
 
-				testrayComponentsSummaryMap.put(
+				testrayRunComparisonByTestrayComponentMap.put(
 					String.valueOf(
-						comparedTestrayCaseResult.get(
+						mergedTestrayCaseResultMap.get(
 							"r_componentToCaseResult_c_componentId")),
 					testrayComponentSummaryMap);
 			}
 
 			Map<String, Integer> testrayCaseResult2StatusCountMap =
 				testrayComponentSummaryMap.get(
-					comparedTestrayCaseResult.get("testrayCaseResult1Status"));
+					mergedTestrayCaseResultMap.get("testrayCaseResult1Status"));
 
 			if (testrayCaseResult2StatusCountMap == null) {
 				testrayCaseResult2StatusCountMap = new HashMap<>();
 
 				testrayComponentSummaryMap.put(
 					String.valueOf(
-						comparedTestrayCaseResult.get(
+						mergedTestrayCaseResultMap.get(
 							"testrayCaseResult1Status")),
 					testrayCaseResult2StatusCountMap);
 			}
@@ -177,44 +205,11 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 			_incrementTestrayCaseResultStatusQuantity(
 				testrayCaseResult2StatusCountMap,
 				String.valueOf(
-					comparedTestrayCaseResult.get("testrayCaseResult2Status")));
-		}
-
-		return testrayComponentsSummaryMap;
-	}
-
-	private Map<String, Map<String, Integer>> _getTestrayRunsSummaryMap(
-		Set<Map<String, Serializable>> comparedTestrayCaseResultsSet) {
-
-		Map<String, Map<String, Integer>> testrayRunsSummaryMap =
-			new HashMap<>();
-
-		for (Map<String, Serializable> comparedTestrayCaseResultMap :
-				comparedTestrayCaseResultsSet) {
-
-			Map<String, Integer> testrayCaseResult2StatusCountMap =
-				testrayRunsSummaryMap.get(
-					comparedTestrayCaseResultMap.get(
-						"testrayCaseResult1Status"));
-
-			if (testrayCaseResult2StatusCountMap == null) {
-				testrayCaseResult2StatusCountMap = new HashMap<>();
-
-				testrayRunsSummaryMap.put(
-					String.valueOf(
-						comparedTestrayCaseResultMap.get(
-							"testrayCaseResult1Status")),
-					testrayCaseResult2StatusCountMap);
-			}
-
-			_incrementTestrayCaseResultStatusQuantity(
-				testrayCaseResult2StatusCountMap,
-				String.valueOf(
-					comparedTestrayCaseResultMap.get(
+					mergedTestrayCaseResultMap.get(
 						"testrayCaseResult2Status")));
 		}
 
-		return testrayRunsSummaryMap;
+		return testrayRunComparisonByTestrayComponentMap;
 	}
 
 	private void _incrementTestrayCaseResultStatusQuantity(
