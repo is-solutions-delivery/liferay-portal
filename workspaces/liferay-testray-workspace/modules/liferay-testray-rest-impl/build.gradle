@@ -16,5 +16,6 @@ apply plugin: "com.liferay.portal.tools.rest.builder"
 
 dependencies {
 	compileOnly group: "com.liferay.portal", name: "release.portal.api", version: "latest.release"
+	compileOnly project(":modules:liferay-testray-api")
 	compileOnly project(":modules:liferay-testray-rest-api")
 }
