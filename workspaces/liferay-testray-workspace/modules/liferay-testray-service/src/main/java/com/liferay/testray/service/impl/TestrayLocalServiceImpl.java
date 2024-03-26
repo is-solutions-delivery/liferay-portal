@@ -46,24 +46,24 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 
 		Set<Map<String, Serializable>> set = new HashSet<>();
 
-		Map<String, Map<String, Serializable>> testrayCaseResultValuesMap1 =
-			_getTestrayCaseResultValuesMapByTestrayRun(
+		Map<String, Map<String, Serializable>> testrayCaseResultsTestrayRun1 =
+			_getTestrayCaseResultsByTestrayRun(
 				companyId, testrayCasePriorities, testrayRun1Id, testrayTeamId);
-		Map<String, Map<String, Serializable>> testrayCaseResultValuesMap2 =
-			_getTestrayCaseResultValuesMapByTestrayRun(
+		Map<String, Map<String, Serializable>> testrayCaseResultsTestrayRun2 =
+			_getTestrayCaseResultsByTestrayRun(
 				companyId, testrayCasePriorities, testrayRun2Id, testrayTeamId);
 
 		for (Map.Entry<String, Map<String, Serializable>> entry :
-				testrayCaseResultValuesMap1.entrySet()) {
+				testrayCaseResultsTestrayRun1.entrySet()) {
 
 			set.add(
 				_compareTestrayCaseResults(
 					entry.getValue(),
-					testrayCaseResultValuesMap2.remove(entry.getKey())));
+					testrayCaseResultsTestrayRun2.remove(entry.getKey())));
 		}
 
 		for (Map.Entry<String, Map<String, Serializable>> entry :
-				testrayCaseResultValuesMap2.entrySet()) {
+				testrayCaseResultsTestrayRun2.entrySet()) {
 
 			set.add(_compareTestrayCaseResults(null, entry.getValue()));
 		}
@@ -77,45 +77,42 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 	}
 
 	private Map<String, Serializable> _compareTestrayCaseResults(
-		Map<String, Serializable> testrayCaseResultValuesMap1,
-		Map<String, Serializable> testrayCaseResultValuesMap2) {
+		Map<String, Serializable> testrayCaseResultsTestrayRun1,
+		Map<String, Serializable> testrayCaseResultsTestrayRun2) {
 
-		Map<String, Serializable> comparedValuesMap =
-			testrayCaseResultValuesMap1;
+		Map<String, Serializable> map = testrayCaseResultsTestrayRun1;
 
-		if (testrayCaseResultValuesMap1 == null) {
-			comparedValuesMap = testrayCaseResultValuesMap2;
+		if (testrayCaseResultsTestrayRun1 == null) {
+			map = testrayCaseResultsTestrayRun2;
 		}
 
 		Serializable testrayCaseResult1Id = 0;
 		Serializable testrayCaseResult1Status = "DIDNOTRUN";
 
-		if (testrayCaseResultValuesMap1 != null) {
-			testrayCaseResult1Id = testrayCaseResultValuesMap1.get(
+		if (testrayCaseResultsTestrayRun1 != null) {
+			testrayCaseResult1Id = testrayCaseResultsTestrayRun1.get(
 				"c_caseResultId");
-			testrayCaseResult1Status = testrayCaseResultValuesMap1.get(
+			testrayCaseResult1Status = testrayCaseResultsTestrayRun1.get(
 				"dueStatus");
 		}
 
-		comparedValuesMap.put("testrayCaseResult1Id", testrayCaseResult1Id);
-		comparedValuesMap.put(
-			"testrayCaseResult1Status", testrayCaseResult1Status);
+		map.put("testrayCaseResult1Id", testrayCaseResult1Id);
+		map.put("testrayCaseResult1Status", testrayCaseResult1Status);
 
 		Serializable testrayCaseResult2Id = 0;
 		Serializable testrayCaseResult2Status = "DIDNOTRUN";
 
-		if (testrayCaseResultValuesMap2 != null) {
-			testrayCaseResult2Id = testrayCaseResultValuesMap2.get(
+		if (testrayCaseResultsTestrayRun2 != null) {
+			testrayCaseResult2Id = testrayCaseResultsTestrayRun2.get(
 				"c_caseResultId");
-			testrayCaseResult2Status = testrayCaseResultValuesMap2.get(
+			testrayCaseResult2Status = testrayCaseResultsTestrayRun2.get(
 				"dueStatus");
 		}
 
-		comparedValuesMap.put("testrayCaseResult2Id", testrayCaseResult2Id);
-		comparedValuesMap.put(
-			"testrayCaseResult2Status", testrayCaseResult2Status);
+		map.put("testrayCaseResult2Id", testrayCaseResult2Id);
+		map.put("testrayCaseResult2Status", testrayCaseResult2Status);
 
-		return comparedValuesMap;
+		return map;
 	}
 
 	private String _getFilterString(
@@ -148,7 +145,7 @@ public class TestrayLocalServiceImpl extends TestrayLocalServiceBaseImpl {
 	}
 
 	private Map<String, Map<String, Serializable>>
-			_getTestrayCaseResultValuesMapByTestrayRun(
+			_getTestrayCaseResultsByTestrayRun(
 				long companyId, String testrayCasePriorities, long testrayRunId,
 				long testrayTeamId)
 		throws Exception {
