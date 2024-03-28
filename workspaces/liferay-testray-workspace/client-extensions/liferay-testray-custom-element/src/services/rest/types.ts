@@ -180,7 +180,7 @@ export type TestrayCaseResult = {
 	dueStatus: PickList;
 	errors: string;
 	id: number;
-	issues: TestrayCaseResultIssue[];
+	issues: string;
 	key: string;
 	mbMessageId: number;
 	mbThreadId: number;
@@ -326,7 +326,7 @@ export type TestraySubTask = {
 	dueStatus: PickList;
 	errors: string;
 	id: number;
-	issues?: TestrayIssue[];
+	issues?: string[];
 	mbMessageId: number;
 	mbThreadId: number;
 	mergedToSubtaskId: TestraySubTask;
