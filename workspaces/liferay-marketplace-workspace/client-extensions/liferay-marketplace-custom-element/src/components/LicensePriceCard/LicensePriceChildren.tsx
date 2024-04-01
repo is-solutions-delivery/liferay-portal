@@ -3,66 +3,144 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import './LicensePriceChildren.scss';
 import unitedStatesIcon from '../../assets/icons/united_states_icon.svg';
+import {CurrencyAbbreviation} from '../../enums/CurrencyAbbreviation';
+import {App} from '../../pages/ReviewAndSubmitAppPage/ReviewAndSubmitAppPageUtil';
 
-type Quantity = {
-	from: string;
-	to: string;
+export type TierPrices = {
+	skuId: number;
+	tierPrice: {
+		currency: string;
+		price: number;
+		priceFormatted: string;
+		quantity: number;
+	}[];
 };
 
-interface LicensePriceChildren {
-	currency: string;
-	quantity: Quantity;
-	value: string;
-}
+type LicensePriceChildrenType = {
+	app: App;
+	isCloud: boolean;
+	tierPrices: TierPrices[];
+};
 
-export function LicensePriceChildren({
-	currency,
-	quantity,
-	value,
-}: LicensePriceChildren) {
+const LicensePriceChildren = ({
+	app,
+	isCloud,
+	tierPrices,
+}: LicensePriceChildrenType) => {
+	const {skus} = app;
+
+	const productSkus = tierPrices
+		.map((sku) => {
+			const {skuId, tierPrice} = sku;
+
+			return {
+				sku: skus.find(({id}) => id === skuId) as SKU,
+				tierPrices: tierPrice,
+			};
+		})
+		.filter(({sku}) => {
+			if (!sku || sku.sku.endsWith('ts')) {
+				return false;
+			}
+
+			if (
+				sku.skuOptions.some(({value}) =>
+					['yes', 'trial'].includes(value)
+				)
+			) {
+				return false;
+			}
+
+			return true;
+		});
+
 	return (
-		<div className="license-container">
-			<div className="license-type">
-				<span>Standard Licenses</span>
-			</div>
+		<div className="align-items-start d-flex flex-column justify-content-between license-container">
+			{productSkus?.map(({sku, tierPrices: licenses}, index: number) => {
+				return (
+					<div
+						className="align-items-baseline d-flex mb-5"
+						key={index}
+					>
+						<div className="col-3 license-type p-0">
+							<span className="text-capitalize">
+								{` ${
+									isCloud
+										? 'Standard'
+										: sku.skuOptions[0].value
+								} Licenses`}
+							</span>
+						</div>
+						<div className="align-items-start d-flex flex-column ml-5">
+							{licenses?.map((license, indexLicense: number) => {
+								const {
+									currency,
+									priceFormatted,
+									quantity,
+								} = license;
 
-			<div>
-				<span className="license-title">From</span>
+								const minPriceLicenseOption =
+									indexLicense === licenses?.length - 1;
 
-				<span className="license-value">{quantity.from}</span>
+								const toLicenseQuantityValue =
+									licenses[indexLicense + 1]?.quantity - 1;
 
-				<span className="license-title">To</span>
+								return (
+									<div
+										className="d-flex flex-row"
+										key={indexLicense}
+									>
+										<div className="col-4">
+											<span className="font-weight-bold text-muted">
+												From
+											</span>
 
-				<span className="license-value">{quantity.to}</span>
-			</div>
+											<span className="font-weight-bold ml-3 mr-3">
+												{quantity}
+											</span>
 
-			<div>
-				<span>-</span>
-			</div>
+											<span className="font-weight-bold text-muted">
+												To
+											</span>
 
-			<div className="license-currency">
-				<div className="license-currency-icon">
-					<img src={unitedStatesIcon} />
-				</div>
+											<span className="font-weight-bold ml-4 mr-6">
+												{minPriceLicenseOption ? (
+													<span id="infinity-symbol">
+														∞
+													</span>
+												) : (
+													toLicenseQuantityValue
+												)}
+											</span>
+										</div>
 
-				<span className="license-currency-country-abbreviation">
-					{currency}
-				</span>
+										<div className="mx-5">
+											<span>-</span>
+										</div>
 
-				<span className="license-currency-value">{value}</span>
-			</div>
+										<div className="align-items-end d-flex">
+											<div className="license-currency-icon">
+												<img src={unitedStatesIcon} />
+											</div>
 
-			<div>
-				<span>-</span>
-			</div>
+											<span className="font-weight-bold mr-3">
+												{currency === 'US Dollar'
+													? CurrencyAbbreviation.USD
+													: currency}
+											</span>
 
-			<div className="license-total">
-				<span className="license-title">Total</span>
-
-				<span className="license-value">{value}</span>
-			</div>
+											<span>{priceFormatted}</span>
+										</div>
+									</div>
+								);
+							})}
+						</div>
+					</div>
+				);
+			})}
 		</div>
 	);
-}
+};
+
+export default LicensePriceChildren;
