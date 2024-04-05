@@ -1,11 +1,44 @@
 components:
     schemas:
-        TestrayRunComparison:
+        TestrayCaseResultComparison:
             properties:
-                results:
+                blocked:
+                    type: object
+                didNotRun:
+                    type: object
+                failed:
+                    type: object
+                passed:
+                    type: object
+                testFix:
+                    type: object
+            type: object
+        TestrayComparison:
+            properties:
+                testrayComponentComparisons:
                     items:
-                        type: object
+                        $ref: "#/components/schemas/TestrayComponentComparison"
                     type: array
+                testrayRunComparison:
+                    $ref: "#/components/schemas/TestrayCaseResultComparison"
+                testrayTeamComparisons:
+                    items:
+                        $ref: "#/components/schemas/TestrayTeamComparison"
+                    type: array
+            type: object
+        TestrayComponentComparison:
+            properties:
+                name:
+                    type: string
+                testrayCaseResultComparison:
+                    $ref: "#/components/schemas/TestrayCaseResultComparison"
+            type: object
+        TestrayTeamComparison:
+            properties:
+                name:
+                    type: string
+                testrayCaseResultComparison:
+                    $ref: "#/components/schemas/TestrayCaseResultComparison"
             type: object
 info:
     license:
@@ -17,7 +50,7 @@ openapi: 3.0.1
 paths:
     "/testray-run-comparisons/{testrayRunId1}/{testrayRunId2}":
         get:
-            operationId: getTestrayRunComparison
+            operationId: getTestrayRunComparisonTestrayRunId1TestrayRunId2
             parameters:
                 - in: path
                   name: testrayRunId1
@@ -45,8 +78,8 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: "#/components/schemas/TestrayRunComparison"
+                                $ref: "#/components/schemas/TestrayComparison"
                         application/xml:
                             schema:
-                                $ref: "#/components/schemas/TestrayRunComparison"
-            tags: ["TestrayRunComparison"]
+                                $ref: "#/components/schemas/TestrayComparison"
+            tags: ["TestrayComparison"]
