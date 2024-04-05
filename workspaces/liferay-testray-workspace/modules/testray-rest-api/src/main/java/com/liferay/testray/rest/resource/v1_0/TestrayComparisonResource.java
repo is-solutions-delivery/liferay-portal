@@ -10,7 +10,7 @@ import com.liferay.portal.odata.filter.ExpressionConvert;
 import com.liferay.portal.odata.filter.FilterParserProvider;
 import com.liferay.portal.odata.sort.SortParserProvider;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
-import com.liferay.testray.rest.dto.v1_0.TestrayRunComparison;
+import com.liferay.testray.rest.dto.v1_0.TestrayComparison;
 
 import java.util.Collections;
 import java.util.List;
@@ -36,9 +36,9 @@ import org.osgi.annotation.versioning.ProviderType;
  */
 @Generated("")
 @ProviderType
-public interface TestrayRunComparisonResource {
+public interface TestrayComparisonResource {
 
-	public TestrayRunComparison getTestrayRunComparison(
+	public TestrayComparison getTestrayRunComparisonTestrayRunId1TestrayRunId2(
 			Long testrayRunId1, Long testrayRunId2,
 			String testrayCasePriorities, Long testrayTeamId)
 		throws Exception;
@@ -100,7 +100,7 @@ public interface TestrayRunComparisonResource {
 	@ProviderType
 	public interface Builder {
 
-		public TestrayRunComparisonResource build();
+		public TestrayComparisonResource build();
 
 		public Builder checkPermissions(boolean checkPermissions);
 

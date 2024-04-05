@@ -1,5 +1,21 @@
 dependencies {
 	api project(":modules:testray-rest-api")
 
-	compileOnly group: "com.liferay.portal", name: "release.dxp.api", version: "7.4.13.u112"
+	compileOnly group: "com.liferay", name: "com.liferay.petra.string", version: "5.3.4"
+	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "138.0.0"
+	compileOnly group: "javax.servlet", name: "servlet-api", version: "2.5"
+	compileOnly group: "org.osgi", name: "org.osgi.framework", version: "1.9.0"
+	compileOnly group: "org.osgi", name: "org.osgi.service.component", version: "1.4.0"
+	compileOnly group: "org.osgi", name: "org.osgi.service.component.annotations", version: "1.4.0"
+
+	implementation group: "com.liferay", name: "com.liferay.object.api", version: "87.0.0"
+	implementation group: "com.liferay", name: "com.liferay.object.rest.api", version: "19.4.4"
+	implementation group: "com.liferay", name: "com.liferay.petra.function", version: "5.6.1"
+	implementation group: "com.liferay", name: "com.liferay.petra.sql.dsl.api", version: "6.0.0"
+	implementation group: "com.liferay", name: "com.liferay.portal.aop.api", version: "3.0.5"
+	implementation group: "com.liferay", name: "com.liferay.portal.odata.api", version: "4.6.0"
+	implementation group: "com.liferay", name: "com.liferay.portal.vulcan.api", version: "42.0.3"
+	implementation group: "io.swagger.core.v3", name: "swagger-annotations", version: "2.0.5"
+	implementation group: "javax.validation", name: "validation-api", version: "2.0.1.Final"
+	implementation group: "javax.ws.rs", name: "javax.ws.rs-api", version: "2.1"
 }

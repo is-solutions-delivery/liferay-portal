@@ -80,7 +80,7 @@ public class OpenAPIResourceImpl {
 
 	private final Set<Class<?>> _resourceClasses = new HashSet<Class<?>>() {
 		{
-			add(TestrayRunComparisonResourceImpl.class);
+			add(TestrayComparisonResourceImpl.class);
 
 			add(OpenAPIResourceImpl.class);
 		}

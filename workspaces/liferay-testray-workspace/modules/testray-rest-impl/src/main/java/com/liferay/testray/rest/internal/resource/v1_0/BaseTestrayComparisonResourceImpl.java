@@ -17,8 +17,8 @@ import com.liferay.portal.odata.filter.FilterParserProvider;
 import com.liferay.portal.odata.sort.SortParserProvider;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.util.ActionUtil;
-import com.liferay.testray.rest.dto.v1_0.TestrayRunComparison;
-import com.liferay.testray.rest.resource.v1_0.TestrayRunComparisonResource;
+import com.liferay.testray.rest.dto.v1_0.TestrayComparison;
+import com.liferay.testray.rest.resource.v1_0.TestrayComparisonResource;
 
 import java.util.Collection;
 import java.util.List;
@@ -37,8 +37,8 @@ import javax.ws.rs.core.UriInfo;
  */
 @Generated("")
 @javax.ws.rs.Path("/v1.0")
-public abstract class BaseTestrayRunComparisonResourceImpl
-	implements TestrayRunComparisonResource {
+public abstract class BaseTestrayComparisonResourceImpl
+	implements TestrayComparisonResource {
 
 	/**
 	 * Invoke this method with the command line:
@@ -67,9 +67,7 @@ public abstract class BaseTestrayRunComparisonResourceImpl
 	)
 	@io.swagger.v3.oas.annotations.tags.Tags(
 		value = {
-			@io.swagger.v3.oas.annotations.tags.Tag(
-				name = "TestrayRunComparison"
-			)
+			@io.swagger.v3.oas.annotations.tags.Tag(name = "TestrayComparison")
 		}
 	)
 	@javax.ws.rs.GET
@@ -78,7 +76,7 @@ public abstract class BaseTestrayRunComparisonResourceImpl
 	)
 	@javax.ws.rs.Produces({"application/json", "application/xml"})
 	@Override
-	public TestrayRunComparison getTestrayRunComparison(
+	public TestrayComparison getTestrayRunComparisonTestrayRunId1TestrayRunId2(
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
 			@javax.validation.constraints.NotNull
 			@javax.ws.rs.PathParam("testrayRunId1")
@@ -95,7 +93,7 @@ public abstract class BaseTestrayRunComparisonResourceImpl
 			Long testrayTeamId)
 		throws Exception {
 
-		return new TestrayRunComparison();
+		return new TestrayComparison();
 	}
 
 	public void setContextAcceptLanguage(AcceptLanguage contextAcceptLanguage) {
@@ -297,6 +295,6 @@ public abstract class BaseTestrayRunComparisonResourceImpl
 	protected SortParserProvider sortParserProvider;
 
 	private static final com.liferay.portal.kernel.log.Log _log =
-		LogFactoryUtil.getLog(BaseTestrayRunComparisonResourceImpl.class);
+		LogFactoryUtil.getLog(BaseTestrayComparisonResourceImpl.class);
 
 }

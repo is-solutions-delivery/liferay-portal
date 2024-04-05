@@ -10,8 +10,8 @@ import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLField;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLName;
 import com.liferay.portal.vulcan.pagination.Page;
-import com.liferay.testray.rest.dto.v1_0.TestrayRunComparison;
-import com.liferay.testray.rest.resource.v1_0.TestrayRunComparisonResource;
+import com.liferay.testray.rest.dto.v1_0.TestrayComparison;
+import com.liferay.testray.rest.resource.v1_0.TestrayComparisonResource;
 
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -32,21 +32,21 @@ import org.osgi.service.component.ComponentServiceObjects;
 @Generated("")
 public class Query {
 
-	public static void setTestrayRunComparisonResourceComponentServiceObjects(
-		ComponentServiceObjects<TestrayRunComparisonResource>
-			testrayRunComparisonResourceComponentServiceObjects) {
+	public static void setTestrayComparisonResourceComponentServiceObjects(
+		ComponentServiceObjects<TestrayComparisonResource>
+			testrayComparisonResourceComponentServiceObjects) {
 
-		_testrayRunComparisonResourceComponentServiceObjects =
-			testrayRunComparisonResourceComponentServiceObjects;
+		_testrayComparisonResourceComponentServiceObjects =
+			testrayComparisonResourceComponentServiceObjects;
 	}
 
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparison(testrayCasePriorities: ___, testrayRunId1: ___, testrayRunId2: ___, testrayTeamId: ___){results}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparisonTestrayRunId1TestrayRunId2(testrayCasePriorities: ___, testrayRunId1: ___, testrayRunId2: ___, testrayTeamId: ___){testrayComponentComparisons, testrayRunComparison, testrayTeamComparisons}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
-	public TestrayRunComparison testrayRunComparison(
+	public TestrayComparison testrayRunComparisonTestrayRunId1TestrayRunId2(
 			@GraphQLName("testrayRunId1") Long testrayRunId1,
 			@GraphQLName("testrayRunId2") Long testrayRunId2,
 			@GraphQLName("testrayCasePriorities") String testrayCasePriorities,
@@ -54,32 +54,33 @@ public class Query {
 		throws Exception {
 
 		return _applyComponentServiceObjects(
-			_testrayRunComparisonResourceComponentServiceObjects,
+			_testrayComparisonResourceComponentServiceObjects,
 			this::_populateResourceContext,
-			testrayRunComparisonResource ->
-				testrayRunComparisonResource.getTestrayRunComparison(
-					testrayRunId1, testrayRunId2, testrayCasePriorities,
-					testrayTeamId));
+			testrayComparisonResource ->
+				testrayComparisonResource.
+					getTestrayRunComparisonTestrayRunId1TestrayRunId2(
+						testrayRunId1, testrayRunId2, testrayCasePriorities,
+						testrayTeamId));
 	}
 
-	@GraphQLName("TestrayRunComparisonPage")
-	public class TestrayRunComparisonPage {
+	@GraphQLName("TestrayComparisonPage")
+	public class TestrayComparisonPage {
 
-		public TestrayRunComparisonPage(Page testrayRunComparisonPage) {
-			actions = testrayRunComparisonPage.getActions();
+		public TestrayComparisonPage(Page testrayComparisonPage) {
+			actions = testrayComparisonPage.getActions();
 
-			items = testrayRunComparisonPage.getItems();
-			lastPage = testrayRunComparisonPage.getLastPage();
-			page = testrayRunComparisonPage.getPage();
-			pageSize = testrayRunComparisonPage.getPageSize();
-			totalCount = testrayRunComparisonPage.getTotalCount();
+			items = testrayComparisonPage.getItems();
+			lastPage = testrayComparisonPage.getLastPage();
+			page = testrayComparisonPage.getPage();
+			pageSize = testrayComparisonPage.getPageSize();
+			totalCount = testrayComparisonPage.getTotalCount();
 		}
 
 		@GraphQLField
 		protected Map<String, Map<String, String>> actions;
 
 		@GraphQLField
-		protected java.util.Collection<TestrayRunComparison> items;
+		protected java.util.Collection<TestrayComparison> items;
 
 		@GraphQLField
 		protected long lastPage;
@@ -115,23 +116,23 @@ public class Query {
 	}
 
 	private void _populateResourceContext(
-			TestrayRunComparisonResource testrayRunComparisonResource)
+			TestrayComparisonResource testrayComparisonResource)
 		throws Exception {
 
-		testrayRunComparisonResource.setContextAcceptLanguage(_acceptLanguage);
-		testrayRunComparisonResource.setContextCompany(_company);
-		testrayRunComparisonResource.setContextHttpServletRequest(
+		testrayComparisonResource.setContextAcceptLanguage(_acceptLanguage);
+		testrayComparisonResource.setContextCompany(_company);
+		testrayComparisonResource.setContextHttpServletRequest(
 			_httpServletRequest);
-		testrayRunComparisonResource.setContextHttpServletResponse(
+		testrayComparisonResource.setContextHttpServletResponse(
 			_httpServletResponse);
-		testrayRunComparisonResource.setContextUriInfo(_uriInfo);
-		testrayRunComparisonResource.setContextUser(_user);
-		testrayRunComparisonResource.setGroupLocalService(_groupLocalService);
-		testrayRunComparisonResource.setRoleLocalService(_roleLocalService);
+		testrayComparisonResource.setContextUriInfo(_uriInfo);
+		testrayComparisonResource.setContextUser(_user);
+		testrayComparisonResource.setGroupLocalService(_groupLocalService);
+		testrayComparisonResource.setRoleLocalService(_roleLocalService);
 	}
 
-	private static ComponentServiceObjects<TestrayRunComparisonResource>
-		_testrayRunComparisonResourceComponentServiceObjects;
+	private static ComponentServiceObjects<TestrayComparisonResource>
+		_testrayComparisonResourceComponentServiceObjects;
 
 	private AcceptLanguage _acceptLanguage;
 	private com.liferay.portal.kernel.model.Company _company;

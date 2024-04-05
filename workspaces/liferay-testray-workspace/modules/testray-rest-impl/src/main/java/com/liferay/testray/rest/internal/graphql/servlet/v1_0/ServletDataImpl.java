@@ -4,8 +4,8 @@ import com.liferay.portal.kernel.util.ObjectValuePair;
 import com.liferay.portal.vulcan.graphql.servlet.ServletData;
 import com.liferay.testray.rest.internal.graphql.mutation.v1_0.Mutation;
 import com.liferay.testray.rest.internal.graphql.query.v1_0.Query;
-import com.liferay.testray.rest.internal.resource.v1_0.TestrayRunComparisonResourceImpl;
-import com.liferay.testray.rest.resource.v1_0.TestrayRunComparisonResource;
+import com.liferay.testray.rest.internal.resource.v1_0.TestrayComparisonResourceImpl;
+import com.liferay.testray.rest.resource.v1_0.TestrayComparisonResource;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,8 +29,8 @@ public class ServletDataImpl implements ServletData {
 
 	@Activate
 	public void activate(BundleContext bundleContext) {
-		Query.setTestrayRunComparisonResourceComponentServiceObjects(
-			_testrayRunComparisonResourceComponentServiceObjects);
+		Query.setTestrayComparisonResourceComponentServiceObjects(
+			_testrayComparisonResourceComponentServiceObjects);
 	}
 
 	public String getApplicationName() {
@@ -68,15 +68,15 @@ public class ServletDataImpl implements ServletData {
 			new HashMap<String, ObjectValuePair<Class<?>, String>>() {
 				{
 					put(
-						"query#testrayRunComparison",
+						"query#testrayRunComparisonTestrayRunId1TestrayRunId2",
 						new ObjectValuePair<>(
-							TestrayRunComparisonResourceImpl.class,
-							"getTestrayRunComparison"));
+							TestrayComparisonResourceImpl.class,
+							"getTestrayRunComparisonTestrayRunId1TestrayRunId2"));
 				}
 			};
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
-	private ComponentServiceObjects<TestrayRunComparisonResource>
-		_testrayRunComparisonResourceComponentServiceObjects;
+	private ComponentServiceObjects<TestrayComparisonResource>
+		_testrayComparisonResourceComponentServiceObjects;
 
 }

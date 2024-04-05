@@ -21,7 +21,7 @@ import com.liferay.portal.odata.filter.FilterParserProvider;
 import com.liferay.portal.odata.sort.SortParserProvider;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.testray.rest.internal.security.permission.LiberalPermissionChecker;
-import com.liferay.testray.rest.resource.v1_0.TestrayRunComparisonResource;
+import com.liferay.testray.rest.resource.v1_0.TestrayComparisonResource;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
@@ -50,29 +50,29 @@ import org.osgi.service.component.annotations.ReferenceScope;
  * @generated
  */
 @Component(
-	property = "resource.locator.key=/testray-rest/v1.0/TestrayRunComparison",
-	service = TestrayRunComparisonResource.Factory.class
+	property = "resource.locator.key=/testray-rest/v1.0/TestrayComparison",
+	service = TestrayComparisonResource.Factory.class
 )
 @Generated("")
-public class TestrayRunComparisonResourceFactoryImpl
-	implements TestrayRunComparisonResource.Factory {
+public class TestrayComparisonResourceFactoryImpl
+	implements TestrayComparisonResource.Factory {
 
 	@Override
-	public TestrayRunComparisonResource.Builder create() {
-		return new TestrayRunComparisonResource.Builder() {
+	public TestrayComparisonResource.Builder create() {
+		return new TestrayComparisonResource.Builder() {
 
 			@Override
-			public TestrayRunComparisonResource build() {
+			public TestrayComparisonResource build() {
 				if (_user == null) {
 					throw new IllegalArgumentException("User is not set");
 				}
 
-				Function<InvocationHandler, TestrayRunComparisonResource>
-					testrayRunComparisonResourceProxyProviderFunction =
+				Function<InvocationHandler, TestrayComparisonResource>
+					testrayComparisonResourceProxyProviderFunction =
 						ResourceProxyProviderFunctionHolder.
-							_testrayRunComparisonResourceProxyProviderFunction;
+							_testrayComparisonResourceProxyProviderFunction;
 
-				return testrayRunComparisonResourceProxyProviderFunction.apply(
+				return testrayComparisonResourceProxyProviderFunction.apply(
 					(proxy, method, arguments) -> _invoke(
 						method, arguments, _checkPermissions,
 						_httpServletRequest, _httpServletResponse,
@@ -80,7 +80,7 @@ public class TestrayRunComparisonResourceFactoryImpl
 			}
 
 			@Override
-			public TestrayRunComparisonResource.Builder checkPermissions(
+			public TestrayComparisonResource.Builder checkPermissions(
 				boolean checkPermissions) {
 
 				_checkPermissions = checkPermissions;
@@ -89,7 +89,7 @@ public class TestrayRunComparisonResourceFactoryImpl
 			}
 
 			@Override
-			public TestrayRunComparisonResource.Builder httpServletRequest(
+			public TestrayComparisonResource.Builder httpServletRequest(
 				HttpServletRequest httpServletRequest) {
 
 				_httpServletRequest = httpServletRequest;
@@ -98,7 +98,7 @@ public class TestrayRunComparisonResourceFactoryImpl
 			}
 
 			@Override
-			public TestrayRunComparisonResource.Builder httpServletResponse(
+			public TestrayComparisonResource.Builder httpServletResponse(
 				HttpServletResponse httpServletResponse) {
 
 				_httpServletResponse = httpServletResponse;
@@ -107,7 +107,7 @@ public class TestrayRunComparisonResourceFactoryImpl
 			}
 
 			@Override
-			public TestrayRunComparisonResource.Builder preferredLocale(
+			public TestrayComparisonResource.Builder preferredLocale(
 				Locale preferredLocale) {
 
 				_preferredLocale = preferredLocale;
@@ -116,16 +116,14 @@ public class TestrayRunComparisonResourceFactoryImpl
 			}
 
 			@Override
-			public TestrayRunComparisonResource.Builder uriInfo(
-				UriInfo uriInfo) {
-
+			public TestrayComparisonResource.Builder uriInfo(UriInfo uriInfo) {
 				_uriInfo = uriInfo;
 
 				return this;
 			}
 
 			@Override
-			public TestrayRunComparisonResource.Builder user(User user) {
+			public TestrayComparisonResource.Builder user(User user) {
 				_user = user;
 
 				return this;
@@ -141,16 +139,16 @@ public class TestrayRunComparisonResourceFactoryImpl
 		};
 	}
 
-	private static Function<InvocationHandler, TestrayRunComparisonResource>
+	private static Function<InvocationHandler, TestrayComparisonResource>
 		_getProxyProviderFunction() {
 
 		Class<?> proxyClass = ProxyUtil.getProxyClass(
-			TestrayRunComparisonResource.class.getClassLoader(),
-			TestrayRunComparisonResource.class);
+			TestrayComparisonResource.class.getClassLoader(),
+			TestrayComparisonResource.class);
 
 		try {
-			Constructor<TestrayRunComparisonResource> constructor =
-				(Constructor<TestrayRunComparisonResource>)
+			Constructor<TestrayComparisonResource> constructor =
+				(Constructor<TestrayComparisonResource>)
 					proxyClass.getConstructor(InvocationHandler.class);
 
 			return invocationHandler -> {
@@ -192,41 +190,41 @@ public class TestrayRunComparisonResourceFactoryImpl
 				new LiberalPermissionChecker(user));
 		}
 
-		TestrayRunComparisonResource testrayRunComparisonResource =
+		TestrayComparisonResource testrayComparisonResource =
 			_componentServiceObjects.getService();
 
-		testrayRunComparisonResource.setContextAcceptLanguage(
+		testrayComparisonResource.setContextAcceptLanguage(
 			new AcceptLanguageImpl(httpServletRequest, preferredLocale, user));
 
 		Company company = _companyLocalService.getCompany(user.getCompanyId());
 
-		testrayRunComparisonResource.setContextCompany(company);
+		testrayComparisonResource.setContextCompany(company);
 
-		testrayRunComparisonResource.setContextHttpServletRequest(
+		testrayComparisonResource.setContextHttpServletRequest(
 			httpServletRequest);
-		testrayRunComparisonResource.setContextHttpServletResponse(
+		testrayComparisonResource.setContextHttpServletResponse(
 			httpServletResponse);
-		testrayRunComparisonResource.setContextUriInfo(uriInfo);
-		testrayRunComparisonResource.setContextUser(user);
-		testrayRunComparisonResource.setExpressionConvert(_expressionConvert);
-		testrayRunComparisonResource.setFilterParserProvider(
+		testrayComparisonResource.setContextUriInfo(uriInfo);
+		testrayComparisonResource.setContextUser(user);
+		testrayComparisonResource.setExpressionConvert(_expressionConvert);
+		testrayComparisonResource.setFilterParserProvider(
 			_filterParserProvider);
-		testrayRunComparisonResource.setGroupLocalService(_groupLocalService);
-		testrayRunComparisonResource.setResourceActionLocalService(
+		testrayComparisonResource.setGroupLocalService(_groupLocalService);
+		testrayComparisonResource.setResourceActionLocalService(
 			_resourceActionLocalService);
-		testrayRunComparisonResource.setResourcePermissionLocalService(
+		testrayComparisonResource.setResourcePermissionLocalService(
 			_resourcePermissionLocalService);
-		testrayRunComparisonResource.setRoleLocalService(_roleLocalService);
-		testrayRunComparisonResource.setSortParserProvider(_sortParserProvider);
+		testrayComparisonResource.setRoleLocalService(_roleLocalService);
+		testrayComparisonResource.setSortParserProvider(_sortParserProvider);
 
 		try {
-			return method.invoke(testrayRunComparisonResource, arguments);
+			return method.invoke(testrayComparisonResource, arguments);
 		}
 		catch (InvocationTargetException invocationTargetException) {
 			throw invocationTargetException.getTargetException();
 		}
 		finally {
-			_componentServiceObjects.ungetService(testrayRunComparisonResource);
+			_componentServiceObjects.ungetService(testrayComparisonResource);
 
 			PrincipalThreadLocal.setName(name);
 
@@ -238,7 +236,7 @@ public class TestrayRunComparisonResourceFactoryImpl
 	private CompanyLocalService _companyLocalService;
 
 	@Reference(scope = ReferenceScope.PROTOTYPE_REQUIRED)
-	private ComponentServiceObjects<TestrayRunComparisonResource>
+	private ComponentServiceObjects<TestrayComparisonResource>
 		_componentServiceObjects;
 
 	@Reference
@@ -273,8 +271,8 @@ public class TestrayRunComparisonResourceFactoryImpl
 	private static class ResourceProxyProviderFunctionHolder {
 
 		private static final Function
-			<InvocationHandler, TestrayRunComparisonResource>
-				_testrayRunComparisonResourceProxyProviderFunction =
+			<InvocationHandler, TestrayComparisonResource>
+				_testrayComparisonResourceProxyProviderFunction =
 					_getProxyProviderFunction();
 
 	}
