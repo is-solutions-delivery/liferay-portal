@@ -49,14 +49,9 @@ paths:
                       format: int64
                       type: integer
                 - in: query
-                  name: testrayCasePriorities
+                  name: filter
                   schema:
                       type: string
-                - in: query
-                  name: testrayTeamId
-                  schema:
-                      format: int64
-                      type: integer
             responses:
                 200:
                     content:
