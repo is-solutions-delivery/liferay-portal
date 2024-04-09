@@ -1,10 +1,27 @@
 components:
     schemas:
+        TestrayCase:
+            properties:
+                name:
+                    type: string
+                caseResultStatus1:
+                    type: string
+                caseResultStatus2:
+                    type: string
+                component:
+                    type: string
+                priority:
+                    type: string
+            type: object
         TestrayRunComparison:
             properties:
                 results:
                     items:
                         type: object
+                    type: array
+                testrayCases:
+                    items:
+                        $ref: "#/components/schemas/TestrayCase"
                     type: array
                 testrayCasePriorities:
                     type: string
@@ -45,6 +62,36 @@ paths:
                   schema:
                       format: int64
                       type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/TestrayRunComparison"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/TestrayRunComparison"
+            tags: ["TestrayRunComparison"]
+    "/testray-run-comparisons/{testrayRunId1}/{testrayRunId2}/details":
+        get:
+            operationId: getTestrayRunComparisonDetail
+            parameters:
+                - in: path
+                  name: testrayRunId1
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: testrayRunId2
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: filter
+                  schema:
+                      type: string
             responses:
                 200:
                     content:
