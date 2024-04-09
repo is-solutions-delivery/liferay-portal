@@ -89,47 +89,6 @@ public class TestrayRunComparison implements Serializable {
 	private Supplier<Object[]> _resultsSupplier;
 
 	@Schema
-	public String getTestrayCasePriorities() {
-		if (_testrayCasePrioritiesSupplier != null) {
-			testrayCasePriorities = _testrayCasePrioritiesSupplier.get();
-
-			_testrayCasePrioritiesSupplier = null;
-		}
-
-		return testrayCasePriorities;
-	}
-
-	public void setTestrayCasePriorities(String testrayCasePriorities) {
-		this.testrayCasePriorities = testrayCasePriorities;
-
-		_testrayCasePrioritiesSupplier = null;
-	}
-
-	@JsonIgnore
-	public void setTestrayCasePriorities(
-		UnsafeSupplier<String, Exception> testrayCasePrioritiesUnsafeSupplier) {
-
-		_testrayCasePrioritiesSupplier = () -> {
-			try {
-				return testrayCasePrioritiesUnsafeSupplier.get();
-			}
-			catch (RuntimeException runtimeException) {
-				throw runtimeException;
-			}
-			catch (Exception exception) {
-				throw new RuntimeException(exception);
-			}
-		};
-	}
-
-	@GraphQLField
-	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected String testrayCasePriorities;
-
-	@JsonIgnore
-	private Supplier<String> _testrayCasePrioritiesSupplier;
-
-	@Schema
 	@Valid
 	public TestrayCase[] getTestrayCases() {
 		if (_testrayCasesSupplier != null) {
@@ -170,47 +129,6 @@ public class TestrayRunComparison implements Serializable {
 
 	@JsonIgnore
 	private Supplier<TestrayCase[]> _testrayCasesSupplier;
-
-	@Schema
-	public Long getTestrayTeamId() {
-		if (_testrayTeamIdSupplier != null) {
-			testrayTeamId = _testrayTeamIdSupplier.get();
-
-			_testrayTeamIdSupplier = null;
-		}
-
-		return testrayTeamId;
-	}
-
-	public void setTestrayTeamId(Long testrayTeamId) {
-		this.testrayTeamId = testrayTeamId;
-
-		_testrayTeamIdSupplier = null;
-	}
-
-	@JsonIgnore
-	public void setTestrayTeamId(
-		UnsafeSupplier<Long, Exception> testrayTeamIdUnsafeSupplier) {
-
-		_testrayTeamIdSupplier = () -> {
-			try {
-				return testrayTeamIdUnsafeSupplier.get();
-			}
-			catch (RuntimeException runtimeException) {
-				throw runtimeException;
-			}
-			catch (Exception exception) {
-				throw new RuntimeException(exception);
-			}
-		};
-	}
-
-	@GraphQLField
-	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected Long testrayTeamId;
-
-	@JsonIgnore
-	private Supplier<Long> _testrayTeamIdSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -266,22 +184,6 @@ public class TestrayRunComparison implements Serializable {
 			sb.append("]");
 		}
 
-		String testrayCasePriorities = getTestrayCasePriorities();
-
-		if (testrayCasePriorities != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"testrayCasePriorities\": ");
-
-			sb.append("\"");
-
-			sb.append(_escape(testrayCasePriorities));
-
-			sb.append("\"");
-		}
-
 		TestrayCase[] testrayCases = getTestrayCases();
 
 		if (testrayCases != null) {
@@ -302,18 +204,6 @@ public class TestrayRunComparison implements Serializable {
 			}
 
 			sb.append("]");
-		}
-
-		Long testrayTeamId = getTestrayTeamId();
-
-		if (testrayTeamId != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"testrayTeamId\": ");
-
-			sb.append(testrayTeamId);
 		}
 
 		sb.append("}");
