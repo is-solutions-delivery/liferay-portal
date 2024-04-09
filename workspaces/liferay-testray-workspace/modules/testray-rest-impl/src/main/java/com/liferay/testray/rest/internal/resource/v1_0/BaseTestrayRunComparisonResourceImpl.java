@@ -57,11 +57,7 @@ public abstract class BaseTestrayRunComparisonResourceImpl
 			),
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
-				name = "testrayCasePriorities"
-			),
-			@io.swagger.v3.oas.annotations.Parameter(
-				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
-				name = "testrayTeamId"
+				name = "filter"
 			)
 		}
 	)
@@ -87,12 +83,7 @@ public abstract class BaseTestrayRunComparisonResourceImpl
 			@javax.validation.constraints.NotNull
 			@javax.ws.rs.PathParam("testrayRunId2")
 			Long testrayRunId2,
-			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.ws.rs.QueryParam("testrayCasePriorities")
-			String testrayCasePriorities,
-			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.ws.rs.QueryParam("testrayTeamId")
-			Long testrayTeamId)
+			@javax.ws.rs.core.Context Filter filter)
 		throws Exception {
 
 		return new TestrayRunComparison();

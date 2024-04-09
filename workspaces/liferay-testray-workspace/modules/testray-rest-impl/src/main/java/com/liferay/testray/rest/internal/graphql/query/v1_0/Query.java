@@ -43,14 +43,13 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparison(testrayCasePriorities: ___, testrayRunId1: ___, testrayRunId2: ___, testrayTeamId: ___){results, testrayCases}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparison(filter: ___, testrayRunId1: ___, testrayRunId2: ___){results, testrayCases}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public TestrayRunComparison testrayRunComparison(
 			@GraphQLName("testrayRunId1") Long testrayRunId1,
 			@GraphQLName("testrayRunId2") Long testrayRunId2,
-			@GraphQLName("testrayCasePriorities") String testrayCasePriorities,
-			@GraphQLName("testrayTeamId") Long testrayTeamId)
+			@GraphQLName("filter") String filterString)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
@@ -58,8 +57,9 @@ public class Query {
 			this::_populateResourceContext,
 			testrayRunComparisonResource ->
 				testrayRunComparisonResource.getTestrayRunComparison(
-					testrayRunId1, testrayRunId2, testrayCasePriorities,
-					testrayTeamId));
+					testrayRunId1, testrayRunId2,
+					_filterBiFunction.apply(
+						testrayRunComparisonResource, filterString)));
 	}
 
 	/**
