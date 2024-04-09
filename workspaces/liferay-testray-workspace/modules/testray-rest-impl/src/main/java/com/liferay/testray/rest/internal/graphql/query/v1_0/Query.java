@@ -43,7 +43,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparison(testrayCasePriorities: ___, testrayRunId1: ___, testrayRunId2: ___, testrayTeamId: ___){results, testrayCases, testrayCasePriorities, testrayTeamId}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparison(testrayCasePriorities: ___, testrayRunId1: ___, testrayRunId2: ___, testrayTeamId: ___){results, testrayCasePriorities, testrayCases, testrayTeamId}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public TestrayRunComparison testrayRunComparison(
@@ -65,12 +65,18 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparisonDetail(filter: ___, testrayRunId1: ___, testrayRunId2: ___){results, testrayCases, testrayCasePriorities, testrayTeamId}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparisonDetail(error1: ___, error2: ___, filter: ___, issues1: ___, issues2: ___, status1: ___, status2: ___, testrayRunId1: ___, testrayRunId2: ___){results, testrayCasePriorities, testrayCases, testrayTeamId}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public TestrayRunComparison testrayRunComparisonDetail(
 			@GraphQLName("testrayRunId1") Long testrayRunId1,
 			@GraphQLName("testrayRunId2") Long testrayRunId2,
+			@GraphQLName("error1") String error1,
+			@GraphQLName("error2") String error2,
+			@GraphQLName("issues1") String issues1,
+			@GraphQLName("issues2") String issues2,
+			@GraphQLName("status1") String status1,
+			@GraphQLName("status2") String status2,
 			@GraphQLName("filter") String filterString)
 		throws Exception {
 
@@ -79,7 +85,8 @@ public class Query {
 			this::_populateResourceContext,
 			testrayRunComparisonResource ->
 				testrayRunComparisonResource.getTestrayRunComparisonDetail(
-					testrayRunId1, testrayRunId2,
+					testrayRunId1, testrayRunId2, error1, error2, issues1,
+					issues2, status1, status2,
 					_filterBiFunction.apply(
 						testrayRunComparisonResource, filterString)));
 	}
