@@ -2,13 +2,13 @@ components:
     schemas:
         TestrayCase:
             properties:
-                name:
-                    type: string
                 caseResultStatus1:
                     type: string
                 caseResultStatus2:
                     type: string
                 component:
+                    type: string
+                name:
                     type: string
                 priority:
                     type: string
@@ -19,12 +19,12 @@ components:
                     items:
                         type: object
                     type: array
+                testrayCasePriorities:
+                    type: string
                 testrayCases:
                     items:
                         $ref: "#/components/schemas/TestrayCase"
                     type: array
-                testrayCasePriorities:
-                    type: string
                 testrayTeamId:
                     format: int64
                     type: integer
@@ -89,7 +89,31 @@ paths:
                       format: int64
                       type: integer
                 - in: query
+                  name: error1
+                  schema:
+                      type: string
+                - in: query
+                  name: error2
+                  schema:
+                      type: string
+                - in: query
                   name: filter
+                  schema:
+                      type: string
+                - in: query
+                  name: issues1
+                  schema:
+                      type: string
+                - in: query
+                  name: issues2
+                  schema:
+                      type: string
+                - in: query
+                  name: status1
+                  schema:
+                      type: string
+                - in: query
+                  name: status2
                   schema:
                       type: string
             responses:
