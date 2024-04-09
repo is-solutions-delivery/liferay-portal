@@ -43,7 +43,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparison(testrayCasePriorities: ___, testrayRunId1: ___, testrayRunId2: ___, testrayTeamId: ___){results, testrayCasePriorities, testrayTeamId}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparison(testrayCasePriorities: ___, testrayRunId1: ___, testrayRunId2: ___, testrayTeamId: ___){results, testrayCases, testrayCasePriorities, testrayTeamId}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public TestrayRunComparison testrayRunComparison(
@@ -60,6 +60,28 @@ public class Query {
 				testrayRunComparisonResource.getTestrayRunComparison(
 					testrayRunId1, testrayRunId2, testrayCasePriorities,
 					testrayTeamId));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparisonDetail(filter: ___, testrayRunId1: ___, testrayRunId2: ___){results, testrayCases, testrayCasePriorities, testrayTeamId}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public TestrayRunComparison testrayRunComparisonDetail(
+			@GraphQLName("testrayRunId1") Long testrayRunId1,
+			@GraphQLName("testrayRunId2") Long testrayRunId2,
+			@GraphQLName("filter") String filterString)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_testrayRunComparisonResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			testrayRunComparisonResource ->
+				testrayRunComparisonResource.getTestrayRunComparisonDetail(
+					testrayRunId1, testrayRunId2,
+					_filterBiFunction.apply(
+						testrayRunComparisonResource, filterString)));
 	}
 
 	@GraphQLName("TestrayRunComparisonPage")

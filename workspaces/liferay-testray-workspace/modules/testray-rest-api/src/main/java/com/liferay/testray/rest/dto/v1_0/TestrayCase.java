@@ -23,8 +23,6 @@ import java.util.function.Supplier;
 
 import javax.annotation.Generated;
 
-import javax.validation.Valid;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -32,45 +30,43 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @generated
  */
 @Generated("")
-@GraphQLName("TestrayRunComparison")
+@GraphQLName("TestrayCase")
 @JsonFilter("Liferay.Vulcan")
-@XmlRootElement(name = "TestrayRunComparison")
-public class TestrayRunComparison implements Serializable {
+@XmlRootElement(name = "TestrayCase")
+public class TestrayCase implements Serializable {
 
-	public static TestrayRunComparison toDTO(String json) {
-		return ObjectMapperUtil.readValue(TestrayRunComparison.class, json);
+	public static TestrayCase toDTO(String json) {
+		return ObjectMapperUtil.readValue(TestrayCase.class, json);
 	}
 
-	public static TestrayRunComparison unsafeToDTO(String json) {
-		return ObjectMapperUtil.unsafeReadValue(
-			TestrayRunComparison.class, json);
+	public static TestrayCase unsafeToDTO(String json) {
+		return ObjectMapperUtil.unsafeReadValue(TestrayCase.class, json);
 	}
 
 	@Schema
-	@Valid
-	public Object[] getResults() {
-		if (_resultsSupplier != null) {
-			results = _resultsSupplier.get();
+	public String getCaseResultStatus1() {
+		if (_caseResultStatus1Supplier != null) {
+			caseResultStatus1 = _caseResultStatus1Supplier.get();
 
-			_resultsSupplier = null;
+			_caseResultStatus1Supplier = null;
 		}
 
-		return results;
+		return caseResultStatus1;
 	}
 
-	public void setResults(Object[] results) {
-		this.results = results;
+	public void setCaseResultStatus1(String caseResultStatus1) {
+		this.caseResultStatus1 = caseResultStatus1;
 
-		_resultsSupplier = null;
+		_caseResultStatus1Supplier = null;
 	}
 
 	@JsonIgnore
-	public void setResults(
-		UnsafeSupplier<Object[], Exception> resultsUnsafeSupplier) {
+	public void setCaseResultStatus1(
+		UnsafeSupplier<String, Exception> caseResultStatus1UnsafeSupplier) {
 
-		_resultsSupplier = () -> {
+		_caseResultStatus1Supplier = () -> {
 			try {
-				return resultsUnsafeSupplier.get();
+				return caseResultStatus1UnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -83,35 +79,35 @@ public class TestrayRunComparison implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected Object[] results;
+	protected String caseResultStatus1;
 
 	@JsonIgnore
-	private Supplier<Object[]> _resultsSupplier;
+	private Supplier<String> _caseResultStatus1Supplier;
 
 	@Schema
-	public String getTestrayCasePriorities() {
-		if (_testrayCasePrioritiesSupplier != null) {
-			testrayCasePriorities = _testrayCasePrioritiesSupplier.get();
+	public String getCaseResultStatus2() {
+		if (_caseResultStatus2Supplier != null) {
+			caseResultStatus2 = _caseResultStatus2Supplier.get();
 
-			_testrayCasePrioritiesSupplier = null;
+			_caseResultStatus2Supplier = null;
 		}
 
-		return testrayCasePriorities;
+		return caseResultStatus2;
 	}
 
-	public void setTestrayCasePriorities(String testrayCasePriorities) {
-		this.testrayCasePriorities = testrayCasePriorities;
+	public void setCaseResultStatus2(String caseResultStatus2) {
+		this.caseResultStatus2 = caseResultStatus2;
 
-		_testrayCasePrioritiesSupplier = null;
+		_caseResultStatus2Supplier = null;
 	}
 
 	@JsonIgnore
-	public void setTestrayCasePriorities(
-		UnsafeSupplier<String, Exception> testrayCasePrioritiesUnsafeSupplier) {
+	public void setCaseResultStatus2(
+		UnsafeSupplier<String, Exception> caseResultStatus2UnsafeSupplier) {
 
-		_testrayCasePrioritiesSupplier = () -> {
+		_caseResultStatus2Supplier = () -> {
 			try {
-				return testrayCasePrioritiesUnsafeSupplier.get();
+				return caseResultStatus2UnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -124,36 +120,35 @@ public class TestrayRunComparison implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected String testrayCasePriorities;
+	protected String caseResultStatus2;
 
 	@JsonIgnore
-	private Supplier<String> _testrayCasePrioritiesSupplier;
+	private Supplier<String> _caseResultStatus2Supplier;
 
 	@Schema
-	@Valid
-	public TestrayCase[] getTestrayCases() {
-		if (_testrayCasesSupplier != null) {
-			testrayCases = _testrayCasesSupplier.get();
+	public String getComponent() {
+		if (_componentSupplier != null) {
+			component = _componentSupplier.get();
 
-			_testrayCasesSupplier = null;
+			_componentSupplier = null;
 		}
 
-		return testrayCases;
+		return component;
 	}
 
-	public void setTestrayCases(TestrayCase[] testrayCases) {
-		this.testrayCases = testrayCases;
+	public void setComponent(String component) {
+		this.component = component;
 
-		_testrayCasesSupplier = null;
+		_componentSupplier = null;
 	}
 
 	@JsonIgnore
-	public void setTestrayCases(
-		UnsafeSupplier<TestrayCase[], Exception> testrayCasesUnsafeSupplier) {
+	public void setComponent(
+		UnsafeSupplier<String, Exception> componentUnsafeSupplier) {
 
-		_testrayCasesSupplier = () -> {
+		_componentSupplier = () -> {
 			try {
-				return testrayCasesUnsafeSupplier.get();
+				return componentUnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -166,35 +161,33 @@ public class TestrayRunComparison implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected TestrayCase[] testrayCases;
+	protected String component;
 
 	@JsonIgnore
-	private Supplier<TestrayCase[]> _testrayCasesSupplier;
+	private Supplier<String> _componentSupplier;
 
 	@Schema
-	public Long getTestrayTeamId() {
-		if (_testrayTeamIdSupplier != null) {
-			testrayTeamId = _testrayTeamIdSupplier.get();
+	public String getName() {
+		if (_nameSupplier != null) {
+			name = _nameSupplier.get();
 
-			_testrayTeamIdSupplier = null;
+			_nameSupplier = null;
 		}
 
-		return testrayTeamId;
+		return name;
 	}
 
-	public void setTestrayTeamId(Long testrayTeamId) {
-		this.testrayTeamId = testrayTeamId;
+	public void setName(String name) {
+		this.name = name;
 
-		_testrayTeamIdSupplier = null;
+		_nameSupplier = null;
 	}
 
 	@JsonIgnore
-	public void setTestrayTeamId(
-		UnsafeSupplier<Long, Exception> testrayTeamIdUnsafeSupplier) {
-
-		_testrayTeamIdSupplier = () -> {
+	public void setName(UnsafeSupplier<String, Exception> nameUnsafeSupplier) {
+		_nameSupplier = () -> {
 			try {
-				return testrayTeamIdUnsafeSupplier.get();
+				return nameUnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -207,10 +200,51 @@ public class TestrayRunComparison implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected Long testrayTeamId;
+	protected String name;
 
 	@JsonIgnore
-	private Supplier<Long> _testrayTeamIdSupplier;
+	private Supplier<String> _nameSupplier;
+
+	@Schema
+	public String getPriority() {
+		if (_prioritySupplier != null) {
+			priority = _prioritySupplier.get();
+
+			_prioritySupplier = null;
+		}
+
+		return priority;
+	}
+
+	public void setPriority(String priority) {
+		this.priority = priority;
+
+		_prioritySupplier = null;
+	}
+
+	@JsonIgnore
+	public void setPriority(
+		UnsafeSupplier<String, Exception> priorityUnsafeSupplier) {
+
+		_prioritySupplier = () -> {
+			try {
+				return priorityUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String priority;
+
+	@JsonIgnore
+	private Supplier<String> _prioritySupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -218,14 +252,13 @@ public class TestrayRunComparison implements Serializable {
 			return true;
 		}
 
-		if (!(object instanceof TestrayRunComparison)) {
+		if (!(object instanceof TestrayCase)) {
 			return false;
 		}
 
-		TestrayRunComparison testrayRunComparison =
-			(TestrayRunComparison)object;
+		TestrayCase testrayCase = (TestrayCase)object;
 
-		return Objects.equals(toString(), testrayRunComparison.toString());
+		return Objects.equals(toString(), testrayCase.toString());
 	}
 
 	@Override
@@ -240,80 +273,84 @@ public class TestrayRunComparison implements Serializable {
 
 		sb.append("{");
 
-		Object[] results = getResults();
+		String caseResultStatus1 = getCaseResultStatus1();
 
-		if (results != null) {
+		if (caseResultStatus1 != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"results\": ");
-
-			sb.append("[");
-
-			for (int i = 0; i < results.length; i++) {
-				sb.append("\"");
-
-				sb.append(_escape(results[i]));
-
-				sb.append("\"");
-
-				if ((i + 1) < results.length) {
-					sb.append(", ");
-				}
-			}
-
-			sb.append("]");
-		}
-
-		String testrayCasePriorities = getTestrayCasePriorities();
-
-		if (testrayCasePriorities != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"testrayCasePriorities\": ");
+			sb.append("\"caseResultStatus1\": ");
 
 			sb.append("\"");
 
-			sb.append(_escape(testrayCasePriorities));
+			sb.append(_escape(caseResultStatus1));
 
 			sb.append("\"");
 		}
 
-		TestrayCase[] testrayCases = getTestrayCases();
+		String caseResultStatus2 = getCaseResultStatus2();
 
-		if (testrayCases != null) {
+		if (caseResultStatus2 != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"testrayCases\": ");
+			sb.append("\"caseResultStatus2\": ");
 
-			sb.append("[");
+			sb.append("\"");
 
-			for (int i = 0; i < testrayCases.length; i++) {
-				sb.append(String.valueOf(testrayCases[i]));
+			sb.append(_escape(caseResultStatus2));
 
-				if ((i + 1) < testrayCases.length) {
-					sb.append(", ");
-				}
-			}
-
-			sb.append("]");
+			sb.append("\"");
 		}
 
-		Long testrayTeamId = getTestrayTeamId();
+		String component = getComponent();
 
-		if (testrayTeamId != null) {
+		if (component != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"testrayTeamId\": ");
+			sb.append("\"component\": ");
 
-			sb.append(testrayTeamId);
+			sb.append("\"");
+
+			sb.append(_escape(component));
+
+			sb.append("\"");
+		}
+
+		String name = getName();
+
+		if (name != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"name\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(name));
+
+			sb.append("\"");
+		}
+
+		String priority = getPriority();
+
+		if (priority != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"priority\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(priority));
+
+			sb.append("\"");
 		}
 
 		sb.append("}");
@@ -323,7 +360,7 @@ public class TestrayRunComparison implements Serializable {
 
 	@Schema(
 		accessMode = Schema.AccessMode.READ_ONLY,
-		defaultValue = "com.liferay.testray.rest.dto.v1_0.TestrayRunComparison",
+		defaultValue = "com.liferay.testray.rest.dto.v1_0.TestrayCase",
 		name = "x-class-name"
 	)
 	public String xClassName;

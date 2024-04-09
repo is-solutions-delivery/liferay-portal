@@ -72,6 +72,11 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							TestrayRunComparisonResourceImpl.class,
 							"getTestrayRunComparison"));
+					put(
+						"query#testrayRunComparisonDetail",
+						new ObjectValuePair<>(
+							TestrayRunComparisonResourceImpl.class,
+							"getTestrayRunComparisonDetail"));
 				}
 			};
 

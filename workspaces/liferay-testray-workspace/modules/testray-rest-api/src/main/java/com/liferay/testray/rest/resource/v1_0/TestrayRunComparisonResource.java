@@ -43,6 +43,10 @@ public interface TestrayRunComparisonResource {
 			String testrayCasePriorities, Long testrayTeamId)
 		throws Exception;
 
+	public TestrayRunComparison getTestrayRunComparisonDetail(
+			Long testrayRunId1, Long testrayRunId2, Filter filter)
+		throws Exception;
+
 	public default void setContextAcceptLanguage(
 		AcceptLanguage contextAcceptLanguage) {
 	}
