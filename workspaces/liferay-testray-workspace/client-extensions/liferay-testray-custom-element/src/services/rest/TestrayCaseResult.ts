@@ -188,7 +188,9 @@ class TestrayCaseResultRest extends Rest<CaseResultForm, TestrayCaseResult> {
 
 	public async assignCaseResultIssue(caseResultId: number, issues: string[]) {
 		const caseResultIssuesResponse = await testrayCaseResultsIssuesImpl.getAll(
-			{filter: SearchBuilder.eq('caseResultId', caseResultId)}
+			{
+				filter: SearchBuilder.eq('caseResultId', caseResultId),
+			}
 		);
 
 		for (const issue of issues) {
@@ -254,7 +256,10 @@ class TestrayCaseResultRest extends Rest<CaseResultForm, TestrayCaseResult> {
 			}
 		>
 	): Promise<TestrayCaseResult> {
-		const issues = data.issues || [];
+		const issues =
+			(typeof data.issues === 'string'
+				? data.issues.split(', ')
+				: data.issues) || [];
 
 		if (data.issues) {
 			await this.assignCaseResultIssue(id, issues);
