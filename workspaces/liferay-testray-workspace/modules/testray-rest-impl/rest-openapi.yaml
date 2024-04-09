@@ -19,15 +19,10 @@ components:
                     items:
                         type: object
                     type: array
-                testrayCasePriorities:
-                    type: string
                 testrayCases:
                     items:
                         $ref: "#/components/schemas/TestrayCase"
                     type: array
-                testrayTeamId:
-                    format: int64
-                    type: integer
             type: object
 info:
     license:
