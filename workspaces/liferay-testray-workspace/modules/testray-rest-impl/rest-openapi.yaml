@@ -79,31 +79,31 @@ paths:
                       format: int64
                       type: integer
                 - in: query
-                  name: error1
-                  schema:
-                      type: string
-                - in: query
-                  name: error2
-                  schema:
-                      type: string
-                - in: query
                   name: filter
                   schema:
                       type: string
                 - in: query
-                  name: issues1
+                  name: testrayCaseResultError1
                   schema:
                       type: string
                 - in: query
-                  name: issues2
+                  name: testrayCaseResultError2
                   schema:
                       type: string
                 - in: query
-                  name: status1
+                  name: testrayCaseResultIssue1
                   schema:
                       type: string
                 - in: query
-                  name: status2
+                  name: testrayCaseResultIssue2
+                  schema:
+                      type: string
+                - in: query
+                  name: testrayCaseResultStatus1
+                  schema:
+                      type: string
+                - in: query
+                  name: testrayCaseResultStatus2
                   schema:
                       type: string
             responses:
