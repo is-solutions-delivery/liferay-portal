@@ -43,9 +43,11 @@ public interface TestrayRunComparisonResource {
 		throws Exception;
 
 	public TestrayRunComparison getTestrayRunComparisonDetail(
-			Long testrayRunId1, Long testrayRunId2, String error1,
-			String error2, String issues1, String issues2, String status1,
-			String status2, Filter filter)
+			Long testrayRunId1, Long testrayRunId2,
+			String testrayCaseResultError1, String testrayCaseResultError2,
+			String testrayCaseResultIssue1, String testrayCaseResultIssue2,
+			String testrayCaseResultStatus1, String testrayCaseResultStatus2,
+			Filter filter)
 		throws Exception;
 
 	public default void setContextAcceptLanguage(

@@ -106,31 +106,31 @@ public abstract class BaseTestrayRunComparisonResourceImpl
 			),
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
-				name = "error1"
-			),
-			@io.swagger.v3.oas.annotations.Parameter(
-				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
-				name = "error2"
-			),
-			@io.swagger.v3.oas.annotations.Parameter(
-				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
 				name = "filter"
 			),
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
-				name = "issues1"
+				name = "testrayCaseResultError1"
 			),
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
-				name = "issues2"
+				name = "testrayCaseResultError2"
 			),
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
-				name = "status1"
+				name = "testrayCaseResultIssue1"
 			),
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
-				name = "status2"
+				name = "testrayCaseResultIssue2"
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "testrayCaseResultStatus1"
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "testrayCaseResultStatus2"
 			)
 		}
 	)
@@ -157,23 +157,23 @@ public abstract class BaseTestrayRunComparisonResourceImpl
 			@javax.ws.rs.PathParam("testrayRunId2")
 			Long testrayRunId2,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.ws.rs.QueryParam("error1")
-			String error1,
+			@javax.ws.rs.QueryParam("testrayCaseResultError1")
+			String testrayCaseResultError1,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.ws.rs.QueryParam("error2")
-			String error2,
+			@javax.ws.rs.QueryParam("testrayCaseResultError2")
+			String testrayCaseResultError2,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.ws.rs.QueryParam("issues1")
-			String issues1,
+			@javax.ws.rs.QueryParam("testrayCaseResultIssue1")
+			String testrayCaseResultIssue1,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.ws.rs.QueryParam("issues2")
-			String issues2,
+			@javax.ws.rs.QueryParam("testrayCaseResultIssue2")
+			String testrayCaseResultIssue2,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.ws.rs.QueryParam("status1")
-			String status1,
+			@javax.ws.rs.QueryParam("testrayCaseResultStatus1")
+			String testrayCaseResultStatus1,
 			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
-			@javax.ws.rs.QueryParam("status2")
-			String status2,
+			@javax.ws.rs.QueryParam("testrayCaseResultStatus2")
+			String testrayCaseResultStatus2,
 			@javax.ws.rs.core.Context Filter filter)
 		throws Exception {
 

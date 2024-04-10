@@ -65,18 +65,24 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparisonDetail(error1: ___, error2: ___, filter: ___, issues1: ___, issues2: ___, status1: ___, status2: ___, testrayRunId1: ___, testrayRunId2: ___){results, testrayCases}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparisonDetail(filter: ___, testrayCaseResultError1: ___, testrayCaseResultError2: ___, testrayCaseResultIssue1: ___, testrayCaseResultIssue2: ___, testrayCaseResultStatus1: ___, testrayCaseResultStatus2: ___, testrayRunId1: ___, testrayRunId2: ___){results, testrayCases}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public TestrayRunComparison testrayRunComparisonDetail(
 			@GraphQLName("testrayRunId1") Long testrayRunId1,
 			@GraphQLName("testrayRunId2") Long testrayRunId2,
-			@GraphQLName("error1") String error1,
-			@GraphQLName("error2") String error2,
-			@GraphQLName("issues1") String issues1,
-			@GraphQLName("issues2") String issues2,
-			@GraphQLName("status1") String status1,
-			@GraphQLName("status2") String status2,
+			@GraphQLName("testrayCaseResultError1") String
+				testrayCaseResultError1,
+			@GraphQLName("testrayCaseResultError2") String
+				testrayCaseResultError2,
+			@GraphQLName("testrayCaseResultIssue1") String
+				testrayCaseResultIssue1,
+			@GraphQLName("testrayCaseResultIssue2") String
+				testrayCaseResultIssue2,
+			@GraphQLName("testrayCaseResultStatus1") String
+				testrayCaseResultStatus1,
+			@GraphQLName("testrayCaseResultStatus2") String
+				testrayCaseResultStatus2,
 			@GraphQLName("filter") String filterString)
 		throws Exception {
 
@@ -85,8 +91,10 @@ public class Query {
 			this::_populateResourceContext,
 			testrayRunComparisonResource ->
 				testrayRunComparisonResource.getTestrayRunComparisonDetail(
-					testrayRunId1, testrayRunId2, error1, error2, issues1,
-					issues2, status1, status2,
+					testrayRunId1, testrayRunId2, testrayCaseResultError1,
+					testrayCaseResultError2, testrayCaseResultIssue1,
+					testrayCaseResultIssue2, testrayCaseResultStatus1,
+					testrayCaseResultStatus2,
 					_filterBiFunction.apply(
 						testrayRunComparisonResource, filterString)));
 	}
