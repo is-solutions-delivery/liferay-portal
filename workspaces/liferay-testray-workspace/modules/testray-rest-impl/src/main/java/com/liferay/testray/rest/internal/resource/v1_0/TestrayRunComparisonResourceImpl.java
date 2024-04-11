@@ -16,12 +16,13 @@ import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
-import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.testray.rest.dto.v1_0.TestrayRunComparison;
 import com.liferay.testray.rest.resource.v1_0.TestrayRunComparisonResource;
 
 import java.io.Serializable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -169,22 +170,20 @@ public class TestrayRunComparisonResourceImpl
 
 		Map<String, Map<String, Serializable>> testrayCaseResultsMap1 =
 			_getObjectEntriesMap(
-				StringUtil.merge(
-					new String[] {
+				_merge(
+					ListUtil.fromArray(
 						"runId eq '" + testrayRunId1 + "'", filter,
 						testrayCaseResultError1, testrayCaseResultIssue1,
-						testrayCaseResultStatus1
-					},
+						testrayCaseResultStatus1),
 					" and "),
 				"r_caseToCaseResult_c_caseId", "CaseResult");
 		Map<String, Map<String, Serializable>> testrayCaseResultsMap2 =
 			_getObjectEntriesMap(
-				StringUtil.merge(
-					new String[] {
+				_merge(
+					ListUtil.fromArray(
 						"runId eq '" + testrayRunId2 + "'", filter,
 						testrayCaseResultError2, testrayCaseResultIssue2,
-						testrayCaseResultStatus2
-					},
+						testrayCaseResultStatus2),
 					" and "),
 				"r_caseToCaseResult_c_caseId", "CaseResult");
 
@@ -311,6 +310,28 @@ public class TestrayRunComparisonResourceImpl
 		}
 
 		return testrayTeamComparisonsMap;
+	}
+
+	private String _merge(Collection<?> col, String delimiter) {
+		StringBundler sb = new StringBundler(2 * col.size());
+
+		for (Object object : col) {
+			if (Validator.isNull(object)) {
+				continue;
+			}
+
+			String objectString = String.valueOf(object);
+
+			sb.append(objectString.trim());
+
+			sb.append(delimiter);
+		}
+
+		if (!delimiter.isEmpty()) {
+			sb.setIndex(sb.index() - 1);
+		}
+
+		return sb.toString();
 	}
 
 	private Map<String, Serializable> _mergeTestrayCaseResults(
