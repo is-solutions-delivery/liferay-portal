@@ -204,29 +204,29 @@ public class TestrayCaseResult implements Serializable {
 	private Supplier<Long> _id2Supplier;
 
 	@Schema
-	public String getIssues1() {
-		if (_issues1Supplier != null) {
-			issues1 = _issues1Supplier.get();
+	public String getIssue1() {
+		if (_issue1Supplier != null) {
+			issue1 = _issue1Supplier.get();
 
-			_issues1Supplier = null;
+			_issue1Supplier = null;
 		}
 
-		return issues1;
+		return issue1;
 	}
 
-	public void setIssues1(String issues1) {
-		this.issues1 = issues1;
+	public void setIssue1(String issue1) {
+		this.issue1 = issue1;
 
-		_issues1Supplier = null;
+		_issue1Supplier = null;
 	}
 
 	@JsonIgnore
-	public void setIssues1(
-		UnsafeSupplier<String, Exception> issues1UnsafeSupplier) {
+	public void setIssue1(
+		UnsafeSupplier<String, Exception> issue1UnsafeSupplier) {
 
-		_issues1Supplier = () -> {
+		_issue1Supplier = () -> {
 			try {
-				return issues1UnsafeSupplier.get();
+				return issue1UnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -239,35 +239,35 @@ public class TestrayCaseResult implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected String issues1;
+	protected String issue1;
 
 	@JsonIgnore
-	private Supplier<String> _issues1Supplier;
+	private Supplier<String> _issue1Supplier;
 
 	@Schema
-	public String getIssues2() {
-		if (_issues2Supplier != null) {
-			issues2 = _issues2Supplier.get();
+	public String getIssue2() {
+		if (_issue2Supplier != null) {
+			issue2 = _issue2Supplier.get();
 
-			_issues2Supplier = null;
+			_issue2Supplier = null;
 		}
 
-		return issues2;
+		return issue2;
 	}
 
-	public void setIssues2(String issues2) {
-		this.issues2 = issues2;
+	public void setIssue2(String issue2) {
+		this.issue2 = issue2;
 
-		_issues2Supplier = null;
+		_issue2Supplier = null;
 	}
 
 	@JsonIgnore
-	public void setIssues2(
-		UnsafeSupplier<String, Exception> issues2UnsafeSupplier) {
+	public void setIssue2(
+		UnsafeSupplier<String, Exception> issue2UnsafeSupplier) {
 
-		_issues2Supplier = () -> {
+		_issue2Supplier = () -> {
 			try {
-				return issues2UnsafeSupplier.get();
+				return issue2UnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -280,10 +280,10 @@ public class TestrayCaseResult implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected String issues2;
+	protected String issue2;
 
 	@JsonIgnore
-	private Supplier<String> _issues2Supplier;
+	private Supplier<String> _issue2Supplier;
 
 	@Schema
 	public String getName() {
@@ -653,34 +653,34 @@ public class TestrayCaseResult implements Serializable {
 			sb.append(id2);
 		}
 
-		String issues1 = getIssues1();
+		String issue1 = getIssue1();
 
-		if (issues1 != null) {
+		if (issue1 != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"issues1\": ");
+			sb.append("\"issue1\": ");
 
 			sb.append("\"");
 
-			sb.append(_escape(issues1));
+			sb.append(_escape(issue1));
 
 			sb.append("\"");
 		}
 
-		String issues2 = getIssues2();
+		String issue2 = getIssue2();
 
-		if (issues2 != null) {
+		if (issue2 != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"issues2\": ");
+			sb.append("\"issue2\": ");
 
 			sb.append("\"");
 
-			sb.append(_escape(issues2));
+			sb.append(_escape(issue2));
 
 			sb.append("\"");
 		}
