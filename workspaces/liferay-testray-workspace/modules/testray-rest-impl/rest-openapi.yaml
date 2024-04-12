@@ -12,9 +12,9 @@ components:
                 id2:
                     format: int64
                     type: integer
-                issues1:
+                issue1:
                     type: string
-                issues2:
+                issue2:
                     type: string
                 name:
                     type: string
