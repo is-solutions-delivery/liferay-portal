@@ -44,6 +44,88 @@ public class TestrayCaseResult implements Serializable {
 	}
 
 	@Schema
+	public String getError1() {
+		if (_error1Supplier != null) {
+			error1 = _error1Supplier.get();
+
+			_error1Supplier = null;
+		}
+
+		return error1;
+	}
+
+	public void setError1(String error1) {
+		this.error1 = error1;
+
+		_error1Supplier = null;
+	}
+
+	@JsonIgnore
+	public void setError1(
+		UnsafeSupplier<String, Exception> error1UnsafeSupplier) {
+
+		_error1Supplier = () -> {
+			try {
+				return error1UnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String error1;
+
+	@JsonIgnore
+	private Supplier<String> _error1Supplier;
+
+	@Schema
+	public String getError2() {
+		if (_error2Supplier != null) {
+			error2 = _error2Supplier.get();
+
+			_error2Supplier = null;
+		}
+
+		return error2;
+	}
+
+	public void setError2(String error2) {
+		this.error2 = error2;
+
+		_error2Supplier = null;
+	}
+
+	@JsonIgnore
+	public void setError2(
+		UnsafeSupplier<String, Exception> error2UnsafeSupplier) {
+
+		_error2Supplier = () -> {
+			try {
+				return error2UnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String error2;
+
+	@JsonIgnore
+	private Supplier<String> _error2Supplier;
+
+	@Schema
 	public Long getId1() {
 		if (_id1Supplier != null) {
 			id1 = _id1Supplier.get();
@@ -120,6 +202,88 @@ public class TestrayCaseResult implements Serializable {
 
 	@JsonIgnore
 	private Supplier<Long> _id2Supplier;
+
+	@Schema
+	public String getIssues1() {
+		if (_issues1Supplier != null) {
+			issues1 = _issues1Supplier.get();
+
+			_issues1Supplier = null;
+		}
+
+		return issues1;
+	}
+
+	public void setIssues1(String issues1) {
+		this.issues1 = issues1;
+
+		_issues1Supplier = null;
+	}
+
+	@JsonIgnore
+	public void setIssues1(
+		UnsafeSupplier<String, Exception> issues1UnsafeSupplier) {
+
+		_issues1Supplier = () -> {
+			try {
+				return issues1UnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String issues1;
+
+	@JsonIgnore
+	private Supplier<String> _issues1Supplier;
+
+	@Schema
+	public String getIssues2() {
+		if (_issues2Supplier != null) {
+			issues2 = _issues2Supplier.get();
+
+			_issues2Supplier = null;
+		}
+
+		return issues2;
+	}
+
+	public void setIssues2(String issues2) {
+		this.issues2 = issues2;
+
+		_issues2Supplier = null;
+	}
+
+	@JsonIgnore
+	public void setIssues2(
+		UnsafeSupplier<String, Exception> issues2UnsafeSupplier) {
+
+		_issues2Supplier = () -> {
+			try {
+				return issues2UnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String issues2;
+
+	@JsonIgnore
+	private Supplier<String> _issues2Supplier;
 
 	@Schema
 	public String getName() {
@@ -284,6 +448,47 @@ public class TestrayCaseResult implements Serializable {
 	private Supplier<String> _status2Supplier;
 
 	@Schema
+	public Long getTestrayCaseId() {
+		if (_testrayCaseIdSupplier != null) {
+			testrayCaseId = _testrayCaseIdSupplier.get();
+
+			_testrayCaseIdSupplier = null;
+		}
+
+		return testrayCaseId;
+	}
+
+	public void setTestrayCaseId(Long testrayCaseId) {
+		this.testrayCaseId = testrayCaseId;
+
+		_testrayCaseIdSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setTestrayCaseId(
+		UnsafeSupplier<Long, Exception> testrayCaseIdUnsafeSupplier) {
+
+		_testrayCaseIdSupplier = () -> {
+			try {
+				return testrayCaseIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Long testrayCaseId;
+
+	@JsonIgnore
+	private Supplier<Long> _testrayCaseIdSupplier;
+
+	@Schema
 	public String getTestrayComponentName() {
 		if (_testrayComponentNameSupplier != null) {
 			testrayComponentName = _testrayComponentNameSupplier.get();
@@ -392,6 +597,38 @@ public class TestrayCaseResult implements Serializable {
 
 		sb.append("{");
 
+		String error1 = getError1();
+
+		if (error1 != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"error1\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(error1));
+
+			sb.append("\"");
+		}
+
+		String error2 = getError2();
+
+		if (error2 != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"error2\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(error2));
+
+			sb.append("\"");
+		}
+
 		Long id1 = getId1();
 
 		if (id1 != null) {
@@ -414,6 +651,38 @@ public class TestrayCaseResult implements Serializable {
 			sb.append("\"id2\": ");
 
 			sb.append(id2);
+		}
+
+		String issues1 = getIssues1();
+
+		if (issues1 != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"issues1\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(issues1));
+
+			sb.append("\"");
+		}
+
+		String issues2 = getIssues2();
+
+		if (issues2 != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"issues2\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(issues2));
+
+			sb.append("\"");
 		}
 
 		String name = getName();
@@ -474,6 +743,18 @@ public class TestrayCaseResult implements Serializable {
 			sb.append(_escape(status2));
 
 			sb.append("\"");
+		}
+
+		Long testrayCaseId = getTestrayCaseId();
+
+		if (testrayCaseId != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"testrayCaseId\": ");
+
+			sb.append(testrayCaseId);
 		}
 
 		String testrayComponentName = getTestrayComponentName();
