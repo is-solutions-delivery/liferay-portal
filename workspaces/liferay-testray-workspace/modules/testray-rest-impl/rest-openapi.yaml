@@ -1,24 +1,24 @@
 components:
     schemas:
-        TestrayCase:
+        TestrayCaseResult:
             properties:
-                caseResultId1:
+                id1:
                     format: int64
                     type: integer
-                caseResultId2:
+                id2:
                     format: int64
                     type: integer
-                caseResultStatus1:
-                    type: string
-                caseResultStatus2:
-                    type: string
-                component:
-                    type: string
                 name:
                     type: string
                 priority:
                     type: string
-                teamId:
+                status1:
+                    type: string
+                status2:
+                    type: string
+                testrayComponent:
+                    type: string
+                testrayTeamId:
                     format: int64
                     type: integer
             type: object
@@ -28,9 +28,9 @@ components:
                     items:
                         type: object
                     type: array
-                testrayCases:
+                testrayCaseResults:
                     items:
-                        $ref: "#/components/schemas/TestrayCase"
+                        $ref: "#/components/schemas/TestrayCaseResult"
                     type: array
             type: object
 info:
