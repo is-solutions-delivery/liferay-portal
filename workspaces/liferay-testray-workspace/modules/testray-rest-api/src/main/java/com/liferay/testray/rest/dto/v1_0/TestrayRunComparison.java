@@ -90,29 +90,30 @@ public class TestrayRunComparison implements Serializable {
 
 	@Schema
 	@Valid
-	public TestrayCase[] getTestrayCases() {
-		if (_testrayCasesSupplier != null) {
-			testrayCases = _testrayCasesSupplier.get();
+	public TestrayCaseResult[] getTestrayCaseResults() {
+		if (_testrayCaseResultsSupplier != null) {
+			testrayCaseResults = _testrayCaseResultsSupplier.get();
 
-			_testrayCasesSupplier = null;
+			_testrayCaseResultsSupplier = null;
 		}
 
-		return testrayCases;
+		return testrayCaseResults;
 	}
 
-	public void setTestrayCases(TestrayCase[] testrayCases) {
-		this.testrayCases = testrayCases;
+	public void setTestrayCaseResults(TestrayCaseResult[] testrayCaseResults) {
+		this.testrayCaseResults = testrayCaseResults;
 
-		_testrayCasesSupplier = null;
+		_testrayCaseResultsSupplier = null;
 	}
 
 	@JsonIgnore
-	public void setTestrayCases(
-		UnsafeSupplier<TestrayCase[], Exception> testrayCasesUnsafeSupplier) {
+	public void setTestrayCaseResults(
+		UnsafeSupplier<TestrayCaseResult[], Exception>
+			testrayCaseResultsUnsafeSupplier) {
 
-		_testrayCasesSupplier = () -> {
+		_testrayCaseResultsSupplier = () -> {
 			try {
-				return testrayCasesUnsafeSupplier.get();
+				return testrayCaseResultsUnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -125,10 +126,10 @@ public class TestrayRunComparison implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected TestrayCase[] testrayCases;
+	protected TestrayCaseResult[] testrayCaseResults;
 
 	@JsonIgnore
-	private Supplier<TestrayCase[]> _testrayCasesSupplier;
+	private Supplier<TestrayCaseResult[]> _testrayCaseResultsSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -184,21 +185,21 @@ public class TestrayRunComparison implements Serializable {
 			sb.append("]");
 		}
 
-		TestrayCase[] testrayCases = getTestrayCases();
+		TestrayCaseResult[] testrayCaseResults = getTestrayCaseResults();
 
-		if (testrayCases != null) {
+		if (testrayCaseResults != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"testrayCases\": ");
+			sb.append("\"testrayCaseResults\": ");
 
 			sb.append("[");
 
-			for (int i = 0; i < testrayCases.length; i++) {
-				sb.append(String.valueOf(testrayCases[i]));
+			for (int i = 0; i < testrayCaseResults.length; i++) {
+				sb.append(String.valueOf(testrayCaseResults[i]));
 
-				if ((i + 1) < testrayCases.length) {
+				if ((i + 1) < testrayCaseResults.length) {
 					sb.append(", ");
 				}
 			}

@@ -43,7 +43,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparison(filter: ___, testrayRunId1: ___, testrayRunId2: ___){results, testrayCases}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparison(filter: ___, testrayRunId1: ___, testrayRunId2: ___){results, testrayCaseResults}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public TestrayRunComparison testrayRunComparison(
@@ -65,7 +65,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparisonDetail(filter: ___, testrayCaseResultError1: ___, testrayCaseResultError2: ___, testrayCaseResultIssue1: ___, testrayCaseResultIssue2: ___, testrayCaseResultStatus1: ___, testrayCaseResultStatus2: ___, testrayRunId1: ___, testrayRunId2: ___){results, testrayCases}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRunComparisonDetail(filter: ___, testrayCaseResultError1: ___, testrayCaseResultError2: ___, testrayCaseResultIssue1: ___, testrayCaseResultIssue2: ___, testrayCaseResultStatus1: ___, testrayCaseResultStatus2: ___, testrayRunId1: ___, testrayRunId2: ___){results, testrayCaseResults}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public TestrayRunComparison testrayRunComparisonDetail(
