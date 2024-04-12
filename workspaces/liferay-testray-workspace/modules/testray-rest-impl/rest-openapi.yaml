@@ -2,12 +2,20 @@ components:
     schemas:
         TestrayCaseResult:
             properties:
+                error1:
+                    type: string
+                error2:
+                    type: string
                 id1:
                     format: int64
                     type: integer
                 id2:
                     format: int64
                     type: integer
+                issues1:
+                    type: string
+                issues2:
+                    type: string
                 name:
                     type: string
                 priority:
@@ -16,6 +24,9 @@ components:
                     type: string
                 status2:
                     type: string
+                testrayCaseId:
+                    format: int64
+                    type: integer
                 testrayComponentName:
                     type: string
                 testrayTeamId:
