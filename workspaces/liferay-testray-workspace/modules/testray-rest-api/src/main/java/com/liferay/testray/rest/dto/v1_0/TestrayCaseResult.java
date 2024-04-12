@@ -161,7 +161,7 @@ public class TestrayCaseResult implements Serializable {
 	private Supplier<String> _nameSupplier;
 
 	@Schema
-	public String getPriority() {
+	public Integer getPriority() {
 		if (_prioritySupplier != null) {
 			priority = _prioritySupplier.get();
 
@@ -171,7 +171,7 @@ public class TestrayCaseResult implements Serializable {
 		return priority;
 	}
 
-	public void setPriority(String priority) {
+	public void setPriority(Integer priority) {
 		this.priority = priority;
 
 		_prioritySupplier = null;
@@ -179,7 +179,7 @@ public class TestrayCaseResult implements Serializable {
 
 	@JsonIgnore
 	public void setPriority(
-		UnsafeSupplier<String, Exception> priorityUnsafeSupplier) {
+		UnsafeSupplier<Integer, Exception> priorityUnsafeSupplier) {
 
 		_prioritySupplier = () -> {
 			try {
@@ -196,10 +196,10 @@ public class TestrayCaseResult implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected String priority;
+	protected Integer priority;
 
 	@JsonIgnore
-	private Supplier<String> _prioritySupplier;
+	private Supplier<Integer> _prioritySupplier;
 
 	@Schema
 	public String getStatus1() {
@@ -284,29 +284,29 @@ public class TestrayCaseResult implements Serializable {
 	private Supplier<String> _status2Supplier;
 
 	@Schema
-	public String getTestrayComponent() {
-		if (_testrayComponentSupplier != null) {
-			testrayComponent = _testrayComponentSupplier.get();
+	public String getTestrayComponentName() {
+		if (_testrayComponentNameSupplier != null) {
+			testrayComponentName = _testrayComponentNameSupplier.get();
 
-			_testrayComponentSupplier = null;
+			_testrayComponentNameSupplier = null;
 		}
 
-		return testrayComponent;
+		return testrayComponentName;
 	}
 
-	public void setTestrayComponent(String testrayComponent) {
-		this.testrayComponent = testrayComponent;
+	public void setTestrayComponentName(String testrayComponentName) {
+		this.testrayComponentName = testrayComponentName;
 
-		_testrayComponentSupplier = null;
+		_testrayComponentNameSupplier = null;
 	}
 
 	@JsonIgnore
-	public void setTestrayComponent(
-		UnsafeSupplier<String, Exception> testrayComponentUnsafeSupplier) {
+	public void setTestrayComponentName(
+		UnsafeSupplier<String, Exception> testrayComponentNameUnsafeSupplier) {
 
-		_testrayComponentSupplier = () -> {
+		_testrayComponentNameSupplier = () -> {
 			try {
-				return testrayComponentUnsafeSupplier.get();
+				return testrayComponentNameUnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -319,10 +319,10 @@ public class TestrayCaseResult implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected String testrayComponent;
+	protected String testrayComponentName;
 
 	@JsonIgnore
-	private Supplier<String> _testrayComponentSupplier;
+	private Supplier<String> _testrayComponentNameSupplier;
 
 	@Schema
 	public Long getTestrayTeamId() {
@@ -432,7 +432,7 @@ public class TestrayCaseResult implements Serializable {
 			sb.append("\"");
 		}
 
-		String priority = getPriority();
+		Integer priority = getPriority();
 
 		if (priority != null) {
 			if (sb.length() > 1) {
@@ -441,11 +441,7 @@ public class TestrayCaseResult implements Serializable {
 
 			sb.append("\"priority\": ");
 
-			sb.append("\"");
-
-			sb.append(_escape(priority));
-
-			sb.append("\"");
+			sb.append(priority);
 		}
 
 		String status1 = getStatus1();
@@ -480,18 +476,18 @@ public class TestrayCaseResult implements Serializable {
 			sb.append("\"");
 		}
 
-		String testrayComponent = getTestrayComponent();
+		String testrayComponentName = getTestrayComponentName();
 
-		if (testrayComponent != null) {
+		if (testrayComponentName != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"testrayComponent\": ");
+			sb.append("\"testrayComponentName\": ");
 
 			sb.append("\"");
 
-			sb.append(_escape(testrayComponent));
+			sb.append(_escape(testrayComponentName));
 
 			sb.append("\"");
 		}
