@@ -353,25 +353,59 @@ public class TestrayRunComparisonResourceImpl
 
 		TestrayCaseResult testrayCaseResult = new TestrayCaseResult();
 
-		testrayCaseResult.setId1(
-			_getTestrayCaseResultId(testrayCaseResultMap1));
-		testrayCaseResult.setId2(
-			_getTestrayCaseResultId(testrayCaseResultMap2));
-		testrayCaseResult.setStatus1(
-			_getTestrayCaseResultStatus(testrayCaseResultMap1));
-		testrayCaseResult.setStatus2(
-			_getTestrayCaseResultStatus(testrayCaseResultMap2));
+		testrayCaseResult.setStatus1("DIDNOTRUN");
+		testrayCaseResult.setStatus2("DIDNOTRUN");
+
+		if (testrayCaseResultMap1 != null) {
+			testrayCaseResult.setError1(
+				GetterUtil.getString(
+					testrayCaseResultMap1.get("errors"), null));
+			testrayCaseResult.setIssue1(
+				GetterUtil.getString(testrayCaseResultMap1.get("issues")));
+			testrayCaseResult.setId1(
+				GetterUtil.getLong(
+					testrayCaseResultMap1.get("c_caseResultId")));
+
+			String dueStatus = String.valueOf(
+				testrayCaseResultMap1.get("dueStatus"));
+
+			if (!Objects.equals(dueStatus, "UNTESTED")) {
+				testrayCaseResult.setStatus2(dueStatus);
+			}
+		}
+
+		if (testrayCaseResultMap2 != null) {
+			testrayCaseResult.setError2(
+				GetterUtil.getString(testrayCaseResultMap2.get("errors")));
+			testrayCaseResult.setIssue2(
+				GetterUtil.getString(testrayCaseResultMap2.get("issues")));
+			testrayCaseResult.setId2(
+				GetterUtil.getLong(
+					testrayCaseResultMap1.get("c_caseResultId")));
+
+			String dueStatus = String.valueOf(
+				testrayCaseResultMap2.get("dueStatus"));
+
+			if (!Objects.equals(dueStatus, "UNTESTED")) {
+				testrayCaseResult.setStatus1(dueStatus);
+			}
+		}
+
+		testrayCaseResult.setTestrayCaseId(
+			GetterUtil.getLong(map.get("r_caseToCaseResult_c_caseId")));
 		testrayCaseResult.setTestrayComponentName(
 			String.valueOf(
 				testrayComponentsMap.get(
-					map.get("r_componentToCaseResult_c_componentId")
+					String.valueOf(
+						map.get("r_componentToCaseResult_c_componentId"))
 				).get(
 					"name"
 				)));
 		testrayCaseResult.setTestrayTeamId(
 			GetterUtil.getLong(
 				testrayComponentsMap.get(
-					map.get("r_componentToCaseResult_c_componentId")
+					String.valueOf(
+						map.get("r_componentToCaseResult_c_componentId"))
 				).get(
 					"r_teamToComponents_c_teamId"
 				)));
