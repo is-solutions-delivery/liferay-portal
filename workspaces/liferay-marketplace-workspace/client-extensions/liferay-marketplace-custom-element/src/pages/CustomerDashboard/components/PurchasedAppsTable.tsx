@@ -16,6 +16,7 @@ import Table from '../../../components/Table/Table';
 import {useMarketplaceContext} from '../../../context/MarketplaceContext';
 import {OrderType} from '../../../enums/OrderType';
 import i18n from '../../../i18n';
+import {Analytics} from '../../../liferay/Analytics';
 import {safeJSONParse} from '../../../utils/util';
 
 type AppsTableProps = {
@@ -118,7 +119,9 @@ const AppsTable: React.FC<AppsTableProps> = ({items}) => {
 					render: (
 						_,
 						{
+							account,
 							id,
+							name,
 							orderStatusInfo,
 							orderTypeExternalReferenceCode,
 							placedOrderItems,
@@ -221,6 +224,14 @@ const AppsTable: React.FC<AppsTableProps> = ({items}) => {
 															: orderStatusIsNotCompleted
 													}
 													onClick={() => {
+														Analytics.track(
+															'Download App',
+															{
+																accountName: account,
+																productName: name,
+															}
+														);
+
 														window.location.href = virtualURL;
 													}}
 													title={

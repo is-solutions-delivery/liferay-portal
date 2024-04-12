@@ -10,6 +10,7 @@ import {useOutletContext} from 'react-router-dom';
 import {Input} from '../../../components/Input/Input';
 import useCommerceRegions from '../../../hooks/useCommerceRegions';
 import i18n from '../../../i18n';
+import {Analytics} from '../../../liferay/Analytics';
 import {useGetAppContext} from '../GetAppContextProvider';
 import {GetAppOutletContext} from '../GetAppOutlet';
 import {BillingAddress} from '../components/SelectPaymentMethod/BillingAddress/BillingAddress';
@@ -45,6 +46,7 @@ export default function Payment() {
 			currentStep,
 			formState: {isValid},
 			payment: {billingAddress, invoice, method: paymentMethod},
+			product,
 			steps,
 		},
 		dispatch,
@@ -73,6 +75,13 @@ export default function Payment() {
 							if (isTrial && cartId) {
 								await cartUtil.removeCart(cartId);
 							}
+
+							Analytics.track('App Purchase', {
+								isPaid: true,
+								isTrial,
+								paymentMethod,
+								productName: product.name,
+							});
 
 							await handleGetApp(cartId);
 						},
