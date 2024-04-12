@@ -44,6 +44,88 @@ public class TestrayCase implements Serializable {
 	}
 
 	@Schema
+	public Long getCaseResultId1() {
+		if (_caseResultId1Supplier != null) {
+			caseResultId1 = _caseResultId1Supplier.get();
+
+			_caseResultId1Supplier = null;
+		}
+
+		return caseResultId1;
+	}
+
+	public void setCaseResultId1(Long caseResultId1) {
+		this.caseResultId1 = caseResultId1;
+
+		_caseResultId1Supplier = null;
+	}
+
+	@JsonIgnore
+	public void setCaseResultId1(
+		UnsafeSupplier<Long, Exception> caseResultId1UnsafeSupplier) {
+
+		_caseResultId1Supplier = () -> {
+			try {
+				return caseResultId1UnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Long caseResultId1;
+
+	@JsonIgnore
+	private Supplier<Long> _caseResultId1Supplier;
+
+	@Schema
+	public Long getCaseResultId2() {
+		if (_caseResultId2Supplier != null) {
+			caseResultId2 = _caseResultId2Supplier.get();
+
+			_caseResultId2Supplier = null;
+		}
+
+		return caseResultId2;
+	}
+
+	public void setCaseResultId2(Long caseResultId2) {
+		this.caseResultId2 = caseResultId2;
+
+		_caseResultId2Supplier = null;
+	}
+
+	@JsonIgnore
+	public void setCaseResultId2(
+		UnsafeSupplier<Long, Exception> caseResultId2UnsafeSupplier) {
+
+		_caseResultId2Supplier = () -> {
+			try {
+				return caseResultId2UnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Long caseResultId2;
+
+	@JsonIgnore
+	private Supplier<Long> _caseResultId2Supplier;
+
+	@Schema
 	public String getCaseResultStatus1() {
 		if (_caseResultStatus1Supplier != null) {
 			caseResultStatus1 = _caseResultStatus1Supplier.get();
@@ -246,6 +328,47 @@ public class TestrayCase implements Serializable {
 	@JsonIgnore
 	private Supplier<String> _prioritySupplier;
 
+	@Schema
+	public Long getTeamId() {
+		if (_teamIdSupplier != null) {
+			teamId = _teamIdSupplier.get();
+
+			_teamIdSupplier = null;
+		}
+
+		return teamId;
+	}
+
+	public void setTeamId(Long teamId) {
+		this.teamId = teamId;
+
+		_teamIdSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setTeamId(
+		UnsafeSupplier<Long, Exception> teamIdUnsafeSupplier) {
+
+		_teamIdSupplier = () -> {
+			try {
+				return teamIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected Long teamId;
+
+	@JsonIgnore
+	private Supplier<Long> _teamIdSupplier;
+
 	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
@@ -272,6 +395,30 @@ public class TestrayCase implements Serializable {
 		StringBundler sb = new StringBundler();
 
 		sb.append("{");
+
+		Long caseResultId1 = getCaseResultId1();
+
+		if (caseResultId1 != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"caseResultId1\": ");
+
+			sb.append(caseResultId1);
+		}
+
+		Long caseResultId2 = getCaseResultId2();
+
+		if (caseResultId2 != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"caseResultId2\": ");
+
+			sb.append(caseResultId2);
+		}
 
 		String caseResultStatus1 = getCaseResultStatus1();
 
@@ -351,6 +498,18 @@ public class TestrayCase implements Serializable {
 			sb.append(_escape(priority));
 
 			sb.append("\"");
+		}
+
+		Long teamId = getTeamId();
+
+		if (teamId != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"teamId\": ");
+
+			sb.append(teamId);
 		}
 
 		sb.append("}");
