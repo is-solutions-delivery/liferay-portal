@@ -11,12 +11,12 @@ components:
                 name:
                     type: string
                 priority:
-                    type: string
+                    type: integer
                 status1:
                     type: string
                 status2:
                     type: string
-                testrayComponent:
+                testrayComponentName:
                     type: string
                 testrayTeamId:
                     format: int64
