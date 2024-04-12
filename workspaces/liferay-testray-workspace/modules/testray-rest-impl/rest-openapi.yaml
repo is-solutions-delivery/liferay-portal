@@ -2,6 +2,12 @@ components:
     schemas:
         TestrayCase:
             properties:
+                caseResultId1:
+                    format: int64
+                    type: integer
+                caseResultId2:
+                    format: int64
+                    type: integer
                 caseResultStatus1:
                     type: string
                 caseResultStatus2:
@@ -12,6 +18,9 @@ components:
                     type: string
                 priority:
                     type: string
+                teamId:
+                    format: int64
+                    type: integer
             type: object
         TestrayRunComparison:
             properties:
