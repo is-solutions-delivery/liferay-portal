@@ -87,6 +87,7 @@ export default {
 	'drag-and-drop-to-upload-or': 'Drag and drop to upload or',
 	'dxp-module-based-apps-are-not-supported-on-liferay-experience-cloud-lxc':
 		'DXP module-based apps are not supported on Liferay SaaS.',
+	'each': 'each',
 	'edit': 'Edit',
 	'email': 'Email',
 	'end-user-license-agreement': 'End User License Agreement',
@@ -148,8 +149,10 @@ export default {
 		'Learn more about App Resource Requirements',
 	'learn-more-about-becoming-a-liferay-customer':
 		'Learn more about becoming a Liferay Customer',
+	'license-prices': 'License Prices',
 	'license-price': 'License Price',
 	'license-type': 'License Type',
+	'license': 'License',
 	'licenses': 'Licenses',
 	'liferay-learn': 'Liferay Learn',
 	'liferay-s': 'Liferay’s',
