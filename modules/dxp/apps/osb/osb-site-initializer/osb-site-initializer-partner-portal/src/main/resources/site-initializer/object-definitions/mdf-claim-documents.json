@@ -10,13 +10,13 @@
 		{
 			"DBType": "Long",
 			"businessType": "Attachment",
-			"externalReferenceCode": "FILE",
+			"externalReferenceCode": "REIMBURSEMENTINVOICES",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "File"
+				"en_US": "Reimbursement Invoices"
 			},
-			"name": "file",
+			"name": "reimbursementInvoices",
 			"objectFieldSettings": [
 				{
 					"name": "acceptedFileExtensions",
@@ -36,7 +36,7 @@
 				},
 				{
 					"name": "storageDLFolderPath",
-					"value": "/MDFClaimFile"
+					"value": "/MDFClaimReimbursementInvoices"
 				}
 			],
 			"required": false,
