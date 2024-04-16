@@ -41,8 +41,16 @@
 					],
 					"indexed": true,
 					"layout": {
+						"borderWidth": 0,
+						"marginBottom": 0,
+						"marginLeft": 0,
+						"marginRight": 0,
+						"marginTop": 0,
 						"paddingBottom": 2,
-						"paddingTop": 6
+						"paddingLeft": 0,
+						"paddingRight": 0,
+						"paddingTop": 6,
+						"widthType": "Fluid"
 					},
 					"name": "Page"
 				},
@@ -78,11 +86,16 @@
 							},
 							"indexed": true,
 							"layout": {
+								"borderWidth": 0,
 								"marginBottom": 1,
+								"marginLeft": 0,
+								"marginRight": 0,
+								"marginTop": 0,
 								"paddingBottom": 2,
 								"paddingLeft": 2,
 								"paddingRight": 2,
-								"paddingTop": 2
+								"paddingTop": 2,
+								"widthType": "Fluid"
 							},
 							"name": "Header"
 						},
@@ -107,9 +120,20 @@
 									"indexed": true,
 									"layout": {
 										"align": "Start",
+										"borderWidth": 0,
 										"contentDisplay": "FlexRow",
 										"flexWrap": "Wrap",
-										"justify": "SpaceBetween"
+										"justify": "SpaceBetween",
+										"marginBottom": 0,
+										"marginLeft": 0,
+										"marginRight": 0,
+										"marginTop": 0,
+										"opacity": 100,
+										"paddingBottom": 0,
+										"paddingLeft": 0,
+										"paddingRight": 0,
+										"paddingTop": 0,
+										"widthType": "Fluid"
 									}
 								},
 								"pageElements": [
@@ -124,8 +148,19 @@
 											"indexed": true,
 											"layout": {
 												"align": "Start",
+												"borderWidth": 0,
 												"contentDisplay": "FlexColumn",
-												"flexWrap": "Wrap"
+												"flexWrap": "Wrap",
+												"marginBottom": 0,
+												"marginLeft": 0,
+												"marginRight": 0,
+												"marginTop": 0,
+												"opacity": 100,
+												"paddingBottom": 0,
+												"paddingLeft": 0,
+												"paddingRight": 0,
+												"paddingTop": 0,
+												"widthType": "Fluid"
 											}
 										},
 										"pageElements": [
@@ -279,8 +314,19 @@
 													},
 													"indexed": true,
 													"layout": {
+														"borderWidth": 0,
 														"contentDisplay": "FlexRow",
-														"flexWrap": "Wrap"
+														"flexWrap": "Wrap",
+														"marginBottom": 0,
+														"marginLeft": 0,
+														"marginRight": 0,
+														"marginTop": 0,
+														"opacity": 100,
+														"paddingBottom": 0,
+														"paddingLeft": 0,
+														"paddingRight": 0,
+														"paddingTop": 0,
+														"widthType": "Fluid"
 													}
 												},
 												"pageElements": [
@@ -466,9 +512,20 @@
 											"indexed": true,
 											"layout": {
 												"align": "Center",
+												"borderWidth": 0,
 												"contentDisplay": "FlexRow",
 												"flexWrap": "Wrap",
-												"justify": "End"
+												"justify": "End",
+												"marginBottom": 0,
+												"marginLeft": 0,
+												"marginRight": 0,
+												"marginTop": 0,
+												"opacity": 100,
+												"paddingBottom": 0,
+												"paddingLeft": 0,
+												"paddingRight": 0,
+												"paddingTop": 0,
+												"widthType": "Fluid"
 											}
 										},
 										"pageElements": [
@@ -549,11 +606,16 @@
 							},
 							"indexed": true,
 							"layout": {
+								"borderWidth": 0,
 								"marginBottom": 1,
+								"marginLeft": 0,
+								"marginRight": 0,
+								"marginTop": 0,
 								"paddingBottom": 2,
 								"paddingLeft": 2,
 								"paddingRight": 2,
-								"paddingTop": 2
+								"paddingTop": 2,
+								"widthType": "Fluid"
 							},
 							"name": "Summary"
 						},
@@ -712,7 +774,7 @@
 														"borderRadius": "borderRadiusSm",
 														"borderWidth": "0",
 														"marginBottom": "3",
-														"paddingBottom": "3",
+														"paddingBottom": "4",
 														"paddingLeft": "3",
 														"paddingRight": "4",
 														"paddingTop": "4",
@@ -723,7 +785,7 @@
 													"layout": {
 														"contentDisplay": "FlexColumn",
 														"marginBottom": 1,
-														"paddingBottom": 1,
+														"paddingBottom": 2,
 														"paddingLeft": 1,
 														"paddingRight": 2,
 														"paddingTop": 2
@@ -746,19 +808,19 @@
 																		},
 																		"text": {
 																			"value_i18n": {
-																				"ar_SA": "<p>Reimbursement Invoices</p>\n",
-																				"ca_ES": "<p>Reimbursement Invoices</p>\n",
-																				"de_DE": "<p>Reimbursement Invoices</p>\n",
-																				"en_US": "<p>Reimbursement Invoices</p>\n",
-																				"es_ES": "<p>Reimbursement Invoices</p>\n",
-																				"fi_FI": "<p>Reimbursement Invoices</p>\n",
-																				"fr_FR": "<p>Reimbursement Invoices</p>\n",
-																				"hu_HU": "<p>Reimbursement Invoices</p>\n",
-																				"ja_JP": "<p>Reimbursement Invoices</p>\n",
-																				"nl_NL": "<p>Reimbursement Invoices</p>\n",
-																				"pt_BR": "<p>Reimbursement Invoices</p>\n",
-																				"sv_SE": "<p>Reimbursement Invoices</p>\n",
-																				"zh_CN": "<p>Reimbursement Invoices</p>\n"
+																				"ar_SA": "Invoice",
+																				"ca_ES": "Invoice",
+																				"de_DE": "Invoice",
+																				"en_US": "Invoice",
+																				"es_ES": "Invoice",
+																				"fi_FI": "Invoice",
+																				"fr_FR": "Invoice",
+																				"hu_HU": "Invoice",
+																				"ja_JP": "Invoice",
+																				"nl_NL": "Invoice",
+																				"pt_BR": "Invoice",
+																				"sv_SE": "Invoice",
+																				"zh_CN": "Invoice"
 																			}
 																		}
 																	}
@@ -766,6 +828,7 @@
 															],
 															"fragmentStyle": {
 																"fontWeight": "fontWeightBold",
+																"marginBottom": "1",
 																"textAlign": "",
 																"textColor": "colorNeutral9"
 															},
@@ -804,33 +867,7 @@
 															"indexed": true
 														},
 														"type": "Fragment"
-													}
-												],
-												"type": "Section"
-											},
-											{
-												"definition": {
-													"fragmentStyle": {
-														"backgroundColor": "colorNeutral0",
-														"borderRadius": "borderRadiusSm",
-														"borderWidth": "0",
-														"marginBottom": "3",
-														"paddingLeft": "3",
-														"paddingRight": "4",
-														"paddingTop": "4",
-														"textAlign": "",
-														"textColor": "colorNeutral10"
 													},
-													"indexed": true,
-													"layout": {
-														"contentDisplay": "FlexColumn",
-														"marginBottom": 1,
-														"paddingLeft": 1,
-														"paddingRight": 2,
-														"paddingTop": 2
-													}
-												},
-												"pageElements": [
 													{
 														"definition": {
 															"fragment": {
