@@ -10,7 +10,7 @@
 		{
 			"DBType": "Long",
 			"businessType": "Attachment",
-			"externalReferenceCode": "MDFCLMDOCFILE",
+			"externalReferenceCode": "FILE",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
