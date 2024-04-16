@@ -353,46 +353,36 @@ const claimSchema = object({
 					)
 				)
 		),
-	reimbursementInvoices: array()
-		.of(
-			mixed()
-				.test(
-					'fileSize',
-					validateDocument.fileSize.message,
-					(reimbursementInvoiceFile) => {
-						if (
-							reimbursementInvoiceFile &&
-							!reimbursementInvoiceFile.documentId
-						) {
-							return (
-								Math.ceil(
-									reimbursementInvoiceFile.size / 1000
-								) <= validateDocument.fileSize.maxSize
-							);
-						}
 
-						return true;
-					}
-				)
-				.test(
-					'fileType',
-					validateDocument.document.message,
-					(reimbursementInvoiceFile) => {
-						if (
-							reimbursementInvoiceFile &&
-							!reimbursementInvoiceFile.documentId
-						) {
-							return validateDocument.document.types.includes(
-								reimbursementInvoiceFile.type
-							);
-						}
+	reimbursementInvoice: mixed()
+		.required('Required')
+		.test(
+			'fileSize',
+			validateDocument.fileSize.message,
+			(reimbursementInvoice) => {
+				if (reimbursementInvoice && !reimbursementInvoice.documentId) {
+					return (
+						Math.ceil(reimbursementInvoice.size / 1000) <=
+						validateDocument.fileSize.maxSize
+					);
+				}
 
-						return true;
-					}
-				)
+				return true;
+			}
 		)
-		.min(1, 'Reimbursement Invoices must have at least 1 file')
-		.required('Required'),
+		.test(
+			'fileType',
+			validateDocument.document.message,
+			(reimbursementInvoice) => {
+				if (reimbursementInvoice && !reimbursementInvoice.documentId) {
+					return validateDocument.document.types.includes(
+						reimbursementInvoice.type
+					);
+				}
+
+				return true;
+			}
+		),
 	totalClaimAmount: number()
 		.moreThan(0, 'Need be bigger than 0')
 		.required('Required')

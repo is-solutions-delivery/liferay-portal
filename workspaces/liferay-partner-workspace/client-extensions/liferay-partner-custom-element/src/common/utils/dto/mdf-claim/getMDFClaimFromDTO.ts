@@ -5,7 +5,6 @@
 
 import MDFClaimDTO from '../../../interfaces/dto/mdfClaimDTO';
 import MDFClaim from '../../../interfaces/mdfClaim';
-import getInvoiceFromMDFClmDocs from '../../getInvoiceFromMDFClmDocs';
 import getPOPFromMDFActDocs from '../../getPOPFromMDFActDocs';
 import {getLiferayFileFromAttachment} from './getLiferayFileFromAttachment';
 
@@ -80,6 +79,8 @@ export function getMDFClaimFromDTO(mdfClaim: MDFClaimDTO): MDFClaim {
 					videoLink,
 				};
 			}) || [],
-		reimbursementInvoices: getInvoiceFromMDFClmDocs(mdfClaim),
+		reimbursementInvoice:
+			mdfClaim.reimbursementInvoice &&
+			getLiferayFileFromAttachment(mdfClaim.reimbursementInvoice),
 	};
 }

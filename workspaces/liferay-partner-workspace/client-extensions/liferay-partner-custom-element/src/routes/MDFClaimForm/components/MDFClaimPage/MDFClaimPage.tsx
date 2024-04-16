@@ -10,7 +10,6 @@ import {useFormikContext} from 'formik';
 import {useCallback} from 'react';
 
 import PRMForm from '../../../../common/components/PRMForm';
-import InputMultipleFilesListing from '../../../../common/components/PRMForm/components/fields/InputMultipleFilesListing/InputMultipleFilesListing';
 import PRMFormik from '../../../../common/components/PRMFormik';
 import PRMFormikPageProps from '../../../../common/components/PRMFormik/interfaces/prmFormikPageProps';
 import ResumeCard from '../../../../common/components/ResumeCard';
@@ -20,7 +19,7 @@ import LiferayFile from '../../../../common/interfaces/liferayFile';
 import MDFClaim from '../../../../common/interfaces/mdfClaim';
 import MDFClaimActivity from '../../../../common/interfaces/mdfClaimActivity';
 import MDFClaimProps from '../../../../common/interfaces/mdfClaimProps';
-import {ResourceName} from '../../../../common/services/liferay/object/enum/resourceName';
+import deleteDocument from '../../../../common/services/liferay/headless-delivery/deleteDocument';
 import {Status} from '../../../../common/utils/constants/status';
 import getIntlNumberFormat from '../../../../common/utils/getIntlNumberFormat';
 import useDynamicFieldEntries from '../../../MDFClaimList/hooks/useDynamicFieldEntries';
@@ -209,28 +208,28 @@ const MDFClaimPage = ({
 					subtitle="Total Claim is the reimbursement of your expenses, and is up to the Total MDF Requested. In case need to claim more than the MDF Requested you need to apply for a New MDF Request."
 					title="Total Claim"
 				>
-					<InputMultipleFilesListing
-						acceptedFilesExtensions="doc, docx, jpg, jpeg, png, tif, tiff, pdf"
-						description="Drag and drop your files here to upload an invoice for the Total Claim Amount."
-						label="Reimbursement Invoices"
-						name="reimbursementInvoices"
-						onAccept={(liferayFiles: LiferayFile[]) =>
-							setFieldValue(
-								`reimbursementInvoices`,
-								values.reimbursementInvoices
-									? values.reimbursementInvoices.concat(
-											liferayFiles as LiferayFile[]
-									  )
-									: liferayFiles
-							)
-						}
+					<PRMFormik.Field
+						component={PRMForm.InputFile}
+						description="Upload an invoice for the Total Claim Amount"
+						displayType="secondary"
+						label="Reimbursement Invoice"
+						name="reimbursementInvoice"
+						onAccept={(liferayFile: LiferayFile) => {
+							if (values.reimbursementInvoice?.documentId) {
+								deleteDocument(
+									values.reimbursementInvoice.documentId
+								);
+							}
+
+							setFieldValue(`reimbursementInvoice`, liferayFile);
+						}}
+						outline
 						required
-						resourceName={ResourceName.MDF_CLAIM_DOCUMENTS}
-						value={values.reimbursementInvoices}
+						small
 					/>
 
 					<ResumeCard
-						className="my-4"
+						className="mb-4"
 						leftContent="Total Activity Cost"
 						rightContent={getIntlNumberFormat(
 							values.currency

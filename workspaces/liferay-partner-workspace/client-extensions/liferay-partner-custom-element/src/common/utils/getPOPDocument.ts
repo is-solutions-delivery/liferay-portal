@@ -11,6 +11,7 @@ export function getPOPDocument(
 	mdfClaimActivityDocumentDTO: MDFClaimActivityDocumentDTO
 ): LiferayFile {
 	return {
+		activityDocumentId: mdfClaimActivityDocumentDTO.id,
 		documentId: mdfClaimActivityDocumentDTO.proofOfPerformanceFile?.id,
 		link: mdfClaimActivityDocumentDTO.proofOfPerformanceFile?.link,
 		name:
@@ -18,6 +19,5 @@ export function getPOPDocument(
 			getNameFromMDFClaimDocument(
 				mdfClaimActivityDocumentDTO.proofOfPerformanceFile.name
 			),
-		objectId: mdfClaimActivityDocumentDTO.id,
 	};
 }

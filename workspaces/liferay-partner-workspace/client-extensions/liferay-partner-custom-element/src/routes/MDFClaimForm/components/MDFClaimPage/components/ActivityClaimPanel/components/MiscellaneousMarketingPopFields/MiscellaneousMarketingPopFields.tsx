@@ -12,7 +12,6 @@ import LiferayFile from '../../../../../../../../common/interfaces/liferayFile';
 import MDFClaim from '../../../../../../../../common/interfaces/mdfClaim';
 import MDFClaimActivity from '../../../../../../../../common/interfaces/mdfClaimActivity';
 import deleteDocument from '../../../../../../../../common/services/liferay/headless-delivery/deleteDocument';
-import {ResourceName} from '../../../../../../../../common/services/liferay/object/enum/resourceName';
 
 interface IProps {
 	activity: MDFClaimActivity;
@@ -70,7 +69,6 @@ const MiscellaneousMarketingPopFields = ({
 							: liferayFiles
 					)
 				}
-				resourceName={ResourceName.MDF_CLAIM_ACTIVITY_DOCUMENTS}
 				value={activity.proofOfPerformance?.images}
 			/>
 
@@ -90,7 +88,6 @@ const MiscellaneousMarketingPopFields = ({
 					)
 				}
 				required={activity.selected}
-				resourceName={ResourceName.MDF_CLAIM_ACTIVITY_DOCUMENTS}
 				value={activity.proofOfPerformance?.allContents}
 			/>
 		</>
