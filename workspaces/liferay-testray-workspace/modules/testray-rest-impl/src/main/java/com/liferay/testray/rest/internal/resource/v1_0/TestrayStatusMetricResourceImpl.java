@@ -43,7 +43,7 @@ public class TestrayStatusMetricResourceImpl
 				String testrayTeamId, Pagination pagination)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(22);
+		StringBundler sb = new StringBundler(24);
 
 		sb.append("select ct.c_caseTypeId_, ct.name_, count(cr.dueStatus_) ");
 		sb.append("as total, sum(case when cr.dueStatus_ = 'blocked' then 1 ");
@@ -121,7 +121,7 @@ public class TestrayStatusMetricResourceImpl
 				Pagination pagination)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(23);
+		StringBundler sb = new StringBundler(25);
 
 		sb.append("select co.c_componentId_, co.name_, count(cr.dueStatus_) ");
 		sb.append("as total, sum(case when cr.dueStatus_ = 'blocked' then 1 ");
@@ -204,7 +204,7 @@ public class TestrayStatusMetricResourceImpl
 				Pagination pagination)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(26);
+		StringBundler sb = new StringBundler(28);
 
 		sb.append("select r.c_runId_, r.name_, r.number_, ");
 		sb.append("count(cr.dueStatus_) as total, sum(case when ");
@@ -286,11 +286,11 @@ public class TestrayStatusMetricResourceImpl
 	public Page<TestrayTeamMetric>
 			getTestrayStatusMetricByTestrayBuildIdTestrayBuildTestrayTeamsMetricsPage(
 				Long testrayBuildId, String testrayCasePriorities,
-				String testrayCaseTypes, Long testrayRunId, String testrayTeamId,
-				Pagination pagination)
+				String testrayCaseTypes, Long testrayRunId,
+				String testrayTeamId, Pagination pagination)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(27);
+		StringBundler sb = new StringBundler(29);
 
 		sb.append("select t.c_teamId_ , t.name_, count(cr.dueStatus_) as ");
 		sb.append("TOTAL, sum(case when cr.dueStatus_ = 'blocked' then 1 ");
