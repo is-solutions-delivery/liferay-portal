@@ -40,7 +40,7 @@ public class TestrayStatusMetricResourceImpl
 	public Page<TestrayCaseTypeMetric>
 			getTestrayStatusMetricByTestrayBuildIdTestrayBuildTestrayCaseTypesMetricsPage(
 				Long testrayBuildId, String testrayCasePriorities,
-				Long testrayTeamId, Pagination pagination)
+				String testrayTeamId, Pagination pagination)
 		throws Exception {
 
 		StringBundler sb = new StringBundler(22);
@@ -74,8 +74,9 @@ public class TestrayStatusMetricResourceImpl
 		}
 
 		if (Validator.isNotNull(testrayTeamId)) {
-			sb.append("and t.c_teamId_ = ? ");
-			params.add(testrayTeamId);
+			sb.append("and co.r_teamToComponents_c_teamId in (");
+			sb.append(_interpolateParams(params, testrayTeamId));
+			sb.append(") ");
 		}
 
 		sb.append("group by ct.c_caseTypeId_, ct.name_ order by ct.name_ asc ");
@@ -116,7 +117,7 @@ public class TestrayStatusMetricResourceImpl
 	public Page<TestrayComponentMetric>
 			getTestrayStatusMetricByTestrayBuildIdTestrayBuildTestrayComponentsMetricsPage(
 				Long testrayBuildId, String testrayCasePriorities,
-				String testrayCaseTypes, Long testrayTeamId,
+				String testrayCaseTypes, String testrayTeamId,
 				Pagination pagination)
 		throws Exception {
 
@@ -155,8 +156,9 @@ public class TestrayStatusMetricResourceImpl
 		}
 
 		if (Validator.isNotNull(testrayTeamId)) {
-			sb.append("and t.c_teamId_ = ? ");
-			params.add(testrayTeamId);
+			sb.append("and co.r_teamToComponents_c_teamId in (");
+			sb.append(_interpolateParams(params, testrayTeamId));
+			sb.append(") ");
 		}
 
 		sb.append(
@@ -198,7 +200,7 @@ public class TestrayStatusMetricResourceImpl
 	public Page<TestrayRunMetric>
 			getTestrayStatusMetricByTestrayBuildIdTestrayBuildTestrayRunsMetricsPage(
 				Long testrayBuildId, String testrayCasePriorities,
-				String testrayCaseTypes, Long testrayTeamId,
+				String testrayCaseTypes, String testrayTeamId,
 				Pagination pagination)
 		throws Exception {
 
@@ -240,8 +242,9 @@ public class TestrayStatusMetricResourceImpl
 		}
 
 		if (Validator.isNotNull(testrayTeamId)) {
-			sb.append("and co.r_teamToComponents_c_teamId  = ? ");
-			params.add(testrayTeamId);
+			sb.append("and co.r_teamToComponents_c_teamId in (");
+			sb.append(_interpolateParams(params, testrayTeamId));
+			sb.append(") ");
 		}
 
 		sb.append("group by r.c_runId_, r.name_ order by r.number_ asc ");
@@ -283,7 +286,7 @@ public class TestrayStatusMetricResourceImpl
 	public Page<TestrayTeamMetric>
 			getTestrayStatusMetricByTestrayBuildIdTestrayBuildTestrayTeamsMetricsPage(
 				Long testrayBuildId, String testrayCasePriorities,
-				String testrayCaseTypes, Long testrayRunId, Long testrayTeamId,
+				String testrayCaseTypes, Long testrayRunId, String testrayTeamId,
 				Pagination pagination)
 		throws Exception {
 
@@ -327,8 +330,9 @@ public class TestrayStatusMetricResourceImpl
 		}
 
 		if (Validator.isNotNull(testrayTeamId)) {
-			sb.append("and t.c_teamId_ = ? ");
-			params.add(testrayTeamId);
+			sb.append("and t.c_teamId_ in (");
+			sb.append(_interpolateParams(params, testrayTeamId));
+			sb.append(") ");
 		}
 
 		sb.append("and cr.r_componentToCaseResult_c_componentId  = ");
