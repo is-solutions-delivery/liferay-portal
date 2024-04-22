@@ -125,6 +125,17 @@ export default class SearchBuilder {
 		return _filter;
 	}
 
+	static formatValuesToString(values: Value[]) {
+		if (values) {
+			return values
+				.map((value) => `${value}`)
+				.join(',')
+				.trim();
+		}
+
+		return '';
+	}
+
 	static createCustomFilter(schema: RendererFields, filter: any) {
 		const customOperator = schema?.operator;
 		const requestOperator = schema?.requestOperator as string;
@@ -138,17 +149,21 @@ export default class SearchBuilder {
 					.join(',');
 
 				return SearchBuilder[customOperator](requestOperator, filters);
-			}
-			else if (typeof filter === 'object' && 'value' in filter) {
+			} else if (typeof filter === 'object' && 'value' in filter) {
 				return SearchBuilder[customOperator](
 					requestOperator,
 					filter.value
 				);
-			}
-			else {
+			} else {
 				return SearchBuilder[customOperator](requestOperator, filter);
 			}
 		}
+
+		return this.formatValuesToString(
+			filter.map((_value: any) =>
+				typeof _value === 'object' ? _value.value : _value
+			)
+		);
 	}
 
 	static createFilter({
@@ -206,8 +221,7 @@ export default class SearchBuilder {
 				};
 
 				searchCondition = getOptionalSearchCondition();
-			}
-			else {
+			} else {
 				if (Array.isArray(value)) {
 					searchCondition = SearchBuilder.in(
 						key,
@@ -215,8 +229,7 @@ export default class SearchBuilder {
 							typeof _value === 'object' ? _value.value : _value
 						)
 					);
-				}
-				else {
+				} else {
 					searchCondition = SearchBuilder.eq(key, value);
 				}
 			}
