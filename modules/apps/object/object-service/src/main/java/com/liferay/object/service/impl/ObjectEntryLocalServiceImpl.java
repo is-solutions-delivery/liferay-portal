@@ -511,7 +511,9 @@ public class ObjectEntryLocalServiceImpl
 			Collections.emptyMap(), objectDefinition.getObjectDefinitionId(),
 			values);
 
-		if (objectDefinition.isActive()) {
+		if (objectDefinition.isActive() &&
+			objectDefinition.isEnableIndexedSearch()) {
+
 			Indexer<ObjectEntry> indexer = IndexerRegistryUtil.getIndexer(
 				objectDefinition.getClassName());
 
@@ -3733,6 +3735,10 @@ public class ObjectEntryLocalServiceImpl
 		ObjectDefinition objectDefinition =
 			_objectDefinitionPersistence.findByPrimaryKey(
 				objectEntry.getObjectDefinitionId());
+
+		if (!objectDefinition.isEnableIndexedSearch()) {
+			return;
+		}
 
 		Indexer<ObjectEntry> indexer = IndexerRegistryUtil.getIndexer(
 			objectDefinition.getClassName());
