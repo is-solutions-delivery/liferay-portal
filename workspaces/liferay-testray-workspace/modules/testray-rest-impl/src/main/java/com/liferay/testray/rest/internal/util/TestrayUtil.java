@@ -9,6 +9,8 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.testray.rest.dto.v1_0.TestrayStatusMetric;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,6 +27,24 @@ import java.util.Map;
  * @author José Abelenda
  */
 public class TestrayUtil {
+
+	public static TestrayStatusMetric getTestrayStatusMetric(
+		Map<String, Object> map) {
+
+		TestrayStatusMetric testrayStatusMetric = new TestrayStatusMetric();
+
+		testrayStatusMetric.setBlocked(GetterUtil.getLong(map.get("blocked")));
+		testrayStatusMetric.setFailed(GetterUtil.getLong(map.get("failed")));
+		testrayStatusMetric.setInProgress(
+			GetterUtil.getLong(map.get("inprogress")));
+		testrayStatusMetric.setPassed(GetterUtil.getLong(map.get("passed")));
+		testrayStatusMetric.setTestfix(GetterUtil.getLong(map.get("testfix")));
+		testrayStatusMetric.setTotal(GetterUtil.getLong(map.get("total")));
+		testrayStatusMetric.setUntested(
+			GetterUtil.getLong(map.get("untested")));
+
+		return testrayStatusMetric;
+	}
 
 	public static long getTotalCount(String sql, List<Object> params)
 		throws SQLException {
@@ -43,6 +63,22 @@ public class TestrayUtil {
 			).get(
 				"count"
 			));
+	}
+
+	public static String interpolateParams(List<Object> params, String values) {
+		String[] valuesArray = StringUtil.split(values);
+
+		StringBundler sb = new StringBundler();
+
+		for (String value : valuesArray) {
+			sb.append("? ");
+			sb.append(", ");
+			params.add(value);
+		}
+
+		sb.setIndex(sb.index() - 1);
+
+		return sb.toString();
 	}
 
 	public static List<Map<String, Object>> runSQL(

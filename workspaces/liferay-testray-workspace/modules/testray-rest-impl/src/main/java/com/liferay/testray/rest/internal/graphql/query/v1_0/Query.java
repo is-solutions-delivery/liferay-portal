@@ -11,8 +11,10 @@ import com.liferay.portal.vulcan.graphql.annotation.GraphQLField;
 import com.liferay.portal.vulcan.graphql.annotation.GraphQLName;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.testray.rest.dto.v1_0.TestrayRoutineMetric;
 import com.liferay.testray.rest.dto.v1_0.TestrayRunComparison;
 import com.liferay.testray.rest.dto.v1_0.TestrayStatusMetric;
+import com.liferay.testray.rest.resource.v1_0.TestrayRoutineMetricResource;
 import com.liferay.testray.rest.resource.v1_0.TestrayRunComparisonResource;
 import com.liferay.testray.rest.resource.v1_0.TestrayStatusMetricResource;
 
@@ -35,6 +37,14 @@ import org.osgi.service.component.ComponentServiceObjects;
 @Generated("")
 public class Query {
 
+	public static void setTestrayRoutineMetricResourceComponentServiceObjects(
+		ComponentServiceObjects<TestrayRoutineMetricResource>
+			testrayRoutineMetricResourceComponentServiceObjects) {
+
+		_testrayRoutineMetricResourceComponentServiceObjects =
+			testrayRoutineMetricResourceComponentServiceObjects;
+	}
+
 	public static void setTestrayRunComparisonResourceComponentServiceObjects(
 		ComponentServiceObjects<TestrayRunComparisonResource>
 			testrayRunComparisonResourceComponentServiceObjects) {
@@ -49,6 +59,35 @@ public class Query {
 
 		_testrayStatusMetricResourceComponentServiceObjects =
 			testrayStatusMetricResourceComponentServiceObjects;
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayStatusMetricByTestrayProjectIdTestrayProjectTestrayRoutinesMetrics(page: ___, pageSize: ___, testrayCasePriorities: ___, testrayCaseTypes: ___, testrayProjectId: ___, testrayRoutineId: ___, testrayTeamId: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public TestrayRoutineMetricPage
+			testrayStatusMetricByTestrayProjectIdTestrayProjectTestrayRoutinesMetrics(
+				@GraphQLName("testrayProjectId") Long testrayProjectId,
+				@GraphQLName("testrayCasePriorities") String
+					testrayCasePriorities,
+				@GraphQLName("testrayCaseTypes") String testrayCaseTypes,
+				@GraphQLName("testrayRoutineId") Long testrayRoutineId,
+				@GraphQLName("testrayTeamId") Long testrayTeamId,
+				@GraphQLName("pageSize") int pageSize,
+				@GraphQLName("page") int page)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_testrayRoutineMetricResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			testrayRoutineMetricResource -> new TestrayRoutineMetricPage(
+				testrayRoutineMetricResource.
+					getTestrayStatusMetricByTestrayProjectIdTestrayProjectTestrayRoutinesMetricsPage(
+						testrayProjectId, testrayCasePriorities,
+						testrayCaseTypes, testrayRoutineId, testrayTeamId,
+						Pagination.of(page, pageSize))));
 	}
 
 	/**
@@ -219,6 +258,39 @@ public class Query {
 						Pagination.of(page, pageSize))));
 	}
 
+	@GraphQLName("TestrayRoutineMetricPage")
+	public class TestrayRoutineMetricPage {
+
+		public TestrayRoutineMetricPage(Page testrayRoutineMetricPage) {
+			actions = testrayRoutineMetricPage.getActions();
+
+			items = testrayRoutineMetricPage.getItems();
+			lastPage = testrayRoutineMetricPage.getLastPage();
+			page = testrayRoutineMetricPage.getPage();
+			pageSize = testrayRoutineMetricPage.getPageSize();
+			totalCount = testrayRoutineMetricPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<TestrayRoutineMetric> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
 	@GraphQLName("TestrayRunComparisonPage")
 	public class TestrayRunComparisonPage {
 
@@ -305,6 +377,22 @@ public class Query {
 	}
 
 	private void _populateResourceContext(
+			TestrayRoutineMetricResource testrayRoutineMetricResource)
+		throws Exception {
+
+		testrayRoutineMetricResource.setContextAcceptLanguage(_acceptLanguage);
+		testrayRoutineMetricResource.setContextCompany(_company);
+		testrayRoutineMetricResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		testrayRoutineMetricResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		testrayRoutineMetricResource.setContextUriInfo(_uriInfo);
+		testrayRoutineMetricResource.setContextUser(_user);
+		testrayRoutineMetricResource.setGroupLocalService(_groupLocalService);
+		testrayRoutineMetricResource.setRoleLocalService(_roleLocalService);
+	}
+
+	private void _populateResourceContext(
 			TestrayRunComparisonResource testrayRunComparisonResource)
 		throws Exception {
 
@@ -336,6 +424,8 @@ public class Query {
 		testrayStatusMetricResource.setRoleLocalService(_roleLocalService);
 	}
 
+	private static ComponentServiceObjects<TestrayRoutineMetricResource>
+		_testrayRoutineMetricResourceComponentServiceObjects;
 	private static ComponentServiceObjects<TestrayRunComparisonResource>
 		_testrayRunComparisonResourceComponentServiceObjects;
 	private static ComponentServiceObjects<TestrayStatusMetricResource>
