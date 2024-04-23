@@ -1,11 +1,11 @@
 {
 	"description": "",
 	"fragmentCompositionDefinitionPath": "page-definition.json",
-	"friendlyURL": "/clarity-solution",
+	"friendlyURL": "/pre-built-trial",
 	"hidden": true,
-	"name": "Clarity Solution",
+	"name": "Pre-Built Trial ",
 	"name_i18n": {
-		"en_US": "Clarity Solution"
+		"en_US": "Pre-Built Trial "
 	},
 	"private": false,
 	"system": false,

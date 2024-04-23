@@ -1,0 +1,13 @@
+{
+	"description": "",
+	"fragmentCompositionDefinitionPath": "page-definition.json",
+	"friendlyURL": "/try-it-now",
+	"hidden": true,
+	"name": "Try it Now",
+	"name_i18n": {
+		"en_US": "Try it Now"
+	},
+	"private": false,
+	"system": false,
+	"type": "content"
+}
