@@ -1,6 +1,6 @@
 [
 	{
-		"ddmStructureKey": "ENTRY",
+		"assetEntryId": "[$DDM_STRUCTURE_ID:ENTRY$]",
 		"title": "Blog Entries",
 		"unicodeProperties": {
 			"anyClassType": "anyClassTypeJournalArticleAssetRendererFactory",
@@ -41,7 +41,7 @@
 		}
 	},
 	{
-		"ddmStructureKey": "ENTRY",
+		"assetEntryId": "[$DDM_STRUCTURE_ID:ENTRY$]",
 		"title": "Featured Blog Entries",
 		"unicodeProperties": {
 			"anyClassType": "anyClassTypeJournalArticleAssetRendererFactory",
@@ -82,7 +82,7 @@
 		}
 	},
 	{
-		"ddmStructureKey": "MEMBER",
+		"assetEntryId": "[$DDM_STRUCTURE_ID:MEMBER$]",
 		"title": "Team Members",
 		"unicodeProperties": {
 			"anyClassType": "anyClassTypeJournalArticleAssetRendererFactory",
@@ -123,7 +123,7 @@
 		}
 	},
 	{
-		"ddmStructureKey": "POSITION",
+		"assetEntryId": "[$DDM_STRUCTURE_ID:POSITION$]",
 		"title": "Job Positions",
 		"unicodeProperties": {
 			"anyClassType": "anyClassTypeJournalArticleAssetRendererFactory",

@@ -1,9 +1,9 @@
 [
 	{
+		"assetEntryId": "[$DDM_STRUCTURE_ID:JOB$]",
 		"assetTagNames": [
 			"homepage"
 		],
-		"ddmStructureKey": "JOB",
 		"title": "Homepage",
 		"unicodeProperties": {
 			"anyClassType": "anyClassTypeJournalArticleAssetRendererFactory",
@@ -44,7 +44,7 @@
 		}
 	},
 	{
-		"ddmStructureKey": "JOB",
+		"assetEntryId": "[$DDM_STRUCTURE_ID:JOB$]",
 		"title": "Jobs",
 		"unicodeProperties": {
 			"anyClassType": "anyClassTypeJournalArticleAssetRendererFactory",
