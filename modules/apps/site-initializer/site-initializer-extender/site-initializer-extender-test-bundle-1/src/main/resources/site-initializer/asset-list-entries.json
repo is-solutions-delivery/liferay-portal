@@ -1,30 +1,30 @@
 [
 	{
-		"ddmStructureKey": "TEST DDM STRUCTURE NAME",
+		"assetEntryId": "[$DDM_STRUCTURE_ID:TEST DDM STRUCTURE NAME$]",
 		"title": "Test Asset List Entry 1",
 		"unicodeProperties": {
 			"classNameIds": "com.liferay.journal.model.JournalArticle"
 		}
 	},
 	{
-		"ddmStructureKey": "TEST DDM STRUCTURE NAME",
+		"assetEntryId": "[$DDM_STRUCTURE_ID:TEST DDM STRUCTURE NAME$]",
 		"title": "Test Asset List Entry 2",
 		"unicodeProperties": {
 			"classNameIds": "com.liferay.journal.model.JournalArticle"
 		}
 	},
 	{
-		"dlFileEntryTypeKey": "BASIC-DOCUMENT",
-		"title": "DL Asset List Entry",
+		"assetEntryId": "[$DOCUMENT_FILE_ENTRY_ID:/site-initializer/documents/company/2-test.js$]",
+		"title": "Test Asset List Entry 3",
 		"unicodeProperties": {
 			"classNameIds": "com.liferay.document.library.kernel.model.DLFileEntry"
 		}
 	},
 	{
-		"objectDefinitionName": "TestObjectDefinition1",
-		"title": "Object Asset List Entry",
+		"assetEntryId": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:TestObjectDefinition1$]",
+		"title": "Test Asset List Entry 4",
 		"unicodeProperties": {
-			"classNameIds": "com.liferay.object.model.ObjectDefinition"
+			"classNameIds": "com.liferay.object.model.ObjectDefinition#[$OBJECT_DEFINITION_ID:TestObjectDefinition1$]"
 		}
 	}
 ]
