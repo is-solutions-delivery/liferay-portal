@@ -261,7 +261,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		DDMStructureLocalService ddmStructureLocalService,
 		DDMTemplateLocalService ddmTemplateLocalService,
 		DefaultDDMStructureHelper defaultDDMStructureHelper,
-		DLFileEntryTypeLocalService dlFileEntryTypeLocalService,
 		DLURLHelper dlURLHelper,
 		DocumentFolderResource.Factory documentFolderResourceFactory,
 		DocumentResource.Factory documentResourceFactory,
@@ -345,7 +344,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_ddmStructureLocalService = ddmStructureLocalService;
 		_ddmTemplateLocalService = ddmTemplateLocalService;
 		_defaultDDMStructureHelper = defaultDDMStructureHelper;
-		_dlFileEntryTypeLocalService = dlFileEntryTypeLocalService;
 		_dlURLHelper = dlURLHelper;
 		_documentFolderResourceFactory = documentFolderResourceFactory;
 		_documentResourceFactory = documentResourceFactory;
@@ -417,6 +415,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			workflowDefinitionLinkLocalService;
 		_workflowDefinitionResourceFactory = workflowDefinitionResourceFactory;
 		_zipWriterFactory = zipWriterFactory;
+
+		_dlFileEntryTypeLocalService = dlFileEntryTypeLocalService;
 
 		BundleWiring bundleWiring = _bundle.adapt(BundleWiring.class);
 
