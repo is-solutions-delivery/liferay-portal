@@ -1,6 +1,6 @@
 [
 	{
-		"ddmStructureKey": "BLOG",
+		"assetEntryId": "[$DDM_STRUCTURE_ID:BLOG$]",
 		"title": "Blog Entries",
 		"unicodeProperties": {
 			"anyClassType": "anyClassTypeJournalArticleAssetRendererFactory",
@@ -41,7 +41,7 @@
 		}
 	},
 	{
-		"ddmStructureKey": "BLOG",
+		"assetEntryId": "[$DDM_STRUCTURE_ID:BLOG$]",
 		"title": "Featured Blog Entries",
 		"unicodeProperties": {
 			"anyClassType": "anyClassTypeJournalArticleAssetRendererFactory",
@@ -86,7 +86,7 @@
 		}
 	},
 	{
-		"ddmStructureKey": "COURSE",
+		"assetEntryId": "[$DDM_STRUCTURE_ID:COURSE]",
 		"title": "Courses",
 		"unicodeProperties": {
 			"anyClassType": "anyClassTypeJournalArticleAssetRendererFactory",
@@ -127,7 +127,7 @@
 		}
 	},
 	{
-		"ddmStructureKey": "TEACHER",
+		"assetEntryId": "[$DDM_STRUCTURE_ID:TEACHER]",
 		"title": "Teachers",
 		"unicodeProperties": {
 			"anyClassType": "anyClassTypeJournalArticleAssetRendererFactory",
@@ -168,7 +168,7 @@
 		}
 	},
 	{
-		"ddmStructureKey": "CLASSROOM",
+		"assetEntryId": "[$DDM_STRUCTURE_ID:CLASSROOM]",
 		"title": "Classrooms",
 		"unicodeProperties": {
 			"anyClassType": "anyClassTypeJournalArticleAssetRendererFactory",
