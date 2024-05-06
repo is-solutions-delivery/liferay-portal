@@ -62,12 +62,28 @@ public class TestrayTestFlowResourceImpl
 		sb.append("and cr.r_caseToCaseResult_c_caseId = c.c_caseId_ order by ");
 		sb.append("cr.errors_ ");
 
+		ObjectDefinition objectDefinition =
+			_objectDefinitionLocalService.getObjectDefinition(
+				contextCompany.getCompanyId(), "C_Build");
+
+		List<Map<String, Serializable>> valuesList =
+			_objectEntryLocalService.getValuesList(
+				0, contextCompany.getCompanyId(), contextUser.getUserId(),
+				objectDefinition.getObjectDefinitionId(),
+				_filterFactory.create(
+					"buildToTasks/id eq '" + testrayTaskId + "'",
+					objectDefinition),
+				null, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
+
+		Map<String, Serializable> testrayBuild = valuesList.get(0);
+
+		long testrayBuildId = GetterUtil.getLong(testrayBuild.get("c_buildId"));
+
 		List<Map<String, Object>> values = TestrayUtil.runSQL(
 			StringUtil.replace(
 				sb.toString(), "[%COMPANY_ID%]",
 				String.valueOf(contextCompany.getCompanyId())),
-			ListUtil.fromArray(
-				_getTestrayBuildIdByTestrayTaskId(testrayTaskId)));
+			ListUtil.fromArray(testrayBuildId));
 
 		String errors = null;
 		Map<String, List<Map<String, Object>>> map = new HashMap<>();
@@ -101,9 +117,8 @@ public class TestrayTestFlowResourceImpl
 
 		int testraySubtasksAmount = 0;
 
-		ObjectDefinition objectDefinition =
-			_objectDefinitionLocalService.getObjectDefinition(
-				contextCompany.getCompanyId(), "C_Subtask");
+		objectDefinition = _objectDefinitionLocalService.getObjectDefinition(
+			contextCompany.getCompanyId(), "C_Subtask");
 
 		for (List<Map<String, Object>> testrayCaseResults :
 				ListUtil.sort(
@@ -134,28 +149,19 @@ public class TestrayTestFlowResourceImpl
 				).build(),
 				_serviceContextHelper.getServiceContext());
 
-			for (Map<String, Object> testrayCaseResult : testrayCaseResults) {
-				testrayCaseResult.put(
-					"r_subtaskToCaseResults_c_subtaskId",
-					objectEntry.getObjectEntryId());
+			sb = new StringBundler();
 
-				Map<String, Serializable> serializableTestrayCaseResult =
-					new HashMap<>();
+			sb.append("update O_[%COMPANY_ID%]_CaseResult set ");
+			sb.append("r_subtaskToCaseResults_c_subtaskId = ? where ");
+			sb.append("r_buildToCaseResult_c_buildId = ? and errors_ = ?");
 
-				for (Map.Entry<String, Object> entry :
-						testrayCaseResult.entrySet()) {
-
-					serializableTestrayCaseResult.put(
-						entry.getKey(), String.valueOf(entry.getValue()));
-				}
-
-				_objectEntryLocalService.updateObjectEntry(
-					contextUser.getUserId(),
-					GetterUtil.getLong(
-						testrayCaseResult.get("c_caseResultId_")),
-					serializableTestrayCaseResult,
-					_serviceContextHelper.getServiceContext());
-			}
+			TestrayUtil.updateSQL(
+				StringUtil.replace(
+					sb.toString(), "[%COMPANY_ID%]",
+					String.valueOf(contextCompany.getCompanyId())),
+				ListUtil.fromArray(
+					objectEntry.getObjectEntryId(), testrayBuildId,
+					firstTestrayCaseResult.get("errors_")));
 		}
 
 		TestrayTestFlow testrayTestFlow = new TestrayTestFlow();
@@ -163,27 +169,6 @@ public class TestrayTestFlowResourceImpl
 		testrayTestFlow.setTestraySubtasksAmount(testraySubtasksAmount);
 
 		return testrayTestFlow;
-	}
-
-	private long _getTestrayBuildIdByTestrayTaskId(long testrayTaskId)
-		throws Exception {
-
-		ObjectDefinition objectDefinition =
-			_objectDefinitionLocalService.getObjectDefinition(
-				contextCompany.getCompanyId(), "C_Build");
-
-		List<Map<String, Serializable>> valuesList =
-			_objectEntryLocalService.getValuesList(
-				0, contextCompany.getCompanyId(), contextUser.getUserId(),
-				objectDefinition.getObjectDefinitionId(),
-				_filterFactory.create(
-					"buildToTasks/id eq '" + testrayTaskId + "'",
-					objectDefinition),
-				null, QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
-
-		Map<String, Serializable> testrayBuild = valuesList.get(0);
-
-		return GetterUtil.getLong(testrayBuild.get("c_buildId"));
 	}
 
 	private int _getTestraySubtaskScore(
