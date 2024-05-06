@@ -14,6 +14,7 @@ import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.petra.sql.dsl.expression.Predicate;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -208,6 +209,8 @@ public class TestrayTestFlowResourceImpl
 			params);
 
 		testrayTestFlow.setCaseResultAmount(rows);
+
+		EntityCacheUtil.clearCache();
 
 		return testrayTestFlow;
 	}
