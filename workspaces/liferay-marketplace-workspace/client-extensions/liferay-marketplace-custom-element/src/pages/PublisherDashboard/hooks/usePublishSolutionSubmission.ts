@@ -23,6 +23,7 @@ const usePublishSolutionSubmission = (
 	context: SolutionInitialState,
 	dispatch: ReturnType<typeof useSolutionContext>[1]
 ) => {
+	console.log('context:', context);
 	const syncProfile = async () => {
 		const {
 			_product,
@@ -101,6 +102,8 @@ const usePublishSolutionSubmission = (
 			},
 		} = context;
 
+		console.log('syncSolutionHeader', content, type);
+
 		const {productId, productSpecifications = []} = product;
 
 		const _updateSpecification = async (
@@ -113,7 +116,6 @@ const usePublishSolutionSubmission = (
 			);
 
 			if (specification && specification.value.en_US === value) {
-
 				// No need to update the specification if the value is equal.
 
 				return;
@@ -133,8 +135,7 @@ const usePublishSolutionSubmission = (
 
 			if (specification) {
 				specification.value.en_US = value;
-			}
-			else {
+			} else {
 				productSpecifications.push(result);
 			}
 		};
@@ -150,7 +151,7 @@ const usePublishSolutionSubmission = (
 		);
 
 		if (type === 'embed-video-url') {
-			if (content.headerVideoDescription) {
+			if (content?.headerVideoDescription) {
 				await _updateSpecification(
 					PRODUCT_SPECIFICATION_KEY.SOLUTION_HEADER_VIDEO_DESCRIPTION,
 					content.headerVideoDescription
