@@ -15,10 +15,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.io.Serializable;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -51,7 +47,7 @@ public class TestrayRoutineMetric implements Serializable {
 	}
 
 	@Schema
-	public Date getDueDate() {
+	public String getDueDate() {
 		if (_dueDateSupplier != null) {
 			dueDate = _dueDateSupplier.get();
 
@@ -61,7 +57,7 @@ public class TestrayRoutineMetric implements Serializable {
 		return dueDate;
 	}
 
-	public void setDueDate(Date dueDate) {
+	public void setDueDate(String dueDate) {
 		this.dueDate = dueDate;
 
 		_dueDateSupplier = null;
@@ -69,7 +65,7 @@ public class TestrayRoutineMetric implements Serializable {
 
 	@JsonIgnore
 	public void setDueDate(
-		UnsafeSupplier<Date, Exception> dueDateUnsafeSupplier) {
+		UnsafeSupplier<String, Exception> dueDateUnsafeSupplier) {
 
 		_dueDateSupplier = () -> {
 			try {
@@ -86,10 +82,10 @@ public class TestrayRoutineMetric implements Serializable {
 
 	@GraphQLField
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected Date dueDate;
+	protected String dueDate;
 
 	@JsonIgnore
-	private Supplier<Date> _dueDateSupplier;
+	private Supplier<String> _dueDateSupplier;
 
 	@Schema
 	public Long getTestrayRoutineId() {
@@ -246,10 +242,7 @@ public class TestrayRoutineMetric implements Serializable {
 
 		sb.append("{");
 
-		DateFormat liferayToJSONDateFormat = new SimpleDateFormat(
-			"yyyy-MM-dd'T'HH:mm:ss'Z'");
-
-		Date dueDate = getDueDate();
+		String dueDate = getDueDate();
 
 		if (dueDate != null) {
 			if (sb.length() > 1) {
@@ -260,7 +253,7 @@ public class TestrayRoutineMetric implements Serializable {
 
 			sb.append("\"");
 
-			sb.append(liferayToJSONDateFormat.format(dueDate));
+			sb.append(_escape(dueDate));
 
 			sb.append("\"");
 		}
