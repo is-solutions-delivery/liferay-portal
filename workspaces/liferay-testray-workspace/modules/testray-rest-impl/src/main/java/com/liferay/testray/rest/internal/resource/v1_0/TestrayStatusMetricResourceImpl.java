@@ -6,7 +6,6 @@
 package com.liferay.testray.rest.internal.resource.v1_0;
 
 import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -459,16 +458,10 @@ public class TestrayStatusMetricResourceImpl
 					TestrayRoutineMetric testrayRoutineMetric =
 						new TestrayRoutineMetric();
 
-					if (value.get("dueDate_") != null) {
-						testrayRoutineMetric.setDueDate(
-							GetterUtil.getDate(
-								value.get(
-									"dueDate_"
-								).toString(),
-								DateFormatFactoryUtil.getSimpleDateFormat(
-									"yyyy-MM-dd'T'HH:mm:ss")));
-					}
-
+					testrayRoutineMetric.setDueDate(
+						value.get(
+							"dueDate_"
+						).toString());
 					testrayRoutineMetric.setTestrayRoutineId(
 						GetterUtil.getLong(value.get("c_routineId_")));
 					testrayRoutineMetric.setTestrayRoutineName(
