@@ -29,6 +29,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -179,7 +180,7 @@ public class TestrayImportResultsDispatchTaskExecutor
 	private JSONArray _addTestrayAttachments(Node testcaseNode)
 		throws Exception {
 
-		JSONArray jsonArray = null;
+		JSONArray jsonArray = _jsonFactory.createJSONArray();
 
 		Element testcaseElement = (Element)testcaseNode;
 
@@ -207,7 +208,7 @@ public class TestrayImportResultsDispatchTaskExecutor
 
 				Element fileElement = (Element)fileNode;
 
-				jsonArray = JSONUtil.put(
+				jsonArray.put(
 					JSONUtil.put(
 						"name", fileElement.getAttribute("name")
 					).put(
@@ -1334,6 +1335,9 @@ public class TestrayImportResultsDispatchTaskExecutor
 		target = "(filter.factory.key=" + ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT + ")"
 	)
 	private FilterFactory<Predicate> _filterFactory;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;
