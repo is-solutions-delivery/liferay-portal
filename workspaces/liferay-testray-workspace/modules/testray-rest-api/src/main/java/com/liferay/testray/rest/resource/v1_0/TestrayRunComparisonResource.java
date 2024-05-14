@@ -10,9 +10,7 @@ import com.liferay.portal.odata.filter.ExpressionConvert;
 import com.liferay.portal.odata.filter.FilterParserProvider;
 import com.liferay.portal.odata.sort.SortParserProvider;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
-import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.testray.rest.dto.v1_0.TestrayRunComparison;
-import com.liferay.testray.rest.dto.v1_0.TestrayRunQuickComparison;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,9 +38,8 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface TestrayRunComparisonResource {
 
-	public Page<TestrayRunQuickComparison>
-			getTestrayRunComparisonByTestrayRoutineIdTestrayRoutinePage(
-				Long testrayRoutineId)
+	public Object getTestrayRunComparisonByTestrayRoutineIdTestrayRoutine(
+			Long testrayRoutineId)
 		throws Exception;
 
 	public TestrayRunComparison getTestrayRunComparison(
