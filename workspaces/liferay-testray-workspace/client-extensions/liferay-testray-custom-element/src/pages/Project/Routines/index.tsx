@@ -3,7 +3,12 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {useParams} from 'react-router-dom';
+import {ClayTooltipProvider} from '@clayui/tooltip';
+import {useNavigate, useParams} from 'react-router-dom';
+import Button from '~/components/Button';
+import TestrayIcons from '~/components/Icons/TestrayIcon';
+import fetcher from '~/services/fetcher';
+import {Liferay} from '~/services/liferay';
 import {TestrayRoutine} from '~/services/rest';
 
 import Container from '../../../components/Layout/Container';
@@ -16,6 +21,24 @@ import useRoutineActions from './useRoutineActions';
 const Routines = () => {
 	const {actions} = useRoutineActions();
 	const {projectId} = useParams();
+	const navigate = useNavigate();
+
+	const handleCompareRuns = async (testrayRoutineId: number) => {
+		const {
+			items: [runA, runB],
+		} = await fetcher(
+			`/testray-run-comparisons/by-testray-routineId/${testrayRoutineId}`
+		);
+
+		if (!runA || !runB) {
+			return Liferay.Util.openToast({
+				message: i18n.translate('only-one-run-found-for-this-routine'),
+				type: 'danger',
+			});
+		}
+
+		navigate(`/compare-runs/${runA.runId}/${runB.runId}/teams`);
+	};
 
 	return (
 		<Container>
@@ -44,6 +67,29 @@ const Routines = () => {
 							size: 'md',
 							sorteable: true,
 							value: i18n.translate('routine'),
+						},
+						{
+							key: 'testrayRoutineId',
+							render: (testrayRoutineId) => (
+								<ClayTooltipProvider>
+									<Button
+										className="align-items-center d-flex p-0 rounded-circle tr-assign-to-me"
+										data-tooltip-align="right"
+										displayType="link"
+										onClick={() =>
+											handleCompareRuns(testrayRoutineId)
+										}
+										title={i18n.sub('compare-x', 'runs')}
+									>
+										<TestrayIcons
+											fill="#acbcc7"
+											size={30}
+											symbol="drop"
+										/>
+									</Button>
+								</ClayTooltipProvider>
+							),
+							value: '',
 						},
 						{
 							clickable: true,

@@ -272,6 +272,8 @@ export default {
 	'none': 'None',
 	'notifications': 'Notifications',
 	'number-of-case-results': 'Number of Case Results',
+	'only-one-run-found-for-this-routine':
+		'Only one run found for this routine.',
 	'only-x-cases-can-be-added':
 		'Only {0} Cases can be added at a time. Please, change the quantity selected.',
 	'open': 'Open',
