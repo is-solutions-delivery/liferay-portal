@@ -272,8 +272,6 @@ export default {
 	'none': 'None',
 	'notifications': 'Notifications',
 	'number-of-case-results': 'Number of Case Results',
-	'only-one-run-found-for-this-routine':
-		'Only one run found for this routine.',
 	'only-x-cases-can-be-added':
 		'Only {0} Cases can be added at a time. Please, change the quantity selected.',
 	'open': 'Open',
@@ -438,6 +436,7 @@ export default {
 	'total-test-cases': 'Total test cases',
 	'type': 'Type',
 	'type-is-a-required-field': 'Type is a required field',
+	'unable-to-find-more-than-one-run': 'Unable to find more than one run.',
 	'unarchive': 'Unarchive',
 	'unassign-myself': 'Unassign Myself',
 	'unassigned': 'Unassigned',

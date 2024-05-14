@@ -23,21 +23,19 @@ const Routines = () => {
 	const {projectId} = useParams();
 	const navigate = useNavigate();
 
-	const handleCompareRuns = async (testrayRoutineId: number) => {
-		const {
-			items: [runA, runB],
-		} = await fetcher(
+	const handleCompareRuns = (testrayRoutineId: number) => {
+		fetcher(
 			`/testray-run-comparisons/by-testray-routineId/${testrayRoutineId}`
-		);
-
-		if (!runA || !runB) {
-			return Liferay.Util.openToast({
-				message: i18n.translate('only-one-run-found-for-this-routine'),
-				type: 'danger',
-			});
-		}
-
-		navigate(`/compare-runs/${runA.runId}/${runB.runId}/teams`);
+		)
+			.then(({runId1, runId2}) =>
+				navigate(`/compare-runs/${runId1.runId}/${runId2.runId}/teams`)
+			)
+			.catch((_) =>
+				Liferay.Util.openToast({
+					message: i18n.translate('unable-to-find-more-than-one-run'),
+					type: 'danger',
+				})
+			);
 	};
 
 	return (
