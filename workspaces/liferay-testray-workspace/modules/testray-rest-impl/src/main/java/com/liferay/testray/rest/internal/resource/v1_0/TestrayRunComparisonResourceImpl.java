@@ -12,6 +12,8 @@ import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.petra.sql.dsl.expression.Predicate;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -19,11 +21,8 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.vulcan.pagination.Page;
-import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.testray.rest.dto.v1_0.TestrayCaseResultComparison;
 import com.liferay.testray.rest.dto.v1_0.TestrayRunComparison;
-import com.liferay.testray.rest.dto.v1_0.TestrayRunQuickComparison;
 import com.liferay.testray.rest.internal.util.TestrayUtil;
 import com.liferay.testray.rest.internal.util.comparator.TestrayCaseResultComparisonComparator;
 import com.liferay.testray.rest.resource.v1_0.TestrayRunComparisonResource;
@@ -88,9 +87,8 @@ public class TestrayRunComparisonResourceImpl
 	}
 
 	@Override
-	public Page<TestrayRunQuickComparison>
-			getTestrayRunComparisonByTestrayRoutineIdTestrayRoutinePage(
-				Long testrayRoutineId)
+	public Object getTestrayRunComparisonByTestrayRoutineIdTestrayRoutine(
+			Long testrayRoutineId)
 		throws Exception {
 
 		StringBundler sb = new StringBundler(8);
@@ -115,19 +113,19 @@ public class TestrayRunComparisonResourceImpl
 		List<Map<String, Object>> values = TestrayUtil.executeQuery(
 			sql, params);
 
-		return Page.of(
-			transform(
-				values,
-				value -> {
-					TestrayRunQuickComparison testrayRunQuickComparison =
-						new TestrayRunQuickComparison();
+		if (ListUtil.isEmpty(values) || (values.size() < 2)) {
+			throw new Exception("Unable to find more than one run");
+		}
 
-					testrayRunQuickComparison.setRunId(
-						GetterUtil.getLong(value.get("runId")));
+		JSONObject jsonObject = _jsonFactory.createJSONObject();
 
-					return testrayRunQuickComparison;
-				}),
-			Pagination.of(1, 2), 2);
+		jsonObject.put(
+			"runId1", values.get(0)
+		).put(
+			"runId2", values.get(1)
+		);
+
+		return jsonObject;
 	}
 
 	@Override
@@ -518,6 +516,9 @@ public class TestrayRunComparisonResourceImpl
 		target = "(filter.factory.key=" + ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT + ")"
 	)
 	private FilterFactory<Predicate> _filterFactory;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;
