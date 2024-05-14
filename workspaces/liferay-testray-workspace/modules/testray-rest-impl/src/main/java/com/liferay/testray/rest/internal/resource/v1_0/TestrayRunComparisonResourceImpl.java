@@ -17,9 +17,14 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.vulcan.pagination.Page;
+import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.testray.rest.dto.v1_0.TestrayCaseResultComparison;
 import com.liferay.testray.rest.dto.v1_0.TestrayRunComparison;
+import com.liferay.testray.rest.dto.v1_0.TestrayRunQuickComparison;
+import com.liferay.testray.rest.internal.util.TestrayUtil;
 import com.liferay.testray.rest.internal.util.comparator.TestrayCaseResultComparisonComparator;
 import com.liferay.testray.rest.resource.v1_0.TestrayRunComparisonResource;
 
@@ -80,6 +85,49 @@ public class TestrayRunComparisonResourceImpl
 			).toArray());
 
 		return testrayRunComparison;
+	}
+
+	@Override
+	public Page<TestrayRunQuickComparison>
+			getTestrayRunComparisonByTestrayRoutineIdTestrayRoutinePage(
+				Long testrayRoutineId)
+		throws Exception {
+
+		StringBundler sb = new StringBundler(8);
+
+		sb.append("select (select cr.r_runToCaseResult_c_runId from ");
+		sb.append("O_[%COMPANY_ID%]_CaseResult cr where ");
+		sb.append("cr.r_buildToCaseResult_c_buildId = b.c_buildId_ group by ");
+		sb.append("cr.r_runToCaseResult_c_runId order by ");
+		sb.append("count(cr.c_caseResultId_) desc limit 1) as runId from ");
+		sb.append("O_[%COMPANY_ID%]_Build b where ");
+		sb.append("b.r_routineToBuilds_c_routineId = ? order by b.dueDate_ ");
+		sb.append("desc limit 2");
+
+		List<Object> params = new ArrayList<>();
+
+		params.add(testrayRoutineId);
+
+		String sql = StringUtil.replace(
+			sb.toString(), "[%COMPANY_ID%]",
+			String.valueOf(contextCompany.getCompanyId()));
+
+		List<Map<String, Object>> values = TestrayUtil.executeQuery(
+			sql, params);
+
+		return Page.of(
+			transform(
+				values,
+				value -> {
+					TestrayRunQuickComparison testrayRunQuickComparison =
+						new TestrayRunQuickComparison();
+
+					testrayRunQuickComparison.setRunId(
+						GetterUtil.getLong(value.get("runId")));
+
+					return testrayRunQuickComparison;
+				}),
+			Pagination.of(1, 2), 2);
 	}
 
 	@Override
