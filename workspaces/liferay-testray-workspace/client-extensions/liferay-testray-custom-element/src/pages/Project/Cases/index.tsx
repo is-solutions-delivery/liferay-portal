@@ -96,7 +96,8 @@ const CaseListView: React.FC<CaseListViewProps> = ({
 					{
 						clickable: true,
 						key: 'description',
-						render: (description) => description,
+						render: (description) =>
+							description === 'null' ? '' : description,
 						value: i18n.translate('description'),
 					},
 					{key: 'issues', value: i18n.translate('issues')},

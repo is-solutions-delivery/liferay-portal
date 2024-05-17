@@ -48,7 +48,11 @@ const Case = () => {
 							title: i18n.translate('description'),
 							value: (
 								<PreviewInformation
-									data={testrayCase.description}
+									data={
+										testrayCase.description === 'null'
+											? ''
+											: testrayCase.description
+									}
 									displayType={testrayCase.descriptionType}
 								/>
 							),
