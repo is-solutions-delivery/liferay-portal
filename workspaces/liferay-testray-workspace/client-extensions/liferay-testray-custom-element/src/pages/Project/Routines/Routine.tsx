@@ -161,7 +161,6 @@ const Routine = () => {
 									build.caseResultBlocked,
 									build.caseResultFailed,
 									build.caseResultInProgress,
-									build.caseResultIncomplete,
 									build.caseResultPassed,
 									build.caseResultTestFix,
 									build.caseResultUntested,
