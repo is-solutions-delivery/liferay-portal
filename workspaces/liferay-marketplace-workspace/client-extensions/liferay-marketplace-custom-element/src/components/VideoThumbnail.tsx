@@ -23,7 +23,8 @@ const getThumbnail = (videoURL: string) => {
 
 			return videoId ? `https://img.youtube.com/vi/${videoId}/0.jpg` : '';
 		}
-	} catch (error) {}
+	}
+	catch (error) {}
 
 	return '';
 };

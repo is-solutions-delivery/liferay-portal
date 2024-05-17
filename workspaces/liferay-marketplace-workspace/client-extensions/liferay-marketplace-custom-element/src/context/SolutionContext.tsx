@@ -537,7 +537,6 @@ export default function SolutionContextProvider({
 }: SolutionContextProviderProps) {
 	const [state, dispatch] = useReducer(reducer, solutionInitialState);
 	const {productId} = useParams();
-
 	const {data = {}} = useGetVocabulariesAndCategories([
 		ProductVocabulary.PRODUCT_TYPE,
 		ProductVocabulary.SOLUTION_CATEGORY,
