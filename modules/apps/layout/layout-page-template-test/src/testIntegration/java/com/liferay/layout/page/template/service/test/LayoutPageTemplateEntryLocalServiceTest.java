@@ -75,7 +75,7 @@ public class LayoutPageTemplateEntryLocalServiceTest {
 	}
 
 	@Test
-	public void testAddLayoutPageTemplateEntryDuplicateExternalReferenceCode()
+	public void testAddLayoutPageTemplateEntryWithDuplicateExternalReferenceCode()
 		throws Exception {
 
 		String externalReferenceCode = RandomTestUtil.randomString();
