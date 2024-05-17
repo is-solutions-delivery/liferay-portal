@@ -169,7 +169,10 @@ const CaseResult = () => {
 								},
 								{
 									title: i18n.translate('description'),
-									value: caseResult.case?.description,
+									value:
+										caseResult.case?.description === 'null'
+											? ''
+											: caseResult.case?.description,
 								},
 								{
 									title: i18n.translate('steps'),
@@ -203,9 +206,7 @@ const CaseResult = () => {
 								{
 									divider: true,
 									title: i18n.translate('execution-date'),
-									value: getTimeFromNow(
-										caseResult.dateModified
-									),
+									value: getTimeFromNow(caseResult.startDate),
 								},
 								{
 									divider: true,
