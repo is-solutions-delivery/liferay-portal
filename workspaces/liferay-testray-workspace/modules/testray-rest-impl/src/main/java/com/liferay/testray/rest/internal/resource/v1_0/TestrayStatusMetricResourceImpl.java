@@ -385,7 +385,7 @@ public class TestrayStatusMetricResourceImpl
 				Long testrayTeamId, Pagination pagination)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(34);
+		StringBundler sb = new StringBundler(35);
 
 		sb.append("select count(cr.dueStatus_) as total, sum(case when ");
 		sb.append("cr.dueStatus_ = 'blocked' then 1 else 0 end) as blocked, ");
@@ -412,7 +412,8 @@ public class TestrayStatusMetricResourceImpl
 		sb.append("b2.r_routineToBuilds_c_routineId = r.c_routineId_ and ");
 		sb.append("b2.dueDate_ = (select max(b3.dueDate_) from ");
 		sb.append("O_[%COMPANY_ID%]_Build b3 where ");
-		sb.append("b3.r_routineToBuilds_c_routineId = r.c_routineId_)) ");
+		sb.append("b3.r_routineToBuilds_c_routineId = r.c_routineId_) limit ");
+		sb.append("1) ");
 
 		List<Object> params = new ArrayList<>();
 
