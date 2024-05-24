@@ -119,8 +119,8 @@ const Routine = () => {
 							value: i18n.translate('product-version'),
 						},
 						{
-							clickable: true,
 							key: 'name',
+							selectable: true,
 							value: i18n.translate('build'),
 						},
 						{

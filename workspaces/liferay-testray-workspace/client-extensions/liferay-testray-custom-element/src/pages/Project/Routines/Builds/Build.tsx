@@ -99,12 +99,12 @@ const Build = () => {
 							value: i18n.translate('component'),
 						},
 						{
-							clickable: true,
 							key: 'name',
 							render: (
 								_,
 								{case: testrayCase}: TestrayCaseResult
 							) => testrayCase?.name,
+							selectable: true,
 							size: 'xl',
 							value: i18n.translate('case'),
 						},
@@ -192,7 +192,6 @@ const Build = () => {
 							value: i18n.translate('issues'),
 						},
 						{
-							clickable: true,
 							key: 'errors',
 							render: (errors: string) =>
 								errors && (

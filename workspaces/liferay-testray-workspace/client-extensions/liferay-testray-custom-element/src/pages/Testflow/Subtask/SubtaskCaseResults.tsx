@@ -196,10 +196,10 @@ const SubtasksCaseResults: React.FC<SubtasksCaseResultsProps> = ({
 						value: i18n.translate('component'),
 					},
 					{
-						clickable: true,
 						key: 'name',
 						render: (_, {case: testrayCase}: TestrayCaseResult) =>
 							testrayCase?.name,
+						selectable: true,
 						size: 'xl',
 						value: i18n.translate('case'),
 					},

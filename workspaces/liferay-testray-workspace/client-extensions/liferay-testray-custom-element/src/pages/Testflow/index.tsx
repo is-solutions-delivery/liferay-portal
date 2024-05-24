@@ -89,9 +89,9 @@ const TestFlow = () => {
 							value: i18n.translate('routine-name'),
 						},
 						{
-							clickable: true,
 							key: 'buildName',
 							render: (_, task) => task?.build?.name,
+							selectable: true,
 							size: 'lg',
 							value: i18n.translate('build-name'),
 						},
