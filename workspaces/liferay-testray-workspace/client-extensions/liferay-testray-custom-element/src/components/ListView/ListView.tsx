@@ -16,7 +16,7 @@ import {
 } from 'react';
 import {useSearchParams} from 'react-router-dom';
 import {KeyedMutator} from 'swr';
-import useQueryParams from '~/hooks/useQueryParams';
+import useUpdateUrlParams from '~/hooks/useUpdateUrlParams';
 
 import ListViewContextProvider, {
 	AppActions,
@@ -110,12 +110,15 @@ const ListView: React.FC<ListViewProps> = ({
 	variables,
 }) => {
 	const [listViewContext, dispatch] = useContext(ListViewContext);
-	const {updateUrlParams} = useQueryParams();
+	const updateUrlParams = useUpdateUrlParams();
+
 	const [searchParams] = useSearchParams();
 
 	const currentPage = searchParams.get('page');
 
 	const currentPageSize = searchParams.get('pageSize');
+
+	let isRowSelectable = false;
 
 	const onSelectRowNormalizer = useMemo(
 		() => normalizers.onSelectRow ?? noop,
@@ -325,23 +328,20 @@ const ListView: React.FC<ListViewProps> = ({
 				type: ListViewTypes.SET_CUSTOM_FILTER_FIELDS,
 			});
 		}
+	}, [customFilterFields, dispatch]);
 
-		if (tableProps.rowSelectable) {
-			dispatch({
-				payload: itemsMemoized.every((item) =>
-					selectedRows.includes(onSelectRowNormalizer(item))
-				),
-				type: ListViewTypes.SET_CHECKED_ALL_ROWS,
-			});
-		}
-	}, [
-		customFilterFields,
-		dispatch,
-		itemsMemoized,
-		onSelectRowNormalizer,
-		selectedRows,
-		tableProps.rowSelectable,
-	]);
+	if (tableProps.rowSelectable) {
+		isRowSelectable = itemsMemoized.every((item) =>
+			selectedRows.includes(onSelectRowNormalizer(item))
+		);
+	}
+
+	useEffect(() => {
+		dispatch({
+			payload: isRowSelectable,
+			type: ListViewTypes.SET_CHECKED_ALL_ROWS,
+		});
+	}, [dispatch, isRowSelectable]);
 
 	useEffect(() => {
 		if (managementToolbarProps.applyFilters) {
