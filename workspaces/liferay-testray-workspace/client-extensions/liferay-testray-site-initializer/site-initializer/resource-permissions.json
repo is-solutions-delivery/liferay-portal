@@ -1,7 +1,8 @@
 [
 	{
 		"actionIds": [
-			"ADD_USER"
+			"ADD_USER",
+			"ADD_USER_GROUP"
 		],
 		"primKey": "0",
 		"resourceName": "90",
@@ -1512,6 +1513,7 @@
 	{
 		"actionIds": [
 			"ASSIGN_MEMBERS",
+			"UPDATE",
 			"VIEW"
 		],
 		"primKey": "0",
@@ -1591,6 +1593,24 @@
 		"primKey": "0",
 		"resourceName": "com_liferay_product_navigation_applications_menu_web_internal_portlet_ProductNavigationApplicationsMenuPortlet",
 		"roleName": "Testray Analyst",
+		"scope": 1
+	},
+	{
+		"actionIds": [
+			"ACCESS_IN_CONTROL_PANEL"
+		],
+		"primKey": "0",
+		"resourceName": "com_liferay_roles_admin_web_portlet_RolesAdminPortlet",
+		"roleName": "Testray Administrator",
+		"scope": 1
+	},
+	{
+		"actionIds": [
+			"ACCESS_IN_CONTROL_PANEL"
+		],
+		"primKey": "0",
+		"resourceName": "com_liferay_user_groups_admin_web_portlet_UserGroupsAdminPortlet",
+		"roleName": "Testray Administrator",
 		"scope": 1
 	}
 ]
