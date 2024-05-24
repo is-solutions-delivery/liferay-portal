@@ -117,6 +117,8 @@ const ListView: React.FC<ListViewProps> = ({
 
 	const currentPageSize = searchParams.get('pageSize');
 
+	let isRowSelectable = false;
+
 	const onSelectRowNormalizer = useMemo(
 		() => normalizers.onSelectRow ?? noop,
 		[normalizers.onSelectRow]
@@ -325,23 +327,20 @@ const ListView: React.FC<ListViewProps> = ({
 				type: ListViewTypes.SET_CUSTOM_FILTER_FIELDS,
 			});
 		}
+	}, [customFilterFields, dispatch]);
 
-		if (tableProps.rowSelectable) {
-			dispatch({
-				payload: itemsMemoized.every((item) =>
-					selectedRows.includes(onSelectRowNormalizer(item))
-				),
-				type: ListViewTypes.SET_CHECKED_ALL_ROWS,
-			});
-		}
-	}, [
-		customFilterFields,
-		dispatch,
-		itemsMemoized,
-		onSelectRowNormalizer,
-		selectedRows,
-		tableProps.rowSelectable,
-	]);
+	if (tableProps.rowSelectable) {
+		isRowSelectable = itemsMemoized.every((item) =>
+			selectedRows.includes(onSelectRowNormalizer(item))
+		);
+	}
+
+	useEffect(() => {
+		dispatch({
+			payload: isRowSelectable,
+			type: ListViewTypes.SET_CHECKED_ALL_ROWS,
+		});
+	}, [dispatch, isRowSelectable]);
 
 	useEffect(() => {
 		if (managementToolbarProps.applyFilters) {
