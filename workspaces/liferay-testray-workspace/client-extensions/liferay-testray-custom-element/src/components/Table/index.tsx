@@ -8,7 +8,7 @@ import ClayIcon from '@clayui/icon';
 import ClayTable from '@clayui/table';
 import classNames from 'classnames';
 import React, {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {KeyedMutator} from 'swr';
 import i18n from '~/i18n';
 
@@ -27,6 +27,7 @@ export type Column<T = any> = {
 		item: T,
 		mutate: KeyedMutator<APIResponse<T>>
 	) => String | React.ReactNode;
+	selectable?: boolean;
 	size?: 'sm' | 'md' | 'lg' | 'xl' | 'none';
 	sorteable?: boolean;
 	truncate?: boolean;
@@ -251,6 +252,11 @@ const Table: React.FC<TableProps> = ({
 							)}
 
 							{columns?.map((column, columnIndex) => {
+								const Wrapper =
+									column.selectable && navigateTo
+										? Link
+										: (props: any) => <div {...props} />;
+
 								return (
 									<ClayTable.Cell
 										className={classNames('text-dark', {
@@ -281,13 +287,22 @@ const Table: React.FC<TableProps> = ({
 										}}
 										truncate={column.truncate}
 									>
-										{column.render
-											? column.render(
-													item[column.key],
-													{...item, rowIndex},
-													mutate
-											  )
-											: item[column.key]}
+										<Wrapper
+											className="text-dark"
+											to={
+												navigateTo?.(
+													item
+												)?.toString() as string
+											}
+										>
+											{column.render
+												? column.render(
+														item[column.key],
+														{...item, rowIndex},
+														mutate
+												  )
+												: item[column.key]}
+										</Wrapper>
 									</ClayTable.Cell>
 								);
 							})}
