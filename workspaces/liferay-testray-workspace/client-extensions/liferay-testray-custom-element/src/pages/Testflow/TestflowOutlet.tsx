@@ -74,6 +74,7 @@ const TestflowOutlet = () => {
 	>(testrayTaskImpl.getResource(taskId), {
 		transformData: (response) => testrayTaskImpl.transformData(response),
 	});
+	const projectId = String(testrayTask?.build?.project?.id);
 
 	const {data: testrayTaskCaseTypes} = useFetch<
 		APIResponse<TestrayTaskCaseTypes>
@@ -128,6 +129,7 @@ const TestflowOutlet = () => {
 					context={{
 						actions: testrayTask?.actions,
 						data: {
+							projectId,
 							testraySubtasks,
 							testrayTask,
 							testrayTaskCaseTypes:
