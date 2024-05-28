@@ -1,12 +1,14 @@
 <style>
-	.solution-category-container {
+	.solution-tag-container {
 		font-size: 1rem;
+		gap: 8px;
 		line-height: 1.5;
 	}
 
-	.solution-category-container .solution-category {
-		background-color: #ebeef2;
-		border-radius: 2px;
+	.solution-tag-container .solution-tag {
+		background-color: #E6EBF5;
+		border-radius: 4px;
+		color: #1C3667;
 	}
 </style>
 
@@ -23,23 +25,20 @@
 </#if>
 
 <#if (CPDefinition_cProductId.getData())??>
-	<#assign productId = CPDefinition_cProductId.getData() />
+	<#assign
+		productId = CPDefinition_cProductId.getData()
+		product = restClient.get("/headless-commerce-delivery-catalog/v1.0/channels/"+ channelId +"/products/"+ productId +"?accountId=-1&nestedFields=categories")
+
+		categories = product.categories
+	/>
+
+	<div class="color-neutral-3 d-flex flex-wrap font-size-paragraph-small solution-tag-container">
+		<#list categories as category>
+			<#if category.vocabulary == VOCABULARY_NAME>
+				<div class="border-radius-small px-2 py-1 solution-tag">
+					${category.name}
+				</div>
+			</#if>
+		</#list>
+	</div>
 </#if>
-
-<#assign categories = restClient.get("/headless-commerce-delivery-catalog/v1.0/channels/"+ channelId +"/products/"+ productId +"/categories") />
-
-<#if categories?has_content>
-	<#assign categoriesItems = categories.items />
-<#else>
-	<#assign categoriesItems = [] />
-</#if>
-
-<div class="color-neutral-3 d-flex flex-wrap font-size-paragraph-small solution-category-container">
-	<#list categoriesItems as category>
-		<#if category.vocabulary == VOCABULARY_NAME>
-			<div class="bg-neutral-8 border-radius-small mb-1 mr-1 px-1 solution-category">
-				${category.name}
-			</div>
-		</#if>
-	</#list>
-</div>
