@@ -12,6 +12,7 @@ import com.liferay.portal.odata.sort.SortParserProvider;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.testray.rest.dto.v1_0.TestrayBuildMetric;
 import com.liferay.testray.rest.dto.v1_0.TestrayCaseTypeMetric;
 import com.liferay.testray.rest.dto.v1_0.TestrayComponentMetric;
 import com.liferay.testray.rest.dto.v1_0.TestrayRoutineMetric;
@@ -76,6 +77,13 @@ public interface TestrayStatusMetricResource {
 				Long testrayProjectId, String testrayCasePriorities,
 				String testrayCaseTypes, Long testrayRoutineId,
 				Long testrayTeamId, Pagination pagination)
+		throws Exception;
+
+	public Page<TestrayBuildMetric>
+			getTestrayStatusMetricByTestrayRoutineIdTestrayRoutineTestrayBuildsMetricsPage(
+				Long testrayRoutineId, Long testrayBuildId,
+				String testrayBuildName, String testrayProductVersion,
+				String testrayTaskStatus, Pagination pagination)
 		throws Exception;
 
 	public default void setContextAcceptLanguage(

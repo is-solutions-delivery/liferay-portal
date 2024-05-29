@@ -165,6 +165,11 @@ public class ServletDataImpl implements ServletData {
 						new ObjectValuePair<>(
 							TestrayStatusMetricResourceImpl.class,
 							"getTestrayStatusMetricByTestrayProjectIdTestrayProjectTestrayRoutinesMetricsPage"));
+					put(
+						"query#testrayStatusMetricByTestrayRoutineIdTestrayRoutineTestrayBuildsMetrics",
+						new ObjectValuePair<>(
+							TestrayStatusMetricResourceImpl.class,
+							"getTestrayStatusMetricByTestrayRoutineIdTestrayRoutineTestrayBuildsMetricsPage"));
 				}
 			};
 
