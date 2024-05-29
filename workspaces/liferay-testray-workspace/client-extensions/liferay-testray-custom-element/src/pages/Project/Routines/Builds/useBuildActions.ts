@@ -29,10 +29,18 @@ const useBuildActions = ({isHeaderActions}: ActionsHookParameter = {}) => {
 			name: i18n.translate('export-csv'),
 		},
 		{
-			action: ({id, promoted}, mutate) => {
+			action: (build, mutate) => {
+				const buildId = build.id
+					? build.id
+					: (build.testrayBuildId as number);
+
+				const buildPromoted = build.id
+					? build.promoted
+					: build.testrayBuildPromoted;
+
 				testrayBuildImpl
-					.update(id, {
-						promoted: !promoted,
+					.update(buildId, {
+						promoted: !buildPromoted,
 					})
 					.then(() => {
 						if (isHeaderActions) {
@@ -42,52 +50,93 @@ const useBuildActions = ({isHeaderActions}: ActionsHookParameter = {}) => {
 							}));
 						}
 
-						updateItemFromList(mutate, id, {
-							promoted: !promoted,
+						updateItemFromList(mutate, buildId, {
+							promoted: !buildPromoted,
 						});
 					})
 					.then(modal.onSuccess)
 					.catch(modal.onError);
 			},
 			icon: 'star',
-			name: (build) =>
-				i18n.translate(build?.promoted ? 'demote' : 'promote'),
+			name: (build) => {
+				const buildPromoted = build.id
+					? build.promoted
+					: build.testrayBuildPromoted;
+
+				return i18n.translate(buildPromoted ? 'demote' : 'promote');
+			},
 			permission: 'UPDATE',
 		},
 		{
-			action: ({archived, id, promoted}, mutate) => {
-				if (!promoted) {
+			action: (build, mutate) => {
+				const buildId = build.id
+					? build.id
+					: (build.testrayBuildId as number);
+
+				const buildPromoted = build.id
+					? build.promoted
+					: build.testrayBuildPromoted;
+
+				const buildArchived = build.id
+					? build.archived
+					: build.testrayBuildArchived;
+
+				if (!buildPromoted) {
 					testrayBuildImpl
-						.updateArchivedFlag(id, !archived)
+						.updateArchivedFlag(buildId, !buildArchived)
 						.then(() => mutate())
 						.catch(modal.onError);
 				}
 			},
-			disabled: ({promoted, tasks}) => promoted || tasks.length,
+			disabled: (build) => {
+				const isPromoted = build.id
+					? build.promoted
+					: build.testrayBuildPromoted;
+
+				const hasTasks = build.id
+					? !!build.tasks.length
+					: !!build.testrayBuildTaskStatus;
+
+				return isPromoted || hasTasks;
+			},
 			icon: 'archive',
-			name: (build) =>
-				i18n.translate(build.archived ? 'unarchive' : 'archive'),
+			name: (build) => {
+				const buildArchived = build.id
+					? build.archived
+					: build.testrayBuildArchived;
+
+				return i18n.translate(buildArchived ? 'unarchive' : 'archive');
+			},
 			permission: 'UPDATE',
 		},
 		{
-			action: ({id}, mutate) =>
-				testrayBuildImpl
-					.removeResource(id)
-					?.then(() => removeItemFromList(mutate, id))
+			action: (build, mutate) => {
+				const buildId = build.id
+					? build.id
+					: (build.testrayBuildId as number);
+
+				return testrayBuildImpl
+					.removeResource(buildId)
+					?.then(() => removeItemFromList(mutate, buildId))
 					.then(modal.onSave)
 					.then(() => {
 						if (isHeaderActions) {
 							navigate('../');
 						}
 					})
-					.catch(modal.onError),
+					.catch(modal.onError);
+			},
 			icon: 'trash',
 			name: i18n.translate(isHeaderActions ? 'delete-build' : 'delete'),
 			permission: 'DELETE',
 		},
 		{
-			action: ({id}) => {
-				setBuildA(id);
+			action: (build) => {
+				const buildId = build.id
+					? build.id
+					: (build.testrayBuildId as number);
+
+				setBuildA(buildId);
 
 				return Liferay.Util.openToast({
 					message: i18n.translate('build-a-successfully-added'),
@@ -97,8 +146,12 @@ const useBuildActions = ({isHeaderActions}: ActionsHookParameter = {}) => {
 			name: i18n.translate('select-build-a'),
 		},
 		{
-			action: ({id}) => {
-				setBuildB(id);
+			action: (build) => {
+				const buildId = build.id
+					? build.id
+					: (build.testrayBuildId as number);
+
+				setBuildB(buildId);
 
 				return Liferay.Util.openToast({
 					message: i18n.translate('build-b-successfully-added'),

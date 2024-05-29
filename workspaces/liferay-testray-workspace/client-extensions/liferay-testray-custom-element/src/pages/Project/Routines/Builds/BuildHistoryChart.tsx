@@ -45,37 +45,38 @@ const BuildHistoryChart: React.FC<BuildHistoryChartProps> = ({builds}) => (
 				columns: [
 					[
 						Statuses.PASSED,
-						...builds.map(({caseResultPassed = 0}) =>
-							Number(caseResultPassed)
+						...builds.map(
+							({testrayStatusMetric}) =>
+								testrayStatusMetric?.passed
 						),
 					],
 					[
 						Statuses.FAILED,
-						...builds.map(({caseResultFailed = 0}) =>
-							Number(caseResultFailed)
+						...builds.map(
+							({testrayStatusMetric}) =>
+								testrayStatusMetric?.failed
 						),
 					],
 					[
 						Statuses.BLOCKED,
-						...builds.map(({caseResultBlocked = 0}) =>
-							Number(caseResultBlocked)
+						...builds.map(
+							({testrayStatusMetric}) =>
+								testrayStatusMetric?.blocked
 						),
 					],
 					[
 						Statuses.TEST_FIX,
-						...builds.map(({caseResultTestFix = 0}) =>
-							Number(caseResultTestFix)
+						...builds.map(
+							({testrayStatusMetric}) =>
+								testrayStatusMetric?.testfix
 						),
 					],
 					[
 						Statuses.INCOMPLETE,
 						...builds.map(
-							({
-								caseResultInProgress = 0,
-								caseResultUntested = 0,
-							}) =>
-								Number(caseResultInProgress) +
-								Number(caseResultUntested)
+							({testrayStatusMetric}) =>
+								(testrayStatusMetric?.inProgress as number) +
+								(testrayStatusMetric?.untested as number)
 						),
 					],
 				],
@@ -102,7 +103,7 @@ const BuildHistoryChart: React.FC<BuildHistoryChartProps> = ({builds}) => (
 			padding={{bottom: 5, top: 30}}
 			tooltip={{
 				format: {
-					title: (index: number) => builds[index]?.name,
+					title: (index: number) => builds[index]?.testrayBuildName,
 				},
 			}}
 		/>

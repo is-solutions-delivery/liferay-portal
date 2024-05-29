@@ -161,7 +161,6 @@ const TestFlowTasks = () => {
 	return (
 		<>
 			{testrayTask.actions?.update && <TaskHeaderActions />}
-
 			<Container collapsable title={i18n.sub('task-x', 'details')}>
 				<div className="d-flex flex-wrap">
 					<div className="col-4 col-lg-4 col-md-12 p-0">
@@ -262,7 +261,6 @@ const TestFlowTasks = () => {
 					</div>
 				</div>
 			</Container>
-
 			<Container
 				className="mt-3"
 				collapsable
@@ -461,7 +459,6 @@ const TestFlowTasks = () => {
 					}}
 				</ListView>
 			</Container>
-
 			<SubtaskCompleteModal
 				modal={completeModal}
 				revalidateSubtask={revalidateSubtask}

@@ -135,7 +135,27 @@ export type TestrayBuild = {
 	tasks: TestrayTask[];
 	template: boolean;
 	templateTestrayBuildId: string;
-} & CaseResultAggregation;
+} & CaseResultAggregation &
+	Partial<TestrayBuildCustomAPI>;
+
+export type TestrayBuildCustomAPI = {
+	testrayBuildArchived: boolean;
+	testrayBuildId: number;
+	testrayBuildName: string;
+	testrayBuildPromoted: boolean;
+	testrayBuildTaskStatus: string;
+	testrayStatusMetric: TestrayStatusMetric;
+};
+
+export type TestrayStatusMetric = {
+	blocked: number;
+	failed: number;
+	inProgress: number;
+	passed: number;
+	testfix: number;
+	total: number;
+	untested: number;
+};
 
 export type TestrayCase = {
 	actions: ObjectActionsItems;
