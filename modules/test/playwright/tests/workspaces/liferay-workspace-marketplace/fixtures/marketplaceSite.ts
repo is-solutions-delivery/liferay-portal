@@ -24,6 +24,8 @@ export const marketplaceSiteFixture = test.extend<Marketplace>({
 				SITE_EXTERNAL_REFERENCE_CODE
 			);
 
+			console.log('Site 1', site);
+
 			if ((site as any).status === 'NOT_FOUND') {
 				site = await apiHelpers.headlessSite.createSite({
 					externalReferenceCode: SITE_EXTERNAL_REFERENCE_CODE,
@@ -32,6 +34,8 @@ export const marketplaceSiteFixture = test.extend<Marketplace>({
 						'com.liferay.site.initializer.liferay.marketplace',
 					templateType: 'site-initializer',
 				});
+
+				console.log('Site 2', site);
 			}
 
 			expect(site.name).toBe(SITE_NAME);

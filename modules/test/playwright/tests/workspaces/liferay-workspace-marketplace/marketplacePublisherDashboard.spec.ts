@@ -17,7 +17,7 @@ export const test = mergeTests(
 	marketplacePagesTest
 );
 
-test.describe('LPD-26707 Can Publish and Manage Solutions', () => {
+test.describe('Can Publish and Manage Solutions', () => {
 	test.beforeEach(
 		async ({apiHelpers, marketplace, publisherSolutionPage}) => {
 			const account = await apiHelpers.headlessAdminUser.postAccount({
