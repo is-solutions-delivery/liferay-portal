@@ -1676,12 +1676,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 			return;
 		}
 
-		BlogPostingResource.Builder builder =
+		BlogPostingResource.Builder blogPostingResourceBuilder =
 			_blogPostingResourceFactory.create();
 
-		BlogPostingResource blogPostingResource = builder.user(
-			serviceContext.fetchUser()
-		).build();
+		BlogPostingResource blogPostingResource =
+			blogPostingResourceBuilder.user(
+				serviceContext.fetchUser()
+			).build();
 
 		JSONArray jsonArray = _jsonFactory.createJSONArray(
 			_replace(json, stringUtilReplaceValues));
