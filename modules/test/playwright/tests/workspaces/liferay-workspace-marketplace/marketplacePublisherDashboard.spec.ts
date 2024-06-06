@@ -19,6 +19,7 @@ export const test = mergeTests(
 );
 
 const accountName = 'Supplier Account';
+const SOLUTION_PUBLISHER_ROLE = 'Solution Publisher';
 
 test.describe('Can Publish and Manage Solutions', () => {
 	test.beforeEach(
@@ -42,7 +43,7 @@ test.describe('Can Publish and Manage Solutions', () => {
 				await apiHelpers.headlessAdminUser.getAccountRoles(account.id);
 
 			const accountSupplierRole = rolesResponse?.items?.filter((role) => {
-				return role.name === 'Solution Publisher';
+				return role.name === SOLUTION_PUBLISHER_ROLE;
 			});
 
 			await apiHelpers.headlessAdminUser.assingUserToAccountRole(
