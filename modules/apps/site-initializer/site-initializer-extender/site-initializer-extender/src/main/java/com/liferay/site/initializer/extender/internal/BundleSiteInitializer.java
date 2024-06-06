@@ -1078,7 +1078,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		_addKeywords(
 			"ASSET_LIBRARY", "/site-initializer/keywords/asset-libraries",
 			serviceContext, stringUtilReplaceValues);
-
 		_addKeywords(
 			"SITE", "/site-initializer/keywords/group", serviceContext,
 			stringUtilReplaceValues);
@@ -1118,8 +1117,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 				if (group == null) {
 					_log.error(
-						"Unable to get a valid asset library with ID " +
-							jsonObject.getLong("assetLibraryId"));
+						"Unable to get asset library " +
+							jsonObject.getString("assetLibraryName"));
 
 					break;
 				}
