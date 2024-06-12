@@ -16,7 +16,7 @@ export function getTimeFromNow(date: string): string {
 	return dayjs(date).fromNow();
 }
 
-export function getTimeFromUtcFormat(date: string): string {
+export function getUtcFormat(date: string): string {
 	return dayjs(date).utc().format('lll');
 }
 
