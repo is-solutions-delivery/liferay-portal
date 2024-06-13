@@ -857,6 +857,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			if (group == null) {
 				String className = null;
 				long classPK = 0;
+				String externalReferenceCode = null;
 				int type = GroupConstants.TYPE_SITE_RESTRICTED;
 				String friendlyURL = null;
 				boolean site = true;
@@ -877,6 +878,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 					site = false;
 				}
 				else if (groupKey.equals(GroupConstants.GUEST)) {
+					externalReferenceCode = "GUEST";
 					friendlyURL = "/guest";
 				}
 				else if (groupKey.equals(GroupConstants.USER_PERSONAL_SITE)) {
@@ -888,12 +890,18 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 					site = false;
 				}
 
-				group = groupLocalService.addGroup(
-					guestUserId, GroupConstants.DEFAULT_PARENT_GROUP_ID,
-					className, classPK, GroupConstants.DEFAULT_LIVE_GROUP_ID,
-					getLocalizationMap(groupKey), null, type, true,
-					GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION, friendlyURL,
-					site, true, null);
+				try {
+					group = groupLocalService.addOrUpdateGroup(
+						externalReferenceCode, guestUserId,
+						GroupConstants.DEFAULT_PARENT_GROUP_ID, className,
+						classPK, GroupConstants.DEFAULT_LIVE_GROUP_ID,
+						getLocalizationMap(groupKey), null, type, true,
+						GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION,
+						friendlyURL, site, false, true, null);
+				}
+				catch (Exception exception) {
+					throw new PortalException(exception);
+				}
 
 				if (groupKey.equals(GroupConstants.USER_PERSONAL_SITE)) {
 					initUserPersonalSitePermissions(group);
