@@ -15,17 +15,14 @@ export function getTimeFromNow(date: string): string {
 }
 
 export function getUtcFormat(date: string): string {
-
-	if(date.includes('Z')) {
-
+	if (date.includes('Z')) {
 		const dateWithoutZ = date.replace('Z', '');
 
 		return dayjs(dateWithoutZ).format('lll');
-
-	} else {
+	}
+	else {
 		return dayjs(date).format('lll');
 	}
-	
 }
 
 export default dayjs;
