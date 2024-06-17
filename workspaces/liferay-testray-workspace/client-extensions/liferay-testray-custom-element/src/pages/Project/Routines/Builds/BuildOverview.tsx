@@ -41,7 +41,6 @@ const BuildOverview: React.FC<BuildOverviewProps> = ({testrayBuild}) => {
 
 	useEffect(() => {
 		setColumnChartLoad(false);
-
 		setTimeout(() => {
 			setColumnChartLoad(true);
 		}, 100);
