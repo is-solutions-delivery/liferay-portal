@@ -14,7 +14,7 @@ export function getTimeFromNow(date: string): string {
 	return dayjs(date).fromNow();
 }
 
-export function getformatUTCDate(date: string): string {
+export function formatUTCDate(date: string): string {
 	if (date.includes('Z')) {
 		return dayjs(date.replace('Z', '')).format('lll');
 	}
