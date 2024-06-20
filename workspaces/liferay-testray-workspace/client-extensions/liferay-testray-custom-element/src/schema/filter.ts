@@ -249,6 +249,14 @@ const filterSchema = {
 			overrides(baseFilters.team, {
 				isCustomFilter: true,
 				name: 'testrayTeamIds',
+				resource: ({buildId}) => {
+					const filter = `${SearchBuilder.eq(
+						'teamToComponents/componentToCaseResult/buildToCaseResult/id',
+						buildId as string
+					)}`;
+
+					return `/teams?fields=id,name&filter=${filter}&pageSize=-1&sort=name:asc`;
+				},
 				type: 'multiselect',
 			}),
 		] as RendererFields[],
@@ -264,11 +272,27 @@ const filterSchema = {
 			}),
 			overrides(baseFilters.caseType, {
 				isCustomFilter: true,
+				resource: ({buildId}) => {
+					const filter = `${SearchBuilder.eq(
+						'caseTypeToCases/caseToCaseResult/buildToCaseResult/id',
+						buildId as string
+					)}`;
+
+					return `/casetypes?fields=id,name&filter=${filter}&pageSize=-1&sort=name:asc`;
+				},
 				name: 'testrayCaseTypes',
 			}),
 			overrides(baseFilters.team, {
 				isCustomFilter: true,
 				name: 'testrayTeamIds',
+				resource: ({buildId}) => {
+					const filter = `${SearchBuilder.eq(
+						'teamToComponents/componentToCaseResult/buildToCaseResult/id',
+						buildId as string
+					)}`;
+
+					return `/teams?fields=id,name&filter=${filter}&pageSize=-1&sort=name:asc`;
+				},
 				type: 'multiselect',
 			}),
 			overrides(baseFilters.run, {
@@ -291,6 +315,14 @@ const filterSchema = {
 		fields: [
 			overrides(baseFilters.caseType, {
 				name: 'caseToCaseResult/r_caseTypeToCases_c_caseTypeId',
+				resource: ({buildId}) => {
+					const filter = `${SearchBuilder.eq(
+						'caseTypeToCases/caseToCaseResult/buildToCaseResult/id',
+						buildId as string
+					)}`;
+
+					return `/casetypes?fields=id,name&filter=${filter}&pageSize=-1&sort=name:asc`;
+				},
 				type: 'multiselect',
 			}),
 			overrides(baseFilters.priority, {
@@ -301,10 +333,26 @@ const filterSchema = {
 			overrides(baseFilters.team, {
 				name: 'componentToCaseResult/r_teamToComponents_c_teamId',
 				type: 'multiselect',
+				resource: ({buildId}) => {
+					const filter = `${SearchBuilder.eq(
+						'teamToComponents/componentToCaseResult/buildToCaseResult/id',
+						buildId as string
+					)}`;
+
+					return `/teams?fields=id,name&filter=${filter}&pageSize=-1&sort=name:asc`;
+				},
 			}),
 			overrides(baseFilters.component, {
 				name: 'componentToCaseResult/id',
 				type: 'multiselect',
+				resource: ({buildId}) => {
+					const filter = `${SearchBuilder.eq(
+						'componentToCaseResult/buildToCaseResult/id',
+						buildId as string
+					)}`;
+
+					return `/components?fields=id,name&filter=${filter}&pageSize=-1&sort=name:asc`;
+				},
 			}),
 			{
 				label: i18n.translate('environment'),
@@ -454,10 +502,25 @@ const filterSchema = {
 			overrides(baseFilters.caseType, {
 				isCustomFilter: true,
 				name: 'testrayCaseTypes',
+				resource: ({buildId}) => {
+					const filter = `${SearchBuilder.eq(
+						'caseTypeToCases/caseToCaseResult/buildToCaseResult/id',
+						buildId as string
+					)}`;
+
+					return `/casetypes?fields=id,name&filter=${filter}&pageSize=-1&sort=name:asc`;}
 			}),
 			overrides(baseFilters.team, {
 				isCustomFilter: true,
 				name: 'testrayTeamIds',
+				resource: ({buildId}) => {
+					const filter = `${SearchBuilder.eq(
+						'teamToComponents/componentToCaseResult/buildToCaseResult/id',
+						buildId as string
+					)}`;
+
+					return `/teams?fields=id,name&filter=${filter}&pageSize=-1&sort=name:asc`;
+				},
 				type: 'multiselect',
 			}),
 		] as RendererFields[],
@@ -473,10 +536,26 @@ const filterSchema = {
 			overrides(baseFilters.caseType, {
 				isCustomFilter: true,
 				name: 'testrayCaseTypes',
+				resource: ({buildId}) => {
+					const filter = `${SearchBuilder.eq(
+						'caseTypeToCases/caseToCaseResult/buildToCaseResult/id',
+						buildId as string
+					)}`;
+
+					return `/casetypes?fields=id,name&filter=${filter}&pageSize=-1&sort=name:asc`;
+				},
 			}),
 			overrides(baseFilters.team, {
 				isCustomFilter: true,
 				name: 'testrayTeamIds',
+				resource: ({buildId}) => {
+					const filter = `${SearchBuilder.eq(
+						'teamToComponents/componentToCaseResult/buildToCaseResult/id',
+						buildId as string
+					)}`;
+
+					return `/teams?fields=id,name&filter=${filter}&pageSize=-1&sort=name:asc`;
+				},
 				type: 'multiselect',
 			}),
 			overrides(baseFilters.run, {
