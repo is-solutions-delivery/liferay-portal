@@ -272,6 +272,7 @@ const filterSchema = {
 			}),
 			overrides(baseFilters.caseType, {
 				isCustomFilter: true,
+				name: 'testrayCaseTypes',
 				resource: ({buildId}) => {
 					const filter = `${SearchBuilder.eq(
 						'caseTypeToCases/caseToCaseResult/buildToCaseResult/id',
@@ -280,7 +281,6 @@ const filterSchema = {
 
 					return `/casetypes?fields=id,name&filter=${filter}&pageSize=-1&sort=name:asc`;
 				},
-				name: 'testrayCaseTypes',
 			}),
 			overrides(baseFilters.team, {
 				isCustomFilter: true,
@@ -332,7 +332,6 @@ const filterSchema = {
 			}),
 			overrides(baseFilters.team, {
 				name: 'componentToCaseResult/r_teamToComponents_c_teamId',
-				type: 'multiselect',
 				resource: ({buildId}) => {
 					const filter = `${SearchBuilder.eq(
 						'teamToComponents/componentToCaseResult/buildToCaseResult/id',
@@ -341,10 +340,10 @@ const filterSchema = {
 
 					return `/teams?fields=id,name&filter=${filter}&pageSize=-1&sort=name:asc`;
 				},
+				type: 'multiselect',
 			}),
 			overrides(baseFilters.component, {
 				name: 'componentToCaseResult/id',
-				type: 'multiselect',
 				resource: ({buildId}) => {
 					const filter = `${SearchBuilder.eq(
 						'componentToCaseResult/buildToCaseResult/id',
@@ -353,6 +352,7 @@ const filterSchema = {
 
 					return `/components?fields=id,name&filter=${filter}&pageSize=-1&sort=name:asc`;
 				},
+				type: 'multiselect',
 			}),
 			{
 				label: i18n.translate('environment'),
@@ -508,7 +508,8 @@ const filterSchema = {
 						buildId as string
 					)}`;
 
-					return `/casetypes?fields=id,name&filter=${filter}&pageSize=-1&sort=name:asc`;}
+					return `/casetypes?fields=id,name&filter=${filter}&pageSize=-1&sort=name:asc`;
+				},
 			}),
 			overrides(baseFilters.team, {
 				isCustomFilter: true,
