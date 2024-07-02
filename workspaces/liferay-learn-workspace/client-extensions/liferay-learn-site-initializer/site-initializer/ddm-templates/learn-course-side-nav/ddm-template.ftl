@@ -1,37 +1,27 @@
 <#assign
-	courseData = ""
 	groupPathFriendlyURLPublic = themeDisplay.getPathFriendlyURLPublic() + themeDisplay.getScopeGroup().getFriendlyURL()
 	navigationJSONObject = jsonFactoryUtil.createJSONObject(navigation.getData())
 
-	childrenJSONArray1 = navigationJSONObject.getJSONArray("children")
-	siblingsJSONArray = navigationJSONObject.getJSONArray("siblings")
+	courseData = navigationJSONObject.getJSONObject("course")
+	modulesJSONArray = navigationJSONObject.getJSONArray("modules")
 />
 
-<#list 0..siblingsJSONArray.length()-1 as i>
-	<#assign sibling = siblingsJSONArray.getJSONObject(i) />
-
-	<#if sibling.getString("title") == "${course.getData()}">
-		<#assign courseData = sibling />
-		<#break>
-	</#if>
-</#list>
-
-<div class="learn-article-nav">
-	<div class="learn-article-nav-content">
-		<#if childrenJSONArray1.length() gt 0>
+<div class="learn-course-side-nav">
+	<div class="learn-course-nav-content">
+		<#if modulesJSONArray.length() gt 0>
 			<ul class="m-0 p-2">
-				<li class="learn-article-nav-item ${(navigationJSONObject.getJSONObject("self").url == courseData.url)?then("selected", "")}">
+				<li class="learn-course-nav-item ${(navigationJSONObject.getJSONObject("self").url == courseData.url)?then("selected", "")}">
 					<a class="liferay-nav-item" href="${courseData.url}">
 						<span>Introduction</span>
 					</a>
 				</li>
 
-				<#list 0..childrenJSONArray1.length()-1 as i>
+				<#list 0..modulesJSONArray.length()-1 as i>
 					<div>
 						<#assign
-							child = childrenJSONArray1.getJSONObject(i)
+							module = modulesJSONArray.getJSONObject(i)
 
-							childrenJSONArray2 = child.getJSONArray("children")
+							lessons = module.getJSONArray("lessons")
 						/>
 
 						<div class="panel-group">
@@ -45,10 +35,10 @@
 									onclick="togglePanel(this)"
 								>
 									<span class="panel-title">
-										<li class="learn-article-nav-item">
+										<li class="learn-course-nav-item">
 											<div
-												class="liferay-nav-item ${(navigationJSONObject.getJSONObject("self").url == child.url)?then("selected", "")}"
-												href="${child.url}"
+												class="liferay-nav-item ${(navigationJSONObject.getJSONObject("self").url == module.url)?then("selected", "")}"
+												href="${module.url}"
 												style="display: flex; justify-content: space-between;"
 											>
 												<div class="nav-item-number-title">
@@ -56,33 +46,34 @@
 														<span class="course-module-number">${i+1}</span>
 													</div>
 
-													<span class="course-module-title">${child.getString("title")}</span>
+													<span class="course-module-title">${module.getString("title")}</span>
 												</div>
 											</div>
+
+											<span class="collapse-icon-closed">
+												<svg
+													class="lexicon-icon lexicon-icon-angle-right"
+													role="presentation"
+												>
+													<use xlink:href="/o/admin-theme/images/clay/icons.svg#angle-right"></use>
+												</svg>
+											</span>
+											<span class="collapse-icon-open">
+												<svg
+													class="lexicon-icon lexicon-icon-angle-down"
+													role="presentation"
+												>
+													<use xlink:href="/o/admin-theme/images/clay/icons.svg#angle-down"></use>
+												</svg>
+											</span>
 										</li>
-									</span>
-									<span class="collapse-icon-closed">
-										<svg
-											class="lexicon-icon lexicon-icon-angle-right"
-											role="presentation"
-										>
-											<use xlink:href="/o/admin-theme/images/clay/icons.svg#angle-right"></use>
-										</svg>
-									</span>
-									<span class="collapse-icon-open">
-										<svg
-											class="lexicon-icon lexicon-icon-angle-down"
-											role="presentation"
-										>
-											<use xlink:href="/o/admin-theme/images/clay/icons.svg#angle-down"></use>
-										</svg>
 									</span>
 								</button>
 
 								<div class="panel-collapse collapse" id="collapsePanel${i}">
 									<div class="panel-body">
-										<#assign lessons = childrenJSONArray2?eval_json />
-
+										<#assign lessons = lessons?eval_json />
+										
 										<#list lessons as lesson>
 											<div class="container-lesson"><div class="course-module-transparent" ></div><a href="${lesson.url}">${lesson.title}</a></div>
 										</#list>
