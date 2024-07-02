@@ -40,7 +40,7 @@
 												class="liferay-nav-item ${(navigationJSONObject.getJSONObject("self").url == module.url)?then("selected", "")}"
 												href="${module.url}"
 												style="display: flex; justify-content: space-between;"
-										>
+											>
 												<div class="nav-item-number-title">
 													<div>
 														<span class="course-module-number">${i+1}</span>
@@ -51,12 +51,12 @@
 											</div>
 
 											<span class="collapse-icon-closed">
-											<svg
-												class="lexicon-icon lexicon-icon-angle-right"
-												role="presentation"
-											>
-												<use xlink:href="/o/admin-theme/images/clay/icons.svg#angle-right"></use>
-											</svg>
+												<svg
+													class="lexicon-icon lexicon-icon-angle-right"
+													role="presentation"
+												>
+													<use xlink:href="/o/admin-theme/images/clay/icons.svg#angle-right"></use>
+												</svg>
 											</span>
 											<span class="collapse-icon-open">
 												<svg
@@ -73,7 +73,7 @@
 								<div class="panel-collapse collapse" id="collapsePanel${i}">
 									<div class="panel-body">
 										<#assign lessons = lessons?eval_json />
-
+										
 										<#list lessons as lesson>
 											<div class="container-lesson"><div class="course-module-transparent" ></div><a href="${lesson.url}">${lesson.title}</a></div>
 										</#list>
@@ -92,7 +92,7 @@
 	function togglePanel(button) {
 		const courseModuleNumber = button.querySelector('.course-module-number');
 		const liferayNavItem = button.querySelector('.liferay-nav-item');
-		
+
 		if (button.getAttribute('aria-expanded') === 'true') {
 			button.setAttribute('aria-expanded', 'false');
 			courseModuleNumber.classList.remove('highlighted');
