@@ -1,6 +1,7 @@
 <#assign
 	groupPathFriendlyURLPublic = themeDisplay.getPathFriendlyURLPublic() + themeDisplay.getScopeGroup().getFriendlyURL()
 	navigationJSONObject = jsonFactoryUtil.createJSONObject(navigation.getData())
+
 	courseData = navigationJSONObject.getJSONObject("course")
 	modulesJSONArray = navigationJSONObject.getJSONArray("modules")
 />
@@ -14,10 +15,12 @@
 						<span>Introduction</span>
 					</a>
 				</li>
+
 				<#list 0..modulesJSONArray.length()-1 as i>
 					<div>
 						<#assign
 							module = modulesJSONArray.getJSONObject(i)
+
 							lessons = module.getJSONArray("lessons")
 						/>
 
@@ -30,7 +33,7 @@
 									data-target= "#collapsePanel${i}"
 									data-toggle="liferay-collapse"
 									onclick="togglePanel(this)"
-							>
+								>
 									<span class="panel-title">
 										<li class="learn-course-nav-item">
 											<div
@@ -70,6 +73,7 @@
 								<div class="panel-collapse collapse" id="collapsePanel${i}">
 									<div class="panel-body">
 										<#assign lessons = lessons?eval_json />
+
 										<#list lessons as lesson>
 											<div class="container-lesson"><div class="course-module-transparent" ></div><a href="${lesson.url}">${lesson.title}</a></div>
 										</#list>
@@ -88,6 +92,7 @@
 	function togglePanel(button) {
 		const courseModuleNumber = button.querySelector('.course-module-number');
 		const liferayNavItem = button.querySelector('.liferay-nav-item');
+		
 		if (button.getAttribute('aria-expanded') === 'true') {
 			button.setAttribute('aria-expanded', 'false');
 			courseModuleNumber.classList.remove('highlighted');
