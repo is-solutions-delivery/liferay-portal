@@ -73,7 +73,6 @@
 								<div class="panel-collapse collapse" id="collapsePanel${i}">
 									<div class="panel-body">
 										<#assign lessons = lessons?eval_json />
-										
 										<#list lessons as lesson>
 											<div class="container-lesson"><div class="course-module-transparent" ></div><a href="${lesson.url}">${lesson.title}</a></div>
 										</#list>
