@@ -71,15 +71,14 @@ public class TestrayManagerImpl implements TestrayManager {
 			long companyId, OffsetDateTime offsetDateTime, long testrayCaseId)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(12);
+		StringBundler sb = new StringBundler(11);
 
 		sb.append("select cr.r_caseToCaseResult_c_caseId, sum(case when ");
 		sb.append("cr.previousStatus != cr.dueStatus_ and cr.previousStatus ");
 		sb.append("is not null then 1 end) as totalChanges, count(");
 		sb.append("c_caseResultId_) as totalCases from (select ");
 		sb.append("c_caseResultId_, r_caseToCaseResult_c_caseId, dueStatus_, ");
-		sb.append("lag(dueStatus_) over (partition by ");
-		sb.append("r_caseToCaseResult_c_caseId order by c_caseResultId_) ");
+		sb.append("lag(dueStatus_) over (order by c_caseResultId_) ");
 		sb.append("previousStatus from lportal.O_[%COMPANY_ID%]_CaseResult ");
 		sb.append("where r_caseToCaseResult_c_caseId = ? and (dueStatus_ = ");
 		sb.append("'passed' or dueStatus_ ='failed') and startDate_ is not ");
