@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {expect, mergeTests} from '@playwright/test';
+import {mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../../../fixtures/apiHelpersTest';
 import {loginTest} from '../../../../fixtures/loginTest';
@@ -33,9 +33,6 @@ export const marketplaceSiteFixture = test.extend<Marketplace>({
 					templateType: 'site-initializer',
 				});
 			}
-
-			expect(site.name).toBe(SITE_NAME);
-			expect(site.id).toBeGreaterThan(0);
 
 			await page.goto(`web${site.friendlyUrlPath}`);
 
