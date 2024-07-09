@@ -1,30 +1,107 @@
 <#assign
 	navigationJSONObject = jsonFactoryUtil.createJSONObject(navigation.getData())
-	nextLesson =
+
+	courseJSONObject = navigationJSONObject.getJSONObject("course")
+	modulesJSONArray = navigationJSONObject.getJSONArray("modules")
+
+	lastModuleLessonsJSONObject = modulesJSONArray.getJSONObject(modulesJSONArray.length() - 1).lessons
+
+	lastCourseLessonJSONObject = lastModuleLessonsJSONObject.getJSONObject(modulesJSONArray.length() - 1)
+	previousLesson =
 		{
 			"title": "",
 			"url": ""
 		}
-
-	childrenJSONArray = navigationJSONObject.getJSONArray("children")
-	parentJSONObject = navigationJSONObject.getJSONObject("parent")
-	siblingsJSONArray = navigationJSONObject.getJSONArray("siblings")
+	selfJSONObject = navigationJSONObject.getJSONObject("self")
 />
 
-<#if childrenJSONArray.length() gt 0>
-	<#assign nextLesson = childrenJSONArray.getJSONObject(0) />
+<#if modulesJSONArray.getJSONObject(0).url == selfJSONObject.url>
+	<#assign
+		previousLesson =
+			{
+				"title": "Introduction",
+				"url": selfJSONObject.url + "/introduction"
+			}
+		nextLesson =
+			{
+		"title": modulesJSONArray.getJSONObject(0).lessons.getJSONObject(0).title,
+				"url": modulesJSONArray.getJSONObject(0).lessons.getJSONObject(0).url
+			}
+	/>
+</#if>
+<#if lastCourseLessonJSONObject.url == selfJSONObject.url>
+	<#assign nextLesson =
+		{
+			"title": "Finish the course",
+			"url": selfJSONObject.url + "/congratulations"
+		}
+	/>
 </#if>
 
-<#if siblingsJSONArray.length() gt 0>
-	<#list 0..siblingsJSONArray.length()-1 as i>
-		<#if .vars["reserved-article-title"].data == siblingsJSONArray.getJSONObject(i).title>
-			<#assign previousLesson = siblingsJSONArray.getJSONObject(i-1) />
-			<#if !nextLesson.title?has_content>
-				<#assign nextLesson = siblingsJSONArray.getJSONObject(i+1) />
-			</#if>
+<#list 0..modulesJSONArray.length()-1 as i>
+	<#if modulesJSONArray.getJSONObject(i).url == selfJSONObject.url>
+		<#if !previousLesson?has_content>
+			<#assign
+				previousModuleLessonsJSONObject = modulesJSONArray.getJSONObject(i-1).lessons
+				previousLesson =
+					{
+						"title": previousModuleLessonsJSONObject.getJSONObject(previousModuleLessonsJSONObject.length() -1).title,
+						"url": previousModuleLessonsJSONObject.getJSONObject(previousModuleLessonsJSONObject.length() -1).url
+					}
+			/>
 		</#if>
-	</#list>
-</#if>
+		<#assign
+			nextLesson =
+				{
+					"title": modulesJSONArray.getJSONObject(i).lessons.getJSONObject(0).title,
+					"url": modulesJSONArray.getJSONObject(i).lessons.getJSONObject(0).url
+				}
+		/>
+	<#else>
+		<#assign currentModuleLessonsJSONArray = modulesJSONArray.getJSONObject(i).getJSONArray("lessons") />
+
+		<#list 0..currentModuleLessonsJSONArray.length()-1 as j>
+			<#if currentModuleLessonsJSONArray.getJSONObject(j).url == selfJSONObject.url>
+				<#if j == 0>
+					<#assign previousLesson =
+						{
+							"title": modulesJSONArray.getJSONObject(i).title,
+							"url": modulesJSONArray.getJSONObject(i).url
+						}
+					/>
+				<#elseif previousLesson?has_content>
+					<#assign
+						previousLesson =
+							{
+								"title": currentModuleLessonsJSONArray.getJSONObject(j-1).title,
+								"url": currentModuleLessonsJSONArray.getJSONObject(j-1).url
+							}
+					/>
+				</#if>
+
+				<#if !nextLesson?has_content>
+					<#if j == currentModuleLessonsJSONArray.length()-1>
+						<#assign
+							nextLesson =
+								{
+									"title": modulesJSONArray.getJSONObject(i+1).title,
+									"url": modulesJSONArray.getJSONObject(i+1).url
+								}
+						/>
+					<#else>
+						<#assign
+							nextLesson =
+								{
+									"title": currentModuleLessonsJSONArray.getJSONObject(j+1).title,
+									"url": currentModuleLessonsJSONArray.getJSONObject(j+1).url
+								}
+						/>
+					</#if>
+				</#if>
+			</#if>
+		</#list>
+	</#if>
+</#list>
 
 <a href=${nextLesson.url}>
 	<div class="course-nav-bottom__banner d-flex">
