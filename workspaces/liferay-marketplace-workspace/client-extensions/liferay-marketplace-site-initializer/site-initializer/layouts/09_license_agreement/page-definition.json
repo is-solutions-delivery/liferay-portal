@@ -1,0 +1,46 @@
+{
+	"pageElement": {
+		"pageElements": [
+			{
+				"definition": {
+					"fragmentStyle": {
+						"borderWidth": "0",
+						"marginBottom": "6",
+						"marginTop": "9"
+					},
+					"indexed": true,
+					"layout": {
+						"contentDisplay": "FlexRow",
+						"justify": "Center",
+						"marginBottom": 6,
+						"widthType": "Fixed"
+					}
+				},
+				"pageElements": [
+					{
+						"definition": {
+							"fragmentStyle": {
+								"width": "1000px"
+							},
+							"widgetInstance": {
+								"widgetConfig": {
+									"properties": "path=license-agreement"
+								},
+								"widgetName": "com_liferay_client_extension_web_internal_portlet_ClientExtensionEntryPortlet_[$COMPANY_ID$]_LXC_liferay_marketplace_custom_element"
+							}
+						},
+						"type": "Widget"
+					}
+				],
+				"type": "Section"
+			}
+		],
+		"type": "Root"
+	},
+	"settings": {
+		"masterPage": {
+			"key": "marketplace-master-private"
+		}
+	},
+	"version": 1.1
+}

@@ -1,0 +1,48 @@
+[
+	{
+		"accountBriefs": [
+			{
+				"externalReferenceCode": "MKT-ACCOUNT-1",
+				"roleBriefs": [
+					"App Editor"
+				]
+			}
+		],
+		"alternateName": "pae",
+		"emailAddress": "pae@editor.com",
+		"familyName": "Editor",
+		"givenName": "Publisher App",
+		"name": "Publisher App Editor (PAE)"
+	},
+	{
+		"accountBriefs": [
+			{
+				"externalReferenceCode": "MKT-ACCOUNT-1",
+				"roleBriefs": [
+					"Account Administrator"
+				]
+			}
+		],
+		"alternateName": "da",
+		"emailAddress": "dashboard@adm.com",
+		"familyName": "ADM",
+		"givenName": "Dashboard",
+		"jobTitle": "Owner",
+		"name": "Dashboard Administrator (DA)"
+	},
+	{
+		"accountBriefs": [
+			{
+				"externalReferenceCode": "MKT-ACCOUNT-1",
+				"roleBriefs": [
+					"Account Buyer"
+				]
+			}
+		],
+		"alternateName": "cab",
+		"emailAddress": "cab@buyer.com",
+		"familyName": "Buyer",
+		"givenName": "Customer Account",
+		"name": "Customer Account Buyer (CAB)"
+	}
+]

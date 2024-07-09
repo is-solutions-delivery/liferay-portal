@@ -1,0 +1,27 @@
+{
+	"description": "",
+	"fragmentCompositionDefinitionPath": "page-definition.json",
+	"friendlyURL": "/customer-dashboard",
+	"hidden": false,
+	"name": "Customer",
+	"name_i18n": {
+		"en_US": "Customer"
+	},
+	"permissions": [
+		{
+			"actionIds": [
+			],
+			"roleName": "Guest",
+			"scope": 4
+		},
+		{
+			"actionIds": [
+				"VIEW"
+			],
+			"roleName": "User",
+			"scope": 4
+		}
+	],
+	"system": false,
+	"type": "content"
+}

@@ -1,0 +1,27 @@
+{
+	"description": "",
+	"fragmentCompositionDefinitionPath": "page-definition.json",
+	"friendlyURL": "/get-app",
+	"hidden": true,
+	"name": "Get App",
+	"name_i18n": {
+		"en_US": "Get App"
+	},
+	"permissions": [
+		{
+			"actionIds": [
+			],
+			"roleName": "Guest",
+			"scope": 4
+		},
+		{
+			"actionIds": [
+				"VIEW"
+			],
+			"roleName": "User",
+			"scope": 4
+		}
+	],
+	"system": false,
+	"type": "content"
+}

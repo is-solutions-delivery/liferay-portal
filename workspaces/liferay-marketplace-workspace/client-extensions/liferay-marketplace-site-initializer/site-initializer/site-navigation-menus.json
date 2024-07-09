@@ -1,0 +1,59 @@
+[
+	{
+		"addNewPages": "Yes",
+		"menuItems": [
+			{
+				"friendlyURL": "/home",
+				"privateLayout": false,
+				"type": "layout"
+			},
+			{
+				"friendlyURL": "/customer-dashboard",
+				"privateLayout": false,
+				"type": "layout"
+			},
+			{
+				"friendlyURL": "/publisher-dashboard",
+				"privateLayout": false,
+				"type": "layout"
+			},
+			{
+				"friendlyURL": "/administrator-dashboard",
+				"privateLayout": false,
+				"type": "layout"
+			}
+		],
+		"name": "Primary Navigation"
+	},
+	{
+		"addNewPages": "Yes",
+		"menuItems": [
+			{
+				"friendlyURL": "/home",
+				"privateLayout": false,
+				"type": "layout"
+			},
+			{
+				"friendlyURL": "/solutions-marketplace",
+				"privateLayout": false,
+				"type": "layout"
+			},
+			{
+				"friendlyURL": "/customer-dashboard",
+				"privateLayout": false,
+				"type": "layout"
+			},
+			{
+				"friendlyURL": "/publisher-dashboard",
+				"privateLayout": false,
+				"type": "layout"
+			},
+			{
+				"friendlyURL": "/administrator-dashboard",
+				"privateLayout": false,
+				"type": "layout"
+			}
+		],
+		"name": "Mobile Menu"
+	}
+]
