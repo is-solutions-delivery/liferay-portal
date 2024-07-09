@@ -61,17 +61,4 @@ export class HeadlessCommerceAdminChannelApiHelper {
 
 		return channel;
 	}
-
-	async putChannel(channel: TChannel, channelId: number): Promise<TChannel> {
-		return this.apiHelpers.put(
-			`${this.apiHelpers.baseUrl}${this.basePath}/channels/${channelId}`,
-			{
-				data: {
-					currencyCode: 'USD',
-					type: 'site',
-					...channel,
-				},
-			}
-		);
-	}
 }
