@@ -7,7 +7,6 @@ import {mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../../../fixtures/apiHelpersTest';
 import {loginTest} from '../../../../fixtures/loginTest';
-import {getRandomInt} from '../../../../utils/getRandomInt';
 
 export const test = mergeTests(apiHelpersTest, loginTest({screenName: 'test'}));
 
@@ -15,8 +14,8 @@ export interface Marketplace {
 	marketplace: Site;
 }
 
-const SITE_EXTERNAL_REFERENCE_CODE = 'marketplace-site-initializer';
-const SITE_NAME = `Marketplace${getRandomInt()}`;
+const SITE_EXTERNAL_REFERENCE_CODE = 'LIFERAY_MARKETPLACE';
+const SITE_NAME = 'Marketplace';
 
 export const marketplaceSiteFixture = test.extend<Marketplace>({
 	marketplace: [

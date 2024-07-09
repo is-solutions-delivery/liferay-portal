@@ -11,7 +11,11 @@ import {getTempDir} from '../../../../utils/temp';
 import {marketplaceHelper} from '../fixtures/marketplaceHelper';
 import {marketplacePagesTest} from '../fixtures/marketplacePages';
 import {marketplaceSiteFixture} from '../fixtures/marketplaceSite';
-import {ORDER_ITEMS, PRODUCT_WORKFLOW_STATUS_CODE} from '../utils/constants';
+import {
+	MARKETPLACE_CHANNEL,
+	ORDER_ITEMS,
+	PRODUCT_WORKFLOW_STATUS_CODE,
+} from '../utils/constants';
 
 export const test = mergeTests(
 	marketplacePagesTest,
@@ -22,7 +26,6 @@ export const test = mergeTests(
 test.describe('Can Purchase and Manage Apps', () => {
 	let _account;
 	let _catalog;
-	let _channel;
 	let _product;
 	let _order;
 	const accountName = `Customer Account${getRandomInt()}`;
@@ -31,10 +34,8 @@ test.describe('Can Purchase and Manage Apps', () => {
 	test.beforeEach(async ({apiHelpers, marketplace, marketplaceHelper}) => {
 		const channel =
 			await apiHelpers.headlessCommerceAdminChannel.getChannelsPage(
-				`name eq ${marketplace.name}`
+				`name eq ${MARKETPLACE_CHANNEL}`
 			);
-
-		_channel = channel;
 
 		const {account, catalog} =
 			await marketplaceHelper.createAccountUserCatalog({
@@ -100,7 +101,7 @@ test.describe('Can Purchase and Manage Apps', () => {
 		const {order, product} = await marketplaceHelper.createTestProductOrder(
 			{
 				accountId: account.id,
-				channelId: channel.id,
+				channelId: channel.items[0].id,
 				orderItems: ORDER_ITEMS,
 				productBody,
 			}

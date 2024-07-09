@@ -144,6 +144,8 @@ export const solutions: {
 	},
 };
 
+export const MARKETPLACE_CHANNEL = 'Marketplace Channel';
+
 export const SOLUTION_PUBLISHER_ROLE = 'Solution Publisher';
 
 export enum PAYMENT_STATUS {
