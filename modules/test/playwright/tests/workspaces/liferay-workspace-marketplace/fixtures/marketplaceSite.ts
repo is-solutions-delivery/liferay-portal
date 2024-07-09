@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {mergeTests} from '@playwright/test';
+import {expect, mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../../../fixtures/apiHelpersTest';
 import {loginTest} from '../../../../fixtures/loginTest';
@@ -20,19 +20,12 @@ const SITE_NAME = 'Marketplace';
 export const marketplaceSiteFixture = test.extend<Marketplace>({
 	marketplace: [
 		async ({apiHelpers, page}, use) => {
-			let site = await apiHelpers.headlessSite.getSiteByERC(
+			const site = await apiHelpers.headlessSite.getSiteByERC(
 				SITE_EXTERNAL_REFERENCE_CODE
 			);
 
-			if ((site as any).status === 'NOT_FOUND') {
-				site = await apiHelpers.headlessSite.createSite({
-					externalReferenceCode: SITE_EXTERNAL_REFERENCE_CODE,
-					name: SITE_NAME,
-					templateKey:
-						'com.liferay.site.initializer.liferay.marketplace',
-					templateType: 'site-initializer',
-				});
-			}
+			expect(site.name).toBe(SITE_NAME);
+			expect(site.id).toBeGreaterThan(0);
 
 			await page.goto(`web${site.friendlyUrlPath}`);
 
