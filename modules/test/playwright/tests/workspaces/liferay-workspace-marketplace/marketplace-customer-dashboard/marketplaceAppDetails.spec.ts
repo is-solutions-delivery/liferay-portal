@@ -10,11 +10,7 @@ import {getRandomInt} from '../../../../utils/getRandomInt';
 import {marketplaceHelper} from '../fixtures/marketplaceHelper';
 import {marketplacePagesTest} from '../fixtures/marketplacePages';
 import {marketplaceSiteFixture} from '../fixtures/marketplaceSite';
-import {
-	MARKETPLACE_CHANNEL,
-	ORDER_ITEMS,
-	PRODUCT_WORKFLOW_STATUS_CODE,
-} from '../utils/constants';
+import {ORDER_ITEMS, PRODUCT_WORKFLOW_STATUS_CODE} from '../utils/constants';
 
 export const test = mergeTests(
 	marketplaceSiteFixture,
@@ -30,11 +26,30 @@ test.describe('Custumers Can View Marketplace App Details', () => {
 	const accountName = `Customer Account${getRandomInt()}`;
 	const productName = `Product${getRandomInt()}`;
 
-	test.beforeEach(async ({apiHelpers, marketplaceHelper}) => {
+	test.beforeEach(async ({apiHelpers, marketplace, marketplaceHelper}) => {
 		const channel =
 			await apiHelpers.headlessCommerceAdminChannel.getChannelsPage(
-				`name eq ${MARKETPLACE_CHANNEL}`
+				`name eq 'Marketplace Channel'`
 			);
+
+		const channelId = channel.items[0].id;
+
+		const channelData = {
+			name: marketplace.name,
+			siteGroupId: marketplace.id,
+		};
+
+		await apiHelpers.headlessCommerceAdminChannel.putChannel(
+			channelData,
+			channelId
+		);
+
+		const newChannel =
+			await apiHelpers.headlessCommerceAdminChannel.getChannelsPage(
+				`name eq ${marketplace.name}`
+			);
+
+		console.log('newChannel', newChannel);
 
 		const {account, catalog} =
 			await marketplaceHelper.createAccountUserCatalog({
@@ -43,6 +58,7 @@ test.describe('Custumers Can View Marketplace App Details', () => {
 			});
 
 		_account = account;
+
 		_catalog = catalog;
 
 		await marketplaceHelper.assignUserToAccountRole({
@@ -58,10 +74,10 @@ test.describe('Custumers Can View Marketplace App Details', () => {
 			},
 			productChannels: [
 				{
-					channelId: channel.items[0].id,
+					channelId: newChannel.items[0].id,
 					currencyCode: 'USD',
-					id: channel.items[0].id,
-					name: MARKETPLACE_CHANNEL,
+					id: newChannel.items[0].id,
+					name: marketplace.name,
 					type: 'site',
 				},
 			],
@@ -86,7 +102,7 @@ test.describe('Custumers Can View Marketplace App Details', () => {
 		const {order, product} = await marketplaceHelper.createTestProductOrder(
 			{
 				accountId: account.id,
-
+				channelId: newChannel.items[0].id,
 				orderItems: ORDER_ITEMS,
 				productBody,
 			}

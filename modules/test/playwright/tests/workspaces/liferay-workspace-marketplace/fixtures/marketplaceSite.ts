@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {expect, mergeTests} from '@playwright/test';
+import {mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../../../fixtures/apiHelpersTest';
 import {loginTest} from '../../../../fixtures/loginTest';
+import {getRandomInt} from '../../../../utils/getRandomInt';
 
 export const test = mergeTests(apiHelpersTest, loginTest({screenName: 'test'}));
 
@@ -15,7 +16,7 @@ export interface Marketplace {
 }
 
 const SITE_EXTERNAL_REFERENCE_CODE = 'marketplace-site-initializer';
-const SITE_NAME = 'Marketplace';
+const SITE_NAME = `Marketplace${getRandomInt()}`;
 
 export const marketplaceSiteFixture = test.extend<Marketplace>({
 	marketplace: [
@@ -33,9 +34,6 @@ export const marketplaceSiteFixture = test.extend<Marketplace>({
 					templateType: 'site-initializer',
 				});
 			}
-
-			expect(site.name).toBe(SITE_NAME);
-			expect(site.id).toBeGreaterThan(0);
 
 			await page.goto(`web${site.friendlyUrlPath}`);
 

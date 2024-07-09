@@ -11,7 +11,6 @@ import {marketplaceHelper} from '../fixtures/marketplaceHelper';
 import {marketplacePagesTest} from '../fixtures/marketplacePages';
 import {marketplaceSiteFixture} from '../fixtures/marketplaceSite';
 import {
-	MARKETPLACE_CHANNEL,
 	ORDER_ITEMS,
 	PRODUCT_WORKFLOW_STATUS_CODE,
 	SOLUTION_PUBLISHER_ROLE,
@@ -34,7 +33,7 @@ test.describe('Publishers Can View Marketplace Solution Details', () => {
 	test.beforeEach(async ({apiHelpers, marketplace, marketplaceHelper}) => {
 		const channel =
 			await apiHelpers.headlessCommerceAdminChannel.getChannelsPage(
-				`name eq ${MARKETPLACE_CHANNEL}`
+				`name eq ${marketplace.name}`
 			);
 
 		const {account, catalog} =
@@ -75,7 +74,7 @@ test.describe('Publishers Can View Marketplace Solution Details', () => {
 					channelId: channel.items[0].id,
 					currencyCode: 'USD',
 					id: channel.items[0].id,
-					name: MARKETPLACE_CHANNEL,
+					name: marketplace.name,
 					type: 'site',
 				},
 			],
@@ -87,7 +86,7 @@ test.describe('Publishers Can View Marketplace Solution Details', () => {
 		const {order, product} = await marketplaceHelper.createTestProductOrder(
 			{
 				accountId: account.id,
-
+				channelId: channel.items[0].id,
 				orderItems: ORDER_ITEMS,
 				productBody,
 			}

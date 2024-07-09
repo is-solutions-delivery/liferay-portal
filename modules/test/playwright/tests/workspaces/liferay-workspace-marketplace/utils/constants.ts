@@ -9,8 +9,6 @@ import {PublishSolution} from '../types';
 
 const dependenciesFolder = path.join(__dirname, '..', 'dependencies');
 
-export const MARKETPLACE_CHANNEL = 'Marketplace Channel';
-
 export const ORDER_ITEMS = {
 	DECIMAL_QUANTITY: 1,
 	QUANTITY: 1,
