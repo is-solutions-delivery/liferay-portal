@@ -11,7 +11,7 @@
 		<#if modulesJSONArray.length() gt 0>
 			<ul class="m-0 p-2">
 				<li class="learn-course-nav-item ${(navigationJSONObject.getJSONObject("self").url == courseJSONObject.url)?then("selected", "")}">
-					<a class="liferay-nav-item" href="${courseJSONObject.url}">
+					<a class="liferay-nav-item" href="${courseJSONObject.url}/introduction">
 						<span>Introduction</span>
 					</a>
 				</li>
