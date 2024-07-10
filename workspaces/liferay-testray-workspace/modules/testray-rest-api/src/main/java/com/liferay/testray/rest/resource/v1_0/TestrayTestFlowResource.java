@@ -12,6 +12,9 @@ import com.liferay.portal.odata.sort.SortParserProvider;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.batch.engine.resource.VulcanBatchEngineExportTaskResource;
 import com.liferay.portal.vulcan.batch.engine.resource.VulcanBatchEngineImportTaskResource;
+import com.liferay.portal.vulcan.pagination.Page;
+import com.liferay.portal.vulcan.pagination.Pagination;
+import com.liferay.testray.rest.dto.v1_0.TestraySubtask;
 import com.liferay.testray.rest.dto.v1_0.TestrayTestFlow;
 
 import java.util.Collections;
@@ -50,6 +53,12 @@ public interface TestrayTestFlowResource {
 
 	public Response postTestrayTestFlowBatch(
 			Long testrayTaskId, String callbackURL, Object object)
+		throws Exception;
+
+	public Page<TestraySubtask> getTestrayTestFlowTestraySubtaskPage(
+			Long testrayTaskId, String error, String issues, String name,
+			Boolean noIssues, String status, String testrayComponentIds,
+			String testrayTeamIds, String userId, Pagination pagination)
 		throws Exception;
 
 	public default void setContextAcceptLanguage(
