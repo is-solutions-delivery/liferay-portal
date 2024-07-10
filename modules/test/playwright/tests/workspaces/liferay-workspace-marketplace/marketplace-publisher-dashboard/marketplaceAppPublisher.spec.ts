@@ -80,6 +80,13 @@ test.describe('Can Publish Marketplace Apps', () => {
 				accountName,
 				appName: 'New App',
 			});
+
+			await expect(publisherAppPage.continueButton).toBeDisabled();
+
+			await publisherAppPage.donwloadAgreementButton.click();
+
+			await expect(publisherAppPage.continueButton).toBeEnabled();
+
 			await publisherAppPage.continue();
 			await publisherAppPage.fillProfile();
 			await publisherAppPage.fillBuild();

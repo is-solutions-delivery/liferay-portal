@@ -23,6 +23,7 @@ export class PublisherSolutionPage {
 	readonly customizeSolutionHeader: Locator;
 	readonly defineSolution: Locator;
 	readonly descriptionInput: Locator;
+	readonly donwloadAgreementButton: Locator;
 	readonly emailInput: Locator;
 	readonly headerTitle: Locator;
 	readonly newSolutionButton: Locator;
@@ -77,6 +78,9 @@ export class PublisherSolutionPage {
 		this.descriptionInput = page.getByPlaceholder(
 			'Enter solution description'
 		);
+		this.donwloadAgreementButton = page.getByRole('button', {
+			name: 'Download',
+		});
 		this.emailInput = page.getByPlaceholder('name@yourdomain.com');
 		this.headerTitle = page.getByPlaceholder('Enter title header');
 		this.newSolutionButton = page.getByRole('button', {

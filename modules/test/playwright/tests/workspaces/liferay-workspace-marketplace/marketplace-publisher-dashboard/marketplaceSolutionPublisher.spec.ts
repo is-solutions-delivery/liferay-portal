@@ -77,6 +77,13 @@ test.describe('Can Publish and Manage Solutions', () => {
 			);
 
 			await publisherSolutionPage.goToNewSolution();
+
+			await expect(publisherSolutionPage.continueButton).toBeDisabled();
+
+			await publisherSolutionPage.donwloadAgreementButton.click();
+
+			await expect(publisherSolutionPage.continueButton).toBeEnabled();
+
 			await publisherSolutionPage.goToDefineSolutionProfile();
 			await publisherSolutionPage.fillDefineSolutionProfile(
 				solution.profile

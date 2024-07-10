@@ -15,6 +15,7 @@ export class PublisherAppPage {
 	readonly cloudCompatibleRadio: Locator;
 	readonly confirmButton: Locator;
 	readonly continueButton: Locator;
+	readonly donwloadAgreementButton: Locator;
 	readonly form: {
 		build: {
 			cpu: Locator;
@@ -54,6 +55,9 @@ export class PublisherAppPage {
 
 		this.confirmButton = page.getByRole('button', {name: 'Confirm'});
 		this.continueButton = page.getByRole('button', {name: 'Continue'});
+		this.donwloadAgreementButton = page.getByRole('button', {
+			name: 'Download',
+		});
 		this.form = {
 			build: {
 				cpu: page.getByPlaceholder('Enter the number of CPUs'),
