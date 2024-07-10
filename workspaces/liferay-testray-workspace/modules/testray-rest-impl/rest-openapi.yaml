@@ -219,6 +219,40 @@ components:
                     format: int64
                     type: integer
             type: object
+        TestraySubtask:
+            properties:
+                actions:
+                    additionalProperties:
+                        additionalProperties:
+                            type: string
+                        type: object
+                    readOnly: true
+                    type: object
+                error:
+                    type: string
+                id:
+                    format: int64
+                    type: integer
+                issues:
+                    type: string
+                name:
+                    type: string
+                score:
+                    format: int64
+                    type: integer
+                status:
+                    type: string
+                tests:
+                    format: int64
+                    type: integer
+                userId:
+                    format: int64
+                    type: integer
+                userImgUrl:
+                    type: string
+                userName:
+                    type: string
+            type: object
         TestrayTeamMetric:
             properties:
                 testrayStatusMetric:
@@ -1009,4 +1043,68 @@ paths:
                         application/xml:
                             schema:
                                 $ref: "#/components/schemas/TestrayTestFlow"
+            tags: ["TestrayTestFlow"]
+    "/testray-testflow/{testrayTaskId}/testray-subtask":
+        get:
+            operationId: getTestrayTestFlowTestraySubtaskPage
+            parameters:
+                - in: path
+                  name: testrayTaskId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: error
+                  schema:
+                      type: string
+                - in: query
+                  name: issues
+                  schema:
+                      type: string
+                - in: query
+                  name: name
+                  schema:
+                      type: string
+                - in: query
+                  name: noIssues
+                  schema:
+                      type: boolean
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: status
+                  schema:
+                      type: string
+                - in: query
+                  name: testrayComponentIds
+                  schema:
+                      type: string
+                - in: query
+                  name: testrayTeamIds
+                  schema:
+                      type: string
+                - in: query
+                  name: userId
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/TestraySubtask"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/TestraySubtask"
+                                type: array
             tags: ["TestrayTestFlow"]
