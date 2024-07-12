@@ -103,7 +103,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayCaseResultsTestrayBuild(comment: ___, error: ___, flaky: ___, issues: ___, noComment: ___, noError: ___, noIssues: ___, page: ___, pageSize: ___, priority: ___, status: ___, testrayBuildId: ___, testrayCaseName: ___, testrayCaseTypeIds: ___, testrayComponentIds: ___, testrayRunId: ___, testrayRunName: ___, testrayTeamIds: ___, userId: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayCaseResultsTestrayBuild(comment: ___, error: ___, flaky: ___, issues: ___, noComment: ___, noError: ___, noIssues: ___, page: ___, pageSize: ___, priority: ___, status: ___, testrayBuildId: ___, testrayCaseName: ___, testrayCaseTypeIds: ___, testrayComponentIds: ___, testrayRunId: ___, testrayRunName: ___, testraySubtaskId: ___, testrayTeamIds: ___, userId: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public TestrayCaseResultPage testrayCaseResultsTestrayBuild(
@@ -122,6 +122,7 @@ public class Query {
 			@GraphQLName("testrayComponentIds") String testrayComponentIds,
 			@GraphQLName("testrayRunId") String testrayRunId,
 			@GraphQLName("testrayRunName") String testrayRunName,
+			@GraphQLName("testraySubtaskId") String testraySubtaskId,
 			@GraphQLName("testrayTeamIds") String testrayTeamIds,
 			@GraphQLName("userId") String userId,
 			@GraphQLName("pageSize") int pageSize,
@@ -136,7 +137,7 @@ public class Query {
 					testrayBuildId, comment, error, flaky, issues, noComment,
 					noError, noIssues, priority, status, testrayCaseName,
 					testrayCaseTypeIds, testrayComponentIds, testrayRunId,
-					testrayRunName, testrayTeamIds, userId,
+					testrayRunName, testraySubtaskId, testrayTeamIds, userId,
 					Pagination.of(page, pageSize))));
 	}
 
