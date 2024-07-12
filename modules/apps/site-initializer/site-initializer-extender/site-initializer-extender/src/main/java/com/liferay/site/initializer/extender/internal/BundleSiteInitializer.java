@@ -709,7 +709,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 
 		JSONArray assetListJSONArray = _jsonFactory.createJSONArray(
-			_replace(json, stringUtilReplaceValues));
+			SiteInitializerUtil.replace(json, stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues));
 
 		for (int i = 0; i < assetListJSONArray.length(); i++) {
 			JSONObject assetListJSONObject = assetListJSONArray.getJSONObject(
@@ -761,7 +761,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 
 		JSONArray jsonArray = _jsonFactory.createJSONArray(
-			_replace(json, stringUtilReplaceValues));
+			SiteInitializerUtil.replace(json, stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues));
 
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -834,8 +834,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 				String json = URLUtil.toString(url);
 
-				json = _replace(
-					_replace(json, serviceContext), stringUtilReplaceValues);
+				json = SiteInitializerUtil.replace(
+					_replace(json, serviceContext), stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues);
 
 				zipWriter.addEntry(
 					_removeFirst(fileName, parentResourcePath), json);
@@ -1007,14 +1007,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 				String json = URLUtil.toString(url);
 
-				json = _replace(
-					_replace(json, serviceContext), stringUtilReplaceValues);
+				json = SiteInitializerUtil.replace(
+					_replace(json, serviceContext), stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues);
 
-				String css = _replace(
+				String css = SiteInitializerUtil.replace(
 					SiteInitializerUtil.read(
 						FileUtil.getPath(urlPath) + "/css.css",
 						_servletContext),
-					stringUtilReplaceValues);
+					stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues);
 
 				if (Validator.isNotNull(css)) {
 					JSONObject jsonObject = _jsonFactory.createJSONObject(json);
@@ -1078,14 +1078,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 			if (StringUtil.endsWith(urlPath, "page-definition.json")) {
 				String json = URLUtil.toString(url);
 
-				json = _replace(
-					_replace(json, serviceContext), stringUtilReplaceValues);
+				json = SiteInitializerUtil.replace(
+					_replace(json, serviceContext), stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues);
 
-				String css = _replace(
+				String css = SiteInitializerUtil.replace(
 					SiteInitializerUtil.read(
 						FileUtil.getPath(urlPath) + "/css.css",
 						_servletContext),
-					stringUtilReplaceValues);
+					stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues);
 
 				if (Validator.isNotNull(css)) {
 					JSONObject jsonObject = _jsonFactory.createJSONObject(json);
@@ -1167,7 +1167,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			String json = SiteInitializerUtil.read(
 				resourcePath, _servletContext);
 
-			json = _replace(json, stringUtilReplaceValues);
+			json = SiteInitializerUtil.replace(json, stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues);
 
 			ObjectDefinition objectDefinition = ObjectDefinition.toDTO(json);
 
@@ -1327,7 +1327,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 
 		JSONArray jsonArray = _jsonFactory.createJSONArray(
-			_replace(json, stringUtilReplaceValues));
+			SiteInitializerUtil.replace(json, stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues));
 
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -1499,7 +1499,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			).build();
 
 		JSONArray jsonArray = _jsonFactory.createJSONArray(
-			_replace(json, stringUtilReplaceValues));
+			SiteInitializerUtil.replace(json, stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues));
 
 		for (int i = 0; i < jsonArray.length(); i++) {
 			BlogPosting blogPosting = BlogPosting.toDTO(
@@ -1578,12 +1578,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 					true
 				).put(
 					"cssURLs",
-					_replace(
+					SiteInitializerUtil.replace(
 						StringUtil.merge(
 							JSONUtil.toStringArray(
 								jsonObject.getJSONArray("cssURLs")),
 							StringPool.NEW_LINE),
-						stringUtilReplaceValues)
+						stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues)
 				).put(
 					"friendlyURLMapping", StringPool.BLANK
 				).put(
@@ -1595,12 +1595,12 @@ public class BundleSiteInitializer implements SiteInitializer {
 					jsonObject.getString("portletCategoryName")
 				).put(
 					"urls",
-					_replace(
+					SiteInitializerUtil.replace(
 						StringUtil.merge(
 							JSONUtil.toStringArray(
 								jsonObject.getJSONArray("elementURLs")),
 							StringPool.NEW_LINE),
-						stringUtilReplaceValues)
+						stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues)
 				).put(
 					"useESM", jsonObject.getBoolean("useESM", false)
 				).buildString());
@@ -1648,9 +1648,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 			).build();
 
 		for (String resourcePath : resourcePaths) {
-			String json = _replace(
+			String json = SiteInitializerUtil.replace(
 				SiteInitializerUtil.read(resourcePath, _servletContext),
-				stringUtilReplaceValues);
+				stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues);
 
 			DataDefinition dataDefinition = DataDefinition.toDTO(json);
 
@@ -1753,7 +1753,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			URL url = enumeration.nextElement();
 
 			JSONObject jsonObject = _jsonFactory.createJSONObject(
-				_replace(URLUtil.toString(url), stringUtilReplaceValues));
+				SiteInitializerUtil.replace(URLUtil.toString(url), stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues));
 
 			long resourceClassNameId = _portal.getClassNameId(
 				jsonObject.getString(
@@ -2351,11 +2351,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 					serviceContext.getScopeGroupId(), journalFolderId,
 					JournalArticleConstants.CLASS_NAME_ID_DEFAULT, 0, articleId,
 					false, 1, titleMap, null, titleMap,
-					_replace(
+					SiteInitializerUtil.replace(
 						SiteInitializerUtil.read(
 							_replace(resourcePath, ".json", ".xml"),
 							_servletContext),
-						stringUtilReplaceValues),
+						stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues),
 					ddmStructure.getStructureId(),
 					jsonObject.getString("ddmTemplateKey"), null,
 					calendar.get(Calendar.MONTH),
@@ -2372,11 +2372,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 					serviceContext.getScopeGroupId(), journalFolderId,
 					articleId, journalArticle.getVersion(), titleMap, null,
 					titleMap,
-					_replace(
+					SiteInitializerUtil.replace(
 						SiteInitializerUtil.read(
 							_replace(resourcePath, ".json", ".xml"),
 							_servletContext),
-						stringUtilReplaceValues),
+						stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues),
 					jsonObject.getString("ddmTemplateKey"), null,
 					calendar.get(Calendar.MONTH),
 					calendar.get(Calendar.DAY_OF_MONTH),
@@ -2528,10 +2528,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 		throws Exception {
 
 		JSONObject pageJSONObject = _jsonFactory.createJSONObject(
-			_replace(
+			SiteInitializerUtil.replace(
 				SiteInitializerUtil.read(
 					parentResourcePath + "page.json", _servletContext),
-				stringUtilReplaceValues));
+				stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues));
 
 		Map<Locale, String> nameMap = new HashMap<>(
 			SiteInitializerUtil.toMap(pageJSONObject.getString("name_i18n")));
@@ -2711,8 +2711,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			return;
 		}
 
-		json = _replace(
-			_replace(json, serviceContext), stringUtilReplaceValues);
+		json = SiteInitializerUtil.replace(
+			_replace(json, serviceContext), stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues);
 
 		JSONObject pageDefinitionJSONObject = _jsonFactory.createJSONObject(
 			json);
@@ -2802,7 +2802,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 				String value = typeSettingJSONObject.getString("value");
 
 				unicodeProperties.put(
-					key, _replace(value, stringUtilReplaceValues));
+					key, SiteInitializerUtil.replace(value, stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues));
 			}
 
 			draftLayout = _layoutLocalService.updateLayout(
@@ -3017,9 +3017,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 			bodyJSONObject.put(
 				FileUtil.getShortFileName(
 					FileUtil.stripExtension(url.getPath())),
-				_replace(
+				SiteInitializerUtil.replace(
 					_replace(URLUtil.toString(url), serviceContext),
-					stringUtilReplaceValues));
+					stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues));
 		}
 
 		JSONObject notificationTemplateJSONObject =
@@ -3065,7 +3065,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			return;
 		}
 
-		json = _replace(json, stringUtilReplaceValues);
+		json = SiteInitializerUtil.replace(json, stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues);
 
 		JSONArray jsonArray = _jsonFactory.createJSONArray(json);
 
@@ -3127,7 +3127,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			String json = SiteInitializerUtil.read(
 				resourcePath, _servletContext);
 
-			json = _replace(json, stringUtilReplaceValues);
+			json = SiteInitializerUtil.replace(json, stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues);
 
 			if (json == null) {
 				continue;
@@ -3197,7 +3197,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 				continue;
 			}
 
-			json = _replace(json, stringUtilReplaceValues);
+			json = SiteInitializerUtil.replace(json, stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues);
 
 			JSONObject jsonObject = _jsonFactory.createJSONObject(json);
 
@@ -3296,7 +3296,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			String json = SiteInitializerUtil.read(
 				resourcePath, _servletContext);
 
-			json = _replace(json, stringUtilReplaceValues);
+			json = SiteInitializerUtil.replace(json, stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues);
 
 			JSONObject jsonObject = _jsonFactory.createJSONObject(json);
 
@@ -3360,7 +3360,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			String json = SiteInitializerUtil.read(
 				resourcePath, _servletContext);
 
-			json = _replace(json, stringUtilReplaceValues);
+			json = SiteInitializerUtil.replace(json, stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues);
 
 			ObjectRelationship objectRelationship = ObjectRelationship.toDTO(
 				json);
@@ -3481,7 +3481,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 
 		JSONArray jsonArray = _jsonFactory.createJSONArray(
-			_replace(json, stringUtilReplaceValues));
+			SiteInitializerUtil.replace(json, stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues));
 
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -4342,7 +4342,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 				return;
 			}
 
-			json = _replace(json, stringUtilReplaceValues);
+			json = SiteInitializerUtil.replace(json, stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues);
 
 			JSONObject jsonObject = _jsonFactory.createJSONObject(json);
 
@@ -4504,8 +4504,8 @@ public class BundleSiteInitializer implements SiteInitializer {
 			String json = SiteInitializerUtil.read(
 				resourcePath, _servletContext);
 
-			json = _replace(
-				_replace(json, serviceContext), stringUtilReplaceValues);
+			json = SiteInitializerUtil.replace(
+				_replace(json, serviceContext), stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues);
 
 			TaxonomyCategory taxonomyCategory = TaxonomyCategory.toDTO(json);
 
@@ -4575,7 +4575,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			).build();
 
 		JSONArray jsonArray = _jsonFactory.createJSONArray(
-			_replace(json, stringUtilReplaceValues));
+			SiteInitializerUtil.replace(json, stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues));
 
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -4769,11 +4769,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 
 			workflowDefinitionJSONObject.put(
 				"content",
-				_replace(
+				SiteInitializerUtil.replace(
 					SiteInitializerUtil.read(
 						resourcePath + "workflow-definition.xml",
 						_servletContext),
-					stringUtilReplaceValues));
+					stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues));
 
 			WorkflowDefinition workflowDefinition =
 				workflowDefinitionResource.postWorkflowDefinitionDeploy(
@@ -5542,25 +5542,6 @@ public class BundleSiteInitializer implements SiteInitializer {
 		return s.substring(index + oldSub.length());
 	}
 
-	private String _replace(
-		String s, Map<String, String> stringUtilReplaceValues) {
-
-		HashMap<String, String> aggregatedStringUtilReplaceValues =
-			HashMapBuilder.putAll(
-				_getClassNameIdStringUtilReplaceValues()
-			).putAll(
-				_releaseInfoStringUtilReplaceValues
-			).putAll(
-				stringUtilReplaceValues
-			).build();
-
-		s = StringUtil.replace(
-			s, "\"[#", "#]\"", aggregatedStringUtilReplaceValues);
-
-		return StringUtil.replace(
-			s, "[$", "$]", aggregatedStringUtilReplaceValues);
-	}
-
 	private String _replace(String s, ServiceContext serviceContext)
 		throws Exception {
 
@@ -5776,10 +5757,10 @@ public class BundleSiteInitializer implements SiteInitializer {
 		JSONObject metadataJSONObject = _jsonFactory.createJSONObject(
 			(metadataJSON == null) ? "{}" : metadataJSON);
 
-		String css = _replace(
+		String css = SiteInitializerUtil.replace(
 			SiteInitializerUtil.read(
 				resourcePath + "/css.css", _servletContext),
-			stringUtilReplaceValues);
+			stringUtilReplaceValues, _getClassNameIdStringUtilReplaceValues(), _releaseInfoStringUtilReplaceValues);
 
 		_layoutSetLocalService.updateLookAndFeel(
 			serviceContext.getScopeGroupId(), privateLayout,
