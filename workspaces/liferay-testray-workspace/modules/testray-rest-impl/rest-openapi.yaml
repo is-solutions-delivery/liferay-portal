@@ -92,9 +92,9 @@ components:
                     type: integer
                 testrayTeamName:
                     type: string
-                userImgUrl:
-                    type: string
                 userName:
+                    type: string
+                userPortraitUrl:
                     type: string
                 warning:
                     type: integer
@@ -450,6 +450,10 @@ paths:
                       type: string
                 - in: query
                   name: testrayRunName
+                  schema:
+                      type: string
+                - in: query
+                  name: testraySubtaskId
                   schema:
                       type: string
                 - in: query
