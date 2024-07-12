@@ -235,7 +235,21 @@ public class TestrayTestFlowResourceImpl
 							value.get("c_taskId_"));
 						userId = GetterUtil.getLong(value.get("userId"));
 
-						setUserImgUrl(
+						setUserName(
+							() -> {
+								FullNameGenerator fullNameGenerator =
+									FullNameGeneratorFactory.getInstance();
+
+								return fullNameGenerator.getFullName(
+									GetterUtil.getString(
+										value.get("firstName")),
+									GetterUtil.getString(
+										value.get("middleName")),
+									GetterUtil.getString(
+										value.get("lastName")));
+							});
+
+						setUserPortraitUrl(
 							() -> {
 								long portraitId = GetterUtil.getLong(
 									value.get("portraitId"));
@@ -249,20 +263,6 @@ public class TestrayTestFlowResourceImpl
 								return UserConstants.getPortraitURL(
 									"/image", true, portraitId,
 									GetterUtil.getString(value.get("uuid_")));
-							});
-
-						setUserName(
-							() -> {
-								FullNameGenerator fullNameGenerator =
-									FullNameGeneratorFactory.getInstance();
-
-								return fullNameGenerator.getFullName(
-									GetterUtil.getString(
-										value.get("firstName")),
-									GetterUtil.getString(
-										value.get("middleName")),
-									GetterUtil.getString(
-										value.get("lastName")));
 							});
 					}
 				}),
