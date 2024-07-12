@@ -251,9 +251,9 @@ components:
                 userId:
                     format: int64
                     type: integer
-                userImgUrl:
-                    type: string
                 userName:
+                    type: string
+                userPortraitUrl:
                     type: string
             type: object
         TestrayTeamMetric:
