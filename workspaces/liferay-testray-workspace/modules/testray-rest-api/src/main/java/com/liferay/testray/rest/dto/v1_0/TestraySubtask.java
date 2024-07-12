@@ -452,47 +452,6 @@ public class TestraySubtask implements Serializable {
 	private Supplier<Long> _userIdSupplier;
 
 	@Schema
-	public String getUserImgUrl() {
-		if (_userImgUrlSupplier != null) {
-			userImgUrl = _userImgUrlSupplier.get();
-
-			_userImgUrlSupplier = null;
-		}
-
-		return userImgUrl;
-	}
-
-	public void setUserImgUrl(String userImgUrl) {
-		this.userImgUrl = userImgUrl;
-
-		_userImgUrlSupplier = null;
-	}
-
-	@JsonIgnore
-	public void setUserImgUrl(
-		UnsafeSupplier<String, Exception> userImgUrlUnsafeSupplier) {
-
-		_userImgUrlSupplier = () -> {
-			try {
-				return userImgUrlUnsafeSupplier.get();
-			}
-			catch (RuntimeException runtimeException) {
-				throw runtimeException;
-			}
-			catch (Exception exception) {
-				throw new RuntimeException(exception);
-			}
-		};
-	}
-
-	@GraphQLField
-	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected String userImgUrl;
-
-	@JsonIgnore
-	private Supplier<String> _userImgUrlSupplier;
-
-	@Schema
 	public String getUserName() {
 		if (_userNameSupplier != null) {
 			userName = _userNameSupplier.get();
@@ -532,6 +491,47 @@ public class TestraySubtask implements Serializable {
 
 	@JsonIgnore
 	private Supplier<String> _userNameSupplier;
+
+	@Schema
+	public String getUserPortraitUrl() {
+		if (_userPortraitUrlSupplier != null) {
+			userPortraitUrl = _userPortraitUrlSupplier.get();
+
+			_userPortraitUrlSupplier = null;
+		}
+
+		return userPortraitUrl;
+	}
+
+	public void setUserPortraitUrl(String userPortraitUrl) {
+		this.userPortraitUrl = userPortraitUrl;
+
+		_userPortraitUrlSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setUserPortraitUrl(
+		UnsafeSupplier<String, Exception> userPortraitUrlUnsafeSupplier) {
+
+		_userPortraitUrlSupplier = () -> {
+			try {
+				return userPortraitUrlUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String userPortraitUrl;
+
+	@JsonIgnore
+	private Supplier<String> _userPortraitUrlSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -696,22 +696,6 @@ public class TestraySubtask implements Serializable {
 			sb.append(userId);
 		}
 
-		String userImgUrl = getUserImgUrl();
-
-		if (userImgUrl != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"userImgUrl\": ");
-
-			sb.append("\"");
-
-			sb.append(_escape(userImgUrl));
-
-			sb.append("\"");
-		}
-
 		String userName = getUserName();
 
 		if (userName != null) {
@@ -724,6 +708,22 @@ public class TestraySubtask implements Serializable {
 			sb.append("\"");
 
 			sb.append(_escape(userName));
+
+			sb.append("\"");
+		}
+
+		String userPortraitUrl = getUserPortraitUrl();
+
+		if (userPortraitUrl != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"userPortraitUrl\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(userPortraitUrl));
 
 			sb.append("\"");
 		}
