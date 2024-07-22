@@ -5,14 +5,20 @@
 
 package com.liferay.client.extension.util.spring.boot;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
+
+import org.apache.commons.logging.Log;
+
+import org.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -145,6 +151,40 @@ public abstract class BaseRestController {
 
 	protected String getWebClientBaseURL() {
 		return _lxcDXPServerProtocol + "://" + _lxcDXPMainDomain;
+	}
+
+	protected void log(Jwt jwt, Log log) {
+		if (log.isInfoEnabled()) {
+			log.info("JWT Claims: " + jwt.getClaims());
+			log.info("JWT ID: " + jwt.getId());
+			log.info("JWT Subject: " + jwt.getSubject());
+		}
+	}
+
+	protected void log(Jwt jwt, Log log, Map<String, String> parameters) {
+		if (log.isInfoEnabled()) {
+			log.info("JWT Claims: " + jwt.getClaims());
+			log.info("JWT ID: " + jwt.getId());
+			log.info("JWT Subject: " + jwt.getSubject());
+			log.info("Parameters: " + parameters);
+		}
+	}
+
+	protected void log(Jwt jwt, Log log, String json) {
+		if (log.isInfoEnabled()) {
+			try {
+				JSONObject jsonObject = new JSONObject(json);
+
+				log.info("JSON: " + jsonObject.toString(4));
+			}
+			catch (Exception exception) {
+				log.error("JSON: " + json, exception);
+			}
+
+			log.info("JWT Claims: " + jwt.getClaims());
+			log.info("JWT ID: " + jwt.getId());
+			log.info("JWT Subject: " + jwt.getSubject());
+		}
 	}
 
 	protected String patch(String authorization, String body, String path) {
