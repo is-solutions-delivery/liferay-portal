@@ -1406,6 +1406,11 @@ pre[class*='language-'] {
 	}
 }
 
+.liferay-sites-dropdown.show div .lfr-layout-structure-item-basic-component-html {
+	padding-top: 1px;
+	width: auto;
+}
+
 .pagination-bar {
 	&,
 	.dropdown-toggle,
