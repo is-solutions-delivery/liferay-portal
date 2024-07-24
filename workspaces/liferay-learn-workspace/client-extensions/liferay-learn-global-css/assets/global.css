@@ -1515,7 +1515,7 @@ pre[class*='language-'] {
 	padding: 0.5rem !important;
 	.personal-menu-dropdown .dropdown .rounded-circle .sticker-lg {
 		color: var(--color-neutral-4);
-		font-size: 1.1rem;
+		font-size: 1.1rem !important;
 		height: 1.8rem !important;
 		width: 1.8rem !important;
 	}
