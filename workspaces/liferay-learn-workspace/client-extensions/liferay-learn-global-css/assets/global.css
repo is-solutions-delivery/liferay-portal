@@ -1510,3 +1510,22 @@ pre[class*='language-'] {
 .token.entity {
 	cursor: help;
 }
+
+.utility-nav-container .search-account-container .mr-1 {
+	padding: 0.5rem !important;
+	.personal-menu-dropdown .dropdown .rounded-circle .sticker-lg {
+		color: var(--color-neutral-4);
+		font-size: 1.1rem;
+		height: 1.8rem !important;
+		width: 1.8rem !important;
+	}
+}
+
+.utility-nav-container .search-account-container .mr-1:hover{
+	background-color: var(--color-action-primary-hover-lighten);
+	border-radius: 8px;
+    opacity: 1;
+	.personal-menu-dropdown .dropdown .rounded-circle .sticker-lg {
+		color: var(--color-action-primary-hover, #0053f0);
+	}
+}
