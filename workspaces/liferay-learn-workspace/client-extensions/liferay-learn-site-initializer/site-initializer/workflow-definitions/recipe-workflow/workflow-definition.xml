@@ -41,7 +41,7 @@
 		</transitions>
 	</state>
 	<state>
-		<name>Approved</name>
+		<name>approved</name>
 		<description>Conclude the workflow.</description>
 		<metadata>
 			<![CDATA[
@@ -61,7 +61,7 @@
 				<execution-type>onEntry</execution-type>
 			</action>
 			<notification>
-				<name>Approve Notification</name>
+				<name>Approve notification</name>
 				<template>
 					<![CDATA[Congrats, your recipe article has been approved by ${userName}. You can find your recipe article live on <a href="https://learn.liferay.com">Learn</a> by searching the related keywords.]]>
 				</template>
