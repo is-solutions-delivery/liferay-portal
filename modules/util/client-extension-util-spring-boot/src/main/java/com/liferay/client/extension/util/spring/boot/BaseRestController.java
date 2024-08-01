@@ -149,6 +149,10 @@ public abstract class BaseRestController {
 		).block();
 	}
 
+	protected String getWebClientAcceptMediaType() {
+		return MediaType.APPLICATION_JSON_VALUE;
+	}
+
 	protected String getWebClientBaseURL() {
 		return _lxcDXPServerProtocol + "://" + _lxcDXPMainDomain;
 	}
@@ -242,7 +246,10 @@ public abstract class BaseRestController {
 			HttpStatus httpStatus = clientResponse.statusCode();
 
 			if (Objects.equals(
-					clientResponse.statusCode(), HttpStatus.NO_CONTENT)) {
+					clientResponse.statusCode(), HttpStatus.NO_CONTENT) &&
+				Objects.equals(
+					getWebClientAcceptMediaType(),
+					MediaType.APPLICATION_JSON_VALUE)) {
 
 				return Mono.just("{}");
 			}
@@ -265,7 +272,7 @@ public abstract class BaseRestController {
 		).baseUrl(
 			getWebClientBaseURL()
 		).defaultHeader(
-			HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE
+			HttpHeaders.ACCEPT, getWebClientAcceptMediaType()
 		).defaultHeader(
 			HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE
 		).build();
