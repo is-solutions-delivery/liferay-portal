@@ -1454,6 +1454,7 @@ pre[class*='language-'] {
 
 	.lexicon-icon-sites {
 		width: var(--spacer-3);
+		color: white;
 	}
 }
 
