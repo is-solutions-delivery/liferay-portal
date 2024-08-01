@@ -5,6 +5,7 @@
 
 package com.liferay.customer;
 
+import com.liferay.client.extension.util.spring.boot.BaseRestController;
 import com.liferay.customer.model.TicketAttachment;
 import com.liferay.customer.service.TicketAttachmentWebService;
 import com.liferay.osb.spring.boot.client.zendesk.model.ZendeskUser;
@@ -137,5 +138,11 @@ public class TicketAttachmentsCompleteUploadRestController
 
 	@Autowired
 	private ZendeskWebService _zendeskWebService;
+
+	@Value("${com.liferay.lxc.dxp.mainDomain}")
+	protected String lxcDXPMainDomain;
+
+	@Value("${com.liferay.lxc.dxp.server.protocol}")
+	protected String lxcDXPServerProtocol;
 
 }
