@@ -369,6 +369,10 @@ pre[class*='language-'] {
 			}
 		}
 
+		.learn-article-breadcrumbs-content {
+			width: 100%
+		}
+
 		.submit-feedback > a {
 			color: var(--color-brand-primary, #0b5fff);
 			font-size: 1rem;
