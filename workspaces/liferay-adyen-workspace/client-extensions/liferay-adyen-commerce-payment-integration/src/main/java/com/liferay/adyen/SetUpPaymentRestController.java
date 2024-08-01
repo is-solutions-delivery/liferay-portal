@@ -14,6 +14,7 @@ import com.adyen.service.checkout.PaymentsApi;
 
 import java.math.BigDecimal;
 
+import com.liferay.client.extension.util.spring.boot.BaseRestController;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
