@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.reactive.function.client.ClientResponse;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
@@ -275,6 +276,14 @@ public abstract class BaseRestController {
 			HttpHeaders.ACCEPT, getWebClientAcceptMediaType()
 		).defaultHeader(
 			HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE
+		).exchangeStrategies(
+			ExchangeStrategies.builder(
+			).codecs(
+				clientCodecConfigurer -> clientCodecConfigurer.defaultCodecs(
+				).maxInMemorySize(
+					5 * 1024 * 1024
+				)
+			).build()
 		).build();
 	}
 
