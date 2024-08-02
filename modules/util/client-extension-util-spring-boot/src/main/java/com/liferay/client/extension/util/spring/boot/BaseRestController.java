@@ -155,6 +155,14 @@ public abstract class BaseRestController {
 	}
 
 	protected String getWebClientBaseURL() {
+		if ((_lxcDXPServerProtocol == null) ||
+			Objects.equals(_lxcDXPServerProtocol, "") ||
+			(_lxcDXPMainDomain == null) ||
+			Objects.equals(_lxcDXPMainDomain, "")) {
+
+			return "";
+		}
+
 		return _lxcDXPServerProtocol + "://" + _lxcDXPMainDomain;
 	}
 
@@ -281,16 +289,16 @@ public abstract class BaseRestController {
 			).codecs(
 				clientCodecConfigurer -> clientCodecConfigurer.defaultCodecs(
 				).maxInMemorySize(
-					5 * 1024 * 1024
+					16 * 1024 * 1024
 				)
 			).build()
 		).build();
 	}
 
-	@Value("${com.liferay.lxc.dxp.mainDomain}")
+	@Value("${com.liferay.lxc.dxp.mainDomain:}")
 	private String _lxcDXPMainDomain;
 
-	@Value("${com.liferay.lxc.dxp.server.protocol}")
+	@Value("${com.liferay.lxc.dxp.server.protocol:}")
 	private String _lxcDXPServerProtocol;
 
 }
