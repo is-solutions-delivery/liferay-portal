@@ -5,6 +5,7 @@
 
 package com.liferay.marketplace;
 
+import com.liferay.client.extension.util.spring.boot.BaseRestController;
 import com.liferay.client.extension.util.spring.boot.LiferayOAuth2AccessTokenManager;
 import com.liferay.headless.admin.user.client.dto.v1_0.Account;
 import com.liferay.headless.admin.user.client.dto.v1_0.CustomField;
@@ -468,7 +469,7 @@ public class KoroneikiRestController extends BaseRestController {
 					"headless-server");
 
 		URL liferayDXPURL = new URL(
-			lxcDXPServerProtocol + "://" + lxcDXPMainDomain);
+			_lxcDXPServerProtocol + "://" + _lxcDXPMainDomain);
 
 		_accountResource = AccountResource.builder(
 		).header(
@@ -726,6 +727,12 @@ public class KoroneikiRestController extends BaseRestController {
 
 	@Autowired
 	private LiferayOAuth2AccessTokenManager _liferayOAuth2AccessTokenManager;
+
+	@Value("${com.liferay.lxc.dxp.mainDomain:}")
+	private String _lxcDXPMainDomain;
+
+	@Value("${com.liferay.lxc.dxp.server.protocol:}")
+	private String _lxcDXPServerProtocol;
 
 	private OrderItemResource _orderItemResource;
 	private OrderResource _orderResource;

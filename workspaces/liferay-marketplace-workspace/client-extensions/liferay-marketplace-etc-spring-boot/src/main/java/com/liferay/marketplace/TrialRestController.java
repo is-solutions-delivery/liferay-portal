@@ -5,6 +5,7 @@
 
 package com.liferay.marketplace;
 
+import com.liferay.client.extension.util.spring.boot.BaseRestController;
 import com.liferay.client.extension.util.spring.boot.LiferayOAuth2AccessTokenManager;
 import com.liferay.headless.admin.user.client.dto.v1_0.UserAccount;
 import com.liferay.headless.admin.user.client.resource.v1_0.UserAccountResource;
@@ -315,7 +316,7 @@ public class TrialRestController extends BaseRestController {
 
 	private OrderResource _getOrderResource() throws Exception {
 		URL liferayDXPURL = new URL(
-			lxcDXPServerProtocol + "://" + lxcDXPMainDomain);
+			_lxcDXPServerProtocol + "://" + _lxcDXPMainDomain);
 
 		return OrderResource.builder(
 		).endpoint(
@@ -351,7 +352,7 @@ public class TrialRestController extends BaseRestController {
 
 	private UserAccountResource _getUserAccountResource() throws Exception {
 		URL liferayDXPURL = new URL(
-			lxcDXPServerProtocol + "://" + lxcDXPMainDomain);
+			_lxcDXPServerProtocol + "://" + _lxcDXPMainDomain);
 
 		return UserAccountResource.builder(
 		).endpoint(
@@ -374,7 +375,7 @@ public class TrialRestController extends BaseRestController {
 				"liferay-marketplace-etc-spring-boot-oauth-application-" +
 					"headless-server");
 		URL liferayDXPURL = new URL(
-			lxcDXPServerProtocol + "://" + lxcDXPMainDomain);
+			_lxcDXPServerProtocol + "://" + _lxcDXPMainDomain);
 
 		NotificationTemplateResource notificationTemplateResource =
 			NotificationTemplateResource.builder(
@@ -560,6 +561,12 @@ public class TrialRestController extends BaseRestController {
 
 	@Autowired
 	private LiferayOAuth2AccessTokenManager _liferayOAuth2AccessTokenManager;
+
+	@Value("${com.liferay.lxc.dxp.mainDomain}")
+	private String _lxcDXPMainDomain;
+
+	@Value("${com.liferay.lxc.dxp.server.protocol}")
+	private String _lxcDXPServerProtocol;
 
 	@Value("${liferay.marketplace.trial.dxp.domain}")
 	private String _trialDXPDomain;
