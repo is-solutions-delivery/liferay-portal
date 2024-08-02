@@ -24,7 +24,6 @@ import java.io.OutputStreamWriter;
 import java.net.URI;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -418,25 +417,14 @@ public class TestrayCaseResultResourceImpl
 	}
 
 	@Override
-	public Response getTestrayExportCaseResultTestrayBuild(Long testrayBuildId)
-		throws Exception {
-
-		Page<TestrayCaseResult> page = getTestrayCaseResultsTestrayBuildPage(
-			testrayBuildId, null, null, null, null, null, null, null, null,
-			null, null, null, null, null, null, null, null, null, null);
-
-		return _buildCSVResponse(page.getItems());
-	}
-
-	private Response _buildCSVResponse(
-		Collection<TestrayCaseResult> testrayCaseResults) {
+	public Response getTestrayExportCaseResultTestrayBuild(
+		Long testrayBuildId) {
 
 		StreamingOutput streamingOutput = outputStream -> {
 			CSVFormat csvFormat = CSVFormat.DEFAULT.builder(
 			).setHeader(
 				"Case Name", "Case Type", "Priority", "Team", "Component",
-				"Run Number", "Application Server", "Browser", "Database",
-				"Java JDK", "Operating System", "Assignee", "Status", "Issues",
+				"Run Number", "Run Name", "Assignee", "Status", "Issues",
 				"Errors", "Comments", "Case Result URL"
 			).build();
 
@@ -444,12 +432,13 @@ public class TestrayCaseResultResourceImpl
 					new BufferedWriter(new OutputStreamWriter(outputStream)),
 					csvFormat)) {
 
-				for (TestrayCaseResult testrayCaseResult : testrayCaseResults) {
-					String[] runName = testrayCaseResult.getTestrayRunName(
-					).split(
-						"\\|"
-					);
+				Page<TestrayCaseResult> page =
+					getTestrayCaseResultsTestrayBuildPage(
+						testrayBuildId, null, null, null, null, null, null,
+						null, null, null, null, null, null, null, null, null,
+						null, null, null);
 
+				for (TestrayCaseResult testrayCaseResult : page.getItems()) {
 					URI baseURI = contextUriInfo.getBaseUri();
 
 					String caseResultUrl =
@@ -463,8 +452,8 @@ public class TestrayCaseResultResourceImpl
 						testrayCaseResult.getPriority(),
 						testrayCaseResult.getTestrayTeamName(),
 						testrayCaseResult.getTestrayComponentName(),
-						testrayCaseResult.getTestrayRunNumber(), runName[0],
-						runName[1], runName[2], runName[3], runName[4],
+						testrayCaseResult.getTestrayRunNumber(),
+						testrayCaseResult.getTestrayRunName(),
 						testrayCaseResult.getUserName(),
 						testrayCaseResult.getStatus(),
 						testrayCaseResult.getIssues(),
