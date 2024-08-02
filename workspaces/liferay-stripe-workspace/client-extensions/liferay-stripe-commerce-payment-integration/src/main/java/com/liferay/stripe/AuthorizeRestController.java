@@ -5,6 +5,7 @@
 
 package com.liferay.stripe;
 
+import com.liferay.client.extension.util.spring.boot.BaseRestController;
 import com.liferay.petra.string.StringBundler;
 
 import com.stripe.Stripe;
@@ -28,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -114,7 +116,7 @@ public class AuthorizeRestController extends BaseRestController {
 					).get(
 					).uri(
 						StringBundler.concat(
-							lxcDXPServerProtocol, "://", lxcDXPMainDomain,
+							_lxcDXPServerProtocol, "://", _lxcDXPMainDomain,
 							"/o/headless-commerce-admin-order/v1.0/orders/",
 							commercePaymentEntryJSONObject.getLong("classPK"),
 							"?nestedFields=orderItems")
@@ -309,5 +311,11 @@ public class AuthorizeRestController extends BaseRestController {
 
 	private static final Log _log = LogFactory.getLog(
 		AuthorizeRestController.class);
+
+	@Value("${com.liferay.lxc.dxp.mainDomain:}")
+	private String _lxcDXPMainDomain;
+
+	@Value("${com.liferay.lxc.dxp.server.protocol:}")
+	private String _lxcDXPServerProtocol;
 
 }

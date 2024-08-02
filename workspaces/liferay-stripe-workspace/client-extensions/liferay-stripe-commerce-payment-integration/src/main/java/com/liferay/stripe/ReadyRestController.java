@@ -5,6 +5,7 @@
 
 package com.liferay.stripe;
 
+import com.liferay.client.extension.util.spring.boot.BaseRestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
