@@ -9,9 +9,9 @@
 			"indexed": false,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Name"
+				"en_US": "External Key"
 			},
-			"name": "name",
+			"name": "externalKey",
 			"required": false
 		},
 		{
@@ -19,9 +19,9 @@
 			"indexed": false,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "External Key"
+				"en_US": "Name"
 			},
-			"name": "externalKey",
+			"name": "name",
 			"required": false
 		}
 	],

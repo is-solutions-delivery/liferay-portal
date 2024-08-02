@@ -3,35 +3,15 @@
 		"en_US": "Exam Result"
 	},
 	"name": "ExamResult",
-	"objectFields": [
-		{
-			"DBType": "Integer",
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Score"
-			},
-			"name": "score",
-			"required": false
-		},
-		{
-			"DBType": "Integer",
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Max Score"
-			},
-			"name": "maxScore",
-			"required": false
-		},
+	"objectFields": [	
 		{
 			"DBType": "String",
 			"indexed": false,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Grade"
+				"en_US": "External Key"
 			},
-			"name": "grade",
+			"name": "externalKey",
 			"required": false
 		},
 		{
@@ -49,9 +29,9 @@
 			"indexed": false,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Type"
+				"en_US": "Exam Status"
 			},
-			"name": "type",
+			"name": "examStatus",
 			"required": false
 		},
 		{
@@ -59,19 +39,9 @@
 			"indexed": false,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Registration Number"
+				"en_US": "Grade"
 			},
-			"name": "registrationNumber",
-			"required": false
-		},
-		{
-			"DBType": "String",
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "External Key"
-			},
-			"name": "externalKey",
+			"name": "grade",
 			"required": false
 		},
 		{
@@ -89,9 +59,39 @@
 			"indexed": false,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Exam Status"
+				"en_US": "Max Score"
 			},
-			"name": "examStatus",
+			"name": "maxScore",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Registration Number"
+			},
+			"name": "registrationNumber",
+			"required": false
+		},
+		{
+			"DBType": "Integer",
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Score"
+			},
+			"name": "score",
+			"required": false
+		},
+		{
+			"DBType": "Integer",
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Type"
+			},
+			"name": "type",
 			"required": false
 		}
 	],

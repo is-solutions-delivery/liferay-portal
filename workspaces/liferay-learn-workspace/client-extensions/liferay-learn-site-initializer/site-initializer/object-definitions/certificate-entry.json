@@ -5,26 +5,6 @@
 	"name": "CertificateEntry",
 	"objectFields": [
 		{
-			"DBType": "String",
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Name"
-			},
-			"name": "name",
-			"required": false
-		},
-		{
-			"DBType": "String",
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "Key"
-			},
-			"name": "key",
-			"required": false
-		},
-		{
 			"DBType": "Date",
 			"indexed": false,
 			"indexedAsKeyword": false,
@@ -42,6 +22,26 @@
 				"en_US": "Expiration Date"
 			},
 			"name": "expirationDate",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Key"
+			},
+			"name": "key",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"label": {
+				"en_US": "Name"
+			},
+			"name": "name",
 			"required": false
 		}
 	],

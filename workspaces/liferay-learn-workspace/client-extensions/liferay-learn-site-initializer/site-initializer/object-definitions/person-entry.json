@@ -19,6 +19,16 @@
 			"indexed": false,
 			"indexedAsKeyword": false,
 			"label": {
+				"en_US": "External Key"
+			},
+			"name": "externalKey",
+			"required": false
+		},
+		{
+			"DBType": "String",
+			"indexed": false,
+			"indexedAsKeyword": false,
+			"label": {
 				"en_US": "First Name"
 			},
 			"name": "firstName",
@@ -32,16 +42,6 @@
 				"en_US": "Last Name"
 			},
 			"name": "lastName",
-			"required": false
-		},
-		{
-			"DBType": "String",
-			"indexed": false,
-			"indexedAsKeyword": false,
-			"label": {
-				"en_US": "External Key"
-			},
-			"name": "externalKey",
 			"required": false
 		}
 	],
