@@ -7,6 +7,7 @@ package com.liferay.ticket;
 
 import java.util.Objects;
 
+import com.liferay.client.extension.util.spring.boot.BaseRestController;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -27,25 +28,12 @@ import org.springframework.web.reactive.function.client.WebClient;
  * @author Brian Wing Shun Chan
  */
 @Component
-public class TicketCommandLineRunner implements CommandLineRunner {
+public class TicketCommandLineRunner extends BaseRestController implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
 		JSONObject responseJSONObject = new JSONObject(
-			WebClient.create(
-				_lxcDXPServerProtocol + "://" + _lxcDXPMainDomain
-			).get(
-			).uri(
-				"/o/c/j3y7tickets"
-			).accept(
-				MediaType.APPLICATION_JSON
-			).header(
-				HttpHeaders.AUTHORIZATION,
-				"Bearer " + _oAuth2AccessToken.getTokenValue()
-			).retrieve(
-			).bodyToMono(
-				String.class
-			).block());
+			get("Bearer " + _oAuth2AccessToken.getTokenValue(), "/o/c/j3y7tickets"));
 
 		if (_log.isInfoEnabled()) {
 			_log.info(responseJSONObject.toString(4));
@@ -77,20 +65,7 @@ public class TicketCommandLineRunner implements CommandLineRunner {
 				_log.info("Deleting ticket " + id);
 			}
 
-			WebClient.create(
-				_lxcDXPServerProtocol + "://" + _lxcDXPMainDomain
-			).delete(
-			).uri(
-				"/o/c/j3y7tickets/" + id
-			).accept(
-				MediaType.APPLICATION_JSON
-			).header(
-				HttpHeaders.AUTHORIZATION,
-				"Bearer " + _oAuth2AccessToken.getTokenValue()
-			).retrieve(
-			).toEntity(
-				Void.class
-			).block();
+			delete("Bearer " + _oAuth2AccessToken.getTokenValue(), null,"/o/c/j3y7tickets/" + id);
 		}
 	}
 
