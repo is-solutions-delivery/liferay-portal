@@ -5,6 +5,7 @@
 
 package com.liferay.jethr0.entity;
 
+import com.liferay.client.extension.util.spring.boot.BaseRestController;
 import com.liferay.jethr0.util.BaseRetryable;
 import com.liferay.jethr0.util.Jethr0ContextUtil;
 import com.liferay.jethr0.util.Retryable;
@@ -27,7 +28,7 @@ import org.json.JSONObject;
 /**
  * @author Michael Hashimoto
  */
-public abstract class BaseEntity implements Entity {
+public abstract class BaseEntity extends BaseRestController implements Entity {
 
 	@Override
 	public boolean equals(Object object) {

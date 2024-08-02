@@ -20,9 +20,6 @@ import org.apache.tomcat.util.codec.binary.Base64;
 
 import org.json.JSONObject;
 
-import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.client.WebClient;
-
 /**
  * @author Michael Hashimoto
  */
@@ -229,18 +226,9 @@ public class BaseJenkinsNodeEntity
 			jenkinsServerEntity.getJenkinsUserName(), ":",
 			jenkinsServerEntity.getJenkinsUserPassword());
 
-		String response = WebClient.create(
-			StringUtil.combine(getURL(), "/api/json")
-		).get(
-		).accept(
-			MediaType.APPLICATION_JSON
-		).header(
-			"Authorization",
-			"Basic " + Base64.encodeBase64String(basicAuthorization.getBytes())
-		).retrieve(
-		).bodyToMono(
-			String.class
-		).block();
+		String response = get(
+			"Basic " + Base64.encodeBase64String(basicAuthorization.getBytes()),
+			StringUtil.combine(getURL(), "/api/json"));
 
 		return new JSONObject(response);
 	}

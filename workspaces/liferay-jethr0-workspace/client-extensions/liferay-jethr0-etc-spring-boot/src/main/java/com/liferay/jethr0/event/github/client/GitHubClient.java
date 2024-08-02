@@ -5,6 +5,7 @@
 
 package com.liferay.jethr0.event.github.client;
 
+import com.liferay.client.extension.util.spring.boot.BaseRestController;
 import com.liferay.jethr0.util.BaseRetryable;
 import com.liferay.jethr0.util.Retryable;
 import com.liferay.jethr0.util.StringUtil;
@@ -25,14 +26,12 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * @author Michael Hashimoto
  */
 @Configuration
-public class GitHubClient {
+public class GitHubClient extends BaseRestController {
 
 	public String requestGet(URL url) {
 		String urlString = url.toString();
@@ -82,17 +81,7 @@ public class GitHubClient {
 
 			@Override
 			public String execute() {
-				String response = WebClient.create(
-					gitHubURL
-				).get(
-				).accept(
-					MediaType.APPLICATION_JSON
-				).header(
-					"Authorization", _getAuthorization()
-				).retrieve(
-				).bodyToMono(
-					String.class
-				).block();
+				String response = get(_getAuthorization(), gitHubURL);
 
 				if (response == null) {
 					throw new RuntimeException("Unable to get authorization");
@@ -123,21 +112,9 @@ public class GitHubClient {
 
 			@Override
 			public String execute() {
-				String response = WebClient.create(
-					gitHubURL
-				).patch(
-				).accept(
-					MediaType.APPLICATION_JSON
-				).contentType(
-					MediaType.APPLICATION_JSON
-				).header(
-					"Authorization", _getAuthorization()
-				).body(
-					BodyInserters.fromValue(requestJSONObject.toString())
-				).retrieve(
-				).bodyToMono(
-					String.class
-				).block();
+				String response = patch(
+					_getAuthorization(), requestJSONObject.toString(),
+					gitHubURL);
 
 				if (response == null) {
 					throw new RuntimeException("No response");
@@ -168,21 +145,9 @@ public class GitHubClient {
 
 			@Override
 			public String execute() {
-				String response = WebClient.create(
-					gitHubURL
-				).post(
-				).accept(
-					MediaType.APPLICATION_JSON
-				).contentType(
-					MediaType.APPLICATION_JSON
-				).header(
-					"Authorization", _getAuthorization()
-				).body(
-					BodyInserters.fromValue(requestJSONObject.toString())
-				).retrieve(
-				).bodyToMono(
-					String.class
-				).block();
+				String response = post(
+					_getAuthorization(), requestJSONObject.toString(),
+					gitHubURL);
 
 				if (response == null) {
 					throw new RuntimeException("No response");
@@ -213,21 +178,9 @@ public class GitHubClient {
 
 			@Override
 			public String execute() {
-				String response = WebClient.create(
-					gitHubURL
-				).put(
-				).accept(
-					MediaType.APPLICATION_JSON
-				).contentType(
-					MediaType.APPLICATION_JSON
-				).header(
-					"Authorization", _getAuthorization()
-				).body(
-					BodyInserters.fromValue(requestJSONObject.toString())
-				).retrieve(
-				).bodyToMono(
-					String.class
-				).block();
+				String response = put(
+					_getAuthorization(), requestJSONObject.toString(),
+					gitHubURL);
 
 				if (response == null) {
 					throw new RuntimeException("No response");
