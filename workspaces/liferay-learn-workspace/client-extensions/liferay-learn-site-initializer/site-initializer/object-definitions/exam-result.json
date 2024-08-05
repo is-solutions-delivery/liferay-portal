@@ -3,7 +3,7 @@
 		"en_US": "Exam Result"
 	},
 	"name": "ExamResult",
-	"objectFields": [	
+	"objectFields": [
 		{
 			"DBType": "String",
 			"indexed": false,
