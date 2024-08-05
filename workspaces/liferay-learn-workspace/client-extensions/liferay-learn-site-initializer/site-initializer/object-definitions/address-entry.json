@@ -55,7 +55,7 @@
 			"required": false
 		},
 		{
-			"DBType": "String",
+			"DBType": "Integer",
 			"indexed": false,
 			"indexedAsKeyword": false,
 			"label": {
