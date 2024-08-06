@@ -5628,7 +5628,11 @@ public class BundleSiteInitializer implements SiteInitializer {
 		Group group = serviceContext.getScopeGroup();
 
 		serviceContext.setPortalURL(
-			_companyLocalService.getCompany(group.getCompanyId()).getPortalURL(serviceContext.getScopeGroupId()));
+			_companyLocalService.getCompany(
+				group.getCompanyId()
+			).getPortalURL(
+				serviceContext.getScopeGroupId()
+			));
 
 		return StringUtil.replace(
 			s,
