@@ -56,43 +56,10 @@ function changeResource(resource: RequestInfo) {
 	return `${liferayHost}/o/c${resource}`;
 }
 
-const EXTEND_SESSION_5_MINUTES = 5 * 60 * 1000;
-
-const safeLiferaySessionExtend = () => {
-	const currentTimestamp = Date.now();
-	const lastTimestampStorage = sessionStorage.getItem('lastTimestamp') || 0;
-	let lastTimestamp = parseInt(String(lastTimestampStorage), 10);
-
-	if (!lastTimestampStorage) {
-		lastTimestamp = currentTimestamp;
-
-		sessionStorage.setItem('lastTimestamp', String(currentTimestamp));
-	}
-
-	if (currentTimestamp - lastTimestamp >= 15 * 60 * 1000) {
-		window.location.reload();
-
-		sessionStorage.setItem('lastTimestamp', String(currentTimestamp));
-	}
-
-	if (currentTimestamp - lastTimestamp > EXTEND_SESSION_5_MINUTES) {
-		try {
-			Liferay.Session.reset();
-
-			sessionStorage.setItem('lastTimestamp', String(currentTimestamp));
-		}
-		catch (error) {
-			error;
-		}
-	}
-};
-
 const fetcher = async <T = any>(
 	resource: RequestInfo,
 	options?: RequestInit
 ): Promise<T | undefined> => {
-	safeLiferaySessionExtend();
-
 	const response = await fetch(changeResource(resource), {
 		...options,
 		headers: {
