@@ -186,8 +186,7 @@ const ListView: React.FC<ListViewProps> = ({
 
 			if (matchingField) {
 				if (
-					value.includes(`No ${matchingField.label}`) +
-						matchingField.label &&
+					value.includes(`No ${matchingField.label}`) &&
 					!matchingField.requestOperator
 				) {
 					const newKey = `no${key.charAt(0).toUpperCase() + key.slice(1)}`;
