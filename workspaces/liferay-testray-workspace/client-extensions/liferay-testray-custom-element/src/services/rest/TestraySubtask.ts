@@ -87,16 +87,9 @@ class TestraySubtaskImpl extends Rest<SubtaskForm, TestraySubtask> {
 				filter: SearchBuilder.eq('subtaskId', subtaskId),
 			});
 
-		if (!subtaskCaseResultResponse) {
-			return [];
-		}
-
-		const subtaskCaseResults =
-			testraySubtaskCaseResultImpl.transformDataFromList(
-				subtaskCaseResultResponse
-			)?.items || [];
-
-		return subtaskCaseResults;
+		return subtaskCaseResultResponse
+			? subtaskCaseResultResponse?.items
+			: [];
 	}
 
 	public async assignTo(subtask: TestraySubtask, userId: number) {
@@ -218,7 +211,7 @@ class TestraySubtaskImpl extends Rest<SubtaskForm, TestraySubtask> {
 				sumScore += caseResult?.case?.priority || 0;
 
 				await testraySubtaskCaseResultImpl.update(caseResult.id, {
-					name: `${parentTestraySubtask.id}`,
+					issues: parentTestraySubtask?.issues,
 					subtaskId: parentTestraySubtask.id,
 				});
 			}

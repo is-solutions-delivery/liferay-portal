@@ -111,7 +111,7 @@ const TestFlowTasks = () => {
 		const subtasksWithDifferentAssignedUsers = subtasks
 			?.filter(
 				(subtask) =>
-					subtask?.userId.toString() &&
+					subtask?.userId &&
 					subtask?.userId.toString() !==
 						Liferay.ThemeDisplay.getUserId()
 			)
