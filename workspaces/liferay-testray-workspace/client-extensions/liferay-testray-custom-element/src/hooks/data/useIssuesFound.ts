@@ -52,13 +52,17 @@ const useIssuesFound = ({buildId, caseId}: useIssuesFoundProps) => {
 			testrayCaseResultImpl.transformDataFromList(response),
 	});
 
-	const issues = useMemo(() => {
-		const terms = (data?.facets[0].facetValues ?? []).flatMap(({term}) =>
-			term.split(',').map((t) => t.trim())
-		);
-
-		return Array.from(new Set(terms));
-	}, [data?.facets]);
+	const issues = useMemo(
+		() =>
+			Array.from(
+				new Set(
+					(data?.facets[0].facetValues ?? []).flatMap(({term}) =>
+						term.split(',').map((t) => t.trim())
+					)
+				)
+			),
+		[data?.facets]
+	);
 
 	return issues;
 };
