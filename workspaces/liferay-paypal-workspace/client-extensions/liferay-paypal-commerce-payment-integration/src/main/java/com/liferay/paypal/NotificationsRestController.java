@@ -20,16 +20,13 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * @author Brian I. Kim
@@ -74,8 +71,10 @@ public class NotificationsRestController extends BaseRestController {
 					_liferayOAuth2AccessTokenManager.getAuthorization(
 						"liferay-paypal-commerce-payment-integration-oauth-" +
 							"application-headless-server"),
-					"/o/c/b9k3paypalwebhooks/by-external-reference-code/" +
-						transactionCode));
+					StringBundler.concat(
+						lxcDXPServerProtocol, "://", lxcDXPMainDomain,
+						"/o/c/b9k3paypalwebhooks/by-external-reference-code/",
+						transactionCode)));
 
 			if (!_hasAuthentication(
 					b9k3PayPalWebhookJSONObject, headers, json)) {
@@ -96,6 +95,11 @@ public class NotificationsRestController extends BaseRestController {
 		return new ResponseEntity<>(HttpStatus.ACCEPTED);
 	}
 
+	@Override
+	protected String getLXCDXPURL() {
+		return "";
+	}
+
 	private boolean _hasAuthentication(
 		JSONObject b9k3PayPalWebhookJSONObject, Map<String, String> headers,
 		String json) {
@@ -104,41 +108,23 @@ public class NotificationsRestController extends BaseRestController {
 			return false;
 		}
 
+		// Ugly string format is what PayPal expects
+
+		String body = StringBundler.concat(
+			"{\"transmission_id\": \"", headers.get("paypal-transmission-id"),
+			"\", \"transmission_time\": \"",
+			headers.get("paypal-transmission-time"), "\", \"cert_url\": \"",
+			headers.get("paypal-cert-url"), "\", \"auth_algo\": \"",
+			headers.get("paypal-auth-algo"), "\", \"transmission_sig\": \"",
+			headers.get("paypal-transmission-sig"), "\", \"webhook_id\": \"",
+			b9k3PayPalWebhookJSONObject.getString("webhookId"),
+			"\", \"webhook_event\": ", json, "}");
+
 		JSONObject verifyWebhookSignatureResponseJSONObject = new JSONObject(
-			WebClient.create(
-				getPayPalURL(b9k3PayPalWebhookJSONObject.getString("mode"))
-			).post(
-			).uri(
-				"v1/notifications/verify-webhook-signature"
-			).accept(
-				MediaType.APPLICATION_JSON
-			).contentType(
-				MediaType.APPLICATION_JSON
-			).header(
-				HttpHeaders.AUTHORIZATION,
-				"Bearer " + getAuthorization(b9k3PayPalWebhookJSONObject)
-			).bodyValue(
-
-				// Ugly string format is what PayPal expects
-
-				StringBundler.concat(
-					"{\"transmission_id\": \"",
-					headers.get("paypal-transmission-id"),
-					"\", \"transmission_time\": \"",
-					headers.get("paypal-transmission-time"),
-					"\", \"cert_url\": \"",
-					headers.get("paypal-cert-url"),
-					"\", \"auth_algo\": \"",
-					headers.get("paypal-auth-algo"),
-					"\", \"transmission_sig\": \"",
-					headers.get("paypal-transmission-sig"),
-					"\", \"webhook_id\": \"",
-					b9k3PayPalWebhookJSONObject.getString("webhookId"),
-					"\", \"webhook_event\": ", json, "}")
-			).retrieve(
-			).bodyToMono(
-				String.class
-			).block());
+			post(
+				"Bearer " + getAuthorization(b9k3PayPalWebhookJSONObject), body,
+				getPayPalURL(b9k3PayPalWebhookJSONObject.getString("mode")) +
+					"v1/notifications/verify-webhook-signature"));
 
 		if (Objects.equals(
 				verifyWebhookSignatureResponseJSONObject.getString(
@@ -171,16 +157,20 @@ public class NotificationsRestController extends BaseRestController {
 			).put(
 				"paymentStatus", paymentStatus
 			).toString(),
-			"/o/headless-commerce-admin-payment/v1.0/payments/" +
-				b9k3PayPalWebhookJSONObject.getLong("paymentEntryId"));
+			StringBundler.concat(
+				lxcDXPServerProtocol, "://", lxcDXPMainDomain,
+				"/o/headless-commerce-admin-payment/v1.0/payments/",
+				b9k3PayPalWebhookJSONObject.getLong("paymentEntryId")));
 
 		delete(
 			_liferayOAuth2AccessTokenManager.getAuthorization(
 				"liferay-paypal-commerce-payment-integration-oauth-" +
 					"application-headless-server"),
 			StringPool.BLANK,
-			"/o/c/b9k3paypalwebhooks/by-external-reference-code/" +
-				transactionCode);
+			StringBundler.concat(
+				lxcDXPServerProtocol, "://", lxcDXPMainDomain,
+				"/o/c/b9k3paypalwebhooks/by-external-reference-code/",
+				transactionCode));
 	}
 
 	private static final Log _log = LogFactory.getLog(
