@@ -51,6 +51,11 @@ public class WorkflowAction1RestController extends BaseRestController {
 		return new ResponseEntity<>(json, HttpStatus.OK);
 	}
 
+	@Override
+	protected String getLXCDXPURL() {
+		return "";
+	}
+
 	private static final Log _log = LogFactory.getLog(
 		WorkflowAction1RestController.class);
 

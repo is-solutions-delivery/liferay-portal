@@ -16,7 +16,6 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * @author Brian I. Kim
@@ -47,21 +45,14 @@ public class RenderRestController extends BaseRestController {
 
 		long orderId = jsonObject.getLong("orderId");
 
+		setAcceptMediaType(MediaType.TEXT_PLAIN);
+
 		sb.append(
-			WebClient.create(
+			get(
+				"Bearer " + jwt.getTokenValue(),
 				StringBundler.concat(
-					getLXCDXPURL(),
 					"/o/headless-commerce-delivery-cart/v1.0/carts/", orderId,
-					"/payment-url")
-			).get(
-			).accept(
-				MediaType.TEXT_PLAIN
-			).header(
-				HttpHeaders.AUTHORIZATION, "Bearer " + jwt.getTokenValue()
-			).retrieve(
-			).bodyToMono(
-				String.class
-			).block());
+					"/payment-url")));
 
 		if (jsonObject.has("callbackURL")) {
 			sb.append("&callbackURL=");
@@ -104,6 +95,8 @@ public class RenderRestController extends BaseRestController {
 
 	private String _getPaymentEntryId(
 		Jwt jwt, long orderId, String transactionCode) {
+
+		setAcceptMediaType(MediaType.APPLICATION_JSON);
 
 		JSONObject paymentsJSONObject = new JSONObject(
 			get(
