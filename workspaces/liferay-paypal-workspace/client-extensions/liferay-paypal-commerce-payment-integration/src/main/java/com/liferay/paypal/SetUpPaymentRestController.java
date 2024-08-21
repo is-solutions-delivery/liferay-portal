@@ -23,9 +23,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -35,7 +33,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * @author Brian I. Kim
@@ -128,8 +125,10 @@ public class SetUpPaymentRestController extends BaseRestController {
 				},
 				() -> get(
 					"Bearer " + jwt.getTokenValue(),
-					"/o/c/b9k3paypaltransactions/by-external-reference-code/" +
-						orderId));
+					StringBundler.concat(
+						lxcDXPServerProtocol, "://", lxcDXPMainDomain,
+						"/o/c/b9k3paypaltransactions/by-external-reference-",
+						"code/", orderId)));
 
 		String transactionCode = new JSONObject(
 			unsafeSupplier.get()
@@ -140,8 +139,10 @@ public class SetUpPaymentRestController extends BaseRestController {
 		if (StringUtils.isNotBlank(transactionCode)) {
 			delete(
 				"Bearer " + jwt.getTokenValue(), StringPool.BLANK,
-				"/o/c/b9k3paypaltransactions/by-external-reference-code/" +
-					orderId);
+				StringBundler.concat(
+					lxcDXPServerProtocol, "://", lxcDXPMainDomain,
+					"/o/c/b9k3paypaltransactions/by-external-reference-code/",
+					orderId));
 		}
 
 		return new ResponseEntity<>(
@@ -177,28 +178,17 @@ public class SetUpPaymentRestController extends BaseRestController {
 				httpServletRequestParameterMapJSONObject.getJSONArray(
 					"fundingSource");
 
+			putAdditionalHttpHeader(
+				"PayPal-Partner-Attribution-Id", "Liferay_SP_PPCP_API");
+			putAdditionalHttpHeader(
+				"PayPal-Request-Id",
+				commercePaymentEntryJSONObject.getString(
+					"commercePaymentEntryId"));
+			putAdditionalHttpHeader("Prefer", "return=representation");
+
 			JSONObject ordersResponseJSONObject = new JSONObject(
-				WebClient.create(
-					getPayPalURL(typeSettingsJSONObject.getString("mode"))
-				).post(
-				).uri(
-					"/v2/checkout/orders"
-				).accept(
-					MediaType.APPLICATION_JSON
-				).contentType(
-					MediaType.APPLICATION_JSON
-				).header(
-					HttpHeaders.AUTHORIZATION,
-					"Bearer " + getAuthorization(typeSettingsJSONObject)
-				).header(
-					"PayPal-Partner-Attribution-Id", "Liferay_SP_PPCP_API"
-				).header(
-					"PayPal-Request-Id",
-					commercePaymentEntryJSONObject.getString(
-						"commercePaymentEntryId")
-				).header(
-					"Prefer", "return=representation"
-				).bodyValue(
+				post(
+					"Bearer " + getAuthorization(typeSettingsJSONObject),
 					new JSONObject(
 					).put(
 						"intent", "CAPTURE"
@@ -212,11 +202,9 @@ public class SetUpPaymentRestController extends BaseRestController {
 						_getPurchaseUnitJSONArray(
 							commercePaymentEntryJSONObject, jwt,
 							typeSettingsJSONObject.getString("merchantId"))
-					).toString()
-				).retrieve(
-				).bodyToMono(
-					String.class
-				).block());
+					).toString(),
+					getPayPalURL(typeSettingsJSONObject.getString("mode")) +
+						"/v2/checkout/orders"));
 
 			payload = ordersResponseJSONObject.toString();
 
@@ -233,7 +221,9 @@ public class SetUpPaymentRestController extends BaseRestController {
 				).put(
 					"transactionCode", transactionCode
 				).toString(),
-				"/o/c/b9k3paypaltransactions");
+					StringBundler.concat(
+							lxcDXPServerProtocol, "://", lxcDXPMainDomain,
+				"/o/c/b9k3paypaltransactions"));
 
 			post(
 				"Bearer " + jwt.getTokenValue(),
@@ -254,7 +244,9 @@ public class SetUpPaymentRestController extends BaseRestController {
 				).put(
 					"webhookId", typeSettingsJSONObject.getString("webhookId")
 				).toString(),
-				"/o/c/b9k3paypalwebhooks");
+				StringBundler.concat(
+					lxcDXPServerProtocol, "://", lxcDXPMainDomain,
+					"/o/c/b9k3paypalwebhooks"));
 		}
 		catch (Exception exception) {
 			errorMessages = ExceptionUtils.getStackTrace(exception);
@@ -274,6 +266,11 @@ public class SetUpPaymentRestController extends BaseRestController {
 				"transactionCode", transactionCode
 			).toString(),
 			HttpStatus.OK);
+	}
+
+	@Override
+	protected String getLXCDXPURL() {
+		return "";
 	}
 
 	private JSONObject _getAmountJSONObject(
@@ -411,6 +408,7 @@ public class SetUpPaymentRestController extends BaseRestController {
 			get(
 				"Bearer " + jwt.getTokenValue(),
 				StringBundler.concat(
+					lxcDXPServerProtocol, "://", lxcDXPMainDomain,
 					"/o/headless-commerce-admin-order/v1.0/orders/", orderId,
 					"?nestedFields=orderItems,shippingAddress")));
 	}

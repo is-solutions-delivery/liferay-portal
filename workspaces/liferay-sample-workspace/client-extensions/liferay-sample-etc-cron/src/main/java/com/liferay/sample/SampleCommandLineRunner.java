@@ -5,6 +5,7 @@
 
 package com.liferay.sample;
 
+import com.liferay.client.extension.util.spring.boot.BaseRestController;
 import com.liferay.client.extension.util.spring.boot.LiferayOAuth2AccessTokenManager;
 import com.liferay.headless.admin.user.client.dto.v1_0.Site;
 import com.liferay.headless.admin.user.client.resource.v1_0.SiteResource;
@@ -26,13 +27,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * @author Gregory Amerson
  */
 @Component
-public class SampleCommandLineRunner implements CommandLineRunner {
+public class SampleCommandLineRunner
+	extends BaseRestController implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -61,20 +62,13 @@ public class SampleCommandLineRunner implements CommandLineRunner {
 		// Call another client extension (liferay-sample-etc-spring-boot)
 
 		try {
-			String dadJoke = WebClient.create(
-			).get(
-			).uri(
-				_liferaySampleEtcSpringBootHomePageURL + "/dad/joke"
-			).header(
-				"Authorization",
+			setAcceptMediaType(MediaType.TEXT_PLAIN);
+
+			String dadJoke = get(
 				_liferayOAuth2AccessTokenManager.getAuthorization(
-					"liferay-sample-etc-cron-oauth-application-headless-server")
-			).accept(
-				MediaType.TEXT_PLAIN
-			).retrieve(
-			).bodyToMono(
-				String.class
-			).block();
+					"liferay-sample-etc-cron-oauth-application-headless-" +
+						"server"),
+				"/dad/joke");
 
 			if ((dadJoke != null) && _log.isInfoEnabled()) {
 				_log.info("Dad joke: " + dadJoke);
@@ -83,6 +77,11 @@ public class SampleCommandLineRunner implements CommandLineRunner {
 		catch (Exception exception) {
 			_log.error(exception);
 		}
+	}
+
+	@Override
+	protected String getLXCDXPURL() {
+		return _liferaySampleEtcSpringBootHomePageURL.toString();
 	}
 
 	private void _countMessageBoardThreads(

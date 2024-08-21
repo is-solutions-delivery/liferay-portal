@@ -16,9 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -26,7 +24,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * @author Brian I. Kim
@@ -54,40 +51,23 @@ public class CaptureRestController extends BaseRestController {
 			JSONObject typeSettingsJSONObject = jsonObject.getJSONObject(
 				"typeSettings");
 
+			putAdditionalHttpHeader(
+				"PayPal-Partner-Attribution-Id", "Liferay_SP_PPCP_API");
+			putAdditionalHttpHeader(
+				"PayPal-Request-Id",
+				commercePaymentEntryJSONObject.getString(
+					"commercePaymentEntryId"));
+			putAdditionalHttpHeader("Prefer", "return=representation");
+
 			JSONObject captureResponseJSONObject = new JSONObject(
-				WebClient.create(
-					getPayPalURL(typeSettingsJSONObject.getString("mode"))
-				).post(
-				).uri(
+				post(
+					"Bearer " + getAuthorization(typeSettingsJSONObject), null,
 					StringBundler.concat(
+						getPayPalURL(typeSettingsJSONObject.getString("mode")),
 						"v2/checkout/orders/",
 						commercePaymentEntryJSONObject.getString(
 							"transactionCode"),
-						"/capture")
-				).contentType(
-					MediaType.APPLICATION_JSON
-				).header(
-					HttpHeaders.AUTHORIZATION,
-					"Bearer " + getAuthorization(typeSettingsJSONObject)
-				).header(
-					"PayPal-Partner-Attribution-Id", "Liferay_SP_PPCP_API"
-				).header(
-					"PayPal-Request-Id",
-					commercePaymentEntryJSONObject.getString(
-						"commercePaymentEntryId")
-				).header(
-					"Prefer", "return=representation"
-				).exchangeToMono(
-					clientResponse -> {
-						HttpStatus httpStatus = clientResponse.statusCode();
-
-						if (!httpStatus.is2xxSuccessful()) {
-							throw new RuntimeException(httpStatus.toString());
-						}
-
-						return clientResponse.bodyToMono(String.class);
-					}
-				).block());
+						"/capture")));
 
 			if (Objects.equals(
 					captureResponseJSONObject.getString("status"),
@@ -133,7 +113,9 @@ public class CaptureRestController extends BaseRestController {
 						"webhookId",
 						typeSettingsJSONObject.getString("webhookId")
 					).toString(),
-					"/o/c/b9k3paypalwebhooks");
+					StringBundler.concat(
+						lxcDXPServerProtocol, "://", lxcDXPMainDomain,
+						"/o/c/b9k3paypalwebhooks"));
 			}
 		}
 		catch (Exception exception) {
@@ -152,6 +134,11 @@ public class CaptureRestController extends BaseRestController {
 				"transactionCode", transactionCode
 			).toString(),
 			HttpStatus.OK);
+	}
+
+	@Override
+	protected String getLXCDXPURL() {
+		return "";
 	}
 
 	private static final Log _log = LogFactory.getLog(
