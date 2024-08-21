@@ -5,6 +5,9 @@
 
 package com.liferay.client.extension.util.spring.boot;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -42,8 +45,14 @@ public abstract class BaseRestController {
 			uriBuilder -> uriBuilder.path(
 				path
 			).build()
+		).accept(
+			_acceptMediaType
+		).contentType(
+			_contentTypeMediaType
 		).header(
 			HttpHeaders.AUTHORIZATION, authorization
+		).headers(
+			httpHeaders -> httpHeaders.putAll(_customHttpHeaders)
 		).bodyValue(
 			body
 		).exchangeToMono(
@@ -58,8 +67,12 @@ public abstract class BaseRestController {
 			uriBuilder -> uriBuilder.path(
 				path
 			).build()
+		).accept(
+			_acceptMediaType
 		).header(
 			HttpHeaders.AUTHORIZATION, authorization
+		).headers(
+			httpHeaders -> httpHeaders.putAll(_customHttpHeaders)
 		).exchangeToMono(
 			_getExchangeToMonoFunction()
 		).subscribe();
@@ -74,10 +87,16 @@ public abstract class BaseRestController {
 			uriBuilder -> uriBuilder.path(
 				path
 			).build()
-		).bodyValue(
-			body
+		).accept(
+			_acceptMediaType
+		).contentType(
+			_contentTypeMediaType
 		).header(
 			HttpHeaders.AUTHORIZATION, authorization
+		).headers(
+			httpHeaders -> httpHeaders.putAll(_customHttpHeaders)
+		).bodyValue(
+			body
 		).exchangeToMono(
 			_getExchangeToMonoFunction()
 		).subscribe();
@@ -92,10 +111,16 @@ public abstract class BaseRestController {
 			uriBuilder -> uriBuilder.path(
 				path
 			).build()
-		).bodyValue(
-			body
+		).accept(
+			_acceptMediaType
+		).contentType(
+			_contentTypeMediaType
 		).header(
 			HttpHeaders.AUTHORIZATION, authorization
+		).headers(
+			httpHeaders -> httpHeaders.putAll(_customHttpHeaders)
+		).bodyValue(
+			body
 		).exchangeToMono(
 			_getExchangeToMonoFunction()
 		).subscribe();
@@ -110,8 +135,14 @@ public abstract class BaseRestController {
 			uriBuilder -> uriBuilder.path(
 				path
 			).build()
+		).accept(
+			_acceptMediaType
+		).contentType(
+			_contentTypeMediaType
 		).header(
 			HttpHeaders.AUTHORIZATION, authorization
+		).headers(
+			httpHeaders -> httpHeaders.putAll(_customHttpHeaders)
 		).bodyValue(
 			body
 		).exchangeToMono(
@@ -127,13 +158,25 @@ public abstract class BaseRestController {
 			uriBuilder -> uriBuilder.path(
 				path
 			).build()
+		).accept(
+			_acceptMediaType
+		).contentType(
+			_contentTypeMediaType
 		).header(
 			HttpHeaders.AUTHORIZATION, authorization
+		).headers(
+			httpHeaders -> httpHeaders.putAll(_customHttpHeaders)
 		).bodyValue(
 			body
 		).exchangeToMono(
 			_getExchangeToMonoFunction()
 		).block();
+	}
+
+	protected JSONObject deleteAsJSONObject(
+		String authorization, String body, String path) {
+
+		return new JSONObject(delete(authorization, body, path));
 	}
 
 	protected String get(String authorization, String path) {
@@ -143,11 +186,27 @@ public abstract class BaseRestController {
 			uriBuilder -> uriBuilder.path(
 				path
 			).build()
+		).accept(
+			_acceptMediaType
 		).header(
 			HttpHeaders.AUTHORIZATION, authorization
+		).headers(
+			httpHeaders -> httpHeaders.putAll(_customHttpHeaders)
 		).exchangeToMono(
 			_getExchangeToMonoFunction()
 		).block();
+	}
+
+	protected MediaType getAcceptMediaType() {
+		return _acceptMediaType;
+	}
+
+	protected JSONObject getAsJSONObject(String authorization, String path) {
+		return new JSONObject(get(authorization, path));
+	}
+
+	protected MediaType getContentTypeMediaType() {
+		return _contentTypeMediaType;
 	}
 
 	protected String getLXCDXPURL() {
@@ -195,13 +254,25 @@ public abstract class BaseRestController {
 			uriBuilder -> uriBuilder.path(
 				path
 			).build()
-		).bodyValue(
-			body
+		).accept(
+			_acceptMediaType
+		).contentType(
+			_contentTypeMediaType
 		).header(
 			HttpHeaders.AUTHORIZATION, authorization
+		).headers(
+			httpHeaders -> httpHeaders.putAll(_customHttpHeaders)
+		).bodyValue(
+			body
 		).exchangeToMono(
 			_getExchangeToMonoFunction()
 		).block();
+	}
+
+	protected JSONObject patchAsJSONObject(
+		String authorization, String body, String path) {
+
+		return new JSONObject(patch(authorization, body, path));
 	}
 
 	protected String post(String authorization, String body, String path) {
@@ -211,13 +282,25 @@ public abstract class BaseRestController {
 			uriBuilder -> uriBuilder.path(
 				path
 			).build()
-		).bodyValue(
-			body
+		).accept(
+			_acceptMediaType
+		).contentType(
+			_contentTypeMediaType
 		).header(
 			HttpHeaders.AUTHORIZATION, authorization
+		).headers(
+			httpHeaders -> httpHeaders.putAll(_customHttpHeaders)
+		).bodyValue(
+			body
 		).exchangeToMono(
 			_getExchangeToMonoFunction()
 		).block();
+	}
+
+	protected JSONObject postAsJSONObject(
+		String authorization, String body, String path) {
+
+		return new JSONObject(post(authorization, body, path));
 	}
 
 	protected String put(String authorization, String body, String path) {
@@ -227,13 +310,37 @@ public abstract class BaseRestController {
 			uriBuilder -> uriBuilder.path(
 				path
 			).build()
+		).accept(
+			_acceptMediaType
+		).contentType(
+			_contentTypeMediaType
 		).header(
 			HttpHeaders.AUTHORIZATION, authorization
+		).headers(
+			httpHeaders -> httpHeaders.putAll(_customHttpHeaders)
 		).bodyValue(
 			body
 		).exchangeToMono(
 			_getExchangeToMonoFunction()
 		).block();
+	}
+
+	protected void putAdditionalHttpHeader(String key, String... values) {
+		_customHttpHeaders.put(key, Arrays.asList(values));
+	}
+
+	protected JSONObject putAsJSONObject(
+		String authorization, String body, String path) {
+
+		return new JSONObject(put(authorization, body, path));
+	}
+
+	protected void setAcceptMediaType(MediaType acceptMediaType) {
+		_acceptMediaType = acceptMediaType;
+	}
+
+	protected void setContentTypeMediaType(MediaType contentTypeMediaType) {
+		_contentTypeMediaType = contentTypeMediaType;
 	}
 
 	@Value("${com.liferay.lxc.dxp.mainDomain}")
@@ -251,7 +358,13 @@ public abstract class BaseRestController {
 			if (Objects.equals(
 					clientResponse.statusCode(), HttpStatus.NO_CONTENT)) {
 
-				return Mono.just("{}");
+				if (Objects.equals(
+						_acceptMediaType, MediaType.APPLICATION_JSON_VALUE)) {
+
+					return Mono.just("{}");
+				}
+
+				return Mono.just("");
 			}
 			else if (httpStatus.is2xxSuccessful()) {
 				return clientResponse.bodyToMono(String.class);
@@ -271,10 +384,6 @@ public abstract class BaseRestController {
 		return WebClient.builder(
 		).baseUrl(
 			getLXCDXPURL()
-		).defaultHeader(
-			HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE
-		).defaultHeader(
-			HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE
 		).exchangeStrategies(
 			ExchangeStrategies.builder(
 			).codecs(
@@ -285,5 +394,10 @@ public abstract class BaseRestController {
 			).build()
 		).build();
 	}
+
+	private MediaType _acceptMediaType = MediaType.APPLICATION_JSON;
+	private MediaType _contentTypeMediaType = MediaType.APPLICATION_JSON;
+	private final Map<String, List<String>> _customHttpHeaders =
+		new HashMap<>();
 
 }
