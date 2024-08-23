@@ -36,7 +36,7 @@ import reactor.core.publisher.Mono;
 public abstract class BaseRestController {
 
 	protected Disposable asyncDelete(
-		String authorization, String body, String path) {
+		String authorization, Object body, String path) {
 
 		return _getWebClient(
 		).method(
@@ -79,7 +79,7 @@ public abstract class BaseRestController {
 	}
 
 	protected Disposable asyncPatch(
-		String authorization, String body, String path) {
+		String authorization, Object body, String path) {
 
 		return _getWebClient(
 		).patch(
@@ -103,7 +103,7 @@ public abstract class BaseRestController {
 	}
 
 	protected Disposable asyncPost(
-		String authorization, String body, String path) {
+		String authorization, Object body, String path) {
 
 		return _getWebClient(
 		).post(
@@ -127,7 +127,7 @@ public abstract class BaseRestController {
 	}
 
 	protected Disposable asyncPut(
-		String authorization, String body, String path) {
+		String authorization, Object body, String path) {
 
 		return _getWebClient(
 		).put(
@@ -150,7 +150,7 @@ public abstract class BaseRestController {
 		).subscribe();
 	}
 
-	protected String delete(String authorization, String body, String path) {
+	protected String delete(String authorization, Object body, String path) {
 		return _getWebClient(
 		).method(
 			HttpMethod.DELETE
@@ -174,7 +174,7 @@ public abstract class BaseRestController {
 	}
 
 	protected JSONObject deleteAsJSONObject(
-		String authorization, String body, String path) {
+		String authorization, Object body, String path) {
 
 		return new JSONObject(delete(authorization, body, path));
 	}
@@ -247,7 +247,7 @@ public abstract class BaseRestController {
 		}
 	}
 
-	protected String patch(String authorization, String body, String path) {
+	protected String patch(String authorization, Object body, String path) {
 		return _getWebClient(
 		).patch(
 		).uri(
@@ -270,12 +270,12 @@ public abstract class BaseRestController {
 	}
 
 	protected JSONObject patchAsJSONObject(
-		String authorization, String body, String path) {
+		String authorization, Object body, String path) {
 
 		return new JSONObject(patch(authorization, body, path));
 	}
 
-	protected String post(String authorization, String body, String path) {
+	protected String post(String authorization, Object body, String path) {
 		return _getWebClient(
 		).post(
 		).uri(
@@ -298,12 +298,12 @@ public abstract class BaseRestController {
 	}
 
 	protected JSONObject postAsJSONObject(
-		String authorization, String body, String path) {
+		String authorization, Object body, String path) {
 
 		return new JSONObject(post(authorization, body, path));
 	}
 
-	protected String put(String authorization, String body, String path) {
+	protected String put(String authorization, Object body, String path) {
 		return _getWebClient(
 		).put(
 		).uri(
@@ -330,7 +330,7 @@ public abstract class BaseRestController {
 	}
 
 	protected JSONObject putAsJSONObject(
-		String authorization, String body, String path) {
+		String authorization, Object body, String path) {
 
 		return new JSONObject(put(authorization, body, path));
 	}
