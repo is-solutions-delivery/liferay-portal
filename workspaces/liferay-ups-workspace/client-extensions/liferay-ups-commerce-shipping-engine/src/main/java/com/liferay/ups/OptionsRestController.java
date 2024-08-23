@@ -6,6 +6,7 @@
 package com.liferay.ups;
 
 import com.liferay.client.extension.util.spring.boot.BaseRestController;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.ups.constants.UPSServiceCodeConstants;
@@ -18,7 +19,6 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * @author Alessio Antonio Rendina
@@ -44,6 +43,11 @@ public class OptionsRestController extends BaseRestController {
 		throws Exception {
 
 		return post(jwt, json, _log);
+	}
+
+	@Override
+	protected String getLXCDXPURL() {
+		return "";
 	}
 
 	protected ResponseEntity<String> post(Jwt jwt, String json, Log log)
@@ -72,8 +76,10 @@ public class OptionsRestController extends BaseRestController {
 
 			JSONObject skuJSONObject = _get(
 				"Bearer " + jwt.getTokenValue(),
-				"/o/headless-commerce-admin-catalog/v1.0/skus/" +
-					orderItemJSONObject.getString("skuId"));
+				StringBundler.concat(
+					lxcDXPServerProtocol, "://", lxcDXPMainDomain,
+					"/o/headless-commerce-admin-catalog/v1.0/skus/",
+					orderItemJSONObject.getString("skuId")));
 
 			depth += skuJSONObject.getDouble("depth");
 			height += skuJSONObject.getDouble("height");
@@ -120,28 +126,16 @@ public class OptionsRestController extends BaseRestController {
 
 			String credentials = clientId + ":" + clientSecret;
 
-			WebClient webClient = WebClient.builder(
-			).baseUrl(
-				"https://wwwcie.ups.com"
-			).defaultHeader(
-				HttpHeaders.AUTHORIZATION,
-				"Basic " + encoder.encodeToString(credentials.getBytes())
-			).defaultHeader(
-				HttpHeaders.CONTENT_TYPE,
-				MediaType.APPLICATION_FORM_URLENCODED_VALUE
-			).build();
+			setContentTypeMediaType(MediaType.APPLICATION_FORM_URLENCODED);
 
 			JSONObject jsonObject = new JSONObject(
-				webClient.post(
-				).uri(
-					"/security/v1/oauth/token"
-				).body(
+				post(
+					"Basic " + encoder.encodeToString(credentials.getBytes()),
 					BodyInserters.fromFormData(
-						"grant_type", "client_credentials")
-				).retrieve(
-				).bodyToFlux(
-					String.class
-				).blockLast());
+						"grant_type", "client_credentials"),
+					"https://wwwcie.ups.com/security/v1/oauth/token"));
+
+			setContentTypeMediaType(MediaType.APPLICATION_JSON);
 
 			return jsonObject.getString("access_token");
 		}
@@ -290,28 +284,10 @@ public class OptionsRestController extends BaseRestController {
 		).toString();
 
 		try {
-			WebClient webClient = WebClient.builder(
-			).baseUrl(
-				"https://wwwcie.ups.com"
-			).defaultHeader(
-				HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE
-			).defaultHeader(
-				HttpHeaders.AUTHORIZATION,
-				"Bearer " + _getAccessToken(clientId, clientSecret, log)
-			).defaultHeader(
-				HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE
-			).build();
-
 			return new JSONObject(
-				webClient.post(
-				).uri(
-					"/api/rating/v2403/Rate"
-				).bodyValue(
-					body
-				).retrieve(
-				).bodyToFlux(
-					String.class
-				).blockLast());
+				post(
+					"Bearer " + _getAccessToken(clientId, clientSecret, log),
+					body, "https://wwwcie.ups.com/api/rating/v2403/Rate"));
 		}
 		catch (Exception exception) {
 			if (log.isDebugEnabled()) {
