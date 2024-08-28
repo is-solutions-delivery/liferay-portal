@@ -113,7 +113,7 @@ public class TestrayUtil {
 		for (String value : valuesArray) {
 			sb.append("? ");
 			sb.append(", ");
-			params.add(value);
+			params.add(StringUtil.quote(value));
 		}
 
 		sb.setIndex(sb.index() - 1);
