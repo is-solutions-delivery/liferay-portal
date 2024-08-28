@@ -1521,9 +1521,29 @@ public class Main {
 		File japaneseFile = new File(
 			StringUtil.replace(fileName, "/en/", "/ja/"));
 
-		if (japaneseFile.exists()) {
-			String japaneseText = FileUtils.readFileToString(
-				japaneseFile, StandardCharsets.UTF_8);
+		File koreanFile = new File(
+			StringUtil.replace(fileName, "/en/", "/ko/"));
+
+		if (japaneseFile.exists() || koreanFile.exists()) {
+			String japaneseText;
+
+			if (japaneseFile.exists()) {
+				japaneseText = FileUtils.readFileToString(
+					japaneseFile, StandardCharsets.UTF_8);
+			}
+			else {
+				japaneseText = null;
+			}
+
+			String koreanText;
+
+			if (koreanFile.exists()) {
+				koreanText = FileUtils.readFileToString(
+					koreanFile, StandardCharsets.UTF_8);
+			}
+			else {
+				koreanText = null;
+			}
 
 			structuredContent.setContentFields(
 				() -> new ContentField[] {
@@ -1531,18 +1551,45 @@ public class Main {
 						{
 							setContentFieldValue(
 								() -> englishContentContentFieldValue);
-							setContentFieldValue_i18n(
-								() -> HashMapBuilder.put(
-									"en-US", englishContentContentFieldValue
-								).put(
-									"ja-JP",
+
+							ContentFieldValue japaneseContentFieldValue;
+
+							if (japaneseText != null) {
+								japaneseContentFieldValue =
 									new ContentFieldValue() {
 										{
 											setData(
 												() -> _getHTML(japaneseFile));
 										}
-									}
+									};
+							}
+							else {
+								japaneseContentFieldValue = null;
+							}
+
+							ContentFieldValue koreanContentFieldValue;
+
+							if (koreanText != null) {
+								koreanContentFieldValue =
+									new ContentFieldValue() {
+										{
+											setData(() -> _getHTML(koreanFile));
+										}
+									};
+							}
+							else {
+								koreanContentFieldValue = null;
+							}
+
+							setContentFieldValue_i18n(
+								() -> HashMapBuilder.put(
+									"en-US", englishContentContentFieldValue
+								).put(
+									"ja-JP", japaneseContentFieldValue
+								).put(
+									"ko-KR", koreanContentFieldValue
 								).build());
+
 							setName(() -> "content");
 						}
 					},
@@ -1550,11 +1597,11 @@ public class Main {
 						{
 							setContentFieldValue(
 								() -> englishMD5HexContentFieldValue);
-							setContentFieldValue_i18n(
-								() -> HashMapBuilder.put(
-									"en-US", englishMD5HexContentFieldValue
-								).put(
-									"ja-JP",
+
+							ContentFieldValue japaneseContentFieldValue;
+
+							if (japaneseFile.exists()) {
+								japaneseContentFieldValue =
 									new ContentFieldValue() {
 										{
 											setData(
@@ -1562,8 +1609,38 @@ public class Main {
 													new FileInputStream(
 														japaneseFile)));
 										}
-									}
+									};
+							}
+							else {
+								japaneseContentFieldValue = null;
+							}
+
+							ContentFieldValue koreanContentFieldValue;
+
+							if (koreanFile.exists()) {
+								koreanContentFieldValue =
+									new ContentFieldValue() {
+										{
+											setData(
+												() -> DigestUtils.md5Hex(
+													new FileInputStream(
+														koreanFile)));
+										}
+									};
+							}
+							else {
+								koreanContentFieldValue = null;
+							}
+
+							setContentFieldValue_i18n(
+								() -> HashMapBuilder.put(
+									"en-US", englishMD5HexContentFieldValue
+								).put(
+									"ja-JP", japaneseContentFieldValue
+								).put(
+									"ko-KR", koreanContentFieldValue
 								).build());
+
 							setName(() -> "md5Hex");
 						}
 					},
@@ -1571,11 +1648,11 @@ public class Main {
 						{
 							setContentFieldValue(
 								() -> englishNavigationContentFieldValue);
-							setContentFieldValue_i18n(
-								() -> HashMapBuilder.put(
-									"en-US", englishNavigationContentFieldValue
-								).put(
-									"ja-JP",
+
+							ContentFieldValue japaneseContentFieldValue;
+
+							if (japaneseFile.exists()) {
+								japaneseContentFieldValue =
 									new ContentFieldValue() {
 										{
 											setData(
@@ -1583,8 +1660,38 @@ public class Main {
 													_getNavigationJSONObject(
 														japaneseFile)));
 										}
-									}
+									};
+							}
+							else {
+								japaneseContentFieldValue = null;
+							}
+
+							ContentFieldValue koreanContentFieldValue;
+
+							if (koreanFile.exists()) {
+								koreanContentFieldValue =
+									new ContentFieldValue() {
+										{
+											setData(
+												() -> String.valueOf(
+													_getNavigationJSONObject(
+														koreanFile)));
+										}
+									};
+							}
+							else {
+								koreanContentFieldValue = null;
+							}
+
+							setContentFieldValue_i18n(
+								() -> HashMapBuilder.put(
+									"en-US", englishNavigationContentFieldValue
+								).put(
+									"ja-JP", japaneseContentFieldValue
+								).put(
+									"ko-KR", koreanContentFieldValue
 								).build());
+
 							setName(() -> "navigation");
 						}
 					},
@@ -1593,12 +1700,11 @@ public class Main {
 							setContentFieldValue(
 								() ->
 									englishShowChildrenCardsContentFieldValue);
-							setContentFieldValue_i18n(
-								() -> HashMapBuilder.put(
-									"en-US",
-									englishShowChildrenCardsContentFieldValue
-								).put(
-									"ja-JP",
+
+							ContentFieldValue japaneseContentFieldValue;
+
+							if (japaneseFile.exists()) {
+								japaneseContentFieldValue =
 									new ContentFieldValue() {
 										{
 											setData(
@@ -1606,30 +1712,76 @@ public class Main {
 													_isShowChildrenCards(
 														japaneseFile)));
 										}
-									}
+									};
+							}
+							else {
+								japaneseContentFieldValue = null;
+							}
+
+							ContentFieldValue koreanContentFieldValue;
+
+							if (koreanFile.exists()) {
+								koreanContentFieldValue =
+									new ContentFieldValue() {
+										{
+											setData(
+												() -> String.valueOf(
+													_isShowChildrenCards(
+														koreanFile)));
+										}
+									};
+							}
+							else {
+								koreanContentFieldValue = null;
+							}
+
+							setContentFieldValue_i18n(
+								() -> HashMapBuilder.put(
+									"en-US",
+									englishShowChildrenCardsContentFieldValue
+								).put(
+									"ja-JP", japaneseContentFieldValue
+								).put(
+									"ko-KR", koreanContentFieldValue
 								).build());
+
 							setName(() -> "showChildrenCards");
 						}
 					}
 				});
+
 			structuredContent.setDescription_i18n(
 				() -> HashMapBuilder.put(
 					"en-US", _getDescription(englishText)
 				).put(
-					"ja-JP", _getDescription(japaneseText)
+					"ja-JP",
+					(japaneseText != null) ? _getDescription(japaneseText) :
+						null
+				).put(
+					"ko-KR",
+					(koreanText != null) ? _getDescription(koreanText) : null
 				).build());
 
 			structuredContent.setFriendlyUrlPath_i18n(
 				() -> HashMapBuilder.put(
 					"en-US", _toFriendlyURLPath(englishFile)
 				).put(
-					"ja-JP", _toFriendlyURLPath(japaneseFile)
+					"ja-JP",
+					japaneseFile.exists() ? _toFriendlyURLPath(japaneseFile) :
+						null
+				).put(
+					"ko-KR",
+					koreanFile.exists() ? _toFriendlyURLPath(koreanFile) : null
 				).build());
+
 			structuredContent.setTitle_i18n(
 				() -> HashMapBuilder.put(
 					"en-US", englishTitle
 				).put(
-					"ja-JP", _getTitle(japaneseText)
+					"ja-JP",
+					(japaneseText != null) ? _getTitle(japaneseText) : null
+				).put(
+					"ko-KR", (koreanText != null) ? _getTitle(koreanText) : null
 				).build());
 		}
 		else {
