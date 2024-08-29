@@ -151,7 +151,7 @@
 							<li> ${currentStep.StepInstruction.getData()} </li>
 						</#if>
 
-						<#if (currentStep.Resources.Image.getData())??>
+						<#if (currentStep.Resources.Image.getData())?? && currentStep.Resources.Image.getData() != "">
 							<img class="rounded img-fluid" alt="${currentStep.Resources.Image.getAttribute("alt")}" data-fileentryid="${currentStep.Resources.Image.getAttribute("fileEntryId")}" src="${currentStep.Resources.Image.getData()}" />
 						</#if>
 
