@@ -41,6 +41,7 @@ import java.sql.Timestamp;
 
 import java.time.OffsetDateTime;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -189,6 +190,9 @@ public class TestrayManagerImpl implements TestrayManager {
 				testrayCache.getTestrayCaseResultAmount(), dueStatus,
 				System.currentTimeMillis() - startTime, fileName, bytes.length,
 				serviceContext, testrayCache, userId);
+
+			_updateTestrayBuildSummary(companyId,
+					testrayCache.getTestrayBuildId());
 		}
 	}
 
@@ -248,6 +252,9 @@ public class TestrayManagerImpl implements TestrayManager {
 					System.currentTimeMillis() - startTime, fileName, fileSize,
 					serviceContext, testrayCache, userId);
 			}
+
+//			_updateTestrayBuildSummary(
+//				companyId, testrayCache.getTestrayBuildId());
 		}
 	}
 
@@ -1336,6 +1343,61 @@ public class TestrayManagerImpl implements TestrayManager {
 
 		return _objectEntryLocalService.updateObjectEntry(
 			userId, objectEntryId, values, serviceContext);
+	}
+
+	private void _updateTestrayBuildSummary(long companyId, long testrayBuildId)
+		throws Exception {
+
+		StringBundler sb = new StringBundler(4);
+
+		sb.append("select cr.duestatus_, count(*) from ");
+		sb.append("O_[%COMPANY_ID%]_CaseResult cr where ");
+		sb.append("cr.r_buildtocaseresult_c_buildid = ? group by ");
+		sb.append("cr.dueStatus_");
+
+		List<Object> params = new ArrayList<>();
+
+		params.add(testrayBuildId);
+
+		String sql = StringUtil.replace(
+			sb.toString(), "[%COMPANY_ID%]", String.valueOf(companyId));
+
+		List<Map<String, Object>> values = TestrayUtil.executeQuery(
+			sql, params);
+
+		Map<String, Integer> status = new HashMap<>();
+
+		for (Map<String, Object> map : values) {
+			status.put(
+				GetterUtil.getString(map.get("duestatus_")),
+				GetterUtil.getInteger(map.get("count")));
+		}
+
+		sb = new StringBundler(5);
+
+		sb.append("update O_[%COMPANY_ID%]_Build set caseresultblocked_ = ?, ");
+		sb.append("caseresultdidnotrun_ = ?, caseresultfailed_ = ?, ");
+		sb.append("caseresultinprogress_ = ?, caseresultincomplete_ = ?, ");
+		sb.append("caseresultpassed_ = ?, caseresulttestfix_ = ?, ");
+		sb.append("caseresultuntested_ = ? where c_buildId_ = ? ");
+
+		params = new ArrayList<>();
+
+		params.add(GetterUtil.getLong(status.get("BLOCKED")));
+		params.add(GetterUtil.getLong(status.get("DIDNOTRUN")));
+		params.add(GetterUtil.getLong(status.get("FAILED")));
+		params.add(GetterUtil.getLong(status.get("INPROGRESS")));
+		params.add(GetterUtil.getLong(status.get("INCOMPLETE")));
+		params.add(GetterUtil.getLong(status.get("PASSED")));
+		params.add(GetterUtil.getLong(status.get("TESTFIX")));
+		params.add(GetterUtil.getLong(status.get("UNTESTED")));
+
+		params.add(testrayBuildId);
+
+		sql = StringUtil.replace(
+			sb.toString(), "[%COMPANY_ID%]", String.valueOf(companyId));
+
+		TestrayUtil.executeUpdate(sql, params);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
