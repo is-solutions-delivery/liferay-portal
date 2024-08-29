@@ -351,6 +351,11 @@
 													"label": "Warn",
 													"reference": "warning",
 													"value": "Option51237183"
+												},
+												{
+													"label": "Tip",
+													"reference": "tip",
+													"value": "Option82785170"
 												}
 											]
 										},
@@ -414,7 +419,7 @@
 						}
 					],
 					"readOnly": false,
-					"repeatable": false,
+					"repeatable": true,
 					"required": false,
 					"showLabel": true,
 					"tip": {
@@ -422,7 +427,7 @@
 				}
 			],
 			"readOnly": false,
-			"repeatable": true,
+			"repeatable": false,
 			"required": false,
 			"showLabel": true,
 			"tip": {
@@ -470,15 +475,15 @@
 			"indexType": "text",
 			"indexable": true,
 			"label": {
-				"en_US": "Tip"
+				"en_US": "Tips and Troubleshooting"
 			},
 			"localizable": true,
 			"name": "RichText86046881",
 			"nestedDataDefinitionFields": [
 			],
 			"readOnly": false,
-			"repeatable": true,
-			"required": true,
+			"repeatable": false,
+			"required": false,
 			"showLabel": true,
 			"tip": {
 				"en_US": ""
