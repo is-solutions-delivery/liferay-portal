@@ -191,8 +191,8 @@ public class TestrayManagerImpl implements TestrayManager {
 				System.currentTimeMillis() - startTime, fileName, bytes.length,
 				serviceContext, testrayCache, userId);
 
-			_updateTestrayBuildSummary(companyId,
-					testrayCache.getTestrayBuildId());
+			_updateTestrayBuildSummary(
+				companyId, testrayCache.getTestrayBuildId());
 		}
 	}
 
@@ -253,8 +253,8 @@ public class TestrayManagerImpl implements TestrayManager {
 					serviceContext, testrayCache, userId);
 			}
 
-//			_updateTestrayBuildSummary(
-//				companyId, testrayCache.getTestrayBuildId());
+			//			_updateTestrayBuildSummary(
+			//				companyId, testrayCache.getTestrayBuildId());
 		}
 	}
 
@@ -267,7 +267,7 @@ public class TestrayManagerImpl implements TestrayManager {
 			companyId,
 			"externalReferenceCode in ('TRFCAT-001', 'TRFCAT-002', " +
 				"'TRFCAT-003', 'TRFCAT-004', 'TRFCAT-009')",
-			"FactorCategory", testrayCache, userId);
+			null, "FactorCategory", testrayCache, userId);
 
 		if (ListUtil.isNotEmpty(valuesList)) {
 			for (Map<String, Serializable> values : valuesList) {
@@ -314,7 +314,8 @@ public class TestrayManagerImpl implements TestrayManager {
 			StringBundler.concat(
 				"r_runToCaseResult_c_runId eq '", testrayRunId,
 				"' and r_caseToCaseResult_c_caseId eq '", testrayCaseId, "'"),
-			objectEntryIdsKey, "CaseResult", testrayCache, userId);
+			objectEntryIdsKey, new String[] {"c_caseResultId"}, "CaseResult",
+			testrayCache, userId);
 
 		Map<String, Serializable> properties =
 			HashMapBuilder.<String, Serializable>put(
@@ -465,7 +466,8 @@ public class TestrayManagerImpl implements TestrayManager {
 				StringUtil.removeChar(
 					StringUtil.replace(testrayCaseName, '\'', "''"), '\\'),
 				"'"),
-			objectEntryIdsKey, "Case", testrayCache, userId);
+			objectEntryIdsKey, new String[] {"c_caseId"}, "Case", testrayCache,
+			userId);
 
 		long testrayTeamId = _getTestrayTeamId(
 			companyId, serviceContext, testrayCache, testrayProjectId,
@@ -515,7 +517,7 @@ public class TestrayManagerImpl implements TestrayManager {
 					StringBundler.concat(
 						"buildId eq '", testrayBuildId, "' and caseId eq '",
 						testrayCaseId, "'"),
-					"BuildsCases", testrayCache, userId))) {
+					null, "BuildsCases", testrayCache, userId))) {
 
 			_addObjectEntry(
 				"BuildsCases", serviceContext, testrayCache, userId,
@@ -615,7 +617,8 @@ public class TestrayManagerImpl implements TestrayManager {
 
 	private long _getObjectEntryId(
 			long companyId, String filterString, String objectEntryIdsKey,
-			String shortName, TestrayCache testrayCache, long userId)
+			String[] selectedObjectFieldNames, String shortName,
+			TestrayCache testrayCache, long userId)
 		throws Exception {
 
 		Long objectEntryId = testrayCache.getObjectEntryId(objectEntryIdsKey);
@@ -625,7 +628,8 @@ public class TestrayManagerImpl implements TestrayManager {
 		}
 
 		List<Map<String, Serializable>> valuesList = _getValuesList(
-			companyId, filterString, shortName, testrayCache, userId);
+			companyId, filterString, selectedObjectFieldNames, shortName,
+			testrayCache, userId);
 
 		if (ListUtil.isNotEmpty(valuesList)) {
 			Map<String, Serializable> values = valuesList.get(0);
@@ -714,7 +718,8 @@ public class TestrayManagerImpl implements TestrayManager {
 			StringBundler.concat(
 				"projectId eq '", testrayProjectId, "' and name eq '",
 				testrayBuildName, "'"),
-			objectEntryIdsKey, "Build", testrayCache, userId);
+			objectEntryIdsKey, new String[] {"c_buildId"}, "Build",
+			testrayCache, userId);
 
 		if (testrayBuildId != 0) {
 			return testrayBuildId;
@@ -795,7 +800,8 @@ public class TestrayManagerImpl implements TestrayManager {
 
 		long testrayCaseTypeId = _getObjectEntryId(
 			companyId, "name eq '" + testrayCaseTypeName + "'",
-			objectEntryIdsKey, "CaseType", testrayCache, userId);
+			objectEntryIdsKey, new String[] {"c_caseTypeId"}, "CaseType",
+			testrayCache, userId);
 
 		if (testrayCaseTypeId != 0) {
 			return testrayCaseTypeId;
@@ -834,7 +840,7 @@ public class TestrayManagerImpl implements TestrayManager {
 				StringBundler.concat(
 					"projectId eq '", testrayProjectId, "' and name eq '",
 					testrayComponentName, "'"),
-				"Component", testrayCache, userId);
+				null, "Component", testrayCache, userId);
 
 			if (ListUtil.isNotEmpty(valuesList)) {
 				values = valuesList.get(0);
@@ -897,7 +903,8 @@ public class TestrayManagerImpl implements TestrayManager {
 
 		long testrayFactorCategoryId = _getObjectEntryId(
 			companyId, "name eq '" + testrayFactorCategoryName + "'",
-			objectEntryIdsKey, "FactorCategory", testrayCache, userId);
+			objectEntryIdsKey, new String[] {"c_factorCategoryId"},
+			"FactorCategory", testrayCache, userId);
 
 		if (testrayFactorCategoryId != 0) {
 			return testrayFactorCategoryId;
@@ -932,7 +939,8 @@ public class TestrayManagerImpl implements TestrayManager {
 			StringBundler.concat(
 				"factorCategoryId eq '", testrayFactorCategoryId,
 				"' and name eq '", testrayFactorOptionName, "'"),
-			objectEntryIdsKey, "FactorOption", testrayCache, userId);
+			objectEntryIdsKey, new String[] {"c_factorOptionId"},
+			"FactorOption", testrayCache, userId);
 
 		if (testrayFactorOptionId != 0) {
 			return testrayFactorOptionId;
@@ -965,7 +973,8 @@ public class TestrayManagerImpl implements TestrayManager {
 
 		long testrayProductVersionId = _getObjectEntryId(
 			companyId, "name eq '" + testrayProductVersionName + "'",
-			objectEntryIdsKey, "ProductVersion", testrayCache, userId);
+			objectEntryIdsKey, new String[] {"c_productVersionId"},
+			"ProductVersion", testrayCache, userId);
 
 		if (testrayProductVersionId != 0) {
 			return testrayProductVersionId;
@@ -996,7 +1005,8 @@ public class TestrayManagerImpl implements TestrayManager {
 
 		long testrayProjectId = _getObjectEntryId(
 			companyId, "name eq '" + testrayProjectName + "'",
-			objectEntryIdsKey, "Project", testrayCache, userId);
+			objectEntryIdsKey, new String[] {"c_projectId"}, "Project",
+			testrayCache, userId);
 
 		if (testrayProjectId != 0) {
 			return testrayProjectId;
@@ -1029,7 +1039,8 @@ public class TestrayManagerImpl implements TestrayManager {
 			StringBundler.concat(
 				"projectId eq '", testrayProjectId, "' and name eq '",
 				testrayRoutineName, "'"),
-			objectEntryIdsKey, "Routine", testrayCache, userId);
+			objectEntryIdsKey, new String[] {"c_RoutineId"}, "Routine",
+			testrayCache, userId);
 
 		if (testrayRoutineId != 0) {
 			return testrayRoutineId;
@@ -1109,7 +1120,8 @@ public class TestrayManagerImpl implements TestrayManager {
 			StringBundler.concat(
 				"buildId eq '", testrayBuildId, "' and name eq '",
 				testrayRunName, "'"),
-			objectEntryIdsKey, "Run", testrayCache, userId);
+			objectEntryIdsKey, new String[] {"c_runId"}, "Run", testrayCache,
+			userId);
 
 		if (testrayRunId != 0) {
 			return testrayRunId;
@@ -1165,7 +1177,8 @@ public class TestrayManagerImpl implements TestrayManager {
 			StringBundler.concat(
 				"projectId eq '", testrayProjectId, "' and name eq '",
 				testrayTeamName, "'"),
-			objectEntryIdsKey, "Team", testrayCache, userId);
+			objectEntryIdsKey, new String[] {"c_teamId"}, "Team", testrayCache,
+			userId);
 
 		if (testrayTeamId != 0) {
 			return testrayTeamId;
@@ -1186,7 +1199,8 @@ public class TestrayManagerImpl implements TestrayManager {
 	}
 
 	private List<Map<String, Serializable>> _getValuesList(
-			long companyId, String filterString, String shortName,
+			long companyId, String filterString,
+			String[] selectedObjectFieldNames, String shortName,
 			TestrayCache testrayCache, long userId)
 		throws Exception {
 
@@ -1195,7 +1209,8 @@ public class TestrayManagerImpl implements TestrayManager {
 
 		return _objectEntryLocalService.getValuesList(
 			0, companyId, userId, objectDefinition.getObjectDefinitionId(),
-			null, _filterFactory.create(filterString, objectDefinition), null,
+			selectedObjectFieldNames,
+			_filterFactory.create(filterString, objectDefinition), null,
 			QueryUtil.ALL_POS, QueryUtil.ALL_POS, null);
 	}
 
@@ -1220,7 +1235,7 @@ public class TestrayManagerImpl implements TestrayManager {
 		throws Exception {
 
 		List<Map<String, Serializable>> valuesList = _getValuesList(
-			companyId, null, "CaseType", testrayCache, userId);
+			companyId, null, null, "CaseType", testrayCache, userId);
 
 		if (ListUtil.isEmpty(valuesList)) {
 			return;
@@ -1238,7 +1253,7 @@ public class TestrayManagerImpl implements TestrayManager {
 		throws Exception {
 
 		List<Map<String, Serializable>> valuesList = _getValuesList(
-			companyId, null, "Component", testrayCache, userId);
+			companyId, null, null, "Component", testrayCache, userId);
 
 		if (ListUtil.isEmpty(valuesList)) {
 			return;
@@ -1260,7 +1275,8 @@ public class TestrayManagerImpl implements TestrayManager {
 		throws Exception {
 
 		List<Map<String, Serializable>> valuesList = _getValuesList(
-			companyId, null, "FactorCategory", testrayCache, userId);
+			companyId, null, new String[] {"c_factorCategoryId", "name"},
+			"FactorCategory", testrayCache, userId);
 
 		if (ListUtil.isEmpty(valuesList)) {
 			return;
@@ -1278,7 +1294,7 @@ public class TestrayManagerImpl implements TestrayManager {
 		throws Exception {
 
 		List<Map<String, Serializable>> valuesList = _getValuesList(
-			companyId, null, "FactorOption", testrayCache, userId);
+			companyId, null, null, "FactorOption", testrayCache, userId);
 
 		if (ListUtil.isEmpty(valuesList)) {
 			return;
@@ -1301,7 +1317,8 @@ public class TestrayManagerImpl implements TestrayManager {
 		throws Exception {
 
 		List<Map<String, Serializable>> valuesList = _getValuesList(
-			companyId, null, "Project", testrayCache, userId);
+			companyId, null, new String[] {"c_projectId", "name"}, "Project",
+			testrayCache, userId);
 
 		if (ListUtil.isEmpty(valuesList)) {
 			return;
@@ -1319,7 +1336,7 @@ public class TestrayManagerImpl implements TestrayManager {
 		throws Exception {
 
 		List<Map<String, Serializable>> valuesList = _getValuesList(
-			companyId, null, "Team", testrayCache, userId);
+			companyId, null, null, "Team", testrayCache, userId);
 
 		if (ListUtil.isEmpty(valuesList)) {
 			return;
