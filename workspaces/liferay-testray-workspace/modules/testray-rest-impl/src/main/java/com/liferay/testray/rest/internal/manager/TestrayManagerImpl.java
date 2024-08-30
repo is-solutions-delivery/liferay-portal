@@ -1308,7 +1308,7 @@ public class TestrayManagerImpl implements TestrayManager {
 					GetterUtil.getLong(
 						values.get(
 							"r_factorCategoryToOptions_c_factorCategoryId"))),
-				GetterUtil.getLong(values.get("c_factorCategoryId")));
+				GetterUtil.getLong(values.get("c_factorOptionId")));
 		}
 	}
 
