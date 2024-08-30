@@ -9,6 +9,7 @@ import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.rest.filter.factory.FilterFactory;
+import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.petra.sql.dsl.expression.Predicate;
@@ -22,11 +23,18 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.xml.SecureXMLFactoryProviderUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.vulcan.aggregation.Aggregation;
+import com.liferay.portal.vulcan.aggregation.Facet;
+import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
+import com.liferay.portal.vulcan.pagination.Page;
+import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.testray.rest.dto.v1_0.TestrayCache;
 import com.liferay.testray.rest.internal.util.TestrayUtil;
 import com.liferay.testray.rest.manager.TestrayManager;
@@ -41,7 +49,6 @@ import java.sql.Timestamp;
 
 import java.time.OffsetDateTime;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -192,7 +199,7 @@ public class TestrayManagerImpl implements TestrayManager {
 				serviceContext, testrayCache, userId);
 
 			_updateTestrayBuildSummary(
-				companyId, testrayCache.getTestrayBuildId());
+				companyId, testrayCache.getTestrayBuildId(), userId);
 		}
 	}
 
@@ -252,9 +259,6 @@ public class TestrayManagerImpl implements TestrayManager {
 					System.currentTimeMillis() - startTime, fileName, fileSize,
 					serviceContext, testrayCache, userId);
 			}
-
-			//			_updateTestrayBuildSummary(
-			//				companyId, testrayCache.getTestrayBuildId());
 		}
 	}
 
@@ -1362,59 +1366,55 @@ public class TestrayManagerImpl implements TestrayManager {
 			userId, objectEntryId, values, serviceContext);
 	}
 
-	private void _updateTestrayBuildSummary(long companyId, long testrayBuildId)
+	private void _updateTestrayBuildSummary(
+			long companyId, long testrayBuildId, long userId)
 		throws Exception {
 
-		StringBundler sb = new StringBundler(4);
+		Page<com.liferay.object.rest.dto.v1_0.ObjectEntry> objectEntriesPage =
+			_objectEntryManager.getObjectEntries(
+				companyId,
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					companyId, "C_CaseResult"),
+				null,
+				new Aggregation() {
+					{
+						setAggregationTerms(
+							HashMapBuilder.put(
+								"dueStatus", "dueStatus"
+							).build());
+					}
+				},
+				new DefaultDTOConverterContext(
+					false, null, null, null, null, LocaleUtil.getSiteDefault(),
+					null, _userLocalService.fetchUser(userId)),
+				"buildId eq '" + testrayBuildId + "'", Pagination.of(1, 8),
+				null, null);
 
-		sb.append("select cr.duestatus_, count(*) from ");
-		sb.append("O_[%COMPANY_ID%]_CaseResult cr where ");
-		sb.append("cr.r_buildtocaseresult_c_buildid = ? group by ");
-		sb.append("cr.dueStatus_");
+		List<Facet> facets = objectEntriesPage.getFacets();
 
-		List<Object> params = new ArrayList<>();
+		Facet facet = facets.get(0);
 
-		params.add(testrayBuildId);
+		List<Facet.FacetValue> facetValues = facet.getFacetValues();
 
-		String sql = StringUtil.replace(
-			sb.toString(), "[%COMPANY_ID%]", String.valueOf(companyId));
+		Map<String, Integer> map = new HashMap<>();
 
-		List<Map<String, Object>> values = TestrayUtil.executeQuery(
-			sql, params);
-
-		Map<String, Integer> status = new HashMap<>();
-
-		for (Map<String, Object> map : values) {
-			status.put(
-				GetterUtil.getString(map.get("duestatus_")),
-				GetterUtil.getInteger(map.get("count")));
+		for (Facet.FacetValue facetValue : facetValues) {
+			map.put(
+				StringUtil.lowerCase(facetValue.getTerm()),
+				facetValue.getNumberOfOccurrences());
 		}
 
-		sb = new StringBundler(5);
+		ObjectEntry objectEntry = _objectEntryLocalService.getObjectEntry(
+			testrayBuildId);
 
-		sb.append("update O_[%COMPANY_ID%]_Build set caseresultblocked_ = ?, ");
-		sb.append("caseresultdidnotrun_ = ?, caseresultfailed_ = ?, ");
-		sb.append("caseresultinprogress_ = ?, caseresultincomplete_ = ?, ");
-		sb.append("caseresultpassed_ = ?, caseresulttestfix_ = ?, ");
-		sb.append("caseresultuntested_ = ? where c_buildId_ = ? ");
+		objectEntry.getValues(
+		).putAll(
+			map
+		);
 
-		params = new ArrayList<>();
-
-		params.add(GetterUtil.getLong(status.get("BLOCKED")));
-		params.add(GetterUtil.getLong(status.get("DIDNOTRUN")));
-		params.add(GetterUtil.getLong(status.get("FAILED")));
-		params.add(GetterUtil.getLong(status.get("INPROGRESS")));
-		params.add(GetterUtil.getLong(status.get("INCOMPLETE")));
-		params.add(GetterUtil.getLong(status.get("PASSED")));
-		params.add(GetterUtil.getLong(status.get("TESTFIX")));
-		params.add(GetterUtil.getLong(status.get("UNTESTED")));
-
-		params.add(testrayBuildId);
-
-		sql = StringUtil.replace(
-			sb.toString(), "[%COMPANY_ID%]", String.valueOf(companyId));
-
-		TestrayUtil.executeUpdate(sql, params);
+		_objectEntryLocalService.updateObjectEntry(
+			userId, objectEntry.getObjectEntryId(), objectEntry.getValues(),
+			new ServiceContext());
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
@@ -1433,5 +1433,11 @@ public class TestrayManagerImpl implements TestrayManager {
 
 	@Reference
 	private ObjectEntryLocalService _objectEntryLocalService;
+
+	@Reference(target = "(object.entry.manager.storage.type=default)")
+	private ObjectEntryManager _objectEntryManager;
+
+	@Reference
+	private UserLocalService _userLocalService;
 
 }
