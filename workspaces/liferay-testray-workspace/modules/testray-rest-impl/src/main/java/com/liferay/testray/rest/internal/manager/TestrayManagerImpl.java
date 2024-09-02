@@ -198,7 +198,7 @@ public class TestrayManagerImpl implements TestrayManager {
 				System.currentTimeMillis() - startTime, fileName, bytes.length,
 				serviceContext, testrayCache, userId);
 
-			_updateTestrayBuildSummary(
+			updateTestrayBuildSummary(
 				companyId, testrayCache.getTestrayBuildId(), userId);
 		}
 	}
@@ -260,6 +260,72 @@ public class TestrayManagerImpl implements TestrayManager {
 					serviceContext, testrayCache, userId);
 			}
 		}
+	}
+
+	@Override
+	public void updateTestrayBuildSummary(
+			long companyId, long testrayBuildId, long userId)
+		throws Exception {
+
+		Page<com.liferay.object.rest.dto.v1_0.ObjectEntry> objectEntriesPage =
+			_objectEntryManager.getObjectEntries(
+				companyId,
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					companyId, "C_CaseResult"),
+				null,
+				new Aggregation() {
+					{
+						setAggregationTerms(
+							HashMapBuilder.put(
+								"dueStatus", "dueStatus"
+							).build());
+					}
+				},
+				new DefaultDTOConverterContext(
+					false, null, null, null, null, LocaleUtil.getSiteDefault(),
+					null, _userLocalService.fetchUser(userId)),
+				"buildId eq '" + testrayBuildId + "'", Pagination.of(1, 8),
+				null, null);
+
+		List<Facet> facets = objectEntriesPage.getFacets();
+
+		Facet facet = facets.get(0);
+
+		List<Facet.FacetValue> facetValues = facet.getFacetValues();
+
+		Map<String, Integer> map = new HashMap<>();
+
+		for (Facet.FacetValue facetValue : facetValues) {
+			String key = facetValue.getTerm();
+
+			if (key.equals("INPROGRESS")) {
+				key = "InProgress";
+			}
+			else if (key.equals("DIDNOTRUN")) {
+				key = "DidNotRun";
+			}
+			else if (key.equals("TESTFIX")) {
+				key = "TestFix";
+			}
+			else {
+				key = StringUtil.upperCaseFirstLetter(
+					StringUtil.lowerCase(key));
+			}
+
+			map.put("caseResult" + key, facetValue.getNumberOfOccurrences());
+		}
+
+		ObjectEntry objectEntry = _objectEntryLocalService.getObjectEntry(
+			testrayBuildId);
+
+		objectEntry.getValues(
+		).putAll(
+			map
+		);
+
+		_objectEntryLocalService.updateObjectEntry(
+			userId, objectEntry.getObjectEntryId(), objectEntry.getValues(),
+			new ServiceContext());
 	}
 
 	private void _addDefaultFactors(
@@ -354,6 +420,10 @@ public class TestrayManagerImpl implements TestrayManager {
 
 					return "UNTESTED";
 				}
+			).put(
+				"duration",
+				GetterUtil.getLong(
+					testrayCasePropertiesMap.get("testray.testcase.duration"))
 			).put(
 				"r_buildToCaseResult_c_buildId", testrayBuildId
 			).put(
@@ -1364,57 +1434,6 @@ public class TestrayManagerImpl implements TestrayManager {
 
 		return _objectEntryLocalService.updateObjectEntry(
 			userId, objectEntryId, values, serviceContext);
-	}
-
-	private void _updateTestrayBuildSummary(
-			long companyId, long testrayBuildId, long userId)
-		throws Exception {
-
-		Page<com.liferay.object.rest.dto.v1_0.ObjectEntry> objectEntriesPage =
-			_objectEntryManager.getObjectEntries(
-				companyId,
-				_objectDefinitionLocalService.fetchObjectDefinition(
-					companyId, "C_CaseResult"),
-				null,
-				new Aggregation() {
-					{
-						setAggregationTerms(
-							HashMapBuilder.put(
-								"dueStatus", "dueStatus"
-							).build());
-					}
-				},
-				new DefaultDTOConverterContext(
-					false, null, null, null, null, LocaleUtil.getSiteDefault(),
-					null, _userLocalService.fetchUser(userId)),
-				"buildId eq '" + testrayBuildId + "'", Pagination.of(1, 8),
-				null, null);
-
-		List<Facet> facets = objectEntriesPage.getFacets();
-
-		Facet facet = facets.get(0);
-
-		List<Facet.FacetValue> facetValues = facet.getFacetValues();
-
-		Map<String, Integer> map = new HashMap<>();
-
-		for (Facet.FacetValue facetValue : facetValues) {
-			map.put(
-				StringUtil.lowerCase(facetValue.getTerm()),
-				facetValue.getNumberOfOccurrences());
-		}
-
-		ObjectEntry objectEntry = _objectEntryLocalService.getObjectEntry(
-			testrayBuildId);
-
-		objectEntry.getValues(
-		).putAll(
-			map
-		);
-
-		_objectEntryLocalService.updateObjectEntry(
-			userId, objectEntry.getObjectEntryId(), objectEntry.getValues(),
-			new ServiceContext());
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
