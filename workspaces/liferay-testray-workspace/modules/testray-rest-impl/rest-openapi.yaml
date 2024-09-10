@@ -95,6 +95,9 @@ components:
             properties:
                 comment:
                     type: string
+                duration:
+                    format: int64
+                    type: integer
                 error:
                     type: string
                 executionDate:
@@ -195,6 +198,37 @@ components:
                     type: string
                 testrayStatusMetric:
                     $ref: "#/components/schemas/TestrayStatusMetric"
+            type: object
+        TestrayDurationReport:
+            properties:
+                avgDuration:
+                    format: int64
+                    type: integer
+                durations:
+                    items:
+                        format: int64
+                        type: integer
+                    type: array
+                flaky:
+                    type: boolean
+                name:
+                    type: string
+                priority:
+                    format: int32
+                    type: integer
+                results:
+                    items:
+                        type: string
+                    type: array
+                testrayCaseId:
+                    format: int64
+                    type: integer
+                testrayCaseTypeName:
+                    type: string
+                testrayComponentName:
+                    type: string
+                testrayTeamName:
+                    type: string
             type: object
         TestrayRoutineMetric:
             properties:
@@ -565,6 +599,62 @@ paths:
                                     $ref: "#/components/schemas/TestrayCaseResult"
                                 type: array
             tags: ["TestrayCaseResult"]
+    "/testray-duration-report/{testrayRoutineId}":
+        get:
+            operationId: getTestrayDurationReportsTestrayRoutinePage
+            parameters:
+                - in: path
+                  name: testrayRoutineId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: flaky
+                  schema:
+                      type: boolean
+                - in: query
+                  name: page
+                  schema:
+                      type: integer
+                - in: query
+                  name: pageSize
+                  schema:
+                      type: integer
+                - in: query
+                  name: priority
+                  schema:
+                      type: string
+                - in: query
+                  name: testrayCaseName
+                  schema:
+                      type: string
+                - in: query
+                  name: testrayCaseTypeIds
+                  schema:
+                      type: string
+                - in: query
+                  name: testrayComponentIds
+                  schema:
+                      type: string
+                - in: query
+                  name: testrayTeamIds
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/TestrayDurationReport"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/TestrayDurationReport"
+                                type: array
+            tags: ["TestrayDurationReport"]
     "/testray-export-case-result/{testrayBuildId}":
         get:
             operationId: getTestrayExportCaseResultTestrayBuild
