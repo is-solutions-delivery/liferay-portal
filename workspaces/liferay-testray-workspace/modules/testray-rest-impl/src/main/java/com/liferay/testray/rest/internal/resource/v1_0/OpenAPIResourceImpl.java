@@ -86,6 +86,8 @@ public class OpenAPIResourceImpl {
 
 			add(TestrayCaseResultResourceImpl.class);
 
+			add(TestrayDurationReportResourceImpl.class);
+
 			add(TestrayRunComparisonResourceImpl.class);
 
 			add(TestrayStatusMetricResourceImpl.class);

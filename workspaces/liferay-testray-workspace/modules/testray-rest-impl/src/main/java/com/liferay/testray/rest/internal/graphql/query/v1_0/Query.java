@@ -12,10 +12,12 @@ import com.liferay.portal.vulcan.graphql.annotation.GraphQLName;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.testray.rest.dto.v1_0.TestrayCaseResult;
+import com.liferay.testray.rest.dto.v1_0.TestrayDurationReport;
 import com.liferay.testray.rest.dto.v1_0.TestrayRunComparison;
 import com.liferay.testray.rest.dto.v1_0.TestrayStatusMetric;
 import com.liferay.testray.rest.dto.v1_0.TestrayTestFlow;
 import com.liferay.testray.rest.resource.v1_0.TestrayCaseResultResource;
+import com.liferay.testray.rest.resource.v1_0.TestrayDurationReportResource;
 import com.liferay.testray.rest.resource.v1_0.TestrayRunComparisonResource;
 import com.liferay.testray.rest.resource.v1_0.TestrayStatusMetricResource;
 import com.liferay.testray.rest.resource.v1_0.TestrayTestFlowResource;
@@ -46,6 +48,14 @@ public class Query {
 
 		_testrayCaseResultResourceComponentServiceObjects =
 			testrayCaseResultResourceComponentServiceObjects;
+	}
+
+	public static void setTestrayDurationReportResourceComponentServiceObjects(
+		ComponentServiceObjects<TestrayDurationReportResource>
+			testrayDurationReportResourceComponentServiceObjects) {
+
+		_testrayDurationReportResourceComponentServiceObjects =
+			testrayDurationReportResourceComponentServiceObjects;
 	}
 
 	public static void setTestrayRunComparisonResourceComponentServiceObjects(
@@ -168,6 +178,35 @@ public class Query {
 			testrayCaseResultResource ->
 				testrayCaseResultResource.
 					getTestrayExportCaseResultTestrayBuild(testrayBuildId));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testrayRoutineDurationReportTestrayRoutine(flaky: ___, page: ___, pageSize: ___, priority: ___, testrayCaseName: ___, testrayCaseTypeIds: ___, testrayComponentIds: ___, testrayRoutineId: ___, testrayTeamIds: ___){items {__}, page, pageSize, totalCount}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public TestrayDurationReportPage testrayRoutineDurationReportTestrayRoutine(
+			@GraphQLName("testrayRoutineId") Long testrayRoutineId,
+			@GraphQLName("flaky") Boolean flaky,
+			@GraphQLName("priority") String priority,
+			@GraphQLName("testrayCaseName") String testrayCaseName,
+			@GraphQLName("testrayCaseTypeIds") String testrayCaseTypeIds,
+			@GraphQLName("testrayComponentIds") String testrayComponentIds,
+			@GraphQLName("testrayTeamIds") String testrayTeamIds,
+			@GraphQLName("pageSize") int pageSize,
+			@GraphQLName("page") int page)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_testrayDurationReportResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			testrayDurationReportResource -> new TestrayDurationReportPage(
+				testrayDurationReportResource.
+					getTestrayRoutineDurationReportTestrayRoutinePage(
+						testrayRoutineId, flaky, priority, testrayCaseName,
+						testrayCaseTypeIds, testrayComponentIds, testrayTeamIds,
+						Pagination.of(page, pageSize))));
 	}
 
 	/**
@@ -513,6 +552,39 @@ public class Query {
 
 	}
 
+	@GraphQLName("TestrayDurationReportPage")
+	public class TestrayDurationReportPage {
+
+		public TestrayDurationReportPage(Page testrayDurationReportPage) {
+			actions = testrayDurationReportPage.getActions();
+
+			items = testrayDurationReportPage.getItems();
+			lastPage = testrayDurationReportPage.getLastPage();
+			page = testrayDurationReportPage.getPage();
+			pageSize = testrayDurationReportPage.getPageSize();
+			totalCount = testrayDurationReportPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<TestrayDurationReport> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
 	@GraphQLName("TestrayRunComparisonPage")
 	public class TestrayRunComparisonPage {
 
@@ -648,6 +720,22 @@ public class Query {
 	}
 
 	private void _populateResourceContext(
+			TestrayDurationReportResource testrayDurationReportResource)
+		throws Exception {
+
+		testrayDurationReportResource.setContextAcceptLanguage(_acceptLanguage);
+		testrayDurationReportResource.setContextCompany(_company);
+		testrayDurationReportResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		testrayDurationReportResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		testrayDurationReportResource.setContextUriInfo(_uriInfo);
+		testrayDurationReportResource.setContextUser(_user);
+		testrayDurationReportResource.setGroupLocalService(_groupLocalService);
+		testrayDurationReportResource.setRoleLocalService(_roleLocalService);
+	}
+
+	private void _populateResourceContext(
 			TestrayRunComparisonResource testrayRunComparisonResource)
 		throws Exception {
 
@@ -697,6 +785,8 @@ public class Query {
 
 	private static ComponentServiceObjects<TestrayCaseResultResource>
 		_testrayCaseResultResourceComponentServiceObjects;
+	private static ComponentServiceObjects<TestrayDurationReportResource>
+		_testrayDurationReportResourceComponentServiceObjects;
 	private static ComponentServiceObjects<TestrayRunComparisonResource>
 		_testrayRunComparisonResourceComponentServiceObjects;
 	private static ComponentServiceObjects<TestrayStatusMetricResource>
