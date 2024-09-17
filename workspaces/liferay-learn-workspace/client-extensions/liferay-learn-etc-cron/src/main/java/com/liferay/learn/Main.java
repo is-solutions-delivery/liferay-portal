@@ -650,6 +650,20 @@ public class Main {
 		return childrenJSONArray;
 	}
 
+	private ContentFieldValue _getContentFieldValue(File file)
+		throws Exception {
+
+		if ((file != null) && file.exists()) {
+			return new ContentFieldValue() {
+				{
+					setData(() -> _getHTML(file));
+				}
+			};
+		}
+
+		return null;
+	}
+
 	private String _getDescription(String text) {
 		TextCollectingVisitor textCollectingVisitor =
 			new TextCollectingVisitor();
@@ -754,6 +768,36 @@ public class Main {
 		}
 
 		return StringPool.BLANK;
+	}
+
+	private ContentFieldValue _getMD5HexContentFieldValue(File file)
+		throws Exception {
+
+		if ((file != null) && file.exists()) {
+			return new ContentFieldValue() {
+				{
+					setData(
+						() -> DigestUtils.md5Hex(new FileInputStream(file)));
+				}
+			};
+		}
+
+		return null;
+	}
+
+	private ContentFieldValue _getNavigationContentFieldValue(File file)
+		throws Exception {
+
+		if ((file != null) && file.exists()) {
+			return new ContentFieldValue() {
+				{
+					setData(
+						() -> String.valueOf(_getNavigationJSONObject(file)));
+				}
+			};
+		}
+
+		return null;
 	}
 
 	private JSONObject _getNavigationItemJSONObject(File file)
@@ -961,6 +1005,20 @@ public class Main {
 			});
 
 		return permissions.toArray(new Permission[0]);
+	}
+
+	private ContentFieldValue _getShowChildrenCardsContentFieldValue(File file)
+		throws Exception {
+
+		if ((file != null) && file.exists()) {
+			return new ContentFieldValue() {
+				{
+					setData(() -> String.valueOf(_isShowChildrenCards(file)));
+				}
+			};
+		}
+
+		return null;
 	}
 
 	private List<StructuredContent> _getSiteStructuredContents(long siteId)
@@ -1487,35 +1545,14 @@ public class Main {
 			englishFile, StandardCharsets.UTF_8);
 
 		ContentFieldValue englishContentContentFieldValue =
-			new ContentFieldValue() {
-				{
-					setData(() -> _getHTML(englishFile));
-				}
-			};
+			_getContentFieldValue(englishFile);
 		ContentFieldValue englishMD5HexContentFieldValue =
-			new ContentFieldValue() {
-				{
-					setData(
-						() -> DigestUtils.md5Hex(
-							new FileInputStream(englishFile)));
-				}
-			};
+			_getMD5HexContentFieldValue(englishFile);
 		ContentFieldValue englishNavigationContentFieldValue =
-			new ContentFieldValue() {
-				{
-					setData(
-						() -> String.valueOf(
-							_getNavigationJSONObject(englishFile)));
-				}
-			};
+			_getNavigationContentFieldValue(englishFile);
 		ContentFieldValue englishShowChildrenCardsContentFieldValue =
-			new ContentFieldValue() {
-				{
-					setData(
-						() -> String.valueOf(
-							_isShowChildrenCards(englishFile)));
-				}
-			};
+			_getShowChildrenCardsContentFieldValue(englishFile);
+
 		String englishTitle = _getTitle(englishText);
 
 		File japaneseFile = new File(
@@ -1552,42 +1589,13 @@ public class Main {
 							setContentFieldValue(
 								() -> englishContentContentFieldValue);
 
-							ContentFieldValue japaneseContentFieldValue;
-
-							if (japaneseText != null) {
-								japaneseContentFieldValue =
-									new ContentFieldValue() {
-										{
-											setData(
-												() -> _getHTML(japaneseFile));
-										}
-									};
-							}
-							else {
-								japaneseContentFieldValue = null;
-							}
-
-							ContentFieldValue koreanContentFieldValue;
-
-							if (koreanText != null) {
-								koreanContentFieldValue =
-									new ContentFieldValue() {
-										{
-											setData(() -> _getHTML(koreanFile));
-										}
-									};
-							}
-							else {
-								koreanContentFieldValue = null;
-							}
-
 							setContentFieldValue_i18n(
 								() -> HashMapBuilder.put(
 									"en-US", englishContentContentFieldValue
 								).put(
-									"ja-JP", japaneseContentFieldValue
+									"ja-JP", _getContentFieldValue(japaneseFile)
 								).put(
-									"ko-KR", koreanContentFieldValue
+									"ko-KR", _getContentFieldValue(koreanFile)
 								).build());
 
 							setName(() -> "content");
@@ -1598,47 +1606,15 @@ public class Main {
 							setContentFieldValue(
 								() -> englishMD5HexContentFieldValue);
 
-							ContentFieldValue japaneseContentFieldValue;
-
-							if (japaneseFile.exists()) {
-								japaneseContentFieldValue =
-									new ContentFieldValue() {
-										{
-											setData(
-												() -> DigestUtils.md5Hex(
-													new FileInputStream(
-														japaneseFile)));
-										}
-									};
-							}
-							else {
-								japaneseContentFieldValue = null;
-							}
-
-							ContentFieldValue koreanContentFieldValue;
-
-							if (koreanFile.exists()) {
-								koreanContentFieldValue =
-									new ContentFieldValue() {
-										{
-											setData(
-												() -> DigestUtils.md5Hex(
-													new FileInputStream(
-														koreanFile)));
-										}
-									};
-							}
-							else {
-								koreanContentFieldValue = null;
-							}
-
 							setContentFieldValue_i18n(
 								() -> HashMapBuilder.put(
 									"en-US", englishMD5HexContentFieldValue
 								).put(
-									"ja-JP", japaneseContentFieldValue
+									"ja-JP",
+									_getMD5HexContentFieldValue(japaneseFile)
 								).put(
-									"ko-KR", koreanContentFieldValue
+									"ko-KR",
+									_getMD5HexContentFieldValue(koreanFile)
 								).build());
 
 							setName(() -> "md5Hex");
@@ -1649,47 +1625,16 @@ public class Main {
 							setContentFieldValue(
 								() -> englishNavigationContentFieldValue);
 
-							ContentFieldValue japaneseContentFieldValue;
-
-							if (japaneseFile.exists()) {
-								japaneseContentFieldValue =
-									new ContentFieldValue() {
-										{
-											setData(
-												() -> String.valueOf(
-													_getNavigationJSONObject(
-														japaneseFile)));
-										}
-									};
-							}
-							else {
-								japaneseContentFieldValue = null;
-							}
-
-							ContentFieldValue koreanContentFieldValue;
-
-							if (koreanFile.exists()) {
-								koreanContentFieldValue =
-									new ContentFieldValue() {
-										{
-											setData(
-												() -> String.valueOf(
-													_getNavigationJSONObject(
-														koreanFile)));
-										}
-									};
-							}
-							else {
-								koreanContentFieldValue = null;
-							}
-
 							setContentFieldValue_i18n(
 								() -> HashMapBuilder.put(
 									"en-US", englishNavigationContentFieldValue
 								).put(
-									"ja-JP", japaneseContentFieldValue
+									"ja-JP",
+									_getNavigationContentFieldValue(
+										japaneseFile)
 								).put(
-									"ko-KR", koreanContentFieldValue
+									"ko-KR",
+									_getNavigationContentFieldValue(koreanFile)
 								).build());
 
 							setName(() -> "navigation");
@@ -1701,48 +1646,18 @@ public class Main {
 								() ->
 									englishShowChildrenCardsContentFieldValue);
 
-							ContentFieldValue japaneseContentFieldValue;
-
-							if (japaneseFile.exists()) {
-								japaneseContentFieldValue =
-									new ContentFieldValue() {
-										{
-											setData(
-												() -> String.valueOf(
-													_isShowChildrenCards(
-														japaneseFile)));
-										}
-									};
-							}
-							else {
-								japaneseContentFieldValue = null;
-							}
-
-							ContentFieldValue koreanContentFieldValue;
-
-							if (koreanFile.exists()) {
-								koreanContentFieldValue =
-									new ContentFieldValue() {
-										{
-											setData(
-												() -> String.valueOf(
-													_isShowChildrenCards(
-														koreanFile)));
-										}
-									};
-							}
-							else {
-								koreanContentFieldValue = null;
-							}
-
 							setContentFieldValue_i18n(
 								() -> HashMapBuilder.put(
 									"en-US",
 									englishShowChildrenCardsContentFieldValue
 								).put(
-									"ja-JP", japaneseContentFieldValue
+									"ja-JP",
+									_getShowChildrenCardsContentFieldValue(
+										japaneseFile)
 								).put(
-									"ko-KR", koreanContentFieldValue
+									"ko-KR",
+									_getShowChildrenCardsContentFieldValue(
+										koreanFile)
 								).build());
 
 							setName(() -> "showChildrenCards");
