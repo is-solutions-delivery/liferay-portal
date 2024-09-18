@@ -1573,26 +1573,6 @@ public class Main {
 			StringUtil.replace(fileName, "/en/", "/ko/"));
 
 		if (japaneseFile.exists() || koreanFile.exists()) {
-			String japaneseText;
-
-			if (japaneseFile.exists()) {
-				japaneseText = FileUtils.readFileToString(
-					japaneseFile, StandardCharsets.UTF_8);
-			}
-			else {
-				japaneseText = null;
-			}
-
-			String koreanText;
-
-			if (koreanFile.exists()) {
-				koreanText = FileUtils.readFileToString(
-					koreanFile, StandardCharsets.UTF_8);
-			}
-			else {
-				koreanText = null;
-			}
-
 			structuredContent.setContentFields(
 				() -> new ContentField[] {
 					new ContentField() {
