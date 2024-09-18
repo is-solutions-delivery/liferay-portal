@@ -1534,15 +1534,19 @@ public class Main {
 	}
 
 	private String _toFriendlyURLPath(File file) {
-		String filePathString = file.getPath();
+		if (file.exists()) {
+			String filePathString = file.getPath();
 
-		String relativeFilePathString = filePathString.substring(
-			_docsDirName.length() + 1);
+			String relativeFilePathString = filePathString.substring(
+				_docsDirName.length() + 1);
 
-		String friendlyURLPathString = StringUtil.merge(
-			_getDirNames(relativeFilePathString), StringPool.FORWARD_SLASH);
+			String friendlyURLPathString = StringUtil.merge(
+				_getDirNames(relativeFilePathString), StringPool.FORWARD_SLASH);
 
-		return FilenameUtils.removeExtension(friendlyURLPathString);
+			return FilenameUtils.removeExtension(friendlyURLPathString);
+		}
+
+		return null;
 	}
 
 	private StructuredContent _toStructuredContent(String fileName)
@@ -1669,12 +1673,9 @@ public class Main {
 				() -> HashMapBuilder.put(
 					"en-US", _toFriendlyURLPath(englishFile)
 				).put(
-					"ja-JP",
-					japaneseFile.exists() ? _toFriendlyURLPath(japaneseFile) :
-						null
+					"ja-JP", _toFriendlyURLPath(japaneseFile)
 				).put(
-					"ko-KR",
-					koreanFile.exists() ? _toFriendlyURLPath(koreanFile) : null
+					"ko-KR", _toFriendlyURLPath(koreanFile)
 				).build());
 
 			structuredContent.setTitle_i18n(
