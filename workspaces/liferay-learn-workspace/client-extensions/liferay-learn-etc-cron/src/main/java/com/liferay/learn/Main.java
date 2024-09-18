@@ -1576,153 +1576,112 @@ public class Main {
 		File koreanFile = new File(
 			StringUtil.replace(fileName, "/en/", "/ko/"));
 
-		if (japaneseFile.exists() || koreanFile.exists()) {
-			structuredContent.setContentFields(
-				() -> new ContentField[] {
-					new ContentField() {
-						{
-							setContentFieldValue(
-								() -> englishContentContentFieldValue);
+		structuredContent.setContentFields(
+			() -> new ContentField[] {
+				new ContentField() {
+					{
+						setContentFieldValue(
+							() -> englishContentContentFieldValue);
 
-							setContentFieldValue_i18n(
-								() -> HashMapBuilder.put(
-									"en-US", englishContentContentFieldValue
-								).put(
-									"ja-JP", _getContentFieldValue(japaneseFile)
-								).put(
-									"ko-KR", _getContentFieldValue(koreanFile)
-								).build());
+						setContentFieldValue_i18n(
+							() -> HashMapBuilder.put(
+								"en-US", englishContentContentFieldValue
+							).put(
+								"ja-JP", _getContentFieldValue(japaneseFile)
+							).put(
+								"ko-KR", _getContentFieldValue(koreanFile)
+							).build());
 
-							setName(() -> "content");
-						}
-					},
-					new ContentField() {
-						{
-							setContentFieldValue(
-								() -> englishMD5HexContentFieldValue);
-
-							setContentFieldValue_i18n(
-								() -> HashMapBuilder.put(
-									"en-US", englishMD5HexContentFieldValue
-								).put(
-									"ja-JP",
-									_getMD5HexContentFieldValue(japaneseFile)
-								).put(
-									"ko-KR",
-									_getMD5HexContentFieldValue(koreanFile)
-								).build());
-
-							setName(() -> "md5Hex");
-						}
-					},
-					new ContentField() {
-						{
-							setContentFieldValue(
-								() -> englishNavigationContentFieldValue);
-
-							setContentFieldValue_i18n(
-								() -> HashMapBuilder.put(
-									"en-US", englishNavigationContentFieldValue
-								).put(
-									"ja-JP",
-									_getNavigationContentFieldValue(
-										japaneseFile)
-								).put(
-									"ko-KR",
-									_getNavigationContentFieldValue(koreanFile)
-								).build());
-
-							setName(() -> "navigation");
-						}
-					},
-					new ContentField() {
-						{
-							setContentFieldValue(
-								() ->
-									englishShowChildrenCardsContentFieldValue);
-
-							setContentFieldValue_i18n(
-								() -> HashMapBuilder.put(
-									"en-US",
-									englishShowChildrenCardsContentFieldValue
-								).put(
-									"ja-JP",
-									_getShowChildrenCardsContentFieldValue(
-										japaneseFile)
-								).put(
-									"ko-KR",
-									_getShowChildrenCardsContentFieldValue(
-										koreanFile)
-								).build());
-
-							setName(() -> "showChildrenCards");
-						}
+						setName(() -> "content");
 					}
-				});
+				},
+				new ContentField() {
+					{
+						setContentFieldValue(
+							() -> englishMD5HexContentFieldValue);
 
-			structuredContent.setDescription_i18n(
-				() -> HashMapBuilder.put(
-					"en-US", _getDescription(englishFile)
-				).put(
-					"ja-JP", _getDescription(japaneseFile)
-				).put(
-					"ko-KR", _getDescription(koreanFile)
-				).build());
+						setContentFieldValue_i18n(
+							() -> HashMapBuilder.put(
+								"en-US", englishMD5HexContentFieldValue
+							).put(
+								"ja-JP",
+								_getMD5HexContentFieldValue(japaneseFile)
+							).put(
+								"ko-KR", _getMD5HexContentFieldValue(koreanFile)
+							).build());
 
-			structuredContent.setFriendlyUrlPath_i18n(
-				() -> HashMapBuilder.put(
-					"en-US", _toFriendlyURLPath(englishFile)
-				).put(
-					"ja-JP", _toFriendlyURLPath(japaneseFile)
-				).put(
-					"ko-KR", _toFriendlyURLPath(koreanFile)
-				).build());
-
-			structuredContent.setTitle_i18n(
-				() -> HashMapBuilder.put(
-					"en-US", englishTitle
-				).put(
-					"ja-JP", _getTitle(japaneseFile)
-				).put(
-					"ko-KR", _getTitle(koreanFile)
-				).build());
-		}
-		else {
-			structuredContent.setContentFields(
-				() -> new ContentField[] {
-					new ContentField() {
-						{
-							setContentFieldValue(
-								() -> englishContentContentFieldValue);
-							setName(() -> "content");
-						}
-					},
-					new ContentField() {
-						{
-							setContentFieldValue(
-								() -> englishMD5HexContentFieldValue);
-							setName(() -> "md5Hex");
-						}
-					},
-					new ContentField() {
-						{
-							setContentFieldValue(
-								() -> englishNavigationContentFieldValue);
-							setName(() -> "navigation");
-						}
-					},
-					new ContentField() {
-						{
-							setContentFieldValue(
-								() ->
-									englishShowChildrenCardsContentFieldValue);
-							setName(() -> "showChildrenCards");
-						}
+						setName(() -> "md5Hex");
 					}
-				});
-			structuredContent.setDescription(
-				() -> _getDescription(englishFile));
-		}
+				},
+				new ContentField() {
+					{
+						setContentFieldValue(
+							() -> englishNavigationContentFieldValue);
+
+						setContentFieldValue_i18n(
+							() -> HashMapBuilder.put(
+								"en-US", englishNavigationContentFieldValue
+							).put(
+								"ja-JP",
+								_getNavigationContentFieldValue(japaneseFile)
+							).put(
+								"ko-KR",
+								_getNavigationContentFieldValue(koreanFile)
+							).build());
+
+						setName(() -> "navigation");
+					}
+				},
+				new ContentField() {
+					{
+						setContentFieldValue(
+							() -> englishShowChildrenCardsContentFieldValue);
+
+						setContentFieldValue_i18n(
+							() -> HashMapBuilder.put(
+								"en-US",
+								englishShowChildrenCardsContentFieldValue
+							).put(
+								"ja-JP",
+								_getShowChildrenCardsContentFieldValue(
+									japaneseFile)
+							).put(
+								"ko-KR",
+								_getShowChildrenCardsContentFieldValue(
+									koreanFile)
+							).build());
+
+						setName(() -> "showChildrenCards");
+					}
+				}
+			});
+
+		structuredContent.setDescription_i18n(
+			() -> HashMapBuilder.put(
+				"en-US", _getDescription(englishFile)
+			).put(
+				"ja-JP", _getDescription(japaneseFile)
+			).put(
+				"ko-KR", _getDescription(koreanFile)
+			).build());
+
+		structuredContent.setFriendlyUrlPath_i18n(
+			() -> HashMapBuilder.put(
+				"en-US", _toFriendlyURLPath(englishFile)
+			).put(
+				"ja-JP", _toFriendlyURLPath(japaneseFile)
+			).put(
+				"ko-KR", _toFriendlyURLPath(koreanFile)
+			).build());
+
+		structuredContent.setTitle_i18n(
+			() -> HashMapBuilder.put(
+				"en-US", englishTitle
+			).put(
+				"ja-JP", _getTitle(japaneseFile)
+			).put(
+				"ko-KR", _getTitle(koreanFile)
+			).build());
 
 		structuredContent.setContentStructureId(
 			() -> _liferayContentStructureId);
