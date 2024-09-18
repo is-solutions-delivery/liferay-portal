@@ -664,12 +664,20 @@ public class Main {
 		return null;
 	}
 
-	private String _getDescription(String text) {
-		TextCollectingVisitor textCollectingVisitor =
-			new TextCollectingVisitor();
+	private String _getDescription(File file) throws Exception {
+		if (file.exists()) {
+			TextCollectingVisitor textCollectingVisitor =
+				new TextCollectingVisitor();
 
-		return StringUtil.shorten(
-			textCollectingVisitor.collectAndGetText(_parser.parse(text)), 300);
+			return StringUtil.shorten(
+				textCollectingVisitor.collectAndGetText(
+					_parser.parse(
+						FileUtils.readFileToString(
+							file, StandardCharsets.UTF_8))),
+				300);
+		}
+
+		return null;
 	}
 
 	private String[] _getDirNames(String fileName) {
@@ -809,10 +817,7 @@ public class Main {
 			return navigationItemJSONObject;
 		}
 
-		navigationItemJSONObject.put(
-			"title",
-			_getTitle(
-				FileUtils.readFileToString(file, StandardCharsets.UTF_8)));
+		navigationItemJSONObject.put("title", _getTitle(file));
 
 		Path docsPath = Paths.get(_docsDirName);
 		Path filePath = Paths.get(file.toURI());
@@ -1193,6 +1198,16 @@ public class Main {
 		return taxonomyCategoryIds.toArray(new Long[0]);
 	}
 
+	private String _getTitle(File file) throws Exception {
+		if (file.exists()) {
+			return _getTitle(
+				_parser.parse(
+					FileUtils.readFileToString(file, StandardCharsets.UTF_8)));
+		}
+
+		return null;
+	}
+
 	private String _getTitle(Node node) {
 		if (node instanceof Heading) {
 			Heading heading = (Heading)node;
@@ -1220,10 +1235,6 @@ public class Main {
 		}
 
 		return null;
-	}
-
-	private String _getTitle(String text) {
-		return _getTitle(_parser.parse(text));
 	}
 
 	private String _getUuid(String text) {
@@ -1553,7 +1564,7 @@ public class Main {
 		ContentFieldValue englishShowChildrenCardsContentFieldValue =
 			_getShowChildrenCardsContentFieldValue(englishFile);
 
-		String englishTitle = _getTitle(englishText);
+		String englishTitle = _getTitle(englishFile);
 
 		File japaneseFile = new File(
 			StringUtil.replace(fileName, "/en/", "/ja/"));
@@ -1667,14 +1678,11 @@ public class Main {
 
 			structuredContent.setDescription_i18n(
 				() -> HashMapBuilder.put(
-					"en-US", _getDescription(englishText)
+					"en-US", _getDescription(englishFile)
 				).put(
-					"ja-JP",
-					(japaneseText != null) ? _getDescription(japaneseText) :
-						null
+					"ja-JP", _getDescription(japaneseFile)
 				).put(
-					"ko-KR",
-					(koreanText != null) ? _getDescription(koreanText) : null
+					"ko-KR", _getDescription(koreanFile)
 				).build());
 
 			structuredContent.setFriendlyUrlPath_i18n(
@@ -1693,10 +1701,9 @@ public class Main {
 				() -> HashMapBuilder.put(
 					"en-US", englishTitle
 				).put(
-					"ja-JP",
-					(japaneseText != null) ? _getTitle(japaneseText) : null
+					"ja-JP", _getTitle(japaneseFile)
 				).put(
-					"ko-KR", (koreanText != null) ? _getTitle(koreanText) : null
+					"ko-KR", _getTitle(koreanFile)
 				).build());
 		}
 		else {
@@ -1733,7 +1740,7 @@ public class Main {
 					}
 				});
 			structuredContent.setDescription(
-				() -> _getDescription(englishText));
+				() -> _getDescription(englishFile));
 		}
 
 		structuredContent.setContentStructureId(
