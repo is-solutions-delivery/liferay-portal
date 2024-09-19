@@ -233,9 +233,7 @@ const CloudProductInstallation = () => {
 	};
 
 	const buttonsInfo = useMemo(() => {
-		const isFinalStep =
-			step === StepCloudInstallation.INSTALLATION ||
-			step === StepCloudInstallation.SUCCESS;
+		const isFinalStep = step === StepCloudInstallation.INSTALLATION;
 
 		const handleNextStep = () => {
 			switch (step) {
@@ -251,6 +249,12 @@ const CloudProductInstallation = () => {
 						setValue('step', StepCloudInstallation.SUCCESS);
 					}, 5000);
 					break;
+				case StepCloudInstallation.SUCCESS:
+					window.open(
+						`https://console.marketplace.liferay.sh/projects/${environment}/services`
+					);
+
+					break;
 				default:
 					break;
 			}
@@ -260,13 +264,23 @@ const CloudProductInstallation = () => {
 			cancelButton: {
 				displayType: 'unstyled',
 				onClick: () => navigate('..'),
-				show: !isFinalStep,
+				show:
+					step !== StepCloudInstallation.INSTALLATION &&
+					step !== StepCloudInstallation.SUCCESS,
 			},
 			customizedButton: {
 				displayType: 'secondary',
-				onClick: () => setValue('step', StepCloudInstallation.PROJECT),
-				show: step === StepCloudInstallation.ENVIRONMENT,
-				text: 'Back',
+				onClick: () =>
+					step === StepCloudInstallation.ENVIRONMENT
+						? setValue('step', StepCloudInstallation.PROJECT)
+						: navigate('..'),
+				show:
+					step === StepCloudInstallation.ENVIRONMENT ||
+					step === StepCloudInstallation.SUCCESS,
+				text:
+					step === StepCloudInstallation.ENVIRONMENT
+						? 'Back'
+						: 'Go to My Apps',
 			},
 			nextButton: {
 				className: 'ml-6',
@@ -278,7 +292,10 @@ const CloudProductInstallation = () => {
 				displayType: 'primary',
 				onClick: handleNextStep,
 				show: !isFinalStep,
-				text: 'Install',
+				text:
+					step === StepCloudInstallation.ENVIRONMENT
+						? 'Install'
+						: 'View app in Cloud',
 			},
 		};
 	}, [project, navigate, step, environment]);
