@@ -130,6 +130,17 @@ const zodSchema = {
 			})
 			.optional(),
 	}),
+	installProductSchema: z.object({
+		environment: z.string(),
+		orderItemId: z.number(),
+		project: z.object({
+			availabilityToProduct: z.boolean(),
+			environments: z.array(z.string()),
+			rootProjectId: z.string(),
+			rootProjectPlanUsage: z.any(),
+		}),
+		step: z.string(),
+	}),
 	invitedNewMember: z.object({
 		emailAddress: z
 			.string()
