@@ -36,3 +36,9 @@ export type StepsInformation = {
 	[StepCloudInstallation.PROJECT]: StepsInformationProps;
 	[StepCloudInstallation.SUCCESS]: StepsInformationProps;
 };
+
+export enum InstallStatus {
+	EXPIRED = 'expired',
+	INSTALLED = 'installed',
+	READY_TO_INSTALL = 'ready to install',
+}

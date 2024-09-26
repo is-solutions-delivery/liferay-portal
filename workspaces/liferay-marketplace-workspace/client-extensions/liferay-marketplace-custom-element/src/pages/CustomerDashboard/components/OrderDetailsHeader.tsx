@@ -30,31 +30,33 @@ const OrderDetailsHeader: React.FC<OrderDetailsProps> = ({
 	version,
 }) => (
 	<div className={className}>
-		<div className="d-flex flex-row">
-			<img
-				alt="App Icon"
-				className="order-details-publisher-icon"
-				src={image}
-			/>
+		<div className="d-flex flex-row justify-content-between">
+			<div className="d-flex flex-row">
+				<img
+					alt="App Icon"
+					className="order-details-publisher-icon"
+					src={image}
+				/>
 
-			<div className="align-items-center ml-4">
-				<div className="d-flex justify-content-start">
-					<h2 className="text-weight-bold">{name}</h2>
-					{version && <p className="ml-2 my-1">v{version}</p>}
-				</div>
-
-				{hasOrderDetails && (
-					<OrderDetailsStatusDescription
-						order={order}
-						productOwner={productOwner}
-					/>
-				)}
-
-				{hasOrderDescription && (
-					<div className="header-description text-capitalize">
-						{hasOrderDescription}
+				<div className="d-flex flex-column justify-content-between ml-4">
+					<div className="align-items-center d-flex justify-content-start">
+						<h2 className="m-0 text-weight-bold">{name}</h2>
+						{version && <p className="ml-2 my-0">v{version}</p>}
 					</div>
-				)}
+
+					{hasOrderDetails && (
+						<OrderDetailsStatusDescription
+							order={order}
+							productOwner={productOwner}
+						/>
+					)}
+
+					{hasOrderDescription && (
+						<div className="header-description text-capitalize">
+							{hasOrderDescription}
+						</div>
+					)}
+				</div>
 			</div>
 		</div>
 	</div>
