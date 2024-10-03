@@ -121,11 +121,67 @@ public class ConsoleRestController extends BaseRestController {
 	}
 
 	@PostMapping("uninstall-app/{orderId}")
-	public void uninstallApp(@PathVariable("orderId") long orderId)
+	public void uninstallApp(
+			@PathVariable("orderId") long orderId, @RequestBody String json)
 		throws Exception {
 
 		try {
 			_consoleService.uninstallApp(orderId);
+
+			Order order = _marketplaceService.getOrder(orderId);
+
+			Map<String, String> customFields =
+				(Map<String, String>)order.getCustomFields();
+
+			JSONObject jsonObject = new JSONObject(json);
+
+			JSONArray cloudProvisioningJSONArray = new JSONArray(
+				customFields.get("cloud-provisioning"));
+
+			for (int i = 0; i < cloudProvisioningJSONArray.length(); i++) {
+				JSONObject cloudProvisioningJSONObject =
+					cloudProvisioningJSONArray.getJSONObject(i);
+
+				JSONArray deploymentsJSONArray =
+					cloudProvisioningJSONObject.getJSONArray("deployments");
+					
+				if (!Objects.equals(
+						cloudProvisioningJSONObject.getLong("orderItemId"),
+						jsonObject.getLong("orderItemId"))) {
+
+					continue;
+				}
+
+				for (int j = 0; j < deploymentsJSONArray.length(); j++) {
+					JSONObject deploymentJSONObject =
+						deploymentsJSONArray.getJSONObject(j);
+
+					if (Objects.equals(
+							deploymentJSONObject.get("projectId"),
+							jsonObject.get("projectId"))) {
+
+						deploymentsJSONArray.remove(j);
+					}
+				}
+
+				cloudProvisioningJSONObject.put(
+					"deployments",
+					cloudProvisioningJSONObject.getJSONArray("deployments")
+				).put(
+					"shippedQuantity",
+					cloudProvisioningJSONObject.getJSONArray(
+						"deployments"
+					).length()
+				);
+			}
+
+			customFields.put(
+				"cloud-provisioning", cloudProvisioningJSONArray.toString());
+
+			_marketplaceService.updateOrder(
+				customFields, orderId, order.getOrderStatus());
+
+						_consoleService.uninstallApp(orderId);
 
 			if (_log.isInfoEnabled()) {
 				_log.info("Uninstalled app for order " + orderId);
