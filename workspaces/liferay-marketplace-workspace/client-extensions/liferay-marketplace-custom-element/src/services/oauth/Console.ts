@@ -17,6 +17,16 @@ class ConsoleOAuth2 extends MarketplaceSpringBootOAuth2 {
 	): Promise<void> {
 		return this.post(`/provisioning/${orderId}`, data);
 	}
+
+	async uninstallApp(
+		orderId: number,
+		data: {
+			id: string;
+			orderItemId: number;
+		}
+	): Promise<void> {
+		return this.post(`/uninstall-app/${orderId}`, data);
+	}
 }
 
 const consoleOAuth2 = new ConsoleOAuth2('/console');
