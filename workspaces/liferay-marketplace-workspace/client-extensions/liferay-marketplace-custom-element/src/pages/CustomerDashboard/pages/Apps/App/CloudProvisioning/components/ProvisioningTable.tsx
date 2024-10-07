@@ -7,7 +7,7 @@ import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import ClayDropDown from '@clayui/drop-down';
 import {useModal} from '@clayui/modal';
 import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
+import {useNavigate, useOutletContext} from 'react-router-dom';
 
 import Modal from '../../../../../../../components/Modal';
 import Table from '../../../../../../../components/Table/Table';
@@ -30,14 +30,11 @@ type DetailsData = {
 	headerInfo: {
 		image?: string;
 		licenseType?: string;
-		myUserAccount: ReturnType<
-			typeof useMarketplaceContext
-		>['myUserAccount'];
 		name?: string;
 	};
+	installationInProgress?: boolean;
 	isExpired: boolean;
 	isInstalled: boolean;
-	order: PlacedOrder;
 	orderItem: OrderItem;
 };
 
@@ -47,32 +44,33 @@ const ProvisioningTable: React.FC<ProvisioningTableProps> = ({
 	provisioningTableData,
 	resourceRequirements,
 }) => {
+	const {selectedAccount} = useOutletContext<{selectedAccount: Account}>();
 	const {
 		properties: {cloudConsoleURL},
 	} = useMarketplaceContext();
-	const {myUserAccount} = useMarketplaceContext();
 
 	const [detailsData, setDetailsData] = useState<DetailsData>();
 	const navigate = useNavigate();
 	const modal = useModal();
 	const uninstallModal = useModal();
 	const detailsModal = useModal();
-	const [loading, setLoading] = useState<boolean>();
+	const [loading, setLoading] = useState<boolean>(false);
 
 	const onOpenDetailsModal = (orderItem: OrderItem) => {
 		const isExpired = orderItem.status === InstallStatus.EXPIRED;
 		const isInstalled = orderItem.status === InstallStatus.INSTALLED;
+		const installationInProgress =
+			orderItem.status === InstallStatus.IN_PROGRESS;
 
 		setDetailsData({
 			headerInfo: {
 				image: order.placedOrderItems[0].thumbnail,
-				licenseType: `${orderItem?.type} License for ${myUserAccount.name}`,
-				myUserAccount,
+				licenseType: `${orderItem?.type} License for ${selectedAccount.name}`,
 				name: order.placedOrderItems[0].name,
 			},
+			installationInProgress,
 			isExpired,
 			isInstalled,
-			order,
 			orderItem,
 		});
 
@@ -91,7 +89,7 @@ const ProvisioningTable: React.FC<ProvisioningTableProps> = ({
 		setLoading(true);
 
 		try {
-			await consoleOAuth2.uninstallApp(detailsData.order.id, {
+			await consoleOAuth2.uninstallApp(order.id, {
 				id: detailsData.orderItem.id,
 				orderItemId: detailsData.orderItem.orderItem,
 			});
@@ -105,7 +103,7 @@ const ProvisioningTable: React.FC<ProvisioningTableProps> = ({
 
 			uninstallModal.onClose();
 		}
-		catch (error: any) {
+		catch (error) {
 			console.warn(error);
 
 			Liferay.Util.openToast({
@@ -214,6 +212,9 @@ const ProvisioningTable: React.FC<ProvisioningTableProps> = ({
 							const isExpired =
 								orderItem.status === InstallStatus.EXPIRED;
 
+							const installationInProgress =
+								orderItem.status === InstallStatus.IN_PROGRESS;
+
 							const isInstalled =
 								orderItem.status === InstallStatus.INSTALLED;
 
@@ -263,6 +264,9 @@ const ProvisioningTable: React.FC<ProvisioningTableProps> = ({
 
 											{!isInstalled && !isExpired && (
 												<ClayDropDown.Item
+													disabled={
+														installationInProgress
+													}
 													onClick={() =>
 														install(
 															resourceRequirements
@@ -288,15 +292,14 @@ const ProvisioningTable: React.FC<ProvisioningTableProps> = ({
 																image: order
 																	.placedOrderItems[0]
 																	.thumbnail,
-																licenseType: `${orderItem?.type} License for ${myUserAccount.name}`,
-																myUserAccount,
+																licenseType: `${orderItem?.type} License for ${selectedAccount.name}`,
 																name: order
 																	.placedOrderItems[0]
 																	.name,
 															},
+															installationInProgress,
 															isExpired,
 															isInstalled,
-															order,
 															orderItem,
 														});
 
@@ -379,7 +382,7 @@ const ProvisioningTable: React.FC<ProvisioningTableProps> = ({
 				}
 				observer={uninstallModal.observer}
 				size={'md' as any}
-				title="Confirm Unstallation Terms"
+				title="Confirm Unistallation Terms"
 				visible={uninstallModal.open}
 			>
 				<p>
@@ -402,10 +405,13 @@ const ProvisioningTable: React.FC<ProvisioningTableProps> = ({
 							!detailsData?.isExpired && (
 								<ClayButton
 									className="border border-primary ml-2 rounded-lg text-primary"
+									disabled={
+										detailsData?.installationInProgress
+									}
 									displayType="secondary"
-									onClick={() => {
-										install(resourceRequirements);
-									}}
+									onClick={() =>
+										install(resourceRequirements)
+									}
 									size="sm"
 								>
 									{i18n.translate('install')}

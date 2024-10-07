@@ -12,6 +12,7 @@ import useGetProductByOrderId from '../../../../../../../hooks/useGetProductByOr
 import i18n from '../../../../../../../i18n';
 import {getSpecificationByKey} from '../../../../../../../utils/productUtils';
 import {safeJSONParse} from '../../../../../../../utils/util';
+import {LicenseType} from '../../../../../../GetApp/enums/licenseType';
 import useGetResourceInfo from '../../../../../../GetApp/hooks/useGetResourceInfo';
 import {InstallStatus} from '../types';
 
@@ -23,10 +24,34 @@ const getExpirationDate = (createdDate: Date, licenseType: string) => {
 	return format(addYears(createdDate, 1), 'MMM dd, yyyy');
 };
 
+const getStatus = (
+	deployment: any,
+	licenseType: string,
+	order: PlacedOrder
+) => {
+	if (deployment.loading) {
+		return InstallStatus.IN_PROGRESS;
+	}
+
+	if (
+		licenseType.toLowerCase() === LicenseType.Subscription &&
+		new Date(order.createDate) > addYears(new Date(order.createDate), 1)
+	) {
+		return InstallStatus.EXPIRED;
+	}
+
+	return deployment
+		? InstallStatus.INSTALLED
+		: InstallStatus.READY_TO_INSTALL;
+};
+
 const useProvisioningData = (orderId: string) => {
 	const {data, mutate: mutateOrder} = useGetProductByOrderId(orderId);
 
-	const order = data?.placedOrder || ({} as PlacedOrder);
+	const order = useMemo(
+		() => data?.placedOrder || ({} as PlacedOrder),
+		[data?.placedOrder]
+	);
 	const orderItems = order.placedOrderItems;
 	const product = data?.product;
 
@@ -74,23 +99,21 @@ const useProvisioningData = (orderId: string) => {
 						productLicenseType
 					),
 					host: '',
-					id: deployment?.id,
+					id: deployment?.id || i,
 					orderItem: orderItem.id,
 					project,
 					startDate: format(
 						new Date(order.createDate),
 						'MMM dd, yyyy'
 					),
-					status: deployment
-						? InstallStatus.INSTALLED
-						: InstallStatus.READY_TO_INSTALL,
+					status: getStatus(deployment, productLicenseType, order),
 					type: productLicenseType,
 				});
 			}
 		}
 
 		return items;
-	}, [order.createDate, order.customFields, orderItems, productLicenseType]);
+	}, [order, orderItems, productLicenseType]);
 
 	return {
 		mutateOrder,
