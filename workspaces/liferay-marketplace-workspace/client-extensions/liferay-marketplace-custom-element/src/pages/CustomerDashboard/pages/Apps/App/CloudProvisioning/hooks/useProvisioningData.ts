@@ -3,18 +3,22 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {addYears, format} from 'date-fns';
-import {useEffect, useMemo, useState} from 'react';
+import { addYears, format } from 'date-fns';
+import { useEffect, useMemo, useState } from 'react';
 
-import {ORDER_CUSTOM_FIELDS} from '../../../../../../../enums/Order';
-import {PRODUCT_SPECIFICATION_KEY} from '../../../../../../../enums/Product';
+import { ORDER_CUSTOM_FIELDS } from '../../../../../../../enums/Order';
+import { PRODUCT_SPECIFICATION_KEY } from '../../../../../../../enums/Product';
 import useGetProductByOrderId from '../../../../../../../hooks/useGetProductByOrderId';
 import i18n from '../../../../../../../i18n';
-import {getSpecificationByKey} from '../../../../../../../utils/productUtils';
-import {safeJSONParse} from '../../../../../../../utils/util';
-import {LicenseType} from '../../../../../../GetApp/enums/licenseType';
+import { getSpecificationByKey } from '../../../../../../../utils/productUtils';
+import { safeJSONParse } from '../../../../../../../utils/util';
+import { LicenseType } from '../../../../../../GetApp/enums/licenseType';
 import useGetResourceInfo from '../../../../../../GetApp/hooks/useGetResourceInfo';
-import {InstallStatus} from '../types';
+import { InstallStatus } from '../types';
+
+export type ProvisioningRow = ReturnType<
+	typeof useProvisioningData
+>['provisioningTableData'][0];
 
 const ACTIVE_REFRESH_INTERVAL = 60 * 1000;
 const DEFAULT_REFRESH_INTERVAL = 240 * 1000;
@@ -53,7 +57,7 @@ const useProvisioningData = (orderId: string) => {
 		DEFAULT_REFRESH_INTERVAL
 	);
 
-	const {data, mutate: mutateOrder} = useGetProductByOrderId(orderId, {
+	const { data, mutate: mutateOrder } = useGetProductByOrderId(orderId, {
 		refreshInterval,
 	});
 
@@ -82,9 +86,9 @@ const useProvisioningData = (orderId: string) => {
 	const provisioningTableData = useMemo(() => {
 		const items = [];
 
-		const [cloudProvisioning] = safeJSONParse<{deployments: any[]}[]>(
+		const [cloudProvisioning] = safeJSONParse<{ deployments: any[] }[]>(
 			order.customFields[ORDER_CUSTOM_FIELDS.CLOUD_PROVISIONING],
-			[{deployments: []}]
+			[{ deployments: [] }]
 		);
 
 		for (const orderItem of orderItems) {
@@ -110,7 +114,7 @@ const useProvisioningData = (orderId: string) => {
 					host: '',
 					id: deployment?.id || i,
 					loading: deployment?.loading,
-					orderItem: orderItem.id,
+					orderItemId: orderItem.id,
 					project,
 					startDate: format(
 						new Date(order.createDate),

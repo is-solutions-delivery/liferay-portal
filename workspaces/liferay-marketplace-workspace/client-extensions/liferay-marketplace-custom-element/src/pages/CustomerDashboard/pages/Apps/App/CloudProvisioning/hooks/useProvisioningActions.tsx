@@ -4,22 +4,18 @@
  */
 
 import ClayButton from '@clayui/button';
-import {useModal} from '@clayui/modal';
-import {useRef, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {KeyedMutator} from 'swr';
+import { useModal } from '@clayui/modal';
+import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { KeyedMutator } from 'swr';
 
 import useModalContext from '../../../../../../../hooks/useModalContext';
 import i18n from '../../../../../../../i18n';
-import {Liferay} from '../../../../../../../liferay/liferay';
+import { Liferay } from '../../../../../../../liferay/liferay';
 import consoleOAuth2 from '../../../../../../../services/oauth/Console';
 import ProvisioningDetails from '../components/ProvisioningDetails';
-import {InstallStatus} from '../types';
-import useProvisioningData from './useProvisioningData';
-
-type OrderItem = ReturnType<
-	typeof useProvisioningData
->['provisioningTableData'][0];
+import { InstallStatus } from '../types';
+import useProvisioningData, { ProvisioningRow } from './useProvisioningData';
 
 type UseProvisioningActionsProp = {
 	mutateOrder: KeyedMutator<{
@@ -39,13 +35,14 @@ const useProvisioningActions = ({
 	resourceRequirements,
 	selectedAccount,
 }: UseProvisioningActionsProp) => {
-	const {onClose, onOpenModal} = useModalContext();
-	const [loading, setLoading] = useState<boolean>(false);
-	const [selectedOrderItem, setSelectedOrderItem] = useState<OrderItem>();
+	const { onClose, onOpenModal } = useModalContext();
+	const [loading, setLoading] = useState(false);
+	const [selectedProvisioningRow, setSelectedProvisioningRow] =
+		useState<ProvisioningRow>();
 	const navigate = useNavigate();
 	const uninstallModal = useModal();
 
-	const install = () => {
+	const onClickInstall = () => {
 		if (!resourceRequirements.resourceRequest?.userProjects?.length) {
 			return onOpenModal({
 				body: (
@@ -61,7 +58,7 @@ const useProvisioningActions = ({
 						className="ml-2 rounded-lg"
 						displayType="unstyled"
 						key="install-cancel-footer"
-						onClick={() => onClose()}
+						onClick={onClose}
 						size="sm"
 					>
 						{i18n.translate('cancel')}
@@ -71,7 +68,7 @@ const useProvisioningActions = ({
 						className="ml-2 rounded-lg"
 						displayType="primary"
 						key="install-done-footer"
-						onClick={() => onClose()}
+						onClick={onClose}
 						size="sm"
 					>
 						{i18n.translate('done')}
@@ -85,16 +82,16 @@ const useProvisioningActions = ({
 		navigate(`/order/${order?.id}/cloud-provisioning/install`);
 	};
 
-	const uninstall = async (orderItem: OrderItem) => {
+	const uninstall = async (provisioningRow: ProvisioningRow) => {
 		setLoading(true);
 
 		try {
 			await consoleOAuth2.uninstallApp(order.id, {
-				id: orderItem.id,
-				orderItemId: orderItem.orderItem,
+				id: provisioningRow.id,
+				orderItemId: provisioningRow.orderItemId,
 			});
 
-			await mutateOrder((items: any) => items, {revalidate: true});
+			await mutateOrder((items: any) => items, { revalidate: true });
 
 			Liferay.Util.openToast({
 				message: i18n.translate('your-request-completed-successfully'),
@@ -113,26 +110,26 @@ const useProvisioningActions = ({
 		setLoading(false);
 	};
 
-	function checkOrderItemStatus(orderItem: OrderItem) {
+	function checkOrderItemStatus(provisioningRow: ProvisioningRow) {
 		return {
-			inProgress: orderItem.status === InstallStatus.IN_PROGRESS,
-			installationInProgress:
-				orderItem.status === InstallStatus.IN_PROGRESS,
-			isExpired: orderItem.status === InstallStatus.EXPIRED,
-			isInstalled: orderItem.status === InstallStatus.INSTALLED,
+			inProgress:
+				provisioningRow.status === InstallStatus.IN_PROGRESS,
+			isExpired: provisioningRow.status === InstallStatus.EXPIRED,
+			isInstalled: provisioningRow.status === InstallStatus.INSTALLED,
+			readyToInstall:
+				provisioningRow.status === InstallStatus.READY_TO_INSTALL,
 		};
 	}
 
-	const openUninstallModal = (orderItem: OrderItem) => {
-		setSelectedOrderItem(orderItem);
+	const openUninstallModal = (provisioningRow: ProvisioningRow) => {
+		setSelectedProvisioningRow(provisioningRow);
+
 		uninstallModal.onOpenChange(true);
 	};
 
-	const onOpenDetailsModal = (orderItem: OrderItem) => {
-		const isExpired = orderItem.status === InstallStatus.EXPIRED;
-		const isInstalled = orderItem.status === InstallStatus.INSTALLED;
-		const installationInProgress =
-			orderItem.status === InstallStatus.IN_PROGRESS;
+	const onOpenDetailsModal = (provisioningRow: ProvisioningRow) => {
+		const { inProgress, isInstalled, readyToInstall } =
+			checkOrderItemStatus(provisioningRow);
 
 		onOpenModal({
 			body: (
@@ -140,11 +137,11 @@ const useProvisioningActions = ({
 					account={selectedAccount}
 					headerInfo={{
 						image: order.placedOrderItems[0].thumbnail,
-						licenseType: `${orderItem?.type} License for ${selectedAccount.name}`,
+						licenseType: `${provisioningRow?.type} License for ${selectedAccount.name}`,
 						name: order.placedOrderItems[0].name,
 					}}
-					onClose={() => onClose()}
-					orderItem={orderItem}
+					onClose={onClose}
+					provisioningRow={provisioningRow}
 				/>
 			),
 			center: true,
@@ -152,15 +149,15 @@ const useProvisioningActions = ({
 				undefined,
 				undefined,
 				<div key="details-footer-buttons">
-					{!isInstalled && !isExpired && (
+					{readyToInstall && (
 						<ClayButton
 							className="border border-primary ml-2 rounded-lg text-primary"
-							disabled={installationInProgress}
+							disabled={inProgress}
 							displayType="secondary"
 							onClick={() => {
 								onClose();
 
-								install();
+								onClickInstall();
 							}}
 							size="sm"
 						>
@@ -175,7 +172,7 @@ const useProvisioningActions = ({
 							onClick={() => {
 								onClose();
 
-								openUninstallModal(orderItem);
+								openUninstallModal(provisioningRow);
 							}}
 							size="sm"
 						>
@@ -186,7 +183,7 @@ const useProvisioningActions = ({
 					<ClayButton
 						className="ml-2 rounded-lg"
 						displayType="primary"
-						onClick={() => onClose()}
+						onClick={onClose}
 						size="sm"
 					>
 						{i18n.translate('done')}
@@ -199,20 +196,22 @@ const useProvisioningActions = ({
 
 	const provisioningRef = useRef([
 		{
-			action: () => install(),
-			show: (orderItem: OrderItem) =>
-				orderItem.status === InstallStatus.READY_TO_INSTALL,
+			action: () => onClickInstall(),
+			show: (provisioningRow: ProvisioningRow) =>
+				provisioningRow.status === InstallStatus.READY_TO_INSTALL,
 			title: i18n.translate('install'),
 		},
 		{
-			action: (orderItem: OrderItem) => onOpenDetailsModal(orderItem),
+			action: (provisioningRow: ProvisioningRow) =>
+				onOpenDetailsModal(provisioningRow),
 			show: () => true,
 			title: i18n.translate('view-details'),
 		},
 		{
-			action: (orderItem: OrderItem) => openUninstallModal(orderItem),
-			show: (orderItem: OrderItem) => {
-				const {isInstalled} = checkOrderItemStatus(orderItem);
+			action: (provisioningRow: ProvisioningRow) =>
+				openUninstallModal(provisioningRow),
+			show: (provisioningRow: ProvisioningRow) => {
+				const { isInstalled } = checkOrderItemStatus(provisioningRow);
 
 				return isInstalled;
 			},
@@ -224,7 +223,7 @@ const useProvisioningActions = ({
 		actions: provisioningRef.current,
 		loading,
 		onOpenDetailsModal,
-		selectedOrderItem,
+		selectedProvisioningRow,
 		uninstall,
 		uninstallModal,
 	};
