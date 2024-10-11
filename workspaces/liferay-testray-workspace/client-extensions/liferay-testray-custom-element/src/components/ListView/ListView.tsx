@@ -173,6 +173,10 @@ const ListView: React.FC<ListViewProps> = ({
 	};
 
 	const filter = useMemo(() => {
+		if(!managementToolbarProps.applyFilters){
+			return {}
+		}
+
 		const appliedFilters: {[key: string]: string} = {
 			...filterVariables.appliedFilter,
 		};

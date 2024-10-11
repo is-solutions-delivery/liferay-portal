@@ -24,6 +24,7 @@ const CaseResultAssignModal: React.FC<AssignModalProps> = ({
 		<UserListView
 			listViewProps={{
 				managementToolbarProps: {
+					applyFilters: false,
 					addButton: undefined,
 					display: {columns: false},
 					hasSearch: true,
