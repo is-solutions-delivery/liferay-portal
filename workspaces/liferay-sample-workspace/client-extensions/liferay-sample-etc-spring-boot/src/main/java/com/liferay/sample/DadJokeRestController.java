@@ -13,9 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
 /**
@@ -23,8 +23,8 @@ import org.springframework.web.reactive.function.client.WebClient;
  * @author Gregory Amerson
  * @author Brian Wing Shun Chan
  */
+@Component
 @RequestMapping("/dad/joke")
-@RestController
 public class DadJokeRestController extends BaseRestController {
 
 	@GetMapping

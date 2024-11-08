@@ -5,15 +5,15 @@
 
 package com.liferay.ups;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author Alessio Antonio Rendina
  */
+@Component
 @RequestMapping("/ready")
-@RestController
 public class ReadyRestController extends BaseRestController {
 
 	@GetMapping
