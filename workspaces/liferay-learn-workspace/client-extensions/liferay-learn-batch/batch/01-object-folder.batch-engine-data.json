@@ -12,10 +12,10 @@
 	"items": [
 		{
 			"externalReferenceCode": "learningManagementSystem",
-			"name": "LearningManagementSystem",
 			"label": {
 				"en_US": "Learning Management System"
-			}
+			},
+			"name": "LearningManagementSystem"
 		}
 	]
 }
