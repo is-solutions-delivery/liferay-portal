@@ -20,6 +20,7 @@ const AppAdministrator = () => {
 		() =>
 			HeadlessCommerceAdminCatalogImpl.getProducts(
 				new URLSearchParams({
+					'productSpecifications.pageSize': '-1',
 					nestedFields: 'productSpecifications',
 					sort: 'createDate:desc',
 				})
