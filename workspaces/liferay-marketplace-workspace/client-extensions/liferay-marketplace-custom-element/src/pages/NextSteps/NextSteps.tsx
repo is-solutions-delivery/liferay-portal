@@ -57,13 +57,16 @@ export function NextSteps() {
 	const paymentStatus = cart?.paymentStatusLabel;
 	const orderTypeExternalReferenceCode = cart?.orderTypeExternalReferenceCode;
 
+	const isCloudApp = orderTypeExternalReferenceCode === ORDER_TYPES.CLOUDAPP;
+	const isDxpApp = orderTypeExternalReferenceCode === ORDER_TYPES.DXPAPP;
+
 	const {isPaidApp} = getProductPriceModel(product);
 
 	const nextStepBody = {
 		[PaymentStatus.PAID]: (
 			<Header
 				description={
-					orderTypeExternalReferenceCode === ORDER_TYPES.CLOUDAPP ? (
+					isCloudApp ? (
 						<span>
 							<p>
 								Congratulations on the purchase of{' '}
@@ -194,16 +197,14 @@ export function NextSteps() {
 
 				<NewAppPageFooterButtons
 					backButtonText={i18n.translate(
-						orderTypeExternalReferenceCode === ORDER_TYPES.CLOUDAPP
-							? 'go-to-my-apps'
-							: 'go-to-dashboard'
+						isCloudApp ? 'go-to-my-apps' : 'go-to-dashboard'
 					)}
 					continueButtonText={i18n.translate(
-						orderTypeExternalReferenceCode === ORDER_TYPES.DXPAPP
-							? 'download-app'
-							: 'continue-to-install'
+						isDxpApp ? 'download-app' : 'continue-to-install'
 					)}
 					onClickBack={() => {
+						console.log('OnClickBack');
+
 						return CommerceSelectAccountImpl.selectAccount(
 							cart?.accountId
 						).then(() => {
@@ -220,29 +221,27 @@ export function NextSteps() {
 						});
 					}}
 					onClickContinue={() => {
-						if (
-							orderTypeExternalReferenceCode ===
-							ORDER_TYPES.DXPAPP
-						) {
-							Liferay.Util.navigate(
-								Liferay.ThemeDisplay.getLayoutURL().replace(
-									'/next-steps',
-									`/customer-dashboard#/order/${orderId}/download`
-								)
-							);
-						}
+						CommerceSelectAccountImpl.selectAccount(
+							cart?.accountId
+						).then(() => {
+							if (isCloudApp) {
+								Liferay.Util.navigate(
+									Liferay.ThemeDisplay.getLayoutURL().replace(
+										'/next-steps',
+										`/customer-dashboard#/order/${orderId}/cloud-provisioning`
+									)
+								);
+							}
 
-						if (
-							orderTypeExternalReferenceCode ===
-							ORDER_TYPES.CLOUDAPP
-						) {
-							Liferay.Util.navigate(
-								Liferay.ThemeDisplay.getLayoutURL().replace(
-									'/next-steps',
-									`/customer-dashboard#/order/${orderId}/cloud-provisioning`
-								)
-							);
-						}
+							if (isDxpApp) {
+								Liferay.Util.navigate(
+									Liferay.ThemeDisplay.getLayoutURL().replace(
+										'/next-steps',
+										`/customer-dashboard#/order/${orderId}/download`
+									)
+								);
+							}
+						});
 					}}
 					showContinueButton={true}
 				/>
