@@ -7,6 +7,7 @@ import ClayModal from '@clayui/modal';
 import {Observer} from '@clayui/modal/lib/types';
 import React, {useEffect, useState} from 'react';
 
+import {useMarketplaceAuthorization} from '../hooks/useMarketplaceAuthorization';
 import useProducts from '../hooks/useProducts';
 import {Product} from '../types';
 import AppDetails from './AppDetails';
@@ -18,18 +19,21 @@ export const PAYMENT_VIEW = {
 };
 
 type MarketplaceAppsModalProps = {
+	data: NonNullable<ReturnType<typeof useMarketplaceAuthorization>['data']>;
 	observer: Observer;
 	open: boolean;
 };
 
 const MarketplaceAppsModal: React.FC<MarketplaceAppsModalProps> = ({
+	data,
 	observer,
 	open,
 }) => {
 	const [step, setStep] = useState<string>(PAYMENT_VIEW.list);
 	const [selectedApp, setSelectedApp] = useState<Product>();
 
-	const {loading, pagination, productsResponse, search, sort} = useProducts();
+	const {loading, pagination, productsResponse, search, sort} =
+		useProducts(data);
 
 	const items = productsResponse?.items;
 
@@ -44,12 +48,7 @@ const MarketplaceAppsModal: React.FC<MarketplaceAppsModalProps> = ({
 	}
 
 	return (
-		<ClayModal
-			center
-			className="clay-modal-refector"
-			observer={observer}
-			size="full-screen"
-		>
+		<ClayModal center observer={observer} size="full-screen">
 			<ClayModal.Header>
 				{Liferay.Language.get('add-from-marketplace')}
 			</ClayModal.Header>
@@ -69,7 +68,11 @@ const MarketplaceAppsModal: React.FC<MarketplaceAppsModalProps> = ({
 				)}
 
 				{step === PAYMENT_VIEW.details && selectedApp && (
-					<AppDetails backToList={setStep} product={selectedApp} />
+					<AppDetails
+						backToList={setStep}
+						data={data}
+						product={selectedApp}
+					/>
 				)}
 			</ClayModal.Body>
 		</ClayModal>
