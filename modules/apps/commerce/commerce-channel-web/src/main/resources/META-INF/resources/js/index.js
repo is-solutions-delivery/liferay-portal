@@ -8,5 +8,5 @@ export {default as CommerceChannelSite} from './CommerceChannelSite';
 export {default as accountEntries} from './accountEntries';
 export {default as addCommerceChannel} from './addCommerceChannel';
 export {default as commerceChannelCountry} from './commerce_channel/commerceChannelCountry';
-export {default as CommerceChannelAddPaymentMethod} from './paymentMethod_instalation/CommerceChannelAddPaymentMethod';
+export {default as CommerceChannelAddPaymentMethod} from './marketplace_payment_method/CommerceChannelAddPaymentMethod';
 export {default as qualifiers} from './qualifiers';

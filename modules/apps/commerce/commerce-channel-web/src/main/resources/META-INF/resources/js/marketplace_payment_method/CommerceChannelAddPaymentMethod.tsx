@@ -6,19 +6,38 @@
 import {useModal} from '@clayui/modal';
 import React from 'react';
 
+import ConnectionWithMarketplaceNeededModal from './components/ConnectionWithMarketplaceNeededModal';
 import ManagementToolbar from './components/ManagementToolbar';
 import MarketplaceAppsModal from './components/MarketplaceAppsModal';
+import {useMarketplaceAuthorization} from './hooks/useMarketplaceAuthorization';
 
 import './style/index.scss';
 
 const CommerceChannelAddPaymentMethod = () => {
 	const {observer, onOpenChange, open} = useModal();
+	const {data, hasAuthorization, loading} = useMarketplaceAuthorization();
+
+	const Modal = hasAuthorization
+		? MarketplaceAppsModal
+		: ConnectionWithMarketplaceNeededModal;
+
+	if (loading) {
+		return 'Loading...';
+	}
 
 	return (
 		<div className="commerce-channer-management-tool-bar">
 			<ManagementToolbar PlusButtonAction={() => onOpenChange(true)} />
 
-			<MarketplaceAppsModal observer={observer} open={open} />
+			<Modal
+				data={
+					data as NonNullable<
+						ReturnType<typeof useMarketplaceAuthorization>['data']
+					>
+				}
+				observer={observer}
+				open={open}
+			/>
 		</div>
 	);
 };

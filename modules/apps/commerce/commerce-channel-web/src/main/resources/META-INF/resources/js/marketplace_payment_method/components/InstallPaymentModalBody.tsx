@@ -197,6 +197,9 @@ const InstallPaymentMethodModalBody: React.FC<
 														<div className="image-container mr-2 rounded">
 															<img
 																className="payment-method-app-search-results-card-image"
+																draggable={
+																	false
+																}
 																src={
 																	productImage
 																}
