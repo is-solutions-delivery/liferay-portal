@@ -254,9 +254,9 @@ Map<String, String> contextParams = HashMapBuilder.<String, String>put(
 	<div>
 		<c:if test='<%= FeatureFlagManagerUtil.isEnabled("LPD-35941") %>'>
 			<div>
-					<react:component
-						module="{CommerceChannelAddPaymentMethod} from commerce-channel-web"
-					/>\
+				<react:component
+					module="{CommerceChannelAddPaymentMethod} from commerce-channel-web"
+				/>
 			</div>
 		</c:if>
 

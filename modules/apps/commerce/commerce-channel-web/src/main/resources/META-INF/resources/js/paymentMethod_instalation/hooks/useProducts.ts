@@ -3,14 +3,12 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import { useDebounce } from '@clayui/shared';
-import { useCallback, useEffect, useState } from 'react';
+import {useDebounce} from '@clayui/shared';
+import {useCallback, useEffect, useState} from 'react';
 
-import { APIResponse, Channel, Product } from '../types';
-
+import {APIResponse, Channel, Product} from '../types';
 
 type Sort = 'asc' | 'desc';
-
 
 const pageSize = [
 	{
@@ -34,7 +32,7 @@ const SORT_ICON = {
 
 const API_BASE_URL = 'https://marketplace-uat.liferay.com';
 const CHANNEL_NAME = 'Marketplace Channel';
-const CATEGORY_ID = '34083689'
+const CATEGORY_ID = '34083689';
 
 const useProducts = () => {
 	const [delta, setDelta] = useState(8);
@@ -47,8 +45,10 @@ const useProducts = () => {
 	const [searchQuery, setSearchQuery] = useState<string>('');
 	const deboucedValue = useDebounce(searchQuery, 1000);
 
-
-	const buildUrl = (basePath: string, params: Record<string, string | number | undefined>) => {
+	const buildUrl = (
+		basePath: string,
+		params: Record<string, string | number | undefined>
+	) => {
 		const url = new URL(basePath);
 
 		for (const key in params) {
@@ -65,9 +65,12 @@ const useProducts = () => {
 			options?: RequestInit
 		): Promise<APIResponse<Channel> | undefined | void> => {
 			try {
-				const url = buildUrl(`${API_BASE_URL}/o/headless-commerce-delivery-catalog/v1.0/channels`, {
-					search: `name eq '${CHANNEL_NAME}'`,
-				});
+				const url = buildUrl(
+					`${API_BASE_URL}/o/headless-commerce-delivery-catalog/v1.0/channels`,
+					{
+						search: `name eq '${CHANNEL_NAME}'`,
+					}
+				);
 
 				const response = await Liferay.Util.fetch(url.toString(), {
 					headers: {
@@ -85,8 +88,9 @@ const useProducts = () => {
 			catch (error) {
 				console.error('Failed to fetch channel ID:', error);
 			}
-
-		}, []);
+		},
+		[]
+	);
 
 	const fetchProducts = useCallback(
 		async (
@@ -101,17 +105,21 @@ const useProducts = () => {
 			}
 
 			try {
-				const url = buildUrl(`${API_BASE_URL}/o/headless-commerce-delivery-catalog/v1.0/channels/${channelId}/products`, {
-					accountId: -1,
-					filter: `(categoryIds/any(x:(x eq '${CATEGORY_ID}')))`,
-					images: 'accountId=-1',
-					nestedFields: 'productSpecifications,skus,categories,images',
-					page: deltas,
-					pageSize: delta,
-					search: deboucedValue,
-					skus: 'accountId=-1',
-					sort: `name:${sortDirection}`,
-				});
+				const url = buildUrl(
+					`${API_BASE_URL}/o/headless-commerce-delivery-catalog/v1.0/channels/${channelId}/products`,
+					{
+						accountId: -1,
+						filter: `(categoryIds/any(x:(x eq '${CATEGORY_ID}')))`,
+						images: 'accountId=-1',
+						nestedFields:
+							'productSpecifications,skus,categories,images',
+						page: deltas,
+						pageSize: delta,
+						search: deboucedValue,
+						skus: 'accountId=-1',
+						sort: `name:${sortDirection}`,
+					}
+				);
 
 				const response = await Liferay.Util.fetch(url.toString(), {
 					headers: {
@@ -127,9 +135,9 @@ const useProducts = () => {
 			catch (error) {
 				console.error('Failed to fetch products:', error);
 			}
-
-
-		}, [channelId, deboucedValue, delta, deltas, fetchChannelId, sortDirection]);
+		},
+		[channelId, deboucedValue, delta, deltas, fetchChannelId, sortDirection]
+	);
 
 	useEffect(() => {
 		(async () => {

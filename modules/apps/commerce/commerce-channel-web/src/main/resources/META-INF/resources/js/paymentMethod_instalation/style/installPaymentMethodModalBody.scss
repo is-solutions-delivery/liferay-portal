@@ -2,9 +2,8 @@
 	min-height: 852px;
 
 	&-empty-state {
-		min-height: 700px
+		min-height: 700px;
 	}
-
 }
 
 .payment-method-app-search-results {
@@ -15,8 +14,8 @@
 
 	&-card {
 		background-color: #fbfcfe;
-		border-radius: 10px;
 		border: 1px solid #e7efff;
+		border-radius: 10px;
 		height: 320px;
 		padding: 16px;
 		width: 288px;
@@ -32,11 +31,11 @@
 		}
 
 		&-title {
+			font-weight: 600;
 			overflow: hidden;
 			text-align: left;
 			text-overflow: ellipsis;
 			white-space: nowrap;
-			font-weight: 600;
 			width: 200px;
 		}
 
@@ -67,7 +66,7 @@
 		}
 
 		&-category {
-			gap: 8px
+			gap: 8px;
 		}
 
 		&-tags {

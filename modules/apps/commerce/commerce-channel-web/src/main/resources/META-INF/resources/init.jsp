@@ -20,7 +20,6 @@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
-<%@ page import="com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil" %>
 <%@ page import="com.liferay.account.constants.AccountConstants" %><%@
 page import="com.liferay.account.exception.AccountEntryStatusException" %><%@
 page import="com.liferay.account.exception.AccountEntryTypeException" %><%@
@@ -45,6 +44,7 @@ page import="com.liferay.document.library.kernel.exception.FileExtensionExceptio
 page import="com.liferay.document.library.kernel.exception.InvalidFileException" %><%@
 page import="com.liferay.petra.string.StringPool" %><%@
 page import="com.liferay.portal.kernel.bean.BeanParamUtil" %><%@
+page import="com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil" %><%@
 page import="com.liferay.portal.kernel.language.LanguageUtil" %><%@
 page import="com.liferay.portal.kernel.model.Group" %><%@
 page import="com.liferay.portal.kernel.model.WorkflowDefinitionLink" %><%@

@@ -137,14 +137,14 @@ export type Price = {
 	price: number;
 	priceFormatted: string;
 	priceOnApplication: boolean;
-}
+};
 
 export type TierPrice = {
 	currency: string;
 	price: number;
 	priceFormatted: string;
 	quantity: number;
-}
+};
 
 export type SKUOption = {
 	key: number;
@@ -158,4 +158,4 @@ export type SKUOption = {
 	skuOptionValueKey: string;
 	skuOptionValueNames: string[];
 	value: number;
-}
+};
