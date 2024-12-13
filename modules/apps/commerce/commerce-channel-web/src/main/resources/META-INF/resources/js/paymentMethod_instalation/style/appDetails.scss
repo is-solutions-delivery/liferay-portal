@@ -1,0 +1,178 @@
+.additional-cards {
+	flex: 2;
+}
+
+.back-to-list-button-text {
+	font-family: Source Sans 3;
+}
+
+.app-icon img {
+	max-height: 70px;
+	max-width: 70px;
+}
+
+.app-type {
+	border: 1px solid #2e5aac;
+	color: #2e5aac;
+	font-size: 13px;
+}
+
+.back-button {
+	color: #6b6c7e;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 16px;
+	text-align: left;
+	text-decoration: none;
+}
+
+.body-container {
+	flex: 3;
+}
+
+.card {
+	background-color: #fff;
+	box-shadow: none;
+}
+
+.card-buttons {
+	cursor: pointer;
+}
+
+.card-description {
+	background-color: #ffff;
+}
+
+.card-description-container {
+	margin-top: 20px;
+}
+
+.card-description-text {
+	color: #5a5a5a;
+}
+
+.card-title {
+	display: inline-block;
+}
+
+.card-title-description {
+	border-bottom: 5px solid #5791ff;
+}
+
+.carousel {
+	background-color: white;
+	height: 580px;
+	overflow: hidden;
+	width: 100%;
+}
+
+.carousel-border {
+	bottom: 0;
+	cursor: pointer;
+	position: absolute;
+	top: 0;
+	width: 200px;
+	z-index: 10;
+}
+
+.carousel-border.left {
+	left: 0;
+}
+
+.carousel-border.right {
+	right: 0;
+}
+
+.carousel-border:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
+.carousel-image {
+	background-color: white;
+	max-height: 100%;
+	max-width: 100%;
+	object-fit: contain;
+	transition: transform 0.5s ease-in-out;
+}
+
+.carousel-section {
+	width: 60%;
+}
+
+.catalog-icon {
+	height: 40px;
+	object-fit: contain;
+	width: 40px;
+}
+
+.categories-container {
+	gap: 8px;
+}
+
+.category-tag {
+	background-color: #e6ebf5;
+	border-radius: 8px;
+	color: #1c3667;
+	font-size: 13px;
+}
+
+.clay-modal-refector .modal-dialog.modal-full-screen {
+	display: flex;
+	justify-content: center;
+}
+
+.clay-modal-refector .modal-dialog-centered .modal-dialog,
+.modal-dialog-centered.modal-dialog {
+	min-height: unset !important;
+}
+
+.clay-modal-refector .modal {
+	height: auto;
+}
+
+.clay-modal-refector .modal-content {
+	min-height: 920px !important;
+	width: 1307px !important;
+}
+
+.clay-modal-refector .modal-full-screen .modal-content {
+	height: unset !important;
+}
+
+.gallery-image {
+	border: 3px solid transparent;
+	cursor: pointer;
+	height: 80px;
+	object-fit: cover;
+	transition: border 0.3s ease;
+	width: 80px;
+}
+
+.gallery-image.selected {
+	border: 3px solid #0b5fff;
+}
+
+.modal-content {
+	background-color: #f7f7f8;
+	overflow-y: auto;
+}
+
+.modal-icon {
+	background: #e2e2e4;
+	height: 40px;
+	width: 40px;
+}
+
+.modal-link {
+	color: #007bff;
+	font-weight: bold;
+	text-decoration: none;
+}
+
+.modal-link:hover {
+	text-decoration: underline;
+}
+
+.text-black-50 {
+	color: rgba(0, 0, 0, 0.5);
+}
