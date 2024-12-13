@@ -6,14 +6,14 @@
 import ClayButton from '@clayui/button';
 import ClayCard from '@clayui/card';
 import ClayIcon from '@clayui/icon';
-import ClayModal, { useModal } from '@clayui/modal';
+import ClayModal, {useModal} from '@clayui/modal';
 import classNames from 'classnames';
-import { format } from 'date-fns';
+import {format} from 'date-fns';
 import DOMPurify from 'isomorphic-dompurify';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
-import { Product } from '../types';
-import { PAYMENT_VIEW } from './MarketplaceAppsModal';
+import {Product} from '../types';
+import {PAYMENT_VIEW} from './MarketplaceAppsModal';
 
 type AppDetailsProps = {
 	backToList: any;
@@ -23,12 +23,12 @@ type AppDetailsProps = {
 type BodyModal = AppDetailsProps;
 
 const handleCopyLink = async (href: string) => {
-	await navigator.clipboard.writeText(href)
+	await navigator.clipboard.writeText(href);
 
 	Liferay.Util.openToast({
 		message: Liferay.Language.get('copied-link-to-the-clipboard'),
 		type: 'success',
-	})
+	});
 };
 
 type PublisherSupportModalProps = {
@@ -67,7 +67,7 @@ const PublisherSupportModal = ({
 
 	const supportphone = getProductSpecification(product, 'supportphone');
 
-	const { observer } = useModal({
+	const {observer} = useModal({
 		onClose,
 	});
 
@@ -185,18 +185,21 @@ type CardProps = {
 	title: string;
 };
 
-const Card: React.FC<CardProps> = ({ buttons, description, isCommentCard, title }) => (
+const Card: React.FC<CardProps> = ({
+	buttons,
+	description,
+	isCommentCard,
+	title,
+}) => (
 	<>
 		{(description || buttons) && (
 			<div>
 				<ClayCard className="mb-2 px-3">
 					<ClayCard.Body>
 						<ClayCard.Description
-							className={
-								classNames({
-									'card-title-description pb-1': isCommentCard
-								})
-							}
+							className={classNames({
+								'card-title-description pb-1': isCommentCard,
+							})}
 							displayType="title"
 						>
 							{title.toUpperCase()}
@@ -252,7 +255,7 @@ const Card: React.FC<CardProps> = ({ buttons, description, isCommentCard, title 
 	</>
 );
 
-const Carousel = ({ images }: { images: string[] }) => {
+const Carousel = ({images}: {images: string[]}) => {
 	const [currentIndex, setCurrentIndex] = useState(0);
 
 	const handleNext = () =>
@@ -281,19 +284,19 @@ const Carousel = ({ images }: { images: string[] }) => {
 					/>
 				</div>
 
-				<div
-					className="carousel-border right"
-					onClick={handleNext}
-				/>
+				<div className="carousel-border right" onClick={handleNext} />
 			</div>
 
 			<div className="d-flex justify-content-start overflow-auto">
 				{images.map((image, index) => (
 					<img
 						alt={`Thumbnail ${index}`}
-						className={classNames("gallery-image mt-5 mb-2 mx-1 rounded", {
-							selected: index === currentIndex
-						})}
+						className={classNames(
+							'gallery-image mt-5 mb-2 mx-1 rounded',
+							{
+								selected: index === currentIndex,
+							}
+						)}
 						key={index}
 						onClick={() => handleSelectImage(index)}
 						src={image}
@@ -304,7 +307,7 @@ const Carousel = ({ images }: { images: string[] }) => {
 	);
 };
 
-const BodyModal = ({ backToList, product }: BodyModal) => {
+const BodyModal = ({backToList, product}: BodyModal) => {
 	const [publisherSupportModalVisible, setPublisherSupportModalVisible] =
 		useState(false);
 	const productImage = product.urlImage;
@@ -329,9 +332,15 @@ const BodyModal = ({ backToList, product }: BodyModal) => {
 
 	const productType = getProductSpecification(product, 'type');
 
-	const sku = product?.skus.filter((sku) => sku?.skuOptions.find((option) => option.skuOptionValueKey === "standard"))
+	const sku = product?.skus.filter((sku) =>
+		sku?.skuOptions.find(
+			(option) => option.skuOptionValueKey === 'standard'
+		)
+	);
 
-	const price = sku.length ? sku[0]?.price?.priceFormatted : Liferay.Language.get('free');
+	const price = sku.length
+		? sku[0]?.price?.priceFormatted
+		: Liferay.Language.get('free');
 
 	return (
 		<div className="p-4">
@@ -342,7 +351,7 @@ const BodyModal = ({ backToList, product }: BodyModal) => {
 				>
 					<ClayIcon symbol="angle-left" />
 
-					<span className="back-to-list-button-text" >
+					<span className="back-to-list-button-text">
 						{Liferay.Language.get('back-to-list')}
 					</span>
 				</a>
@@ -371,11 +380,9 @@ const BodyModal = ({ backToList, product }: BodyModal) => {
 										}
 									/>
 
-									{
-										productType?.value === 'dxp'
-											? Liferay.Language.get('dxp-app')
-											: Liferay.Language.get('cloud-app')
-									}
+									{productType?.value === 'dxp'
+										? Liferay.Language.get('dxp-app')
+										: Liferay.Language.get('cloud-app')}
 								</div>
 
 								<div className="categories-container d-flex flex-wrap">
@@ -406,11 +413,15 @@ const BodyModal = ({ backToList, product }: BodyModal) => {
 
 					<div className="mt-4">
 						<Card
-							description={<div
-								dangerouslySetInnerHTML={{
-									__html: DOMPurify.sanitize(product.description)
-								}}
-							/>}
+							description={
+								<div
+									dangerouslySetInnerHTML={{
+										__html: DOMPurify.sanitize(
+											product.description
+										),
+									}}
+								/>
+							}
 							isCommentCard
 							title="Description"
 						/>
@@ -431,7 +442,10 @@ const BodyModal = ({ backToList, product }: BodyModal) => {
 					/>
 
 					<Card
-						description={format(new Date(product.createDate), 'MMM dd, yyyy')}
+						description={format(
+							new Date(product.createDate),
+							'MMM dd, yyyy'
+						)}
 						title={Liferay.Language.get('published-date')}
 					/>
 
@@ -496,7 +510,7 @@ const BodyModal = ({ backToList, product }: BodyModal) => {
 	);
 };
 
-const AppDetails: React.FC<AppDetailsProps> = ({ backToList, product }) => {
+const AppDetails: React.FC<AppDetailsProps> = ({backToList, product}) => {
 	return <BodyModal backToList={backToList} product={product} />;
 };
 

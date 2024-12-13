@@ -4,11 +4,11 @@
  */
 
 import ClayModal from '@clayui/modal';
-import { Observer } from '@clayui/modal/lib/types';
-import React, { useEffect, useState } from 'react';
+import {Observer} from '@clayui/modal/lib/types';
+import React, {useEffect, useState} from 'react';
 
 import useProducts from '../hooks/useProducts';
-import { Product } from '../types';
+import {Product} from '../types';
 import AppDetails from './AppDetails';
 import InstallPaymentMethodModalBody from './InstallPaymentModalBody';
 
@@ -29,7 +29,7 @@ const MarketplaceAppsModal: React.FC<MarketplaceAppsModalProps> = ({
 	const [step, setStep] = useState<string>(PAYMENT_VIEW.list);
 	const [selectedApp, setSelectedApp] = useState<Product>();
 
-	const { loading, pagination, productsResponse, search, sort } = useProducts();
+	const {loading, pagination, productsResponse, search, sort} = useProducts();
 
 	const items = productsResponse?.items;
 
@@ -44,7 +44,6 @@ const MarketplaceAppsModal: React.FC<MarketplaceAppsModalProps> = ({
 	}
 
 	return (
-
 		<ClayModal
 			center
 			className="clay-modal-refector"
@@ -70,10 +69,7 @@ const MarketplaceAppsModal: React.FC<MarketplaceAppsModalProps> = ({
 				)}
 
 				{step === PAYMENT_VIEW.details && selectedApp && (
-					<AppDetails
-						backToList={setStep}
-						product={selectedApp}
-					/>
+					<AppDetails backToList={setStep} product={selectedApp} />
 				)}
 			</ClayModal.Body>
 		</ClayModal>
