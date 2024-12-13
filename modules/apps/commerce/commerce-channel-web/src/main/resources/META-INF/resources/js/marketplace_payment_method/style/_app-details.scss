@@ -2,10 +2,6 @@
 	flex: 2;
 }
 
-.back-to-list-button-text {
-	font-family: Source Sans 3;
-}
-
 .app-icon img {
 	max-height: 70px;
 	max-width: 70px;
@@ -19,6 +15,7 @@
 
 .back-button {
 	color: #6b6c7e;
+	cursor: pointer;
 	font-size: 13px;
 	font-weight: 600;
 	line-height: 16px;
@@ -128,11 +125,6 @@
 
 .clay-modal-refector .modal {
 	height: auto;
-}
-
-.clay-modal-refector .modal-content {
-	min-height: 920px !important;
-	width: 1307px !important;
 }
 
 .clay-modal-refector .modal-full-screen .modal-content {
