@@ -1,0 +1,89 @@
+.payment-methods-modal-body {
+	min-height: 852px;
+
+	&-empty-state {
+		min-height: 700px
+	}
+
+}
+
+.payment-method-app-search-results {
+	box-sizing: border-box;
+	gap: 31px;
+	max-height: 700px;
+	overflow: auto;
+
+	&-card {
+		background-color: #fbfcfe;
+		border-radius: 10px;
+		border: 1px solid #e7efff;
+		height: 320px;
+		padding: 16px;
+		width: 288px;
+
+		&-content {
+			cursor: pointer;
+		}
+
+		&-image {
+			height: 48px;
+			object-fit: contain;
+			width: 48px;
+		}
+
+		&-title {
+			overflow: hidden;
+			text-align: left;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			font-weight: 600;
+			width: 200px;
+		}
+
+		&-subtitle {
+			overflow: hidden;
+			text-align: left;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			width: 200px;
+		}
+
+		&-description {
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 4;
+			display: -webkit-box;
+			height: 96px;
+			line-height: 24px;
+			overflow: hidden;
+			overflow: hidden;
+			text-align: left;
+		}
+
+		&-price-model {
+			line-height: 16px;
+			text-align: left;
+			text-decoration-skip-ink: none;
+			text-underline-position: from-font;
+		}
+
+		&-category {
+			gap: 8px
+		}
+
+		&-tags {
+			background-color: #f7f7f8;
+			border-radius: 4px 0 0;
+			color: #2e5aac;
+			display: block;
+			font-size: 13px;
+			height: hug (24px) px;
+			line-height: 16px;
+			min-width: 35px;
+			overflow: hidden;
+			padding: 4px 8px;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			width: auto;
+		}
+	}
+}

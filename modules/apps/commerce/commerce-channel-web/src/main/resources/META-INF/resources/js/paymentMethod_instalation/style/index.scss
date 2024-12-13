@@ -1,0 +1,8 @@
+@use 'appDetails';
+@use 'installPaymentMethodModalBody';
+
+.commerce-channer-management-tool-bar {
+	.navbar-nav {
+		width: 100% !important;
+	}
+}
