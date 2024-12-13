@@ -1,6 +1,4 @@
 .payment-methods-modal-body {
-	min-height: 852px;
-
 	&-empty-state {
 		min-height: 700px;
 	}
@@ -9,7 +7,6 @@
 .payment-method-app-search-results {
 	box-sizing: border-box;
 	gap: 31px;
-	max-height: 700px;
 	overflow: auto;
 
 	&-card {
