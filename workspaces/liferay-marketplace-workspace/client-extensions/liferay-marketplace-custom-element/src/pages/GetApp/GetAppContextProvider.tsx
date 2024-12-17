@@ -44,6 +44,7 @@ type InitialState = {
 	};
 	product: DeliveryProduct;
 	project?: string;
+	requiresResources: boolean;
 	stepState: {
 		onNext: () => void;
 		onPrevious: () => void;
@@ -83,6 +84,7 @@ const initialState: InitialState = {
 		method: 'pay',
 	},
 	product: {} as DeliveryProduct,
+	requiresResources: true,
 	stepState: {} as InitialState['stepState'],
 	steps: [
 		{
@@ -262,12 +264,27 @@ const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 				value === 'Free'
 		) ?? false;
 
+	const requiresResources = !!product?.productSpecifications.every(
+		(specification) => {
+			if (
+				specification.specificationKey ===
+				PRODUCT_SPECIFICATION_KEY.APP_SETTINGS
+			) {
+				const hasResourceRequirements = JSON.parse(specification.value);
+
+				return hasResourceRequirements?.resourceRequirements !== false;
+			}
+
+			return true;
+		}
+	);
+
 	const steps = useMemo(
 		() =>
 			state.steps.filter(({id}) =>
-				isCloudApp ? true : id !== StepType.PROJECT
+				isCloudApp && requiresResources ? true : id !== StepType.PROJECT
 			),
-		[isCloudApp, state.steps]
+		[isCloudApp, requiresResources, state.steps]
 	);
 
 	const isValid = useMemo(() => {
@@ -345,6 +362,7 @@ const GetAppContextProvider: React.FC<GetAppContextProviderProps> = ({
 					},
 					isCloudApp,
 					product: product as DeliveryProduct,
+					requiresResources,
 					stepState: {
 						onNext() {
 							dispatch({

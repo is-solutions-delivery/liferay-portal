@@ -115,11 +115,17 @@ const AppOutlet = () => {
 					OrderType.CLOUD
 				) {
 					const isDownloadableCloud =
-						product?.productSpecifications.some(
-							(specification) =>
+						product?.productSpecifications.some((specification) => {
+							if (
 								specification.specificationKey ===
-								PRODUCT_SPECIFICATION_KEY.DOWNLOADABLE_CLOUD_APP
-						);
+								PRODUCT_SPECIFICATION_KEY.APP_SETTINGS
+							) {
+								return (
+									JSON.parse(specification.value)
+										.downloadableCloud === true
+								);
+							}
+						});
 
 					return [
 						...tabs,
