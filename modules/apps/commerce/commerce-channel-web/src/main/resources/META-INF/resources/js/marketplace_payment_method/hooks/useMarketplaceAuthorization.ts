@@ -9,8 +9,11 @@ import {useEffect, useState} from 'react';
 type Authorization = {
 	data: null | {
 		accessToken: string;
-		instance: {
+		marketplaceSettings: {
 			accountId: number;
+			categoryReferences: {
+				PAYMENT_METHOD: number;
+			};
 			channelId: number;
 			siteId: number;
 		};
@@ -26,6 +29,7 @@ export function useMarketplaceAuthorization() {
 		hasAuthorization: false,
 		loading: true,
 	});
+
 	useEffect(() => {
 		const getAuthorization = async () => {
 			const response = await fetch(

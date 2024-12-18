@@ -14,7 +14,7 @@ import React, {useState} from 'react';
 
 import {useMarketplaceAuthorization} from '../hooks/useMarketplaceAuthorization';
 import {Product} from '../types';
-import {PAYMENT_VIEW} from './MarketplaceAppsModal';
+import {AppView} from './MarketplaceAppsModal';
 
 type BodyModalProps = {
 	backToList: any;
@@ -32,24 +32,19 @@ const handleCopyLink = async (href: string) => {
 };
 
 type PublisherSupportModalProps = {
-	onClose: any;
+	onClose: () => void;
 	product: Product;
 };
 
-const getCategoryVocabulary = (product: Product, vocabulary: string) => {
-	return product.categories.filter(
+const getCategoryVocabulary = (product: Product, vocabulary: string) =>
+	product.categories.filter(
 		(category) => category?.vocabulary === vocabulary
 	);
-};
 
-const getProductSpecification = (
-	product: Product,
-	specificationKey: string
-) => {
-	return product.productSpecifications.find(
+const getProductSpecification = (product: Product, specificationKey: string) =>
+	product.productSpecifications.find(
 		(specification) => specification.specificationKey === specificationKey
 	);
-};
 
 const PublisherSupportModal = ({
 	onClose,
@@ -343,7 +338,7 @@ const BodyModal = ({backToList, data, product}: BodyModalProps) => {
 			<div>
 				<span
 					className="back-button mb-3"
-					onClick={() => backToList(PAYMENT_VIEW.list)}
+					onClick={() => backToList(AppView.list)}
 				>
 					<ClayIcon symbol="angle-left" />
 

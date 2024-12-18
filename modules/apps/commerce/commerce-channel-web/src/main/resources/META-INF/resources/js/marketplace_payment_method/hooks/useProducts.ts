@@ -4,6 +4,7 @@
  */
 
 import {useDebounce} from '@clayui/shared';
+import {fetch} from 'frontend-js-web';
 import {useCallback, useEffect, useState} from 'react';
 
 import {APIResponse, Product} from '../types';
@@ -31,15 +32,13 @@ const SORT_ICON = {
 	desc: 'order-list-down',
 };
 
-const CATEGORY_ID = '34083689';
-
 const useProducts = (
 	authorization: NonNullable<
 		ReturnType<typeof useMarketplaceAuthorization>['data']
 	>
 ) => {
 	const {
-		instance: {channelId},
+		marketplaceSettings: {categoryReferences, channelId},
 		url,
 	} = authorization || {};
 
@@ -53,45 +52,37 @@ const useProducts = (
 	const [searchQuery, setSearchQuery] = useState('');
 	const debouncedValue = useDebounce(searchQuery, 1000);
 
-	const buildUrl = (
-		basePath: string,
-		params: Record<string, string | number | undefined>
-	) => {
-		const url = new URL(basePath);
-
-		for (const key in params) {
-			if (params[key] !== undefined) {
-				url.searchParams.append(key, String(params[key]));
-			}
-		}
-
-		return url.toString();
-	};
-
 	const fetchProducts = useCallback(async (): Promise<
 		APIResponse<Product> | undefined | void
 	> => {
-		const _url = buildUrl(
-			`${url}/o/headless-commerce-delivery-catalog/v1.0/channels/${channelId}/products`,
-			{
-				accountId: -1,
-				filter: `(categoryIds/any(x:(x eq '${CATEGORY_ID}')))`,
-				images: 'accountId=-1',
-				nestedFields: 'productSpecifications,skus,categories,images',
-				page: deltas,
-				pageSize: delta,
-				search: debouncedValue,
-				skus: 'accountId=-1',
-				sort: `name:${sortDirection}`,
-			}
-		);
+		const urlSearchParams = new URLSearchParams({
+			accountId: '-1',
+			filter: `(categoryIds/any(x:(x eq '${categoryReferences.PAYMENT_METHOD}')))`,
+			images: 'accountId=-1',
+			nestedFields: 'productSpecifications,skus,categories,images',
+			page: String(deltas),
+			pageSize: String(delta),
+			search: debouncedValue,
+			skus: 'accountId=-1',
+			sort: `name:${sortDirection}`,
+		});
 
-		const response = await Liferay.Util.fetch(_url.toString());
+		const response = await fetch(
+			`${url}/o/headless-commerce-delivery-catalog/v1.0/channels/${channelId}/products?${urlSearchParams.toString()}`
+		);
 
 		const data = await response.json();
 
 		setProductsResponse(data);
-	}, [url, channelId, debouncedValue, delta, deltas, sortDirection]);
+	}, [
+		categoryReferences.PAYMENT_METHOD,
+		channelId,
+		debouncedValue,
+		delta,
+		deltas,
+		sortDirection,
+		url,
+	]);
 
 	useEffect(() => {
 		fetchProducts()

@@ -13,10 +13,10 @@ import {Product} from '../types';
 import AppDetails from './AppDetails';
 import InstallPaymentMethodModalBody from './InstallPaymentModalBody';
 
-export const PAYMENT_VIEW = {
-	details: 'DETAILS',
-	list: 'LIST',
-};
+export enum AppView {
+	DETAILS,
+	LIST,
+}
 
 type MarketplaceAppsModalProps = {
 	data: NonNullable<ReturnType<typeof useMarketplaceAuthorization>['data']>;
@@ -29,7 +29,7 @@ const MarketplaceAppsModal: React.FC<MarketplaceAppsModalProps> = ({
 	observer,
 	open,
 }) => {
-	const [step, setStep] = useState<string>(PAYMENT_VIEW.list);
+	const [step, setStep] = useState(AppView.LIST);
 	const [selectedApp, setSelectedApp] = useState<Product>();
 
 	const {loading, pagination, productsResponse, search, sort} =
@@ -39,7 +39,7 @@ const MarketplaceAppsModal: React.FC<MarketplaceAppsModalProps> = ({
 
 	useEffect(() => {
 		if (!open) {
-			setStep(PAYMENT_VIEW.list);
+			setStep(AppView.LIST);
 		}
 	}, [open]);
 
@@ -54,7 +54,15 @@ const MarketplaceAppsModal: React.FC<MarketplaceAppsModalProps> = ({
 			</ClayModal.Header>
 
 			<ClayModal.Body className="m-0 p-0">
-				{step === PAYMENT_VIEW.list && (
+				{step === AppView.DETAILS && (
+					<AppDetails
+						backToList={setStep}
+						data={data}
+						product={selectedApp as Product}
+					/>
+				)}
+
+				{step === AppView.LIST && (
 					<InstallPaymentMethodModalBody
 						loading={loading}
 						pagination={pagination}
@@ -64,14 +72,6 @@ const MarketplaceAppsModal: React.FC<MarketplaceAppsModalProps> = ({
 						setSelectedApp={setSelectedApp}
 						setStep={setStep}
 						sort={sort}
-					/>
-				)}
-
-				{step === PAYMENT_VIEW.details && selectedApp && (
-					<AppDetails
-						backToList={setStep}
-						data={data}
-						product={selectedApp}
 					/>
 				)}
 			</ClayModal.Body>
