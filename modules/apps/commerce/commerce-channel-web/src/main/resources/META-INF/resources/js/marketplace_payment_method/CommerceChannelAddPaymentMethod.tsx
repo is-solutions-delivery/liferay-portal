@@ -22,11 +22,11 @@ const CommerceChannelAddPaymentMethod = () => {
 		: ConnectionWithMarketplaceNeededModal;
 
 	if (loading) {
-		return 'Loading...';
+		return Liferay.Language.get('loading');
 	}
 
 	return (
-		<div className="commerce-channer-management-tool-bar">
+		<div className="commerce-channer-management-toolbar">
 			<ManagementToolbar PlusButtonAction={() => onOpenChange(true)} />
 
 			<Modal

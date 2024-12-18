@@ -16,7 +16,7 @@ import React, {useState} from 'react';
 
 import useProducts from '../hooks/useProducts';
 import {Product} from '../types';
-import {PAYMENT_VIEW} from './MarketplaceAppsModal';
+import {AppView} from './MarketplaceAppsModal';
 
 type InstallPaymentMethodModalBodyProps = {
 	loading: ReturnType<typeof useProducts>['loading'];
@@ -25,7 +25,7 @@ type InstallPaymentMethodModalBodyProps = {
 	searchQuery: any;
 	setSearchQuery: any;
 	setSelectedApp: any;
-	setStep: React.Dispatch<string>;
+	setStep: React.Dispatch<number>;
 	sort: ReturnType<typeof useProducts>['sort'];
 };
 
@@ -187,9 +187,7 @@ const InstallPaymentMethodModalBody: React.FC<
 												className="payment-method-app-search-results-card-content"
 												onClick={() => {
 													setSelectedApp(product);
-													setStep(
-														PAYMENT_VIEW.details
-													);
+													setStep(AppView.details);
 												}}
 											>
 												<div>
