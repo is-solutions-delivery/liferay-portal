@@ -10,9 +10,11 @@ import {useOutletContext, useParams} from 'react-router-dom';
 import {DetailedCard} from '../../../../../components/DetailedCard/DetailedCard';
 import i18n from '../../../../../i18n';
 import formatLocaleCurrency from '../../../../../utils/formatLocaleCurrency';
-import {isCloudProduct} from '../../../../../utils/productUtils';
+import {
+	getProductPriceModel,
+	isCloudProduct,
+} from '../../../../../utils/productUtils';
 import {safeJSONParse} from '../../../../../utils/util';
-import getProductPriceModel from '../../../../GetApp/utils/getProductPriceModel';
 import {formatDate} from '../../../../PublisherDashboard/PublisherDashboardPageUtil';
 
 import './App.scss';

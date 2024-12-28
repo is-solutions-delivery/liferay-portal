@@ -14,13 +14,13 @@ import withProviders from '../../hoc/withProviders';
 import i18n from '../../i18n';
 import {Liferay} from '../../liferay/liferay';
 import {baseURL} from '../../utils/api';
+import {getProductPriceModel} from '../../utils/productUtils';
 import {
 	getAccountImage,
 	getThumbnailByProductAttachment,
 	showAppImage,
 } from '../../utils/util';
 import {PaymentStatus} from '../GetApp/enums/PaymentStatus';
-import getProductPriceModel from '../GetApp/utils/getProductPriceModel';
 import useNextSteps from './useNextSteps';
 
 import './NextSteps.scss';
@@ -59,7 +59,7 @@ export function NextSteps() {
 	const isCloudApp = orderTypeExternalReferenceCode === ORDER_TYPES.CLOUDAPP;
 	const isDxpApp = orderTypeExternalReferenceCode === ORDER_TYPES.DXPAPP;
 
-	const {isPaidApp} = getProductPriceModel(product);
+	const {isPaidApp} = getProductPriceModel(product as DeliveryProduct);
 
 	const nextStepBody = {
 		[PaymentStatus.PAID]: (
