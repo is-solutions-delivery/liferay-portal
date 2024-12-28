@@ -381,7 +381,7 @@ export async function getPaymentMethodURL(
 		}
 	);
 
-	return await paymentResponse.text();
+	return paymentResponse.text();
 }
 
 export async function getOptions() {

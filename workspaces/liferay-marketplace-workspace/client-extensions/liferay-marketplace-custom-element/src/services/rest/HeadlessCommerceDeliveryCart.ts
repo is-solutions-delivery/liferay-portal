@@ -26,9 +26,21 @@ class HeadlessCommerceDeliveryCart {
 		);
 	}
 
-	async getPaymentURL(orderId: string, callbackURL: string) {
+	async getAccountCarts(accountId: number | string, channelId: string) {
+		return fetcher<APIResponse<Cart>>(
+			`o/headless-commerce-delivery-cart/v1.0/channels/${channelId}/account/${accountId}/carts`
+		);
+	}
+
+	async getCartItems(cartId: number) {
+		return fetcher<APIResponse<CartItem>>(
+			`o/headless-commerce-delivery-cart/v1.0/carts/${cartId}/items`
+		);
+	}
+
+	async getPaymentMethodURL(cartId: number, callbackURL: string) {
 		const response = await Liferay.Util.fetch(
-			`/o/headless-commerce-delivery-cart/v1.0/carts/${orderId}/payment-url?callbackURL=${callbackURL}`
+			`/o/headless-commerce-delivery-cart/v1.0/carts/${cartId}/payment-url?callbackURL=${callbackURL}`
 		);
 
 		return response.text();
