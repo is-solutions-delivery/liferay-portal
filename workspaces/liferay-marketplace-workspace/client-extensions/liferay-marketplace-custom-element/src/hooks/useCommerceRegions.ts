@@ -13,7 +13,7 @@ const useCommerceRegions = (
 		pageSize: '-1',
 	})
 ) => {
-	return useSWR(`/commerce-regions/${searchParams.get('fields') ?? ''}`, () =>
+	return useSWR(`/commerce-regions/${searchParams.get('fields')}`, () =>
 		headlessCommerceAdminAddress.getRegions(searchParams)
 	);
 };
