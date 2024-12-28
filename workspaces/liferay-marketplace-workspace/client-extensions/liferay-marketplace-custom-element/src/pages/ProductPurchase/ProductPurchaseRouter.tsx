@@ -17,29 +17,71 @@ import {useDeliveryProduct} from '../../hooks/data/useProduct';
 import i18n from '../../i18n';
 import {
 	getProductCategoriesByVocabularyName,
-	getSpecificationByKey,
+	getProductPriceModel,
+	getProductSpecification,
+	isCloudProduct,
 } from '../../utils/productUtils';
 import ProductPurchaseOutlet from './ProductPurchaseOutlet';
-import ProductPurchaseAccountSelection from './steps/AccountSelection';
-import SolutionProvisioningForm from './steps/Solution';
-import ThankYou from './steps/ThankYou';
+import ProductPurchaseAccountSelection from './pages/AccountSelection';
+import AppAccountSelection from './pages/App/AccountSelection';
+import {InsuficientResources} from './pages/App/InsuficientResources';
+import ContactSalesPage from './pages/App/InsuficientResources/ContactSales';
+import ContactSalesForm from './pages/App/InsuficientResources/ContactSalesForm';
+import License from './pages/App/License';
+import PaymentMethod from './pages/App/PaymentMethod';
+import ProjectSelection from './pages/App/Project';
+import NextSteps from './pages/NextSteps';
+import SolutionProvisioningForm from './pages/Solution';
 
-const productTypeRoutes = {
-	[PRODUCT_TYPE_VOCABULARY.SOLUTION]: [
-		{
-			element: ProductPurchaseAccountSelection,
-			index: true,
-			title: i18n.translate('account-selection'),
+export const productTypeRoutes = {
+	[PRODUCT_TYPE_VOCABULARY.SOLUTION]: {
+		metadata: {
+			skipSingleAccountSelection: true,
 		},
-		{
-			element: SolutionProvisioningForm,
-			path: 'form',
-			title: 'Form',
+		routes: [
+			{
+				element: ProductPurchaseAccountSelection,
+				index: true,
+				title: i18n.translate('account-selection'),
+			},
+			{
+				element: SolutionProvisioningForm,
+				path: 'form',
+				title: 'Form',
+			},
+		],
+	},
+	[PRODUCT_TYPE_VOCABULARY.APP]: {
+		metadata: {
+			isNavigationStepVisible: (product: DeliveryProduct) =>
+				getProductPriceModel(product).isPaidApp,
+			useCart: true,
 		},
-	],
-	[PRODUCT_TYPE_VOCABULARY.APP]: [
-		{element: ProductPurchaseAccountSelection, index: true, title: 'Setup'},
-	],
+		routes: [
+			{
+				element: AppAccountSelection,
+				index: true,
+				title: i18n.translate('account-selection'),
+			},
+			{
+				element: ProjectSelection,
+				path: 'project',
+				stepVisible: (product: DeliveryProduct) =>
+					isCloudProduct(product),
+				title: i18n.translate('projects'),
+			},
+			{
+				element: License,
+				path: 'license',
+				title: i18n.translate('licenses'),
+			},
+			{
+				element: PaymentMethod,
+				path: 'payment-method',
+				title: i18n.translate('payment-method'),
+			},
+		],
+	},
 };
 
 const ProductPurchaseRouter = () => {
@@ -69,7 +111,7 @@ const ProductPurchaseRouter = () => {
 
 	const productTypeCategory = productTypes[0] as PRODUCT_TYPE_VOCABULARY;
 
-	const solutionTypeSpecification = getSpecificationByKey(
+	const solutionTypeSpecification = getProductSpecification(
 		PRODUCT_SPECIFICATION_KEY.SOLUTION_TYPE,
 		product as DeliveryProduct
 	);
@@ -77,7 +119,9 @@ const ProductPurchaseRouter = () => {
 	const solutionTypeSpecificationValue =
 		solutionTypeSpecification?.value as SOLUTION_TYPES;
 
-	const routes = productTypeRoutes[productTypeCategory] || [];
+	const productTypeRoute = productTypeRoutes[productTypeCategory];
+
+	const {routes = []} = productTypeRoute || {};
 
 	return (
 		<HashRouter>
@@ -86,7 +130,7 @@ const ProductPurchaseRouter = () => {
 					element={
 						<ProductPurchaseOutlet
 							product={product as DeliveryProduct}
-							routes={routes}
+							productTypeRoute={productTypeRoute as any}
 							solutionTypeSpecificationValue={
 								solutionTypeSpecificationValue
 							}
@@ -108,7 +152,19 @@ const ProductPurchaseRouter = () => {
 
 				<Route
 					element={
-						<ThankYou
+						<InsuficientResources
+							product={product as DeliveryProduct}
+						/>
+					}
+					path="insuficient-resources/:projectId/:accountId"
+				>
+					<Route element={<ContactSalesPage />} index />
+					<Route element={<ContactSalesForm />} path="form" />
+				</Route>
+
+				<Route
+					element={
+						<NextSteps
 							product={product as DeliveryProduct}
 							productTypeCategory={productTypeCategory}
 							solutionTypeSpecificationValue={
@@ -116,7 +172,7 @@ const ProductPurchaseRouter = () => {
 							}
 						/>
 					}
-					path="thank-you"
+					path="next-steps"
 				/>
 			</Routes>
 		</HashRouter>
