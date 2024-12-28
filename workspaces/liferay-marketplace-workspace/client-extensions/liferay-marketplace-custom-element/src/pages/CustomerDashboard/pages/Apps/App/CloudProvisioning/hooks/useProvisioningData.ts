@@ -10,7 +10,7 @@ import {ORDER_CUSTOM_FIELDS} from '../../../../../../../enums/Order';
 import {PRODUCT_SPECIFICATION_KEY} from '../../../../../../../enums/Product';
 import useGetProductByOrderId from '../../../../../../../hooks/useGetProductByOrderId';
 import i18n from '../../../../../../../i18n';
-import {getSpecificationByKey} from '../../../../../../../utils/productUtils';
+import {getProductSpecification} from '../../../../../../../utils/productUtils';
 import {safeJSONParse} from '../../../../../../../utils/util';
 import {LicenseType} from '../../../../../../GetApp/enums/licenseType';
 import useGetResourceInfo from '../../../../../../GetApp/hooks/useGetResourceInfo';
@@ -76,7 +76,7 @@ const useProvisioningData = (orderId: string) => {
 
 	const productLicenseType = useMemo(
 		() =>
-			getSpecificationByKey(
+			getProductSpecification(
 				PRODUCT_SPECIFICATION_KEY.APP_LICENSING_TYPE,
 				product as DeliveryProduct
 			)?.value || '',

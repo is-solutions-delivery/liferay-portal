@@ -7,8 +7,8 @@ import {useEffect, useState} from 'react';
 import {Outlet, useLocation, useNavigate} from 'react-router-dom';
 
 import {useMarketplaceContext} from '../../context/MarketplaceContext';
+import useAccountAddresses from '../../hooks/useAccountAddresses';
 import useCart from '../../hooks/useCart';
-import useGetAddresses from '../../hooks/useGetAddresses';
 import {
 	getPaymentMethodURL,
 	postCheckoutCart,
@@ -21,7 +21,6 @@ import {PaymentMethod} from './enums/paymentMethod';
 import {SkuOptions} from './enums/skuOptions';
 import buildNewCart from './utils/buildNewCart';
 import {getProductOrderTypes} from './utils/getProductOrderTypes';
-import getProductPriceModel from './utils/getProductPriceModel';
 import {getProductSpecificationValues} from './utils/getProductSpecificationValues';
 import getReplaceCurrentURL from './utils/getReplaceCurrentURL';
 import {postCartByPaymentMethod} from './utils/postCartByPaymentMethod';
@@ -31,6 +30,7 @@ import {Analytics} from '../../core/Analytics';
 import i18n from '../../i18n';
 import {Liferay} from '../../liferay/liferay';
 import CommerceSelectAccountImpl from '../../services/rest/CommerceSelectAccount';
+import {getProductPriceModel} from '../../utils/productUtils';
 
 const getProductBasePriceAndTrial = (
 	product: DeliveryProduct,
@@ -127,7 +127,9 @@ const GetAppOutlet = () => {
 	] = useGetAppContext();
 
 	const [loading, setLoading] = useState(false);
-	const {addresses} = useGetAddresses(account?.id);
+	const {data: addressResponse = {items: []}} = useAccountAddresses(
+		account?.id
+	);
 	const {channel} = useMarketplaceContext();
 	const location = useLocation();
 	const navigate = useNavigate();
@@ -259,7 +261,7 @@ const GetAppOutlet = () => {
 
 						<Outlet
 							context={{
-								addresses,
+								addresses: addressResponse.items,
 								cartUtil,
 								handleGetApp,
 								isFreeApp,

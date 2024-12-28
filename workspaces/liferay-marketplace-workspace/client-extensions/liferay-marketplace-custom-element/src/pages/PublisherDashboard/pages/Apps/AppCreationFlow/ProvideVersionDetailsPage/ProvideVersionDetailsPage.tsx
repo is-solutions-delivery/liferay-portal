@@ -7,7 +7,7 @@ import {Header} from '../../../../../../components/Header/Header';
 import {Input} from '../../../../../../components/Input/Input';
 import {NewAppPageFooterButtons} from '../../../../../../components/NewAppPageFooterButtons/NewAppPageFooterButtons';
 import {Section} from '../../../../../../components/Section/Section';
-import {PRODUCT_LICENSE} from '../../../../../../enums/Product';
+import {SkuLicenseUsageType} from '../../../../../../enums/Sku';
 import i18n from '../../../../../../i18n';
 import {
 	createAppSKU,
@@ -89,10 +89,12 @@ export function ProvideVersionDetailsPage({
 
 	const createProductOptions = async () => {
 		const cloudOption = options.find(
-			({key}) => key === PRODUCT_LICENSE.CLOUD
+			({key}) => key === SkuLicenseUsageType.CLOUD
 		);
 
-		const dxpOption = options.find(({key}) => key === PRODUCT_LICENSE.DXP);
+		const dxpOption = options.find(
+			({key}) => key === SkuLicenseUsageType.DXP
+		);
 
 		const targetOption = isCloud ? cloudOption : dxpOption;
 

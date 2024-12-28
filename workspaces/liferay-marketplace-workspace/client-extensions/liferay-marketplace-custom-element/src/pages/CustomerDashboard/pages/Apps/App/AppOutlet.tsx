@@ -16,13 +16,13 @@ import Navbar, {NavbarProps} from '../../../../../components/Navbar';
 import {PageRenderer} from '../../../../../components/Page';
 import {ORDER_WORKFLOW_STATUS_CODE} from '../../../../../enums/Order';
 import {OrderType} from '../../../../../enums/OrderType';
+import {PRODUCT_SPECIFICATION_KEY} from '../../../../../enums/Product';
 import useGetProductByOrderId from '../../../../../hooks/useGetProductByOrderId';
 import i18n from '../../../../../i18n';
-import getProductPriceModel from '../../../../GetApp/utils/getProductPriceModel';
+import {getProductPriceModel} from '../../../../../utils/productUtils';
 import OrderDetailsHeader from '../../../components/OrderDetailsHeader';
 
 import './App.scss';
-import {PRODUCT_SPECIFICATION_KEY} from '../../../../../enums/Product';
 
 type ProductAndOrderPayload = NonNullable<
 	ReturnType<typeof useGetProductByOrderId>['data']

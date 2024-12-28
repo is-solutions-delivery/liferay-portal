@@ -3,28 +3,14 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {useMarketplaceContext} from '../../../context/MarketplaceContext';
+import {getLicenseTagText} from '../../../utils/productUtils';
 import {getValueFromDeliverySpecifications} from '../../../utils/util';
 import AccountEmailInfo from '../../CustomerDashboard/pages/Apps/App/Licenses/CreateLicense/AccountInfo';
 import {useGetAppContext} from '../GetAppContextProvider';
 import {getProductBasePriceAndTrial} from '../GetAppOutlet';
 import {ProductCardRevamp} from '../components/ProductCard/ProductCard';
-import {LicenseType} from '../enums/licenseType';
 import {getIconUrl} from '../utils/getIcon';
 import ProductHeaderPrice from './ProductHeaderPrice';
-
-const getLicenseTagText = (product: DeliveryProduct) => {
-	const licenseTypeSpecification = getValueFromDeliverySpecifications(
-		product.productSpecifications,
-		'license-type'
-	).toLowerCase();
-
-	if (licenseTypeSpecification) {
-		return licenseTypeSpecification === LicenseType.Perpetual
-			? 'One-Time'
-			: 'Annually';
-	}
-};
 
 type ProductHeaderProps = {
 	productBasePriceAndTrial: ReturnType<typeof getProductBasePriceAndTrial>;
@@ -34,7 +20,6 @@ const ProductHeader: React.FC<ProductHeaderProps> = ({
 	productBasePriceAndTrial,
 }) => {
 	const [{account, product}] = useGetAppContext();
-	const {myUserAccount} = useMarketplaceContext();
 
 	const productCreatorAccountName = product?.catalogName || '';
 
@@ -80,11 +65,8 @@ const ProductHeader: React.FC<ProductHeaderProps> = ({
 						</strong>
 
 						<AccountEmailInfo
-							userAccount={{
-								...myUserAccount,
-								...account,
-								image: account.logoURL,
-							}}
+							image={account.logoURL}
+							name={account.name}
 						/>
 					</div>
 				</>
