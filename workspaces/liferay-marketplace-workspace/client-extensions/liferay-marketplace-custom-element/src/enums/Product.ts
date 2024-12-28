@@ -19,9 +19,9 @@ export enum PRODUCT_IMAGE_FALLBACK_CATEGORIES {
 	PRODUCT_IMAGE = 'productImage',
 }
 
-export enum PRODUCT_LICENSE {
-	CLOUD = 'cloud-license-usage-type',
-	DXP = 'dxp-license-usage-type',
+export enum PRODUCT_LICENSE_TYPE {
+	Subscription = 'subscription',
+	Perpetual = 'perpetual',
 }
 
 export enum PRODUCT_PRICE_MODEL {
