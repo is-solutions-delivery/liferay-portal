@@ -6,19 +6,34 @@
 import {Analytics} from '../../../core/Analytics';
 import {ORDER_TYPES} from '../../../enums/Order';
 import CommerceSelectAccountImpl from '../../../services/rest/CommerceSelectAccount';
-import HeadlessCommerceDeliveryCart from '../../../services/rest/HeadlessCommerceDeliveryCart';
+import headlessCommerceDeliveryCart from '../../../services/rest/HeadlessCommerceDeliveryCart';
+
+export type ProductPurchaseCart = Partial<Cart> | undefined;
 
 export default class ProductPurchase {
+	protected Analytics = Analytics;
 	protected orderTypeExternalReferenceCode?: ORDER_TYPES;
-	protected HeadlessCommerceDeliveryCart = HeadlessCommerceDeliveryCart;
 
 	constructor(
-		protected account: Account,
-		protected channel: Channel,
-		protected product: DeliveryProduct | Product
+		protected readonly account: Account,
+		protected readonly channel: Channel,
+		protected readonly product: DeliveryProduct
 	) {}
 
-	protected getCartItems() {
+	protected getCart() {
+		return {
+			accountId: this.account.id,
+			cartItems: this.getCartItems(),
+			currencyCode: this.channel.currencyCode,
+			orderTypeExternalReferenceCode: this.orderTypeExternalReferenceCode,
+		} as Cart;
+	}
+
+	public async getNextStepsLink(cart: Cart) {
+		return `/next-steps?orderId=${cart.id}`;
+	}
+
+	protected getCartItems(skuId = this.product.skus[0]?.id) {
 		return [
 			{
 				price: {
@@ -30,37 +45,39 @@ export default class ProductPurchase {
 				settings: {
 					maxQuantity: 1,
 				},
-				skuId: this.product.skus[0]?.id,
+				skuId,
 			},
 		];
 	}
 
-	public async createOrder(order?: Partial<Cart>): Promise<Cart> {
-		const accountId = Number(this.account.id);
-
-		const cart = await HeadlessCommerceDeliveryCart.createCart(
-			this.channel.id,
-			{
-				...order,
-				accountId,
-				cartItems: this.getCartItems(),
-				currencyCode: this.channel.currencyCode,
-				orderTypeExternalReferenceCode:
-					this.orderTypeExternalReferenceCode,
-			}
-		);
-
-		await Promise.all([
-			CommerceSelectAccountImpl.selectAccount(this.account.id),
-			HeadlessCommerceDeliveryCart.checkoutCart(cart.id),
-		]);
-
+	protected analyticsTrack() {
 		Analytics.track('ORDER_CREATION', {
 			accountId: this.account.id,
 			orderTypeExternalReferenceCode: this.orderTypeExternalReferenceCode,
 			productName: this.product.name,
 		});
+	}
 
-		return cart;
+	public async createOrder(
+		cart?: ProductPurchaseCart,
+		_options?: unknown
+	): Promise<Cart> {
+		const body = {
+			...this.getCart(),
+			...cart,
+		};
+
+		const newCart = await (cart?.id
+			? headlessCommerceDeliveryCart.updateCart(cart.id, body)
+			: headlessCommerceDeliveryCart.createCart(this.channel.id, body));
+
+		await Promise.all([
+			CommerceSelectAccountImpl.selectAccount(this.account.id),
+			headlessCommerceDeliveryCart.checkoutCart(newCart.id),
+		]);
+
+		this.analyticsTrack();
+
+		return newCart;
 	}
 }
