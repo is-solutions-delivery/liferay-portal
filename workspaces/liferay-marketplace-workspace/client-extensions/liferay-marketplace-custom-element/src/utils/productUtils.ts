@@ -192,7 +192,7 @@ export function getProductPriceModel(product: DeliveryProduct) {
 	const priceModel = getProductSpecificationValue(
 		PRODUCT_SPECIFICATION_KEY.APP_PRICING_MODEL,
 		product
-	);
+	)?.toLowerCase();
 
 	return {
 		isFreeApp: priceModel === 'free',

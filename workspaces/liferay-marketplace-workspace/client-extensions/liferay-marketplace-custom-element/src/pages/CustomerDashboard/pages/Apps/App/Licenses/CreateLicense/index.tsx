@@ -243,7 +243,10 @@ const CreateLicense = () => {
 				<ProductCard
 					ExtendBanner={<ExtendBanner subscription={subscription} />}
 					RightSideBanner={
-						<AccountEmailInfo userAccount={myUserAccount} />
+						<AccountEmailInfo
+							image={myUserAccount.logoURL}
+							name={myUserAccount.name}
+						/>
 					}
 					creatorAccountName={productCreatorAccountName}
 					product={product as DeliveryProduct}

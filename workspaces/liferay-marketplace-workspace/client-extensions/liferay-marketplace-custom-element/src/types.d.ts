@@ -573,7 +573,7 @@ type DeliverySKU = {
 	purchasable: boolean;
 	sku: string;
 	skuOptions: DeliverySKUOption[];
-	tierPrices?: TierPrice[];
+	tierPrices: TierPrice[];
 };
 
 type DeliverySKUOption = {skuOptionKey: string; skuOptionValueKey: string};

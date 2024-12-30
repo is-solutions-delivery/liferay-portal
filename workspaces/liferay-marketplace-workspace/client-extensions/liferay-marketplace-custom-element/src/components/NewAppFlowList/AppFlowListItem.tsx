@@ -4,11 +4,9 @@
  */
 
 import ClayIcon from '@clayui/icon';
-
-import './AppFlowListItem.scss';
-
 import classNames from 'classnames';
 
+import './AppFlowListItem.scss';
 interface AppFlowListItemProps {
 	checked?: boolean;
 	selected?: boolean;
@@ -35,9 +33,7 @@ export function AppFlowListItem({
 	return (
 		<div className="app-flow-list-item-container">
 			<ClayIcon
-				aria-label={
-					'check fill' ?? selected ? 'radio selected' : 'circle fill'
-				}
+				aria-label={selected ? 'radio selected' : 'circle fill'}
 				className={classNames('app-flow-list-item-icon text-muted', {
 					'app-flow-list-item-icon-checked': checked,
 					'app-flow-list-item-icon-selected': selected,

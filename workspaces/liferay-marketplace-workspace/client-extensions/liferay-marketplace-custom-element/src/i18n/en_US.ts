@@ -306,6 +306,7 @@ export default {
 	'order-id': 'Order ID',
 	'order-status': 'Order Status',
 	'orders': 'Orders',
+	'payment': 'Payment',
 	'payment-method': 'Payment Method',
 	'payment-status': 'Payment Status',
 	'phone': 'Phone',
