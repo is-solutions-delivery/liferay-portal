@@ -21,6 +21,8 @@ Map<String, String> contextParams = HashMapBuilder.<String, String>put(
 ).build();
 %>
 
+<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" var="baseResourceURL" />
+
 <liferay-ui:error embed="<%= false %>" exception="<%= AccountEntryStatusException.class %>" message="please-select-a-valid-supplier" />
 <liferay-ui:error embed="<%= false %>" exception="<%= AccountEntryTypeException.class %>" message="please-select-a-valid-supplier" />
 <liferay-ui:error embed="<%= false %>" exception="<%= DuplicateCommerceChannelAccountEntryIdException.class %>" message="a-supplier-account-can-be-linked-only-to-one-channel" />
@@ -256,6 +258,11 @@ Map<String, String> contextParams = HashMapBuilder.<String, String>put(
 			<div>
 				<react:component
 					module="{CommerceChannelAddPaymentMethod} from commerce-channel-web"
+					props='<%=
+						HashMapBuilder.<String, Object>put(
+							"baseResourceURL", baseResourceURL
+						).build()
+					%>'
 				/>
 			</div>
 		</c:if>

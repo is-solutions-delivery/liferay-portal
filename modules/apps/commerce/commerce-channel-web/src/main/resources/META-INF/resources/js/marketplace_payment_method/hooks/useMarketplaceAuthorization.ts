@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {fetch} from 'frontend-js-web';
+import {createResourceURL, fetch} from 'frontend-js-web';
 import {useEffect, useState} from 'react';
 
 type Authorization = {
 	data: null | {
 		accessToken: string;
-		marketplaceSettings: {
+		settings: {
 			accountId: number;
 			categoryReferences: {
-				PAYMENT_METHOD: number;
+				PAYMENT_METHOD: string;
 			};
 			channelId: number;
 			siteId: number;
@@ -23,17 +23,30 @@ type Authorization = {
 	loading: boolean;
 };
 
-export function useMarketplaceAuthorization() {
+export function useMarketplaceAuthorization(baseResourceURL: string) {
 	const [authorization, setAuthorization] = useState<Authorization>({
-		data: null,
-		hasAuthorization: false,
-		loading: true,
+		data: {
+			accessToken: 'AA',
+			settings: {
+				accountId: 34415342,
+				categoryReferences: {
+					PAYMENT_METHOD: 'Experience Management',
+				},
+				channelId: 20515281,
+				siteId: 20506817,
+			},
+			url: 'https://marketplace-uat.liferay.com',
+		},
+		hasAuthorization: true,
+		loading: false,
 	});
 
 	useEffect(() => {
 		const getAuthorization = async () => {
 			const response = await fetch(
-				'/o/marketplace-rest/v1.0/authorization'
+				createResourceURL(baseResourceURL, {
+					p_p_resource_id: '/marketplace_settings/get_authorization',
+				}).toString()
 			);
 
 			if (response.ok) {
@@ -50,8 +63,9 @@ export function useMarketplaceAuthorization() {
 			}));
 		};
 
-		getAuthorization();
-	}, []);
+		// getAuthorization();/
+
+	}, [baseResourceURL]);
 
 	return authorization;
 }

@@ -38,7 +38,7 @@ const useProducts = (
 	>
 ) => {
 	const {
-		marketplaceSettings: {categoryReferences, channelId},
+		settings: {categoryReferences, channelId},
 		url,
 	} = authorization || {};
 
@@ -57,7 +57,7 @@ const useProducts = (
 	> => {
 		const urlSearchParams = new URLSearchParams({
 			accountId: '-1',
-			filter: `(categoryIds/any(x:(x eq '${categoryReferences.PAYMENT_METHOD}')))`,
+			filter: `(categoryNames/any(x:(x eq '${categoryReferences.PAYMENT_METHOD}')))`,
 			images: 'accountId=-1',
 			nestedFields: 'productSpecifications,skus,categories,images',
 			page: String(deltas),
@@ -85,6 +85,8 @@ const useProducts = (
 	]);
 
 	useEffect(() => {
+		setLoading(true);
+
 		fetchProducts()
 			.catch((error) => console.error('Failed to fetch products:', error))
 			.finally(() => setLoading(false));
