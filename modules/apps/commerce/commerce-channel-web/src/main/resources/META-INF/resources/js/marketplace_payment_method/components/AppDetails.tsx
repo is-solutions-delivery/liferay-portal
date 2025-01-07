@@ -4,17 +4,18 @@
  */
 
 import ClayButton from '@clayui/button';
-import ClayCard from '@clayui/card';
 import ClayIcon from '@clayui/icon';
-import ClayModal, {useModal} from '@clayui/modal';
-import classNames from 'classnames';
-import {format} from 'date-fns';
+import { format } from 'date-fns';
 import DOMPurify from 'isomorphic-dompurify';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
-import {useMarketplaceAuthorization} from '../hooks/useMarketplaceAuthorization';
-import {Product} from '../types';
-import {AppView} from './MarketplaceAppsModal';
+import { useMarketplaceAuthorization } from '../hooks/useMarketplaceAuthorization';
+import { Product } from '../types';
+import { getCategoryVocabulary, getProductSpecification } from '../util';
+import Carousel from './Carousel';
+import DetailsCard from './DetailCard';
+import { AppView } from './MarketplaceAppsModal';
+import PublisherSupportModal from './PublisherSupportModal';
 
 type BodyModalProps = {
 	backToList: any;
@@ -31,274 +32,7 @@ const handleCopyLink = async (href: string) => {
 	});
 };
 
-type PublisherSupportModalProps = {
-	onClose: () => void;
-	product: Product;
-};
-
-const getCategoryVocabulary = (product: Product, vocabulary: string) =>
-	product.categories.filter(
-		(category) => category?.vocabulary === vocabulary
-	);
-
-const getProductSpecification = (product: Product, specificationKey: string) =>
-	product.productSpecifications.find(
-		(specification) => specification.specificationKey === specificationKey
-	);
-
-const PublisherSupportModal = ({
-	onClose,
-	product,
-}: PublisherSupportModalProps) => {
-	const publisherWebsiteUrl = getProductSpecification(
-		product,
-		'publisherwebsiteurl'
-	);
-
-	const supportemailaddress = getProductSpecification(
-		product,
-		'supportemailaddress'
-	);
-
-	const supportphone = getProductSpecification(product, 'supportphone');
-
-	const {observer} = useModal({
-		onClose,
-	});
-
-	return (
-		<ClayModal center observer={observer} size="lg">
-			<ClayModal.Header>
-				{Liferay.Language.get('publisher-support-contact-info')}
-			</ClayModal.Header>
-
-			<ClayModal.Body>
-				<div className="p-3">
-					{product.catalogName && (
-						<div className="align-items-center d-flex flex-row mb-4">
-							<span className="align-items-center d-flex justify-content-center modal-icon mr-3 rounded-circle">
-								{product.urlImage ? (
-									<img
-										alt="Catalog Thumbnail"
-										className="catalog-icon rounded-circle"
-										draggable={false}
-										src={product.urlImage}
-									/>
-								) : (
-									<ClayIcon symbol="picture" />
-								)}
-							</span>
-
-							<div className="d-flex flex-column">
-								<h3>{product.catalogName}</h3>
-							</div>
-						</div>
-					)}
-
-					{publisherWebsiteUrl?.value && (
-						<div className="align-items-center d-flex flex-row mb-4">
-							<span className="align-items-center d-flex justify-content-center modal-icon mr-3 rounded-circle">
-								<ClayIcon symbol="globe" />
-							</span>
-
-							<div className="d-flex flex-column">
-								<span className="text-black-50">
-									{Liferay.Language.get(
-										'publisher-support-url'
-									)}
-								</span>
-
-								<a
-									className="modal-link"
-									href={publisherWebsiteUrl.value}
-									target="_blank"
-								>
-									{publisherWebsiteUrl.value}
-								</a>
-							</div>
-						</div>
-					)}
-
-					{supportemailaddress?.value && (
-						<div className="align-items-center d-flex flex-row mb-4">
-							<span className="align-items-center d-flex justify-content-center modal-icon mr-3 rounded-circle">
-								<ClayIcon symbol="envelope-closed" />
-							</span>
-
-							<div className="d-flex flex-column">
-								<span className="text-black-50">
-									{Liferay.Language.get('support-email')}
-								</span>
-
-								<a
-									className="modal-link"
-									href={`mailto:${supportemailaddress.value}`}
-									target="_blank"
-								>
-									{supportemailaddress.value}
-								</a>
-							</div>
-						</div>
-					)}
-
-					{supportphone?.value && (
-						<div className="align-items-center d-flex flex-row mb-4">
-							<span className="align-items-center d-flex justify-content-center modal-icon mr-3 rounded-circle">
-								<ClayIcon symbol="phone" />
-							</span>
-
-							<div className="d-flex flex-column">
-								<span className="text-black-50">
-									{Liferay.Language.get('phone')}
-								</span>
-
-								<a
-									className="modal-link"
-									href={`tel:${supportphone}`}
-									target="_blank"
-								>
-									{supportphone}
-								</a>
-							</div>
-						</div>
-					)}
-				</div>
-			</ClayModal.Body>
-		</ClayModal>
-	);
-};
-
-type CardProps = {
-	buttons?: {
-		href?: string;
-		leftIcon?: string;
-		onClick?: () => void;
-		rightIcon?: string;
-		text: string;
-	}[];
-	description?: any;
-	isCommentCard?: boolean;
-	title: string;
-};
-
-const Card: React.FC<CardProps> = ({
-	buttons,
-	description,
-	isCommentCard,
-	title,
-}) => (
-	<ClayCard className="mb-2 px-3">
-		<ClayCard.Body>
-			<ClayCard.Description
-				className={classNames('text-uppercase', {
-					'card-title-description pb-1': isCommentCard,
-				})}
-				displayType="title"
-			>
-				{title}
-			</ClayCard.Description>
-
-			<ClayCard.Description
-				className="mt-3"
-				displayType="text"
-				truncate={false}
-			>
-				{description}
-			</ClayCard.Description>
-
-			{buttons && (
-				<div className="d-flex flex-wrap mt-2">
-					{buttons.map((button, index) => (
-						<div
-							className="align-items-center card-buttons d-flex w-100"
-							key={index}
-						>
-							{button.leftIcon && (
-								<ClayIcon
-									className="mr-2"
-									symbol={button.leftIcon}
-								/>
-							)}
-
-							<a
-								className="align-items-center d-flex justify-content-between text-decoration-none text-reset w-100"
-								href={button.href}
-								onClick={button.onClick}
-								target="_blank"
-							>
-								<span className="text-truncate">
-									{button.text}
-								</span>
-
-								{button.rightIcon && (
-									<ClayIcon
-										className="ml-2"
-										symbol={button.rightIcon}
-									/>
-								)}
-							</a>
-						</div>
-					))}
-				</div>
-			)}
-		</ClayCard.Body>
-	</ClayCard>
-);
-
-const Carousel = ({images}: {images: string[]}) => {
-	const [currentIndex, setCurrentIndex] = useState(0);
-
-	const handleNext = () =>
-		setCurrentIndex((prevIndex) =>
-			prevIndex === images.length - 1 ? 0 : prevIndex + 1
-		);
-
-	const handlePrev = () =>
-		setCurrentIndex((prevIndex) =>
-			prevIndex === 0 ? images.length - 1 : prevIndex - 1
-		);
-
-	const handleSelectImage = (index: number) => setCurrentIndex(index);
-
-	return (
-		<div>
-			<div className="align-items-center carousel d-flex justify-content-center m-0 rounded">
-				<div className="carousel-border left" onClick={handlePrev} />
-
-				<div className="carousel-images d-flex justify-content-between">
-					<img
-						alt={`Slide ${currentIndex}`}
-						className="carousel-image rounded"
-						draggable={false}
-						src={images[currentIndex]}
-					/>
-				</div>
-
-				<div className="carousel-border right" onClick={handleNext} />
-			</div>
-
-			<div className="d-flex justify-content-start overflow-auto">
-				{images.map((image, index) => (
-					<img
-						alt={`Thumbnail ${index}`}
-						className={classNames(
-							'gallery-image mt-5 mb-2 mx-1 rounded',
-							{
-								selected: index === currentIndex,
-							}
-						)}
-						draggable={false}
-						key={index}
-						onClick={() => handleSelectImage(index)}
-						src={image}
-					/>
-				))}
-			</div>
-		</div>
-	);
-};
-
-const BodyModal = ({backToList, data, product}: BodyModalProps) => {
+const BodyModal = ({ backToList, data, product }: BodyModalProps) => {
 	const [publisherSupportModalVisible, setPublisherSupportModalVisible] =
 		useState(false);
 	const productImage = product.urlImage;
@@ -338,7 +72,7 @@ const BodyModal = ({backToList, data, product}: BodyModalProps) => {
 			<div>
 				<span
 					className="back-button mb-3"
-					onClick={() => backToList(AppView.list)}
+					onClick={() => backToList(AppView.LIST)}
 				>
 					<ClayIcon symbol="angle-left" />
 
@@ -404,7 +138,7 @@ const BodyModal = ({backToList, data, product}: BodyModalProps) => {
 					<Carousel images={carrouselImages} />
 
 					<div className="mt-4">
-						<Card
+						<DetailsCard
 							description={
 								<div
 									dangerouslySetInnerHTML={{
@@ -428,12 +162,12 @@ const BodyModal = ({backToList, data, product}: BodyModalProps) => {
 				)}
 
 				<div className="additional-cards ml-4">
-					<Card
+					<DetailsCard
 						description={product.catalogName}
 						title={Liferay.Language.get('developer')}
 					/>
 
-					<Card
+					<DetailsCard
 						description={format(
 							new Date(product.createDate),
 							'MMM dd, yyyy'
@@ -441,27 +175,27 @@ const BodyModal = ({backToList, data, product}: BodyModalProps) => {
 						title={Liferay.Language.get('published-date')}
 					/>
 
-					<Card
+					<DetailsCard
 						description={suportedOfferings?.name}
 						title={Liferay.Language.get('supported-offerings')}
 					/>
 
-					<Card
+					<DetailsCard
 						description={liferayVersion?.value}
 						title={Liferay.Language.get('supported-versions')}
 					/>
 
-					<Card
+					<DetailsCard
 						description={edition.name}
 						title={Liferay.Language.get('edition')}
 					/>
 
-					<Card
+					<DetailsCard
 						description={price}
 						title={Liferay.Language.get('price')}
 					/>
 
-					<Card
+					<DetailsCard
 						buttons={[
 							{
 								leftIcon: 'envelope-closed',
@@ -482,7 +216,7 @@ const BodyModal = ({backToList, data, product}: BodyModalProps) => {
 						title={Liferay.Language.get('help-and-share')}
 					/>
 
-					<Card
+					<DetailsCard
 						buttons={[
 							{
 								leftIcon: 'link',
