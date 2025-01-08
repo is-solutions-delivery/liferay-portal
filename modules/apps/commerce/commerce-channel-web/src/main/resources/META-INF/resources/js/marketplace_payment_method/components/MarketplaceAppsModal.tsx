@@ -4,17 +4,19 @@
  */
 
 import ClayModal from '@clayui/modal';
-import {Observer} from '@clayui/modal/lib/types';
-import React, {useEffect, useState} from 'react';
+import { Observer } from '@clayui/modal/lib/types';
+import React, { useEffect, useState } from 'react';
 
-import {useMarketplaceAuthorization} from '../hooks/useMarketplaceAuthorization';
+import { useMarketplaceAuthorization } from '../hooks/useMarketplaceAuthorization';
 import useProducts from '../hooks/useProducts';
-import {Product} from '../types';
+import { Product } from '../types';
 import AppDetails from './AppDetails';
 import InstallPaymentMethodModalBody from './InstallPaymentModalBody';
+import Installation from './Installation';
 
 export enum AppView {
 	DETAILS,
+	INSTALLATION,
 	LIST,
 }
 
@@ -32,7 +34,7 @@ const MarketplaceAppsModal: React.FC<MarketplaceAppsModalProps> = ({
 	const [step, setStep] = useState(AppView.LIST);
 	const [selectedApp, setSelectedApp] = useState<Product>();
 
-	const {loading, pagination, productsResponse, search, sort} =
+	const { loading, pagination, productsResponse, search, sort } =
 		useProducts(data);
 
 	const items = productsResponse?.items;
@@ -47,35 +49,53 @@ const MarketplaceAppsModal: React.FC<MarketplaceAppsModalProps> = ({
 		return null;
 	}
 
+	const modalSize = [AppView.DETAILS, AppView.LIST].some((item) => item === step) ? "full-screen" : "lg"
+
 	return (
-		<ClayModal center observer={observer} size="full-screen">
+		<ClayModal center observer={observer} size={modalSize}>
 			<ClayModal.Header>
 				{Liferay.Language.get('add-from-marketplace')}
 			</ClayModal.Header>
 
 			<ClayModal.Body className="m-0 p-0">
-				{step === AppView.DETAILS && (
-					<AppDetails
-						backToList={setStep}
-						data={data}
-						product={selectedApp as Product}
-					/>
-				)}
+				{
+					step === AppView.DETAILS && (
+						<AppDetails
+							data={data}
+							product={selectedApp as Product}
+							setStep={setStep}
+						/>
+					)
+				}
 
-				{step === AppView.LIST && (
-					<InstallPaymentMethodModalBody
-						loading={loading}
-						pagination={pagination}
-						products={items}
-						searchQuery={search.searchQuery}
-						setSearchQuery={search.setSearchQuery}
-						setSelectedApp={setSelectedApp}
-						setStep={setStep}
-						sort={sort}
-					/>
-				)}
-			</ClayModal.Body>
-		</ClayModal>
+				{
+					step === AppView.LIST && (
+						<InstallPaymentMethodModalBody
+							loading={loading}
+							pagination={pagination}
+							products={items}
+							searchQuery={search.searchQuery}
+							setSearchQuery={search.setSearchQuery}
+							setSelectedApp={setSelectedApp}
+							setStep={setStep}
+							sort={sort}
+						/>
+					)
+				}
+
+				{
+					step === AppView.INSTALLATION && (
+						<Installation
+							marketplaceConfigData={data}
+							product={selectedApp as Product}
+							projectId="PROJECT-ENVIRONMENT"
+							setStep={setStep}
+						/>
+					)
+				}
+
+			</ClayModal.Body >
+		</ClayModal >
 	);
 };
 

@@ -253,7 +253,10 @@ const InstallPaymentMethodModalBody: React.FC<
 
 												<ClayButton
 													className="w-100"
-													onClick={() => alert('Test')}
+													onClick={() => {
+														setSelectedApp(product)
+														setStep(AppView.INSTALLATION)
+													}}
 												>
 													{Liferay.Language.get(
 														'install'

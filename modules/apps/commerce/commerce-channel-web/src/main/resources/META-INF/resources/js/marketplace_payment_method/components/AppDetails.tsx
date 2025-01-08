@@ -18,9 +18,9 @@ import { AppView } from './MarketplaceAppsModal';
 import PublisherSupportModal from './PublisherSupportModal';
 
 type BodyModalProps = {
-	backToList: any;
 	data: NonNullable<ReturnType<typeof useMarketplaceAuthorization>>['data'];
 	product: Product;
+	setStep: any;
 };
 
 const handleCopyLink = async (href: string) => {
@@ -32,7 +32,7 @@ const handleCopyLink = async (href: string) => {
 	});
 };
 
-const BodyModal = ({ backToList, data, product }: BodyModalProps) => {
+const BodyModal = ({ data, product, setStep }: BodyModalProps) => {
 	const [publisherSupportModalVisible, setPublisherSupportModalVisible] =
 		useState(false);
 	const productImage = product.urlImage;
@@ -72,7 +72,7 @@ const BodyModal = ({ backToList, data, product }: BodyModalProps) => {
 			<div>
 				<span
 					className="back-button mb-3"
-					onClick={() => backToList(AppView.LIST)}
+					onClick={() => setStep(AppView.LIST)}
 				>
 					<ClayIcon symbol="angle-left" />
 
@@ -126,7 +126,7 @@ const BodyModal = ({ backToList, data, product }: BodyModalProps) => {
 					</div>
 
 					<div>
-						<ClayButton className="ml-auto mt-3 rounded">
+						<ClayButton className="ml-auto mt-3 rounded" onClick={() => setStep(AppView.INSTALLATION)}>
 							{Liferay.Language.get('install')}
 						</ClayButton>
 					</div>

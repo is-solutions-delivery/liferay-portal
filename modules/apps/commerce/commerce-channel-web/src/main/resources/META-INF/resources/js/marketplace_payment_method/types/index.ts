@@ -2,6 +2,45 @@
  * SPDX-FileCopyrightText: (c) 2024 Liferay, Inc. https://liferay.com
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
+
+export type OrderType = {
+	externalReferenceCode: string;
+	id: number;
+	name: {[key: string]: string};
+};
+
+export type ConsoleProjectsUsage = {
+	userEmail: string;
+	userProjects: ConsoleUserProject[];
+};
+
+export type ConsoleUserProject = {
+	environments: {isExtensionEnvironment: boolean; projectId: string}[];
+	rootProjectId: string;
+	rootProjectPlanUsage: {
+		cpu: ConsoleCPU;
+		instance: ConsoleCPU;
+		memory: ConsoleCPU;
+	};
+};
+
+export type CartItems = {
+	productId: number;
+	quantity: number;
+	skuId: number;
+}[];
+
+export type ConsoleCPU = {
+	free: number;
+	limit: number;
+	used: number;
+};
+
+export type convertMegabyteToGigabyteProps = {
+	inverseOperation?: boolean;
+	value: number;
+};
+
 export type CustomField = {
 	customValue: {
 		data: string | string[];
