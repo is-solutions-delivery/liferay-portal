@@ -61,9 +61,6 @@ const EnvironmentSelection = () => {
 						}>
 					) => setValue('environment', selectedRadio.value);
 
-					const [environmentName = ''] =
-						projectEnvironment.projectId.split('-');
-
 					return (
 						<RadioCard
 							activeRadio={
@@ -87,7 +84,11 @@ const EnvironmentSelection = () => {
 
 									<ClayBadge
 										className="text-uppercase"
-										label={environmentName.toUpperCase()}
+										label={
+											projectEnvironment.projectId.split(
+												'-'
+											)[1]
+										}
 									/>
 								</>
 							}
