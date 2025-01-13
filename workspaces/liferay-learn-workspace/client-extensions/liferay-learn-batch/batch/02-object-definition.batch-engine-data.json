@@ -882,7 +882,8 @@
 					"name": "synchronize",
 					"objectActionExecutorKey": "function#liferay-learn-etc-spring-boot-object-action-exam-result-synchronization",
 					"objectActionTriggerKey": "onAfterAdd",
-					"parameters": {}
+					"parameters": {
+					}
 				}
 			],
 			"objectFields": [
