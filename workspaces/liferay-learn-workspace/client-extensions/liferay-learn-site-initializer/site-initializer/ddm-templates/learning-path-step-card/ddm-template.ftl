@@ -7,7 +7,8 @@
 <#if (ObjectEntry_objectEntryId.getData())??>
 	<#assign
 		learningPathStepId = ObjectEntry_objectEntryId.getData()
-		learningPathStepInfo = restClient.get("/c/learningpathsteps/${learningPathStepId}?nestedFields=${stepTypeParam!}")
+
+			learningPathStepInfo = restClient.get("/c/learningpathsteps/${learningPathStepId}?nestedFields=${stepTypeParam!}")
 	/>
 
 	  <#if learningPathStepInfo?? && stepTypeParam??>
