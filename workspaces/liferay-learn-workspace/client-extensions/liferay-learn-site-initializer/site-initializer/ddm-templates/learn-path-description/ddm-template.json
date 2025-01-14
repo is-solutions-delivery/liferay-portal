@@ -1,0 +1,7 @@
+{
+  "className": "com.liferay.template.model.TemplateEntry",
+  "ddmTemplateKey": "LEARN_PATH_DESCRIPTION",
+  "infoItemClassName": "com.liferay.portal.kernel.repository.model.FileEntry",
+  "name": "Learn Path Description",
+  "resourceClassName": "com.liferay.template.model.TemplateEntry"
+}

@@ -1,0 +1,7 @@
+{
+  "className": "com.liferay.template.model.TemplateEntry",
+  "ddmTemplateKey": "LESSON_CONTENT",
+  "infoItemClassName": "com.liferay.portal.kernel.repository.model.FileEntry",
+  "name": "Lesson Content",
+  "resourceClassName": "com.liferay.template.model.TemplateEntry"
+}
