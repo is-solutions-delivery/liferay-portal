@@ -1,7 +1,7 @@
 {
-  "className": "com.liferay.template.model.TemplateEntry",
-  "ddmTemplateKey": "LEARNING_PATH_EXTERNAL_MEDIA_VIDEO_TEMPLATE",
-  "infoItemClassName": "com.liferay.portal.kernel.repository.model.FileEntry",
-  "name": "Learning Path External Media Video Template",
-  "resourceClassName": "com.liferay.template.model.TemplateEntry"
+	"className": "com.liferay.template.model.TemplateEntry",
+	"ddmTemplateKey": "LEARNING_PATH_EXTERNAL_MEDIA_VIDEO_TEMPLATE",
+	"infoItemClassName": "com.liferay.portal.kernel.repository.model.FileEntry",
+	"name": "Learning Path External Media Video Template",
+	"resourceClassName": "com.liferay.template.model.TemplateEntry"
 }
