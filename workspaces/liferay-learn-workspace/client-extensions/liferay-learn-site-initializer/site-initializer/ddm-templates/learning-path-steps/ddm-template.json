@@ -1,7 +1,7 @@
 {
-  "className": "com.liferay.template.model.TemplateEntry",
-  "ddmTemplateKey": "LEARNING_PATH_STEPS",
-  "infoItemClassName": "com.liferay.portal.kernel.repository.model.FileEntry",
-  "name": "Learning Path Steps",
-  "resourceClassName": "com.liferay.template.model.TemplateEntry"
+	"className": "com.liferay.template.model.TemplateEntry",
+	"ddmTemplateKey": "LEARNING_PATH_STEPS",
+	"infoItemClassName": "com.liferay.portal.kernel.repository.model.FileEntry",
+	"name": "Learning Path Steps",
+	"resourceClassName": "com.liferay.template.model.TemplateEntry"
 }
