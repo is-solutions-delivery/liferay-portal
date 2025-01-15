@@ -6,13 +6,23 @@
 import ClayButton from '@clayui/button';
 import ClayModal from '@clayui/modal';
 import {Observer} from '@clayui/modal/lib/types';
-import {sub} from 'frontend-js-web';
+import {createRenderURL} from 'frontend-js-web';
 import React from 'react';
 
 type ConnectionWithMarketplaceNeededModalProps = {
 	observer: Observer;
 	open: boolean;
 };
+
+const goToInstanceSettings = () =>
+	Liferay.Util.navigate(
+		createRenderURL('group/control_panel/manage', {
+			configurationScreenKey: 'marketplace',
+			mvcRenderCommandName:
+				'/configuration_admin/view_configuration_screen',
+			p_p_id: Liferay.PortletKeys.INSTANCE_SETTINGS,
+		})
+	);
 
 export function ConnectionWithMarketplaceNeededModal(
 	props: ConnectionWithMarketplaceNeededModalProps
@@ -28,30 +38,9 @@ export function ConnectionWithMarketplaceNeededModal(
 			</ClayModal.Header>
 
 			<ClayModal.Body>
-				<p>
-					{Liferay.Language.get(
-						'you-are-trying-to-add-a-new-payment-method-through-the-marketplace-but-the-connection-has-not-been-established-yet-please-go-to-instance-settings-to-enable-the-connection-into-dxp'
-					)}
-				</p>
-
-				<h5>{Liferay.Language.get('do-you-need-help')}</h5>
-
-				<span>
-					{sub(
-						Liferay.Language.get(
-							'click-x-to-learn-how-to-connect-liferay-dxp-to-marketplace'
-						),
-						(
-							<a
-								href="https://learn.liferay.com/w/dxp/liferay-development/marketplace"
-								rel="noopener noreferrer"
-								target="_blank"
-							>
-								{Liferay.Language.get('here')}
-							</a>
-						) as any
-					)}
-				</span>
+				{Liferay.Language.get(
+					'you-are-trying-to-add-a-new-payment-method-through-the-marketplace-but-the-connection-has-not-been-established-yet-please-go-to-instance-settings-to-enable-the-connection-into-dxp'
+				)}
 			</ClayModal.Body>
 
 			<ClayModal.Footer
@@ -59,11 +48,7 @@ export function ConnectionWithMarketplaceNeededModal(
 					<ClayButton.Group spaced>
 						<ClayButton
 							displayType="info"
-							onClick={() =>
-								Liferay.Util.navigate(
-									'/group/control_panel/manage?p_p_id=com_liferay_configuration_admin_web_portlet_InstanceSettingsPortlet&p_p_lifecycle=0&p_p_state=maximized&p_p_mode=view&_com_liferay_configuration_admin_web_portlet_InstanceSettingsPortlet_mvcRenderCommandName=%2Fconfiguration_admin%2Fview_configuration_screen&_com_liferay_configuration_admin_web_portlet_InstanceSettingsPortlet_configurationScreenKey=marketplace'
-								)
-							}
+							onClick={goToInstanceSettings}
 						>
 							{Liferay.Language.get('go-to-instance-settings')}
 						</ClayButton>

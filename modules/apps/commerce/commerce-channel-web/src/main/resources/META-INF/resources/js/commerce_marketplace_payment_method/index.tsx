@@ -14,7 +14,7 @@ const CommerceChannelAddPaymentMethod = () => (
 	<MarketplaceModal
 		properties={{settings: {productFilter: 'payments'}}}
 		trigger={
-			<div className="d-flex justify-content-end px-2 py-2">
+			<div className="d-flex justify-content-end my-2 px-2 py-2">
 				<ClayButton size="sm">
 					<ClayIcon className="mr-2" symbol="marketplace" />
 
