@@ -3,28 +3,28 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {useEffect} from 'react';
-import {Navigate} from 'react-router-dom';
+import { useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
 
 import CongratulationsIcon from '../../../assets/icons/congratulations_icon.svg';
 import SearchBuilder from '../../../core/SearchBuilder';
 import i18n from '../../../i18n';
-import {Liferay} from '../../../liferay/liferay';
+import { Liferay } from '../../../liferay/liferay';
 import fetcher from '../../../services/fetcher';
 import dxpOAuth2Client from '../../../services/oauth/DXP';
-import {safeJSONParse} from '../../../utils/util';
-import {useOAuth2OutletContext} from '../OAuth2AuthorizeOutlet';
+import { safeJSONParse } from '../../../utils/util';
+import { useOAuth2OutletContext } from '../OAuth2AuthorizeOutlet';
 
 const urlSearchParams = new URLSearchParams(window.location.search);
 
 const POST_MESSAGE_TIMEOUT = 3000;
 
 const Congratulations = () => {
-	const {environment, myUserAccount, selectedAccount} =
+	const { environment, myUserAccount, selectedAccount } =
 		useOAuth2OutletContext();
 
 	useEffect(() => {
-		const {origin} = safeJSONParse(urlSearchParams.get('state'), {
+		const { origin } = safeJSONParse(urlSearchParams.get('state'), {
 			origin: null,
 		});
 
