@@ -94,7 +94,7 @@ export function MarketplaceStorefront({
 							href: 'https://www.liferay.com/en/legal/marketplace-terms-of-service',
 							leftIcon: 'document',
 							rightIcon: 'angle-right',
-							text: Liferay.Language.get('terms-and-condition'),
+							text: Liferay.Language.get('terms-and-conditions'),
 						},
 					].map((button, index) => (
 						<div
@@ -171,7 +171,7 @@ export function MarketplaceStorefront({
 				<div className="align-items-center d-flex justify-content-between mt-2">
 					<div className="d-flex">
 						<img
-							alt={Liferay.Language.get('app-icon')}
+							alt="app-icon"
 							className="rounded"
 							draggable={false}
 							height={70}
