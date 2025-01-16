@@ -158,6 +158,8 @@ public class ObjectActionExamResultSynchronizationRestController
 		).put(
 			"result", jsonObject.getString("passFail")
 		).put(
+			"score", jsonObject.getDouble("score")
+		).put(
 			"testName",
 			jsonObject.getJSONObject(
 				"simpleRegistration"
