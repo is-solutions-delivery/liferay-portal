@@ -6,12 +6,12 @@
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import {format} from 'date-fns';
-import DOMPurify from 'isomorphic-dompurify';
 import React, {ReactNode, useState} from 'react';
 
 import {useMarketplaceContext} from '../../MarketplaceContext';
 import {MarketplaceProduct} from '../../core/MarketplaceProduct';
 import {Product} from '../../types';
+import {sanitizeHTML} from '../../util';
 import Carousel from './Carousel';
 import PublisherSupportModal from './PublisherSupportModal';
 import StorefrontDetails from './StorefrontDetails';
@@ -225,9 +225,7 @@ export function MarketplaceStorefront({
 						>
 							<div
 								dangerouslySetInnerHTML={{
-									__html: DOMPurify.sanitize(
-										product.description
-									),
+									__html: sanitizeHTML(product.description),
 								}}
 							/>
 						</StorefrontDetails>

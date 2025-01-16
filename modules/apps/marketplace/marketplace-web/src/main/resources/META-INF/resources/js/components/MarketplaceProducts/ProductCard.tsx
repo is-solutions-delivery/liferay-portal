@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import DOMPurify from 'isomorphic-dompurify';
 import React, {ReactNode} from 'react';
 
 import {MarketplaceProduct} from '../../core/MarketplaceProduct';
 import {Product} from '../../types';
+import {sanitizeHTML} from '../../util';
 
 export type ProductCardProps = {
 	children?: (product: Product) => ReactNode;
@@ -54,7 +54,7 @@ export function ProductCard({
 					<span
 						className="marketplace-search-results-card-description"
 						dangerouslySetInnerHTML={{
-							__html: DOMPurify.sanitize(product?.description),
+							__html: sanitizeHTML(product?.description),
 						}}
 					/>
 				</div>
