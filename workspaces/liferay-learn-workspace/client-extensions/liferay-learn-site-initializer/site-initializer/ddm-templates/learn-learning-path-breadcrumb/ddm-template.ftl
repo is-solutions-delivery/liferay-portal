@@ -1,5 +1,4 @@
 <script type="module">
-	import "lms";
 	document.addEventListener("DOMContentLoaded", function() {
 		const title = document.querySelector(".title");
 		var h1Text = document.getElementsByTagName('title')[0].textContent;
@@ -17,9 +16,17 @@
 		learningPathName=restClient.get("/c/learningpaths/${learningPathId}?fields=name").name />
 
 	<div class="breadcrumb breadcrumb-lp">
-		<a class="breadcrumb-home" href="/education-lms/index">Education&nbsp/</a>&nbsp
-		<a href="/education-lms/learning-paths">Learning Path&nbsp/</a>&nbsp
+		<a class="breadcrumb-home" href="/education-lms/index">
+			<@liferay_ui["message"] key="education" />&nbsp/
+		</a>&nbsp
+		<a href="/education-lms/learning-paths">
+			<@liferay_ui["message"] key="learning-path" />&nbsp/
+		</a>&nbsp
 		<a href="/l/${learningPathId}">${learningPathName} &nbsp/</a>&nbsp
-		<span class="title breadcrumb-text-truncate"> </span>
+		<span class="breadcrumb-text-truncate title">
+			<#if (ObjectField_name.getData())??>
+				${ObjectField_name.getData()}
+			</#if>
+		</span>
 	</div>
 </#if>
