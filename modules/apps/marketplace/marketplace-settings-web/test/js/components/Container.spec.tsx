@@ -27,9 +27,9 @@ test('render container', async () => {
 
 	expect(queryByText('Container Child')).toBeInTheDocument();
 
-	const button = container.querySelector('button');
+	const button = container.querySelector('button') as HTMLButtonElement;
 
-	fireEvent.click(button as HTMLButtonElement);
+	fireEvent.click(button);
 
 	expect(onClickMock).toBeCalledTimes(1);
 });
