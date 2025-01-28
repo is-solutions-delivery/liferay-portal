@@ -16,4 +16,6 @@ if (!themeDisplay.isSignedIn()) {
 			navigationContainer.style.position = 'inherit';
 		});
 	});
+} else {
+	document.querySelector('.learn-banner').style.marginTop = '100px';
 }
