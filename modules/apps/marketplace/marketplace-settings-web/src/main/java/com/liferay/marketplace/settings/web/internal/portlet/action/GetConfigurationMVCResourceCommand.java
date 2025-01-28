@@ -6,6 +6,7 @@
 package com.liferay.marketplace.settings.web.internal.portlet.action;
 
 import com.liferay.configuration.admin.constants.ConfigurationAdminPortletKeys;
+import com.liferay.marketplace.settings.web.internal.util.MarketplaceUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
@@ -74,6 +75,10 @@ public class GetConfigurationMVCResourceCommand extends BaseMVCResourceCommand {
 						PrefsPropsUtil.getString(PropsKeys.MARKETPLACE_URL)
 					);
 				}
+			).put(
+				"permissions",
+				MarketplaceUtil.getMarketplacePermissionsJSONObject(
+					themeDisplay.getPermissionChecker())
 			));
 	}
 

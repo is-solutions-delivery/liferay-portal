@@ -386,6 +386,16 @@ public class EditRolePermissionsNavigationDisplayContext {
 
 			topLevelNavigationItem.addNavigationItems(
 				NavigationItem.create(
+					LanguageUtil.get(_locale, "marketplace"),
+					navigationItem -> {
+						navigationItem.addNavigationItems(
+							_getPanelCategoryNavigationItems(
+								PanelCategoryKeys.MARKETPLACE));
+						navigationItem.setInitialExpanded(true);
+					}));
+
+			topLevelNavigationItem.addNavigationItems(
+				NavigationItem.create(
 					LanguageUtil.get(_locale, "applications-menu"),
 					navigationItem -> {
 						navigationItem.addNavigationItems(

@@ -37,6 +37,8 @@ public interface PanelCategoryKeys {
 
 	public static final String COMMERCE = "commerce";
 
+	public static final String MARKETPLACE = "marketplace";
+
 	public static final String CONTROL_PANEL = "control_panel";
 
 	public static final String CONTROL_PANEL_APPS =

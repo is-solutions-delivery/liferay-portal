@@ -5,8 +5,14 @@
 
 package com.liferay.marketplace.settings.web.internal.util;
 
+import com.liferay.marketplace.settings.web.internal.constants.MarketplaceActionKeys;
+import com.liferay.marketplace.settings.web.internal.constants.MarketplaceAppsPortletKeys;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.ResourceActionLocalServiceUtil;
+import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
 import com.liferay.portal.kernel.util.ContentTypes;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.HttpUtil;
@@ -74,6 +80,48 @@ public class MarketplaceUtil {
 		portletPreferences.store();
 
 		return jsonObject;
+	}
+
+	public static JSONObject getMarketplacePermissionsJSONObject(
+			PermissionChecker permissionChecker)
+		throws PortalException {
+
+		JSONObject permissionJSONObject = JSONFactoryUtil.createJSONObject();
+		
+		for (String[] permission :
+				new String[][] {
+					{
+						MarketplaceAppsPortletKeys.APPS,
+						MarketplaceActionKeys.PURCHASE_AND_INSTALL_FREE_APPS
+					},
+					{
+						MarketplaceAppsPortletKeys.APPS,
+						MarketplaceActionKeys.PURCHASE_AND_INSTALL_PAID_APPS
+					},
+					{
+						MarketplaceAppsPortletKeys.GENERAL,
+						MarketplaceActionKeys.VIEW_MARKETPLACE_APP
+					},
+					{
+						MarketplaceAppsPortletKeys.GENERAL,
+						MarketplaceActionKeys.CONNECT_TO_MARKETPLACE
+					},
+					{
+						MarketplaceAppsPortletKeys.GENERAL,
+						MarketplaceActionKeys.GET_AUTHORIZATION
+					},
+				}) {
+
+			String permissionAction = permission[0];
+			String permissionPortletId = permission[1];
+
+			permissionJSONObject.put(
+				permissionAction,
+				PortletPermissionUtil.contains(
+					permissionChecker, permissionPortletId, permissionAction));
+		}
+
+		return permissionJSONObject;
 	}
 
 }
