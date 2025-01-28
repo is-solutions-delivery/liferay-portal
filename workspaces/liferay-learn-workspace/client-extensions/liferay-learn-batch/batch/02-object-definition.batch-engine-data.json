@@ -2297,6 +2297,694 @@
 				"label": "approved",
 				"label_i18n": "Approved"
 			}
-		}
+		},
+		{
+			"enableComments": false,
+			"objectRelationships": [
+			  {
+				"objectDefinitionSystem2": false,
+				"objectField": {
+				  "relationshipType": "oneToMany",
+				  "indexed": true,
+				  "localized": false,
+				  "objectRelationshipExternalReferenceCode": "15f58a95-98fd-d930-72a0-c3edb6207d96",
+				  "objectFieldSettings": [
+					{
+					  "name": "objectDefinition1ShortName",
+					  "value": "P2S3FAQTopic"
+					},
+					{
+					  "name": "objectRelationshipERCObjectFieldName",
+					  "value": "r_topicQuestion_c_p2s3faqTopicERC"
+					}
+				  ],
+				  "readOnly": "false",
+				  "DBType": "Long",
+				  "label": {
+					"en_US": "Topic Question"
+				  },
+				  "type": "Long",
+				  "required": false,
+				  "externalReferenceCode": "66b3c623-9d2b-fec5-6b25-77a44d517370",
+				  "indexedAsKeyword": false,
+				  "system": false,
+				  "indexedLanguageId": "",
+				  "unique": false,
+				  "name": "r_topicQuestion_c_p2s3faqTopicId",
+				  "objectDefinitionExternalReferenceCode1": "f840daaa-a956-2ba4-2e02-885eebafeee9",
+				  "state": false,
+				  "businessType": "Relationship",
+				  "readOnlyConditionExpression": ""
+				},
+				"parameterObjectFieldName": "",
+				"parameterObjectFieldId": 0,
+				"label": {
+				  "en_US": "Topic Question"
+				},
+				"reverse": false,
+				"type": "oneToMany",
+				"externalReferenceCode": "15f58a95-98fd-d930-72a0-c3edb6207d96",
+				"objectDefinitionModifiable2": true,
+				"system": false,
+				"name": "topicQuestion",
+				"objectDefinitionScope2": "site",
+				"deletionType": "prevent",
+				"objectDefinitionExternalReferenceCode1": "f840daaa-a956-2ba4-2e02-885eebafeee9",
+				"objectDefinitionExternalReferenceCode2": "895560cc-5ac7-1805-4c0b-67f53a27ee83",
+				"objectDefinitionName2": "P2S3FAQQuestion"
+			  }
+			],
+			"objectFolderExternalReferenceCode": "P2S3_LEARNING_MANAGEMENT_SYSTEM",
+			"enableCategorization": true,
+			"accountEntryRestrictedObjectFieldName": "",
+			"className": "com.liferay.object.model.ObjectDefinition#R7O3",
+			"objectActions": [],
+			"enableLocalization": true,
+			"accountEntryRestricted": false,
+			"externalReferenceCode": "f840daaa-a956-2ba4-2e02-885eebafeee9",
+			"objectFields": [
+			  {
+				"indexed": false,
+				"localized": false,
+				"objectFieldSettings": [],
+				"readOnly": "true",
+				"DBType": "String",
+				"label": {
+				  "en_US": "Author"
+				},
+				"type": "String",
+				"required": false,
+				"externalReferenceCode": "bbdf671c-9b4c-a9d7-1af7-a03448d923f1",
+				"indexedAsKeyword": false,
+				"system": true,
+				"indexedLanguageId": "",
+				"unique": false,
+				"name": "creator",
+				"state": false,
+				"businessType": "Text",
+				"readOnlyConditionExpression": ""
+			  },
+			  {
+				"indexed": false,
+				"localized": false,
+				"objectFieldSettings": [],
+				"readOnly": "true",
+				"DBType": "Date",
+				"label": {
+				  "en_US": "Create Date"
+				},
+				"type": "Date",
+				"required": false,
+				"externalReferenceCode": "5a46bdf1-4389-082c-8756-56ea604bf370",
+				"indexedAsKeyword": false,
+				"system": true,
+				"indexedLanguageId": "",
+				"unique": false,
+				"name": "createDate",
+				"state": false,
+				"businessType": "Date",
+				"readOnlyConditionExpression": ""
+			  },
+			  {
+				"indexed": false,
+				"localized": false,
+				"objectFieldSettings": [],
+				"readOnly": "false",
+				"DBType": "String",
+				"label": {
+				  "en_US": "External Reference Code"
+				},
+				"type": "String",
+				"required": false,
+				"externalReferenceCode": "94f7b9c9-aace-d78c-01aa-a4589863f8b5",
+				"indexedAsKeyword": false,
+				"system": true,
+				"indexedLanguageId": "",
+				"unique": false,
+				"name": "externalReferenceCode",
+				"state": false,
+				"businessType": "Text",
+				"readOnlyConditionExpression": ""
+			  },
+			  {
+				"indexed": true,
+				"localized": false,
+				"objectFieldSettings": [],
+				"readOnly": "true",
+				"DBType": "Long",
+				"label": {
+				  "en_US": "ID"
+				},
+				"type": "Long",
+				"required": false,
+				"externalReferenceCode": "a32fe755-69cb-dfe5-c4d5-da6980466e0b",
+				"indexedAsKeyword": true,
+				"system": true,
+				"indexedLanguageId": "",
+				"unique": false,
+				"name": "id",
+				"state": false,
+				"businessType": "LongInteger",
+				"readOnlyConditionExpression": ""
+			  },
+			  {
+				"indexed": false,
+				"localized": false,
+				"objectFieldSettings": [],
+				"readOnly": "true",
+				"DBType": "Date",
+				"label": {
+				  "en_US": "Modified Date"
+				},
+				"type": "Date",
+				"required": false,
+				"externalReferenceCode": "12823834-c673-0299-85d4-5c43e7dc25b8",
+				"indexedAsKeyword": false,
+				"system": true,
+				"indexedLanguageId": "",
+				"unique": false,
+				"name": "modifiedDate",
+				"state": false,
+				"businessType": "Date",
+				"readOnlyConditionExpression": ""
+			  },
+			  {
+				"indexed": false,
+				"localized": false,
+				"objectFieldSettings": [],
+				"readOnly": "true",
+				"DBType": "Integer",
+				"label": {
+				  "en_US": "Status"
+				},
+				"type": "Integer",
+				"required": false,
+				"externalReferenceCode": "4d83827f-013d-0e16-373a-1402a8474afc",
+				"indexedAsKeyword": false,
+				"system": true,
+				"indexedLanguageId": "",
+				"unique": false,
+				"name": "status",
+				"state": false,
+				"businessType": "Text",
+				"readOnlyConditionExpression": ""
+			  },
+			  {
+				"indexed": true,
+				"localized": true,
+				"objectFieldSettings": [
+				  {
+					"name": "uniqueValues",
+					"value": true
+				  }
+				],
+				"readOnly": "false",
+				"DBType": "String",
+				"label": {
+				  "en_US": "Title"
+				},
+				"type": "String",
+				"required": false,
+				"externalReferenceCode": "061642af-c10d-f032-c5cd-9f2655f6af73",
+				"indexedAsKeyword": false,
+				"system": false,
+				"indexedLanguageId": "en_US",
+				"unique": true,
+				"name": "title",
+				"state": false,
+				"businessType": "Text",
+				"readOnlyConditionExpression": ""
+			  },
+			  {
+				"indexed": true,
+				"localized": false,
+				"readOnly": "false",
+				"DBType": "Integer",
+				"label": {
+				  "en_US": "Position"
+				},
+				"type": "Integer",
+				"required": false,
+				"externalReferenceCode": "535f8185-13e8-a516-35d5-06b511cc9463",
+				"indexedAsKeyword": false,
+				"system": false,
+				"indexedLanguageId": "",
+				"unique": false,
+				"name": "position",
+				"state": false,
+				"businessType": "Integer",
+				"readOnlyConditionExpression": ""
+			  }
+			],
+			"restContextPath": "/o/c/p2s3faqtopics",
+			"scope": "site",
+			"portlet": true,
+			"modifiable": true,
+			"parameterRequired": false,
+			"enableObjectEntryHistory": false,
+			"titleObjectFieldName": "id",
+			"objectValidationRules": [],
+			"active": true,
+			"defaultLanguageId": "en_US",
+			"enableIndexSearch": true,
+			"label": {
+			  "en_US": "P2S3 FAQ Topic"
+			},
+			"panelCategoryKey": "site_administration.content",
+			"pluralLabel": {
+			  "en_US": "P2S3 FAQ Topics"
+			},
+			"objectLayouts": [
+			  {
+				"objectLayoutTabs": [
+				  {
+					"name": {
+					  "en_US": "Topic Information"
+					},
+					"objectLayoutBoxes": [
+					  {
+						"objectLayoutRows": [
+						  {
+							"objectLayoutColumns": [
+							  {
+								"objectFieldName": "title",
+								"size": 12,
+								"priority": 0
+							  }
+							],
+							"priority": 0
+						  },
+						  {
+							"objectLayoutColumns": [
+							  {
+								"objectFieldName": "position",
+								"size": 4,
+								"priority": 0
+							  }
+							],
+							"priority": 0
+						  }
+						],
+						"collapsable": false,
+						"name": {
+						  "en_US": "Main"
+						},
+						"priority": 0,
+						"type": "regular"
+					  }
+					],
+					"priority": 0
+				  },
+				  {
+					"name": {
+					  "en_US": "Questions"
+					},
+					"objectLayoutBoxes": [],
+					"objectRelationshipExternalReferenceCode": "15f58a95-98fd-d930-72a0-c3edb6207d96",
+					"priority": 0
+				  }
+				],
+				"objectDefinitionExternalReferenceCode": "f840daaa-a956-2ba4-2e02-885eebafeee9",
+				"name": {
+				  "en_US": "FAQ Topic Creation / Edit"
+				},
+				"defaultObjectLayout": true
+			  }
+			],
+			"system": false,
+			"objectViews": [],
+			"enableObjectEntryDraft": false,
+			"name": "P2S3FAQTopic",
+			"actions": {
+			  "permissions": {
+		  
+			  },
+			  "get": {
+		  
+			  },
+			  "update": {
+		  
+			  },
+			  "delete": {
+		  
+			  },
+			  "exportObjectDefinition": {
+		  
+			  }
+			},
+			"status": {
+			  "label_i18n": "Approved",
+			  "code": 0,
+			  "label": "approved"
+			}
+		  },
+		  {
+			"enableComments": false,
+			"objectRelationships": [],
+			"objectFolderExternalReferenceCode": "P2S3_LEARNING_MANAGEMENT_SYSTEM",
+			"enableCategorization": true,
+			"accountEntryRestrictedObjectFieldName": "",
+			"className": "com.liferay.object.model.ObjectDefinition#I9V3",
+			"objectActions": [],
+			"enableLocalization": true,
+			"accountEntryRestricted": false,
+			"externalReferenceCode": "895560cc-5ac7-1805-4c0b-67f53a27ee83",
+			"objectFields": [
+			  {
+				"indexed": false,
+				"localized": false,
+				"objectFieldSettings": [],
+				"readOnly": "true",
+				"DBType": "String",
+				"label": {
+				  "en_US": "Author"
+				},
+				"type": "String",
+				"required": false,
+				"externalReferenceCode": "e00cacc9-0d35-6260-6be8-fc70547d95f3",
+				"indexedAsKeyword": false,
+				"system": true,
+				"indexedLanguageId": "",
+				"unique": false,
+				"name": "creator",
+				"state": false,
+				"businessType": "Text",
+				"readOnlyConditionExpression": ""
+			  },
+			  {
+				"indexed": false,
+				"localized": false,
+				"objectFieldSettings": [],
+				"readOnly": "true",
+				"DBType": "Date",
+				"label": {
+				  "en_US": "Create Date"
+				},
+				"type": "Date",
+				"required": false,
+				"externalReferenceCode": "bd65d7f8-57f9-d577-6cd2-03db84ffb53b",
+				"indexedAsKeyword": false,
+				"system": true,
+				"indexedLanguageId": "",
+				"unique": false,
+				"name": "createDate",
+				"state": false,
+				"businessType": "Date",
+				"readOnlyConditionExpression": ""
+			  },
+			  {
+				"indexed": false,
+				"localized": false,
+				"objectFieldSettings": [],
+				"readOnly": "false",
+				"DBType": "String",
+				"label": {
+				  "en_US": "External Reference Code"
+				},
+				"type": "String",
+				"required": false,
+				"externalReferenceCode": "8f765179-906e-14b9-aa10-7f080f31c942",
+				"indexedAsKeyword": false,
+				"system": true,
+				"indexedLanguageId": "",
+				"unique": false,
+				"name": "externalReferenceCode",
+				"state": false,
+				"businessType": "Text",
+				"readOnlyConditionExpression": ""
+			  },
+			  {
+				"indexed": true,
+				"localized": false,
+				"objectFieldSettings": [],
+				"readOnly": "true",
+				"DBType": "Long",
+				"label": {
+				  "en_US": "ID"
+				},
+				"type": "Long",
+				"required": false,
+				"externalReferenceCode": "090f8c12-cdce-63b5-af3c-5b8b03263bb2",
+				"indexedAsKeyword": true,
+				"system": true,
+				"indexedLanguageId": "",
+				"unique": false,
+				"name": "id",
+				"state": false,
+				"businessType": "LongInteger",
+				"readOnlyConditionExpression": ""
+			  },
+			  {
+				"indexed": false,
+				"localized": false,
+				"objectFieldSettings": [],
+				"readOnly": "true",
+				"DBType": "Date",
+				"label": {
+				  "en_US": "Modified Date"
+				},
+				"type": "Date",
+				"required": false,
+				"externalReferenceCode": "5593a289-864d-36a3-6f80-66b420c5fe3a",
+				"indexedAsKeyword": false,
+				"system": true,
+				"indexedLanguageId": "",
+				"unique": false,
+				"name": "modifiedDate",
+				"state": false,
+				"businessType": "Date",
+				"readOnlyConditionExpression": ""
+			  },
+			  {
+				"indexed": false,
+				"localized": false,
+				"objectFieldSettings": [],
+				"readOnly": "true",
+				"DBType": "Integer",
+				"label": {
+				  "en_US": "Status"
+				},
+				"type": "Integer",
+				"required": false,
+				"externalReferenceCode": "7fa48810-f569-3251-30e4-007115c2a6ba",
+				"indexedAsKeyword": false,
+				"system": true,
+				"indexedLanguageId": "",
+				"unique": false,
+				"name": "status",
+				"state": false,
+				"businessType": "Text",
+				"readOnlyConditionExpression": ""
+			  },
+			  {
+				"indexed": false,
+				"localized": true,
+				"objectFieldSettings": [
+				  {
+					"name": "showCounter",
+					"value": false
+				  }
+				],
+				"readOnly": "false",
+				"DBType": "Clob",
+				"label": {
+				  "en_US": "Question"
+				},
+				"type": "Clob",
+				"required": false,
+				"externalReferenceCode": "4ef41496-ad2d-1585-739f-5cc94c63bb3a",
+				"indexedAsKeyword": false,
+				"system": false,
+				"indexedLanguageId": "en_US",
+				"unique": false,
+				"name": "question",
+				"state": false,
+				"businessType": "LongText",
+				"readOnlyConditionExpression": ""
+			  },
+			  {
+				"indexed": false,
+				"localized": true,
+				"objectFieldSettings": [
+				  {
+					"name": "showCounter",
+					"value": false
+				  }
+				],
+				"readOnly": "false",
+				"DBType": "Clob",
+				"label": {
+				  "en_US": "Answer"
+				},
+				"type": "Clob",
+				"required": false,
+				"externalReferenceCode": "acf6cc5b-191a-d36a-3431-3b4230d4d6b9",
+				"indexedAsKeyword": false,
+				"system": false,
+				"indexedLanguageId": "en_US",
+				"unique": false,
+				"name": "answer",
+				"state": false,
+				"businessType": "LongText",
+				"readOnlyConditionExpression": ""
+			  },
+			  {
+				"indexed": false,
+				"localized": false,
+				"readOnly": "false",
+				"DBType": "Integer",
+				"label": {
+				  "en_US": "Position"
+				},
+				"type": "Integer",
+				"required": true,
+				"externalReferenceCode": "a60d9b65-ae55-9a25-8cd2-bfde568e83c3",
+				"indexedAsKeyword": false,
+				"system": false,
+				"indexedLanguageId": "",
+				"unique": false,
+				"name": "position",
+				"state": false,
+				"businessType": "Integer",
+				"readOnlyConditionExpression": ""
+			  },
+			  {
+				"relationshipType": "oneToMany",
+				"indexed": true,
+				"localized": false,
+				"objectRelationshipExternalReferenceCode": "15f58a95-98fd-d930-72a0-c3edb6207d96",
+				"objectFieldSettings": [
+				  {
+					"name": "objectDefinition1ShortName",
+					"value": "P2S3FAQTopic"
+				  },
+				  {
+					"name": "objectRelationshipERCObjectFieldName",
+					"value": "r_topicQuestion_c_p2s3faqTopicERC"
+				  }
+				],
+				"readOnly": "false",
+				"DBType": "Long",
+				"label": {
+				  "en_US": "Topic Question"
+				},
+				"type": "Long",
+				"required": false,
+				"externalReferenceCode": "66b3c623-9d2b-fec5-6b25-77a44d517370",
+				"indexedAsKeyword": false,
+				"system": false,
+				"indexedLanguageId": "",
+				"unique": false,
+				"name": "r_topicQuestion_c_p2s3faqTopicId",
+				"objectDefinitionExternalReferenceCode1": "f840daaa-a956-2ba4-2e02-885eebafeee9",
+				"state": false,
+				"businessType": "Relationship",
+				"readOnlyConditionExpression": ""
+			  }
+			],
+			"restContextPath": "/o/c/p2s3faqquestions",
+			"scope": "site",
+			"portlet": true,
+			"modifiable": true,
+			"parameterRequired": false,
+			"enableObjectEntryHistory": false,
+			"titleObjectFieldName": "id",
+			"objectValidationRules": [],
+			"active": true,
+			"defaultLanguageId": "en_US",
+			"enableIndexSearch": true,
+			"label": {
+			  "en_US": "P2S3 FAQ Question"
+			},
+			"panelCategoryKey": "site_administration.content",
+			"pluralLabel": {
+			  "en_US": "P2S3 FAQ Questions"
+			},
+			"objectLayouts": [
+			  {
+				"objectLayoutTabs": [
+				  {
+					"name": {
+					  "en_US": "Question Information"
+					},
+					"objectLayoutBoxes": [
+					  {
+						"objectLayoutRows": [
+						  {
+							"objectLayoutColumns": [
+							  {
+								"objectFieldName": "question",
+								"size": 12,
+								"priority": 0
+							  }
+							],
+							"priority": 0
+						  },
+						  {
+							"objectLayoutColumns": [
+							  {
+								"objectFieldName": "answer",
+								"size": 12,
+								"priority": 0
+							  }
+							],
+							"priority": 0
+						  },
+						  {
+							"objectLayoutColumns": [
+							  {
+								"objectFieldName": "position",
+								"size": 4,
+								"priority": 0
+							  }
+							],
+							"priority": 0
+						  }
+						],
+						"collapsable": false,
+						"name": {
+						  "en_US": "Main"
+						},
+						"priority": 0,
+						"type": "regular"
+					  }
+					],
+					"priority": 0
+				  }
+				],
+				"objectDefinitionExternalReferenceCode": "895560cc-5ac7-1805-4c0b-67f53a27ee83",
+				"name": {
+				  "en_US": "FAQ Question Create / Edit"
+				},
+				"defaultObjectLayout": true
+			  }
+			],
+			"system": false,
+			"objectViews": [],
+			"enableObjectEntryDraft": false,
+			"name": "P2S3FAQQuestion",
+			"actions": {
+			  "permissions": {
+		  
+			  },
+			  "get": {
+		  
+			  },
+			  "update": {
+		  
+			  },
+			  "delete": {
+		  
+			  },
+			  "exportObjectDefinition": {
+		  
+			  }
+			},
+			"status": {
+			  "label_i18n": "Approved",
+			  "code": 0,
+			  "label": "approved"
+			}
+		  }
 	]
 }
