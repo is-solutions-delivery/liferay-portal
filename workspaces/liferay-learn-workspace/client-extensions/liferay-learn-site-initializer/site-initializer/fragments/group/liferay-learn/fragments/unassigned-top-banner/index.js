@@ -4,7 +4,6 @@
  */
 if (!themeDisplay.isSignedIn()) {
 	document.querySelector('.learn-banner').style.marginTop = '150px';
-
 	document.addEventListener('DOMContentLoaded', () => {
 		document.querySelector('.icon-x').addEventListener('click', () => {
 			document.querySelector('.banner-sign-in').style.display = 'none';
