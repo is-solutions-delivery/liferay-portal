@@ -9907,8 +9907,12 @@ public class ObjectEntryResourceTest {
 				() -> {
 					ObjectEntry relatedObjectEntry =
 						ObjectEntryTestUtil.addObjectEntry(
-							_objectDefinition2, _OBJECT_FIELD_NAME_2,
-							_OBJECT_FIELD_VALUE_2);
+							_objectDefinition2,
+							HashMapBuilder.<String, Serializable>put(
+								_OBJECT_FIELD_NAME_2, _OBJECT_FIELD_VALUE_2
+							).put(
+								"externalReferenceCode", _ERC_VALUE_1
+							).build());
 
 					return relatedObjectEntry.getObjectEntryId();
 				}
@@ -9951,8 +9955,12 @@ public class ObjectEntryResourceTest {
 				() -> {
 					ObjectEntry relatedObjectEntry =
 						ObjectEntryTestUtil.addObjectEntry(
-							_objectDefinition2, _OBJECT_FIELD_NAME_2,
-							_OBJECT_FIELD_VALUE_2);
+							_objectDefinition2,
+							HashMapBuilder.<String, Serializable>put(
+								_OBJECT_FIELD_NAME_2, _OBJECT_FIELD_VALUE_2
+							).put(
+								"externalReferenceCode", _ERC_VALUE_2
+							).build());
 
 					return relatedObjectEntry.getObjectEntryId();
 				}
@@ -16107,9 +16115,11 @@ public class ObjectEntryResourceTest {
 
 	private static final String _ERC_VALUE_1 = RandomTestUtil.randomString();
 
-	private static final String _ERC_VALUE_2 = RandomTestUtil.randomString();
+	private static final String _ERC_VALUE_2 =
+		_ERC_VALUE_1 + RandomTestUtil.randomString();
 
-	private static final String _ERC_VALUE_3 = RandomTestUtil.randomString();
+	private static final String _ERC_VALUE_3 =
+		_ERC_VALUE_2 + RandomTestUtil.randomString();
 
 	private static final String _LIST_TYPE_ENTRY_KEY_1 =
 		"a" + RandomTestUtil.randomString();
