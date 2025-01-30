@@ -200,7 +200,7 @@
 			<ol>
 				<#list Steps.getSiblings() as currentStep>
 					<li>
-					
+
 					${currentStep.Step.StepInstruction.getData()}
 
 					<#if currentStep.Step.AdditionalNotes.getSiblings()?has_content>
@@ -224,7 +224,7 @@
 							</#if>
 						</#list>
 					</#if>
-					
+
 				  <#if currentStep.Step.Resources.Image.getData()?has_content>
 						<div class="mb-3">
 							<img
@@ -235,7 +235,7 @@
 							/>
 						</div>
 					</#if>
-					
+
 					<#if currentStep.Step.Resources.code.getData()?has_content>
 						<div class="code-toolbar">
 							<pre class="language-bash" tabindex="0">
@@ -256,7 +256,7 @@
 							</div>
 						</div>
 					</#if>
-					</li>					
+					</li>
 				</#list>
 			</ol>
 		</#if>
@@ -295,7 +295,6 @@
 		<#assign journalArticlePK = .vars["reserved-article-resource-prim-key"].getData()?number />
 
 		<div class="page-nav-menu voting-box-bottom">
-
 			<div class="d-flex flex-row align-items-center justify-content-evenly voting-box__content">
 				<div>
 					<@liferay_ui["message"] key="was-this-article-helpful" />
@@ -408,9 +407,9 @@
 		color: #FFFFFF;
 		margin-top: 50px;
 		width: 30%;
-		
+
 		.on .lexicon-icon {
-    		color: #FFF !important;
+			color: #FFF !important;
 		}
 
 		.ratings-thumbs {
