@@ -309,6 +309,9 @@
 						"readOnly": true,
 						"type": "string"
 					},
+					"defaultLanguageId": {
+						"type": "string"
+					},
 					"externalReferenceCode": {
 						"readOnly": false,
 						"type": "string",
@@ -612,6 +615,9 @@
 					"dateModified": {
 						"format": "date-time",
 						"readOnly": true,
+						"type": "string"
+					},
+					"defaultLanguageId": {
 						"type": "string"
 					},
 					"externalReferenceCode": {
