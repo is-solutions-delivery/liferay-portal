@@ -9876,6 +9876,7 @@ public class ObjectEntryResourceTest {
 			ObjectFieldValidationConstants.BUSINESS_TYPE_LONG_VALUE_MAX);
 		String randomString1 = RandomTestUtil.randomString();
 		String randomString2 = RandomTestUtil.randomString();
+		String randomString3 = RandomTestUtil.randomString();
 
 		JSONObject jsonObject1 = HTTPTestUtil.invokeToJSONObject(
 			JSONUtil.put(
@@ -9903,6 +9904,8 @@ public class ObjectEntryResourceTest {
 			).put(
 				_OBJECT_FIELD_NAME_TEXT, "a" + randomString2
 			).put(
+				"externalReferenceCode", _ERC_VALUE_2
+			).put(
 				objectField.getName(),
 				() -> {
 					ObjectEntry relatedObjectEntry =
@@ -9911,7 +9914,7 @@ public class ObjectEntryResourceTest {
 							HashMapBuilder.<String, Serializable>put(
 								_OBJECT_FIELD_NAME_2, _OBJECT_FIELD_VALUE_2
 							).put(
-								"externalReferenceCode", _ERC_VALUE_1
+								"externalReferenceCode", "a" + randomString3
 							).build());
 
 					return relatedObjectEntry.getObjectEntryId();
@@ -9951,6 +9954,8 @@ public class ObjectEntryResourceTest {
 			).put(
 				_OBJECT_FIELD_NAME_TEXT, "b" + randomString2
 			).put(
+				"externalReferenceCode", _ERC_VALUE_1
+			).put(
 				objectField.getName(),
 				() -> {
 					ObjectEntry relatedObjectEntry =
@@ -9959,7 +9964,7 @@ public class ObjectEntryResourceTest {
 							HashMapBuilder.<String, Serializable>put(
 								_OBJECT_FIELD_NAME_2, _OBJECT_FIELD_VALUE_2
 							).put(
-								"externalReferenceCode", _ERC_VALUE_2
+								"externalReferenceCode", "b" + randomString3
 							).build());
 
 					return relatedObjectEntry.getObjectEntryId();
@@ -16113,13 +16118,14 @@ public class ObjectEntryResourceTest {
 		return JSONFactoryUtil.createJSONObject(fileEntry.toString());
 	}
 
-	private static final String _ERC_VALUE_1 = RandomTestUtil.randomString();
+	private static final String _ERC_VALUE_1 =
+		"a" + RandomTestUtil.randomString();
 
 	private static final String _ERC_VALUE_2 =
-		_ERC_VALUE_1 + RandomTestUtil.randomString();
+		"b" + RandomTestUtil.randomString();
 
 	private static final String _ERC_VALUE_3 =
-		_ERC_VALUE_2 + RandomTestUtil.randomString();
+		"c" + RandomTestUtil.randomString();
 
 	private static final String _LIST_TYPE_ENTRY_KEY_1 =
 		"a" + RandomTestUtil.randomString();
