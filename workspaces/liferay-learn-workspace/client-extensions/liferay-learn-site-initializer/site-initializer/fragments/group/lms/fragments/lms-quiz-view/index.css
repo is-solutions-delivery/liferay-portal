@@ -86,6 +86,23 @@
 	text-align: start !important;
 }
 
+.banner-options {
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.banner-option-text-alignment {
+	align-items: center;
+	display: flex;
+	flex-direction: row;
+	gap: 1rem;
+}
+
+.banner-next-container {
+	text-align: start !important;
+}
+
 .button-bottom-home {
 	background-color: #f7f7f8;
 	border: none;
@@ -327,12 +344,104 @@
 	font-style: italic;
 }
 
+.course-nav-bottom__banner {
+	align-items: flex-end;
+	background: linear-gradient(
+		91.07deg,
+		#001742 0%,
+		#0011a8 24.6%,
+		#0b5fff 49%,
+		#0b5fff 74.5%,
+		#0b5fff 100%
+	),
+	radial-gradient(
+		26.56% 43.82% at 0% 0%,
+		#00256b 20.83%,
+		rgba(0, 37, 107, 0) 100%
+	),
+	radial-gradient(
+		14.55% 34.6% at 100% 34.6%,
+		rgba(55, 124, 255, 0.68) 0%,
+		rgba(55, 124, 255, 0) 100%
+	);
+	border-radius: 10px;
+	color: var(--color-neutral-0, #fff);
+	display: flex;
+	justify-content: space-between;
+	padding: 20px;
+	position: relative;
+	
+	.banner-icon {
+		align-items: center;
+		display: flex;
+		padding: 0 24px;
+		
+		svg {
+			height: 24px;
+			width: 24px;
+		}
+	}
+	
+	.banner-options {
+		.banner-next-container {
+			background-color: #28293426;
+			border-radius: 10px;
+			font-size: 14px;
+			font-weight: 600;
+			padding: 12px;
+			text-align: center;
+		}
+				
+		.banner-title {
+			font-size: 20px;
+			font-weight: 600;
+		}				
+	}
+}
+
+.course-nav-bottom__banner:hover {
+	cursor: pointer;
+	outline: 2px solid #6399ff !important;
+	transform: none !important;
+}
+
+.course-nav-bottom_banner-line {
+	justify-content: space-between;
+	border-top: 1px solid #E2E2E4 !important;
+	margin-top: 2rem !important;
+
+	.sign-in-text {
+		display: flex;
+		justify-content: flex-end;
+		padding-top: 2rem !important;
+		position: relative;
+		z-index: 1;
+	}
+}
+
+.course-nav-bottom__banner-img_background {
+	height: 100%;
+	position: absolute;
+	right: 0px;
+	z-index: 1;
+
+	& > svg {
+		height: 100%;
+		overflow: visible !important;
+		pointer-events: none;
+	}
+}
+
 .custom-control-input:not(:disabled):hover ~ .custom-control-label::before {
 	box-shadow: 0 0 0 0.2rem var(--custom-control-color-hover) !important;
 }
 
 .custom-control-label {
 	font-size: 1rem;
+}
+
+div > .course-nav-bottom__banner {
+	border: 2px solid var(--color-neutral-0, #FFFFFF) !important;
 }
 
 .home-quiz {
@@ -357,6 +466,17 @@
 
 li {
 	list-style-type: none;
+}
+
+.menu-previous-lesson {
+	margin-top: 2rem;
+	padding: 0px 1rem !important;
+	width: fit-content !important;
+}
+
+.menu-previous-lesson:hover {
+	cursor: pointer;
+	font-size: unset !important;
 }
 
 .nav-tabs {
@@ -399,16 +519,16 @@ li {
 }
 
 .progressbar-tag {
-	width: 129px;
-	height: 24px;
-  background-color: #E7EFFF;
-  border: 1px solid #0B5FFF;
-  border-radius: 15px;
-  color: #0B5FFF;
-	display: flex;
-	justify-content: center;
 	align-items: center;
+	background-color: #E7EFFF;
+	border: 1px solid #0B5FFF;
+	border-radius: 15px;
+	color: #0B5FFF;
+	display: flex;
+	height: 24px;
+	justify-content: center;
 	position: absolute;
+	width: 129px;
 }
 
 .question {
@@ -513,7 +633,7 @@ li {
 
 	p {
 		color: #000000;
-    font-family: "Source Sans 3";
+		font-family: "Source Sans 3";
 		font-size: 21px;
 		font-weight: 600;
 	}

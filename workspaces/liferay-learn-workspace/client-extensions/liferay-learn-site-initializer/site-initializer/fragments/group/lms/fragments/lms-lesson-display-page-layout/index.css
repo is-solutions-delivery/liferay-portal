@@ -2,6 +2,93 @@
 	width: 100%;
 }
 
+.course-nav-bottom__banner {
+	align-items: flex-end;
+	background: linear-gradient(
+		91.07deg,
+		#001742 0%,
+		#0011a8 24.6%,
+		#0b5fff 49%,
+		#0b5fff 74.5%,
+		#0b5fff 100%
+	),
+	radial-gradient(
+		26.56% 43.82% at 0% 0%,
+		#00256b 20.83%,
+		rgba(0, 37, 107, 0) 100%
+	),
+	radial-gradient(
+		14.55% 34.6% at 100% 34.6%,
+		rgba(55, 124, 255, 0.68) 0%,
+		rgba(55, 124, 255, 0) 100%
+	);
+	border-radius: 10px;
+  	color: var(--color-neutral-0, #fff);
+	display: flex;
+	justify-content: space-between;
+	padding: 20px;
+	position: relative;
+	
+	.banner-icon {
+		align-items: center;
+		display: flex;
+		padding: 0 24px;
+		
+		svg {
+			height: 24px;
+			width: 24px;
+		}
+	}
+	
+	.banner-options {
+		.banner-next-container {
+			background-color: #28293426;
+			border-radius: 10px;
+			font-size: 14px;
+			font-weight: 600;
+			padding: 12px;
+			text-align: center;
+		}
+		.banner-title {
+			font-size: 20px;
+			font-weight: 600;
+		}
+	}
+}
+
+.course-nav-bottom__banner:hover {
+	cursor: pointer;
+	outline: 2px solid #6399ff !important;
+	transform: none !important;
+}
+
+.course-nav-bottom_banner-line {
+	justify-content: space-between;
+	border-top: 1px solid #E2E2E4 !important;
+	margin-top: 2rem !important;
+
+	.sign-in-text {
+		display: flex;
+		justify-content: flex-end;
+		padding-top: 2rem !important;
+		position: relative;
+		z-index: 1;
+	}
+}
+
+.course-nav-bottom__banner-img_background {
+	height: 100%;
+	position: absolute;
+	right: 0px;
+	z-index: 1;
+
+	& > svg {
+		height: 100%;
+		overflow: visible !important;
+		pointer-events: none;
+	}
+}
+
 .lesson-layout-container {
 	display: flex;
 	flex-direction: row;

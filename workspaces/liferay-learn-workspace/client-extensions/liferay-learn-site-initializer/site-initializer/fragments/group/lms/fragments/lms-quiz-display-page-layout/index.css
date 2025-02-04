@@ -173,7 +173,7 @@ p {
 		border-radius: 6px;
 
 		.module-title span {
-			color: var(--color-brand-primary-darken-3, #003EB3);
+			color: #003EB3;
 		}
 
 		.sticker-circle {
