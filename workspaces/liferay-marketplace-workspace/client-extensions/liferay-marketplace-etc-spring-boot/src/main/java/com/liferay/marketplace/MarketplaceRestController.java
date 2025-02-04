@@ -8,15 +8,26 @@ package com.liferay.marketplace;
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
 import com.liferay.headless.admin.user.client.dto.v1_0.Account;
 import com.liferay.headless.admin.user.client.resource.v1_0.AccountResource;
-import com.liferay.headless.commerce.admin.catalog.client.pagination.Pagination;
+import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Catalog;
+import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Product;
 import com.liferay.headless.commerce.admin.catalog.client.resource.v1_0.SkuResource;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.Order;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.OrderItem;
 import com.liferay.headless.commerce.admin.order.client.pagination.Page;
+import com.liferay.headless.commerce.admin.order.client.pagination.Pagination;
 import com.liferay.marketplace.constants.MarketplaceConstants;
 import com.liferay.marketplace.service.KoroneikiService;
 import com.liferay.marketplace.service.MarketplaceService;
 import com.liferay.marketplace.util.MarketplaceUtil;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LocaleUtil;
+
+import java.net.URL;
+
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 import java.util.Map;
 import java.util.Objects;
@@ -77,9 +88,7 @@ public class MarketplaceRestController extends BaseRestController {
 		Page<OrderItem> orderItemPage =
 			_marketplaceService.getOrderItemResource(
 			).getOrderIdOrderItemsPage(
-				order.getId(),
-				com.liferay.headless.commerce.admin.order.client.pagination.
-					Pagination.of(1, 10)
+				order.getId(), Pagination.of(1, 10)
 			);
 
 		if (Objects.equals(
@@ -93,6 +102,68 @@ public class MarketplaceRestController extends BaseRestController {
 
 			_setUpDxpProductPurchase(jwt, order, orderItemPage);
 		}
+	}
+
+	@PostMapping("product/submit")
+	public void postProductSubmit(
+			@AuthenticationPrincipal Jwt jwt, @RequestBody String json)
+		throws Exception {
+
+		if (_log.isInfoEnabled()) {
+			_log.info("POST product submit " + json);
+		}
+
+		JSONObject jsonObject = new JSONObject(json);
+
+		JSONObject commerceCPDefinitionJSONObject = jsonObject.getJSONObject(
+			"modelCPDefinition");
+
+		Product product = _marketplaceService.getProduct(
+			commerceCPDefinitionJSONObject.getLong("CProductId"));
+
+		Catalog catalog = _marketplaceService.getCatalog(
+			product.getCatalogId());
+
+		String productThumbnail = new URL(
+			"http://" + lxcDXPMainDomain + product.getThumbnail()
+		).toString();
+
+		Long definitionID = commerceCPDefinitionJSONObject.getLong(
+			"CPDefinitionId");
+
+		String productUrl = new URL(
+			StringBundler.concat(
+				lxcDXPServerProtocol, "://", lxcDXPMainDomain,
+				"/administrator-dashboard#/apps/", definitionID)
+		).toString();
+
+		_marketplaceService.postNotificationQueueEntry(
+			"marketplace-admin@liferay.com",
+			"MARKETPLACE-PRODUCT-SUBMIT-TEMPLATE",
+			new HashMapBuilder<String, Object>().put(
+				"[%CPDEFINITION_NAME%]",
+				product.getName(
+				).get(
+					commerceCPDefinitionJSONObject.getString(
+						"defaultLanguageId")
+				)
+			).put(
+				"[%CPDEFINITION_THUMBNAIL%]", productThumbnail
+			).put(
+				"[%CPDEFINITION_DEVELOPER_NAME%]", catalog.getName()
+			).put(
+				"[%CPDEFINITION_URL%]", productUrl
+			).put(
+				"[%CPDEFINITION_CREATEDATE%]",
+				ZonedDateTime.ofInstant(
+					product.getCreateDate(
+					).toInstant(),
+					ZoneOffset.UTC
+				).format(
+					DateTimeFormatter.ofPattern(
+						"MMMM d, yyyy", LocaleUtil.ENGLISH)
+				)
+			).build());
 	}
 
 	private void _setUpCloudProductPurchase(
