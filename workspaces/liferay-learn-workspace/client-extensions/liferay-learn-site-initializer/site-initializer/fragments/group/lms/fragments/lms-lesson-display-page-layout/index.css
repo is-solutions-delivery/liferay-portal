@@ -108,8 +108,8 @@
 }
 
 .course-nav-bottom_banner-line {
-	justify-content: space-between;
 	border-top: 1px solid #E2E2E4 !important;
+	justify-content: space-between;
 	margin-top: 2rem !important;
 }
 
@@ -195,8 +195,8 @@ iframe {
 .lesson-navigation-sign-in-container {
 	background: #f7f7f8;
 	border-radius: 1rem;
-	padding: 2rem;
 	margin-top: var(--spacer-3, 1rem) !important;
+	padding: 2rem;
 
 	.mt-3 {
 		margin-top: unset !important;
@@ -209,9 +209,9 @@ iframe {
 
 .menu-previous-lesson {
 	color: #282934 !important;
-	gap: 0.5rem;
 	font-family: var(--font-family-sans-serif) !important;
 	font-weight: 600 !important;
+	gap: 0.5rem;
 	margin-top: 2rem;
 	padding: 0 1rem !important;
 	width: fit-content !important;
