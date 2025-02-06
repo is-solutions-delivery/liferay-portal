@@ -740,12 +740,14 @@ public class TestrayImporter {
 				Properties buildProperties =
 					JenkinsResultsParserUtil.getBuildProperties();
 
-				String testrayOverrideProjectName = buildProperties.getProperty(
-					"testray.override.project.name");
+				if (buildProperties.containsKey(
+						"testray.override.project.name")) {
 
-				if (testrayOverrideProjectName != null) {
+					testrayProjectName = buildProperties.getProperty(
+						"testray.override.project.name");
+
 					testrayProject = testrayServer.getTestrayProjectByName(
-						_replaceEnvVars(testrayOverrideProjectName, true));
+						_replaceEnvVars(testrayProjectName, true));
 				}
 			}
 			catch (IOException ioException) {
@@ -860,10 +862,12 @@ public class TestrayImporter {
 				Properties buildProperties =
 					JenkinsResultsParserUtil.getBuildProperties();
 
-				String testrayOverrideRoutineName = buildProperties.getProperty(
-					"testray.override.routine.name");
+				if (buildProperties.containsKey(
+						"testray.override.routine.name")) {
 
-				if (testrayOverrideRoutineName != null) {
+					testrayRoutineName = buildProperties.getProperty(
+						"testray.override.routine.name");
+
 					testrayRoutine = testrayProject.createTestrayRoutine(
 						_replaceEnvVars(testrayRoutineName, true));
 				}
