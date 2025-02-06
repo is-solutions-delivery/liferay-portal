@@ -3,6 +3,7 @@
 		var collapsibleContent = document.getElementById('collapsibleContent');
 
 		if(collapsibleContent) {
+
 			if (window.innerWidth >= 768) {
 				collapsibleContent.style.display = "block";
 				return;
