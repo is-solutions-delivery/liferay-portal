@@ -97,9 +97,9 @@
 	<div class="container recipe-main">
 		<div class="row">
 			<div class="col-md-9 recipe-main" id="left-panel">
-			  	<div class="disclaimer">
-				  	<div class="container-fluid">
-					   	<div class="row">
+				<div class="disclaimer">
+					<div class="container-fluid">
+						<div class="row">
 							<div class="col recipe-dialect">
 								<@liferay_ui["message"] key="recipe" />
 							</div>
@@ -165,61 +165,61 @@
 				<#list Steps.getSiblings() as currentStep>
 					<li>
 
-					${currentStep.Step.StepInstruction.getData()}
+						${currentStep.Step.StepInstruction.getData()}
 
-					<#if currentStep.Step.AdditionalNotes.getSiblings()?has_content>
-	  				<#list currentStep.Step.AdditionalNotes.getSiblings() as currentNote>
-							<#if currentNote?? && currentNote.NoteText.getData()?has_content>
-								<div class="adm-block adm-${currentNote.NoteType.getData()}">
-									<div class="adm-heading">
-										<svg class="adm-icon">
-											<use xlink:href="#adm-note"></use>
-										</svg>
+						<#if currentStep.Step.AdditionalNotes.getSiblings()?has_content>
+							<#list currentStep.Step.AdditionalNotes.getSiblings() as currentNote>
+								<#if currentNote?? && currentNote.NoteText.getData()?has_content>
+									<div class="adm-block adm-${currentNote.NoteType.getData()}">
+										<div class="adm-heading">
+											<svg class="adm-icon">
+												<use xlink:href="#adm-note"></use>
+											</svg>
 
-										<span>
-											<@liferay_ui["message"] key="${currentNote.NoteType.getData()}" />
-										</span>
+											<span>
+												<@liferay_ui["message"] key="${currentNote.NoteType.getData()}" />
+											</span>
+										</div>
+
+										<div class="adm-body">
+											${currentNote.NoteText.getData()}
+										</div>
 									</div>
+								</#if>
+							</#list>
+						</#if>
 
-									<div class="adm-body">
-										${currentNote.NoteText.getData()}
+						<#if currentStep.Step.Resources.Image.getData()?has_content>
+							<div class="mb-3">
+								<img
+									class="rounded img-fluid"
+									height="75%"
+									src="${currentStep.Step.Resources.Image.getData()}"
+									width="75%"
+								/>
+							</div>
+						</#if>
+
+						<#if currentStep.Step.Resources.code.getData()?has_content>
+							<div class="code-toolbar">
+								<pre class="language-bash" tabindex="0">
+									<code class="language-bash">${currentStep.Step.Resources.code.getData()}</code>
+								</pre>
+
+								<div class="toolbar">
+									<div class="toolbar-item">
+										<button
+											class="copy-to-clipboard-button"
+											data-copy-state="copy"
+											onclick="copyToClipboard(this)"
+											type="button"
+										>
+											<span>Copy</span>
+										</button>
 									</div>
-								</div>
-							</#if>
-						</#list>
-					</#if>
-
-				  <#if currentStep.Step.Resources.Image.getData()?has_content>
-						<div class="mb-3">
-							<img
-								class="rounded img-fluid"
-								height="75%"
-								src="${currentStep.Step.Resources.Image.getData()}"
-								width="75%"
-							/>
-						</div>
-					</#if>
-
-					<#if currentStep.Step.Resources.code.getData()?has_content>
-						<div class="code-toolbar">
-							<pre class="language-bash" tabindex="0">
-								<code class="language-bash">${currentStep.Step.Resources.code.getData()}</code>
-							</pre>
-
-							<div class="toolbar">
-								<div class="toolbar-item">
-									<button
-										class="copy-to-clipboard-button"
-										data-copy-state="copy"
-										onclick="copyToClipboard(this)"
-										type="button"
-									>
-										<span>Copy</span>
-									</button>
 								</div>
 							</div>
-						</div>
-					</#if>
+						</#if>
 					</li>
 				</#list>
 			</ol>
@@ -242,7 +242,7 @@
 				<#if (currentTip.getData())??>
 					<div class="adm-block adm-tip">
 						<div class="adm-heading">
-						 	<svg class="adm-icon">
+							<svg class="adm-icon">
 								<use xlink:href="#adm-tip"></use>
 							</svg>
 
