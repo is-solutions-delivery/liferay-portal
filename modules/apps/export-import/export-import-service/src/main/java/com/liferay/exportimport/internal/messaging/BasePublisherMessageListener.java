@@ -5,6 +5,7 @@
 
 package com.liferay.exportimport.internal.messaging;
 
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
 import com.liferay.portal.kernel.messaging.MessageListener;
@@ -31,7 +32,7 @@ import java.util.Map;
  */
 public abstract class BasePublisherMessageListener implements MessageListener {
 
-	protected void initThreadLocals(
+	protected SafeCloseable initThreadLocals(
 			long userId, Map<String, String[]> parameterMap)
 		throws PortalException {
 
@@ -84,13 +85,16 @@ public abstract class BasePublisherMessageListener implements MessageListener {
 		serviceContext.setAttributes(attributes);
 
 		ServiceContextThreadLocal.pushServiceContext(serviceContext);
+
+		return () -> {
+			CompanyThreadLocal.setCompanyId(CompanyConstants.SYSTEM);
+			PermissionThreadLocal.setPermissionChecker(null);
+			PrincipalThreadLocal.setName(null);
+			ServiceContextThreadLocal.popServiceContext();
+		};
 	}
 
 	protected void resetThreadLocals() {
-		CompanyThreadLocal.setCompanyId(CompanyConstants.SYSTEM);
-		PermissionThreadLocal.setPermissionChecker(null);
-		PrincipalThreadLocal.setName(null);
-		ServiceContextThreadLocal.popServiceContext();
 	}
 
 }

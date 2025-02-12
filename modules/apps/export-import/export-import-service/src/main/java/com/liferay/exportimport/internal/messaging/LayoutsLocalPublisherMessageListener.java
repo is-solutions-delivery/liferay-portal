@@ -8,6 +8,7 @@ package com.liferay.exportimport.internal.messaging;
 import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
 import com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalService;
 import com.liferay.exportimport.kernel.staging.Staging;
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -77,8 +78,8 @@ public class LayoutsLocalPublisherMessageListener
 		Map<String, String[]> parameterMap =
 			(Map<String, String[]>)settingsMap.get("parameterMap");
 
-		try {
-			initThreadLocals(userId, parameterMap);
+		try (SafeCloseable safeCloseable = initThreadLocals(
+				userId, parameterMap)) {
 
 			_staging.publishLayouts(
 				userId, sourceGroupId, targetGroupId, privateLayout, layoutIds,
@@ -86,9 +87,6 @@ public class LayoutsLocalPublisherMessageListener
 		}
 		catch (PortalException portalException) {
 			throw new MessageListenerException(portalException);
-		}
-		finally {
-			resetThreadLocals();
 		}
 	}
 

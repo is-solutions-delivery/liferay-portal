@@ -8,6 +8,7 @@ package com.liferay.exportimport.internal.messaging;
 import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
 import com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalService;
 import com.liferay.exportimport.kernel.staging.Staging;
+import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -87,8 +88,8 @@ public class LayoutsRemotePublisherMessageListener
 		boolean remotePrivateLayout = MapUtil.getBoolean(
 			settingsMap, "remotePrivateLayout");
 
-		try {
-			initThreadLocals(userId, parameterMap);
+		try (SafeCloseable safeCloseable = initThreadLocals(
+				userId, parameterMap)) {
 
 			User user = _userLocalService.getUserById(userId);
 
@@ -102,9 +103,6 @@ public class LayoutsRemotePublisherMessageListener
 		}
 		catch (PortalException portalException) {
 			throw new MessageListenerException(portalException);
-		}
-		finally {
-			resetThreadLocals();
 		}
 	}
 
