@@ -54,7 +54,7 @@ public class AnalyticsDataControlTasksSchedulerJobConfiguration
 
 				_analyticsCloudClient.createDataControlTasks(
 					entry.getValue(), emailAddresses,
-					SetUtil.fromArray(new String[] {"SUPPRESS", "DELETE"}));
+					SetUtil.fromArray(new String[] {"DELETE", "SUPPRESS"}));
 			}
 		};
 	}
