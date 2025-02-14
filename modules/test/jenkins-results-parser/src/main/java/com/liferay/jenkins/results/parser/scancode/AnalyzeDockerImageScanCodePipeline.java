@@ -52,6 +52,8 @@ public class AnalyzeDockerImageScanCodePipeline extends BaseScanCodePipeline {
 				"Invalid Docker tag " + _dockerTag);
 		}
 
+		JSONObject jsonObject = new JSONObject();
+
 		List<String> inputURLs = new ArrayList<>();
 
 		inputURLs.add("docker://liferay/" + _dockerTag);
@@ -61,8 +63,6 @@ public class AnalyzeDockerImageScanCodePipeline extends BaseScanCodePipeline {
 		inputURLs.add(
 			JenkinsResultsParserUtil.getBuildProperty(
 				"scancode.policies.file.url"));
-
-		JSONObject jsonObject = new JSONObject();
 
 		SimpleDateFormat simpleDateFormat = getSimpleDateFormat();
 
