@@ -21,12 +21,14 @@ import com.liferay.portal.kernel.model.LayoutStagingHandler;
 import com.liferay.portal.kernel.service.LayoutRevisionLocalService;
 import com.liferay.portal.kernel.service.LayoutSetBranchLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 
 import java.lang.reflect.InvocationHandler;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
@@ -255,10 +257,20 @@ public class LayoutStagingImpl implements LayoutStaging {
 					layoutBranchId = layoutRevision.getLayoutBranchId();
 				}
 
-				layoutRevision =
-					_layoutRevisionLocalService.fetchLayoutRevision(
-						layoutSetBranchId, layoutBranchId, true,
-						layout.getPlid());
+				Iterator<LayoutRevision> iterator = ListUtil.reverseIterator(
+					layoutRevisions);
+
+				while (iterator.hasNext()) {
+					LayoutRevision curLayoutRevision = iterator.next();
+
+					if (curLayoutRevision.getLayoutBranchId() ==
+							layoutBranchId) {
+
+						layoutRevision = curLayoutRevision;
+
+						break;
+					}
+				}
 			}
 
 			if ((layoutRevision == null) && !layoutRevisions.isEmpty()) {
