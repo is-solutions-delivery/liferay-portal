@@ -241,45 +241,41 @@ public class LayoutStagingImpl implements LayoutStaging {
 			return false;
 		}
 
-		LayoutRevision layoutRevision = null;
-
 		List<LayoutRevision> layoutRevisions =
 			_layoutRevisionLocalService.getLayoutRevisions(
 				layoutSetBranchId, layout.getPlid(), true);
 
-		if (!layoutRevisions.isEmpty()) {
-			if (layoutRevisions.size() > 1) {
-				layoutRevision = getLayoutRevision(layout);
+		if (layoutRevisions.isEmpty()) {
+			return false;
+		}
 
-				long layoutBranchId = GetterUtil.DEFAULT_LONG;
+		LayoutRevision layoutRevision = null;
 
-				if (layoutRevision != null) {
-					layoutBranchId = layoutRevision.getLayoutBranchId();
-				}
+		if (layoutRevisions.size() > 1) {
+			layoutRevision = getLayoutRevision(layout);
 
-				Iterator<LayoutRevision> iterator = ListUtil.reverseIterator(
-					layoutRevisions);
+			long layoutBranchId = GetterUtil.DEFAULT_LONG;
 
-				while (iterator.hasNext()) {
-					LayoutRevision curLayoutRevision = iterator.next();
-
-					if (curLayoutRevision.getLayoutBranchId() ==
-							layoutBranchId) {
-
-						layoutRevision = curLayoutRevision;
-
-						break;
-					}
-				}
+			if (layoutRevision != null) {
+				layoutBranchId = layoutRevision.getLayoutBranchId();
 			}
 
-			if ((layoutRevision == null) && !layoutRevisions.isEmpty()) {
-				layoutRevision = layoutRevisions.get(0);
+			Iterator<LayoutRevision> iterator = ListUtil.reverseIterator(
+				layoutRevisions);
+
+			while (iterator.hasNext()) {
+				LayoutRevision curLayoutRevision = iterator.next();
+
+				if (curLayoutRevision.getLayoutBranchId() == layoutBranchId) {
+					layoutRevision = curLayoutRevision;
+
+					break;
+				}
 			}
 		}
 
 		if (layoutRevision == null) {
-			return false;
+			layoutRevision = layoutRevisions.get(0);
 		}
 
 		LayoutStagingHandler layoutStagingHandler =
