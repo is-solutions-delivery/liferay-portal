@@ -3117,8 +3117,8 @@ public abstract class BaseBuild implements Build {
 	}
 
 	private void _archiveConsoleLog() {
-		if (Objects.equals(getStatus(), "completed") &&
-			!Objects.equals(getResult(), "SUCCESS")) {
+		if (!Objects.equals(getResult(), "SUCCESS") &&
+			Objects.equals(getStatus(), "completed")) {
 
 			_archive(getConsoleText(), true, "consoleText");
 		}
