@@ -60,7 +60,7 @@ public class AttachmentDDMFormFieldTemplateContextContributorTest
 	}
 
 	@Test
-	public void testGetFileEntryProperties() throws Exception {
+	public void testGetParametersFileEntryProperties() throws Exception {
 		String contentURL = RandomTestUtil.randomString();
 
 		_ddmFormField.setProperty("contentURL", contentURL);
@@ -107,7 +107,7 @@ public class AttachmentDDMFormFieldTemplateContextContributorTest
 	}
 
 	@Test
-	public void testGetLocalizedObjectFieldTrue() {
+	public void testGetParametersLocalizedObjectField() {
 		_ddmFormField.setProperty("localizedObjectField", true);
 
 		Assert.assertTrue(
