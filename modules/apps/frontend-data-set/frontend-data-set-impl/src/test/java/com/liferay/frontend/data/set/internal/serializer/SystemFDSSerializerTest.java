@@ -105,6 +105,9 @@ public class SystemFDSSerializerTest {
 
 	@Test
 	public void testSerializeAPIURL() throws Exception {
+
+		// Different resolvers
+
 		ServiceTrackerMap
 			<String,
 			 ServiceTrackerCustomizerFactory.ServiceWrapper<FDSAPIURLResolver>>
@@ -124,8 +127,6 @@ public class SystemFDSSerializerTest {
 		).thenReturn(
 			themeDisplay
 		);
-
-		// Different resolvers
 
 		_registerServices(
 			_registerFDSAPIURLResolver(
@@ -214,6 +215,9 @@ public class SystemFDSSerializerTest {
 
 	@Test
 	public void testSerializeBulkActions() throws Exception {
+
+		// Different bulk actions
+
 		ServiceTrackerMap
 			<String,
 			 ServiceTrackerCustomizerFactory.ServiceWrapper<FDSBulkActions>>
@@ -225,8 +229,6 @@ public class SystemFDSSerializerTest {
 
 		_systemFDSSerializer.fdsBulkActionsRegistry =
 			new FDSBulkActionsRegistryImpl(serviceTrackerMap);
-
-		// Different bulk actions
 
 		List<FDSActionDropdownItem> fdsActionDropdownItems1 =
 			ListUtil.fromArray(
@@ -309,6 +311,9 @@ public class SystemFDSSerializerTest {
 
 	@Test
 	public void testSerializeCreationMenu() throws Exception {
+
+		// Different creation menu
+
 		ServiceTrackerMap
 			<String,
 			 ServiceTrackerCustomizerFactory.ServiceWrapper<FDSCreationMenu>>
@@ -320,8 +325,6 @@ public class SystemFDSSerializerTest {
 
 		_systemFDSSerializer.fdsCreationMenuRegistry =
 			new FDSCreationMenuRegistryImpl(serviceTrackerMap);
-
-		// Different creation menu
 
 		CreationMenu creationMenu1 = CreationMenuBuilder.addDropdownItem(
 			DropdownItemBuilder.setIcon(
@@ -354,7 +357,6 @@ public class SystemFDSSerializerTest {
 			creationMenu2,
 			_systemFDSSerializer.serializeCreationMenu(
 				"fdsName2", _httpServletRequest));
-
 		Assert.assertNotEquals(
 			_systemFDSSerializer.serializeCreationMenu(
 				"fdsName1", _httpServletRequest),
@@ -405,6 +407,9 @@ public class SystemFDSSerializerTest {
 
 	@Test
 	public void testSerializeFilters() throws Exception {
+
+		// Client extension filter
+
 		ServiceTrackerMap
 			<String,
 			 List
@@ -481,8 +486,6 @@ public class SystemFDSSerializerTest {
 
 		ResourceBundleLoaderUtil.setPortalResourceBundleLoader(
 			resourceBundleLoader);
-
-		// Client extension filter
 
 		_registerServices(
 			_registerFDSFilter(

@@ -575,7 +575,7 @@ public class CustomFDSSerializerTest {
 
 		_resetFDSSerializer();
 
-		// Selection filter, with API URL
+		// Selection filter
 
 		_mockSerializeFilters(
 			"fdsName",
