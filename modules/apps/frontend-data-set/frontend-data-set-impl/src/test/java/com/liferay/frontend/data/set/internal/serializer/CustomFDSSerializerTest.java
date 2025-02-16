@@ -94,6 +94,9 @@ public class CustomFDSSerializerTest {
 
 	@Test
 	public void testSerializeAPIURL() {
+
+		// Interpolation
+
 		ServiceTrackerMap
 			<String,
 			 ServiceTrackerCustomizerFactory.ServiceWrapper<FDSAPIURLResolver>>
@@ -107,8 +110,6 @@ public class CustomFDSSerializerTest {
 			new FDSAPIURLResolverRegistryImpl(serviceTrackerMap);
 
 		_resetFDSSerializer(fdsAPIURLResolverRegistry);
-
-		// Interpolation
 
 		_mockSerializeAPIURL("fdsName", "/app", "/endpoint/{foo}", "schema");
 
@@ -410,9 +411,9 @@ public class CustomFDSSerializerTest {
 			).toString(),
 			JSONCompareMode.LENIENT);
 
-		// Date range filter
-
 		_resetFDSSerializer();
+
+		// Date range filter
 
 		_mockSerializeFilters(
 			"fdsName",
@@ -468,9 +469,9 @@ public class CustomFDSSerializerTest {
 			).toString(),
 			JSONCompareMode.LENIENT);
 
-		// Different filters
-
 		_resetFDSSerializer();
+
+		// Different filters
 
 		_mockSerializeFilters(
 			"fdsName1",
@@ -483,7 +484,6 @@ public class CustomFDSSerializerTest {
 			).put(
 				"type", (Object)FDSEntityFieldTypes.DATE
 			).build());
-
 		_mockSerializeFilters(
 			"fdsName2",
 			HashMapBuilder.put(
@@ -525,7 +525,6 @@ public class CustomFDSSerializerTest {
 				"fdsName1", _httpServletRequest
 			).toString(),
 			JSONCompareMode.LENIENT);
-
 		JSONAssert.assertEquals(
 			JSONUtil.putAll(
 				JSONUtil.put(
@@ -556,9 +555,9 @@ public class CustomFDSSerializerTest {
 			).toString(),
 			JSONCompareMode.LENIENT);
 
-		// No filter
-
 		_resetFDSSerializer();
+
+		// No filter
 
 		_mockSerializeFilters("fdsName", null);
 
@@ -569,9 +568,9 @@ public class CustomFDSSerializerTest {
 			).toString(),
 			JSONCompareMode.STRICT);
 
-		// Selection filter, with API URL
-
 		_resetFDSSerializer();
+
+		// Selection filter, with API URL
 
 		_mockSerializeFilters(
 			"fdsName",
