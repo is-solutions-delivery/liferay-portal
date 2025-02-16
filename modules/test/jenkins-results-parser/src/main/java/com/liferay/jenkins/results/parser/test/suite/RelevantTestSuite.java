@@ -102,10 +102,10 @@ public class RelevantTestSuite {
 					System.out.println(
 						JenkinsResultsParserUtil.combine(
 							testBatch.getName(),
-							" is not a valid test batch in relevant. ",
-							"Please check test.batch.names[relevant] ",
-							"in the base test.properties file and ",
-							"set the batch name if necessary.\n"));
+							" is not a valid test batch in relevant. Check ",
+							"the property \"test.batch.names[relevant]\" ",
+							"in the base test.properties file and set the ",
+							"batch name.\n"));
 				}
 			}
 
