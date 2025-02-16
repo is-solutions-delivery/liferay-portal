@@ -45,7 +45,7 @@ public class SitemapStrutsActionTest {
 		new LiferayIntegrationTestRule();
 
 	@Test
-	public void testViewStagingSitemap() throws Exception {
+	public void testExecute() throws Exception {
 		Group liveGroup = GroupTestUtil.addGroup();
 
 		Group stagingGroup = GroupTestUtil.addGroup();
@@ -67,21 +67,20 @@ public class SitemapStrutsActionTest {
 
 		mockHttpServletRequest.addHeader("Host", "virtual");
 
-		mockHttpServletRequest.setParameter(
-			"currentURL", "http://localhost:8080/sitemap.xml");
-
 		ThemeDisplay themeDisplay = new ThemeDisplay();
 
 		Company company = _companyLocalService.getCompany(
 			TestPropsValues.getCompanyId());
 
 		themeDisplay.setCompany(company);
-
 		themeDisplay.setPermissionChecker(
 			PermissionCheckerFactoryUtil.create(company.getGuestUser()));
 
 		mockHttpServletRequest.setAttribute(
 			WebKeys.THEME_DISPLAY, themeDisplay);
+
+		mockHttpServletRequest.setParameter(
+			"currentURL", "http://localhost:8080/sitemap.xml");
 
 		MockHttpServletResponse mockHttpServletResponse =
 			new MockHttpServletResponse();
