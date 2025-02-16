@@ -111,7 +111,8 @@ public class CustomFDSSerializerTest {
 
 		_resetFDSSerializer(fdsAPIURLResolverRegistry);
 
-		_mockSerializeAPIURL("fdsName", "/app", "/endpoint/{foo}", "schema");
+		_mockSerializeAPIURL(
+			"fdsName", null, "/app", "/endpoint/{foo}", "schema");
 
 		ServiceRegistration<FDSAPIURLResolver> serviceRegistration =
 			_registerFDSAPIURLResolver(
@@ -128,8 +129,10 @@ public class CustomFDSSerializerTest {
 
 		// REST application: /app
 
-		_mockSerializeAPIURL("fdsName1", "/app", "/endpoint/{foo}", "schema");
-		_mockSerializeAPIURL("fdsName2", "/app", "/endpoint/{foo}", "schema");
+		_mockSerializeAPIURL(
+			"fdsName1", null, "/app", "/endpoint/{foo}", "schema");
+		_mockSerializeAPIURL(
+			"fdsName2", null, "/app", "/endpoint/{foo}", "schema");
 
 		serviceRegistration = _registerFDSAPIURLResolver(
 			"/app", "schema", new String[] {"{foo}"}, new String[] {"bar"});
@@ -149,8 +152,10 @@ public class CustomFDSSerializerTest {
 
 		// REST application: /app1 and /app2
 
-		_mockSerializeAPIURL("fdsName1", "/app1", "/endpoint/{foo}", "schema");
-		_mockSerializeAPIURL("fdsName2", "/app2", "/endpoint/{foo}", "schema");
+		_mockSerializeAPIURL(
+			"fdsName1", null, "/app1", "/endpoint/{foo}", "schema");
+		_mockSerializeAPIURL(
+			"fdsName2", null, "/app2", "/endpoint/{foo}", "schema");
 
 		serviceRegistration = _registerFDSAPIURLResolver(
 			"/app1", "schema", new String[] {"{foo}"}, new String[] {"bar"});
@@ -753,14 +758,6 @@ public class CustomFDSSerializerTest {
 			"primaryItems");
 
 		return dropdownItems.size();
-	}
-
-	private void _mockSerializeAPIURL(
-		String fdsName, String restApplication, String restEndpoint,
-		String restSchema) {
-
-		_mockSerializeAPIURL(
-			fdsName, null, restApplication, restEndpoint, restSchema);
 	}
 
 	private void _mockSerializeAPIURL(
