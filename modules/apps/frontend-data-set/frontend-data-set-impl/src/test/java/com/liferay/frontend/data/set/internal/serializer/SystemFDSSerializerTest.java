@@ -1029,6 +1029,9 @@ public class SystemFDSSerializerTest {
 
 	@Test
 	public void testSerializeItemsActions() throws Exception {
+
+		// Different items actions
+
 		ServiceTrackerMap
 			<String,
 			 ServiceTrackerCustomizerFactory.ServiceWrapper<FDSItemsActions>>
@@ -1040,8 +1043,6 @@ public class SystemFDSSerializerTest {
 
 		_systemFDSSerializer.fdsItemsActionsRegistry =
 			new FDSItemsActionsRegistryImpl(serviceTrackerMap);
-
-		// Different items actions
 
 		List<FDSActionDropdownItem> fdsActionDropdownItems1 =
 			ListUtil.fromArray(
@@ -1067,12 +1068,10 @@ public class SystemFDSSerializerTest {
 			fdsActionDropdownItems1,
 			_systemFDSSerializer.serializeItemsActions(
 				"fdsName1", _httpServletRequest));
-
 		Assert.assertEquals(
 			fdsActionDropdownItems2,
 			_systemFDSSerializer.serializeItemsActions(
 				"fdsName2", _httpServletRequest));
-
 		Assert.assertNotEquals(
 			_systemFDSSerializer.serializeItemsActions(
 				"fdsName1", _httpServletRequest),
