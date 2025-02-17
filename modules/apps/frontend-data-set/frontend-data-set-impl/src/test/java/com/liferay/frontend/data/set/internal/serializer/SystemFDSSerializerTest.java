@@ -786,7 +786,7 @@ public class SystemFDSSerializerTest {
 
 		_unregisterServices();
 
-		// Selection filter, with API URL
+		// Selection filter
 
 		_registerServices(
 			_registerFDSFilter(
@@ -831,13 +831,22 @@ public class SystemFDSSerializerTest {
 					}
 
 					@Override
+					public List<SelectionFDSFilterItem>
+						getSelectionFDSFilterItems(Locale locale) {
+
+						return ListUtil.fromArray(
+							new SelectionFDSFilterItem("animal", 1),
+							new SelectionFDSFilterItem("vegetable", 2));
+					}
+
+					@Override
 					public boolean isAutocompleteEnabled() {
 						return true;
 					}
 
 					@Override
 					public boolean isMultiple() {
-						return false;
+						return true;
 					}
 
 				},
@@ -869,100 +878,6 @@ public class SystemFDSSerializerTest {
 				).put(
 					"itemLabel", "label"
 				).put(
-					"items", JSONUtil.putAll()
-				).put(
-					"label", "By Category"
-				).put(
-					"multiple", false
-				).put(
-					"preloadedData", JSONUtil.put("exclude", false)
-				).put(
-					"type", "selection"
-				)
-			).toString(),
-			_systemFDSSerializer.serializeFilters(
-				"fdsName", _httpServletRequest
-			).toString(),
-			JSONCompareMode.STRICT);
-
-		_unregisterServices();
-
-		// Selection filter, with items
-
-		_registerServices(
-			_registerFDSFilter(
-				new BaseSelectionFDSFilter() {
-
-					@Override
-					public String getEntityFieldType() {
-						return FDSEntityFieldTypes.COLLECTION;
-					}
-
-					@Override
-					public String getId() {
-						return "categoryIds";
-					}
-
-					@Override
-					public String getItemKey() {
-						return "id";
-					}
-
-					@Override
-					public String getItemLabel() {
-						return "label";
-					}
-
-					@Override
-					public String getLabel() {
-						return "By Category";
-					}
-
-					@Override
-					public Map<String, Object> getPreloadedData() {
-						return new HashMapBuilder<>().<String, Object>put(
-							"exclude", true
-						).build();
-					}
-
-					@Override
-					public List<SelectionFDSFilterItem>
-						getSelectionFDSFilterItems(Locale locale) {
-
-						return ListUtil.fromArray(
-							new SelectionFDSFilterItem("animal", 1),
-							new SelectionFDSFilterItem("vegetable", 2));
-					}
-
-					@Override
-					public boolean isAutocompleteEnabled() {
-						return false;
-					}
-
-					@Override
-					public boolean isMultiple() {
-						return true;
-					}
-
-				},
-				"fdsName"),
-			_bundleContext.registerService(
-				FDSFilterContextContributor.class,
-				new SelectionFDSFilterContextContributor(),
-				MapUtil.singletonDictionary(
-					"frontend.data.set.filter.type", "selection")),
-			_registerSystemFDSEntry(
-				null, "fdsName", "/app", "/endpoint", "schema"));
-
-		JSONAssert.assertEquals(
-			JSONUtil.putAll(
-				JSONUtil.put(
-					"autocompleteEnabled", false
-				).put(
-					"entityFieldType", "collection"
-				).put(
-					"id", "categoryIds"
-				).put(
 					"items",
 					JSONUtil.putAll(
 						JSONUtil.put(
@@ -980,7 +895,7 @@ public class SystemFDSSerializerTest {
 				).put(
 					"multiple", true
 				).put(
-					"preloadedData", JSONUtil.put("exclude", true)
+					"preloadedData", JSONUtil.put("exclude", false)
 				).put(
 					"type", "selection"
 				)
