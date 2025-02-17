@@ -91,10 +91,6 @@ public class LayoutsRemotePublisherMessageListener
 		try (SafeCloseable safeCloseable = initThreadLocals(
 				userId, parameterMap)) {
 
-			User user = _userLocalService.getUserById(userId);
-
-			CompanyThreadLocal.setCompanyId(user.getCompanyId());
-
 			_staging.copyRemoteLayouts(
 				sourceGroupId, privateLayout, layoutIdMap,
 				exportImportConfiguration.getName(), parameterMap,
