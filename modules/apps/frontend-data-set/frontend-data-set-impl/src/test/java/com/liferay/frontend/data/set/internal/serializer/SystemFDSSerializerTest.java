@@ -490,7 +490,6 @@ public class SystemFDSSerializerTest {
 
 		_registerServices(
 			_registerFDSFilter(
-				"fdsName",
 				new BaseClientExtensionFDSFilter() {
 
 					@Override
@@ -517,7 +516,8 @@ public class SystemFDSSerializerTest {
 						).build();
 					}
 
-				}),
+				},
+				"fdsName"),
 			_bundleContext.registerService(
 				FDSFilterContextContributor.class,
 				new ClientExtensionFDSFilterContextContributor(),
@@ -556,7 +556,6 @@ public class SystemFDSSerializerTest {
 
 		_registerServices(
 			_registerFDSFilter(
-				"fdsName",
 				_createFDSDateRangeFilter(
 					"createDate", "By Creation Date",
 					new DateFDSFilterItem(16, 3, 1977),
@@ -565,7 +564,8 @@ public class SystemFDSSerializerTest {
 						"from", new DateFDSFilterItem(30, 11, 1985)
 					).put(
 						"to", new DateFDSFilterItem(27, 5, 1995)
-					).build())),
+					).build()),
+				"fdsName"),
 			_bundleContext.registerService(
 				FDSFilterContextContributor.class,
 				new DateRangeFDSFilterContextContributor(),
@@ -636,17 +636,17 @@ public class SystemFDSSerializerTest {
 
 		_registerServices(
 			_registerFDSFilter(
-				"fdsName1",
 				_createFDSDateRangeFilter(
 					"createDate", "By Creation Date",
 					new DateFDSFilterItem(1, 1, 1980),
-					new DateFDSFilterItem(0, 0, 0), null)),
+					new DateFDSFilterItem(0, 0, 0), null),
+				"fdsName1"),
 			_registerFDSFilter(
-				"fdsName2",
 				_createFDSDateRangeFilter(
 					"modifiedDate", "By Modification Date",
 					new DateFDSFilterItem(1, 1, 1980),
-					new DateFDSFilterItem(0, 0, 0), null)),
+					new DateFDSFilterItem(0, 0, 0), null),
+				"fdsName2"),
 			_bundleContext.registerService(
 				FDSFilterContextContributor.class,
 				new DateRangeFDSFilterContextContributor(),
@@ -741,7 +741,6 @@ public class SystemFDSSerializerTest {
 
 		_registerServices(
 			_registerFDSFilter(
-				"fdsName",
 				new FDSFilter() {
 
 					@Override
@@ -764,7 +763,8 @@ public class SystemFDSSerializerTest {
 						return false;
 					}
 
-				}),
+				},
+				"fdsName"),
 			_registerSystemFDSEntry(
 				null, "fdsName", "/app", "/endpoint", "schema"));
 
@@ -796,7 +796,6 @@ public class SystemFDSSerializerTest {
 
 		_registerServices(
 			_registerFDSFilter(
-				"fdsName",
 				new BaseSelectionFDSFilter() {
 
 					@Override
@@ -847,7 +846,8 @@ public class SystemFDSSerializerTest {
 						return false;
 					}
 
-				}),
+				},
+				"fdsName"),
 			_bundleContext.registerService(
 				FDSFilterContextContributor.class,
 				new SelectionFDSFilterContextContributor(),
@@ -897,7 +897,6 @@ public class SystemFDSSerializerTest {
 
 		_registerServices(
 			_registerFDSFilter(
-				"fdsName",
 				new BaseSelectionFDSFilter() {
 
 					@Override
@@ -951,7 +950,8 @@ public class SystemFDSSerializerTest {
 						return true;
 					}
 
-				}),
+				},
+				"fdsName"),
 			_bundleContext.registerService(
 				FDSFilterContextContributor.class,
 				new SelectionFDSFilterContextContributor(),
@@ -1005,8 +1005,8 @@ public class SystemFDSSerializerTest {
 			new DateFDSFilterItem(0, 0, 0), null);
 
 		_registerServices(
-			_registerFDSFilter("fdsName1", dateRangeFDSFilter),
-			_registerFDSFilter("fdsName2", dateRangeFDSFilter),
+			_registerFDSFilter(dateRangeFDSFilter, "fdsName1"),
+			_registerFDSFilter(dateRangeFDSFilter, "fdsName2"),
 			_registerSystemFDSEntry(
 				null, "fdsName1", "/app", "/endpoint", "schema"),
 			_registerSystemFDSEntry(
@@ -1223,7 +1223,7 @@ public class SystemFDSSerializerTest {
 	}
 
 	private ServiceRegistration<FDSFilter> _registerFDSFilter(
-		String fdsName, FDSFilter fdsFilter) {
+		FDSFilter fdsFilter, String fdsName) {
 
 		return _bundleContext.registerService(
 			FDSFilter.class, fdsFilter,
