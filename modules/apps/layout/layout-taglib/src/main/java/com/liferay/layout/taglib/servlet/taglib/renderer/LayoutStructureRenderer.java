@@ -1210,9 +1210,8 @@ public class LayoutStructureRenderer {
 						 infoField.getInfoFieldType() instanceof
 							 MultiselectInfoFieldType)) {
 
-						jspWriter.write(
-							"<input name=\"checkboxNames\" type=\"hidden\"");
-						jspWriter.write("value=\"");
+						jspWriter.write("<input name=\"checkboxNames\" ");
+						jspWriter.write("type=\"hidden\" value=\"");
 						jspWriter.write(fieldName);
 						jspWriter.write("\">");
 					}
