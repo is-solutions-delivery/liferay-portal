@@ -43,13 +43,10 @@ import com.liferay.commerce.test.util.context.TestCommerceContext;
 import com.liferay.commerce.test.util.order.status.Test1CommerceOrderStatusImpl;
 import com.liferay.commerce.test.util.order.status.Test2CommerceOrderStatusImpl;
 import com.liferay.commerce.test.util.order.status.Test3CommerceOrderStatusImpl;
-import com.liferay.petra.lang.CentralizedThreadLocal;
-import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.RandomUtil;
-import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -62,7 +59,6 @@ import com.liferay.portal.kernel.test.rule.Sync;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
-import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.test.rule.Inject;
@@ -104,9 +100,6 @@ public class CommerceOrderEngineTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_safeCloseable = CompanyThreadLocal.setCompanyIdWithSafeCloseable(
-			TestPropsValues.getCompanyId());
-
 		_group = GroupTestUtil.addGroup();
 
 		_user = UserTestUtil.addUser();
@@ -157,10 +150,6 @@ public class CommerceOrderEngineTest {
 	@After
 	public void tearDown() throws PortalException {
 		_commerceOrderLocalService.deleteCommerceOrder(_commerceOrder);
-
-		CentralizedThreadLocal.clearShortLivedCentralizedThreadLocals();
-
-		_safeCloseable.close();
 	}
 
 	@Test
@@ -1179,7 +1168,6 @@ public class CommerceOrderEngineTest {
 	@Rule
 	public FrutillaRule frutillaRule = new FrutillaRule();
 
-	private static SafeCloseable _safeCloseable;
 	private static User _user;
 
 	private AccountEntry _accountEntry;

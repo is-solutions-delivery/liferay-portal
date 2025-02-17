@@ -34,8 +34,6 @@ import com.liferay.commerce.test.util.CommerceTestUtil;
 import com.liferay.commerce.test.util.context.TestCustomCommerceContextFactory;
 import com.liferay.commerce.test.util.context.TestCustomCommerceContextHttp;
 import com.liferay.commerce.util.CommerceAccountHelper;
-import com.liferay.petra.lang.CentralizedThreadLocal;
-import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.Country;
@@ -45,7 +43,6 @@ import com.liferay.portal.kernel.model.OrganizationConstants;
 import com.liferay.portal.kernel.model.Region;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.CountryLocalService;
@@ -64,7 +61,6 @@ import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
-import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -121,9 +117,6 @@ public class CommerceOrderTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_safeCloseable = CompanyThreadLocal.setCompanyIdWithSafeCloseable(
-			TestPropsValues.getCompanyId());
-
 		_group = GroupTestUtil.addGroup();
 		_user = UserTestUtil.addUser(true);
 
@@ -161,8 +154,6 @@ public class CommerceOrderTest {
 		_commerceOrderLocalService.deleteCommerceOrders(
 			_commerceChannel.getGroupId());
 
-		CentralizedThreadLocal.clearShortLivedCentralizedThreadLocals();
-
 		ComponentDescriptionDTO componentDescriptionDTO =
 			_serviceComponentRuntime.getComponentDescriptionDTO(
 				FrameworkUtil.getBundle(TestCustomCommerceContextFactory.class),
@@ -172,8 +163,6 @@ public class CommerceOrderTest {
 			componentDescriptionDTO);
 
 		voidPromise.getValue();
-
-		_safeCloseable.close();
 	}
 
 	@Test
@@ -1157,8 +1146,6 @@ public class CommerceOrderTest {
 	}
 
 	private static final int _MAX_CLAUSES_COUNT = 1024;
-
-	private static SafeCloseable _safeCloseable;
 
 	@Inject
 	private static ServiceComponentRuntime _serviceComponentRuntime;
