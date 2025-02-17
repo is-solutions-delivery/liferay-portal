@@ -389,8 +389,6 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 			return;
 		}
 
-		boolean selectFromDocumentLibrary = false;
-
 		String fileName = _getFileName(fileSourceType, value);
 
 		if (fileName != null) {
@@ -410,6 +408,8 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 		}
 
 		inputTemplateNode.addAttribute("fileNameI18n", fileNameI18n);
+
+		boolean selectFromDocumentLibrary = false;
 
 		if (fileSourceType ==
 				FileInfoFieldType.FileSourceType.DOCUMENTS_AND_MEDIA) {
