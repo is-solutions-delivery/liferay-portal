@@ -1121,7 +1121,7 @@ public class SystemFDSSerializerTest {
 
 	private FDSFilter _createFDSDateRangeFilter(
 		String id, String label, Map<String, Object> preloadedData,
-		DateFDSFilterItem min, DateFDSFilterItem max) {
+		DateFDSFilterItem minDateFDSFilterItem, DateFDSFilterItem maxDateFDSFilterItem) {
 
 		return new BaseDateRangeFDSFilter() {
 
@@ -1142,12 +1142,12 @@ public class SystemFDSSerializerTest {
 
 			@Override
 			public DateFDSFilterItem getMaxDateFDSFilterItem() {
-				return max;
+				return maxDateFDSFilterItem;
 			}
 
 			@Override
 			public DateFDSFilterItem getMinDateFDSFilterItem() {
-				return min;
+				return minDateFDSFilterItem;
 			}
 
 			@Override
