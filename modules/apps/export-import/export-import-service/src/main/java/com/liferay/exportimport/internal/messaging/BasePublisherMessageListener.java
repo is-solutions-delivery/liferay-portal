@@ -94,7 +94,4 @@ public abstract class BasePublisherMessageListener implements MessageListener {
 		};
 	}
 
-	protected void resetThreadLocals() {
-	}
-
 }
