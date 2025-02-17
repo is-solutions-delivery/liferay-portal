@@ -433,76 +433,70 @@ public class RestrictedLiferayObjectWrapperTest
 				objectWrapper.wrap(new TestBaseModel(123L))));
 
 		try (LogCapture logCapture = LoggerTestUtil.configureJDKLogger(
-				CompanyThreadLocal.class.getName(), Level.OFF)) {
+				CompanyThreadLocal.class.getName(), Level.OFF);
+			SafeCloseable safeCloseable =
+				CompanyThreadLocal.setCompanyIdWithSafeCloseable(
+					Long.valueOf(1))) {
 
-			try {
-				CompanyThreadLocal.setCompanyId(1L);
+			// Base model without company ID
 
-				// Base model without company ID
+			assertTemplateModel(
+				"123", stringModel -> stringModel.getAsString(),
+				StringModel.class.cast(
+					objectWrapper.wrap(
+						new TestBaseModel(123L) {
+
+							public Map<String, Function<TestBaseModel, Object>>
+								getAttributeGetterFunctions() {
+
+								return Collections.emptyMap();
+							}
+
+						})));
+
+			// Base model with company ID
+
+			assertTemplateModel(
+				"1", stringModel -> stringModel.getAsString(),
+				StringModel.class.cast(
+					objectWrapper.wrap(new TestBaseModel(1L))));
+
+			// Base model with wrong company ID
+
+			boolean companyRestrict = ReflectionTestUtil.getFieldValue(
+				PropsValues.class,
+				"TEMPLATE_ENGINE_FREEMARKER_COMPANY_RESTRICT");
+
+			if (companyRestrict) {
+				try {
+					objectWrapper.wrap(new TestBaseModel(123L));
+
+					Assert.fail();
+				}
+				catch (TemplateModelException templateModelException) {
+					Assert.assertEquals(
+						"Denied access to model object as it does not belong " +
+							"to current company 1",
+						templateModelException.getMessage());
+				}
+			}
+			else {
+				assertTemplateModel(
+					"123", stringModel -> stringModel.getAsString(),
+					StringModel.class.cast(
+						objectWrapper.wrap(new TestBaseModel(123L))));
+			}
+
+			// Base model with wrong company ID and disabled checking
+
+			try (SafeCloseable safeCloseable2 =
+					CompanyThreadLocal.
+						setInitializingPortalInstanceWithSafeCloseable(true)) {
 
 				assertTemplateModel(
 					"123", stringModel -> stringModel.getAsString(),
 					StringModel.class.cast(
-						objectWrapper.wrap(
-							new TestBaseModel(123L) {
-
-								public Map
-									<String, Function<TestBaseModel, Object>>
-										getAttributeGetterFunctions() {
-
-									return Collections.emptyMap();
-								}
-
-							})));
-
-				// Base model with company ID
-
-				assertTemplateModel(
-					"1", stringModel -> stringModel.getAsString(),
-					StringModel.class.cast(
-						objectWrapper.wrap(new TestBaseModel(1L))));
-
-				// Base model with wrong company ID
-
-				boolean companyRestrict = ReflectionTestUtil.getFieldValue(
-					PropsValues.class,
-					"TEMPLATE_ENGINE_FREEMARKER_COMPANY_RESTRICT");
-
-				if (companyRestrict) {
-					try {
-						objectWrapper.wrap(new TestBaseModel(123L));
-
-						Assert.fail();
-					}
-					catch (TemplateModelException templateModelException) {
-						Assert.assertEquals(
-							"Denied access to model object as it does not " +
-								"belong to current company 1",
-							templateModelException.getMessage());
-					}
-				}
-				else {
-					assertTemplateModel(
-						"123", stringModel -> stringModel.getAsString(),
-						StringModel.class.cast(
-							objectWrapper.wrap(new TestBaseModel(123L))));
-				}
-
-				// Base model with wrong company ID and disabled checking
-
-				try (SafeCloseable safeCloseable =
-						CompanyThreadLocal.
-							setInitializingPortalInstanceWithSafeCloseable(
-								true)) {
-
-					assertTemplateModel(
-						"123", stringModel -> stringModel.getAsString(),
-						StringModel.class.cast(
-							objectWrapper.wrap(new TestBaseModel(123L))));
-				}
-			}
-			finally {
-				CompanyThreadLocal.setCompanyId(0L);
+						objectWrapper.wrap(new TestBaseModel(123L))));
 			}
 		}
 	}
