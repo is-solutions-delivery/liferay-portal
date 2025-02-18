@@ -7605,10 +7605,10 @@ public class ObjectEntryResourceTest {
 				_OBJECT_FIELD_NAME_ATTACHMENT_DOCS_AND_MEDIA_SOURCE, ".folder"),
 			Http.Method.POST);
 
-		JSONObject virtualInstanceJSONObject = _addVirtualInstanceJSONObject();
+		JSONObject portalInstanceJSONObject = _addPortalInstanceJSONObject();
 
 		User adminUser = UserTestUtil.getAdminUser(
-			virtualInstanceJSONObject.getLong("companyId"));
+			portalInstanceJSONObject.getLong("companyId"));
 
 		ObjectDefinition objectDefinition =
 			ObjectDefinitionTestUtil.publishObjectDefinition(
@@ -8612,10 +8612,10 @@ public class ObjectEntryResourceTest {
 				objectRelationship1.getObjectDefinitionId1()),
 			_OBJECT_FIELD_NAME_TEXT, RandomTestUtil.randomString());
 
-		JSONObject virtualInstanceJSONObject = _addVirtualInstanceJSONObject();
+		JSONObject portalInstanceJSONObject = _addPortalInstanceJSONObject();
 
 		ObjectRelationship objectRelationship2 = _addObjectRelationship(
-			virtualInstanceJSONObject.getLong("companyId"));
+			portalInstanceJSONObject.getLong("companyId"));
 
 		HTTPTestUtil.customize(
 		).withBaseURL(
@@ -12811,7 +12811,7 @@ public class ObjectEntryResourceTest {
 		return UserLocalServiceUtil.updateUser(user);
 	}
 
-	private JSONObject _addVirtualInstanceJSONObject() throws Exception {
+	private JSONObject _addPortalInstanceJSONObject() throws Exception {
 		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
 			null, "headless-portal-instances/v1.0/portal-instances/able.com",
 			Http.Method.GET);
