@@ -146,6 +146,7 @@
 					</span>
 				</span>
 			</#if>
+
 			<#list categories as category>
 				<#if category.vocabulary?upper_case == VOCABULARY_PRODUCT_CATEGORY>
 					<span class="app-category bg-neutral-8 border-radius-small mb-1 mr-2 px-3 rounded-lg" title="${category.name}">
