@@ -9,8 +9,6 @@
 
 <%
 StagingGroupHelper stagingGroupHelper = StagingGroupHelperUtil.getStagingGroupHelper();
-
-boolean companyGroup = stagingGroupHelper.isCompanyGroup(group);
 %>
 
 <liferay-util:buffer
@@ -31,7 +29,7 @@ boolean companyGroup = stagingGroupHelper.isCompanyGroup(group);
 
 		PortletDataHandler portletDataHandler = portlet.getPortletDataHandlerInstance();
 
-		if (!portletDataHandler.isEnabled(company.getCompanyId()) || (portletDataHandler.isCompany() != companyGroup)) {
+		if (!portletDataHandler.isEnabled(company.getCompanyId()) || (portletDataHandler.isCompany() != stagingGroupHelper.isCompanyGroup(group))) {
 			continue;
 		}
 
@@ -243,7 +241,7 @@ html = html.trim();
 	<%= html %>
 </ul>
 
-<c:if test="<%= type.equals(Constants.EXPORT) && !companyGroup %>">
+<c:if test="<%= type.equals(Constants.EXPORT) && !stagingGroupHelper.isCompanyGroup(group) %>">
 	<aui:fieldset cssClass="content-options" label="for-each-of-the-selected-content-types,-export-their">
 		<span class="selected-labels" id="<portlet:namespace />selectedContentOptions"></span>
 
