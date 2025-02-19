@@ -40,16 +40,16 @@ public class GroupModelListener extends BaseModelListener<Group> {
 			}
 
 			_objectEntryFolderLocalService.addObjectEntryFolder(
-				"L_CONTENT_OBJECT_ENTRY_FOLDER",
+				"L_CONTENTS",
 				group.getCreatorUserId(), group.getGroupId(),
 				ObjectEntryFolderConstants.
 					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 				HashMapBuilder.put(
-					LocaleUtil.ENGLISH, "Content"
+					LocaleUtil.ENGLISH, "Contents"
 				).build(),
-				"Content", ServiceContextThreadLocal.getServiceContext());
+				"Contents", ServiceContextThreadLocal.getServiceContext());
 			_objectEntryFolderLocalService.addObjectEntryFolder(
-				"L_FILES_OBJECT_ENTRY_FOLDER",
+				"L_FILES",
 				group.getCreatorUserId(), group.getGroupId(),
 				ObjectEntryFolderConstants.
 					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
@@ -76,10 +76,10 @@ public class GroupModelListener extends BaseModelListener<Group> {
 			}
 
 			_objectEntryFolderLocalService.deleteObjectEntryFolder(
-				"L_CONTENT_OBJECT_ENTRY_FOLDER",
+				"L_CONTENTS",
 				group.getGroupId(), group.getCompanyId());
 			_objectEntryFolderLocalService.deleteObjectEntryFolder(
-				"L_FILES_OBJECT_ENTRY_FOLDER",
+				"L_FILES",
 				group.getGroupId(), group.getCompanyId());
 		}
 		catch (PortalException portalException) {

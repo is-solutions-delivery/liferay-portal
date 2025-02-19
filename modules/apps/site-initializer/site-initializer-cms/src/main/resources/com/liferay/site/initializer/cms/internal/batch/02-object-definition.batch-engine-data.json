@@ -30,29 +30,6 @@
 			],
 			"objectFields": [
 				{
-					"DBType": "String",
-					"businessType": "Text",
-					"defaultValue": "null",
-					"externalReferenceCode": "TITLE",
-					"indexed": true,
-					"indexedAsKeyword": false,
-					"indexedLanguageId": "en_US",
-					"label": {
-						"en_US": "Title"
-					},
-					"localized": true,
-					"name": "title",
-					"objectFieldSettings": [
-					],
-					"readOnly": "false",
-					"readOnlyConditionExpression": "",
-					"required": false,
-					"state": false,
-					"system": false,
-					"type": "String",
-					"unique": false
-				},
-				{
 					"DBType": "Long",
 					"businessType": "Attachment",
 					"defaultValue": "null",
@@ -90,9 +67,32 @@
 					"system": false,
 					"type": "Long",
 					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"defaultValue": "null",
+					"externalReferenceCode": "TITLE",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Title"
+					},
+					"localized": true,
+					"name": "title",
+					"objectFieldSettings": [
+					],
+					"readOnly": "false",
+					"readOnlyConditionExpression": "",
+					"required": false,
+					"state": false,
+					"system": false,
+					"type": "String",
+					"unique": false
 				}
 			],
-			"objectFolderExternalReferenceCode": "L_CMS_FILES",
+			"objectFolderExternalReferenceCode": "L_CMS_FILE_TYPES",
 			"panelCategoryKey": "",
 			"parameterRequired": false,
 			"pluralLabel": {
@@ -122,6 +122,27 @@
 			"name": "BasicWebContent",
 			"objectFields": [
 				{
+					"DBType": "Clob",
+					"businessType": "RichText",
+					"defaultValue": "null",
+					"externalReferenceCode": "BODY",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Body"
+					},
+					"localized": true,
+					"name": "body",
+					"readOnly": "false",
+					"readOnlyConditionExpression": "",
+					"required": false,
+					"state": false,
+					"system": false,
+					"type": "Clob",
+					"unique": false
+				},
+				{
 					"DBType": "String",
 					"businessType": "Text",
 					"defaultValue": "null",
@@ -141,30 +162,9 @@
 					"system": false,
 					"type": "String",
 					"unique": false
-				},
-				{
-					"DBType": "Clob",
-					"businessType": "RichText",
-					"defaultValue": "null",
-					"externalReferenceCode": "CONTENT",
-					"indexed": true,
-					"indexedAsKeyword": false,
-					"indexedLanguageId": "en_US",
-					"label": {
-						"en_US": "Content"
-					},
-					"localized": true,
-					"name": "content",
-					"readOnly": "false",
-					"readOnlyConditionExpression": "",
-					"required": false,
-					"state": false,
-					"system": false,
-					"type": "Clob",
-					"unique": false
 				}
 			],
-			"objectFolderExternalReferenceCode": "L_CMS_CONTENT",
+			"objectFolderExternalReferenceCode": "L_CMS_CONTENT_STRUCTURES",
 			"panelCategoryKey": "",
 			"parameterRequired": false,
 			"pluralLabel": {

@@ -23,11 +23,11 @@
 				"update": {
 				}
 			},
-			"externalReferenceCode": "L_CMS_CONTENT",
+			"externalReferenceCode": "L_CMS_CONTENT_STRUCTURES",
 			"label": {
-				"en_US": "CMS Content"
+				"en_US": "CMS Content Structures"
 			},
-			"name": "CMSContent",
+			"name": "CMSContentStructures",
 			"objectFolderItems": [
 			]
 		},
@@ -42,11 +42,11 @@
 				"update": {
 				}
 			},
-			"externalReferenceCode": "L_CMS_FILES",
+			"externalReferenceCode": "L_CMS_FILE_TYPES",
 			"label": {
-				"en_US": "CMS Files"
+				"en_US": "CMS File Types"
 			},
-			"name": "CMSFiles",
+			"name": "CMSFileTypes",
 			"objectFolderItems": [
 			]
 		}
