@@ -65,7 +65,7 @@ public class AMDLStoreConvertProcess implements DLStoreConvertProcess {
 				}
 				catch (PortalException portalException) {
 					_log.error(
-						"Unable to migrate file version id: " +
+						"Unable to migrate file version " +
 							amImageEntry.getFileVersionId(),
 						portalException);
 				}
