@@ -38,18 +38,18 @@ function download_hotfix {
 function download_license {
 	if command -v op &> /dev/null
 	then
-		echo "1Password CLI found. Downloading license..."
+		echo "Downloading license from 1Password."
 
 		op read --force "op://Customer Solutions/license.xml/notesPlain" --out-file ./liferay/deploy/license.xml
 
 		if [[ $? -eq 0 ]]
 		then
-			echo "License downloaded successfully."
+			echo "Downloaded license successfully."
 		else
-			echo "Error downloading license from 1Password."
+			echo "Unable to download license from 1Password."
 		fi
 	else
-		echo "1Password CLI not found. Skipping license download."
+		echo "Skipping the download of ./liferay/deploy/license.xml because the 1Password CLI is not available."
 	fi
 }
 
