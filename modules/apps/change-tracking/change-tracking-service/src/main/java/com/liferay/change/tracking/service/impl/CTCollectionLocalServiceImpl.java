@@ -893,7 +893,7 @@ public class CTCollectionLocalServiceImpl
 		Map<Long, List<CTEntry>> relatedCTEntriesMap = new HashMap<>();
 
 		for (CTEntry ctEntry : ctEntries) {
-			if (!_isMovable(fromCTCollectionId, ctEntry)) {
+			if (!_isMoveable(fromCTCollectionId, ctEntry)) {
 				return;
 			}
 
@@ -992,7 +992,7 @@ public class CTCollectionLocalServiceImpl
 		CTEntry ctEntry = _ctEntryPersistence.findByC_MCNI_MCPK(
 			fromCTCollectionId, modelClassNameId, modelClassPK);
 
-		if (!_isMovable(fromCTCollectionId, ctEntry)) {
+		if (!_isMoveable(fromCTCollectionId, ctEntry)) {
 			return;
 		}
 
@@ -1448,7 +1448,7 @@ public class CTCollectionLocalServiceImpl
 		};
 	}
 
-	private <T extends BaseModel<T>> boolean _isMovable(
+	private <T extends BaseModel<T>> boolean _isMoveable(
 		long ctCollectionId, CTEntry ctEntry) {
 
 		CTSQLModeThreadLocal.CTSQLMode ctSQLMode =
@@ -1459,7 +1459,7 @@ public class CTCollectionLocalServiceImpl
 			ctEntry.getModelClassNameId(), ctEntry.getModelClassPK());
 
 		if ((model == null) ||
-			!_ctDisplayRendererRegistry.isMovable(
+			!_ctDisplayRendererRegistry.isMoveable(
 				model, ctEntry.getModelClassNameId())) {
 
 			return false;
