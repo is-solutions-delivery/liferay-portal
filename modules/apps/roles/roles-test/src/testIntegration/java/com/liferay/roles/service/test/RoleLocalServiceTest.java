@@ -762,12 +762,12 @@ public class RoleLocalServiceTest {
 
 		String content = byteArrayOutputStream.toString();
 
+		Assert.assertTrue(content.contains("\"ASSIGN\""));
 		Assert.assertTrue(
 			content.contains(
 				"\"groupName\":\"" + group.getGroupKey() + "\""));
 		Assert.assertTrue(
 			content.contains("\"roleName\":\"" + role.getName() + "\""));
-		Assert.assertTrue(content.contains("\"ASSIGN\""));
 
 		byteArrayOutputStream.reset();
 
@@ -775,12 +775,12 @@ public class RoleLocalServiceTest {
 
 		content = byteArrayOutputStream.toString();
 
+		Assert.assertTrue(content.contains("\"UNASSIGN\""));
 		Assert.assertTrue(
 			content.contains(
 				"\"groupName\":\"" + group.getGroupKey() + "\""));
 		Assert.assertTrue(
 			content.contains("\"roleName\":\"" + role.getName() + "\""));
-		Assert.assertTrue(content.contains("\"UNASSIGN\""));
 
 		byteArrayOutputStream.reset();
 
@@ -790,12 +790,12 @@ public class RoleLocalServiceTest {
 
 		content = byteArrayOutputStream.toString();
 
+		Assert.assertTrue(content.contains("\"ASSIGN\""));
 		Assert.assertTrue(
 			content.contains(
 				"\"organizationName\":\"" + organization.getName() + "\""));
 		Assert.assertTrue(
 			content.contains("\"roleName\":\"" + role.getName() + "\""));
-		Assert.assertTrue(content.contains("\"ASSIGN\""));
 
 		byteArrayOutputStream.reset();
 
@@ -803,12 +803,12 @@ public class RoleLocalServiceTest {
 
 		content = byteArrayOutputStream.toString();
 
+		Assert.assertTrue(content.contains("\"UNASSIGN\""));
 		Assert.assertTrue(
 			content.contains(
 				"\"organizationName\":\"" + organization.getName() + "\""));
 		Assert.assertTrue(
 			content.contains("\"roleName\":\"" + role.getName() + "\""));
-		Assert.assertTrue(content.contains("\"UNASSIGN\""));
 
 		byteArrayOutputStream.reset();
 
@@ -818,12 +818,12 @@ public class RoleLocalServiceTest {
 
 		content = byteArrayOutputStream.toString();
 
+		Assert.assertTrue(content.contains("\"ASSIGN\""));
+		Assert.assertTrue(
+			content.contains("\"roleName\":\"" + role.getName() + "\""));
 		Assert.assertTrue(
 			content.contains(
 				"\"userEmailAddress\":\"" + user.getEmailAddress() + "\""));
-		Assert.assertTrue(
-			content.contains("\"roleName\":\"" + role.getName() + "\""));
-		Assert.assertTrue(content.contains("\"ASSIGN\""));
 
 		byteArrayOutputStream.reset();
 
@@ -831,12 +831,12 @@ public class RoleLocalServiceTest {
 
 		content = byteArrayOutputStream.toString();
 
+		Assert.assertTrue(content.contains("\"UNASSIGN\""));
+		Assert.assertTrue(
+			content.contains("\"roleName\":\"" + role.getName() + "\""));
 		Assert.assertTrue(
 			content.contains(
 				"\"userEmailAddress\":\"" + user.getEmailAddress() + "\""));
-		Assert.assertTrue(
-			content.contains("\"roleName\":\"" + role.getName() + "\""));
-		Assert.assertTrue(content.contains("\"UNASSIGN\""));
 
 		byteArrayOutputStream.reset();
 
@@ -846,12 +846,12 @@ public class RoleLocalServiceTest {
 
 		content = byteArrayOutputStream.toString();
 
+		Assert.assertTrue(content.contains("\"ASSIGN\""));
+		Assert.assertTrue(
+			content.contains("\"roleName\":\"" + role.getName() + "\""));
 		Assert.assertTrue(
 			content.contains(
 				"\"userGroupName\":\"" + userGroup.getName() + "\""));
-		Assert.assertTrue(
-			content.contains("\"roleName\":\"" + role.getName() + "\""));
-		Assert.assertTrue(content.contains("\"ASSIGN\""));
 
 		byteArrayOutputStream.reset();
 
@@ -859,12 +859,12 @@ public class RoleLocalServiceTest {
 
 		content = byteArrayOutputStream.toString();
 
+		Assert.assertTrue(content.contains("\"UNASSIGN\""));
+		Assert.assertTrue(
+			content.contains("\"roleName\":\"" + role.getName() + "\""));
 		Assert.assertTrue(
 			content.contains(
 				"\"userGroupName\":\"" + userGroup.getName() + "\""));
-		Assert.assertTrue(
-			content.contains("\"roleName\":\"" + role.getName() + "\""));
-		Assert.assertTrue(content.contains("\"UNASSIGN\""));
 	}
 
 	private static ResourceAction _arbitraryResourceAction;
