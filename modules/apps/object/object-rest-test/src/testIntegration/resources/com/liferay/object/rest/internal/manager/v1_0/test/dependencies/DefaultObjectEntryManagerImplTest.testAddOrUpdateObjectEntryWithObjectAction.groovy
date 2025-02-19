@@ -1,7 +1,7 @@
 import com.liferay.object.service.ObjectEntryLocalServiceUtil
 import com.liferay.portal.kernel.service.ServiceContext
 
-HashMap<String, Serializable> values = new HashMap<>();
+Map<String, Serializable> values = new HashMap<>();
 
 values.put("integerObjectField", integerObjectField + 1);
 
