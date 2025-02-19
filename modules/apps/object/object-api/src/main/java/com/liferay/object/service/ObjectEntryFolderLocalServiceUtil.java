@@ -125,11 +125,11 @@ public class ObjectEntryFolderLocalServiceUtil {
 	}
 
 	public static ObjectEntryFolder deleteObjectEntryFolder(
-			String externalReferenceCode, long companyId, long groupId)
+			String externalReferenceCode, long groupId, long companyId)
 		throws PortalException {
 
 		return getService().deleteObjectEntryFolder(
-			externalReferenceCode, companyId, groupId);
+			externalReferenceCode, groupId, companyId);
 	}
 
 	/**
@@ -315,11 +315,11 @@ public class ObjectEntryFolderLocalServiceUtil {
 	}
 
 	public static List<ObjectEntryFolder> getObjectEntryFolders(
-		long companyId, long groupId, long parentObjectEntryFolderId, int start,
+		long groupId, long companyId, long parentObjectEntryFolderId, int start,
 		int end) {
 
 		return getService().getObjectEntryFolders(
-			companyId, groupId, parentObjectEntryFolderId, start, end);
+			groupId, companyId, parentObjectEntryFolderId, start, end);
 	}
 
 	/**
@@ -365,10 +365,10 @@ public class ObjectEntryFolderLocalServiceUtil {
 	}
 
 	public static int getObjectEntryFoldersCount(
-		long companyId, long groupId, long parentObjectEntryFolderId) {
+		long groupId, long companyId, long parentObjectEntryFolderId) {
 
 		return getService().getObjectEntryFoldersCount(
-			companyId, groupId, parentObjectEntryFolderId);
+			groupId, companyId, parentObjectEntryFolderId);
 	}
 
 	/**

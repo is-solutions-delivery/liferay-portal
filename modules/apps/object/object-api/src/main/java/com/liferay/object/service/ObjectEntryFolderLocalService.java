@@ -125,8 +125,9 @@ public interface ObjectEntryFolderLocalService
 			ObjectEntryFolder objectEntryFolder)
 		throws PortalException;
 
+	@Indexable(type = IndexableType.REINDEX)
 	public ObjectEntryFolder deleteObjectEntryFolder(
-			String externalReferenceCode, long companyId, long groupId)
+			String externalReferenceCode, long groupId, long companyId)
 		throws PortalException;
 
 	/**
@@ -272,7 +273,7 @@ public interface ObjectEntryFolderLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public List<ObjectEntryFolder> getObjectEntryFolders(
-		long companyId, long groupId, long parentObjectEntryFolderId, int start,
+		long groupId, long companyId, long parentObjectEntryFolderId, int start,
 		int end);
 
 	/**
@@ -311,7 +312,7 @@ public interface ObjectEntryFolderLocalService
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public int getObjectEntryFoldersCount(
-		long companyId, long groupId, long parentObjectEntryFolderId);
+		long groupId, long companyId, long parentObjectEntryFolderId);
 
 	/**
 	 * Returns the OSGi service identifier.
@@ -328,7 +329,6 @@ public interface ObjectEntryFolderLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
-	@Indexable(type = IndexableType.REINDEX)
 	public ObjectEntryFolder updateObjectEntryFolder(
 			long userId, long objectEntryFolderId,
 			long parentObjectEntryFolderId, Map<Locale, String> labelMap,

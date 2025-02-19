@@ -128,11 +128,11 @@ public class ObjectEntryFolderLocalServiceWrapper
 
 	@Override
 	public com.liferay.object.model.ObjectEntryFolder deleteObjectEntryFolder(
-			String externalReferenceCode, long companyId, long groupId)
+			String externalReferenceCode, long groupId, long companyId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _objectEntryFolderLocalService.deleteObjectEntryFolder(
-			externalReferenceCode, companyId, groupId);
+			externalReferenceCode, groupId, companyId);
 	}
 
 	/**
@@ -352,11 +352,11 @@ public class ObjectEntryFolderLocalServiceWrapper
 	@Override
 	public java.util.List<com.liferay.object.model.ObjectEntryFolder>
 		getObjectEntryFolders(
-			long companyId, long groupId, long parentObjectEntryFolderId,
+			long groupId, long companyId, long parentObjectEntryFolderId,
 			int start, int end) {
 
 		return _objectEntryFolderLocalService.getObjectEntryFolders(
-			companyId, groupId, parentObjectEntryFolderId, start, end);
+			groupId, companyId, parentObjectEntryFolderId, start, end);
 	}
 
 	/**
@@ -409,10 +409,10 @@ public class ObjectEntryFolderLocalServiceWrapper
 
 	@Override
 	public int getObjectEntryFoldersCount(
-		long companyId, long groupId, long parentObjectEntryFolderId) {
+		long groupId, long companyId, long parentObjectEntryFolderId) {
 
 		return _objectEntryFolderLocalService.getObjectEntryFoldersCount(
-			companyId, groupId, parentObjectEntryFolderId);
+			groupId, companyId, parentObjectEntryFolderId);
 	}
 
 	/**
