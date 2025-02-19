@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 package com.liferay.learn;
-import com.liferay.client.extension.util.spring.boot.BaseRestController;
+import com.liferay.client.extension.util.spring.boot3.BaseRestController;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 import java.io.BufferedWriter;
@@ -43,7 +43,7 @@ public class DocumentsAndMediaDownloadRestController extends BaseRestController 
 				@Override
 				public void writeTo(OutputStream outputStream)
 					throws IOException {
-					_write(endDate, jwt, outputStream, startDate);
+					_write(jwt, outputStream);
 				}
 			}
 		);
@@ -59,31 +59,32 @@ public class DocumentsAndMediaDownloadRestController extends BaseRestController 
 				"Date Created", "Date Modified",
 				"Document Description", "Document Type",
 				"Document Folder ID", "File Name", "File Extension",
-				"Enconding Format", "External Reference Code",
-				"Key Words", "Number Of Comments",
+				"Encoding Format", "External Reference Code",
+				"Number Of Comments",
 				"Category Names", "Category Ids",
-				"Related Contents", "Rendered Contents",
 				"Side Id", "Size In Bytes"
 			).build())) {
 			int lastPage = 1;
 			for (int i = 1; i <= lastPage; i++) {
+
 				JSONObject jsonObject1 = new JSONObject(
 					get(
-						"Bearer " + jwt.getTokenValue(),
+						null,
 						StringBundler.concat(
-							"o/headless-delivery/v1.0/sites/", _siteGroupId,
+							"/o/headless-delivery/v1.0/sites/", _siteGroupId,
 							"/documents?pageSize=500&page=", i)));
 				JSONArray jsonArray = jsonObject1.getJSONArray("items");
 				for (int j = 0; j < jsonArray.length(); j++) {
 					JSONObject jsonObject2 = jsonArray.getJSONObject(j);
 					String categoryNames = "";
 					String categoryIds = "";
-					if(!jsonObject2.getJSONObject("taxonomyCategoryBriefs").isEmpty()) {
-						JSONObject categoryArr = jsonObject2.getJSONObject("taxonomyCategoryBriefs");
-						for (int k = 0; k < categoryArr.length; k++) {
-							categoryNames = categoryNames + categoryArr[k].taxonomyCategoryName;
-							categoryIds = categoryIds + categoryArr[k].taxonomyCategoryId;
-							if (k < (categoryArr.length - 1)){
+					if(!jsonObject2.isNull("taxonomyCategoryBriefs")) {
+						JSONArray categoryArray = jsonObject2.getJSONArray("taxonomyCategoryBriefs");
+						for (int k = 0; k < categoryArray.length(); k++) {
+							JSONObject categoryObject = categoryArray.getJSONObject(k);
+							categoryNames += categoryObject.get("taxonomyCategoryName").toString();
+							categoryIds += String.valueOf(categoryObject.getInt("taxonomyCategoryId"));
+							if (k < (categoryArray.length() - 1)){
 								categoryNames = categoryNames + ", ";
 								categoryIds = categoryIds + ", ";
 							}
@@ -92,26 +93,24 @@ public class DocumentsAndMediaDownloadRestController extends BaseRestController 
 					csvPrinter.printRecord(
 						jsonObject2.getString("contentUrl"),
 						jsonObject2.getString("title"),
-						jsonObject2.getString("id"),
-						jsonObject2.getJSONObject("creator").getString("name")),
-						jsonObject2.getJSONObject("creator").getString("id")),
+						jsonObject2.getInt("id"),
+						jsonObject2.getJSONObject("creator").getString("name"),
+						jsonObject2.getJSONObject("creator").getInt("id"),
 						jsonObject2.getString("dateCreated"),
 						jsonObject2.getString("dateModified"),
 						jsonObject2.getString("description"),
 						jsonObject2.getJSONObject("documentType").getString("name"),
-						jsonObject2.getString("documentFolderId"),
+						jsonObject2.getInt("documentFolderId"),
 						jsonObject2.getString("fileName"),
 						jsonObject2.getString("fileExtension"),
 						jsonObject2.getString("encodingFormat"),
 						jsonObject2.getString("externalReferenceCode"),
-						jsonObject2.getJSONArray("keywords"),
-						jsonObject2.getString("numberOfComments"),
+						jsonObject2.getInt("numberOfComments"),
 						categoryIds,
 						categoryNames,
-						jsonObject2.getJSONArray("relatedContents"),
-						jsonObject2.getJSONArray("renderedContents"),
-						jsonObject2.getString("siteId"),
-						jsonObject2.getString("sizeInBytes")
+						jsonObject2.getInt("siteId"),
+						jsonObject2.getInt("sizeInBytes")
+					);
 				}
 				lastPage = jsonObject1.getInt("lastPage");
 			}
