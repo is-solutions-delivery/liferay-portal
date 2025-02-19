@@ -85,8 +85,8 @@ public class ContactIndexerReindexTest {
 	protected void setUpContactFixture() throws Exception {
 		contactFixture = new ContactFixture(contactLocalService);
 
-		contactFixture.setUser(user);
 		contactFixture.setGroup(group);
+		contactFixture.setUser(user);
 
 		_contacts = contactFixture.getContacts();
 	}
