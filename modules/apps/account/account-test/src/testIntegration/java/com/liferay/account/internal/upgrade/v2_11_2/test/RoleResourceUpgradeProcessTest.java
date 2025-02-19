@@ -58,7 +58,6 @@ public class RoleResourceUpgradeProcessTest {
 	@Before
 	public void setUp() throws Exception {
 		_group = GroupTestUtil.addGroup();
-
 		_user = UserTestUtil.addUser();
 
 		_serviceContext = ServiceContextTestUtil.getServiceContext(
