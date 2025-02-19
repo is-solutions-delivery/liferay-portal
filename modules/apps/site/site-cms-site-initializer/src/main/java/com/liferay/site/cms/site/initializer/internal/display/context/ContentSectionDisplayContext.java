@@ -85,7 +85,8 @@ public class ContentSectionDisplayContext {
 		return HashMapBuilder.<String, Object>put(
 			"description",
 			LanguageUtil.get(
-				_httpServletRequest, "click-new-to-create-your-first-content")
+				_httpServletRequest,
+				"click-new-to-create-your-first-piece-of-content")
 		).put(
 			"image", "/states/cms_empty_state_content.svg"
 		).put(
