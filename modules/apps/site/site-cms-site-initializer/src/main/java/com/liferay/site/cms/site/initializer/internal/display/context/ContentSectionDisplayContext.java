@@ -38,13 +38,12 @@ public class ContentSectionDisplayContext {
 	public String getAPIURL() {
 		StringBundler sb = new StringBundler(3);
 
-		sb.append("/o/search/v1.0/search?emptySearch=true");
-		sb.append("&nestedFields=embedded&entryClassNames=");
-
+		sb.append("/o/search/v1.0/search?emptySearch=true&entryClassNames=");
 		sb.append(
 			ArrayUtil.toString(
 				_cmsSiteInitializerConfiguration.contentClassNames(),
 				StringPool.BLANK));
+		sb.append("&nestedFields=embedded");
 
 		return sb.toString();
 	}
