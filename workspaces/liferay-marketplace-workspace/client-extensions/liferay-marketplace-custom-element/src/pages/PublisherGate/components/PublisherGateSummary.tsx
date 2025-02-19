@@ -38,14 +38,15 @@ const PublisherGateSummary: React.FC<PublisherGateSummaryProps> = ({
 							{i18n.translate(
 								'by-requesting-a-publisher-account-you-agree-to-the'
 							)}
-							&nbsp;
-							<strong>{i18n.translate('content-policy')}</strong>
-							.&nbsp;{i18n.translate('liferay-s')}&nbsp;
-							<strong>
-								{i18n.translate('terms-of-service')}
-							</strong>
+							&nbsp;{i18n.translate('liferay-s')}&nbsp;
+							<a href='https://www.liferay.com/legal/marketplace-terms-of-service' target="_blank">
+								<strong>{i18n.translate('terms-of-service')}</strong>
+							</a>
 							{` ${i18n.translate('and')} `}&nbsp;
-							<strong>{i18n.translate('privacy-policy')}</strong>
+							<a href='https://www.liferay.com/privacy-policy' target="_blank">
+								<strong>{i18n.translate('privacy-policy')}</strong>
+							</a>
+							
 							&nbsp;
 							{i18n.translate(
 								'apply-to-your-use-of-this-service-the-name-on-your-liferay-account-will-be-used-in-this-liferay-marketplace-publisher-profile-it-may-appear-where-you-contribute-and-be-changed-at-any-time'
