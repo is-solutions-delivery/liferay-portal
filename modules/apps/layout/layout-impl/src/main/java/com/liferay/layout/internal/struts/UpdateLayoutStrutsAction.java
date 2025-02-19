@@ -404,11 +404,10 @@ public class UpdateLayoutStrutsAction implements StrutsAction {
 			themeDisplay.getPermissionChecker(), portletId,
 			ActionKeys.ADD_TO_PAGE);
 
-		Portlet portlet = _portletLocalService.getPortletById(
-			themeDisplay.getCompanyId(), portletId);
-
 		LayoutTypePortlet layoutTypePortlet =
 			themeDisplay.getLayoutTypePortlet();
+		Portlet portlet = _portletLocalService.getPortletById(
+			themeDisplay.getCompanyId(), portletId);
 
 		if (!portlet.isActive() || !portlet.isInclude() ||
 			(!portlet.isInstanceable() &&
