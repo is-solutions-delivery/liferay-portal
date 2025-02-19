@@ -39,6 +39,9 @@ public class GroupModelListener extends BaseModelListener<Group> {
 				return;
 			}
 
+			// TODO We need to protect L_ in ObjectEntryFolderLocalServiceImpl
+			// via a thread local
+
 			_objectEntryFolderLocalService.addObjectEntryFolder(
 				"L_CONTENTS",
 				group.getCreatorUserId(), group.getGroupId(),
