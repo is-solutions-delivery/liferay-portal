@@ -764,8 +764,7 @@ public class RoleLocalServiceTest {
 
 		Assert.assertTrue(content.contains("\"ASSIGN\""));
 		Assert.assertTrue(
-			content.contains(
-				"\"groupName\":\"" + group.getGroupKey() + "\""));
+			content.contains("\"groupName\":\"" + group.getGroupKey() + "\""));
 		Assert.assertTrue(
 			content.contains("\"roleName\":\"" + role.getName() + "\""));
 
@@ -777,8 +776,7 @@ public class RoleLocalServiceTest {
 
 		Assert.assertTrue(content.contains("\"UNASSIGN\""));
 		Assert.assertTrue(
-			content.contains(
-				"\"groupName\":\"" + group.getGroupKey() + "\""));
+			content.contains("\"groupName\":\"" + group.getGroupKey() + "\""));
 		Assert.assertTrue(
 			content.contains("\"roleName\":\"" + role.getName() + "\""));
 
