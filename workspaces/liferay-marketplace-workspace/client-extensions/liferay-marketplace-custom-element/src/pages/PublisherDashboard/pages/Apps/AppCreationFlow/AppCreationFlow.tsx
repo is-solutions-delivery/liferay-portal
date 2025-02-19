@@ -3,31 +3,32 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
-import {AppFlowList} from '../../../../../components/NewAppFlowList/AppFlowList';
-import {initialFLowListItems} from './AppCreationFlowUtil';
-import {ChoosePricingModelPage} from './ChoosePricingModelPage/ChoosePricingModelPage';
-import {CreateNewAppPage} from './CreateNewAppPage/CreateNewAppPage';
-import {InformLicensingTermsPage} from './InformLicensingTermsPage/InformLicensingTermsPage';
-import {InformLicensingTermsPricePage} from './InformLicensingTermsPage/InformLicensingTermsPricePage';
-import {ProvideAppBuildPage} from './ProvideAppBuildPage/ProvideAppBuildPage';
-import {ProvideAppSupportAndHelpPage} from './ProvideAppSupportAndHelpPage/ProvideAppSupportAndHelpPage';
-import {ProvideVersionDetailsPage} from './ProvideVersionDetailsPage/ProvideVersionDetailsPage';
-import {ReviewAndSubmitAppPage} from './ReviewAndSubmitAppPage/ReviewAndSubmitAppPage';
-import {CustomizeAppStorefrontPage} from './StorefrontPage/CustomizeAppStorefrontPage';
+import { AppFlowList } from '../../../../../components/NewAppFlowList/AppFlowList';
+import { initialFLowListItems } from './AppCreationFlowUtil';
+import { ChoosePricingModelPage } from './ChoosePricingModelPage/ChoosePricingModelPage';
+import { CreateNewAppPage } from './CreateNewAppPage/CreateNewAppPage';
+import { InformLicensingTermsPage } from './InformLicensingTermsPage/InformLicensingTermsPage';
+import { InformLicensingTermsPricePage } from './InformLicensingTermsPage/InformLicensingTermsPricePage';
+import { ProvideAppBuildPage } from './ProvideAppBuildPage/ProvideAppBuildPage';
+import { ProvideAppSupportAndHelpPage } from './ProvideAppSupportAndHelpPage/ProvideAppSupportAndHelpPage';
+import { ProvideVersionDetailsPage } from './ProvideVersionDetailsPage/ProvideVersionDetailsPage';
+import { ReviewAndSubmitAppPage } from './ReviewAndSubmitAppPage/ReviewAndSubmitAppPage';
+import { CustomizeAppStorefrontPage } from './StorefrontPage/CustomizeAppStorefrontPage';
 
 import './AppCreationFlow.scss';
 
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import AppToolbar from '../../../../../components/AppPublish/Navbar';
 import Loading from '../../../../../components/Loading';
-import {useAccount} from '../../../../../hooks/data/useAccounts';
-import {Liferay} from '../../../../../liferay/liferay';
-import {getCategories, getVocabularies} from '../../../../../utils/api';
-import {useAppContext} from './AppContext/AppManageState';
-import {DefineAppProfilePage} from './DefineAppProfilePage/DefineAppProfilePage';
+import { useAccount } from '../../../../../hooks/data/useAccounts';
+import { Liferay } from '../../../../../liferay/liferay';
+import { getCategories, getVocabularies } from '../../../../../utils/api';
+import { useAppContext } from './AppContext/AppManageState';
+import { DefineAppProfilePage } from './DefineAppProfilePage/DefineAppProfilePage';
+import AppType from './AppType/Apptype';
 
 type SetAppFlowListStateProps = {
 	checkedItems?: string[];
@@ -42,8 +43,8 @@ type VocabDropdownItem = {
 	checked: boolean;
 } & Categories;
 
-export function AppCreationFlow({catalogId}: AppCreationFlowProps) {
-	const [{appERC, appLogo, appName, appProductId, priceModel}] =
+export function AppCreationFlow({ catalogId }: AppCreationFlowProps) {
+	const [{ appERC, appLogo, appName, appProductId, priceModel }] =
 		useAppContext();
 	const [appFlowListItems, setAppFlowListItems] =
 		useState(initialFLowListItems);
@@ -53,7 +54,7 @@ export function AppCreationFlow({catalogId}: AppCreationFlowProps) {
 	const [categories, setCategories] = useState<VocabDropdownItem[]>([]);
 	const [tags, setTags] = useState<VocabDropdownItem[]>([]);
 
-	const {data: account} = useAccount();
+	const { data: account } = useAccount();
 	const navigate = useNavigate();
 
 	const setAppFlowListState = ({
@@ -97,7 +98,7 @@ export function AppCreationFlow({catalogId}: AppCreationFlowProps) {
 			let tagVocabId = 0;
 
 			vocabulariesResponse.items.forEach(
-				(vocab: {id: number; name: string}) => {
+				(vocab: { id: number; name: string }) => {
 					if (vocab.name === 'Marketplace App Category') {
 						categoryVocabId = vocab.id;
 					}
@@ -115,7 +116,7 @@ export function AppCreationFlow({catalogId}: AppCreationFlowProps) {
 			const categoriesList = await getCategories({
 				vocabId: categoryVocabId,
 			});
-			const tagsList = await getCategories({vocabId: tagVocabId});
+			const tagsList = await getCategories({ vocabId: tagVocabId });
 
 			const productTypeList = await getCategories({
 				vocabId: productTypeVocabId,
@@ -220,6 +221,31 @@ export function AppCreationFlow({catalogId}: AppCreationFlowProps) {
 								productType={productType as Categories}
 								setLoading={setLoading}
 								tags={tags}
+							/>
+						)}
+
+						{currentFlow === 'build' && (
+							<AppType
+								onClickBack={() => {
+									setAppFlowListState({
+										checkedItems: ['create'],
+										selectedItem: 'profile',
+									});
+
+									setCurrentFlow('profile');
+								}}
+								onClickContinue={() => {
+									setAppFlowListState({
+										checkedItems: [
+											'create',
+											'profile',
+											'build',
+										],
+										selectedItem: 'storefront',
+									});
+
+									setCurrentFlow('storefront');
+								}}
 							/>
 						)}
 

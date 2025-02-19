@@ -7,14 +7,14 @@ import ClayIcon from '@clayui/icon';
 import DOMPurify from 'dompurify';
 
 import brightnessEmptyIcon from '../../../../../../assets/icons/brightness_empty_icon.svg';
-import {CardLink} from '../../../../../../components/Card/CardLink';
-import {CardView} from '../../../../../../components/Card/CardView';
+import { CardLink } from '../../../../../../components/Card/CardLink';
+import { CardView } from '../../../../../../components/Card/CardView';
 import LicensePriceChildren from '../../../../../../components/LicensePriceCard/LicensePriceChildren';
-import {Tag} from '../../../../../../components/Tag/Tag';
+import { Tag } from '../../../../../../components/Tag/Tag';
 import i18n from '../../../../../../i18n';
-import {removeUnnecessaryURLString} from '../../../../../../utils/string';
-import {CardSection} from './CardSection';
-import {App} from './ReviewAndSubmitAppPageUtil';
+import { removeUnnecessaryURLString } from '../../../../../../utils/string';
+import { CardSection } from './CardSection';
+import { App } from './ReviewAndSubmitAppPageUtil';
 
 import './CardSectionsBody.scss';
 
@@ -70,11 +70,11 @@ export function CardSectionsBody({
 							description={
 								isCloud
 									? i18n.translate(
-											'create-a-cloud-app-to-be-delivered-as-a-live-service'
-										)
+										'create-a-cloud-app-to-be-delivered-as-a-live-service'
+									)
 									: i18n.translate(
-											'create-a-dxp-app-to-be-delivered-as-a-download'
-										)
+										'create-a-dxp-app-to-be-delivered-as-a-download'
+									)
 							}
 							icon={isCloud ? 'check-circle' : 'times-circle'}
 							title={isCloud ? 'Yes' : 'No'}
@@ -110,6 +110,22 @@ export function CardSectionsBody({
 			{isApp && (
 				<>
 					<CardSection required sectionName="Build">
+						<div className="card-section-body-section-file">
+							<div className="card-section-body-section-file-container">
+								<ClayIcon
+									aria-label="Folder Icon"
+									className="card-section-body-section-file-container-icon"
+									symbol="document-text"
+								/>
+							</div>
+
+							<span className="card-section-body-section-file-name ml-3">
+								{app?.attachmentTitle}
+							</span>
+						</div>
+					</CardSection>
+
+					<CardSection required sectionName="Type">
 						<div className="card-section-body-section-file">
 							<div className="card-section-body-section-file-container">
 								<ClayIcon
@@ -173,7 +189,7 @@ export function CardSectionsBody({
 
 			<CardSection required sectionName="Storefront">
 				<div>
-					{app?.storefront?.map(({id, priority, src, title}) => (
+					{app?.storefront?.map(({ id, priority, src, title }) => (
 						<div
 							className="align-items-center card-section-body-section-files d-flex"
 							key={id}
@@ -228,7 +244,7 @@ export function CardSectionsBody({
 					</CardSection>
 					<CardSection required sectionName="Support & Help">
 						{app?.supportAndHelp.map(
-							({icon, link, title}, index) => (
+							({ icon, link, title }, index) => (
 								<CardLink
 									description={link as string}
 									icon={icon}
