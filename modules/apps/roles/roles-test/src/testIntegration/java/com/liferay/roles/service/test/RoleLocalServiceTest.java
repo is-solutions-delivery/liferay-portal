@@ -111,7 +111,7 @@ public class RoleLocalServiceTest {
 
 	@Test
 	@TestInfo("LPS-159272")
-	public void testAddGroupRoleLoggingAuditMessageProcessor()
+	public void testAddGroupRoleWithLoggingAuditMessageProcessor()
 		throws Exception {
 
 		PrintStream printStream = System.out;
@@ -127,124 +127,7 @@ public class RoleLocalServiceTest {
 						"outputToConsole", true
 					).build())) {
 
-			ByteArrayOutputStream byteArrayOutputStream =
-				new ByteArrayOutputStream();
-
-			System.setOut(new PrintStream(byteArrayOutputStream));
-
-			Group group = GroupTestUtil.addGroup();
-
-			group.setSite(true);
-
-			group = _groupLocalService.updateGroup(group);
-
-			_roleLocalService.addGroupRole(group.getGroupId(), role);
-
-			String logContent = byteArrayOutputStream.toString();
-
-			Assert.assertTrue(
-				logContent.contains(
-					"\"groupName\":\"" + group.getGroupKey() + "\""));
-			Assert.assertTrue(
-				logContent.contains("\"roleName\":\"" + role.getName() + "\""));
-			Assert.assertTrue(logContent.contains("\"ASSIGN\""));
-
-			byteArrayOutputStream.reset();
-
-			_roleLocalService.deleteGroupRole(group.getGroupId(), role);
-
-			logContent = byteArrayOutputStream.toString();
-
-			Assert.assertTrue(
-				logContent.contains(
-					"\"groupName\":\"" + group.getGroupKey() + "\""));
-			Assert.assertTrue(
-				logContent.contains("\"roleName\":\"" + role.getName() + "\""));
-			Assert.assertTrue(logContent.contains("\"UNASSIGN\""));
-
-			byteArrayOutputStream.reset();
-
-			Organization organization = OrganizationTestUtil.addOrganization();
-
-			_roleLocalService.addGroupRole(organization.getGroupId(), role);
-
-			logContent = byteArrayOutputStream.toString();
-
-			Assert.assertTrue(
-				logContent.contains(
-					"\"organizationName\":\"" + organization.getName() + "\""));
-			Assert.assertTrue(
-				logContent.contains("\"roleName\":\"" + role.getName() + "\""));
-			Assert.assertTrue(logContent.contains("\"ASSIGN\""));
-
-			byteArrayOutputStream.reset();
-
-			_roleLocalService.deleteGroupRole(organization.getGroupId(), role);
-
-			logContent = byteArrayOutputStream.toString();
-
-			Assert.assertTrue(
-				logContent.contains(
-					"\"organizationName\":\"" + organization.getName() + "\""));
-			Assert.assertTrue(
-				logContent.contains("\"roleName\":\"" + role.getName() + "\""));
-			Assert.assertTrue(logContent.contains("\"UNASSIGN\""));
-
-			byteArrayOutputStream.reset();
-
-			User user = TestPropsValues.getUser();
-
-			_roleLocalService.addUserRole(user.getUserId(), role);
-
-			logContent = byteArrayOutputStream.toString();
-
-			Assert.assertTrue(
-				logContent.contains(
-					"\"userEmailAddress\":\"" + user.getEmailAddress() + "\""));
-			Assert.assertTrue(
-				logContent.contains("\"roleName\":\"" + role.getName() + "\""));
-			Assert.assertTrue(logContent.contains("\"ASSIGN\""));
-
-			byteArrayOutputStream.reset();
-
-			_roleLocalService.deleteUserRole(user.getUserId(), role);
-
-			logContent = byteArrayOutputStream.toString();
-
-			Assert.assertTrue(
-				logContent.contains(
-					"\"userEmailAddress\":\"" + user.getEmailAddress() + "\""));
-			Assert.assertTrue(
-				logContent.contains("\"roleName\":\"" + role.getName() + "\""));
-			Assert.assertTrue(logContent.contains("\"UNASSIGN\""));
-
-			byteArrayOutputStream.reset();
-
-			UserGroup userGroup = UserGroupTestUtil.addUserGroup();
-
-			_roleLocalService.addGroupRole(userGroup.getGroupId(), role);
-
-			logContent = byteArrayOutputStream.toString();
-
-			Assert.assertTrue(
-				logContent.contains(
-					"\"userGroupName\":\"" + userGroup.getName() + "\""));
-			Assert.assertTrue(
-				logContent.contains("\"roleName\":\"" + role.getName() + "\""));
-			Assert.assertTrue(logContent.contains("\"ASSIGN\""));
-
-			byteArrayOutputStream.reset();
-
-			_roleLocalService.deleteGroupRole(userGroup.getGroupId(), role);
-
-			logContent = byteArrayOutputStream.toString();
-
-			Assert.assertTrue(
-				logContent.contains(
-					"\"userGroupName\":\"" + userGroup.getName() + "\""));
-			Assert.assertTrue(
-				logContent.contains("\"roleName\":\"" + role.getName() + "\""));
-			Assert.assertTrue(logContent.contains("\"UNASSIGN\""));
+			_testAddGroupRoleWithLoggingAuditMessageProcessor(role);
 		}
 		finally {
 			System.setOut(printStream);
@@ -858,6 +741,129 @@ public class RoleLocalServiceTest {
 		_team = _teamLocalService.addTeam(
 			user.getUserId(), _organization.getGroupId(),
 			RandomTestUtil.randomString(), null, new ServiceContext());
+	}
+
+	private void _testAddGroupRoleWithLoggingAuditMessageProcessor(Role role)
+		throws Exception {
+
+		ByteArrayOutputStream byteArrayOutputStream =
+			new ByteArrayOutputStream();
+
+		System.setOut(new PrintStream(byteArrayOutputStream));
+
+		Group group = GroupTestUtil.addGroup();
+
+		group.setSite(true);
+
+		group = _groupLocalService.updateGroup(group);
+
+		_roleLocalService.addGroupRole(group.getGroupId(), role);
+
+		String logContent = byteArrayOutputStream.toString();
+
+		Assert.assertTrue(
+			logContent.contains(
+				"\"groupName\":\"" + group.getGroupKey() + "\""));
+		Assert.assertTrue(
+			logContent.contains("\"roleName\":\"" + role.getName() + "\""));
+		Assert.assertTrue(logContent.contains("\"ASSIGN\""));
+
+		byteArrayOutputStream.reset();
+
+		_roleLocalService.deleteGroupRole(group.getGroupId(), role);
+
+		logContent = byteArrayOutputStream.toString();
+
+		Assert.assertTrue(
+			logContent.contains(
+				"\"groupName\":\"" + group.getGroupKey() + "\""));
+		Assert.assertTrue(
+			logContent.contains("\"roleName\":\"" + role.getName() + "\""));
+		Assert.assertTrue(logContent.contains("\"UNASSIGN\""));
+
+		byteArrayOutputStream.reset();
+
+		Organization organization = OrganizationTestUtil.addOrganization();
+
+		_roleLocalService.addGroupRole(organization.getGroupId(), role);
+
+		logContent = byteArrayOutputStream.toString();
+
+		Assert.assertTrue(
+			logContent.contains(
+				"\"organizationName\":\"" + organization.getName() + "\""));
+		Assert.assertTrue(
+			logContent.contains("\"roleName\":\"" + role.getName() + "\""));
+		Assert.assertTrue(logContent.contains("\"ASSIGN\""));
+
+		byteArrayOutputStream.reset();
+
+		_roleLocalService.deleteGroupRole(organization.getGroupId(), role);
+
+		logContent = byteArrayOutputStream.toString();
+
+		Assert.assertTrue(
+			logContent.contains(
+				"\"organizationName\":\"" + organization.getName() + "\""));
+		Assert.assertTrue(
+			logContent.contains("\"roleName\":\"" + role.getName() + "\""));
+		Assert.assertTrue(logContent.contains("\"UNASSIGN\""));
+
+		byteArrayOutputStream.reset();
+
+		User user = TestPropsValues.getUser();
+
+		_roleLocalService.addUserRole(user.getUserId(), role);
+
+		logContent = byteArrayOutputStream.toString();
+
+		Assert.assertTrue(
+			logContent.contains(
+				"\"userEmailAddress\":\"" + user.getEmailAddress() + "\""));
+		Assert.assertTrue(
+			logContent.contains("\"roleName\":\"" + role.getName() + "\""));
+		Assert.assertTrue(logContent.contains("\"ASSIGN\""));
+
+		byteArrayOutputStream.reset();
+
+		_roleLocalService.deleteUserRole(user.getUserId(), role);
+
+		logContent = byteArrayOutputStream.toString();
+
+		Assert.assertTrue(
+			logContent.contains(
+				"\"userEmailAddress\":\"" + user.getEmailAddress() + "\""));
+		Assert.assertTrue(
+			logContent.contains("\"roleName\":\"" + role.getName() + "\""));
+		Assert.assertTrue(logContent.contains("\"UNASSIGN\""));
+
+		byteArrayOutputStream.reset();
+
+		UserGroup userGroup = UserGroupTestUtil.addUserGroup();
+
+		_roleLocalService.addGroupRole(userGroup.getGroupId(), role);
+
+		logContent = byteArrayOutputStream.toString();
+
+		Assert.assertTrue(
+			logContent.contains(
+				"\"userGroupName\":\"" + userGroup.getName() + "\""));
+		Assert.assertTrue(
+			logContent.contains("\"roleName\":\"" + role.getName() + "\""));
+		Assert.assertTrue(logContent.contains("\"ASSIGN\""));
+
+		byteArrayOutputStream.reset();
+
+		_roleLocalService.deleteGroupRole(userGroup.getGroupId(), role);
+
+		logContent = byteArrayOutputStream.toString();
+
+		Assert.assertTrue(
+			logContent.contains(
+				"\"userGroupName\":\"" + userGroup.getName() + "\""));
+		Assert.assertTrue(
+			logContent.contains("\"roleName\":\"" + role.getName() + "\""));
+		Assert.assertTrue(logContent.contains("\"UNASSIGN\""));
 	}
 
 	private static ResourceAction _arbitraryResourceAction;
