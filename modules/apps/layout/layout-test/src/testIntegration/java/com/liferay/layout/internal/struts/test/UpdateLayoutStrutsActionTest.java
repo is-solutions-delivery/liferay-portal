@@ -66,7 +66,7 @@ public class UpdateLayoutStrutsActionTest {
 
 	@Test
 	@TestInfo("LPD-49304")
-	public void testAddPortletToLayout() throws Exception {
+	public void testExecute() throws Exception {
 		MockHttpServletRequest mockHttpServletRequest =
 			_getMockHttpServletRequest();
 		MockHttpServletResponse mockHttpServletResponse =
