@@ -181,7 +181,7 @@ public class ObjectEntryFolderLocalServiceImpl
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public ObjectEntryFolder deleteObjectEntryFolder(
-			String externalReferenceCode, long companyId, long groupId)
+			String externalReferenceCode, long groupId, long companyId)
 		throws PortalException {
 
 		ObjectEntryFolder objectEntryFolder =
@@ -194,7 +194,7 @@ public class ObjectEntryFolderLocalServiceImpl
 
 	@Override
 	public List<ObjectEntryFolder> getObjectEntryFolders(
-		long companyId, long groupId, long parentObjectEntryFolderId, int start,
+		long groupId, long companyId, long parentObjectEntryFolderId, int start,
 		int end) {
 
 		return objectEntryFolderPersistence.findByG_C_P(
@@ -203,7 +203,7 @@ public class ObjectEntryFolderLocalServiceImpl
 
 	@Override
 	public int getObjectEntryFoldersCount(
-		long companyId, long groupId, long parentObjectEntryFolderId) {
+		long groupId, long companyId, long parentObjectEntryFolderId) {
 
 		return objectEntryFolderPersistence.countByG_C_P(
 			groupId, companyId, parentObjectEntryFolderId);
@@ -251,7 +251,7 @@ public class ObjectEntryFolderLocalServiceImpl
 	}
 
 	private void _validateExternalReferenceCode(
-		String externalReferenceCode, long companyId, long groupId) {
+		String externalReferenceCode, long groupId, long companyId) {
 
 		ObjectEntryFolder objectEntryFolder =
 			objectEntryFolderPersistence.fetchByERC_G_C(
@@ -266,7 +266,7 @@ public class ObjectEntryFolderLocalServiceImpl
 	}
 
 	private void _validateName(
-			long companyId, long groupId, long objectEntryFolderId,
+			long groupId, long companyId, long objectEntryFolderId,
 			long parentObjectEntryFolderId, String name)
 		throws PortalException {
 

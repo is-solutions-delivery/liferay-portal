@@ -77,10 +77,10 @@ public class GroupModelListener extends BaseModelListener<Group> {
 
 			_objectEntryFolderLocalService.deleteObjectEntryFolder(
 				"L_CONTENT_OBJECT_ENTRY_FOLDER",
-				group.getCompanyId(), group.getGroupId());
+				group.getGroupId(), group.getCompanyId());
 			_objectEntryFolderLocalService.deleteObjectEntryFolder(
 				"L_FILES_OBJECT_ENTRY_FOLDER",
-				group.getCompanyId(), group.getGroupId());
+				group.getGroupId(), group.getCompanyId());
 		}
 		catch (PortalException portalException) {
 			throw new ModelListenerException(portalException);
