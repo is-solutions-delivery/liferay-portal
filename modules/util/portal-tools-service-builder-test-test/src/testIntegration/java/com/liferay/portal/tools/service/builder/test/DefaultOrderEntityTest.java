@@ -44,16 +44,34 @@ public class DefaultOrderEntityTest {
 	@Test
 	public void test() {
 
-		// Undefined
+		// Defined
 
 		String name = RandomTestUtil.randomString();
 		Date modifiedDate1 = new Date();
 
-		UndefinedDefaultOrderEntry undefinedDefaultOrderEntry1 =
-			_createUndefinedDefaultOrderEntry(1, modifiedDate1, name);
+		DefinedDefaultOrderEntry definedDefaultOrderEntry1 =
+			_createDefinedDefaultOrderEntry(1, modifiedDate1, name);
 
 		Date modifiedDate2 = new Date(modifiedDate1.getTime() - 1000);
 
+		DefinedDefaultOrderEntry definedDefaultOrderEntry2 =
+			_createDefinedDefaultOrderEntry(2, modifiedDate2, name);
+
+		Assert.assertTrue(
+			definedDefaultOrderEntry1.compareTo(definedDefaultOrderEntry2) > 0);
+
+		Assert.assertEquals(
+			definedDefaultOrderEntry1,
+			_definedDefaultOrderEntryPersistence.fetchByName(name));
+		Assert.assertEquals(
+			_definedDefaultOrderEntryPersistence.fetchByName(name),
+			_definedDefaultOrderEntryPersistence.fetchByName_Collection_Last(
+				name, null));
+
+		// Undefined
+
+		UndefinedDefaultOrderEntry undefinedDefaultOrderEntry1 =
+			_createUndefinedDefaultOrderEntry(1, modifiedDate1, name);
 		UndefinedDefaultOrderEntry undefinedDefaultOrderEntry2 =
 			_createUndefinedDefaultOrderEntry(2, modifiedDate2, name);
 
@@ -68,24 +86,6 @@ public class DefaultOrderEntityTest {
 		Assert.assertEquals(
 			_undefinedDefaultOrderEntryPersistence.fetchByName(name),
 			_undefinedDefaultOrderEntryPersistence.fetchByName_Collection_Last(
-				name, null));
-
-		// Defined
-
-		DefinedDefaultOrderEntry definedDefaultOrderEntry1 =
-			_createDefinedDefaultOrderEntry(1, modifiedDate1, name);
-		DefinedDefaultOrderEntry definedDefaultOrderEntry2 =
-			_createDefinedDefaultOrderEntry(2, modifiedDate2, name);
-
-		Assert.assertTrue(
-			definedDefaultOrderEntry1.compareTo(definedDefaultOrderEntry2) > 0);
-
-		Assert.assertEquals(
-			definedDefaultOrderEntry1,
-			_definedDefaultOrderEntryPersistence.fetchByName(name));
-		Assert.assertEquals(
-			_definedDefaultOrderEntryPersistence.fetchByName(name),
-			_definedDefaultOrderEntryPersistence.fetchByName_Collection_Last(
 				name, null));
 	}
 
