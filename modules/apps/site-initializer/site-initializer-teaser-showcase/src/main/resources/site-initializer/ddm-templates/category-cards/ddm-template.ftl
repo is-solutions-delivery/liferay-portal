@@ -4,12 +4,12 @@
 	}
 </style>
 
-<#if currentURL?has_content>
-	<#assign groupKey = currentURL?substring(currentURL?index_of('/web/') + 5, currentURL?index_of('/products')) />
-</#if>
-
 <div class="row widget-mode-card">
 	<#if entries?has_content>
+		<#if currentURL?has_content>
+			<#assign groupKey = currentURL?substring(currentURL?index_of('/web/') + 5, currentURL?index_of('/products')) />
+		</#if>
+
 		<#list entries as currentCategory>
 			<#if currentCategory.getName() == "Contacts">
 				<#assign categoryImage = "/documents/d/${groupKey}/contacts-png" />
