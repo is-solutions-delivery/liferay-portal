@@ -66,19 +66,22 @@ public class DocumentsAndMediaDownloadRestController extends BaseRestController 
 			).build())) {
 			int lastPage = 1;
 			for (int i = 1; i <= lastPage; i++) {
+				System.out.println("i: " + i);
 
 				JSONObject jsonObject1 = new JSONObject(
 					get(
 						null,
 						StringBundler.concat(
 							"/o/headless-delivery/v1.0/sites/", _siteGroupId,
-							"/documents?pageSize=500&page=", i)));
+							"/documents?flatten=true&pageSize=500&page=", i)));
 				JSONArray jsonArray = jsonObject1.getJSONArray("items");
 				for (int j = 0; j < jsonArray.length(); j++) {
+					System.out.println("j: " + j);
+
 					JSONObject jsonObject2 = jsonArray.getJSONObject(j);
 					String categoryNames = "";
 					String categoryIds = "";
-					if(!jsonObject2.isNull("taxonomyCategoryBriefs")) {
+					if (!jsonObject2.isNull("taxonomyCategoryBriefs")) {
 						JSONArray categoryArray = jsonObject2.getJSONArray("taxonomyCategoryBriefs");
 						for (int k = 0; k < categoryArray.length(); k++) {
 							JSONObject categoryObject = categoryArray.getJSONObject(k);
@@ -90,16 +93,29 @@ public class DocumentsAndMediaDownloadRestController extends BaseRestController 
 							}
 						}
 					}
+
+					String creatorName = "";
+					String creatorId = "";
+					if (!jsonObject2.isNull("creator")) {
+						creatorName = jsonObject2.getJSONObject("creator").getString("name");
+						creatorId = String.valueOf(jsonObject2.getJSONObject("creator").getInt("id"));
+					}
+
+					String documentType = "";
+					if (!jsonObject2.isNull("documentType")) {
+						documentType = jsonObject2.getJSONObject("documentType").getString("name");
+					}
+
 					csvPrinter.printRecord(
 						jsonObject2.getString("contentUrl"),
 						jsonObject2.getString("title"),
 						jsonObject2.getInt("id"),
-						jsonObject2.getJSONObject("creator").getString("name"),
-						jsonObject2.getJSONObject("creator").getInt("id"),
+						creatorName,
+						creatorId,
 						jsonObject2.getString("dateCreated"),
 						jsonObject2.getString("dateModified"),
 						jsonObject2.getString("description"),
-						jsonObject2.getJSONObject("documentType").getString("name"),
+						documentType,
 						jsonObject2.getInt("documentFolderId"),
 						jsonObject2.getString("fileName"),
 						jsonObject2.getString("fileExtension"),
@@ -113,6 +129,7 @@ public class DocumentsAndMediaDownloadRestController extends BaseRestController 
 					);
 				}
 				lastPage = jsonObject1.getInt("lastPage");
+				System.out.println("lastPage: " + lastPage);
 			}
 			csvPrinter.flush();
 		}

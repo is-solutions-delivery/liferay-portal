@@ -96,7 +96,7 @@ public class ExamResultsDownloadRestController extends BaseRestController {
 			for (int i = 1; i <= lastPage; i++) {
 				JSONObject jsonObject1 = new JSONObject(
 					get(
-						"Bearer " + jwt.getTokenValue(),
+						null,
 						StringBundler.concat(
 							"/o/c/p2s3examresults/scopes/", _siteGroupId,
 							"?pageSize=500&page=", i, filterString)));
