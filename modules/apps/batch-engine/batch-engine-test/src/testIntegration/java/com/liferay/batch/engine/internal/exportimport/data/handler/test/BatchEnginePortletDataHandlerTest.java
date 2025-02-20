@@ -72,7 +72,7 @@ public class BatchEnginePortletDataHandlerTest {
 				ObjectFieldUtil.createObjectField(
 					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
-					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME_TEXT,
+					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME,
 					Arrays.asList(
 						new ObjectFieldSettingBuilder(
 						).name(
@@ -84,26 +84,32 @@ public class BatchEnginePortletDataHandlerTest {
 			ObjectDefinitionConstants.SCOPE_COMPANY);
 
 		_objectEntry1 = _addObjectEntry(RandomTestUtil.randomString());
-
 		_objectEntry2 = _addObjectEntry(RandomTestUtil.randomString());
-
 		_objectEntry3 = _addObjectEntry(RandomTestUtil.randomString());
 
 		Group companyGroup = _stagingGroupHelper.fetchCompanyGroup(
 			_objectDefinition.getCompanyId());
 
 		_companyGroupId = companyGroup.getGroupId();
+
+		_larFile = _exportImportLocalService.exportLayoutsAsFile(
+			_exportImportConfigurationLocalService.
+				addDraftExportImportConfiguration(
+					TestPropsValues.getUserId(),
+					ExportImportConfigurationConstants.TYPE_EXPORT_LAYOUT,
+					ExportImportConfigurationSettingsMapFactoryUtil.
+						buildExportLayoutSettingsMap(
+							TestPropsValues.getUser(), _companyGroupId, false,
+							new long[0], _getExportParameterMap())));
 	}
 
 	@Test
 	public void testExportImportCompanyGroup() throws Exception {
-		File larFile = _exportCompanyGroup();
-
 		_objectEntryLocalService.deleteObjectEntry(_objectEntry1);
 		_objectEntryLocalService.deleteObjectEntry(_objectEntry2);
 		_objectEntryLocalService.deleteObjectEntry(_objectEntry3);
 
-		_importCompanyGroup(larFile);
+		_importLayouts();
 
 		Assert.assertNotNull(
 			_objectEntryLocalService.getObjectEntry(
@@ -121,18 +127,16 @@ public class BatchEnginePortletDataHandlerTest {
 
 	@Test
 	public void testExportImportCompanyGroupWithError() throws Exception {
-		File larFile = _exportCompanyGroup();
-
-		String existingValue = (String)_objectEntry2.getValues(
+		String objectFieldValue = (String)_objectEntry2.getValues(
 		).get(
-			_OBJECT_FIELD_NAME_TEXT
+			_OBJECT_FIELD_NAME
 		);
 
 		_objectEntryLocalService.deleteObjectEntry(_objectEntry1);
 		_objectEntryLocalService.deleteObjectEntry(_objectEntry2);
 		_objectEntryLocalService.deleteObjectEntry(_objectEntry3);
 
-		ObjectEntry duplicateObjectEntry = _addObjectEntry(existingValue);
+		ObjectEntry duplicateObjectEntry = _addObjectEntry(objectFieldValue);
 
 		try {
 			try (LogCapture logCapture1 = LoggerTestUtil.configureLog4JLogger(
@@ -144,15 +148,15 @@ public class BatchEnginePortletDataHandlerTest {
 						"BatchEngineImportTaskExecutorImpl",
 					LoggerTestUtil.OFF)) {
 
-				_importCompanyGroup(larFile);
+				_importLayouts();
 			}
 
-			Assert.fail("Import process should fail");
+			Assert.fail();
 		}
 		catch (PortletDataException portletDataException) {
 			String message = portletDataException.getMessage();
 
-			Assert.assertTrue(message.contains(existingValue));
+			Assert.assertTrue(message.contains(objectFieldValue));
 		}
 
 		List<ObjectEntry> objectEntries =
@@ -178,21 +182,9 @@ public class BatchEnginePortletDataHandlerTest {
 			TestPropsValues.getUserId(), 0L,
 			_objectDefinition.getObjectDefinitionId(),
 			HashMapBuilder.put(
-				_OBJECT_FIELD_NAME_TEXT, objectFieldValue
+				_OBJECT_FIELD_NAME, objectFieldValue
 			).build(),
 			ServiceContextTestUtil.getServiceContext());
-	}
-
-	private File _exportCompanyGroup() throws Exception {
-		return _exportImportLocalService.exportLayoutsAsFile(
-			_exportImportConfigurationLocalService.
-				addDraftExportImportConfiguration(
-					TestPropsValues.getUserId(),
-					ExportImportConfigurationConstants.TYPE_EXPORT_LAYOUT,
-					ExportImportConfigurationSettingsMapFactoryUtil.
-						buildExportLayoutSettingsMap(
-							TestPropsValues.getUser(), _companyGroupId, false,
-							new long[0], _getExportParameterMap())));
 	}
 
 	private Map<String, String[]> _getExportParameterMap() {
@@ -215,7 +207,7 @@ public class BatchEnginePortletDataHandlerTest {
 		).build();
 	}
 
-	private void _importCompanyGroup(File larFile) throws Exception {
+	private void _importLayouts() throws Exception {
 		_exportImportLocalService.importLayouts(
 			_exportImportConfigurationLocalService.
 				addDraftExportImportConfiguration(
@@ -225,10 +217,10 @@ public class BatchEnginePortletDataHandlerTest {
 						buildImportLayoutSettingsMap(
 							TestPropsValues.getUser(), _companyGroupId, false,
 							null, _getExportParameterMap())),
-			larFile);
+			_larFile);
 	}
 
-	private static final String _OBJECT_FIELD_NAME_TEXT =
+	private static final String _OBJECT_FIELD_NAME =
 		"a" + RandomTestUtil.randomString();
 
 	private long _companyGroupId;
@@ -240,6 +232,7 @@ public class BatchEnginePortletDataHandlerTest {
 	@Inject
 	private ExportImportLocalService _exportImportLocalService;
 
+	private File _larFile;
 	private ObjectDefinition _objectDefinition;
 	private ObjectEntry _objectEntry1;
 	private ObjectEntry _objectEntry2;
