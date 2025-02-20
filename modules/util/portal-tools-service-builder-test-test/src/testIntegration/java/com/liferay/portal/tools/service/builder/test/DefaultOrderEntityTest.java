@@ -42,7 +42,7 @@ public class DefaultOrderEntityTest {
 				"com.liferay.portal.tools.service.builder.test.service"));
 
 	@Test
-	public void testDefaultOrderEntry() {
+	public void test() {
 
 		// Test 1, order by primary key by default
 

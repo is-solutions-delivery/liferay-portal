@@ -39,11 +39,11 @@ public class DataLimitTest {
 		new LiferayIntegrationTestRule();
 
 	@Test
-	public void testDataLimit() {
-		_initializeDataLimit(3);
+	public void test() {
+		_setDataLimitModelMaxCount(3);
 
 		try {
-			_testDataLimit();
+			_test();
 
 			// Asserting limit is per company
 
@@ -53,15 +53,15 @@ public class DataLimitTest {
 					CompanyThreadLocal.setCompanyIdWithSafeCloseable(
 						companyId + 1)) {
 
-				_testDataLimit();
+				_test();
 			}
 		}
 		finally {
-			_initializeDataLimit(0);
+			_setDataLimitModelMaxCount(0);
 		}
 	}
 
-	private void _initializeDataLimit(long dataLimit) {
+	private void _setDataLimitModelMaxCount(long dataLimit) {
 		ReflectionTestUtil.setFieldValue(
 			_dataLimitEntryPersistence, "_dataLimitModelMaxCount", 0);
 
@@ -75,7 +75,7 @@ public class DataLimitTest {
 			new Class<?>[] {Class.class}, DataLimitEntry.class);
 	}
 
-	private void _testDataLimit() {
+	private void _test() {
 
 		// Within data limit
 

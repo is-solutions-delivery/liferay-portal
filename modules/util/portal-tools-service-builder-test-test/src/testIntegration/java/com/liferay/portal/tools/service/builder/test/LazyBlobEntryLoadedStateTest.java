@@ -47,7 +47,7 @@ public class LazyBlobEntryLoadedStateTest {
 				"com.liferay.portal.tools.service.builder.test.service"));
 
 	@Test
-	public void testLoadedState() throws Exception {
+	public void test() throws Exception {
 		_group = GroupTestUtil.addGroup();
 
 		LazyBlobEntry addedLazyBlobEntry =

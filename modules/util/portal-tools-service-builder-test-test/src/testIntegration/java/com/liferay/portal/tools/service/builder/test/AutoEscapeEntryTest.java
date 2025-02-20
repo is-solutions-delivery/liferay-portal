@@ -32,7 +32,7 @@ public class AutoEscapeEntryTest {
 		new LiferayIntegrationTestRule();
 
 	@Test
-	public void testAutoEscapeEntry() {
+	public void test() {
 		AutoEscapeEntry autoEscapeEntry = _autoEscapeEntryPersistence.create(
 			RandomTestUtil.nextLong());
 

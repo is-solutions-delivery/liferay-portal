@@ -31,7 +31,7 @@ public class NullConvertibleEntryTest {
 		new LiferayIntegrationTestRule();
 
 	@Test
-	public void testFetchNullConvertibleEntry() {
+	public void test() {
 		NullConvertibleEntry nullConvertibleEntry = null;
 
 		try {
