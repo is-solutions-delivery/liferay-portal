@@ -23,7 +23,7 @@
 
 			<#assign
 				categoryHref = cpAssetCategoriesNavigationDisplayContext.getFriendlyURL(currentCategory.getCategoryId(), themeDisplay)
-\				categoryName = currentCategory.getName()
+				categoryName = currentCategory.getName()
 			/>
 
 			<#if cpAssetCategoriesNavigationDisplayContext.getDefaultImageSrc(currentCategory.getCategoryId())??>
