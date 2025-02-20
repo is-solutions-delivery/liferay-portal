@@ -22,21 +22,19 @@
 	}
 </style>
 
-<#assign accountEntryId = renderRequest.getAttribute("COMMERCE_CONTEXT").getAccount().getAccountEntryId() />
-
 <div class="product-card-tiles">
 	<#if entries?has_content>
 		<#list entries as curCPCatalogEntry>
 			<#assign
+				accountEntryId = renderRequest.getAttribute("COMMERCE_CONTEXT").getAccount().getAccountEntryId()
 				productId = curCPCatalogEntry.getCProductId()
-
-				productDetail = restClient.get("/headless-commerce-delivery-catalog/v1.0/channels/${chanelId}/products/${productId}?accountId=${accountEntryId}&nestedFields=productSpecifications")
-
 				friendlyURL = cpContentHelper.getFriendlyURL(curCPCatalogEntry, themeDisplay)
 				isSuggested = false
 				productName = curCPCatalogEntry.getName()
-				productSpecifications = productDetail.productSpecifications
 				suggestedClass = ""
+
+				productDetail = restClient.get("/headless-commerce-delivery-catalog/v1.0/channels/${chanelId}/products/${productId}?accountId=${accountEntryId}&nestedFields=productSpecifications")
+				productSpecifications = productDetail.productSpecifications
 				tags = productDetail.tags
 			/>
 
