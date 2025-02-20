@@ -44,7 +44,7 @@ public class DefaultOrderEntityTest {
 	@Test
 	public void test() {
 
-		// Test 1, order by primary key by default
+		// Undefined
 
 		String name = RandomTestUtil.randomString();
 		Date modifiedDate1 = new Date();
@@ -70,7 +70,7 @@ public class DefaultOrderEntityTest {
 			_undefinedDefaultOrderEntryPersistence.fetchByName_Collection_Last(
 				name, null));
 
-		// Test 2, order by modified date as defined
+		// Defined
 
 		DefinedDefaultOrderEntry definedDefaultOrderEntry1 =
 			_createDefinedDefaultOrderEntry(1, modifiedDate1, name);
