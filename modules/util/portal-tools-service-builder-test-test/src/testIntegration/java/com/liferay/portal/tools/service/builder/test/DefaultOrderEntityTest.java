@@ -47,16 +47,15 @@ public class DefaultOrderEntityTest {
 		// Test 1, order by primary key by default
 
 		String name = RandomTestUtil.randomString();
-
-		long currentTime = System.currentTimeMillis();
-
-		Object[] testData1 = {1L, name, new Date(currentTime)};
-		Object[] testData2 = {2L, name, new Date(currentTime - 1000)};
+		Date modifiedDate1 = new Date();
 
 		UndefinedDefaultOrderEntry undefinedDefaultOrderEntry1 =
-			_createUndefinedDefaultOrderEntry(testData1);
+			_createUndefinedDefaultOrderEntry(1, modifiedDate1, name);
+
+		Date modifiedDate2 = new Date(modifiedDate1.getTime() - 1000);
+
 		UndefinedDefaultOrderEntry undefinedDefaultOrderEntry2 =
-			_createUndefinedDefaultOrderEntry(testData2);
+			_createUndefinedDefaultOrderEntry(2, modifiedDate2, name);
 
 		Assert.assertTrue(
 			undefinedDefaultOrderEntry2.compareTo(undefinedDefaultOrderEntry1) >
@@ -71,12 +70,12 @@ public class DefaultOrderEntityTest {
 			_undefinedDefaultOrderEntryPersistence.fetchByName_Collection_Last(
 				name, null));
 
-		// Test 2, order by modifiedDate as defined
+		// Test 2, order by modified date as defined
 
 		DefinedDefaultOrderEntry definedDefaultOrderEntry1 =
-			_createDefinedDefaultOrderEntry(testData1);
+			_createDefinedDefaultOrderEntry(1, modifiedDate1, name);
 		DefinedDefaultOrderEntry definedDefaultOrderEntry2 =
-			_createDefinedDefaultOrderEntry(testData2);
+			_createDefinedDefaultOrderEntry(2, modifiedDate2, name);
 
 		Assert.assertTrue(
 			definedDefaultOrderEntry1.compareTo(definedDefaultOrderEntry2) > 0);
@@ -91,26 +90,28 @@ public class DefaultOrderEntityTest {
 	}
 
 	private DefinedDefaultOrderEntry _createDefinedDefaultOrderEntry(
-		Object[] testData) {
+		long definedDefaultOrderEntryId, Date modifiedDate, String name) {
 
 		DefinedDefaultOrderEntry definedDefaultOrderEntry =
-			_definedDefaultOrderEntryPersistence.create((long)testData[0]);
+			_definedDefaultOrderEntryPersistence.create(
+				definedDefaultOrderEntryId);
 
-		definedDefaultOrderEntry.setModifiedDate((Date)testData[2]);
-		definedDefaultOrderEntry.setName((String)testData[1]);
+		definedDefaultOrderEntry.setModifiedDate(modifiedDate);
+		definedDefaultOrderEntry.setName(name);
 
 		return _definedDefaultOrderEntryPersistence.update(
 			definedDefaultOrderEntry);
 	}
 
 	private UndefinedDefaultOrderEntry _createUndefinedDefaultOrderEntry(
-		Object[] testData) {
+		long undefinedDefaultOrderEntryId, Date modifiedDate, String name) {
 
 		UndefinedDefaultOrderEntry undefinedDefaultOrderEntry =
-			_undefinedDefaultOrderEntryPersistence.create((long)testData[0]);
+			_undefinedDefaultOrderEntryPersistence.create(
+				undefinedDefaultOrderEntryId);
 
-		undefinedDefaultOrderEntry.setModifiedDate((Date)testData[2]);
-		undefinedDefaultOrderEntry.setName((String)testData[1]);
+		undefinedDefaultOrderEntry.setModifiedDate(modifiedDate);
+		undefinedDefaultOrderEntry.setName(name);
 
 		return _undefinedDefaultOrderEntryPersistence.update(
 			undefinedDefaultOrderEntry);
