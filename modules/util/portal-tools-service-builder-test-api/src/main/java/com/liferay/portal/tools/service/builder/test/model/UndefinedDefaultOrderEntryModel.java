@@ -63,6 +63,20 @@ public interface UndefinedDefaultOrderEntryModel
 		long undefinedDefaultOrderEntryId);
 
 	/**
+	 * Returns the modified date of this undefined default order entry.
+	 *
+	 * @return the modified date of this undefined default order entry
+	 */
+	public Date getModifiedDate();
+
+	/**
+	 * Sets the modified date of this undefined default order entry.
+	 *
+	 * @param modifiedDate the modified date of this undefined default order entry
+	 */
+	public void setModifiedDate(Date modifiedDate);
+
+	/**
 	 * Returns the name of this undefined default order entry.
 	 *
 	 * @return the name of this undefined default order entry
@@ -76,20 +90,6 @@ public interface UndefinedDefaultOrderEntryModel
 	 * @param name the name of this undefined default order entry
 	 */
 	public void setName(String name);
-
-	/**
-	 * Returns the modified date of this undefined default order entry.
-	 *
-	 * @return the modified date of this undefined default order entry
-	 */
-	public Date getModifiedDate();
-
-	/**
-	 * Sets the modified date of this undefined default order entry.
-	 *
-	 * @param modifiedDate the modified date of this undefined default order entry
-	 */
-	public void setModifiedDate(Date modifiedDate);
 
 	@Override
 	public UndefinedDefaultOrderEntry cloneWithOriginalValues();

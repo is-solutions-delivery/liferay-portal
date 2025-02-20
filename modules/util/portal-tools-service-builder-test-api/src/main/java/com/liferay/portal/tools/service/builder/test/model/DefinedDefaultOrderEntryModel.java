@@ -62,6 +62,20 @@ public interface DefinedDefaultOrderEntryModel
 	public void setDefinedDefaultOrderEntryId(long definedDefaultOrderEntryId);
 
 	/**
+	 * Returns the modified date of this defined default order entry.
+	 *
+	 * @return the modified date of this defined default order entry
+	 */
+	public Date getModifiedDate();
+
+	/**
+	 * Sets the modified date of this defined default order entry.
+	 *
+	 * @param modifiedDate the modified date of this defined default order entry
+	 */
+	public void setModifiedDate(Date modifiedDate);
+
+	/**
 	 * Returns the name of this defined default order entry.
 	 *
 	 * @return the name of this defined default order entry
@@ -75,20 +89,6 @@ public interface DefinedDefaultOrderEntryModel
 	 * @param name the name of this defined default order entry
 	 */
 	public void setName(String name);
-
-	/**
-	 * Returns the modified date of this defined default order entry.
-	 *
-	 * @return the modified date of this defined default order entry
-	 */
-	public Date getModifiedDate();
-
-	/**
-	 * Sets the modified date of this defined default order entry.
-	 *
-	 * @param modifiedDate the modified date of this defined default order entry
-	 */
-	public void setModifiedDate(Date modifiedDate);
 
 	@Override
 	public DefinedDefaultOrderEntry cloneWithOriginalValues();

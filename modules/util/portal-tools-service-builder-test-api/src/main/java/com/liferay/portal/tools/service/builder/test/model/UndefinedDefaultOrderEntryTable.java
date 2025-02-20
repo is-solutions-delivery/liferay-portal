@@ -29,11 +29,11 @@ public class UndefinedDefaultOrderEntryTable
 		undefinedDefaultOrderEntryId = createColumn(
 			"undefinedDefaultOrderEntryId", Long.class, Types.BIGINT,
 			Column.FLAG_PRIMARY);
-	public final Column<UndefinedDefaultOrderEntryTable, String> name =
-		createColumn("name", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 	public final Column<UndefinedDefaultOrderEntryTable, Date> modifiedDate =
 		createColumn(
 			"modifiedDate", Date.class, Types.TIMESTAMP, Column.FLAG_DEFAULT);
+	public final Column<UndefinedDefaultOrderEntryTable, String> name =
+		createColumn("name", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 
 	private UndefinedDefaultOrderEntryTable() {
 		super(

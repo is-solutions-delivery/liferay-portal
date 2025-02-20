@@ -121,9 +121,9 @@ public class DefinedDefaultOrderEntryPersistenceTest {
 		DefinedDefaultOrderEntry newDefinedDefaultOrderEntry =
 			_persistence.create(pk);
 
-		newDefinedDefaultOrderEntry.setName(RandomTestUtil.randomString());
-
 		newDefinedDefaultOrderEntry.setModifiedDate(RandomTestUtil.nextDate());
+
+		newDefinedDefaultOrderEntry.setName(RandomTestUtil.randomString());
 
 		_definedDefaultOrderEntries.add(
 			_persistence.update(newDefinedDefaultOrderEntry));
@@ -136,13 +136,13 @@ public class DefinedDefaultOrderEntryPersistenceTest {
 			existingDefinedDefaultOrderEntry.getDefinedDefaultOrderEntryId(),
 			newDefinedDefaultOrderEntry.getDefinedDefaultOrderEntryId());
 		Assert.assertEquals(
-			existingDefinedDefaultOrderEntry.getName(),
-			newDefinedDefaultOrderEntry.getName());
-		Assert.assertEquals(
 			Time.getShortTimestamp(
 				existingDefinedDefaultOrderEntry.getModifiedDate()),
 			Time.getShortTimestamp(
 				newDefinedDefaultOrderEntry.getModifiedDate()));
+		Assert.assertEquals(
+			existingDefinedDefaultOrderEntry.getName(),
+			newDefinedDefaultOrderEntry.getName());
 	}
 
 	@Test
@@ -194,7 +194,7 @@ public class DefinedDefaultOrderEntryPersistenceTest {
 
 		return OrderByComparatorFactoryUtil.create(
 			"DefinedDefaultOrderEntry", "definedDefaultOrderEntryId", true,
-			"name", true, "modifiedDate", true);
+			"modifiedDate", true, "name", true);
 	}
 
 	@Test
@@ -507,9 +507,9 @@ public class DefinedDefaultOrderEntryPersistenceTest {
 		DefinedDefaultOrderEntry definedDefaultOrderEntry = _persistence.create(
 			pk);
 
-		definedDefaultOrderEntry.setName(RandomTestUtil.randomString());
-
 		definedDefaultOrderEntry.setModifiedDate(RandomTestUtil.nextDate());
+
+		definedDefaultOrderEntry.setName(RandomTestUtil.randomString());
 
 		_definedDefaultOrderEntries.add(
 			_persistence.update(definedDefaultOrderEntry));

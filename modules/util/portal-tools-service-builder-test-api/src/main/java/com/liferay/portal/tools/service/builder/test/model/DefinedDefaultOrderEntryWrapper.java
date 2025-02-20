@@ -38,8 +38,8 @@ public class DefinedDefaultOrderEntryWrapper
 
 		attributes.put(
 			"definedDefaultOrderEntryId", getDefinedDefaultOrderEntryId());
-		attributes.put("name", getName());
 		attributes.put("modifiedDate", getModifiedDate());
+		attributes.put("name", getName());
 
 		return attributes;
 	}
@@ -53,16 +53,16 @@ public class DefinedDefaultOrderEntryWrapper
 			setDefinedDefaultOrderEntryId(definedDefaultOrderEntryId);
 		}
 
-		String name = (String)attributes.get("name");
-
-		if (name != null) {
-			setName(name);
-		}
-
 		Date modifiedDate = (Date)attributes.get("modifiedDate");
 
 		if (modifiedDate != null) {
 			setModifiedDate(modifiedDate);
+		}
+
+		String name = (String)attributes.get("name");
+
+		if (name != null) {
+			setName(name);
 		}
 	}
 

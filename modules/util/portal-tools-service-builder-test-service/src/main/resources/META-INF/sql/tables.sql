@@ -58,8 +58,8 @@ create table DataLimitEntry (
 
 create table DefinedDefaultOrderEntry (
 	definedDefaultOrderEntryId LONG not null primary key,
-	name VARCHAR(75) null,
-	modifiedDate DATE null
+	modifiedDate DATE null,
+	name VARCHAR(75) null
 );
 
 create table ERCCompanyEntry (
@@ -312,8 +312,8 @@ create table UADPartialEntry (
 
 create table UndefinedDefaultOrderEntry (
 	undefinedDefaultOrderEntryId LONG not null primary key,
-	name VARCHAR(75) null,
-	modifiedDate DATE null
+	modifiedDate DATE null,
+	name VARCHAR(75) null
 );
 
 create table VersionedEntry (

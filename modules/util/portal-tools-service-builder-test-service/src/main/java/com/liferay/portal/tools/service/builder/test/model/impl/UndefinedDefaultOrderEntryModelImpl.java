@@ -58,8 +58,8 @@ public class UndefinedDefaultOrderEntryModelImpl
 	public static final String TABLE_NAME = "UndefinedDefaultOrderEntry";
 
 	public static final Object[][] TABLE_COLUMNS = {
-		{"undefinedDefaultOrderEntryId", Types.BIGINT}, {"name", Types.VARCHAR},
-		{"modifiedDate", Types.TIMESTAMP}
+		{"undefinedDefaultOrderEntryId", Types.BIGINT},
+		{"modifiedDate", Types.TIMESTAMP}, {"name", Types.VARCHAR}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -67,12 +67,12 @@ public class UndefinedDefaultOrderEntryModelImpl
 
 	static {
 		TABLE_COLUMNS_MAP.put("undefinedDefaultOrderEntryId", Types.BIGINT);
-		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("modifiedDate", Types.TIMESTAMP);
+		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table UndefinedDefaultOrderEntry (undefinedDefaultOrderEntryId LONG not null primary key,name VARCHAR(75) null,modifiedDate DATE null)";
+		"create table UndefinedDefaultOrderEntry (undefinedDefaultOrderEntryId LONG not null primary key,modifiedDate DATE null,name VARCHAR(75) null)";
 
 	public static final String TABLE_SQL_DROP =
 		"drop table UndefinedDefaultOrderEntry";
@@ -229,9 +229,9 @@ public class UndefinedDefaultOrderEntryModelImpl
 				"undefinedDefaultOrderEntryId",
 				UndefinedDefaultOrderEntry::getUndefinedDefaultOrderEntryId);
 			attributeGetterFunctions.put(
-				"name", UndefinedDefaultOrderEntry::getName);
-			attributeGetterFunctions.put(
 				"modifiedDate", UndefinedDefaultOrderEntry::getModifiedDate);
+			attributeGetterFunctions.put(
+				"name", UndefinedDefaultOrderEntry::getName);
 
 			_attributeGetterFunctions = Collections.unmodifiableMap(
 				attributeGetterFunctions);
@@ -257,13 +257,13 @@ public class UndefinedDefaultOrderEntryModelImpl
 					UndefinedDefaultOrderEntry::
 						setUndefinedDefaultOrderEntryId);
 			attributeSetterBiConsumers.put(
-				"name",
-				(BiConsumer<UndefinedDefaultOrderEntry, String>)
-					UndefinedDefaultOrderEntry::setName);
-			attributeSetterBiConsumers.put(
 				"modifiedDate",
 				(BiConsumer<UndefinedDefaultOrderEntry, Date>)
 					UndefinedDefaultOrderEntry::setModifiedDate);
+			attributeSetterBiConsumers.put(
+				"name",
+				(BiConsumer<UndefinedDefaultOrderEntry, String>)
+					UndefinedDefaultOrderEntry::setName);
 
 			_attributeSetterBiConsumers = Collections.unmodifiableMap(
 				(Map)attributeSetterBiConsumers);
@@ -285,6 +285,26 @@ public class UndefinedDefaultOrderEntryModelImpl
 		}
 
 		_undefinedDefaultOrderEntryId = undefinedDefaultOrderEntryId;
+	}
+
+	@Override
+	public Date getModifiedDate() {
+		return _modifiedDate;
+	}
+
+	public boolean hasSetModifiedDate() {
+		return _setModifiedDate;
+	}
+
+	@Override
+	public void setModifiedDate(Date modifiedDate) {
+		_setModifiedDate = true;
+
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_modifiedDate = modifiedDate;
 	}
 
 	@Override
@@ -313,26 +333,6 @@ public class UndefinedDefaultOrderEntryModelImpl
 	@Deprecated
 	public String getOriginalName() {
 		return getColumnOriginalValue("name");
-	}
-
-	@Override
-	public Date getModifiedDate() {
-		return _modifiedDate;
-	}
-
-	public boolean hasSetModifiedDate() {
-		return _setModifiedDate;
-	}
-
-	@Override
-	public void setModifiedDate(Date modifiedDate) {
-		_setModifiedDate = true;
-
-		if (_columnOriginalValues == Collections.EMPTY_MAP) {
-			_setColumnOriginalValues();
-		}
-
-		_modifiedDate = modifiedDate;
 	}
 
 	public long getColumnBitmask() {
@@ -394,8 +394,8 @@ public class UndefinedDefaultOrderEntryModelImpl
 
 		undefinedDefaultOrderEntryImpl.setUndefinedDefaultOrderEntryId(
 			getUndefinedDefaultOrderEntryId());
-		undefinedDefaultOrderEntryImpl.setName(getName());
 		undefinedDefaultOrderEntryImpl.setModifiedDate(getModifiedDate());
+		undefinedDefaultOrderEntryImpl.setName(getName());
 
 		undefinedDefaultOrderEntryImpl.resetOriginalValues();
 
@@ -409,10 +409,10 @@ public class UndefinedDefaultOrderEntryModelImpl
 
 		undefinedDefaultOrderEntryImpl.setUndefinedDefaultOrderEntryId(
 			this.<Long>getColumnOriginalValue("undefinedDefaultOrderEntryId"));
-		undefinedDefaultOrderEntryImpl.setName(
-			this.<String>getColumnOriginalValue("name"));
 		undefinedDefaultOrderEntryImpl.setModifiedDate(
 			this.<Date>getColumnOriginalValue("modifiedDate"));
+		undefinedDefaultOrderEntryImpl.setName(
+			this.<String>getColumnOriginalValue("name"));
 
 		return undefinedDefaultOrderEntryImpl;
 	}
@@ -498,14 +498,6 @@ public class UndefinedDefaultOrderEntryModelImpl
 		undefinedDefaultOrderEntryCacheModel.undefinedDefaultOrderEntryId =
 			getUndefinedDefaultOrderEntryId();
 
-		undefinedDefaultOrderEntryCacheModel.name = getName();
-
-		String name = undefinedDefaultOrderEntryCacheModel.name;
-
-		if ((name != null) && (name.length() == 0)) {
-			undefinedDefaultOrderEntryCacheModel.name = null;
-		}
-
 		Date modifiedDate = getModifiedDate();
 
 		if (modifiedDate != null) {
@@ -514,6 +506,14 @@ public class UndefinedDefaultOrderEntryModelImpl
 		}
 		else {
 			undefinedDefaultOrderEntryCacheModel.modifiedDate = Long.MIN_VALUE;
+		}
+
+		undefinedDefaultOrderEntryCacheModel.name = getName();
+
+		String name = undefinedDefaultOrderEntryCacheModel.name;
+
+		if ((name != null) && (name.length() == 0)) {
+			undefinedDefaultOrderEntryCacheModel.name = null;
 		}
 
 		return undefinedDefaultOrderEntryCacheModel;
@@ -580,9 +580,9 @@ public class UndefinedDefaultOrderEntryModelImpl
 	}
 
 	private long _undefinedDefaultOrderEntryId;
-	private String _name;
 	private Date _modifiedDate;
 	private boolean _setModifiedDate;
+	private String _name;
 
 	public <T> T getColumnValue(String columnName) {
 		Function<UndefinedDefaultOrderEntry, Object> function =
@@ -614,8 +614,8 @@ public class UndefinedDefaultOrderEntryModelImpl
 
 		_columnOriginalValues.put(
 			"undefinedDefaultOrderEntryId", _undefinedDefaultOrderEntryId);
-		_columnOriginalValues.put("name", _name);
 		_columnOriginalValues.put("modifiedDate", _modifiedDate);
+		_columnOriginalValues.put("name", _name);
 	}
 
 	private transient Map<String, Object> _columnOriginalValues;
@@ -631,9 +631,9 @@ public class UndefinedDefaultOrderEntryModelImpl
 
 		columnBitmasks.put("undefinedDefaultOrderEntryId", 1L);
 
-		columnBitmasks.put("name", 2L);
+		columnBitmasks.put("modifiedDate", 2L);
 
-		columnBitmasks.put("modifiedDate", 4L);
+		columnBitmasks.put("name", 4L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}

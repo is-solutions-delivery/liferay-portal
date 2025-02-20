@@ -61,10 +61,10 @@ public class UndefinedDefaultOrderEntryCacheModel
 
 		sb.append("{undefinedDefaultOrderEntryId=");
 		sb.append(undefinedDefaultOrderEntryId);
-		sb.append(", name=");
-		sb.append(name);
 		sb.append(", modifiedDate=");
 		sb.append(modifiedDate);
+		sb.append(", name=");
+		sb.append(name);
 		sb.append("}");
 
 		return sb.toString();
@@ -78,19 +78,19 @@ public class UndefinedDefaultOrderEntryCacheModel
 		undefinedDefaultOrderEntryImpl.setUndefinedDefaultOrderEntryId(
 			undefinedDefaultOrderEntryId);
 
-		if (name == null) {
-			undefinedDefaultOrderEntryImpl.setName("");
-		}
-		else {
-			undefinedDefaultOrderEntryImpl.setName(name);
-		}
-
 		if (modifiedDate == Long.MIN_VALUE) {
 			undefinedDefaultOrderEntryImpl.setModifiedDate(null);
 		}
 		else {
 			undefinedDefaultOrderEntryImpl.setModifiedDate(
 				new Date(modifiedDate));
+		}
+
+		if (name == null) {
+			undefinedDefaultOrderEntryImpl.setName("");
+		}
+		else {
+			undefinedDefaultOrderEntryImpl.setName(name);
 		}
 
 		undefinedDefaultOrderEntryImpl.resetOriginalValues();
@@ -101,13 +101,14 @@ public class UndefinedDefaultOrderEntryCacheModel
 	@Override
 	public void readExternal(ObjectInput objectInput) throws IOException {
 		undefinedDefaultOrderEntryId = objectInput.readLong();
-		name = objectInput.readUTF();
 		modifiedDate = objectInput.readLong();
+		name = objectInput.readUTF();
 	}
 
 	@Override
 	public void writeExternal(ObjectOutput objectOutput) throws IOException {
 		objectOutput.writeLong(undefinedDefaultOrderEntryId);
+		objectOutput.writeLong(modifiedDate);
 
 		if (name == null) {
 			objectOutput.writeUTF("");
@@ -115,12 +116,10 @@ public class UndefinedDefaultOrderEntryCacheModel
 		else {
 			objectOutput.writeUTF(name);
 		}
-
-		objectOutput.writeLong(modifiedDate);
 	}
 
 	public long undefinedDefaultOrderEntryId;
-	public String name;
 	public long modifiedDate;
+	public String name;
 
 }
