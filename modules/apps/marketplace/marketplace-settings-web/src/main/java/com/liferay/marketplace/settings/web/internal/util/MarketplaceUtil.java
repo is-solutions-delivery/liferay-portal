@@ -90,6 +90,18 @@ public class MarketplaceUtil {
 		for (String[] permission :
 				new String[][] {
 					{
+							MarketplaceAppsPortletKeys.FRAGMENTS,
+							MarketplaceActionKeys.PURCHASE_AND_INSTALL_FREE_APPS
+					},
+					{
+							MarketplaceAppsPortletKeys.FRAGMENTS,
+							MarketplaceActionKeys.PURCHASE_AND_INSTALL_PAID_APPS
+					},
+					{
+							MarketplaceAppsPortletKeys.FRAGMENTS,
+							MarketplaceActionKeys.VIEW_MARKETPLACE_APP
+					},
+					{
 						MarketplaceAppsPortletKeys.GENERAL,
 						MarketplaceActionKeys.CONNECT_TO_MARKETPLACE
 					},
