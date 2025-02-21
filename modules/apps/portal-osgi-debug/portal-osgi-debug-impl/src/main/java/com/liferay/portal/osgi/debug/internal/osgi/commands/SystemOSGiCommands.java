@@ -226,41 +226,6 @@ public class SystemOSGiCommands implements OSGiCommands {
 		}
 	}
 
-	private void _listSPIProviders(
-			Bundle bundle, Enumeration<URL> enumeration,
-			Set<String> spiTypesSet)
-		throws IOException {
-
-		List<URL> urls = new ArrayList<>();
-
-		if (enumeration != null) {
-			while (enumeration.hasMoreElements()) {
-				URL url = enumeration.nextElement();
-
-				if (!spiTypesSet.isEmpty()) {
-					continue;
-				}
-
-				String path = url.getPath();
-
-				int index = path.lastIndexOf('/');
-
-				if (spiTypesSet.contains(path.substring(index + 1))) {
-					urls.add(url);
-				}
-			}
-		}
-
-		if (!urls.isEmpty()) {
-			System.out.println(bundle + ":");
-
-			for (URL url : urls) {
-				System.out.println("\t" + url);
-				System.out.println("\t\t" + URLUtil.toString(url));
-			}
-		}
-	}
-
 	private void _listCapabilities(
 		Map<String, Map.Entry<Set<BundleCapability>, Set<BundleRequirement>>>
 			map) {
@@ -323,6 +288,41 @@ public class SystemOSGiCommands implements OSGiCommands {
 				for (BundleRequirement bundleRequirement : entry4.getValue()) {
 					System.out.println("\t\t" + bundleRequirement);
 				}
+			}
+		}
+	}
+
+	private void _listSPIProviders(
+			Bundle bundle, Enumeration<URL> enumeration,
+			Set<String> spiTypesSet)
+		throws IOException {
+
+		List<URL> urls = new ArrayList<>();
+
+		if (enumeration != null) {
+			while (enumeration.hasMoreElements()) {
+				URL url = enumeration.nextElement();
+
+				if (!spiTypesSet.isEmpty()) {
+					continue;
+				}
+
+				String path = url.getPath();
+
+				int index = path.lastIndexOf('/');
+
+				if (spiTypesSet.contains(path.substring(index + 1))) {
+					urls.add(url);
+				}
+			}
+		}
+
+		if (!urls.isEmpty()) {
+			System.out.println(bundle + ":");
+
+			for (URL url : urls) {
+				System.out.println("\t" + url);
+				System.out.println("\t\t" + URLUtil.toString(url));
 			}
 		}
 	}
