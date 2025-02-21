@@ -172,9 +172,11 @@ public class SystemOSGiCommands implements OSGiCommands {
 			Enumeration<URL> enumeration = bundle.findEntries(
 				"/META-INF/services/", null, true);
 
-			if (enumeration != null) {
-				_print(bundle, enumeration, spiTypesSet);
+			if (enumeration == null) {
+				continue;
 			}
+
+			_print(bundle, enumeration, spiTypesSet);
 		}
 	}
 
