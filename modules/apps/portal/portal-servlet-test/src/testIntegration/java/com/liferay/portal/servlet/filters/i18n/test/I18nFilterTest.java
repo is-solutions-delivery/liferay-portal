@@ -156,11 +156,10 @@ public class I18nFilterTest {
 
 	@Test
 	public void testGetRedirectWithVirtualHost() throws Exception {
+		LayoutSet layoutSet = _group.getPublicLayoutSet();
 		String layoutHostname =
 			RandomTestUtil.randomString(6) + "." +
 				RandomTestUtil.randomString(3);
-
-		LayoutSet layoutSet = _group.getPublicLayoutSet();
 
 		_virtualHostLocalService.updateVirtualHosts(
 			_group.getCompanyId(), layoutSet.getLayoutSetId(),
