@@ -890,7 +890,7 @@ public class SystemFDSSerializerTest extends BaseFDSSerializerTestCase {
 
 		mockLanguage();
 
-		FDSView cardsView = new BaseCardsFDSView() {
+		FDSView cardsFDSView = new BaseCardsFDSView() {
 
 			@Override
 			public String getDescription() {
@@ -930,7 +930,7 @@ public class SystemFDSSerializerTest extends BaseFDSSerializerTestCase {
 				new CardsFDSViewContextContributor(),
 				MapUtil.singletonDictionary(
 					"frontend.data.set.view.name", FDSConstants.CARDS)),
-			_registerFDSView("fdsName", cardsView),
+			_registerFDSView("fdsName", cardsFDSView),
 			_registerSystemFDSEntry(null, "fdsName"));
 
 		JSONAssert.assertEquals(
@@ -971,7 +971,7 @@ public class SystemFDSSerializerTest extends BaseFDSSerializerTestCase {
 
 		// Different views
 
-		FDSView fdsListView = new BaseListFDSView() {
+		FDSView listFDSView = new BaseListFDSView() {
 
 			@Override
 			public String getDescription() {
@@ -1011,8 +1011,8 @@ public class SystemFDSSerializerTest extends BaseFDSSerializerTestCase {
 				new ListFDSViewContextContributor(),
 				MapUtil.singletonDictionary(
 					"frontend.data.set.view.name", FDSConstants.LIST)),
-			_registerFDSView("fdsName1", cardsView),
-			_registerFDSView("fdsName2", fdsListView),
+			_registerFDSView("fdsName1", cardsFDSView),
+			_registerFDSView("fdsName2", listFDSView),
 			_registerSystemFDSEntry(null, "fdsName1"),
 			_registerSystemFDSEntry(null, "fdsName2"));
 
@@ -1048,7 +1048,7 @@ public class SystemFDSSerializerTest extends BaseFDSSerializerTestCase {
 				new ListFDSViewContextContributor(),
 				MapUtil.singletonDictionary(
 					"frontend.data.set.view.name", FDSConstants.LIST)),
-			_registerFDSView("fdsName", fdsListView),
+			_registerFDSView("fdsName", listFDSView),
 			_registerSystemFDSEntry(null, "fdsName"));
 
 		JSONAssert.assertEquals(
@@ -1093,8 +1093,8 @@ public class SystemFDSSerializerTest extends BaseFDSSerializerTestCase {
 				new CardsFDSViewContextContributor(),
 				MapUtil.singletonDictionary(
 					"frontend.data.set.view.name", FDSConstants.CARDS)),
-			_registerFDSView("fdsName1", cardsView),
-			_registerFDSView("fdsName2", cardsView),
+			_registerFDSView("fdsName1", cardsFDSView),
+			_registerFDSView("fdsName2", cardsFDSView),
 			_registerSystemFDSEntry(null, "fdsName1"),
 			_registerSystemFDSEntry(null, "fdsName2"));
 
