@@ -94,8 +94,8 @@ public class FacebookConnectAutoLogin extends BaseAutoLogin {
 			if (user == null) {
 				throw new NoSuchUserException(
 					StringBundler.concat(
-						"No user exists with companyId ", companyId,
-						" and facebookId ", facebookId));
+						"No user exists with company ID ", companyId,
+						" and facebook ID ", facebookId));
 			}
 		}
 
