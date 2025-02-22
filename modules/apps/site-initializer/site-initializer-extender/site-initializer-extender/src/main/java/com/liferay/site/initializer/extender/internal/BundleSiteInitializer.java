@@ -728,14 +728,16 @@ public class BundleSiteInitializer implements SiteInitializer {
 			}
 
 			for (Long organizationId : organizationIds) {
-				if (!_accountEntryOrganizationRelLocalService.
+				if (_accountEntryOrganizationRelLocalService.
 						hasAccountEntryOrganizationRel(
 							accountEntry.getAccountEntryId(), organizationId)) {
 
-					_accountEntryOrganizationRelLocalService.
-						addAccountEntryOrganizationRel(
-							accountEntry.getAccountEntryId(), organizationId);
+					continue;
 				}
+
+				_accountEntryOrganizationRelLocalService.
+					addAccountEntryOrganizationRel(
+						accountEntry.getAccountEntryId(), organizationId);
 			}
 		}
 	}
