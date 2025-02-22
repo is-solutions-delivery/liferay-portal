@@ -44,6 +44,10 @@ public class BatchEnginePortletDataHandlerTest {
 
 	@Before
 	public void setUp() throws Exception {
+		_batchEnginePortletDataHandler = new BatchEnginePortletDataHandler(
+			_batchEngineExportTaskExecutor, _batchEngineExportTaskService, null,
+			null, RandomTestUtil.randomString(), RandomTestUtil.randomString());
+
 		_dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss'Z'");
 
@@ -55,10 +59,6 @@ public class BatchEnginePortletDataHandlerTest {
 		).thenReturn(
 			_dateFormat
 		);
-
-		_batchEnginePortletDataHandler = new BatchEnginePortletDataHandler(
-			_batchEngineExportTaskExecutor, _batchEngineExportTaskService, null,
-			null, RandomTestUtil.randomString(), RandomTestUtil.randomString());
 	}
 
 	@After
@@ -67,7 +67,7 @@ public class BatchEnginePortletDataHandlerTest {
 	}
 
 	@Test
-	public void testBuildParametersWithEndDateOnly() throws Exception {
+	public void testBuildParametersWithEndDate() throws Exception {
 		Date endDate = _getDate(0);
 
 		Map<String, Serializable> parameters =
@@ -80,16 +80,7 @@ public class BatchEnginePortletDataHandlerTest {
 	}
 
 	@Test
-	public void testBuildParametersWithNoDates() throws Exception {
-		Map<String, Serializable> parameters =
-			_batchEnginePortletDataHandler.buildParameters(
-				_mockPortletDataContext(null, null));
-
-		Assert.assertNull(parameters.get("filter"));
-	}
-
-	@Test
-	public void testBuildParametersWithStartAndEndDate() throws Exception {
+	public void testBuildParametersWithEndDateAndStartDate() throws Exception {
 		Date endDate = _getDate(0);
 		Date startDate = _getDate(-1);
 
@@ -105,7 +96,16 @@ public class BatchEnginePortletDataHandlerTest {
 	}
 
 	@Test
-	public void testBuildParametersWithStartDateOnly() throws Exception {
+	public void testBuildParametersWithNoDates() throws Exception {
+		Map<String, Serializable> parameters =
+			_batchEnginePortletDataHandler.buildParameters(
+				_mockPortletDataContext(null, null));
+
+		Assert.assertNull(parameters.get("filter"));
+	}
+
+	@Test
+	public void testBuildParametersWithStartDate() throws Exception {
 		Date startDate = _getDate(-1);
 
 		Map<String, Serializable> parameters =
@@ -117,10 +117,10 @@ public class BatchEnginePortletDataHandlerTest {
 			parameters.get("filter"));
 	}
 
-	private Date _getDate(int addDays) {
+	private Date _getDate(int days) {
 		Calendar calendar = Calendar.getInstance();
 
-		calendar.add(Calendar.DATE, addDays);
+		calendar.add(Calendar.DATE, days);
 
 		return calendar.getTime();
 	}
