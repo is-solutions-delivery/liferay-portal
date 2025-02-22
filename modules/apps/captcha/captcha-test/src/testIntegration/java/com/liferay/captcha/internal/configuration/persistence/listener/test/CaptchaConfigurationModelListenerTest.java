@@ -21,9 +21,9 @@ import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import java.util.Dictionary;
 import java.util.Locale;
 
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,8 +40,8 @@ public class CaptchaConfigurationModelListenerTest {
 	public static final LiferayIntegrationTestRule liferayIntegrationTestRule =
 		new LiferayIntegrationTestRule();
 
-	@BeforeClass
-	public static void setUpClass() {
+	@Before
+	public void setUp() {
 		_locale = LocaleThreadLocal.getThemeDisplayLocale();
 
 		LocaleThreadLocal.setThemeDisplayLocale(LocaleUtil.ENGLISH);
@@ -63,8 +63,8 @@ public class CaptchaConfigurationModelListenerTest {
 		).build();
 	}
 
-	@AfterClass
-	public static void tearDownClass() {
+	@After
+	public void tearDown() {
 		LocaleThreadLocal.setThemeDisplayLocale(_locale);
 	}
 
@@ -118,9 +118,6 @@ public class CaptchaConfigurationModelListenerTest {
 		}
 	}
 
-	private static Locale _locale;
-	private static Dictionary<String, Object> _reCaptchaProperties;
-
 	@Inject(
 		filter = "model.class.name=com.liferay.captcha.configuration.CaptchaConfiguration"
 	)
@@ -128,5 +125,8 @@ public class CaptchaConfigurationModelListenerTest {
 
 	@Inject
 	private Language _language;
+
+	private Locale _locale;
+	private Dictionary<String, Object> _reCaptchaProperties;
 
 }
