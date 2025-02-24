@@ -11,17 +11,16 @@ package com.liferay.marketplace.settings.web.internal.constants;
 public class MarketplaceActionKeys {
 
 	public static final String CONNECT_TO_MARKETPLACE =
-			"CONNECT_TO_MARKETPLACE";
+		"CONNECT_TO_MARKETPLACE";
 
 	public static final String GET_AUTHORIZATION = "GET_AUTHORIZATION";
 
 	public static final String INSTALL_FREE_BUNDLED_APPS =
-			"INSTALL_FREE_BUNDLED_APPS";
+		"INSTALL_FREE_BUNDLED_APPS";
 
 	public static final String PURCHASE_AND_INSTALL_PAID_APPS =
-			"PURCHASE_AND_INSTALL_PAID_APPS";
+		"PURCHASE_AND_INSTALL_PAID_APPS";
 
-	public static final String VIEW_MARKETPLACE_APP = "VIEW_MARKETPLACE_APP";
+	public static final String VIEW_MARKETPLACE_APPS = "VIEW_MARKETPLACE_APPS";
 
-}
 }

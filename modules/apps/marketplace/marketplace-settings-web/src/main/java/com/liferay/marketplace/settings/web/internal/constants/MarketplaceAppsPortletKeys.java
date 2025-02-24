@@ -11,10 +11,14 @@ package com.liferay.marketplace.settings.web.internal.constants;
 public class MarketplaceAppsPortletKeys {
 
 	public static final String FRAGMENTS =
-			"com_liferay_marketplace_settings_web_internal_portlet_" +
-					"FragmentsPortlet";
+		"com_liferay_marketplace_settings_web_internal_portlet_" +
+			"FragmentsPortlet";
 
 	public static final String GENERAL =
 		"com_liferay_marketplace_settings_web_internal_portlet_GeneralPortlet";
+
+	public static final String PAYMENT_METHODS =
+		"com_liferay_marketplace_settings_web_internal_portlet_" +
+			"PaymentMethodsPortlet";
 
 }

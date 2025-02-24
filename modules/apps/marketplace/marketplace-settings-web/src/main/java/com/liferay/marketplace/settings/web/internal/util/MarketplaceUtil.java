@@ -90,16 +90,16 @@ public class MarketplaceUtil {
 		for (String[] permission :
 				new String[][] {
 					{
-							MarketplaceAppsPortletKeys.FRAGMENTS,
-							MarketplaceActionKeys.PURCHASE_AND_INSTALL_FREE_APPS
+						MarketplaceAppsPortletKeys.FRAGMENTS,
+						MarketplaceActionKeys.INSTALL_FREE_BUNDLED_APPS
 					},
 					{
-							MarketplaceAppsPortletKeys.FRAGMENTS,
-							MarketplaceActionKeys.PURCHASE_AND_INSTALL_PAID_APPS
+						MarketplaceAppsPortletKeys.FRAGMENTS,
+						MarketplaceActionKeys.PURCHASE_AND_INSTALL_PAID_APPS
 					},
 					{
-							MarketplaceAppsPortletKeys.FRAGMENTS,
-							MarketplaceActionKeys.VIEW_MARKETPLACE_APP
+						MarketplaceAppsPortletKeys.FRAGMENTS,
+						MarketplaceActionKeys.VIEW_MARKETPLACE_APPS
 					},
 					{
 						MarketplaceAppsPortletKeys.GENERAL,
@@ -108,11 +108,23 @@ public class MarketplaceUtil {
 					{
 						MarketplaceAppsPortletKeys.GENERAL,
 						MarketplaceActionKeys.GET_AUTHORIZATION
+					},
+					{
+						MarketplaceAppsPortletKeys.PAYMENT_METHODS,
+						MarketplaceActionKeys.INSTALL_FREE_BUNDLED_APPS
+					},
+					{
+						MarketplaceAppsPortletKeys.PAYMENT_METHODS,
+						MarketplaceActionKeys.PURCHASE_AND_INSTALL_PAID_APPS
+					},
+					{
+						MarketplaceAppsPortletKeys.PAYMENT_METHODS,
+						MarketplaceActionKeys.VIEW_MARKETPLACE_APPS
 					}
 				}) {
 
 			permissionJSONObject.put(
-				permissionAction,
+				permission[0],
 				PortletPermissionUtil.contains(
 					permissionChecker, permission[1], permission[0]));
 		}

@@ -8,13 +8,13 @@
 			<supports>
 				<action-key>INSTALL_FREE_BUNDLED_APPS</action-key>
 				<action-key>PURCHASE_AND_INSTALL_PAID_APPS</action-key>
-				<action-key>VIEW_MARKETPLACE_APP</action-key>
+				<action-key>VIEW_MARKETPLACE_APPS</action-key>
 			</supports>
 			<site-member-defaults />
 			<guest-unsupported>
 				<action-key>INSTALL_FREE_BUNDLED_APPS</action-key>
 				<action-key>PURCHASE_AND_INSTALL_PAID_APPS</action-key>
-				<action-key>VIEW_MARKETPLACE_APP</action-key>
+				<action-key>VIEW_MARKETPLACE_APPS</action-key>
 			</guest-unsupported>
 		</permissions>
 	</portlet-resource>
@@ -38,13 +38,13 @@
 			<supports>
 				<action-key>INSTALL_FREE_BUNDLED_APPS</action-key>
 				<action-key>PURCHASE_AND_INSTALL_PAID_APPS</action-key>
-				<action-key>VIEW_MARKETPLACE_APP</action-key>
+				<action-key>VIEW_MARKETPLACE_APPS</action-key>
 			</supports>
 			<site-member-defaults />
 			<guest-unsupported>
 				<action-key>INSTALL_FREE_BUNDLED_APPS</action-key>
 				<action-key>PURCHASE_AND_INSTALL_PAID_APPS</action-key>
-				<action-key>VIEW_MARKETPLACE_APP</action-key>
+				<action-key>VIEW_MARKETPLACE_APPS</action-key>
 			</guest-unsupported>
 		</permissions>
 	</portlet-resource>
