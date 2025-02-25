@@ -466,11 +466,8 @@ export function ProvideAppBuildPage({
 			/>
 
 			<Section
-				label={i18n.translate('cloud-compatible')}
+				label={i18n.translate('app-type')}
 				required
-				tooltip={i18n.translate(
-					'a-cloud-app-is-a-client-extension-delivered-as-a-deployed-service-to-liferay-saas-and-liferay-paas-customers-dxp-apps-include-jar-based-collection-meant-to-run-within-liferay-dxp-fragments-client-extensions-that-do-not-require-dedicated-resources'
-				)}
 				tooltipText={i18n.translate('more-info')}
 			>
 				<div className="app-type">
