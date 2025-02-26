@@ -1,28 +1,31 @@
 assemble:
-  - fromTask: bootJar
+    - fromTask: bootJar
 liferay-dotcom-etc-spring-boot-oauth-application-headless-server:
-  .serviceAddress: localhost:58081
-  .serviceScheme: http
-  name: Liferay Dotcom Etc Spring Boot OAuth Application Headless Server
-  scopes:
-    - Liferay.Headless.Admin.User.everything
-    - Liferay.Object.Admin.REST.everything.read
-  type: oAuthApplicationHeadlessServer
-  userAccountScreenName: default-service-account
+    .serviceAddress: localhost:58081
+    .serviceScheme: http
+    name: Liferay Dotcom Etc Spring Boot OAuth Application Headless Server
+    scopes:
+        - c_events.everything
+        - c_eventregistrations.everything
+        - Liferay.Headless.Admin.User.everything
+        - Liferay.Object.Admin.REST.everything.read
+    type: oAuthApplicationHeadlessServer
+    userAccountScreenName: default-service-account
 liferay-dotcom-etc-spring-boot-oauth-application-user-agent:
-  .serviceAddress: localhost:58081
-  .serviceScheme: http
-  name: Liferay Dotcom Etc Spring Boot OAuth Application User Agent
-  scopes:
-    - 
-  type: oAuthApplicationUserAgent
+    .serviceAddress: localhost:58081
+    .serviceScheme: http
+    name: Liferay Dotcom Etc Spring Boot OAuth Application User Agent
+    scopes:
+        - c_events.everything
+        - c_eventregistrations.everything
+    type: oAuthApplicationUserAgent
 liferay-dotcom-etc-spring-boot-object-action-event-registration-status-update:
-  name: Liferay Dotcom Etc Spring Boot Object Action Event Status Update
-  oAuth2ApplicationExternalReferenceCode: liferay-dotcom-etc-spring-boot-oauth-application-user-agent
-  resourcePath: /object/action/event-registration-status-update
-  type: objectAction
+    name: Liferay Dotcom Etc Spring Boot Object Action Event Status Update
+    oAuth2ApplicationExternalReferenceCode: liferay-dotcom-etc-spring-boot-oauth-application-user-agent
+    resourcePath: /object/action/event-registration-status-update
+    type: objectAction
 liferay-dotcom-etc-spring-boot-object-action-permission:
-  name: Liferay Dotcom Etc Spring Boot Object Action Permission
-  oAuth2ApplicationExternalReferenceCode: liferay-dotcom-etc-spring-boot-oauth-application-user-agent
-  resourcePath: /object/action/permission
-  type: objectAction
+    name: Liferay Dotcom Etc Spring Boot Object Action Permission
+    oAuth2ApplicationExternalReferenceCode: liferay-dotcom-etc-spring-boot-oauth-application-user-agent
+    resourcePath: /object/action/permission
+    type: objectAction
