@@ -57,10 +57,10 @@ public class ObjectActionEventRegistrationStatusUpdateRestController extends Bas
 			_getPayloadJSONObject(
 				eventResponseJSONObject.getJSONObject("eventCapacityStatus")
 			).toString(),
-			"/o/c/eventregistrations/" + _getEventRegistrationId(json);
+			"/o/c/eventregistrations/" + _getEventRegistrationId(json));
 
 		if (_log.isInfoEnabled()) {
-			_log.info("Updated Event Registration Status " + itemJSONObject.getLong("id"));
+			_log.info("Updated Event Registration Status " + _getEventRegistrationId(json));
 		}
 
 		return new ResponseEntity<>(json, HttpStatus.OK);
@@ -84,7 +84,7 @@ public class ObjectActionEventRegistrationStatusUpdateRestController extends Bas
 	}
 
 	private JSONObject _getPayloadJSONObject(JSONObject eventStatusJSONObject) {
-		JSONObject eventResgistrationStatus = new JSONOBject(
+		JSONObject eventResgistrationStatus = new JSONObject(
 		).put("key", eventStatusJSONObject.getString("key")
 		).put("name", eventStatusJSONObject.getString("name"));
 
