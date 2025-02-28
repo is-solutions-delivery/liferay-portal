@@ -12,6 +12,7 @@ import {
 } from 'frontend-js-components-web';
 import {setFormValues} from 'frontend-js-web';
 
+import ShareFragmentModal from './ShareFragmentModal';
 import openDeleteFragmentModal from './openDeleteFragmentModal';
 
 const ACTIONS = {
@@ -134,6 +135,14 @@ const ACTIONS = {
 			mainFieldValue: fragmentEntryName,
 			namespace: portletNamespace,
 		});
+	},
+
+	shareFragmentEntry(data) {
+		render(
+			ShareFragmentModal,
+			data.fragmentEntry,
+			document.createElement('div')
+		);
 	},
 
 	unmarkAsCacheableFragmentEntry({unmarkAsCacheableFragmentEntryURL}) {

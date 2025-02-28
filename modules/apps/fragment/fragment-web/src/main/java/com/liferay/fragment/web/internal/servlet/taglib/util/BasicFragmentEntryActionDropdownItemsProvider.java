@@ -19,6 +19,7 @@ import com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType;
 import com.liferay.item.selector.criteria.UUIDItemSelectorReturnType;
 import com.liferay.item.selector.criteria.upload.criterion.UploadItemSelectorCriterion;
 import com.liferay.petra.function.UnsafeConsumer;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
@@ -165,6 +166,8 @@ public class BasicFragmentEntryActionDropdownItemsProvider {
 							hasManageFragmentEntriesPermission &&
 							!_fragmentEntry.isReadOnly(),
 						_getMoveFragmentEntryActionUnsafeConsumer()
+					).add(
+						() -> true, _getShareFragmentEntryActionUnsafeConsumer()
 					).build());
 				dropdownGroupItem.setSeparator(true);
 			}
@@ -307,9 +310,7 @@ public class BasicFragmentEntryActionDropdownItemsProvider {
 		};
 	}
 
-	private UnsafeConsumer<DropdownItem, Exception>
-		_getExportFragmentEntryActionUnsafeConsumer() {
-
+	private ResourceURL _getExportFragmentURL() {
 		ResourceURL exportFragmentEntryURL =
 			_renderResponse.createResourceURL();
 
@@ -319,9 +320,15 @@ public class BasicFragmentEntryActionDropdownItemsProvider {
 		exportFragmentEntryURL.setResourceID(
 			"/fragment/export_fragment_compositions_and_fragment_entries");
 
+		return exportFragmentEntryURL;
+	}
+
+	private UnsafeConsumer<DropdownItem, Exception>
+		_getExportFragmentEntryActionUnsafeConsumer() {
+
 		return dropdownItem -> {
 			dropdownItem.setDisabled(_fragmentEntry.isDraft());
-			dropdownItem.setHref(exportFragmentEntryURL);
+			dropdownItem.setHref(_getExportFragmentURL());
 			dropdownItem.setIcon("export");
 			dropdownItem.setLabel(
 				LanguageUtil.get(_httpServletRequest, "export"));
@@ -451,6 +458,45 @@ public class BasicFragmentEntryActionDropdownItemsProvider {
 				).buildString());
 			dropdownItem.setLabel(
 				LanguageUtil.get(_httpServletRequest, "rename"));
+		};
+	}
+
+	private UnsafeConsumer<DropdownItem, Exception>
+			_getShareFragmentEntryActionUnsafeConsumer()
+		throws Exception {
+
+		return dropdownItem -> {
+			dropdownItem.putData("action", "shareFragmentEntry");
+			dropdownItem.putData(
+				"fragmentEntry",
+				JSONUtil
+					.put("author", _fragmentEntry.getUserName())
+				.put(
+					"externalReferenceCode",
+					_fragmentEntry.getExternalReferenceCode()
+				)
+				.put("export", _getExportFragmentURL())
+				.put(
+					"mvccVersion", _fragmentEntry.getMvccVersion()
+				).put(
+					"name", _fragmentEntry.getName()
+				).put(
+					"thumbnail",
+					_fragmentEntry.getImagePreviewURL(_themeDisplay)
+				));
+
+			FragmentCollectionItemSelectorCriterion
+				fragmentCollectionItemSelectorCriterion =
+					new FragmentCollectionItemSelectorCriterion();
+
+			fragmentCollectionItemSelectorCriterion.
+				setDesiredItemSelectorReturnTypes(
+					new UUIDItemSelectorReturnType());
+
+			dropdownItem.setDisabled(_fragmentEntry.isDraft());
+			dropdownItem.setIcon("share");
+			dropdownItem.setLabel(
+				LanguageUtil.get(_httpServletRequest, "share"));
 		};
 	}
 

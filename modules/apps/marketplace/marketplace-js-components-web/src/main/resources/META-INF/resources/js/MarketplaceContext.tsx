@@ -126,19 +126,21 @@ export function MarketplaceContextProvider({
 
 		setLoading(true);
 
+		const accountId = String(marketplaceRest.settings.account.id);
+
 		const urlSearchParams = new URLSearchParams({
-			'accountId': '-1',
-			'attachments.accountId': '-1',
+			accountId,
+			'attachments.accountId': accountId,
 			'filter': getProductFilter(
 				marketplaceRest.settings.references,
 				settings
 			),
-			'images.accountId': '-1',
+			'images.accountId': accountId,
 			'nestedFields': 'productSpecifications,skus,categories,images',
 			'page': String(productSearchParams.page),
 			'pageSize': String(productSearchParams.pageSize),
 			'search': productSearchParams.search,
-			'skus.accountId': '-1',
+			'skus.accountId': accountId,
 			...(productSearchParams.sortKey && {
 				sort: `${productSearchParams.sortKey}:${productSearchParams.sortDirection}`,
 			}),
