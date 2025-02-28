@@ -12,6 +12,7 @@ import zodSchema, {z, zodResolver} from '../../schema/zod';
 import {ConsoleUserProject} from '../../services/oauth/types';
 import useGetResourceInfo from '../GetApp/hooks/useGetResourceInfo';
 import useAccounts from '../ProductPurchase/hooks/useAccounts';
+import {useCatalogs} from '../../hooks/data/useCatalogs';
 
 type Schema = z.infer<typeof zodSchema.installProductSchema>;
 
@@ -21,6 +22,7 @@ const OAuth2AuthorizeOutlet = () => {
 		shouldFetch: true,
 	});
 
+	const {data: catalogs = []} = useCatalogs();
 	const {myUserAccount} = useMarketplaceContext();
 	const {selectedAccount, setSelectedAccount} = useAccounts();
 
@@ -48,6 +50,9 @@ const OAuth2AuthorizeOutlet = () => {
 		<div className="container mt-5">
 			<Outlet
 				context={{
+					catalogId: catalogs.find(
+						(catalog) => catalog.accountId === selectedAccount?.id
+					)?.id,
 					environment,
 					isLoading,
 					myUserAccount,
@@ -66,6 +71,7 @@ const OAuth2AuthorizeOutlet = () => {
 
 const useOAuth2OutletContext = () =>
 	useOutletContext<{
+		catalogId: number;
 		environment: Schema['environment'];
 		isLoading: boolean;
 		myUserAccount: UserAccount;

@@ -20,7 +20,7 @@ const urlSearchParams = new URLSearchParams(window.location.search);
 const POST_MESSAGE_TIMEOUT = 3000;
 
 const Congratulations = () => {
-	const {environment, myUserAccount, selectedAccount} =
+	const {environment, catalogId, myUserAccount, selectedAccount} =
 		useOAuth2OutletContext();
 
 	useEffect(() => {
@@ -47,6 +47,7 @@ const Congratulations = () => {
 					image: selectedAccount?.logoURL,
 					name: selectedAccount?.name,
 				},
+				catalogId,
 				channelId: Liferay.CommerceContext.commerceChannelId,
 				cloudProject: environment?.projectId,
 				references: {
