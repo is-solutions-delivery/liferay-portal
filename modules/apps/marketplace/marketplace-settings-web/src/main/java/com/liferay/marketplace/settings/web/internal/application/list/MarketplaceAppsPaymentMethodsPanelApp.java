@@ -17,7 +17,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Stefano Motta
+ * @author Ricardo Mariz
  */
 @Component(
 	property = {

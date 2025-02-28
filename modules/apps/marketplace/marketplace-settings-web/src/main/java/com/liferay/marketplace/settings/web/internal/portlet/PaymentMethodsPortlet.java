@@ -13,7 +13,7 @@ import javax.portlet.Portlet;
 import org.osgi.service.component.annotations.Component;
 
 /**
- * @author Stefano Motta
+ * @author Ricardo Mariz
  */
 @Component(
 	property = {
