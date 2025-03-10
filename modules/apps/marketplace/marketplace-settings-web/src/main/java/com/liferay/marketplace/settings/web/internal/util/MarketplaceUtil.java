@@ -123,10 +123,13 @@ public class MarketplaceUtil {
 					}
 				}) {
 
+			String portletKey = permission[0];
+			String actionKey = permission[1];
+
 			permissionJSONObject.put(
-				permission[0],
+				portletKey + "_" + actionKey,
 				PortletPermissionUtil.contains(
-					permissionChecker, permission[1], permission[0]));
+					permissionChecker, portletKey, actionKey));
 		}
 
 		return permissionJSONObject;
