@@ -7,8 +7,8 @@ package com.liferay.marketplace.settings.web.internal.application.list;
 
 import com.liferay.application.list.BasePanelApp;
 import com.liferay.application.list.PanelApp;
+import com.liferay.application.list.constants.PanelCategoryKeys;
 import com.liferay.marketplace.settings.web.internal.constants.MarketplaceAppsPortletKeys;
-import com.liferay.marketplace.settings.web.internal.constants.MarketplacePanelCategoryKeys;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -21,12 +21,12 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	property = {
-		"panel.app.order:Integer=100",
-		"panel.category.key=" + MarketplacePanelCategoryKeys.MARKETPLACE_APPS
+		"panel.app.order:Integer=300",
+		"panel.category.key=" + PanelCategoryKeys.MARKETPLACE
 	},
 	service = PanelApp.class
 )
-public class MarketplaceAppsGeneralPermissionsPanelApp extends BasePanelApp {
+public class MarketplacePaymentMethodsPanelApp extends BasePanelApp {
 
 	@Override
 	public Portlet getPortlet() {
@@ -35,7 +35,7 @@ public class MarketplaceAppsGeneralPermissionsPanelApp extends BasePanelApp {
 
 	@Override
 	public String getPortletId() {
-		return MarketplaceAppsPortletKeys.GENERAL;
+		return MarketplaceAppsPortletKeys.PAYMENT_METHODS;
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class MarketplaceAppsGeneralPermissionsPanelApp extends BasePanelApp {
 	}
 
 	@Reference(
-		target = "(javax.portlet.name=" + MarketplaceAppsPortletKeys.GENERAL + ")"
+		target = "(javax.portlet.name=" + MarketplaceAppsPortletKeys.PAYMENT_METHODS + ")"
 	)
 	private Portlet _portlet;
 

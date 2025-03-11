@@ -175,6 +175,34 @@ public class EditRolePermissionsNavigationDisplayContext {
 		).buildString();
 	}
 
+
+	private List<NavigationItem>
+	_getMarketPlacePanelCategoryNavigationItems() {
+		List<NavigationItem> navigationItems = new ArrayList<>();
+
+		List<PanelApp> panelApps = _panelAppRegistry.getPanelApps(
+			PanelCategoryKeys.MARKETPLACE);
+
+		if (panelApps.isEmpty()) {
+			return null;
+		}
+
+		for (PanelApp panelApp : panelApps) {
+			Portlet panelAppPortlet =
+				PortletLocalServiceUtil.getPortletById(
+					_themeDisplay.getCompanyId(),
+					panelApp.getPortletId());
+
+				navigationItems.add(NavigationItem.create(
+					PortalUtil.getPortletLongTitle(
+						panelAppPortlet, _servletContext, _locale),
+					_getPortletResourceNavigationItemConsumer(
+						panelAppPortlet.getPortletId())));
+		};
+
+		return navigationItems;
+	}
+
 	private List<NavigationItem> _getObjectsNavigationItems() {
 		List<NavigationItem> navigationItems = new ArrayList<>();
 
@@ -389,8 +417,7 @@ public class EditRolePermissionsNavigationDisplayContext {
 					LanguageUtil.get(_locale, "marketplace"),
 					navigationItem -> {
 						navigationItem.addNavigationItems(
-							_getPanelCategoryNavigationItems(
-								PanelCategoryKeys.MARKETPLACE));
+							_getMarketPlacePanelCategoryNavigationItems());
 						navigationItem.setInitialExpanded(true);
 					}));
 

@@ -7,8 +7,8 @@ package com.liferay.marketplace.settings.web.internal.application.list;
 
 import com.liferay.application.list.BasePanelApp;
 import com.liferay.application.list.PanelApp;
+import com.liferay.application.list.constants.PanelCategoryKeys;
 import com.liferay.marketplace.settings.web.internal.constants.MarketplaceAppsPortletKeys;
-import com.liferay.marketplace.settings.web.internal.constants.MarketplacePanelCategoryKeys;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -22,11 +22,11 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	property = {
 		"panel.app.order:Integer=200",
-		"panel.category.key=" + MarketplacePanelCategoryKeys.MARKETPLACE_APPS
+		"panel.category.key=" + PanelCategoryKeys.MARKETPLACE
 	},
 	service = PanelApp.class
 )
-public class MarketplaceAppsFragmentsPanelApp extends BasePanelApp {
+public class MarketplaceFragmentsPanelApp extends BasePanelApp {
 
 	@Override
 	public Portlet getPortlet() {
