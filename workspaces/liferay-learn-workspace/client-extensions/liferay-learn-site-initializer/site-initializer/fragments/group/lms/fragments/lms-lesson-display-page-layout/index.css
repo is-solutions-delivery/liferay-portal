@@ -400,6 +400,11 @@
 	z-index: 1;
 }
 
+.text-admonition {
+	color: #282934;
+	font-weight: 400;
+}
+
 @media (max-width: 600px) {
 	.banner-tag {
 		font-size: 0.7rem !important;
