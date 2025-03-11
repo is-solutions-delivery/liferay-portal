@@ -51,6 +51,7 @@ public class ObjectEntryWrapper
 		attributes.put("rootObjectEntryId", getRootObjectEntryId());
 		attributes.put("defaultLanguageId", getDefaultLanguageId());
 		attributes.put("treePath", getTreePath());
+		attributes.put("version", getVersion());
 		attributes.put("lastPublishDate", getLastPublishDate());
 		attributes.put("status", getStatus());
 		attributes.put("statusByUserId", getStatusByUserId());
@@ -151,6 +152,12 @@ public class ObjectEntryWrapper
 
 		if (treePath != null) {
 			setTreePath(treePath);
+		}
+
+		Integer version = (Integer)attributes.get("version");
+
+		if (version != null) {
+			setVersion(version);
 		}
 
 		Date lastPublishDate = (Date)attributes.get("lastPublishDate");
@@ -389,6 +396,13 @@ public class ObjectEntryWrapper
 	}
 
 	@Override
+	public Map<java.util.Locale, String> getTitleMap()
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return model.getTitleMap();
+	}
+
+	@Override
 	public String getTitleValue()
 		throws com.liferay.portal.kernel.exception.PortalException {
 
@@ -465,6 +479,16 @@ public class ObjectEntryWrapper
 	@Override
 	public Map<String, Serializable> getValues() {
 		return model.getValues();
+	}
+
+	/**
+	 * Returns the version of this object entry.
+	 *
+	 * @return the version of this object entry
+	 */
+	@Override
+	public int getVersion() {
+		return model.getVersion();
 	}
 
 	/**
@@ -790,6 +814,16 @@ public class ObjectEntryWrapper
 	@Override
 	public void setValues(Map<String, Serializable> values) {
 		model.setValues(values);
+	}
+
+	/**
+	 * Sets the version of this object entry.
+	 *
+	 * @param version the version of this object entry
+	 */
+	@Override
+	public void setVersion(int version) {
+		model.setVersion(version);
 	}
 
 	@Override

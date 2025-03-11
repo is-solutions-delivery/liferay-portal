@@ -18,6 +18,7 @@ import com.liferay.object.admin.rest.dto.v1_0.ObjectValidationRule;
 import com.liferay.object.admin.rest.dto.v1_0.ObjectView;
 import com.liferay.object.admin.rest.dto.v1_0.Status;
 import com.liferay.object.admin.rest.internal.dto.v1_0.converter.constants.DTOConverterConstants;
+import com.liferay.object.admin.rest.internal.dto.v1_0.util.ObjectDefinitionSettingUtil;
 import com.liferay.object.admin.rest.internal.dto.v1_0.util.ObjectFieldSettingUtil;
 import com.liferay.object.admin.rest.internal.dto.v1_0.util.ObjectFieldUtil;
 import com.liferay.object.admin.rest.internal.odata.entity.v1_0.ObjectDefinitionEntityModel;
@@ -44,6 +45,7 @@ import com.liferay.object.service.ObjectActionLocalService;
 import com.liferay.object.service.ObjectActionService;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectDefinitionService;
+import com.liferay.object.service.ObjectDefinitionSettingLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectFieldSettingLocalService;
 import com.liferay.object.service.ObjectFilterLocalService;
@@ -66,6 +68,7 @@ import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.auth.GuestOrUserUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.kernel.transaction.TransactionConfig;
 import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
@@ -268,6 +271,10 @@ public class ObjectDefinitionResourceImpl
 						objectDefinition.getPluralLabel()),
 					GetterUtil.getBoolean(objectDefinition.getPortlet()),
 					objectDefinition.getScope(),
+					ObjectDefinitionSettingUtil.toObjectDefinitionSettings(
+						contextUser.getCompanyId(), _groupLocalService,
+						objectDefinition.getObjectDefinitionSettings(),
+						_objectDefinitionSettingLocalService),
 					transformToList(
 						objectDefinition.getObjectFields(),
 						objectField -> ObjectFieldUtil.toObjectField(
@@ -311,6 +318,10 @@ public class ObjectDefinitionResourceImpl
 					GetterUtil.getBoolean(objectDefinition.getPortlet(), true),
 					objectDefinition.getScope(),
 					objectDefinition.getStorageType(),
+					ObjectDefinitionSettingUtil.toObjectDefinitionSettings(
+						contextUser.getCompanyId(), _groupLocalService,
+						objectDefinition.getObjectDefinitionSettings(),
+						_objectDefinitionSettingLocalService),
 					transformToList(
 						ArrayUtil.filter(
 							objectDefinition.getObjectFields(),
@@ -527,7 +538,11 @@ public class ObjectDefinitionResourceImpl
 					_getObjectFolderId(
 						objectDefinition.
 							getObjectFolderExternalReferenceCode()),
-					0);
+					0,
+					ObjectDefinitionSettingUtil.toObjectDefinitionSettings(
+						contextUser.getCompanyId(), _groupLocalService,
+						objectDefinition.getObjectDefinitionSettings(),
+						_objectDefinitionSettingLocalService));
 		}
 		else {
 			serviceBuilderObjectDefinition =
@@ -571,7 +586,11 @@ public class ObjectDefinitionResourceImpl
 					LocalizedMapUtil.populateLocalizedMap(
 						objectDefinition.getDefaultLanguageId(),
 						objectDefinition.getPluralLabel()),
-					objectDefinition.getScope(), statusInt);
+					objectDefinition.getScope(), statusInt,
+					ObjectDefinitionSettingUtil.toObjectDefinitionSettings(
+						contextUser.getCompanyId(), _groupLocalService,
+						objectDefinition.getObjectDefinitionSettings(),
+						_objectDefinitionSettingLocalService));
 		}
 
 		List<ObjectAction> objectActions = ListUtil.fromArray(
@@ -830,6 +849,15 @@ public class ObjectDefinitionResourceImpl
 		}
 
 		return postObjectDefinition(objectDefinition);
+	}
+
+	@Override
+	protected void preparePatch(
+		ObjectDefinition objectDefinition,
+		ObjectDefinition existingObjectDefinition) {
+
+		existingObjectDefinition.setObjectDefinitionSettings(
+			objectDefinition::getObjectDefinitionSettings);
 	}
 
 	private void _addListTypeDefinition(ObjectDefinition objectDefinition)
@@ -1287,6 +1315,9 @@ public class ObjectDefinitionResourceImpl
 			Propagation.REQUIRES_NEW, new Class<?>[] {Exception.class});
 
 	@Reference
+	private GroupLocalService _groupLocalService;
+
+	@Reference
 	private ListTypeDefinitionLocalService _listTypeDefinitionLocalService;
 
 	@Reference
@@ -1317,6 +1348,10 @@ public class ObjectDefinitionResourceImpl
 
 	@Reference
 	private ObjectDefinitionService _objectDefinitionService;
+
+	@Reference
+	private ObjectDefinitionSettingLocalService
+		_objectDefinitionSettingLocalService;
 
 	@Reference(target = DTOConverterConstants.OBJECT_FIELD_DTO_CONVERTER)
 	private DTOConverter<com.liferay.object.model.ObjectField, ObjectField>

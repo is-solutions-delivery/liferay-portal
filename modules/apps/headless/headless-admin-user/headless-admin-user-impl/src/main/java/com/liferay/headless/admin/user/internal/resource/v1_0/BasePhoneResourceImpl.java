@@ -743,8 +743,23 @@ public abstract class BasePhoneResourceImpl
 			Collection<Phone> phones, Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (Phone phone : phones) {
+		UnsafeFunction<Phone, Phone, Exception> phoneUnsafeFunction = phone -> {
 			deletePhone(phone.getId());
+
+			return phone;
+		};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(phones, phoneUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				phones, phoneUnsafeFunction::apply);
+		}
+		else {
+			for (Phone phone : phones) {
+				phoneUnsafeFunction.apply(phone);
+			}
 		}
 	}
 

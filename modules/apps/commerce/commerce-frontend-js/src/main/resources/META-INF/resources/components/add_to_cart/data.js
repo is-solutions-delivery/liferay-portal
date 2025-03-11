@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {openModal} from 'frontend-js-web';
+import {openModal} from 'frontend-js-components-web';
 
 import ServiceProvider from '../../ServiceProvider/index';
 import {CURRENT_ORDER_UPDATED} from '../../utilities/eventsDefinitions';
@@ -64,6 +64,10 @@ export async function addToCart(
 	skuOptions,
 	skuOptionsNamespace
 ) {
+	const currencyCode = Liferay.CommerceContext
+		? Liferay.CommerceContext.currency.currencyCode
+		: '';
+
 	if (!cartId) {
 		const newCart = await CartResource.createCartByChannelId(channel.id, {
 			accountId,
@@ -75,7 +79,7 @@ export async function addToCart(
 					skuOptionsNamespace
 				)
 			),
-			currencyCode: channel.currencyCode,
+			currencyCode,
 			orderTypeId,
 		});
 

@@ -195,8 +195,25 @@ public abstract class BaseFormDocumentResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (FormDocument formDocument : formDocuments) {
-			deleteFormDocument(formDocument.getId());
+		UnsafeFunction<FormDocument, FormDocument, Exception>
+			formDocumentUnsafeFunction = formDocument -> {
+				deleteFormDocument(formDocument.getId());
+
+				return formDocument;
+			};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				formDocuments, formDocumentUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				formDocuments, formDocumentUnsafeFunction::apply);
+		}
+		else {
+			for (FormDocument formDocument : formDocuments) {
+				formDocumentUnsafeFunction.apply(formDocument);
+			}
 		}
 	}
 

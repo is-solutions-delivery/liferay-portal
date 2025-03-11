@@ -6,30 +6,43 @@
 package com.liferay.layout.internal.upgrade.v1_4_4.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.portal.kernel.cache.MultiVMPool;
-import com.liferay.portal.kernel.dao.orm.EntityCache;
+import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.configuration.test.util.ConfigurationTestUtil;
 import com.liferay.portal.kernel.feature.flag.constants.FeatureFlagConstants;
+import com.liferay.portal.kernel.model.Release;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.service.PortalPreferencesLocalService;
+import com.liferay.portal.kernel.service.ReleaseLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.version.Version;
+import com.liferay.portal.test.log.LogCapture;
+import com.liferay.portal.test.log.LogEntry;
+import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.upgrade.registry.UpgradeStepRegistrator;
 import com.liferay.portal.upgrade.test.util.UpgradeTestUtil;
 import com.liferay.portlet.PortalPreferencesWrapper;
-import com.liferay.release.feature.flag.ReleaseFeatureFlag;
-import com.liferay.release.feature.flag.ReleaseFeatureFlagManager;
+
+import java.util.Dictionary;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import org.osgi.framework.Constants;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 
 /**
  * @author Lourdes Fernández Besada
@@ -46,34 +59,92 @@ public class LayoutPrivateLayoutsUpgradeProcessTest {
 
 	@Test
 	public void testUpgrade() throws Exception {
-		boolean releaseFeatureFlagEnabled =
-			_releaseFeatureFlagManager.isEnabled(
-				ReleaseFeatureFlag.DISABLE_PRIVATE_LAYOUTS);
-
+		Configuration[] originalConfigurations =
+			_configurationAdmin.listConfigurations(
+				StringBundler.concat(
+					StringPool.OPEN_PARENTHESIS, Constants.SERVICE_PID,
+					StringPool.EQUAL, _PID, StringPool.CLOSE_PARENTHESIS));
+		Release originalRelease = _releaseLocalService.fetchRelease(
+			_SCHEMA_NAME);
+		Release release = null;
 		String originalFeatureFlagValue = _updateFeatureFlagValue(
 			Boolean.FALSE.toString());
 
 		try {
-			_releaseFeatureFlagManager.setEnabled(
-				ReleaseFeatureFlag.DISABLE_PRIVATE_LAYOUTS, false);
+			if (ArrayUtil.isNotEmpty(originalConfigurations)) {
+				ConfigurationTestUtil.deleteConfiguration(
+					originalConfigurations[0]);
+			}
 
-			_runUpgrade();
+			if (originalRelease != null) {
+				_releaseLocalService.deleteRelease(originalRelease);
+			}
 
-			_assertFeatureFlagValue(Boolean.TRUE.toString());
+			// Old Version (No intermediate Upgrade): Installation from an old
+			// version, missing the release feature flag upgrade process.
 
-			_updateFeatureFlagValue(Boolean.FALSE.toString());
+			_runUpgrade(Boolean.TRUE.toString(), null);
 
-			_releaseFeatureFlagManager.setEnabled(
-				ReleaseFeatureFlag.DISABLE_PRIVATE_LAYOUTS, true);
+			release = _releaseLocalService.addRelease(_SCHEMA_NAME, "1.0.0");
 
-			_runUpgrade();
+			// Old Version (Upgraded, Default): Installation from an old
+			// version, upgraded through an intermediate version with the
+			// release feature flag upgrade process, but configuration
+			// remains default, thus private pages are enabled.
 
-			_assertFeatureFlagValue(Boolean.FALSE.toString());
+			_runUpgrade(
+				Boolean.TRUE.toString(),
+				HashMapDictionaryBuilder.<String, Object>put(
+					"disabledReleaseFeatureFlags",
+					new String[] {_DISABLE_PRIVATE_LAYOUTS}
+				).build());
+
+			// Old Version (Upgraded, Modified): Installation from an old
+			// version, upgraded through an intermediate version with the
+			// release feature flag upgrade process,
+			// and configuration modified to disable private pages.
+
+			_runUpgrade(
+				Boolean.FALSE.toString(),
+				HashMapDictionaryBuilder.<String, Object>put(
+					"disabledReleaseFeatureFlags", new String[0]
+				).build());
+
+			// Intermediate Version: Installation from an intermediate version
+			// where the release feature flag upgrade process occurred,
+			// but no configuration was added, and it was not manually enabled,
+			// thus private pages are disabled.
+
+			_runUpgrade(Boolean.FALSE.toString(), null);
+
+			// Intermediate Version (Enabled): Installation from an intermediate
+			// version where the release feature flag upgrade process occurred,
+			// but no configuration was added, and it was manually enabled,
+			// thus private pages are enabled.
+
+			_runUpgrade(
+				Boolean.TRUE.toString(),
+				HashMapDictionaryBuilder.<String, Object>put(
+					"disabledReleaseFeatureFlags",
+					new String[] {_DISABLE_PRIVATE_LAYOUTS}
+				).build());
 		}
 		finally {
-			_releaseFeatureFlagManager.setEnabled(
-				ReleaseFeatureFlag.DISABLE_PRIVATE_LAYOUTS,
-				releaseFeatureFlagEnabled);
+			if (ArrayUtil.isNotEmpty(originalConfigurations)) {
+				Configuration originalConfiguration = originalConfigurations[0];
+
+				ConfigurationTestUtil.saveConfiguration(
+					originalConfiguration,
+					originalConfiguration.getProperties());
+			}
+
+			if (release != null) {
+				_releaseLocalService.deleteRelease(release);
+			}
+
+			if (originalRelease != null) {
+				_releaseLocalService.addRelease(originalRelease);
+			}
 
 			_updateFeatureFlagValue(originalFeatureFlagValue);
 		}
@@ -96,15 +167,66 @@ public class LayoutPrivateLayoutsUpgradeProcessTest {
 	}
 
 	private void _runUpgrade() throws Exception {
-		UpgradeProcess[] upgradeSteps = UpgradeTestUtil.getUpgradeSteps(
-			_upgradeStepRegistrator, new Version(1, 4, 4));
+		PortalPreferencesWrapper portalPreferencesWrapper =
+			(PortalPreferencesWrapper)
+				_portalPreferencesLocalService.getPreferences(
+					TestPropsValues.getCompanyId(),
+					PortletKeys.PREFS_OWNER_TYPE_COMPANY);
 
-		UpgradeProcess upgradeProcess = upgradeSteps[0];
+		PortalPreferences portalPreferences =
+			portalPreferencesWrapper.getPortalPreferencesImpl();
 
-		upgradeProcess.upgrade();
+		portalPreferences.setValue(
+			FeatureFlagConstants.PREFERENCE_NAMESPACE, "LPD-38869", null);
 
-		_entityCache.clearCache();
-		_multiVMPool.clear();
+		_portalPreferencesLocalService.updatePreferences(
+			TestPropsValues.getCompanyId(),
+			PortletKeys.PREFS_OWNER_TYPE_COMPANY, portalPreferences);
+
+		_assertFeatureFlagValue(null);
+
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				"com.liferay.layout.internal.upgrade.v1_4_4." +
+					"LayoutPrivateLayoutsUpgradeProcess",
+				LoggerTestUtil.ERROR)) {
+
+			UpgradeProcess[] upgradeSteps = UpgradeTestUtil.getUpgradeSteps(
+				_upgradeStepRegistrator, new Version(1, 4, 4));
+
+			UpgradeProcess upgradeProcess = upgradeSteps[0];
+
+			upgradeProcess.upgrade();
+
+			List<LogEntry> logEntries = logCapture.getLogEntries();
+
+			Assert.assertTrue(logEntries.toString(), logEntries.isEmpty());
+		}
+	}
+
+	private void _runUpgrade(
+			String expectedValue, Dictionary<String, Object> properties)
+		throws Exception {
+
+		Configuration configuration = null;
+
+		try {
+			if (properties != null) {
+				configuration = _configurationAdmin.getConfiguration(
+					_PID, StringPool.QUESTION);
+
+				ConfigurationTestUtil.saveConfiguration(
+					configuration, properties);
+			}
+
+			_runUpgrade();
+
+			_assertFeatureFlagValue(expectedValue);
+		}
+		finally {
+			if (configuration != null) {
+				ConfigurationTestUtil.deleteConfiguration(configuration);
+			}
+		}
 	}
 
 	private String _updateFeatureFlagValue(String value) throws Exception {
@@ -134,21 +256,28 @@ public class LayoutPrivateLayoutsUpgradeProcessTest {
 		return previousValue;
 	}
 
+	private static final String _DISABLE_PRIVATE_LAYOUTS =
+		"DISABLE_PRIVATE_LAYOUTS";
+
+	private static final String _PID =
+		"com.liferay.release.feature.flag.web.internal.configuration." +
+			"ReleaseFeatureFlagConfiguration";
+
+	private static final String _SCHEMA_NAME =
+		"com.liferay.release.feature.flag.web";
+
+	@Inject
+	private static ConfigurationAdmin _configurationAdmin;
+
 	@Inject(
 		filter = "(&(component.name=com.liferay.layout.internal.upgrade.registry.LayoutServiceUpgradeStepRegistrator))"
 	)
 	private static UpgradeStepRegistrator _upgradeStepRegistrator;
 
 	@Inject
-	private EntityCache _entityCache;
-
-	@Inject
-	private MultiVMPool _multiVMPool;
-
-	@Inject
 	private PortalPreferencesLocalService _portalPreferencesLocalService;
 
 	@Inject
-	private ReleaseFeatureFlagManager _releaseFeatureFlagManager;
+	private ReleaseLocalService _releaseLocalService;
 
 }

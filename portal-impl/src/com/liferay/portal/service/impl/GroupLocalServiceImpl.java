@@ -161,6 +161,7 @@ import com.liferay.portal.kernel.util.UnicodePropertiesBuilder;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.comparator.GroupIdComparator;
 import com.liferay.portal.kernel.util.comparator.GroupNameComparator;
+import com.liferay.portal.model.impl.GroupModelImpl;
 import com.liferay.portal.model.impl.LayoutImpl;
 import com.liferay.portal.security.permission.PermissionCacheUtil;
 import com.liferay.portal.service.base.GroupLocalServiceBaseImpl;
@@ -848,7 +849,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 		for (String groupKey : systemGroups) {
 			if (groupKey.equals(GroupConstants.CMS) &&
-				!FeatureFlagManagerUtil.isEnabled("LPD-17809")) {
+				!FeatureFlagManagerUtil.isEnabled("LPD-17564")) {
 
 				continue;
 			}
@@ -1536,8 +1537,25 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 	@Override
 	public Group fetchStagingGroup(long liveGroupId) {
+		if (liveGroupId == 0) {
+			return null;
+		}
+
 		if (_cacheableQueryLimitLPD28122 <= 0) {
-			return groupPersistence.fetchByLiveGroupId_Last(liveGroupId, null);
+			List<Group> groups = groupPersistence.findByLiveGroupId(
+				liveGroupId);
+
+			if (groups.isEmpty()) {
+				return null;
+			}
+
+			if (groups.size() > 1) {
+				_log.error(
+					"Live group " + liveGroupId +
+						" has more than one staging group");
+			}
+
+			return groups.get(groups.size() - 1);
 		}
 
 		Map<Long, Long> stagingGroupIds =
@@ -5429,7 +5447,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 
 			SQLQuery sqlQuery = session.createSynchronizedSQLQuery(
 				"select liveGroupId, groupId from Group_ where liveGroupId " +
-					"!= 0");
+					"!= 0" + GroupModelImpl.ORDER_BY_SQL);
 
 			sqlQuery.addScalar("liveGroupId", Type.LONG);
 			sqlQuery.addScalar("groupId", Type.LONG);
@@ -5443,7 +5461,14 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			Map<Long, Long> stagingGroupIds = new HashMap<>();
 
 			for (Object[] result : results) {
-				stagingGroupIds.put((Long)result[0], (Long)result[1]);
+				Long originalValue = stagingGroupIds.put(
+					(Long)result[0], (Long)result[1]);
+
+				if ((originalValue != null) && _log.isWarnEnabled()) {
+					_log.warn(
+						"Duplicated staging group for group with id " +
+							result[0]);
+				}
 			}
 
 			return stagingGroupIds;

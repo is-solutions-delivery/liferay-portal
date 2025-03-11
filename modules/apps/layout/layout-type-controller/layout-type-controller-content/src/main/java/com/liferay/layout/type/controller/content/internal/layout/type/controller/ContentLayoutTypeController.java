@@ -131,6 +131,17 @@ public class ContentLayoutTypeController extends BaseLayoutTypeControllerImpl {
 			if (!hasUpdatePermissions) {
 				layoutMode = Constants.VIEW;
 			}
+			else if (!layout.isLayoutUpdateable()) {
+				Layout redirectLayout = layout;
+
+				if (layout.isDraftLayout()) {
+					redirectLayout = _layoutLocalService.fetchLayout(
+						layout.getClassPK());
+				}
+
+				redirect = _portal.getLayoutFullURL(
+					redirectLayout, themeDisplay);
+			}
 			else if (!layout.isUnlocked(layoutMode, themeDisplay.getUserId())) {
 				redirect = _layoutLockManager.getLockedLayoutURL(
 					httpServletRequest);

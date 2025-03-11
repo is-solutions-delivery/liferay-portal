@@ -9,7 +9,10 @@ export const PORTLET_URLS = {
 	announcements:
 		'/~/control_panel/manage?p_p_id=com_liferay_announcements_web_portlet_AnnouncementsAdminPortlet',
 	blogs: '/~/control_panel/manage?p_p_id=com_liferay_blogs_web_portlet_BlogsAdminPortlet',
+	bookmarks:
+		'/~/control_panel/manage?p_p_id=com_liferay_bookmarks_web_portlet_BookmarksAdminPortlet',
 	categoriesAdmin: '/~/control_panel/manage/-/categories_admin/vocabularies',
+	cmsStructureBuilder: 'web/cms/structure-builder',
 	collections:
 		'/~/control_panel/manage?p_p_id=com_liferay_asset_list_web_portlet_AssetListPortlet',
 	contentDashboard:
@@ -67,7 +70,9 @@ export const PORTLET_URLS = {
 	selectSites: '/~/control_panel/manage/-/sites/sites/select_site',
 	serviceAccessPolicy:
 		'/~/control_panel/manage?p_p_id=com_liferay_portal_security_service_access_policy_web_portlet_SAPPortlet&p_p_lifecycle=0&p_p_state=maximized',
+	siteMemberships: '/~/control_panel/manage/-/site_memberships',
 	siteSettings: '/~/control_panel/manage/-/site/settings',
+	sites: '/~/control_panel/manage/-/sites/sites',
 	staging:
 		'/~/control_panel/manage?p_p_id=com_liferay_staging_processes_web_portlet_StagingProcessesPortlet',
 	styleBooks: '/~/control_panel/manage/-/style_books/style_books',

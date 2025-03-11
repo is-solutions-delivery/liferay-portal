@@ -59,6 +59,26 @@ export const addAnalyticsCloudWorkspace = gql`
 	}
 `;
 
+export const addBusinessEvent = gql`
+	mutation addBusinessEvent($businessEvent: InputC_BusinessEvent!) {
+		createBusinessEvent(input: $businessEvent)
+			@rest(
+				method: "POST"
+				type: "C_BusinessEvent"
+				path: "/c/businessevents/"
+			) {
+			currentLiferayVersion
+			description
+			eventType
+			impactedZendeskTicketIds
+			name
+			newLiferayVersione
+			targetGoLiveDateTime
+			timeZone
+		}
+	}
+`;
+
 export const addDXPCloudEnvironment = gql`
 	mutation addDXPCloudEnvironment(
 		$DXPCloudEnvironment: InputC_DXPCloudEnvironment!
@@ -761,6 +781,32 @@ export const updateAccountSubscriptionGroups = gql`
 			activationStatus
 			externalReferenceCode
 			name
+		}
+	}
+`;
+
+export const updateBusinessEvent = gql`
+	mutation updateBusinessEvent(
+		$businessEvent: InputC_BusinessEvent!
+		$businessEventId: Long!
+	) {
+		updateBusinessEvent(
+			businessEventId: $businessEventId
+			input: $businessEvent
+		)
+			@rest(
+				method: "PUT"
+				type: "C_BusinessEvent"
+				path: "/c/businessevents/{args.businessEventId}"
+			) {
+			actualGoLiveDateTime
+			currentLiferayVersion
+			description
+			eventType
+			feedback
+			name
+			newLiferayVersion
+			targetGoLiveDateTime
 		}
 	}
 `;

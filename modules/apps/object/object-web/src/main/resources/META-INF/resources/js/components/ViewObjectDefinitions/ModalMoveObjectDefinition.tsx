@@ -15,11 +15,9 @@ import {
 	arrayUtils,
 	stringUtils,
 } from '@liferay/object-js-components-web';
-import {ManagementToolbar} from 'frontend-js-components-web';
-import {openToast, sub} from 'frontend-js-web';
+import {ManagementToolbar, openToast} from 'frontend-js-components-web';
+import {sub} from 'frontend-js-web';
 import React, {useEffect, useMemo, useState} from 'react';
-
-import {defaultLanguageId} from '../../utils/constants';
 
 import './ModalMoveObjectDefinition.scss';
 
@@ -92,11 +90,10 @@ export function ModalMoveObjectDefinition({
 				message: sub(
 					Liferay.Language.get('x-was-moved-successfully'),
 					`<strong>${Liferay.Util.escapeHTML(
-						stringUtils.getLocalizableLabel(
-							defaultLanguageId,
-							movedObjectDefinition?.label,
-							movedObjectDefinition?.name
-						)
+						stringUtils.getLocalizableLabel({
+							fallbackLabel: movedObjectDefinition?.name,
+							labels: movedObjectDefinition?.label,
+						})
 					)}</strong>`
 				),
 				type: 'success',
@@ -134,10 +131,9 @@ export function ModalMoveObjectDefinition({
 				<ClayModal.Header>
 					{`${Liferay.Language.get(
 						'move'
-					)} "${stringUtils.getLocalizableLabel(
-						defaultLanguageId,
-						objectDefinition?.label
-					)}"`}
+					)} "${stringUtils.getLocalizableLabel({
+						labels: objectDefinition?.label,
+					})}"`}
 				</ClayModal.Header>
 
 				<ClayModal.Body>
@@ -201,9 +197,11 @@ export function ModalMoveObjectDefinition({
 
 													<span className="lfr-object__object-web-view-modal-move-object-definition-list-item-label">
 														{stringUtils.getLocalizableLabel(
-															defaultLanguageId,
-															label,
-															name
+															{
+																fallbackLabel:
+																	name,
+																labels: label,
+															}
 														)}
 													</span>
 												</div>

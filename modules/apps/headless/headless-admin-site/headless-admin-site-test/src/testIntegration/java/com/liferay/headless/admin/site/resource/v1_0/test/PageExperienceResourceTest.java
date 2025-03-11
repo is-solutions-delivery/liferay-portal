@@ -21,7 +21,7 @@ import com.liferay.segments.test.util.SegmentsTestUtil;
 import java.util.Collections;
 
 import org.junit.Assert;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -32,6 +32,16 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class PageExperienceResourceTest
 	extends BasePageExperienceResourceTestCase {
+
+	@Before
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+
+		_layout = LayoutTestUtil.addTypeContentLayout(testGroup);
+
+		_draftLayout = _layout.fetchDraftLayout();
+	}
 
 	@Override
 	@Test
@@ -109,16 +119,6 @@ public class PageExperienceResourceTest
 		}
 	}
 
-	@Ignore
-	@Override
-	@Test
-	public void testGetSiteSiteByExternalReferenceCodePageSpecificationPageExperiencesPage()
-		throws Exception {
-
-		super.
-			testGetSiteSiteByExternalReferenceCodePageSpecificationPageExperiencesPage();
-	}
-
 	@Override
 	@Test
 	public void testPatchSiteSiteByExternalReferenceCodePageExperience()
@@ -154,7 +154,6 @@ public class PageExperienceResourceTest
 		}
 	}
 
-	@Ignore
 	@Override
 	@Test
 	public void testPostSiteSiteByExternalReferenceCodePageSpecificationPageExperience()
@@ -192,8 +191,7 @@ public class PageExperienceResourceTest
 
 		pageExperience.setName_i18n(
 			Collections.singletonMap("en-US", RandomTestUtil.randomString()));
-		pageExperience.setPageElements(
-			new PageElement[] {new PageElement(), new PageElement()});
+		pageExperience.setPageElements(new PageElement[0]);
 
 		SegmentsEntry segmentsEntry = SegmentsTestUtil.addSegmentsEntry(
 			testGroup.getGroupId());
@@ -201,10 +199,8 @@ public class PageExperienceResourceTest
 		pageExperience.setSegmentExternalReferenceCode(
 			segmentsEntry.getSegmentsEntryKey());
 
-		Layout layout = LayoutTestUtil.addTypeContentLayout(testGroup);
-
-		pageExperience.setSitePageExternalReferenceCode(
-			layout.getExternalReferenceCode());
+		pageExperience.setPageSpecificationExternalReferenceCode(
+			_draftLayout.getExternalReferenceCode());
 
 		return pageExperience;
 	}
@@ -233,6 +229,14 @@ public class PageExperienceResourceTest
 
 	@Override
 	protected String
+			testGetSiteSiteByExternalReferenceCodePageSpecificationPageExperiencesPage_getPageSpecificationExternalReferenceCode()
+		throws Exception {
+
+		return _draftLayout.getExternalReferenceCode();
+	}
+
+	@Override
+	protected String
 			testGetSiteSiteByExternalReferenceCodePageSpecificationPageExperiencesPage_getSiteExternalReferenceCode()
 		throws Exception {
 
@@ -248,9 +252,12 @@ public class PageExperienceResourceTest
 		return pageExperienceResource.
 			postSiteSiteByExternalReferenceCodePageSpecificationPageExperience(
 				testGroup.getExternalReferenceCode(),
-				pageExperience.getSitePageExternalReferenceCode(),
+				pageExperience.getPageSpecificationExternalReferenceCode(),
 				pageExperience);
 	}
+
+	private Layout _draftLayout;
+	private Layout _layout;
 
 	@Inject
 	private SegmentsExperienceLocalService _segmentsExperienceLocalService;

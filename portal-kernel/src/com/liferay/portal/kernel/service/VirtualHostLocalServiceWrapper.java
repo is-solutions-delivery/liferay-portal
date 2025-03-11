@@ -215,19 +215,14 @@ public class VirtualHostLocalServiceWrapper
 	}
 
 	@Override
-	public VirtualHost fetchVirtualHost(long virtualHostId) {
-		return _virtualHostLocalService.fetchVirtualHost(virtualHostId);
+	public VirtualHost fetchCompanyDefaultVirtualHost(long companyId) {
+		return _virtualHostLocalService.fetchCompanyDefaultVirtualHost(
+			companyId);
 	}
 
-	/**
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link
-	 #getVirtualHosts(long, long)}
-	 */
-	@Deprecated
 	@Override
-	public VirtualHost fetchVirtualHost(long companyId, long layoutSetId) {
-		return _virtualHostLocalService.fetchVirtualHost(
-			companyId, layoutSetId);
+	public VirtualHost fetchVirtualHost(long virtualHostId) {
+		return _virtualHostLocalService.fetchVirtualHost(virtualHostId);
 	}
 
 	@Override
@@ -284,18 +279,6 @@ public class VirtualHostLocalServiceWrapper
 		return _virtualHostLocalService.getVirtualHost(virtualHostId);
 	}
 
-	/**
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link
-	 #getVirtualHosts(long, long)}
-	 */
-	@Deprecated
-	@Override
-	public VirtualHost getVirtualHost(long companyId, long layoutSetId)
-		throws com.liferay.portal.kernel.exception.PortalException {
-
-		return _virtualHostLocalService.getVirtualHost(companyId, layoutSetId);
-	}
-
 	@Override
 	public VirtualHost getVirtualHost(String hostname)
 		throws com.liferay.portal.kernel.exception.PortalException {
@@ -347,19 +330,6 @@ public class VirtualHostLocalServiceWrapper
 
 		return _virtualHostLocalService.getVirtualHostsCount(
 			excludedLayoutSetId, virtualHostNames);
-	}
-
-	/**
-	 * @deprecated As of Mueller (7.2.x), replaced by {@link
-	 #updateVirtualHosts(long, long, TreeMap)}
-	 */
-	@Deprecated
-	@Override
-	public VirtualHost updateVirtualHost(
-		long companyId, long layoutSetId, String hostname) {
-
-		return _virtualHostLocalService.updateVirtualHost(
-			companyId, layoutSetId, hostname);
 	}
 
 	/**

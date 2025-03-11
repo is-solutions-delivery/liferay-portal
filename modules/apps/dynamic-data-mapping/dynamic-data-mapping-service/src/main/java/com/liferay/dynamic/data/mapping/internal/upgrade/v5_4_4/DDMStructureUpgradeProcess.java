@@ -16,6 +16,8 @@ import com.liferay.dynamic.data.mapping.util.DDMFormDeserializeUtil;
 import com.liferay.dynamic.data.mapping.util.DDMFormSerializeUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.jdbc.AutoBatchPreparedStatementUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.PortalUtil;
 
@@ -91,7 +93,8 @@ public class DDMStructureUpgradeProcess extends UpgradeProcess {
 		try (PreparedStatement selectPreparedStatement =
 				connection.prepareStatement(
 					StringBundler.concat(
-						"select DDMStructureVersion.ctCollectionId, ",
+						"select DDMStructure.structureId, ",
+						"DDMStructureVersion.ctCollectionId, ",
 						"DDMStructureVersion.structureVersionId, ",
 						"DDMStructureVersion.definition from DDMStructure ",
 						"inner join DDMStructureVersion on ",
@@ -122,16 +125,33 @@ public class DDMStructureUpgradeProcess extends UpgradeProcess {
 					spiDDMFormRuleSerializerContext.addAttribute(
 						"form", ddmForm);
 
-					List<DDMFormRule> newDDMFormRules =
-						_spiDDMFormRuleConverter.convert(
-							_spiDDMFormRuleConverter.convert(ddmFormRules),
-							spiDDMFormRuleSerializerContext);
+					try {
+						List<DDMFormRule> newDDMFormRules =
+							_spiDDMFormRuleConverter.convert(
+								_spiDDMFormRuleConverter.convert(ddmFormRules),
+								spiDDMFormRuleSerializerContext);
 
-					if (Objects.equals(ddmFormRules, newDDMFormRules)) {
+						if (Objects.equals(ddmFormRules, newDDMFormRules)) {
+							continue;
+						}
+
+						ddmForm.setDDMFormRules(newDDMFormRules);
+					}
+					catch (Exception exception) {
+						String message =
+							"Unable to normalize form rules for dynamic data " +
+								"mapping structure ID " +
+									resultSet.getLong("structureId");
+
+						if (_log.isDebugEnabled()) {
+							_log.debug(message, exception);
+						}
+						else if (_log.isWarnEnabled()) {
+							_log.warn(message);
+						}
+
 						continue;
 					}
-
-					ddmForm.setDDMFormRules(newDDMFormRules);
 
 					updatePreparedStatement.setString(
 						1,
@@ -149,6 +169,9 @@ public class DDMStructureUpgradeProcess extends UpgradeProcess {
 			}
 		}
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		DDMStructureUpgradeProcess.class);
 
 	private final DDMFormDeserializer _ddmFormDeserializer;
 	private final DDMFormSerializer _ddmFormSerializer;

@@ -17,6 +17,9 @@ import com.liferay.batch.engine.service.BatchEngineExportTaskLocalService;
 import com.liferay.blogs.model.BlogsEntry;
 import com.liferay.petra.io.unsync.UnsyncBufferedReader;
 import com.liferay.petra.string.CharPool;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.test.AssertUtils;
 import com.liferay.portal.kernel.test.rule.DataGuard;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -30,6 +33,8 @@ import com.liferay.portal.test.rule.Inject;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+
+import java.sql.Blob;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -252,6 +257,94 @@ public class BatchEngineExportTaskExecutorTest
 				"siteId", TestPropsValues.getGroupId()
 			).build(),
 			true);
+	}
+
+	@Test
+	public void testExportBlogPostingsWithoutPersistingContent()
+		throws Exception {
+
+		List<BlogsEntry> blogsEntries = addBlogsEntries();
+
+		_batchEngineExportTask =
+			_batchEngineExportTaskLocalService.addBatchEngineExportTask(
+				null, user.getCompanyId(), user.getUserId(), null,
+				BlogPosting.class.getName(), "JSON",
+				BatchEngineTaskExecuteStatus.INITIAL.name(), null, _parameters,
+				null);
+
+		BatchEngineExportTaskExecutor.Result result =
+			_batchEngineExportTaskExecutor.execute(
+				_batchEngineExportTask,
+				new BatchEngineExportTaskExecutor.Settings() {
+
+					@Override
+					public boolean isCompressContent() {
+						return false;
+					}
+
+					@Override
+					public boolean isPersistContent() {
+						return false;
+					}
+
+				});
+
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray(
+			StringUtil.read(result.getInputStream()));
+
+		Assert.assertTrue(jsonArray.length() >= blogsEntries.size());
+
+		_batchEngineExportTask =
+			_batchEngineExportTaskLocalService.getBatchEngineExportTask(
+				_batchEngineExportTask.getBatchEngineExportTaskId());
+
+		BatchEngineExportTask resultBatchEngineExportTask =
+			result.getBatchEngineExportTask();
+
+		Assert.assertEquals(
+			_batchEngineExportTask, resultBatchEngineExportTask);
+		Assert.assertEquals(
+			_batchEngineExportTask.getMvccVersion(),
+			resultBatchEngineExportTask.getMvccVersion());
+
+		Assert.assertEquals(
+			BatchEngineTaskExecuteStatus.COMPLETED.toString(),
+			_batchEngineExportTask.getExecuteStatus());
+		Assert.assertEquals(
+			blogsEntries.size(),
+			_batchEngineExportTask.getProcessedItemsCount());
+		Assert.assertEquals(
+			blogsEntries.size(), _batchEngineExportTask.getTotalItemsCount());
+
+		Blob content = _batchEngineExportTask.getContent();
+
+		Assert.assertEquals(0, content.length());
+	}
+
+	@Test
+	public void testExportBlogPostingsWithUncompressedContent() {
+		AssertUtils.assertFailure(
+			IllegalArgumentException.class,
+			"Uncompressed content cannot be stored in the database",
+			() -> _batchEngineExportTaskExecutor.execute(
+				_batchEngineExportTaskLocalService.addBatchEngineExportTask(
+					null, user.getCompanyId(), user.getUserId(), null,
+					BlogPosting.class.getName(), "JSON",
+					BatchEngineTaskExecuteStatus.INITIAL.name(), null,
+					_parameters, null),
+				new BatchEngineExportTaskExecutor.Settings() {
+
+					@Override
+					public boolean isCompressContent() {
+						return false;
+					}
+
+					@Override
+					public boolean isPersistContent() {
+						return true;
+					}
+
+				}));
 	}
 
 	public abstract class BlogPostingMixin {

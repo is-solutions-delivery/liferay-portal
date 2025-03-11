@@ -81,6 +81,19 @@
 		<field name="version" type="int" />
 		<field name="status" type="int" />
 	</model>
+	<model name="com.liferay.object.model.ObjectDefinitionSetting">
+		<field name="mvccVersion" type="long" />
+		<field name="uuid" type="String" />
+		<field name="objectDefinitionSettingId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="objectDefinitionId" type="long" />
+		<field name="name" type="String" />
+		<field name="value" type="String" />
+	</model>
 	<model name="com.liferay.object.model.ObjectEntry">
 		<field name="mvccVersion" type="long" />
 		<field name="uuid" type="String" />
@@ -101,6 +114,7 @@
 		<field name="treePath" type="String">
 			<hint name="max-length">4000</hint>
 		</field>
+		<field name="version" type="int" />
 		<field name="lastPublishDate" type="Date" />
 		<field name="status" type="int" />
 		<field name="statusByUserId" type="long" />
@@ -124,6 +138,22 @@
 		<field name="treePath" type="String">
 			<hint name="max-length">4000</hint>
 		</field>
+	</model>
+	<model name="com.liferay.object.model.ObjectEntryVersion">
+		<field name="mvccVersion" type="long" />
+		<field name="uuid" type="String" />
+		<field name="objectEntryVersionId" type="long" />
+		<field name="companyId" type="long" />
+		<field name="userId" type="long" />
+		<field name="userName" type="String" />
+		<field name="createDate" type="Date" />
+		<field name="modifiedDate" type="Date" />
+		<field name="objectEntryId" type="long" />
+		<field name="content" type="String">
+			<hint-collection name="CLOB" />
+		</field>
+		<field name="version" type="int" />
+		<field name="status" type="int" />
 	</model>
 	<model name="com.liferay.object.model.ObjectField">
 		<field name="mvccVersion" type="long" />

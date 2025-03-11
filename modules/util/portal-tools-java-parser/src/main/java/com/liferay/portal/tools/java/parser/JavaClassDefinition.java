@@ -16,13 +16,13 @@ import java.util.List;
 public class JavaClassDefinition extends BaseJavaTerm {
 
 	public JavaClassDefinition(
-		String type, List<JavaAnnotation> javaAnnotations,
-		List<JavaSimpleValue> modifiers, JavaType classJavaType) {
+		JavaType classJavaType, List<JavaAnnotation> javaAnnotations,
+		List<JavaSimpleValue> modifiers, String type) {
 
-		_type = type;
+		_classJavaType = classJavaType;
 		_javaAnnotations = javaAnnotations;
 		_modifiers = modifiers;
-		_classJavaType = classJavaType;
+		_type = type;
 	}
 
 	public void setExtendedClassJavaTypes(
@@ -35,6 +35,12 @@ public class JavaClassDefinition extends BaseJavaTerm {
 		List<JavaType> implementedClassJavaTypes) {
 
 		_implementedClassJavaTypes = implementedClassJavaTypes;
+	}
+
+	public void setJavaRecordComponent(
+		List<JavaRecordComponent> javaRecordComponents) {
+
+		_javaRecordComponents = javaRecordComponents;
 	}
 
 	public void setPermittedClassJavaTypes(
@@ -83,6 +89,11 @@ public class JavaClassDefinition extends BaseJavaTerm {
 		appendSingleLine(
 			sb, _classJavaType, StringBundler.concat(prefix, _type, " "), "",
 			NO_MAX_LINE_LENGTH);
+
+		if (_javaRecordComponents != null) {
+			appendSingleLine(
+				sb, _javaRecordComponents, "(", ")", NO_MAX_LINE_LENGTH);
+		}
 
 		if (_extendedClassJavaTypes != null) {
 			appendSingleLine(
@@ -202,6 +213,7 @@ public class JavaClassDefinition extends BaseJavaTerm {
 	private List<JavaType> _extendedClassJavaTypes;
 	private List<JavaType> _implementedClassJavaTypes;
 	private final List<JavaAnnotation> _javaAnnotations;
+	private List<JavaRecordComponent> _javaRecordComponents;
 	private final List<JavaSimpleValue> _modifiers;
 	private List<JavaType> _permittedClassJavaTypes;
 	private final String _type;

@@ -6212,6 +6212,10 @@ public class JournalArticleLocalServiceImpl
 					article = journalArticleLocalService.updateJournalArticle(
 						article);
 
+					sendEmail(
+						article, _getArticleURL(article), "expired",
+						new ServiceContext());
+
 					notifySubscribers(
 						0, article, "expired", new ServiceContext());
 
@@ -6359,22 +6363,11 @@ public class JournalArticleLocalServiceImpl
 						article.getId());
 			}
 
-			String portletId = PortletProviderUtil.getPortletId(
-				JournalArticle.class.getName(), PortletProvider.Action.EDIT);
+			sendEmail(
+				article, _getArticleURL(article), "review",
+				new ServiceContext());
 
-			String articleURL = _portal.getControlPanelFullURL(
-				article.getGroupId(), portletId, null);
-
-			articleURL = HttpComponentsUtil.addParameter(
-				articleURL,
-				_portal.getPortletNamespace(portletId) + "mvcRenderCommandName",
-				"/journal/edit_article");
-
-			articleURL = buildArticleURL(
-				articleURL, article.getGroupId(), article.getFolderId(),
-				article.getArticleId());
-
-			sendEmail(article, articleURL, "review", new ServiceContext());
+			notifySubscribers(0, article, "review", new ServiceContext());
 		}
 	}
 
@@ -6869,6 +6862,9 @@ public class JournalArticleLocalServiceImpl
 				 journalGroupServiceConfiguration.
 					 emailArticleMovedToTrashEnabled()) {
 		}
+		else if (action.equals("review") &&
+				 journalGroupServiceConfiguration.emailArticleReviewEnabled()) {
+		}
 		else if (action.equals("update") &&
 				 journalGroupServiceConfiguration.
 					 emailArticleUpdatedEnabled()) {
@@ -6994,7 +6990,9 @@ public class JournalArticleLocalServiceImpl
 		subscriptionSender.setNotificationType(_getNotificationType(action));
 		subscriptionSender.setReplyToAddress(fromAddress);
 
-		if (action.equals("expired") && (serviceContext.getUserId() == 0)) {
+		if ((action.equals("expired") || action.equals("review")) &&
+			(serviceContext.getUserId() == 0)) {
+
 			subscriptionSender.setSendToCurrentUser(true);
 		}
 
@@ -7069,6 +7067,10 @@ public class JournalArticleLocalServiceImpl
 			journalGroupServiceConfiguration.
 				emailArticleApprovalDeniedEnabled()) {
 		}
+		else if (emailType.equals("expired") &&
+				 journalGroupServiceConfiguration.
+					 emailArticleExpiredEnabled()) {
+		}
 		else if (emailType.equals("granted") &&
 				 journalGroupServiceConfiguration.
 					 emailArticleApprovalGrantedEnabled()) {
@@ -7121,7 +7123,9 @@ public class JournalArticleLocalServiceImpl
 		subscriptionSender.setEntryTitle(article.getTitle(user.getLocale()));
 		subscriptionSender.setNotificationType(_getNotificationType(emailType));
 
-		if (emailType.equals("review") && (serviceContext.getUserId() == 0)) {
+		if ((emailType.equals("expired") || emailType.equals("review")) &&
+			(serviceContext.getUserId() == 0)) {
+
 			subscriptionSender.setSendToCurrentUser(true);
 		}
 
@@ -7778,6 +7782,27 @@ public class JournalArticleLocalServiceImpl
 		}
 
 		return StringPool.BLANK;
+	}
+
+	private String _getArticleURL(JournalArticle article)
+		throws PortalException {
+
+		String portletId = PortletProviderUtil.getPortletId(
+			JournalArticle.class.getName(), PortletProvider.Action.EDIT);
+
+		String articleURL = _portal.getControlPanelFullURL(
+			article.getGroupId(), portletId, null);
+
+		articleURL = HttpComponentsUtil.addParameter(
+			articleURL,
+			_portal.getPortletNamespace(portletId) + "mvcRenderCommandName",
+			"/journal/edit_article");
+
+		articleURL = buildArticleURL(
+			articleURL, article.getGroupId(), article.getFolderId(),
+			article.getArticleId());
+
+		return articleURL;
 	}
 
 	private Predicate<String> _getEmptyValuePredicate(String fieldType) {

@@ -7,11 +7,11 @@ import {ClayButtonWithIcon} from '@clayui/button';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import ClayPanel from '@clayui/panel';
 import {API, stringUtils} from '@liferay/object-js-components-web';
-import {createResourceURL, openToast, sub} from 'frontend-js-web';
+import {openToast} from 'frontend-js-components-web';
+import {createResourceURL, sub} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 import {isEdge, isNode} from 'react-flow-renderer';
 
-import {defaultLanguageId} from '../../../utils/constants';
 import {EditObjectRelationshipContent} from '../../ObjectRelationship/EditObjectRelationshipContent';
 import {ModalDeleteObjectRelationship} from '../../ObjectRelationship/ModalDeleteObjectRelationship';
 import {useObjectRelationshipForm} from '../../ObjectRelationship/useObjectRelationshipForm';
@@ -164,11 +164,10 @@ export function RightSidebarObjectRelationshipDetails({
 							) {
 								return {
 									...objectRelationshipEdgeData,
-									label: stringUtils.getLocalizableLabel(
-										defaultLanguageId,
-										objectRelationship.label,
-										objectRelationship.name
-									),
+									label: stringUtils.getLocalizableLabel({
+										fallbackLabel: objectRelationship.name,
+										labels: objectRelationship.label,
+									}),
 								};
 							}
 

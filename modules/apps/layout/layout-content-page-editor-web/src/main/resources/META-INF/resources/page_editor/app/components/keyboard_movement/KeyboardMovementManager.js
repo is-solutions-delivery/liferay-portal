@@ -4,7 +4,8 @@
  */
 
 import {useEventListener} from '@liferay/frontend-js-react-web';
-import {openToast, sub} from 'frontend-js-web';
+import {openToast} from 'frontend-js-components-web';
+import {sub} from 'frontend-js-web';
 import {useEffect, useRef} from 'react';
 
 import {FRAGMENT_ENTRY_TYPES} from '../../config/constants/fragmentEntryTypes';
@@ -41,14 +42,11 @@ import checkAllowedChild from '../../utils/drag_and_drop/checkAllowedChild';
 import {TARGET_POSITIONS} from '../../utils/drag_and_drop/constants/targetPositions';
 import getDropData from '../../utils/drag_and_drop/getDropData';
 import itemIsAncestor from '../../utils/drag_and_drop/itemIsAncestor';
-import getFirstControlsId from '../../utils/getFirstControlsId';
 import {getFormParent} from '../../utils/getFormParent';
-import {hasCollectionParent} from '../../utils/hasCollectionParent';
 import {isMultistepForm} from '../../utils/isMultistepForm';
 import isStepper from '../../utils/isStepper';
 import {isUnmappedCollection} from '../../utils/isUnmappedCollection';
 import {openFormConversionModal} from '../../utils/openFormConversionModal';
-import {fromControlsId} from '../layout_data_items/Collection';
 
 const DIRECTIONS = {
 	down: 'down',
@@ -81,9 +79,7 @@ export default function KeyboardMovementManager() {
 
 	const getWidgets = useGetWidgets();
 
-	const selectItems = Liferay.FeatureFlags['LPD-18221']
-		? selectMultipleItems
-		: selectItem;
+	const selectItems = selectMultipleItems;
 
 	keymapRef.current = {
 		disableMovement: {
@@ -126,46 +122,6 @@ export default function KeyboardMovementManager() {
 							})
 						: moveItems({
 								itemIds: sources.map(({itemId}) => itemId),
-								onMoveEnd: (updatedLayoutData) => {
-
-									// The item is being moved inside a collection
-
-									if (
-										hasCollectionParent(
-											updatedLayoutData.items[targetId],
-											updatedLayoutData
-										)
-									) {
-										const itemIds = sources.map(
-											({itemId}) =>
-												getFirstControlsId({
-													item: updatedLayoutData
-														.items[itemId],
-													layoutData:
-														updatedLayoutData,
-												})
-										);
-
-										selectItems(itemIds);
-									}
-
-									// The item is being moved outside a collection
-
-									else if (
-										hasCollectionParent(
-											layoutDataRef.current.items[
-												targetId
-											],
-											layoutDataRef.current
-										)
-									) {
-										selectItems(
-											sources.map(({itemId}) =>
-												fromControlsId(itemId)
-											)
-										);
-									}
-								},
 								parentItemIds: [targetId],
 								positions: [position],
 							});

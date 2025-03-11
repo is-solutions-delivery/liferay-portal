@@ -12,7 +12,6 @@ import com.liferay.fragment.model.FragmentComposition;
 import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.renderer.DefaultFragmentRendererContext;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
-import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.frontend.token.definition.FrontendTokenDefinition;
 import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
 import com.liferay.info.collection.provider.item.selector.criterion.InfoCollectionProviderItemSelectorCriterion;
@@ -66,6 +65,7 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.editor.configuration.EditorConfiguration;
 import com.liferay.portal.kernel.editor.configuration.EditorConfigurationFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -87,7 +87,6 @@ import com.liferay.portal.kernel.portlet.url.builder.ResourceURLBuilder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.LayoutSetLocalService;
-import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.kernel.service.permission.LayoutPermission;
 import com.liferay.portal.kernel.servlet.MultiSessionMessages;
@@ -158,7 +157,6 @@ public class ContentPageEditorDisplayContext {
 		FragmentCollectionManager fragmentCollectionManager,
 		FragmentEntryLinkManager fragmentEntryLinkManager,
 		FragmentEntryLinkLocalService fragmentEntryLinkLocalService,
-		FragmentEntryLocalService fragmentEntryLocalService,
 		FrontendTokenDefinitionRegistry frontendTokenDefinitionRegistry,
 		HttpServletRequest httpServletRequest,
 		InfoItemServiceRegistry infoItemServiceRegistry,
@@ -180,7 +178,6 @@ public class ContentPageEditorDisplayContext {
 		SegmentsEntryService segmentsEntryService, Staging staging,
 		StagingGroupHelper stagingGroupHelper,
 		StyleBookEntryLocalService styleBookEntryLocalService,
-		UserLocalService userLocalService,
 		WorkflowDefinitionLinkLocalService workflowDefinitionLinkLocalService) {
 
 		_contentPageEditorSidebarPanels = contentPageEditorSidebarPanels;
@@ -188,7 +185,6 @@ public class ContentPageEditorDisplayContext {
 		_fragmentCollectionManager = fragmentCollectionManager;
 		_fragmentEntryLinkManager = fragmentEntryLinkManager;
 		_fragmentEntryLinkLocalService = fragmentEntryLinkLocalService;
-		_fragmentEntryLocalService = fragmentEntryLocalService;
 		_frontendTokenDefinitionRegistry = frontendTokenDefinitionRegistry;
 		_itemSelector = itemSelector;
 		_jsonFactory = jsonFactory;
@@ -211,7 +207,6 @@ public class ContentPageEditorDisplayContext {
 		_segmentsEntryService = segmentsEntryService;
 		_staging = staging;
 		_styleBookEntryLocalService = styleBookEntryLocalService;
-		_userLocalService = userLocalService;
 		_workflowDefinitionLinkLocalService =
 			workflowDefinitionLinkLocalService;
 
@@ -920,6 +915,29 @@ public class ContentPageEditorDisplayContext {
 			infoCollectionProviderItemSelectorCriterion);
 	}
 
+	protected long getDraftSegmentsExperienceId(
+		long plid, long segmentsExperienceId) {
+
+		SegmentsExperience segmentsExperience =
+			segmentsExperienceLocalService.fetchSegmentsExperience(
+				segmentsExperienceId);
+
+		if (segmentsExperience == null) {
+			return segmentsExperienceId;
+		}
+
+		segmentsExperience =
+			segmentsExperienceLocalService.fetchSegmentsExperience(
+				segmentsExperience.getGroupId(),
+				segmentsExperience.getSegmentsExperienceKey(), plid);
+
+		if (segmentsExperience == null) {
+			return segmentsExperienceId;
+		}
+
+		return segmentsExperience.getSegmentsExperienceId();
+	}
+
 	protected String getFragmentEntryActionURL(String action) {
 		return getFragmentEntryActionURL(action, null);
 	}
@@ -1033,6 +1051,9 @@ public class ContentPageEditorDisplayContext {
 				_segmentsExperienceManager.getSegmentsExperienceId(
 					httpServletRequest);
 		}
+
+		_segmentsExperienceId = getDraftSegmentsExperienceId(
+			themeDisplay.getPlid(), _segmentsExperienceId);
 
 		return _segmentsExperienceId;
 	}
@@ -1846,14 +1867,29 @@ public class ContentPageEditorDisplayContext {
 				itemSelectorCriterion));
 	}
 
-	private List<Map<String, Object>> _getStyleBooks() {
+	private List<Map<String, Object>> _getStyleBooks() throws Exception {
 		ArrayList<Map<String, Object>> styleBooks = new ArrayList<>();
 
-		List<StyleBookEntry> styleBookEntries =
-			_styleBookEntryLocalService.getStyleBookEntries(
+		List<StyleBookEntry> styleBookEntries = new ArrayList<>();
+
+		if (FeatureFlagManagerUtil.isEnabled("LPD-30204")) {
+			FrontendTokenDefinition frontendTokenDefinition =
+				_frontendTokenDefinitionRegistry.getFrontendTokenDefinition(
+					themeDisplay.getLayout());
+
+			if (frontendTokenDefinition != null) {
+				styleBookEntries =
+					_styleBookEntryLocalService.getStyleBookEntries(
+						_staging.getLiveGroupId(themeDisplay.getScopeGroupId()),
+						frontendTokenDefinition.getThemeId());
+			}
+		}
+		else {
+			styleBookEntries = _styleBookEntryLocalService.getStyleBookEntries(
 				_staging.getLiveGroupId(themeDisplay.getScopeGroupId()),
 				QueryUtil.ALL_POS, QueryUtil.ALL_POS,
 				StyleBookEntryNameComparator.getInstance(true));
+		}
 
 		for (StyleBookEntry styleBookEntry : styleBookEntries) {
 			styleBooks.add(
@@ -1980,17 +2016,16 @@ public class ContentPageEditorDisplayContext {
 	}
 
 	private boolean _isSegmentsExperimentVariant() {
-		long segmentsExperienceId = getSegmentsExperienceId();
-
 		SegmentsExperience segmentsExperience =
 			segmentsExperienceLocalService.fetchSegmentsExperience(
-				segmentsExperienceId);
+				getSegmentsExperienceId());
 
 		if ((segmentsExperience != null) && !segmentsExperience.isActive()) {
 			List<SegmentsExperimentRel> segmentsExperimentRels =
 				_segmentsExperimentRelLocalService.
-					getSegmentsExperimentRelsBySegmentsExperienceId(
-						segmentsExperienceId);
+					getSegmentsExperimentRelsBySegmentsExperienceKey(
+						segmentsExperience.getSegmentsExperienceKey(),
+						themeDisplay.getPlid());
 
 			if (ListUtil.isNotEmpty(segmentsExperimentRels)) {
 				return true;
@@ -2013,7 +2048,6 @@ public class ContentPageEditorDisplayContext {
 	private final FragmentEntryLinkLocalService _fragmentEntryLinkLocalService;
 	private final FragmentEntryLinkManager _fragmentEntryLinkManager;
 	private Map<String, Object> _fragmentEntryLinks;
-	private final FragmentEntryLocalService _fragmentEntryLocalService;
 	private final FrontendTokenDefinitionRegistry
 		_frontendTokenDefinitionRegistry;
 	private Long _groupId;
@@ -2043,7 +2077,6 @@ public class ContentPageEditorDisplayContext {
 	private final Staging _staging;
 	private final StyleBookEntryLocalService _styleBookEntryLocalService;
 	private ItemSelectorCriterion _urlItemSelectorCriterion;
-	private final UserLocalService _userLocalService;
 	private final WorkflowDefinitionLinkLocalService
 		_workflowDefinitionLinkLocalService;
 

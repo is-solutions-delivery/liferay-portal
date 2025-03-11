@@ -22,8 +22,6 @@ public class ServerDetector {
 
 	public static final String WEBLOGIC_ID = "weblogic";
 
-	public static final String WEBSPHERE_ID = "websphere";
-
 	public static final String WILDFLY_ID = "wildfly";
 
 	public static String getServerId() {
@@ -42,7 +40,6 @@ public class ServerDetector {
 		if (serverType.equals(ServerDetector.JBOSS_ID) ||
 			serverType.equals(ServerDetector.TOMCAT_ID) ||
 			serverType.equals(ServerDetector.WEBLOGIC_ID) ||
-			serverType.equals(ServerDetector.WEBSPHERE_ID) ||
 			serverType.equals(ServerDetector.WILDFLY_ID)) {
 
 			return true;
@@ -65,14 +62,6 @@ public class ServerDetector {
 
 	public static boolean isWebLogic() {
 		if (_serverType == ServerType.WEBLOGIC) {
-			return true;
-		}
-
-		return false;
-	}
-
-	public static boolean isWebSphere() {
-		if (_serverType == ServerType.WEBSPHERE) {
 			return true;
 		}
 
@@ -116,40 +105,16 @@ public class ServerDetector {
 			return ServerType.valueOf(StringUtil.toUpperCase(serverId));
 		}
 
-		if (_hasSystemProperty("com.sun.aas.instanceRoot")) {
-			return ServerType.GLASSFISH;
-		}
-
 		if (_hasSystemProperty("jboss.home.dir")) {
 			return ServerType.JBOSS;
-		}
-
-		if (_hasSystemProperty("jonas.base")) {
-			return ServerType.JONAS;
-		}
-
-		if (_detect("oracle.oc4j.util.ClassUtils")) {
-			return ServerType.OC4J;
-		}
-
-		if (_hasSystemProperty("resin.home")) {
-			return ServerType.RESIN;
 		}
 
 		if (_detect("/weblogic/Server.class")) {
 			return ServerType.WEBLOGIC;
 		}
 
-		if (_detect("/com/ibm/websphere/product/VersionInfo.class")) {
-			return ServerType.WEBSPHERE;
-		}
-
 		if (_hasSystemProperty("jboss.home.dir")) {
 			return ServerType.WILDFLY;
-		}
-
-		if (_hasSystemProperty("jetty.home")) {
-			return ServerType.JETTY;
 		}
 
 		if (_hasSystemProperty("catalina.base")) {
@@ -188,9 +153,8 @@ public class ServerDetector {
 
 	private enum ServerType {
 
-		GLASSFISH("glassfish"), JBOSS("jboss"), JETTY("jetty"), JONAS("jonas"),
-		OC4J("oc4j"), RESIN("resin"), TOMCAT("tomcat"), UNKNOWN("unknown"),
-		WEBLOGIC("weblogic"), WEBSPHERE("websphere"), WILDFLY("wildfly");
+		JBOSS("jboss"), TOMCAT("tomcat"), UNKNOWN("unknown"),
+		WEBLOGIC("weblogic"), WILDFLY("wildfly");
 
 		public String getLowerCaseName() {
 			return _lowerCaseName;

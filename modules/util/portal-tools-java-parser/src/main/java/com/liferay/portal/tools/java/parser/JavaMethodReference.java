@@ -15,12 +15,12 @@ import java.util.List;
 public class JavaMethodReference extends BaseJavaExpression {
 
 	public JavaMethodReference(
-		String methodName, JavaExpression referenceJavaExpression,
-		List<JavaType> genericJavaTypes) {
+		List<JavaType> genericJavaTypes, String methodName,
+		JavaExpression referenceJavaExpression) {
 
+		_genericJavaTypes = genericJavaTypes;
 		_methodName = new JavaSimpleValue(methodName);
 		_referenceJavaExpression = referenceJavaExpression;
-		_genericJavaTypes = genericJavaTypes;
 	}
 
 	@Override

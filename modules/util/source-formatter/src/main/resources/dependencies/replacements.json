@@ -3317,11 +3317,20 @@
 	{
 		"classNames": [
 			"DLAppLocalService",
-			"DLAppService"
+			"DLAppLocalServiceUtil"
 		],
 		"from": "addFileEntry(long paramName, long paramName, long paramName, String paramName, String paramName, byte[] paramName, ServiceContext paramName)",
 		"issueKey": "LPD-36311",
-		"to": "addFileEntry(null, param#0#, param#1#, param#2#, param#3#, param#4#, param#5#, null, null, param#6#)"
+		"to": "addFileEntry(null, param#0#, param#1#, param#2#, param#3#, param#4#, param#5#, null, null, null, param#6#)"
+	},
+	{
+		"classNames": [
+			"DLAppService",
+			"DLAppServiceUtil"
+		],
+		"from": "addFileEntry(long paramName, long paramName, String paramName, String paramName, byte[] paramName, ServiceContext paramName)",
+		"issueKey": "LPD-36311",
+		"to": "addFileEntry(null, param#0#, param#1#, param#2#, param#3#, param#4#, null, null, null, param#5#)"
 	},
 	{
 		"classNames": [
@@ -3591,12 +3600,71 @@
 	},
 	{
 		"classNames": [
+			"CommerceOrderItem"
+		],
+		"from": "getBookedQuantityId",
+		"issueKey": "LPD-48396",
+		"to": "getCommerceInventoryBookedQuantityId"
+	},
+	{
+		"classNames": [
+			"AccountEntry"
+		],
+		"from": "getCommerceAccountId",
+		"issueKey": "LPD-48402",
+		"to": "getAccountEntryId",
+		"validExtensions": [
+			"java",
+			"jsp"
+		]
+	},
+	{
+		"from": "regex:CommerceOrderConstants\\.(?<methodName>getPaymentLabelStyle|getPaymentStatusLabel)",
+		"issueKey": "LPD-48412",
+		"newImports": [
+			"com.liferay.commerce.constants.CommercePaymentEntryConstants"
+		],
+		"to": "CommercePaymentEntryConstants.${methodName}",
+		"validExtensions": [
+			"java",
+			"jsp"
+		]
+	},
+	{
+		"from": "regex:(?<utilName>CPAttachmentFileEntryServiceUtil|CPAttachmentFileEntryLocalServiceUtil)\\.fetchByExternalReferenceCode",
+		"issueKey": "LPD-48708",
+		"to": "${utilName}.fetchCPAttachmentFileEntryByExternalReferenceCode",
+		"validExtensions": [
+			"java",
+			"jsp"
+		]
+	},
+	{
+		"classNames": [
+			"CPAttachmentFileEntryService",
+			"CPAttachmentFileEntryServiceUtil"
+		],
+		"from": "addCPAttachmentFileEntry(long paramName, long paramName, long paramName, long paramName, long paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, boolean paramName, Map<Locale, String> paramName, String paramName, double paramName, int paramName, ServiceContext paramName)",
+		"issueKey": "LPD-48712",
+		"to": "addCPAttachmentFileEntry(param#1#, param#2#, param#3#, param#4#, false, null, param#5#, param#6#, param#7#, param#8#, param#9#, param#10#, param#11#, param#12#, param#13#, param#14#, param#15#, true, param#16#, param#17#, param#18#, param#19#, param#20#)"
+	},
+	{
+		"classNames": [
+			"CPAttachmentFileEntryLocalService",
+			"CPAttachmentFileEntryLocalServiceUtil"
+		],
+		"from": "addCPAttachmentFileEntry(long paramName, long paramName, long paramName, long paramName, long paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, boolean paramName, Map<Locale, String> paramName, String paramName, double paramName, int paramName, String paramName, ServiceContext paramName)",
+		"issueKey": "LPD-48712",
+		"to": "addCPAttachmentFileEntry(param#20#, param#0#, param#1#, param#2#, param#3#, param#4#, false, null, param#5#, param#6#, param#7#, param#8#, param#9#, param#10#, param#11#, param#12#, param#13#, param#14#, param#15#, true, param#16#, param#17#, param#18#, param#19#, param#21#)"
+	},
+	{
+		"classNames": [
 			"CPAttachmentFileEntryService",
 			"CPAttachmentFileEntryServiceUtil"
 		],
 		"from": "addOrUpdateCPAttachmentFileEntry(String paramName, long paramName, long paramName, long paramName, long paramName, long paramName, boolean paramName, String paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, boolean paramName, Map<Locale, String> paramName, String paramName, double paramName, int paramName, ServiceContext paramName)",
 		"issueKey": "LPD-48759",
-		"to": "addOrUpdateCPAttachmentFileEntry(param#0#, param#1#, param#2#, param#3#, param#4#, param#5#, param#6#, param#7#, param#8#, param#9#, param#10#, param#11#, param#12#, param#13#, param#14#, param#15#, param#16#, param#17#, param#18#, null, param#19#, param#20#, param#21#, param#22#, param#23#)"
+		"to": "addOrUpdateCPAttachmentFileEntry(param#0#, param#1#, param#2#, param#3#, param#4#, param#5#, param#6#, param#7#, param#8#, param#9#, param#10#, param#11#, param#12#, param#13#, param#14#, param#15#, param#16#, param#17#, param#18#, true, param#19#, param#20#, param#21#, param#22#, param#23#)"
 	},
 	{
 		"classNames": [
@@ -3605,7 +3673,69 @@
 		],
 		"from": "addOrUpdateCPAttachmentFileEntry(String paramName, long paramName, long paramName, long paramName, long paramName, long paramName, long paramName, boolean paramName, String paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, boolean paramName, Map<Locale, String> paramName, String paramName, double paramName, int paramName, ServiceContext paramName)",
 		"issueKey": "LPD-48759",
-		"to": "addOrUpdateCPAttachmentFileEntry(param#0#, param#1#, param#2#, param#3#, param#4#, param#5#, param#6#, param#7#, param#8#, param#9#, param#10#, param#11#, param#12#, param#13#, param#14#, param#15#, param#16#, param#17#, param#18#, param#19#, null, param#20#, param#21#, param#22#, param#23#, param#24#)"
+		"to": "addOrUpdateCPAttachmentFileEntry(param#0#, param#1#, param#2#, param#3#, param#4#, param#5#, param#6#, param#7#, param#8#, param#9#, param#10#, param#11#, param#12#, param#13#, param#14#, param#15#, param#16#, param#17#, param#18#, param#19#, true, param#20#, param#21#, param#22#, param#23#, param#24#)"
+	},
+	{
+		"classNames": [
+			"DLFileEntryLocalService",
+			"DLFileEntryLocalServiceUtil"
+		],
+		"from": "addFileEntry(long paramName, long paramName, long paramName, long paramName, String paramName, String paramName, String paramName, String paramName, String paramName, long paramName, Map<String, DDMFormValues> paramName, File paramName, InputStream paramName, long paramName, ServiceContext paramName)",
+		"issueKey": "LPD-49109",
+		"to": "addFileEntry(null, param#0#, param#1#, param#2#, param#3#, param#4#, param#5#, param#6#, null, param#7#, param#8#, param#9#, param#10#, param#11#, param#12#, param#13#, null, null, null, param#14#)"
+	},
+	{
+		"classNames": [
+			"DLFileEntryService",
+			"DLFileEntryServiceUtil"
+		],
+		"from": "addFileEntry(long paramName, long paramName, long paramName, String paramName, String paramName, String paramName, String paramName, String paramName, long paramName, Map<String, DDMFormValues> paramName, File paramName, InputStream paramName, long paramName, ServiceContext paramName)",
+		"issueKey": "LPD-49109",
+		"to": "addFileEntry(null, param#0#, param#1#, param#2#, param#3#, param#4#, param#5#, null, param#6#, param#7#, param#8#, param#9#, param#10#, param#11#, param#12#, null,  null, null, param#13#)"
+	},
+	{
+		"classNames": [
+			"CPAttachmentFileEntryLocalService",
+			"CPAttachmentFileEntryLocalServiceUtil"
+		],
+		"from": "updateCPAttachmentFileEntry(long paramName, long paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, boolean paramName, Map<Locale, String> paramName, String paramName, double paramName, int paramName, ServiceContext paramName)",
+		"issueKey": "LPD-49281",
+		"to": "updateCPAttachmentFileEntry(null, param#0#, param#1#, false, null, param#2#, param#3#, param#4#, param#5#, param#6#, param#7#, param#8#, param#9#, param#10#, param#11#, param#12#, true, param#13#, param#14#, param#15#, param#16#, param#17#)"
+	},
+	{
+		"classNames": [
+			"CPAttachmentFileEntryService",
+			"CPAttachmentFileEntryServiceUtil"
+		],
+		"from": "updateCPAttachmentFileEntry(long paramName, long paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, boolean paramName, Map<Locale, String> paramName, String paramName, double paramName, int paramName, ServiceContext paramName)",
+		"issueKey": "LPD-49281",
+		"to": "updateCPAttachmentFileEntry(param#0#, param#1#, false, null, param#2#, param#3#, param#4#, param#5#, param#6#, param#7#, param#8#, param#9#, param#10#, param#11#, param#12#, true, param#13#, param#14#, param#15#, param#16#, param#17#)"
+	},
+	{
+		"classNames": [
+			"CPAttachmentFileEntryLocalService",
+			"CPAttachmentFileEntryLocalServiceUtil"
+		],
+		"from": "updateCPAttachmentFileEntry(long paramName, long paramName, long paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, int paramName, boolean paramName, Map<Locale, String> paramName, String paramName, double paramName, int paramName, ServiceContext paramName)",
+		"issueKey": "LPD-49281",
+		"to": "updateCPAttachmentFileEntry(param#0#, param#1#, param#2#, false, null, param#3#, param#4#, param#5#, param#6#, param#7#, param#8#, param#9#, param#10#, param#11#, param#12#, param#13#, true, param#14#, param#15#, param#16#, param#17#, param#18#)"
+	},
+	{
+		"from": "SitemapManager.addURLElement",
+		"issueKey": "LPD-50074",
+		"newReference": "SitemapManager _sitemapManager",
+		"to": "_sitemapManager.addURLElement"
+	},
+	{
+		"classNames": [
+			"AccountEntryLocalService",
+			"AccountEntryLocalServiceUtil",
+			"AccountEntryService",
+			"AccountEntryServiceUtil"
+		],
+		"from": "fetchByExternalReferenceCode(long paramName, String paramName)",
+		"issueKey": "LPD-50175",
+		"to": "fetchAccountEntryByExternalReferenceCode(param#1#, param#0#)"
 	},
 	{
 		"from": "CookieKeys.COMMERCE_CONTINUE_AS_GUEST",
@@ -3982,7 +4112,7 @@
 		],
 		"from": "addFileEntry(long paramName, long paramName, long paramName, String paramName, String paramName, String paramName, String paramName, String paramName, byte[] paramName, ServiceContext paramName)",
 		"issueKey": "LPS-194818",
-		"to": "addFileEntry(null, param#0#, param#1#, param#2#, param#3#, param#4#, param#5#, null, param#6#, param#7#, param#8#, null, null, param#9#)"
+		"to": "addFileEntry(null, param#0#, param#1#, param#2#, param#3#, param#4#, param#5#, null, param#6#, param#7#, param#8#, null, null, null, param#9#)"
 	},
 	{
 		"from": "ServiceTrackerList<Class<T>, Class<E>>",

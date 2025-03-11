@@ -12,10 +12,12 @@ import com.liferay.object.entry.util.ObjectEntryValuesUtil;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
+import com.liferay.object.model.ObjectFolder;
 import com.liferay.object.rest.dto.v1_0.ListEntry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.object.service.ObjectFolderLocalService;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -58,7 +60,8 @@ public class ObjectEntryModelDocumentContributor
 		String className,
 		ObjectDefinitionLocalService objectDefinitionLocalService,
 		ObjectEntryLocalService objectEntryLocalService,
-		ObjectFieldLocalService objectFieldLocalService) {
+		ObjectFieldLocalService objectFieldLocalService,
+		ObjectFolderLocalService objectFolderLocalService) {
 
 		_accountEntryOrganizationRelLocalService =
 			accountEntryOrganizationRelLocalService;
@@ -66,6 +69,7 @@ public class ObjectEntryModelDocumentContributor
 		_objectDefinitionLocalService = objectDefinitionLocalService;
 		_objectEntryLocalService = objectEntryLocalService;
 		_objectFieldLocalService = objectFieldLocalService;
+		_objectFolderLocalService = objectFolderLocalService;
 	}
 
 	@Override
@@ -291,6 +295,12 @@ public class ObjectEntryModelDocumentContributor
 		document.addKeyword(
 			"objectDefinitionName", objectDefinition.getShortName());
 
+		ObjectFolder objectFolder = _objectFolderLocalService.getObjectFolder(
+			objectDefinition.getObjectFolderId());
+
+		document.addKeyword(
+			"objectDefinitionFolder", objectFolder.getExternalReferenceCode());
+
 		Map<String, Serializable> values = objectEntry.getValues();
 
 		List<ObjectField> objectFields =
@@ -371,5 +381,6 @@ public class ObjectEntryModelDocumentContributor
 	private final ObjectDefinitionLocalService _objectDefinitionLocalService;
 	private final ObjectEntryLocalService _objectEntryLocalService;
 	private final ObjectFieldLocalService _objectFieldLocalService;
+	private final ObjectFolderLocalService _objectFolderLocalService;
 
 }

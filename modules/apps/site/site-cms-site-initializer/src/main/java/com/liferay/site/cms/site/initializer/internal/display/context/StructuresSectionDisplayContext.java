@@ -8,20 +8,16 @@ package com.liferay.site.cms.site.initializer.internal.display.context;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenuBuilder;
-import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
-import com.liferay.portal.kernel.theme.ThemeDisplay;
-import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.site.cms.site.initializer.internal.configuration.CMSSiteInitializerConfiguration;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,65 +25,75 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author Sam Ziemer
  */
-public class StructuresSectionDisplayContext {
+public class StructuresSectionDisplayContext extends BaseSectionDisplayContext {
 
 	public StructuresSectionDisplayContext(
 		CMSSiteInitializerConfiguration cmsSiteInitializerConfiguration,
 		HttpServletRequest httpServletRequest) {
 
-		_cmsSiteInitializerConfiguration = cmsSiteInitializerConfiguration;
-		_httpServletRequest = httpServletRequest;
+		super(cmsSiteInitializerConfiguration, httpServletRequest);
 	}
 
+	@Override
 	public String getAPIURL() {
-		StringBundler sb = new StringBundler(3);
-
-		sb.append("/o/search/v1.0/search?emptySearch=true&entryClassNames=");
-		sb.append(
-			ArrayUtil.toString(
-				_cmsSiteInitializerConfiguration.structuresClassNames(),
-				StringPool.BLANK));
-		sb.append("&nestedFields=embedded");
-
-		return sb.toString();
+		return "/o/object-admin/v1.0/object-definitions?filter=" +
+			"objectFolderExternalReferenceCode eq 'L_CMS_CONTENT_STRUCTURES' " +
+				"or objectFolderExternalReferenceCode eq 'L_CMS_FILE_TYPES'";
 	}
 
-	public List<DropdownItem> getBulkActionDropdownItems() {
-		return new ArrayList<>();
-	}
-
-	public CreationMenu getCreationMenu() throws PortalException {
-		ThemeDisplay themeDisplay =
-			(ThemeDisplay)_httpServletRequest.getAttribute(
-				WebKeys.THEME_DISPLAY);
-
-		Layout layout = LayoutLocalServiceUtil.getLayoutByFriendlyURL(
-			themeDisplay.getScopeGroupId(), false, "/structure-builder");
-
-		String layoutFullURL = PortalUtil.getLayoutFullURL(
-			layout, themeDisplay);
-
+	@Override
+	public CreationMenu getCreationMenu() {
 		return CreationMenuBuilder.addPrimaryDropdownItem(
 			dropdownItem -> {
-				dropdownItem.setHref(layoutFullURL);
+				dropdownItem.setHref(_getHref("L_CMS_CONTENT_STRUCTURES"));
 				dropdownItem.setLabel(
-					LanguageUtil.get(_httpServletRequest, "content"));
+					LanguageUtil.get(httpServletRequest, "content"));
 			}
 		).addPrimaryDropdownItem(
 			dropdownItem -> {
-				dropdownItem.setHref(layoutFullURL);
+				dropdownItem.setHref(_getHref("L_CMS_FILE_TYPES"));
 				dropdownItem.setLabel(
-					LanguageUtil.get(_httpServletRequest, "file"));
+					LanguageUtil.get(httpServletRequest, "file"));
 			}
 		).build();
 	}
 
-	public List<FDSActionDropdownItem> getFDSActionDropdownItems() {
-		return new ArrayList<>();
+	@Override
+	public List<FDSActionDropdownItem> getFDSActionDropdownItems()
+		throws Exception {
+
+		return List.of(
+			new FDSActionDropdownItem(
+				HttpComponentsUtil.addParameters(
+					PortalUtil.getLayoutFullURL(
+						LayoutLocalServiceUtil.getLayoutByFriendlyURL(
+							themeDisplay.getScopeGroupId(), false,
+							"/structure-builder"),
+						themeDisplay),
+					"objectDefinitionId", "{id}"),
+				"pencil", "edit", LanguageUtil.get(httpServletRequest, "edit"),
+				"get", null, null));
 	}
 
-	private final CMSSiteInitializerConfiguration
-		_cmsSiteInitializerConfiguration;
-	private final HttpServletRequest _httpServletRequest;
+	private String _getHref(String objectFolderExternalReferenceCode) {
+		try {
+			return HttpComponentsUtil.addParameters(
+				PortalUtil.getLayoutFullURL(
+					LayoutLocalServiceUtil.getLayoutByFriendlyURL(
+						themeDisplay.getScopeGroupId(), false,
+						"/structure-builder"),
+					themeDisplay),
+				"objectFolderExternalReferenceCode",
+				objectFolderExternalReferenceCode);
+		}
+		catch (PortalException portalException) {
+			_log.error(portalException);
+		}
+
+		return StringPool.BLANK;
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		StructuresSectionDisplayContext.class);
 
 }

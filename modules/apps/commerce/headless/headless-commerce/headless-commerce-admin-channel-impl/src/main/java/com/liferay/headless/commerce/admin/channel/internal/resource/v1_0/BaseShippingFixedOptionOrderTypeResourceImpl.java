@@ -272,12 +272,34 @@ public abstract class BaseShippingFixedOptionOrderTypeResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (ShippingFixedOptionOrderType shippingFixedOptionOrderType :
-				shippingFixedOptionOrderTypes) {
+		UnsafeFunction
+			<ShippingFixedOptionOrderType, ShippingFixedOptionOrderType,
+			 Exception> shippingFixedOptionOrderTypeUnsafeFunction =
+				shippingFixedOptionOrderType -> {
+					deleteShippingFixedOptionOrderType(
+						shippingFixedOptionOrderType.
+							getShippingFixedOptionOrderTypeId());
 
-			deleteShippingFixedOptionOrderType(
-				shippingFixedOptionOrderType.
-					getShippingFixedOptionOrderTypeId());
+					return shippingFixedOptionOrderType;
+				};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				shippingFixedOptionOrderTypes,
+				shippingFixedOptionOrderTypeUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				shippingFixedOptionOrderTypes,
+				shippingFixedOptionOrderTypeUnsafeFunction::apply);
+		}
+		else {
+			for (ShippingFixedOptionOrderType shippingFixedOptionOrderType :
+					shippingFixedOptionOrderTypes) {
+
+				shippingFixedOptionOrderTypeUnsafeFunction.apply(
+					shippingFixedOptionOrderType);
+			}
 		}
 	}
 

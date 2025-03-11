@@ -347,11 +347,30 @@ public abstract class BaseAccountAddressChannelResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (AccountAddressChannel accountAddressChannel :
-				accountAddressChannels) {
+		UnsafeFunction<AccountAddressChannel, AccountAddressChannel, Exception>
+			accountAddressChannelUnsafeFunction = accountAddressChannel -> {
+				deleteAccountAddressChannel(
+					accountAddressChannel.getAccountAddressChannelId());
 
-			deleteAccountAddressChannel(
-				accountAddressChannel.getAccountAddressChannelId());
+				return accountAddressChannel;
+			};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				accountAddressChannels, accountAddressChannelUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				accountAddressChannels,
+				accountAddressChannelUnsafeFunction::apply);
+		}
+		else {
+			for (AccountAddressChannel accountAddressChannel :
+					accountAddressChannels) {
+
+				accountAddressChannelUnsafeFunction.apply(
+					accountAddressChannel);
+			}
 		}
 	}
 

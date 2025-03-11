@@ -19,8 +19,7 @@ import javax.annotation.Generated;
  * @generated
  */
 @Generated("")
-public class ItemExternalReference
-	extends CollectionReference implements Cloneable, Serializable {
+public class ItemExternalReference implements Cloneable, Serializable {
 
 	public static ItemExternalReference toDTO(String json) {
 		return ItemExternalReferenceSerDes.toDTO(json);

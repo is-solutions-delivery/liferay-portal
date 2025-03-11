@@ -5,6 +5,8 @@
 
 import {FrameLocator, Locator, Page} from '@playwright/test';
 
+import {clickAndExpectToBeVisible} from '../../utils/clickAndExpectToBeVisible';
+import {waitForAlert} from '../../utils/waitForAlert';
 import {UIElementsPage} from '../uielements/UIElementsPage';
 
 export class SitesPage {
@@ -15,7 +17,9 @@ export class SitesPage {
 	readonly addSiteIFrame: FrameLocator;
 	readonly customSiteTemplatesItem: Locator;
 	readonly defaultPagesAsPrivateCheck: Locator;
+	readonly deleteButton: Locator;
 	readonly nameBox: Locator;
+	readonly selectAllItemsCheckbox: Locator;
 	readonly uiElementsPage: UIElementsPage;
 
 	constructor(page: Page) {
@@ -35,23 +39,42 @@ export class SitesPage {
 			.getByLabel(
 				'Create default pages as private (available only to members). If unchecked, they will be public (available to anyone).'
 			);
+		this.deleteButton = page.getByRole('button', {name: 'Delete'});
 		this.nameBox = page
 			.frameLocator('iframe[title="Add Site"]')
 			.getByLabel('Name Required');
+		this.selectAllItemsCheckbox = page.getByLabel(
+			'Select All Items on the Page'
+		);
 		this.uiElementsPage = new UIElementsPage(page);
 	}
 
-	async createSiteFromTemplate(
-		templateName: string,
-		siteName: string
-	): Promise<string> {
+	async createSite({
+		defaultPagesAsPrivate = false,
+		isCustom,
+		siteName,
+		templateName,
+	}: {
+		defaultPagesAsPrivate?: boolean;
+		isCustom: boolean;
+		siteName: string;
+		templateName: string;
+	}): Promise<string> {
 		await this.addSiteButton.click();
-		await this.customSiteTemplatesItem.click();
+
+		if (isCustom) {
+			await this.customSiteTemplatesItem.click();
+		}
+
 		await this.page
 			.getByRole('button', {name: `Select Template: ${templateName}`})
 			.click();
 		await this.nameBox.fill(siteName);
-		await this.defaultPagesAsPrivateCheck.check();
+
+		if (defaultPagesAsPrivate) {
+			await this.defaultPagesAsPrivateCheck.check();
+		}
+
 		await this.addButton.click();
 		await this.page.waitForURL(/(.)settings(.)/);
 		await this.page.getByRole('link', {name: 'Site Configuration'}).click();
@@ -61,5 +84,31 @@ export class SitesPage {
 			.getAttribute('value');
 
 		return siteId as string;
+	}
+
+	async deleteAllSites() {
+		const sitesCount = await this.page
+			.getByRole('table')
+			.locator('tr[id*=_sites_]')
+			.count();
+
+		if (sitesCount === 2) {
+			return;
+		}
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.deleteButton,
+			trigger: this.selectAllItemsCheckbox,
+		});
+
+		await this.page
+			.getByRole('alert')
+			.getByRole('button', {
+				name: 'Delete',
+			})
+			.click();
+
+		await waitForAlert(this.page);
 	}
 }

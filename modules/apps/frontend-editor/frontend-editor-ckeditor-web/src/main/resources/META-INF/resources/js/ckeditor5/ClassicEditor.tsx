@@ -9,17 +9,23 @@ import {
 	BlockQuote,
 	Bold,
 	ClassicEditor as BaseClassicEditor,
-	EditorConfig,
+	Editor,
 	Essentials,
+	EventInfo,
 	Font,
 	GeneralHtmlSupport,
 	Heading,
 	HorizontalLine,
+	Image,
+	ImageBlock,
+	ImageCaption,
+	ImageInline,
+	ImageStyle,
+	ImageToolbar,
 	Indent,
 	Italic,
 	Link,
 	List,
-	MediaEmbed,
 	Paragraph,
 	RemoveFormat,
 	SourceEditing,
@@ -34,9 +40,24 @@ import {
 import React from 'react';
 
 import '../../css/ckeditor5/editor.scss';
+import ItemSelector from './plugins/ItemSelector';
+import advancedClassicEditorConfig from './presets/advancedClassicEditorConfig';
+import basicClassicEditorConfig from './presets/basicClassicEditorConfig';
+import {ClassicEditorConfig, EClassicEditorConfigPreset} from './utils/types';
 
-const ClassicEditor = ({config}: {config?: EditorConfig}) => {
-	const defaultConfig: EditorConfig = {
+const ClassicEditor = ({
+	className,
+	config,
+	data,
+	onChange,
+}: {
+	className?: string;
+	config?: ClassicEditorConfig;
+	data?: string;
+	id?: string;
+	onChange?: (event: EventInfo, editor: Editor) => void;
+}) => {
+	const defaultConfig: ClassicEditorConfig = {
 		plugins: [
 			Alignment,
 			BlockQuote,
@@ -46,11 +67,17 @@ const ClassicEditor = ({config}: {config?: EditorConfig}) => {
 			GeneralHtmlSupport,
 			Heading,
 			HorizontalLine,
+			ItemSelector,
+			Image,
+			ImageBlock,
+			ImageCaption,
+			ImageInline,
+			ImageStyle,
+			ImageToolbar,
 			Indent,
 			Italic,
 			Link,
 			List,
-			MediaEmbed,
 			Paragraph,
 			RemoveFormat,
 			SourceEditing,
@@ -62,7 +89,11 @@ const ClassicEditor = ({config}: {config?: EditorConfig}) => {
 			TableToolbar,
 			Underline,
 		],
-		toolbar: ['undo', 'redo', '|', 'bold', 'italic', 'underline'],
+		ui: {
+			viewportOffset: {
+				top: 56,
+			},
+		},
 	};
 
 	if (!Liferay.FeatureFlags['LPD-11235']) {
@@ -70,13 +101,29 @@ const ClassicEditor = ({config}: {config?: EditorConfig}) => {
 	}
 
 	return (
-		<CKEditor
-			config={{
-				...defaultConfig,
-				...config,
-			}}
-			editor={BaseClassicEditor}
-		/>
+		<div className={`lfr-ck ${className ? className : ''}`}>
+			<CKEditor
+				config={{
+					...defaultConfig,
+					...(config?.preset === EClassicEditorConfigPreset.ADVANCED
+						? advancedClassicEditorConfig
+						: basicClassicEditorConfig),
+					...config,
+				}}
+				data={data}
+				editor={BaseClassicEditor}
+				onChange={onChange}
+				onReady={(editor: BaseClassicEditor) => {
+					editor.ui.view.toolbar.items.map((item: any) => {
+						if (item.buttonView) {
+							item.buttonView.tooltipPosition = 'n';
+						}
+
+						item.tooltipPosition = 'n';
+					});
+				}}
+			/>
+		</div>
 	);
 };
 

@@ -277,8 +277,25 @@ public abstract class BaseProductChannelResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (ProductChannel productChannel : productChannels) {
-			deleteProductChannel(productChannel.getId());
+		UnsafeFunction<ProductChannel, ProductChannel, Exception>
+			productChannelUnsafeFunction = productChannel -> {
+				deleteProductChannel(productChannel.getId());
+
+				return productChannel;
+			};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				productChannels, productChannelUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				productChannels, productChannelUnsafeFunction::apply);
+		}
+		else {
+			for (ProductChannel productChannel : productChannels) {
+				productChannelUnsafeFunction.apply(productChannel);
+			}
 		}
 	}
 

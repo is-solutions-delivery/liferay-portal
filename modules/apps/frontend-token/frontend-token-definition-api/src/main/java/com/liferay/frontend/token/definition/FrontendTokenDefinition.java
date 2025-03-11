@@ -30,4 +30,8 @@ public interface FrontendTokenDefinition {
 
 	public String getThemeId();
 
+	public String getThemeName(Locale locale);
+
+	public String getThemeType();
+
 }

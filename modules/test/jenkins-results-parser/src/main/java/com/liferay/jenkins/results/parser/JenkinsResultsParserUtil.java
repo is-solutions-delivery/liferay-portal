@@ -2909,6 +2909,15 @@ public class JenkinsResultsParserUtil {
 		String baseInvocationURL, String blacklist, int invokedBatchSize,
 		int minimumRAM, int maximumSlavesPerHost) {
 
+		return getMostAvailableMasterURL(
+			baseInvocationURL, blacklist, invokedBatchSize, null, minimumRAM,
+			maximumSlavesPerHost);
+	}
+
+	public static String getMostAvailableMasterURL(
+		String baseInvocationURL, String blacklist, int invokedBatchSize,
+		String jobName, int minimumRAM, int maximumSlavesPerHost) {
+
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(getJenkinsLoadBalancerURL());
@@ -2923,6 +2932,11 @@ public class JenkinsResultsParserUtil {
 		if (invokedBatchSize > 0) {
 			sb.append("&invokedJobBatchSize=");
 			sb.append(invokedBatchSize);
+		}
+
+		if (isNullOrEmpty(jobName)) {
+			sb.append("&jobName=");
+			sb.append(fixURL(jobName));
 		}
 
 		if (minimumRAM > 0) {
@@ -2951,8 +2965,8 @@ public class JenkinsResultsParserUtil {
 			List<JenkinsMaster> availableJenkinsMasters =
 				LoadBalancerUtil.getAvailableJenkinsMasters(
 					LoadBalancerUtil.getMasterPrefix(baseInvocationURL),
-					blacklist, minimumRAM, maximumSlavesPerHost,
-					buildProperties);
+					blacklist, false, jobName, minimumRAM, maximumSlavesPerHost,
+					buildProperties, true);
 
 			Random random = new Random(getCurrentTimeMillis());
 
@@ -3659,6 +3673,12 @@ public class JenkinsResultsParserUtil {
 			return _ciNode;
 		}
 
+		if (!isNullOrEmpty(System.getenv("JENKINS_HOME"))) {
+			_ciNode = true;
+
+			return _ciNode;
+		}
+
 		String hostName = getHostName("");
 
 		try {
@@ -3683,6 +3703,34 @@ public class JenkinsResultsParserUtil {
 		}
 
 		return _ciNode;
+	}
+
+	public static boolean isCloudCINode() {
+		if (!isCINode()) {
+			return false;
+		}
+
+		String masterNetworkName = System.getenv("MASTER_NETWORK_NAME");
+
+		if (!isNullOrEmpty(masterNetworkName) &&
+			(masterNetworkName.equals("aws-network") ||
+			 masterNetworkName.equals("gcp-network"))) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public static boolean isDouble(String string) {
+		try {
+			Double.parseDouble(string);
+		}
+		catch (Exception exception) {
+			return false;
+		}
+
+		return true;
 	}
 
 	public static boolean isFileExcluded(
@@ -6356,22 +6404,8 @@ public class JenkinsResultsParserUtil {
 	}
 
 	private static File _getCacheFile(String key) {
-		String baseDirPath = System.getProperty("java.io.tmpdir");
-
-		if (isCINode()) {
-			String baseRepositoryDirPath = "/opt/dev/projects/github";
-
-			try {
-				baseRepositoryDirPath = getBuildProperty("base.repository.dir");
-			}
-			catch (IOException ioException) {
-			}
-
-			baseDirPath = baseRepositoryDirPath + "/liferay-jenkins-ee/tmp";
-		}
-
 		String fileName = combine(
-			baseDirPath, "/jenkins-cached-files/",
+			System.getProperty("java.io.tmpdir"), "/jenkins-cached-files/",
 			String.valueOf(key.hashCode()), ".txt");
 
 		return new File(fileName);

@@ -1,18 +1,18 @@
 {
 	"dependencies": {
-		"@clayui/badge": "3.111.0",
-		"@clayui/button": "3.116.0",
-		"@clayui/card": "3.127.0",
-		"@clayui/drop-down": "3.127.0",
-		"@clayui/empty-state": "3.116.0",
-		"@clayui/form": "3.125.0",
-		"@clayui/icon": "3.111.0",
-		"@clayui/label": "3.111.0",
-		"@clayui/layout": "3.111.0",
-		"@clayui/list": "3.127.0",
-		"@clayui/loading-indicator": "3.111.0",
-		"@clayui/pagination": "3.127.0",
-		"@clayui/pagination-bar": "3.127.0",
+		"@clayui/badge": "3.128.0",
+		"@clayui/button": "3.128.0",
+		"@clayui/card": "3.129.0",
+		"@clayui/drop-down": "3.129.0",
+		"@clayui/empty-state": "3.128.0",
+		"@clayui/form": "3.128.0",
+		"@clayui/icon": "3.128.0",
+		"@clayui/label": "3.128.0",
+		"@clayui/layout": "3.128.0",
+		"@clayui/list": "3.129.0",
+		"@clayui/loading-indicator": "3.128.0",
+		"@clayui/pagination": "3.129.0",
+		"@clayui/pagination-bar": "3.129.0",
 		"@clayui/table": "3.111.0",
 		"@liferay/frontend-js-react-web": "*",
 		"classnames": "2.3.1",
@@ -20,7 +20,6 @@
 		"frontend-js-components-web": "*",
 		"frontend-js-web": "*",
 		"history": "4.9.0",
-		"image-promise": "^5.0.1",
 		"moment": "2.29.4",
 		"prop-types": "15.7.2",
 		"qs": "^6.9.6",
@@ -45,5 +44,5 @@
 		"format": "node-scripts format",
 		"test": "node-scripts test"
 	},
-	"version": "1.0.78"
+	"version": "1.0.80"
 }

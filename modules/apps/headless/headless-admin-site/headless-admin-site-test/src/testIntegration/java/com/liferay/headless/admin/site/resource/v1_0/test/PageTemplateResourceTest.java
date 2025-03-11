@@ -11,7 +11,6 @@ import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.exportimport.kernel.service.StagingLocalService;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageTemplate;
-import com.liferay.headless.admin.site.client.dto.v1_0.PageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageTemplate;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageTemplateSet;
 import com.liferay.headless.admin.site.client.dto.v1_0.WidgetPageTemplate;
@@ -30,6 +29,7 @@ import com.liferay.petra.function.UnsafeBiConsumer;
 import com.liferay.petra.function.UnsafeConsumer;
 import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.petra.function.UnsafeSupplier;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
@@ -43,10 +43,10 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
@@ -645,32 +645,6 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 				pageTemplateSet.getExternalReferenceCode(), pageTemplate);
 	}
 
-	private void _assertPageSpecifications(
-		Layout layout, PageSpecification[] pageSpecifications) {
-
-		Assert.assertFalse(layout.isPublished());
-
-		Assert.assertTrue(ArrayUtil.isNotEmpty(pageSpecifications));
-
-		Assert.assertEquals(
-			Arrays.toString(pageSpecifications), 1, pageSpecifications.length);
-
-		Layout draftLayout = layout.fetchDraftLayout();
-
-		PageSpecification pageSpecification = pageSpecifications[0];
-
-		Assert.assertEquals(
-			draftLayout.getExternalReferenceCode(),
-			pageSpecification.getExternalReferenceCode());
-
-		Assert.assertEquals(
-			PageSpecification.Status.DRAFT, pageSpecification.getStatus());
-
-		Assert.assertEquals(
-			PageSpecification.Type.CONTENT_PAGE_SPECIFICATION,
-			pageSpecification.getType());
-	}
-
 	private void
 			_assertPostSiteSiteByExternalReferenceCodePageTemplatePageSpecificationProblemException(
 				String pageTemplateExternalReferenceCode)
@@ -987,9 +961,13 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 					getPageTemplate.getExternalReferenceCode(),
 					testGroup.getGroupId());
 
-		_assertPageSpecifications(
-			_layoutLocalService.getLayout(layoutPageTemplateEntry.getPlid()),
-			getPageTemplate.getPageSpecifications());
+		Layout layout = _layoutLocalService.getLayout(
+			layoutPageTemplateEntry.getPlid());
+
+		Assert.assertFalse(layout.isPublished());
+
+		PageSpecificationsTestUtil.assertPageSpecifications(
+			layout, getPageTemplate.getPageSpecifications());
 	}
 
 	private void _testPatchSiteSiteByExternalReferenceCodePageTemplate(
@@ -1009,12 +987,27 @@ public class PageTemplateResourceTest extends BasePageTemplateResourceTestCase {
 
 		PageTemplate randomPageTemplate = randomPageTemplate();
 
+		randomPageTemplate.setKey(StringPool.BLANK);
+
 		PageTemplate postPageTemplate =
 			testPostSiteSiteByExternalReferenceCodePageTemplate_addPageTemplate(
 				randomPageTemplate);
 
 		assertEquals(randomPageTemplate, postPageTemplate);
 		assertValid(postPageTemplate);
+
+		Assert.assertTrue(Validator.isNotNull(postPageTemplate.getKey()));
+
+		ContentPageTemplate contentPageTemplate = _getContentPageTemplate(
+			testGroup);
+
+		postPageTemplate =
+			pageTemplateResource.
+				postSiteSiteByExternalReferenceCodePageTemplate(
+					testGroup.getExternalReferenceCode(), contentPageTemplate);
+
+		Assert.assertEquals(
+			contentPageTemplate.getKey(), postPageTemplate.getKey());
 
 		_postSiteSiteByExternalReferenceCodePageTemplate(
 			_getContentPageTemplate(testGroup),

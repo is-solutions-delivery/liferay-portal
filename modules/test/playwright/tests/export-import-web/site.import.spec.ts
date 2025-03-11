@@ -3,10 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {
-	ObjectDefinitionApi,
-	ObjectField,
-} from '@liferay/object-admin-rest-client-js';
+import {ObjectDefinitionApi} from '@liferay/object-admin-rest-client-js';
 import {Page, expect, mergeTests} from '@playwright/test';
 import fs from 'fs/promises';
 import * as path from 'path';
@@ -22,6 +19,7 @@ import {pageEditorPagesTest} from '../../fixtures/pageEditorPagesTest';
 import {pageTemplatesPagesTest} from '../../fixtures/pageTemplatesPagesTest';
 import {productMenuPageTest} from '../../fixtures/productMenuPageTest';
 import {wikiPagesTest} from '../../fixtures/wikiPagesTest';
+import {expandSection} from '../../utils/expandSection';
 import getRandomString from '../../utils/getRandomString';
 import {getTempDir} from '../../utils/temp';
 import {companyExportImportPageTest} from './fixtures/companyExportImportPagesTest';
@@ -305,8 +303,8 @@ test('can see corresponding elements at site level', async ({
 			name: 'Test',
 			objectFields: [
 				{
-					DBType: ObjectField.DBTypeEnum.String,
-					businessType: ObjectField.BusinessTypeEnum.Text,
+					DBType: 'String',
+					businessType: 'Text',
 					indexed: true,
 					indexedAsKeyword: true,
 					label: {
@@ -355,4 +353,24 @@ test('can see corresponding elements at site level', async ({
 	await expect(
 		exportImportPage.page.getByRole('group', {name: 'Pages'})
 	).toBeVisible();
+
+	await expect(
+		exportImportPage.page.getByLabel('Delete Application Data')
+	).toBeVisible();
+
+	await expandSection(
+		exportImportPage.page.getByRole('button', {name: 'Update Data'})
+	);
+
+	await expect(
+		exportImportPage.page.getByText(
+			'Mirror: All data and content inside the imported LAR is created as new the first time while maintaining a reference to the source. Subsequent imports from the same source update the entries instead of creating new entries.'
+		)
+	).toBeVisible();
+
+	await expect(
+		exportImportPage.page.getByText('Mirror with overwriting:')
+	).toBeVisible();
+
+	await expect(exportImportPage.page.getByText('Copy as New:')).toBeVisible();
 });

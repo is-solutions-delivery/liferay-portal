@@ -94,15 +94,15 @@ public class JobHistory {
 
 		try {
 			if (ciHistoryURL.startsWith(
-					CloudStorageSyncUtil.GCP_BUCKET_PATH_JENKINS_CI_DATA) ||
+					CloudBucketUtil.GCP_BUCKET_PATH_JENKINS_CI_DATA) ||
 				ciHistoryURL.startsWith(
-					CloudStorageSyncUtil.GCP_BUCKET_PATH_PATCHER_SHARED) ||
+					CloudBucketUtil.GCP_BUCKET_PATH_PATCHER_SHARED) ||
 				ciHistoryURL.startsWith(
-					CloudStorageSyncUtil.GCP_BUCKET_PATH_TESTRAY_RESULTS)) {
+					CloudBucketUtil.GCP_BUCKET_PATH_TESTRAY_RESULTS)) {
 
-				CloudStorageSyncUtil.copyGCPFile(
-					ciHistoryURL,
-					JenkinsResultsParserUtil.getCanonicalPath(tempGzipFile));
+				CloudBucketUtil.copyGCPFile(
+					JenkinsResultsParserUtil.getCanonicalPath(tempGzipFile),
+					ciHistoryURL);
 			}
 			else {
 				JenkinsResultsParserUtil.toFile(

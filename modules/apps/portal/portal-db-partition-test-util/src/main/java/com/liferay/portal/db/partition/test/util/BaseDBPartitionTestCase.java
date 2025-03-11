@@ -42,6 +42,7 @@ import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 import java.util.Set;
@@ -190,6 +191,19 @@ public abstract class BaseDBPartitionTestCase {
 		db.runSQL("drop table if exists " + tableName + " cascade");
 	}
 
+	protected static boolean exists(String partitionName) throws Exception {
+		try (PreparedStatement preparedStatement = connection.prepareStatement(
+				"SELECT 1 FROM information_schema.schemata WHERE schema_name " +
+					"= ?")) {
+
+			preparedStatement.setString(1, partitionName);
+
+			try (ResultSet resultSet = preparedStatement.executeQuery()) {
+				return resultSet.next();
+			}
+		}
+	}
+
 	protected static void extractDBPartitions() throws Exception {
 		extractDBPartitions(COMPANY_IDS);
 	}
@@ -209,6 +223,12 @@ public abstract class BaseDBPartitionTestCase {
 	protected static String getCreateTableSQL(String tableName) {
 		return "create table " + tableName +
 			" (testColumn bigint primary key, companyId bigint)";
+	}
+
+	protected static String getExtractedPartitionName(long companyId) {
+		return ReflectionTestUtil.invoke(
+			DBPartitionUtil.class, "_getExtractedPartitionName",
+			new Class<?>[] {long.class}, companyId);
 	}
 
 	protected static String getPartitionName(long companyId) {

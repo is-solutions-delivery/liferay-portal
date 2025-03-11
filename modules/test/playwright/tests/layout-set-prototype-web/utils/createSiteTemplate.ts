@@ -12,6 +12,7 @@ import getBasicWebContentStructureId from '../../../utils/structured-content/get
 
 export default async function createSiteTemplate({
 	apiHelpers,
+	layoutsUpdateable = true,
 	page,
 	productMenuPage,
 	templateName,
@@ -19,6 +20,7 @@ export default async function createSiteTemplate({
 	webContentName,
 }: {
 	apiHelpers: ApiHelpers;
+	layoutsUpdateable?: boolean;
 	page: Page;
 	productMenuPage: ProductMenuPage;
 	templateName: string;
@@ -27,7 +29,10 @@ export default async function createSiteTemplate({
 }): Promise<LayoutSetPrototype> {
 	const layoutSetPrototype: LayoutSetPrototype =
 		await apiHelpers.jsonWebServicesLayoutSetPrototype.addLayoutSetPrototypes(
-			templateName
+			{
+				layoutsUpdateable,
+				name: templateName,
+			}
 		);
 
 	await page.goto(

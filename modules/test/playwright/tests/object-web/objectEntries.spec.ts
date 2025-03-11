@@ -334,8 +334,8 @@ test.describe('Manage object entries through Page Templates', () => {
 	}) => {
 		const objectFields: ObjectField[] = [
 			{
-				DBType: ObjectField.DBTypeEnum.Boolean,
-				businessType: ObjectField.BusinessTypeEnum.Boolean,
+				DBType: 'Boolean',
+				businessType: 'Boolean',
 				externalReferenceCode: 'booleanField',
 				indexed: true,
 				indexedAsKeyword: false,
@@ -346,11 +346,11 @@ test.describe('Manage object entries through Page Templates', () => {
 				name: 'booleanField',
 				required: false,
 				system: false,
-				type: ObjectField.TypeEnum.Boolean,
+				type: 'Boolean',
 			},
 			{
-				DBType: ObjectField.DBTypeEnum.String,
-				businessType: ObjectField.BusinessTypeEnum.Text,
+				DBType: 'String',
+				businessType: 'Text',
 				externalReferenceCode: 'textField',
 				indexed: true,
 				indexedAsKeyword: false,
@@ -361,7 +361,7 @@ test.describe('Manage object entries through Page Templates', () => {
 				name: 'textField',
 				required: false,
 				system: false,
-				type: ObjectField.TypeEnum.String,
+				type: 'String',
 			},
 		];
 
@@ -430,7 +430,7 @@ test.describe('Manage object entries through Page Templates', () => {
 				objectDefinitionId1: objectDefinition1.id,
 				objectDefinitionId2: objectDefinition2.id,
 				objectDefinitionName2: objectDefinition2.name,
-				type: ObjectRelationship.TypeEnum.OneToMany,
+				type: 'oneToMany',
 			}
 		);
 
@@ -608,12 +608,12 @@ test.describe('Manage object entries through Page Templates', () => {
 			let matchString: string;
 
 			switch (objectField.businessType) {
-				case ObjectField.BusinessTypeEnum.AutoIncrement: {
+				case 'AutoIncrement': {
 					matchString = '1';
 
 					break;
 				}
-				case ObjectField.BusinessTypeEnum.Date: {
+				case 'Date': {
 					const date = new Date(
 						Date.parse(objectEntry[objectField.name])
 					);
@@ -624,14 +624,14 @@ test.describe('Manage object entries through Page Templates', () => {
 
 					continue overloop;
 				}
-				case ObjectField.BusinessTypeEnum.Picklist: {
+				case 'Picklist': {
 					matchString = (
 						objectEntry[objectField.name] as {key: string}
 					).key;
 
 					break;
 				}
-				case ObjectField.BusinessTypeEnum.MultiselectPicklist: {
+				case 'MultiselectPicklist': {
 					(objectEntry[objectField.name] as string[]).forEach(
 						(listTypeEntry, index) => {
 							index < 1
@@ -727,14 +727,14 @@ test.describe('Manage object entries through View Object Entries', () => {
 
 		for (const objectField of objectFields) {
 			switch (objectField.businessType) {
-				case ObjectField.BusinessTypeEnum.Attachment: {
+				case 'Attachment': {
 					await viewObjectEntriesPage.selectFileFromDocumentsAndMedia(
 						ATTACHMENT_FILE_NAME
 					);
 
 					break;
 				}
-				case ObjectField.BusinessTypeEnum.Boolean: {
+				case 'Boolean': {
 					objectEntry[objectField.name]
 						? await page
 								.getByLabel(objectField.label['en_US'])
@@ -745,7 +745,7 @@ test.describe('Manage object entries through View Object Entries', () => {
 
 					break;
 				}
-				case ObjectField.BusinessTypeEnum.Picklist: {
+				case 'Picklist': {
 					await viewObjectEntriesPage.selectDropdownItem(
 						objectField.label['en_US'],
 						objectEntry[objectField.name].key.toString()
@@ -774,29 +774,29 @@ test.describe('Manage object entries through View Object Entries', () => {
 			let matchString: string;
 
 			switch (businessType) {
-				case ObjectField.BusinessTypeEnum.Attachment: {
+				case 'Attachment': {
 					matchString = ATTACHMENT_FILE_NAME;
 
 					break;
 				}
-				case ObjectField.BusinessTypeEnum.Boolean: {
+				case 'Boolean': {
 					matchString = objectEntry[name] ? 'Yes' : 'No';
 
 					break;
 				}
-				case ObjectField.BusinessTypeEnum.Date: {
+				case 'Date': {
 					const date = new Date(objectEntry[name]);
 
 					matchString = getFDSDateFormat(date);
 
 					break;
 				}
-				case ObjectField.BusinessTypeEnum.Picklist: {
+				case 'Picklist': {
 					matchString = (objectEntry[name] as {key: string}).key;
 
 					break;
 				}
-				case ObjectField.BusinessTypeEnum.MultiselectPicklist: {
+				case 'MultiselectPicklist': {
 					(objectEntry[name] as string[]).forEach(
 						(listTypeEntry, index) => {
 							index < 1
@@ -807,7 +807,7 @@ test.describe('Manage object entries through View Object Entries', () => {
 
 					break;
 				}
-				case ObjectField.BusinessTypeEnum.RichText: {
+				case 'RichText': {
 					matchString = objectEntry[name].substring(0, 35);
 
 					break;
@@ -895,9 +895,7 @@ test.describe('Manage object entries through View Object Entries', () => {
 		await page.getByPlaceholder(placeHolderText).click();
 
 		const multiselectPicklistField = objectFields.find(
-			({businessType}) =>
-				businessType ===
-				ObjectField.BusinessTypeEnum.MultiselectPicklist
+			({businessType}) => businessType === 'MultiselectPicklist'
 		);
 
 		const firstOptionName = objectEntry[multiselectPicklistField.name][0];
@@ -969,6 +967,8 @@ test.describe('Manage object entries through View Object Entries', () => {
 		await viewObjectEntriesPage.clickAddObjectEntry(
 			objectDefinition.label['en_US']
 		);
+
+		await viewObjectEntriesPage.selectFileButton.click();
 
 		await viewObjectEntriesPage.selectFileFromDocumentsAndMedia(
 			ATTACHMENT_FILE_NAME
@@ -1052,7 +1052,7 @@ test.describe('Manage object entries through View Object Entries', () => {
 				objectDefinitionId1: objectDefinition1.id,
 				objectDefinitionId2: objectDefinition2.id,
 				objectDefinitionName2: objectDefinition2.name,
-				type: ObjectRelationship.TypeEnum.OneToMany,
+				type: 'oneToMany',
 			}
 		);
 
@@ -1140,7 +1140,7 @@ test.describe('Manage object entries through View Object Entries', () => {
 			objectDefinitionId1: objectDefinition1.id,
 			objectDefinitionId2: objectDefinition2.id,
 			objectDefinitionName2: objectDefinition2.name,
-			type: ObjectRelationship.TypeEnum.ManyToMany,
+			type: 'manyToMany',
 		};
 
 		await objectRelationshipApiClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
@@ -1200,7 +1200,7 @@ test.describe('Manage object entries through View Object Entries', () => {
 		);
 
 		await viewObjectEntriesPage.fillObjectEntry({
-			objectFieldBusinessType: ObjectField.BusinessTypeEnum.Text,
+			objectFieldBusinessType: 'Text',
 			objectFieldLabel: objectField,
 			objectFieldValue: 'tests',
 		});
@@ -1309,7 +1309,7 @@ test.describe('Manage object entries through View Object Entries', () => {
 		await objectRelationshipApiClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
 			objectDefinition.externalReferenceCode,
 			{
-				deletionType: ObjectRelationship.DeletionTypeEnum.Disassociate,
+				deletionType: 'disassociate',
 				label: {
 					en_US: 'Relationship',
 				},
@@ -1320,7 +1320,7 @@ test.describe('Manage object entries through View Object Entries', () => {
 					objectDefinition.externalReferenceCode,
 				objectDefinitionId1: objectDefinition.id,
 				objectDefinitionId2: objectDefinition.id,
-				type: ObjectRelationship.TypeEnum.OneToMany,
+				type: 'oneToMany',
 			}
 		);
 
@@ -1452,6 +1452,126 @@ test.describe('Manage object entries through View Object Entries', () => {
 			'Entry A'
 		);
 	});
+
+	test('Verify that temporary files are deleted from the database if the object creation is not completed', async ({
+		apiHelpers,
+		page,
+		viewObjectEntriesPage,
+	}) => {
+
+		// Create object definition with attachment object field
+
+		const objectDefinition =
+			await apiHelpers.objectAdmin.postRandomObjectDefinition({
+				objectFields: [mockedObjectFields.attachmentFieldUserComputer],
+				objectFolderExternalReferenceCode: 'default',
+				status: {code: 0},
+			});
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await viewObjectEntriesPage.goto(objectDefinition.className);
+
+		await viewObjectEntriesPage.clickAddObjectEntry(objectDefinition.name);
+
+		// Upload first file from user computer
+
+		await viewObjectEntriesPage.selectFileFromUserComputer(
+			__dirname,
+			'sampleFile.txt'
+		);
+
+		const fileEntryId1 = await page.getAttribute(
+			'input[data-field-name^="testAttachment"]',
+			'value'
+		);
+
+		expect(
+			await apiHelpers.headlessDelivery.getDocument(fileEntryId1)
+		).toEqual(
+			expect.objectContaining({
+				id: Number(fileEntryId1),
+			})
+		);
+
+		// Verify that the first file is removed after the second file is uploaded
+
+		await viewObjectEntriesPage.selectFileFromUserComputer(
+			__dirname,
+			'astronaut.png'
+		);
+
+		expect(
+			await apiHelpers.headlessDelivery.getDocument(fileEntryId1)
+		).toEqual({status: 'NOT_FOUND'});
+
+		const fileEntryId2 = await page.getAttribute(
+			'input[data-field-name^="testAttachment"]',
+			'value'
+		);
+
+		expect(
+			await apiHelpers.headlessDelivery.getDocument(fileEntryId2)
+		).toEqual(
+			expect.objectContaining({
+				id: Number(fileEntryId2),
+			})
+		);
+
+		// Verify that the delete button removes the second file
+
+		await viewObjectEntriesPage.deleteFileButton.click();
+
+		expect(
+			await apiHelpers.headlessDelivery.getDocument(fileEntryId2)
+		).toEqual({status: 'NOT_FOUND'});
+
+		// Verify that the file is removed after page reload
+
+		await viewObjectEntriesPage.selectFileFromUserComputer(
+			__dirname,
+			'sampleFile.txt'
+		);
+
+		const fileEntryId3 = await page.getAttribute(
+			'input[data-field-name^="testAttachment"]',
+			'value'
+		);
+
+		await page.reload();
+
+		expect(
+			await apiHelpers.headlessDelivery.getDocument(fileEntryId3)
+		).toEqual({status: 'NOT_FOUND'});
+
+		// Verify that the file is saved successfully when clicking submit
+
+		await viewObjectEntriesPage.selectFileFromUserComputer(
+			__dirname,
+			'astronaut.png'
+		);
+
+		await viewObjectEntriesPage.saveObjectEntryButton.click();
+
+		await expect(viewObjectEntriesPage.successMessage).toBeVisible();
+		await expect(
+			viewObjectEntriesPage.page.getByText('astronaut.png')
+		).toBeVisible();
+
+		await viewObjectEntriesPage.selectFileFromUserComputer(
+			__dirname,
+			'sampleFile.txt'
+		);
+
+		await page.reload();
+
+		await expect(
+			viewObjectEntriesPage.page.getByText('astronaut.png')
+		).toBeVisible();
+	});
 });
 
 test.describe('Manage object entries through Workflow', () => {
@@ -1508,7 +1628,7 @@ test.describe('Manage object entries through Workflow', () => {
 		const objectFieldValue = getRandomString();
 
 		await viewObjectEntriesPage.fillObjectEntry({
-			objectFieldBusinessType: ObjectField.BusinessTypeEnum.Text,
+			objectFieldBusinessType: 'Text',
 			objectFieldLabel: objectDefinition.titleObjectFieldName,
 			objectFieldValue,
 		});

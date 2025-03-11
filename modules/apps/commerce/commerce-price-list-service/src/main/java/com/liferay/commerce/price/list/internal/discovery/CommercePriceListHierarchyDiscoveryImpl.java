@@ -31,8 +31,23 @@ public class CommercePriceListHierarchyDiscoveryImpl
 	@Override
 	public CommercePriceList getCommercePriceList(
 			long groupId, long commerceAccountId, long commerceChannelId,
-			long commerceOrderTypeId, String cpInstanceUuid, String type,
-			String unitOfMeasureKey)
+			long commerceOrderTypeId, String cpInstanceUuid,
+			String currencyCode, String type, String unitOfMeasureKey)
+		throws PortalException {
+
+		return _getCommercePriceList(
+			groupId, commerceAccountId, commerceChannelId, commerceOrderTypeId,
+			currencyCode, type);
+	}
+
+	@Override
+	public String getCommercePriceListDiscoveryKey() {
+		return CommercePricingConstants.ORDER_BY_HIERARCHY;
+	}
+
+	private CommercePriceList _getCommercePriceList(
+			long groupId, long commerceAccountId, long commerceChannelId,
+			long commerceOrderTypeId, String currencyCode, String type)
 		throws PortalException {
 
 		CommercePriceList firstEligibleCommercePriceList = null;
@@ -47,7 +62,7 @@ public class CommercePriceListHierarchyDiscoveryImpl
 			_commercePriceListLocalService.
 				getCommercePriceListsByAccountAndChannelAndOrderTypeId(
 					groupId, commerceAccountId, commerceChannelId,
-					commerceOrderTypeId, type);
+					commerceOrderTypeId, currencyCode, type);
 
 		if ((commercePriceLists != null) && !commercePriceLists.isEmpty()) {
 			CommercePriceList defaultCommercePriceList =
@@ -64,7 +79,8 @@ public class CommercePriceListHierarchyDiscoveryImpl
 		commercePriceLists =
 			_commercePriceListLocalService.
 				getCommercePriceListsByAccountAndOrderTypeId(
-					groupId, commerceAccountId, commerceOrderTypeId, type);
+					groupId, commerceAccountId, commerceOrderTypeId,
+					currencyCode, type);
 
 		if ((commercePriceLists != null) && !commercePriceLists.isEmpty()) {
 			CommercePriceList defaultCommercePriceList =
@@ -83,7 +99,8 @@ public class CommercePriceListHierarchyDiscoveryImpl
 		commercePriceLists =
 			_commercePriceListLocalService.
 				getCommercePriceListsByAccountAndChannelId(
-					groupId, commerceAccountId, commerceChannelId, type);
+					groupId, commerceAccountId, commerceChannelId, currencyCode,
+					type);
 
 		if ((commercePriceLists != null) && !commercePriceLists.isEmpty()) {
 			CommercePriceList defaultCommercePriceList =
@@ -101,7 +118,7 @@ public class CommercePriceListHierarchyDiscoveryImpl
 
 		commercePriceLists =
 			_commercePriceListLocalService.getCommercePriceListsByAccountId(
-				groupId, commerceAccountId, type);
+				groupId, commerceAccountId, currencyCode, type);
 
 		if ((commercePriceLists != null) && !commercePriceLists.isEmpty()) {
 			CommercePriceList defaultCommercePriceList =
@@ -124,7 +141,7 @@ public class CommercePriceListHierarchyDiscoveryImpl
 			_commercePriceListLocalService.
 				getCommercePriceListsByAccountGroupsAndChannelAndOrderTypeId(
 					groupId, commerceAccountGroupIds, commerceChannelId,
-					commerceOrderTypeId, type);
+					commerceOrderTypeId, currencyCode, type);
 
 		if ((commercePriceLists != null) && !commercePriceLists.isEmpty()) {
 			CommercePriceList defaultCommercePriceList =
@@ -144,7 +161,7 @@ public class CommercePriceListHierarchyDiscoveryImpl
 			_commercePriceListLocalService.
 				getCommercePriceListsByAccountGroupsAndOrderTypeId(
 					groupId, commerceAccountGroupIds, commerceOrderTypeId,
-					type);
+					currencyCode, type);
 
 		if ((commercePriceLists != null) && !commercePriceLists.isEmpty()) {
 			CommercePriceList defaultCommercePriceList =
@@ -163,7 +180,8 @@ public class CommercePriceListHierarchyDiscoveryImpl
 		commercePriceLists =
 			_commercePriceListLocalService.
 				getCommercePriceListsByAccountGroupsAndChannelId(
-					groupId, commerceAccountGroupIds, commerceChannelId, type);
+					groupId, commerceAccountGroupIds, commerceChannelId,
+					currencyCode, type);
 
 		if ((commercePriceLists != null) && !commercePriceLists.isEmpty()) {
 			CommercePriceList defaultCommercePriceList =
@@ -182,7 +200,7 @@ public class CommercePriceListHierarchyDiscoveryImpl
 		commercePriceLists =
 			_commercePriceListLocalService.
 				getCommercePriceListsByAccountGroupIds(
-					groupId, commerceAccountGroupIds, type);
+					groupId, commerceAccountGroupIds, currencyCode, type);
 
 		if ((commercePriceLists != null) && !commercePriceLists.isEmpty()) {
 			CommercePriceList defaultCommercePriceList =
@@ -201,7 +219,8 @@ public class CommercePriceListHierarchyDiscoveryImpl
 		commercePriceLists =
 			_commercePriceListLocalService.
 				getCommercePriceListsByChannelAndOrderTypeId(
-					groupId, commerceChannelId, commerceOrderTypeId, type);
+					groupId, commerceChannelId, commerceOrderTypeId,
+					currencyCode, type);
 
 		if ((commercePriceLists != null) && !commercePriceLists.isEmpty()) {
 			CommercePriceList defaultCommercePriceList =
@@ -219,7 +238,7 @@ public class CommercePriceListHierarchyDiscoveryImpl
 
 		commercePriceLists =
 			_commercePriceListLocalService.getCommercePriceListsByOrderTypeId(
-				groupId, commerceOrderTypeId, type);
+				groupId, commerceOrderTypeId, currencyCode, type);
 
 		if ((commercePriceLists != null) && !commercePriceLists.isEmpty()) {
 			CommercePriceList defaultCommercePriceList =
@@ -237,7 +256,7 @@ public class CommercePriceListHierarchyDiscoveryImpl
 
 		commercePriceLists =
 			_commercePriceListLocalService.getCommercePriceListsByChannelId(
-				groupId, commerceChannelId, type);
+				groupId, commerceChannelId, currencyCode, type);
 
 		if ((commercePriceLists != null) && !commercePriceLists.isEmpty()) {
 			CommercePriceList defaultCommercePriceList =
@@ -255,7 +274,7 @@ public class CommercePriceListHierarchyDiscoveryImpl
 
 		commercePriceLists =
 			_commercePriceListLocalService.getCommercePriceListsByUnqualified(
-				groupId, type);
+				groupId, currencyCode, type);
 
 		if ((commercePriceLists != null) && !commercePriceLists.isEmpty()) {
 			CommercePriceList defaultCommercePriceList =
@@ -272,11 +291,6 @@ public class CommercePriceListHierarchyDiscoveryImpl
 		}
 
 		return firstEligibleCommercePriceList;
-	}
-
-	@Override
-	public String getCommercePriceListDiscoveryKey() {
-		return CommercePricingConstants.ORDER_BY_HIERARCHY;
 	}
 
 	private CommercePriceList _getDefaultCommercePriceList(

@@ -16,7 +16,6 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -220,10 +219,8 @@ public class DLEditFolderDisplayContext {
 	public boolean hasAdvancedUpdateDLFolderPermission()
 		throws PortalException {
 
-		if (!FeatureFlagManagerUtil.isEnabled(
-				_themeDisplay.getCompanyId(), "LPD-42452")) {
-
-			return hasUpdateDLFolderPermission();
+		if (getFolder() == null) {
+			return true;
 		}
 
 		if (_advancedUpdateDLFolderPermission != null) {
@@ -239,6 +236,10 @@ public class DLEditFolderDisplayContext {
 	}
 
 	public boolean hasUpdateDLFolderPermission() throws PortalException {
+		if (getFolder() == null) {
+			return true;
+		}
+
 		if (_updateDLFolderPermission != null) {
 			return _updateDLFolderPermission;
 		}
@@ -397,12 +398,10 @@ public class DLEditFolderDisplayContext {
 				DLFileEntry.class.getName());
 
 		if ((workflowHandler != null) &&
-			((DLFolderPermission.contains(
+			(DLFolderPermission.contains(
 				_themeDisplay.getPermissionChecker(),
 				_themeDisplay.getScopeGroupId(), getFolderId(),
-				ActionKeys.ADVANCED_UPDATE) &&
-			  FeatureFlagManagerUtil.isEnabled(
-				  _themeDisplay.getCompanyId(), "LPD-42452")) ||
+				ActionKeys.ADVANCED_UPDATE) ||
 			 DLFolderPermission.contains(
 				 _themeDisplay.getPermissionChecker(),
 				 _themeDisplay.getScopeGroupId(), getFolderId(),

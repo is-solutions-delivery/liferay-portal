@@ -34,6 +34,12 @@ public class ScimClientIdKeywordQueryContributor
 		queryHelper.addSearchTerm(
 			booleanQuery, keywordQueryContributorHelper.getSearchContext(),
 			"expando__keyword__custom_fields__scimClientId", false);
+		queryHelper.addSearchTerm(
+			booleanQuery, keywordQueryContributorHelper.getSearchContext(),
+			"externalReferenceCode", false);
+		queryHelper.addSearchTerm(
+			booleanQuery, keywordQueryContributorHelper.getSearchContext(),
+			"name", false);
 	}
 
 	@Reference

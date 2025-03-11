@@ -792,16 +792,8 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 
 	@Override
 	public Layout copyLayoutContent(
-			long segmentsExperienceId, Layout sourceLayout, Layout targetLayout)
-		throws Exception {
-
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Layout copyLayoutContent(
-			long[] segmentsExperienceIds, Layout sourceLayout,
-			Layout targetLayout)
+			long sourceSegmentsExperienceId, Layout sourceLayout,
+			long targetSegmentsExperienceId, Layout targetLayout)
 		throws Exception {
 
 		throw new UnsupportedOperationException();
@@ -1075,8 +1067,22 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 
 	@Override
 	public Layout fetchDraftLayout(long plid) {
-		return fetchLayout(
+		if (plid <= 0) {
+			return null;
+		}
+
+		List<Layout> layouts = layoutPersistence.findByC_C(
 			_classNameLocalService.getClassNameId(Layout.class), plid);
+
+		if (layouts.isEmpty()) {
+			return null;
+		}
+
+		if (layouts.size() > 1) {
+			_log.error("Layout ID " + plid + " has more than one draft");
+		}
+
+		return layouts.get(layouts.size() - 1);
 	}
 
 	@Override
@@ -1106,11 +1112,6 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 	}
 
 	@Override
-	public Layout fetchLayout(long classNameId, long classPK) {
-		return layoutPersistence.fetchByC_C(classNameId, classPK);
-	}
-
-	@Override
 	public Layout fetchLayout(
 		String uuid, long groupId, boolean privateLayout) {
 
@@ -1129,10 +1130,25 @@ public class LayoutLocalServiceImpl extends LayoutLocalServiceBaseImpl {
 
 	@Override
 	public Layout fetchLayoutByIconImageId(
-			boolean privateLayout, long iconImageId)
-		throws PortalException {
+		boolean privateLayout, long iconImageId) {
 
-		return layoutPersistence.fetchByP_I(privateLayout, iconImageId);
+		if (iconImageId <= 0) {
+			return null;
+		}
+
+		List<Layout> layouts = layoutPersistence.findByP_I(
+			privateLayout, iconImageId);
+
+		if (layouts.isEmpty()) {
+			return null;
+		}
+
+		if (layouts.size() > 1) {
+			_log.error(
+				"Image ID " + iconImageId + " is used by more than one layout");
+		}
+
+		return layouts.get(layouts.size() - 1);
 	}
 
 	/**

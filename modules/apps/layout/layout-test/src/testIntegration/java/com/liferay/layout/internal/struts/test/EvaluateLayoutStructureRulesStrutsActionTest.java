@@ -505,6 +505,8 @@ public class EvaluateLayoutStructureRulesStrutsActionTest {
 		mockHttpServletRequest.setParameter(
 			"layoutStructureRuleIds", layoutStructureRuleIds);
 		mockHttpServletRequest.setParameter(
+			"plid", String.valueOf(_layout.getPlid()));
+		mockHttpServletRequest.setParameter(
 			"segmentsExperienceId",
 			String.valueOf(
 				_segmentsExperienceLocalService.
@@ -573,6 +575,7 @@ public class EvaluateLayoutStructureRulesStrutsActionTest {
 	@Inject
 	private LayoutStructureProvider _layoutStructureProvider;
 
+	@DeleteAfterTestRun
 	private ObjectDefinition _objectDefinition;
 
 	@Inject

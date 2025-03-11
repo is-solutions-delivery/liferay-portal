@@ -111,7 +111,8 @@ public class ObjectEntryFolderLocalServiceTest {
 			ObjectEntryFolderScopeException.class,
 			StringBundler.concat(
 				"Group ID ", TestPropsValues.getGroupId(),
-				" does not match parent folder group ID ", _group.getGroupId()),
+				" does not match parent object entry folder group ID ",
+				_group.getGroupId()),
 			() -> {
 				ObjectEntryFolder parentObjectEntryFolder =
 					_addObjectEntryFolder(
@@ -223,7 +224,7 @@ public class ObjectEntryFolderLocalServiceTest {
 			ObjectEntryFolderScopeException.class,
 			StringBundler.concat(
 				"Group ID ", _group.getGroupId(),
-				" does not match parent folder group ID ",
+				" does not match parent object entry folder group ID ",
 				TestPropsValues.getGroupId()),
 			() -> {
 				ObjectEntryFolder objectEntryFolder = _addObjectEntryFolder(
@@ -281,6 +282,7 @@ public class ObjectEntryFolderLocalServiceTest {
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				true, ObjectDefinitionConstants.SCOPE_SITE,
 				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
+				Collections.emptyList(),
 				Collections.singletonList(
 					ObjectFieldUtil.createObjectField(
 						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
@@ -297,7 +299,9 @@ public class ObjectEntryFolderLocalServiceTest {
 
 		ObjectEntry objectEntry = _objectEntryLocalService.addObjectEntry(
 			TestPropsValues.getUserId(), _group.getGroupId(),
-			_objectDefinition.getObjectDefinitionId(), null,
+			_objectDefinition.getObjectDefinitionId(),
+			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+			null,
 			HashMapBuilder.<String, Serializable>put(
 				"fieldName", StringUtil.randomString()
 			).build(),

@@ -10,6 +10,7 @@ import com.liferay.document.library.kernel.model.DLFileEntryType;
 import com.liferay.document.library.kernel.model.DLFileShortcut;
 import com.liferay.document.library.kernel.model.DLFileVersion;
 import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.model.DLVersionNumberIncrease;
 import com.liferay.document.library.kernel.service.DLAppHelperLocalService;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
@@ -24,7 +25,6 @@ import com.liferay.document.library.kernel.service.DLFolderService;
 import com.liferay.dynamic.data.mapping.kernel.DDMFormValues;
 import com.liferay.portal.kernel.dao.orm.QueryDefinition;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.lock.Lock;
 import com.liferay.portal.kernel.model.UserConstants;
 import com.liferay.portal.kernel.repository.Repository;
@@ -40,6 +40,7 @@ import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchException;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -1036,17 +1037,31 @@ public class LiferayRepository
 		int restrictionType = ParamUtil.getInteger(
 			serviceContext, "restrictionType");
 
-		if (FeatureFlagManagerUtil.isEnabled(
-				serviceContext.getCompanyId(), "LPD-42452")) {
+		ModelResourcePermission<DLFolder> modelResourcePermission =
+			ModelResourcePermissionRegistryUtil.
+				<DLFolder>getModelResourcePermission(DLFolder.class.getName());
+		PermissionChecker permissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
+
+		if (ModelResourcePermissionUtil.contains(
+				modelResourcePermission, permissionChecker,
+				serviceContext.getScopeGroupId(), folderId,
+				ActionKeys.ADVANCED_UPDATE) ||
+			ModelResourcePermissionUtil.contains(
+				modelResourcePermission, permissionChecker,
+				serviceContext.getScopeGroupId(), folderId,
+				ActionKeys.UPDATE)) {
+
+			if (folderId == DLFolderConstants.DEFAULT_PARENT_FOLDER_ID) {
+				DLFolder dlFolder = dlFolderService.updateFolder(
+					toFolderId(folderId), name, description,
+					defaultFileEntryTypeId, fileEntryTypeIds, restrictionType,
+					serviceContext);
+
+				return new LiferayFolder(dlFolder);
+			}
 
 			DLFolder dlFolder = dlFolderService.getFolder(toFolderId(folderId));
-
-			ModelResourcePermission<DLFolder> modelResourcePermission =
-				ModelResourcePermissionRegistryUtil.
-					<DLFolder>getModelResourcePermission(
-						DLFolder.class.getName());
-			PermissionChecker permissionChecker =
-				PermissionThreadLocal.getPermissionChecker();
 
 			if (!ModelResourcePermissionUtil.contains(
 					modelResourcePermission, permissionChecker,
@@ -1074,13 +1089,17 @@ public class LiferayRepository
 				name = dlFolder.getName();
 				description = dlFolder.getDescription();
 			}
+
+			dlFolder = dlFolderService.updateFolder(
+				toFolderId(folderId), name, description, defaultFileEntryTypeId,
+				fileEntryTypeIds, restrictionType, serviceContext);
+
+			return new LiferayFolder(dlFolder);
 		}
 
-		DLFolder dlFolder = dlFolderService.updateFolder(
-			toFolderId(folderId), name, description, defaultFileEntryTypeId,
-			fileEntryTypeIds, restrictionType, serviceContext);
-
-		return new LiferayFolder(dlFolder);
+		throw new PrincipalException.MustHavePermission(
+			permissionChecker, Folder.class.getName(), folderId,
+			ActionKeys.ADVANCED_UPDATE, ActionKeys.UPDATE);
 	}
 
 	@Override

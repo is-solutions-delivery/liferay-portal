@@ -1,6 +1,6 @@
 [#assign user = restClient.get("/headless-admin-user/v1.0/user-accounts/${themeDisplay.getUserId()}") /]
 
-<div class="align-items-center d-flex user-dashboard">
+<div class="align-items-center d-flex">
 	[#if user.image?has_content]
 		<img class="profile-img" src=${user.image} />
 	[#else]

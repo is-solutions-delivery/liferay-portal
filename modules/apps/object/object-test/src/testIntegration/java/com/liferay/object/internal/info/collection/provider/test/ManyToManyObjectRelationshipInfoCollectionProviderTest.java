@@ -12,6 +12,7 @@ import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.pagination.InfoPage;
 import com.liferay.info.pagination.Pagination;
 import com.liferay.object.constants.ObjectDefinitionConstants;
+import com.liferay.object.constants.ObjectEntryFolderConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.field.builder.TextObjectFieldBuilder;
 import com.liferay.object.model.ObjectDefinition;
@@ -39,6 +40,7 @@ import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import java.io.Serializable;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Assert;
@@ -107,7 +109,10 @@ public class ManyToManyObjectRelationshipInfoCollectionProviderTest {
 		ObjectEntry objectDefinition1ObjectEntry1 =
 			_objectEntryLocalService.addObjectEntry(
 				TestPropsValues.getUserId(), _group.getGroupId(),
-				_objectDefinition1.getObjectDefinitionId(), null,
+				_objectDefinition1.getObjectDefinitionId(),
+				ObjectEntryFolderConstants.
+					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+				null,
 				HashMapBuilder.<String, Serializable>put(
 					"objectDefinition1TextObjectFieldName",
 					RandomTestUtil.randomString()
@@ -117,7 +122,10 @@ public class ManyToManyObjectRelationshipInfoCollectionProviderTest {
 		ObjectEntry objectDefinition1ObjectEntry2 =
 			_objectEntryLocalService.addObjectEntry(
 				TestPropsValues.getUserId(), _group.getGroupId(),
-				_objectDefinition1.getObjectDefinitionId(), null,
+				_objectDefinition1.getObjectDefinitionId(),
+				ObjectEntryFolderConstants.
+					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+				null,
 				HashMapBuilder.<String, Serializable>put(
 					"objectDefinition1TextObjectFieldName",
 					RandomTestUtil.randomString()
@@ -127,7 +135,10 @@ public class ManyToManyObjectRelationshipInfoCollectionProviderTest {
 		ObjectEntry objectDefinition2ObjectEntry =
 			_objectEntryLocalService.addObjectEntry(
 				TestPropsValues.getUserId(), _group.getGroupId(),
-				_objectDefinition2.getObjectDefinitionId(), null,
+				_objectDefinition2.getObjectDefinitionId(),
+				ObjectEntryFolderConstants.
+					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+				null,
 				HashMapBuilder.<String, Serializable>put(
 					"objectDefinition2TextObjectFieldName",
 					RandomTestUtil.randomString()
@@ -170,7 +181,7 @@ public class ManyToManyObjectRelationshipInfoCollectionProviderTest {
 			LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 			true, ObjectDefinitionConstants.SCOPE_SITE,
 			ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
-			Arrays.asList(objectField));
+			Collections.emptyList(), Arrays.asList(objectField));
 	}
 
 	private void _assertRelatedInfoCollectionProvider(

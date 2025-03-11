@@ -6,8 +6,6 @@
 import {
 	ObjectDefinition,
 	ObjectDefinitionApi,
-	ObjectField,
-	ObjectRelationship,
 	ObjectRelationshipApi,
 } from '@liferay/object-admin-rest-client-js';
 import {expect, mergeTests} from '@playwright/test';
@@ -51,8 +49,8 @@ const generateRandomObjectDefinition = ({
 		name: objectDefinitionName,
 		objectFields: [
 			{
-				DBType: ObjectField.DBTypeEnum.String,
-				businessType: ObjectField.BusinessTypeEnum.Text,
+				DBType: 'String',
+				businessType: 'Text',
 				externalReferenceCode: 'textField',
 				indexed: true,
 				indexedAsKeyword: false,
@@ -62,7 +60,7 @@ const generateRandomObjectDefinition = ({
 				name: 'textField',
 				required: false,
 				system: false,
-				type: ObjectField.TypeEnum.String,
+				type: 'String',
 			},
 		],
 		objectRelationships,
@@ -165,7 +163,7 @@ test.skip('LPD-26733 Show object in role permissions page', async ({
 		await objectRelationshipApiClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
 			objectDefinition5.externalReferenceCode,
 			{
-				deletionType: ObjectRelationship.DeletionTypeEnum.Cascade,
+				deletionType: 'cascade',
 				edge: true,
 				label: {
 					en_US: objectDefinition6.name,
@@ -180,7 +178,7 @@ test.skip('LPD-26733 Show object in role permissions page', async ({
 				objectDefinitionName2: objectDefinition6.name,
 				reverse: false,
 				system: false,
-				type: ObjectRelationship.TypeEnum.OneToMany,
+				type: 'oneToMany',
 			}
 		);
 

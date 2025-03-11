@@ -51,7 +51,7 @@ buildCreoleParser {
 	into "src/main/java/com/liferay/wiki/engine/creole/internal/parser/parser/Creole10Parser.java"
 }
 
-compileJava {
+configure([compileJava, jarSources]) {
 	dependsOn buildCreoleLexer
 	dependsOn buildCreoleParser
 }

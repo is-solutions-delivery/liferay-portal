@@ -1,10 +1,10 @@
 {
 	"dependencies": {
-		"@clayui/alert": "3.111.0",
-		"@clayui/button": "3.116.0",
-		"@clayui/form": "3.125.0",
-		"@clayui/icon": "3.111.0",
-		"@clayui/modal": "3.122.0",
+		"@clayui/alert": "3.129.1",
+		"@clayui/button": "3.128.0",
+		"@clayui/form": "3.128.0",
+		"@clayui/icon": "3.128.0",
+		"@clayui/modal": "3.128.0",
 		"@liferay/frontend-icons-web": "*",
 		"frontend-js-components-web": "*",
 		"frontend-js-web": "*",
@@ -16,9 +16,9 @@
 	"name": "@liferay/oauth2-provider-web",
 	"private": true,
 	"scripts": {
-		"build": "node-scripts build && node-scripts build:custom",
+		"build": "node-scripts build",
 		"checkFormat": "node-scripts format --check",
 		"format": "node-scripts format"
 	},
-	"version": "4.0.88"
+	"version": "4.0.90"
 }

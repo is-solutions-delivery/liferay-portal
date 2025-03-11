@@ -5,6 +5,7 @@
 
 package com.liferay.frontend.data.set.admin.web.internal.portlet.action;
 
+import com.liferay.frontend.data.set.FDSEntryItemImportPolicy;
 import com.liferay.frontend.data.set.SystemFDSEntry;
 import com.liferay.frontend.data.set.SystemFDSEntryRegistry;
 import com.liferay.frontend.data.set.action.FDSCreationMenu;
@@ -15,6 +16,7 @@ import com.liferay.frontend.data.set.admin.web.internal.constants.FDSAdminPortle
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
+import com.liferay.object.constants.ObjectEntryFolderConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManagerRegistry;
@@ -78,6 +80,7 @@ public class ImportSystemDataSetMVCResourceCommand
 
 		ObjectEntry objectEntry = _objectEntryService.addOrUpdateObjectEntry(
 			fdsName, 0, dataSetObjectDefinition.getObjectDefinitionId(),
+			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 			HashMapBuilder.<String, Serializable>put(
 				"additionalAPIURLParameters",
 				systemFDSEntry.getAdditionalAPIURLParameters()
@@ -91,6 +94,8 @@ public class ImportSystemDataSetMVCResourceCommand
 				"listOfItemsPerPage",
 				StringUtil.merge(
 					systemFDSEntry.getListOfItemsPerPage(), StringPool.COMMA)
+			).put(
+				"propsTransformer", systemFDSEntry.getPropsTransformer()
 			).put(
 				"restApplication", systemFDSEntry.getRESTApplication()
 			).put(
@@ -142,56 +147,120 @@ public class ImportSystemDataSetMVCResourceCommand
 		List<DropdownItem> primaryDropdownItems =
 			(List<DropdownItem>)creationMenu.get("primaryItems");
 
-		for (DropdownItem dropdownItem : primaryDropdownItems) {
-			Map<String, Serializable> objectEntryValues =
+		FDSEntryItemImportPolicy fdsEntryItemImportPolicy =
+			fdsCreationMenu.getFDSEntryItemImportPolicy();
+
+		if (fdsEntryItemImportPolicy == FDSEntryItemImportPolicy.DETACHED) {
+			for (DropdownItem dropdownItem : primaryDropdownItems) {
+				Map<String, Serializable> objectEntryValues =
+					HashMapBuilder.<String, Serializable>put(
+						"icon",
+						() -> _getOptionalValue(dropdownItem.get("icon"))
+					).put(
+						"label_i18n",
+						() -> _getLocalizeableValue(
+							defaultLanguageId,
+							_getOptionalValue(dropdownItem.get("label")))
+					).put(
+						"r_dataSetToDataSetActions_l_dataSetId", dataSetId
+					).put(
+						"target", String.valueOf(dropdownItem.get("target"))
+					).put(
+						"type", "creation"
+					).put(
+						"url", () -> _getOptionalValue(dropdownItem.get("href"))
+					).build();
+
+				Object dataObject = dropdownItem.get("data");
+
+				if (dataObject != null) {
+					Map<String, Object> data = (Map<String, Object>)dataObject;
+
+					objectEntryValues.putAll(
+						HashMapBuilder.<String, Serializable>put(
+							"confirmationMessage_i18n",
+							() -> _getLocalizeableValue(
+								defaultLanguageId,
+								_getOptionalValue(
+									data.get("confirmationMessage")))
+						).put(
+							"confirmationMessageType",
+							() -> _getOptionalValue(
+								data.get("confirmationMessageType"))
+						).put(
+							"modalSize",
+							() -> _getOptionalValue(data.get("modalSize"))
+						).put(
+							"permissionKey",
+							() -> _getOptionalValue(data.get("permissionKey"))
+						).put(
+							"title_i18n",
+							() -> _getLocalizeableValue(
+								defaultLanguageId,
+								_getOptionalValue(data.get("title")))
+						).build());
+				}
+
+				_objectEntryService.addObjectEntry(
+					0, objectDefinitionId,
+					ObjectEntryFolderConstants.
+						PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+					null, objectEntryValues, new ServiceContext());
+			}
+		}
+		else if (fdsEntryItemImportPolicy ==
+					FDSEntryItemImportPolicy.ITEM_PROXY) {
+
+			for (DropdownItem dropdownItem : primaryDropdownItems) {
+				Object id = null;
+
+				Object dataObject = dropdownItem.get("data");
+
+				if (dataObject != null) {
+					Map<String, Object> data = (Map<String, Object>)dataObject;
+
+					id = data.get("id");
+				}
+
+				if (id == null) {
+					continue;
+				}
+
+				_objectEntryService.addOrUpdateObjectEntry(
+					String.valueOf(id), 0, objectDefinitionId,
+					ObjectEntryFolderConstants.
+						PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+					HashMapBuilder.<String, Serializable>put(
+						"icon",
+						() -> _getOptionalValue(dropdownItem.get("icon"))
+					).put(
+						"label_i18n",
+						() -> _getLocalizeableValue(
+							defaultLanguageId,
+							_getOptionalValue(dropdownItem.get("label")))
+					).put(
+						"r_dataSetToDataSetActions_l_dataSetId", dataSetId
+					).put(
+						"target", FDSEntryItemImportPolicy.ITEM_PROXY
+					).put(
+						"type", "creation"
+					).build(),
+					new ServiceContext());
+			}
+		}
+		else {
+			_objectEntryService.addObjectEntry(
+				0, objectDefinitionId,
+				ObjectEntryFolderConstants.
+					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+				null,
 				HashMapBuilder.<String, Serializable>put(
-					"icon", () -> _getOptionalValue(dropdownItem.get("icon"))
-				).put(
-					"label_i18n",
-					() -> _getLocalizeableValue(
-						defaultLanguageId,
-						_getOptionalValue(dropdownItem.get("label")))
-				).put(
 					"r_dataSetToDataSetActions_l_dataSetId", dataSetId
 				).put(
-					"target", String.valueOf(dropdownItem.get("target"))
+					"target", FDSEntryItemImportPolicy.GROUP_PROXY
 				).put(
 					"type", "creation"
-				).put(
-					"url", () -> _getOptionalValue(dropdownItem.get("href"))
-				).build();
-
-			Object dataObject = dropdownItem.get("data");
-
-			if (dataObject != null) {
-				Map<String, Object> data = (Map<String, Object>)dataObject;
-
-				objectEntryValues.putAll(
-					HashMapBuilder.<String, Serializable>put(
-						"confirmationMessage_i18n",
-						() -> _getLocalizeableValue(
-							defaultLanguageId,
-							_getOptionalValue(data.get("confirmationMessage")))
-					).put(
-						"confirmationMessageType",
-						() -> _getOptionalValue(
-							data.get("confirmationMessageType"))
-					).put(
-						"modalSize",
-						() -> _getOptionalValue(data.get("modalSize"))
-					).put(
-						"permissionKey",
-						() -> _getOptionalValue(data.get("permissionKey"))
-					).put(
-						"title_i18n",
-						() -> _getLocalizeableValue(
-							defaultLanguageId,
-							_getOptionalValue(data.get("title")))
-					).build());
-			}
-
-			_objectEntryService.addObjectEntry(
-				0, objectDefinitionId, null, objectEntryValues,
+				).build(),
 				new ServiceContext());
 		}
 	}
@@ -205,64 +274,132 @@ public class ImportSystemDataSetMVCResourceCommand
 		List<FDSActionDropdownItem> fdsActionDropdownItems =
 			fdsItemsActions.getFDSActionDropdownItems(httpServletRequest);
 
-		for (FDSActionDropdownItem fdsActionDropdownItem :
-				fdsActionDropdownItems) {
+		FDSEntryItemImportPolicy fdsEntryItemImportPolicy =
+			fdsItemsActions.getFDSEntryItemImportPolicy();
 
-			Map<String, Object> data =
-				(Map<String, Object>)fdsActionDropdownItem.get("data");
+		if (fdsEntryItemImportPolicy == FDSEntryItemImportPolicy.DETACHED) {
+			for (FDSActionDropdownItem fdsActionDropdownItem :
+					fdsActionDropdownItems) {
 
+				Map<String, Object> data =
+					(Map<String, Object>)fdsActionDropdownItem.get("data");
+
+				_objectEntryService.addObjectEntry(
+					0, objectDefinitionId,
+					ObjectEntryFolderConstants.
+						PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+					null,
+					HashMapBuilder.<String, Serializable>put(
+						"confirmationMessage_i18n",
+						() -> _getLocalizeableValue(
+							defaultLanguageId,
+							_getOptionalValue(data.get("confirmationMessage")))
+					).put(
+						"confirmationMessageType",
+						() -> _getOptionalValue(
+							data.get("confirmationMessageType"))
+					).put(
+						"errorMessage_i18n",
+						() -> _getLocalizeableValue(
+							defaultLanguageId,
+							_getOptionalValue(data.get("errorMessage")))
+					).put(
+						"icon",
+						() -> _getOptionalValue(
+							fdsActionDropdownItem.get("icon"))
+					).put(
+						"label_i18n",
+						() -> _getLocalizeableValue(
+							defaultLanguageId,
+							_getOptionalValue(
+								fdsActionDropdownItem.get("label")))
+					).put(
+						"method", () -> _getOptionalValue(data.get("method"))
+					).put(
+						"modalSize",
+						() -> _getOptionalValue(data.get("modalSize"))
+					).put(
+						"permissionKey",
+						() -> _getOptionalValue(data.get("permissionKey"))
+					).put(
+						"r_dataSetToDataSetActions_l_dataSetId", dataSetId
+					).put(
+						"requestBody",
+						() -> _getOptionalValue(data.get("requestBody"))
+					).put(
+						"successMessage_i18n",
+						() -> _getLocalizeableValue(
+							defaultLanguageId,
+							_getOptionalValue(data.get("successMessage")))
+					).put(
+						"target",
+						String.valueOf(fdsActionDropdownItem.get("target"))
+					).put(
+						"title_i18n",
+						() -> _getLocalizeableValue(
+							defaultLanguageId,
+							_getOptionalValue(data.get("title")))
+					).put(
+						"type", "item"
+					).put(
+						"url",
+						() -> _getOptionalValue(
+							fdsActionDropdownItem.get("href"))
+					).build(),
+					new ServiceContext());
+			}
+		}
+		else if (fdsEntryItemImportPolicy ==
+					FDSEntryItemImportPolicy.ITEM_PROXY) {
+
+			for (FDSActionDropdownItem fdsActionDropdownItem :
+					fdsActionDropdownItems) {
+
+				Map<String, Object> data =
+					(Map<String, Object>)fdsActionDropdownItem.get("data");
+
+				Object id = data.get("id");
+
+				if (id == null) {
+					continue;
+				}
+
+				_objectEntryService.addOrUpdateObjectEntry(
+					String.valueOf(id), 0, objectDefinitionId,
+					ObjectEntryFolderConstants.
+						PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+					HashMapBuilder.<String, Serializable>put(
+						"icon",
+						() -> _getOptionalValue(
+							fdsActionDropdownItem.get("icon"))
+					).put(
+						"label_i18n",
+						() -> _getLocalizeableValue(
+							defaultLanguageId,
+							_getOptionalValue(
+								fdsActionDropdownItem.get("label")))
+					).put(
+						"r_dataSetToDataSetActions_l_dataSetId", dataSetId
+					).put(
+						"target", FDSEntryItemImportPolicy.ITEM_PROXY
+					).put(
+						"type", "item"
+					).build(),
+					new ServiceContext());
+			}
+		}
+		else {
 			_objectEntryService.addObjectEntry(
-				0, objectDefinitionId, null,
+				0, objectDefinitionId,
+				ObjectEntryFolderConstants.
+					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+				null,
 				HashMapBuilder.<String, Serializable>put(
-					"confirmationMessage_i18n",
-					() -> _getLocalizeableValue(
-						defaultLanguageId,
-						_getOptionalValue(data.get("confirmationMessage")))
-				).put(
-					"confirmationMessageType",
-					() -> _getOptionalValue(data.get("confirmationMessageType"))
-				).put(
-					"errorMessage_i18n",
-					() -> _getLocalizeableValue(
-						defaultLanguageId,
-						_getOptionalValue(data.get("errorMessage")))
-				).put(
-					"icon",
-					() -> _getOptionalValue(fdsActionDropdownItem.get("icon"))
-				).put(
-					"label_i18n",
-					() -> _getLocalizeableValue(
-						defaultLanguageId,
-						_getOptionalValue(fdsActionDropdownItem.get("label")))
-				).put(
-					"method", () -> _getOptionalValue(data.get("method"))
-				).put(
-					"modalSize", () -> _getOptionalValue(data.get("modalSize"))
-				).put(
-					"permissionKey",
-					() -> _getOptionalValue(data.get("permissionKey"))
-				).put(
 					"r_dataSetToDataSetActions_l_dataSetId", dataSetId
 				).put(
-					"requestBody",
-					() -> _getOptionalValue(data.get("requestBody"))
-				).put(
-					"successMessage_i18n",
-					() -> _getLocalizeableValue(
-						defaultLanguageId,
-						_getOptionalValue(data.get("successMessage")))
-				).put(
-					"target",
-					String.valueOf(fdsActionDropdownItem.get("target"))
-				).put(
-					"title_i18n",
-					() -> _getLocalizeableValue(
-						defaultLanguageId, _getOptionalValue(data.get("title")))
+					"target", FDSEntryItemImportPolicy.GROUP_PROXY
 				).put(
 					"type", "item"
-				).put(
-					"url",
-					() -> _getOptionalValue(fdsActionDropdownItem.get("href"))
 				).build(),
 				new ServiceContext());
 		}

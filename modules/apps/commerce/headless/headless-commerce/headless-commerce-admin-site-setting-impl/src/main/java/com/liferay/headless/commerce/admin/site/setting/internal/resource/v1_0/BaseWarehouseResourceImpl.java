@@ -348,8 +348,25 @@ public abstract class BaseWarehouseResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (Warehouse warehouse : warehouses) {
-			deleteWarehouse(warehouse.getId());
+		UnsafeFunction<Warehouse, Warehouse, Exception>
+			warehouseUnsafeFunction = warehouse -> {
+				deleteWarehouse(warehouse.getId());
+
+				return warehouse;
+			};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				warehouses, warehouseUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				warehouses, warehouseUnsafeFunction::apply);
+		}
+		else {
+			for (Warehouse warehouse : warehouses) {
+				warehouseUnsafeFunction.apply(warehouse);
+			}
 		}
 	}
 

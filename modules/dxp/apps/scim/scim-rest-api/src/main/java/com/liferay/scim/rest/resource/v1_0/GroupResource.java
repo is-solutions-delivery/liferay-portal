@@ -16,6 +16,7 @@ import com.liferay.portal.odata.filter.FilterParserProvider;
 import com.liferay.portal.odata.sort.SortParserProvider;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.scim.rest.dto.v1_0.Group;
+import com.liferay.scim.rest.dto.v1_0.PatchOp;
 import com.liferay.scim.rest.dto.v1_0.QueryAttributes;
 import com.liferay.scim.rest.dto.v1_0.User;
 
@@ -46,7 +47,9 @@ import org.osgi.annotation.versioning.ProviderType;
 @ProviderType
 public interface GroupResource {
 
-	public Object getV2Groups(Integer count, Integer startIndex)
+	public Object getV2Groups(
+			Integer count, String excludedAttributes, Integer startIndex,
+			Filter filter)
 		throws Exception;
 
 	public Response postV2Group(Group group) throws Exception;
@@ -56,7 +59,10 @@ public interface GroupResource {
 
 	public Response deleteV2Group(String id) throws Exception;
 
-	public Object getV2GroupById(String id) throws Exception;
+	public Object getV2GroupById(String id, String excludedAttributes)
+		throws Exception;
+
+	public Response patchV2Group(String id, PatchOp patchOp) throws Exception;
 
 	public Response putV2Group(String id, Group group) throws Exception;
 

@@ -652,3 +652,8 @@ ead3fd323d6ec401dd438a2c5fe8a14eb833f095^..d10b8925dd3a3f8fd6e352d3e0fa44e3cae7e
 # Bundle Version 7.0.124
 #
 d10b8925dd3a3f8fd6e352d3e0fa44e3cae7eab3^..b0dca9f0eb7dcce5090545cd20db60cc513e65a3=LPD-46007
+
+#
+# Bundle Version 7.0.126
+#
+b0dca9f0eb7dcce5090545cd20db60cc513e65a3^..ecb6b19de00a2221e49d65ded8045081bc17e69c=LPD-44271 LPD-46007 LPD-47508 LPD-47925

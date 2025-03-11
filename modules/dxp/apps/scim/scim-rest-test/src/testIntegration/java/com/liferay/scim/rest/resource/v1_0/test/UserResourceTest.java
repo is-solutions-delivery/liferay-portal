@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.search.IndexerRegistryUtil;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DataGuard;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
@@ -37,6 +38,8 @@ import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.scim.rest.client.dto.v1_0.MultiValuedAttribute;
 import com.liferay.scim.rest.client.dto.v1_0.Name;
+import com.liferay.scim.rest.client.dto.v1_0.Operation;
+import com.liferay.scim.rest.client.dto.v1_0.PatchOp;
 import com.liferay.scim.rest.client.dto.v1_0.User;
 import com.liferay.scim.rest.client.dto.v1_0.UserSchemaExtension;
 import com.liferay.scim.rest.client.http.HttpInvoker;
@@ -169,17 +172,18 @@ public class UserResourceTest extends BaseUserResourceTestCase {
 	public void testGetV2Users() throws Exception {
 		UserTestUtil.addUser();
 
-		_assertListResponse(userResource.getV2Users(5, 0), 0, 0);
+		_assertListResponse(userResource.getV2Users(5, 0, null), 0, 0);
 
 		User user1 = testDeleteV2User_addUser();
 		User user2 = testDeleteV2User_addUser();
 
-		_assertListResponse(userResource.getV2Users(5, 0), 2, 2, user1, user2);
+		_assertListResponse(
+			userResource.getV2Users(5, 0, null), 2, 2, user1, user2);
 
 		User user3 = testDeleteV2User_addUser();
 
 		_assertListResponse(
-			userResource.getV2Users(5, 3), 3, 1, user1, user2, user3);
+			userResource.getV2Users(5, 3, null), 3, 1, user1, user2, user3);
 
 		long userId = GetterUtil.getLong(user3.getId());
 
@@ -191,12 +195,101 @@ public class UserResourceTest extends BaseUserResourceTestCase {
 
 		_reindexUser(userId);
 
-		_assertListResponse(userResource.getV2Users(5, 0), 2, 2, user1, user2);
+		_assertListResponse(
+			userResource.getV2Users(5, 0, null), 2, 2, user1, user2);
+		_assertListResponse(
+			userResource.getV2Users(
+				5, 0,
+				"externalId eq \"" + RandomTestUtil.randomString() + "\""),
+			0, 0);
+		_assertListResponse(
+			userResource.getV2Users(
+				5, 0, "externalId eq \"" + user1.getExternalId() + "\""),
+			1, 1, user1);
+		_assertListResponse(
+			userResource.getV2Users(
+				5, 0, "userName eq \"" + RandomTestUtil.randomString() + "\""),
+			0, 0);
+		_assertListResponse(
+			userResource.getV2Users(
+				5, 0, "userName eq \"" + user1.getUserName() + "\""),
+			1, 1, user1);
+
+		assertHttpResponseStatusCode(
+			400,
+			userResource.getV2UsersHttpResponse(
+				5, 0,
+				RandomTestUtil.randomString() + "eq \"" +
+					RandomTestUtil.randomString() + "\""));
 
 		ConfigurationTestUtil.deleteConfiguration(_pid);
 
 		assertHttpResponseStatusCode(
-			404, userResource.getV2UsersHttpResponse(5, 0));
+			404, userResource.getV2UsersHttpResponse(5, 0, null));
+	}
+
+	@Override
+	@Test
+	@TestInfo("LPD-48895")
+	public void testPatchV2User() throws Exception {
+		User user = testDeleteV2User_addUser();
+
+		PatchOp patchOp = new PatchOp();
+
+		String title = StringUtil.toLowerCase(RandomTestUtil.randomString());
+
+		patchOp.setOperations(
+			new Operation[] {
+				new Operation() {
+					{
+						setOp("replace");
+						setPath("title");
+						setValue(title);
+					}
+				}
+			});
+		patchOp.setSchemas(
+			new String[] {"\"urn:ietf:params:scim:api:messages:2.0:PatchOp\""});
+
+		HttpInvoker.HttpResponse httpResponse =
+			userResource.patchV2UserHttpResponse(user.getId(), patchOp);
+
+		assertHttpResponseStatusCode(200, httpResponse);
+
+		User patchUser = User.toDTO(httpResponse.getContent());
+
+		assertValid(patchUser);
+
+		Assert.assertEquals(patchUser.getTitle(), title);
+
+		patchOp.setOperations(
+			new Operation[] {
+				new Operation() {
+					{
+						setOp("replace");
+						setPath("active");
+						setValue(false);
+					}
+				}
+			});
+
+		httpResponse = userResource.patchV2UserHttpResponse(
+			user.getId(), patchOp);
+
+		assertHttpResponseStatusCode(200, httpResponse);
+
+		patchUser = User.toDTO(httpResponse.getContent());
+
+		assertValid(patchUser);
+
+		Assert.assertEquals(patchUser.getActive(), false);
+
+		ConfigurationTestUtil.deleteConfiguration(_pid);
+
+		assertHttpResponseStatusCode(
+			404,
+			userResource.patchV2UserHttpResponse(
+				randomUser().getId(), patchOp));
 	}
 
 	@Override
@@ -277,6 +370,19 @@ public class UserResourceTest extends BaseUserResourceTestCase {
 
 		assertHttpResponseStatusCode(
 			409, userResource.postV2UserHttpResponse(postUser3));
+
+		User postUser4 = randomUser();
+
+		postUser4.setActive((Boolean)null);
+
+		assertHttpResponseStatusCode(
+			201, userResource.postV2UserHttpResponse(postUser4));
+
+		com.liferay.portal.kernel.model.User portalUser4 =
+			_userLocalService.getUserByExternalReferenceCode(
+				postUser4.getExternalId(), TestPropsValues.getCompanyId());
+
+		Assert.assertTrue(portalUser4.isActive());
 
 		ConfigurationTestUtil.deleteConfiguration(_pid);
 
@@ -374,7 +480,7 @@ public class UserResourceTest extends BaseUserResourceTestCase {
 				new MultiValuedAttribute() {
 					{
 						primary = true;
-						type = "default";
+						type = "work";
 						value = user.getUserName() + "@liferay.com";
 					}
 				}

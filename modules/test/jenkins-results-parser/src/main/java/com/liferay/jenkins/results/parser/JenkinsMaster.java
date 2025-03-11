@@ -5,6 +5,9 @@
 
 package com.liferay.jenkins.results.parser;
 
+import com.liferay.jenkins.results.parser.aws.AWSFactory;
+import com.liferay.jenkins.results.parser.aws.AWSFleetCloud;
+
 import java.io.IOException;
 
 import java.util.ArrayList;
@@ -140,13 +143,52 @@ public class JenkinsMaster implements JenkinsNode<JenkinsMaster> {
 	}
 
 	public int getAvailableSlavesCount() {
-		return getIdleJenkinsSlavesCount() - _queueCount -
-			_getRecentBatchSizesTotal();
+		List<AWSFleetCloud> awsFleetClouds = getAWSFleetClouds();
+
+		int totalQueueCount = _queueCount + _getRecentBatchSizesTotal();
+
+		if (!awsFleetClouds.isEmpty()) {
+			AWSFleetCloud awsFleetCloud = awsFleetClouds.get(0);
+
+			return awsFleetCloud.getMaxSize() - getBusyJenkinsSlavesCount() -
+				totalQueueCount;
+		}
+
+		return getIdleJenkinsSlavesCount() - totalQueueCount;
 	}
 
 	public float getAverageQueueLength() {
-		return ((float)_queueCount + _getRecentBatchSizesTotal()) /
-			getOnlineJenkinsSlavesCount();
+		List<AWSFleetCloud> awsFleetClouds = getAWSFleetClouds();
+
+		int totalQueueCount = _queueCount + _getRecentBatchSizesTotal();
+
+		if (!awsFleetClouds.isEmpty()) {
+			AWSFleetCloud awsFleetCloud = awsFleetClouds.get(0);
+
+			return ((float)totalQueueCount + getBusyJenkinsSlavesCount()) /
+				awsFleetCloud.getMaxSize();
+		}
+
+		return (float)totalQueueCount / getOnlineJenkinsSlavesCount();
+	}
+
+	public List<AWSFleetCloud> getAWSFleetClouds() {
+		long currentTimestamp = JenkinsResultsParserUtil.getCurrentTimeMillis();
+
+		long timeSinceLastUpdate =
+			currentTimestamp - _awsFleetCloudLastUpdateTimestamp;
+
+		if ((_awsFleetClouds != null) &&
+			(timeSinceLastUpdate <= _AWS_FLEET_CLOUD_UPDATE_DURATION)) {
+
+			return _awsFleetClouds;
+		}
+
+		_awsFleetClouds = AWSFactory.getAWSFleetClouds(this);
+
+		_awsFleetCloudLastUpdateTimestamp = currentTimestamp;
+
+		return _awsFleetClouds;
 	}
 
 	public List<JSONObject> getBuildJSONObjects(String jobName) {
@@ -213,6 +255,18 @@ public class JenkinsMaster implements JenkinsNode<JenkinsMaster> {
 
 	public List<String> getBuildURLs() {
 		return new ArrayList<>(_buildURLs);
+	}
+
+	public int getBusyJenkinsSlavesCount() {
+		int busySlavesCount = 0;
+
+		for (JenkinsSlave jenkinsSlave : _jenkinsSlavesMap.values()) {
+			if (!jenkinsSlave.isIdle()) {
+				busySlavesCount++;
+			}
+		}
+
+		return busySlavesCount;
 	}
 
 	public List<DefaultBuild> getDefaultBuilds() {
@@ -518,8 +572,7 @@ public class JenkinsMaster implements JenkinsNode<JenkinsMaster> {
 
 			try {
 				if (!isBlackListed()) {
-					JenkinsResultsParserUtil.toString(
-						"http://" + getName(), false, 0, 0, 0);
+					JenkinsResultsParserUtil.toString(getURL(), false, 0, 0, 0);
 
 					_available = true;
 				}
@@ -1040,6 +1093,9 @@ public class JenkinsMaster implements JenkinsNode<JenkinsMaster> {
 
 	private static final long _AVAILABLE_TIMEOUT = 1000 * 60 * 5;
 
+	private static final long _AWS_FLEET_CLOUD_UPDATE_DURATION =
+		15 * 1000 * 1000;
+
 	private static final long _MAXIMUM_BUILD_AGE = 24 * 60 * 60 * 1000;
 
 	private static final long _MAXIMUM_BUILD_UPDATE_DURATION = 30 * 1000;
@@ -1076,6 +1132,8 @@ public class JenkinsMaster implements JenkinsNode<JenkinsMaster> {
 
 	private boolean _available;
 	private long _availableTimestamp = -1;
+	private long _awsFleetCloudLastUpdateTimestamp;
+	private List<AWSFleetCloud> _awsFleetClouds;
 	private final Map<Long, Integer> _batchSizes = new TreeMap<>();
 	private boolean _blacklisted;
 	private final Map<String, List<JSONObject>> _buildJSONObjectsMap =

@@ -9,6 +9,7 @@ import com.liferay.asset.display.page.model.AssetDisplayPageEntry;
 import com.liferay.asset.display.page.service.base.AssetDisplayPageEntryServiceBaseImpl;
 import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
 import com.liferay.asset.kernel.model.AssetRendererFactory;
+import com.liferay.info.item.InfoItemReference;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.info.item.provider.InfoItemPermissionProvider;
 import com.liferay.portal.aop.AopService;
@@ -38,7 +39,7 @@ public class AssetDisplayPageEntryServiceImpl
 
 	@Override
 	public AssetDisplayPageEntry addAssetDisplayPageEntry(
-			long userId, long groupId, long classNameId, long classPK,
+			long groupId, long classNameId, long classPK,
 			long layoutPageTemplateEntryId, int type,
 			ServiceContext serviceContext)
 		throws Exception {
@@ -47,13 +48,13 @@ public class AssetDisplayPageEntryServiceImpl
 			_portal.getClassName(classNameId), classPK, ActionKeys.UPDATE);
 
 		return assetDisplayPageEntryLocalService.addAssetDisplayPageEntry(
-			userId, groupId, classNameId, classPK, layoutPageTemplateEntryId,
-			type, serviceContext);
+			getUserId(), groupId, classNameId, classPK,
+			layoutPageTemplateEntryId, type, serviceContext);
 	}
 
 	@Override
 	public AssetDisplayPageEntry addAssetDisplayPageEntry(
-			long userId, long groupId, long classNameId, long classPK,
+			long groupId, long classNameId, long classPK,
 			long layoutPageTemplateEntryId, ServiceContext serviceContext)
 		throws Exception {
 
@@ -61,8 +62,8 @@ public class AssetDisplayPageEntryServiceImpl
 			_portal.getClassName(classNameId), classPK, ActionKeys.UPDATE);
 
 		return assetDisplayPageEntryLocalService.addAssetDisplayPageEntry(
-			userId, groupId, classNameId, classPK, layoutPageTemplateEntryId,
-			serviceContext);
+			getUserId(), groupId, classNameId, classPK,
+			layoutPageTemplateEntryId, serviceContext);
 	}
 
 	@Override
@@ -169,7 +170,8 @@ public class AssetDisplayPageEntryServiceImpl
 
 		if (infoItemPermissionProvider != null) {
 			if (!infoItemPermissionProvider.hasPermission(
-					getPermissionChecker(), classPK, actionId)) {
+					getPermissionChecker(),
+					new InfoItemReference(className, classPK), actionId)) {
 
 				throw new PrincipalException();
 			}

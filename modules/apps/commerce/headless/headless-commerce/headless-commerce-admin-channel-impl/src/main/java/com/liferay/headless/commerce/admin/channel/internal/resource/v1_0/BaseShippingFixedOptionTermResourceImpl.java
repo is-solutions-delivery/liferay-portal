@@ -269,11 +269,34 @@ public abstract class BaseShippingFixedOptionTermResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (ShippingFixedOptionTerm shippingFixedOptionTerm :
-				shippingFixedOptionTerms) {
+		UnsafeFunction
+			<ShippingFixedOptionTerm, ShippingFixedOptionTerm, Exception>
+				shippingFixedOptionTermUnsafeFunction =
+					shippingFixedOptionTerm -> {
+						deleteShippingFixedOptionTerm(
+							shippingFixedOptionTerm.
+								getShippingFixedOptionTermId());
 
-			deleteShippingFixedOptionTerm(
-				shippingFixedOptionTerm.getShippingFixedOptionTermId());
+						return shippingFixedOptionTerm;
+					};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				shippingFixedOptionTerms,
+				shippingFixedOptionTermUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				shippingFixedOptionTerms,
+				shippingFixedOptionTermUnsafeFunction::apply);
+		}
+		else {
+			for (ShippingFixedOptionTerm shippingFixedOptionTerm :
+					shippingFixedOptionTerms) {
+
+				shippingFixedOptionTermUnsafeFunction.apply(
+					shippingFixedOptionTerm);
+			}
 		}
 	}
 

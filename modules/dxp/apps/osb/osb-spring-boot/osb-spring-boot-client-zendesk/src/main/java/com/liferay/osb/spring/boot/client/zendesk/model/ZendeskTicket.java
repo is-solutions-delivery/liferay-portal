@@ -5,6 +5,12 @@
 
 package com.liferay.osb.spring.boot.client.zendesk.model;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
@@ -14,14 +20,65 @@ public class ZendeskTicket {
 
 	public static final String STATUS_CLOSED = "closed";
 
-	public ZendeskTicket(JSONObject jsonObject) {
+	public ZendeskTicket(JSONObject jsonObject, String zendeskURL) {
+		_zendeskURL = zendeskURL;
+
+		Map<Long, String> customFields = new HashMap<>();
+
+		JSONArray customFieldsJSONArray = jsonObject.getJSONArray(
+			"custom_fields");
+
+		if (customFieldsJSONArray != null) {
+			for (int i = 0; i < customFieldsJSONArray.length(); i++) {
+				JSONObject customFieldJSONObject =
+					customFieldsJSONArray.getJSONObject(i);
+
+				customFields.put(
+					customFieldJSONObject.getLong("id"),
+					customFieldJSONObject.optString("value"));
+			}
+		}
+
+		_customFields = customFields;
+
+		_requesterId = jsonObject.getLong("requester_id");
 		_status = jsonObject.getString("status");
+		_subject = jsonObject.getString("subject");
+
+		Set<String> tags = new HashSet<>();
+
+		JSONArray tagsJSONArray = jsonObject.getJSONArray("tags");
+
+		if (tagsJSONArray != null) {
+			for (int i = 0; i < tagsJSONArray.length(); i++) {
+				tags.add(tagsJSONArray.getString(i));
+			}
+		}
+
+		_tags = tags;
+
 		_zendeskOrganizationId = jsonObject.getLong("organization_id");
 		_zendeskTicketId = jsonObject.getLong("id");
 	}
 
+	public Map<Long, String> getCustomFields() {
+		return _customFields;
+	}
+
+	public long getRequesterId() {
+		return _requesterId;
+	}
+
 	public String getStatus() {
 		return _status;
+	}
+
+	public String getSubject() {
+		return _subject;
+	}
+
+	public Set<String> getTags() {
+		return _tags;
 	}
 
 	public long getZendeskOrganizationId() {
@@ -40,8 +97,26 @@ public class ZendeskTicket {
 		return false;
 	}
 
+	public JSONObject toJSONObject() {
+		return new JSONObject(
+		).put(
+			"link", _zendeskURL + "/requests/" + _zendeskTicketId
+		).put(
+			"status", _status
+		).put(
+			"subject", _subject
+		).put(
+			"ticketId", _zendeskTicketId
+		);
+	}
+
+	private final Map<Long, String> _customFields;
+	private final long _requesterId;
 	private final String _status;
+	private final String _subject;
+	private final Set<String> _tags;
 	private final long _zendeskOrganizationId;
 	private final long _zendeskTicketId;
+	private final String _zendeskURL;
 
 }

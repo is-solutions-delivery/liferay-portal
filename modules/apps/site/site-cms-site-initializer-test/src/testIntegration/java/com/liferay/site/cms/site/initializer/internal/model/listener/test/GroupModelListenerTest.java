@@ -43,7 +43,7 @@ public class GroupModelListenerTest {
 	public static final AggregateTestRule aggregateTestRule =
 		new LiferayIntegrationTestRule();
 
-	@FeatureFlags("LPD-17809")
+	@FeatureFlags("LPD-17564")
 	@Test
 	public void testAddDepotEntry() throws Exception {
 		_depotEntry = _depotEntryLocalService.addDepotEntry(
@@ -67,14 +67,14 @@ public class GroupModelListenerTest {
 			ListUtil.sort(
 				ListUtil.toList(
 					_objectEntryFolderLocalService.getObjectEntryFolders(
-						_depotEntry.getCompanyId(), _depotEntry.getGroupId(),
+						_depotEntry.getGroupId(), _depotEntry.getCompanyId(),
 						ObjectEntryFolderConstants.
 							PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 						QueryUtil.ALL_POS, QueryUtil.ALL_POS),
 					ObjectEntryFolder::getName)));
 	}
 
-	@FeatureFlags("LPD-17809")
+	@FeatureFlags("LPD-17564")
 	@Test
 	public void testDeleteDepotEntry() throws Exception {
 		DepotEntry depotEntry = _depotEntryLocalService.addDepotEntry(

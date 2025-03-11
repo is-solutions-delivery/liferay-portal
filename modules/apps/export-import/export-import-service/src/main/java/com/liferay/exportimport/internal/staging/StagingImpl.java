@@ -28,6 +28,7 @@ import com.liferay.exportimport.kernel.exception.LARFileException;
 import com.liferay.exportimport.kernel.exception.LARFileSizeException;
 import com.liferay.exportimport.kernel.exception.LARTypeException;
 import com.liferay.exportimport.kernel.exception.LayoutImportException;
+import com.liferay.exportimport.kernel.exception.MissingPortletDataHandlerException;
 import com.liferay.exportimport.kernel.exception.MissingReferenceException;
 import com.liferay.exportimport.kernel.exception.RemoteExportException;
 import com.liferay.exportimport.kernel.lar.ExportImportClassedModelUtil;
@@ -1311,6 +1312,18 @@ public class StagingImpl implements Staging {
 						StringPool.COMMA_AND_SPACE)
 				},
 				false);
+
+			errorType = ServletResponseConstants.SC_FILE_CUSTOM_EXCEPTION;
+		}
+		else if (exception instanceof MissingPortletDataHandlerException) {
+			MissingPortletDataHandlerException
+				missingPortletDataHandlerException =
+					(MissingPortletDataHandlerException)exception;
+
+			errorMessage = _language.format(
+				locale,
+				"the-data-handler-for-the-x-portlet-is-missing-from-the-system",
+				missingPortletDataHandlerException.getPortletDisplayName());
 
 			errorType = ServletResponseConstants.SC_FILE_CUSTOM_EXCEPTION;
 		}

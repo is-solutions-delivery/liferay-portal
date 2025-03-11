@@ -25,6 +25,7 @@ const ROW_DRAGGABLE = 'rowDraggable';
 
 interface IAction {
 	icon: string;
+	isVisible?: ({item}: {item: any}) => boolean;
 	label: string;
 	onClick: Function;
 }
@@ -265,24 +266,32 @@ const Row = ({
 						}
 					>
 						<ClayDropDown.ItemList>
-							{actions.map(({icon, label, onClick}) => (
-								<ClayDropDown.Item
-									key={label}
-									onClick={() =>
-										onClick({
-											item,
-										})
+							{actions.map(
+								({icon, isVisible, label, onClick}) => {
+									if (isVisible && !isVisible({item})) {
+										return;
 									}
-								>
-									{icon && (
-										<span className="pr-2">
-											<ClayIcon symbol={icon} />
-										</span>
-									)}
 
-									{label}
-								</ClayDropDown.Item>
-							))}
+									return (
+										<ClayDropDown.Item
+											key={label}
+											onClick={() =>
+												onClick({
+													item,
+												})
+											}
+										>
+											{icon && (
+												<span className="pr-2">
+													<ClayIcon symbol={icon} />
+												</span>
+											)}
+
+											{label}
+										</ClayDropDown.Item>
+									);
+								}
+							)}
 						</ClayDropDown.ItemList>
 					</ClayDropDown>
 				</ClayTable.Cell>
@@ -320,7 +329,11 @@ const Table = ({
 					<ClayTable.Cell className="drag-handle-cell" />
 
 					{fields.map((field) => (
-						<ClayTable.Cell headingCell key={field.name}>
+						<ClayTable.Cell
+							className={`cell-${field.name}`}
+							headingCell
+							key={field.name}
+						>
 							{field.label}
 						</ClayTable.Cell>
 					))}

@@ -93,6 +93,41 @@ components:
                         The attribute's significant value, e.g., email address, phone number.
                     type: string
             type: object
+        Operation:
+            properties:
+                op:
+                    description:
+                        The method that should be used in the operation. Possible values are add, remove and replace.
+                    pattern: "^[Aa][dd]|[Rr][emove]|[Rr][eplace]$"
+                    type: string
+                path:
+                    description:
+                        The path to the specify attribute/sub-attribute that should be updated.
+                    type: string
+                value:
+                    description:
+                        The value that should be updated.
+                    oneOf:
+                        - type: array
+                        - type: boolean
+                        - type: integer
+                        - type: number
+                        - type: string
+            type: object
+        PatchOp:
+            properties:
+                Operations:
+                    items:
+                        $ref: "#/components/schemas/Operation"
+                    type: array
+                schemas:
+                    description:
+                        The schema associated to this operation.
+                    items:
+                        enum: ["urn:ietf:params:scim:api:messages:2.0:PatchOp"]
+                        type: string
+                    type: array
+            type: object
         QueryAttributes:
             properties:
                 attributes:
@@ -332,7 +367,7 @@ components:
 info:
     description:
         "Liferay SCIM endpoints. A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.scim.rest.client', and version '1.0.11'."
+        'com.liferay.scim.rest.client', and version '1.0.12'."
     license:
         name: "Apache 2.0"
         url: "http://www.apache.org/licenses/LICENSE-2.0.html"
@@ -350,6 +385,14 @@ paths:
                   name: count
                   schema:
                       type: integer
+                - in: query
+                  name: excludedAttributes
+                  schema:
+                      type: string
+                - in: query
+                  name: filter
+                  schema:
+                      type: string
                 - in: query
                   name: startIndex
                   schema:
@@ -436,6 +479,10 @@ paths:
                   required: true
                   schema:
                       type: string
+                - in: query
+                  name: excludedAttributes
+                  schema:
+                      type: string
             responses:
                 200:
                     content:
@@ -448,6 +495,26 @@ paths:
                     description:
                         If the resource exists, the server responds with HTTP status code 200 (OK) and includes the
                         result in the body of the response.
+            tags: ["Group"]
+        patch:
+            description:
+                Updates a group.
+            operationId: patchV2Group
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/scim+json:
+                        schema:
+                            $ref: "#/components/schemas/PatchOp"
+            responses:
+                204:
+                    description:
+                        The Group was successfully updated.
             tags: ["Group"]
         put:
             description:
@@ -486,6 +553,10 @@ paths:
                   name: count
                   schema:
                       type: integer
+                - in: query
+                  name: filter
+                  schema:
+                      type: string
                 - in: query
                   name: startIndex
                   schema:
@@ -584,6 +655,33 @@ paths:
                     description:
                         If the resource exists, the server responds with HTTP status code 200 (OK) and includes the
                         result in the body of the response.
+            tags: ["User"]
+        patch:
+            description:
+                Updates a user.
+            operationId: patchV2User
+            parameters:
+                - in: path
+                  name: id
+                  required: true
+                  schema:
+                      type: string
+            requestBody:
+                content:
+                    application/scim+json:
+                        schema:
+                            $ref: "#/components/schemas/PatchOp"
+            responses:
+                200:
+                    content:
+                        application/scim+json:
+                            schema:
+                                oneOf:
+                                    - format: binary
+                                      type: string
+                                    - $ref: "#/components/schemas/User"
+                    description:
+                        The User was successfully updated.
             tags: ["User"]
         put:
             description:

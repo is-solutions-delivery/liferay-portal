@@ -16,6 +16,7 @@ import com.liferay.headless.admin.site.dto.v1_0.PageExperience;
 import com.liferay.headless.admin.site.dto.v1_0.PageSpecification;
 import com.liferay.headless.admin.site.dto.v1_0.Settings;
 import com.liferay.headless.admin.site.dto.v1_0.WidgetPageSpecification;
+import com.liferay.headless.admin.site.internal.resource.v1_0.util.LayoutUtil;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructure;
 import com.liferay.layout.page.template.model.LayoutPageTemplateStructureRel;
@@ -230,7 +231,6 @@ public class PageSpecificationDTOConverter
 						return new ItemExternalReference() {
 							{
 								setClassName(() -> FileEntry.class.getName());
-								setCollectionType(CollectionType.COLLECTION);
 								setExternalReferenceCode(
 									fileEntry::getExternalReferenceCode);
 							}
@@ -263,7 +263,6 @@ public class PageSpecificationDTOConverter
 
 						return new ItemExternalReference() {
 							{
-								setCollectionType(CollectionType.COLLECTION);
 								setExternalReferenceCode(
 									layoutPageTemplateEntry::
 										getExternalReferenceCode);
@@ -282,7 +281,6 @@ public class PageSpecificationDTOConverter
 
 						return new ItemExternalReference() {
 							{
-								setCollectionType(CollectionType.COLLECTION);
 								setExternalReferenceCode(
 									styleBookEntry::getExternalReferenceCode);
 							}
@@ -345,7 +343,15 @@ public class PageSpecificationDTOConverter
 				setSettings(() -> _setSettings(layout));
 				setStatus(
 					() -> {
-						if (!layout.isDraftLayout()) {
+						if (layout.isDraftLayout()) {
+							if (layout.isApproved()) {
+								return Status.APPROVED;
+							}
+
+							return Status.DRAFT;
+						}
+
+						if (LayoutUtil.isPublished(layout)) {
 							return Status.APPROVED;
 						}
 

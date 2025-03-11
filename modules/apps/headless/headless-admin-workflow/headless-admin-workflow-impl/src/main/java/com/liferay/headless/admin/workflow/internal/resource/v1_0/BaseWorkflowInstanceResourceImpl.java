@@ -394,8 +394,25 @@ public abstract class BaseWorkflowInstanceResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (WorkflowInstance workflowInstance : workflowInstances) {
-			deleteWorkflowInstance(workflowInstance.getId());
+		UnsafeFunction<WorkflowInstance, WorkflowInstance, Exception>
+			workflowInstanceUnsafeFunction = workflowInstance -> {
+				deleteWorkflowInstance(workflowInstance.getId());
+
+				return workflowInstance;
+			};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				workflowInstances, workflowInstanceUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				workflowInstances, workflowInstanceUnsafeFunction::apply);
+		}
+		else {
+			for (WorkflowInstance workflowInstance : workflowInstances) {
+				workflowInstanceUnsafeFunction.apply(workflowInstance);
+			}
 		}
 	}
 

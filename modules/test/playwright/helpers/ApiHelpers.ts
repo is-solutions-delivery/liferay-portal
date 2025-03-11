@@ -42,6 +42,7 @@ import {ObjectEntryApiHelper} from './ObjectEntryApiHelper';
 import {SCIMApiHelper} from './SCIMApiHelper';
 import {SearchExperiencesApiHelper} from './SearchExperiencesApiHelper';
 import {JSONWebServicesAnnouncementsEntryApiHelper} from './json-web-services/JSONWebServicesAnnouncementsEntryApiHelper';
+import {JSONWebServicesAssetDisplayPageEntryApiHelper} from './json-web-services/JSONWebServicesAssetDisplayPageEntryApiHelper';
 import {JSONWebServicesAssetListEntryApiHelper} from './json-web-services/JSONWebServicesAssetListEntryApiHelper';
 import {JSONWebServicesClassNameApiHelper} from './json-web-services/JSONWebServicesClassNameApiHelper';
 import {JSONWebServicesClientExtensionApiHelper} from './json-web-services/JSONWebServicesClientExtensionApiHelper';
@@ -64,6 +65,8 @@ import {JSONWebServicesOSBFaroApiHelper} from './json-web-services/JSONWebServic
 import {JSONWebServicesResourcePermissionApiHelper} from './json-web-services/JSONWebServicesResourcePermissionApiHelper';
 import {JSONWebServicesSegmentsEntryApiHelper} from './json-web-services/JSONWebServicesSegmentsEntryApiHelper';
 import {JSONWebServicesSiteNavigationMenuApiHelper} from './json-web-services/JSONWebServicesSiteNavigationMenuApiHelper';
+import {JSONWebServicesStagingApiHelper} from './json-web-services/JSONWebServicesStagingApiHelper';
+import {JSONWebServicesTeamApiHelper} from './json-web-services/JSONWebServicesTeamApiHelper';
 import {JSONWebServicesUserApiHelper} from './json-web-services/JSONWebServicesUserApiHelper';
 
 type ContentType = 'application/json' | 'application/x-www-form-urlencoded';
@@ -128,6 +131,7 @@ export class ApiHelpers {
 	readonly headlessDelivery: HeadlessDeliveryApiHelper;
 	readonly headlessSite: HeadlessSiteApiHelper;
 	readonly jsonWebServicesAnnouncementsEntryApiHelper: JSONWebServicesAnnouncementsEntryApiHelper;
+	readonly jsonWebServicesAssetDisplayPageEntry: JSONWebServicesAssetDisplayPageEntryApiHelper;
 	readonly jsonWebServicesAssetListEntry: JSONWebServicesAssetListEntryApiHelper;
 	readonly jsonWebServicesClassName: JSONWebServicesClassNameApiHelper;
 	readonly jsonWebServicesClientExtension: JSONWebServicesClientExtensionApiHelper;
@@ -150,6 +154,8 @@ export class ApiHelpers {
 	readonly jsonWebServicesResourcePermissionApiHelper: JSONWebServicesResourcePermissionApiHelper;
 	readonly jsonWebServicesSegmentsEntry: JSONWebServicesSegmentsEntryApiHelper;
 	readonly jsonWebServicesSiteNavigationMenu: JSONWebServicesSiteNavigationMenuApiHelper;
+	readonly jsonWebServicesStaging: JSONWebServicesStagingApiHelper;
+	readonly jsonWebServicesTeam: JSONWebServicesTeamApiHelper;
 	readonly jsonWebServicesUser: JSONWebServicesUserApiHelper;
 	readonly listTypeAdmin: ListTypeAdminApiHelper;
 	readonly notification: NotificationApiHelper;
@@ -200,6 +206,8 @@ export class ApiHelpers {
 		this.headlessSite = new HeadlessSiteApiHelper(this);
 		this.jsonWebServicesAnnouncementsEntryApiHelper =
 			new JSONWebServicesAnnouncementsEntryApiHelper(this);
+		this.jsonWebServicesAssetDisplayPageEntry =
+			new JSONWebServicesAssetDisplayPageEntryApiHelper(this);
 		this.jsonWebServicesAssetListEntry =
 			new JSONWebServicesAssetListEntryApiHelper(this);
 		this.jsonWebServicesClassName = new JSONWebServicesClassNameApiHelper(
@@ -236,6 +244,8 @@ export class ApiHelpers {
 			new JSONWebServicesSegmentsEntryApiHelper(this);
 		this.jsonWebServicesSiteNavigationMenu =
 			new JSONWebServicesSiteNavigationMenuApiHelper(this);
+		this.jsonWebServicesStaging = new JSONWebServicesStagingApiHelper(this);
+		this.jsonWebServicesTeam = new JSONWebServicesTeamApiHelper(this);
 		this.jsonWebServicesUser = new JSONWebServicesUserApiHelper(this);
 		this.listTypeAdmin = new ListTypeAdminApiHelper(this);
 		this.notification = new NotificationApiHelper(this);
@@ -318,8 +328,13 @@ export class ApiHelpers {
 		});
 	}
 
-	async delete(url: string, headers?: any) {
+	async delete<T>(
+		url: string,
+		{data, failOnStatusCode, headers}: RequestOptions<T> = {}
+	) {
 		return this.page.request.delete(url, {
+			data,
+			failOnStatusCode: failOnStatusCode || false,
 			headers: {
 				...(await getHeader(this.page)),
 				...(headers || {}),
@@ -569,6 +584,13 @@ export class DataApiHelpers extends ApiHelpers {
 			}
 			else if (item.type === 'userGroup') {
 				await this.headlessAdminUser.deleteUserGroup(item.id);
+			}
+			else if (item.type === 'userGroupUserAccountAssociation') {
+				const [userGroupId, ...userIds] = item.id.split('_');
+				await this.headlessAdminUser.deleteUserGroupUsers(
+					userGroupId,
+					userIds
+				);
 			}
 			else if (item.type === 'warehouse') {
 				await this.headlessCommerceAdminInventoryApiHelper.deleteWarehouse(

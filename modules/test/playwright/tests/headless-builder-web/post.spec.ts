@@ -3,11 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {
-	ObjectDefinitionApi,
-	ObjectField,
-	ObjectRelationship,
-} from '@liferay/object-admin-rest-client-js';
+import {ObjectDefinitionApi} from '@liferay/object-admin-rest-client-js';
 import {expect, mergeTests} from '@playwright/test';
 
 import {dataApiHelpersTest} from '../../fixtures/dataApiHelpersTest';
@@ -156,8 +152,8 @@ test('can create post endpoint with different request and response schema', asyn
 			name: 'Subject',
 			objectFields: [
 				{
-					DBType: ObjectField.DBTypeEnum.String,
-					businessType: ObjectField.BusinessTypeEnum.Text,
+					DBType: 'String',
+					businessType: 'Text',
 					externalReferenceCode: 'subject-name-field',
 					indexed: true,
 					indexedAsKeyword: false,
@@ -170,7 +166,7 @@ test('can create post endpoint with different request and response schema', asyn
 					required: false,
 					state: false,
 					system: false,
-					type: ObjectField.TypeEnum.String,
+					type: 'String',
 				},
 			],
 			panelCategoryKey: 'control_panel.object',
@@ -197,8 +193,8 @@ test('can create post endpoint with different request and response schema', asyn
 			name: 'Student',
 			objectFields: [
 				{
-					DBType: ObjectField.DBTypeEnum.String,
-					businessType: ObjectField.BusinessTypeEnum.Text,
+					DBType: 'String',
+					businessType: 'Text',
 					externalReferenceCode: 'student-name-field',
 					indexed: true,
 					indexedAsKeyword: false,
@@ -211,12 +207,12 @@ test('can create post endpoint with different request and response schema', asyn
 					required: true,
 					state: false,
 					system: false,
-					type: ObjectField.TypeEnum.String,
+					type: 'String',
 				},
 			],
 			objectRelationships: [
 				{
-					deletionType: ObjectRelationship.DeletionTypeEnum.Cascade,
+					deletionType: 'cascade',
 					externalReferenceCode: 'student-subjects-relationship',
 					label: {
 						en_US: 'Student subjects',
@@ -230,8 +226,8 @@ test('can create post endpoint with different request and response schema', asyn
 					objectDefinitionName2: 'Subject',
 					objectDefinitionSystem2: false,
 					objectField: {
-						DBType: ObjectField.DBTypeEnum.Long,
-						businessType: ObjectField.BusinessTypeEnum.Relationship,
+						DBType: 'Long',
+						businessType: 'Relationship',
 						externalReferenceCode:
 							'student-subjects-relationship-field',
 						indexed: true,
@@ -251,19 +247,18 @@ test('can create post endpoint with different request and response schema', asyn
 								value: 'r_studentSubjects_c_studentERC',
 							} as any,
 						],
-						relationshipType:
-							ObjectField.RelationshipTypeEnum.OneToMany,
+						relationshipType: 'oneToMany',
 						required: false,
 						state: false,
 						system: false,
-						type: ObjectField.TypeEnum.Long,
+						type: 'Long',
 						unique: false,
 					},
 					parameterObjectFieldId: 0,
 					parameterObjectFieldName: '',
 					reverse: false,
 					system: false,
-					type: ObjectRelationship.TypeEnum.OneToMany,
+					type: 'oneToMany',
 				},
 			],
 			panelCategoryKey: 'control_panel.object',

@@ -10,7 +10,8 @@ import Icon from '@clayui/icon';
 import {ClayTooltipProvider} from '@clayui/tooltip';
 import {API, stringUtils} from '@liferay/object-js-components-web';
 import classNames from 'classnames';
-import {openToast, sub} from 'frontend-js-web';
+import {openToast} from 'frontend-js-components-web';
+import {sub} from 'frontend-js-web';
 import React from 'react';
 import {Node, useStoreState, useZoomPanHelper} from 'react-flow-renderer';
 
@@ -107,10 +108,11 @@ export default function LeftSidebarTreeView({
 						message: sub(
 							Liferay.Language.get('x-was-moved-successfully'),
 							`<strong>${Liferay.Util.escapeHTML(
-								stringUtils.getLocalizableLabel(
-									objectDefinitionToBeMoved.defaultLanguageId,
-									objectDefinitionToBeMoved.label
-								)
+								stringUtils.getLocalizableLabel({
+									fallbackLanguageId:
+										objectDefinitionToBeMoved.defaultLanguageId,
+									labels: objectDefinitionToBeMoved.label,
+								})
 							)}</strong>`
 						),
 						type: 'success',

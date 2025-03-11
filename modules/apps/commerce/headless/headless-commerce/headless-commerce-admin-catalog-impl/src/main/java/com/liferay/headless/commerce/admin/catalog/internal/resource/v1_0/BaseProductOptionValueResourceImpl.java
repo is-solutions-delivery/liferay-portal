@@ -359,8 +359,25 @@ public abstract class BaseProductOptionValueResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (ProductOptionValue productOptionValue : productOptionValues) {
-			deleteProductOptionValue(productOptionValue.getId());
+		UnsafeFunction<ProductOptionValue, ProductOptionValue, Exception>
+			productOptionValueUnsafeFunction = productOptionValue -> {
+				deleteProductOptionValue(productOptionValue.getId());
+
+				return productOptionValue;
+			};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				productOptionValues, productOptionValueUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				productOptionValues, productOptionValueUnsafeFunction::apply);
+		}
+		else {
+			for (ProductOptionValue productOptionValue : productOptionValues) {
+				productOptionValueUnsafeFunction.apply(productOptionValue);
+			}
 		}
 	}
 

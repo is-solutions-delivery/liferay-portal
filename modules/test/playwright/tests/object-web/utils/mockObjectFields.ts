@@ -19,6 +19,7 @@ interface MockObjectFieldsReturn {
 	objectEntry: ObjectEntry;
 	objectFields: Partial<ObjectField>[];
 	titleObjectFieldName?: string;
+	translatedListTypeDefinitionItems?: string[];
 }
 
 type ObjectFieldBusinessTypesLabelName = {
@@ -54,84 +55,85 @@ const objectFieldbusinessTypeInfo: {
 	};
 } = {
 	attachment: {
-		DBType: ObjectField.DBTypeEnum.Long,
-		businessType: ObjectField.BusinessTypeEnum.Attachment,
-		type: ObjectField.TypeEnum.Long,
+		DBType: 'Long',
+		businessType: 'Attachment',
+		type: 'Long',
 	},
 	autoIncrement: {
-		DBType: ObjectField.DBTypeEnum.String,
-		businessType: ObjectField.BusinessTypeEnum.AutoIncrement,
-		type: ObjectField.TypeEnum.String,
+		DBType: 'String',
+		businessType: 'AutoIncrement',
+		type: 'String',
 	},
 	boolean: {
-		DBType: ObjectField.DBTypeEnum.Boolean,
-		businessType: ObjectField.BusinessTypeEnum.Boolean,
-		type: ObjectField.TypeEnum.Boolean,
+		DBType: 'Boolean',
+		businessType: 'Boolean',
+		type: 'Boolean',
 	},
 	date: {
-		DBType: ObjectField.DBTypeEnum.Date,
-		businessType: ObjectField.BusinessTypeEnum.Date,
-		type: ObjectField.TypeEnum.Date,
+		DBType: 'Date',
+		businessType: 'Date',
+		type: 'Date',
 	},
 	dateTime: {
-		DBType: ObjectField.DBTypeEnum.DateTime,
-		businessType: ObjectField.BusinessTypeEnum.DateTime,
-		type: ObjectField.TypeEnum.DateTime,
+		DBType: 'DateTime',
+		businessType: 'DateTime',
+		type: 'DateTime',
 	},
 	decimal: {
-		DBType: ObjectField.DBTypeEnum.Double,
-		businessType: ObjectField.BusinessTypeEnum.Decimal,
-		type: ObjectField.TypeEnum.Double,
+		DBType: 'Double',
+		businessType: 'Decimal',
+		type: 'Double',
 	},
 	encrypted: {
-		DBType: ObjectField.DBTypeEnum.Clob,
-		businessType: ObjectField.BusinessTypeEnum.Encrypted,
-		type: ObjectField.TypeEnum.Clob,
+		DBType: 'Clob',
+		businessType: 'Encrypted',
+		type: 'Clob',
 	},
 	integer: {
-		DBType: ObjectField.DBTypeEnum.Integer,
-		businessType: ObjectField.BusinessTypeEnum.Integer,
-		type: ObjectField.TypeEnum.Integer,
+		DBType: 'Integer',
+		businessType: 'Integer',
+		type: 'Integer',
 	},
 	longInteger: {
-		DBType: ObjectField.DBTypeEnum.Long,
-		businessType: ObjectField.BusinessTypeEnum.LongInteger,
-		type: ObjectField.TypeEnum.Long,
+		DBType: 'Long',
+		businessType: 'LongInteger',
+		type: 'Long',
 	},
 	longText: {
-		DBType: ObjectField.DBTypeEnum.Clob,
-		businessType: ObjectField.BusinessTypeEnum.LongText,
-		type: ObjectField.TypeEnum.Clob,
+		DBType: 'Clob',
+		businessType: 'LongText',
+		type: 'Clob',
 	},
 	multiselectPicklist: {
-		DBType: ObjectField.DBTypeEnum.String,
-		businessType: ObjectField.BusinessTypeEnum.MultiselectPicklist,
-		type: ObjectField.TypeEnum.String,
+		DBType: 'String',
+		businessType: 'MultiselectPicklist',
+		type: 'String',
 	},
 	picklist: {
-		DBType: ObjectField.DBTypeEnum.String,
-		businessType: ObjectField.BusinessTypeEnum.Picklist,
-		type: ObjectField.TypeEnum.String,
+		DBType: 'String',
+		businessType: 'Picklist',
+		type: 'String',
 	},
 	precisionDecimal: {
-		DBType: ObjectField.DBTypeEnum.BigDecimal,
-		businessType: ObjectField.BusinessTypeEnum.PrecisionDecimal,
-		type: ObjectField.TypeEnum.BigDecimal,
+		DBType: 'BigDecimal',
+		businessType: 'PrecisionDecimal',
+		type: 'BigDecimal',
 	},
 	richText: {
-		DBType: ObjectField.DBTypeEnum.Clob,
-		businessType: ObjectField.BusinessTypeEnum.RichText,
-		type: ObjectField.TypeEnum.Clob,
+		DBType: 'Clob',
+		businessType: 'RichText',
+		type: 'Clob',
 	},
 	text: {
-		DBType: ObjectField.DBTypeEnum.String,
-		businessType: ObjectField.BusinessTypeEnum.Text,
-		type: ObjectField.TypeEnum.String,
+		DBType: 'String',
+		businessType: 'Text',
+		type: 'String',
 	},
 };
 
 function isLocalizable(businessType: ObjectFieldBusinessTypes) {
 	const localizableBusinessTypes: ObjectFieldBusinessTypes[] = [
+		'attachment',
 		'boolean',
 		'date',
 		'dateTime',
@@ -156,7 +158,7 @@ export function createObjectFields(
 		indexedAsKeyword: false,
 		indexedLanguageId: '',
 		localized: !!(isLocalizable(businessType) && localizeAllLocalizable),
-		readOnly: ObjectField.ReadOnlyEnum.False,
+		readOnly: 'false',
 		readOnlyConditionExpression: '',
 		required: false,
 		state: false,
@@ -172,8 +174,8 @@ export function createObjectFields(
 		},
 		name,
 		type: objectFieldbusinessTypeInfo[businessType].type,
-		...additionalSettings,
 		...baseObjectField,
+		...additionalSettings,
 	}));
 }
 
@@ -225,17 +227,20 @@ function getRandomObjectFieldEntryValue(
 
 export async function mockObjectFields({
 	apiHelpers,
+	localeToTranslateListTypeItems,
 	localizeAllLocalizable,
 	objectEntryReturn,
 	objectFieldBusinessTypes,
 	titleObjectFieldName,
 }: {
 	apiHelpers: DataApiHelpers;
+	localeToTranslateListTypeItems?: Locale;
 	localizeAllLocalizable?: boolean;
 	objectEntryReturn?: {format: 'API' | 'UI'};
 	objectFieldBusinessTypes: ObjectFieldBusinessTypes[];
 	titleObjectFieldName?: ObjectFieldBusinessTypes;
 }): Promise<MockObjectFieldsReturn> {
+	let translatedListTypeDefinitionItems: string[];
 	let listTypeDefinition: ListTypeDefinition;
 	let listTypeDefinitionItems: string[];
 
@@ -251,14 +256,28 @@ export async function mockObjectFields({
 			type: 'listTypeDefinition',
 		});
 
-		listTypeDefinitionItems = new Array(3)
+		const numberOfListTypeDefinitionItems = 3;
+
+		listTypeDefinitionItems = new Array(numberOfListTypeDefinitionItems)
 			.fill('')
 			.map(() => getRandomInt().toString());
 
-		for (const lisTypeEntry of listTypeDefinitionItems) {
+		if (localeToTranslateListTypeItems) {
+			translatedListTypeDefinitionItems = listTypeDefinitionItems.map(
+				() => getRandomInt().toString()
+			);
+		}
+
+		for (let i = 0; i < numberOfListTypeDefinitionItems; i++) {
 			await apiHelpers.listTypeAdmin.postListTypeEntry(
 				listTypeDefinition.externalReferenceCode,
-				lisTypeEntry
+				listTypeDefinitionItems[i],
+				translatedListTypeDefinitionItems
+					? {
+							[localeToTranslateListTypeItems]:
+								translatedListTypeDefinitionItems[i],
+						}
+					: {}
 			);
 		}
 	}
@@ -388,5 +407,6 @@ export async function mockObjectFields({
 		titleObjectFieldName: titleObjectFieldName
 			? objectFieldBusinessTypesLabelName[titleObjectFieldName][0].name
 			: undefined,
+		translatedListTypeDefinitionItems,
 	};
 }

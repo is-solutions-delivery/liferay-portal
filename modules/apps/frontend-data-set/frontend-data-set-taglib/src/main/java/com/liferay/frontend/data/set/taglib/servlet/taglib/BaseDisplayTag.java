@@ -6,10 +6,14 @@
 package com.liferay.frontend.data.set.taglib.servlet.taglib;
 
 import com.liferay.frontend.data.set.model.FDSPaginationEntry;
+import com.liferay.frontend.data.set.renderer.FDSRenderer;
+import com.liferay.frontend.data.set.serializer.FDSSerializer;
 import com.liferay.frontend.data.set.taglib.internal.servlet.ServletContextUtil;
+import com.liferay.frontend.data.set.taglib.servlet.taglib.util.ServicesProvider;
 import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolvedPackageNameUtil;
-import com.liferay.frontend.taglib.react.servlet.taglib.util.ServicesProvider;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
@@ -33,8 +37,10 @@ import javax.portlet.PortletURL;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
 
 /**
  * @author Marko Cikos
@@ -69,6 +75,8 @@ public class BaseDisplayTag extends AttributesTagSupport {
 				_fdsPaginationEntries.add(
 					new FDSPaginationEntry(null, curDelta));
 			}
+
+			_setViewsJSONArray();
 		}
 		catch (Exception exception) {
 			_log.error(exception);
@@ -151,6 +159,13 @@ public class BaseDisplayTag extends AttributesTagSupport {
 		_namespace = namespace;
 	}
 
+	@Override
+	public void setPageContext(PageContext pageContext) {
+		fdsSerializer = ServletContextUtil.getFDSSerializer();
+
+		super.setPageContext(pageContext);
+	}
+
 	public void setPageNumber(int pageNumber) {
 		_pageNumber = pageNumber;
 	}
@@ -199,6 +214,8 @@ public class BaseDisplayTag extends AttributesTagSupport {
 		_randomNamespace = null;
 		_selectedItems = null;
 		_uniformActionsDisplay = false;
+		_viewsJSONArray = null;
+		fdsSerializer = null;
 	}
 
 	protected void doClearTag() {
@@ -248,6 +265,8 @@ public class BaseDisplayTag extends AttributesTagSupport {
 			"selectedItems", _selectedItems
 		).put(
 			"uniformActionsDisplay", getUniformActionsDisplay()
+		).put(
+			"views", _viewsJSONArray
 		).build();
 	}
 
@@ -274,15 +293,25 @@ public class BaseDisplayTag extends AttributesTagSupport {
 			}
 		}
 
-		ComponentDescriptor componentDescriptor = new ComponentDescriptor(
-			"{FrontendDataSet} from frontend-data-set-web", getId(),
-			new LinkedHashSet<>(), false, propsTransformer);
+		if (FeatureFlagManagerUtil.isEnabled("LPD-37531")) {
+			FDSRenderer fdsRenderer = ServicesProvider.getFDSRenderer();
 
-		ReactRenderer reactRenderer = ServicesProvider.getReactRenderer();
+			fdsRenderer.render(
+				prepareProps(new HashMap<>()), getId(), getId(), getRequest(),
+				(HttpServletResponse)pageContext.getResponse(), true,
+				propsTransformer, jspWriter);
+		}
+		else {
+			ComponentDescriptor componentDescriptor = new ComponentDescriptor(
+				"{FrontendDataSet} from frontend-data-set-web", getId(),
+				new LinkedHashSet<>(), false, propsTransformer);
 
-		reactRenderer.renderReact(
-			componentDescriptor, prepareProps(new HashMap<>()), getRequest(),
-			jspWriter);
+			ReactRenderer reactRenderer = ServicesProvider.getReactRenderer();
+
+			reactRenderer.renderReact(
+				componentDescriptor, prepareProps(new HashMap<>()),
+				getRequest(), jspWriter);
+		}
 
 		jspWriter.write("</div>");
 
@@ -291,6 +320,8 @@ public class BaseDisplayTag extends AttributesTagSupport {
 
 	protected void setAttributes(HttpServletRequest httpServletRequest) {
 	}
+
+	protected FDSSerializer fdsSerializer;
 
 	private String _getCustomViews() {
 		HttpServletRequest httpServletRequest = getRequest();
@@ -302,6 +333,10 @@ public class BaseDisplayTag extends AttributesTagSupport {
 		return portalPreferences.getValue(
 			ServletContextUtil.getFDSSettingsNamespace(httpServletRequest, _id),
 			"customViews", "{}");
+	}
+
+	private void _setViewsJSONArray() {
+		_viewsJSONArray = fdsSerializer.serializeViews(getId(), getRequest());
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(BaseDisplayTag.class);
@@ -319,5 +354,6 @@ public class BaseDisplayTag extends AttributesTagSupport {
 	private String _randomNamespace;
 	private List<Object> _selectedItems;
 	private boolean _uniformActionsDisplay;
+	private JSONArray _viewsJSONArray;
 
 }

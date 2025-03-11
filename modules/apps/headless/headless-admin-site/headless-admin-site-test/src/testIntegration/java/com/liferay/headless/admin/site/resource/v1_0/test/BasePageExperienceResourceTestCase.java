@@ -30,7 +30,7 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.odata.entity.EntityField;
@@ -42,7 +42,7 @@ import com.liferay.portal.vulcan.resource.EntityModelResource;
 
 import java.lang.reflect.Method;
 
-import java.text.DateFormat;
+import java.text.Format;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -81,7 +81,7 @@ public abstract class BasePageExperienceResourceTestCase {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		_dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
+		_format = FastDateFormatFactoryUtil.getSimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss'Z'");
 	}
 
@@ -95,12 +95,12 @@ public abstract class BasePageExperienceResourceTestCase {
 
 		_pageExperienceResource.setContextCompany(testCompany);
 
-		com.liferay.portal.kernel.model.User testCompanyAdminUser =
-			UserTestUtil.getAdminUser(testCompany.getCompanyId());
+		_testCompanyAdminUser = UserTestUtil.getAdminUser(
+			testCompany.getCompanyId());
 
 		pageExperienceResource = PageExperienceResource.builder(
 		).authentication(
-			testCompanyAdminUser.getEmailAddress(),
+			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
 			testCompany.getVirtualHostname(), 8080, "http"
@@ -167,8 +167,8 @@ public abstract class BasePageExperienceResourceTestCase {
 
 		pageExperience.setExternalReferenceCode(regex);
 		pageExperience.setKey(regex);
+		pageExperience.setPageSpecificationExternalReferenceCode(regex);
 		pageExperience.setSegmentExternalReferenceCode(regex);
-		pageExperience.setSitePageExternalReferenceCode(regex);
 
 		String json = PageExperienceSerDes.toJSON(pageExperience);
 
@@ -179,9 +179,9 @@ public abstract class BasePageExperienceResourceTestCase {
 		Assert.assertEquals(regex, pageExperience.getExternalReferenceCode());
 		Assert.assertEquals(regex, pageExperience.getKey());
 		Assert.assertEquals(
-			regex, pageExperience.getSegmentExternalReferenceCode());
+			regex, pageExperience.getPageSpecificationExternalReferenceCode());
 		Assert.assertEquals(
-			regex, pageExperience.getSitePageExternalReferenceCode());
+			regex, pageExperience.getSegmentExternalReferenceCode());
 	}
 
 	@Test
@@ -494,6 +494,19 @@ public abstract class BasePageExperienceResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals(
+					"pageSpecificationExternalReferenceCode",
+					additionalAssertFieldName)) {
+
+				if (pageExperience.
+						getPageSpecificationExternalReferenceCode() == null) {
+
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("priority", additionalAssertFieldName)) {
 				if (pageExperience.getPriority() == null) {
 					valid = false;
@@ -507,17 +520,6 @@ public abstract class BasePageExperienceResourceTestCase {
 					additionalAssertFieldName)) {
 
 				if (pageExperience.getSegmentExternalReferenceCode() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals(
-					"sitePageExternalReferenceCode",
-					additionalAssertFieldName)) {
-
-				if (pageExperience.getSitePageExternalReferenceCode() == null) {
 					valid = false;
 				}
 
@@ -699,6 +701,22 @@ public abstract class BasePageExperienceResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals(
+					"pageSpecificationExternalReferenceCode",
+					additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						pageExperience1.
+							getPageSpecificationExternalReferenceCode(),
+						pageExperience2.
+							getPageSpecificationExternalReferenceCode())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("priority", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
 						pageExperience1.getPriority(),
@@ -717,20 +735,6 @@ public abstract class BasePageExperienceResourceTestCase {
 				if (!Objects.deepEquals(
 						pageExperience1.getSegmentExternalReferenceCode(),
 						pageExperience2.getSegmentExternalReferenceCode())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals(
-					"sitePageExternalReferenceCode",
-					additionalAssertFieldName)) {
-
-				if (!Objects.deepEquals(
-						pageExperience1.getSitePageExternalReferenceCode(),
-						pageExperience2.getSitePageExternalReferenceCode())) {
 
 					return false;
 				}
@@ -953,14 +957,9 @@ public abstract class BasePageExperienceResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
-		if (entityFieldName.equals("priority")) {
-			sb.append(String.valueOf(pageExperience.getPriority()));
-
-			return sb.toString();
-		}
-
-		if (entityFieldName.equals("segmentExternalReferenceCode")) {
-			Object object = pageExperience.getSegmentExternalReferenceCode();
+		if (entityFieldName.equals("pageSpecificationExternalReferenceCode")) {
+			Object object =
+				pageExperience.getPageSpecificationExternalReferenceCode();
 
 			String value = String.valueOf(object);
 
@@ -1005,8 +1004,14 @@ public abstract class BasePageExperienceResourceTestCase {
 			return sb.toString();
 		}
 
-		if (entityFieldName.equals("sitePageExternalReferenceCode")) {
-			Object object = pageExperience.getSitePageExternalReferenceCode();
+		if (entityFieldName.equals("priority")) {
+			sb.append(String.valueOf(pageExperience.getPriority()));
+
+			return sb.toString();
+		}
+
+		if (entityFieldName.equals("segmentExternalReferenceCode")) {
+			Object object = pageExperience.getSegmentExternalReferenceCode();
 
 			String value = String.valueOf(object);
 
@@ -1099,10 +1104,10 @@ public abstract class BasePageExperienceResourceTestCase {
 				externalReferenceCode = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				key = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				pageSpecificationExternalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
 				priority = RandomTestUtil.randomInt();
 				segmentExternalReferenceCode = StringUtil.toLowerCase(
-					RandomTestUtil.randomString());
-				sitePageExternalReferenceCode = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 			}
 		};
@@ -1319,7 +1324,9 @@ public abstract class BasePageExperienceResourceTestCase {
 	private static final com.liferay.portal.kernel.log.Log _log =
 		LogFactoryUtil.getLog(BasePageExperienceResourceTestCase.class);
 
-	private static DateFormat _dateFormat;
+	private static Format _format;
+
+	private com.liferay.portal.kernel.model.User _testCompanyAdminUser;
 
 	@Inject
 	private com.liferay.headless.admin.site.resource.v1_0.PageExperienceResource

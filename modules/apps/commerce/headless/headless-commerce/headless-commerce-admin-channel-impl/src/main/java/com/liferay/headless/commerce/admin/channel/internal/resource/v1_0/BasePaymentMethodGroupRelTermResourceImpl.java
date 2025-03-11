@@ -269,11 +269,34 @@ public abstract class BasePaymentMethodGroupRelTermResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (PaymentMethodGroupRelTerm paymentMethodGroupRelTerm :
-				paymentMethodGroupRelTerms) {
+		UnsafeFunction
+			<PaymentMethodGroupRelTerm, PaymentMethodGroupRelTerm, Exception>
+				paymentMethodGroupRelTermUnsafeFunction =
+					paymentMethodGroupRelTerm -> {
+						deletePaymentMethodGroupRelTerm(
+							paymentMethodGroupRelTerm.
+								getPaymentMethodGroupRelTermId());
 
-			deletePaymentMethodGroupRelTerm(
-				paymentMethodGroupRelTerm.getPaymentMethodGroupRelTermId());
+						return paymentMethodGroupRelTerm;
+					};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				paymentMethodGroupRelTerms,
+				paymentMethodGroupRelTermUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				paymentMethodGroupRelTerms,
+				paymentMethodGroupRelTermUnsafeFunction::apply);
+		}
+		else {
+			for (PaymentMethodGroupRelTerm paymentMethodGroupRelTerm :
+					paymentMethodGroupRelTerms) {
+
+				paymentMethodGroupRelTermUnsafeFunction.apply(
+					paymentMethodGroupRelTerm);
+			}
 		}
 	}
 

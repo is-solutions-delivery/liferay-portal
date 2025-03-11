@@ -19,13 +19,12 @@ import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.CompanyConstants;
 import com.liferay.portal.kernel.scheduler.SchedulerEngine;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
-import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.AssumeTestRule;
+import com.liferay.portal.kernel.test.rule.CompanyProviderClassTestRule;
 import com.liferay.portal.kernel.test.util.CompanyTestUtil;
-import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.test.rule.Inject;
@@ -66,7 +65,12 @@ public abstract class BaseDBPartitionMessageBusInterceptorTestCase {
 	@Rule
 	public static final AggregateTestRule aggregateTestRule =
 		new AggregateTestRule(
-			new AssumeTestRule("assume"), new LiferayIntegrationTestRule(),
+			new AssumeTestRule("assume"),
+			new LiferayIntegrationTestRule() {
+				{
+					skipTestRule(CompanyProviderClassTestRule.INSTANCE);
+				}
+			},
 			PermissionCheckerMethodTestRule.INSTANCE);
 
 	public static void assume() {
@@ -84,8 +88,6 @@ public abstract class BaseDBPartitionMessageBusInterceptorTestCase {
 		_serviceRegistrations.clear();
 
 		_companyLocalService.deleteCompany(_company);
-
-		PrincipalThreadLocal.setName(_originalName);
 	}
 
 	@Before
@@ -96,9 +98,6 @@ public abstract class BaseDBPartitionMessageBusInterceptorTestCase {
 				"_excludedMessageBusDestinationNames");
 		_originalExcludedSchedulerJobNames = ReflectionTestUtil.getFieldValue(
 			_dbPartitionMessageBusInterceptor, "_excludedSchedulerJobNames");
-
-		_safeCloseable = CompanyThreadLocal.setCompanyIdWithSafeCloseable(
-			CompanyConstants.SYSTEM);
 	}
 
 	@After
@@ -110,8 +109,6 @@ public abstract class BaseDBPartitionMessageBusInterceptorTestCase {
 		ReflectionTestUtil.setFieldValue(
 			_dbPartitionMessageBusInterceptor, "_excludedSchedulerJobNames",
 			_originalExcludedSchedulerJobNames);
-
-		_safeCloseable.close();
 	}
 
 	@Test
@@ -261,10 +258,6 @@ public abstract class BaseDBPartitionMessageBusInterceptorTestCase {
 	}
 
 	protected static void setUpClass(String destinationType) throws Exception {
-		_originalName = PrincipalThreadLocal.getName();
-
-		PrincipalThreadLocal.setName(TestPropsValues.getUserId());
-
 		_company = CompanyTestUtil.addCompany();
 
 		Set<Long> companyIds = new TreeSet<>();
@@ -321,8 +314,6 @@ public abstract class BaseDBPartitionMessageBusInterceptorTestCase {
 	@Inject
 	private static MessageBus _messageBus;
 
-	private static String _originalName;
-	private static SafeCloseable _safeCloseable;
 	private static final List<ServiceRegistration<?>> _serviceRegistrations =
 		new ArrayList<>();
 	private static TestDBPartitionMessageListener

@@ -14,12 +14,16 @@ import {CommerceLayoutsPage} from './commerceLayoutsPage';
 export class PendingOrdersPage extends CommerceDNDTablePage {
 	readonly approveButton: Locator;
 	readonly checkoutButton: Locator;
+	readonly createDateSortButton: Locator;
 	readonly doneButton: Locator;
 	readonly editMenuItem: Locator;
 	readonly errorMessageCloseButton: Locator;
 	readonly layoutsPage: CommerceLayoutsPage;
+	readonly orderCell: (orderId: string) => Locator;
+	readonly orderColumn: (rowIndex: number, rowColumn: number) => Locator;
 	readonly orderItemActionsButton: Locator;
 	readonly orderItemActionsButtonEdit: Locator;
+	readonly orderItemExpandButton: (productName: string) => Locator;
 	readonly orderItemsTable: Locator;
 	readonly orderItemsTableRow: (
 		colPosition: number,
@@ -42,6 +46,9 @@ export class PendingOrdersPage extends CommerceDNDTablePage {
 
 		this.approveButton = page.getByText('Approve');
 		this.checkoutButton = page.getByText('Checkout');
+		this.createDateSortButton = page
+			.getByRole('columnheader', {name: 'Create Date'})
+			.getByRole('button');
 		this.doneButton = page.getByRole('button', {
 			exact: true,
 			name: 'Done',
@@ -54,12 +61,17 @@ export class PendingOrdersPage extends CommerceDNDTablePage {
 			name: 'close',
 		});
 		this.layoutsPage = new CommerceLayoutsPage(page);
+		this.orderCell = (orderId) => page.getByRole('cell', {name: orderId});
+		this.orderColumn = (rowIndex, colIndex) =>
+			page.getByRole('row').nth(rowIndex).locator('td').nth(colIndex);
 		this.orderItemActionsButton = page.getByRole('button', {
 			name: 'Actions',
 		});
 		this.orderItemActionsButtonEdit = page.getByRole('menuitem', {
 			name: 'Edit',
 		});
+		this.orderItemExpandButton = (productName) =>
+			page.getByRole('gridcell', {name: productName}).getByRole('button');
 		this.orderItemsTable = page.locator(
 			'#portlet_com_liferay_commerce_order_content_web_internal_portlet_CommerceOpenOrderContentPortlet .fds table'
 		);

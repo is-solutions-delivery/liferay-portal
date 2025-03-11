@@ -341,8 +341,25 @@ public abstract class BaseTaxCategoryResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (TaxCategory taxCategory : taxCategories) {
-			deleteTaxCategory(taxCategory.getId());
+		UnsafeFunction<TaxCategory, TaxCategory, Exception>
+			taxCategoryUnsafeFunction = taxCategory -> {
+				deleteTaxCategory(taxCategory.getId());
+
+				return taxCategory;
+			};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				taxCategories, taxCategoryUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				taxCategories, taxCategoryUnsafeFunction::apply);
+		}
+		else {
+			for (TaxCategory taxCategory : taxCategories) {
+				taxCategoryUnsafeFunction.apply(taxCategory);
+			}
 		}
 	}
 

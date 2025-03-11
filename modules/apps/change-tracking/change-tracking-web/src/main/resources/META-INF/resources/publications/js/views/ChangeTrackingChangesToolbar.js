@@ -8,7 +8,6 @@ import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
 import {ClayDropDownWithItems} from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
 import ClayLabel from '@clayui/label';
-import ClayLayout from '@clayui/layout';
 import ClayToolbar from '@clayui/toolbar';
 import classNames from 'classnames';
 import React, {useCallback, useRef, useState} from 'react';
@@ -170,7 +169,7 @@ export default function ChangeTrackingChangesToolbar({
 	const renderPublicationsToolbar = () => {
 		return (
 			<ClayToolbar className="publications-tbar" light>
-				<div className="container-fluid container-fluid-max-xl">
+				<div className="container-fluid">
 					<ClayToolbar.Nav>
 						<ClayToolbar.Item className="text-left" expand>
 							<ClayToolbar.Section>
@@ -207,6 +206,7 @@ export default function ChangeTrackingChangesToolbar({
 			<ClayAlert
 				displayType="warning"
 				spritemap={spritemap}
+				style={{margin: '0px'}}
 				title={Liferay.Language.get('out-of-date')}
 			>
 				{Liferay.Language.get(
@@ -277,9 +277,7 @@ export default function ChangeTrackingChangesToolbar({
 				</div>
 			</div>
 
-			<ClayLayout.ContainerFluid style={{marginTop: '1em'}}>
-				{renderExpiredBanner()}
-			</ClayLayout.ContainerFluid>
+			<div>{renderExpiredBanner()}</div>
 		</>
 	);
 }

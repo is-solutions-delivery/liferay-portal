@@ -50,6 +50,7 @@ export class EditUserPage {
 	readonly selectOrganizationButton: Locator;
 	readonly selectOrganizationRolesButton: Locator;
 	readonly selectOrganizationRolesFrame: FrameLocator;
+	readonly selectOrganizationRolesFrameCell: (name: string) => Locator;
 	readonly selectOrganizationRolesTable: Locator;
 	readonly selectOrganizationRolesTableRow: (
 		colPosition: number,
@@ -99,7 +100,9 @@ export class EditUserPage {
 			exact: true,
 			name: 'Apps',
 		});
-		this.backLink = page.getByRole('link', {exact: true, name: 'Back'});
+		this.backLink = page
+			.getByRole('link', {exact: true, name: 'Back'})
+			.or(page.getByRole('link', {name: 'Return to Full Page'}));
 		this.cancelButton = page.getByRole('button', {
 			exact: true,
 			name: 'Cancel',
@@ -115,9 +118,15 @@ export class EditUserPage {
 
 			throw new Error(`Cannot locate Custom Field ${fieldName}`);
 		};
-		this.emailAddressError = page.locator(
-			'#_com_liferay_account_admin_web_internal_portlet_AccountEntriesAdminPortlet_emailAddressHelper'
-		);
+		this.emailAddressError = page
+			.locator(
+				'#_com_liferay_account_admin_web_internal_portlet_AccountEntriesAdminPortlet_emailAddressHelper'
+			)
+			.or(
+				page.locator(
+					'#_com_liferay_account_admin_web_internal_portlet_AccountEntriesManagementPortlet_emailAddressHelper'
+				)
+			);
 		this.emailAddressInput = page.getByLabel('Email Address');
 		this.firstNameInput = page.getByLabel('First Name');
 		this.generateWebDAVPasswordButton = page.getByTestId(
@@ -205,6 +214,8 @@ export class EditUserPage {
 		this.selectOrganizationRolesFrame = page.frameLocator(
 			'iframe[title="Select Organization Role"]'
 		);
+		this.selectOrganizationRolesFrameCell = (name) =>
+			this.selectOrganizationRolesFrame.getByRole('cell', {name});
 		this.selectOrganizationRolesTable =
 			this.selectOrganizationRolesFrame.locator(
 				'#_com_liferay_roles_admin_web_portlet_RolesAdminPortlet_organizationsSearchContainer'

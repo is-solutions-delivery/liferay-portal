@@ -26,6 +26,7 @@ import com.liferay.segments.SegmentsEntryRetriever;
 import com.liferay.segments.context.RequestContextMapper;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -54,14 +55,15 @@ public class EvaluateLayoutStructureRulesStrutsAction implements StrutsAction {
 			(ThemeDisplay)httpServletRequest.getAttribute(
 				WebKeys.THEME_DISPLAY);
 
+		long plid = ParamUtil.getLong(httpServletRequest, "plid");
+
 		LayoutStructure layoutStructure =
 			_layoutStructureProvider.getLayoutStructure(
-				themeDisplay.getPlid(),
+				plid,
 				ParamUtil.getLong(
 					httpServletRequest, "segmentsExperienceId",
 					_segmentsExperienceLocalService.
-						fetchDefaultSegmentsExperienceId(
-							themeDisplay.getPlid())));
+						fetchDefaultSegmentsExperienceId(plid)));
 
 		String[] layoutStructureRuleIds = ParamUtil.getStringValues(
 			httpServletRequest, "layoutStructureRuleIds");
@@ -99,9 +101,9 @@ public class EvaluateLayoutStructureRulesStrutsAction implements StrutsAction {
 			if (_log.isDebugEnabled()) {
 				_log.debug(jsonException);
 			}
-
-			throw new UnsupportedOperationException(jsonException);
 		}
+
+		return Collections.emptyMap();
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

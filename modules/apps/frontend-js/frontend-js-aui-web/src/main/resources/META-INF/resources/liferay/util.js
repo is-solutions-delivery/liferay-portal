@@ -18,19 +18,11 @@
 
 	const STR_RIGHT_SQUARE_BRACKET = ']';
 
-	const Window = {
-		_map: {},
+	Liferay.Util = Liferay.Util ?? {};
 
-		getById(id) {
-			const instance = this;
-
-			return instance._map[id];
-		},
-	};
-
-	const Util = {
+	Object.assign(Liferay.Util, {
 		_getEditableInstance(title) {
-			let editable = Util._EDITABLE;
+			let editable = Liferay.Util._EDITABLE;
 
 			if (!editable) {
 				editable = new A.Editable({
@@ -45,7 +37,7 @@
 									'portletTitleEditOptions'
 								);
 
-								Util.savePortletTitle({
+								Liferay.Util.savePortletTitle({
 									doAsUserId:
 										portletTitleEditOptions.doAsUserId,
 									plid: portletTitleEditOptions.plid,
@@ -76,7 +68,9 @@
 								'mouseupoutside',
 								(event) => {
 									const editable =
-										Util._getEditableInstance(title);
+										Liferay.Util._getEditableInstance(
+											title
+										);
 
 									if (
 										!editable
@@ -107,10 +101,20 @@
 				editable.get('cancelButton').icon = 'times';
 				editable.get('saveButton').icon = 'check';
 
-				Util._EDITABLE = editable;
+				Liferay.Util._EDITABLE = editable;
 			}
 
 			return editable;
+		},
+
+		Window: {
+			_map: {},
+
+			getById(id) {
+				const instance = this;
+
+				return instance._map[id];
+			},
 		},
 
 		/**
@@ -124,18 +128,18 @@
 				});
 			});
 
-			Util.addInputCancel = function () {};
+			Liferay.Util.addInputCancel = function () {};
 		},
 
 		checkAll(form, name, allBox, selectClassName) {
 			if (form) {
-				form = Util.getDOM(form);
+				form = Liferay.Util.getDOM(form);
 
 				if (typeof form === 'string') {
 					form = document.querySelector(form);
 				}
 
-				allBox = Util.getDOM(allBox);
+				allBox = Liferay.Util.getDOM(allBox);
 
 				if (typeof allBox === 'string') {
 					allBox = document.querySelector(allBox);
@@ -182,13 +186,13 @@
 			let totalOn = 0;
 
 			if (form) {
-				form = Util.getDOM(form);
+				form = Liferay.Util.getDOM(form);
 
 				if (typeof form === 'string') {
 					form = document.querySelector(form);
 				}
 
-				allBox = Util.getDOM(allBox);
+				allBox = Liferay.Util.getDOM(allBox);
 
 				if (typeof allBox === 'string') {
 					allBox =
@@ -234,7 +238,7 @@
 				box.selection = document.selection.createRange();
 
 				setTimeout(() => {
-					Util.processTab(box.id);
+					Liferay.Util.processTab(box.id);
 				}, 0);
 			}
 		},
@@ -243,7 +247,7 @@
 		 * @deprecated As of Cavanaugh (7.4.x), with no direct replacement
 		 */
 		disableElements(element) {
-			const currentElement = Util.getElement(element);
+			const currentElement = Liferay.Util.getElement(element);
 
 			if (currentElement) {
 				const children = currentElement.getElementsByTagName('*');
@@ -286,7 +290,7 @@
 			else if (A.UA.safari) {
 				A.use('node-event-html5', (A) => {
 					A.getWin().on('pagehide', () => {
-						Util.enableFormButtons(inputs, form);
+						Liferay.Util.enableFormButtons(inputs, form);
 					});
 				});
 			}
@@ -312,9 +316,9 @@
 		 * @deprecated As of Cavanaugh (7.4.x), with no direct replacement
 		 */
 		enableFormButtons(inputs) {
-			Util._submitLocked = null;
+			Liferay.Util._submitLocked = null;
 
-			Util.toggleDisabled(inputs, false);
+			Liferay.Util.toggleDisabled(inputs, false);
 		},
 
 		/**
@@ -339,7 +343,7 @@
 		 * @deprecated As of Cavanaugh (7.4.x), with no direct replacement
 		 */
 		forcePost(link) {
-			const currentElement = Util.getElement(link);
+			const currentElement = Liferay.Util.getElement(link);
 
 			if (currentElement) {
 				const url = currentElement.getAttribute('href');
@@ -361,7 +365,7 @@
 
 				submitForm(hrefFm, url, !newWindow);
 
-				Util._submitLocked = null;
+				Liferay.Util._submitLocked = null;
 			}
 		},
 
@@ -372,7 +376,7 @@
 			let result = null;
 
 			if (element) {
-				element = Util.getDOM(element);
+				element = Liferay.Util.getDOM(element);
 
 				if (element.jquery) {
 					element = element[0];
@@ -427,7 +431,7 @@
 		 * @deprecated As of Cavanaugh (7.4.x), replaced by `window.name`
 		 */
 		getWindowName() {
-			return window.name || Window._name || '';
+			return window.name || Liferay.Util.Window._name || '';
 		},
 
 		/**
@@ -448,7 +452,7 @@
 		 * @deprecated As of Cavanaugh (7.4.x), replaced by `get_checkboxes.js`
 		 */
 		listCheckboxesExcept(form, except, name, checked) {
-			form = Util.getDOM(form);
+			form = Liferay.Util.getDOM(form);
 
 			if (typeof form === 'string') {
 				form = document.querySelector(form);
@@ -484,14 +488,14 @@
 		 * @deprecated As of Cavanaugh (7.4.x), replaced by `import {getCheckedCheckboxes} from 'frontend-js-web';`
 		 */
 		listCheckedExcept(form, except, name) {
-			return Util.listCheckboxesExcept(form, except, name, true);
+			return Liferay.Util.listCheckboxesExcept(form, except, name, true);
 		},
 
 		/**
 		 * @deprecated As of Cavanaugh (7.4.x), replaced by `import {getSelectedOptionValues} from 'frontend-js-web';`
 		 */
 		listSelect(select, delimiter) {
-			select = Util.getElement(select);
+			select = Liferay.Util.getElement(select);
 
 			return Array.from(select.querySelectorAll('option'))
 				.reduce((prev, item) => {
@@ -510,7 +514,7 @@
 		 * @deprecated As of Cavanaugh (7.4.x), replaced by `import {getUncheckedCheckboxes} from 'frontend-js-web';`
 		 */
 		listUncheckedExcept(form, except, name) {
-			return Util.listCheckboxesExcept(form, except, name, false);
+			return Liferay.Util.listCheckboxesExcept(form, except, name, false);
 		},
 
 		/**
@@ -519,7 +523,7 @@
 		openInDialog(event, config) {
 			event.preventDefault();
 
-			const currentTarget = Util.getElement(event.currentTarget);
+			const currentTarget = Liferay.Util.getElement(event.currentTarget);
 
 			// eslint-disable-next-line prefer-object-spread
 			config = Object.assign(
@@ -562,7 +566,7 @@
 		 * @deprecated As of Cavanaugh (7.4.x), with no direct replacement
 		 */
 		reorder(box, down) {
-			box = Util.getElement(box);
+			box = Liferay.Util.getElement(box);
 
 			if (box) {
 				if (box.getAttribute('selectedIndex') === -1) {
@@ -621,7 +625,11 @@
 			checkboxAllIds,
 			cssClass
 		) {
-			Util.checkAllBox(ancestorTable, checkboxesIds, checkboxAllIds);
+			Liferay.Util.checkAllBox(
+				ancestorTable,
+				checkboxesIds,
+				checkboxAllIds
+			);
 
 			if (ancestorRow) {
 				ancestorRow.toggleClass(cssClass);
@@ -669,7 +677,7 @@
 		 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setSelectionRange}
 		 */
 		setSelectionRange(element, selectionStart, selectionEnd) {
-			element = Util.getDOM(element);
+			element = Liferay.Util.getDOM(element);
 
 			if (element.jquery) {
 				element = element[0];
@@ -738,18 +746,21 @@
 			A.one(searchContainerId).delegate(
 				EVENT_CLICK,
 				() => {
-					Util.toggleDisabled(
+					Liferay.Util.toggleDisabled(
 						buttonId,
-						!Util.getCheckedCheckboxes(form, ignoreFieldName)
+						!Liferay.Util.getCheckedCheckboxes(
+							form,
+							ignoreFieldName
+						)
 					);
 				},
 				'input[type=checkbox]'
 			);
 		},
-	};
+	});
 
 	Liferay.provide(
-		Util,
+		Liferay.Util,
 		'afterIframeLoaded',
 		(event) => {
 
@@ -843,7 +854,7 @@
 	 * @deprecated As of Cavanaugh (7.4.x), replaced by `openSelectionModal`
 	 */
 	Liferay.provide(
-		Util,
+		Liferay.Util,
 		'openDDMPortlet',
 		(config, callback) => {
 			const defaultValues = {
@@ -946,7 +957,7 @@
 				}
 			};
 
-			Util.openWindow(config, (dialogWindow) => {
+			Liferay.Util.openWindow(config, (dialogWindow) => {
 				eventHandles.push(
 					dialogWindow.after(
 						['destroy', 'visibleChange'],
@@ -959,7 +970,7 @@
 	);
 
 	Liferay.provide(
-		Util,
+		Liferay.Util,
 		'openDocument',
 		(webDavUrl, onSuccess, onError) => {
 			if (A.UA.ie) {
@@ -988,7 +999,7 @@
 	 * @deprecated As of Cavanaugh (7.4.x), with no direct replacement
 	 */
 	Liferay.provide(
-		Util,
+		Liferay.Util,
 		'selectEntityHandler',
 		(containerSelector, selectEventName, disableButton) => {
 			const container = A.one(containerSelector);
@@ -997,7 +1008,7 @@
 				return;
 			}
 
-			const openingLiferay = Util.getOpener().Liferay;
+			const openingLiferay = Liferay.Util.getOpener().Liferay;
 
 			const selectorButtons = container
 				.getDOM()
@@ -1024,14 +1035,14 @@
 							currentTarget.disabled = true;
 						}
 
-						const result = Util.getAttributes(
+						const result = Liferay.Util.getAttributes(
 							currentTarget,
 							'data-'
 						);
 
 						openingLiferay.fire(selectEventName, result);
 
-						const window = Util.getWindow();
+						const window = Liferay.Util.getWindow();
 
 						if (window) {
 							window.hide();
@@ -1062,7 +1073,7 @@
 										currentTarget.disabled = true;
 									}
 
-									const result = Util.getAttributes(
+									const result = Liferay.Util.getAttributes(
 										currentTarget,
 										'data-'
 									);
@@ -1072,7 +1083,7 @@
 										result
 									);
 
-									const window = Util.getWindow();
+									const window = Liferay.Util.getWindow();
 
 									if (window) {
 										window.hide();
@@ -1095,7 +1106,7 @@
 	);
 
 	Liferay.provide(
-		Util,
+		Liferay.Util,
 		'portletTitleEdit',
 		(options) => {
 			const object = options.obj;
@@ -1109,7 +1120,8 @@
 					title.addClass('portlet-title-editable');
 
 					title.on(EVENT_CLICK, (event) => {
-						const editable = Util._getEditableInstance(title);
+						const editable =
+							Liferay.Util._getEditableInstance(title);
 
 						const rendered = editable.get('rendered');
 
@@ -1148,10 +1160,10 @@
 	);
 
 	Liferay.provide(
-		Util,
+		Liferay.Util,
 		'editEntity',
 		(config, callback) => {
-			const dialog = Util.getWindow(config.id);
+			const dialog = Liferay.Util.getWindow(config.id);
 
 			const eventName = config.eventName || config.id;
 
@@ -1177,11 +1189,11 @@
 				const destroyDialog = function (event) {
 					const dialogId = config.id;
 
-					const dialogWindow = Util.getWindow(dialogId);
+					const dialogWindow = Liferay.Util.getWindow(dialogId);
 
 					if (
 						dialogWindow &&
-						Util.getPortletId(dialogId) === event.portletId
+						Liferay.Util.getPortletId(dialogId) === event.portletId
 					) {
 						dialogWindow.destroy();
 
@@ -1211,7 +1223,7 @@
 					config.dialogIframe || {}
 				);
 
-				Util.openWindow(config, (dialogWindow) => {
+				Liferay.Util.openWindow(config, (dialogWindow) => {
 					eventHandles.push(
 						dialogWindow.after(
 							['destroy', 'visibleChange'],
@@ -1231,10 +1243,10 @@
 	 * which will need to be migrated over to `openModal`.
 	 */
 	Liferay.provide(
-		Util,
+		Liferay.Util,
 		'_openWindowProvider',
 		(config, callback) => {
-			const dialog = Window.getWindow(config);
+			const dialog = Liferay.Util.Window.getWindow(config);
 
 			if (Lang.isFunction(callback)) {
 				callback(dialog);
@@ -1242,10 +1254,6 @@
 		},
 		['liferay-util-window']
 	);
-
-	Util.Window = Window;
-
-	Liferay.Util = Util;
 
 	// 0-200: Theme Developer
 	// 200-400: Portlet Developer

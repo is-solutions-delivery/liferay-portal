@@ -18,11 +18,7 @@ import {getEmptyImage} from 'react-dnd-html5-backend';
 
 import {LAYOUT_DATA_ITEM_TYPES} from '../../config/constants/layoutDataItemTypes';
 import {config} from '../../config/index';
-import {
-	useCollectionItemIndex,
-	useParentToControlsId,
-	useToControlsId,
-} from '../../contexts/CollectionItemContext';
+import {useIsDisabledCollectionItem} from '../../contexts/CollectionItemContext';
 import {useActiveItemIds, useSelectItem} from '../../contexts/ControlsContext';
 import {useSelectorRef} from '../../contexts/StoreContext';
 import {useGetWidgets} from '../../contexts/WidgetsContext';
@@ -246,31 +242,18 @@ export function useDropClear() {
 	return dropClearRef;
 }
 
-export function useDropTarget(_targetItem, computeHover = defaultComputeHover) {
-	const collectionItemIndex = useCollectionItemIndex();
-	const toControlsId = useToControlsId();
-	const parentToControlsId = useParentToControlsId();
+export function useDropTarget(targetItem, computeHover = defaultComputeHover) {
+	const isDisabledCollectionItem = useIsDisabledCollectionItem();
 
 	const {dispatch, layoutDataRef, state, targetRefs} =
 		useContext(DragAndDropContext);
 
 	const targetRef = useRef(null);
 
-	const targetItem = useMemo(
-		() => ({
-			..._targetItem,
-			collectionItemIndex,
-			parentToControlsId,
-			toControlsId,
-		}),
-		[_targetItem, collectionItemIndex, toControlsId, parentToControlsId]
-	);
-
 	const isOverTarget =
 		state.dropTarget &&
 		targetItem &&
-		state.dropTarget.toControlsId?.(state.dropTarget.itemId) ===
-			targetItem.toControlsId(targetItem.itemId);
+		state.dropTarget.itemId === targetItem.itemId;
 
 	const coordsRef = useRef({x: 0, y: 0});
 
@@ -300,20 +283,29 @@ export function useDropTarget(_targetItem, computeHover = defaultComputeHover) {
 				state,
 				targetItem,
 				targetRefs,
-				toControlsId,
 			});
 		},
 	});
 
 	useEffect(() => {
-		const itemId = toControlsId(targetItem.itemId);
+		const itemId = targetItem.itemId;
+
+		if (isDisabledCollectionItem) {
+			return;
+		}
 
 		targetRefs.set(itemId, targetRef);
 
 		return () => {
 			targetRefs.delete(itemId);
 		};
-	}, [layoutDataRef, targetItem, targetRef, targetRefs, toControlsId]);
+	}, [
+		isDisabledCollectionItem,
+		layoutDataRef,
+		targetItem,
+		targetRef,
+		targetRefs,
+	]);
 
 	const setTargetRef = useCallback(
 		(element) => {
@@ -327,7 +319,7 @@ export function useDropTarget(_targetItem, computeHover = defaultComputeHover) {
 	return {
 		isOverTarget,
 		sourceItem: state.dragSource,
-		targetItemId: state.dropTarget?.toControlsId?.(state.dropTarget.itemId),
+		targetItemId: state.dropTarget?.itemId,
 		targetPosition: state.targetPositionWithMiddle,
 		targetRef: setTargetRef,
 	};
@@ -437,12 +429,7 @@ function computeDrop({
 			});
 		}
 		else {
-			onDragEnd(
-				targetId,
-				position,
-				dropTarget.collectionItemIndex !== null &&
-					dropTarget.toControlsId
-			);
+			onDragEnd(targetId, position);
 		}
 	}
 

@@ -75,6 +75,7 @@ import com.liferay.template.test.util.TemplateTestUtil;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.portlet.PortletPreferences;
 
@@ -362,6 +363,44 @@ public class LayoutModelDocumentContributorTest {
 		_assertPortletPreferences(journalArticle, _layout, portletId);
 
 		_assertReindex(content);
+	}
+
+	@Test
+	@TestInfo("LPD-50788")
+	public void testReindexPublishedLayoutWithFragmentEntryLinkTypePortletWithLocalizedContent()
+		throws Exception {
+
+		String portletId = _addJournalContentPortletToDraftLayout();
+
+		Map<Locale, String> contentMap = HashMapBuilder.put(
+			LocaleUtil.SPAIN, RandomTestUtil.randomString()
+		).put(
+			LocaleUtil.US, RandomTestUtil.randomString()
+		).build();
+
+		JournalArticle journalArticle = JournalTestUtil.addArticle(
+			_group.getGroupId(), 0,
+			_portal.getClassNameId(JournalArticle.class),
+			HashMapBuilder.put(
+				LocaleUtil.SPAIN, RandomTestUtil.randomString()
+			).put(
+				LocaleUtil.US, RandomTestUtil.randomString()
+			).build(),
+			null, contentMap, LocaleUtil.US, true, true, _serviceContext);
+
+		_setUpPortletPreferences(journalArticle, portletId);
+
+		ContentLayoutTestUtil.publishLayout(_draftLayout, _layout);
+
+		_assertPortletPreferences(journalArticle, _layout, portletId);
+
+		List<LogEntry> logEntries = _reindexLayoutsLogEntries();
+
+		Assert.assertEquals(logEntries.toString(), 0, logEntries.size());
+
+		_assertSearch(contentMap.get(LocaleUtil.SPAIN), LocaleUtil.SPAIN);
+		_assertSearch(contentMap.get(LocaleUtil.US), LocaleUtil.GERMANY);
+		_assertSearch(contentMap.get(LocaleUtil.US), LocaleUtil.US);
 	}
 
 	@Test

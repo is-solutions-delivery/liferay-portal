@@ -27,11 +27,13 @@ import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.service.ClassNameLocalServiceUtil;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -103,6 +105,50 @@ public class ObjectEntryImpl extends ObjectEntryBaseImpl {
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(
 			PortalUtil.getClassNameId(getModelClassName()));
+	}
+
+	@Override
+	public Map<Locale, String> getTitleMap() throws PortalException {
+		ObjectDefinition objectDefinition =
+			ObjectDefinitionLocalServiceUtil.getObjectDefinition(
+				getObjectDefinitionId());
+
+		if ((objectDefinition == null) ||
+			(objectDefinition.getTitleObjectFieldId() == 0)) {
+
+			return Collections.emptyMap();
+		}
+
+		ObjectField objectField = ObjectFieldLocalServiceUtil.fetchObjectField(
+			objectDefinition.getTitleObjectFieldId());
+
+		if ((objectField == null) || !objectField.isLocalized()) {
+			return Collections.emptyMap();
+		}
+
+		Map<String, Serializable> values = getValues();
+
+		Map<String, Serializable> localizedValues =
+			(Map<String, Serializable>)values.get(
+				objectField.getI18nObjectFieldName());
+
+		if (MapUtil.isEmpty(localizedValues)) {
+			return Collections.emptyMap();
+		}
+
+		Map<Locale, String> titleMap = new HashMap<>();
+
+		for (Map.Entry<String, Serializable> entry :
+				localizedValues.entrySet()) {
+
+			titleMap.put(
+				LocaleUtil.fromLanguageId(entry.getKey()),
+				String.valueOf(
+					ObjectEntryValuesUtil.getValue(
+						entry.getKey(), objectField, new HashMap<>(values))));
+		}
+
+		return titleMap;
 	}
 
 	@Override

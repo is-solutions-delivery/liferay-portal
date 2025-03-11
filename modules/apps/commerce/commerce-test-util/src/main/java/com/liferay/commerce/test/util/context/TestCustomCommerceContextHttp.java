@@ -10,15 +10,19 @@ import com.liferay.commerce.context.BaseCommerceContextHttp;
 import com.liferay.commerce.currency.model.CommerceCurrency;
 import com.liferay.commerce.currency.service.CommerceCurrencyLocalService;
 import com.liferay.commerce.currency.test.util.CommerceCurrencyTestUtil;
+import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.order.CommerceOrderHttpHelper;
 import com.liferay.commerce.product.discovery.CPConfigurationListDiscovery;
 import com.liferay.commerce.product.service.CommerceCatalogLocalService;
 import com.liferay.commerce.product.service.CommerceChannelAccountEntryRelLocalService;
 import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.util.CommerceAccountHelper;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
+import com.liferay.portal.kernel.cookies.CookiesManagerUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.Validator;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -58,6 +62,28 @@ public class TestCustomCommerceContextHttp extends BaseCommerceContextHttp {
 	public CommerceCurrency getCommerceCurrency() throws PortalException {
 		if (_commerceCurrency != null) {
 			return _commerceCurrency;
+		}
+
+		CommerceOrder commerceOrder = getCommerceOrder();
+
+		if (commerceOrder != null) {
+			return commerceOrder.getCommerceCurrency();
+		}
+
+		String commerceCurrencyCode = CookiesManagerUtil.getCookieValue(
+			CommerceCurrency.class.getName() + StringPool.POUND +
+				getCommerceChannelGroupId(),
+			_httpServletRequest);
+
+		if (!Validator.isBlank(commerceCurrencyCode)) {
+			_commerceCurrency =
+				_commerceCurrencyLocalService.fetchCommerceCurrency(
+					_portal.getCompanyId(_httpServletRequest),
+					commerceCurrencyCode);
+
+			if ((_commerceCurrency != null) && _commerceCurrency.isActive()) {
+				return _commerceCurrency;
+			}
 		}
 
 		long companyId = _portal.getCompanyId(_httpServletRequest);

@@ -39,6 +39,16 @@ public class LoadBalancerUtil {
 		int minimumRAM, int maximumSlavesPerHost, Properties properties,
 		boolean verbose) {
 
+		return getAvailableJenkinsMasters(
+			masterPrefix, blacklistString, goodClockRequired, null, minimumRAM,
+			maximumSlavesPerHost, properties, verbose);
+	}
+
+	public static List<JenkinsMaster> getAvailableJenkinsMasters(
+		String masterPrefix, String blacklistString, boolean goodClockRequired,
+		String jobName, int minimumRAM, int maximumSlavesPerHost,
+		Properties properties, boolean verbose) {
+
 		List<JenkinsMaster> allJenkinsMasters = null;
 
 		if (!_jenkinsMasters.containsKey(masterPrefix)) {
@@ -68,13 +78,16 @@ public class LoadBalancerUtil {
 		}
 
 		List<String> goodClockList = _getGoodClockList(properties, verbose);
+		List<String> whitelist = _getWhitelist(jobName, properties, verbose);
 
 		for (JenkinsMaster jenkinsMaster : allJenkinsMasters) {
 			if (blacklist.contains(jenkinsMaster.getName()) ||
 				(goodClockRequired &&
 				 !goodClockList.contains(jenkinsMaster.getName())) ||
 				(jenkinsMaster.getSlaveRAM() < minimumRAM) ||
-				(jenkinsMaster.getSlavesPerHost() > maximumSlavesPerHost)) {
+				(jenkinsMaster.getSlavesPerHost() > maximumSlavesPerHost) ||
+				(!whitelist.isEmpty() &&
+				 !whitelist.contains(jenkinsMaster.getName()))) {
 
 				continue;
 			}
@@ -146,6 +159,7 @@ public class LoadBalancerUtil {
 				}
 
 				String blacklistString = properties.getProperty("blacklist");
+				String jobName = properties.getProperty("job.name");
 
 				Integer minimumRAM = JenkinsMaster.getSlaveRAMMinimumDefault();
 
@@ -171,7 +185,7 @@ public class LoadBalancerUtil {
 				}
 
 				List<JenkinsMaster> jenkinsMasters = getAvailableJenkinsMasters(
-					masterPrefix, blacklistString, clock, minimumRAM,
+					masterPrefix, blacklistString, clock, jobName, minimumRAM,
 					maximumSlavesPerHost, properties, verbose);
 
 				long nextUpdateTimestamp = _getNextUpdateTimestamp(
@@ -379,6 +393,29 @@ public class LoadBalancerUtil {
 		}
 
 		return _nextUpdateTimestampMap.get(masterPrefix);
+	}
+
+	private static List<String> _getWhitelist(
+		String jobName, Properties properties, boolean verbose) {
+
+		List<String> whitelist = new ArrayList<>();
+
+		String whitelistString = JenkinsResultsParserUtil.getProperty(
+			properties, "jenkins.load.balancer.whitelist", jobName);
+
+		if (JenkinsResultsParserUtil.isNullOrEmpty(whitelistString)) {
+			return whitelist;
+		}
+
+		if (verbose) {
+			System.out.println("Whitelist: " + whitelistString);
+		}
+
+		for (String whitelistItem : whitelistString.split(",")) {
+			whitelist.add(whitelistItem.trim());
+		}
+
+		return whitelist;
 	}
 
 	private static void _setNextUpdateTimestamp(

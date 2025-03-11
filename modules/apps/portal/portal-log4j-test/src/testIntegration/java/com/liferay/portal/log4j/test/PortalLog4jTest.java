@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.ThreadContext;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -167,6 +168,39 @@ public class PortalLog4jTest {
 				StringPool.PERIOD, key2, StringPool.EQUAL, value2,
 				StringPool.CLOSE_CURLY_BRACE),
 			logContextName);
+	}
+
+	@Test
+	public void testLogOutputWithLogContextAndExternalContext() {
+		String key1 = "test.key.1";
+		String key2 = "test.key.2";
+		String value1 = "test.value.1";
+		String value2 = "test.value.2";
+
+		String logContextName = "TestLogContext";
+
+		try {
+			ThreadContext.put(key2, value2);
+
+			_testLogOutputWithLogContext(
+				HashMapBuilder.put(
+					key1, value1
+				).build(),
+				StringBundler.concat(
+					StringPool.OPEN_CURLY_BRACE, logContextName,
+					StringPool.PERIOD, key1, StringPool.EQUAL, value1, ", ",
+					key2, StringPool.EQUAL, value2,
+					StringPool.CLOSE_CURLY_BRACE),
+				logContextName);
+
+			Map<String, String> context = ThreadContext.getContext();
+
+			Assert.assertEquals(context.toString(), 1, context.size());
+			Assert.assertEquals(value2, context.get(key2));
+		}
+		finally {
+			ThreadContext.remove(key2);
+		}
 	}
 
 	@Test
@@ -595,22 +629,25 @@ public class PortalLog4jTest {
 
 		logger.addAppender(logContextWriterAppender);
 
-		_testLogOutputWithLogContext(
-			"DEBUG", logContextMessage, unsyncStringWriter);
-		_testLogOutputWithLogContext(
-			"ERROR", logContextMessage, unsyncStringWriter);
-		_testLogOutputWithLogContext(
-			"FATAL", logContextMessage, unsyncStringWriter);
-		_testLogOutputWithLogContext(
-			"INFO", logContextMessage, unsyncStringWriter);
-		_testLogOutputWithLogContext(
-			"TRACE", logContextMessage, unsyncStringWriter);
-		_testLogOutputWithLogContext(
-			"WARN", logContextMessage, unsyncStringWriter);
+		try {
+			_testLogOutputWithLogContext(
+				"DEBUG", logContextMessage, unsyncStringWriter);
+			_testLogOutputWithLogContext(
+				"ERROR", logContextMessage, unsyncStringWriter);
+			_testLogOutputWithLogContext(
+				"FATAL", logContextMessage, unsyncStringWriter);
+			_testLogOutputWithLogContext(
+				"INFO", logContextMessage, unsyncStringWriter);
+			_testLogOutputWithLogContext(
+				"TRACE", logContextMessage, unsyncStringWriter);
+			_testLogOutputWithLogContext(
+				"WARN", logContextMessage, unsyncStringWriter);
+		}
+		finally {
+			serviceRegistration.unregister();
 
-		serviceRegistration.unregister();
-
-		logger.removeAppender(logContextWriterAppender);
+			logger.removeAppender(logContextWriterAppender);
+		}
 	}
 
 	private void _testLogOutputWithLogContext(

@@ -25,7 +25,9 @@ BNDBreakingChangeCommitMessageCheck | .bnd | Checks that commit message should c
 CDNCheck | | Checks the URL in `artifact.properties` files. |
 CIMergeAndGitRepoFileCheck | .gitrepo or ci-merge | Checks that `ci-merge` and `.gitrepo` files can not be added or modified. |
 CQLKeywordCheck | .cql | Checks that Cassandra keywords are upper case. |
-CSPComplianceCheck | .ftl, .jsp, .jspf, .jspx, .tag, .tpl or .vm | Checks code to prevent common CSP related pitfalls. |
+CSPIllegalTagsCheck | .ftl, .jsp, .jspf, .jspx or .vm | Finds cases of incorrect use of certain tags. |
+CSPTagIllegalAttributesCheck | .ftl, .jsp, .jspf, .jspx or .vm | Finds cases of incorrect use of tag attributes. |
+CSPTagMissingAttributesCheck | .ftl, .jsp, .jspf, .jspx or .vm | Checks for missing tag attributes. |
 ClassNameIdCheck | .java | Avoid caching noncompany scoped class name IDs. |
 [CodeownersFileLocationCheck](check/codeowners_file_location_check.markdown#codeownersfilelocationcheck) | CODEOWNERS | Checks that `CODEOWNERS` files are located in `.github` directory. |
 [CompanyIterationCheck](check/company_iteration_check.markdown#companyiterationcheck) | .java, .jsp, .jspf, .jspx, .tag, .tpl or .vm | Checks that `CompanyLocalService.forEachCompany` or `CompanyLocalService.forEachCompanyId` is used when iterating over companies. |
@@ -43,7 +45,7 @@ FactoryCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl or .vm | Finds cases where 
 FilterStringWhitespaceCheck | .java | Finds missing and unnecessary whitespace in the value of the filter string in `ServiceTrackerFactory.open` or `WaiterUtil.waitForFilter`. |
 [GenericTypeCheck](check/generic_type_check.markdown#generictypecheck) | .java, .jsp, .jspf, .jspx, .tag, .tpl or .vm | Checks that generics are always specified to provide compile-time checking and removing the risk of `ClassCastException` during runtime. |
 GradleCommerceDependenciesCheck | .gradle | Checks the modules that are outside of Commerce are not allowed to depend on Commerce modules. |
-[GradleDependencyArtifactsCheck](check/gradle_dependency_artifacts_check.markdown#gradledependencyartifactscheck) | .gradle | Checks that value `default` is not used for attribute `version`. |
+[GradleDependencyArtifactsCheck](check/gradle_dependency_artifacts_check.markdown#gradledependencyartifactscheck) | .eslintignore, .gradle, .prettierignore or .properties | Performs several checks on dependencies artifacts. |
 GradleDependencyConfigurationCheck | .gradle | Validates the scope of dependencies in build gradle files. |
 GradleDependencyVersionCheck | .gradle | Checks the version for dependencies in gradle build files. |
 GradleExportedPackageDependenciesCheck | .gradle | Validates dependencies in gradle build files. |
@@ -85,7 +87,6 @@ JSPTaglibMissingAttributesCheck | .jsp, .jspf, .jspx, .tag, .tpl or .vm | Checks
 JavaAbstractMethodCheck | .java | Finds incorrect `abstract` methods in `interface`. |
 JavaAnnotationsCheck | .java | Performs several checks on annotations. |
 [JavaAnonymousInnerClassCheck](check/java_anonymous_inner_class_check.markdown#javaanonymousinnerclasscheck) | .java | Performs several checks on anonymous classes. |
-[JavaBaseUpgradeCallableCheck](check/java_base_upgrade_callable_check.markdown#javabaseupgradecallablecheck) | .java | Checks that BaseUpgradeCallable is used instead of Callable or Runnable in Upgrade and Verify classes. |
 JavaBooleanStatementCheck | .java | Performs several checks on variable declaration of type `Boolean`. |
 JavaBooleanUsageCheck | .java | Finds incorrect use of passing boolean values in `setAttribute` calls. |
 JavaCleanUpMethodSuperCleanUpCheck | .java | Checks that `cleanUp` method in `*Tag` class with `@Override` annotation calls the `cleanUp` method of the superclass. |

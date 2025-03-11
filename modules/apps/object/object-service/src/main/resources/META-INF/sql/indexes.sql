@@ -10,15 +10,20 @@ create index IX_2A008543 on ObjectDefinition (companyId, className[$COLUMN_LENGT
 create unique index IX_F861636D on ObjectDefinition (companyId, externalReferenceCode[$COLUMN_LENGTH:75$]);
 create index IX_3E56F38F on ObjectDefinition (companyId, name[$COLUMN_LENGTH:75$]);
 create index IX_66A8EEB3 on ObjectDefinition (companyId, rootObjectDefinitionId);
-create index IX_7D686D13 on ObjectDefinition (companyId, status, active_);
+create index IX_2055DB0 on ObjectDefinition (companyId, status, active_, objectFolderId, enableObjectEntryDraft, scope[$COLUMN_LENGTH:75$]);
+create index IX_B56984FF on ObjectDefinition (companyId, status, system_, active_);
 create index IX_12BECBE8 on ObjectDefinition (companyId, system_, modifiable);
-create index IX_F8B95773 on ObjectDefinition (companyId, system_, status, active_);
 create index IX_86E0480A on ObjectDefinition (companyId, userId);
 create index IX_8D232754 on ObjectDefinition (objectFolderId);
-create index IX_55C39BCE on ObjectDefinition (system_, status);
+create index IX_1FBC0C2 on ObjectDefinition (status, system_);
+create index IX_CE84C4E8 on ObjectDefinition (system_);
 create index IX_7B61F95C on ObjectDefinition (uuid_[$COLUMN_LENGTH:75$]);
 
+create unique index IX_BB97A04 on ObjectDefinitionSetting (objectDefinitionId, name[$COLUMN_LENGTH:75$]);
+create index IX_89F99D10 on ObjectDefinitionSetting (uuid_[$COLUMN_LENGTH:75$]);
+
 create unique index IX_E60FE3FC on ObjectEntry (groupId, externalReferenceCode[$COLUMN_LENGTH:1000$], companyId);
+create index IX_4F10AA1B on ObjectEntry (groupId, objectEntryFolderId);
 create unique index IX_28B2B723 on ObjectEntry (groupId, uuid_[$COLUMN_LENGTH:75$]);
 create unique index IX_5979B105 on ObjectEntry (objectDefinitionId, externalReferenceCode[$COLUMN_LENGTH:1000$], companyId);
 create index IX_622DB416 on ObjectEntry (objectDefinitionId, groupId, status);
@@ -31,6 +36,9 @@ create unique index IX_F55286DC on ObjectEntryFolder (groupId, companyId, parent
 create index IX_772D12BC on ObjectEntryFolder (groupId, companyId, treePath[$COLUMN_LENGTH:4000$]);
 create unique index IX_8EC73DF1 on ObjectEntryFolder (groupId, uuid_[$COLUMN_LENGTH:75$]);
 create index IX_56A855AD on ObjectEntryFolder (uuid_[$COLUMN_LENGTH:75$]);
+
+create index IX_90A2DF33 on ObjectEntryVersion (objectEntryId);
+create index IX_5C2CDBC9 on ObjectEntryVersion (uuid_[$COLUMN_LENGTH:75$]);
 
 create index IX_EAECE0E1 on ObjectField (companyId, userId);
 create index IX_6DCE835D on ObjectField (listTypeDefinitionId, state_);

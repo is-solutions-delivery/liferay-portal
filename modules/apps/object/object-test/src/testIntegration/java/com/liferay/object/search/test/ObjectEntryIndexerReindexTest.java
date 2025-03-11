@@ -7,6 +7,7 @@ package com.liferay.object.search.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.object.constants.ObjectDefinitionConstants;
+import com.liferay.object.constants.ObjectEntryFolderConstants;
 import com.liferay.object.constants.ObjectFieldSettingConstants;
 import com.liferay.object.constants.ObjectFieldValidationConstants;
 import com.liferay.object.field.builder.DecimalObjectFieldBuilder;
@@ -92,6 +93,7 @@ public class ObjectEntryIndexerReindexTest {
 						RandomTestUtil.randomString()),
 					true, ObjectDefinitionConstants.SCOPE_COMPANY,
 					ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
+					Collections.emptyList(),
 					Arrays.asList(
 						new DecimalObjectFieldBuilder(
 						).indexed(
@@ -200,7 +202,10 @@ public class ObjectEntryIndexerReindexTest {
 
 			ObjectEntry objectEntry = _objectEntryLocalService.addObjectEntry(
 				TestPropsValues.getUserId(), 0,
-				objectDefinition.getObjectDefinitionId(), null,
+				objectDefinition.getObjectDefinitionId(),
+				ObjectEntryFolderConstants.
+					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+				null,
 				HashMapBuilder.<String, Serializable>put(
 					"decimalLocalized_i18n",
 					HashMapBuilder.put(

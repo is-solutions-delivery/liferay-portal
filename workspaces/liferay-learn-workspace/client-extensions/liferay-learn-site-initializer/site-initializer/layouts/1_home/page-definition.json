@@ -13,12 +13,14 @@
 					"indexed": true,
 					"layout": {
 						"paddingBottom": 1
-					}
+					},
+					"name": "Banner"
 				},
 				"id": "50e5cbf7-592e-9031-1548-ef245ce8ce89",
 				"pageElements": [
 					{
 						"definition": {
+							"customCSS": ".[$FRAGMENT_CLASS$] {\n  * {\n    place-content: center;\n  }\n}",
 							"fragmentStyle": {
 								"maxWidth": "var(--container-max-md)",
 								"paddingBottom": "4",
@@ -156,7 +158,8 @@
 						"paddingRight": 2,
 						"paddingTop": 2,
 						"widthType": "Fixed"
-					}
+					},
+					"name": "Cards Container"
 				},
 				"id": "7b588cec-ca55-bb11-fda2-fe3d5feb0cef",
 				"pageElements": [
@@ -284,9 +287,12 @@
 													"customCSS": ".[$FRAGMENT_CLASS$] {\nborder: 1px solid rgba(9, 16, 24, 0.12);\nbox-shadow: 0 6px 15px -6px rgba(9, 16, 29, 0.06);\n}\n\n.[$FRAGMENT_CLASS$]:hover{\nbackground-color: var(--color-action-primary-hover-10, #EDF3FE) !important; \nborder-color: var(--color-brand-primary-darken-1, #0053F0) !important;\nborder-radius: 10px !important;\nborder-width: 1px !important;\n}",
 													"fragmentLink": {
 														"href": {
-															"value_i18n": {
-																"en_US": "/capabilities/cloud",
-																"ja_JP": "/capabilities/cloud"
+															"mapping": {
+																"fieldKey": "LayoutPageTemplateEntry_34256",
+																"itemReference": {
+																	"className": "com.liferay.asset.kernel.model.AssetCategory",
+																	"classPK": "[$TAXONOMY_CATEGORY_ID:Cloud$]"
+																}
 															}
 														}
 													},
@@ -438,9 +444,12 @@
 													"customCSS": ".[$FRAGMENT_CLASS$] {\nborder: 1px solid rgba(9, 16, 24, 0.12);\nbox-shadow: 0 6px 15px -6px rgba(9, 16, 29, 0.06);\n}\n\n.[$FRAGMENT_CLASS$]:hover{\nbackground-color: var(--color-action-primary-hover-10, #EDF3FE) !important; \nborder-color: var(--color-brand-primary-darken-1, #0053F0) !important;\nborder-radius: 10px !important;\nborder-width: 1px !important;\n}",
 													"fragmentLink": {
 														"href": {
-															"value_i18n": {
-																"en_US": "/capabilities/commerce",
-																"ja_JP": "/capabilities/commerce"
+															"mapping": {
+																"fieldKey": "LayoutPageTemplateEntry_34256",
+																"itemReference": {
+																	"className": "com.liferay.asset.kernel.model.AssetCategory",
+																	"classPK": "[$TAXONOMY_CATEGORY_ID:Commerce$]"
+																}
 															}
 														}
 													},
@@ -587,9 +596,12 @@
 													"customCSS": ".[$FRAGMENT_CLASS$] {\nborder: 1px solid rgba(9, 16, 24, 0.12);\nbox-shadow: 0 6px 15px -6px rgba(9, 16, 29, 0.06);\n}\n\n.[$FRAGMENT_CLASS$]:hover{\nbackground-color: var(--color-action-primary-hover-10, #EDF3FE) !important; \nborder-color: var(--color-brand-primary-darken-1, #0053F0) !important;\nborder-radius: 10px !important;\nborder-width: 1px !important;\n}",
 													"fragmentLink": {
 														"href": {
-															"value_i18n": {
-																"en_US": "/capabilities/content-management-system",
-																"ja_JP": "/capabilities/content-management-system"
+															"mapping": {
+																"fieldKey": "LayoutPageTemplateEntry_34256",
+																"itemReference": {
+																	"className": "com.liferay.asset.kernel.model.AssetCategory",
+																	"classPK": "[$TAXONOMY_CATEGORY_ID:Content Management System$]"
+																}
 															}
 														}
 													},
@@ -736,9 +748,12 @@
 													"customCSS": ".[$FRAGMENT_CLASS$] {\nborder: 1px solid rgba(9, 16, 24, 0.12);\nbox-shadow: 0 6px 15px -6px rgba(9, 16, 29, 0.06);\n}\n\n.[$FRAGMENT_CLASS$]:hover{\nbackground-color: var(--color-action-primary-hover-10, #EDF3FE) !important; \nborder-color: var(--color-brand-primary-darken-1, #0053F0) !important;\nborder-radius: 10px !important;\nborder-width: 1px !important;\n}",
 													"fragmentLink": {
 														"href": {
-															"value_i18n": {
-																"en_US": "/capabilities/development-and-tooling",
-																"ja_JP": "/capabilities/development-and-tooling"
+															"mapping": {
+																"fieldKey": "LayoutPageTemplateEntry_34256",
+																"itemReference": {
+																	"className": "com.liferay.asset.kernel.model.AssetCategory",
+																	"classPK": "[$TAXONOMY_CATEGORY_ID:Development and Tooling$]"
+																}
 															}
 														}
 													},
@@ -779,7 +794,7 @@
 																		"fragmentImage": {
 																			"url": {
 																				"value_i18n": {
-																					"en_US": "[$DOCUMENT_URL:/site-initializer/documents/group/icons/development_t.svg$]"
+																					"en_US": "[$DOCUMENT_URL:/site-initializer/documents/group/icons/development_t.svg $]"
 																				}
 																			}
 																		},
@@ -885,9 +900,12 @@
 													"customCSS": ".[$FRAGMENT_CLASS$] {\nborder: 1px solid rgba(9, 16, 24, 0.12);\nbox-shadow: 0 6px 15px -6px rgba(9, 16, 29, 0.06);\n}\n\n.[$FRAGMENT_CLASS$]:hover{\nbackground-color: var(--color-action-primary-hover-10, #EDF3FE) !important; \nborder-color: var(--color-brand-primary-darken-1, #0053F0) !important;\nborder-radius: 10px !important;\nborder-width: 1px !important;\n}",
 													"fragmentLink": {
 														"href": {
-															"value_i18n": {
-																"en_US": "/capabilities/digital-asset-management",
-																"ja_JP": "/capabilities/digital-asset-management"
+															"mapping": {
+																"fieldKey": "LayoutPageTemplateEntry_34256",
+																"itemReference": {
+																	"className": "com.liferay.asset.kernel.model.AssetCategory",
+																	"classPK": "[$TAXONOMY_CATEGORY_ID:Digital Asset Management$]"
+																}
 															}
 														}
 													},
@@ -1034,9 +1052,12 @@
 													"customCSS": ".[$FRAGMENT_CLASS$] {\nborder: 1px solid rgba(9, 16, 24, 0.12);\nbox-shadow: 0 6px 15px -6px rgba(9, 16, 29, 0.06);\n}\n\n.[$FRAGMENT_CLASS$]:hover{\nbackground-color: var(--color-action-primary-hover-10, #EDF3FE) !important; \nborder-color: var(--color-brand-primary-darken-1, #0053F0) !important;\nborder-radius: 10px !important;\nborder-width: 1px !important;\n}",
 													"fragmentLink": {
 														"href": {
-															"value_i18n": {
-																"en_US": "/capabilities/dxp-self-hosted-installation-maintenance-and-administration",
-																"ja_JP": "/capabilities/dxp-self-hosted-installation-maintenance-and-administration"
+															"mapping": {
+																"fieldKey": "LayoutPageTemplateEntry_34256",
+																"itemReference": {
+																	"className": "com.liferay.asset.kernel.model.AssetCategory",
+																	"classPK": "[$TAXONOMY_CATEGORY_ID:DXP Self-Hosted Installation, Maintenance, and Administration$]"
+																}
 															}
 														}
 													},
@@ -1183,9 +1204,12 @@
 													"customCSS": ".[$FRAGMENT_CLASS$] {\nborder: 1px solid rgba(9, 16, 24, 0.12);\nbox-shadow: 0 6px 15px -6px rgba(9, 16, 29, 0.06);\n}\n\n.[$FRAGMENT_CLASS$]:hover{\nbackground-color: var(--color-action-primary-hover-10, #EDF3FE) !important; \nborder-color: var(--color-brand-primary-darken-1, #0053F0) !important;\nborder-radius: 10px !important;\nborder-width: 1px !important;\n}",
 													"fragmentLink": {
 														"href": {
-															"value_i18n": {
-																"en_US": "/capabilities/integration",
-																"ja_JP": "/capabilities/integration"
+															"mapping": {
+																"fieldKey": "LayoutPageTemplateEntry_34256",
+																"itemReference": {
+																	"className": "com.liferay.asset.kernel.model.AssetCategory",
+																	"classPK": "[$TAXONOMY_CATEGORY_ID:Integration$]"
+																}
 															}
 														}
 													},
@@ -1332,9 +1356,12 @@
 													"customCSS": ".[$FRAGMENT_CLASS$] {\nborder: 1px solid rgba(9, 16, 24, 0.12);\nbox-shadow: 0 6px 15px -6px rgba(9, 16, 29, 0.06);\n}\n\n.[$FRAGMENT_CLASS$]:hover{\nbackground-color: var(--color-action-primary-hover-10, #EDF3FE) !important; \nborder-color: var(--color-brand-primary-darken-1, #0053F0) !important;\nborder-radius: 10px !important;\nborder-width: 1px !important;\n}",
 													"fragmentLink": {
 														"href": {
-															"value_i18n": {
-																"en_US": "/capabilities/personalization",
-																"ja_JP": "/capabilities/personalization"
+															"mapping": {
+																"fieldKey": "LayoutPageTemplateEntry_34256",
+																"itemReference": {
+																	"className": "com.liferay.asset.kernel.model.AssetCategory",
+																	"classPK": "[$TAXONOMY_CATEGORY_ID:Personalization$]"
+																}
 															}
 														}
 													},
@@ -1481,9 +1508,12 @@
 													"customCSS": ".[$FRAGMENT_CLASS$] {\nborder: 1px solid rgba(9, 16, 24, 0.12);\nbox-shadow: 0 6px 15px -6px rgba(9, 16, 29, 0.06);\n}\n\n.[$FRAGMENT_CLASS$]:hover{\nbackground-color: var(--color-action-primary-hover-10, #EDF3FE) !important; \nborder-color: var(--color-brand-primary-darken-1, #0053F0) !important;\nborder-radius: 10px !important;\nborder-width: 1px !important;\n}",
 													"fragmentLink": {
 														"href": {
-															"value_i18n": {
-																"en_US": "/capabilities/platform",
-																"ja_JP": "/capabilities/platform"
+															"mapping": {
+																"fieldKey": "LayoutPageTemplateEntry_34256",
+																"itemReference": {
+																	"className": "com.liferay.asset.kernel.model.AssetCategory",
+																	"classPK": "[$TAXONOMY_CATEGORY_ID:Platform$]"
+																}
 															}
 														}
 													},
@@ -1630,9 +1660,12 @@
 													"customCSS": ".[$FRAGMENT_CLASS$] {\nborder: 1px solid rgba(9, 16, 24, 0.12);\nbox-shadow: 0 6px 15px -6px rgba(9, 16, 29, 0.06);\n}\n\n.[$FRAGMENT_CLASS$]:hover{\nbackground-color: var(--color-action-primary-hover-10, #EDF3FE) !important; \nborder-color: var(--color-brand-primary-darken-1, #0053F0) !important;\nborder-radius: 10px !important;\nborder-width: 1px !important;\n}",
 													"fragmentLink": {
 														"href": {
-															"value_i18n": {
-																"en_US": "/capabilities/search",
-																"ja_JP": "/capabilities/search"
+															"mapping": {
+																"fieldKey": "LayoutPageTemplateEntry_34256",
+																"itemReference": {
+																	"className": "com.liferay.asset.kernel.model.AssetCategory",
+																	"classPK": "[$TAXONOMY_CATEGORY_ID:Search$]"
+																}
 															}
 														}
 													},
@@ -1779,9 +1812,12 @@
 													"customCSS": ".[$FRAGMENT_CLASS$] {\nborder: 1px solid rgba(9, 16, 24, 0.12);\nbox-shadow: 0 6px 15px -6px rgba(9, 16, 29, 0.06);\n}\n\n.[$FRAGMENT_CLASS$]:hover{\nbackground-color: var(--color-action-primary-hover-10, #EDF3FE) !important; \nborder-color: var(--color-brand-primary-darken-1, #0053F0) !important;\nborder-radius: 10px !important;\nborder-width: 1px !important;\n}",
 													"fragmentLink": {
 														"href": {
-															"value_i18n": {
-																"en_US": "/capabilities/security",
-																"ja_JP": "/capabilities/security"
+															"mapping": {
+																"fieldKey": "LayoutPageTemplateEntry_34256",
+																"itemReference": {
+																	"className": "com.liferay.asset.kernel.model.AssetCategory",
+																	"classPK": "[$TAXONOMY_CATEGORY_ID:Security$]"
+																}
 															}
 														}
 													},
@@ -1928,9 +1964,12 @@
 													"customCSS": ".[$FRAGMENT_CLASS$] {\nborder: 1px solid rgba(9, 16, 24, 0.12);\nbox-shadow: 0 6px 15px -6px rgba(9, 16, 29, 0.06);\n}\n\n.[$FRAGMENT_CLASS$]:hover{\nbackground-color: var(--color-action-primary-hover-10, #EDF3FE) !important; \nborder-color: var(--color-brand-primary-darken-1, #0053F0) !important;\nborder-radius: 10px !important;\nborder-width: 1px !important;\n}",
 													"fragmentLink": {
 														"href": {
-															"value_i18n": {
-																"en_US": "/capabilities/sites",
-																"ja_JP": "/capabilities/sites"
+															"mapping": {
+																"fieldKey": "LayoutPageTemplateEntry_34256",
+																"itemReference": {
+																	"className": "com.liferay.asset.kernel.model.AssetCategory",
+																	"classPK": "[$TAXONOMY_CATEGORY_ID:Sites$]"
+																}
 															}
 														}
 													},

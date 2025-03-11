@@ -175,6 +175,20 @@
 			<property name="allowLeadingSpaces" value="true" />
 		</check>
 	</source-processor>
+	<source-processor name="CSPSourceProcessor">
+		<check name="CSPIllegalTagsCheck">
+			<category name="Bug Prevention" />
+			<description name="Finds cases of incorrect use of certain tags." />
+		</check>
+		<check name="CSPTagIllegalAttributesCheck">
+			<category name="Bug Prevention" />
+			<description name="Finds cases of incorrect use of tag attributes." />
+		</check>
+		<check name="CSPTagMissingAttributesCheck">
+			<category name="Bug Prevention" />
+			<description name="Checks for missing tag attributes." />
+		</check>
+	</source-processor>
 	<source-processor name="CSSSourceProcessor">
 		<check name="CSSCommentsCheck">
 			<category name="Styling" />
@@ -217,10 +231,6 @@
 		</check>
 	</source-processor>
 	<source-processor name="FTLSourceProcessor">
-		<check name="CSPComplianceCheck">
-			<category name="Bug Prevention" />
-			<description name="Checks code to prevent common CSP related pitfalls." />
-		</check>
 		<check name="FTLEmptyLinesCheck">
 			<category name="Styling" />
 			<description name="Finds missing and unnecessary empty lines." />
@@ -278,7 +288,7 @@
 		</check>
 		<check name="GradleDependencyArtifactsCheck">
 			<category name="Bug Prevention" />
-			<description name="Checks that value `default` is not used for attribute `version`." />
+			<description name="Performs several checks on dependencies artifacts." />
 		</check>
 		<check name="GradleDependencyConfigurationCheck">
 			<category name="Bug Prevention" />
@@ -682,11 +692,6 @@
 		<check name="JavaAnonymousInnerClassCheck">
 			<category name="Bug Prevention" />
 			<description name="Performs several checks on anonymous classes." />
-		</check>
-		<check name="JavaBaseUpgradeCallableCheck">
-			<category name="Bug Prevention" />
-			<description name="Checks that BaseUpgradeCallable is used instead of Callable or Runnable in Upgrade and Verify classes." />
-			<property name="enabled" value="false" />
 		</check>
 		<check name="JavaCleanUpMethodSuperCleanUpCheck">
 			<category name="Bug Prevention" />
@@ -1092,10 +1097,6 @@
 			<category name="Performance" />
 			<description name="Checks if performance can be improved by using different methods that can be used by collections." />
 		</check>
-		<check name="CSPComplianceCheck">
-			<category name="Bug Prevention" />
-			<description name="Checks code to prevent common CSP related pitfalls." />
-		</check>
 		<check name="EmptyCollectionCheck">
 			<category name="Styling" />
 			<description name="Checks that there are no calls to `Collections.EMPTY_LIST`, `Collections.EMPTY_MAP` or `Collections.EMPTY_SET`." />
@@ -1499,6 +1500,10 @@
 		</check>
 	</source-processor>
 	<source-processor name="PropertiesSourceProcessor">
+		<check name="GradleDependencyArtifactsCheck">
+			<category name="Bug Prevention" />
+			<description name="Performs several checks on dependencies artifacts." />
+		</check>
 		<check name="PropertiesArchivedModulesCheck">
 			<category name="Bug Prevention" />
 			<description name="Finds `test.batch.class.names.includes` property value pointing to archived modules in `test.properties`." />

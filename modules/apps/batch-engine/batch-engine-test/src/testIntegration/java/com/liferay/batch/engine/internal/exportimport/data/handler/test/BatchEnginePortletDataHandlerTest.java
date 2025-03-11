@@ -13,6 +13,7 @@ import com.liferay.exportimport.kernel.lar.PortletDataHandlerKeys;
 import com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalService;
 import com.liferay.exportimport.kernel.service.ExportImportLocalService;
 import com.liferay.object.constants.ObjectDefinitionConstants;
+import com.liferay.object.constants.ObjectEntryFolderConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectFieldSettingConstants;
 import com.liferay.object.field.setting.builder.ObjectFieldSettingBuilder;
@@ -23,6 +24,7 @@ import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
@@ -70,9 +72,35 @@ public class BatchEnginePortletDataHandlerTest {
 			ObjectDefinitionTestUtil.getRandomName(),
 			Arrays.asList(
 				ObjectFieldUtil.createObjectField(
+					ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT,
+					ObjectFieldConstants.DB_TYPE_LONG, true, false, null,
+					RandomTestUtil.randomString(),
+					_OBJECT_FIELD_NAME_ATTACHMENT,
+					Arrays.asList(
+						new ObjectFieldSettingBuilder(
+						).name(
+							ObjectFieldSettingConstants.
+								NAME_ACCEPTED_FILE_EXTENSIONS
+						).value(
+							"txt"
+						).build(),
+						new ObjectFieldSettingBuilder(
+						).name(
+							ObjectFieldSettingConstants.NAME_FILE_SOURCE
+						).value(
+							ObjectFieldSettingConstants.VALUE_USER_COMPUTER
+						).build(),
+						new ObjectFieldSettingBuilder(
+						).name(
+							ObjectFieldSettingConstants.NAME_MAX_FILE_SIZE
+						).value(
+							"100"
+						).build()),
+					false),
+				ObjectFieldUtil.createObjectField(
 					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
 					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
-					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME,
+					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME_TEXT,
 					Arrays.asList(
 						new ObjectFieldSettingBuilder(
 						).name(
@@ -104,6 +132,7 @@ public class BatchEnginePortletDataHandlerTest {
 	}
 
 	@Test
+	@TestInfo("LPD-50142")
 	public void testExportImportCompanyGroup() throws Exception {
 		_objectEntryLocalService.deleteObjectEntry(_objectEntry1);
 		_objectEntryLocalService.deleteObjectEntry(_objectEntry2);
@@ -129,7 +158,7 @@ public class BatchEnginePortletDataHandlerTest {
 	public void testExportImportCompanyGroupWithError() throws Exception {
 		String objectFieldValue = (String)_objectEntry2.getValues(
 		).get(
-			_OBJECT_FIELD_NAME
+			_OBJECT_FIELD_NAME_TEXT
 		);
 
 		_objectEntryLocalService.deleteObjectEntry(_objectEntry1);
@@ -180,9 +209,11 @@ public class BatchEnginePortletDataHandlerTest {
 
 		return _objectEntryLocalService.addObjectEntry(
 			TestPropsValues.getUserId(), 0L,
-			_objectDefinition.getObjectDefinitionId(), null,
+			_objectDefinition.getObjectDefinitionId(),
+			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+			null,
 			HashMapBuilder.put(
-				_OBJECT_FIELD_NAME, objectFieldValue
+				_OBJECT_FIELD_NAME_TEXT, objectFieldValue
 			).build(),
 			ServiceContextTestUtil.getServiceContext());
 	}
@@ -220,8 +251,11 @@ public class BatchEnginePortletDataHandlerTest {
 			_larFile);
 	}
 
-	private static final String _OBJECT_FIELD_NAME =
-		"a" + RandomTestUtil.randomString();
+	private static final String _OBJECT_FIELD_NAME_ATTACHMENT =
+		"x" + RandomTestUtil.randomString();
+
+	private static final String _OBJECT_FIELD_NAME_TEXT =
+		"x" + RandomTestUtil.randomString();
 
 	private long _companyGroupId;
 

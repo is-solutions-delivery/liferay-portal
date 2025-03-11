@@ -28,17 +28,9 @@ export const test = mergeTests(
 test(
 	'Using session utils does not change locale',
 	{tag: '@LPD-1935'},
-	async ({
-		apiHelpers,
-		page,
-		productMenuPage,
-		site,
-		siteSettingsLocalizationPage,
-	}) => {
-		let layout: Layout;
-
+	async ({apiHelpers, page, site, siteSettingsLocalizationPage}) => {
 		await test.step('Create site with default Spanish locale', async () => {
-			layout = await apiHelpers.headlessDelivery.createSitePage({
+			await apiHelpers.headlessDelivery.createSitePage({
 				siteId: site.id,
 				title: getRandomString(),
 			});
@@ -78,18 +70,18 @@ test(
 
 		await test.step('Go to any control menu site page, see it in Spanish', async () => {
 			await page.goto(
-				`/web${site.friendlyUrlPath}${layout.friendlyUrlPath}`
+				`/group${site.friendlyUrlPath}/~/control_panel/manage?p_p_id=com_liferay_layout_admin_web_portlet_GroupPagesPortlet`
 			);
 
-			await productMenuPage.goToPages();
+			const translateLink = page.getByRole('link', {
+				name: 'Mostrar la página en español (España).',
+			});
 
-			await page.reload();
+			const inEnglish = await translateLink.isVisible();
 
-			await page
-				.getByRole('link', {
-					name: 'Mostrar la página en español (España).',
-				})
-				.click();
+			if (inEnglish) {
+				await translateLink.click();
+			}
 
 			const bcp47LanguageId = await page.evaluate(() =>
 				Liferay.ThemeDisplay.getBCP47LanguageId()

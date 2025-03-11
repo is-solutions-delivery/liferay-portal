@@ -6,24 +6,29 @@
 package com.liferay.layout.admin.web.internal.item.selector;
 
 import com.liferay.exportimport.kernel.staging.StagingUtil;
+import com.liferay.frontend.token.definition.FrontendTokenDefinition;
+import com.liferay.frontend.token.definition.FrontendTokenDefinitionRegistry;
 import com.liferay.item.selector.ItemSelectorReturnType;
 import com.liferay.item.selector.ItemSelectorViewDescriptor;
 import com.liferay.item.selector.criteria.AssetEntryItemSelectorReturnType;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.JavaConstants;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.style.book.model.StyleBookEntry;
+import com.liferay.style.book.service.StyleBookEntryLocalService;
 import com.liferay.style.book.service.StyleBookEntryLocalServiceUtil;
 import com.liferay.style.book.util.comparator.StyleBookEntryNameComparator;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.portlet.PortletRequest;
@@ -38,14 +43,17 @@ public class StyleBookEntryItemSelectorViewDescriptor
 	implements ItemSelectorViewDescriptor<StyleBookEntry> {
 
 	public StyleBookEntryItemSelectorViewDescriptor(
+		FrontendTokenDefinitionRegistry frontendTokenDefinitionRegistry,
 		HttpServletRequest httpServletRequest, PortletURL portletURL,
-		StyleBookEntryItemSelectorCriterion
-			styleBookEntryItemSelectorCriterion) {
+		StyleBookEntryItemSelectorCriterion styleBookEntryItemSelectorCriterion,
+		StyleBookEntryLocalService styleBookEntryLocalService) {
 
+		_frontendTokenDefinitionRegistry = frontendTokenDefinitionRegistry;
 		_httpServletRequest = httpServletRequest;
 		_portletURL = portletURL;
 		_styleBookEntryItemSelectorCriterion =
 			styleBookEntryItemSelectorCriterion;
+		_styleBookEntryLocalService = styleBookEntryLocalService;
 
 		_themeDisplay = (ThemeDisplay)httpServletRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -87,32 +95,8 @@ public class StyleBookEntryItemSelectorViewDescriptor
 					JavaConstants.JAVAX_PORTLET_REQUEST),
 				_portletURL, null, "there-are-no-style-books");
 
-		List<StyleBookEntry> styleBookEntries = new ArrayList<>();
-
-		StyleBookEntry styleFromThemeStyleBookEntry =
-			StyleBookEntryLocalServiceUtil.create();
-
-		styleFromThemeStyleBookEntry.setStyleBookEntryId(0);
-		styleFromThemeStyleBookEntry.setName(
-			LanguageUtil.get(_httpServletRequest, "styles-from-theme"));
-
-		StyleBookEntry defaultStyleBookEntry =
-			StyleBookEntryLocalServiceUtil.fetchDefaultStyleBookEntry(
-				_themeDisplay.getScopeGroupId());
-
-		if (defaultStyleBookEntry == null) {
-			styleFromThemeStyleBookEntry.setDefaultStyleBookEntry(true);
-		}
-
-		styleBookEntries.add(styleFromThemeStyleBookEntry);
-
-		styleBookEntries.addAll(
-			StyleBookEntryLocalServiceUtil.getStyleBookEntries(
-				StagingUtil.getLiveGroupId(_themeDisplay.getScopeGroupId()),
-				QueryUtil.ALL_POS, QueryUtil.ALL_POS,
-				StyleBookEntryNameComparator.getInstance(true)));
-
-		styleBookEntrySearchContainer.setResultsAndTotal(styleBookEntries);
+		styleBookEntrySearchContainer.setResultsAndTotal(
+			_getStyleBookEntries());
 
 		return styleBookEntrySearchContainer;
 	}
@@ -142,11 +126,62 @@ public class StyleBookEntryItemSelectorViewDescriptor
 		return _selLayout;
 	}
 
+	private List<StyleBookEntry> _getStyleBookEntries() throws PortalException {
+		StyleBookEntry styleFromThemeStyleBookEntry =
+			StyleBookEntryLocalServiceUtil.create();
+
+		styleFromThemeStyleBookEntry.setStyleBookEntryId(0);
+
+		StyleBookEntry defaultStyleBookEntry =
+			StyleBookEntryLocalServiceUtil.fetchDefaultStyleBookEntry(
+				_themeDisplay.getScopeGroupId());
+
+		if (defaultStyleBookEntry == null) {
+			styleFromThemeStyleBookEntry.setDefaultStyleBookEntry(true);
+		}
+
+		styleFromThemeStyleBookEntry.setName(
+			LanguageUtil.get(_httpServletRequest, "styles-from-theme"));
+
+		List<StyleBookEntry> styleBookEntries = ListUtil.fromArray(
+			styleFromThemeStyleBookEntry);
+
+		if (!FeatureFlagManagerUtil.isEnabled(
+				_themeDisplay.getCompanyId(), "LPD-30204")) {
+
+			styleBookEntries.addAll(
+				StyleBookEntryLocalServiceUtil.getStyleBookEntries(
+					StagingUtil.getLiveGroupId(_themeDisplay.getScopeGroupId()),
+					QueryUtil.ALL_POS, QueryUtil.ALL_POS,
+					StyleBookEntryNameComparator.getInstance(true)));
+
+			return styleBookEntries;
+		}
+
+		FrontendTokenDefinition frontendTokenDefinition =
+			_frontendTokenDefinitionRegistry.getFrontendTokenDefinition(
+				_getSelLayout());
+
+		if (frontendTokenDefinition == null) {
+			return Collections.emptyList();
+		}
+
+		styleBookEntries.addAll(
+			_styleBookEntryLocalService.getStyleBookEntries(
+				StagingUtil.getLiveGroupId(_themeDisplay.getScopeGroupId()),
+				frontendTokenDefinition.getThemeId()));
+
+		return styleBookEntries;
+	}
+
+	private final FrontendTokenDefinitionRegistry
+		_frontendTokenDefinitionRegistry;
 	private final HttpServletRequest _httpServletRequest;
 	private final PortletURL _portletURL;
 	private Layout _selLayout;
 	private final StyleBookEntryItemSelectorCriterion
 		_styleBookEntryItemSelectorCriterion;
+	private final StyleBookEntryLocalService _styleBookEntryLocalService;
 	private final ThemeDisplay _themeDisplay;
 
 }

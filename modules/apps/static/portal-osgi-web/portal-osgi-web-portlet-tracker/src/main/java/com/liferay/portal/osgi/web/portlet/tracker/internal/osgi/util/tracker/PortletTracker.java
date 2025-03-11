@@ -40,7 +40,7 @@ import com.liferay.portal.kernel.portlet.LiferayPortletConfig;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.portlet.PortletInstanceFactory;
-import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.security.auth.CompanyInheritableThreadLocalCallable;
 import com.liferay.portal.kernel.security.permission.ResourceActions;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.PortletLocalService;
@@ -173,26 +173,24 @@ public class PortletTracker
 			_log.info("Adding " + serviceReference);
 		}
 
-		long companyId = CompanyThreadLocal.getNonsystemCompanyId();
 		String finalPortletName = portletName;
 		String finalPortletId = portletId;
 
 		FutureTask<com.liferay.portal.kernel.model.Portlet> futureTask =
 			new FutureTask<>(
-				() -> {
-					CompanyThreadLocal.setCompanyId(companyId);
+				new CompanyInheritableThreadLocalCallable<>(
+					() -> {
+						com.liferay.portal.kernel.model.Portlet
+							addedPortletModel = _addingPortlet(
+								serviceReference, portlet, finalPortletName,
+								finalPortletId);
 
-					com.liferay.portal.kernel.model.Portlet addedPortletModel =
-						_addingPortlet(
-							serviceReference, portlet, finalPortletName,
-							finalPortletId);
+						if (addedPortletModel == null) {
+							_bundleContext.ungetService(serviceReference);
+						}
 
-					if (addedPortletModel == null) {
-						_bundleContext.ungetService(serviceReference);
-					}
-
-					return addedPortletModel;
-				});
+						return addedPortletModel;
+					}));
 
 		if (_parallel &&
 			GetterUtil.getBoolean(

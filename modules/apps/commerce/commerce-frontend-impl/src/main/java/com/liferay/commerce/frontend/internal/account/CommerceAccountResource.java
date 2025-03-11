@@ -32,7 +32,6 @@ import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -138,10 +137,10 @@ public class CommerceAccountResource {
 
 		try {
 			CommerceContext commerceContext = _commerceContextFactory.create(
-				_portal.getCompanyId(httpServletRequest),
+				0,
 				_commerceChannelLocalService.
 					getCommerceChannelGroupIdBySiteGroupId(groupId),
-				_portal.getUserId(httpServletRequest), 0, 0);
+				null, 0, _portal.getCompanyId(httpServletRequest));
 
 			accountList = getAccountList(
 				themeDisplay.getUserId(),
@@ -261,27 +260,20 @@ public class CommerceAccountResource {
 
 			HttpSession httpSession = originalHttpServletRequest.getSession();
 
-			if (FeatureFlagManagerUtil.isEnabled("LPD-35678")) {
-				CommerceOrder commerceOrder =
-					(CommerceOrder)httpSession.getAttribute(
-						CommerceCheckoutWebKeys.
-							COMMERCE_ORDER_ON_ACCOUNT_SELECTION);
+			CommerceOrder commerceOrder =
+				(CommerceOrder)httpSession.getAttribute(
+					CommerceCheckoutWebKeys.
+						COMMERCE_ORDER_ON_ACCOUNT_SELECTION);
 
-				if (commerceOrder != null) {
-					httpSession.setAttribute(
-						CommerceOrder.class.getName() + StringPool.POUND +
-							channelGroupId,
-						commerceOrder.getUuid());
+			if (commerceOrder != null) {
+				httpSession.setAttribute(
+					CommerceOrder.class.getName() + StringPool.POUND +
+						channelGroupId,
+					commerceOrder.getUuid());
 
-					httpSession.removeAttribute(
-						CommerceCheckoutWebKeys.
-							COMMERCE_ORDER_ON_ACCOUNT_SELECTION);
-				}
-				else {
-					httpSession.removeAttribute(
-						CommerceOrder.class.getName() + StringPool.POUND +
-							channelGroupId);
-				}
+				httpSession.removeAttribute(
+					CommerceCheckoutWebKeys.
+						COMMERCE_ORDER_ON_ACCOUNT_SELECTION);
 			}
 			else {
 				httpSession.removeAttribute(

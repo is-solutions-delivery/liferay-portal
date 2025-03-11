@@ -14,7 +14,11 @@
 				<liferay-ui:message key="deletions" />
 			</span>
 
-			<c:if test="<%= !cmd.equals(Constants.EXPORT) %>">
+			<%
+			StagingGroupHelper stagingGroupHelper = StagingGroupHelperUtil.getStagingGroupHelper();
+			%>
+
+			<c:if test="<%= !cmd.equals(Constants.EXPORT) && !stagingGroupHelper.isCompanyGroup(group) %>">
 				<liferay-staging:checkbox
 					checked="<%= MapUtil.getBoolean(parameterMap, PortletDataHandlerKeys.DELETE_PORTLET_DATA, false) %>"
 					disabled="<%= disableInputs %>"

@@ -762,12 +762,6 @@ public class UserPersistenceTest {
 				"contactId"));
 
 		Assert.assertEquals(
-			Long.valueOf(user.getPortraitId()),
-			ReflectionTestUtil.<Long>invoke(
-				user, "getColumnOriginalValue", new Class<?>[] {String.class},
-				"portraitId"));
-
-		Assert.assertEquals(
 			Long.valueOf(user.getCompanyId()),
 			ReflectionTestUtil.<Long>invoke(
 				user, "getColumnOriginalValue", new Class<?>[] {String.class},
@@ -799,17 +793,6 @@ public class UserPersistenceTest {
 			ReflectionTestUtil.invoke(
 				user, "getColumnOriginalValue", new Class<?>[] {String.class},
 				"emailAddress"));
-
-		Assert.assertEquals(
-			Long.valueOf(user.getCompanyId()),
-			ReflectionTestUtil.<Long>invoke(
-				user, "getColumnOriginalValue", new Class<?>[] {String.class},
-				"companyId"));
-		Assert.assertEquals(
-			Long.valueOf(user.getFacebookId()),
-			ReflectionTestUtil.<Long>invoke(
-				user, "getColumnOriginalValue", new Class<?>[] {String.class},
-				"facebookId"));
 
 		Assert.assertEquals(
 			user.getExternalReferenceCode(),

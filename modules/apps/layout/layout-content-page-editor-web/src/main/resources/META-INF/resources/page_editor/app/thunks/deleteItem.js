@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {openToast} from 'frontend-js-web';
+import {openToast} from 'frontend-js-components-web';
 
 import deleteItemAction from '../actions/deleteItem';
 import {ITEM_ACTIVATION_ORIGINS} from '../config/constants/itemActivationOrigins';
@@ -20,7 +20,6 @@ import {getFormParent} from '../utils/getFormParent';
 import getFragmentEntryLinkIdsFromItemId from '../utils/getFragmentEntryLinkIdsFromItemId';
 import getPortletId from '../utils/getPortletId';
 import {isRequiredFormInput} from '../utils/isRequiredFormInput';
-import selectFirstControlsItem from '../utils/selectFirstControlsItem';
 import {clearPageContents} from '../utils/usePageContents';
 import filterSelectedItems from './filterSelectedItems';
 
@@ -76,11 +75,8 @@ export default function deleteItem({itemIds, selectItems = () => {}}) {
 				selectItems(null);
 			}
 			else {
-				selectFirstControlsItem({
-					itemId: nextItemId,
-					layoutData,
+				selectItems([nextItemId], {
 					origin: ITEM_ACTIVATION_ORIGINS.itemActions,
-					selectItems,
 				});
 			}
 

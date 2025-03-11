@@ -5,16 +5,37 @@
 
 import {expect, mergeTests} from '@playwright/test';
 
+import {dataApiHelpersTest} from '../../../../../fixtures/dataApiHelpersTest';
 import {loginTest} from '../../../../../fixtures/loginTest';
+import {clickAndExpectToBeVisible} from '../../../../../utils/clickAndExpectToBeVisible';
 import getRandomString from '../../../../../utils/getRandomString';
-import {waitForAlert} from '../../../../../utils/waitForAlert';
+import getBasicWebContentStructureId from '../../../../../utils/structured-content/getBasicWebContentStructureId';
 
-const test = mergeTests(loginTest());
+const test = mergeTests(dataApiHelpersTest, loginTest());
 
 test(
 	'Check fixed permission header is visible',
 	{tag: ['@LPD-39339']},
-	async ({page}) => {
+	async ({apiHelpers, page}) => {
+		const contentStructureId =
+			await getBasicWebContentStructureId(apiHelpers);
+		const randomTitle = getRandomString();
+		const siteId = await page.evaluate(() => {
+			return String(Liferay.ThemeDisplay.getSiteGroupId());
+		});
+
+		const webContent =
+			await apiHelpers.jsonWebServicesJournal.addWebContent({
+				ddmStructureId: contentStructureId,
+				groupId: siteId,
+				titleMap: {en_US: randomTitle},
+			});
+
+		apiHelpers.data.push({
+			id: `${siteId}_${webContent.articleId}`,
+			type: 'webContent',
+		});
+
 		await page.goto('/');
 
 		const openProductButton = page.getByLabel('Open Product Menu');
@@ -39,64 +60,19 @@ test(
 
 		await webContentButton.click();
 
-		const newButton = page.getByRole('button', {name: 'New'});
-
-		await newButton.waitFor({state: 'visible'});
-
-		await newButton.click();
-
-		const basicWebContentButton = page.getByRole('menuitem', {
-			name: 'Basic Web Content',
-		});
-
-		await basicWebContentButton.waitFor({state: 'visible'});
-
-		await basicWebContentButton.click();
-
-		const currentLanguageButton = page.getByLabel(
-			'Select a language, current'
-		);
-
-		await currentLanguageButton.waitFor({state: 'visible'});
-
-		const webContentTitle = page.getByPlaceholder(
-			'Untitled Basic Web Content'
-		);
-
-		await webContentTitle.waitFor({state: 'visible'});
-
-		const randomTitle = getRandomString();
-
-		await webContentTitle.fill(randomTitle);
-
-		const publishButton = page.getByRole('button', {name: 'Publish'});
-
-		await publishButton.click();
-
-		await waitForAlert(
-			page,
-			`Success:${randomTitle} was created successfully.`
-		);
-
 		const webContentPage = page.getByRole('heading', {name: 'Web Content'});
 
 		await webContentPage.waitFor({state: 'visible'});
 
-		const editWebContentButton = page.locator(
-			`button[aria-label="Actions for ${randomTitle}"]`
-		);
-
-		await editWebContentButton.waitFor({state: 'visible'});
-
-		await editWebContentButton.click();
-
-		const permissionButton = page.getByRole('menuitem', {
-			name: 'Permissions',
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: page.getByRole('menuitem', {
+				name: 'Permissions',
+			}),
+			trigger: page.locator(
+				`button[aria-label="Actions for ${randomTitle}"]`
+			),
 		});
-
-		await permissionButton.waitFor({state: 'visible'});
-
-		await permissionButton.click();
 
 		const permissionHeading = page.getByRole('heading', {
 			name: 'Permissions',

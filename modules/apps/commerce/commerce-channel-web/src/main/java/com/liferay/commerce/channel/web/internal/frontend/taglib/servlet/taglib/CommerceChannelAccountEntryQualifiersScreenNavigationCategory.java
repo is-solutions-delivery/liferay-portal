@@ -20,7 +20,7 @@ import org.osgi.service.component.annotations.Reference;
  * @author Danny Situ
  */
 @Component(
-	property = "screen.navigation.category.order:Integer=90",
+	property = "screen.navigation.category.order:Integer=100",
 	service = ScreenNavigationCategory.class
 )
 public class CommerceChannelAccountEntryQualifiersScreenNavigationCategory

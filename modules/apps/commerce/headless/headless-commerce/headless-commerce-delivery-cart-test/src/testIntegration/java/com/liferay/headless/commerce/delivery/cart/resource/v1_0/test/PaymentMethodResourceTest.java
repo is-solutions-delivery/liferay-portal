@@ -22,16 +22,15 @@ import com.liferay.commerce.test.util.CommerceTestUtil;
 import com.liferay.headless.commerce.delivery.cart.client.dto.v1_0.PaymentMethod;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
-import com.liferay.portal.kernel.security.permission.PermissionChecker;
-import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
-import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
 import java.math.BigDecimal;
 
@@ -41,9 +40,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -55,15 +55,17 @@ import org.junit.runner.RunWith;
 public class PaymentMethodResourceTest
 	extends BasePaymentMethodResourceTestCase {
 
+	@ClassRule
+	@Rule
+	public static final AggregateTestRule aggregateTestRule =
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(),
+			PermissionCheckerMethodTestRule.INSTANCE);
+
 	@Before
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-
-		_user = UserTestUtil.addUser(testCompany);
-
-		_setUpPermissionThreadLocal();
-		_setUpPrincipalThreadLocal();
 
 		_commerceCurrency = CommerceCurrencyTestUtil.addCommerceCurrency(
 			testGroup.getCompanyId());
@@ -71,24 +73,11 @@ public class PaymentMethodResourceTest
 		_commerceChannel = CommerceTestUtil.addCommerceChannel(
 			testGroup.getGroupId(), _commerceCurrency.getCode());
 
-		_engineKeys = new ArrayList(
-			Arrays.asList(
-				"authorize-net", "mercanet", "money-order", "paypal",
-				"test-payment-method"));
-		_siteAdminUser = UserTestUtil.addGroupAdminUser(testGroup);
+		_user = UserTestUtil.addUser(testCompany);
 
 		_serviceContext = ServiceContextTestUtil.getServiceContext(
 			testCompany.getCompanyId(), testGroup.getGroupId(),
 			_user.getUserId());
-	}
-
-	@After
-	@Override
-	public void tearDown() throws Exception {
-		super.tearDown();
-
-		PermissionThreadLocal.setPermissionChecker(_originalPermissionChecker);
-		PrincipalThreadLocal.setName(_originalName);
 	}
 
 	@Ignore
@@ -230,20 +219,6 @@ public class PaymentMethodResourceTest
 		return _engineKeys.remove(random.nextInt(_engineKeys.size()));
 	}
 
-	private void _setUpPermissionThreadLocal() {
-		_originalPermissionChecker =
-			PermissionThreadLocal.getPermissionChecker();
-
-		PermissionThreadLocal.setPermissionChecker(
-			PermissionCheckerFactoryUtil.create(_siteAdminUser));
-	}
-
-	private void _setUpPrincipalThreadLocal() {
-		_originalName = PrincipalThreadLocal.getName();
-
-		PrincipalThreadLocal.setName(_siteAdminUser.getUserId());
-	}
-
 	@DeleteAfterTestRun
 	private CommerceChannel _commerceChannel;
 
@@ -269,13 +244,11 @@ public class PaymentMethodResourceTest
 	@DeleteAfterTestRun
 	private CPInstance _cpInstance;
 
-	private List<String> _engineKeys;
-	private String _originalName;
-	private PermissionChecker _originalPermissionChecker;
+	private final List<String> _engineKeys = new ArrayList<>(
+		Arrays.asList(
+			"authorize-net", "mercanet", "money-order", "paypal",
+			"test-payment-method"));
 	private ServiceContext _serviceContext;
-
-	@DeleteAfterTestRun
-	private User _siteAdminUser;
 
 	@DeleteAfterTestRun
 	private User _user;

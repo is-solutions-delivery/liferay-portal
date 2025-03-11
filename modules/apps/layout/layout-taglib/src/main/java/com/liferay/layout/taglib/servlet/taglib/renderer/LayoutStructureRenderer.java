@@ -37,6 +37,7 @@ import com.liferay.layout.constants.LayoutWebKeys;
 import com.liferay.layout.display.page.LayoutDisplayPageObjectProvider;
 import com.liferay.layout.display.page.LayoutDisplayPageProvider;
 import com.liferay.layout.display.page.constants.LayoutDisplayPageWebKeys;
+import com.liferay.layout.helper.structure.LayoutStructureRulesHelper;
 import com.liferay.layout.list.retriever.ListObjectReference;
 import com.liferay.layout.responsive.ResponsiveLayoutStructureUtil;
 import com.liferay.layout.taglib.internal.display.context.RenderCollectionLayoutStructureItemDisplayContext;
@@ -76,6 +77,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -134,6 +136,21 @@ public class LayoutStructureRenderer {
 				_renderLayoutStructureDisplayContext.
 					getInfoItemActionComponentContext(),
 				"{InfoItemActionHandler} from layout-taglib");
+		}
+
+		LayoutStructureRulesHelper.LayoutStructureRulesResult
+			layoutStructureRulesResult =
+				_renderLayoutStructureDisplayContext.
+					getLayoutStructureRulesResult();
+
+		if (MapUtil.isNotEmpty(
+				layoutStructureRulesResult.getLayoutStructureRuleIdsMap())) {
+
+			_renderComponent(
+				"RulesHandlerComponent",
+				_renderLayoutStructureDisplayContext.
+					getRulesHandlerComponentContext(),
+				"{RulesHandler} from layout-taglib");
 		}
 	}
 
@@ -251,6 +268,8 @@ public class LayoutStructureRenderer {
 			collectionStyledLayoutStructureItem.getUniqueCssClass());
 		jspWriter.write(StringPool.SPACE);
 		jspWriter.write(collectionStyledLayoutStructureItem.getCssClass());
+		jspWriter.write("\" data-layout-structure-item-id=\"");
+		jspWriter.write(collectionStyledLayoutStructureItem.getItemId());
 		jspWriter.write("\"");
 
 		ListObjectReference listObjectReference =
@@ -707,6 +726,8 @@ public class LayoutStructureRenderer {
 			}
 		}
 
+		jspWriter.write("\" data-layout-structure-item-id=\"");
+		jspWriter.write(containerStyledLayoutStructureItem.getItemId());
 		jspWriter.write("\" style=\"");
 
 		String contentVisibility =
@@ -894,6 +915,8 @@ public class LayoutStructureRenderer {
 		jspWriter.write(StringPool.SPACE);
 		jspWriter.write(
 			formStepContainerStyledLayoutStructureItem.getStyledCssClasses());
+		jspWriter.write("\" data-layout-structure-item-id=\"");
+		jspWriter.write(formStepContainerStyledLayoutStructureItem.getItemId());
 		jspWriter.write("\" style=\"");
 
 		jspWriter.write(
@@ -1007,6 +1030,8 @@ public class LayoutStructureRenderer {
 			}
 		}
 
+		jspWriter.write("\" data-layout-structure-item-id=\"");
+		jspWriter.write(formStyledLayoutStructureItem.getItemId());
 		jspWriter.write(
 			"\" enctype=\"multipart/form-data\" method=\"POST\" style=\"");
 		jspWriter.write(
@@ -1174,6 +1199,24 @@ public class LayoutStructureRenderer {
 							fragmentEntryLink, infoForm,
 							fragmentStyledLayoutStructureItem.getItemId());
 
+				Set<String> disabledItemIds =
+					_renderLayoutStructureDisplayContext.getDisabledItemIds();
+				Set<String> enabledItemIds =
+					_renderLayoutStructureDisplayContext.getEnabledItemIds();
+
+				if (disabledItemIds.contains(
+						fragmentStyledLayoutStructureItem.getItemId())) {
+
+					defaultFragmentRendererContext.setAttribute(
+						"disabled", Boolean.TRUE);
+				}
+				else if (enabledItemIds.contains(
+							fragmentStyledLayoutStructureItem.getItemId())) {
+
+					defaultFragmentRendererContext.setAttribute(
+						"enabled", Boolean.TRUE);
+				}
+
 				FragmentRendererController fragmentRendererController =
 					ServletContextUtil.getFragmentRendererController();
 
@@ -1186,7 +1229,8 @@ public class LayoutStructureRenderer {
 					defaultFragmentRendererContext, _httpServletRequest,
 					httpServletResponse);
 
-				if (Objects.equals(
+				if ((infoForm != null) &&
+					Objects.equals(
 						fragmentEntryLink.getType(),
 						FragmentConstants.TYPE_INPUT)) {
 
@@ -1398,6 +1442,8 @@ public class LayoutStructureRenderer {
 		jspWriter.write(rowStyledLayoutStructureItem.getCssClass());
 		jspWriter.write(StringPool.SPACE);
 		jspWriter.write(rowStyledLayoutStructureItem.getStyledCssClasses());
+		jspWriter.write("\" data-layout-structure-item-id=\"");
+		jspWriter.write(rowStyledLayoutStructureItem.getItemId());
 		jspWriter.write("\" style=\"");
 		jspWriter.write(
 			_renderLayoutStructureDisplayContext.getStyle(
@@ -1481,6 +1527,8 @@ public class LayoutStructureRenderer {
 			jspWriter.write(colorCssClasses);
 		}
 
+		jspWriter.write("\" data-layout-structure-item-id=\"");
+		jspWriter.write(fragmentStyledLayoutStructureItem.getItemId());
 		jspWriter.write("\" style=\"");
 		jspWriter.write(
 			_renderLayoutStructureDisplayContext.getStyle(

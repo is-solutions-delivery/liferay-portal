@@ -18,11 +18,12 @@ import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeCon
 import com.liferay.layout.page.template.exception.LayoutPageTemplateEntryDefaultTemplateException;
 import com.liferay.layout.page.template.exception.LayoutPageTemplateEntryGroupIdException;
 import com.liferay.layout.page.template.exception.LayoutPageTemplateEntryLayoutPageTemplateCollectionIdException;
+import com.liferay.layout.page.template.exception.LayoutPageTemplateEntryLayoutPageTemplateEntryKeyException;
 import com.liferay.layout.page.template.exception.LayoutPageTemplateEntryNameException;
 import com.liferay.layout.page.template.exception.NoSuchPageTemplateEntryException;
-import com.liferay.layout.page.template.internal.validator.LayoutPageTemplateValidator;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.base.LayoutPageTemplateEntryLocalServiceBaseImpl;
+import com.liferay.layout.validator.LayoutValidator;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
@@ -121,7 +122,8 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 	@Override
 	public LayoutPageTemplateEntry addLayoutPageTemplateEntry(
 			String externalReferenceCode, long userId, long groupId,
-			long layoutPageTemplateCollectionId, long classNameId,
+			long layoutPageTemplateCollectionId,
+			String layoutPageTemplateEntryKey, long classNameId,
 			long classTypeId, String name, int type, long previewFileEntryId,
 			boolean defaultTemplate, long layoutPrototypeId, long plid,
 			long masterLayoutPlid, int status, ServiceContext serviceContext)
@@ -135,6 +137,15 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 			groupId, layoutPageTemplateCollectionId, name, type,
 			defaultTemplate, status);
 		_validate(groupId, layoutPageTemplateCollectionId, type);
+
+		if (Validator.isNull(layoutPageTemplateEntryKey)) {
+			layoutPageTemplateEntryKey = _generateLayoutPageTemplateEntryKey(
+				groupId, name);
+		}
+		else {
+			_validateLayoutPageTemplateEntryKey(
+				groupId, layoutPageTemplateEntryKey, type);
+		}
 
 		long layoutPageTemplateEntryId = counterLocalService.increment();
 
@@ -155,7 +166,7 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 		layoutPageTemplateEntry.setLayoutPageTemplateCollectionId(
 			layoutPageTemplateCollectionId);
 		layoutPageTemplateEntry.setLayoutPageTemplateEntryKey(
-			_generateLayoutPageTemplateEntryKey(groupId, name));
+			layoutPageTemplateEntryKey);
 		layoutPageTemplateEntry.setClassNameId(classNameId);
 		layoutPageTemplateEntry.setClassTypeId(classTypeId);
 		layoutPageTemplateEntry.setName(name);
@@ -224,7 +235,8 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 	@Override
 	public LayoutPageTemplateEntry addLayoutPageTemplateEntry(
 			String externalReferenceCode, long userId, long groupId,
-			long layoutPageTemplateCollectionId, long classNameId,
+			long layoutPageTemplateCollectionId,
+			String layoutPageTemplateEntryKey, long classNameId,
 			long classTypeId, String name, int type, long masterLayoutPlid,
 			int status, ServiceContext serviceContext)
 		throws PortalException {
@@ -236,8 +248,9 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 		LayoutPageTemplateEntry layoutPageTemplateEntry =
 			addLayoutPageTemplateEntry(
 				externalReferenceCode, userId, groupId,
-				layoutPageTemplateCollectionId, classNameId, classTypeId, name,
-				type, 0, false, 0, 0, masterLayoutPlid, status, serviceContext);
+				layoutPageTemplateCollectionId, layoutPageTemplateEntryKey,
+				classNameId, classTypeId, name, type, 0, false, 0, 0,
+				masterLayoutPlid, status, serviceContext);
 
 		// Dynamic data mapping structure link
 
@@ -253,14 +266,16 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 	@Override
 	public LayoutPageTemplateEntry addLayoutPageTemplateEntry(
 			String externalReferenceCode, long userId, long groupId,
-			long layoutPageTemplateCollectionId, String name, int type,
+			long layoutPageTemplateCollectionId,
+			String layoutPageTemplateEntryKey, String name, int type,
 			long masterLayoutPlid, int status, ServiceContext serviceContext)
 		throws PortalException {
 
 		return addLayoutPageTemplateEntry(
 			externalReferenceCode, userId, groupId,
-			layoutPageTemplateCollectionId, 0, 0, name, type, 0, false, 0, 0,
-			masterLayoutPlid, status, serviceContext);
+			layoutPageTemplateCollectionId, layoutPageTemplateEntryKey, 0, 0,
+			name, type, 0, false, 0, 0, masterLayoutPlid, status,
+			serviceContext);
 	}
 
 	@Override
@@ -290,7 +305,7 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 
 		LayoutPageTemplateEntry targetLayoutPageTemplateEntry =
 			addLayoutPageTemplateEntry(
-				null, userId, groupId, layoutPageTemplateCollectionId,
+				null, userId, groupId, layoutPageTemplateCollectionId, null,
 				sourceLayoutPageTemplateEntry.getClassNameId(),
 				sourceLayoutPageTemplateEntry.getClassTypeId(), name,
 				sourceLayoutPageTemplateEntry.getType(), 0, false,
@@ -964,7 +979,7 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 		}
 
 		return addLayoutPageTemplateEntry(
-			null, layoutPrototype.getUserId(), groupId, 0, 0, 0,
+			null, layoutPrototype.getUserId(), groupId, 0, null, 0, 0,
 			nameMap.get(defaultLocale),
 			LayoutPageTemplateEntryTypeConstants.WIDGET_PAGE, 0, false,
 			layoutPrototype.getLayoutPrototypeId(), layout.getPlid(), 0, status,
@@ -1187,7 +1202,12 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 			throw new LayoutPageTemplateEntryNameException.MustNotBeNull();
 		}
 
-		LayoutPageTemplateValidator.validateNameCharacters(name);
+		Character character = LayoutValidator.getBlacklistCharacter(name);
+
+		if (character != null) {
+			throw new LayoutPageTemplateEntryNameException.
+				MustNotContainInvalidCharacters(character);
+		}
 
 		int nameMaxLength = ModelHintsUtil.getMaxLength(
 			LayoutPageTemplateEntry.class.getName(), "name");
@@ -1224,6 +1244,37 @@ public class LayoutPageTemplateEntryLocalServiceImpl
 		}
 
 		_validate(groupId, layoutPageTemplateCollectionId, name, type);
+	}
+
+	private void _validateLayoutPageTemplateEntryKey(
+			long groupId, String layoutPageTemplateEntryKey, int type)
+		throws PortalException {
+
+		if (LayoutValidator.hasBlacklistedChar(layoutPageTemplateEntryKey)) {
+			throw new LayoutPageTemplateEntryLayoutPageTemplateEntryKeyException.MustNotContainInvalidCharacters(
+				layoutPageTemplateEntryKey, type);
+		}
+
+		int layoutPageTemplateEntryKeyMaxLength = ModelHintsUtil.getMaxLength(
+			LayoutPageTemplateEntry.class.getName(),
+			"layoutPageTemplateEntryKey");
+
+		if (layoutPageTemplateEntryKey.length() >
+				layoutPageTemplateEntryKeyMaxLength) {
+
+			throw new LayoutPageTemplateEntryLayoutPageTemplateEntryKeyException.MustNotExceedMaximumSize(
+				layoutPageTemplateEntryKey, layoutPageTemplateEntryKeyMaxLength,
+				type);
+		}
+
+		LayoutPageTemplateEntry layoutPageTemplateEntry =
+			layoutPageTemplateEntryPersistence.fetchByG_LPTEK(
+				groupId, layoutPageTemplateEntryKey);
+
+		if (layoutPageTemplateEntry != null) {
+			throw new LayoutPageTemplateEntryLayoutPageTemplateEntryKeyException.MustNotBeDuplicate(
+				groupId, layoutPageTemplateEntryKey, type);
+		}
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

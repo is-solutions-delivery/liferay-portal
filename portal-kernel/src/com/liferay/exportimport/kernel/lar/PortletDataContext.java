@@ -370,6 +370,8 @@ public interface PortletDataContext extends Serializable {
 
 	public boolean isStagedModelCounted(StagedModel stagedModel);
 
+	public boolean isValidateExistingDataHandler();
+
 	public boolean isWithinDateRange(Date modifiedDate);
 
 	public void putNotUniquePerLayout(String dataKey);
@@ -439,6 +441,9 @@ public interface PortletDataContext extends Serializable {
 	public void setUserIdStrategy(UserIdStrategy userIdStrategy);
 
 	public void setUserPersonalSiteGroupId(long userPersonalSiteGroupId);
+
+	public void setValidateExistingDataHandler(
+		boolean validateExistingDataHandler);
 
 	public void setZipReader(ZipReader zipReader);
 

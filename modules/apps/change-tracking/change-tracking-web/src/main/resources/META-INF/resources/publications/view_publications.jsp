@@ -17,7 +17,7 @@
 	/>
 </div>
 
-<clay:container-fluid>
+<div>
 	<frontend-data-set:headless-display
 		apiURL="<%= publicationsDisplayContext.getAPIURL() %>"
 		creationMenu="<%= publicationsDisplayContext.getCreationMenu() %>"
@@ -25,7 +25,7 @@
 		id="<%= PublicationsFDSNames.PUBLICATIONS_ONGOING %>"
 		propsTransformer="{DeletePublicationsFDSPropsTransformer} from change-tracking-web"
 	/>
-</clay:container-fluid>
+</div>
 
 <aui:script>
 	(function () {

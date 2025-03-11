@@ -179,6 +179,44 @@
 			<finder-column name="system" />
 			<finder-column name="status" />
 		</finder>
+		<finder name="C_OFI_A_E_S_S" return-type="Collection">
+			<finder-column name="companyId" />
+			<finder-column arrayable-operator="OR" name="objectFolderId" />
+			<finder-column name="active" />
+			<finder-column name="enableObjectEntryDraft" />
+			<finder-column name="scope" />
+			<finder-column name="status" />
+		</finder>
+	</entity>
+	<entity local-service="true" name="ObjectDefinitionSetting" remote-service="false" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="objectDefinitionSettingId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="objectDefinitionId" type="long" />
+		<column name="name" type="String" />
+		<column name="value" type="String" />
+
+		<!-- Finder methods -->
+
+		<finder name="ObjectDefinitionId" return-type="Collection">
+			<finder-column name="objectDefinitionId" />
+		</finder>
+		<finder name="ODI_N" return-type="ObjectDefinitionSetting" unique="true">
+			<finder-column name="objectDefinitionId" />
+			<finder-column name="name" />
+		</finder>
 	</entity>
 	<entity local-service="true" name="ObjectEntry" remote-service="true" uuid="true">
 
@@ -209,6 +247,7 @@
 		<column name="rootObjectEntryId" type="long" />
 		<column name="defaultLanguageId" type="String" />
 		<column name="treePath" type="String" />
+		<column name="version" type="int" />
 		<column name="lastPublishDate" type="Date" />
 		<column name="status" type="int" />
 		<column name="statusByUserId" type="long" />
@@ -229,6 +268,10 @@
 		<finder name="G_ODI" return-type="Collection">
 			<finder-column name="groupId" />
 			<finder-column name="objectDefinitionId" />
+		</finder>
+		<finder name="G_OEFI" return-type="Collection">
+			<finder-column name="groupId" />
+			<finder-column name="objectEntryFolderId" />
 		</finder>
 		<finder name="U_ODI" return-type="Collection">
 			<finder-column name="userId" />
@@ -310,6 +353,33 @@
 			<finder-column name="companyId" />
 			<finder-column name="parentObjectEntryFolderId" />
 			<finder-column name="name" />
+		</finder>
+	</entity>
+	<entity local-service="true" name="ObjectEntryVersion" remote-service="true" uuid="true">
+
+		<!-- PK fields -->
+
+		<column name="objectEntryVersionId" primary="true" type="long" />
+
+		<!-- Audit fields -->
+
+		<column name="companyId" type="long" />
+		<column name="userId" type="long" />
+		<column name="userName" type="String" />
+		<column name="createDate" type="Date" />
+		<column name="modifiedDate" type="Date" />
+
+		<!-- Other fields -->
+
+		<column name="objectEntryId" type="long" />
+		<column name="content" type="String" />
+		<column name="version" type="int" />
+		<column name="status" type="int" />
+
+		<!-- Finder methods -->
+
+		<finder name="ObjectEntryId" return-type="Collection">
+			<finder-column name="objectEntryId" />
 		</finder>
 	</entity>
 	<entity local-service="true" name="ObjectField" remote-service="true" uuid="true">
@@ -1136,6 +1206,8 @@
 		<exception>ObjectDefinitionPortlet</exception>
 		<exception>ObjectDefinitionRootObjectDefinitionId</exception>
 		<exception>ObjectDefinitionScope</exception>
+		<exception>ObjectDefinitionSettingName</exception>
+		<exception>ObjectDefinitionSettingValue</exception>
 		<exception>ObjectDefinitionStatus</exception>
 		<exception>ObjectDefinitionSystem</exception>
 		<exception>ObjectDefinitionVersion</exception>

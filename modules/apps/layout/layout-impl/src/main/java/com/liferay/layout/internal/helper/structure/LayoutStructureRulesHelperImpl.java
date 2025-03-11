@@ -41,9 +41,8 @@ public class LayoutStructureRulesHelperImpl
 		long groupId, LayoutStructure layoutStructure,
 		PermissionChecker permissionChecker, long[] segmentsEntryIds) {
 
-		Set<String> displayedItemIds = new HashSet<>();
-		Set<String> hiddenItemIds = new HashSet<>();
 		Map<String, List<String>> itemIdsMap = new HashMap<>();
+		JSONArray jsonArray = _jsonFactory.createJSONArray();
 		Map<String, List<String>> layoutStructureRuleIdsMap = new HashMap<>();
 		LayoutStructureRulesContext layoutStructureRulesContext =
 			new LayoutStructureRulesContext(
@@ -56,8 +55,7 @@ public class LayoutStructureRulesHelperImpl
 
 			if (itemIds.isEmpty()) {
 				_processActions(
-					layoutStructureRule.getActionsJSONArray(), displayedItemIds,
-					hiddenItemIds,
+					layoutStructureRule.getActionsJSONArray(), jsonArray,
 					!_evaluateLayoutStructureRule(
 						Collections.emptyMap(), layoutStructureRule,
 						layoutStructureRulesContext));
@@ -85,9 +83,56 @@ public class LayoutStructureRulesHelperImpl
 			}
 		}
 
+		Set<String> disabledItemIds = new HashSet<>();
+		Set<String> displayedItemIds = new HashSet<>();
+		Set<String> enabledItemIds = new HashSet<>();
+		Set<String> hiddenItemIds = new HashSet<>();
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+			String action = jsonObject.getString("action");
+			String itemId = jsonObject.getString("itemId");
+
+			if (Objects.equals(action, Action.DISABLE.getValue())) {
+				if (enabledItemIds.contains(itemId)) {
+					enabledItemIds.remove(itemId);
+				}
+
+				disabledItemIds.add(itemId);
+			}
+			else if (Objects.equals(
+						jsonObject.getString("action"),
+						Action.SHOW.getValue())) {
+
+				if (hiddenItemIds.contains(itemId)) {
+					hiddenItemIds.remove(itemId);
+				}
+
+				displayedItemIds.add(itemId);
+			}
+			else if (Objects.equals(
+						jsonObject.getString("action"),
+						Action.ENABLE.getValue())) {
+
+				if (disabledItemIds.contains(itemId)) {
+					disabledItemIds.remove(itemId);
+				}
+
+				enabledItemIds.add(itemId);
+			}
+			else {
+				if (displayedItemIds.contains(itemId)) {
+					displayedItemIds.remove(itemId);
+				}
+
+				hiddenItemIds.add(itemId);
+			}
+		}
+
 		return new LayoutStructureRulesResult(
-			displayedItemIds, hiddenItemIds, itemIdsMap,
-			layoutStructureRuleIdsMap);
+			disabledItemIds, displayedItemIds, enabledItemIds, hiddenItemIds,
+			itemIdsMap, layoutStructureRuleIdsMap);
 	}
 
 	@Override
@@ -299,25 +344,6 @@ public class LayoutStructureRulesHelperImpl
 				).put(
 					"itemId", actionsJSONObject.getString("itemId")
 				));
-		}
-	}
-
-	private void _processActions(
-		JSONArray actionsJSONArray, Set<String> displayedItemIds,
-		Set<String> hiddenItemIds, boolean negated) {
-
-		for (int i = 0; i < actionsJSONArray.length(); i++) {
-			JSONObject actionsJSONObject = actionsJSONArray.getJSONObject(i);
-
-			if (Objects.equals(
-					_getAction(negated, actionsJSONObject.getString("type")),
-					Action.SHOW)) {
-
-				displayedItemIds.add(actionsJSONObject.getString("itemId"));
-			}
-			else {
-				hiddenItemIds.add(actionsJSONObject.getString("itemId"));
-			}
 		}
 	}
 

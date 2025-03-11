@@ -20,6 +20,10 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
+
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -89,6 +93,22 @@ public class FileUtil {
 				}
 
 			});
+	}
+
+	public static String getCopyrightYear(File file) throws Exception {
+		if (file.exists()) {
+			String content = read(file);
+
+			int x = content.indexOf("/**\n * SPDX-FileCopyrightText: (c) ");
+
+			if (x != -1) {
+				return content.substring(x + 35, x + 39);
+			}
+		}
+
+		Format format = new SimpleDateFormat("yyyy");
+
+		return format.format(new Date());
 	}
 
 	public static File[] getFiles(File dir, String prefix, String suffix) {

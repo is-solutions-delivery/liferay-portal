@@ -11,6 +11,7 @@ import com.liferay.layout.utility.page.exception.DefaultLayoutUtilityPageEntryEx
 import com.liferay.layout.utility.page.exception.LayoutUtilityPageEntryNameException;
 import com.liferay.layout.utility.page.model.LayoutUtilityPageEntry;
 import com.liferay.layout.utility.page.service.base.LayoutUtilityPageEntryLocalServiceBaseImpl;
+import com.liferay.layout.validator.LayoutValidator;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
@@ -608,11 +609,11 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 				MustNotExceedMaximumSize(nameMaxLength);
 		}
 
-		for (char c : _BLACKLIST_CHAR) {
-			if (name.indexOf(c) >= 0) {
-				throw new LayoutUtilityPageEntryNameException.
-					MustNotContainInvalidCharacters(c);
-			}
+		Character character = LayoutValidator.getBlacklistCharacter(name);
+
+		if (character != null) {
+			throw new LayoutUtilityPageEntryNameException.
+				MustNotContainInvalidCharacters(character);
 		}
 
 		LayoutUtilityPageEntry duplicatedLayoutUtilityPageEntry =
@@ -626,11 +627,6 @@ public class LayoutUtilityPageEntryLocalServiceImpl
 				groupId, name);
 		}
 	}
-
-	private static final char[] _BLACKLIST_CHAR = {
-		';', '/', '?', ':', '@', '=', '&', '\"', '<', '>', '#', '%', '{', '}',
-		'|', '\\', '^', '~', '[', ']', '`'
-	};
 
 	@Reference
 	private CustomSQL _customSQL;

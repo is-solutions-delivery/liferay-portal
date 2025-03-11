@@ -37,6 +37,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.settings.GroupServiceSettingsLocator;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.HashMap;
 import java.util.List;
@@ -49,31 +50,33 @@ import java.util.Map;
 public class BaseCommerceContext implements CommerceContext {
 
 	public BaseCommerceContext(
-		long companyId, long commerceChannelGroupId, long orderId,
-		long commerceAccountId,
 		AccountEntryLocalService accountEntryLocalService,
 		AccountGroupLocalService accountGroupLocalService,
+		long commerceAccountId,
 		CommerceCatalogLocalService commerceCatalogLocalService,
 		CommerceChannelAccountEntryRelLocalService
 			commerceChannelAccountEntryRelLocalService,
+		long commerceChannelGroupId,
 		CommerceChannelLocalService commerceChannelLocalService,
+		String commerceCurrencyCode,
 		CommerceCurrencyLocalService commerceCurrencyLocalService,
-		CommerceOrderService commerceOrderService,
-		ConfigurationProvider configurationProvider,
+		long commerceOrderId, CommerceOrderService commerceOrderService,
+		long companyId, ConfigurationProvider configurationProvider,
 		CPConfigurationListDiscovery cpConfigurationListDiscovery) {
 
-		_companyId = companyId;
-		_commerceChannelGroupId = commerceChannelGroupId;
-		_orderId = orderId;
-		_commerceAccountId = commerceAccountId;
 		_accountEntryLocalService = accountEntryLocalService;
 		_accountGroupLocalService = accountGroupLocalService;
+		_commerceAccountId = commerceAccountId;
 		_commerceCatalogLocalService = commerceCatalogLocalService;
 		_commerceChannelAccountEntryRelLocalService =
 			commerceChannelAccountEntryRelLocalService;
+		_commerceChannelGroupId = commerceChannelGroupId;
 		_commerceChannelLocalService = commerceChannelLocalService;
+		_commerceCurrencyCode = commerceCurrencyCode;
 		_commerceCurrencyLocalService = commerceCurrencyLocalService;
+		_commerceOrderId = commerceOrderId;
 		_commerceOrderService = commerceOrderService;
+		_companyId = companyId;
 		_cpConfigurationListDiscovery = cpConfigurationListDiscovery;
 
 		try {
@@ -161,6 +164,22 @@ public class BaseCommerceContext implements CommerceContext {
 			return _commerceCurrency;
 		}
 
+		CommerceOrder commerceOrder = getCommerceOrder();
+
+		if (commerceOrder != null) {
+			return commerceOrder.getCommerceCurrency();
+		}
+
+		if (!Validator.isBlank(_commerceCurrencyCode)) {
+			CommerceCurrency commerceCurrency =
+				_commerceCurrencyLocalService.fetchCommerceCurrency(
+					_companyId, _commerceCurrencyCode);
+
+			if ((commerceCurrency != null) && commerceCurrency.isActive()) {
+				return commerceCurrency;
+			}
+		}
+
 		CommerceChannel commerceChannel =
 			_commerceChannelLocalService.getCommerceChannelByGroupId(
 				_commerceChannelGroupId);
@@ -197,7 +216,8 @@ public class BaseCommerceContext implements CommerceContext {
 	@Override
 	public CommerceOrder getCommerceOrder() {
 		try {
-			_commerceOrder = _commerceOrderService.fetchCommerceOrder(_orderId);
+			_commerceOrder = _commerceOrderService.fetchCommerceOrder(
+				_commerceOrderId);
 
 			return _commerceOrder;
 		}
@@ -335,12 +355,13 @@ public class BaseCommerceContext implements CommerceContext {
 	private final long _commerceChannelGroupId;
 	private final CommerceChannelLocalService _commerceChannelLocalService;
 	private CommerceCurrency _commerceCurrency;
+	private final String _commerceCurrencyCode;
 	private final CommerceCurrencyLocalService _commerceCurrencyLocalService;
 	private CommerceOrder _commerceOrder;
+	private final long _commerceOrderId;
 	private final CommerceOrderService _commerceOrderService;
 	private final long _companyId;
 	private final CPConfigurationListDiscovery _cpConfigurationListDiscovery;
 	private Map<Long, CPConfigurationList> _cpConfigurationLists;
-	private final long _orderId;
 
 }

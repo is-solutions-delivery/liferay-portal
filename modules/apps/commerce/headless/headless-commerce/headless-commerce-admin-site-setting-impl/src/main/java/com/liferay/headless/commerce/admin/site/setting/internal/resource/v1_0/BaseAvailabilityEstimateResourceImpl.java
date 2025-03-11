@@ -375,10 +375,28 @@ public abstract class BaseAvailabilityEstimateResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (AvailabilityEstimate availabilityEstimate :
-				availabilityEstimates) {
+		UnsafeFunction<AvailabilityEstimate, AvailabilityEstimate, Exception>
+			availabilityEstimateUnsafeFunction = availabilityEstimate -> {
+				deleteAvailabilityEstimate(availabilityEstimate.getId());
 
-			deleteAvailabilityEstimate(availabilityEstimate.getId());
+				return availabilityEstimate;
+			};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				availabilityEstimates, availabilityEstimateUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				availabilityEstimates,
+				availabilityEstimateUnsafeFunction::apply);
+		}
+		else {
+			for (AvailabilityEstimate availabilityEstimate :
+					availabilityEstimates) {
+
+				availabilityEstimateUnsafeFunction.apply(availabilityEstimate);
+			}
 		}
 	}
 

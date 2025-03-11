@@ -21,8 +21,39 @@ export class JSONWebServicesUserApiHelper {
 		urlSearchParams.append('groupId', groupId);
 		urlSearchParams.append('userIds', JSON.stringify(userIds));
 
-		this.apiHelpers.post(
+		return this.apiHelpers.post(
 			`${liferayConfig.environment.baseUrl}${this.basePath}/add-group-users`,
+			{
+				data: urlSearchParams.toString(),
+				failOnStatusCode: true,
+				headers: await this.apiHelpers.getJSONWebServicesHeaders(),
+			}
+		);
+	}
+
+	async addTeamUsers(teamId: string, userIds: string[]) {
+		const urlSearchParams = new URLSearchParams();
+
+		urlSearchParams.append('teamId', teamId);
+		urlSearchParams.append('userIds', JSON.stringify(userIds));
+
+		return this.apiHelpers.post(
+			`${liferayConfig.environment.baseUrl}${this.basePath}/add-team-users`,
+			{
+				data: urlSearchParams.toString(),
+				failOnStatusCode: true,
+				headers: await this.apiHelpers.getJSONWebServicesHeaders(),
+			}
+		);
+	}
+
+	async agreeToTermsOfUse(userId: string) {
+		const urlSearchParams = new URLSearchParams();
+
+		urlSearchParams.append('userId', userId);
+
+		return this.apiHelpers.post(
+			`${liferayConfig.environment.baseUrl}${this.basePath}/update-agreed-to-terms-of-use/user-id/${userId}/agreed-to-terms-of-use/true`,
 			{
 				data: urlSearchParams.toString(),
 				failOnStatusCode: true,
@@ -55,6 +86,21 @@ export class JSONWebServicesUserApiHelper {
 
 		return this.apiHelpers.post(
 			`${liferayConfig.environment.baseUrl}${this.basePath}/add-role-users/role-id/${roleId}/user-ids/${userIds}`,
+			{
+				data: urlSearchParams.toString(),
+				failOnStatusCode: true,
+				headers: await this.apiHelpers.getJSONWebServicesHeaders(),
+			}
+		);
+	}
+
+	async answerReminderQuery(userId: string) {
+		const urlSearchParams = new URLSearchParams();
+
+		urlSearchParams.append('userId', userId);
+
+		return this.apiHelpers.post(
+			`${liferayConfig.environment.baseUrl}${this.basePath}/update-reminder-query/user-id/${userId}/question/what-is-your-father%27s-middle-name/answer/test`,
 			{
 				data: urlSearchParams.toString(),
 				failOnStatusCode: true,

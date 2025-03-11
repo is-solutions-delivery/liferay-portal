@@ -12,6 +12,7 @@ import com.liferay.item.selector.ItemSelectorCriterion;
 import com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType;
 import com.liferay.item.selector.criteria.upload.criterion.UploadItemSelectorCriterion;
 import com.liferay.petra.function.UnsafeConsumer;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
@@ -23,6 +24,7 @@ import com.liferay.style.book.constants.StyleBookPortletKeys;
 import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryLocalServiceUtil;
 import com.liferay.style.book.web.internal.constants.StyleBookWebKeys;
+import com.liferay.style.book.web.internal.util.StyleBookUtil;
 
 import java.util.List;
 
@@ -56,6 +58,30 @@ public class StyleBookEntryActionDropdownItemsProvider {
 			return DropdownItemListBuilder.add(
 				() -> !_styleBookEntry.isDefaultStyleBookEntry(),
 				_getMarkAsDefaultStyleBookEntryActionUnsafeConsumer()
+			).build();
+		}
+
+		if (FeatureFlagManagerUtil.isEnabled(
+				_themeDisplay.getCompanyId(), "LPD-30204") &&
+			StyleBookUtil.isThemeInactive(
+				_styleBookEntry.getCompanyId(), _styleBookEntry.getThemeId())) {
+
+			return DropdownItemListBuilder.addGroup(
+				dropdownGroupItem -> {
+					dropdownGroupItem.setDropdownItems(
+						DropdownItemListBuilder.add(
+							_getExportStyleBookEntryActionUnsafeConsumer()
+						).build());
+					dropdownGroupItem.setSeparator(true);
+				}
+			).addGroup(
+				dropdownGroupItem -> {
+					dropdownGroupItem.setDropdownItems(
+						DropdownItemListBuilder.add(
+							_getDeleteStyleBookEntryActionUnsafeConsumer()
+						).build());
+					dropdownGroupItem.setSeparator(true);
+				}
 			).build();
 		}
 

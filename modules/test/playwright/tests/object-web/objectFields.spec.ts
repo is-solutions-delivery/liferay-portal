@@ -6,11 +6,9 @@
 import {
 	ObjectDefinition,
 	ObjectDefinitionApi,
-	ObjectField,
 	ObjectFieldApi,
 	ObjectFolder,
 	ObjectFolderApi,
-	ObjectValidationRule,
 	ObjectValidationRuleApi,
 } from '@liferay/object-admin-rest-client-js';
 import {Locator, Page, expect, mergeTests} from '@playwright/test';
@@ -164,6 +162,41 @@ test.describe('Manage object fields through Model Builder', () => {
 		);
 	});
 
+	test('assert that field entry translation is disabled by default', async ({
+		modelBuilderDiagramPage,
+		modelBuilderLeftSidebarPage,
+		modelBuilderObjectDefinitionNodePage,
+		page,
+	}) => {
+		const {objectDefinitions} = createdEntities;
+
+		const [objectDefinition] = objectDefinitions;
+
+		await modelBuilderDiagramPage.goto({objectFolderName: 'Default'});
+
+		await modelBuilderLeftSidebarPage.sidebarItems
+			.filter({hasText: objectDefinition.name})
+			.click();
+
+		await modelBuilderObjectDefinitionNodePage.openAddNewObjectFieldOrRelationshipModal(
+			objectDefinition.name,
+			modelBuilderDiagramPage.objectDefinitionNodes,
+			modelBuilderObjectDefinitionNodePage.addObjectFieldButton
+		);
+
+		await modelBuilderObjectDefinitionNodePage.fillObjectFieldLabelInput(
+			'objectFieldLabel' + getRandomInt()
+		);
+
+		await modelBuilderObjectDefinitionNodePage.selectNewObjectFieldBusinessTypeOption(
+			'Decimal'
+		);
+
+		await expect(
+			page.getByRole('switch', {name: 'Enable Entry Translation'})
+		).not.toBeChecked();
+	});
+
 	test('can add picklist object field to object definition node', async ({
 		apiHelpers,
 		modelBuilderDiagramPage,
@@ -227,7 +260,7 @@ test.describe('Manage object fields through Model Builder', () => {
 		await objectFieldApiClient.postObjectDefinitionByExternalReferenceCodeObjectField(
 			objectDefinition.externalReferenceCode,
 			{
-				DBType: ObjectField.DBTypeEnum.Integer,
+				DBType: 'Integer',
 				label: {
 					en_US: 'intField',
 				},
@@ -236,7 +269,7 @@ test.describe('Manage object fields through Model Builder', () => {
 				localized: false,
 				name: 'intField',
 				objectFieldSettings: [],
-				readOnly: ObjectField.ReadOnlyEnum.False,
+				readOnly: 'false',
 				readOnlyConditionExpression: '',
 				required: false,
 				state: false,
@@ -301,8 +334,8 @@ test.describe('Manage object fields through Model Builder', () => {
 		await objectFieldApiClient.postObjectDefinitionByExternalReferenceCodeObjectField(
 			draftObjectDefinition.externalReferenceCode,
 			{
-				DBType: ObjectField.DBTypeEnum.String,
-				businessType: ObjectField.BusinessTypeEnum.Picklist,
+				DBType: 'String',
+				businessType: 'Picklist',
 				externalReferenceCode: picklistFieldName,
 				indexed: true,
 				indexedAsKeyword: false,
@@ -313,7 +346,7 @@ test.describe('Manage object fields through Model Builder', () => {
 				listTypeDefinitionId: listTypeDefinition.id,
 				localized: false,
 				name: picklistFieldName,
-				readOnly: ObjectField.ReadOnlyEnum.False,
+				readOnly: 'false',
 				required: false,
 				state: false,
 				system: false,
@@ -532,8 +565,8 @@ test.describe('Manage object fields through Model Builder', () => {
 		await objectFieldApiClient.postObjectDefinitionByExternalReferenceCodeObjectField(
 			objectDefinition.externalReferenceCode,
 			{
-				DBType: ObjectField.DBTypeEnum.Integer,
-				businessType: ObjectField.BusinessTypeEnum.Integer,
+				DBType: 'Integer',
+				businessType: 'Integer',
 				externalReferenceCode: integerFieldName,
 				indexed: true,
 				indexedAsKeyword: false,
@@ -542,7 +575,7 @@ test.describe('Manage object fields through Model Builder', () => {
 				listTypeDefinitionId: 0,
 				localized: false,
 				name: integerFieldName,
-				readOnly: ObjectField.ReadOnlyEnum.False,
+				readOnly: 'false',
 				required: false,
 				state: false,
 				system: false,
@@ -552,8 +585,8 @@ test.describe('Manage object fields through Model Builder', () => {
 		await objectFieldApiClient.postObjectDefinitionByExternalReferenceCodeObjectField(
 			objectDefinition.externalReferenceCode,
 			{
-				DBType: ObjectField.DBTypeEnum.Date,
-				businessType: ObjectField.BusinessTypeEnum.Date,
+				DBType: 'Date',
+				businessType: 'Date',
 				externalReferenceCode: dateFieldName,
 				indexed: true,
 				indexedAsKeyword: false,
@@ -562,7 +595,7 @@ test.describe('Manage object fields through Model Builder', () => {
 				listTypeDefinitionId: 0,
 				localized: false,
 				name: dateFieldName,
-				readOnly: ObjectField.ReadOnlyEnum.False,
+				readOnly: 'false',
 				required: false,
 				state: false,
 				system: false,
@@ -613,8 +646,8 @@ test.describe('Manage object fields through Model Builder', () => {
 		await objectFieldApiClient.postObjectDefinitionByExternalReferenceCodeObjectField(
 			objectDefinition.externalReferenceCode,
 			{
-				DBType: ObjectField.DBTypeEnum.Integer,
-				businessType: ObjectField.BusinessTypeEnum.Integer,
+				DBType: 'Integer',
+				businessType: 'Integer',
 				externalReferenceCode: integerFieldName,
 				indexed: true,
 				indexedAsKeyword: false,
@@ -623,7 +656,7 @@ test.describe('Manage object fields through Model Builder', () => {
 				listTypeDefinitionId: 0,
 				localized: false,
 				name: integerFieldName,
-				readOnly: ObjectField.ReadOnlyEnum.False,
+				readOnly: 'false',
 				required: false,
 				state: false,
 				system: false,
@@ -659,7 +692,7 @@ test.describe('Manage object fields through Model Builder', () => {
 						value: integerFieldName,
 					} as any,
 				],
-				outputType: ObjectValidationRule.OutputTypeEnum.FullValidation,
+				outputType: 'fullValidation',
 				script: '',
 				system: false,
 			}
@@ -911,8 +944,8 @@ test.describe('Manage objectFields through Objects Admin UI', () => {
 		await objectFieldApiClient.postObjectDefinitionByExternalReferenceCodeObjectField(
 			objectDefinition.externalReferenceCode,
 			{
-				DBType: ObjectField.DBTypeEnum.Integer,
-				businessType: ObjectField.BusinessTypeEnum.Integer,
+				DBType: 'Integer',
+				businessType: 'Integer',
 				externalReferenceCode: integerFieldName,
 				indexed: true,
 				indexedAsKeyword: false,
@@ -921,7 +954,7 @@ test.describe('Manage objectFields through Objects Admin UI', () => {
 				listTypeDefinitionId: 0,
 				localized: false,
 				name: integerFieldName,
-				readOnly: ObjectField.ReadOnlyEnum.False,
+				readOnly: 'false',
 				required: false,
 				state: false,
 				system: false,
@@ -957,7 +990,7 @@ test.describe('Manage objectFields through Objects Admin UI', () => {
 						value: integerFieldName,
 					} as any,
 				],
-				outputType: ObjectValidationRule.OutputTypeEnum.FullValidation,
+				outputType: 'fullValidation',
 				script: '',
 				system: false,
 			}

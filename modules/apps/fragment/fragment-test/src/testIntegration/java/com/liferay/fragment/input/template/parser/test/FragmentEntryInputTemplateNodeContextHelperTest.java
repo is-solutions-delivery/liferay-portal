@@ -30,6 +30,7 @@ import com.liferay.list.type.model.ListTypeDefinition;
 import com.liferay.list.type.model.ListTypeEntry;
 import com.liferay.list.type.service.ListTypeDefinitionLocalService;
 import com.liferay.object.constants.ObjectDefinitionConstants;
+import com.liferay.object.constants.ObjectEntryFolderConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectFieldSettingConstants;
 import com.liferay.object.field.attachment.AttachmentManager;
@@ -140,7 +141,9 @@ public class FragmentEntryInputTemplateNodeContextHelperTest {
 
 		_objectEntry = _objectEntryLocalService.addObjectEntry(
 			TestPropsValues.getUserId(), _group.getGroupId(),
-			_objectDefinition.getObjectDefinitionId(), null,
+			_objectDefinition.getObjectDefinitionId(),
+			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+			null,
 			HashMapBuilder.<String, Serializable>put(
 				"myMultiselectPicklist",
 				() -> {
@@ -207,7 +210,9 @@ public class FragmentEntryInputTemplateNodeContextHelperTest {
 
 		ObjectEntry objectEntry = _objectEntryLocalService.addObjectEntry(
 			TestPropsValues.getUserId(), _group.getGroupId(),
-			objectDefinition.getObjectDefinitionId(), null,
+			objectDefinition.getObjectDefinitionId(),
+			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+			null,
 			HashMapBuilder.<String, Serializable>put(
 				relationshipObjectFieldName, _objectEntry.getObjectEntryId()
 			).put(
@@ -245,7 +250,7 @@ public class FragmentEntryInputTemplateNodeContextHelperTest {
 			InputTemplateNode inputTemplateNode =
 				_fragmentEntryInputTemplateNodeContextHelper.
 					toInputTemplateNode(
-						"Default",
+						Collections.emptyMap(), "Default",
 						_addInputFragmentEntryLink(
 							"ObjectField_" + relationshipObjectFieldName),
 						httpServletRequest,
@@ -301,7 +306,8 @@ public class FragmentEntryInputTemplateNodeContextHelperTest {
 			InputTemplateNode inputTemplateNode =
 				_fragmentEntryInputTemplateNodeContextHelper.
 					toInputTemplateNode(
-						"Default", _addInputFragmentEntryLink("myRichText"),
+						Collections.emptyMap(), "Default",
+						_addInputFragmentEntryLink("myRichText"),
 						httpServletRequest,
 						infoItemFormProvider.getInfoForm(
 							StringPool.BLANK, _group.getGroupId()),
@@ -347,7 +353,8 @@ public class FragmentEntryInputTemplateNodeContextHelperTest {
 			InputTemplateNode inputTemplateNode =
 				_fragmentEntryInputTemplateNodeContextHelper.
 					toInputTemplateNode(
-						"Default", _addInputFragmentEntryLink("myText"),
+						Collections.emptyMap(), "Default",
+						_addInputFragmentEntryLink("myText"),
 						httpServletRequest,
 						infoItemFormProvider.getInfoForm(
 							StringPool.BLANK, _group.getGroupId()),
@@ -465,7 +472,9 @@ public class FragmentEntryInputTemplateNodeContextHelperTest {
 
 		ObjectEntry objectEntry = _objectEntryLocalService.addObjectEntry(
 			TestPropsValues.getUserId(), _group.getGroupId(),
-			objectDefinition.getObjectDefinitionId(), null,
+			objectDefinition.getObjectDefinitionId(),
+			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+			null,
 			HashMapBuilder.<String, Serializable>put(
 				"myAttachment", dlFileEntry.getFileEntryId()
 			).put(
@@ -745,7 +754,8 @@ public class FragmentEntryInputTemplateNodeContextHelperTest {
 				"CustomObjectDefinition", null, "control_panel.sites",
 				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString()),
 				true, ObjectDefinitionConstants.SCOPE_SITE,
-				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT, objectFields);
+				ObjectDefinitionConstants.STORAGE_TYPE_DEFAULT,
+				Collections.emptyList(), objectFields);
 
 		ObjectField myTextObjectField = ObjectFieldUtil.addCustomObjectField(
 			new TextObjectFieldBuilder(
@@ -796,7 +806,8 @@ public class FragmentEntryInputTemplateNodeContextHelperTest {
 			InputTemplateNode inputTemplateNode =
 				_fragmentEntryInputTemplateNodeContextHelper.
 					toInputTemplateNode(
-						"Default", _addInputFragmentEntryLink(inputFieldId),
+						Collections.emptyMap(), "Default",
+						_addInputFragmentEntryLink(inputFieldId),
 						httpServletRequest,
 						infoItemFormProvider.getInfoForm(
 							StringPool.BLANK, _group.getGroupId()),
@@ -917,7 +928,8 @@ public class FragmentEntryInputTemplateNodeContextHelperTest {
 				InputTemplateNode inputTemplateNode =
 					_fragmentEntryInputTemplateNodeContextHelper.
 						toInputTemplateNode(
-							"Default", _addInputFragmentEntryLink(inputFieldId),
+							Collections.emptyMap(), "Default",
+							_addInputFragmentEntryLink(inputFieldId),
 							httpServletRequest,
 							infoItemFormProvider.getInfoForm(
 								StringPool.BLANK, _group.getGroupId()),

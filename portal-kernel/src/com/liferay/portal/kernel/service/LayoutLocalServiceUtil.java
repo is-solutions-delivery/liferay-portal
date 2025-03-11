@@ -400,20 +400,13 @@ public class LayoutLocalServiceUtil {
 	}
 
 	public static Layout copyLayoutContent(
-			long segmentsExperienceId, Layout sourceLayout, Layout targetLayout)
+			long sourceSegmentsExperienceId, Layout sourceLayout,
+			long targetSegmentsExperienceId, Layout targetLayout)
 		throws Exception {
 
 		return getService().copyLayoutContent(
-			segmentsExperienceId, sourceLayout, targetLayout);
-	}
-
-	public static Layout copyLayoutContent(
-			long[] segmentsExperienceIds, Layout sourceLayout,
-			Layout targetLayout)
-		throws Exception {
-
-		return getService().copyLayoutContent(
-			segmentsExperienceIds, sourceLayout, targetLayout);
+			sourceSegmentsExperienceId, sourceLayout,
+			targetSegmentsExperienceId, targetLayout);
 	}
 
 	/**
@@ -668,10 +661,6 @@ public class LayoutLocalServiceUtil {
 		return getService().fetchLayout(groupId, privateLayout, layoutId);
 	}
 
-	public static Layout fetchLayout(long classNameId, long classPK) {
-		return getService().fetchLayout(classNameId, classPK);
-	}
-
 	public static Layout fetchLayout(
 		String uuid, long groupId, boolean privateLayout) {
 
@@ -693,8 +682,7 @@ public class LayoutLocalServiceUtil {
 	}
 
 	public static Layout fetchLayoutByIconImageId(
-			boolean privateLayout, long iconImageId)
-		throws PortalException {
+		boolean privateLayout, long iconImageId) {
 
 		return getService().fetchLayoutByIconImageId(
 			privateLayout, iconImageId);

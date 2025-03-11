@@ -331,11 +331,33 @@ public abstract class BaseSkuVirtualSettingsFileEntryResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (SkuVirtualSettingsFileEntry skuVirtualSettingsFileEntry :
-				skuVirtualSettingsFileEntries) {
+		UnsafeFunction
+			<SkuVirtualSettingsFileEntry, SkuVirtualSettingsFileEntry,
+			 Exception> skuVirtualSettingsFileEntryUnsafeFunction =
+				skuVirtualSettingsFileEntry -> {
+					deleteSkuVirtualSettingsFileEntry(
+						skuVirtualSettingsFileEntry.getId());
 
-			deleteSkuVirtualSettingsFileEntry(
-				skuVirtualSettingsFileEntry.getId());
+					return skuVirtualSettingsFileEntry;
+				};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				skuVirtualSettingsFileEntries,
+				skuVirtualSettingsFileEntryUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				skuVirtualSettingsFileEntries,
+				skuVirtualSettingsFileEntryUnsafeFunction::apply);
+		}
+		else {
+			for (SkuVirtualSettingsFileEntry skuVirtualSettingsFileEntry :
+					skuVirtualSettingsFileEntries) {
+
+				skuVirtualSettingsFileEntryUnsafeFunction.apply(
+					skuVirtualSettingsFileEntry);
+			}
 		}
 	}
 

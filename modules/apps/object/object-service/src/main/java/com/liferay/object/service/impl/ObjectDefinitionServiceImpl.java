@@ -7,17 +7,23 @@ package com.liferay.object.service.impl;
 
 import com.liferay.object.constants.ObjectActionKeys;
 import com.liferay.object.constants.ObjectConstants;
+import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectDefinitionSetting;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectFolder;
+import com.liferay.object.service.ObjectFolderLocalService;
 import com.liferay.object.service.base.ObjectDefinitionServiceBaseImpl;
+import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.aop.AopService;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -47,6 +53,7 @@ public class ObjectDefinitionServiceImpl
 			Map<Locale, String> labelMap, String name, String panelAppOrder,
 			String panelCategoryKey, Map<Locale, String> pluralLabelMap,
 			boolean portlet, String scope, String storageType,
+			List<ObjectDefinitionSetting> objectDefinitionSettings,
 			List<ObjectField> objectFields)
 		throws PortalException {
 
@@ -63,7 +70,7 @@ public class ObjectDefinitionServiceImpl
 			enableFriendlyURLCustomization, enableIndexSearch,
 			enableLocalization, enableObjectEntryDraft, labelMap, name,
 			panelAppOrder, panelCategoryKey, pluralLabelMap, portlet, scope,
-			storageType, objectFields);
+			storageType, objectDefinitionSettings, objectFields);
 	}
 
 	@Override
@@ -92,7 +99,9 @@ public class ObjectDefinitionServiceImpl
 			boolean enableIndexSearch, boolean enableLocalization,
 			Map<Locale, String> labelMap, String name, String panelAppOrder,
 			String panelCategoryKey, Map<Locale, String> pluralLabelMap,
-			boolean portlet, String scope, List<ObjectField> objectFields)
+			boolean portlet, String scope,
+			List<ObjectDefinitionSetting> objectDefinitionSettings,
+			List<ObjectField> objectFields)
 		throws PortalException {
 
 		_portletResourcePermission.check(
@@ -108,7 +117,8 @@ public class ObjectDefinitionServiceImpl
 			enableComments, enableFriendlyURLCustomization, enableIndexSearch,
 			enableLocalization, labelMap, true, name, panelAppOrder,
 			panelCategoryKey, null, null, pluralLabelMap, portlet, scope, null,
-			1, WorkflowConstants.STATUS_DRAFT, objectFields);
+			1, WorkflowConstants.STATUS_DRAFT, objectDefinitionSettings,
+			objectFields);
 	}
 
 	@Override
@@ -138,6 +148,28 @@ public class ObjectDefinitionServiceImpl
 		}
 
 		return objectDefinition;
+	}
+
+	@Override
+	public List<ObjectDefinition> getCMSObjectDefinitions(
+		long companyId, String[] objectFolderExternalReferenceCodes) {
+
+		long[] objectFolderIds = TransformUtil.transformToLongArray(
+			Arrays.asList(objectFolderExternalReferenceCodes),
+			objectFolderExternalReferenceCode -> {
+				ObjectFolder objectFolder =
+					_objectFolderLocalService.
+						fetchObjectFolderByExternalReferenceCode(
+							objectFolderExternalReferenceCode, companyId);
+
+				return objectFolder.getObjectFolderId();
+			});
+
+		return objectDefinitionPersistence.filterFindByC_OFI_A_E_S_S(
+			companyId, objectFolderIds, true, true,
+			ObjectDefinitionConstants.SCOPE_SITE,
+			WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS);
 	}
 
 	@Override
@@ -231,7 +263,8 @@ public class ObjectDefinitionServiceImpl
 			boolean enableObjectEntryDraft, boolean enableObjectEntryHistory,
 			Map<Locale, String> labelMap, String name, String panelAppOrder,
 			String panelCategoryKey, boolean portlet,
-			Map<Locale, String> pluralLabelMap, String scope, int status)
+			Map<Locale, String> pluralLabelMap, String scope, int status,
+			List<ObjectDefinitionSetting> objectDefinitionSettings)
 		throws PortalException {
 
 		_objectDefinitionModelResourcePermission.check(
@@ -249,7 +282,8 @@ public class ObjectDefinitionServiceImpl
 			enableFriendlyURLCustomization, enableIndexSearch,
 			enableLocalization, enableObjectEntryDraft,
 			enableObjectEntryHistory, labelMap, name, panelAppOrder,
-			panelCategoryKey, portlet, pluralLabelMap, scope, status);
+			panelCategoryKey, portlet, pluralLabelMap, scope, status,
+			objectDefinitionSettings);
 	}
 
 	@Override
@@ -279,7 +313,8 @@ public class ObjectDefinitionServiceImpl
 	@Override
 	public ObjectDefinition updateSystemObjectDefinition(
 			String externalReferenceCode, long objectDefinitionId,
-			long objectFolderId, long titleObjectFieldId)
+			long objectFolderId, long titleObjectFieldId,
+			List<ObjectDefinitionSetting> objectDefinitionSettings)
 		throws PortalException {
 
 		_objectDefinitionModelResourcePermission.check(
@@ -291,7 +326,7 @@ public class ObjectDefinitionServiceImpl
 
 		return objectDefinitionLocalService.updateSystemObjectDefinition(
 			externalReferenceCode, objectDefinitionId, objectFolderId,
-			titleObjectFieldId);
+			titleObjectFieldId, objectDefinitionSettings);
 	}
 
 	@Override
@@ -311,6 +346,9 @@ public class ObjectDefinitionServiceImpl
 	)
 	private ModelResourcePermission<ObjectDefinition>
 		_objectDefinitionModelResourcePermission;
+
+	@Reference
+	private ObjectFolderLocalService _objectFolderLocalService;
 
 	@Reference(
 		target = "(model.class.name=com.liferay.object.model.ObjectFolder)"

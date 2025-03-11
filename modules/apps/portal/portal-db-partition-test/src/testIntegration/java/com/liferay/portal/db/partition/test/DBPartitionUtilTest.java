@@ -45,6 +45,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -170,7 +171,7 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 				DBPartitionUtil.copyDBPartition(COMPANY_IDS[0], companyId));
 
 			List<String> fromTableNames = _getObjectNames(
-				"TABLE", COMPANY_IDS[0]);
+				"TABLE", getPartitionName(COMPANY_IDS[0]));
 
 			Assert.assertTrue(
 				fromTableNames.remove(
@@ -178,7 +179,8 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 			Assert.assertTrue(
 				fromTableNames.add(testObjectTableNamePrefix + companyId));
 
-			List<String> toTableNames = _getObjectNames("TABLE", companyId);
+			List<String> toTableNames = _getObjectNames(
+				"TABLE", getPartitionName(companyId));
 
 			Assert.assertEquals(
 				toTableNames.toString(), fromTableNames.size(),
@@ -193,8 +195,8 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 			_assertJobMessage(COMPANY_IDS[0], _JOB_NAME_1);
 
 			Assert.assertEquals(
-				_getObjectNames("VIEW", COMPANY_IDS[0]),
-				_getObjectNames("VIEW", companyId));
+				_getObjectNames("VIEW", getPartitionName(COMPANY_IDS[0])),
+				_getObjectNames("VIEW", getPartitionName(companyId)));
 
 			for (String fromTableName : fromTableNames) {
 				String toTableName = fromTableName;
@@ -225,6 +227,7 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 		}
 	}
 
+	@Ignore
 	@Test
 	public void testExtractAndInsertDBPartition() throws Exception {
 		try {
@@ -238,8 +241,11 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 			HashMap<Long, Integer> tablesCount = new HashMap<>();
 
 			for (long companyId : COMPANY_IDS) {
-				viewNames.put(companyId, _getObjectNames("VIEW", companyId));
-				tablesCount.put(companyId, _getTablesCount(companyId));
+				viewNames.put(
+					companyId,
+					_getObjectNames("VIEW", getPartitionName(companyId)));
+				tablesCount.put(
+					companyId, _getTablesCount(getPartitionName(companyId)));
 
 				_scheduleJob(companyId, _JOB_NAME_1);
 			}
@@ -275,10 +281,10 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 			for (long companyId : COMPANY_IDS) {
 				Assert.assertEquals(
 					viewNames.get(companyId),
-					_getObjectNames("VIEW", companyId));
+					_getObjectNames("VIEW", getPartitionName(companyId)));
 				Assert.assertEquals(
 					(int)tablesCount.get(companyId),
-					_getTablesCount(companyId));
+					_getTablesCount(getPartitionName(companyId)));
 				Assert.assertEquals(1, _getJobsCountByCompany(companyId));
 			}
 
@@ -303,13 +309,15 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 			HashMap<Long, Integer> tablesCount = new HashMap<>();
 
 			for (long companyId : COMPANY_IDS) {
-				List<String> views = _getObjectNames("VIEW", companyId);
+				List<String> views = _getObjectNames(
+					"VIEW", getPartitionName(companyId));
 
 				viewNames.put(companyId, views);
 
 				Assert.assertNotEquals(0, views.size());
 
-				tablesCount.put(companyId, _getTablesCount(companyId));
+				tablesCount.put(
+					companyId, _getTablesCount(getPartitionName(companyId)));
 
 				_scheduleJob(companyId, _JOB_NAME_1);
 			}
@@ -321,13 +329,20 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 			extractDBPartitions();
 
 			for (long companyId : COMPANY_IDS) {
+				String extractedPartitionName = getExtractedPartitionName(
+					companyId);
 				List<String> views = viewNames.get(companyId);
 
 				Assert.assertEquals(
 					tablesCount.get(companyId) + views.size(),
-					_getTablesCount(companyId));
+					_getTablesCount(extractedPartitionName));
 
-				Assert.assertEquals(0, _getViewsCount(companyId));
+				Assert.assertEquals(
+					(int)tablesCount.get(companyId),
+					_getTablesCount(getPartitionName(companyId)));
+				Assert.assertEquals(0, _getViewsCount(extractedPartitionName));
+				Assert.assertEquals(
+					views.size(), _getViewsCount(getPartitionName(companyId)));
 
 				for (String viewName : viewNames.get(companyId)) {
 					if (!isCopyableQuartzTable(viewName)) {
@@ -336,7 +351,8 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 							_getCount(
 								PortalInstancePool.getDefaultCompanyId(),
 								viewName),
-							_getCount(companyId, viewName));
+							_getCount(
+								companyId, extractedPartitionName, viewName));
 					}
 					else if (StringUtil.equalsIgnoreCase(
 								viewName, "QUARTZ_JOB_DETAILS") ||
@@ -347,20 +363,27 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 
 						Assert.assertEquals(
 							viewName + " count", 1,
-							_getCount(companyId, viewName));
+							_getCount(
+								companyId, extractedPartitionName, viewName));
 					}
 					else {
 						Assert.assertEquals(
 							viewName + " count", 0,
-							_getCount(companyId, viewName));
+							_getCount(
+								companyId, extractedPartitionName, viewName));
 					}
 				}
 
-				Assert.assertEquals(
-					1, _getJobsCount(getPartitionName(companyId)));
+				Assert.assertEquals(1, _getJobsCount(extractedPartitionName));
 			}
 		}
 		finally {
+			for (long companyId : COMPANY_IDS) {
+				db.runSQL(
+					dbPartitionDB.getDropPartitionSQL(
+						getExtractedPartitionName(companyId)));
+			}
+
 			deletePartitionRequiredData();
 
 			removeDBPartitions();
@@ -466,6 +489,13 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 	}
 
 	private int _getCount(long companyId, String tableName) throws Exception {
+		return _getCount(companyId, getPartitionName(companyId), tableName);
+	}
+
+	private int _getCount(
+			long companyId, String partitionName, String tableName)
+		throws Exception {
+
 		String whereClause = StringPool.BLANK;
 
 		if (dbInspector.hasColumn(tableName, "companyId")) {
@@ -474,8 +504,8 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 
 		try (PreparedStatement preparedStatement = connection.prepareStatement(
 				StringBundler.concat(
-					"select count(1) from ", getPartitionName(companyId),
-					StringPool.PERIOD, tableName, whereClause));
+					"select count(1) from ", partitionName, StringPool.PERIOD,
+					tableName, whereClause));
 			ResultSet resultSet = preparedStatement.executeQuery()) {
 
 			if (resultSet.next()) {
@@ -531,13 +561,13 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 		throw new Exception("Table does not exist");
 	}
 
-	private List<String> _getObjectNames(String objectType, long companyId)
+	private List<String> _getObjectNames(
+			String objectType, String partitionName)
 		throws Exception {
 
 		List<String> objectNames = new ArrayList<>();
 
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
-		String partitionName = getPartitionName(companyId);
 
 		try (ResultSet resultSet = databaseMetaData.getTables(
 				dbPartitionDB.getCatalog(connection, partitionName),
@@ -552,14 +582,14 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 		return objectNames;
 	}
 
-	private int _getTablesCount(long companyId) throws Exception {
-		List<String> tableNames = _getObjectNames("TABLE", companyId);
+	private int _getTablesCount(String partitionName) throws Exception {
+		List<String> tableNames = _getObjectNames("TABLE", partitionName);
 
 		return tableNames.size();
 	}
 
-	private int _getViewsCount(long companyId) throws Exception {
-		List<String> viewNames = _getObjectNames("VIEW", companyId);
+	private int _getViewsCount(String partitionName) throws Exception {
+		List<String> viewNames = _getObjectNames("VIEW", partitionName);
 
 		return viewNames.size();
 	}

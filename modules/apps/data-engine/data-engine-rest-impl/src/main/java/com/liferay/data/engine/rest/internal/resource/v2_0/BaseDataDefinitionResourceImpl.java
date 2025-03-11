@@ -989,8 +989,25 @@ public abstract class BaseDataDefinitionResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (DataDefinition dataDefinition : dataDefinitions) {
-			deleteDataDefinition(dataDefinition.getId());
+		UnsafeFunction<DataDefinition, DataDefinition, Exception>
+			dataDefinitionUnsafeFunction = dataDefinition -> {
+				deleteDataDefinition(dataDefinition.getId());
+
+				return dataDefinition;
+			};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				dataDefinitions, dataDefinitionUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				dataDefinitions, dataDefinitionUnsafeFunction::apply);
+		}
+		else {
+			for (DataDefinition dataDefinition : dataDefinitions) {
+				dataDefinitionUnsafeFunction.apply(dataDefinition);
+			}
 		}
 	}
 

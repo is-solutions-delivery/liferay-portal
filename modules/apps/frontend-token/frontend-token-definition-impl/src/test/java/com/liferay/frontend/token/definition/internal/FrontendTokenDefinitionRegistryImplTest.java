@@ -21,6 +21,7 @@ import java.net.URL;
 
 import java.util.Dictionary;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -141,21 +142,21 @@ public class FrontendTokenDefinitionRegistryImplTest {
 	}
 
 	@Test
-	public void testGetThemeIdsWithNontheme() {
+	public void testGetThemeMapsWithNontheme() {
 		FrontendTokenDefinitionRegistryImpl
 			frontendTokenDefinitionRegistryImpl =
 				new FrontendTokenDefinitionRegistryImpl();
 
 		Bundle bundle = Mockito.mock(Bundle.class);
 
-		List<String> themeIds = frontendTokenDefinitionRegistryImpl.getThemeIds(
-			bundle);
+		List<Map<String, String>> themeMaps =
+			frontendTokenDefinitionRegistryImpl.getThemeMaps(bundle);
 
-		Assert.assertTrue(themeIds.isEmpty());
+		Assert.assertTrue(themeMaps.isEmpty());
 	}
 
 	@Test
-	public void testGetThemeIdsWithoutServletContext() {
+	public void testGetThemeMapsWithoutServletContext() {
 		FrontendTokenDefinitionRegistryImpl
 			frontendTokenDefinitionRegistryImpl =
 				new FrontendTokenDefinitionRegistryImpl();
@@ -176,16 +177,24 @@ public class FrontendTokenDefinitionRegistryImplTest {
 
 		frontendTokenDefinitionRegistryImpl.portal = new PortalImpl();
 
-		List<String> themeIds = frontendTokenDefinitionRegistryImpl.getThemeIds(
-			bundle);
+		List<Map<String, String>> themeMaps =
+			frontendTokenDefinitionRegistryImpl.getThemeMaps(bundle);
 
-		Assert.assertEquals(themeIds.toString(), 2, themeIds.size());
-		Assert.assertEquals("classic", themeIds.get(0));
-		Assert.assertEquals("modern", themeIds.get(1));
+		Assert.assertEquals(themeMaps.toString(), 2, themeMaps.size());
+
+		Map<String, String> themesData1 = themeMaps.get(0);
+
+		Assert.assertEquals("classic", themesData1.get("id"));
+		Assert.assertEquals("Classic", themesData1.get("name"));
+
+		Map<String, String> themesData2 = themeMaps.get(1);
+
+		Assert.assertEquals("modern", themesData2.get("id"));
+		Assert.assertEquals("Modern", themesData2.get("name"));
 	}
 
 	@Test
-	public void testGetThemeIdsWithServletContext() {
+	public void testGetThemeMapsWithServletContext() {
 		FrontendTokenDefinitionRegistryImpl
 			frontendTokenDefinitionRegistryImpl =
 				new FrontendTokenDefinitionRegistryImpl();
@@ -210,13 +219,20 @@ public class FrontendTokenDefinitionRegistryImplTest {
 
 		frontendTokenDefinitionRegistryImpl.portal = new PortalImpl();
 
-		List<String> themeIds = frontendTokenDefinitionRegistryImpl.getThemeIds(
-			bundle);
+		List<Map<String, String>> themeMaps =
+			frontendTokenDefinitionRegistryImpl.getThemeMaps(bundle);
 
-		Assert.assertEquals(themeIds.toString(), 2, themeIds.size());
+		Assert.assertEquals(themeMaps.toString(), 2, themeMaps.size());
 
-		Assert.assertEquals("classic_WAR_twothemes", themeIds.get(0));
-		Assert.assertEquals("modern_WAR_twothemes", themeIds.get(1));
+		Map<String, String> themesData1 = themeMaps.get(0);
+
+		Assert.assertEquals("classic_WAR_twothemes", themesData1.get("id"));
+		Assert.assertEquals("Classic", themesData1.get("name"));
+
+		Map<String, String> themesData2 = themeMaps.get(1);
+
+		Assert.assertEquals("modern_WAR_twothemes", themesData2.get("id"));
+		Assert.assertEquals("Modern", themesData2.get("name"));
 	}
 
 	private static final URL _frontendTokenDefinitionJSONURL =

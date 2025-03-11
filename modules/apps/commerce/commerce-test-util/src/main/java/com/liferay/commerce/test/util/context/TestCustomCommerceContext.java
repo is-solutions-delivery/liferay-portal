@@ -11,6 +11,7 @@ import com.liferay.commerce.context.BaseCommerceContext;
 import com.liferay.commerce.currency.model.CommerceCurrency;
 import com.liferay.commerce.currency.service.CommerceCurrencyLocalService;
 import com.liferay.commerce.currency.test.util.CommerceCurrencyTestUtil;
+import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.product.discovery.CPConfigurationListDiscovery;
 import com.liferay.commerce.product.service.CommerceCatalogLocalService;
 import com.liferay.commerce.product.service.CommerceChannelAccountEntryRelLocalService;
@@ -18,6 +19,7 @@ import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.service.CommerceOrderService;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.util.Validator;
 
 /**
  * @author Alec Sloan
@@ -25,34 +27,47 @@ import com.liferay.portal.kernel.exception.PortalException;
 public class TestCustomCommerceContext extends BaseCommerceContext {
 
 	public TestCustomCommerceContext(
-		long companyId, long commerceChannelGroupId, long orderId,
-		long commerceAccountId,
 		AccountEntryLocalService accountEntryLocalService,
 		AccountGroupLocalService accountGroupLocalService,
+		long commerceAccountId,
 		CommerceCatalogLocalService commerceCatalogLocalService,
 		CommerceChannelAccountEntryRelLocalService
 			commerceChannelAccountEntryRelLocalService,
+		long commerceChannelGroupId,
 		CommerceChannelLocalService commerceChannelLocalService,
+		String commerceCurrencyCode,
 		CommerceCurrencyLocalService commerceCurrencyLocalService,
-		CommerceOrderService commerceOrderService,
-		ConfigurationProvider configurationProvider,
+		long commerceOrderId, CommerceOrderService commerceOrderService,
+		long companyId, ConfigurationProvider configurationProvider,
 		CPConfigurationListDiscovery cpConfigurationListDiscovery) {
 
 		super(
-			companyId, commerceChannelGroupId, orderId, commerceAccountId,
 			accountEntryLocalService, accountGroupLocalService,
-			commerceCatalogLocalService,
-			commerceChannelAccountEntryRelLocalService,
-			commerceChannelLocalService, commerceCurrencyLocalService,
-			commerceOrderService, configurationProvider,
-			cpConfigurationListDiscovery);
+			commerceAccountId, commerceCatalogLocalService,
+			commerceChannelAccountEntryRelLocalService, commerceChannelGroupId,
+			commerceChannelLocalService, commerceCurrencyCode,
+			commerceCurrencyLocalService, commerceOrderId, commerceOrderService,
+			companyId, configurationProvider, cpConfigurationListDiscovery);
 
-		_companyId = companyId;
+		_commerceCurrencyCode = commerceCurrencyCode;
 		_commerceCurrencyLocalService = commerceCurrencyLocalService;
+		_companyId = companyId;
 	}
 
 	@Override
 	public CommerceCurrency getCommerceCurrency() throws PortalException {
+		CommerceOrder commerceOrder = getCommerceOrder();
+
+		if (commerceOrder != null) {
+			return commerceOrder.getCommerceCurrency();
+		}
+
+		if (!Validator.isBlank(_commerceCurrencyCode)) {
+			_commerceCurrency =
+				_commerceCurrencyLocalService.fetchCommerceCurrency(
+					_companyId, _commerceCurrencyCode);
+		}
+
 		if (_commerceCurrency != null) {
 			return _commerceCurrency;
 		}
@@ -69,6 +84,7 @@ public class TestCustomCommerceContext extends BaseCommerceContext {
 	}
 
 	private CommerceCurrency _commerceCurrency;
+	private final String _commerceCurrencyCode;
 	private final CommerceCurrencyLocalService _commerceCurrencyLocalService;
 	private final long _companyId;
 

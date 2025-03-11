@@ -11,6 +11,7 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.LabelItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.LabelItemListBuilder;
 import com.liferay.portal.kernel.dao.search.RowChecker;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.BaseModel;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
@@ -22,6 +23,7 @@ import com.liferay.style.book.model.StyleBookEntry;
 import com.liferay.style.book.service.StyleBookEntryLocalServiceUtil;
 import com.liferay.style.book.web.internal.security.permissions.resource.StyleBookPermission;
 import com.liferay.style.book.web.internal.servlet.taglib.util.StyleBookEntryActionDropdownItemsProvider;
+import com.liferay.style.book.web.internal.util.StyleBookUtil;
 
 import java.util.Collections;
 import java.util.List;
@@ -86,7 +88,12 @@ public class StyleBookVerticalCard
 				_themeDisplay.getPermissionChecker(),
 				_themeDisplay.getScopeGroupId(),
 				StyleBookActionKeys.MANAGE_STYLE_BOOK_ENTRIES) ||
-			(_styleBookEntry.getStyleBookEntryId() <= 0)) {
+			(_styleBookEntry.getStyleBookEntryId() <= 0) ||
+			(FeatureFlagManagerUtil.isEnabled(
+				_themeDisplay.getCompanyId(), "LPD-30204") &&
+			 StyleBookUtil.isThemeInactive(
+				 _styleBookEntry.getCompanyId(),
+				 _styleBookEntry.getThemeId()))) {
 
 			return null;
 		}
@@ -112,6 +119,20 @@ public class StyleBookVerticalCard
 
 	@Override
 	public List<LabelItem> getLabels() {
+		if ((_styleBookEntry.getStyleBookEntryId() > 0) &&
+			FeatureFlagManagerUtil.isEnabled(
+				_themeDisplay.getCompanyId(), "LPD-30204") &&
+			StyleBookUtil.isThemeInactive(
+				_styleBookEntry.getCompanyId(), _styleBookEntry.getThemeId())) {
+
+			return LabelItemListBuilder.add(
+				labelItem -> {
+					labelItem.setStatus(WorkflowConstants.STATUS_INACTIVE);
+					labelItem.setStyle("danger");
+				}
+			).build();
+		}
+
 		StyleBookEntry draftStyleBookEntry =
 			StyleBookEntryLocalServiceUtil.fetchDraft(_styleBookEntry);
 
@@ -168,11 +189,17 @@ public class StyleBookVerticalCard
 
 	@Override
 	public boolean isSelectable() {
-		if (_styleBookEntry.getStyleBookEntryId() > 0) {
-			return true;
+		if ((_styleBookEntry.getStyleBookEntryId() <= 0) ||
+			(FeatureFlagManagerUtil.isEnabled(
+				_themeDisplay.getCompanyId(), "LPD-30204") &&
+			 StyleBookUtil.isThemeInactive(
+				 _styleBookEntry.getCompanyId(),
+				 _styleBookEntry.getThemeId()))) {
+
+			return false;
 		}
 
-		return false;
+		return true;
 	}
 
 	private final RenderRequest _renderRequest;

@@ -21,6 +21,9 @@ import com.liferay.object.service.ObjectRelationshipLocalService;
 import com.liferay.object.service.ObjectValidationRuleLocalService;
 import com.liferay.object.service.ObjectViewLocalService;
 import com.liferay.object.system.SystemObjectDefinitionManagerRegistry;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
 
@@ -56,7 +59,7 @@ public class ObjectDefinitionDTOConverter
 
 		ObjectDefinition objectDefinition =
 			ObjectDefinitionUtil.toObjectDefinition(
-				dtoConverterContext.getLocale(),
+				_groupLocalService, dtoConverterContext.getLocale(),
 				_notificationTemplateLocalService, _objectActionLocalService,
 				_objectDefinitionLocalService, _objectFieldDTOConverter,
 				_objectFieldLocalService, _objectLayoutLocalService,
@@ -64,13 +67,17 @@ public class ObjectDefinitionDTOConverter
 				_objectRelationshipLocalService,
 				_objectValidationRuleDTOConverter,
 				_objectValidationRuleLocalService, _objectViewDTOConverter,
-				_objectViewLocalService, serviceBuilderObjectDefinition,
-				_systemObjectDefinitionManagerRegistry);
+				_objectViewLocalService, _portal,
+				serviceBuilderObjectDefinition,
+				_systemObjectDefinitionManagerRegistry, _userLocalService);
 
 		objectDefinition.setActions(dtoConverterContext::getActions);
 
 		return objectDefinition;
 	}
+
+	@Reference
+	private GroupLocalService _groupLocalService;
 
 	@Reference
 	private NotificationTemplateLocalService _notificationTemplateLocalService;
@@ -118,7 +125,13 @@ public class ObjectDefinitionDTOConverter
 	private ObjectViewLocalService _objectViewLocalService;
 
 	@Reference
+	private Portal _portal;
+
+	@Reference
 	private SystemObjectDefinitionManagerRegistry
 		_systemObjectDefinitionManagerRegistry;
+
+	@Reference
+	private UserLocalService _userLocalService;
 
 }

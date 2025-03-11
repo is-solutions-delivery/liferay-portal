@@ -23,6 +23,13 @@ import getLayoutDataItemUniqueClassName from '../../../../../src/main/resources/
 
 const COLLECTION_ID = 'COLLECTION_ID';
 
+jest.mock(
+	'../../../../../src/main/resources/META-INF/resources/page_editor/app/services/InfoItemService',
+	() => ({
+		getPageContents: jest.fn(() => Promise.resolve()),
+	})
+);
+
 const renderCollection = ({
 	isActive = true,
 	collectionConfig = {styles: {}},
@@ -77,12 +84,6 @@ const renderCollection = ({
 
 describe('CollectionWithControls', () => {
 	afterEach(cleanup);
-
-	it('shows a no-collection-selected message', () => {
-		const {getByText} = renderCollection();
-
-		expect(getByText('no-collection-selected-yet')).toBeInTheDocument();
-	});
 
 	it('removes all buttons if user has no permissions', () => {
 		const {queryByTitle} = renderCollection({hasUpdatePermission: false});

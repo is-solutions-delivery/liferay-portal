@@ -4,7 +4,9 @@
  */
 
 type Args = {
-	defaultLanguageId: string;
+	changeTextDirection?: boolean;
+	customLocaleChangeHandler?: boolean;
+	defaultLanguageId: Liferay.Language.Locale;
 	inputElement?: HTMLInputElement;
 	onLocaleChange?: (languageId: string) => void;
 	readOnlyInputLabel?: HTMLSpanElement;
@@ -13,6 +15,8 @@ type Args = {
 };
 
 export function registerUnlocalizedInput({
+	changeTextDirection = true,
+	customLocaleChangeHandler = false,
 	defaultLanguageId,
 	inputElement,
 	onLocaleChange,
@@ -20,23 +24,41 @@ export function registerUnlocalizedInput({
 	unlocalizedFieldsState,
 	unlocalizedMessageContainer,
 }: Args) {
-	Liferay.on('localizationSelect:localeChanged', ({languageId}) => {
-		onLocaleChange?.(languageId);
+	Liferay.on(
+		'localizationSelect:localeChanged',
+		({languageId}: {languageId: Liferay.Language.Locale}) => {
+			onLocaleChange?.(languageId);
 
-		if (languageId === defaultLanguageId) {
-			if (unlocalizedFieldsState === 'disabled') {
-				inputElement?.removeAttribute('disabled');
+			const editingDefaultLanguage = languageId === defaultLanguageId;
+
+			// Show unlocalized icon for non-default language
+
+			unlocalizedMessageContainer?.classList.toggle(
+				'd-none',
+				editingDefaultLanguage
+			);
+
+			if (changeTextDirection) {
+				inputElement?.setAttribute(
+					'dir',
+					Liferay.Language.direction[languageId]!
+				);
+			}
+
+			const isReadOnlyFieldState = unlocalizedFieldsState === 'read-only';
+
+			if (isReadOnlyFieldState) {
+
+				// Show "(Read Only)" label in input label
+
+				readOnlyInputLabel?.classList.toggle(
+					'd-none',
+					editingDefaultLanguage
+				);
 			}
 			else {
-				inputElement?.removeAttribute('readonly');
-				readOnlyInputLabel?.classList.add('d-none');
-			}
 
-			unlocalizedMessageContainer?.classList.add('d-none');
-		}
-		else {
-			if (unlocalizedFieldsState === 'disabled') {
-				inputElement?.setAttribute('disabled', '');
+				// Remove disable attribute before submit to include the value in the form
 
 				inputElement?.closest('form')?.addEventListener(
 					'submit',
@@ -46,12 +68,24 @@ export function registerUnlocalizedInput({
 					true
 				);
 			}
-			else {
-				inputElement?.setAttribute('readonly', '');
-				readOnlyInputLabel?.classList.remove('d-none');
+
+			if (customLocaleChangeHandler) {
+				return;
 			}
 
-			unlocalizedMessageContainer.classList.remove('d-none');
+			// Change state of the input to disabled/readonly for non default language
+
+			if (editingDefaultLanguage) {
+				inputElement?.removeAttribute(
+					isReadOnlyFieldState ? 'readonly' : 'disabled'
+				);
+			}
+			else {
+				inputElement?.setAttribute(
+					isReadOnlyFieldState ? 'readonly' : 'disabled',
+					''
+				);
+			}
 		}
-	});
+	);
 }

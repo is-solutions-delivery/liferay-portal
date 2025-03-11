@@ -77,9 +77,7 @@ async function performLogin(
 			.click();
 	}
 
-	await expect(
-		page.getByLabel(`${name} ${surname} User Profile`)
-	).toBeVisible({
+	await expect(page.getByLabel(`${name} ${surname}`)).toBeVisible({
 		timeout: 30 * 1000,
 	});
 

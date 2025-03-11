@@ -7,10 +7,14 @@ package com.liferay.segments.model.impl;
 
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.segments.constants.SegmentsExperimentConstants;
+import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.model.SegmentsExperiment;
+import com.liferay.segments.service.SegmentsExperienceLocalServiceUtil;
 import com.liferay.segments.service.SegmentsExperimentLocalServiceUtil;
 
 import java.io.IOException;
@@ -38,9 +42,14 @@ public class SegmentsExperienceImpl extends SegmentsExperienceBaseImpl {
 
 	@Override
 	public boolean hasSegmentsExperiment() {
+		SegmentsExperience segmentsExperience =
+			SegmentsExperienceLocalServiceUtil.fetchSegmentsExperience(
+				getSegmentsExperienceId());
+
 		SegmentsExperiment segmentsExperiment =
 			SegmentsExperimentLocalServiceUtil.fetchSegmentsExperiment(
-				getGroupId(), getSegmentsExperienceId(), getPlid());
+				getGroupId(), segmentsExperience.getSegmentsExperienceKey(),
+				_getPublishedLayoutPlid());
 
 		if ((segmentsExperiment == null) ||
 			!ArrayUtil.contains(
@@ -60,6 +69,16 @@ public class SegmentsExperienceImpl extends SegmentsExperienceBaseImpl {
 		_typeSettingsUnicodeProperties = typeSettingsUnicodeProperties;
 
 		super.setTypeSettings(_typeSettingsUnicodeProperties.toString());
+	}
+
+	private long _getPublishedLayoutPlid() {
+		Layout layout = LayoutLocalServiceUtil.fetchLayout(getPlid());
+
+		if ((layout != null) && layout.isDraftLayout()) {
+			return layout.getClassPK();
+		}
+
+		return getPlid();
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

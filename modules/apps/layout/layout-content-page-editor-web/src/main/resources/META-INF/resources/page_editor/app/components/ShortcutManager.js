@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {openToast} from 'frontend-js-web';
+import {openToast} from 'frontend-js-components-web';
 import React, {useEffect, useRef, useState} from 'react';
 
 import {ITEM_ACTIVATION_ORIGINS} from '../config/constants/itemActivationOrigins';
@@ -93,9 +93,7 @@ export default function ShortcutManager() {
 		return !activeItemIds?.length ? rootItem.itemId : activeItemIds[0];
 	};
 
-	const selectItems = Liferay.FeatureFlags['LPD-18221']
-		? selectMultipleItems
-		: selectItem;
+	const selectItems = selectMultipleItems;
 
 	const multiSelection = activeItemIds.length > 1;
 
@@ -107,49 +105,47 @@ export default function ShortcutManager() {
 	const keymapRef = useRef(null);
 
 	keymapRef.current = {
-		...(Liferay.FeatureFlags['LPD-18221'] && {
-			copy: {
-				action: () => setClipboard(activeItemIds),
-				canBeExecuted: () =>
-					!isEditingEditableField() &&
-					!isTextSelected() &&
-					canUpdatePageStructure &&
-					activeItemIds.every(
-						(activeItemId) =>
-							!!layoutData.items[activeItemId] &&
-							canBeDuplicated(
-								fragmentEntryLinks,
-								layoutData.items[activeItemId],
-								layoutData,
-								getWidgets
-							)
-					),
-				isKeyCombination: (event) =>
-					isCtrlOrMeta(event) && event.code === C_KEY_CODE,
-			},
-			cut: {
-				action: () => {
-					setClipboard(activeItemIds);
+		copy: {
+			action: () => setClipboard(activeItemIds),
+			canBeExecuted: () =>
+				!isEditingEditableField() &&
+				!isTextSelected() &&
+				canUpdatePageStructure &&
+				activeItemIds.every(
+					(activeItemId) =>
+						!!layoutData.items[activeItemId] &&
+						canBeDuplicated(
+							fragmentEntryLinks,
+							layoutData.items[activeItemId],
+							layoutData,
+							getWidgets
+						)
+				),
+			isKeyCombination: (event) =>
+				isCtrlOrMeta(event) && event.code === C_KEY_CODE,
+		},
+		cut: {
+			action: () => {
+				setClipboard(activeItemIds);
 
-					dispatch(
-						deleteItem({
-							itemIds: activeItemIds,
-							selectItems,
-						})
-					);
-				},
-				canBeExecuted: (event) =>
-					!isEditingEditableField() &&
-					!isTextSelected() &&
-					canUpdatePageStructure &&
-					!isInteractiveElement(event.target) &&
-					activeItemIds.every((id) =>
-						isCuttable(id, fragmentEntryLinks, layoutData)
-					),
-				isKeyCombination: (event) =>
-					isCtrlOrMeta(event) && event.code === X_KEY_CODE,
+				dispatch(
+					deleteItem({
+						itemIds: activeItemIds,
+						selectItems,
+					})
+				);
 			},
-		}),
+			canBeExecuted: (event) =>
+				!isEditingEditableField() &&
+				!isTextSelected() &&
+				canUpdatePageStructure &&
+				!isInteractiveElement(event.target) &&
+				activeItemIds.every((id) =>
+					isCuttable(id, fragmentEntryLinks, layoutData)
+				),
+			isKeyCombination: (event) =>
+				isCtrlOrMeta(event) && event.code === X_KEY_CODE,
+		},
 		duplicate: {
 			action: () =>
 				dispatch(
@@ -231,35 +227,33 @@ export default function ShortcutManager() {
 				!isEditingEditableField(),
 			isKeyCombination: (event) => event.shiftKey && event.key === '?',
 		},
-		...(Liferay.FeatureFlags['LPD-18221'] && {
-			paste: {
-				action: () =>
-					dispatch(
-						pasteItems({
-							clipboard,
-							parentItemId: getParentItemId(),
-							selectItems,
-						})
+		paste: {
+			action: () =>
+				dispatch(
+					pasteItems({
+						clipboard,
+						parentItemId: getParentItemId(),
+						selectItems,
+					})
+				),
+			canBeExecuted: () =>
+				!isEditingEditableField() &&
+				!isInteractiveElement(document.activeElement) &&
+				canUpdatePageStructure &&
+				isOnlyOneParentSelected(activeItemIds) &&
+				clipboard.length &&
+				isMovementValid({
+					fragmentEntryLinks,
+					getWidgets,
+					layoutData,
+					sources: clipboard.map((id) =>
+						toMovementItem(id, layoutData, fragmentEntryLinks)
 					),
-				canBeExecuted: () =>
-					!isEditingEditableField() &&
-					!isInteractiveElement(document.activeElement) &&
-					canUpdatePageStructure &&
-					isOnlyOneParentSelected(activeItemIds) &&
-					clipboard.length &&
-					isMovementValid({
-						fragmentEntryLinks,
-						getWidgets,
-						layoutData,
-						sources: clipboard.map((id) =>
-							toMovementItem(id, layoutData, fragmentEntryLinks)
-						),
-						targetId: getParentItemId(),
-					}),
-				isKeyCombination: (event) =>
-					isCtrlOrMeta(event) && event.code === V_KEY_CODE,
-			},
-		}),
+					targetId: getParentItemId(),
+				}),
+			isKeyCombination: (event) =>
+				isCtrlOrMeta(event) && event.code === V_KEY_CODE,
+		},
 		remove: {
 			action: () =>
 				dispatch(

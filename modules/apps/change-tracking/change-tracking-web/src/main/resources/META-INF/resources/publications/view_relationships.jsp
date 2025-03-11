@@ -29,10 +29,10 @@ renderResponse.setTitle(LanguageUtil.get(request, "review-changes"));
 		navigationItems="<%= viewChangesDisplayContext.getViewNavigationItems() %>"
 	/>
 
-	<clay:container-fluid>
+	<div>
 		<react:component
 			module="{ChangeTrackingRelationshipsView} from change-tracking-web"
 			props="<%= viewChangesDisplayContext.getToolbarReactData() %>"
 		/>
-	</clay:container-fluid>
+	</div>
 </div>

@@ -35,6 +35,7 @@ import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.batch.engine.VulcanBatchEngineTaskItemDelegate;
 import com.liferay.portal.vulcan.batch.engine.resource.VulcanBatchEngineExportTaskResource;
 import com.liferay.portal.vulcan.batch.engine.resource.VulcanBatchEngineImportTaskResource;
+import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegate;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
@@ -70,7 +71,8 @@ import javax.ws.rs.core.UriInfo;
 @javax.ws.rs.Path("/v1.0")
 public abstract class BaseCTCollectionResourceImpl
 	implements CTCollectionResource, EntityModelResource,
-			   VulcanBatchEngineTaskItemDelegate<CTCollection> {
+			   VulcanBatchEngineTaskItemDelegate<CTCollection>,
+			   VulcanCRUDItemDelegate<CTCollection> {
 
 	/**
 	 * Invoke this method with the command line:
@@ -871,8 +873,25 @@ public abstract class BaseCTCollectionResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (CTCollection ctCollection : ctCollections) {
-			deleteCTCollection(ctCollection.getId());
+		UnsafeFunction<CTCollection, CTCollection, Exception>
+			ctCollectionUnsafeFunction = ctCollection -> {
+				deleteCTCollection(ctCollection.getId());
+
+				return ctCollection;
+			};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				ctCollections, ctCollectionUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				ctCollections, ctCollectionUnsafeFunction::apply);
+		}
+		else {
+			for (CTCollection ctCollection : ctCollections) {
+				ctCollectionUnsafeFunction.apply(ctCollection);
+			}
 		}
 	}
 
@@ -992,6 +1011,11 @@ public abstract class BaseCTCollectionResourceImpl
 		}
 
 		return null;
+	}
+
+	@Override
+	public CTCollection getItem(Long id) throws Exception {
+		return getCTCollection(id);
 	}
 
 	public void setContextAcceptLanguage(AcceptLanguage contextAcceptLanguage) {

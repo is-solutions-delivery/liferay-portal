@@ -62,13 +62,21 @@ components:
                         The client extension's external reference code.
                     type: string
             type: object
+        CollectionItemExternalReference:
+            allOf:
+                - $ref: "#/components/schemas/CollectionReference"
+                - $ref: "#/components/schemas/ItemExternalReference"
+            # @review
+            description:
+                A unique reference to a collection which remains constant across environments.
+            type: object
         CollectionReference:
             # @review
             description:
                 The page collection's reference.
             discriminator:
                 mapping:
-                    Collection: "#/components/schemas/ItemExternalReference"
+                    Collection: "#/components/schemas/CollectionItemExternalReference"
                     CollectionProvider: "#/components/schemas/ClassNameReference"
                 propertyName: collectionType
             properties:
@@ -139,8 +147,8 @@ components:
                           type: array
             # @review
             description:
-                A page specification of a content page. A content page may contain 0 or 1 page specifications in draft
-                status and 0 or 1 page specifications in published status.
+                A page specification of a content page. A content page will contain 1 page specifications for its draft
+                layout and 1 page specifications for its published layout.
             type: object
         ContentPageTemplate:
             allOf:
@@ -348,9 +356,9 @@ components:
                 pageSpecifications:
                     # @review
                     description:
-                        The display page template's specifications. A display page template may contain 0 or 1 page
-                        specifications in draft status and 0 or 1 page specifications in published status. This field is
-                        not returned by default. It can be requested via nestedFields.
+                        The display page template's specifications. A display page template will contain 1 page
+                        specifications for its draft layout and 1 page specifications for its published layout. This
+                        field is not returned by default. It can be requested via nestedFields.
                     items:
                         $ref: "#/components/schemas/PageSpecification"
                     type: array
@@ -1094,27 +1102,25 @@ components:
                     type: number
             type: object
         ItemExternalReference:
-            allOf:
-                - $ref: "#/components/schemas/CollectionReference"
-                - properties:
-                      className:
-                          type: string
-                      externalReferenceCode:
-                          type: string
-                      scope:
-                          properties:
-                              externalReferenceCode:
-                                  type: string
-                              type:
-                                  enum: [AssetLibrary, Site]
-                                  type: string
-                          required:
-                              - externalReferenceCode
-                              - type
-                          type: object
             # @review
             description:
                 A unique reference to an entity which remains constant across environments.
+            properties:
+                className:
+                    type: string
+                externalReferenceCode:
+                    type: string
+                scope:
+                    properties:
+                        externalReferenceCode:
+                            type: string
+                        type:
+                            enum: [AssetLibrary, Site]
+                            type: string
+                    required:
+                        - externalReferenceCode
+                        - type
+                    type: object
             required:
                 - externalReferenceCode
             type: object
@@ -1188,8 +1194,8 @@ components:
                 pageSpecifications:
                     # @review
                     description:
-                        The master page's specifications. A master page may contain 0 or 1 page specifications in draft
-                        status and 0 or 1 page specifications in published status. This field is not returned by
+                        The master page's specifications. A master page will contain 1 page specifications for its draft
+                        layout and 1 page specifications for its published layout. This field is not returned by
                         default. It can be requested via nestedFields.
                     items:
                         $ref: "#/components/schemas/PageSpecification"
@@ -1693,6 +1699,11 @@ components:
                     items:
                         $ref: "#/components/schemas/PageRule"
                     type: array
+                pageSpecificationExternalReferenceCode:
+                    # @review
+                    description:
+                        The page specification's external reference code.
+                    type: string
                 priority:
                     # @review
                     description:
@@ -1701,11 +1712,6 @@ components:
                         experience being active and a priority lower than 0 will result in an experience being inactive.
                     type: integer
                 segmentExternalReferenceCode:
-                    # @review
-                    description:
-                        The segment's external reference code.
-                    type: string
-                sitePageExternalReferenceCode:
                     # @review
                     description:
                         The segment's external reference code.
@@ -2224,8 +2230,8 @@ components:
             # @review
             description:
                 A page specification of a content page, content page template, widget page, or widget page template. A
-                content page may contain 0 or 1 page specifications in draft status and 0 or 1 page specifications in
-                published status. A widget page contains only 1 page specification in published status.
+                content page will contain 1 page specifications for its draft layout and 1 page specifications for its
+                published layout. A widget page contains only 1 page specification for its published layout.
             discriminator:
                 mapping:
                     ContentPageSpecification: "#/components/schemas/ContentPageSpecification"
@@ -2323,10 +2329,10 @@ components:
                 pageSpecifications:
                     # @review
                     description:
-                        The page template's specifications. A page template of type content may contain 0 or 1 page
-                        specifications in draft status and 0 or 1 page specifications in published status. A page
-                        template of type widget contains only 1 page specification in published status. This field is
-                        not returned by default. It can be requested via nestedFields.
+                        The page template's specifications. A page template of type content will contain 1 page
+                        specifications for its draft layout and 1 page specifications for its published layout. A page
+                        template of type widget contains only 1 page specification for its published layout. This field
+                        is not returned by default. It can be requested via nestedFields.
                     items:
                         $ref: "#/components/schemas/PageSpecification"
                     type: array
@@ -2766,9 +2772,10 @@ components:
                 pageSpecifications:
                     # @review
                     description:
-                        The page's specifications. A page may contain 0 or 1 page specifications in draft status and 0
-                        or 1 page specifications in published status. This field is not returned by default. It can be
-                        requested via nestedFields.
+                        The page's specifications. A page of type content will contain 1 page specifications for its
+                        draft layout and 1 page specifications for its published layout. A page of type widget contains
+                        only 1 page specification for its published layout. This field is not returned by default. It
+                        can be requested via nestedFields.
                     items:
                         $ref: "#/components/schemas/PageSpecification"
                     type: array
@@ -2921,8 +2928,8 @@ components:
                 pageSpecifications:
                     # @review
                     description:
-                        The utility page's specifications. A utility page may contain 0 or 1 page specifications in
-                        draft status and 0 or 1 page specifications in published status. This field is not returned by
+                        The utility page's specifications. A utility page will contain 1 page specifications for its
+                        draft layout and 1 page specifications for its published layout. This field is not returned by
                         default. It can be requested via nestedFields.
                     items:
                         $ref: "#/components/schemas/PageSpecification"
@@ -3489,7 +3496,7 @@ components:
 info:
     description:
         "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.admin.site.client', and version '1.0.7'."
+        'com.liferay.headless.admin.site.client', and version '1.0.8'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html

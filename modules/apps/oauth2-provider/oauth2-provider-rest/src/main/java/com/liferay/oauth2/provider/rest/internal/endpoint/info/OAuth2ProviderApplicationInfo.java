@@ -6,15 +6,21 @@
 package com.liferay.oauth2.provider.rest.internal.endpoint.info;
 
 import com.liferay.oauth2.provider.model.OAuth2Application;
+import com.liferay.oauth2.provider.redirect.OAuth2RedirectURIInterpolator;
 import com.liferay.oauth2.provider.service.OAuth2ApplicationLocalService;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
+
+import javax.servlet.http.HttpServletRequest;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -38,7 +44,8 @@ public class OAuth2ProviderApplicationInfo {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response get(
-		@QueryParam("externalReferenceCode") String externalReferenceCode) {
+		@QueryParam("externalReferenceCode") String externalReferenceCode,
+		@Context HttpServletRequest httpServletRequest) {
 
 		OAuth2Application oAuth2Application = null;
 
@@ -61,11 +68,25 @@ public class OAuth2ProviderApplicationInfo {
 		return Response.ok(
 			JSONUtil.put(
 				"client_id", oAuth2Application.getClientId()
+			).put(
+				"homePageURL", oAuth2Application.getHomePageURL()
+			).put(
+				"redirectURIs",
+				_jsonFactory.createJSONArray(
+					OAuth2RedirectURIInterpolator.interpolateRedirectURIsList(
+						httpServletRequest,
+						oAuth2Application.getRedirectURIsList(), _portal))
 			).toString()
 		).build();
 	}
 
 	@Reference
+	private JSONFactory _jsonFactory;
+
+	@Reference
 	private OAuth2ApplicationLocalService _oAuth2ApplicationLocalService;
+
+	@Reference
+	private Portal _portal;
 
 }

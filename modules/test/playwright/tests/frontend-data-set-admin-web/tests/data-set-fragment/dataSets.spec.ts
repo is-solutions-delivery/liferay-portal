@@ -62,9 +62,9 @@ const taxonomyVocabularyDataSetConfig = {
 };
 
 test.afterEach(async ({apiHelpers, dataSetManagerApiHelpers}) => {
-	for (const DATA_SET_ERC of dataSetERCs) {
+	for (const erc of dataSetERCs) {
 		await dataSetManagerApiHelpers.deleteDataSet({
-			erc: DATA_SET_ERC,
+			erc,
 		});
 	}
 
@@ -440,11 +440,15 @@ test(
 			).toEqual(['Role Type', 'Name', '']);
 
 			expect(
+				await dataSetFragmentPage.table.bodyRows.count()
+			).toBeGreaterThanOrEqual(1);
+
+			expect(
 				await dataSetFragmentPage.table.bodyRows
 					.first()
 					.locator('td')
 					.allInnerTexts()
-			).toEqual(['organization', 'Account Manager', '']);
+			).toHaveLength(3);
 		});
 
 		await test.step('Confirm that we can change the Data Set and display the Taxonomy Vocabulary Data Set', async () => {

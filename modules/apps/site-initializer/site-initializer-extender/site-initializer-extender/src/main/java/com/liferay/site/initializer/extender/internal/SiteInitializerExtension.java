@@ -83,6 +83,7 @@ import com.liferay.portal.language.override.service.PLOEntryLocalService;
 import com.liferay.portal.security.service.access.policy.service.SAPEntryLocalService;
 import com.liferay.segments.service.SegmentsEntryLocalService;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
+import com.liferay.site.configuration.manager.MenuAccessConfigurationManager;
 import com.liferay.site.initializer.SiteInitializer;
 import com.liferay.site.navigation.service.SiteNavigationMenuItemLocalService;
 import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
@@ -112,11 +113,12 @@ public class SiteInitializerExtension {
 		AccountResource.Factory accountResourceFactory,
 		AccountRoleLocalService accountRoleLocalService,
 		AccountRoleResource.Factory accountRoleResourceFactory,
+		ArchivedSettingsFactory archivedSettingsFactory,
 		AssetCategoryLocalService assetCategoryLocalService,
 		AssetEntryLocalService assetEntryLocalService,
 		AssetLinkLocalService assetLinkLocalService,
 		AssetListEntryLocalService assetListEntryLocalService,
-		BlogPostingResource.Factory blogPostingResourceFactory, Bundle bundle,
+		BlogPostingResource.Factory blogPostingResourceFactory,
 		CETManager cetManager,
 		ClientExtensionEntryLocalService clientExtensionEntryLocalService,
 		CompanyLocalService companyLocalService,
@@ -154,6 +156,7 @@ public class SiteInitializerExtension {
 		ListTypeEntryLocalService listTypeEntryLocalService,
 		ListTypeEntryResource listTypeEntryResource,
 		ListTypeEntryResource.Factory listTypeEntryResourceFactory,
+		MenuAccessConfigurationManager menuAccessConfigurationManager,
 		NotificationTemplateResource.Factory
 			notificationTemplateResourceFactory,
 		ObjectActionLocalService objectActionLocalService,
@@ -176,8 +179,8 @@ public class SiteInitializerExtension {
 		SAPEntryLocalService sapEntryLocalService,
 		SegmentsEntryLocalService segmentsEntryLocalService,
 		SegmentsExperienceLocalService segmentsExperienceLocalService,
-		ServletContext servletContext,
-		ArchivedSettingsFactory archivedSettingsFactory,
+		ServletContext servletContext, Bundle siteBundle,
+		Bundle siteInitializerExtenderBundle,
 		SiteNavigationMenuItemLocalService siteNavigationMenuItemLocalService,
 		SiteNavigationMenuItemTypeRegistry siteNavigationMenuItemTypeRegistry,
 		SiteNavigationMenuLocalService siteNavigationMenuLocalService,
@@ -203,10 +206,11 @@ public class SiteInitializerExtension {
 			accountEntryLocalService, accountEntryOrganizationRelLocalService,
 			accountGroupLocalService, accountGroupRelService,
 			accountResourceFactory, accountRoleLocalService,
-			accountRoleResourceFactory, assetCategoryLocalService,
-			assetEntryLocalService, assetLinkLocalService,
-			assetListEntryLocalService, blogPostingResourceFactory, bundle,
-			cetManager, clientExtensionEntryLocalService, companyLocalService,
+			accountRoleResourceFactory, archivedSettingsFactory,
+			assetCategoryLocalService, assetEntryLocalService,
+			assetLinkLocalService, assetListEntryLocalService,
+			blogPostingResourceFactory, cetManager,
+			clientExtensionEntryLocalService, companyLocalService,
 			configurationProvider, dataDefinitionResourceFactory,
 			ddmStructureLocalService, ddmTemplateLocalService,
 			defaultDDMStructureHelper, depotEntryGroupRelLocalService,
@@ -222,18 +226,18 @@ public class SiteInitializerExtension {
 			layoutUtilityPageEntryLocalService, listTypeDefinitionResource,
 			listTypeDefinitionResourceFactory, listTypeEntryLocalService,
 			listTypeEntryResource, listTypeEntryResourceFactory,
-			notificationTemplateResourceFactory, objectActionLocalService,
-			objectDefinitionLocalService, objectDefinitionResourceFactory,
-			objectEntryLocalService, objectEntryManager,
-			objectFieldLocalService, objectFieldResourceFactory,
-			objectFolderResourceFactory, objectRelationshipLocalService,
-			objectRelationshipResourceFactory, organizationLocalService,
-			organizationResourceFactory, ploEntryLocalService, portal,
-			portletPreferencesLocalService, resourceActionLocalService,
-			resourcePermissionLocalService, roleLocalService,
-			sapEntryLocalService, segmentsEntryLocalService,
-			segmentsExperienceLocalService, archivedSettingsFactory,
-			siteNavigationMenuItemLocalService,
+			menuAccessConfigurationManager, notificationTemplateResourceFactory,
+			objectActionLocalService, objectDefinitionLocalService,
+			objectDefinitionResourceFactory, objectEntryLocalService,
+			objectEntryManager, objectFieldLocalService,
+			objectFieldResourceFactory, objectFolderResourceFactory,
+			objectRelationshipLocalService, objectRelationshipResourceFactory,
+			organizationLocalService, organizationResourceFactory,
+			ploEntryLocalService, portal, portletPreferencesLocalService,
+			resourceActionLocalService, resourcePermissionLocalService,
+			roleLocalService, sapEntryLocalService, segmentsEntryLocalService,
+			segmentsExperienceLocalService, siteBundle,
+			siteInitializerExtenderBundle, siteNavigationMenuItemLocalService,
 			siteNavigationMenuItemTypeRegistry, siteNavigationMenuLocalService,
 			structuredContentFolderResourceFactory, styleBookEntryZipProcessor,
 			taxonomyCategoryResourceFactory, taxonomyVocabularyResourceFactory,
@@ -247,7 +251,7 @@ public class SiteInitializerExtension {
 		_component.setInterface(
 			SiteInitializer.class,
 			MapUtil.singletonDictionary(
-				"site.initializer.key", bundle.getSymbolicName()));
+				"site.initializer.key", siteBundle.getSymbolicName()));
 
 		if (servletContext == null) {
 			ServiceDependency serviceDependency =
@@ -257,7 +261,7 @@ public class SiteInitializerExtension {
 			serviceDependency.setRequired(true);
 			serviceDependency.setService(
 				ServletContext.class,
-				"(osgi.web.symbolicname=" + bundle.getSymbolicName() + ")");
+				"(osgi.web.symbolicname=" + siteBundle.getSymbolicName() + ")");
 
 			_component.add(serviceDependency);
 		}

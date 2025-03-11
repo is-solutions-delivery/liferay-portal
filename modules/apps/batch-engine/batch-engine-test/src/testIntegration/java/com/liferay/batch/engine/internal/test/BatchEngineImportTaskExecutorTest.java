@@ -444,6 +444,50 @@ public class BatchEngineImportTaskExecutorTest
 	}
 
 	@Test
+	public void testDeleteBlogPostingsWithImportStrategies() throws Exception {
+		List<BlogsEntry> blogsEntries = addBlogsEntries();
+
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				_CLASS_NAME_BATCH_ENGINE_IMPORT_TASK_EXECUTOR_IMPL,
+				LoggerTestUtil.ERROR)) {
+
+			_importBlogPostings(
+				BatchEngineTaskOperation.DELETE,
+				_getBlogPostingsCSVDeleteContent(blogsEntries, true), "CSV",
+				null,
+				BatchEngineImportTaskConstants.IMPORT_STRATEGY_ON_ERROR_FAIL);
+		}
+
+		Assert.assertEquals(0, _batchEngineImportTask.getProcessedItemsCount());
+		Assert.assertEquals(
+			initialCount + blogsEntries.size(),
+			blogsEntryLocalService.getGroupEntriesCount(
+				TestPropsValues.getGroupId(),
+				new QueryDefinition<>(WorkflowConstants.STATUS_ANY)));
+
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				"com.liferay.batch.engine.internal.strategy." +
+					"OnErrorContinueBatchEngineImportStrategy",
+				LoggerTestUtil.ERROR)) {
+
+			_importBlogPostings(
+				BatchEngineTaskOperation.DELETE,
+				_getBlogPostingsCSVDeleteContent(blogsEntries, true), "CSV",
+				null,
+				BatchEngineImportTaskConstants.
+					IMPORT_STRATEGY_ON_ERROR_CONTINUE);
+		}
+
+		Assert.assertEquals(
+			ROWS_COUNT + 1, _batchEngineImportTask.getProcessedItemsCount());
+		Assert.assertEquals(
+			initialCount,
+			blogsEntryLocalService.getGroupEntriesCount(
+				TestPropsValues.getGroupId(),
+				new QueryDefinition<>(WorkflowConstants.STATUS_ANY)));
+	}
+
+	@Test
 	public void testImportAccountSystemObjectDefinitionsJSON()
 		throws Exception {
 
@@ -956,9 +1000,20 @@ public class BatchEngineImportTaskExecutorTest
 			List<BlogsEntry> blogsEntries)
 		throws Exception {
 
+		return _getBlogPostingsCSVDeleteContent(blogsEntries, false);
+	}
+
+	private byte[] _getBlogPostingsCSVDeleteContent(
+			List<BlogsEntry> blogsEntries, boolean addInvalidId)
+		throws Exception {
+
 		StringBundler sb = new StringBundler();
 
 		_createCSVRow(sb, "id");
+
+		if (addInvalidId) {
+			_createCSVRow(sb, String.valueOf(-1));
+		}
 
 		for (BlogsEntry blogsEntry : blogsEntries) {
 			_createCSVRow(sb, String.valueOf(blogsEntry.getEntryId()));
@@ -1241,6 +1296,17 @@ public class BatchEngineImportTaskExecutorTest
 				batchEngineTaskOperation.name(), parameters, null);
 
 		_batchEngineImportTaskExecutor.execute(_batchEngineImportTask);
+	}
+
+	private void _importBlogPostings(
+			BatchEngineTaskOperation batchEngineTaskOperation, byte[] content,
+			String contentType, Map<String, String> fieldNameMappingMap,
+			String importStrategy)
+		throws Exception {
+
+		_importBlogPostings(
+			batchEngineTaskOperation, content, contentType, fieldNameMappingMap,
+			importStrategy);
 	}
 
 	private byte[] _toContent(String contentType, StringBundler sb)

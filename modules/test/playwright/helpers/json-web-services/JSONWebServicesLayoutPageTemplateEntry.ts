@@ -21,12 +21,14 @@ export class JSONWebServicesLayoutPageTemplateEntryApiHelper {
 		classTypeId = '0',
 		externalReferenceCode = '',
 		groupId,
+		layoutPageTemplateEntryKey = '',
 		name,
 	}: {
 		classNameId: string;
 		classTypeId?: string;
 		externalReferenceCode?: string;
 		groupId: string;
+		layoutPageTemplateEntryKey?: string;
 		name: string;
 		type?: LayoutPageTemplateEntryType;
 	}): Promise<LayoutPageTemplateEntry> {
@@ -37,6 +39,10 @@ export class JSONWebServicesLayoutPageTemplateEntryApiHelper {
 		urlSearchParams.append('externalReferenceCode', externalReferenceCode);
 		urlSearchParams.append('groupId', groupId);
 		urlSearchParams.append('layoutPageTemplateCollectionId', '0');
+		urlSearchParams.append(
+			'layoutPageTemplateEntryKey',
+			layoutPageTemplateEntryKey
+		);
 		urlSearchParams.append('masterLayoutPlid', '0');
 		urlSearchParams.append('name', name);
 		urlSearchParams.append(
@@ -59,11 +65,13 @@ export class JSONWebServicesLayoutPageTemplateEntryApiHelper {
 	async addLayoutPageTemplateEntry({
 		externalReferenceCode = '',
 		groupId,
+		layoutPageTemplateEntryKey = '',
 		name,
 		type = 'basic',
 	}: {
 		externalReferenceCode?: string;
 		groupId: string;
+		layoutPageTemplateEntryKey?: string;
 		name: string;
 		type?: LayoutPageTemplateEntryType;
 	}): Promise<LayoutPageTemplateEntry> {
@@ -72,6 +80,10 @@ export class JSONWebServicesLayoutPageTemplateEntryApiHelper {
 		urlSearchParams.append('externalReferenceCode', externalReferenceCode);
 		urlSearchParams.append('groupId', groupId);
 		urlSearchParams.append('layoutPageTemplateCollectionId', '0');
+		urlSearchParams.append(
+			'layoutPageTemplateEntryKey',
+			layoutPageTemplateEntryKey
+		);
 		urlSearchParams.append('name', name);
 		urlSearchParams.append('type', LAYOUT_PAGE_TEMPLATE_ENTRY_TYPES[type]);
 		urlSearchParams.append('masterLayoutPlid', '0');
@@ -102,6 +114,32 @@ export class JSONWebServicesLayoutPageTemplateEntryApiHelper {
 
 		return await this.apiHelpers.post(
 			`${liferayConfig.environment.baseUrl}${this.basePath}/delete-layout-page-template-entry`,
+			{
+				data: urlSearchParams.toString(),
+				failOnStatusCode: true,
+				headers: await this.apiHelpers.getJSONWebServicesHeaders(),
+			}
+		);
+	}
+
+	async fetchLayoutPageTemplateEntry({
+		groupId,
+		name,
+		type = 'basic',
+	}: {
+		groupId: string;
+		name: string;
+		type?: LayoutPageTemplateEntryType;
+	}): Promise<LayoutPageTemplateEntry> {
+		const urlSearchParams = new URLSearchParams();
+
+		urlSearchParams.append('groupId', groupId);
+		urlSearchParams.append('layoutPageTemplateCollectionId', '0');
+		urlSearchParams.append('name', name);
+		urlSearchParams.append('type', LAYOUT_PAGE_TEMPLATE_ENTRY_TYPES[type]);
+
+		return await this.apiHelpers.post(
+			`${liferayConfig.environment.baseUrl}${this.basePath}/fetch-layout-page-template-entry`,
 			{
 				data: urlSearchParams.toString(),
 				failOnStatusCode: true,

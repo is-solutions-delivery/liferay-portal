@@ -139,6 +139,27 @@ public class ObjectDefinition implements Cloneable, Serializable {
 
 	protected String className;
 
+	public Creator getCreator() {
+		return creator;
+	}
+
+	public void setCreator(Creator creator) {
+		this.creator = creator;
+	}
+
+	public void setCreator(
+		UnsafeSupplier<Creator, Exception> creatorUnsafeSupplier) {
+
+		try {
+			creator = creatorUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected Creator creator;
+
 	public Date getDateCreated() {
 		return dateCreated;
 	}
@@ -477,6 +498,31 @@ public class ObjectDefinition implements Cloneable, Serializable {
 	}
 
 	protected ObjectAction[] objectActions;
+
+	public ObjectDefinitionSetting[] getObjectDefinitionSettings() {
+		return objectDefinitionSettings;
+	}
+
+	public void setObjectDefinitionSettings(
+		ObjectDefinitionSetting[] objectDefinitionSettings) {
+
+		this.objectDefinitionSettings = objectDefinitionSettings;
+	}
+
+	public void setObjectDefinitionSettings(
+		UnsafeSupplier<ObjectDefinitionSetting[], Exception>
+			objectDefinitionSettingsUnsafeSupplier) {
+
+		try {
+			objectDefinitionSettings =
+				objectDefinitionSettingsUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected ObjectDefinitionSetting[] objectDefinitionSettings;
 
 	public ObjectField[] getObjectFields() {
 		return objectFields;

@@ -15,10 +15,8 @@ ViewScheduledDisplayContext viewScheduledDisplayContext = (ViewScheduledDisplayC
 	navigationItems="<%= viewScheduledDisplayContext.getViewNavigationItems() %>"
 />
 
-<clay:container-fluid>
-	<frontend-data-set:headless-display
-		apiURL="<%= viewScheduledDisplayContext.getAPIURL() %>"
-		fdsActionDropdownItems="<%= viewScheduledDisplayContext.getFDSActionDropdownItems() %>"
-		id="<%= PublicationsFDSNames.PUBLICATIONS_SCHEDULED %>"
-	/>
-</clay:container-fluid>
+<frontend-data-set:headless-display
+	apiURL="<%= viewScheduledDisplayContext.getAPIURL() %>"
+	fdsActionDropdownItems="<%= viewScheduledDisplayContext.getFDSActionDropdownItems() %>"
+	id="<%= PublicationsFDSNames.PUBLICATIONS_SCHEDULED %>"
+/>

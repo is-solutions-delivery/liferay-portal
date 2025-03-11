@@ -7,7 +7,8 @@ import {ClayButtonWithIcon} from '@clayui/button';
 import {Text} from '@clayui/core';
 import ClayPanel from '@clayui/panel';
 import {API, stringUtils} from '@liferay/object-js-components-web';
-import {openToast, sub} from 'frontend-js-web';
+import {openToast} from 'frontend-js-components-web';
+import {sub} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 import {useStore} from 'react-flow-renderer';
 
@@ -157,11 +158,13 @@ export function RightSidebarObjectFieldDetails() {
 										baseResourceURL,
 										objectFieldId: selectedObjectField?.id!,
 										objectFieldLabel:
-											stringUtils.getLocalizableLabel(
-												objectDefinitionNodeData.defaultLanguageId,
-												objectDefinitionNodeData.label,
-												objectDefinitionNodeData.name
-											),
+											stringUtils.getLocalizableLabel({
+												fallbackLabel:
+													objectDefinitionNodeData.name,
+												fallbackLanguageId:
+													objectDefinitionNodeData.defaultLanguageId,
+												labels: objectDefinitionNodeData.label,
+											}),
 										onAfterDelete: () => {
 											if (
 												selectedObjectField &&
@@ -264,11 +267,12 @@ export function RightSidebarObjectFieldDetails() {
 									Liferay.Language.get(
 										'the-object-field-x-cannot-be-deleted-because-it-is-the-only-custom-object-field-of-the-published-object-definition'
 									),
-									`${stringUtils.getLocalizableLabel(
-										objectDefinitionNodeData.defaultLanguageId as Liferay.Language.Locale,
-										values.label,
-										values.name
-									)}`
+									`${stringUtils.getLocalizableLabel({
+										fallbackLabel: values.name,
+										fallbackLanguageId:
+											objectDefinitionNodeData.defaultLanguageId as Liferay.Language.Locale,
+										labels: values.label,
+									})}`
 								)}
 							</Text>
 						) : (
@@ -277,11 +281,12 @@ export function RightSidebarObjectFieldDetails() {
 									Liferay.Language.get(
 										'the-object-field-x-cannot-be-deleted-because-it-is-used-in-a-unique-composite-key-validation'
 									),
-									`${stringUtils.getLocalizableLabel(
-										objectDefinitionNodeData.defaultLanguageId as Liferay.Language.Locale,
-										values.label,
-										values.name
-									)}`
+									`${stringUtils.getLocalizableLabel({
+										fallbackLabel: values.name,
+										fallbackLanguageId:
+											objectDefinitionNodeData.defaultLanguageId as Liferay.Language.Locale,
+										labels: values.label,
+									})}`
 								)}
 							</Text>
 						)

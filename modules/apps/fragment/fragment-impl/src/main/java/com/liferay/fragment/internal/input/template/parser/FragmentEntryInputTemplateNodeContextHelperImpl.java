@@ -54,6 +54,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.InfoFormException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
@@ -70,6 +71,8 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.Validator;
+
+import java.io.Serializable;
 
 import java.math.BigDecimal;
 
@@ -101,7 +104,8 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 
 	@Override
 	public InputTemplateNode toInputTemplateNode(
-		String defaultInputLabel, FragmentEntryLink fragmentEntryLink,
+		Map<String, Serializable> attributes, String defaultInputLabel,
+		FragmentEntryLink fragmentEntryLink,
 		HttpServletRequest httpServletRequest, InfoForm infoForm,
 		Locale locale) {
 
@@ -223,10 +227,19 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 				locale));
 
 		if (infoField == null) {
-			return new InputTemplateNode(
+			InputTemplateNode inputTemplateNode = new InputTemplateNode(
 				errorMessage, inputHelpText, inputLabel, localizable, name,
 				readOnly, required, inputShowHelpText, inputShowLabel, "type",
 				StringPool.BLANK, Collections.emptyMap());
+
+			for (Map.Entry<String, Serializable> entry :
+					attributes.entrySet()) {
+
+				inputTemplateNode.addAttribute(
+					entry.getKey(), entry.getValue());
+			}
+
+			return inputTemplateNode;
 		}
 
 		InfoFieldType infoFieldType = infoField.getInfoFieldType();
@@ -327,8 +340,8 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 			infoFieldType.getName(), value, valueI18n);
 
 		_addInputTemplateNodeAttributes(
-			fragmentEntryLink, httpServletRequest, infoField, inputTemplateNode,
-			label, locale, value, valueI18n);
+			attributes, fragmentEntryLink, httpServletRequest, infoField,
+			inputTemplateNode, label, locale, value, valueI18n);
 
 		if (!localizable && FeatureFlagManagerUtil.isEnabled("LPD-37927")) {
 			_addLocalizationOptionsAttributes(
@@ -407,7 +420,8 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 			}
 		}
 
-		inputTemplateNode.addAttribute("fileNameI18n", fileNameI18n);
+		inputTemplateNode.addAttribute(
+			"fileNameI18n", _jsonFactory.createJSONObject(fileNameI18n));
 
 		boolean selectFromDocumentLibrary = false;
 
@@ -445,6 +459,7 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 	}
 
 	private void _addInputTemplateNodeAttributes(
+		Map<String, Serializable> attributes,
 		FragmentEntryLink fragmentEntryLink,
 		HttpServletRequest httpServletRequest, InfoField infoField,
 		InputTemplateNode inputTemplateNode, String label, Locale locale,
@@ -484,6 +499,10 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 		else if (infoField.getInfoFieldType() instanceof TextInfoFieldType) {
 			_addTextInfoFieldTypeInputTemplateNodeAttributes(
 				infoField, inputTemplateNode);
+		}
+
+		for (Map.Entry<String, Serializable> entry : attributes.entrySet()) {
+			inputTemplateNode.addAttribute(entry.getKey(), entry.getValue());
 		}
 	}
 
@@ -1054,6 +1073,9 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 
 	@Reference
 	private ItemSelector _itemSelector;
+
+	@Reference
+	private JSONFactory _jsonFactory;
 
 	@Reference
 	private Language _language;

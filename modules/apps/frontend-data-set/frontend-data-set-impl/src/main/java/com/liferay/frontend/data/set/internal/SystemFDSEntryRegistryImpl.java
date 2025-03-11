@@ -12,6 +12,7 @@ import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory
 
 import java.util.Collections;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
@@ -40,7 +41,8 @@ public class SystemFDSEntryRegistryImpl implements SystemFDSEntryRegistry {
 
 	@Override
 	public Set<String> getSystemFDSNames() {
-		return Collections.unmodifiableSet(_serviceTrackerMap.keySet());
+		return Collections.unmodifiableSet(
+			new TreeSet<>(_serviceTrackerMap.keySet()));
 	}
 
 	@Activate

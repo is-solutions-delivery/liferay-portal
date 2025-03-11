@@ -42,53 +42,147 @@ else {
 	if (Liferay.FeatureFlags['LPD-37927']) {
 		import('@liferay/fragment-impl').then(
 			({
-				registerLocalizedMultiSelect,
-				registerUnlocalizedMultiSelect,
+				getOrCreateTranslationInput,
+				registerLocalizedInput,
+				registerUnlocalizedInput,
 			}) => {
 				const defaultLanguageId = themeDisplay.getDefaultLanguageId();
 
+				let currentLanguageId = defaultLanguageId;
+
 				if (input.localizable) {
-					const {onChange} = registerLocalizedMultiSelect({
-						defaultLanguageId,
-						initialValues: input.valueI18n,
-						inputElements: allInputs,
-						namespace: fragmentNamespace,
+
+					// Set initial values
+
+					allInputs.forEach((inputElement) => {
+						Object.entries(input.valueI18n).forEach(
+							([languageId, value]) => {
+								const input = getOrCreateTranslationInput(
+									inputElement.id,
+									inputElement.name,
+									languageId,
+									inputElement.parentNode,
+									fragmentNamespace
+								);
+
+								input.value = value.includes(inputElement.value)
+									? inputElement.value
+									: '';
+							}
+						);
 					});
 
-					fieldSet.addEventListener('change', (event) => {
-						onChange(event);
+					const {onChange} = registerLocalizedInput({
+						changeTextDirection: false,
+						customLocaleChangeHandler: true,
+						defaultLanguageId,
+						onLocaleChange: ({languageId}) => {
+							currentLanguageId = languageId;
+
+							allInputs.forEach((input) => {
+								const translationInput =
+									getOrCreateTranslationInput(
+										input.id,
+										input.name,
+										languageId,
+										input.parentNode,
+										fragmentNamespace
+									);
+
+								if (translationInput) {
+									if (
+										translationInput.getAttribute(
+											'value'
+										) !== null
+									) {
+										input.checked = Boolean(
+											translationInput.value
+										);
+									}
+								}
+								else {
+									const defaultLanguageInput =
+										getOrCreateTranslationInput(
+											input.id,
+											input.name,
+											defaultLanguageId,
+											input.parentNode,
+											fragmentNamespace
+										);
+
+									if (defaultLanguageInput) {
+										input.checked = Boolean(
+											defaultLanguageInput.value
+										);
+									}
+								}
+							});
+						},
+					});
+
+					fieldSet.addEventListener('change', () => {
+						allInputs.forEach((input) => {
+							const translationInput =
+								getOrCreateTranslationInput(
+									input.id,
+									input.name,
+									currentLanguageId,
+									input.parentNode,
+									fragmentNamespace
+								);
+
+							translationInput.value = input.checked
+								? input.value
+								: '';
+						});
+
+						onChange();
 					});
 				}
 				else {
 					const unlocalizedFieldsState =
 						input.attributes.unlocalizedFieldsState;
 
-					registerUnlocalizedMultiSelect({
+					registerUnlocalizedInput({
+						changeTextDirection: false,
+						customLocaleChangeHandler: true,
 						defaultLanguageId,
-						inputElements: allInputs,
-
 						onLocaleChange: (languageId) => {
-							if (
-								defaultLanguageId !== languageId &&
-								unlocalizedFieldsState === 'read-only'
-							) {
-								allInputs.forEach((input) => {
-									input.addEventListener(
-										'click',
-										preventClick
-									);
-								});
-							}
-							else {
-								allInputs.forEach((input) => {
-									input.removeEventListener(
-										'click',
-										preventClick
-									);
-								});
-							}
-						},
+							const editingDefaultLanguage =
+								defaultLanguageId === languageId;
+							const isReadOnlyFieldState =
+								unlocalizedFieldsState === 'read-only';
 
+							allInputs.forEach((inputElement) => {
+								if (editingDefaultLanguage) {
+									inputElement?.removeAttribute(
+										isReadOnlyFieldState
+											? 'readonly'
+											: 'disabled'
+									);
+								}
+								else {
+									inputElement?.setAttribute(
+										isReadOnlyFieldState
+											? 'readonly'
+											: 'disabled',
+										''
+									);
+								}
+
+								inputElement.addEventListener(
+									'click',
+									(event) => {
+										if (
+											!editingDefaultLanguage &&
+											isReadOnlyFieldState
+										) {
+											event.preventDefault();
+										}
+									}
+								);
+							});
+						},
 						readOnlyInputLabel: document.getElementById(
 							`${fragmentNamespace}-multiselect-list-read-only`
 						),

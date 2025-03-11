@@ -31,14 +31,11 @@ import com.liferay.petra.sql.dsl.spi.expression.DefaultPredicate;
 import com.liferay.petra.sql.dsl.spi.expression.Operand;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.dao.db.DBManagerUtil;
-import com.liferay.portal.kernel.dao.db.DBType;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
-import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ObjectValuePair;
@@ -63,13 +60,8 @@ import com.liferay.portal.odata.filter.expression.PrimitivePropertyExpression;
 import com.liferay.portal.odata.filter.expression.PropertyExpression;
 import com.liferay.portal.odata.filter.expression.UnaryExpression;
 
-import java.text.DateFormat;
-import java.text.Format;
-import java.text.ParseException;
-
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -233,11 +225,16 @@ public class PredicateExpressionVisitorImpl
 			return GetterUtil.getBoolean(literalExpression.getText());
 		}
 		else if (Objects.equals(
-					LiteralExpression.Type.DATE, literalExpression.getType())) {
+					LiteralExpression.Type.DATE, literalExpression.getType()) ||
+				 Objects.equals(
+					 LiteralExpression.Type.DATE_TIME,
+					 literalExpression.getType())) {
 
 			return GetterUtil.getDate(
 				literalExpression.getText(),
-				DateFormatFactoryUtil.getSimpleDateFormat("yyyy-MM-dd"));
+				DateFormatFactoryUtil.getSimpleDateFormat(
+					ObjectFieldUtil.getDateTimePattern(
+						literalExpression.getText())));
 		}
 		else if (Objects.equals(
 					LiteralExpression.Type.DOUBLE,
@@ -679,57 +676,10 @@ public class PredicateExpressionVisitorImpl
 		EntityField entityField = _getEntityField(
 			(String)left, objectDefinition);
 
-		EntityField.Type entityType = entityField.getType();
-
-		if ((Objects.equals(entityType, EntityField.Type.DATE) ||
-			 Objects.equals(entityType, EntityField.Type.DATE_TIME)) &&
-			(Objects.equals(DBManagerUtil.getDBType(), DBType.DB2) ||
-			 Objects.equals(DBManagerUtil.getDBType(), DBType.HYPERSONIC) ||
-			 Objects.equals(DBManagerUtil.getDBType(), DBType.ORACLE) ||
-			 Objects.equals(DBManagerUtil.getDBType(), DBType.POSTGRESQL)) &&
-			Validator.isNotNull(right)) {
-
-			try {
-				String value = right.toString();
-
-				DateFormat dateFormat =
-					DateFormatFactoryUtil.getSimpleDateFormat(
-						ObjectFieldUtil.getDateTimePattern(value));
-
-				Date date = dateFormat.parse(value);
-
-				if (Objects.equals(
-						DBManagerUtil.getDBType(), DBType.POSTGRESQL)) {
-
-					right = date;
-				}
-				else {
-					String pattern = "yyyy-MM-dd HH:mm:ss.SSS";
-
-					if (Objects.equals(
-							DBManagerUtil.getDBType(), DBType.ORACLE)) {
-
-						pattern = "dd-MMM-yyyy hh:mm:ss.SSS a";
-					}
-
-					Format format =
-						FastDateFormatFactoryUtil.getSimpleDateFormat(pattern);
-
-					right = format.format(date);
-				}
-			}
-			catch (ParseException parseException) {
-				throw new RuntimeException(parseException);
-			}
-		}
-
-		String entityFieldFilterableName = entityField.getFilterableName(null);
-		String entityFieldName = entityField.getName();
-
 		try {
 			ObjectField objectField = _objectFieldLocalService.getObjectField(
 				objectDefinition.getObjectDefinitionId(),
-				entityFieldFilterableName);
+				entityField.getFilterableName(null));
 
 			ObjectFieldBusinessType objectFieldBusinessType =
 				_objectFieldBusinessTypeRegistry.getObjectFieldBusinessType(
@@ -737,7 +687,7 @@ public class PredicateExpressionVisitorImpl
 
 			Object value = objectFieldBusinessType.getValue(
 				objectField, PrincipalThreadLocal.getUserId(),
-				Collections.singletonMap(entityFieldName, right));
+				Collections.singletonMap(entityField.getName(), right));
 
 			if (value == null) {
 				value = right;
@@ -758,7 +708,7 @@ public class PredicateExpressionVisitorImpl
 				_log.debug(portalException);
 			}
 
-			if (Objects.equals(entityType, EntityField.Type.ID) &&
+			if (Objects.equals(entityField.getType(), EntityField.Type.ID) &&
 				Validator.isNumber(String.valueOf(right))) {
 
 				return GetterUtil.getLong(right);

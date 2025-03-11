@@ -14,6 +14,7 @@ import com.liferay.portal.kernel.log.LogWrapper;
 import com.liferay.portal.kernel.module.util.SystemBundleUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.ThreadContext;
@@ -33,164 +34,200 @@ public class Log4jLogContextLogWrapper extends LogWrapper {
 
 	@Override
 	public void debug(Object message) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.debug(message);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void debug(Object message, Throwable throwable) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.debug(message, throwable);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void debug(Throwable throwable) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.debug(throwable);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void error(Object message) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.error(message);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void error(Object message, Throwable throwable) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.error(message, throwable);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void error(Throwable throwable) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.error(throwable);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void fatal(Object message) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.fatal(message);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void fatal(Object message, Throwable throwable) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.fatal(message, throwable);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void fatal(Throwable throwable) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.fatal(throwable);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void info(Object message) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.info(message);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void info(Object message, Throwable throwable) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.info(message, throwable);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void info(Throwable throwable) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.info(throwable);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void trace(Object message) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.trace(message);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void trace(Object message, Throwable throwable) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.trace(message, throwable);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void trace(Throwable throwable) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.trace(throwable);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void warn(Object message) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.warn(message);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void warn(Object message, Throwable throwable) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.warn(message, throwable);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	@Override
 	public void warn(Throwable throwable) {
-		_populateThreadContext();
+		Map<String, String> context = _getContext();
+
+		ThreadContext.putAll(context);
 
 		super.warn(throwable);
 
-		_cleanThreadContext();
+		ThreadContext.removeAll(context.keySet());
 	}
 
 	private static ServiceTrackerList<LogContext> _createServiceTrackerList() {
@@ -203,23 +240,24 @@ public class Log4jLogContextLogWrapper extends LogWrapper {
 		}
 	}
 
-	private void _cleanThreadContext() {
-		ThreadContext.clearMap();
-	}
+	private Map<String, String> _getContext() {
+		Map<String, String> context = new HashMap<>();
 
-	private void _populateThreadContext() {
 		ServiceTrackerList<LogContext> serviceTrackerList =
 			_serviceTrackerListDCLSingleton.getSingleton(
 				Log4jLogContextLogWrapper::_createServiceTrackerList);
 
 		if (serviceTrackerList == null) {
-			return;
+			return context;
 		}
 
 		for (LogContext logContext : serviceTrackerList) {
-			Map<String, String> context = logContext.getContext(_name);
+			Map<String, String> logContextContext = logContext.getContext(
+				_name);
 
-			for (Map.Entry<String, String> entry : context.entrySet()) {
+			for (Map.Entry<String, String> entry :
+					logContextContext.entrySet()) {
+
 				String key = entry.getKey();
 
 				String logContextName = logContext.getName();
@@ -228,9 +266,11 @@ public class Log4jLogContextLogWrapper extends LogWrapper {
 					key = logContextName + "." + key;
 				}
 
-				ThreadContext.put(key, entry.getValue());
+				context.put(key, entry.getValue());
 			}
 		}
+
+		return context;
 	}
 
 	private static final DCLSingleton<ServiceTrackerList<LogContext>>

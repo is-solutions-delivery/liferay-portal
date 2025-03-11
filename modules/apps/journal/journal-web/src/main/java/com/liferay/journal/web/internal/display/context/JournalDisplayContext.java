@@ -65,7 +65,6 @@ import com.liferay.portal.kernel.bean.BeanParamUtil;
 import com.liferay.portal.kernel.dao.search.ResultRowSplitter;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -1177,10 +1176,8 @@ public class JournalDisplayContext {
 	public boolean hasAdvancedUpdateDLFolderPermission()
 		throws PortalException {
 
-		if (!FeatureFlagManagerUtil.isEnabled(
-				_themeDisplay.getCompanyId(), "LPD-42452")) {
-
-			return hasUpdateDLFolderPermission();
+		if (getFolder() == null) {
+			return true;
 		}
 
 		if (_advancedUpdateDLFolderPermission != null) {
@@ -1242,6 +1239,10 @@ public class JournalDisplayContext {
 	}
 
 	public boolean hasUpdateDLFolderPermission() throws PortalException {
+		if (getFolder() == null) {
+			return true;
+		}
+
 		if (_updateJournalFolderPermission != null) {
 			return _updateJournalFolderPermission;
 		}

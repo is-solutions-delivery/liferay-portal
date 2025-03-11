@@ -22,7 +22,7 @@ export interface Condition {
 		type: 'equal' | 'not-equal';
 		value?: string;
 	};
-	type: 'user' | 'formFragment' | undefined;
+	type: 'user' | 'form' | undefined;
 }
 
 interface ConditionProps {
@@ -35,7 +35,7 @@ interface ConditionProps {
 }
 
 export const TYPE_VALUES = {
-	formFragment: 'formFragment',
+	formFragment: 'form',
 	user: 'user',
 } as const;
 
@@ -199,6 +199,7 @@ function FormFragmentTypeSelectors({
 					onConditionChange({
 						...condition,
 						field: selectedFragment,
+						options: undefined,
 					});
 				}}
 				selectedKey={condition.field}
@@ -215,7 +216,6 @@ function FormFragmentTypeSelectors({
 						onConditionChange({
 							...condition,
 							options: {
-								...condition.options!,
 								type,
 							},
 						});

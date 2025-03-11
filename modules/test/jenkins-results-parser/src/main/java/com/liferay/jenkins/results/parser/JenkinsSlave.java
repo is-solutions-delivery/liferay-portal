@@ -22,9 +22,14 @@ import org.json.JSONObject;
 public class JenkinsSlave implements JenkinsNode<JenkinsSlave> {
 
 	public JenkinsSlave() {
-		this(
-			JenkinsResultsParserUtil.getHostName(
-				JenkinsResultsParserUtil.getHostIPAddress()));
+		_jenkinsMaster = JenkinsMaster.getInstance(
+			System.getenv("MASTER_HOSTNAME"));
+		_name = System.getenv("NODE_NAME");
+
+		update(
+			JenkinsAPIUtil.getAPIJSONObject(
+				getComputerURL(),
+				"displayName,idle,offline,offlineCauseReason"));
 	}
 
 	public JenkinsSlave(String hostname) {

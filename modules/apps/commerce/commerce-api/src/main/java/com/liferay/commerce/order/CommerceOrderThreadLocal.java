@@ -9,6 +9,7 @@ import com.liferay.petra.lang.CentralizedThreadLocal;
 
 /**
  * @author Brian I. Kim
+ * @author Crescenzo Rega
  */
 public class CommerceOrderThreadLocal {
 
@@ -16,13 +17,27 @@ public class CommerceOrderThreadLocal {
 		return _deleteInProcess.get();
 	}
 
+	public static boolean isSkipValidateAccountLimit() {
+		return _skipValidateAccountLimit.get();
+	}
+
 	public static void setDeleteInProcess(boolean deleteInProcess) {
 		_deleteInProcess.set(deleteInProcess);
+	}
+
+	public static void setSkipValidateAccountLimit(
+		boolean skipValidateAccountLimit) {
+
+		_skipValidateAccountLimit.set(skipValidateAccountLimit);
 	}
 
 	private static final ThreadLocal<Boolean> _deleteInProcess =
 		new CentralizedThreadLocal<>(
 			CommerceOrderThreadLocal.class + "._deleteInProcess",
+			() -> Boolean.FALSE);
+	private static final ThreadLocal<Boolean> _skipValidateAccountLimit =
+		new CentralizedThreadLocal<>(
+			CommerceReturnThreadLocal.class + "._skipValidateAccountLimit",
 			() -> Boolean.FALSE);
 
 }

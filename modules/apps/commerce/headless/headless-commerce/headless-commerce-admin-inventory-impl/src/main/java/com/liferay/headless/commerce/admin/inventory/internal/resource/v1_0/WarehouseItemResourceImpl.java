@@ -47,17 +47,13 @@ import org.osgi.service.component.annotations.ServiceScope;
 public class WarehouseItemResourceImpl extends BaseWarehouseItemResourceImpl {
 
 	@Override
-	public Response deleteWarehouseItem(Long id) throws Exception {
+	public void deleteWarehouseItem(Long id) throws Exception {
 		_commerceInventoryWarehouseItemService.
 			deleteCommerceInventoryWarehouseItem(id);
-
-		Response.ResponseBuilder responseBuilder = Response.ok();
-
-		return responseBuilder.build();
 	}
 
 	@Override
-	public Response deleteWarehouseItemByExternalReferenceCode(
+	public void deleteWarehouseItemByExternalReferenceCode(
 			String externalReferenceCode)
 		throws Exception {
 
@@ -76,10 +72,6 @@ public class WarehouseItemResourceImpl extends BaseWarehouseItemResourceImpl {
 			deleteCommerceInventoryWarehouseItem(
 				commerceInventoryWarehouseItem.
 					getCommerceInventoryWarehouseItemId());
-
-		Response.ResponseBuilder responseBuilder = Response.noContent();
-
-		return responseBuilder.build();
 	}
 
 	@Override
@@ -167,36 +159,38 @@ public class WarehouseItemResourceImpl extends BaseWarehouseItemResourceImpl {
 
 	@Override
 	public Page<WarehouseItem> getWarehouseItemsUpdatedPage(
-			Date end, Date start, Pagination pagination)
+			Date endDate, Date startDate, Pagination pagination)
 		throws Exception {
 
-		if ((start != null) && (end != null) && (start.compareTo(end) > 0)) {
+		if ((startDate != null) && (endDate != null) &&
+			(startDate.compareTo(endDate) > 0)) {
+
 			throw new CommerceInventoryInvalidDateException(
 				"End date should be after start date");
 		}
 
-		if ((start == null) && (end == null)) {
-			start = new Date();
+		if ((startDate == null) && (endDate == null)) {
+			endDate = new Date();
 		}
 
-		if (start == null) {
-			start = _addDaysToDate(end, -_DEFAULT_INCREMENT_DAYS);
+		if (startDate == null) {
+			startDate = _addDaysToDate(endDate, -_DEFAULT_INCREMENT_DAYS);
 		}
 
-		if (end == null) {
-			end = _addDaysToDate(start, _DEFAULT_INCREMENT_DAYS);
+		if (endDate == null) {
+			endDate = _addDaysToDate(startDate, _DEFAULT_INCREMENT_DAYS);
 		}
 
 		List<CommerceInventoryWarehouseItem> commerceInventoryWarehouseItems =
 			_commerceInventoryWarehouseItemService.
 				getCommerceInventoryWarehouseItemsCountByModifiedDate(
-					contextCompany.getCompanyId(), start, end,
+					contextCompany.getCompanyId(), startDate, endDate,
 					pagination.getStartPosition(), pagination.getEndPosition());
 
 		int totalCount =
 			_commerceInventoryWarehouseItemService.
 				getCommerceInventoryWarehouseItemsCountByModifiedDate(
-					contextCompany.getCompanyId(), start, end);
+					contextCompany.getCompanyId(), startDate, endDate);
 
 		return Page.of(
 			_toWarehouseItems(commerceInventoryWarehouseItems), pagination,
@@ -375,14 +369,50 @@ public class WarehouseItemResourceImpl extends BaseWarehouseItemResourceImpl {
 				contextAcceptLanguage.getPreferredLocale()));
 	}
 
+	@Override
+	public WarehouseItem putWarehouseItemByExternalReferenceCode(
+			String externalReferenceCode, WarehouseItem warehouseItem)
+		throws Exception {
+
+		CommerceInventoryWarehouse commerceInventoryWarehouse =
+			_commerceInventoryWarehouseService.
+				fetchCommerceInventoryWarehouseByExternalReferenceCode(
+					GetterUtil.getString(
+						warehouseItem.getWarehouseExternalReferenceCode()),
+					contextCompany.getCompanyId());
+
+		if (commerceInventoryWarehouse == null) {
+			throw new NoSuchInventoryWarehouseException(
+				"Unable to find warehouse with external reference code " +
+					warehouseItem.getWarehouseExternalReferenceCode());
+		}
+
+		CommerceInventoryWarehouseItem commerceInventoryWarehouseItem =
+			_commerceInventoryWarehouseItemService.
+				addOrUpdateCommerceInventoryWarehouseItem(
+					externalReferenceCode, contextCompany.getCompanyId(),
+					commerceInventoryWarehouse.
+						getCommerceInventoryWarehouseId(),
+					BigDecimalUtil.get(
+						warehouseItem.getQuantity(), BigDecimal.ONE),
+					GetterUtil.getString(warehouseItem.getSku()),
+					GetterUtil.getString(warehouseItem.getUnitOfMeasureKey()));
+
+		return _warehouseItemDTOConverter.toDTO(
+			new DefaultDTOConverterContext(
+				commerceInventoryWarehouseItem.
+					getCommerceInventoryWarehouseItemId(),
+				contextAcceptLanguage.getPreferredLocale()));
+	}
+
 	private Date _addDaysToDate(Date date, int increment) {
-		Calendar cal = Calendar.getInstance();
+		Calendar calendar = Calendar.getInstance();
 
-		cal.setTime(date);
+		calendar.setTime(date);
 
-		cal.add(Calendar.DATE, increment);
+		calendar.add(Calendar.DATE, increment);
 
-		return cal.getTime();
+		return calendar.getTime();
 	}
 
 	private WarehouseItem _toWarehouseItem(

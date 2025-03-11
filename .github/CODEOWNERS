@@ -14,6 +14,7 @@ modules/apps/asset/
 modules/apps/asset/asset-auto-tagger-google-cloud-natural-language-test    @liferay-content-management
 modules/apps/asset/asset-auto-tagger-opennlp-test    @liferay-content-management
 modules/apps/asset/asset-auto-tagger-test    @liferay-content-management
+modules/apps/asset/asset-categories-admin-web    @liferay-content-management
 modules/apps/asset/asset-categories-test    @liferay-content-management
 modules/apps/asset/asset-category-property-test    @liferay-content-management
 modules/apps/asset/asset-display-page-api    @liferay-page-management
@@ -38,8 +39,9 @@ modules/apps/asset/asset-publisher-api    @liferay-content-management
 modules/apps/asset/asset-publisher-layout-prototype    @liferay-content-management
 modules/apps/asset/asset-publisher-test    @liferay-content-management
 modules/apps/asset/asset-publisher-web    @liferay-content-management
-modules/apps/asset/asset-publisher-web    @liferay-content-management
+modules/apps/asset/asset-taglib    @liferay-content-management
 modules/apps/asset/asset-taglib-test    @liferay-content-management
+modules/apps/asset/asset-tags-admin-web    @liferay-content-management
 modules/apps/asset/asset-tags-test    @liferay-content-management
 modules/apps/asset/asset-test    @liferay-content-management
 modules/apps/asset/asset-test-util    @liferay-content-management
@@ -205,7 +207,7 @@ modules/apps/object/object-rest-impl    @liferay-headless
 modules/apps/object/object-rest-test    @liferay-headless
 modules/apps/on-demand-admin/    @liferay-commerce
 modules/apps/organizations/    @liferay-commerce
-modules/apps/password-policies-admin/
+modules/apps/password-policies-admin/    @liferay-appsec
 modules/apps/plugins-admin/
 modules/apps/portal-background-task/    @liferay-core-infra
 modules/apps/portal-cache/    @liferay-core-infra
@@ -324,7 +326,6 @@ modules/apps/questions/    @liferay-content-management
 modules/apps/ratings/    @liferay-content-management
 modules/apps/reading-time/    @liferay-content-management
 modules/apps/redirect/    @liferay-site-management
-modules/apps/release-feature-flag/    @liferay-platform-experience
 modules/apps/repository/    @liferay-content-management
 modules/apps/roles/    @liferay-commerce
 modules/apps/rss/    @liferay-page-management
@@ -407,7 +408,7 @@ modules/dxp/apps/enterprise-product-notification/
 modules/dxp/apps/frontend-theme/    @liferay-platform-experience
 modules/dxp/apps/multi-factor-authentication/
 modules/dxp/apps/osb/osb-faro/    @liferay-ac
-modules/dxp/apps/osb/osb-site-initializer/
+modules/dxp/apps/osb/osb-site-initializer/    @liferay-site-management
 modules/dxp/apps/osb/osb-spring-boot/
 modules/dxp/apps/osb/osb-testray/
 modules/dxp/apps/portal-reports-engine-console/    @liferay-bpm

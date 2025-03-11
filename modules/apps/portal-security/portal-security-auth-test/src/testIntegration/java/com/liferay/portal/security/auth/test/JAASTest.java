@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.util.IntegerWrapper;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.security.jaas.JAASHelper;
 import com.liferay.portal.servlet.filters.absoluteredirects.AbsoluteRedirectsResponse;
 import com.liferay.portal.test.rule.Inject;
@@ -78,7 +79,7 @@ public class JAASTest {
 
 	@BeforeClass
 	public static void setUpClass() {
-		_originalJAASEnabled = ReflectionTestUtil.getAndSetFieldValue(
+		_originalPortalJAASEnable = ReflectionTestUtil.getAndSetFieldValue(
 			PropsValues.class, "PORTAL_JAAS_ENABLE", true);
 
 		Configuration.setConfiguration(new JAASConfiguration());
@@ -89,7 +90,7 @@ public class JAASTest {
 		Configuration.setConfiguration(null);
 
 		ReflectionTestUtil.setFieldValue(
-			PropsValues.class, "PORTAL_JAAS_ENABLE", _originalJAASEnabled);
+			PropsValues.class, "PORTAL_JAAS_ENABLE", _originalPortalJAASEnable);
 	}
 
 	@Before
@@ -107,11 +108,11 @@ public class JAASTest {
 			new JAASHelper() {
 
 				@Override
-				protected long doGetJaasUserId(long companyId, String name)
+				protected long doGetJAASUserId(long companyId, String name)
 					throws PortalException {
 
 					try {
-						return super.doGetJaasUserId(companyId, name);
+						return super.doGetJAASUserId(companyId, name);
 					}
 					finally {
 						counter.increment();
@@ -129,6 +130,8 @@ public class JAASTest {
 					ServletContextPool.get(StringPool.BLANK), HttpMethods.GET,
 					StringPool.SLASH);
 
+			mockHttpServletRequest.setAttribute(
+				WebKeys.COMPANY_ID, TestPropsValues.getCompanyId());
 			mockHttpServletRequest.setRemoteUser(
 				String.valueOf(_user.getScreenName()));
 
@@ -206,6 +209,8 @@ public class JAASTest {
 		mockHttpServletRequest.setRemoteUser(String.valueOf(_user.getUserId()));
 		mockHttpServletRequest.setAttribute(
 			AbsoluteRedirectsResponse.class.getName(), new Object());
+		mockHttpServletRequest.setAttribute(
+			WebKeys.COMPANY_ID, TestPropsValues.getCompanyId());
 
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
 
@@ -266,7 +271,7 @@ public class JAASTest {
 		}
 	}
 
-	private static Boolean _originalJAASEnabled;
+	private static Boolean _originalPortalJAASEnable;
 
 	private User _user;
 

@@ -77,15 +77,21 @@
 													/>
 												</div>
 
-												<div class="range-options c-p-4 <%= disableInputs ? "hide" : StringPool.BLANK %>">
-													<clay:icon
-														symbol="reload"
-													/>
+												<%
+												StagingGroupHelper stagingGroupHelper = StagingGroupHelperUtil.getStagingGroupHelper();
+												%>
 
-													<aui:a cssClass="modify-link" href="javascript:void(0);" id="rangeLink" method="get">
-														<liferay-ui:message key="refresh-counts" />
-													</aui:a>
-												</div>
+												<c:if test="<%= !stagingGroupHelper.isCompanyGroup(group) %>">
+													<div class="range-options c-p-4 <%= disableInputs ? "hide" : StringPool.BLANK %>">
+														<clay:link
+															cssClass="modify-link"
+															href="javascript:void(0);"
+															icon="reload"
+															id='<%= liferayPortletResponse.getNamespace() + "rangeLink" %>'
+															label="refresh-counts"
+														/>
+													</div>
+												</c:if>
 											</div>
 
 											<%

@@ -742,8 +742,24 @@ public abstract class BaseWebUrlResourceImpl
 			Collection<WebUrl> webUrls, Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (WebUrl webUrl : webUrls) {
-			deleteWebUrl(webUrl.getId());
+		UnsafeFunction<WebUrl, WebUrl, Exception> webUrlUnsafeFunction =
+			webUrl -> {
+				deleteWebUrl(webUrl.getId());
+
+				return webUrl;
+			};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(webUrls, webUrlUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				webUrls, webUrlUnsafeFunction::apply);
+		}
+		else {
+			for (WebUrl webUrl : webUrls) {
+				webUrlUnsafeFunction.apply(webUrl);
+			}
 		}
 	}
 

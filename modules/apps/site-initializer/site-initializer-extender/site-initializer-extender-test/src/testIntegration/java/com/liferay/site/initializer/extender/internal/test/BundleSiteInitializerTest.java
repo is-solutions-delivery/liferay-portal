@@ -120,6 +120,7 @@ import com.liferay.object.admin.rest.dto.v1_0.ObjectRelationship;
 import com.liferay.object.admin.rest.resource.v1_0.ObjectRelationshipResource;
 import com.liferay.object.constants.ObjectActionExecutorConstants;
 import com.liferay.object.constants.ObjectDefinitionConstants;
+import com.liferay.object.constants.ObjectPortletKeys;
 import com.liferay.object.model.ObjectAction;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
@@ -205,6 +206,7 @@ import com.liferay.segments.model.SegmentsEntry;
 import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.service.SegmentsEntryLocalService;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
+import com.liferay.site.configuration.manager.MenuAccessConfigurationManager;
 import com.liferay.site.initializer.SiteInitializer;
 import com.liferay.site.initializer.SiteInitializerFactory;
 import com.liferay.site.initializer.SiteInitializerRegistry;
@@ -1750,25 +1752,51 @@ public class BundleSiteInitializerTest {
 				expandoBridgeAttribute.get(LocaleUtil.getSiteDefault())));
 	}
 
-	private void _assertFragmentEntries() throws Exception {
+	private void _assertFragmentEntries1() throws Exception {
 		Group companyGroup = _groupLocalService.getCompanyGroup(
 			_serviceContext.getCompanyId());
 
-		FragmentEntry testFragmentEntry1 =
+		FragmentEntry fragmentEntry =
 			_fragmentEntryLocalService.fetchFragmentEntry(
 				companyGroup.getGroupId(), "test-fragment-entry-1");
 
-		Assert.assertNotNull(testFragmentEntry1);
-		Assert.assertEquals(
-			"Test Fragment Entry 1", testFragmentEntry1.getName());
+		Assert.assertNotNull(fragmentEntry);
+		Assert.assertEquals("Test Fragment Entry 1", fragmentEntry.getName());
 
-		FragmentEntry testFragmentEntry2 =
+		fragmentEntry = _fragmentEntryLocalService.fetchFragmentEntry(
+			_group.getGroupId(), "test-fragment-entry-2");
+
+		Assert.assertNotNull(fragmentEntry);
+		Assert.assertEquals("Test Fragment Entry 2", fragmentEntry.getName());
+
+		fragmentEntry = _fragmentEntryLocalService.fetchFragmentEntry(
+			_group.getGroupId(), "dialect-button");
+
+		Assert.assertNull(fragmentEntry);
+	}
+
+	private void _assertFragmentEntries2() throws Exception {
+		Group companyGroup = _groupLocalService.getCompanyGroup(
+			_serviceContext.getCompanyId());
+
+		FragmentEntry fragmentEntry =
 			_fragmentEntryLocalService.fetchFragmentEntry(
-				_group.getGroupId(), "test-fragment-entry-2");
+				companyGroup.getGroupId(), "test-fragment-entry-1");
 
-		Assert.assertNotNull(testFragmentEntry2);
-		Assert.assertEquals(
-			"Test Fragment Entry 2", testFragmentEntry2.getName());
+		Assert.assertNotNull(fragmentEntry);
+		Assert.assertEquals("Test Fragment Entry 1", fragmentEntry.getName());
+
+		fragmentEntry = _fragmentEntryLocalService.fetchFragmentEntry(
+			_group.getGroupId(), "test-fragment-entry-2");
+
+		Assert.assertNotNull(fragmentEntry);
+		Assert.assertEquals("Test Fragment Entry 2", fragmentEntry.getName());
+
+		fragmentEntry = _fragmentEntryLocalService.fetchFragmentEntry(
+			_group.getGroupId(), "dialect-button");
+
+		Assert.assertNotNull(fragmentEntry);
+		Assert.assertEquals("Dialect Button", fragmentEntry.getName());
 	}
 
 	private void _assertJournalArticles1() throws Exception {
@@ -2071,7 +2099,51 @@ public class BundleSiteInitializerTest {
 		_assertPublicLayouts2();
 	}
 
-	private void _assertLayoutSets() throws Exception {
+	private void _assertLayoutSets1() throws Exception {
+		LayoutSet privateLayoutSet = _layoutSetLocalService.fetchLayoutSet(
+			_group.getGroupId(), true);
+
+		Assert.assertNotNull(privateLayoutSet);
+
+		Theme privateTheme = privateLayoutSet.getTheme();
+
+		Assert.assertEquals("Classic", privateTheme.getName());
+
+		UnicodeProperties privateLayoutSetUnicodeProperties =
+			privateLayoutSet.getSettingsProperties();
+
+		Assert.assertTrue(
+			GetterUtil.getBoolean(
+				privateLayoutSetUnicodeProperties.getProperty(
+					"lfr-theme:regular:show-footer")));
+		Assert.assertTrue(
+			GetterUtil.getBoolean(
+				privateLayoutSetUnicodeProperties.getProperty(
+					"lfr-theme:regular:show-header")));
+
+		LayoutSet publicLayoutSet = _layoutSetLocalService.fetchLayoutSet(
+			_group.getGroupId(), false);
+
+		Assert.assertNotNull(publicLayoutSet);
+
+		Theme publicTheme = publicLayoutSet.getTheme();
+
+		Assert.assertEquals("Classic", publicTheme.getName());
+
+		UnicodeProperties publicLayoutSetUnicodeProperties =
+			publicLayoutSet.getSettingsProperties();
+
+		Assert.assertFalse(
+			GetterUtil.getBoolean(
+				publicLayoutSetUnicodeProperties.getProperty(
+					"lfr-theme:regular:show-footer")));
+		Assert.assertFalse(
+			GetterUtil.getBoolean(
+				publicLayoutSetUnicodeProperties.getProperty(
+					"lfr-theme:regular:show-header")));
+	}
+
+	private void _assertLayoutSets2() throws Exception {
 		LayoutSet privateLayoutSet = _layoutSetLocalService.fetchLayoutSet(
 			_group.getGroupId(), true);
 
@@ -3151,6 +3223,21 @@ public class BundleSiteInitializerTest {
 		Assert.assertFalse(
 			pageDefinitionString.contains(
 				"[$OBJECT_DEFINITION_CLASS_NAME:TestObjectDefinition3$]"));
+		Assert.assertFalse(
+			pageDefinitionString.contains(
+				"[$OBJECT_DEFINITION_PORTLET_ID:TestObjectDefinition3$]"));
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionLocalService.fetchObjectDefinition(
+				_group.getCompanyId(), "C_TestObjectDefinition3");
+
+		Assert.assertTrue(
+			pageDefinitionString.contains(
+				StringBundler.concat(
+					ObjectPortletKeys.OBJECT_DEFINITIONS, StringPool.UNDERLINE,
+					StringUtil.split(
+						objectDefinition.getClassName(), StringPool.POUND)
+						[1])));
 
 		layout = _layoutLocalService.getLayoutByFriendlyURL(
 			_group.getGroupId(), false, "/test-url-layout");
@@ -3287,6 +3374,21 @@ public class BundleSiteInitializerTest {
 		Assert.assertFalse(
 			pageDefinitionString.contains(
 				"[$OBJECT_DEFINITION_CLASS_NAME:TestObjectDefinition3$]"));
+		Assert.assertFalse(
+			pageDefinitionString.contains(
+				"[$OBJECT_DEFINITION_PORTLET_ID:TestObjectDefinition3$]"));
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionLocalService.fetchObjectDefinition(
+				_group.getCompanyId(), "C_TestObjectDefinition3");
+
+		Assert.assertTrue(
+			pageDefinitionString.contains(
+				StringBundler.concat(
+					ObjectPortletKeys.OBJECT_DEFINITIONS, StringPool.UNDERLINE,
+					StringUtil.split(
+						objectDefinition.getClassName(), StringPool.POUND)
+						[1])));
 
 		layout = _layoutLocalService.getLayoutByFriendlyURL(
 			_group.getGroupId(), false, "/test-url-layout");
@@ -3690,12 +3792,36 @@ public class BundleSiteInitializerTest {
 			draftLayoutSegmentsExperience2.getSegmentsExperienceId());
 	}
 
-	private void _assertSiteConfiguration() {
+	private void _assertSiteConfiguration1() throws Exception {
 		Assert.assertEquals(
 			GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION,
 			_group.getMembershipRestriction());
 		Assert.assertEquals(GroupConstants.TYPE_SITE_OPEN, _group.getType());
 		Assert.assertTrue(_group.isManualMembership());
+
+		Assert.assertEquals(
+			2,
+			_menuAccessConfigurationManager.getAccessToControlMenuRoleIds(
+				_group.getGroupId()).length);
+		Assert.assertTrue(
+			_menuAccessConfigurationManager.isShowControlMenuByRole(
+				_group.getGroupId()));
+	}
+
+	private void _assertSiteConfiguration2() throws Exception {
+		Assert.assertEquals(
+			GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION,
+			_group.getMembershipRestriction());
+		Assert.assertEquals(GroupConstants.TYPE_SITE_OPEN, _group.getType());
+		Assert.assertTrue(_group.isManualMembership());
+
+		Assert.assertEquals(
+			0,
+			_menuAccessConfigurationManager.getAccessToControlMenuRoleIds(
+				_group.getGroupId()).length);
+		Assert.assertFalse(
+			_menuAccessConfigurationManager.isShowControlMenuByRole(
+				_group.getGroupId()));
 	}
 
 	private void _assertSiteNavigationMenu1() {
@@ -4358,12 +4484,12 @@ public class BundleSiteInitializerTest {
 		_assertDLFileEntry1();
 		_assertExpandoColumns1();
 		_assertExpandoValues1();
-		_assertFragmentEntries();
+		_assertFragmentEntries1();
 		_assertJournalArticles1();
 		_assertKBArticles();
 		_assertKeywords1();
 		_assertLayoutPageTemplateEntries();
-		_assertLayoutSets();
+		_assertLayoutSets1();
 		_assertLayouts1();
 		_assertLayoutUtilityPageEntries();
 		_assertListTypeDefinitions1();
@@ -4376,7 +4502,7 @@ public class BundleSiteInitializerTest {
 		_assertPortletSettings();
 		_assertSAPEntries();
 		_assertSegmentsEntries();
-		_assertSiteConfiguration();
+		_assertSiteConfiguration1();
 		_assertSiteSettings();
 		_assertSiteNavigationMenu1();
 		_assertStyleBookEntry();
@@ -4403,9 +4529,11 @@ public class BundleSiteInitializerTest {
 		_assertDLFileEntry2();
 		_assertExpandoColumns2();
 		_assertExpandoValues2();
+		_assertFragmentEntries2();
 		_assertJournalArticles2();
 		_assertKeywords2();
 		_assertLayouts2();
+		_assertLayoutSets2();
 		_assertListTypeDefinitions2();
 		_assertNotificationTemplate2();
 		_assertObjectDefinitions2();
@@ -4413,6 +4541,7 @@ public class BundleSiteInitializerTest {
 		_assertOrganizations2();
 		_assertPLOEntries2();
 		_assertResourcePermission2();
+		_assertSiteConfiguration2();
 		_assertSiteNavigationMenu2();
 		_assertSXPBlueprint2();
 		_assertUserAccounts2();
@@ -4568,6 +4697,9 @@ public class BundleSiteInitializerTest {
 	@Inject
 	private ListTypeDefinitionResource.Factory
 		_listTypeDefinitionResourceFactory;
+
+	@Inject
+	private MenuAccessConfigurationManager _menuAccessConfigurationManager;
 
 	@Inject
 	private NotificationTemplateResource.Factory

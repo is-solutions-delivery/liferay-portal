@@ -19,6 +19,7 @@ import com.liferay.headless.commerce.delivery.catalog.client.pagination.Page;
 import com.liferay.headless.commerce.delivery.catalog.client.pagination.Pagination;
 import com.liferay.headless.commerce.delivery.catalog.client.resource.v1_0.WishListResource;
 import com.liferay.headless.commerce.delivery.catalog.client.serdes.v1_0.WishListSerDes;
+import com.liferay.oauth2.provider.scope.ScopeChecker;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.StringBundler;
@@ -28,11 +29,17 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.ResourceActionLocalService;
+import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
+import com.liferay.portal.kernel.service.RoleLocalService;
+import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -40,12 +47,18 @@ import com.liferay.portal.odata.entity.EntityField;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.util.PropsValues;
+import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
+import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegate;
+import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegateBuilderRegistry;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
 
 import java.lang.reflect.Method;
 
-import java.text.DateFormat;
+import java.net.URI;
+
+import java.text.Format;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,13 +67,20 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import javax.annotation.Generated;
 
+import javax.servlet.http.HttpServletRequest;
+
 import javax.ws.rs.core.MultivaluedHashMap;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.PathSegment;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -69,6 +89,9 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 /**
  * @author Andrea Sbarra
@@ -79,12 +102,14 @@ public abstract class BaseWishListResourceTestCase {
 
 	@ClassRule
 	@Rule
-	public static final LiferayIntegrationTestRule liferayIntegrationTestRule =
-		new LiferayIntegrationTestRule();
+	public static final AggregateTestRule aggregateTestRule =
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(),
+			PermissionCheckerMethodTestRule.INSTANCE);
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		_dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
+		_format = FastDateFormatFactoryUtil.getSimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss'Z'");
 	}
 
@@ -98,12 +123,12 @@ public abstract class BaseWishListResourceTestCase {
 
 		_wishListResource.setContextCompany(testCompany);
 
-		com.liferay.portal.kernel.model.User testCompanyAdminUser =
-			UserTestUtil.getAdminUser(testCompany.getCompanyId());
+		_testCompanyAdminUser = UserTestUtil.getAdminUser(
+			testCompany.getCompanyId());
 
 		wishListResource = WishListResource.builder(
 		).authentication(
-			testCompanyAdminUser.getEmailAddress(),
+			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
 			testCompany.getVirtualHostname(), 8080, "http"
@@ -190,7 +215,8 @@ public abstract class BaseWishListResourceTestCase {
 
 		Page<WishList> page =
 			wishListResource.getChannelByExternalReferenceCodeWishListsPage(
-				externalReferenceCode, null, Pagination.of(1, 10));
+				externalReferenceCode, null, RandomTestUtil.randomString(),
+				Pagination.of(1, 10));
 
 		long totalCount = page.getTotalCount();
 
@@ -202,7 +228,7 @@ public abstract class BaseWishListResourceTestCase {
 
 			page =
 				wishListResource.getChannelByExternalReferenceCodeWishListsPage(
-					irrelevantExternalReferenceCode, null,
+					irrelevantExternalReferenceCode, null, null,
 					Pagination.of(1, (int)totalCount + 1));
 
 			Assert.assertEquals(totalCount + 1, page.getTotalCount());
@@ -223,7 +249,7 @@ public abstract class BaseWishListResourceTestCase {
 				externalReferenceCode, randomWishList());
 
 		page = wishListResource.getChannelByExternalReferenceCodeWishListsPage(
-			externalReferenceCode, null, Pagination.of(1, 10));
+			externalReferenceCode, null, null, Pagination.of(1, 10));
 
 		Assert.assertEquals(totalCount + 2, page.getTotalCount());
 
@@ -258,7 +284,7 @@ public abstract class BaseWishListResourceTestCase {
 
 		Page<WishList> wishListPage =
 			wishListResource.getChannelByExternalReferenceCodeWishListsPage(
-				externalReferenceCode, null, null);
+				externalReferenceCode, null, null, null);
 
 		int totalCount = GetterUtil.getInteger(wishListPage.getTotalCount());
 
@@ -281,7 +307,7 @@ public abstract class BaseWishListResourceTestCase {
 		if (totalCount >= (pageSizeLimit - 2)) {
 			Page<WishList> page1 =
 				wishListResource.getChannelByExternalReferenceCodeWishListsPage(
-					externalReferenceCode, null,
+					externalReferenceCode, null, null,
 					Pagination.of(
 						(int)Math.ceil((totalCount + 1.0) / pageSizeLimit),
 						pageSizeLimit));
@@ -292,7 +318,7 @@ public abstract class BaseWishListResourceTestCase {
 
 			Page<WishList> page2 =
 				wishListResource.getChannelByExternalReferenceCodeWishListsPage(
-					externalReferenceCode, null,
+					externalReferenceCode, null, null,
 					Pagination.of(
 						(int)Math.ceil((totalCount + 2.0) / pageSizeLimit),
 						pageSizeLimit));
@@ -301,7 +327,7 @@ public abstract class BaseWishListResourceTestCase {
 
 			Page<WishList> page3 =
 				wishListResource.getChannelByExternalReferenceCodeWishListsPage(
-					externalReferenceCode, null,
+					externalReferenceCode, null, null,
 					Pagination.of(
 						(int)Math.ceil((totalCount + 3.0) / pageSizeLimit),
 						pageSizeLimit));
@@ -311,7 +337,7 @@ public abstract class BaseWishListResourceTestCase {
 		else {
 			Page<WishList> page1 =
 				wishListResource.getChannelByExternalReferenceCodeWishListsPage(
-					externalReferenceCode, null,
+					externalReferenceCode, null, null,
 					Pagination.of(1, totalCount + 2));
 
 			List<WishList> wishLists1 = (List<WishList>)page1.getItems();
@@ -321,7 +347,7 @@ public abstract class BaseWishListResourceTestCase {
 
 			Page<WishList> page2 =
 				wishListResource.getChannelByExternalReferenceCodeWishListsPage(
-					externalReferenceCode, null,
+					externalReferenceCode, null, null,
 					Pagination.of(2, totalCount + 2));
 
 			Assert.assertEquals(totalCount + 3, page2.getTotalCount());
@@ -332,7 +358,7 @@ public abstract class BaseWishListResourceTestCase {
 
 			Page<WishList> page3 =
 				wishListResource.getChannelByExternalReferenceCodeWishListsPage(
-					externalReferenceCode, null,
+					externalReferenceCode, null, null,
 					Pagination.of(1, (int)totalCount + 3));
 
 			assertContains(wishList1, (List<WishList>)page3.getItems());
@@ -395,7 +421,8 @@ public abstract class BaseWishListResourceTestCase {
 			testGetChannelWishListsPage_getIrrelevantChannelId();
 
 		Page<WishList> page = wishListResource.getChannelWishListsPage(
-			channelId, null, Pagination.of(1, 10));
+			channelId, null, RandomTestUtil.randomString(),
+			Pagination.of(1, 10));
 
 		long totalCount = page.getTotalCount();
 
@@ -405,7 +432,7 @@ public abstract class BaseWishListResourceTestCase {
 					irrelevantChannelId, randomIrrelevantWishList());
 
 			page = wishListResource.getChannelWishListsPage(
-				irrelevantChannelId, null,
+				irrelevantChannelId, null, null,
 				Pagination.of(1, (int)totalCount + 1));
 
 			Assert.assertEquals(totalCount + 1, page.getTotalCount());
@@ -424,7 +451,7 @@ public abstract class BaseWishListResourceTestCase {
 			channelId, randomWishList());
 
 		page = wishListResource.getChannelWishListsPage(
-			channelId, null, Pagination.of(1, 10));
+			channelId, null, null, Pagination.of(1, 10));
 
 		Assert.assertEquals(totalCount + 2, page.getTotalCount());
 
@@ -452,7 +479,7 @@ public abstract class BaseWishListResourceTestCase {
 		Long channelId = testGetChannelWishListsPage_getChannelId();
 
 		Page<WishList> wishListPage = wishListResource.getChannelWishListsPage(
-			channelId, null, null);
+			channelId, null, null, null);
 
 		int totalCount = GetterUtil.getInteger(wishListPage.getTotalCount());
 
@@ -471,7 +498,7 @@ public abstract class BaseWishListResourceTestCase {
 
 		if (totalCount >= (pageSizeLimit - 2)) {
 			Page<WishList> page1 = wishListResource.getChannelWishListsPage(
-				channelId, null,
+				channelId, null, null,
 				Pagination.of(
 					(int)Math.ceil((totalCount + 1.0) / pageSizeLimit),
 					pageSizeLimit));
@@ -481,7 +508,7 @@ public abstract class BaseWishListResourceTestCase {
 			assertContains(wishList1, (List<WishList>)page1.getItems());
 
 			Page<WishList> page2 = wishListResource.getChannelWishListsPage(
-				channelId, null,
+				channelId, null, null,
 				Pagination.of(
 					(int)Math.ceil((totalCount + 2.0) / pageSizeLimit),
 					pageSizeLimit));
@@ -489,7 +516,7 @@ public abstract class BaseWishListResourceTestCase {
 			assertContains(wishList2, (List<WishList>)page2.getItems());
 
 			Page<WishList> page3 = wishListResource.getChannelWishListsPage(
-				channelId, null,
+				channelId, null, null,
 				Pagination.of(
 					(int)Math.ceil((totalCount + 3.0) / pageSizeLimit),
 					pageSizeLimit));
@@ -498,7 +525,7 @@ public abstract class BaseWishListResourceTestCase {
 		}
 		else {
 			Page<WishList> page1 = wishListResource.getChannelWishListsPage(
-				channelId, null, Pagination.of(1, totalCount + 2));
+				channelId, null, null, Pagination.of(1, totalCount + 2));
 
 			List<WishList> wishLists1 = (List<WishList>)page1.getItems();
 
@@ -506,7 +533,7 @@ public abstract class BaseWishListResourceTestCase {
 				wishLists1.toString(), totalCount + 2, wishLists1.size());
 
 			Page<WishList> page2 = wishListResource.getChannelWishListsPage(
-				channelId, null, Pagination.of(2, totalCount + 2));
+				channelId, null, null, Pagination.of(2, totalCount + 2));
 
 			Assert.assertEquals(totalCount + 3, page2.getTotalCount());
 
@@ -515,7 +542,7 @@ public abstract class BaseWishListResourceTestCase {
 			Assert.assertEquals(wishLists2.toString(), 1, wishLists2.size());
 
 			Page<WishList> page3 = wishListResource.getChannelWishListsPage(
-				channelId, null, Pagination.of(1, (int)totalCount + 3));
+				channelId, null, null, Pagination.of(1, (int)totalCount + 3));
 
 			assertContains(wishList1, (List<WishList>)page3.getItems());
 			assertContains(wishList2, (List<WishList>)page3.getItems());
@@ -665,6 +692,194 @@ public abstract class BaseWishListResourceTestCase {
 
 		assertEquals(postWishList, getWishList);
 		assertValid(getWishList);
+	}
+
+	@Test
+	public void testVulcanCRUDItemDelegateGetItem() throws Exception {
+		WishList postWishList = testGetWishList_addWishList();
+
+		WishList getWishList = wishListResource.getWishList(
+			postWishList.getId());
+
+		VulcanCRUDItemDelegate vulcanCRUDItemDelegate =
+			_vulcanCRUDItemDelegateBuilderRegistry.builder(
+				testCompany,
+				"com.liferay.headless.commerce.delivery.catalog.dto.v1_0.WishList"
+			).acceptLanguage(
+				new AcceptLanguage() {
+
+					@Override
+					public List<Locale> getLocales() {
+						return Arrays.asList(LocaleUtil.getDefault());
+					}
+
+					@Override
+					public String getPreferredLanguageId() {
+						return LocaleUtil.toLanguageId(LocaleUtil.getDefault());
+					}
+
+					@Override
+					public Locale getPreferredLocale() {
+						return LocaleUtil.getDefault();
+					}
+
+				}
+			).groupLocalService(
+				_groupLocalService
+			).httpServletRequest(
+				testVulcanCRUDItemDelegate_getHttpServletRequest()
+			).httpServletResponse(
+				new MockHttpServletResponse()
+			).resourceActionLocalService(
+				_resourceActionLocalService
+			).resourcePermissionLocalService(
+				_resourcePermissionLocalService
+			).roleLocalService(
+				_roleLocalService
+			).scopeChecker(
+				_scopeChecker
+			).uriInfo(
+				testVulcanCRUDItemDelegate_getUriInfo()
+			).user(
+				testVulcanCRUDItemDelegate_getUser()
+			).build();
+
+		Object item = vulcanCRUDItemDelegate.getItem(postWishList.getId());
+
+		assertEquals(getWishList, WishListSerDes.toDTO(item.toString()));
+	}
+
+	protected HttpServletRequest
+		testVulcanCRUDItemDelegate_getHttpServletRequest() {
+
+		return new MockHttpServletRequest() {
+
+			@Override
+			public StringBuffer getRequestURL() {
+				return new StringBuffer(
+					StringBundler.concat(
+						"http://localhost:8080/o/v1.0/",
+						RandomTestUtil.randomString(), "/",
+						RandomTestUtil.randomString()));
+			}
+
+		};
+	}
+
+	protected UriInfo testVulcanCRUDItemDelegate_getUriInfo() {
+		String applicationPath = RandomTestUtil.randomString() + "/";
+		String resourcePath = RandomTestUtil.randomString();
+
+		return new UriInfo() {
+
+			@Override
+			public String getPath() {
+				return resourcePath;
+			}
+
+			@Override
+			public String getPath(boolean decode) {
+				return getPath();
+			}
+
+			@Override
+			public List<PathSegment> getPathSegments() {
+				return Collections.emptyList();
+			}
+
+			@Override
+			public List<PathSegment> getPathSegments(boolean decode) {
+				return getPathSegments();
+			}
+
+			@Override
+			public URI getRequestUri() {
+				return URI.create(
+					"http://localhost:8080/o/" + applicationPath +
+						resourcePath);
+			}
+
+			@Override
+			public UriBuilder getRequestUriBuilder() {
+				return UriBuilder.fromUri(getRequestUri());
+			}
+
+			@Override
+			public URI getAbsolutePath() {
+				return getRequestUri();
+			}
+
+			@Override
+			public UriBuilder getAbsolutePathBuilder() {
+				return getRequestUriBuilder();
+			}
+
+			@Override
+			public URI getBaseUri() {
+				return URI.create("http://localhost:8080/o/" + applicationPath);
+			}
+
+			@Override
+			public UriBuilder getBaseUriBuilder() {
+				return UriBuilder.fromUri(getBaseUri());
+			}
+
+			@Override
+			public MultivaluedMap<String, String> getPathParameters() {
+				return new MultivaluedHashMap<>();
+			}
+
+			@Override
+			public MultivaluedMap<String, String> getPathParameters(
+				boolean decode) {
+
+				return getPathParameters();
+			}
+
+			@Override
+			public MultivaluedMap<String, String> getQueryParameters() {
+				return new MultivaluedHashMap<>();
+			}
+
+			@Override
+			public MultivaluedMap<String, String> getQueryParameters(
+				boolean decode) {
+
+				return getQueryParameters();
+			}
+
+			@Override
+			public List<String> getMatchedURIs() {
+				return Collections.emptyList();
+			}
+
+			@Override
+			public List<String> getMatchedURIs(boolean decode) {
+				return getMatchedURIs();
+			}
+
+			@Override
+			public List<Object> getMatchedResources() {
+				return Collections.emptyList();
+			}
+
+			@Override
+			public URI resolve(URI requestUri) {
+				return getBaseUri().resolve(requestUri);
+			}
+
+			@Override
+			public URI relativize(URI uri) {
+				return getBaseUri().relativize(uri);
+			}
+
+		};
+	}
+
+	protected com.liferay.portal.kernel.model.User
+		testVulcanCRUDItemDelegate_getUser() {
+
+		return _testCompanyAdminUser;
 	}
 
 	protected WishList testGetWishList_addWishList() throws Exception {
@@ -1483,10 +1698,34 @@ public abstract class BaseWishListResourceTestCase {
 	private static final com.liferay.portal.kernel.log.Log _log =
 		LogFactoryUtil.getLog(BaseWishListResourceTestCase.class);
 
-	private static DateFormat _dateFormat;
+	private static Format _format;
+
+	private com.liferay.portal.kernel.model.User _testCompanyAdminUser;
 
 	@Inject
 	private com.liferay.headless.commerce.delivery.catalog.resource.v1_0.
 		WishListResource _wishListResource;
+
+	@Inject
+	private GroupLocalService _groupLocalService;
+
+	@Inject
+	private ResourceActionLocalService _resourceActionLocalService;
+
+	@Inject
+	private ResourcePermissionLocalService _resourcePermissionLocalService;
+
+	@Inject
+	private RoleLocalService _roleLocalService;
+
+	@Inject
+	private ScopeChecker _scopeChecker;
+
+	@Inject
+	private UserLocalService _userLocalService;
+
+	@Inject
+	private VulcanCRUDItemDelegateBuilderRegistry
+		_vulcanCRUDItemDelegateBuilderRegistry;
 
 }

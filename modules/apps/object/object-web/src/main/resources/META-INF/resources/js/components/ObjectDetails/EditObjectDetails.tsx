@@ -137,9 +137,8 @@ export default function EditObjectDetails({
 			}
 
 			if (!draft) {
-				const publishResponse = await API.postObjectDefinitionPublish(
-					values.id as number
-				);
+				const publishResponse: any =
+					await API.postObjectDefinitionPublish(values.id as number);
 
 				if (!publishResponse.ok) {
 					const {title} = (await publishResponse.json()) as {
@@ -210,11 +209,12 @@ export default function EditObjectDetails({
 					isApproved={isApproved}
 					isRootDescendantNode={isRootDescendantNode}
 					isRootNode={isRootNode}
-					label={stringUtils.getLocalizableLabel(
-						values.defaultLanguageId as Liferay.Language.Locale,
-						values.label,
-						values.name
-					)}
+					label={stringUtils.getLocalizableLabel({
+						fallbackLabel: values.name,
+						fallbackLanguageId:
+							values.defaultLanguageId as Liferay.Language.Locale,
+						labels: values.label,
+					})}
 					objectDefinitionExternalReferenceCode={
 						objectDefinitionExternalReferenceCode
 					}

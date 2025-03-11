@@ -17,10 +17,45 @@ export interface IAccountRole {
 	raysourceName?: string;
 }
 
+export interface IAccountSubscription {
+	name?: string;
+}
+
 export interface IAccountSubscriptionGroup {
 	accountSubscriptionGroupId?: number;
 	activationStatus: string;
 	name?: string;
+}
+
+export interface IBusinessEvent {
+	actualGoLiveDate?: string;
+	actualGoLiveDateTime?: string;
+	actualGoLiveTime?: string;
+	associatedTickets?: any;
+	currentLiferayVersion?: {
+		key: string;
+		name: string;
+	};
+	description?: string;
+	details?: string;
+	eventStatus?: {
+		key: string;
+		name: string;
+	};
+	eventType?: {
+		key: string;
+		name: string;
+	};
+	id?: number;
+	name?: string;
+	newLiferayVersion?: {
+		key: string;
+		name: string;
+	};
+	targetGoLiveDate?: string;
+	targetGoLiveDateTime?: string;
+	targetGoLiveTime?: string;
+	timeZone?: string;
 }
 
 export interface IKoroneikiAccount {

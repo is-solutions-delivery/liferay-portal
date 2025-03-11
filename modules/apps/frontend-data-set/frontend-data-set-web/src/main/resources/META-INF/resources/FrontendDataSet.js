@@ -6,12 +6,8 @@
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {ClayPaginationBarWithBasicItems} from '@clayui/pagination-bar';
 import {useIsMounted, useThunk} from '@liferay/frontend-js-react-web';
-import {
-	fetch,
-	loadClientExtensions,
-	loadModule,
-	openToast,
-} from 'frontend-js-web';
+import {openToast} from 'frontend-js-components-web';
+import {fetch, loadClientExtensions, loadModule} from 'frontend-js-web';
 import React, {
 	useCallback,
 	useEffect,
@@ -252,7 +248,24 @@ const FrontendDataSet = ({
 	const isMounted = useIsMounted();
 
 	function updateDataSetItems(dataSetData) {
-		setItems(dataSetData.items);
+		const remappedItems = dataSetData.items.map((item) => {
+			if (item.embedded && item.embedded.actions) {
+				const actions = item.embedded.actions;
+
+				delete item.embedded.actions;
+
+				return {
+					...item,
+					actions,
+				};
+			}
+
+			return {
+				...item,
+			};
+		});
+
+		setItems(remappedItems);
 		setTotal(dataSetData.totalCount);
 
 		if (!dataSetData.items.length && dataSetData.totalCount > 0) {
@@ -343,24 +356,59 @@ const FrontendDataSet = ({
 		}
 	}, [itemsProp]);
 
-	function selectItems(value) {
+	function deselectItems(value) {
 		if (Array.isArray(value)) {
-			return setSelectedItemsValue(value);
-		}
-
-		if (selectionType === 'single') {
-			return setSelectedItemsValue([value]);
-		}
-
-		const itemAdded = selectedItemsValue.find((item) => item === value);
-
-		if (itemAdded) {
-			setSelectedItemsValue(
-				selectedItemsValue.filter((element) => element !== value)
+			return setSelectedItemsValue(
+				selectedItemsValue.filter((item) => !value.includes(item))
 			);
 		}
+
+		setSelectedItemsValue(
+			selectedItemsValue.filter((item) => item !== value)
+		);
+	}
+
+	function selectItems(value) {
+		if (Liferay.FeatureFlags['LPD-42570']) {
+			if (Array.isArray(value)) {
+				const newItems = value.filter(
+					(item) => !selectedItemsValue.includes(item)
+				);
+
+				return setSelectedItemsValue([
+					...selectedItemsValue,
+					...newItems,
+				]);
+			}
+
+			if (selectedItemsValue.includes(value)) {
+				setSelectedItemsValue(
+					selectedItemsValue.filter((item) => item !== value)
+				);
+			}
+			else {
+				setSelectedItemsValue([...selectedItemsValue, value]);
+			}
+		}
 		else {
-			setSelectedItemsValue(selectedItemsValue.concat(value));
+			if (Array.isArray(value)) {
+				return setSelectedItemsValue(value);
+			}
+
+			if (selectionType === 'single') {
+				return setSelectedItemsValue([value]);
+			}
+
+			const itemAdded = selectedItemsValue.find((item) => item === value);
+
+			if (itemAdded) {
+				setSelectedItemsValue(
+					selectedItemsValue.filter((element) => element !== value)
+				);
+			}
+			else {
+				setSelectedItemsValue(selectedItemsValue.concat(value));
+			}
 		}
 	}
 
@@ -563,6 +611,7 @@ const FrontendDataSet = ({
 			<ManagementBar
 				bulkActions={bulkActions}
 				creationMenu={creationMenu}
+				deselectItems={(items) => deselectItems(items)}
 				fluid={style === 'fluid'}
 				items={items}
 				selectItems={(items) => selectItems(items)}
@@ -733,6 +782,14 @@ const FrontendDataSet = ({
 			onSubmit: refreshData,
 			...config,
 		});
+	}
+
+	function onItemsChange({itemKey = 'id', items: itemsChanged}) {
+		const updatedItems = new Map(
+			[...items, ...itemsChanged].map((item) => [item[itemKey], item])
+		);
+
+		setItems(Array.from(updatedItems.values()));
 	}
 
 	function updateItem(itemKey, property, valuePath, value = null) {
@@ -906,6 +963,7 @@ const FrontendDataSet = ({
 				nestedItemsReferenceKey,
 				onActionDropdownItemClick,
 				onBulkActionItemClick,
+				onItemsChange,
 				onSearch,
 				onSelect,
 				openModal,
@@ -971,7 +1029,7 @@ const FrontendDataSet = ({
 							<div className="data-set data-set-fluid">
 								{managementBar}
 
-								<div className="container-fluid container-xl mt-3">
+								<div className="container-fluid mt-3">
 									{view}
 
 									{paginationComponent}

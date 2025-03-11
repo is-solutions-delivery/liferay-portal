@@ -102,7 +102,8 @@ export function ModalAddObjectField({
 		values.businessType === 'RichText' ||
 		values.businessType === 'Text' ||
 		(Liferay.FeatureFlags['LPD-32050'] &&
-			(values.businessType === 'Boolean' ||
+			(values.businessType === 'Attachment' ||
+				values.businessType === 'Boolean' ||
 				values.businessType === 'Date' ||
 				values.businessType === 'DateTime' ||
 				values.businessType === 'Decimal' ||
@@ -147,12 +148,6 @@ export function ModalAddObjectField({
 		};
 
 		makeFetch();
-
-		setValues({
-			localized:
-				objectDefinition?.enableLocalization &&
-				showEnableTranslationToggle,
-		});
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [objectDefinitionExternalReferenceCode, values.businessType]);

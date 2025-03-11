@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Object API
 Bundle-SymbolicName: com.liferay.object.api
-Bundle-Version: 101.0.0
+Bundle-Version: 103.0.0
 Export-Package:\
 	com.liferay.object.action.engine,\
 	com.liferay.object.action.executor,\
@@ -11,6 +11,8 @@ Export-Package:\
 	com.liferay.object.definition.groovy.script.use,\
 	com.liferay.object.definition.notification.term.util,\
 	com.liferay.object.definition.security.permission.resource,\
+	com.liferay.object.definition.setting.builder,\
+	com.liferay.object.definition.setting.util,\
 	com.liferay.object.definition.util,\
 	com.liferay.object.deployer,\
 	com.liferay.object.display.context,\

@@ -273,12 +273,34 @@ public abstract class BasePaymentMethodGroupRelOrderTypeResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (PaymentMethodGroupRelOrderType paymentMethodGroupRelOrderType :
-				paymentMethodGroupRelOrderTypes) {
+		UnsafeFunction
+			<PaymentMethodGroupRelOrderType, PaymentMethodGroupRelOrderType,
+			 Exception> paymentMethodGroupRelOrderTypeUnsafeFunction =
+				paymentMethodGroupRelOrderType -> {
+					deletePaymentMethodGroupRelOrderType(
+						paymentMethodGroupRelOrderType.
+							getPaymentMethodGroupRelOrderTypeId());
 
-			deletePaymentMethodGroupRelOrderType(
-				paymentMethodGroupRelOrderType.
-					getPaymentMethodGroupRelOrderTypeId());
+					return paymentMethodGroupRelOrderType;
+				};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				paymentMethodGroupRelOrderTypes,
+				paymentMethodGroupRelOrderTypeUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				paymentMethodGroupRelOrderTypes,
+				paymentMethodGroupRelOrderTypeUnsafeFunction::apply);
+		}
+		else {
+			for (PaymentMethodGroupRelOrderType paymentMethodGroupRelOrderType :
+					paymentMethodGroupRelOrderTypes) {
+
+				paymentMethodGroupRelOrderTypeUnsafeFunction.apply(
+					paymentMethodGroupRelOrderType);
+			}
 		}
 	}
 

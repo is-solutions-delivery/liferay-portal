@@ -6,6 +6,7 @@
 package com.liferay.commerce.test.util.price.list;
 
 import com.liferay.commerce.currency.model.CommerceCurrency;
+import com.liferay.commerce.currency.service.CommerceCurrencyLocalServiceUtil;
 import com.liferay.commerce.currency.test.util.CommerceCurrencyTestUtil;
 import com.liferay.commerce.price.list.constants.CommercePriceListConstants;
 import com.liferay.commerce.price.list.model.CommercePriceList;
@@ -220,8 +221,26 @@ public class CommercePriceListTestUtil {
 			ServiceContextTestUtil.getServiceContext(groupId);
 
 		CommerceCurrency commerceCurrency =
-			CommerceCurrencyTestUtil.addCommerceCurrency(
+			CommerceCurrencyLocalServiceUtil.fetchPrimaryCommerceCurrency(
 				serviceContext.getCompanyId());
+
+		if (commerceCurrency == null) {
+			commerceCurrency = CommerceCurrencyTestUtil.addCommerceCurrency(
+				serviceContext.getCompanyId());
+		}
+
+		return addCommercePriceList(
+			groupId, catalogBasePriceList, commerceCurrency.getCode(), type,
+			priority);
+	}
+
+	public static CommercePriceList addCommercePriceList(
+			long groupId, boolean catalogBasePriceList, String currencyCode,
+			String type, double priority)
+		throws Exception {
+
+		ServiceContext serviceContext =
+			ServiceContextTestUtil.getServiceContext(groupId);
 
 		User user = UserLocalServiceUtil.getGuestUser(
 			serviceContext.getCompanyId());
@@ -231,14 +250,14 @@ public class CommercePriceListTestUtil {
 		serviceContext.setWorkflowAction(WorkflowConstants.ACTION_PUBLISH);
 
 		return CommercePriceListLocalServiceUtil.addCommercePriceList(
-			null, groupId, user.getUserId(), commerceCurrency.getCode(), true,
-			type, 0, catalogBasePriceList, RandomTestUtil.randomString(),
-			priority, calendar.get(Calendar.MONTH),
-			calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.YEAR),
-			calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE),
+			null, groupId, user.getUserId(), currencyCode, true, type, 0,
+			catalogBasePriceList, RandomTestUtil.randomString(), priority,
 			calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),
 			calendar.get(Calendar.YEAR), calendar.get(Calendar.HOUR_OF_DAY),
-			calendar.get(Calendar.MINUTE), true, serviceContext);
+			calendar.get(Calendar.MINUTE), calendar.get(Calendar.MONTH),
+			calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.YEAR),
+			calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE),
+			true, serviceContext);
 	}
 
 	public static CommercePriceList addCommercePriceList(

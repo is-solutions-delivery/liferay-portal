@@ -6,11 +6,8 @@
 import {
 	ObjectDefinition,
 	ObjectDefinitionApi,
-	ObjectField,
 	ObjectFieldApi,
-	ObjectRelationship,
 	ObjectRelationshipApi,
-	ObjectValidationRule,
 	ObjectValidationRuleApi,
 } from '@liferay/object-admin-rest-client-js';
 import {expect, mergeTests} from '@playwright/test';
@@ -68,8 +65,8 @@ test.describe('Object Unique Composite Key Validation', () => {
 		await objectFieldApiClient.postObjectDefinitionByExternalReferenceCodeObjectField(
 			objectDefinition1.externalReferenceCode,
 			{
-				DBType: ObjectField.DBTypeEnum.Integer,
-				businessType: ObjectField.BusinessTypeEnum.Integer,
+				DBType: 'Integer',
+				businessType: 'Integer',
 				externalReferenceCode: 'integerField',
 				indexed: true,
 				indexedAsKeyword: false,
@@ -78,7 +75,7 @@ test.describe('Object Unique Composite Key Validation', () => {
 				listTypeDefinitionId: 0,
 				localized: false,
 				name: 'integerField',
-				readOnly: ObjectField.ReadOnlyEnum.False,
+				readOnly: 'false',
 				required: false,
 				state: false,
 				system: false,
@@ -126,8 +123,8 @@ test.describe('Object Unique Composite Key Validation', () => {
 		await objectFieldApiClient.postObjectDefinitionByExternalReferenceCodeObjectField(
 			objectDefinition1.externalReferenceCode,
 			{
-				DBType: ObjectField.DBTypeEnum.Integer,
-				businessType: ObjectField.BusinessTypeEnum.Integer,
+				DBType: 'Integer',
+				businessType: 'Integer',
 				externalReferenceCode: integerFieldName,
 				indexed: true,
 				indexedAsKeyword: false,
@@ -136,7 +133,7 @@ test.describe('Object Unique Composite Key Validation', () => {
 				listTypeDefinitionId: 0,
 				localized: false,
 				name: integerFieldName,
-				readOnly: ObjectField.ReadOnlyEnum.False,
+				readOnly: 'false',
 				required: false,
 				state: false,
 				system: false,
@@ -172,7 +169,7 @@ test.describe('Object Unique Composite Key Validation', () => {
 						value: integerFieldName,
 					} as any,
 				],
-				outputType: ObjectValidationRule.OutputTypeEnum.FullValidation,
+				outputType: 'fullValidation',
 				script: '',
 				system: false,
 			}
@@ -251,8 +248,8 @@ test.describe('Object Unique Composite Key Validation', () => {
 		await objectFieldApiClient.postObjectDefinitionByExternalReferenceCodeObjectField(
 			objectDefinition1.externalReferenceCode,
 			{
-				DBType: ObjectField.DBTypeEnum.String,
-				businessType: ObjectField.BusinessTypeEnum.AutoIncrement,
+				DBType: 'String',
+				businessType: 'AutoIncrement',
 				externalReferenceCode: autoIncrementFieldName,
 				indexed: true,
 				indexedAsKeyword: false,
@@ -267,7 +264,7 @@ test.describe('Object Unique Composite Key Validation', () => {
 						value: '1234',
 					} as any,
 				],
-				readOnly: ObjectField.ReadOnlyEnum.False,
+				readOnly: 'false',
 				required: false,
 				state: false,
 				system: false,
@@ -277,8 +274,8 @@ test.describe('Object Unique Composite Key Validation', () => {
 		await objectFieldApiClient.postObjectDefinitionByExternalReferenceCodeObjectField(
 			objectDefinition1.externalReferenceCode,
 			{
-				DBType: ObjectField.DBTypeEnum.Date,
-				businessType: ObjectField.BusinessTypeEnum.Date,
+				DBType: 'Date',
+				businessType: 'Date',
 				externalReferenceCode: dateFieldName,
 				indexed: true,
 				indexedAsKeyword: false,
@@ -287,7 +284,7 @@ test.describe('Object Unique Composite Key Validation', () => {
 				listTypeDefinitionId: 0,
 				localized: false,
 				name: dateFieldName,
-				readOnly: ObjectField.ReadOnlyEnum.False,
+				readOnly: 'false',
 				required: false,
 				state: false,
 				system: false,
@@ -297,8 +294,8 @@ test.describe('Object Unique Composite Key Validation', () => {
 		await objectFieldApiClient.postObjectDefinitionByExternalReferenceCodeObjectField(
 			objectDefinition1.externalReferenceCode,
 			{
-				DBType: ObjectField.DBTypeEnum.Integer,
-				businessType: ObjectField.BusinessTypeEnum.Integer,
+				DBType: 'Integer',
+				businessType: 'Integer',
 				externalReferenceCode: integerFieldName,
 				indexed: true,
 				indexedAsKeyword: false,
@@ -307,7 +304,7 @@ test.describe('Object Unique Composite Key Validation', () => {
 				listTypeDefinitionId: 0,
 				localized: false,
 				name: integerFieldName,
-				readOnly: ObjectField.ReadOnlyEnum.False,
+				readOnly: 'false',
 				required: false,
 				state: false,
 				system: false,
@@ -332,7 +329,7 @@ test.describe('Object Unique Composite Key Validation', () => {
 				objectDefinitionId1: objectDefinition2.id,
 				objectDefinitionId2: objectDefinition1.id,
 				objectDefinitionName2: objectDefinition1.name,
-				type: ObjectRelationship.TypeEnum.OneToMany,
+				type: 'oneToMany',
 			}
 		);
 
@@ -342,8 +339,8 @@ test.describe('Object Unique Composite Key Validation', () => {
 		await objectFieldApiClient.postObjectDefinitionByExternalReferenceCodeObjectField(
 			objectDefinition1.externalReferenceCode,
 			{
-				DBType: ObjectField.DBTypeEnum.String,
-				businessType: ObjectField.BusinessTypeEnum.Picklist,
+				DBType: 'String',
+				businessType: 'Picklist',
 				externalReferenceCode: picklistFieldName,
 				indexed: true,
 				indexedAsKeyword: false,
@@ -354,7 +351,7 @@ test.describe('Object Unique Composite Key Validation', () => {
 				listTypeDefinitionId: listTypeDefinition.id,
 				localized: false,
 				name: picklistFieldName,
-				readOnly: ObjectField.ReadOnlyEnum.False,
+				readOnly: 'false',
 				required: false,
 				state: false,
 				system: false,
@@ -409,8 +406,8 @@ test.describe('Object Unique Composite Key Validation', () => {
 		await objectFieldApiClient.postObjectDefinitionByExternalReferenceCodeObjectField(
 			objectDefinition1.externalReferenceCode,
 			{
-				DBType: ObjectField.DBTypeEnum.Integer,
-				businessType: ObjectField.BusinessTypeEnum.Integer,
+				DBType: 'Integer',
+				businessType: 'Integer',
 				externalReferenceCode: 'integerField',
 				indexed: true,
 				indexedAsKeyword: false,
@@ -419,7 +416,7 @@ test.describe('Object Unique Composite Key Validation', () => {
 				listTypeDefinitionId: 0,
 				localized: false,
 				name: 'integerField',
-				readOnly: ObjectField.ReadOnlyEnum.False,
+				readOnly: 'false',
 				required: false,
 				state: false,
 				system: false,

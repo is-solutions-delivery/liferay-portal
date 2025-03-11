@@ -13,6 +13,7 @@ import {required, validate} from '~/utils/validations.form';
 import './Input.css';
 
 interface IProps extends React.ComponentPropsWithoutRef<typeof ClayInput> {
+	badgeClassName?: string;
 	disableError?: boolean;
 	groupStyle?: string;
 	helper?: any;
@@ -21,6 +22,7 @@ interface IProps extends React.ComponentPropsWithoutRef<typeof ClayInput> {
 }
 
 const Input = ({
+	badgeClassName,
 	disableError,
 	groupStyle,
 	helper,
@@ -62,7 +64,7 @@ const Input = ({
 			</label>
 
 			{typeof meta.error === 'string' && meta.touched && !disableError ? (
-				<Badge>
+				<Badge badgeClassName={badgeClassName}>
 					<span className="pl-1">{meta.error}</span>
 				</Badge>
 			) : (

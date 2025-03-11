@@ -5,6 +5,8 @@
 
 package com.liferay.commerce.product.service.impl;
 
+import com.liferay.commerce.currency.model.CommerceCurrency;
+import com.liferay.commerce.currency.model.CommerceCurrencyTable;
 import com.liferay.commerce.product.exception.DuplicateCommerceChannelRelException;
 import com.liferay.commerce.product.model.CommerceChannelRel;
 import com.liferay.commerce.product.model.CommerceChannelRelTable;
@@ -107,81 +109,6 @@ public class CommerceChannelRelLocalServiceImpl
 	}
 
 	@Override
-	public List<CommerceChannelRel> getCommerceChannelCountries(
-		long commerceChannelId, String name, int start, int end) {
-
-		return dslQuery(
-			DSLQueryFactoryUtil.select(
-				CommerceChannelRelTable.INSTANCE
-			).from(
-				CommerceChannelRelTable.INSTANCE
-			).leftJoinOn(
-				CountryTable.INSTANCE,
-				CountryTable.INSTANCE.countryId.eq(
-					CommerceChannelRelTable.INSTANCE.classPK)
-			).where(
-				CommerceChannelRelTable.INSTANCE.classNameId.eq(
-					_classNameLocalService.getClassNameId(
-						Country.class.getName())
-				).and(
-					CommerceChannelRelTable.INSTANCE.commerceChannelId.eq(
-						commerceChannelId)
-				).and(
-					() -> {
-						if (Validator.isNull(name)) {
-							return null;
-						}
-
-						return DSLFunctionFactoryUtil.lower(
-							CountryTable.INSTANCE.name
-						).like(
-							StringPool.PERCENT + StringUtil.toLowerCase(name) +
-								StringPool.PERCENT
-						);
-					}
-				)
-			).limit(
-				start, end
-			));
-	}
-
-	@Override
-	public int getCommerceChannelCountriesCount(
-		long commerceChannelId, String name) {
-
-		return dslQueryCount(
-			DSLQueryFactoryUtil.count(
-			).from(
-				CommerceChannelRelTable.INSTANCE
-			).leftJoinOn(
-				CountryTable.INSTANCE,
-				CountryTable.INSTANCE.countryId.eq(
-					CommerceChannelRelTable.INSTANCE.classPK)
-			).where(
-				CommerceChannelRelTable.INSTANCE.commerceChannelId.eq(
-					commerceChannelId
-				).and(
-					CommerceChannelRelTable.INSTANCE.classNameId.eq(
-						_classNameLocalService.getClassNameId(
-							Country.class.getName()))
-				).and(
-					() -> {
-						if (Validator.isNull(name)) {
-							return null;
-						}
-
-						return DSLFunctionFactoryUtil.lower(
-							CountryTable.INSTANCE.name
-						).like(
-							StringPool.PERCENT + StringUtil.toLowerCase(name) +
-								StringPool.PERCENT
-						);
-					}
-				)
-			));
-	}
-
-	@Override
 	public List<CommerceChannelRel> getCommerceChannelRels(
 		long commerceChannelId, int start, int end,
 		OrderByComparator<CommerceChannelRel> orderByComparator) {
@@ -225,6 +152,156 @@ public class CommerceChannelRelLocalServiceImpl
 		String className, long classPK, String name) {
 
 		return commerceChannelRelFinder.countByC_C(className, classPK, name);
+	}
+
+	@Override
+	public List<CommerceChannelRel> getCommerceCurrencyCommerceChannelRels(
+		long commerceChannelId, String name, int start, int end) {
+
+		return dslQuery(
+			DSLQueryFactoryUtil.select(
+				CommerceChannelRelTable.INSTANCE
+			).from(
+				CommerceChannelRelTable.INSTANCE
+			).leftJoinOn(
+				CommerceCurrencyTable.INSTANCE,
+				CommerceCurrencyTable.INSTANCE.commerceCurrencyId.eq(
+					CommerceChannelRelTable.INSTANCE.classPK)
+			).where(
+				CommerceChannelRelTable.INSTANCE.classNameId.eq(
+					_classNameLocalService.getClassNameId(
+						CommerceCurrency.class.getName())
+				).and(
+					CommerceChannelRelTable.INSTANCE.commerceChannelId.eq(
+						commerceChannelId)
+				).and(
+					() -> {
+						if (Validator.isNull(name)) {
+							return null;
+						}
+
+						return DSLFunctionFactoryUtil.lower(
+							CommerceCurrencyTable.INSTANCE.name
+						).like(
+							StringPool.PERCENT + StringUtil.toLowerCase(name) +
+								StringPool.PERCENT
+						);
+					}
+				)
+			).limit(
+				start, end
+			));
+	}
+
+	@Override
+	public int getCommerceCurrencyCommerceChannelRelsCount(
+		long commerceChannelId, String name) {
+
+		return dslQueryCount(
+			DSLQueryFactoryUtil.count(
+			).from(
+				CommerceChannelRelTable.INSTANCE
+			).leftJoinOn(
+				CommerceCurrencyTable.INSTANCE,
+				CommerceCurrencyTable.INSTANCE.commerceCurrencyId.eq(
+					CommerceChannelRelTable.INSTANCE.classPK)
+			).where(
+				CommerceChannelRelTable.INSTANCE.commerceChannelId.eq(
+					commerceChannelId
+				).and(
+					CommerceChannelRelTable.INSTANCE.classNameId.eq(
+						_classNameLocalService.getClassNameId(
+							CommerceCurrency.class.getName()))
+				).and(
+					() -> {
+						if (Validator.isNull(name)) {
+							return null;
+						}
+
+						return DSLFunctionFactoryUtil.lower(
+							CommerceCurrencyTable.INSTANCE.name
+						).like(
+							StringPool.PERCENT + StringUtil.toLowerCase(name) +
+								StringPool.PERCENT
+						);
+					}
+				)
+			));
+	}
+
+	@Override
+	public List<CommerceChannelRel> getCountryCommerceChannelRels(
+		long commerceChannelId, String name, int start, int end) {
+
+		return dslQuery(
+			DSLQueryFactoryUtil.select(
+				CommerceChannelRelTable.INSTANCE
+			).from(
+				CommerceChannelRelTable.INSTANCE
+			).leftJoinOn(
+				CountryTable.INSTANCE,
+				CountryTable.INSTANCE.countryId.eq(
+					CommerceChannelRelTable.INSTANCE.classPK)
+			).where(
+				CommerceChannelRelTable.INSTANCE.classNameId.eq(
+					_classNameLocalService.getClassNameId(
+						Country.class.getName())
+				).and(
+					CommerceChannelRelTable.INSTANCE.commerceChannelId.eq(
+						commerceChannelId)
+				).and(
+					() -> {
+						if (Validator.isNull(name)) {
+							return null;
+						}
+
+						return DSLFunctionFactoryUtil.lower(
+							CountryTable.INSTANCE.name
+						).like(
+							StringPool.PERCENT + StringUtil.toLowerCase(name) +
+								StringPool.PERCENT
+						);
+					}
+				)
+			).limit(
+				start, end
+			));
+	}
+
+	@Override
+	public int getCountryCommerceChannelRelsCount(
+		long commerceChannelId, String name) {
+
+		return dslQueryCount(
+			DSLQueryFactoryUtil.count(
+			).from(
+				CommerceChannelRelTable.INSTANCE
+			).leftJoinOn(
+				CountryTable.INSTANCE,
+				CountryTable.INSTANCE.countryId.eq(
+					CommerceChannelRelTable.INSTANCE.classPK)
+			).where(
+				CommerceChannelRelTable.INSTANCE.commerceChannelId.eq(
+					commerceChannelId
+				).and(
+					CommerceChannelRelTable.INSTANCE.classNameId.eq(
+						_classNameLocalService.getClassNameId(
+							Country.class.getName()))
+				).and(
+					() -> {
+						if (Validator.isNull(name)) {
+							return null;
+						}
+
+						return DSLFunctionFactoryUtil.lower(
+							CountryTable.INSTANCE.name
+						).like(
+							StringPool.PERCENT + StringUtil.toLowerCase(name) +
+								StringPool.PERCENT
+						);
+					}
+				)
+			));
 	}
 
 	@Reference

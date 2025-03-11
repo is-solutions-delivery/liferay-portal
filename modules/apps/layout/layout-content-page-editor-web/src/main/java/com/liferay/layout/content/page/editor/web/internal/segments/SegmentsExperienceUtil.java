@@ -121,7 +121,7 @@ public class SegmentsExperienceUtil {
 					"segmentsExperimentStatus",
 					getSegmentsExperimentStatus(
 						themeDisplay,
-						segmentsExperience.getSegmentsExperienceId())
+						segmentsExperience.getSegmentsExperienceKey())
 				).put(
 					"segmentsExperimentURL",
 					_getSegmentsExperimentURL(
@@ -154,11 +154,12 @@ public class SegmentsExperienceUtil {
 	}
 
 	public static Map<String, Object> getSegmentsExperimentStatus(
-			ThemeDisplay themeDisplay, long segmentsExperienceId)
-		throws Exception {
+		ThemeDisplay themeDisplay, String segmentsExperienceKey) {
 
-		SegmentsExperiment segmentsExperiment = _getSegmentsExperiment(
-			themeDisplay, segmentsExperienceId);
+		SegmentsExperiment segmentsExperiment =
+			SegmentsExperimentLocalServiceUtil.fetchSegmentsExperiment(
+				themeDisplay.getScopeGroupId(), segmentsExperienceKey,
+				themeDisplay.getPlid());
 
 		if (segmentsExperiment == null) {
 			return null;
@@ -299,20 +300,6 @@ public class SegmentsExperienceUtil {
 			existingPortletPreferences.getPortletId(), jxPortletPreferences);
 	}
 
-	private static SegmentsExperiment _getSegmentsExperiment(
-			ThemeDisplay themeDisplay, long segmentsExperienceId)
-		throws Exception {
-
-		Layout draftLayout = themeDisplay.getLayout();
-
-		Layout layout = LayoutLocalServiceUtil.getLayout(
-			draftLayout.getClassPK());
-
-		return SegmentsExperimentLocalServiceUtil.fetchSegmentsExperiment(
-			themeDisplay.getScopeGroupId(), segmentsExperienceId,
-			layout.getPlid());
-	}
-
 	private static String _getSegmentsExperimentURL(
 		ThemeDisplay themeDisplay, String layoutFullURL,
 		long segmentsExperienceId) {
@@ -373,16 +360,11 @@ public class SegmentsExperienceUtil {
 				JSONFactoryUtil.createJSONObject(
 					fragmentEntryLink.getEditableValues());
 
-			long segmentsExperimentPlid = layout.getPlid();
-
-			if (layout.isDraftLayout()) {
-				segmentsExperimentPlid = layout.getClassPK();
-			}
-
 			SegmentsExperiment segmentsExperiment =
 				SegmentsExperimentLocalServiceUtil.fetchSegmentsExperiment(
-					groupId, sourceSegmentsExperience.getSegmentsExperienceId(),
-					segmentsExperimentPlid);
+					groupId,
+					sourceSegmentsExperience.getSegmentsExperienceKey(),
+					layout.getPlid());
 
 			if (Validator.isNull(
 					editableValuesJSONObject.getString("instanceId")) &&

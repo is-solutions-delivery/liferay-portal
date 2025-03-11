@@ -32,7 +32,7 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -46,7 +46,7 @@ import com.liferay.portal.vulcan.resource.EntityModelResource;
 
 import java.lang.reflect.Method;
 
-import java.text.DateFormat;
+import java.text.Format;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -85,7 +85,7 @@ public abstract class BaseMappedProductResourceTestCase {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		_dateFormat = DateFormatFactoryUtil.getSimpleDateFormat(
+		_format = FastDateFormatFactoryUtil.getSimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ss'Z'");
 	}
 
@@ -99,12 +99,12 @@ public abstract class BaseMappedProductResourceTestCase {
 
 		_mappedProductResource.setContextCompany(testCompany);
 
-		com.liferay.portal.kernel.model.User testCompanyAdminUser =
-			UserTestUtil.getAdminUser(testCompany.getCompanyId());
+		_testCompanyAdminUser = UserTestUtil.getAdminUser(
+			testCompany.getCompanyId());
 
 		mappedProductResource = MappedProductResource.builder(
 		).authentication(
-			testCompanyAdminUser.getEmailAddress(),
+			_testCompanyAdminUser.getEmailAddress(),
 			PropsValues.DEFAULT_ADMIN_PASSWORD
 		).endpoint(
 			testCompany.getVirtualHostname(), 8080, "http"
@@ -202,7 +202,8 @@ public abstract class BaseMappedProductResourceTestCase {
 
 		Page<MappedProduct> page =
 			mappedProductResource.getChannelProductMappedProductsPage(
-				channelId, productId, null, null, Pagination.of(1, 10), null);
+				channelId, productId, null, RandomTestUtil.randomString(), null,
+				Pagination.of(1, 10), null);
 
 		long totalCount = page.getTotalCount();
 
@@ -213,7 +214,7 @@ public abstract class BaseMappedProductResourceTestCase {
 					randomIrrelevantMappedProduct());
 
 			page = mappedProductResource.getChannelProductMappedProductsPage(
-				irrelevantChannelId, irrelevantProductId, null, null,
+				irrelevantChannelId, irrelevantProductId, null, null, null,
 				Pagination.of(1, (int)totalCount + 1), null);
 
 			Assert.assertEquals(totalCount + 1, page.getTotalCount());
@@ -235,7 +236,7 @@ public abstract class BaseMappedProductResourceTestCase {
 				channelId, productId, randomMappedProduct());
 
 		page = mappedProductResource.getChannelProductMappedProductsPage(
-			channelId, productId, null, null, Pagination.of(1, 10), null);
+			channelId, productId, null, null, null, Pagination.of(1, 10), null);
 
 		Assert.assertEquals(totalCount + 2, page.getTotalCount());
 
@@ -266,7 +267,7 @@ public abstract class BaseMappedProductResourceTestCase {
 
 		Page<MappedProduct> mappedProductPage =
 			mappedProductResource.getChannelProductMappedProductsPage(
-				channelId, productId, null, null, null, null);
+				channelId, productId, null, null, null, null, null);
 
 		int totalCount = GetterUtil.getInteger(
 			mappedProductPage.getTotalCount());
@@ -290,7 +291,7 @@ public abstract class BaseMappedProductResourceTestCase {
 		if (totalCount >= (pageSizeLimit - 2)) {
 			Page<MappedProduct> page1 =
 				mappedProductResource.getChannelProductMappedProductsPage(
-					channelId, productId, null, null,
+					channelId, productId, null, null, null,
 					Pagination.of(
 						(int)Math.ceil((totalCount + 1.0) / pageSizeLimit),
 						pageSizeLimit),
@@ -303,7 +304,7 @@ public abstract class BaseMappedProductResourceTestCase {
 
 			Page<MappedProduct> page2 =
 				mappedProductResource.getChannelProductMappedProductsPage(
-					channelId, productId, null, null,
+					channelId, productId, null, null, null,
 					Pagination.of(
 						(int)Math.ceil((totalCount + 2.0) / pageSizeLimit),
 						pageSizeLimit),
@@ -314,7 +315,7 @@ public abstract class BaseMappedProductResourceTestCase {
 
 			Page<MappedProduct> page3 =
 				mappedProductResource.getChannelProductMappedProductsPage(
-					channelId, productId, null, null,
+					channelId, productId, null, null, null,
 					Pagination.of(
 						(int)Math.ceil((totalCount + 3.0) / pageSizeLimit),
 						pageSizeLimit),
@@ -326,7 +327,7 @@ public abstract class BaseMappedProductResourceTestCase {
 		else {
 			Page<MappedProduct> page1 =
 				mappedProductResource.getChannelProductMappedProductsPage(
-					channelId, productId, null, null,
+					channelId, productId, null, null, null,
 					Pagination.of(1, totalCount + 2), null);
 
 			List<MappedProduct> mappedProducts1 =
@@ -338,7 +339,7 @@ public abstract class BaseMappedProductResourceTestCase {
 
 			Page<MappedProduct> page2 =
 				mappedProductResource.getChannelProductMappedProductsPage(
-					channelId, productId, null, null,
+					channelId, productId, null, null, null,
 					Pagination.of(2, totalCount + 2), null);
 
 			Assert.assertEquals(totalCount + 3, page2.getTotalCount());
@@ -351,7 +352,7 @@ public abstract class BaseMappedProductResourceTestCase {
 
 			Page<MappedProduct> page3 =
 				mappedProductResource.getChannelProductMappedProductsPage(
-					channelId, productId, null, null,
+					channelId, productId, null, null, null,
 					Pagination.of(1, (int)totalCount + 3), null);
 
 			assertContains(
@@ -491,12 +492,12 @@ public abstract class BaseMappedProductResourceTestCase {
 
 		Page<MappedProduct> page =
 			mappedProductResource.getChannelProductMappedProductsPage(
-				channelId, productId, null, null, null, null);
+				channelId, productId, null, null, null, null, null);
 
 		for (EntityField entityField : entityFields) {
 			Page<MappedProduct> ascPage =
 				mappedProductResource.getChannelProductMappedProductsPage(
-					channelId, productId, null, null,
+					channelId, productId, null, null, null,
 					Pagination.of(1, (int)page.getTotalCount() + 1),
 					entityField.getName() + ":asc");
 
@@ -507,7 +508,7 @@ public abstract class BaseMappedProductResourceTestCase {
 
 			Page<MappedProduct> descPage =
 				mappedProductResource.getChannelProductMappedProductsPage(
-					channelId, productId, null, null,
+					channelId, productId, null, null, null,
 					Pagination.of(1, (int)page.getTotalCount() + 1),
 					entityField.getName() + ":desc");
 
@@ -1938,7 +1939,9 @@ public abstract class BaseMappedProductResourceTestCase {
 	private static final com.liferay.portal.kernel.log.Log _log =
 		LogFactoryUtil.getLog(BaseMappedProductResourceTestCase.class);
 
-	private static DateFormat _dateFormat;
+	private static Format _format;
+
+	private com.liferay.portal.kernel.model.User _testCompanyAdminUser;
 
 	@Inject
 	private com.liferay.headless.commerce.delivery.catalog.resource.v1_0.

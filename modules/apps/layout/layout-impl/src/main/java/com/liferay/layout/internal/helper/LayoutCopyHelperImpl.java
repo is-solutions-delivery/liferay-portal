@@ -28,21 +28,13 @@ public class LayoutCopyHelperImpl implements LayoutCopyHelper {
 
 	@Override
 	public Layout copyLayoutContent(
-			long segmentsExperienceId, Layout sourceLayout, Layout targetLayout)
+			long sourceSegmentsExperienceId, Layout sourceLayout,
+			long targetSegmentsExperienceId, Layout targetLayout)
 		throws Exception {
 
 		return _layoutLocalService.copyLayoutContent(
-			segmentsExperienceId, sourceLayout, targetLayout);
-	}
-
-	@Override
-	public Layout copyLayoutContent(
-			long[] segmentsExperiencesIds, Layout sourceLayout,
-			Layout targetLayout)
-		throws Exception {
-
-		return _layoutLocalService.copyLayoutContent(
-			segmentsExperiencesIds, sourceLayout, targetLayout);
+			sourceSegmentsExperienceId, sourceLayout,
+			targetSegmentsExperienceId, targetLayout);
 	}
 
 	@Reference

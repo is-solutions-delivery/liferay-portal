@@ -20,11 +20,11 @@ import com.liferay.commerce.product.service.CommerceChannelLocalService;
 import com.liferay.commerce.product.test.util.CPTestUtil;
 import com.liferay.commerce.service.CommerceOrderLocalService;
 import com.liferay.commerce.test.util.CommerceTestUtil;
+import com.liferay.object.constants.ObjectEntryFolderConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
-import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -35,6 +35,7 @@ import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -51,7 +52,6 @@ import org.frutilla.FrutillaRule;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -61,6 +61,7 @@ import org.junit.runner.RunWith;
 /**
  * @author Danny Situ
  */
+@FeatureFlags("LPD-10562")
 @RunWith(Arquillian.class)
 public class CommerceReturnItemObjectEntryValuesContributorTest {
 
@@ -73,8 +74,6 @@ public class CommerceReturnItemObjectEntryValuesContributorTest {
 
 	@Before
 	public void setUp() throws Exception {
-		Assume.assumeTrue(FeatureFlagManagerUtil.isEnabled("LPD-10562"));
-
 		_group = GroupTestUtil.addGroup();
 		_user = UserTestUtil.addUser();
 
@@ -123,6 +122,7 @@ public class CommerceReturnItemObjectEntryValuesContributorTest {
 
 		_objectEntry = _objectEntryLocalService.addObjectEntry(
 			_user.getUserId(), 0, objectDefinition.getObjectDefinitionId(),
+			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 			null,
 			HashMapBuilder.<String, Serializable>put(
 				"channelGroupId", _commerceChannel.getSiteGroupId()
@@ -168,6 +168,7 @@ public class CommerceReturnItemObjectEntryValuesContributorTest {
 
 		ObjectEntry objectEntry = _objectEntryLocalService.addObjectEntry(
 			_user.getUserId(), 0, objectDefinition.getObjectDefinitionId(),
+			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
 			null,
 			HashMapBuilder.<String, Serializable>put(
 				"quantity", _commerceOrderItem.getQuantity()

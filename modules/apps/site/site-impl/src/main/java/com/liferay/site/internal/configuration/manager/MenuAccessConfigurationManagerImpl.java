@@ -5,16 +5,18 @@
 
 package com.liferay.site.internal.configuration.manager;
 
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
-import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Role;
-import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.site.configuration.MenuAccessConfiguration;
 import com.liferay.site.configuration.manager.MenuAccessConfigurationManager;
 
+import java.util.Dictionary;
+
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -26,57 +28,35 @@ public class MenuAccessConfigurationManagerImpl
 	implements MenuAccessConfigurationManager {
 
 	@Override
-	public void addAccessRoleToControlMenu(Role role) throws Exception {
-		for (Group group :
-				_groupLocalService.getGroups(
-					role.getCompanyId(), GroupConstants.ANY_PARENT_GROUP_ID,
-					true)) {
-
-			MenuAccessConfiguration menuAccessConfiguration =
-				_configurationProvider.getGroupConfiguration(
-					MenuAccessConfiguration.class, group.getGroupId());
-
-			if (!menuAccessConfiguration.showControlMenuByRole()) {
-				continue;
-			}
-
-			String roleId = String.valueOf(role.getRoleId());
-			String[] accessToControlMenuRoleIds =
-				menuAccessConfiguration.accessToControlMenuRoleIds();
-
-			if (!ArrayUtil.contains(accessToControlMenuRoleIds, roleId)) {
-				accessToControlMenuRoleIds = ArrayUtil.append(
-					accessToControlMenuRoleIds, roleId);
-
-				updateMenuAccessConfiguration(
-					group.getGroupId(), accessToControlMenuRoleIds,
-					menuAccessConfiguration.showControlMenuByRole());
-			}
-		}
-	}
-
-	@Override
 	public void deleteRoleAccessToControlMenu(Role role) throws Exception {
-		for (Group group :
-				_groupLocalService.getGroups(
-					role.getCompanyId(), GroupConstants.ANY_PARENT_GROUP_ID,
-					true)) {
+		String filterString = StringBundler.concat(
+			"(service.factoryPid=", MenuAccessConfiguration.class.getName(),
+			".scoped)");
 
-			MenuAccessConfiguration menuAccessConfiguration =
-				_configurationProvider.getGroupConfiguration(
-					MenuAccessConfiguration.class, group.getGroupId());
+		Configuration[] configurations = _configurationAdmin.listConfigurations(
+			filterString);
 
-			String roleId = String.valueOf(role.getRoleId());
-			String[] accessToControlMenuRoleIds =
-				menuAccessConfiguration.accessToControlMenuRoleIds();
+		if (configurations == null) {
+			return;
+		}
+
+		String roleId = String.valueOf(role.getRoleId());
+
+		for (Configuration configuration : configurations) {
+			Dictionary<String, Object> properties =
+				configuration.getProperties();
+
+			String[] accessToControlMenuRoleIds = (String[])properties.get(
+				"accessToControlMenuRoleIds");
 
 			if (ArrayUtil.contains(accessToControlMenuRoleIds, roleId)) {
 				accessToControlMenuRoleIds = ArrayUtil.remove(
 					accessToControlMenuRoleIds, roleId);
 
-				updateMenuAccessConfiguration(
-					group.getGroupId(), accessToControlMenuRoleIds,
-					menuAccessConfiguration.showControlMenuByRole());
+				properties.put(
+					"accessToControlMenuRoleIds", accessToControlMenuRoleIds);
+
+				configuration.update(properties);
 			}
 		}
 	}
@@ -117,9 +97,9 @@ public class MenuAccessConfigurationManagerImpl
 	}
 
 	@Reference
-	private ConfigurationProvider _configurationProvider;
+	private ConfigurationAdmin _configurationAdmin;
 
 	@Reference
-	private GroupLocalService _groupLocalService;
+	private ConfigurationProvider _configurationProvider;
 
 }

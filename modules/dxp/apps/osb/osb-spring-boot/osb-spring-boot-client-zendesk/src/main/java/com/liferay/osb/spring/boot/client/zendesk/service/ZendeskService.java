@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -39,24 +40,6 @@ public class ZendeskService {
 			String htmlBody, long zendeskTicketId, long zendeskUserId)
 		throws Exception {
 
-		JSONObject commentJSONObject = new JSONObject();
-
-		commentJSONObject.put(
-			"author_id", zendeskUserId
-		).put(
-			"html_body", htmlBody
-		).put(
-			"public", true
-		);
-
-		JSONObject ticketJSONObject = new JSONObject();
-
-		ticketJSONObject.put("comment", commentJSONObject);
-
-		JSONObject jsonObject = new JSONObject();
-
-		jsonObject.put("ticket", ticketJSONObject);
-
 		WebClient.create(
 			_zendeskURL
 		).put(
@@ -69,7 +52,23 @@ public class ZendeskService {
 		).header(
 			HttpHeaders.AUTHORIZATION, _zendeskAuthorization
 		).body(
-			BodyInserters.fromValue(jsonObject.toString())
+			BodyInserters.fromValue(
+				new JSONObject(
+				).put(
+					"ticket",
+					new JSONObject(
+					).put(
+						"comment",
+						new JSONObject(
+						).put(
+							"author_id", zendeskUserId
+						).put(
+							"html_body", htmlBody
+						).put(
+							"public", true
+						)
+					)
+				).toString())
 		).retrieve(
 		).bodyToMono(
 			String.class
@@ -79,18 +78,6 @@ public class ZendeskService {
 	public void addEndUserZendeskTicketComment(
 			String emailAddress, String htmlBody, long zendeskTicketId)
 		throws Exception {
-
-		JSONObject commentJSONObject = new JSONObject();
-
-		commentJSONObject.put("html_body", htmlBody);
-
-		JSONObject ticketJSONObject = new JSONObject();
-
-		ticketJSONObject.put("comment", commentJSONObject);
-
-		JSONObject jsonObject = new JSONObject();
-
-		jsonObject.put("request", ticketJSONObject);
 
 		WebClient.create(
 			_zendeskURL
@@ -104,7 +91,19 @@ public class ZendeskService {
 		).header(
 			HttpHeaders.AUTHORIZATION, _getAuthorization(emailAddress)
 		).body(
-			BodyInserters.fromValue(jsonObject.toString())
+			BodyInserters.fromValue(
+				new JSONObject(
+				).put(
+					"request",
+					new JSONObject(
+					).put(
+						"comment",
+						new JSONObject(
+						).put(
+							"html_body", htmlBody
+						)
+					)
+				).toString())
 		).retrieve(
 		).bodyToMono(
 			String.class
@@ -177,7 +176,8 @@ public class ZendeskService {
 				String.class
 			).block());
 
-		return new ZendeskTicket(jsonObject.getJSONObject("ticket"));
+		return new ZendeskTicket(
+			jsonObject.getJSONObject("ticket"), _zendeskURL);
 	}
 
 	@PostConstruct
@@ -218,6 +218,82 @@ public class ZendeskService {
 		return toSearchHits(jsonObject);
 	}
 
+	public void updateZendeskOrganization(
+			long zendeskOrganizationId, String businessEvents)
+		throws Exception {
+
+		WebClient.create(
+			_zendeskURL
+		).put(
+		).uri(
+			"/api/v2/organizations/" + zendeskOrganizationId + ".json"
+		).accept(
+			MediaType.APPLICATION_JSON
+		).contentType(
+			MediaType.APPLICATION_JSON
+		).header(
+			HttpHeaders.AUTHORIZATION, _zendeskAuthorization
+		).body(
+			BodyInserters.fromValue(
+				new JSONObject(
+				).put(
+					"organization",
+					new JSONObject(
+					).put(
+						"organization_fields",
+						new JSONObject(
+						).put(
+							"business_events", businessEvents
+						)
+					)
+				).toString())
+		).retrieve(
+		).bodyToMono(
+			String.class
+		).block();
+	}
+
+	public void updateZendeskTicket(
+			long zendeskTicketId, long zendeskOrganizationId, long requesterId,
+			String status, Map<Long, String> customFields, Set<String> tags)
+		throws Exception {
+
+		WebClient.create(
+			_zendeskURL
+		).put(
+		).uri(
+			"/api/v2/tickets/" + zendeskTicketId + ".json"
+		).accept(
+			MediaType.APPLICATION_JSON
+		).contentType(
+			MediaType.APPLICATION_JSON
+		).header(
+			HttpHeaders.AUTHORIZATION, _zendeskAuthorization
+		).body(
+			BodyInserters.fromValue(
+				new JSONObject(
+				).put(
+					"ticket",
+					new JSONObject(
+					).put(
+						"custom_fields",
+						_transformToCustomFieldsJSONArray(customFields)
+					).put(
+						"organization_id", zendeskOrganizationId
+					).put(
+						"requester_id", requesterId
+					).put(
+						"status", status
+					).put(
+						"tags", _transformToTagsJSONArray(tags)
+					)
+				).toString())
+		).retrieve(
+		).bodyToMono(
+			String.class
+		).block();
+	}
+
 	protected SearchHits<ZendeskTicket> toSearchHits(JSONObject jsonObject) {
 		SearchHits<ZendeskTicket> searchHits = new SearchHits<>();
 
@@ -236,7 +312,8 @@ public class ZendeskService {
 		JSONArray jsonArray = jsonObject.getJSONArray("results");
 
 		for (int i = 0; i < jsonArray.length(); i++) {
-			zendeskTickets.add(new ZendeskTicket(jsonArray.getJSONObject(i)));
+			zendeskTickets.add(
+				new ZendeskTicket(jsonArray.getJSONObject(i), _zendeskURL));
 		}
 
 		searchHits.setResults(zendeskTickets);
@@ -272,6 +349,34 @@ public class ZendeskService {
 		}
 
 		return url.substring(y + name.length() + 1, z);
+	}
+
+	private JSONArray _transformToCustomFieldsJSONArray(
+		Map<Long, String> customFields) {
+
+		JSONArray jsonArray = new JSONArray();
+
+		for (Map.Entry<Long, String> entry : customFields.entrySet()) {
+			jsonArray.put(
+				new JSONObject(
+				).put(
+					"id", entry.getKey()
+				).put(
+					"value", entry.getValue()
+				));
+		}
+
+		return jsonArray;
+	}
+
+	private JSONArray _transformToTagsJSONArray(Set<String> tags) {
+		JSONArray jsonArray = new JSONArray();
+
+		for (String tag : tags) {
+			jsonArray.put(tag);
+		}
+
+		return jsonArray;
 	}
 
 	@Value("${liferay.osb.spring.boot.client.zendesk.api.email.address}")

@@ -13,9 +13,11 @@ import com.liferay.petra.string.StringBundler;
 public class JavaInstanceofStatement extends BaseJavaExpression {
 
 	public JavaInstanceofStatement(
-		JavaType classJavaType, JavaExpression valueJavaExpression) {
+		JavaType classJavaType, JavaVariableDefinition javaVariableDefinition,
+		JavaExpression valueJavaExpression) {
 
 		_classJavaType = classJavaType;
+		_javaVariableDefinition = javaVariableDefinition;
 		_valueJavaExpression = valueJavaExpression;
 	}
 
@@ -47,12 +49,19 @@ public class JavaInstanceofStatement extends BaseJavaExpression {
 			sb, _valueJavaExpression, indent, "", " instanceof ",
 			maxLineLength);
 
-		append(sb, _classJavaType, indent, "", suffix, maxLineLength);
+		if (_classJavaType != null) {
+			append(sb, _classJavaType, indent, "", suffix, maxLineLength);
+		}
+		else {
+			append(
+				sb, _javaVariableDefinition, indent, "", suffix, maxLineLength);
+		}
 
 		return sb.toString();
 	}
 
 	private final JavaType _classJavaType;
+	private final JavaVariableDefinition _javaVariableDefinition;
 	private final JavaExpression _valueJavaExpression;
 
 }

@@ -37,8 +37,6 @@ import com.liferay.layout.test.util.ContentLayoutTestUtil;
 import com.liferay.layout.test.util.LayoutTestUtil;
 import com.liferay.layout.util.constants.LayoutDataItemTypeConstants;
 import com.liferay.layout.util.structure.ContainerStyledLayoutStructureItem;
-import com.liferay.layout.util.structure.FormStepContainerStyledLayoutStructureItem;
-import com.liferay.layout.util.structure.FormStepLayoutStructureItem;
 import com.liferay.layout.util.structure.FormStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.FragmentStyledLayoutStructureItem;
 import com.liferay.layout.util.structure.LayoutStructure;
@@ -61,6 +59,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.servlet.PortletServlet;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletActionRequest;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletActionResponse;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -78,7 +77,6 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -132,9 +130,9 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 
 		_company = _companyLocalService.getCompany(_group.getCompanyId());
 
-		_layout = LayoutTestUtil.addTypeContentLayout(_group);
+		Layout layout = LayoutTestUtil.addTypeContentLayout(_group);
 
-		_draftLayout = _layout.fetchDraftLayout();
+		_draftLayout = layout.fetchDraftLayout();
 
 		_segmentsExperienceId =
 			_segmentsExperienceLocalService.fetchDefaultSegmentsExperienceId(
@@ -148,9 +146,9 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 		ServiceContextThreadLocal.popServiceContext();
 	}
 
-	@FeatureFlags("LPD-31772")
 	@Test
-	public void testUpdateFormItemConfigMVCActionCommandDecreasingNumberOfStepsWithFeatureFlagEnabled()
+	@TestInfo("LPD-31772")
+	public void testUpdateFormItemConfigMVCActionCommandDecreasingNumberOfSteps()
 		throws Exception {
 
 		LayoutStructure layoutStructure =
@@ -272,7 +270,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 
 			JSONObject addItemJSONObject =
 				ContentLayoutTestUtil.addItemToLayout(
-					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _layout,
+					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _draftLayout,
 					_layoutStructureProvider, _segmentsExperienceId);
 
 			String formItemId = addItemJSONObject.getString("addedItemId");
@@ -290,7 +288,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 					).put(
 						"classTypeId", "0"
 					).toString(),
-					formItemId, _layout),
+					formItemId, _draftLayout),
 				new MockLiferayPortletActionResponse());
 
 			_assertUpdateFormStyledLayoutStructureItemConfigJSONObject(
@@ -308,9 +306,9 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 		}
 	}
 
-	@FeatureFlags("LPD-31772")
 	@Test
-	public void testUpdateFormItemConfigMVCActionCommandIncreasingNumberOfStepsWithFeatureFlagEnabled()
+	@TestInfo("LPD-31772")
+	public void testUpdateFormItemConfigMVCActionCommandIncreasingNumberOfSteps()
 		throws Exception {
 
 		LayoutStructure layoutStructure = new LayoutStructure();
@@ -449,7 +447,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 
 			JSONObject addItemJSONObject =
 				ContentLayoutTestUtil.addItemToLayout(
-					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _layout,
+					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _draftLayout,
 					_layoutStructureProvider, _segmentsExperienceId);
 
 			String formItemId = addItemJSONObject.getString("addedItemId");
@@ -464,7 +462,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 					).put(
 						"classTypeId", "0"
 					).toString(),
-					formItemId, _layout),
+					formItemId, _draftLayout),
 				new MockLiferayPortletActionResponse());
 
 			_assertUpdateFormStyledLayoutStructureItemConfigJSONObject(
@@ -504,7 +502,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 
 			JSONObject addItemJSONObject =
 				ContentLayoutTestUtil.addItemToLayout(
-					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _layout,
+					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _draftLayout,
 					_layoutStructureProvider, _segmentsExperienceId);
 
 			String formItemId = addItemJSONObject.getString("addedItemId");
@@ -519,7 +517,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 					).put(
 						"classTypeId", "0"
 					).toString(),
-					formItemId, _layout),
+					formItemId, _draftLayout),
 				new MockLiferayPortletActionResponse());
 
 			_assertUpdateFormStyledLayoutStructureItemConfigJSONObject(
@@ -533,68 +531,8 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 	}
 
 	@Test
+	@TestInfo("LPD-31772")
 	public void testUpdateFormItemConfigMVCActionCommandMappingFormChangingFormTypeMultistep()
-		throws Exception {
-
-		LayoutStructure layoutStructure = LayoutStructure.of(_readLayoutData());
-
-		FormStyledLayoutStructureItem formStyledLayoutStructureItem =
-			(FormStyledLayoutStructureItem)
-				layoutStructure.getLayoutStructureItem("formId");
-
-		ReflectionTestUtil.invoke(
-			_mvcActionCommand, "_updateFormStyledLayoutStructureItemFormType",
-			new Class<?>[] {
-				List.class, FormStyledLayoutStructureItem.class,
-				HttpServletRequest.class, HttpServletResponse.class,
-				String.class, Layout.class, LayoutStructure.class, int.class,
-				String.class, int.class, long.class, ServiceContext.class,
-				long.class
-			},
-			new ArrayList<>(), formStyledLayoutStructureItem, null, null,
-			"multistep", _draftLayout, layoutStructure, 2, "simple", 2,
-			_segmentsExperienceId,
-			ServiceContextTestUtil.getServiceContext(_group.getGroupId()), 0);
-
-		List<String> childrenItemIds =
-			formStyledLayoutStructureItem.getChildrenItemIds();
-
-		Assert.assertEquals(
-			childrenItemIds.toString(), 1, childrenItemIds.size());
-
-		LayoutStructureItem layoutStructureItem =
-			layoutStructure.getLayoutStructureItem(childrenItemIds.get(0));
-
-		Assert.assertTrue(
-			layoutStructureItem instanceof
-				FormStepContainerStyledLayoutStructureItem);
-
-		childrenItemIds = layoutStructureItem.getChildrenItemIds();
-
-		Assert.assertEquals(
-			childrenItemIds.toString(), 2, childrenItemIds.size());
-
-		layoutStructureItem = layoutStructure.getLayoutStructureItem(
-			childrenItemIds.get(0));
-
-		Assert.assertTrue(
-			layoutStructureItem instanceof FormStepLayoutStructureItem);
-
-		childrenItemIds = layoutStructureItem.getChildrenItemIds();
-
-		Assert.assertEquals(
-			childrenItemIds.toString(), 1, childrenItemIds.size());
-
-		layoutStructureItem = layoutStructure.getLayoutStructureItem(
-			childrenItemIds.get(0));
-
-		Assert.assertTrue(
-			layoutStructureItem instanceof ContainerStyledLayoutStructureItem);
-	}
-
-	@FeatureFlags("LPD-31772")
-	@Test
-	public void testUpdateFormItemConfigMVCActionCommandMappingFormChangingFormTypeMultistepWithFeatureFlagEnabled()
 		throws Exception {
 
 		LayoutStructure layoutStructure = new LayoutStructure();
@@ -680,7 +618,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 	}
 
 	@Test
-	public void testUpdateFormItemConfigMVCActionCommandMappingFormChangingFormTypeSimple()
+	public void testUpdateFormItemConfigMVCActionCommandMappingFormChangingFormTypeSimple1()
 		throws Exception {
 
 		LayoutStructure layoutStructure = LayoutStructure.of(_readLayoutData());
@@ -730,9 +668,9 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 			layoutStructureItem instanceof ContainerStyledLayoutStructureItem);
 	}
 
-	@FeatureFlags("LPD-31772")
 	@Test
-	public void testUpdateFormItemConfigMVCActionCommandMappingFormChangingFormTypeSimpleWithFeatureFlagEnabled()
+	@TestInfo("LPD-31772")
+	public void testUpdateFormItemConfigMVCActionCommandMappingFormChangingFormTypeSimple2()
 		throws Exception {
 
 		LayoutStructure layoutStructure =
@@ -850,7 +788,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 
 			JSONObject addItemJSONObject =
 				ContentLayoutTestUtil.addItemToLayout(
-					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _layout,
+					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _draftLayout,
 					_layoutStructureProvider, _segmentsExperienceId);
 
 			long classNameId = _portal.getClassNameId(
@@ -871,7 +809,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 					).put(
 						"classTypeId", "0"
 					).toString(),
-					formItemId, _layout),
+					formItemId, _draftLayout),
 				new MockLiferayPortletActionResponse());
 
 			uniqueInfoFieldIds = TransformUtil.transform(
@@ -887,7 +825,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 					).put(
 						"classTypeId", "0"
 					).toString(),
-					formItemId, _layout),
+					formItemId, _draftLayout),
 				new MockLiferayPortletActionResponse());
 
 			_assertUpdateFormStyledLayoutStructureItemConfigJSONObject(
@@ -917,7 +855,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 
 			JSONObject addItemJSONObject =
 				ContentLayoutTestUtil.addItemToLayout(
-					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _layout,
+					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _draftLayout,
 					_layoutStructureProvider, _segmentsExperienceId);
 
 			long classNameId = _portal.getClassNameId(
@@ -935,7 +873,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 					).put(
 						"classTypeId", "0"
 					).toString(),
-					formItemId, _layout),
+					formItemId, _draftLayout),
 				new MockLiferayPortletActionResponse());
 
 			_assertUpdateFormStyledLayoutStructureItemConfigJSONObject(
@@ -971,7 +909,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 
 			JSONObject addItemJSONObject =
 				ContentLayoutTestUtil.addItemToLayout(
-					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _layout,
+					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _draftLayout,
 					_layoutStructureProvider, _segmentsExperienceId);
 
 			long classNameId = _portal.getClassNameId(
@@ -992,7 +930,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 					).put(
 						"classTypeId", "0"
 					).toString(),
-					formItemId, _layout),
+					formItemId, _draftLayout),
 				new MockLiferayPortletActionResponse());
 
 			uniqueInfoFieldIds = TransformUtil.transform(
@@ -1008,7 +946,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 					).put(
 						"classTypeId", "0"
 					).toString(),
-					formItemId, _layout),
+					formItemId, _draftLayout),
 				new MockLiferayPortletActionResponse());
 
 			_assertUpdateFormStyledLayoutStructureItemConfigJSONObject(
@@ -1038,7 +976,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 
 			JSONObject addItemJSONObject =
 				ContentLayoutTestUtil.addItemToLayout(
-					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _layout,
+					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _draftLayout,
 					_layoutStructureProvider, _segmentsExperienceId);
 
 			long classNameId = _portal.getClassNameId(
@@ -1056,7 +994,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 					).put(
 						"classTypeId", "0"
 					).toString(),
-					formItemId, _layout),
+					formItemId, _draftLayout),
 				new MockLiferayPortletActionResponse());
 
 			_assertUpdateFormStyledLayoutStructureItemConfigJSONObject(
@@ -1096,7 +1034,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 
 			JSONObject addItemJSONObject =
 				ContentLayoutTestUtil.addItemToLayout(
-					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _layout,
+					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _draftLayout,
 					_layoutStructureProvider, _segmentsExperienceId);
 
 			long classNameId = _portal.getClassNameId(
@@ -1118,7 +1056,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 					).put(
 						"classTypeId", "0"
 					).toString(),
-					formItemId, _layout),
+					formItemId, _draftLayout),
 				new MockLiferayPortletActionResponse());
 
 			_assertUpdateFormStyledLayoutStructureItemConfigJSONObject(
@@ -1194,7 +1132,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 
 			JSONObject addItemJSONObject =
 				ContentLayoutTestUtil.addItemToLayout(
-					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _layout,
+					"{}", LayoutDataItemTypeConstants.TYPE_FORM, _draftLayout,
 					_layoutStructureProvider, _segmentsExperienceId);
 
 			String formItemId = addItemJSONObject.getString("addedItemId");
@@ -1209,7 +1147,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 					).put(
 						"classTypeId", "0"
 					).toString(),
-					formItemId, _layout),
+					formItemId, _draftLayout),
 				new MockLiferayPortletActionResponse());
 
 			_assertUpdateFormStyledLayoutStructureItemConfigJSONObject(
@@ -1255,7 +1193,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 				MockObject.class.getName());
 
 			JSONObject jsonObject = ContentLayoutTestUtil.addFormToLayout(
-				false, String.valueOf(classNameId), "0", _layout,
+				false, String.valueOf(classNameId), "0", _draftLayout,
 				_layoutStructureProvider, _segmentsExperienceId, _INFO_FIELDS);
 
 			String formItemId = jsonObject.getString("addedItemId");
@@ -1278,7 +1216,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 									LocaleUtil.getMostRelevantLocale()),
 								RandomTestUtil.randomString()))
 					).toString(),
-					formItemId, _layout),
+					formItemId, _draftLayout),
 				new MockLiferayPortletActionResponse());
 
 			_assertUpdateFormStyledLayoutStructureItemConfigJSONObject(
@@ -1310,7 +1248,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 				MockObject.class.getName());
 
 			JSONObject jsonObject = ContentLayoutTestUtil.addFormToLayout(
-				false, String.valueOf(classNameId), "0", _layout,
+				false, String.valueOf(classNameId), "0", _draftLayout,
 				_layoutStructureProvider, _segmentsExperienceId, _INFO_FIELDS);
 
 			String formItemId = jsonObject.getString("addedItemId");
@@ -1329,7 +1267,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 					).put(
 						"classTypeId", "0"
 					).toString(),
-					formItemId, _layout),
+					formItemId, _draftLayout),
 				new MockLiferayPortletActionResponse());
 
 			_assertUpdateFormStyledLayoutStructureItemConfigJSONObject(
@@ -1458,7 +1396,7 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 		LayoutPageTemplateStructure layoutPageTemplateStructure =
 			_layoutPageTemplateStructureLocalService.
 				fetchLayoutPageTemplateStructure(
-					_group.getGroupId(), _layout.getPlid());
+					_group.getGroupId(), _draftLayout.getPlid());
 
 		LayoutStructure layoutStructure = LayoutStructure.of(
 			layoutPageTemplateStructure.getDefaultSegmentsExperienceData());
@@ -1656,10 +1594,10 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 		MockHttpServletRequest mockHttpServletRequest =
 			new MockHttpServletRequest();
 
-		mockHttpServletRequest.setAttribute(WebKeys.LAYOUT, _layout);
+		mockHttpServletRequest.setAttribute(WebKeys.LAYOUT, _draftLayout);
 
 		ThemeDisplay themeDisplay = ContentLayoutTestUtil.getThemeDisplay(
-			_company, _group, _layout);
+			_company, _group, _draftLayout);
 
 		themeDisplay.setRequest(mockHttpServletRequest);
 
@@ -1724,8 +1662,6 @@ public class UpdateFormItemConfigMVCActionCommandTest {
 
 	@Inject
 	private Language _language;
-
-	private Layout _layout;
 
 	@Inject
 	private LayoutPageTemplateStructureLocalService

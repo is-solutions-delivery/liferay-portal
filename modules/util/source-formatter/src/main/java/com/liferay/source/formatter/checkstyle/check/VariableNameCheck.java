@@ -77,67 +77,7 @@ public class VariableNameCheck extends BaseCheck {
 			_checkExceptionVariableName(detailAST, name, typeName);
 		}
 
-		DetailAST parentDetailAST = getParentWithTokenType(
-			detailAST, TokenTypes.CLASS_DEF, TokenTypes.CTOR_DEF,
-			TokenTypes.METHOD_DEF);
-
-		if (parentDetailAST == null) {
-			return;
-		}
-
-		List<DetailAST> assignDetailASTList = getAllChildTokens(
-			parentDetailAST, true, TokenTypes.ASSIGN);
-
-		for (DetailAST assignDetailAST : assignDetailASTList) {
-			firstChildDetailAST = assignDetailAST.getFirstChild();
-
-			if (firstChildDetailAST == null) {
-				continue;
-			}
-
-			String methodName = StringPool.BLANK;
-
-			if (equals(assignDetailAST.getParent(), detailAST)) {
-				if (firstChildDetailAST.getType() != TokenTypes.EXPR) {
-					continue;
-				}
-
-				firstChildDetailAST = firstChildDetailAST.getFirstChild();
-
-				if (firstChildDetailAST.getType() == TokenTypes.METHOD_CALL) {
-					methodName = getMethodName(firstChildDetailAST);
-
-					if (methodName.equals("stream")) {
-						firstChildDetailAST =
-							firstChildDetailAST.getFirstChild();
-
-						if (firstChildDetailAST.getType() == TokenTypes.DOT) {
-							firstChildDetailAST =
-								firstChildDetailAST.getFirstChild();
-
-							_checkTypo(
-								detailAST, name,
-								firstChildDetailAST.getText() + "Stream",
-								false);
-						}
-					}
-				}
-			}
-			else if ((firstChildDetailAST.getType() == TokenTypes.IDENT) &&
-					 name.equals(firstChildDetailAST.getText())) {
-
-				DetailAST nextSiblingDetailAST =
-					firstChildDetailAST.getNextSibling();
-
-				if (nextSiblingDetailAST.getType() == TokenTypes.METHOD_CALL) {
-					methodName = getMethodName(nextSiblingDetailAST);
-				}
-			}
-
-			if (methodName.matches("get[A-Z].*")) {
-				_checkTypo(detailAST, name, methodName.substring(3), false);
-			}
-		}
+		_checkVariableNameByMethodCall(detailAST, name);
 	}
 
 	protected String getExpectedVariableName(String typeName) {
@@ -575,7 +515,7 @@ public class VariableNameCheck extends BaseCheck {
 						"(?i).*" + expectedVariableName + "[0-9]*")) {
 
 					log(
-						detailAST, _MSG_INCORRECT_ENDING_VARIABLE, typeName,
+						detailAST, _MSG_INCORRECT_ENDING_VARIABLE_1, typeName,
 						expectedVariableName);
 
 					return;
@@ -614,7 +554,7 @@ public class VariableNameCheck extends BaseCheck {
 
 		if (typeName.endsWith("Impl")) {
 			log(
-				detailAST, _MSG_INCORRECT_ENDING_VARIABLE, typeName,
+				detailAST, _MSG_INCORRECT_ENDING_VARIABLE_1, typeName,
 				expectedVariableName);
 
 			return;
@@ -626,7 +566,7 @@ public class VariableNameCheck extends BaseCheck {
 		for (String enforceTypeName : enforceTypeNames) {
 			if (typeName.matches(enforceTypeName)) {
 				log(
-					detailAST, _MSG_INCORRECT_ENDING_VARIABLE, typeName,
+					detailAST, _MSG_INCORRECT_ENDING_VARIABLE_1, typeName,
 					expectedVariableName);
 
 				return;
@@ -771,6 +711,139 @@ public class VariableNameCheck extends BaseCheck {
 		}
 	}
 
+	private void _checkVariableNameByMethodCall(
+		DetailAST detailAST, String variableName) {
+
+		DetailAST parentDetailAST = getParentWithTokenType(
+			detailAST, TokenTypes.CLASS_DEF, TokenTypes.CTOR_DEF,
+			TokenTypes.METHOD_DEF);
+
+		if (parentDetailAST == null) {
+			return;
+		}
+
+		List<DetailAST> assignDetailASTList = getAllChildTokens(
+			parentDetailAST, true, TokenTypes.ASSIGN);
+
+		for (DetailAST assignDetailAST : assignDetailASTList) {
+			DetailAST firstChildDetailAST = assignDetailAST.getFirstChild();
+
+			if (firstChildDetailAST == null) {
+				continue;
+			}
+
+			if (equals(assignDetailAST.getParent(), detailAST)) {
+				if (firstChildDetailAST.getType() != TokenTypes.EXPR) {
+					continue;
+				}
+
+				firstChildDetailAST = firstChildDetailAST.getFirstChild();
+
+				if (firstChildDetailAST.getType() != TokenTypes.METHOD_CALL) {
+					continue;
+				}
+
+				String absolutePath = getAbsolutePath();
+
+				if (absolutePath.contains("/test/")) {
+					_checkVariableNameByMethodCall(
+						firstChildDetailAST, variableName, "ReflectionTestUtil",
+						"getAndSetFieldValue", detailAST);
+				}
+
+				String methodName = getMethodName(firstChildDetailAST);
+
+				if (methodName.equals("stream")) {
+					firstChildDetailAST = firstChildDetailAST.getFirstChild();
+
+					if (firstChildDetailAST.getType() != TokenTypes.DOT) {
+						continue;
+					}
+
+					firstChildDetailAST = firstChildDetailAST.getFirstChild();
+
+					_checkTypo(
+						detailAST, variableName,
+						firstChildDetailAST.getText() + "Stream", false);
+				}
+			}
+			else if ((firstChildDetailAST.getType() == TokenTypes.IDENT) &&
+					 variableName.equals(firstChildDetailAST.getText())) {
+
+				DetailAST nextSiblingDetailAST =
+					firstChildDetailAST.getNextSibling();
+
+				if (nextSiblingDetailAST.getType() != TokenTypes.METHOD_CALL) {
+					continue;
+				}
+
+				String absolutePath = getAbsolutePath();
+
+				if (absolutePath.contains("/test/")) {
+					_checkVariableNameByMethodCall(
+						nextSiblingDetailAST, variableName,
+						"ReflectionTestUtil", "getAndSetFieldValue",
+						firstChildDetailAST);
+				}
+
+				String methodName = getMethodName(nextSiblingDetailAST);
+
+				if (!methodName.matches("get[A-Z].*")) {
+					continue;
+				}
+
+				_checkTypo(
+					detailAST, variableName, methodName.substring(3), false);
+			}
+		}
+	}
+
+	private void _checkVariableNameByMethodCall(
+		DetailAST methodCallDetailAST, String variableName, String className,
+		String methodName, DetailAST detailAST) {
+
+		DetailAST firstChildDetailAST = methodCallDetailAST.getFirstChild();
+
+		if ((firstChildDetailAST == null) ||
+			(firstChildDetailAST.getType() != TokenTypes.DOT)) {
+
+			return;
+		}
+
+		List<String> names = getNames(firstChildDetailAST, false);
+
+		if ((names.size() != 2) ||
+			!StringUtil.equals(className, names.get(0)) ||
+			!StringUtil.equals(methodName, names.get(1))) {
+
+			return;
+		}
+
+		List<DetailAST> parameterExprDetailASTList =
+			getParameterExprDetailASTList(firstChildDetailAST.getParent());
+
+		if (parameterExprDetailASTList.size() < 2) {
+			return;
+		}
+
+		DetailAST exprDetailAST = parameterExprDetailASTList.get(1);
+
+		firstChildDetailAST = exprDetailAST.getFirstChild();
+
+		if (firstChildDetailAST.getType() != TokenTypes.STRING_LITERAL) {
+			return;
+		}
+
+		String expectedVariableName = _getExpectedVariableName(
+			firstChildDetailAST.getText());
+
+		if (!variableName.matches("(?i).*" + expectedVariableName + "[0-9]*")) {
+			log(
+				detailAST, _MSG_INCORRECT_ENDING_VARIABLE_2,
+				className + "." + methodName, expectedVariableName);
+		}
+	}
+
 	private boolean _classHasVariableWithName(
 		DetailAST detailAST, String variableName) {
 
@@ -867,14 +940,20 @@ public class VariableNameCheck extends BaseCheck {
 			return null;
 		}
 
-		DetailAST parameterDetailAST = getParameterDetailAST(
+		DetailAST firstParameterExprDetailAST = getFirstParameterExprDetailAST(
 			firstChildDetailAST.getParent());
 
-		if (parameterDetailAST.getType() != TokenTypes.STRING_LITERAL) {
+		if (firstParameterExprDetailAST == null) {
 			return null;
 		}
 
-		String s = parameterDetailAST.getText();
+		firstChildDetailAST = firstParameterExprDetailAST.getFirstChild();
+
+		if (firstChildDetailAST.getType() != TokenTypes.STRING_LITERAL) {
+			return null;
+		}
+
+		String s = firstChildDetailAST.getText();
 
 		s = TextFormatter.format(
 			StringUtil.replace(
@@ -893,6 +972,10 @@ public class VariableNameCheck extends BaseCheck {
 		}
 
 		if (s.matches("[A-Z0-9_]+")) {
+			if (s.startsWith("_")) {
+				s = s.substring(1);
+			}
+
 			return TextFormatter.format(
 				StringUtil.replace(StringUtil.toLowerCase(s), '_', '-'),
 				TextFormatter.M);
@@ -953,15 +1036,13 @@ public class VariableNameCheck extends BaseCheck {
 			return true;
 		}
 
-		if (childDetailAST.getType() == TokenTypes.IDENT) {
-			String name = childDetailAST.getText();
-
-			if (name.equals("Boolean")) {
-				return true;
-			}
+		if (childDetailAST.getType() != TokenTypes.IDENT) {
+			return false;
 		}
 
-		return false;
+		String name = childDetailAST.getText();
+
+		return name.equals("Boolean");
 	}
 
 	private static final String _ALLOWED_VARIABLE_NAMES_KEY =
@@ -978,8 +1059,11 @@ public class VariableNameCheck extends BaseCheck {
 	private static final String _MSG_INCORRECT_COUNT_VARIABLE =
 		"variable.incorrect.count";
 
-	private static final String _MSG_INCORRECT_ENDING_VARIABLE =
-		"variable.incorrect.ending";
+	private static final String _MSG_INCORRECT_ENDING_VARIABLE_1 =
+		"variable.incorrect.ending.1";
+
+	private static final String _MSG_INCORRECT_ENDING_VARIABLE_2 =
+		"variable.incorrect.ending.2";
 
 	private static final String _MSG_INCORRECT_NAME_FOR_STATEMENT =
 		"variable.name.incorrect.for.statement";

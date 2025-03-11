@@ -41,6 +41,7 @@ import com.liferay.portal.kernel.transaction.TransactionInvokerUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
@@ -64,6 +65,7 @@ import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
 import org.wso2.charon3.core.exceptions.AbstractCharonException;
+import org.wso2.charon3.core.exceptions.BadRequestException;
 import org.wso2.charon3.core.exceptions.CharonException;
 import org.wso2.charon3.core.exceptions.ConflictException;
 import org.wso2.charon3.core.exceptions.NotFoundException;
@@ -73,6 +75,7 @@ import org.wso2.charon3.core.objects.Group;
 import org.wso2.charon3.core.objects.User;
 import org.wso2.charon3.core.objects.plainobjects.GroupsGetResponse;
 import org.wso2.charon3.core.objects.plainobjects.UsersGetResponse;
+import org.wso2.charon3.core.utils.codeutils.ExpressionNode;
 import org.wso2.charon3.core.utils.codeutils.Node;
 import org.wso2.charon3.core.utils.codeutils.SearchRequest;
 
@@ -248,9 +251,12 @@ public class UserManagerImpl implements UserManager {
 
 	@Override
 	public GroupsGetResponse listGroupsWithGET(
-		Node node, Integer startIndex, Integer count, String sortBy,
-		String sortOrder, String domainName,
-		Map<String, Boolean> requiredAttributes) {
+			Node node, Integer startIndex, Integer count, String sortBy,
+			String sortOrder, String domainName,
+			Map<String, Boolean> requiredAttributes)
+		throws BadRequestException {
+
+		_validate(node, "displayName");
 
 		if (startIndex != null) {
 			startIndex--;
@@ -285,10 +291,23 @@ public class UserManagerImpl implements UserManager {
 				count
 			).withSearchContext(
 				searchContext -> {
+					searchContext.setAndSearch(true);
 					searchContext.setAttribute(Field.GROUP_ID, 0L);
 					searchContext.setAttribute(
 						"expando__keyword__custom_fields__scimClientId",
 						scimClientId);
+
+					ExpressionNode expressionNode = (ExpressionNode)node;
+
+					if ((expressionNode != null) &&
+						StringUtil.contains(
+							expressionNode.getAttributeValue(), "displayName",
+							StringPool.COLON)) {
+
+						searchContext.setAttribute(
+							"name", expressionNode.getValue());
+					}
+
 					searchContext.setUserId(serviceContext.getUserId());
 				}
 			).build();
@@ -326,9 +345,12 @@ public class UserManagerImpl implements UserManager {
 
 	@Override
 	public UsersGetResponse listUsersWithGET(
-		Node node, Integer startIndex, Integer count, String sortBy,
-		String sortOrder, String domainName,
-		Map<String, Boolean> requiredAttributes) {
+			Node node, Integer startIndex, Integer count, String sortBy,
+			String sortOrder, String domainName,
+			Map<String, Boolean> requiredAttributes)
+		throws BadRequestException {
+
+		_validate(node, "externalId", "userName");
 
 		if (startIndex != null) {
 			startIndex--;
@@ -363,12 +385,34 @@ public class UserManagerImpl implements UserManager {
 				count
 			).withSearchContext(
 				searchContext -> {
+					searchContext.setAndSearch(true);
 					searchContext.setAttribute(Field.GROUP_ID, 0L);
 					searchContext.setAttribute(
 						Field.STATUS, WorkflowConstants.STATUS_APPROVED);
 					searchContext.setAttribute(
 						"expando__keyword__custom_fields__scimClientId",
 						scimClientId);
+
+					ExpressionNode expressionNode = (ExpressionNode)node;
+
+					if (expressionNode != null) {
+						if (StringUtil.contains(
+								expressionNode.getAttributeValue(),
+								"externalId", StringPool.COLON)) {
+
+							searchContext.setAttribute(
+								"externalReferenceCode",
+								expressionNode.getValue());
+						}
+						else if (StringUtil.contains(
+									expressionNode.getAttributeValue(),
+									"userName", StringPool.COLON)) {
+
+							searchContext.setAttribute(
+								"screenName", expressionNode.getValue());
+						}
+					}
+
 					searchContext.setUserId(serviceContext.getUserId());
 				}
 			).build();
@@ -399,6 +443,13 @@ public class UserManagerImpl implements UserManager {
 		throws NotImplementedException {
 
 		throw new NotImplementedException();
+	}
+
+	@Override
+	public void updateGroup(Group oldGroup, Group newGroup)
+		throws CharonException {
+
+		_addOrUpdateGroup(newGroup);
 	}
 
 	@Override
@@ -531,11 +582,8 @@ public class UserManagerImpl implements UserManager {
 
 		if (userGroup == null) {
 			userGroup = _userGroupService.addUserGroup(
-				group.getDisplayName(), null, new ServiceContext());
-
-			userGroup.setExternalReferenceCode(group.getExternalId());
-
-			userGroup = _userGroupLocalService.updateUserGroup(userGroup);
+				group.getExternalId(), group.getDisplayName(), null,
+				new ServiceContext());
 
 			_saveScimClientId(
 				UserGroup.class.getName(), userGroup.getPrimaryKey(),
@@ -560,17 +608,9 @@ public class UserManagerImpl implements UserManager {
 			}
 
 			userGroup = _userGroupService.updateUserGroup(
-				userGroup.getPrimaryKey(), group.getDisplayName(),
-				userGroup.getDescription(), new ServiceContext());
-
-			if (!Objects.equals(
-					group.getExternalId(),
-					userGroup.getExternalReferenceCode())) {
-
-				userGroup.setExternalReferenceCode(group.getExternalId());
-
-				userGroup = _userGroupLocalService.updateUserGroup(userGroup);
-			}
+				group.getExternalId(), userGroup.getPrimaryKey(),
+				group.getDisplayName(), userGroup.getDescription(),
+				new ServiceContext());
 
 			if (Validator.isNull(userGroupScimClientId)) {
 				_saveScimClientId(
@@ -946,9 +986,11 @@ public class UserManagerImpl implements UserManager {
 			portalUser = _userLocalService.updateUser(portalUser);
 		}
 
-		if (!portalUser.isActive()) {
+		if (portalUser.isActive() != scimUser.isActive()) {
 			portalUser = _userLocalService.updateStatus(
-				portalUser, WorkflowConstants.STATUS_APPROVED,
+				portalUser.getUserId(),
+				scimUser.isActive() ? WorkflowConstants.STATUS_APPROVED :
+					WorkflowConstants.STATUS_INACTIVE,
 				new ServiceContext());
 		}
 
@@ -986,6 +1028,27 @@ public class UserManagerImpl implements UserManager {
 
 					return GetterUtil.getLong(userId);
 				}));
+	}
+
+	private void _validate(Node node, String... fieldNames)
+		throws BadRequestException {
+
+		if (node == null) {
+			return;
+		}
+
+		ExpressionNode expressionNode = (ExpressionNode)node;
+
+		for (String fieldName : fieldNames) {
+			if (StringUtil.contains(
+					expressionNode.getAttributeValue(), fieldName,
+					StringPool.COLON)) {
+
+				return;
+			}
+		}
+
+		throw new BadRequestException();
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

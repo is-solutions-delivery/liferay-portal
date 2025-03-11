@@ -1,0 +1,445 @@
+components:
+    schemas:
+        AssetLibrary:
+            description:
+                Represents an Asset Library
+            properties:
+                assetLibraryKey:
+                    # @review
+                    description:
+                        The key of the asset library.
+                    readOnly: true
+                    type: string
+                dateCreated:
+                    description:
+                        The asset library's creation date.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                dateModified:
+                    description:
+                        The last time a field of the asset library changed.
+                    format: date-time
+                    readOnly: true
+                    type: string
+                description:
+                    description:
+                        The asset library's description.
+                    type: string
+                description_i18n:
+                    additionalProperties:
+                        type: string
+                    description:
+                        The localized asset library's description.
+                    type: object
+                externalReferenceCode:
+                    description:
+                        The asset library's site external reference code.
+                    readOnly: true
+                    type: string
+                id:
+                    description:
+                        The asset library's ID.
+                    format: int64
+                    readOnly: true
+                    type: integer
+                linkedSiteIds:
+                    description:
+                        The asset library linked site ids.
+                    items:
+                        format: int64
+                        type: integer
+                    readOnly: true
+                    type: array
+                linkedSitesExternalReferenceCodes:
+                    description:
+                        The asset library linked sites external reference codes.
+                    items:
+                        type: string
+                    readOnly: true
+                    type: array
+                name:
+                    description:
+                        The asset library's name.
+                    type: string
+                name_i18n:
+                    additionalProperties:
+                        type: string
+                    description:
+                        The localized asset library's name.
+                    type: object
+                siteId:
+                    description:
+                        The asset library's site ID.
+                    format: int64
+                    readOnly: true
+                    type: integer
+                usersCount:
+                    description:
+                        The asset library's users count.
+                    readOnly: true
+                    type: integer
+info:
+    description:
+        "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
+        'com.liferay.headless.asset.library.client', and version '1.0.2'."
+    license:
+        name: Apache 2.0
+        url: http://www.apache.org/licenses/LICENSE-2.0.html
+    title: Liferay Asset Library Headless API
+    version: v1.0
+openapi: 3.0.1
+paths:
+    /asset-libraries:
+        post:
+            description:
+                Adds a new asset library
+            operationId: postAssetLibrary
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AssetLibrary"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/AssetLibrary"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+                    description:
+                        default response
+            # @review
+            tags: ["AssetLibrary"]
+    /asset-libraries/by-site-id/{siteId}:
+        delete:
+            description:
+                Deletes the asset library by the site Id, and returns a 204 if the operation succeeds.
+            operationId: deleteAssetLibraryBySite
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["AssetLibrary"]
+        get:
+            description:
+                Retrieves the asset library by the site Id.
+            operationId: getAssetLibraryBySite
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+            tags: ["AssetLibrary"]
+        patch:
+            description:
+                Updates the asset library using only the fields received in the request body. Any other fields are left
+                untouched. Returns the updated asset library.
+            operationId: patchAssetLibraryBySite
+            parameters:
+                - in: path
+                  name: siteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AssetLibrary"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/AssetLibrary"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+            tags: ["AssetLibrary"]
+    /asset-libraries/{assetLibraryId}:
+        delete:
+            description:
+                Deletes the asset library and returns a 204 if the operation succeeds.
+            operationId: deleteAssetLibrary
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                204:
+                    content:
+                        application/json: {}
+                        application/xml: {}
+            tags: ["AssetLibrary"]
+        get:
+            description:
+                Retrieves the asset library.
+            operationId: getAssetLibrary
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: query
+                  name: fields
+                  schema:
+                      type: string
+                - in: query
+                  name: nestedFields
+                  schema:
+                      type: string
+                - in: query
+                  name: restrictFields
+                  schema:
+                      type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+            tags: ["AssetLibrary"]
+        patch:
+            description:
+                Updates the asset library using only the fields received in the request body. Any other fields are left
+                untouched. Returns the updated asset library.
+            operationId: patchAssetLibrary
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AssetLibrary"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/AssetLibrary"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+            tags: ["AssetLibrary"]
+    /asset-libraries/{assetLibraryId}/links/{toSiteId}:
+        delete:
+            description:
+                Removes an asset library link with the received asset library and site ids. Returns the asset library.
+            operationId: deleteAssetLibraryLinkToSite
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: toSiteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+            tags: ["AssetLibrary"]
+        post:
+            description:
+                Adds an asset library link with the received asset library and site ids. Returns the asset library.
+            operationId: postAssetLibraryLinkToSite
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: toSiteId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+            tags: ["AssetLibrary"]
+    /asset-libraries/{assetLibraryId}/user-accounts/{userId}:
+        delete:
+            description:
+                Removes the user from the asset library. Returns the asset library.
+            operationId: deleteAssetLibraryUserAccountUser
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: userId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+            tags: ["AssetLibrary"]
+        post:
+            description:
+                Adds the user to the asset library. Returns the asset library.
+            operationId: postAssetLibraryUserAccountUser
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: userId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+            tags: ["AssetLibrary"]
+    /asset-libraries/{assetLibraryId}/user-groups/{userGroupId}:
+        delete:
+            description:
+                Removes the user group from the asset library. Returns the asset library.
+            operationId: deleteAssetLibraryUserGroup
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: userGroupId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+            tags: ["AssetLibrary"]
+        post:
+            description:
+                Adds the user group to the asset library. Returns the asset library.
+            operationId: postAssetLibraryUserGroup
+            parameters:
+                - in: path
+                  name: assetLibraryId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+                - in: path
+                  name: userGroupId
+                  required: true
+                  schema:
+                      format: int64
+                      type: integer
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/AssetLibrary"
+            tags: ["AssetLibrary"]

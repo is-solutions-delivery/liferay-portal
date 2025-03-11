@@ -33,6 +33,7 @@ import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.batch.engine.VulcanBatchEngineTaskItemDelegate;
 import com.liferay.portal.vulcan.batch.engine.resource.VulcanBatchEngineExportTaskResource;
 import com.liferay.portal.vulcan.batch.engine.resource.VulcanBatchEngineImportTaskResource;
+import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegate;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
@@ -70,7 +71,8 @@ import javax.ws.rs.core.UriInfo;
 @javax.ws.rs.Path("/v1.0")
 public abstract class BaseSXPElementResourceImpl
 	implements EntityModelResource, SXPElementResource,
-			   VulcanBatchEngineTaskItemDelegate<SXPElement> {
+			   VulcanBatchEngineTaskItemDelegate<SXPElement>,
+			   VulcanCRUDItemDelegate<SXPElement> {
 
 	/**
 	 * Invoke this method with the command line:
@@ -797,8 +799,25 @@ public abstract class BaseSXPElementResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (SXPElement sxpElement : sxpElements) {
-			deleteSXPElement(sxpElement.getId());
+		UnsafeFunction<SXPElement, SXPElement, Exception>
+			sxpElementUnsafeFunction = sxpElement -> {
+				deleteSXPElement(sxpElement.getId());
+
+				return sxpElement;
+			};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				sxpElements, sxpElementUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				sxpElements, sxpElementUnsafeFunction::apply);
+		}
+		else {
+			for (SXPElement sxpElement : sxpElements) {
+				sxpElementUnsafeFunction.apply(sxpElement);
+			}
 		}
 	}
 
@@ -917,6 +936,11 @@ public abstract class BaseSXPElementResourceImpl
 		}
 
 		return null;
+	}
+
+	@Override
+	public SXPElement getItem(Long id) throws Exception {
+		return getSXPElement(id);
 	}
 
 	public void setContextAcceptLanguage(AcceptLanguage contextAcceptLanguage) {

@@ -560,27 +560,19 @@ const PublicationsSearchContainer = ({
 			}
 
 			return (
-				<div
-					className={
-						containerView
-							? 'container-fluid container-fluid-max-xl'
-							: ''
-					}
-				>
-					<div className={containerView ? 'container-view' : ''}>
-						<div className={className}>
-							<ClayEmptyState
-								description={Liferay.Language.get(
-									'no-publications-were-found'
-								)}
-								imgSrc={
-									resultsKeywords
-										? `${themeDisplay.getPathThemeImages()}/states/search_state.svg`
-										: `${themeDisplay.getPathThemeImages()}/states/empty_state.svg`
-								}
-								title={Liferay.Language.get('no-results-found')}
-							/>
-						</div>
+				<div className={containerView ? 'container-view' : ''}>
+					<div className={className}>
+						<ClayEmptyState
+							description={Liferay.Language.get(
+								'no-publications-were-found'
+							)}
+							imgSrc={
+								resultsKeywords
+									? `${themeDisplay.getPathThemeImages()}/states/search_state.svg`
+									: `${themeDisplay.getPathThemeImages()}/states/empty_state.svg`
+							}
+							title={Liferay.Language.get('no-results-found')}
+						/>
 					</div>
 				</div>
 			);
@@ -600,26 +592,18 @@ const PublicationsSearchContainer = ({
 			);
 
 			return (
-				<div
-					className={
-						containerView
-							? 'container-fluid container-fluid-max-xl'
-							: ''
-					}
-				>
-					<div className={containerView ? 'container-view' : ''}>
-						<ClayList
-							className={
-								loading
-									? 'publications-loading publications-table'
-									: 'publications-table'
-							}
-						>
-							{items}
-						</ClayList>
+				<div className={containerView ? 'container-view' : ''}>
+					<ClayList
+						className={
+							loading
+								? 'publications-loading publications-table'
+								: 'publications-table'
+						}
+					>
+						{items}
+					</ClayList>
 
-						{renderPagination()}
-					</div>
+					{renderPagination()}
 				</div>
 			);
 		}
@@ -629,30 +613,22 @@ const PublicationsSearchContainer = ({
 			);
 
 			return (
-				<div
-					className={
-						containerView
-							? 'container-fluid container-fluid-max-xl'
-							: ''
-					}
-				>
-					<div className={containerView ? 'container-view' : ''}>
-						<ClayTable
-							className={
-								loading
-									? 'publications-loading publications-table'
-									: 'publications-table'
-							}
-							headingNoWrap
-							hover={false}
-						>
-							{getTableHead ? getTableHead() : ''}
+				<div className={containerView ? 'container-view' : ''}>
+					<ClayTable
+						className={
+							loading
+								? 'publications-loading publications-table'
+								: 'publications-table'
+						}
+						headingNoWrap
+						hover={false}
+					>
+						{getTableHead ? getTableHead() : ''}
 
-							<ClayTable.Body>{rows}</ClayTable.Body>
-						</ClayTable>
+						<ClayTable.Body>{rows}</ClayTable.Body>
+					</ClayTable>
 
-						{renderPagination()}
-					</div>
+					{renderPagination()}
 				</div>
 			);
 		}

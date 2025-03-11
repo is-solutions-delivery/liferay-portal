@@ -15,6 +15,7 @@ import com.liferay.exportimport.kernel.controller.ImportController;
 import com.liferay.exportimport.kernel.exception.LARFileException;
 import com.liferay.exportimport.kernel.exception.LARTypeException;
 import com.liferay.exportimport.kernel.exception.LayoutImportException;
+import com.liferay.exportimport.kernel.exception.MissingPortletDataHandlerException;
 import com.liferay.exportimport.kernel.exception.MissingReferenceException;
 import com.liferay.exportimport.kernel.lar.ExportImportHelper;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
@@ -618,6 +619,15 @@ public class LayoutImportController implements ImportController {
 				_portletDataHandlerProvider.provide(companyId, portletId);
 
 			if (portletDataHandler == null) {
+				if (GetterUtil.getBoolean(
+						portletElement.attributeValue(
+							"validate-existing-data-handler"))) {
+
+					throw new MissingPortletDataHandlerException(
+						GetterUtil.getString(
+							portletElement.attributeValue("display-name")));
+				}
+
 				continue;
 			}
 

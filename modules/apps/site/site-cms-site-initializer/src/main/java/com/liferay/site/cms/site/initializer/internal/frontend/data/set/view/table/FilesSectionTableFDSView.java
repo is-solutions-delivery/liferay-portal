@@ -32,9 +32,9 @@ public class FilesSectionTableFDSView extends BaseTableFDSView {
 			_fdsTableSchemaBuilderFactory.create();
 
 		return fdsTableSchemaBuilder.add(
-			"embedded.title", "title",
+			"title", "title",
 			fdsTableSchemaField -> fdsTableSchemaField.setContentRenderer(
-				"embedded.title"
+				"title"
 			).setSortable(
 				true
 			)
@@ -54,7 +54,7 @@ public class FilesSectionTableFDSView extends BaseTableFDSView {
 		).add(
 			"embedded.status", "status"
 		).add(
-			"embdedded.actions", "actions"
+			"embedded.actions", "actions"
 		).build();
 	}
 

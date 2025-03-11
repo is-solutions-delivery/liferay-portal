@@ -14,11 +14,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
+import com.liferay.batch.engine.BatchEngineTaskContentType;
 import com.liferay.batch.engine.action.ItemReaderPostAction;
 import com.liferay.batch.engine.model.BatchEngineImportTask;
 import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.SetUtil;
@@ -55,16 +54,6 @@ public class BatchEngineImportTaskItemReaderUtil {
 		Map<String, Serializable> extendedProperties = new HashMap<>();
 		T item = itemClass.newInstance();
 
-		boolean keepCreatorInfo = false;
-
-		if (StringUtil.equals(
-				batchEngineImportTask.getParameterValue(
-					"importCreatorStrategy"),
-				"KEEP_CREATOR")) {
-
-			keepCreatorInfo = true;
-		}
-
 		Set<String> batchRestrictFields = _getBatchRestrictFields(
 			batchEngineImportTask);
 
@@ -91,13 +80,13 @@ public class BatchEngineImportTaskItemReaderUtil {
 			if (field != null) {
 				field.setAccessible(true);
 
+				Object value = entry.getValue();
+
 				ObjectMapper objectMapper = _getObjectMapper(
-					field, keepCreatorInfo);
+					batchEngineImportTask, field, value);
 
 				field.set(
-					item,
-					objectMapper.convertValue(
-						entry.getValue(), field.getType()));
+					item, objectMapper.convertValue(value, field.getType()));
 
 				continue;
 			}
@@ -243,20 +232,19 @@ public class BatchEngineImportTaskItemReaderUtil {
 	}
 
 	private static ObjectMapper _getObjectMapper(
-			Field field, boolean keepCreatorInfo)
+			BatchEngineImportTask batchEngineImportTask, Field field,
+			Object value)
 		throws IllegalAccessException, InstantiationException {
 
-		if (keepCreatorInfo && StringUtil.equals(field.getName(), "creator")) {
+		if (StringUtil.equals(
+				batchEngineImportTask.getParameterValue(
+					"importCreatorStrategy"),
+				"KEEP_CREATOR") &&
+			StringUtil.equals(field.getName(), "creator")) {
+
 			return new ObjectMapper() {
 				{
 					addMixIn(field.getType(), CreatorMixin.class);
-
-					SimpleModule simpleModule = new SimpleModule();
-
-					simpleModule.addDeserializer(
-						Map.class, new MapStdDeserializer());
-
-					registerModule(simpleModule);
 				}
 			};
 		}
@@ -265,6 +253,14 @@ public class BatchEngineImportTaskItemReaderUtil {
 			JsonDeserialize.class);
 
 		if (ArrayUtil.isEmpty(jsonDeserializes)) {
+			if (Objects.equals(
+					batchEngineImportTask.getContentType(),
+					BatchEngineTaskContentType.CSV.getFileExtension()) &&
+				_isCSVMapColumn(field.getType(), value)) {
+
+				return _csvMapObjectMapper;
+			}
+
 			return _objectMapper;
 		}
 
@@ -284,8 +280,36 @@ public class BatchEngineImportTaskItemReaderUtil {
 		};
 	}
 
-	private static final Log _log = LogFactoryUtil.getLog(
-		BatchEngineImportTaskItemReaderUtil.class);
+	private static boolean _isCSVMapColumn(Class<?> clazz, Object value) {
+		if (!Map.class.isAssignableFrom(clazz)) {
+			return false;
+		}
+
+		String string = value.toString();
+
+		if ((string == null) || string.isEmpty()) {
+			return false;
+		}
+
+		for (String line : string.split(StringPool.RETURN_NEW_LINE)) {
+			if (!line.contains(StringPool.COLON)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private static final ObjectMapper _csvMapObjectMapper = new ObjectMapper() {
+		{
+			SimpleModule simpleModule = new SimpleModule();
+
+			simpleModule.addDeserializer(
+				Map.class, new MapStdCSVDeserializer());
+
+			registerModule(simpleModule);
+		}
+	};
 
 	private static final Pattern _multiselectPicklistPattern = Pattern.compile(
 		"key_\\d+|name_\\d+");
@@ -294,16 +318,14 @@ public class BatchEngineImportTaskItemReaderUtil {
 		{
 			SimpleModule simpleModule = new SimpleModule();
 
-			simpleModule.addDeserializer(Map.class, new MapStdDeserializer());
-
 			registerModule(simpleModule);
 		}
 	};
 
-	private static class MapStdDeserializer
+	private static class MapStdCSVDeserializer
 		extends StdDeserializer<Map<String, Object>> {
 
-		public MapStdDeserializer() {
+		public MapStdCSVDeserializer() {
 			this(Map.class);
 		}
 
@@ -313,30 +335,20 @@ public class BatchEngineImportTaskItemReaderUtil {
 				DeserializationContext deserializationContext)
 			throws IOException {
 
-			try {
-				return deserializationContext.readValue(
-					jsonParser, LinkedHashMap.class);
+			Map<String, Object> map = new LinkedHashMap<>();
+
+			String string = jsonParser.getValueAsString();
+
+			for (String line : string.split(StringPool.RETURN_NEW_LINE)) {
+				String[] lineParts = line.split(StringPool.COLON);
+
+				map.put(lineParts[0], lineParts[1]);
 			}
-			catch (Exception exception) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(exception);
-				}
 
-				Map<String, Object> map = new LinkedHashMap<>();
-
-				String string = jsonParser.getValueAsString();
-
-				for (String line : string.split(StringPool.RETURN_NEW_LINE)) {
-					String[] lineParts = line.split(StringPool.COLON);
-
-					map.put(lineParts[0], lineParts[1]);
-				}
-
-				return map;
-			}
+			return map;
 		}
 
-		protected MapStdDeserializer(Class<?> clazz) {
+		protected MapStdCSVDeserializer(Class<?> clazz) {
 			super(clazz);
 		}
 

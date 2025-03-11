@@ -10,7 +10,9 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -101,10 +103,22 @@ public class GitUtil {
 	public static RemoteGitBranch getRemoteGitBranch(
 		String remoteGitBranchName, File workingDirectory, String remoteURL) {
 
+		return getRemoteGitBranch(
+			remoteGitBranchName, workingDirectory, remoteURL, true);
+	}
+
+	public static RemoteGitBranch getRemoteGitBranch(
+		String remoteGitBranchName, File workingDirectory, String remoteURL,
+		boolean required) {
+
 		RemoteGitRef remoteGitRef = getRemoteGitRef(
-			remoteGitBranchName, workingDirectory, remoteURL);
+			remoteGitBranchName, workingDirectory, remoteURL, required);
 
 		if (!(remoteGitRef instanceof RemoteGitBranch)) {
+			if (!required) {
+				return null;
+			}
+
 			throw new RuntimeException(
 				JenkinsResultsParserUtil.combine(
 					"Unable to find remote Git branch ", remoteGitBranchName,
@@ -132,6 +146,12 @@ public class GitUtil {
 	}
 
 	public static RemoteGitRef getRemoteGitRef(String gitHubURL) {
+		return getRemoteGitRef(gitHubURL, true);
+	}
+
+	public static RemoteGitRef getRemoteGitRef(
+		String gitHubURL, boolean required) {
+
 		Matcher matcher = _gitHubRefURLPattern.matcher(gitHubURL);
 
 		if (!matcher.find()) {
@@ -143,57 +163,94 @@ public class GitUtil {
 			matcher.group("gitRepositoryName"), ".git");
 
 		return getRemoteGitRef(
-			matcher.group("refName"), new File("."), remoteGitRepositoryURL);
+			matcher.group("refName"), new File("."), remoteGitRepositoryURL,
+			required);
 	}
 
 	public static RemoteGitRef getRemoteGitRef(
 		String remoteGitBranchName, File workingDirectory, String remoteURL) {
 
-		List<RemoteGitRef> remoteGitRefs = null;
+		return getRemoteGitRef(
+			remoteGitBranchName, workingDirectory, remoteURL, true);
+	}
 
-		if (remoteURL.contains(_HOSTNAME_GITHUB_CACHE_PROXY)) {
-			List<String> usedGitHubDevNodeHostnames = new ArrayList<>(3);
+	public static RemoteGitRef getRemoteGitRef(
+		String remoteGitBranchName, File workingDirectory, String remoteURL,
+		boolean required) {
 
-			while ((usedGitHubDevNodeHostnames.size() < 3) &&
-				   ((remoteGitRefs == null) || remoteGitRefs.isEmpty())) {
+		String key = JenkinsResultsParserUtil.combine(
+			remoteURL, "#", remoteGitBranchName);
 
-				String gitHubDevNodeHostname =
-					JenkinsResultsParserUtil.getRandomGitHubDevNodeHostname(
-						usedGitHubDevNodeHostnames);
+		synchronized (_gitHubRemoteGitRefs) {
+			if (remoteURL.contains(_HOSTNAME_GITHUB)) {
+				RemoteGitRef gitHubRemoteGitRef = _gitHubRemoteGitRefs.get(key);
 
-				String gitHubDevNodeRemoteURL = remoteURL.replace(
-					_HOSTNAME_GITHUB_CACHE_PROXY, gitHubDevNodeHostname);
+				if (gitHubRemoteGitRef != null) {
+					System.out.println(
+						JenkinsResultsParserUtil.combine(
+							"Using cached Git ref from ", remoteURL, " for ",
+							remoteGitBranchName));
 
-				if (gitHubDevNodeHostname.startsWith("slave-")) {
-					gitHubDevNodeRemoteURL = toSlaveGitHubDevNodeRemoteURL(
-						remoteURL, gitHubDevNodeHostname.substring(6));
+					return gitHubRemoteGitRef;
 				}
-
-				try {
-					remoteGitRefs = getRemoteGitRefs(
-						remoteGitBranchName, workingDirectory,
-						gitHubDevNodeRemoteURL);
-				}
-				catch (Exception exception) {
-					exception.printStackTrace();
-				}
-
-				usedGitHubDevNodeHostnames.add(gitHubDevNodeHostname);
 			}
-		}
-		else {
-			remoteGitRefs = getRemoteGitRefs(
-				remoteGitBranchName, workingDirectory, remoteURL);
-		}
 
-		if ((remoteGitRefs == null) || remoteGitRefs.isEmpty()) {
-			throw new RuntimeException(
-				JenkinsResultsParserUtil.combine(
-					"Unable to find remote Git ref ", remoteGitBranchName,
-					" on remote URL ", remoteURL));
-		}
+			List<RemoteGitRef> remoteGitRefs = null;
 
-		return remoteGitRefs.get(0);
+			if (remoteURL.contains(_HOSTNAME_GITHUB_CACHE_PROXY)) {
+				List<String> usedGitHubDevNodeHostnames = new ArrayList<>(3);
+
+				while ((usedGitHubDevNodeHostnames.size() < 3) &&
+					   ((remoteGitRefs == null) || remoteGitRefs.isEmpty())) {
+
+					String gitHubDevNodeHostname =
+						JenkinsResultsParserUtil.getRandomGitHubDevNodeHostname(
+							usedGitHubDevNodeHostnames);
+
+					String gitHubDevNodeRemoteURL = remoteURL.replace(
+						_HOSTNAME_GITHUB_CACHE_PROXY, gitHubDevNodeHostname);
+
+					if (gitHubDevNodeHostname.startsWith("slave-")) {
+						gitHubDevNodeRemoteURL = toSlaveGitHubDevNodeRemoteURL(
+							remoteURL, gitHubDevNodeHostname.substring(6));
+					}
+
+					try {
+						remoteGitRefs = getRemoteGitRefs(
+							remoteGitBranchName, workingDirectory,
+							gitHubDevNodeRemoteURL);
+					}
+					catch (Exception exception) {
+						exception.printStackTrace();
+					}
+
+					usedGitHubDevNodeHostnames.add(gitHubDevNodeHostname);
+				}
+			}
+			else {
+				remoteGitRefs = getRemoteGitRefs(
+					remoteGitBranchName, workingDirectory, remoteURL);
+			}
+
+			if ((remoteGitRefs == null) || remoteGitRefs.isEmpty()) {
+				if (!required) {
+					return null;
+				}
+
+				throw new RuntimeException(
+					JenkinsResultsParserUtil.combine(
+						"Unable to find remote Git ref ", remoteGitBranchName,
+						" on remote URL ", remoteURL));
+			}
+
+			RemoteGitRef remoteGitRef = remoteGitRefs.get(0);
+
+			if (remoteURL.contains(_HOSTNAME_GITHUB)) {
+				_gitHubRemoteGitRefs.put(key, remoteGitRef);
+			}
+
+			return remoteGitRef;
+		}
 	}
 
 	public static List<RemoteGitRef> getRemoteGitRefs(
@@ -573,6 +630,8 @@ public class GitUtil {
 		return defaultBranchName;
 	}
 
+	private static final String _HOSTNAME_GITHUB = "github.com";
+
 	private static final String _HOSTNAME_GITHUB_CACHE_PROXY =
 		"github-dev.liferay.com";
 
@@ -582,5 +641,7 @@ public class GitUtil {
 		JenkinsResultsParserUtil.combine(
 			"https://github.com/(?<username>[^/]+)/",
 			"(?<gitRepositoryName>[^/]+)/tree/(?<refName>.+)"));
+	private static final Map<String, RemoteGitRef> _gitHubRemoteGitRefs =
+		new HashMap<>();
 
 }

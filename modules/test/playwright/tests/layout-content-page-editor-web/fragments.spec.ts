@@ -47,7 +47,6 @@ const test = mergeTests(
 	displayPageTemplatesPagesTest,
 	documentLibraryPagesTest,
 	featureFlagsTest({
-		'LPD-18221': {enabled: true},
 		'LPD-39304': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
@@ -64,7 +63,6 @@ const test = mergeTests(
 const testWithPrivatePages = mergeTests(
 	test,
 	featureFlagsTest({
-		'LPD-18221': {enabled: true},
 		'LPD-38869': {enabled: true},
 		'LPD-39304': {enabled: true},
 		'LPS-178052': {enabled: true},
@@ -170,7 +168,7 @@ test.describe('Content Display Fragment', () => {
 		});
 
 		await expect(
-			page.locator('#page-editor').getByText('Hummingbird')
+			page.locator('#page-editor').getByText('Hummingbird', {exact: true})
 		).toBeVisible();
 
 		await pageEditorPage.publishPage();

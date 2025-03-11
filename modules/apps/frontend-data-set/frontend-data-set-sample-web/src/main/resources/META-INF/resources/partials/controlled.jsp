@@ -11,19 +11,21 @@
 ControlledFDSDisplayContext controlledFDSDisplayContext = new ControlledFDSDisplayContext(request);
 %>
 
-<react:component
-	module="{ControlledFrontendDataSet} from frontend-data-set-sample-web"
-	props='<%=
-		HashMapBuilder.<String, Object>put(
-			"id", FDSSampleFDSNames.CONTROLLED
-		).put(
-			"items", controlledFDSDisplayContext.getItems()
-		).put(
-			"showManagementBar", false
-		).put(
-			"style", "fluid"
-		).put(
-			"views", controlledFDSDisplayContext.getViews()
-		).build()
-	%>'
-/>
+<div>
+	<react:component
+		module="{ControlledFrontendDataSet} from frontend-data-set-sample-web"
+		props='<%=
+			HashMapBuilder.<String, Object>put(
+				"id", FDSSampleFDSNames.CONTROLLED
+			).put(
+				"items", controlledFDSDisplayContext.getItems()
+			).put(
+				"showManagementBar", false
+			).put(
+				"style", "fluid"
+			).put(
+				"views", controlledFDSDisplayContext.getViews()
+			).build()
+		%>'
+	/>
+</div>

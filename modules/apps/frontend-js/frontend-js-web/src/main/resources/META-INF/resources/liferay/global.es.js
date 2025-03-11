@@ -3,9 +3,6 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import groupBy from 'lodash.groupby';
-import isEqual from 'lodash.isequal';
-
 import loadClientExtensions from '../utils/client_extensions/loadClientExtensions';
 import loadEditorClientExtensions from '../utils/client_extensions/loadEditorClientExtensions';
 import DynamicInlineScroll from './DynamicInlineScroll.es';
@@ -102,8 +99,6 @@ import toggleRadio from './util/toggle_radio';
 import toggleSelectBox from './util/toggle_select_box';
 import zIndex from './zIndex';
 
-const PATH_CONTEXT = Liferay.ThemeDisplay.getPathContext();
-
 Liferay = window.Liferay || {};
 
 /**
@@ -161,18 +156,6 @@ Liferay.Portlet = Liferay.Portlet || {};
 
 Liferay.Portlet.minimize = minimizePortlet;
 
-Liferay.Portlet.openModal = (...args) => {
-	import(PATH_CONTEXT + '/o/frontend-js-web/__liferay__/index.js').then(
-		({openPortletModal}) => openPortletModal(...args)
-	);
-};
-
-Liferay.Portlet.openWindow = (...args) => {
-	import(PATH_CONTEXT + '/o/frontend-js-web/__liferay__/index.js').then(
-		({openPortletWindow}) => openPortletWindow(...args)
-	);
-};
-
 Liferay.SideNavigation = SideNavigation;
 
 Liferay.Util = Liferay.Util || {};
@@ -183,18 +166,6 @@ Liferay.Util.MAP_HTML_CHARS_ESCAPED = MAP_HTML_CHARS_ESCAPED;
  * @deprecated As of Athanasius (7.3.x), replaced by `import {addParams} from 'frontend-js-web'`
  */
 Liferay.Util.addParams = addParams;
-
-Liferay.Util.openAlertModal = (...args) => {
-	import(PATH_CONTEXT + '/o/frontend-js-web/__liferay__/index.js').then(
-		({openAlertModal}) => openAlertModal(...args)
-	);
-};
-
-Liferay.Util.openSimpleInputModal = (...args) => {
-	import(PATH_CONTEXT + '/o/frontend-js-web/__liferay__/index.js').then(
-		({openSimpleInputModal}) => openSimpleInputModal(...args)
-	);
-};
 
 /**
  * Utils added to global namespace to be consumed by portal-web
@@ -272,14 +243,11 @@ Liferay.Util.getSelectedOptionValues = getSelectedOptionValues;
 Liferay.Util.getTop = getTop;
 Liferay.Util.getURLWithSessionId = getURLWithSessionId;
 Liferay.Util.getWindow = getWindow;
-Liferay.Util.groupBy = groupBy;
 
 /**
  * @deprecated As of Athanasius (7.3.x), replaced by `import {inBrowserView} from 'frontend-js-web'`
  */
 Liferay.Util.inBrowserView = inBrowserView;
-
-Liferay.Util.isEqual = isEqual;
 
 /**
  * @deprecated As of Athanasius (7.3.x), replaced by `import {isPhone} from 'frontend-js-web'`
@@ -318,30 +286,6 @@ Liferay.Util.toCharCode = toCharCode;
  * @deprecated As of Athanasius (7.3.x), replaced by `import {toggleDisabled} from 'frontend-js-web'`
  */
 Liferay.Util.toggleDisabled = toggleDisabled;
-
-Liferay.Util.openConfirmModal = (...args) => {
-	import(PATH_CONTEXT + '/o/frontend-js-web/__liferay__/index.js').then(
-		({openConfirmModal}) => openConfirmModal(...args)
-	);
-};
-
-Liferay.Util.openModal = (...args) => {
-	import(PATH_CONTEXT + '/o/frontend-js-web/__liferay__/index.js').then(
-		({openModal}) => openModal(...args)
-	);
-};
-
-Liferay.Util.openSelectionModal = (...args) => {
-	import(PATH_CONTEXT + '/o/frontend-js-web/__liferay__/index.js').then(
-		({openSelectionModal}) => openSelectionModal(...args)
-	);
-};
-
-Liferay.Util.openToast = (...args) => {
-	import(PATH_CONTEXT + '/o/frontend-js-web/__liferay__/index.js').then(
-		({openToast}) => openToast(...args)
-	);
-};
 
 Liferay.Util.openWindow = openWindow;
 Liferay.Util.removeEntitySelection = removeEntitySelection;

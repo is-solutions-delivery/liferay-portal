@@ -7,9 +7,7 @@
 
 <%@ include file="/publications/init.jsp" %>
 
-<clay:container-fluid
-	cssClass="container-view"
->
+<div class="container-view">
 	<div class="sheet">
 		<h2 class="sheet-title">
 			<liferay-ui:message arguments='<%= HtmlUtil.escape(renderRequest.getParameter("ctCollectionName")) %>' key="x-scheduled-publication-failed-with-an-unexpected-system-error" />
@@ -25,4 +23,4 @@
 
 			<pre class="bg-light border p-2"><%= backgroundTask.getStatusMessage() %></pre>
 		</div>
-</clay:container-fluid>
+</div>

@@ -7,6 +7,13 @@ import {ProductType} from '../../../../../../../enums/ProductType';
 import i18n from '../../../../../../../i18n';
 
 export const offeringTypesDescription = {
+	[ProductType.CLIENT_EXTENSION]: [
+		{
+			description: 'placeholder',
+			disabled: true,
+			label: i18n.translate('liferay-self-hosted'),
+		},
+	],
 	[ProductType.CLOUD]: [
 		{
 			description: i18n.translate(
@@ -17,14 +24,13 @@ export const offeringTypesDescription = {
 		},
 		{
 			description: i18n.translate(
-				'the-cloud-app-is-client-extension-based-and-is-compatible-with-liferay’s-self-managed-formerly-dxp-cloud-offering'
+				'the-cloud-app-is-client-extension-based-and-is-compatible-with-liferays-self-managed-offering'
 			),
-			disabled: true,
 			label: i18n.translate('liferay-paas'),
 		},
 		{
 			description: i18n.translate(
-				'the-cloud-app-is-client-extension-based-and-is-compatible-with-liferay-experience-cloud-lxc-it-fully-supports-and-deploys-on-extension-environments-in-lxc'
+				'the-cloud-app-is-client-extension-based-and-compatible-with-liferay-saas-it-fully-supports-and-deploys-on-extension-environments'
 			),
 			label: i18n.translate('liferay-saas'),
 		},
@@ -47,6 +53,26 @@ export const offeringTypesDescription = {
 				'dxp-module-based-apps-are-not-supported-on-liferay-experience-cloud-lxc'
 			),
 			disabled: true,
+			label: i18n.translate('liferay-saas'),
+		},
+	],
+	[ProductType.FRAGMENT]: [
+		{
+			description: i18n.translate(
+				'the-dxp-app-is-module-based-and-is-compatible-with-7-4-builds-of-liferay-dxp'
+			),
+			label: i18n.translate('liferay-self-hosted'),
+		},
+		{
+			description: i18n.translate(
+				'the-dxp-app-is-module-based-and-is-compatible-with-7-4-builds-of-liferay-dxp-self-managed-liferay-cloud-formerly-dxp-cloud'
+			),
+			label: i18n.translate('liferay-paas'),
+		},
+		{
+			description: i18n.translate(
+				'dxp-module-based-apps-are-not-supported-on-liferay-experience-cloud-lxc'
+			),
 			label: i18n.translate('liferay-saas'),
 		},
 	],

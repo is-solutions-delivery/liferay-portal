@@ -7,16 +7,15 @@ package com.liferay.site.cms.site.initializer.internal.display.context;
 
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
-import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenuBuilder;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
-import com.liferay.petra.string.StringBundler;
-import com.liferay.petra.string.StringPool;
+import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.service.ObjectDefinitionService;
+import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.site.cms.site.initializer.internal.configuration.CMSSiteInitializerConfiguration;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,79 +24,80 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author Sam Ziemer
  */
-public class FilesSectionDisplayContext {
+public class FilesSectionDisplayContext extends BaseSectionDisplayContext {
 
 	public FilesSectionDisplayContext(
 		CMSSiteInitializerConfiguration cmsSiteInitializerConfiguration,
-		HttpServletRequest httpServletRequest) {
+		HttpServletRequest httpServletRequest, Language language,
+		ObjectDefinitionService objectDefinitionService) {
 
-		_cmsSiteInitializerConfiguration = cmsSiteInitializerConfiguration;
-		_httpServletRequest = httpServletRequest;
+		super(cmsSiteInitializerConfiguration, httpServletRequest);
+
+		_language = language;
+		_objectDefinitionService = objectDefinitionService;
 	}
 
-	public String getAPIURL() {
-		StringBundler sb = new StringBundler(3);
-
-		sb.append("/o/search/v1.0/search?emptySearch=true&entryClassNames=");
-		sb.append(
-			ArrayUtil.toString(
-				_cmsSiteInitializerConfiguration.filesClassNames(),
-				StringPool.BLANK));
-		sb.append("&nestedFields=embedded");
-
-		return sb.toString();
-	}
-
+	@Override
 	public List<DropdownItem> getBulkActionDropdownItems() {
-		return new ArrayList<>();
+		return ListUtil.fromArray(
+			new FDSActionDropdownItem(
+				"#", "document", "sampleBulkAction",
+				LanguageUtil.get(httpServletRequest, "label"), null, null,
+				null));
 	}
 
+	@Override
 	public CreationMenu getCreationMenu() {
-		return CreationMenuBuilder.addPrimaryDropdownItem(
-			dropdownItem -> {
-				dropdownItem.setIcon("forms");
-				dropdownItem.setLabel(
-					LanguageUtil.get(_httpServletRequest, "basic-content"));
+		return new CreationMenu() {
+			{
+				addPrimaryDropdownItem(
+					dropdownItem -> {
+						dropdownItem.putData("action", "createFolder");
+						dropdownItem.setIcon("folder");
+						dropdownItem.setLabel(
+							_language.get(httpServletRequest, "folder"));
+					});
+
+				for (ObjectDefinition objectDefinition :
+						_objectDefinitionService.getCMSObjectDefinitions(
+							themeDisplay.getCompanyId(),
+							new String[] {"L_CMS_FILE_TYPES"})) {
+
+					addPrimaryDropdownItem(
+						dropdownItem -> {
+							dropdownItem.setHref(
+								getAddStructuredContentItemURL(
+									objectDefinition.getObjectDefinitionId()));
+							dropdownItem.setIcon("forms");
+							dropdownItem.setLabel(
+								objectDefinition.getLabel(
+									themeDisplay.getLocale()));
+						});
+				}
 			}
-		).addPrimaryDropdownItem(
-			dropdownItem -> {
-				dropdownItem.setIcon("blogs");
-				dropdownItem.setLabel(
-					LanguageUtil.get(_httpServletRequest, "blog"));
-			}
-		).addPrimaryDropdownItem(
-			dropdownItem -> {
-				dropdownItem.setIcon("wiki");
-				dropdownItem.setLabel(
-					LanguageUtil.get(_httpServletRequest, "knowledge-base"));
-			}
-		).addPrimaryDropdownItem(
-			dropdownItem -> {
-				dropdownItem.setIcon("folder");
-				dropdownItem.setLabel(
-					LanguageUtil.get(_httpServletRequest, "folder"));
-			}
-		).build();
+		};
 	}
 
+	@Override
 	public Map<String, Object> getEmptyState() {
 		return HashMapBuilder.<String, Object>put(
 			"description",
 			LanguageUtil.get(
-				_httpServletRequest, "click-new-to-create-your-first-file")
+				httpServletRequest, "click-new-to-create-your-first-file")
 		).put(
 			"image", "/states/cms_empty_state_files.svg"
 		).put(
-			"title", LanguageUtil.get(_httpServletRequest, "no-files-yet")
+			"title", LanguageUtil.get(httpServletRequest, "no-files-yet")
 		).build();
 	}
 
-	public List<FDSActionDropdownItem> getFDSActionDropdownItems() {
-		return new ArrayList<>();
+	@Override
+	public String[] getObjectDefinitionFolderExternalReferenceCodes() {
+		return cmsSiteInitializerConfiguration.
+			filesObjectDefinitionFolderExternalReferenceCodes();
 	}
 
-	private final CMSSiteInitializerConfiguration
-		_cmsSiteInitializerConfiguration;
-	private final HttpServletRequest _httpServletRequest;
+	private final Language _language;
+	private final ObjectDefinitionService _objectDefinitionService;
 
 }

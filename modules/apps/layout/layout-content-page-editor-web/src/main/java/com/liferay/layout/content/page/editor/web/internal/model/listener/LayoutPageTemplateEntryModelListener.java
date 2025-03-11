@@ -19,6 +19,7 @@ import com.liferay.info.item.provider.InfoItemFormVariationsProvider;
 import com.liferay.info.permission.provider.InfoPermissionProvider;
 import com.liferay.info.search.InfoSearchClassMapperRegistry;
 import com.liferay.layout.content.page.editor.web.internal.manager.FormItemManager;
+import com.liferay.layout.manager.FormManager;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.exception.RequiredLayoutPageTemplateEntryException;
 import com.liferay.layout.page.template.info.item.capability.EditPageInfoItemCapability;
@@ -211,7 +212,7 @@ public class LayoutPageTemplateEntryModelListener
 
 			List<FragmentEntryLink> addedFragmentEntryLinks = new ArrayList<>();
 
-			_formItemManager.addFragmentEntryLinksLayoutStructureItems(
+			_formManager.addFragmentEntryLinksLayoutStructureItems(
 				addedFragmentEntryLinks, _jsonFactory.createJSONObject(),
 				formStyledLayoutStructureItem, true, layout, layoutStructure,
 				LocaleUtil.getMostRelevantLocale(), segmentsExperienceId,
@@ -236,24 +237,14 @@ public class LayoutPageTemplateEntryModelListener
 		Layout layout = _layoutLocalService.getLayout(
 			layoutPageTemplateEntry.getPlid());
 
-		Layout draftLayout = layout.fetchDraftLayout();
-
 		for (SegmentsExperience segmentsExperience :
 				_segmentsExperienceLocalService.getSegmentsExperiences(
-					layoutPageTemplateEntry.getGroupId(),
-					layoutPageTemplateEntry.getPlid())) {
+					layout.getGroupId(), layout.getPlid())) {
 
 			_updateLayoutPageTemplateStructureData(
 				layout, layoutPageTemplateEntry,
 				originalLayoutPageTemplateEntry,
 				segmentsExperience.getSegmentsExperienceId());
-
-			if (draftLayout != null) {
-				_updateLayoutPageTemplateStructureData(
-					draftLayout, layoutPageTemplateEntry,
-					originalLayoutPageTemplateEntry,
-					segmentsExperience.getSegmentsExperienceId());
-			}
 		}
 
 		for (FragmentEntryLink fragmentEntryLink :
@@ -263,7 +254,19 @@ public class LayoutPageTemplateEntryModelListener
 			_updateFragmentEntryLinkEditableValues(fragmentEntryLink);
 		}
 
+		Layout draftLayout = layout.fetchDraftLayout();
+
 		if (draftLayout != null) {
+			for (SegmentsExperience segmentsExperience :
+					_segmentsExperienceLocalService.getSegmentsExperiences(
+						draftLayout.getGroupId(), draftLayout.getPlid())) {
+
+				_updateLayoutPageTemplateStructureData(
+					draftLayout, layoutPageTemplateEntry,
+					originalLayoutPageTemplateEntry,
+					segmentsExperience.getSegmentsExperienceId());
+			}
+
 			for (FragmentEntryLink fragmentEntryLink :
 					_fragmentEntryLinkLocalService.getFragmentEntryLinksByPlid(
 						draftLayout.getGroupId(), draftLayout.getPlid())) {
@@ -428,6 +431,9 @@ public class LayoutPageTemplateEntryModelListener
 
 	@Reference
 	private FormItemManager _formItemManager;
+
+	@Reference
+	private FormManager _formManager;
 
 	@Reference
 	private FragmentEntryLinkListenerRegistry

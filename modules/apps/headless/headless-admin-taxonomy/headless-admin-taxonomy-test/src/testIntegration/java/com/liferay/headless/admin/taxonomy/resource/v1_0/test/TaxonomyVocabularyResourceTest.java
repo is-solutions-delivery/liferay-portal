@@ -359,16 +359,6 @@ public class TaxonomyVocabularyResourceTest
 	}
 
 	@Override
-	@Test
-	public void testPutAssetLibraryTaxonomyVocabularyByExternalReferenceCode()
-		throws Exception {
-
-		super.testPutAssetLibraryTaxonomyVocabularyByExternalReferenceCode();
-
-		_testPutAssetLibraryTaxonomyVocabularyByExternalReferenceCodeWithExternalReferenceCode();
-	}
-
-	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {"assetTypes", "description", "name"};
 	}
@@ -401,29 +391,11 @@ public class TaxonomyVocabularyResourceTest
 	}
 
 	@Override
-	protected TaxonomyVocabulary
-			testDeleteAssetLibraryTaxonomyVocabularyByExternalReferenceCode_addTaxonomyVocabulary()
-		throws Exception {
-
-		return taxonomyVocabularyResource.postAssetLibraryTaxonomyVocabulary(
-			testDepotEntry.getDepotEntryId(), randomTaxonomyVocabulary());
-	}
-
-	@Override
 	protected Long
 			testDeleteAssetLibraryTaxonomyVocabularyByExternalReferenceCode_getAssetLibraryId()
 		throws Exception {
 
 		return testDepotEntry.getDepotEntryId();
-	}
-
-	@Override
-	protected TaxonomyVocabulary
-			testGetAssetLibraryTaxonomyVocabularyByExternalReferenceCode_addTaxonomyVocabulary()
-		throws Exception {
-
-		return testPostAssetLibraryTaxonomyVocabulary_addTaxonomyVocabulary(
-			randomTaxonomyVocabulary());
 	}
 
 	@Override
@@ -547,27 +519,6 @@ public class TaxonomyVocabularyResourceTest
 				postTaxonomyVocabulary.getId());
 
 		Assert.assertNull(getTaxonomyVocabulary.getPermissions());
-	}
-
-	private void _testPutAssetLibraryTaxonomyVocabularyByExternalReferenceCodeWithExternalReferenceCode()
-		throws Exception {
-
-		String externalReferenceCode = StringUtil.toLowerCase(
-			RandomTestUtil.randomString());
-
-		TaxonomyVocabulary taxonomyVocabulary =
-			testPutAssetLibraryTaxonomyVocabularyByExternalReferenceCode_addTaxonomyVocabulary();
-
-		TaxonomyVocabulary putTaxonomyVocabulary =
-			taxonomyVocabularyResource.
-				putAssetLibraryTaxonomyVocabularyByExternalReferenceCode(
-					testPutAssetLibraryTaxonomyVocabularyByExternalReferenceCode_getAssetLibraryId(),
-					externalReferenceCode, taxonomyVocabulary);
-
-		Assert.assertEquals(
-			externalReferenceCode,
-			putTaxonomyVocabulary.getExternalReferenceCode());
-		assertValid(putTaxonomyVocabulary);
 	}
 
 	@Inject

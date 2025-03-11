@@ -33,8 +33,23 @@ type TOrganization = {
 	externalReferenceCode?: string;
 	id?: string;
 	name?: string;
+	organizationContactInformation?: TOrganizationContactInformation;
 	parentOrganization?: TOrganization;
 	services?: TServices[];
+};
+
+export type TOrganizationContactInformation = {
+	postalAddresses: TPostalAddresses[];
+};
+
+export type TPostalAddresses = {
+	addressCountry: string;
+	addressLocality: string;
+	addressType: string;
+	externalReferenceCode?: string;
+	id?: string;
+	postalCode: string;
+	streetAddressLine1: string;
 };
 
 export type TPermission = {
@@ -48,6 +63,9 @@ export type TRole = {
 	externalReferenceCode?: string;
 	id?: number;
 	name: string;
+	name_i18n?: {
+		[key: string]: string;
+	};
 	rolePermissions?: Array<TPermission>;
 	roleType?: number | string;
 };
@@ -183,6 +201,15 @@ export class HeadlessAdminUserApiHelper {
 	async deleteUserGroup(userGroupId: number) {
 		return this.apiHelpers.delete(
 			`${this.apiHelpers.baseUrl}${this.basePath}/user-groups/${userGroupId}`
+		);
+	}
+
+	async deleteUserGroupUsers(userGroupId: number, userIds: string[]) {
+		return this.apiHelpers.delete(
+			`${this.apiHelpers.baseUrl}${this.basePath}/user-groups/${userGroupId}/user-group-users`,
+			{
+				data: userIds,
+			}
 		);
 	}
 
@@ -486,13 +513,22 @@ export class HeadlessAdminUserApiHelper {
 		return userGroup;
 	}
 
-	async assignUsersToUserGroup(userGroupId: number, userIds: number[]) {
-		return this.apiHelpers.post(
+	async assignUsersToUserGroup(userGroupId: number, userIds: string[]) {
+		const association = this.apiHelpers.post(
 			`${this.apiHelpers.baseUrl}${this.basePath}/user-groups/${userGroupId}/user-group-users`,
 			{
-				data: {userIds},
+				data: userIds,
 			}
 		);
+
+		if (this.apiHelpers instanceof DataApiHelpers) {
+			this.apiHelpers.data.push({
+				id: `${userGroupId}_${userIds.join('_')}`,
+				type: 'userGroupUserAccountAssociation',
+			});
+		}
+
+		return association;
 	}
 
 	async getAccountRoles(accountId: number) {

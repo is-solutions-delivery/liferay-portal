@@ -9,10 +9,13 @@ import com.liferay.petra.concurrent.DCLSingleton;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.UserEmailAddressException;
 import com.liferay.portal.kernel.exception.UserScreenNameException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -21,22 +24,28 @@ import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.util.CalendarFactoryUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
 import com.liferay.portal.kernel.util.PropsKeys;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.scim.rest.dto.v1_0.Operation;
+import com.liferay.scim.rest.dto.v1_0.PatchOp;
 import com.liferay.scim.rest.internal.model.ScimUser;
 
 import java.io.File;
 
 import java.text.DateFormat;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.wso2.charon3.core.attributes.Attribute;
 import org.wso2.charon3.core.attributes.ComplexAttribute;
@@ -101,7 +110,7 @@ public class ScimUtil {
 
 		ScimUser scimUser = new ScimUser();
 
-		scimUser.setActive(user.getActive());
+		scimUser.setActive(_isActive(user));
 		scimUser.setAutoScreenName(
 			PrefsPropsUtil.getBoolean(
 				companyId, PropsKeys.USERS_SCREEN_NAME_ALWAYS_AUTOGENERATE));
@@ -175,7 +184,7 @@ public class ScimUtil {
 		user.replaceEmails(
 			Collections.singletonList(
 				new MultiValuedComplexType(
-					"default", true, null, scimUser.getEmailAddress(), null)));
+					"work", true, null, scimUser.getEmailAddress(), null)));
 
 		ScimName scimName = new ScimName();
 
@@ -220,6 +229,115 @@ public class ScimUtil {
 		user.setUserName(scimUser.getScreenName());
 
 		return user;
+	}
+
+	public static String transformGroupPatchOp(PatchOp patchOp) {
+		JSONArray operationsJSONArray = JSONFactoryUtil.createJSONArray();
+
+		for (Operation operation : patchOp.getOperations()) {
+			JSONObject operationJSONObject = JSONUtil.put(
+				SCIMConstants.OperationalConstants.OP, operation.getOp());
+
+			operationsJSONArray.put(operationJSONObject);
+
+			if (SCIMConstants.OperationalConstants.ADD.equalsIgnoreCase(
+					operation.getOp())) {
+
+				if (!SCIMConstants.GroupSchemaConstants.MEMBERS.
+						equalsIgnoreCase(operation.getPath())) {
+
+					continue;
+				}
+
+				Object value = operation.getValue();
+
+				if (!(value instanceof ArrayList)) {
+					operationJSONObject.put(
+						SCIMConstants.OperationalConstants.VALUE,
+						JSONUtil.put(
+							SCIMConstants.GroupSchemaConstants.MEMBERS, value));
+
+					continue;
+				}
+
+				JSONArray valueJSONArray = JSONFactoryUtil.createJSONArray(
+					(ArrayList)value);
+
+				JSONObject valueJSONObject = valueJSONArray.getJSONObject(0);
+
+				if (!valueJSONObject.has(
+						SCIMConstants.GroupSchemaConstants.DISPLAY)) {
+
+					valueJSONObject.put(
+						SCIMConstants.GroupSchemaConstants.DISPLAY,
+						StringPool.BLANK);
+				}
+
+				operationJSONObject.put(
+					SCIMConstants.OperationalConstants.VALUE,
+					JSONUtil.put(
+						SCIMConstants.GroupSchemaConstants.MEMBERS,
+						valueJSONArray));
+			}
+			else if (SCIMConstants.OperationalConstants.REMOVE.equalsIgnoreCase(
+						operation.getOp())) {
+
+				Object value = operation.getValue();
+
+				if (value == null) {
+					operationJSONObject.put(
+						SCIMConstants.OperationalConstants.PATH,
+						operation.getPath());
+
+					continue;
+				}
+
+				if (value instanceof ArrayList) {
+					JSONArray valueJSONArray = JSONFactoryUtil.createJSONArray(
+						(ArrayList)value);
+
+					JSONObject valueJSONObject = valueJSONArray.getJSONObject(
+						0);
+
+					value = valueJSONObject.get(
+						SCIMConstants.OperationalConstants.VALUE);
+				}
+				else if (value instanceof Map) {
+					value = MapUtil.getString(
+						(Map)value, SCIMConstants.OperationalConstants.VALUE);
+				}
+
+				operationJSONObject.put(
+					SCIMConstants.OperationalConstants.PATH,
+					StringBundler.concat(
+						operation.getPath(), StringPool.OPEN_BRACKET,
+						SCIMConstants.OperationalConstants.VALUE, " eq \"",
+						value, StringPool.QUOTE, StringPool.CLOSE_BRACKET));
+			}
+			else {
+				operationJSONObject.put(
+					SCIMConstants.OperationalConstants.PATH,
+					operation.getPath());
+
+				Object value = operation.getValue();
+
+				if (value instanceof ArrayList) {
+					operationJSONObject.put(
+						SCIMConstants.OperationalConstants.VALUE,
+						JSONFactoryUtil.createJSONArray((ArrayList)value));
+				}
+				else {
+					operationJSONObject.put(
+						SCIMConstants.OperationalConstants.VALUE, value);
+				}
+			}
+		}
+
+		return JSONUtil.put(
+			SCIMConstants.CommonSchemaConstants.SCHEMAS, patchOp.getSchemas()
+		).put(
+			SCIMConstants.OperationalConstants.OPERATIONS, operationsJSONArray
+		).toString();
 	}
 
 	private static AttributeSchema _createAttributeSchema() {
@@ -423,6 +541,17 @@ public class ScimUtil {
 			multiValuedComplexTypes.get(0);
 
 		return multiValuedComplexType.getValue();
+	}
+
+	private static boolean _isActive(User user) {
+		SimpleAttribute simpleAttribute = (SimpleAttribute)user.getAttribute(
+			"active");
+
+		if (simpleAttribute != null) {
+			return GetterUtil.getBoolean(simpleAttribute.getValue());
+		}
+
+		return user.getActive();
 	}
 
 	private static boolean _isMale(User user) {

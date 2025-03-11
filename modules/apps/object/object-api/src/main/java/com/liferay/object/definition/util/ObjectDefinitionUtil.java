@@ -99,11 +99,13 @@ public class ObjectDefinitionUtil {
 		).put(
 			"BasicWebContent", "/cms/basic-web-contents"
 		).put(
+			"Blog", "/cms/blogs"
+		).put(
 			"Bookmark", "/bookmarks"
 		).put(
-			"CommerceReturn", "/commerce-returns"
+			"CommerceReturn", "/commerce/returns"
 		).put(
-			"CommerceReturnItem", "/commerce-return-items"
+			"CommerceReturnItem", "/commerce/return-items"
 		).put(
 			"DataSet", "/data-set-admin/data-sets"
 		).put(
@@ -124,6 +126,8 @@ public class ObjectDefinitionUtil {
 			"DataSetSort", "/data-set-admin/data-sets/sorts"
 		).put(
 			"DataSetTableSection", "/data-set-admin/data-sets/table-sections"
+		).put(
+			"ExternalVideo", "/cms/external-videos"
 		).put(
 			"FDSAction", "/data-set-manager/actions"
 		).put(
@@ -147,6 +151,8 @@ public class ObjectDefinitionUtil {
 			"FDSView", "/data-set-manager/data-sets"
 		).put(
 			"FunctionalCookieEntry", "/functional-cookies-entries"
+		).put(
+			"KnowledgeBase", "/cms/knowledge-bases"
 		).put(
 			"NecessaryCookieEntry", "/necessary-cookies-entries"
 		).put(

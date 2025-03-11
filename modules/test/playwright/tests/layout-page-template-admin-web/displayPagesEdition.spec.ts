@@ -6,14 +6,12 @@
 import {
 	ObjectActionApi,
 	ObjectDefinitionApi,
-	ObjectField,
 } from '@liferay/object-admin-rest-client-js';
 import {expect, mergeTests} from '@playwright/test';
 
 import {applicationsMenuPageTest} from '../../fixtures/applicationsMenuPageTest';
 import {dataApiHelpersTest} from '../../fixtures/dataApiHelpersTest';
 import {displayPageTemplatesPagesTest} from '../../fixtures/displayPageTemplatesPagesTest';
-import {featureFlagsTest} from '../../fixtures/featureFlagsTest';
 import {isolatedSiteTest} from '../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../fixtures/loginTest';
 import {pageEditorPagesTest} from '../../fixtures/pageEditorPagesTest';
@@ -35,9 +33,6 @@ const test = mergeTests(
 	applicationsMenuPageTest,
 	dataApiHelpersTest,
 	displayPageTemplatesPagesTest,
-	featureFlagsTest({
-		'LPD-18221': {enabled: true},
-	}),
 	pageEditorPagesTest,
 	loginTest(),
 	pageManagementSiteTest,
@@ -883,8 +878,8 @@ test.describe('Object Display page', () => {
 					name: 'Ticket',
 					objectFields: [
 						{
-							DBType: ObjectField.DBTypeEnum.String,
-							businessType: ObjectField.BusinessTypeEnum.Text,
+							DBType: 'String',
+							businessType: 'Text',
 							externalReferenceCode: 'textERC',
 							indexed: true,
 							indexedAsKeyword: false,
@@ -1176,9 +1171,8 @@ test.describe('Object Display page', () => {
 					name: 'Attachment',
 					objectFields: [
 						{
-							DBType: ObjectField.DBTypeEnum.Long,
-							businessType:
-								ObjectField.BusinessTypeEnum.Attachment,
+							DBType: 'Long',
+							businessType: 'Attachment',
 							indexed: true,
 							indexedAsKeyword: false,
 							label: {
@@ -1200,7 +1194,7 @@ test.describe('Object Display page', () => {
 								} as any,
 							],
 							required: false,
-							type: ObjectField.TypeEnum.Long,
+							type: 'Long',
 						},
 					],
 					pluralLabel: {
@@ -1362,10 +1356,8 @@ test.describe('Object Display page', () => {
 					name: 'Film',
 					objectFields: [
 						{
-							DBType: ObjectField.DBTypeEnum.String,
-							businessType:
-								ObjectField.BusinessTypeEnum
-									.MultiselectPicklist,
+							DBType: 'String',
+							businessType: 'MultiselectPicklist',
 							externalReferenceCode: 'genreERC',
 							indexed: true,
 							indexedAsKeyword: false,
@@ -1377,8 +1369,8 @@ test.describe('Object Display page', () => {
 							name: 'genre',
 						},
 						{
-							DBType: ObjectField.DBTypeEnum.String,
-							businessType: ObjectField.BusinessTypeEnum.Picklist,
+							DBType: 'String',
+							businessType: 'Picklist',
 							externalReferenceCode: 'originERC',
 							indexed: true,
 							indexedAsKeyword: false,
@@ -1390,7 +1382,7 @@ test.describe('Object Display page', () => {
 							name: 'origin',
 						},
 						{
-							DBType: ObjectField.DBTypeEnum.DateTime,
+							DBType: 'DateTime',
 							externalReferenceCode: 'releaseDateERC',
 							indexed: true,
 							indexedAsKeyword: false,

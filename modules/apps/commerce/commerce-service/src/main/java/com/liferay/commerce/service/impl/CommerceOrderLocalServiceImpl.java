@@ -264,7 +264,7 @@ public class CommerceOrderLocalServiceImpl
 
 		// Commerce order
 
-		_validateAccountOrdersLimit(groupId, commerceAccountId);
+		_validateAccountLimit(groupId, commerceAccountId);
 		_validateCommerceChannelAccount(groupId, commerceAccountId);
 		_validateGuestOrders();
 
@@ -2781,9 +2781,13 @@ public class CommerceOrderLocalServiceImpl
 		}
 	}
 
-	private void _validateAccountOrdersLimit(
+	private void _validateAccountLimit(
 			long commerceChannelGroupId, long commerceAccountId)
 		throws PortalException {
+
+		if (CommerceOrderThreadLocal.isSkipValidateAccountLimit()) {
+			return;
+		}
 
 		Group group = _groupLocalService.getGroup(commerceChannelGroupId);
 

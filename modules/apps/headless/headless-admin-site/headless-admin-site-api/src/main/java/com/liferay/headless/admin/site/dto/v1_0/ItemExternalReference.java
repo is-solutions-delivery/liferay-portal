@@ -48,8 +48,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 	requiredProperties = {"externalReferenceCode"}
 )
 @XmlRootElement(name = "ItemExternalReference")
-public class ItemExternalReference
-	extends CollectionReference implements Serializable {
+public class ItemExternalReference implements Serializable {
 
 	public static ItemExternalReference toDTO(String json) {
 		return ObjectMapperUtil.readValue(ItemExternalReference.class, json);
@@ -253,22 +252,6 @@ public class ItemExternalReference
 			sb.append("\"scope\": ");
 
 			sb.append(String.valueOf(scope));
-		}
-
-		CollectionType collectionType = getCollectionType();
-
-		if (collectionType != null) {
-			if (sb.length() > 1) {
-				sb.append(", ");
-			}
-
-			sb.append("\"collectionType\": ");
-
-			sb.append("\"");
-
-			sb.append(collectionType);
-
-			sb.append("\"");
 		}
 
 		sb.append("}");

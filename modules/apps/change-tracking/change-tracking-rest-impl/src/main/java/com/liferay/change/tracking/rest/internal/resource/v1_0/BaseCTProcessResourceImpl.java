@@ -33,6 +33,7 @@ import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.batch.engine.VulcanBatchEngineTaskItemDelegate;
 import com.liferay.portal.vulcan.batch.engine.resource.VulcanBatchEngineExportTaskResource;
 import com.liferay.portal.vulcan.batch.engine.resource.VulcanBatchEngineImportTaskResource;
+import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegate;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.resource.EntityModelResource;
@@ -66,7 +67,8 @@ import javax.ws.rs.core.UriInfo;
 @javax.ws.rs.Path("/v1.0")
 public abstract class BaseCTProcessResourceImpl
 	implements CTProcessResource, EntityModelResource,
-			   VulcanBatchEngineTaskItemDelegate<CTProcess> {
+			   VulcanBatchEngineTaskItemDelegate<CTProcess>,
+			   VulcanCRUDItemDelegate<CTProcess> {
 
 	/**
 	 * Invoke this method with the command line:
@@ -376,8 +378,25 @@ public abstract class BaseCTProcessResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (CTProcess ctProcess : ctProcesses) {
-			deleteCTProcess(ctProcess.getId());
+		UnsafeFunction<CTProcess, CTProcess, Exception>
+			ctProcessUnsafeFunction = ctProcess -> {
+				deleteCTProcess(ctProcess.getId());
+
+				return ctProcess;
+			};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				ctProcesses, ctProcessUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				ctProcesses, ctProcessUnsafeFunction::apply);
+		}
+		else {
+			for (CTProcess ctProcess : ctProcesses) {
+				ctProcessUnsafeFunction.apply(ctProcess);
+			}
 		}
 	}
 
@@ -453,6 +472,11 @@ public abstract class BaseCTProcessResourceImpl
 
 		throw new UnsupportedOperationException(
 			"This method needs to be implemented");
+	}
+
+	@Override
+	public CTProcess getItem(Long id) throws Exception {
+		return getCTProcess(id);
 	}
 
 	public void setContextAcceptLanguage(AcceptLanguage contextAcceptLanguage) {

@@ -755,8 +755,25 @@ public abstract class BaseEmailAddressResourceImpl
 			Map<String, Serializable> parameters)
 		throws Exception {
 
-		for (EmailAddress emailAddress : emailAddresses) {
-			deleteEmailAddress(emailAddress.getId());
+		UnsafeFunction<EmailAddress, EmailAddress, Exception>
+			emailAddressUnsafeFunction = emailAddress -> {
+				deleteEmailAddress(emailAddress.getId());
+
+				return emailAddress;
+			};
+
+		if (contextBatchUnsafeBiConsumer != null) {
+			contextBatchUnsafeBiConsumer.accept(
+				emailAddresses, emailAddressUnsafeFunction);
+		}
+		else if (contextBatchUnsafeConsumer != null) {
+			contextBatchUnsafeConsumer.accept(
+				emailAddresses, emailAddressUnsafeFunction::apply);
+		}
+		else {
+			for (EmailAddress emailAddress : emailAddresses) {
+				emailAddressUnsafeFunction.apply(emailAddress);
+			}
 		}
 	}
 

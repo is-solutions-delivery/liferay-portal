@@ -7,8 +7,10 @@ package com.liferay.frontend.data.set.serializer;
 
 import com.liferay.frontend.data.set.filter.FDSFilter;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
+import com.liferay.frontend.data.set.model.FDSSortItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONObject;
 
 import java.util.List;
 
@@ -19,9 +21,16 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface FDSSerializer {
 
+	public static final String[] FDS_TYPES = {
+		FDSSerializer.TYPE_CUSTOM, FDSSerializer.TYPE_SYSTEM
+	};
+
 	public static final String TYPE_CUSTOM = "custom";
 
 	public static final String TYPE_SYSTEM = "system";
+
+	public boolean isAvailable(
+		String fdsName, HttpServletRequest httpServletRequest);
 
 	public String serializeAPIURL(
 		String fdsName, HttpServletRequest httpServletRequest);
@@ -40,6 +49,18 @@ public interface FDSSerializer {
 		String fdsName, HttpServletRequest httpServletRequest);
 
 	public List<FDSActionDropdownItem> serializeItemsActions(
+		String fdsName, HttpServletRequest httpServletRequest);
+
+	public JSONObject serializePagination(
+		String fdsName, HttpServletRequest httpServletRequest);
+
+	public String serializePropsTransformer(
+		String fdsName, HttpServletRequest httpServletRequest);
+
+	public List<FDSSortItem> serializeSorts(
+		String fdsName, HttpServletRequest httpServletRequest);
+
+	public JSONArray serializeViews(
 		String fdsName, HttpServletRequest httpServletRequest);
 
 }

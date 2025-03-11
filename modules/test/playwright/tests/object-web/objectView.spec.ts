@@ -3,11 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {
-	ObjectField,
-	ObjectRelationship,
-	ObjectRelationshipApi,
-} from '@liferay/object-admin-rest-client-js';
+import {ObjectRelationshipApi} from '@liferay/object-admin-rest-client-js';
 import {expect, mergeTests} from '@playwright/test';
 
 import {dataApiHelpersTest} from '../../fixtures/dataApiHelpersTest';
@@ -65,7 +61,7 @@ test('can create an object custom view using object relationship entry', async (
 			objectDefinitionId1: objectDefinition1.id,
 			objectDefinitionId2: objectDefinition2.id,
 			objectDefinitionName2: objectDefinition2.name,
-			type: ObjectRelationship.TypeEnum.OneToMany,
+			type: 'oneToMany',
 		}
 	);
 
@@ -125,9 +121,8 @@ test('cannot create an object custom view using empty multiselectpicklist entry'
 		await apiHelpers.objectAdmin.postRandomObjectDefinition({
 			objectFields: [
 				{
-					DBType: ObjectField.DBTypeEnum.String,
-					businessType:
-						ObjectField.BusinessTypeEnum.MultiselectPicklist,
+					DBType: 'String',
+					businessType: 'MultiselectPicklist',
 					externalReferenceCode: 'customPicklist',
 					indexed: true,
 					indexedAsKeyword: false,

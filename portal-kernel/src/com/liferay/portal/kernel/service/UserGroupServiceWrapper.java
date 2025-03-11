@@ -69,6 +69,7 @@ public class UserGroupServiceWrapper
 	 * including its resources, metadata, and internal data structures.
 	 * </p>
 	 *
+	 * @param externalReferenceCode the user group's external reference code
 	 * @param name the user group's name
 	 * @param description the user group's description
 	 * @param serviceContext the service context to be applied (optionally
@@ -78,11 +79,12 @@ public class UserGroupServiceWrapper
 	 */
 	@Override
 	public UserGroup addUserGroup(
-			String name, String description, ServiceContext serviceContext)
+			String externalReferenceCode, String name, String description,
+			ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _userGroupService.addUserGroup(
-			name, description, serviceContext);
+			externalReferenceCode, name, description, serviceContext);
 	}
 
 	/**
@@ -112,11 +114,11 @@ public class UserGroupServiceWrapper
 
 	@Override
 	public UserGroup fetchUserGroupByExternalReferenceCode(
-			long companyId, String externalReferenceCode)
+			String externalReferenceCode, long companyId)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _userGroupService.fetchUserGroupByExternalReferenceCode(
-			companyId, externalReferenceCode);
+			externalReferenceCode, companyId);
 	}
 
 	@Override
@@ -368,6 +370,7 @@ public class UserGroupServiceWrapper
 	/**
 	 * Updates the user group.
 	 *
+	 * @param externalReferenceCode the user group's external reference code
 	 * @param userGroupId the primary key of the user group
 	 * @param name the user group's name
 	 * @param description the the user group's description
@@ -378,12 +381,13 @@ public class UserGroupServiceWrapper
 	 */
 	@Override
 	public UserGroup updateUserGroup(
-			long userGroupId, String name, String description,
-			ServiceContext serviceContext)
+			String externalReferenceCode, long userGroupId, String name,
+			String description, ServiceContext serviceContext)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return _userGroupService.updateUserGroup(
-			userGroupId, name, description, serviceContext);
+			externalReferenceCode, userGroupId, name, description,
+			serviceContext);
 	}
 
 	@Override

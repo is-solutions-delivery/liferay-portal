@@ -1,5 +1,6 @@
 {
 	"dependencies": {
+		"frontend-js-components-web": "*",
 		"frontend-js-web": "*"
 	},
 	"main": "js/index.js",
@@ -12,5 +13,5 @@
 		"checkFormat": "node-scripts format --check",
 		"format": "node-scripts format"
 	},
-	"version": "6.0.70"
+	"version": "6.0.72"
 }

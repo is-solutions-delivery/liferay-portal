@@ -30,6 +30,7 @@ type TDocument = {
 };
 
 type TDocumentFolder = {
+	description?: string;
 	externalReferenceCode?: string;
 	id?: number;
 	name?: string;
@@ -108,9 +109,27 @@ export class HeadlessDeliveryApiHelper {
 		);
 	}
 
+	async getContentSetElements(assetListEntryId: number) {
+		return this.apiHelpers.get(
+			`${this.apiHelpers.baseUrl}${this.basePath}/content-sets/${assetListEntryId}/content-set-elements`
+		);
+	}
+
+	async getDocument(documentId: string) {
+		return this.apiHelpers.get(
+			`${this.apiHelpers.baseUrl}${this.basePath}/documents/${documentId}`
+		);
+	}
+
 	async getSiteDocumentsPage(siteId: string, sort: string = 'id') {
 		return this.apiHelpers.get(
 			`${this.apiHelpers.baseUrl}${this.basePath}/sites/${siteId}/documents?sort=${sort}`
+		);
+	}
+
+	async getSitePage(friendlyUrlPath: string, siteId: string) {
+		return this.apiHelpers.get(
+			`${this.apiHelpers.baseUrl}${this.basePath}/sites/${siteId}/site-pages/${friendlyUrlPath}`
 		);
 	}
 
@@ -330,6 +349,7 @@ export class HeadlessDeliveryApiHelper {
 		documentFolder?: TDocumentFolder
 	) {
 		documentFolder = {
+			description: getRandomString(),
 			externalReferenceCode: getRandomString(),
 			name: getRandomString(),
 			viewableBy: 'Anyone',

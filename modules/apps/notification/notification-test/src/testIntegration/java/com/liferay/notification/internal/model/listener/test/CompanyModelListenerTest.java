@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.CompanyTestUtil;
+import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -59,7 +60,7 @@ public class CompanyModelListenerTest {
 	}
 
 	@Test
-	public void testOnBeforeDelete() throws Exception {
+	public void testOnBeforeRemove() throws Exception {
 		NotificationQueueEntry notificationQueueEntry = null;
 		NotificationRecipient notificationRecipient = null;
 		NotificationRecipientSetting notificationRecipientSetting = null;
@@ -102,7 +103,19 @@ public class CompanyModelListenerTest {
 				_companyId, notificationRecipient.getCompanyId());
 		}
 
+		Assert.assertNotNull(
+			_notificationTemplateLocalService.
+				fetchNotificationTemplateByExternalReferenceCode(
+					"L_COMMERCE_ORDER_TEMPLATE",
+					TestPropsValues.getCompanyId()));
+
 		_companyLocalService.deleteCompany(_companyId);
+
+		Assert.assertNotNull(
+			_notificationTemplateLocalService.
+				fetchNotificationTemplateByExternalReferenceCode(
+					"L_COMMERCE_ORDER_TEMPLATE",
+					TestPropsValues.getCompanyId()));
 
 		Assert.assertNull(
 			_notificationQueueEntryLocalService.fetchNotificationQueueEntry(

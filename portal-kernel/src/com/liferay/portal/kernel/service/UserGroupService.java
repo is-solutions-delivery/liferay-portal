@@ -77,6 +77,7 @@ public interface UserGroupService extends BaseService {
 	 * including its resources, metadata, and internal data structures.
 	 * </p>
 	 *
+	 * @param externalReferenceCode the user group's external reference code
 	 * @param name the user group's name
 	 * @param description the user group's description
 	 * @param serviceContext the service context to be applied (optionally
@@ -85,7 +86,8 @@ public interface UserGroupService extends BaseService {
 	 * @return the user group
 	 */
 	public UserGroup addUserGroup(
-			String name, String description, ServiceContext serviceContext)
+			String externalReferenceCode, String name, String description,
+			ServiceContext serviceContext)
 		throws PortalException;
 
 	/**
@@ -106,7 +108,7 @@ public interface UserGroupService extends BaseService {
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public UserGroup fetchUserGroupByExternalReferenceCode(
-			long companyId, String externalReferenceCode)
+			String externalReferenceCode, long companyId)
 		throws PortalException;
 
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
@@ -293,6 +295,7 @@ public interface UserGroupService extends BaseService {
 	/**
 	 * Updates the user group.
 	 *
+	 * @param externalReferenceCode the user group's external reference code
 	 * @param userGroupId the primary key of the user group
 	 * @param name the user group's name
 	 * @param description the the user group's description
@@ -302,8 +305,8 @@ public interface UserGroupService extends BaseService {
 	 * @return the user group
 	 */
 	public UserGroup updateUserGroup(
-			long userGroupId, String name, String description,
-			ServiceContext serviceContext)
+			String externalReferenceCode, long userGroupId, String name,
+			String description, ServiceContext serviceContext)
 		throws PortalException;
 
 }

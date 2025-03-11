@@ -8,6 +8,7 @@ package com.liferay.scim.rest.internal.resource.v1_0;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
 import com.liferay.expando.kernel.service.ExpandoValueLocalService;
+import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.UserGroupLocalService;
@@ -15,11 +16,14 @@ import com.liferay.portal.kernel.service.UserGroupService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.service.UserService;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.search.searcher.SearchRequestBuilderFactory;
 import com.liferay.portal.search.searcher.Searcher;
 import com.liferay.scim.rest.dto.v1_0.Group;
+import com.liferay.scim.rest.dto.v1_0.PatchOp;
 import com.liferay.scim.rest.internal.manager.GroupResourceManagerImpl;
 import com.liferay.scim.rest.internal.manager.UserManagerImpl;
+import com.liferay.scim.rest.internal.util.ScimUtil;
 import com.liferay.scim.rest.resource.v1_0.GroupResource;
 
 import java.util.Map;
@@ -51,19 +55,32 @@ public class GroupResourceImpl extends BaseGroupResourceImpl {
 	}
 
 	@Override
-	public Object getV2GroupById(String id) throws Exception {
+	public Object getV2GroupById(String id, String excludedAttributes)
+		throws Exception {
+
 		return _buildResponse(
-			_groupResourceManager.get(id, _userManager, null, null));
+			_groupResourceManager.get(
+				id, _userManager, null, excludedAttributes));
 	}
 
 	@Override
-	public Object getV2Groups(Integer count, Integer startIndex)
+	public Object getV2Groups(
+			Integer count, String excludedAttributes, Integer startIndex,
+			Filter filter)
 		throws Exception {
 
 		return _buildResponse(
 			_groupResourceManager.listWithGET(
-				_userManager, null, startIndex, count, null, null, null, null,
-				null));
+				_userManager,
+				ParamUtil.getString(contextHttpServletRequest, "filter", null),
+				startIndex, count, null, null, null, null, excludedAttributes));
+	}
+
+	@Override
+	public Response patchV2Group(String id, PatchOp patchOp) throws Exception {
+		return _buildResponse(
+			_groupResourceManager.updateWithPATCH(
+				id, ScimUtil.transformGroupPatchOp(patchOp), _userManager));
 	}
 
 	@Override

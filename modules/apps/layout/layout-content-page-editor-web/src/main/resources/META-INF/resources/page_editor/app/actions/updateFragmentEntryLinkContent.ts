@@ -6,16 +6,16 @@
 import {UPDATE_FRAGMENT_ENTRY_LINK_CONTENT} from './types';
 
 export default function updateFragmentEntryLinkContent({
-	collectionContentId,
+	collectionItemId,
 	content,
 	fragmentEntryLinkId,
 }: {
-	collectionContentId?: string;
+	collectionItemId?: string;
 	content: string;
 	fragmentEntryLinkId: string;
 }) {
 	return {
-		collectionContentId,
+		collectionItemId,
 		content,
 		fragmentEntryLinkId,
 		type: UPDATE_FRAGMENT_ENTRY_LINK_CONTENT,

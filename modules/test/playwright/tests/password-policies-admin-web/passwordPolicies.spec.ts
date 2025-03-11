@@ -10,9 +10,9 @@ import {captchaConfigPageTest} from '../../fixtures/captchaConfigPageTest';
 import {loginTest} from '../../fixtures/loginTest';
 import {passwordPoliciesAdminPageTest} from '../../fixtures/passwordPoliciesAdminConfigPageTest';
 import {TPasswordPolicy} from '../../helpers/PasswordPolicyApiHelper';
-import {liferayConfig} from '../../liferay.config';
+import {PasswordPoliciesAdminPage} from '../../pages/password-policies-admin-web/PasswordPoliciesAdminPage';
 import getRandomString from '../../utils/getRandomString';
-import {performLoginViaApi, performLogout} from '../../utils/performLogin';
+import performLoginViaApi from '../../utils/performLogin';
 
 export const test = mergeTests(
 	applicationsMenuPageTest,
@@ -24,7 +24,7 @@ export const test = mergeTests(
 test.beforeEach(
 	'Disable create account CAPTCHA',
 	async ({captchaConfigPage, page}) => {
-		await page.goto(liferayConfig.environment.baseUrl);
+		await page.goto('/');
 
 		if (await page.getByRole('button', {name: 'Sign In'}).isVisible()) {
 			await performLoginViaApi(page, 'test');
@@ -39,7 +39,7 @@ test.beforeEach(
 test.afterEach(
 	'Reset CAPTCHA configuration',
 	async ({captchaConfigPage, page, passwordPoliciesAdminConfigPage}) => {
-		await page.goto(liferayConfig.environment.baseUrl);
+		await page.goto('/');
 
 		if (await page.getByRole('button', {name: 'Sign In'}).isVisible()) {
 			await performLoginViaApi(page, 'test');
@@ -49,7 +49,7 @@ test.afterEach(
 
 		await captchaConfigPage.resetCaptchaConfiguration();
 
-		await page.goto(liferayConfig.environment.baseUrl);
+		await page.goto('/');
 
 		await passwordPoliciesAdminConfigPage.goTo();
 		await passwordPoliciesAdminConfigPage.resetDefaultPasswordPolicy();
@@ -57,50 +57,178 @@ test.afterEach(
 );
 
 test(
+	'Edit default password policy with syntax checking and restrict dictionary words and check that it shows a Dictionary Words error',
+	{tag: '@LPD-50094'},
+	async ({browser, passwordPoliciesAdminConfigPage}) => {
+		const passwordPolicy: TPasswordPolicy = {
+			allowDictionaryWordsToggle: false,
+			checkSyntaxToggle: true,
+			minNumbers: 0,
+			minUpperCase: 0,
+		};
+
+		await testPasswordPolicySyntaxCheck(
+			browser,
+			'That password uses common dictionary words',
+			passwordPoliciesAdminConfigPage,
+			passwordPolicy,
+			'aardvark'
+		);
+	}
+);
+
+test(
+	'Edit default password policy with syntax checking and 1 alphanumeric and check that it shows an error for Minimum Alpha Numeric error',
+	{tag: '@LPD-50094'},
+	async ({browser, passwordPoliciesAdminConfigPage}) => {
+		const passwordPolicy: TPasswordPolicy = {
+			checkSyntaxToggle: true,
+			minAlphanumeric: 1,
+			minLowerCase: 0,
+			minNumbers: 0,
+			minUpperCase: 0,
+		};
+
+		await testPasswordPolicySyntaxCheck(
+			browser,
+			'That password must contain at least 1 alphanumeric character',
+			passwordPoliciesAdminConfigPage,
+			passwordPolicy,
+			'@@@@@@'
+		);
+	}
+);
+
+test(
+	'Edit default password policy with syntax checking and 10 length and check that it shows an error for Minimum Length',
+	{tag: '@LPD-50094'},
+	async ({browser, passwordPoliciesAdminConfigPage}) => {
+		const passwordPolicy: TPasswordPolicy = {
+			checkSyntaxToggle: true,
+			minLength: 10,
+		};
+
+		await testPasswordPolicySyntaxCheck(
+			browser,
+			'That password is too short',
+			passwordPoliciesAdminConfigPage,
+			passwordPolicy,
+			'ABcd12#$'
+		);
+	}
+);
+
+test(
 	'Edit default password policy with syntax checking and 1 lowercase and check that it shows an error for Minimum Lower Case error',
 	{tag: '@LPD-48268'},
-	async ({page, passwordPoliciesAdminConfigPage}) => {
+	async ({browser, passwordPoliciesAdminConfigPage}) => {
 		const passwordPolicy: TPasswordPolicy = {
 			checkSyntaxToggle: true,
 			minLowerCase: 1,
 		};
-		await passwordPoliciesAdminConfigPage.goTo();
-		await passwordPoliciesAdminConfigPage.editDefaultPasswordPolicy(
-			passwordPolicy
+
+		await testPasswordPolicySyntaxCheck(
+			browser,
+			'That password must contain at least 1 lowercase character',
+			passwordPoliciesAdminConfigPage,
+			passwordPolicy,
+			'ABC123'
 		);
-
-		await performLogout(page);
-
-		await page.goto(liferayConfig.environment.baseUrl);
-
-		await page.getByRole('button', {name: 'Sign In'}).click();
-
-		await page.getByText('Create Account').click();
-
-		await page.getByLabel('Screen Name').fill(getRandomString());
-
-		await page
-			.getByLabel('Email Address')
-			.fill(getRandomString() + '@liferay.com');
-
-		await page.getByLabel('First Name').fill(getRandomString());
-
-		await page.getByLabel('Last Name').fill(getRandomString());
-
-		const password = 'ABC123';
-
-		await page
-			.getByLabel('Password Required', {exact: true})
-			.fill(password);
-
-		await page.getByLabel('Reenter Password Required').fill(password);
-
-		await page.getByRole('button', {name: 'Save'}).click();
-
-		await expect(
-			page.getByText(
-				'Close Error: That password must contain at least 1 lowercase characters. User'
-			)
-		).toBeVisible();
 	}
 );
+
+test(
+	'Edit default password policy with syntax checking and 1 number and check that it shows an error for Minimum Numbers error',
+	{tag: '@LPD-50094'},
+	async ({browser, passwordPoliciesAdminConfigPage}) => {
+		const passwordPolicy: TPasswordPolicy = {
+			checkSyntaxToggle: true,
+			minNumbers: 1,
+		};
+
+		await testPasswordPolicySyntaxCheck(
+			browser,
+			'That password must contain at least 1 number',
+			passwordPoliciesAdminConfigPage,
+			passwordPolicy,
+			'ABCdef'
+		);
+	}
+);
+
+test(
+	'Edit default password policy with syntax checking and 1 symbol and check that it shows an error for Minimum Symbols',
+	{tag: '@LPD-50094'},
+	async ({browser, passwordPoliciesAdminConfigPage}) => {
+		const passwordPolicy: TPasswordPolicy = {
+			checkSyntaxToggle: true,
+			minSymbols: 1,
+		};
+
+		await testPasswordPolicySyntaxCheck(
+			browser,
+			'That password must contain at least 1 symbol',
+			passwordPoliciesAdminConfigPage,
+			passwordPolicy,
+			'abCD123'
+		);
+	}
+);
+
+test(
+	'Edit default password policy with syntax checking and 1 uppercase and check that it shows an error for Minimum Upper Case',
+	{tag: '@LPD-50094'},
+	async ({browser, passwordPoliciesAdminConfigPage}) => {
+		const passwordPolicy: TPasswordPolicy = {
+			checkSyntaxToggle: true,
+			minUpperCase: 1,
+		};
+
+		await testPasswordPolicySyntaxCheck(
+			browser,
+			'That password must contain at least 1 uppercase character',
+			passwordPoliciesAdminConfigPage,
+			passwordPolicy,
+			'abc123'
+		);
+	}
+);
+
+async function testPasswordPolicySyntaxCheck(
+	browser,
+	expectedMessage: String,
+	passwordPoliciesAdminConfigPage: PasswordPoliciesAdminPage,
+	passwordPolicy: TPasswordPolicy,
+	password: String
+) {
+	await passwordPoliciesAdminConfigPage.goTo();
+	await passwordPoliciesAdminConfigPage.editDefaultPasswordPolicy(
+		passwordPolicy
+	);
+
+	const page = await browser.newPage();
+
+	await page.goto('/');
+
+	await page.getByRole('button', {name: 'Sign In'}).click();
+
+	await page.getByText('Create Account').click();
+
+	await page.getByLabel('Screen Name').fill(getRandomString());
+
+	await page
+		.getByLabel('Email Address')
+		.fill(getRandomString() + '@liferay.com');
+
+	await page.getByLabel('First Name').fill(getRandomString());
+
+	await page.getByLabel('Last Name').fill(getRandomString());
+
+	await page.getByLabel('Password Required', {exact: true}).fill(password);
+
+	await page.getByLabel('Reenter Password Required').fill(password);
+
+	await page.getByRole('button', {name: 'Save'}).click();
+
+	await expect(page.getByText(expectedMessage)).toBeVisible();
+}
