@@ -41,12 +41,14 @@ export default function FileContainer({
 						{attachment.title}
 					</ClayButton>
 
-					<a
-						className="lfr-objects__attachment-download"
-						href={attachment.contentURL}
-					>
-						<ClayIcon symbol="download" />
-					</a>
+					{Liferay.ThemeDisplay.isSignedIn() && (
+						<a
+							className="lfr-objects__attachment-download"
+							href={attachment.contentURL}
+						>
+							<ClayIcon symbol="download" />
+						</a>
+					)}
 
 					{!readOnly && (
 						<>

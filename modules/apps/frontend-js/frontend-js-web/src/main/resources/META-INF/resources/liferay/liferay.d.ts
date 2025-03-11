@@ -257,6 +257,7 @@ declare module Liferay {
 		export function getUserId(): string;
 		export function isControlPanel(): boolean;
 		export function isImpersonated(): boolean;
+		export function isSignedIn(): boolean;
 	}
 
 	namespace Util {
