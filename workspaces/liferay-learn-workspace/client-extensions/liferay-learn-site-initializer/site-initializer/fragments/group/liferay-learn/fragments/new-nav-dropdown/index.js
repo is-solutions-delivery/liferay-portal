@@ -114,6 +114,7 @@ function handleToggleClick(event) {
 function handleBodyClick(event) {
 	if (!toggle.isConnected) {
 		document.body.removeEventListener('click', handleBodyClick);
+
 		return;
 	}
 
@@ -142,6 +143,7 @@ function handleWindowEvent() {
 	if (!toggle.isConnected) {
 		window.removeEventListener('resize', handleWindowEvent);
 		window.removeEventListener('scroll', handleWindowEvent);
+
 		return;
 	}
 
