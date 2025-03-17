@@ -3,7 +3,7 @@
 	"cssPath": "index.css",
 	"fragmentEntryKey": "new-nav-dropdown",
 	"htmlPath": "index.html",
-	"icon": "text-editor",
+	"icon": "code",
 	"jsPath": "index.js",
 	"name": "new-nav-dropdown",
 	"type": "component"

@@ -5,57 +5,63 @@
 
 /* eslint-disable no-undef */
 
-const documentationEducationDropdown = document.querySelector('.documentation-education-dropdown');
+const documentationEducationDropdown = document.querySelector(
+	'.documentation-education-dropdown'
+);
 const menuButton = document.querySelector('.cta-menu-hamburguer');
 const menuTextOpen = document.querySelector('.menu-button-text-open');
 const menuTextClose = document.querySelector('.menu-button-text-close');
-const menuIconLines = document.querySelectorAll('.nav-items-menu-button-icon-line');
+const menuIconLines = document.querySelectorAll(
+	'.nav-items-menu-button-icon-line'
+);
 
 function checkScreenSize() {
-    if (window.innerWidth <= 1000) {
-        documentationEducationDropdown.classList.add('hide');
-        menuTextOpen.style.display = "inline";
-        menuTextClose.style.display = "none";
-        menuButton.classList.remove('open'); 
-    } else {
-        documentationEducationDropdown.classList.remove('hide');
-        menuTextOpen.style.display = "inline";
-        menuTextClose.style.display = "none";
-        menuButton.classList.remove('open'); 
-        resetMenuIcon();
-    }
+	if (window.innerWidth <= 1000) {
+		documentationEducationDropdown.classList.add('hide');
+		menuTextOpen.style.display = 'inline';
+		menuTextClose.style.display = 'none';
+		menuButton.classList.remove('open');
+	}
+	else {
+		documentationEducationDropdown.classList.remove('hide');
+		menuTextOpen.style.display = 'inline';
+		menuTextClose.style.display = 'none';
+		menuButton.classList.remove('open');
+		resetMenuIcon();
+	}
 }
 
 function resetMenuIcon() {
-    menuIconLines.forEach(line => {
-        line.style.transform = ""; 
-        line.style.opacity = "";
-    });
+	menuIconLines.forEach((line) => {
+		line.style.transform = '';
+		line.style.opacity = '';
+	});
 }
 
 checkScreenSize();
 window.addEventListener('resize', checkScreenSize);
 
-menuButton.addEventListener("click", function () {
-    if (window.innerWidth <= 1000) {
-        documentationEducationDropdown.classList.toggle('hide');
-        menuButton.classList.toggle('open');
+menuButton.addEventListener('click', () => {
+	if (window.innerWidth <= 1000) {
+		documentationEducationDropdown.classList.toggle('hide');
+		menuButton.classList.toggle('open');
 
-        if (menuButton.classList.contains('open')) {
-            menuTextOpen.style.display = "none";
-            menuTextClose.style.display = "inline";
+		if (menuButton.classList.contains('open')) {
+			menuTextOpen.style.display = 'none';
+			menuTextClose.style.display = 'inline';
 
+			menuIconLines[0].style.transform = 'translateY(5px) rotate(45deg)';
+			menuIconLines[1].style.opacity = '0';
+			menuIconLines[2].style.transform =
+				'translateY(-7px) rotate(-45deg)';
+		}
+		else {
+			menuTextOpen.style.display = 'inline';
+			menuTextClose.style.display = 'none';
 
-            menuIconLines[0].style.transform = "translateY(5px) rotate(45deg)";
-            menuIconLines[1].style.opacity = "0";
-            menuIconLines[2].style.transform = "translateY(-7px) rotate(-45deg)";
-        } else {
-            menuTextOpen.style.display = "inline";
-            menuTextClose.style.display = "none";
-
-            resetMenuIcon();
-        }
-    }
+			resetMenuIcon();
+		}
+	}
 });
 
 const searchSubmitURL = fragmentElement.querySelector('.search-submit').href;
