@@ -6,7 +6,7 @@
 const toggle = fragmentElement.querySelector('.dropdown-fragment-toggle');
 const toggleEditable = toggle.querySelector('[data-lfr-editable-id]');
 const menu = fragmentElement.querySelector('.dropdown-fragment-menu');
-const menuDropdownCaret = toggle.querySelector(".menu-dropdown-caret"); // Pega o caret do botão específico
+const menuDropdownCaret = toggle.querySelector('.menu-dropdown-caret');
 const withinMasterLayout = fragmentElement.parentElement.classList.contains(
 	'page-editor__fragment-content--master'
 );
@@ -79,16 +79,17 @@ function toggleMenu() {
 	if (isMenuVisible) {
 		menu.style.display = 'none';
 		toggle.setAttribute('aria-expanded', 'false');
-		menuDropdownCaret.classList.remove("rotated"); // Remove rotação do caret
+		menuDropdownCaret.classList.remove('rotated'); // Remove rotação do caret
 
 		window.removeEventListener('resize', handleWindowEvent);
 		window.removeEventListener('scroll', handleWindowEvent);
 
 		clearInterval(alignMenuInterval);
-	} else {
+	}
+	else {
 		menu.style.display = 'block';
 		toggle.setAttribute('aria-expanded', 'true');
-		menuDropdownCaret.classList.add("rotated"); // Adiciona rotação ao caret
+		menuDropdownCaret.classList.add('rotated'); // Adiciona rotação ao caret
 
 		alignMenu();
 
@@ -153,13 +154,15 @@ function handleWindowEvent() {
 function main() {
 	if (configuration.keepOpen && editMode && !withinMasterLayout) {
 		toggleMenu();
-	} else if (configuration.displayOnHover) {
+	}
+	else if (configuration.displayOnHover) {
 		toggle.addEventListener('mouseenter', handleDropdownHover);
 		toggle.addEventListener('mouseleave', handleDropdownLeave);
 
 		menu.addEventListener('mouseenter', handleDropdownHover);
 		menu.addEventListener('mouseleave', handleDropdownLeave);
-	} else {
+	}
+	else {
 		toggle.addEventListener('click', handleToggleClick);
 		document.body.addEventListener('click', handleBodyClick);
 	}
