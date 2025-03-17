@@ -1,9 +1,10 @@
 {
 	"configurationPath": "configuration.json",
 	"cssPath": "index.css",
+	"fragmentEntryKey": "new-nav-dropdown",
 	"htmlPath": "index.html",
-	"icon": "code",
+	"icon": "text-editor",
 	"jsPath": "index.js",
-	"name": "Logo",
+	"name": "new-nav-dropdown",
 	"type": "component"
 }
