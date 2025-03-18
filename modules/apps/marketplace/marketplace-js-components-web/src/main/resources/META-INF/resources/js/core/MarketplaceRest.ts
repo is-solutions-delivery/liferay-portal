@@ -60,6 +60,8 @@ async function getBaseFetch<T = any>(url: string, options?: FetchOptions) {
 
 const sessionKey = '@marketplace/token';
 
+const PRODUCT_DRAFT_STATUS = 2;
+
 export class MarketplaceRest {
 	private tokenRequestPromise: Promise<MarketplaceAuthorization> | null =
 		null;
@@ -117,6 +119,31 @@ export class MarketplaceRest {
 		);
 
 		return cart;
+	}
+
+	async createProduct({
+		catalogId,
+		description,
+		name,
+		...product
+	}: Partial<Product>) {
+		return this.fetchMarketplace<Product>(
+			'/o/headless-commerce-admin-catalog/v1.0/products?nestedFields=productVirtualSettings',
+			{
+				body: JSON.stringify({
+					active: true,
+					catalogId,
+					description: {en_US: description},
+					name: {en_US: name},
+					productStatus: PRODUCT_DRAFT_STATUS,
+					productType: 'virtual',
+					productVirtualSettings: {},
+					workflowStatusInfo: PRODUCT_DRAFT_STATUS,
+					...product,
+				}),
+				method: 'POST',
+			}
+		);
 	}
 
 	public async checkoutCart(cart: Cart) {

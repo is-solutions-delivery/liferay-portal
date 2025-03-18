@@ -22,6 +22,11 @@ const accountGroups = {
 	'Liferay, Inc.': 'LIFERAY-INC-PRIVATE-GROUP',
 };
 
+const accountGroupsCatalogId = {
+	'Liferay DevCon': 36183761,
+	'Liferay, Inc.': 14866780,
+};
+
 const base64ToText = (base64) => base64.split(',').at(-1);
 
 function blobToBase64(blob) {
@@ -53,7 +58,9 @@ export default function ShareFragmentModal(fragmentEntryProps) {
 			await MarketplaceRest.getMarketplaceRestWithConfiguration();
 
 		const productPayload = {
-			catalogId: marketplaceRest.settings.catalogId,
+			catalogId:
+				marketplaceRest.settings.catalogId ||
+				accountGroupsCatalogId[marketplaceRest.settings.account.name],
 			categories: [
 				{id: '11730536', name: 'App'},
 				{
@@ -85,6 +92,8 @@ export default function ShareFragmentModal(fragmentEntryProps) {
 					},
 				},
 			],
+			productStatus: 0,
+			workflowStatusInfo: 0,
 		};
 
 		productPayload.productAccountGroupFilter = true;
