@@ -1,7 +1,16 @@
 {
-	"name": "liferay-lms-custom-elements",
-	"version": "0.1.0",
-	"private": true,
+	"browserslist": {
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		],
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		]
+	},
 	"dependencies": {
 		"@clayui/icon": "^3.128.0",
 		"@testing-library/jest-dom": "^5.17.0",
@@ -16,29 +25,20 @@
 		"react-scripts": "5.0.1",
 		"sass": "^1.83.4"
 	},
-	"scripts": {
-		"start": "react-scripts start",
-		"build": "react-scripts build",
-		"test": "react-scripts test",
-		"eject": "react-scripts eject"
+	"devDependencies": {
+		"eslint-config-react-app": "^7.0.1",
+		"react-scripts": "^5.0.1"
 	},
 	"eslintConfig": {
 		"extends": "react-app"
 	},
-	"browserslist": {
-		"production": [
-			">0.2%",
-			"not dead",
-			"not op_mini all"
-		],
-		"development": [
-			"last 1 chrome version",
-			"last 1 firefox version",
-			"last 1 safari version"
-		]
+	"name": "liferay-lms-custom-elements",
+	"private": true,
+	"scripts": {
+		"build": "react-scripts build",
+		"eject": "react-scripts eject",
+		"start": "react-scripts start",
+		"test": "react-scripts test"
 	},
-	"devDependencies": {
-		"eslint-config-react-app": "^7.0.1",
-		"react-scripts": "^5.0.1"
-	}
+	"version": "0.1.0"
 }
