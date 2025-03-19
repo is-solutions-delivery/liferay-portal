@@ -15,6 +15,7 @@ import com.liferay.commerce.constants.CommercePortletKeys;
 import com.liferay.commerce.internal.upgrade.v11_5_1.SupplierRoleUpgradeProcess;
 import com.liferay.commerce.internal.upgrade.v11_5_2.CommerceChannelRepositoryUpgradeProcess;
 import com.liferay.commerce.internal.upgrade.v13_0_3.CPConfigurationUpgradeProcess;
+import com.liferay.commerce.internal.upgrade.v13_0_5.CommerceReturnReasonConfigurationUpgradeProcess;
 import com.liferay.commerce.internal.upgrade.v1_2_0.CommerceSubscriptionUpgradeProcess;
 import com.liferay.commerce.internal.upgrade.v2_0_0.CommercePaymentMethodUpgradeProcess;
 import com.liferay.commerce.internal.upgrade.v2_1_0.CPDAvailabilityEstimateUpgradeProcess;
@@ -89,6 +90,7 @@ import com.liferay.portlet.display.template.upgrade.BaseUpgradePortletPreference
 
 import javax.portlet.PortletPreferences;
 
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -837,6 +839,11 @@ public class CommerceServiceUpgradeStepRegistrator
 
 		registry.register("13.0.3", "13.0.4", new DummyUpgradeProcess());
 
+		registry.register(
+			"13.0.4", "13.0.5",
+			new CommerceReturnReasonConfigurationUpgradeProcess(
+				_configurationAdmin));
+
 		if (_log.isInfoEnabled()) {
 			_log.info("Commerce upgrade step registrator finished");
 		}
@@ -888,6 +895,9 @@ public class CommerceServiceUpgradeStepRegistrator
 
 	@Reference
 	private CompanyLocalService _companyLocalService;
+
+	@Reference
+	private ConfigurationAdmin _configurationAdmin;
 
 	@Reference
 	private CountryLocalService _countryLocalService;
