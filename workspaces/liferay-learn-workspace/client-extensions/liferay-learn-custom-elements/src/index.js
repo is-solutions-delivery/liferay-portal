@@ -1,4 +1,13 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
 /* global Liferay */
+
+import { ClayIconSpriteContext } from "@clayui/icon";
+import Fragment from "react";
+import React, { createElement } from "react";
+import { createRoot } from "react-dom/client";
 
 import ArticleNavigation from "./components/ArticleNavigation";
 import CertificationList from './components/Certification/CertificationList';
@@ -10,21 +19,17 @@ import CoursesList from "./components/Course/CoursesList";
 import Duration from "./components/Duration";
 import Enroll from "./components/Enroll";
 import ExerciseView from "./components/Quiz/ExerciseView";
-import Fragment from "react";
 import LandingPageView from "./components/LandingPageView";
-import LessonNavigation from "./components/Lesson/LessonNavigation";
-import LessonView from "./components/Lesson/LessonView";
 import LearningPathSteps from "./components/LearningPath/LearningPathSteps";
 import LearningPathsList from "./components/LearningPath/LearningPathsList";
+import LessonNavigation from "./components/Lesson/LessonNavigation";
+import LessonView from "./components/Lesson/LessonView";
 import NavigationMenu from "./components/NavigationMenu";
 import UserDashboardView from "./components/UserDashboard/UserDashboardView";
 import UserProgressReport from "./components/UserProgressReport";
 import VerifyAssessmentsView from "./components/Assessments/VerifyAssessmentsView";
-
-import React, { createElement } from "react";
-import { ClayIconSpriteContext } from "@clayui/icon";
-import { createRoot } from "react-dom/client";
 import { getChildByAttribute } from "./utils/util";
+import "./index.scss";
 
 const COURSE_ENROLL_WATCH_ATTRIBUTES = ["course-id", "learning-path-id"];
 const COURSE_VIEW_WATCH_ATTRIBUTES = ["course-id"];
@@ -117,19 +122,19 @@ class CourseViewComponent extends HTMLElement {
 
   renderComponent(moduleId = this.getAttribute("module-id")) {
     if (this.root) {
-      let height = this.getAttribute("height") || "100vh";
-      let videoHeight = this.getAttribute("video-height") || "500px";
-      let videoWidth = this.getAttribute("video-width") || "100%";
-      let courseId = this.getAttribute("course-id");
+      const height = this.getAttribute("height") || "100vh";
+      const videoHeight = this.getAttribute("video-height") || "500px";
+      const videoWidth = this.getAttribute("video-width") || "100%";
+      const courseId = this.getAttribute("course-id");
       this.root.render(
         <ClayIconSpriteContext.Provider
           key={courseId}
           value={Liferay.Icons.spritemap}
         >
           <CourseView
-            key={courseId}
-            height={height}
             courseId={courseId}
+            height={height}
+            key={courseId}
             videoHeight={videoHeight}
             videoWidth={videoWidth}
           />
@@ -170,18 +175,18 @@ class LessonViewComponent extends HTMLElement {
 
   renderComponent(lessonId = this.getAttribute("lesson-id")) {
     if (this.root) {
-      let height = this.getAttribute("height") || "100vh";
-      let videoHeight = this.getAttribute("video-height") || "500px";
-      let videoWidth = this.getAttribute("video-width") || "100%";
+      const height = this.getAttribute("height") || "100vh";
+      const videoHeight = this.getAttribute("video-height") || "500px";
+      const videoWidth = this.getAttribute("video-width") || "100%";
       this.root.render(
         <ClayIconSpriteContext.Provider
           key={lessonId}
           value={Liferay.Icons.spritemap}
         >
           <LessonView
-            lessonId={lessonId}
-            key={lessonId}
             height={height}
+            key={lessonId}
+            lessonId={lessonId}
             videoHeight={videoHeight}
             videoWidth={videoWidth}
           />
@@ -238,9 +243,9 @@ class ExerciseViewComponent extends HTMLElement {
           value={Liferay.Icons.spritemap}
         >
           <ExerciseView
-            enableBackButton={enableBackButton}
-            educationPageUrl={educationPageUrl}
             badgePageUrl={badgePageUrl}
+            educationPageUrl={educationPageUrl}
+            enableBackButton={enableBackButton}
             exerciseId={exerciseId}
             height={height}
             key={exerciseId}
@@ -286,9 +291,9 @@ class CertificationListComponent extends HTMLElement {
         <ClayIconSpriteContext.Provider value={Liferay.Icons.spritemap}>
           <CertificationList
             durationFormat={durationFormat}
+            page={page}
             pageSize={pageSize}
             paging={paging}
-            page={page}
           ></CertificationList>
         </ClayIconSpriteContext.Provider>
       )
@@ -324,9 +329,9 @@ class CoursesListComponent extends HTMLElement {
         <ClayIconSpriteContext.Provider value={Liferay.Icons.spritemap}>
           <CoursesList
             durationFormat={durationFormat}
+            page={page}
             pageSize={pageSize}
             paging={paging}
-            page={page}
           ></CoursesList>
         </ClayIconSpriteContext.Provider>
       );
@@ -369,9 +374,9 @@ class LearningPathsListComponent extends HTMLElement {
         <ClayIconSpriteContext.Provider value={Liferay.Icons.spritemap}>
           <LearningPathsList
             durationFormat={durationFormat}
+            page={page}
             pageSize={pageSize}
             paging={paging}
-            page={page}
           ></LearningPathsList>
         </ClayIconSpriteContext.Provider>
       );
@@ -441,7 +446,7 @@ class LearningPathEnrollComponent extends HTMLElement {
       learningPathId =
         slottedAssetId === null ||
         slottedAssetId.textContent === null ||
-        slottedAssetId.textContent.length === 0
+        !slottedAssetId.textContent.length
           ? learningPathId
           : slottedAssetId.textContent;
 
@@ -452,8 +457,8 @@ class LearningPathEnrollComponent extends HTMLElement {
         >
           <Enroll
             children={viewMode != "view" ? children : null}
-            learningPathId={learningPathId}
             key={learningPathId}
+            learningPathId={learningPathId}
           />
         </ClayIconSpriteContext.Provider>
       );
@@ -523,7 +528,7 @@ class CourseEnrollComponent extends HTMLElement {
       courseId =
         slottedAssetId === null ||
         slottedAssetId.textContent === null ||
-        slottedAssetId.textContent.length === 0
+        !slottedAssetId.textContent.length
           ? courseId
           : slottedAssetId.textContent;
 
@@ -573,10 +578,12 @@ class UserProgressReportComponent extends HTMLElement {
 
   updateShadowDOM(styles) {
     // Create a new CSSStyleSheet
+
     const styleSheet = new CSSStyleSheet();
     styleSheet.replaceSync(styles);
 
     // Apply styles to Shadow DOM
+
     this.shadow.adoptedStyleSheets = [styleSheet];
   }
 
@@ -627,19 +634,19 @@ class UserProgressReportComponent extends HTMLElement {
       assetId =
         slottedAssetId === null ||
         slottedAssetId.textContent === null ||
-        slottedAssetId.textContent.length === 0
+        !slottedAssetId.textContent.length
           ? assetId
           : slottedAssetId.textContent;
       assetProgress =
         slottedProgress === null ||
         slottedProgress.textContent === null ||
-        slottedProgress.textContent.length === 0
+        !slottedProgress.textContent.length
           ? assetProgress
           : slottedProgress.textContent;
       assetType =
         slottedAssetType === null ||
         slottedAssetType.textContent === null ||
-        slottedAssetType.textContent.length === 0
+        !slottedAssetType.textContent.length
           ? assetType
           : slottedAssetType.textContent;
 
@@ -652,9 +659,9 @@ class UserProgressReportComponent extends HTMLElement {
             assetId={assetId}
             assetProgress={assetProgress}
             assetType={assetType}
+            children={children}
             key={assetId}
             viewMode={viewMode}
-            children={children}
           />
         </ClayIconSpriteContext.Provider>
       );
@@ -763,8 +770,8 @@ class CourseLessonOneLinkComponent extends HTMLElement {
         >
           <CourseFirstLesson
             assetId={assetId}
-            linkTitle={linkTitle}
             key={assetId}
+            linkTitle={linkTitle}
           />
         </ClayIconSpriteContext.Provider>
       );
@@ -870,7 +877,7 @@ class ArticleNavigationComponent extends HTMLElement {
     if (this.root) {
       this.root.render(
         <ClayIconSpriteContext.Provider value={Liferay.Icons.spritemap}>
-          <ArticleNavigation selector={selector} containerId={containerId} />
+          <ArticleNavigation containerId={containerId} selector={selector} />
         </ClayIconSpriteContext.Provider>
       );
     }
@@ -917,7 +924,7 @@ class LessonNavigationComponent extends HTMLElement {
     if (this.root) {
       this.root.render(
         <ClayIconSpriteContext.Provider value={Liferay.Icons.spritemap}>
-          <LessonNavigation upNextLabel={upNextLabel} linkPrefix={linkPrefix} />
+          <LessonNavigation linkPrefix={linkPrefix} upNextLabel={upNextLabel} />
         </ClayIconSpriteContext.Provider>
       );
     }
@@ -1034,7 +1041,7 @@ class UserDashboardViewComponent extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    let moduleId = this.getAttribute("module-id");
+    const moduleId = this.getAttribute("module-id");
 
     if (
       DASHBOARD_VIEW_WATCH_ATTRIBUTES.includes(name) &&
@@ -1052,7 +1059,7 @@ class UserDashboardViewComponent extends HTMLElement {
           key={dashboardId}
           value={Liferay.Icons.spritemap}
         >
-          <UserDashboardView moduleId={dashboardId} key={`${dashboardId}`} />
+          <UserDashboardView key={`${dashboardId}`} moduleId={dashboardId} />
         </ClayIconSpriteContext.Provider>
       );
     }

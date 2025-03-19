@@ -1,72 +1,44 @@
 {
-  "name": "liferay-lms-custom-elements",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@ckeditor/ckeditor5-react": "^9.0.0",
-    "@clayui/alert": "^3.111.0",
-    "@clayui/badge": "^3.111.0",
-    "@clayui/button": "^3.116.0",
-    "@clayui/card": "^3.116.1",
-    "@clayui/core": "^3.116.1",
-    "@clayui/css": "^3.116.1",
-    "@clayui/drop-down": "^3.116.1",
-    "@clayui/empty-state": "^3.116.0",
-    "@clayui/form": "^3.116.0",
-    "@clayui/icon": "^3.111.0",
-    "@clayui/layout": "^3.111.0",
-    "@clayui/link": "^3.111.0",
-    "@clayui/list": "^3.116.1",
-    "@clayui/loading-indicator": "^3.111.0",
-    "@clayui/management-toolbar": "^3.111.0",
-    "@clayui/modal": "^3.122.0",
-    "@clayui/multi-step-nav": "^3.116.1",
-    "@clayui/nav": "^3.118.0",
-    "@clayui/pagination": "^3.116.1",
-    "@clayui/pagination-bar": "^3.116.1",
-    "@clayui/panel": "^3.119.0",
-    "@clayui/progress-bar": "^3.111.0",
-    "@clayui/sticker": "^3.111.0",
-    "@clayui/tabs": "^3.116.0",
-    "@clayui/toolbar": "^3.116.0",
-    "@clayui/tooltip": "^3.119.0",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.7.7",
-    "events": "^3.3.0",
-    "i18next": "^23.11.5",
-    "i18next-browser-languagedetector": "^8.0.0",
-    "i18next-http-backend": "^2.5.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-i18next": "^14.1.2",
-    "react-scripts": "5.0.1",
-    "sass": "^1.83.4",
-    "web-vitals": "^2.1.4"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+	"name": "liferay-lms-custom-elements",
+	"version": "0.1.0",
+	"private": true,
+	"dependencies": {
+		"@clayui/icon": "^3.128.0",
+		"@testing-library/jest-dom": "^5.17.0",
+		"@testing-library/react": "^13.4.0",
+		"@testing-library/user-event": "^13.5.0",
+		"axios": "^1.7.7",
+		"eslint": "^9.22.0",
+		"events": "^3.3.0",
+		"react": "^18.3.1",
+		"react-dom": "^18.3.1",
+		"react-i18next": "^14.1.2",
+		"react-scripts": "5.0.1",
+		"sass": "^1.83.4"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eject": "react-scripts eject"
+	},
+	"eslintConfig": {
+		"extends": "react-app"
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	},
+	"devDependencies": {
+		"eslint-config-react-app": "^7.0.1",
+		"react-scripts": "^5.0.1"
+	}
 }
