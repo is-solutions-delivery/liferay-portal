@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const QuizBottomNavigation = () => {
-  return (
-	<div>QuizBottomNavigation</div>
-  )
-}
+	return <div>QuizBottomNavigation</div>;
+};
 
-export default QuizBottomNavigation
+export default QuizBottomNavigation;

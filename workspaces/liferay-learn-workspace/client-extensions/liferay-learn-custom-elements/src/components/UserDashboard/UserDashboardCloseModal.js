@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const UserDashboardCloseModal = () => {
-  return (
-    <div>UserDashboardCloseModal</div>
-  )
-}
+	return <div>UserDashboardCloseModal</div>;
+};
 
-export default UserDashboardCloseModal
+export default UserDashboardCloseModal;

@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const QuizHome = () => {
-  return (
-    <div>QuizHome</div>
-  )
-}
+	return <div>QuizHome</div>;
+};
 
-export default QuizHome
+export default QuizHome;

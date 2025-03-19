@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const KnowldgeCheckResult = () => {
-  return (
-    <div>KnowldgeCheckResult</div>
-  )
-}
+	return <div>KnowldgeCheckResult</div>;
+};
 
-export default KnowldgeCheckResult
+export default KnowldgeCheckResult;

@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const Enroll = () => {
-  return (
-    <div>Enroll</div>
-  )
-}
+	return <div>Enroll</div>;
+};
 
-export default Enroll
+export default Enroll;

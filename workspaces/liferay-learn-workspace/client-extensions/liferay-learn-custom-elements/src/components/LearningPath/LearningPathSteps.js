@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const LearningPathSteps = () => {
-  return (
-    <div>LearningPathSteps</div>
-  )
-}
+	return <div>LearningPathSteps</div>;
+};
 
-export default LearningPathSteps
+export default LearningPathSteps;

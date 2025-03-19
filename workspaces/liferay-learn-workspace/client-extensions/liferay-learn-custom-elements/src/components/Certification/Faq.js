@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const Faq = () => {
-  return (
-	<div>Faq</div>
-  )
-}
+	return <div>Faq</div>;
+};
 
-export default Faq
+export default Faq;

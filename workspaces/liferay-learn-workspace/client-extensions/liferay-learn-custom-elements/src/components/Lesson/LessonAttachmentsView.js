@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const LessonAttachmentsView = () => {
-  return (
-    <div>LessonAttachmentsView</div>
-  )
-}
+	return <div>LessonAttachmentsView</div>;
+};
 
-export default LessonAttachmentsView
+export default LessonAttachmentsView;

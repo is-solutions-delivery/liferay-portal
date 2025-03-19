@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const PageLoading = () => {
-  return (
-    <div>PageLoading</div>
-  )
-}
+	return <div>PageLoading</div>;
+};
 
-export default PageLoading
+export default PageLoading;

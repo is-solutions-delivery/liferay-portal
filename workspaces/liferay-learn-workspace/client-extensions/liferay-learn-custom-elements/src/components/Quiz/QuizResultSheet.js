@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const QuizResultSheet = () => {
-  return (
-    <div>QuizResultSheet</div>
-  )
-}
+	return <div>QuizResultSheet</div>;
+};
 
-export default QuizResultSheet
+export default QuizResultSheet;

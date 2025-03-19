@@ -2,20 +2,20 @@
  * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
+
 /* global Liferay */
 
-
 export const config = {
-
 	agentOauthAppId: 'liferay-lms-etc-node-oauth-application-user-agent',
 
-	agentOauthSpringAppId: 'liferay-learn-etc-spring-boot-oauth-application-user-agent',
+	agentOauthSpringAppId:
+		'liferay-learn-etc-spring-boot-oauth-application-user-agent',
 
-	modulesViewComponent : 'liferay-lms-modules-view',
+	modulesViewComponent: 'liferay-lms-modules-view',
 
-	lessonsViewComponent : 'liferay-lms-lessons-view',
+	lessonsViewComponent: 'liferay-lms-lessons-view',
 
-	lessonsCompactViewComponent : 'liferay-lms-lessons-compact-view',
+	lessonsCompactViewComponent: 'liferay-lms-lessons-compact-view',
 
 	courseEndpoint: '/o/c/courses/',
 
@@ -23,23 +23,23 @@ export const config = {
 
 	lessonEndpoint: '/o/c/lessons/',
 
-	enrollmentEndpoint : '/o/c/enrollments/',
+	enrollmentEndpoint: '/o/c/enrollments/',
 
-	menuEndPoint : '/menu/items',
+	menuEndPoint: '/menu/items',
 
-	navigationMenuEndPoint : '/menu/',
+	navigationMenuEndPoint: '/menu/',
 
-	examResultEndPoint : '/o/c/p2s3examresults/',
+	examResultEndPoint: '/o/c/p2s3examresults/',
 
-	exerciseEndPoint : '/quizes/',
+	exerciseEndPoint: '/quizes/',
 
-	progressEndPoint : '/progress/',
+	progressEndPoint: '/progress/',
 
-	durationEndPoint : '/duration/',
+	durationEndPoint: '/duration/',
 
-	utilsEndPoint : '/utils/',
+	utilsEndPoint: '/utils/',
 
-	userUtilsEndpoint : '/user/',
+	userUtilsEndpoint: '/user/',
 
 	userBadgeEndpoint: '/o/c/userbadges/',
 
@@ -58,5 +58,5 @@ export const config = {
 
 export const ViewSelectedType = Object.freeze({
 	Lesson: 'lesson',
-	Exercise: 'exercise'
+	Exercise: 'exercise',
 });
