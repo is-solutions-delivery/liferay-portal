@@ -25,7 +25,8 @@ function alignMenu() {
 	const wrapperRect = document
 		.querySelector('#wrapper')
 		?.getBoundingClientRect();
-	const isRTL = Liferay.Language.direction?.[themeDisplay?.getLanguageId()] === 'rtl';
+	const isRTL =
+		Liferay.Language.direction?.[themeDisplay?.getLanguageId()] === 'rtl';
 
 	menu.style.top = `${toggleRect.bottom}px`;
 
@@ -102,7 +103,6 @@ function handleWindowEvent() {
 }
 
 function isShown() {
-
 	return toggle.getAttribute('aria-expanded') === 'true';
 }
 
