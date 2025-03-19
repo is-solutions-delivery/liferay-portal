@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const LessonView = () => {
-  return (
-    <div>LessonView</div>
-  )
-}
+	return <div>LessonView</div>;
+};
 
-export default LessonView
+export default LessonView;

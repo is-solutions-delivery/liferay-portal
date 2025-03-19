@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const UserDashboardEmptySection = () => {
-  return (
-    <div>UserDashboardEmptySection</div>
-  )
-}
+	return <div>UserDashboardEmptySection</div>;
+};
 
-export default UserDashboardEmptySection
+export default UserDashboardEmptySection;

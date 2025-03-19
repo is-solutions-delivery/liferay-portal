@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const CourseBanner = () => {
-  return (
-    <div>CourseBanner</div>
-  )
-}
+	return <div>CourseBanner</div>;
+};
 
-export default CourseBanner
+export default CourseBanner;

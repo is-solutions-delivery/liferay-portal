@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const UserDashboardBadgeCard = () => {
-  return (
-    <div>UserDashboardBadgeCard</div>
-  )
-}
+	return <div>UserDashboardBadgeCard</div>;
+};
 
-export default UserDashboardBadgeCard
+export default UserDashboardBadgeCard;

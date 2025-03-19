@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const Duration = () => {
-  return (
-    <div>Duration</div>
-  )
-}
+	return <div>Duration</div>;
+};
 
-export default Duration
+export default Duration;

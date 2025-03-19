@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const LessonNavigation = () => {
-  return (
-    <div>LessonNavigation</div>
-  )
-}
+	return <div>LessonNavigation</div>;
+};
 
-export default LessonNavigation
+export default LessonNavigation;

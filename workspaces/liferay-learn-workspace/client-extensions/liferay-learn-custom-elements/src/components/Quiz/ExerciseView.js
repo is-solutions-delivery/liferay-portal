@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const ExerciseView = () => {
-  return (
-    <div>ExerciseView</div>
-  )
-}
+	return <div>ExerciseView</div>;
+};
 
-export default ExerciseView
+export default ExerciseView;

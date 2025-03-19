@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const VerifyAssessmentsEmptyResult = () => {
-  return (
-    <div>VerifyAssessmentsEmptyResult</div>
-  )
-}
+	return <div>VerifyAssessmentsEmptyResult</div>;
+};
 
-export default VerifyAssessmentsEmptyResult
+export default VerifyAssessmentsEmptyResult;

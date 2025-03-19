@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const UserProgressReport = () => {
-  return (
-    <div>UserProgressReport</div>
-  )
-}
+	return <div>UserProgressReport</div>;
+};
 
-export default UserProgressReport
+export default UserProgressReport;

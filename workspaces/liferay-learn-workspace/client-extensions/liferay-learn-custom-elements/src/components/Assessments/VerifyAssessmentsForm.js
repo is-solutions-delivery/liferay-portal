@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const VerifyAssessmentsForm = () => {
-  return (
-    <div>VerifyAssessmentsForm</div>
-  )
-}
+	return <div>VerifyAssessmentsForm</div>;
+};
 
-export default VerifyAssessmentsForm
+export default VerifyAssessmentsForm;

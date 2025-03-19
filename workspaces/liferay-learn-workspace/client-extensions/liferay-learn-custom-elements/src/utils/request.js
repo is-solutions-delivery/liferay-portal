@@ -1,8 +1,8 @@
 /* global Liferay */
 
 import axios from 'axios';
-import {config} from "./constants";
-import {getCurrentSiteId} from "./util";
+import {config} from './constants';
+import {getCurrentSiteId} from './util';
 
 export async function getOAuthToken() {
 	const prom = new Promise((resolve, reject) => {
@@ -31,7 +31,9 @@ export function getServerUrl() {
 
 export async function getSpringOAuthToken() {
 	const prom = new Promise((resolve, reject) => {
-		Liferay.OAuth2Client.FromUserAgentApplication(config.agentOauthSpringAppId)
+		Liferay.OAuth2Client.FromUserAgentApplication(
+			config.agentOauthSpringAppId
+		)
 			._getOrRequestToken()
 			.then(
 				(token) => {
@@ -52,9 +54,10 @@ export async function getSpringOAuthToken() {
 export async function oAuthRequest(config) {
 	return request({
 		headers: {
-			Authorization: `Bearer ${await getOAuthToken()}`,
-			'Accept-Language' : Liferay.ThemeDisplay.getLanguageId().split('_')[0],
-			'scope-id' : getCurrentSiteId()
+			'Authorization': `Bearer ${await getOAuthToken()}`,
+			'Accept-Language':
+				Liferay.ThemeDisplay.getLanguageId().split('_')[0],
+			'scope-id': getCurrentSiteId(),
 		},
 		...config,
 	});
@@ -63,17 +66,21 @@ export async function oAuthRequest(config) {
 export function request(config) {
 	return new Promise((resolve, reject) => {
 		axios
-			.request({
-				headers: {
-					'x-csrf-token': Liferay.authToken,
-					'Accept-Language' : Liferay.ThemeDisplay.getLanguageId().split('_')[0],
-					'scope-id' : getCurrentSiteId()
+			.request(
+				{
+					headers: {
+						'x-csrf-token': Liferay.authToken,
+						'Accept-Language':
+							Liferay.ThemeDisplay.getLanguageId().split('_')[0],
+						'scope-id': getCurrentSiteId(),
+					},
+					method: 'get',
+					...config,
 				},
-				method: 'get',
-				...config,
-			},error=>{
-				reject({error, message: error || ''});
-			})
+				(error) => {
+					reject({error, message: error || ''});
+				}
+			)
 			.then((response) => {
 				resolve(response.data);
 			})

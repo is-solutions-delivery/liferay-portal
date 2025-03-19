@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const QuizBadgeResult = () => {
-  return (
-    <div>QuizBadgeResult</div>
-  )
-}
+	return <div>QuizBadgeResult</div>;
+};
 
-export default QuizBadgeResult
+export default QuizBadgeResult;
