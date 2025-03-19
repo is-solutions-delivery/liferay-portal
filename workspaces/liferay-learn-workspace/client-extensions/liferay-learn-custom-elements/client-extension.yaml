@@ -1,18 +1,6 @@
 assemble:
   - from: build/static
     into: static
-liferay-lms-course-page:
-  cssURLs:
-    - css/main.*.css
-  friendlyURLMapping: liferay-lms-course-page
-  htmlElementName: liferay-lms-course-page
-  instanceable: true
-  name: Liferay LMS Course Page
-  portletCategoryName: category.client-extensions
-  type: customElement
-  urls:
-    - js/main.*.js
-  useESM: true
 liferay-lms-certifications-details:
   cssURLs:
     - css/main.*.css
@@ -20,18 +8,6 @@ liferay-lms-certifications-details:
   htmlElementName: liferay-lms-certifications-details
   instanceable: true
   name: Liferay LMS Certifications Details
-  portletCategoryName: category.client-extensions
-  type: customElement
-  urls:
-    - js/main.*.js
-  useESM: true
-liferay-lms-learning-path-page:
-  cssURLs:
-    - css/main.*.css
-  friendlyURLMapping: liferay-lms-learning-path-page
-  htmlElementName: liferay-lms-learning-path-page
-  instanceable: true
-  name: Liferay LMS Learning Path Page
   portletCategoryName: category.client-extensions
   type: customElement
   urls:
@@ -97,20 +73,6 @@ liferay-lms-course-enroll:
   urls:
     - js/main.*.js
   useESM: true
-liferay-lms-menu:
-  cssURLs:
-    - css/main.*.css
-  friendlyURLMapping: liferay-lms-menu
-  htmlElementName: liferay-lms-menu
-  instanceable: false
-  name: Liferay LMS
-  portletCategoryName: category.client-extensions
-  panelAppOrder: 700
-  panelCategoryKey: site_administration.content
-  type: customElement
-  urls:
-    - js/main.*.js
-  useESM: true
 liferay-lms-exercise-view:
   cssURLs:
     - css/main.*.css
@@ -130,30 +92,6 @@ liferay-lms-course-lesson-one-link:
   htmlElementName: liferay-lms-course-lesson-one-link
   instanceable: false
   name: Liferay LMS Course Lesson One Link
-  portletCategoryName: category.client-extensions
-  type: customElement
-  urls:
-    - js/main.*.js
-  useESM: true
-liferay-lms-delete-objects:
-  cssURLs:
-    - css/main.*.css
-  friendlyURLMapping: liferay-lms-delete-objects
-  htmlElementName: liferay-lms-delete-objects
-  instanceable: false
-  name: Liferay LMS Remove System Objects
-  portletCategoryName: category.client-extensions
-  type: customElement
-  urls:
-    - js/main.*.js
-  useESM: true
-liferay-lms-create-objects:
-  cssURLs:
-    - css/main.*.css
-  friendlyURLMapping: liferay-lms-create-objects
-  htmlElementName: liferay-lms-create-objects
-  instanceable: false
-  name: Liferay LMS Create System Objects
   portletCategoryName: category.client-extensions
   type: customElement
   urls:
