@@ -21,6 +21,7 @@ function alignMenu() {
 	const parent =
 		document.querySelector('.page-editor__layout-viewport__resizer') ||
 		document.body;
+
 	const parentRect = parent.getBoundingClientRect();
 	const wrapperRect = document
 		.querySelector('#wrapper')
@@ -103,6 +104,7 @@ function handleWindowEvent() {
 }
 
 function isShown() {
+
 	return toggle.getAttribute('aria-expanded') === 'true';
 }
 
@@ -121,6 +123,7 @@ function menuHasChildren() {
 
 function toggleMenu() {
 	if (!menuHasChildren()) {
+
 		return;
 	}
 
