@@ -1,3 +1,23 @@
+.btn.btn-nm.dropdown-fragment-toggle {
+	svg {
+		height: 16px;
+		opacity: 35%;
+		transition: all 0.2s ease-in-out;
+		width: 16px;
+	}
+
+	&:hover, &:focus, &:focus-visible {
+		background: #1A3B7B;
+		outline: var(--color-brand-primary-lighten-2, #6399FF) solid 2px;
+		transition: all 0.1s linear;
+
+		svg {
+			opacity: 1;
+			transition: all 0.1s linear;
+		}
+	}
+}
+
 .component-dropdown .dropdown-fragment-menu {
 	background-clip: padding-box;
 	background-color: #fff;
@@ -10,28 +30,6 @@
 	min-width: 240px;
 	position: fixed;
 	z-index: 976;
-}
-
-.btn.btn-nm.dropdown-fragment-toggle {
-	svg {
-		height: 16px;
-		opacity: 35%;
-		transition: all 0.2s ease-in-out;
-		width: 16px;
-	}
-}
-
-.btn.btn-nm.dropdown-fragment-toggle {
-	&:hover, &:focus, &:focus-visible {
-		background: #1A3B7B;
-		outline: var(--color-brand-primary-lighten-2, #6399FF) solid 2px;
-		transition: all 0.1s linear;
-
-		svg {
-			opacity: 1;
-			transition: all 0.1s linear;
-		}
-	}
 }
 
 .menu-dropdown-caret.rotated {
@@ -56,9 +54,10 @@ html:not(#__):not(#___) .page-editor.is-dragging .page-editor__fragment-content 
 			transition: all 0.1slinear;
 		}
 	}
+
 	.component-dropdown .dropdown-fragment-menu {
 		height: 60vh;
-    overflow-y: scroll;
+		overflow-y: scroll;
 		position: sticky;
 	}
 
