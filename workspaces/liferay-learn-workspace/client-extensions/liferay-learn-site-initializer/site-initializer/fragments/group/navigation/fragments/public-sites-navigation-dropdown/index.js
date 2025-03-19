@@ -104,7 +104,6 @@ function handleWindowEvent() {
 }
 
 function isShown() {
-
 	return toggle.getAttribute('aria-expanded') === 'true';
 }
 
@@ -123,7 +122,6 @@ function menuHasChildren() {
 
 function toggleMenu() {
 	if (!menuHasChildren()) {
-
 		return;
 	}
 

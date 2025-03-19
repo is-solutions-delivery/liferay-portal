@@ -81,7 +81,6 @@ function debounce(callback, time) {
 
 function getBreadcrumbFromURL(url) {
 	if (!url) {
-
 		return '';
 	}
 
@@ -110,86 +109,88 @@ function getBreadcrumbFromURL(url) {
 }
 
 function performSearch(query) {
-
-	postData([
-		{
-			attributes: {
-				includeAssetSearchSummary: true,
-				includeassetURL: true,
-				sxpBlueprintId: configuration.searchBlueprintId,
+	postData(
+		[
+			{
+				attributes: {
+					includeAssetSearchSummary: true,
+					includeassetURL: true,
+					sxpBlueprintId: configuration.searchBlueprintId,
+				},
+				contributorName: 'sxpBlueprint',
+				displayGroupName: 'Public Nav Search Recommendations',
+				size: '3',
 			},
-			contributorName: 'sxpBlueprint',
-			displayGroupName: 'Public Nav Search Recommendations',
-			size: '3',
-		},
-	], `/o/portal-search-rest/v1.0/suggestions?currentURL=
+		],
+		`/o/portal-search-rest/v1.0/suggestions?currentURL=
 			${window.location.href}&destinationFriendlyURL=/search&groupId=
 			${Liferay.ThemeDisplay.getScopeGroupId()}&plid=
 			${Liferay.ThemeDisplay.getPlid()}&scope=this-site&search=
-			${query}`)
-				.then((data) => {
-					if (data?.items?.[0]) {				
-						fragmentSearchElements.searchSuggestions.innerHTML = '';
+			${query}`
+	)
+		.then((data) => {
+			if (data?.items?.[0]) {
+				fragmentSearchElements.searchSuggestions.innerHTML = '';
 
-						const items = JSON.parse(JSON.stringify(data.items[0]));
+				const items = JSON.parse(JSON.stringify(data.items[0]));
 
-						items.suggestions.forEach((suggestion) => {
-							const suggestionLink = document.importNode(
-								fragmentSearchElements.searchSuggestionItemTemplate.content.querySelector(
-									'a'
-								),
-								true
-							);
-							const assetURL = suggestion.attributes.assetURL.replace(
-								/\?.*$/,
-								''
-							);
+				items.suggestions.forEach((suggestion) => {
+					const suggestionLink = document.importNode(
+						fragmentSearchElements.searchSuggestionItemTemplate.content.querySelector(
+							'a'
+						),
+						true
+					);
+					const assetURL = suggestion.attributes.assetURL.replace(
+						/\?.*$/,
+						''
+					);
 
-							suggestionLink.href = assetURL;
-							const suggestionTitle = suggestionLink.querySelector(
-								'.search-suggestion-item-title'
-							);
+					suggestionLink.href = assetURL;
+					const suggestionTitle = suggestionLink.querySelector(
+						'.search-suggestion-item-title'
+					);
 
-							suggestionTitle.textContent = suggestion.text;
-							const suggestionContent = suggestionLink.querySelector(
-								'.search-suggestion-item-content'
-							);
-							let contentText = suggestion.attributes.assetSearchSummary;
+					suggestionTitle.textContent = suggestion.text;
+					const suggestionContent = suggestionLink.querySelector(
+						'.search-suggestion-item-content'
+					);
+					let contentText = suggestion.attributes.assetSearchSummary;
 
-							if (contentText) {
-								contentText = contentText.substring(0, 500);
-								suggestionContent.innerHTML = contentText.replace(
-									new RegExp('(' + query + ')', 'gi'),
-									`<b>$1</b>`
-								);
-							}
-
-							const suggestionURL = suggestionLink.querySelector(
-								'.search-suggestion-item-link'
-							);
-
-							suggestionURL.textContent = getBreadcrumbFromURL(assetURL);
-							fragmentSearchElements.searchSuggestions.appendChild(
-								suggestionLink
-							);
-							fragmentSearchElements.suggestions.classList.add(
-								'search-results-found'
-							);
-						});
-					}
-					else {
-						fragmentSearchElements.suggestions.classList.remove(
-							'search-results-found'
+					if (contentText) {
+						contentText = contentText.substring(0, 500);
+						suggestionContent.innerHTML = contentText.replace(
+							new RegExp('(' + query + ')', 'gi'),
+							`<b>$1</b>`
 						);
 					}
-					fragmentSearchElements.suggestions.classList.remove(
-						'loading-search',
-						'search-error'
+
+					const suggestionURL = suggestionLink.querySelector(
+						'.search-suggestion-item-link'
 					);
-				})
-				.catch(() => {
-					fragmentSearchElements.suggestions.classList.add('search-error');
+
+					suggestionURL.textContent = getBreadcrumbFromURL(assetURL);
+					fragmentSearchElements.searchSuggestions.appendChild(
+						suggestionLink
+					);
+					fragmentSearchElements.suggestions.classList.add(
+						'search-results-found'
+					);
 				});
+			}
+			else {
+				fragmentSearchElements.suggestions.classList.remove(
+					'search-results-found'
+				);
+			}
+			fragmentSearchElements.suggestions.classList.remove(
+				'loading-search',
+				'search-error'
+			);
+		})
+		.catch(() => {
+			fragmentSearchElements.suggestions.classList.add('search-error');
+		});
 }
 
 function resetMenuIcon() {
@@ -238,7 +239,6 @@ function updateSearch() {
 
 window.addEventListener('load', () => {
 	if (!navigation?.default?.DropdownProvider) {
-
 		return;
 	}
 
@@ -274,7 +274,6 @@ document.getElementById('searchIcon').addEventListener('click', changeFocus);
 window.addEventListener('keyup', (event) => {
 	if (event.code === 'Escape' || event.key === 'Escape') {
 		if (!siteSearchWrapper.classList.contains('search-open')) {
-
 			return;
 		}
 
@@ -288,7 +287,6 @@ window.addEventListener('keyup', (event) => {
 	) {
 		searchInput.focus();
 		if (siteSearchWrapper.classList.contains('search-open')) {
-
 			return;
 		}
 
