@@ -723,7 +723,7 @@
 												"documentation-dropdown"
 											],
 											"fragment": {
-												"key": "new-nav-dropdown",
+												"key": "public-sites-navigation-dropdown",
 												"siteKey": "Liferay Learn"
 											},
 											"fragmentConfig": {
@@ -1725,7 +1725,7 @@
 												"education-dropdown"
 											],
 											"fragment": {
-												"key": "new-nav-dropdown",
+												"key": "public-sites-navigation-dropdown",
 												"siteKey": "Liferay Learn"
 											},
 											"fragmentConfig": {
