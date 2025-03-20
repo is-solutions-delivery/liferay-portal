@@ -53,7 +53,7 @@ function alignMenu() {
 			menu.style.left = `${toggleRect.left}px`;
 		}
 	}
-	else if (configuration.panelType === 'full-width') {
+	else {
 		menu.style.width = `${fragmentElement.getBoundingClientRect().width}px`;
 	}
 }
