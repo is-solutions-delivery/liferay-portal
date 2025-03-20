@@ -39,9 +39,11 @@ function alignMenu() {
 		menu.style.width = `${regularMenuWidth}px`;
 
 		if (
-			toggleBoundingClientRect.left + regularMenuWidth >= window.innerWidth ||
+			toggleBoundingClientRect.left + regularMenuWidth >=
+				window.innerWidth ||
 			(wrapperRect &&
-				toggleBoundingClientRect.left + regularMenuWidth >= wrapperRect.width)
+				toggleBoundingClientRect.left + regularMenuWidth >=
+					wrapperRect.width)
 		) {
 			menu.style.right = `${window.innerWidth - toggleBoundingClientRect.right}px`;
 		}
