@@ -125,9 +125,7 @@ function toggleMenu() {
 		return;
 	}
 
-	const isMenuVisible = menu.style.display === 'block';
-
-	if (isMenuVisible) {
+	if (menu.style.display === 'block') {
 		menu.style.display = 'none';
 		toggle.setAttribute('aria-expanded', 'false');
 		menuDropdownCaret.classList.remove('rotated'); // Remove rotação do caret
