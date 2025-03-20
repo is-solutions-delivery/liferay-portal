@@ -26,8 +26,6 @@ function alignMenu() {
 	const wrapperRect = document
 		.querySelector('#wrapper')
 		?.getBoundingClientRect();
-	const isRTL =
-		Liferay.Language.direction?.[themeDisplay?.getLanguageId()] === 'rtl';
 
 	menu.style.top = `${toggleBoundingClientRect.bottom}px`;
 
@@ -51,7 +49,11 @@ function alignMenu() {
 			menu.style.right = null;
 		}
 
-		if (isRTL && toggleBoundingClientRect.right - regularMenuWidth < 0) {
+		if (
+			Liferay.Language.direction?.[themeDisplay?.getLanguageId()] ===
+				'rtl' &&
+			toggleBoundingClientRect.right - regularMenuWidth < 0
+		) {
 			menu.style.left = `${toggleBoundingClientRect.left}px`;
 		}
 	}
