@@ -128,7 +128,7 @@ function toggleMenu() {
 	if (menu.style.display === 'block') {
 		menu.style.display = 'none';
 		toggle.setAttribute('aria-expanded', 'false');
-		menuDropdownCaret.classList.remove('rotated'); // Remove rotação do caret
+		menuDropdownCaret.classList.remove('rotated');
 
 		window.removeEventListener('resize', handleWindowEvent);
 		window.removeEventListener('scroll', handleWindowEvent);
@@ -138,7 +138,7 @@ function toggleMenu() {
 	else {
 		menu.style.display = 'block';
 		toggle.setAttribute('aria-expanded', 'true');
-		menuDropdownCaret.classList.add('rotated'); // Adiciona rotação ao caret
+		menuDropdownCaret.classList.add('rotated');
 
 		alignMenu();
 
