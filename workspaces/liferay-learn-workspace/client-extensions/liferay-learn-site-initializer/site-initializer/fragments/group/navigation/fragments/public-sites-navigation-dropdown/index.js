@@ -39,9 +39,11 @@ function alignMenu() {
 		menu.style.width = `${regularMenuWidth}px`;
 
 		if (
-			toggleBoundingClientRect.left + regularMenuWidth >= window.innerWidth ||
+			toggleBoundingClientRect.left + regularMenuWidth >=
+				window.innerWidth ||
 			(wrapperRect &&
-				toggleBoundingClientRect.left + regularMenuWidth >= wrapperRect.width)
+				toggleBoundingClientRect.left + regularMenuWidth >=
+					wrapperRect.width)
 		) {
 			menu.style.right = `${window.innerWidth - toggleBoundingClientRect.right}px`;
 		}
@@ -53,7 +55,7 @@ function alignMenu() {
 			menu.style.left = `${toggleBoundingClientRect.left}px`;
 		}
 	}
-	else if (configuration.panelType === 'full-width') {
+	else {
 		menu.style.width = `${fragmentElement.getBoundingClientRect().width}px`;
 	}
 }
