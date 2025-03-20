@@ -30,10 +30,12 @@
 						</div>
 					</div>
 				[/#if]
+
 				[#if configuration.showLanguageMenu]
 					<div class="language-selector-container ml-2">
 						<div class="language language-selector pl-2 py-2 utility-nav-link" tabindex="7">
 							<div class="language-selector-globe-icon opacity-50">[@clay["icon"] symbol="globe-lines"/]</div>
+
 							<div class="language-selector-text opacity-80">
 								[#assign current_locale = locale ]
 
@@ -74,11 +76,13 @@
 						<span class="search-icon opacity-50" id="searchIcon" tabindex="8">[@clay["icon"] symbol="search"/]</span>
 					</a>
 				[/#if]
+
 				[#if configuration.showHelp]
 					<a class="question-icon-container" href="https://help.liferay.com" target="_blank">
 						<span class="question-icon opacity-50" id="questionIcon" tabindex="9">[@clay["icon"] symbol="question-circle"/]</span>
 					</a>
 				[/#if]
+
 				[#if configuration.showAccountMenu]
 					<lfr-drop-zone class="utility-nav-container-content"></lfr-drop-zone>
 				[/#if]
