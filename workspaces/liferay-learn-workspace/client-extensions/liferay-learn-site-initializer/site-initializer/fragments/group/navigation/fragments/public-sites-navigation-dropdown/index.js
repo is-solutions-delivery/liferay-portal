@@ -18,11 +18,11 @@ let alignMenuInterval;
 
 function alignMenu() {
 	const toggleBoundingClientRect = toggle.getBoundingClientRect();
-	const parent =
+	const parentElement =
 		document.querySelector('.page-editor__layout-viewport__resizer') ||
 		document.body;
 
-	const parentBoundingClientRect = parent.getBoundingClientRect();
+	const parentBoundingClientRect = parentElement.getBoundingClientRect();
 	const wrapperRect = document
 		.querySelector('#wrapper')
 		?.getBoundingClientRect();
