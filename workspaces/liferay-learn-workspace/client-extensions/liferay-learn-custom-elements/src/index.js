@@ -9,18 +9,17 @@ import {ClayIconSpriteContext} from '@clayui/icon';
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 
-import ArticleNavigation from './components/ArticleNavigation';
+import ArticleNavigation from './components/Lesson/ArticleNavigation';
 import CertificationList from './components/Certification/CertificationList';
 import CertificationsDetails from './components/Certification/CertificationsDetails';
 import CourseBanner from './components/Course/CourseBanner';
 import CoursesList from './components/Course/CoursesList';
-import Duration from './components/Duration';
 import ExerciseView from './components/Quiz/ExerciseView';
-import LandingPageView from './components/LandingPageView';
+import LandingPageView from './components/Global/LandingPageView';
 import LearningPathSteps from './components/LearningPath/LearningPathSteps';
 import LearningPathsList from './components/LearningPath/LearningPathsList';
 import LessonNavigation from './components/Lesson/LessonNavigation';
-import NavigationMenu from './components/NavigationMenu';
+import NavigationMenu from './components/Course/NavigationMenu';
 import UserDashboardView from './components/UserDashboard/UserDashboardView';
 import VerifyAssessmentsView from './components/Assessments/VerifyAssessmentsView';
 import './index.scss';
@@ -28,14 +27,12 @@ import './index.scss';
 const COURSE_ENROLL_WATCH_ATTRIBUTES = ['course-id', 'learning-path-id'];
 const COURSE_VIEW_WATCH_ATTRIBUTES = ['course-id'];
 const DASHBOARD_VIEW_WATCH_ATTRIBUTES = ['dashboard-id'];
-const DURATION_VIEW_WATCH_ATTRIBUTES = ['asset-id', 'asset-type'];
 const ELEMENT_ID_ARTICLE_NAVIGATION_MENU =
 	'liferay-lms-article-navigation-menu';
 const ELEMENT_ID_CERTIFICATION_LIST = 'liferay-lms-certification-list';
 const ELEMENT_ID_CERTIFICATIONS_DETAILS = 'liferay-lms-certifications-details';
 const ELEMENT_ID_COURSES_LIST = 'liferay-lms-courses-list';
 const ELEMENT_ID_DASHBOARD_VIEW = 'liferay-lms-dashboard-view';
-const ELEMENT_ID_DURATION = 'liferay-lms-duration';
 const ELEMENT_ID_EXERCISE_VIEW = 'liferay-lms-exercise-view';
 const ELEMENT_ID_LANDINGPAGE_VIEW = 'liferay-lms-landingpage-view';
 const ELEMENT_ID_LEARN_PATHS_LIST = 'liferay-lms-learn-paths-list';
@@ -251,62 +248,6 @@ class CoursesListComponent extends HTMLElement {
 						pageSize={pageSize}
 						paging={paging}
 					></CoursesList>
-				</ClayIconSpriteContext.Provider>
-			);
-		}
-	}
-
-	disconnectedCallback() {
-		if (this.root) {
-			this.root.unmount();
-			this.root = null;
-		}
-	}
-}
-
-class DurationComponent extends HTMLElement {
-	static get observedAttributes() {
-		return DURATION_VIEW_WATCH_ATTRIBUTES;
-	}
-
-	constructor() {
-		super();
-		this.root = null;
-	}
-
-	connectedCallback() {
-		if (!this.root) {
-			this.root = createRoot(this);
-		}
-		this.renderComponent();
-	}
-
-	attributeChangedCallback(name, oldValue, newValue) {
-		if (
-			COURSE_ENROLL_WATCH_ATTRIBUTES.includes(name) &&
-			oldValue !== newValue
-		) {
-			this.renderComponent(newValue);
-		}
-	}
-
-	renderComponent(
-		assetId = this.getAttribute('asset-id'),
-		assetType = this.getAttribute('asset-type'),
-		format = this.getAttribute('format')
-	) {
-		if (this.root) {
-			this.root.render(
-				<ClayIconSpriteContext.Provider
-					key={assetId}
-					value={Liferay.Icons.spritemap}
-				>
-					<Duration
-						assetId={assetId}
-						assetType={assetType}
-						format={format}
-						key={assetId}
-					/>
 				</ClayIconSpriteContext.Provider>
 			);
 		}
@@ -714,10 +655,6 @@ if (!customElements.get(ELEMENT_ID_LMS_COURSE_BANNER)) {
 
 if (!customElements.get(ELEMENT_ID_COURSES_LIST)) {
 	customElements.define(ELEMENT_ID_COURSES_LIST, CoursesListComponent);
-}
-
-if (!customElements.get(ELEMENT_ID_DURATION)) {
-	customElements.define(ELEMENT_ID_DURATION, DurationComponent);
 }
 
 if (!customElements.get(ELEMENT_ID_EXERCISE_VIEW)) {
