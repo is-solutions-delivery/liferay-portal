@@ -239,7 +239,6 @@ function updateSearch() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-
     if (!Liferay.ThemeDisplay.isSignedIn()) {
         document.querySelector(".public-sites-navigation").style.marginTop = "0";
     }
