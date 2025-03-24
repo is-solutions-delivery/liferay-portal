@@ -354,9 +354,7 @@ nav {
 		align-items: stretch;
 		background-color: var(--white);
 		font-size: var(--font-size-base);
-		margin-top: 3.5rem;
 		position: fixed;
-		top: 0;
 		width: 100%;
 		z-index: 3;
 
