@@ -107,11 +107,10 @@ const TrialDetails: React.FC<TrialDetailsProps> = ({order}) => {
 					),
 				},
 				{
-					visible: !!trialError,
 					title: 'Error',
 					value: (
 						<span
-							className="text-secondary cursor-pointer"
+							className="cursor-pointer text-secondary"
 							onClick={() =>
 								alert(
 									JSON.stringify(
@@ -125,6 +124,7 @@ const TrialDetails: React.FC<TrialDetailsProps> = ({order}) => {
 							{i18n.translate('details')}
 						</span>
 					),
+					visible: !!trialError,
 				},
 			]}
 		/>
