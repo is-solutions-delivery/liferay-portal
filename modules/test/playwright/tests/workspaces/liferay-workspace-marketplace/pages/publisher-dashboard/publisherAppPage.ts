@@ -12,7 +12,9 @@ import {PublishProductPayload, Steps} from '../../types';
 export class PublisherAppPage {
 	readonly addPackagesButton: Locator;
 	readonly backButton: Locator;
+	readonly clientExtensionDropdownOption: Locator;
 	readonly cloudDropdownOption: Locator;
+	readonly compositeAppDropdownOption: Locator;
 	readonly confirmButton: Locator;
 	readonly continueButton: Locator;
 	readonly dxpDropdownOption: Locator;
@@ -37,9 +39,9 @@ export class PublisherAppPage {
 			version: Locator;
 		};
 	};
-	readonly fragmentDropdownOption: Locator;
 	protected publishProductPayload: PublishProductPayload;
 	readonly logoUploadButton: Locator;
+	readonly lowCodeConfigurationDropdownOption: Locator;
 	readonly page: Page;
 	readonly paidPriceModel: Locator;
 	readonly selectAppTypeDropdown: Locator;
@@ -54,8 +56,14 @@ export class PublisherAppPage {
 			name: 'Add Package(s)',
 		});
 		this.backButton = page.getByRole('button', {name: 'Back'});
+		this.clientExtensionDropdownOption = page.getByRole('menuitem', {
+			name: 'Client Extension Modular',
+		});
 		this.cloudDropdownOption = page.getByRole('menuitem', {
 			name: 'Cloud App Backend client',
+		});
+		this.compositeAppDropdownOption = page.getByRole('menuitem', {
+			name: 'Composite App Complex app',
 		});
 		this.confirmButton = page.getByRole('button', {name: 'Confirm'});
 		this.continueButton = page.getByRole('button', {name: 'Continue'});
@@ -87,10 +95,10 @@ export class PublisherAppPage {
 				version: page.getByPlaceholder('0.0.0'),
 			},
 		};
-		this.fragmentDropdownOption = page.getByRole('menuitem', {
-			name: 'Fragment/Collection of',
-		});
 		this.logoUploadButton = page.getByText('Upload Image');
+		this.lowCodeConfigurationDropdownOption = page.getByRole('menuitem', {
+			name: 'Low-Code Configuration Methods',
+		});
 		this.page = page;
 		this.paidPriceModel = page
 			.locator('div')
@@ -107,7 +115,6 @@ export class PublisherAppPage {
 		this.submitButton = page.getByRole('button', {
 			name: 'Submit App',
 		});
-
 		this.zipFilesContainer = page.locator(
 			'.document-file-list-item-container'
 		);
@@ -178,6 +185,12 @@ export class PublisherAppPage {
 	async fillBuild() {
 		expect(this.continueButton).toBeDisabled();
 
+		if (this.publishProductPayload.appType === 'client extension') {
+			await this.selectAppTypeDropdown.click();
+
+			await this.clientExtensionDropdownOption.first().click();
+		}
+
 		if (this.publishProductPayload.appType === 'cloud') {
 			await this.selectAppTypeDropdown.click();
 
@@ -191,23 +204,22 @@ export class PublisherAppPage {
 			);
 		}
 
+		if (this.publishProductPayload.appType === 'composite app') {
+			await this.selectAppTypeDropdown.click();
+
+			await this.compositeAppDropdownOption.first().click();
+		}
+
 		if (this.publishProductPayload.appType === 'dxp') {
 			await this.selectAppTypeDropdown.click();
 
 			await this.dxpDropdownOption.first().click();
 		}
 
-		if (this.publishProductPayload.appType === 'fragment') {
+		if (this.publishProductPayload.appType === 'low code configuration') {
 			await this.selectAppTypeDropdown.click();
 
-			await this.fragmentDropdownOption.first().click();
-		}
-
-		for (const compatibleOffering of this.publishProductPayload
-			.compatibleOfferings) {
-			await this.page
-				.getByText(compatibleOffering, {exact: true})
-				.click();
+			await this.lowCodeConfigurationDropdownOption.first().click();
 		}
 
 		await this.addPackagesButton.click();

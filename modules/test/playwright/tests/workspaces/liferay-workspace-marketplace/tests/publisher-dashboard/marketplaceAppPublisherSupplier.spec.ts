@@ -6,14 +6,16 @@
 import {expect, mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../../../../fixtures/apiHelpersTest';
-import performLogin from '../../../../../utils/performLogin';
+import {performLoginViaApi} from '../../../../../utils/performLogin';
 import {marketplaceHelper} from '../../fixtures/marketplaceHelper';
 import {marketplacePagesTest} from '../../fixtures/marketplacePages';
+import {marketplaceSiteFixture} from '../../fixtures/marketplaceSite';
 import {PublishProductPayload} from '../../types';
 import {products} from '../../utils/constants';
 
 export const test = mergeTests(
 	apiHelpersTest,
+	marketplaceSiteFixture,
 	marketplacePagesTest,
 	marketplaceHelper
 );
@@ -23,47 +25,81 @@ const accountName = `Supplier Account`;
 let _account;
 let _catalog;
 let _productId;
+let _user;
 
 test.describe('Publish Marketplace Apps', () => {
-	test(`Publish Marketplace Apps `, async ({
-		apiHelpers,
-		marketplaceHelper,
-		page,
-	}) => {
-		await performLogin(page, 'test');
+	test.afterEach(async ({apiHelpers, page}) => {
+		await performLoginViaApi(page, 'test');
 
-		const {account, catalog} =
-			await marketplaceHelper.createAccountUserCatalog({
-				accountName,
-				accountType: 'supplier',
+		await apiHelpers.headlessCommerceAdminCatalog.deleteProduct(_productId);
+
+		await apiHelpers.headlessAdminUser.deleteAccount(_account.id);
+
+		await apiHelpers.headlessCommerceAdminCatalog.deleteCatalog(
+			_catalog.id
+		);
+
+		await apiHelpers.headlessAdminUser.deleteUserAccount(_user.id);
+	});
+
+	test.beforeEach(
+		async ({apiHelpers, marketplaceHelper}) => {
+			let account =
+				await apiHelpers.headlessAdminUser.getAccountByName(
+					accountName
+				);
+
+			if (!account) {
+				account = await apiHelpers.headlessAdminUser.postAccount({
+					name: accountName,
+					type: 'supplier',
+				});
+			}
+
+			_account = account;
+
+			const accountRole =
+				await apiHelpers.headlessAdminUser.getAccountRolesByRoleName(
+					_account.id,
+					'Account Supplier'
+				);
+
+			await marketplaceHelper.createAccountUserSupplier({
+				accountId: _account.id,
+				accountRoleIds: accountRole.items[0].id,
+				emailAddresses: 'demo.unprivileged@liferay.com',
 			});
 
-		_account = account;
-		_catalog = catalog;
+			const catalogData = {
+				default: {},
+				supplier: {accountId: account.id},
+			};
 
-		const accountRole =
-			await apiHelpers.headlessAdminUser.getAccountRolesByRoleName(
+			const catalogConfig =
+				catalogData['supplier'] || catalogData.default;
+
+			const catalog =
+				await apiHelpers.headlessCommerceAdminCatalog.postCatalog(
+					catalogConfig
+				);
+
+			_catalog = catalog;
+
+			await apiHelpers.headlessAdminUser.assignUserToAccountByEmailAddress(
 				_account.id,
-				'Account Supplier'
+				['demo.unprivileged@liferay.com']
 			);
 
-		await marketplaceHelper.createAccountUserSupplier({
-			accountId: account.id,
-			accountRoleIds: accountRole.items[0].id,
-			emailAddresses: 'demo.unprivileged@liferay.com',
-		});
+			const user =
+				await apiHelpers.headlessAdminUser.getUserAccountByEmailAddress(
+					'demo.unprivileged@liferay.com'
+				);
 
-		await apiHelpers.headlessAdminUser.assignUserToAccountByEmailAddress(
-			_account.id,
-			['demo.unprivileged@liferay.com']
-		);
+			_user = user;
 
-		const site = await apiHelpers.headlessSite.getSiteByERC(
-			'LIFERAY_MARKETPLACE'
-		);
-
-		await page.goto(`web${site.friendlyUrlPath}`);
-	});
+			await apiHelpers.jsonWebServicesUser.agreeToTermsOfUse(_user.id);
+		}
+	);
 
 	for (const key of Object.keys(products)) {
 		const product = products[key as keyof typeof products];
@@ -74,11 +110,13 @@ test.describe('Publish Marketplace Apps', () => {
 			publisherAppPage,
 			publisherDashboardPage,
 		}) => {
-			await performLogin(page, 'demo.unprivileged');
-
 			publisherAppPage.setPublishProduct(
 				product as unknown as PublishProductPayload
 			);
+
+			// Log in to unprivileged account
+
+			await performLoginViaApi(page, 'demo.unprivileged');
 
 			// Go to Publisher Dashboard
 

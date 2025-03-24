@@ -25,7 +25,7 @@ test.describe('Can Publish Marketplace Apps', () => {
 	const accountName = `Supplier Account${getRandomInt()}`;
 
 	test.beforeEach(
-		async ({marketplace, marketplaceHelper, publisherSolutionPage}) => {
+		async ({apiHelpers, marketplaceHelper, page, publisherDashboardPage}) => {
 			const {account, catalog} =
 				await marketplaceHelper.createAccountUserCatalog({
 					accountName,
@@ -36,9 +36,13 @@ test.describe('Can Publish Marketplace Apps', () => {
 
 			_catalog = catalog;
 
-			await publisherSolutionPage.goto(
-				`web${marketplace.friendlyUrlPath}/publisher-dashboard#/solutions`
+			const site = await apiHelpers.headlessSite.getSiteByERC(
+				'LIFERAY_MARKETPLACE'
 			);
+
+			await page.goto(`web${site.friendlyUrlPath}`);
+
+			await publisherDashboardPage.goto(site.friendlyUrlPath);
 		}
 	);
 
