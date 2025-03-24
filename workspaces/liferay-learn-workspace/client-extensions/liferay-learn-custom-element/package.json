@@ -32,7 +32,7 @@
 			"react-app/jest"
 		]
 	},
-	"name": "liferay-learn-custom-elements",
+	"name": "liferay-learn-custom-element",
 	"private": true,
 	"scripts": {
 		"build": "react-scripts build",
