@@ -463,6 +463,7 @@ nav {
 						align-items: center;
 						border-radius: var(--border-radius-xs);
 						font-weight: var(--font-weight-semi-bold);
+						list-style-type: none;
 						text-align: left;
 
 						.language-entry-long-text {
