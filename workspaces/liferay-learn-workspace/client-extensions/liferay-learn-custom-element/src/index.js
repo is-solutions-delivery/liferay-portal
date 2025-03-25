@@ -7,19 +7,20 @@ import {ClayIconSpriteContext} from '@clayui/icon';
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 
-import ArticleNavigation from './components/Lesson/ArticleNavigation';
+import VerifyAssessmentsView from './components/Assessments/VerifyAssessmentsView';
 import CertificationList from './components/Certification/CertificationList';
 import CertificationsDetails from './components/Certification/CertificationsDetails';
 import CourseBanner from './components/Course/CourseBanner';
 import CoursesList from './components/Course/CoursesList';
-import ExerciseView from './components/Quiz/ExerciseView';
+import NavigationMenu from './components/Course/NavigationMenu';
 import LandingPageView from './components/Global/LandingPageView';
 import LearningPathSteps from './components/LearningPath/LearningPathSteps';
 import LearningPathsList from './components/LearningPath/LearningPathsList';
+import ArticleNavigation from './components/Lesson/ArticleNavigation';
 import LessonNavigation from './components/Lesson/LessonNavigation';
-import NavigationMenu from './components/Course/NavigationMenu';
+import ExerciseView from './components/Quiz/ExerciseView';
 import UserDashboardView from './components/UserDashboard/UserDashboardView';
-import VerifyAssessmentsView from './components/Assessments/VerifyAssessmentsView';
+
 import './index.scss';
 
 const COURSE_ENROLL_WATCH_ATTRIBUTES = ['course-id', 'learning-path-id'];
