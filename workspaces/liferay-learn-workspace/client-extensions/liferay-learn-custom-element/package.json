@@ -17,28 +17,23 @@
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/react": "^16.2.0",
 		"@testing-library/user-event": "^13.5.0",
-		"react": "^19.0.0",
-		"react-dom": "^19.0.0",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
 		"react-scripts": "5.0.1",
 		"web-vitals": "^2.1.4"
 	},
-	"devDependencies": {
-		"eslint-config-react-app": "^7.0.1",
-		"sass": "^1.86.0"
-	},
 	"eslintConfig": {
-		"extends": [
-			"react-app",
-			"react-app/jest"
-		]
+		"globals": {
+			"Liferay": true
+		}
 	},
-	"name": "liferay-learn-custom-element",
+	"license": "LGPL",
+	"name": "@liferay/liferay-learn-custom-element",
 	"private": true,
 	"scripts": {
 		"build": "react-scripts build",
-		"eject": "react-scripts eject",
 		"start": "react-scripts start",
 		"test": "react-scripts test"
 	},
-	"version": "0.1.0"
+	"version": "1.0.0"
 }
