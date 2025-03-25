@@ -45,6 +45,38 @@ const EXERCISE_VIEW_WATCH_ATTRIBUTES = ['exercise-id'];
 const LESSON_NAVIGATION_WATCH_ATTRIBUTES = [];
 const MODULE_VIEW_WATCH_ATTRIBUTES = ['module-id'];
 
+class ClientExtensionComponent extends HTMLElement {
+	constructor(props) {
+		super();
+		this.root = null;
+		this.component = props.component;
+	}
+
+	connectedCallback() {
+		if (!this.root) {
+			this.root = createRoot(this);
+		}
+		this.renderComponent();
+	}
+
+	disconnectedCallback() {
+		if (this.root) {
+			this.root.unmount();
+			this.root = null;
+		}
+	}
+
+	renderComponent() {
+		if (this.root) {
+			this.root.render(
+				<ClayIconSpriteContext.Provider value={Liferay.Icons.spritemap}>
+					${this.component}
+				</ClayIconSpriteContext.Provider>
+			);
+		}
+	}
+}
+
 class ArticleNavigationComponent extends HTMLElement {
 	static get observedAttributes() {
 		return COURSE_ENROLL_WATCH_ATTRIBUTES;
@@ -94,8 +126,8 @@ class ArticleNavigationComponent extends HTMLElement {
 		}
 	}
 }
+
 class CertificationDetailsComponent extends HTMLElement {
-	static get observedAttributes() {}
 	constructor() {
 		super();
 		this.root = null;
@@ -106,13 +138,7 @@ class CertificationDetailsComponent extends HTMLElement {
 		}
 		this.renderComponent();
 	}
-	attributeChangedCallback(name, oldValue, newValue) {}
-	renderComponent(
-		page = this.getAttribute('page') || 1,
-		pageSize = this.getAttribute('page-size') || 3,
-		paging = this.getAttribute('paging') || false,
-		durationFormat = this.getAttribute('duration-format')
-	) {
+	renderComponent() {
 		if (this.root) {
 			this.root.render(
 				<ClayIconSpriteContext.Provider value={Liferay.Icons.spritemap}>
@@ -128,9 +154,8 @@ class CertificationDetailsComponent extends HTMLElement {
 		}
 	}
 }
-class CertificationListComponent extends HTMLElement {
-	static get observedAttributes() {}
 
+class CertificationListComponent extends HTMLElement {
 	constructor() {
 		super();
 		this.root = null;
@@ -142,8 +167,6 @@ class CertificationListComponent extends HTMLElement {
 		}
 		this.renderComponent();
 	}
-
-	attributeChangedCallback(name, oldValue, newValue) {}
 
 	renderComponent(
 		page = this.getAttribute('page') || 1,
@@ -216,8 +239,6 @@ class CourseBannerComponent extends HTMLElement {
 	}
 }
 class CoursesListComponent extends HTMLElement {
-	static get observedAttributes() {}
-
 	constructor() {
 		super();
 		this.root = null;
@@ -229,8 +250,6 @@ class CoursesListComponent extends HTMLElement {
 		}
 		this.renderComponent();
 	}
-
-	attributeChangedCallback(name, oldValue, newValue) {}
 
 	renderComponent(
 		page = this.getAttribute('page') || 1,
@@ -348,8 +367,6 @@ class LandingPageViewComponent extends HTMLElement {
 	}
 }
 class LearningPathsListComponent extends HTMLElement {
-	static get observedAttributes() {}
-
 	constructor() {
 		super();
 		this.root = null;
@@ -361,8 +378,6 @@ class LearningPathsListComponent extends HTMLElement {
 		}
 		this.renderComponent();
 	}
-
-	attributeChangedCallback(name, oldValue, newValue) {}
 
 	renderComponent(
 		page = this.getAttribute('page') || 1,
@@ -594,7 +609,6 @@ class UserDashboardViewComponent extends HTMLElement {
 	}
 }
 class VerifyAssessmentsViewComponent extends HTMLElement {
-	static get observedAttributes() {}
 	constructor() {
 		super();
 		this.root = null;
@@ -605,7 +619,6 @@ class VerifyAssessmentsViewComponent extends HTMLElement {
 		}
 		this.renderComponent();
 	}
-	attributeChangedCallback(name, oldValue, newValue) {}
 	renderComponent() {
 		if (this.root) {
 			this.root.render(
@@ -625,6 +638,13 @@ class VerifyAssessmentsViewComponent extends HTMLElement {
 			this.root = null;
 		}
 	}
+}
+
+if (!customElements.get(ELEMENT_ID_ARTICLE_NAVIGATION_MENU)) {
+	customElements.define(
+		ELEMENT_ID_ARTICLE_NAVIGATION_MENU,
+		ClientExtensionComponent(ArticleNavigation)
+	);
 }
 
 if (!customElements.get(ELEMENT_ID_ARTICLE_NAVIGATION_MENU)) {
