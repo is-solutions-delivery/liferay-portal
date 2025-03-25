@@ -98,7 +98,7 @@ public class EditCommerceAddressMVCActionCommand extends BaseMVCActionCommand {
 		}
 	}
 
-	private int _toType(ActionRequest actionRequest) {
+	private int _getType(ActionRequest actionRequest) {
 		int type = CommerceAddressConstants.ADDRESS_TYPE_BILLING_AND_SHIPPING;
 
 		boolean defaultBilling = ParamUtil.getBoolean(
@@ -138,7 +138,7 @@ public class EditCommerceAddressMVCActionCommand extends BaseMVCActionCommand {
 				ParamUtil.getString(actionRequest, "street1"),
 				ParamUtil.getString(actionRequest, "street2"),
 				ParamUtil.getString(actionRequest, "street3"), StringPool.BLANK,
-				_toType(actionRequest),
+				_getType(actionRequest),
 				ParamUtil.getString(actionRequest, "zip"),
 				ServiceContextFactory.getInstance(
 					CommerceAddress.class.getName(), actionRequest));
@@ -158,7 +158,7 @@ public class EditCommerceAddressMVCActionCommand extends BaseMVCActionCommand {
 				ParamUtil.getString(actionRequest, "street1"),
 				ParamUtil.getString(actionRequest, "street2"),
 				ParamUtil.getString(actionRequest, "street3"),
-				commerceAddress.getSubtype(), _toType(actionRequest),
+				commerceAddress.getSubtype(), _getType(actionRequest),
 				ParamUtil.getString(actionRequest, "zip"),
 				ServiceContextFactory.getInstance(
 					CommerceAddress.class.getName(), actionRequest));
