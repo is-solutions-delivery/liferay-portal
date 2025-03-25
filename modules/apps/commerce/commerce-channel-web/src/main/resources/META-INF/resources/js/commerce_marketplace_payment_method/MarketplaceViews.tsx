@@ -26,6 +26,7 @@ export default function MarketplaceViews() {
 	const {
 		marketplaceConfiguration,
 		marketplaceRest,
+		permissions,
 		product,
 		setProduct,
 		setView,
@@ -36,6 +37,18 @@ export default function MarketplaceViews() {
 		() => new MarketplaceProduct(product),
 		[product]
 	);
+
+	const hasPermissionToInstallApp = (product: MarketplaceProduct) => {
+		if (permissions.canPurchaseAndInstallPaidApps) {
+			return true;
+		}
+
+		if (product.getPriceModel() === 'free') {
+			return permissions.canInstallFreeApps;
+		}
+
+		return false;
+	};
 
 	const isProductInstalled = useCallback(
 		(product: Product) =>
@@ -140,10 +153,18 @@ export default function MarketplaceViews() {
 				>
 					{(product) => (
 						<ClayButton
-							{...(isProductInstalled(product) && {
-								disabled: true,
-								title: Liferay.Language.get('installed'),
-							})}
+							{...(isProductInstalled(product)
+								? {
+										disabled: true,
+										title: Liferay.Language.get(
+											'installed'
+										),
+									}
+								: {
+										disabled: !hasPermissionToInstallApp(
+											new MarketplaceProduct(product)
+										),
+									})}
 							className="w-100"
 							onClick={() => {
 								setProduct(product);
@@ -163,10 +184,18 @@ export default function MarketplaceViews() {
 					onClickBack={() => setView(MarketplaceView.PRODUCTS)}
 					primaryButton={
 						<ClayButton
-							{...(isProductInstalled(product) && {
-								disabled: true,
-								title: Liferay.Language.get('installed'),
-							})}
+							{...(isProductInstalled(product)
+								? {
+										disabled: true,
+										title: Liferay.Language.get(
+											'installed'
+										),
+									}
+								: {
+										disabled: !hasPermissionToInstallApp(
+											new MarketplaceProduct(product)
+										),
+									})}
 							className="ml-auto mt-3 rounded"
 							onClick={() => {
 								setState(States.CONFIRM_INSTALLATION);

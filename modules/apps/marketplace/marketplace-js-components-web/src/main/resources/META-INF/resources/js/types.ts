@@ -12,6 +12,12 @@ export type APIResponse<T = any> = {
 	totalCount: number;
 };
 
+export type AppsPermissions = {
+	canInstallFreeApps: boolean;
+	canPurchaseAndInstallPaidApps: boolean;
+	canViewApps: boolean;
+};
+
 type BillingAddress = {
 	city?: string;
 	country?: string;

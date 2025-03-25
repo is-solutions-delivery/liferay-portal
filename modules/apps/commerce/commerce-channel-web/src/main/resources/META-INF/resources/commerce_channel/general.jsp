@@ -265,6 +265,14 @@ Map<String, String> contextParams = HashMapBuilder.<String, String>put(
 					props='<%=
 						HashMapBuilder.<String, Object>put(
 							"baseResourceURL", baseResourceURL
+						).put(
+							"permissions", HashMapBuilder.<String, Object>put(
+								"canInstallFreeApps", PortletPermissionUtil.contains(themeDisplay.getPermissionChecker(), MarketplacePortletKeys.PAYMENT_METHODS, MarketplaceActionKeys.INSTALL_FREE_BUNDLED_APPS)
+							).put(
+								"canPurchaseAndInstallPaidApps", PortletPermissionUtil.contains(themeDisplay.getPermissionChecker(), MarketplacePortletKeys.PAYMENT_METHODS, MarketplaceActionKeys.PURCHASE_AND_INSTALL_PAID_APPS)
+							).put(
+								"canViewApps", PortletPermissionUtil.contains(themeDisplay.getPermissionChecker(), MarketplacePortletKeys.PAYMENT_METHODS, MarketplaceActionKeys.VIEW_APPS)
+							).build()
 						).build()
 					%>'
 				/>

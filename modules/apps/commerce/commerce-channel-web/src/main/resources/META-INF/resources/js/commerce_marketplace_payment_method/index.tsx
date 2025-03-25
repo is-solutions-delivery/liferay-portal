@@ -6,6 +6,7 @@
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import {
+	AppsPermissions,
 	Marketplace,
 	MarketplaceContext,
 	MarketplaceContextProvider,
@@ -16,11 +17,20 @@ import React from 'react';
 
 import MarketplaceViews from './MarketplaceViews';
 
-const CommerceChannelAddPaymentMethod = () => (
+type CommerceChannelAddPaymentMethodProps = {
+	permissions: AppsPermissions;
+};
+
+const CommerceChannelAddPaymentMethod = ({
+	permissions,
+}: CommerceChannelAddPaymentMethodProps) => (
 	<MarketplaceContextProvider
 		baseResourceURL={MarketplaceRest.getBaseResourceURL()}
 		className="d-flex justify-content-end my-2 px-2 py-2"
-		settings={{productFilter: 'payments'}}
+		permissions={permissions}
+		settings={{
+			productFilter: 'payments',
+		}}
 	>
 		<MarketplaceContext.Consumer>
 			{({view}) => (
@@ -32,7 +42,10 @@ const CommerceChannelAddPaymentMethod = () => (
 						view === MarketplaceView.PURCHASE ? 'lg' : 'full-screen'
 					}
 					trigger={
-						<ClayButton size="sm">
+						<ClayButton
+							disabled={!permissions.canViewApps}
+							size="sm"
+						>
 							<ClayIcon className="mr-2" symbol="marketplace" />
 
 							{Liferay.Language.get('add')}

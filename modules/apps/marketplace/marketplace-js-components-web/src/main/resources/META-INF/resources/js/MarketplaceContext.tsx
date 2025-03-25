@@ -15,7 +15,12 @@ import React, {
 
 import {MarketplaceRest} from './core/MarketplaceRest';
 import {useMarketplaceConfiguration} from './hooks/useMarketplaceConfiguration';
-import {APIResponse, MarketplaceConfiguration, Product} from './types';
+import {
+	APIResponse,
+	AppsPermissions,
+	MarketplaceConfiguration,
+	Product,
+} from './types';
 
 import './style/index.scss';
 
@@ -37,6 +42,7 @@ type State = {
 	marketplaceConfiguration: ReturnType<typeof useMarketplaceConfiguration>;
 	marketplaceRest: MarketplaceRest;
 	modal: ReturnType<typeof useModal>;
+	permissions: AppsPermissions;
 	product: Product;
 	productListView: {
 		loading: boolean;
@@ -62,6 +68,7 @@ export type MarketplaceContextProviderProps = {
 	children: ReactNode;
 	className?: string;
 	defaultView?: MarketplaceView;
+	permissions: AppsPermissions;
 	settings: {
 		productFilter?: 'all' | 'fragments' | 'payments';
 		productFilterCustom?: string;
@@ -92,6 +99,7 @@ export function MarketplaceContextProvider({
 	children,
 	defaultView = MarketplaceView.PRODUCTS,
 	className,
+	permissions,
 	settings,
 }: MarketplaceContextProviderProps) {
 	const [loading, setLoading] = useState(false);
@@ -169,6 +177,7 @@ export function MarketplaceContextProvider({
 					marketplaceConfiguration,
 					marketplaceRest,
 					modal,
+					permissions,
 					product: product || ({} as Product),
 					productListView: {
 						loading,
