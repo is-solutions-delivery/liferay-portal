@@ -91,9 +91,7 @@ public class RolesAdminPortletTest {
 	}
 
 	@Test
-	public void testEditRoleAssignmentsForUserGroups()
-		throws Exception {
-
+	public void testEditRoleAssignmentsForUserGroups() throws Exception {
 		Groups_RolesTable groups_rolesTable = Groups_RolesTable.INSTANCE;
 
 		Column<Groups_RolesTable, Long> groupIdColumn =
