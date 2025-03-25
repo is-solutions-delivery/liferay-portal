@@ -100,9 +100,6 @@ public class StatusStrutsActionTest {
 	private void _testExecute(User user, String expectedContent)
 		throws Exception {
 
-		MockHttpServletResponse mockHttpServletResponse =
-			new MockHttpServletResponse();
-
 		MockHttpServletRequest mockHttpServletRequest =
 			ContentLayoutTestUtil.getMockHttpServletRequest(
 				_companyLocalService.getCompany(TestPropsValues.getCompanyId()),
@@ -115,9 +112,11 @@ public class StatusStrutsActionTest {
 
 		themeDisplay.setPermissionChecker(
 			PermissionCheckerFactoryUtil.create(user));
+		themeDisplay.setRequest(mockHttpServletRequest);
 		themeDisplay.setUser(user);
 
-		themeDisplay.setRequest(mockHttpServletRequest);
+		MockHttpServletResponse mockHttpServletResponse =
+			new MockHttpServletResponse();
 
 		_processEvents(mockHttpServletRequest, mockHttpServletResponse, user);
 

@@ -70,7 +70,7 @@ public class StatusStrutsAction implements StrutsAction {
 
 		SessionErrors.clear(httpServletRequest);
 
-		Document document;
+		Document document = null;
 
 		String originalPrincipalName = PrincipalThreadLocal.getName();
 
