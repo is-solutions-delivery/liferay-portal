@@ -53,7 +53,7 @@ public class DefaultStyleBookEntryUtilTest {
 
 		LayoutSet layoutSet = _group.getPublicLayoutSet();
 
-		layoutSet.setThemeId(_CLASSIC_THEME_ID);
+		layoutSet.setThemeId(_THEME_ID_CLASSIC);
 
 		_layout = LayoutTestUtil.addTypeContentLayout(_group);
 	}
@@ -139,7 +139,7 @@ public class DefaultStyleBookEntryUtilTest {
 
 		_layout = _layoutLocalService.updateLookAndFeel(
 			_group.getGroupId(), _layout.isPrivateLayout(),
-			_layout.getLayoutId(), _DIALECT_THEME_ID, "01", StringPool.BLANK);
+			_layout.getLayoutId(), _THEME_ID_DIALECT, "01", StringPool.BLANK);
 
 		Assert.assertNull(
 			DefaultStyleBookEntryUtil.getDefaultStyleBookEntry(_layout));
@@ -148,7 +148,7 @@ public class DefaultStyleBookEntryUtilTest {
 			_styleBookEntryLocalService.addStyleBookEntry(
 				RandomTestUtil.randomString(), TestPropsValues.getUserId(),
 				_group.getGroupId(), true, null, RandomTestUtil.randomString(),
-				null, _DIALECT_THEME_ID, null);
+				null, _THEME_ID_DIALECT, null);
 
 		StyleBookEntry defaultStyleBookEntry =
 			DefaultStyleBookEntryUtil.getDefaultStyleBookEntry(_layout);
@@ -275,7 +275,7 @@ public class DefaultStyleBookEntryUtilTest {
 		StyleBookEntry styleBookEntry =
 			_styleBookEntryLocalService.addStyleBookEntry(
 				RandomTestUtil.randomString(), TestPropsValues.getUserId(),
-				_group.getGroupId(), false, null, name, null, _CLASSIC_THEME_ID,
+				_group.getGroupId(), false, null, name, null, _THEME_ID_CLASSIC,
 				null);
 
 		Assert.assertEquals(
@@ -290,7 +290,7 @@ public class DefaultStyleBookEntryUtilTest {
 		return _styleBookEntryLocalService.addStyleBookEntry(
 			RandomTestUtil.randomString(), TestPropsValues.getUserId(),
 			_group.getGroupId(), defaultStyleBookEntry, null,
-			RandomTestUtil.randomString(), null, _CLASSIC_THEME_ID, null);
+			RandomTestUtil.randomString(), null, _THEME_ID_CLASSIC, null);
 	}
 
 	private Layout _getMasterLayoutBasedLayout() throws Exception {
@@ -326,9 +326,9 @@ public class DefaultStyleBookEntryUtilTest {
 				masterLayoutBasedLayout, null, null));
 	}
 
-	private static final String _CLASSIC_THEME_ID = "classic_WAR_classictheme";
+	private static final String _THEME_ID_CLASSIC = "classic_WAR_classictheme";
 
-	private static final String _DIALECT_THEME_ID = "dialect_WAR_dialecttheme";
+	private static final String _THEME_ID_DIALECT = "dialect_WAR_dialecttheme";
 
 	private Group _group;
 	private Layout _layout;

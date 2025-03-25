@@ -148,9 +148,9 @@ public class ChangeMasterLayoutMVCActionCommand
 		return false;
 	}
 
-	private String _getStyleBookEntryId(Layout updatedLayout) {
+	private String _getStyleBookEntryId(Layout layout) {
 		StyleBookEntry styleBookEntry =
-			DefaultStyleBookEntryUtil.getDefaultStyleBookEntry(updatedLayout);
+			DefaultStyleBookEntryUtil.getDefaultStyleBookEntry(layout);
 
 		if (styleBookEntry != null) {
 			return String.valueOf(styleBookEntry.getStyleBookEntryId());
