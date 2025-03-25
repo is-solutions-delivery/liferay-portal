@@ -395,6 +395,10 @@ nav {
 		}
 
 		.account-dropdown-nav {
+			.account-dropdown-content {
+				text-align-last: start;
+			}
+
 			.sign-in {
 				border-radius: var(--border-radius);
 
@@ -559,7 +563,7 @@ nav {
 		}
 
 		.liferay-logo {
-			&:hover, .logo-text:hover {
+			.logo-text:hover, &:hover {
 				text-decoration: none;
 			}
 		}
