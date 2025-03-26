@@ -17,12 +17,12 @@ import {Section} from '../../../../../../components/Section/Section';
 import {createApp, createImage, updateApp} from '../../../../../../utils/api';
 import {submitBase64EncodedFile} from '../../../../../../utils/util';
 import {useAppContext} from '../AppContext/AppManageState';
-import {TYPES} from '../AppContext/actionTypes';
+import {ActionTypes} from '../AppContext/actionTypes';
 
 import './DefineAppProfilePage.scss';
 import MultiSelect from '../../../../../../components/MultiSelect/MultiSelect';
 import UploadLogo from '../../../../../../components/UploadLogo/UploadLogo';
-import {PRODUCT_SPECIFICATION_KEY} from '../../../../../../enums/Product';
+import {ProductSpecificationKey} from '../../../../../../enums/Product';
 import i18n from '../../../../../../i18n';
 import HeadlessCommerceAdminCatalogImpl from '../../../../../../services/rest/HeadlessCommerceAdminCatalog';
 import {getRandomID} from '../../../../../../utils/string';
@@ -82,7 +82,7 @@ export function DefineAppProfilePage({
 			payload: {
 				file: newUploadedFile,
 			},
-			type: TYPES.UPDATE_APP_LOGO,
+			type: ActionTypes.UPDATE_APP_LOGO,
 		});
 	};
 
@@ -91,7 +91,7 @@ export function DefineAppProfilePage({
 			payload: {
 				file: undefined,
 			},
-			type: TYPES.UPDATE_APP_LOGO,
+			type: ActionTypes.UPDATE_APP_LOGO,
 		});
 	};
 
@@ -124,7 +124,7 @@ export function DefineAppProfilePage({
 				productSpecifications: [
 					{
 						specificationKey:
-							PRODUCT_SPECIFICATION_KEY.APP_DEVELOPER_NAME,
+							ProductSpecificationKey.APP_DEVELOPER_NAME,
 						value: {en_US: catalog?.name},
 					},
 				],
@@ -142,7 +142,7 @@ export function DefineAppProfilePage({
 						virtualSettingId: product.productVirtualSettings.id,
 					},
 				},
-				type: TYPES.SUBMIT_APP_PROFILE,
+				type: ActionTypes.SUBMIT_APP_PROFILE,
 			});
 		}
 
@@ -217,7 +217,7 @@ export function DefineAppProfilePage({
 									payload: {
 										value: target.value,
 									},
-									type: TYPES.UPDATE_APP_NAME,
+									type: ActionTypes.UPDATE_APP_NAME,
 								})
 							}
 							placeholder="Enter app name"
@@ -256,7 +256,7 @@ export function DefineAppProfilePage({
 									payload: {
 										value: target.value,
 									},
-									type: TYPES.UPDATE_APP_DESCRIPTION,
+									type: ActionTypes.UPDATE_APP_DESCRIPTION,
 								})
 							}
 							placeholder="Enter app description"
@@ -287,7 +287,7 @@ export function DefineAppProfilePage({
 									payload: {
 										value,
 									},
-									type: TYPES.UPDATE_APP_CATEGORIES,
+									type: ActionTypes.UPDATE_APP_CATEGORIES,
 								})
 							}
 							placeholder={i18n.translate('select-categories')}
@@ -323,7 +323,7 @@ export function DefineAppProfilePage({
 									payload: {
 										value,
 									},
-									type: TYPES.UPDATE_APP_TAGS,
+									type: ActionTypes.UPDATE_APP_TAGS,
 								})
 							}
 							placeholder={i18n.translate('select-tags')}

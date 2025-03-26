@@ -13,8 +13,8 @@ import OrderStatus from '../../../components/OrderStatus';
 import Table from '../../../components/Table/Table';
 import {Analytics} from '../../../core/Analytics';
 import MarketplaceDeliveryOrder from '../../../entity/DeliveryOrder';
-import {ORDER_TYPES, ORDER_TYPES_LABELS} from '../../../enums/Order';
-import {PRODUCT_IMAGE_FALLBACK_CATEGORIES} from '../../../enums/Product';
+import {ORDER_TYPES_LABELS, OrderTypes} from '../../../enums/Order';
+import {ProductImageFallbackCategories} from '../../../enums/Product';
 import i18n from '../../../i18n';
 import {getProductImageFallback} from '../../../utils/productUtils';
 
@@ -51,7 +51,7 @@ const AppsTable: React.FC<AppsTableProps> = ({items}) => {
 								src={
 									thumbnail ||
 									getProductImageFallback(
-										PRODUCT_IMAGE_FALLBACK_CATEGORIES.PRODUCT_IMAGE
+										ProductImageFallbackCategories.PRODUCT_IMAGE
 									)
 								}
 							/>
@@ -91,7 +91,7 @@ const AppsTable: React.FC<AppsTableProps> = ({items}) => {
 					key: 'orderTypeExternalReferenceCode',
 					render: (orderTypeExternalReferenceCode) => {
 						return ORDER_TYPES_LABELS[
-							orderTypeExternalReferenceCode as ORDER_TYPES
+							orderTypeExternalReferenceCode as OrderTypes
 						];
 					},
 					title: i18n.translate('app-type'),

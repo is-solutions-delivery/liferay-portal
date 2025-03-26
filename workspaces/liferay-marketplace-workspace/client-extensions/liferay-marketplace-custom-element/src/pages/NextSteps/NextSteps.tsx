@@ -9,7 +9,7 @@ import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {AccountAndAppCard} from '../../components/Card/AccountAndAppCard';
 import {Header} from '../../components/Header/Header';
 import {NewAppPageFooterButtons} from '../../components/NewAppPageFooterButtons/NewAppPageFooterButtons';
-import {ORDER_TYPES} from '../../enums/Order';
+import {OrderTypes} from '../../enums/Order';
 import withProviders from '../../hoc/withProviders';
 import i18n from '../../i18n';
 import {Liferay} from '../../liferay/liferay';
@@ -56,7 +56,7 @@ export function NextSteps() {
 	const paymentStatus = cart?.paymentStatusLabel;
 	const orderTypeExternalReferenceCode = cart?.orderTypeExternalReferenceCode;
 
-	const isCloudApp = orderTypeExternalReferenceCode === ORDER_TYPES.CLOUDAPP;
+	const isCloudApp = orderTypeExternalReferenceCode === OrderTypes.CLOUDAPP;
 
 	const {isPaidApp} = getProductPriceModel(product);
 
