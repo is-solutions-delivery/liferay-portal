@@ -14,8 +14,6 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
-import com.liferay.portal.kernel.security.auth.PrincipalException;
-import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.permission.PortletPermissionUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PrefsPropsUtil;
@@ -34,8 +32,8 @@ import org.osgi.service.component.annotations.Reference;
  */
 @Component(
 	property = {
-		"javax.portlet.name=" + CPPortletKeys.COMMERCE_CHANNELS,
 		"javax.portlet.name=" + ConfigurationAdminPortletKeys.INSTANCE_SETTINGS,
+		"javax.portlet.name=" + CPPortletKeys.COMMERCE_CHANNELS,
 		"mvc.command.name=/marketplace_settings/get_configuration"
 	},
 	service = MVCResourceCommand.class
@@ -50,10 +48,9 @@ public class GetConfigurationMVCResourceCommand extends BaseMVCResourceCommand {
 		ThemeDisplay themeDisplay = (ThemeDisplay)resourceRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
-		PermissionChecker permissionChecker =
-			themeDisplay.getPermissionChecker();
-
-		PortletPermissionUtil.check(permissionChecker, MarketplacePortletKeys.GENERAL, MarketplaceActionKeys.GET_AUTHORIZATION);
+		PortletPermissionUtil.check(
+			themeDisplay.getPermissionChecker(), MarketplacePortletKeys.GENERAL,
+			MarketplaceActionKeys.GET_AUTHORIZATION);
 
 		boolean authorized = Validator.isNotNull(
 			PrefsPropsUtil.getString(
