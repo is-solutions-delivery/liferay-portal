@@ -42,10 +42,7 @@ const CommerceChannelAddPaymentMethod = ({
 						view === MarketplaceView.PURCHASE ? 'lg' : 'full-screen'
 					}
 					trigger={
-						<ClayButton
-							disabled={!permissions.canViewApps}
-							size="sm"
-						>
+						<ClayButton size="sm">
 							<ClayIcon className="mr-2" symbol="marketplace" />
 
 							{Liferay.Language.get('add')}

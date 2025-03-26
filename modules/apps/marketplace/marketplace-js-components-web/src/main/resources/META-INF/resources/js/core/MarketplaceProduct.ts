@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {CloudUserProject, Product} from '../types';
+import {AppsPermissions, CloudUserProject, Product} from '../types';
 
 export const Specifications = {
 	CPU: 'cpu',
@@ -164,6 +164,18 @@ export class MarketplaceProduct {
 		}
 
 		return true;
+	}
+
+	public hasPermissionToInstall(permissions: AppsPermissions) {
+		if (permissions.canPurchaseAndInstallPaidApps) {
+			return true;
+		}
+
+		if (this.getPriceModel() === 'free') {
+			return permissions.canInstallFreeApps;
+		}
+
+		return false;
 	}
 
 	public getPlatformOfferings() {

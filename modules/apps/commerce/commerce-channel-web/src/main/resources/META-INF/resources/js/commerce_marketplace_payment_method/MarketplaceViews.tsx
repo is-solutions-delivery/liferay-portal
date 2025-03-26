@@ -38,18 +38,6 @@ export default function MarketplaceViews() {
 		[product]
 	);
 
-	const hasPermissionToInstallApp = (product: MarketplaceProduct) => {
-		if (permissions.canPurchaseAndInstallPaidApps) {
-			return true;
-		}
-
-		if (product.getPriceModel() === 'free') {
-			return permissions.canInstallFreeApps;
-		}
-
-		return false;
-	};
-
 	const isProductInstalled = useCallback(
 		(product: Product) =>
 			placedOrders.some((placedOrder) =>
@@ -77,6 +65,19 @@ export default function MarketplaceViews() {
 			),
 		[placedOrders]
 	);
+
+	const getButtonConfiguration = (product: Product) => {
+		return isProductInstalled(product)
+			? {
+					disabled: true,
+					title: Liferay.Language.get('installed'),
+				}
+			: {
+					disabled: !new MarketplaceProduct(
+						product
+					).hasPermissionToInstall(permissions),
+				};
+	};
 
 	useEffect(() => {
 		marketplaceRest
@@ -153,18 +154,7 @@ export default function MarketplaceViews() {
 				>
 					{(product) => (
 						<ClayButton
-							{...(isProductInstalled(product)
-								? {
-										disabled: true,
-										title: Liferay.Language.get(
-											'installed'
-										),
-									}
-								: {
-										disabled: !hasPermissionToInstallApp(
-											new MarketplaceProduct(product)
-										),
-									})}
+							{...getButtonConfiguration(product)}
 							className="w-100"
 							onClick={() => {
 								setProduct(product);
@@ -184,18 +174,7 @@ export default function MarketplaceViews() {
 					onClickBack={() => setView(MarketplaceView.PRODUCTS)}
 					primaryButton={
 						<ClayButton
-							{...(isProductInstalled(product)
-								? {
-										disabled: true,
-										title: Liferay.Language.get(
-											'installed'
-										),
-									}
-								: {
-										disabled: !hasPermissionToInstallApp(
-											new MarketplaceProduct(product)
-										),
-									})}
+							{...getButtonConfiguration(product)}
 							className="ml-auto mt-3 rounded"
 							onClick={() => {
 								setState(States.CONFIRM_INSTALLATION);
