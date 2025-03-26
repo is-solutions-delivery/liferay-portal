@@ -167,12 +167,12 @@ export class MarketplaceProduct {
 	}
 
 	public hasPermissionToInstall(permissions: AppsPermissions) {
-		if (permissions.canPurchaseAndInstallPaidApps) {
+		if (permissions.purchaseAndInstallPaidApps) {
 			return true;
 		}
 
 		if (this.getPriceModel() === 'free') {
-			return permissions.canInstallFreeApps;
+			return permissions.installFreeApps;
 		}
 
 		return false;

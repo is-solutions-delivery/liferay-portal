@@ -268,9 +268,9 @@ Map<String, String> contextParams = HashMapBuilder.<String, String>put(
 						).put(
 							"permissions",
 							HashMapBuilder.<String, Object>put(
-								"canInstallFreeApps", PortletPermissionUtil.contains(themeDisplay.getPermissionChecker(), MarketplacePortletKeys.PAYMENT_METHODS, MarketplaceActionKeys.INSTALL_FREE_BUNDLED_APPS)
+								"installFreeApps", PortletPermissionUtil.contains(themeDisplay.getPermissionChecker(), MarketplacePortletKeys.PAYMENT_METHODS, MarketplaceActionKeys.INSTALL_FREE_BUNDLED_APPS)
 							).put(
-								"canPurchaseAndInstallPaidApps", PortletPermissionUtil.contains(themeDisplay.getPermissionChecker(), MarketplacePortletKeys.PAYMENT_METHODS, MarketplaceActionKeys.PURCHASE_AND_INSTALL_PAID_APPS)
+								"purchaseAndInstallPaidApps", PortletPermissionUtil.contains(themeDisplay.getPermissionChecker(), MarketplacePortletKeys.PAYMENT_METHODS, MarketplaceActionKeys.PURCHASE_AND_INSTALL_PAID_APPS)
 							).build()
 						).build()
 					%>'
