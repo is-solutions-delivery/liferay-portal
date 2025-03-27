@@ -53,24 +53,20 @@ public class LanguagePortalInstanceLifecycleListener
 		}
 
 		_sapEntryLocalService.addSAPEntry(
-			_userLocalService.getGuestUserId(companyId), _SAP_ENTRY_SIGNATURES,
+			_userLocalService.getGuestUserId(companyId),
+			StringBundler.concat(
+				"com.liferay.portal.language.rest.internal.resource.v1_0.",
+				"MessageResourceImpl#getMessages", StringPool.NEW_LINE,
+				"com.liferay.portal.language.rest.internal.resource.v1_0.",
+				"MessageResourceImpl#postMessagesExportPage"),
 			true, true, _SAP_ENTRY_NAME,
 			ResourceBundleUtil.getLocalizationMap(
 				ResourceBundleLoaderUtil.getPortalResourceBundleLoader(),
-				_ACCESS_POLICY_ENTRY_LANGUAGE_ID),
+				"service-access-policy-entry-default-language-title"),
 			new ServiceContext());
 	}
 
-	private static final String _ACCESS_POLICY_ENTRY_LANGUAGE_ID =
-		"service-access-policy-entry-default-language-title";
-
 	private static final String _SAP_ENTRY_NAME = "LANGUAGE_MESSAGE";
-
-	private static final String _SAP_ENTRY_SIGNATURES = StringBundler.concat(
-		"com.liferay.portal.language.rest.internal.resource.v1_0.",
-		"MessageResourceImpl#getMessages", StringPool.NEW_LINE,
-		"com.liferay.portal.language.rest.internal.resource.v1_0.",
-		"MessageResourceImpl#postMessagesExportPage");
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		LanguagePortalInstanceLifecycleListener.class);
