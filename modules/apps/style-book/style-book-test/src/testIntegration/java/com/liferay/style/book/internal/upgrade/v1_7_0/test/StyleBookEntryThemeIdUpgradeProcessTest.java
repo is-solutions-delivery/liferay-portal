@@ -53,7 +53,7 @@ public class StyleBookEntryThemeIdUpgradeProcessTest {
 
 	@FeatureFlags("LPD-30204")
 	@Test
-	public void testDoUpgrade() throws Exception {
+	public void testUpgrade() throws Exception {
 		StyleBookEntry styleBookEntry =
 			_styleBookEntryLocalService.addStyleBookEntry(
 				RandomTestUtil.randomString(), TestPropsValues.getUserId(),
