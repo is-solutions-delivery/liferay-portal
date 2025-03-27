@@ -67,16 +67,21 @@ export default function MarketplaceViews() {
 	);
 
 	const getButtonConfiguration = (product: Product) => {
-		return isProductInstalled(product)
-			? {
-					disabled: true,
-					title: Liferay.Language.get('installed'),
-				}
-			: {
-					disabled: !new MarketplaceProduct(
-						product
-					).hasPermissionToInstall(permissions),
-				};
+		if (isProductInstalled(product)) {
+			return {
+				disabled: true,
+				title: Liferay.Language.get('installed'),
+			};
+		}
+
+		const marketplaceProduct = new MarketplaceProduct(product);
+
+		if (!marketplaceProduct.hasPermissionToInstall(permissions)) {
+			return {
+				disabled: true,
+				title: Liferay.Language.get('action-not-allowed'),
+			};
+		}
 	};
 
 	useEffect(() => {

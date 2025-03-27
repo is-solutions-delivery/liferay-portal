@@ -96,9 +96,7 @@ export class MarketplaceProduct {
 	}
 
 	public getPrice() {
-		const priceModel = this.getPriceModel();
-
-		if (priceModel.toLowerCase() === PriceModel.FREE.toLowerCase()) {
+		if (this.isPriceModelFree()) {
 			return PriceModel.FREE;
 		}
 
@@ -171,7 +169,7 @@ export class MarketplaceProduct {
 			return true;
 		}
 
-		if (this.getPriceModel() === 'free') {
+		if (this.isPriceModelFree()) {
 			return permissions.installFreeApps;
 		}
 
@@ -229,5 +227,11 @@ export class MarketplaceProduct {
 		);
 
 		return `${cpuSpecification}CPUs, ${ramSpecification}GB RAM`;
+	}
+
+	private isPriceModelFree() {
+		return (
+			this.getPriceModel().toLowerCase() === PriceModel.FREE.toLowerCase()
+		);
 	}
 }
