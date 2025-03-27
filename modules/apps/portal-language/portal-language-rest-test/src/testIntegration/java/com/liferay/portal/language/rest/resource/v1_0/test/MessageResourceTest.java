@@ -138,11 +138,15 @@ public class MessageResourceTest extends BaseMessageResourceTestCase {
 	@Test
 	public void testPostMessagesExportPage() throws Exception {
 		Message message1 = _createMessage();
-		Message message2 = _createMessage();
-		Message message3 = _createMessage();
 
 		_postMessage(message1);
+
+		Message message2 = _createMessage();
+
 		_postMessage(message2);
+
+		Message message3 = _createMessage();
+
 		_postMessage(message3);
 
 		Page<Message> messagesPage = messageResource.postMessagesExportPage(
