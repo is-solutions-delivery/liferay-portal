@@ -78,27 +78,24 @@ public class JournalUserNotificationTest extends BaseUserNotificationTestCase {
 			ResourceConstants.SCOPE_COMPANY,
 			String.valueOf(group.getCompanyId()), ActionKeys.SUBSCRIBE);
 
-		_roleLocalService.addUserRole(
-			subscribedUser.getUserId(), role);
+		_roleLocalService.addUserRole(subscribedUser.getUserId(), role);
 
 		JournalFolderLocalServiceUtil.subscribe(
 			subscribedUser.getUserId(), group.getGroupId(),
 			_folder.getFolderId());
 
-		JournalArticle pendingArticle = (JournalArticle)addBaseModel();
+		JournalArticle article = (JournalArticle)addBaseModel();
 
 		_assertJournalArticleNotifications(
-			pendingArticle, 1,
-			UserNotificationDefinition.NOTIFICATION_TYPE_ADD_ENTRY, 0,
-			subscribedUser);
+			article, 1, UserNotificationDefinition.NOTIFICATION_TYPE_ADD_ENTRY,
+			0, subscribedUser);
 
 		_journalArticleLocalService.moveArticleToTrash(
-			user.getUserId(), pendingArticle);
+			user.getUserId(), article);
 
 		_assertJournalArticleNotifications(
-			pendingArticle, 1,
-			UserNotificationDefinition.NOTIFICATION_TYPE_ADD_ENTRY, 0,
-			subscribedUser);
+			article, 1, UserNotificationDefinition.NOTIFICATION_TYPE_ADD_ENTRY,
+			0, subscribedUser);
 
 		_deactivateSingleApproverWorkflow();
 	}
