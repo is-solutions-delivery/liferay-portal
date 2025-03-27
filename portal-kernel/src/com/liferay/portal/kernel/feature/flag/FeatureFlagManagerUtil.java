@@ -6,6 +6,7 @@
 package com.liferay.portal.kernel.feature.flag;
 
 import com.liferay.petra.lang.SafeCloseable;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -28,6 +29,22 @@ import org.osgi.framework.ServiceRegistration;
  * @author Drew Brokke
  */
 public class FeatureFlagManagerUtil {
+
+	public static void checkEnabled(long companyId, String key) {
+		if (!isEnabled(companyId, key)) {
+			throw new UnsupportedOperationException(
+				StringBundler.concat(
+					"Feature flag ", key, " is disabled for company ",
+					companyId));
+		}
+	}
+
+	public static void checkEnabled(String key) {
+		if (!isEnabled(key)) {
+			throw new UnsupportedOperationException(
+				"Feature flag " + key + " is disabled");
+		}
+	}
 
 	public static String getJSON(long companyId) {
 		return _withFeatureFlagManager(
