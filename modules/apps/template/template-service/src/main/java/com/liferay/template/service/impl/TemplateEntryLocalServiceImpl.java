@@ -66,7 +66,7 @@ public class TemplateEntryLocalServiceImpl
 		TemplateEntry templateEntry =
 			templateEntryPersistence.fetchByPrimaryKey(templateEntryId);
 
-		return templateEntryLocalService.deleteTemplateEntry(templateEntry);
+		return deleteTemplateEntry(templateEntry);
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class TemplateEntryLocalServiceImpl
 		TemplateEntry templateEntry = templateEntryPersistence.fetchByERC_G(
 			externalReferenceCode, groupId);
 
-		return templateEntryLocalService.deleteTemplateEntry(templateEntry);
+		return deleteTemplateEntry(templateEntry);
 	}
 
 	@Override
