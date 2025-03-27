@@ -71,15 +71,15 @@ public class JournalUserNotificationTest extends BaseUserNotificationTestCase {
 
 		User subscribedUser = UserTestUtil.addUser();
 
-		Role subscriberRole = RoleTestUtil.addRole(RoleConstants.TYPE_REGULAR);
+		Role role = RoleTestUtil.addRole(RoleConstants.TYPE_REGULAR);
 
 		RoleTestUtil.addResourcePermission(
-			subscriberRole, JournalFolder.class.getName(),
+			role, JournalFolder.class.getName(),
 			ResourceConstants.SCOPE_COMPANY,
 			String.valueOf(group.getCompanyId()), ActionKeys.SUBSCRIBE);
 
 		_roleLocalService.addUserRole(
-			subscribedUser.getUserId(), subscriberRole);
+			subscribedUser.getUserId(), role);
 
 		JournalFolderLocalServiceUtil.subscribe(
 			subscribedUser.getUserId(), group.getGroupId(),
