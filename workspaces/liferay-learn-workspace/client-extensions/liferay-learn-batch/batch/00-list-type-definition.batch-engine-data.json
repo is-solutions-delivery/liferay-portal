@@ -11,181 +11,317 @@
 	},
 	"items": [
 		{
-			"externalReferenceCode": "P2S3_ACCESS_TYPE",
+			"externalReferenceCode": "T4T14_QUIZ_QUESTION_TYPE",
 			"listTypeEntries": [
-				{
-					"externalReferenceCode": "ANYONE_SIGNED_IN",
-					"key": "anyoneSignedIn",
-					"name": "Anyone Signed In"
+			  {
+				"externalReferenceCode": "T4T14_QUIZ_QUESTION_TYPE_MULTIPLE",
+				"key": "selectMultipleChoice",
+				"name": "Select Multiple Choice",
+				"name_i18n": {
+				  "en-US": "Select Multiple Choice"
 				},
-				{
-					"externalReferenceCode": "ENROLLED_ONLY",
-					"key": "enrolledOnly",
-					"name": "Enrolled Only"
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": " T4T14_QUIZ_QUESTION_TYPE_SINGLE",
+				"key": "selectSingleChoice",
+				"name": "Select Single Choice",
+				"name_i18n": {
+				  "en-US": "Select Single Choice"
 				},
-				{
-					"externalReferenceCode": "GUEST",
-					"key": "guest",
-					"name": "Guest"
-				}
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "T4T14_QUIZ_QUESTION_TYPE_TEXT",
+				"key": "freeText",
+				"name": "Free Text",
+				"name_i18n": {
+				  "en-US": "Free Text"
+				},
+				"type": ""
+			  }
 			],
-			"name": "P2S3 Access Type"
+			"name": "Quiz Question Type",
+			"name_i18n": {
+			  "en-US": "Quiz Question Type"
+			},
+			"system": false
 		},
 		{
-			"externalReferenceCode": "P2S3_EXPERTISE_LEVELS",
+			"externalReferenceCode": "T4T14_ACCESS_TYPE",
 			"listTypeEntries": [
-				{
-					"externalReferenceCode": "BEGINNER",
-					"key": "beginner",
-					"name": "Beginner"
+			  {
+				"externalReferenceCode": "T4T14_ACCESS_TYPE_GUEST",
+				"key": "guest",
+				"name": "Guest",
+				"name_i18n": {
+				  "en-US": "Guest"
 				},
-				{
-					"externalReferenceCode": "EXPERT",
-					"key": "expert",
-					"name": "Expert"
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "T4T14_ACCESS_TYPE_ANYONE_SIGNED_IN",
+				"key": "anyoneSignedIn",
+				"name": "Anyone Signed In",
+				"name_i18n": {
+				  "en-US": "Anyone Signed In"
 				},
-				{
-					"externalReferenceCode": "INTERMEDIATE",
-					"key": "intermediate",
-					"name": "Intermediate"
-				}
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "T4T14_ACCESS_TYPE_ENROLLED_ONLY",
+				"key": "enrolledOnly",
+				"name": "Enrolled Only",
+				"name_i18n": {
+				  "en-US": "Enrolled Only"
+				},
+				"type": ""
+			  }
 			],
-			"name": "P2S3 Expertise Levels"
+			"name": "Access Type",
+			"name_i18n": {
+			  "en-US": "Access Type"
+			},
+			"system": false
 		},
 		{
-			"externalReferenceCode": "P2S3_PERSONAS",
+			"externalReferenceCode": "T4T14_PERSONAS",
 			"listTypeEntries": [
-				{
-					"externalReferenceCode": "ADMINISTRATOR",
-					"key": "administrator",
-					"name": "Administrator"
+			  {
+				"externalReferenceCode": "T4T14_PERSONAS_PRACTITIONER",
+				"key": "practitioner",
+				"name": "Practitioner",
+				"name_i18n": {
+				  "en-US": "Practitioner"
 				},
-				{
-					"externalReferenceCode": "ARCHITECT",
-					"key": "architect",
-					"name": "Architect"
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "T4T14_PERSONAS_SALES",
+				"key": "sales",
+				"name": "Sales",
+				"name_i18n": {
+				  "en-US": "Sales"
 				},
-				{
-					"externalReferenceCode": "BUSINESS_ANALYST",
-					"key": "businessAnalyst",
-					"name": "Business Analyst"
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "T4T14_PERSONAS_DEVELOPER",
+				"key": "developer",
+				"name": "Developer",
+				"name_i18n": {
+				  "en-US": "Developer"
 				},
-				{
-					"externalReferenceCode": "CLOUD_ARCHITECT",
-					"key": "cloudArchitect",
-					"name": "Cloud Architect"
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "T4T14_PERSONAS_ARCHITECT",
+				"key": "architect",
+				"name": "Architect",
+				"name_i18n": {
+				  "en-US": "Architect"
 				},
-				{
-					"externalReferenceCode": "DEVELOPER",
-					"key": "developer",
-					"name": "Developer"
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "T4T14_PERSONAS_CLOUD_ARCHITECT",
+				"key": "cloudArchitect",
+				"name": "Cloud Architect",
+				"name_i18n": {
+				  "en-US": "Cloud Architect"
 				},
-				{
-					"externalReferenceCode": "INTERNAL_EMPLOYEE",
-					"key": "internalEmployee",
-					"name": "Internal Employee"
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "T4T14_PERSONAS_ADMINISTRATOR",
+				"key": "administrator",
+				"name": "Administrator",
+				"name_i18n": {
+				  "en-US": "Administrator"
 				},
-				{
-					"externalReferenceCode": "PARTNER",
-					"key": "partner",
-					"name": "Partner"
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "T4T14_PERSONAS_INTERNAL_EMPLOYEE",
+				"key": "internalEmployee",
+				"name": "Internal Employee",
+				"name_i18n": {
+				  "en-US": "Internal Employee"
 				},
-				{
-					"externalReferenceCode": "PRACTITIONER",
-					"key": "practitioner",
-					"name": "Practitioner"
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "T4T14_PERSONAS_PARTNER",
+				"key": "partner",
+				"name": "Partner",
+				"name_i18n": {
+				  "en-US": "Partner"
 				},
-				{
-					"externalReferenceCode": "SALES",
-					"key": "sales",
-					"name": "Sales"
-				}
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "BUSINESS_ANALYST",
+				"key": "businessAnalyst",
+				"name": "Business Analyst",
+				"name_i18n": {
+				  "en-US": "Business Analyst"
+				},
+				"type": ""
+			  }
 			],
-			"name": "P2S3 Personas"
+			"name": "Personas ",
+			"name_i18n": {
+			  "en-US": "Personas "
+			},
+			"system": false
 		},
 		{
-			"externalReferenceCode": "P2S3_QUIZ_QUESTION_TYPE",
+			"externalReferenceCode": "EXPERTISE_LEVELS",
 			"listTypeEntries": [
-				{
-					"externalReferenceCode": "FREE_TEXT",
-					"key": "freeText",
-					"name": "Free Text"
+			  {
+				"externalReferenceCode": "T4T14_EXPERTISE_LEVELS_BEGINNER",
+				"key": "beginner",
+				"name": "Beginner",
+				"name_i18n": {
+				  "en-US": "Beginner"
 				},
-				{
-					"externalReferenceCode": "SELECT_MULTIPLE_CHOICE",
-					"key": "selectMultipleChoice",
-					"name": "Select Multiple Choice"
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "T4T14_EXPERTISE_LEVELS_INTERMEDIATE",
+				"key": "intermediate",
+				"name": "Intermediate",
+				"name_i18n": {
+				  "en-US": "Intermediate"
 				},
-				{
-					"externalReferenceCode": "SELECT_SINGLE_CHOICE",
-					"key": "selectSingleChoice",
-					"name": "Select Single Choice"
-				}
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "T4T14_EXPERTISE_LEVELS_EXPERT",
+				"key": "expert",
+				"name": "Expert",
+				"name_i18n": {
+				  "en-US": "Expert"
+				},
+				"type": ""
+			  }
 			],
-			"name": "P2S3 Quiz Question Type"
+			"name": "Expertise Levels",
+			"name_i18n": {
+			  "en-US": "Expertise Levels"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "T4T14_STEP_TYPE",
+			"listTypeEntries": [
+			  {
+				"externalReferenceCode": "T4T14_STEP_TYPE_COURSE",
+				"key": "course",
+				"name": "Course",
+				"name_i18n": {
+				  "en-US": "Course"
+				},
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "T4T14_STEP_TYPE_VIDEO",
+				"key": "video",
+				"name": "Video",
+				"name_i18n": {
+				  "en-US": "Video"
+				},
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "T4T14_STEP_TYPE_CONTENT",
+				"key": "content",
+				"name": "Content",
+				"name_i18n": {
+				  "en-US": "Content"
+				},
+				"type": ""
+			  }
+			],
+			"name": "LMS Step Type",
+			"name_i18n": {
+			  "en-US": "LMS Step Type"
+			},
+			"system": false
 		},
 		{
 			"externalReferenceCode": "P2S3_RESULT",
 			"listTypeEntries": [
-				{
-					"externalReferenceCode": "FAIL",
-					"key": "fail",
-					"name": "Fail"
+			  {
+				"externalReferenceCode": "FAIL",
+				"key": "fail",
+				"name": "Fail",
+				"name_i18n": {
+				  "en-US": "Fail"
 				},
-				{
-					"externalReferenceCode": "NA",
-					"key": "na",
-					"name": "NA"
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "NA",
+				"key": "na",
+				"name": "NA",
+				"name_i18n": {
+				  "en-US": "NA"
 				},
-				{
-					"externalReferenceCode": "PASS",
-					"key": "pass",
-					"name": "Pass"
-				}
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "PASS",
+				"key": "pass",
+				"name": "Pass",
+				"name_i18n": {
+				  "en-US": "Pass"
+				},
+				"type": ""
+			  }
 			],
-			"name": "P2S3 Result"
-		},
-		{
-			"externalReferenceCode": "P2S3_STEP_TYPE",
-			"listTypeEntries": [
-				{
-					"externalReferenceCode": "CONTENT",
-					"key": "content",
-					"name": "Content"
-				},
-				{
-					"externalReferenceCode": "COURSE",
-					"key": "course",
-					"name": "Course"
-				},
-				{
-					"externalReferenceCode": "VIDEO",
-					"key": "video",
-					"name": "Video"
-				}
-			],
-			"name": "P2S3 Step Type"
+			"name": "P2S3 Result",
+			"name_i18n": {
+			  "en-US": "P2S3 Result"
+			},
+			"system": false
 		},
 		{
 			"externalReferenceCode": "P2S3_SYNCHRONIZATION_STATUS",
 			"listTypeEntries": [
-				{
-					"externalReferenceCode": "FAILED",
-					"key": "failed",
-					"name": "Failed"
+			  {
+				"externalReferenceCode": "FAILED",
+				"key": "failed",
+				"name": "Failed",
+				"name_i18n": {
+				  "en-US": "Failed"
 				},
-				{
-					"externalReferenceCode": "IN_PROGRESS",
-					"key": "inProgress",
-					"name": "In Progress"
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "IN_PROGRESS",
+				"key": "inProgress",
+				"name": "In Progress",
+				"name_i18n": {
+				  "en-US": "In Progress"
 				},
-				{
-					"externalReferenceCode": "SUCCESSFUL",
-					"key": "successful",
-					"name": "Successful"
-				}
+				"type": ""
+			  },
+			  {
+				"externalReferenceCode": "SUCCESSFUL",
+				"key": "successful",
+				"name": "Successful",
+				"name_i18n": {
+				  "en-US": "Successful"
+				},
+				"type": ""
+			  }
 			],
-			"name": "P2S3 Synchronization Status"
+			"name": "P2S3 Synchronization Status",
+			"name_i18n": {
+			  "en-US": "P2S3 Synchronization Status"
+			},
+			"system": false
 		}
 	]
 }
