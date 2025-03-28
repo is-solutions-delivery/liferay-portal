@@ -68,8 +68,8 @@ export type MarketplaceContextProviderProps = {
 	children: ReactNode;
 	className?: string;
 	defaultView?: MarketplaceView;
-	permissions: AppsPermissions;
 	onCloseModal?: () => void;
+	permissions: AppsPermissions;
 	settings: {
 		productFilter?: 'all' | 'fragments' | 'payments';
 		productFilterCustom?: string;
