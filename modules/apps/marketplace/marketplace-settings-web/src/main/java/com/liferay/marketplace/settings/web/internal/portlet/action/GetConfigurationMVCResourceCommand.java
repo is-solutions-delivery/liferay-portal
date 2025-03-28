@@ -5,7 +5,7 @@
 
 package com.liferay.marketplace.settings.web.internal.portlet.action;
 
-	import com.liferay.configuration.admin.constants.ConfigurationAdminPortletKeys;
+import com.liferay.configuration.admin.constants.ConfigurationAdminPortletKeys;
 import com.liferay.marketplace.constants.CPPortletKeys;
 import com.liferay.marketplace.constants.MarketplaceActionKeys;
 import com.liferay.marketplace.constants.MarketplacePortletKeys;
