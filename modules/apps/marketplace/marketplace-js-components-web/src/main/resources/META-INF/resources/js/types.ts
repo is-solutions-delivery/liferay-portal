@@ -12,6 +12,17 @@ export type APIResponse<T = any> = {
 	totalCount: number;
 };
 
+type Attachment = {
+	customFields: CustomField[];
+	galleryEnabled: boolean;
+	id: number;
+	priority: number;
+	src: string;
+	tags?: string[];
+	title: string;
+	type: number;
+};
+
 export type AppsPermissions = {
 	installFreeApps: boolean;
 	purchaseAndInstallPaidApps: boolean;
@@ -250,6 +261,7 @@ export type Price = {
 };
 
 export type Product = {
+	attachments: Attachment[];
 	catalogId: number;
 	catalogName: string;
 	categories: Category[];
