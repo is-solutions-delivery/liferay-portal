@@ -94,6 +94,7 @@ public class DBPartitionCopyPortalInstanceOperationTest
 					"name=\"testName\"\nsourceCompanyId=L\"",
 					_company.getCompanyId(), "\"\nvirtualHostname=",
 					"\"testVirtualHostname\"\nwebId=\"testWebId\"\n"));
+
 			assertLog(
 				logCapture,
 				"Portal instance with company ID " +
@@ -121,6 +122,7 @@ public class DBPartitionCopyPortalInstanceOperationTest
 					"name=\"testName\"\nsourceCompanyId=L\"",
 					_company.getCompanyId(), "\"\nvirtualHostname=",
 					"\"testVirtualHostname\"\nwebId=\"testWebId\"\n"));
+
 			assertLogException(
 				logCapture, "Feature flag LPD-11342 is disabled");
 		}
