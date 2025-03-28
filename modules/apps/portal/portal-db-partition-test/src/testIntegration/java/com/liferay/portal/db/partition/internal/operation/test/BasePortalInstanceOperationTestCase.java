@@ -92,10 +92,9 @@ public abstract class BasePortalInstanceOperationTestCase
 
 		LogEntry logEntry = logEntries.get(0);
 
-		Assert.assertEquals(
-			expectedMessage,
-			logEntry.getThrowable(
-			).getMessage());
+		Throwable throwable = logEntry.getThrowable();
+
+		Assert.assertEquals(expectedMessage, throwable.getMessage());
 	}
 
 	protected void deployConfiguration(String pid, String content)
