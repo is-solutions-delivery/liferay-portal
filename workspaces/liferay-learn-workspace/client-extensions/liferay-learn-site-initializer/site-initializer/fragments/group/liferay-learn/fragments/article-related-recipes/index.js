@@ -38,45 +38,29 @@ async function getRecipeKeywordsSearch(articleKeywords) {
 }
 
 function createRecipesContainer() {
-	const recipesContainer = document.createElement('div');
-	
-	recipesContainer.classList.add('recipes-container');
-	
-	const recipesContainerHeader = document.createElement('div');
-	
-	recipesContainerHeader.classList.add('recipes-container-header');
-	recipesContainerHeader.innerText = 'Recipes related to this article';
-	
-	const recipesCardsContainer = document.createElement('div');
-	
-	recipesCardsContainer.classList.add('recipes-cards-container');
-	recipesCardsContainer.setAttribute('id', 'recipes-cards-container');
-
-	recipesContainer.appendChild(recipesContainerHeader);
-	recipesContainer.appendChild(recipesCardsContainer);
-	
 	const recipes = document.getElementById('article-related-recipes');
 	
-	recipes.appendChild(recipesContainer);
+	recipes.innerHTML = `
+		<div class="recipes-container">
+			<div class="recipes-container-header">Recipes related to this article</div>
+			<div class="recipes-cards-container" id="recipes-cards-container"></div>
+		</div>
+	`;
 }
 
 function createRecipeLinkCard(title, datePublished, description, friendlyUrl) {
 	const recipeCardDiv = document.createElement('div');
-	
+
 	recipeCardDiv.classList.add('recipe-card');
 	recipeCardDiv.onclick = function () {
-		window.location.href =
-		`${Liferay.ThemeDisplay.getCDNBaseURL()}` +
-		'/w/' +
-		`${friendlyUrl}/`;
+		window.location.href = `${Liferay.ThemeDisplay.getCDNBaseURL()}/w/${friendlyUrl}/`;
 	};
-	
 	recipeCardDiv.innerHTML = `
 	<div class="recipe-card-header">${title}</div>
 	<div class="recipe-card-description">${description || ''}</div>
 	<div class="recipe-card-date-published">Published Date: ${formatDate(datePublished)}</div>
 	`;
-	
+
 	const displayContainer = document.getElementById('recipes-cards-container');
 
 	displayContainer.appendChild(recipeCardDiv);
@@ -84,16 +68,15 @@ function createRecipeLinkCard(title, datePublished, description, friendlyUrl) {
 
 function formatDate(datePublished) {
 	const date = new Date(datePublished);
-	const options = {
+
+	return date.toLocaleString('en-US', {
 		day: 'numeric',
 		hour: 'numeric',
 		hour12: true,
 		minute: '2-digit',
 		month: 'short',
 		year: '2-digit',
-	};
-
-	return date.toLocaleString('en-US', options);
+	});
 }
 
 createRecipeSuggestions();
