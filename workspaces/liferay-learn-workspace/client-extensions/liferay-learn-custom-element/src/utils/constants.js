@@ -4,5 +4,7 @@
  */
 
 export const endpoint = {
+	learningPath: '/o/c/learningpaths',
+
 	modules: '/o/c/modules/',
 };
