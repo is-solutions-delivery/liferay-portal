@@ -1239,32 +1239,15 @@ pre[class*='language-'] {
 		gap: 0.5rem !important;
 	}
 
-	.learn-education__card {
-		margin-bottom: 1.5rem;
-		min-height: 282px;
-	}
-
 	.learn-education__landing-card {
 		margin-bottom: 3rem;
 		min-height: 282px;
 	}
 
-	.learn-education__card:hover,
 	.learn-education__landing-card:hover {
 		background: var(--color-action-primary-hover-10, #edf3fe) !important;
 		border-color: var(--color-action-primary-hover, #0053f0) !important;
 		cursor: pointer;
-	}
-
-	.tooltip-inner {
-		background-color: var(--color-neutral-9, #3F404B);
-	}
-
-	.tooltip .arrow::before {
-		border-top-color: var(--color-neutral-9, #3F404B);
-		border-style: solid;
-		content: '';
-		position: absolute;
 	}
 
 	@media (max-width: 576px) {
@@ -1848,6 +1831,17 @@ pre[class*='language-'] {
 
 .token.entity {
 	cursor: help;
+}
+
+.tooltip-inner {
+	background-color: #3F404B;
+}
+
+.tooltip .arrow::before {
+	border-style: solid;
+	border-top-color: #3F404B;
+	content: '';
+	position: absolute;
 }
 
 .treeview .btn {
