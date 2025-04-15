@@ -6,7 +6,10 @@
 import ReactDOMServer from 'react-dom/server';
 
 import {NewAppInitialState} from '../../../../../context/NewAppContext';
-import {ProductUploadType} from '../../../../../enums/Product';
+import {
+	ProductPriceModel,
+	ProductUploadType,
+} from '../../../../../enums/Product';
 import i18n from '../../../../../i18n';
 import zodSchema from '../../../../../schema/zod';
 
@@ -80,6 +83,14 @@ export const APP_FLOW_ITEMS = [
 	{
 		description: `Inform the support and help references. This will impact how users will experience this app's customer support and learning.`,
 		label: 'Support',
+		parseSchema: (context: NewAppInitialState) => {
+			const schema =
+				context.pricing.priceModel === ProductPriceModel.PAID
+					? zodSchema.appPublishing.support.supportForPaidApp
+					: zodSchema.appPublishing.support.supportForFreeApp;
+
+			return schema.safeParse(context.support);
+		},
 		path: 'support',
 		title: 'Provide app support and help',
 	},
