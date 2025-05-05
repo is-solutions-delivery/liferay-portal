@@ -58,7 +58,7 @@ const Apps = () => {
 			rightButton={
 				<ClayButton
 					disabled={!(catalogId && catalogId > 0)}
-					onClick={() => navigate('/app/create')}
+					onClick={() => navigate('/newapp/publisher')}
 				>
 					New App
 				</ClayButton>

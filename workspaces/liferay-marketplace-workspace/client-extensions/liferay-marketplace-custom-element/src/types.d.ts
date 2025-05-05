@@ -580,6 +580,9 @@ type Product = {
 	productSpecifications: ProductSpecification[];
 	productStatus: number;
 	productType: string;
+	productVirtualSettings: {
+		id: string;
+	};
 	skus: SKU[];
 	thumbnail: string;
 	urlImage: string;
