@@ -31,6 +31,12 @@ class HeadlessCommerceDeliveryCatalog {
 		);
 	}
 
+	async getCurrencies(channelId: string) {
+		return fetcher<APIResponse<Currency>>(
+			`o/headless-commerce-delivery-catalog/v1.0/channels/${channelId}/currencies`
+		);
+	}
+
 	async getSkuInfo(
 		channelId: number,
 		productId: number,

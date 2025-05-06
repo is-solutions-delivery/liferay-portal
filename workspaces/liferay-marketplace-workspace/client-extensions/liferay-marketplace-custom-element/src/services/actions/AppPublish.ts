@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {NewAppInitialState} from '../../context/NewAppContext';
+import {NewAppInitialState, PriceEntry} from '../../context/NewAppContext';
 import {
 	ProductLicense,
 	ProductSpecificationKey,
@@ -12,6 +12,7 @@ import {
 	ProductVocabulary,
 	ProductWorkflowStatusCode,
 } from '../../enums/Product';
+import { getPriceListByCatalogName, getProductById, postPriceEntryIdTierPrice, postPriceListEntry } from '../../utils/api';
 import {base64ToText, fileToBase64} from '../../utils/file';
 import HeadlessCommerceAdminCatalogImpl from '../rest/HeadlessCommerceAdminCatalog';
 import BaseAppPublish from './BaseAppPublish';
@@ -202,8 +203,12 @@ export default class AppPublish extends BaseAppPublish {
 
 		const [productOption] = _product?.productOptions ?? [];
 
+		if (!_product?.skus || !_product.skus.length) {
+			(_product as any).skus = []
+		}
+
 		for (const productOptionValue of productOption.productOptionValues) {
-			await HeadlessCommerceAdminCatalogImpl.createProductSKU(
+			const sku = await HeadlessCommerceAdminCatalogImpl.createProductSKU(
 				{
 					published: true,
 					purchasable: true,
@@ -217,7 +222,10 @@ export default class AppPublish extends BaseAppPublish {
 				},
 				product.productId
 			);
+
+			(_product as any).skus.push(sku);
 		}
+		
 	}
 
 	private async createProductOption(product: Product) {
@@ -271,23 +279,100 @@ export default class AppPublish extends BaseAppPublish {
 
 	async syncLicensing(product: Product) {
 		const {
-			licensing: {licenseType},
+			_product,
+			licensing: { licenseType, prices },
 		} = this.context;
-
-		if (!licenseType) {
-			return;
-		}
-
+	
+	
+		if (!licenseType) return;
+	
 		await this.createProductOption(product);
 		await this.createProductSKUs(product);
+	
+		const skusByType = (_product?.skus || []).reduce((acc, sku) => {
+			const type = sku.sku?.toLowerCase();
+			if (!type) return acc;
+	
+			if (!acc[type]) {
+				acc[type] = [];
+			}
+			acc[type].push(sku);
+			return acc;
+		}, {} as Record<string, any[]>);
 
+		const currencies = Object.keys(prices);
+	
+		const processTier = async (
+			priceEntry: PriceEntry,
+			currencyCode: string,
+			licenseTier: string
+		) => {
+			const tiersByCurrency = prices[currencyCode];
+			const tierPrices = tiersByCurrency?.[licenseTier];
+		
+			for (const quantity in tierPrices) {
+				const tierPrice = {
+					minimumQuantity: quantity,
+					price: tierPrices[quantity],
+					priceEntryId: priceEntry?.id,
+				};
+		
+				await postPriceEntryIdTierPrice(priceEntry?.id, tierPrice);
+			}
+		};
+		
+		for (const currencyCode of currencies) {
+	
+			const producta = await getProductById({
+				nestedFields: 'catalog',
+				productId: _product?.productId,
+			});
+			const priceList = await getPriceListByCatalogName(producta?.catalog?.name);
+
+			const priceListResponse = priceList.items.filter((item: any) => item.currencyCode === currencyCode);
+	
+			if (priceListResponse.length === 0) {
+				console.warn(`No price list found for currency: ${currencyCode}`);
+				continue;
+			}
+	
+			const priceListId = priceListResponse[0].id;
+	
+			const licenseTiers = Object.keys(prices[currencyCode]);
+	
+			for (const licenseTier of licenseTiers) {
+	
+				const tierPrices = prices[currencyCode][licenseTier];
+				if (!tierPrices) continue;
+	
+				const tierSkus = skusByType[licenseTier.toLowerCase()] || [];
+
+				for (const sku of tierSkus) {
+					const basePrice = tierPrices["1"];
+					if (basePrice === undefined) continue;
+	
+					const priceEntry = {
+						hasTierPrice: true,
+						price: Number(basePrice),
+						sku: sku.sku,
+						skuExternalReferenceCode: sku.externalReferenceCode,
+						skuId: sku.id,
+					};
+	
+					const priceEntryResponse = await postPriceListEntry(priceListId, priceEntry);
+	
+					await processTier(priceEntryResponse, currencyCode, licenseTier);
+				}
+			}
+		}
+	
 		await BaseAppPublish.updateSpecification(
 			product,
 			ProductSpecificationKey.APP_LICENSING_TYPE,
 			licenseType
 		);
 	}
-
+	
 	async syncPricing(product: Product) {
 		const {
 			pricing: {priceModel},

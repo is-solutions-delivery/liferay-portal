@@ -450,6 +450,18 @@ export async function getPriceListByCatalogName(catalogName: string) {
 	return await response.json();
 }
 
+export async function getPriceListByCurrencyCode() {
+	const response = await fetch(
+		`${baseURL}/o/headless-commerce-admin-pricing/v2.0/price-lists`,
+		{
+			headers,
+			method: 'GET',
+		}
+	);
+
+	return await response.json();
+}
+
 export async function getPriceListIdPriceEntries(priceListId: number) {
 	const response = await fetch(
 		`${baseURL}/o/headless-commerce-admin-pricing/v2.0/price-lists/${priceListId}/price-entries?nestedFields=sku`,
@@ -584,6 +596,20 @@ export async function patchPriceEntry(priceEntry: any, priceEntryId: number) {
 
 	return await response.json();
 }
+
+export async function postPriceListEntry(priceListId: number, priceEntry: any) {
+	const response = await fetch(
+		`/o/headless-commerce-admin-pricing/v1.0/priceLists/${priceListId}/priceEntries`,
+		{
+			body: JSON.stringify(priceEntry),
+			headers,
+			method: 'POST',
+		}
+	);
+
+	return await response.json();
+}
+
 
 export async function postPriceEntryIdTierPrice(
 	priceEntryId: any,
