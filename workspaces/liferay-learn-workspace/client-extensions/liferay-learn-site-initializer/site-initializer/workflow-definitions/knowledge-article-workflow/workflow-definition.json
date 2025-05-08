@@ -1,6 +1,6 @@
 {
 	"active": true,
-	"description": "Workflow for Knowledge Article content creation",
+	"description": "Users publishing new knowledge base articles will follow a defined review and approval workflow to ensure content quality and relevance.",
 	"name": "Knowledge Article Workflow",
 	"title": "Knowledge Article Workflow",
 	"title_i18n": {
