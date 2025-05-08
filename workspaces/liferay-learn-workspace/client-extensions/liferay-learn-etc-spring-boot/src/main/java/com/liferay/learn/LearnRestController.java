@@ -5,6 +5,8 @@
 
 package com.liferay.learn;
 
+import com.google.auth.oauth2.GoogleCredentials;
+
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
 import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
 import com.liferay.petra.function.transform.TransformUtil;
@@ -12,9 +14,19 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,6 +42,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -82,6 +95,115 @@ public class LearnRestController extends BaseRestController {
 			HttpStatus.OK);
 	}
 
+	@GetMapping("/{lessonId}/speech-base64")
+	@ResponseBody
+	public ResponseEntity<?> getSpeechBase64(
+		@AuthenticationPrincipal Jwt jwt, @PathVariable long lessonId,
+		@RequestParam String languageCode, @RequestParam String voiceName) {
+
+		try {
+			String lessonUrl = String.format(
+				"https://learn-uat.liferay.com/l/%s", lessonId);
+
+			HttpClient pageHttpClient = HttpClient.newHttpClient();
+			HttpRequest pageHttpRequest = HttpRequest.newBuilder(
+			).uri(
+				URI.create(lessonUrl)
+			).build();
+
+			HttpResponse<String> pageHttpResponse = pageHttpClient.send(
+				pageHttpRequest, HttpResponse.BodyHandlers.ofString());
+
+			if (pageHttpResponse.statusCode() != 200) {
+				return ResponseEntity.status(
+					HttpStatus.BAD_GATEWAY
+				).body(
+					"Failed to fetch content from the lesson URL."
+				);
+			}
+
+			String htmlBody = pageHttpResponse.body();
+
+			String lessonText = _extractTextByClass(
+				htmlBody, ".course-lesson__content");
+
+			System.out.println(lessonText);
+
+			if (lessonText.isEmpty()) {
+				return ResponseEntity.status(
+					HttpStatus.NOT_FOUND
+				).body(
+					"Could not extract text content from the lesson page."
+				);
+			}
+
+			InputStream inputStream = new ByteArrayInputStream(
+				_googleCretentials.getBytes());
+
+			GoogleCredentials credentials = GoogleCredentials.fromStream(
+				inputStream
+			).createScoped(
+				Collections.singletonList(
+					"https://www.googleapis.com/auth/cloud-platform")
+			);
+
+			credentials.refresh();
+
+			String accessToken = credentials.getAccessToken(
+			).getTokenValue();
+
+			Map<String, Object> body = HashMapBuilder.<String, Object>put(
+				"audioConfig",
+				HashMapBuilder.<String, Object>put(
+					"audioEncoding", "MP3"
+				).build()
+			).put(
+				"input",
+				HashMapBuilder.<String, Object>put(
+					"ssml", "<speak>" + lessonText + "</speak>"
+				).build()
+			).put(
+				"voice",
+				HashMapBuilder.<String, Object>put(
+					"languageCode", languageCode
+				).put(
+					"name", voiceName
+				).build()
+			).build();
+
+			JSONObject jsonObject = new JSONObject(body);
+
+			HttpClient httpClient = HttpClient.newHttpClient();
+			HttpRequest httpRequest = HttpRequest.newBuilder(
+			).uri(
+				URI.create(
+					"https://texttospeech.googleapis.com/v1/text:synthesize")
+			).header(
+				"Authorization", "Bearer " + accessToken
+			).header(
+				"Content-Type", "application/json"
+			).POST(
+				HttpRequest.BodyPublishers.ofString(jsonObject.toString())
+			).build();
+
+			HttpResponse<String> httpResponse = httpClient.send(
+				httpRequest, HttpResponse.BodyHandlers.ofString());
+
+			return ResponseEntity.status(
+				httpResponse.statusCode()
+			).body(
+				httpResponse.body()
+			);
+		}
+		catch (Exception exception) {
+			return ResponseEntity.status(
+				500
+			).body(
+				"Error: " + exception.getMessage()
+			);
+		}
+	}
+
 	@PostMapping("/{quizId}/result")
 	@ResponseBody
 	public ResponseEntity<Object> postQuizResult(
@@ -120,6 +242,26 @@ public class LearnRestController extends BaseRestController {
 		}
 
 		return ResponseEntity.ok(quizResultMap);
+	}
+
+	private String _extractTextByClass(String html, String className) {
+		String regex =
+			"<([a-zA-Z]+)([^>]*)class\\s*=\\s*\"[^\"]*\\b" + className +
+				"\\b[^\"]*\"[^>]*>(.*?)</\\1>";
+
+		Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
+
+		Matcher matcher = pattern.matcher(html);
+
+		if (matcher.find()) {
+			String innerHtml = matcher.group(3);
+
+			return _stripHtmlTags(
+				innerHtml
+			).trim();
+		}
+
+		return "";
 	}
 
 	private String _getAuthorization() {
@@ -304,6 +446,14 @@ public class LearnRestController extends BaseRestController {
 			"/o/c/userbadges/scopes/" + _siteGroupId);
 	}
 
+	private String _stripHtmlTags(String html) {
+		return html.replaceAll(
+			"<[^>]+>", ""
+		).replaceAll(
+			"&nbsp;", " "
+		).trim();
+	}
+
 	private Map<String, Object> _toMap(Object object) {
 		Map<String, Object> map = (Map<String, Object>)object;
 
@@ -323,6 +473,9 @@ public class LearnRestController extends BaseRestController {
 			"title", objectDefinitionMap.get("pluralLabel")
 		).build();
 	}
+
+	@Value("${liferay.learn.google.credentials}")
+	private String _googleCretentials;
 
 	@Autowired
 	private LiferayOAuth2AccessTokenManager _liferayOAuth2AccessTokenManager;
