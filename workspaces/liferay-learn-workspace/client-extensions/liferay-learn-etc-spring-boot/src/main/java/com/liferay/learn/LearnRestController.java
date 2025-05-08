@@ -5,14 +5,20 @@
 
 package com.liferay.learn;
 
+import com.google.auth.oauth2.GoogleCredentials;
+
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
 import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.Validator;
+
+import java.io.ByteArrayInputStream;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -30,6 +36,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -41,6 +48,67 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RestController
 public class LearnRestController extends BaseRestController {
 
+	@GetMapping("/lesson/{lessonId}/audio/base64")
+	@ResponseBody
+	public ResponseEntity<?> getLessonAudioBase64(
+		@AuthenticationPrincipal Jwt jwt, @PathVariable long lessonId,
+		@RequestParam String languageCode, @RequestParam String voiceName) {
+
+		try {
+			JSONObject jsonObject = new JSONObject(
+				get(
+					_getAuthorization(),
+					StringBundler.concat(
+						_getLiferayURL(), "/o/c/lessons/", lessonId,
+						"?fields=contentRawText")));
+
+			String contentRawText = jsonObject.getString("contentRawText");
+
+			if (Validator.isNull(contentRawText)) {
+				return ResponseEntity.status(
+					HttpStatus.NOT_FOUND
+				).body(
+					"Could not extract text content from the lesson page."
+				);
+			}
+
+			return ResponseEntity.ok(
+				post(
+					_getGoogleAccessToken(),
+					new JSONObject(
+						HashMapBuilder.<String, Object>put(
+							"audioConfig",
+							HashMapBuilder.<String, Object>put(
+								"audioEncoding", "MP3"
+							).build()
+						).put(
+							"enableTimePointing", List.of("SSML_MARK")
+						).put(
+							"input",
+							HashMapBuilder.<String, Object>put(
+								"ssml", _buildSSMLWithMarks(contentRawText)
+							).build()
+						).put(
+							"voice",
+							HashMapBuilder.<String, Object>put(
+								"languageCode", languageCode
+							).put(
+								"name", voiceName
+							).build()
+						).build()
+					).toString(),
+					"https://texttospeech.googleapis.com/v1beta1" +
+						"/text:synthesize"));
+		}
+		catch (Exception exception) {
+			return ResponseEntity.status(
+				500
+			).body(
+				"Error: " + exception.getMessage()
+			);
+		}
+	}
+
 	@GetMapping("/menu/items")
 	@ResponseBody
 	public ResponseEntity<Object> getMenuItems(
@@ -51,12 +119,11 @@ public class LearnRestController extends BaseRestController {
 				new JSONObject(
 					get(
 						_getAuthorization(),
-						UriComponentsBuilder.fromPath(
-							"/o/object-admin/v1.0/object-folders" +
-								"/by-external-reference-code" +
-									"/P2S3_LEARNING_MANAGEMENT_SYSTEM"
-						).build(
-						).toUri())
+						StringBundler.concat(
+							_getLiferayURL(),
+							"/o/object-admin/v1.0/object-folders",
+							"/by-external-reference-code",
+							"/P2S3_LEARNING_MANAGEMENT_SYSTEM"))
 				).getJSONArray(
 					"objectFolderItems"
 				).toList(),
@@ -74,23 +141,13 @@ public class LearnRestController extends BaseRestController {
 			new JSONObject(
 				get(
 					_getAuthorization(),
-					UriComponentsBuilder.fromPath(
-						"/o/c/quizquestions/scopes/" + _siteGroupId
-					).queryParam(
-						"fields",
-						"id,position,question,questionType,quizAnswers," +
-							"quizAnswers.answer,quizAnswers.id," +
-								"quizAnswers.position"
-					).queryParam(
-						"filter", "quizId eq '" + quizId + "'"
-					).queryParam(
-						"nestedFields", "quizAnswers"
-					).queryParam(
-						"pageSize", 500
-					).queryParam(
-						"sort", "position"
-					).build(
-					).toUri())
+					StringBundler.concat(
+						_getLiferayURL(), "/o/c/quizquestions/scopes/",
+						_siteGroupId, "?filter=quizId eq '", quizId,
+						"'&fields=id,position,",
+						"question,questionType,quizAnswers,quizAnswers.answer,",
+						"quizAnswers.id,quizAnswers.position&nestedFields=",
+						"quizAnswers&pageSize=500&sort=position"))
 			).getJSONArray(
 				"items"
 			).toList(),
@@ -109,27 +166,18 @@ public class LearnRestController extends BaseRestController {
 			new JSONObject(
 				get(
 					_getAuthorization(),
-					UriComponentsBuilder.fromPath(
-						"/o/c/quizes/" + quizId
-					).queryParam(
-						"fields",
-						StringBundler.concat(
-							"id,r_quiz_c_moduleId,durationMinutes,",
-							"passingScore,isKnowledgeCheck,quizQuestions.id,",
-							"quizQuestions.position,quizQuestions.question,",
-							"quizQuestions.questionType,quizQuestions.",
-							"questionTotalScore,quizQuestions.quizAnswers,",
-							"quizQuestions.quizAnswers.id,quizQuestions.",
-							"quizAnswers.position,quizQuestions.quizAnswers.",
-							"answer,quizQuestions.quizAnswers.score")
-					).queryParam(
-						"nestedFields", "quizQuestions,quizAnswers"
-					).queryParam(
-						"nestedFieldsDepth", 2
-					).queryParam(
-						"pageSize", 500
-					).build(
-					).toUri())));
+					StringBundler.concat(
+						_getLiferayURL(), "/o/c/quizes/", quizId,
+						"?&fields=id,r_quiz_c_moduleId,durationMinutes,",
+						"passingScore,isKnowledgeCheck,quizQuestions.id,",
+						"quizQuestions.position,quizQuestions.question,",
+						"quizQuestions.questionType,quizQuestions.",
+						"questionTotalScore,quizQuestions.quizAnswers,",
+						"quizQuestions.quizAnswers.id,quizQuestions.",
+						"quizAnswers.position,quizQuestions.quizAnswers.",
+						"answer,quizQuestions.quizAnswers.score&",
+						"nestedFields=quizQuestions,quizAnswers&",
+						"nestedFieldsDepth=2&pageSize=500"))));
 
 		if (!GetterUtil.getBoolean(quizResultMap.get("isKnowledgeCheck")) &&
 			GetterUtil.getBoolean(quizResultMap.get("passed"))) {
@@ -146,9 +194,59 @@ public class LearnRestController extends BaseRestController {
 		return ResponseEntity.ok(quizResultMap);
 	}
 
+	@Override
+	protected String getWebClientBaseURL() {
+		return "";
+	}
+
+	private String _buildSSMLWithMarks(String text) {
+		StringBuilder sb = new StringBuilder("<speak>");
+
+		String[] words = text.split("\\s+");
+
+		for (int i = 0; i < words.length; i++) {
+			sb.append(
+				"<mark name=\""
+			).append(
+				"mark" + i
+			).append(
+				"\"/> "
+			).append(
+				words[i]
+			).append(
+				" "
+			);
+		}
+
+		sb.append("</speak>");
+
+		return sb.toString();
+	}
+
 	private String _getAuthorization() {
 		return _liferayOAuth2AccessTokenManager.getAuthorization(
 			"liferay-learn-etc-spring-boot-oauth-application-headless-server");
+	}
+
+	private String _getGoogleAccessToken() throws Exception {
+		GoogleCredentials credentials = GoogleCredentials.fromStream(
+			new ByteArrayInputStream(_googleCredentials.getBytes())
+		).createScoped(
+			Collections.singletonList(
+				"https://www.googleapis.com/auth/cloud-platform")
+		);
+
+		credentials.refresh();
+
+		String accessTokenValue = credentials.getAccessToken(
+		).getTokenValue();
+
+		return "Bearer " + accessTokenValue;
+	}
+
+	private String _getLiferayURL() {
+		return StringBundler.concat(
+			lxcDXPServerProtocol, "://", lxcDXPMainDomain);
 	}
 
 	private int _getQuizQuestionScore(
@@ -292,12 +390,9 @@ public class LearnRestController extends BaseRestController {
 		JSONArray jsonArray = new JSONObject(
 			get(
 				_getAuthorization(),
-				UriComponentsBuilder.fromPath(
-					"/o/c/quizes/" + quizId + "/quizBadge"
-				).queryParam(
-					"fields", "id"
-				).build(
-				).toUri())
+				StringBundler.concat(
+					_getLiferayURL(), "/o/c/quizes/", quizId,
+					"/quizBadge?fields=id"))
 		).getJSONArray(
 			"items"
 		);
@@ -311,15 +406,10 @@ public class LearnRestController extends BaseRestController {
 		JSONObject userBadgeJSONObject = new JSONObject(
 			get(
 				_getAuthorization(),
-				UriComponentsBuilder.fromPath(
-					"/o/c/userbadges/scopes/" + _siteGroupId
-				).queryParam(
-					"filter",
-					StringBundler.concat(
-						"userId eq '", userId, "' and badgeId eq ",
-						badgeJSONObject.getLong("id"))
-				).build(
-				).toUri()));
+				StringBundler.concat(
+					_getLiferayURL(), "/o/c/userbadges/scopes/", _siteGroupId,
+					"/?filter=userId eq '", userId, "' and badgeId eq ",
+					badgeJSONObject.getLong("id"))));
 
 		if (userBadgeJSONObject.getInt("totalCount") > 0) {
 			return;
@@ -335,10 +425,8 @@ public class LearnRestController extends BaseRestController {
 			).put(
 				"r_userBadges_userId", userId
 			).toString(),
-			UriComponentsBuilder.fromPath(
-				"/o/c/userbadges/scopes/" + _siteGroupId
-			).build(
-			).toUri());
+			StringBundler.concat(
+				_getLiferayURL(), "/o/c/userbadges/scopes/", _siteGroupId));
 	}
 
 	private Map<String, Object> _toMap(Object object) {
@@ -360,6 +448,9 @@ public class LearnRestController extends BaseRestController {
 			"title", objectDefinitionMap.get("pluralLabel")
 		).build();
 	}
+
+	@Value("${liferay.learn.google.credentials}")
+	private String _googleCredentials;
 
 	@Autowired
 	private LiferayOAuth2AccessTokenManager _liferayOAuth2AccessTokenManager;
