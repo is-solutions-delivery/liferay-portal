@@ -5,6 +5,9 @@
 
 package com.liferay.learn;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.google.auth.oauth2.GoogleCredentials;
 
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
@@ -25,8 +28,6 @@ import java.net.http.HttpResponse;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -102,19 +103,24 @@ public class LearnRestController extends BaseRestController {
 		@RequestParam String languageCode, @RequestParam String voiceName) {
 
 		try {
-			String lessonUrl = String.format(
-				"https://learn-uat.liferay.com/l/%s", lessonId);
+			String apiUrl = String.format(
+				"https://learn-uat.liferay.com/o/c/lessons" +
+					"/%s?fields=contentRawText",
+				lessonId);
 
-			HttpClient pageHttpClient = HttpClient.newHttpClient();
-			HttpRequest pageHttpRequest = HttpRequest.newBuilder(
+			HttpClient headlessHttpClient = HttpClient.newHttpClient();
+			HttpRequest headlessHttpRequest = HttpRequest.newBuilder(
 			).uri(
-				URI.create(lessonUrl)
+				URI.create(apiUrl)
+			).header(
+				"Accept", "application/json"
+			).GET(
 			).build();
 
-			HttpResponse<String> pageHttpResponse = pageHttpClient.send(
-				pageHttpRequest, HttpResponse.BodyHandlers.ofString());
+			HttpResponse<String> headlessHttpResponse = headlessHttpClient.send(
+				headlessHttpRequest, HttpResponse.BodyHandlers.ofString());
 
-			if (pageHttpResponse.statusCode() != 200) {
+			if (headlessHttpResponse.statusCode() != 200) {
 				return ResponseEntity.status(
 					HttpStatus.BAD_GATEWAY
 				).body(
@@ -122,12 +128,14 @@ public class LearnRestController extends BaseRestController {
 				);
 			}
 
-			String htmlBody = pageHttpResponse.body();
+			ObjectMapper objectMapper = new ObjectMapper();
 
-			String lessonText = _extractTextByClass(
-				htmlBody, ".course-lesson__content");
+			JsonNode rootJsonNode = objectMapper.readTree(
+				headlessHttpResponse.body());
 
-			System.out.println(lessonText);
+			String lessonText = rootJsonNode.path(
+				"contentRawText"
+			).asText();
 
 			if (lessonText.isEmpty()) {
 				return ResponseEntity.status(
@@ -242,26 +250,6 @@ public class LearnRestController extends BaseRestController {
 		}
 
 		return ResponseEntity.ok(quizResultMap);
-	}
-
-	private String _extractTextByClass(String html, String className) {
-		String regex =
-			"<([a-zA-Z]+)([^>]*)class\\s*=\\s*\"[^\"]*\\b" + className +
-				"\\b[^\"]*\"[^>]*>(.*?)</\\1>";
-
-		Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
-
-		Matcher matcher = pattern.matcher(html);
-
-		if (matcher.find()) {
-			String innerHtml = matcher.group(3);
-
-			return _stripHtmlTags(
-				innerHtml
-			).trim();
-		}
-
-		return "";
 	}
 
 	private String _getAuthorization() {
@@ -444,14 +432,6 @@ public class LearnRestController extends BaseRestController {
 				"r_userBadges_userId", userId
 			).toString(),
 			"/o/c/userbadges/scopes/" + _siteGroupId);
-	}
-
-	private String _stripHtmlTags(String html) {
-		return html.replaceAll(
-			"<[^>]+>", ""
-		).replaceAll(
-			"&nbsp;", " "
-		).trim();
 	}
 
 	private Map<String, Object> _toMap(Object object) {
