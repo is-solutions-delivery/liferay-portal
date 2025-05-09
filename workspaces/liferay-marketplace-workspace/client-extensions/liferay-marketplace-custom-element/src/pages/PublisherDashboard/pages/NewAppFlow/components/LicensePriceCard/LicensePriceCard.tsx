@@ -5,15 +5,14 @@
 
 import {ClayButtonWithIcon} from '@clayui/button';
 import ClayForm, {ClayInput} from '@clayui/form';
-
-import './LicensePriceCard.scss';
-
 import classNames from 'classnames';
 
 import {FieldBase} from '../../../../../../components/FieldBase';
 import {LicenseTier} from '../../../../../../enums/licenseTier';
 import {currenciesCode} from '../../../../../../utils/currencies';
 import IconButton from '../IconButton';
+
+import './LicensePriceCard.scss';
 
 type LicensePriceCardProps = {
 	currency: string;

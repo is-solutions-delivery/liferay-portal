@@ -15,6 +15,8 @@ import {useParams} from 'react-router-dom';
 import {UploadedFile} from '../components/FileList/FileList';
 import Loading from '../components/Loading';
 import {
+	ProductLicenseType,
+	ProductPriceModel,
 	ProductSpecificationKey,
 	ProductTags,
 	ProductType,
@@ -180,7 +182,7 @@ const newAppInitialState: NewAppInitialState = {
 	},
 	catalogId: 0,
 	licensing: {
-		licenseType: 'Perpetual',
+		licenseType: ProductLicenseType.PERPETUAL,
 		prices: {
 			USD: {
 				developer: {},
@@ -193,7 +195,7 @@ const newAppInitialState: NewAppInitialState = {
 	},
 	loading: false,
 	pricing: {
-		priceModel: '' as 'Free',
+		priceModel: '' as ProductPriceModel.FREE,
 	},
 	productId: 0,
 	profile: {

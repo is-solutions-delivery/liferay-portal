@@ -12,8 +12,8 @@ import {
 	ProductVocabulary,
 	ProductWorkflowStatusCode,
 } from '../../enums/Product';
-import {createProductVirtualEntry} from '../../utils/api';
 import {
+	createProductVirtualEntry,
 	getPriceListByCatalogName,
 	getPriceListIdPriceEntries,
 	getProductById,

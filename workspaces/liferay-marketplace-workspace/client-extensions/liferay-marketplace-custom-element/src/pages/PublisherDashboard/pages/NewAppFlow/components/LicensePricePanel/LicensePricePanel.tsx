@@ -14,14 +14,15 @@ import {LicenseTier} from '../../../../../../enums/licenseTier';
 import {currenciesCode} from '../../../../../../utils/currencies';
 import IconButton from '../IconButton';
 import LicensePriceCard from '../LicensePriceCard';
+import {
+	NewAppTypes,
+	useNewAppContext,
+} from '../../../../../../context/NewAppContext';
 
 type Props = {
 	cloudCompatible: boolean;
 	currencyCode: string;
-	handleAddPriceTier: Function;
-	handleDeletePriceTier: Function;
-	handleEditPriceTier: Function;
-	prices: {
+	tierPrices: {
 		[licenseTier in LicenseTier]?: {[key: number]: number};
 	};
 };
@@ -29,15 +30,59 @@ type Props = {
 const LicensePricePanel: React.FC<Props> = ({
 	cloudCompatible,
 	currencyCode,
-	handleAddPriceTier,
-	handleDeletePriceTier,
-	handleEditPriceTier,
-	prices,
+	tierPrices,
 }) => {
-	const standardPrices = prices[LicenseTier.STANDARD] || {};
-	const developerPrices = prices[LicenseTier.DEVELOPER] || {};
+	const [, dispatch] = useNewAppContext();
+
+	const standardPrices = tierPrices[LicenseTier.STANDARD] || {};
+	const developerPrices = tierPrices[LicenseTier.DEVELOPER] || {};
 
 	const matchedCurrency = currenciesCode.find((c) => c.code === currencyCode);
+
+	const handleAddPriceTier = (licenseTier: LicenseTier, currency: string) => {
+		dispatch({
+			payload: {
+				currency,
+				licenseTier,
+			},
+			type: NewAppTypes.SET_LICENSING_ADD_PRICE,
+		});
+	};
+
+	const handleEditPriceTier = (
+		licenseTier: LicenseTier,
+		index: number,
+		price: LicensePrice,
+		currency: string
+	) => {
+		dispatch({
+			payload: {
+				currency,
+				index,
+				licenseTier,
+				price: price.value,
+				quantity: price.key,
+			},
+			type: NewAppTypes.SET_LICENSING_UPDATE_PRICES,
+		});
+	};
+
+	const handleDeletePriceTier = (
+		licenseTier: LicenseTier,
+		key: number,
+		currency: string,
+		deleteCurrency?: boolean
+	) => {
+		dispatch({
+			payload: {
+				currency,
+				deleteCurrency,
+				key,
+				licenseTier,
+			},
+			type: NewAppTypes.SET_LICENSING_DELETE_PRICE,
+		});
+	};
 
 	const icon =
 		matchedCurrency?.code === 'EUR' ? (
@@ -59,7 +104,7 @@ const LicensePricePanel: React.FC<Props> = ({
 		const tiers = [LicenseTier.STANDARD, LicenseTier.DEVELOPER];
 
 		tiers.forEach((tier) => {
-			const pricesByTier = prices[tier] || {};
+			const pricesByTier = tierPrices[tier] || {};
 			const keys = Object.keys(pricesByTier);
 
 			keys.forEach((key) => {
