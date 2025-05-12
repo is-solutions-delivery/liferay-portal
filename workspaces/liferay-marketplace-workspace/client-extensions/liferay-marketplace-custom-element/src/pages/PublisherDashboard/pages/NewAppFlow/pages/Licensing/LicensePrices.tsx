@@ -9,6 +9,7 @@ import {
 	useNewAppContext,
 } from '../../../../../../context/NewAppContext';
 import {
+	ProductPriceModel,
 	ProductType,
 	ProductWorkflowStatusCode,
 } from '../../../../../../enums/Product';
@@ -25,6 +26,7 @@ const LicensePrices = () => {
 			licensing: {
 				prices: {developer: developerPrices, standard: standardPrices},
 			},
+			pricing: {priceModel},
 		},
 		dispatch,
 	] = useNewAppContext();
@@ -34,7 +36,9 @@ const LicensePrices = () => {
 
 	const isSaveAsDraft = !_product || isDraft(_product.productStatus);
 
-	const isDisabled = !isSaveAsDraft && !!_product.id;
+	const isDisabled =
+		!isSaveAsDraft &&
+		(_product?.id ? priceModel === ProductPriceModel.FREE : false);
 
 	const handleAddPriceTier = (licenseTier: LicenseTier) =>
 		dispatch({
