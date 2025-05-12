@@ -144,7 +144,24 @@ export default class AppPublish extends BaseAppPublish {
 				liferayPackages,
 				resourceRequirements,
 			},
+			profile: {areas, categories, tags},
+			references: {vocabulariesAndCategories},
 		} = this.context;
+
+		const productTypeCategories = (
+			vocabulariesAndCategories[ProductVocabulary.PRODUCT_TYPE]
+				?.categories ?? []
+		).filter(({label}: any) => label === 'App');
+
+		const productCategories = [
+			...areas,
+			categories,
+			...productTypeCategories,
+			...tags,
+		].map((category) => ({
+			id: category.value,
+			name: category.label,
+		}));
 
 		const specifications = [
 			{
@@ -189,7 +206,7 @@ export default class AppPublish extends BaseAppPublish {
 		await HeadlessCommerceAdminCatalogImpl.updateProduct(
 			product.productId,
 			{
-				categories: [...product.categories, ...compatibleOfferings],
+				categories: [...productCategories, ...compatibleOfferings],
 				productStatus,
 				workflowStatusInfo: productStatus,
 			}
@@ -231,7 +248,8 @@ export default class AppPublish extends BaseAppPublish {
 
 		const [productOption] = _product?.productOptions ?? [];
 
-		for (const productOptionValue of productOption.productOptionValues) {
+		const productOptionValues = productOption.productOptionValues ?? [];
+		for (const productOptionValue of productOptionValues) {
 			await HeadlessCommerceAdminCatalogImpl.createProductSKU(
 				{
 					published: true,

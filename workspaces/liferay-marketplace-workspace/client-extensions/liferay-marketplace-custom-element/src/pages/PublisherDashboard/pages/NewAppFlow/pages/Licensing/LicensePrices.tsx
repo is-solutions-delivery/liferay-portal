@@ -8,7 +8,10 @@ import {
 	NewAppTypes,
 	useNewAppContext,
 } from '../../../../../../context/NewAppContext';
-import {ProductType} from '../../../../../../enums/Product';
+import {
+	ProductType,
+	ProductWorkflowStatusCode,
+} from '../../../../../../enums/Product';
 import {LicenseTier} from '../../../../../../enums/licenseTier';
 import {LicensePrice} from '../../../Apps/AppCreationFlow/AppContext/AppManageState';
 import IconButton from '../../../Apps/AppCreationFlow/InformLicensingTermsPage/components/IconButton';
@@ -17,6 +20,7 @@ import LicensePriceCard from '../../../Apps/AppCreationFlow/InformLicensingTerms
 const LicensePrices = () => {
 	const [
 		{
+			_product,
 			build: {appType},
 			licensing: {
 				prices: {developer: developerPrices, standard: standardPrices},
@@ -24,6 +28,13 @@ const LicensePrices = () => {
 		},
 		dispatch,
 	] = useNewAppContext();
+
+	const isDraft = (status: number) =>
+		status === ProductWorkflowStatusCode.DRAFT;
+
+	const isSaveAsDraft = !_product || isDraft(_product.productStatus);
+
+	const isDisabled = !isSaveAsDraft && !!_product.id;
 
 	const handleAddPriceTier = (licenseTier: LicenseTier) =>
 		dispatch({
@@ -64,6 +75,7 @@ const LicensePrices = () => {
 				tooltipText="More Info"
 			>
 				<LicensePriceCard
+					disabled={isDisabled}
 					licensePrices={standardPrices}
 					onAdd={() => handleAddPriceTier(LicenseTier.STANDARD)}
 					onChange={(index: number, price: LicensePrice) => {
@@ -83,6 +95,7 @@ const LicensePrices = () => {
 				>
 					{developerPrices.length ? (
 						<LicensePriceCard
+							disabled={isDisabled}
 							licensePrices={developerPrices}
 							onAdd={() =>
 								handleAddPriceTier(LicenseTier.DEVELOPER)
@@ -104,6 +117,7 @@ const LicensePrices = () => {
 					) : (
 						<IconButton
 							className="icon-button py-3 w-100"
+							disabled={isDisabled}
 							onClick={() =>
 								handleAddPriceTier(LicenseTier.DEVELOPER)
 							}
