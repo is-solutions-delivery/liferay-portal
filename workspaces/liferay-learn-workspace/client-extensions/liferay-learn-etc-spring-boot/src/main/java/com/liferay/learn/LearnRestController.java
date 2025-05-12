@@ -26,6 +26,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -166,9 +167,11 @@ public class LearnRestController extends BaseRestController {
 					"audioEncoding", "MP3"
 				).build()
 			).put(
+				"enableTimePointing", List.of("SSML_MARK")
+			).put(
 				"input",
 				HashMapBuilder.<String, Object>put(
-					"ssml", "<speak>" + lessonText + "</speak>"
+					"ssml", _buildSSMLWithMarks(lessonText)
 				).build()
 			).put(
 				"voice",
@@ -185,7 +188,8 @@ public class LearnRestController extends BaseRestController {
 			HttpRequest httpRequest = HttpRequest.newBuilder(
 			).uri(
 				URI.create(
-					"https://texttospeech.googleapis.com/v1/text:synthesize")
+					"https://texttospeech.googleapis.com/v1beta1" +
+						"/text:synthesize")
 			).header(
 				"Authorization", "Bearer " + accessToken
 			).header(
@@ -250,6 +254,36 @@ public class LearnRestController extends BaseRestController {
 		}
 
 		return ResponseEntity.ok(quizResultMap);
+	}
+
+	private String _buildSSMLWithMarks(String text) {
+		String[] words = text.split("\\s+");
+
+		StringBuilder sb = new StringBuilder("<speak>");
+
+		for (int i = 0; i < words.length; i++) {
+			String word = words[i];
+
+			String markName = "mark" + i;
+
+			sb.append(
+				"<mark name=\""
+			).append(
+				markName
+			).append(
+				"\"/> "
+			);
+
+			sb.append(
+				word
+			).append(
+				" "
+			);
+		}
+
+		sb.append("</speak>");
+
+		return sb.toString();
 	}
 
 	private String _getAuthorization() {
