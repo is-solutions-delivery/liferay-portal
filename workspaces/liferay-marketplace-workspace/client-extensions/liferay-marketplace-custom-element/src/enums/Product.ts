@@ -19,6 +19,11 @@ export enum ProductCategories {
 	MARKETPLACE_SOLUTION_TAGS = 'marketplace-solution-tags',
 }
 
+export enum ProductCategories {
+	FRAGMENTS = 'Fragments',
+	PAYMENT_METHODS = 'Payment methods',
+}
+
 export enum ProductEditionOption {
 	EE = 'EE',
 }
@@ -212,4 +217,8 @@ export const ProductWorkflowStatusLabel = {
 
 export function getOfferingTypes(type: ProductType) {
 	return offeringTypes[type as keyof typeof offeringTypes];
+}
+
+export enum PARTNERSHIP_TYPE {
+	TECHNOLOGY_PARTNERSHIP = 'Technology Partnership',
 }
