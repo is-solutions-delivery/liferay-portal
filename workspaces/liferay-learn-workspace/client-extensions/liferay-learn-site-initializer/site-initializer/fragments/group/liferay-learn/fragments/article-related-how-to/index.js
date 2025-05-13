@@ -32,7 +32,8 @@ function createHowToContainer() {
 }
 
 async function createHowToSuggestions() {
-	const articleId = document.querySelector('.article-related-how-to').dataset.articleId;
+	const articleId = document.querySelector('.article-related-how-to').dataset
+		.articleId;
 
 	const structuredContent = await Liferay.Util.fetch(
 		`/o/headless-delivery/v1.0/sites/${Liferay.ThemeDisplay.getSiteGroupId()}/structured-contents/by-key/${articleId}`
@@ -43,15 +44,11 @@ async function createHowToSuggestions() {
 			structuredContent.keywords
 		);
 
-		if(structuredContentHowTo.totalCount > 0) {
+		if (structuredContentHowTo.totalCount > 0) {
 			createHowToContainer();
 
 			structuredContentHowTo.items.forEach((item) =>
-				createHowToCard(
-					item.title,
-					item.dateModified,
-					item.id
-				)
+				createHowToCard(item.title, item.dateModified, item.id)
 			);
 		}
 	}
