@@ -629,6 +629,7 @@ export default function NewAppContextProvider({
 	useEffect(() => {
 		if (!productId) {
 			setIsLoadingProduct(false);
+
 			return;
 		}
 

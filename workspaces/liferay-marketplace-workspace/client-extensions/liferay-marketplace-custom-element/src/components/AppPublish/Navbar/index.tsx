@@ -12,11 +12,13 @@ import i18n from '../../../i18n';
 import {getAccountImage} from '../../../utils/util';
 
 import './index.scss';
+
+import classNames from 'classnames';
+
 import {
 	ProductWorkflowStatusCode,
 	ProductWorkflowStatusLabel,
 } from '../../../enums/Product';
-import classNames from 'classnames';
 
 type NavbarProps = {
 	accountImage?: string;

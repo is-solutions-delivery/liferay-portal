@@ -370,7 +370,8 @@ export default class AppPublish extends BaseAppPublish {
 			licenseTier: string
 		) => {
 			const tiersByCurrency = prices[currencyCode];
-			const tierPrices = tiersByCurrency?.[licenseTier as keyof typeof tiersByCurrency];
+			const tierPrices =
+				tiersByCurrency?.[licenseTier as keyof typeof tiersByCurrency];
 
 			for (const quantity in tierPrices) {
 				const tierPrice = {
@@ -418,7 +419,10 @@ export default class AppPublish extends BaseAppPublish {
 			const licenseTiers = Object.keys(prices[currencyCode]);
 
 			for (const licenseTier of licenseTiers) {
-				const tierPrices = prices[currencyCode][licenseTier as keyof typeof prices[typeof currencyCode]];
+				const tierPrices =
+					prices[currencyCode][
+						licenseTier as keyof (typeof prices)[typeof currencyCode]
+					];
 				if (!tierPrices) {
 					continue;
 				}
