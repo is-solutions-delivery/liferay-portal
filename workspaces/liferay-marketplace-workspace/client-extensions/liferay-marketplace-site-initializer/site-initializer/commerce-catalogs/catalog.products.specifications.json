@@ -3,8 +3,8 @@
 		"categoryKey": "product-metadata",
 		"cpDefinitionExternalReferenceCode": "MKT-TECHNOLOGY-INTEGRATION",
 		"description": "Technology Integration",
-		"facetable": false,
-		"key": "technologyintegration",
+		"facetable": true,
+		"key": "technology-integration",
 		"title": "Technology Integration"
 	},
 	{
