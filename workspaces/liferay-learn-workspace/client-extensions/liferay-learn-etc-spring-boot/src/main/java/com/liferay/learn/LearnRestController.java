@@ -16,7 +16,6 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import java.util.Collections;
@@ -94,14 +93,14 @@ public class LearnRestController extends BaseRestController {
 				).build()
 			).build();
 
-			String googleSpeechResponse = post(
-				"Bearer " + _getAccessTokenFromCredentials(),
-				new JSONObject(
-					body
-				).toString(),
-				"https://texttospeech.googleapis.com/v1beta1/text:synthesize");
-
-			return ResponseEntity.ok(googleSpeechResponse);
+			return ResponseEntity.ok(
+				post(
+					_getGoogleAccessToken(),
+					new JSONObject(
+						body
+					).toString(),
+					"https://texttospeech.googleapis.com/v1beta1" +
+						"/text:synthesize"));
 		}
 		catch (Exception exception) {
 			return ResponseEntity.status(
@@ -218,9 +217,7 @@ public class LearnRestController extends BaseRestController {
 				markName
 			).append(
 				"\"/> "
-			);
-
-			sb.append(
+			).append(
 				word
 			).append(
 				" "
@@ -232,9 +229,14 @@ public class LearnRestController extends BaseRestController {
 		return sb.toString();
 	}
 
-	private String _getAccessTokenFromCredentials() throws IOException {
+	private String _getAuthorization() {
+		return _liferayOAuth2AccessTokenManager.getAuthorization(
+			"liferay-learn-etc-spring-boot-oauth-application-headless-server");
+	}
+
+	private String _getGoogleAccessToken() throws Exception {
 		InputStream inputStream = new ByteArrayInputStream(
-			_googleCretentials.getBytes());
+			_googleCredentials.getBytes());
 
 		GoogleCredentials credentials = GoogleCredentials.fromStream(
 			inputStream
@@ -245,13 +247,10 @@ public class LearnRestController extends BaseRestController {
 
 		credentials.refresh();
 
-		return credentials.getAccessToken(
+		String accessTokenValue = credentials.getAccessToken(
 		).getTokenValue();
-	}
 
-	private String _getAuthorization() {
-		return _liferayOAuth2AccessTokenManager.getAuthorization(
-			"liferay-learn-etc-spring-boot-oauth-application-headless-server");
+		return "Bearer " + accessTokenValue;
 	}
 
 	private String _getLiferayURL() {
@@ -460,7 +459,7 @@ public class LearnRestController extends BaseRestController {
 	}
 
 	@Value("${liferay.learn.google.credentials}")
-	private String _googleCretentials;
+	private String _googleCredentials;
 
 	@Autowired
 	private LiferayOAuth2AccessTokenManager _liferayOAuth2AccessTokenManager;
