@@ -270,6 +270,7 @@ public class ObjectEntryFolderResourceImpl
 			_objectEntryFolderService.updateObjectEntryFolder(
 				persistedObjectEntryFolder.getObjectEntryFolderId(),
 				_getParentObjectEntryFolderId(true, groupId, objectEntryFolder),
+				objectEntryFolder.getDescription(),
 				LocalizedMapUtil.getLocalizedMap(
 					contextAcceptLanguage.getPreferredLocale(),
 					objectEntryFolder.getLabel(),
@@ -288,7 +289,7 @@ public class ObjectEntryFolderResourceImpl
 		return _toObjectEntryFolder(
 			_objectEntryFolderService.addObjectEntryFolder(
 				objectEntryFolder.getExternalReferenceCode(), groupId,
-				parentObjectEntryFolderId,
+				parentObjectEntryFolderId, objectEntryFolder.getDescription(),
 				LocalizedMapUtil.getLocalizedMap(
 					contextAcceptLanguage.getPreferredLocale(),
 					objectEntryFolder.getLabel(),
@@ -367,7 +368,7 @@ public class ObjectEntryFolderResourceImpl
 					parentObjectEntryFolderExternalReferenceCode, groupId,
 					ObjectEntryFolderConstants.
 						PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
-					null, parentObjectEntryFolderExternalReferenceCode,
+					null, null, parentObjectEntryFolderExternalReferenceCode,
 					ServiceContextBuilder.create(
 						groupId, contextHttpServletRequest, null
 					).build());
@@ -381,6 +382,12 @@ public class ObjectEntryFolderResourceImpl
 			com.liferay.object.model.ObjectEntryFolder
 				persistedObjectEntryFolder)
 		throws Exception {
+
+		String description = objectEntryFolder.getDescription();
+
+		if (description == null) {
+			description = persistedObjectEntryFolder.getDescription();
+		}
 
 		Map<String, String> labelMap = objectEntryFolder.getLabel_i18n();
 
@@ -403,7 +410,7 @@ public class ObjectEntryFolderResourceImpl
 		return _toObjectEntryFolder(
 			_objectEntryFolderService.updateObjectEntryFolder(
 				persistedObjectEntryFolder.getObjectEntryFolderId(),
-				parentObjectEntryFolderId,
+				parentObjectEntryFolderId, description,
 				LocalizedMapUtil.getLocalizedMap(
 					contextAcceptLanguage.getPreferredLocale(),
 					GetterUtil.getString(

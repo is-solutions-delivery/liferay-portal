@@ -94,8 +94,6 @@ import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 
 import java.io.Serializable;
 
-import java.math.BigDecimal;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -784,7 +782,7 @@ public class CommercePriceListLocalServiceImpl
 			String currencyCode, String type, String unitOfMeasureKey)
 		throws PortalException {
 
-		Expression<BigDecimal> expression = DSLFunctionFactoryUtil.divide(
+		Expression<Float> expression = DSLFunctionFactoryUtil.floatDivide(
 			CommercePriceEntryTable.INSTANCE.price,
 			CommerceCurrencyTable.INSTANCE.rate
 		).as(

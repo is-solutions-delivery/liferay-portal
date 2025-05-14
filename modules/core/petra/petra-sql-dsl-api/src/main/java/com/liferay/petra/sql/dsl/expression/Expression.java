@@ -16,8 +16,6 @@ public interface Expression<T> extends ASTNode {
 
 	public Alias<T> as(String name);
 
-	public Alias<T> as(String name, Class<?> javaType);
-
 	public OrderByExpression ascending();
 
 	public OrderByExpression descending();
