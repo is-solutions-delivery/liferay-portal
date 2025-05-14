@@ -19,6 +19,8 @@ import com.liferay.portal.kernel.service.WorkflowDefinitionLinkLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.workflow.WorkflowHandler;
+import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 import com.liferay.portal.workflow.kaleo.model.KaleoDefinition;
 import com.liferay.portal.workflow.kaleo.service.KaleoDefinitionLocalService;
 
@@ -54,31 +56,37 @@ public class GetObjectDefinitionInfoMVCResourceCommand
 			return;
 		}
 
+		String tableName = objectDefinition.getDBTableName();
+
+		if (objectDefinition.isRootDescendantNode()) {
+			objectDefinition =
+				_objectDefinitionLocalService.fetchObjectDefinition(
+					objectDefinition.getRootObjectDefinitionId());
+		}
+
+		boolean workflowSupported = _isWorkflowSupported(objectDefinition);
+
 		JSONPortletResponseUtil.writeJSON(
 			resourceRequest, resourceResponse,
 			JSONUtil.put(
-				"tableName", objectDefinition.getDBTableName()
+				"isWorkflowSupported", workflowSupported
+			).put(
+				"tableName", tableName
 			).put(
 				"workflowDefinitionTitle",
-				() -> {
-					if (!objectDefinition.isRootDescendantNode()) {
-						return _getWorkflowDefinitionTitle(
-							objectDefinition, resourceRequest);
-					}
-
-					ObjectDefinition rootObjectDefinition =
-						_objectDefinitionLocalService.fetchObjectDefinition(
-							objectDefinition.getRootObjectDefinitionId());
-
-					return _getWorkflowDefinitionTitle(
-						rootObjectDefinition, resourceRequest);
-				}
+				_getWorkflowDefinitionTitle(
+					objectDefinition, resourceRequest, workflowSupported)
 			));
 	}
 
 	private String _getWorkflowDefinitionTitle(
-			ObjectDefinition objectDefinition, ResourceRequest resourceRequest)
+			ObjectDefinition objectDefinition, ResourceRequest resourceRequest,
+			boolean workflowSupported)
 		throws Exception {
+
+		if (!workflowSupported) {
+			return null;
+		}
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)resourceRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -98,6 +106,18 @@ public class GetObjectDefinitionInfoMVCResourceCommand
 				ServiceContextFactory.getInstance(resourceRequest));
 
 		return kaleoDefinition.getTitle(themeDisplay.getLocale());
+	}
+
+	private boolean _isWorkflowSupported(ObjectDefinition objectDefinition) {
+		WorkflowHandler<?> workflowHandler =
+			WorkflowHandlerRegistryUtil.getWorkflowHandler(
+				objectDefinition.getClassName());
+
+		if ((workflowHandler == null) || !workflowHandler.isVisible()) {
+			return false;
+		}
+
+		return true;
 	}
 
 	@Reference

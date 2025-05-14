@@ -13,7 +13,6 @@ import com.liferay.petra.sql.dsl.ast.ASTNode;
 import com.liferay.petra.sql.dsl.expression.Alias;
 import com.liferay.petra.sql.dsl.expression.Expression;
 import com.liferay.petra.sql.dsl.expression.ScalarDSLQueryAlias;
-import com.liferay.petra.sql.dsl.expression.TypeAlias;
 import com.liferay.petra.sql.dsl.query.DSLQuery;
 import com.liferay.petra.sql.dsl.query.FromStep;
 import com.liferay.petra.sql.dsl.query.GroupByStep;
@@ -258,7 +257,8 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 					if (expression instanceof Alias) {
 						Alias<?> alias = (Alias<?>)expression;
 
-						sqlQuery.addScalar(alias.getName(), _getType(alias));
+						sqlQuery.addScalar(
+							alias.getName(), _getType(alias.getExpression()));
 					}
 					else if (expression instanceof Column) {
 						Column<?, ?> column = (Column<?, ?>)expression;
@@ -1053,12 +1053,7 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 		for (Expression<?> expression : expressions) {
 			Type type = null;
 
-			if (expression instanceof TypeAlias) {
-				TypeAlias<?> typeAlias = (TypeAlias<?>)expression;
-
-				type = _types.get(typeAlias.getJavaType());
-			}
-			else if (expression instanceof Alias) {
+			if (expression instanceof Alias) {
 				Alias<?> alias = (Alias<?>)expression;
 
 				type = _getType(alias.getExpression());
@@ -1144,12 +1139,6 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 			}
 		}
 
-		if (expression instanceof TypeAlias) {
-			TypeAlias<?> typeAlias = (TypeAlias<?>)expression;
-
-			return _types.get(typeAlias.getJavaType());
-		}
-
 		if (expression instanceof Alias) {
 			Alias<?> alias = (Alias<?>)expression;
 
@@ -1184,6 +1173,10 @@ public class BasePersistenceImpl<T extends BaseModel<T>>
 				(dslFunctionType == DSLFunctionType.CAST_LONG)) {
 
 				return Type.LONG;
+			}
+
+			if (dslFunctionType == DSLFunctionType.FLOAT_DIVISION) {
+				return Type.FLOAT;
 			}
 
 			return _getType(dslFunction.getExpressions()[0]);
