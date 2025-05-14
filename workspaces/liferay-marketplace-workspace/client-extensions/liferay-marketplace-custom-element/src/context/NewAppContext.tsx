@@ -177,12 +177,7 @@ type NewAppPayload = {
 
 const newAppInitialState: NewAppInitialState = {
 	build: {
-
-		// appType: null as unknown as ProductType,
-
-		// Remove this
-
-		appType: ProductType.DXP,
+		appType: null as unknown as ProductType,
 		compatibleOffering: [],
 		liferayPackages: [],
 		resourceRequirements: {
@@ -637,7 +632,7 @@ export default function NewAppContextProvider({
 			productId as string,
 			new URLSearchParams({
 				nestedFields:
-					'attachments,images,productSpecifications,productOptions,productVirtualSettings',
+					'attachments,images,productSpecifications,productOptions,productVirtualSettings,skus',
 			})
 		)
 			.then((response) => {
