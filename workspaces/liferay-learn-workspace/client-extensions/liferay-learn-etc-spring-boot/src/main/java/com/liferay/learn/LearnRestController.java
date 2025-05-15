@@ -16,7 +16,6 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 
 import java.util.Collections;
 import java.util.List;
@@ -72,32 +71,30 @@ public class LearnRestController extends BaseRestController {
 				);
 			}
 
-			Map<String, Object> body = HashMapBuilder.<String, Object>put(
-				"audioConfig",
-				HashMapBuilder.<String, Object>put(
-					"audioEncoding", "MP3"
-				).build()
-			).put(
-				"enableTimePointing", List.of("SSML_MARK")
-			).put(
-				"input",
-				HashMapBuilder.<String, Object>put(
-					"ssml", _buildSSMLWithMarks(contentRawText)
-				).build()
-			).put(
-				"voice",
-				HashMapBuilder.<String, Object>put(
-					"languageCode", languageCode
-				).put(
-					"name", voiceName
-				).build()
-			).build();
-
 			return ResponseEntity.ok(
 				post(
 					_getGoogleAccessToken(),
 					new JSONObject(
-						body
+						HashMapBuilder.<String, Object>put(
+							"audioConfig",
+							HashMapBuilder.<String, Object>put(
+								"audioEncoding", "MP3"
+							).build()
+						).put(
+							"enableTimePointing", List.of("SSML_MARK")
+						).put(
+							"input",
+							HashMapBuilder.<String, Object>put(
+								"ssml", _buildSSMLWithMarks(contentRawText)
+							).build()
+						).put(
+							"voice",
+							HashMapBuilder.<String, Object>put(
+								"languageCode", languageCode
+							).put(
+								"name", voiceName
+							).build()
+						).build()
 					).toString(),
 					"https://texttospeech.googleapis.com/v1beta1" +
 						"/text:synthesize"));
@@ -202,23 +199,19 @@ public class LearnRestController extends BaseRestController {
 	}
 
 	private String _buildSSMLWithMarks(String text) {
-		String[] words = text.split("\\s+");
-
 		StringBuilder sb = new StringBuilder("<speak>");
 
+		String[] words = text.split("\\s+");
+
 		for (int i = 0; i < words.length; i++) {
-			String word = words[i];
-
-			String markName = "mark" + i;
-
 			sb.append(
 				"<mark name=\""
 			).append(
-				markName
+				"mark" + i
 			).append(
 				"\"/> "
 			).append(
-				word
+				words[i]
 			).append(
 				" "
 			);
@@ -235,11 +228,8 @@ public class LearnRestController extends BaseRestController {
 	}
 
 	private String _getGoogleAccessToken() throws Exception {
-		InputStream inputStream = new ByteArrayInputStream(
-			_googleCredentials.getBytes());
-
 		GoogleCredentials credentials = GoogleCredentials.fromStream(
-			inputStream
+			new ByteArrayInputStream(_googleCredentials.getBytes())
 		).createScoped(
 			Collections.singletonList(
 				"https://www.googleapis.com/auth/cloud-platform")
