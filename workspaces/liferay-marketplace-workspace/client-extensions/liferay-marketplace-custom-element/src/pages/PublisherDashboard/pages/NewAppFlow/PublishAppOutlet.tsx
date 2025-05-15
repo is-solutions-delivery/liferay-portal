@@ -30,8 +30,9 @@ const PublishAppOutlet = () => {
 	const isDraft = (status: number) =>
 		status === ProductWorkflowStatusCode.DRAFT;
 
-	const isSaveAsDraft =
-		!context._product || isDraft(context._product.productStatus);
+	const isSaveAsDraft = isDraft(
+		context._product ? context._product.productStatus : 0
+	);
 
 	const getFlowItems = () => {
 		return APP_FLOW_ITEMS.filter((item) => item.visible(context));
@@ -79,7 +80,7 @@ const PublishAppOutlet = () => {
 						appStatus={context._product?.productStatus}
 						display={{
 							preview: true,
-							saveAsDraft: isSaveAsDraft,
+							saveAsDraft: !isSaveAsDraft,
 						}}
 						exitProps={{
 							onClick: () => {
@@ -93,7 +94,7 @@ const PublishAppOutlet = () => {
 							onClick: () => alert('Preview...'),
 						}}
 						saveAsDraftProps={{
-							disabled: isDisabled,
+							disabled: isDisabled || isSaveAsDraft,
 							onClick: onSaveAsDraft,
 						}}
 						submitProps={{
@@ -173,7 +174,11 @@ const PublishAppOutlet = () => {
 					<Modal
 						last={
 							<>
-								<ClayButton displayType="secondary">
+								<ClayButton
+									displayType="secondary"
+									disabled={isDisabled || isSaveAsDraft}
+									onClick={() => onSaveAsDraft().then(onExit)}
+								>
 									{i18n.translate('save-as-a-draft-exit')}
 								</ClayButton>
 
