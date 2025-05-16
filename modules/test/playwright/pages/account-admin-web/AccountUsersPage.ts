@@ -71,6 +71,17 @@ export class AccountUsersPage {
 		);
 	}
 
+	async changeFilter(option) {
+		const expanded =
+			await this.usersTable.filterButton.getAttribute('aria-expanded');
+
+		if (expanded === 'false') {
+			await this.usersTable.filterButton.click();
+		}
+
+		await this.usersTable.filterMenuItem(option).click();
+	}
+
 	async roleName(name: string): Promise<Locator> {
 		return this.page.getByText(name, {exact: true});
 	}

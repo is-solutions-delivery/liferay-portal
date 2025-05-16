@@ -89,18 +89,6 @@ public class ExportAuditEventsMVCResourceCommand
 		return CSVUtil.encode(String.valueOf(date));
 	}
 
-	private String _getAuditEventCSV(AuditEvent auditEvent) {
-		return StringBundler.concat(
-			StringPool.QUOTE,
-			StringUtil.merge(
-				TransformUtil.transform(
-					_functions.values(),
-					function -> function.apply(auditEvent)),
-				StringBundler.concat(
-					StringPool.QUOTE, StringPool.COMMA, StringPool.QUOTE)),
-			StringPool.QUOTE, StringPool.NEW_LINE);
-	}
-
 	private List<AuditEvent> _getAuditEvents(
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
 		throws Exception {
@@ -149,7 +137,7 @@ public class ExportAuditEventsMVCResourceCommand
 
 		progressTracker.setPercent(percentage);
 
-		StringBundler sb = new StringBundler(auditEvents.size() + 1);
+		StringBundler sb = new StringBundler((auditEvents.size() * 2) + 4);
 
 		sb.append(StringPool.QUOTE);
 		sb.append(
@@ -162,7 +150,14 @@ public class ExportAuditEventsMVCResourceCommand
 		for (int i = 0; i < auditEvents.size(); i++) {
 			AuditEvent auditEvent = auditEvents.get(i);
 
-			sb.append(_getAuditEventCSV(auditEvent));
+			sb.append(
+				StringUtil.merge(
+					TransformUtil.transform(
+						_functions.values(),
+						function -> CSVUtil.encode(
+							function.apply(auditEvent)))));
+
+			sb.append(StringPool.NEW_LINE);
 
 			percentage = Math.min(10 + ((i * 90) / total), 99);
 

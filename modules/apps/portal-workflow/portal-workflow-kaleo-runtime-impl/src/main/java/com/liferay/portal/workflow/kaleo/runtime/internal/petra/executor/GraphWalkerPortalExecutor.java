@@ -15,7 +15,7 @@ import com.liferay.petra.lang.SafeCloseable;
 import com.liferay.portal.kernel.change.tracking.CTCollectionThreadLocal;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.security.auth.CompanyInheritableThreadLocalCallable;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactory;
@@ -63,27 +63,24 @@ public class GraphWalkerPortalExecutor {
 			return;
 		}
 
-		ExecutionContext executionContext = pathElement.getExecutionContext();
-
-		ServiceContext serviceContext = executionContext.getServiceContext();
-
-		long companyId = serviceContext.getCompanyId();
-
 		long ctCollectionId = CTCollectionThreadLocal.getCTCollectionId();
 
-		if (waitForCompletion) {
-			NoticeableFuture<?> noticeableFuture =
-				_noticeableExecutorService.submit(
+		NoticeableFuture<?> noticeableFuture =
+			_noticeableExecutorService.submit(
+				new CompanyInheritableThreadLocalCallable<>(
 					() -> {
 						try (SafeCloseable safeCloseable =
-								CompanyThreadLocal.
-									setCompanyIdWithSafeCloseable(
-										companyId, ctCollectionId)) {
+								CTCollectionThreadLocal.
+									setCTCollectionIdWithSafeCloseable(
+										ctCollectionId)) {
 
 							_walk(pathElement);
 						}
-					});
 
+						return null;
+					}));
+
+		if (waitForCompletion) {
 			try {
 				noticeableFuture.get();
 			}
@@ -93,17 +90,6 @@ public class GraphWalkerPortalExecutor {
 			catch (InterruptedException interruptedException) {
 				_log.error(interruptedException);
 			}
-		}
-		else {
-			_noticeableExecutorService.submit(
-				() -> {
-					try (SafeCloseable safeCloseable =
-							CompanyThreadLocal.setCompanyIdWithSafeCloseable(
-								companyId, ctCollectionId)) {
-
-						_walk(pathElement);
-					}
-				});
 		}
 	}
 

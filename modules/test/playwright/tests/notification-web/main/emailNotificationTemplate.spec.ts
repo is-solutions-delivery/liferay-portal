@@ -10,12 +10,15 @@ import {
 import {expect, mergeTests} from '@playwright/test';
 
 import {apiHelpersTest} from '../../../fixtures/apiHelpersTest';
+import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {notificationPagesTest} from '../../../fixtures/notificationPagesTest';
 import {getRandomInt} from '../../../utils/getRandomInt';
+import getRandomString from '../../../utils/getRandomString';
 
 export const test = mergeTests(
 	apiHelpersTest,
+	dataApiHelpersTest,
 	loginTest(),
 	notificationPagesTest
 );
@@ -124,6 +127,92 @@ test.describe('Email notification template', () => {
 		await expect(emailNotificationTemplatePage.contentSubject).toHaveValue(
 			notificationTemplateInfo.subject
 		);
+	});
+
+	test('can be edited correctly', async ({
+		apiHelpers,
+		emailNotificationTemplatePage,
+		notificationTemplatesPage,
+	}) => {
+		const notificationTemplate =
+			await apiHelpers.notification.postRandomNotificationTemplate(
+				'notification template test ' + getRandomInt()
+			);
+
+		apiHelpers.data.push({
+			id: notificationTemplate.id,
+			type: 'notificationTemplate',
+		});
+
+		await notificationTemplatesPage.goto();
+
+		await notificationTemplatesPage
+			.getFrontEndDatasetItemLocator(notificationTemplate.name)
+			.click();
+
+		const editedNotificationTemplateInfo = {
+			bcc: getRandomString(),
+			cc: getRandomString(),
+			description: getRandomString(),
+			recipients: getRandomString(),
+			senderAddress: getRandomString(),
+			senderName: getRandomString(),
+			subject: getRandomString(),
+			term: getRandomString(),
+		};
+
+		const editedNotificationTemplateName = getRandomString();
+
+		await emailNotificationTemplatePage.fillNotificationTemplateInfo(
+			editedNotificationTemplateName,
+			editedNotificationTemplateInfo
+		);
+
+		await emailNotificationTemplatePage.saveButton.click();
+
+		await notificationTemplatesPage
+			.getFrontEndDatasetItemLocator(editedNotificationTemplateName)
+			.click();
+
+		await expect
+			.soft(emailNotificationTemplatePage.basicInfoName)
+			.toHaveValue(editedNotificationTemplateName);
+
+		await expect
+			.soft(emailNotificationTemplatePage.descriptionInput)
+			.toHaveValue(editedNotificationTemplateInfo.description);
+
+		await expect
+			.soft(emailNotificationTemplatePage.senderEmailAddress)
+			.toHaveValue(editedNotificationTemplateInfo.senderAddress);
+
+		await expect
+			.soft(emailNotificationTemplatePage.senderName)
+			.toHaveValue(editedNotificationTemplateInfo.senderName);
+
+		await expect
+			.soft(
+				emailNotificationTemplatePage.primaryRecipientUserEmailAddress
+			)
+			.toHaveValue(editedNotificationTemplateInfo.recipients);
+
+		await expect
+			.soft(emailNotificationTemplatePage.secondaryRecipientsCCInput)
+			.toHaveValue(editedNotificationTemplateInfo.cc);
+
+		await expect
+			.soft(emailNotificationTemplatePage.secondaryRecipientsBCCInput)
+			.toHaveValue(editedNotificationTemplateInfo.bcc);
+
+		await expect
+			.soft(emailNotificationTemplatePage.contentSubject)
+			.toHaveValue(editedNotificationTemplateInfo.subject);
+
+		await expect
+			.soft(emailNotificationTemplatePage.contentSubject)
+			.toHaveValue(editedNotificationTemplateInfo.subject);
+
+		await expect(test.info().errors).toHaveLength(0);
 	});
 
 	test('can have rich text source code verifying that the source code is persisted', async ({

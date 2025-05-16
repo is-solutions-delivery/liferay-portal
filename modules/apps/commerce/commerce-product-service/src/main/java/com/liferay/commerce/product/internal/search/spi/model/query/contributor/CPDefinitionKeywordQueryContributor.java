@@ -68,6 +68,12 @@ public class CPDefinitionKeywordQueryContributor
 			booleanQuery, searchContext, CPField.SPECIFICATION_VALUES_NAMES,
 			false);
 		_queryHelper.addSearchLocalizedTerm(
+			booleanQuery, searchContext,
+			CPField.SPECIFICATION_VALUES_NAMES + "_text", false);
+		_queryHelper.addSearchTerm(
+			booleanQuery, searchContext,
+			CPField.SPECIFICATION_VALUES_NAMES + "_text", false);
+		_queryHelper.addSearchLocalizedTerm(
 			booleanQuery, searchContext, Field.CONTENT, false);
 		_queryHelper.addSearchLocalizedTerm(
 			booleanQuery, searchContext, Field.DESCRIPTION, false);
