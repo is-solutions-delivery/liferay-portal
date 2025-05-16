@@ -17,6 +17,7 @@ import CommerceSelectAccount from '../../services/rest/CommerceSelectAccount';
 import HeadlessAdminUser from '../../services/rest/HeadlessAdminUser';
 import {Region} from '../../services/rest/HeadlessCommerceAdminAddress';
 import {
+	getCurrentCurrency,
 	getPaymentMethodURL,
 	postCheckoutCart,
 	postEmailAppInformation,
@@ -34,8 +35,9 @@ import {postCartByPaymentMethod} from './utils/postCartByPaymentMethod';
 
 import './styles/index.scss';
 import {SkuOptions} from '../../enums/Product';
+import {getPrices} from './utils/getPrices';
 
-const getProductBasePriceAndTrial = (
+const getProductBasePriceAndTrial = async (
 	product: DeliveryProduct,
 	isCloudApp: boolean
 ) => {
@@ -44,6 +46,8 @@ const getProductBasePriceAndTrial = (
 		firstSku: undefined,
 		isTrial: false,
 		trialSku: undefined,
+		standardSku: undefined,
+		prices: undefined,
 	};
 
 	if (!product) {
@@ -63,8 +67,11 @@ const getProductBasePriceAndTrial = (
 		};
 	}
 
-	let standardSku;
-	let trialSku;
+	let basePrice: any;
+	let developerSku: DeliverySKU | undefined;
+	let standardSku: DeliverySKU | undefined;
+	let regionalPrices: any;
+	let trialSku: DeliverySKU | undefined;
 
 	if (isCloudApp) {
 		trialSku = skus.find(({skuOptions}) =>
@@ -82,35 +89,52 @@ const getProductBasePriceAndTrial = (
 					skuOption.skuOptionValueKey === 'no'
 			)
 		);
-	}
-	else {
+	} else {
 		const skusLicenseUsageTypes = skus
-			.map(({skuOptions, ...sku}) => ({
-				...sku,
-				skuOptions: skuOptions.find((skuOption) =>
-					[SkuOptions.STANDARD, SkuOptions.TRIAL].includes(
+			.map((sku) => {
+				const match = sku.skuOptions.find((skuOption) =>
+					[SkuOptions.STANDARD, SkuOptions.TRIAL, SkuOptions.DEVELOPER].includes(
 						skuOption.skuOptionValueKey as SkuOptions
 					)
-				),
-			}))
-			.filter(({skuOptions}) => skuOptions);
+				);
+				return match ? { ...sku, matchedOption: match } : null;
+			})
+			.filter(Boolean) as (DeliverySKU & { matchedOption: SkuOption })[];
 
 		standardSku = skusLicenseUsageTypes.find(
-			({skuOptions}) =>
-				skuOptions?.skuOptionValueKey === SkuOptions.STANDARD
+			({ matchedOption }) => matchedOption.skuOptionValueKey === SkuOptions.STANDARD
+		);
+
+		developerSku = skusLicenseUsageTypes.find(
+			({ matchedOption }) => matchedOption.skuOptionValueKey === SkuOptions.DEVELOPER
 		);
 
 		trialSku = skusLicenseUsageTypes.find(
-			({skuOptions}) => skuOptions?.skuOptionValueKey === SkuOptions.TRIAL
+			({ matchedOption }) => matchedOption.skuOptionValueKey === SkuOptions.TRIAL
 		);
+
+		const standardSkuId = standardSku?.id as number;
+		const developerSkuId = developerSku?.id as number;
+
+		const currency = await getCurrentCurrency();
+		regionalPrices = await getPrices(product, standardSkuId , developerSkuId);
+
+		if (currency) {
+			basePrice = regionalPrices?.standard.entries[0].price ?? (standardSku?.price?.price ?? 0) * currency.rate;
+		} else {
+			basePrice = standardSku?.price?.price 
+		}
 	}
 
 	return {
-		basePrice: standardSku?.price?.price,
+		basePrice,
 		firstSku: skus[0],
 		standardSku,
 		trialSku,
+		isTrial: !!trialSku,
+		prices: regionalPrices
 	};
+	
 };
 
 const GetAppOutlet = () => {
@@ -144,7 +168,17 @@ const GetAppOutlet = () => {
 		isCloudApp
 	);
 
-	const {firstSku, trialSku} = productBasePriceAndTrial;
+	let firstSku: DeliverySKU | undefined;
+	let trialSku: DeliverySKU | undefined;
+
+	useEffect(() => {
+		(async () => {
+			const result = await productBasePriceAndTrial;
+			firstSku = result.firstSku;
+			trialSku = result.trialSku;
+
+		})();
+	}, [productBasePriceAndTrial]);
 
 	const sku = trialSku ?? firstSku;
 
@@ -234,7 +268,7 @@ const GetAppOutlet = () => {
 				selectedSKU,
 				sku: sku as any,
 			});
-
+			console.log('cart', cart);
 			const cartResponse = orderId
 				? await cartUtil.updateCart(orderId, {
 						...cart,

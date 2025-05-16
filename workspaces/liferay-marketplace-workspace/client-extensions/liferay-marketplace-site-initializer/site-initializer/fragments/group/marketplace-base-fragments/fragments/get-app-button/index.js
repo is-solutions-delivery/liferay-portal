@@ -58,7 +58,7 @@ const getHelpModal = () => `
 	
 			<li style="color: #54555F;">
 				Install fragments directly from Page Builder. 
-				Check <a href="https://learn.liferay.com/w/dxp/site-building/creating-pages/page-fragments-and-widgets/using-fragments/adding-marketplace-fragments-to-pages" target="_blank">
+				Check <a href="https://learn.liferay.com/w/dxp/site-building/creating-pages/page-fragments-and-widgets/using-fragments/using-fragments-from-the-marketplace" target="_blank">
 				here</a> to learn how.
 			</li>
 		</ol>
@@ -85,6 +85,12 @@ const getProductPrice = async (product) => {
 			['standard', 'no'].includes(skuOption.skuOptionValueKey)
 		)
 	);
+	
+	const standardSkuId = standardSku.id;
+	
+	const isRegionalPricingArray = await getPrices(product, standardSkuId);
+  
+	const isRegionalPricing = isRegionalPricingArray[0];
 
 	const licenseType = productSpecifications.find(
 		(productSpecification) =>
@@ -93,20 +99,23 @@ const getProductPrice = async (product) => {
 
 	const licenseTypeText =
 		licenseType?.value === 'Perpetual' ? 'One-Time' : 'Annually';
+
 	const currency = await getCurrentCurrency();
 
 	let displayPrice = '';
 
-	if (currency) {
+if (currency) {
+	if (isRegionalPricing?.price != null) {
+		displayPrice = `${currency.symbol} ${isRegionalPricing.price.toFixed(2)}`;
+	} else {
 		const convertedPrice = standardSku?.price?.price * currency.rate;
-
 		displayPrice = `${currency.symbol} ${convertedPrice?.toFixed(2)}`;
 	}
-	else {
-		displayPrice = standardSku?.price?.priceFormatted
-			?.replace(' ', '')
-			?.replace(',', '.');
-	}
+} else {
+	displayPrice = standardSku?.price?.priceFormatted
+		?.replace(' ', '')
+		?.replace(',', '.');
+}
 
 	const price = `${hasTrialSku ? '30-day trial or' : ''} ${displayPrice}`;
 
@@ -157,6 +166,55 @@ const getCommerceProduct = async (channelId) => {
 		return {skus: []};
 	}
 };
+
+const getPriceListByCatalogName = async (catalogName) => {
+	try {
+		const response = await Liferay.Util.fetch(
+			`/o/headless-commerce-admin-pricing/v2.0/price-lists?search=catalogName%20eq%20%27${encodeURIComponent(catalogName)}%27`
+		);
+
+		const data = await response.json();
+
+		const filteredItems = (data.items || []).filter(
+			(item) => item.currencyCode === Liferay.CommerceContext.currency.currencyCode
+		);
+		
+		return filteredItems;
+	} catch (error) {
+		console.error('Erro:', error);
+		return [];
+	}
+};
+
+
+const getPriceEntriesBySkuId = async (priceListId, skuId) => {
+	try {
+		const response = await Liferay.Util.fetch(
+			`/o/headless-commerce-admin-pricing/v2.0/price-lists/${priceListId}/price-entries?filter=skuId%20eq%20${skuId}&pageSize=500`
+		);
+
+		const data = await response.json();
+
+		return data.items || [];
+	} catch (error) {
+		console.error(`Erro ao buscar entries para priceListId ${priceListId}:`, error);
+		return [];
+	}
+};
+
+const getPrices = async (product, standardSkuId) => {
+	const catalogName = product.catalogName;
+
+	const priceLists = await getPriceListByCatalogName(catalogName);
+
+	for (const priceList of priceLists) {
+		const entries = await getPriceEntriesBySkuId(priceList.id, standardSkuId);
+
+		return entries;
+	}
+};
+
+
 
 const getCurrentCurrency = async () => {
 	try {
@@ -278,7 +336,7 @@ const main = async () => {
 
 	const product = await getCommerceProduct(channelId);
 	const skuPublished = product.skus.some((sku) => sku.purchasable);
-
+	
 	if (skuPublished) {
 		getAppButtonElement.classList.remove('d-none');
 

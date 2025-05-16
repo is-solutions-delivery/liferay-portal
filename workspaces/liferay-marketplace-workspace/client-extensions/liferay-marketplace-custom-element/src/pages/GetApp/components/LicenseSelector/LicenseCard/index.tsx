@@ -12,6 +12,8 @@ import ClayButton from '@clayui/button';
 import infoCircleFullIcon from '../../../../../assets/icons/icon_info_circle_full.svg';
 import useCart from '../../../../../hooks/useCart';
 import i18n from '../../../../../i18n';
+import { useProductPrice } from '../../../../../hooks/useProductPrice';
+import { useGetAppContext } from '../../../GetAppContextProvider';
 
 const MAX_ITEM = 99;
 const MIN_ITEM = 0;
@@ -39,18 +41,21 @@ const LicenseSectorCard: React.FC<LicenseSectorCardProps> = ({
 		cartUtil.cartItems.find((item) => item.skuId === sku.id)?.quantity ||
 		MIN_ITEM;
 
-	const tierPrices = licensetiers[0]?.tierPrice ?? ([] as TierPrice[]);
+	const [{ product }] = useGetAppContext();
+	const {productPrice} = useProductPrice(product);
+
+	const tierPrices =
+		productPrice?.prices?.[lisenceType.toLowerCase()]?.tierPrices ?? [];
 
 	const tierPriceText = (tierPrice: TierPrice, index: number) => {
-		const {priceFormatted, quantity} = tierPrice;
+		const {priceFormatted, minimumQuantity} = tierPrice;
 
 		const minPriceLicenseOption = index === tierPrices?.length - 1;
+		const nextMinQty = tierPrices[index + 1]?.minimumQuantity || 0;
 
-		const toLicenseQuantityValue = tierPrices[index + 1]?.quantity - 1;
-
-		const quantityText = `${quantity}${`${
-			minPriceLicenseOption ? '+ ' : `-${toLicenseQuantityValue}`
-		}`} ${i18n.translate('licenses')}:`;
+		const quantityText = `${minimumQuantity}${
+			minPriceLicenseOption? '+': `-${nextMinQty - 1}`
+			} ${i18n.translate('licenses')}:`;
 
 		const tierPriceValue = `${priceFormatted} ${i18n.translate('each')}`;
 
@@ -122,16 +127,13 @@ const LicenseSectorCard: React.FC<LicenseSectorCardProps> = ({
 				</div>
 
 				{tierPrices.length > 1 ? (
-					tierPrices.map((tier: TierPrice, index: number) => {
-						return (
-							<span
-								className="license__card__tier__price__text"
-								key={index}
-							>
-								{tierPriceText(tier, index)}
-							</span>
-						);
-					})
+					tierPrices.map((tier: TierPrice, index: number) => (
+						<span 
+							className="license__card__tier__price__text"
+							key={tier.id}>
+							{tierPriceText(tier, index)}
+						</span>
+					))
 				) : (
 					<span className="license__card__tier__price__text">
 						{`1 License: ${sku?.price?.priceFormatted}`}

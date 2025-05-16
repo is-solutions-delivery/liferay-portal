@@ -12,6 +12,7 @@ import {getProductBasePriceAndTrial} from '../GetAppOutlet';
 import {ProductCardRevamp} from '../components/ProductCard/ProductCard';
 import {getIconUrl} from '../utils/getIcon';
 import ProductHeaderPrice from './ProductHeaderPrice';
+import {useProductPrice} from '../../../hooks/useProductPrice';
 
 const getLicenseTagText = (product: DeliveryProduct) => {
 	const licenseTypeSpecification = getValueFromDeliverySpecifications(
@@ -35,9 +36,9 @@ const ProductHeader: React.FC<ProductHeaderProps> = ({
 }) => {
 	const [{account, product}] = useGetAppContext();
 	const {myUserAccount} = useMarketplaceContext();
+	const {productPrice} = useProductPrice(product);
 
 	const productCreatorAccountName = product?.catalogName || '';
-
 	const latestVersion = getValueFromDeliverySpecifications(
 		product?.productSpecifications,
 		'latest-version'
@@ -52,11 +53,10 @@ const ProductHeader: React.FC<ProductHeaderProps> = ({
 
 					<div className="mr-1 py-2">
 						<ProductHeaderPrice
-							productBasePriceAndTrial={productBasePriceAndTrial}
+							productBasePriceAndTrial={productPrice}
 						/>
 					</div>
-
-					{!!productBasePriceAndTrial.basePrice && (
+					{!!productPrice?.basePrice && (
 						<div className="license-tag px-2">
 							{getLicenseTagText(product as DeliveryProduct)}
 						</div>

@@ -450,6 +450,81 @@ export async function getPriceListByCatalogName(catalogName: string) {
 	return await response.json();
 }
 
+export async function getCurrentCurrency() {
+	try {
+		const response = await fetch(
+			`${baseURL}/o/headless-commerce-delivery-catalog/v1.0/channels/${Liferay.CommerceContext.commerceChannelId}/currencies`,
+
+			{
+				headers,
+				method: 'GET',
+			}
+		);
+
+		const currencyResponse = await response.json();
+
+		return currencyResponse.items.find(
+			({code}: {code: String}) =>
+				code === Liferay.CommerceContext.currency.currencyCode
+		);
+	}
+	catch (error) {
+		console.error('Error fetching currency:', error);
+
+		return null;
+	}
+}
+
+export async function getFilteredPriceListsByCatalogName(catalogName: string) {
+	const response = await fetch(
+		`${baseURL}/o/headless-commerce-admin-pricing/v2.0/price-lists?search=catalogName%20eq%20%27${encodeURIComponent(catalogName)}%27`,
+		{
+			headers,
+			method: 'GET',
+		}
+	);
+
+	const data = await response.json();
+
+	const matchedItem = (data.items || []).find(
+		({currencyCode}: {currencyCode: string}) =>
+			currencyCode === Liferay.CommerceContext.currency.currencyCode
+	);
+
+	return matchedItem ? [matchedItem] : [];
+}
+
+export async function getTierPricesByPriceEntry(priceEntry: number) {
+	const response = await fetch(
+		`${baseURL}/o/headless-commerce-admin-pricing/v2.0/price-entries/${priceEntry}/tier-prices`,
+		{
+			headers,
+			method: 'GET',
+		}
+	);
+
+	const data = await response.json();
+
+	return data.items || [];
+}
+
+export async function getPriceEntriesBySkuId(
+	priceListId: number,
+	skuId: number
+) {
+	const response = await fetch(
+		`${baseURL}/o/headless-commerce-admin-pricing/v2.0/price-lists/${priceListId}/price-entries?filter=skuId%20eq%20${skuId}&pageSize=500`,
+		{
+			headers,
+			method: 'GET',
+		}
+	);
+
+	const data = await response.json();
+
+	return data.items || [];
+}
+
 export async function getPriceListIdPriceEntries(priceListId: number) {
 	const response = await fetch(
 		`${baseURL}/o/headless-commerce-admin-pricing/v2.0/price-lists/${priceListId}/price-entries?pageSize=-1&nestedFields=sku,product`,

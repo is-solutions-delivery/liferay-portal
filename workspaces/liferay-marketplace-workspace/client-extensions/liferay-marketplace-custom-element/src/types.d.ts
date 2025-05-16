@@ -578,11 +578,11 @@ type Product = {
 };
 
 type PriceList = {
-	active: boolean,
-	catalogId: number,
-	currencyCode:string,
-	name: string,
-	type: string
+	active: boolean;
+	catalogId: number;
+	currencyCode: string;
+	name: string;
+	type: string;
 };
 
 type ProductAttachment = {
@@ -709,6 +709,8 @@ type TaxonomyVocabulary = {
 
 type TierPrice = {
 	currency: string;
+	id: number;
+	minimumQuantity: number;
 	price: number;
 	priceFormatted: string;
 	quantity: number;
