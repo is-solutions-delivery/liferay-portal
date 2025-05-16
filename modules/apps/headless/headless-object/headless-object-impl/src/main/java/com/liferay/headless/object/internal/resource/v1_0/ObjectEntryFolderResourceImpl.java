@@ -237,7 +237,9 @@ public class ObjectEntryFolderResourceImpl
 
 		return _addObjectEntryFolder(
 			groupId,
-			_getParentObjectEntryFolderId(false, groupId, objectEntryFolder),
+			GetterUtil.getLong(
+				_getParentObjectEntryFolderId(
+					false, groupId, objectEntryFolder)),
 			objectEntryFolder);
 	}
 
@@ -262,14 +264,18 @@ public class ObjectEntryFolderResourceImpl
 		if (persistedObjectEntryFolder == null) {
 			return _addObjectEntryFolder(
 				groupId,
-				_getParentObjectEntryFolderId(true, groupId, objectEntryFolder),
+				GetterUtil.getLong(
+					_getParentObjectEntryFolderId(
+						true, groupId, objectEntryFolder)),
 				objectEntryFolder);
 		}
 
 		return _toObjectEntryFolder(
 			_objectEntryFolderService.updateObjectEntryFolder(
 				persistedObjectEntryFolder.getObjectEntryFolderId(),
-				_getParentObjectEntryFolderId(true, groupId, objectEntryFolder),
+				GetterUtil.getLong(
+					_getParentObjectEntryFolderId(
+						true, groupId, objectEntryFolder)),
 				objectEntryFolder.getDescription(),
 				LocalizedMapUtil.getLocalizedMap(
 					contextAcceptLanguage.getPreferredLocale(),
@@ -316,7 +322,7 @@ public class ObjectEntryFolderResourceImpl
 		throw new NoSuchGroupException();
 	}
 
-	private long _getParentObjectEntryFolderId(
+	private Long _getParentObjectEntryFolderId(
 			boolean addObjectEntryFolder, long groupId,
 			ObjectEntryFolder objectEntryFolder)
 		throws Exception {
@@ -329,12 +335,12 @@ public class ObjectEntryFolderResourceImpl
 
 		if (Validator.isNull(parentObjectEntryFolderExternalReferenceCode)) {
 			if (parentObjectEntryFolderId == null) {
-				return ObjectEntryFolderConstants.
-					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT;
+				return null;
 			}
 
-			if (parentObjectEntryFolderId > ObjectEntryFolderConstants.
-					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT) {
+			if (parentObjectEntryFolderId !=
+					ObjectEntryFolderConstants.
+						PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT) {
 
 				_objectEntryFolderService.getObjectEntryFolder(
 					parentObjectEntryFolderId);
@@ -343,27 +349,26 @@ public class ObjectEntryFolderResourceImpl
 			return parentObjectEntryFolderId;
 		}
 
-		com.liferay.object.model.ObjectEntryFolder
-			objectEntryFolderPersistence =
-				_objectEntryFolderService.
-					fetchObjectEntryFolderByExternalReferenceCode(
-						parentObjectEntryFolderExternalReferenceCode, groupId,
-						contextUser.getCompanyId());
+		com.liferay.object.model.ObjectEntryFolder persistedObjectEntryFolder =
+			_objectEntryFolderService.
+				fetchObjectEntryFolderByExternalReferenceCode(
+					parentObjectEntryFolderExternalReferenceCode, groupId,
+					contextUser.getCompanyId());
 
 		if ((parentObjectEntryFolderId != null) &&
-			((objectEntryFolderPersistence == null) ||
-			 (objectEntryFolderPersistence.getObjectEntryFolderId() !=
+			((persistedObjectEntryFolder == null) ||
+			 (persistedObjectEntryFolder.getObjectEntryFolderId() !=
 				 parentObjectEntryFolderId))) {
 
 			throw new NoSuchObjectEntryFolderException();
 		}
 
-		if (objectEntryFolderPersistence == null) {
+		if (persistedObjectEntryFolder == null) {
 			if (!addObjectEntryFolder) {
 				throw new NoSuchObjectEntryFolderException();
 			}
 
-			objectEntryFolderPersistence =
+			persistedObjectEntryFolder =
 				_objectEntryFolderService.addObjectEntryFolder(
 					parentObjectEntryFolderExternalReferenceCode, groupId,
 					ObjectEntryFolderConstants.
@@ -374,7 +379,7 @@ public class ObjectEntryFolderResourceImpl
 					).build());
 		}
 
-		return objectEntryFolderPersistence.getObjectEntryFolderId();
+		return persistedObjectEntryFolder.getObjectEntryFolderId();
 	}
 
 	private ObjectEntryFolder _patchObjectEntryFolder(
@@ -396,15 +401,12 @@ public class ObjectEntryFolderResourceImpl
 				persistedObjectEntryFolder.getLabelMap());
 		}
 
-		long parentObjectEntryFolderId = _getParentObjectEntryFolderId(
+		Long parentObjectEntryFolderId = _getParentObjectEntryFolderId(
 			false, persistedObjectEntryFolder.getGroupId(), objectEntryFolder);
 
-		if (parentObjectEntryFolderId ==
-				ObjectEntryFolderConstants.
-					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT) {
-
+		if (parentObjectEntryFolderId == null) {
 			parentObjectEntryFolderId =
-				persistedObjectEntryFolder.getObjectEntryFolderId();
+				persistedObjectEntryFolder.getParentObjectEntryFolderId();
 		}
 
 		return _toObjectEntryFolder(

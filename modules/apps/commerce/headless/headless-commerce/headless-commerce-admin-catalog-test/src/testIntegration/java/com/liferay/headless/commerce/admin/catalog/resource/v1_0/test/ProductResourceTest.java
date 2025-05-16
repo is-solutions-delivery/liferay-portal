@@ -36,6 +36,7 @@ import com.liferay.headless.commerce.admin.catalog.client.pagination.Pagination;
 import com.liferay.headless.commerce.admin.catalog.client.problem.Problem;
 import com.liferay.headless.commerce.admin.catalog.client.resource.v1_0.ProductResource;
 import com.liferay.headless.commerce.core.util.LanguageUtils;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.User;
@@ -189,6 +190,7 @@ public class ProductResourceTest extends BaseProductResourceTestCase {
 	@Test
 	public void testGetProductsPage() throws Exception {
 		_testGetProductsPage();
+		_testGetProductsPageWithSearch();
 		_testGetProductsPageWithFilter();
 	}
 
@@ -457,7 +459,10 @@ public class ProductResourceTest extends BaseProductResourceTestCase {
 		return productResource.postProduct(product);
 	}
 
-	private Product _randomProductWithProductSpecification() throws Exception {
+	private Product _randomProductWithProductSpecification(
+			String specificationValue)
+		throws Exception {
+
 		return new Product() {
 			{
 				active = true;
@@ -481,8 +486,7 @@ public class ProductResourceTest extends BaseProductResourceTestCase {
 							specificationKey = _cpSpecificationOption.getKey();
 							value = LanguageUtils.getLanguageIdMap(
 								HashMapBuilder.put(
-									LocaleUtil.getDefault(),
-									"test specification"
+									LocaleUtil.getDefault(), specificationValue
 								).build());
 						}
 					}
@@ -552,7 +556,6 @@ public class ProductResourceTest extends BaseProductResourceTestCase {
 		long totalCount = page.getTotalCount();
 
 		Product product1 = testGetProductsPage_addProduct(randomProduct());
-
 		Product product2 = testGetProductsPage_addProduct(randomProduct());
 
 		page = productResource.getProductsPage(
@@ -565,7 +568,6 @@ public class ProductResourceTest extends BaseProductResourceTestCase {
 		assertValid(page, testGetProductsPage_getExpectedActions());
 
 		productResource.deleteProduct(product1.getProductId());
-
 		productResource.deleteProduct(product2.getProductId());
 	}
 
@@ -577,9 +579,8 @@ public class ProductResourceTest extends BaseProductResourceTestCase {
 
 		Product product1 = testGetProductsPage_addProduct(
 			_randomProductWithSku());
-
 		Product product2 = testGetProductsPage_addProduct(
-			_randomProductWithProductSpecification());
+			_randomProductWithProductSpecification("test specification"));
 
 		page = productResource.getProductsPage(
 			null, null, Pagination.of(1, 10), null);
@@ -628,7 +629,54 @@ public class ProductResourceTest extends BaseProductResourceTestCase {
 		assertValid(page, testGetProductsPage_getExpectedActions());
 
 		productResource.deleteProduct(product1.getProductId());
+		productResource.deleteProduct(product2.getProductId());
+	}
 
+	private void _testGetProductsPageWithSearch() throws Exception {
+		String string1 = RandomTestUtil.randomString();
+		String string2 = RandomTestUtil.randomString();
+
+		Product product1 = testGetProductsPage_addProduct(
+			_randomProductWithProductSpecification(
+				StringBundler.concat(string1, StringPool.SPACE, string2)));
+
+		Page<Product> page = productResource.getProductsPage(
+			string1, null, Pagination.of(1, 10), null);
+
+		Assert.assertEquals(1, page.getTotalCount());
+		assertContains(product1, (List<Product>)page.getItems());
+
+		page = productResource.getProductsPage(
+			string2, null, Pagination.of(1, 10), null);
+
+		Assert.assertEquals(1, page.getTotalCount());
+
+		assertContains(product1, (List<Product>)page.getItems());
+
+		page = productResource.getProductsPage(
+			StringBundler.concat(string1, StringPool.SPACE, string2), null,
+			Pagination.of(1, 10), null);
+
+		Assert.assertEquals(1, page.getTotalCount());
+
+		assertContains(product1, (List<Product>)page.getItems());
+
+		String string3 = RandomTestUtil.randomString();
+
+		Product product2 = testGetProductsPage_addProduct(
+			_randomProductWithProductSpecification(string3));
+
+		page = productResource.getProductsPage(
+			StringBundler.concat(
+				string2, StringPool.COMMA, StringPool.SPACE, string3),
+			null, Pagination.of(1, 10), null);
+
+		Assert.assertEquals(2, page.getTotalCount());
+
+		assertContains(product1, (List<Product>)page.getItems());
+		assertContains(product2, (List<Product>)page.getItems());
+
+		productResource.deleteProduct(product1.getProductId());
 		productResource.deleteProduct(product2.getProductId());
 	}
 

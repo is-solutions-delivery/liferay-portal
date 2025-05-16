@@ -8,6 +8,7 @@ package com.liferay.source.formatter.check;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.source.formatter.util.FileUtil;
 import com.liferay.source.formatter.util.SourceFormatterUtil;
 
@@ -39,6 +40,8 @@ public class PropertiesPlaywrightTestCheck extends BaseFileCheck {
 		}
 
 		if (absolutePath.contains("/modules/test/playwright/tests/")) {
+			_checkMissingConfigTs(fileName, absolutePath);
+
 			Properties properties = new Properties();
 
 			properties.load(new StringReader(content));
@@ -61,7 +64,7 @@ public class PropertiesPlaywrightTestCheck extends BaseFileCheck {
 				return content;
 			}
 
-			String moduleName = _getModuleName(absolutePath);
+			String moduleName = _getModuleName(absolutePath, 2);
 			List<String> testPropertiesFileNames = new ArrayList<>();
 
 			for (String buildGradleFileName : buildGradleFileNames) {
@@ -115,7 +118,7 @@ public class PropertiesPlaywrightTestCheck extends BaseFileCheck {
 		if (absolutePath.contains("/modules/apps/") ||
 			absolutePath.contains("/modules/dxp/apps/")) {
 
-			String moduleName = _getModuleName(absolutePath);
+			String moduleName = _getModuleName(absolutePath, 1);
 
 			if (absolutePath.endsWith(
 					"/modules/apps/" + moduleName + "/test.properties") ||
@@ -126,8 +129,9 @@ public class PropertiesPlaywrightTestCheck extends BaseFileCheck {
 			}
 
 			File file = new File(
-				getPortalDir() + "/modules/test/playwright/tests/" +
-					moduleName);
+				StringBundler.concat(
+					getPortalDir(), "/modules/test/playwright/tests/",
+					moduleName, "/main"));
 
 			if (!file.exists()) {
 				return content;
@@ -139,7 +143,7 @@ public class PropertiesPlaywrightTestCheck extends BaseFileCheck {
 				addMessage(
 					fileName,
 					"Missing test.properties in playwright/tests/" +
-						moduleName);
+						moduleName + "/main");
 
 				return content;
 			}
@@ -149,6 +153,19 @@ public class PropertiesPlaywrightTestCheck extends BaseFileCheck {
 		}
 
 		return content;
+	}
+
+	private void _checkMissingConfigTs(String fileName, String absolutePath) {
+		int x = absolutePath.lastIndexOf(StringPool.SLASH);
+
+		String playwrightTestDirLocation = absolutePath.substring(0, x);
+
+		File file = new File(playwrightTestDirLocation + "/config.ts");
+
+		if (!file.exists()) {
+			addMessage(
+				fileName, "Missing config.ts in " + playwrightTestDirLocation);
+		}
 	}
 
 	private void _checkMissingPlaywrightTestProjectProperty(
@@ -173,11 +190,24 @@ public class PropertiesPlaywrightTestCheck extends BaseFileCheck {
 		}
 
 		for (String relevantRuleName : relevantRuleNames) {
+			if (!relevantRuleName.endsWith("-playwright-rule")) {
+				continue;
+			}
+
+			String testBatchNamesRelevantName =
+				"test.batch.names[relevant][" + relevantRuleName + "]";
+
+			String playwrightRuleName = properties.getProperty(
+				testBatchNamesRelevantName);
+
+			if (Validator.isBlank(playwrightRuleName)) {
+				continue;
+			}
+
 			String playwrightProjectsIncludesPropertyName =
 				StringBundler.concat(
-					"playwright.projects.includes",
-					"[playwright-js-tomcat90-mysql57][relevant][",
-					relevantRuleName, "]");
+					"playwright.projects.includes[", playwrightRuleName,
+					"][relevant][", relevantRuleName, "]");
 
 			List<String> playwrightProjectsIncludesList = ListUtil.fromString(
 				properties.getProperty(playwrightProjectsIncludesPropertyName),
@@ -200,13 +230,15 @@ public class PropertiesPlaywrightTestCheck extends BaseFileCheck {
 						playwrightProjectsIncludesPropertyName, "\"",
 						additionalMessage));
 			}
-			else if (!playwrightProjectsIncludesList.contains(moduleName)) {
+			else if (!playwrightProjectsIncludesList.contains(
+						moduleName + ".main")) {
+
 				addMessage(
 					fileName,
 					StringBundler.concat(
-						"Missing property value \"", moduleName, "\" in \"",
-						playwrightProjectsIncludesPropertyName, "\"",
-						additionalMessage));
+						"Missing property value \"", moduleName, ".main",
+						"\" in \"", playwrightProjectsIncludesPropertyName,
+						"\"", additionalMessage));
 			}
 		}
 	}
@@ -225,12 +257,24 @@ public class PropertiesPlaywrightTestCheck extends BaseFileCheck {
 		return _buildGradleFileNames;
 	}
 
-	private String _getModuleName(String absolutePath) {
+	private String _getModuleName(String absolutePath, int depth) {
+		int i = 1;
+
 		int x = absolutePath.lastIndexOf(StringPool.SLASH);
 
-		int y = absolutePath.lastIndexOf(StringPool.SLASH, x - 1);
+		String s = absolutePath.substring(0, x);
 
-		return absolutePath.substring(y + 1, x);
+		while (true) {
+			x = s.lastIndexOf(StringPool.SLASH);
+
+			if (i == depth) {
+				return s.substring(x + 1);
+			}
+
+			i = i + 1;
+
+			s = s.substring(0, x);
+		}
 	}
 
 	private static final String _RELEVANT_RULE_NAMES = "relevant.rule.names";

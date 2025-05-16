@@ -94,6 +94,7 @@ import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.role.RoleConstants;
+import com.liferay.portal.kernel.security.auth.CompanyInheritableThreadLocalCallable;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
@@ -138,6 +139,8 @@ import com.liferay.portal.kernel.workflow.WorkflowTask;
 import com.liferay.portal.kernel.workflow.WorkflowTaskManager;
 import com.liferay.portal.security.script.management.test.rule.ScriptManagementConfigurationTestRule;
 import com.liferay.portal.security.script.management.test.util.ScriptManagementConfigurationTestUtil;
+import com.liferay.portal.test.mail.MailMessage;
+import com.liferay.portal.test.mail.MailServiceTestUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.FeatureFlags;
 import com.liferay.portal.test.rule.Inject;
@@ -162,6 +165,7 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.FutureTask;
 
 import org.hamcrest.CoreMatchers;
 
@@ -1737,41 +1741,8 @@ public class ObjectActionLocalServiceTest {
 				PermissionCheckerFactoryUtil.create(_user));
 			PrincipalThreadLocal.setName(_user.getUserId());
 
-			Thread thread1 = new Thread(
-				() -> {
-					try {
-						_objectEntryLocalService.addObjectEntry(
-							TestPropsValues.getUserId(), 0,
-							_objectDefinition.getObjectDefinitionId(),
-							ObjectEntryFolderConstants.
-								PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
-							null,
-							HashMapBuilder.<String, Serializable>put(
-								"firstName", "John"
-							).build(),
-							ServiceContextTestUtil.getServiceContext());
-					}
-					catch (PortalException portalException) {
-					}
-				});
-
-			Thread thread2 = new Thread(
-				() -> {
-					try {
-						_objectEntryLocalService.addObjectEntry(
-							TestPropsValues.getUserId(), 0,
-							_objectDefinition.getObjectDefinitionId(),
-							ObjectEntryFolderConstants.
-								PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
-							null,
-							HashMapBuilder.<String, Serializable>put(
-								"firstName", "Peter"
-							).build(),
-							ServiceContextTestUtil.getServiceContext());
-					}
-					catch (PortalException portalException) {
-					}
-				});
+			Thread thread1 = new Thread(_getAddObjectEntryFutureTask("John"));
+			Thread thread2 = new Thread(_getAddObjectEntryFutureTask("Peter"));
 
 			thread1.start();
 			thread2.start();
@@ -2689,6 +2660,61 @@ public class ObjectActionLocalServiceTest {
 	}
 
 	@Test
+	public void testUpdateNotificationTemplateObjectAction() throws Exception {
+		MailServiceTestUtil.clearMessages();
+
+		ObjectDefinition objectDefinition = _publishCustomObjectDefinition();
+
+		String body = RandomTestUtil.randomString();
+
+		NotificationTemplate notificationTemplate = _addNotificationTemplate(
+			TestPropsValues.getUserId(),
+			objectDefinition.getObjectDefinitionId(), body,
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			RandomTestUtil.randomString());
+
+		_addObjectAction(
+			objectDefinition.getObjectDefinitionId(),
+			ObjectActionExecutorConstants.KEY_NOTIFICATION,
+			ObjectActionTriggerConstants.KEY_ON_AFTER_ADD,
+			UnicodePropertiesBuilder.put(
+				"notificationTemplateId",
+				String.valueOf(notificationTemplate.getNotificationTemplateId())
+			).build());
+
+		_objectEntryLocalService.addObjectEntry(
+			TestPropsValues.getUserId(), 0,
+			objectDefinition.getObjectDefinitionId(),
+			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+			null,
+			HashMapBuilder.<String, Serializable>put(
+				"firstName", RandomTestUtil.randomString()
+			).build(),
+			ServiceContextTestUtil.getServiceContext());
+
+		_assertEmailNotificationSent(body, 1);
+
+		body = RandomTestUtil.randomString();
+
+		notificationTemplate.setBody(body);
+
+		_notificationTemplateLocalService.updateNotificationTemplate(
+			notificationTemplate);
+
+		_objectEntryLocalService.addObjectEntry(
+			TestPropsValues.getUserId(), 0,
+			objectDefinition.getObjectDefinitionId(),
+			ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+			null,
+			HashMapBuilder.<String, Serializable>put(
+				"firstName", RandomTestUtil.randomString()
+			).build(),
+			ServiceContextTestUtil.getServiceContext());
+
+		_assertEmailNotificationSent(body, 2);
+	}
+
+	@Test
 	public void testUpdateObjectAction() throws Exception {
 		String externalReferenceCode1 = RandomTestUtil.randomString();
 
@@ -2874,23 +2900,23 @@ public class ObjectActionLocalServiceTest {
 				_objectDefinition.getClassName()));
 	}
 
-	private ObjectAction _addNotificationTemplateObjectAction(
-			String objectActionTriggerKey, ObjectDefinition objectDefinition)
+	private NotificationTemplate _addNotificationTemplate(
+			long userId, long objectDefinitionId, String body,
+			String description, String name, String subject)
 		throws Exception {
 
 		NotificationTemplate notificationTemplate =
 			NotificationTemplateLocalServiceUtil.createNotificationTemplate(
 				RandomTestUtil.randomInt());
 
-		notificationTemplate.setUserId(_user.getUserId());
-		notificationTemplate.setObjectDefinitionId(
-			objectDefinition.getObjectDefinitionId());
-		notificationTemplate.setBody(RandomTestUtil.randomString());
-		notificationTemplate.setDescription(RandomTestUtil.randomString());
+		notificationTemplate.setUserId(userId);
+		notificationTemplate.setObjectDefinitionId(objectDefinitionId);
+		notificationTemplate.setBody(body);
+		notificationTemplate.setDescription(description);
 		notificationTemplate.setEditorType(
 			NotificationTemplateConstants.EDITOR_TYPE_RICH_TEXT);
-		notificationTemplate.setName(RandomTestUtil.randomString());
-		notificationTemplate.setSubject(RandomTestUtil.randomString());
+		notificationTemplate.setName(name);
+		notificationTemplate.setSubject(subject);
 		notificationTemplate.setType(NotificationConstants.TYPE_EMAIL);
 
 		NotificationContext notificationContext = new NotificationContext();
@@ -2922,9 +2948,19 @@ public class ObjectActionLocalServiceTest {
 		notificationContext.setNotificationTemplate(notificationTemplate);
 		notificationContext.setType(NotificationConstants.TYPE_EMAIL);
 
-		notificationTemplate =
-			_notificationTemplateLocalService.addNotificationTemplate(
-				notificationContext);
+		return _notificationTemplateLocalService.addNotificationTemplate(
+			notificationContext);
+	}
+
+	private ObjectAction _addNotificationTemplateObjectAction(
+			String objectActionTriggerKey, ObjectDefinition objectDefinition)
+		throws Exception {
+
+		NotificationTemplate notificationTemplate = _addNotificationTemplate(
+			TestPropsValues.getUserId(),
+			objectDefinition.getObjectDefinitionId(),
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			RandomTestUtil.randomString(), RandomTestUtil.randomString());
 
 		return _addObjectAction(
 			objectDefinition.getObjectDefinitionId(),
@@ -3014,6 +3050,25 @@ public class ObjectActionLocalServiceTest {
 				"firstName"));
 
 		return objectEntry;
+	}
+
+	private void _assertEmailNotificationSent(String body, int inboxSize) {
+		List<NotificationQueueEntry> notificationQueueEntries =
+			_notificationQueueEntryLocalService.getNotificationEntries(
+				NotificationConstants.TYPE_EMAIL,
+				NotificationQueueEntryConstants.STATUS_SENT);
+
+		Assert.assertEquals(
+			notificationQueueEntries.toString(), inboxSize,
+			notificationQueueEntries.size());
+
+		Assert.assertEquals(inboxSize, MailServiceTestUtil.getInboxSize());
+
+		MailMessage lastMailMessage = MailServiceTestUtil.getLastMailMessage();
+
+		String mailMessageBody = lastMailMessage.getBody();
+
+		Assert.assertTrue(mailMessageBody.contains(body));
 	}
 
 	private void _assertGroovyObjectActionExecutorArguments(
@@ -3198,6 +3253,29 @@ public class ObjectActionLocalServiceTest {
 				JSONUtil.getValue(
 					payloadJSONObject, "JSONObject/originalObjectEntry"));
 		}
+	}
+
+	private FutureTask<Void> _getAddObjectEntryFutureTask(String firstName) {
+		return new FutureTask<Void>(
+			new CompanyInheritableThreadLocalCallable(
+				() -> {
+					try {
+						_objectEntryLocalService.addObjectEntry(
+							TestPropsValues.getUserId(), 0,
+							_objectDefinition.getObjectDefinitionId(),
+							ObjectEntryFolderConstants.
+								PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT,
+							null,
+							HashMapBuilder.<String, Serializable>put(
+								"firstName", firstName
+							).build(),
+							ServiceContextTestUtil.getServiceContext());
+					}
+					catch (PortalException portalException) {
+					}
+
+					return null;
+				}));
 	}
 
 	private Object _getAndSetFieldValue(

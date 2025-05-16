@@ -187,11 +187,21 @@
 							/>
 
 							<execute-analytics-cloud dir="${analytics.cloud.faro.dir}" timeout="600000">
-								${portal.gradlew} createDocker -Pcom.liferay.osb.faro.environment.name=local -Dliferay.ci=true
+								${portal.gradlew} prepareAppDockerImageInputDir -Pcom.liferay.osb.faro.environment.name=local -Dliferay.ci=true
+
+								cp -R ${app.server.parent.dir} ./build/docker/bundles
+
+								mv ./build/docker/bundles/tomcat-${app.server.tomcat.version} ./build/docker/bundles/tomcat
+
+								if [ -f ./build/docker/bundles/tomcat/webapps/ROOT/WEB-INF/classes/portal-ext.properties ]; then
+									rm ./build/docker/bundles/tomcat/webapps/ROOT/WEB-INF/classes/portal-ext.properties
+								fi
+
+								cd ./build/docker
+
+								docker build . -t ${analytics.cloud.faro.image.name}
 
 								docker tag ${analytics.cloud.faro.image.name} ${analytics.cloud.faro.tag.name}
-
-								docker rm ${analytics.cloud.faro.container.name}
 
 								docker save --output ${project.dir}/dist/liferay-docker-faro.tar ${analytics.cloud.faro.image.name}
 							</execute-analytics-cloud>
@@ -530,7 +540,7 @@
 			/>
 
 			<replaceregexp
-				file="${analytics.cloud.faro.dir}/osb-faro-docker/local/Dockerfile"
+				file="${analytics.cloud.faro.dir}/osb-faro-docker/local/test/Dockerfile"
 				match="FARO_URL=http://localhost:8080"
 				replace="FARO_URL=${analytics.cloud.faro.frontend.url}"
 			/>
@@ -792,7 +802,11 @@ OSB_FARO_FRONTEND_URL=${analytics.cloud.faro.frontend.url}</echo>
 
 										docker system prune --volumes -f
 
-										docker-compose --file=${analytics.cloud.docker.test.yaml} --project-name=${analytics.cloud.project.name} up --detach
+										docker-compose --file=${analytics.cloud.docker.test.yaml} --project-name=${analytics.cloud.project.name} up --detach --scale osbfarofrontend=0
+
+										sleep 30
+
+										docker-compose --file=${analytics.cloud.docker.test.yaml} --project-name=${analytics.cloud.project.name} up --detach osbfarofrontend
 
 										while [[ -n $(docker ps | grep "health: starting") ]] || [[ -n $(docker ps | grep "unhealthy") ]]
 										do

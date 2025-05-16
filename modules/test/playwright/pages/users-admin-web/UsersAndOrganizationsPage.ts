@@ -7,6 +7,7 @@ import {FrameLocator, Locator, Page} from '@playwright/test';
 
 import {clickAndExpectToBeVisible} from '../../utils/clickAndExpectToBeVisible';
 import {waitForAlert} from '../../utils/waitForAlert';
+import {DataTablePage} from '../account-admin-web/DataTablePage';
 import {ApplicationsMenuPage} from '../product-navigation-applications-menu/ApplicationsMenuPage';
 
 export const searchTableRowByValue = async function (
@@ -114,15 +115,7 @@ export class UsersAndOrganizationsPage {
 	readonly optionsMenu: Locator;
 	readonly organizationChartLink: Locator;
 	readonly organizationsLink: Locator;
-	readonly organizationsTable: Locator;
-	readonly organizationsTableRow: (
-		colPosition: number,
-		value: string,
-		strictEqual?: boolean
-	) => Promise<{column: Locator; row: Locator}>;
-	readonly organizationsTableRowLink: (
-		organizationName: string
-	) => Promise<Locator>;
+	readonly organizationsTable: DataTablePage;
 	readonly organizationUsersTable: Locator;
 	readonly organizationUsersTableRow: (
 		colPosition: number,
@@ -142,6 +135,7 @@ export class UsersAndOrganizationsPage {
 	readonly page: Page;
 	readonly pageTitle: Locator;
 	readonly selectAllUsersCheckBox: Locator;
+	readonly statusText: (value: string) => Locator;
 	readonly tableFilterMenu: Locator;
 	readonly tableFilterMenuItem: (option: string) => Locator;
 	readonly tableOrderMenu: Locator;
@@ -369,29 +363,6 @@ export class UsersAndOrganizationsPage {
 		this.optionsMenu = page
 			.getByTestId('headerOptions')
 			.getByLabel('Options');
-		this.organizationActionsMenu = async (organizationName: string) => {
-			const organizationsTableRow = await this.organizationsTableRow(
-				1,
-				organizationName,
-				true
-			);
-
-			if (organizationsTableRow && organizationsTableRow.row) {
-				const organizationActionsMenu =
-					organizationsTableRow.row.getByLabel('Show Actions');
-
-				if (organizationActionsMenu) {
-					return organizationActionsMenu;
-				}
-			}
-			else {
-				throw new Error(
-					`Cannot locate organization row with organizationName ${organizationName}`
-				);
-			}
-
-			throw new Error(`Cannot locate button with label: Show Actions`);
-		};
 		this.organizationChartLink = page.getByRole('link', {
 			exact: true,
 			name: 'Organization Chart',
@@ -399,8 +370,13 @@ export class UsersAndOrganizationsPage {
 		this.organizationsLink = page.getByRole('link', {
 			name: 'Organizations',
 		});
-		this.organizationsTable = page.locator(
-			'#_com_liferay_users_admin_web_portlet_UsersAdminPortlet_organizationsSearchContainer'
+		this.organizationsTable = new DataTablePage(
+			page,
+			page
+				.locator(
+					'#_com_liferay_users_admin_web_portlet_UsersAdminPortlet_organizationsSearchContainer'
+				)
+				.first()
 		);
 		this.organizationUsersTable = page.locator(
 			'[id$="_organizationUsersSearchContainer"]'
@@ -467,35 +443,6 @@ export class UsersAndOrganizationsPage {
 			}
 		};
 		this.assignUsersDoneButton = page.getByRole('button', {name: 'Done'});
-		this.organizationsTableRow = async (
-			colPosition: number,
-			value: string,
-			strictEqual: boolean = false
-		) => {
-			return await searchTableRowByValue(
-				this.organizationsTable,
-				colPosition,
-				value,
-				strictEqual
-			);
-		};
-		this.organizationsTableRowLink = async (organizationName: string) => {
-			const myOrganizationsTableRow = await this.organizationsTableRow(
-				1,
-				organizationName,
-				true
-			);
-
-			if (myOrganizationsTableRow && myOrganizationsTableRow.column) {
-				return myOrganizationsTableRow.column.getByRole('link', {
-					name: organizationName,
-				});
-			}
-
-			throw new Error(
-				`Cannot locate organization row with name ${organizationName}`
-			);
-		};
 		this.page = page;
 		this.pageTitle = page.getByTestId('headerTitle');
 		this.usersCheckbox = async (userName: string) => {
@@ -521,6 +468,7 @@ export class UsersAndOrganizationsPage {
 				strictEqual
 			);
 		};
+		this.statusText = (value) => page.getByText(value, {exact: true});
 		this.selectAllUsersCheckBox = page
 			.locator('.management-bar')
 			.getByLabel('Select All Users on the Page');

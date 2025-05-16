@@ -55,9 +55,9 @@ public class ElasticsearchInstaller {
 			_createTemporaryDownloadDirectory();
 
 			try {
-				_downloadAndInstallElasticsearch();
+				_installElasticsearch();
 
-				_downloadAndInstallPlugins();
+				_installPlugins();
 			}
 			catch (IOException ioException) {
 				throw new RuntimeException(ioException);
@@ -145,7 +145,56 @@ public class ElasticsearchInstaller {
 		PathUtil.deleteDir(_temporaryDirectoryPath);
 	}
 
-	private Path _download(Distributable distributable) throws IOException {
+	private void _installElasticsearch() throws IOException {
+		String rootArchiveName = UncompressUtil.unarchive(
+			_resolveOrDownload(_distribution.getElasticsearchDistributable()),
+			_temporaryDirectoryPath);
+
+		PathUtil.copyDirectory(
+			_temporaryDirectoryPath.resolve(rootArchiveName),
+			_installationDirectoryPath);
+	}
+
+	private void _installPlugin(Distributable distributable)
+		throws IOException {
+
+		Path filePath = _resolveOrDownload(distributable);
+
+		String pluginName = StringUtils.substringBeforeLast(
+			String.valueOf(filePath.getFileName()), StringPool.DASH);
+
+		Path extractedDirectoryPath = _temporaryDirectoryPath.resolve(
+			pluginName);
+
+		UncompressUtil.unzip(filePath, extractedDirectoryPath);
+
+		Path pluginsDirectoryPath = _installationDirectoryPath.resolve(
+			"plugins");
+
+		createDirectories(pluginsDirectoryPath);
+
+		Path pluginDestinationDirectoryPath = pluginsDirectoryPath.resolve(
+			pluginName);
+
+		PathUtil.copyDirectory(
+			extractedDirectoryPath, pluginDestinationDirectoryPath);
+	}
+
+	private void _installPlugins() throws IOException {
+		for (Distributable distributable :
+				_distribution.getPluginDistributables()) {
+
+			_installPlugin(distributable);
+		}
+	}
+
+	private boolean _isAlreadyInstalled() {
+		return Files.exists(_installationDirectoryPath);
+	}
+
+	private Path _resolveOrDownload(Distributable distributable)
+		throws IOException {
+
 		String downloadURLString = distributable.getDownloadURLString();
 
 		String fileName = StringUtils.substringAfterLast(
@@ -171,53 +220,6 @@ public class ElasticsearchInstaller {
 			fileName);
 
 		return downloadedFilePath;
-	}
-
-	private void _downloadAndInstallElasticsearch() throws IOException {
-		String rootArchiveName = UncompressUtil.unarchive(
-			_download(_distribution.getElasticsearchDistributable()),
-			_temporaryDirectoryPath);
-
-		PathUtil.copyDirectory(
-			_temporaryDirectoryPath.resolve(rootArchiveName),
-			_installationDirectoryPath);
-	}
-
-	private void _downloadAndInstallPlugin(Distributable distributable)
-		throws IOException {
-
-		Path filePath = _download(distributable);
-
-		String pluginName = StringUtils.substringBeforeLast(
-			String.valueOf(filePath.getFileName()), StringPool.DASH);
-
-		Path extractedDirectoryPath = _temporaryDirectoryPath.resolve(
-			pluginName);
-
-		UncompressUtil.unzip(filePath, extractedDirectoryPath);
-
-		Path pluginsDirectoryPath = _installationDirectoryPath.resolve(
-			"plugins");
-
-		createDirectories(pluginsDirectoryPath);
-
-		Path pluginDestinationDirectoryPath = pluginsDirectoryPath.resolve(
-			pluginName);
-
-		PathUtil.copyDirectory(
-			extractedDirectoryPath, pluginDestinationDirectoryPath);
-	}
-
-	private void _downloadAndInstallPlugins() throws IOException {
-		for (Distributable distributable :
-				_distribution.getPluginDistributables()) {
-
-			_downloadAndInstallPlugin(distributable);
-		}
-	}
-
-	private boolean _isAlreadyInstalled() {
-		return Files.exists(_installationDirectoryPath);
 	}
 
 	private void _validateChecksum(
