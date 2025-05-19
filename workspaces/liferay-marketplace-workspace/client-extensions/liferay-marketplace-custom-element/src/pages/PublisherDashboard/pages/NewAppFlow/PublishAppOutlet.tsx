@@ -19,8 +19,10 @@ import usePublishNavigation from '../../hooks/usePublishNavigation';
 import {APP_FLOW_ITEMS} from './constants';
 
 import './PublishAppOutlet.scss';
-import usePublishAppSubmission from '../../hooks/usePublishAppSubmission';
+
 import ClayAlert from '@clayui/alert';
+
+import usePublishAppSubmission from '../../hooks/usePublishAppSubmission';
 
 const PublishAppOutlet = () => {
 	usePublishHeader();
