@@ -20,6 +20,7 @@ import {APP_FLOW_ITEMS} from './constants';
 
 import './PublishAppOutlet.scss';
 import usePublishAppSubmission from '../../hooks/usePublishAppSubmission';
+import ClayAlert from '@clayui/alert';
 
 const PublishAppOutlet = () => {
 	usePublishHeader();
@@ -27,12 +28,10 @@ const PublishAppOutlet = () => {
 	const {data: account} = useAccount();
 	const [context, dispatch] = useNewAppContext();
 
-	const isDraft = (status: number) =>
-		status === ProductWorkflowStatusCode.DRAFT;
-
-	const isSaveAsDraft = isDraft(
-		context._product ? context._product.productStatus : 0
-	);
+	const canSaveAsDraft = !context?._product;
+	const isEditingApp =
+		context?._product &&
+		context._product.productStatus === ProductWorkflowStatusCode.APPROVED;
 
 	const getFlowItems = () => {
 		return APP_FLOW_ITEMS.filter((item) => item.visible(context));
@@ -80,11 +79,11 @@ const PublishAppOutlet = () => {
 						appStatus={context._product?.productStatus}
 						display={{
 							preview: true,
-							saveAsDraft: !isSaveAsDraft,
+							saveAsDraft: canSaveAsDraft,
 						}}
 						exitProps={{
 							onClick: () => {
-								isSaveAsDraft
+								canSaveAsDraft
 									? onOpenChange(true)
 									: onExitModal.onOpenChange(true);
 							},
@@ -94,7 +93,7 @@ const PublishAppOutlet = () => {
 							onClick: () => alert('Preview...'),
 						}}
 						saveAsDraftProps={{
-							disabled: isDisabled || isSaveAsDraft,
+							disabled: isDisabled || !canSaveAsDraft,
 							onClick: onSaveAsDraft,
 						}}
 						submitProps={{
@@ -109,32 +108,16 @@ const PublishAppOutlet = () => {
 						/>
 
 						<AppPublish.Content>
+							{isEditingApp && activeRoute.alertText && (
+								<ClayAlert displayType="info">
+									{activeRoute.alertText}
+								</ClayAlert>
+							)}
+
 							<h1 className="header-title mb-4">
-								{activeRoute.title}
+								{activeRoute.title(isEditingApp)}
 							</h1>
-							{activeRoute.description}
-
-							<details>
-								<pre>
-									{JSON.stringify(
-										(function () {
-											const _context: Partial<
-												typeof context
-											> = {
-												...context,
-											};
-
-											delete _context.references;
-											delete _context._product;
-
-											return _context;
-										})(),
-										null,
-										4
-									)}
-								</pre>
-							</details>
-
+							{activeRoute.description(isEditingApp)}
 							<div className="mt-6 new-app-form">
 								<Outlet />
 							</div>
@@ -175,7 +158,7 @@ const PublishAppOutlet = () => {
 						last={
 							<>
 								<ClayButton
-									disabled={isDisabled || isSaveAsDraft}
+									disabled={isDisabled || !canSaveAsDraft}
 									displayType="secondary"
 									onClick={() => onSaveAsDraft().then(onExit)}
 								>
