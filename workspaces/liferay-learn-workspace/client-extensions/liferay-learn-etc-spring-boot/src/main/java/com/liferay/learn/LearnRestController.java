@@ -200,18 +200,13 @@ public class LearnRestController extends BaseRestController {
 
 	private String _buildSSMLWithMarks(String text) {
 		StringBuilder sb = new StringBuilder("<speak>");
+		String[] sentences = text.split("(?<=[.?!])\\s+");
 
-		String[] words = text.split("\\s+");
-
-		for (int i = 0; i < words.length; i++) {
+		for (int i = 0; i < sentences.length; i++) {
 			sb.append(
-				"<mark name=\""
+				"<mark name=\"sentence" + i + "\"/> "
 			).append(
-				"mark" + i
-			).append(
-				"\"/> "
-			).append(
-				words[i]
+				sentences[i]
 			).append(
 				" "
 			);
