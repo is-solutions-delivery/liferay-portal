@@ -122,6 +122,7 @@ export type NewAppInitialState = {
 	};
 	storefront: {
 		images: UploadedFile[];
+		video: {description: string; videoURL: string};
 	};
 	support: {
 		appUsageTermsURL: string;
@@ -211,7 +212,7 @@ const newAppInitialState: NewAppInitialState = {
 		tags: [],
 	},
 	references: {imagesToDelete: [], vocabulariesAndCategories: {}},
-	storefront: {images: []},
+	storefront: {images: [], video: {description: '', videoURL: ''}},
 	support: {
 		appUsageTermsURL: '',
 		documentationURL: '',
@@ -387,6 +388,14 @@ const reducer = (state: NewAppInitialState, action: AppActions) => {
 							uploaded: true,
 						})
 					),
+					video: {
+						description: specificationsMap.get(
+							ProductSpecificationKey.APP_STOREFRONT_VIDEO_DESCRIPTION
+						),
+						videoURL: specificationsMap.get(
+							ProductSpecificationKey.APP_STOREFRONT_VIDEO_URL
+						),
+					},
 				} as NewAppInitialState['storefront'],
 				support: {
 					appUsageTermsURL:
