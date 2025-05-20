@@ -18,7 +18,6 @@ import com.liferay.portal.kernel.util.Validator;
 import java.io.ByteArrayInputStream;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -81,11 +80,9 @@ public class LearnRestController extends BaseRestController {
 								"audioEncoding", "MP3"
 							).build()
 						).put(
-							"enableTimePointing", List.of("SSML_MARK")
-						).put(
 							"input",
 							HashMapBuilder.<String, Object>put(
-								"ssml", _buildSSMLWithMarks(contentRawText)
+								"ssml", contentRawText
 							).build()
 						).put(
 							"voice",
@@ -196,25 +193,6 @@ public class LearnRestController extends BaseRestController {
 	@Override
 	protected String getWebClientBaseURL() {
 		return "";
-	}
-
-	private String _buildSSMLWithMarks(String text) {
-		StringBuilder sb = new StringBuilder("<speak>");
-		String[] sentences = text.split("(?<=[.?!])\\s+");
-
-		for (int i = 0; i < sentences.length; i++) {
-			sb.append(
-				"<mark name=\"sentence" + i + "\"/> "
-			).append(
-				sentences[i]
-			).append(
-				" "
-			);
-		}
-
-		sb.append("</speak>");
-
-		return sb.toString();
 	}
 
 	private String _getAuthorization() {
