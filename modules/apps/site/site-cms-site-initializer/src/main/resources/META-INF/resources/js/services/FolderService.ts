@@ -3,8 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {patch} from '../services/api';
-import ApiHelper from '../structure_builder/services/ApiHelper';
+import ApiHelper from './ApiHelper';
 
 export type TFolder = {
 	description: string;
@@ -16,15 +15,37 @@ export type TFolder = {
 
 const OBJECT_ENTRY_FOLDER_URL = '/o/headless-object/v1.0/object-entry-folders';
 
+async function createFolder<DataType = unknown>(
+	scopeKey: string,
+	title: string,
+	parentObjectEntryFolderExternalReferenceCode: string
+) {
+	return await ApiHelper.post<DataType>(
+		`/o/headless-object/v1.0/scopes/${scopeKey}/object-entry-folders`,
+		{
+			parentObjectEntryFolderExternalReferenceCode,
+			title,
+		}
+	);
+}
+
 async function getFolder(folderId: string): Promise<TFolder> {
-	return await ApiHelper.get(`${OBJECT_ENTRY_FOLDER_URL}/${folderId}`);
+	const {data, error} = await ApiHelper.get<TFolder>(
+		`${OBJECT_ENTRY_FOLDER_URL}/${folderId}`
+	);
+
+	if (data) {
+		return data;
+	}
+
+	throw new Error(error);
 }
 
 async function updateFolder(folderData: TFolder) {
-	return await patch(
+	return await ApiHelper.patch(
 		folderData,
 		`${OBJECT_ENTRY_FOLDER_URL}/${folderData.id}`
 	);
 }
 
-export default {getFolder, updateFolder};
+export default {createFolder, getFolder, updateFolder};

@@ -3,19 +3,19 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ApiHelper from '../../../structure_builder/services/ApiHelper';
+import ApiHelper from '../../../services/ApiHelper';
+import {Space} from '../../../types/Space';
 
-async function getSpaces(): Promise<
-	{
-		id: string;
-		name: string;
-	}[]
-> {
-	const {items} = await ApiHelper.get(
+async function getSpaces(): Promise<Space[]> {
+	const {data, error} = await ApiHelper.get<{items: Space[]}>(
 		'/o/headless-asset-library/v1.0/asset-libraries'
 	);
 
-	return items;
+	if (data) {
+		return data.items;
+	}
+
+	throw new Error(error);
 }
 
 export default {

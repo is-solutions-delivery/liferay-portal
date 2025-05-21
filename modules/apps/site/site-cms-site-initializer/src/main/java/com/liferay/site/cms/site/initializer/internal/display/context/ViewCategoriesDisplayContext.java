@@ -7,7 +7,6 @@
 package com.liferay.site.cms.site.initializer.internal.display.context;
 
 import com.liferay.asset.kernel.model.AssetCategory;
-import com.liferay.asset.kernel.model.AssetVocabulary;
 import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
@@ -15,7 +14,6 @@ import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenuBuilder;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -28,7 +26,9 @@ import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.site.cms.site.initializer.internal.util.CategorizationBreadcrumbUtil;
 import com.liferay.taglib.security.PermissionsURLTag;
 
 import java.util.List;
@@ -60,39 +60,16 @@ public class ViewCategoriesDisplayContext {
 	public Map<String, Object> getBreadcrumbReactData() throws Exception {
 		return HashMapBuilder.<String, Object>put(
 			"breadcrumbItems",
-			JSONUtil.putAll(
-				JSONUtil.put(
-					"active", false
-				).put(
-					"href",
-					_portal.getLayoutFullURL(
-						_layoutLocalService.getLayoutByFriendlyURL(
-							_themeDisplay.getScopeGroupId(), false,
-							"/categorization/view_vocabularies"),
-						_themeDisplay)
-				).put(
-					"label",
-					_language.get(_httpServletRequest, "categorization")
-				),
-				JSONUtil.put(
-					"active", true
-				).put(
-					"label",
-					() -> {
-						AssetVocabulary assetVocabulary =
-							_assetVocabularyLocalService.getVocabulary(
-								getVocabularyId());
-
-						return assetVocabulary.getName();
-					}
-				))
+			CategorizationBreadcrumbUtil.getBreadcrumbsJSONArray(
+				true, getVocabularyId(), _themeDisplay)
 		).build();
 	}
 
 	public String getCategoriesByVocabularyIdAPIURL() {
 		return StringBundler.concat(
 			"/o/headless-admin-taxonomy/v1.0/taxonomy-vocabularies/",
-			getVocabularyId(), "/taxonomy-categories");
+			getVocabularyId(),
+			"/taxonomy-categories?nestedFields=taxonomyCategoryUsageCount");
 	}
 
 	public CreationMenu getCreationMenu() {
@@ -132,6 +109,17 @@ public class ViewCategoriesDisplayContext {
 				"TODO: Add Subcategory URL", null, "add-subcategory",
 				_language.get(_httpServletRequest, "add-subcategory"), "get",
 				"update", null),
+			new FDSActionDropdownItem(
+				HttpComponentsUtil.addParameter(
+					PortalUtil.getLayoutFullURL(
+						_layoutLocalService.getLayoutByFriendlyURL(
+							_themeDisplay.getScopeGroupId(), false,
+							"/categorization/view_category_usages"),
+						_themeDisplay),
+					"categoryId", "{id}"),
+				null, "view-category-usages",
+				_language.get(_httpServletRequest, "view-usages"), "get", null,
+				null),
 			new FDSActionDropdownItem(
 				"TODO: Move URL", null, "move",
 				_language.get(_httpServletRequest, "move"), null, "update",

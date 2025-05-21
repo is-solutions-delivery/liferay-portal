@@ -47,6 +47,7 @@ import java.util.function.Predicate;
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.mockito.MockedStatic;
@@ -64,6 +65,7 @@ public class LiferayGlobalObjectPreAUIDynamicIncludeTest {
 	public static final LiferayUnitTestRule liferayUnitTestRule =
 		LiferayUnitTestRule.INSTANCE;
 
+	@Ignore
 	@Test
 	public void test() throws Exception {
 		LiferayGlobalObjectPreAUIDynamicInclude

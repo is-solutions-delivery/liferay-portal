@@ -5,7 +5,6 @@
 		"@clayui/badge": "^3.100.0",
 		"@clayui/button": "3.111.0",
 		"@clayui/card": "^3.85.0",
-		"@clayui/charts": "^3.106.1",
 		"@clayui/drop-down": "^3.87.0",
 		"@clayui/empty-state": "^3.106.1",
 		"@clayui/form": "^3.85.0",
@@ -19,6 +18,7 @@
 		"@clayui/multi-step-nav": "3.120.0",
 		"@clayui/navigation-bar": "^3.85.0",
 		"@clayui/pagination-bar": "3.52.0",
+		"@clayui/panel": "^3.132.0",
 		"@clayui/popover": "^3.119.0",
 		"@clayui/sticker": "^3.65.0",
 		"@clayui/table": "^3.56.0",
@@ -38,6 +38,7 @@
 		"react-infinite-scroll-component": "^6.1.0",
 		"react-quill": "^2.0.0",
 		"react-router-dom": "6.8.0",
+		"recharts": "^2.15.3",
 		"sass": "1.57.1",
 		"swr": "^2.2.4",
 		"zod": "^3.21.4"

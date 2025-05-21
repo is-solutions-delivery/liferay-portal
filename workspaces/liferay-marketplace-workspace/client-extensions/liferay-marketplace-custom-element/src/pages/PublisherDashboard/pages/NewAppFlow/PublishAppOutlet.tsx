@@ -14,18 +14,27 @@ import {useNewAppContext} from '../../../../context/NewAppContext';
 import {ProductWorkflowStatusCode} from '../../../../enums/Product';
 import {useAccount} from '../../../../hooks/data/useAccounts';
 import i18n from '../../../../i18n';
+import usePublishAppSubmission from '../../hooks/usePublishAppSubmission';
 import usePublishHeader from '../../hooks/usePublishHeader';
 import usePublishNavigation from '../../hooks/usePublishNavigation';
 import {APP_FLOW_ITEMS} from './constants';
 
 import './PublishAppOutlet.scss';
-import usePublishAppSubmission from '../../hooks/usePublishAppSubmission';
+
+import ClayAlert from '@clayui/alert';
 
 const PublishAppOutlet = () => {
 	usePublishHeader();
 
 	const {data: account} = useAccount();
 	const [context, dispatch] = useNewAppContext();
+	const isEditingApp =
+		context?._product &&
+		context._product.productStatus === ProductWorkflowStatusCode.APPROVED;
+
+	const getFlowItems = () => {
+		return APP_FLOW_ITEMS.filter((item) => item.visible(context));
+	};
 
 	const {
 		activeIndex,
@@ -35,7 +44,17 @@ const PublishAppOutlet = () => {
 		onClickPrevious,
 		onExit,
 		steps,
-	} = usePublishNavigation({exitLink: '/', flowItems: APP_FLOW_ITEMS});
+	} = usePublishNavigation({
+		exitLink: '/',
+		flowItems: getFlowItems(),
+	});
+
+	const isRequiredDraftFormFilled = () =>
+		APP_FLOW_ITEMS.filter((item) => item.saveAsDraftRequired).every(
+			(item) => item.parseSchema && item.parseSchema(context).success
+		);
+
+	const canSaveAsDraft = !context?._product && isRequiredDraftFormFilled();
 
 	const {onSave, onSaveAsDraft} = usePublishAppSubmission(context, dispatch);
 
@@ -54,11 +73,9 @@ const PublishAppOutlet = () => {
 
 	const isDisabled = parsedSchema ? !parsedSchema.success : false;
 
-	const isDraft = (status: number) =>
-		status === ProductWorkflowStatusCode.DRAFT;
-
-	const isSaveAsDraft =
-		!context._product || isDraft(context._product.productStatus);
+	if (context.loading) {
+		return null;
+	}
 
 	return (
 		<AppPublish>
@@ -67,16 +84,14 @@ const PublishAppOutlet = () => {
 				accountName={account?.name as string}
 				appImage={context.profile.file?.preview}
 				appName={context.profile.name}
+				appStatus={context._product?.productStatus}
 				display={{
 					preview: true,
-					saveAsDraft: isSaveAsDraft,
-					submit:
-						!!context._product &&
-						!isDraft(context._product.productStatus),
+					saveAsDraft: canSaveAsDraft,
 				}}
 				exitProps={{
 					onClick: () => {
-						isSaveAsDraft
+						canSaveAsDraft
 							? onOpenChange(true)
 							: onExitModal.onOpenChange(true);
 					},
@@ -86,7 +101,7 @@ const PublishAppOutlet = () => {
 					onClick: () => alert('Preview...'),
 				}}
 				saveAsDraftProps={{
-					disabled: isDisabled,
+					disabled: isDisabled || !canSaveAsDraft,
 					onClick: onSaveAsDraft,
 				}}
 				submitProps={{
@@ -98,28 +113,16 @@ const PublishAppOutlet = () => {
 				<AppPublish.Sidebar activeIndex={activeIndex} items={steps} />
 
 				<AppPublish.Content>
-					<h1 className="header-title mb-4">{activeRoute.title}</h1>
-					{activeRoute.description}
+					{isEditingApp && activeRoute.alertText && (
+						<ClayAlert displayType="info">
+							{activeRoute.alertText}
+						</ClayAlert>
+					)}
 
-					<details>
-						<pre>
-							{JSON.stringify(
-								(function () {
-									const _context: Partial<typeof context> = {
-										...context,
-									};
-
-									delete _context.references;
-									delete _context._product;
-
-									return _context;
-								})(),
-								null,
-								4
-							)}
-						</pre>
-					</details>
-
+					<h1 className="header-title mb-4">
+						{activeRoute.title(isEditingApp)}
+					</h1>
+					{activeRoute.description(isEditingApp)}
 					<div className="mt-6 new-app-form">
 						<Outlet />
 					</div>
@@ -157,7 +160,11 @@ const PublishAppOutlet = () => {
 			<Modal
 				last={
 					<>
-						<ClayButton displayType="secondary">
+						<ClayButton
+							disabled={isDisabled || !canSaveAsDraft}
+							displayType="secondary"
+							onClick={() => onSaveAsDraft().then(onExit)}
+						>
 							{i18n.translate('save-as-a-draft-exit')}
 						</ClayButton>
 
@@ -204,5 +211,4 @@ const PublishAppOutlet = () => {
 		</AppPublish>
 	);
 };
-
 export default PublishAppOutlet;

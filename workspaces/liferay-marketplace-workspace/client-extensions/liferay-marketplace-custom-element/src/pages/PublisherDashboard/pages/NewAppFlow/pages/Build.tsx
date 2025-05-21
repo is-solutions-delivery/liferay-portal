@@ -6,6 +6,7 @@
 import ClayButton from '@clayui/button';
 import ClayDropDown, {Align} from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
+import classNames from 'classnames';
 import {useState} from 'react';
 
 import {RadioCard} from '../../../../../components/RadioCard/RadioCard';
@@ -14,7 +15,10 @@ import {
 	NewAppTypes,
 	useNewAppContext,
 } from '../../../../../context/NewAppContext';
-import {ProductType} from '../../../../../enums/Product';
+import {
+	ProductType,
+	ProductWorkflowStatusCode,
+} from '../../../../../enums/Product';
 import i18n from '../../../../../i18n';
 import {ProductTypeOptions} from '../../Apps/AppCreationFlow/ProvideAppBuildPage/constants/productTypes';
 import CloudResourceRequirements from '../components/CloudResourceRequirements';
@@ -146,6 +150,7 @@ const Build = () => {
 
 	const [
 		{
+			_product,
 			build: {appType},
 		},
 		dispatch,
@@ -176,7 +181,12 @@ const Build = () => {
 	};
 
 	return (
-		<div className="new-app-form-build">
+		<div
+			className={classNames('new-app-form-build', {
+				'section-disabled':
+					_product?.productStatus === ProductWorkflowStatusCode.DRAFT,
+			})}
+		>
 			<Section
 				label={i18n.translate('app-type')}
 				required

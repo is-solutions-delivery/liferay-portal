@@ -264,6 +264,37 @@ public class DefaultObjectEntryManagerImpl
 	}
 
 	@Override
+	public void deleteObjectEntryByVersion(
+			ObjectDefinition objectDefinition, long objectEntryId, int version)
+		throws Exception {
+
+		_checkObjectEntryObjectDefinitionId(
+			objectDefinition,
+			_objectEntryService.getObjectEntry(objectEntryId));
+
+		_objectEntryVersionService.deleteObjectEntryVersion(
+			objectEntryId, version);
+	}
+
+	@Override
+	public void deleteObjectEntryByVersion(
+			String externalReferenceCode, ObjectDefinition objectDefinition,
+			int version)
+		throws Exception {
+
+		com.liferay.object.model.ObjectEntry serviceBuilderObjectEntry =
+			_objectEntryService.getObjectEntry(
+				externalReferenceCode, objectDefinition.getCompanyId(),
+				getGroupId(objectDefinition, null));
+
+		_checkObjectEntryObjectDefinitionId(
+			objectDefinition, serviceBuilderObjectEntry);
+
+		_objectEntryVersionService.deleteObjectEntryVersion(
+			serviceBuilderObjectEntry.getObjectEntryId(), version);
+	}
+
+	@Override
 	public void disassociateRelatedModels(
 			DTOConverterContext dtoConverterContext,
 			ObjectDefinition objectDefinition,
@@ -849,9 +880,9 @@ public class DefaultObjectEntryManagerImpl
 					dtoConverterContext, objectDefinition, objectEntryId),
 				objectDefinition.getObjectDefinitionId(), objectEntry);
 
-		return updateObjectEntry(
-			dtoConverterContext, objectDefinition, objectEntryId,
-			existingObjectEntry);
+		return _updateObjectEntry(
+			dtoConverterContext, objectDefinition, existingObjectEntry,
+			objectEntryId, true);
 	}
 
 	@Override
@@ -887,35 +918,9 @@ public class DefaultObjectEntryManagerImpl
 			ObjectEntry objectEntry)
 		throws Exception {
 
-		com.liferay.object.model.ObjectEntry serviceBuilderObjectEntry =
-			_objectEntryService.getObjectEntry(objectEntryId);
-
-		_checkObjectEntryObjectDefinitionId(
-			objectDefinition, serviceBuilderObjectEntry);
-
-		validateReadOnlyObjectFields(
-			serviceBuilderObjectEntry.getExternalReferenceCode(),
-			objectDefinition, objectEntry);
-
-		String scopeKey = String.valueOf(
-			serviceBuilderObjectEntry.getGroupId());
-
-		ServiceContext serviceContext = _createServiceContext(
-			dtoConverterContext, objectDefinition, objectEntry);
-
-		serviceBuilderObjectEntry = _objectEntryService.updateObjectEntry(
-			objectEntryId,
-			_toObjectValues(
-				dtoConverterContext.getLocale(), objectDefinition, objectEntry,
-				scopeKey, serviceContext),
-			serviceContext);
-
-		return _toObjectEntry(
-			dtoConverterContext, objectDefinition,
-			_addOrUpdateNestedObjectEntries(
-				dtoConverterContext, objectDefinition, objectEntry,
-				_getObjectRelationships(objectDefinition, objectEntry),
-				serviceBuilderObjectEntry, scopeKey));
+		return _updateObjectEntry(
+			dtoConverterContext, objectDefinition, objectEntry, objectEntryId,
+			false);
 	}
 
 	@Override
@@ -2105,6 +2110,54 @@ public class DefaultObjectEntryManagerImpl
 		}
 
 		return values;
+	}
+
+	private ObjectEntry _updateObjectEntry(
+			DTOConverterContext dtoConverterContext,
+			ObjectDefinition objectDefinition, ObjectEntry objectEntry,
+			long objectEntryId, boolean partialUpdate)
+		throws Exception {
+
+		com.liferay.object.model.ObjectEntry serviceBuilderObjectEntry =
+			_objectEntryService.getObjectEntry(objectEntryId);
+
+		_checkObjectEntryObjectDefinitionId(
+			objectDefinition, serviceBuilderObjectEntry);
+
+		validateReadOnlyObjectFields(
+			serviceBuilderObjectEntry.getExternalReferenceCode(),
+			objectDefinition, objectEntry);
+
+		String scopeKey = String.valueOf(
+			serviceBuilderObjectEntry.getGroupId());
+
+		ServiceContext serviceContext = _createServiceContext(
+			dtoConverterContext, objectDefinition, objectEntry);
+
+		if (partialUpdate) {
+			serviceBuilderObjectEntry =
+				_objectEntryService.partialUpdateObjectEntry(
+					objectEntryId,
+					_toObjectValues(
+						dtoConverterContext.getLocale(), objectDefinition,
+						objectEntry, scopeKey, serviceContext),
+					serviceContext);
+		}
+		else {
+			serviceBuilderObjectEntry = _objectEntryService.updateObjectEntry(
+				objectEntryId,
+				_toObjectValues(
+					dtoConverterContext.getLocale(), objectDefinition,
+					objectEntry, scopeKey, serviceContext),
+				serviceContext);
+		}
+
+		return _toObjectEntry(
+			dtoConverterContext, objectDefinition,
+			_addOrUpdateNestedObjectEntries(
+				dtoConverterContext, objectDefinition, objectEntry,
+				_getObjectRelationships(objectDefinition, objectEntry),
+				serviceBuilderObjectEntry, scopeKey));
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

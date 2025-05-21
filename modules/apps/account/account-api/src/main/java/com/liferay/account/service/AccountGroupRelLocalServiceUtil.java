@@ -349,6 +349,13 @@ public class AccountGroupRelLocalServiceUtil {
 			accountGroupId);
 	}
 
+	public static int getAccountGroupRelsCountByClassName(
+		long accountGroupId, String className) {
+
+		return getService().getAccountGroupRelsCountByClassName(
+			accountGroupId, className);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery
 		getActionableDynamicQuery() {
 

@@ -4,44 +4,166 @@
  */
 
 import {NewAppInitialState} from '../../context/NewAppContext';
+import SearchBuilder from '../../core/SearchBuilder';
 import {
 	ProductLicense,
+	ProductOfferingTypes,
 	ProductSpecificationKey,
 	ProductTags,
 	ProductType,
+	ProductTypeVocabulary,
 	ProductVocabulary,
 	ProductWorkflowStatusCode,
+	SkuOptions,
+	getOfferingTypes,
 } from '../../enums/Product';
+import {Liferay} from '../../liferay/liferay';
+import {createProductVirtualEntry} from '../../utils/api';
 import {base64ToText, fileToBase64} from '../../utils/file';
 import HeadlessCommerceAdminCatalogImpl from '../rest/HeadlessCommerceAdminCatalog';
+import HeadlessCommerceAdminPricing from '../rest/HeadlessCommerceAdminPricing';
 import BaseAppPublish from './BaseAppPublish';
 
 type ProductConfig = {
 	isDraft: boolean;
 };
 
+function isTierPriceChanged(
+	currentTierPrices: TierPrice[],
+	newTierPrices: TierPrice[]
+): boolean {
+	if (currentTierPrices.length !== newTierPrices.length) {
+		return true;
+	}
+
+	const priceMap = new Map(
+		currentTierPrices.map(({minimumQuantity, price}) => [
+			minimumQuantity,
+			price,
+		])
+	);
+
+	for (let i = 0; i < newTierPrices.length; i++) {
+		const {minimumQuantity, price} = newTierPrices[i];
+		if (priceMap.get(minimumQuantity) !== price) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 export default class AppPublish extends BaseAppPublish {
 	constructor(private context: NewAppInitialState) {
 		super();
 	}
 
+	private async createProductSKUs(product: Product) {
+		if (!product.productOptions) {
+			const _productOptions =
+				await HeadlessCommerceAdminCatalogImpl.getProductOptions(
+					product.productId
+				);
+
+			product.productOptions = _productOptions.items;
+		}
+
+		const [productOption] = product.productOptions ?? [];
+
+		if (!product?.skus || !product.skus.length) {
+			product.skus = [];
+		}
+
+		const productOptionValues = productOption.productOptionValues ?? [];
+
+		for (const productOptionValue of productOptionValues) {
+			const sku = await HeadlessCommerceAdminCatalogImpl.createProductSKU(
+				{
+					published: true,
+					purchasable: true,
+					sku: productOptionValue.name.en_US,
+					skuOptions: [
+						{
+							key: productOption.id,
+							value: productOptionValue.id,
+						},
+					],
+				},
+				product.productId
+			);
+
+			product.skus.push(sku);
+		}
+	}
+
+	private async createProductOption(product: Product) {
+		if (product?.productOptions?.length) {
+			return product?.productOptions[0];
+		}
+
+		const {items: options} =
+			await HeadlessCommerceAdminCatalogImpl.getOptions();
+
+		const option = options.find(
+			(option) => option.key === this.getProductOptionKey()
+		);
+
+		if (!option) {
+			return;
+		}
+
+		(option as any).optionId = option?.id;
+
+		delete (option as any).actions;
+		delete (option as any).externalReferenceCode;
+
+		const {
+			items: [productOption],
+		} = await HeadlessCommerceAdminCatalogImpl.createProductOption(
+			[option],
+			product.productId
+		);
+
+		if (!product.productOptions) {
+			product.productOptions = [];
+
+			product.productOptions.push(productOption);
+		}
+
+		return productOption;
+	}
+
+	private getProductOptionKey() {
+		const optionsTypes = {
+			[ProductType.CLOUD]: ProductLicense.CLOUD,
+			[ProductType.DXP]: ProductLicense.DXP,
+		};
+
+		return (
+			optionsTypes[
+				this.context.build.appType as keyof typeof optionsTypes
+			] || ProductLicense.BASE
+		);
+	}
+
 	async syncProfile(config: ProductConfig) {
 		const {
 			_product,
-			catalogId,
-			profile: {categories, description, file, name, tags},
+			catalog,
+			profile: {areas, categories, description, file, name, tags},
 			references: {vocabulariesAndCategories},
 		} = this.context;
 
 		const productTypeCategories = (
 			vocabulariesAndCategories[ProductVocabulary.PRODUCT_TYPE]
 				?.categories ?? []
-		).filter(({label}: any) => label === 'App');
+		).filter(({label}: any) => label === ProductTypeVocabulary.APP);
 
 		const productCategories = [
-			...categories,
+			...areas,
 			...productTypeCategories,
 			...tags,
+			categories,
 		].map((category) => ({
 			id: category.value,
 			name: category.label,
@@ -86,7 +208,7 @@ export default class AppPublish extends BaseAppPublish {
 
 		const product =
 			await HeadlessCommerceAdminCatalogImpl.createVirtualProduct({
-				catalogId,
+				catalogId: catalog.id,
 				categories: productCategories,
 				description,
 				name,
@@ -117,25 +239,10 @@ export default class AppPublish extends BaseAppPublish {
 		return product;
 	}
 
-	async syncStorefront(product: Product) {
+	async syncBuild(product: Product) {
 		const {
-			storefront: {images},
-		} = this.context;
-
-		// Process Upload Images, priority starts in 1 to not conflict with
-		// the app icon defined as priority 0
-
-		await AppPublish.addOrUpdateImages(
-			images,
-			ProductTags.APP_ICON,
-			product,
-			1
-		);
-	}
-
-	async syncBuild(product: Product, config: ProductConfig) {
-		const {
-			build: {appType, compatibleOffering, resourceRequirements},
+			_product,
+			build: {appType, liferayPackages, resourceRequirements},
 		} = this.context;
 
 		const specifications = [
@@ -167,106 +274,45 @@ export default class AppPublish extends BaseAppPublish {
 				compatibleOfferingVocabulary,
 		} = this.context.references.vocabulariesAndCategories;
 
+		const platformOfferingLabels = getOfferingTypes(appType);
+
 		const compatibleOfferingCategories =
 			compatibleOfferingVocabulary.categories ?? [];
 
 		const compatibleOfferings = compatibleOfferingCategories.filter(
-			({label}: {label: string}) => compatibleOffering.includes(label)
+			({label}: {label: string}) =>
+				platformOfferingLabels.includes(label as ProductOfferingTypes)
 		);
-
-		const productStatus = config.isDraft
-			? ProductWorkflowStatusCode.DRAFT
-			: ProductWorkflowStatusCode.PENDING;
 
 		await HeadlessCommerceAdminCatalogImpl.updateProduct(
 			product.productId,
 			{
 				categories: [...product.categories, ...compatibleOfferings],
-				productStatus,
-				workflowStatusInfo: productStatus,
+				productStatus: product.productStatus,
+				workflowStatusInfo: product.workflowStatusInfo.code,
 			}
 		);
-	}
 
-	private async createProductSKUs(product: Product) {
-		const {_product} = this.context;
+		for (const liferayPackage of liferayPackages) {
+			const {files, version} = liferayPackage;
 
-		if (!_product?.productOptions) {
-			const _productOptions =
-				await HeadlessCommerceAdminCatalogImpl.getProductOptions(
-					product.productId
+			for (const file of files) {
+				const formData = new FormData();
+				const blob = new Blob([file]);
+
+				formData.append('file', blob, file.fileName);
+				formData.append(
+					'productVirtualSettingsFileEntry',
+					JSON.stringify({version})
 				);
 
-			(_product as any).productOptions = _productOptions.items;
+				await createProductVirtualEntry({
+					body: formData,
+					callback: () => {},
+					virtualSettingId: _product?.productVirtualSettings.id ?? '',
+				});
+			}
 		}
-
-		const [productOption] = _product?.productOptions ?? [];
-
-		for (const productOptionValue of productOption.productOptionValues) {
-			await HeadlessCommerceAdminCatalogImpl.createProductSKU(
-				{
-					published: true,
-					purchasable: true,
-					sku: productOptionValue.name.en_US,
-					skuOptions: [
-						{
-							key: productOption.id,
-							value: productOptionValue.id,
-						},
-					],
-				},
-				product.productId
-			);
-		}
-	}
-
-	private async createProductOption(product: Product) {
-		const {
-			_product,
-			build: {appType},
-		} = this.context;
-
-		if (_product?.productOptions?.length) {
-			return _product?.productOptions[0];
-		}
-
-		const {items: options} =
-			await HeadlessCommerceAdminCatalogImpl.getOptions();
-
-		const optionsTypes = {
-			[ProductType.CLOUD]: ProductLicense.CLOUD,
-			[ProductType.DXP]: ProductLicense.DXP,
-		} as const;
-
-		const option = options.find(
-			(option) =>
-				option.key === (optionsTypes as any)[appType] ||
-				ProductLicense.BASE
-		);
-
-		if (!option) {
-			return;
-		}
-
-		(option as any).optionId = option?.id;
-
-		delete (option as any).actions;
-		delete (option as any).externalReferenceCode;
-
-		const {
-			items: [productOption],
-		} = await HeadlessCommerceAdminCatalogImpl.createProductOption(
-			[option],
-			product.productId
-		);
-
-		if (!product.productOptions) {
-			product.productOptions = [];
-		}
-
-		product?.productOptions?.push(productOption);
-
-		return productOption;
 	}
 
 	async syncLicensing(product: Product) {
@@ -278,14 +324,17 @@ export default class AppPublish extends BaseAppPublish {
 			return;
 		}
 
-		await this.createProductOption(product);
-		await this.createProductSKUs(product);
-
 		await BaseAppPublish.updateSpecification(
 			product,
 			ProductSpecificationKey.APP_LICENSING_TYPE,
 			licenseType
 		);
+
+		await this.createProductOption(product);
+
+		await this.createProductSKUs(product);
+
+		await this.updatePrices();
 	}
 
 	async syncPricing(product: Product) {
@@ -341,6 +390,33 @@ export default class AppPublish extends BaseAppPublish {
 		]);
 	}
 
+	async syncStorefront(product: Product) {
+		const {
+			storefront: {images, video},
+		} = this.context;
+
+		// Process Upload Images, priority starts in 1 to not conflict with
+		// the app icon defined as priority 0
+
+		await AppPublish.addOrUpdateImages(
+			images,
+			ProductTags.APP_ICON,
+			product,
+			1
+		);
+
+		await BaseAppPublish.updateSpecifications(product, [
+			{
+				key: ProductSpecificationKey.APP_STOREFRONT_VIDEO_DESCRIPTION,
+				value: video.description,
+			},
+			{
+				key: ProductSpecificationKey.APP_STOREFRONT_VIDEO_URL,
+				value: video.videoURL,
+			},
+		]);
+	}
+
 	async syncVersion(product: Product) {
 		const {
 			version: {notes, version},
@@ -364,9 +440,7 @@ export default class AppPublish extends BaseAppPublish {
 		try {
 			product = await this.syncProfile(config);
 
-			if (!this.context._product) {
-				this.context._product = product;
-			}
+			this.context._product = product;
 
 			await AppPublish.deleteReferences(
 				this.context.references.imagesToDelete
@@ -382,7 +456,12 @@ export default class AppPublish extends BaseAppPublish {
 			]) {
 				this.context._product = product;
 
-				await sync(product, config);
+				try {
+					await sync(product);
+				}
+				catch (error) {
+					console.error(`Unable to sync ${sync.name}`, error);
+				}
 			}
 		}
 		catch (error) {
@@ -390,5 +469,204 @@ export default class AppPublish extends BaseAppPublish {
 		}
 
 		return product;
+	}
+
+	private async deleteUnusedPriceLists(priceLists: PriceList[]) {
+		const currencies = Object.keys(this.context.licensing.prices);
+
+		const priceListsToDelete = priceLists.filter(
+			({catalogId, currencyCode}) =>
+				this.context.catalog.id === catalogId &&
+				!currencies.includes(currencyCode)
+		);
+
+		await Promise.allSettled(
+			priceListsToDelete.map(({id}) =>
+				HeadlessCommerceAdminPricing.deletePriceList(id)
+			)
+		);
+	}
+
+	private getNonTrialSKUs() {
+		const skus = (this.context._product?.skus || []).filter(
+			({skuOptions}) =>
+				skuOptions.some(({value}) => value !== SkuOptions.TRIAL)
+		);
+
+		return skus;
+	}
+
+	async updatePrices() {
+		const skus = this.getNonTrialSKUs();
+
+		const response = await HeadlessCommerceAdminPricing.getPriceLists(
+			new URLSearchParams({
+				filter: SearchBuilder.eq('type', 'price-list'),
+				search: SearchBuilder.eq(
+					'catalogName',
+					this.context.catalog.name
+				),
+			})
+		);
+
+		await this.deleteUnusedPriceLists(response.items);
+
+		for (const currencyCode in this.context.licensing.prices) {
+			const prices = this.context.licensing.prices[currencyCode];
+
+			let priceList = response.items.find(
+				(item) =>
+					item.catalogId === this.context.catalog.id &&
+					item.currencyCode === currencyCode
+			);
+
+			if (!priceList) {
+				priceList = await HeadlessCommerceAdminPricing.createPriceList({
+					active: true,
+					catalogId: this.context.catalog.id,
+					currencyCode,
+					name: `${Liferay.CommerceContext.account?.accountName} ${currencyCode} Price List`,
+					type: 'price-list',
+				});
+			}
+
+			const priceEntriesResponse =
+				await HeadlessCommerceAdminPricing.getPriceListEntries(
+					priceList.id,
+					new URLSearchParams({
+						nestedFields: 'product,sku',
+						pageSize: '-1',
+					})
+				);
+
+			const priceEntries = priceEntriesResponse.items.filter(
+				({product}) => product.id === this.context._product!.id
+			);
+
+			for (let i = 0; i < skus.length; i++) {
+				const sku = skus[i];
+
+				const priceEntry = priceEntries.find(
+					({sku: {id}}) => id === sku.id
+				);
+
+				const skuOptionValue = sku.skuOptions.find(
+					(skuOption) => skuOption.key === this.getProductOptionKey()
+				)?.value;
+
+				if (!skuOptionValue) {
+					continue;
+				}
+
+				const tierPrices =
+					prices[skuOptionValue as keyof typeof prices];
+
+				if (!tierPrices) {
+					continue;
+				}
+
+				const tierPricesEntries = Object.entries(tierPrices).map(
+					([quantity, price]) => ({
+						active: true,
+						minimumQuantity: Number(quantity),
+						neverExpire: true,
+						price,
+						priceEntryId: priceEntry?.priceEntryId || 0,
+					})
+				);
+
+				if (priceEntry) {
+					await this.updatePriceEntry(
+						priceEntry,
+						tierPricesEntries as unknown as TierPrice[]
+					);
+
+					continue;
+				}
+
+				await HeadlessCommerceAdminPricing.createPriceEntry(
+					{
+						hasTierPrice: true,
+						price: tierPricesEntries[0]?.price || 0,
+						priceListId: priceList.id,
+						sku: sku.sku,
+						skuExternalReferenceCode: sku.externalReferenceCode,
+						skuId: sku.id,
+						tierPrices: tierPricesEntries,
+					},
+					priceList.id
+				);
+			}
+		}
+	}
+
+	private async updatePriceEntry(
+		priceEntry: PriceEntry,
+		tierPricesEntries: TierPrice[]
+	) {
+		const {items: tierPrices} =
+			await HeadlessCommerceAdminPricing.getTierPricesByPriceEntryId(
+				priceEntry.priceEntryId
+			);
+
+		if (
+			!isTierPriceChanged(
+				tierPrices,
+				tierPricesEntries as unknown as TierPrice[]
+			)
+		) {
+			return;
+		}
+
+		await this.deleteUnusedTierPrices(tierPrices, tierPricesEntries);
+
+		const tierPricesWithExternalReferenceCode = tierPricesEntries.map(
+			(tierPriceEntry) => {
+				const tierPrice = tierPrices.find(
+					(tierPrice) =>
+						tierPrice.minimumQuantity ===
+						Number(tierPriceEntry.minimumQuantity)
+				);
+
+				if (tierPrice) {
+					return {
+						...tierPriceEntry,
+						externalReferenceCode: tierPrice.externalReferenceCode,
+						id: tierPrice.id,
+					};
+				}
+
+				return tierPriceEntry;
+			}
+		);
+
+		await HeadlessCommerceAdminPricing.updatePriceEntry(
+			{
+				...priceEntry,
+				price: tierPricesEntries[0]?.price ?? priceEntry.price,
+				tierPrices: tierPricesWithExternalReferenceCode,
+			},
+			priceEntry.priceEntryId
+		);
+	}
+
+	private async deleteUnusedTierPrices(
+		tierPrices: TierPrice[],
+		tierPricesEntries: TierPrice[]
+	) {
+		const priceEntriesToDelete = tierPrices.filter(
+			(tierPrice) =>
+				!tierPricesEntries.some(
+					(tierPriceEntry) =>
+						tierPriceEntry.minimumQuantity ===
+						tierPrice.minimumQuantity
+				)
+		);
+
+		await Promise.allSettled(
+			priceEntriesToDelete.map(({id}) =>
+				HeadlessCommerceAdminPricing.deleteTierPrice(id)
+			)
+		);
 	}
 }

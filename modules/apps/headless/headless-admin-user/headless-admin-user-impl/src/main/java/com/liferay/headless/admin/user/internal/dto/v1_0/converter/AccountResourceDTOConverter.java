@@ -15,7 +15,7 @@ import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.account.service.AccountGroupService;
 import com.liferay.account.service.AccountRoleLocalService;
 import com.liferay.asset.kernel.model.AssetTag;
-import com.liferay.asset.kernel.service.AssetCategoryService;
+import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.asset.kernel.service.AssetTagLocalService;
 import com.liferay.headless.admin.user.dto.v1_0.Account;
 import com.liferay.headless.admin.user.dto.v1_0.AccountContactInformation;
@@ -39,6 +39,7 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.Contact;
+import com.liferay.portal.kernel.model.Image;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.Role;
@@ -46,6 +47,7 @@ import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.AddressLocalService;
+import com.liferay.portal.kernel.service.ImageLocalService;
 import com.liferay.portal.kernel.service.ListTypeLocalService;
 import com.liferay.portal.kernel.service.OrganizationLocalService;
 import com.liferay.portal.kernel.service.PermissionService;
@@ -53,6 +55,7 @@ import com.liferay.portal.kernel.service.ResourceActionLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleService;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -194,6 +197,23 @@ public class AccountResourceDTOConverter
 								AccountEntry.class.getName(),
 								accountEntry.getAccountEntryId()),
 							AssetTag.NAME_ACCESSOR)));
+				setLogoBase64(
+					() -> NestedFieldsSupplier.supply(
+						"logoBase64",
+						nestedFieldNames -> {
+							if (accountEntry.getLogoId() == 0) {
+								return null;
+							}
+
+							Image image = _imageLocalService.fetchImage(
+								accountEntry.getLogoId());
+
+							if (image == null) {
+								return null;
+							}
+
+							return Base64.encode(image.getTextObj());
+						}));
 				setLogoId(accountEntry::getLogoId);
 				setLogoURL(
 					() -> StringBundler.concat(
@@ -261,7 +281,7 @@ public class AccountResourceDTOConverter
 					() -> NestedFieldsSupplier.supply(
 						"taxonomyCategoryBriefs",
 						nestedFieldNames -> TransformUtil.transformToArray(
-							_assetCategoryService.getCategories(
+							_assetCategoryLocalService.getCategories(
 								AccountEntry.class.getName(),
 								accountEntry.getAccountEntryId()),
 							assetCategory ->
@@ -430,13 +450,16 @@ public class AccountResourceDTOConverter
 	private AddressLocalService _addressLocalService;
 
 	@Reference
-	private AssetCategoryService _assetCategoryService;
+	private AssetCategoryLocalService _assetCategoryLocalService;
 
 	@Reference
 	private AssetTagLocalService _assetTagLocalService;
 
 	@Reference
 	private DTOConverterRegistry _dtoConverterRegistry;
+
+	@Reference
+	private ImageLocalService _imageLocalService;
 
 	@Reference
 	private ListTypeLocalService _listTypeLocalService;

@@ -12,12 +12,15 @@ declare module 'warning';
 
 type Account = {
 	customFields?: CustomField[];
+	dateCreated: string;
 	description: string;
 	emailAddress: string;
 	externalReferenceCode: string;
 	id: number;
 	logoURL?: string;
 	name: string;
+	numberOfUsers: number;
+	status: number;
 	taxId: string;
 	type: string;
 };
@@ -302,12 +305,24 @@ type CustomField = {
 	name: string;
 };
 
+type Currency = {
+	code: string;
+	symbol?: string;
+};
+
 type DefaultProperties = {
 	analyticsCloudURL: string;
 	cloudConsoleURL: string;
 	contactSupportURL: string;
 	eulaBaseURL: string;
 	featureFlags: string[];
+	kpi: {
+		kpiConnectorQuartelyRelease: string;
+		kpiLowCodePublishedApps: string;
+		kpiPartnershipIntegration: string;
+		kpiProjectUsingMarketplaceApps: string;
+		kpiQuartelyReleaseApps: string;
+	};
 	marketoFormId: string;
 	productId: string;
 	trialAccountCheck: 'false' | 'true';
@@ -317,7 +332,7 @@ type DefaultProperties = {
 
 type DeliveryProduct = {
 	attachments: DeliveryProductAttachment[];
-	catalogName?: string;
+	catalogName: string;
 	categories: ProductCategories[];
 	createDate: string;
 	customFields?: CustomField[];
@@ -540,7 +555,7 @@ type Product = {
 	attachments: ProductAttachment[];
 	catalog: Catalog;
 	catalogId: number;
-	catalogName?: string;
+	catalogName: string;
 	categories: ProductCategories[];
 	createDate: string;
 	customFields?: CustomField[];
@@ -557,6 +572,13 @@ type Product = {
 	productSpecifications: ProductSpecification[];
 	productStatus: number;
 	productType: string;
+	productVirtualSettings: {
+		id: string;
+		productVirtualSettingsFileEntries: {
+			src: string;
+			version: string;
+		}[];
+	};
 	skus: SKU[];
 	thumbnail: string;
 	urlImage: string;
@@ -567,6 +589,27 @@ type Product = {
 		label: string;
 		label_i18n: string;
 	};
+};
+
+type PriceList = {
+	active: boolean;
+	catalogId: number;
+	currencyCode: string;
+	id: number;
+	name: string;
+	type: string;
+};
+
+type PriceEntry = {
+	bulkPricing: boolean;
+	hasTierPrice: boolean;
+	id: number;
+	price: number;
+	priceEntryId: number;
+	priceFormatted: string;
+	product: Pick<Product, 'id' | 'name' | 'sku' | 'thumbnail'>;
+	sku: SKU;
+	skuId: number;
 };
 
 type ProductAttachment = {
@@ -693,6 +736,9 @@ type TaxonomyVocabulary = {
 
 type TierPrice = {
 	currency: string;
+	externalReferenceCode: string;
+	id: number;
+	minimumQuantity: number;
 	price: number;
 	priceFormatted: string;
 	quantity: number;

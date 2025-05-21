@@ -69,12 +69,20 @@ public class ObjectEntryManagerUtil {
 							NAME_OBJECT_RELATIONSHIP_ERC_OBJECT_FIELD_NAME,
 						objectField);
 
-				if (properties.containsKey(objectField.getName()) &&
+				String relationshipObjectFieldName = objectField.getName();
+
+				if (properties.containsKey(relationshipObjectFieldName) &&
 					!properties.containsKey(
 						objectRelationshipERCObjectFieldName)) {
 
 					existingProperties.remove(
 						objectRelationshipERCObjectFieldName);
+				}
+				else if (properties.containsKey(
+							objectRelationshipERCObjectFieldName) &&
+						 !properties.containsKey(relationshipObjectFieldName)) {
+
+					existingProperties.remove(relationshipObjectFieldName);
 				}
 			}
 

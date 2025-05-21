@@ -4,32 +4,18 @@
  */
 
 import {sub} from 'frontend-js-web';
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 
-import {ViewDashboardContext} from '../ViewDashboardContext';
+import {generateUrl} from '../utils/urls';
 import {ActionsDropdown} from './ActionsDropdown';
 import {BaseCard} from './BaseCard';
-import {ContentAndFilesCard, TrendClassification} from './ContentAndFilesCard';
+import {ContentAndFilesCard} from './ContentAndFilesCard';
 import {RangeSelectors, RangeSelectorsDropdown} from './RangeSelectorsDropdown';
 
-// TODO: LPD-53329 - Remove it after implementing integration with backend
-
-const MOCKED_VALUE = 999999;
-
 export function ContentCard() {
-	const {
-		filters: {languageId, spaceId},
-	} = useContext(ViewDashboardContext);
-
-	const [action, setAction] = useState('');
 	const [rangeSelector, setRangeSelector] = useState(
 		RangeSelectors.Last7Days
 	);
-
-	// TODO: LPD-53329 - Remove it after implementing integration with backend
-
-	// eslint-disable-next-line no-console
-	console.log({action, languageId, rangeSelector, spaceId});
 
 	return (
 		<BaseCard
@@ -37,19 +23,17 @@ export function ContentCard() {
 				<>
 					<RangeSelectorsDropdown
 						activeRangeSelector={rangeSelector}
-						className="mr-3"
 						onChange={setRangeSelector}
 					/>
 
 					<ActionsDropdown
 						items={[
 							{
-								icon: 'catalog',
-								label: Liferay.Language.get('view-new-content'),
-								value: 'viewNewContent',
+								href: generateUrl('/contents').toString(),
+								label: Liferay.Language.get('view-all-content'),
+								value: 'view-all-content',
 							},
 						]}
-						onChange={setAction}
 					/>
 				</>
 			}
@@ -59,16 +43,16 @@ export function ContentCard() {
 			title={Liferay.Language.get('content')}
 		>
 			<ContentAndFilesCard
-				categories={MOCKED_VALUE}
-				tags={MOCKED_VALUE}
-				title={sub(Liferay.Language.get('x-new-content-items'), [
-					MOCKED_VALUE,
-				])}
-				trend={{
-					classification: TrendClassification.Positive,
-					percentage: MOCKED_VALUE,
-				}}
-				vocabularies={MOCKED_VALUE}
+				endpointURL="/o/analytics-cms-rest/v1.0/content-overview"
+				rangeSelector={rangeSelector}
+				title={(totalCount) =>
+					sub(
+						totalCount === 1
+							? Liferay.Language.get('x-new-content-item')
+							: Liferay.Language.get('x-new-content-items'),
+						[totalCount]
+					)
+				}
 			/>
 		</BaseCard>
 	);

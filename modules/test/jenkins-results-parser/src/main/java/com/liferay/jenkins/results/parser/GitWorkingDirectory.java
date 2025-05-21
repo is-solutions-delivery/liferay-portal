@@ -108,6 +108,25 @@ public class GitWorkingDirectory {
 		return newGitRemote;
 	}
 
+	public File archive(String fileName) {
+		GitUtil.ExecutionResult executionResult = executeBashCommands(
+			3, GitUtil.MILLIS_RETRY_DELAY, 1000 * 60 * 10,
+			"git archive HEAD -o " + fileName);
+
+		if (executionResult.getExitValue() != 0) {
+			File gitDirectory = getGitDirectory();
+
+			throw new GitWorkingDirectoryRuntimeException(
+				this,
+				JenkinsResultsParserUtil.combine(
+					"Unable to create Git archive from ",
+					gitDirectory.toString(), "\n",
+					executionResult.getStandardError()));
+		}
+
+		return new File(getWorkingDirectory(), fileName);
+	}
+
 	public LocalGitBranch checkoutLocalGitBranch(
 		Build.BranchInformation branchInformation) {
 
@@ -713,7 +732,8 @@ public class GitWorkingDirectory {
 
 		String remoteURL = remoteGitRepository.getRemoteURL();
 
-		if (JenkinsResultsParserUtil.isCINode() &&
+		if (!JenkinsResultsParserUtil.isCloudCINode() &&
+			JenkinsResultsParserUtil.isCINode() &&
 			remoteURL.contains("github.com:liferay/")) {
 
 			String gitHubDevRemoteURL = remoteURL.replace(

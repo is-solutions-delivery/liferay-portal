@@ -81,12 +81,11 @@ public class ActionUtil {
 					layout.fetchDraftLayout(), themeDisplay),
 				"p_l_mode", Constants.EDIT);
 
-			String backURL = ParamUtil.getString(
-				httpServletRequest, "p_l_back_url");
+			String backURL = ParamUtil.getString(httpServletRequest, "backURL");
 
 			if (Validator.isNotNull(backURL)) {
 				editURL = HttpComponentsUtil.addParameter(
-					editURL, "p_l_back_url", backURL);
+					editURL, "backURL", backURL);
 			}
 
 			return editURL;
@@ -256,9 +255,23 @@ public class ActionUtil {
 			}
 		}
 
+		LayoutPageTemplateEntry masterLayoutPageTemplateEntry =
+			LayoutPageTemplateEntryLocalServiceUtil.
+				fetchLayoutPageTemplateEntry(groupId, "content-editor-master");
+
+		if (masterLayoutPageTemplateEntry != null) {
+			draftLayout.setMasterLayoutPlid(
+				masterLayoutPageTemplateEntry.getPlid());
+		}
+
 		LayoutLocalServiceUtil.copyLayoutContent(draftLayout, layout);
 
 		draftLayout = LayoutLocalServiceUtil.getLayout(draftLayout.getPlid());
+
+		if (masterLayoutPageTemplateEntry != null) {
+			draftLayout.setMasterLayoutPlid(
+				masterLayoutPageTemplateEntry.getPlid());
+		}
 
 		draftLayout.setStatus(WorkflowConstants.STATUS_APPROVED);
 

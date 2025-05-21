@@ -19,20 +19,22 @@ export default {
 	'accounts': 'Accounts',
 	'activation-status': 'Activation Status',
 	'active': 'Active',
+	'add-currency': 'Add Currency',
 	'add-developer-licenses': 'Add Developer Licenses',
+	'add-new-version': 'Add New Version',
 	'add-packages': 'Add Package(s)',
 	'add-up-to-x-images': 'Add up to {0} images',
 	'additional-apps-requested': 'Additional Apps Requested',
 	'address': 'Address',
 	'all-orders': 'All Orders',
 	'all-progress-and-information-related-to-the-creation-of-the-app-will-be-lost-do-you-still-want-to-exit':
-		'All progress and information related to the creation of the app will be lost, Do you still want to exit?',
+		'All progress and information related to the creation of the app will be lost. Do you still want to exit?',
 	'all-progress-and-information-related-to-the-creation-of-the-app-will-be-lost-unless-you-save-the-app-as-a-draft-do-you-still-want-to-exit':
-		'All progress and information related to the creation of the app will be lost unless you save the app as a draft, Do you still want to exit?',
+		'All progress and information related to the creation of the app will be lost unless you save the app as a draft. Do you still want to exit?',
 	'all-progress-and-information-related-to-the-creation-of-the-solution-will-be-lost-do-you-still-want-to-exit':
-		'All progress and information related to the creation of the solution will be lost, Do you still want to exit?',
+		'All progress and information related to the creation of the solution will be lost. Do you still want to exit?',
 	'all-progress-and-information-related-to-the-creation-of-the-solution-will-be-lost-unless-you-save-the-solution-as-a-draft-do-you-still-want-to-exit':
-		'All progress and information related to the creation of the solution will be lost unless you save the solution as a draft, Do you still want to exit?',
+		'All progress and information related to the creation of the solution will be lost unless you save the solution as a draft. Do you still want to exit?',
 	'all-published-apps': 'All Published Apps',
 	'allowed-email-domains': 'Allowed Email Domains',
 	'amount': 'Amount',
@@ -42,6 +44,7 @@ export default {
 		'An App Build is your compiled or non-compiled code submitted on behalf of your account to the Marketplace. Once submitted, it will be reviewed and tested by our Marketplace administrators for approval in the Marketplace.',
 	'an-unexpected-error-occurred': 'An unexpected error ocurred',
 	'and': 'and',
+	'annual-target': 'Annual Target',
 	'app-build': 'App Build',
 	'app-documentation-url': 'App Documentation URL',
 	'app-installation-and-uninstallation-guide-url':
@@ -53,6 +56,7 @@ export default {
 	'app-type': 'App Type',
 	'app-version': 'App Version',
 	'app-x-submitted': 'App <b>{0}</b> submitted',
+	'apply': 'Apply',
 	'apply-to-your-use-of-this-service-the-name-on-your-liferay-account-will-be-used-in-this-liferay-marketplace-publisher-profile-it-may-appear-where-you-contribute-and-be-changed-at-any-time':
 		'apply to your use of this service. The name on your Liferay account will be used in this Liferay Marketplace Publisher Profile. It may appear where you contribute and be changed at any time',
 	'approve': 'Approve',
@@ -77,9 +81,12 @@ export default {
 	'cancel': 'Cancel',
 	'cash': 'Cash',
 	'categories': 'Categories',
+	'category': 'Category',
 	'choose-an-option': 'Choose an option',
+	'choose-currency': 'Choose Currency',
 	'choose-the-marketplace-category-that-most-accurately-describes-what-your-solution-does-users-looking-for-specific-types-of-solutions-will-often-browse-categories-by-searching-on-a-specific-category-name-in-the-main-marketplace-home-page-having-your-solution-listed-under-the-appropriate-category-will-help-them-find-your-solution':
 		'Choose the Marketplace category that most accurately describes what your solution does. Users looking for specific types of solutions will often browse categories by searching on a specific category name in the main Marketplace home page. Having your solution listed under the appropriate category will help them find your solution.',
+	'clear': 'Clear',
 	'click-on-add-apps-to-start': "Click on 'Add Apps' to start.",
 	'client-extension': 'Client Extension',
 	'client-extensions': 'Client Extensions',
@@ -178,6 +185,7 @@ export default {
 		'DXP module-based apps are not supported on Liferay SaaS.',
 	'each': 'each',
 	'edit': 'Edit',
+	'edit-details': 'Edit Details',
 	'email': 'Email',
 	'end-user-license-agreement': 'End User License Agreement',
 	'enter-app-description': 'Enter app description',
@@ -208,6 +216,7 @@ export default {
 	'explore-over-800-apps-available-in-the-liferay-marketplace-from-a-variety-of-publishers-apps-allow-you-to-accelerate-your-liferay-development-get-to-market-faster':
 		'Explore over 800 apps available in the Liferay Marketplace from a variety of publishers. Apps allow you to accelerate your Liferay development get to market faster.',
 	'extension-optional': 'Extension (optional)',
+	'filter': 'Filter',
 	'first-name': 'First Name',
 	'fragment-collection-of-fragments': 'Fragment/Collection of Fragments',
 	'free': 'Free',
@@ -292,6 +301,7 @@ export default {
 	'module-based-apps-delivered-as-lpkg-files-that-the-user-can-install-to-modify-native-liferay-behavior':
 		'Module-based apps delivered as .lpkg files that the user can install to modify native Liferay behavior.',
 	'monetize-your-apps-and-solutions': 'Monetize your apps and solutions',
+	'monthly-increase': 'Monthly Increase',
 	'more-info': 'More Info',
 	'move-down': 'Move Down',
 	'move-to-bottom': 'Move to Bottom',
@@ -316,6 +326,7 @@ export default {
 	'notes-pertaining-to-the-release-of-the-project-these-will-be-displayed-when-the-customer-goes-to-purchase-and-or-update-the-app':
 		'Notes pertaining to the release of the project. These will be displayed when the customer goes to purchase and/or update the app.',
 	'number-of-cpus': 'Number of CPUs',
+	'of-target': 'of target',
 	'on-hold': 'On Hold',
 	'only-gif-jpg-png-are-allowed-ax-file-size-is-5mb':
 		'Only gif, jpg, png are allowed. Max file size is 5MB',
@@ -367,6 +378,7 @@ export default {
 	'publisher-requests': 'Publisher Requests',
 	'publisher-type': 'Publisher Type',
 	'publisher-website-url': 'Publisher website URL',
+	'publishers': 'Publishers',
 	'purchase-and-install-new-apps-and-they-will-show-up-here':
 		'Purchase and install new apps and they will show up here.',
 	'purchase-order-number': 'Purchase Order Number',
@@ -404,6 +416,7 @@ export default {
 	'select-a-local-file-to-upload': 'Select a local file to upload',
 	'select-areas': 'Select areas',
 	'select-categories': 'Select categories',
+	'select-category': 'Select category',
 	'select-compatible-versions': 'Select Compatible Versions',
 	'select-licensing-terms': 'Select licensing terms',
 	'select-tags': 'Select tags',
@@ -535,6 +548,7 @@ export default {
 	'via-zip-upload': 'Via ZIP Upload',
 	'video-description': 'Video description',
 	'video-url': 'Video URL',
+	'view': 'View',
 	'view-all': 'View All',
 	'view-details': 'View details',
 	'we-are-happy-to-have-you-interested-in-the-liferay-marketplace-at-the-moment-we-are-working-on-enhancing-the-experience-for-our-customers-in-the-marketplace-and-access-is-invite-only-if-you-are-an-existing-liferay-customer-please-keep-an-eye-out-for-an-announcement-related-to-the-new-marketplace-in-the-coming-months':

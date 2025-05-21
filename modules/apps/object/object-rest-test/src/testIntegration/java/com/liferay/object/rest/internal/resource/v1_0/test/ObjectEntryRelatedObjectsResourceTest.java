@@ -90,9 +90,12 @@ public class ObjectEntryRelatedObjectsResourceTest {
 		_objectDefinition1 = ObjectDefinitionTestUtil.publishObjectDefinition(
 			Collections.singletonList(
 				ObjectFieldUtil.createObjectField(
-					"Text", "String", true, true, null,
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
 					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME_1,
 					false)));
+
+		_objectDefinitions.add(_objectDefinition1);
 
 		_objectEntry1 = ObjectEntryTestUtil.addObjectEntry(
 			_objectDefinition1, _OBJECT_FIELD_NAME_1, _OBJECT_FIELD_VALUE_1);
@@ -100,9 +103,12 @@ public class ObjectEntryRelatedObjectsResourceTest {
 		_objectDefinition2 = ObjectDefinitionTestUtil.publishObjectDefinition(
 			Collections.singletonList(
 				ObjectFieldUtil.createObjectField(
-					"Text", "String", true, true, null,
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
 					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME_2,
 					false)));
+
+		_objectDefinitions.add(_objectDefinition2);
 
 		_objectEntry2 = ObjectEntryTestUtil.addObjectEntry(
 			_objectDefinition2, _OBJECT_FIELD_NAME_2, _OBJECT_FIELD_VALUE_2);
@@ -112,9 +118,12 @@ public class ObjectEntryRelatedObjectsResourceTest {
 		_objectDefinition3 = ObjectDefinitionTestUtil.publishObjectDefinition(
 			Collections.singletonList(
 				ObjectFieldUtil.createObjectField(
-					"Text", "String", true, true, null,
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
 					RandomTestUtil.randomString(), _OBJECT_FIELD_NAME_2,
 					false)));
+
+		_objectDefinitions.add(_objectDefinition3);
 
 		_objectEntry4 = ObjectEntryTestUtil.addObjectEntry(
 			_objectDefinition3, _OBJECT_FIELD_NAME_2,
@@ -140,12 +149,10 @@ public class ObjectEntryRelatedObjectsResourceTest {
 				objectRelationship);
 		}
 
-		_objectDefinitionLocalService.deleteObjectDefinition(
-			_objectDefinition1);
-		_objectDefinitionLocalService.deleteObjectDefinition(
-			_objectDefinition2);
-		_objectDefinitionLocalService.deleteObjectDefinition(
-			_objectDefinition3);
+		for (ObjectDefinition objectDefinition : _objectDefinitions) {
+			_objectDefinitionLocalService.deleteObjectDefinition(
+				objectDefinition);
+		}
 	}
 
 	@Test
@@ -759,6 +766,54 @@ public class ObjectEntryRelatedObjectsResourceTest {
 	}
 
 	@Test
+	public void testGetRelatedObjectEntryWithDifferentScope() throws Exception {
+		ObjectDefinition siteScopedObjectDefinition =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				Collections.singletonList(
+					ObjectFieldUtil.createObjectField(
+						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+						ObjectFieldConstants.DB_TYPE_STRING, true, true, null,
+						RandomTestUtil.randomString(), _OBJECT_FIELD_NAME_1,
+						false)),
+				ObjectDefinitionConstants.SCOPE_SITE);
+
+		_objectDefinitions.add(siteScopedObjectDefinition);
+
+		ObjectEntry objectEntry2 = ObjectEntryTestUtil.addObjectEntry(
+			siteScopedObjectDefinition, _OBJECT_FIELD_NAME_1,
+			_OBJECT_FIELD_VALUE_2);
+
+		ObjectRelationship objectRelationship = _addObjectRelationship(
+			_objectDefinition1, siteScopedObjectDefinition,
+			_objectEntry1.getPrimaryKey(), objectEntry2.getPrimaryKey(),
+			ObjectRelationshipConstants.TYPE_MANY_TO_MANY);
+
+		JSONAssert.assertEquals(
+			JSONUtil.put(
+				_OBJECT_FIELD_NAME_1, _OBJECT_FIELD_VALUE_2
+			).put(
+				"externalReferenceCode", objectEntry2.getExternalReferenceCode()
+			).put(
+				objectRelationship.getName(),
+				JSONUtil.putAll(
+					JSONUtil.put(
+						_OBJECT_FIELD_NAME_1, _OBJECT_FIELD_VALUE_1
+					).put(
+						"externalReferenceCode",
+						_objectEntry1.getExternalReferenceCode()
+					))
+			).toString(),
+			HTTPTestUtil.invokeToJSONObject(
+				null,
+				_getEndpoint(
+					String.valueOf(objectEntry2.getPrimaryKey()),
+					objectRelationship, siteScopedObjectDefinition),
+				Http.Method.GET
+			).toString(),
+			JSONCompareMode.LENIENT);
+	}
+
+	@Test
 	public void testGetRelatedSystemObjectsWhenRelationExists()
 		throws Exception {
 
@@ -803,6 +858,8 @@ public class ObjectEntryRelatedObjectsResourceTest {
 						RandomTestUtil.randomString(), "able", false)),
 				ObjectDefinitionConstants.SCOPE_SITE,
 				TestPropsValues.getUserId());
+
+		_objectDefinitions.add(siteScopedObjectDefinition);
 
 		ObjectEntry siteObjectEntry = ObjectEntryTestUtil.addObjectEntry(
 			siteScopedObjectDefinition, "able", RandomTestUtil.randomString());
@@ -1489,21 +1546,6 @@ public class ObjectEntryRelatedObjectsResourceTest {
 		_objectDefinitionLocalService.updateObjectDefinition(objectDefinition);
 	}
 
-	private String _getEndpoint(
-		boolean manyToOne, String objectEntryId,
-		String objectRelationshipName) {
-
-		if (manyToOne) {
-			return StringBundler.concat(
-				_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
-				objectEntryId, "?nestedFields=", objectRelationshipName);
-		}
-
-		return StringBundler.concat(
-			_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
-			objectEntryId, StringPool.SLASH, objectRelationshipName);
-	}
-
 	private String _getEndpoint(String name) {
 		return StringBundler.concat(
 			_objectDefinition1.getRESTContextPath(), StringPool.SLASH,
@@ -1513,6 +1555,15 @@ public class ObjectEntryRelatedObjectsResourceTest {
 	private String _getEndpoint(String name, long primaryKey) {
 		return StringBundler.concat(
 			_getEndpoint(name), StringPool.SLASH, primaryKey);
+	}
+
+	private String _getEndpoint(
+		String objectEntryId, ObjectRelationship objectRelationship,
+		ObjectDefinition objectDefinition) {
+
+		return StringBundler.concat(
+			objectDefinition.getRESTContextPath(), StringPool.SLASH,
+			objectEntryId, "?nestedFields=", objectRelationship.getName());
 	}
 
 	private String _getSystemObjectEntryId(
@@ -1526,8 +1577,8 @@ public class ObjectEntryRelatedObjectsResourceTest {
 			HTTPTestUtil.invokeToJSONObject(
 				null,
 				_getEndpoint(
-					manyToOne, customObjectEntryId,
-					objectRelationship.getName()),
+					customObjectEntryId, objectRelationship,
+					_objectDefinition1),
 				Http.Method.GET);
 
 		if (manyToOne) {
@@ -1536,10 +1587,10 @@ public class ObjectEntryRelatedObjectsResourceTest {
 					objectRelationship.getName());
 		}
 		else {
-			JSONArray itemsJSONArray = customObjectEntryJSONObject.getJSONArray(
-				"items");
+			JSONArray jsonArray = customObjectEntryJSONObject.getJSONArray(
+				objectRelationship.getName());
 
-			systemObjectEntryJSONObject = itemsJSONArray.getJSONObject(0);
+			systemObjectEntryJSONObject = jsonArray.getJSONObject(0);
 		}
 
 		return systemObjectEntryJSONObject.getString("id");
@@ -1842,8 +1893,8 @@ public class ObjectEntryRelatedObjectsResourceTest {
 					HTTPTestUtil.invokeToJSONObject(
 						null,
 						_getEndpoint(
-							manyToOne, customObjectEntryId,
-							objectRelationship.getName()),
+							customObjectEntryId, objectRelationship,
+							_objectDefinition1),
 						Http.Method.GET);
 
 				if (manyToOne) {
@@ -1856,10 +1907,10 @@ public class ObjectEntryRelatedObjectsResourceTest {
 								"Id", "ERC")));
 				}
 
-				JSONArray itemsJSONArray =
-					systemObjectEntryJSONObject.getJSONArray("items");
+				JSONArray jsonArray = systemObjectEntryJSONObject.getJSONArray(
+					objectRelationship.getName());
 
-				systemObjectEntryJSONObject = itemsJSONArray.getJSONObject(0);
+				systemObjectEntryJSONObject = jsonArray.getJSONObject(0);
 
 				return systemObjectEntryJSONObject.getString(
 					"externalReferenceCode");
@@ -1940,9 +1991,8 @@ public class ObjectEntryRelatedObjectsResourceTest {
 					HTTPTestUtil.invokeToJSONObject(
 						null,
 						_getEndpoint(
-							manyToOne,
 							customObjectEntryJSONObject.getString("id"),
-							objectRelationship.getName()),
+							objectRelationship, _objectDefinition1),
 						Http.Method.GET);
 
 				if (manyToOne) {
@@ -1955,10 +2005,10 @@ public class ObjectEntryRelatedObjectsResourceTest {
 								"Id", "ERC")));
 				}
 
-				JSONArray itemsJSONArray =
-					systemObjectEntryJSONObject.getJSONArray("items");
+				JSONArray jsonArray = systemObjectEntryJSONObject.getJSONArray(
+					objectRelationship.getName());
 
-				systemObjectEntryJSONObject = itemsJSONArray.getJSONObject(0);
+				systemObjectEntryJSONObject = jsonArray.getJSONObject(0);
 
 				return systemObjectEntryJSONObject.getString(
 					"externalReferenceCode");
@@ -2072,6 +2122,7 @@ public class ObjectEntryRelatedObjectsResourceTest {
 	@Inject
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;
 
+	private final List<ObjectDefinition> _objectDefinitions = new ArrayList<>();
 	private ObjectEntry _objectEntry1;
 	private ObjectEntry _objectEntry2;
 	private ObjectEntry _objectEntry3;

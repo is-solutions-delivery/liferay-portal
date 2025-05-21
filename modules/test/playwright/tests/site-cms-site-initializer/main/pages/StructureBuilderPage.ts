@@ -54,7 +54,10 @@ export class StructureBuilderPage {
 	}
 
 	async goto() {
-		await this.page.goto(PORTLET_URLS.cmsStructureBuilder);
+		await this.page.goto(
+			PORTLET_URLS.cmsStructureBuilder +
+				'?objectFolderExternalReferenceCode=L_CMS_CONTENT_STRUCTURES'
+		);
 
 		await this.page.getByText('New Structure').waitFor();
 	}
@@ -177,31 +180,25 @@ export class StructureBuilderPage {
 		if (fields.length === 1) {
 			const [field] = fields;
 
-			const count = await this.page
+			const treeItems = this.page
 				.locator('.treeview-item')
-				.getByLabel(field.label, {exact: true})
-				.count();
+				.getByLabel(field.label, {exact: true});
 
-			const treeItem = this.page
-				.locator('.treeview-item')
-				.getByLabel(field.label, {exact: true})
-				.nth(field.nth || 0);
+			await treeItems.waitFor({state: 'visible'});
 
-			if (treeItem) {
-				await this.selectFields([field]);
+			const count = await treeItems.count();
 
-				await clickAndExpectToBeVisible({
-					autoClick: true,
-					target: this.page.getByRole('menuitem', {name: 'Delete'}),
-					trigger: treeItem.getByLabel('Field Options'),
-				});
+			const treeItem = treeItems.nth(field.nth || 0);
 
-				await expect(
-					this.page
-						.locator('.treeview-item')
-						.getByLabel(field.label, {exact: true})
-				).toHaveCount(count - 1);
-			}
+			await this.selectFields([field]);
+
+			await clickAndExpectToBeVisible({
+				autoClick: true,
+				target: this.page.getByRole('menuitem', {name: 'Delete'}),
+				trigger: treeItem.getByLabel('Field Options'),
+			});
+
+			await expect(treeItems).toHaveCount(count - 1);
 		}
 
 		// Deleting multiple fields

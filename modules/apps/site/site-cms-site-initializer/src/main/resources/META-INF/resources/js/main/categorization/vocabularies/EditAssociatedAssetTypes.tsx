@@ -5,104 +5,206 @@
 
 import ClayAlert from '@clayui/alert';
 import ClayForm, {ClayCheckbox, ClayToggle} from '@clayui/form';
-import ClayIcon from '@clayui/icon';
 import ClayMultiSelect from '@clayui/multi-select';
 import ClayTable from '@clayui/table';
 import {sub} from 'frontend-js-web';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
+
+import {IVocabulary} from '../types/IVocabulary';
+
+type Structure = {
+	label?: string;
+	required: boolean;
+	value?: number;
+};
 
 const ALL_ASSET_TYPES: AssetType[] = [
 	{
 		required: false,
-		subtype: '-1',
-		type: Liferay.Language.get('all-asset-types'),
-		typeId: '0',
+		type: 'AllAssetTypes',
+		typeId: 0,
+	},
+];
+
+const ALL_STRUCTURES: Structure[] = [
+	{
+		label: Liferay.Language.get('all-asset-types'),
+		required: false,
+		value: 0,
 	},
 ];
 
 export default function EditAssociatedAssetTypes({
-	assetTypes,
+	assetTypeInputError,
+	availableAssetTypes,
+	initialAssetTypes,
+	onChangeVocabulary,
+	setAssetTypeChange,
+	setAssetTypeInputError,
+	vocabulary,
 }: {
-	assetTypes: AssetType[];
+	assetTypeInputError: string;
+	availableAssetTypes: AssetType[];
+	initialAssetTypes: AssetType[];
+	onChangeVocabulary: Function;
+	setAssetTypeChange: Function;
+	setAssetTypeInputError: Function;
+	vocabulary: IVocabulary;
 }) {
 	const [allAssetTypesSelected, setAllAssetTypesSelected] =
 		useState<boolean>(true);
-	const [inputError, setInputError] = useState<string>('');
+	const availableStructures = availableAssetTypes.map((assetType) => ({
+		label: assetType.type,
+		required: assetType.required,
+		value: assetType.typeId,
+	}));
 
-	const [selectedAssetTypes, setSelectedAssetTypes] =
-		useState<AssetType[]>(ALL_ASSET_TYPES);
+	const [selectedItems, setSelectedItems] =
+		useState<Structure[]>(ALL_STRUCTURES);
 
-	const isChecked = (items: AssetType[], item: AssetType) => {
-		return !!items.find((val) => val.typeId === item.typeId);
-	};
+	useEffect(() => {
+		if (vocabulary.assetTypes.length) {
+			if (vocabulary.assetTypes[0].typeId === 0) {
+				setSelectedItems(ALL_STRUCTURES);
+			}
+			else {
+				setAllAssetTypesSelected(false);
 
-	const _handleChangeAllAssetTypes = () => {
-		setAllAssetTypesSelected(!allAssetTypesSelected);
-
-		if (allAssetTypesSelected) {
-			setSelectedAssetTypes([]);
+				setSelectedItems(
+					vocabulary.assetTypes.map((assetType) => ({
+						label: assetType.type,
+						required: assetType.required,
+						value: assetType.typeId,
+					}))
+				);
+			}
 		}
-		else {
-			setSelectedAssetTypes(ALL_ASSET_TYPES);
-			setInputError('');
-		}
-	};
+	}, [vocabulary]);
 
-	const _handleChangeAssetTypes = (selectedItems: AssetType[]) => {
-		setSelectedAssetTypes(
-			selectedItems.filter((item, i, self) => i === self.indexOf(item))
-		);
-
+	useEffect(() => {
 		if (selectedItems.length) {
-			setInputError('');
+			setAssetTypeInputError('');
 		}
 		else {
-			setInputError(
+			setAssetTypeInputError(
 				sub(
 					Liferay.Language.get('the-x-field-is-required'),
 					Liferay.Language.get('asset-types')
 				)
 			);
 		}
+
+		if (selectedItems?.find((item) => item.value === 0)) {
+			setAssetTypeChange(false);
+		}
+		else if (
+			initialAssetTypes?.some(
+				(assetType) =>
+					!selectedItems.find(
+						(item) => item.value === assetType.typeId
+					)
+			)
+		) {
+			setAssetTypeChange(true);
+		}
+		else {
+			setAssetTypeChange(false);
+		}
+	}, [
+		initialAssetTypes,
+		selectedItems,
+		setAssetTypeChange,
+		setAssetTypeInputError,
+	]);
+
+	const isChecked = (item: Structure) => {
+		return !!selectedItems.find((val) => val.value === item.value);
 	};
 
-	const _handleChangeAssetTypeChecked = (item: AssetType) => {
-		if (!isChecked(selectedAssetTypes, item)) {
+	const _handleChangeAllAssetTypes = () => {
+		setAllAssetTypesSelected(!allAssetTypesSelected);
+
+		if (allAssetTypesSelected) {
+			setSelectedItems([]);
+			onChangeVocabulary(() => ({
+				...vocabulary,
+				assetTypes: [],
+			}));
+		}
+		else {
+			setSelectedItems(ALL_STRUCTURES);
+			onChangeVocabulary(() => ({
+				...vocabulary,
+				assetTypes: [ALL_ASSET_TYPES],
+			}));
+		}
+	};
+
+	const _handleChangeAssetTypes = (newSelectedItems: Structure[]) => {
+		setSelectedItems(
+			newSelectedItems.map((structure) => ({
+				...structure,
+				required: structure.required ? structure.required : false,
+			}))
+		);
+
+		onChangeVocabulary(() => ({
+			...vocabulary,
+			assetTypes: newSelectedItems.map((structure) => ({
+				required: structure.required ? structure.required : false,
+				type:
+					structure.label === Liferay.Language.get('all-asset-types')
+						? 'AllAssetTypes'
+						: structure.label,
+				typeId: structure.value,
+			})),
+		}));
+	};
+
+	const _handleChangeAssetTypeChecked = (item: Structure) => {
+		if (!isChecked(item)) {
 			_handleChangeAssetTypes([
-				...selectedAssetTypes,
+				...selectedItems,
 				{
+					label: item.label,
 					required: false,
-					subtype: '-1',
-					type: item.type,
-					typeId: item.typeId,
+					value: item.value,
 				},
 			]);
 		}
 		else {
 			_handleChangeAssetTypes(
-				selectedAssetTypes.filter(
-					(entry) => item.typeId !== entry.typeId
-				)
+				selectedItems.filter((entry) => item.value !== entry.value)
 			);
 		}
 	};
 
-	const _handleChangeAssetTypeRequired = (item: AssetType) => {
-		const updatedSelectedAssetTypes = selectedAssetTypes.map(
-			(assetType) => {
-				if (assetType.typeId === item.typeId) {
-					return {
-						...assetType,
-						required: !item.required,
-					};
-				}
-				else {
-					return assetType;
-				}
+	const _handleChangeAssetTypeRequired = (item: Structure) => {
+		const updatedSelectedAssetTypes = selectedItems.map((assetType) => {
+			if (assetType.value === item.value) {
+				return {
+					...assetType,
+					required: !item.required,
+				};
 			}
-		);
+			else {
+				return assetType;
+			}
+		});
 
-		setSelectedAssetTypes(updatedSelectedAssetTypes);
+		setSelectedItems(updatedSelectedAssetTypes);
+
+		onChangeVocabulary(() => ({
+			...vocabulary,
+			assetTypes: updatedSelectedAssetTypes.map((structure) => ({
+				required: structure.required ? structure.required : false,
+				type:
+					structure.label === Liferay.Language.get('all-asset-types')
+						? 'AllAssetTypes'
+						: structure.label,
+				typeId: structure.value,
+			})),
+		}));
 	};
 
 	return (
@@ -118,13 +220,14 @@ export default function EditAssociatedAssetTypes({
 					)}
 				</p>
 
-				<div className={inputError ? 'has-error' : ''}>
+				<div className={assetTypeInputError ? 'has-error' : ''}>
 					<label>{Liferay.Language.get('asset-types')}</label>
 
 					<ClayMultiSelect
+						aria-label="Asset Type Selector"
 						disabled={allAssetTypesSelected}
-						items={allAssetTypesSelected ? [] : selectedAssetTypes}
-						onItemsChange={(items: AssetType[]) => {
+						items={allAssetTypesSelected ? [] : selectedItems}
+						onItemsChange={(items: Structure[]) => {
 							_handleChangeAssetTypes(items);
 						}}
 						placeholder={
@@ -132,7 +235,7 @@ export default function EditAssociatedAssetTypes({
 								? Liferay.Language.get('all-asset-types')
 								: ''
 						}
-						sourceItems={assetTypes}
+						sourceItems={availableStructures}
 					>
 						{(item: any) => (
 							<ClayMultiSelect.Item
@@ -146,10 +249,7 @@ export default function EditAssociatedAssetTypes({
 									<div className="autofit-col mr-3">
 										<ClayCheckbox
 											aria-label={item.label}
-											checked={isChecked(
-												selectedAssetTypes,
-												item
-											)}
+											checked={isChecked(item)}
 											className="invisible"
 											onChange={() => {
 												_handleChangeAssetTypeChecked(
@@ -159,10 +259,6 @@ export default function EditAssociatedAssetTypes({
 										/>
 									</div>
 
-									<span className="asset-icon">
-										<ClayIcon symbol={item.icon} />
-									</span>
-
 									<div className="autofit-col">
 										<span>{item.label}</span>
 									</div>
@@ -171,9 +267,9 @@ export default function EditAssociatedAssetTypes({
 						)}
 					</ClayMultiSelect>
 
-					{inputError && (
+					{assetTypeInputError && (
 						<ClayAlert displayType="danger" variant="feedback">
-							{inputError}
+							{assetTypeInputError}
 						</ClayAlert>
 					)}
 				</div>
@@ -186,7 +282,7 @@ export default function EditAssociatedAssetTypes({
 					onChange={_handleChangeAllAssetTypes}
 				/>
 
-				{!!selectedAssetTypes.length && (
+				{!!selectedItems.length && (
 					<ClayTable striped>
 						<ClayTable.Head>
 							<ClayTable.Row>
@@ -201,18 +297,10 @@ export default function EditAssociatedAssetTypes({
 						</ClayTable.Head>
 
 						<ClayTable.Body>
-							{selectedAssetTypes.map((assetType: AssetType) => (
-								<ClayTable.Row key={assetType.typeId}>
+							{selectedItems.map((assetType: Structure) => (
+								<ClayTable.Row key={assetType.value}>
 									<ClayTable.Cell>
-										{assetType.icon && (
-											<span className="asset-icon">
-												<ClayIcon
-													symbol={assetType.icon}
-												/>
-											</span>
-										)}
-
-										{assetType.type}
+										{assetType.label as String}
 									</ClayTable.Cell>
 
 									<ClayTable.Cell>

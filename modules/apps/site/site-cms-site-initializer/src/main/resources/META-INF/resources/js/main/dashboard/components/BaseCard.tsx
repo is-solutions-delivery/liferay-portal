@@ -38,7 +38,9 @@ const BaseCard: React.FC<IBaseCard> = ({
 				</div>
 			)}
 
-			<div className="mt-3">{children}</div>
+			<div className="d-flex flex-column justify-content-center mt-3">
+				{children}
+			</div>
 		</div>
 	);
 };

@@ -9,6 +9,7 @@ import {NewAppInitialState} from '../../../../../context/NewAppContext';
 import {
 	ProductPriceModel,
 	ProductUploadType,
+	ProductWorkflowStatusCode,
 } from '../../../../../enums/Product';
 import i18n from '../../../../../i18n';
 import zodSchema from '../../../../../schema/zod';
@@ -19,69 +20,103 @@ export const MAX_SIZE_5MBS = 5_000_000;
 
 export const APP_FLOW_ITEMS = [
 	{
-		description:
+		description: () =>
 			'Review and accept the legal agreement between you and Liferay before proceeding, You are about to create a new app submission.',
 		label: i18n.translate('create'),
 		path: '',
-		title: 'Create new app',
+		saveAsDraftRequired: false,
+		title: () => 'Create new app',
+		visible: (context: NewAppInitialState) =>
+			!context._product?.productId ||
+			context._product?.productStatus === ProductWorkflowStatusCode.DRAFT,
 	},
 	{
-		description:
-			'Enter your new app details. This information will be used for submission, presentation, customer support, and search capabilities.',
+		alertText:
+			'Please be aware that since you are editing the app details the “Build” section will not be visibile. Some information will also be uneditable',
+		description: (isEditing = false) =>
+			`${isEditing ? 'Edit' : 'Enter'} your new app details. This information will be used for submission, presentation, customer support, and search capabilities.`,
 		label: i18n.translate('profile'),
 		parseSchema: (context: NewAppInitialState) =>
 			zodSchema.appPublishing.profile.safeParse(context.profile),
 		path: 'profile',
-		title: 'Define the app profile',
+		saveAsDraftRequired: true,
+		title: (isEditing = false) =>
+			`${isEditing ? 'Edit' : 'Define'} the app profile`,
+		visible: () => true,
 	},
 	{
-		description:
+		description: () =>
 			'Use one of the following methods to provide your app builds.',
 		label: 'Build',
 		parseSchema: (context: NewAppInitialState) =>
 			zodSchema.appPublishing.build.safeParse(context.build),
 		path: 'build',
-		title: 'Provide app build',
+		saveAsDraftRequired: true,
+		title: () => 'Provide app build',
+		visible: (context: NewAppInitialState) =>
+			!context._product?.productId ||
+			context._product?.productStatus === ProductWorkflowStatusCode.DRAFT,
 	},
 	{
-		description:
+		description: () =>
 			'Design the storefront for your app. This will set the information displayed on the app page in the Marketplace.',
 		label: 'Storefront',
 		parseSchema: (context: NewAppInitialState) =>
 			zodSchema.appPublishing.storefront.safeParse(context.storefront),
 		path: 'storefront',
-		title: 'Customize app storefront',
+		saveAsDraftRequired: false,
+		title: (isEditing = false) =>
+			`${isEditing ? 'Edit' : 'Customize'} app storefront`,
+		visible: () => true,
 	},
 	{
-		description: `Define version information for your app. This will inform users about this version's updates on the storefront.`,
+		description: () =>
+			`Define version information for your app. This will inform users about this version's updates on the storefront.`,
 		label: 'Version',
 		parseSchema: (context: NewAppInitialState) =>
 			zodSchema.appPublishing.version.safeParse(context.version),
 		path: 'version',
-		title: 'Provide version details',
+		saveAsDraftRequired: false,
+		title: () => 'Provide version details',
+		visible: (context: NewAppInitialState) =>
+			!context._product?.productId ||
+			context._product?.productStatus === ProductWorkflowStatusCode.DRAFT,
 	},
 	{
-		description:
+		description: () =>
 			'Select one of the pricing models for your app. This will define how much users will pay. To enable paid apps, you must be a business and enter payment information in your Marketplace account profile.',
 		label: 'Pricing',
 		path: 'pricing',
-		title: 'Choose pricing model',
+		saveAsDraftRequired: false,
+		title: (isEditing = false) =>
+			`${isEditing ? 'Edit' : 'Choose'} pricing model`,
+		visible: () => true,
 	},
 	{
-		description: `Define the licensing approach for your app. This will impact users' licensing renewal experience.`,
+		description: () =>
+			`Define the licensing approach for your app. This will impact users' licensing renewal experience.`,
 		label: 'Licensing',
 		path: 'licensing',
-		title: 'Select licensing terms',
+		saveAsDraftRequired: false,
+		title: (isEditing = false) =>
+			`${isEditing ? 'Edit' : 'Select'} licesing terms`,
+		visible: () => true,
 	},
 	{
-		description: `Define the licensing approach for your app. This will impact users' licensing renewal experience.`,
+		description: () =>
+			`Define the licensing approach for your app. This will impact users' licensing renewal experience.`,
 		hide: true,
 		label: 'Licensing',
 		path: 'licensing-prices',
-		title: 'Select licensing terms',
+		saveAsDraftRequired: false,
+		title: (isEditing = false) =>
+			`${isEditing ? 'Edit' : 'Select'} licesing terms`,
+		visible: (context: NewAppInitialState) =>
+			context.pricing.priceModel === ProductPriceModel.PAID,
 	},
 	{
-		description: `Inform the support and help references. This will impact how users will experience this app's customer support and learning.`,
+		description: () =>
+			`Inform the support and help references. This will impact how users will experience this app's customer support and learning.`,
 		label: 'Support',
 		parseSchema: (context: NewAppInitialState) => {
 			const schema =
@@ -92,14 +127,19 @@ export const APP_FLOW_ITEMS = [
 			return schema.safeParse(context.support);
 		},
 		path: 'support',
-		title: 'Provide app support and help',
+		saveAsDraftRequired: false,
+		title: (isEditing = false) =>
+			`${isEditing ? 'Edit' : 'Provide'} app support and help`,
+		visible: () => true,
 	},
 	{
-		description:
+		description: () =>
 			'Please, review before submitting. Once sent, you will not be able to edit any information until this submission is completely reviewed by Liferay.',
 		label: 'Submit',
 		path: 'submit',
-		title: 'Review and submit app',
+		saveAsDraftRequired: false,
+		title: () => 'Review and submit app',
+		visible: () => true,
 	},
 ];
 
