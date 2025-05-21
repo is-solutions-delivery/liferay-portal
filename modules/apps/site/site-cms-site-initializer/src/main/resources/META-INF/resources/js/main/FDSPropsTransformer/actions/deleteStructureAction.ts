@@ -6,7 +6,7 @@
 import {openModal} from 'frontend-js-components-web';
 import {sub} from 'frontend-js-web';
 
-import {fetchJSON} from '../../../services/api';
+import ApiHelper from '../../../services/ApiHelper';
 import DeleteStructureModalContent from '../../components/modal/DeleteStructureModalContent';
 import {executeAsyncItemAction} from '../utils/executeAsyncItemAction';
 
@@ -41,10 +41,16 @@ export default async function deleteStructureAction({
 		return;
 	}
 
-	const {hasObjectRelationship, objectEntriesCount} = await fetchJSON<{
+	const {data, error} = await ApiHelper.get<{
 		hasObjectRelationship: boolean;
 		objectEntriesCount: number;
 	}>(getObjectDefinitionDeleteInfoURL);
+
+	if (!data || error) {
+		return;
+	}
+
+	const {hasObjectRelationship, objectEntriesCount} = data;
 
 	if (hasObjectRelationship) {
 		openModal({

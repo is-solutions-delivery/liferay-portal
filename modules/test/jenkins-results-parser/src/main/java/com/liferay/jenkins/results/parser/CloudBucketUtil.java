@@ -41,6 +41,9 @@ public class CloudBucketUtil {
 	public static final String GCP_BUCKET_PATH_TESTRAY_RESULTS =
 		"gs://testray-results";
 
+	public static final String S3_BUCKET_PATH_FILE_PROPAGATOR =
+		"s3://liferayci-file-propagator";
+
 	public static void copyGCPFile(String destination, String source)
 		throws IOException {
 
@@ -510,7 +513,7 @@ public class CloudBucketUtil {
 			}
 		}
 
-		return s3ObjectPath;
+		return s3ObjectPath.trim();
 	}
 
 	private static void _validateS3ObjectPath(String s3ObjectPath) {

@@ -1,0 +1,47 @@
+.add-currency-button {
+	background: #fbfcfe;
+	border: 1px solid #e7efff;
+	color: #0b5fff;
+
+	&:hover {
+		background: #edf3fe;
+		border: 1px solid #0053f0;
+		color: #0b5fff;
+		opacity: 0.8;
+	}
+}
+
+.currency-selector {
+	margin-top: 0.5rem;
+
+	&-container {
+		padding-bottom: 64px;
+		padding-top: 24px;
+	}
+}
+
+.currency-selector-modal {
+	.modal-body {
+		border: none;
+	}
+
+	.modal-subtitle-section {
+		color: #6c6c75;
+		display: flex;
+		padding-inline: 1.5rem;
+	}
+
+	.modal-header {
+		border: none;
+		height: 4;
+		padding-top: 1.5rem;
+	}
+
+	.modal-title {
+		font-size: 32px;
+		font-weight: 700;
+		letter-spacing: 0%;
+		line-height: 40px;
+		vertical-align: middle;
+	}
+}

@@ -1506,3 +1506,47 @@ test(
 		).toBeVisible();
 	}
 );
+
+test(
+	'Account group display should show the correct number of accounts',
+	{tag: ['@LPD-55664']},
+	async ({accountGroupsPage, apiHelpers}) => {
+		const accountGroup =
+			await apiHelpers.headlessAdminUser.postAccountGroup();
+
+		apiHelpers.data.push({id: accountGroup.id, type: 'accountGroup'});
+
+		const account = await apiHelpers.headlessAdminUser.postAccount({
+			name: getRandomString(),
+			type: 'business',
+		});
+
+		await apiHelpers.headlessAdminUser.assignAccountToAccountGroup(
+			account.externalReferenceCode,
+			accountGroup.externalReferenceCode
+		);
+
+		const catalog =
+			await apiHelpers.headlessCommerceAdminCatalog.postCatalog();
+
+		await apiHelpers.headlessCommerceAdminCatalog.postProduct({
+			catalogId: catalog.id,
+			productAccountGroupFilter: true,
+			productAccountGroups: [
+				{
+					accountGroupId: accountGroup.id,
+					id: 0,
+				},
+			],
+		});
+
+		await accountGroupsPage.goto();
+
+		await expect(
+			accountGroupsPage.accountGroupsTable.cell('2', true)
+		).toHaveCount(0);
+		await expect(
+			accountGroupsPage.accountGroupsTable.cell('1', true)
+		).toBeVisible();
+	}
+);

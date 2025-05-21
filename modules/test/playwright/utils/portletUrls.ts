@@ -13,6 +13,7 @@ export const PORTLET_URLS = {
 		'/~/control_panel/manage?p_p_id=com_liferay_bookmarks_web_portlet_BookmarksAdminPortlet',
 	categoriesAdmin: '/~/control_panel/manage/-/categories_admin/vocabularies',
 	cmsCategories: 'web/cms/categorization/view_categories',
+	cmsContents: 'web/cms/contents',
 	cmsEditCategory: 'web/cms/categorization/edit_category',
 	cmsFiles: 'web/cms/files',
 	cmsNewCategory: 'web/cms/categorization/new_category',
@@ -32,8 +33,10 @@ export const PORTLET_URLS = {
 		'/~/control_panel/manage?p_p_id=com_liferay_layout_page_template_admin_web_portlet_LayoutPageTemplatesPortlet&_com_liferay_layout_page_template_admin_web_portlet_LayoutPageTemplatesPortlet_tabs1=display-page-templates',
 	documentLibrary:
 		'/~/control_panel/manage?p_p_id=com_liferay_document_library_web_portlet_DLAdminPortlet',
+	export: '/~/control_panel/manage?p_p_id=com_liferay_exportimport_web_portlet_ExportPortlet',
 	forms: '/~/control_panel/manage?p_p_id=com_liferay_dynamic_data_mapping_form_web_portlet_DDMFormAdminPortlet',
 	fragments: '/~/control_panel/manage/-/fragments/fragment_collections',
+	import: '/~/control_panel/manage?p_p_id=com_liferay_exportimport_web_portlet_ImportPortlet',
 	journal:
 		'/~/control_panel/manage?p_p_id=com_liferay_journal_web_portlet_JournalPortlet',
 	journalStructures:

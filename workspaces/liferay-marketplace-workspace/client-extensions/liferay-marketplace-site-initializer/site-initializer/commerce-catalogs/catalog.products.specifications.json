@@ -1,17 +1,17 @@
 [
 	{
 		"categoryKey": "product-metadata",
-		"cpDefinitionExternalReferenceCode": "MKP-APP-SETTINGS",
-		"description": "Define your app settings.",
-		"facetable": false,
-		"key": "app-settings",
-		"title": "App Settings"
+		"cpDefinitionExternalReferenceCode": "MKT-PARTNERSHIP_TYPE",
+		"description": "Technology Integration",
+		"facetable": true,
+		"key": "partnership-type",
+		"title": "Partnership Type"
 	},
 	{
 		"categoryKey": "product-metadata",
 		"cpDefinitionExternalReferenceCode": "MKT-TYPE",
 		"description": "",
-		"facetable": false,
+		"facetable": true,
 		"key": "type",
 		"title": "Type"
 	},
@@ -70,6 +70,22 @@
 		"facetable": false,
 		"key": "appusagetermsurl",
 		"title": "App Usage Terms URL"
+	},
+	{
+		"categoryKey": "product-metadata",
+		"cpDefinitionExternalReferenceCode": "MKT-APP-STOREFRONT-VIDEO-DESCRIPTION",
+		"description": "",
+		"facetable": false,
+		"key": "app-storefront-video-description",
+		"title": "App Storefront Video Description"
+	},
+	{
+		"categoryKey": "product-metadata",
+		"cpDefinitionExternalReferenceCode": "MKT-APP-STOREFRONT-VIDEO-URL",
+		"description": "",
+		"facetable": false,
+		"key": "app-storefront-video-url",
+		"title": "App Storefront Video URL"
 	},
 	{
 		"categoryKey": "app-support-and-help",

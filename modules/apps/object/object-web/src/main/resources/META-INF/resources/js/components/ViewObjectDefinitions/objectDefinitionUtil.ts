@@ -23,12 +23,6 @@ type DeleteObjectDefinitionProps = {
 	onAfterDeleteObjectDefinition?: () => void;
 };
 
-export type ObjectDefinitionInfo = {
-	isWorkflowSupported: boolean;
-	tableName: string;
-	workflowDefinitionTitle: string;
-};
-
 type ObjectDefinitionNodeActionsProps = {
 	baseResourceURL: string;
 	dispatch: React.Dispatch<TAction>;
@@ -167,7 +161,7 @@ export async function deleteRelationship(
 	}
 }
 
-export async function getObjectDefinitionInfo({
+export async function getDbTableName({
 	baseResourceURL,
 	objectDefinitionId,
 }: {
@@ -179,10 +173,11 @@ export async function getObjectDefinitionInfo({
 		p_p_resource_id: '/object_definitions/get_object_definition_info',
 	}).href;
 
-	const objectDefinitionInfoResponse =
-		await API.fetchJSON<ObjectDefinitionInfo>(objectDefinitionInfoURL);
+	const objectDefinitionInfoResponse = await API.fetchJSON<{
+		tableName: string;
+	}>(objectDefinitionInfoURL);
 
-	return objectDefinitionInfoResponse;
+	return objectDefinitionInfoResponse.tableName;
 }
 
 export function getObjectDefinitionNodeActions({
@@ -534,16 +529,15 @@ export async function getUpdatedModelBuilderStructurePayload(
 										objectDefinition.externalReferenceCode
 								);
 
-							const objectDefinitionInfo =
-								await getObjectDefinitionInfo({
-									baseResourceURL,
-									objectDefinitionId: objectDefinition.id,
-								});
+							const dbTableName = await getDbTableName({
+								baseResourceURL,
+								objectDefinitionId: objectDefinition.id,
+							});
 
 							if (objectFolderItem) {
 								objectFolderWithObjectDefinitions.push({
 									...objectDefinition,
-									dbTableName: objectDefinitionInfo.tableName,
+									dbTableName,
 									hasObjectDefinitionDeleteResourcePermission:
 										!!objectDefinition.actions.delete,
 									hasObjectDefinitionManagePermissionsResourcePermission:

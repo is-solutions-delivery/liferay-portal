@@ -2067,6 +2067,10 @@ public class JenkinsResultsParserUtil {
 	}
 
 	public static List<String> getGitHubCacheHostnames() {
+		if (isCloudCINode()) {
+			return Collections.emptyList();
+		}
+
 		try {
 			Properties buildProperties = getBuildProperties();
 
@@ -3220,6 +3224,10 @@ public class JenkinsResultsParserUtil {
 
 	public static String getRandomGitHubDevNodeHostname(
 		List<String> excludedHostnames) {
+
+		if (isCloudCINode()) {
+			return "";
+		}
 
 		List<String> gitHubDevNodeHostnames = getGitHubCacheHostnames();
 

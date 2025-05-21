@@ -63,7 +63,6 @@ public class EditFolderFragmentRenderer extends BaseSectionFragmentRenderer {
 			componentTag.setPageContext(
 				PageContextFactoryUtil.create(
 					httpServletRequest, httpServletResponse));
-
 			componentTag.setProps(
 				HashMapBuilder.<String, Object>put(
 					"backURL",
@@ -84,7 +83,6 @@ public class EditFolderFragmentRenderer extends BaseSectionFragmentRenderer {
 						return null;
 					}
 				).build());
-
 			componentTag.setServletContext(_servletContext);
 
 			componentTag.doStartTag();

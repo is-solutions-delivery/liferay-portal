@@ -5,7 +5,7 @@
 
 package com.liferay.mail.kernel.model;
 
-import java.io.File;
+import java.io.InputStream;
 
 /**
  * @author Barrie Selack
@@ -13,31 +13,20 @@ import java.io.File;
  */
 public class FileAttachment {
 
-	public FileAttachment() {
-	}
-
-	public FileAttachment(File file, String fileName) {
-		_file = file;
+	public FileAttachment(String fileName, InputStream inputStream) {
 		_fileName = fileName;
-	}
-
-	public File getFile() {
-		return _file;
+		_inputStream = inputStream;
 	}
 
 	public String getFileName() {
 		return _fileName;
 	}
 
-	public void setFile(File file) {
-		_file = file;
+	public InputStream getInputStream() {
+		return _inputStream;
 	}
 
-	public void setFileName(String fileName) {
-		_fileName = fileName;
-	}
-
-	private File _file;
-	private String _fileName;
+	private final String _fileName;
+	private final InputStream _inputStream;
 
 }

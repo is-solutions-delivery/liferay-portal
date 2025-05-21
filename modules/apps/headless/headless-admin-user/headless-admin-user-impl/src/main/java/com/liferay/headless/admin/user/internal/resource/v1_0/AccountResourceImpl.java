@@ -18,14 +18,20 @@ import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.account.service.AccountGroupLocalService;
 import com.liferay.account.service.AccountGroupRelService;
 import com.liferay.account.service.AccountGroupService;
+import com.liferay.account.service.AccountRoleLocalService;
+import com.liferay.asset.kernel.model.AssetCategory;
+import com.liferay.asset.kernel.service.AssetCategoryLocalService;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.expando.kernel.service.ExpandoColumnLocalService;
 import com.liferay.expando.kernel.service.ExpandoTableLocalService;
 import com.liferay.headless.admin.user.dto.v1_0.Account;
 import com.liferay.headless.admin.user.dto.v1_0.AccountContactInformation;
 import com.liferay.headless.admin.user.dto.v1_0.AccountGroupBrief;
+import com.liferay.headless.admin.user.dto.v1_0.AccountRole;
 import com.liferay.headless.admin.user.dto.v1_0.Organization;
 import com.liferay.headless.admin.user.dto.v1_0.PostalAddress;
+import com.liferay.headless.admin.user.dto.v1_0.TaxonomyCategoryBrief;
+import com.liferay.headless.admin.user.dto.v1_0.TaxonomyCategoryReference;
 import com.liferay.headless.admin.user.dto.v1_0.UserAccount;
 import com.liferay.headless.admin.user.internal.dto.v1_0.converter.constants.DTOConverterConstants;
 import com.liferay.headless.admin.user.internal.dto.v1_0.util.PostalAddressUtil;
@@ -39,12 +45,14 @@ import com.liferay.headless.admin.user.resource.v1_0.AccountResource;
 import com.liferay.headless.common.spi.odata.entity.EntityFieldsUtil;
 import com.liferay.headless.common.spi.service.context.ServiceContextBuilder;
 import com.liferay.petra.function.UnsafeConsumer;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Address;
 import com.liferay.portal.kernel.model.Contact;
 import com.liferay.portal.kernel.model.EmailAddress;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Phone;
 import com.liferay.portal.kernel.model.Website;
 import com.liferay.portal.kernel.repository.model.FileEntry;
@@ -59,12 +67,15 @@ import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.service.AddressLocalService;
 import com.liferay.portal.kernel.service.ContactService;
+import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ListTypeLocalService;
+import com.liferay.portal.kernel.service.OrganizationLocalService;
 import com.liferay.portal.kernel.service.OrganizationService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.File;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -578,6 +589,24 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 		return accountEntry;
 	}
 
+	private AccountEntry _addAccountRole(
+			AccountEntry accountEntry, AccountRole accountRole)
+		throws Exception {
+
+		String externalReferenceCode = accountRole.getExternalReferenceCode();
+
+		if (Validator.isNull(externalReferenceCode)) {
+			return accountEntry;
+		}
+
+		_accountRoleLocalService.getOrAddIncompleteAccountRole(
+			externalReferenceCode, contextCompany.getCompanyId(),
+			contextUser.getUserId(), accountEntry.getAccountEntryId(),
+			accountRole.getName());
+
+		return accountEntry;
+	}
+
 	private void _addAddresses(Long accountId, Account account)
 		throws Exception {
 
@@ -637,6 +666,8 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 
 		ServiceContext serviceContext = ServiceContextBuilder.create(
 			contextCompany.getGroupId(), contextHttpServletRequest, null
+		).assetCategoryIds(
+			_getAssetCategoryIds(account)
 		).assetTagNames(
 			account.getKeywords()
 		).expandoBridgeAttributes(
@@ -650,6 +681,51 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 		serviceContext.setUserId(contextUser.getUserId());
 
 		return serviceContext;
+	}
+
+	private Long[] _getAssetCategoryIds(Account account) {
+		if (!FeatureFlagManagerUtil.isEnabled("LPD-47858")) {
+			return null;
+		}
+
+		TaxonomyCategoryBrief[] taxonomyCategoryBriefs =
+			account.getTaxonomyCategoryBriefs();
+
+		if (ArrayUtil.isEmpty(taxonomyCategoryBriefs)) {
+			return null;
+		}
+
+		return transform(
+			taxonomyCategoryBriefs,
+			taxonomyCategoryBrief -> {
+				TaxonomyCategoryReference taxonomyCategoryReference =
+					taxonomyCategoryBrief.getTaxonomyCategoryReference();
+
+				String externalReferenceCode =
+					taxonomyCategoryReference.getExternalReferenceCode();
+
+				if (Validator.isNull(externalReferenceCode) ||
+					Validator.isNull(taxonomyCategoryReference.getSiteKey())) {
+
+					return null;
+				}
+
+				Group group = _groupLocalService.fetchGroup(
+					contextCompany.getCompanyId(),
+					taxonomyCategoryReference.getSiteKey());
+
+				if (group == null) {
+					return null;
+				}
+
+				AssetCategory assetCategory =
+					_assetCategoryLocalService.getOrAddIncompleteCategory(
+						externalReferenceCode, contextUser.getUserId(),
+						group.getGroupId());
+
+				return assetCategory.getCategoryId();
+			},
+			Long.class);
 	}
 
 	private List<Address> _getContactAddresses(
@@ -857,6 +933,12 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 			boolean useAccountEntryDefault)
 		throws Exception {
 
+		String logoBase64 = account.getLogoBase64();
+
+		if (Validator.isNotNull(logoBase64)) {
+			return Base64.decode(logoBase64);
+		}
+
 		Long logoId = GetterUtil.getLong(account.getLogoId());
 
 		if (logoId == 0) {
@@ -916,14 +998,23 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 			return null;
 		}
 
-		if (ArrayUtil.isNotEmpty(organizationIds)) {
-			return ArrayUtil.toArray(organizationIds);
-		}
-
 		if (ArrayUtil.isNotEmpty(organizationExternalReferenceCodes)) {
 			organizationIds = transformToArray(
 				Arrays.asList(organizationExternalReferenceCodes),
 				externalReferenceCode -> {
+					if (FeatureFlagManagerUtil.isEnabled("LPD-47858")) {
+						com.liferay.portal.kernel.model.Organization
+							organization =
+								_organizationLocalService.
+									getOrAddIncompleteOrganization(
+										externalReferenceCode,
+										contextCompany.getCompanyId(),
+										contextUser.getUserId(),
+										StringPool.BLANK);
+
+						return organization.getOrganizationId();
+					}
+
 					com.liferay.portal.kernel.model.Organization organization =
 						_organizationService.
 							fetchOrganizationByExternalReferenceCode(
@@ -941,12 +1032,30 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 			return ArrayUtil.toArray(organizationIds);
 		}
 
+		if (ArrayUtil.isNotEmpty(organizationIds)) {
+			return ArrayUtil.toArray(organizationIds);
+		}
+
 		return new long[0];
 	}
 
 	private long _getParentAccountId(
 			Account account, long defaultParentAccountId)
 		throws Exception {
+
+		if (FeatureFlagManagerUtil.isEnabled("LPD-47858") &&
+			Validator.isNotNull(
+				account.getParentAccountExternalReferenceCode())) {
+
+			AccountEntry accountEntry =
+				_accountEntryLocalService.getOrAddIncompleteAccountEntry(
+					account.getParentAccountExternalReferenceCode(),
+					contextCompany.getCompanyId(), contextUser.getUserId(),
+					account.getParentAccountExternalReferenceCode(),
+					AccountConstants.ACCOUNT_ENTRY_TYPE_BUSINESS);
+
+			return accountEntry.getAccountEntryId();
+		}
 
 		Long parentAccountId = GetterUtil.getLong(account.getParentAccountId());
 
@@ -1196,6 +1305,14 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 			}
 		}
 
+		AccountRole[] accountRoles = account.getAccountRoles();
+
+		if (ArrayUtil.isNotEmpty(accountRoles)) {
+			for (AccountRole accountRole : accountRoles) {
+				accountEntry = _addAccountRole(accountEntry, accountRole);
+			}
+		}
+
 		return ResourcePermissionUtil.setResourcePermissions(
 			accountEntry, accountEntry.getCompanyId(), account.getPermissions(),
 			_resourcePermissionLocalService, _roleLocalService,
@@ -1239,7 +1356,13 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 	private DTOConverter<AccountEntry, Account> _accountResourceDTOConverter;
 
 	@Reference
+	private AccountRoleLocalService _accountRoleLocalService;
+
+	@Reference
 	private AddressLocalService _addressLocalService;
+
+	@Reference
+	private AssetCategoryLocalService _assetCategoryLocalService;
 
 	@Reference
 	private ContactService _contactService;
@@ -1263,7 +1386,13 @@ public class AccountResourceImpl extends BaseAccountResourceImpl {
 	private File _file;
 
 	@Reference
+	private GroupLocalService _groupLocalService;
+
+	@Reference
 	private ListTypeLocalService _listTypeLocalService;
+
+	@Reference
+	private OrganizationLocalService _organizationLocalService;
 
 	@Reference(
 		target = DTOConverterConstants.ORGANIZATION_RESOURCE_DTO_CONVERTER

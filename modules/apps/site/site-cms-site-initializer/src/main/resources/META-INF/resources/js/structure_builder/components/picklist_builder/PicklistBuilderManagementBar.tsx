@@ -7,6 +7,7 @@ import {openConfirmModal} from '@liferay/layout-js-components-web';
 import {ManagementToolbar, openToast} from 'frontend-js-components-web';
 import React, {useMemo} from 'react';
 
+import PicklistService from '../../../services/PicklistService';
 import {useStaleCache} from '../../contexts/CacheContext';
 import {
 	useDeletedOptions,
@@ -16,7 +17,6 @@ import {
 	useOptions,
 	useSetId,
 } from '../../contexts/PicklistBuilderContext';
-import PicklistService from '../../services/PicklistService';
 import focusInvalidElement from '../../utils/focusInvalidElement';
 import AsyncButton from '../AsyncButton';
 import ManagementBar from '../ManagementBar';
@@ -66,12 +66,25 @@ export default function PicklistBuilderManagementBar() {
 			};
 
 			if (!id) {
-				const picklist = await PicklistService.createPicklist(params);
+				const {data, error} =
+					await PicklistService.createPicklist(params);
 
-				setId(picklist.id);
+				if (error) {
+					throw new Error(error);
+				}
+				else if (data) {
+					setId(data.id);
+				}
 			}
 			else {
-				await PicklistService.updatePicklist({...params, id});
+				const {error} = await PicklistService.updatePicklist({
+					...params,
+					id,
+				});
+
+				if (error) {
+					throw new Error(error);
+				}
 			}
 
 			staleCache('picklists');

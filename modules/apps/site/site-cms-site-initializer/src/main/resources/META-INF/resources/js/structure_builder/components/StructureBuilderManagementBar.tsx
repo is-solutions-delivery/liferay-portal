@@ -8,7 +8,7 @@ import ClayIcon from '@clayui/icon';
 import ClayLink from '@clayui/link';
 import {openConfirmModal} from '@liferay/layout-js-components-web';
 import {ManagementToolbar, openToast} from 'frontend-js-components-web';
-import {navigate} from 'frontend-js-web';
+import {addParams, navigate} from 'frontend-js-web';
 import React, {Dispatch} from 'react';
 
 import {config} from '../config';
@@ -29,6 +29,7 @@ import selectStructureName from '../selectors/selectStructureName';
 import selectStructureSpaces from '../selectors/selectStructureSpaces';
 import selectStructureStatus from '../selectors/selectStructureStatus';
 import selectUnsavedChanges from '../selectors/selectUnsavedChanges';
+import DisplayPageService from '../services/DisplayPageService';
 import StructureService from '../services/StructureService';
 import {useValidate} from '../utils/validation';
 import AsyncButton from './AsyncButton';
@@ -52,7 +53,7 @@ export default function StructureBuilderManagementBar() {
 			</ManagementToolbar.Item>
 
 			<ManagementToolbar.Item>
-				<div className="vertical-divider"></div>
+				<div className="vertical-divider" />
 			</ManagementToolbar.Item>
 
 			<ManagementToolbar.Item>
@@ -82,64 +83,18 @@ function CustomizeExperienceButton() {
 	const validate = useValidate();
 
 	const history = useSelector(selectHistory);
-	const localizedLabel = useSelector(selectStructureLocalizedLabel);
 	const state = useSelector(selectState);
 	const status = useSelector(selectStructureStatus);
+	const structureId = useSelector(selectStructureId);
 	const unsavedChanges = useSelector(selectUnsavedChanges);
-
-	const onPublish = async () => {
-		openToast({
-			message: Liferay.Util.sub(
-				Liferay.Language.get(
-					'x-was-published-successfully.-remember-to-review-the-customized-experience-if-needed'
-				),
-				localizedLabel
-			),
-			toastProps: {
-				actions: (
-					<ClayButton
-						displayType="success"
-						onClick={() =>
-							navigate(config.resetStructureDisplayPageURL)
-						}
-						size="sm"
-					>
-						{Liferay.Language.get('customize-experience')}
-
-						<ClayIcon className="ml-2" symbol="shortcut" />
-					</ClayButton>
-				),
-			},
-		});
-	};
 
 	return (
 		<ClayButton
+			borderless
 			className="font-weight-semi-bold"
-			displayType="link"
+			displayType="primary"
 			onClick={() => {
-				if (status !== 'published' || unsavedChanges) {
-					openConfirmModal({
-						buttonLabel: Liferay.Language.get('publish'),
-						center: true,
-						onConfirm: async () => {
-							await publishStructure({
-								dispatch,
-								onSuccess: onPublish,
-								state,
-								validate,
-							});
-						},
-						status: 'warning',
-						text: Liferay.Language.get(
-							'to-customize-the-experience-you-need-to-publish-the-structure-first'
-						),
-						title: Liferay.Language.get(
-							'publish-to-customize-experience'
-						),
-					});
-				}
-				else if (history.deletedFields) {
+				if (status === 'published' && history.deletedFields) {
 					openConfirmModal({
 						buttonLabel: Liferay.Language.get('publish'),
 						center: true,
@@ -147,7 +102,7 @@ function CustomizeExperienceButton() {
 							await publishStructure({
 								checkDeletedFields: false,
 								dispatch,
-								onSuccess: onPublish,
+								showExperienceLink: true,
 								state,
 								validate,
 							});
@@ -161,8 +116,42 @@ function CustomizeExperienceButton() {
 						),
 					});
 				}
+				else if (status !== 'published' || unsavedChanges) {
+					openConfirmModal({
+						buttonLabel: Liferay.Language.get('publish'),
+						center: true,
+						onConfirm: async () => {
+							await publishStructure({
+								dispatch,
+								showExperienceLink: true,
+								state,
+								validate,
+							});
+						},
+						status: 'warning',
+						text: Liferay.Language.get(
+							'to-customize-the-experience-you-need-to-publish-the-structure-first'
+						),
+						title: Liferay.Language.get(
+							'publish-to-customize-experience'
+						),
+					});
+				}
 				else {
-					navigate(config.editStructureDisplayPageURL);
+					const editStructureDisplayPageURL = addParams(
+						{
+							backURL: addParams(
+								{
+									objectDefinitionId: String(structureId),
+								},
+								config.structureBuilderURL
+							),
+							objectDefinitionId: String(structureId),
+						},
+						config.editStructureDisplayPageURL
+					);
+
+					navigate(editStructureDisplayPageURL);
 				}
 			}}
 			size="sm"
@@ -187,6 +176,16 @@ function SaveButton() {
 	const status = useSelector(selectStructureStatus);
 	const structureId = useSelector(selectStructureId);
 
+	const onError = (error: string) =>
+		dispatch({
+			error:
+				error ||
+				Liferay.Language.get(
+					'an-unexpected-error-occurred-while-saving-or-publishing-the-structure'
+				),
+			type: 'set-error',
+		});
+
 	const onSave = async () => {
 		const valid = validate();
 
@@ -194,51 +193,51 @@ function SaveButton() {
 			return;
 		}
 
-		try {
-			if (status === 'new') {
-				const {id} = await StructureService.createStructure({
-					erc,
-					fields,
-					label,
-					name,
-					spaces,
-				});
+		if (status === 'new') {
+			const {data, error} = await StructureService.createStructure({
+				erc,
+				fields,
+				label,
+				name,
+				spaces,
+			});
 
-				dispatch({id, type: 'create-structure'});
+			if (error) {
+				onError(error);
+
+				return;
+			}
+			else if (data) {
+				dispatch({id: data.id, type: 'create-structure'});
+			}
+		}
+		else {
+			const {error} = await StructureService.updateStructure({
+				erc,
+				fields,
+				id: structureId,
+				label,
+				name,
+				spaces,
+			});
+
+			if (error) {
+				onError(error);
+
+				return;
 			}
 			else {
-				await StructureService.updateStructure({
-					erc,
-					fields,
-					id: structureId,
-					label,
-					name,
-					spaces,
-				});
-
 				dispatch({type: 'clear-error'});
 			}
-
-			openToast({
-				message: Liferay.Util.sub(
-					Liferay.Language.get('x-was-saved-successfully'),
-					localizedLabel
-				),
-				type: 'success',
-			});
 		}
-		catch (error) {
-			const {message} = error as Error;
 
-			dispatch({
-				error:
-					message ||
-					Liferay.Language.get(
-						'an-unexpected-error-occurred-while-saving-or-publishing-the-structure'
-					),
-				type: 'set-error',
-			});
-		}
+		openToast({
+			message: Liferay.Util.sub(
+				Liferay.Language.get('x-was-saved-successfully'),
+				localizedLabel
+			),
+			type: 'success',
+		});
 	};
 
 	return (
@@ -254,20 +253,11 @@ function PublishButton() {
 	const dispatch = useStateDispatch();
 	const validate = useValidate();
 	const state = useSelector(selectState);
-	const localizedLabel = useSelector(selectStructureLocalizedLabel);
 
 	const onPublish = async () => {
 		await publishStructure({
 			dispatch,
-			onSuccess: () => {
-				openToast({
-					message: Liferay.Util.sub(
-						Liferay.Language.get('x-was-published-successfully'),
-						localizedLabel
-					),
-					type: 'success',
-				});
-			},
+			showExperienceLink: !config.autogeneratedDisplayPage,
 			state,
 			validate,
 		});
@@ -285,13 +275,13 @@ function PublishButton() {
 async function publishStructure({
 	checkDeletedFields = true,
 	dispatch,
-	onSuccess,
+	showExperienceLink,
 	state,
 	validate,
 }: {
 	checkDeletedFields?: boolean;
 	dispatch: Dispatch<Action>;
-	onSuccess: () => void;
+	showExperienceLink: boolean;
 	state: State;
 	validate: () => boolean;
 }) {
@@ -323,64 +313,141 @@ async function publishStructure({
 	const fields = selectStructureFields(state);
 	const label = selectStructureLabel(state);
 
+	const localizedLabel = selectStructureLocalizedLabel(state);
 	const name = selectStructureName(state);
 	const spaces = selectStructureSpaces(state);
 	const status = selectStructureStatus(state);
 	const structureId = selectStructureId(state);
 
-	try {
-		if (status === 'new') {
-			const {id} = await StructureService.createStructure({
-				erc,
-				fields,
-				label,
-				name,
-				spaces,
+	let id = structureId;
+
+	const onSuccess = async ({id}: {id: State['id']}) => {
+		if (!showExperienceLink) {
+			openToast({
+				message: Liferay.Util.sub(
+					Liferay.Language.get('x-was-published-successfully'),
+					localizedLabel
+				),
+				type: 'success',
 			});
 
-			await StructureService.publishStructure({id});
-
-			dispatch({id, type: 'publish-structure'});
-		}
-		else if (status === 'draft') {
-			await StructureService.updateStructure({
-				erc,
-				fields,
-				id: structureId,
-				label,
-				name,
-				spaces,
-			});
-
-			await StructureService.publishStructure({id: structureId});
-
-			dispatch({type: 'publish-structure'});
-		}
-		else if (status === 'published') {
-			await StructureService.updateStructure({
-				erc,
-				fields,
-				id: structureId,
-				label,
-				name,
-				spaces,
-			});
-
-			dispatch({type: 'publish-structure'});
+			return;
 		}
 
-		onSuccess();
-	}
-	catch (error) {
-		const {message} = error as Error;
+		openToast({
+			message: Liferay.Util.sub(
+				Liferay.Language.get(
+					'x-was-published-successfully.-remember-to-review-the-customized-experience-if-needed'
+				),
+				localizedLabel
+			),
+			toastProps: {
+				actions: (
+					<ClayButton
+						displayType="success"
+						onClick={() => {
+							const editStructureDisplayPageURL = addParams(
+								{
+									backURL: addParams(
+										{
+											objectDefinitionId: id,
+										},
+										config.structureBuilderURL
+									),
+									objectDefinitionId: String(id),
+								},
+								config.editStructureDisplayPageURL
+							);
 
+							navigate(editStructureDisplayPageURL);
+						}}
+						size="sm"
+					>
+						{Liferay.Language.get('customize-experience')}
+
+						<ClayIcon className="ml-2" symbol="shortcut" />
+					</ClayButton>
+				),
+			},
+		});
+	};
+
+	const onError = (error: string) =>
 		dispatch({
 			error:
-				message ||
+				error ||
 				Liferay.Language.get(
 					'an-unexpected-error-occurred-while-saving-or-publishing-the-structure'
 				),
 			type: 'set-error',
 		});
+
+	if (status === 'new') {
+		const {data, error} = await StructureService.createStructure({
+			erc,
+			fields,
+			label,
+			name,
+			spaces,
+		});
+
+		if (error) {
+			onError(error);
+
+			return;
+		}
+		else if (data && data.id) {
+			id = data.id;
+
+			await StructureService.publishStructure({id});
+
+			dispatch({id, type: 'publish-structure'});
+		}
 	}
+	else if (status === 'draft') {
+		const {error} = await StructureService.updateStructure({
+			erc,
+			fields,
+			id: structureId,
+			label,
+			name,
+			spaces,
+		});
+
+		if (error) {
+			onError(error);
+
+			return;
+		}
+		else {
+			await StructureService.publishStructure({id: structureId});
+
+			dispatch({type: 'publish-structure'});
+		}
+	}
+	else if (status === 'published') {
+		const {error} = await StructureService.updateStructure({
+			erc,
+			fields,
+			id: structureId,
+			label,
+			name,
+			spaces,
+		});
+
+		if (error) {
+			onError(error);
+
+			return;
+		}
+		else {
+			dispatch({type: 'publish-structure'});
+		}
+	}
+
+	if (config.autogeneratedDisplayPage) {
+		await DisplayPageService.resetDisplayPage({id});
+	}
+
+	onSuccess({id});
 }

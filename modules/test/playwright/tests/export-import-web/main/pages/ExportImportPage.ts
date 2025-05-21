@@ -6,6 +6,8 @@
 import {Locator, Page, expect} from '@playwright/test';
 
 import {ProductMenuPage} from '../../../../pages/product-navigation-control-menu-web/ProductMenuPage';
+import {clickAndExpectToBeHidden} from '../../../../utils/clickAndExpectToBeHidden';
+import {PORTLET_URLS} from '../../../../utils/portletUrls';
 import {getTempDir} from '../../../../utils/temp';
 
 export class ExportImportPage {
@@ -149,33 +151,44 @@ export class ExportImportPage {
 		return filePath;
 	}
 
-	async goToExport() {
-		await this.productMenuPage.openProductMenuIfClosed();
-		await this.productMenuPage.goToPublishingExport();
+	async goToExport(siteUrl?: Site['friendlyUrlPath']) {
+		await this.page.goto(
+			`/group${siteUrl || '/guest'}${PORTLET_URLS.export}`
+		);
 	}
 
-	async goToImport() {
-		await this.productMenuPage.openProductMenuIfClosed();
-		await this.productMenuPage.goToPublishingImport();
+	async goToImport(siteUrl?: Site['friendlyUrlPath']) {
+		await this.page.goto(
+			`/group${siteUrl || '/guest'}${PORTLET_URLS.import}`
+		);
 	}
 
-	async goToImportOptions(folderPath: string) {
-		await this.productMenuPage.openProductMenuIfClosed();
-		await this.productMenuPage.goToPublishingImport();
-
+	async goToImportOptions(
+		folderPath: string,
+		siteUrl?: Site['friendlyUrlPath']
+	) {
+		await this.goToImport(siteUrl);
 		await this.newImportButton.click();
+		await this.page.getByRole('button', {name: 'Select File'}).waitFor();
+
+		const previousFileAlert = this.page.getByText(
+			'Warning:This file was previously uploaded'
+		);
+		if (await previousFileAlert.isVisible()) {
+			await clickAndExpectToBeHidden({
+				target: previousFileAlert,
+				trigger: this.page.getByRole('link', {
+					name: 'Delete File',
+				}),
+			});
+		}
 
 		const fileChooserPromise = this.page.waitForEvent('filechooser');
-
 		await this.fileSelector.click();
-
 		const fileChooser = await fileChooserPromise;
-
 		await fileChooser.setFiles(folderPath);
 
 		await this.continueButton.click();
-
-		await this.page.waitForLoadState('domcontentloaded');
-		await this.page.waitForTimeout(1000);
+		await this.page.getByText('File Summary');
 	}
 }

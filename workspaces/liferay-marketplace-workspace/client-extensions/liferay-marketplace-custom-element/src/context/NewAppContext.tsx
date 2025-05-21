@@ -3,33 +3,49 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {
-	ReactNode,
-	createContext,
-	useContext,
-	useEffect,
-	useReducer,
-} from 'react';
+import {ReactNode, createContext, useContext, useReducer} from 'react';
 import {useParams} from 'react-router-dom';
+import useSWR from 'swr';
 
 import {UploadedFile} from '../components/FileList/FileList';
 import Loading from '../components/Loading';
+import {MarketplaceProduct} from '../entity/MarketplaceProduct';
 import {
+	ProductLicenseTier,
+	ProductLicenseType,
+	ProductPriceModel,
 	ProductSpecificationKey,
 	ProductTags,
 	ProductType,
 	ProductVocabulary,
 } from '../enums/Product';
-import {LicenseTier} from '../enums/licenseTier';
 import {useGetVocabulariesAndCategories} from '../hooks/data/useGetVocabulariesAndCategories';
 import HeadlessCommerceAdminCatalogImpl from '../services/rest/HeadlessCommerceAdminCatalog';
 
 export type LicensePrice = {key: number; value: number};
 export type LicenseType = 'Perpetual' | 'Subscription';
 
-type LicensingPrices = {
-	developer: {key: number; value: number}[];
-	standard: {key: number; value: number}[];
+export type LicensingPrices = {
+	[currency: string]: {
+		developer?: {
+			[key: number]: number;
+		};
+		standard: {
+			[key: number]: number;
+		};
+		trial?: undefined;
+	};
+};
+
+export type PriceEntry = {
+	hasTierPrice: boolean;
+	id: number;
+	price: number;
+	priceEntryId?: number;
+	priceListId: number;
+	sku: string;
+	skuExternalReferenceCode: string;
+	skuId: number;
 };
 
 export enum NewAppTypes {
@@ -39,6 +55,7 @@ export enum NewAppTypes {
 	SET_DELETE_IMAGE = 'SET_DELETE_IMAGE',
 	SET_LICENSING = 'SET_LICENSING',
 	SET_LICENSING_ADD_PRICE = 'SET_LICENSING_ADD_PRICE',
+	SET_LICENSING_DELETE_CURRENCY = 'SET_LICENSING_DELETE_CURRENCY',
 	SET_LICENSING_DELETE_PRICE = 'SET_LICENSING_DELETE_PRICE',
 	SET_LICENSING_UPDATE_PRICES = 'SET_LICENSING_UPDATE_PRICES',
 	SET_LOADING = 'SET_LOADING',
@@ -56,9 +73,9 @@ export type NewAppInitialState = {
 	_product?: Product;
 	build: {
 		appType: ProductType;
-		compatibleOffering: string[];
+
 		liferayPackages: {
-			file: any[];
+			files: any[];
 			version: string;
 		}[];
 		resourceRequirements: {
@@ -66,7 +83,7 @@ export type NewAppInitialState = {
 			ram?: string;
 		};
 	};
-	catalogId: number;
+	catalog: Catalog;
 	licensing: {
 		licenseType: LicenseType;
 		prices: LicensingPrices;
@@ -78,10 +95,14 @@ export type NewAppInitialState = {
 	};
 	productId: number;
 	profile: {
-		categories: {
+		areas: {
 			label: string;
 			value: string;
 		}[];
+		categories: {
+			label: string;
+			value: string;
+		};
 		description: string;
 		file: UploadedFile;
 		name: string;
@@ -96,6 +117,7 @@ export type NewAppInitialState = {
 	};
 	storefront: {
 		images: UploadedFile[];
+		video: {description: string; videoURL: string};
 	};
 	support: {
 		appUsageTermsURL: string;
@@ -119,15 +141,24 @@ type NewAppPayload = {
 	[NewAppTypes.SET_CONTEXT]: Product;
 	[NewAppTypes.SET_DELETE_IMAGE]: string;
 	[NewAppTypes.SET_LICENSING]: Partial<NewAppInitialState['licensing']>;
-	[NewAppTypes.SET_LICENSING_ADD_PRICE]: {licenseTier: LicenseTier};
+	[NewAppTypes.SET_LICENSING_ADD_PRICE]: {
+		currency: string;
+		licenseTier: ProductLicenseTier;
+	};
+	[NewAppTypes.SET_LICENSING_DELETE_CURRENCY]: {
+		currency: string;
+	};
 	[NewAppTypes.SET_LICENSING_DELETE_PRICE]: {
+		currency: string;
 		key: number;
-		licenseTier: LicenseTier;
+		licenseTier: ProductLicenseTier;
 	};
 	[NewAppTypes.SET_LICENSING_UPDATE_PRICES]: {
+		currency: string;
 		index: number;
-		licenseTier: LicenseTier;
-		price: LicensePrice;
+		licenseTier: ProductLicenseTier;
+		price: number;
+		quantity: number;
 	};
 	[NewAppTypes.SET_LOADING]: boolean;
 	[NewAppTypes.SET_PRICING]: Partial<NewAppInitialState['pricing']>;
@@ -143,36 +174,39 @@ type NewAppPayload = {
 const newAppInitialState: NewAppInitialState = {
 	build: {
 		appType: null as unknown as ProductType,
-		compatibleOffering: [],
 		liferayPackages: [],
 		resourceRequirements: {
 			cpu: '',
 			ram: '',
 		},
 	},
-	catalogId: 0,
+	catalog: {} as Catalog,
 	licensing: {
-		licenseType: 'Perpetual',
+		licenseType: ProductLicenseType.PERPETUAL,
 		prices: {
-			developer: [],
-			standard: [{key: 1, value: 0}],
+			USD: {
+				standard: {
+					1: 0,
+				},
+			},
 		},
 		trial30Day: false,
 	},
 	loading: false,
 	pricing: {
-		priceModel: '' as 'Free',
+		priceModel: ProductPriceModel.FREE,
 	},
 	productId: 0,
 	profile: {
-		categories: [],
+		areas: [],
+		categories: {label: '', value: ''},
 		description: '',
 		file: {} as UploadedFile,
 		name: '',
 		tags: [],
 	},
 	references: {imagesToDelete: [], vocabulariesAndCategories: {}},
-	storefront: {images: []},
+	storefront: {images: [], video: {description: '', videoURL: ''}},
 	support: {
 		appUsageTermsURL: '',
 		documentationURL: '',
@@ -191,13 +225,6 @@ const newAppInitialState: NewAppInitialState = {
 
 export type AppActions =
 	ActionMap<NewAppPayload>[keyof ActionMap<NewAppPayload>];
-
-const sortLicenses = (
-	firstPriceTier: LicensePrice,
-	secondPriceTier: LicensePrice
-) => {
-	return firstPriceTier.key - secondPriceTier.key;
-};
 
 const filterProductVocabularies = (product: Product, vocabulary: string) =>
 	product.categories
@@ -275,16 +302,46 @@ const reducer = (state: NewAppInitialState, action: AppActions) => {
 				tags?.includes(ProductTags.SOLUTION_PROFILE_APP_ICON)
 			);
 
+			const liferayPackages = Object.entries(
+				_product.productVirtualSettings.productVirtualSettingsFileEntries.reduce(
+					(acc, fileEntry) => {
+						const {version} = fileEntry;
+
+						if (!acc[version]) {
+							acc[version] = [];
+						}
+
+						acc[version].push(fileEntry);
+
+						return acc;
+					},
+					{} as {[key: string]: {src: string; version: string}[]}
+				)
+			).map(([version, uploadedFiles = []]) => {
+				return {
+					files: uploadedFiles?.map((uploadedFile) => {
+						return {
+							error: false,
+							fileName: uploadedFile.src,
+							readableSize: '',
+							src: uploadedFile.src,
+						};
+					}),
+					version,
+				};
+			});
+
 			return {
 				...state,
 				...newState,
 				_product,
 				build: {
+					...newState.build,
 					appType: specificationsMap.get(
 						ProductSpecificationKey.APP_TYPE
 					),
 					compatibleOffering: [],
-					liferayPackages: [],
+					liferayPackages,
 					resourceRequirements: {
 						cpu: specificationsMap.get(
 							ProductSpecificationKey.APP_BUILD_NUMBER_OF_CPUS
@@ -294,16 +351,28 @@ const reducer = (state: NewAppInitialState, action: AppActions) => {
 						),
 					},
 				} as NewAppInitialState['build'],
+				licensing: {
+					...newState.licensing,
+					licenseType: specificationsMap.get(
+						ProductSpecificationKey.APP_LICENSING_TYPE
+					),
+				} as NewAppInitialState['licensing'],
 				pricing: {
+					...newState.pricing,
 					priceModel: specificationsMap.get(
 						ProductSpecificationKey.APP_PRICING_MODEL
 					),
 				} as NewAppInitialState['pricing'],
 				profile: {
+					...newState.profile,
+					areas: filterProductVocabularies(
+						_product,
+						ProductVocabulary.APP_AREA
+					),
 					categories: filterProductVocabularies(
 						_product,
 						ProductVocabulary.APP_CATEGORY
-					),
+					)[0],
 					description: _product.description.en_US,
 					file: {
 						changed: false,
@@ -320,6 +389,7 @@ const reducer = (state: NewAppInitialState, action: AppActions) => {
 					),
 				} as NewAppInitialState['profile'],
 				storefront: {
+					...newState.storefront,
 					images: storeFrontImages.map(
 						({externalReferenceCode, src, title}) => ({
 							changed: false,
@@ -331,36 +401,52 @@ const reducer = (state: NewAppInitialState, action: AppActions) => {
 							uploaded: true,
 						})
 					),
+					video: {
+						description: specificationsMap.get(
+							ProductSpecificationKey.APP_STOREFRONT_VIDEO_DESCRIPTION
+						),
+						videoURL: specificationsMap.get(
+							ProductSpecificationKey.APP_STOREFRONT_VIDEO_URL
+						),
+					},
 				} as NewAppInitialState['storefront'],
 				support: {
-					appUsageTermsURL: specificationsMap.get(
-						ProductSpecificationKey.APP_SUPPORT_USAGE_TERMS_URL
-					),
-					documentationURL: specificationsMap.get(
-						ProductSpecificationKey.APP_SUPPORT_DOCUMENTATION_URL
-					),
-					email: specificationsMap.get(
-						ProductSpecificationKey.APP_SUPPORT_EMAIL
-					),
-					installationGuideURL: specificationsMap.get(
-						ProductSpecificationKey.APP_SUPPORT_INSTALLATION_GUIDE_URL
-					),
-					phone: specificationsMap.get(
-						ProductSpecificationKey.APP_SUPPORT_PHONE
-					),
-					publisherWebsiteURL: specificationsMap.get(
-						ProductSpecificationKey.APP_SUPPORT_PUBLISHER_WEBSITE_URL
-					),
-					url: specificationsMap.get(
-						ProductSpecificationKey.APP_SUPPORT_URL
-					),
+					...newState.support,
+					appUsageTermsURL:
+						specificationsMap.get(
+							ProductSpecificationKey.APP_SUPPORT_USAGE_TERMS_URL
+						) ?? '',
+					documentationURL:
+						specificationsMap.get(
+							ProductSpecificationKey.APP_SUPPORT_DOCUMENTATION_URL
+						) ?? '',
+					email:
+						specificationsMap.get(
+							ProductSpecificationKey.APP_SUPPORT_EMAIL
+						) ?? '',
+					installationGuideURL:
+						specificationsMap.get(
+							ProductSpecificationKey.APP_SUPPORT_INSTALLATION_GUIDE_URL
+						) ?? '',
+					phone:
+						specificationsMap.get(
+							ProductSpecificationKey.APP_SUPPORT_PHONE
+						) ?? '',
+					publisherWebsiteURL:
+						specificationsMap.get(
+							ProductSpecificationKey.APP_SUPPORT_PUBLISHER_WEBSITE_URL
+						) ?? '',
+					url:
+						specificationsMap.get(
+							ProductSpecificationKey.APP_SUPPORT_URL
+						) ?? '',
 				} as NewAppInitialState['support'],
 				version: {
 					notes: specificationsMap.get(
-						ProductSpecificationKey.APP_VERSION
+						ProductSpecificationKey.APP_VERSION_NOTES
 					),
 					version: specificationsMap.get(
-						ProductSpecificationKey.APP_VERSION_NOTES
+						ProductSpecificationKey.APP_VERSION
 					),
 				} as NewAppInitialState['version'],
 			};
@@ -434,89 +520,111 @@ const reducer = (state: NewAppInitialState, action: AppActions) => {
 		}
 
 		case NewAppTypes.SET_LICENSING_ADD_PRICE: {
-			const licenseTier: LicenseTier = action.payload.licenseTier;
+			const {currency, licenseTier} = action.payload;
 
-			const sortedOldLicensePrice = {
-				developer: state.licensing.prices.developer.sort(sortLicenses),
-				standard: state.licensing.prices.standard.sort(sortLicenses),
-			};
+			const oldPrices = state.licensing.prices;
 
-			if (!sortedOldLicensePrice[licenseTier].length) {
-				return {
-					...state,
-					licensing: {
-						...state.licensing,
-						prices: {
-							...state.licensing.prices,
-							...sortedOldLicensePrice,
-							[licenseTier]: [{key: 1, value: 0}],
-						},
+			const currentPricesForCurrency = oldPrices[currency] || {};
+			const currentPricesForTier =
+				currentPricesForCurrency[licenseTier] || {};
+
+			const newKey = Object.keys(currentPricesForTier).length
+				? Math.max(...Object.keys(currentPricesForTier).map(Number)) + 1
+				: 1;
+
+			const updatedPrices = {
+				...oldPrices,
+				[currency]: {
+					...currentPricesForCurrency,
+					[licenseTier]: {
+						...currentPricesForTier,
+						[newKey]: 0,
 					},
-				};
-			}
-
-			const newKey =
-				sortedOldLicensePrice[licenseTier].slice(-1)[0].key + 1;
-			const newPriceTier = {key: newKey, value: 0};
+				},
+			};
 
 			return {
 				...state,
 				licensing: {
 					...state.licensing,
-					prices: {
-						...state.licensing.prices,
-						...sortedOldLicensePrice,
-						[licenseTier]: [
-							...sortedOldLicensePrice[licenseTier],
-							newPriceTier,
-						],
-					},
+					prices: updatedPrices,
 				},
 			};
 		}
 
 		case NewAppTypes.SET_LICENSING_DELETE_PRICE: {
-			const licenseTier: LicenseTier = action.payload.licenseTier;
+			const {currency, key, licenseTier} = action.payload;
 
-			const sortedOldLicensePrice = {
-				developer: state.licensing.prices.developer.sort(sortLicenses),
-				standard: state.licensing.prices.standard.sort(sortLicenses),
+			const oldPrices = state.licensing.prices;
+
+			if (!oldPrices[currency] || !oldPrices[currency][licenseTier]) {
+				return state;
+			}
+
+			const updatedLicenseTierPrices = {
+				...oldPrices[currency][licenseTier],
 			};
 
-			const filteredLicensePriceTier = sortedOldLicensePrice[
-				licenseTier
-			].filter(
-				(priceTier: {key: any}) => priceTier.key !== action.payload.key
-			);
+			if (key in updatedLicenseTierPrices) {
+				delete (updatedLicenseTierPrices as any)[key];
+			}
 
 			return {
 				...state,
 				licensing: {
 					...state.licensing,
 					prices: {
-						...state.licensing.prices,
-						...sortedOldLicensePrice,
-						[licenseTier]: filteredLicensePriceTier,
+						...oldPrices,
+						[currency]: {
+							...oldPrices[currency],
+							[licenseTier]: updatedLicenseTierPrices,
+						},
 					},
 				},
 			};
 		}
 
-		case NewAppTypes.SET_LICENSING_UPDATE_PRICES: {
-			const licenseTier: LicenseTier = action.payload.licenseTier;
-			const oldLicensePrice = state.licensing.prices;
+		case NewAppTypes.SET_LICENSING_DELETE_CURRENCY: {
+			const {currency} = action.payload;
 
-			const newLicensePrices = [...(oldLicensePrice[licenseTier] ?? [])];
-			newLicensePrices[action.payload.index] = action.payload.price;
+			const updatedPrices = {...state.licensing.prices};
+			delete updatedPrices[currency];
+
+			return {
+				...state,
+				licensing: {
+					...state.licensing,
+					prices: updatedPrices,
+				},
+			};
+		}
+
+		case NewAppTypes.SET_LICENSING_UPDATE_PRICES: {
+			const {currency, index, licenseTier, price, quantity} =
+				action.payload;
+
+			const currentLicensePrice = state.licensing.prices;
+
+			const updatedPrices = {
+				...(currentLicensePrice[currency]?.[licenseTier] || {}),
+			};
+
+			if (quantity && quantity !== index) {
+				delete updatedPrices[index];
+			}
+
+			updatedPrices[quantity] = price;
 
 			return {
 				...state,
 				licensing: {
 					...state.licensing,
 					prices: {
-						...state.licensing.prices,
-						...oldLicensePrice,
-						[licenseTier]: newLicensePrices,
+						...currentLicensePrice,
+						[currency]: {
+							...currentLicensePrice[currency],
+							[licenseTier]: updatedPrices,
+						},
 					},
 				},
 			};
@@ -536,45 +644,58 @@ export const NewAppContext = createContext<
 >([newAppInitialState, () => null]);
 
 type NewAppContextProviderProps = {
-	catalogId: number;
+	catalog: Catalog;
 	children: ReactNode;
 };
 
 export default function NewAppContextProvider({
-	catalogId,
+	catalog,
 	children,
 }: NewAppContextProviderProps) {
 	const [state, dispatch] = useReducer(reducer, newAppInitialState);
 	const {productId} = useParams();
-	const {data = {}, isLoading} = useGetVocabulariesAndCategories([
-		ProductVocabulary.APP_CATEGORY,
-		ProductVocabulary.APP_TAGS,
-		ProductVocabulary.LIFERAY_PLATFORM_OFFERING,
-		ProductVocabulary.PRODUCT_TYPE,
-	]);
+	const {data = {}, isLoading: isLoadingVocabularies} =
+		useGetVocabulariesAndCategories([
+			ProductVocabulary.APP_AREA,
+			ProductVocabulary.APP_CATEGORY,
+			ProductVocabulary.APP_TAGS,
+			ProductVocabulary.LIFERAY_PLATFORM_OFFERING,
+			ProductVocabulary.PRODUCT_TYPE,
+		]);
 
-	useEffect(() => {
-		if (!productId) {
-			return;
-		}
-
-		HeadlessCommerceAdminCatalogImpl.getProduct(
-			productId as string,
-			new URLSearchParams({
-				nestedFields:
-					'attachments,images,productSpecifications,productOptions',
-			})
-		)
-			.then((response) =>
-				dispatch({
-					payload: response,
-					type: NewAppTypes.SET_CONTEXT,
+	const {data: product, isLoading} = useSWR(
+		productId ? `/product/${productId}` : null,
+		() =>
+			HeadlessCommerceAdminCatalogImpl.getProduct(
+				productId as string,
+				new URLSearchParams({
+					nestedFields:
+						'attachments,catalog,images,productSpecifications,productOptions,productVirtualSettings,skus',
 				})
-			)
-			.catch(console.error);
-	}, [productId]);
+			),
+		{
+			onSuccess: (data) => {
+				dispatch({
+					payload: data,
+					type: NewAppTypes.SET_CONTEXT,
+				});
+			},
+		}
+	);
 
-	if (isLoading) {
+	useSWR(
+		product ? `/product/prices/${productId}` : null,
+		() => new MarketplaceProduct(product!).getProductPrices(),
+		{
+			onSuccess: (prices) =>
+				dispatch({
+					payload: {prices: prices as unknown as LicensingPrices},
+					type: NewAppTypes.SET_LICENSING,
+				}),
+		}
+	);
+
+	if (isLoadingVocabularies) {
 		return <Loading />;
 	}
 
@@ -583,7 +704,8 @@ export default function NewAppContextProvider({
 			value={[
 				{
 					...state,
-					catalogId,
+					catalog,
+					loading: isLoadingVocabularies || isLoading,
 					references: {
 						...state.references,
 						vocabulariesAndCategories: data,

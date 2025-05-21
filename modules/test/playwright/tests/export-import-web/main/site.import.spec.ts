@@ -31,6 +31,7 @@ import {readFileFromZip} from '../../../utils/zip';
 import {companyExportImportPageTest} from './fixtures/companyExportImportPagesTest';
 import {exportImportPagesTest} from './fixtures/exportImportPagesTest';
 import {stagingPageTest} from './fixtures/stagingPageTest';
+import {objectDefitionRequestData} from './utils/objectDefitionRequestData';
 import {openImportFieldset} from './utils/openImportFieldset';
 
 export const test = mergeTests(
@@ -45,6 +46,7 @@ export const test = mergeTests(
 	featureFlagsTest({
 		'LPD-35013': {enabled: true},
 		'LPD-35914': {enabled: false, system: true},
+		'LPD-44771': {enabled: true},
 	}),
 	isolatedSiteTest,
 	loginTest(),
@@ -65,6 +67,16 @@ export const testWithExportImportAtInstanceLevelFF = mergeTests(
 	featureFlagsTest({
 		'LPD-35914': {enabled: true, system: true},
 	}),
+	loginTest()
+);
+
+const testDataDeletionHiddenDeprecationFF = mergeTests(
+	dataApiHelpersTest,
+	exportImportPagesTest,
+	featureFlagsTest({
+		'LPD-44771': {enabled: false},
+	}),
+	isolatedSiteTest,
 	loginTest()
 );
 
@@ -202,35 +214,9 @@ testWithExportImportAtInstanceLevelFF(
 			await apiHelpers.buildRestClient(ObjectDefinitionAPI);
 
 		const {body: objectDefinition} =
-			await objectActionAPIClient.postObjectDefinition({
-				active: true,
-				externalReferenceCode: 'test',
-				label: {
-					en_US: 'Test',
-				},
-				name: 'Test',
-				objectFields: [
-					{
-						DBType: 'String',
-						businessType: 'Text',
-						indexed: true,
-						indexedAsKeyword: true,
-						label: {
-							en_US: 'Name',
-						},
-						name: 'name',
-						required: true,
-					},
-				],
-				pluralLabel: {
-					en_US: 'Tests',
-				},
-				portlet: true,
-				scope: 'company',
-				status: {
-					code: 0,
-				},
-			});
+			await objectActionAPIClient.postObjectDefinition(
+				objectDefitionRequestData()
+			);
 
 		apiHelpers.data.push({
 			id: objectDefinition.id,
@@ -474,35 +460,9 @@ test('can see corresponding elements at site level', async ({
 		await apiHelpers.buildRestClient(ObjectDefinitionAPI);
 
 	const {body: objectDefinition} =
-		await objectActionAPIClient.postObjectDefinition({
-			active: true,
-			externalReferenceCode: 'test',
-			label: {
-				en_US: 'Test',
-			},
-			name: 'Test',
-			objectFields: [
-				{
-					DBType: 'String',
-					businessType: 'Text',
-					indexed: true,
-					indexedAsKeyword: true,
-					label: {
-						en_US: 'Name',
-					},
-					name: 'name',
-					required: true,
-				},
-			],
-			pluralLabel: {
-				en_US: 'Tests',
-			},
-			portlet: true,
-			scope: 'company',
-			status: {
-				code: 0,
-			},
-		});
+		await objectActionAPIClient.postObjectDefinition(
+			objectDefitionRequestData()
+		);
 
 	apiHelpers.data.push({id: objectDefinition.id, type: 'objectDefinition'});
 
@@ -555,3 +515,44 @@ test('can see corresponding elements at site level', async ({
 
 	await expect(exportImportPage.page.getByText('Copy as New:')).toBeVisible();
 });
+
+testDataDeletionHiddenDeprecationFF(
+	"hides 'Delete Application Data' checkbox when deprecation FF is false",
+	{tag: ['@LPD-44771']},
+	async ({apiHelpers, exportImportPage}) => {
+		const objectActionAPIClient =
+			await apiHelpers.buildRestClient(ObjectDefinitionAPI);
+
+		const {body: objectDefinition} =
+			await objectActionAPIClient.postObjectDefinition(
+				objectDefitionRequestData()
+			);
+
+		apiHelpers.data.push({
+			id: objectDefinition.id,
+			type: 'objectDefinition',
+		});
+
+		await exportImportPage.goToExport();
+
+		const exportName = 'MyExport-' + getRandomString();
+
+		await exportImportPage.export(exportName);
+
+		await expect(
+			exportImportPage.page
+				.getByText(exportName)
+				.locator('../..')
+				.getByText('Successful')
+		).toBeVisible();
+
+		const exportFilePath =
+			await exportImportPage.downloadExportProcess(exportName);
+
+		await exportImportPage.goToImportOptions(exportFilePath);
+
+		await expect(
+			exportImportPage.page.getByLabel('Delete Application Data')
+		).not.toBeVisible();
+	}
+);

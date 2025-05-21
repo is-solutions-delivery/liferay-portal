@@ -9,7 +9,7 @@ import ClayModal from '@clayui/modal';
 import {openToast} from 'frontend-js-components-web';
 import React, {useState} from 'react';
 
-import {postFormData} from '../../../services/api';
+import ApiHelper from '../../../services/ApiHelper';
 import {FieldFile} from '../forms';
 
 const JSON_EXTENSION = '.json';
@@ -49,9 +49,9 @@ export default function ImportStructureModalContent({
 			formData.append('objectDefinitionJSON', new Blob([jsonFile]));
 		}
 
-		const {errorMessage, success} = await postFormData(formData, importURL);
+		const {error} = await ApiHelper.postFormData(formData, importURL);
 
-		if (success) {
+		if (!error) {
 			closeModal();
 
 			openToast({
@@ -63,8 +63,8 @@ export default function ImportStructureModalContent({
 
 			loadData?.();
 		}
-		else if (errorMessage) {
-			setErrorMessage(errorMessage);
+		else {
+			setErrorMessage(error);
 		}
 	};
 

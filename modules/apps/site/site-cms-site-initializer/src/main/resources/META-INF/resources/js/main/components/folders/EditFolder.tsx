@@ -72,10 +72,9 @@ const EditFolder: React.FC<EditFolderProps> = ({backURL, folderId}) => {
 				title: formValues.folderName,
 			};
 
-			const {errorMessage, success} =
-				await FolderService.updateFolder(newFolderValues);
+			const {error} = await FolderService.updateFolder(newFolderValues);
 
-			if (success) {
+			if (!error) {
 				navigate(backURL);
 
 				openToast({
@@ -88,7 +87,7 @@ const EditFolder: React.FC<EditFolderProps> = ({backURL, folderId}) => {
 			}
 			else {
 				openToast({
-					message: errorMessage,
+					message: error,
 					type: 'danger',
 				});
 			}
@@ -190,10 +189,10 @@ const EditFolder: React.FC<EditFolderProps> = ({backURL, folderId}) => {
 					/>
 
 					<FieldPicker
-						disabled
 						items={spaceItems}
 						label={Liferay.Language.get('space')}
 						name="folderSpace"
+						readOnly
 						required
 						selectedKey={values.folderSpace}
 					/>

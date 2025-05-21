@@ -798,13 +798,18 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 			companyId);
 
 		if (count == 0) {
-			groupLocalService.addGroup(
+			Group group = groupLocalService.addGroup(
 				_userLocalService.getGuestUserId(companyId),
 				GroupConstants.DEFAULT_PARENT_GROUP_ID, Company.class.getName(),
 				companyId, GroupConstants.DEFAULT_LIVE_GROUP_ID,
 				getLocalizationMap(GroupConstants.GLOBAL), null, 0, true,
 				GroupConstants.DEFAULT_MEMBERSHIP_RESTRICTION,
 				GroupConstants.GLOBAL_FRIENDLY_URL, true, true, null);
+
+			group.setExternalReferenceCode(
+				_toExternalReferenceCode(GroupConstants.GLOBAL));
+
+			groupPersistence.update(group);
 		}
 	}
 
@@ -922,7 +927,7 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 				}
 
 				group.setExternalReferenceCode(
-					"L_" + TextFormatter.format(groupKey, TextFormatter.A));
+					_toExternalReferenceCode(groupKey));
 
 				group = groupPersistence.update(group);
 
@@ -5514,6 +5519,10 @@ public class GroupLocalServiceImpl extends GroupLocalServiceBaseImpl {
 		}
 
 		return normalizedNameMap;
+	}
+
+	private String _toExternalReferenceCode(String groupKey) {
+		return "L_" + TextFormatter.format(groupKey, TextFormatter.A);
 	}
 
 	private void _validateGroupKeyChange(long groupId, String typeSettings)

@@ -1,21 +1,21 @@
 definition {
 
-	@summary = "Extracts an integrated DB Partition into a standalone partition"
-	macro extractDBPartition(partitionCompanyId = null) {
+	@summary = "Exports an integrated DB Partition into a standalone partition"
+	macro exportDBPartition(partitionCompanyId = null) {
 		OSGiConfig.deployOSGiConfigFile(
-			osgiConfigFileName = "com.liferay.portal.instances.internal.configuration.ExtractPortalInstanceConfiguration.config",
-			osgiConfigs = "extractCompanyId=L\"${partitionCompanyId}\"");
+			osgiConfigFileName = "com.liferay.portal.instances.internal.configuration.ExportPortalInstanceConfiguration.config",
+			osgiConfigs = "exportCompanyId=L\"${partitionCompanyId}\"");
 
-		OSGiConfig.waitForOSGiConfigDeleted(osgiConfigFileName = "com.liferay.portal.instances.internal.configuration.ExtractPortalInstanceConfiguration.config");
+		OSGiConfig.waitForOSGiConfigDeleted(osgiConfigFileName = "com.liferay.portal.instances.internal.configuration.ExportPortalInstanceConfiguration.config");
 	}
 
-	@summary = "Adds a standalone DB Partition as a new company"
-	macro insertDBPartition(partitionCompanyId = null) {
+	@summary = "Imports a standalone DB Partition as a new company"
+	macro importDBPartition(partitionCompanyId = null) {
 		OSGiConfig.deployOSGiConfigFile(
-			osgiConfigFileName = "com.liferay.portal.instances.internal.configuration.InsertPortalInstanceConfiguration.config",
-			osgiConfigs = "insertCompanyId=L\"${partitionCompanyId}\"");
+			osgiConfigFileName = "com.liferay.portal.instances.internal.configuration.ImportPortalInstanceConfiguration.config",
+			osgiConfigs = "importCompanyId=L\"${partitionCompanyId}\"");
 
-		OSGiConfig.waitForOSGiConfigDeleted(osgiConfigFileName = "com.liferay.portal.instances.internal.configuration.InsertPortalInstanceConfiguration.config");
+		OSGiConfig.waitForOSGiConfigDeleted(osgiConfigFileName = "com.liferay.portal.instances.internal.configuration.ImportPortalInstanceConfiguration.config");
 	}
 
 	@summary = "Validates that the records are correctly tied to their partitions using the portal-tools-db-partition-schema-validator tool"
