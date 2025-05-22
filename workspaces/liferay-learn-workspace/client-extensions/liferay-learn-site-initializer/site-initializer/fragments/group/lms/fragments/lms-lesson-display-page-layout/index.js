@@ -41,6 +41,4 @@ copyToClipboardButtons.forEach((button) => {
 
 if (componentHtmlH1 && componentHtmlH1.parentElement) {
 	componentHtmlH1.insertAdjacentElement('afterend', textToSpeechContainer);
-} else {
-	console.error("Elemento h1 ou seu pai com a classe 'component-html' não encontrado.");
 }
