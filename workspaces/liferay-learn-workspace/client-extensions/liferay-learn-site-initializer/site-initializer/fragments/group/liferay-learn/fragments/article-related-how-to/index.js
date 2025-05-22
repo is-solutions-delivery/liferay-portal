@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-function createHowToCard(title, dateModified, id) {
+function createHowToCard(dateModified, id, title) {
 	const howToCardDiv = document.createElement('div');
 
 	howToCardDiv.classList.add('how-to-card');
@@ -48,7 +48,7 @@ async function createHowToSuggestions() {
 			createHowToContainer();
 
 			structuredContentHowTo.items.forEach((item) =>
-				createHowToCard(item.title, item.dateModified, item.id)
+				createHowToCard(item.dateModified, item.id, item.title)
 			);
 		}
 	}
