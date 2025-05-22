@@ -19,9 +19,8 @@ function createHowToCard(dateModified, id, title) {
 
 	const howToCardDatePublished = document.createElement('div');
 
-	howToCardDatePublished.classList.add('how-to-card-date-published');
-	howToCardDatePublished.textContent =
-		languageUtil.get(locale, 'published-date', 'Published Date') +
+	howToCardDatePublished.classList.add('published-date');
+	howToCardDatePublished.textContent = Liferay.Language.get('published-date') +
 		': ' +
 		formatDate(dateModified);
 
@@ -49,11 +48,7 @@ function createHowToContainer() {
 	const howToContainerHeader = document.createElement('div');
 
 	howToContainerHeader.classList.add('how-to-container-header');
-	howToContainerHeader.textContent = languageUtil.get(
-		locale,
-		'how-to-related-to-this-article',
-		'How To related to this article'
-	);
+	howToContainerHeader.textContent = Liferay.Language.get('how-to-related-to-this-article');
 
 	const howToCardsContainer = document.createElement('div');
 
