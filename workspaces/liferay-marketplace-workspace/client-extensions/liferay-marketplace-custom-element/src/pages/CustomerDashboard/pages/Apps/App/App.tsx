@@ -24,91 +24,71 @@ type HeaderProps = {
 	title: string;
 };
 
-const Header = ({icon, title}: HeaderProps) => {
-	return (
-		<div className="detailed-card-header">
-			<h2>{title}</h2>
+const Header = ({icon, title}: HeaderProps) => (
+	<div className="detailed-card-header">
+		<h2>{title}</h2>
 
-			<div className="detailed-card-header-icon-container">
-				<Icon
-					className="detailed-card-header-clay-icon"
-					symbol={icon}
-				/>
-			</div>
+		<div className="detailed-card-header-icon-container">
+			<Icon className="detailed-card-header-clay-icon" symbol={icon} />
 		</div>
-	);
-};
+	</div>
+);
 
 const getPriceList = (
 	isCloud: boolean,
 	isPaidApp: boolean,
 	placedOrder: PlacedOrder
 ) => {
-	if (isPaidApp) {
+	if (!isPaidApp) {
 		return {
-			title: 'License Price',
-			value: (
-				<table className="qa-table">
-					<thead>
-						<tr>
-							<th {...{width: '40%'}}>
-								{i18n.translate('type')}
-							</th>
-
-							<th {...{width: '30%'}}>{i18n.translate('qty')}</th>
-
-							<th>{i18n.translate('total')}</th>
-						</tr>
-					</thead>
-					<tbody>
-						{placedOrder.placedOrderItems.map(
-							(order: PlacedOrderItems, index: number) => {
-								const optionName = safeJSONParse<any>(
-									order.options,
-									[]
-								);
-
-								const type = isCloud
-									? 'Standard'
-									: optionName[0]?.value || '';
-								{
-									return (
-										<tr key={index}>
-											<td className="text-capitalize">
-												{type}
-											</td>
-
-											<td>{order.quantity}</td>
-
-											<td>
-												{formatLocaleCurrency(
-													order.quantity *
-														order.price.price
-												)}
-											</td>
-										</tr>
-									);
-								}
-							}
-						)}
-					</tbody>
-				</table>
-			),
+			title: i18n.translate('license'),
+			value: placedOrder.placedOrderItems.map((order, index) => (
+				<p key={index}>
+					{formatLocaleCurrency(order.quantity * order.price.price)}
+				</p>
+			)),
 		};
 	}
 
 	return {
-		title: 'license',
-		value: placedOrder.placedOrderItems.map(
-			(order: PlacedOrderItems, index: number) => {
-				return (
-					<p key={index}>
-						{formatLocaleCurrency(
-							order.quantity * order.price.price
-						)}
-					</p>
-				);
-			}
+		title: 'License Price',
+		value: (
+			<table className="qa-table">
+				<thead>
+					<tr>
+						<th {...{width: '40%'}}>{i18n.translate('type')}</th>
+						<th {...{width: '30%'}}>{i18n.translate('qty')}</th>
+						<th>{i18n.translate('total')}</th>
+					</tr>
+				</thead>
+				<tbody>
+					{placedOrder.placedOrderItems.map((order, index) => {
+						const optionName = safeJSONParse<any>(
+							order.options,
+							[]
+						);
+
+						const type = isCloud
+							? 'Standard'
+							: optionName[0]?.value || '';
+						{
+							return (
+								<tr key={index}>
+									<td className="text-capitalize">{type}</td>
+
+									<td>{order.quantity}</td>
+
+									<td>
+										{formatLocaleCurrency(
+											order.quantity * order.price.price
+										)}
+									</td>
+								</tr>
+							);
+						}
+					})}
+				</tbody>
+			</table>
 		),
 	};
 };
