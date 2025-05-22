@@ -4,31 +4,58 @@
  */
 
 function createHowToCard(dateModified, id, title) {
+	const howToCardsContainer = document.getElementById('how-to-cards-container');
+
+	if(!howToCardsContainer) {
+		return;
+	}
+
+	const howToCardHeader = document.createElement('div');
+
+	howToCardHeader.classList.add('how-to-card-header');
+	howToCardHeader.textContent = title;
+
+	const howToCardDatePublished = document.createElement('div');
+
+	howToCardDatePublished.classList.add('how-to-card-date-published');
+	howToCardDatePublished.textContent = languageUtil.get(locale, 'published-date', 'Published Date') + ': ' + formatDate(dateModified);
+
 	const howToCardDiv = document.createElement('div');
 
+	howToCardDiv.appendChild(howToCardHeader);
+	howToCardDiv.appendChild(howToCardDatePublished);
 	howToCardDiv.classList.add('how-to-card');
 	howToCardDiv.onclick = function () {
 		window.location.href = `${Liferay.ThemeDisplay.getCDNBaseURL()}/l/${id}/`;
 	};
-	howToCardDiv.innerHTML = `
-		<div class="how-to-card-header">${title}</div>
-		<div class="how-to-card-date-published">Published Date: ${formatDate(dateModified)}</div>
-	`;
 
-	const displayContainer = document.getElementById('how-to-cards-container');
-
-	displayContainer.appendChild(howToCardDiv);
+	howToCardsContainer.appendChild(howToCardDiv);
 }
 
 function createHowToContainer() {
-	const howTo = document.getElementById('article-related-how-to');
+	const articleRelatedHowTo = document.getElementById('article-related-how-to');
 
-	howTo.innerHTML = `
-		<div class="how-to-container">
-			<div class="how-to-container-header">How To related to this article</div>
-			<div class="how-to-cards-container" id="how-to-cards-container"></div>
-		</div>
-	`;
+	if(!articleRelatedHowTo) {
+		return;
+	}
+
+	const howToContainerHeader = document.createElement('div');
+
+	howToContainerHeader.classList.add('how-to-container-header');
+	howToContainerHeader.textContent = languageUtil.get(locale, 'how-to-related-to-this-article', 'How To related to this article');
+
+	const howToCardsContainer = document.createElement('div');
+
+	howToCardsContainer.classList.add('how-to-cards-container');
+	howToCardsContainer.id = 'how-to-cards-container';
+
+	const howToContainer = document.createElement('div');
+
+	howToContainer.classList.add('how-to-container');
+	howToContainer.appendChild(howToContainerHeader);
+	howToContainer.appendChild(howToCardsContainer);
+
+	articleRelatedHowTo.appendChild(howToContainer);
 }
 
 async function createHowToSuggestions() {
