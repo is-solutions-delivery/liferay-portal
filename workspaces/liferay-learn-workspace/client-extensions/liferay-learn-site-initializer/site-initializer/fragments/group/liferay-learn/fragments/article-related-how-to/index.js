@@ -4,9 +4,11 @@
  */
 
 function createHowToCard(dateModified, id, title) {
-	const howToCardsContainer = document.getElementById('how-to-cards-container');
+	const howToCardsContainer = document.getElementById(
+		'how-to-cards-container'
+	);
 
-	if(!howToCardsContainer) {
+	if (!howToCardsContainer) {
 		return;
 	}
 
@@ -18,7 +20,10 @@ function createHowToCard(dateModified, id, title) {
 	const howToCardDatePublished = document.createElement('div');
 
 	howToCardDatePublished.classList.add('how-to-card-date-published');
-	howToCardDatePublished.textContent = languageUtil.get(locale, 'published-date', 'Published Date') + ': ' + formatDate(dateModified);
+	howToCardDatePublished.textContent =
+		languageUtil.get(locale, 'published-date', 'Published Date') +
+		': ' +
+		formatDate(dateModified);
 
 	const howToCardDiv = document.createElement('div');
 
@@ -33,16 +38,22 @@ function createHowToCard(dateModified, id, title) {
 }
 
 function createHowToContainer() {
-	const articleRelatedHowTo = document.getElementById('article-related-how-to');
+	const articleRelatedHowTo = document.getElementById(
+		'article-related-how-to'
+	);
 
-	if(!articleRelatedHowTo) {
+	if (!articleRelatedHowTo) {
 		return;
 	}
 
 	const howToContainerHeader = document.createElement('div');
 
 	howToContainerHeader.classList.add('how-to-container-header');
-	howToContainerHeader.textContent = languageUtil.get(locale, 'how-to-related-to-this-article', 'How To related to this article');
+	howToContainerHeader.textContent = languageUtil.get(
+		locale,
+		'how-to-related-to-this-article',
+		'How To related to this article'
+	);
 
 	const howToCardsContainer = document.createElement('div');
 
