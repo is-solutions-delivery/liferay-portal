@@ -8,7 +8,13 @@
 	{
 		"key": "hello",
 		"value": {
-			"en-US": "Hello, "
+			"en-US": "Hello"
+		}
+	},
+	{
+		"key": "how-to-related-to-this-article",
+		"value": {
+			"en-US": "How To related to this article"
 		}
 	},
 	{
