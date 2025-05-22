@@ -176,7 +176,8 @@ public class LearnRestController extends BaseRestController {
 						"nestedFieldsDepth=2&pageSize=500"))));
 
 		if (!GetterUtil.getBoolean(quizResultMap.get("isKnowledgeCheck")) &&
-			GetterUtil.getBoolean(quizResultMap.get("passed"))) {
+			GetterUtil.getBoolean(quizResultMap.get("passed")) &&
+			(jwt != null)) {
 
 			_postUserBadge(
 				quizId,
