@@ -442,11 +442,12 @@ public class LearnRestController extends BaseRestController {
 		List<String> parts = new ArrayList<>();
 
 		String[] sentences = cleanSsml.split("(?<=[.!?])\\s+");
+		String speakTag = "<speak>";
 
 		String trimmedCurrent =
-			"<speak>" +
+			speakTag +
 				current.toString(
-				).trim() + "<speak>";
+				).trim() + speakTag;
 
 		for (String sentence : sentences) {
 			int currentLength = current.length();
