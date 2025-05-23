@@ -75,12 +75,12 @@ public class LearnRestController extends BaseRestController {
 				);
 			}
 
-			List<String> ssmlChunks = _splitSsml(contentRawText, 5000);
+			List<String> ssmlTexts = _splitText(contentRawText, 5000);
 
 			ByteArrayOutputStream byteArrayOutputStream =
 				new ByteArrayOutputStream();
 
-			for (String ssmlChunk : ssmlChunks) {
+			for (String ssmlText : ssmlTexts) {
 				String response = post(
 					_getGoogleAccessToken(),
 					new JSONObject(
@@ -92,7 +92,7 @@ public class LearnRestController extends BaseRestController {
 						).put(
 							"input",
 							HashMapBuilder.<String, Object>put(
-								"ssml", ssmlChunk
+								"text", ssmlText
 							).build()
 						).put(
 							"voice",
@@ -432,24 +432,22 @@ public class LearnRestController extends BaseRestController {
 				_getLiferayURL(), "/o/c/userbadges/scopes/", _siteGroupId));
 	}
 
-	private List<String> _splitSsml(String ssml, int maxLength) {
-		StringBuilder current = new StringBuilder();
+	private List<String> _splitText(String ssml, int maxLength) {
 		String cleanSsml = ssml.replaceFirst(
 			"^<speak>", ""
 		).replaceFirst(
 			"</speak>$", ""
 		);
+		StringBuilder current = new StringBuilder();
 		List<String> parts = new ArrayList<>();
+
 		String[] sentences = cleanSsml.split("(?<=[.!?])\\s+");
 
 		for (String sentence : sentences) {
-			if ((current.length() + sentence.length() + 15) > maxLength) {
+			if ((current.length() + sentence.length()) > maxLength) {
 				parts.add(
-					StringBundler.concat(
-						"<speak>",
-						current.toString(
-						).trim(),
-						"</speak>"));
+					current.toString(
+					).trim());
 				current = new StringBuilder();
 			}
 
@@ -462,11 +460,8 @@ public class LearnRestController extends BaseRestController {
 
 		if (current.length() > 0) {
 			parts.add(
-				StringBundler.concat(
-					"<speak>",
-					current.toString(
-					).trim(),
-					"</speak>"));
+				current.toString(
+				).trim());
 		}
 
 		return parts;
