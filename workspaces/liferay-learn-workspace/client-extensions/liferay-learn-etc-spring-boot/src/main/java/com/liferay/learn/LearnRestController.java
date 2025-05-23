@@ -106,10 +106,11 @@ public class LearnRestController extends BaseRestController {
 					"https://texttospeech.googleapis.com/v1beta1" +
 						"/text:synthesize");
 
-				JSONObject responseJsonObject = new JSONObject(response);
-
-				String audioBase64 = responseJsonObject.getString(
-					"audioContent");
+				String audioBase64 = new JSONObject(
+					response
+				).getString(
+					"audioContent"
+				);
 
 				byteArrayOutputStream.write(
 					Base64.getDecoder(
