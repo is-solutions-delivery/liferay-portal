@@ -442,17 +442,18 @@ public class LearnRestController extends BaseRestController {
 		List<String> parts = new ArrayList<>();
 
 		String[] sentences = cleanSsml.split("(?<=[.!?])\\s+");
-		String speak = "<speak>";
+
+		String trimmedCurrent =
+			"<speak>" +
+				current.toString(
+				).trim() + "<speak>";
 
 		for (String sentence : sentences) {
 			int currentLength = current.length();
 			int sentenceLength = sentence.length();
 
 			if ((currentLength + sentenceLength + 15) > maxLength) {
-				parts.add(
-					speak +
-						current.toString(
-						).trim() + speak);
+				parts.add(trimmedCurrent);
 
 				current = new StringBuilder();
 			}
@@ -465,10 +466,7 @@ public class LearnRestController extends BaseRestController {
 		}
 
 		if (current.length() > 0) {
-			parts.add(
-				speak +
-					current.toString(
-					).trim() + speak);
+			parts.add(trimmedCurrent);
 		}
 
 		return parts;
