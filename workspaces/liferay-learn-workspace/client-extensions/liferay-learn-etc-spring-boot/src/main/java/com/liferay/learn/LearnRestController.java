@@ -75,9 +75,10 @@ public class LearnRestController extends BaseRestController {
 				);
 			}
 
-			List<String> ssmlChunks = splitSsml(contentRawText, 5000);
+			List<String> ssmlChunks = _splitSsml(contentRawText, 5000);
 
-			ByteArrayOutputStream combinedAudio = new ByteArrayOutputStream();
+			ByteArrayOutputStream byteArrayOutputStream =
+				new ByteArrayOutputStream();
 
 			for (String ssmlChunk : ssmlChunks) {
 				String response = post(
@@ -102,13 +103,15 @@ public class LearnRestController extends BaseRestController {
 							).build()
 						).build()
 					).toString(),
-					"https://texttospeech.googleapis.com/v1beta1/text:synthesize");
+					"https://texttospeech.googleapis.com/v1beta1" +
+						"/text:synthesize");
 
-				JSONObject json = new JSONObject(response);
+				JSONObject responseJsonObject = new JSONObject(response);
 
-				String audioBase64 = json.getString("audioContent");
+				String audioBase64 = responseJsonObject.getString(
+					"audioContent");
 
-				combinedAudio.write(
+				byteArrayOutputStream.write(
 					Base64.getDecoder(
 					).decode(
 						audioBase64
@@ -117,7 +120,7 @@ public class LearnRestController extends BaseRestController {
 
 			String finalBase64 = Base64.getEncoder(
 			).encodeToString(
-				combinedAudio.toByteArray()
+				byteArrayOutputStream.toByteArray()
 			);
 
 			return ResponseEntity.ok(finalBase64);
@@ -428,6 +431,41 @@ public class LearnRestController extends BaseRestController {
 				_getLiferayURL(), "/o/c/userbadges/scopes/", _siteGroupId));
 	}
 
+	private List<String> _splitSsml(String ssml, int maxLength) {
+		String cleanSsml = ssml.replaceFirst(
+			"^<speak>", ""
+		).replaceFirst(
+			"</speak>$", ""
+		);
+		StringBuilder current = new StringBuilder();
+
+		String currentToString =
+			current.toString(
+			).trim() + "</speak>";
+		List<String> parts = new ArrayList<>();
+
+		String[] sentences = cleanSsml.split("(?<=[.!?])\\s+");
+
+		for (String sentence : sentences) {
+			if ((current.length() + sentence.length() + 15) > maxLength) {
+				parts.add("<speak>" + currentToString);
+				current = new StringBuilder();
+			}
+
+			current.append(
+				sentence
+			).append(
+				" "
+			);
+		}
+
+		if (current.length() > 0) {
+			parts.add("<speak>" + currentToString);
+		}
+
+		return parts;
+	}
+
 	private Map<String, Object> _toMap(Object object) {
 		Map<String, Object> map = (Map<String, Object>)object;
 
@@ -446,43 +484,6 @@ public class LearnRestController extends BaseRestController {
 		).put(
 			"title", objectDefinitionMap.get("pluralLabel")
 		).build();
-	}
-
-	private List<String> splitSsml(String ssml, int maxLength) {
-		String cleanSsml = ssml.replaceFirst(
-			"^<speak>", ""
-		).replaceFirst(
-			"</speak>$", ""
-		);
-		StringBuilder current = new StringBuilder();
-		List<String> parts = new ArrayList<>();
-
-		String[] sentences = cleanSsml.split("(?<=[.!?])\\s+");
-
-		for (String sentence : sentences) {
-			if ((current.length() + sentence.length() + 15) > maxLength) {
-				parts.add(
-					"<speak>" +
-						current.toString(
-						).trim() + "</speak>");
-				current = new StringBuilder();
-			}
-
-			current.append(
-				sentence
-			).append(
-				" "
-			);
-		}
-
-		if (current.length() > 0) {
-			parts.add(
-				"<speak>" +
-					current.toString(
-					).trim() + "</speak>");
-		}
-
-		return parts;
 	}
 
 	@Value("${liferay.learn.google.credentials}")
