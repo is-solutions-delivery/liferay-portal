@@ -16,8 +16,12 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -71,8 +75,12 @@ public class LearnRestController extends BaseRestController {
 				);
 			}
 
-			return ResponseEntity.ok(
-				post(
+			List<String> ssmlChunks = splitSsml(contentRawText, 5000);
+
+			ByteArrayOutputStream combinedAudio = new ByteArrayOutputStream();
+
+			for (String ssmlChunk : ssmlChunks) {
+				String response = post(
 					_getGoogleAccessToken(),
 					new JSONObject(
 						HashMapBuilder.<String, Object>put(
@@ -83,7 +91,7 @@ public class LearnRestController extends BaseRestController {
 						).put(
 							"input",
 							HashMapBuilder.<String, Object>put(
-								"ssml", contentRawText
+								"ssml", ssmlChunk
 							).build()
 						).put(
 							"voice",
@@ -94,8 +102,25 @@ public class LearnRestController extends BaseRestController {
 							).build()
 						).build()
 					).toString(),
-					"https://texttospeech.googleapis.com/v1beta1" +
-						"/text:synthesize"));
+					"https://texttospeech.googleapis.com/v1beta1/text:synthesize");
+
+				JSONObject json = new JSONObject(response);
+
+				String audioBase64 = json.getString("audioContent");
+
+				combinedAudio.write(
+					Base64.getDecoder(
+					).decode(
+						audioBase64
+					));
+			}
+
+			String finalBase64 = Base64.getEncoder(
+			).encodeToString(
+				combinedAudio.toByteArray()
+			);
+
+			return ResponseEntity.ok(finalBase64);
 		}
 		catch (Exception exception) {
 			return ResponseEntity.status(
@@ -421,6 +446,43 @@ public class LearnRestController extends BaseRestController {
 		).put(
 			"title", objectDefinitionMap.get("pluralLabel")
 		).build();
+	}
+
+	private List<String> splitSsml(String ssml, int maxLength) {
+		String cleanSsml = ssml.replaceFirst(
+			"^<speak>", ""
+		).replaceFirst(
+			"</speak>$", ""
+		);
+		StringBuilder current = new StringBuilder();
+		List<String> parts = new ArrayList<>();
+
+		String[] sentences = cleanSsml.split("(?<=[.!?])\\s+");
+
+		for (String sentence : sentences) {
+			if ((current.length() + sentence.length() + 15) > maxLength) {
+				parts.add(
+					"<speak>" +
+						current.toString(
+						).trim() + "</speak>");
+				current = new StringBuilder();
+			}
+
+			current.append(
+				sentence
+			).append(
+				" "
+			);
+		}
+
+		if (current.length() > 0) {
+			parts.add(
+				"<speak>" +
+					current.toString(
+					).trim() + "</speak>");
+		}
+
+		return parts;
 	}
 
 	@Value("${liferay.learn.google.credentials}")
