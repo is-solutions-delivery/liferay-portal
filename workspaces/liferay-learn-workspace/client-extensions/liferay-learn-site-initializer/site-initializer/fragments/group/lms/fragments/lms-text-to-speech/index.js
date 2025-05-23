@@ -38,7 +38,7 @@ const url =
 let voiceType =
 	document
 		.querySelector('.speech-voice li.selected')
-		?.getAttribute('value') || 'B';
+		?.getAttribute('value') || 'Charon';
 
 const fetchAndPlayAudio = async (voiceType) => {
 	try {
@@ -46,7 +46,7 @@ const fetchAndPlayAudio = async (voiceType) => {
 		loadingSpinner.classList.remove('hide');
 
 		const response = await Liferay.Util.fetch(
-			`${url}/learn/lesson/${lessonId}/audio/base64?languageCode=en-US&voiceName=en-US-Standard-${voiceType}`
+			`${url}/learn/lesson/${lessonId}/audio/base64?languageCode=en-US&voiceName=en-US-Chirp3-HD-${voiceType}`
 		);
 		const data = await response.json();
 
