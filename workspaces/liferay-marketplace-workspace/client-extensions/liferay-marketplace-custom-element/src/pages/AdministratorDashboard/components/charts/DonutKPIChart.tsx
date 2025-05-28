@@ -7,8 +7,8 @@ import Button from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import Label from '@clayui/label';
 import React from 'react';
-import {useNavigate} from 'react-router-dom';
-import {Cell, Pie, PieChart, ResponsiveContainer} from 'recharts';
+import { useNavigate } from 'react-router-dom';
+import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts';
 
 import Loading from '../../../../components/Loading';
 import i18n from '../../../../i18n';
@@ -18,7 +18,7 @@ import './DonutKPIChart.scss';
 
 interface DonutKPIChartProps {
 	chartData: NonNullable<ReturnType<typeof useKPI>['data']>[number];
-	isLoading: boolean;
+	isLoading?: boolean;
 }
 
 const DonutKPIChart: React.FC<DonutKPIChartProps> = ({
@@ -30,8 +30,8 @@ const DonutKPIChart: React.FC<DonutKPIChartProps> = ({
 	const viewDetailsPath = chartData?.viewDetailsPath;
 
 	const data = [
-		{name: 'filed', value: chartData.percentage},
-		{name: 'remainder', value: 100 - chartData.percentage},
+		{ name: 'filed', value: chartData.percentage },
+		{ name: 'remainder', value: 100 - chartData.percentage },
 	];
 
 	return (
