@@ -132,7 +132,7 @@ const useKPI = () => {
 						partnerShipIntegration.totalCount
 					),
 					title: 'Technology Partnership With Integrations',
-					viewDetailsPath: `/apps?filter=${partnershipIntegrationFilter.get('filter')}`,
+					viewDetailsPath: `/publishers?filter=customFields/AccountType:${PartnershipType.TECHNOLOGY_PARTNERSHIP}`,
 				},
 				{
 					annualTargetCurrent: supportingQuartelyRelease.totalCount,

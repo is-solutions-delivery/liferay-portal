@@ -3,108 +3,101 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import { useSearchParams } from 'react-router-dom';
+import {useSearchParams} from 'react-router-dom';
 
 import {
 	AppActions,
 	ListViewTypes,
 } from '../../../../components/ListView/hooks/ListViewContext';
 import Page from '../../../../components/Page';
-import {
-	ProductType,
-	ProductTypeLabels,
-} from '../../../../enums/Product';
+import {ProductType, ProductTypeLabels} from '../../../../enums/Product';
 import useListTypeDefinition from '../../../../hooks/useListTypeDefinition';
 import i18n from '../../../../i18n';
-import { LIFERAY_VERSION_PICKLIST } from '../../../PublisherDashboard/pages/NewAppFlow/constants';
-import { AdministratorAppsListView } from './AdministratorAppsListView';
+import {LIFERAY_VERSION_PICKLIST} from '../../../PublisherDashboard/pages/NewAppFlow/constants';
 import InfoCard from '../../components/InfoCard';
-import useAppsMetricks from '../../hooks/useAppsMetricks';
+import useAppsMetrics from '../../hooks/useAppsMetrics';
+import {percentage} from '../../util';
+import AdministratorAppsListView from './AdministratorAppsListView';
 
-type FilterItem<T> = {
-	name: string;
+type FilterItem = {
 	children: {
 		name: string;
 		onClick: (dispatch: React.Dispatch<AppActions>) => void;
 	}[];
+	name: string;
 };
 
 function createFilterGroup<T extends string | number>(
 	values: T[] | Record<string, T>,
 	label: string
-): FilterItem<T> {
-	const isAppType = !Array.isArray(values)
+): FilterItem {
+	const isAppType = !Array.isArray(values);
 
-	const items =
-		Array.isArray(values)
-			? values
-			: Object.keys(values).map((key) => values[key]);
+	const items = Array.isArray(values)
+		? values
+		: Object.keys(values).map((key) => values[key]);
 
 	return {
-		name: i18n.translate(label as any),
 		children: items.map((item) => ({
-			name: isAppType ? ProductTypeLabels[item as keyof typeof ProductTypeLabels] : String(item),
-			onClick: (dispatch: React.Dispatch<AppActions>) => dispatch({
-				type: ListViewTypes.SET_FILTERS,
-				payload: {
-					filters: {
-						filter: {
-							specificationValues: item,
+			name: isAppType
+				? ProductTypeLabels[item as keyof typeof ProductTypeLabels]
+				: String(item),
+			onClick: (dispatch: React.Dispatch<AppActions>) =>
+				dispatch({
+					payload: {
+						filters: {
+							filter: {
+								specificationValues: item,
+							},
 						},
 					},
-				},
-			})
+					type: ListViewTypes.SET_FILTERS,
+				}),
 		})),
+		name: i18n.translate(label as any),
 	};
 }
 
-const percentage = (total: number, partial: number): number => {
-	if (!total) {
-		return 0;
-	}
-
-	return Math.round((partial / total) * 100);
-};
-
 export default function Apps() {
-	const { data } = useListTypeDefinition(LIFERAY_VERSION_PICKLIST);
+	const {data} = useListTypeDefinition(LIFERAY_VERSION_PICKLIST);
 	const [searchParams] = useSearchParams();
 
-	const pageFilter = searchParams.get('filter');
+	const pageFilter = searchParams.get('filter') || '';
 
-	const LiferayVersion =
+	const LiferayVersions =
 		data?.listTypeEntries?.map((version) => version.name).reverse() ?? [];
 
 	const filterItems = [
 		{
 			label: 'app-type',
-			value: ProductType
+			value: ProductType,
 		},
 		{
 			label: 'liferay-version',
-			value: LiferayVersion
+			value: LiferayVersions,
 		},
-	].map(({ label, value }) =>
-		createFilterGroup(value, label)
-	);
+	].map(({label, value}) => createFilterGroup(value, label));
 
 	const {
-		products,
-		inReview,
-		inreviewLastlastweek,
-		inreviewBeforeLastWeek,
 		approved,
+		approvedBeforeLastWeek,
 		approvedLastWeek,
-		approvedBeforeLastWeek
-	} = useAppsMetricks('week')
+		inReview,
+		inreviewBeforeLastWeek,
+		inreviewLastlastweek,
+		products,
+	} = useAppsMetrics('week');
 
 	return (
 		<>
 			<div className="d-flex flex-wrap mb-3">
 				<InfoCard
-					className='mr-3'
+					className="mr-3"
 					expanded
-					growth={percentage(products, inreviewLastlastweek - inreviewBeforeLastWeek)}
+					growth={percentage(
+						products,
+						inreviewLastlastweek - inreviewBeforeLastWeek
+					)}
 					growthContext={`+${inreviewLastlastweek - inreviewBeforeLastWeek} this week`}
 					symbol="squares-clock"
 					title="App Awaiting Review"
@@ -113,7 +106,10 @@ export default function Apps() {
 
 				<InfoCard
 					expanded
-					growth={percentage(products, approvedLastWeek - approvedBeforeLastWeek)}
+					growth={percentage(
+						products,
+						approvedLastWeek - approvedBeforeLastWeek
+					)}
 					growthContext={`+${approvedLastWeek - approvedBeforeLastWeek} this week`}
 					symbol="squares"
 					title="Recently Published"
@@ -122,7 +118,7 @@ export default function Apps() {
 			</div>
 
 			<Page
-				pageRendererProps={{ className: 'border py-2 rounded-lg' }}
+				pageRendererProps={{className: 'border py-2 rounded-lg'}}
 				title="Apps"
 			>
 				<AdministratorAppsListView
@@ -132,9 +128,8 @@ export default function Apps() {
 							filterItems,
 							visible: true,
 						},
-						paginationOptions: { displayType: 'always' },
+						paginationOptions: {displayType: 'always'},
 					}}
-
 				/>
 			</Page>
 		</>
