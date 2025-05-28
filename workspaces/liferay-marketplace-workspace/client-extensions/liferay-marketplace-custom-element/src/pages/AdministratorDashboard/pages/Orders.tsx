@@ -4,13 +4,13 @@
  */
 
 import ClayLabel from '@clayui/label';
-import {Status} from '@clayui/modal/lib/types';
-import {formatDistance} from 'date-fns';
+import { Status } from '@clayui/modal/lib/types';
+import { formatDistance } from 'date-fns';
 import useSWR from 'swr';
 
-import ListView, {ListViewProps} from '../../../components/ListView';
-import {FilterOption} from '../../../components/ListView/components/ManagementToolbar';
-import {ListViewTypes} from '../../../components/ListView/hooks/ListViewContext';
+import ListView, { ListViewProps } from '../../../components/ListView';
+import { FilterOption, ManagementToolbarProps } from '../../../components/ListView/components/ManagementToolbar';
+import { ListViewTypes } from '../../../components/ListView/hooks/ListViewContext';
 import Page from '../../../components/Page';
 import SearchBuilder from '../../../core/SearchBuilder';
 import {
@@ -20,10 +20,10 @@ import {
 	orderTypeLabel,
 } from '../../../enums/Order';
 import i18n from '../../../i18n';
-import {Liferay} from '../../../liferay/liferay';
+import { Liferay } from '../../../liferay/liferay';
 import CommerceSelectAccount from '../../../services/rest/CommerceSelectAccount';
 import HeadlessCommerceAdminOrder from '../../../services/rest/HeadlessCommerceAdminOrder';
-import {getLastDayOfMonth} from '../../../utils/date';
+import { getLastDayOfMonth } from '../../../utils/date';
 import InfoCard from '../components/InfoCard';
 
 function redirectTo(path: string) {
@@ -46,6 +46,8 @@ function redirectTo(path: string) {
 
 type AdministratorOrdersListViewProps = {
 	listViewProps?: Partial<ListViewProps<Order>>;
+	managementToolbarProps?: ManagementToolbarProps & { visible?: boolean };
+	isSortable?: boolean;
 };
 
 const orderTypes = [
@@ -75,21 +77,15 @@ const orderTypeFilters: FilterOption[] = orderTypes.map((orderType) => ({
 
 export function AdministratorOrdersListView({
 	listViewProps,
+	managementToolbarProps,
+	isSortable
 }: AdministratorOrdersListViewProps) {
 	return (
 		<ListView<Order>
-			emptyStateProps={{title: i18n.translate('no-orders-yet')}}
+			emptyStateProps={{ title: i18n.translate('no-orders-yet') }}
 			id="administrator-orders"
-			managementToolbarProps={{
-				filterItems: [
-					{
-						children: orderTypeFilters,
-						name: i18n.translate('app-type'),
-					},
-				],
-				visible: true,
-			}}
-			paginationOptions={{displayType: 'always'}}
+			managementToolbarProps={managementToolbarProps}
+			paginationOptions={{ displayType: 'always' }}
 			resource={function getAdministratorOrders({
 				filters,
 				keywords,
@@ -174,7 +170,7 @@ export function AdministratorOrdersListView({
 							<span>
 								{
 									orderTypeLabel[
-										orderTypeExternalReferenceCode as keyof typeof OrderTypes
+									orderTypeExternalReferenceCode as keyof typeof OrderTypes
 									]
 								}
 							</span>
@@ -192,7 +188,7 @@ export function AdministratorOrdersListView({
 								className="text-nowrap"
 								displayType={
 									OrderWorkflowDisplayType[
-										orderStatusInfo.code as keyof typeof OrderWorkflowDisplayType
+									orderStatusInfo.code as keyof typeof OrderWorkflowDisplayType
 									] as Status
 								}
 							>
@@ -208,7 +204,7 @@ export function AdministratorOrdersListView({
 								className="text-nowrap"
 								displayType={
 									PaymentWorkflowDisplayType[
-										paymentStatusInfo?.code as keyof typeof PaymentWorkflowDisplayType
+									paymentStatusInfo?.code as keyof typeof PaymentWorkflowDisplayType
 									] as Status
 								}
 							>
@@ -224,11 +220,11 @@ export function AdministratorOrdersListView({
 								{formatDistance(
 									new Date(createDate ?? ''),
 									Date.now(),
-									{addSuffix: true}
+									{ addSuffix: true }
 								)}
 							</span>
 						),
-						sortable: true,
+						sortable: isSortable,
 					},
 				],
 			}}
@@ -254,7 +250,7 @@ export default function Orders() {
 	const {
 		data: [totalOrders = 0, montlyOrders = 0, currentYearOrders = 0] = [],
 	} = useSWR('/administrator/orders/metrics', () =>
-		Promise.all([
+		Promise.allSettled([
 			getOrders(new URLSearchParams(baseSearchParams)),
 			getOrders(
 				new URLSearchParams({
@@ -329,10 +325,21 @@ export default function Orders() {
 			</div>
 
 			<Page
-				pageRendererProps={{className: 'border py-2'}}
+				pageRendererProps={{ className: 'border py-2' }}
 				title={i18n.translate('orders')}
 			>
-				<AdministratorOrdersListView />
+				<AdministratorOrdersListView
+					managementToolbarProps={{
+						filterItems: [
+							{
+								children: orderTypeFilters,
+								name: i18n.translate('app-type'),
+							},
+						],
+						visible: true
+					}}
+					isSortable
+				/>
 			</Page>
 		</>
 	);
