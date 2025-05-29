@@ -195,7 +195,7 @@ const setGuestPermissions = async (documentId) => {
 					},
 				]),
 				headers: {
-                    'Accept': 'application/json',
+					'Accept': 'application/json',
 					'Content-Type': 'application/json',
 					'x-csrf-token': Liferay.authToken,
 				},
@@ -272,6 +272,7 @@ playPauseButton.forEach((item) => {
 		if (audioPlayer.paused) {
 			audioPlayer.play();
 
+			// eslint-disable-next-line no-undef
 			Analytics.track('TextToSpeechClicked', {
 				lesson_title: lessonTitle,
 				user_name: Liferay.ThemeDisplay.getUserName(),
