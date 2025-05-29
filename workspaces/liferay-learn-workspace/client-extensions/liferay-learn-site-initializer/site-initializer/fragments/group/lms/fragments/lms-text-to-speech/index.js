@@ -13,12 +13,17 @@ const audioSpeedSelectItems = audioSpeedSelect.querySelectorAll(
 const currentTime = document.querySelector('.current-time');
 const duration = document.querySelector('.duration');
 const lessonId = new URL(window.location.href).pathname.split('/').pop();
+const lessonTitle = document.querySelector('.component-html h1').textContent;
 const listenToLesson = document.querySelector('.listen-to-lesson');
+const loadingSpinner = document.getElementById('loadingSpinner');
 const playPauseButton = document.querySelectorAll('.play-pause-button');
 const playPauseCaret = document.querySelector('.play-pause-caret');
 const progressBarRange = document.querySelector('.progress-bar-range');
 const speechVoice = document.querySelector('.speech-voice');
 const speechVoiceItems = speechVoice.querySelectorAll('.speech-voice li');
+const textToSpeechPlayerContent = document.querySelector(
+	'.text-to-speech-player-content'
+);
 const toggleSpeedSelect = document.querySelector('.toggle-speed-select');
 const toggleSpeechVoiceSelect = document.querySelector(
 	'.toggle-speech-voice-select'
@@ -27,20 +32,17 @@ const url =
 	Liferay.OAuth2._userAgentApplications[
 		'liferay-learn-etc-spring-boot-oauth-application-user-agent'
 	].homePageURL;
-const lesson_title = document.querySelector('.component-html h1').textContent;
-const loadingSpinner = document.getElementById('loadingSpinner');
-const textToSpeechPlayerContent = document.querySelector(
-	'.text-to-speech-player-content'
-);
+
 let voiceType =
 	document
 		.querySelector('.speech-voice li.selected')
 		?.getAttribute('value') || 'Charon';
-const user_name = Liferay.ThemeDisplay.getUserName();
 
 const base64ToBlob = (base64, mimeType = 'audio/mpeg') => {
 	const byteCharacters = atob(base64);
+
 	const byteNumbers = new Array(byteCharacters.length);
+
 	for (let i = 0; i < byteCharacters.length; i++) {
 		byteNumbers[i] = byteCharacters.charCodeAt(i);
 	}
@@ -70,10 +72,12 @@ const fetchAndPlayAudio = async (voiceType) => {
 		);
 
 		const searchData = await searchResponse.json();
+
 		if (searchData.totalCount > 0 && !!searchData.items.length) {
 			const existingAudio = searchData.items.find(
 				(item) => item.title === fileName
 			);
+
 			if (existingAudio && existingAudio.contentUrl) {
 				audioSource.src = existingAudio.contentUrl;
 				audioPlayer.load();
@@ -85,14 +89,16 @@ const fetchAndPlayAudio = async (voiceType) => {
 		const response = await Liferay.Util.fetch(
 			`${url}/learn/lesson/${lessonId}/audio/base64?languageCode=en-US&voiceName=en-US-Chirp3-HD-${voiceType}`
 		);
+
 		const base64Audio = await response.text();
+
 		if (base64Audio) {
 			audioSource.src = 'data:audio/mp3;base64,' + base64Audio;
 			await saveAudioToTTSCache({
+				base64Audio,
+				languageCode: 'en-US',
 				lessonId,
 				voiceName: voiceType,
-				languageCode: 'en-US',
-				base64Audio,
 			});
 			audioPlayer.load();
 		}
@@ -121,60 +127,56 @@ const saveAudioToTTSCache = async ({
 		const blob = base64ToBlob(base64Audio);
 		const formData = new FormData();
 		const fileName = `lesson-${lessonId}-${voiceName}.mp3`;
+
 		formData.append('file', blob, fileName);
 		const uploadResponse = await fetch(
 			`/o/headless-delivery/v1.0/document-folders/35458932/documents`,
 			{
-				method: 'POST',
+				body: formData,
 				headers: {
 					'Accept': 'application/json',
 					'x-csrf-token': Liferay.authToken,
 				},
-				body: formData,
+				method: 'POST',
 			}
 		);
 
 		if (!uploadResponse.ok) {
-			const errText = await uploadResponse.text();
+			const errorText = await uploadResponse.text();
+
 			if (uploadResponse.status === 409) {
 				console.warn('File already exists. Skipping upload.');
 
 				return;
 			}
-			throw new Error(`upload Error: ${errText}`);
+			throw new Error(`upload Error: ${errorText}`);
 		}
 
 		const uploadData = await uploadResponse.json();
 
 		const fileEntryId = uploadData.id;
-		const guestViewDownloadPermissions = [
-			{
-				roleKey: 'Guest',
-				actionKeys: ['VIEW', 'GET_FILE_ENTRY'],
-			},
-		];
+
 		await setGuestPermissions(fileEntryId);
 
 		const objectResponse = await fetch('/o/c/ttscaches/', {
-			method: 'POST',
+			body: JSON.stringify({
+				fileEntryId: uploadData.id,
+				languageCode,
+				lessonId,
+				voiceName,
+			}),
 			headers: {
 				'Content-Type': 'application/json',
 				'x-csrf-token': Liferay.authToken,
 			},
-			body: JSON.stringify({
-				lessonId,
-				voiceName,
-				languageCode,
-				fileEntryId: uploadData.id,
-			}),
+			method: 'POST',
 		});
 
 		if (!objectResponse.ok) {
-			const err = await objectResponse.text();
-			throw new Error(`Erro ao salvar TTSCache: ${err}`);
-		}
+			const errorText = await objectResponse.text();
 
-		const objectData = await objectResponse.json();
+			throw new Error(`Erro ao salvar TTSCache: ${errorText}`);
+		}
 	}
 	catch (error) {
 		console.error('Error saving audio:', error);
@@ -186,28 +188,29 @@ const setGuestPermissions = async (documentId) => {
 		const response = await fetch(
 			`/o/headless-delivery/v1.0/documents/${documentId}/permissions`,
 			{
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-					'x-csrf-token': Liferay.authToken,
-					'Accept': 'application/json',
-				},
 				body: JSON.stringify([
 					{
 						actionIds: ['VIEW', 'DOWNLOAD'],
 						roleName: 'Guest',
 					},
 				]),
+				headers: {
+					'Content-Type': 'application/json',
+					'x-csrf-token': Liferay.authToken,
+					'Accept': 'application/json',
+				},
+				method: 'PUT',
 			}
 		);
 
 		if (!response.ok) {
 			const errorText = await response.text();
+
 			throw new Error(`Erro ${response.status}: ${errorText}`);
 		}
 	}
-	catch (err) {
-		console.error('Error applying public permissions:', err.message);
+	catch (error) {
+		console.error('Error applying public permissions:', error.message);
 	}
 };
 
@@ -270,8 +273,8 @@ playPauseButton.forEach((item) => {
 			audioPlayer.play();
 
 			Analytics.track('TextToSpeechClicked', {
-				lesson_title,
-				user_name,
+				lesson_title: lessonTitle,
+				user_name: Liferay.ThemeDisplay.getUserName(),
 			});
 
 			listenToLesson.classList.add('hide');
