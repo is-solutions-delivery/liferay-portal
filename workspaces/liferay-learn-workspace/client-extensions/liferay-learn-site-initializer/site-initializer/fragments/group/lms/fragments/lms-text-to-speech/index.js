@@ -214,7 +214,7 @@ const setGuestPermissions = async (documentId) => {
 	}
 };
 
-const toggleSelect = (toggleElement, dropdownElement, listenerFunctionName) => {
+const toggleSelect = (toggleElement, dropdownElement) => {
 	toggleElement.addEventListener('click', (event) => {
 		event.preventDefault();
 		dropdownElement.classList.toggle('hide');
@@ -297,5 +297,5 @@ progressBarRange.onclick = (event) => {
 		(event.offsetX / progressBarRange.offsetWidth) * audioPlayer.duration;
 };
 fetchAndPlayAudio(voiceType);
-toggleSelect(toggleSpeedSelect, audioSpeedSelect, 'closeRateSelectOutside');
-toggleSelect(toggleSpeechVoiceSelect, speechVoice, 'closeSpeechVoicetOutside');
+toggleSelect(toggleSpeedSelect, audioSpeedSelect);
+toggleSelect(toggleSpeechVoiceSelect, speechVoice);
