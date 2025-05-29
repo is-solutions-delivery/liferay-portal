@@ -75,7 +75,8 @@ public class LearnRestController extends BaseRestController {
 				);
 			}
 
-			List<String> ssmlTexts = _splitText(contentRawText, 5000);
+			List<String> ssmlTexts = _splitText(
+				contentRawText.replaceAll("\\bLiferay\\b", "Life-ray"), 5000);
 
 			ByteArrayOutputStream byteArrayOutputStream =
 				new ByteArrayOutputStream();
