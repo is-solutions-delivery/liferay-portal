@@ -195,9 +195,9 @@ const setGuestPermissions = async (documentId) => {
 					},
 				]),
 				headers: {
+                    'Accept': 'application/json',
 					'Content-Type': 'application/json',
 					'x-csrf-token': Liferay.authToken,
-					'Accept': 'application/json',
 				},
 				method: 'PUT',
 			}
