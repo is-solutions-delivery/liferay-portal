@@ -62,8 +62,9 @@ public class LearnRestController extends BaseRestController {
 				get(
 					_getAuthorization(),
 					UriComponentsBuilder.fromUriString(
-						_getLiferayURL() + "/o/c/lessons/" + lessonId +
-							"?fields=contentRawText"
+						StringBundler.concat(
+							_getLiferayURL(), "/o/c/lessons/", lessonId,
+							"?fields=contentRawText")
 					).build(
 					).toUri()));
 
@@ -107,7 +108,8 @@ public class LearnRestController extends BaseRestController {
 						).build()
 					).toString(),
 					UriComponentsBuilder.fromUriString(
-						"https://texttospeech.googleapis.com/v1beta1/text:synthesize"
+						"https://texttospeech.googleapis.com/" +
+							"v1beta1/text:synthesize"
 					).build(
 					).toUri());
 
@@ -151,10 +153,11 @@ public class LearnRestController extends BaseRestController {
 					get(
 						_getAuthorization(),
 						UriComponentsBuilder.fromUriString(
-							_getLiferayURL() +
-								"/o/object-admin/v1.0/object-folders" +
-									"/by-external-reference-code" +
-										"/P2S3_LEARNING_MANAGEMENT_SYSTEM"
+							StringBundler.concat(
+								_getLiferayURL(),
+								"/o/object-admin/v1.0/object-folders",
+								"/by-external-reference-code",
+								"/P2S3_LEARNING_MANAGEMENT_SYSTEM")
 						).build(
 						).toUri())
 				).getJSONArray(
@@ -175,12 +178,13 @@ public class LearnRestController extends BaseRestController {
 				get(
 					_getAuthorization(),
 					UriComponentsBuilder.fromUriString(
-						_getLiferayURL() + "/o/c/quizquestions/scopes/" +
-							_siteGroupId + "?filter=quizId eq '" + quizId +
-								"'&fields=id,position," +
-									"question,questionType,quizAnswers,quizAnswers.answer," +
-										"quizAnswers.id,quizAnswers.position&nestedFields=" +
-											"quizAnswers&pageSize=500&sort=position"
+						StringBundler.concat(
+							_getLiferayURL(), "/o/c/quizquestions/scopes/",
+							_siteGroupId, "?filter=quizId eq '", quizId,
+							"'&fields=id,position,",
+							"question,questionType,quizAnswers,quizAnswers.answer,",
+							"quizAnswers.id,quizAnswers.position&nestedFields=",
+							"quizAnswers&pageSize=500&sort=position")
 					).build(
 					).toUri())
 			).getJSONArray(
@@ -202,17 +206,18 @@ public class LearnRestController extends BaseRestController {
 				get(
 					_getAuthorization(),
 					UriComponentsBuilder.fromUriString(
-						_getLiferayURL() + "/o/c/quizes/" + quizId +
-							"?&fields=id,r_quiz_c_moduleId,durationMinutes," +
-								"passingScore,isKnowledgeCheck,quizQuestions.id," +
-									"quizQuestions.position,quizQuestions.question," +
-										"quizQuestions.questionType,quizQuestions." +
-											"questionTotalScore,quizQuestions.quizAnswers," +
-												"quizQuestions.quizAnswers.id,quizQuestions." +
-													"quizAnswers.position,quizQuestions.quizAnswers." +
-														"answer,quizQuestions.quizAnswers.score&" +
-															"nestedFields=quizQuestions,quizAnswers&" +
-																"nestedFieldsDepth=2&pageSize=500"
+						StringBundler.concat(
+							_getLiferayURL(), "/o/c/quizes/", quizId,
+							"?&fields=id,r_quiz_c_moduleId,durationMinutes,",
+							"passingScore,isKnowledgeCheck,quizQuestions.id,",
+							"quizQuestions.position,quizQuestions.question,",
+							"quizQuestions.questionType,quizQuestions.",
+							"questionTotalScore,quizQuestions.quizAnswers,",
+							"quizQuestions.quizAnswers.id,quizQuestions.",
+							"quizAnswers.position,quizQuestions.quizAnswers.",
+							"answer,quizQuestions.quizAnswers.score&",
+							"nestedFields=quizQuestions,quizAnswers&",
+							"nestedFieldsDepth=2&pageSize=500")
 					).build(
 					).toUri())));
 
@@ -234,7 +239,8 @@ public class LearnRestController extends BaseRestController {
 
 	private String _getAuthorization() {
 		return _liferayOAuth2AccessTokenManager.getAuthorization(
-			"liferay-learn-etc-spring-boot-oauth-application-headless-server");
+			"liferay-learn-etc-spring-boot-oauth" +
+				"-application-headless-server");
 	}
 
 	private String _getGoogleAccessToken() throws Exception {
