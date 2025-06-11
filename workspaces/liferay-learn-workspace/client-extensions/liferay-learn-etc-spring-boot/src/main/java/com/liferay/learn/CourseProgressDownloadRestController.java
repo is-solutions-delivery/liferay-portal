@@ -7,23 +7,20 @@ package com.liferay.learn;
 
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
 import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
-import com.liferay.portal.kernel.util.GetterUtil;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.UUID;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,6 +34,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Lucas Emanuel
@@ -45,171 +43,141 @@ import org.springframework.web.bind.annotation.RestController;
 public class CourseProgressDownloadRestController extends BaseRestController {
 
 	@GetMapping("/course-progress/download")
-	public ResponseEntity<Object> downloadCourseProgress(
+	public ResponseEntity<String> downloadCourseProgress(
 		@AuthenticationPrincipal Jwt jwt,
-		@RequestParam(required = false, value = "endDate") String endDate,
-		@RequestParam(required = false, value = "startDate") String startDate) {
+		@RequestParam(required = false) String startDate,
+		@RequestParam(required = false) String endDate) {
 
-		DateTimeFormatter dateTimeFormatter =
-			DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-		List<Object> itemList = new JSONObject(
-			get(_getAuthorization(), "/o/c/enrollments/scopes/" + _siteGroupId)
-		).getJSONArray(
-			"items"
-		).toList();
-		List<String> userIds = new ArrayList<>();
-		LocalDate end = LocalDate.parse(endDate);
-		LocalDate start = LocalDate.parse(startDate);
-		Map<String, String> courseTitleMap = new HashMap<>();
-		Map<String, Integer> courseTotalAssetsMap = new HashMap<>();
-		Map<String, String> dateModifiedMap = new HashMap<>();
-		Map<String, List<String>> userCompletedAssetsMap = new HashMap<>();
-		Map<String, String> userCourseIdsMap = new HashMap<>();
-		Map<String, String> userEmailMap = new HashMap<>();
-		Map<String, String> userFirstNameMap = new HashMap<>();
-		Map<String, String> userGroupNameMap = new HashMap<>();
-		Map<String, String> userLastNameMap = new HashMap<>();
+		List<EnrollmentData> enrollmentDataList = new ArrayList<>();
 
-		for (Object item : itemList) {
-			if (item instanceof Map) {
-				Map<String, Object> mapItem = (Map<String, Object>)item;
+		int lastPage = 1;
 
-				String dateModifiedString = (String)mapItem.get("dateModified");
+		for (int i = 1; i <= lastPage; i++) {
+			JSONObject jsonObject = new JSONObject(
+				get(
+					_getAuthorization(),
+					UriComponentsBuilder.fromUriString(
+						"/o/c/enrollments/scopes/" + _siteGroupId
+					).queryParam(
+						"pageSize", -1
+					).queryParam(
+						"page", i
+					).queryParam(
+						"nestedFields", "course,user"
+					).build(
+					).toUri()));
 
-				ZonedDateTime dateModified = ZonedDateTime.parse(
-					dateModifiedString, dateTimeFormatter);
+			JSONArray jsonArray = jsonObject.getJSONArray("items");
 
-				LocalDate modifiedDate = dateModified.toLocalDate();
-
-				if (modifiedDate.isBefore(start) || modifiedDate.isAfter(end)) {
+			for (Object itemObject : jsonArray) {
+				if (!(itemObject instanceof JSONObject)) {
 					continue;
 				}
 
-				String userId = String.valueOf(
-					mapItem.get("r_userenrollments_userId"));
+				JSONObject enrollmentJsonObject = (JSONObject)itemObject;
 
-				userIds.add(userId);
-				dateModifiedMap.put(userId, dateModifiedString);
+				JSONObject userJsonObject = enrollmentJsonObject.optJSONObject(
+					"r_userenrollments_user");
+				JSONObject courseJsonObject =
+					enrollmentJsonObject.optJSONObject(
+						"r_courseEnrollment_c_course");
 
-				Object completedAssetsObject = mapItem.get("completedAssetIds");
-
-				if (completedAssetsObject != null) {
-					String completedAssetIdsStr =
-						completedAssetsObject.toString(
-						).replaceAll(
-							"^,|,$", ""
-						);
-
-					List<String> completedAssetIds = Arrays.asList(
-						completedAssetIdsStr.split(","));
-
-					userCompletedAssetsMap.put(userId, completedAssetIds);
+				if ((userJsonObject == null) || (courseJsonObject == null)) {
+					continue;
 				}
 
-				Object courseIdObject = mapItem.get(
-					"r_courseEnrollment_c_courseId");
+				String modifiedDate = enrollmentJsonObject.optString(
+					"dateModified", null);
 
-				if (courseIdObject != null) {
-					String courseId = courseIdObject.toString(
-					).trim();
+				if (!isWithinDateRange(modifiedDate, startDate, endDate)) {
+					continue;
+				}
 
-					userCourseIdsMap.put(userId, courseId);
+				String userId = userJsonObject.optString(
+					"id",
+					UUID.randomUUID(
+					).toString());
+				String[] fullName = userJsonObject.optString(
+					"name", ""
+				).split(
+					" ", 2
+				);
+				String firstName = fullName.length > 0 ? fullName[0] : "";
+				String lastName = fullName.length > 1 ? fullName[1] : "";
+				String email = userJsonObject.optString("emailAddress", "");
 
-					if (!courseId.isEmpty() && !Objects.equals(courseId, "0")) {
-						JSONObject courseJSONObject = new JSONObject(
-							get(
-								_getAuthorization(),
-								"/o/c/courses/" + courseId));
+				JSONArray groups = userJsonObject.optJSONArray(
+					"userGroupBriefs");
+				List<String> groupNames = new ArrayList<>();
 
-						String courseTitle = courseJSONObject.get(
-							"title"
-						).toString();
-
-						courseTitleMap.put(userId, courseTitle);
-
-						int courseTotalAssets = GetterUtil.getInteger(
-							courseJSONObject.get(
-								"totalAssets"
-							).toString(
-							).trim());
-
-						courseTotalAssetsMap.put(userId, courseTotalAssets);
+				if (groups != null) {
+					for (int g = 0; g < groups.length(); g++) {
+						groupNames.add(
+							groups.getJSONObject(
+								g
+							).optString(
+								"name", ""
+							));
 					}
 				}
 
-				JSONObject userJSONObject = new JSONObject(
-					get(
-						_getAuthorization(),
-						"/o/headless-admin-user/v1.0/user-accounts/" + userId));
+				String userGroup = String.join(" | ", groupNames);
 
-				userFirstNameMap.put(
-					userId,
-					userJSONObject.get(
-						"givenName"
-					).toString());
-				userLastNameMap.put(
-					userId,
-					userJSONObject.get(
-						"familyName"
-					).toString());
-				userEmailMap.put(
-					userId,
-					userJSONObject.get(
-						"emailAddress"
-					).toString());
+				String courseTitle = courseJsonObject.optString("title", "");
+				float totalAssets = courseJsonObject.optInt("totalAssets", 0);
 
-				JSONArray userGroupBriefsJSONArray =
-					userJSONObject.optJSONArray("userGroupBriefs");
+				String completedAssetsStr = enrollmentJsonObject.optString(
+					"completedAssetIds", ""
+				).replaceFirst(
+					"^,", ""
+				);
 
-				if ((userGroupBriefsJSONArray != null) &&
-					(userGroupBriefsJSONArray.length() > 0)) {
+				List<String> completedAssets =
+					completedAssetsStr.isBlank() ? Collections.emptyList() :
+						Arrays.asList(completedAssetsStr.split(","));
 
-					JSONObject groupJSONObject =
-						userGroupBriefsJSONArray.getJSONObject(0);
-
-					userGroupNameMap.put(
-						userId, groupJSONObject.optString("name"));
-				}
+				enrollmentDataList.add(
+					new EnrollmentData(
+						userId, firstName, lastName, email, userGroup,
+						courseTitle, totalAssets, completedAssets));
 			}
+
+			lastPage = jsonObject.getInt("lastPage");
 		}
 
 		try (PrintWriter printWriter = new PrintWriter(
 				new FileWriter("report.csv"))) {
 
 			printWriter.println(
-				"First Name, Last Name, Work Email, Course Name,
-                completion status, % Complete, User Group");
+				"First Name,Last Name,Work Email,Course Name,Completion Status,% Complete,User Group");
 
-			for (String userId : userIds) {
-				float completed = userCompletedAssetsMap.getOrDefault(
-					userId, Collections.emptyList()
-				).size();
+			for (EnrollmentData data : enrollmentDataList) {
+				if (data.getTotalAssets() == 0)
 
-				float total = courseTotalAssetsMap.getOrDefault(userId, 0);
-
-				if (total == 0) {
 					continue;
-				}
-
-				float percent = (completed / total) * 100;
-
-				String status = (percent >= 100) ? "completed" : "in progress";
+				float percent =
+					(float)data.getCompletedAssets(
+					).size() / data.getTotalAssets() * 100;
+				String status = percent >= 100 ? "completed" : "in progress";
 
 				printWriter.printf(
-					"%s,%s,%s,%s,%s,%.2f,%s",
-					userFirstNameMap.getOrDefault(userId, ""),
-					userLastNameMap.getOrDefault(userId, ""),
-					userEmailMap.getOrDefault(userId, ""),
-					courseTitleMap.getOrDefault(userId, ""), status, percent,
-					userGroupNameMap.getOrDefault(userId, ""));
+					"%s,%s,%s,%s,%s,%.2f,%s\n", data.getFirstName(),
+					data.getLastName(), data.getEmail(), data.getCourseTitle(),
+					status, percent, data.getUserGroup());
 			}
+
+			printWriter.flush();
 		}
 		catch (IOException ioException) {
-			System.err.println(
-				"Error to save CSV: " + ioException.getMessage());
+			return ResponseEntity.status(
+				HttpStatus.INTERNAL_SERVER_ERROR
+			).body(
+				"Error generating CSV."
+			);
 		}
 
-		return new ResponseEntity<>(itemList, HttpStatus.OK);
+		return ResponseEntity.ok(
+			"CSV report successfully generated on 'report.csv'");
 	}
 
 	private String _getAuthorization() {
@@ -217,10 +185,104 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 			"liferay-learn-etc-spring-boot-oauth-application-headless-server");
 	}
 
+	private boolean isWithinDateRange(
+		String dateStr, String start, String end) {
+
+		if ((dateStr == null) || ((start == null) && (end == null)))
+
+			return true;
+
+		try {
+			LocalDate date = LocalDate.parse(
+				dateStr, DateTimeFormatter.ISO_DATE_TIME);
+
+			if (start != null) {
+				LocalDate startDate = LocalDate.parse(start);
+
+				if (date.isBefore(startDate))
+
+					return false;
+			}
+
+			if (end != null) {
+				LocalDate endDate = LocalDate.parse(end);
+
+				if (date.isAfter(endDate))
+
+					return false;
+			}
+
+			return true;
+		}
+		catch (DateTimeParseException dateTimeParseException) {
+			return false;
+		}
+	}
+
 	@Autowired
 	private LiferayOAuth2AccessTokenManager _liferayOAuth2AccessTokenManager;
 
 	@Value("${liferay.learn.dxp.site.group.id}")
 	private long _siteGroupId;
+
+	private static class EnrollmentData {
+
+		public EnrollmentData(
+			String userId, String firstName, String lastName, String email,
+			String userGroup, String courseTitle, float totalAssets,
+			List<String> completedAssets) {
+
+			this.userId = userId;
+			this.firstName = firstName;
+			this.lastName = lastName;
+			this.email = email;
+			this.userGroup = userGroup;
+			this.courseTitle = courseTitle;
+			this.totalAssets = totalAssets;
+			this.completedAssets = completedAssets;
+		}
+
+		public List<String> getCompletedAssets() {
+			return completedAssets;
+		}
+
+		public String getCourseTitle() {
+			return courseTitle;
+		}
+
+		public String getEmail() {
+			return email;
+		}
+
+		public String getFirstName() {
+			return firstName;
+		}
+
+		public String getLastName() {
+			return lastName;
+		}
+
+		public float getTotalAssets() {
+			return totalAssets;
+		}
+
+		public String getUserGroup() {
+			return userGroup;
+		}
+
+		public String getUserId() {
+			return userId;
+		}
+
+		private final List<String> completedAssets;
+		private final String courseTitle;
+		private final String email;
+		private final String firstName;
+		private final String lastName;
+		private final float totalAssets;
+		private final String userGroup;
+		private final String userId;
+
+	}
 
 }
