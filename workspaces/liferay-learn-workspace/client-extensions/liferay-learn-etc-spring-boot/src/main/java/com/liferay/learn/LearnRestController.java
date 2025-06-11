@@ -108,8 +108,8 @@ public class LearnRestController extends BaseRestController {
 						).build()
 					).toString(),
 					UriComponentsBuilder.fromUriString(
-						"https://texttospeech.googleapis.com/" +
-							"v1beta1/text:synthesize"
+						"https://texttospeech.googleapis.com" +
+							"/v1beta1/text:synthesize"
 					).build(
 					).toUri());
 
@@ -182,7 +182,8 @@ public class LearnRestController extends BaseRestController {
 							_getLiferayURL(), "/o/c/quizquestions/scopes/",
 							_siteGroupId, "?filter=quizId eq '", quizId,
 							"'&fields=id,position,",
-							"question,questionType,quizAnswers,quizAnswers.answer,",
+							"question,questionType,quizAnswers",
+							"quizAnswers.answer,",
 							"quizAnswers.id,quizAnswers.position&nestedFields=",
 							"quizAnswers&pageSize=500&sort=position")
 					).build(
@@ -239,8 +240,7 @@ public class LearnRestController extends BaseRestController {
 
 	private String _getAuthorization() {
 		return _liferayOAuth2AccessTokenManager.getAuthorization(
-			"liferay-learn-etc-spring-boot-oauth" +
-				"-application-headless-server");
+			"liferay-learn-etc-spring-boot-oauth-application-headless-server");
 	}
 
 	private String _getGoogleAccessToken() throws Exception {
@@ -406,8 +406,9 @@ public class LearnRestController extends BaseRestController {
 			get(
 				_getAuthorization(),
 				UriComponentsBuilder.fromUriString(
-					_getLiferayURL() + "/o/c/quizes/" + quizId +
-						"/quizBadge?fields=id"
+					StringBundler.concat(
+						_getLiferayURL(), "/o/c/quizes/", quizId,
+						"/quizBadge?fields=id")
 				).build(
 				).toUri())
 		).getJSONArray(
@@ -424,9 +425,10 @@ public class LearnRestController extends BaseRestController {
 			get(
 				_getAuthorization(),
 				UriComponentsBuilder.fromUriString(
-					_getLiferayURL() + "/o/c/userbadges/scopes/" +
-						_siteGroupId + "/?filter=userId eq '" + userId +
-							"' and badgeId eq " + badgeJSONObject.getLong("id")
+					StringBundler.concat(
+						_getLiferayURL(), "/o/c/userbadges/scopes/",
+						_siteGroupId, "/?filter=userId eq '", userId,
+						"' and badgeId eq ", badgeJSONObject.getLong("id"))
 				).build(
 				).toUri()));
 
