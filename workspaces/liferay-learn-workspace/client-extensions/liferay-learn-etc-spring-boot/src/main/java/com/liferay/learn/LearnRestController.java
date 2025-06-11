@@ -182,7 +182,8 @@ public class LearnRestController extends BaseRestController {
 							_getLiferayURL(), "/o/c/quizquestions/scopes/",
 							_siteGroupId, "?filter=quizId eq '", quizId,
 							"'&fields=id,position,",
-							"question,questionType,quizAnswers,quizAnswers.answer,",
+							"question,questionType,quizAnswers,",
+							"quizAnswers.answer,",
 							"quizAnswers.id,quizAnswers.position&nestedFields=",
 							"quizAnswers&pageSize=500&sort=position")
 					).build(
