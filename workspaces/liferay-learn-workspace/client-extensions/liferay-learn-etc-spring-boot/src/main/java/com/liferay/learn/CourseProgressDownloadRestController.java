@@ -74,39 +74,41 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 					continue;
 				}
 
-				JSONObject enrollmentJsonObject = (JSONObject)itemObject;
+				JSONObject enrollmentJSONObject = (JSONObject)itemObject;
 
-				JSONObject userJsonObject = enrollmentJsonObject.optJSONObject(
+				JSONObject userJSONObject = enrollmentJSONObject.optJSONObject(
 					"r_userenrollments_user");
-				JSONObject courseJsonObject =
-					enrollmentJsonObject.optJSONObject(
+				JSONObject courseJSONObject =
+					enrollmentJSONObject.optJSONObject(
 						"r_courseEnrollment_c_course");
 
-				if ((userJsonObject == null) || (courseJsonObject == null)) {
+				if ((userJSONObject == null) || (courseJSONObject == null)) {
 					continue;
 				}
 
-				String modifiedDate = enrollmentJsonObject.optString(
+				String modifiedDate = enrollmentJSONObject.optString(
 					"dateModified", null);
 
 				if (!isWithinDateRange(modifiedDate, startDate, endDate)) {
 					continue;
 				}
 
-				String userId = userJsonObject.optString(
+				String userId = userJSONObject.optString(
 					"id",
 					UUID.randomUUID(
 					).toString());
-				String[] fullName = userJsonObject.optString(
+				String[] fullName = userJSONObject.optString(
 					"name", ""
 				).split(
 					" ", 2
 				);
-				String firstName = fullName.length > 0 ? fullName[0] : "";
-				String lastName = fullName.length > 1 ? fullName[1] : "";
-				String email = userJsonObject.optString("emailAddress", "");
 
-				JSONArray groups = userJsonObject.optJSONArray(
+				String firstName = (fullName.length > 0) ? fullName[0] : "";
+				String lastName = (fullName.length > 1) ? fullName[1] : "";
+
+				String email = userJSONObject.optString("emailAddress", "");
+
+				JSONArray groups = userJSONObject.optJSONArray(
 					"userGroupBriefs");
 				List<String> groupNames = new ArrayList<>();
 
@@ -123,10 +125,10 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 
 				String userGroup = String.join(" | ", groupNames);
 
-				String courseTitle = courseJsonObject.optString("title", "");
-				float totalAssets = courseJsonObject.optInt("totalAssets", 0);
+				String courseTitle = courseJSONObject.optString("title", "");
+				float totalAssets = courseJSONObject.optInt("totalAssets", 0);
 
-				String completedAssetsStr = enrollmentJsonObject.optString(
+				String completedAssetsStr = enrollmentJSONObject.optString(
 					"completedAssetIds", ""
 				).replaceFirst(
 					"^,", ""
