@@ -14,7 +14,6 @@ import java.io.PrintWriter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,7 +88,7 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 				String modifiedDate = enrollmentJSONObject.optString(
 					"dateModified", null);
 
-				if (!isWithinDateRange(modifiedDate, startDate, endDate)) {
+				if (!_isWithinDateRange(modifiedDate, startDate, endDate)) {
 					continue;
 				}
 
@@ -141,8 +140,8 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 
 				enrollmentDataList.add(
 					new EnrollmentData(
-						userId, firstName, lastName, email, userGroup,
-						courseTitle, totalAssets, completedAssets));
+						completedAssets, courseTitle, email, firstName,
+						lastName, userGroup, userId, totalAssets));
 			}
 
 			lastPage = jsonObject.getInt("lastPage");
@@ -152,8 +151,8 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 				new FileWriter("report.csv"))) {
 
 			printWriter.println(
-				"First Name,Last Name,Work Email,Course Name,Completion Status," +
-					"% Complete,User Group");
+				"First Name,Last Name,Work Email,Course Name," +
+					"Completion Status,% Complete,User Group");
 
 			for (EnrollmentData data : enrollmentDataList) {
 				if (data.getTotalAssets() == 0) {
@@ -187,12 +186,12 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 			"liferay-learn-etc-spring-boot-oauth-application-headless-server");
 	}
 
-	private boolean isWithinDateRange(
-		String dateStr, String start, String end) {
+	private boolean _isWithinDateRange(String dateStr, String start, String end)
+		throws IOException {
 
-		if ((dateStr == null) || ((start == null) && (end == null)))
-
+		if ((dateStr == null) || ((start == null) && (end == null))) {
 			return true;
+		}
 
 		try {
 			LocalDate date = LocalDate.parse(
@@ -201,23 +200,23 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 			if (start != null) {
 				LocalDate startDate = LocalDate.parse(start);
 
-				if (date.isBefore(startDate))
-
+				if (date.isBefore(startDate)) {
 					return false;
+				}
 			}
 
 			if (end != null) {
 				LocalDate endDate = LocalDate.parse(end);
 
-				if (date.isAfter(endDate))
-
+				if (date.isAfter(endDate)) {
 					return false;
+				}
 			}
 
 			return true;
 		}
-		catch (DateTimeParseException dateTimeParseException) {
-			return false;
+		catch (Exception exception) {
+			throw new IOException(exception);
 		}
 	}
 
@@ -230,60 +229,60 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 	private static class EnrollmentData {
 
 		public EnrollmentData(
-			String userId, String firstName, String lastName, String email,
-			String userGroup, String courseTitle, float totalAssets,
-			List<String> completedAssets) {
+			List<String> completedAssets, String courseTitle, String email,
+			String firstName, String lastName, String userGroup, String userId,
+			float totalAssets) {
 
-			this.userId = userId;
-			this.firstName = firstName;
-			this.lastName = lastName;
-			this.email = email;
-			this.userGroup = userGroup;
-			this.courseTitle = courseTitle;
-			this.totalAssets = totalAssets;
-			this.completedAssets = completedAssets;
+			this._completedAssets = completedAssets;
+			this._courseTitle = courseTitle;
+			this._email = email;
+			this._firstName = firstName;
+			this._lastName = lastName;
+			this._userGroup = userGroup;
+			this._userId = userId;
+			this._totalAssets = totalAssets;
 		}
 
 		public List<String> getCompletedAssets() {
-			return completedAssets;
+			return _completedAssets;
 		}
 
 		public String getCourseTitle() {
-			return courseTitle;
+			return _courseTitle;
 		}
 
 		public String getEmail() {
-			return email;
+			return _email;
 		}
 
 		public String getFirstName() {
-			return firstName;
+			return _firstName;
 		}
 
 		public String getLastName() {
-			return lastName;
+			return _lastName;
 		}
 
 		public float getTotalAssets() {
-			return totalAssets;
+			return _totalAssets;
 		}
 
 		public String getUserGroup() {
-			return userGroup;
+			return _userGroup;
 		}
 
 		public String getUserId() {
-			return userId;
+			return _userId;
 		}
 
-		private final List<String> completedAssets;
-		private final String courseTitle;
-		private final String email;
-		private final String firstName;
-		private final String lastName;
-		private final float totalAssets;
-		private final String userGroup;
-		private final String userId;
+		private final List<String> _completedAssets;
+		private final String _courseTitle;
+		private final String _email;
+		private final String _firstName;
+		private final String _lastName;
+		private final float _totalAssets;
+		private final String _userGroup;
+		private final String _userId;
 
 	}
 
