@@ -14,7 +14,6 @@ import java.io.PrintWriter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +26,6 @@ import org.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -44,9 +42,10 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 
 	@GetMapping("/course-progress/download")
 	public ResponseEntity<String> downloadCourseProgress(
-		@AuthenticationPrincipal Jwt jwt,
-		@RequestParam(required = false) String startDate,
-		@RequestParam(required = false) String endDate) {
+			@AuthenticationPrincipal Jwt jwt,
+			@RequestParam(required = false) String startDate,
+			@RequestParam(required = false) String endDate)
+		throws IOException {
 
 		List<EnrollmentData> enrollmentDataList = new ArrayList<>();
 
@@ -74,46 +73,49 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 					continue;
 				}
 
-				JSONObject enrollmentJsonObject = (JSONObject)itemObject;
+				JSONObject enrollmentJSONObject = (JSONObject)itemObject;
 
-				JSONObject userJsonObject = enrollmentJsonObject.optJSONObject(
+				JSONObject userJSONObject = enrollmentJSONObject.optJSONObject(
 					"r_userenrollments_user");
-				JSONObject courseJsonObject =
-					enrollmentJsonObject.optJSONObject(
+				JSONObject courseJSONObject =
+					enrollmentJSONObject.optJSONObject(
 						"r_courseEnrollment_c_course");
 
-				if ((userJsonObject == null) || (courseJsonObject == null)) {
+				if ((userJSONObject == null) || (courseJSONObject == null)) {
 					continue;
 				}
 
-				String modifiedDate = enrollmentJsonObject.optString(
+				String modifiedDate = enrollmentJSONObject.optString(
 					"dateModified", null);
 
-				if (!isWithinDateRange(modifiedDate, startDate, endDate)) {
+				if (!_isWithinDateRange(modifiedDate, startDate, endDate)) {
 					continue;
 				}
 
-				String userId = userJsonObject.optString(
+				String userId = userJSONObject.optString(
 					"id",
 					UUID.randomUUID(
 					).toString());
-				String[] fullName = userJsonObject.optString(
+
+				String[] fullName = userJSONObject.optString(
 					"name", ""
 				).split(
 					" ", 2
 				);
-				String firstName = fullName.length > 0 ? fullName[0] : "";
-				String lastName = fullName.length > 1 ? fullName[1] : "";
-				String email = userJsonObject.optString("emailAddress", "");
 
-				JSONArray groups = userJsonObject.optJSONArray(
+				String firstName = (fullName.length > 0) ? fullName[0] : "";
+				String lastName = (fullName.length > 1) ? fullName[1] : "";
+
+				String email = userJSONObject.optString("emailAddress", "");
+
+				JSONArray groupsJSONArray = userJSONObject.optJSONArray(
 					"userGroupBriefs");
 				List<String> groupNames = new ArrayList<>();
 
-				if (groups != null) {
-					for (int g = 0; g < groups.length(); g++) {
+				if (groupsJSONArray != null) {
+					for (int g = 0; g < groupsJSONArray.length(); g++) {
 						groupNames.add(
-							groups.getJSONObject(
+							groupsJSONArray.getJSONObject(
 								g
 							).optString(
 								"name", ""
@@ -123,10 +125,10 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 
 				String userGroup = String.join(" | ", groupNames);
 
-				String courseTitle = courseJsonObject.optString("title", "");
-				float totalAssets = courseJsonObject.optInt("totalAssets", 0);
+				String courseTitle = courseJSONObject.optString("title", "");
+				float totalAssets = courseJSONObject.optInt("totalAssets", 0);
 
-				String completedAssetsStr = enrollmentJsonObject.optString(
+				String completedAssetsStr = enrollmentJSONObject.optString(
 					"completedAssetIds", ""
 				).replaceFirst(
 					"^,", ""
@@ -138,8 +140,8 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 
 				enrollmentDataList.add(
 					new EnrollmentData(
-						userId, firstName, lastName, email, userGroup,
-						courseTitle, totalAssets, completedAssets));
+						completedAssets, courseTitle, email, firstName,
+						lastName, userGroup, userId, totalAssets));
 			}
 
 			lastPage = jsonObject.getInt("lastPage");
@@ -149,16 +151,19 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 				new FileWriter("report.csv"))) {
 
 			printWriter.println(
-				"First Name,Last Name,Work Email,Course Name,Completion Status,% Complete,User Group");
+				"First Name,Last Name,Work Email,Course Name," +
+					"Completion Status,% Complete,User Group");
 
 			for (EnrollmentData data : enrollmentDataList) {
-				if (data.getTotalAssets() == 0)
-
+				if (data.getTotalAssets() == 0) {
 					continue;
+				}
+
 				float percent =
 					(float)data.getCompletedAssets(
 					).size() / data.getTotalAssets() * 100;
-				String status = percent >= 100 ? "completed" : "in progress";
+
+				String status = (percent >= 100) ? "completed" : "in progress";
 
 				printWriter.printf(
 					"%s,%s,%s,%s,%s,%.2f,%s\n", data.getFirstName(),
@@ -168,12 +173,8 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 
 			printWriter.flush();
 		}
-		catch (IOException ioException) {
-			return ResponseEntity.status(
-				HttpStatus.INTERNAL_SERVER_ERROR
-			).body(
-				"Error generating CSV."
-			);
+		catch (Exception exception) {
+			throw new IOException(exception);
 		}
 
 		return ResponseEntity.ok(
@@ -185,12 +186,12 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 			"liferay-learn-etc-spring-boot-oauth-application-headless-server");
 	}
 
-	private boolean isWithinDateRange(
-		String dateStr, String start, String end) {
+	private boolean _isWithinDateRange(String dateStr, String start, String end)
+		throws IOException {
 
-		if ((dateStr == null) || ((start == null) && (end == null)))
-
+		if ((dateStr == null) || ((start == null) && (end == null))) {
 			return true;
+		}
 
 		try {
 			LocalDate date = LocalDate.parse(
@@ -199,23 +200,23 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 			if (start != null) {
 				LocalDate startDate = LocalDate.parse(start);
 
-				if (date.isBefore(startDate))
-
+				if (date.isBefore(startDate)) {
 					return false;
+				}
 			}
 
 			if (end != null) {
 				LocalDate endDate = LocalDate.parse(end);
 
-				if (date.isAfter(endDate))
-
+				if (date.isAfter(endDate)) {
 					return false;
+				}
 			}
 
 			return true;
 		}
-		catch (DateTimeParseException dateTimeParseException) {
-			return false;
+		catch (Exception exception) {
+			throw new IOException(exception);
 		}
 	}
 
@@ -228,60 +229,60 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 	private static class EnrollmentData {
 
 		public EnrollmentData(
-			String userId, String firstName, String lastName, String email,
-			String userGroup, String courseTitle, float totalAssets,
-			List<String> completedAssets) {
+			List<String> completedAssets, String courseTitle, String email,
+			String firstName, String lastName, String userGroup, String userId,
+			float totalAssets) {
 
-			this.userId = userId;
-			this.firstName = firstName;
-			this.lastName = lastName;
-			this.email = email;
-			this.userGroup = userGroup;
-			this.courseTitle = courseTitle;
-			this.totalAssets = totalAssets;
-			this.completedAssets = completedAssets;
+			_completedAssets = completedAssets;
+			_courseTitle = courseTitle;
+			_email = email;
+			_firstName = firstName;
+			_lastName = lastName;
+			_userGroup = userGroup;
+			_userId = userId;
+			_totalAssets = totalAssets;
 		}
 
 		public List<String> getCompletedAssets() {
-			return completedAssets;
+			return _completedAssets;
 		}
 
 		public String getCourseTitle() {
-			return courseTitle;
+			return _courseTitle;
 		}
 
 		public String getEmail() {
-			return email;
+			return _email;
 		}
 
 		public String getFirstName() {
-			return firstName;
+			return _firstName;
 		}
 
 		public String getLastName() {
-			return lastName;
+			return _lastName;
 		}
 
 		public float getTotalAssets() {
-			return totalAssets;
+			return _totalAssets;
 		}
 
 		public String getUserGroup() {
-			return userGroup;
+			return _userGroup;
 		}
 
 		public String getUserId() {
-			return userId;
+			return _userId;
 		}
 
-		private final List<String> completedAssets;
-		private final String courseTitle;
-		private final String email;
-		private final String firstName;
-		private final String lastName;
-		private final float totalAssets;
-		private final String userGroup;
-		private final String userId;
+		private final List<String> _completedAssets;
+		private final String _courseTitle;
+		private final String _email;
+		private final String _firstName;
+		private final String _lastName;
+		private final float _totalAssets;
+		private final String _userGroup;
+		private final String _userId;
 
 	}
 
