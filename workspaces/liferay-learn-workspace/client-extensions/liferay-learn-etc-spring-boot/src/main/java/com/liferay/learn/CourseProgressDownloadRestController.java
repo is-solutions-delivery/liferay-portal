@@ -233,14 +233,14 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 			String firstName, String lastName, String userGroup, String userId,
 			float totalAssets) {
 
-			this._completedAssets = completedAssets;
-			this._courseTitle = courseTitle;
-			this._email = email;
-			this._firstName = firstName;
-			this._lastName = lastName;
-			this._userGroup = userGroup;
-			this._userId = userId;
-			this._totalAssets = totalAssets;
+			_completedAssets = completedAssets;
+			_courseTitle = courseTitle;
+			_email = email;
+			_firstName = firstName;
+			_lastName = lastName;
+			_userGroup = userGroup;
+			_userId = userId;
+			_totalAssets = totalAssets;
 		}
 
 		public List<String> getCompletedAssets() {
