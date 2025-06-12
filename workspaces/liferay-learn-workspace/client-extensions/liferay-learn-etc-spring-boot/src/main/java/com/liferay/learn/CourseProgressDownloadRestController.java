@@ -27,7 +27,6 @@ import org.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -44,9 +43,10 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 
 	@GetMapping("/course-progress/download")
 	public ResponseEntity<String> downloadCourseProgress(
-		@AuthenticationPrincipal Jwt jwt,
-		@RequestParam(required = false) String startDate,
-		@RequestParam(required = false) String endDate) {
+			@AuthenticationPrincipal Jwt jwt,
+			@RequestParam(required = false) String startDate,
+			@RequestParam(required = false) String endDate)
+		throws IOException {
 
 		List<EnrollmentData> enrollmentDataList = new ArrayList<>();
 
@@ -97,6 +97,7 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 					"id",
 					UUID.randomUUID(
 					).toString());
+
 				String[] fullName = userJSONObject.optString(
 					"name", ""
 				).split(
@@ -108,14 +109,14 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 
 				String email = userJSONObject.optString("emailAddress", "");
 
-				JSONArray groups = userJSONObject.optJSONArray(
+				JSONArray groupsJSONArray = userJSONObject.optJSONArray(
 					"userGroupBriefs");
 				List<String> groupNames = new ArrayList<>();
 
-				if (groups != null) {
-					for (int g = 0; g < groups.length(); g++) {
+				if (groupsJSONArray != null) {
+					for (int g = 0; g < groupsJSONArray.length(); g++) {
 						groupNames.add(
-							groups.getJSONObject(
+							groupsJSONArray.getJSONObject(
 								g
 							).optString(
 								"name", ""
@@ -151,16 +152,19 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 				new FileWriter("report.csv"))) {
 
 			printWriter.println(
-				"First Name,Last Name,Work Email,Course Name,Completion Status,% Complete,User Group");
+				"First Name,Last Name,Work Email,Course Name,Completion Status," +
+					"% Complete,User Group");
 
 			for (EnrollmentData data : enrollmentDataList) {
-				if (data.getTotalAssets() == 0)
-
+				if (data.getTotalAssets() == 0) {
 					continue;
+				}
+
 				float percent =
 					(float)data.getCompletedAssets(
 					).size() / data.getTotalAssets() * 100;
-				String status = percent >= 100 ? "completed" : "in progress";
+
+				String status = (percent >= 100) ? "completed" : "in progress";
 
 				printWriter.printf(
 					"%s,%s,%s,%s,%s,%.2f,%s\n", data.getFirstName(),
@@ -170,12 +174,8 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 
 			printWriter.flush();
 		}
-		catch (IOException ioException) {
-			return ResponseEntity.status(
-				HttpStatus.INTERNAL_SERVER_ERROR
-			).body(
-				"Error generating CSV."
-			);
+		catch (Exception exception) {
+			throw new IOException(exception);
 		}
 
 		return ResponseEntity.ok(
