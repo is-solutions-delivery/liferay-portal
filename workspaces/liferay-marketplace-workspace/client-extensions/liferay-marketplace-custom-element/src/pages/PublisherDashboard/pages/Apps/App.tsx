@@ -250,7 +250,7 @@ const App: React.FC<AppProps> = ({isAdministratorDashboard}) => {
 					)}
 			</div>
 			<div>
-				{isNewAppEnabled ? (
+				{isNewAppEnabled && !isAdministratorDashboard ? (
 					<AppDetail />
 				) : (
 					<ReviewAndSubmitAppPage
