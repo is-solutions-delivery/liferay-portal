@@ -445,22 +445,21 @@ public class LearnRestController extends BaseRestController {
 	}
 
 	private List<String> _splitText(String ssml, int maxLength) {
+		StringBundler sb = new StringBundler();
+		List<String> parts = new ArrayList<>();
+
 		String ssmlContent = ssml.replaceFirst(
 			"^<speak>", ""
 		).replaceFirst(
 			"</speak>$", ""
 		).trim();
-		StringBuilder sb = new StringBuilder();
-		List<String> parts = new ArrayList<>();
 
 		String[] sentences = ssmlContent.split("(?<=[.!?])\\s+");
 
 		for (String sentence : sentences) {
 			if ((sb.length() + sentence.length()) > maxLength) {
-				parts.add(
-					sb.toString(
-					).trim());
-				sb = new StringBuilder();
+				parts.add(sb.toString().trim());
+				sb = new StringBundler();
 			}
 
 			sb.append(
@@ -471,9 +470,7 @@ public class LearnRestController extends BaseRestController {
 		}
 
 		if (sb.length() > 0) {
-			parts.add(
-				sb.toString(
-				).trim());
+			parts.add(sb.toString().trim());
 		}
 
 		return parts;
