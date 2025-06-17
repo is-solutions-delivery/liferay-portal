@@ -458,7 +458,9 @@ public class LearnRestController extends BaseRestController {
 
 		for (String sentence : sentences) {
 			if ((sb.length() + sentence.length()) > maxLength) {
-				parts.add(sb.toString().trim());
+				parts.add(
+					sb.toString(
+					).trim());
 				sb = new StringBundler();
 			}
 
@@ -470,7 +472,9 @@ public class LearnRestController extends BaseRestController {
 		}
 
 		if (sb.length() > 0) {
-			parts.add(sb.toString().trim());
+			parts.add(
+				sb.toString(
+				).trim());
 		}
 
 		return parts;
