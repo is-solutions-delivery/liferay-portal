@@ -450,29 +450,29 @@ public class LearnRestController extends BaseRestController {
 		).replaceFirst(
 			"</speak>$", ""
 		);
-		StringBuilder current = new StringBuilder();
+		StringBuilder sb = new StringBuilder();
 		List<String> parts = new ArrayList<>();
 
 		String[] sentences = ssmlContent.split("(?<=[.!?])\\s+");
 
 		for (String sentence : sentences) {
-			if ((current.length() + sentence.length()) > maxLength) {
+			if ((sb.length() + sentence.length()) > maxLength) {
 				parts.add(
-					current.toString(
+					sb.toString(
 					).trim());
-				current = new StringBuilder();
+				sb = new StringBuilder();
 			}
 
-			current.append(
+			sb.append(
 				sentence
 			).append(
 				" "
 			);
 		}
 
-		if (current.length() > 0) {
+		if (sb.length() > 0) {
 			parts.add(
-				current.toString(
+				sb.toString(
 				).trim());
 		}
 
