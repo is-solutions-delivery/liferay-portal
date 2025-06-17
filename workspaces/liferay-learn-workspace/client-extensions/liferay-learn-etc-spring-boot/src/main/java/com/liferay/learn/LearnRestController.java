@@ -269,11 +269,6 @@ public class LearnRestController extends BaseRestController {
 		return "Bearer " + accessTokenValue;
 	}
 
-	private String _getLiferayURL() {
-		return StringBundler.concat(
-			lxcDXPServerProtocol, "://", lxcDXPMainDomain);
-	}
-
 	private int _getQuizQuestionScore(
 		Map<String, Object> answerMap, JSONObject quizQuestionJSONObject,
 		JSONObject scoreSheetJSONObject) {
