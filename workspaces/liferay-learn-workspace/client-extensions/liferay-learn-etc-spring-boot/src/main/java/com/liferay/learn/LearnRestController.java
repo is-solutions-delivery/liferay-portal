@@ -61,9 +61,10 @@ public class LearnRestController extends BaseRestController {
 			JSONObject jsonObject = new JSONObject(
 				get(
 					_getAuthorization(),
-					UriComponentsBuilder.fromUriString(
-						_getLiferayURL() + "/o/c/lessons/" + lessonId +
-							"?fields=contentRawText"
+					UriComponentsBuilder.fromPath(
+						"/o/c/lessons/" + lessonId
+					).queryParam(
+						"fields", "contentRawText"
 					).build(
 					).toUri()));
 
@@ -107,7 +108,8 @@ public class LearnRestController extends BaseRestController {
 						).build()
 					).toString(),
 					UriComponentsBuilder.fromUriString(
-						"https://texttospeech.googleapis.com/v1beta1/text:synthesize"
+						"https://texttospeech.googleapis.com/v1beta1/text:" +
+							"synthesize"
 					).build(
 					).toUri());
 
@@ -150,11 +152,10 @@ public class LearnRestController extends BaseRestController {
 				new JSONObject(
 					get(
 						_getAuthorization(),
-						UriComponentsBuilder.fromUriString(
-							_getLiferayURL() +
-								"/o/object-admin/v1.0/object-folders" +
-									"/by-external-reference-code" +
-										"/P2S3_LEARNING_MANAGEMENT_SYSTEM"
+						UriComponentsBuilder.fromPath(
+							"/o/object-admin/v1.0/object-folders" +
+								"/by-external-reference-code" +
+									"/P2S3_LEARNING_MANAGEMENT_SYSTEM"
 						).build(
 						).toUri())
 				).getJSONArray(
@@ -174,13 +175,21 @@ public class LearnRestController extends BaseRestController {
 			new JSONObject(
 				get(
 					_getAuthorization(),
-					UriComponentsBuilder.fromUriString(
-						_getLiferayURL() + "/o/c/quizquestions/scopes/" +
-							_siteGroupId + "?filter=quizId eq '" + quizId +
-								"'&fields=id,position," +
-									"question,questionType,quizAnswers,quizAnswers.answer," +
-										"quizAnswers.id,quizAnswers.position&nestedFields=" +
-											"quizAnswers&pageSize=500&sort=position"
+					UriComponentsBuilder.fromPath(
+						"/o/c/quizquestions/scopes/" + _siteGroupId
+					).queryParam(
+						"filter", "quizId eq '" + quizId + "'"
+					).queryParam(
+						"fields",
+						"id,position,question,questionType,quizAnswers," +
+							"quizAnswers.answer,quizAnswers.id," +
+								"quizAnswers.position"
+					).queryParam(
+						"nestedFields", "quizAnswers"
+					).queryParam(
+						"pageSize", "500"
+					).queryParam(
+						"sort", "position"
 					).build(
 					).toUri())
 			).getJSONArray(
@@ -201,18 +210,25 @@ public class LearnRestController extends BaseRestController {
 			new JSONObject(
 				get(
 					_getAuthorization(),
-					UriComponentsBuilder.fromUriString(
-						_getLiferayURL() + "/o/c/quizes/" + quizId +
-							"?&fields=id,r_quiz_c_moduleId,durationMinutes," +
-								"passingScore,isKnowledgeCheck,quizQuestions.id," +
-									"quizQuestions.position,quizQuestions.question," +
-										"quizQuestions.questionType,quizQuestions." +
-											"questionTotalScore,quizQuestions.quizAnswers," +
-												"quizQuestions.quizAnswers.id,quizQuestions." +
-													"quizAnswers.position,quizQuestions.quizAnswers." +
-														"answer,quizQuestions.quizAnswers.score&" +
-															"nestedFields=quizQuestions,quizAnswers&" +
-																"nestedFieldsDepth=2&pageSize=500"
+					UriComponentsBuilder.fromPath(
+						"/o/c/quizes/" + quizId
+					).queryParam(
+						"fields",
+						StringBundler.concat(
+							"id,r_quiz_c_moduleId,durationMinutes,passingScore",
+							",isKnowledgeCheck,quizQuestions.id,quizQuestions.",
+							"position,quizQuestions.question,quizQuestions.",
+							"questionType,quizQuestions.questionTotalScore,",
+							"quizQuestions.quizAnswers,quizQuestions.",
+							"quizAnswers.id,quizQuestions.quizAnswers.position",
+							",quizQuestions.quizAnswers.answer,quizQuestions.",
+							"quizAnswers.score")
+					).queryParam(
+						"nestedFields", "quizQuestions,quizAnswers"
+					).queryParam(
+						"nestedFieldsDepth", "2"
+					).queryParam(
+						"pageSize", "500"
 					).build(
 					).toUri())));
 
@@ -399,9 +415,10 @@ public class LearnRestController extends BaseRestController {
 		JSONArray jsonArray = new JSONObject(
 			get(
 				_getAuthorization(),
-				UriComponentsBuilder.fromUriString(
-					_getLiferayURL() + "/o/c/quizes/" + quizId +
-						"/quizBadge?fields=id"
+				UriComponentsBuilder.fromPath(
+					"/o/c/quizes/" + quizId + "/quizBadge"
+				).queryParam(
+					"fields", "id"
 				).build(
 				).toUri())
 		).getJSONArray(
@@ -417,10 +434,13 @@ public class LearnRestController extends BaseRestController {
 		JSONObject userBadgeJSONObject = new JSONObject(
 			get(
 				_getAuthorization(),
-				UriComponentsBuilder.fromUriString(
-					_getLiferayURL() + "/o/c/userbadges/scopes/" +
-						_siteGroupId + "/?filter=userId eq '" + userId +
-							"' and badgeId eq " + badgeJSONObject.getLong("id")
+				UriComponentsBuilder.fromPath(
+					"/o/c/userbadges/scopes/" + _siteGroupId
+				).queryParam(
+					"filter",
+					StringBundler.concat(
+						"userId eq '", userId, "' and badgeId eq ",
+						badgeJSONObject.getLong("id"))
 				).build(
 				).toUri()));
 
@@ -438,8 +458,8 @@ public class LearnRestController extends BaseRestController {
 			).put(
 				"r_userBadges_userId", userId
 			).toString(),
-			UriComponentsBuilder.fromUriString(
-				_getLiferayURL() + "/o/c/userbadges/scopes/" + _siteGroupId
+			UriComponentsBuilder.fromPath(
+				"/o/c/userbadges/scopes/" + _siteGroupId
 			).build(
 			).toUri());
 	}
