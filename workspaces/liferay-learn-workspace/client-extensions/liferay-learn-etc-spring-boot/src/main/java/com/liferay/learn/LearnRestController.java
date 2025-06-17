@@ -77,7 +77,7 @@ public class LearnRestController extends BaseRestController {
 				);
 			}
 
-			List<String> ssmlTexts = _splitText(
+			List<String> ssmlTexts = _splitSsml(
 				contentRawText.replaceAll("\\bLiferay\\b", "Life-ray"), 5000);
 
 			ByteArrayOutputStream byteArrayOutputStream =
@@ -444,7 +444,7 @@ public class LearnRestController extends BaseRestController {
 			).toUri());
 	}
 
-	private List<String> _splitText(String ssml, int maxLength) {
+	private List<String> _splitSsml(String ssml, int maxLength) {
 		StringBundler sb = new StringBundler();
 		List<String> parts = new ArrayList<>();
 
