@@ -172,14 +172,13 @@
 
 					<#if (structuredContent.keywords?has_content && structuredContent.keywords?size > 0)>
 						<#assign
-							firstKeyword = structuredContent.keywords[0]
 							queryParts = []
 
 							queryParams = {
 								"fields": "dateModified,id,title",
 								"filter": "(knowledgeArticleType eq 'howTo') and (status eq 0) and (sourceTeam eq 'Enablement')",
 								"pageSize": "3",
-								"search": firstKeyword,
+								"search": structuredContent.keywords[0],
 								"sort": "dateModified:desc"
 							}
 						/>
