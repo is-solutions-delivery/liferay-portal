@@ -158,7 +158,7 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 					if (!_isWithinDateRange(modifiedDate, endDate, startDate)) {
 						continue;
 					}
-					
+
 					String[] fullName = userJSONObject.optString(
 						"name", ""
 					).split(
@@ -166,16 +166,16 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 					);
 					String firstName = (fullName.length > 0) ? fullName[0] : "";
 					String lastName = (fullName.length > 1) ? fullName[1] : "";
-					String email = userJSONObject.optString("emailAddress", "");
+					String emailAddress = userJSONObject.optString("emailAddress", "");
 
-					JSONArray groupsJSONArray = userJSONObject.optJSONArray(
+					JSONArray userGroupBriefsJSONArray = userJSONObject.optJSONArray(
 						"userGroupBriefs");
 					List<String> groupNames = new ArrayList<>();
 
-					if (groupsJSONArray != null) {
-						for (int g = 0; g < groupsJSONArray.length(); g++) {
+					if (userGroupBriefsJSONArray != null) {
+						for (int g = 0; g < userGroupBriefsJSONArray.length(); g++) {
 							groupNames.add(
-								groupsJSONArray.getJSONObject(
+								userGroupBriefsJSONArray.getJSONObject(
 									g
 								).optString(
 									"name", ""
@@ -208,7 +208,7 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 						(percent >= 100) ? "completed" : "in progress";
 
 					csvPrinter.printRecord(
-						firstName, lastName, email, courseTitle, status,
+						firstName, lastName, emailAddress, courseTitle, status,
 						String.format("%.2f", percent), userGroup);
 				}
 
