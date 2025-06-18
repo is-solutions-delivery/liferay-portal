@@ -4,6 +4,6 @@
 	"htmlPath": "index.html",
 	"icon": "code",
 	"jsPath": "index.js",
-	"name": "LMS Text To Speech",
+	"name": "LMS Text to Speech",
 	"type": "component"
 }
