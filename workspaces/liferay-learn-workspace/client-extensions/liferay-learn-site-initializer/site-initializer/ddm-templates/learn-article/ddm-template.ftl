@@ -190,24 +190,24 @@
 							/>
 						</#list>
 
-						<#assign structuredContentHowTo = restClient.get("/c/p2s3knowledgearticles/?" + queryParts?join('&')) />
+						<#assign knowledgeArticles = restClient.get("/c/p2s3knowledgearticles/?" + queryParts?join('&')) />
 
-						<#if (structuredContentHowTo.totalCount)?has_content && (structuredContentHowTo.totalCount > 0)>
+						<#if (knowledgeArticles.totalCount)?has_content && (knowledgeArticles.totalCount > 0)>
 							<div class="how-to-container">
 								<div class="how-to-container-header">
 									${languageUtil.get(locale, 'how-to-related-to-this-article')}
 								</div>
 
 								<div class="how-to-cards-container" id="how-to-cards-container">
-									<#list structuredContentHowTo.items as howToArticle>
-										<a class="how-to-card" href="${themeDisplay.getCDNBaseURL()}/l/${howToArticle.id}/">
+									<#list knowledgeArticles.items as knowledgeArticle>
+										<a class="how-to-card" href="${themeDisplay.getCDNBaseURL()}/l/${knowledgeArticle.id}/">
 											<div class="how-to-card-header">
-												${howToArticle.title!}
+												${knowledgeArticle.title!}
 											</div>
 
 											<div class="how-to-card-date-published">
 												<#assign
-													date = howToArticle.dateModified?datetime("yyyy-MM-dd'T'HH:mm:ss'Z'")
+													date = knowledgeArticle.dateModified?datetime("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
 													formattedDate = date?string["MMM dd, yy hh:mm a"]
 												/>
