@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -141,14 +140,19 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 				JSONArray jsonArray = jsonObject.getJSONArray("items");
 
 				for (int j = 0; j < jsonArray.length(); j++) {
-					JSONObject enrollmentJSONObject = jsonArray.getJSONObject(j);
+					JSONObject enrollmentJSONObject = jsonArray.getJSONObject(
+						j);
 
-					JSONObject courseJSONObject = enrollmentJSONObject.optJSONObject(
+					JSONObject courseJSONObject =
+						enrollmentJSONObject.optJSONObject(
 							"r_courseEnrollment_c_course");
-					JSONObject userJSONObject = enrollmentJSONObject.optJSONObject(
-						"r_userenrollments_user");
+					JSONObject userJSONObject =
+						enrollmentJSONObject.optJSONObject(
+							"r_userenrollments_user");
 
-					if ((courseJSONObject == null) || (userJSONObject == null)) {
+					if ((courseJSONObject == null) ||
+						(userJSONObject == null)) {
+
 						continue;
 					}
 
@@ -159,22 +163,22 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 						continue;
 					}
 
-					String[] fullName = userJSONObject.optString(
-						"name", ""
-					).split(
-						" ", 2
-					);
-					String firstName = (fullName.length > 0) ? fullName[0] : "";
-					String lastName = (fullName.length > 1) ? fullName[1] : "";
-					String emailAddress = userJSONObject.optString("emailAddress", "");
+					float totalAssets = courseJSONObject.optInt(
+						"totalAssets", 0);
 
-					JSONArray userGroupBriefsJSONArray = userJSONObject.optJSONArray(
-						"userGroupBriefs");
-					List<String> groupNames = new ArrayList<>();
+					if (totalAssets == 0) {
+						continue;
+					}
+
+					JSONArray userGroupBriefsJSONArray =
+						userJSONObject.optJSONArray("userGroupBriefs");
+					List<String> userGroupNames = new ArrayList<>();
 
 					if (userGroupBriefsJSONArray != null) {
-						for (int g = 0; g < userGroupBriefsJSONArray.length(); g++) {
-							groupNames.add(
+						for (int g = 0; g < userGroupBriefsJSONArray.length();
+							 g++) {
+
+							userGroupNames.add(
 								userGroupBriefsJSONArray.getJSONObject(
 									g
 								).optString(
@@ -183,33 +187,39 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 						}
 					}
 
-					String userGroup = String.join(" | ", groupNames);
-
-					String courseTitle = courseJSONObject.optString("title", "");
-					float totalAssets = courseJSONObject.optInt("totalAssets", 0);
-
 					String completedAssetsStr = enrollmentJSONObject.optString(
 						"completedAssetIds", ""
 					).replaceFirst(
 						"^,", ""
 					);
 
+					String userGroup = String.join(" | ", userGroupNames);
+
+					String courseTitle = courseJSONObject.optString(
+						"title", "");
+
 					List<String> completedAssets =
 						completedAssetsStr.isBlank() ? Collections.emptyList() :
 							Arrays.asList(completedAssetsStr.split(","));
 
-					if (totalAssets == 0)
-
-						continue;
-
-					float percent =
+					float progress =
 						((float)completedAssets.size() / totalAssets) * 100;
+
 					String status =
-						(percent >= 100) ? "completed" : "in progress";
+						(progress >= 100) ? "completed" : "in progress";
+
+					String[] fullName = userJSONObject.optString(
+						"name", ""
+					).split(
+						" ", 2
+					);
 
 					csvPrinter.printRecord(
-						firstName, lastName, emailAddress, courseTitle, status,
-						String.format("%.2f", percent), userGroup);
+						(fullName.length > 0) ? fullName[0] : "",
+						(fullName.length > 1) ? fullName[1] : "",
+						userJSONObject.optString("emailAddress", ""),
+						courseTitle, status, String.format("%.2f", progress),
+						userGroup);
 				}
 
 				lastPage = jsonObject.optInt("lastPage", 1);
