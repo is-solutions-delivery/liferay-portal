@@ -80,38 +80,33 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 			"liferay-learn-etc-spring-boot-oauth-application-headless-server");
 	}
 
-	private boolean _isWithinDateRange(String dateStr, String start, String end)
-		throws IOException {
+	private boolean _isWithinDateRange(
+		String dateString, String endDateString, String startDateString) {
 
-		if ((dateStr == null) || ((start == null) && (end == null))) {
-			return true;
-		}
-
-		try {
-			LocalDate date = LocalDate.parse(
-				dateStr, DateTimeFormatter.ISO_DATE_TIME);
-
-			if (start != null) {
-				LocalDate startDate = LocalDate.parse(start);
-
-				if (date.isBefore(startDate)) {
-					return false;
-				}
-			}
-
-			if (end != null) {
-				LocalDate endDate = LocalDate.parse(end);
-
-				if (date.isAfter(endDate)) {
-					return false;
-				}
-			}
+		if ((dateString == null) ||
+			((startDateString == null) && (endDateString == null))) {
 
 			return true;
 		}
-		catch (Exception exception) {
-			throw new IOException(exception);
+
+		LocalDate localDate = LocalDate.parse(
+			dateString, DateTimeFormatter.ISO_DATE_TIME);
+
+		if (startDateString != null) {
+			LocalDate startLocalDate = LocalDate.parse(startDateString);
+
+			if (localDate.isBefore(startLocalDate)) {
+				return false;
+			}
 		}
+
+		if (endDateString != null) {
+			LocalDate endLocalDate = LocalDate.parse(endDateString);
+
+			return !localDate.isAfter(endLocalDate);
+		}
+
+		return true;
 	}
 
 	private void _write(
@@ -160,7 +155,7 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 					String modifiedDate = enrollment.optString(
 						"dateModified", null);
 
-					if (!_isWithinDateRange(modifiedDate, startDate, endDate)) {
+					if (!_isWithinDateRange(modifiedDate, endDate, startDate)) {
 						continue;
 					}
 
