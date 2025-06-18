@@ -221,8 +221,8 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 
 			csvPrinter.flush();
 		}
-		catch (Exception e) {
-			throw new IOException(e);
+		catch (Exception exception) {
+			throw new IOException(exception);
 		}
 	}
 
