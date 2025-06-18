@@ -158,11 +158,7 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 					if (!_isWithinDateRange(modifiedDate, endDate, startDate)) {
 						continue;
 					}
-
-					String userId = userJSONObject.optString(
-						"id",
-						UUID.randomUUID(
-						).toString());
+					
 					String[] fullName = userJSONObject.optString(
 						"name", ""
 					).split(
