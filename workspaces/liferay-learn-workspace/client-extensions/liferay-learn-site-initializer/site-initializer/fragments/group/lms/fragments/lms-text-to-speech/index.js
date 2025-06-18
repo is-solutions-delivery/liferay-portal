@@ -33,6 +33,8 @@ const url =
 		'liferay-learn-etc-spring-boot-oauth-application-user-agent'
 	].homePageURL;
 
+let folderIdResponse = null;
+
 let voiceType =
 	document
 		.querySelector('.speech-voice li.selected')
@@ -57,24 +59,14 @@ const fetchAndPlayAudio = async (voiceType) => {
 		loadingSpinner.classList.remove('hide');
 		const fileName = `lesson-${lessonId}-${voiceType}.mp3`;
 
-		const folderId = await Liferay.Util.fetch(
-			`/o/headless-delivery/v1.0/sites/guest/document-folders?fields=id&filter=name%20eq%20%27audio-lessons%27`
-		).then((response) => response.json());
+		const folderId = await getFolderId();
 
 		const searchResponse = await fetch(
-			`/o/headless-delivery/v1.0/document-folders/${folderId.items[0].id}/documents?search=${fileName}`,
-			{
-				headers: {
-					'Accept': 'application/json',
-					'x-csrf-token': Liferay.authToken,
-				},
-			}
-		);
+			`/o/headless-delivery/v1.0/document-folders/${folderId}/documents?search=${fileName}`
+		).then((response) => response.json());
 
-		const searchData = await searchResponse.json();
-
-		if (searchData.totalCount > 0 && !!searchData.items.length) {
-			const existingAudio = searchData.items.find(
+		if (searchResponse.totalCount > 0 && !!searchResponse.items.length) {
+			const existingAudio = searchResponse.items.find(
 				(item) => item.title === fileName
 			);
 
@@ -102,12 +94,9 @@ const fetchAndPlayAudio = async (voiceType) => {
 			});
 			audioPlayer.load();
 		}
-		else {
-			console.error('No audio content returned.');
-		}
 	}
 	catch (error) {
-		console.error('Error fetching or processing audio:', error);
+		console.error(error);
 	}
 	finally {
 		loadingSpinner.classList.add('hide');
@@ -116,6 +105,28 @@ const fetchAndPlayAudio = async (voiceType) => {
 };
 
 const formatZero = (n) => (n < 10 ? '0' + n : n);
+
+const getFolderId = () => {
+	if (!folderIdResponse) {
+		folderIdResponse = Liferay.Util.fetch(
+			`/o/headless-delivery/v1.0/sites/guest/document-folders?fields=id&filter=name%20eq%20%27audio-lessons%27`
+		)
+			.then((response) => response.json())
+			.then((json) => {
+				if (!json.items?.length) {
+					throw new Error("Folder 'audio-lessons' not found.");
+				}
+
+				return json.items[0].id;
+			})
+			.catch((error) => {
+				folderIdResponse = null;
+				throw error;
+			});
+	}
+
+	return folderIdResponse;
+};
 
 const saveAudioToTTSCache = async ({
 	base64Audio,
@@ -127,10 +138,11 @@ const saveAudioToTTSCache = async ({
 		const blob = base64ToBlob(base64Audio);
 		const formData = new FormData();
 		const fileName = `lesson-${lessonId}-${voiceName}.mp3`;
+		const folderId = await getFolderId();
 
 		formData.append('file', blob, fileName);
 		const uploadResponse = await fetch(
-			`/o/headless-delivery/v1.0/document-folders/35458932/documents`,
+			`/o/headless-delivery/v1.0/document-folders/${folderId}/documents`,
 			{
 				body: formData,
 				headers: {
@@ -145,11 +157,9 @@ const saveAudioToTTSCache = async ({
 			const errorText = await uploadResponse.text();
 
 			if (uploadResponse.status === 409) {
-				console.warn('File already exists. Skipping upload.');
-
 				return;
 			}
-			throw new Error(`upload Error: ${errorText}`);
+			throw new Error(errorText);
 		}
 
 		const uploadData = await uploadResponse.json();
@@ -175,11 +185,11 @@ const saveAudioToTTSCache = async ({
 		if (!objectResponse.ok) {
 			const errorText = await objectResponse.text();
 
-			throw new Error(`Erro ao salvar TTSCache: ${errorText}`);
+			throw new Error(errorText);
 		}
 	}
 	catch (error) {
-		console.error('Error saving audio:', error);
+		console.error(error);
 	}
 };
 
@@ -210,7 +220,7 @@ const setGuestPermissions = async (documentId) => {
 		}
 	}
 	catch (error) {
-		console.error('Error applying public permissions:', error.message);
+		console.error(error);
 	}
 };
 
