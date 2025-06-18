@@ -60,9 +60,8 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 				startDate)
 		throws IOException {
 
-		StreamingResponseBody stream = outputStream -> {
-			_write(endDate, jwt, outputStream, startDate);
-		};
+		StreamingResponseBody stream = outputStream -> _write(
+			endDate, outputStream, startDate);
 
 		return ResponseEntity.ok(
 		).header(
@@ -109,14 +108,13 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 
 			return true;
 		}
-		catch (Exception e) {
-			throw new IOException(e);
+		catch (Exception exception) {
+			throw new IOException(exception);
 		}
 	}
 
 	private void _write(
-			String endDate, Jwt jwt, OutputStream outputStream,
-			String startDate)
+			String endDate, OutputStream outputStream, String startDate)
 		throws IOException {
 
 		try (CSVPrinter csvPrinter = new CSVPrinter(
@@ -156,16 +154,16 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 					JSONObject course = enrollment.optJSONObject(
 						"r_courseEnrollment_c_course");
 
-					if ((user == null) || (course == null))
-
+					if ((user == null) || (course == null)) {
 						continue;
+					}
 
 					String modifiedDate = enrollment.optString(
 						"dateModified", null);
 
-					if (!_isWithinDateRange(modifiedDate, startDate, endDate))
-
+					if (!_isWithinDateRange(modifiedDate, startDate, endDate)) {
 						continue;
+					}
 
 					String userId = user.optString(
 						"id",
