@@ -19,7 +19,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -108,9 +110,89 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 		return true;
 	}
 
+	private void _loadCourseQuizzes() {
+		_courseQuizzes = new HashMap<>();
+
+		int lastPage = 1;
+
+		for (int i = 1; i <= lastPage; i++) {
+			JSONObject jsonObject = new JSONObject(
+				get(
+					_getAuthorization(),
+					UriComponentsBuilder.fromUriString(
+						"/o/c/quizes/scopes/" + _siteGroupId
+					).queryParam(
+						"fields",
+						"id,r_quiz_c_module,r_quiz_c_module.r_module_c_courseId"
+					).queryParam(
+						"nestedFields", "module"
+					).queryParam(
+						"page", i
+					).queryParam(
+						"pageSize", 500
+					).build(
+					).toUri()));
+
+			lastPage = jsonObject.optInt("lastPage", 1);
+
+			JSONArray jsonArray = jsonObject.getJSONArray("items");
+
+			for (int j = 0; j < jsonArray.length(); j++) {
+				JSONObject quizJSONObject = jsonArray.getJSONObject(j);
+
+				JSONObject moduleJSONObject = quizJSONObject.getJSONObject(
+					"r_quiz_c_module");
+
+				_courseQuizzes.put(
+					moduleJSONObject.getLong("r_module_c_courseId"),
+					quizJSONObject.getLong("id"));
+			}
+		}
+	}
+
+	private void _loadUserBadges() {
+		_userBadges = new HashMap<>();
+
+		int lastPage = 1;
+
+		for (int i = 1; i <= lastPage; i++) {
+			JSONObject jsonObject = new JSONObject(
+				get(
+					_getAuthorization(),
+					UriComponentsBuilder.fromUriString(
+						"/o/c/userbadges/scopes/" + _siteGroupId
+					).queryParam(
+						"fields", "quizId,r_userBadges_userId"
+					).queryParam(
+						"page", i
+					).queryParam(
+						"pageSize", 500
+					).build(
+					).toUri()));
+
+			lastPage = jsonObject.optInt("lastPage", 1);
+
+			JSONArray jsonArray = jsonObject.getJSONArray("items");
+
+			for (int j = 0; j < jsonArray.length(); j++) {
+				JSONObject badgeJSONObject = jsonArray.getJSONObject(j);
+
+				_userBadges.computeIfAbsent(
+					badgeJSONObject.getLong("r_userBadges_userId"),
+					k -> new ArrayList<>()
+				).add(
+					badgeJSONObject.getLong("quizId")
+				);
+			}
+		}
+	}
+
 	private void _write(
 			String endDate, OutputStream outputStream, String startDate)
 		throws IOException {
+
+		_loadCourseQuizzes();
+		_loadUserBadges();
 
 		try (CSVPrinter csvPrinter = new CSVPrinter(
 				new BufferedWriter(new OutputStreamWriter(outputStream)),
@@ -195,12 +277,31 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 						"^,", ""
 					);
 
-					List<String> completedAssets =
-						completedAssetIds.isBlank() ? Collections.emptyList() :
-							Arrays.asList(completedAssetIds.split(","));
+					Long quizId = _courseQuizzes.get(
+						enrollmentJSONObject.optLong(
+							"r_courseEnrollment_c_courseId", 0));
 
-					float progress =
-						((float)completedAssets.size() / totalAssets) * 100;
+					float progress = 0;
+
+					if (completedAssetIds.contains(String.valueOf(quizId))) {
+						progress = 100;
+					}
+					else {
+						List<String> completedAssets =
+							completedAssetIds.isBlank() ?
+								Collections.emptyList() :
+									Arrays.asList(completedAssetIds.split(","));
+
+						progress =
+							((float)completedAssets.size() / totalAssets) * 100;
+					}
+
+					//					List<Long> userBadges = _userBadges.get(
+					//						jsonObject.getLong("r_userenrollments_userId"));
+					//
+					//					if(userBadges.contains(quizId)) {
+					//
+					//					}
 
 					String[] fullName = userJSONObject.optString(
 						"name", ""
@@ -226,10 +327,14 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 		}
 	}
 
+	private Map<Long, Long> _courseQuizzes;
+
 	@Autowired
 	private LiferayOAuth2AccessTokenManager _liferayOAuth2AccessTokenManager;
 
 	@Value("${liferay.learn.dxp.site.group.id}")
 	private long _siteGroupId;
+
+	private Map<Long, List<Long>> _userBadges;
 
 }
