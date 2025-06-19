@@ -137,6 +137,8 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 						).build(
 						).toUri()));
 
+				lastPage = jsonObject.optInt("lastPage", 1);
+
 				JSONArray jsonArray = jsonObject.getJSONArray("items");
 
 				for (int j = 0; j < jsonArray.length(); j++) {
@@ -221,8 +223,6 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 						courseTitle, status, String.format("%.2f", progress),
 						userGroup);
 				}
-
-				lastPage = jsonObject.optInt("lastPage", 1);
 			}
 
 			csvPrinter.flush();
