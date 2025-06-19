@@ -195,20 +195,12 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 						"^,", ""
 					);
 
-					String userGroup = String.join(" | ", userGroupNames);
-
-					String courseTitle = courseJSONObject.optString(
-						"title", "");
-
 					List<String> completedAssets =
 						completedAssetIds.isBlank() ? Collections.emptyList() :
 							Arrays.asList(completedAssetIds.split(","));
 
 					float progress =
 						((float)completedAssets.size() / totalAssets) * 100;
-
-					String status =
-						(progress >= 100) ? "completed" : "in progress";
 
 					String[] fullName = userJSONObject.optString(
 						"name", ""
@@ -220,8 +212,10 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 						(fullName.length > 0) ? fullName[0] : "",
 						(fullName.length > 1) ? fullName[1] : "",
 						userJSONObject.optString("emailAddress", ""),
-						courseTitle, status, String.format("%.2f", progress),
-						userGroup);
+						courseJSONObject.optString("title", ""),
+						(progress >= 100) ? "completed" : "in progress",
+						String.format("%.2f", progress),
+						String.join(" | ", userGroupNames));
 				}
 			}
 
