@@ -177,19 +177,19 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 					List<String> userGroupNames = new ArrayList<>();
 
 					if (userGroupBriefsJSONArray != null) {
-						for (int g = 0; g < userGroupBriefsJSONArray.length();
-							 g++) {
+						for (int k = 0; k < userGroupBriefsJSONArray.length();
+							 k++) {
 
 							userGroupNames.add(
 								userGroupBriefsJSONArray.getJSONObject(
-									g
+									k
 								).optString(
 									"name", ""
 								));
 						}
 					}
 
-					String completedAssetsStr = enrollmentJSONObject.optString(
+					String completedAssetIds = enrollmentJSONObject.optString(
 						"completedAssetIds", ""
 					).replaceFirst(
 						"^,", ""
@@ -201,8 +201,8 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 						"title", "");
 
 					List<String> completedAssets =
-						completedAssetsStr.isBlank() ? Collections.emptyList() :
-							Arrays.asList(completedAssetsStr.split(","));
+						completedAssetIds.isBlank() ? Collections.emptyList() :
+							Arrays.asList(completedAssetIds.split(","));
 
 					float progress =
 						((float)completedAssets.size() / totalAssets) * 100;
