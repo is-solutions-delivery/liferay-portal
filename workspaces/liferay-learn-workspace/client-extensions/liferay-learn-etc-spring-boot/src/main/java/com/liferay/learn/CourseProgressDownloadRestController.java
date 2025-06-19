@@ -129,11 +129,11 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 						UriComponentsBuilder.fromUriString(
 							"/o/c/enrollments/scopes/" + _siteGroupId
 						).queryParam(
-							"pageSize", 500
+							"nestedFields", "course,user"
 						).queryParam(
 							"page", i
 						).queryParam(
-							"nestedFields", "course,user"
+							"pageSize", 500
 						).build(
 						).toUri()));
 
