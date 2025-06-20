@@ -13,6 +13,8 @@ export type DashboardListItems = {
 	itemTitle: string;
 	path: string;
 	symbol: string;
+	hidden?: boolean;
+	visible?: boolean;
 };
 
 export type DashboardNavigationProps = {
@@ -28,7 +30,7 @@ export function DashboardNavigation({
 	accountIcon,
 	accountsSearch,
 	currentAccount,
-	dashboardNavigationItems,
+	dashboardNavigationItems, 
 }: DashboardNavigationProps) {
 	return (
 		<div className="dashboard-navigation-container">
@@ -42,12 +44,14 @@ export function DashboardNavigation({
 			)}
 
 			<div className="dashboard-navigation-body">
-				{dashboardNavigationItems.map((dashboardNavigation, index) => (
-					<DashboardNavigationList
-						dashboardNavigation={dashboardNavigation}
-						key={index}
-					/>
-				))}
+				{dashboardNavigationItems.map((dashboardNavigation, index) =>
+					dashboardNavigation.hidden ? null : (
+						<DashboardNavigationList
+							dashboardNavigation={dashboardNavigation}
+							key={index}
+						/>
+					)
+				)}
 			</div>
 		</div>
 	);
