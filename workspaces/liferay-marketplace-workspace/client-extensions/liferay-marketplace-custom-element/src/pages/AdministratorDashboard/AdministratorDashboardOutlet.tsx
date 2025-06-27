@@ -71,7 +71,7 @@ const AdministratorDashboardOutlet = () => {
 			</div>
 
 			<span className="h-vh-100 ml-6 w-100">
-				<Outlet />
+				<Outlet context={{isAdmin}} />
 			</span>
 		</div>
 	);

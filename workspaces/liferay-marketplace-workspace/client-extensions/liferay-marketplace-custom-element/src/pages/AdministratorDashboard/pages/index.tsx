@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import Icon from '@clayui/icon';
 import {useMemo} from 'react';
+import {Link, useOutletContext} from 'react-router-dom';
 
 import ErrorBoundary from '../../../components/ErrorBoundary';
 import Page from '../../../components/Page';
@@ -17,8 +19,10 @@ import useKPI from '../hooks/useKPI';
 import useOrderMetrics from '../hooks/useOrderMetrics';
 import AdministratorAppsListView from './Apps/AdministratorAppsListView';
 import {AdministratorOrdersListView} from './Orders';
+import Container from '../components/container/Container';
 
 export default function AdministratorSummary() {
+	const {isAdmin} = useOutletContext<{isAdmin: boolean}>();
 	const {data: accounts} = useAccountsMetrics('week');
 	const {visitorsMetric} = useAnalyticsViewsMetrics();
 	const {data: orderMetrics} = useOrderMetrics('week');
@@ -90,10 +94,8 @@ export default function AdministratorSummary() {
 					))}
 				</div>
 
-				<Page
-					pageRendererProps={{
-						className: 'border py-2 rounded-lg mb-8',
-					}}
+				<Container
+					link={{path: '/orders', visible: isAdmin}}
 					title={i18n.translate('recent-orders')}
 				>
 					<AdministratorOrdersListView
@@ -106,10 +108,10 @@ export default function AdministratorSummary() {
 							visible: false,
 						}}
 					/>
-				</Page>
+				</Container>
 
-				<Page
-					pageRendererProps={{className: 'border py-2 rounded-lg'}}
+				<Container
+					link={{path: '/apps', visible: isAdmin}}
 					title={i18n.translate('published-apps')}
 				>
 					<AdministratorAppsListView
@@ -123,7 +125,7 @@ export default function AdministratorSummary() {
 							visible: false,
 						}}
 					/>
-				</Page>
+				</Container>
 			</div>
 		</Page>
 	);
