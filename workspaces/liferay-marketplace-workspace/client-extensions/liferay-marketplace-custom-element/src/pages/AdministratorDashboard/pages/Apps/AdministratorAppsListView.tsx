@@ -35,6 +35,7 @@ type AdministratorAppsListViewProps = {
 };
 
 const AdministratorAppsListView: React.FC<AdministratorAppsListViewProps> = ({
+	filter,
 	isSortable = false,
 	listViewProps,
 	managementToolbarProps,
@@ -44,7 +45,7 @@ const AdministratorAppsListView: React.FC<AdministratorAppsListViewProps> = ({
 			filter: `${SearchBuilder.lambda(
 				'categoryNames',
 				ProductTypeVocabulary.APP
-			)}`,
+			)}${filter ? ` and ${filter}` : ''}`,
 		}}
 		id="administrator-apps"
 		managementToolbarProps={{

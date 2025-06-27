@@ -4,6 +4,7 @@
  */
 
 import Label from '@clayui/label';
+import {useSearchParams} from 'react-router-dom';
 
 import ListView from '../../../components/ListView';
 import Page from '../../../components/Page';
@@ -12,6 +13,10 @@ import i18n from '../../../i18n';
 import {formatDate} from '../../../utils/date';
 
 export function Publishers() {
+	const [searchParams] = useSearchParams();
+
+	const kpiFilters = searchParams.get('kpiFilters');
+
 	return (
 		<Page
 			pageRendererProps={{className: 'border py-2 rounded-lg'}}
@@ -19,7 +24,7 @@ export function Publishers() {
 		>
 			<ListView<Account>
 				defaultFilters={{
-					filter: `${SearchBuilder.eq('type', 'supplier')}`,
+					filter: `${SearchBuilder.eq('type', 'supplier')}${kpiFilters ? ` and ${kpiFilters}` : ''}`,
 				}}
 				id="administrator-publishers"
 				managementToolbarProps={{

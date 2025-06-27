@@ -57,7 +57,7 @@ export default function Apps() {
 				title="Apps"
 			>
 				<AdministratorAppsListView
-					filter={searchParams.get('filter') as string}
+					filter={searchParams.get('kpiFilters') as string}
 					isSortable
 					managementToolbarProps={{
 						searchVisible: true,

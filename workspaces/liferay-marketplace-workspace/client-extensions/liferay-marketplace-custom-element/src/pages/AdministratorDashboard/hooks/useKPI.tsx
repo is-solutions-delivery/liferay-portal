@@ -9,12 +9,9 @@ import useSWR from 'swr';
 
 import {useMarketplaceContext} from '../../../context/MarketplaceContext';
 import SearchBuilder from '../../../core/SearchBuilder';
+import {AccountType} from '../../../enums/Account';
 import {orderTypeLabel} from '../../../enums/Order';
-import {
-	PartnershipType,
-	ProductCategories,
-	ProductType,
-} from '../../../enums/Product';
+import {ProductCategories, ProductType} from '../../../enums/Product';
 import useModalContext from '../../../hooks/useModalContext';
 import marketplaceOAuth2 from '../../../services/oauth/Marketplace';
 import HeadlessCommerceAdminCatalog from '../../../services/rest/HeadlessCommerceAdminCatalog';
@@ -39,7 +36,7 @@ const lowCodeConfigurationsPublishedFilter = new SearchBuilder()
 	.build();
 
 const partnershipIntegrationFilter = new SearchBuilder()
-	.lambda('specificationValues', PartnershipType.TECHNOLOGY_PARTNERSHIP)
+	.lambda('specificationValues', AccountType.TECHNOLOGY_PARTNER)
 	.build();
 
 const supportingQuartelyReleaseFilter = baseSearchBuilder.clone().build();
@@ -223,7 +220,7 @@ const useKPI = () => {
 				{
 					onClick: () =>
 						navigate(
-							`/publishers?filter=customFields/AccountType:${PartnershipType.TECHNOLOGY_PARTNERSHIP}`
+							`/publishers?kpiFilters=customFields/AccountType eq '${AccountType.TECHNOLOGY_PARTNER}'`
 						),
 					...getAnnualTargetValues(
 						kpiPartnershipIntegration,
@@ -235,7 +232,7 @@ const useKPI = () => {
 				{
 					onClick: () =>
 						navigate(
-							`/apps?filter=${supportingQuartelyReleaseFilter}`
+							`/apps?kpiFilters=${supportingQuartelyReleaseFilter}`
 						),
 					...getAnnualTargetValues(
 						kpiQuartelyReleaseApps,
@@ -252,7 +249,7 @@ const useKPI = () => {
 					colors: ['#FF73C3', '#FFE1F0'],
 					onClick: () =>
 						navigate(
-							`/apps?filter=${connectorQuartelyReleaseFilter}`
+							`/apps?kpiFilters=${connectorQuartelyReleaseFilter}`
 						),
 					title: 'Apps & Connectors Supporting Quarterly Release',
 				},
@@ -264,7 +261,7 @@ const useKPI = () => {
 					colors: ['#FFD76E', '#FFF3D4'],
 					onClick: () =>
 						navigate(
-							`/apps?filter=${lowCodeConfigurationsPublishedFilter}`
+							`/apps?kpiFilters=${lowCodeConfigurationsPublishedFilter}`
 						),
 					title: 'Low Code Configurations Published',
 				},

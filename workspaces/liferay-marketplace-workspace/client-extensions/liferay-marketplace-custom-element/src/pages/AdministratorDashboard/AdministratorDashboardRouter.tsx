@@ -8,7 +8,7 @@ import {HashRouter, Route, Routes} from 'react-router-dom';
 import withProviders from '../../hoc/withProviders';
 import App from '../PublisherDashboard/pages/Apps/App';
 import AdministratorDashboardOutlet from './AdministratorDashboardOutlet';
-import AdministrationSummary from './pages';
+import AdministratorSummary from './pages';
 import Apps from './pages/Apps';
 import Orders from './pages/Orders';
 import PublisherRequest from './pages/PublisherRequest';
@@ -22,7 +22,7 @@ const AdministratorDashboardRouter = () => (
 	<HashRouter>
 		<Routes>
 			<Route element={<AdministratorDashboardOutlet />}>
-				<Route element={<AdministrationSummary />} index />
+				<Route element={<AdministratorSummary />} index />
 				<Route element={<Orders />} path="orders" />
 				<Route
 					element={<PublisherRequest />}
