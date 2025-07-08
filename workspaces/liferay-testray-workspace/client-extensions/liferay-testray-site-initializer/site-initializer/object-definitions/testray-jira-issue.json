@@ -1,0 +1,84 @@
+{
+	"active": true,
+	"defaultLanguageId": "en_US",
+	"enableIndexSearch": false,
+	"label": {
+		"en_US": "Testray Jira Issue"
+	},
+	"modifiable": true,
+	"name": "JiraIssue",
+	"objectFields": [
+		{
+			"DBType": "Clob",
+			"businessType": "RichText",
+			"externalReferenceCode": "cf5bd0aa-c565-b520-1d8e-e75c8bdc712a",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "en_US",
+			"label": {
+				"en_US": "Description"
+			},
+			"localized": false,
+			"name": "description",
+			"readOnly": "false",
+			"readOnlyConditionExpression": "",
+			"required": false,
+			"state": false,
+			"system": false,
+			"type": "Clob",
+			"unique": false
+		},
+		{
+			"DBType": "String",
+			"businessType": "Picklist",
+			"externalReferenceCode": "c2816158-7220-f8f8-4271-fa32c9060dd9",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "en_US",
+			"label": {
+				"en_US": "Issue Type"
+			},
+			"listTypeDefinitionId": "[$LIST_TYPE_DEFINITION_ID:Jira Issue Types$]",
+			"localized": false,
+			"name": "issueType",
+			"readOnly": "false",
+			"readOnlyConditionExpression": "",
+			"required": false,
+			"state": false,
+			"system": false,
+			"type": "String",
+			"unique": false
+		},
+		{
+			"DBType": "String",
+			"businessType": "Text",
+			"externalReferenceCode": "fd70eb64-313b-52fc-bd13-c271fd70b654",
+			"indexed": true,
+			"indexedAsKeyword": false,
+			"indexedLanguageId": "en_US",
+			"label": {
+				"en_US": "Title"
+			},
+			"localized": false,
+			"name": "title",
+			"readOnly": "false",
+			"readOnlyConditionExpression": "",
+			"required": false,
+			"state": false,
+			"system": false,
+			"type": "String",
+			"unique": false
+		}
+	],
+	"objectFolderExternalReferenceCode": "TESTRAY",
+	"panelCategoryKey": "control_panel.object",
+	"parameterRequired": false,
+	"pluralLabel": {
+		"en_US": "Testray Jira Issues"
+	},
+	"portlet": true,
+	"restContextPath": "/o/c/jiraissues",
+	"scope": "company",
+	"system": false,
+	"titleObjectFieldName": "externalReferenceCode"
+}
