@@ -6,6 +6,7 @@
 package com.liferay.marketplace.service;
 
 import com.liferay.client.extension.util.spring.boot3.service.BaseService;
+import com.liferay.marketplace.util.ConsoleProjectContext;
 import com.liferay.petra.string.StringBundler;
 
 import java.time.Duration;
@@ -18,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
@@ -31,8 +33,12 @@ import reactor.util.retry.Retry;
 @Component
 public class ConsoleService extends BaseService {
 
-	public void deleteProject(String projectId) throws Exception {
-		String projectName = _consoleProjectPrefix + "-ext" + projectId;
+	public void deleteProject(String orderId) throws Exception {
+
+		// extlxcv1e6-ext40509
+		// extlxcv1e6-ext40509
+
+		String projectName = _consoleProjectPrefix + "-ext" + orderId;
 
 		delete(
 			getAuthorization(), "",
@@ -160,6 +166,9 @@ public class ConsoleService extends BaseService {
 	public void setUpProject(
 			String[] emailAddresses, String dxpVirtualInstanceId, long orderId)
 		throws Exception {
+
+		ConsoleProjectContext context = _consoleProjectContextFactory.create(
+			null, orderId);
 
 		JSONObject jsonObject = _postProject(
 			_consoleProjectPrefix + "-ext" + orderId);
@@ -312,6 +321,9 @@ public class ConsoleService extends BaseService {
 
 	@Value("${liferay.marketplace.console.cluster}")
 	private String _consoleCluster;
+
+	@Autowired
+	private ConsoleProjectContext.Factory _consoleProjectContextFactory;
 
 	@Value("${liferay.marketplace.console.project.prefix}")
 	private String _consoleProjectPrefix;
