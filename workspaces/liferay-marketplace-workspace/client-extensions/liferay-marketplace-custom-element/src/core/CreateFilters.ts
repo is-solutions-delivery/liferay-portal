@@ -16,6 +16,7 @@ export default class CreateFilters {
 	static createFilter({
 		appliedFilter,
 		defaultFilter,
+		filterFromURL,
 		filterSchema,
 	}: FilterVariables) {
 		const _filter = defaultFilter ? [defaultFilter] : [];
@@ -59,6 +60,10 @@ export default class CreateFilters {
 				const formattedKey = filterKey.replace('$', '');
 
 				if (customOperator === 'lambda') {
+					if (!value || (Array.isArray(value) && !value.length)) {
+						continue;
+					}
+
 					if (Array.isArray(value)) {
 						const lambdas = value
 							.map((filter) =>
@@ -132,6 +137,10 @@ export default class CreateFilters {
 					? searchCondition.replaceAll(`'`, '')
 					: searchCondition
 			);
+		}
+
+		if (filterFromURL) {
+			_filter.push(filterFromURL);
 		}
 
 		return _filter.join(' and ');

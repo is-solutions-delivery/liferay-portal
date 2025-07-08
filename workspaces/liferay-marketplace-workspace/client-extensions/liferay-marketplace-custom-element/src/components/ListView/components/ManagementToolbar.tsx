@@ -46,6 +46,14 @@ const ManagementToolbar: React.FC<ManagementToolbarProps> = ({
 }) => {
 	const [{filters}] = useContext(ListViewContext);
 
+	const hasEntries = filters?.entries.some(({value}) => {
+		if (Array.isArray(value)) {
+			return !!value.length;
+		}
+
+		return typeof value === 'string' && value.trim() !== '';
+	});
+
 	return (
 		<>
 			<ClayManagementToolbar>
@@ -67,7 +75,7 @@ const ManagementToolbar: React.FC<ManagementToolbarProps> = ({
 					)}
 				</div>
 
-				{!!filters.entries?.filter(({value}) => value).length && (
+				{hasEntries && (
 					<ManagementToolbarResultsBar totalItems={totalItems} />
 				)}
 			</ClayManagementToolbar>

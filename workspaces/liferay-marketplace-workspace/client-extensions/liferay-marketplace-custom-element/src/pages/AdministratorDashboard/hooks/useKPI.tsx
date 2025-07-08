@@ -224,7 +224,7 @@ const useKPI = () => {
 				{
 					onClick: () =>
 						navigate(
-							`/publishers?filter={"customFields/AccountType":["${AccountType.TECHNOLOGY_PARTNER}"]}&filterSchema=administratorPublishers`
+							`/publishers?filters=customFields/AccountType eq '${AccountType.TECHNOLOGY_PARTNER}'`
 						),
 					...getAnnualTargetValues(
 						kpiPartnershipIntegration,
@@ -236,7 +236,7 @@ const useKPI = () => {
 				{
 					onClick: () =>
 						navigate(
-							`/apps?filter=${supportingQuartelyReleaseFilter}`
+							`/apps?filters=${supportingQuartelyReleaseFilter}`
 						),
 					...getAnnualTargetValues(
 						kpiQuartelyReleaseApps,
@@ -253,7 +253,7 @@ const useKPI = () => {
 					colors: ['#FF73C3', '#FFE1F0'],
 					onClick: () =>
 						navigate(
-							`/apps?filter=${connectorQuartelyReleaseFilter}`
+							`/apps?filters=${connectorQuartelyReleaseFilter}`
 						),
 					title: 'Apps & Connectors Supporting Quarterly Release',
 				},
@@ -265,7 +265,7 @@ const useKPI = () => {
 					colors: ['#FFD76E', '#FFF3D4'],
 					onClick: () =>
 						navigate(
-							`/apps?filter=${lowCodeConfigurationsPublishedFilter}`
+							`/apps?filters=${lowCodeConfigurationsPublishedFilter}`
 						),
 					title: 'Low Code Configurations Published',
 				},

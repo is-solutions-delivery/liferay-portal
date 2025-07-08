@@ -61,6 +61,7 @@ export type FilterVariables = {
 		[key: string]: string | AppliedFilters;
 	};
 	defaultFilter?: string | SearchBuilder;
+	filterFromURL?: string | null;
 	filterSchema: FilterSchema;
 };
 

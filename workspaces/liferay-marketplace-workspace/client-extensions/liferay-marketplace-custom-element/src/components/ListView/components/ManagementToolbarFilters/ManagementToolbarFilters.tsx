@@ -172,9 +172,9 @@ const FilterBody: React.FC<FilterBodyProps> = ({
 			name: key,
 			value: Array.isArray(filterCleaned[key])
 				? (filterCleaned as any)[key].map((options: Option) =>
-						options?.label
-							? options?.label
-							: options?.value || options
+						options?.value
+							? options?.value
+							: options?.label || options
 					)
 				: filterCleaned[key],
 		}));

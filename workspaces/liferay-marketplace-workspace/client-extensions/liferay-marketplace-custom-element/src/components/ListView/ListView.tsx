@@ -128,13 +128,16 @@ const ListView = <T extends Record<string, any>>({
 	const currentPage = searchParams.get('page');
 	const currentPageSize = searchParams.get('pageSize');
 
+	const filtersFromURL = searchParams.get('filters');
+
 	const filterVariables = useMemo(
 		() => ({
 			appliedFilter: filters.filter,
 			defaultFilter: defaultFilters?.filter,
+			filterFromURL: filtersFromURL,
 			filterSchema,
 		}),
-		[filters, defaultFilters?.filter, filterSchema]
+		[filters.filter, filtersFromURL, defaultFilters?.filter, filterSchema]
 	);
 
 	const filter = useMemo(() => {
