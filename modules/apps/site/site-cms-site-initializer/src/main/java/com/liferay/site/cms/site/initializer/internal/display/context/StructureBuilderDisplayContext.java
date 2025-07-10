@@ -210,6 +210,9 @@ public class StructureBuilderDisplayContext {
 						"') or (objectFolderExternalReferenceCode eq '",
 						ObjectFolderConstants.
 							EXTERNAL_REFERENCE_CODE_FILE_TYPES,
+						"') or (objectFolderExternalReferenceCode eq '",
+						ObjectFolderConstants.
+							EXTERNAL_REFERENCE_CODE_STRUCTURE_REPEATABLE_GROUPS,
 						"')"),
 					Collections.emptyMap()),
 				null, null);
