@@ -96,7 +96,8 @@ public class ViewStructuresDisplayContext {
 							_themeDisplay.getScopeGroupId(), false,
 							"/structure-builder"),
 						_themeDisplay),
-					"objectDefinitionId", "{id}"),
+					"objectDefinitionExternalReferenceCode",
+					"{externalReferenceCode}"),
 				"pencil", "edit", LanguageUtil.get(_httpServletRequest, "edit"),
 				"get", "update", null),
 			new FDSActionDropdownItem(

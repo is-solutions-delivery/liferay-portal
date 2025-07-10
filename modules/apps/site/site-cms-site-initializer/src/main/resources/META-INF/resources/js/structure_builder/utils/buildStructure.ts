@@ -178,7 +178,10 @@ export function buildReferencedStructure({
 
 	const url = new URL(window.location.href);
 
-	url.searchParams.set('objectDefinitionId', String(objectDefinition.id));
+	url.searchParams.set(
+		'objectDefinitionExternalReferenceCode',
+		objectDefinition.externalReferenceCode
+	);
 	url.searchParams.set(
 		'objectFolderExternalReferenceCode',
 		String(objectDefinition.objectFolderExternalReferenceCode)

@@ -10,7 +10,8 @@ import React, {useEffect} from 'react';
 import {Config, initializeConfig} from '../config';
 import CacheContextProvider from '../contexts/CacheContext';
 import StateContextProvider, {useSelector} from '../contexts/StateContext';
-import selectStructureId from '../selectors/selectStructureId';
+import selectStructureERC from '../selectors/selectStructureERC';
+import selectStructureStatus from '../selectors/selectStructureStatus';
 import {ObjectDefinition, ObjectDefinitions} from '../types/ObjectDefinition';
 import buildState from '../utils/buildState';
 import Sidebar from './Sidebar';
@@ -53,10 +54,11 @@ export default function StructureBuilder({
 }
 
 function HistoryManager() {
-	const structureId = useSelector(selectStructureId);
+	const erc = useSelector(selectStructureERC);
+	const status = useSelector(selectStructureStatus);
 
 	useEffect(() => {
-		if (!structureId) {
+		if (status !== 'published') {
 			return;
 		}
 
@@ -66,10 +68,10 @@ function HistoryManager() {
 			url.searchParams.delete('objectFolderExternalReferenceCode');
 		}
 
-		url.searchParams.set('objectDefinitionId', structureId.toString());
+		url.searchParams.set('objectDefinitionExternalReferenceCode', erc);
 
 		history.replaceState(null, document.head.title, url.href);
-	}, [structureId]);
+	}, [erc, status]);
 
 	return null;
 }
