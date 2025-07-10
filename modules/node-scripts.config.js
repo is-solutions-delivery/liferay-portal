@@ -438,6 +438,7 @@ module.exports = {
 			'BlockQuote',
 			'BlockToolbar',
 			'Bold',
+			'Bookmark',
 			'ButtonView',
 			'ClassicEditor',
 			'Command',
