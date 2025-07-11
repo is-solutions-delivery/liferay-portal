@@ -51,7 +51,7 @@ const createStructure = async ({
 		name,
 	});
 
-	const {id} = await page.saveStructure();
+	const {externalReferenceCode, id} = await page.saveStructure();
 
 	if (publish) {
 		await page.publishStructure();
@@ -59,7 +59,7 @@ const createStructure = async ({
 
 	structureIds.push(id);
 
-	return id;
+	return externalReferenceCode;
 };
 
 test.beforeEach(() => {
@@ -850,7 +850,7 @@ test.describe('Referenced structures', () => {
 
 			// Create another one and reference the first two
 
-			const id4 = await createStructure({
+			const externalReferenceCode4 = await createStructure({
 				label: label4,
 				page: structureBuilderPage,
 			});
@@ -924,7 +924,7 @@ test.describe('Referenced structures', () => {
 
 			// Check everything is persisted
 
-			await structureBuilderPage.editStructure(id4);
+			await structureBuilderPage.editStructure(externalReferenceCode4);
 
 			await expect(
 				page.locator('.treeview-link', {hasText: label1})

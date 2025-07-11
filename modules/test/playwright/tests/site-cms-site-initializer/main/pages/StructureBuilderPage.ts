@@ -60,19 +60,19 @@ export class StructureBuilderPage {
 		this.spaceSelector = this.page.getByLabel('Spaces', {exact: true});
 	}
 
-	private async goto(props: {id: string} | {type: StructureType}) {
+	private async goto(props: {erc: string} | {type: StructureType}) {
 		let url = PORTLET_URLS.cmsStructureBuilder;
 
-		if ('id' in props) {
-			url = url + `?objectDefinitionId=${props.id}`;
+		if ('erc' in props) {
+			url = url + `?objectDefinitionExternalReferenceCode=${props.erc}`;
 		}
 		else if ('type' in props) {
-			const erc =
+			const folderERC =
 				props.type === 'content'
 					? 'L_CMS_CONTENT_STRUCTURES'
 					: 'L_CMS_FILE_TYPES';
 
-			url = url + `?objectFolderExternalReferenceCode=${erc}`;
+			url = url + `?objectFolderExternalReferenceCode=${folderERC}`;
 		}
 
 		await this.page.goto(url);
@@ -147,7 +147,7 @@ export class StructureBuilderPage {
 
 				await expect(
 					this.page.locator('.label-secondary', {hasText: name})
-				).toBeVisible();
+				).toBeVisible({timeout: 1000});
 			}).toPass();
 		}
 
@@ -333,8 +333,8 @@ export class StructureBuilderPage {
 		expect(status).toBe(204);
 	}
 
-	async editStructure(id: string) {
-		await this.goto({id});
+	async editStructure(erc: string) {
+		await this.goto({erc});
 	}
 
 	async enableForAllSpaces() {
