@@ -6,10 +6,13 @@
 import {Outlet} from 'react-router-dom';
 
 import {DashboardNavigation} from '../../components/DashboardNavigation/DashboardNavigation';
+
 import {PageRenderer} from '../../components/Page';
 import {useAccount} from '../../hooks/data/useAccounts';
 
-const SSADashboardOutlet: React.FC = () => {
+type SSADashboardOutletProps = {};
+
+const SSADashboardOutlet: React.FC<SSADashboardOutletProps> = ({}) => {
 	const {data: selectedAccount, error, isLoading} = useAccount();
 
 	return (
