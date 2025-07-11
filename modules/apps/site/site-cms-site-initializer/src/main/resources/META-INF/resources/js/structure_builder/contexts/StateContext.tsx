@@ -72,7 +72,6 @@ const INITIAL_STATE: State = {
 	structure: {
 		children: new Map(),
 		erc: '',
-		id: null,
 		label: {
 			[Liferay.ThemeDisplay.getDefaultLanguageId()]:
 				DEFAULT_STRUCTURE_LABEL,
@@ -108,7 +107,6 @@ type ClearErrorAction = {
 };
 
 type CreateStructureAction = {
-	id: number;
 	type: 'create-structure';
 };
 
@@ -116,7 +114,7 @@ type DeleteChildAction = {type: 'delete-child'; uuid: Uuid};
 
 type DeleteSelectionAction = {type: 'delete-selection'};
 
-type PublishStructureAction = {id?: number; type: 'publish-structure'};
+type PublishStructureAction = {type: 'publish-structure'};
 
 type RefreshReferencedStructuresAction = {
 	objectDefinitions: ObjectDefinitions;
@@ -356,7 +354,6 @@ function reducer(state: State, action: Action): State {
 				error: INITIAL_STATE.error,
 				structure: {
 					...structure,
-					id: action.id,
 					status: 'draft' as Structure['status'],
 				},
 			};
@@ -437,14 +434,10 @@ function reducer(state: State, action: Action): State {
 		case 'publish-structure': {
 			const {structure} = state;
 
-			let nextStructure = {
+			const nextStructure = {
 				...structure,
 				status: 'published' as Structure['status'],
 			};
-
-			if (action.id) {
-				nextStructure = {...nextStructure, id: action.id};
-			}
 
 			return {
 				...state,

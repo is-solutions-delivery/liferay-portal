@@ -39,7 +39,6 @@ export default function buildStructure({
 			parent: uuid,
 		}),
 		erc: mainObjectDefinition.externalReferenceCode,
-		id: mainObjectDefinition.id ?? null,
 		label: mainObjectDefinition.label,
 		name: mainObjectDefinition.name ?? '',
 		spaces: getSpaces(mainObjectDefinition),

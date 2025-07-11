@@ -24,7 +24,6 @@ import selectHistory from '../selectors/selectHistory';
 import selectState from '../selectors/selectState';
 import selectStructureChildren from '../selectors/selectStructureChildren';
 import selectStructureERC from '../selectors/selectStructureERC';
-import selectStructureId from '../selectors/selectStructureId';
 import selectStructureLabel from '../selectors/selectStructureLabel';
 import selectStructureLocalizedLabel from '../selectors/selectStructureLocalizedLabel';
 import selectStructureName from '../selectors/selectStructureName';
@@ -180,7 +179,6 @@ function SaveButton() {
 	const name = useSelector(selectStructureName);
 	const spaces = useSelector(selectStructureSpaces);
 	const status = useSelector(selectStructureStatus);
-	const structureId = useSelector(selectStructureId);
 
 	const onError = (error: string) =>
 		dispatch({
@@ -200,7 +198,7 @@ function SaveButton() {
 		}
 
 		if (status === 'new') {
-			const {data, error} = await StructureService.createStructure({
+			const {error} = await StructureService.createStructure({
 				children,
 				erc,
 				label,
@@ -214,15 +212,14 @@ function SaveButton() {
 
 				return;
 			}
-			else if (data) {
-				dispatch({id: data.id, type: 'create-structure'});
+			else {
+				dispatch({type: 'create-structure'});
 			}
 		}
 		else {
 			const {error} = await StructureService.updateStructure({
 				children,
 				erc,
-				id: structureId,
 				label,
 				name,
 				spaces,
@@ -365,9 +362,6 @@ async function publishStructure({
 	const spaces = selectStructureSpaces(state);
 	const status = selectStructureStatus(state);
 	const structureERC = selectStructureERC(state);
-	const structureId = selectStructureId(state);
-
-	let id = structureId;
 
 	const onSuccess = async () => {
 		staleCache('object-definitions');
@@ -435,7 +429,7 @@ async function publishStructure({
 		});
 
 	if (status === 'new') {
-		const {data, error} = await StructureService.createStructure({
+		const {error} = await StructureService.createStructure({
 			children,
 			erc,
 			label,
@@ -449,17 +443,14 @@ async function publishStructure({
 
 			return;
 		}
-		else if (data && data.id) {
-			id = data.id;
-
-			dispatch({id, type: 'publish-structure'});
+		else {
+			dispatch({type: 'publish-structure'});
 		}
 	}
 	else if (status === 'draft') {
 		const {error} = await StructureService.updateStructure({
 			children,
 			erc,
-			id: structureId,
 			label,
 			name,
 			spaces,
@@ -479,7 +470,6 @@ async function publishStructure({
 		const {error} = await StructureService.updateStructure({
 			children,
 			erc,
-			id: structureId,
 			label,
 			name,
 			spaces,

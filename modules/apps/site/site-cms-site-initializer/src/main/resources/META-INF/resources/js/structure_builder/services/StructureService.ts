@@ -41,7 +41,6 @@ async function createStructure({
 async function updateStructure({
 	children,
 	erc,
-	id,
 	label,
 	name,
 	spaces,
@@ -49,7 +48,6 @@ async function updateStructure({
 }: {
 	children: Structure['children'];
 	erc: Structure['erc'];
-	id: Structure['id'];
 	label: Structure['label'];
 	name: Structure['name'];
 	spaces: Structure['spaces'];
@@ -58,7 +56,6 @@ async function updateStructure({
 	const objectDefinition = buildObjectDefinition({
 		children,
 		erc,
-		id,
 		label,
 		name,
 		spaces,
@@ -66,7 +63,7 @@ async function updateStructure({
 	});
 
 	return await ApiHelper.put(
-		`/o/object-admin/v1.0/object-definitions/${id}`,
+		`/o/object-admin/v1.0/object-definitions/by-external-reference-code/${erc}`,
 		objectDefinition
 	);
 }

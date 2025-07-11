@@ -26,7 +26,6 @@ import {isFieldTextSearchable} from './isFieldTextSearchable';
 export default function buildObjectDefinition({
 	children = new Map(),
 	erc,
-	id,
 	label,
 	name,
 	spaces,
@@ -34,7 +33,6 @@ export default function buildObjectDefinition({
 }: {
 	children?: Structure['children'];
 	erc: Structure['erc'];
-	id?: Structure['id'];
 	label: Structure['label'];
 	name: Structure['name'];
 	spaces: Structure['spaces'];
@@ -60,10 +58,6 @@ export default function buildObjectDefinition({
 			code: status === 'published' ? 0 : 2,
 		},
 	};
-
-	if (id) {
-		objectDefinition.id = id;
-	}
 
 	if (name) {
 		objectDefinition.name = name;
