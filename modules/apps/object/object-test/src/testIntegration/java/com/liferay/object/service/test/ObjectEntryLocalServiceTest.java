@@ -6543,7 +6543,6 @@ public class ObjectEntryLocalServiceTest {
 	private DLFileEntry _addDLFileEntry() throws Exception {
 		Company company = _companyLocalService.getCompanyById(
 			TestPropsValues.getCompanyId());
-
 		String content = RandomTestUtil.randomString();
 
 		FileEntry fileEntry = _dlAppLocalService.addFileEntry(
@@ -8399,7 +8398,7 @@ public class ObjectEntryLocalServiceTest {
 	private static class TestDLFileEntryModelListener
 		extends BaseModelListener<DLFileEntry> {
 
-		public Long getLastFileEntryId() {
+		public long getLastFileEntryId() {
 			return _fileEntryIds.get(_fileEntryIds.size() - 1);
 		}
 
