@@ -462,7 +462,7 @@ public class FragmentEntryFragmentRenderer implements FragmentRenderer {
 		}
 
 		content = _renderFragmentEntry(
-			_toConfigurationString(fragmentEntryLink, fragmentRendererContext),
+			_toConfiguration(fragmentEntryLink, fragmentRendererContext),
 			css, fragmentRendererContext, html, httpServletRequest, nonce);
 
 		if (cacheable) {
@@ -479,7 +479,7 @@ public class FragmentEntryFragmentRenderer implements FragmentRenderer {
 		return content;
 	}
 
-	private String _toConfigurationString(
+	private String _toConfiguration(
 			FragmentEntryLink fragmentEntryLink,
 			FragmentRendererContext fragmentRendererContext)
 		throws JSONException {
