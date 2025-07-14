@@ -397,8 +397,7 @@ public abstract class BaseSegmentsEntryProvider
 					StringPool.UNDERLINE,
 					StringUtil.replace(
 						expandoColumnName.replaceAll(
-							_INVALID_EXPANDO_COLUMN_NAME_CHARS_REGEX,
-							StringPool.BLANK),
+							":|;|'|\"", StringPool.BLANK),
 						CharPool.SPACE, CharPool.UNDERLINE));
 
 				if (expandoValue != null) {
@@ -469,9 +468,6 @@ public abstract class BaseSegmentsEntryProvider
 			)
 		).build();
 	}
-
-	private static final String _INVALID_EXPANDO_COLUMN_NAME_CHARS_REGEX =
-		":|;|'|\"";
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		BaseSegmentsEntryProvider.class);
