@@ -49,7 +49,7 @@ test(
 
 			await test.step('Check the results only show results with colors Blue, Green, and Yellow', async () => {
 				const blueCells = page.getByRole('cell', {name: 'Blue'});
-				const greenCells = page.getByRole('cell', {name: '🍏'});
+				const greenCells = page.getByRole('cell', {name: 'Green'}).or(page.getByRole('cell', {name: '🍏'}));
 				const redCells = page.getByRole('cell', {name: 'Red'});
 				const yellowCells = page.getByRole('cell', {name: 'Yellow'});
 
@@ -216,7 +216,7 @@ test(
 
 			await test.step('Check the results are filtered by checking all results appear', async () => {
 				const blueCells = page.getByRole('cell', {name: 'Blue'});
-				const greenCells = page.getByRole('cell', {name: '🍏'});
+				const greenCells = page.getByRole('cell', {name: 'Green'}).or(page.getByRole('cell', {name: '🍏'}));
 				const redCells = page.getByRole('cell', {name: 'Red'});
 				const yellowCells = page.getByRole('cell', {name: 'Yellow'});
 
@@ -258,7 +258,7 @@ test(
 
 			await test.step('Check the only Red results are displayed', async () => {
 				const blueCells = page.getByRole('cell', {name: 'Blue'});
-				const greenCells = page.getByRole('cell', {name: '🍏'});
+				const greenCells = page.getByRole('cell', {name: 'Green'}).or(page.getByRole('cell', {name: '🍏'}));
 				const redCells = page.getByRole('cell', {name: 'Red'});
 				const yellowCells = page.getByRole('cell', {name: 'Yellow'});
 
@@ -297,7 +297,7 @@ test(
 
 			await test.step('Check the results only show "Green", "Yellow", and "Red"', async () => {
 				const blueCells = page.getByRole('cell', {name: 'Blue'});
-				const greenCells = page.getByRole('cell', {name: '🍏'});
+				const greenCells = page.getByRole('cell', {name: 'Green'}).or(page.getByRole('cell', {name: '🍏'}));
 				const redCells = page.getByRole('cell', {name: 'Red'});
 				const yellowCells = page.getByRole('cell', {name: 'Yellow'});
 
@@ -319,7 +319,7 @@ test(
 
 			await test.step('Check all results are shown', async () => {
 				const blueCells = page.getByRole('cell', {name: 'Blue'});
-				const greenCells = page.getByRole('cell', {name: '🍏'});
+				const greenCells = page.getByRole('cell', {name: 'Green'}).or(page.getByRole('cell', {name: '🍏'}));
 				const yellowCells = page.getByRole('cell', {name: 'Yellow'});
 				const redCells = page.getByRole('cell', {name: 'Red'});
 
