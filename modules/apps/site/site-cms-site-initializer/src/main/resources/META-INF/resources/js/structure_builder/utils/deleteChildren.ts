@@ -27,7 +27,7 @@ export default function deleteChildren({
 
 		// If it's a repeatable group, do recursive call with its children
 
-		if (child.type === 'repeatable-group') {
+		else if (child.type === 'repeatable-group') {
 			const groupChildren = deleteChildren({
 				root: child,
 				uuids,
