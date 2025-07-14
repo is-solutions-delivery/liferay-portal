@@ -31,20 +31,18 @@ export default function Settings() {
 
 	if (item.type === 'repeatable-group') {
 		return (
-			<RepeatableGroupSettings group={item.group} key={item.group.uuid} />
+			<RepeatableGroupSettings
+				disabled={item.referenced}
+				group={item.group}
+				key={item.group.uuid}
+			/>
 		);
 	}
 
 	if (item.type === 'field') {
 		return (
-			<StructureFieldSettings field={item.field} key={item.field.uuid} />
-		);
-	}
-
-	if (item.type === 'referenced-field') {
-		return (
 			<StructureFieldSettings
-				disabled
+				disabled={item.referenced}
 				field={item.field}
 				key={item.field.uuid}
 			/>

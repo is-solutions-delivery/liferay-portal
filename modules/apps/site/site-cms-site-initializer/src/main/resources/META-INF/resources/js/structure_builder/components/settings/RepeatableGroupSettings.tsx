@@ -16,8 +16,10 @@ import Breadcrumb from '../Breadcrumb';
 import {LocalizedInput} from '../LocalizedInput';
 
 export default function RepeatableGroupSettings({
+	disabled,
 	group,
 }: {
+	disabled?: boolean;
 	group: RepeatableGroup;
 }) {
 	useEffect(() => {
@@ -41,7 +43,7 @@ export default function RepeatableGroupSettings({
 
 				<ClayTabs.Panels fade>
 					<ClayTabs.TabPane className="px-0">
-						<GeneralTab group={group} />
+						<GeneralTab disabled={disabled} group={group} />
 					</ClayTabs.TabPane>
 
 					<ClayTabs.TabPane className="px-0">
@@ -53,7 +55,13 @@ export default function RepeatableGroupSettings({
 	);
 }
 
-function GeneralTab({group}: {group: RepeatableGroup}) {
+function GeneralTab({
+	disabled,
+	group,
+}: {
+	disabled?: boolean;
+	group: RepeatableGroup;
+}) {
 	const dispatch = useStateDispatch();
 
 	const labelInputId = useId();
@@ -71,6 +79,7 @@ function GeneralTab({group}: {group: RepeatableGroup}) {
 			</div>
 
 			<LocalizedInput
+				disabled={disabled}
 				formGroupClassName="mt-4"
 				id={labelInputId}
 				label={Liferay.Language.get('label')}

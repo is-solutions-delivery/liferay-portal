@@ -15,10 +15,9 @@ import {Field} from '../../utils/field';
 import {useSelector} from '../StateContext';
 
 type SelectedChild =
-	| {field: Field; type: 'field'}
-	| {field: Field; type: 'referenced-field'}
+	| {field: Field; referenced: boolean; type: 'field'}
 	| {referencedStructure: ReferencedStructure; type: 'referenced-structure'}
-	| {group: RepeatableGroup; type: 'repeatable-group'};
+	| {group: RepeatableGroup; referenced: boolean; type: 'repeatable-group'};
 
 type SelectedItem =
 	| {type: 'main-structure'}
@@ -64,13 +63,15 @@ function findSelectedChild(
 			else if (child.type === 'repeatable-group') {
 				return {
 					group: child,
+					referenced: isReferenced,
 					type: 'repeatable-group',
 				};
 			}
 			else {
 				return {
 					field: child,
-					type: isReferenced ? 'referenced-field' : 'field',
+					referenced: isReferenced,
+					type: 'field',
 				};
 			}
 		}
@@ -78,7 +79,11 @@ function findSelectedChild(
 			child.type === 'referenced-structure' ||
 			child.type === 'repeatable-group'
 		) {
-			const group = findSelectedChild(uuid, child.children);
+			const group = findSelectedChild(
+				uuid,
+				child.children,
+				isReferenced || child.type === 'referenced-structure'
+			);
 
 			if (group) {
 				return group;
