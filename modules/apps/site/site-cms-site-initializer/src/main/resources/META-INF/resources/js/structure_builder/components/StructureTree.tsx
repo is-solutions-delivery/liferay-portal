@@ -12,6 +12,7 @@ import {useEventListener} from '@liferay/frontend-js-react-web';
 import classNames from 'classnames';
 import React, {Key, useEffect, useMemo, useState} from 'react';
 
+import getLocalizedValue from '../../common/utils/getLocalizedValue';
 import {useCache} from '../contexts/CacheContext';
 import {
 	Action,
@@ -34,7 +35,6 @@ import {
 } from '../types/Structure';
 import {Uuid} from '../types/Uuid';
 import {FIELD_TYPE_ICON, FieldType} from '../utils/field';
-import getLocalizedLabel from '../utils/getLocalizedLabel';
 
 type TreeItem = {
 	actions?: Array<{
@@ -351,7 +351,7 @@ function buildItems({
 				child.type === 'referenced-structure' ||
 				child.type === 'repeatable-group'
 			) {
-				const label = getLocalizedLabel(child);
+				const label = getLocalizedValue(child.label);
 
 				const item: TreeItem = {
 					actions: getItemActions({
@@ -387,7 +387,7 @@ function buildItems({
 				}
 			}
 			else {
-				const label = getLocalizedLabel(child);
+				const label = getLocalizedValue(child.label);
 
 				if (match(label, search)) {
 					items.push({
@@ -399,9 +399,7 @@ function buildItems({
 						icon: FIELD_TYPE_ICON[child.type],
 						id: child.uuid,
 						invalid: invalids.has(child.uuid),
-						label: child.label[
-							Liferay.ThemeDisplay.getDefaultLanguageId()
-						]!,
+						label: getLocalizedValue(child.label),
 						type: child.type,
 					});
 				}

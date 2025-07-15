@@ -12,8 +12,8 @@ import ClayTabs from '@clayui/tabs';
 import {sub} from 'frontend-js-web';
 import React from 'react';
 
+import getLocalizedValue from '../../../common/utils/getLocalizedValue';
 import {ReferencedStructure} from '../../types/Structure';
-import getLocalizedLabel from '../../utils/getLocalizedLabel';
 import Breadcrumb from '../Breadcrumb';
 import ERCInput from '../ERCInput';
 import Input from '../Input';
@@ -24,7 +24,7 @@ export default function ReferencedStructureSettings({
 }: {
 	referencedStructure: ReferencedStructure;
 }) {
-	const label = getLocalizedLabel(referencedStructure);
+	const label = getLocalizedValue(referencedStructure.label);
 
 	return (
 		<ClayLayout.ContainerFluid className="px-4" size="md" view>
