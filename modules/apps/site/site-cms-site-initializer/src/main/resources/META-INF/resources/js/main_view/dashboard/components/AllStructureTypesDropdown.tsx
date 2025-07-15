@@ -6,6 +6,7 @@
 import React, {useContext, useState} from 'react';
 
 import ApiHelper from '../../../common/services/ApiHelper';
+import getLocalizedValue from '../../../common/utils/getLocalizedValue';
 import {ViewDashboardContext} from '../ViewDashboardContext';
 import {buildQueryString} from '../utils/buildQueryString';
 import {FilterDropdown, Item} from './FilterDropdown';
@@ -39,8 +40,8 @@ const AllStructureTypesDropdown: React.FC<IAllFiltersDropdown> = ({
 		if (data) {
 			return data.items.map(({id, label}) => ({
 				label:
-					label[Liferay.ThemeDisplay.getDefaultLanguageId()] ||
-					label['en_US'],
+					getLocalizedValue(label) ||
+					getLocalizedValue(label, 'en_US'),
 				value: String(id),
 			}));
 		}

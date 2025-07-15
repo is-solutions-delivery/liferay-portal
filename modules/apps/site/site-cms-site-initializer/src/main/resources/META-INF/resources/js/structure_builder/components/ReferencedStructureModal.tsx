@@ -12,6 +12,7 @@ import classNames from 'classnames';
 import {FieldFeedback, useId} from 'frontend-js-components-web';
 import React, {useState} from 'react';
 
+import getLocalizedValue from '../../common/utils/getLocalizedValue';
 import {useCache} from '../contexts/CacheContext';
 import {useSelector} from '../contexts/StateContext';
 import selectStructureERC from '../selectors/selectStructureERC';
@@ -144,10 +145,7 @@ function getItems(objectDefinitions: ObjectDefinitions): Item[] {
 				'L_CMS_STRUCTURE_REPEATABLE_GROUPS'
 		)
 		.map((objectDefinition) => ({
-			label:
-				objectDefinition.label[
-					Liferay.ThemeDisplay.getDefaultLanguageId()
-				] || '',
+			label: getLocalizedValue(objectDefinition.label),
 			value: objectDefinition.externalReferenceCode,
 		}));
 }

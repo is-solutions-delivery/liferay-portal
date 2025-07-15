@@ -6,6 +6,7 @@
 import ClayBreadcrumb from '@clayui/breadcrumb';
 import React, {useMemo} from 'react';
 
+import getLocalizedValue from '../../common/utils/getLocalizedValue';
 import {useSelector, useStateDispatch} from '../contexts/StateContext';
 import selectStructureChildren from '../selectors/selectStructureChildren';
 import selectStructureLocalizedLabel from '../selectors/selectStructureLocalizedLabel';
@@ -73,9 +74,7 @@ function getPath(
 			return [
 				...path,
 				{
-					label: child!.label[
-						Liferay.ThemeDisplay.getDefaultLanguageId()
-					]!,
+					label: getLocalizedValue(child.label),
 					uuid: child.uuid,
 				},
 			];
@@ -87,9 +86,7 @@ function getPath(
 			const nextPath = getPath(uuid, child.children, [
 				...path,
 				{
-					label: child!.label[
-						Liferay.ThemeDisplay.getDefaultLanguageId()
-					]!,
+					label: getLocalizedValue(child.label),
 					uuid: child.uuid,
 				},
 			]);

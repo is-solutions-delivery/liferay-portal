@@ -12,6 +12,7 @@ import {sub} from 'frontend-js-web';
 import React, {useState} from 'react';
 
 import {Option} from '../../../common/types/Picklist';
+import getLocalizedValue from '../../../common/utils/getLocalizedValue';
 import {useAddOption} from '../../contexts/PicklistBuilderContext';
 import getRandomId from '../../utils/getRandomId';
 import ERCInput from '../ERCInput';
@@ -59,7 +60,7 @@ export default function AddOptionModal({
 					<InputLocalized
 						aria-label={Liferay.Language.get('picklist-name')}
 						error={
-							name[Liferay.ThemeDisplay.getDefaultLanguageId()]
+							getLocalizedValue(name)
 								? ''
 								: Liferay.Language.get('this-field-is-required')
 						}

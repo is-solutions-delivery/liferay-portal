@@ -10,6 +10,7 @@ import React, {useMemo} from 'react';
 import Toolbar from '../../../common/components/Toolbar';
 import PicklistService from '../../../common/services/PicklistService';
 import focusInvalidElement from '../../../common/utils/focusInvalidElement';
+import getLocalizedValue from '../../../common/utils/getLocalizedValue';
 import {useStaleCache} from '../../contexts/CacheContext';
 import {
 	useDeletedOptions,
@@ -30,10 +31,7 @@ export default function PicklistBuilderToolbar() {
 	const setId = useSetId();
 	const staleCache = useStaleCache();
 
-	const localizedName = useMemo(
-		() => name[Liferay.ThemeDisplay.getDefaultLanguageId()],
-		[name]
-	);
+	const localizedName = useMemo(() => getLocalizedValue(name), [name]);
 
 	const onSave = async () => {
 		if (deletedOptions) {
