@@ -6,7 +6,7 @@
 import ClayButton from '@clayui/button';
 import ClayDropDown from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 
 import initializeLock from './initializeLock';
 import PublishModal from './modals/PublishModal';
@@ -18,7 +18,7 @@ const ACTION_SCHEDULE = 'schedule';
 
 export default function SaveButtons({
 	articleId: initialArticleId,
-	defaultLanguageId,
+	defaultLanguageId: initialDefaultLanguageId,
 	displayDate,
 	editingDefaultValues,
 	permissionsURL,
@@ -34,10 +34,33 @@ export default function SaveButtons({
 
 	const [articleId, setArticleId] = useState(initialArticleId);
 
+	const [defaultLanguageId, setDefaultLanguageId] = useState(
+		initialDefaultLanguageId
+	);
+
 	const [{publishModalAction, publishModalVisible}, setPublishModalState] =
 		useState({publishModalAction: '', publishModalVisible: false});
 
 	const [saveButtonDisabled, setSaveButtonDisabled] = useState(false);
+
+	const localeChangeHandler = useCallback(
+		(event) => {
+			const defaultLanguageId = event.item.getAttribute('data-value');
+
+			setDefaultLanguageId(defaultLanguageId);
+		},
+		[setDefaultLanguageId]
+	);
+
+	useEffect(() => {
+		Liferay.on('inputLocalized:defaultLocaleChanged', localeChangeHandler);
+
+		return () =>
+			Liferay.detach(
+				'inputLocalized:defaultLocaleChanged',
+				localeChangeHandler
+			);
+	}, [localeChangeHandler]);
 
 	useEffect(() => {
 		initializeLock('publishing', {
