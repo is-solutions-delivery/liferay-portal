@@ -1693,6 +1693,27 @@ ckeditor4Test(
 	}
 );
 
+baseTest(
+	'Check if Web Content can be saved as draft after changing default language',
+	{
+		tag: '@LPD-60603',
+	},
+	async ({journalEditArticlePage, page, site}) => {
+		await journalEditArticlePage.goto({siteUrl: site.friendlyUrlPath});
+
+		await journalEditArticlePage.changeDefaultLanguage('pt_BR');
+
+		const title = getRandomString();
+
+		await journalEditArticlePage.saveAsDraftWithPermissions(title);
+
+		await waitForAlert(
+			page,
+			`Success:${title} was successfully saved as a draft.`
+		);
+	}
+);
+
 ckeditor5Test(
 	'Web Content is published with multiple translations',
 	{
