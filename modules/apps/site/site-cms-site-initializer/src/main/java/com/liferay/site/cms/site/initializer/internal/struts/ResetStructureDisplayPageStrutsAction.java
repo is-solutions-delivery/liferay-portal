@@ -55,18 +55,21 @@ public class ResetStructureDisplayPageStrutsAction implements StrutsAction {
 				httpServletResponse, _jsonFactory.createJSONObject(),
 				HttpServletResponse.SC_OK);
 
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)httpServletRequest.getAttribute(
+					WebKeys.THEME_DISPLAY);
+
 			ObjectDefinition objectDefinition =
-				_objectDefinitionService.getObjectDefinition(
-					ParamUtil.getLong(
-						httpServletRequest, "objectDefinitionId"));
+				_objectDefinitionService.
+					getObjectDefinitionByExternalReferenceCode(
+						ParamUtil.getString(
+							httpServletRequest,
+							"objectDefinitionExternalReferenceCode"),
+						themeDisplay.getCompanyId());
 
 			if ((objectDefinition == null) || !objectDefinition.isApproved()) {
 				return null;
 			}
-
-			ThemeDisplay themeDisplay =
-				(ThemeDisplay)httpServletRequest.getAttribute(
-					WebKeys.THEME_DISPLAY);
 
 			Group group = _groupLocalService.getGroup(
 				themeDisplay.getCompanyId(), GroupConstants.CMS);
