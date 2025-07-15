@@ -160,8 +160,8 @@ public class ResetStructureDisplayPageStrutsActionTest {
 				_group, _layout);
 
 		mockHttpServletRequest.setParameter(
-			"objectDefinitionId",
-			String.valueOf(_objectDefinition.getObjectDefinitionId()));
+			"objectDefinitionExternalReferenceCode",
+			String.valueOf(_objectDefinition.getExternalReferenceCode()));
 		mockHttpServletRequest.setParameter(
 			"redirect", RandomTestUtil.randomString());
 		mockHttpServletRequest.setRequestURI(_layout.getFriendlyURL());
