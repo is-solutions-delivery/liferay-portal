@@ -168,91 +168,87 @@ public class JSUnitModulesBatchTestClassGroup
 		sortTestClasses();
 	}
 
-	private List<File> _getModulesProjectDirs(final File portalModulesBaseDir) {
-		final List<File> modulesProjectDirs = new ArrayList<>();
+	private List<File> _getModulesProjectDirs(final File portalModulesBaseDir)
+		throws IOException {
 
-		final boolean testGitrepoJSUnit = testGitrepoJSUnit();
+		List<File> modulesProjectDirs = new ArrayList<>();
 
-		try {
-			Files.walkFileTree(
-				portalModulesBaseDir.toPath(),
-				new SimpleFileVisitor<Path>() {
+		boolean testGitrepoJSUnit = testGitrepoJSUnit();
 
-					@Override
-					public FileVisitResult preVisitDirectory(
-						Path filePath,
-						BasicFileAttributes basicFileAttributes) {
+		Files.walkFileTree(
+			portalModulesBaseDir.toPath(),
+			new SimpleFileVisitor<Path>() {
 
-						if (filePath.equals(portalModulesBaseDir.toPath())) {
-							return FileVisitResult.CONTINUE;
-						}
+				@Override
+				public FileVisitResult preVisitDirectory(
+					Path filePath, BasicFileAttributes basicFileAttributes) {
 
-						File file = filePath.toFile();
+					if (filePath.equals(portalModulesBaseDir.toPath())) {
+						return FileVisitResult.CONTINUE;
+					}
 
-						File currentDirectory =
-							JenkinsResultsParserUtil.getCanonicalFile(file);
+					File file = filePath.toFile();
 
-						String currentDirectoryPath =
-							currentDirectory.getAbsolutePath();
+					File currentDirectory =
+						JenkinsResultsParserUtil.getCanonicalFile(file);
 
-						if (currentDirectoryPath.contains("modules") &&
-							!(currentDirectoryPath.contains("modules/apps") ||
-							  currentDirectoryPath.contains("modules/dxp"))) {
+					String currentDirectoryPath =
+						currentDirectory.getAbsolutePath();
 
-							return FileVisitResult.SKIP_SUBTREE;
-						}
+					if (currentDirectoryPath.contains("modules") &&
+						!(currentDirectoryPath.contains("modules/apps") ||
+						  currentDirectoryPath.contains("modules/dxp"))) {
 
-						if (!testGitrepoJSUnit) {
-							File gitrepoFile = new File(
-								currentDirectory, ".gitrepo");
+						return FileVisitResult.SKIP_SUBTREE;
+					}
 
-							if (gitrepoFile.exists() &&
-								!currentDirectoryPath.contains("osb-faro")) {
+					if (!testGitrepoJSUnit) {
+						File gitrepoFile = new File(
+							currentDirectory, ".gitrepo");
 
-								return FileVisitResult.SKIP_SUBTREE;
-							}
-						}
-
-						File buildGradleFile = new File(
-							currentDirectory, "build.gradle");
-						File packageJSONFile = new File(
-							currentDirectory, "package.json");
-
-						if (!buildGradleFile.exists() ||
-							!packageJSONFile.exists()) {
-
-							return FileVisitResult.CONTINUE;
-						}
-
-						try {
-							JSONObject packageJSONObject = new JSONObject(
-								JenkinsResultsParserUtil.read(packageJSONFile));
-
-							if (!packageJSONObject.has("scripts")) {
-								return FileVisitResult.CONTINUE;
-							}
-
-							JSONObject scriptsJSONObject =
-								packageJSONObject.getJSONObject("scripts");
-
-							if (!scriptsJSONObject.has("test")) {
-								return FileVisitResult.CONTINUE;
-							}
-
-							modulesProjectDirs.add(currentDirectory);
+						if (gitrepoFile.exists() &&
+							!currentDirectoryPath.contains("osb-faro")) {
 
 							return FileVisitResult.SKIP_SUBTREE;
-						}
-						catch (IOException | JSONException exception) {
-							return FileVisitResult.CONTINUE;
 						}
 					}
 
-				});
-		}
-		catch (IOException ioException) {
-			throw new RuntimeException(ioException);
-		}
+					File buildGradleFile = new File(
+						currentDirectory, "build.gradle");
+					File packageJSONFile = new File(
+						currentDirectory, "package.json");
+
+					if (!buildGradleFile.exists() ||
+						!packageJSONFile.exists()) {
+
+						return FileVisitResult.CONTINUE;
+					}
+
+					try {
+						JSONObject packageJSONObject = new JSONObject(
+							JenkinsResultsParserUtil.read(packageJSONFile));
+
+						if (!packageJSONObject.has("scripts")) {
+							return FileVisitResult.CONTINUE;
+						}
+
+						JSONObject scriptsJSONObject =
+							packageJSONObject.getJSONObject("scripts");
+
+						if (!scriptsJSONObject.has("test")) {
+							return FileVisitResult.CONTINUE;
+						}
+
+						modulesProjectDirs.add(currentDirectory);
+
+						return FileVisitResult.SKIP_SUBTREE;
+					}
+					catch (IOException | JSONException exception) {
+						return FileVisitResult.CONTINUE;
+					}
+				}
+
+			});
 
 		return modulesProjectDirs;
 	}
