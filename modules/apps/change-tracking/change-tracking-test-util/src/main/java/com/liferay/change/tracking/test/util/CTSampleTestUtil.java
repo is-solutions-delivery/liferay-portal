@@ -48,8 +48,6 @@ public class CTSampleTestUtil {
 			int count)
 		throws Exception {
 
-		long ctCollectionId = CTCollectionThreadLocal.getCTCollectionId();
-
 		long ctsChildId = 0;
 
 		try (Connection connection = DataAccess.getConnection();
@@ -67,6 +65,8 @@ public class CTSampleTestUtil {
 					"modelClassNameId, modelClassPK, modelMvccVersion, ",
 					"changeType) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ",
 					"?)"))) {
+
+			long ctCollectionId = CTCollectionThreadLocal.getCTCollectionId();
 
 			for (int i = 0; i < count; i++) {
 				ctsChildId = CounterLocalServiceUtil.increment(
@@ -115,11 +115,13 @@ public class CTSampleTestUtil {
 			long modelClassPK, PreparedStatement preparedStatement)
 		throws Exception {
 
+		preparedStatement.setLong(1, 1);
+
 		String uuid = PortalUUIDUtil.generate();
 
-		preparedStatement.setLong(1, 1);
 		preparedStatement.setString(2, uuid);
 		preparedStatement.setString(3, uuid);
+
 		preparedStatement.setLong(4, ctCollectionId);
 		preparedStatement.setLong(
 			5, CounterLocalServiceUtil.increment(CTEntry.class.getName()));
