@@ -63,17 +63,18 @@ public class FriendlyURLResolverRegistryUtil {
 		String[] urlSeparators = _urlSeparators.get();
 
 		if (urlSeparators == null) {
-			List<String> urlSeparatorList = new ArrayList<>();
+			List<String> urlSeparatorsList = new ArrayList<>();
 
 			for (FriendlyURLResolver friendlyURLResolver :
 					_serviceTrackerList) {
 
 				if (friendlyURLResolver != null) {
-					urlSeparatorList.add(friendlyURLResolver.getURLSeparator());
+					urlSeparatorsList.add(
+						friendlyURLResolver.getURLSeparator());
 				}
 			}
 
-			urlSeparators = urlSeparatorList.toArray(new String[0]);
+			urlSeparators = urlSeparatorsList.toArray(new String[0]);
 
 			_urlSeparators.set(urlSeparators);
 		}
