@@ -252,16 +252,16 @@ public class OracleDBCTTest {
 	private static final int _BATCH_SIZE = 1001;
 
 	@Inject
-	private static ClassNameLocalService _classNameLocalService;
+	private ClassNameLocalService _classNameLocalService;
 
 	@Inject
-	private static CTCollectionLocalService _ctCollectionLocalService;
+	private CTCollectionLocalService _ctCollectionLocalService;
 
 	@Inject
-	private static CTCollectionService _ctCollectionService;
+	private CTCollectionService _ctCollectionService;
 
 	@Inject
-	private static CTSChildLocalService _ctsChildLocalService;
+	private CTSChildLocalService _ctsChildLocalService;
 
 	private CTCollection _ctCollection1;
 	private CTCollection _ctCollection2;
