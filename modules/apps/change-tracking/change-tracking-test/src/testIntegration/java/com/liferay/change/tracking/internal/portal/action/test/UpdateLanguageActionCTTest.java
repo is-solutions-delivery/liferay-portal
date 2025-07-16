@@ -52,7 +52,7 @@ public class UpdateLanguageActionCTTest {
 			PermissionCheckerMethodTestRule.INSTANCE);
 
 	@Test
-	public void testExecuteInPublication() throws Exception {
+	public void testExecute() throws Exception {
 		CTCollection ctCollection = _ctCollectionLocalService.addCTCollection(
 			null, TestPropsValues.getCompanyId(), TestPropsValues.getUserId(),
 			0, RandomTestUtil.randomString(), RandomTestUtil.randomString());
