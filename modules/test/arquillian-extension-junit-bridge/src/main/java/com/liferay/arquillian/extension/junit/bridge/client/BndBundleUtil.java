@@ -183,14 +183,12 @@ public class BndBundleUtil {
 
 		ProjectBuilder projectBuilder = new ProjectBuilder(project);
 
-		projectBuilder.addClasspath(_getClassPathFiles());
-
 		projectBuilder.addBasicPlugin(
 			(AnalyzerPlugin)analyzer -> {
+				Jar jar = analyzer.getJar();
+
 				Parameters parameters = analyzer.parseHeader(
 					analyzer.getProperty("-metatype"));
-
-				Jar jar = analyzer.getJar();
 
 				for (String name : parameters.keySet()) {
 					Collection<Clazz> metatypeClasses = analyzer.getClasses(
@@ -208,6 +206,7 @@ public class BndBundleUtil {
 
 				return false;
 			});
+		projectBuilder.addClasspath(_getClassPathFiles());
 
 		return projectBuilder;
 	}
