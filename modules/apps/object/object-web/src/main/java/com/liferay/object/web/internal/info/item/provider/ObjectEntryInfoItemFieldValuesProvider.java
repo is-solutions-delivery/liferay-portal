@@ -110,32 +110,34 @@ public class ObjectEntryInfoItemFieldValuesProvider
 
 		InfoItemFieldValues infoItemFieldValues = threadLocalCache.get(key);
 
-		if (infoItemFieldValues == null) {
-			try {
-				infoItemFieldValues = InfoItemFieldValues.builder(
-				).infoFieldValues(
-					_getInfoFieldValues(objectEntry)
-				).infoFieldValues(
-					_displayPageInfoItemFieldSetProvider.getInfoFieldValues(
-						_getInfoItemReference(objectEntry), StringPool.BLANK,
-						ObjectEntry.class.getSimpleName(), objectEntry,
-						_getThemeDisplay())
-				).infoFieldValues(
-					_infoItemFieldReaderFieldSetProvider.getInfoFieldValues(
-						objectEntry.getModelClassName(), objectEntry)
-				).infoFieldValues(
-					_templateInfoItemFieldSetProvider.getInfoFieldValues(
-						objectEntry.getModelClassName(), objectEntry)
-				).infoItemReference(
-					_getInfoItemReference(objectEntry)
-				).build();
-			}
-			catch (Exception exception) {
-				throw new RuntimeException(exception);
-			}
-
-			threadLocalCache.put(key, infoItemFieldValues);
+		if (infoItemFieldValues != null) {
+			return infoItemFieldValues;
 		}
+
+		try {
+			infoItemFieldValues = InfoItemFieldValues.builder(
+			).infoFieldValues(
+				_getInfoFieldValues(objectEntry)
+			).infoFieldValues(
+				_displayPageInfoItemFieldSetProvider.getInfoFieldValues(
+					_getInfoItemReference(objectEntry), StringPool.BLANK,
+					ObjectEntry.class.getSimpleName(), objectEntry,
+					_getThemeDisplay())
+			).infoFieldValues(
+				_infoItemFieldReaderFieldSetProvider.getInfoFieldValues(
+					objectEntry.getModelClassName(), objectEntry)
+			).infoFieldValues(
+				_templateInfoItemFieldSetProvider.getInfoFieldValues(
+					objectEntry.getModelClassName(), objectEntry)
+			).infoItemReference(
+				_getInfoItemReference(objectEntry)
+			).build();
+		}
+		catch (Exception exception) {
+			throw new RuntimeException(exception);
+		}
+
+		threadLocalCache.put(key, infoItemFieldValues);
 
 		return infoItemFieldValues;
 	}
