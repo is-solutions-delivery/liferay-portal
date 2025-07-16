@@ -8,9 +8,10 @@ import {ObjectDefinition, ObjectDefinitions} from '../types/ObjectDefinition';
 
 async function getObjectDefinitions(): Promise<ObjectDefinitions> {
 	const filter =
+		'(status/any(x:(x eq 0))) and (' +
 		"(objectFolderExternalReferenceCode eq 'L_CMS_CONTENT_STRUCTURES') or " +
 		"(objectFolderExternalReferenceCode eq 'L_CMS_FILE_TYPES') or " +
-		"(objectFolderExternalReferenceCode eq 'L_CMS_STRUCTURE_REPEATABLE_GROUPS')";
+		"(objectFolderExternalReferenceCode eq 'L_CMS_STRUCTURE_REPEATABLE_GROUPS'))";
 
 	const {data, error} = await ApiHelper.get<{items: ObjectDefinition[]}>(
 		`/o/object-admin/v1.0/object-definitions?filter=${filter}`
@@ -20,10 +21,6 @@ async function getObjectDefinitions(): Promise<ObjectDefinitions> {
 		const objectDefinitions: ObjectDefinitions = {};
 
 		for (const objectDefinition of data.items) {
-			if (objectDefinition.status?.code !== 0) {
-				continue;
-			}
-
 			objectDefinitions[objectDefinition.externalReferenceCode] =
 				objectDefinition;
 		}
