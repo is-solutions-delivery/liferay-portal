@@ -65,12 +65,10 @@ public class ViewSpaceContentsSummarySectionDisplayContext
 					getRootObjectEntryFolderExternalReferenceCode(), _groupId,
 					themeDisplay.getCompanyId());
 
-		String url =
-			ActionUtil.getBaseViewFolderURL(themeDisplay) +
-				objectEntryFolder.getObjectEntryFolderId();
-
 		return SpaceSummaryHeaderUtil.getSpaceSummaryHeaderProps(
-			httpServletRequest, "view-all-content", "content", url);
+			httpServletRequest, "view-all-content", "content",
+			ActionUtil.getBaseViewFolderURL(themeDisplay) +
+				objectEntryFolder.getObjectEntryFolderId());
 	}
 
 	@Override
