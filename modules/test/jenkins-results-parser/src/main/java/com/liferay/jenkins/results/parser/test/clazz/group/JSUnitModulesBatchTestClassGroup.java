@@ -35,7 +35,7 @@ import org.json.JSONObject;
 public class JSUnitModulesBatchTestClassGroup
 	extends ModulesBatchTestClassGroup {
 
-	public boolean testGitrepoJSUnit() {
+	private boolean _isTestGitrepoJSUnit() {
 		JobProperty jobProperty = getJobProperty("test.gitrepo.js.unit");
 
 		String jobPropertyValue = jobProperty.getValue();
@@ -173,7 +173,7 @@ public class JSUnitModulesBatchTestClassGroup
 
 		List<File> modulesProjectDirs = new ArrayList<>();
 
-		boolean testGitrepoJSUnit = testGitrepoJSUnit();
+		boolean testGitrepoJSUnit = _isTestGitrepoJSUnit();
 
 		Files.walkFileTree(
 			portalModulesBaseDir.toPath(),
