@@ -43,22 +43,6 @@ public class FunctionObjectActionExecutorImpl
 	implements CompanyScoped, ObjectDefinitionScoped {
 
 	@Override
-	public void doExecute(
-			long companyId, long objectActionId,
-			UnicodeProperties parametersUnicodeProperties,
-			JSONObject payloadJSONObject, long userId)
-		throws Exception {
-
-		_portalCatapult.launch(
-			_companyId, Http.Method.POST,
-			_functionObjectActionExecutorImplConfiguration.
-				oAuth2ApplicationExternalReferenceCode(),
-			payloadJSONObject,
-			_functionObjectActionExecutorImplConfiguration.resourcePath(),
-			userId);
-	}
-
-	@Override
 	public long getAllowedCompanyId() {
 		return _companyId;
 	}
@@ -86,6 +70,22 @@ public class FunctionObjectActionExecutorImpl
 		_key = StringBundler.concat(
 			ObjectActionExecutorConstants.KEY_FUNCTION, StringPool.POUND,
 			ConfigurationFactoryUtil.getExternalReferenceCode(properties));
+	}
+
+	@Override
+	protected void doExecute(
+			long companyId, long objectActionId,
+			UnicodeProperties parametersUnicodeProperties,
+			JSONObject payloadJSONObject, long userId)
+		throws Exception {
+
+		_portalCatapult.launch(
+			_companyId, Http.Method.POST,
+			_functionObjectActionExecutorImplConfiguration.
+				oAuth2ApplicationExternalReferenceCode(),
+			payloadJSONObject,
+			_functionObjectActionExecutorImplConfiguration.resourcePath(),
+			userId);
 	}
 
 	private List<String> _allowedObjectDefinitionNames;

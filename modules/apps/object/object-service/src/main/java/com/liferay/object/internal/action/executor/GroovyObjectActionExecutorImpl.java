@@ -32,7 +32,12 @@ import org.osgi.service.component.annotations.Reference;
 public class GroovyObjectActionExecutorImpl extends BaseObjectActionExecutor {
 
 	@Override
-	public void doExecute(
+	public String getKey() {
+		return ObjectActionExecutorConstants.KEY_GROOVY;
+	}
+
+	@Override
+	protected void doExecute(
 			long companyId, long objectActionId,
 			UnicodeProperties parametersUnicodeProperties,
 			JSONObject payloadJSONObject, long userId)
@@ -54,11 +59,6 @@ public class GroovyObjectActionExecutorImpl extends BaseObjectActionExecutor {
 		if (GetterUtil.getBoolean(results.get("invalidScript"))) {
 			throw new ScriptingException();
 		}
-	}
-
-	@Override
-	public String getKey() {
-		return ObjectActionExecutorConstants.KEY_GROOVY;
 	}
 
 	@Reference

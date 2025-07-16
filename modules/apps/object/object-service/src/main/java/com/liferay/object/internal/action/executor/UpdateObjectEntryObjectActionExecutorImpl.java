@@ -50,7 +50,12 @@ public class UpdateObjectEntryObjectActionExecutorImpl
 	extends BaseObjectActionExecutor {
 
 	@Override
-	public void doExecute(
+	public String getKey() {
+		return ObjectActionExecutorConstants.KEY_UPDATE_OBJECT_ENTRY;
+	}
+
+	@Override
+	protected void doExecute(
 			long companyId, long objectActionId,
 			UnicodeProperties parametersUnicodeProperties,
 			JSONObject payloadJSONObject, long userId)
@@ -71,11 +76,6 @@ public class UpdateObjectEntryObjectActionExecutorImpl
 				ObjectEntryVariablesUtil.getVariables(
 					_dtoConverterRegistry, objectDefinition, payloadJSONObject,
 					_systemObjectDefinitionManagerRegistry)));
-	}
-
-	@Override
-	public String getKey() {
-		return ObjectActionExecutorConstants.KEY_UPDATE_OBJECT_ENTRY;
 	}
 
 	private void _execute(
