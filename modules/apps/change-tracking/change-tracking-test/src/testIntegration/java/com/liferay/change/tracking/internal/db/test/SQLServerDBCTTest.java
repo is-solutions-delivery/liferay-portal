@@ -73,7 +73,9 @@ public class SQLServerDBCTTest {
 	}
 
 	@Test
-	public void testDeleteCTCollectionWithOver50000Entries() throws Exception {
+	public void testDeleteCTCollectionWithOver50000CTEntries()
+		throws Exception {
+
 		try (LoggingTimer loggingTimer = new LoggingTimer();
 			SafeCloseable safeCloseable =
 				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
@@ -99,7 +101,9 @@ public class SQLServerDBCTTest {
 	}
 
 	@Test
-	public void testPublishCTCollectionWithOver50000Entries() throws Exception {
+	public void testPublishCTCollectionWithOver50000CTEntries()
+		throws Exception {
+
 		try (LoggingTimer loggingTimer = new LoggingTimer();
 			SafeCloseable safeCloseable =
 				CTCollectionThreadLocal.setCTCollectionIdWithSafeCloseable(
