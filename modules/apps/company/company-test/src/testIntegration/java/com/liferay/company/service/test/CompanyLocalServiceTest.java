@@ -191,7 +191,7 @@ public class CompanyLocalServiceTest {
 
 		_initializeClassNames();
 
-		_modelListenerList = _registerModelListeners();
+		_modelListeners = _registerModelListeners();
 
 		_deletedCompany = _addCompany();
 
@@ -830,8 +830,8 @@ public class CompanyLocalServiceTest {
 		Assume.assumeFalse(DBPartition.isPartitionEnabled());
 
 		Assert.assertEquals(
-			UserGroupRole.class.getName(), _modelListenerList.get(0));
-		Assert.assertEquals(Role.class.getName(), _modelListenerList.get(1));
+			UserGroupRole.class.getName(), _modelListeners.get(0));
+		Assert.assertEquals(Role.class.getName(), _modelListeners.get(1));
 	}
 
 	@Test
@@ -1305,12 +1305,12 @@ public class CompanyLocalServiceTest {
 				company.getCompanyId(), userId,
 				GroupConstants.DEFAULT_PARENT_GROUP_ID);
 
-			UserGroup userGroup = UserGroupTestUtil.addUserGroup(
-				group.getGroupId());
-
 			User user = _addUser(
 				company.getCompanyId(), userId, group.getGroupId(),
 				_getServiceContext(company.getCompanyId()));
+
+			UserGroup userGroup = UserGroupTestUtil.addUserGroup(
+				group.getGroupId());
 
 			_userGroupLocalService.addUserUserGroup(
 				user.getUserId(), userGroup);
@@ -1378,7 +1378,7 @@ public class CompanyLocalServiceTest {
 	}
 
 	private static List<String> _registerModelListeners() {
-		List<String> list = new CopyOnWriteArrayList<>();
+		List<String> modelListeners = new CopyOnWriteArrayList<>();
 
 		Bundle bundle = FrameworkUtil.getBundle(CompanyLocalServiceTest.class);
 
@@ -1393,7 +1393,7 @@ public class CompanyLocalServiceTest {
 					public void onBeforeRemove(Role role)
 						throws ModelListenerException {
 
-						list.add(Role.class.getName());
+						modelListeners.add(Role.class.getName());
 					}
 
 				},
@@ -1407,13 +1407,13 @@ public class CompanyLocalServiceTest {
 					public void onBeforeRemove(UserGroupRole userGroupRole)
 						throws ModelListenerException {
 
-						list.add(UserGroupRole.class.getName());
+						modelListeners.add(UserGroupRole.class.getName());
 					}
 
 				},
 				new HashMapDictionary<>()));
 
-		return list;
+		return modelListeners;
 	}
 
 	private static void _resetBackgroundTaskThreadLocal() throws Exception {
@@ -1445,7 +1445,7 @@ public class CompanyLocalServiceTest {
 			_getServiceContext(companyId));
 	}
 
-	private List<String> _getObjectNames(String type, long companyId)
+	private List<String> _getTableNames(String type, long companyId)
 		throws Exception {
 
 		List<String> objectNames = new ArrayList<>();
@@ -1468,13 +1468,13 @@ public class CompanyLocalServiceTest {
 	}
 
 	private int _getTablesCount(long companyId) throws Exception {
-		List<String> tableNames = _getObjectNames("TABLE", companyId);
+		List<String> tableNames = _getTableNames("TABLE", companyId);
 
 		return tableNames.size();
 	}
 
 	private int _getViewsCount(long companyId) throws Exception {
-		List<String> viewNames = _getObjectNames("VIEW", companyId);
+		List<String> viewNames = _getTableNames("VIEW", companyId);
 
 		return viewNames.size();
 	}
@@ -1606,7 +1606,7 @@ public class CompanyLocalServiceTest {
 	private static DB _db;
 	private static DBPartitionDB _dbPartitionDB;
 	private static Company _deletedCompany;
-	private static List<String> _modelListenerList;
+	private static List<String> _modelListeners;
 
 	@Inject
 	private static RoleLocalService _roleLocalService;
