@@ -54,9 +54,19 @@ public class CTSampleTestUtil {
 
 		try (Connection connection = DataAccess.getConnection();
 			PreparedStatement preparedStatement1 = connection.prepareStatement(
-				_INSERT_CTS_CHILD_SQL);
+				StringBundler.concat(
+					"insert into CTSChild (mvccVersion, ctCollectionId, ",
+					"ctsChildId, companyId, ctsGrandParentId, ",
+					"parentCTSChildId, ctsParentName, name) values (?, ?, ?, ",
+					"?, ?, ?, ?, ?)"));
 			PreparedStatement preparedStatement2 = connection.prepareStatement(
-				_INSERT_CT_ENTRY_SQL)) {
+				StringBundler.concat(
+					"insert into CTEntry (mvccVersion, uuid_, ",
+					"externalReferenceCode, ctCollectionId, ctEntryId, ",
+					"companyId, userId, createDate, modifiedDate, ",
+					"modelClassNameId, modelClassPK, modelMvccVersion, ",
+					"changeType) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ",
+					"?)"))) {
 
 			for (int i = 0; i < count; i++) {
 				ctsChildId = CounterLocalServiceUtil.increment(
@@ -128,16 +138,5 @@ public class CTSampleTestUtil {
 
 		preparedStatement.addBatch();
 	}
-
-	private static final String _INSERT_CT_ENTRY_SQL = StringBundler.concat(
-		"insert into CTEntry (mvccVersion, uuid_, externalReferenceCode, ",
-		"ctCollectionId, ctEntryId, companyId, userId, createDate, ",
-		"modifiedDate, modelClassNameId, modelClassPK, modelMvccVersion, ",
-		"changeType) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-	private static final String _INSERT_CTS_CHILD_SQL = StringBundler.concat(
-		"insert into CTSChild (mvccVersion, ctCollectionId, ctsChildId, ",
-		"companyId, ctsGrandParentId, parentCTSChildId, ctsParentName, name) ",
-		"values (?, ?, ?, ?, ?, ?, ?, ?)");
 
 }
