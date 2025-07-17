@@ -74,9 +74,7 @@ public class UserModelListenerTest {
 
 	@FeatureFlag("LPD-17564")
 	@Test
-	public void testOnAfterAddAssociationUserGroup()
-		throws Exception {
-
+	public void testOnAfterAddAssociationUserGroup() throws Exception {
 		UserGroup userGroup = UserGroupTestUtil.addUserGroup();
 
 		_userGroupLocalService.addGroupUserGroup(
