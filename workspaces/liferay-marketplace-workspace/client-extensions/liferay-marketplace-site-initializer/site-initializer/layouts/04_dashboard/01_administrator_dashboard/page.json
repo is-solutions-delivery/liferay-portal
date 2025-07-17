@@ -10,6 +10,12 @@
 	"permissions": [
 		{
 			"actionIds": [
+			],
+			"roleName": "Guest",
+			"scope": 4
+		},
+		{
+			"actionIds": [
 				"VIEW"
 			],
 			"roleName": "Administrator",

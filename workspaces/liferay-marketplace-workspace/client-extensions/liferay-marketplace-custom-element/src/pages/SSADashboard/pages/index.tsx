@@ -20,10 +20,12 @@ import TrialListView from '../components/TrialListView/TrialListView';
 import {useSSATrials} from '../useSSATrials';
 import getSSATrialsResourceURL from '../util';
 import ExtendSSATrialModal from './ExtendSSATrialModal';
+import {useSSAForm} from '../components/SSAForm';
 
 export default function SaaSTrial() {
 	const modalContext = useModalContext();
 	const modal = useModal();
+	const ssaForm = useSSAForm();
 	const {channel, marketplaceUserAccount, myUserAccount} =
 		useMarketplaceContext();
 	const {selectedAccount} = useOutletContext<any>();
@@ -142,7 +144,7 @@ export default function SaaSTrial() {
 				description="Manage your current trials"
 				pageRendererProps={{className: 'border py-2'}}
 				rightButton={
-					<ClayButton onClick={() => modal.onOpenChange(true)}>
+					<ClayButton onClick={() => ssaForm.openModal()}>
 						Add New Trial
 					</ClayButton>
 				}
