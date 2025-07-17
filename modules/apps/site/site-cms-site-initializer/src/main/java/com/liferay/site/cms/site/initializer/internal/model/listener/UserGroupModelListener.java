@@ -41,7 +41,7 @@ public class UserGroupModelListener extends BaseModelListener<UserGroup> {
 		throws ModelListenerException {
 
 		try {
-			_onAfterAddAssociationGroup(
+			_onAfterAddAssociation(
 				(Long)classPK, associationClassName, (Long)associationClassPK);
 		}
 		catch (PortalException portalException) {
@@ -49,7 +49,7 @@ public class UserGroupModelListener extends BaseModelListener<UserGroup> {
 		}
 	}
 
-	private void _onAfterAddAssociationGroup(
+	private void _onAfterAddAssociation(
 			long userGroupId, String associationClassName, long groupId)
 		throws PortalException {
 
@@ -67,11 +67,11 @@ public class UserGroupModelListener extends BaseModelListener<UserGroup> {
 		}
 
 		for (User user : _userLocalService.getUserGroupUsers(userGroupId)) {
-			_sendNotificationEvent(groupId, user);
+			_addUserNotificationEvent(groupId, user);
 		}
 	}
 
-	private void _sendNotificationEvent(long groupId, User user)
+	private void _addUserNotificationEvent(long groupId, User user)
 		throws PortalException {
 
 		if (!UserNotificationManagerUtil.isDeliver(
