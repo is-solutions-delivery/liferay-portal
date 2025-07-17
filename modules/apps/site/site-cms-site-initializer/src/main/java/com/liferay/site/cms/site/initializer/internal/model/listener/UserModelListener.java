@@ -41,23 +41,32 @@ public class UserModelListener extends BaseModelListener<User> {
 		throws ModelListenerException {
 
 		try {
-			User user = _userLocalService.getUser((Long)classPK);
-
-			if (!FeatureFlagManagerUtil.isEnabled(
-					user.getCompanyId(), "LPD-17564")) {
-
-				return;
-			}
-
-			if (associationClassName.equals(Group.class.getName())) {
-				_onAfterAddAssociationGroup(user, (Long)associationClassPK);
-			}
-			else if (associationClassName.equals(UserGroup.class.getName())) {
-				_onAfterAddAssociationUserGroup(user, (Long)associationClassPK);
-			}
+			_onAfterAddAssociation(
+				classPK, associationClassName, associationClassPK);
 		}
 		catch (PortalException portalException) {
 			throw new ModelListenerException(portalException);
+		}
+	}
+
+	private void _onAfterAddAssociation(
+			Object classPK, String associationClassName,
+			Object associationClassPK)
+		throws PortalException {
+
+		User user = _userLocalService.getUser((Long)classPK);
+
+		if (!FeatureFlagManagerUtil.isEnabled(
+				user.getCompanyId(), "LPD-17564")) {
+
+			return;
+		}
+
+		if (associationClassName.equals(Group.class.getName())) {
+			_onAfterAddAssociationGroup(user, (Long)associationClassPK);
+		}
+		else if (associationClassName.equals(UserGroup.class.getName())) {
+			_onAfterAddAssociationUserGroup(user, (Long)associationClassPK);
 		}
 	}
 
