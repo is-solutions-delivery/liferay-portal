@@ -67,7 +67,7 @@ public class UserModelListener extends BaseModelListener<User> {
 		Group group = _groupLocalService.getGroup(groupId);
 
 		if (group.isDepot() && (group.getCreatorUserId() != user.getUserId())) {
-			_sendNotificationEvent(groupId, user);
+			_addUserNotificationEvent(groupId, user);
 		}
 	}
 
@@ -76,12 +76,12 @@ public class UserModelListener extends BaseModelListener<User> {
 
 		for (Group group : _groupLocalService.getUserGroupGroups(userGroupId)) {
 			if (group.isDepot()) {
-				_sendNotificationEvent(group.getGroupId(), user);
+				_addUserNotificationEvent(group.getGroupId(), user);
 			}
 		}
 	}
 
-	private void _sendNotificationEvent(long groupId, User user)
+	private void _addUserNotificationEvent(long groupId, User user)
 		throws PortalException {
 
 		if (!UserNotificationManagerUtil.isDeliver(

@@ -63,18 +63,18 @@ public class UserModelListenerTest {
 
 	@FeatureFlag("LPD-17564")
 	@Test
-	public void testUserAssociatedToDepotEntry() throws Exception {
+	public void testOnAfterAddAssociationGroup() throws Exception {
 		User user = UserTestUtil.addUser();
 
 		_userLocalService.addGroupUser(
 			_depotEntry.getGroupId(), user.getUserId());
 
-		_assertNotification(user);
+		_assertUserNotificationEvent(user);
 	}
 
 	@FeatureFlag("LPD-17564")
 	@Test
-	public void testUserAssociatedToUserGroupAssociatedToDepotEntry()
+	public void testOnAfterAddAssociationUserGroup()
 		throws Exception {
 
 		UserGroup userGroup = UserGroupTestUtil.addUserGroup();
@@ -86,10 +86,10 @@ public class UserModelListenerTest {
 
 		_userGroupLocalService.addUserUserGroup(user.getUserId(), userGroup);
 
-		_assertNotification(user);
+		_assertUserNotificationEvent(user);
 	}
 
-	private void _assertNotification(User user) {
+	private void _assertUserNotificationEvent(User user) {
 		List<UserNotificationEvent> userNotificationEvents =
 			_userNotificationEventLocalService.getUserNotificationEvents(
 				user.getUserId());
