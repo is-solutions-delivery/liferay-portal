@@ -46,7 +46,7 @@ export default function SaaSTrial() {
 		filter: new SearchBuilder()
 			.eq('orderTypeExternalReferenceCode', OrderTypes.SSA_SAAS)
 			.and()
-			.eq('author', myUserAccount.name)
+			.eq('author', myUserAccount?.name)
 			.and()
 			.eq('orderStatusInfo/code', 0, {
 				unquote: true,
@@ -141,14 +141,24 @@ export default function SaaSTrial() {
 	return (
 		<>
 			<Page
-				description="Manage your current trials"
+				description={
+					isUserSSAAdmin
+						? "Manage your team's trial"
+						: 'Manage your current trials'
+				}
 				pageRendererProps={{className: 'border py-2'}}
 				rightButton={
-					<ClayButton onClick={() => ssaForm.openModal()}>
+					<ClayButton
+						onClick={() =>
+							canCreateTrial
+								? ssaForm.openModal()
+								: modal.onOpenChange(true)
+						}
+					>
 						Add New Trial
 					</ClayButton>
 				}
-				title="SaaS Demos"
+				title={isUserSSAAdmin ? 'SaaS Demos' : 'My SaaS Demos'}
 			>
 				<TrialListView
 					actions={actions}
@@ -161,25 +171,7 @@ export default function SaaSTrial() {
 				/>
 			</Page>
 
-			{modal.open && canCreateTrial ? (
-				<Modal
-					last={
-						<ClayButton
-							className="btn"
-							displayType="secondary"
-							onClick={() => modal.onClose()}
-						>
-							{i18n.translate('cancel')}
-						</ClayButton>
-					}
-					observer={modal.observer}
-					size={'md' as any}
-					title="Form creation"
-					visible={modal.open}
-				>
-					<span>This will be the creation form</span>
-				</Modal>
-			) : (
+			{modal.open && (
 				<Modal
 					last={
 						<ClayButton
