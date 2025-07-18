@@ -43,7 +43,8 @@ const setupCardForRole = (isTrainer) => {
 			'Access exclusive assets, tools, and materials designed to help our partners and staff succeed in their roles, from sales to certified training.';
 		salesPageCardGoToText.innerText = 'Go to the Enablement Hub';
 		salesEnablementHubCardLink.href = '/web/sales-enablement/home';
-	} else {
+	}
+	else {
 		salesPageCard.classList.add('sales-resources-card-icon');
 		salesPageCard.classList.remove('sales-enablement-hub-card-icon');
 
