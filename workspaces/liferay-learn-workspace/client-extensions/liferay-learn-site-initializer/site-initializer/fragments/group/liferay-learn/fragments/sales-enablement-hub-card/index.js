@@ -3,23 +3,45 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+const CARD_CONFIG = {
+	trainer: {
+		href: '/web/sales-enablement/home',
+		description:
+			'Access exclusive assets, tools, and materials designed to help our partners and staff succeed in their roles, from sales to certified training.',
+		goToText: 'Go to the Enablement Hub',
+		title: 'Enablement Hub',
+		class: 'sales-enablement-hub-card-icon',
+	},
+	nonTrainer: {
+		href: '/web/sales-enablement/sales-resources',
+		description:
+			'Find the latest presentation decks, battle cards, reports, and other essential resources to effectively position and sell Liferay solutions.',
+		goToText: 'Go to the Sales Enablement Hub',
+		title: 'Sales Resources',
+		class: 'sales-resources-card-icon',
+	},
+};
+
 const getElementByClass = (className) =>
 	document.querySelector(`.${className}`);
 
-const domElements = {
-	containerEnablementHubCard: getElementByClass(
-		'container-enablement-hub-card'
-	),
-	salesEnablementHubCardLink: getElementByClass(
-		'sales-enablement-hub-card-link'
-	),
-	salesPageCard: getElementByClass('sales-page-card'),
-	salesPageCardDescription: getElementByClass('sales-page-card-description'),
-	salesPageCardGoToText: getElementByClass('sales-page-card-go-to-text'),
-	salesPageCardTitle: getElementByClass('sales-page-card-title'),
+const elementClassMap = {
+	containerEnablementHubCard: 'container-enablement-hub-card',
+	salesEnablementHubCardLink: 'sales-enablement-hub-card-link',
+	salesPageCard: 'sales-page-card',
+	salesPageCardDescription: 'sales-page-card-description',
+	salesPageCardGoToText: 'sales-page-card-go-to-text',
+	salesPageCardTitle: 'sales-page-card-title',
 };
 
-const fetchUserAccounts = async () => {
+const domElements = Object.fromEntries(
+	Object.entries(elementClassMap).map(([key, className]) => [
+		key,
+		getElementByClass(className),
+	])
+);
+
+const getUserAccount = async () => {
 	const response = await Liferay.Util.fetch(
 		`/o/headless-admin-user/v1.0/user-accounts/${Liferay.ThemeDisplay.getUserId()}`
 	);
@@ -27,50 +49,39 @@ const fetchUserAccounts = async () => {
 	return response.json();
 };
 
-const renderCardByRole = (isTrainerLoungeUserAccountRole) => {
+const renderCardByRole = (isTrainer) => {
+	const { salesPageCard } = domElements;
+
+	salesPageCard.classList.remove(
+		CARD_CONFIG.trainer.class,
+		CARD_CONFIG.nonTrainer.class
+	);
+
+	const config = isTrainer ? CARD_CONFIG.trainer : CARD_CONFIG.nonTrainer;
+
+	salesPageCard.classList.add(config.class);
+	setCardInfo(config);
+};
+
+const setCardInfo = ({ href, description, goToText, title }) => {
 	const {
 		salesEnablementHubCardLink,
-		salesPageCard,
 		salesPageCardDescription,
 		salesPageCardGoToText,
 		salesPageCardTitle,
 	} = domElements;
 
-	salesPageCard.classList.toggle(
-		'sales-enablement-hub-card-icon',
-		isTrainerLoungeUserAccountRole
-	);
-	salesPageCard.classList.toggle(
-		'sales-resources-card-icon',
-		!isTrainerLoungeUserAccountRole
-	);
-
-	if (isTrainerLoungeUserAccountRole) {
-		salesEnablementHubCardLink.href = '/web/sales-enablement/home';
-		salesPageCardDescription.textContent =
-			'Access exclusive assets, tools, and materials designed to help our partners and staff succeed in their roles, from sales to certified training.';
-		salesPageCardGoToText.textContent = 'Go to the Enablement Hub';
-		salesPageCardTitle.textContent = 'Enablement Hub';
-	}
-	else {
-		salesEnablementHubCardLink.href =
-			'/web/sales-enablement/sales-resources';
-		salesPageCardDescription.textContent =
-			'Find the latest presentation decks, battle cards, reports, and other essential resources to effectively position and sell Liferay solutions.';
-		salesPageCardGoToText.textContent = 'Go to the Sales Enablement Hub';
-		salesPageCardTitle.textContent = 'Sales Resources';
-	}
+	salesEnablementHubCardLink.href = href;
+	salesPageCardDescription.textContent = description;
+	salesPageCardGoToText.textContent = goToText;
+	salesPageCardTitle.textContent = title;
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
-	const userAccount = await fetchUserAccounts();
+	const userAccount = await getUserAccount();
+	const extractUserAcountData = (arr = [], key) => arr.map(item => item[key]);
 
-	const userExternalReferenceCode = userAccount.roleBriefs.map(
-		(userRole) => userRole.externalReferenceCode
-	);
-	const userGroupNames = userAccount.userGroupBriefs.map(
-		(userGroup) => userGroup.name
-	);
+	const userGroupNames = extractUserAcountData(userAccount.userGroupBriefs, 'name');
 
 	const isEmployeeOrPartner = (userGroupNames) =>
 		userGroupNames.includes('Employees') ||
@@ -79,10 +90,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 	if (isEmployeeOrPartner(userGroupNames)) {
 		domElements.containerEnablementHubCard.classList.remove('hide');
 
-		renderCardByRole(
-			userExternalReferenceCode.includes(
-				'TRAINERS-LOUNGE-CONTENT-ADMIN'
-			) || userExternalReferenceCode.includes('TRAINERS-LOUNGE-USER')
-		);
+		renderCardByRole(extractUserAcountData(userAccount.roleBriefs, 'externalReferenceCode').some((code) =>
+			['TRAINERS-LOUNGE-CONTENT-ADMIN', 'TRAINERS-LOUNGE-USER'].includes(code)
+		));
 	}
 });
