@@ -50,7 +50,7 @@ const getUserAccount = async () => {
 };
 
 const renderCardByRole = (isTrainer) => {
-	const { salesPageCard } = domElements;
+	const {salesPageCard} = domElements;
 
 	salesPageCard.classList.remove(
 		CARD_CONFIG.trainer.class,
@@ -63,7 +63,7 @@ const renderCardByRole = (isTrainer) => {
 	setCardInfo(config);
 };
 
-const setCardInfo = ({ href, description, goToText, title }) => {
+const setCardInfo = ({description, goToText, href, title}) => {
 	const {
 		salesEnablementHubCardLink,
 		salesPageCardDescription,
@@ -79,9 +79,13 @@ const setCardInfo = ({ href, description, goToText, title }) => {
 
 document.addEventListener('DOMContentLoaded', async () => {
 	const userAccount = await getUserAccount();
-	const extractUserAcountData = (arr = [], key) => arr.map(item => item[key]);
+	const extractUserAcountData = (arr = [], key) =>
+		arr.map((item) => item[key]);
 
-	const userGroupNames = extractUserAcountData(userAccount.userGroupBriefs, 'name');
+	const userGroupNames = extractUserAcountData(
+		userAccount.userGroupBriefs,
+		'name'
+	);
 
 	const isEmployeeOrPartner = (userGroupNames) =>
 		userGroupNames.includes('Employees') ||
@@ -90,8 +94,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 	if (isEmployeeOrPartner(userGroupNames)) {
 		domElements.containerEnablementHubCard.classList.remove('hide');
 
-		renderCardByRole(extractUserAcountData(userAccount.roleBriefs, 'externalReferenceCode').some((code) =>
-			['TRAINERS-LOUNGE-CONTENT-ADMIN', 'TRAINERS-LOUNGE-USER'].includes(code)
-		));
+		renderCardByRole(
+			extractUserAcountData(
+				userAccount.roleBriefs,
+				'externalReferenceCode'
+			).some((code) =>
+				[
+					'TRAINERS-LOUNGE-CONTENT-ADMIN',
+					'TRAINERS-LOUNGE-USER',
+				].includes(code)
+			)
+		);
 	}
 });
