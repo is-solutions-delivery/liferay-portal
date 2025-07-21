@@ -4,14 +4,6 @@
  */
 
 const CARD_CONFIG = {
-	trainer: {
-		class: 'sales-enablement-hub-card-icon',
-		description:
-			'Access exclusive assets, tools, and materials designed to help our partners and staff succeed in their roles, from sales to certified training.',
-		goToText: 'Go to the Enablement Hub',
-		href: '/web/sales-enablement/home',
-		title: 'Enablement Hub',
-	},
 	nonTrainer: {
 		class: 'sales-resources-card-icon',
 		description:
@@ -19,6 +11,14 @@ const CARD_CONFIG = {
 		goToText: 'Go to the Sales Enablement Hub',
 		href: '/web/sales-enablement/sales-resources',
 		title: 'Sales Resources',
+	},
+	trainer: {
+		class: 'sales-enablement-hub-card-icon',
+		description:
+			'Access exclusive assets, tools, and materials designed to help our partners and staff succeed in their roles, from sales to certified training.',
+		goToText: 'Go to the Enablement Hub',
+		href: '/web/sales-enablement/home',
+		title: 'Enablement Hub',
 	},
 };
 
