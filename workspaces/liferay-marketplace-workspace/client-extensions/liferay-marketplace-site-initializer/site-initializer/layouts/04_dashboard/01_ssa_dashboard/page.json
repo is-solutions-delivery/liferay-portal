@@ -9,17 +9,22 @@
 	},
 	"permissions": [
 		{
-			"actionIds": [],
+			"actionIds": [
+			],
 			"roleName": "Guest",
 			"scope": 4
 		},
 		{
-			"actionIds": ["VIEW"],
+			"actionIds": [
+				"VIEW"
+			],
 			"roleName": "SSA",
 			"scope": 4
 		},
 		{
-			"actionIds": ["VIEW"],
+			"actionIds": [
+				"VIEW"
+			],
 			"roleName": "SSA Admin",
 			"scope": 4
 		}
