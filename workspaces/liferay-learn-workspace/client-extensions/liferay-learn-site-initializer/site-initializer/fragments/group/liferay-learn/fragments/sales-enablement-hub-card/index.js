@@ -5,21 +5,21 @@
 
 const CARD_CONFIG = {
 	trainer: {
-		href: '/web/sales-enablement/home',
+		class: 'sales-enablement-hub-card-icon',
 		description:
 			'Access exclusive assets, tools, and materials designed to help our partners and staff succeed in their roles, from sales to certified training.',
 		goToText: 'Go to the Enablement Hub',
-		title: 'Enablement Hub',
-		class: 'sales-enablement-hub-card-icon',
+		href: '/web/sales-enablement/home',
+		title: 'Enablement Hub'
 	},
 	nonTrainer: {
-		href: '/web/sales-enablement/sales-resources',
+		class: 'sales-resources-card-icon',
 		description:
 			'Find the latest presentation decks, battle cards, reports, and other essential resources to effectively position and sell Liferay solutions.',
 		goToText: 'Go to the Sales Enablement Hub',
-		title: 'Sales Resources',
-		class: 'sales-resources-card-icon',
-	},
+		href: '/web/sales-enablement/sales-resources',
+		title: 'Sales Resources'
+	}
 };
 
 const getElementByClass = (className) =>
