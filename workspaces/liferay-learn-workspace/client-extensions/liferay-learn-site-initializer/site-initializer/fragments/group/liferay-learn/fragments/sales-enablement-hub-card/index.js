@@ -53,7 +53,8 @@ const renderCardByRole = (isTrainerLoungeUserAccountRole) => {
 		salesPageCardTitle.textContent = 'Enablement Hub';
 	}
 	else {
-		salesEnablementHubCardLink.href = '/web/sales-enablement/sales-resources';
+		salesEnablementHubCardLink.href =
+			'/web/sales-enablement/sales-resources';
 		salesPageCardDescription.textContent =
 			'Find the latest presentation decks, battle cards, reports, and other essential resources to effectively position and sell Liferay solutions.';
 		salesPageCardGoToText.textContent = 'Go to the Sales Enablement Hub';
