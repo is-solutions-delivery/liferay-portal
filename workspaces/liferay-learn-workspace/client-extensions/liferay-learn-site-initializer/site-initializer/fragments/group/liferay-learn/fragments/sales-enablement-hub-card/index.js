@@ -7,8 +7,12 @@ const getElementByClass = (className) =>
 	document.querySelector(`.${className}`);
 
 const domElements = {
-	containerEnablementHubCard: getElementByClass('container-enablement-hub-card'),
-	salesEnablementHubCardLink: getElementByClass('sales-enablement-hub-card-link'),
+	containerEnablementHubCard: getElementByClass(
+		'container-enablement-hub-card'
+	),
+	salesEnablementHubCardLink: getElementByClass(
+		'sales-enablement-hub-card-link'
+	),
 	salesPageCard: getElementByClass('sales-page-card'),
 	salesPageCardDescription: getElementByClass('sales-page-card-description'),
 	salesPageCardGoToText: getElementByClass('sales-page-card-go-to-text'),
@@ -24,11 +28,22 @@ const fetchUserAccounts = async () => {
 };
 
 const renderCardByRole = (isTrainerLoungeUserAccountRole) => {
-	const {salesEnablementHubCardLink, salesPageCard, salesPageCardDescription, salesPageCardGoToText, salesPageCardTitle} =
-		domElements;
+	const {
+		salesEnablementHubCardLink,
+		salesPageCard,
+		salesPageCardDescription,
+		salesPageCardGoToText,
+		salesPageCardTitle,
+	} = domElements;
 
-		salesPageCard.classList.toggle('sales-enablement-hub-card-icon', isTrainerLoungeUserAccountRole);
-		salesPageCard.classList.toggle('sales-resources-card-icon', !isTrainerLoungeUserAccountRole);
+	salesPageCard.classList.toggle(
+		'sales-enablement-hub-card-icon',
+		isTrainerLoungeUserAccountRole
+	);
+	salesPageCard.classList.toggle(
+		'sales-resources-card-icon',
+		!isTrainerLoungeUserAccountRole
+	);
 
 	if (isTrainerLoungeUserAccountRole) {
 		salesEnablementHubCardLink.href = '/web/sales-enablement/home';
@@ -43,7 +58,6 @@ const renderCardByRole = (isTrainerLoungeUserAccountRole) => {
 			'Find the latest presentation decks, battle cards, reports, and other essential resources to effectively position and sell Liferay solutions.';
 		salesPageCardGoToText.textContent = 'Go to the Sales Enablement Hub';
 		salesPageCardTitle.textContent = 'Sales Resources';
-		
 	}
 };
 
