@@ -27,6 +27,20 @@
 	window.addEventListener('load', function() {
 		_addEventListener("h1 a, h2 a, h3 a");
 		_addEventListener(".toc li a");
+
+		if (window.location.hash) {
+			const targetId = window.location.hash.substring(1);
+			const targetElement = document.getElementById(targetId);
+
+			if (targetElement) {
+				setTimeout(() => {
+					window.scrollTo({
+						behavior: 'smooth',
+						top: targetElement.getBoundingClientRect().top + window.scrollY - 190
+					});
+				}, 100);
+			}
+		}
 	});
 </script>
 
