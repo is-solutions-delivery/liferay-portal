@@ -24,8 +24,8 @@
 		if (!element) return;
 
 		window.scrollTo({
-			top: element.getBoundingClientRect().top + window.scrollY - 190,
 			behavior: "smooth",
+			top: element.getBoundingClientRect().top + window.scrollY - 190,
 		});
 	};
 
@@ -34,12 +34,11 @@
 		_addEventListener(".toc li a");
 
 		if (window.location.hash) {
-			const targetId = window.location.hash.substring(1);
-			const targetElement = document.getElementById(targetId);
+			const hashLocation = document.getElementById(window.location.hash.substring(1));
 
-			if (targetElement) {
+			if (hashLocation) {
 				setTimeout(() => {
-					scrollToElement(targetElement);
+					scrollToElement(hashLocation);
 				}, 100);
 			}
 		}
