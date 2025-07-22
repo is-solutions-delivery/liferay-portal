@@ -53,8 +53,8 @@ const renderCardByRole = (isTrainer) => {
 	const {salesPageCard} = domElements;
 
 	salesPageCard.classList.remove(
-		CARD_CONFIG.trainer.class,
-		CARD_CONFIG.nonTrainer.class
+		CARD_CONFIG.nonTrainer.class,
+		CARD_CONFIG.trainer.class
 	);
 
 	const config = isTrainer ? CARD_CONFIG.trainer : CARD_CONFIG.nonTrainer;
