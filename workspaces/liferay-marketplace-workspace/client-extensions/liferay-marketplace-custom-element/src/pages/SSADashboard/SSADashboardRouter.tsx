@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {HashRouter, Route, Routes} from 'react-router-dom';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 
 import SSADashboardOutlet from './SSADashboardOutlet';
 
 import './index.scss';
 import withProviders from '../../hoc/withProviders';
 import SaaSTrial from './pages';
+import SSADetails from './pages/SSADetails';
 
 const SSADashboardRouter = () => {
 	return (
@@ -17,6 +18,7 @@ const SSADashboardRouter = () => {
 			<Routes>
 				<Route element={<SSADashboardOutlet />}>
 					<Route element={<SaaSTrial />} index />
+					<Route element={<SSADetails />} path="details/:orderId" />
 				</Route>
 			</Routes>
 		</HashRouter>

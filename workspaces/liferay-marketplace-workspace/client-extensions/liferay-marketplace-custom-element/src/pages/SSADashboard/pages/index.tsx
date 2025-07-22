@@ -5,22 +5,22 @@
 
 import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
-import {useModal} from '@clayui/modal';
-import {useOutletContext} from 'react-router-dom';
+import { useModal } from '@clayui/modal';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 
 import Modal from '../../../components/Modal';
 import Page from '../../../components/Page';
-import {useMarketplaceContext} from '../../../context/MarketplaceContext';
+import { useMarketplaceContext } from '../../../context/MarketplaceContext';
 import SearchBuilder from '../../../core/SearchBuilder';
-import {OrderStatus, OrderTypes} from '../../../enums/Order';
+import { OrderStatus, OrderTypes } from '../../../enums/Order';
 import useModalContext from '../../../hooks/useModalContext';
 import i18n from '../../../i18n';
 import trialOAuth2 from '../../../services/oauth/Trial';
-import {Action} from '../../../utils/constants';
-import {useSSAForm} from '../components/SSAForm';
+import { Action } from '../../../utils/constants';
+import { useSSAForm } from '../components/SSAForm';
 import TrialListView from '../components/TrialListView/TrialListView';
-import {ExtendRequestStatus} from '../enums/SSATrials';
-import {useSSATrials} from '../useSSATrials';
+import { ExtendRequestStatus } from '../enums/SSATrials';
+import { useSSATrials } from '../useSSATrials';
 import {
 	getSSASettingsOrDefaultFromCustomFields,
 	getSSATrialsResourceURL,
@@ -31,20 +31,22 @@ export default function SaaSTrial() {
 	const modalContext = useModalContext();
 	const modal = useModal();
 	const ssaForm = useSSAForm();
-	const {channel, marketplaceUserAccount, myUserAccount} =
+	const { channel, marketplaceUserAccount, myUserAccount } =
 		useMarketplaceContext();
-	const {selectedAccount} = useOutletContext<any>();
+	const { selectedAccount } = useOutletContext<any>();
 	const resourceUrl = getSSATrialsResourceURL(
 		channel.channelId,
 		selectedAccount?.id
 	);
+
+	const navigate = useNavigate()
 
 	const onExpireTrial = (order: Order) => {
 		trialOAuth2.deleteTrial(order.id);
 	};
 
 	const {
-		data: SSATrialsInProgress = {items: [], pageSize: 1, totalCount: 0},
+		data: SSATrialsInProgress = { items: [], pageSize: 1, totalCount: 0 },
 	} = useSSATrials({
 		accountId: selectedAccount?.id,
 		channelId: channel.channelId,
@@ -68,14 +70,17 @@ export default function SaaSTrial() {
 
 	const actions: Action[] = [
 		{
+			name: i18n.translate('details'),
+			onClick: (order: Order) => navigate(`/details/${order.id}`)
+		},
+		{
 			disabled: (order: Order) =>
 				order.orderStatusInfo.label === OrderStatus.APPROVED ||
 				order.orderStatusInfo.label === OrderStatus.COMPLETED,
 			name: i18n.translate('go-to-trial'),
 			onClick: (order: Order) =>
 				window.open(
-					`https://${
-						order?.customFields?.['trial-virtualhost'] as string
+					`https://${order?.customFields?.['trial-virtualhost'] as string
 					}`
 				),
 		},
@@ -114,9 +119,9 @@ export default function SaaSTrial() {
 					order.orderStatusInfo.label === OrderStatus.APPROVED ||
 					order.orderStatusInfo.label === OrderStatus.COMPLETED ||
 					SSASettings.extendRequestStatus ===
-						ExtendRequestStatus.PENDING ||
+					ExtendRequestStatus.PENDING ||
 					SSASettings.extendRequestStatus ===
-						ExtendRequestStatus.REJECTED
+					ExtendRequestStatus.REJECTED
 				);
 			},
 			name: 'Extend',
@@ -187,7 +192,7 @@ export default function SaaSTrial() {
 						? "Manage your team's trial"
 						: 'Manage your current trials'
 				}
-				pageRendererProps={{className: 'border py-2'}}
+				pageRendererProps={{ className: 'border py-2' }}
 				rightButton={
 					<ClayButton
 						onClick={() =>

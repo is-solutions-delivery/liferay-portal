@@ -3,18 +3,19 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {format} from 'date-fns';
+import { format } from 'date-fns';
 
-import ListView, {ListViewProps} from '../../../../components/ListView';
-import {ManagementToolbarProps} from '../../../../components/ListView/components/ManagementToolbar';
+import ListView, { ListViewProps } from '../../../../components/ListView';
+import { ManagementToolbarProps } from '../../../../components/ListView/components/ManagementToolbar';
 import SearchBuilder from '../../../../core/SearchBuilder';
-import {OrderCustomFields, OrderTypes} from '../../../../enums/Order';
+import { OrderCustomFields, OrderTypes } from '../../../../enums/Order';
 import i18n from '../../../../i18n';
-import {Action} from '../../../../utils/constants';
-import {EXTEND_TRIAL_STATUS_LABEL} from '../../constants';
-import {getSSASettingsOrDefaultFromCustomFields} from '../../util';
+import { Action } from '../../../../utils/constants';
+import { EXTEND_TRIAL_STATUS_LABEL } from '../../constants';
+import { getSSASettingsOrDefaultFromCustomFields } from '../../util';
 import ExtensionStatus from '../ExtensionStatus/ExtensionStatus';
 import TrialStatus from '../TrialStatus/TrialStatus';
+import { useNavigate } from 'react-router-dom';
 
 type TrialsListViewProps = {
 	actions: Action[];
@@ -39,6 +40,8 @@ export default function TrialListView({
 	managementToolbarProps,
 	resourceUrl,
 }: TrialsListViewProps) {
+	const navigate = useNavigate();
+
 	return (
 		<ListView<PlacedOrder>
 			defaultFilters={{
@@ -47,7 +50,7 @@ export default function TrialListView({
 					OrderTypes.SSA_SAAS
 				),
 			}}
-			emptyStateProps={{title: i18n.translate('no-orders-yet')}}
+			emptyStateProps={{ title: i18n.translate('no-orders-yet') }}
 			id="ssa-trials"
 			managementToolbarProps={{
 				filterSchema: 'administratorSSATrials',
@@ -55,12 +58,13 @@ export default function TrialListView({
 			}}
 			resource={resourceUrl}
 			tableProps={{
+				onClickRow: (order) => navigate(`details/${order.id}`),
 				actions,
 				columns: [
 					{
 						id: 'placedOrderItems',
 						name: 'Project ID',
-						render: (_, {customFields, id}) => {
+						render: (_, { customFields, id }) => {
 							const SSASettings =
 								getSSASettingsOrDefaultFromCustomFields(
 									customFields
@@ -76,7 +80,7 @@ export default function TrialListView({
 					{
 						id: 'author',
 						name: 'Created By',
-						render: (author, {createDate}) => {
+						render: (author, { createDate }) => {
 							return (
 								<div className="d-flex flex-column">
 									<span className="dashboard-table-row-text">
@@ -105,16 +109,16 @@ export default function TrialListView({
 					{
 						id: 'createDate',
 						name: 'End Date',
-						render: (_, {customFields}) => {
+						render: (_, { customFields }) => {
 							return customFields[OrderCustomFields.END_DATE]
 								? format(
-										new Date(
-											customFields[
-												OrderCustomFields.END_DATE
-											]
-										),
-										'dd MMM, yyyy'
-									).toString()
+									new Date(
+										customFields[
+										OrderCustomFields.END_DATE
+										]
+									),
+									'dd MMM, yyyy'
+								).toString()
 								: 'DNE';
 						},
 						sortable: true,
