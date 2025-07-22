@@ -6,10 +6,11 @@ import zodSchema from '../../../../schema/zod';
 import {OrderCustomFields} from '../../../../enums/Order';
 import {Liferay} from '../../../../liferay/liferay';
 import i18n from '../../../../i18n';
-import ClayForm, {ClayInput} from '@clayui/form';
+import ClayForm from '@clayui/form';
 import {FormSection} from './FormSection';
 import {Label} from '../../../../components/MarketplaceForm/Label';
 import {Input} from './Input';
+import trialOAuth2 from '../../../../services/oauth/Trial';
 import useSSAProduct from '../../hooks/useSSAProduct';
 
 type ValidationErrors = Partial<Record<keyof FormFields, string>>;
@@ -56,12 +57,26 @@ const SSAFormBody = ({
 				...prevData,
 				demoDuration: '1',
 			}));
+
+			setErrors((prevErrors) => ({
+				...prevErrors,
+				demoDuration: undefined,
+			}));
 		}
 	}, [isTestTrial]);
 
+	const onChange = ({label, value}: {label: string; value: string}) => {
+		setFormData((prevData) => ({
+			...prevData,
+			[label]: value,
+		}));
+
+		setErrors((prevErrors) => ({...prevErrors, [label]: undefined}));
+	};
+
 	const validateProjectId = async (projectId: string) => {
 		try {
-			const data = await productPurchase?.getDemoAvailability(projectId);
+			const data = await trialOAuth2.getDemoAvailability(projectId);
 
 			return data;
 		}
@@ -81,16 +96,16 @@ const SSAFormBody = ({
 		}
 	};
 
-	const onChange = ({label, value}: {label: string; value: string}) => {
-		setFormData((prevData) => ({
-			...prevData,
-			[label]: value,
-		}));
-
-		setErrors((prevErrors) => ({...prevErrors, [label]: undefined}));
-	};
-
 	const onSubmit = useCallback(async () => {
+		if (!productPurchase) {
+			Liferay.Util.openToast({
+				message: 'We could not create the order.',
+				type: 'danger',
+			});
+
+			return false;
+		}
+
 		const result = zodSchema.ssaTrialForm.safeParse(formData);
 
 		if (!result.success) {
@@ -109,22 +124,25 @@ const SSAFormBody = ({
 		const data = await validateProjectId(formData.projectId);
 
 		if (!data) {
-			return;
+			return false;
 		}
 
-		await productPurchase?.createOrder({
+		const trialSettings = {
+			...(formData.emailAddress && {
+				consoleInviteEmailAddresses: [formData.emailAddress],
+			}),
+			ssaSettings: {
+				duration: formData.demoDuration,
+				objective: formData.objective,
+				projectId: formData.projectId,
+				sendNotificationEmail: true,
+			},
+		};
+
+		await productPurchase.createOrder({
 			customFields: {
-				[OrderCustomFields.TRIAL_SETTINGS]: JSON.stringify({
-					...(formData.emailAddress
-						? {consoleInviteEmailAddresses: [formData.emailAddress]}
-						: {}),
-					ssaSettings: {
-						duration: formData.demoDuration,
-						objective: formData.objective,
-						projectId: formData.projectId,
-						sendNotificationEmail: true,
-					},
-				}),
+				[OrderCustomFields.TRIAL_SETTINGS]:
+					JSON.stringify(trialSettings),
 			},
 		} as Cart);
 
@@ -192,7 +210,7 @@ const SSAFormBody = ({
 						title: 'Duration (days)',
 						tooltip: 'placeholder',
 						type: 'number',
-						value: isTestTrial ? '1' : formData.demoDuration,
+						value: formData.demoDuration,
 					}}
 					title="Usage"
 				/>

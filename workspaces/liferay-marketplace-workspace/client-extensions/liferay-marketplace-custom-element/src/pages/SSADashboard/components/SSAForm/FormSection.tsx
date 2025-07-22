@@ -4,32 +4,15 @@
  */
 
 import Form from '../../../../components/MarketplaceForm';
-import {Input} from './Input';
-import { FormFields } from './ModalFormBody';
+import {Input, InputProps} from './Input';
 
 type FormSectionProps = {
+	leftSection: InputProps;
+	rightSection: InputProps;
 	title?: string;
-	leftSection: FieldProps;
-	rightSection: FieldProps;
 };
 
-export type FieldProps = {
-	className?: string;
-	disabled?: boolean;
-	error?: string;
-	handleChange: ({label, value}: {label: string; value: string}) => void;
-	label: keyof FormFields;
-	maxLength?: number;
-	options?: string[];
-	placeholder?: string;
-	required?: boolean;
-	title: string;
-	tooltip?: string;
-	type?: 'input' | 'number' | 'select';
-	value?: string;
-};
-
-const FormField = ({section}: {section: FieldProps}) => (
+export const FormField = ({section}: {section: InputProps}) => (
 	<div className="mb-3 pr-2 w-50">
 		<Form.Label
 			className="mt-5"

@@ -17,16 +17,4 @@ export default class ProductPurchaseSSATrial extends ProductPurchase {
 
 		return order;
 	}
-
-	public async getDemoAvailability(projectId: string) {
-		return trialOAuth2.getDemoAvailability(projectId);
-	}
-
-	public async isTrialOnHold() {
-		const trialAvailability = await trialOAuth2.getAvailability();
-
-		return trialAvailability.fallback
-			? false
-			: trialAvailability.available === 0;
-	}
 }

@@ -4,8 +4,25 @@
  */
 
 import Select from '@clayui/form/lib/Select';
+
+import {FormFields} from './ModalFormBody';
 import Form from '../../../../components/MarketplaceForm';
-import {FieldProps} from './FormSection';
+
+export type InputProps = {
+	className?: string;
+	disabled?: boolean;
+	error?: string;
+	handleChange: ({label, value}: {label: string; value: string}) => void;
+	label: keyof FormFields;
+	maxLength?: number;
+	options?: string[];
+	placeholder?: string;
+	required?: boolean;
+	title: string;
+	tooltip?: string;
+	type?: 'input' | 'number' | 'select';
+	value?: string;
+};
 
 const Input = ({
 	className,
@@ -19,7 +36,7 @@ const Input = ({
 	title,
 	type,
 	value,
-}: FieldProps) => {
+}: InputProps) => {
 	if (type === 'select') {
 		return (
 			<>
@@ -60,7 +77,8 @@ const Input = ({
 					handleChange({label, value: event.target.value})
 				}
 			/>
-			{error && <p className="text-danger mt-1 mb-0">{error}</p>}
+
+			{error && <p className="mb-0 mt-1 text-danger">{error}</p>}
 		</>
 	);
 };
