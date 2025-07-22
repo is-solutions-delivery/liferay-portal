@@ -79,10 +79,10 @@ const setCardInfo = ({description, goToText, href, title}) => {
 
 document.addEventListener('DOMContentLoaded', async () => {
 	const userAccount = await getUserAccount();
-	const extractUserAcountData = (array = [], key) =>
+	const extractUserAccountData = (array = [], key) =>
 		array.map((item) => item[key]);
 
-	const userGroupNames = extractUserAcountData(
+	const userGroupNames = extractUserAccountData(
 		userAccount.userGroupBriefs,
 		'name'
 	);
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 		domElements.containerEnablementHubCard.classList.remove('hide');
 
 		renderCardByRole(
-			extractUserAcountData(
+			extractUserAccountData(
 				userAccount.roleBriefs,
 				'externalReferenceCode'
 			).some((code) =>
