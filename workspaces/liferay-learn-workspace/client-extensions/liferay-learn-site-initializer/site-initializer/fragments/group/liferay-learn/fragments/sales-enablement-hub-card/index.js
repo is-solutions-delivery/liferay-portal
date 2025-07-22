@@ -79,8 +79,8 @@ const setCardInfo = ({description, goToText, href, title}) => {
 
 document.addEventListener('DOMContentLoaded', async () => {
 	const userAccount = await getUserAccount();
-	const extractUserAcountData = (arr = [], key) =>
-		arr.map((item) => item[key]);
+	const extractUserAcountData = (array = [], key) =>
+		array.map((item) => item[key]);
 
 	const userGroupNames = extractUserAcountData(
 		userAccount.userGroupBriefs,
