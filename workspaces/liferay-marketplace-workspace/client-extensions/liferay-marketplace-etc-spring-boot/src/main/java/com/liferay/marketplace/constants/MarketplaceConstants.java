@@ -74,4 +74,20 @@ public class MarketplaceConstants {
 		return null;
 	}
 
+	public enum ExtendRequestStatus {
+		APPROVED("approved"),
+		AUTO_APPROVED("auto-approved"),
+		EXTENSION_EXPIRED("extension-expired"),
+		NOT_REQUESTED("not-requested"),
+		PENDING("pending"),
+		REJECTED("rejected");
+
+		private final String value;
+
+		ExtendRequestStatus(String value) {
+			this.value = value;
+		}
+
+	}
+
 }

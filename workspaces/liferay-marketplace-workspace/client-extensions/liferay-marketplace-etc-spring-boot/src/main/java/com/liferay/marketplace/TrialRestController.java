@@ -97,6 +97,109 @@ public class TrialRestController extends BaseRestController {
 		}
 	}
 
+	@PostMapping("extend/{orderId}")
+	public void postExtend(@PathVariable long orderId, @RequestBody String json)
+		throws Exception {
+
+		JSONObject jsonObject = new JSONObject(json);
+
+		int duration = jsonObject.getInt("duration");
+
+		Order order = _marketplaceService.getOrder(orderId);
+
+		Map<String, String> customFields =
+			(Map<String, String>)order.getCustomFields();
+
+		String endDate = customFields.get("trial-end-date");
+
+		ZonedDateTime date = ZonedDateTime.parse(endDate);
+
+		ZonedDateTime newEndDate = date.plusDays(duration);
+
+		String newEndDateString = newEndDate.format(
+			DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+
+		customFields.put("trial-end-date", newEndDateString);
+
+		String orderTrialSettings = customFields.get("trial-settings");
+
+		JSONObject trialSettingsJSONObject = new JSONObject(orderTrialSettings);
+
+		boolean autoExtended = trialSettingsJSONObject.getBoolean(
+			"autoExtended");
+		int extendCount = trialSettingsJSONObject.getInt("extendCount");
+
+		if (!autoExtended && (extendCount == 0)) {
+			trialSettingsJSONObject.getJSONObject(
+				"ssaSettings"
+			).put(
+				"autoExtended", true
+			).put("extendCount",extendCount++);
+
+			customFields.put(
+				"trial-settings", trialSettingsJSONObject.toString());
+
+			_marketplaceService.updateOrder(
+				customFields, orderId, order.getOrderStatus());
+		}
+	}
+
+
+	@PostMapping("extend-admin-request/{orderId}")
+	public void postRequestExtend(
+			@PathVariable long orderId, @RequestBody String json)
+			throws Exception {
+
+		System.out.println(MarketplaceConstants.ExtendRequestStatus.APPROVED);
+
+		JSONObject jsonObject = new JSONObject(json);
+
+		int newDuration = jsonObject.getInt("duration");
+
+		Order order = _marketplaceService.getOrder(orderId);
+
+		UserAccount userAccount = _marketplaceService.getUserAccount(
+				order.getCreatorEmailAddress());
+
+		Map<String, String> customFields =
+				(Map<String, String>)order.getCustomFields();
+
+		String orderTrialSettings = customFields.get("trial-settings");
+
+		JSONObject trialSettingsJSONObject = new JSONObject(orderTrialSettings);
+
+		trialSettingsJSONObject.getJSONObject(
+				"ssaSettings"
+		).put(
+				"adminRequestExtend", true
+		).put(
+				"duration", newDuration
+		);
+
+		customFields.put("trial-settings", trialSettingsJSONObject.toString());
+
+		_marketplaceService.updateOrder(
+				customFields, orderId, order.getOrderStatus());
+
+		_marketplaceService.postNotificationQueueEntry(
+				order.getCreatorEmailAddress(), "TRIAL-EXTENSION-REQUEST",
+				new HashMapBuilder<String, Object>().put(
+						"%COMMERCEORDER_ACCOUNT_NAME%", userAccount.getGivenName()
+				).put(
+						"%DURATION%", String.valueOf(newDuration)
+				).put(
+						"%PROJECT_ID%",
+						trialSettingsJSONObject.getJSONObject(
+								"ssaSettings"
+						).getString(
+								"projectId"
+						)
+				).put(
+						"%COMMERCEORDER_ID%", String.valueOf(orderId)
+				).build());
+	}
+
+
 	@PostMapping("notify-end/{orderId}")
 	public void postNotifyEnd(@PathVariable long orderId) throws Exception {
 		Order order = _marketplaceService.getOrder(orderId);
