@@ -13,10 +13,10 @@ import {useAccount} from '../../../../hooks/data/useAccounts';
 import i18n from '../../../../i18n';
 import {Liferay} from '../../../../liferay/liferay';
 import zodSchema from '../../../../schema/zod';
-import ProductPurchaseSSATrial from '../../../ProductPurchase/services/ProductPurchaseSSATrial';
-import {FieldGroup} from './FieldGroup';
 import trialOAuth2 from '../../../../services/oauth/Trial';
 import HeadlessCommerceDeliveryCatalog from '../../../../services/rest/HeadlessCommerceDeliveryCatalog';
+import ProductPurchaseSSATrial from '../../../ProductPurchase/services/ProductPurchaseSSATrial';
+import {FieldGroup} from './FieldGroup';
 
 type ValidationErrors = Partial<Record<keyof FormFields, string>>;
 
@@ -49,7 +49,7 @@ const SSAFormBody = ({
 
 		fetchProduct();
 		setProduct(product);
-	}, [properties, channel]);
+	}, [channel, product, properties]);
 
 	const productPurchase = useMemo(() => {
 		if (!account || !channel || !product) {
@@ -110,7 +110,7 @@ const SSAFormBody = ({
 				}
 			}
 		},
-		[productPurchase]
+		[]
 	);
 
 	const onChange = ({label, value}: {label: string; value: string}) => {
@@ -190,14 +190,14 @@ const SSAFormBody = ({
 
 					<ClayInput.Group>
 						<ClayInput
-							className="bg-white marketplace-form-input input-group-inset input-group-inset-after"
+							className="bg-white input-group-inset input-group-inset-after marketplace-form-input"
 							maxLength={9}
 							onChange={({target: {value}}) =>
 								onChange({label: 'projectId', value})
 							}
 						/>
 						<ClayInput.GroupInsetItem after tag="span">
-							{`.saas.demo.lxc.liferay.com`}
+							.saas.demo.lxc.liferay.com
 						</ClayInput.GroupInsetItem>
 					</ClayInput.Group>
 
