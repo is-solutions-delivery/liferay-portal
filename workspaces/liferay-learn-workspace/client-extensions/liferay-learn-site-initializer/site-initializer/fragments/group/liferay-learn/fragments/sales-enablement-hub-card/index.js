@@ -77,7 +77,7 @@ const setCardInfo = ({description, goToText, href, title}) => {
 	salesPageCardTitle.textContent = title;
 };
 
-const userHasGroup = (userAccount, targetGroups = []) => {
+const hasUserGroup = (userAccount, targetGroups = []) => {
 	if (!Array.isArray(userAccount?.userGroupBriefs)) return false;
 
 	return userAccount.userGroupBriefs.some((group) =>
@@ -88,7 +88,7 @@ const userHasGroup = (userAccount, targetGroups = []) => {
 document.addEventListener('DOMContentLoaded', async () => {
 	const userAccount = await getUserAccount();
 
-	if (userHasGroup(userAccount, ['Employees', 'Partners'])) {
+	if (hasUserGroup(userAccount, ['Employees', 'Partners'])) {
 		domElements.containerEnablementHubCard.classList.remove('hide');
 
 		renderCardByRole(userAccount.roleBriefs?.some((role) =>
