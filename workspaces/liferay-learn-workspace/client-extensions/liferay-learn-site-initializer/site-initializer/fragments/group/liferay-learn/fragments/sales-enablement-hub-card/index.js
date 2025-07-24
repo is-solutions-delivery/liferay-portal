@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-const CARD_CONFIG = {
+const cardConfigurations = {
 	nonTrainer: {
 		class: 'sales-resources-card-icon',
 		description:
@@ -53,11 +53,11 @@ const renderCardByRole = (isTrainer) => {
 	const {salesPageCard} = domElements;
 
 	salesPageCard.classList.remove(
-		CARD_CONFIG.nonTrainer.class,
-		CARD_CONFIG.trainer.class
+		cardConfigurations.nonTrainer.class,
+		cardConfigurations.trainer.class
 	);
 
-	const config = isTrainer ? CARD_CONFIG.trainer : CARD_CONFIG.nonTrainer;
+	const config = isTrainer ? cardConfigurations.trainer : cardConfigurations.nonTrainer;
 
 	salesPageCard.classList.add(config.class);
 	setCardInfo(config);
@@ -77,33 +77,24 @@ const setCardInfo = ({description, goToText, href, title}) => {
 	salesPageCardTitle.textContent = title;
 };
 
+const userHasGroup = (userAccount, targetGroups = []) => {
+	if (!Array.isArray(userAccount?.userGroupBriefs)) return false;
+
+	return userAccount.userGroupBriefs.some((group) =>
+		targetGroups.includes(group.name)
+	);
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
 	const userAccount = await getUserAccount();
-	const extractUserAccountData = (array = [], key) =>
-		array.map((item) => item[key]);
 
-	const userGroupNames = extractUserAccountData(
-		userAccount.userGroupBriefs,
-		'name'
-	);
-
-	const isEmployeeOrPartner = (userGroupNames) =>
-		userGroupNames.includes('Employees') ||
-		userGroupNames.includes('Partners');
-
-	if (isEmployeeOrPartner(userGroupNames)) {
+	if (userHasGroup(userAccount, ['Employees', 'Partners'])) {
 		domElements.containerEnablementHubCard.classList.remove('hide');
 
-		renderCardByRole(
-			extractUserAccountData(
-				userAccount.roleBriefs,
-				'externalReferenceCode'
-			).some((code) =>
-				[
-					'TRAINERS-LOUNGE-CONTENT-ADMIN',
-					'TRAINERS-LOUNGE-USER',
-				].includes(code)
+		renderCardByRole(userAccount.roleBriefs?.some((role) =>
+			['TRAINERS-LOUNGE-CONTENT-ADMIN', 'TRAINERS-LOUNGE-USER'].includes(
+				role.externalReferenceCode
 			)
-		);
-	}
+		));
+	}	
 });
