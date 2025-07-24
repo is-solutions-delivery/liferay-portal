@@ -49,6 +49,14 @@ const getUserAccount = async () => {
 	return response.json();
 };
 
+const hasUserGroup = (userAccount, targetGroups = []) => {
+	if (!Array.isArray(userAccount?.userGroupBriefs)) {return false;}
+
+	return userAccount.userGroupBriefs.some((group) =>
+		targetGroups.includes(group.name)
+	);
+};
+
 const renderCardByRole = (isTrainer) => {
 	const {salesPageCard} = domElements;
 
@@ -77,14 +85,6 @@ const setCardInfo = ({description, goToText, href, title}) => {
 	salesPageCardDescription.textContent = description;
 	salesPageCardGoToText.textContent = goToText;
 	salesPageCardTitle.textContent = title;
-};
-
-const hasUserGroup = (userAccount, targetGroups = []) => {
-	if (!Array.isArray(userAccount?.userGroupBriefs)) {return false;}
-
-	return userAccount.userGroupBriefs.some((group) =>
-		targetGroups.includes(group.name)
-	);
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
