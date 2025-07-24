@@ -57,7 +57,9 @@ const renderCardByRole = (isTrainer) => {
 		cardConfigurations.trainer.class
 	);
 
-	const config = isTrainer ? cardConfigurations.trainer : cardConfigurations.nonTrainer;
+	const config = isTrainer
+		? cardConfigurations.trainer
+		: cardConfigurations.nonTrainer;
 
 	salesPageCard.classList.add(config.class);
 	setCardInfo(config);
@@ -78,7 +80,7 @@ const setCardInfo = ({description, goToText, href, title}) => {
 };
 
 const hasUserGroup = (userAccount, targetGroups = []) => {
-	if (!Array.isArray(userAccount?.userGroupBriefs)) return false;
+	if (!Array.isArray(userAccount?.userGroupBriefs)) {return false;}
 
 	return userAccount.userGroupBriefs.some((group) =>
 		targetGroups.includes(group.name)
@@ -91,10 +93,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 	if (hasUserGroup(userAccount, ['Employees', 'Partners'])) {
 		domElements.containerEnablementHubCard.classList.remove('hide');
 
-		renderCardByRole(userAccount.roleBriefs?.some((role) =>
-			['TRAINERS-LOUNGE-CONTENT-ADMIN', 'TRAINERS-LOUNGE-USER'].includes(
-				role.externalReferenceCode
+		renderCardByRole(
+			userAccount.roleBriefs?.some((role) =>
+				[
+					'TRAINERS-LOUNGE-CONTENT-ADMIN',
+					'TRAINERS-LOUNGE-USER',
+				].includes(role.externalReferenceCode)
 			)
-		));
-	}	
+		);
+	}
 });
