@@ -1,37 +1,31 @@
 {
 	"description": "",
 	"fragmentCompositionDefinitionPath": "page-definition.json",
-	"friendlyURL": "/administrator-dashboard",
+	"friendlyURL": "/ssa-dashboard",
 	"hidden": false,
-	"name": "Administrator",
+	"name": "SSA",
 	"name_i18n": {
-		"en_US": "Administrator"
+		"en_US": "SSA"
 	},
 	"permissions": [
 		{
 			"actionIds": [
-				"VIEW"
-			],
-			"roleName": "Administrator",
-			"scope": 4
-		},
-		{
-			"actionIds": [
-				"VIEW"
-			],
-			"roleName": "Dashboard Viewer",
-			"scope": 1
-		},
-		{
-			"actionIds": [
 			],
 			"roleName": "Guest",
 			"scope": 4
 		},
 		{
 			"actionIds": [
+				"VIEW"
 			],
-			"roleName": "Guest",
+			"roleName": "SSA",
+			"scope": 4
+		},
+		{
+			"actionIds": [
+				"VIEW"
+			],
+			"roleName": "SSA Admin",
 			"scope": 4
 		}
 	],

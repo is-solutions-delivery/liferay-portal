@@ -490,6 +490,7 @@ export default {
 	'sorry-there-are-no-results-found': 'Sorry, there are no results found',
 	'specify-your-apps-version-this-will-help-the-user-to-understand-the-latest-version-of-your-app-offered-on-the-marketplace':
 		'Specify your app’s version. This will help the user to understand the latest version of your app offered on the Marketplace.',
+	'ssa-trials': 'SSA Trials',
 	'standard-license-prices': 'Standard License prices',
 	'standard-licenses-cover-the-following-dxp-environments-production-non-production-uat-and-backup-dr-for-both-standalone-and-virtual-cluster-servers':
 		'Standard licenses cover the following DXP environments: production, non-production (UAT) and backup (DR) for both standalone and virtual cluster servers.',
@@ -606,6 +607,7 @@ export default {
 	'view': 'View',
 	'view-all': 'View All',
 	'view-details': 'View details',
+	'view-request': 'View Request',
 	'we-are-happy-to-have-you-interested-in-the-liferay-marketplace-at-the-moment-we-are-working-on-enhancing-the-experience-for-our-customers-in-the-marketplace-and-access-is-invite-only-if-you-are-an-existing-liferay-customer-please-keep-an-eye-out-for-an-announcement-related-to-the-new-marketplace-in-the-coming-months':
 		'We are happy to have you interested in the Liferay Marketplace. At the moment, we are working on enhancing the experience for our customers in the Marketplace and access is invite only. If you are an existing Liferay customer, please keep an eye out for an announcement related to the new Marketplace in the coming months!',
 	'we-are-happy-to-have-you-interested-in-the-liferay-marketplace-at-the-moment-we-are-working-on-enhancing-the-experience-for-our-publishers-in-the-marketplace-if-you-are-an-existing-liferay-developer-or-partner-you-can-choose-to-join-our-pilot-group-of-publishers-to-submit-apps-to-the-marketplace-continue-to-request-a-publisher-account':
