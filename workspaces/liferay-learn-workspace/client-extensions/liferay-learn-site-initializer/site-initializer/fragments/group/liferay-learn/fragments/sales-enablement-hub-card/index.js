@@ -50,7 +50,9 @@ const getUserAccount = async () => {
 };
 
 const hasUserGroup = (userAccount, targetGroups = []) => {
-	if (!Array.isArray(userAccount?.userGroupBriefs)) {return false;}
+	if (!Array.isArray(userAccount?.userGroupBriefs)) {
+		return false;
+	}
 
 	return userAccount.userGroupBriefs.some((group) =>
 		targetGroups.includes(group.name)
