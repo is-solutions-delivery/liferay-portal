@@ -37,7 +37,6 @@ export default function SaaSTrials() {
 		channel.channelId,
 		selectedAccount?.id
 	);
-
 	const navigate = useNavigate();
 
 	const onExpireTrial = (order: Order) => trialOAuth2.expireTrial(order.id);
