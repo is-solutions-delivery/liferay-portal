@@ -16,7 +16,6 @@ import com.liferay.headless.portal.instances.client.resource.v1_0.PortalInstance
 import com.liferay.marketplace.constants.MarketplaceConstants;
 import com.liferay.marketplace.service.ConsoleService;
 import com.liferay.marketplace.service.MarketplaceService;
-import com.liferay.marketplace.util.TrialProvisioningContext;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
