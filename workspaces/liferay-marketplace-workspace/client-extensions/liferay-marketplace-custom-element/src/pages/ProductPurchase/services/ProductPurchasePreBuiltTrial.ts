@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {OrderTypes} from '../../../enums/Order';
+import { OrderTypes } from '../../../enums/Order';
 import trialOAuth2 from '../../../services/oauth/Trial';
 import ProductPurchase from './ProductPurchase';
 
@@ -13,7 +13,7 @@ export default class ProductPurchaseSolutionTrial extends ProductPurchase {
 	public async createOrder(cart?: Cart): Promise<Cart> {
 		const order = await super.createOrder(cart);
 
-		await trialOAuth2.provisioningTrial(order.id);
+		// await trialOAuth2.provisioningTrial(order.id);
 
 		return order;
 	}

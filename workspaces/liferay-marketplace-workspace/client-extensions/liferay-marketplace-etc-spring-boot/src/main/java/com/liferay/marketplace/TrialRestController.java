@@ -171,7 +171,7 @@ public class TrialRestController extends BaseRestController {
 
 		Order order = _marketplaceService.getOrder(
 			trialExtensionRequestJSONObject.getLong(
-				"r_orderTrialExtensionRequest_commerceOrderId"));
+				"r_orderToTrialExtensionRequest_commerceOrderId"));
 
 		Map<String, String> customFields =
 			(Map<String, String>)order.getCustomFields();

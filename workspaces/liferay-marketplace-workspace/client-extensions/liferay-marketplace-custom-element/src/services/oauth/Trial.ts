@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {MarketplaceSpringBootOAuth2} from './OAuth2Client';
+import { MarketplaceSpringBootOAuth2 } from './OAuth2Client';
 
 export type Availability = {
 	active: boolean;
@@ -29,7 +29,7 @@ class TrialOAuth2 extends MarketplaceSpringBootOAuth2 {
 
 	async checkDomainAvailability(projectId: string) {
 		try {
-			return this.get(`/check-availability/${projectId}`);
+			return this.get(`/domain-availability/${projectId}`);
 		}
 		catch (error) {
 			console.error(error);

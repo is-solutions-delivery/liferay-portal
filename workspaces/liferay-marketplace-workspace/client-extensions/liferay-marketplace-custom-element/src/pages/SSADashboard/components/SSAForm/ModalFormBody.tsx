@@ -17,6 +17,7 @@ import trialOAuth2 from '../../../../services/oauth/Trial';
 import ProductPurchaseSSATrial from '../../../ProductPurchase/services/ProductPurchaseSSATrial';
 import { FieldGroup } from './FieldGroup';
 import HeadlessCommerceDeliveryCatalog from '../../../../services/rest/HeadlessCommerceDeliveryCatalog';
+import Loading from '../../../../components/Loading';
 
 type ValidationErrors = Partial<Record<keyof FormFields, string>>;
 
@@ -26,12 +27,15 @@ export type FormFields = {
 	objective: string;
 	projectId: string;
 	site: string;
+
 };
 
 const SSAFormBody = ({
 	submitRef,
+	onSubmitForm,
 }: {
 	submitRef: React.MutableRefObject<() => void>;
+	onSubmitForm?: () => void;
 }) => {
 	const [errors, setErrors] = useState<ValidationErrors>({});
 
@@ -50,15 +54,17 @@ const SSAFormBody = ({
 		const fetchProduct = async () => {
 			const product = await HeadlessCommerceDeliveryCatalog.getProduct(
 				channel.channelId,
-				properties.productId
-			);
+				properties.productId, new URLSearchParams({
+					accountId: "-1",
+					nestedFields: 'skus',
+					'skus.accountId': '-1'
+				}))
 
 			setProduct(product);
 		};
 
 		fetchProduct();
-		setProduct(product);
-	}, [channel, product, properties]);
+	}, [channel, properties]);
 
 	const productPurchase = useMemo(() => {
 		if (!account || !channel || !product) {
@@ -102,7 +108,7 @@ const SSAFormBody = ({
 				return false;
 			}
 		},
-		[]
+		[setErrors]
 	);
 
 	const onChange = ({ label, value }: { label: string; value: string }) => {
@@ -158,6 +164,7 @@ const SSAFormBody = ({
 			title: i18n.translate('success'),
 			type: 'success',
 		});
+
 
 		return true;
 	}, [productPurchase, formData, validateProjectId]);
@@ -249,6 +256,13 @@ const SSAFormBody = ({
 					title={i18n.translate('additional-admin')}
 				/>
 			</ClayForm.Group>
+
+			{false && (
+				<Loading.FullScreen>
+					Hang tight, the submission of <b>{product?.name}</b> is
+					being sent to <b>Liferay</b>
+				</Loading.FullScreen>
+			)}
 		</>
 	);
 };

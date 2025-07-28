@@ -3,18 +3,20 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
+import ClayButton, { ClayButtonWithIcon } from '@clayui/button';
 import classNames from 'classnames';
-import {addDays, format} from 'date-fns';
-import {ReactElement} from 'react';
-import {KeyedMutator} from 'swr';
+import { addDays, format } from 'date-fns';
+import { ReactElement, useState } from 'react';
+import { KeyedMutator } from 'swr';
 
-import {OrderCustomFields, OrderStatus as Status} from '../../../enums/Order';
+import { OrderCustomFields, OrderStatus as Status } from '../../../enums/Order';
 import i18n from '../../../i18n';
 import trialOAuth2 from '../../../services/oauth/Trial';
 import HeadlessTrialExtensionRequest from '../../../services/rest/HeadlessTrialExtensionRequest';
-import {TRIAL_STATUS_LABEL} from '../constants';
-import {ExtendRequestStatus} from '../enums/SSATrials';
+import { TRIAL_STATUS_LABEL } from '../constants';
+import { ExtendRequestStatus } from '../enums/SSATrials';
+import ClayLoadingIndicator from '@clayui/loading-indicator';
+import { Liferay } from '../../../liferay/liferay';
 
 type ExtendSSATrialModalProps = {
 	onClose: () => void;
@@ -29,7 +31,7 @@ type DetailsProps = {
 	title: string;
 };
 
-const Details: React.FC<DetailsProps> = ({children, title}) => (
+const Details: React.FC<DetailsProps> = ({ children, title }) => (
 	<div className="d-flex flex-column mb-4">
 		<p className="font-weight-bold m-0 text-black-50">{title}</p>
 		<div className="d-inline-flex">{children}</div>
@@ -46,6 +48,8 @@ const ExtendRequestModal: React.FC<ExtendSSATrialModalProps> = ({
 	const trialSettings = JSON.parse(
 		order?.customFields[OrderCustomFields.TRIAL_SETTINGS]
 	);
+
+	const [submitting, setSubmitting] = useState<null | 'approve' | 'reject'>(null);
 
 	return (
 		<div>
@@ -95,13 +99,13 @@ const ExtendRequestModal: React.FC<ExtendSSATrialModalProps> = ({
 							<span className="extend-request-info">
 								{trialSettings[OrderCustomFields.END_DATE]
 									? format(
-											new Date(
-												trialSettings[
-													OrderCustomFields.END_DATE
-												]
-											),
-											'dd MMM, yyyy'
-										).toString()
+										new Date(
+											trialSettings[
+											OrderCustomFields.END_DATE
+											]
+										),
+										'dd MMM, yyyy'
+									).toString()
 									: 'DNE'}
 							</span>
 						</Details>
@@ -128,8 +132,8 @@ const ExtendRequestModal: React.FC<ExtendSSATrialModalProps> = ({
 							>
 								{
 									TRIAL_STATUS_LABEL[
-										order.orderStatusInfo
-											.label as keyof typeof TRIAL_STATUS_LABEL
+									order.orderStatusInfo
+										.label as keyof typeof TRIAL_STATUS_LABEL
 									]
 								}
 							</span>
@@ -185,14 +189,17 @@ const ExtendRequestModal: React.FC<ExtendSSATrialModalProps> = ({
 					</div>
 				</div>
 			</div>
+
 			<div className="d-flex justify-content-end pt-8">
 				<ClayButton
+					disabled={!!submitting}
 					className="mr-4"
 					displayType="secondary"
 					onClick={async () => {
+						setSubmitting('reject');
 						await HeadlessTrialExtensionRequest.updateTrialExtensionRequest(
 							trialExtend.id,
-							{dueStatus: {key: ExtendRequestStatus.REJECTED}}
+							{ dueStatus: { key: ExtendRequestStatus.REJECTED } }
 						);
 
 						ssaTrialExtendMutate(
@@ -202,7 +209,7 @@ const ExtendRequestModal: React.FC<ExtendSSATrialModalProps> = ({
 										if (item.id === trialExtend.id) {
 											return {
 												...item,
-												statusRequest: {
+												dueStatus: {
 													key: ExtendRequestStatus.REJECTED,
 												},
 											};
@@ -217,53 +224,75 @@ const ExtendRequestModal: React.FC<ExtendSSATrialModalProps> = ({
 									items: updatedItems,
 								};
 							},
-							{revalidate: false}
+							{ revalidate: false }
 						);
+
+						setSubmitting(null);
+
+						Liferay.Util.openToast({
+							message: 'Trial extension rejected.',
+							title: i18n.translate('success'),
+							type: 'success',
+						});
+
+
 						onClose();
 					}}
 				>
-					{i18n.translate('reject-request')}
+					<div className="d-flex align-items-center">
+						{submitting === 'reject' && (
+							<ClayLoadingIndicator className="my-0 mr-3" />
+						)}
+						{i18n.translate('reject-request')}
+					</div>
 				</ClayButton>
 
 				<ClayButton
+					disabled={!!submitting}
 					onClick={async () => {
+						setSubmitting('approve');
+
 						await HeadlessTrialExtensionRequest.updateTrialExtensionRequest(
 							trialExtend.id,
-							{dueStatus: {key: ExtendRequestStatus.APPROVED}}
+							{ dueStatus: { key: ExtendRequestStatus.APPROVED } }
 						);
 
 						ssaTrialExtendMutate(
-							(data: any) => {
-								const updatedItems = data.items.map(
-									(item: TrialExtend) => {
-										if (item.id === trialExtend.id) {
-											return {
-												...item,
-												statusRequest: {
-													key: ExtendRequestStatus.APPROVED,
-												},
-											};
+							(data: any) => ({
+								...data,
+								items: data.items.map((item: TrialExtend) =>
+									item.id === trialExtend.id
+										? {
+											...item,
+											dueStatus: { key: ExtendRequestStatus.APPROVED },
 										}
-
-										return item;
-									}
-								);
-
-								return {
-									...data,
-									items: updatedItems,
-								};
-							},
-							{revalidate: false}
+										: item
+								),
+							}),
+							{ revalidate: false }
 						);
 
 						await trialOAuth2.extendTrial(trialExtend.id);
 
+						setSubmitting(null);
+
+						Liferay.Util.openToast({
+							message: 'Trial is approved.',
+							title: i18n.translate('success'),
+							type: 'success',
+						});
+
 						onClose();
 					}}
 				>
-					{i18n.translate('approve-request')}
+					<div className="d-flex align-items-center">
+						{submitting === 'approve' && (
+							<ClayLoadingIndicator className="my-0 mr-3" />
+						)}
+						{i18n.translate('approve-request')}
+					</div>
 				</ClayButton>
+
 			</div>
 		</div>
 	);

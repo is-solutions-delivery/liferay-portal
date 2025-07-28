@@ -6,26 +6,28 @@
 import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
 import DropDown from '@clayui/drop-down';
-import {ClayTooltipProvider} from '@clayui/tooltip';
-import {useOutletContext} from 'react-router-dom';
+import { ClayTooltipProvider } from '@clayui/tooltip';
+import { useOutletContext } from 'react-router-dom';
 
-import {useMarketplaceContext} from '../../../../context/MarketplaceContext';
-import {OrderStatus} from '../../../../enums/Order';
+import { useMarketplaceContext } from '../../../../context/MarketplaceContext';
+import { OrderStatus } from '../../../../enums/Order';
 import useModalContext from '../../../../hooks/useModalContext';
 import i18n from '../../../../i18n';
 import trialOAuth2 from '../../../../services/oauth/Trial';
-import {ExtendRequestStatus} from '../../enums/SSATrials';
+import { ExtendRequestStatus } from '../../enums/SSATrials';
 import ExtendRequestModal from '../ExtendRequestModal';
 import ExtendSSATrialModal from '../ExtendSSATrialModal';
+import { KeyedMutator } from 'swr';
 
 type TrialActionsProps = {
 	placedOrder: PlacedOrder;
+	ssaTrialExtendMutate: KeyedMutator<any>;
 };
 
-function TrialActions({placedOrder}: TrialActionsProps) {
-	const {marketplaceUserAccount} = useMarketplaceContext();
+function TrialActions({ placedOrder, ssaTrialExtendMutate }: TrialActionsProps) {
+	const { marketplaceUserAccount } = useMarketplaceContext();
 	const modalContext = useModalContext();
-	const {selectedAccount, ssaTrialExtend, ssaTrialExtendMutate} =
+	const { selectedAccount, ssaTrialExtend } =
 		useOutletContext<any>();
 
 	const onExpireTrial = (order: Order) => trialOAuth2.expireTrial(order.id);
@@ -155,11 +157,11 @@ function TrialActions({placedOrder}: TrialActionsProps) {
 					data-tooltip-align="left"
 					disabled={
 						placedOrder.orderStatusInfo.label ===
-							OrderStatus.APPROVED ||
+						OrderStatus.APPROVED ||
 						placedOrder.orderStatusInfo.label ===
-							OrderStatus.COMPLETED ||
+						OrderStatus.COMPLETED ||
 						placedOrder.orderStatusInfo.label ===
-							OrderStatus.PENDING
+						OrderStatus.PENDING
 					}
 					onClick={() =>
 						modalContext.onOpenModal({
@@ -204,33 +206,26 @@ function TrialActions({placedOrder}: TrialActionsProps) {
 											);
 
 											ssaTrialExtendMutate(
-												{
-													...ssaTrialExtend,
-													items: ssaTrialExtend.items.map(
-														(
-															order: TrialExtend
-														) => {
-															if (
-																order.r_orderToTrialExtensionRequest_commerceOrderId ===
-																placedOrder.id
-															) {
-																return {
-																	...order,
-																	dueStatus: {
-																		key: ExtendRequestStatus.EXTENSION_EXPIRED,
-																	},
-																};
-															}
-
-															return order;
+												(data: any) => {
+													const updatedItems = data.items.map(
+														(item: TrialExtend) => {
+															return {
+																...item,
+																dueStatus: {
+																	key: item.r_orderToTrialExtensionRequest_commerceOrderId === placedOrder.id ? ExtendRequestStatus.EXTENSION_EXPIRED : item.dueStatus.key,
+																	name: item.r_orderToTrialExtensionRequest_commerceOrderId === placedOrder.id ? ExtendRequestStatus.EXTENSION_EXPIRED : item.dueStatus.name,
+																},
+															};
 														}
-													),
-												},
-												{
-													revalidate: false,
-												}
-											);
+													);
 
+													return {
+														...data,
+														items: updatedItems,
+													};
+												},
+												{ revalidate: false }
+											);
 											modalContext.onClose();
 										}}
 									>
@@ -245,25 +240,24 @@ function TrialActions({placedOrder}: TrialActionsProps) {
 				>
 					{i18n.translate('expire-trial')}
 				</DropDown.Item>
-			</ClayTooltipProvider>
+			</ClayTooltipProvider >
 
 			<ClayTooltipProvider>
 				<DropDown.Item
 					data-tooltip-align="left"
 					disabled={
 						placedOrder.orderStatusInfo.label ===
-							OrderStatus.APPROVED ||
+						OrderStatus.APPROVED ||
 						placedOrder.orderStatusInfo.label ===
-							OrderStatus.COMPLETED ||
+						OrderStatus.COMPLETED ||
 						placedOrder.orderStatusInfo.label ===
-							OrderStatus.PENDING
+						OrderStatus.PENDING
 					}
 					onClick={() => {
 						window.open(
-							`https://${
-								placedOrder?.customFields?.[
-									'trial-virtualhost'
-								] as string
+							`https://${placedOrder?.customFields?.[
+							'trial-virtualhost'
+							] as string
 							}`
 						);
 					}}
@@ -271,7 +265,7 @@ function TrialActions({placedOrder}: TrialActionsProps) {
 					{i18n.translate('go-to-trial')}
 				</DropDown.Item>
 			</ClayTooltipProvider>
-		</DropDown.ItemList>
+		</DropDown.ItemList >
 	);
 }
 
