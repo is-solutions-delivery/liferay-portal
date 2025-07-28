@@ -22,7 +22,8 @@
 			"name": "P2S3Announcement",
 			"objectFields": [
 				{
-					"DBType": "String","businessType": "Text",
+					"DBType": "String",
+					"businessType": "Text",
 					"externalReferenceCode": "TITLE",
 					"indexed": true,
 					"indexedAsKeyword": false,
@@ -47,19 +48,19 @@
 					"indexedLanguageId": "en_US",
 					"label": {
 						"en_US": "Description"
-					},	
+					},
 					"localized": false,
-					"system": false,
 					"name": "description",
 					"objectFieldSettings": [
 						{
-							"name": "showCounter", 
+							"name": "showCounter",
 							"value": false
 						}
 					],
 					"readOnly": "false",
 					"required": true,
 					"state": false,
+					"system": false,
 					"type": "Clob",
 					"unique": false
 				},
@@ -74,12 +75,12 @@
 						"en_US": "Content"
 					},
 					"localized": false,
-					"system": false,
 					"name": "content",
 					"readOnly": "false",
 					"required": true,
-					"type": "Clob",
 					"state": false,
+					"system": false,
+					"type": "Clob",
 					"unique": false
 				},
 				{
@@ -116,22 +117,13 @@
 				}
 			],
 			"objectFolderExternalReferenceCode": "P2S3_LEARNING_MANAGEMENT_SYSTEM",
-			"pluralLabel": {
-				"en_US": "P2S3 Announcements"
-			},
-			"portlet": true,
-			"restContextPath": "/o/c/p2s3announcements",
-			"scope": "company",
-			"status": {
-				"label_i18n": "Approved",
-				"code": 0,
-				"label": "approved"
-			},
-			"parameterRequired": false,
-			"titleObjectFieldName": "title",
-			"panelCategoryKey": "control_panel.object",
 			"objectLayouts": [
 				{
+					"defaultObjectLayout": true,
+					"name": {
+						"en_US": "Announcement Create / Edit"
+					},
+					"objectDefinitionExternalReferenceCode": "P2S3_ANNOUNCEMENT",
 					"objectLayoutTabs": [
 						{
 							"name": {
@@ -139,13 +131,17 @@
 							},
 							"objectLayoutBoxes": [
 								{
+									"collapsable": false,
+									"name": {
+										"en_US": "Main"
+									},
 									"objectLayoutRows": [
 										{
 											"objectLayoutColumns": [
 												{
 													"objectFieldName": "title",
-													"size": 12,
-													"priority": 0
+													"priority": 0,
+													"size": 12
 												}
 											],
 											"priority": 0
@@ -154,8 +150,8 @@
 											"objectLayoutColumns": [
 												{
 													"objectFieldName": "description",
-													"size": 12,
-													"priority": 0
+													"priority": 0,
+													"size": 12
 												}
 											],
 											"priority": 0
@@ -164,8 +160,8 @@
 											"objectLayoutColumns": [
 												{
 													"objectFieldName": "content",
-													"size": 12,
-													"priority": 0
+													"priority": 0,
+													"size": 12
 												}
 											],
 											"priority": 0
@@ -174,17 +170,13 @@
 											"objectLayoutColumns": [
 												{
 													"objectFieldName": "image",
-													"size": 12,
-													"priority": 0
+													"priority": 0,
+													"size": 12
 												}
 											],
 											"priority": 0
 										}
 									],
-									"collapsable": false,
-									"name": {
-										"en_US": "Main"
-									},
 									"priority": 0,
 									"type": "regular"
 								},
@@ -199,15 +191,24 @@
 							],
 							"priority": 0
 						}
-					],
-					"objectDefinitionExternalReferenceCode": "P2S3_ANNOUNCEMENT",
-					"name": {
-						"en_US": "Announcement Create / Edit"
-					},
-					"defaultObjectLayout": true
+					]
 				}
-			]
-		},		
+			],
+			"panelCategoryKey": "control_panel.object",
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "P2S3 Announcements"
+			},
+			"portlet": true,
+			"restContextPath": "/o/c/p2s3announcements",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"titleObjectFieldName": "title"
+		},
 		{
 			"active": true,
 			"enableLocalization": true,
