@@ -3,21 +3,21 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayForm, { ClayInput } from '@clayui/form';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import ClayForm, {ClayInput} from '@clayui/form';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 
-import { Label } from '../../../../components/MarketplaceForm/Label';
-import { useMarketplaceContext } from '../../../../context/MarketplaceContext';
-import { OrderCustomFields } from '../../../../enums/Order';
-import { useAccount } from '../../../../hooks/data/useAccounts';
+import Loading from '../../../../components/Loading';
+import {Label} from '../../../../components/MarketplaceForm/Label';
+import {useMarketplaceContext} from '../../../../context/MarketplaceContext';
+import {OrderCustomFields} from '../../../../enums/Order';
+import {useAccount} from '../../../../hooks/data/useAccounts';
 import i18n from '../../../../i18n';
-import { Liferay } from '../../../../liferay/liferay';
+import {Liferay} from '../../../../liferay/liferay';
 import zodSchema from '../../../../schema/zod';
 import trialOAuth2 from '../../../../services/oauth/Trial';
-import ProductPurchaseSSATrial from '../../../ProductPurchase/services/ProductPurchaseSSATrial';
-import { FieldGroup } from './FieldGroup';
 import HeadlessCommerceDeliveryCatalog from '../../../../services/rest/HeadlessCommerceDeliveryCatalog';
-import Loading from '../../../../components/Loading';
+import ProductPurchaseSSATrial from '../../../ProductPurchase/services/ProductPurchaseSSATrial';
+import {FieldGroup} from './FieldGroup';
 
 type ValidationErrors = Partial<Record<keyof FormFields, string>>;
 
@@ -27,15 +27,12 @@ export type FormFields = {
 	objective: string;
 	projectId: string;
 	site: string;
-
 };
 
 const SSAFormBody = ({
 	submitRef,
-	onSubmitForm,
 }: {
 	submitRef: React.MutableRefObject<() => void>;
-	onSubmitForm?: () => void;
 }) => {
 	const [errors, setErrors] = useState<ValidationErrors>({});
 
@@ -46,19 +43,21 @@ const SSAFormBody = ({
 		projectId: '',
 		site: '',
 	});
-	const { channel, properties } = useMarketplaceContext();
+	const {channel, properties} = useMarketplaceContext();
 	const [product, setProduct] = useState<DeliveryProduct | null>(null);
-	const { data: account } = useAccount();
+	const {data: account} = useAccount();
 
 	useEffect(() => {
 		const fetchProduct = async () => {
 			const product = await HeadlessCommerceDeliveryCatalog.getProduct(
 				channel.channelId,
-				properties.productId, new URLSearchParams({
-					accountId: "-1",
-					nestedFields: 'skus',
-					'skus.accountId': '-1'
-				}))
+				properties.productId,
+				new URLSearchParams({
+					'accountId': '-1',
+					'nestedFields': 'skus',
+					'skus.accountId': '-1',
+				})
+			);
 
 			setProduct(product);
 		};
@@ -111,13 +110,13 @@ const SSAFormBody = ({
 		[setErrors]
 	);
 
-	const onChange = ({ label, value }: { label: string; value: string }) => {
+	const onChange = ({label, value}: {label: string; value: string}) => {
 		setFormData((prevData) => ({
 			...prevData,
 			[label]: value,
 		}));
 
-		setErrors((prevErrors) => ({ ...prevErrors, [label]: undefined }));
+		setErrors((prevErrors) => ({...prevErrors, [label]: undefined}));
 	};
 
 	const onSubmit = useCallback(async () => {
@@ -144,7 +143,7 @@ const SSAFormBody = ({
 
 		const trialSettings = {
 			...(formData.emailAddress
-				? { consoleInviteEmailAddresses: [formData.emailAddress] }
+				? {consoleInviteEmailAddresses: [formData.emailAddress]}
 				: {}),
 			duration: formData.demoDuration,
 			projectId: formData.projectId,
@@ -164,7 +163,6 @@ const SSAFormBody = ({
 			title: i18n.translate('success'),
 			type: 'success',
 		});
-
 
 		return true;
 	}, [productPurchase, formData, validateProjectId]);
@@ -191,8 +189,8 @@ const SSAFormBody = ({
 						<ClayInput
 							className="bg-white input-group-inset input-group-inset-after marketplace-form-input"
 							maxLength={9}
-							onChange={({ target: { value } }) =>
-								onChange({ label: 'projectId', value })
+							onChange={({target: {value}}) =>
+								onChange({label: 'projectId', value})
 							}
 						/>
 						<ClayInput.GroupInsetItem after tag="span">

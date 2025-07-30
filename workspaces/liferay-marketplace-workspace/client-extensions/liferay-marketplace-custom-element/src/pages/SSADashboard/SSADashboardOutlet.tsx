@@ -3,14 +3,13 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import { Outlet } from 'react-router-dom';
+import {Outlet} from 'react-router-dom';
 
-import { DashboardNavigation } from '../../components/DashboardNavigation/DashboardNavigation';
-import { PageRenderer } from '../../components/Page';
-import useAccounts, { useAccount } from '../../hooks/data/useAccounts';
-import { getAccountImage } from '../../utils/util';
-import { useSSATrialsExtend } from './useSSATrialsExtend';
-import { useState } from 'react';
+import {DashboardNavigation} from '../../components/DashboardNavigation/DashboardNavigation';
+import {PageRenderer} from '../../components/Page';
+import useAccounts, {useAccount} from '../../hooks/data/useAccounts';
+import {getAccountImage} from '../../utils/util';
+import {useSSATrialsExtend} from './useSSATrialsExtend';
 
 const SSADashboardOutlet = () => {
 	const accountsSearch = useAccounts();
@@ -33,8 +32,6 @@ const SSADashboardOutlet = () => {
 	const error = errorAccount || errorTrialsExtend;
 	const isLoading = isLoadingAccount || isLoadingTrialsExtend;
 
-	const [isSubmitting, setIsSubmitting] = useState(false);
-
 	return (
 		<PageRenderer error={error} isLoading={isLoading}>
 			<div className="published-apps-dashboard-page-container">
@@ -56,8 +53,6 @@ const SSADashboardOutlet = () => {
 							selectedAccount,
 							ssaTrialExtend,
 							ssaTrialExtendMutate,
-							isSubmitting,
-							setIsSubmitting
 						}}
 					/>
 				</span>

@@ -3,34 +3,34 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayAlert from '@clayui/alert';
-import ClayButton from '@clayui/button';
 import DropDown from '@clayui/drop-down';
-import { ClayTooltipProvider } from '@clayui/tooltip';
-import { useOutletContext } from 'react-router-dom';
+import {ClayTooltipProvider} from '@clayui/tooltip';
+import {useOutletContext} from 'react-router-dom';
+import {KeyedMutator} from 'swr';
 
-import { useMarketplaceContext } from '../../../../context/MarketplaceContext';
-import { OrderStatus } from '../../../../enums/Order';
+import {useMarketplaceContext} from '../../../../context/MarketplaceContext';
+import {OrderStatus} from '../../../../enums/Order';
 import useModalContext from '../../../../hooks/useModalContext';
 import i18n from '../../../../i18n';
-import trialOAuth2 from '../../../../services/oauth/Trial';
-import { ExtendRequestStatus } from '../../enums/SSATrials';
+import {ExtendRequestStatus} from '../../enums/SSATrials';
+import ExpireSSAModal from '../ExpireSSAModal';
 import ExtendRequestModal from '../ExtendRequestModal';
 import ExtendSSATrialModal from '../ExtendSSATrialModal';
-import { KeyedMutator } from 'swr';
 
 type TrialActionsProps = {
+	mutatePlacedOrder: KeyedMutator<any>;
 	placedOrder: PlacedOrder;
 	ssaTrialExtendMutate: KeyedMutator<any>;
 };
 
-function TrialActions({ placedOrder, ssaTrialExtendMutate }: TrialActionsProps) {
-	const { marketplaceUserAccount } = useMarketplaceContext();
+function TrialActions({
+	mutatePlacedOrder,
+	placedOrder,
+	ssaTrialExtendMutate,
+}: TrialActionsProps) {
+	const {marketplaceUserAccount} = useMarketplaceContext();
 	const modalContext = useModalContext();
-	const { selectedAccount, ssaTrialExtend } =
-		useOutletContext<any>();
-
-	const onExpireTrial = (order: Order) => trialOAuth2.expireTrial(order.id);
+	const {selectedAccount, ssaTrialExtend} = useOutletContext<any>();
 
 	const isUserSSAAdmin = marketplaceUserAccount.isSSAAdmin;
 
@@ -157,82 +157,22 @@ function TrialActions({ placedOrder, ssaTrialExtendMutate }: TrialActionsProps) 
 					data-tooltip-align="left"
 					disabled={
 						placedOrder.orderStatusInfo.label ===
-						OrderStatus.APPROVED ||
+							OrderStatus.APPROVED ||
 						placedOrder.orderStatusInfo.label ===
-						OrderStatus.COMPLETED ||
+							OrderStatus.COMPLETED ||
 						placedOrder.orderStatusInfo.label ===
-						OrderStatus.PENDING
+							OrderStatus.PENDING
 					}
 					onClick={() =>
 						modalContext.onOpenModal({
 							body: (
-								<div>
-									<ClayAlert
-										displayType="warning"
-										role={null}
-									>
-										{i18n.translate(
-											'this-action-cannot-be-undone'
-										)}
-									</ClayAlert>
-									<p>
-										{i18n.translate(
-											'are-you-sure-you-want-to-expire-this-trial-this-action-imply-the-end-of-the-test-environment-permanently'
-										)}
-									</p>
-								</div>
+								<ExpireSSAModal
+									accountId={selectedAccount.id}
+									mutate={mutatePlacedOrder}
+									onClose={modalContext.onClose}
+									order={placedOrder}
+								/>
 							),
-							footer: [
-								undefined,
-								undefined,
-								<div key="footer-buttons">
-									<ClayButton
-										aria-label="cancel"
-										displayType="secondary"
-										key={0}
-										onClick={modalContext.onClose}
-									>
-										{i18n.translate('cancel')}
-									</ClayButton>
-
-									<ClayButton
-										aria-label="close"
-										className="ml-4"
-										displayType="warning"
-										key={2}
-										onClick={() => {
-											onExpireTrial(
-												placedOrder as unknown as Order
-											);
-
-											ssaTrialExtendMutate(
-												(data: any) => {
-													const updatedItems = data.items.map(
-														(item: TrialExtend) => {
-															return {
-																...item,
-																dueStatus: {
-																	key: item.r_orderToTrialExtensionRequest_commerceOrderId === placedOrder.id ? ExtendRequestStatus.EXTENSION_EXPIRED : item.dueStatus.key,
-																	name: item.r_orderToTrialExtensionRequest_commerceOrderId === placedOrder.id ? ExtendRequestStatus.EXTENSION_EXPIRED : item.dueStatus.name,
-																},
-															};
-														}
-													);
-
-													return {
-														...data,
-														items: updatedItems,
-													};
-												},
-												{ revalidate: false }
-											);
-											modalContext.onClose();
-										}}
-									>
-										{i18n.translate('got-it')}
-									</ClayButton>
-								</div>,
-							],
 							header: `Expire ${placedOrder.id} Trial`,
 							status: undefined,
 						})
@@ -240,24 +180,25 @@ function TrialActions({ placedOrder, ssaTrialExtendMutate }: TrialActionsProps) 
 				>
 					{i18n.translate('expire-trial')}
 				</DropDown.Item>
-			</ClayTooltipProvider >
+			</ClayTooltipProvider>
 
 			<ClayTooltipProvider>
 				<DropDown.Item
 					data-tooltip-align="left"
 					disabled={
 						placedOrder.orderStatusInfo.label ===
-						OrderStatus.APPROVED ||
+							OrderStatus.APPROVED ||
 						placedOrder.orderStatusInfo.label ===
-						OrderStatus.COMPLETED ||
+							OrderStatus.COMPLETED ||
 						placedOrder.orderStatusInfo.label ===
-						OrderStatus.PENDING
+							OrderStatus.PENDING
 					}
 					onClick={() => {
 						window.open(
-							`https://${placedOrder?.customFields?.[
-							'trial-virtualhost'
-							] as string
+							`https://${
+								placedOrder?.customFields?.[
+									'trial-virtual-host'
+								] as string
 							}`
 						);
 					}}
@@ -265,7 +206,7 @@ function TrialActions({ placedOrder, ssaTrialExtendMutate }: TrialActionsProps) 
 					{i18n.translate('go-to-trial')}
 				</DropDown.Item>
 			</ClayTooltipProvider>
-		</DropDown.ItemList >
+		</DropDown.ItemList>
 	);
 }
 
