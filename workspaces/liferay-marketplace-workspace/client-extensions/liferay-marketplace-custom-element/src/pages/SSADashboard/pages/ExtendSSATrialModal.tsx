@@ -5,26 +5,23 @@
 
 import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
-import { ClayInput } from '@clayui/form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import classNames from 'classnames';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-
+import {ClayInput} from '@clayui/form';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
-
-import { KeyedMutator } from 'swr';
+import {zodResolver} from '@hookform/resolvers/zod';
+import classNames from 'classnames';
+import {useState} from 'react';
+import {useForm} from 'react-hook-form';
+import {KeyedMutator} from 'swr';
 
 import BaseWrapper from '../../../components/Form/BaseWrapper';
+import {OrderCustomFields} from '../../../enums/Order';
 import i18n from '../../../i18n';
-import { Liferay } from '../../../liferay/liferay';
-import zodSchema, { z } from '../../../schema/zod';
+import {Liferay} from '../../../liferay/liferay';
+import zodSchema, {z} from '../../../schema/zod';
 import trialOAuth2 from '../../../services/oauth/Trial';
 import HeadlessTrialExtensionRequest from '../../../services/rest/HeadlessTrialExtensionRequest';
-import { EXTEND_OPTIONS, EXTEND_TYPES } from '../constants';
-import { ExtendRequestStatus } from '../enums/SSATrials';
-import { OrderCustomFields } from '../../../enums/Order';
-import { set } from 'date-fns';
+import {EXTEND_OPTIONS, EXTEND_TYPES} from '../constants';
+import {ExtendRequestStatus} from '../enums/SSATrials';
 
 type ExtendSSATrialModalProps = {
 	accountId: number;
@@ -45,7 +42,7 @@ const ExtendSSATrialModal: React.FC<ExtendSSATrialModalProps> = ({
 	const [reason, setReason] = useState<string>('');
 	const [submitting, setSubmitting] = useState<boolean>(false);
 
-	const { formState, handleSubmit, setValue, trigger } = useForm({
+	const {formState, handleSubmit, setValue, trigger} = useForm({
 		defaultValues: {
 			duration: 0,
 			reason: '',
@@ -55,7 +52,7 @@ const ExtendSSATrialModal: React.FC<ExtendSSATrialModalProps> = ({
 		resolver: zodResolver(zodSchema.extendSSATrial),
 	});
 
-	const { isLoading, isValid } = formState;
+	const {isLoading, isValid} = formState;
 
 	const extendType = firstExtendRequest
 		? EXTEND_TYPES.AUTO_EXTEND
@@ -68,7 +65,8 @@ const ExtendSSATrialModal: React.FC<ExtendSSATrialModalProps> = ({
 	const onSubmit = async (form: z.infer<typeof zodSchema.extendSSATrial>) => {
 		setSubmitting(true);
 
-		const trialSettings = order.customFields?.[OrderCustomFields.TRIAL_SETTINGS];
+		const trialSettings =
+			order.customFields?.[OrderCustomFields.TRIAL_SETTINGS];
 		const projectId = JSON.parse(trialSettings)?.projectId;
 
 		try {
@@ -80,10 +78,10 @@ const ExtendSSATrialModal: React.FC<ExtendSSATrialModalProps> = ({
 							: ExtendRequestStatus.PENDING,
 				},
 				duration: form.duration,
+				projectId,
 				r_accountToTrialExtensionRequest_accountEntryId: accountId,
 				r_orderToTrialExtensionRequest_commerceOrderId: order.id,
 				reason: form.reason,
-				projectId
 			};
 
 			const newExtensionRequest: TrialExtend =
@@ -102,7 +100,7 @@ const ExtendSSATrialModal: React.FC<ExtendSSATrialModalProps> = ({
 						items: [newExtensionRequest, ...data.items],
 					};
 				},
-				{ revalidate: false }
+				{revalidate: false}
 			);
 
 			Liferay.Util.openToast({
@@ -166,21 +164,21 @@ const ExtendSSATrialModal: React.FC<ExtendSSATrialModalProps> = ({
 			</BaseWrapper>
 			<div className="d-flex justify-content-end">
 				<ClayButton
-					disabled={!!submitting}
 					className="mr-4"
+					disabled={!!submitting}
 					displayType="secondary"
 					onClick={onClose}
 				>
 					{i18n.translate('cancel')}
 				</ClayButton>
 				<ClayButton
-
 					disabled={!isValid || isLoading || submitting}
 					onClick={handleSubmit(onSubmit)}
 				>
-
-					<div className="d-flex align-items-center">
-						{submitting && <ClayLoadingIndicator className='my-0 mr-3' />}
+					<div className="align-items-center d-flex">
+						{submitting && (
+							<ClayLoadingIndicator className="mr-3 my-0" />
+						)}
 						{extendOptions?.actionText}
 					</div>
 				</ClayButton>
