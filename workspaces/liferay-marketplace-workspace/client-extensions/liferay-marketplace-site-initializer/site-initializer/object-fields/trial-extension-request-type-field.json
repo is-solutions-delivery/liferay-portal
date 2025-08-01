@@ -19,7 +19,7 @@
 					"value": "inputAsValue"
 				}
 			],
-			"required": false,
+			"required": true,
 			"state": false,
 			"type": "String",
 			"unique": false
