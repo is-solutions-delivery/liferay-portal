@@ -25,10 +25,10 @@
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Reason"
+				"en_US": "Project ID"
 			},
-			"name": "reason",
-			"required": false,
+			"name": "projectId",
+			"required": true,
 			"type": "String"
 		},
 		{
@@ -36,9 +36,9 @@
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
-				"en_US": "Project ID"
+				"en_US": "Reason"
 			},
-			"name": "projectId",
+			"name": "reason",
 			"required": false,
 			"type": "String"
 		}
