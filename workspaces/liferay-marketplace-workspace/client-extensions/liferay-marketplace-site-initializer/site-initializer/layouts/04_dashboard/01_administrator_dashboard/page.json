@@ -9,28 +9,17 @@
 	},
 	"permissions": [
 		{
-			"actionIds": [
-				"VIEW"
-			],
+			"actionIds": ["VIEW"],
 			"roleName": "Administrator",
 			"scope": 4
 		},
 		{
-			"actionIds": [
-				"VIEW"
-			],
+			"actionIds": ["VIEW"],
 			"roleName": "Dashboard Viewer",
 			"scope": 1
 		},
 		{
-			"actionIds": [
-			],
-			"roleName": "Guest",
-			"scope": 4
-		},
-		{
-			"actionIds": [
-			],
+			"actionIds": [],
 			"roleName": "Guest",
 			"scope": 4
 		}
