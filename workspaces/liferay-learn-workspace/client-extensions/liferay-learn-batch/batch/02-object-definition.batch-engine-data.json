@@ -222,6 +222,7 @@
 				{
 					"DBType": "Long",
 					"businessType": "Attachment",
+					"externalReferenceCode": "IMAGE",
 					"indexed": true,
 					"indexedAsKeyword": false,
 					"indexedLanguageId": "en_US",
@@ -248,13 +249,13 @@
 					"readOnlyConditionExpression": "",
 					"required": false,
 					"state": false,
-					"system": false,
 					"type": "Long",
 					"unique": false
 				},
 				{
 					"DBType": "String",
 					"businessType": "Text",
+					"externalReferenceCode": "NAME",
 					"indexed": true,
 					"indexedAsKeyword": false,
 					"indexedLanguageId": "en_US",
@@ -267,7 +268,6 @@
 					"readOnlyConditionExpression": "",
 					"required": false,
 					"state": false,
-					"system": false,
 					"type": "String",
 					"unique": false
 				}
