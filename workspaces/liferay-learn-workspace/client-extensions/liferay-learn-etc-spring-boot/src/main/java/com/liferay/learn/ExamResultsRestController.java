@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
@@ -93,7 +94,7 @@ public class ExamResultsRestController extends BaseRestController {
 		@RequestParam("file") MultipartFile file) {
 
 		try {
-			return _processCsv(file);
+			return _process(file);
 		}
 		catch (Exception exception) {
 			return ResponseEntity.status(
@@ -143,7 +144,7 @@ public class ExamResultsRestController extends BaseRestController {
 		throw new IllegalArgumentException("Invalid date format: " + input);
 	}
 
-	private ResponseEntity<String> _processCsv(MultipartFile file)
+	private ResponseEntity<String> _process(MultipartFile file)
 		throws CsvValidationException, IOException {
 
 		try (BufferedReader reader = new BufferedReader(
@@ -157,14 +158,7 @@ public class ExamResultsRestController extends BaseRestController {
 			String[] row;
 
 			while ((row = csvReader.readNext()) != null) {
-				String emailAddress = row[2];
-				String examInstanceTokenId = row[0];
 				String examName = row[6];
-				String examStartDate = row[10];
-				String firstName = row[3];
-				String lastName = row[4];
-				String passFail = row[8];
-				String scoreStr = row[7];
 
 				if (Objects.equals(
 						examName,
@@ -177,29 +171,36 @@ public class ExamResultsRestController extends BaseRestController {
 
 				JSONObject jsonObject = new JSONObject(
 				).put(
-					"externalReferenceCode", examInstanceTokenId
+					"date",
+					OffsetDateTime.of(
+						LocalDateTime.parse(
+							row[10],
+							DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm:ss")
+						),
+						ZoneOffset.UTC
+					).format(DateTimeFormatter.ISO_INSTANT)
 				).put(
-					"email", emailAddress
-				).put(
-					"firstName", firstName
-				).put(
-					"lastName", lastName
+					"email", row[2]
 				).put(
 					"examName", examName
 				).put(
-					"testName", examName
+					"externalReferenceCode", row[0]
 				).put(
-					"score", GetterUtil.getInteger(scoreStr)
+					"firstName", row[3]
 				).put(
-					"date", _formatToIsoUtc(examStartDate)
+					"lastName", row[4]
 				).put(
 					"result",
 					new JSONObject(
 					).put(
-						"key", StringUtil.toLowerCase(passFail)
+						"name", row[8]
 					).put(
-						"name", passFail
+						"key", StringUtil.toLowerCase(row[8])
 					)
+				).put(
+					"score", GetterUtil.getInteger(row[7])
+				).put(
+					"testName", examName
 				);
 
 				jsonArray.put(jsonObject);
