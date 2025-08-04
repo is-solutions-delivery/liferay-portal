@@ -7,7 +7,6 @@ package com.liferay.learn;
 
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
 import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -28,8 +27,6 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -105,43 +102,9 @@ public class ExamResultsRestController extends BaseRestController {
 		}
 	}
 
-	private String _formatToIsoUtc(String rawDateTime) {
-		rawDateTime = _normalizeDateTime(rawDateTime);
-
-		return LocalDateTime.parse(
-			rawDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-		).atOffset(
-			ZoneOffset.UTC
-		).format(
-			DateTimeFormatter.ISO_INSTANT
-		);
-	}
-
 	private String _getAuthorization() {
 		return _liferayOAuth2AccessTokenManager.getAuthorization(
 			"liferay-learn-etc-spring-boot-oauth-application-headless-server");
-	}
-
-	private String _normalizeDateTime(String input) {
-		Matcher matcher = _dateTimePattern.matcher(input);
-
-		if (matcher.matches()) {
-			String day = String.format(
-				"%02d", GetterUtil.getInteger(matcher.group(3)));
-			String hour = String.format(
-				"%02d", GetterUtil.getInteger(matcher.group(4)));
-			String minute = matcher.group(5);
-			String month = String.format(
-				"%02d", GetterUtil.getInteger(matcher.group(2)));
-			String second = matcher.group(6);
-			String year = matcher.group(1);
-
-			return StringBundler.concat(
-				year, "-", month, "-", day, " ", hour, ":", minute, ":",
-				second);
-		}
-
-		throw new IllegalArgumentException("Invalid date format: " + input);
 	}
 
 	private ResponseEntity<String> _process(MultipartFile file)
@@ -175,10 +138,11 @@ public class ExamResultsRestController extends BaseRestController {
 					OffsetDateTime.of(
 						LocalDateTime.parse(
 							row[10],
-							DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm:ss")
-						),
+							DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm:ss")),
 						ZoneOffset.UTC
-					).format(DateTimeFormatter.ISO_INSTANT)
+					).format(
+						DateTimeFormatter.ISO_INSTANT
+					)
 				).put(
 					"email", row[2]
 				).put(
@@ -296,9 +260,6 @@ public class ExamResultsRestController extends BaseRestController {
 			throw new IOException(exception);
 		}
 	}
-
-	private static final Pattern _dateTimePattern = Pattern.compile(
-		"(\\d{4})-(\\d{1,2})-(\\d{1,2})[ ](\\d{1,2}):(\\d{2}):(\\d{2})");
 
 	@Autowired
 	private LiferayOAuth2AccessTokenManager _liferayOAuth2AccessTokenManager;
