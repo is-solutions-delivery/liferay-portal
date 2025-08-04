@@ -156,9 +156,7 @@
 										<#list 0..grandchildrenJSONArray.length()-1 as j>
 											<#assign grandchildJSONObject = grandchildrenJSONArray.getJSONObject(j)! />
 
-											<#if grandchildJSONObject??
-												&& grandchildJSONObject["title"]?has_content
-												&& grandchildJSONObject["url"]?has_content>
+											<#if grandchildJSONObject?? && grandchildJSONObject["title"]?has_content && grandchildJSONObject["url"]?has_content>
 												<a href="${grandchildJSONObject["url"]!}">
 													${grandchildJSONObject["title"]!}
 												</a>
