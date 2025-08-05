@@ -1,0 +1,51 @@
+.related-announcements-container {
+  background: #F7F7F8; 
+	border-radius: 10px;
+	min-height: 260px;
+	max-width: 1136px;
+	padding: 24px;
+}
+
+.related-cards-container {
+   gap: 1rem;
+}
+
+.related-card {
+  background: #fbfcfe;
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+	margin-top: 1rem;
+}
+
+.related-card-link {
+  flex: 1; 
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+}
+
+.related-card-description {
+  flex-grow: 1;
+  color: #282934; 
+  font-size: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  margin-bottom: 0.5rem;
+}
+
+.related-card-date {
+  font-size: 0.8rem;
+  color: #6b7280; 
+	margin-bottom: 0;
+}
+
+.related-card-title {
+  color: #0B5FFF;
+	font-size: 16px; 
+	font-weight: 600; 
+}
