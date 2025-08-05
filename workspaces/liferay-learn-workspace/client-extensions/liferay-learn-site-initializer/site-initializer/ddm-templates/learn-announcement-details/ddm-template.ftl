@@ -101,7 +101,6 @@
 	.admonion-container {
 		border-radius: var(--border-radius-lg);
 		margin-bottom: 1.5rem;
-		margin-right: 1rem;
 		padding: 1.5rem;
 
 		p {
