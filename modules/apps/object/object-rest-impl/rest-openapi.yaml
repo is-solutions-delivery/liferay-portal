@@ -165,6 +165,13 @@ components:
                         type: object
                     type: object
                     x-json-map: true
+                removedBy:
+                    $ref: ../../headless/headless-delivery/headless-delivery-impl/rest-openapi.yaml#Creator
+                    readOnly: true
+                removedDate:
+                    format: date
+                    readOnly: true
+                    type: string
                 reviewDate:
                     format: date
                     type: string
@@ -334,10 +341,6 @@ paths:
                     name: filter
                     schema:
                         type: string
-                -   in: query
-                    name: flatten
-                    schema:
-                        type: boolean
                 -   in: query
                     name: nestedFields
                     schema:
@@ -1899,10 +1902,6 @@ paths:
                     name: filter
                     schema:
                         type: string
-                -   in: query
-                    name: flatten
-                    schema:
-                        type: boolean
                 -   in: query
                     name: nestedFields
                     schema:

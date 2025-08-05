@@ -5,10 +5,14 @@
 
 package com.liferay.analytics.cms.rest.internal.graphql.query.v1_0;
 
+import com.liferay.analytics.cms.rest.dto.v1_0.ConnectionInfo;
 import com.liferay.analytics.cms.rest.dto.v1_0.InventoryAnalysis;
+import com.liferay.analytics.cms.rest.dto.v1_0.ObjectEntryHistogramMetric;
 import com.liferay.analytics.cms.rest.dto.v1_0.ObjectEntryMetric;
 import com.liferay.analytics.cms.rest.dto.v1_0.Overview;
+import com.liferay.analytics.cms.rest.resource.v1_0.ConnectionInfoResource;
 import com.liferay.analytics.cms.rest.resource.v1_0.InventoryAnalysisResource;
+import com.liferay.analytics.cms.rest.resource.v1_0.ObjectEntryHistogramMetricResource;
 import com.liferay.analytics.cms.rest.resource.v1_0.ObjectEntryMetricResource;
 import com.liferay.analytics.cms.rest.resource.v1_0.OverviewResource;
 import com.liferay.petra.function.UnsafeConsumer;
@@ -40,12 +44,29 @@ import org.osgi.service.component.ComponentServiceObjects;
 @Generated("")
 public class Query {
 
+	public static void setConnectionInfoResourceComponentServiceObjects(
+		ComponentServiceObjects<ConnectionInfoResource>
+			connectionInfoResourceComponentServiceObjects) {
+
+		_connectionInfoResourceComponentServiceObjects =
+			connectionInfoResourceComponentServiceObjects;
+	}
+
 	public static void setInventoryAnalysisResourceComponentServiceObjects(
 		ComponentServiceObjects<InventoryAnalysisResource>
 			inventoryAnalysisResourceComponentServiceObjects) {
 
 		_inventoryAnalysisResourceComponentServiceObjects =
 			inventoryAnalysisResourceComponentServiceObjects;
+	}
+
+	public static void
+		setObjectEntryHistogramMetricResourceComponentServiceObjects(
+			ComponentServiceObjects<ObjectEntryHistogramMetricResource>
+				objectEntryHistogramMetricResourceComponentServiceObjects) {
+
+		_objectEntryHistogramMetricResourceComponentServiceObjects =
+			objectEntryHistogramMetricResourceComponentServiceObjects;
 	}
 
 	public static void setObjectEntryMetricResourceComponentServiceObjects(
@@ -67,17 +88,34 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {inventoryAnalysis(categoryId: ___, groupBy: ___, languageId: ___, page: ___, pageSize: ___, rangeEnd: ___, rangeKey: ___, rangeStart: ___, spaceId: ___, structureId: ___, tagId: ___, vocabularyId: ___){inventoryAnalysisItems, totalCount}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {connectionInfo(depotEntryId: ___){admin, connectedToAnalyticsCloud, connectedToSpace, siteSyncedToAnalyticsCloud}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public ConnectionInfo connectionInfo(
+			@GraphQLName("depotEntryId") Long depotEntryId)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_connectionInfoResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			connectionInfoResource -> connectionInfoResource.getConnectionInfo(
+				depotEntryId));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {inventoryAnalysis(categoryId: ___, depotEntryId: ___, groupBy: ___, languageId: ___, page: ___, pageSize: ___, rangeEnd: ___, rangeKey: ___, rangeStart: ___, structureId: ___, tagId: ___, vocabularyId: ___){inventoryAnalysisItems, totalCount}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public InventoryAnalysis inventoryAnalysis(
 			@GraphQLName("categoryId") Long categoryId,
+			@GraphQLName("depotEntryId") Long depotEntryId,
 			@GraphQLName("groupBy") String groupBy,
 			@GraphQLName("languageId") String languageId,
 			@GraphQLName("rangeEnd") String rangeEnd,
 			@GraphQLName("rangeKey") Integer rangeKey,
 			@GraphQLName("rangeStart") String rangeStart,
-			@GraphQLName("spaceId") Long spaceId,
 			@GraphQLName("structureId") Long structureId,
 			@GraphQLName("tagId") Long tagId,
 			@GraphQLName("vocabularyId") Long vocabularyId,
@@ -90,9 +128,32 @@ public class Query {
 			this::_populateResourceContext,
 			inventoryAnalysisResource ->
 				inventoryAnalysisResource.getInventoryAnalysis(
-					categoryId, groupBy, languageId, rangeEnd, rangeKey,
-					rangeStart, spaceId, structureId, tagId, vocabularyId,
+					categoryId, depotEntryId, groupBy, languageId, rangeEnd,
+					rangeKey, rangeStart, structureId, tagId, vocabularyId,
 					Pagination.of(page, pageSize)));
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {objectEntryHistogramMetric(externalReferenceCode: ___, groupId: ___, rangeKey: ___, selectedMetrics: ___){histograms}}"}' -u 'test@liferay.com:test'
+	 */
+	@GraphQLField
+	public ObjectEntryHistogramMetric objectEntryHistogramMetric(
+			@GraphQLName("externalReferenceCode") String externalReferenceCode,
+			@GraphQLName("groupId") Long groupId,
+			@GraphQLName("rangeKey") Integer rangeKey,
+			@GraphQLName("selectedMetrics") String[] selectedMetrics)
+		throws Exception {
+
+		return _applyComponentServiceObjects(
+			_objectEntryHistogramMetricResourceComponentServiceObjects,
+			this::_populateResourceContext,
+			objectEntryHistogramMetricResource ->
+				objectEntryHistogramMetricResource.
+					getObjectEntryHistogramMetric(
+						externalReferenceCode, groupId, rangeKey,
+						selectedMetrics));
 	}
 
 	/**
@@ -119,43 +180,76 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {contentOverview(languageId: ___, rangeEnd: ___, rangeKey: ___, rangeStart: ___, spaceId: ___){categoriesCount, tagsCount, totalCount, trend, vocabulariesCount}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {contentOverview(depotEntryId: ___, languageId: ___, rangeEnd: ___, rangeKey: ___, rangeStart: ___){categoriesCount, tagsCount, totalCount, trend, vocabulariesCount}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public Overview contentOverview(
+			@GraphQLName("depotEntryId") Long depotEntryId,
 			@GraphQLName("languageId") String languageId,
 			@GraphQLName("rangeEnd") String rangeEnd,
 			@GraphQLName("rangeKey") Integer rangeKey,
-			@GraphQLName("rangeStart") String rangeStart,
-			@GraphQLName("spaceId") Long spaceId)
+			@GraphQLName("rangeStart") String rangeStart)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
 			_overviewResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			overviewResource -> overviewResource.getContentOverview(
-				languageId, rangeEnd, rangeKey, rangeStart, spaceId));
+				depotEntryId, languageId, rangeEnd, rangeKey, rangeStart));
 	}
 
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {fileOverview(languageId: ___, rangeEnd: ___, rangeKey: ___, rangeStart: ___, spaceId: ___){categoriesCount, tagsCount, totalCount, trend, vocabulariesCount}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {fileOverview(depotEntryId: ___, languageId: ___, rangeEnd: ___, rangeKey: ___, rangeStart: ___){categoriesCount, tagsCount, totalCount, trend, vocabulariesCount}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public Overview fileOverview(
+			@GraphQLName("depotEntryId") Long depotEntryId,
 			@GraphQLName("languageId") String languageId,
 			@GraphQLName("rangeEnd") String rangeEnd,
 			@GraphQLName("rangeKey") Integer rangeKey,
-			@GraphQLName("rangeStart") String rangeStart,
-			@GraphQLName("spaceId") Long spaceId)
+			@GraphQLName("rangeStart") String rangeStart)
 		throws Exception {
 
 		return _applyComponentServiceObjects(
 			_overviewResourceComponentServiceObjects,
 			this::_populateResourceContext,
 			overviewResource -> overviewResource.getFileOverview(
-				languageId, rangeEnd, rangeKey, rangeStart, spaceId));
+				depotEntryId, languageId, rangeEnd, rangeKey, rangeStart));
+	}
+
+	@GraphQLName("ConnectionInfoPage")
+	public class ConnectionInfoPage {
+
+		public ConnectionInfoPage(Page connectionInfoPage) {
+			actions = connectionInfoPage.getActions();
+
+			items = connectionInfoPage.getItems();
+			lastPage = connectionInfoPage.getLastPage();
+			page = connectionInfoPage.getPage();
+			pageSize = connectionInfoPage.getPageSize();
+			totalCount = connectionInfoPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<ConnectionInfo> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
 	}
 
 	@GraphQLName("InventoryAnalysisPage")
@@ -176,6 +270,41 @@ public class Query {
 
 		@GraphQLField
 		protected java.util.Collection<InventoryAnalysis> items;
+
+		@GraphQLField
+		protected long lastPage;
+
+		@GraphQLField
+		protected long page;
+
+		@GraphQLField
+		protected long pageSize;
+
+		@GraphQLField
+		protected long totalCount;
+
+	}
+
+	@GraphQLName("ObjectEntryHistogramMetricPage")
+	public class ObjectEntryHistogramMetricPage {
+
+		public ObjectEntryHistogramMetricPage(
+			Page objectEntryHistogramMetricPage) {
+
+			actions = objectEntryHistogramMetricPage.getActions();
+
+			items = objectEntryHistogramMetricPage.getItems();
+			lastPage = objectEntryHistogramMetricPage.getLastPage();
+			page = objectEntryHistogramMetricPage.getPage();
+			pageSize = objectEntryHistogramMetricPage.getPageSize();
+			totalCount = objectEntryHistogramMetricPage.getTotalCount();
+		}
+
+		@GraphQLField
+		protected Map<String, Map<String, String>> actions;
+
+		@GraphQLField
+		protected java.util.Collection<ObjectEntryHistogramMetric> items;
 
 		@GraphQLField
 		protected long lastPage;
@@ -277,6 +406,22 @@ public class Query {
 	}
 
 	private void _populateResourceContext(
+			ConnectionInfoResource connectionInfoResource)
+		throws Exception {
+
+		connectionInfoResource.setContextAcceptLanguage(_acceptLanguage);
+		connectionInfoResource.setContextCompany(_company);
+		connectionInfoResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		connectionInfoResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		connectionInfoResource.setContextUriInfo(_uriInfo);
+		connectionInfoResource.setContextUser(_user);
+		connectionInfoResource.setGroupLocalService(_groupLocalService);
+		connectionInfoResource.setRoleLocalService(_roleLocalService);
+	}
+
+	private void _populateResourceContext(
 			InventoryAnalysisResource inventoryAnalysisResource)
 		throws Exception {
 
@@ -290,6 +435,26 @@ public class Query {
 		inventoryAnalysisResource.setContextUser(_user);
 		inventoryAnalysisResource.setGroupLocalService(_groupLocalService);
 		inventoryAnalysisResource.setRoleLocalService(_roleLocalService);
+	}
+
+	private void _populateResourceContext(
+			ObjectEntryHistogramMetricResource
+				objectEntryHistogramMetricResource)
+		throws Exception {
+
+		objectEntryHistogramMetricResource.setContextAcceptLanguage(
+			_acceptLanguage);
+		objectEntryHistogramMetricResource.setContextCompany(_company);
+		objectEntryHistogramMetricResource.setContextHttpServletRequest(
+			_httpServletRequest);
+		objectEntryHistogramMetricResource.setContextHttpServletResponse(
+			_httpServletResponse);
+		objectEntryHistogramMetricResource.setContextUriInfo(_uriInfo);
+		objectEntryHistogramMetricResource.setContextUser(_user);
+		objectEntryHistogramMetricResource.setGroupLocalService(
+			_groupLocalService);
+		objectEntryHistogramMetricResource.setRoleLocalService(
+			_roleLocalService);
 	}
 
 	private void _populateResourceContext(
@@ -321,8 +486,12 @@ public class Query {
 		overviewResource.setRoleLocalService(_roleLocalService);
 	}
 
+	private static ComponentServiceObjects<ConnectionInfoResource>
+		_connectionInfoResourceComponentServiceObjects;
 	private static ComponentServiceObjects<InventoryAnalysisResource>
 		_inventoryAnalysisResourceComponentServiceObjects;
+	private static ComponentServiceObjects<ObjectEntryHistogramMetricResource>
+		_objectEntryHistogramMetricResourceComponentServiceObjects;
 	private static ComponentServiceObjects<ObjectEntryMetricResource>
 		_objectEntryMetricResourceComponentServiceObjects;
 	private static ComponentServiceObjects<OverviewResource>

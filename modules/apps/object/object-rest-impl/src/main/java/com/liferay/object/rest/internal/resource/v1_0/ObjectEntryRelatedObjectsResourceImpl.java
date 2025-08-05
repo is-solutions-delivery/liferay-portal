@@ -5,6 +5,7 @@
 
 package com.liferay.object.rest.internal.resource.v1_0;
 
+import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectRelationship;
 import com.liferay.object.related.models.ObjectRelatedModelsProvider;
@@ -82,6 +83,14 @@ public class ObjectEntryRelatedObjectsResourceImpl
 				relatedObjectEntryId);
 		}
 
+		if (objectRelationship.isEdge()) {
+			defaultObjectEntryManager.deleteRelatedObjectEntry(
+				relatedObjectDefinition, relatedObjectEntryId,
+				objectRelationship, currentObjectEntryId);
+
+			return;
+		}
+
 		ObjectRelatedModelsProvider objectRelatedModelsProvider =
 			_objectRelatedModelsProviderRegistry.getObjectRelatedModelsProvider(
 				relatedObjectDefinition.getClassName(),
@@ -136,6 +145,66 @@ public class ObjectEntryRelatedObjectsResourceImpl
 	}
 
 	@Override
+	public Object
+			patchByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCode(
+				String currentExternalReferenceCode, ObjectEntry objectEntry,
+				String objectRelationshipName,
+				String relatedExternalReferenceCode)
+		throws Exception {
+
+		DefaultObjectEntryManager defaultObjectEntryManager =
+			DefaultObjectEntryManagerProvider.provide(
+				_objectEntryManagerRegistry.getObjectEntryManager(
+					_objectDefinition.getStorageType()));
+
+		ObjectEntry currentObjectEntry =
+			defaultObjectEntryManager.getObjectEntry(
+				_objectDefinition.getCompanyId(), _getDTOConverterContext(null),
+				currentExternalReferenceCode, _objectDefinition, null);
+
+		ObjectRelationship objectRelationship =
+			_objectRelationshipLocalService.getObjectRelationship(
+				_objectDefinition.getObjectDefinitionId(),
+				objectRelationshipName);
+
+		ObjectEntry relatedObjectEntry =
+			defaultObjectEntryManager.getObjectEntry(
+				_objectDefinition.getCompanyId(), _getDTOConverterContext(null),
+				relatedExternalReferenceCode,
+				_objectDefinitionLocalService.getObjectDefinition(
+					objectRelationship.getObjectDefinitionId2()),
+				null);
+
+		return patchCurrentObjectEntry(
+			currentObjectEntry.getId(), objectEntry, objectRelationshipName,
+			relatedObjectEntry.getId());
+	}
+
+	@Override
+	public Object patchCurrentObjectEntry(
+			Long currentObjectEntryId, ObjectEntry objectEntry,
+			String objectRelationshipName, Long relatedObjectEntryId)
+		throws Exception {
+
+		DefaultObjectEntryManager defaultObjectEntryManager =
+			DefaultObjectEntryManagerProvider.provide(
+				_objectEntryManagerRegistry.getObjectEntryManager(
+					_objectDefinition.getStorageType()));
+
+		ObjectRelationship objectRelationship =
+			_objectRelationshipLocalService.getObjectRelationship(
+				_objectDefinition.getObjectDefinitionId(),
+				objectRelationshipName);
+
+		return defaultObjectEntryManager.partialUpdateRelatedObjectEntry(
+			_getDTOConverterContext(null),
+			_objectDefinitionLocalService.getObjectDefinition(
+				objectRelationship.getObjectDefinitionId2()),
+			objectEntry, relatedObjectEntryId, objectRelationship,
+			currentObjectEntryId);
+	}
+
+	@Override
 	public Object postByExternalReferenceCodeObjectEntryObjectRelationshipName(
 			String currentExternalReferenceCode, ObjectEntry objectEntry,
 			String objectRelationshipName)
@@ -144,6 +213,7 @@ public class ObjectEntryRelatedObjectsResourceImpl
 		com.liferay.object.model.ObjectEntry currentObjectEntry =
 			_objectEntryLocalService.getObjectEntry(
 				currentExternalReferenceCode,
+				ObjectDefinitionConstants.GROUP_ID_DEFAULT,
 				_objectDefinition.getObjectDefinitionId());
 
 		return postObjectEntryObjectRelationshipName(
@@ -178,7 +248,7 @@ public class ObjectEntryRelatedObjectsResourceImpl
 	@Override
 	public Object
 			putByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCode(
-				String currentExternalReferenceCode,
+				String currentExternalReferenceCode, ObjectEntry objectEntry,
 				String objectRelationshipName,
 				String relatedExternalReferenceCode)
 		throws Exception {
@@ -186,6 +256,7 @@ public class ObjectEntryRelatedObjectsResourceImpl
 		com.liferay.object.model.ObjectEntry currentObjectEntry =
 			_objectEntryLocalService.getObjectEntry(
 				currentExternalReferenceCode,
+				ObjectDefinitionConstants.GROUP_ID_DEFAULT,
 				_objectDefinition.getObjectDefinitionId());
 
 		ObjectRelationship objectRelationship =
@@ -200,17 +271,18 @@ public class ObjectEntryRelatedObjectsResourceImpl
 		com.liferay.object.model.ObjectEntry relatedObjectEntry =
 			_objectEntryLocalService.getObjectEntry(
 				relatedExternalReferenceCode,
+				ObjectDefinitionConstants.GROUP_ID_DEFAULT,
 				relatedObjectDefinition.getObjectDefinitionId());
 
 		return putCurrentObjectEntry(
-			currentObjectEntry.getObjectEntryId(), objectRelationshipName,
-			relatedObjectEntry.getObjectEntryId());
+			currentObjectEntry.getObjectEntryId(), objectEntry,
+			objectRelationshipName, relatedObjectEntry.getObjectEntryId());
 	}
 
 	@Override
 	public Object putCurrentObjectEntry(
-			Long currentObjectEntryId, String objectRelationshipName,
-			Long relatedObjectEntryId)
+			Long currentObjectEntryId, ObjectEntry objectEntry,
+			String objectRelationshipName, Long relatedObjectEntryId)
 		throws Exception {
 
 		DefaultObjectEntryManager defaultObjectEntryManager =
@@ -226,6 +298,13 @@ public class ObjectEntryRelatedObjectsResourceImpl
 		ObjectDefinition relatedObjectDefinition =
 			_objectDefinitionLocalService.getObjectDefinition(
 				objectRelationship.getObjectDefinitionId2());
+
+		if (objectRelationship.isEdge()) {
+			return defaultObjectEntryManager.updateRelatedObjectEntry(
+				_getDTOConverterContext(currentObjectEntryId),
+				relatedObjectDefinition, relatedObjectEntryId, objectEntry,
+				objectRelationship, currentObjectEntryId);
+		}
 
 		if (relatedObjectDefinition.isUnmodifiableSystemObject()) {
 			return defaultObjectEntryManager.

@@ -255,6 +255,10 @@
 					"link": {
 						"$ref": "#/components/schemas/Link"
 					},
+					"mimeType": {
+						"readOnly": true,
+						"type": "string"
+					},
 					"name": {
 						"type": "string"
 					},
@@ -476,6 +480,14 @@
 							"$ref": "#/components/schemas/Object2"
 						},
 						"type": "array"
+					},
+					"removedBy": {
+						"$ref": "#/components/schemas/Creator"
+					},
+					"removedDate": {
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
 					},
 					"reviewDate": {
 						"format": "date-time",
@@ -847,6 +859,14 @@
 							"type": "object"
 						},
 						"type": "array"
+					},
+					"removedBy": {
+						"$ref": "#/components/schemas/Creator"
+					},
+					"removedDate": {
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
 					},
 					"reviewDate": {
 						"format": "date-time",
@@ -1599,13 +1619,6 @@
 					},
 					{
 						"in": "query",
-						"name": "flatten",
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
 						"name": "nestedFields",
 						"schema": {
 							"type": "string"
@@ -1857,6 +1870,61 @@
 			}
 		},
 		"/by-external-reference-code/{currentExternalReferenceCode}/relationship1/{relatedExternalReferenceCode}": {
+			"patch": {
+				"operationId": "patchByExternalReferenceCodeObject1Relationship1Object2",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "currentExternalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "relatedExternalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Object1"
+							}
+						},
+						"application/xml": {
+							"schema": {
+								"$ref": "#/components/schemas/Object1"
+							}
+						}
+					}
+				},
+				"responses": {
+					"default": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Object2"
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"$ref": "#/components/schemas/Object2"
+								}
+							}
+						},
+						"description": "default response"
+					}
+				},
+				"tags": [
+					"Object1"
+				]
+			},
 			"put": {
 				"operationId": "putByExternalReferenceCodeObject1Relationship1Object2",
 				"parameters": [
@@ -1877,6 +1945,20 @@
 						}
 					}
 				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Object1"
+							}
+						},
+						"application/xml": {
+							"schema": {
+								"$ref": "#/components/schemas/Object1"
+							}
+						}
+					}
+				},
 				"responses": {
 					"default": {
 						"content": {
@@ -1949,6 +2031,61 @@
 			}
 		},
 		"/by-external-reference-code/{currentExternalReferenceCode}/relationship2/{relatedExternalReferenceCode}": {
+			"patch": {
+				"operationId": "patchByExternalReferenceCodeObject1Relationship2Object2",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "currentExternalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "relatedExternalReferenceCode",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Object1"
+							}
+						},
+						"application/xml": {
+							"schema": {
+								"$ref": "#/components/schemas/Object1"
+							}
+						}
+					}
+				},
+				"responses": {
+					"default": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Object2"
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"$ref": "#/components/schemas/Object2"
+								}
+							}
+						},
+						"description": "default response"
+					}
+				},
+				"tags": [
+					"Object1"
+				]
+			},
 			"put": {
 				"operationId": "putByExternalReferenceCodeObject1Relationship2Object2",
 				"parameters": [
@@ -1969,6 +2106,20 @@
 						}
 					}
 				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Object1"
+							}
+						},
+						"application/xml": {
+							"schema": {
+								"$ref": "#/components/schemas/Object1"
+							}
+						}
+					}
+				},
 				"responses": {
 					"default": {
 						"content": {
@@ -3997,8 +4148,8 @@
 					"Object1"
 				]
 			},
-			"put": {
-				"operationId": "putObject1Relationship1Object2",
+			"patch": {
+				"operationId": "patchCurrentObject1",
 				"parameters": [
 					{
 						"in": "path",
@@ -4017,6 +4168,75 @@
 						}
 					}
 				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Object1"
+							}
+						},
+						"application/xml": {
+							"schema": {
+								"$ref": "#/components/schemas/Object1"
+							}
+						}
+					}
+				},
+				"responses": {
+					"default": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Object2"
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"$ref": "#/components/schemas/Object2"
+								}
+							}
+						},
+						"description": "default response"
+					}
+				},
+				"tags": [
+					"Object1"
+				]
+			},
+			"put": {
+				"operationId": "putCurrentObject1",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "object1Id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "object2Id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Object1"
+							}
+						},
+						"application/xml": {
+							"schema": {
+								"$ref": "#/components/schemas/Object1"
+							}
+						}
+					}
+				},
 				"responses": {
 					"default": {
 						"content": {
@@ -4192,8 +4412,8 @@
 					"Object1"
 				]
 			},
-			"put": {
-				"operationId": "putObject1Relationship2Object2",
+			"patch": {
+				"operationId": "patchCurrentObject1",
 				"parameters": [
 					{
 						"in": "path",
@@ -4212,6 +4432,75 @@
 						}
 					}
 				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Object1"
+							}
+						},
+						"application/xml": {
+							"schema": {
+								"$ref": "#/components/schemas/Object1"
+							}
+						}
+					}
+				},
+				"responses": {
+					"default": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Object2"
+								}
+							},
+							"application/xml": {
+								"schema": {
+									"$ref": "#/components/schemas/Object2"
+								}
+							}
+						},
+						"description": "default response"
+					}
+				},
+				"tags": [
+					"Object1"
+				]
+			},
+			"put": {
+				"operationId": "putCurrentObject1",
+				"parameters": [
+					{
+						"in": "path",
+						"name": "object1Id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "path",
+						"name": "object2Id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Object1"
+							}
+						},
+						"application/xml": {
+							"schema": {
+								"$ref": "#/components/schemas/Object1"
+							}
+						}
+					}
+				},
 				"responses": {
 					"default": {
 						"content": {

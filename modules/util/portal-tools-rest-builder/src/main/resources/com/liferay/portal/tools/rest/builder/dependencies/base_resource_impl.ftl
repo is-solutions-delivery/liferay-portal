@@ -146,8 +146,12 @@ public abstract class Base${schemaName}ResourceImpl
 		</#if>
 
 		<#assign
-			generatePermissions = freeMarkerTool.isGeneratePermissions(configYAML, javaMethodSignature, javaMethodSignatures, schema, schemaName)
+			generatePermissions = false
+			getParentPermissionsPageJavaMethodSignature = ""
+			getPermissionsPageJavaMethodSignature = ""
 			httpMethod = freeMarkerTool.getHTTPMethod(javaMethodSignature.operation)
+			putParentPermissionsPageJavaMethodSignature = ""
+			putPermissionsPageJavaMethodSignature = ""
 			parentSchemaName = javaMethodSignature.parentSchemaName!
 		/>
 
@@ -197,7 +201,23 @@ public abstract class Base${schemaName}ResourceImpl
 			</#if>
 		</#if>
 
-		<#if generatePermissions>
+		<#if freeMarkerTool.isGeneratePermissions(configYAML, javaMethodSignature, javaMethodSignatures, schema, schemaName)>
+			<#assign
+				getPermissionsPageJavaMethodSignature = freeMarkerTool.getJavaMethodSignature(javaMethodSignatures, "get" + schemaName + "PermissionsPage")!""
+				putPermissionsPageJavaMethodSignature = freeMarkerTool.getJavaMethodSignature(javaMethodSignatures, "put" + schemaName + "PermissionsPage")!""
+			/>
+
+			<#if !(getPermissionsPageJavaMethodSignature?has_content || putPermissionsPageJavaMethodSignature?has_content)>
+				<#assign
+					getParentPermissionsPageJavaMethodSignature = freeMarkerTool.getParentPermissionsPageJavaMethodSignature("get", javaMethodSignatures, parentSchemaName, schemaName)!""
+					putParentPermissionsPageJavaMethodSignature = freeMarkerTool.getParentPermissionsPageJavaMethodSignature("put", javaMethodSignatures, parentSchemaName, schemaName)!""
+				/>
+			</#if>
+		</#if>
+
+		<#if ((getPermissionsPageJavaMethodSignature?has_content && putPermissionsPageJavaMethodSignature?has_content) || (getParentPermissionsPageJavaMethodSignature?has_content && putParentPermissionsPageJavaMethodSignature?has_content))>
+			<#assign generatePermissions = true />
+
 			protected abstract ${javaMethodSignature.returnType} do${stringUtil.upperCaseFirstLetter(javaMethodSignature.methodName)}(${freeMarkerTool.getResourceParameters(configYAML, javaMethodSignature.javaMethodParameters, javaMethodSignature.operation, allSchemas, false)}) throws Exception;
 
 			<#if configYAML.application??>
@@ -230,13 +250,18 @@ public abstract class Base${schemaName}ResourceImpl
 							for (${schemaName} ${schemaVarName} : ${schemaVarNames}Page.getItems()) {
 								${schemaVarName}.setPermissions(
 									() -> NestedFieldsSupplier.supply("permissions", nestedField -> {
-										Page<Permission> permissionsPage = get${schemaName}PermissionsPage(
-											<#if properties?keys?seq_contains("id")>
-												${schemaVarName}.getId()
-											<#elseif properties?keys?seq_contains(schemaVarName + "Id")>
-												${schemaVarName}.get${schemaVarName}Id()
-											<#else>
-												${schemaVarName}Id
+										Page<Permission> permissionsPage =
+											<#if getPermissionsPageJavaMethodSignature?has_content>
+												${getPermissionsPageJavaMethodSignature.methodName}(
+													<#if properties?keys?seq_contains("id")>
+														${schemaVarName}.getId()
+													<#elseif properties?keys?seq_contains(schemaVarName + "Id")>
+														${schemaVarName}.get${schemaVarName}Id()
+													<#else>
+														${schemaVarName}Id
+													</#if>
+											<#elseif getParentPermissionsPageJavaMethodSignature?has_content>
+												${getParentPermissionsPageJavaMethodSignature.methodName}(${parentSchemaName?uncap_first}ExternalReferenceCode, ${schemaVarName}.getExternalReferenceCode()
 											</#if>
 
 											, null);
@@ -253,20 +278,25 @@ public abstract class Base${schemaName}ResourceImpl
 						<#if properties?keys?seq_contains("permissions")>
 							${httpMethod}${schemaName}.setPermissions(
 								() -> NestedFieldsSupplier.supply("permissions", nestedField -> {
-										Page<Permission> permissionsPage = get${schemaName}PermissionsPage(
-											<#if properties?keys?seq_contains("id")>
-												${httpMethod}${schemaName}.getId()
-											<#elseif properties?keys?seq_contains(schemaVarName + "Id")>
-												${httpMethod}${schemaName}.get${schemaVarName}Id()
-											<#else>
-												${schemaVarName}Id
-											</#if>
+									Page<Permission> permissionsPage =
+										<#if getPermissionsPageJavaMethodSignature?has_content>
+											${getPermissionsPageJavaMethodSignature.methodName}(
+												<#if properties?keys?seq_contains("id")>
+													${httpMethod}${schemaName}.getId()
+												<#elseif properties?keys?seq_contains(schemaVarName + "Id")>
+													${httpMethod}${schemaName}.get${schemaVarName}Id()
+												<#else>
+													${schemaVarName}Id
+												</#if>
+										<#elseif getParentPermissionsPageJavaMethodSignature?has_content>
+											${getParentPermissionsPageJavaMethodSignature.methodName}(${parentSchemaName?uncap_first}ExternalReferenceCode, ${httpMethod}${schemaName}.getExternalReferenceCode()
+										</#if>
 
-											, null);
+										, null);
 
-										Collection<Permission> permissions = permissionsPage.getItems();
+									Collection<Permission> permissions = permissionsPage.getItems();
 
-										return permissions.toArray(new Permission[permissions.size()]);
+									return permissions.toArray(new Permission[permissions.size()]);
 								}));
 
 							return ${httpMethod}${schemaName};
@@ -287,15 +317,19 @@ public abstract class Base${schemaName}ResourceImpl
 						);
 
 					if (permissions != null) {
-						Page<Permission> permissionsPage = put${schemaName}PermissionsPage(
-							<#if properties?keys?seq_contains("id")>
-								${httpMethod}${schemaName}.getId()
-							<#elseif properties?keys?seq_contains(schemaVarName + "Id")>
-								${httpMethod}${schemaName}.get${schemaVarName}Id()
-							<#else>
-								${schemaVarName}Id
+						Page<Permission> permissionsPage =
+							<#if putPermissionsPageJavaMethodSignature?has_content>
+								${putPermissionsPageJavaMethodSignature.methodName}(
+									<#if properties?keys?seq_contains("id")>
+										${httpMethod}${schemaName}.getId()
+									<#elseif properties?keys?seq_contains(schemaVarName + "Id")>
+										${httpMethod}${schemaName}.get${schemaVarName}Id()
+									<#else>
+										${schemaVarName}Id
+									</#if>
+							<#elseif putParentPermissionsPageJavaMethodSignature?has_content>
+								${putParentPermissionsPageJavaMethodSignature.methodName}(${parentSchemaName?uncap_first}ExternalReferenceCode, ${httpMethod}${schemaName}.getExternalReferenceCode()
 							</#if>
-
 							, permissions);
 
 						${httpMethod}${schemaName}.setPermissions(
@@ -308,7 +342,6 @@ public abstract class Base${schemaName}ResourceImpl
 
 					return ${httpMethod}${schemaName};
 				</#if>
-
 			}
 
 			<#continue>
@@ -393,19 +426,23 @@ public abstract class Base${schemaName}ResourceImpl
 					throw new UnsupportedOperationException("This method needs to be implemented");
 				</#if>
 			<#elseif stringUtil.equals(javaMethodSignature.methodName, "getAssetLibrary" + schemaName + "PermissionsPage")>
-				<#assign generateGetPermissionCheckerMethods = true />
+				<#if freeMarkerTool.hasParameter(javaMethodSignature, "assetLibraryId")>
+					<#assign generateGetPermissionCheckerMethods = true />
 
-				String portletName = getPermissionCheckerPortletName(assetLibraryId);
+					String portletName = getPermissionCheckerPortletName(assetLibraryId);
 
-				PermissionServiceUtil.checkPermission(assetLibraryId, portletName, assetLibraryId);
+					PermissionServiceUtil.checkPermission(assetLibraryId, portletName, assetLibraryId);
 
-				return toPermissionPage(
-					<@getActions
-						resourceId="assetLibraryId"
-						resourceName="portletName"
-						source="AssetLibrary" + schemaName
-					/>,
-					assetLibraryId, portletName, roleNames);
+					return toPermissionPage(
+						<@getActions
+							resourceId="assetLibraryId"
+							resourceName="portletName"
+							source="AssetLibrary" + schemaName
+						/>,
+						assetLibraryId, portletName, roleNames);
+				<#else>
+					throw new UnsupportedOperationException("This method needs to be implemented");
+				</#if>
 			<#elseif stringUtil.equals(javaMethodSignature.methodName, "getSite" + schemaName + "PermissionsPage")>
 				<#if freeMarkerTool.hasParameter(javaMethodSignature, "siteId")>
 					<#assign generateGetPermissionCheckerMethods = true />
@@ -446,21 +483,25 @@ public abstract class Base${schemaName}ResourceImpl
 					throw new UnsupportedOperationException("This method needs to be implemented");
 				</#if>
 			<#elseif stringUtil.equals(javaMethodSignature.methodName, "putAssetLibrary" + schemaName + "PermissionsPage")>
-				<#assign generateGetPermissionCheckerMethods = true />
+				<#if freeMarkerTool.hasParameter(javaMethodSignature, "assetLibraryId")>
+					<#assign generateGetPermissionCheckerMethods = true />
 
-				String portletName = getPermissionCheckerPortletName(assetLibraryId);
+					String portletName = getPermissionCheckerPortletName(assetLibraryId);
 
-				<@updateResourcePermissions
-					groupId = "assetLibraryId"
-					resourceId = "assetLibraryId"
-					resourceName = "portletName"
-				>
-					<@getActions
-						resourceId="assetLibraryId"
-						resourceName="portletName"
-						source="AssetLibrary" + schemaName
-					/>
-				</@updateResourcePermissions>
+					<@updateResourcePermissions
+						groupId = "assetLibraryId"
+						resourceId = "assetLibraryId"
+						resourceName = "portletName"
+					>
+						<@getActions
+							resourceId="assetLibraryId"
+							resourceName="portletName"
+							source="AssetLibrary" + schemaName
+						/>
+					</@updateResourcePermissions>
+				<#else>
+					throw new UnsupportedOperationException("This method needs to be implemented");
+				</#if>
 			<#elseif stringUtil.equals(javaMethodSignature.methodName, "putSite" + schemaName + "PermissionsPage")>
 				<#if freeMarkerTool.hasParameter(javaMethodSignature, "siteId")>
 					<#assign generateGetPermissionCheckerMethods = true />

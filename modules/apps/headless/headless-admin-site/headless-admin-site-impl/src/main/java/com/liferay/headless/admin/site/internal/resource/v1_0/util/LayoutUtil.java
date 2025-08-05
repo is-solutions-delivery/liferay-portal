@@ -20,6 +20,7 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServiceUtil;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryServiceUtil;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.LayoutSetPrototype;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
@@ -33,6 +34,7 @@ import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.vulcan.custom.field.CustomFieldsUtil;
 import com.liferay.segments.model.SegmentsExperience;
 import com.liferay.segments.service.SegmentsExperienceServiceUtil;
 import com.liferay.style.book.model.StyleBookEntry;
@@ -271,6 +273,29 @@ public class LayoutUtil {
 			WorkflowConstants.STATUS_DRAFT, serviceContext);
 	}
 
+	public static Layout addPortletLayout(
+			String externalReferenceCode, long groupId, long parentLayoutId,
+			Map<Locale, String> nameMap,
+			UnicodeProperties typeSettingsUnicodeProperties,
+			boolean hiddenFromNavigation, Map<Locale, String> friendlyURLMap,
+			ServiceContext serviceContext,
+			WidgetPageSpecification widgetPageSpecification)
+		throws Exception {
+
+		String typeSettings = null;
+
+		if (typeSettingsUnicodeProperties != null) {
+			typeSettings = typeSettingsUnicodeProperties.toString();
+		}
+
+		_setExpandoBridgeAttributes(widgetPageSpecification, serviceContext);
+
+		return LayoutServiceUtil.addLayout(
+			externalReferenceCode, groupId, false, parentLayoutId, nameMap,
+			null, null, null, null, LayoutConstants.TYPE_PORTLET, typeSettings,
+			hiddenFromNavigation, friendlyURLMap, 0, serviceContext);
+	}
+
 	public static Layout getLayoutPrototypeLayout(
 			long groupId, PageSpecification pageSpecification,
 			ServiceContext serviceContext)
@@ -375,16 +400,16 @@ public class LayoutUtil {
 		ContentPageSpecification publishedContentPageSpecification =
 			(ContentPageSpecification)pageSpecifications[0];
 
-		if (!Objects.equals(
+		if (Objects.equals(
 				layout.getExternalReferenceCode(),
 				publishedContentPageSpecification.getExternalReferenceCode())) {
 
-			draftContentPageSpecification = publishedContentPageSpecification;
-			publishedContentPageSpecification =
+			draftContentPageSpecification =
 				(ContentPageSpecification)pageSpecifications[1];
 		}
 		else {
-			draftContentPageSpecification =
+			draftContentPageSpecification = publishedContentPageSpecification;
+			publishedContentPageSpecification =
 				(ContentPageSpecification)pageSpecifications[1];
 		}
 
@@ -462,8 +487,7 @@ public class LayoutUtil {
 
 		updateLayout(
 			layout, nameMap, titleMap, descriptionMap, robotsMap,
-			friendlyURLMap, contentPageSpecification.getSettings(),
-			serviceContext);
+			friendlyURLMap, contentPageSpecification, serviceContext);
 
 		_updatePageExperiences(
 			layout, contentPageSpecification.getPageExperiences(),
@@ -478,10 +502,18 @@ public class LayoutUtil {
 			Layout layout, Map<Locale, String> nameMap,
 			Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
 			Map<Locale, String> robotsMap, Map<Locale, String> friendlyURLMap,
-			Settings settings, ServiceContext serviceContext)
+			PageSpecification pageSpecification, ServiceContext serviceContext)
 		throws Exception {
 
+		Settings settings = null;
+
+		if (pageSpecification != null) {
+			settings = pageSpecification.getSettings();
+		}
+
 		layout = _updateLookAndFeel(layout, settings);
+
+		_setExpandoBridgeAttributes(pageSpecification, serviceContext);
 
 		return _updateLayout(
 			layout, nameMap, titleMap, descriptionMap, robotsMap,
@@ -500,15 +532,10 @@ public class LayoutUtil {
 			WidgetPageSpecification widgetPageSpecification)
 		throws Exception {
 
-		Settings settings = null;
-
-		if (widgetPageSpecification != null) {
-			settings = widgetPageSpecification.getSettings();
-		}
-
 		layout = updateLayout(
 			layout, nameMap, layout.getTitleMap(), layout.getDescriptionMap(),
-			layout.getRobotsMap(), friendlyURLMap, settings, serviceContext);
+			layout.getRobotsMap(), friendlyURLMap, widgetPageSpecification,
+			serviceContext);
 
 		if (typeSettingsUnicodeProperties == null) {
 			return layout;
@@ -636,6 +663,20 @@ public class LayoutUtil {
 				itemExternalReference.getExternalReferenceCode(), groupId);
 
 		return styleBookEntry.getStyleBookEntryId();
+	}
+
+	private static void _setExpandoBridgeAttributes(
+		PageSpecification pageSpecification, ServiceContext serviceContext) {
+
+		if (pageSpecification == null) {
+			serviceContext.setExpandoBridgeAttributes(null);
+		}
+		else {
+			serviceContext.setExpandoBridgeAttributes(
+				CustomFieldsUtil.toMap(
+					Layout.class.getName(), serviceContext.getCompanyId(),
+					pageSpecification.getCustomFields(), null));
+		}
 	}
 
 	private static Layout _updateLayout(

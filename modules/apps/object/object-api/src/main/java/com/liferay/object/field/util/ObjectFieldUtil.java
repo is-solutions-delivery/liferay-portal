@@ -5,6 +5,7 @@
 
 package com.liferay.object.field.util;
 
+import com.liferay.document.library.util.DLURLHelper;
 import com.liferay.dynamic.data.mapping.expression.CreateExpressionRequest;
 import com.liferay.dynamic.data.mapping.expression.DDMExpression;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionException;
@@ -27,10 +28,15 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.DateUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
@@ -177,6 +183,38 @@ public class ObjectFieldUtil {
 			false, false);
 	}
 
+	public static String getAttachmentDownloadURL(
+			DLURLHelper dlURLHelper, FileEntry fileEntry, long groupId,
+			String objectDefinitionExternalReferenceCode,
+			String objectEntryExternalReferenceCode, ThemeDisplay themeDisplay)
+		throws PortalException {
+
+		String downloadURL = dlURLHelper.getDownloadURL(
+			fileEntry, fileEntry.getFileVersion(), themeDisplay,
+			StringPool.BLANK);
+
+		String groupExternalReferenceCode = StringPool.BLANK;
+
+		Group group = GroupLocalServiceUtil.fetchGroup(groupId);
+
+		if (group != null) {
+			groupExternalReferenceCode = group.getExternalReferenceCode();
+		}
+
+		downloadURL = HttpComponentsUtil.addParameter(
+			downloadURL, "groupExternalReferenceCode",
+			groupExternalReferenceCode);
+
+		downloadURL = HttpComponentsUtil.addParameter(
+			downloadURL, "objectDefinitionExternalReferenceCode",
+			objectDefinitionExternalReferenceCode);
+		downloadURL = HttpComponentsUtil.addParameter(
+			downloadURL, "objectEntryExternalReferenceCode",
+			objectEntryExternalReferenceCode);
+
+		return downloadURL;
+	}
+
 	public static String getCounterName(ObjectField objectField) {
 		return StringBundler.concat(
 			"object.field.auto.increment#", objectField.getCompanyId(),
@@ -226,6 +264,36 @@ public class ObjectFieldUtil {
 	}
 
 	public static boolean isReadOnly(
+			DDMExpressionFactory ddmExpressionFactory, ObjectEntry objectEntry,
+			ObjectField objectField, long userId)
+		throws PortalException {
+
+		if (!Objects.equals(
+				objectField.getReadOnly(),
+				ObjectFieldConstants.READ_ONLY_CONDITIONAL)) {
+
+			return isReadOnly(null, objectField, null);
+		}
+
+		if (objectEntry == null) {
+			return isReadOnly(
+				ddmExpressionFactory, objectField,
+				ObjectFieldSettingUtil.getDefaultValues(
+					objectField.getObjectDefinitionId()));
+		}
+
+		return isReadOnly(
+			ddmExpressionFactory, objectField,
+			HashMapBuilder.<String, Object>putAll(
+				ObjectEntryLocalServiceUtil.getSystemValues(objectEntry)
+			).putAll(
+				ObjectEntryLocalServiceUtil.getValues(objectEntry)
+			).put(
+				"currentUserId", userId
+			).build());
+	}
+
+	public static boolean isReadOnly(
 		DDMExpressionFactory ddmExpressionFactory, ObjectField objectField,
 		Map<String, Object> values) {
 
@@ -258,41 +326,6 @@ public class ObjectFieldUtil {
 		}
 
 		return false;
-	}
-
-	public static boolean isReadOnly(
-			DDMExpressionFactory ddmExpressionFactory,
-			String objectEntryExternalReferenceCode, ObjectField objectField,
-			long userId)
-		throws PortalException {
-
-		if (!Objects.equals(
-				objectField.getReadOnly(),
-				ObjectFieldConstants.READ_ONLY_CONDITIONAL)) {
-
-			return isReadOnly(null, objectField, null);
-		}
-
-		if (objectEntryExternalReferenceCode == null) {
-			return isReadOnly(
-				ddmExpressionFactory, objectField,
-				ObjectFieldSettingUtil.getDefaultValues(
-					objectField.getObjectDefinitionId()));
-		}
-
-		ObjectEntry objectEntry = ObjectEntryLocalServiceUtil.getObjectEntry(
-			objectEntryExternalReferenceCode,
-			objectField.getObjectDefinitionId());
-
-		return isReadOnly(
-			ddmExpressionFactory, objectField,
-			HashMapBuilder.<String, Object>putAll(
-				ObjectEntryLocalServiceUtil.getSystemValues(objectEntry)
-			).putAll(
-				ObjectEntryLocalServiceUtil.getValues(objectEntry)
-			).put(
-				"currentUserId", userId
-			).build());
 	}
 
 	public static Map<String, ObjectField> toObjectFieldsMap(

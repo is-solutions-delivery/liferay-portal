@@ -1,20 +1,53 @@
+<#function hasTaxonomyProperty category key value>
+	<#if category.taxonomyCategoryProperties?has_content>
+		<#list category.taxonomyCategoryProperties as prop>
+			<#if (prop.key == key) && (prop.value == value)>
+				<#return true />
+			</#if>
+		</#list>
+	</#if>
+
+	<#return false />
+</#function>
+
 <#macro panel_item
 	categories
-	selectedMap
+	contextMap
+	parentId
 	title
 >
-	<#assign parentId = stringUtil.replace(title, ' ', '') />
+	<#assign displayableCategories = [] />
+
+	<#list categories.items as item>
+		<#if hasTaxonomyProperty(item, "visible", "false")>
+			<#continue>
+		</#if>
+
+		<#assign
+			context = (contextMap[item.id?string])!{}
+			isFrequencyVisible = (context.isFrequencyVisible)!false
+			isSelected = (context.selected)!false
+		/>
+
+		<#if !isFrequencyVisible && !isSelected>
+			<#continue>
+		</#if>
+
+		<#assign displayableCategories = displayableCategories + [item] />
+	</#list>
+
+	<#assign panelId = stringUtil.replace(title, ' ', '') />
 
 	<@liferay_ui["panel-container"]
 		extended=true
-		id="${namespace}_${parentId}_facetAssetCategoriesPanelContainer"
+		id="${namespace}_${panelId}_facetAssetCategoriesPanelContainer"
 		markupView="lexicon"
 		persistState=true
 	>
 		<@liferay_ui.panel
 			collapsible=true
-			cssClass="bg-brand-primary-lighten-5 mb-4 p-3 search-facet search-facet-display-vocabulary"
-			id="${namespace}_${parentId}_facetAssetCategoriesPanel"
+			cssClass="bg-brand-primary-lighten-5 mb-4 p-3 rounded search-facet search-facet-display-vocabulary"
+			id="${namespace}_${panelId}_facetAssetCategoriesPanel"
 			markupView="lexicon"
 			persistState=true
 			title="${title}"
@@ -23,7 +56,7 @@
 				<@clay.button
 					cssClass="btn-unstyled facet-clear-btn mb-3 mr-1 text-body text-decoration-none"
 					displayType="link"
-					id="${namespace}_${parentId}_facetAssetCategoriesSelectAll"
+					id="${namespace}_${panelId}_facetAssetCategoriesSelectAll"
 					onClick="${namespace}selectAll(event)"
 				>
 					<span>${languageUtil.get(locale, "select-all")}</span>
@@ -32,18 +65,18 @@
 				<@clay.button
 					cssClass="btn-unstyled facet-clear-btn mb-3 text-body text-decoration-none"
 					displayType="link"
-					id="${namespace}_${parentId}_facetAssetCategoriesClear"
+					id="${namespace}_${panelId}_facetAssetCategoriesClear"
 					onClick="${namespace}clearSelections(event)"
 				>
 					<span>${languageUtil.get(locale, "clear")}</span>
 				</@clay.button>
 			</div>
 
-			<div class="collapse show" id="${namespace}_${parentId}_categoryItem">
-				<#if categories.items?size gt 8>
+			<div class="collapse show" id="${namespace}_${panelId}_categoryItem">
+				<#if displayableCategories?size gt 8>
 					<input
 						class="form-control mb-3 pb-2 pl-3 pr-3 pt-2"
-						id="${namespace}_${parentId}_search"
+						id="${namespace}_${panelId}_search"
 						onInput="${namespace}searchCategories(event)"
 						placeholder='${languageUtil.get(locale, "search")}'
 						type="text"
@@ -51,8 +84,11 @@
 				</#if>
 
 				<ul class="m-0 p-0">
-					<#list categories.items as item>
-						<#assign isSelected = ((selectedMap[item.id?string]!{}).selected!false) />
+					<#list displayableCategories as item>
+						<#assign
+							context = (contextMap[item.id?string])!{}
+							isSelected = (context.selected)!false
+						/>
 
 						<li class="m-0 category-item <#if item_index gte 8>d-none</#if>">
 							<span class="autofit-row">
@@ -62,11 +98,12 @@
 											autocomplete="off"
 											${isSelected?then("checked", "")}
 											class="facet-term mr-1"
+											data-parent-id="${parentId}"
 											data-term-id="${item.id}"
 											data-term-name="${item.name}"
 											data-term-param="category"
 											data-term-value="${item.id}"
-											onChange="Liferay.Search.FacetUtil.changeSelection(event);"
+											onChange="${namespace}handleSelection(event);"
 											type="checkbox"
 										/>
 
@@ -80,12 +117,12 @@
 					</#list>
 				</ul>
 
-				<#if categories.items?size gt 8>
+				<#if displayableCategories?size gt 8>
 					<@clay.button
 						cssClass="btn-unstyled facet-clear-btn view-all-btn mt-3 text-body text-decoration-none"
 						displayType="link"
-						id="${namespace}_${parentId}_facetAssetCategoriesViewAll"
-						onClick="${namespace}viewAll('${namespace}_${parentId}_categoryItem', event)"
+						id="${namespace}_${panelId}_facetAssetCategoriesViewAll"
+						onClick="${namespace}viewAll('${namespace}_${panelId}_categoryItem', event)"
 					>
 						<span>${languageUtil.get(locale, "view-all")}</span>
 					</@clay.button>
@@ -95,22 +132,67 @@
 	</@>
 
 	<#list categories.items as item>
+		<#if hasTaxonomyProperty(item, "visible", "false")>
+			<#continue>
+		</#if>
+
 		<#if item.numberOfTaxonomyCategories gt 0>
-			<#assign isSelected = ((selectedMap[item.id?string]!{}).selected!false) />
+			<#assign isSelected = ((contextMap[item.id?string])!{}).selected!false />
 
 			<#if isSelected>
-				<#assign childCategories = restClient.get("/headless-admin-taxonomy/v1.0/taxonomy-categories/${item.id}/taxonomy-categories") />
-				<@panel_item
-					categories = childCategories
-					selectedMap = selectedMap
-					title = item.name
-				/>
+				<#if hasTaxonomyProperty(item, "skipNextLevel", "true")>
+					<#assign childCategories = restClient.get("/headless-admin-taxonomy/v1.0/taxonomy-categories/${item.id}/taxonomy-categories") />
+
+					<#if childCategories.items?has_content>
+						<#list childCategories.items as childCategory>
+							<#if hasTaxonomyProperty(childCategory, "visible", "false")>
+								<#continue>
+							</#if>
+
+							<input
+								checked
+								class="facet-term d-none"
+								data-parent-id="${item.id}"
+								data-term-id="${childCategory.id}"
+								onChange="${namespace}handleSelection(event);"
+								type="checkbox"
+							/>
+
+							<#assign grandChildCategories = restClient.get("/headless-admin-taxonomy/v1.0/taxonomy-categories/${childCategory.id}/taxonomy-categories") />
+
+							<@panel_item
+								categories = grandChildCategories
+								contextMap = contextMap
+								parentId = childCategory.id
+								title = childCategory.name
+							/>
+						</#list>
+					</#if>
+				<#else>
+					<#assign childCategories = restClient.get("/headless-admin-taxonomy/v1.0/taxonomy-categories/${item.id}/taxonomy-categories") />
+
+					<@panel_item
+						categories = childCategories
+						contextMap = contextMap
+						parentId = item.id
+						title = item.name
+					/>
+				</#if>
 			</#if>
 		</#if>
 	</#list>
 </#macro>
 
-<#assign selectedMap = {} />
+<#assign contextMap = {} />
+
+<#list assetCategoriesSearchFacetDisplayContext.getBucketDisplayContexts() as bucketDisplayContext>
+	<#assign contextMap = contextMap + {
+		(bucketDisplayContext.getFilterValue()): {
+			"isFrequencyVisible": bucketDisplayContext.isFrequencyVisible(),
+			"selected": false
+		}
+	} />
+</#list>
 
 <#list assetCategoriesSearchFacetDisplayContext.getParameterValues() as categoryId>
 	<#attempt>
@@ -121,14 +203,23 @@
 
 			<#list 0..9 as _>
 				<#if currentCategory?has_content>
-					<#assign selectedMap = selectedMap + {currentCategory.id?string: {"selected": true}} />
+					<#assign
+						currentCategoryId = currentCategory.id?string
+						existingData = (contextMap[currentCategoryId])!{}
+
+						contextMap = contextMap + {
+							(currentCategoryId): {
+								"isFrequencyVisible": (existingData.isFrequencyVisible)!false,
+								"selected": true
+							}
+						}
+					/>
 
 					<#if currentCategory.parentTaxonomyCategory?has_content && (currentCategory.parentTaxonomyCategory.id?string) != "0">
 						<#assign
 							parentId = currentCategory.parentTaxonomyCategory.id
 							currentCategory = restClient.get("/headless-admin-taxonomy/v1.0/taxonomy-categories/" + parentId)
 						/>
-
 					<#else>
 						<#break />
 					</#if>
@@ -155,7 +246,8 @@
 		<#if categories?has_content>
 			<@panel_item
 				categories = categories
-				selectedMap = selectedMap
+				contextMap = contextMap
+				parentId = 0
 				title = languageUtil.get(locale, "type")
 			/>
 		</#if>
@@ -179,6 +271,41 @@
 				checkbox.dispatchEvent(changeEvent);
 			});
 		}
+	}
+
+	function ${namespace}deselectCheckboxes(attribute, value, target) {
+		const selectedCheckboxes = document.querySelectorAll('input.facet-term:checked');
+
+		selectedCheckboxes.forEach(selectedCheckbox => {
+			event.preventDefault();
+
+			const selectedValue = selectedCheckbox.getAttribute(attribute);
+
+			if (selectedValue === value) {
+				selectedCheckbox.checked = false;
+
+				${namespace}deselectCheckboxes(attribute, selectedValue, target);
+			}
+		});
+	}
+
+	function ${namespace}handleSelection(event) {
+		event.preventDefault();
+
+		const checkbox = event.target;
+
+		const parentId = checkbox.getAttribute('data-parent-id');
+
+		if (checkbox.checked && parentId) {
+			${namespace}deselectCheckboxes('data-term-id', parentId, 'data-parent-id');
+		}
+		else if (!checkbox.checked) {
+			const termId = checkbox.getAttribute('data-term-id');
+
+			${namespace}deselectCheckboxes('data-parent-id', termId, 'data-term-id');
+		}
+
+		Liferay.Search.FacetUtil.changeSelection(event);
 	}
 
 	function ${namespace}searchCategories(event) {

@@ -30,28 +30,10 @@ public class ModulesSegmentTestClassGroup extends SegmentTestClassGroup {
 		for (int axisIndex = 0; axisIndex < getAxisCount(); axisIndex++) {
 			axisIndexes.add(String.valueOf(axisIndex));
 
-			AxisTestClassGroup axisTestClassGroup = getAxisTestClassGroup(
-				axisIndex);
-
-			List<TestClassMethod> testClassMethods = new ArrayList<>();
-
-			for (TestClass testClass : axisTestClassGroup.getTestClasses()) {
-				testClassMethods.addAll(testClass.getTestClassMethods());
-			}
-
 			sb.append("TEST_CLASS_GROUP_");
 			sb.append(axisIndex);
 			sb.append("=");
-
-			for (TestClassMethod testClassMethod : testClassMethods) {
-				sb.append(testClassMethod.getName());
-				sb.append(",");
-			}
-
-			if (!testClassMethods.isEmpty()) {
-				sb.setLength(sb.length() - 1);
-			}
-
+			sb.append(getTestTaskNames(axisIndex));
 			sb.append("\n");
 		}
 
@@ -72,6 +54,28 @@ public class ModulesSegmentTestClassGroup extends SegmentTestClassGroup {
 		BatchTestClassGroup parentBatchTestClassGroup, JSONObject jsonObject) {
 
 		super(parentBatchTestClassGroup, jsonObject);
+	}
+
+	protected String getTestTaskNames(int axisIndex) {
+		StringBuilder sb = new StringBuilder();
+
+		AxisTestClassGroup axisTestClassGroup = getAxisTestClassGroup(
+			axisIndex);
+
+		for (TestClass testClass : axisTestClassGroup.getTestClasses()) {
+			for (TestClassMethod testClassMethod :
+					testClass.getTestClassMethods()) {
+
+				sb.append(testClassMethod.getName());
+				sb.append(",");
+			}
+		}
+
+		if (!sb.isEmpty()) {
+			sb.setLength(sb.length() - 1);
+		}
+
+		return sb.toString();
 	}
 
 }

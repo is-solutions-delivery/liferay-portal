@@ -59,5 +59,11 @@ test(
 
 			expect(availableButtons).toEqual(expectedButtons);
 		});
+
+		await test.step('Toolbar does not contain removed plugin', async () => {
+			await expect(
+				classicPage.toolbar.buttonLabels.getByLabel('Underline')
+			).toBeHidden();
+		});
 	}
 );

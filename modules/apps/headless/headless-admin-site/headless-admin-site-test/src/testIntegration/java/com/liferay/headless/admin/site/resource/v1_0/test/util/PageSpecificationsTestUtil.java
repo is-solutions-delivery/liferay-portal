@@ -5,6 +5,13 @@
 
 package com.liferay.headless.admin.site.resource.v1_0.test.util;
 
+import com.liferay.expando.kernel.model.ExpandoBridge;
+import com.liferay.expando.kernel.model.ExpandoColumnConstants;
+import com.liferay.expando.kernel.model.ExpandoTable;
+import com.liferay.expando.kernel.service.ExpandoColumnLocalServiceUtil;
+import com.liferay.expando.kernel.service.ExpandoTableLocalServiceUtil;
+import com.liferay.headless.admin.site.client.custom.field.CustomField;
+import com.liferay.headless.admin.site.client.custom.field.CustomValue;
 import com.liferay.headless.admin.site.client.dto.v1_0.ContentPageSpecification;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageElement;
 import com.liferay.headless.admin.site.client.dto.v1_0.PageExperience;
@@ -20,17 +27,25 @@ import com.liferay.layout.test.util.ContentLayoutTestUtil;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.function.UnsafeRunnable;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.segments.constants.SegmentsExperienceConstants;
 
+import java.io.Serializable;
+
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 
 import org.junit.Assert;
@@ -75,6 +90,22 @@ public class PageSpecificationsTestUtil {
 		Assert.assertEquals(
 			PageSpecification.Type.CONTENT_PAGE_SPECIFICATION,
 			pageSpecification.getType());
+	}
+
+	public static void assertCustomFields(
+			CustomField[][] expectedCustomFields, long groupId,
+			PageSpecification[] pageSpecifications)
+		throws Exception {
+
+		Assert.assertEquals(
+			Arrays.toString(pageSpecifications), expectedCustomFields.length,
+			pageSpecifications.length);
+
+		for (int i = 0; i < pageSpecifications.length; i++) {
+			_assertCustomFields(
+				_getExpectedCustomFields(expectedCustomFields[i]), groupId,
+				pageSpecifications[i]);
+		}
 	}
 
 	public static void assertPageSpecifications(
@@ -231,6 +262,12 @@ public class PageSpecificationsTestUtil {
 		Assert.assertEquals(
 			Arrays.toString(pageSpecifications), 2, pageSpecifications.length);
 
+		if (layout.isTypeUtility()) {
+			for (PageSpecification pageSpecification : pageSpecifications) {
+				Assert.assertNull(pageSpecification.getCustomFields());
+			}
+		}
+
 		assertContentPageSpecification(pageSpecifications[0], layout.getPlid());
 
 		Layout draftLayout = layout.fetchDraftLayout();
@@ -254,44 +291,143 @@ public class PageSpecificationsTestUtil {
 	}
 
 	public static ContentPageSpecification getContentPageSpecification(
+		String contentPageSpecificationExternalReferenceCode,
+		CustomField[] customFields,
 		String draftContentPageSpecificationExternalReferenceCode,
-		PageSpecification.Status status) {
+		PageExperience[] pageExperiences, PageSpecification.Status status) {
 
 		ContentPageSpecification contentPageSpecification =
 			new ContentPageSpecification() {
 				{
-					setExternalReferenceCode(RandomTestUtil::randomString);
 					setType(() -> Type.CONTENT_PAGE_SPECIFICATION);
 				}
 			};
 
+		contentPageSpecification.setCustomFields(customFields);
 		contentPageSpecification.
 			setDraftContentPageSpecificationExternalReferenceCode(
 				draftContentPageSpecificationExternalReferenceCode);
-		contentPageSpecification.setPageExperiences(
-			() -> {
-				PageExperience pageExperience = new PageExperience();
+		contentPageSpecification.setExternalReferenceCode(
+			contentPageSpecificationExternalReferenceCode);
 
-				pageExperience.setExternalReferenceCode(
-					RandomTestUtil::randomString);
-				pageExperience.setKey(SegmentsExperienceConstants.KEY_DEFAULT);
-				pageExperience.setName_i18n(
-					Collections.singletonMap(
-						"en-US", RandomTestUtil.randomString()));
-				pageExperience.setPageElements(new PageElement[0]);
-				pageExperience.setPageSpecificationExternalReferenceCode(
-					contentPageSpecification.getExternalReferenceCode());
+		if (pageExperiences == null) {
+			pageExperiences = new PageExperience[] {
+				new PageExperience() {
+					{
+						setExternalReferenceCode(RandomTestUtil::randomString);
+						setKey(SegmentsExperienceConstants.KEY_DEFAULT);
+						setName_i18n(
+							Collections.singletonMap(
+								"en-US", RandomTestUtil.randomString()));
+						setPageElements(new PageElement[0]);
+						setPageSpecificationExternalReferenceCode(
+							contentPageSpecification.
+								getExternalReferenceCode());
+					}
+				}
+			};
+		}
 
-				return new PageExperience[] {pageExperience};
-			});
+		contentPageSpecification.setPageExperiences(pageExperiences);
 		contentPageSpecification.setStatus(status);
 
 		return contentPageSpecification;
 	}
 
-	public static WidgetPageSpecification getWidgetPageSpecification(
-		String externalReferenceCode, Settings settings,
+	public static ContentPageSpecification getContentPageSpecification(
+		String draftContentPageSpecificationExternalReferenceCode,
 		PageSpecification.Status status) {
+
+		return getContentPageSpecification(
+			RandomTestUtil.randomString(), null,
+			draftContentPageSpecificationExternalReferenceCode, null, status);
+	}
+
+	public static CustomField[] getCustomFields() {
+		return new CustomField[] {
+			_getCustomField(_EXPANDO_ATTRIBUTE_NAMES[0], (String)null),
+			_getCustomField(
+				_EXPANDO_ATTRIBUTE_NAMES[1], RandomTestUtil.randomString())
+		};
+	}
+
+	public static ExpandoTableAutocloseable getExpandoTableAutoCloseable()
+		throws Exception {
+
+		return new ExpandoTableAutocloseable();
+	}
+
+	public static PageSpecification[] getPageSpecificationsWithCustomFields(
+		String publishedPageSpecificationExternalReferenceCode,
+		PageSpecification.Type type) {
+
+		PageSpecification[] pageSpecifications;
+
+		if (type == PageSpecification.Type.CONTENT_PAGE_SPECIFICATION) {
+			pageSpecifications = _getContentPageSpecifications(
+				getCustomFields(), RandomTestUtil.randomString(), null,
+				getCustomFields(),
+				publishedPageSpecificationExternalReferenceCode, null);
+		}
+		else {
+			pageSpecifications = new PageSpecification[] {
+				getWidgetPageSpecification(
+					getCustomFields(),
+					publishedPageSpecificationExternalReferenceCode, null,
+					PageSpecification.Status.APPROVED)
+			};
+		}
+
+		return pageSpecifications;
+	}
+
+	public static PageSpecification[] getPatchPageSpecifications(
+		PageSpecification[] pageSpecifications) {
+
+		if (pageSpecifications.length == 2) {
+			ContentPageSpecification draftContentPageSpecification = null;
+
+			ContentPageSpecification publishedContentPageSpecification =
+				(ContentPageSpecification)pageSpecifications[0];
+
+			String draftContentPageSpecificationExternalReferenceCode =
+				publishedContentPageSpecification.
+					getDraftContentPageSpecificationExternalReferenceCode();
+
+			if (draftContentPageSpecificationExternalReferenceCode != null) {
+				draftContentPageSpecification =
+					(ContentPageSpecification)pageSpecifications[1];
+			}
+			else {
+				draftContentPageSpecification =
+					publishedContentPageSpecification;
+				publishedContentPageSpecification =
+					(ContentPageSpecification)pageSpecifications[1];
+			}
+
+			return _getContentPageSpecifications(
+				getCustomFields(),
+				draftContentPageSpecification.getExternalReferenceCode(),
+				draftContentPageSpecification.getPageExperiences(),
+				getCustomFields(),
+				publishedContentPageSpecification.getExternalReferenceCode(),
+				publishedContentPageSpecification.getPageExperiences());
+		}
+
+		WidgetPageSpecification widgetPageSpecification =
+			(WidgetPageSpecification)pageSpecifications[0];
+
+		return new PageSpecification[] {
+			getWidgetPageSpecification(
+				getCustomFields(),
+				widgetPageSpecification.getExternalReferenceCode(), null,
+				PageSpecification.Status.APPROVED)
+		};
+	}
+
+	public static WidgetPageSpecification getWidgetPageSpecification(
+		CustomField[] customFields, String externalReferenceCode,
+		Settings settings, PageSpecification.Status status) {
 
 		WidgetPageSpecification widgetPageSpecification =
 			new WidgetPageSpecification() {
@@ -300,6 +436,7 @@ public class PageSpecificationsTestUtil {
 				}
 			};
 
+		widgetPageSpecification.setCustomFields(customFields);
 		widgetPageSpecification.setExternalReferenceCode(externalReferenceCode);
 		widgetPageSpecification.setSettings(settings);
 		widgetPageSpecification.setStatus(status);
@@ -416,6 +553,74 @@ public class PageSpecificationsTestUtil {
 			() -> unsafeFunction.apply(draftContentPageSpecification));
 	}
 
+	public static class ExpandoTableAutocloseable implements AutoCloseable {
+
+		public ExpandoTableAutocloseable() throws Exception {
+			_originalPermissionChecker =
+				PermissionThreadLocal.getPermissionChecker();
+
+			PermissionThreadLocal.setPermissionChecker(
+				PermissionCheckerFactoryUtil.create(TestPropsValues.getUser()));
+
+			_expandoTable = ExpandoTableLocalServiceUtil.addDefaultTable(
+				PortalUtil.getDefaultCompanyId(), Layout.class.getName());
+
+			for (int i = 0; i < _EXPANDO_ATTRIBUTE_NAMES.length; i++) {
+				ExpandoColumnLocalServiceUtil.addColumn(
+					_expandoTable.getTableId(), _EXPANDO_ATTRIBUTE_NAMES[i],
+					ExpandoColumnConstants.STRING,
+					_EXPANDO_ATTRIBUTE_VALUES[i]);
+			}
+		}
+
+		@Override
+		public void close() throws Exception {
+			try {
+				if (_expandoTable != null) {
+					ExpandoTableLocalServiceUtil.deleteTable(_expandoTable);
+				}
+			}
+			finally {
+				PermissionThreadLocal.setPermissionChecker(
+					_originalPermissionChecker);
+			}
+		}
+
+		private final ExpandoTable _expandoTable;
+		private final PermissionChecker _originalPermissionChecker;
+
+	}
+
+	private static void _assertCustomFields(
+			CustomField[] expectedCustomFields, long groupId,
+			PageSpecification pageSpecification)
+		throws Exception {
+
+		CustomField[] customFields = pageSpecification.getCustomFields();
+
+		Assert.assertTrue(
+			Arrays.toString(customFields) +
+				" does not contain all custom fields in " +
+					Arrays.toString(expectedCustomFields),
+			ArrayUtil.containsAll(customFields, expectedCustomFields));
+
+		Layout layout = LayoutLocalServiceUtil.getLayoutByExternalReferenceCode(
+			pageSpecification.getExternalReferenceCode(), groupId);
+
+		ExpandoBridge expandoBridge = layout.getExpandoBridge();
+
+		Map<String, Serializable> attributes = expandoBridge.getAttributes();
+
+		Assert.assertFalse(attributes.isEmpty());
+
+		for (CustomField customField : expectedCustomFields) {
+			CustomValue customValue = customField.getCustomValue();
+
+			Assert.assertEquals(
+				customValue.getData(), attributes.get(customField.getName()));
+		}
+	}
+
 	private static void _assertProblemException(
 			UnsafeRunnable<Exception> unsafeRunnable)
 		throws Exception {
@@ -432,10 +637,109 @@ public class PageSpecificationsTestUtil {
 		}
 	}
 
+	private static ContentPageSpecification[] _getContentPageSpecifications(
+		CustomField[] draftPageSpecificationCustomFields,
+		String draftPageSpecificationExternalReferenceCode,
+		PageExperience[] draftPageSpecificationPageExperiences,
+		CustomField[] publishedPageSpecificationCustomFields,
+		String publishedPageSpecificationExternalReferenceCode,
+		PageExperience[] publishedPageSpecificationPageExperiences) {
+
+		ContentPageSpecification draftContentPageSpecification =
+			getContentPageSpecification(
+				draftPageSpecificationExternalReferenceCode,
+				draftPageSpecificationCustomFields, null,
+				draftPageSpecificationPageExperiences,
+				PageSpecification.Status.DRAFT);
+
+		ContentPageSpecification publishedContentPageSpecification =
+			getContentPageSpecification(
+				publishedPageSpecificationExternalReferenceCode,
+				publishedPageSpecificationCustomFields,
+				draftContentPageSpecification.getExternalReferenceCode(),
+				publishedPageSpecificationPageExperiences,
+				PageSpecification.Status.APPROVED);
+
+		return new ContentPageSpecification[] {
+			publishedContentPageSpecification, draftContentPageSpecification
+		};
+	}
+
+	private static CustomField _getCustomField(
+		String attributeName, CustomField[] customFields) {
+
+		CustomField[] filteredCustomFields = ArrayUtil.filter(
+			customFields,
+			customField -> Objects.equals(
+				customField.getName(), attributeName));
+
+		if (ArrayUtil.isEmpty(filteredCustomFields)) {
+			return null;
+		}
+
+		return filteredCustomFields[0];
+	}
+
+	private static CustomField _getCustomField(String curName, String curData) {
+		return new CustomField() {
+			{
+				customValue = new CustomValue() {
+					{
+						data = curData;
+						dataType = "Text";
+					}
+				};
+				name = curName;
+			}
+		};
+	}
+
+	private static CustomField[] _getExpectedCustomFields(
+		CustomField[] customFields) {
+
+		CustomField[] expectedCustomFields =
+			new CustomField[_EXPANDO_ATTRIBUTE_NAMES.length];
+
+		for (int i = 0; i < _EXPANDO_ATTRIBUTE_NAMES.length; i++) {
+			String attributeName = _EXPANDO_ATTRIBUTE_NAMES[i];
+
+			CustomField customField = _getCustomField(
+				attributeName, customFields);
+
+			if (customField == null) {
+				expectedCustomFields[i] = _getCustomField(
+					attributeName,
+					GetterUtil.getString(_EXPANDO_ATTRIBUTE_VALUES[i]));
+
+				continue;
+			}
+
+			CustomValue customValue = customField.getCustomValue();
+
+			if (Validator.isNull(customValue.getData())) {
+				customValue.setData(
+					GetterUtil.getString(_EXPANDO_ATTRIBUTE_VALUES[i]));
+			}
+
+			expectedCustomFields[i] = customField;
+		}
+
+		return expectedCustomFields;
+	}
+
 	private static boolean _isPublished(Layout draftLayout) {
 		return GetterUtil.getBoolean(
 			draftLayout.getTypeSettingsProperty(
 				LayoutTypeSettingsConstants.KEY_PUBLISHED));
 	}
+
+	private static final String[] _EXPANDO_ATTRIBUTE_NAMES = {
+		RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+		RandomTestUtil.randomString()
+	};
+
+	private static final String[] _EXPANDO_ATTRIBUTE_VALUES = {
+		RandomTestUtil.randomString(), RandomTestUtil.randomString(), null
+	};
 
 }

@@ -57,6 +57,7 @@ public interface DefaultObjectEntryManager extends ObjectEntryManager {
 		throws Exception;
 
 	public void deleteObjectEntry(
+			DTOConverterContext dtoConverterContext,
 			ObjectDefinition objectDefinition, long objectEntryId)
 		throws Exception;
 
@@ -67,6 +68,11 @@ public interface DefaultObjectEntryManager extends ObjectEntryManager {
 	public void deleteObjectEntryByVersion(
 			String externalReferenceCode, ObjectDefinition objectDefinition,
 			String scopeKey, int version)
+		throws Exception;
+
+	public void deleteRelatedObjectEntry(
+			ObjectDefinition objectDefinition, long objectEntryId,
+			ObjectRelationship objectRelationship, long parentObjectEntryId)
 		throws Exception;
 
 	public void disassociateRelatedModels(
@@ -159,7 +165,8 @@ public interface DefaultObjectEntryManager extends ObjectEntryManager {
 		throws Exception;
 
 	public Page<ObjectEntry> getVersionedObjectEntries(
-			DTOConverterContext dtoConverterContext, long objectEntryId,
+			DTOConverterContext dtoConverterContext,
+			ObjectDefinition objectDefinition, long objectEntryId,
 			Pagination pagination)
 		throws Exception;
 
@@ -173,6 +180,13 @@ public interface DefaultObjectEntryManager extends ObjectEntryManager {
 			DTOConverterContext dtoConverterContext,
 			ObjectDefinition objectDefinition, long objectEntryId,
 			ObjectEntry objectEntry)
+		throws Exception;
+
+	public ObjectEntry partialUpdateRelatedObjectEntry(
+			DTOConverterContext dtoConverterContext,
+			ObjectDefinition objectDefinition, ObjectEntry objectEntry,
+			long objectEntryId, ObjectRelationship objectRelationship,
+			long parentObjectEntryId)
 		throws Exception;
 
 	public ObjectEntry restoreObjectEntryByVersion(
@@ -202,6 +216,13 @@ public interface DefaultObjectEntryManager extends ObjectEntryManager {
 			DTOConverterContext dtoConverterContext,
 			ObjectDefinition objectDefinition, long objectEntryId,
 			ObjectEntry objectEntry)
+		throws Exception;
+
+	public ObjectEntry updateRelatedObjectEntry(
+			DTOConverterContext dtoConverterContext,
+			ObjectDefinition objectDefinition, long objectEntryId,
+			ObjectEntry objectEntry, ObjectRelationship objectRelationship,
+			long parentNodeObjectEntryId)
 		throws Exception;
 
 	public void validateObjectEntry(

@@ -109,36 +109,6 @@ const ProjectRoutes = () => {
 				<Route element={<Layout />} path="/:accountKey">
 					<Route element={<Overview />} index />
 
-					{featureFlags.includes('LPS-153478') && (
-						<Route
-							element={
-								<ProductOutlet
-									product={
-										PRODUCT_TYPES.liferayExperienceCloud
-									}
-								/>
-							}
-						>
-							<Route
-								element={<LiferayExperienceCloud />}
-								path={getKebabCase(
-									PRODUCT_TYPES.liferayExperienceCloud
-								)}
-							/>
-						</Route>
-					)}
-
-					<Route
-						element={
-							<ProductOutlet product={PRODUCT_TYPES.dxpCloud} />
-						}
-					>
-						<Route
-							element={<DXPCloud />}
-							path={getKebabCase(PRODUCT_TYPES.dxpCloud)}
-						/>
-					</Route>
-
 					<Route element={<ActivationOutlet />} path="activation">
 						<Route
 							element={
@@ -250,6 +220,34 @@ const ProjectRoutes = () => {
 									/>
 								}
 								path="dxp-renew"
+							/>
+						</Route>
+
+						<Route
+							element={
+								<ProductOutlet product={PRODUCT_TYPES.dxpCloud} />
+							}
+						>
+							<Route
+								element={<DXPCloud />}
+								path={getKebabCase(PRODUCT_TYPES.dxpCloud)}
+							/>
+						</Route>
+
+						<Route
+							element={
+								<ProductOutlet
+									product={
+										PRODUCT_TYPES.liferayExperienceCloud
+									}
+								/>
+							}
+						>
+							<Route
+								element={<LiferayExperienceCloud />}
+								path={getKebabCase(
+									PRODUCT_TYPES.liferayExperienceCloud
+								)}
 							/>
 						</Route>
 

@@ -32,6 +32,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Role;
+import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalService;
@@ -266,16 +267,18 @@ public class BatchEngineUnitProcessorImpl implements BatchEngineUnitProcessor {
 		Role role = _roleLocalService.getRole(
 			companyId, RoleConstants.ADMINISTRATOR);
 
-		long[] userIds = _userLocalService.getRoleUserIds(role.getRoleId());
+		for (long userId : _userLocalService.getRoleUserIds(role.getRoleId())) {
+			User user = _userLocalService.fetchUser(userId);
 
-		if (userIds.length == 0) {
-			throw new NoSuchUserException(
-				StringBundler.concat(
-					"No user exists in company ", companyId, " with role ",
-					role.getName()));
+			if ((user != null) && user.isActive()) {
+				return user.getUserId();
+			}
 		}
 
-		return userIds[0];
+		throw new NoSuchUserException(
+			StringBundler.concat(
+				"No active user exists in company ", companyId, " with role ",
+				role.getName()));
 	}
 
 	private Bundle _getBundle(BatchEngineUnit batchEngineUnit) {

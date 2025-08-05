@@ -15,9 +15,11 @@ ViewSharedWithMeSectionDisplayContext viewSharedWithMeSectionDisplayContext = (V
 	<frontend-data-set:headless-display
 		apiURL="<%= viewSharedWithMeSectionDisplayContext.getAPIURL() %>"
 		emptyState="<%= viewSharedWithMeSectionDisplayContext.getEmptyState() %>"
+		fdsActionDropdownItems="<%= viewSharedWithMeSectionDisplayContext.getFDSActionDropdownItems() %>"
 		formName="fm"
 		id="<%= CMSSiteInitializerFDSNames.SHARED_WITH_ME %>"
 		itemsPerPage="<%= 20 %>"
+		propsTransformer="{SharedWithMeFDSPropsTransformer} from site-cms-site-initializer"
 		selectedItemsKey="id"
 		selectionType="multiple"
 		style="fluid"

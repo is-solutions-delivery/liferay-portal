@@ -255,6 +255,10 @@
 					"link": {
 						"$ref": "#/components/schemas/Link"
 					},
+					"mimeType": {
+						"readOnly": true,
+						"type": "string"
+					},
 					"name": {
 						"type": "string"
 					},
@@ -502,6 +506,14 @@
 							"$ref": "#/components/schemas/Permission"
 						},
 						"type": "array"
+					},
+					"removedBy": {
+						"$ref": "#/components/schemas/Creator"
+					},
+					"removedDate": {
+						"format": "date-time",
+						"readOnly": true,
+						"type": "string"
 					},
 					"reviewDate": {
 						"format": "date-time",
@@ -1136,13 +1148,6 @@
 					{
 						"in": "query",
 						"name": "filter",
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "flatten",
 						"schema": {
 							"type": "string"
 						}

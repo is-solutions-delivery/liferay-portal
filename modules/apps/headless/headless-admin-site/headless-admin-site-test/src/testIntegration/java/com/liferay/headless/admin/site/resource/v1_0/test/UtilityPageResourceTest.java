@@ -167,6 +167,17 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 			utilityPageResource.getSiteSiteByExternalReferenceCodeUtilityPage(
 				testGroup.getExternalReferenceCode(),
 				postUtilityPage.getExternalReferenceCode()));
+
+		try (PageSpecificationsTestUtil.ExpandoTableAutocloseable
+				expandoTableAutoCloseable =
+					PageSpecificationsTestUtil.getExpandoTableAutoCloseable()) {
+
+			_assertNestedFields(
+				utilityPageResource.
+					getSiteSiteByExternalReferenceCodeUtilityPage(
+						testGroup.getExternalReferenceCode(),
+						postUtilityPage.getExternalReferenceCode()));
+		}
 	}
 
 	@Override
@@ -818,6 +829,46 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 		_testPatchSiteSiteByExternalReferenceCodeUtilityPageWithPageSpecifications(
 			PageSpecification.Status.DRAFT, PageSpecification.Status.DRAFT,
 			PageSpecification.Status.APPROVED, PageSpecification.Status.DRAFT);
+
+		try (PageSpecificationsTestUtil.ExpandoTableAutocloseable
+				expandoTableAutoCloseable =
+					PageSpecificationsTestUtil.getExpandoTableAutoCloseable()) {
+
+			UtilityPageResource utilityPageResource = _getUtilityPageResource();
+
+			UtilityPage utilityPage =
+				utilityPageResource.
+					postSiteSiteByExternalReferenceCodeUtilityPage(
+						testGroup.getExternalReferenceCode(),
+						randomUtilityPage());
+
+			_assertNestedFields(utilityPage);
+
+			PageSpecification[] pageSpecifications =
+				utilityPage.getPageSpecifications();
+
+			PageSpecification pageSpecification = pageSpecifications[0];
+
+			_assertProblemException(
+				"BAD_REQUEST",
+				() ->
+					utilityPageResource.
+						patchSiteSiteByExternalReferenceCodeUtilityPage(
+							testGroup.getExternalReferenceCode(),
+							utilityPage.getExternalReferenceCode(),
+							new UtilityPage() {
+								{
+									setPageSpecifications(
+										() ->
+											PageSpecificationsTestUtil.
+												getPageSpecificationsWithCustomFields(
+													pageSpecification.
+														getExternalReferenceCode(),
+													PageSpecification.Type.
+														CONTENT_PAGE_SPECIFICATION));
+								}
+							}));
+		}
 	}
 
 	private void
@@ -886,6 +937,29 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 			PageSpecification.Status.DRAFT, PageSpecification.Status.APPROVED);
 		_testPostSiteSiteByExternalReferenceCodeUtilityPageWithPageSpecifications(
 			PageSpecification.Status.DRAFT, PageSpecification.Status.DRAFT);
+
+		try (PageSpecificationsTestUtil.ExpandoTableAutocloseable
+				expandoTableAutoCloseable =
+					PageSpecificationsTestUtil.getExpandoTableAutoCloseable()) {
+
+			UtilityPageResource utilityPageResource = _getUtilityPageResource();
+
+			UtilityPage utilityPage = randomUtilityPage();
+
+			utilityPage.setPageSpecifications(
+				() ->
+					PageSpecificationsTestUtil.
+						getPageSpecificationsWithCustomFields(
+							RandomTestUtil.randomString(),
+							PageSpecification.Type.CONTENT_PAGE_SPECIFICATION));
+
+			_assertProblemException(
+				"BAD_REQUEST",
+				() ->
+					utilityPageResource.
+						postSiteSiteByExternalReferenceCodeUtilityPage(
+							testGroup.getExternalReferenceCode(), utilityPage));
+		}
 	}
 
 	private void
@@ -955,6 +1029,42 @@ public class UtilityPageResourceTest extends BaseUtilityPageResourceTestCase {
 		_testPutSiteSiteByExternalReferenceCodeUtilityPageWithPageSpecifications(
 			PageSpecification.Status.DRAFT, PageSpecification.Status.DRAFT,
 			PageSpecification.Status.APPROVED, PageSpecification.Status.DRAFT);
+
+		try (PageSpecificationsTestUtil.ExpandoTableAutocloseable
+				expandoTableAutoCloseable =
+					PageSpecificationsTestUtil.getExpandoTableAutoCloseable()) {
+
+			UtilityPageResource utilityPageResource = _getUtilityPageResource();
+
+			UtilityPage utilityPage =
+				utilityPageResource.
+					postSiteSiteByExternalReferenceCodeUtilityPage(
+						testGroup.getExternalReferenceCode(),
+						randomUtilityPage());
+
+			_assertNestedFields(utilityPage);
+
+			PageSpecification[] pageSpecifications =
+				utilityPage.getPageSpecifications();
+
+			PageSpecification pageSpecification = pageSpecifications[0];
+
+			utilityPage.setPageSpecifications(
+				() ->
+					PageSpecificationsTestUtil.
+						getPageSpecificationsWithCustomFields(
+							pageSpecification.getExternalReferenceCode(),
+							PageSpecification.Type.CONTENT_PAGE_SPECIFICATION));
+
+			_assertProblemException(
+				"BAD_REQUEST",
+				() ->
+					utilityPageResource.
+						patchSiteSiteByExternalReferenceCodeUtilityPage(
+							testGroup.getExternalReferenceCode(),
+							utilityPage.getExternalReferenceCode(),
+							utilityPage));
+		}
 	}
 
 	private void

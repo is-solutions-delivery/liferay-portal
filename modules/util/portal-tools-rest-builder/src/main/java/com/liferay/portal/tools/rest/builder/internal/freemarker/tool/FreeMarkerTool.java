@@ -747,6 +747,39 @@ public class FreeMarkerTool {
 		return parentJavaMethodSignatures;
 	}
 
+	public JavaMethodSignature getParentPermissionsPageJavaMethodSignature(
+		String httpMethod, List<JavaMethodSignature> javaMethodSignatures,
+		String parentSchemaName, String schemaName) {
+
+		if ((parentSchemaName == null) ||
+			!(Objects.equals(parentSchemaName, "AssetLibrary") ||
+			  Objects.equals(parentSchemaName, "Site"))) {
+
+			return null;
+		}
+
+		for (JavaMethodSignature javaMethodSignature : javaMethodSignatures) {
+			if (Objects.equals(
+					javaMethodSignature.getMethodName(),
+					StringBundler.concat(
+						httpMethod, parentSchemaName, schemaName,
+						"PermissionsPage")) &&
+				hasPathParameter(
+					javaMethodSignature,
+					TextFormatter.format(parentSchemaName, TextFormatter.I) +
+						"ExternalReferenceCode") &&
+				hasPathParameter(
+					javaMethodSignature,
+					TextFormatter.format(schemaName, TextFormatter.I) +
+						"ExternalReferenceCode")) {
+
+				return javaMethodSignature;
+			}
+		}
+
+		return null;
+	}
+
 	public JavaMethodSignature getPostSchemaJavaMethodSignature(
 		List<JavaMethodSignature> javaMethodSignatures, String parameterName,
 		String schemaName) {
@@ -1004,6 +1037,21 @@ public class FreeMarkerTool {
 		return false;
 	}
 
+	public boolean hasPathParameter(
+		JavaMethodSignature javaMethodSignature, String parameterName) {
+
+		List<JavaMethodParameter> javaMethodParameters =
+			javaMethodSignature.getPathJavaMethodParameters();
+
+		for (JavaMethodParameter javaMethodParameter : javaMethodParameters) {
+			if (parameterName.equals(javaMethodParameter.getParameterName())) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public boolean hasPostSchemaJavaMethodSignature(
 		List<JavaMethodSignature> javaMethodSignatures, String parameterName,
 		String schemaName) {
@@ -1128,11 +1176,7 @@ public class FreeMarkerTool {
 		Map<String, Schema> propertySchemas = schema.getPropertySchemas();
 
 		if (MapUtil.isEmpty(propertySchemas) ||
-			!propertySchemas.containsKey("permissions") ||
-			!containsJavaMethodSignature(
-				javaMethodSignatures, "get" + schemaName + "PermissionsPage") ||
-			!containsJavaMethodSignature(
-				javaMethodSignatures, "put" + schemaName + "PermissionsPage")) {
+			!propertySchemas.containsKey("permissions")) {
 
 			return false;
 		}

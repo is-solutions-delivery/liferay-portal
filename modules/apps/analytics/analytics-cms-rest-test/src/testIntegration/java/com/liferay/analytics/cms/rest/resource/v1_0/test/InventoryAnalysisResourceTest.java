@@ -61,7 +61,7 @@ import org.osgi.framework.FrameworkUtil;
 	featureFlags = {
 		@FeatureFlag(value = "LPD-31149"), @FeatureFlag(value = "LPD-34594"),
 		@FeatureFlag(value = "LPS-179669"), @FeatureFlag(value = "LPD-17564"),
-		@FeatureFlag(value = "LPD-21926"), @FeatureFlag(value = "LPD-11232")
+		@FeatureFlag(value = "LPD-21926"), @FeatureFlag(value = "LPS-179669")
 	}
 )
 @RunWith(Arquillian.class)
@@ -147,8 +147,8 @@ public class InventoryAnalysisResourceTest
 	public void testGetInventoryAnalysis() throws Exception {
 		InventoryAnalysis inventoryAnalysis =
 			inventoryAnalysisResource.getInventoryAnalysis(
-				null, null, null, null, null, null,
-				_depotEntry.getDepotEntryId(), null, null, null, null);
+				null, _depotEntry.getDepotEntryId(), null, null, null, null,
+				null, null, null, null, null);
 
 		InventoryAnalysisItem[] inventoryAnalysisItems =
 			inventoryAnalysis.getInventoryAnalysisItems();
@@ -165,8 +165,8 @@ public class InventoryAnalysisResourceTest
 			"Basic Web Content", inventoryAnalysisItem.getTitle());
 
 		inventoryAnalysis = inventoryAnalysisResource.getInventoryAnalysis(
-			null, "category", null, null, null, null,
-			_depotEntry.getDepotEntryId(), null, null, null, null);
+			null, _depotEntry.getDepotEntryId(), "category", null, null, null,
+			null, null, null, null, null);
 
 		inventoryAnalysisItems = inventoryAnalysis.getInventoryAnalysisItems();
 
@@ -187,8 +187,8 @@ public class InventoryAnalysisResourceTest
 		Assert.assertEquals("My Category", inventoryAnalysisItem.getTitle());
 
 		inventoryAnalysis = inventoryAnalysisResource.getInventoryAnalysis(
-			_assetCategory.getCategoryId(), "category", null, null, null, null,
-			_depotEntry.getDepotEntryId(), null, null, null, null);
+			_assetCategory.getCategoryId(), _depotEntry.getDepotEntryId(),
+			"category", null, null, null, null, null, null, null, null);
 
 		inventoryAnalysisItems = inventoryAnalysis.getInventoryAnalysisItems();
 

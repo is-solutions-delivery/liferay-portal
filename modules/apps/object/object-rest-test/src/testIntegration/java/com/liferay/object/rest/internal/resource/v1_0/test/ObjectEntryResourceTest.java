@@ -44,6 +44,7 @@ import com.liferay.object.constants.ObjectFieldValidationConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
 import com.liferay.object.constants.ObjectValidationRuleConstants;
 import com.liferay.object.constants.ObjectValidationRuleSettingConstants;
+import com.liferay.object.exception.NoSuchObjectEntryException;
 import com.liferay.object.field.builder.AttachmentObjectFieldBuilder;
 import com.liferay.object.field.builder.LongTextObjectFieldBuilder;
 import com.liferay.object.field.builder.RichTextObjectFieldBuilder;
@@ -96,6 +97,7 @@ import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.test.util.ConfigurationTemporarySwapper;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.exception.ModelListenerException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -182,6 +184,8 @@ import com.liferay.portal.util.PropsValues;
 import com.liferay.portal.vulcan.accept.language.AcceptLanguage;
 import com.liferay.portal.vulcan.fields.NestedFieldsContext;
 import com.liferay.portal.vulcan.fields.NestedFieldsContextThreadLocal;
+import com.liferay.portal.vulcan.pagination.Page;
+import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.GroupUtil;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
 import com.liferay.portlet.documentlibrary.constants.DLConstants;
@@ -5775,6 +5779,50 @@ public class ObjectEntryResourceTest {
 	}
 
 	@Test
+	public void testGetObjectEntriesVersionsPage() throws Exception {
+		_objectDefinition1.setEnableObjectEntryVersioning(true);
+
+		_objectDefinition1 =
+			_objectDefinitionLocalService.updateObjectDefinition(
+				_objectDefinition1);
+
+		_objectDefinition2.setEnableObjectEntryVersioning(true);
+
+		_objectDefinition2 =
+			_objectDefinitionLocalService.updateObjectDefinition(
+				_objectDefinition2);
+
+		ObjectEntry objectEntry = ObjectEntryTestUtil.addObjectEntry(
+			_objectDefinition1, _OBJECT_FIELD_NAME_1, _OBJECT_FIELD_VALUE_1);
+
+		_objectEntryLocalService.updateObjectEntry(
+			TestPropsValues.getUserId(), objectEntry.getObjectEntryId(),
+			HashMapBuilder.<String, Serializable>put(
+				_OBJECT_FIELD_NAME_1, RandomTestUtil.randomString()
+			).build(),
+			ServiceContextTestUtil.getServiceContext());
+
+		ObjectEntryResource objectEntryResource1 = _getObjectEntryResource(
+			_objectDefinition1, TestPropsValues.getUser());
+
+		Page<com.liferay.object.rest.dto.v1_0.ObjectEntry> objectEntryPage =
+			objectEntryResource1.getObjectEntriesVersionsPage(
+				objectEntry.getObjectEntryId(),
+				Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS));
+
+		Assert.assertEquals(2, objectEntryPage.getTotalCount());
+
+		ObjectEntryResource objectEntryResource2 = _getObjectEntryResource(
+			_objectDefinition2, TestPropsValues.getUser());
+
+		AssertUtils.assertFailure(
+			NoSuchObjectEntryException.class, null,
+			() -> objectEntryResource2.getObjectEntriesVersionsPage(
+				objectEntry.getObjectEntryId(),
+				Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS)));
+	}
+
+	@Test
 	public void testGetObjectEntriesWithPagination() throws Exception {
 		ObjectEntryTestUtil.addObjectEntry(
 			_objectDefinition1, _OBJECT_FIELD_NAME_TEXT,
@@ -9768,7 +9816,7 @@ public class ObjectEntryResourceTest {
 		Assert.assertEquals(
 			200,
 			HTTPTestUtil.invokeToHttpCode(
-				null,
+				"{}",
 				StringBundler.concat(
 					_objectDefinition1.getRESTContextPath(),
 					"/by-external-reference-code/a%252Fb/",
@@ -9785,7 +9833,7 @@ public class ObjectEntryResourceTest {
 			Assert.assertEquals(
 				404,
 				HTTPTestUtil.invokeToHttpCode(
-					null,
+					"{}",
 					StringBundler.concat(
 						_objectDefinition1.getRESTContextPath(),
 						"/by-external-reference-code/a/",
@@ -9796,7 +9844,7 @@ public class ObjectEntryResourceTest {
 		Assert.assertEquals(
 			200,
 			HTTPTestUtil.invokeToHttpCode(
-				null,
+				"{}",
 				StringBundler.concat(
 					_objectDefinition1.getRESTContextPath(),
 					"/by-external-reference-code/a/",
@@ -9813,7 +9861,7 @@ public class ObjectEntryResourceTest {
 			Assert.assertEquals(
 				404,
 				HTTPTestUtil.invokeToHttpCode(
-					null,
+					"{}",
 					StringBundler.concat(
 						_objectDefinition1.getRESTContextPath(),
 						"/by-external-reference-code/a/b/",
@@ -9824,7 +9872,7 @@ public class ObjectEntryResourceTest {
 		Assert.assertEquals(
 			200,
 			HTTPTestUtil.invokeToHttpCode(
-				null,
+				"{}",
 				StringBundler.concat(
 					_objectDefinition1.getRESTContextPath(),
 					"/by-external-reference-code/a%252Fb/",
@@ -9839,7 +9887,7 @@ public class ObjectEntryResourceTest {
 			Assert.assertEquals(
 				404,
 				HTTPTestUtil.invokeToHttpCode(
-					null,
+					"{}",
 					StringBundler.concat(
 						_objectDefinition1.getRESTContextPath(),
 						"/by-external-reference-code/a%252Fb/",
@@ -9848,7 +9896,7 @@ public class ObjectEntryResourceTest {
 			Assert.assertEquals(
 				404,
 				HTTPTestUtil.invokeToHttpCode(
-					null,
+					"{}",
 					StringBundler.concat(
 						_objectDefinition1.getRESTContextPath(),
 						"/by-external-reference-code/a/b/",
@@ -9885,7 +9933,7 @@ public class ObjectEntryResourceTest {
 			ObjectRelationshipConstants.TYPE_MANY_TO_MANY);
 
 		JSONObject jsonObject = HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			StringBundler.concat(
 				_objectDefinition1.getRESTContextPath(),
 				"/by-external-reference-code/",
@@ -9901,7 +9949,7 @@ public class ObjectEntryResourceTest {
 			_OBJECT_FIELD_VALUE_2, jsonObject.getInt(_OBJECT_FIELD_NAME_2));
 
 		jsonObject = HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			StringBundler.concat(
 				_objectDefinition2.getRESTContextPath(),
 				"/by-external-reference-code/",
@@ -9917,7 +9965,7 @@ public class ObjectEntryResourceTest {
 			_OBJECT_FIELD_VALUE_1, jsonObject.getInt(_OBJECT_FIELD_NAME_1));
 
 		jsonObject = HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			StringBundler.concat(
 				_objectDefinition2.getRESTContextPath(),
 				"/by-external-reference-code/",
@@ -11482,35 +11530,35 @@ public class ObjectEntryResourceTest {
 			endpoint1, Http.Method.POST);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2, depth1JSONObject1.getLong("id"),
 				_objectRelationship1.getName(), jsonObject1.getLong("id")),
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2, depth1JSONObject1.getLong("id"),
 				_objectRelationship1.getName(), jsonObject2.getLong("id")),
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2, depth1JSONObject2.getLong("id"),
 				_objectRelationship1.getName(), jsonObject3.getLong("id")),
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2, depth1JSONObject2.getLong("id"),
 				_objectRelationship1.getName(), jsonObject4.getLong("id")),
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2, depth1JSONObject1.getLong("id"),
 				_objectRelationship2.getName(),
@@ -11518,7 +11566,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2, depth1JSONObject1.getLong("id"),
 				_objectRelationship2.getName(),
@@ -11526,7 +11574,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2, depth1JSONObject2.getLong("id"),
 				_objectRelationship2.getName(),
@@ -11534,7 +11582,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2, depth1JSONObject2.getLong("id"),
 				_objectRelationship2.getName(),
@@ -11896,35 +11944,35 @@ public class ObjectEntryResourceTest {
 			endpoint1, Http.Method.POST);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2, depth1JSONObject1.getLong("id"),
 				_objectRelationship1.getName(), jsonObject1.getLong("id")),
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2, depth1JSONObject1.getLong("id"),
 				_objectRelationship1.getName(), jsonObject2.getLong("id")),
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2, depth1JSONObject2.getLong("id"),
 				_objectRelationship1.getName(), jsonObject3.getLong("id")),
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2, depth1JSONObject2.getLong("id"),
 				_objectRelationship1.getName(), jsonObject4.getLong("id")),
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint3, depth2JSONObject1.getLong("id"),
 				_objectRelationship2.getName(),
@@ -11932,7 +11980,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint3, depth2JSONObject2.getLong("id"),
 				_objectRelationship2.getName(),
@@ -12344,7 +12392,7 @@ public class ObjectEntryResourceTest {
 			endpoint1, Http.Method.POST);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2,
 				manyToOneDepth1JSONObjects[0].getLong("id"),
@@ -12352,7 +12400,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2,
 				manyToOneDepth1JSONObjects[0].getLong("id"),
@@ -12360,7 +12408,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2,
 				manyToOneDepth1JSONObjects[1].getLong("id"),
@@ -12368,7 +12416,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2,
 				manyToOneDepth1JSONObjects[1].getLong("id"),
@@ -12376,7 +12424,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint3,
 				manyToOneDepth2JSONObjects[0].getLong("id"),
@@ -12385,7 +12433,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint3,
 				manyToOneDepth2JSONObjects[1].getLong("id"),
@@ -12877,7 +12925,7 @@ public class ObjectEntryResourceTest {
 			endpoint1, Http.Method.POST);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint1, jsonObject1.getLong("id"),
 				_objectRelationship1.getName(),
@@ -12885,7 +12933,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint1, jsonObject1.getLong("id"),
 				_objectRelationship1.getName(),
@@ -12893,7 +12941,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint1, jsonObject2.getLong("id"),
 				_objectRelationship1.getName(),
@@ -12901,7 +12949,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint1, jsonObject2.getLong("id"),
 				_objectRelationship1.getName(),
@@ -12909,7 +12957,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2, depth1JSONObject1.getLong("id"),
 				_objectRelationship2.getName(),
@@ -12917,7 +12965,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2, depth1JSONObject2.getLong("id"),
 				_objectRelationship2.getName(),
@@ -12925,7 +12973,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2, depth1JSONObject3.getLong("id"),
 				_objectRelationship2.getName(),
@@ -12933,7 +12981,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2, depth1JSONObject4.getLong("id"),
 				_objectRelationship2.getName(),
@@ -13419,7 +13467,7 @@ public class ObjectEntryResourceTest {
 			endpoint1, Http.Method.POST);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint1, jsonObject1.getLong("id"),
 				_objectRelationship1.getName(),
@@ -13427,7 +13475,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint1, jsonObject1.getLong("id"),
 				_objectRelationship1.getName(),
@@ -13435,7 +13483,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint1, jsonObject2.getLong("id"),
 				_objectRelationship1.getName(),
@@ -13443,7 +13491,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint1, jsonObject2.getLong("id"),
 				_objectRelationship1.getName(),
@@ -13451,7 +13499,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2,
 				oneToManyDepth1JSONObjects[0].getLong("id"),
@@ -13460,7 +13508,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2,
 				oneToManyDepth1JSONObjects[1].getLong("id"),
@@ -13469,7 +13517,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2,
 				oneToManyDepth1JSONObjects[2].getLong("id"),
@@ -13478,7 +13526,7 @@ public class ObjectEntryResourceTest {
 			Http.Method.PUT);
 
 		HTTPTestUtil.invokeToJSONObject(
-			null,
+			"{}",
 			String.format(
 				"%s/%d/%s/%d", endpoint2,
 				oneToManyDepth1JSONObjects[3].getLong("id"),
@@ -14539,13 +14587,28 @@ public class ObjectEntryResourceTest {
 
 				Date modifiedDate = fileVersion.getModifiedDate();
 
+				String groupExternalReferenceCode = StringPool.BLANK;
+
+				if (!StringUtil.equals(
+						objectDefinition.getScope(),
+						ObjectDefinitionConstants.SCOPE_COMPANY)) {
+
+					Group group = _groupLocalService.fetchGroup(
+						objectEntry.getGroupId());
+
+					groupExternalReferenceCode =
+						group.getExternalReferenceCode();
+				}
+
 				link.setHref(
 					StringBundler.concat(
 						"/documents/", repositoryId, "/", folderId, "/",
 						URLCodec.encodeURL(fileEntry.getName()), "/",
 						serviceBuilderFileEntry.getUuid(), "?version=",
 						fileVersion.getVersion(), "&t=", modifiedDate.getTime(),
-						"&download=true&objectDefinitionExternalReferenceCode=",
+						"&download=true&groupExternalReferenceCode=",
+						groupExternalReferenceCode,
+						"&objectDefinitionExternalReferenceCode=",
 						objectDefinition.getExternalReferenceCode(),
 						"&objectEntryExternalReferenceCode=",
 						objectEntry.getExternalReferenceCode()));

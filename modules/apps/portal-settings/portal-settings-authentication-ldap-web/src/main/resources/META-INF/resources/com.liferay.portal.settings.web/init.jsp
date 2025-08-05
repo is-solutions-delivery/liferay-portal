@@ -44,6 +44,7 @@ page import="com.liferay.portal.security.ldap.constants.LDAPConstants" %><%@
 page import="com.liferay.portal.security.ldap.util.LDAPUtil" %><%@
 page import="com.liferay.portal.security.ldap.validator.LDAPFilterException" %><%@
 page import="com.liferay.portal.security.ldap.validator.LDAPFilterValidator" %><%@
+page import="com.liferay.portal.settings.authentication.ldap.web.internal.portlet.action.ActionUtil" %><%@
 page import="com.liferay.portal.settings.authentication.ldap.web.internal.portlet.util.ConfigurationProviderUtil" %><%@
 page import="com.liferay.portal.settings.authentication.ldap.web.internal.util.LDAPFilterValidatorUtil" %><%@
 page import="com.liferay.portal.settings.authentication.ldap.web.internal.util.SafePortalLDAPUtil" %><%@

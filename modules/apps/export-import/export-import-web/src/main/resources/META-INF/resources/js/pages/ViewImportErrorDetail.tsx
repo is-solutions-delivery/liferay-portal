@@ -69,7 +69,8 @@ export function ViewImportErrorDetail({
 			response.json().then((data: ErrorDetail) => {
 				setErrorDetail({
 					...data,
-					dateCreated: formatDate(data.dateCreated),
+					dateCreated:
+						data.dateCreated && formatDate(data.dateCreated),
 				});
 				setIsLoading(false);
 			});
@@ -121,7 +122,7 @@ export function ViewImportErrorDetail({
 		<ClayLayout.ContainerFluid>
 			{isLoading ? (
 				<div className="align-items-center d-flex justify-content-center mt-4">
-					<ClayLoadingIndicator title="Loaging import error details..." />
+					<ClayLoadingIndicator />
 				</div>
 			) : (
 				<>

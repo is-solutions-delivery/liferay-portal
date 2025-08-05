@@ -56,6 +56,12 @@ public class BlogsViewEntryDisplayContext {
 			WebKeys.THEME_DISPLAY);
 	}
 
+	public String getBlogEntryExternalReferenceCode() {
+		BlogsEntry blogsEntry = getBlogsEntry();
+
+		return blogsEntry.getExternalReferenceCode();
+	}
+
 	public BlogsEntry getBlogsEntry() {
 		if (_blogsEntry != null) {
 			return _blogsEntry;

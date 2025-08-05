@@ -107,6 +107,8 @@ import com.liferay.portal.vulcan.jaxrs.extension.ExtendedEntity;
 import com.liferay.portal.vulcan.permission.Permission;
 import com.liferay.portal.vulcan.permission.PermissionUtil;
 import com.liferay.portal.vulcan.util.LocalizedMapUtil;
+import com.liferay.trash.model.TrashEntry;
+import com.liferay.trash.service.TrashEntryLocalService;
 
 import jakarta.ws.rs.core.UriInfo;
 
@@ -243,6 +245,18 @@ public class ObjectEntryDTOConverter
 		ObjectEntry contentObjectEntry = (objectEntryVersion == null) ? null :
 			ObjectEntry.unsafeToDTO(objectEntryVersion.getContent());
 
+		TrashEntry trashEntry = null;
+
+		if (serviceBuilderObjectEntry.getStatus() ==
+				WorkflowConstants.STATUS_IN_TRASH) {
+
+			trashEntry = _trashEntryLocalService.fetchEntry(
+				objectDefinition.getClassName(),
+				serviceBuilderObjectEntry.getObjectEntryId());
+		}
+
+		TrashEntry finalTrashEntry = trashEntry;
+
 		return new ObjectEntry() {
 			{
 				setActions(dtoConverterContext::getActions);
@@ -373,6 +387,25 @@ public class ObjectEntryDTOConverter
 								clonedServiceBuilderObjectEntry.
 									getObjectDefinitionId()),
 							clonedServiceBuilderObjectEntry);
+					});
+				setRemovedBy(
+					() -> {
+						if (finalTrashEntry != null) {
+							return CreatorUtil.toCreator(
+								_portal, dtoConverterContext.getUriInfo(),
+								_userLocalService.fetchUser(
+									finalTrashEntry.getUserId()));
+						}
+
+						return null;
+					});
+				setRemovedDate(
+					() -> {
+						if (finalTrashEntry != null) {
+							return finalTrashEntry.getCreateDate();
+						}
+
+						return null;
 					});
 				setReviewDate(
 					() -> _getAttribute(
@@ -716,6 +749,7 @@ public class ObjectEntryDTOConverter
 		fileEntry.setLink(
 			() -> LinkUtil.toLink(
 				_dlAppService, dlFileEntry, _dlURLHelper,
+				objectEntry.getGroupId(),
 				objectDefinition.getExternalReferenceCode(),
 				objectEntry.getExternalReferenceCode(), _portal));
 		fileEntry.setMimeType(dlFileEntry::getMimeType);
@@ -1452,6 +1486,9 @@ public class ObjectEntryDTOConverter
 	@Reference
 	private SystemObjectDefinitionManagerRegistry
 		_systemObjectDefinitionManagerRegistry;
+
+	@Reference
+	private TrashEntryLocalService _trashEntryLocalService;
 
 	@Reference
 	private UserLocalService _userLocalService;
