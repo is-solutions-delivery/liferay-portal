@@ -78,6 +78,11 @@ export type ListViewProps<T extends Record<string, any>> = {
 		| 'totalItems'
 	>;
 
+	onDataLoad?: (data: {
+		items: T[];
+		mutate: KeyedMutator<APIResponse<T>>;
+	}) => void;
+
 	/**
 	 * The options for the pagination.
 	 *
@@ -103,10 +108,6 @@ export type ListViewProps<T extends Record<string, any>> = {
 	 * @default undefined
 	 */
 	transformData?: (response: APIResponse<T>) => APIResponse<T>;
-	onDataLoad?: (data: {
-		items: T[];
-		mutate: KeyedMutator<APIResponse<T>>;
-	}) => void;
 };
 
 function getMatchedOption(rawValue: string, field?: RendererFields) {
@@ -267,7 +268,7 @@ const ListView = <T extends Record<string, any>>({
 		if (response?.items && onDataLoad) {
 			onDataLoad({items: response.items, mutate});
 		}
-	}, [response?.items]);
+	}, [mutate, onDataLoad, response?.items]);
 
 	const {
 		actions = {},

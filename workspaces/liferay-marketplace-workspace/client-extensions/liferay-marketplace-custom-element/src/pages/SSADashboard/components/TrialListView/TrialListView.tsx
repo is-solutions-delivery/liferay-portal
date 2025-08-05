@@ -17,7 +17,6 @@ import {
 	OrderStatus,
 	OrderTypes,
 } from '../../../../enums/Order';
-import {OrderStatus as Status} from '../../../../enums/Order';
 import i18n from '../../../../i18n';
 import {Liferay} from '../../../../liferay/liferay';
 import {Action} from '../../../../utils/constants';
@@ -28,6 +27,7 @@ import TrialStatus from '../TrialStatus/TrialStatus';
 
 type TrialsListViewProps = {
 	actions: Action[];
+	createTrialFormModal: any;
 	isSortable?: boolean;
 	listViewProps?: Partial<ListViewProps<PlacedOrder>>;
 	managementToolbarProps?: {
@@ -40,7 +40,6 @@ type TrialsListViewProps = {
 		| 'tableProps'
 		| 'totalItems'
 	>;
-	createTrialFormModal: any;
 };
 
 export default function TrialListView({
@@ -68,7 +67,7 @@ export default function TrialListView({
 	};
 
 	const refresh = items.some(
-		(item) => item.orderStatusInfo.label === Status.PROCESSING
+		(item) => item.orderStatusInfo.label === OrderStatus.PROCESSING
 	);
 
 	const resource = `/o/headless-commerce-delivery-order/v1.0/channels/${Liferay.CommerceContext.commerceChannelId}/accounts/${properties?.accountId}/placed-orders?${new URLSearchParams(
@@ -219,12 +218,15 @@ export default function TrialListView({
 					],
 				}}
 				{...listViewProps}
-			/>
-			<CreateTrialModalForm
-				items={items}
-				modal={createTrialFormModal}
-				mutate={mutateRef.current}
-			/>
+			>
+				{(_, {mutate}) => (
+					<CreateTrialModalForm
+						items={items}
+						modal={createTrialFormModal}
+						mutate={mutate}
+					/>
+				)}
+			</ListView>
 		</>
 	);
 }
