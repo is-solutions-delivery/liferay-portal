@@ -16,7 +16,7 @@
 	</ul>
 </nav>
 
-<div class="page-container d-flex">
+<div class="d-flex page-container">
 	<div class="main-container my-3">
 		<div class="header">
 			<div class="asset-info d-flex">
