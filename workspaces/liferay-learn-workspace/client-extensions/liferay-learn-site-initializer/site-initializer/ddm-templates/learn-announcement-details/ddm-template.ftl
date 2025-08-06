@@ -73,40 +73,42 @@
 			return;
 		}
 
-		const h3Elements = contentContainer.querySelectorAll("h3");
+		const headings = contentContainer.querySelectorAll("h3");
 
-		if (h3Elements.length === 0) {
-			return
-		};
+		if (headings.length === 0) {
+			return;
+		}
 
-		const ulElement = document.createElement("ul");
+		const tocList = document.createElement("ul");
 
-		h3Elements.forEach((heading, index) => {
-			const liElement = document.createElement("li");
+		headings.forEach((heading, index) => {
+			const headingId = "heading-" + index;
+			const link = document.createElement("a");
+            const listItem = document.createElement("li");
 
-			heading.id = "heading-" + index;
+			heading.id = headingId;
 
-			const anchorElement = document.createElement("a");
+			link.href = "#" + headingId;
+			link.textContent = heading.textContent;
 
-			anchorElement.href = "#" + "heading-" + index;
-			anchorElement.textContent = heading.textContent;
-
-			anchorElement.addEventListener("click", function() {
-				liElement.classList.add("active");
-
-				ulElement.querySelectorAll("li").forEach((li) => li.classList.remove("active"));
+			link.addEventListener("click", function() {
+				tocList.querySelectorAll("li").forEach((li) => li.classList.remove("active"));
+				listItem.classList.add("active");
 			});
 
-			liElement.appendChild(anchorElement);
-
-			ulElement.appendChild(liElement);
+			listItem.appendChild(link);
+			tocList.appendChild(listItem);
 		});
 
-		tocContainer.appendChild(ulElement);
+		tocContainer.appendChild(tocList);
 	});
 </script>
 
 <style>
+	h1, h2, h3 {
+	  color: var(--color-neutral-10, #282934);
+	}
+	
 	.admonion-container {
 		border-radius: var(--border-radius-lg);
 		margin-bottom: 1.5rem;
@@ -131,10 +133,10 @@
 			color: var(--color-state-error, #dA1414);
 		}
 	}
-
+	
 	.admonion-type-info {
 	   background-color: #EFF2FA;
-
+		
 		admonion-title {
 		  color: #4F6FB8;
 		}
@@ -193,6 +195,11 @@
 			font-style: italic;
 			margin-top: 1rem;
 		}
+	}
+
+	html {
+		scroll-behavior: smooth;
+		scroll-padding-top: 11.25rem;
 	}
 
 	.learn-breadcrumb {
@@ -276,15 +283,6 @@
 		list-style: none;
 		margin: 0;
 		padding-left: 0;
-	}
-
-	h1, h2, h3 {
-	  color: var(--color-neutral-10, #282934);
-	}
-
-	html {
-		scroll-behavior: smooth;
-		scroll-padding-top: 11.25rem;
 	}
 
 	@media (max-width:1024px) {
