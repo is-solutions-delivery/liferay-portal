@@ -182,11 +182,6 @@
 		}
 	}
 
-	html {
-		scroll-behavior: smooth;
-		scroll-padding-top: 11.25rem;
-	}
-
 	.learn-breadcrumb {
 		align-items: center;
 		display: flex;
@@ -267,6 +262,11 @@
 		list-style: none;
 		margin: 0;
 		padding-left: 0;
+	}
+
+	html {
+		scroll-behavior: smooth;
+		scroll-padding-top: 11.25rem;
 	}
 
 	@media (max-width:1024px) {
