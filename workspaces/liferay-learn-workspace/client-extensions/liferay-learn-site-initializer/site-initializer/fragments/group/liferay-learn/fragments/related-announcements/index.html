@@ -33,7 +33,7 @@
     <div class="related-announcements-container">
       <h5>[@liferay_ui["message"] key="related-announcements" /]</h5>
       
-      <div class="related-cards-container d-flex">
+      <div class="d-flex related-cards-container">
         [#list related?sort_by("dateCreated")?reverse as item]
           [#if (item_index < 3)]
             <a href="/l/${item.id}" class="related-card-link">
