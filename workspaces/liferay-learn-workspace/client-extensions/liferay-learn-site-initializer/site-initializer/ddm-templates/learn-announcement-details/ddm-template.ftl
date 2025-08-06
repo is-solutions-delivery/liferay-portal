@@ -30,7 +30,7 @@
 					</#if>
 				</p>
 			</div>
-			<div class="content-info">
+			<div class="content-info mt-2">
 				<h1>
 					<#if (ObjectField_title.getData())??>
 						${ObjectField_title.getData()}
@@ -127,6 +127,14 @@
 			color: var(--color-state-error, #dA1414);
 		}
 	}
+	
+	.admonion-type-info {
+	   background-color: #EFF2FA;
+		
+		admonion-title {
+		  color: #4F6FB8;
+		}
+	}
 
 	.admonion-type-note {
 		background-color: var(--color-state-success-lighten-2, #e9f5e8);
@@ -172,7 +180,7 @@
 	}
 
 	.component-html img {
-		max-height: 334px;
+		border-radius: 10px;
 		width: 100%;
 	}
 
@@ -214,6 +222,7 @@
 		margin-top: 4rem;
 		position: sticky;
 		top: 12.5rem;
+		min-width: 256px;
 	}
 
 	.table-of-contents {
@@ -263,6 +272,10 @@
 		list-style: none;
 		margin: 0;
 		padding-left: 0;
+	}
+
+	h1, h2, h3 {
+	  color: var(--color-neutral-10, #282934);
 	}
 
 	html {
