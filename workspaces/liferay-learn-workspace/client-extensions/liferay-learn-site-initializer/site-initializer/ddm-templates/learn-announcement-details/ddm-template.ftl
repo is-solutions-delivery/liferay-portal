@@ -23,6 +23,7 @@
 				<p class="title">
 					<@liferay_ui["message"] key="announcement" />
 				</p>
+
 				<p class="date">
 					<#if (ObjectEntry_createDate.getData())??>
 						<#assign rawDate = ObjectEntry_createDate.getData()?datetime("M/d/yy h:mm a") />
@@ -30,6 +31,7 @@
 					</#if>
 				</p>
 			</div>
+
 			<div class="content-info mt-2">
 				<h1>
 					<#if (ObjectField_title.getData())??>
@@ -46,6 +48,7 @@
 				</div>
 			</div>
 		</div>
+
 		<div class="content mt-3" id="content">
 			<#if (ObjectField_content.getData())??>
 				${ObjectField_content.getData()}
@@ -55,6 +58,7 @@
 			</#if>
 		</div>
 	</div>
+
 	<div class="side-container">
 		<div class="table-of-contents"></div>
 	</div>
@@ -127,10 +131,10 @@
 			color: var(--color-state-error, #dA1414);
 		}
 	}
-	
+
 	.admonion-type-info {
 	   background-color: #EFF2FA;
-		
+
 		admonion-title {
 		  color: #4F6FB8;
 		}
