@@ -105,10 +105,6 @@
 </script>
 
 <style>
-	h1, h2, h3 {
-	  color: var(--color-neutral-10, #282934);
-	}
-	
 	.admonion-container {
 		border-radius: var(--border-radius-lg);
 		margin-bottom: 1.5rem;
@@ -197,11 +193,6 @@
 		}
 	}
 
-	html {
-		scroll-behavior: smooth;
-		scroll-padding-top: 11.25rem;
-	}
-
 	.learn-breadcrumb {
 		align-items: center;
 		display: flex;
@@ -283,6 +274,15 @@
 		list-style: none;
 		margin: 0;
 		padding-left: 0;
+	}
+
+	h1, h2, h3 {
+	  color: var(--color-neutral-10, #282934);
+	}
+
+	html {
+		scroll-behavior: smooth;
+		scroll-padding-top: 11.25rem;
 	}
 
 	@media (max-width:1024px) {
