@@ -62,14 +62,18 @@
 
 <script>
 	document.addEventListener("DOMContentLoaded", function() {
-		const contentDiv = document.getElementById("content");
-		const tocDiv = document.querySelector(".table-of-contents");
+		const contentContainer = document.getElementById("content");
+		const tocContainer = document.querySelector(".table-of-contents");
 
-		if (!contentDiv || !tocDiv) return;
+		if (!contentContainer || !tocContainer) {
+			return;
+		}
 
-		const headings = contentDiv.querySelectorAll("h3");
+		const headings = contentContainer.querySelectorAll("h3");
 
-		if (headings.length === 0) return;
+		if (headings.length === 0) {
+			return
+		};
 
 		const tocList = document.createElement("ul");
 
@@ -93,7 +97,7 @@
 			tocList.appendChild(listItem);
 		});
 
-		tocDiv.appendChild(tocList);
+		tocContainer.appendChild(tocList);
 	});
 </script>
 
