@@ -69,35 +69,36 @@
 			return;
 		}
 
-		const headings = contentContainer.querySelectorAll("h3");
+		const h3Elements = contentContainer.querySelectorAll("h3");
 
-		if (headings.length === 0) {
+		if (h3Elements.length === 0) {
 			return
 		};
 
-		const tocList = document.createElement("ul");
+		const ulElement = document.createElement("ul");
 
-		headings.forEach((heading, index) => {
-			const headingId = "heading-" + index;
+		h3Elements.forEach((heading, index) => {
+			const liElement = document.createElement("li");
 
-			heading.id = headingId;
+			heading.id = "heading-" + index;
 
-			const listItem = document.createElement("li");
-			const link = document.createElement("a");
+			const anchorElement = document.createElement("a");
 
-			link.href = "#" + headingId;
-			link.textContent = heading.textContent;
+			anchorElement.href = "#" + "heading-" + index;
+			anchorElement.textContent = heading.textContent;
 
-			link.addEventListener("click", function() {
-				tocList.querySelectorAll("li").forEach((li) => li.classList.remove("active"));
-				listItem.classList.add("active");
+			anchorElement.addEventListener("click", function() {
+				liElement.classList.add("active");
+
+				ulElement.querySelectorAll("li").forEach((li) => li.classList.remove("active"));
 			});
 
-			listItem.appendChild(link);
-			tocList.appendChild(listItem);
+			liElement.appendChild(anchorElement);
+
+			ulElement.appendChild(liElement);
 		});
 
-		tocContainer.appendChild(tocList);
+		tocContainer.appendChild(ulElement);
 	});
 </script>
 
