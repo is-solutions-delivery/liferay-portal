@@ -6,10 +6,6 @@
 	padding: 1.5rem;
 }
 
-.related-cards-container {
-   gap: 1rem;
-}
-
 .related-card {
   background: var(--color-brand-primary-lighten-6, #fbfcfe);
   border-radius: 10px;
@@ -19,11 +15,10 @@
   padding: 1rem;
 }
 
-.related-card-link {
-  color: inherit;
-  display: flex;
-  flex: 1; 
-  text-decoration: none;
+.related-card-date {
+  color: #6b7280; 
+  font-size: 0.8rem;
+	margin-bottom: 0;
 }
 
 .related-card-description {
@@ -39,10 +34,11 @@
   -webkit-box-orient: vertical;
 }
 
-.related-card-date {
-  color: #6b7280; 
-  font-size: 0.8rem;
-	margin-bottom: 0;
+.related-card-link {
+  color: inherit;
+  display: flex;
+  flex: 1; 
+  text-decoration: none;
 }
 
 .related-card-title {
@@ -50,3 +46,9 @@
 	font-size: 1rem; 
 	font-weight: 600; 
 }
+
+.related-cards-container {
+   gap: 1rem;
+}
+
+
