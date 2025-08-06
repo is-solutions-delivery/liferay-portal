@@ -84,7 +84,7 @@
 		headings.forEach((heading, index) => {
 			const headingId = "heading-" + index;
 			const link = document.createElement("a");
-            const listItem = document.createElement("li");
+			const listItem = document.createElement("li");
 
 			heading.id = headingId;
 
@@ -129,10 +129,10 @@
 			color: var(--color-state-error, #dA1414);
 		}
 	}
-	
+
 	.admonion-type-info {
 	   background-color: #EFF2FA;
-		
+
 		admonion-title {
 		  color: #4F6FB8;
 		}
