@@ -129,7 +129,8 @@ public class ExamResultsRestController extends BaseRestController {
 						"Building Enterprise Websites with Liferay")) {
 
 					examName =
-						"Building Enterprise Websites with Liferay Certification Exam (2024)";
+						"Building Enterprise Websites with Liferay " +
+							"Certification Exam (2024)";
 				}
 
 				JSONObject jsonObject = new JSONObject(
