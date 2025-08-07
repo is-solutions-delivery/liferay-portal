@@ -11,16 +11,13 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvValidationException;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -29,8 +26,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
-
+import org.apache.commons.csv.CSVRecord;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -107,84 +105,55 @@ public class ExamResultsRestController extends BaseRestController {
 			"liferay-learn-etc-spring-boot-oauth-application-headless-server");
 	}
 
-	private ResponseEntity<String> _process(MultipartFile file)
-		throws CsvValidationException, IOException {
+	private ResponseEntity<String> _process(MultipartFile file) throws IOException {
+	try (BufferedReader reader = new BufferedReader(
+			 new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8));
+		 CSVParser parser = CSVFormat.DEFAULT
+			 .withFirstRecordAsHeader()
+			 .parse(reader)) {
 
-		try (BufferedReader reader = new BufferedReader(
-				new InputStreamReader(file.getInputStream()));
-			CSVReader csvReader = new CSVReader(reader)) {
+		JSONArray jsonArray = new JSONArray();
 
-			csvReader.readNext();
+		for (CSVRecord record : parser) {
+			String examName = record.get(6);
 
-			JSONArray jsonArray = new JSONArray();
-
-			String[] row;
-
-			while ((row = csvReader.readNext()) != null) {
-				String examName = row[6];
-
-				if (Objects.equals(
-						examName,
-						"Building Enterprise Websites with Liferay")) {
-
-					examName =
-						"Building Enterprise Websites with Liferay " +
-							"Certification Exam (2024)";
-				}
-
-				JSONObject jsonObject = new JSONObject(
-				).put(
-					"date",
-					OffsetDateTime.of(
-						LocalDateTime.parse(
-							row[10],
-							DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm:ss")),
-						ZoneOffset.UTC
-					).format(
-						DateTimeFormatter.ISO_INSTANT
-					)
-				).put(
-					"email", row[2]
-				).put(
-					"examName", examName
-				).put(
-					"externalReferenceCode", row[0]
-				).put(
-					"firstName", row[3]
-				).put(
-					"lastName", row[4]
-				).put(
-					"result",
-					new JSONObject(
-					).put(
-						"name", row[8]
-					).put(
-						"key", StringUtil.toLowerCase(row[8])
-					)
-				).put(
-					"score", GetterUtil.getInteger(row[7])
-				).put(
-					"testName", examName
-				);
-
-				jsonArray.put(jsonObject);
+			if (Objects.equals(examName, "Building Enterprise Websites with Liferay")) {
+				examName = "Building Enterprise Websites with Liferay Certification Exam (2024)";
 			}
 
-			String response = post(
-				_getAuthorization(), jsonArray.toString(),
-				UriComponentsBuilder.fromPath(
-					"/o/c/p2s3examresults/batch?createStrategy=UPSERT"
-				).build(
-				).toUri());
+			JSONObject jsonObject = new JSONObject()
+				.put("date", OffsetDateTime.of(
+					LocalDateTime.parse(
+						record.get(10),
+						DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm:ss")
+					),
+					ZoneOffset.UTC
+				).format(DateTimeFormatter.ISO_INSTANT))
+				.put("email", record.get(2))
+				.put("examName", examName)
+				.put("externalReferenceCode", record.get(0))
+				.put("firstName", record.get(3))
+				.put("lastName", record.get(4))
+				.put("result", new JSONObject()
+					.put("name", record.get(8))
+					.put("key", StringUtil.toLowerCase(record.get(8))))
+				.put("score", GetterUtil.getInteger(record.get(7)))
+				.put("testName", examName);
 
-			return ResponseEntity.ok(response);
+			jsonArray.put(jsonObject);
 		}
+
+		String response = post(
+			_getAuthorization(), jsonArray.toString(),
+			UriComponentsBuilder.fromPath(
+				"/o/c/p2s3examresults/batch?createStrategy=UPSERT"
+			).build().toUri());
+
+		return ResponseEntity.ok(response);
+	}
 		catch (Exception exception) {
-			return ResponseEntity.status(
-				HttpStatus.INTERNAL_SERVER_ERROR
-			).body(
-				"Error CSV format: " + exception.getMessage()
-			);
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body("Error CSV format: " + exception.getMessage());
 		}
 	}
 
