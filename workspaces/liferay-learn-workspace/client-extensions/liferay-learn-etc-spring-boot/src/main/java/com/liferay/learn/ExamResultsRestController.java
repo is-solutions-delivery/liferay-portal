@@ -17,7 +17,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+
 import java.nio.charset.StandardCharsets;
+
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -29,6 +31,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -105,55 +108,83 @@ public class ExamResultsRestController extends BaseRestController {
 			"liferay-learn-etc-spring-boot-oauth-application-headless-server");
 	}
 
-	private ResponseEntity<String> _process(MultipartFile file) throws IOException {
-	try (BufferedReader reader = new BufferedReader(
-			 new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8));
-		 CSVParser parser = CSVFormat.DEFAULT
-			 .withFirstRecordAsHeader()
-			 .parse(reader)) {
+	private ResponseEntity<String> _process(MultipartFile file)
+		throws IOException {
 
-		JSONArray jsonArray = new JSONArray();
+		try (BufferedReader reader = new BufferedReader(
+				new InputStreamReader(
+					file.getInputStream(), StandardCharsets.UTF_8));
+			CSVParser parser = CSVFormat.DEFAULT.withFirstRecordAsHeader(
+			).parse(
+				reader
+			)) {
 
-		for (CSVRecord record : parser) {
-			String examName = record.get(6);
+			JSONArray jsonArray = new JSONArray();
 
-			if (Objects.equals(examName, "Building Enterprise Websites with Liferay")) {
-				examName = "Building Enterprise Websites with Liferay Certification Exam (2024)";
+			for (CSVRecord record : parser) {
+				String examName = record.get(6);
+
+				if (Objects.equals(
+						examName,
+						"Building Enterprise Websites with Liferay")) {
+
+					examName =
+						"Building Enterprise Websites with Liferay Certification Exam (2024)";
+				}
+
+				JSONObject jsonObject = new JSONObject(
+				).put(
+					"date",
+					OffsetDateTime.of(
+						LocalDateTime.parse(
+							record.get(10),
+							DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm:ss")),
+						ZoneOffset.UTC
+					).format(
+						DateTimeFormatter.ISO_INSTANT
+					)
+				).put(
+					"email", record.get(2)
+				).put(
+					"examName", examName
+				).put(
+					"externalReferenceCode", record.get(0)
+				).put(
+					"firstName", record.get(3)
+				).put(
+					"lastName", record.get(4)
+				).put(
+					"result",
+					new JSONObject(
+					).put(
+						"name", record.get(8)
+					).put(
+						"key", StringUtil.toLowerCase(record.get(8))
+					)
+				).put(
+					"score", GetterUtil.getInteger(record.get(7))
+				).put(
+					"testName", examName
+				);
+
+				jsonArray.put(jsonObject);
 			}
 
-			JSONObject jsonObject = new JSONObject()
-				.put("date", OffsetDateTime.of(
-					LocalDateTime.parse(
-						record.get(10),
-						DateTimeFormatter.ofPattern("yyyy-MM-dd H:mm:ss")
-					),
-					ZoneOffset.UTC
-				).format(DateTimeFormatter.ISO_INSTANT))
-				.put("email", record.get(2))
-				.put("examName", examName)
-				.put("externalReferenceCode", record.get(0))
-				.put("firstName", record.get(3))
-				.put("lastName", record.get(4))
-				.put("result", new JSONObject()
-					.put("name", record.get(8))
-					.put("key", StringUtil.toLowerCase(record.get(8))))
-				.put("score", GetterUtil.getInteger(record.get(7)))
-				.put("testName", examName);
+			String response = post(
+				_getAuthorization(), jsonArray.toString(),
+				UriComponentsBuilder.fromPath(
+					"/o/c/p2s3examresults/batch?createStrategy=UPSERT"
+				).build(
+				).toUri());
 
-			jsonArray.put(jsonObject);
+			return ResponseEntity.ok(response);
 		}
-
-		String response = post(
-			_getAuthorization(), jsonArray.toString(),
-			UriComponentsBuilder.fromPath(
-				"/o/c/p2s3examresults/batch?createStrategy=UPSERT"
-			).build().toUri());
-
-		return ResponseEntity.ok(response);
-	}
 		catch (Exception exception) {
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-			.body("Error CSV format: " + exception.getMessage());
+			return ResponseEntity.status(
+				HttpStatus.INTERNAL_SERVER_ERROR
+			).body(
+				"Error CSV format: " + exception.getMessage()
+			);
 		}
 	}
 
