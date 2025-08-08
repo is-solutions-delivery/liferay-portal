@@ -11,7 +11,7 @@
 
 [#if (categoryIds?size > 0)]
 	[#assign filterExpression = "taxonomyCategoryIds in (" + categoryIds?join(",") + ") and id ne '" + announcementId?string + "'"]
-	
+
 	[#assign relatedAnnouncementsResponse = restClient.get(
 		"/c/p2s3learnannouncements?fields=id,title,description,dateCreated,taxonomyCategoryBriefs&pageSize=3&sort=dateCreated:desc&filter=" + filterExpression?url("UTF-8")
 	)]
@@ -21,11 +21,13 @@
 	[#if (relatedAnnouncements?size > 0)]
 		<div class="related-announcements-container">
 			<h5>[@liferay_ui["message"] key="related-announcements" /]</h5>
-			<div class="related-cards-container d-flex">
+
+			<div class="d-flex related-cards-container">
 				[#list relatedAnnouncements as item]
-					<a href="/l/${item.id}" class="related-card-link">
+					<a class="related-card-link" href="/l/${item.id}">
 						<div class="related-card">
 							<h6 class="related-card-title">${item.title}</h6>
+
 							<p class="related-card-description">${item.description}</p>
 							[#if item.dateCreated??]
 								<p class="related-card-date">
