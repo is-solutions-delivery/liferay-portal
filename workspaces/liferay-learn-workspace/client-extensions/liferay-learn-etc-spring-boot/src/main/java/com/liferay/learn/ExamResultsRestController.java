@@ -32,10 +32,10 @@ import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -87,13 +87,15 @@ public class ExamResultsRestController extends BaseRestController {
 		consumes = MediaType.MULTIPART_FORM_DATA_VALUE, value = "/import"
 	)
 	public ResponseEntity<String> postExamResultsCSV(
-		@AuthenticationPrincipal Jwt jwt,
-		@RequestParam("file") MultipartFile file) throws IOException {
+			@AuthenticationPrincipal Jwt jwt,
+			@RequestParam("file") MultipartFile file)
+		throws IOException {
 
 		return ResponseEntity.ok(_process(jwt, file));
 	}
 
-	private String _process(@AuthenticationPrincipal Jwt jwt, MultipartFile file)
+	private String _process(
+			@AuthenticationPrincipal Jwt jwt, MultipartFile file)
 		throws IOException {
 
 		try (BufferedReader reader = new BufferedReader(
@@ -243,7 +245,7 @@ public class ExamResultsRestController extends BaseRestController {
 		}
 	}
 
-		private static final Log _log = LogFactory.getLog(
+	private static final Log _log = LogFactory.getLog(
 		ObjectActionCourseRestController.class);
 
 }
