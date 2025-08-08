@@ -36,6 +36,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -87,11 +88,19 @@ public class ExamResultsRestController extends BaseRestController {
 		consumes = MediaType.MULTIPART_FORM_DATA_VALUE, value = "/import"
 	)
 	public ResponseEntity<String> postExamResultsCSV(
-			@AuthenticationPrincipal Jwt jwt,
-			@RequestParam("file") MultipartFile file)
-		throws IOException {
+		@AuthenticationPrincipal Jwt jwt,
+		@RequestParam("file") MultipartFile file) {
 
-		return ResponseEntity.ok(_process(jwt, file));
+		try {
+			return ResponseEntity.ok(_process(jwt, file));
+		}
+		catch (Exception exception) {
+			return ResponseEntity.status(
+				HttpStatus.INTERNAL_SERVER_ERROR
+			).body(
+				"Error to import CSV"
+			);
+		}
 	}
 
 	private String _process(
@@ -166,7 +175,7 @@ public class ExamResultsRestController extends BaseRestController {
 				).toUri());
 		}
 		catch (Exception exception) {
-			_log.error("Error to import CSV");
+			_log.error("Unable to import CSV ", exception);
 
 			throw exception;
 		}
@@ -246,6 +255,6 @@ public class ExamResultsRestController extends BaseRestController {
 	}
 
 	private static final Log _log = LogFactory.getLog(
-		ObjectActionCourseRestController.class);
+		ExamResultsRestController.class);
 
 }
