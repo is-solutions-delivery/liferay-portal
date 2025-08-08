@@ -264,7 +264,7 @@
 		margin-bottom: 0;
 	}
 
-.collapse-icon {
+	.collapse-icon {
 		align-items: center !important;
 		display: flex !important;
 		justify-content: space-between !important;
