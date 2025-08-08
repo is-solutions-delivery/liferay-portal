@@ -6,7 +6,6 @@
 package com.liferay.learn;
 
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
-import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -31,12 +30,11 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -59,9 +57,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 @RestController
 public class ExamResultsRestController extends BaseRestController {
 
-	@GetMapping("/download")
+	@GetMapping("/export")
 	@ResponseBody
-	public ResponseEntity<StreamingResponseBody> get(
+	public ResponseEntity<StreamingResponseBody> getExamResultsCSV(
 			@AuthenticationPrincipal Jwt jwt,
 			@RequestParam(required = false, value = "endDate") String endDate,
 			@RequestParam(required = false, value = "startDate") String
@@ -88,27 +86,14 @@ public class ExamResultsRestController extends BaseRestController {
 	@PostMapping(
 		consumes = MediaType.MULTIPART_FORM_DATA_VALUE, value = "/import"
 	)
-	public ResponseEntity<String> uploadCsv(
-		@RequestParam("file") MultipartFile file) {
+	public ResponseEntity<String> postExamResultsCSV(
+		@AuthenticationPrincipal Jwt jwt,
+		@RequestParam("file") MultipartFile file) throws IOException {
 
-		try {
-			return _process(file);
-		}
-		catch (Exception exception) {
-			return ResponseEntity.status(
-				HttpStatus.INTERNAL_SERVER_ERROR
-			).body(
-				"Error processing CSV: " + exception.getMessage()
-			);
-		}
+		return ResponseEntity.ok(_process(jwt, file));
 	}
 
-	private String _getAuthorization() {
-		return _liferayOAuth2AccessTokenManager.getAuthorization(
-			"liferay-learn-etc-spring-boot-oauth-application-headless-server");
-	}
-
-	private ResponseEntity<String> _process(MultipartFile file)
+	private String _process(@AuthenticationPrincipal Jwt jwt, MultipartFile file)
 		throws IOException {
 
 		try (BufferedReader reader = new BufferedReader(
@@ -171,21 +156,17 @@ public class ExamResultsRestController extends BaseRestController {
 				jsonArray.put(jsonObject);
 			}
 
-			String response = post(
-				_getAuthorization(), jsonArray.toString(),
+			return post(
+				"Bearer " + jwt.getTokenValue(), jsonArray.toString(),
 				UriComponentsBuilder.fromPath(
 					"/o/c/p2s3examresults/batch?createStrategy=UPSERT"
 				).build(
 				).toUri());
-
-			return ResponseEntity.ok(response);
 		}
 		catch (Exception exception) {
-			return ResponseEntity.status(
-				HttpStatus.INTERNAL_SERVER_ERROR
-			).body(
-				"Error CSV format: " + exception.getMessage()
-			);
+			_log.error("Error to import CSV");
+
+			throw exception;
 		}
 	}
 
@@ -223,7 +204,7 @@ public class ExamResultsRestController extends BaseRestController {
 					get(
 						"Bearer " + jwt.getTokenValue(),
 						UriComponentsBuilder.fromPath(
-							"/o/c/p2s3examresults/scopes/" + _siteGroupId
+							"/o/c/p2s3examresults"
 						).queryParam(
 							"filter", filterString
 						).queryParam(
@@ -262,10 +243,7 @@ public class ExamResultsRestController extends BaseRestController {
 		}
 	}
 
-	@Autowired
-	private LiferayOAuth2AccessTokenManager _liferayOAuth2AccessTokenManager;
-
-	@Value("${liferay.learn.dxp.site.group.id}")
-	private long _siteGroupId;
+		private static final Log _log = LogFactory.getLog(
+		ObjectActionCourseRestController.class);
 
 }
