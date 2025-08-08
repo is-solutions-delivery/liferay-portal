@@ -60,10 +60,18 @@
 	z-index: 0;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 430px) {
+	.banner-cta-group-container {
+		padding: 1rem;
+	}
+	
+	.banner-cta-title::before {
+		height: 5rem;
+		width: 5rem;
+	}
+	
 	.waves-banner {
-		height: 245px;
-		width: 210px !important;
+		display: none;
 	}
 }
 
@@ -79,17 +87,9 @@
 	}
 }
 
-@media (max-width: 430px) {
-	.banner-cta-group-container {
-		padding: 1rem;
-	}
-	
-	.banner-cta-title::before {
-		height: 5rem;
-		width: 5rem;
-	}
-	
+@media (max-width: 1024px) {
 	.waves-banner {
-		display: none;
+		height: 245px;
+		width: 210px !important;
 	}
 }
