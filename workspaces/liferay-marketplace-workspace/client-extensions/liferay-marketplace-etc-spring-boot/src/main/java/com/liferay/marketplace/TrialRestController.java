@@ -19,7 +19,6 @@ import com.liferay.marketplace.service.MarketplaceService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.net.URI;
 
@@ -223,8 +222,7 @@ public class TrialRestController extends BaseRestController {
 				ZonedDateTime.parse(
 					customFields.get("trial-end-date")
 				).format(
-					DateTimeFormatter.ofPattern(
-						"MMMM d, yyyy")
+					DateTimeFormatter.ofPattern("MMMM d, yyyy")
 				)
 			).build());
 

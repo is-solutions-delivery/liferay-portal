@@ -21,7 +21,6 @@ import com.liferay.marketplace.service.MarketplaceService;
 import com.liferay.marketplace.util.MarketplaceUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -275,8 +274,7 @@ public class MarketplaceRestController extends BaseRestController {
 					).toInstant(),
 					ZoneOffset.UTC
 				).format(
-					DateTimeFormatter.ofPattern(
-						"MMMM d, yyyy")
+					DateTimeFormatter.ofPattern("MMMM d, yyyy")
 				)
 			).build());
 	}
