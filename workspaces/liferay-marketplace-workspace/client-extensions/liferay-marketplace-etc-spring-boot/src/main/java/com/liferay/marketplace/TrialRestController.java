@@ -224,7 +224,7 @@ public class TrialRestController extends BaseRestController {
 					customFields.get("trial-end-date")
 				).format(
 					DateTimeFormatter.ofPattern(
-						"MMMM d, yyyy", LocaleUtil.ENGLISH)
+						"MMMM d, yyyy")
 				)
 			).build());
 
