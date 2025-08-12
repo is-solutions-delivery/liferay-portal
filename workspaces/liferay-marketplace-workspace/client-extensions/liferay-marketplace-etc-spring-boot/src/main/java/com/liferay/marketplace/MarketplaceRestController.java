@@ -266,7 +266,7 @@ public class MarketplaceRestController extends BaseRestController {
 					StringBundler.concat(
 						lxcDXPServerProtocol, "://", lxcDXPMainDomain,
 						"/web/marketplace/administrator-dashboard#/apps/",
-						modelCPDefinitionJSONObject.getLong("CPDefinitionId"))
+						modelCPDefinitionJSONObject.getLong("CProductId"))
 				).toString()
 			).put(
 				"[%CPDEFINITION_CREATEDATE%]",
@@ -276,7 +276,7 @@ public class MarketplaceRestController extends BaseRestController {
 					ZoneOffset.UTC
 				).format(
 					DateTimeFormatter.ofPattern(
-						"MMMM d, yyyy", LocaleUtil.ENGLISH)
+						"MMMM d, yyyy")
 				)
 			).build());
 	}
