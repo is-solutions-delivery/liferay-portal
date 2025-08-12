@@ -276,6 +276,10 @@ public class MarketplaceRestController extends BaseRestController {
 				).format(
 					DateTimeFormatter.ofPattern("MMMM d, yyyy")
 				)
+			).put(
+				"[%CPDEFINITION_ID%]",
+				String.valueOf(
+					modelCPDefinitionJSONObject.getLong("CPDefinitionId"))
 			).build());
 	}
 
