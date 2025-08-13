@@ -17,9 +17,24 @@
 }
 
 .banner-cta-main-container {
-	background: linear-gradient(91.07deg, #001742 0%, #0011A8 24.6%, #0B5FFF 49%, #0B5FFF 74.5%, #0B5FFF 100%),
-	radial-gradient(26.56% 43.82% at 0% 0%, #00256B 20.83%, rgba(0, 37, 107, 0) 100%),
-	radial-gradient(14.55% 34.6% at 100% 34.6%, rgba(55, 124, 255, 0.68) 0%, rgba(55, 124, 255, 0) 100%);
+	background: linear-gradient(
+		91.07deg,
+		#001742 0%,
+		#0011A8 24.6%,
+		#0B5FFF 49%,
+		#0B5FFF 74.5%,
+		#0B5FFF 100%
+	),
+	radial-gradient(
+		26.56% 43.82% at 0% 0%,
+		#00256B 20.83%, 
+		rgba(0, 37, 107, 0) 100%
+	),
+	radial-gradient(
+		14.55% 34.6% at 100% 34.6%,
+		rgba(55, 124, 255, 0.68) 0%,
+		rgba(55, 124, 255, 0) 100%
+	);
 	border: 1px solid none;
 	border-radius: 10px;
 	display: flex;
@@ -60,10 +75,18 @@
 	z-index: 0;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 430px) {
+	.banner-cta-group-container {
+		padding: 1rem;
+	}
+	
+	.banner-cta-title::before {
+		height: 5rem;
+		width: 5rem;
+	}
+	
 	.waves-banner {
-		height: 245px;
-		width: 210px !important;
+		display: none;
 	}
 }
 
@@ -79,17 +102,9 @@
 	}
 }
 
-@media (max-width: 430px) {
-	.banner-cta-group-container {
-		padding: 1rem;
-	}
-	
-	.banner-cta-title::before {
-		height: 5rem;
-		width: 5rem;
-	}
-	
+@media (max-width: 1024px) {
 	.waves-banner {
-		display: none;
+		height: 245px;
+		width: 210px !important;
 	}
 }

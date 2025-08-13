@@ -1,77 +1,138 @@
-<#assign announcement = restClient.get("/c/p2s3learnannouncements/?nestedFields=r_p2S3AnnouncementImageType_c_p2s3AnnouncementImageType&pageSize=500") />
+<#assign
+	announcementCategoryItems = []
+	announcementCategoryMap = {}
+	getAnnouncementImagesType = restClient.get("/c/p2s3announcementimagetypes/?fields=id%2Cimage&nestedFields=r_p2S3AnnouncementImageType_c_p2s3AnnouncementImageType")
+	searchResults = searchContainer.getResults()
 
-<div class="announcement-container">
-	<#if entries?has_content>
-		<#list entries as searchEntry>
+	getFirstAssetVocabularyId = searchResults?first!searchResults.get(0)!searchResults[0]
+
+	getAnnouncementCategoriesList = restClient.get("/headless-admin-taxonomy/v1.0/taxonomy-vocabularies/${getFirstAssetVocabularyId.assetVocabularyIds!first_result.getAssetVocabularyIds()}/taxonomy-categories?fields=id%2Cname")
+/>
+
+<#list getAnnouncementCategoriesList.items as dataCategories>
+	<#assign announcementCategory = {
+		"id": dataCategories.id,
+		"name": dataCategories.name
+	}>
+	<#assign announcementCategoryItems = announcementCategoryItems + [announcementCategory] />
+</#list>
+
+<#list announcementCategoryItems as category>
+	<#assign announcementCategoryMap = announcementCategoryMap + {(category.id) : category.name} />
+</#list>
+
+<#assign
+	announcementImageTypeList = []
+	imageMap = {}
+/>
+
+<#list getAnnouncementImagesType.items as dataImages>
+	<#assign imageCategory = {
+		"id": dataImages.id,
+		"image": dataImages.image.link.href
+	}>
+	<#assign announcementImageTypeList = announcementImageTypeList + [imageCategory] />
+</#list>
+
+<#list announcementImageTypeList as img>
+	<#assign imageMap = imageMap + {(img.id) : img.image} />
+</#list>
+
+<#assign entryMap = {} />
+<#list entries as e>
+	<#assign entryMap = entryMap + {(e.classPK) : e.getViewURL()} />
+</#list>
+
+<#list searchResults as search>
+	<#assign
+		announcementRelationField = "r_p2S3AnnouncementImageType_c_p2s3AnnouncementImageTypeId:"
+		contentString = search.objectEntryContent?string
+
+		keyStartIndex = contentString?index_of(announcementRelationField)
+	/>
+
+	<#if keyStartIndex != -1>
 			<#assign
-				className = searchEntry.getClassName()!""
-				classPK = searchEntry.getClassPK()!""
-				matchingItem = ""
-				searchEntryContent = searchEntry.getContent()!languageUtil.get(locale, "no-content-preview", "No content preview")
-				searchEntryTitle = searchEntry.getTitle()!""
+				valueStartIndex = keyStartIndex + announcementRelationField?length
+
+				substringAfterKey = contentString?substring(valueStartIndex)?trim
+
+				endIndex = substringAfterKey?index_of(",")
 			/>
 
-			<#list announcement.items as item>
-				<#if item.id == classPK>
-					<#assign matchingItem = item />
-					<#break>
-				</#if>
-			</#list>
+			<#if endIndex == -1>
+					<#assign imageTypeId = substringAfterKey />
+			<#else>
+					<#assign imageTypeId = substringAfterKey?substring(0, endIndex)?trim />
+			</#if>
+	<#else>
+			<#assign imageTypeId = "" />
+	</#if>
 
-			<div class="announcement-main-container">
-				<div class="announcement-group-container">
-					<div class="announcement-group-top">
-						<div class="announcement-categories">
-							<#if matchingItem?? && matchingItem.taxonomyCategoryBriefs?has_content>
-								<#list matchingItem.taxonomyCategoryBriefs as cat>
-									<span class="category-item">${cat.taxonomyCategoryName}</span>
-								</#list>
-							</#if>
-						</div>
+	<#assign descriptionStart = contentString?index_of("description: ") />
 
-						<div class="announcement-title">
-							<#if (searchEntryTitle)??>
-								<span>
-									${searchEntryTitle}
-								</span>
-							</#if>
-						</div>
+	<#if descriptionStart != -1>
+			<#assign
+				descriptionSubstring = contentString?substring(descriptionStart + 12)
 
-						<div class="announcement-date-created">
-							<#if entry?has_content && entry.getModifiedDateString()?has_content>
-								<#assign dateParts = entry.getModifiedDateString()?split(" ") />
+				nextKey = descriptionSubstring?index_of("image:")
+			/>
 
-								${dateParts[0]} ${dateParts[1]} ${dateParts[2]}
-							</#if>
-						</div>
-					</div>
+			<#if nextKey != -1>
+					<#assign description = descriptionSubstring?substring(0, nextKey)?trim />
+			<#else>
+					<#assign description = descriptionSubstring?trim />
+			</#if>
 
-					<div class="announcement-description">
-						<#if matchingItem?? && matchingItem.description?has_content>
-							<span class="description-item">
-								${matchingItem.description}
-							</span>
+			<#if description?ends_with(",")>
+					<#assign description = description?substring(0, description?length - 1)?trim />
+			</#if>
+	<#else>
+			<#assign description = "" />
+	</#if>
+
+	<div class="announcement-main-container">
+		<div class="announcement-group-container">
+			<div class="announcement-group-top">
+				<div class="announcement-categories">
+					<#list search.getValues("assetCategoryIds") as taxonomyCategoryId>
+						<#if announcementCategoryMap[taxonomyCategoryId]??>
+							<span>${announcementCategoryMap[taxonomyCategoryId]}</span>
 						</#if>
-					</div>
-
-					<div class="announcement-button">
-						<a>${languageUtil.get(locale, "read-more", "Read More")}</a>
-					</div>
+					</#list>
 				</div>
 
-				<div class="announcement-image-container">
-					<#if matchingItem?? && matchingItem.r_p2S3AnnouncementImageType_c_p2s3AnnouncementImageType?has_content>
-						<#assign imageHref = matchingItem.r_p2S3AnnouncementImageType_c_p2s3AnnouncementImageType.image.link.href!"" />
+				<div class="announcement-title">
+					<span>${search.objectEntryTitle!""}</span>
+				</div>
 
-						<#if imageHref?has_content>
-							<img alt="Announcement Image Type" class="announcement-image-type" src="${imageHref}" />
-						</#if>
+				<div class="announcement-date-created">
+					<#if stringUtil.equals(locale.language, "en")>
+						${search.modified?datetime["yyyyMMddHHmmss"]?string("dd MMM yyyy")}
+					<#else>
+						${search.modified?datetime["yyyyMMddHHmmss"]?string("dd/MM/yyyy")}
 					</#if>
 				</div>
 			</div>
-		</#list>
-	</#if>
-</div>
+
+			<div class="announcement-description">
+				<span>${description}</span>
+			</div>
+
+			<div class="announcement-button">
+				<a href="${entryMap[search.entryClassPK]!""}&highlight=${htmlUtil.escape(searchResultsPortletDisplayContext.getKeywords()?url('ISO-8859-1'))}">
+					${languageUtil.get(locale, "read-more", "Read More")}
+				</a>
+			</div>
+		</div>
+
+		<div class="announcement-image-container">
+			<#if imageTypeId?has_content && imageMap[imageTypeId]?has_content>
+				<img alt="Announcement Image" src="${imageMap[imageTypeId]}" />
+			</#if>
+		</div>
+	</div>
+</#list>
 
 <style>
 	.announcement-button a {
@@ -89,7 +150,7 @@
 	}
 
 	.announcement-button a:after {
-		background-image: url(";data: image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns=';http: //www.w3.org/2000/svg'%3E%3Cmask id='mask0_141_2460' style=';mask-type:alpha' maskUnits='userSpaceOnUse' x='1' y='4' width='13' height='8'%3E%3Cpath d='M11.4998 11.1703L13.7395 8.76752C14.0773 8.36817 14.0898 7.66344 13.7395 7.23053L11.4998 4.82771C10.4488 3.82765 9.15688 5.35794 10.0671 6.36471L10.5895 6.92514H2.99462C1.6652 6.92514 1.6652 9.07291 2.99462 9.07291H10.5895L10.0671 9.63334C9.13186 10.7005 10.5332 12.167 11.4998 11.1703Z' fill='%230B5FFF'/%3E%3C/mask%3E%3Cg mask='url(%23mask0_141_2460)'%3E%3Crect width='16' height='16' fill='%230B5FFF'/%3E%3C/g%3E%3C/svg%3E%0A");
+		background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cmask id='mask0_141_2460' style='mask-type:alpha' maskUnits='userSpaceOnUse' x='1' y='4' width='13' height='8'%3E%3Cpath d='M11.4998 11.1703L13.7395 8.76752C14.0773 8.36817 14.0898 7.66344 13.7395 7.23053L11.4998 4.82771C10.4488 3.82765 9.15688 5.35794 10.0671 6.36471L10.5895 6.92514H2.99462C1.6652 6.92514 1.6652 9.07291 2.99462 9.07291H10.5895L10.0671 9.63334C9.13186 10.7005 10.5332 12.167 11.4998 11.1703Z' fill='%230B5FFF'/%3E%3C/mask%3E%3Cg mask='url(%23mask0_141_2460)'%3E%3Crect width='16' height='16' fill='%230B5FFF'/%3E%3C/g%3E%3C/svg%3E%0A");
 		background-repeat: no-repeat;
 		background-size: contain;
 		content: '';
@@ -140,7 +201,6 @@
 		flex-direction: column;
 		gap: 1.5rem;
 		justify-content: space-between;
-		padding: 0.5rem 1rem 3rem 0;
 		width: 70%;
 	}
 
@@ -167,7 +227,7 @@
 		display: flex;
 		justify-content: space-between;
 		padding-bottom: 2.5rem;
-		padding-top: 1.5rem;
+		padding-top: 2.5rem;
 		width: 100% !important;
 	}
 
