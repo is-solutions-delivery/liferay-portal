@@ -1,6 +1,6 @@
 <#if entries?has_content>
 	<#assign
-		knowledgeBaseFrequency = 0 
+		knowledgeBaseFrequency = 0
 		knowledgeBaseIds = []
 		sortedTaxonomyCategories = []
 		totalCount = 0
@@ -11,18 +11,18 @@
 
 		<#if label == "OFFICIAL DOCUMENTATION">
 			<#assign sortedTaxonomyCategories = [entry] + sortedTaxonomyCategories />
-		<#elseif label == "HOW TO" || label == "TROUBLESHOOTING" || label == "REFERENCE">
-			<#assign 
-				knowledgeBaseFrequency += entry.getFrequency() 
+		<#elseif label == "HOW TO" || stringUtil.equals(label, "TROUBLESHOOTING") || stringUtil.equals(label, "REFERENCE")>
+			<#assign
+				knowledgeBaseFrequency += entry.getFrequency()
 				knowledgeBaseIds += [entry.getFilterValue()]
 			/>
 		</#if>
 	</#list>
-		
+
 	<#list assetCategoriesSearchFacetDisplayContext.getBucketDisplayContexts() as bucketDisplayContext>
 		<#assign totalCount = totalCount + bucketDisplayContext.getCount() />
 	</#list>
-	
+
 	<ul class="learn-category-facet-tabs list-unstyled tab-list" id="tab-list">
 		<li class="facet-value">
 			<@clay.button
@@ -60,7 +60,7 @@
 				</@clay.button>
 			</li>
 		</#list>
-		
+
 		<#assign selectedIds = (paramUtil.getParameterValues(request, "resource-type")![])?join(",") />
 
 		<li class="facet-value">
@@ -83,11 +83,11 @@
 <@liferay_aui.script>
 	function handleStyleTabs(event) {
 		const buttons = document.querySelectorAll('.tab-btn');
-		
+
 		buttons.forEach(button => button.classList.remove('selected-tab-btn'));
 
 		const targetButton = event.currentTarget;
-		
+
 		if (targetButton.classList.contains('tab-btn')) {
 			targetButton.classList.add('selected-tab-btn');
 		}
@@ -99,16 +99,16 @@
 		handleStyleTabs(event);
 
 		const form = event.currentTarget.form;
-		
+
 		if (!form) {
 			return;
 		}
 
 		const dataTermIds = event.currentTarget.getAttribute('data-term-ids');
 		const dataTermId = event.currentTarget.getAttribute('data-term-id');
-		
+
 		const params = new URLSearchParams(window.location.search);
-		
+
 		params.delete('resource-type');
 
 		if (event.currentTarget.value === 'clear') {
@@ -131,7 +131,7 @@
 		}
 
 		const newUrl = window.location.pathname + '?' + params.toString();
-	
+
 		window.location.href = newUrl;
 	}
 </@liferay_aui.script>
