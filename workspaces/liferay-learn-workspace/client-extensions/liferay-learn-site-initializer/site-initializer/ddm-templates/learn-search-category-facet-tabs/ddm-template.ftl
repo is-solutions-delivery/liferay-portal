@@ -65,7 +65,7 @@
 
 		<li class="facet-value">
 			<@clay.button
-				cssClass="btn-unstyled facet-term tab-btn term-name text-center  ${(selectedIds?contains(knowledgeBaseIds?join(',')))?then('selected-tab-btn', '')}"
+				cssClass="btn-unstyled facet-term tab-btn term-name text-center ${(selectedIds?contains(knowledgeBaseIds?join(',')))?then('selected-tab-btn', '')}"
 				data\-term\-ids="${knowledgeBaseIds?join(',')}"
 				displayType="link"
 				onClick="${namespace}updateSelection(event)"
