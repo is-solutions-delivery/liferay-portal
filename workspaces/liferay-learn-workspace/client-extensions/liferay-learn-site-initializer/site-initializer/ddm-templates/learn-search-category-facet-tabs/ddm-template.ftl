@@ -61,11 +61,11 @@
 			</li>
 		</#list>
 
-		<#assign selectedIds = (paramUtil.getParameterValues(request, "resource-type")![])?join(",") />
+		<#assign selectedResourceTypeIds = (paramUtil.getParameterValues(request, "resource-type")![])?join(",") />
 
 		<li class="facet-value">
 			<@clay.button
-				cssClass="btn-unstyled facet-term tab-btn term-name text-center ${(selectedIds?contains(knowledgeBaseIds?join(',')))?then('selected-tab-btn', '')}"
+				cssClass="btn-unstyled facet-term tab-btn term-name text-center ${(selectedResourceTypeIds?contains(knowledgeBaseIds?join(',')))?then('selected-tab-btn', '')}"
 				data\-term\-ids="${knowledgeBaseIds?join(',')}"
 				displayType="link"
 				onClick="${namespace}updateSelection(event)"
@@ -98,39 +98,39 @@
 
 		handleStyleTabs(event);
 
-		const form = event.currentTarget.form;
+		const formElement = event.currentTarget.form;
 
-		if (!form) {
+		if (!formElement) {
 			return;
 		}
 
 		const dataTermIds = event.currentTarget.getAttribute('data-term-ids');
 		const dataTermId = event.currentTarget.getAttribute('data-term-id');
 
-		const params = new URLSearchParams(window.location.search);
+		const urlSearchParams = new URLSearchParams(window.location.search);
 
-		params.delete('resource-type');
+		urlSearchParams.delete('resource-type');
 
 		if (event.currentTarget.value === 'clear') {
-			const newUrlClear = window.location.pathname + '?' + params.toString();
+			const clearedUrl = window.location.pathname + '?' + urlSearchParams.toString();
 
-			window.location.href = newUrlClear;
+			window.location.href = clearedUrl;
 
 			return;
 		}
 
 		if (dataTermIds) {
-			const ids = dataTermIds.split(',');
+			const resourceTypeIds = dataTermIds.split(',');
 
-			ids.forEach(id => {
-				params.append('resource-type', id.trim());
+			resourceTypeIds.forEach(id => {
+				urlSearchParams.append('resource-type', id.trim());
 			});
 
 		} else if (dataTermId) {
-			params.append('resource-type', dataTermId);
+			urlSearchParams.append('resource-type', dataTermId);
 		}
 
-		const newUrl = window.location.pathname + '?' + params.toString();
+		const newUrl = window.location.pathname + '?' + urlSearchParams.toString();
 
 		window.location.href = newUrl;
 	}
