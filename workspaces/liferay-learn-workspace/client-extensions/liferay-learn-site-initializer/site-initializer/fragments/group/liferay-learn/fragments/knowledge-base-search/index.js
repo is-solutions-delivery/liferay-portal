@@ -12,26 +12,28 @@
 		}
 
 		const mutationObserver = new MutationObserver(() => {
-			const found = document.querySelector(CSSselector);
+			const foundElement = document.querySelector(CSSselector);
 
-			if (found) {
+			if (foundElement) {
 				mutationObserver.disconnect();
-				callbackFunction(found);
+				callbackFunction(foundElement);
 			}
 		});
 
-		mutationObserver.observe(document.documentElement, { childList: true, subtree: true });
+		mutationObserver.observe(document.documentElement, {
+			childList: true,
+			subtree: true,
+		});
 	}
 
 	document.addEventListener('DOMContentLoaded', () => {
 		const searchButton = document.querySelector('.search-button');
 
 		onElementReady('.search-bar-keywords-input', (input) => {
-
-			if(searchButton) {
+			if (searchButton) {
 				searchButton.classList.remove('hide');
 			}
-			
+
 			const buildUrl = () => {
 				const inputValue = input.value.trim();
 
@@ -42,9 +44,9 @@
 				const params = new URLSearchParams();
 
 				params.set('q', inputValue);
-                 params.append('resource-type', '35456023');
-                 params.append('resource-type', '35458322');
-                 params.append('resource-type', '35456026');
+				params.append('resource-type', '35456023');
+				params.append('resource-type', '35458322');
+				params.append('resource-type', '35456026');
 
 				return `/search?${params.toString()}`;
 			};
@@ -57,27 +59,29 @@
 				if (searchButton) {
 					searchButton.href = url;
 					searchButton.click();
-					
+
 					return;
 				}
 
 				if (window.Liferay?.SPA?.app) {
 					window.Liferay.SPA.app.navigate(url);
-				} else {
+				}
+				else {
 					window.location.href = url;
 				}
 			};
 
 			const syncHref = () => {
-				const url = buildUrl();
-				if (searchButton) {searchButton.href = url || '#';}
+				if (searchButton) {
+					searchButton.href = buildUrl() || '#';
+				}
 			};
-            input.addEventListener('input', syncHref);
-            syncHref();
+			input.addEventListener('input', syncHref);
+			syncHref();
 
 			const form = input.closest('form');
-            
-            if (form) {
+
+			if (form) {
 				form.addEventListener(
 					'submit',
 					(event) => {
