@@ -135,7 +135,6 @@
 			resourceTypeIds.forEach(id => {
 				urlSearchParams.append('resource-type', id.trim());
 			});
-
 		} else if (dataTermId) {
 			urlSearchParams.append('resource-type', dataTermId);
 		}
