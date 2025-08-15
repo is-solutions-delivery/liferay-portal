@@ -1,0 +1,57 @@
+.input-group .input-group-inset-item {
+	display: none !important;
+}
+
+.learn-search {
+	& .input-group-item {
+		& .input-group {
+			.input-group-inset-after.form-control {
+				border-color: rgba(0, 83, 240, 1);
+			}
+		}
+	}
+}
+
+.search-button {
+	align-items: center;
+	background-color: rgba(255, 255, 255, 1);
+	border-bottom-right-radius: 48px;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-right-color: rgba(0, 83, 240, 1);
+	border-right-style: solid;
+	border-right-width: 1px;
+	border-top-right-radius: 48px;
+	border-top-style: solid;
+	border-top-width: 1px;
+	cursor: pointer;
+	color: rgba(0, 83, 240, 1);
+	display: flex;
+	height: 56px;
+	justify-content: center;
+	width: 8%;
+
+	span {
+		margin-right: 5px;
+		padding-top: 6px;
+
+		&::after {
+			background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cmask id='mask0_1692_5893' style='mask-type:alpha' maskUnits='userSpaceOnUse' x='0' y='0' width='16' height='16'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M15.6002 14.2337L11.8035 10.4181C16.3658 2.88361 7.17563 -3.20082 1.86027 1.85548C-3.29885 7.66491 3.16021 16.2494 10.4036 11.8243L14.2003 15.5369C15.2971 16.7431 16.7002 15.3369 15.6002 14.2337ZM6.44442 1.98673C12.441 1.98673 12.6347 11.0181 6.44442 11.0181C0.416594 11.0181 0.588461 1.98673 6.44442 1.98673Z' fill='%236B6C7E'/%3E%3C/mask%3E%3Cg mask='url(%23mask0_1692_5893)'%3E%3Crect width='15.9992' height='16.0002' fill='%230053F0'/%3E%3C/g%3E%3C/svg%3E%0A");
+			content: '';
+			display: inline-block;
+			height:1rem;
+			width:1rem;
+		}
+	}
+}
+
+.search-knowledge-base {
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+
+	div {
+		height: 56px;
+		width: 100%
+	}
+}

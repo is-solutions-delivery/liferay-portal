@@ -1,0 +1,10 @@
+{
+	"configurationPath": "configuration.json",
+	"cssPath": "index.css",
+	"fragmentEntryKey": "knowledge-base-search",
+	"htmlPath": "index.html",
+	"icon": "code",
+	"jsPath": "index.js",
+	"name": "knowledge-base-search",
+	"type": "component"
+}
