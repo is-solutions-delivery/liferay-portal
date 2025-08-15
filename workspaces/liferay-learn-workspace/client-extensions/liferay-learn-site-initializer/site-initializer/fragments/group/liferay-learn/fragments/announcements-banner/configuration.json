@@ -1,4 +1,22 @@
 {
 	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": " ",
+					"label": "Set Button Link",
+					"name": "setButtonLink",
+					"type": "text"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "See What's New",
+					"label": "Set Button Text",
+					"name": "setButtonText",
+					"type": "text"
+				}
+			]
+		}
 	]
 }

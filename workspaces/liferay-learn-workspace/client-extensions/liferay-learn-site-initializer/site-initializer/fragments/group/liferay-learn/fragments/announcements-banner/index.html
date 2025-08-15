@@ -1,12 +1,13 @@
 <div class="announcements-banner">
-	<div class="announcements-banner-info">
-		<div class="announcements-banner-content">
-			<span data-lfr-editable-id="text" data-lfr-editable-type="text">
-				Learn announcements CTA.
+	<div class="banner-info">
+		<div class="banner-content">
+			<span class="announcements-message" data-lfr-editable-id="text" data-lfr-editable-type="text">
+				${languageUtil.get(locale, 'liferay-announcements-cta', 'We have updated our courses to Liferay DXP 2025.Q1 LTS.
+				Read our announcement for more information.')}
 			</span>
 
-			<a class="announcements-button" data-lfr-editable-id="button" data-lfr-editable-type="link">
-				See what is new
+			<a class="announcements-button" href="${configuration.setButtonLink}">
+				${languageUtil.get(locale, 'liferay-learn-announcements', '${configuration.setButtonText}')}
 			</a>
 		</div>
 

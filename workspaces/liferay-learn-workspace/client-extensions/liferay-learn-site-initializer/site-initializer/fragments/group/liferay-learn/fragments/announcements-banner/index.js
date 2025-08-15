@@ -8,18 +8,17 @@ const publicSiteNavigationContainer = document.querySelector(
 );
 
 const announcementsBanner = document.querySelector('.announcements-banner');
-const editMode = document.body.classList.contains('has-edit-mode-menu');
+const BANNER_CLOSED_SESSION_KEY = 'bannerWasClosedOnLearn';
+const isInEditMode = document.body.classList.contains('has-edit-mode-menu');
 
-if (editMode) {
+if (isInEditMode) {
 	announcementsBanner.style.display = 'flex';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-	const announcementsBannerClosed = sessionStorage.getItem(
-		'@liferay-learn/announcements-banner-closed'
-	);
+	const userClosedBanner = sessionStorage.getItem(BANNER_CLOSED_SESSION_KEY);
 
-	if (announcementsBannerClosed === 'true') {
+	if (userClosedBanner === 'true') {
 		announcementsBanner.style.display = 'none';
 		publicSiteNavigationContainer.classList.remove(
 			'navigation-margin-true'
@@ -29,28 +28,28 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	if (announcementsBanner) {
-		announcementsBanner.style.display = 'flex';
-
 		if (themeDisplay.isSignedIn()) {
 			announcementsBanner.style.top = '56px';
+			publicSiteNavigationContainer.classList.add(
+				'navigation-margin-true'
+			);
 		}
 		else {
 			announcementsBanner.style.top = '0px';
+			publicSiteNavigationContainer.classList.add(
+				'navigation-margin-true'
+			);
 		}
-
-		publicSiteNavigationContainer.classList.add('navigation-margin-true');
 	}
+
+	announcementsBanner.style.display = 'flex';
 
 	document.querySelector('.icon-x').addEventListener('click', () => {
 		document.querySelector('.announcements-banner').style.display = 'none';
-
 		publicSiteNavigationContainer.classList.remove(
 			'navigation-margin-true'
 		);
 
-		sessionStorage.setItem(
-			'@liferay-learn/announcements-banner-closed',
-			'true'
-		);
+		sessionStorage.setItem(BANNER_CLOSED_SESSION_KEY, 'true');
 	});
 });
