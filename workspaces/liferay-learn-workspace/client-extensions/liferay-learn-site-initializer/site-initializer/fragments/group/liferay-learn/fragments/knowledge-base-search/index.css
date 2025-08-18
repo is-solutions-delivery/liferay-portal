@@ -24,8 +24,8 @@
 	border-top-right-radius: 48px;
 	border-top-style: solid;
 	border-top-width: 1px;
+    color: rgba(0, 83, 240, 1);
     cursor: pointer;
-	color: rgba(0, 83, 240, 1);
 	display: flex;
 	height: 56px;
 	justify-content: center;

@@ -3,23 +3,49 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-(function () {
-	function onElementReady(CSSselector, callbackFunction) {
-		const elementSelector = document.querySelector(CSSselector);
+(async function () {
+	async function fetchTaxonomyCategoryIds() {
+		const taxonomyCategoriesIds = [];
+		try {
+			const {id: taxonomyVocabularyId} = await Liferay.Util.fetch(
+				`/o/headless-admin-taxonomy/v1.0/sites/${Liferay.ThemeDisplay.getCompanyId()}/taxonomy-vocabularies/by-external-reference-code/RESOURCE_TYPE?fields=id`
+			).then((response) => response.json());
 
-		if (elementSelector) {
-			return callbackFunction(elementSelector);
+			const {items = []} = await Liferay.Util.fetch(
+				`/o/headless-admin-taxonomy/v1.0/taxonomy-vocabularies/${taxonomyVocabularyId}/taxonomy-categories?fields=id%2CexternalReferenceCode`,
+				'Failed to fetch categories'
+			).then((response) => response.json());
+
+			items.forEach((item) => {
+				if (item.externalReferenceCode !== 'OFFICIAL_DOCUMENTATION') {
+					taxonomyCategoriesIds.push(item.id);
+				}
+			});
+
+			return taxonomyCategoriesIds;
+		}
+		catch (error) {
+			console.error(error);
+
+			return [];
+		}
+	}
+
+	function onElementReady(selector, callbackFunction) {
+		let element = document.querySelector(selector);
+
+		if (element) {
+			return callbackFunction(element);
 		}
 
 		const mutationObserver = new MutationObserver(() => {
-			const foundElement = document.querySelector(CSSselector);
+			element = document.querySelector(selector);
 
-			if (foundElement) {
+			if (element) {
 				mutationObserver.disconnect();
-				callbackFunction(foundElement);
+				callbackFunction(element);
 			}
 		});
-
 		mutationObserver.observe(document.documentElement, {
 			childList: true,
 			subtree: true,
@@ -34,27 +60,24 @@
 				searchButton.classList.remove('hide');
 			}
 
-			const buildUrl = () => {
-				const inputValue = input.value.trim();
+			const buildSearchURL = async () => {
+				const categoryIds = await fetchTaxonomyCategoryIds();
+				const searchInputValue = input.value.trim();
+				const URLParams = new URLSearchParams();
 
-				if (!inputValue) {
+				if (!searchInputValue) {
 					return null;
 				}
+				URLParams.set('q', searchInputValue);
+				categoryIds.forEach((id) =>
+					URLParams.append('resource-type', id)
+				);
 
-				const params = new URLSearchParams();
-
-				params.set('q', inputValue);
-				params.append('resource-type', '35456023');
-				params.append('resource-type', '35458322');
-				params.append('resource-type', '35456026');
-
-				return `/search?${params.toString()}`;
+				return `/search?${URLParams.toString()}`;
 			};
 
-			const navigate = (url) => {
-				if (!url) {
-					return;
-				}
+			const navigateToSearchResults = async (urlPromise) => {
+				const url = await urlPromise;
 
 				if (searchButton) {
 					searchButton.href = url;
@@ -64,23 +87,23 @@
 				}
 
 				if (window.Liferay?.SPA?.app) {
-					window.Liferay.SPA.app.navigate(url);
+					window.Liferay.SPA.app.navigateToSearchResults(url);
 				}
 				else {
 					window.location.href = url;
 				}
 			};
 
-			const syncHref = () => {
+			const updateSearchButtonUrl = async () => {
 				if (searchButton) {
-					searchButton.href = buildUrl() || '#';
+					searchButton.href = (await buildSearchURL()) || '#';
 				}
 			};
-			input.addEventListener('input', syncHref);
-			syncHref();
+
+			input.addEventListener('input', updateSearchButtonUrl);
+			updateSearchButtonUrl();
 
 			const form = input.closest('form');
-
 			if (form) {
 				form.addEventListener(
 					'submit',
@@ -88,7 +111,7 @@
 						event.preventDefault();
 						event.stopPropagation();
 						event.stopImmediatePropagation();
-						navigate(buildUrl());
+						navigateToSearchResults(buildSearchURL());
 
 						return false;
 					},
@@ -103,7 +126,7 @@
 						event.preventDefault();
 						event.stopPropagation();
 						event.stopImmediatePropagation();
-						navigate(buildUrl());
+						navigateToSearchResults(buildSearchURL());
 					}
 				},
 				true
