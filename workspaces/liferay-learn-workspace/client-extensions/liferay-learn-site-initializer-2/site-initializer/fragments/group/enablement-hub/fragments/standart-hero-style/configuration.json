@@ -3,14 +3,6 @@
 		{
 			"fields": [
 				{
-					"dataType": "string",
-					"defaultValue": "100% 438.26% at 100% 100%",
-					"description": "Enter a radial-gradient direction to set the gradient angle.",
-					"label": "Set the gradient direction",
-					"name": "degrees",
-					"type": "text"
-				},
-				{
 					"defaultValue": "#1FDA8F",
 					"label": "First Color",
 					"name": "color1",
@@ -129,6 +121,14 @@
 							"type": "number"
 						}
 					}
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "100% 438.26% at 100% 100%",
+					"description": "Enter a radial-gradient direction to set the gradient angle.",
+					"label": "Set the gradient direction",
+					"name": "degrees",
+					"type": "text"
 				}
 			],
 			"label": "Gradient"
