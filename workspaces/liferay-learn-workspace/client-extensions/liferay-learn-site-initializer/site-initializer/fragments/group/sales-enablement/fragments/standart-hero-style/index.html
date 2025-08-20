@@ -1,0 +1,43 @@
+<div class="hero-style" id="${fragmentEntryLinkNamespace}-hero-style">
+	[#if layoutMode == "edit"]
+		<div class="alert alert-primary" role="alert">
+			<h4>${languageUtil.get(locale, "click-here-to-change-the-hero-style", "Click here to change the hero style")}</h4>
+
+			<hr />
+
+			<p class="mb-0">${languageUtil.get(locale,
+				"Add-the-x-class-to-the-container-that-includes-the-standart-hero-style-fragment-to-apply-the-changes.", "learn-hero")} </p>
+		</div>
+	[/#if]
+</div>
+
+<style>
+	.learn-hero:has( #${fragmentEntryLinkNamespace}-hero-style) {
+			--gradient-degrees: ${configuration.degrees};
+			--color1: ${configuration.color1};
+			--stop1: ${configuration.color1Stop}%;
+			--color2: ${configuration.color2};
+			--stop2: ${configuration.color2Stop}%;
+			--color3: ${configuration.color3};
+			--stop3: ${configuration.color3Stop}%;
+			--color4: ${configuration.color4};
+			--stop4: ${configuration.color4Stop}%;
+			--color5: ${configuration.color5};
+			--stop5: ${configuration.color5Stop}%;
+			--color6: ${configuration.color6};
+			--stop6: ${configuration.color6Stop}%;
+
+		background: radial-gradient(
+			var(--gradient-degrees)
+			[#if configuration.color1Stop != 0], ${configuration.color1} ${configuration.color1Stop}%[/#if]
+			[#if configuration.color2Stop != 0], ${configuration.color2} ${configuration.color2Stop}%[/#if]
+			[#if configuration.color3Stop != 0], ${configuration.color3} ${configuration.color3Stop}%[/#if]
+			[#if configuration.color4Stop != 0], ${configuration.color4} ${configuration.color4Stop}%[/#if]
+			[#if configuration.color5Stop != 0], ${configuration.color5} ${configuration.color5Stop}%[/#if]
+			[#if configuration.color6Stop != 0], ${configuration.color6} ${configuration.color6Stop}%[/#if]
+		);
+		color: var(--color-neutral-0, #fff);
+		position: relative;
+		z-index: 0;
+	}
+</style>
