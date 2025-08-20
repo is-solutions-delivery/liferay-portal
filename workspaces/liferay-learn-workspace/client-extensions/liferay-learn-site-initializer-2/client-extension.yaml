@@ -1,0 +1,13 @@
+liferay-enablement-hub-site-initializer:
+    name: Liferay Enablement Hub Site Initializer
+    oAuthApplicationHeadlessServer: liferay-enablement-hub-site-initializer-oauth-application-headless-server
+    siteExternalReferenceCode: LIFERAY_ENABLEMENT_HUB
+    siteName: Liferay Enablement Hub
+    type: siteInitializer
+liferay-enablement-hub-site-initializer-oauth-application-headless-server:
+    .serviceAddress: localhost:8080
+    .serviceScheme: http
+    name: Liferay Enablement Hub Site Initializer OAuth Application Headless Server
+    scopes:
+        -   Liferay.Headless.Site.everything
+    type: oAuthApplicationHeadlessServer
