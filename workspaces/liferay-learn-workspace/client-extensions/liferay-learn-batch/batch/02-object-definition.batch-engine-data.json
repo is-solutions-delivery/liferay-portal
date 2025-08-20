@@ -3336,7 +3336,7 @@
 					"objectFieldSettings": [
 						{
 							"name": "objectRelationshipName",
-							"value": "lesson"
+							"value": "p2s3ModuleToP2S3Lessons"
 						},
 						{
 							"name": "function",
@@ -3378,7 +3378,7 @@
 						},
 						{
 							"name": "objectRelationshipName",
-							"value": "lesson"
+							"value": "p2s3ModuleToP2S3Lessons"
 						},
 						{
 							"name": "filters",
@@ -3443,7 +3443,7 @@
 					"objectFieldSettings": [
 						{
 							"name": "objectRelationshipName",
-							"value": "quiz"
+							"value": "p2s3ModuleToP2S3Quizzes"
 						},
 						{
 							"name": "function",
@@ -3485,7 +3485,7 @@
 						},
 						{
 							"name": "objectRelationshipName",
-							"value": "Quiz"
+							"value": "p2s3ModuleToP2S3Quizzes"
 						},
 						{
 							"name": "filters",
@@ -4119,7 +4119,7 @@
 						},
 						{
 							"name": "objectRelationshipName",
-							"value": "quizAnswers"
+							"value": "p2s3QuizQuestionToP2S3QuizAnswers"
 						},
 						{
 							"name": "filters",
