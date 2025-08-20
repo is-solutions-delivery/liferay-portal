@@ -406,14 +406,14 @@
 	function changeLayoutView() {
 		const displayLayout = document.querySelector(".search-results__display");
 		const layoutOptions = document.querySelectorAll(".search-results__layout-option");
-		const preference = localStorage.getItem("@liferay/_sa_s_layout");
+		const layoutPreference = localStorage.getItem("@liferay/_sa_s_layout");
 
 		layoutOptions.forEach(currentOption => {
-			if (preference && currentOption.dataset.layout === preference) {
+			if (layoutPreference && currentOption.dataset.layout === layoutPreference) {
 				layoutOptions.forEach(option => option.classList.remove("active"));
 
 				currentOption.classList.add("active");
-				displayLayout.dataset.layout = preference;
+				displayLayout.dataset.layout = layoutPreference;
 			}
 
 			currentOption.addEventListener("click", () => {
