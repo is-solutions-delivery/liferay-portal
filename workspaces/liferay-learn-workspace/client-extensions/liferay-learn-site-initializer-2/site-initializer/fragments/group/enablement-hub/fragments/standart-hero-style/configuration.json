@@ -16,7 +16,7 @@
 					"type": "text",
 					"typeOptions": {
 						"validation": {
-							"errorMessage": "Please do not enter letters",
+							"errorMessage": "it-accepts-only-numbers",
 							"type": "number"
 						}
 					}
@@ -35,7 +35,7 @@
 					"type": "text",
 					"typeOptions": {
 						"validation": {
-							"errorMessage": "Please do not enter letters",
+							"errorMessage": "it-accepts-only-numbers",
 							"type": "number"
 						}
 					}
@@ -54,7 +54,7 @@
 					"type": "text",
 					"typeOptions": {
 						"validation": {
-							"errorMessage": "Please do not enter letters",
+							"errorMessage": "it-accepts-only-numbers",
 							"type": "number"
 						}
 					}
@@ -73,7 +73,7 @@
 					"type": "text",
 					"typeOptions": {
 						"validation": {
-							"errorMessage": "Please do not enter letters",
+							"errorMessage": "it-accepts-only-numbers",
 							"type": "number"
 						}
 					}
@@ -92,7 +92,7 @@
 					"type": "text",
 					"typeOptions": {
 						"validation": {
-							"errorMessage": "Please do not enter letters",
+							"errorMessage": "it-accepts-only-numbers",
 							"type": "number"
 						}
 					}
@@ -111,7 +111,7 @@
 					"type": "text",
 					"typeOptions": {
 						"validation": {
-							"errorMessage": "Please do not enter letters",
+							"errorMessage": "it-accepts-only-numbers",
 							"type": "number"
 						}
 					}
