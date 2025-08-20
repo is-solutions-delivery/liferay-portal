@@ -13,20 +13,6 @@
 
 <style>
 	.learn-hero:has( #${fragmentEntryLinkNamespace}-hero-style) {
-			--gradient-degrees: ${configuration.degrees};
-			--color1: ${configuration.color1};
-			--stop1: ${configuration.color1Stop}%;
-			--color2: ${configuration.color2};
-			--stop2: ${configuration.color2Stop}%;
-			--color3: ${configuration.color3};
-			--stop3: ${configuration.color3Stop}%;
-			--color4: ${configuration.color4};
-			--stop4: ${configuration.color4Stop}%;
-			--color5: ${configuration.color5};
-			--stop5: ${configuration.color5Stop}%;
-			--color6: ${configuration.color6};
-			--stop6: ${configuration.color6Stop}%;
-
 		background: radial-gradient(
 			var(--gradient-degrees)
 			[#if configuration.color1Stop != 0], ${configuration.color1} ${configuration.color1Stop}%[/#if]
