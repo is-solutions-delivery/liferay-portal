@@ -1,18 +1,11 @@
 <#assign
 	pageTitle = layout.getName(locale)
-	taxonomyCategoryByKnowledgeArticles = restClient.get("/c/p2s3knowledgearticles/?fields=taxonomyCategoryBriefs.embeddedTaxonomyCategory.externalReferenceCode%2CtaxonomyCategoryBriefs.embeddedTaxonomyCategory.id&nestedFields=embeddedTaxonomyCategory")
-	taxonomyCategoriesIds = []
-/>
+	taxonomyCategories = restClient.get("/headless-admin-taxonomy/v1.0/taxonomy-categories/ranked?fields=externalReferenceCode%2Cid")
 
-<#list taxonomyCategoryByKnowledgeArticles["items"] as taxonomyCategoryByKnowledgeArticle>
-	<#list taxonomyCategoryByKnowledgeArticle.taxonomyCategoryBriefs as taxonomyCategoryBrief>
-		<#assign embeddedTaxonomyCategory = taxonomyCategoryBrief["embeddedTaxonomyCategory"] />
-		<#if ["TROUBLESHOOTING", "HOW_TO", "REFERENCE"]?seq_contains(embeddedTaxonomyCategory.externalReferenceCode)
-				 && !(taxonomyCategoriesIds?seq_contains(embeddedTaxonomyCategory.id))>
-			<#assign taxonomyCategoriesIds = taxonomyCategoriesIds + [embeddedTaxonomyCategory.id] />
-		</#if>
-	</#list>
-</#list>
+	taxonomyCategoriesIds = taxonomyCategories["items"]?filter(
+		taxonomyCategory ->["HOW_TO", "REFERENCE", "TROUBLESHOOTING"]?seq_contains(taxonomyCategory.externalReferenceCode)
+		)?map(taxonomyCategory -> taxonomyCategory.id)
+/>
 
 <@liferay_aui.fieldset cssClass="search-bar">
 	<@liferay_aui.input
@@ -53,7 +46,7 @@
 	document.addEventListener("DOMContentLoaded", () => {
 		const searchBarKeywordsInput = document.querySelector(".search-bar-keywords-input");
 		const searchButton = document.querySelector(".search-button");
-		const taxonomyCategoriesIds = [<#list taxonomyCategoriesIds as id>${id}<#if id_has_next>,</#if></#list>];
+		const taxonomyCategoriesIds = [${taxonomyCategoriesIds?join(",")}];
 
 		function buildSearchURL(keywords, categoryIds) {
 			let searchURL = "/search?q=" + encodeURIComponent(keywords.trim());
