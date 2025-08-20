@@ -56,7 +56,7 @@
 						href="${entry.getViewURL()}"
 						class="display-item"
 						<#if isDocument>data-icon="${fileExtension}"</#if>
-				>
+					>
 						<div class="display-item__image">
 							<img src="${imageURL!}" alt="List Item Thumbnail" />
 						</div>
@@ -85,10 +85,7 @@
 	</ul>
 </div>
 
-<#macro getEntryInfo
-	entry
-	entryDocument
->
+<#macro getEntryInfo entry entryDocument>
 	<#assign
 		entryClassName = entry.getClassName()
 		isDocument = false
