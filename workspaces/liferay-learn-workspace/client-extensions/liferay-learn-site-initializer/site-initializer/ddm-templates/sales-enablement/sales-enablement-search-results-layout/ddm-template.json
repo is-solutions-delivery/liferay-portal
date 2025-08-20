@@ -1,0 +1,6 @@
+{
+	"className": "com.liferay.portal.search.web.internal.result.display.context.SearchResultSummaryDisplayContext",
+	"ddmTemplateKey": "SALES-ENABLEMENT-SEARCH-RESULTS-LAYOUT",
+	"name": "Sales Enablement Search Results Layout",
+	"resourceClassName": "com.liferay.portlet.display.template.PortletDisplayTemplate"
+}
