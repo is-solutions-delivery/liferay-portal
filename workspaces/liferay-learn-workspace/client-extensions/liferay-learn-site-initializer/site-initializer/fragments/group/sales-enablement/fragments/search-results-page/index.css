@@ -1,0 +1,14 @@
+.search-page {
+	gap: var(--spacer-5);
+}
+
+.search-page-filters,
+.search-page-results {
+	padding: 0;
+}
+
+@media(min-width: 992px) {
+	.search-page-filters {
+		max-width: 300px;
+	}
+}
