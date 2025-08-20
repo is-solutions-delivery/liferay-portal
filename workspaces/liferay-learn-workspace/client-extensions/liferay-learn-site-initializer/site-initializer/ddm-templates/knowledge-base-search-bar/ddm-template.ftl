@@ -50,7 +50,7 @@
 </@liferay_aui.fieldset>
 
 <script>
-	document.addEventListener("DOMContentLoaded", () => { 
+	document.addEventListener("DOMContentLoaded", () => {
 		const searchBarKeywordsInput = document.querySelector(".search-bar-keywords-input");
 		const searchButton = document.querySelector(".search-button");
 		const taxonomyCategoriesIds = [<#list taxonomyCategoriesIds as id>${id}<#if id_has_next>,</#if></#list>];
