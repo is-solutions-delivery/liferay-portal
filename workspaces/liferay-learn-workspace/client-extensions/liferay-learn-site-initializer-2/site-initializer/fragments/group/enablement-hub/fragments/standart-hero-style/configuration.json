@@ -11,7 +11,6 @@
 				{
 					"dataType": "double",
 					"defaultValue": "1",
-					"description": "If you don't want to use the First Color, let this field empty",
 					"label": "First Color Stop (%)",
 					"name": "color1Stop",
 					"type": "text",
@@ -31,7 +30,6 @@
 				{
 					"dataType": "double",
 					"defaultValue": "25",
-					"description": "If you don't want to use the Second Color, let this field empty",
 					"label": "Second Color Stop (%)",
 					"name": "color2Stop",
 					"type": "text",
@@ -51,7 +49,6 @@
 				{
 					"dataType": "double",
 					"defaultValue": "45",
-					"description": "If you don't want to use the Third Color, let this field empty",
 					"label": "Third Color Stop (%)",
 					"name": "color3Stop",
 					"type": "text",
@@ -71,7 +68,6 @@
 				{
 					"dataType": "double",
 					"defaultValue": "65",
-					"description": "If you don't want to use the Fourth Color, let this field empty",
 					"label": "Fourth Color Stop (%)",
 					"name": "color4Stop",
 					"type": "text",
@@ -91,7 +87,6 @@
 				{
 					"dataType": "double",
 					"defaultValue": "75",
-					"description": "If you don't want to use the Fifth Color, let this field empty",
 					"label": "Fifth Color Stop (%)",
 					"name": "color5Stop",
 					"type": "text",
@@ -111,7 +106,6 @@
 				{
 					"dataType": "double",
 					"defaultValue": "97",
-					"description": "If you don't want to use the Sixth Color, let this field empty",
 					"label": "Sixth Color Stop (%)",
 					"name": "color6Stop",
 					"type": "text",
@@ -125,7 +119,6 @@
 				{
 					"dataType": "string",
 					"defaultValue": "100% 438.26% at 100% 100%",
-					"description": "Enter a radial-gradient direction to set the gradient angle.",
 					"label": "Set the gradient direction",
 					"name": "degrees",
 					"type": "text"
