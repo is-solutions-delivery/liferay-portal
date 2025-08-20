@@ -185,6 +185,7 @@ async function loadSelectedAccount() {
 		const account = await getAccount(
 			Liferay.CommerceContext.account.accountId
 		);
+
 		if (account) {
 			setAccountImage(account.logoURL);
 			setAccountName(account.name);
@@ -206,16 +207,6 @@ async function fetchAccounts(search) {
 				sort: 'name:asc',
 			})
 		);
-
-		if (!response.items.length) {
-			renderAccounts(
-				[],
-				Liferay.CommerceContext.account.accountId,
-				search
-			);
-
-			return;
-		}
 
 		renderAccounts(
 			response.items,
