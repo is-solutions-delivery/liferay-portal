@@ -1,0 +1,6 @@
+{
+	"className": "com.liferay.portal.search.web.internal.result.display.context.SearchResultSummaryDisplayContext",
+	"ddmTemplateKey": "ENABLEMENT-HUB-SEARCH-RESULTS",
+	"name": "Enablement Hub Search Results",
+	"resourceClassName": "com.liferay.portlet.display.template.PortletDisplayTemplate"
+}
