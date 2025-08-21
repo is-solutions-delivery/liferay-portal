@@ -1,0 +1,130 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"defaultValue": "#1FDA8F",
+					"label": "First Color",
+					"name": "color1",
+					"type": "colorPicker"
+				},
+				{
+					"dataType": "double",
+					"defaultValue": "1",
+					"label": "First Color Stop (%)",
+					"name": "color1Stop",
+					"type": "text",
+					"typeOptions": {
+						"validation": {
+							"errorMessage": "it-accepts-only-numbers",
+							"type": "number"
+						}
+					}
+				},
+				{
+					"defaultValue": "#099EBF",
+					"label": "Second Color",
+					"name": "color2",
+					"type": "colorPicker"
+				},
+				{
+					"dataType": "double",
+					"defaultValue": "25",
+					"label": "Second Color Stop (%)",
+					"name": "color2Stop",
+					"type": "text",
+					"typeOptions": {
+						"validation": {
+							"errorMessage": "it-accepts-only-numbers",
+							"type": "number"
+						}
+					}
+				},
+				{
+					"defaultValue": "#0A7CBA",
+					"label": "Third Color",
+					"name": "color3",
+					"type": "colorPicker"
+				},
+				{
+					"dataType": "double",
+					"defaultValue": "45",
+					"label": "Third Color Stop (%)",
+					"name": "color3Stop",
+					"type": "text",
+					"typeOptions": {
+						"validation": {
+							"errorMessage": "it-accepts-only-numbers",
+							"type": "number"
+						}
+					}
+				},
+				{
+					"defaultValue": "#032FA7",
+					"label": "Fourth Color",
+					"name": "color4",
+					"type": "colorPicker"
+				},
+				{
+					"dataType": "double",
+					"defaultValue": "65",
+					"label": "Fourth Color Stop (%)",
+					"name": "color4Stop",
+					"type": "text",
+					"typeOptions": {
+						"validation": {
+							"errorMessage": "it-accepts-only-numbers",
+							"type": "number"
+						}
+					}
+				},
+				{
+					"defaultValue": "#040667",
+					"label": "Fifth Color",
+					"name": "color5",
+					"type": "colorPicker"
+				},
+				{
+					"dataType": "double",
+					"defaultValue": "75",
+					"label": "Fifth Color Stop (%)",
+					"name": "color5Stop",
+					"type": "text",
+					"typeOptions": {
+						"validation": {
+							"errorMessage": "it-accepts-only-numbers",
+							"type": "number"
+						}
+					}
+				},
+				{
+					"defaultValue": "#04084C",
+					"label": "Sixth Color",
+					"name": "color6",
+					"type": "colorPicker"
+				},
+				{
+					"dataType": "double",
+					"defaultValue": "97",
+					"label": "Sixth Color Stop (%)",
+					"name": "color6Stop",
+					"type": "text",
+					"typeOptions": {
+						"validation": {
+							"errorMessage": "it-accepts-only-numbers",
+							"type": "number"
+						}
+					}
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "100% 438.26% at 100% 100%",
+					"label": "Set the gradient direction",
+					"name": "degrees",
+					"type": "text"
+				}
+			],
+			"label": "Gradient"
+		}
+	]
+}
