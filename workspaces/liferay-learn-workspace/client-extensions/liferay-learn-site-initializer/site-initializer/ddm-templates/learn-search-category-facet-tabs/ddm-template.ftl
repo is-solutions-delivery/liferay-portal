@@ -1,244 +1,421 @@
 <#if entries?has_content>
-	<#assign
-		knowledgeBaseFrequency = 0
-		knowledgeBaseIds = []
-		sortedTaxonomyCategories = []
-		totalCount = 0
-	/>
-
-	<#list entries as entry>
-		<#assign label = entry.bucketText?upper_case />
-
-		<#if stringUtil.equals(label, "HOW TO") || stringUtil.equals(label, "REFERENCE")> || stringUtil.equals(label, "TROUBLESHOOTING")
-			<#assign
-				knowledgeBaseFrequency += entry.getFrequency()
-				knowledgeBaseIds += [entry.getFilterValue()]
-			/>
-		<#elseif stringUtil.equals(label, "OFFICIAL DOCUMENTATION")>
-			<#assign sortedTaxonomyCategories = [entry] + sortedTaxonomyCategories />
-		</#if>
-	</#list>
-
-	<#list assetCategoriesSearchFacetDisplayContext.getBucketDisplayContexts() as bucketDisplayContext>
-		<#assign totalCount = totalCount + bucketDisplayContext.getCount() />
-	</#list>
-
-	<ul class="learn-category-facet-tabs list-unstyled tab-list" id="tab-list">
-		<li class="facet-value">
-			<@clay.button
-				cssClass="btn-unstyled facet-clear tab-btn text-center ${assetCategoriesSearchFacetDisplayContext.isNothingSelected()?then('selected-tab-btn', '')}"
-				displayType="link"
-				onClick="${namespace}updateSelection(event)"
-				value="clear"
-			>
-				<span class="term-text">${languageUtil.get(locale, "all-results", "All Results")}</span>
-
-				<#if totalCount?has_content>
-					<span class="term-count">${totalCount}</span>
-				</#if>
-			</@clay.button>
-		</li>
-
-		<#list sortedTaxonomyCategories as entry>
-			<li class="facet-value">
-				<@clay.button
-					cssClass="btn-unstyled facet-term tab-btn term-name text-center ${(entry.isSelected())?then('selected-tab-btn', '')}"
-					data\-term\-id="${entry.getFilterValue()}"
-					disabled="true"
-					displayType="link"
-					onClick="${namespace}updateSelection(event)"
-				>
-					<span class="term-text">
-						${htmlUtil.escape(entry.getBucketText())}
-					</span>
-
-					<#if entry.isFrequencyVisible()>
-						<span class="term-count">
-							${entry.getFrequency()}
-						</span>
-					</#if>
-				</@clay.button>
-			</li>
-		</#list>
-
-		<#assign
-			knowledgeBaseSelected = false
-			selectedResourceTypeIds = paramUtil.getParameterValues(request, "resource-type")![]
-		/>
-
-		<#list selectedResourceTypeIds as selectedResourceTypeId>
-			<#if knowledgeBaseIds?seq_contains(selectedResourceTypeId)>
-				<#assign knowledgeBaseSelected = true />
-			</#if>
-		</#list>
-
-		<li class="facet-value">
-			<@clay.button
-				cssClass="btn-unstyled facet-term tab-btn term-name text-center ${knowledgeBaseSelected?then('selected-tab-btn', '')}"
-				data\-term\-ids="${knowledgeBaseIds?join(',')}"
-				displayType="link"
-				onClick="${namespace}updateSelection(event)"
-			>
-				<span class="term-text">${languageUtil.get(locale, "knowledge-base", "Knowledge Base")}</span>
-
-				<#if knowledgeBaseFrequency?has_content>
-					<span class="term-count">${knowledgeBaseFrequency}</span>
-				</#if>
-			</@clay.button>
-		</li>
-	</ul>
+    <#assign
+        knowledgeBaseFrequency = 0
+        knowledgeBaseIds = []
+        sortedTaxonomyCategories = []
+        totalCount = 0
+    />
+    <#list entries as entry>
+        <#assign label = entry.bucketText?upper_case />
+        <#if stringUtil.equals(label, "OFFICIAL DOCUMENTATION")>
+            <#assign sortedTaxonomyCategories = [entry] + sortedTaxonomyCategories />
+        <#elseif stringUtil.equals(label, "HOW TO") || stringUtil.equals(label, "TROUBLESHOOTING") || stringUtil.equals(label, "REFERENCE")>
+            <#assign
+                knowledgeBaseFrequency += entry.getFrequency()
+                knowledgeBaseIds += [entry.getFilterValue()]
+            />
+        </#if>
+    </#list>
+    <#list assetCategoriesSearchFacetDisplayContext.getBucketDisplayContexts() as bucketDisplayContext>
+        <#assign totalCount = totalCount + bucketDisplayContext.getCount() />
+    </#list>
+    <div class="form-group custom-select-wrapper">
+        <#assign
+            selectedLabel = ""
+            selectedResourceTypeIds = paramUtil.getParameterValues(request, "resource-type")![]
+            knowledgeBaseSelected = false
+        />
+        <#list selectedResourceTypeIds as selectedId>
+            <#if knowledgeBaseIds?seq_contains(selectedId)>
+                <#assign knowledgeBaseSelected = true />
+            </#if>
+        </#list>
+        <#if knowledgeBaseSelected>
+            <#assign selectedLabel = languageUtil.get(locale, "knowledge-base", "Knowledge Base") />
+                <#if knowledgeBaseFrequency?has_content>
+                    <#assign selectedLabel = '<span class="selected-label">' + selectedLabel + '</span>' + ' <span class="term-count">' + knowledgeBaseFrequency + '</span>' />
+                </#if>
+        <#else>
+            <#list sortedTaxonomyCategories as entry>
+                <#if entry.isSelected()>
+                    <#assign selectedLabel = htmlUtil.escape(entry.getBucketText()) />
+                    <#if entry.isFrequencyVisible()>
+                        <#assign selectedLabel = '<span class="selected-label">' + selectedLabel + '</span>' + ' <span class="term-count">' + entry.getFrequency() + '</span>' />
+                    </#if>
+                </#if>
+            </#list>
+        </#if>
+        <#if selectedLabel == "">
+            <#assign selectedLabel = languageUtil.get(locale, "all-results", "All Results") />
+        <#if totalCount?has_content>
+            <#assign selectedLabel = '<span class="selected-label">' + selectedLabel + '</span>' + ' <span class="term-count">' + totalCount + '</span>' />
+        </#if>
+    </#if>
+    <select class="form-control d-none" id="real-select" onchange="${namespace}updateSelection(event)">
+        <option value="clear">
+            ${languageUtil.get(locale, "all-results", "All Results")}
+            <#if totalCount?has_content>(${totalCount})</#if>
+        </option>
+        <#list sortedTaxonomyCategories as entry>
+            <option value="${entry.getFilterValue()}" ${entry.isSelected()?then("selected", "")}>
+                ${htmlUtil.escape(entry.getBucketText())}
+                <#if entry.isFrequencyVisible()>(${entry.getFrequency()})</#if>
+            </option>
+        </#list>
+        <option class="custom-option ${knowledgeBaseSelected?then('selected-tab-btn', '')}" value="${knowledgeBaseIds?join(',')}">
+            ${languageUtil.get(locale, "knowledge-base", "Knowledge Base")}
+            <#if knowledgeBaseFrequency?has_content>(${knowledgeBaseFrequency})</#if>
+        </option>
+    </select>
+    <div class="custom-select learn-category-facet-tabs list-unstyled tab-list">
+        <div class="custom-select-trigger">
+            <div class="custom-select-trigger-text">
+                ${selectedLabel}
+            </div>
+            
+            <div class="icon-custom-select">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <mask id="mask0_820_11850" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="3" y="5" width="10" height="6">
+                    <path d="M3.21478 6.3781L7.48679 10.6499C7.76929 10.9324 8.23071 10.9324 8.51321 10.6499L12.7852 6.3781C13.2435 5.91985 12.9202 5.13831 12.2704 5.13831H3.72956C3.07981 5.13831 2.75651 5.91985 3.21478 6.3781Z" fill="#6B6C7E"/>
+                    </mask>
+                    <g mask="url(#mask0_820_11850)">
+                    <rect width="16" height="16" fill="#999AA3"/>
+                    </g>
+                </svg>
+            </div>
+        </div>
+        <div class="custom-options">
+            <span class="custom-option ${assetCategoriesSearchFacetDisplayContext.isNothingSelected()?then('selected-select-tab-btn', '')}" data-value="clear">
+                <div class="title-count">
+                    ${languageUtil.get(locale, "all-results", "All Results")}
+                <#if totalCount?has_content><span class="total-results">${totalCount}</span></#if>
+                </div>
+            </span>
+            <#list sortedTaxonomyCategories as entry>
+                <span class="custom-option ${(entry.isSelected())?then('selected-select-tab-btn', '')}" data-value="${entry.getFilterValue()}">
+                        <div class="title-count">
+                    ${htmlUtil.escape(entry.getBucketText())}
+                    <#if entry.isFrequencyVisible()><span class="total-results">${entry.getFrequency()}</span></#if>
+                        </div>
+                </span>
+            </#list>
+            <span class="custom-option ${knowledgeBaseSelected?then('selected-select-tab-btn', '')}" data-value="${knowledgeBaseIds?join(',')}">
+                <div class="title-count">
+                ${languageUtil.get(locale, "knowledge-base", "Knowledge Base")}
+                <#if knowledgeBaseFrequency?has_content><span class="total-results">${knowledgeBaseFrequency}</span></#if>
+                    </div>
+            </span>
+        </div>
+    </div>
+    <ul class="learn-category-facet-tabs list-unstyled tab-list" id="tab-list">
+        <li class="facet-value">
+            <@clay.button
+                cssClass="btn-unstyled facet-clear tab-btn text-center ${assetCategoriesSearchFacetDisplayContext.isNothingSelected()?then('selected-tab-btn', '')}"
+                displayType="link"
+                onClick="${namespace}updateSelection(event)"
+                value="clear"
+            >
+                <span class="term-text">${languageUtil.get(locale, "all-results", "All Results")}</span>
+                <#if totalCount?has_content>
+                    <span class="term-count">${totalCount}</span>
+                </#if>
+            </@clay.button>
+        </li>
+        <#list sortedTaxonomyCategories as entry>
+            <li class="facet-value">
+                <@clay.button
+                    cssClass="btn-unstyled facet-term tab-btn term-name text-center ${(entry.isSelected())?then('selected-tab-btn', '')}"
+                    data\-term\-id="${entry.getFilterValue()}"
+                    disabled="true"
+                    displayType="link"
+                    onClick="${namespace}updateSelection(event)"
+                >
+                    <span class="term-text">
+                        ${htmlUtil.escape(entry.getBucketText())}
+                    </span>
+                    <#if entry.isFrequencyVisible()>
+                        <span class="term-count">
+                            ${entry.getFrequency()}
+                        </span>
+                    </#if>
+                </@clay.button>
+            </li>
+        </#list>
+        <#assign selectedResourceTypeIds = paramUtil.getParameterValues(request, "resource-type")![] />
+        <#assign knowledgeBaseSelected = false />
+        <#list selectedResourceTypeIds as selectedId>
+            <#if knowledgeBaseIds?seq_contains(selectedId)>
+                <#assign knowledgeBaseSelected = true />
+            </#if>
+        </#list>
+        <li class="facet-value">
+            <@clay.button
+                cssClass="btn-unstyled facet-term tab-btn term-name text-center ${knowledgeBaseSelected?then('selected-tab-btn', '')}"
+                data\-term\-ids="${knowledgeBaseIds?join(',')}"
+                displayType="link"
+                onClick="${namespace}updateSelection(event)"
+            >
+                <span class="term-text">${languageUtil.get(locale, "knowledge-base", "Knowledge Base")}</span>
+                <#if knowledgeBaseFrequency?has_content>
+                    <span class="term-count">${knowledgeBaseFrequency}</span>
+                </#if>
+            </@clay.button>
+        </li>
+    </ul>
 </#if>
-
 <@liferay_aui.script>
-	function handleStyleTabs(event) {
-		const buttons = document.querySelectorAll('.tab-btn');
-
-		buttons.forEach(button => button.classList.remove('selected-tab-btn'));
-
-		const targetButton = event.currentTarget;
-
-		if (targetButton.classList.contains('tab-btn')) {
-			targetButton.classList.add('selected-tab-btn');
-		}
-	}
-
-	function ${namespace}updateSelection(event) {
-		event.preventDefault();
-		handleStyleTabs(event);
-
-		const formElement = event.currentTarget.form;
-
-		if (!formElement) {
-			return;
-		}
-
-		const urlSearchParams = new URLSearchParams(window.location.search);
-
-		if (event.currentTarget.value === 'clear') {
-			urlSearchParams.delete('resource-type');
-
-			const clearedUrl = window.location.pathname + '?' + urlSearchParams.toString();
-
-			window.location.href = clearedUrl;
-
-			return;
-		}
-
-		urlSearchParams.delete('resource-type');
-
-		const dataTermId = event.currentTarget.getAttribute('data-term-id');
-		const dataTermIds = event.currentTarget.getAttribute('data-term-ids');
-
-		if (dataTermIds) {
-			const resourceTypeIds = dataTermIds.split(',');
-
-			resourceTypeIds.forEach(id => {
-				urlSearchParams.append('resource-type', id.trim());
-			});
-		} else if (dataTermId) {
-			urlSearchParams.append('resource-type', dataTermId);
-		}
-
-		window.location.href = window.location.pathname + '?' + urlSearchParams.toString();
-	}
+        const realSelect = document.getElementById("real-select");
+        const customSelect = document.querySelector(".custom-select");
+        const trigger = customSelect.querySelector(".custom-select-trigger");
+        const customOptions = customSelect.querySelectorAll(".custom-option");
+        trigger.addEventListener("click", () => {
+            customSelect.classList.toggle("open");
+        });
+        customOptions.forEach(option => {
+            option.addEventListener("click", () => {
+                const value = option.dataset.value;
+                realSelect.value = value;
+                customSelect.classList.remove("open");
+                realSelect.dispatchEvent(new Event("change", { bubbles: true }));
+            });
+        });
+        document.addEventListener("click", e => {
+            if (!customSelect.contains(e.target)) {
+                customSelect.classList.remove("open");
+            }
+        });
+    
+    
+    
+    
+    function handleStyleTabs(event) {
+        const buttons = document.querySelectorAll('.tab-btn');
+        buttons.forEach(button => button.classList.remove('selected-tab-btn'));
+        const targetButton = event.currentTarget;
+        if (targetButton.classList.contains('tab-btn')) {
+            targetButton.classList.add('selected-tab-btn');
+        }
+    }
+    function ${namespace}updateSelection(event) {
+    event.preventDefault?.();
+    handleStyleTabs?.(event);
+    const formElement = event.currentTarget.form;
+    if (!formElement && event.currentTarget.tagName !== 'SELECT') {
+        return;
+    }
+    const isSelect = event.currentTarget.tagName === 'SELECT';
+    const value = event.currentTarget.value; 
+    const dataTermIds = event.currentTarget.getAttribute('data-term-ids');
+    const dataTermId = event.currentTarget.getAttribute('data-term-id');
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    if (value === 'clear') { 
+        urlSearchParams.delete('resource-type');
+        const clearedUrl = window.location.pathname + (urlSearchParams.toString() ? '?' + urlSearchParams.toString() : '');
+        window.location.href = clearedUrl;
+        return;
+    }
+    
+    urlSearchParams.delete('resource-type');
+    if (isSelect) {
+        if (value) {
+            if (value.includes(',')) {
+            
+                value.split(',').forEach(id => urlSearchParams.append('resource-type', id.trim()));
+            } else {
+                urlSearchParams.append('resource-type', value);
+            }
+        }
+    } 
+    else {
+        if (dataTermIds) {
+            dataTermIds.split(',').forEach(id => urlSearchParams.append('resource-type', id.trim()));
+        } else if (dataTermId) {
+            urlSearchParams.append('resource-type', dataTermId);
+        }
+    }
+    const newUrl = window.location.pathname + '?' + urlSearchParams.toString();
+    window.location.href = newUrl;
+}
 </@liferay_aui.script>
-
 <style>
-	.learn-category-facet-tabs .facet-term-unselected .term-text {
-		opacity: 0.8;
-	}
-
-	.learn-category-facet-tabs .facet-value {
-		flex:1;
-	}
-
-	.learn-category-facet-tabs.tab-list {
-		align-items:center;
-		display: flex;
-		background: var(--Neutral-01, #F7F7F8);
-		border-radius: 99px;
-		height: 52px;
-		padding: 4px 6px;
-	}
-
-	.learn-category-facet-tabs .selected-tab-btn {
-		background: var(--Action-Primary-Active-Lighten, #E6EDFB);
-		border-radius: 99px;
-		opacity: 1;
-		padding: 8px;
-		text-align: center;
-		width: 100%;
-	}
-
-	.learn-category-facet-tabs .term-count {
-		background: var(--Status-Info-Info, #2E5AAC);
-		border-radius: 12px;
-		color: var(--Neutral-00, #FFF);
-		font-size: 13px;
-		padding: 2px 5px;
-	}
-
-	.learn-category-facet-tabs .term-text {
-		color: var(--Neutral-10, #282934);
-		font-size: 14px;
-		font-style: normal;
-		font-weight: 600;
-	}
-
-	.selected-item-mobile-tab::after {
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' fill='currentColor' class='lexicon-icon lexicon-icon-check' role='presentation' viewBox='0 0 512 512'%3E%3Cpath d='M192.9,429.5c-8.3,0-16.4-3.3-22.3-9.2L44.5,294.1C15,263.2,62.7,222,89.1,249.5L191.5,352l230-258.9 c27.2-30.5,74.3,11.5,47.1,41.9L216.4,418.9c-5.8,6.5-14,10.3-22.6,10.6C193.5,429.5,193.2,429.5,192.9,429.5z'%3E%3C/path%3E%3C/svg%3E");
-		background-repeat: no-repeat;
-		background-size: contain;
-		content: "";
-		height: 15px;
-		position: absolute;
-		right: 1rem;
-		top: 50%;
-		transform: translateY(-50%);
-		width: 15px;
-	}
-
-	@media screen and (max-width: 992px) {
-		.learn-category-facet-tabs .facet-value-mobile {
-			gap: var(--spacer-2, 0.5rem);
-		}
-
-		.learn-category-facet-tabs .facet-value-mobile .term-text {
-			opacity: 0.80;
-		}
-
-		.learn-category-facet-tabs .dropdown-menu,
-		.learn-category-facet-tabs#tab-list-mobile {
-			max-width: none;
-			padding: var(--spacer-2, 0.5rem);
-			width: 100%;
-		}
-
-		.learn-category-facet-tabs#tab-list {
-			display: none !important;
-		}
-
-		.learn-category-facet-tabs#tab-list-mobile {
-			align-items: center;
-			display: flex !important;
-			width: 100%;
-		}
-	}
-
-	#tab-list-mobile {
-		display: none;
-	}
-
-	#tab-list-mobile::after {
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%23999AA3' d='M103.5 204.3l136.1 136.1c9 9 23.7 9 32.7 0l136.1-136.1c14.6-14.6 4.3-39.5-16.4-39.5H119.9C99.2 164.8 88.9 189.7 103.5 204.3z'/%3E%3C/svg%3E");
-		background-repeat: no-repeat;
-		background-size: contain;
-		content: "";
-		height: 15px;
-		position: absolute;
-		right: 1rem;
-		top: 50%;
-		transform: translateY(-50%);
-		width: 15px;
-	}
+    .learn-category-facet-tabs .facet-term-unselected .term-text {
+        opacity: 0.8;
+    }
+    .learn-category-facet-tabs .facet-value {
+        flex:1;
+    }
+    .learn-category-facet-tabs.tab-list {
+        align-items:center;
+        display: flex;
+        background: var(--Neutral-01, #F7F7F8);
+        border-radius: 99px;
+        height: 52px;
+        padding: 4px 6px;
+    }
+    .learn-category-facet-tabs .selected-tab-btn {
+        background: var(--Action-Primary-Active-Lighten, #E6EDFB);
+        border-radius: 99px;
+        opacity: 1;
+        padding: 8px;
+        text-align: center;
+        width: 100%;
+    }
+    .learn-category-facet-tabs .term-count {
+        background: var(--Status-Info-Info, #2E5AAC);
+        border-radius: 12px;
+        color: var(--Neutral-00, #FFF);
+        font-size: 13px;
+        padding: 2px 5px;
+    }
+    .learn-category-facet-tabs .term-text {
+        color: var(--Neutral-10, #282934);
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 600;
+    }
+    .selected-item-mobile-tab::after {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' fill='currentColor' class='lexicon-icon lexicon-icon-check' role='presentation' viewBox='0 0 512 512'%3E%3Cpath d='M192.9,429.5c-8.3,0-16.4-3.3-22.3-9.2L44.5,294.1C15,263.2,62.7,222,89.1,249.5L191.5,352l230-258.9 c27.2-30.5,74.3,11.5,47.1,41.9L216.4,418.9c-5.8,6.5-14,10.3-22.6,10.6C193.5,429.5,193.2,429.5,192.9,429.5z'%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-size: contain;
+        content: "";
+        height: 15px;
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 15px;
+    }
+    
+    
+    
+    
+    #real-select {
+  display: none;
+}
+    .selected-select-tab-btn {
+        &:after {
+            background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cmask id='mask0_820_174' style='mask-type:alpha' maskUnits='userSpaceOnUse' x='1' y='2' width='14' height='12'%3E%3Cpath d='M6.02807 13.4237C5.76869 13.4237 5.51557 13.3205 5.33119 13.1362L1.39057 9.19242C0.468691 8.2268 1.95932 6.9393 2.78432 7.79867L5.98432 11.0018L13.1718 2.91117C14.0218 1.95805 15.4937 3.27055 14.6437 4.22055L6.76244 13.0924C6.58119 13.2955 6.32494 13.4143 6.05619 13.4237C6.04682 13.4237 6.03744 13.4237 6.02807 13.4237Z' fill='%236B6C7E'/%3E%3C/mask%3E%3Cg mask='url(%23mask0_820_174)'%3E%3Crect width='16' height='16' fill='%2354555F'/%3E%3C/g%3E%3C/svg%3E%0A");
+            content: '';
+            height: 16px;
+            width: 16px;
+        }
+    }
+    .selected-label {
+            font-family: 'Source Sans 3';
+    font-weight: 600;
+    opacity: 80%;
+    }
+    
+    .total-results {
+            background: #2E5AAC;
+    border-radius: 12px;
+    padding: 2px 5px;
+    color: #FFFFFF;
+    }
+    
+.custom-select {
+        border: none;
+  position: relative;
+    width: 100%;
+  cursor: pointer;
+  font-family: sans-serif;
+        justify-content: center;
+    
+    display: none !important;
+    
+}
+.custom-select-trigger {
+  color: #282934;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+        padding: 8px;
+    border-radius: 99px;
+    
+    .custom-select-trigger-text {
+            width: 100%;
+    }
+    
+    &:hover {
+            background: #E6EDFB;
+    }
+}
+.custom-options {
+        border: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  display: none;
+  flex-direction: column;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 8px;
+    z-index: 10;
+}
+.custom-option {
+    padding: 10px;
+    transition: background 0.2s;
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Source Sans 3';
+    font-weight: 600;
+    border-radius: 6px;
+}
+.custom-option:hover {
+  background: #EDF3FE;
+}
+.custom-select.open .custom-options {
+  display: flex;
+}
+    
+    
+    
+    
+    
+    @media screen and (max-width: 992px) {
+            .custom-select {
+                display: flex !important;
+            }
+            
+        .learn-category-facet-tabs .facet-value-mobile {
+            gap: var(--spacer-2, 0.5rem);
+        }
+        .learn-category-facet-tabs .facet-value-mobile .term-text {
+            opacity: 0.80;
+        }
+        .learn-category-facet-tabs .dropdown-menu,
+        .learn-category-facet-tabs#tab-list-mobile {
+            max-width: none;
+            padding: var(--spacer-2, 0.5rem);
+            width: 100%;
+        }
+        .learn-category-facet-tabs#tab-list {
+            display: none !important;
+        }
+        .learn-category-facet-tabs#tab-list-mobile {
+            align-items: center;
+            display: flex !important;
+            width: 100%;
+        }
+    }
+    #tab-list-mobile {
+        display: none;
+    }
+    #tab-list-mobile::after {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='%23999AA3' d='M103.5 204.3l136.1 136.1c9 9 23.7 9 32.7 0l136.1-136.1c14.6-14.6 4.3-39.5-16.4-39.5H119.9C99.2 164.8 88.9 189.7 103.5 204.3z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-size: contain;
+        content: "";
+        height: 15px;
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 15px;
+    }
 </style>
