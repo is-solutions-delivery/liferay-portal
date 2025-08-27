@@ -69,7 +69,7 @@
 			itemCount
 			label
 			value
->
+		>
 			<option value="${value}">
 				${label}
 				<#if hasCount>(${itemCount})</#if>
@@ -128,7 +128,7 @@
 					label
 					selectedClass
 					value
->
+				>
 					<span class="custom-select-option ${selectedClass}" data-value="${value}">
 						<div class="title-count">
 							${label}
@@ -249,6 +249,7 @@
 		handleStyleTabs?.(event);
 
 		if (!event.currentTarget.form && event.currentTarget.tagName !== 'SELECT') {
+
 			return;
 		}
 
@@ -256,6 +257,7 @@
 			urlSearchParams.delete('resource-type');
 
 			window.location.href = window.location.pathname + (urlSearchParams.toString() ? '?' + urlSearchParams.toString() : '');
+
 			return;
 		}
 
