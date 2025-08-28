@@ -156,10 +156,9 @@
 
 <@liferay_aui.script>
 	(function() {
+		const DESKTOP_BREAKPOINT = 992;
 		const filterToggle = document.querySelector(".filter-toggle");
 		const learnCategoryFacetTabs = document.querySelector(".learn-category-facet-tabs");
-
-		const DESKTOP_BREAKPOINT = 992;
 
 		const updateTabsVisibility = () => {
 			if (window.innerWidth >= DESKTOP_BREAKPOINT) {
