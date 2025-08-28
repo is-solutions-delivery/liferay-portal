@@ -97,7 +97,7 @@
 				onClick="${namespace}updateSelection(event)"
 				value="clear"
 			>
-				<div>
+				<div class="facet-value-term-text-term-count">
 					<span class="term-text">${languageUtil.get(locale, "all-results", "All Results")}</span>
 					<#if totalCount?has_content>
 						<span class="term-count">${totalCount}</span>
@@ -114,7 +114,7 @@
 					displayType="link"
 					onClick="${namespace}updateSelection(event)"
 				>
-					<div>
+					<div class="facet-value-term-text-term-count">
 						<span class="term-text">
 							${htmlUtil.escape(entry.getBucketText())}
 						</span>
@@ -143,7 +143,7 @@
 				displayType="link"
 				onClick="${namespace}updateSelection(event)"
 			>
-				<div>
+				<div class="facet-value-term-text-term-count">
 					<span class="term-text">${languageUtil.get(locale, "knowledge-base", "Knowledge Base")}</span>
 					<#if knowledgeBaseFrequency?has_content>
 						<span class="term-count">${knowledgeBaseFrequency}</span>
@@ -155,31 +155,33 @@
 </#if>
 
 <@liferay_aui.script>
-	const filterToggle = document.querySelector(".filter-toggle");
-	const learnCategoryFacetTabs = document.querySelector(".learn-category-facet-tabs");
+	(function() {
+		const filterToggle = document.querySelector(".filter-toggle");
+		const learnCategoryFacetTabs = document.querySelector(".learn-category-facet-tabs");
 
-	const DESKTOP_BREAKPOINT = 992;
+		const DESKTOP_BREAKPOINT = 992;
 
-	function updateTabsDisplay() {
-		if (window.innerWidth >= DESKTOP_BREAKPOINT) {
-			learnCategoryFacetTabs.style.display = "flex";
-		} else {
-			learnCategoryFacetTabs.style.display = "none";
-		}
-	}
-
-	updateTabsDisplay();
-	window.addEventListener("resize", updateTabsDisplay);
-
-	filterToggle.addEventListener("click", () => {
-		if (window.innerWidth < DESKTOP_BREAKPOINT) {
-			if (learnCategoryFacetTabs.style.display === "flex") {
-				learnCategoryFacetTabs.style.display = "none";
-			} else {
+		const updateTabsVisibility = () => {
+			if (window.innerWidth >= DESKTOP_BREAKPOINT) {
 				learnCategoryFacetTabs.style.display = "flex";
+			} else {
+				learnCategoryFacetTabs.style.display = "none";
 			}
 		}
-	});
+
+		updateTabsVisibility();
+		window.addEventListener("resize", updateTabsVisibility);
+
+		filterToggle.addEventListener("click", function() {
+			if (window.innerWidth < DESKTOP_BREAKPOINT) {
+				if (learnCategoryFacetTabs.style.display === "flex") {
+					learnCategoryFacetTabs.style.display = "none";
+				} else {
+					learnCategoryFacetTabs.style.display = "flex";
+				}
+			}
+		});
+	})();
 
 	function handleStyleTabs(event) {
 		const buttons = document.querySelectorAll('.tab-btn');
@@ -235,18 +237,18 @@
 
 </@liferay_aui.script>
 <style>
+	.facet-value-term-text-term-count {
+		width: 100%;
+	}
 	.filter-toggle {
 		display: none;
 	}
-
 	.learn-category-facet-tabs {
 		display: flex;
 	}
-
 	.learn-category-facet-tabs.open {
-	display: flex;
+		display: flex;
 	}
-
 	.learn-category-facet-tabs .facet-term-unselected .term-text {
 		opacity: 0.8;
 	}
@@ -284,6 +286,11 @@
 	}
 
 	@media screen and (max-width: 992px) {
+		.facet-value {
+			button {
+				width: 100%;
+			}
+		}
 		.filter-toggle {
 			align-items: center;
 			background: #F7F7F8;
@@ -303,13 +310,11 @@
 				.filter-toggle-term-text-term-count {
 					width: 100%;
 				}
-
 				&:hover, &:active, &:focus {
 					background: #E6EDFB;
 				}
 			}
 		}
-
 		.learn-category-facet-tabs .facet-value {
 			border-radius: 6px;
 			padding: 8px;
@@ -336,7 +341,6 @@
 				width: 16px;
 			}
 		}
-
 		.learn-category-facet-tabs.tab-list {
 			align-items: start;
 			background: #FFFF;
