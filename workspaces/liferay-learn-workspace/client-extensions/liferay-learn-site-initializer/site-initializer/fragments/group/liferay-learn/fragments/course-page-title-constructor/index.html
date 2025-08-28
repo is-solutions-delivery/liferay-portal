@@ -1,0 +1,29 @@
+[#assign assetEntry = (request.getAttribute("LIFERAY_SHARED_LAYOUT_ASSET_ENTRY"))! /]
+
+[#assign assetId = (assetEntry.classPK!0)?number /]
+
+[#assign response = restClient.get("/c/modules/?fields=lesson.id,lesson.title,quiz.id,quiz.title,r_module_c_course.name,title_i18n&nestedFields=course,lesson,quiz&pageSize=-1")]
+
+[#assign pageTitle = ""]
+
+[#list response.items as item]
+    [#if item.lesson??]
+        [#assign filteredLesson = item.lesson?filter(lesson -> lesson.id == assetId)]
+        
+        [#if filteredLesson?has_content]
+            [#assign pageTitle = item.r_module_c_course.name + " - " + item.title_i18n.en_US + " - " + filteredLesson[0].title]
+        [/#if]
+    [/#if]
+
+    [#if item.quiz??]
+        [#assign filteredQuiz = item.quiz?filter(quiz -> quiz.id == assetId)]
+
+        [#if filteredQuiz?has_content]
+            [#assign pageTitle = item.r_module_c_course.name + " - " + item.title_i18n.en_US + " - " + filteredQuiz[0].title]      
+        [/#if]
+    [/#if]
+[/#list]
+
+[#if pageTitle?has_content]
+    [#assign void = portalUtil.setPageTitle(pageTitle, request)]
+[/#if]
