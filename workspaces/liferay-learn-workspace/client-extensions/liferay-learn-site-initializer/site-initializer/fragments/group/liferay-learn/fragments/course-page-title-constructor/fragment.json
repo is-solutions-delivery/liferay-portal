@@ -1,9 +1,9 @@
 {
 	"configurationPath": "configuration.json",
-	"jsPath": "index.js",
-	"htmlPath": "index.html",
 	"cssPath": "index.css",
+	"htmlPath": "index.html",
 	"icon": "code",
+	"jsPath": "index.js",
 	"name": "Course Page Title Constructor",
 	"type": "component"
 }

@@ -7,23 +7,23 @@
 [#assign pageTitle = ""]
 
 [#list response.items as item]
-    [#if item.lesson??]
-        [#assign filteredLesson = item.lesson?filter(lesson -> lesson.id == assetId)]
-        
-        [#if filteredLesson?has_content]
-            [#assign pageTitle = item.r_module_c_course.name + " - " + item.title_i18n.en_US + " - " + filteredLesson[0].title]
-        [/#if]
-    [/#if]
+	[#if item.lesson??]
+		[#assign filteredLesson = item.lesson?filter(lesson -> lesson.id == assetId)]
 
-    [#if item.quiz??]
-        [#assign filteredQuiz = item.quiz?filter(quiz -> quiz.id == assetId)]
+		[#if filteredLesson?has_content]
+			[#assign pageTitle = item.r_module_c_course.name + " - " + item.title_i18n.en_US + " - " + filteredLesson[0].title]
+		[/#if]
+	[/#if]
 
-        [#if filteredQuiz?has_content]
-            [#assign pageTitle = item.r_module_c_course.name + " - " + item.title_i18n.en_US + " - " + filteredQuiz[0].title]      
-        [/#if]
-    [/#if]
+	[#if item.quiz??]
+		[#assign filteredQuiz = item.quiz?filter(quiz -> quiz.id == assetId)]
+
+		[#if filteredQuiz?has_content]
+			[#assign pageTitle = item.r_module_c_course.name + " - " + item.title_i18n.en_US + " - " + filteredQuiz[0].title]
+		[/#if]
+	[/#if]
 [/#list]
 
 [#if pageTitle?has_content]
-    [#assign void = portalUtil.setPageTitle(pageTitle, request)]
+	[#assign void = portalUtil.setPageTitle(pageTitle, request)]
 [/#if]
