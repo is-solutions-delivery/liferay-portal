@@ -2,15 +2,15 @@
 	<#assign
 		knowledgeBaseFrequency = 0
 		knowledgeBaseIds = []
-		sortedTaxonomyCategories = []
-		totalCount = 0
 		selectedFrequency = 0
 		selectedLabel = ""
+		sortedTaxonomyCategories = []
+		totalCount = 0
 	/>
 	<#list entries as entry>
 		<#assign label = entry.bucketText?upper_case />
 
-		<#if stringUtil.equals(label, "HOW TO") || stringUtil.equals(label, "REFERENCE") || stringUtil.equals(label, "TROUBLESHOOTING") >
+		<#if stringUtil.equals(label, "HOW TO") || stringUtil.equals(label, "REFERENCE") || stringUtil.equals(label, "TROUBLESHOOTING")>
 			<#assign
 				knowledgeBaseFrequency += entry.getFrequency()
 				knowledgeBaseIds += [entry.getFilterValue()]
@@ -21,39 +21,45 @@
 		</#if>
 
 		<#if entry.isSelected()>
-			<#assign selectedFrequency = entry.getFrequency() />
-			<#assign selectedLabel = label />
+			<#assign
+				selectedFrequency = entry.getFrequency()
+				selectedLabel = label
+			/>
 		</#if>
 	</#list>
 
 	<#assign
-    selectedResourceTypeIds = paramUtil.getParameterValues(request, "resource-type")![]
-    knowledgeBaseSelected = (selectedResourceTypeIds?filter(id -> knowledgeBaseIds?seq_contains(id))?size > 0)
+		selectedResourceTypeIds = paramUtil.getParameterValues(request, "resource-type")![]
+
+		knowledgeBaseSelected = (selectedResourceTypeIds?filter(id -> knowledgeBaseIds?seq_contains(id))?size > 0)
 	/>
 
 	<#if knowledgeBaseSelected && knowledgeBaseFrequency?has_content>
-    <#assign
-     selectedFrequency = knowledgeBaseFrequency
-     selectedLabel = "KNOWLEDGE BASE"
-    />
+		<#assign
+			selectedFrequency = knowledgeBaseFrequency
+			selectedLabel = "KNOWLEDGE BASE"
+		/>
 	<#elseif !selectedLabel?has_content && totalCount?has_content>
-    <#assign
-     selectedFrequency = totalCount
-     selectedLabel = "ALL RESULTS"
-    />
+		<#assign
+			selectedFrequency = totalCount
+			selectedLabel = "ALL RESULTS"
+		/>
 	</#if>
 
 	<#list assetCategoriesSearchFacetDisplayContext.getBucketDisplayContexts() as bucketDisplayContext>
 		<#assign totalCount = totalCount + bucketDisplayContext.getCount() />
 	</#list>
-		
+
 	<#function capitalizeWords text>
-    <#assign words = text?split(" ")>
-    <#assign capitalizedWords = []>
-    <#list words as word>
-        <#assign capitalizedWords += [word?lower_case?cap_first]>
-    </#list>
-    <#return capitalizedWords?join(" ")>
+		<#assign
+			words = text?split(" ")
+			capitalizedWords = []
+		/>
+
+		<#list words as word>
+			<#assign capitalizedWords += [word?lower_case?cap_first] />
+		</#list>
+		<#return capitalizedWords?join(" ")>
 	</#function>
 
 	<div class="filter-toggle">
@@ -61,20 +67,22 @@
 			<div class="filter-toggle-term-text-term-count">
 				<span class="term-text">${capitalizeWords(selectedLabel)} </span>
 				<span class="term-count">
-					<#if selectedFrequency != 0 >
+					<#if selectedFrequency != 0>
 						${selectedFrequency}
 					<#else>
 						${totalCount}
 					</#if>
 				</span>
 			</div>
+
 			<div class="filter-toggle-arrow-icon">
 				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<mask id="mask0_820_11850" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="3" y="5" width="10" height="6">
-						<path d="M3.21478 6.3781L7.48679 10.6499C7.76929 10.9324 8.23071 10.9324 8.51321 10.6499L12.7852 6.3781C13.2435 5.91985 12.9202 5.13831 12.2704 5.13831H3.72956C3.07981 5.13831 2.75651 5.91985 3.21478 6.3781Z" fill="#6B6C7E"/>
+						<path d="M3.21478 6.3781L7.48679 10.6499C7.76929 10.9324 8.23071 10.9324 8.51321 10.6499L12.7852 6.3781C13.2435 5.91985 12.9202 5.13831 12.2704 5.13831H3.72956C3.07981 5.13831 2.75651 5.91985 3.21478 6.3781Z" fill="#6B6C7E" />
 					</mask>
+
 					<g mask="url(#mask0_820_11850)">
-						<rect width="16" height="16" fill="#999AA3"/>
+						<rect width="16" height="16" fill="#999AA3" />
 					</g>
 				</svg>
 			</div>
@@ -153,28 +161,27 @@
 	const DESKTOP_BREAKPOINT = 992;
 
 	function updateTabsDisplay() {
-			if (window.innerWidth >= DESKTOP_BREAKPOINT) {
-					learnCategoryFacetTabs.style.display = "flex";
-			} else {
-					learnCategoryFacetTabs.style.display = "none";
-			}
+		if (window.innerWidth >= DESKTOP_BREAKPOINT) {
+			learnCategoryFacetTabs.style.display = "flex";
+		} else {
+			learnCategoryFacetTabs.style.display = "none";
+		}
 	}
 
 	updateTabsDisplay();
 	window.addEventListener("resize", updateTabsDisplay);
 
 	filterToggle.addEventListener("click", () => {
-			if (window.innerWidth < DESKTOP_BREAKPOINT) {
-					if (learnCategoryFacetTabs.style.display === "flex") {
-							learnCategoryFacetTabs.style.display = "none";
-					} else {
-							learnCategoryFacetTabs.style.display = "flex";
-					}
+		if (window.innerWidth < DESKTOP_BREAKPOINT) {
+			if (learnCategoryFacetTabs.style.display === "flex") {
+				learnCategoryFacetTabs.style.display = "none";
+			} else {
+				learnCategoryFacetTabs.style.display = "flex";
 			}
+		}
 	});
 
-
-function handleStyleTabs(event) {
+	function handleStyleTabs(event) {
 		const buttons = document.querySelectorAll('.tab-btn');
 
 		buttons.forEach(button => button.classList.remove('selected-tab-btn'));
@@ -235,9 +242,9 @@ function handleStyleTabs(event) {
 	.learn-category-facet-tabs {
 		display: flex;
 	}
-	
+
 	.learn-category-facet-tabs.open {
-    display: flex;
+	display: flex;
 	}
 
 	.learn-category-facet-tabs .facet-term-unselected .term-text {
@@ -292,7 +299,7 @@ function handleStyleTabs(event) {
 				display: flex;
 				padding: 8px;
 				width: 100%;
-				
+
 				.filter-toggle-term-text-term-count {
 					width: 100%;
 				}
