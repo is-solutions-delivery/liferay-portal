@@ -69,7 +69,7 @@
 			itemCount
 			label
 			value
-		>
+>
 			<option value="${value}">
 				${label}
 				<#if hasCount>(${itemCount})</#if>
@@ -128,7 +128,7 @@
 					label
 					selectedClass
 					value
-				>
+>
 					<span class="custom-select-option ${selectedClass}" data-value="${value}">
 						<div class="title-count">
 							${label}
