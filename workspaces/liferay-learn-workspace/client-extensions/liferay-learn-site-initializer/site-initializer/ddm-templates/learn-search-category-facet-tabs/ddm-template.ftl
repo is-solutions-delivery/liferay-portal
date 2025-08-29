@@ -122,9 +122,9 @@
 	</ul>
 </#if>
 <@liferay_aui.script>
-document.querySelector(".filter-toggle").addEventListener("click", function() {
-	  document.querySelector(".learn-category-facet-tabs").classList.toggle("open");
-});
+	document.querySelector(".filter-toggle").addEventListener("click", function() {
+		document.querySelector(".learn-category-facet-tabs").classList.toggle("open");
+	});
 
 	function handleStyleTabs(event) {
 		const buttons = document.querySelectorAll('.tab-btn');
