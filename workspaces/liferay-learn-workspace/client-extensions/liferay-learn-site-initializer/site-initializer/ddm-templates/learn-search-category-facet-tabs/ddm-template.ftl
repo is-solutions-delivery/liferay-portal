@@ -7,6 +7,11 @@
 		sortedTaxonomyCategories = []
 		totalCount = 0
 	/>
+
+	<#list assetCategoriesSearchFacetDisplayContext.getBucketDisplayContexts() as bucketDisplayContext>
+		<#assign totalCount = totalCount + bucketDisplayContext.getCount() />
+	</#list>
+
 	<#list entries as entry>
 		<#assign label = entry.bucketText?upper_case />
 
@@ -28,10 +33,6 @@
 		</#if>
 	</#list>
 
-	<#list assetCategoriesSearchFacetDisplayContext.getBucketDisplayContexts() as bucketDisplayContext>
-		<#assign totalCount = totalCount + bucketDisplayContext.getCount() />
-	</#list>
-
 	<#assign
 		selectedResourceTypeIds = paramUtil.getParameterValues(request, "resource-type")![]
 
@@ -45,7 +46,7 @@
 		/>
 	</#if>
 
-	<#if selectedResourceTypeIds?size == 0 >
+	<#if selectedResourceTypeIds?size == 0>
 		<#assign selectedLabel = languageUtil.get(locale, "all-results", "All Results") />
 	</#if>
 
@@ -61,6 +62,7 @@
 					</#if>
 				</span>
 			</div>
+
 			<div class="filter-toggle-arrow-icon">
 			</div>
 		</div>
