@@ -307,7 +307,6 @@
 				background: #EDF3FE;
 			}
 		}
-
 		.learn-category-facet-tabs .selected-tab-btn {
 			align-items: center;
 			background: unset;
