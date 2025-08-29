@@ -298,15 +298,15 @@ document.querySelector(".filter-toggle").addEventListener("click", function() {
 				height: 100%;
 				padding: 8px;
 			}
+		}
 
-			&.open {
-				display: flex;
-				flex-direction: column !important;
-			}
+		.learn-category-facet-tabs.open {
+			display: flex;
+			flex-direction: column !important;
+		}
 
-			&:not(.open) {
-				display: none;
-			}
+		.learn-category-facet-tabs:not(.open) {
+			display: none;
 		}
 	}
 </style>
