@@ -10,6 +10,13 @@
 	<#list entries as entry>
 		<#assign label = entry.bucketText?upper_case />
 
+		<#if entry.isSelected()>
+			<#assign
+				selectedFrequency = entry.getFrequency()
+				selectedLabel = entry.bucketText
+			/>
+		</#if>
+
 		<#if stringUtil.equals(label, "HOW TO") || stringUtil.equals(label, "REFERENCE") || stringUtil.equals(label, "TROUBLESHOOTING")>
 			<#assign
 				knowledgeBaseFrequency += entry.getFrequency()
@@ -19,13 +26,10 @@
 		<#elseif stringUtil.equals(label, "OFFICIAL DOCUMENTATION")>
 			<#assign sortedTaxonomyCategories = [entry] + sortedTaxonomyCategories />
 		</#if>
+	</#list>
 
-		<#if entry.isSelected()>
-			<#assign
-				selectedFrequency = entry.getFrequency()
-				selectedLabel = label
-			/>
-		</#if>
+	<#list assetCategoriesSearchFacetDisplayContext.getBucketDisplayContexts() as bucketDisplayContext>
+		<#assign totalCount = totalCount + bucketDisplayContext.getCount() />
 	</#list>
 
 	<#assign
@@ -34,38 +38,21 @@
 		knowledgeBaseSelected = (selectedResourceTypeIds?filter(id -> knowledgeBaseIds?seq_contains(id))?size > 0)
 	/>
 
-	<#if knowledgeBaseSelected && knowledgeBaseFrequency?has_content>
+	<#if knowledgeBaseSelected>
 		<#assign
 			selectedFrequency = knowledgeBaseFrequency
-			selectedLabel = "KNOWLEDGE BASE"
-		/>
-	<#elseif !selectedLabel?has_content && totalCount?has_content>
-		<#assign
-			selectedFrequency = totalCount
-			selectedLabel = "ALL RESULTS"
+			selectedLabel = languageUtil.get(locale, "knowledge-base", "Knowledge Base")
 		/>
 	</#if>
 
-	<#list assetCategoriesSearchFacetDisplayContext.getBucketDisplayContexts() as bucketDisplayContext>
-		<#assign totalCount = totalCount + bucketDisplayContext.getCount() />
-	</#list>
-
-	<#function capitalizeWords text>
-		<#assign
-			words = text?split(" ")
-			capitalizedWords = []
-		/>
-
-		<#list words as word>
-			<#assign capitalizedWords += [word?lower_case?cap_first] />
-		</#list>
-		<#return capitalizedWords?join(" ")>
-	</#function>
+	<#if selectedResourceTypeIds?size == 0 >
+		<#assign selectedLabel = languageUtil.get(locale, "all-results", "All Results") />
+	</#if>
 
 	<div class="filter-toggle">
 		<div class="filter-toggle-content">
 			<div class="filter-toggle-term-text-term-count">
-				<span class="term-text">${capitalizeWords(selectedLabel)} </span>
+				<span class="term-text">${selectedLabel} </span>
 				<span class="term-count">
 					<#if selectedFrequency != 0>
 						${selectedFrequency}
@@ -74,17 +61,7 @@
 					</#if>
 				</span>
 			</div>
-
 			<div class="filter-toggle-arrow-icon">
-				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<mask id="mask0_820_11850" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="3" y="5" width="10" height="6">
-						<path d="M3.21478 6.3781L7.48679 10.6499C7.76929 10.9324 8.23071 10.9324 8.51321 10.6499L12.7852 6.3781C13.2435 5.91985 12.9202 5.13831 12.2704 5.13831H3.72956C3.07981 5.13831 2.75651 5.91985 3.21478 6.3781Z" fill="#6B6C7E" />
-					</mask>
-
-					<g mask="url(#mask0_820_11850)">
-						<rect width="16" height="16" fill="#999AA3" />
-					</g>
-				</svg>
 			</div>
 		</div>
 	</div>
@@ -127,10 +104,6 @@
 				</@clay.button>
 			</li>
 		</#list>
-		<#assign
-			selectedResourceTypeIds = paramUtil.getParameterValues(request, "resource-type")![]
-			knowledgeBaseSelected = false
-		/>
 		<#list selectedResourceTypeIds as selectedId>
 			<#if knowledgeBaseIds?seq_contains(selectedId)>
 				<#assign knowledgeBaseSelected = true />
@@ -168,9 +141,6 @@
 			}
 		}
 
-		updateTabsVisibility();
-		window.addEventListener("resize", updateTabsVisibility);
-
 		filterToggle.addEventListener("click", function() {
 			if (window.innerWidth < DESKTOP_BREAKPOINT) {
 				if (learnCategoryFacetTabs.style.display === "flex") {
@@ -180,6 +150,9 @@
 				}
 			}
 		});
+
+		updateTabsVisibility();
+		window.addEventListener("resize", updateTabsVisibility);
 	})();
 
 	function handleStyleTabs(event) {
@@ -242,6 +215,13 @@
 	.filter-toggle {
 		display: none;
 	}
+	.filter-toggle-arrow-icon::after {
+		background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cmask id='mask0_820_11850' style='mask-type:alpha' maskUnits='userSpaceOnUse' x='3' y='5' width='10' height='6'%3E%3Cpath d='M3.21478 6.3781L7.48679 10.6499C7.76929 10.9324 8.23071 10.9324 8.51321 10.6499L12.7852 6.3781C13.2435 5.91985 12.9202 5.13831 12.2704 5.13831H3.72956C3.07981 5.13831 2.75651 5.91985 3.21478 6.3781Z' fill='%236B6C7E' /%3E%3C/mask%3E%3Cg mask='url(%23mask0_820_11850)'%3E%3Crect width='16' height='16' fill='%23999AA3' /%3E%3C/g%3E%3C/svg%3E");
+		content: '';
+		display: block;
+		height: 16px;
+		width: 16px;
+	}
 	.learn-category-facet-tabs {
 		display: flex;
 	}
@@ -301,6 +281,7 @@
 			width: 100%;
 
 			.filter-toggle-content {
+				align-items: center;
 				border-radius: 99px;
 				display: flex;
 				padding: 8px;
