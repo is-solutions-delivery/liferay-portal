@@ -71,6 +71,7 @@
 			>
 				<div class="facet-value-term-text-term-count">
 					<span class="term-text">${languageUtil.get(locale, "all-results", "All Results")}</span>
+
 					<#if totalCount?has_content>
 						<span class="term-count">${totalCount}</span>
 					</#if>
@@ -90,6 +91,7 @@
 						<span class="term-text">
 							${htmlUtil.escape(entry.getBucketText())}
 						</span>
+
 						<#if entry.isFrequencyVisible()>
 							<span class="term-count">
 								${entry.getFrequency()}
@@ -113,6 +115,7 @@
 			>
 				<div class="facet-value-term-text-term-count">
 					<span class="term-text">${languageUtil.get(locale, "knowledge-base", "Knowledge Base")}</span>
+
 					<#if knowledgeBaseFrequency?has_content>
 						<span class="term-count">${knowledgeBaseFrequency}</span>
 					</#if>
@@ -121,6 +124,7 @@
 		</li>
 	</ul>
 </#if>
+
 <@liferay_aui.script>
 	document.querySelector(".filter-toggle").addEventListener("click", function() {
 		document.querySelector(".learn-category-facet-tabs").classList.toggle("open");
@@ -162,6 +166,7 @@
 		window.location.href = window.location.pathname + '?' + urlSearchParams.toString();
 	}
 </@liferay_aui.script>
+
 <style>
 	.facet-value-term-text-term-count {
 		width: 100%;
