@@ -10,10 +10,15 @@
 
 	.order-item-display {
 		border-bottom: none !important;
+		margin: 0 !important;
 	}
 
 	.payment-icon-warning {
-		color: #B95000;
+		color: #b95000;
+	}
+
+	.detailed-card-container {
+		padding-bottom: 1px !important;
 	}
 
 	.detailed-card-header-clay-icon {
@@ -23,5 +28,10 @@
 
 	.dashboard-navigation-container {
 		min-width: 280px;
+	}
+
+	.order-details-app-icon {
+		height: 36px;
+		width: 36px;
 	}
 }

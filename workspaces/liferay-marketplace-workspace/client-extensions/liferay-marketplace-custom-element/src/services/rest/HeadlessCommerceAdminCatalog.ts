@@ -148,6 +148,12 @@ export default class HeadlessCommerceAdminCatalog {
 		);
 	}
 
+	static async getSku(skuId: number, searchParams = new URLSearchParams()) {
+		return fetcher<SKU>(
+			`o/headless-commerce-admin-catalog/v1.0/skus/${skuId}${searchParams}`
+		);
+	}
+
 	static async getOptions() {
 		return fetcher<APIResponse<CommerceOption>>(
 			'/o/headless-commerce-admin-catalog/v1.0/options'

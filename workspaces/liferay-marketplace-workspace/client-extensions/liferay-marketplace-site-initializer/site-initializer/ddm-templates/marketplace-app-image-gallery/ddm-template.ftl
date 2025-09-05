@@ -11,17 +11,19 @@
 >
 
 <div class = "carousel-container">
-	<div class = "main-image-wrapper">
-		<button class = "nav-button prev" aria-label = "Previous Image">
-			<span class = "lexicon-icon-overwide"> <@clay["icon"] symbol = "angle-left" /></span>
-		</button>
-
-		<img alt = "${productImages[1].title?html}" id = "main-image" src = "${(productImages[1].src?replace("https://", "http://"))}" />
-
-		<button class="nav-button next" aria-label="Next Image">
-			<span class="lexicon-icon-overwide"> <@clay["icon"] symbol="angle-right" /></span>
-		</button>
-	</div>
+	<#if productImages[1]?has_content >
+		<div class = "main-image-wrapper">
+			<button class = "nav-button prev" aria-label = "Previous Image">
+				<span class = "lexicon-icon-overwide"> <@clay["icon"] symbol = "angle-left" /></span>
+			</button>
+			
+			<img alt = "${productImages[1].title?html}" id = "main-image" src = "${(productImages[1].src?replace("https://", "http://"))}" />
+			
+			<button class="nav-button next" aria-label="Next Image">
+				<span class="lexicon-icon-overwide"> <@clay["icon"] symbol="angle-right" /></span>
+			</button>
+		</div>
+	</#if>
 
 	<div class="thumbnails-wrapper">
 		<div class="thumbnails"></div>
