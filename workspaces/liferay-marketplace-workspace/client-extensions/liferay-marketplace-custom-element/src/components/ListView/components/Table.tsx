@@ -12,9 +12,9 @@ import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
 import {KeyedMutator} from 'swr';
 
+import {getIconSpriteMap} from '../../../liferay/constants';
 import {Action, SortDirection, SortOption} from '../../../utils/constants';
 import {Sort} from '../hooks/ListViewContext';
-import {getIconSpriteMap} from '../../../liferay/constants';
 
 export type Column<
 	T extends Record<string, any>,
