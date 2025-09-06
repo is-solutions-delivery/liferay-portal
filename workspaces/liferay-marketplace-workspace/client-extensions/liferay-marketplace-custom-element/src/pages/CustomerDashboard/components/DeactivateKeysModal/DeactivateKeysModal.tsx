@@ -4,14 +4,14 @@
  */
 
 import ClayButton, {ClayButtonWithIcon} from '@clayui/button';
+import ClayIcon from '@clayui/icon';
 import ClayModal, {useModal} from '@clayui/modal';
+import {useState} from 'react';
 
 import i18n from '../../../../i18n';
+import {getIconSpriteMap} from '../../../../liferay/constants';
 
 import './DeactivateKeysModal.scss';
-
-import ClayIcon from '@clayui/icon';
-import {useState} from 'react';
 
 type DeactivateKeysModalProps = ReturnType<typeof useModal> & {
 	onConfirm: () => Promise<void>;
@@ -47,6 +47,7 @@ const DeactivateKeysModal: React.FC<DeactivateKeysModalProps> = ({
 							className="align-self-start"
 							displayType="unstyled"
 							onClick={() => onOpenChange(false)}
+							spritemap={getIconSpriteMap()}
 							symbol="times"
 						/>
 					</div>

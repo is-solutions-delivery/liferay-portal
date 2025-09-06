@@ -9,6 +9,7 @@ import React, {useState} from 'react';
 import {KeyedMutator} from 'swr';
 
 import i18n from '../../i18n';
+import {getIconSpriteMap} from '../../liferay/constants';
 import {Action} from '../../utils/constants';
 import DropDownAction from './DropDownAction';
 
@@ -46,6 +47,7 @@ const DropDown: React.FC<DropDownProps> = ({
 						aria-label={i18n.translate('more-actions')}
 						className="page-link"
 						displayType="unstyled"
+						spritemap={getIconSpriteMap()}
 						symbol="ellipsis-v"
 					/>
 				)

@@ -9,6 +9,7 @@ import ClayManagementToolbar from '@clayui/management-toolbar';
 import {useCallback, useContext, useEffect, useRef, useState} from 'react';
 
 import i18n from '../../../i18n';
+import {getIconSpriteMap} from '../../../liferay/constants';
 import {ListViewContext, ListViewTypes} from '../hooks/ListViewContext';
 
 const ManagementToolbarSearch = () => {
@@ -58,6 +59,7 @@ const ManagementToolbarSearch = () => {
 							type="text"
 							value={search}
 						/>
+
 						<ClayInput.GroupInsetItem
 							after
 							className="bg-white"
@@ -67,13 +69,16 @@ const ManagementToolbarSearch = () => {
 								aria-label="Search"
 								displayType="unstyled"
 								onClick={onApply}
+								spritemap={getIconSpriteMap()}
 								symbol="search"
 							/>
+
 							{keywords && (
 								<ClayButtonWithIcon
 									aria-label="Search"
 									displayType="unstyled"
 									onClick={onClear}
+									spritemap={getIconSpriteMap()}
 									symbol="times"
 								/>
 							)}

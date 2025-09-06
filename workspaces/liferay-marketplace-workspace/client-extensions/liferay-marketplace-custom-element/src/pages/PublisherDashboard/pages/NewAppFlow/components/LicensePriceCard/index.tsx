@@ -9,6 +9,7 @@ import classNames from 'classnames';
 
 import {FieldBase} from '../../../../../../components/FieldBase';
 import {ProductLicenseTier} from '../../../../../../enums/Product';
+import {getIconSpriteMap} from '../../../../../../liferay/constants';
 import {currenciesCode} from '../../../../../../utils/currencies';
 import IconButton from '../IconButton';
 
@@ -125,6 +126,7 @@ const LicensePriceCard: React.FC<LicensePriceCardProps> = ({
 						aria-label="Delete"
 						displayType={null}
 						onClick={() => onDelete(Number(key), currency)}
+						spritemap={getIconSpriteMap()}
 						symbol="trash"
 						title="Delete"
 					/>

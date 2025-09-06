@@ -14,6 +14,7 @@ import {KeyedMutator} from 'swr';
 
 import {Action, SortDirection, SortOption} from '../../../utils/constants';
 import {Sort} from '../hooks/ListViewContext';
+import {getIconSpriteMap} from '../../../liferay/constants';
 
 export type Column<
 	T extends Record<string, any>,
@@ -122,6 +123,7 @@ const Table = <T extends Record<string, any>>({
 								aria-label="actions"
 								displayType="unstyled"
 								onClick={(event) => event.stopPropagation()}
+								spritemap={getIconSpriteMap()}
 								symbol="ellipsis-v"
 							/>
 						}

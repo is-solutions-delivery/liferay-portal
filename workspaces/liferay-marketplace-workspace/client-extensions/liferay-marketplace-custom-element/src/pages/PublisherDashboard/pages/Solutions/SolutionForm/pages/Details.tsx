@@ -16,6 +16,7 @@ import {
 	useSolutionContext,
 } from '../../../../../../context/SolutionContext';
 import i18n from '../../../../../../i18n';
+import {getIconSpriteMap} from '../../../../../../liferay/constants';
 import IconsBlock from '../../components/Blocks/IconBlock';
 import ImagesGrid from '../../components/Blocks/ImagesGrid';
 import SingleImage from '../../components/Blocks/SingleImage';
@@ -166,6 +167,7 @@ const Details = () => {
 								displayType="unstyled"
 								onClick={() => onOpenChange(false)}
 								size="sm"
+								spritemap={getIconSpriteMap()}
 								symbol="times"
 								title="Close"
 							/>

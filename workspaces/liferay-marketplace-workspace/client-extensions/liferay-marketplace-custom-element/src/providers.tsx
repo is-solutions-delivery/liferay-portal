@@ -29,7 +29,9 @@ const Providers: React.FC<ProviderProps> = ({children, properties}) => (
 			}}
 		>
 			<MarketplaceContextProvider properties={properties}>
-				<ClayModalProvider>{children}</ClayModalProvider>
+				<ClayModalProvider spritemap={getIconSpriteMap()}>
+					{children}
+				</ClayModalProvider>
 			</MarketplaceContextProvider>
 		</SWRConfig>
 	</ClayIconSpriteContext.Provider>

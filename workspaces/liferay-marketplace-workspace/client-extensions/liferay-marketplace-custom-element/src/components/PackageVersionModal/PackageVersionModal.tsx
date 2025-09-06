@@ -12,6 +12,7 @@ import {useEffect, useMemo, useState} from 'react';
 import './PackageVersionModal.scss';
 import useListTypeDefinition from '../../hooks/useListTypeDefinition';
 import i18n from '../../i18n';
+import {getIconSpriteMap} from '../../liferay/constants';
 import {useAppContext} from '../../pages/PublisherDashboard/pages/Apps/AppCreationFlow/AppContext/AppManageState';
 import {ActionTypes} from '../../pages/PublisherDashboard/pages/Apps/AppCreationFlow/AppContext/actionTypes';
 interface PackageVersionModal {
@@ -115,6 +116,7 @@ export function PackageVersionModal({
 									<ClayButtonWithIcon
 										aria-labelledby="search icon"
 										displayType="unstyled"
+										spritemap={getIconSpriteMap()}
 										symbol="search"
 										type="submit"
 									/>

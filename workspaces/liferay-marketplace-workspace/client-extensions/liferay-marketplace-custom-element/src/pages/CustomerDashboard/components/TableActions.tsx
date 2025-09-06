@@ -7,6 +7,8 @@ import {ClayButtonWithIcon} from '@clayui/button';
 import ClayDropDown, {Align} from '@clayui/drop-down';
 import {ClayTooltipProvider} from '@clayui/tooltip';
 
+import {getIconSpriteMap} from '../../../liferay/constants';
+
 type TableActionsProps = {
 	isDisabled: boolean;
 	onDeactivate: () => void;
@@ -29,6 +31,7 @@ const TableActions: React.FC<TableActionsProps> = ({
 				<ClayButtonWithIcon
 					aria-label="Menu"
 					displayType={null}
+					spritemap={getIconSpriteMap()}
 					symbol="ellipsis-v"
 					title="Menu"
 				/>

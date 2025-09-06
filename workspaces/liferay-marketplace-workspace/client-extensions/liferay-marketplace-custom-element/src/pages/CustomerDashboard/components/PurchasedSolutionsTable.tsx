@@ -13,6 +13,7 @@ import OrderStatus from '../../../components/OrderStatus';
 import Table from '../../../components/Table/Table';
 import {OrderCustomFields, OrderTypes} from '../../../enums/Order';
 import i18n from '../../../i18n';
+import {getIconSpriteMap} from '../../../liferay/constants';
 
 type PurchasedSolutionsTableProps = {
 	items: PlacedOrder[];
@@ -142,6 +143,7 @@ const PurchasedSolutionsTable: React.FC<PurchasedSolutionsTableProps> = ({
 										<ClayButtonWithIcon
 											aria-label="Kebab Button"
 											displayType={null}
+											spritemap={getIconSpriteMap()}
 											symbol="ellipsis-v"
 											title="Kebab Button"
 										/>

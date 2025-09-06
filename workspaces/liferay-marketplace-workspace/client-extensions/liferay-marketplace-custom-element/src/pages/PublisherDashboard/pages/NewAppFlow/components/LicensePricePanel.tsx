@@ -18,6 +18,7 @@ import {
 	ProductLicenseTier,
 	ProductTypeLicenseOptions,
 } from '../../../../../enums/Product';
+import {getIconSpriteMap} from '../../../../../liferay/constants';
 import {currenciesCode} from '../../../../../utils/currencies';
 import {CurrencyFlag} from '../pages/Licensing/components/CurrencyModal';
 import IconButton from './IconButton';
@@ -126,6 +127,7 @@ const LicensePricePanel: React.FC<LicensePricePanelProps> = ({
 									type: NewAppTypes.SET_LICENSING_DELETE_CURRENCY,
 								})
 							}
+							spritemap={getIconSpriteMap()}
 							symbol="trash"
 							title="Delete all prices"
 						/>

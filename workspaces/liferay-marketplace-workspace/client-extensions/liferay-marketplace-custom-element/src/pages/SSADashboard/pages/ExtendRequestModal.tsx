@@ -12,6 +12,7 @@ import {KeyedMutator} from 'swr';
 
 import {OrderCustomFields, OrderStatus as Status} from '../../../enums/Order';
 import i18n from '../../../i18n';
+import {getIconSpriteMap} from '../../../liferay/constants';
 import {Liferay} from '../../../liferay/liferay';
 import trialOAuth2 from '../../../services/oauth/Trial';
 import HeadlessTrialExtensionRequest from '../../../services/rest/HeadlessTrialExtensionRequest';
@@ -92,6 +93,7 @@ const ExtendRequestModal: React.FC<ExtendSSATrialModalProps> = ({
 							borderless
 							className="text-dark"
 							onClick={onClose}
+							spritemap={getIconSpriteMap()}
 							symbol="times"
 							title="Close"
 						/>

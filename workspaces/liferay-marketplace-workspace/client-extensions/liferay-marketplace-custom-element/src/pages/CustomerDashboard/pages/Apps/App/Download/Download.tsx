@@ -17,6 +17,7 @@ import {OrderTypes} from '../../../../../../enums/Order';
 import {ProductSpecificationKey} from '../../../../../../enums/Product';
 import useGetProductByOrderId from '../../../../../../hooks/useGetProductByOrderId';
 import i18n from '../../../../../../i18n';
+import {getIconSpriteMap} from '../../../../../../liferay/constants';
 import {Liferay} from '../../../../../../liferay/liferay';
 import HeadlessCommerceDeliveryCatalog from '../../../../../../services/rest/HeadlessCommerceDeliveryCatalog';
 import {getProductCategoriesByVocabularyName} from '../../../../../../utils/productUtils';
@@ -171,6 +172,7 @@ const Download = () => {
 								aria-label="Search"
 								className="border-0"
 								displayType="unstyled"
+								spritemap={getIconSpriteMap()}
 								symbol="search"
 							/>
 						</ClayInput.GroupText>

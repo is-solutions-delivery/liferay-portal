@@ -12,7 +12,7 @@ import MarketplaceDeliveryOrder from '../../../../entity/MarketplaceDeliveryOrde
 import {MarketplaceDeliveryProduct} from '../../../../entity/MarketplaceDeliveryProduct';
 import {OrderWorkflowStatusCode} from '../../../../enums/Order';
 import i18n from '../../../../i18n';
-import {formatDate} from '../../../../utils/date';
+import {formatDate, formatDateTime} from '../../../../utils/date';
 import {useSSADashboardOutlet} from '../../SSADashboardOutlet';
 import ExtensionStatus from '../../components/ExtensionStatus/ExtensionStatus';
 import TrialStatus from '../../components/TrialStatus/TrialStatus';
@@ -137,7 +137,7 @@ const TrialDetailsBody: React.FC<TrialDetailsBodyProps> = ({
 						items={[
 							{
 								title: i18n.translate('trial-start-date'),
-								value: formatDate(
+								value: formatDateTime(
 									marketplaceOrder.customFields
 										.TRIAL_START_DATE
 								),
@@ -145,7 +145,7 @@ const TrialDetailsBody: React.FC<TrialDetailsBodyProps> = ({
 							},
 							{
 								title: i18n.translate('trial-end-date'),
-								value: formatDate(
+								value: formatDateTime(
 									marketplaceOrder.customFields.TRIAL_END_DATE
 								),
 								visible: !marketplaceOrder.isCancelled,

@@ -5,16 +5,16 @@
 
 import {ClayButtonWithIcon} from '@clayui/button';
 import ClayForm, {ClayInput} from '@clayui/form';
-
-import './LicensePriceCard.scss';
-
 import classNames from 'classnames';
 import {useState} from 'react';
 
 import {FieldBase} from '../../../../../../../../components/FieldBase';
+import {getIconSpriteMap} from '../../../../../../../../liferay/constants';
 import {LicensePrice} from '../../../AppContext/AppManageState';
 import CurrencySelector from '../CurrencySelector';
 import IconButton from '../IconButton';
+
+import './LicensePriceCard.scss';
 
 type LicensePriceCardProps = {
 	disabled?: boolean;
@@ -120,6 +120,7 @@ const LicensePriceCard: React.FC<LicensePriceCardProps> = ({
 							aria-label="Delete"
 							displayType={null}
 							onClick={() => onDelete(tierPrice.key)}
+							spritemap={getIconSpriteMap()}
 							symbol="trash"
 							title="Delete"
 						/>

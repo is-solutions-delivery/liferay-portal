@@ -9,6 +9,7 @@ import {useSelector} from '@xstate/store/react';
 
 import {ProductLicense} from '../../../../../../enums/Product';
 import i18n from '../../../../../../i18n';
+import {getIconSpriteMap} from '../../../../../../liferay/constants';
 import {useProductPurchaseOutletContext} from '../../../../ProductPurchaseOutlet';
 import {cartStore} from '../../../../store/CartStore';
 import LicenseTier from './LicenseTier';
@@ -79,6 +80,7 @@ const LicenseCard: React.FC<LicenseCardProps> = ({sku}) => {
 						onClick={() =>
 							productPurchaseCart.removeFromCart(sku.id)
 						}
+						spritemap={getIconSpriteMap()}
 						symbol="hr"
 					/>
 
@@ -97,6 +99,7 @@ const LicenseCard: React.FC<LicenseCardProps> = ({sku}) => {
 								sku.id
 							)
 						}
+						spritemap={getIconSpriteMap()}
 						symbol="plus"
 					/>
 				</div>

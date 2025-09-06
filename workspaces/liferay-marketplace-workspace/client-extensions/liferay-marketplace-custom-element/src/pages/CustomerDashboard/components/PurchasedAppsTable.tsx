@@ -13,6 +13,7 @@ import Table from '../../../components/Table/Table';
 import {OrderTypes, orderTypeLabel} from '../../../enums/Order';
 import {ProductImageFallbackCategories} from '../../../enums/Product';
 import i18n from '../../../i18n';
+import {getIconSpriteMap} from '../../../liferay/constants';
 import {getProductImageFallback} from '../../../utils/productUtils';
 import AppDropdownActions from '../pages/Apps/App/AppDropdownActions/AppDropdownActions';
 
@@ -120,6 +121,7 @@ const AppsTable: React.FC<AppsTableProps> = ({items}) => {
 										<ClayButtonWithIcon
 											aria-label="Kebab Button"
 											displayType={null}
+											spritemap={getIconSpriteMap()}
 											symbol="ellipsis-v"
 											title="Kebab Button"
 										/>

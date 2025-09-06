@@ -11,6 +11,7 @@ import ClayDropDown from '@clayui/drop-down';
 import {HTMLAttributes, useState} from 'react';
 
 import {BlockDirections} from '../../context/SolutionContext';
+import {getIconSpriteMap} from '../../liferay/constants';
 
 interface SectionWithControllersProps extends HTMLAttributes<HTMLDivElement> {
 	dropdownItems: {
@@ -48,6 +49,7 @@ export function SectionWithControllers({
 								onArrowClick(BlockDirections.MOVE_UP)
 							}
 							size="sm"
+							spritemap={getIconSpriteMap()}
 							symbol="order-arrow-up"
 						/>
 

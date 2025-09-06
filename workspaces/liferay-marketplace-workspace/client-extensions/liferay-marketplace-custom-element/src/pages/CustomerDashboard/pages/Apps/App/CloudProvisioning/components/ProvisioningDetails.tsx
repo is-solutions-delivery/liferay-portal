@@ -7,6 +7,7 @@ import {ClayButtonWithIcon} from '@clayui/button';
 import classNames from 'classnames';
 
 import i18n from '../../../../../../../i18n';
+import {getIconSpriteMap} from '../../../../../../../liferay/constants';
 import OrderDetailsHeader from '../../../../../components/OrderDetailsHeader';
 import AccountEmailInfo from '../../Licenses/CreateLicense/AccountInfo';
 import {ProvisioningRow} from '../hooks/useProvisioningData';
@@ -78,6 +79,7 @@ const ProvisioningDetails: React.FC<ProvisioningDetailsProps> = ({
 						borderless
 						className="text-dark"
 						onClick={onClose}
+						spritemap={getIconSpriteMap()}
 						symbol="times"
 						title="Close"
 					/>

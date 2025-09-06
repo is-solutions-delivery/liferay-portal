@@ -7,6 +7,8 @@ import {ClayButtonWithIcon} from '@clayui/button';
 import ClayDropDown from '@clayui/drop-down';
 import Icon from '@clayui/icon';
 
+import {getIconSpriteMap} from '../../../liferay/constants';
+
 type TableKebabButtonProps = {
 	items: {
 		disabled?: boolean;
@@ -22,6 +24,7 @@ const TableKebabButton: React.FC<TableKebabButtonProps> = ({items}) => (
 			<ClayButtonWithIcon
 				aria-label="Kebab Button"
 				displayType={null}
+				spritemap={getIconSpriteMap()}
 				symbol="ellipsis-v"
 				title="Kebab Button"
 			/>

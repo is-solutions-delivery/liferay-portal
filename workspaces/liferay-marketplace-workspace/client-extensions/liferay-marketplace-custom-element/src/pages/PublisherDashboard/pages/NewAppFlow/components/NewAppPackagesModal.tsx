@@ -15,6 +15,7 @@ import {
 } from '../../../../../context/NewAppContext';
 import useListTypeDefinition from '../../../../../hooks/useListTypeDefinition';
 import i18n from '../../../../../i18n';
+import {getIconSpriteMap} from '../../../../../liferay/constants';
 import {getRandomID} from '../../../../../utils/string';
 import {LIFERAY_VERSION_PICKLIST} from '../constants';
 
@@ -83,6 +84,7 @@ export function NewAppPackageVersionModal({
 									<ClayButtonWithIcon
 										aria-labelledby="search icon"
 										displayType="unstyled"
+										spritemap={getIconSpriteMap()}
 										symbol="search"
 										type="submit"
 									/>
