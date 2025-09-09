@@ -1,10 +1,10 @@
-/*Source Sans 3*/
+/* Source Sans 3 (Variable) */
 @font-face {
 	font-display: swap;
 	font-family: 'Source Sans 3';
 	font-style: normal;
-	font-weight: 400;
-	src: url('/documents/d/marketplace/sourcesans3-regular-ttf');
+	font-weight: 200 900;
+	src: url('/documents/d/marketplace/sourcesans3-variablefont_wght') format('truetype-variations');
 }
 
 /* ---------- Marketplace app tags ---------- */
