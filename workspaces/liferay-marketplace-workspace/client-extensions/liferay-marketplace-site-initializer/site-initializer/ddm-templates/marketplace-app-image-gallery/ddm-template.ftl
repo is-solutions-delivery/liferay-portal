@@ -121,7 +121,9 @@
 
 	function setupModalTriggers() {
 		carouselMainImage.addEventListener('click', () => openModalGallery(currentIndex));
-		viewFullGalleryBtn.addEventListener('click', () => openModalGallery(currentIndex));
+		if (viewFullGalleryBtn) {
+				viewFullGalleryBtn.addEventListener('click', () => openModalGallery(currentIndex));
+		}
 	}
 
 	function openModalGallery(startIndex) {
@@ -193,7 +195,6 @@
 <style ${nonceAttribute}>
 .carousel-container img {
 	cursor: pointer;
-	object-fit: contain;
 }
 
 .custom-gallery-modal button:disabled {
@@ -236,7 +237,6 @@
 .main-image-wrapper img {
 	border-radius: 8px;
 	max-height: 100%;
-	width: 100%;
 }
 
 .main-image-wrapper:hover .nav-button {
