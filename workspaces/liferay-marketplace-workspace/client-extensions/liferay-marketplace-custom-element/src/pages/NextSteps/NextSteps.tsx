@@ -3,18 +3,19 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
+import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 
+import checkCircleIcon from '../../assets/icons/check_circle_icon.svg';
+import paymentPendingIcon from '../../assets/icons/payment_pending_icon.svg';
 import {AccountAndAppCard} from '../../components/Card/AccountAndAppCard';
 import {Header} from '../../components/Header/Header';
-import {NewAppPageFooterButtons} from '../../components/NewAppPageFooterButtons/NewAppPageFooterButtons';
-import {OrderTypes, PaymentStatus} from '../../enums/Order';
+import {PaymentStatus} from '../../enums/Order';
 import withProviders from '../../hoc/withProviders';
 import i18n from '../../i18n';
 import {Liferay} from '../../liferay/liferay';
 import {baseURL} from '../../utils/api';
-import {getProductPriceModel} from '../../utils/productUtils';
 import {
 	getAccountImage,
 	getThumbnailByProductAttachment,
@@ -23,6 +24,7 @@ import {
 import useNextSteps from './useNextSteps';
 
 import './NextSteps.scss';
+import {getSiteURL} from '../../utils/site';
 
 export function NextSteps() {
 	const queryString = window.location.search;
@@ -47,12 +49,6 @@ export function NextSteps() {
 	);
 
 	const paymentStatus = placedOrder?.paymentStatus;
-	const orderTypeExternalReferenceCode =
-		placedOrder?.orderTypeExternalReferenceCode;
-
-	const isCloudApp = orderTypeExternalReferenceCode === OrderTypes.CLOUDAPP;
-
-	const {isPaidApp} = getProductPriceModel(product as DeliveryProduct);
 
 	const nextStepBody = {
 		[PaymentStatus.FAILED]: (
@@ -81,97 +77,73 @@ export function NextSteps() {
 		[PaymentStatus.PAID]: (
 			<Header
 				description={
-					isCloudApp ? (
-						<span>
-							<p>
-								Congratulations on the purchase of{' '}
-								<strong>{appName}</strong>. You will now need to
-								install the app by clicking on the
-								&quot;Continue to Install&quot; button below.
-							</p>
+					<span>
+						<p className="mb-4 text-center">
+							Congratulations on the purchase of{' '}
+							<strong>{appName}</strong>. Your payment has been
+							successfully processed via PayPal. You will now need
+							to install the app by clicking on the &quot;Continue
+							to Install&quot; button below.
+						</p>
 
-							<p>
-								Your Order ID is: <strong>{orderId}</strong>
-							</p>
-						</span>
-					) : isPaidApp ? (
-						<span>
-							<p>
-								Congratulations on the purchase of{' '}
-								<strong>{appName}</strong>. You will need to
-								create a license your app before deploying to
-								your DXP instance.
-							</p>
-
-							<p>
-								Your Order ID is: <strong>{orderId}</strong>
-							</p>
-
-							<p>
-								To license your app, you can click Go to
-								Dashboard below. Find your Order ID and choose
-								Create License Key. To create a license, you
-								must have at least one of your instance details
-								available - IP address, MAC address or hostname.
-							</p>
-						</span>
-					) : (
-						<span>
-							<strong>{appName}</strong> app is ready for
-							download.
-							<p>
-								Your Order ID is: <strong>{orderId}</strong>
-							</p>
-							<p>
-								To download your app, you can click &quot;Go to
-								Dashboard&quot; button below. To find your app
-								download, find your Order ID and click on
-								<ClayIcon className="m-1" symbol="ellipsis-v" />
-								→ Download App.
-							</p>
-						</span>
-					)
+						<p className="align-items-end d-flex justify-content-center mb-0">
+							Your Order ID is: &nbsp;
+							<a
+								className="next-step-page-text-bold"
+								href={`${getSiteURL()}/customer-dashboard#/order/${orderId}`}
+							>
+								<h2 className="mb-0 next-step-page-order next-step-page-text-bold">
+									{orderId}
+								</h2>
+							</a>
+						</p>
+					</span>
 				}
-				title="Next steps"
+				icon={
+					<span className="d-flex justify-content-center">
+						<img alt="check circle icon" src={checkCircleIcon} />
+					</span>
+				}
+				title={
+					<span className="d-flex justify-content-center mb-5 next-step-page-title">
+						Payment completed!
+					</span>
+				}
 			/>
 		),
-		[PaymentStatus.PAYMENT_PENDING]: (
+		[PaymentStatus.PENDING]: (
 			<Header
 				description={
-					isTrial ? (
-						<>
-							<p>
-								You will need to create a license for your app
-								before deploying it to your DXP instance
-							</p>
-
-							<p>
-								Your Order ID is: <strong>{orderId}</strong>
-							</p>
-
-							<p>
-								To license your app, you can click Go to
-								Dashboard below. Find your Order ID and choose
-								Create License Key. To create a license, you
-								must have at least one of your instance details
-								available - IP address, MAC address or hostname.
-							</p>
-						</>
-					) : (
-						<p>
-							Congratulations on agreeing to purchase{' '}
-							<strong>{appName}</strong>. Payment is required
-							before licensing the app. An invoice will be sent to
-							the email address listed in the order. Once payment
-							is processed, you will be notified as to the next
-							steps to license your app.
-							<span className="mt-4">
-								Your Order ID is: <strong>{orderId}</strong>
-							</span>
+					<span>
+						<p className="text-center">
+							Thank you for your order. We have registered your
+							request and will send you the invoice by email with
+							all the details to complete your payment. Check your
+							Spam or Promotions folder if you don't see it in
+							your inbox. Your order is currently{' '}
+							<strong>pending payment</strong>.
 						</p>
-					)
+						<p className="d-flex justify-content-center m-0 next-step-page-text-bold">
+							Need help?&nbsp;{' '}
+							<a href="mailto:support@liferay.com">
+								support@liferay.com
+							</a>
+						</p>
+					</span>
 				}
-				title="Next steps"
+				icon={
+					<span className="d-flex justify-content-center mb-4">
+						<img
+							alt="payment pending icon"
+							src={paymentPendingIcon}
+						/>
+					</span>
+				}
+				title={
+					<h1 className="d-flex justify-content-center mb-5 text-body">
+						Order received!
+					</h1>
+				}
 			/>
 		),
 	};
@@ -210,45 +182,40 @@ export function NextSteps() {
 					</div>
 				</div>
 
-				<NewAppPageFooterButtons
-					backButtonText={i18n.translate(
-						isCloudApp ? 'go-to-my-apps' : 'go-to-dashboard'
-					)}
-					continueButtonText={i18n.translate(
-						isCloudApp ? 'continue-to-install' : 'download-app'
-					)}
-					onClickBack={() => {
-						Liferay.Util.navigate(
-							Liferay.ThemeDisplay.getLayoutURL().replace(
-								'/next-steps',
-								`/customer-dashboard`
-							)
-						);
-					}}
-					onClickContinue={() => {
-						if (isCloudApp) {
+				<div className="d-flex justify-content-center mt-4 next-step-page-footer-button-container">
+					<ClayButton
+						className="mr-3 next-step-page-footer-button-back"
+						displayType="secondary"
+						onClick={() => {
 							Liferay.Util.navigate(
-								Liferay.ThemeDisplay.getLayoutURL().replace(
-									'/next-steps',
-									`/customer-dashboard#/order/${orderId}/cloud-provisioning`
-								)
+								`${getSiteURL()}/customer-dashboard`
 							);
-						}
+						}}
+					>
+						{i18n.translate('go-to-my-apps')}
+					</ClayButton>
 
-						if (!isCloudApp) {
-							Liferay.Util.navigate(
-								Liferay.ThemeDisplay.getLayoutURL().replace(
-									'/next-steps',
-									`/customer-dashboard#/order/${orderId}/download`
-								)
-							);
-						}
-					}}
-					showContinueButton={true}
-				/>
+					<ClayButton
+						className="next-step-page-footer-button-continue"
+						displayType="primary"
+						onClick={() => {
+							const url =
+								paymentStatus === PaymentStatus.PAID
+									? `${getSiteURL()}/customer-dashboard#/order/${orderId}`
+									: getSiteURL();
+							Liferay.Util.navigate(url);
+						}}
+					>
+						{i18n.translate(
+							paymentStatus === PaymentStatus.PAID
+								? 'continue-to-install'
+								: 'go-to-the-catalog'
+						)}
+					</ClayButton>
+				</div>
 
 				{paymentStatus === PaymentStatus.FAILED && (
-					<div className="d-flex justify-content-end">
+					<div className="d-flex justify-content-center">
 						<a href="#">
 							<ins>Contact Support</ins>
 						</a>
@@ -256,9 +223,9 @@ export function NextSteps() {
 				)}
 
 				{(paymentStatus === PaymentStatus.PAID || isTrial) && (
-					<div className="d-flex justify-content-end">
-						<a href="#">
-							<ins>Learn more about App Configuration</ins>
+					<div className="d-flex justify-content-center next-step-page-learn-more">
+						<a href="https://learn.liferay.com/w/dxp/development/marketplace">
+							Learn more about App Configuration
 						</a>
 					</div>
 				)}
