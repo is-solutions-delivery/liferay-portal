@@ -10,6 +10,7 @@
 </#if>
 
 <#assign entriesMap = {} />
+
 <#list entries as entry>
 	<#assign entriesMap = entriesMap + {(entry.classPK) : entry.getViewURL()} />
 </#list>
@@ -27,7 +28,7 @@
 	</#list>
 </#if>
 
-<#function getValue contentString start end>
+<#function getValue contentString end start>
 	<#assign startIndex = contentString?index_of(start) />
 
 	<#if startIndex == -1>
@@ -53,7 +54,7 @@
 	<#assign
 		contentString = search.objectEntryContent?string
 
-		announcementImageTypeId = getValue(contentString, "r_p2S3AnnouncementImageType_c_p2s3AnnouncementImageTypeId:", ", title:")
+		announcementImageTypeId = getValue(contentString, ", title:", "r_p2S3AnnouncementImageType_c_p2s3AnnouncementImageTypeId:")
 	/>
 
 	<div class="announcement-main-container">
@@ -81,12 +82,10 @@
 			</div>
 
 			<div class="announcement-description">
-				<#assign description = getValue(contentString, "description:", ", image:") />
+				<#assign description = getValue(contentString, ", image:", "description:") />
 
 				<#if description?has_content>
 					<span>${description}</span>
-				<#else>
-					<span></span>
 				</#if>
 			</div>
 
