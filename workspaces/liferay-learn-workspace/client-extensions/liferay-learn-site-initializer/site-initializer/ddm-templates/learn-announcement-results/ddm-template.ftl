@@ -42,7 +42,11 @@
 	/>
 
 	<#if endIndex == -1>
-		<#return "" />
+		<#assign endIndex = substring?index_of(",") />
+
+		<#if endIndex == -1>
+			<#return substring?trim />
+		</#if>
 	</#if>
 
 	<#return substring?substring(0, endIndex)?trim />
@@ -69,7 +73,9 @@
 				</div>
 
 				<div class="announcement-title">
-					<span>${search.objectEntryTitle!""}</span>
+					<span>
+						${(search.objectEntryTitle!"")?replace("null", "")}
+					</span>
 				</div>
 
 				<div class="announcement-date-created">
