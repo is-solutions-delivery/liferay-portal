@@ -9,6 +9,7 @@ import com.liferay.commerce.media.CommerceMediaResolver;
 import com.liferay.commerce.model.CommerceAddress;
 import com.liferay.commerce.model.CommerceOrder;
 import com.liferay.commerce.model.CommerceOrderItem;
+import com.liferay.commerce.product.helper.CPInstanceHelper;
 import com.liferay.commerce.product.model.CPInstance;
 import com.liferay.commerce.product.model.CPInstanceUnitOfMeasure;
 import com.liferay.commerce.product.model.CPMeasurementUnit;
@@ -163,6 +164,10 @@ public class OrderItemDTOConverter
 					() -> _getSkuExternalReferenceCode(cpInstance));
 				setSkuId(() -> _getSkuId(cpInstance));
 				setSubscription(commerceOrderItem::isSubscription);
+				setThumbnail(
+					() -> _cpInstanceHelper.getCPInstanceThumbnailSrc(
+						commerceOrder.getCommerceAccountId(),
+						commerceOrderItem.getCPInstanceId()));
 				setUnitOfMeasure(
 					() -> {
 						if (commerceOrderItem.getCPMeasurementUnitId() <= 0) {
@@ -391,6 +396,8 @@ public class OrderItemDTOConverter
 	@Reference
 	private CommerceVirtualOrderItemService _commerceVirtualOrderItemService;
 
+	@Reference
+	private CPInstanceHelper _cpInstanceHelper;
 	@Reference
 	private CPInstanceLocalService _cpInstanceLocalService;
 

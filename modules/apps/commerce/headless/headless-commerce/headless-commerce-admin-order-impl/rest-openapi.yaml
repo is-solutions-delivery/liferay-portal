@@ -786,6 +786,9 @@ components:
                 subscription:
                     example: true
                     type: boolean
+                thumbnail:
+                    readOnly: true
+                    type: string
                 unitOfMeasure:
                     example: pc
                     type: string
