@@ -399,6 +399,7 @@ public class OrderItemDTOConverter
 
 	@Reference
 	private CPInstanceHelper _cpInstanceHelper;
+
 	@Reference
 	private CPInstanceLocalService _cpInstanceLocalService;
 
