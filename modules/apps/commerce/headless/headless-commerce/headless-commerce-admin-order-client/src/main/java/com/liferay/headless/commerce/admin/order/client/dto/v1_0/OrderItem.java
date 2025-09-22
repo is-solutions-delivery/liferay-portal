@@ -651,6 +651,27 @@ public class OrderItem implements Cloneable, Serializable {
 
 	protected String printedNote;
 
+	public Long getProductId() {
+		return productId;
+	}
+
+	public void setProductId(Long productId) {
+		this.productId = productId;
+	}
+
+	public void setProductId(
+		UnsafeSupplier<Long, Exception> productIdUnsafeSupplier) {
+
+		try {
+			productId = productIdUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected Long productId;
+
 	public BigDecimal getPromoPrice() {
 		return promoPrice;
 	}
@@ -997,6 +1018,27 @@ public class OrderItem implements Cloneable, Serializable {
 	}
 
 	protected Boolean subscription;
+
+	public String getThumbnail() {
+		return thumbnail;
+	}
+
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
+	}
+
+	public void setThumbnail(
+		UnsafeSupplier<String, Exception> thumbnailUnsafeSupplier) {
+
+		try {
+			thumbnail = thumbnailUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected String thumbnail;
 
 	public String getUnitOfMeasure() {
 		return unitOfMeasure;

@@ -1249,6 +1249,47 @@ public class OrderItem implements Serializable {
 	@JsonIgnore
 	private Supplier<String> _printedNoteSupplier;
 
+	@io.swagger.v3.oas.annotations.media.Schema
+	public Long getProductId() {
+		if (_productIdSupplier != null) {
+			productId = _productIdSupplier.get();
+
+			_productIdSupplier = null;
+		}
+
+		return productId;
+	}
+
+	public void setProductId(Long productId) {
+		this.productId = productId;
+
+		_productIdSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setProductId(
+		UnsafeSupplier<Long, Exception> productIdUnsafeSupplier) {
+
+		_productIdSupplier = () -> {
+			try {
+				return productIdUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected Long productId;
+
+	@JsonIgnore
+	private Supplier<Long> _productIdSupplier;
+
 	@DecimalMin("0")
 	@io.swagger.v3.oas.annotations.media.Schema(example = "101")
 	@Valid
@@ -1925,6 +1966,47 @@ public class OrderItem implements Serializable {
 	@JsonIgnore
 	private Supplier<Boolean> _subscriptionSupplier;
 
+	@io.swagger.v3.oas.annotations.media.Schema
+	public String getThumbnail() {
+		if (_thumbnailSupplier != null) {
+			thumbnail = _thumbnailSupplier.get();
+
+			_thumbnailSupplier = null;
+		}
+
+		return thumbnail;
+	}
+
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
+
+		_thumbnailSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setThumbnail(
+		UnsafeSupplier<String, Exception> thumbnailUnsafeSupplier) {
+
+		_thumbnailSupplier = () -> {
+			try {
+				return thumbnailUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	protected String thumbnail;
+
+	@JsonIgnore
+	private Supplier<String> _thumbnailSupplier;
+
 	@io.swagger.v3.oas.annotations.media.Schema(example = "pc")
 	public String getUnitOfMeasure() {
 		if (_unitOfMeasureSupplier != null) {
@@ -2574,6 +2656,18 @@ public class OrderItem implements Serializable {
 			sb.append("\"");
 		}
 
+		Long productId = getProductId();
+
+		if (productId != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"productId\": ");
+
+			sb.append(productId);
+		}
+
 		BigDecimal promoPrice = getPromoPrice();
 
 		if (promoPrice != null) {
@@ -2790,6 +2884,22 @@ public class OrderItem implements Serializable {
 			sb.append("\"subscription\": ");
 
 			sb.append(subscription);
+		}
+
+		String thumbnail = getThumbnail();
+
+		if (thumbnail != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"thumbnail\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(thumbnail));
+
+			sb.append("\"");
 		}
 
 		String unitOfMeasure = getUnitOfMeasure();
