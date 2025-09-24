@@ -59,7 +59,7 @@ const fetchAndPlayAudio = async (voiceType) => {
 	try {
 		textToSpeechPlayerContent.classList.add('hide');
 		loadingSpinner.classList.remove('hide');
-		
+
 		const fileName = `lesson-${lessonId}-${voiceType}.mp3`;
 
 		const folderId = await getFolderId();
@@ -110,18 +110,14 @@ const formatZero = (n) => (n < 10 ? '0' + n : n);
 const getFolderId = () => {
 	if (!folderIdResponse) {
 		folderIdResponse = Liferay.Util.fetch(
-				`/o/headless-delivery/v1.0/sites/${companyId}/documents-folder/by-external-reference-code/AUDIO-LESSONS`
-			)
-				.then((response) => response.json());
+			`/o/headless-delivery/v1.0/sites/${companyId}/documents-folder/by-external-reference-code/AUDIO-LESSONS`
+		).then((response) => response.json());
 	}
+
 	return folderIdResponse;
 };
 
-const saveAudioToTTSCache = async ({
-	base64Audio,
-	lessonId,
-	voiceName,
-}) => {
+const saveAudioToTTSCache = async ({base64Audio, lessonId, voiceName}) => {
 	try {
 		const blob = base64ToBlob(base64Audio);
 		const formData = new FormData();
@@ -145,7 +141,6 @@ const saveAudioToTTSCache = async ({
 			const errorText = await uploadResponse.text();
 
 			if (uploadResponse.status === 409) {
-
 				return;
 			}
 			throw new Error(errorText);
@@ -241,7 +236,9 @@ speechVoiceItems.forEach((item) => {
 		voiceType = item.getAttribute('value');
 		speechVoiceItems.forEach((li) => li.removeAttribute('selected'));
 		item.setAttribute('selected', '');
-		audioPlayer.playbackRate = parseFloat(defaultAudioSpeedItem.getAttribute('value'));
+		audioPlayer.playbackRate = parseFloat(
+			defaultAudioSpeedItem.getAttribute('value')
+		);
 		audioSpeedSelectItems.forEach((li) => li.removeAttribute('selected'));
 		defaultAudioSpeedItem.setAttribute('selected', '');
 		fetchAndPlayAudio(voiceType);
