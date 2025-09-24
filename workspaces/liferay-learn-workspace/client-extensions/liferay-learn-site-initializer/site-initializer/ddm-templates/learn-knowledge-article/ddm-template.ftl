@@ -77,13 +77,9 @@
 								</div>
 
 								<div class="col paragraph">
-									<p class="disclaimer-how-to d-none">
-										<@liferay_ui["message"] key="knowledge-article-header-disclaimer-how-to" />
-									</p>
+									<p class="disclaimer-how-to d-none">${languageUtil.get(locale, "knowledge-article-header-disclaimer-how-to", "How To articles are not official guidelines or officially supported documentation. They are community-contributed content and may not always reflect the latest updates to Liferay DXP. We welcome your feedback to improve How To articles!")}</p>
 
-									<p class="disclaimer-default d-none">
-										<@liferay_ui["message"] key="knowledge-article-header-disclaimer" />
-									</p>
+									<p class="disclaimer-default d-none">${languageUtil.get(locale, "knowledge-article-header-disclaimer", "While we make every effort to ensure this Knowledge Base is accurate, it may not always reflect the most recent updates or official guidelines.We appreciate your understanding and encourage you to reach out with any feedback or concerns.")}</p>
 								</div>
 							</div>
 						</div>
