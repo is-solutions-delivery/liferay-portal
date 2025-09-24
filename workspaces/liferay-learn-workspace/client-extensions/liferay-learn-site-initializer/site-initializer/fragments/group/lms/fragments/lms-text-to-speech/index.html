@@ -1,0 +1,66 @@
+<div class="text-to-speech-container">
+	<div class="hide loading-spinner" id="loadingSpinner">
+		<div class="loader-container" id="myLoader">
+			<div class="spinner"></div>
+
+			<p class="loader-text">Loading Audio...</p>
+		</div>
+	</div>
+
+	<div class="text-to-speech-player-content">
+		<audio class="audio-player">
+			<source class="audio-source" type="audio/mp3" />
+			Your browser does not support the audio element.
+		</audio>
+
+		<div class="listen-to-lesson">
+			<button class="play-pause-button"><i class='caret-right'></i></button>
+
+			<span class="listen-to-lesson-text">Listen to Lesson</span>
+			<span class="duration"></span>
+		</div>
+
+		<div class="audio-player-container hide">
+			<div class="player-content">
+				<button class="play-pause-button">
+					<i class="caret-right play-pause-caret"></i>
+				</button>
+
+				<input class="progress-bar-range" id="progressBar" max="100" min="0" step="1" type="range" value="0" />
+
+				<div class="time">
+					<span class="current-time">0:00</span>
+					<span class="duration"></span>
+				</div>
+
+				<div class="controls">
+					<div>
+						<button class="rate-icon-button toggle-speed-select">
+							<span></span>
+						</button>
+
+						<ul class="audio-speed-select hide">
+							<li value="0.5">Speed 0.5x</li>
+							<li value="0.75">Speed 0.75x</li>
+							<li value="1" selected>Speed 1x</li>
+							<li value="1.25">Speed 1.25x</li>
+							<li value="1.5">Speed 1.5x</li>
+							<li value="2">Speed 2x</li>
+						</ul>
+					</div>
+
+					<div>
+						<button class="speech-voice-icon-button toggle-speech-voice-select">
+							<span></span>
+						</button>
+
+						<ul class="hide speech-voice">
+							<li value="Charon" selected>Brian</li>
+							<li value="Aoede">Caris</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
