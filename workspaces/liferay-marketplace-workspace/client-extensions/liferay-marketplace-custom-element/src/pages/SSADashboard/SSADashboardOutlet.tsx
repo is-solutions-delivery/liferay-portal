@@ -30,7 +30,9 @@ const SSADashboardOutlet = () => {
 	const {data: inProgressTrialResponse = {totalCount: 0}} = usePlacedOrders({
 		accountId: ssaAccount?.id as number,
 		filter: new SearchBuilder()
-			.eq('author', myUserAccount?.name)
+			.eq('authorId', myUserAccount?.id, {
+				unquote: true,
+			})
 			.and()
 			.eq('orderTypeExternalReferenceCode', OrderTypes.SSA_SAAS)
 			.and()

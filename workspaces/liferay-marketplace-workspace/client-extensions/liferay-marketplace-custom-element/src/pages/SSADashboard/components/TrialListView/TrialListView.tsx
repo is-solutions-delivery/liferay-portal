@@ -66,7 +66,7 @@ export default function TrialListView({
 	const {ssaAccount, ssaTrialExtend} = useSSADashboardOutlet();
 	const {myUserAccount} = useMarketplaceContext();
 
-	const author = myUserAccount?.name;
+	const authorId = myUserAccount?.id;
 
 	const searchBuilder = useMemo(() => {
 		const searchBuilder = new SearchBuilder().eq(
@@ -75,11 +75,13 @@ export default function TrialListView({
 		);
 
 		if (authorOnlyTrials) {
-			searchBuilder.and().eq('author', author);
+			searchBuilder.and().eq('authorId', authorId, {
+				unquote: true,
+			});
 		}
 
 		return searchBuilder;
-	}, [author, authorOnlyTrials]);
+	}, [authorId, authorOnlyTrials]);
 
 	return (
 		<>
