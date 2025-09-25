@@ -14,7 +14,7 @@ liferay-adyen-commerce-payment-integration:
         webhookPassword:
         webhookUsername:
     type: commercePaymentIntegration
-liferay-adyen-commerce-payment-integration-oahs:
+liferay-adyen-commerce-payment-integration-oauth-application-headless-server:
     .serviceAddress: localhost:58081
     .serviceScheme: http
     name: Liferay Adyen Commerce Payment Integration OAuth Application Headless Server

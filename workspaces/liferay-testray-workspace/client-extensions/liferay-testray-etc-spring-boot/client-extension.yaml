@@ -1,6 +1,6 @@
 assemble:
     -   fromTask: bootJar
-liferay-testray-etc-spring-boot-oahs:
+liferay-testray-etc-spring-boot-oauth-application-headless-server:
     .serviceAddress: localhost:58081
     .serviceScheme: http
     name: Liferay Testray Etc Spring Boot OAuth Application Headless Server

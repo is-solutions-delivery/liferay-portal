@@ -20,13 +20,13 @@ public abstract class BaseDALO extends BaseRestController implements DALO {
 	@Override
 	public String getAuthorization() {
 		return _liferayOAuth2AccessTokenManager.getAuthorization(
-			"liferay-jethr0-etc-spring-boot-oahs");
+			"liferay-jethr0-etc-spring-boot-oauth-application-headless-server");
 	}
 
 	@Override
 	public void refresh() {
 		_liferayOAuth2AccessTokenManager.refresh(
-			"liferay-jethr0-etc-spring-boot-oahs");
+			"liferay-jethr0-etc-spring-boot-oauth-application-headless-server");
 	}
 
 	@Autowired

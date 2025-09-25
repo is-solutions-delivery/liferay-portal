@@ -10,7 +10,7 @@ liferay-marketplace-etc-spring-boot-marketplace-product-submit:
     oAuth2ApplicationExternalReferenceCode: liferay-marketplace-etc-spring-boot-oaua
     resourcePath: /marketplace/product/submit
     type: objectAction
-liferay-marketplace-etc-spring-boot-oahs:
+liferay-marketplace-etc-spring-boot-oauth-application-headless-server:
     .serviceAddress: localhost:58081
     .serviceScheme: http
     name: Liferay Marketplace Etc Spring Boot OAuth Application Headless Server

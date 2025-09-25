@@ -3,9 +3,9 @@ assemble:
         into: batch
 liferay-tryitnow-batch:
     name: Liferay Try It Now Batch
-    oAuthApplicationHeadlessServer: liferay-tryitnow-batch-oahs
+    oAuthApplicationHeadlessServer: liferay-tryitnow-batch-oauth-application-headless-server
     type: batch
-liferay-tryitnow-batch-oahs:
+liferay-tryitnow-batch-oauth-application-headless-server:
     .serviceAddress: localhost:8080
     .serviceScheme: http
     name: Liferay Try It Now Batch OAuth Application Headless Server

@@ -12,7 +12,7 @@ liferay-paypal-commerce-payment-integration:
         mode:
         webhookId:
     type: commercePaymentIntegration
-liferay-paypal-commerce-payment-integration-oahs:
+liferay-paypal-commerce-payment-integration-oauth-application-headless-server:
     .serviceAddress: localhost:58082
     .serviceScheme: http
     name: Liferay PayPal Commerce Payment Integration OAuth Application Headless Server

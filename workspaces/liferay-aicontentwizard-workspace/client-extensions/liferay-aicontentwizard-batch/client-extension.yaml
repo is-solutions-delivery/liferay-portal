@@ -3,9 +3,9 @@ assemble:
         into: batch
 liferay-aicontentwizard-batch:
     name: Liferay AI Content Wizard Batch
-    oAuthApplicationHeadlessServer: liferay-aicontentwizard-batch-oahs
+    oAuthApplicationHeadlessServer: liferay-aicontentwizard-batch-oauth-application-headless-server
     type: batch
-liferay-aicontentwizard-batch-oahs:
+liferay-aicontentwizard-batch-oauth-application-headless-server:
     .serviceAddress: localhost:8080
     .serviceScheme: http
     name: Liferay AI Content Wizard Batch Headless Server

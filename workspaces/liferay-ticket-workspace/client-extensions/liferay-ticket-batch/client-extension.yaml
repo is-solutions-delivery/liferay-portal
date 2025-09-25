@@ -3,9 +3,9 @@ assemble:
         into: batch
 liferay-ticket-batch:
     name: Liferay Ticket Batch
-    oAuthApplicationHeadlessServer: liferay-ticket-batch-oahs
+    oAuthApplicationHeadlessServer: liferay-ticket-batch-oauth-application-headless-server
     type: batch
-liferay-ticket-batch-oahs:
+liferay-ticket-batch-oauth-application-headless-server:
     .serviceAddress: localhost:8080
     .serviceScheme: http
     name: Liferay Ticket Batch OAuth Application Headless Server

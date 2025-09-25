@@ -1,10 +1,10 @@
 liferay-learn-site-initializer:
     name: Liferay Learn Site Initializer
-    oAuthApplicationHeadlessServer: liferay-learn-site-initializer-oahs
+    oAuthApplicationHeadlessServer: liferay-learn-site-initializer-oauth-application-headless-server
     siteExternalReferenceCode: LIFERAY_LEARN
     siteName: Liferay Learn
     type: siteInitializer
-liferay-learn-site-initializer-oahs:
+liferay-learn-site-initializer-oauth-application-headless-server:
     .serviceAddress: localhost:8080
     .serviceScheme: http
     name: Liferay Learn Site Initializer OAuth Application Headless Server

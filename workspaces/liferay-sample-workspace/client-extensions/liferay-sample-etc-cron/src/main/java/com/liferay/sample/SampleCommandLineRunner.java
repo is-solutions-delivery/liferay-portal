@@ -45,7 +45,7 @@ public class SampleCommandLineRunner
 
 		try {
 			_countMessageBoardThreads(
-				"liferay-sample-etc-cron-oahs",
+				"liferay-sample-etc-cron-oauth-application-headless-server",
 				new URL(_lxcDXPServerProtocol + "://" + _lxcDXPMainDomain));
 		}
 		catch (Exception exception) {
@@ -149,7 +149,7 @@ public class SampleCommandLineRunner
 
 	private String _getAuthorization() {
 		return _liferayOAuth2AccessTokenManager.getAuthorization(
-			"liferay-sample-etc-cron-oahs");
+			"liferay-sample-etc-cron-oauth-application-headless-server");
 	}
 
 	private String _getWebClientBaseURL() {

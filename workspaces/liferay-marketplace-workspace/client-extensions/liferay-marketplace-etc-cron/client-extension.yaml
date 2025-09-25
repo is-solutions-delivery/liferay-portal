@@ -1,6 +1,6 @@
 assemble:
     -   fromTask: bootJar
-liferay-marketplace-etc-cron-oahs:
+liferay-marketplace-etc-cron-oauth-application-headless-server:
     .serviceAddress: localhost:8080
     .serviceScheme: http
     name: Liferay Marketplace Etc Cron OAuth Application Headless Server
