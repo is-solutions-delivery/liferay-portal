@@ -120,7 +120,7 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 				get(
 					_getAuthorization(),
 					UriComponentsBuilder.fromUriString(
-						"/o/c/quizes/scopes/" + _siteGroupId
+						"/o/c/quizes/"
 					).queryParam(
 						"fields",
 						"id,r_quiz_c_module,r_quiz_c_module.r_module_c_courseId"
@@ -177,7 +177,7 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 					get(
 						_getAuthorization(),
 						UriComponentsBuilder.fromUriString(
-							"/o/c/enrollments/scopes/" + _siteGroupId
+							"/o/c/enrollments/"
 						).queryParam(
 							"nestedFields", "course,user"
 						).queryParam(
@@ -292,8 +292,4 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 
 	@Autowired
 	private LiferayOAuth2AccessTokenManager _liferayOAuth2AccessTokenManager;
-
-	@Value("${liferay.learn.dxp.site.group.id}")
-	private long _siteGroupId;
-
 }
