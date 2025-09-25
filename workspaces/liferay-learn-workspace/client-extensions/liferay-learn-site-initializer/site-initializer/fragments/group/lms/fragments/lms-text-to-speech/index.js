@@ -38,11 +38,6 @@ const url =
 
 let folderIdResponse = null;
 
-let voiceType =
-	document
-		.querySelector('.speech-voice li.selected')
-		?.getAttribute('value') || 'Charon';
-
 const base64ToBlob = (base64, mimeType = 'audio/mpeg') => {
 	const byteCharacters = atob(base64);
 
@@ -81,9 +76,11 @@ const fetchAndPlayAudio = async (voiceType) => {
 			}
 		}
 
-		const base64Audio = await Liferay.Util.fetch(
+		const response = await Liferay.Util.fetch(
 			`${url}/learn/lesson/${lessonId}/audio/base64?languageCode=en-US&voiceName=en-US-Chirp3-HD-${voiceType}`
-		).text();
+		);
+
+		const base64Audio = await response.text();
 
 		if (base64Audio) {
 			audioSource.src = 'data:audio/mp3;base64,' + base64Audio;
@@ -233,7 +230,7 @@ audioSpeedSelectItems.forEach((item) => {
 });
 speechVoiceItems.forEach((item) => {
 	item.addEventListener('click', () => {
-		voiceType = item.getAttribute('value');
+		const speechVoiceValue = item.getAttribute('value');
 		speechVoiceItems.forEach((li) => li.removeAttribute('selected'));
 		item.setAttribute('selected', '');
 		audioPlayer.playbackRate = parseFloat(
@@ -241,7 +238,7 @@ speechVoiceItems.forEach((item) => {
 		);
 		audioSpeedSelectItems.forEach((li) => li.removeAttribute('selected'));
 		defaultAudioSpeedItem.setAttribute('selected', '');
-		fetchAndPlayAudio(voiceType);
+		fetchAndPlayAudio(speechVoiceValue);
 		audioPlayer.pause();
 		playPauseCaret.classList.remove('caret-pause');
 		playPauseCaret.classList.add('caret-right');
@@ -278,6 +275,11 @@ progressBarRange.onclick = (event) => {
 	audioPlayer.currentTime =
 		(event.offsetX / progressBarRange.offsetWidth) * audioPlayer.duration;
 };
-fetchAndPlayAudio(voiceType);
+
+fetchAndPlayAudio(
+	document
+		.querySelector('.speech-voice li.selected')
+		?.getAttribute('value') || 'Charon'
+);
 toggleSelect(toggleSpeedSelect, audioSpeedSelect);
 toggleSelect(toggleSpeechVoiceSelect, speechVoice);
