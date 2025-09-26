@@ -28,6 +28,11 @@ import java.util.Objects;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -64,13 +69,13 @@ public class LearnRestController extends BaseRestController {
 					UriComponentsBuilder.fromPath(
 						"/o/c/lessons/" + lessonId
 					).queryParam(
-						"fields", "contentRawText"
+						"fields", "content"
 					).build(
 					).toUri()));
 
-			String contentRawText = jsonObject.getString("contentRawText");
+			String content = jsonObject.getString("content");
 
-			if (Validator.isNull(contentRawText)) {
+			if (Validator.isNull(content)) {
 				return ResponseEntity.status(
 					HttpStatus.NOT_FOUND
 				).body(
@@ -82,7 +87,7 @@ public class LearnRestController extends BaseRestController {
 				new ByteArrayOutputStream();
 
 			List<String> ssmls = _splitSsml(
-				contentRawText.replaceAll("\\bLiferay\\b", "Life-ray"), 5000);
+				content.replaceAll("\\bLiferay\\b", "Life-ray"), 5000);
 
 			for (String ssml : ssmls) {
 				String response = post(
@@ -459,7 +464,6 @@ public class LearnRestController extends BaseRestController {
 
 	private List<String> _splitSsml(String ssml, int maxLength) {
 		List<String> parts = new ArrayList<>();
-
 		StringBundler sb = new StringBundler();
 
 		String ssmlContent = ssml.replaceFirst(
@@ -468,7 +472,24 @@ public class LearnRestController extends BaseRestController {
 			"</speak>$", ""
 		).trim();
 
-		String[] sentences = ssmlContent.split("(?<=[.!?])\\s+");
+		Document document = Jsoup.parse(ssmlContent);
+
+		Elements elements = document.select("li");
+
+		for (Element element : elements) {
+			String text = element.text(
+			).trim();
+
+			if (!text.matches(".*[.!?;:]$")) {
+				text = text + ".";
+			}
+
+			element.text(text);
+		}
+
+		String cleanedText = document.text();
+
+		String[] sentences = cleanedText.split("(?<=[.!?])\\s+");
 
 		for (String sentence : sentences) {
 			if ((sb.length() + sentence.length()) > maxLength) {
