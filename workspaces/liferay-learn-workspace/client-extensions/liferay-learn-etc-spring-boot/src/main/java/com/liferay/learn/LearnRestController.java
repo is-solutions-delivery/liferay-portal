@@ -13,6 +13,7 @@ import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.ByteArrayInputStream;
@@ -24,14 +25,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -251,9 +249,23 @@ public class LearnRestController extends BaseRestController {
 		return ResponseEntity.ok(quizResultMap);
 	}
 
+	private String _decodeBasicHtmlEntities(String string) {
+		if (string == null) {
+			return "";
+		}
+
+		return StringUtil.replace(
+			string,
+			new String[] {
+				"&nbsp;", "&NBSP;", "\u00A0", "&amp;", "&lt;", "&gt;", "&quot;",
+				"&#39;"
+			},
+			new String[] {" ", " ", " ", "&", "<", ">", "\"", "'"});
+	}
+
 	private String _getAuthorization() {
 		return _liferayOAuth2AccessTokenManager.getAuthorization(
-			"liferay-learn-etc-spring-boot-oahs");
+			"liferay-learn-etc-spring-boot-oauth-application-headless-server");
 	}
 
 	private String _getGoogleAccessToken() throws Exception {
@@ -472,24 +484,60 @@ public class LearnRestController extends BaseRestController {
 			"</speak>$", ""
 		).trim();
 
-		Document document = Jsoup.parse(ssmlContent);
+		ssmlContent = _decodeBasicHtmlEntities(ssmlContent);
 
-		Elements elements = document.select("li");
+		Matcher matcher = _pattern.matcher(ssmlContent);
 
-		for (Element element : elements) {
-			String text = element.text(
+		StringBuffer buffer = new StringBuffer();
+
+		while (matcher.find()) {
+			String openTag = matcher.group(1);
+			String inner = matcher.group(
+				2
+			).trim();
+			String closeTag = matcher.group(3);
+
+			String visible = inner.replaceAll(
+				"(?s)<[^>]+>", " "
+			).replaceAll(
+				"\\s+", " "
 			).trim();
 
-			if (!text.matches(".*[.!?;:]$")) {
-				text = text + ".";
+			if (!visible.matches(".*[.!?;:]$")) {
+				int lastCloseTagIndex = inner.lastIndexOf("</");
+
+				if (lastCloseTagIndex != -1) {
+					String before = inner.substring(
+						0, lastCloseTagIndex
+					).replaceAll(
+						"\\s+$", ""
+					);
+					String after = inner.substring(lastCloseTagIndex);
+
+					inner = StringBundler.concat(before, ".", after);
+				}
+				else {
+					inner = inner + ".";
+				}
 			}
 
-			element.text(text);
+			matcher.appendReplacement(
+				buffer,
+				Matcher.quoteReplacement(
+					StringBundler.concat(openTag, inner, closeTag)));
 		}
 
-		String cleanedText = document.text();
+		matcher.appendTail(buffer);
 
-		String[] sentences = cleanedText.split("(?<=[.!?])\\s+");
+		ssmlContent = buffer.toString();
+
+		String textContent = ssmlContent.replaceAll("(?s)<[^>]+>", " ");
+
+		textContent = textContent.replaceAll(
+			"\\s+", " "
+		).trim();
+
+		String[] sentences = textContent.split("(?<=[.!?])\\s+");
 
 		for (String sentence : sentences) {
 			if ((sb.length() + sentence.length()) > maxLength) {
@@ -534,6 +582,9 @@ public class LearnRestController extends BaseRestController {
 			"title", objectDefinitionMap.get("pluralLabel")
 		).build();
 	}
+
+	private static final Pattern _pattern = Pattern.compile(
+		"(?i)(<li[^>]*>)(.*?)(</li>)", Pattern.DOTALL);
 
 	@Value("${liferay.learn.google.credentials}")
 	private String _googleCredentials;
