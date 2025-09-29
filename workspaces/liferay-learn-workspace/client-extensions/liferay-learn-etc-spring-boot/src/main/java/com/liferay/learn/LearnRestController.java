@@ -488,48 +488,48 @@ public class LearnRestController extends BaseRestController {
 
 		Matcher matcher = _pattern.matcher(ssmlContent);
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuffer stringBuffer = new StringBuffer();
 
 		while (matcher.find()) {
 			String openTag = matcher.group(1);
-			String inner = matcher.group(
+			String tagContent = matcher.group(
 				2
 			).trim();
 			String closeTag = matcher.group(3);
 
-			String visible = inner.replaceAll(
+			String visibleText = tagContent.replaceAll(
 				"(?s)<[^>]+>", " "
 			).replaceAll(
 				"\\s+", " "
 			).trim();
 
-			if (!visible.matches(".*[.!?;:]$")) {
-				int lastCloseTagIndex = inner.lastIndexOf("</");
+			if (!visibleText.matches(".*[.!?;:]$")) {
+				int lastCloseTagIndex = tagContent.lastIndexOf("</");
 
 				if (lastCloseTagIndex != -1) {
-					String before = inner.substring(
+					String contentBeforeClosingTag = tagContent.substring(
 						0, lastCloseTagIndex
 					).replaceAll(
 						"\\s+$", ""
 					);
-					String after = inner.substring(lastCloseTagIndex);
+					String closingTagAndContentAfter = tagContent.substring(lastCloseTagIndex);
 
-					inner = StringBundler.concat(before, ".", after);
+					tagContent = StringBundler.concat(contentBeforeClosingTag, ".", closingTagAndContentAfter);
 				}
 				else {
-					inner = inner + ".";
+					tagContent = tagContent + ".";
 				}
 			}
 
 			matcher.appendReplacement(
-				buffer,
+				stringBuffer,
 				Matcher.quoteReplacement(
-					StringBundler.concat(openTag, inner, closeTag)));
+					StringBundler.concat(openTag, tagContent, closeTag)));
 		}
 
-		matcher.appendTail(buffer);
+		matcher.appendTail(stringBuffer);
 
-		ssmlContent = buffer.toString();
+		ssmlContent = stringBuffer.toString();
 
 		String textContent = ssmlContent.replaceAll("(?s)<[^>]+>", " ");
 
