@@ -10,9 +10,13 @@ package com.liferay.marketplace.constants;
  */
 public class MarketplaceConstants {
 
+	public static final String ORDER_PAYMENT_METHOD_MONEY_ORDER = "money-order";
+
 	public static final int ORDER_PAYMENT_STATUS_COMPLETED = 0;
 
 	public static final int ORDER_PAYMENT_STATUS_NOT_REQUIRED = 23;
+
+	public static final int ORDER_PAYMENT_STATUS_PENDING = 1;
 
 	public static final int ORDER_STATUS_CANCELLED = 8;
 

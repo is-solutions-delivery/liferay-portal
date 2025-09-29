@@ -152,6 +152,25 @@ public class MarketplaceRestController extends BaseRestController {
 			(paymentStatus !=
 				MarketplaceConstants.ORDER_PAYMENT_STATUS_NOT_REQUIRED)) {
 
+			if (Objects.equals(
+					commerceOrderJSONObject.getString("paymentMethod"),
+					MarketplaceConstants.ORDER_PAYMENT_METHOD_MONEY_ORDER) &&
+				(paymentStatus ==
+					MarketplaceConstants.ORDER_PAYMENT_STATUS_PENDING)) {
+
+				if (_log.isInfoEnabled()) {
+					_log.info("Sending INVOICE EMAIL...");
+				}
+
+				_marketplaceService.postNotificationQueueEntry(
+						"finance@liferay.com",
+						"MARKETPLACE-INVOICE-ORDER-SUBMIT-TEMPLATE",
+						new HashMapBuilder<String, Object>().put(
+								"[%ORDER_ID%]",
+								commerceOrderJSONObject.getString("id")
+						).build());
+			}
+
 			if (_log.isInfoEnabled()) {
 				_log.info(
 					"Skipping POST product purchase for order " +
