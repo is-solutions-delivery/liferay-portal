@@ -103,7 +103,7 @@ const OrderSummary = () => {
 			});
 		}
 
-		if (paymentStore.type === PaymentMethodType.INVOICE) {
+		if (paymentStore.type === PaymentMethodType.INVOICE && cart.summary.total === 0) {
 			return handlePurchase(ProductPurchaseApp, undefined);
 		}
 
@@ -111,6 +111,7 @@ const OrderSummary = () => {
 			...cart,
 			billingAddress: paymentStore.billingAddress,
 			cartItems,
+			paymentMethod: paymentStore.type === PaymentMethodType.PAY_NOW ? 'paypal-integration' : 'money-order',
 			shippingAddress: paymentStore.billingAddress,
 		});
 	};
