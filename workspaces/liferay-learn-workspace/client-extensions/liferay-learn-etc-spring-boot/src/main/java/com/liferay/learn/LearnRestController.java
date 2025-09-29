@@ -512,9 +512,12 @@ public class LearnRestController extends BaseRestController {
 					).replaceAll(
 						"\\s+$", ""
 					);
-					String closingTagAndContentAfter = tagContent.substring(lastCloseTagIndex);
+					String closingTagAndContentAfter = tagContent.substring(
+						lastCloseTagIndex);
 
-					tagContent = StringBundler.concat(contentBeforeClosingTag, ".", closingTagAndContentAfter);
+					tagContent = StringBundler.concat(
+						contentBeforeClosingTag, ".",
+						closingTagAndContentAfter);
 				}
 				else {
 					tagContent = tagContent + ".";
