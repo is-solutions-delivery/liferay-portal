@@ -3,14 +3,14 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {ComponentProps, ReactNode, useEffect} from 'react';
+import { ComponentProps, ReactNode, useEffect } from 'react';
 
 import AccountSelection from '../../../components/Checkout/AccountSelection';
 import ProductPurchase from '../../../components/ProductPurchase';
 import ProductPurchaseFooter from '../../../components/ProductPurchase/Footer';
-import {useMarketplaceContext} from '../../../context/MarketplaceContext';
+import { useMarketplaceContext } from '../../../context/MarketplaceContext';
 import i18n from '../../../i18n';
-import {useProductPurchaseOutletContext} from '../ProductPurchaseOutlet';
+import { useProductPurchaseOutletContext } from '../ProductPurchaseOutlet';
 
 type ProductPurchaseAccountSelectionProps = {
 	children?: ReactNode;
@@ -19,12 +19,12 @@ type ProductPurchaseAccountSelectionProps = {
 
 const ProductPurchaseAccountSelection: React.FC<
 	ProductPurchaseAccountSelectionProps
-> = ({children, footerProps}) => {
-	const {myUserAccount} = useMarketplaceContext();
+> = ({ children, footerProps }) => {
+	const { myUserAccount } = useMarketplaceContext();
 
 	const {
 		accounts,
-		actions: {nextStep},
+		actions: { nextStep },
 		productTypeRoute,
 		selectedAccount,
 		setSelectedAccount,
@@ -48,7 +48,7 @@ const ProductPurchaseAccountSelection: React.FC<
 	return (
 		<ProductPurchase.Shell
 			footerProps={{
-				backButtonProps: {className: 'd-none'},
+				backButtonProps: { className: 'd-none' },
 				continueButtonProps: {
 					disabled: !selectedAccount,
 					onClick: nextStep,

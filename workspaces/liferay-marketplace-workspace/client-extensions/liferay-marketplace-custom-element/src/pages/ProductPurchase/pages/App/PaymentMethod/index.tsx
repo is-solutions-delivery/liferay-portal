@@ -12,7 +12,9 @@ import ProductPurchase from '../../../../../components/ProductPurchase';
 import useAccountAddresses from '../../../../../hooks/useAccountAddresses';
 import i18n from '../../../../../i18n';
 import zodSchema from '../../../../../schema/zod';
+import marketplaceOAuth2 from '../../../../../services/oauth/Marketplace';
 import HeadlessAdminUser from '../../../../../services/rest/HeadlessAdminUser';
+import HeadlessCommerceDeliveryCart from '../../../../../services/rest/HeadlessCommerceDeliveryCart';
 import {useProductPurchaseOutletContext} from '../../../ProductPurchaseOutlet';
 import ProductPurchaseApp from '../../../services/ProductPurchaseApp';
 import {cartStore} from '../../../store';
@@ -22,8 +24,6 @@ import BillingAddress from './BillingAddress/BillingAddress';
 import {PaymentTypeSelector} from './PaymentTypeSelector';
 import TaxIdDisplay from './TaxIdDisplay';
 import {TrialMethod} from './TrialMethod/TrialMethod';
-import marketplaceOAuth2 from '../../../../../services/oauth/Marketplace';
-import HeadlessCommerceDeliveryCart from '../../../../../services/rest/HeadlessCommerceDeliveryCart';
 
 const PaymentMethodFlows = {
 	[PaymentMethodType.TRIAL]: {
@@ -109,7 +109,9 @@ export default function PaymentMethod() {
 			billingAddress: payment.billingAddress,
 		});
 
-		await marketplaceOAuth2.taxCalculate(productPurchaseCart.cart.id);
+		if (licenseType === 'PAID') {
+			await marketplaceOAuth2.taxCalculate(productPurchaseCart.cart.id);
+		}
 
 		if (payment.taxId && !selectedAccount.taxId) {
 			await HeadlessAdminUser.updateAccount(selectedAccount.id, {

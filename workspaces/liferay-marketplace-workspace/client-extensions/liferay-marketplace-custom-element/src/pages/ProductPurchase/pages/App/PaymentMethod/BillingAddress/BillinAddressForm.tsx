@@ -10,12 +10,12 @@ import React from 'react';
 import Select from '../../../../../../components/Select/Select';
 import useCommerceRegions from '../../../../../../hooks/useCommerceRegions';
 import i18n from '../../../../../../i18n';
-import {Liferay} from '../../../../../../liferay/liferay';
+import { Liferay } from '../../../../../../liferay/liferay';
 
 import './BillingAddress.scss';
 
-import {zodResolver} from '@hookform/resolvers/zod';
-import {useForm} from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 
 import FormInput from '../../../../../../components/Input/formInput';
 import zodSchema from '../../../../../../schema/zod';
@@ -48,7 +48,7 @@ const BillingAddressForm: React.FC<BillingAddressProps> = ({
 	showNewAddressButton,
 }) => {
 	const {
-		formState: {errors, isValid},
+		formState: { errors, isValid },
 		handleSubmit,
 		register,
 		reset,
@@ -76,9 +76,9 @@ const BillingAddressForm: React.FC<BillingAddressProps> = ({
 		required: true,
 	};
 
-	const {country, regionISOCode} = watch();
+	const { country, regionISOCode } = watch();
 
-	const {data: regionsResponse} = useCommerceRegions();
+	const { data: regionsResponse } = useCommerceRegions();
 
 	const regions = regionsResponse?.items || [];
 
@@ -156,7 +156,7 @@ const BillingAddressForm: React.FC<BillingAddressProps> = ({
 					className="custom-input"
 					label="Country"
 					name="country"
-					onChange={({target: {value}}) => {
+					onChange={({ target: { value } }) => {
 						const states =
 							regions.find((region) => region.a2 === value)
 								?.regions ?? [];
@@ -172,10 +172,10 @@ const BillingAddressForm: React.FC<BillingAddressProps> = ({
 						key: region.a2,
 						name:
 							region.title_i18n[
-								Liferay.ThemeDisplay.getLanguageId()
+							Liferay.ThemeDisplay.getLanguageId()
 							] ||
 							region.title_i18n[
-								Liferay.ThemeDisplay.getDefaultLanguageId()
+							Liferay.ThemeDisplay.getDefaultLanguageId()
 							] ||
 							region.name,
 					}))}
@@ -194,6 +194,7 @@ const BillingAddressForm: React.FC<BillingAddressProps> = ({
 						key: state.regionCode,
 						name: state.name,
 					}))}
+					onChange={({ target: { value } }) => setValue('regionISOCode', value)}
 					required={!!states.length}
 					value={regionISOCode}
 				/>

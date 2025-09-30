@@ -4,6 +4,7 @@
  */
 
 import ClayIcon from '@clayui/icon';
+import {useSelector} from '@xstate/store/react';
 import classNames from 'classnames';
 import {useEffect, useMemo, useState} from 'react';
 import {
@@ -20,6 +21,7 @@ import {SolutionTypes} from '../../enums/Product';
 import useProductPurchaseCart from '../../hooks/useProductPurchaseCart';
 import i18n from '../../i18n';
 import {Liferay} from '../../liferay/liferay';
+import marketplaceOAuth2 from '../../services/oauth/Marketplace';
 import {scrollToMiddleOfPage} from '../../utils/browser';
 import ProductPurchasePrice from './ProductPurchasePrice';
 import {productTypeRoutes} from './ProductPurchaseRouter';
@@ -27,8 +29,6 @@ import useAccounts from './hooks/useAccounts';
 import ProductPurchaseService from './services/ProductPurchase';
 import ProductPurchaseApp from './services/ProductPurchaseApp';
 import {productPurchaseStore} from './store/AppPurchaseStore';
-import marketplaceOAuth2 from '../../services/oauth/Marketplace';
-import taxCalculateOAuth2 from '../../services/oauth/TaxCalculate';
 
 type ProductPurchaseOutletProps = {
 	product: DeliveryProduct;
@@ -78,6 +78,11 @@ const ProductPurchaseOutlet: React.FC<ProductPurchaseOutletProps> = ({
 		ProductPurchaseApp.getOrderTypeExternalReferenceCode(product)
 	);
 
+	const licenseType = useSelector(
+		productPurchaseStore,
+		(state) => state.context.licenseType
+	);
+
 	const marketplaceDeliveryProduct = useMemo(() => {
 		return new MarketplaceDeliveryProduct(product);
 	}, [product]);
@@ -123,9 +128,9 @@ const ProductPurchaseOutlet: React.FC<ProductPurchaseOutletProps> = ({
 
 			const link = await _productPurchase.getNextStepsLink(order);
 
-			await marketplaceOAuth2.taxCalculate(cart.id);
-
-			console.log(link);
+			if (licenseType === 'PAID') {
+				await marketplaceOAuth2.taxCalculate(cart?.id);
+			}
 
 			if (link.startsWith('http')) {
 				return sendRedirect(link);

@@ -7,4 +7,5 @@ export enum PaymentMethodType {
 	INVOICE,
 	PAY_NOW,
 	TRIAL,
+	FREE,
 }

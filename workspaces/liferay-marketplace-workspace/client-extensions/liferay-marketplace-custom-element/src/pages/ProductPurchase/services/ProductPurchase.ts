@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {Analytics} from '../../../core/Analytics';
-import {OrderTypes} from '../../../enums/Order';
-import {Liferay} from '../../../liferay/liferay';
+import { Analytics } from '../../../core/Analytics';
+import { OrderTypes } from '../../../enums/Order';
+import { Liferay } from '../../../liferay/liferay';
 import CommerceSelectAccount from '../../../services/rest/CommerceSelectAccount';
 import HeadlessCommerceDeliveryCart from '../../../services/rest/HeadlessCommerceDeliveryCart';
 
@@ -16,11 +16,11 @@ export default class ProductPurchase {
 	constructor(
 		protected readonly account: Account,
 		protected readonly product: DeliveryProduct
-	) {}
+	) { }
 
 	protected getCart() {
 		return {
-			accountId: this.account.id,
+			accountId: this.account?.id,
 			cartItems: this.getCartItems(),
 			currencyCode: Liferay.CommerceContext.currency.currencyCode,
 			orderTypeExternalReferenceCode: this.orderTypeExternalReferenceCode,
@@ -63,11 +63,11 @@ export default class ProductPurchase {
 		};
 
 		const newCart = await (cart?.id
-			? HeadlessCommerceDeliveryCart.updateCart(cart.id, body)
+			? HeadlessCommerceDeliveryCart.updateCart(cart?.id, body)
 			: HeadlessCommerceDeliveryCart.createCart(
-					Liferay.CommerceContext.commerceChannelId,
-					body
-				));
+				Liferay.CommerceContext.commerceChannelId,
+				body
+			));
 
 		await Promise.all([
 			CommerceSelectAccount.selectAccount(this.account.id),

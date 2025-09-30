@@ -4,25 +4,25 @@
  */
 
 import ClayIcon from '@clayui/icon';
-import {useSelector} from '@xstate/store/react';
-import {useMemo} from 'react';
+import { useSelector } from '@xstate/store/react';
+import { useMemo } from 'react';
 
 import CardButton from '../../../../../components/CardButton/CardButton';
 import ProductPurchase from '../../../../../components/ProductPurchase';
-import {SkuOptions} from '../../../../../enums/Product';
+import { SkuOptions } from '../../../../../enums/Product';
 import i18n from '../../../../../i18n';
-import {getSkuByOptionValueKey} from '../../../../../utils/productUtils';
-import {useProductPurchaseOutletContext} from '../../../ProductPurchaseOutlet';
+import { getSkuByOptionValueKey } from '../../../../../utils/productUtils';
+import { useProductPurchaseOutletContext } from '../../../ProductPurchaseOutlet';
 import {
 	LicenseType,
 	productPurchaseStore,
 } from '../../../store/AppPurchaseStore';
-import {PaymentMethodType} from '../../../types';
+import { PaymentMethodType } from '../../../types';
 import PaidLicense from './PaidLicense';
 import TrialLicense from './TrialLicense';
 
 import '../../../../GetApp/styles/index.scss';
-import {cartStore} from '../../../store/CartStore';
+import { cartStore } from '../../../store/CartStore';
 
 const isContinueButtonDisabled = () => {
 	const snapshot = productPurchaseStore.getSnapshot();
@@ -33,7 +33,7 @@ const isContinueButtonDisabled = () => {
 	}
 
 	if (
-		cartSnaptshot.context.cart.id &&
+		cartSnaptshot.context.cart.id && cartSnaptshot.context.cartItems.length &&
 		snapshot.context.licenseType === 'PAID'
 	) {
 		return false;
@@ -43,13 +43,13 @@ const isContinueButtonDisabled = () => {
 };
 
 const License = () => {
-	const {product, productPurchaseCart} = useProductPurchaseOutletContext();
+	const { product, productPurchaseCart } = useProductPurchaseOutletContext();
 
 	const {
-		actions: {nextStep, previousStep},
+		actions: { nextStep, previousStep },
 	} = useProductPurchaseOutletContext();
 
-	const {licenseType} = useSelector(
+	const { licenseType } = useSelector(
 		productPurchaseStore,
 		(state) => state.context
 	);
@@ -79,7 +79,7 @@ const License = () => {
 		<ProductPurchase.Shell
 			className="d-flex flex-column license-selector-timeline"
 			footerProps={{
-				backButtonProps: {onClick: previousStep},
+				backButtonProps: { onClick: previousStep },
 				continueButtonProps: {
 					disabled: isContinueButtonDisabled(),
 					onClick: () => nextStep(),
@@ -88,7 +88,7 @@ const License = () => {
 			title={i18n.translate('license-selection')}
 		>
 			<div className="license-selector mb-6">
-				{licenseOptions.map(({icon, type, ...licenseOption}, index) => (
+				{licenseOptions.map(({ icon, type, ...licenseOption }, index) => (
 					<CardButton
 						{...licenseOption}
 						icon={

@@ -22,7 +22,6 @@ import {PaymentMethodType} from '../../../../types';
 import LicenseTermsCheckbox from '../../License/LicenseTermsCheckbox';
 
 import './index.scss';
-import marketplaceOAuth2 from '../../../../../../services/oauth/Marketplace';
 
 const PaymentMethods = {
 	[PaymentMethodType.TRIAL]: {
@@ -68,6 +67,7 @@ const OrderSummary = () => {
 	const navigate = useNavigate();
 
 	const {
+		accounts,
 		actions: {previousStep},
 		handlePurchase,
 		marketplaceDeliveryProduct,
@@ -104,14 +104,14 @@ const OrderSummary = () => {
 			});
 		}
 
-		if (paymentStore.type === PaymentMethodType.INVOICE) {
-			return handlePurchase(ProductPurchaseApp, undefined);
-		}
-
 		await handlePurchase(ProductPurchaseApp, {
 			...cart,
 			billingAddress: paymentStore.billingAddress,
 			cartItems,
+			paymentMethod:
+				paymentStore.type === PaymentMethodType.PAY_NOW
+					? 'paypal-integration'
+					: 'money-order',
 			shippingAddress: paymentStore.billingAddress,
 		});
 	};
@@ -124,11 +124,14 @@ const OrderSummary = () => {
 		return value;
 	};
 
+	const isSingleAccount = accounts.length === 1;
+
 	return (
 		<ProductPurchase.Shell
 			className="product-purchase-summary select-payment-step"
 			footerProps={{
 				backButtonProps: {
+					disabled: isSingleAccount,
 					onClick: previousStep,
 				},
 				continueButtonProps: {
@@ -178,13 +181,27 @@ const OrderSummary = () => {
 
 					<Section label={i18n.translate('payment-method')}>
 						<div className="align-items-center d-flex p-4 section-card">
-							<div>{PaymentMethods[paymentStore.type].icon}</div>
+							<div>
+								{
+									PaymentMethods[
+										paymentStore.type as keyof typeof PaymentMethods
+									]?.icon
+								}
+							</div>
 							<div>
 								<div className="font-weight-bold section-card-title">
-									{PaymentMethods[paymentStore.type].title}
+									{
+										PaymentMethods[
+											paymentStore.type as keyof typeof PaymentMethods
+										].title
+									}
 								</div>
 								<div className="section-card-subtitle text-black-50">
-									{PaymentMethods[paymentStore.type].subtitle}
+									{
+										PaymentMethods[
+											paymentStore.type as keyof typeof PaymentMethods
+										].subtitle
+									}
 								</div>
 							</div>
 						</div>
