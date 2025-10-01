@@ -249,6 +249,192 @@ public class LearnRestController extends BaseRestController {
 		return ResponseEntity.ok(quizResultMap);
 	}
 
+	private String _convertHtmlListToTextInline(String html) {
+		html = _convertHtmlTableToTextInline(html);
+
+		Matcher matcher = _liPattern.matcher(html);
+
+		StringBuffer stringBuffer = new StringBuffer();
+
+		while (matcher.find()) {
+			String openTag = matcher.group(1);
+			String tagContent = matcher.group(
+				2
+			).trim();
+			String closeTag = matcher.group(3);
+
+			String visibleText = tagContent.replaceAll(
+				"(?s)<[^>]+>", " "
+			).replaceAll(
+				"\\s+", " "
+			).trim();
+
+			if (!visibleText.matches(".*[.!?;:]$")) {
+				int lastCloseTagIndex = tagContent.lastIndexOf("</");
+
+				if (lastCloseTagIndex != -1) {
+					String contentBeforeClosingTag = tagContent.substring(
+						0, lastCloseTagIndex
+					).replaceAll(
+						"\\s+$", ""
+					);
+					String closingTagAndContentAfter = tagContent.substring(
+						lastCloseTagIndex);
+
+					tagContent = StringBundler.concat(
+						contentBeforeClosingTag, ".",
+						closingTagAndContentAfter);
+				}
+				else {
+					tagContent = tagContent + ".";
+				}
+			}
+
+			matcher.appendReplacement(
+				stringBuffer,
+				Matcher.quoteReplacement(
+					StringBundler.concat(openTag, tagContent, closeTag)));
+		}
+
+		matcher.appendTail(stringBuffer);
+
+		html = stringBuffer.toString();
+
+		String textContent = html.replaceAll("(?s)<[^>]+>", " ");
+
+		return textContent.replaceAll(
+			"\\s+", " "
+		).trim();
+	}
+
+	private String _convertHtmlTableToTextInline(String html) {
+		if (html == null) {
+			return "";
+		}
+
+		Matcher tableMatcher = _tablePattern.matcher(html);
+		StringBuffer stringBuffer = new StringBuffer();
+
+		while (tableMatcher.find()) {
+			String tableHtml = tableMatcher.group(1);
+
+			List<String> headers = new ArrayList<>();
+			Matcher theadMatcher = _theadPattern.matcher(tableHtml);
+
+			if (theadMatcher.find()) {
+				Matcher headTrMatcher = _trPattern.matcher(
+					theadMatcher.group(1));
+
+				if (headTrMatcher.find()) {
+					Matcher headCellsMatcher = _cellPattern.matcher(
+						headTrMatcher.group(1));
+
+					while (headCellsMatcher.find()) {
+						headers.add(
+							_decodeBasicHtmlEntities(
+								headCellsMatcher.group(1)
+							).trim());
+					}
+				}
+			}
+
+			String bodyHtml = tableHtml;
+			Matcher tbodyMatcher = _tbodyPattern.matcher(tableHtml);
+
+			if (tbodyMatcher.find()) {
+				bodyHtml = tbodyMatcher.group(1);
+			}
+
+			Matcher trMatcher = _trPattern.matcher(bodyHtml);
+
+			StringBuilder tableDescription = new StringBuilder("Table: ");
+
+			if (!headers.isEmpty()) {
+				StringBundler sb = new StringBundler();
+
+				sb.append("Column headings: ");
+
+				for (int i = 0; i < headers.size(); i++) {
+					sb.append(headers.get(i));
+
+					if (i < (headers.size() - 1)) {
+						sb.append("; ");
+					}
+					else {
+						sb.append(". ");
+					}
+				}
+
+				tableDescription.append(sb.toString());
+			}
+
+			int row = 0;
+
+			while (trMatcher.find()) {
+				row++;
+
+				String tr = trMatcher.group(1);
+
+				Matcher cellMatcher = _cellPattern.matcher(tr);
+
+				List<String> cells = new ArrayList<>();
+
+				while (cellMatcher.find()) {
+					String raw = _decodeBasicHtmlEntities(
+						cellMatcher.group(1)
+					).trim();
+
+					if (Objects.equals(raw, "✔") || Objects.equals(raw, "✓")) {
+						raw = "supported";
+					}
+					else if (raw.isEmpty() || Objects.equals(raw, "&nbsp;")) {
+						raw = "not supported";
+					}
+
+					cells.add(raw);
+				}
+
+				if (!cells.isEmpty()) {
+					tableDescription.append(
+						"Row "
+					).append(
+						row
+					).append(
+						". "
+					);
+
+					for (int c = 0; c < cells.size(); c++) {
+						String colName =
+							(c < headers.size()) ? headers.get(c) :
+								("Column " + (c + 1));
+
+						tableDescription.append(
+							colName
+						).append(
+							": "
+						).append(
+							cells.get(c)
+						).append(
+							". "
+						);
+					}
+				}
+			}
+
+			String trimmedTableDescriptionText = tableDescription.toString(
+			).trim();
+
+			String replacement = trimmedTableDescriptionText + " ";
+
+			tableMatcher.appendReplacement(
+				stringBuffer, Matcher.quoteReplacement(replacement));
+		}
+
+		tableMatcher.appendTail(stringBuffer);
+
+		return stringBuffer.toString();
+	}
+
 	private String _decodeBasicHtmlEntities(String string) {
 		if (string == null) {
 			return "";
@@ -486,61 +672,9 @@ public class LearnRestController extends BaseRestController {
 
 		ssmlContent = _decodeBasicHtmlEntities(ssmlContent);
 
-		Matcher matcher = _pattern.matcher(ssmlContent);
+		ssmlContent = _convertHtmlListToTextInline(ssmlContent);
 
-		StringBuffer stringBuffer = new StringBuffer();
-
-		while (matcher.find()) {
-			String openTag = matcher.group(1);
-			String tagContent = matcher.group(
-				2
-			).trim();
-			String closeTag = matcher.group(3);
-
-			String visibleText = tagContent.replaceAll(
-				"(?s)<[^>]+>", " "
-			).replaceAll(
-				"\\s+", " "
-			).trim();
-
-			if (!visibleText.matches(".*[.!?;:]$")) {
-				int lastCloseTagIndex = tagContent.lastIndexOf("</");
-
-				if (lastCloseTagIndex != -1) {
-					String contentBeforeClosingTag = tagContent.substring(
-						0, lastCloseTagIndex
-					).replaceAll(
-						"\\s+$", ""
-					);
-					String closingTagAndContentAfter = tagContent.substring(
-						lastCloseTagIndex);
-
-					tagContent = StringBundler.concat(
-						contentBeforeClosingTag, ".",
-						closingTagAndContentAfter);
-				}
-				else {
-					tagContent = tagContent + ".";
-				}
-			}
-
-			matcher.appendReplacement(
-				stringBuffer,
-				Matcher.quoteReplacement(
-					StringBundler.concat(openTag, tagContent, closeTag)));
-		}
-
-		matcher.appendTail(stringBuffer);
-
-		ssmlContent = stringBuffer.toString();
-
-		String textContent = ssmlContent.replaceAll("(?s)<[^>]+>", " ");
-
-		textContent = textContent.replaceAll(
-			"\\s+", " "
-		).trim();
-
-		String[] sentences = textContent.split("(?<=[.!?])\\s+");
+		String[] sentences = ssmlContent.split("(?<=[.!?])\\s+");
 
 		for (String sentence : sentences) {
 			if ((sb.length() + sentence.length()) > maxLength) {
@@ -586,8 +720,18 @@ public class LearnRestController extends BaseRestController {
 		).build();
 	}
 
-	private static final Pattern _pattern = Pattern.compile(
+	private static final Pattern _cellPattern = Pattern.compile(
+		"(?is)<t(?:h|d)[^>]*>(.*?)</t(?:h|d)>");
+	private static final Pattern _liPattern = Pattern.compile(
 		"(?i)(<li[^>]*>)(.*?)(</li>)", Pattern.DOTALL);
+	private static final Pattern _tablePattern = Pattern.compile(
+		"(?is)<table[^>]*>(.*?)</table>");
+	private static final Pattern _tbodyPattern = Pattern.compile(
+		"(?is)<tbody[^>]*>(.*?)</tbody>");
+	private static final Pattern _theadPattern = Pattern.compile(
+		"(?is)<thead[^>]*>(.*?)</thead>");
+	private static final Pattern _trPattern = Pattern.compile(
+		"(?is)<tr[^>]*>(.*?)</tr>");
 
 	@Value("${liferay.learn.google.credentials}")
 	private String _googleCredentials;
