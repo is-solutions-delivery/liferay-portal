@@ -394,9 +394,26 @@ public class MarketplaceService extends BaseService {
 
 		JSONObject jsonObject = jsonArray.getJSONObject(0);
 
+		String resolvedEmailAddress;
+
+		if ((emailAddress == null) || emailAddress.isEmpty()) {
+			resolvedEmailAddress = jsonObject.getJSONObject(
+				"to"
+			).getString(
+				"en_US"
+			);
+		}
+		else {
+			resolvedEmailAddress = emailAddress;
+		}
+
 		notificationQueueEntry.setRecipients(
 			() -> new Object[] {
 				new HashMapBuilder<String, Object>().put(
+					"cc", jsonObject.getString("cc")
+				).put(
+					"ccType", jsonObject.getString("ccType")
+				).put(
 					"from", jsonObject.getString("from")
 				).put(
 					"fromName",
@@ -406,7 +423,7 @@ public class MarketplaceService extends BaseService {
 						"en_US"
 					)
 				).put(
-					"to", emailAddress
+					"to", resolvedEmailAddress
 				).build()
 			});
 
