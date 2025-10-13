@@ -1948,111 +1948,113 @@ public class BundleSiteInitializer implements SiteInitializer {
 		}
 
 		for (String resourcePath : resourcePaths) {
-			if (resourcePath.endsWith("/")) {
-				String json = SiteInitializerUtil.read(
-					resourcePath + "depot-entry-settings.json",
-					_servletContext);
+			if (!resourcePath.endsWith("/")) {
+				continue;
+			}
+		
+			String json = SiteInitializerUtil.read(
+				resourcePath + "depot-entry-settings.json",
+				_servletContext);
 
-				if (json == null) {
-					continue;
-				}
+			if (json == null) {
+				continue;
+			}
 
-				JSONObject jsonObject = JSONFactoryUtil.createJSONObject(json);
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(json);
 
-				Group group = _groupLocalService.fetchGroup(
-					serviceContext.getCompanyId(),
-					SiteInitializerUtil.toMap(
-						jsonObject.getString("name_i18n")
-					).get(
-						LocaleUtil.getSiteDefault()
-					));
+			Group group = _groupLocalService.fetchGroup(
+				serviceContext.getCompanyId(),
+				SiteInitializerUtil.toMap(
+					jsonObject.getString("name_i18n")
+				).get(
+					LocaleUtil.getSiteDefault()
+				));
 
-				DepotEntry depotEntry = null;
+			DepotEntry depotEntry = null;
 
-				if (group == null) {
-					depotEntry = _depotEntryLocalService.addDepotEntry(
-						SiteInitializerUtil.toMap(
-							jsonObject.getString("name_i18n")),
-						SiteInitializerUtil.toMap(
-							jsonObject.getString("description_i18n")),
-						DepotConstants.TYPE_ASSET_LIBRARY, serviceContext);
-				}
-
-				UnicodeProperties unicodeProperties = new UnicodeProperties(
-					true);
-
-				JSONArray typeSettingsJSONArray = jsonObject.getJSONArray(
-					"typeSettings");
-
-				if (typeSettingsJSONArray != null) {
-					for (int j = 0; j < typeSettingsJSONArray.length(); j++) {
-						JSONObject propertyJSONObject =
-							typeSettingsJSONArray.getJSONObject(j);
-
-						unicodeProperties.put(
-							propertyJSONObject.getString("key"),
-							propertyJSONObject.getString("value"));
-					}
-				}
-
-				JSONObject depotAppCustomizationJSONObject =
-					jsonObject.getJSONObject("depotAppCustomization");
-
-				_depotEntryLocalService.updateDepotEntry(
-					(group != null) ? group.getClassPK() :
-						depotEntry.getDepotEntryId(),
+			if (group == null) {
+				depotEntry = _depotEntryLocalService.addDepotEntry(
 					SiteInitializerUtil.toMap(
 						jsonObject.getString("name_i18n")),
 					SiteInitializerUtil.toMap(
 						jsonObject.getString("description_i18n")),
-					HashMapBuilder.put(
-						PortletKeys.ASSET_LIST,
-						GetterUtil.getBoolean(
-							depotAppCustomizationJSONObject.getBoolean(
-								PortletKeys.ASSET_LIST),
-							true)
-					).put(
-						PortletKeys.DOCUMENT_LIBRARY_ADMIN,
-						GetterUtil.getBoolean(
-							depotAppCustomizationJSONObject.getBoolean(
-								PortletKeys.DOCUMENT_LIBRARY_ADMIN),
-							true)
-					).put(
-						PortletKeys.JOURNAL,
-						GetterUtil.getBoolean(
-							depotAppCustomizationJSONObject.getBoolean(
-								PortletKeys.JOURNAL),
-							true)
-					).put(
-						PortletKeys.TRANSLATION,
-						GetterUtil.getBoolean(
-							depotAppCustomizationJSONObject.getBoolean(
-								PortletKeys.TRANSLATION),
-							true)
-					).build(),
-					unicodeProperties, serviceContext);
-
-				_depotEntryGroupRelLocalService.addDepotEntryGroupRel(
-					(group != null) ? group.getClassPK() :
-						depotEntry.getDepotEntryId(),
-					serviceContext.getScopeGroupId());
-
-				_addOrUpdateDDMStructures(
-					(group != null) ? group.getGroupId() :
-						depotEntry.getGroupId(),
-					resourcePath + "ddm-structures", serviceContext,
-					stringUtilReplaceValues);
-				_addOrUpdateDocuments(
-					null,
-					(group != null) ? group.getGroupId() :
-						depotEntry.getGroupId(),
-					resourcePath + "documents", serviceContext,
-					siteNavigationMenuItemSettingsBuilder,
-					stringUtilReplaceValues);
-				_addKeywords(
-					"ASSET_LIBRARY", resourcePath, serviceContext,
-					stringUtilReplaceValues);
+					DepotConstants.TYPE_ASSET_LIBRARY, serviceContext);
 			}
+
+			UnicodeProperties unicodeProperties = new UnicodeProperties(
+				true);
+
+			JSONArray typeSettingsJSONArray = jsonObject.getJSONArray(
+				"typeSettings");
+
+			if (typeSettingsJSONArray != null) {
+				for (int j = 0; j < typeSettingsJSONArray.length(); j++) {
+					JSONObject propertyJSONObject =
+						typeSettingsJSONArray.getJSONObject(j);
+
+					unicodeProperties.put(
+						propertyJSONObject.getString("key"),
+						propertyJSONObject.getString("value"));
+				}
+			}
+
+			JSONObject depotAppCustomizationJSONObject =
+				jsonObject.getJSONObject("depotAppCustomization");
+
+			_depotEntryLocalService.updateDepotEntry(
+				(group != null) ? group.getClassPK() :
+					depotEntry.getDepotEntryId(),
+				SiteInitializerUtil.toMap(
+					jsonObject.getString("name_i18n")),
+				SiteInitializerUtil.toMap(
+					jsonObject.getString("description_i18n")),
+				HashMapBuilder.put(
+					PortletKeys.ASSET_LIST,
+					GetterUtil.getBoolean(
+						depotAppCustomizationJSONObject.getBoolean(
+							PortletKeys.ASSET_LIST),
+						true)
+				).put(
+					PortletKeys.DOCUMENT_LIBRARY_ADMIN,
+					GetterUtil.getBoolean(
+						depotAppCustomizationJSONObject.getBoolean(
+							PortletKeys.DOCUMENT_LIBRARY_ADMIN),
+						true)
+				).put(
+					PortletKeys.JOURNAL,
+					GetterUtil.getBoolean(
+						depotAppCustomizationJSONObject.getBoolean(
+							PortletKeys.JOURNAL),
+						true)
+				).put(
+					PortletKeys.TRANSLATION,
+					GetterUtil.getBoolean(
+						depotAppCustomizationJSONObject.getBoolean(
+							PortletKeys.TRANSLATION),
+						true)
+				).build(),
+				unicodeProperties, serviceContext);
+
+			_depotEntryGroupRelLocalService.addDepotEntryGroupRel(
+				(group != null) ? group.getClassPK() :
+					depotEntry.getDepotEntryId(),
+				serviceContext.getScopeGroupId());
+
+			_addOrUpdateDDMStructures(
+				(group != null) ? group.getGroupId() :
+					depotEntry.getGroupId(),
+				resourcePath + "ddm-structures", serviceContext,
+				stringUtilReplaceValues);
+			_addOrUpdateDocuments(
+				null,
+				(group != null) ? group.getGroupId() :
+					depotEntry.getGroupId(),
+				resourcePath + "documents", serviceContext,
+				siteNavigationMenuItemSettingsBuilder,
+				stringUtilReplaceValues);
+			_addKeywords(
+				"ASSET_LIBRARY", resourcePath, serviceContext,
+				stringUtilReplaceValues);
 		}
 	}
 
