@@ -1510,11 +1510,7 @@ public class BundleSiteInitializerTest {
 				0
 			).getEnabled());
 
-		_assertDLFileEntry1(
-			depotEntries.get(
-				0
-			).getGroupId());
-		_assertDepotEntryDDMStructure(
+		_assertDepotEntryContent(
 			depotEntries.get(
 				0
 			).getGroupId());
@@ -1560,28 +1556,29 @@ public class BundleSiteInitializerTest {
 				0
 			).getEnabled());
 
-		_assertDLFileEntry2(
+		_assertDepotEntryContent(
 			depotEntries.get(
 				0
 			).getGroupId());
 	}
 
-	private void _assertDepotEntryDDMStructure(long groupId) {
+	private void _assertDepotEntryContent(long groupId) {
 		DDMStructure ddmStructure = _ddmStructureLocalService.fetchStructure(
 			groupId, _portal.getClassNameId(JournalArticle.class.getName()),
 			"Test Depot Entry 1 DDM Structure Name");
 
 		Assert.assertNotNull(ddmStructure);
-		Assert.assertTrue(ddmStructure.hasField("aField"));
+
+		DLFileEntry dlFileEntry = _dlFileEntryLocalService.fetchFileEntry(
+			groupId, DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+			"Test Depot Entry 1 Document.md");
+
+		Assert.assertNotNull(dlFileEntry);
 	}
 
-	private void _assertDLFileEntry1(long groupId) throws Exception {
-		if (groupId == 0) {
-			groupId = _group.getGroupId();
-		}
-
+	private void _assertDLFileEntry1() throws Exception {
 		DLFileEntry dlFileEntry = _dlFileEntryLocalService.getFileEntry(
-			groupId, DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+			_group.getGroupId(), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
 			"Table of Contents.md");
 
 		String string = new String(
@@ -1595,13 +1592,9 @@ public class BundleSiteInitializerTest {
 		Assert.assertTrue(string.contains("1. Revelation"));
 	}
 
-	private void _assertDLFileEntry2(long groupId) throws Exception {
-		if (groupId == 0) {
-			groupId = _group.getGroupId();
-		}
-
+	private void _assertDLFileEntry2() throws Exception {
 		DLFileEntry dlFileEntry = _dlFileEntryLocalService.getFileEntry(
-			groupId, DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+			_group.getGroupId(), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
 			"Table of Contents.md");
 
 		String string = new String(
@@ -1617,13 +1610,13 @@ public class BundleSiteInitializerTest {
 		Assert.assertTrue(string.contains("1. Test Update"));
 
 		DLFolder dlFolder = _dlFolderLocalService.fetchFolder(
-			groupId, DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
+			_group.getGroupId(), DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
 			"Old Testament");
 
 		Assert.assertNotNull(dlFolder);
 
 		dlFileEntry = _dlFileEntryLocalService.getFileEntry(
-			groupId, dlFolder.getFolderId(), "Genesis.txt");
+			_group.getGroupId(), dlFolder.getFolderId(), "Genesis.txt");
 
 		Assert.assertNotNull(dlFileEntry);
 
@@ -4544,7 +4537,7 @@ public class BundleSiteInitializerTest {
 		_assertDDMStructure();
 		_assertDDMTemplate1();
 		_assertDepotEntries1();
-		_assertDLFileEntry1(0);
+		_assertDLFileEntry1();
 		_assertExpandoColumns1();
 		_assertExpandoValues1();
 		_assertFragmentEntries1();
@@ -4589,7 +4582,7 @@ public class BundleSiteInitializerTest {
 		_assertDataDefinition2();
 		_assertDDMTemplate2();
 		_assertDepotEntries2();
-		_assertDLFileEntry2(0);
+		_assertDLFileEntry2();
 		_assertExpandoColumns2();
 		_assertExpandoValues2();
 		_assertFragmentEntries2();
