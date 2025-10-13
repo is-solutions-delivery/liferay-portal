@@ -12,6 +12,44 @@ import {downloadFile} from '../../utils/file';
 import {MarketplaceSpringBootOAuth2} from './OAuth2Client';
 
 class MarketplaceOAuth2 extends MarketplaceSpringBootOAuth2 {
+	async createAccount(data: any): Promise<Account> {
+		const formData = new FormData();
+		const blob = new Blob([data.accountImage]);
+
+		formData.append('file', blob, data.accountImage.name);
+
+		const payload = {
+			customFields: [
+				{
+					customValue: {
+						data: data.emailAddress,
+					},
+					name: 'Contact Email',
+				},
+			],
+			name: data.accountName,
+			postalAddresses: [
+				{
+					addressCountry: data.billingAddress.country,
+					addressLocality: data.billingAddress.city,
+					addressRegion: data.billingAddress.regionISOCode ?? '',
+					postalCode: data.billingAddress.zip,
+					primary: true,
+					streetAddressLine1: data.billingAddress.street1,
+					streetAddressLine2: data.billingAddress.street2 ?? '',
+				},
+			],
+			taxId: data.taxNumber,
+			type: data.type,
+		};
+
+		formData.append('account', JSON.stringify({payload}));
+
+		const account = await this.post<Account>(`/account/`, formData);
+
+		return account;
+	}
+
 	async downloadOrderReport(
 		filter: {
 			[key: string]: string;

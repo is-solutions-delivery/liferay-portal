@@ -22,6 +22,7 @@ import useCommerceRegions from '../../../hooks/useCommerceRegions';
 import ClayIcon from '@clayui/icon';
 import CustomDropdown from '../../../components/CustomDropDown/CustomDropDown';
 import {useMarketplaceContext} from '../../../context/MarketplaceContext';
+import marketplaceOAuth2 from '../../../services/oauth/Marketplace';
 
 type CreateAccountModalFormProps = {
 	modal: {
@@ -77,6 +78,8 @@ const CreateAccountModalForm: React.FC<CreateAccountModalFormProps> = ({
 		regions.find((region) => region.a2 === billingAddress?.country)
 			?.regions ?? [];
 
+	const isTypeExistingBusiness = type === 'existing-business';
+
 	const getAccountType = (key: string) => {
 		const accountType = AccountType.find((option) => option.key === key);
 
@@ -113,40 +116,8 @@ const CreateAccountModalForm: React.FC<CreateAccountModalFormProps> = ({
 	const onSubmit = useCallback(
 		(data: FormFields) => {
 			try {
-				const formData = new FormData();
-				const blob = new Blob([data.accountImage]);
-
-				formData.append('file', blob, data.accountImage.name);
-
-				const payload = {
-					name: data.accountName,
-					type: data.type,
-					taxId: data.taxNumber,
-					postalAddresses: [
-						{
-							addressCountry: data.billingAddress.country,
-							addressLocality: data.billingAddress.city,
-							addressRegion:
-								data.billingAddress.regionISOCode ?? '',
-							postalCode: data.billingAddress.zip,
-							primary: true,
-							streetAddressLine1: data.billingAddress.street1,
-							streetAddressLine2:
-								data.billingAddress.street2 ?? '',
-						},
-					],
-					customFields: [
-						{
-							name: 'Contact Email',
-							customValue: {
-								data: data.emailAddress,
-							},
-						},
-					],
-				};
-
-				formData.append('account', JSON.stringify({payload}));
-
+				marketplaceOAuth2.createAccount(data);
+				window.location.reload();
 				Liferay.Util.openToast({
 					message:
 						'Account has been succesfully created. You can now proceed with your app purchase',
@@ -196,7 +167,7 @@ const CreateAccountModalForm: React.FC<CreateAccountModalFormProps> = ({
 			size={'md' as Size}
 			visible={modal.open}
 		>
-			<div style={{minHeight: '450px'}}>
+			<div style={{minHeight: '400px'}}>
 				<div>
 					<h1 style={{fontSize: '32px'}}>
 						{i18n.translate('new-account')}
@@ -218,8 +189,8 @@ const CreateAccountModalForm: React.FC<CreateAccountModalFormProps> = ({
 					/>
 				</ClayForm.Group>
 
-				{type === 'existing-business' ? (
-					<div className="d-flex c-gap-2">
+				{isTypeExistingBusiness ? (
+					<div className="d-flex c-gap-2 my-5">
 						{' '}
 						<div>
 							<ClayIcon
@@ -238,6 +209,7 @@ const CreateAccountModalForm: React.FC<CreateAccountModalFormProps> = ({
 							account and will be able to manage it and make
 							purchases on Markeplace.
 							<p>
+								<br />
 								<strong>
 									Any questions?{' '}
 									<a href="mailto:marketplace-admin@liferay.com">
@@ -501,32 +473,32 @@ const CreateAccountModalForm: React.FC<CreateAccountModalFormProps> = ({
 								</div>
 							</div>
 						</ClayForm.Group>
-
-						<div className="d-flex justify-content-end">
-							<Button
-								className="mr-2"
-								disabled={isSubmitting}
-								displayType="secondary"
-								onClick={handleOnClose}
-							>
-								{i18n.translate('cancel')}
-							</Button>
-
-							<Button
-								disabled={isSubmitting}
-								displayType="primary"
-								onClick={handleSubmit(onSubmit)}
-							>
-								<div className="align-items-center d-flex">
-									{isSubmitting && (
-										<ClayLoadingIndicator className="mr-3 my-0" />
-									)}
-									{i18n.translate('save')}
-								</div>
-							</Button>
-						</div>
 					</>
 				)}
+
+				<div className="d-flex justify-content-end">
+					<Button
+						className="mr-2"
+						disabled={isSubmitting}
+						displayType="secondary"
+						onClick={handleOnClose}
+					>
+						{i18n.translate('cancel')}
+					</Button>
+
+					<Button
+						disabled={isSubmitting || isTypeExistingBusiness}
+						displayType="primary"
+						onClick={handleSubmit(onSubmit)}
+					>
+						<div className="align-items-center d-flex">
+							{isSubmitting && (
+								<ClayLoadingIndicator className="mr-3 my-0" />
+							)}
+							{i18n.translate('save')}
+						</div>
+					</Button>
+				</div>
 			</div>
 		</Modal>
 	);
