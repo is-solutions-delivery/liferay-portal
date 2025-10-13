@@ -1969,15 +1969,23 @@ public class BundleSiteInitializer implements SiteInitializer {
 					LocaleUtil.getSiteDefault()
 				));
 
-			DepotEntry depotEntry = null;
+			long depotEntryId = 0;
+			long groupId = 0;
 
 			if (group == null) {
-				depotEntry = _depotEntryLocalService.addDepotEntry(
+				DepotEntry depotEntry = _depotEntryLocalService.addDepotEntry(
 					SiteInitializerUtil.toMap(
 						jsonObject.getString("name_i18n")),
 					SiteInitializerUtil.toMap(
 						jsonObject.getString("description_i18n")),
 					DepotConstants.TYPE_ASSET_LIBRARY, serviceContext);
+
+				depotEntryId = depotEntry.getDepotEntryId();
+				groupId = depotEntry.getGroupId();
+			}
+			else {
+				depotEntryId = group.getClassPK();
+				groupId = group.getGroupId();
 			}
 
 			UnicodeProperties unicodeProperties = new UnicodeProperties(true);
@@ -2000,8 +2008,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 				jsonObject.getJSONObject("depotAppCustomization");
 
 			_depotEntryLocalService.updateDepotEntry(
-				(group != null) ? group.getClassPK() :
-					depotEntry.getDepotEntryId(),
+				depotEntryId,
 				SiteInitializerUtil.toMap(jsonObject.getString("name_i18n")),
 				SiteInitializerUtil.toMap(
 					jsonObject.getString("description_i18n")),
@@ -2033,18 +2040,13 @@ public class BundleSiteInitializer implements SiteInitializer {
 				unicodeProperties, serviceContext);
 
 			_depotEntryGroupRelLocalService.addDepotEntryGroupRel(
-				(group != null) ? group.getClassPK() :
-					depotEntry.getDepotEntryId(),
-				serviceContext.getScopeGroupId());
+				depotEntryId, serviceContext.getScopeGroupId());
 
 			_addOrUpdateDDMStructures(
-				(group != null) ? group.getGroupId() : depotEntry.getGroupId(),
-				resourcePath + "ddm-structures", serviceContext,
+				groupId, resourcePath + "ddm-structures", serviceContext,
 				stringUtilReplaceValues);
 			_addOrUpdateDocuments(
-				null,
-				(group != null) ? group.getGroupId() : depotEntry.getGroupId(),
-				resourcePath + "documents", serviceContext,
+				null, groupId, resourcePath + "documents", serviceContext,
 				siteNavigationMenuItemSettingsBuilder, stringUtilReplaceValues);
 			_addKeywords(
 				"ASSET_LIBRARY", resourcePath, serviceContext,
