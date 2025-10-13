@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<root>
+	<structure>
+		<definition>
+			<![CDATA[
+				{
+					"availableLanguageIds": [
+						"en_US"
+					],
+					"defaultLanguageId": "en_US",
+					"fields": [
+						{
+							"name": "aField",
+							"type": "text"
+						}
+					]
+				}
+			]]>
+		</definition>
+		<description></description>
+		<name>Test Depot Entry 1 DDM Structure Name</name>
+	</structure>
+</root>
