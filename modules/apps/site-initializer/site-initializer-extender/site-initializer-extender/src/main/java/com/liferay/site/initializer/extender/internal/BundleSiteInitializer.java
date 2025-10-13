@@ -1951,10 +1951,9 @@ public class BundleSiteInitializer implements SiteInitializer {
 			if (!resourcePath.endsWith("/")) {
 				continue;
 			}
-		
+
 			String json = SiteInitializerUtil.read(
-				resourcePath + "depot-entry-settings.json",
-				_servletContext);
+				resourcePath + "depot-entry-settings.json", _servletContext);
 
 			if (json == null) {
 				continue;
@@ -1981,8 +1980,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 					DepotConstants.TYPE_ASSET_LIBRARY, serviceContext);
 			}
 
-			UnicodeProperties unicodeProperties = new UnicodeProperties(
-				true);
+			UnicodeProperties unicodeProperties = new UnicodeProperties(true);
 
 			JSONArray typeSettingsJSONArray = jsonObject.getJSONArray(
 				"typeSettings");
@@ -2004,8 +2002,7 @@ public class BundleSiteInitializer implements SiteInitializer {
 			_depotEntryLocalService.updateDepotEntry(
 				(group != null) ? group.getClassPK() :
 					depotEntry.getDepotEntryId(),
-				SiteInitializerUtil.toMap(
-					jsonObject.getString("name_i18n")),
+				SiteInitializerUtil.toMap(jsonObject.getString("name_i18n")),
 				SiteInitializerUtil.toMap(
 					jsonObject.getString("description_i18n")),
 				HashMapBuilder.put(
@@ -2041,17 +2038,14 @@ public class BundleSiteInitializer implements SiteInitializer {
 				serviceContext.getScopeGroupId());
 
 			_addOrUpdateDDMStructures(
-				(group != null) ? group.getGroupId() :
-					depotEntry.getGroupId(),
+				(group != null) ? group.getGroupId() : depotEntry.getGroupId(),
 				resourcePath + "ddm-structures", serviceContext,
 				stringUtilReplaceValues);
 			_addOrUpdateDocuments(
 				null,
-				(group != null) ? group.getGroupId() :
-					depotEntry.getGroupId(),
+				(group != null) ? group.getGroupId() : depotEntry.getGroupId(),
 				resourcePath + "documents", serviceContext,
-				siteNavigationMenuItemSettingsBuilder,
-				stringUtilReplaceValues);
+				siteNavigationMenuItemSettingsBuilder, stringUtilReplaceValues);
 			_addKeywords(
 				"ASSET_LIBRARY", resourcePath, serviceContext,
 				stringUtilReplaceValues);
