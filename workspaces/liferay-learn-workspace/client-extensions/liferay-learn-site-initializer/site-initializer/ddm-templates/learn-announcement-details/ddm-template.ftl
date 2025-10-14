@@ -15,24 +15,26 @@
 		</li>
 	</ul>
 </nav>
+
 <div class="main-container my-3">
 	<div class="header">
 		<div class="asset-info d-flex">
 			<p class="title">
 				<@liferay_ui["message"] key="announcement" />
 			</p>
+
 			<p class="date">
 				<#if (ObjectEntry_createDate.getData())??>
-					<#assign rawDate=ObjectEntry_createDate.getData() />
+					<#assign rawDate = ObjectEntry_createDate.getData() />
 					<@liferay_ui["message"] key="published" />
-					<#assign dt="" />
+					<#assign dt = "" />
 					<#attempt>
-						<#assign dt=rawDate?datetime("M/d/yy h:mm a") />
+						<#assign dt = rawDate?datetime("M/d/yy h:mm a") />
 						<#recover>
 							<#attempt>
-								<#assign dt=rawDate?datetime("yy/MM/dd H:mm") />
+								<#assign dt = rawDate?datetime("yy/MM/dd H:mm") />
 								<#recover>
-									<#assign dt=rawDate />
+									<#assign dt = rawDate />
 								</#recover>
 							</#attempt>
 							<#if dt?is_date>
@@ -47,12 +49,14 @@
 				</#if>
 			</p>
 		</div>
+
 		<div class="content-info mt-2">
 			<h1>
 				<#if (ObjectField_title.getData())??>
 					${ObjectField_title.getData()}
 				</#if>
 			</h1>
+
 			<div>
 				<#if (ObjectField_description.getData())??>
 					<p class="description">
@@ -62,6 +66,7 @@
 			</div>
 		</div>
 	</div>
+
 	<div class="content mt-3" id="content">
 		<#if (ObjectField_content.getData())??>
 			${ObjectField_content.getData()}
