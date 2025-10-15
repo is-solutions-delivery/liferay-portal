@@ -178,6 +178,8 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 						UriComponentsBuilder.fromUriString(
 							"/o/c/enrollments/"
 						).queryParam(
+							"active", "true"
+						).queryParam(
 							"nestedFields", "course,user"
 						).queryParam(
 							"page", i
@@ -204,13 +206,6 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 					if ((courseJSONObject == null) ||
 						(userJSONObject == null)) {
 
-						continue;
-					}
-
-					String modifiedDate = enrollmentJSONObject.optString(
-						"dateModified", null);
-
-					if (!_isBetween(modifiedDate, endDate, startDate)) {
 						continue;
 					}
 
@@ -255,6 +250,14 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 						progress = 100;
 					}
 					else {
+						if (!_isBetween(
+								enrollmentJSONObject.optString(
+									"dateModified", null),
+								endDate, startDate)) {
+
+							continue;
+						}
+
 						List<String> completedAssets =
 							completedAssetIds.isBlank() ?
 								Collections.emptyList() :
