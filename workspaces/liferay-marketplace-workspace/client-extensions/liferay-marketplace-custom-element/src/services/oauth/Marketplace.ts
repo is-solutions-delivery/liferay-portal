@@ -12,40 +12,46 @@ import {downloadFile} from '../../utils/file';
 import {MarketplaceSpringBootOAuth2} from './OAuth2Client';
 
 class MarketplaceOAuth2 extends MarketplaceSpringBootOAuth2 {
-	async createAccount(data: any): Promise<Account> {
+	async createAccount(accountData: any): Promise<Account> {
 		const formData = new FormData();
-		const blob = new Blob([data.accountImage]);
 
-		formData.append('file', blob, data.accountImage.name);
+		if (accountData.accountImage) {
+			const blob = new Blob([accountData.accountImage]);
+			formData.append('file', blob, accountData.accountImage.name);
+		}
 
-		const payload = {
+		const data = {
 			customFields: [
 				{
 					customValue: {
-						data: data.emailAddress,
+						data: accountData.emailAddress,
 					},
 					name: 'Contact Email',
 				},
 			],
-			name: data.accountName,
+			name: accountData.accountName,
 			postalAddresses: [
 				{
-					addressCountry: data.billingAddress.country,
-					addressLocality: data.billingAddress.city,
-					addressRegion: data.billingAddress.regionISOCode ?? '',
-					postalCode: data.billingAddress.zip,
+					addressCountry: accountData.billingAddress.country,
+					addressLocality: accountData.billingAddress.city,
+					addressRegion:
+						accountData.billingAddress.regionISOCode ?? '',
+
+					addressType: 'billing',
+					postalCode: accountData.billingAddress.zip,
 					primary: true,
-					streetAddressLine1: data.billingAddress.street1,
-					streetAddressLine2: data.billingAddress.street2 ?? '',
+					streetAddressLine1: accountData.billingAddress.street1,
+					streetAddressLine2:
+						accountData.billingAddress.street2 ?? '',
 				},
 			],
-			taxId: data.taxNumber,
-			type: data.type,
+			taxId: accountData.taxNumber,
+			type: accountData.type,
 		};
 
-		formData.append('account', JSON.stringify({payload}));
+		formData.append('account', JSON.stringify({data}));
 
-		const account = await this.post<Account>(`/account/`, formData);
+		const account = await this.post<Account>(`/account`, data);
 
 		return account;
 	}
@@ -56,13 +62,13 @@ class MarketplaceOAuth2 extends MarketplaceSpringBootOAuth2 {
 		},
 		filterSchema?: FilterSchemaOption
 	) {
-		const searchBulider = CreateFilters.createFilter({
+		const searchBuilder = CreateFilters.createFilter({
 			appliedFilter: filter,
 			filterSchema: (filterSchemas as any)[filterSchema ?? ''],
 		});
 
 		const response = await this.get<Response>(
-			`/orders/export?filters=${searchBulider}`,
+			`/orders/export?filters=${searchBuilder}`,
 			{earlyReturn: true}
 		);
 

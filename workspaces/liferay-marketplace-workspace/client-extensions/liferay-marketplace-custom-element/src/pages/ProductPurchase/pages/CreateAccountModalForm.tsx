@@ -114,10 +114,12 @@ const CreateAccountModalForm: React.FC<CreateAccountModalFormProps> = ({
 	}, [modal.open]);
 
 	const onSubmit = useCallback(
-		(data: FormFields) => {
+		async (data: FormFields) => {
 			try {
-				marketplaceOAuth2.createAccount(data);
+				await marketplaceOAuth2.createAccount(data);
+
 				window.location.reload();
+
 				Liferay.Util.openToast({
 					message:
 						'Account has been succesfully created. You can now proceed with your app purchase',
