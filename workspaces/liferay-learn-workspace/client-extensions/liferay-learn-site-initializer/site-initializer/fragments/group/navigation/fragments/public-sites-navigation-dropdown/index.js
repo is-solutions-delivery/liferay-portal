@@ -6,6 +6,7 @@
 const editMode = layoutMode === 'edit';
 const menu = fragmentElement.querySelector('.dropdown-fragment-menu');
 const toggle = fragmentElement.querySelector('.dropdown-fragment-toggle');
+const OFFSET = 6;
 
 const menuDropdownCaret = toggle.querySelector('.menu-dropdown-caret');
 const toggleEditable = toggle.querySelector('[data-lfr-editable-id]');
@@ -27,7 +28,7 @@ function alignMenu() {
 		.querySelector('#wrapper')
 		?.getBoundingClientRect();
 
-	menu.style.top = `${toggleBoundingClientRect.bottom}px`;
+	menu.style.top = `${toggleBoundingClientRect.bottom + OFFSET}px`;
 
 	if (configuration.panelType === 'mega-menu') {
 		menu.style.left = `${parentBoundingClientRect.left}px`;
