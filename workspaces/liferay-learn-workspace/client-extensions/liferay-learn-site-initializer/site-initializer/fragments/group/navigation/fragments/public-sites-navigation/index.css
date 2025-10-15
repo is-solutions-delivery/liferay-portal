@@ -28,6 +28,19 @@
 	vertical-align: middle;
 }
 
+.sign-button-container
+	.public-sites-navigation-buttons
+	.lfr-layout-structure-item-dialect-text {
+	&:hover {
+		background: #FFFFFF1A;
+
+		svg {
+			opacity: 1;
+			transition: all 0.1s linear;
+		}
+	}
+}
+
 .public-sites-navigation-buttons {
 	gap: 2px;
 }
@@ -900,6 +913,7 @@ nav {
 	.btn.btn-nm.dropdown-fragment-toggle {
 		display: flex;
 		justify-content: space-between;
+		padding: 14px 18px;
 		width: 100%;
 	}
 
