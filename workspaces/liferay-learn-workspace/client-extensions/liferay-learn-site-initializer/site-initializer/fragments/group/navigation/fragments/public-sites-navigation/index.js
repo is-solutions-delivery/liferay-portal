@@ -4,7 +4,7 @@
  */
 
 /* eslint-disable no-undef */
-['DOMContentLoaded', 'resize'].forEach((event) =>
+['DOMContentLoaded'].forEach((event) =>
 	window.addEventListener(event, checkScreenSize)
 );
 
@@ -12,6 +12,7 @@ const controlMenu = document.getElementById('ControlMenu');
 const documentationEducationDropdown = document.querySelector(
 	'.documentation-education-dropdown'
 );
+
 const fragmentSearchElements = {
 	searchSubmitLink: fragmentElement.querySelector('.search-submit'),
 	searchSubmitURL: fragmentElement.querySelector('.search-submit').href,
@@ -72,16 +73,17 @@ function changeFocus() {
 }
 
 function checkScreenSize() {
-	menuElements.menuTextOpen.style.display = 'inline';
-	menuElements.menuTextClose.style.display = 'none';
-	menuElements.menuButton.classList.remove('open');
-
-	if (window.innerWidth <= 1000) {
-		documentationEducationDropdown.classList.add('hide');
+	if (!menuElements.menuButton.classList.contains('open')) {
+		menuElements.menuTextOpen.style.display = 'inline';
+		menuElements.menuTextClose.style.display = 'none';
 	}
-	else {
+
+	if (!(window.innerWidth <= 1024)) {
 		documentationEducationDropdown.classList.remove('hide');
+		menuElements.menuButton.classList.remove('open');
 		resetMenuIcon();
+		menuElements.menuTextOpen.style.display = 'inline';
+		menuElements.menuTextClose.style.display = 'none';
 	}
 }
 
@@ -304,5 +306,25 @@ window.addEventListener('keyup', (event) => {
 		}
 
 		siteSearchWrapper.classList.add('search-open');
+	}
+});
+
+window.addEventListener('resize', () => {
+	if (window.innerWidth <= 1024) {
+		if (!menuElements.menuButton.classList.contains('open')) {
+			documentationEducationDropdown.classList.add('hide');
+		}
+	}
+	else {
+		documentationEducationDropdown.classList.remove('hide');
+
+		if (menuElements.menuButton.classList.contains('open')) {
+			menuElements.menuButton.classList.remove('open');
+			toggleMenuAnimation();
+		}
+
+		menuElements.menuTextOpen.style.display = 'inline';
+		menuElements.menuTextClose.style.display = 'none';
+		resetMenuIcon();
 	}
 });
