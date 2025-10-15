@@ -3,8 +3,8 @@
 
 	&::before {
 		background: var(--color-neutral-0, #ffffff);
-		border-radius: var(--border-radius-circle);
-		bottom: -4px;
+		border-radius: var(--border-radius-xs);
+		bottom: -6px;
 		content: '';
 		height: 3px;
 		left: -2px;
@@ -19,8 +19,8 @@
 		transition: transform 0.3s ease-in-out;
 	}
 
-	&:hover, &:focus, &:focus-visible {
-		background: #1A3B7B;
+	&:hover {
+		background: #FFFFFF1A;
 
 		svg {
 			opacity: 1;
@@ -47,7 +47,6 @@
 	display: none;
 	min-width: 240px;
 	position: fixed;
-	top: 110px !important;
 	z-index: 976;
 }
 
