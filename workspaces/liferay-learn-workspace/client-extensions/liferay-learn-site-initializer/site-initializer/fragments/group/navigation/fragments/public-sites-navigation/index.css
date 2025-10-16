@@ -920,6 +920,7 @@ nav {
 
 	.cta-menu-hamburguer {
 		align-items: center;
+		cursor: pointer;
 		display: flex;
 		height: 100%;
 
