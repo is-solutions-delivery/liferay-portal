@@ -68,8 +68,8 @@
 }
 
 .search-results-found {
-	&::-webkit-scrollbar { 
-		width: 15px; 
+	&::-webkit-scrollbar {
+		width: 15px;
 	}
 
 	&::-webkit-scrollbar-thumb {
@@ -181,7 +181,7 @@
 				opacity: 0.9;
 				overflow: hidden;
 
-				b  {
+				b {
 					font-weight: var(--font-weight-bold);
 				}
 			}
@@ -400,7 +400,7 @@
 
 	.utility-nav {
 		border-bottom: 1px solid var(--color-neutral-3, #C9C9CF);
-    max-width: 1280px;
+   		max-width: 1280px;
 	}
 }
 
@@ -725,7 +725,7 @@ nav {
 			align-self: center;
 			height: 64px;
 			max-width: 1440px;
-      width: 100%;
+      		width: 100%;
 		}
 
 		.search-account-container {
@@ -814,7 +814,7 @@ nav {
 							fill: var(--color-action-primary-hover);
 						}
 					}
-				} 
+				}
 			}
 		}
 
@@ -891,6 +891,7 @@ nav {
 		text-overflow: ellipsis;
 		white-space: nowrap;
 	}
+
 	.menu-button-text {
 		margin-bottom: 0 !important;
 		padding: 0px 12px !important;
@@ -1022,7 +1023,7 @@ nav {
 @media (max-width: 360px) {
 	.cta-menu-hamburguer-content {
 		min-width: auto !important;
-    padding: 5px !important;
+    	padding: 5px !important;
 	}
 
 	.menu-button-text {
