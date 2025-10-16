@@ -14,11 +14,8 @@ export default function ProductUOM({uom}: {uom: any[]}) {
 			<div className="space-y-2">
 				<div className="font-medium gap-4 grid grid-cols-4 text-sm">
 					<span>Unit</span>
-
 					<span>Key</span>
-
 					<span>Quantity</span>
-
 					<span>Net Price</span>
 				</div>
 
@@ -28,11 +25,8 @@ export default function ProductUOM({uom}: {uom: any[]}) {
 						key={index}
 					>
 						<span>{item.name}</span>
-
 						<span>{item.key}</span>
-
 						<span>{item.incrementalOrderQuantity}</span>
-
 						<span className="font-bold text-slate-900">
 							{item.price?.priceFormatted}
 						</span>
