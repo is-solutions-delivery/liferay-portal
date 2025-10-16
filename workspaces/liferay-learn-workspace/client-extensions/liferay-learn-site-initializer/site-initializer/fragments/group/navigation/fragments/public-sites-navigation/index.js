@@ -4,7 +4,7 @@
  */
 
 /* eslint-disable no-undef */
-['DOMContentLoaded'].forEach((event) =>
+['DOMContentLoaded', 'resize'].forEach((event) =>
 	window.addEventListener(event, checkScreenSize)
 );
 
@@ -28,7 +28,9 @@ const fragmentSearchElements = {
 	),
 	suggestions: fragmentElement.querySelector('.suggestions'),
 };
+
 const inputElements = ['input', 'textarea'];
+
 const menuElements = {
 	menuButton: document.querySelector('.cta-menu-hamburguer'),
 	menuIconLines: document.querySelectorAll(
@@ -72,15 +74,33 @@ function changeFocus() {
 	searchInput.focus();
 }
 
-function checkScreenSize() {
-	if (!menuElements.menuButton.classList.contains('open')) {
-		menuElements.menuTextOpen.style.display = 'inline';
-		menuElements.menuTextClose.style.display = 'none';
-	}
+function isMenuOpen() {
+	return menuElements.menuButton.classList.contains('open');
+}
 
-	if (!(window.innerWidth <= 1024)) {
+function checkScreenSize() {
+	const menuButtonIsOpen = isMenuOpen();
+
+	menuElements.menuTextOpen.style.display = menuButtonIsOpen
+		? 'none'
+		: 'inline';
+	menuElements.menuTextClose.style.display = menuButtonIsOpen
+		? 'inline'
+		: 'none';
+
+	if (window.innerWidth <= 1024) {
+		if (!menuButtonIsOpen) {
+			documentationEducationDropdown.classList.add('hide');
+		}
+	}
+	else {
 		documentationEducationDropdown.classList.remove('hide');
-		menuElements.menuButton.classList.remove('open');
+
+		if (menuButtonIsOpen) {
+			menuElements.menuButton.classList.remove('open');
+			toggleMenuAnimation();
+		}
+
 		resetMenuIcon();
 		menuElements.menuTextOpen.style.display = 'inline';
 		menuElements.menuTextClose.style.display = 'none';
@@ -89,7 +109,6 @@ function checkScreenSize() {
 
 function debounce(callback, time) {
 	window.clearTimeout(debounceTimer);
-
 	debounceTimer = window.setTimeout(callback, time);
 }
 
@@ -161,20 +180,19 @@ function performSearch(query) {
 					);
 
 					suggestionLink.href = assetURL;
+
 					const suggestionTitle = suggestionLink.querySelector(
 						'.search-suggestion-item-title'
 					);
-
 					suggestionTitle.textContent = suggestion.text;
+
 					let contentText = suggestion.attributes.assetSearchSummary;
 
 					if (contentText) {
 						contentText = contentText.substring(0, 500);
-
 						const suggestionContent = suggestionLink.querySelector(
 							'.search-suggestion-item-content'
 						);
-
 						suggestionContent.innerHTML = contentText.replace(
 							new RegExp('(' + query + ')', 'gi'),
 							`<b>$1</b>`
@@ -184,8 +202,8 @@ function performSearch(query) {
 					const suggestionURL = suggestionLink.querySelector(
 						'.search-suggestion-item-link'
 					);
-
 					suggestionURL.textContent = getBreadcrumbFromURL(assetURL);
+
 					fragmentSearchElements.searchSuggestions.appendChild(
 						suggestionLink
 					);
@@ -218,17 +236,21 @@ function resetMenuIcon() {
 }
 
 function toggleMenuAnimation() {
-	const isOpen = menuElements.menuButton.classList.contains('open');
+	const menuButtonIsOpen = isMenuOpen();
 
 	menuElements.menuIconLines.forEach((line, index) => {
-		line.style.opacity = index === 1 && isOpen ? '0' : '1';
-		line.style.transform = isOpen
+		line.style.opacity = index === 1 && menuButtonIsOpen ? '0' : '1';
+		line.style.transform = menuButtonIsOpen
 			? `rotate(${index === 0 ? 45 : -45}deg) translateY(${index === 0 ? 8 : -8}px)`
 			: '';
 	});
 
-	menuElements.menuTextOpen.style.display = isOpen ? 'none' : 'inline';
-	menuElements.menuTextClose.style.display = isOpen ? 'inline' : 'none';
+	menuElements.menuTextOpen.style.display = menuButtonIsOpen
+		? 'none'
+		: 'inline';
+	menuElements.menuTextClose.style.display = menuButtonIsOpen
+		? 'inline'
+		: 'none';
 }
 
 function updateSearch() {
@@ -236,10 +258,11 @@ function updateSearch() {
 	const searchValue = fragmentSearchElements.searchSuggestionsInput.value;
 
 	if (searchValue) {
-		fragmentSearchElements.seeAllResultsLink.href =
+		const baseURL =
 			fragmentSearchElements.searchSubmitURL + '?q=' + searchValue;
-		fragmentSearchElements.searchSubmitLink.href =
-			fragmentSearchElements.searchSubmitURL + '?q=' + searchValue;
+
+		fragmentSearchElements.seeAllResultsLink.href = baseURL;
+		fragmentSearchElements.searchSubmitLink.href = baseURL;
 		fragmentSearchElements.suggestions.classList.add('performing-search');
 
 		performSearch(searchValue);
@@ -297,34 +320,11 @@ window.addEventListener('keyup', (event) => {
 	}
 	if (
 		(event.code === 'Slash' || event.key === '/') &&
-		inputElements.indexOf(document.activeElement.tagName.toLowerCase()) ===
-			-1
+		!inputElements.includes(document.activeElement.tagName.toLowerCase())
 	) {
 		searchInput.focus();
-		if (siteSearchWrapper.classList.contains('search-open')) {
-			return;
+		if (!siteSearchWrapper.classList.contains('search-open')) {
+			siteSearchWrapper.classList.add('search-open');
 		}
-
-		siteSearchWrapper.classList.add('search-open');
-	}
-});
-
-window.addEventListener('resize', () => {
-	if (window.innerWidth <= 1024) {
-		if (!menuElements.menuButton.classList.contains('open')) {
-			documentationEducationDropdown.classList.add('hide');
-		}
-	}
-	else {
-		documentationEducationDropdown.classList.remove('hide');
-
-		if (menuElements.menuButton.classList.contains('open')) {
-			menuElements.menuButton.classList.remove('open');
-			toggleMenuAnimation();
-		}
-
-		menuElements.menuTextOpen.style.display = 'inline';
-		menuElements.menuTextClose.style.display = 'none';
-		resetMenuIcon();
 	}
 });
