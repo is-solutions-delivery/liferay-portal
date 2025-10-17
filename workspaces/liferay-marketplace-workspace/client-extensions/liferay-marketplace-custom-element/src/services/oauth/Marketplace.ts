@@ -49,9 +49,11 @@ class MarketplaceOAuth2 extends MarketplaceSpringBootOAuth2 {
 			type: accountData.type,
 		};
 
-		formData.append('account', JSON.stringify({data}));
+		formData.append('account', JSON.stringify(data));
 
-		const account = await this.post<Account>(`/account`, data);
+		const account = await this.post<Account>(`/account`, formData, {
+			earlyReturn: true,
+		});
 
 		return account;
 	}
