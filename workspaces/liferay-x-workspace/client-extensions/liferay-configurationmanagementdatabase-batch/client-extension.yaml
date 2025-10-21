@@ -1,0 +1,15 @@
+assemble:
+    -   from: batch
+        into: batch
+configuration-management-database:
+    name: Configuration Management Database
+    oAuthApplicationHeadlessServer: configuration-management-database-oahs
+    type: batch
+configuration-management-database-oahs:
+    .serviceAddress: localhost:8080
+    .serviceScheme: http
+    name: Configuration Management Database OAuth Application Headless Server
+    scopes:
+        -   Liferay.Headless.Batch.Engine.everything
+        -   Liferay.Object.Admin.REST.everything
+    type: oAuthApplicationHeadlessServer

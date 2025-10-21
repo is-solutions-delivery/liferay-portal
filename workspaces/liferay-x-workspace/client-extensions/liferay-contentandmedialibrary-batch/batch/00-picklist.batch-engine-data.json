@@ -1,0 +1,154 @@
+{
+	"configuration": {
+		"className": "com.liferay.headless.admin.list.type.dto.v1_0.ListTypeDefinition",
+		"parameters": {
+			"containsHeaders": "true",
+			"createStrategy": "UPSERT",
+			"onErrorFail": "false",
+			"updateStrategy": "UPDATE"
+		},
+		"taskItemDelegateName": "DEFAULT"
+	},
+	"items": [
+		{
+			"externalReferenceCode": "B3C7-MEDIA-TYPE",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B3C7-IMAGE",
+					"key": "b3c7Image",
+					"name": "Image",
+					"name_i18n": {
+						"en-US": "Image"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B3C7-VIDEO",
+					"key": "b3c7Video",
+					"name": "Video",
+					"name_i18n": {
+						"en-US": "Video"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B3C7-DOCUMENT",
+					"key": "b3c7Document",
+					"name": "Document",
+					"name_i18n": {
+						"en-US": "Document"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B3C7-AUDIO",
+					"key": "b3c7Audio",
+					"name": "Audio",
+					"name_i18n": {
+						"en-US": "Audio"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B3C7-OTHER",
+					"key": "b3c7Other",
+					"name": "Other",
+					"name_i18n": {
+						"en-US": "Other"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B3C7 Media Type",
+			"name_i18n": {
+				"en-US": "B3C7 Media Type"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B3C7-MEDIA-STATUS",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B3C7-DRAFT",
+					"key": "b3c7Draft",
+					"name": "Draft",
+					"name_i18n": {
+						"en-US": "Draft"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B3C7-PUBLISHED",
+					"key": "b3c7Published",
+					"name": "Published",
+					"name_i18n": {
+						"en-US": "Published"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B3C7-ARCHIVED",
+					"key": "b3c7Archived",
+					"name": "Archived",
+					"name_i18n": {
+						"en-US": "Archived"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B3C7 Media Status",
+			"name_i18n": {
+				"en-US": "B3C7 Media Status"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B3C7-MEDIA-VISIBILITY",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B3C7-PUBLIC",
+					"key": "b3c7Public",
+					"name": "Public",
+					"name_i18n": {
+						"en-US": "Public"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B3C7-PRIVATE",
+					"key": "b3c7Private",
+					"name": "Private",
+					"name_i18n": {
+						"en-US": "Private"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B3C7-INTERNAL",
+					"key": "b3c7Internal",
+					"name": "Internal",
+					"name_i18n": {
+						"en-US": "Internal"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B3C7 Media Visibility",
+			"name_i18n": {
+				"en-US": "B3C7 Media Visibility"
+			},
+			"system": false
+		}
+	]
+}

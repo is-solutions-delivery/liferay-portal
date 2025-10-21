@@ -1,0 +1,15 @@
+assemble:
+    -   from: batch
+        into: batch
+content-management-operations:
+    name: Content Management Operations
+    oAuthApplicationHeadlessServer: content-management-operations-oahs
+    type: batch
+content-management-operations-oahs:
+    .serviceAddress: localhost:8080
+    .serviceScheme: http
+    name: Content Management Operations OAuth Application Headless Server
+    scopes:
+        -   Liferay.Headless.Batch.Engine.everything
+        -   Liferay.Object.Admin.REST.everything
+    type: oAuthApplicationHeadlessServer

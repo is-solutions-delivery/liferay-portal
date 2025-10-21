@@ -1,0 +1,454 @@
+{
+	"configuration": {
+		"className": "com.liferay.headless.admin.list.type.dto.v1_0.ListTypeDefinition",
+		"parameters": {
+			"containsHeaders": "true",
+			"createStrategy": "UPSERT",
+			"onErrorFail": "false",
+			"updateStrategy": "UPDATE"
+		},
+		"taskItemDelegateName": "DEFAULT"
+	},
+	"items": [
+		{
+			"externalReferenceCode": "A7C4-PRIORITY",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "A7C4-CRITICAL",
+					"key": "critical",
+					"name": "Critical",
+					"name_i18n": {
+						"en-US": "Critical"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-HIGH",
+					"key": "high",
+					"name": "High",
+					"name_i18n": {
+						"en-US": "High"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-MEDIUM",
+					"key": "medium",
+					"name": "Medium",
+					"name_i18n": {
+						"en-US": "Medium"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-LOW",
+					"key": "low",
+					"name": "Low",
+					"name_i18n": {
+						"en-US": "Low"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "A7C4 Priority",
+			"name_i18n": {
+				"en-US": "A7C4 Priority"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "A7C4-SEVERITY",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "A7C4-BLOCKER",
+					"key": "blocker",
+					"name": "Blocker",
+					"name_i18n": {
+						"en-US": "Blocker"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-MAJOR",
+					"key": "major",
+					"name": "Major",
+					"name_i18n": {
+						"en-US": "Major"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-MINOR",
+					"key": "minor",
+					"name": "Minor",
+					"name_i18n": {
+						"en-US": "Minor"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-DESIGN",
+					"key": "design",
+					"name": "Design",
+					"name_i18n": {
+						"en-US": "Design"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-VULNERABILITY",
+					"key": "vulnerability",
+					"name": "Vulnerability",
+					"name_i18n": {
+						"en-US": "Vulnerability"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "A7C4 Severity",
+			"name_i18n": {
+				"en-US": "A7C4 Severity"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "A7C4-BUG-STATUS",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "A7C4-NEW",
+					"key": "new",
+					"name": "New",
+					"name_i18n": {
+						"en-US": "New"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-TRIAGED",
+					"key": "triaged",
+					"name": "Triaged",
+					"name_i18n": {
+						"en-US": "Triaged"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-IN-PROGRESS",
+					"key": "inProgress",
+					"name": "In Progress",
+					"name_i18n": {
+						"en-US": "In Progress"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-IN-REVIEW",
+					"key": "inReview",
+					"name": "In Review",
+					"name_i18n": {
+						"en-US": "In Review"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-REVIEW",
+					"key": "resolved",
+					"name": "Resolved",
+					"name_i18n": {
+						"en-US": "Resolved"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-CLOSED",
+					"key": "closed",
+					"name": "Closed",
+					"name_i18n": {
+						"en-US": "Closed"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-REOPENED",
+					"key": "reopened",
+					"name": "Reopened",
+					"name_i18n": {
+						"en-US": "Reopened"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "A7C4 Bug Status",
+			"name_i18n": {
+				"en-US": "A7C4 Bug Status"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "A7C4-SYSTEM-MODULE",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "A7C4-AUTHENTICATION",
+					"key": "authentication",
+					"name": "Authentication",
+					"name_i18n": {
+						"en-US": "Authentication"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-DASHBOARD",
+					"key": "dashboard",
+					"name": "Dashboard",
+					"name_i18n": {
+						"en-US": "Dashboard"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-REPORTING",
+					"key": "reporting",
+					"name": "Reporting",
+					"name_i18n": {
+						"en-US": "Reporting"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-API",
+					"key": "api",
+					"name": "API",
+					"name_i18n": {
+						"en-US": "API"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-UI-FRONTEND",
+					"key": "uiFrontend",
+					"name": "UI / Frontend",
+					"name_i18n": {
+						"en-US": "UI / Frontend"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-BACKEND",
+					"key": "backend",
+					"name": "Backend",
+					"name_i18n": {
+						"en-US": "Backend"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "A7C4 System Module",
+			"name_i18n": {
+				"en-US": "A7C4 System Module"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "A7C4-ENVIRONMENT",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "A7C4-DEVELOPMENT",
+					"key": "development",
+					"name": "Development",
+					"name_i18n": {
+						"en-US": "Development"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-STAGING",
+					"key": "staging",
+					"name": "Staging",
+					"name_i18n": {
+						"en-US": "Staging"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-PRODUCTION",
+					"key": "production",
+					"name": "Production",
+					"name_i18n": {
+						"en-US": "Production"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "A7C4 Environment",
+			"name_i18n": {
+				"en-US": "A7C4 Environment"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "A7C4-ACTIVITY-TYPE",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "A7C4-CREATED",
+					"key": "created",
+					"name": "Created",
+					"name_i18n": {
+						"en-US": "Created"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-ASSIGNED",
+					"key": "assigned",
+					"name": "Assigned",
+					"name_i18n": {
+						"en-US": "Assigned"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-COMMENTED",
+					"key": "commented",
+					"name": "Commented",
+					"name_i18n": {
+						"en-US": "Commented"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-STATUS-UPDATED",
+					"key": "statusUpdated",
+					"name": "Status Updated",
+					"name_i18n": {
+						"en-US": "Status Updated"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-REOPENED",
+					"key": "reopened",
+					"name": "Reopened",
+					"name_i18n": {
+						"en-US": "Reopened"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-CLOSED",
+					"key": "closed",
+					"name": "Closed",
+					"name_i18n": {
+						"en-US": "Closed"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "A7C4 Activity Type",
+			"name_i18n": {
+				"en-US": "A7C4 Activity Type"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "A7C4-ROOT-CAUSE-CATEGORY",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "A7C4-LOGIC-ERROR",
+					"key": "logicError",
+					"name": "Logic Error",
+					"name_i18n": {
+						"en-US": "Logic Error"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-DATA-ISSUE",
+					"key": "dataIssue",
+					"name": "Data Issue",
+					"name_i18n": {
+						"en-US": "Data Issue"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-ENV-MISCONFIGURATION",
+					"key": "envMisconfiguration",
+					"name": "Environment Misconfiguration",
+					"name_i18n": {
+						"en-US": "Environment Misconfiguration"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-MISSING-VALIDATION",
+					"key": "missingValidation",
+					"name": "Missing Validation",
+					"name_i18n": {
+						"en-US": "Missing Validation"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-REGRESSION",
+					"key": "regression",
+					"name": "Regression",
+					"name_i18n": {
+						"en-US": "Regression"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "A7C4-OTHER",
+					"key": "other",
+					"name": "Other",
+					"name_i18n": {
+						"en-US": "Other"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "A7C4 Root Cause Category",
+			"name_i18n": {
+				"en-US": "A7C4 Root Cause Category"
+			},
+			"system": false
+		}
+	]
+}

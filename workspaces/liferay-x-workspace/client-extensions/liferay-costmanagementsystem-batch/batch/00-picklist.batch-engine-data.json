@@ -1,0 +1,364 @@
+{
+	"configuration": {
+		"className": "com.liferay.headless.admin.list.type.dto.v1_0.ListTypeDefinition",
+		"parameters": {
+			"containsHeaders": "true",
+			"createStrategy": "UPSERT",
+			"onErrorFail": "false",
+			"updateStrategy": "UPDATE"
+		},
+		"taskItemDelegateName": "DEFAULT"
+	},
+	"items": [
+		{
+			"externalReferenceCode": "B1A4-COST-TYPE",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B1A4-FIXED",
+					"key": "b1a4Fixed",
+					"name": "B1A4 Fixed",
+					"name_i18n": {
+						"en-US": "B1A4 Fixed"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-VARIABLE",
+					"key": "b1a4Variable",
+					"name": "B1A4 Variable",
+					"name_i18n": {
+						"en-US": "B1A4 Variable"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-ONE-TIME",
+					"key": "b1a4OneTime",
+					"name": "B1A4 One-Time",
+					"name_i18n": {
+						"en-US": "B1A4 One-Time"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-RECURRING",
+					"key": "b1a4Recurring",
+					"name": "B1A4 Recurring",
+					"name_i18n": {
+						"en-US": "B1A4 Recurring"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B1A4 Cost Type",
+			"name_i18n": {
+				"en-US": "B1A4 Cost Type"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B1A4-CURRENCY",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B1A4-USD",
+					"key": "b1a4USD",
+					"name": "B1A4 USD",
+					"name_i18n": {
+						"en-US": "B1A4 USD"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-EUR",
+					"key": "b1a4EUR",
+					"name": "B1A4 EUR",
+					"name_i18n": {
+						"en-US": "B1A4 EUR"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-GBP",
+					"key": "b1a4GBP",
+					"name": "B1A4 GBP",
+					"name_i18n": {
+						"en-US": "B1A4 GBP"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-BRL",
+					"key": "b1a4BRL",
+					"name": "B1A4 BRL",
+					"name_i18n": {
+						"en-US": "B1A4 BRL"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-JPY",
+					"key": "b1a4JPY",
+					"name": "B1A4 JPY",
+					"name_i18n": {
+						"en-US": "B1A4 JPY"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-OTHER",
+					"key": "b1a4Other",
+					"name": "B1A4 Other",
+					"name_i18n": {
+						"en-US": "B1A4 Other"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B1A4 Currency",
+			"name_i18n": {
+				"en-US": "B1A4 Currency"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B1A4-PROJECT-STATUS",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B1A4-PLANNED",
+					"key": "b1a4Planned",
+					"name": "B1A4 Planned",
+					"name_i18n": {
+						"en-US": "B1A4 Planned"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-ACTIVE",
+					"key": "b1a4Active",
+					"name": "B1A4 Active",
+					"name_i18n": {
+						"en-US": "B1A4 Active"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-COMPLETED",
+					"key": "b1a4Completed",
+					"name": "B1A4 Completed",
+					"name_i18n": {
+						"en-US": "B1A4 Completed"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-ON-HOLD",
+					"key": "b1a4OnHold",
+					"name": "B1A4 On Hold",
+					"name_i18n": {
+						"en-US": "B1A4 On Hold"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B1A4 Project Status",
+			"name_i18n": {
+				"en-US": "B1A4 Project Status"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B1A4-VENDOR-TYPE",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B1A4-SERVICE-PROVIDER",
+					"key": "b1a4ServiceProvider",
+					"name": "B1A4 Service Provider",
+					"name_i18n": {
+						"en-US": "B1A4 Service Provider"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-CONTRACTOR",
+					"key": "b1a4Contractor",
+					"name": "B1A4 Contractor",
+					"name_i18n": {
+						"en-US": "B1A4 Contractor"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-MANUFACTURER",
+					"key": "b1a4Manufacturer",
+					"name": "B1A4 Manufacturer",
+					"name_i18n": {
+						"en-US": "B1A4 Manufacturer"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-CONSULTANT",
+					"key": "b1a4Consultant",
+					"name": "B1A4Consultant",
+					"name_i18n": {
+						"en-US": "B1A4Consultant"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B1A4 Vendor Type",
+			"name_i18n": {
+				"en-US": "B1A4 Vendor Type"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B1A4-VENDOR-STATUS",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B1A4-ACTIVE",
+					"key": "b1a4Active",
+					"name": "B1A4 Active",
+					"name_i18n": {
+						"en-US": "B1A4 Active"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-INACTIVE",
+					"key": "b1a4Inactive",
+					"name": "B1A4 Inactive",
+					"name_i18n": {
+						"en-US": "B1A4 Inactive"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-SUSPENDED",
+					"key": "b1a4Suspended",
+					"name": "B1A4 Suspended",
+					"name_i18n": {
+						"en-US": "B1A4 Suspended"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B1A4 Vendor Status",
+			"name_i18n": {
+				"en-US": "B1A4 Vendor Status"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B1A4-ASSET-CATEGORY",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B1A4-HARDWARE",
+					"key": "b1a4Hardware",
+					"name": "B1A4 Hardware",
+					"name_i18n": {
+						"en-US": "B1A4 Hardware"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-SOFTWARE",
+					"key": "b1a4Software",
+					"name": "B1A4 Software",
+					"name_i18n": {
+						"en-US": "B1A4 Software"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-SUBSCRIPTION",
+					"key": "b1a4Subscription",
+					"name": "B1A4 Subscription",
+					"name_i18n": {
+						"en-US": "B1A4 Subscription"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-FACILITY",
+					"key": "b1a4Facility",
+					"name": "B1A4 Facility",
+					"name_i18n": {
+						"en-US": "B1A4 Facility"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B1A4 Asset Category",
+			"name_i18n": {
+				"en-US": "B1A4 Asset Category"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B1A4-ASSET-STATUS",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B1A4-ACTIVE",
+					"key": "b1a4Active",
+					"name": "B1A4 Active",
+					"name_i18n": {
+						"en-US": "B1A4 Active"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-RETIRED",
+					"key": "b1a4Retired",
+					"name": "B1A4 Retired",
+					"name_i18n": {
+						"en-US": "B1A4 Retired"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B1A4-UNDER-MAINTENANCE",
+					"key": "b1a4UnderMaintenance",
+					"name": "B1A4 Under Maintenance",
+					"name_i18n": {
+						"en-US": "B1A4 Under Maintenance"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B1A4 Asset Status",
+			"name_i18n": {
+				"en-US": "B1A4 Asset Status"
+			},
+			"system": false
+		}
+	]
+}

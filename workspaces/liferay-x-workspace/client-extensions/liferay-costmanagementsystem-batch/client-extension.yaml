@@ -1,0 +1,15 @@
+assemble:
+    -   from: batch
+        into: batch
+cost-management-system:
+    name: Cost Management System
+    oAuthApplicationHeadlessServer: cost-management-system-oahs
+    type: batch
+cost-management-system-oahs:
+    .serviceAddress: localhost:8080
+    .serviceScheme: http
+    name: Cost Management System OAuth Application Headless Server
+    scopes:
+        -   Liferay.Headless.Batch.Engine.everything
+        -   Liferay.Object.Admin.REST.everything
+    type: oAuthApplicationHeadlessServer

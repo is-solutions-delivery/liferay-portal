@@ -1,0 +1,15 @@
+assemble:
+    -   from: batch
+        into: batch
+bug-triage-and-resolution:
+    name: Bug Triage And Resolution
+    oAuthApplicationHeadlessServer: bug-triage-and-resolution-oahs
+    type: batch
+bug-triage-and-resolution-oahs:
+    .serviceAddress: localhost:8080
+    .serviceScheme: http
+    name: Bug Triage And Resolution OAuth Application Headless Server
+    scopes:
+        -   Liferay.Headless.Batch.Engine.everything
+        -   Liferay.Object.Admin.REST.everything
+    type: oAuthApplicationHeadlessServer

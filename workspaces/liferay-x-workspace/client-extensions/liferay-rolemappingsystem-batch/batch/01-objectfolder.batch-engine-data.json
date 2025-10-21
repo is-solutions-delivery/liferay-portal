@@ -1,0 +1,1683 @@
+{
+	"configuration": {
+		"className": "com.liferay.object.admin.rest.dto.v1_0.ObjectFolder",
+		"parameters": {
+			"containsHeaders": "true",
+			"createStrategy": "UPSERT",
+			"onErrorFail": "false",
+			"updateStrategy": "UPDATE"
+		},
+		"taskItemDelegateName": "DEFAULT"
+	},
+	"items": [
+		{
+			"externalReferenceCode": "4a339b21-ba56-f765-9125-df5dc9b1e15c",
+			"label": {
+				"en_US": "B5A8 Role Mapping System"
+			},
+			"name": "B5A8RoleMappingSystem",
+			"objectFolderItems": [
+				{
+					"linkedObjectDefinition": false,
+					"objectDefinition": {
+						"accountEntryRestricted": false,
+						"accountEntryRestrictedObjectFieldName": "",
+						"active": true,
+						"className": "com.liferay.object.model.ObjectDefinition#Z0Z7",
+						"creator": {
+							"additionalName": "",
+							"contentType": "UserAccount",
+							"familyName": "Test",
+							"givenName": "Test",
+							"name": "Test Test"
+						},
+						"defaultLanguageId": "en_US",
+						"enableCategorization": true,
+						"enableComments": false,
+						"enableIndexSearch": true,
+						"enableLocalization": false,
+						"enableObjectEntryDraft": false,
+						"enableObjectEntryHistory": false,
+						"externalReferenceCode": "61183b3d-d5d6-0cd7-8080-72ecfd491119",
+						"label": {
+							"en_US": "B5A8 Role Assignment"
+						},
+						"modifiable": true,
+						"name": "B5A8RoleAssignment",
+						"objectActions": [
+						],
+						"objectDefinitionSettings": [
+						],
+						"objectFields": [
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "80e7b7fa-08a7-0c8c-de29-86e8abd8ab99",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Create Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "createDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "41166c1f-8d92-b512-8ebd-4edd7416f54d",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Author"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "creator",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "1272812b-3d5b-570b-4f49-444f2ae8b955",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "External Reference Code"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "externalReferenceCode",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "LongInteger",
+								"defaultValue": "null",
+								"externalReferenceCode": "52c4c4e8-aa6b-bb84-3b50-268968bb004f",
+								"indexed": true,
+								"indexedAsKeyword": true,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "ID"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "id",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Long",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "9c382ee8-15b0-07c4-f1eb-6d0e6c8dbbce",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Modified Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "modifiedDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "Integer",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "2c4a7d75-2981-dd90-ddca-aca17d61a047",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Status"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "status",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Integer",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "d7020afb-23be-8d6c-dc4f-c590436e401a",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Assignment Name"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "assignmentName",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "2baf2889-0820-334f-ea3d-89fbc65865a4",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "End Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "endDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "bf7b1d9f-b62e-bbc4-4fb6-53ef2e412031",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Start Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "startDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Picklist",
+								"defaultValue": "null",
+								"externalReferenceCode": "e47df339-a42a-c2fb-e5b3-21ca2524d11c",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "B5A8 Role Assignment Status"
+								},
+								"listTypeDefinitionExternalReferenceCode": "B5A8-STATUS",
+								"listTypeDefinitionId": 35159,
+								"localized": false,
+								"name": "b5A8RoleAssignmentStatus",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Clob",
+								"businessType": "LongText",
+								"defaultValue": "null",
+								"externalReferenceCode": "8d07d723-8dd0-b588-2e00-a4a0266daa53",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Notes"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "notes",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Clob",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "Relationship",
+								"defaultValue": "null",
+								"externalReferenceCode": "00f78da4-60b2-c388-6b4a-27dc6db1a292",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "B5A8 Department To B5A8 Role Assignment"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "r_b5A8DepartmentToB5A8RoleAssignment_c_b5a8DepartmentId",
+								"objectDefinitionExternalReferenceCode1": "41c35be4-d2b8-599f-7f91-658caba70254",
+								"objectFieldSettings": [
+									{
+										"name": "objectDefinition1ShortName",
+										"value": "41c35be4-d2b8-599f-7f91-658caba70254"
+									},
+									{
+										"name": "objectRelationshipERCObjectFieldName",
+										"value": "r_b5A8DepartmentToB5A8RoleAssignment_c_b5a8DepartmentERC"
+									}
+								],
+								"objectRelationshipExternalReferenceCode": "f125f192-7f6a-e9ab-486a-6b17824037a6",
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"relationshipType": "oneToMany",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Long",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "Relationship",
+								"defaultValue": "null",
+								"externalReferenceCode": "ff726455-9692-f446-eeac-df6334c85c51",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "B5A8 Asset To B5A8 Role Assignment"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "r_b5A8AssetToB5A8RoleAssignment_c_b5a8AssetId",
+								"objectDefinitionExternalReferenceCode1": "edf012cb-b526-bf89-51e7-42f16aba9866",
+								"objectFieldSettings": [
+									{
+										"name": "objectDefinition1ShortName",
+										"value": "edf012cb-b526-bf89-51e7-42f16aba9866"
+									},
+									{
+										"name": "objectRelationshipERCObjectFieldName",
+										"value": "r_b5A8AssetToB5A8RoleAssignment_c_b5a8AssetERC"
+									}
+								],
+								"objectRelationshipExternalReferenceCode": "1925946c-3af7-28f4-6bc5-e7e3d378c0ba",
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"relationshipType": "oneToMany",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Long",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "Relationship",
+								"defaultValue": "null",
+								"externalReferenceCode": "5292ba33-9bba-bca1-c574-c322b05e6b3f",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "B5A8 Role To B5A8 Role Assignment"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "r_b5A8RoleToB5A8RoleAssignment_c_b5a8RoleId",
+								"objectDefinitionExternalReferenceCode1": "a24dfdec-9de3-4579-054c-1eccd5c859b2",
+								"objectFieldSettings": [
+									{
+										"name": "objectDefinition1ShortName",
+										"value": "a24dfdec-9de3-4579-054c-1eccd5c859b2"
+									},
+									{
+										"name": "objectRelationshipERCObjectFieldName",
+										"value": "r_b5A8RoleToB5A8RoleAssignment_c_b5a8RoleERC"
+									}
+								],
+								"objectRelationshipExternalReferenceCode": "2fcd6485-5e51-7e13-b180-f090025b0ca0",
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"relationshipType": "oneToMany",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Long",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "Relationship",
+								"defaultValue": "null",
+								"externalReferenceCode": "c4d137f1-c111-910d-49ba-1fbc6f4dc845",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "User To B5A8 Role Assignment"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "r_userToB5A8RoleAssignment_userId",
+								"objectDefinitionExternalReferenceCode1": "L_USER",
+								"objectFieldSettings": [
+									{
+										"name": "objectDefinition1ShortName",
+										"value": "User"
+									},
+									{
+										"name": "objectRelationshipERCObjectFieldName",
+										"value": "r_userToB5A8RoleAssignment_userERC"
+									}
+								],
+								"objectRelationshipExternalReferenceCode": "e29614dd-4602-9f7d-9ff7-5dd1c53526cd",
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"relationshipType": "oneToMany",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Long",
+								"unique": false
+							}
+						],
+						"objectFolderExternalReferenceCode": "4a339b21-ba56-f765-9125-df5dc9b1e15c",
+						"objectLayouts": [
+						],
+						"objectRelationships": [
+						],
+						"objectValidationRules": [
+						],
+						"objectViews": [
+						],
+						"panelCategoryKey": "",
+						"parameterRequired": false,
+						"pluralLabel": {
+							"en_US": "B5A8 Role Assignments"
+						},
+						"portlet": true,
+						"restContextPath": "/o/c/b5a8roleassignments",
+						"scope": "company",
+						"status": {
+							"code": 0,
+							"label": "approved",
+							"label_i18n": "Approved"
+						},
+						"system": false,
+						"titleObjectFieldName": "id"
+					},
+					"objectDefinitionExternalReferenceCode": "61183b3d-d5d6-0cd7-8080-72ecfd491119",
+					"positionX": 366,
+					"positionY": 303
+				},
+				{
+					"linkedObjectDefinition": false,
+					"objectDefinition": {
+						"accountEntryRestricted": false,
+						"accountEntryRestrictedObjectFieldName": "",
+						"active": true,
+						"className": "com.liferay.object.model.ObjectDefinition#F1T7",
+						"creator": {
+							"additionalName": "",
+							"contentType": "UserAccount",
+							"familyName": "Test",
+							"givenName": "Test",
+							"name": "Test Test"
+						},
+						"defaultLanguageId": "en_US",
+						"enableCategorization": true,
+						"enableComments": false,
+						"enableIndexSearch": true,
+						"enableLocalization": false,
+						"enableObjectEntryDraft": false,
+						"enableObjectEntryHistory": false,
+						"externalReferenceCode": "edf012cb-b526-bf89-51e7-42f16aba9866",
+						"label": {
+							"en_US": "B5A8 Asset"
+						},
+						"modifiable": true,
+						"name": "B5A8Asset",
+						"objectActions": [
+						],
+						"objectDefinitionSettings": [
+						],
+						"objectFields": [
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "6a71ff19-b367-9a9d-563c-dc4d4fb6c98e",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Author"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "creator",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "ea6b6e3b-d4b0-772b-bbb5-39aaa098e73c",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Create Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "createDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "47db7f6d-cb86-0f70-f544-01c6b1359368",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "External Reference Code"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "externalReferenceCode",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "536bdd51-a6cc-a7b7-008c-4ad3f3444271",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Modified Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "modifiedDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "LongInteger",
+								"defaultValue": "null",
+								"externalReferenceCode": "82dec1a6-360f-7891-cfe1-e290e5cfc511",
+								"indexed": true,
+								"indexedAsKeyword": true,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "ID"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "id",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Long",
+								"unique": false
+							},
+							{
+								"DBType": "Integer",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "652db76b-0485-55df-42e6-d0bee0153330",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Status"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "status",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Integer",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "0a24ab07-3aab-b136-29f6-29657648d35b",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Asset Name"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "assetName",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Picklist",
+								"defaultValue": "null",
+								"externalReferenceCode": "cfe93b00-2885-1b43-e3b1-e4fd5ddec9ef",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Category"
+								},
+								"listTypeDefinitionExternalReferenceCode": "B5A8-ASSET-CATEGORY",
+								"listTypeDefinitionId": 35153,
+								"localized": false,
+								"name": "category",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Picklist",
+								"defaultValue": "null",
+								"externalReferenceCode": "200641ef-5dc1-9da3-8f67-3eebf8fd9de3",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "B5A8 Asset Status"
+								},
+								"listTypeDefinitionExternalReferenceCode": "B5A8-STATUS",
+								"listTypeDefinitionId": 35159,
+								"localized": false,
+								"name": "b5A8AssetStatus",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Clob",
+								"businessType": "LongText",
+								"defaultValue": "null",
+								"externalReferenceCode": "24b126a7-1802-a6f0-4364-2f64716c4740",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Description"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "description",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Clob",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "Relationship",
+								"defaultValue": "null",
+								"externalReferenceCode": "3b6e7156-5680-1185-fc64-29b9e80051a6",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "B5A8 Department To B5A8 Asset"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "r_b5A8DepartmentToB5A8Asset_c_b5a8DepartmentId",
+								"objectDefinitionExternalReferenceCode1": "41c35be4-d2b8-599f-7f91-658caba70254",
+								"objectFieldSettings": [
+									{
+										"name": "objectDefinition1ShortName",
+										"value": "41c35be4-d2b8-599f-7f91-658caba70254"
+									},
+									{
+										"name": "objectRelationshipERCObjectFieldName",
+										"value": "r_b5A8DepartmentToB5A8Asset_c_b5a8DepartmentERC"
+									}
+								],
+								"objectRelationshipExternalReferenceCode": "8d3b090a-72a3-37fd-4dd1-2bfe7b64a9d5",
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"relationshipType": "oneToMany",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Long",
+								"unique": false
+							}
+						],
+						"objectFolderExternalReferenceCode": "4a339b21-ba56-f765-9125-df5dc9b1e15c",
+						"objectLayouts": [
+						],
+						"objectRelationships": [
+							{
+								"deletionType": "prevent",
+								"externalReferenceCode": "1925946c-3af7-28f4-6bc5-e7e3d378c0ba",
+								"label": {
+									"en_US": "B5A8 Asset To B5A8 Role Assignment"
+								},
+								"name": "b5A8AssetToB5A8RoleAssignment",
+								"objectDefinitionExternalReferenceCode1": "edf012cb-b526-bf89-51e7-42f16aba9866",
+								"objectDefinitionExternalReferenceCode2": "61183b3d-d5d6-0cd7-8080-72ecfd491119",
+								"objectDefinitionId1": 35244,
+								"objectDefinitionId2": 35166,
+								"objectDefinitionModifiable2": true,
+								"objectDefinitionName2": "B5A8RoleAssignment",
+								"objectDefinitionScope2": "company",
+								"objectDefinitionSystem2": false,
+								"objectField": {
+									"DBType": "Long",
+									"businessType": "Relationship",
+									"defaultValue": "null",
+									"externalReferenceCode": "ff726455-9692-f446-eeac-df6334c85c51",
+									"indexed": true,
+									"indexedAsKeyword": false,
+									"indexedLanguageId": "",
+									"label": {
+										"en_US": "B5A8 Asset To B5A8 Role Assignment"
+									},
+									"listTypeDefinitionId": 0,
+									"localized": false,
+									"name": "r_b5A8AssetToB5A8RoleAssignment_c_b5a8AssetId",
+									"objectDefinitionExternalReferenceCode1": "edf012cb-b526-bf89-51e7-42f16aba9866",
+									"objectFieldSettings": [
+										{
+											"name": "objectDefinition1ShortName",
+											"value": "edf012cb-b526-bf89-51e7-42f16aba9866"
+										},
+										{
+											"name": "objectRelationshipERCObjectFieldName",
+											"value": "r_b5A8AssetToB5A8RoleAssignment_c_b5a8AssetERC"
+										}
+									],
+									"objectRelationshipExternalReferenceCode": "1925946c-3af7-28f4-6bc5-e7e3d378c0ba",
+									"readOnly": "false",
+									"readOnlyConditionExpression": "",
+									"relationshipType": "oneToMany",
+									"required": false,
+									"state": false,
+									"system": false,
+									"type": "Long",
+									"unique": false
+								},
+								"parameterObjectFieldId": 0,
+								"parameterObjectFieldName": "",
+								"reverse": false,
+								"system": false,
+								"type": "oneToMany"
+							}
+						],
+						"objectValidationRules": [
+						],
+						"objectViews": [
+						],
+						"panelCategoryKey": "",
+						"parameterRequired": false,
+						"pluralLabel": {
+							"en_US": "B5A8 Assets"
+						},
+						"portlet": true,
+						"restContextPath": "/o/c/b5a8assets",
+						"scope": "company",
+						"status": {
+							"code": 0,
+							"label": "approved",
+							"label_i18n": "Approved"
+						},
+						"system": false,
+						"titleObjectFieldName": "id"
+					},
+					"objectDefinitionExternalReferenceCode": "edf012cb-b526-bf89-51e7-42f16aba9866",
+					"positionX": 746,
+					"positionY": 303
+				},
+				{
+					"linkedObjectDefinition": false,
+					"objectDefinition": {
+						"accountEntryRestricted": false,
+						"accountEntryRestrictedObjectFieldName": "",
+						"active": true,
+						"className": "com.liferay.object.model.ObjectDefinition#Y5H8",
+						"creator": {
+							"additionalName": "",
+							"contentType": "UserAccount",
+							"familyName": "Test",
+							"givenName": "Test",
+							"name": "Test Test"
+						},
+						"defaultLanguageId": "en_US",
+						"enableCategorization": true,
+						"enableComments": false,
+						"enableIndexSearch": true,
+						"enableLocalization": false,
+						"enableObjectEntryDraft": false,
+						"enableObjectEntryHistory": false,
+						"externalReferenceCode": "41c35be4-d2b8-599f-7f91-658caba70254",
+						"label": {
+							"en_US": "B5A8 Department"
+						},
+						"modifiable": true,
+						"name": "B5A8Department",
+						"objectActions": [
+						],
+						"objectDefinitionSettings": [
+						],
+						"objectFields": [
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "258c05dd-bc28-b3d0-e89d-5e660ee86f2f",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Create Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "createDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "a16f436a-1866-2d13-2d49-a9f48cf749f0",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Author"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "creator",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "f46ebfb0-2867-77c3-d97c-ffd5abe9af9b",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "External Reference Code"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "externalReferenceCode",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "LongInteger",
+								"defaultValue": "null",
+								"externalReferenceCode": "645eafa1-0908-6ac8-8889-533185b22937",
+								"indexed": true,
+								"indexedAsKeyword": true,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "ID"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "id",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Long",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "0b0f99ec-061f-d461-b1d0-dde07c268ea3",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Modified Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "modifiedDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "Integer",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "34d62813-a4cd-4dba-6766-6b2721980f05",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Status"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "status",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Integer",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "df455648-a817-ad9c-d0af-7cee1587e811",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Department Name"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "departmentName",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Clob",
+								"businessType": "LongText",
+								"defaultValue": "null",
+								"externalReferenceCode": "09997282-8350-2a1b-02c3-ed9431def987",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Notes"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "notes",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Clob",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "Relationship",
+								"defaultValue": "null",
+								"externalReferenceCode": "7568abc4-cd5c-688b-c6b1-ae8760c80869",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "User To B5A8 Department"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "r_userToB5A8Department_userId",
+								"objectDefinitionExternalReferenceCode1": "L_USER",
+								"objectFieldSettings": [
+									{
+										"name": "objectDefinition1ShortName",
+										"value": "User"
+									},
+									{
+										"name": "objectRelationshipERCObjectFieldName",
+										"value": "r_userToB5A8Department_userERC"
+									}
+								],
+								"objectRelationshipExternalReferenceCode": "d1bfc39b-303d-47de-481f-03c1c099c2af",
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"relationshipType": "oneToMany",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Long",
+								"unique": false
+							}
+						],
+						"objectFolderExternalReferenceCode": "4a339b21-ba56-f765-9125-df5dc9b1e15c",
+						"objectLayouts": [
+						],
+						"objectRelationships": [
+							{
+								"deletionType": "prevent",
+								"externalReferenceCode": "f125f192-7f6a-e9ab-486a-6b17824037a6",
+								"label": {
+									"en_US": "B5A8 Department To B5A8 Role Assignment"
+								},
+								"name": "b5A8DepartmentToB5A8RoleAssignment",
+								"objectDefinitionExternalReferenceCode1": "41c35be4-d2b8-599f-7f91-658caba70254",
+								"objectDefinitionExternalReferenceCode2": "61183b3d-d5d6-0cd7-8080-72ecfd491119",
+								"objectDefinitionId1": 35213,
+								"objectDefinitionId2": 35166,
+								"objectDefinitionModifiable2": true,
+								"objectDefinitionName2": "B5A8RoleAssignment",
+								"objectDefinitionScope2": "company",
+								"objectDefinitionSystem2": false,
+								"objectField": {
+									"DBType": "Long",
+									"businessType": "Relationship",
+									"defaultValue": "null",
+									"externalReferenceCode": "00f78da4-60b2-c388-6b4a-27dc6db1a292",
+									"indexed": true,
+									"indexedAsKeyword": false,
+									"indexedLanguageId": "",
+									"label": {
+										"en_US": "B5A8 Department To B5A8 Role Assignment"
+									},
+									"listTypeDefinitionId": 0,
+									"localized": false,
+									"name": "r_b5A8DepartmentToB5A8RoleAssignment_c_b5a8DepartmentId",
+									"objectDefinitionExternalReferenceCode1": "41c35be4-d2b8-599f-7f91-658caba70254",
+									"objectFieldSettings": [
+										{
+											"name": "objectDefinition1ShortName",
+											"value": "41c35be4-d2b8-599f-7f91-658caba70254"
+										},
+										{
+											"name": "objectRelationshipERCObjectFieldName",
+											"value": "r_b5A8DepartmentToB5A8RoleAssignment_c_b5a8DepartmentERC"
+										}
+									],
+									"objectRelationshipExternalReferenceCode": "f125f192-7f6a-e9ab-486a-6b17824037a6",
+									"readOnly": "false",
+									"readOnlyConditionExpression": "",
+									"relationshipType": "oneToMany",
+									"required": false,
+									"state": false,
+									"system": false,
+									"type": "Long",
+									"unique": false
+								},
+								"parameterObjectFieldId": 0,
+								"parameterObjectFieldName": "",
+								"reverse": false,
+								"system": false,
+								"type": "oneToMany"
+							},
+							{
+								"deletionType": "prevent",
+								"externalReferenceCode": "8d3b090a-72a3-37fd-4dd1-2bfe7b64a9d5",
+								"label": {
+									"en_US": "B5A8 Department To B5A8 Asset"
+								},
+								"name": "b5A8DepartmentToB5A8Asset",
+								"objectDefinitionExternalReferenceCode1": "41c35be4-d2b8-599f-7f91-658caba70254",
+								"objectDefinitionExternalReferenceCode2": "edf012cb-b526-bf89-51e7-42f16aba9866",
+								"objectDefinitionId1": 35213,
+								"objectDefinitionId2": 35244,
+								"objectDefinitionModifiable2": true,
+								"objectDefinitionName2": "B5A8Asset",
+								"objectDefinitionScope2": "company",
+								"objectDefinitionSystem2": false,
+								"objectField": {
+									"DBType": "Long",
+									"businessType": "Relationship",
+									"defaultValue": "null",
+									"externalReferenceCode": "3b6e7156-5680-1185-fc64-29b9e80051a6",
+									"indexed": true,
+									"indexedAsKeyword": false,
+									"indexedLanguageId": "",
+									"label": {
+										"en_US": "B5A8 Department To B5A8 Asset"
+									},
+									"listTypeDefinitionId": 0,
+									"localized": false,
+									"name": "r_b5A8DepartmentToB5A8Asset_c_b5a8DepartmentId",
+									"objectDefinitionExternalReferenceCode1": "41c35be4-d2b8-599f-7f91-658caba70254",
+									"objectFieldSettings": [
+										{
+											"name": "objectDefinition1ShortName",
+											"value": "41c35be4-d2b8-599f-7f91-658caba70254"
+										},
+										{
+											"name": "objectRelationshipERCObjectFieldName",
+											"value": "r_b5A8DepartmentToB5A8Asset_c_b5a8DepartmentERC"
+										}
+									],
+									"objectRelationshipExternalReferenceCode": "8d3b090a-72a3-37fd-4dd1-2bfe7b64a9d5",
+									"readOnly": "false",
+									"readOnlyConditionExpression": "",
+									"relationshipType": "oneToMany",
+									"required": false,
+									"state": false,
+									"system": false,
+									"type": "Long",
+									"unique": false
+								},
+								"parameterObjectFieldId": 0,
+								"parameterObjectFieldName": "",
+								"reverse": false,
+								"system": false,
+								"type": "oneToMany"
+							}
+						],
+						"objectValidationRules": [
+						],
+						"objectViews": [
+						],
+						"panelCategoryKey": "",
+						"parameterRequired": false,
+						"pluralLabel": {
+							"en_US": "B5A8 Departments"
+						},
+						"portlet": true,
+						"restContextPath": "/o/c/b5a8departments",
+						"scope": "company",
+						"status": {
+							"code": 0,
+							"label": "approved",
+							"label_i18n": "Approved"
+						},
+						"system": false,
+						"titleObjectFieldName": "id"
+					},
+					"objectDefinitionExternalReferenceCode": "41c35be4-d2b8-599f-7f91-658caba70254",
+					"positionX": 1126,
+					"positionY": 303
+				},
+				{
+					"linkedObjectDefinition": false,
+					"objectDefinition": {
+						"accountEntryRestricted": false,
+						"accountEntryRestrictedObjectFieldName": "",
+						"active": true,
+						"className": "com.liferay.object.model.ObjectDefinition#E5N5",
+						"creator": {
+							"additionalName": "",
+							"contentType": "UserAccount",
+							"familyName": "Test",
+							"givenName": "Test",
+							"name": "Test Test"
+						},
+						"defaultLanguageId": "en_US",
+						"enableCategorization": true,
+						"enableComments": false,
+						"enableIndexSearch": true,
+						"enableLocalization": false,
+						"enableObjectEntryDraft": false,
+						"enableObjectEntryHistory": false,
+						"externalReferenceCode": "a24dfdec-9de3-4579-054c-1eccd5c859b2",
+						"label": {
+							"en_US": "B5A8 Role"
+						},
+						"modifiable": true,
+						"name": "B5A8Role",
+						"objectActions": [
+						],
+						"objectDefinitionSettings": [
+						],
+						"objectFields": [
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "92a785d8-f16f-7e82-3024-5b0b0bcfb03d",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Author"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "creator",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "29adfc7f-c19e-6de1-35cd-187d3f79ac00",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Create Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "createDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "ba0be83e-040f-fd20-e3bb-ac3c1922c56e",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "External Reference Code"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "externalReferenceCode",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "7eddedb0-d98a-1423-4938-de626b2c01f7",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Modified Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "modifiedDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "LongInteger",
+								"defaultValue": "null",
+								"externalReferenceCode": "8706c3b9-53af-f508-4e79-7714eed05df7",
+								"indexed": true,
+								"indexedAsKeyword": true,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "ID"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "id",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Long",
+								"unique": false
+							},
+							{
+								"DBType": "Integer",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "1ade47fd-d55a-b260-dcee-11cfb2429b51",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Status"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "status",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Integer",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "ecaa5639-d61a-7fbd-145d-a5ca81c7f04d",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Role Name"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "roleName",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Picklist",
+								"defaultValue": "null",
+								"externalReferenceCode": "809eb325-7a2a-903e-5885-221b75d89776",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Role Type"
+								},
+								"listTypeDefinitionExternalReferenceCode": "B5A8-ROLE-TYPE",
+								"listTypeDefinitionId": 35147,
+								"localized": false,
+								"name": "roleType",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Boolean",
+								"businessType": "Boolean",
+								"defaultValue": "null",
+								"externalReferenceCode": "fa362c89-8ccb-80e6-3464-2bff17f86cea",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "IsDefault"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "isDefault",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Boolean",
+								"unique": false
+							},
+							{
+								"DBType": "Clob",
+								"businessType": "LongText",
+								"defaultValue": "null",
+								"externalReferenceCode": "ba157eeb-1892-e08a-f7c5-5736ba7c875d",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Description"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "description",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Clob",
+								"unique": false
+							}
+						],
+						"objectFolderExternalReferenceCode": "4a339b21-ba56-f765-9125-df5dc9b1e15c",
+						"objectLayouts": [
+						],
+						"objectRelationships": [
+							{
+								"deletionType": "prevent",
+								"externalReferenceCode": "2fcd6485-5e51-7e13-b180-f090025b0ca0",
+								"label": {
+									"en_US": "B5A8 Role To B5A8 Role Assignment"
+								},
+								"name": "b5A8RoleToB5A8RoleAssignment",
+								"objectDefinitionExternalReferenceCode1": "a24dfdec-9de3-4579-054c-1eccd5c859b2",
+								"objectDefinitionExternalReferenceCode2": "61183b3d-d5d6-0cd7-8080-72ecfd491119",
+								"objectDefinitionId1": 35275,
+								"objectDefinitionId2": 35166,
+								"objectDefinitionModifiable2": true,
+								"objectDefinitionName2": "B5A8RoleAssignment",
+								"objectDefinitionScope2": "company",
+								"objectDefinitionSystem2": false,
+								"objectField": {
+									"DBType": "Long",
+									"businessType": "Relationship",
+									"defaultValue": "null",
+									"externalReferenceCode": "5292ba33-9bba-bca1-c574-c322b05e6b3f",
+									"indexed": true,
+									"indexedAsKeyword": false,
+									"indexedLanguageId": "",
+									"label": {
+										"en_US": "B5A8 Role To B5A8 Role Assignment"
+									},
+									"listTypeDefinitionId": 0,
+									"localized": false,
+									"name": "r_b5A8RoleToB5A8RoleAssignment_c_b5a8RoleId",
+									"objectDefinitionExternalReferenceCode1": "a24dfdec-9de3-4579-054c-1eccd5c859b2",
+									"objectFieldSettings": [
+										{
+											"name": "objectDefinition1ShortName",
+											"value": "a24dfdec-9de3-4579-054c-1eccd5c859b2"
+										},
+										{
+											"name": "objectRelationshipERCObjectFieldName",
+											"value": "r_b5A8RoleToB5A8RoleAssignment_c_b5a8RoleERC"
+										}
+									],
+									"objectRelationshipExternalReferenceCode": "2fcd6485-5e51-7e13-b180-f090025b0ca0",
+									"readOnly": "false",
+									"readOnlyConditionExpression": "",
+									"relationshipType": "oneToMany",
+									"required": false,
+									"state": false,
+									"system": false,
+									"type": "Long",
+									"unique": false
+								},
+								"parameterObjectFieldId": 0,
+								"parameterObjectFieldName": "",
+								"reverse": false,
+								"system": false,
+								"type": "oneToMany"
+							}
+						],
+						"objectValidationRules": [
+						],
+						"objectViews": [
+						],
+						"panelCategoryKey": "",
+						"parameterRequired": false,
+						"pluralLabel": {
+							"en_US": "B5A8 Roles"
+						},
+						"portlet": true,
+						"restContextPath": "/o/c/b5a8roles",
+						"scope": "company",
+						"status": {
+							"code": 0,
+							"label": "approved",
+							"label_i18n": "Approved"
+						},
+						"system": false,
+						"titleObjectFieldName": "id"
+					},
+					"objectDefinitionExternalReferenceCode": "a24dfdec-9de3-4579-054c-1eccd5c859b2",
+					"positionX": 1506,
+					"positionY": 303
+				},
+				{
+					"linkedObjectDefinition": true,
+					"objectDefinitionExternalReferenceCode": "L_USER",
+					"positionX": 1886,
+					"positionY": 303
+				}
+			]
+		}
+	]
+}

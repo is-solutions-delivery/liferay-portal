@@ -1,0 +1,1973 @@
+{
+	"configuration": {
+		"className": "com.liferay.object.admin.rest.dto.v1_0.ObjectFolder",
+		"parameters": {
+			"containsHeaders": "true",
+			"createStrategy": "UPSERT",
+			"onErrorFail": "false",
+			"updateStrategy": "UPDATE"
+		},
+		"taskItemDelegateName": "DEFAULT"
+	},
+	"items": [
+		{
+			"externalReferenceCode": "0498424d-9736-abfa-7ec9-aa533a89f65e",
+			"label": {
+				"en_US": "B3A6 Configuration Management Database"
+			},
+			"name": "B3A6ConfigurationManagementDatabase",
+			"objectFolderItems": [
+				{
+					"linkedObjectDefinition": false,
+					"objectDefinition": {
+						"accountEntryRestricted": false,
+						"accountEntryRestrictedObjectFieldName": "",
+						"active": true,
+						"className": "com.liferay.object.model.ObjectDefinition#Y6X6",
+						"creator": {
+							"additionalName": "",
+							"contentType": "UserAccount",
+							"familyName": "Test",
+							"givenName": "Test",
+							"name": "Test Test"
+						},
+						"defaultLanguageId": "en_US",
+						"enableCategorization": true,
+						"enableComments": false,
+						"enableIndexSearch": true,
+						"enableLocalization": false,
+						"enableObjectEntryDraft": false,
+						"enableObjectEntryHistory": false,
+						"externalReferenceCode": "1c710fb8-ba0f-03b9-151d-d573635bd996",
+						"label": {
+							"en_US": "B3A6 Configuration Item"
+						},
+						"modifiable": true,
+						"name": "B3A6ConfigurationItem",
+						"objectActions": [
+						],
+						"objectDefinitionSettings": [
+						],
+						"objectFields": [
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "81642f48-2023-36e0-e63e-b76a1af06d88",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Author"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "creator",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "9a583620-1cfb-f009-09ca-9ef371691ae2",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Create Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "createDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "b8e85392-c337-5a83-1131-a9786c9930d8",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "External Reference Code"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "externalReferenceCode",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "LongInteger",
+								"defaultValue": "null",
+								"externalReferenceCode": "47eae1bf-b7d0-8420-ef96-575781169e23",
+								"indexed": true,
+								"indexedAsKeyword": true,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "ID"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "id",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Long",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "f0522ed5-5793-a3ec-d075-967bb0a42b7a",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Modified Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "modifiedDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "Integer",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "2b09188c-9600-e770-1088-9313b0b1af96",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Status"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "status",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Integer",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "0916e002-33c3-5a01-d0e3-62c783ebc8fd",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Name"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "name",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Clob",
+								"businessType": "LongText",
+								"defaultValue": "null",
+								"externalReferenceCode": "6930853a-cce6-7072-0f54-37e993fa989f",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Description"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "description",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Clob",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Picklist",
+								"defaultValue": "null",
+								"externalReferenceCode": "ecebe271-4b15-1819-c307-296dfea09009",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "CI Type"
+								},
+								"listTypeDefinitionExternalReferenceCode": "B3A6-CI-TYPE",
+								"listTypeDefinitionId": 36052,
+								"localized": false,
+								"name": "cIType",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Picklist",
+								"defaultValue": "null",
+								"externalReferenceCode": "8808f830-e7a7-e353-1449-8e6e3e5033e7",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Environment"
+								},
+								"listTypeDefinitionExternalReferenceCode": "B3A6-ENVIRONMENT",
+								"listTypeDefinitionId": 36065,
+								"localized": false,
+								"name": "environment",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Picklist",
+								"defaultValue": "null",
+								"externalReferenceCode": "e920530f-f5f4-d945-a1d7-5c9f707c2adf",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Criticality"
+								},
+								"listTypeDefinitionExternalReferenceCode": "B3A6-PRIORITY",
+								"listTypeDefinitionId": 36081,
+								"localized": false,
+								"name": "criticality",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Picklist",
+								"defaultValue": "null",
+								"externalReferenceCode": "c4ddecf1-b042-55aa-d30e-a7dd8424f91e",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "B3A6 Configuration Item Status"
+								},
+								"listTypeDefinitionExternalReferenceCode": "B3A6-STATUS",
+								"listTypeDefinitionId": 36060,
+								"localized": false,
+								"name": "b3A6ConfigurationItemStatus",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "Relationship",
+								"defaultValue": "null",
+								"externalReferenceCode": "8611657c-cc96-bf05-feb0-21f9405c6936",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "B3A6 Department To B3A6 Configuration Item"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "r_b3A6DepartmentToB3A6ConfigurationItem_c_b3a6DepartmentId",
+								"objectDefinitionExternalReferenceCode1": "a0e566c2-1adb-f812-af4d-aee7736e758e",
+								"objectFieldSettings": [
+									{
+										"name": "objectDefinition1ShortName",
+										"value": "a0e566c2-1adb-f812-af4d-aee7736e758e"
+									},
+									{
+										"name": "objectRelationshipERCObjectFieldName",
+										"value": "r_b3A6DepartmentToB3A6ConfigurationItem_c_b3a6DepartmentERC"
+									}
+								],
+								"objectRelationshipExternalReferenceCode": "b129916e-94d2-59c4-4ea1-5166f3d363ab",
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"relationshipType": "oneToMany",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Long",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "Relationship",
+								"defaultValue": "null",
+								"externalReferenceCode": "7d128c76-b684-a5d9-5d8b-58fc22beaab7",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "User To B3A6 Configuration Item"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "r_userToB3A6ConfigurationItem_userId",
+								"objectDefinitionExternalReferenceCode1": "L_USER",
+								"objectFieldSettings": [
+									{
+										"name": "objectDefinition1ShortName",
+										"value": "User"
+									},
+									{
+										"name": "objectRelationshipERCObjectFieldName",
+										"value": "r_userToB3A6ConfigurationItem_userERC"
+									}
+								],
+								"objectRelationshipExternalReferenceCode": "e2e1d396-3e40-d540-aa83-9018becebb9b",
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"relationshipType": "oneToMany",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Long",
+								"unique": false
+							}
+						],
+						"objectFolderExternalReferenceCode": "0498424d-9736-abfa-7ec9-aa533a89f65e",
+						"objectLayouts": [
+						],
+						"objectRelationships": [
+							{
+								"deletionType": "prevent",
+								"externalReferenceCode": "19f9455e-9e58-5f4b-acbc-889585d0e667",
+								"label": {
+									"en_US": "B3A6 Config Item To B3A6 Config Item"
+								},
+								"name": "b3A6ConfigItemToB3A6ConfigItem",
+								"objectDefinitionExternalReferenceCode1": "1c710fb8-ba0f-03b9-151d-d573635bd996",
+								"objectDefinitionExternalReferenceCode2": "1c710fb8-ba0f-03b9-151d-d573635bd996",
+								"objectDefinitionId1": 36087,
+								"objectDefinitionId2": 36087,
+								"objectDefinitionModifiable2": true,
+								"objectDefinitionName2": "B3A6ConfigurationItem",
+								"objectDefinitionScope2": "company",
+								"objectDefinitionSystem2": false,
+								"parameterObjectFieldId": 0,
+								"parameterObjectFieldName": "",
+								"reverse": false,
+								"system": false,
+								"type": "manyToMany"
+							},
+							{
+								"deletionType": "prevent",
+								"externalReferenceCode": "2694ab76-9a60-c5a3-ef13-4e9fd1cb8db5",
+								"label": {
+									"en_US": "B3A6 Config Item To B3A6 Config Item"
+								},
+								"name": "b3A6ConfigItemToB3A6ConfigItem",
+								"objectDefinitionExternalReferenceCode1": "1c710fb8-ba0f-03b9-151d-d573635bd996",
+								"objectDefinitionExternalReferenceCode2": "1c710fb8-ba0f-03b9-151d-d573635bd996",
+								"objectDefinitionId1": 36087,
+								"objectDefinitionId2": 36087,
+								"objectDefinitionModifiable2": true,
+								"objectDefinitionName2": "B3A6ConfigurationItem",
+								"objectDefinitionScope2": "company",
+								"objectDefinitionSystem2": false,
+								"parameterObjectFieldId": 0,
+								"parameterObjectFieldName": "",
+								"reverse": true,
+								"system": false,
+								"type": "manyToMany"
+							},
+							{
+								"deletionType": "prevent",
+								"externalReferenceCode": "2782ff1d-5e7f-69ba-750b-eb008c05e3a5",
+								"label": {
+									"en_US": "B3A6 Configuration Item To B3A6 Tag"
+								},
+								"name": "b3A6ConfigurationItemToB3A6Tag",
+								"objectDefinitionExternalReferenceCode1": "1c710fb8-ba0f-03b9-151d-d573635bd996",
+								"objectDefinitionExternalReferenceCode2": "0ee41413-73d5-c565-1203-48ef53ff7af5",
+								"objectDefinitionId1": 36087,
+								"objectDefinitionId2": 36174,
+								"objectDefinitionModifiable2": true,
+								"objectDefinitionName2": "B3A6Tag",
+								"objectDefinitionScope2": "company",
+								"objectDefinitionSystem2": false,
+								"parameterObjectFieldId": 0,
+								"parameterObjectFieldName": "",
+								"reverse": false,
+								"system": false,
+								"type": "manyToMany"
+							},
+							{
+								"deletionType": "prevent",
+								"externalReferenceCode": "1035193b-f187-9394-7b2b-a7f4c663850b",
+								"label": {
+									"en_US": "B3A6 Configuration Item To B3A6 Incident"
+								},
+								"name": "b3A6ConfigurationItemToB3A6Incident",
+								"objectDefinitionExternalReferenceCode1": "1c710fb8-ba0f-03b9-151d-d573635bd996",
+								"objectDefinitionExternalReferenceCode2": "42f93f89-3c05-7780-0fe9-dc17c7f25bc1",
+								"objectDefinitionId1": 36087,
+								"objectDefinitionId2": 36204,
+								"objectDefinitionModifiable2": true,
+								"objectDefinitionName2": "B3A6Incident",
+								"objectDefinitionScope2": "company",
+								"objectDefinitionSystem2": false,
+								"objectField": {
+									"DBType": "Long",
+									"businessType": "Relationship",
+									"defaultValue": "null",
+									"externalReferenceCode": "f67c7a45-c4c5-37b8-7423-29974a5078d1",
+									"indexed": true,
+									"indexedAsKeyword": false,
+									"indexedLanguageId": "",
+									"label": {
+										"en_US": "B3A6 Configuration Item To B3A6 Incident"
+									},
+									"listTypeDefinitionId": 0,
+									"localized": false,
+									"name": "r_b3A6ConfigurationItemToB3A6Incident_c_b3a6ConfigurationItemId",
+									"objectDefinitionExternalReferenceCode1": "1c710fb8-ba0f-03b9-151d-d573635bd996",
+									"objectFieldSettings": [
+										{
+											"name": "objectDefinition1ShortName",
+											"value": "B3A6ConfigurationItem"
+										},
+										{
+											"name": "objectRelationshipERCObjectFieldName",
+											"value": "r_b3A6ConfigurationItemToB3A6Incident_c_b3a6ConfigurationItemERC"
+										}
+									],
+									"objectRelationshipExternalReferenceCode": "1035193b-f187-9394-7b2b-a7f4c663850b",
+									"readOnly": "false",
+									"readOnlyConditionExpression": "",
+									"relationshipType": "oneToMany",
+									"required": false,
+									"state": false,
+									"system": false,
+									"type": "Long",
+									"unique": false
+								},
+								"parameterObjectFieldId": 0,
+								"parameterObjectFieldName": "",
+								"reverse": false,
+								"system": false,
+								"type": "oneToMany"
+							}
+						],
+						"objectValidationRules": [
+						],
+						"objectViews": [
+						],
+						"panelCategoryKey": "",
+						"parameterRequired": false,
+						"pluralLabel": {
+							"en_US": "B3A6 Configuration Items"
+						},
+						"portlet": true,
+						"restContextPath": "/o/c/b3a6configurationitems",
+						"scope": "company",
+						"status": {
+							"code": 0,
+							"label": "approved",
+							"label_i18n": "Approved"
+						},
+						"system": false,
+						"titleObjectFieldName": "id"
+					},
+					"objectDefinitionExternalReferenceCode": "1c710fb8-ba0f-03b9-151d-d573635bd996",
+					"positionX": 366,
+					"positionY": 303
+				},
+				{
+					"linkedObjectDefinition": false,
+					"objectDefinition": {
+						"accountEntryRestricted": false,
+						"accountEntryRestrictedObjectFieldName": "",
+						"active": true,
+						"className": "com.liferay.object.model.ObjectDefinition#N3G8",
+						"creator": {
+							"additionalName": "",
+							"contentType": "UserAccount",
+							"familyName": "Test",
+							"givenName": "Test",
+							"name": "Test Test"
+						},
+						"defaultLanguageId": "en_US",
+						"enableCategorization": true,
+						"enableComments": false,
+						"enableIndexSearch": true,
+						"enableLocalization": false,
+						"enableObjectEntryDraft": false,
+						"enableObjectEntryHistory": false,
+						"externalReferenceCode": "daaf3ba1-dd18-44e5-a4e1-8a1ec6c367f8",
+						"label": {
+							"en_US": "B3A6 Relationship"
+						},
+						"modifiable": true,
+						"name": "B3A6Relationship",
+						"objectActions": [
+						],
+						"objectDefinitionSettings": [
+						],
+						"objectFields": [
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "cf6c0dc5-f467-9069-47c8-f4ddb80be2d1",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Author"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "creator",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "ee15baf4-b867-bbad-aa37-f5e3c011cf26",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Create Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "createDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "a36f7491-cefd-a0c7-de35-447737424b94",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "External Reference Code"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "externalReferenceCode",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "9bf7220f-a509-7d33-c0a5-775f7599f58e",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Modified Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "modifiedDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "LongInteger",
+								"defaultValue": "null",
+								"externalReferenceCode": "f95dd7d3-f36c-0b28-aade-f015b9e1ecc1",
+								"indexed": true,
+								"indexedAsKeyword": true,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "ID"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "id",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Long",
+								"unique": false
+							},
+							{
+								"DBType": "Integer",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "91bedb2a-629b-0fc2-bc9b-632e99fa39e1",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Status"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "status",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Integer",
+								"unique": false
+							},
+							{
+								"DBType": "Clob",
+								"businessType": "LongText",
+								"defaultValue": "null",
+								"externalReferenceCode": "bc3ad810-6063-136d-2933-a904c5be8c6d",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Description"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "description",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Clob",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Picklist",
+								"defaultValue": "null",
+								"externalReferenceCode": "31f3be61-9e92-2e5f-5cb4-fb96322e3bfa",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "B3A6 Relationship Status"
+								},
+								"listTypeDefinitionExternalReferenceCode": "B3A6-STATUS",
+								"listTypeDefinitionId": 36060,
+								"localized": false,
+								"name": "b3A6RelationshipStatus",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Picklist",
+								"defaultValue": "null",
+								"externalReferenceCode": "940b63d4-ef86-6460-a076-aa4a25235503",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "B3A6 Relationship Type"
+								},
+								"listTypeDefinitionExternalReferenceCode": "B3A6-RELATIONSHIP-TYPE",
+								"listTypeDefinitionId": 36075,
+								"localized": false,
+								"name": "b3A6RelationshipType",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							}
+						],
+						"objectFolderExternalReferenceCode": "0498424d-9736-abfa-7ec9-aa533a89f65e",
+						"objectLayouts": [
+						],
+						"objectRelationships": [
+						],
+						"objectValidationRules": [
+						],
+						"objectViews": [
+						],
+						"panelCategoryKey": "",
+						"parameterRequired": false,
+						"pluralLabel": {
+							"en_US": "B3A6 Relationships"
+						},
+						"portlet": true,
+						"restContextPath": "/o/c/b3a6relationships",
+						"scope": "company",
+						"status": {
+							"code": 0,
+							"label": "approved",
+							"label_i18n": "Approved"
+						},
+						"system": false,
+						"titleObjectFieldName": "id"
+					},
+					"objectDefinitionExternalReferenceCode": "daaf3ba1-dd18-44e5-a4e1-8a1ec6c367f8",
+					"positionX": 746,
+					"positionY": 303
+				},
+				{
+					"linkedObjectDefinition": false,
+					"objectDefinition": {
+						"accountEntryRestricted": false,
+						"accountEntryRestrictedObjectFieldName": "",
+						"active": true,
+						"className": "com.liferay.object.model.ObjectDefinition#Y9H3",
+						"creator": {
+							"additionalName": "",
+							"contentType": "UserAccount",
+							"familyName": "Test",
+							"givenName": "Test",
+							"name": "Test Test"
+						},
+						"defaultLanguageId": "en_US",
+						"enableCategorization": true,
+						"enableComments": false,
+						"enableIndexSearch": true,
+						"enableLocalization": false,
+						"enableObjectEntryDraft": false,
+						"enableObjectEntryHistory": false,
+						"externalReferenceCode": "a0e566c2-1adb-f812-af4d-aee7736e758e",
+						"label": {
+							"en_US": "B3A6 Department"
+						},
+						"modifiable": true,
+						"name": "B3A6Department",
+						"objectActions": [
+						],
+						"objectDefinitionSettings": [
+						],
+						"objectFields": [
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "9a5a4ee0-5b02-2be8-3b4c-6c5c7a559c33",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Author"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "creator",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "29ca320d-e723-9379-6e34-5a5a8a4672ae",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Create Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "createDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "b88f47f5-3532-3a38-803d-2051bcee651a",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "External Reference Code"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "externalReferenceCode",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "LongInteger",
+								"defaultValue": "null",
+								"externalReferenceCode": "55a2638a-4e74-4501-c5d9-d8cb569314b8",
+								"indexed": true,
+								"indexedAsKeyword": true,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "ID"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "id",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Long",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "7ebb2f5d-357b-4fdf-b13e-952381a6d4ba",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Modified Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "modifiedDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "Integer",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "4011f5e8-f4d0-c79d-8390-c105b870f4af",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Status"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "status",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Integer",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "f80bb95c-56f1-b321-20fe-16ca4b429e68",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Name"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "name",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Clob",
+								"businessType": "LongText",
+								"defaultValue": "null",
+								"externalReferenceCode": "ca18dc4b-4277-9361-1494-0974956db74f",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Description"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "description",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Clob",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "Relationship",
+								"defaultValue": "null",
+								"externalReferenceCode": "58d1ec34-ec63-0b24-3bfd-a98bb5e07e4a",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "User To B3A6 Department"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "r_userToB3A6Department_userId",
+								"objectDefinitionExternalReferenceCode1": "L_USER",
+								"objectFieldSettings": [
+									{
+										"name": "objectDefinition1ShortName",
+										"value": "User"
+									},
+									{
+										"name": "objectRelationshipERCObjectFieldName",
+										"value": "r_userToB3A6Department_userERC"
+									}
+								],
+								"objectRelationshipExternalReferenceCode": "37fa1341-0ba0-0111-e511-a41005f9d606",
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"relationshipType": "oneToMany",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Long",
+								"unique": false
+							}
+						],
+						"objectFolderExternalReferenceCode": "0498424d-9736-abfa-7ec9-aa533a89f65e",
+						"objectLayouts": [
+						],
+						"objectRelationships": [
+							{
+								"deletionType": "prevent",
+								"externalReferenceCode": "b129916e-94d2-59c4-4ea1-5166f3d363ab",
+								"label": {
+									"en_US": "B3A6 Department To B3A6 Configuration Item"
+								},
+								"name": "b3A6DepartmentToB3A6ConfigurationItem",
+								"objectDefinitionExternalReferenceCode1": "a0e566c2-1adb-f812-af4d-aee7736e758e",
+								"objectDefinitionExternalReferenceCode2": "1c710fb8-ba0f-03b9-151d-d573635bd996",
+								"objectDefinitionId1": 36135,
+								"objectDefinitionId2": 36087,
+								"objectDefinitionModifiable2": true,
+								"objectDefinitionName2": "B3A6ConfigurationItem",
+								"objectDefinitionScope2": "company",
+								"objectDefinitionSystem2": false,
+								"objectField": {
+									"DBType": "Long",
+									"businessType": "Relationship",
+									"defaultValue": "null",
+									"externalReferenceCode": "8611657c-cc96-bf05-feb0-21f9405c6936",
+									"indexed": true,
+									"indexedAsKeyword": false,
+									"indexedLanguageId": "",
+									"label": {
+										"en_US": "B3A6 Department To B3A6 Configuration Item"
+									},
+									"listTypeDefinitionId": 0,
+									"localized": false,
+									"name": "r_b3A6DepartmentToB3A6ConfigurationItem_c_b3a6DepartmentId",
+									"objectDefinitionExternalReferenceCode1": "a0e566c2-1adb-f812-af4d-aee7736e758e",
+									"objectFieldSettings": [
+										{
+											"name": "objectDefinition1ShortName",
+											"value": "a0e566c2-1adb-f812-af4d-aee7736e758e"
+										},
+										{
+											"name": "objectRelationshipERCObjectFieldName",
+											"value": "r_b3A6DepartmentToB3A6ConfigurationItem_c_b3a6DepartmentERC"
+										}
+									],
+									"objectRelationshipExternalReferenceCode": "b129916e-94d2-59c4-4ea1-5166f3d363ab",
+									"readOnly": "false",
+									"readOnlyConditionExpression": "",
+									"relationshipType": "oneToMany",
+									"required": false,
+									"state": false,
+									"system": false,
+									"type": "Long",
+									"unique": false
+								},
+								"parameterObjectFieldId": 0,
+								"parameterObjectFieldName": "",
+								"reverse": false,
+								"system": false,
+								"type": "oneToMany"
+							},
+							{
+								"deletionType": "prevent",
+								"externalReferenceCode": "a1aa438d-f50c-aed3-a486-7ed3fd63d813",
+								"label": {
+									"en_US": "B3A6 Department To B3A6 Incident"
+								},
+								"name": "b3A6DepartmentToB3A6Incident",
+								"objectDefinitionExternalReferenceCode1": "a0e566c2-1adb-f812-af4d-aee7736e758e",
+								"objectDefinitionExternalReferenceCode2": "42f93f89-3c05-7780-0fe9-dc17c7f25bc1",
+								"objectDefinitionId1": 36135,
+								"objectDefinitionId2": 36204,
+								"objectDefinitionModifiable2": true,
+								"objectDefinitionName2": "B3A6Incident",
+								"objectDefinitionScope2": "company",
+								"objectDefinitionSystem2": false,
+								"objectField": {
+									"DBType": "Long",
+									"businessType": "Relationship",
+									"defaultValue": "null",
+									"externalReferenceCode": "8f74c174-d8b1-dfd7-9e6c-0562b2c56a37",
+									"indexed": true,
+									"indexedAsKeyword": false,
+									"indexedLanguageId": "",
+									"label": {
+										"en_US": "B3A6 Department To B3A6 Incident"
+									},
+									"listTypeDefinitionId": 0,
+									"localized": false,
+									"name": "r_b3A6DepartmentToB3A6Incident_c_b3a6DepartmentId",
+									"objectDefinitionExternalReferenceCode1": "a0e566c2-1adb-f812-af4d-aee7736e758e",
+									"objectFieldSettings": [
+										{
+											"name": "objectDefinition1ShortName",
+											"value": "B3A6Department"
+										},
+										{
+											"name": "objectRelationshipERCObjectFieldName",
+											"value": "r_b3A6DepartmentToB3A6Incident_c_b3a6DepartmentERC"
+										}
+									],
+									"objectRelationshipExternalReferenceCode": "a1aa438d-f50c-aed3-a486-7ed3fd63d813",
+									"readOnly": "false",
+									"readOnlyConditionExpression": "",
+									"relationshipType": "oneToMany",
+									"required": false,
+									"state": false,
+									"system": false,
+									"type": "Long",
+									"unique": false
+								},
+								"parameterObjectFieldId": 0,
+								"parameterObjectFieldName": "",
+								"reverse": false,
+								"system": false,
+								"type": "oneToMany"
+							}
+						],
+						"objectValidationRules": [
+						],
+						"objectViews": [
+						],
+						"panelCategoryKey": "",
+						"parameterRequired": false,
+						"pluralLabel": {
+							"en_US": "B3A6 Departments"
+						},
+						"portlet": true,
+						"restContextPath": "/o/c/b3a6departments",
+						"scope": "company",
+						"status": {
+							"code": 0,
+							"label": "approved",
+							"label_i18n": "Approved"
+						},
+						"system": false,
+						"titleObjectFieldName": "id"
+					},
+					"objectDefinitionExternalReferenceCode": "a0e566c2-1adb-f812-af4d-aee7736e758e",
+					"positionX": 1126,
+					"positionY": 303
+				},
+				{
+					"linkedObjectDefinition": false,
+					"objectDefinition": {
+						"accountEntryRestricted": false,
+						"accountEntryRestrictedObjectFieldName": "",
+						"active": true,
+						"className": "com.liferay.object.model.ObjectDefinition#W5G0",
+						"creator": {
+							"additionalName": "",
+							"contentType": "UserAccount",
+							"familyName": "Test",
+							"givenName": "Test",
+							"name": "Test Test"
+						},
+						"defaultLanguageId": "en_US",
+						"enableCategorization": true,
+						"enableComments": false,
+						"enableIndexSearch": true,
+						"enableLocalization": false,
+						"enableObjectEntryDraft": false,
+						"enableObjectEntryHistory": false,
+						"externalReferenceCode": "0ee41413-73d5-c565-1203-48ef53ff7af5",
+						"label": {
+							"en_US": "B3A6 Tag"
+						},
+						"modifiable": true,
+						"name": "B3A6Tag",
+						"objectActions": [
+						],
+						"objectDefinitionSettings": [
+						],
+						"objectFields": [
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "24b2612c-1319-42ff-fd00-bb82354448bd",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Create Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "createDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "e632597f-cf48-0b56-b2d5-3ac296d6035d",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Author"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "creator",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "525d23e1-6bf9-79f6-08ff-c34459bf6804",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "External Reference Code"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "externalReferenceCode",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "LongInteger",
+								"defaultValue": "null",
+								"externalReferenceCode": "ea1e42fe-0935-1b9e-8a65-73f77673da62",
+								"indexed": true,
+								"indexedAsKeyword": true,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "ID"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "id",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Long",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "0c84dc8e-cbb6-b53e-f797-ec1c3168a8d4",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Modified Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "modifiedDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "Integer",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "d5655993-da40-ed9b-f280-f3803910ecfd",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Status"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "status",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Integer",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "24362f51-d73b-9125-113c-73335e3200c8",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Name"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "name",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "bad3b3ad-9a90-8e0e-c9f9-be0978e0b2e7",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Category"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "category",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							}
+						],
+						"objectFolderExternalReferenceCode": "0498424d-9736-abfa-7ec9-aa533a89f65e",
+						"objectLayouts": [
+						],
+						"objectRelationships": [
+							{
+								"deletionType": "prevent",
+								"externalReferenceCode": "81f57b81-bd7b-7e44-8ef5-f973d95e0cd4",
+								"label": {
+									"en_US": "B3A6 Configuration Item To B3A6 Tag"
+								},
+								"name": "b3A6ConfigurationItemToB3A6Tag",
+								"objectDefinitionExternalReferenceCode1": "0ee41413-73d5-c565-1203-48ef53ff7af5",
+								"objectDefinitionExternalReferenceCode2": "1c710fb8-ba0f-03b9-151d-d573635bd996",
+								"objectDefinitionId1": 36174,
+								"objectDefinitionId2": 36087,
+								"objectDefinitionModifiable2": true,
+								"objectDefinitionName2": "B3A6ConfigurationItem",
+								"objectDefinitionScope2": "company",
+								"objectDefinitionSystem2": false,
+								"parameterObjectFieldId": 0,
+								"parameterObjectFieldName": "",
+								"reverse": true,
+								"system": false,
+								"type": "manyToMany"
+							}
+						],
+						"objectValidationRules": [
+						],
+						"objectViews": [
+						],
+						"panelCategoryKey": "",
+						"parameterRequired": false,
+						"pluralLabel": {
+							"en_US": "B3A6 Tags"
+						},
+						"portlet": true,
+						"restContextPath": "/o/c/b3a6tags",
+						"scope": "company",
+						"status": {
+							"code": 0,
+							"label": "approved",
+							"label_i18n": "Approved"
+						},
+						"system": false,
+						"titleObjectFieldName": "id"
+					},
+					"objectDefinitionExternalReferenceCode": "0ee41413-73d5-c565-1203-48ef53ff7af5",
+					"positionX": 1506,
+					"positionY": 303
+				},
+				{
+					"linkedObjectDefinition": false,
+					"objectDefinition": {
+						"accountEntryRestricted": false,
+						"accountEntryRestrictedObjectFieldName": "",
+						"active": true,
+						"className": "com.liferay.object.model.ObjectDefinition#U6Z9",
+						"creator": {
+							"additionalName": "",
+							"contentType": "UserAccount",
+							"familyName": "Test",
+							"givenName": "Test",
+							"name": "Test Test"
+						},
+						"defaultLanguageId": "en_US",
+						"enableCategorization": true,
+						"enableComments": false,
+						"enableIndexSearch": true,
+						"enableLocalization": false,
+						"enableObjectEntryDraft": false,
+						"enableObjectEntryHistory": false,
+						"externalReferenceCode": "42f93f89-3c05-7780-0fe9-dc17c7f25bc1",
+						"label": {
+							"en_US": "B3A6 Incident"
+						},
+						"modifiable": true,
+						"name": "B3A6Incident",
+						"objectActions": [
+						],
+						"objectDefinitionSettings": [
+						],
+						"objectFields": [
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "68d51e02-9e77-f94e-0238-4bb835d044db",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Author"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "creator",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "b060bd88-7937-8e63-3e87-c9eaebc14742",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Create Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "createDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "7963faba-be15-ab92-07b7-823b5f3d7882",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "External Reference Code"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "externalReferenceCode",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Date",
+								"businessType": "Date",
+								"defaultValue": "null",
+								"externalReferenceCode": "845c3e2a-2c6e-9300-0abb-43e8cc6394b9",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Modified Date"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "modifiedDate",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Date",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "LongInteger",
+								"defaultValue": "null",
+								"externalReferenceCode": "c840ce6a-744c-ee75-a095-d0ec7c5e9639",
+								"indexed": true,
+								"indexedAsKeyword": true,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "ID"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "id",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Long",
+								"unique": false
+							},
+							{
+								"DBType": "Integer",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "b4f16adf-6346-28d3-89dd-73ec42d8e193",
+								"indexed": false,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "Status"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "status",
+								"objectFieldSettings": [
+								],
+								"readOnly": "true",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": true,
+								"type": "Integer",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "Relationship",
+								"defaultValue": "null",
+								"externalReferenceCode": "f67c7a45-c4c5-37b8-7423-29974a5078d1",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "B3A6 Configuration Item To B3A6 Incident"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "r_b3A6ConfigurationItemToB3A6Incident_c_b3a6ConfigurationItemId",
+								"objectDefinitionExternalReferenceCode1": "1c710fb8-ba0f-03b9-151d-d573635bd996",
+								"objectFieldSettings": [
+									{
+										"name": "objectDefinition1ShortName",
+										"value": "B3A6ConfigurationItem"
+									},
+									{
+										"name": "objectRelationshipERCObjectFieldName",
+										"value": "r_b3A6ConfigurationItemToB3A6Incident_c_b3a6ConfigurationItemERC"
+									}
+								],
+								"objectRelationshipExternalReferenceCode": "1035193b-f187-9394-7b2b-a7f4c663850b",
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"relationshipType": "oneToMany",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Long",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "Relationship",
+								"defaultValue": "null",
+								"externalReferenceCode": "8f74c174-d8b1-dfd7-9e6c-0562b2c56a37",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "B3A6 Department To B3A6 Incident"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "r_b3A6DepartmentToB3A6Incident_c_b3a6DepartmentId",
+								"objectDefinitionExternalReferenceCode1": "a0e566c2-1adb-f812-af4d-aee7736e758e",
+								"objectFieldSettings": [
+									{
+										"name": "objectDefinition1ShortName",
+										"value": "B3A6Department"
+									},
+									{
+										"name": "objectRelationshipERCObjectFieldName",
+										"value": "r_b3A6DepartmentToB3A6Incident_c_b3a6DepartmentERC"
+									}
+								],
+								"objectRelationshipExternalReferenceCode": "a1aa438d-f50c-aed3-a486-7ed3fd63d813",
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"relationshipType": "oneToMany",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Long",
+								"unique": false
+							},
+							{
+								"DBType": "Clob",
+								"businessType": "LongText",
+								"defaultValue": "null",
+								"externalReferenceCode": "f865e8b2-683f-523d-1321-f8bbef044442",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Description"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "description",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Clob",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Text",
+								"defaultValue": "null",
+								"externalReferenceCode": "4c8302e5-9609-8190-c796-6a19a6bb49f0",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Title"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "title",
+								"objectFieldSettings": [
+									{
+										"name": "showCounter",
+										"value": false
+									}
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Picklist",
+								"defaultValue": "null",
+								"externalReferenceCode": "50a3bfe2-ab4e-80bf-80e0-6458136704a2",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "B3A6 Incident Status"
+								},
+								"listTypeDefinitionExternalReferenceCode": "B3A6-STATUS",
+								"listTypeDefinitionId": 36060,
+								"localized": false,
+								"name": "b3A6IncidentStatus",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "String",
+								"businessType": "Picklist",
+								"defaultValue": "null",
+								"externalReferenceCode": "cbde92d8-a5c8-5450-e893-f54db67be909",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "en_US",
+								"label": {
+									"en_US": "Priority"
+								},
+								"listTypeDefinitionExternalReferenceCode": "B3A6-PRIORITY",
+								"listTypeDefinitionId": 36081,
+								"localized": false,
+								"name": "priority",
+								"objectFieldSettings": [
+								],
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "String",
+								"unique": false
+							},
+							{
+								"DBType": "Long",
+								"businessType": "Relationship",
+								"defaultValue": "null",
+								"externalReferenceCode": "e5968376-5fef-1226-1851-183c52d58b8f",
+								"indexed": true,
+								"indexedAsKeyword": false,
+								"indexedLanguageId": "",
+								"label": {
+									"en_US": "User To B3A6 Incident"
+								},
+								"listTypeDefinitionId": 0,
+								"localized": false,
+								"name": "r_userToB3A6Incident_userId",
+								"objectDefinitionExternalReferenceCode1": "L_USER",
+								"objectFieldSettings": [
+									{
+										"name": "objectDefinition1ShortName",
+										"value": "User"
+									},
+									{
+										"name": "objectRelationshipERCObjectFieldName",
+										"value": "r_userToB3A6Incident_userERC"
+									}
+								],
+								"objectRelationshipExternalReferenceCode": "e6670604-b132-ab7b-59e4-2e8f5b800e31",
+								"readOnly": "false",
+								"readOnlyConditionExpression": "",
+								"relationshipType": "oneToMany",
+								"required": false,
+								"state": false,
+								"system": false,
+								"type": "Long",
+								"unique": false
+							}
+						],
+						"objectFolderExternalReferenceCode": "0498424d-9736-abfa-7ec9-aa533a89f65e",
+						"objectLayouts": [
+						],
+						"objectRelationships": [
+						],
+						"objectValidationRules": [
+						],
+						"objectViews": [
+						],
+						"panelCategoryKey": "",
+						"parameterRequired": false,
+						"pluralLabel": {
+							"en_US": "B3A6 Incidents"
+						},
+						"portlet": true,
+						"restContextPath": "/o/c/b3a6incidents",
+						"scope": "company",
+						"status": {
+							"code": 0,
+							"label": "approved",
+							"label_i18n": "Approved"
+						},
+						"system": false,
+						"titleObjectFieldName": "id"
+					},
+					"objectDefinitionExternalReferenceCode": "42f93f89-3c05-7780-0fe9-dc17c7f25bc1",
+					"positionX": 1886,
+					"positionY": 303
+				},
+				{
+					"linkedObjectDefinition": true,
+					"objectDefinitionExternalReferenceCode": "L_USER",
+					"positionX": 2266,
+					"positionY": 303
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,15 @@
+assemble:
+    -   from: batch
+        into: batch
+content-and-media-library:
+    name: Content And Media Library
+    oAuthApplicationHeadlessServer: content-and-media-library-oahs
+    type: batch
+content-and-media-library-oahs:
+    .serviceAddress: localhost:8080
+    .serviceScheme: http
+    name: Content And Media Library OAuth Application Headless Server
+    scopes:
+        -   Liferay.Headless.Batch.Engine.everything
+        -   Liferay.Object.Admin.REST.everything
+    type: oAuthApplicationHeadlessServer

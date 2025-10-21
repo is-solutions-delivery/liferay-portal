@@ -1,0 +1,15 @@
+assemble:
+    -   from: batch
+        into: batch
+license-management-system:
+    name: License Management System
+    oAuthApplicationHeadlessServer: license-management-system-oahs
+    type: batch
+license-management-system-oahs:
+    .serviceAddress: localhost:8080
+    .serviceScheme: http
+    name: License Management System OAuth Application Headless Server
+    scopes:
+        -   Liferay.Headless.Batch.Engine.everything
+        -   Liferay.Object.Admin.REST.everything
+    type: oAuthApplicationHeadlessServer

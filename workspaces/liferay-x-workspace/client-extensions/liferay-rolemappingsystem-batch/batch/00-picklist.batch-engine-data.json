@@ -1,0 +1,194 @@
+{
+	"configuration": {
+		"className": "com.liferay.headless.admin.list.type.dto.v1_0.ListTypeDefinition",
+		"parameters": {
+			"containsHeaders": "true",
+			"createStrategy": "UPSERT",
+			"onErrorFail": "false",
+			"updateStrategy": "UPDATE"
+		},
+		"taskItemDelegateName": "DEFAULT"
+	},
+	"items": [
+		{
+			"externalReferenceCode": "B5A8-ROLE-TYPE",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B5A8-OPERATIONAL",
+					"key": "b5a8Operational",
+					"name": "B5A8 Operational",
+					"name_i18n": {
+						"en-US": "B5A8 Operational"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B5A8-ADMINISTRATIVE",
+					"key": "b5a8Administrative",
+					"name": "B5A8 Administrative",
+					"name_i18n": {
+						"en-US": "B5A8 Administrative"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B5A8-SECURITY",
+					"key": "b5a8Security",
+					"name": "B5A8 Security",
+					"name_i18n": {
+						"en-US": "B5A8 Security"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B5A8-BUSINESS",
+					"key": "b5a8Business",
+					"name": "B5A8 Business",
+					"name_i18n": {
+						"en-US": "B5A8 Business"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B5A8-COMPLIANCE",
+					"key": "b5a8Compliance",
+					"name": "B5A8 Compliance",
+					"name_i18n": {
+						"en-US": "B5A8 Compliance"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B5A8 Role Type",
+			"name_i18n": {
+				"en-US": "B5A8 Role Type"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B5A8-ASSET-CATEGORY",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B5A8-APPLICATION",
+					"key": "b5a8Application",
+					"name": "B5A8 Application",
+					"name_i18n": {
+						"en-US": "B5A8 Application"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B5A8-HARDWARE",
+					"key": "b5a8Hardware",
+					"name": "B5A8 Hardware",
+					"name_i18n": {
+						"en-US": "B5A8 Hardware"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B5A8-SERVICE",
+					"key": "b5a8Service",
+					"name": "B5A8 Service",
+					"name_i18n": {
+						"en-US": "B5A8 Service"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B5A8-DATA-SET",
+					"key": "b5a8DataSet",
+					"name": "B5A8 Data Set",
+					"name_i18n": {
+						"en-US": "B5A8 Data Set"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B5A8-INFRASTRUCTURE",
+					"key": "b5a8Infrastructure",
+					"name": "B5A8 Infrastructure",
+					"name_i18n": {
+						"en-US": "B5A8 Infrastructure"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B5A8 Asset Category",
+			"name_i18n": {
+				"en-US": "B5A8 Asset Category"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B5A8-STATUS",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B5A8-ACTIVE",
+					"key": "b5a8Active",
+					"name": "B5A8 Active",
+					"name_i18n": {
+						"en-US": "B5A8 Active"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B5A8-EXPIRED",
+					"key": "b5a8Expired",
+					"name": "B5A8 Expired",
+					"name_i18n": {
+						"en-US": "B5A8 Expired"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B5A8-SUSPENDED",
+					"key": "b5a8Suspended",
+					"name": "B5A8 Suspended",
+					"name_i18n": {
+						"en-US": "B5A8 Suspended"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B5A8-PLANNED",
+					"key": "b5a8Planned",
+					"name": "B5A8 Planned",
+					"name_i18n": {
+						"en-US": "B5A8 Planned"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B5A8-RETIRED",
+					"key": "b5a8Retired",
+					"name": "B5A8 Retired",
+					"name_i18n": {
+						"en-US": "B5A8 Retired"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B5A8 Status",
+			"name_i18n": {
+				"en-US": "B5A8 Status"
+			},
+			"system": false
+		}
+	]
+}

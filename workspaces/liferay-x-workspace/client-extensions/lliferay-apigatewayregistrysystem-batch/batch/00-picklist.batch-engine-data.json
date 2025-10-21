@@ -1,0 +1,444 @@
+{
+	"configuration": {
+		"className": "com.liferay.headless.admin.list.type.dto.v1_0.ListTypeDefinition",
+		"parameters": {
+			"containsHeaders": "true",
+			"createStrategy": "UPSERT",
+			"onErrorFail": "false",
+			"updateStrategy": "UPDATE"
+		},
+		"taskItemDelegateName": "DEFAULT"
+	},
+	"items": [
+		{
+			"externalReferenceCode": "B7A3-API-STATUS",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B7A3-ACTIVE",
+					"key": "b7a3Active",
+					"name": "B7A3 Active",
+					"name_i18n": {
+						"en-US": "B7A3 Active"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-DEPRECATED",
+					"key": "b7a3Deprecated",
+					"name": "B7A3 Deprecated",
+					"name_i18n": {
+						"en-US": "B7A3 Deprecated"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-IN-DEVELOPMENT",
+					"key": "b7a3InDevelopment",
+					"name": "B7A3 In Development",
+					"name_i18n": {
+						"en-US": "B7A3 In Development"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-RETIRED",
+					"key": "b7a3Retired",
+					"name": "B7A3 Retired",
+					"name_i18n": {
+						"en-US": "B7A3 Retired"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B7A3 API Status",
+			"name_i18n": {
+				"en-US": "B7A3 API Status"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B7A3-PROTOCOL",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B7A3-REST",
+					"key": "b7a3REST",
+					"name": "B7A3 REST",
+					"name_i18n": {
+						"en-US": "B7A3 REST"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-GRAPHQL",
+					"key": "b7a3GraphQL",
+					"name": "B7A3 GraphQL",
+					"name_i18n": {
+						"en-US": "B7A3 GraphQL"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-SOAP",
+					"key": "b7a3SOAP",
+					"name": "B7A3 SOAP",
+					"name_i18n": {
+						"en-US": "B7A3 SOAP"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-GRPC",
+					"key": "b7a3GRPC",
+					"name": "B7A3 gRPC",
+					"name_i18n": {
+						"en-US": "B7A3 gRPC"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-OTHER",
+					"key": "b7a3Other",
+					"name": "B7A3 Other",
+					"name_i18n": {
+						"en-US": "B7A3 Other"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B7A3 Protocol",
+			"name_i18n": {
+				"en-US": "B7A3 Protocol"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B7A3-AUTHENTICATION-METHOD",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B7A3-OAUTH2",
+					"key": "b7a3OAuth2",
+					"name": "B7A3 OAuth2",
+					"name_i18n": {
+						"en-US": "B7A3 OAuth2"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-API-KEY",
+					"key": "b7a3APIKey",
+					"name": "B7A3 API Key",
+					"name_i18n": {
+						"en-US": "B7A3 API Key"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-JWT",
+					"key": "b7a3JWT",
+					"name": "B7A3 JWT",
+					"name_i18n": {
+						"en-US": "B7A3 JWT"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-NONE",
+					"key": "b7a3None",
+					"name": "B7A3 None",
+					"name_i18n": {
+						"en-US": "B7A3 None"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B7A3 Authentication Method",
+			"name_i18n": {
+				"en-US": "B7A3 Authentication Method"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B7A3-ENDPOINT-METHOD",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B7A3-GET",
+					"key": "b7a3GET",
+					"name": "B7A3 GET",
+					"name_i18n": {
+						"en-US": "B7A3 GET"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-POST",
+					"key": "b7a3POST",
+					"name": "B7A3 POST",
+					"name_i18n": {
+						"en-US": "B7A3 POST"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-PUT",
+					"key": "b7a3PUT",
+					"name": "B7A3 PUT",
+					"name_i18n": {
+						"en-US": "B7A3 PUT"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-DELETE",
+					"key": "b7a3DELETE",
+					"name": "B7A3 DELETE",
+					"name_i18n": {
+						"en-US": "B7A3 DELETE"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-PATCH",
+					"key": "b7a3PATCH",
+					"name": "B7A3 PATCH",
+					"name_i18n": {
+						"en-US": "B7A3 PATCH"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B7A3 Endpoint Method",
+			"name_i18n": {
+				"en-US": "B7A3 Endpoint Method"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B7A3-ENDPOINT-STATUS",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B7A3-ACTIVE",
+					"key": "b7a3Active",
+					"name": "B7A3 Active",
+					"name_i18n": {
+						"en-US": "B7A3 Active"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-DEPRECATED",
+					"key": "b7a3Deprecated",
+					"name": "B7A3 Deprecated",
+					"name_i18n": {
+						"en-US": "B7A3 Deprecated"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-EXPERIMENTAL",
+					"key": "b7a3Experimental",
+					"name": "B7A3 Experimental",
+					"name_i18n": {
+						"en-US": "B7A3 Experimental"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B7A3 Endpoint Status",
+			"name_i18n": {
+				"en-US": "B7A3 Endpoint Status"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B7A3-RESPONSE-FORMAT",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B7A3-JSON",
+					"key": "b7a3JSON",
+					"name": "B7A3 JSON",
+					"name_i18n": {
+						"en-US": "B7A3 JSON"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-XML",
+					"key": "b7a3XML",
+					"name": "B7A3 XML",
+					"name_i18n": {
+						"en-US": "B7A3 XML"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-CSV",
+					"key": "b7a3CSV",
+					"name": "B7A3 CSV",
+					"name_i18n": {
+						"en-US": "B7A3 CSV"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-OTHER",
+					"key": "b7a3Other",
+					"name": "B7A3 Other",
+					"name_i18n": {
+						"en-US": "B7A3 Other"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B7A3 Response Format",
+			"name_i18n": {
+				"en-US": "B7A3 Response Format"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B7A3-INTEGRATION-TYPE",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B7A3-INTERNAL",
+					"key": "b7a3Internal",
+					"name": "B7A3 Internal",
+					"name_i18n": {
+						"en-US": "B7A3 Internal"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-EXTERNAL",
+					"key": "b7a3External",
+					"name": "B7A3 External",
+					"name_i18n": {
+						"en-US": "B7A3 External"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-PARTNER",
+					"key": "b7a3Partner",
+					"name": "B7A3 Partner",
+					"name_i18n": {
+						"en-US": "B7A3 Partner"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B7A3 Integration Type",
+			"name_i18n": {
+				"en-US": "B7A3 Integration Type"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B7A3-INTEGRATION-STATUS",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B7A3-ACTIVE",
+					"key": "b7a3Active",
+					"name": "B7A3 Active",
+					"name_i18n": {
+						"en-US": "B7A3 Active"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-INACTIVE",
+					"key": "b7a3Inactive",
+					"name": "B7A3 Inactive",
+					"name_i18n": {
+						"en-US": "B7A3 Inactive"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-PLANNED",
+					"key": "b7a3Planned",
+					"name": "B7A3 Planned",
+					"name_i18n": {
+						"en-US": "B7A3 Planned"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B7A3 Integration Status",
+			"name_i18n": {
+				"en-US": "B7A3 Integration Status"
+			},
+			"system": false
+		},
+		{
+			"externalReferenceCode": "B7A3-ENVIRONMENT-STATUS",
+			"listTypeEntries": [
+				{
+					"externalReferenceCode": "B7A3-ACTIVE",
+					"key": "b7a3Active",
+					"name": "B7A3 Active",
+					"name_i18n": {
+						"en-US": "B7A3 Active"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-INACTIVE",
+					"key": "b7a3Inactive",
+					"name": "B7A3 Inactive",
+					"name_i18n": {
+						"en-US": "B7A3 Inactive"
+					},
+					"system": false,
+					"type": ""
+				},
+				{
+					"externalReferenceCode": "B7A3-MAINTENANCE",
+					"key": "b7a3Maintenance",
+					"name": "B7A3 Maintenance",
+					"name_i18n": {
+						"en-US": "B7A3 Maintenance"
+					},
+					"system": false,
+					"type": ""
+				}
+			],
+			"name": "B7A3 Environment Status",
+			"name_i18n": {
+				"en-US": "B7A3 Environment Status"
+			},
+			"system": false
+		}
+	]
+}
