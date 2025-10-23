@@ -14,7 +14,7 @@
 			[#if products?has_content]
 				<div class="align-items-start d-flex flex-column justify-content-start list-section-container w-100">
 					<div class="align-items-center d-flex justify-content-between results-title-container w-100">
-						<h4 class="text-black-50 m-0 text-nowrap">${sectionTitle}</h4>
+						<h4 class="m-0 text-black-50 text-nowrap">${sectionTitle}</h4>
 
 						<div class="divider-horizontal mx-3"></div>
 
@@ -48,10 +48,10 @@
 	[/#if]
 [/#macro]
 
-<div class="align-items-end d-flex d-flex flex-column justify-content-center marketplace-search-container">
+<div class="align-items-end d-flex flex-column justify-content-center marketplace-search-container">
 	<div class="align-items-center d-flex justify-content-between search">
 		<div class="align-items-center d-flex p-relative w-100">
-			<div class="align-items-center d-flex justify-content-center mr-2 search-icon" onclick="">
+			<div class="align-items-center d-flex justify-content-center mr-2 search-icon">
 				[@clay["icon"] symbol="search" /]
 			</div>
 
@@ -93,11 +93,11 @@
 
 		<div class="d-flex flex-row p-3 results-footer w-100">
 			<div class="align-items-center d-flex flex-row justify-content-center mr-4">
-				<div class="align-items-center btn btn-primary d-flex d-flex justify-content-center mr-1 search-results-footer-button">
+				<div class="align-items-center btn btn-primary d-flex justify-content-center mr-1 search-results-footer-button">
 					<span> [@clay["icon"] symbol="order-arrow-up" /]</span>
 				</div>
 
-				<div class="align-items-center btn btn-primary d-flex d-flex justify-content-center mr-3 search-results-footer-button">
+				<div class="align-items-center btn btn-primary d-flex justify-content-center mr-3 search-results-footer-button">
 					<span> [@clay["icon"] symbol="order-arrow-down" /]</span>
 				</div>
 
@@ -107,7 +107,7 @@
 			</div>
 
 			<div class="align-items-center d-flex flex-row justify-content-center mr-4">
-				<div class="align-items-center btn btn-primary d-flex d-flex justify-content-center mr-3 search-results-footer-button">
+				<div class="align-items-center btn btn-primary d-flex justify-content-center mr-3 search-results-footer-button">
 					<span class="enter-icon">[@clay["icon"] symbol="reply" /]</span>
 				</div>
 
@@ -117,7 +117,7 @@
 			</div>
 
 			<div class="align-items-center d-flex flex-row justify-content-center mr-4">
-				<div class="align-items-center btn btn-primary d-flex d-flex justify-content-center mr-3 search-results-footer-button">
+				<div class="align-items-center btn btn-primary d-flex justify-content-center mr-3 search-results-footer-button">
 					<span>
 						Esc
 					</span>
@@ -135,7 +135,7 @@
 			<ul class="d-flex flex-column" id="searchDropdownList">
 				[#assign appCategories = configuration.appCategories?eval_json]
 
-				<li class="align-items-center btn d-flex justify-content-between px-4 rounded search-dropdown-list-item text-nowrap" data-category="All Categories" id="category-all">
+				<li class="align-items-center btn d-flex justify-content-between px-4 rounded search-dropdown-list-item text-nowrap" data-category="All Categories" id="all-categories">
 					<div class="align-items-center category-icon-container d-flex justify-content-center mr-3">
 						<span class="category-icon" style="--category-color:#0053F0">
 							<svg fill="none" height="16" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
