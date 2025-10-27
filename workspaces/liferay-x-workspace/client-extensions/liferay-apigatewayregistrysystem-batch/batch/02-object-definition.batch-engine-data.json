@@ -1,0 +1,923 @@
+{
+	"configuration": {
+		"className": "com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition",
+		"parameters": {
+			"containsHeaders": "true",
+			"createStrategy": "UPSERT",
+			"onErrorFail": "false",
+			"updateStrategy": "UPDATE"
+		},
+		"taskItemDelegateName": "DEFAULT"
+	},
+    "items": [
+        {
+			"accountEntryRestricted": false,
+			"active": true,
+			"className": "com.liferay.portal.kernel.model.User",
+			"enableCategorization": true,
+			"enableComments": false,
+			"enableIndexSearch": true,
+			"enableLocalization": false,
+			"enableObjectEntryDraft": false,
+			"enableObjectEntryHistory": false,
+			"externalReferenceCode": "L_USER",
+			"label": {
+				"en_US": "User"
+			},
+			"modifiable": false,
+			"name": "User",
+			"objectFolderExternalReferenceCode": "default",
+            "objectFields": [{
+                "DBType": "Long",
+                "businessType": "Relationship",
+                "indexed": true,
+                "indexedAsKeyword": false,
+                "indexedLanguageId": "",
+                "label": {
+                    "en_US": "B7A3 API To L User"
+                },
+                "localized": false,
+                "name": "r_b7A3APIToL_User_c_b7a3APIId",
+                "objectDefinitionExternalReferenceCode1": "B7A3-API",
+                "objectFieldSettings": [
+                    {
+                        "name": "objectDefinition1ShortName",
+                        "value": "B7A3-API"
+                    },
+                    {
+                        "name": "objectRelationshipERCObjectFieldName",
+                        "value": "r_b7A3APIToL_User_c_b7a3APIERC"
+                    }
+                ],
+                "objectRelationshipExternalReferenceCode": "B7A3-API-TO-L-USER",
+                "readOnly": "false",
+                "relationshipType": "manyToMany",
+                "required": false,
+                "state": false,
+                "type": "Long",
+                "unique": false
+            }],
+            "objectRelationships": [
+				{
+					"deletionType": "disassociate",
+					"externalReferenceCode": "L-USER-TO-B7A3-DEPARTMENT",
+					"label": {
+						"en_US": "L User to B7A3 Department"
+					},
+					"name": "lUserToB7A3Department",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectDefinitionExternalReferenceCode2": "B7A3-DEPARTMENT",
+					"type": "oneToMany"
+				}
+			],
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "Users"
+			},
+			"portlet": false,
+			"restContextPath": "/o/headless-admin-user/v1.0/user-accounts",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"system": true,
+			"titleObjectFieldName": "id"
+		},
+        {
+            "accountEntryRestricted": false,
+            "active": true,
+            "enableCategorization": true,
+            "enableLocalization": false,
+            "enableObjectEntryHistory": false,
+            "externalReferenceCode": "B7A3-API",
+            "label": {
+                "en_US": "B7A3 API"
+            },
+            "modifiable": true,
+            "name": "B7A3API",
+            "objectFields": [
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "API Name"
+                    },
+                    "localized": false,
+                    "name": "apiName",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Version"
+                    },
+                    "localized": false,
+                    "name": "version",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Picklist",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "B7A3 API Status"
+                    },
+                    "listTypeDefinitionExternalReferenceCode": "B7A3-API-STATUS",
+                    "localized": false,
+                    "name": "b7A3APIStatus",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Picklist",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Response Format"
+                    },
+                    "listTypeDefinitionExternalReferenceCode": "B7A3-RESPONSE-FORMAT",
+                    "localized": false,
+                    "name": "responseFormat",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "Clob",
+                    "businessType": "LongText",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Description"
+                    },
+                    "localized": false,
+                    "name": "description",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Clob",
+                    "unique": false
+                },
+                {
+                    "DBType": "Long",
+                    "businessType": "Relationship",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "B7A3 Department To B7A3 API"
+                    },
+                    "localized": false,
+                    "name": "r_b7A3DepartmentToB7A3API_c_b7a3DepartmentId",
+                    "objectDefinitionExternalReferenceCode1": "B7A3-DEPARTMENT",
+                    "objectFieldSettings": [
+                        {
+                            "name": "objectDefinition1ShortName",
+                            "value": "B7A3-DEPARTMENT"
+                        },
+                        {
+                            "name": "objectRelationshipERCObjectFieldName",
+                            "value": "r_b7A3DepartmentToB7A3API_c_b7a3DepartmentERC"
+                        }
+                    ],
+                    "objectRelationshipExternalReferenceCode": "B7A3-DEPARTMENT-TO-B7A3-API",
+                    "readOnly": "false",
+                    "relationshipType": "oneToMany",
+                    "required": false,
+                    "state": false,
+                    "type": "Long",
+                    "unique": false
+                }
+            ],
+            "objectFolderExternalReferenceCode": "B7A3-API-GATEWAY-REGISTRY-SYSTEM",
+            "objectRelationships": [
+                {
+                    "deletionType": "prevent",
+                    "externalReferenceCode": "B7A3-API-TO-B7A3-API-INTEGRATION",
+                    "label": {
+                        "en_US": "B7A3 API To B7A3 API Integration"
+                    },
+                    "name": "b7A3APIToB7A3APIIntegration",
+                    "objectDefinitionExternalReferenceCode1": "B7A3-API",
+                    "objectDefinitionExternalReferenceCode2": "B7A-API-INTEGRATION",
+                    "type": "oneToMany"
+                },
+                {
+                    "deletionType": "prevent",
+                    "externalReferenceCode": "B7A3-API-TO-API-ENDPOINT",
+                    "label": {
+                        "en_US": "B7A3 API To API Endpoint"
+                    },
+                    "name": "b7A3APIToAPIEndpoint",
+                    "objectDefinitionExternalReferenceCode1": "B7A3-API",
+                    "objectDefinitionExternalReferenceCode2": "B7A3-API-ENDPOINT",
+                    "type": "oneToMany"
+                },
+                {
+                    "deletionType": "prevent",
+                    "externalReferenceCode": "B7A3-API-TO-L-USER",
+                    "label": {
+                        "en_US": "B7A3 API To L User"
+                    },
+                    "name": "b7A3APIToUser",
+                    "objectDefinitionExternalReferenceCode1": "B7A3-API",
+                    "objectDefinitionExternalReferenceCode2": "L_USER",
+                    "type": "manyToMany"
+                }
+            ],
+            "panelCategoryKey": "",
+            "parameterRequired": false,
+            "pluralLabel": {
+                "en_US": "B7A3 APIs"
+            },
+            "portlet": true,
+            "restContextPath": "/o/c/b7a3apis",
+            "scope": "company",
+            "status": {
+                "code": 0,
+                "label": "approved",
+                "label_i18n": "Approved"
+            },
+            "titleObjectFieldName": "id"
+        },
+        {
+            "accountEntryRestricted": false,
+            "active": true,
+            "enableLocalization": false,
+            "enableObjectEntryHistory": false,
+            "externalReferenceCode": "B7A-API-INTEGRATION",
+            "label": {
+                "en_US": "B7A3 API Integration"
+            },
+            "modifiable": true,
+            "name": "B7A3APIIntegration",
+            "objectFields": [
+                {
+                    "DBType": "Long",
+                    "businessType": "Relationship",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "B7A3 API To B7A3 API Integration"
+                    },
+                    "localized": false,
+                    "name": "r_b7A3APIToB7A3APIIntegration_c_b7a3apiId",
+                    "objectDefinitionExternalReferenceCode1": "B7A3-API",
+                    "objectFieldSettings": [
+                        {
+                            "name": "objectDefinition1ShortName",
+                            "value": "B7A3API"
+                        },
+                        {
+                            "name": "objectRelationshipERCObjectFieldName",
+                            "value": "r_b7A3APIToB7A3APIIntegration_c_b7a3apiERC"
+                        }
+                    ],
+                    "objectRelationshipExternalReferenceCode": "B7A3-API-TO-B7A3-API-INTEGRATION",
+                    "readOnly": "false",
+                    "relationshipType": "oneToMany",
+                    "required": false,
+                    "state": false,
+                    "type": "Long",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Integration Name"
+                    },
+                    "localized": false,
+                    "name": "integrationName",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Picklist",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Integration Type"
+                    },
+                    "listTypeDefinitionExternalReferenceCode": "B7A3-INTEGRATION-TYPE",
+                    "listTypeDefinitionId": 34169,
+                    "localized": false,
+                    "name": "integrationType",
+                    "objectFieldSettings": [
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "Clob",
+                    "businessType": "LongText",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Description"
+                    },
+                    "localized": false,
+                    "name": "description",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Clob",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Picklist",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "B7A3 API Integration Status"
+                    },
+                    "listTypeDefinitionExternalReferenceCode": "B7A3-INTEGRATION-STATUS",
+                    "listTypeDefinitionId": 34173,
+                    "localized": false,
+                    "name": "b7A3APIIntegrationStatus",
+                    "objectFieldSettings": [
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "Long",
+                    "businessType": "Relationship",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "B7A3 Environment To B7A3 API Integration"
+                    },
+                    "localized": false,
+                    "name": "r_b7A3EnvironmentToB7A3APIIntegration_c_b7a3EnvironmentId",
+                    "objectDefinitionExternalReferenceCode1": "B7A3-ENVIRONMENT",
+                    "objectFieldSettings": [
+                        {
+                            "name": "objectDefinition1ShortName",
+                            "value": "B7A3-ENVIRONMENT"
+                        },
+                        {
+                            "name": "objectRelationshipERCObjectFieldName",
+                            "value": "r_b7A3EnvironmentToB7A3APIIntegration_c_b7a3EnvironmentERC"
+                        }
+                    ],
+                    "objectRelationshipExternalReferenceCode": "B7A3-ENVIRONMENT-TO-B7A3-API-INTEGRATION",
+                    "readOnly": "false",
+                    "relationshipType": "oneToMany",
+                    "required": false,
+                    "state": false,
+                    "type": "Long",
+                    "unique": false
+                }
+            ],
+            "objectFolderExternalReferenceCode": "B7A3-API-GATEWAY-REGISTRY-SYSTEM",
+            "panelCategoryKey": "",
+            "parameterRequired": false,
+            "pluralLabel": {
+                "en_US": "B7A3 API Integrations"
+            },
+            "portlet": true,
+            "restContextPath": "/o/c/b7a3apiintegrations",
+            "scope": "company",
+            "status": {
+                "code": 0,
+                "label": "approved",
+                "label_i18n": "Approved"
+            },
+            "titleObjectFieldName": "id"
+        },
+        {
+                "accountEntryRestricted": false,
+                "active": true,
+                "enableLocalization": false,
+                "enableObjectEntryHistory": false,
+                "externalReferenceCode": "B7A3-API-ENDPOINT",
+                "label": {
+                    "en_US": "B7A3 API Endpoint"
+                },
+                "modifiable": true,
+                "name": "B7A3APIEndpoint",
+                "objectFields": [
+                    {
+                        "DBType": "Long",
+                        "businessType": "Relationship",
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "",
+                        "label": {
+                            "en_US": "B7A3 API To API Endpoint"
+                        },
+                        "localized": false,
+                        "name": "r_b7A3APIToAPIEndpoint_c_b7a3apiId",
+                        "objectDefinitionExternalReferenceCode1": "B7A3-API",
+                        "objectFieldSettings": [
+                            {
+                                "name": "objectDefinition1ShortName",
+                                "value": "B7A3API"
+                            },
+                            {
+                                "name": "objectRelationshipERCObjectFieldName",
+                                "value": "r_b7A3APIToAPIEndpoint_c_b7a3apiERC"
+                            }
+                        ],
+                        "objectRelationshipExternalReferenceCode": "B7A3-API-TO-API-ENDPOINT",
+                        "readOnly": "false",
+                        "relationshipType": "oneToMany",
+                        "required": false,
+                        "state": false,
+                        "type": "Long",
+                        "unique": false
+                    },
+                    {
+                        "DBType": "String",
+                        "businessType": "Text",
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "en_US",
+                        "label": {
+                            "en_US": "Endpoint Path"
+                        },
+                        "localized": false,
+                        "name": "endpointPath",
+                        "objectFieldSettings": [
+                            {
+                                "name": "showCounter",
+                                "value": false
+                            }
+                        ],
+                        "readOnly": "false",
+                        "required": false,
+                        "state": false,
+                        "type": "String",
+                        "unique": false
+                    },
+                    {
+                        "DBType": "String",
+                        "businessType": "Picklist",
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "en_US",
+                        "label": {
+                            "en_US": "Method"
+                        },
+                        "listTypeDefinitionExternalReferenceCode": "B7A3-ENDPOINT-METHOD",
+                        "localized": false,
+                        "name": "method",
+                        "objectFieldSettings": [
+                        ],
+                        "readOnly": "false",
+                        "required": false,
+                        "state": false,
+                        "type": "String",
+                        "unique": false
+                    },
+                    {
+                        "DBType": "String",
+                        "businessType": "Picklist",
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "en_US",
+                        "label": {
+                            "en_US": "B7A3 API Endpoint Status"
+                        },
+                        "listTypeDefinitionExternalReferenceCode": "B7A3-ENDPOINT-STATUS",
+                        "localized": false,
+                        "name": "b7A3APIEndpointStatus",
+                        "objectFieldSettings": [
+                        ],
+                        "readOnly": "false",
+                        "required": false,
+                        "state": false,
+                        "type": "String",
+                        "unique": false
+                    },
+                    {
+                        "DBType": "String",
+                        "businessType": "Picklist",
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "en_US",
+                        "label": {
+                            "en_US": "Response Format"
+                        },
+                        "listTypeDefinitionExternalReferenceCode": "B7A3-RESPONSE-FORMAT",
+                        "localized": false,
+                        "name": "responseFormat",
+                        "objectFieldSettings": [
+                        ],
+                        "readOnly": "false",
+                        "required": false,
+                        "state": false,
+                        "type": "String",
+                        "unique": false
+                    },
+                    {
+                        "DBType": "Clob",
+                        "businessType": "LongText",
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "en_US",
+                        "label": {
+                            "en_US": "Description"
+                        },
+                        "localized": false,
+                        "name": "description",
+                        "objectFieldSettings": [
+                            {
+                                "name": "showCounter",
+                                "value": false
+                            }
+                        ],
+                        "readOnly": "false",
+                        "required": false,
+                        "state": false,
+                        "type": "Clob",
+                        "unique": false
+                    },
+                    {
+                        "DBType": "Long",
+                        "businessType": "Relationship",
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "",
+                        "label": {
+                            "en_US": "B7A3 Environment To B7A3 API Endpoint"
+                        },
+                        "localized": false,
+                        "name": "r_b7A3EnvironmentToB7A3APIEndpoint_c_b7a3EnvironmentId",
+                        "objectDefinitionExternalReferenceCode1": "B7A3-ENVIRONMENT",
+                        "objectFieldSettings": [
+                            {
+                                "name": "objectDefinition1ShortName",
+                                "value": "B7A3-ENVIRONMENT"
+                            },
+                            {
+                                "name": "objectRelationshipERCObjectFieldName",
+                                "value": "r_b7A3EnvironmentToB7A3APIEndpoint_c_b7a3EnvironmentERC"
+                            }
+                        ],
+                        "objectRelationshipExternalReferenceCode": "B7A3-ENVIRONMENT-TO-B7A3-API-ENDPOINT",
+                        "readOnly": "false",
+                        "relationshipType": "oneToMany",
+                        "required": false,
+                        "state": false,
+                        "type": "Long",
+                        "unique": false
+                    }
+                ],
+                "objectFolderExternalReferenceCode": "B7A3-API-GATEWAY-REGISTRY-SYSTEM",
+                "panelCategoryKey": "",
+                "parameterRequired": false,
+                "pluralLabel": {
+                    "en_US": "B7A3 API Endpoints"
+                },
+                "portlet": true,
+                "restContextPath": "/o/c/b7a3apiendpoints",
+                "scope": "company",
+                "status": {
+                    "code": 0,
+                    "label": "approved",
+                    "label_i18n": "Approved"
+                },
+                "titleObjectFieldName": "id"            
+        },
+        {
+                "accountEntryRestricted": false,
+                "active": true,
+                "enableLocalization": false,
+                "enableObjectEntryHistory": false,
+                "externalReferenceCode": "B7A3-ENVIRONMENT",
+                "label": {
+                    "en_US": "B7A3 Environment"
+                },
+                "modifiable": true,
+                "name": "B7A3Environment",
+                "objectFields": [
+                    {
+                        "DBType": "String",
+                        "businessType": "Text",
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "en_US",
+                        "label": {
+                            "en_US": "Base Domain"
+                        },
+                        "localized": false,
+                        "name": "baseDomain",
+                        "objectFieldSettings": [
+                            {
+                                "name": "showCounter",
+                                "value": false
+                            }
+                        ],
+                        "readOnly": "false",
+                        "required": false,
+                        "state": false,
+                        "type": "String",
+                        "unique": false
+                    },
+                    {
+                        "DBType": "String",
+                        "businessType": "Text",
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "en_US",
+                        "label": {
+                            "en_US": "Environment Name"
+                        },
+                        "localized": false,
+                        "name": "environmentName",
+                        "objectFieldSettings": [
+                            {
+                                "name": "showCounter",
+                                "value": false
+                            }
+                        ],
+                        "readOnly": "false",
+                        "required": false,
+                        "state": false,
+                        "type": "String",
+                        "unique": false
+                    },
+                    {
+                        "DBType": "String",
+                        "businessType": "Picklist",
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "en_US",
+                        "label": {
+                            "en_US": "B7A3 Environment Status"
+                        },
+                        "listTypeDefinitionExternalReferenceCode": "B7A3-ENVIRONMENT-STATUS",
+                        "localized": false,
+                        "name": "b7A3EnvironmentStatus",
+                        "objectFieldSettings": [
+                        ],
+                        "readOnly": "false",
+                        "required": false,
+                        "state": false,
+                        "type": "String",
+                        "unique": false
+                    },
+                    {
+                        "DBType": "String",
+                        "businessType": "Text",
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "en_US",
+                        "label": {
+                            "en_US": "Region"
+                        },
+                        "localized": false,
+                        "name": "region",
+                        "objectFieldSettings": [
+                            {
+                                "name": "showCounter",
+                                "value": false
+                            }
+                        ],
+                        "readOnly": "false",
+                        "required": false,
+                        "state": false,
+                        "type": "String",
+                        "unique": false
+                    }
+                ],
+                "objectFolderExternalReferenceCode": "B7A3-API-GATEWAY-REGISTRY-SYSTEM",
+                "objectLayouts": [
+                ],
+                "objectRelationships": [
+                    {
+                        "deletionType": "prevent",
+                        "externalReferenceCode": "B7A3-ENVIRONMENT-TO-B7A3-API-INTEGRATION",
+                        "label": {
+                            "en_US": "B7A3 Environment To B7A3 API Integration"
+                        },
+                        "name": "b7A3EnvironmentToB7A3APIIntegration",
+                        "objectDefinitionExternalReferenceCode1": "B7A3-ENVIRONMENT",
+                        "objectDefinitionExternalReferenceCode2": "B7A-API-INTEGRATION",
+                        "type": "oneToMany"
+                    },
+                    {
+                        "deletionType": "prevent",
+                        "externalReferenceCode": "B7A3-ENVIRONMENT-TO-B7A3-API-ENDPOINT",
+                        "label": {
+                            "en_US": "B7A3 Environment To B7A3 API Endpoint"
+                        },
+                        "name": "b7A3EnvironmentToB7A3APIEndpoint",
+                        "objectDefinitionExternalReferenceCode1": "B7A3-ENVIRONMENT",
+                        "objectDefinitionExternalReferenceCode2": "B7A3-API-ENDPOINT",
+                        "type": "oneToMany"
+                    }
+                ],
+                "panelCategoryKey": "",
+                "parameterRequired": false,
+                "pluralLabel": {
+                    "en_US": "B7A3 Environments"
+                },
+                "portlet": true,
+                "restContextPath": "/o/c/b7a3environments",
+                "scope": "company",
+                "status": {
+                    "code": 0,
+                    "label": "approved",
+                    "label_i18n": "Approved"
+                },
+                "titleObjectFieldName": "id"            
+        },
+        {
+                "accountEntryRestricted": false,
+                "active": true,
+                "enableLocalization": false,
+                "enableObjectEntryHistory": false,
+                "externalReferenceCode": "B7A3-DEPARTMENT",
+                "label": {
+                    "en_US": "B7A3 Department"
+                },
+                "modifiable": true,
+                "name": "B7A3Department",
+                "objectFields": [
+                    {
+                        "DBType": "String",
+                        "businessType": "Text",
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "en_US",
+                        "label": {
+                            "en_US": "Department Name"
+                        },
+                        "localized": false,
+                        "name": "departmentName",
+                        "objectFieldSettings": [
+                            {
+                                "name": "showCounter",
+                                "value": false
+                            }
+                        ],
+                        "readOnly": "false",
+                        "required": false,
+                        "state": false,
+                        "type": "String",
+                        "unique": false
+                    },
+                    {
+                        "DBType": "Clob",
+                        "businessType": "LongText",
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "en_US",
+                        "label": {
+                            "en_US": "Notes"
+                        },
+                        "localized": false,
+                        "name": "notes",
+                        "objectFieldSettings": [
+                            {
+                                "name": "showCounter",
+                                "value": false
+                            }
+                        ],
+                        "readOnly": "false",
+                        "required": false,
+                        "state": false,
+                        "type": "Clob",
+                        "unique": false
+                    },
+                    {
+                        "DBType": "Long",
+                        "businessType": "Relationship",
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "",
+                        "label": {
+                            "en_US": "User To B7A3 Department"
+                        },
+                        "localized": false,
+                        "name": "r_userToB7A3Department_userId",
+                        "objectDefinitionExternalReferenceCode1": "L_USER",
+                        "objectFieldSettings": [
+                            {
+                                "name": "objectDefinition1ShortName",
+                                "value": "User"
+                            },
+                            {
+                                "name": "objectRelationshipERCObjectFieldName",
+                                "value": "r_userToB7A3Department_userERC"
+                            }
+                        ],
+                        "objectRelationshipExternalReferenceCode": "L-USER-TO-B7A3-DEPARTMENT",
+                        "readOnly": "false",
+                        "relationshipType": "oneToMany",
+                        "required": false,
+                        "state": false,
+                        "type": "Long",
+                        "unique": false
+                    }
+                ],
+                "objectFolderExternalReferenceCode": "B7A3-API-GATEWAY-REGISTRY-SYSTEM",
+                "objectRelationships": [
+                    {
+                        "deletionType": "prevent",
+                        "externalReferenceCode": "B7A3-DEPARTMENT-TO-B7A3-API",
+                        "label": {
+                            "en_US": "B7A3 Department To B7A3 API"
+                        },
+                        "name": "b7A3DepartmentToB7A3API",
+                        "objectDefinitionExternalReferenceCode1": "B7A3-DEPARTMENT",
+                        "objectDefinitionExternalReferenceCode2": "B7A3-API",
+                        "type": "oneToMany"
+                    }
+                ],
+                "panelCategoryKey": "",
+                "parameterRequired": false,
+                "pluralLabel": {
+                    "en_US": "B7A3 Departments"
+                },
+                "portlet": true,
+                "restContextPath": "/o/c/b7a3departments",
+                "scope": "company",
+                "status": {
+                    "code": 0,
+                    "label": "approved",
+                    "label_i18n": "Approved"
+                },
+                "titleObjectFieldName": "id"
+        }
+    ]
+}

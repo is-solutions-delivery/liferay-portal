@@ -1,0 +1,548 @@
+{
+	"configuration": {
+		"className": "com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition",
+		"parameters": {
+			"containsHeaders": "true",
+			"createStrategy": "UPSERT",
+			"onErrorFail": "false",
+			"updateStrategy": "UPDATE"
+		},
+		"taskItemDelegateName": "DEFAULT"
+	},
+    "items": [
+        {
+			"accountEntryRestricted": false,
+			"active": true,
+			"className": "com.liferay.portal.kernel.model.User",
+			"enableCategorization": true,
+			"enableComments": false,
+			"enableIndexSearch": true,
+			"enableLocalization": false,
+			"enableObjectEntryDraft": false,
+			"enableObjectEntryHistory": false,
+			"externalReferenceCode": "L_USER",
+			"label": {
+				"en_US": "User"
+			},
+			"modifiable": false,
+			"name": "User",
+			"objectFolderExternalReferenceCode": "default",
+            "objectRelationships": [
+                {
+                    "deletionType": "prevent",
+                    "externalReferenceCode": "L-USER-TO-E5A2-COURSE",
+                    "label": {
+                        "en_US": "L User to E5A2 Course"
+                    },
+                    "name": "lUserToE5A2Course",
+                    "objectDefinitionExternalReferenceCode1": "L_USER",
+                    "objectDefinitionExternalReferenceCode2": "E5A2-COURSE",
+                    "type": "oneToMany"
+                },
+                {
+                    "deletionType": "prevent",
+                    "externalReferenceCode": "L-USER-TO-E5A2-SUBMISSION",
+                    "label": {
+                        "en_US": "L User to E5A2 Submission"
+                    },
+                    "name": "lUserToE5A2Submission",
+                    "objectDefinitionExternalReferenceCode1": "L_USER",
+                    "objectDefinitionExternalReferenceCode2": "E5A2-SUBMISSION",
+                    "type": "oneToMany"
+                }
+            ],
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "Users"
+			},
+			"portlet": false,
+			"restContextPath": "/o/headless-admin-user/v1.0/user-accounts",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"system": true,
+			"titleObjectFieldName": "id"
+		},
+        {
+            "accountEntryRestricted": false,
+            "active": true,
+            "enableCategorization": true,
+            "enableObjectEntryHistory": false,
+            "externalReferenceCode": "E5A2-SUBMISSION",
+            "label": {
+                "en_US": "E5A2 Submission"
+            },
+            "modifiable": true,
+            "name": "E5A2Submission",
+            "objectFields": [
+                {
+                    "DBType": "Long",
+                    "businessType": "Relationship",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "L User to E5A2 Submission"
+                    },
+                    "localized": false,
+                    "name": "r_lUserToE5A2Submission_c_lUserId",
+                    "objectDefinitionExternalReferenceCode1": "L_USER",
+                    "objectFieldSettings": [
+                        {
+                            "name": "objectDefinition1ShortName",
+                            "value": "User"
+                        },
+                        {
+                            "name": "objectRelationshipERCObjectFieldName",
+                            "value": "r_lUserToE5A2Submission_c_lUserERC"
+                        }
+                    ],
+                    "objectRelationshipExternalReferenceCode": "L-USER-TO-E5A2-SUBMISSION",
+                    "readOnly": "false",
+                    "relationshipType": "oneToMany",
+                    "required": false,
+                    "state": false,
+                    "type": "Long",
+                    "unique": false
+                },
+                {
+                    "DBType": "Integer",
+                    "businessType": "Integer",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "Score"
+                    },
+                    "localized": false,
+                    "name": "score",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Integer",
+                    "unique": false
+                },
+                {
+                    "DBType": "Long",
+                    "businessType": "Relationship",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "E5A2 Quiz to E5A2 Submission"
+                    },
+                    "localized": false,
+                    "name": "r_e5A2QuizToE5A2Submission_c_e5a2QuizId",
+                    "objectDefinitionExternalReferenceCode1": "E5A2-QUIZ",
+                    "objectFieldSettings": [
+                        {
+                            "name": "objectDefinition1ShortName",
+                            "value": "E5A2-QUIZ"
+                        },
+                        {
+                            "name": "objectRelationshipERCObjectFieldName",
+                            "value": "r_e5A2QuizToE5A2Submission_c_e5a2QuizERC"
+                        }
+                    ],
+                    "objectRelationshipExternalReferenceCode": "E5A2-QUIZ-TO-E5A2-SUBMISSION",
+                    "readOnly": "false",
+                    "relationshipType": "oneToMany",
+                    "required": false,
+                    "state": false,
+                    "type": "Long",
+                    "unique": false
+                },
+                {
+                    "DBType": "Date",
+                    "businessType": "Date",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "submittedAt"
+                    },
+                    "localized": false,
+                    "name": "submittedAt",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Date",
+                    "unique": false
+                }
+            ],
+            "objectFolderExternalReferenceCode": "E5A2-LEARNING-MANAGEMENT-SYSTEM",
+            "panelCategoryKey": "",
+            "parameterRequired": false,
+            "pluralLabel": {
+                "en_US": "E5A2 Submissions"
+            },
+            "portlet": true,
+            "restContextPath": "/o/c/e5a2submissions",
+            "scope": "company",
+            "status": {
+                "code": 0,
+                "label": "approved",
+                "label_i18n": "Approved"
+            },
+            "titleObjectFieldName": "id"
+        },
+        {
+            "accountEntryRestricted": false,
+            "active": true,
+            "enableCategorization": true,
+            "enableObjectEntryHistory": false,
+            "externalReferenceCode": "E5A2-COURSE",
+            "label": {
+                "en_US": "E5A2 Course"
+            },
+            "modifiable": true,
+            "name": "E5A2Course",
+            "objectFields": [
+                {
+                    "DBType": "Long",
+                    "businessType": "Relationship",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "L User to E5A2 Course"
+                    },
+                    "localized": false,
+                    "name": "r_lUserToE5A2Course_c_lUserId",
+                    "objectDefinitionExternalReferenceCode1": "L_USER",
+                    "objectFieldSettings": [
+                        {
+                            "name": "objectDefinition1ShortName",
+                            "value": "User"
+                        },
+                        {
+                            "name": "objectRelationshipERCObjectFieldName",
+                            "value": "r_lUserToE5A2Course_c_lUserERC"
+                        }
+                    ],
+                    "objectRelationshipExternalReferenceCode": "L-USER-TO-E5A2-COURSE",
+                    "readOnly": "false",
+                    "relationshipType": "oneToMany",
+                    "required": false,
+                    "state": false,
+                    "type": "Long",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Title"
+                    },
+                    "localized": false,
+                    "name": "title",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Picklist",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Difficulty Level"
+                    },
+                    "listTypeDefinitionExternalReferenceCode": "E5A2-DIFFICULTY-LEVEL",
+                    "localized": false,
+                    "name": "difficultyLevel",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Picklist",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Course Category"
+                    },
+                    "listTypeDefinitionExternalReferenceCode": "E5A2-COURSE-CATEGORY",
+                    "localized": false,
+                    "name": "courseCategory",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                }
+            ],
+            "objectFolderExternalReferenceCode": "E5A2-LEARNING-MANAGEMENT-SYSTEM",
+            "objectRelationships": [
+                {
+                    "deletionType": "prevent",
+                    "externalReferenceCode": "E5A2-COURSE-TO-E5A2-LESSON",
+                    "label": {
+                        "en_US": "E5A2 Course to E5A2 Lesson"
+                    },
+                    "name": "e5A2CourseToE5A2Lesson",
+                    "objectDefinitionExternalReferenceCode1": "E5A2-COURSE",
+                    "objectDefinitionExternalReferenceCode2": "E5A2-LESSON",
+                    "type": "oneToMany"
+                }
+            ],
+            "panelCategoryKey": "",
+            "parameterRequired": false,
+            "pluralLabel": {
+                "en_US": "E5A2 Courses"
+            },
+            "portlet": true,
+            "restContextPath": "/o/c/e5a2courses",
+            "scope": "company",
+            "status": {
+                "code": 0,
+                "label": "approved",
+                "label_i18n": "Approved"
+            },
+            "titleObjectFieldName": "id"
+        },
+        {
+            "accountEntryRestricted": false,
+            "active": true,
+            "enableCategorization": true,
+            "enableObjectEntryHistory": false,
+            "externalReferenceCode": "E5A2-LESSON",
+            "label": {
+                "en_US": "E5A2 Lesson "
+            },
+            "modifiable": true,
+            "name": "E5A2Lesson",
+            "objectFields": [
+                {
+                    "DBType": "Long",
+                    "businessType": "Relationship",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "E5A2 Course to E5A2 Lesson"
+                    },
+                    "localized": false,
+                    "name": "r_e5A2CourseToE5A2Lesson_c_e5a2CourseId",
+                    "objectDefinitionExternalReferenceCode1": "E5A2-COURSE",
+                    "objectFieldSettings": [
+                        {
+                            "name": "objectDefinition1ShortName",
+                            "value": "E5A2Course"
+                        },
+                        {
+                            "name": "objectRelationshipERCObjectFieldName",
+                            "value": "r_e5A2CourseToE5A2Lesson_c_e5a2CourseERC"
+                        }
+                    ],
+                    "objectRelationshipExternalReferenceCode": "E5A2-COURSE-TO-E5A2-LESSON",
+                    "readOnly": "false",
+                    "relationshipType": "oneToMany",
+                    "required": false,
+                    "state": false,
+                    "type": "Long",
+                    "unique": false
+                },
+                {
+                    "DBType": "Integer",
+                    "businessType": "Integer",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "Duration"
+                    },
+                    "localized": false,
+                    "name": "duration",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Integer",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Title"
+                    },
+                    "localized": false,
+                    "name": "title",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                }
+            ],
+            "objectFolderExternalReferenceCode": "E5A2-LEARNING-MANAGEMENT-SYSTEM",
+            "objectRelationships": [
+                {
+                    "deletionType": "prevent",
+                    "externalReferenceCode": "E5A2-LESSON-TO-E5A2-QUIZ",
+                    "label": {
+                        "en_US": "E5A2 Lesson to E5A2 Quiz"
+                    },
+                    "name": "e5A2LessonToE5A2Quiz",
+                    "objectDefinitionExternalReferenceCode1": "E5A2-LESSON",
+                    "objectDefinitionExternalReferenceCode2": "E5A2-QUIZ",
+                    "type": "oneToMany"
+                }
+            ],
+            "panelCategoryKey": "",
+            "parameterRequired": false,
+            "pluralLabel": {
+                "en_US": "E5A2 Lessons"
+            },
+            "portlet": true,
+            "restContextPath": "/o/c/e5a2lessons",
+            "scope": "company",
+            "status": {
+                "code": 0,
+                "label": "approved",
+                "label_i18n": "Approved"
+            },
+            "titleObjectFieldName": "id"
+        },
+        {
+            "accountEntryRestricted": false,
+            "active": true,
+            "enableCategorization": true,
+            "enableObjectEntryHistory": false,
+            "externalReferenceCode": "E5A2-QUIZ",
+            "label": {
+                "en_US": "E5A2 Quiz"
+            },
+            "modifiable": true,
+            "name": "E5A2Quiz",
+            "objectFields": [
+                {
+                    "DBType": "Long",
+                    "businessType": "Relationship",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "E5A2 Lesson to E5A2 Quiz"
+                    },
+                    "localized": false,
+                    "name": "r_e5A2LessonToE5A2Quiz_c_e5a2LessonId",
+                    "objectDefinitionExternalReferenceCode1": "E5A2-LESSON",
+                    "objectFieldSettings": [
+                        {
+                            "name": "objectDefinition1ShortName",
+                            "value": "E5A2Lesson"
+                        },
+                        {
+                            "name": "objectRelationshipERCObjectFieldName",
+                            "value": "r_e5A2LessonToE5A2Quiz_c_e5a2LessonERC"
+                        }
+                    ],
+                    "objectRelationshipExternalReferenceCode": "E5A2-LESSON-TO-E5A2-QUIZ",
+                    "readOnly": "false",
+                    "relationshipType": "oneToMany",
+                    "required": false,
+                    "state": false,
+                    "type": "Long",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Title"
+                    },
+                    "localized": false,
+                    "name": "title",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "Integer",
+                    "businessType": "Integer",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "maxScore"
+                    },
+                    "localized": false,
+                    "name": "maxScore",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Integer",
+                    "unique": false
+                }
+            ],
+            "objectFolderExternalReferenceCode": "E5A2-LEARNING-MANAGEMENT-SYSTEM",
+            "objectRelationships": [
+                {
+                    "deletionType": "prevent",
+                    "externalReferenceCode": "E5A2-QUIZ-TO-E5A2-SUBMISSION",
+                    "label": {
+                        "en_US": "E5A2 Quiz to E5A2 Submission"
+                    },
+                    "name": "e5A2QuizToE5A2Submission",
+                    "objectDefinitionExternalReferenceCode1": "E5A2-QUIZ",
+                    "objectDefinitionExternalReferenceCode2": "E5A2-SUBMISSION",
+                    "type": "oneToMany"
+                }
+            ],
+            "panelCategoryKey": "",
+            "parameterRequired": false,
+            "pluralLabel": {
+                "en_US": "E5A2 Quizzes"
+            },
+            "portlet": true,
+            "restContextPath": "/o/c/e5a2quizes",
+            "scope": "company",
+            "status": {
+                "code": 0,
+                "label": "approved",
+                "label_i18n": "Approved"
+            },
+            "titleObjectFieldName": "id"
+        }
+    ]
+}

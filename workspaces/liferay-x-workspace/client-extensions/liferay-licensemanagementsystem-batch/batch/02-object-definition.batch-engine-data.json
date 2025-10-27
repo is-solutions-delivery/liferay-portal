@@ -1,0 +1,955 @@
+{
+	"configuration": {
+		"className": "com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition",
+		"parameters": {
+			"containsHeaders": "true",
+			"createStrategy": "UPSERT",
+			"onErrorFail": "false",
+			"updateStrategy": "UPDATE"
+		},
+		"taskItemDelegateName": "DEFAULT"
+	},
+    "items": [
+        {
+			"accountEntryRestricted": false,
+			"active": true,
+			"className": "com.liferay.portal.kernel.model.User",
+			"enableCategorization": true,
+			"enableComments": false,
+			"enableIndexSearch": true,
+			"enableLocalization": false,
+			"enableObjectEntryDraft": false,
+			"enableObjectEntryHistory": false,
+			"externalReferenceCode": "L_USER",
+			"label": {
+				"en_US": "User"
+			},
+			"modifiable": false,
+			"name": "User",
+			"objectFolderExternalReferenceCode": "default",
+            "objectRelationships": [
+				{
+					"deletionType": "disassociate",
+					"externalReferenceCode": "L-USER-TO-B4A7-LICENSE-EVENT",
+					"label": {
+						"en_US": "L User To B4A7 License Event"
+					},
+					"name": "lUserToB5A7LicenseEvent",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectDefinitionExternalReferenceCode2": "B4A7-LICENSE-EVENT",
+					"type": "oneToMany"
+				}
+			],
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "Users"
+			},
+			"portlet": false,
+			"restContextPath": "/o/headless-admin-user/v1.0/user-accounts",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"system": true,
+			"titleObjectFieldName": "id"
+		},
+        {
+            "accountEntryRestricted": false,
+            "active": true,
+            "enableCategorization": true,
+            "enableLocalization": false,
+            "enableObjectEntryHistory": false,
+            "externalReferenceCode": "B4A7-VENDOR",
+            "label": {
+                "en_US": "B4A7 Vendor"
+            },
+            "modifiable": true,
+            "name": "B4A7Vendor",
+            "objectFields": [
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Vendor Name"
+                    },
+                    "localized": false,
+                    "name": "vendorName",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Contact Person"
+                    },
+                    "localized": false,
+                    "name": "contactPerson",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Email"
+                    },
+                    "localized": false,
+                    "name": "email",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Phone"
+                    },
+                    "localized": false,
+                    "name": "phone",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "Date",
+                    "businessType": "Date",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "Contract Expiry"
+                    },
+                    "localized": false,
+                    "name": "contractExpiry",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Date",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Picklist",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Vendor Type"
+                    },
+                    "listTypeDefinitionExternalReferenceCode": "B4A7-VENDOR-TYPE",
+                    "localized": false,
+                    "name": "vendorType",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "Clob",
+                    "businessType": "LongText",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Notes"
+                    },
+                    "localized": false,
+                    "name": "notes",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Clob",
+                    "unique": false
+                }
+            ],
+            "objectFolderExternalReferenceCode": "B4A7-LICENSE-MANAGEMENT-SYSTEM",
+            "objectRelationships": [
+                {
+                    "deletionType": "prevent",
+                    "externalReferenceCode": "B4A7-VENDOR-TO-B4A7-LICENSE",
+                    "label": {
+                        "en_US": "B4A7 Vendor To B4A7 License"
+                    },
+                    "name": "b4A7VendorToB4A7License",
+                    "objectDefinitionExternalReferenceCode1": "B4A7-VENDOR",
+                    "objectDefinitionExternalReferenceCode2": "B4A7-LICENSE",
+                    "type": "oneToMany"
+                }
+            ],
+            "panelCategoryKey": "",
+            "parameterRequired": false,
+            "pluralLabel": {
+                "en_US": "B4A7 Vendors"
+            },
+            "portlet": true,
+            "restContextPath": "/o/c/b4a7vendors",
+            "scope": "company",
+            "status": {
+                "code": 0,
+                "label": "approved",
+                "label_i18n": "Approved"
+            },
+            "titleObjectFieldName": "id"
+        },
+        {
+            "accountEntryRestricted": false,
+            "active": true,
+            "enableCategorization": true,
+            "enableLocalization": false,
+            "enableObjectEntryHistory": false,
+            "externalReferenceCode": "B4A7-LICENSE",
+            "label": {
+                "en_US": "B4A7 License"
+            },
+            "modifiable": true,
+            "name": "B4A7License",
+            "objectFields": [
+                {
+                    "DBType": "Long",
+                    "businessType": "Relationship",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "B4A7 Vendor To B4A7 License"
+                    },
+                    "localized": false,
+                    "name": "r_b4A7VendorToB4A7License_c_b4a7VendorId",
+                    "objectDefinitionExternalReferenceCode1": "B4A7-VENDOR",
+                    "objectFieldSettings": [
+                        {
+                            "name": "objectDefinition1ShortName",
+                            "value": "B4A7Vendor"
+                        },
+                        {
+                            "name": "objectRelationshipERCObjectFieldName",
+                            "value": "r_b4A7VendorToB4A7License_c_b4a7VendorERC"
+                        }
+                    ],
+                    "objectRelationshipExternalReferenceCode": "B4A7-VENDOR-TO-B4A7-LICENSE",
+                    "readOnly": "false",
+                    "relationshipType": "oneToMany",
+                    "required": false,
+                    "state": false,
+                    "type": "Long",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "License Name"
+                    },
+                    "localized": false,
+                    "name": "licenseName",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "License Key"
+                    },
+                    "localized": false,
+                    "name": "licenseKey",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        },
+                        {
+                            "name": "uniqueValues",
+                            "value": true
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": true
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Picklist",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "license Type"
+                    },
+                    "listTypeDefinitionExternalReferenceCode": "B4A7-LICENSE-TYPE",
+                    "localized": false,
+                    "name": "licenseType",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "Date",
+                    "businessType": "Date",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "Start Date"
+                    },
+                    "localized": false,
+                    "name": "startDate",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Date",
+                    "unique": false
+                },
+                {
+                    "DBType": "Double",
+                    "businessType": "Decimal",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "Cost"
+                    },
+                    "localized": false,
+                    "name": "cost",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Double",
+                    "unique": false
+                },
+                {
+                    "DBType": "Date",
+                    "businessType": "Date",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "End Date"
+                    },
+                    "localized": false,
+                    "name": "endDate",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Date",
+                    "unique": false
+                },
+                {
+                    "DBType": "Integer",
+                    "businessType": "Integer",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "Seats"
+                    },
+                    "localized": false,
+                    "name": "seats",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Integer",
+                    "unique": false
+                },
+                {
+                    "DBType": "Clob",
+                    "businessType": "LongText",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Notes"
+                    },
+                    "localized": false,
+                    "name": "notes",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Clob",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Picklist",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "License Status"
+                    },
+                    "listTypeDefinitionExternalReferenceCode": "B4A7-LICENSE-STATUS",
+                    "localized": false,
+                    "name": "licenseStatus",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "Long",
+                    "businessType": "Relationship",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "B4A7 Product To B4A7 License"
+                    },
+                    "localized": false,
+                    "name": "r_b4A7ProductToB4A7License_c_b4a7ProductId",
+                    "objectDefinitionExternalReferenceCode1": "B4A7-PRODUCT",
+                    "objectFieldSettings": [
+                        {
+                            "name": "objectDefinition1ShortName",
+                            "value": "B4A7-PRODUCT"
+                        },
+                        {
+                            "name": "objectRelationshipERCObjectFieldName",
+                            "value": "r_b4A7ProductToB4A7License_c_b4a7ProductERC"
+                        }
+                    ],
+                    "objectRelationshipExternalReferenceCode": "B4A7-PRODUCT-TO-B4A7-LICENSE",
+                    "readOnly": "false",
+                    "relationshipType": "oneToMany",
+                    "required": false,
+                    "state": false,
+                    "type": "Long",
+                    "unique": false
+                }
+            ],
+            "objectFolderExternalReferenceCode": "B4A7-LICENSE-MANAGEMENT-SYSTEM",
+            "objectRelationships": [
+                {
+                    "deletionType": "prevent",
+                    "externalReferenceCode": "B4A7-LICENSE-TO-B4A7-LICENSE-EVENT",
+                    "label": {
+                        "en_US": "B4A7 License To B4A7 License Event"
+                    },
+                    "name": "b4A7LicenseToB4A7LicenseEvent",
+                    "objectDefinitionExternalReferenceCode1": "B4A7-LICENSE",
+                    "objectDefinitionExternalReferenceCode2": "B4A7-LICENSE-EVENT",
+                    "type": "oneToMany"
+                },
+                {
+                    "deletionType": "prevent",
+                    "externalReferenceCode": "B4A7-LICENSE-TO-B4A7-DEPARTMENT",
+                    "label": {
+                        "en_US": "B4A7 License To B4A7 Department"
+                    },
+                    "name": "b4A7LicenseToB4A7Department",
+                    "objectDefinitionExternalReferenceCode1": "B4A7-LICENSE",
+                    "objectDefinitionExternalReferenceCode2": "B4A7-DEPARTMENT",
+                    "type": "manyToMany"
+                }
+            ],
+            "panelCategoryKey": "",
+            "parameterRequired": false,
+            "pluralLabel": {
+                "en_US": "B4A7 Licenses"
+            },
+            "portlet": true,
+            "restContextPath": "/o/c/b4a7licenses",
+            "scope": "company",
+            "status": {
+                "code": 0,
+                "label": "approved",
+                "label_i18n": "Approved"
+            },
+            "titleObjectFieldName": "id"
+        },
+        {
+            "accountEntryRestricted": false,
+            "active": true,
+            "enableCategorization": true,
+            "enableLocalization": false,
+            "enableObjectEntryHistory": false,
+            "externalReferenceCode": "B4A7-PRODUCT",
+            "label": {
+                "en_US": "B4A7 Product"
+            },
+            "modifiable": true,
+            "name": "B4A7Product",
+            "objectFields": [
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Product Name"
+                    },
+                    "localized": false,
+                    "name": "productName",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Picklist",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Category"
+                    },
+                    "listTypeDefinitionExternalReferenceCode": "B4A7-PRODUCT-CATEGORY",
+                    "localized": false,
+                    "name": "category",
+                    "readOnly": "false",
+                        "required": false,
+                        "state": false,
+                        "type": "String",
+                        "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Version"
+                    },
+                    "localized": false,
+                    "name": "version",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Picklist",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "B4A7 Product Status"
+                    },
+                    "listTypeDefinitionExternalReferenceCode": "B4A7-PRODUCT-STATUS",
+                    "localized": false,
+                    "name": "b4A7ProductStatus",
+                    "objectFieldSettings": [
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "Clob",
+                    "businessType": "LongText",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Notes"
+                    },
+                    "localized": false,
+                    "name": "notes",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Clob",
+                    "unique": false
+                }
+            ],
+            "objectFolderExternalReferenceCode": "B4A7-LICENSE-MANAGEMENT-SYSTEM",
+            "objectRelationships": [
+                {
+                    "deletionType": "prevent",
+                    "externalReferenceCode": "B4A7-PRODUCT-TO-B4A7-LICENSE",
+                    "label": {
+                        "en_US": "B4A7 Product To B4A7 License"
+                    },
+                    "name": "b4A7ProductToB4A7License",
+                    "objectDefinitionExternalReferenceCode1": "B4A7-PRODUCT",
+                    "objectDefinitionExternalReferenceCode2": "B4A7-LICENSE",
+                    "type": "oneToMany"
+                }
+            ],
+            "panelCategoryKey": "",
+            "parameterRequired": false,
+            "pluralLabel": {
+                "en_US": "B4A7 Products"
+            },
+            "portlet": true,
+            "restContextPath": "/o/c/b4a7products",
+            "scope": "company",
+            "status": {
+                "code": 0,
+                "label": "approved",
+                "label_i18n": "Approved"
+            },
+            "titleObjectFieldName": "id"
+        },
+        {
+            "accountEntryRestricted": false,
+            "active": true,
+            "enableCategorization": true,
+            "enableLocalization": false,
+            "enableObjectEntryHistory": false,
+            "externalReferenceCode": "B4A7-DEPARTMENT",
+            "label": {
+                "en_US": "B4A7 Department"
+            },
+            "modifiable": true,
+            "name": "B4A7Department",
+            "objectFields": [
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Department Name"
+                    },
+                    "localized": false,
+                    "name": "departmentName",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "Clob",
+                    "businessType": "LongText",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Notes"
+                    },
+                    "localized": false,
+                    "name": "notes",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Clob",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Cost Center"
+                    },
+                    "localized": false,
+                    "name": "costCenter",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                }
+            ],
+            "objectFolderExternalReferenceCode": "B4A7-LICENSE-MANAGEMENT-SYSTEM",
+            "objectRelationships": [
+                {
+                    "deletionType": "prevent",
+                    "externalReferenceCode": "B4A7-DEPARTMENT-TO-B4A7-LICENSE",
+                    "label": {
+                        "en_US": "B4A7 Department To B4A7 LICENSE"
+                    },
+                    "name": "b4A7LicenseToB4A7Department",
+                    "objectDefinitionExternalReferenceCode1": "B4A7-DEPARTMENT",
+                    "objectDefinitionExternalReferenceCode2": "B4A7-LICENSE",
+                    "type": "manyToMany"
+                }
+            ],
+            "panelCategoryKey": "",
+            "parameterRequired": false,
+            "pluralLabel": {
+                "en_US": "B4A7 Departments"
+            },
+            "portlet": true,
+            "restContextPath": "/o/c/b4a7departments",
+            "scope": "company",
+            "status": {
+                "code": 0,
+                "label": "approved",
+                "label_i18n": "Approved"
+            },
+            "titleObjectFieldName": "id"
+        
+        },
+        {
+            "accountEntryRestricted": false,
+            "active": true,
+            "enableCategorization": true,
+            "enableLocalization": false,
+            "enableObjectEntryHistory": false,
+            "externalReferenceCode": "B4A7-LICENSE-EVENT",
+            "label": {
+                "en_US": "B4A7 License Event"
+            },
+            "modifiable": true,
+            "name": "B4A7LicenseEvent",
+            "objectFields": [
+                {
+                    "DBType": "Long",
+                    "businessType": "Relationship",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "B4A7 License To B4A7 License Event"
+                    },
+                    "localized": false,
+                    "name": "r_b4A7LicenseToB4A7LicenseEvent_c_b4a7LicenseId",
+                    "objectDefinitionExternalReferenceCode1": "B4A7-LICENSE",
+                    "objectFieldSettings": [
+                        {
+                            "name": "objectDefinition1ShortName",
+                            "value": "B4A7License"
+                        },
+                        {
+                            "name": "objectRelationshipERCObjectFieldName",
+                            "value": "r_b4A7LicenseToB4A7LicenseEvent_c_b4a7LicenseERC"
+                        }
+                    ],
+                    "objectRelationshipExternalReferenceCode": "B4A7-LICENSE-TO-B4A7-LICENSE-EVENT",
+                    "readOnly": "false",
+                    "relationshipType": "oneToMany",
+                    "required": false,
+                    "state": false,
+                    "type": "Long",
+                    "unique": false
+                },
+                {
+                    "DBType": "Date",
+                    "businessType": "Date",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "Event Date"
+                    },
+                    "localized": false,
+                    "name": "eventDate",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Date",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Picklist",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Event Type"
+                    },
+                    "listTypeDefinitionExternalReferenceCode": "B4A7-EVENT-TYPE",
+                    "localized": false,
+                    "name": "eventType",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "Clob",
+                    "businessType": "LongText",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Notes"
+                    },
+                    "localized": false,
+                    "name": "notes",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "type": "Clob",
+                    "unique": false
+                },
+                {
+                    "DBType": "Long",
+                    "businessType": "Relationship",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "L User To B4A7 License Event"
+                    },
+                    "localized": false,
+                    "name": "r_userToB4A7LicenseEvent_userId",
+                    "objectDefinitionExternalReferenceCode1": "L_USER",
+                    "objectFieldSettings": [
+                        {
+                            "name": "objectDefinition1ShortName",
+                            "value": "User"
+                        },
+                        {
+                            "name": "objectRelationshipERCObjectFieldName",
+                            "value": "r_userToB4A7LicenseEvent_userERC"
+                        }
+                    ],
+                    "objectRelationshipExternalReferenceCode": "L-USER-TO-B4A7-LICENSE-EVENT",
+                    "readOnly": "false",
+                    "relationshipType": "oneToMany",
+                    "required": false,
+                    "state": false,
+                    "type": "Long",
+                    "unique": false
+                }
+            ],
+            "objectFolderExternalReferenceCode": "B4A7-LICENSE-MANAGEMENT-SYSTEM",
+            "panelCategoryKey": "",
+            "parameterRequired": false,
+            "pluralLabel": {
+                "en_US": "B4A7 License Events"
+            },
+            "portlet": true,
+            "restContextPath": "/o/c/b4a7licenseevents",
+            "scope": "company",
+            "status": {
+                "code": 0,
+                "label": "approved",
+                "label_i18n": "Approved"
+            },
+            "titleObjectFieldName": "id"
+        
+        }
+    ]
+}

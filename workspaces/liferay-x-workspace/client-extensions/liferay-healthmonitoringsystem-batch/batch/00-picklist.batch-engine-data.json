@@ -16,59 +16,30 @@
 				{
 					"externalReferenceCode": "B6A9-SYSTEM",
 					"key": "b6a9System",
-					"name": "B6A9 System",
-					"name_i18n": {
-						"en-US": "B6A9 System"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 System"
 				},
 				{
 					"externalReferenceCode": "B6A9-DATA",
 					"key": "b6A9Data",
-					"name": "B6A9 Data",
-					"name_i18n": {
-						"en-US": "B6A9 Data"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Data"
 				},
 				{
 					"externalReferenceCode": "B6A9-PROCESS",
 					"key": "b6a9Process",
-					"name": "B6A9 Process",
-					"name_i18n": {
-						"en-US": "B6A9 Process"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Process"
 				},
 				{
 					"externalReferenceCode": "B6A9-INTEGRATION",
 					"key": "b6a9Integration",
-					"name": "B6A9 Integration",
-					"name_i18n": {
-						"en-US": "B6A9 Integration"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Integration"
 				},
 				{
 					"externalReferenceCode": "B6A9-SERVICE",
 					"key": "b6a9Service",
-					"name": "B6A9 Service",
-					"name_i18n": {
-						"en-US": "B6A9 Service"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Service"
 				}
 			],
-			"name": "B6A9 Dependency Type",
-			"name_i18n": {
-				"en-US": "B6A9 Dependency Type"
-			},
-			"system": false
+			"name": "B6A9 Dependency Type"
 		},
 		{
 			"externalReferenceCode": "B6A9-CRITICALITY",
@@ -76,49 +47,25 @@
 				{
 					"externalReferenceCode": "B6A9-LOW",
 					"key": "b6a9Low",
-					"name": "B6A9 Low",
-					"name_i18n": {
-						"en-US": "B6A9 Low"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Low"
 				},
 				{
 					"externalReferenceCode": "B6A9-MEDIUM",
 					"key": "b6a9Medium",
-					"name": "B6A9 Medium",
-					"name_i18n": {
-						"en-US": "B6A9 Medium"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Medium"
 				},
 				{
 					"externalReferenceCode": "B6A9-HIGH",
 					"key": "b6a9High",
-					"name": "B6A9 High",
-					"name_i18n": {
-						"en-US": "B6A9 High"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 High"
 				},
 				{
 					"externalReferenceCode": "B6A9-CRITICAL",
 					"key": "b6a9Critical",
-					"name": "B6A9 Critical",
-					"name_i18n": {
-						"en-US": "B6A9 Critical"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Critical"
 				}
 			],
-			"name": "B6A9 Criticality",
-			"name_i18n": {
-				"en-US": "B6A9 Criticality"
-			},
-			"system": false
+			"name": "B6A9 Criticality"
 		},
 		{
 			"externalReferenceCode": "B6A9-HEALTH-STATUS",
@@ -126,49 +73,25 @@
 				{
 					"externalReferenceCode": "B6A9-HEALTHY",
 					"key": "b6a9Healthy",
-					"name": "B6A9 Healthy",
-					"name_i18n": {
-						"en-US": "B6A9 Healthy"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Healthy"
 				},
 				{
 					"externalReferenceCode": "B6A9-DEGRADED",
 					"key": "b6a9Degraded",
-					"name": "B6A9 Degraded",
-					"name_i18n": {
-						"en-US": "B6A9 Degraded"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Degraded"
 				},
 				{
 					"externalReferenceCode": "B6A9-OFFLINE",
 					"key": "b6a9Offline",
-					"name": "B6A9 Offline",
-					"name_i18n": {
-						"en-US": "B6A9 Offline"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Offline"
 				},
 				{
 					"externalReferenceCode": "B6A9-UNKNOWN",
 					"key": "b6a9Unknown",
-					"name": "B6A9 Unknown",
-					"name_i18n": {
-						"en-US": "B6A9 Unknown"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Unknown"
 				}
 			],
-			"name": "B6A9 Health Status",
-			"name_i18n": {
-				"en-US": "B6A9 Health Status"
-			},
-			"system": false
+			"name": "B6A9 Health Status"
 		},
 		{
 			"externalReferenceCode": "B6A9-ASSET-CATEGORY",
@@ -176,59 +99,30 @@
 				{
 					"externalReferenceCode": "B6A9-APPLICATION",
 					"key": "b6a9Application",
-					"name": "B6A9 Application",
-					"name_i18n": {
-						"en-US": "B6A9 Application"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Application"
 				},
 				{
 					"externalReferenceCode": "B6A9-API",
 					"key": "b6a9API",
-					"name": "B6A9 API",
-					"name_i18n": {
-						"en-US": "B6A9 API"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 API"
 				},
 				{
 					"externalReferenceCode": "B6A9-DATABASE",
 					"key": "b6a9Database",
-					"name": "B6A9 Database",
-					"name_i18n": {
-						"en-US": "B6A9 Database"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Database"
 				},
 				{
 					"externalReferenceCode": "B6A9-SERVICE",
 					"key": "b6a9Service",
-					"name": "B6A9 Service",
-					"name_i18n": {
-						"en-US": "B6A9 Service"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Service"
 				},
 				{
 					"externalReferenceCode": "B6A9-HARDWARE",
 					"key": "b6a9Hardware",
-					"name": "B6A9 Hardware",
-					"name_i18n": {
-						"en-US": "B6A9 Hardware"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Hardware"
 				}
 			],
-			"name": "B6A9 Asset Category",
-			"name_i18n": {
-				"en-US": "B6A9 Asset Category"
-			},
-			"system": false
+			"name": "B6A9 Asset Category"
 		},
 		{
 			"externalReferenceCode": "B6A9-ASSET-STATUS",
@@ -236,49 +130,25 @@
 				{
 					"externalReferenceCode": "B6A9-ACTIVE",
 					"key": "b6a9Active",
-					"name": "B6A9 Active",
-					"name_i18n": {
-						"en-US": "B6A9 Active"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Active"
 				},
 				{
 					"externalReferenceCode": "B6A9-RETIRED",
 					"key": "b6a9Retired",
-					"name": "B6A9 Retired",
-					"name_i18n": {
-						"en-US": "B6A9 Retired"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Retired"
 				},
 				{
 					"externalReferenceCode": "B6A9-PLANNED",
 					"key": "b6a9Planned",
-					"name": "B6A9 Planned",
-					"name_i18n": {
-						"en-US": "B6A9 Planned"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Planned"
 				},
 				{
 					"externalReferenceCode": "B6A9-UNDER-MAINTENANCE",
 					"key": "b6a9UnderMaintenance",
-					"name": "B6A9 Under Maintenance",
-					"name_i18n": {
-						"en-US": "B6A9 Under Maintenance"
-					},
-					"system": false,
-					"type": ""
+					"name": "B6A9 Under Maintenance"
 				}
 			],
-			"name": "B6A9 Asset Status",
-			"name_i18n": {
-				"en-US": "B6A9 Asset Status"
-			},
-			"system": false
+			"name": "B6A9 Asset Status"
 		}
 	]
 }

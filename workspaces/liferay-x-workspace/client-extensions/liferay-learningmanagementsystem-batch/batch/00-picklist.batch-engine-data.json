@@ -11,34 +11,22 @@
 	},
 	"items": [
 		{
-			"externalReferenceCode": "7c9b16b0-fcf1-9bb0-0be6-5723eb6c195b",
+			"externalReferenceCode": "E5A2-USER-ROLE",
 			"listTypeEntries": [
 			],
-			"name": "E5A2 User Role",
-			"name_i18n": {
-				"en-US": "E5A2 User Role"
-			},
-			"system": false
+			"name": "E5A2 User Role"
 		},
 		{
-			"externalReferenceCode": "dd070b09-2602-87f6-1de9-09741c2c3b70",
+			"externalReferenceCode": "E5A2-COURSE-CATEGORY",
 			"listTypeEntries": [
 			],
-			"name": "E5A2 Course Category",
-			"name_i18n": {
-				"en-US": "E5A2 Course Category"
-			},
-			"system": false
+			"name": "E5A2 Course Category"
 		},
 		{
-			"externalReferenceCode": "9319719c-62ec-e87c-6b8a-634e90c3a36c",
+			"externalReferenceCode": "E5A2-DIFFICULTY-LEVEL",
 			"listTypeEntries": [
 			],
-			"name": "E5A2 Difficulty Level",
-			"name_i18n": {
-				"en-US": "E5A2 Difficulty Level"
-			},
-			"system": false
+			"name": "E5A2 Difficulty Level"
 		}
 	]
 }
