@@ -42,6 +42,7 @@ const Apps = () => {
 	const navigate = useNavigate();
 
 	const isNewAppEnabled = properties.featureFlags.includes('LPD-24546');
+	const isEditAppEnabled = properties.featureFlags.includes('LPD-24546-2');
 
 	return (
 		<Page
@@ -96,7 +97,7 @@ const Apps = () => {
 					}
 				)}`}
 				tableProps={{
-					actions: isNewAppEnabled
+					actions: isEditAppEnabled
 						? [
 								{
 									disabled: (row: Product) =>

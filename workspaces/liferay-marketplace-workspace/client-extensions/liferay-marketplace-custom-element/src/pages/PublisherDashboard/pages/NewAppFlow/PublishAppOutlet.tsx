@@ -17,6 +17,7 @@ import usePublishAppSubmission from '../../hooks/usePublishAppSubmission';
 import usePublishHeader from '../../hooks/usePublishHeader';
 import usePublishNavigation from '../../hooks/usePublishNavigation';
 import {APP_FLOW_ITEMS} from './constants';
+import {useMarketplaceContext} from '../../../../context/MarketplaceContext';
 
 type Context = ReturnType<typeof useNewAppContext>[0];
 
@@ -31,10 +32,14 @@ const isRequiredDraftFormFilled = (context: Context) =>
 const PublishAppOutlet = () => {
 	usePublishHeader();
 
+	const {properties} = useMarketplaceContext();
 	const [context, dispatch] = useNewAppContext();
 	const {observer, onOpenChange, open} = useModal();
 	const {onSave, onSaveAsDraft} = usePublishAppSubmission(context, dispatch);
 	const onExitModal = useModal();
+
+	const isEditAppEnabled = properties.featureFlags.includes('LPD-24546-2');
+
 	const isEditingApp =
 		context?._product &&
 		context._product.productStatus === ProductWorkflowStatusCode.APPROVED;
@@ -65,7 +70,7 @@ const PublishAppOutlet = () => {
 
 	return (
 		<BasePublishAppOutlet
-			canSaveAsDraft={canSaveAsDraft}
+			canSaveAsDraft={isEditAppEnabled && canSaveAsDraft}
 			context={context}
 			flowItems={getFlowItems(context)}
 			isEditingApp={!!isEditingApp}
