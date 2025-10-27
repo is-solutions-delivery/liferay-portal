@@ -16,59 +16,30 @@
 				{
 					"externalReferenceCode": "B3C7-IMAGE",
 					"key": "b3c7Image",
-					"name": "Image",
-					"name_i18n": {
-						"en-US": "Image"
-					},
-					"system": false,
-					"type": ""
+					"name": "Image"
 				},
 				{
 					"externalReferenceCode": "B3C7-VIDEO",
 					"key": "b3c7Video",
-					"name": "Video",
-					"name_i18n": {
-						"en-US": "Video"
-					},
-					"system": false,
-					"type": ""
+					"name": "Video"
 				},
 				{
 					"externalReferenceCode": "B3C7-DOCUMENT",
 					"key": "b3c7Document",
-					"name": "Document",
-					"name_i18n": {
-						"en-US": "Document"
-					},
-					"system": false,
-					"type": ""
+					"name": "Document"
 				},
 				{
 					"externalReferenceCode": "B3C7-AUDIO",
 					"key": "b3c7Audio",
-					"name": "Audio",
-					"name_i18n": {
-						"en-US": "Audio"
-					},
-					"system": false,
-					"type": ""
+					"name": "Audio"
 				},
 				{
 					"externalReferenceCode": "B3C7-OTHER",
 					"key": "b3c7Other",
-					"name": "Other",
-					"name_i18n": {
-						"en-US": "Other"
-					},
-					"system": false,
-					"type": ""
+					"name": "Other"
 				}
 			],
-			"name": "B3C7 Media Type",
-			"name_i18n": {
-				"en-US": "B3C7 Media Type"
-			},
-			"system": false
+			"name": "B3C7 Media Type"
 		},
 		{
 			"externalReferenceCode": "B3C7-MEDIA-STATUS",
@@ -76,39 +47,20 @@
 				{
 					"externalReferenceCode": "B3C7-DRAFT",
 					"key": "b3c7Draft",
-					"name": "Draft",
-					"name_i18n": {
-						"en-US": "Draft"
-					},
-					"system": false,
-					"type": ""
+					"name": "Draft"
 				},
 				{
 					"externalReferenceCode": "B3C7-PUBLISHED",
 					"key": "b3c7Published",
-					"name": "Published",
-					"name_i18n": {
-						"en-US": "Published"
-					},
-					"system": false,
-					"type": ""
+					"name": "Published"
 				},
 				{
 					"externalReferenceCode": "B3C7-ARCHIVED",
 					"key": "b3c7Archived",
-					"name": "Archived",
-					"name_i18n": {
-						"en-US": "Archived"
-					},
-					"system": false,
-					"type": ""
+					"name": "Archived"
 				}
 			],
-			"name": "B3C7 Media Status",
-			"name_i18n": {
-				"en-US": "B3C7 Media Status"
-			},
-			"system": false
+			"name": "B3C7 Media Status"
 		},
 		{
 			"externalReferenceCode": "B3C7-MEDIA-VISIBILITY",
@@ -116,39 +68,20 @@
 				{
 					"externalReferenceCode": "B3C7-PUBLIC",
 					"key": "b3c7Public",
-					"name": "Public",
-					"name_i18n": {
-						"en-US": "Public"
-					},
-					"system": false,
-					"type": ""
+					"name": "Public"
 				},
 				{
 					"externalReferenceCode": "B3C7-PRIVATE",
 					"key": "b3c7Private",
-					"name": "Private",
-					"name_i18n": {
-						"en-US": "Private"
-					},
-					"system": false,
-					"type": ""
+					"name": "Private"
 				},
 				{
 					"externalReferenceCode": "B3C7-INTERNAL",
 					"key": "b3c7Internal",
-					"name": "Internal",
-					"name_i18n": {
-						"en-US": "Internal"
-					},
-					"system": false,
-					"type": ""
+					"name": "Internal"
 				}
 			],
-			"name": "B3C7 Media Visibility",
-			"name_i18n": {
-				"en-US": "B3C7 Media Visibility"
-			},
-			"system": false
+			"name": "B3C7 Media Visibility"
 		}
 	]
 }

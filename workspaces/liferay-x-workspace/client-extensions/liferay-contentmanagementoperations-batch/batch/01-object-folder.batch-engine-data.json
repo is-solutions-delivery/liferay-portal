@@ -1,0 +1,21 @@
+{
+	"configuration": {
+		"className": "com.liferay.object.admin.rest.dto.v1_0.ObjectFolder",
+		"parameters": {
+			"containsHeaders": "true",
+			"createStrategy": "UPSERT",
+			"onErrorFail": "false",
+			"updateStrategy": "UPDATE"
+		},
+		"taskItemDelegateName": "DEFAULT"
+	},
+	"items": [
+		{
+			"externalReferenceCode": "B7A3-CONTENT-MANAGEMENT-OPERATIONS",
+			"label": {
+				"en_US": "B2A5 Content Management Operations"
+			},
+			"name": "B2A5ContentManagementOperations"
+		}
+	]
+}

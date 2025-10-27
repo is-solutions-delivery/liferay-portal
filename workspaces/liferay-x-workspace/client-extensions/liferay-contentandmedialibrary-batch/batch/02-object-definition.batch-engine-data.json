@@ -1,0 +1,491 @@
+{
+	"configuration": {
+		"className": "com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition",
+		"parameters": {
+			"containsHeaders": "true",
+			"createStrategy": "UPSERT",
+			"onErrorFail": "false",
+			"updateStrategy": "UPDATE"
+		},
+		"taskItemDelegateName": "DEFAULT"
+	},
+    "items": [
+        {
+            "accountEntryRestricted": false,
+            "active": true,
+            "enableCategorization": true,
+            "enableObjectEntryHistory": false,
+            "externalReferenceCode": "B3C7-MEDIA-ITEM",
+            "label": {
+                "en_US": "B3C7 Media Item"
+            },
+            "modifiable": true,
+            "name": "B3C7MediaItem",
+            "objectFields": [
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Title"
+                    },
+                    "listTypeDefinitionId": 0,
+                    "localized": false,
+                    "name": "title",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    
+                    "required": false,
+                    "state": false,
+                    "system": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "Clob",
+                    "businessType": "LongText",
+                    
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Description"
+                    },
+                    "listTypeDefinitionId": 0,
+                    "localized": false,
+                    "name": "description",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    
+                    "required": false,
+                    "state": false,
+                    "system": false,
+                    "type": "Clob",
+                    "unique": false
+                },
+                {
+                    "DBType": "Long",
+                    "businessType": "Attachment",
+                    
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "File"
+                    },
+                    "listTypeDefinitionId": 0,
+                    "localized": false,
+                    "name": "file",
+                    "objectFieldSettings": [
+                        {
+                            "name": "acceptedFileExtensions",
+                            "value": "jpeg, jpg, pdf, png"
+                        },
+                        {
+                            "name": "maximumFileSize",
+                            "value": 0
+                        },
+                        {
+                            "name": "fileSource",
+                            "value": "userComputer"
+                        },
+                        {
+                            "name": "showFilesInDocumentsAndMedia",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "system": false,
+                    "type": "Long",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Picklist",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "B3C7 Media Type"
+                    },
+                    "listTypeDefinitionExternalReferenceCode": "B3C7-MEDIA-TYPE",
+                    "listTypeDefinitionId": 38976,
+                    "localized": false,
+                    "name": "b3c7MediaType",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "system": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Picklist",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "B3C7 Media Status"
+                    },
+                    "listTypeDefinitionExternalReferenceCode": "B3C7-MEDIA-STATUS",
+                    "listTypeDefinitionId": 38982,
+                    "localized": false,
+                    "name": "b3c7MediaStatus",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "system": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Picklist",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "B3C7 Media Visibility"
+                    },
+                    "listTypeDefinitionExternalReferenceCode": "B3C7-MEDIA-VISIBILITY",
+                    "listTypeDefinitionId": 38986,
+                    "localized": false,
+                    "name": "b3c7MediaVisibility",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "system": false,
+                    "type": "String",
+                    "unique": false
+                },
+                {
+                    "DBType": "Integer",
+                    "businessType": "Integer",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "Media Size"
+                    },
+                    "listTypeDefinitionId": 0,
+                    "localized": false,
+                    "name": "mediaSize",
+                    "readOnly": "false",
+                    "required": false,
+                    "state": false,
+                    "system": false,
+                    "type": "Integer",
+                    "unique": false
+                },
+                {
+                    "DBType": "Long",
+                    "businessType": "Relationship",
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "B3C7 Uploaded By L User"
+                    },
+                    "listTypeDefinitionId": 0,
+                    "localized": false,
+                    "name": "r_uploadedBy_userId",
+                    "objectDefinitionExternalReferenceCode1": "L_USER",
+                    "objectFieldSettings": [
+                        {
+                            "name": "objectDefinition1ShortName",
+                            "value": "User"
+                        },
+                        {
+                            "name": "objectRelationshipERCObjectFieldName",
+                            "value": "r_uploadedBy_userERC"
+                        }
+                    ],
+                    "objectRelationshipExternalReferenceCode": "B3C7-MEDIA-ITEM-UPLOADED-BY-L-USER",
+                    "readOnly": "false",
+                    "relationshipType": "oneToMany",
+                    "required": false,
+                    "state": false,
+                    "system": false,
+                    "type": "Long",
+                    "unique": false
+                }
+            ],
+            "objectFolderExternalReferenceCode": "B3C7-CONTENT-AND-MEDIA-LIBRARY",
+            "panelCategoryKey": "",
+            "parameterRequired": false,
+            "pluralLabel": {
+                "en_US": "B3C7 Media Items"
+            },
+            "portlet": true,
+            "restContextPath": "/o/c/b3c7mediaitems",
+            "scope": "company",
+            "status": {
+                "code": 0,
+                "label": "approved",
+                "label_i18n": "Approved"
+            },
+            "system": false,
+            "titleObjectFieldName": "id"
+        },
+        {
+            "accountEntryRestricted": false,
+            "active": true,
+            "enableCategorization": true,
+            "enableObjectEntryHistory": false,
+            "externalReferenceCode": "B3C7-MEDIA-VERSION",
+            "label": {
+                "en_US": "B3C7 Media Version"
+            },
+            "modifiable": true,
+            "name": "B3C7MediaVersion",
+            "objectFields": [
+                {
+                    "DBType": "Long",
+                    "businessType": "Attachment",
+                    
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "File"
+                    },
+                    "listTypeDefinitionId": 0,
+                    "localized": false,
+                    "name": "file",
+                    "objectFieldSettings": [
+                        {
+                            "name": "acceptedFileExtensions",
+                            "value": "jpeg, jpg, pdf, png"
+                        },
+                        {
+                            "name": "maximumFileSize",
+                            "value": 0
+                        },
+                        {
+                            "name": "fileSource",
+                            "value": "userComputer"
+                        },
+                        {
+                            "name": "showFilesInDocumentsAndMedia",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    
+                    "required": false,
+                    "state": false,
+                    "system": false,
+                    "type": "Long",
+                    "unique": false
+                },
+                {
+                    "DBType": "Integer",
+                    "businessType": "Integer",
+                    
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "",
+                    "label": {
+                        "en_US": "Version Number"
+                    },
+                    "listTypeDefinitionId": 0,
+                    "localized": false,
+                    "name": "versionNumber",
+                    "readOnly": "false",
+                    
+                    "required": false,
+                    "state": false,
+                    "system": false,
+                    "type": "Integer",
+                    "unique": false
+                },
+                {
+                    "DBType": "String",
+                    "businessType": "Text",
+                    
+                    "indexed": true,
+                    "indexedAsKeyword": false,
+                    "indexedLanguageId": "en_US",
+                    "label": {
+                        "en_US": "Notes"
+                    },
+                    "listTypeDefinitionId": 0,
+                    "localized": false,
+                    "name": "notes",
+                    "objectFieldSettings": [
+                        {
+                            "name": "showCounter",
+                            "value": false
+                        }
+                    ],
+                    "readOnly": "false",
+                    
+                    "required": false,
+                    "state": false,
+                    "system": false,
+                    "type": "String",
+                    "unique": false
+                }
+            ],
+            "objectFolderExternalReferenceCode": "B3C7-CONTENT-AND-MEDIA-LIBRARY",
+            "panelCategoryKey": "",
+            "parameterRequired": false,
+            "pluralLabel": {
+                "en_US": "B3C7 Media Versions"
+            },
+            "portlet": true,
+            "restContextPath": "/o/c/b3c7mediaversions",
+            "scope": "company",
+            "status": {
+                "code": 0,
+                "label": "approved",
+                "label_i18n": "Approved"
+            },
+            "system": false,
+            "titleObjectFieldName": "id"
+        },
+        {
+                "accountEntryRestricted": false,
+                "active": true,
+                "defaultLanguageId": "en_US",
+                "enableCategorization": true,
+                "enableObjectEntryHistory": false,
+                "externalReferenceCode": "B3C7-PROJECT",
+                "label": {
+                    "en_US": "B3C7 Project"
+                },
+                "modifiable": true,
+                "name": "B3C7Project",
+                "objectFields": [
+                    {
+                        "DBType": "String",
+                        "businessType": "Text",
+                        
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "en_US",
+                        "label": {
+                            "en_US": "Title"
+                        },
+                        "listTypeDefinitionId": 0,
+                        "localized": false,
+                        "name": "title",
+                        "objectFieldSettings": [
+                            {
+                                "name": "showCounter",
+                                "value": false
+                            }
+                        ],
+                        "readOnly": "false",
+                        
+                        "required": false,
+                        "state": false,
+                        "system": false,
+                        "type": "String",
+                        "unique": false
+                    },
+                    {
+                        "DBType": "Date",
+                        "businessType": "Date",
+                        
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "",
+                        "label": {
+                            "en_US": "Start Date"
+                        },
+                        "listTypeDefinitionId": 0,
+                        "localized": false,
+                        "name": "startDate",
+                        "readOnly": "false",
+                        
+                        "required": false,
+                        "state": false,
+                        "system": false,
+                        "type": "Date",
+                        "unique": false
+                    },
+                    {
+                        "DBType": "Clob",
+                        "businessType": "LongText",
+                        
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "en_US",
+                        "label": {
+                            "en_US": "Description"
+                        },
+                        "listTypeDefinitionId": 0,
+                        "localized": false,
+                        "name": "description",
+                        "objectFieldSettings": [
+                            {
+                                "name": "showCounter",
+                                "value": false
+                            }
+                        ],
+                        "readOnly": "false",
+                        
+                        "required": false,
+                        "state": false,
+                        "system": false,
+                        "type": "Clob",
+                        "unique": false
+                    },
+                    {
+                        "DBType": "Date",
+                        "businessType": "Date",
+                        
+                        "indexed": true,
+                        "indexedAsKeyword": false,
+                        "indexedLanguageId": "",
+                        "label": {
+                            "en_US": "End Date"
+                        },
+                        "listTypeDefinitionId": 0,
+                        "localized": false,
+                        "name": "endDate",
+                        "readOnly": "false",
+                        
+                        "required": false,
+                        "state": false,
+                        "system": false,
+                        "type": "Date",
+                        "unique": false
+                    }
+                ],
+                "objectFolderExternalReferenceCode": "B3C7-CONTENT-AND-MEDIA-LIBRARY",
+                "panelCategoryKey": "",
+                "parameterRequired": false,
+                "pluralLabel": {
+                    "en_US": "B3C7 Projects"
+                },
+                "portlet": true,
+                "restContextPath": "/o/c/b3c7projects",
+                "scope": "company",
+                "status": {
+                    "code": 0,
+                    "label": "approved",
+                    "label_i18n": "Approved"
+                },
+                "system": false,
+                "titleObjectFieldName": "id"
+        }
+    ]
+
+}

@@ -16,69 +16,35 @@
 				{
 					"externalReferenceCode": "B2A5-ARTICLE",
 					"key": "b2a5Article",
-					"name": "B2A5 Article",
-					"name_i18n": {
-						"en-US": "B2A5 Article"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Article"
 				},
 				{
 					"externalReferenceCode": "B2A5-DOCUMENT",
 					"key": "b2a5Document",
-					"name": "B2A5 Document",
-					"name_i18n": {
-						"en-US": "B2A5 Document"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Document"
 				},
 				{
 					"externalReferenceCode": "B2A5-MEDIA",
 					"key": "b2a5Media",
-					"name": "B2A5 Media",
-					"name_i18n": {
-						"en-US": "B2A5 Media"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Media"
 				},
 				{
 					"externalReferenceCode": "B2A5-PRODUCT",
 					"key": "b2a5Product",
-					"name": "B2A5 Product",
-					"name_i18n": {
-						"en-US": "B2A5 Product"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Product"
 				},
 				{
 					"externalReferenceCode": "B2A5-FAQ",
 					"key": "b2a5FAQ",
-					"name": "B2A5 FAQ",
-					"name_i18n": {
-						"en-US": "B2A5 FAQ"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 FAQ"
 				},
 				{
 					"externalReferenceCode": "B2A5-REPORT",
 					"key": "b2a5Report",
-					"name": "B2A5 Report",
-					"name_i18n": {
-						"en-US": "B2A5 Report"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Report"
 				}
 			],
-			"name": "B2A5 Content Type",
-			"name_i18n": {
-				"en-US": "B2A5 Content Type"
-			},
-			"system": false
+			"name": "B2A5 Content Type"
 		},
 		{
 			"externalReferenceCode": "B2A5-STATUS",
@@ -86,49 +52,25 @@
 				{
 					"externalReferenceCode": "B2A5-DRAFT",
 					"key": "b2a5Draft",
-					"name": "B2A5 Draft",
-					"name_i18n": {
-						"en-US": "B2A5 Draft"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Draft"
 				},
 				{
 					"externalReferenceCode": "B2A5-IN-REVIEW",
 					"key": "b2a5InReview",
-					"name": "B2A5 In Review",
-					"name_i18n": {
-						"en-US": "B2A5 In Review"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 In Review"
 				},
 				{
 					"externalReferenceCode": "B2A5-PUBLISHED",
 					"key": "b2a5Published",
-					"name": "B2A5 Published",
-					"name_i18n": {
-						"en-US": "B2A5 Published"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Published"
 				},
 				{
 					"externalReferenceCode": "B2A5-ARCHIVED",
 					"key": "b2a5Archived",
-					"name": "B2A5 Archived",
-					"name_i18n": {
-						"en-US": "B2A5 Archived"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Archived"
 				}
 			],
-			"name": "B2A5 Status",
-			"name_i18n": {
-				"en-US": "B2A5 Status"
-			},
-			"system": false
+			"name": "B2A5 Status"
 		},
 		{
 			"externalReferenceCode": "B2A5-PRIORITY",
@@ -136,49 +78,25 @@
 				{
 					"externalReferenceCode": "B2A5-LOW",
 					"key": "b2a5Low",
-					"name": "B2A5 Low",
-					"name_i18n": {
-						"en-US": "B2A5 Low"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Low"
 				},
 				{
 					"externalReferenceCode": "B2A5-MEDIUM",
 					"key": "b2a5Medium",
-					"name": "B2A5 Medium",
-					"name_i18n": {
-						"en-US": "B2A5 Medium"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Medium"
 				},
 				{
 					"externalReferenceCode": "B2A5-HIGH",
 					"key": "b2a5High",
-					"name": "B2A5 High",
-					"name_i18n": {
-						"en-US": "B2A5 High"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 High"
 				},
 				{
 					"externalReferenceCode": "B2A5-CRITICAL",
 					"key": "b2a5Critical",
-					"name": "B2A5 Critical",
-					"name_i18n": {
-						"en-US": "B2A5 Critical"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Critical"
 				}
 			],
-			"name": "B2A5 Priority",
-			"name_i18n": {
-				"en-US": "B2A5 Priority"
-			},
-			"system": false
+			"name": "B2A5 Priority"
 		},
 		{
 			"externalReferenceCode": "B2A5-DEPARTMENT-TYPE",
@@ -186,59 +104,30 @@
 				{
 					"externalReferenceCode": "B2A5-MARKETING",
 					"key": "b2a5Marketing",
-					"name": "B2A5 Marketing",
-					"name_i18n": {
-						"en-US": "B2A5 Marketing"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Marketing"
 				},
 				{
 					"externalReferenceCode": "B2A5-HR",
 					"key": "b2a5HR",
-					"name": "B2A5 HR",
-					"name_i18n": {
-						"en-US": "B2A5 HR"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 HR"
 				},
 				{
 					"externalReferenceCode": "B2A5-IT",
 					"key": "b2a5IT",
-					"name": "B2A5 IT",
-					"name_i18n": {
-						"en-US": "B2A5 IT"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 IT"
 				},
 				{
 					"externalReferenceCode": "B2A5-FINANCE",
 					"key": "b2a5Finance",
-					"name": "B2A5 Finance",
-					"name_i18n": {
-						"en-US": "B2A5 Finance"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Finance"
 				},
 				{
 					"externalReferenceCode": "B2A5-OPERATIONS",
 					"key": "b2a5Operations",
-					"name": "B2A5 Operations",
-					"name_i18n": {
-						"en-US": "B2A5 Operations"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Operations"
 				}
 			],
-			"name": "B2A5 Department Type",
-			"name_i18n": {
-				"en-US": "B2A5 Department Type"
-			},
-			"system": false
+			"name": "B2A5 Department Type"
 		},
 		{
 			"externalReferenceCode": "B2A5-MEDIA-TYPE",
@@ -246,59 +135,30 @@
 				{
 					"externalReferenceCode": "B2A5-IMAGE",
 					"key": "b2a5Image",
-					"name": "B2A5 Image",
-					"name_i18n": {
-						"en-US": "B2A5 Image"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Image"
 				},
 				{
 					"externalReferenceCode": "B2A5-VIDEO",
 					"key": "b2a5Video",
-					"name": "B2A5 Video",
-					"name_i18n": {
-						"en-US": "B2A5 Video"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Video"
 				},
 				{
 					"externalReferenceCode": "B2A5-AUDIO",
 					"key": "b2a5Audio",
-					"name": "B2A5 Audio",
-					"name_i18n": {
-						"en-US": "B2A5 Audio"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Audio"
 				},
 				{
 					"externalReferenceCode": "B2A5-PDF",
 					"key": "b2a5PDF",
-					"name": "B2A5 PDF",
-					"name_i18n": {
-						"en-US": "B2A5 PDF"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 PDF"
 				},
 				{
 					"externalReferenceCode": "B2A5-DATASET",
 					"key": "b2a5Dataset",
-					"name": "B2A5 Dataset",
-					"name_i18n": {
-						"en-US": "B2A5 Dataset"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Dataset"
 				}
 			],
-			"name": "B2A5 Media Type",
-			"name_i18n": {
-				"en-US": "B2A5 Media Type"
-			},
-			"system": false
+			"name": "B2A5 Media Type"
 		},
 		{
 			"externalReferenceCode": "B2A5-TASK-TYPE",
@@ -306,59 +166,30 @@
 				{
 					"externalReferenceCode": "B2A5-REVIEW",
 					"key": "b2a5Review",
-					"name": "B2A5 Review",
-					"name_i18n": {
-						"en-US": "B2A5 Review"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Review"
 				},
 				{
 					"externalReferenceCode": "B2A5-CREATION",
 					"key": "b2a5Creation",
-					"name": "B2A5 Creation",
-					"name_i18n": {
-						"en-US": "B2A5 Creation"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Creation"
 				},
 				{
 					"externalReferenceCode": "B2A5-UPDATE",
 					"key": "b2a5Update",
-					"name": "B2A5 Update",
-					"name_i18n": {
-						"en-US": "B2A5 Update"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Update"
 				},
 				{
 					"externalReferenceCode": "B2A5-AUDIT",
 					"key": "b2a5Audit",
-					"name": "B2A5 Audit",
-					"name_i18n": {
-						"en-US": "B2A5 Audit"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Audit"
 				},
 				{
 					"externalReferenceCode": "B2A5-APPROVAL",
 					"key": "b2a5Approval",
-					"name": "B2A5 Approval",
-					"name_i18n": {
-						"en-US": "B2A5 Approval"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Approval"
 				}
 			],
-			"name": "B2A5 Task Type",
-			"name_i18n": {
-				"en-US": "B2A5 Task Type"
-			},
-			"system": false
+			"name": "B2A5 Task Type"
 		},
 		{
 			"externalReferenceCode": "B2A5-ROLE-TYPE",
@@ -366,49 +197,25 @@
 				{
 					"externalReferenceCode": "B2A5-AUTHOR",
 					"key": "b2a5Author",
-					"name": "B2A5 Author",
-					"name_i18n": {
-						"en-US": "B2A5 Author"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Author"
 				},
 				{
 					"externalReferenceCode": "B2A5-REVIEWER",
 					"key": "b2a5Reviewer",
-					"name": "B2A5 Reviewer",
-					"name_i18n": {
-						"en-US": "B2A5 Reviewer"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Reviewer"
 				},
 				{
 					"externalReferenceCode": "B2A5-APPROVER",
 					"key": "b2a5Approver",
-					"name": "B2A5 Approver",
-					"name_i18n": {
-						"en-US": "B2A5 Approver"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Approver"
 				},
 				{
 					"externalReferenceCode": "B2A5-OWNER",
 					"key": "b2a5Owner",
-					"name": "B2A5 Owner",
-					"name_i18n": {
-						"en-US": "B2A5 Owner"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Owner"
 				}
 			],
-			"name": "B2A5 Role Type",
-			"name_i18n": {
-				"en-US": "B2A5 Role Type"
-			},
-			"system": false
+			"name": "B2A5 Role Type"
 		},
 		{
 			"externalReferenceCode": "B2A5-OBJECT-TYPE",
@@ -416,39 +223,20 @@
 				{
 					"externalReferenceCode": "B2A5-CONTENT-ITEM",
 					"key": "b2a5ContentItem",
-					"name": "B2A5 Content Item",
-					"name_i18n": {
-						"en-US": "B2A5 Content Item"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Content Item"
 				},
 				{
 					"externalReferenceCode": "B2A5-PROJECT",
 					"key": "b2a5Project",
-					"name": "B2A5 Project",
-					"name_i18n": {
-						"en-US": "B2A5 Project"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Project"
 				},
 				{
 					"externalReferenceCode": "B2A5-TASK",
 					"key": "b2a5Task",
-					"name": "B2A5 Task",
-					"name_i18n": {
-						"en-US": "B2A5 Task"
-					},
-					"system": false,
-					"type": ""
+					"name": "B2A5 Task"
 				}
 			],
-			"name": "B2A5 Object Type",
-			"name_i18n": {
-				"en-US": "B2A5 Object Type"
-			},
-			"system": false
+			"name": "B2A5 Object Type"
 		}
 	]
 }

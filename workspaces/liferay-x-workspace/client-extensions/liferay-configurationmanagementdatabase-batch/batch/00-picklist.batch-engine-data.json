@@ -16,79 +16,40 @@
 				{
 					"externalReferenceCode": "B3A6-SERVER",
 					"key": "b3a6Server",
-					"name": "B3A6 Server",
-					"name_i18n": {
-						"en-US": "B3A6 Server"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Server"
 				},
 				{
 					"externalReferenceCode": "B3A6-APPLICATION",
 					"key": "b3a6Application",
-					"name": "B3A6 Application",
-					"name_i18n": {
-						"en-US": "B3A6 Application"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Application"
 				},
 				{
 					"externalReferenceCode": "B3A6-DATABASE",
 					"key": "b3a6Database",
-					"name": "B3A6 Database",
-					"name_i18n": {
-						"en-US": "B3A6 Database"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Database"
 				},
 				{
 					"externalReferenceCode": "B3A6-NETWORK-DEVICE",
 					"key": "b3a6NetworkDevice",
-					"name": "B3A6 Network Device",
-					"name_i18n": {
-						"en-US": "B3A6 Network Device"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Network Device"
 				},
 				{
 					"externalReferenceCode": "B3A6-SERVICE",
 					"key": "b3a6Service",
-					"name": "B3A6 Service",
-					"name_i18n": {
-						"en-US": "B3A6 Service"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Service"
 				},
 				{
 					"externalReferenceCode": "B3A6-ENDPOINT",
 					"key": "b3a6Endpoint",
-					"name": "B3A6 Endpoint",
-					"name_i18n": {
-						"en-US": "B3A6 Endpoint"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Endpoint"
 				},
 				{
 					"externalReferenceCode": "B3A6-DEVICE",
 					"key": "b3a6Device",
-					"name": "B3A6 Device",
-					"name_i18n": {
-						"en-US": "B3A6 Device"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Device"
 				}
 			],
-			"name": "B3A6 CI Type",
-			"name_i18n": {
-				"en-US": "B3A6 CI Type"
-			},
-			"system": false
+			"name": "B3A6 CI Type"
 		},
 		{
 			"externalReferenceCode": "B3A6-STATUS",
@@ -96,49 +57,25 @@
 				{
 					"externalReferenceCode": "B3A6-ACTIVE",
 					"key": "b3a6Active",
-					"name": "B3A6 Active",
-					"name_i18n": {
-						"en-US": "B3A6 Active"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Active"
 				},
 				{
 					"externalReferenceCode": "B3A6-INACTIVE",
 					"key": "b3a6Inactive",
-					"name": "B3A6 Inactive",
-					"name_i18n": {
-						"en-US": "B3A6 Inactive"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Inactive"
 				},
 				{
 					"externalReferenceCode": "B3A6-MAINTENCE",
 					"key": "b3a6Maintence",
-					"name": "B3A6 Maintence",
-					"name_i18n": {
-						"en-US": "B3A6 Maintence"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Maintence"
 				},
 				{
 					"externalReferenceCode": "B3A6-RETIRED",
 					"key": "b3a6Retired",
-					"name": "B3A6 Retired",
-					"name_i18n": {
-						"en-US": "B3A6 Retired"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Retired"
 				}
 			],
-			"name": "B3A6 Status",
-			"name_i18n": {
-				"en-US": "B3A6 Status"
-			},
-			"system": false
+			"name": "B3A6 Status"
 		},
 		{
 			"externalReferenceCode": "B3A6-ENVIRONMENT",
@@ -146,49 +83,25 @@
 				{
 					"externalReferenceCode": "B3A6-PRODUCTION",
 					"key": "b3a6Production",
-					"name": "B3A6 Production",
-					"name_i18n": {
-						"en-US": "B3A6 Production"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Production"
 				},
 				{
 					"externalReferenceCode": "B3A6-STAGING",
 					"key": "b3a6Staging",
-					"name": "B3A6 Staging",
-					"name_i18n": {
-						"en-US": "B3A6 Staging"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Staging"
 				},
 				{
 					"externalReferenceCode": "B3A6-QA",
 					"key": "b3a6QA",
-					"name": "B3A6 QA",
-					"name_i18n": {
-						"en-US": "B3A6 QA"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 QA"
 				},
 				{
 					"externalReferenceCode": "B3A6-DEVELOPMENT",
 					"key": "b3a6Development",
-					"name": "B3A6 Development",
-					"name_i18n": {
-						"en-US": "B3A6 Development"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Development"
 				}
 			],
-			"name": "B3A6 Environment",
-			"name_i18n": {
-				"en-US": "B3A6 Environment"
-			},
-			"system": false
+			"name": "B3A6 Environment"
 		},
 		{
 			"externalReferenceCode": "B3A6-OWNERSHIP-TYPE",
@@ -196,49 +109,25 @@
 				{
 					"externalReferenceCode": "B3A6-INTERNAL",
 					"key": "b3a6Internal",
-					"name": "B3A6 Internal",
-					"name_i18n": {
-						"en-US": "B3A6 Internal"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Internal"
 				},
 				{
 					"externalReferenceCode": "B3A6-VENDOR",
 					"key": "b3a6Vendor",
-					"name": "B3A6 Vendor",
-					"name_i18n": {
-						"en-US": "B3A6 Vendor"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Vendor"
 				},
 				{
 					"externalReferenceCode": "B3A6-CLOUD",
 					"key": "b3a6Cloud",
-					"name": "B3A6 Cloud",
-					"name_i18n": {
-						"en-US": "B3A6 Cloud"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Cloud"
 				},
 				{
 					"externalReferenceCode": "B3A6-THRID-PARTY",
 					"key": "b3a6ThirdParty",
-					"name": "B3A6 Third-Party",
-					"name_i18n": {
-						"en-US": "B3A6 Third-Party"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Third-Party"
 				}
 			],
-			"name": "B3A6 Ownership Type",
-			"name_i18n": {
-				"en-US": "B3A6 Ownership Type"
-			},
-			"system": false
+			"name": "B3A6 Ownership Type"
 		},
 		{
 			"externalReferenceCode": "B3A6-RELATIONSHIP-TYPE",
@@ -246,59 +135,30 @@
 				{
 					"externalReferenceCode": "B3A6-DEPENDS-ON",
 					"key": "b3a6DependsOn",
-					"name": "B3A6 Depends On",
-					"name_i18n": {
-						"en-US": "B3A6 Depends On"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Depends On"
 				},
 				{
 					"externalReferenceCode": "B3A6-CONNECTS-TO",
 					"key": "b3a6ConnectsTo",
-					"name": "B3A6 Connects To",
-					"name_i18n": {
-						"en-US": "B3A6 Connects To"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Connects To"
 				},
 				{
 					"externalReferenceCode": "B3A6-HOSTS",
 					"key": "b3a6Hosts",
-					"name": "B3A6 Hosts",
-					"name_i18n": {
-						"en-US": "B3A6 Hosts"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Hosts"
 				},
 				{
 					"externalReferenceCode": "B3A6-USES",
 					"key": "b3a6Uses",
-					"name": "B3A6 Uses",
-					"name_i18n": {
-						"en-US": "B3A6 Uses"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Uses"
 				},
 				{
 					"externalReferenceCode": "B3A6-LINKED-TO",
 					"key": "b3a6LinkedTo",
-					"name": "B3A6 Linked To",
-					"name_i18n": {
-						"en-US": "B3A6 Linked To"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Linked To"
 				}
 			],
-			"name": "B3A6 Relationship Type",
-			"name_i18n": {
-				"en-US": "B3A6 Relationship Type"
-			},
-			"system": false
+			"name": "B3A6 Relationship Type"
 		},
 		{
 			"externalReferenceCode": "B3A6-PRIORITY",
@@ -306,49 +166,25 @@
 				{
 					"externalReferenceCode": "B3A6-LOW",
 					"key": "b3a6Low",
-					"name": "B3A6 Low",
-					"name_i18n": {
-						"en-US": "B3A6 Low"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Low"
 				},
 				{
 					"externalReferenceCode": "B3A6-MEDIUM",
 					"key": "b3a6Medium",
-					"name": "B3A6 Medium",
-					"name_i18n": {
-						"en-US": "B3A6 Medium"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Medium"
 				},
 				{
 					"externalReferenceCode": "B3A6-HIGH",
 					"key": "b3a6High",
-					"name": "B3A6 High",
-					"name_i18n": {
-						"en-US": "B3A6 High"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 High"
 				},
 				{
 					"externalReferenceCode": "B3A6-CRITICAL",
 					"key": "b3a6Critical",
-					"name": "B3A6 Critical",
-					"name_i18n": {
-						"en-US": "B3A6 Critical"
-					},
-					"system": false,
-					"type": ""
+					"name": "B3A6 Critical"
 				}
 			],
-			"name": "B3A6 Priority",
-			"name_i18n": {
-				"en-US": "B3A6 Priority"
-			},
-			"system": false
+			"name": "B3A6 Priority"
 		}
 	]
 }
