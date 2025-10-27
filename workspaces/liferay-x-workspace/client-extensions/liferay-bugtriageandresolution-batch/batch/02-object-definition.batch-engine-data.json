@@ -1,5 +1,5 @@
-{ 
-    "configuration": {
+{
+	"configuration": {
 		"className": "com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition",
 		"parameters": {
 			"containsHeaders": "true",
@@ -9,8 +9,8 @@
 		},
 		"taskItemDelegateName": "DEFAULT"
 	},
-    "items": [
-        {
+	"items": [
+		{
 			"accountEntryRestricted": false,
 			"active": true,
 			"className": "com.liferay.portal.kernel.model.User",
@@ -27,8 +27,8 @@
 			"modifiable": false,
 			"name": "User",
 			"objectFolderExternalReferenceCode": "default",
-            "objectRelationships": [
-                {
+			"objectRelationships": [
+				{
 					"deletionType": "disassociate",
 					"externalReferenceCode": "L-USER-TO-A7C4-REPORTER",
 					"label": {
@@ -39,7 +39,7 @@
 					"objectDefinitionExternalReferenceCode2": "A7C4-BUG-REPORT",
 					"type": "oneToMany"
 				},
-                {
+				{
 					"deletionType": "disassociate",
 					"externalReferenceCode": "L-USER-TO-A7C4-TRIAGED-BY",
 					"label": {
@@ -61,7 +61,7 @@
 					"objectDefinitionExternalReferenceCode2": "A7C4-BUG-REPORT",
 					"type": "oneToMany"
 				},
-                {
+				{
 					"deletionType": "disassociate",
 					"externalReferenceCode": "L-USER-TO-A7C4-PERFORMED-BY",
 					"label": {
@@ -72,7 +72,7 @@
 					"objectDefinitionExternalReferenceCode2": "A7C4-BUG-ACTIVITY-LOG",
 					"type": "oneToMany"
 				},
-                {
+				{
 					"deletionType": "disassociate",
 					"externalReferenceCode": "L-USER-TO-A7C4-IDENTIFIED-BY",
 					"label": {
@@ -80,7 +80,7 @@
 					},
 					"name": "lUserToA7C4IdentifiedBy",
 					"objectDefinitionExternalReferenceCode1": "L_USER",
-				    "objectDefinitionExternalReferenceCode2": "A7C4-ROOT-CAUSE",
+					"objectDefinitionExternalReferenceCode2": "A7C4-ROOT-CAUSE",
 					"type": "oneToMany"
 				}
 			],
@@ -99,746 +99,737 @@
 			"system": true,
 			"titleObjectFieldName": "id"
 		},
-        {
-                "accountEntryRestricted": false,
-                "active": true,
-                "defaultLanguageId": "en_US",
-                "enableCategorization": true,
-                "enableComments": false,
-                "enableIndexSearch": true,
-                "enableLocalization": false,
-                "externalReferenceCode": "A7C4-BUG-REPORT",
-                "label": {
-                    "en_US": "A7C4 Bug Report"
-                },
-                "modifiable": true,
-                "name": "A7C4BugReport",
-                "objectFields": [
-                    {
-                        "DBType": "String",
-                        "businessType": "Text",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "en_US",
-                        "label": {
-                            "en_US": "Title"
-                        },
-                        "localized": false,
-                        "name": "title",
-                        "objectFieldSettings": [
-                            {
-                                "name": "showCounter",
-                                "value": false
-                            }
-                        ],
-                        "readOnly": "false",
-                        "required": false,
-                        "state": false,
-                        "type": "String",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "Clob",
-                        "businessType": "LongText",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "en_US",
-                        "label": {
-                            "en_US": "Description"
-                        },
-                        "localized": false,
-                        "name": "description",
-                        "objectFieldSettings": [
-                            {
-                                "name": "showCounter",
-                                "value": false
-                            }
-                        ],
-                        "readOnly": "false",
-                        "required": false,
-                        "state": false,
-                        "type": "Clob",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "String",
-                        "businessType": "Picklist",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "en_US",
-                        "label": {
-                            "en_US": "Priority"
-                        },
-                        "listTypeDefinitionExternalReferenceCode": "A7C4-PRIORITY",
-                        "listTypeDefinitionId": 34540,
-                        "localized": false,
-                        "name": "priority",
-                        "readOnly": "false",
-                        "required": false,
-                        "state": false,
-                        "type": "String",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "String",
-                        "businessType": "Picklist",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "en_US",
-                        "label": {
-                            "en_US": "Severity"
-                        },
-                        "listTypeDefinitionExternalReferenceCode": "A7C4-SEVERITY",
-                        "listTypeDefinitionId": 34541,
-                        "localized": false,
-                        "name": "severity",
-                        "readOnly": "false",
-                        "required": false,
-                        "state": false,
-                        "type": "String",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "Long",
-                        "businessType": "Relationship",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "",
-                        "label": {
-                            "en_US": "A7C4 Assigned To"
-                        },
-                        "localized": false,
-                        "name": "r_a7c4AssignedTo_userId",
-                        "objectDefinitionExternalReferenceCode1": "L_USER",
-                        "objectFieldSettings": [
-                            {
-                                "name": "objectDefinition1ShortName",
-                                "value": "User"
-                            },
-                            {
-                                "name": "objectRelationshipERCObjectFieldName",
-                                "value": "r_a7c4AssignedTo_userERC"
-                            }
-                        ],
-                        "objectRelationshipExternalReferenceCode": "L-USER-TO-A7C4-ASSIGNED-TO",
-                        "readOnly": "false",
-                        "relationshipType": "oneToMany",
-                        "required": false,
-                        "state": false,
-                        "type": "Long",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "Long",
-                        "businessType": "Relationship",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "",
-                        "label": {
-                            "en_US": "A7C4 Reporter"
-                        },
-                        "localized": false,
-                        "name": "r_a7c4Reporter_userId",
-                        "objectDefinitionExternalReferenceCode1": "L_USER",
-                        "objectFieldSettings": [
-                            {
-                                "name": "objectDefinition1ShortName",
-                                "value": "User"
-                            },
-                            {
-                                "name": "objectRelationshipERCObjectFieldName",
-                                "value": "r_a7c4Reporter_userERC"
-                            }
-                        ],
-                        "objectRelationshipExternalReferenceCode": "L-USER-TO-A7C4-REPORTER",
-                        "readOnly": "false",
-                        "relationshipType": "oneToMany",
-                        "required": false,
-                        "state": false,
-                        "type": "Long",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "Long",
-                        "businessType": "Relationship",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "",
-                        "label": {
-                            "en_US": "A7C4 Triaged By"
-                        },
-                        "localized": false,
-                        "name": "r_a7c4TriagedBy_userId",
-                        "objectDefinitionExternalReferenceCode1": "L_USER",
-                        "objectFieldSettings": [
-                            {
-                                "name": "objectDefinition1ShortName",
-                                "value": "User"
-                            },
-                            {
-                                "name": "objectRelationshipERCObjectFieldName",
-                                "value": "r_a7c4TriagedBy_userERC"
-                            }
-                        ],
-                        "objectRelationshipExternalReferenceCode": "L-USER-TO-A7C4-TRIAGED-BY",
-                        "readOnly": "false",
-                        "relationshipType": "oneToMany",
-                        "required": false,
-                        "state": false,
-                        "type": "Long",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "String",
-                        "businessType": "Picklist",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "en_US",
-                        "label": {
-                            "en_US": "Module"
-                        },
-                        "listTypeDefinitionExternalReferenceCode": "A7C4-SYSTEM-MODULE",
-                        "listTypeDefinitionId": 34581,
-                        "localized": false,
-                        "name": "module",
-                        "readOnly": "false",
-                        "required": false,
-                        "state": false,
-                        "type": "String",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "Date",
-                        "businessType": "Date",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "",
-                        "label": {
-                            "en_US": "Resolved Date"
-                        },
-                        "localized": false,
-                        "name": "resolvedDate",
-                        "readOnly": "false",
-                        "required": false,
-                        "state": false,
-                        "type": "Date",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "Long",
-                        "businessType": "Attachment",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "en_US",
-                        "label": {
-                            "en_US": "Attachments"
-                        },
-                        "localized": false,
-                        "name": "attachments",
-                        "objectFieldSettings": [
-                            {
-                                "name": "acceptedFileExtensions",
-                                "value": "jpeg, jpg, pdf, png"
-                            },
-                            {
-                                "name": "maximumFileSize",
-                                "value": 0
-                            },
-                            {
-                                "name": "fileSource",
-                                "value": "documentsAndMedia"
-                            }
-                        ],
-                        "readOnly": "false",
-                        "required": false,
-                        "state": false,
-                        "type": "Long",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "String",
-                        "businessType": "Picklist",
-                        "defaultValue": "new",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "en_US",
-                        "label": {
-                            "en_US": "Bug Status"
-                        },
-                        "listTypeDefinitionExternalReferenceCode": "A7C4-BUG-STATUS",
-                        "listTypeDefinitionId": 34542,
-                        "localized": false,
-                        "name": "bugStatus",
-                        "objectFieldSettings": [
-                            {
-                                "name": "stateFlow",
-                                "value": {
-                                    "objectStates": [
-                                        {
-                                            "key": "new",
-                                            "objectStateTransitions": [
-                                                {
-                                                    "key": "triaged"
-                                                },
-                                                {
-                                                    "key": "closed"
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "key": "triaged",
-                                            "objectStateTransitions": [
-                                                {
-                                                    "key": "inProgress"
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "key": "inProgress",
-                                            "objectStateTransitions": [
-                                                {
-                                                    "key": "inReview"
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "key": "inReview",
-                                            "objectStateTransitions": [
-                                                {
-                                                    "key": "resolved"
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "key": "resolved",
-                                            "objectStateTransitions": [
-                                                {
-                                                    "key": "closed"
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "key": "closed",
-                                            "objectStateTransitions": [
-                                                {
-                                                    "key": "reopened"
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "key": "reopened",
-                                            "objectStateTransitions": [
-                                                {
-                                                    "key": "triaged"
-                                                },
-                                                {
-                                                    "key": "inProgress"
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "name": "defaultValueType",
-                                "value": "inputAsValue"
-                            },
-                            {
-                                "name": "defaultValue",
-                                "value": "new"
-                            }
-                        ],
-                        "readOnly": "false",
-                        "required": true,
-                        "state": true,
-                        "type": "String",
-                        "unique": false
-                    }
-                ],
-                "objectFolderExternalReferenceCode": "A7C4-BUG-TRIAGE-AND-RESOLUTION",
-                "objectRelationships": [
-                    {
-                        "deletionType": "prevent",
-                        "externalReferenceCode": "A7C4-BUG-REPORT-A7C4-BUG-COMMENT",
-                        "label": {
-                            "en_US": "A7C4 Bug Report to Bug Comment"
-                        },
-                        "name": "a7C4BugReportToBugComment",
-                        "objectDefinitionExternalReferenceCode1": "A7C4-BUG-REPORT",
-                        "objectDefinitionExternalReferenceCode2": "A7C4-BUG-COMMENT",
-                        "type": "oneToMany"
-                    },
-                    {
-                        "deletionType": "prevent",
-                        "externalReferenceCode": "A7C4-BUG-REPORT-TO-A7C4-BUG-ACTIVITY-LOG",
-                        "label": {
-                            "en_US": "A7C4 Bug Report to Bug Activity Log"
-                        },
-                        "name": "a7c4BugReportToBugActivityLog",
-                        "objectDefinitionExternalReferenceCode1": "A7C4-BUG-REPORT",
-                        "objectDefinitionExternalReferenceCode2": "A7C4-BUG-ACTIVITY-LOG",
-                        "type": "oneToMany"
-                    }
-                ],
-                "panelCategoryKey": "control_panel.object",
-                "parameterRequired": false,
-                "pluralLabel": {
-                    "en_US": "A7C4 Bug Reports"
-                },
-                "portlet": true,
-                "restContextPath": "/o/c/a7c4bugreports",
-                "scope": "company",
-                "status": {
-                    "code": 0,
-                    "label": "approved",
-                    "label_i18n": "Approved"
-                },
-                "titleObjectFieldName": "id"
-        },
-        {
-            
-                "accountEntryRestricted": false,
-                "active": true,
-                "defaultLanguageId": "en_US",
-                "enableCategorization": true,
-                "enableComments": false,
-                "enableIndexSearch": true,
-                "enableLocalization": false,
-                "externalReferenceCode": "A7C4-BUG-COMMENT",
-                "label": {
-                    "en_US": "A7C4 Bug Comment"
-                },
-                "modifiable": true,
-                "name": "A7C4BugComment",
-                "objectFields": [
-                    {
-                        "DBType": "Long",
-                        "businessType": "Relationship",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "",
-                        "label": {
-                            "en_US": "A7C4 Bug Report to Bug Comment"
-                        },
-                        "localized": false,
-                        "name": "r_a7C4BugReportToBugComment_c_a7c4BugReportId",
-                        "objectDefinitionExternalReferenceCode1": "A7C4-BUG-REPORT",
-                        "objectFieldSettings": [
-                            {
-                                "name": "objectDefinition1ShortName",
-                                "value": "A7C4BugReport"
-                            },
-                            {
-                                "name": "objectRelationshipERCObjectFieldName",
-                                "value": "r_a7C4BugReportToBugComment_c_a7c4BugReportERC"
-                            }
-                        ],
-                        "objectRelationshipExternalReferenceCode": "A7C4-BUG-REPORT-A7C4-BUG-COMMENT",
-                        "readOnly": "false",
-                        "relationshipType": "oneToMany",
-                        "required": false,
-                        "state": false,
-                        "type": "Long",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "Clob",
-                        "businessType": "LongText",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "en_US",
-                        "label": {
-                            "en_US": "Comment"
-                        },
-                        "localized": false,
-                        "name": "comment",
-                        "objectFieldSettings": [
-                            {
-                                "name": "showCounter",
-                                "value": false
-                            }
-                        ],
-                        "readOnly": "false",
-                        "required": false,
-                        "state": false,
-                        "type": "Clob",
-                        "unique": false
-                    }
-                ],
-                "objectFolderExternalReferenceCode": "A7C4-BUG-TRIAGE-AND-RESOLUTION",
-                "panelCategoryKey": "",
-                "parameterRequired": false,
-                "pluralLabel": {
-                    "en_US": "A7C4 Bug Comments"
-                },
-                "portlet": true,
-                "restContextPath": "/o/c/a7c4bugcomments",
-                "scope": "company",
-                "status": {
-                    "code": 0,
-                    "label": "approved",
-                    "label_i18n": "Approved"
-                },
-                "titleObjectFieldName": "id"
-            
-        },
-        {
-            
-                "accountEntryRestricted": false,
-                "active": true,
-                "defaultLanguageId": "en_US",
-                "enableCategorization": true,
-                "enableComments": false,
-                "enableIndexSearch": true,
-                "enableLocalization": false,
-                "externalReferenceCode": "A7C4-BUG-ACTIVITY-LOG",
-                "label": {
-                    "en_US": "A7C4 Bug Activity Log"
-                },
-                "modifiable": true,
-                "name": "A7C4BugActivityLog",
-                "objectFields": [
-                    {
-                        "DBType": "Long",
-                        "businessType": "Relationship",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "",
-                        "label": {
-                            "en_US": "A7C4 Bug Report to Bug Activity Log"
-                        },
-                        "localized": false,
-                        "name": "r_a7c4BugReportToBugActivityLog_c_a7c4BugReportId",
-                        "objectDefinitionExternalReferenceCode1": "A7C4-BUG-REPORT",
-                        "objectFieldSettings": [
-                            {
-                                "name": "objectDefinition1ShortName",
-                                "value": "A7C4BugReport"
-                            },
-                            {
-                                "name": "objectRelationshipERCObjectFieldName",
-                                "value": "r_a7c4BugReportToBugActivityLog_c_a7c4BugReportERC"
-                            }
-                        ],
-                        "objectRelationshipExternalReferenceCode": "A7C4-BUG-REPORT-TO-A7C4-BUG-ACTIVITY-LOG",
-                        "readOnly": "false",
-                        "relationshipType": "oneToMany",
-                        "required": false,
-                        "state": false,
-                        "type": "Long",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "String",
-                        "businessType": "Picklist",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "en_US",
-                        "label": {
-                            "en_US": "Action Type"
-                        },
-                        "listTypeDefinitionExternalReferenceCode": "A7C4-ACTIVITY-TYPE",
-                        "listTypeDefinitionId": 34734,
-                        "localized": false,
-                        "name": "actionType",
-                        "readOnly": "false",
-                        "required": false,
-                        "state": false,
-                        "type": "String",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "Long",
-                        "businessType": "Relationship",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "",
-                        "label": {
-                            "en_US": "A7C4 Performed By"
-                        },
-                        "localized": false,
-                        "name": "r_a7c4PerformedBy_userId",
-                        "objectDefinitionExternalReferenceCode1": "L_USER",
-                        "objectFieldSettings": [
-                            {
-                                "name": "objectDefinition1ShortName",
-                                "value": "User"
-                            },
-                            {
-                                "name": "objectRelationshipERCObjectFieldName",
-                                "value": "r_a7c4PerformedBy_userERC"
-                            }
-                        ],
-                        "objectRelationshipExternalReferenceCode": "L-USER-TO-A7C4-PERFORMED-BY",
-                        "readOnly": "false",
-                        "relationshipType": "oneToMany",
-                        "required": false,
-                        "state": false,
-                        "type": "Long",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "Date",
-                        "businessType": "Date",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "",
-                        "label": {
-                            "en_US": "Performed At"
-                        },
-                        "localized": false,
-                        "name": "performedAt",
-                        "readOnly": "false",
-                        "required": false,
-                        "state": false,
-                        "type": "Date",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "String",
-                        "businessType": "Text",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "en_US",
-                        "label": {
-                            "en_US": "Details"
-                        },
-                        "localized": false,
-                        "name": "details",
-                        "objectFieldSettings": [
-                            {
-                                "name": "showCounter",
-                                "value": false
-                            }
-                        ],
-                        "readOnly": "false",
-                        "required": false,
-                        "state": false,
-                        "type": "String",
-                        "unique": false
-                    }
-                ],
-                "objectFolderExternalReferenceCode": "A7C4-BUG-TRIAGE-AND-RESOLUTION",
-                "panelCategoryKey": "",
-                "parameterRequired": false,
-                "pluralLabel": {
-                    "en_US": "A7C4 Bug Activity Logs"
-                },
-                "portlet": true,
-                "restContextPath": "/o/c/a7c4bugactivitylogs",
-                "scope": "company",
-                "status": {
-                    "code": 0,
-                    "label": "approved",
-                    "label_i18n": "Approved"
-                },
-                "titleObjectFieldName": "id"
-            
-        },
-        {
-            
-                "accountEntryRestricted": false,
-                "active": true,
-                "defaultLanguageId": "en_US",
-                "enableCategorization": true,
-                "enableComments": false,
-                "enableIndexSearch": true,
-                "enableLocalization": false,
-                "externalReferenceCode": "A7C4-ROOT-CAUSE",
-                "label": {
-                    "en_US": "A7C4 Root Cause"
-                },
-                "modifiable": true,
-                "name": "A7C4RootCause",
-                "objectFields": [
-                    {
-                        "DBType": "String",
-                        "businessType": "Picklist",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "en_US",
-                        "label": {
-                            "en_US": "Category"
-                        },
-                        "listTypeDefinitionExternalReferenceCode": "A7C4-ROOT-CAUSE-CATEGORY",
-                        "listTypeDefinitionId": 34847,
-                        "localized": false,
-                        "name": "category",
-                        "readOnly": "false",
-                        "required": false,
-                        "state": false,
-                        "type": "String",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "Clob",
-                        "businessType": "LongText",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "en_US",
-                        "label": {
-                            "en_US": "Description"
-                        },
-                        "localized": false,
-                        "name": "description",
-                        "objectFieldSettings": [
-                            {
-                                "name": "showCounter",
-                                "value": false
-                            }
-                        ],
-                        "readOnly": "false",
-                        "required": false,
-                        "state": false,
-                        "type": "Clob",
-                        "unique": false
-                    },
-                    {
-                        "DBType": "Long",
-                        "businessType": "Relationship",
-                        "indexed": true,
-                        "indexedAsKeyword": false,
-                        "indexedLanguageId": "",
-                        "label": {
-                            "en_US": "A7C4 Identified By"
-                        },
-                        "localized": false,
-                        "name": "r_a7c4IdentifiedBy_userId",
-                        "objectDefinitionExternalReferenceCode1": "L_USER",
-                        "objectFieldSettings": [
-                            {
-                                "name": "objectDefinition1ShortName",
-                                "value": "User"
-                            },
-                            {
-                                "name": "objectRelationshipERCObjectFieldName",
-                                "value": "r_a7c4IdentifiedBy_userERC"
-                            }
-                        ],
-                        "objectRelationshipExternalReferenceCode": "L-USER-TO-A7C4-IDENTIFIED-BY",
-                        "readOnly": "false",
-                        "relationshipType": "oneToMany",
-                        "required": false,
-                        "state": false,
-                        "type": "Long",
-                        "unique": false
-                    }
-                ],
-                "objectFolderExternalReferenceCode": "A7C4-BUG-TRIAGE-AND-RESOLUTION",
-                "panelCategoryKey": "",
-                "parameterRequired": false,
-                "pluralLabel": {
-                    "en_US": "A7C4 Root Causes"
-                },
-                "portlet": true,
-                "restContextPath": "/o/c/a7c4rootcauses",
-                "scope": "company",
-                "status": {
-                    "code": 0,
-                    "label": "approved",
-                    "label_i18n": "Approved"
-                },
-                "titleObjectFieldName": "id"
-        }
+		{
+			"accountEntryRestricted": false,
+			"active": true,
+			"enableCategorization": true,
+			"enableComments": false,
+			"enableIndexSearch": true,
+			"enableLocalization": false,
+			"externalReferenceCode": "A7C4-BUG-REPORT",
+			"label": {
+				"en_US": "A7C4 Bug Report"
+			},
+			"modifiable": true,
+			"name": "A7C4BugReport",
+			"objectFields": [
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Title"
+					},
+					"localized": false,
+					"name": "title",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Description"
+					},
+					"localized": false,
+					"name": "description",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Clob",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Picklist",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Priority"
+					},
+					"listTypeDefinitionExternalReferenceCode": "A7C4-PRIORITY",
+					"listTypeDefinitionId": 34540,
+					"localized": false,
+					"name": "priority",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Picklist",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Severity"
+					},
+					"listTypeDefinitionExternalReferenceCode": "A7C4-SEVERITY",
+					"listTypeDefinitionId": 34541,
+					"localized": false,
+					"name": "severity",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "A7C4 Assigned To"
+					},
+					"localized": false,
+					"name": "r_a7c4AssignedTo_userId",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "User"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_a7c4AssignedTo_userERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "L-USER-TO-A7C4-ASSIGNED-TO",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "A7C4 Reporter"
+					},
+					"localized": false,
+					"name": "r_a7c4Reporter_userId",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "User"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_a7c4Reporter_userERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "L-USER-TO-A7C4-REPORTER",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "A7C4 Triaged By"
+					},
+					"localized": false,
+					"name": "r_a7c4TriagedBy_userId",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "User"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_a7c4TriagedBy_userERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "L-USER-TO-A7C4-TRIAGED-BY",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Picklist",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Module"
+					},
+					"listTypeDefinitionExternalReferenceCode": "A7C4-SYSTEM-MODULE",
+					"listTypeDefinitionId": 34581,
+					"localized": false,
+					"name": "module",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "Date",
+					"businessType": "Date",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "Resolved Date"
+					},
+					"localized": false,
+					"name": "resolvedDate",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Date",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Attachment",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Attachments"
+					},
+					"localized": false,
+					"name": "attachments",
+					"objectFieldSettings": [
+						{
+							"name": "acceptedFileExtensions",
+							"value": "jpeg, jpg, pdf, png"
+						},
+						{
+							"name": "maximumFileSize",
+							"value": 0
+						},
+						{
+							"name": "fileSource",
+							"value": "documentsAndMedia"
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Picklist",
+					"defaultValue": "new",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Bug Status"
+					},
+					"listTypeDefinitionExternalReferenceCode": "A7C4-BUG-STATUS",
+					"listTypeDefinitionId": 34542,
+					"localized": false,
+					"name": "bugStatus",
+					"objectFieldSettings": [
+						{
+							"name": "stateFlow",
+							"value": {
+								"objectStates": [
+									{
+										"key": "new",
+										"objectStateTransitions": [
+											{
+												"key": "triaged"
+											},
+											{
+												"key": "closed"
+											}
+										]
+									},
+									{
+										"key": "triaged",
+										"objectStateTransitions": [
+											{
+												"key": "inProgress"
+											}
+										]
+									},
+									{
+										"key": "inProgress",
+										"objectStateTransitions": [
+											{
+												"key": "inReview"
+											}
+										]
+									},
+									{
+										"key": "inReview",
+										"objectStateTransitions": [
+											{
+												"key": "resolved"
+											}
+										]
+									},
+									{
+										"key": "resolved",
+										"objectStateTransitions": [
+											{
+												"key": "closed"
+											}
+										]
+									},
+									{
+										"key": "closed",
+										"objectStateTransitions": [
+											{
+												"key": "reopened"
+											}
+										]
+									},
+									{
+										"key": "reopened",
+										"objectStateTransitions": [
+											{
+												"key": "triaged"
+											},
+											{
+												"key": "inProgress"
+											}
+										]
+									}
+								]
+							}
+						},
+						{
+							"name": "defaultValueType",
+							"value": "inputAsValue"
+						},
+						{
+							"name": "defaultValue",
+							"value": "new"
+						}
+					],
+					"readOnly": "false",
+					"required": true,
+					"state": true,
+					"type": "String",
+					"unique": false
+				}
+			],
+			"objectFolderExternalReferenceCode": "A7C4-BUG-TRIAGE-AND-RESOLUTION",
+			"objectRelationships": [
+				{
+					"deletionType": "prevent",
+					"externalReferenceCode": "A7C4-BUG-REPORT-A7C4-BUG-COMMENT",
+					"label": {
+						"en_US": "A7C4 Bug Report to Bug Comment"
+					},
+					"name": "a7C4BugReportToBugComment",
+					"objectDefinitionExternalReferenceCode1": "A7C4-BUG-REPORT",
+					"objectDefinitionExternalReferenceCode2": "A7C4-BUG-COMMENT",
+					"type": "oneToMany"
+				},
+				{
+					"deletionType": "prevent",
+					"externalReferenceCode": "A7C4-BUG-REPORT-TO-A7C4-BUG-ACTIVITY-LOG",
+					"label": {
+						"en_US": "A7C4 Bug Report to Bug Activity Log"
+					},
+					"name": "a7c4BugReportToBugActivityLog",
+					"objectDefinitionExternalReferenceCode1": "A7C4-BUG-REPORT",
+					"objectDefinitionExternalReferenceCode2": "A7C4-BUG-ACTIVITY-LOG",
+					"type": "oneToMany"
+				}
+			],
+			"panelCategoryKey": "control_panel.object",
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "A7C4 Bug Reports"
+			},
+			"portlet": true,
+			"restContextPath": "/o/c/a7c4bugreports",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"titleObjectFieldName": "id"
+		},
+		{
+			"accountEntryRestricted": false,
+			"active": true,
+			"enableCategorization": true,
+			"enableComments": false,
+			"enableIndexSearch": true,
+			"enableLocalization": false,
+			"externalReferenceCode": "A7C4-BUG-COMMENT",
+			"label": {
+				"en_US": "A7C4 Bug Comment"
+			},
+			"modifiable": true,
+			"name": "A7C4BugComment",
+			"objectFields": [
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "A7C4 Bug Report to Bug Comment"
+					},
+					"localized": false,
+					"name": "r_a7C4BugReportToBugComment_c_a7c4BugReportId",
+					"objectDefinitionExternalReferenceCode1": "A7C4-BUG-REPORT",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "A7C4BugReport"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_a7C4BugReportToBugComment_c_a7c4BugReportERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "A7C4-BUG-REPORT-A7C4-BUG-COMMENT",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Comment"
+					},
+					"localized": false,
+					"name": "comment",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Clob",
+					"unique": false
+				}
+			],
+			"objectFolderExternalReferenceCode": "A7C4-BUG-TRIAGE-AND-RESOLUTION",
+			"panelCategoryKey": "",
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "A7C4 Bug Comments"
+			},
+			"portlet": true,
+			"restContextPath": "/o/c/a7c4bugcomments",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"titleObjectFieldName": "id"
+		},
+		{
+			"accountEntryRestricted": false,
+			"active": true,
+			"enableCategorization": true,
+			"enableComments": false,
+			"enableIndexSearch": true,
+			"enableLocalization": false,
+			"externalReferenceCode": "A7C4-BUG-ACTIVITY-LOG",
+			"label": {
+				"en_US": "A7C4 Bug Activity Log"
+			},
+			"modifiable": true,
+			"name": "A7C4BugActivityLog",
+			"objectFields": [
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "A7C4 Bug Report to Bug Activity Log"
+					},
+					"localized": false,
+					"name": "r_a7c4BugReportToBugActivityLog_c_a7c4BugReportId",
+					"objectDefinitionExternalReferenceCode1": "A7C4-BUG-REPORT",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "A7C4BugReport"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_a7c4BugReportToBugActivityLog_c_a7c4BugReportERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "A7C4-BUG-REPORT-TO-A7C4-BUG-ACTIVITY-LOG",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Picklist",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Action Type"
+					},
+					"listTypeDefinitionExternalReferenceCode": "A7C4-ACTIVITY-TYPE",
+					"listTypeDefinitionId": 34734,
+					"localized": false,
+					"name": "actionType",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "A7C4 Performed By"
+					},
+					"localized": false,
+					"name": "r_a7c4PerformedBy_userId",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "User"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_a7c4PerformedBy_userERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "L-USER-TO-A7C4-PERFORMED-BY",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				},
+				{
+					"DBType": "Date",
+					"businessType": "Date",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "Performed At"
+					},
+					"localized": false,
+					"name": "performedAt",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Date",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Details"
+					},
+					"localized": false,
+					"name": "details",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				}
+			],
+			"objectFolderExternalReferenceCode": "A7C4-BUG-TRIAGE-AND-RESOLUTION",
+			"panelCategoryKey": "",
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "A7C4 Bug Activity Logs"
+			},
+			"portlet": true,
+			"restContextPath": "/o/c/a7c4bugactivitylogs",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"titleObjectFieldName": "id"
+		},
+		{
+			"accountEntryRestricted": false,
+			"active": true,
+			"enableCategorization": true,
+			"enableComments": false,
+			"enableIndexSearch": true,
+			"enableLocalization": false,
+			"externalReferenceCode": "A7C4-ROOT-CAUSE",
+			"label": {
+				"en_US": "A7C4 Root Cause"
+			},
+			"modifiable": true,
+			"name": "A7C4RootCause",
+			"objectFields": [
+				{
+					"DBType": "String",
+					"businessType": "Picklist",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Category"
+					},
+					"listTypeDefinitionExternalReferenceCode": "A7C4-ROOT-CAUSE-CATEGORY",
+					"listTypeDefinitionId": 34847,
+					"localized": false,
+					"name": "category",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Description"
+					},
+					"localized": false,
+					"name": "description",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Clob",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "A7C4 Identified By"
+					},
+					"localized": false,
+					"name": "r_a7c4IdentifiedBy_userId",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "User"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_a7c4IdentifiedBy_userERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "L-USER-TO-A7C4-IDENTIFIED-BY",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				}
+			],
+			"objectFolderExternalReferenceCode": "A7C4-BUG-TRIAGE-AND-RESOLUTION",
+			"panelCategoryKey": "",
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "A7C4 Root Causes"
+			},
+			"portlet": true,
+			"restContextPath": "/o/c/a7c4rootcauses",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"titleObjectFieldName": "id"
+		}
 	]
 }

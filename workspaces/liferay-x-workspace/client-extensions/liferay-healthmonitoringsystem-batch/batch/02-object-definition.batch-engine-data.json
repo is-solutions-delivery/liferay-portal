@@ -9,8 +9,8 @@
 		},
 		"taskItemDelegateName": "DEFAULT"
 	},
-    "items": [
-        {
+	"items": [
+		{
 			"accountEntryRestricted": false,
 			"active": true,
 			"className": "com.liferay.portal.kernel.model.User",
@@ -27,7 +27,7 @@
 			"modifiable": false,
 			"name": "User",
 			"objectFolderExternalReferenceCode": "default",
-            "objectRelationships": [
+			"objectRelationships": [
 				{
 					"deletionType": "disassociate",
 					"externalReferenceCode": "L-USER-TO-B6A9-DEPEDENCY-HEALTH-RECORD",
@@ -39,7 +39,7 @@
 					"objectDefinitionExternalReferenceCode2": "B6A9-DEPENDENCY-HEALTH-RECORD",
 					"type": "oneToMany"
 				},
-                {
+				{
 					"deletionType": "disassociate",
 					"externalReferenceCode": "L-USER-TO-B6A9-DEPARTMENT",
 					"label": {
@@ -66,676 +66,676 @@
 			"system": true,
 			"titleObjectFieldName": "id"
 		},
-        {
-            "accountEntryRestricted": false,
-            "active": true,
-            "enableCategorization": true,
-            "enableObjectEntryHistory": false,
-            "externalReferenceCode": "B6A9-DEPENDENCY",
-            "label": {
-                "en_US": "B6A9 Dependency"
-            },
-            "modifiable": true,
-            "name": "B6A9Dependency",
-            "objectFields": [
-                {
-                    "DBType": "String",
-                    "businessType": "Text",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Dependency Name"
-                    },
-                    "localized": false,
-                    "name": "dependencyName",
-                    "objectFieldSettings": [
-                        {
-                            "name": "showCounter",
-                            "value": false
-                        }
-                    ],
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "String",
-                    "businessType": "Picklist",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Dependency Type"
-                    },
-                    "listTypeDefinitionExternalReferenceCode": "B6A9-DEPENDENCY-TYPE",
-                    "localized": false,
-                    "name": "dependencyType",
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "String",
-                    "businessType": "Picklist",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Criticality"
-                    },
-                    "listTypeDefinitionExternalReferenceCode": "B6A9-CRITICALITY",
-                    "localized": false,
-                    "name": "criticality",
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "Clob",
-                    "businessType": "LongText",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Description"
-                    },
-                    "localized": false,
-                    "name": "description",
-                    "objectFieldSettings": [
-                        {
-                            "name": "showCounter",
-                            "value": false
-                        }
-                    ],
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "Clob",
-                    "unique": false
-                },
-                {
-                    "DBType": "Long",
-                    "businessType": "Relationship",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "B6A9 Department To B6A9 Dependency"
-                    },
-                    "localized": false,
-                    "name": "r_b6A9DepartmentToB6A9Dependency_c_b6a9DepartmentId",
-                    "objectDefinitionExternalReferenceCode1": "B6A9-DEPARTMENT",
-                    "objectFieldSettings": [
-                        {
-                            "name": "objectDefinition1ShortName",
-                            "value": "B6A9-DEPARTMENT"
-                        },
-                        {
-                            "name": "objectRelationshipERCObjectFieldName",
-                            "value": "r_b6A9DepartmentToB6A9Dependency_c_b6a9DepartmentERC"
-                        }
-                    ],
-                    "objectRelationshipExternalReferenceCode": "B6A9-DEPARTMENT-TO-B6A9-DEPENDENCY",
-                    "readOnly": "false",
-                    "relationshipType": "oneToMany",
-                    "required": false,
-                    "state": false,
-                    "type": "Long",
-                    "unique": false
-                },
-                {
-                    "DBType": "Long",
-                    "businessType": "Relationship",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "B6A9 Asset To B6A9 Dependency"
-                    },
-                    "localized": false,
-                    "name": "r_b6A9AssetToB6A9Dependency_c_b6a9AssetId",
-                    "objectDefinitionExternalReferenceCode1": "B6A9-ASSET",
-                    "objectFieldSettings": [
-                        {
-                            "name": "objectDefinition1ShortName",
-                            "value": "B6A9-ASSET"
-                        },
-                        {
-                            "name": "objectRelationshipERCObjectFieldName",
-                            "value": "r_b6A9AssetToB6A9Dependency_c_b6a9AssetERC"
-                        }
-                    ],
-                    "objectRelationshipExternalReferenceCode": "B6A9-ASSET-TO-B6A9-DEPENDENCY",
-                    "readOnly": "false",
-                    "relationshipType": "oneToMany",
-                    "required": false,
-                    "state": false,
-                    "type": "Long",
-                    "unique": false
-                }
-            ],
-            "objectFolderExternalReferenceCode": "B6A9-HEALTH-MONITORING-SYSTEM",
-            "objectRelationships": [
-                {
-                    "deletionType": "prevent",
-                    "externalReferenceCode": "B6A9-DEPENDENCY-TO-B6A9-DEP-HEALTH-RECORD",
-                    "label": {
-                        "en_US": "B6A9 Dependency To B6A9 Dep Health Record"
-                    },
-                    "name": "b6A9DependencyToB6A9DepHealthRecord",
-                    "objectDefinitionExternalReferenceCode1": "B6A9-DEPENDENCY",
-                    "objectDefinitionExternalReferenceCode2": "B6A9-DEPENDENCY-HEALTH-RECORD",
-                    "type": "oneToMany"
-                }
-            ],
-            "panelCategoryKey": "",
-            "parameterRequired": false,
-            "pluralLabel": {
-                "en_US": "B6A9 Dependencies"
-            },
-            "portlet": true,
-            "restContextPath": "/o/c/b6a9dependencies",
-            "scope": "company",
-            "status": {
-                "code": 0,
-                "label": "approved",
-                "label_i18n": "Approved"
-            },
-            "titleObjectFieldName": "id"
-        },
-        {
-            "accountEntryRestricted": false,
-            "active": true,
-            "enableCategorization": true,
-            "enableObjectEntryHistory": false,
-            "externalReferenceCode": "B6A9-DEPENDENCY-HEALTH-RECORD",
-            "label": {
-                "en_US": "B6A9 Dependency Health Record"
-            },
-            "modifiable": true,
-            "name": "B6A9DependencyHealthRecord",
-            "objectFields": [
-                {
-                    "DBType": "Long",
-                    "businessType": "Relationship",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "B6A9 Dependency To B6A9 Dep Health Record"
-                    },
-                    "localized": false,
-                    "name": "r_b6A9DependencyToB6A9DepHealthRecord_c_b6a9DependencyId",
-                    "objectDefinitionExternalReferenceCode1": "B6A9-DEPENDENCY",
-                    "objectFieldSettings": [
-                        {
-                            "name": "objectDefinition1ShortName",
-                            "value": "B6A9Dependency"
-                        },
-                        {
-                            "name": "objectRelationshipERCObjectFieldName",
-                            "value": "r_b6A9DependencyToB6A9DepHealthRecord_c_b6a9DependencyERC"
-                        }
-                    ],
-                    "objectRelationshipExternalReferenceCode": "B6A9-DEPENDENCY-TO-B6A9-DEP-HEALTH-RECORD",
-                    "readOnly": "false",
-                    "relationshipType": "oneToMany",
-                    "required": false,
-                    "state": false,
-                    "type": "Long",
-                    "unique": false
-                },
-                {
-                    "DBType": "String",
-                    "businessType": "Text",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Record Name"
-                    },
-                    "localized": false,
-                    "name": "recordName",
-                    "objectFieldSettings": [
-                        {
-                            "name": "showCounter",
-                            "value": false
-                        }
-                    ],
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "String",
-                    "businessType": "Picklist",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Health Status"
-                    },
-                    "listTypeDefinitionExternalReferenceCode": "B6A9-HEALTH-STATUS",
-                    "localized": false,
-                    "name": "healthStatus",
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "Double",
-                    "businessType": "Decimal",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "Uptime"
-                    },
-                    "localized": false,
-                    "name": "uptime",
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "Double",
-                    "unique": false
-                },
-                {
-                    "DBType": "Integer",
-                    "businessType": "Integer",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "Incident Count"
-                    },
-                    "localized": false,
-                    "name": "incidentCount",
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "Integer",
-                    "unique": false
-                },
-                {
-                    "DBType": "Date",
-                    "businessType": "Date",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "Observation Date"
-                    },
-                    "localized": false,
-                    "name": "observationDate",
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "Date",
-                    "unique": false
-                },
-                {
-                    "DBType": "Clob",
-                    "businessType": "LongText",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Notes"
-                    },
-                    "localized": false,
-                    "name": "notes",
-                    "objectFieldSettings": [
-                        {
-                            "name": "showCounter",
-                            "value": false
-                        }
-                    ],
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "Clob",
-                    "unique": false
-                },
-                {
-                    "DBType": "Long",
-                    "businessType": "Relationship",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "L User To B6A9 Dependency Health Record"
-                    },
-                    "localized": false,
-                    "name": "r_userToB6A9DependencyHealthRecord_userId",
-                    "objectDefinitionExternalReferenceCode1": "L_USER",
-                    "objectFieldSettings": [
-                        {
-                            "name": "objectDefinition1ShortName",
-                            "value": "User"
-                        },
-                        {
-                            "name": "objectRelationshipERCObjectFieldName",
-                            "value": "r_userToB6A9DependencyHealthRecord_userERC"
-                        }
-                    ],
-                    "objectRelationshipExternalReferenceCode": "L-USER-TO-B6A9-DEPEDENCY-HEALTH-RECORD",
-                    "readOnly": "false",
-                    "relationshipType": "oneToMany",
-                    "required": false,
-                    "state": false,
-                    "type": "Long",
-                    "unique": false
-                }
-            ],
-            "objectFolderExternalReferenceCode": "B6A9-HEALTH-MONITORING-SYSTEM",
-            "panelCategoryKey": "",
-            "parameterRequired": false,
-            "pluralLabel": {
-                "en_US": "B6A9 Dependency Health Records"
-            },
-            "portlet": true,
-            "restContextPath": "/o/c/b6a9dependencyhealthrecords",
-            "scope": "company",
-            "status": {
-                "code": 0,
-                "label": "approved",
-                "label_i18n": "Approved"
-            },
-            "titleObjectFieldName": "id"
-        },
-        {
-            "accountEntryRestricted": false,
-            "active": true,
-            "enableCategorization": true,
-            "enableObjectEntryHistory": false,
-            "externalReferenceCode": "B6A9-ASSET",
-            "label": {
-                "en_US": "B6A9 Asset"
-            },
-            "modifiable": true,
-            "name": "B6A9Asset",
-            "objectFields": [
-                {
-                    "DBType": "String",
-                    "businessType": "Text",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Asset Name"
-                    },
-                    "localized": false,
-                    "name": "assetName",
-                    "objectFieldSettings": [
-                        {
-                            "name": "showCounter",
-                            "value": false
-                        }
-                    ],
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "String",
-                    "businessType": "Picklist",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Category"
-                    },
-                    "listTypeDefinitionExternalReferenceCode": "B6A9-ASSET-CATEGORY",
-                    "localized": false,
-                    "name": "category",
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "String",
-                    "businessType": "Picklist",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "B6A9 Asset Status"
-                    },
-                    "listTypeDefinitionExternalReferenceCode": "B6A9-ASSET-STATUS",
-                    "localized": false,
-                    "name": "b6A9AssetStatus",
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "Clob",
-                    "businessType": "LongText",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Description"
-                    },
-                    "localized": false,
-                    "name": "description",
-                    "objectFieldSettings": [
-                        {
-                            "name": "showCounter",
-                            "value": false
-                        }
-                    ],
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "Clob",
-                    "unique": false
-                },
-                {
-                    "DBType": "Long",
-                    "businessType": "Relationship",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "B6A9 Department To B6A9 Asset"
-                    },
-                    "localized": false,
-                    "name": "r_b6a9DepartmentToB6A9Asset_c_b6a9DepartmentId",
-                    "objectDefinitionExternalReferenceCode1": "B6A9-DEPARTMENT",
-                    "objectFieldSettings": [
-                        {
-                            "name": "objectDefinition1ShortName",
-                            "value": "B6A9-DEPARTMENT"
-                        },
-                        {
-                            "name": "objectRelationshipERCObjectFieldName",
-                            "value": "r_b6a9DepartmentToB6A9Asset_c_b6a9DepartmentERC"
-                        }
-                    ],
-                    "objectRelationshipExternalReferenceCode": "B6A9-DEPARTMENT-TO-B6A9-ASSET",
-                    "readOnly": "false",
-                    "relationshipType": "oneToMany",
-                    "required": false,
-                    "state": false,
-                    "type": "Long",
-                    "unique": false
-                }
-            ],
-            "objectFolderExternalReferenceCode": "B6A9-HEALTH-MONITORING-SYSTEM",
-            "objectRelationships": [
-                {
-                    "deletionType": "prevent",
-                    "externalReferenceCode": "B6A9-ASSET-TO-B6A9-DEPENDENCY",
-                    "label": {
-                        "en_US": "B6A9 Asset To B6A9 Dependency"
-                    },
-                    "name": "b6A9AssetToB6A9Dependency",
-                    "objectDefinitionExternalReferenceCode1": "B6A9-ASSET",
-                    "objectDefinitionExternalReferenceCode2": "B6A9-DEPENDENCY",
-                    "type": "oneToMany"
-                }
-            ],
-            "panelCategoryKey": "",
-            "parameterRequired": false,
-            "pluralLabel": {
-                "en_US": "B6A9 Assets"
-            },
-            "portlet": true,
-            "restContextPath": "/o/c/b6a9assets",
-            "scope": "company",
-            "status": {
-                "code": 0,
-                "label": "approved",
-                "label_i18n": "Approved"
-            },
-            "titleObjectFieldName": "id"
-        },
-        {
-            "accountEntryRestricted": false,
-            "active": true,
-            "enableCategorization": true,
-            "enableObjectEntryHistory": false,
-            "externalReferenceCode": "B6A9-DEPARTMENT",
-            "label": {
-                "en_US": "B6A9 Department"
-            },
-            "modifiable": true,
-            "name": "B6A9Department",
-            "objectFields": [
-                {
-                    "DBType": "String",
-                    "businessType": "Text",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Department Name"
-                    },
-                    "localized": false,
-                    "name": "departmentName",
-                    "objectFieldSettings": [
-                        {
-                            "name": "showCounter",
-                            "value": false
-                        }
-                    ],
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "Clob",
-                    "businessType": "LongText",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Notes"
-                    },
-                    "localized": false,
-                    "name": "notes",
-                    "objectFieldSettings": [
-                        {
-                            "name": "showCounter",
-                            "value": false
-                        }
-                    ],
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "Clob",
-                    "unique": false
-                },
-                {
-                    "DBType": "Long",
-                    "businessType": "Relationship",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "L User To B6A9 Department"
-                    },
-                    "localized": false,
-                    "name": "r_userToB6A9Department_userId",
-                    "objectDefinitionExternalReferenceCode1": "L_USER",
-                    "objectFieldSettings": [
-                        {
-                            "name": "objectDefinition1ShortName",
-                            "value": "User"
-                        },
-                        {
-                            "name": "objectRelationshipERCObjectFieldName",
-                            "value": "r_userToB6A9Department_userERC"
-                        }
-                    ],
-                    "objectRelationshipExternalReferenceCode": "L-USER-TO-B6A9-DEPARTMENT",
-                    "readOnly": "false",
-                    "relationshipType": "oneToMany",
-                    "required": false,
-                    "state": false,
-                    "type": "Long",
-                    "unique": false
-                }
-            ],
-            "objectFolderExternalReferenceCode": "B6A9-HEALTH-MONITORING-SYSTEM",
-            "objectRelationships": [
-                {
-                    "deletionType": "prevent",
-                    "externalReferenceCode": "B6A9-DEPARTMENT-TO-B6A9-DEPENDENCY",
-                    "label": {
-                        "en_US": "B6A9 Department To B6A9 Dependency"
-                    },
-                    "name": "b6A9DepartmentToB6A9Dependency",
-                    "objectDefinitionExternalReferenceCode1": "B6A9-DEPARTMENT",
-                    "objectDefinitionExternalReferenceCode2": "B6A9-DEPENDENCY",
-                    "type": "oneToMany"
-                },
-                {
-                    "deletionType": "prevent",
-                    "externalReferenceCode": "B6A9-DEPARTMENT-TO-B6A9-ASSET",
-                    "label": {
-                        "en_US": "B6A9 Department To B6A9 Asset"
-                    },
-                    "name": "b6a9DepartmentToB6A9Asset",
-                    "objectDefinitionExternalReferenceCode1": "B6A9-DEPARTMENT",
-                    "objectDefinitionExternalReferenceCode2": "B6A9-ASSET",
-                    "type": "oneToMany"
-                }
-            ],
-            "panelCategoryKey": "",
-            "parameterRequired": false,
-            "pluralLabel": {
-                "en_US": "B6A9 Departments"
-            },
-            "portlet": true,
-            "restContextPath": "/o/c/b6a9departments",
-            "scope": "company",
-            "status": {
-                "code": 0,
-                "label": "approved",
-                "label_i18n": "Approved"
-            },
-            "titleObjectFieldName": "id"
-        }
-    ]
+		{
+			"accountEntryRestricted": false,
+			"active": true,
+			"enableCategorization": true,
+			"enableObjectEntryHistory": false,
+			"externalReferenceCode": "B6A9-DEPENDENCY",
+			"label": {
+				"en_US": "B6A9 Dependency"
+			},
+			"modifiable": true,
+			"name": "B6A9Dependency",
+			"objectFields": [
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Dependency Name"
+					},
+					"localized": false,
+					"name": "dependencyName",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Picklist",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Dependency Type"
+					},
+					"listTypeDefinitionExternalReferenceCode": "B6A9-DEPENDENCY-TYPE",
+					"localized": false,
+					"name": "dependencyType",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Picklist",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Criticality"
+					},
+					"listTypeDefinitionExternalReferenceCode": "B6A9-CRITICALITY",
+					"localized": false,
+					"name": "criticality",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Description"
+					},
+					"localized": false,
+					"name": "description",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Clob",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "B6A9 Department To B6A9 Dependency"
+					},
+					"localized": false,
+					"name": "r_b6A9DepartmentToB6A9Dependency_c_b6a9DepartmentId",
+					"objectDefinitionExternalReferenceCode1": "B6A9-DEPARTMENT",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "B6A9-DEPARTMENT"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_b6A9DepartmentToB6A9Dependency_c_b6a9DepartmentERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "B6A9-DEPARTMENT-TO-B6A9-DEPENDENCY",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "B6A9 Asset To B6A9 Dependency"
+					},
+					"localized": false,
+					"name": "r_b6A9AssetToB6A9Dependency_c_b6a9AssetId",
+					"objectDefinitionExternalReferenceCode1": "B6A9-ASSET",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "B6A9-ASSET"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_b6A9AssetToB6A9Dependency_c_b6a9AssetERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "B6A9-ASSET-TO-B6A9-DEPENDENCY",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				}
+			],
+			"objectFolderExternalReferenceCode": "B6A9-HEALTH-MONITORING-SYSTEM",
+			"objectRelationships": [
+				{
+					"deletionType": "prevent",
+					"externalReferenceCode": "B6A9-DEPENDENCY-TO-B6A9-DEP-HEALTH-RECORD",
+					"label": {
+						"en_US": "B6A9 Dependency To B6A9 Dep Health Record"
+					},
+					"name": "b6A9DependencyToB6A9DepHealthRecord",
+					"objectDefinitionExternalReferenceCode1": "B6A9-DEPENDENCY",
+					"objectDefinitionExternalReferenceCode2": "B6A9-DEPENDENCY-HEALTH-RECORD",
+					"type": "oneToMany"
+				}
+			],
+			"panelCategoryKey": "",
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "B6A9 Dependencies"
+			},
+			"portlet": true,
+			"restContextPath": "/o/c/b6a9dependencies",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"titleObjectFieldName": "id"
+		},
+		{
+			"accountEntryRestricted": false,
+			"active": true,
+			"enableCategorization": true,
+			"enableObjectEntryHistory": false,
+			"externalReferenceCode": "B6A9-DEPENDENCY-HEALTH-RECORD",
+			"label": {
+				"en_US": "B6A9 Dependency Health Record"
+			},
+			"modifiable": true,
+			"name": "B6A9DependencyHealthRecord",
+			"objectFields": [
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "B6A9 Dependency To B6A9 Dep Health Record"
+					},
+					"localized": false,
+					"name": "r_b6A9DependencyToB6A9DepHealthRecord_c_b6a9DependencyId",
+					"objectDefinitionExternalReferenceCode1": "B6A9-DEPENDENCY",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "B6A9Dependency"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_b6A9DependencyToB6A9DepHealthRecord_c_b6a9DependencyERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "B6A9-DEPENDENCY-TO-B6A9-DEP-HEALTH-RECORD",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Record Name"
+					},
+					"localized": false,
+					"name": "recordName",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Picklist",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Health Status"
+					},
+					"listTypeDefinitionExternalReferenceCode": "B6A9-HEALTH-STATUS",
+					"localized": false,
+					"name": "healthStatus",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "Double",
+					"businessType": "Decimal",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "Uptime"
+					},
+					"localized": false,
+					"name": "uptime",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Double",
+					"unique": false
+				},
+				{
+					"DBType": "Integer",
+					"businessType": "Integer",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "Incident Count"
+					},
+					"localized": false,
+					"name": "incidentCount",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Integer",
+					"unique": false
+				},
+				{
+					"DBType": "Date",
+					"businessType": "Date",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "Observation Date"
+					},
+					"localized": false,
+					"name": "observationDate",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Date",
+					"unique": false
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Notes"
+					},
+					"localized": false,
+					"name": "notes",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Clob",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "L User To B6A9 Dependency Health Record"
+					},
+					"localized": false,
+					"name": "r_userToB6A9DependencyHealthRecord_userId",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "User"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_userToB6A9DependencyHealthRecord_userERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "L-USER-TO-B6A9-DEPEDENCY-HEALTH-RECORD",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				}
+			],
+			"objectFolderExternalReferenceCode": "B6A9-HEALTH-MONITORING-SYSTEM",
+			"panelCategoryKey": "",
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "B6A9 Dependency Health Records"
+			},
+			"portlet": true,
+			"restContextPath": "/o/c/b6a9dependencyhealthrecords",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"titleObjectFieldName": "id"
+		},
+		{
+			"accountEntryRestricted": false,
+			"active": true,
+			"enableCategorization": true,
+			"enableObjectEntryHistory": false,
+			"externalReferenceCode": "B6A9-ASSET",
+			"label": {
+				"en_US": "B6A9 Asset"
+			},
+			"modifiable": true,
+			"name": "B6A9Asset",
+			"objectFields": [
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Asset Name"
+					},
+					"localized": false,
+					"name": "assetName",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Picklist",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Category"
+					},
+					"listTypeDefinitionExternalReferenceCode": "B6A9-ASSET-CATEGORY",
+					"localized": false,
+					"name": "category",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Picklist",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "B6A9 Asset Status"
+					},
+					"listTypeDefinitionExternalReferenceCode": "B6A9-ASSET-STATUS",
+					"localized": false,
+					"name": "b6A9AssetStatus",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Description"
+					},
+					"localized": false,
+					"name": "description",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Clob",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "B6A9 Department To B6A9 Asset"
+					},
+					"localized": false,
+					"name": "r_b6a9DepartmentToB6A9Asset_c_b6a9DepartmentId",
+					"objectDefinitionExternalReferenceCode1": "B6A9-DEPARTMENT",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "B6A9-DEPARTMENT"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_b6a9DepartmentToB6A9Asset_c_b6a9DepartmentERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "B6A9-DEPARTMENT-TO-B6A9-ASSET",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				}
+			],
+			"objectFolderExternalReferenceCode": "B6A9-HEALTH-MONITORING-SYSTEM",
+			"objectRelationships": [
+				{
+					"deletionType": "prevent",
+					"externalReferenceCode": "B6A9-ASSET-TO-B6A9-DEPENDENCY",
+					"label": {
+						"en_US": "B6A9 Asset To B6A9 Dependency"
+					},
+					"name": "b6A9AssetToB6A9Dependency",
+					"objectDefinitionExternalReferenceCode1": "B6A9-ASSET",
+					"objectDefinitionExternalReferenceCode2": "B6A9-DEPENDENCY",
+					"type": "oneToMany"
+				}
+			],
+			"panelCategoryKey": "",
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "B6A9 Assets"
+			},
+			"portlet": true,
+			"restContextPath": "/o/c/b6a9assets",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"titleObjectFieldName": "id"
+		},
+		{
+			"accountEntryRestricted": false,
+			"active": true,
+			"enableCategorization": true,
+			"enableObjectEntryHistory": false,
+			"externalReferenceCode": "B6A9-DEPARTMENT",
+			"label": {
+				"en_US": "B6A9 Department"
+			},
+			"modifiable": true,
+			"name": "B6A9Department",
+			"objectFields": [
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Department Name"
+					},
+					"localized": false,
+					"name": "departmentName",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Notes"
+					},
+					"localized": false,
+					"name": "notes",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Clob",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "L User To B6A9 Department"
+					},
+					"localized": false,
+					"name": "r_userToB6A9Department_userId",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "User"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_userToB6A9Department_userERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "L-USER-TO-B6A9-DEPARTMENT",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				}
+			],
+			"objectFolderExternalReferenceCode": "B6A9-HEALTH-MONITORING-SYSTEM",
+			"objectRelationships": [
+				{
+					"deletionType": "prevent",
+					"externalReferenceCode": "B6A9-DEPARTMENT-TO-B6A9-DEPENDENCY",
+					"label": {
+						"en_US": "B6A9 Department To B6A9 Dependency"
+					},
+					"name": "b6A9DepartmentToB6A9Dependency",
+					"objectDefinitionExternalReferenceCode1": "B6A9-DEPARTMENT",
+					"objectDefinitionExternalReferenceCode2": "B6A9-DEPENDENCY",
+					"type": "oneToMany"
+				},
+				{
+					"deletionType": "prevent",
+					"externalReferenceCode": "B6A9-DEPARTMENT-TO-B6A9-ASSET",
+					"label": {
+						"en_US": "B6A9 Department To B6A9 Asset"
+					},
+					"name": "b6a9DepartmentToB6A9Asset",
+					"objectDefinitionExternalReferenceCode1": "B6A9-DEPARTMENT",
+					"objectDefinitionExternalReferenceCode2": "B6A9-ASSET",
+					"type": "oneToMany"
+				}
+			],
+			"panelCategoryKey": "",
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "B6A9 Departments"
+			},
+			"portlet": true,
+			"restContextPath": "/o/c/b6a9departments",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"titleObjectFieldName": "id"
+		}
+	]
 }

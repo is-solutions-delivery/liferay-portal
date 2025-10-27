@@ -29,36 +29,36 @@
 			"objectFolderExternalReferenceCode": "default",
 			"objectRelationships": [
 				{
-					"deletionType": "disassociate", 
-					"externalReferenceCode": "L-USER-TO-B3A6-CONFIGURATION-ITEM", 
+					"deletionType": "disassociate",
+					"externalReferenceCode": "L-USER-TO-B3A6-CONFIGURATION-ITEM",
 					"label": {
 						"en_US": "L User To B3A6 Configuration Item"
 					},
-					"name": "lUserToB3A6ConfigurationItem", 
-					"objectDefinitionExternalReferenceCode1": "L_USER", 
-					"objectDefinitionExternalReferenceCode2": "B3A6-CONFIGURATION-ITEM", 
+					"name": "lUserToB3A6ConfigurationItem",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectDefinitionExternalReferenceCode2": "B3A6-CONFIGURATION-ITEM",
 					"type": "oneToMany"
 				},
 				{
-					"deletionType": "disassociate", 
-					"externalReferenceCode": "L-USER-TO-B3A6-DEPARTMENT", 
+					"deletionType": "disassociate",
+					"externalReferenceCode": "L-USER-TO-B3A6-DEPARTMENT",
 					"label": {
 						"en_US": "L User To B3A6 Department"
 					},
-					"name": "lUserToB3A6Department", 
-					"objectDefinitionExternalReferenceCode1": "L_USER", 
-					"objectDefinitionExternalReferenceCode2": "B3A6-DEPARTMENT", 
+					"name": "lUserToB3A6Department",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectDefinitionExternalReferenceCode2": "B3A6-DEPARTMENT",
 					"type": "oneToMany"
 				},
 				{
-					"deletionType": "disassociate", 
-					"externalReferenceCode": "L-USER-TO-B3A6-INCIDENT", 
+					"deletionType": "disassociate",
+					"externalReferenceCode": "L-USER-TO-B3A6-INCIDENT",
 					"label": {
 						"en_US": "L User To B3A6 Incident"
 					},
-					"name": "lUserToB3A6Incident", 
-					"objectDefinitionExternalReferenceCode1": "L_USER", 
-					"objectDefinitionExternalReferenceCode2": "B3A6-INCIDENT", 
+					"name": "lUserToB3A6Incident",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectDefinitionExternalReferenceCode2": "B3A6-INCIDENT",
 					"type": "oneToMany"
 				}
 			],
@@ -80,7 +80,6 @@
 		{
 			"accountEntryRestricted": false,
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableIndexSearch": true,
 			"externalReferenceCode": "B3A6-CONFIGURATION-ITEM",
@@ -108,9 +107,9 @@
 						}
 					],
 					"readOnly": "false",
-					"type": "String",
 					"required": false,
-                    "state": false,
+					"state": false,
+					"type": "String",
 					"unique": false
 				},
 				{
@@ -130,9 +129,9 @@
 							"value": false
 						}
 					],
-					"type": "Clob",
 					"required": false,
-                    "state": false,
+					"state": false,
+					"type": "Clob",
 					"unique": false
 				},
 				{
@@ -147,9 +146,9 @@
 					"listTypeDefinitionExternalReferenceCode": "B3A6-CI-TYPE",
 					"localized": false,
 					"name": "cIType",
-					"type": "String",
 					"required": false,
-                    "state": false,
+					"state": false,
+					"type": "String",
 					"unique": false
 				},
 				{
@@ -164,11 +163,11 @@
 					"listTypeDefinitionExternalReferenceCode": "B3A6-ENVIRONMENT",
 					"localized": false,
 					"name": "environment",
-					"type": "String",
+					"readOnly": "false",
 					"required": false,
-                    "state": false,
-					"unique": false,
-					"readOnly": "false"
+					"state": false,
+					"type": "String",
+					"unique": false
 				},
 				{
 					"DBType": "String",
@@ -297,7 +296,6 @@
 			"accountEntryRestricted": false,
 			"accountEntryRestrictedObjectFieldName": "",
 			"active": true,
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableIndexSearch": true,
 			"externalReferenceCode": "B3A6-RELATIONSHIP",
@@ -380,7 +378,6 @@
 			"accountEntryRestrictedObjectFieldName": "",
 			"active": true,
 			"className": "com.liferay.object.model.ObjectDefinition#Y9H3",
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableIndexSearch": true,
 			"externalReferenceCode": "B3A6-DEPARTMENT",
@@ -474,7 +471,6 @@
 			"accountEntryRestrictedObjectFieldName": "",
 			"active": true,
 			"className": "com.liferay.object.model.ObjectDefinition#W5G0",
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableIndexSearch": true,
 			"externalReferenceCode": "B3A6-TAG",
@@ -557,7 +553,6 @@
 			"accountEntryRestrictedObjectFieldName": "",
 			"active": true,
 			"className": "com.liferay.object.model.ObjectDefinition#U6Z9",
-			"defaultLanguageId": "en_US",
 			"enableCategorization": true,
 			"enableIndexSearch": true,
 			"enableObjectEntryHistory": false,
@@ -685,7 +680,7 @@
 					"localized": false,
 					"name": "priority",
 					"type": "String"
-				}	
+				}
 			],
 			"objectFolderExternalReferenceCode": "B3A6-CONFIGURATION-MANAGEMENT-DATABASE",
 			"panelCategoryKey": "",

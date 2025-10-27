@@ -9,8 +9,8 @@
 		},
 		"taskItemDelegateName": "DEFAULT"
 	},
-    "items": [
-        {
+	"items": [
+		{
 			"accountEntryRestricted": false,
 			"active": true,
 			"className": "com.liferay.portal.kernel.model.User",
@@ -27,7 +27,7 @@
 			"modifiable": false,
 			"name": "User",
 			"objectFolderExternalReferenceCode": "default",
-            "objectRelationships": [
+			"objectRelationships": [
 				{
 					"deletionType": "disassociate",
 					"externalReferenceCode": "L-USER-TO-B5A8-ROLE-ASSIGNMENT",
@@ -39,7 +39,7 @@
 					"objectDefinitionExternalReferenceCode2": "B5A8-ROLE-ASSIGNMENT",
 					"type": "oneToMany"
 				},
-                {
+				{
 					"deletionType": "disassociate",
 					"externalReferenceCode": "L-USER-TO-B5A8-DEPARTMENT",
 					"label": {
@@ -66,659 +66,659 @@
 			"system": true,
 			"titleObjectFieldName": "id"
 		},
-        {
-            "accountEntryRestricted": false,
-            "active": true,
-            "enableComments": false,
-            "enableObjectEntryHistory": false,
-            "externalReferenceCode": "B5A8-ROLE-ASSIGNMENT",
-            "label": {
-                "en_US": "B5A8 Role Assignment"
-            },
-            "modifiable": true,
-            "name": "B5A8RoleAssignment",
-            "objectFields": [
-                {
-                    "DBType": "String",
-                    "businessType": "Text",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Assignment Name"
-                    },
-                    "localized": false,
-                    "name": "assignmentName",
-                    "objectFieldSettings": [
-                        {
-                            "name": "showCounter",
-                            "value": false
-                        }
-                    ],
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "Date",
-                    "businessType": "Date",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "End Date"
-                    },
-                    "localized": false,
-                    "name": "endDate",
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "Date",
-                    "unique": false
-                },
-                {
-                    "DBType": "Date",
-                    "businessType": "Date",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "Start Date"
-                    },
-                    "localized": false,
-                    "name": "startDate",
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "Date",
-                    "unique": false
-                },
-                {
-                    "DBType": "String",
-                    "businessType": "Picklist",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "B5A8 Role Assignment Status"
-                    },
-                    "listTypeDefinitionExternalReferenceCode": "B5A8-STATUS",
-                    "localized": false,
-                    "name": "roleAssignmentStatus",
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "Clob",
-                    "businessType": "LongText",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Notes"
-                    },
-                    "localized": false,
-                    "name": "notes",
-                    "objectFieldSettings": [
-                        {
-                            "name": "showCounter",
-                            "value": false
-                        }
-                    ],
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "Clob",
-                    "unique": false
-                },
-                {
-                    "DBType": "Long",
-                    "businessType": "Relationship",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "B5A8 Department To B5A8 Role Assignment"
-                    },
-                    "localized": false,
-                    "name": "r_b5A8DepartmentToB5A8RoleAssignment_c_b5a8DepartmentId",
-                    "objectDefinitionExternalReferenceCode1": "B5A8-DEPARTMENT",
-                    "objectFieldSettings": [
-                        {
-                            "name": "objectDefinition1ShortName",
-                            "value": "B5A8-DEPARTMENT"
-                        },
-                        {
-                            "name": "objectRelationshipERCObjectFieldName",
-                            "value": "r_b5A8DepartmentToB5A8RoleAssignment_c_b5a8DepartmentERC"
-                        }
-                    ],
-                    "objectRelationshipExternalReferenceCode": "B5A8-DEPARTMENT-TO-B5A8-ROLE-ASSIGNMENT",
-                    "readOnly": "false",
-                    "relationshipType": "oneToMany",
-                    "required": false,
-                    "state": false,
-                    "type": "Long",
-                    "unique": false
-                },
-                {
-                    "DBType": "Long",
-                    "businessType": "Relationship",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "B5A8 Asset To B5A8 Role Assignment"
-                    },
-                    "localized": false,
-                    "name": "r_b5A8AssetToB5A8RoleAssignment_c_b5a8AssetId",
-                    "objectDefinitionExternalReferenceCode1": "B5A8-ASSET",
-                    "objectFieldSettings": [
-                        {
-                            "name": "objectDefinition1ShortName",
-                            "value": "B5A8-ASSET"
-                        },
-                        {
-                            "name": "objectRelationshipERCObjectFieldName",
-                            "value": "r_b5A8AssetToB5A8RoleAssignment_c_b5a8AssetERC"
-                        }
-                    ],
-                    "objectRelationshipExternalReferenceCode": "B5A8-ASSET-TO-B5A8-ROLE-ASSIGNMENT",
-                    "readOnly": "false",
-                    "relationshipType": "oneToMany",
-                    "required": false,
-                    "state": false,
-                    "type": "Long",
-                    "unique": false
-                },
-                {
-                    "DBType": "Long",
-                    "businessType": "Relationship",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "B5A8 Role To B5A8 Role Assignment"
-                    },
-                    "localized": false,
-                    "name": "r_b5A8RoleToB5A8RoleAssignment_c_b5a8RoleId",
-                    "objectDefinitionExternalReferenceCode1": "B5A8-ROLE",
-                    "objectFieldSettings": [
-                        {
-                            "name": "objectDefinition1ShortName",
-                            "value": "B5A8-ROLE"
-                        },
-                        {
-                            "name": "objectRelationshipERCObjectFieldName",
-                            "value": "r_b5A8RoleToB5A8RoleAssignment_c_b5a8RoleERC"
-                        }
-                    ],
-                    "objectRelationshipExternalReferenceCode": "B5A8-ROLE-T0-B5A8-ROLE-ASSIGNMENT",
-                    "readOnly": "false",
-                    "relationshipType": "oneToMany",
-                    "required": false,
-                    "state": false,
-                    "type": "Long",
-                    "unique": false
-                },
-                {
-                    "DBType": "Long",
-                    "businessType": "Relationship",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "L User To B5A8 Role Assignment"
-                    },
-                    "listTypeDefinitionId": 0,
-                    "localized": false,
-                    "name": "r_userToB5A8RoleAssignment_userId",
-                    "objectDefinitionExternalReferenceCode1": "L_USER",
-                    "objectFieldSettings": [
-                        {
-                            "name": "objectDefinition1ShortName",
-                            "value": "User"
-                        },
-                        {
-                            "name": "objectRelationshipERCObjectFieldName",
-                            "value": "r_userToB5A8RoleAssignment_userERC"
-                        }
-                    ],
-                    "objectRelationshipExternalReferenceCode": "L-USER-TO-B5A8-ROLE-ASSIGNMENT",
-                    "readOnly": "false",
-                    "relationshipType": "oneToMany",
-                    "required": false,
-                    "state": false,
-                    "type": "Long",
-                    "unique": false
-                }
-            ],
-            "objectFolderExternalReferenceCode": "B5A8-ROLE-MAPPING-SYSTEM",
-            "panelCategoryKey": "",
-            "parameterRequired": false,
-            "pluralLabel": {
-                "en_US": "B5A8 Role Assignments"
-            },
-            "portlet": true,
-            "restContextPath": "/o/c/b5a8roleassignments",
-            "scope": "company",
-            "status": {
-                "code": 0,
-                "label": "approved",
-                "label_i18n": "Approved"
-            },
-            "titleObjectFieldName": "id"
-        },
-        {
-            "accountEntryRestricted": false,
-            "active": true,
-            "enableComments": false,
-            "enableObjectEntryHistory": false,
-            "externalReferenceCode": "B5A8-ASSET",
-            "label": {
-                "en_US": "B5A8 Asset"
-            },
-            "modifiable": true,
-            "name": "B5A8Asset",
-            "objectFields": [
-                {
-                    "DBType": "String",
-                    "businessType": "Text",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Asset Name"
-                    },
-                    "localized": false,
-                    "name": "assetName",
-                    "objectFieldSettings": [
-                        {
-                            "name": "showCounter",
-                            "value": false
-                        }
-                    ],
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "String",
-                    "businessType": "Picklist",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Category"
-                    },
-                    "listTypeDefinitionExternalReferenceCode": "B5A8-ASSET-CATEGORY",
-                    "localized": false,
-                    "name": "category",
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "String",
-                    "businessType": "Picklist",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "B5A8 Asset Status"
-                    },
-                    "listTypeDefinitionExternalReferenceCode": "B5A8-STATUS",
-                    "localized": false,
-                    "name": "b5A8AssetStatus",
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "Clob",
-                    "businessType": "LongText",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Description"
-                    },
-                    "localized": false,
-                    "name": "description",
-                    "objectFieldSettings": [
-                        {
-                            "name": "showCounter",
-                            "value": false
-                        }
-                    ],
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "Clob",
-                    "unique": false
-                },
-                {
-                    "DBType": "Long",
-                    "businessType": "Relationship",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "B5A8 Department To B5A8 Asset"
-                    },
-                    "localized": false,
-                    "name": "r_b5A8DepartmentToB5A8Asset_c_b5a8DepartmentId",
-                    "objectDefinitionExternalReferenceCode1": "B5A8-DEPARTMENT",
-                    "objectFieldSettings": [
-                        {
-                            "name": "objectDefinition1ShortName",
-                            "value": "B5A8-DEPARTMENT"
-                        },
-                        {
-                            "name": "objectRelationshipERCObjectFieldName",
-                            "value": "r_b5A8DepartmentToB5A8Asset_c_b5a8DepartmentERC"
-                        }
-                    ],
-                    "objectRelationshipExternalReferenceCode": "B5A8-DEPARTMENT-TO-B5A8-ASSET",
-                    "readOnly": "false",
-                    "relationshipType": "oneToMany",
-                    "required": false,
-                    "state": false,
-                    "type": "Long",
-                    "unique": false
-                }
-            ],
-            "objectFolderExternalReferenceCode": "B5A8-ROLE-MAPPING-SYSTEM",
-            "objectRelationships": [
-                {
-                    "deletionType": "prevent",
-                    "externalReferenceCode": "B5A8-ASSET-TO-B5A8-ROLE-ASSIGNMENT",
-                    "label": {
-                        "en_US": "B5A8 Asset To B5A8 Role Assignment"
-                    },
-                    "name": "b5A8AssetToB5A8RoleAssignment",
-                    "objectDefinitionExternalReferenceCode1": "B5A8-ASSET",
-                    "objectDefinitionExternalReferenceCode2": "B5A8-ROLE-ASSIGNMENT",
-                    "type": "oneToMany"
-                }
-            ],
-            "panelCategoryKey": "",
-            "parameterRequired": false,
-            "pluralLabel": {
-                "en_US": "B5A8 Assets"
-            },
-            "portlet": true,
-            "restContextPath": "/o/c/b5a8assets",
-            "scope": "company",
-            "status": {
-                "code": 0,
-                "label": "approved",
-                "label_i18n": "Approved"
-            },
-            "titleObjectFieldName": "id"
-        },
-        {
-            "accountEntryRestricted": false,
-            "active": true,
-            "enableComments": false,
-            "enableObjectEntryHistory": false,
-            "externalReferenceCode": "B5A8-DEPARTMENT",
-            "label": {
-                "en_US": "B5A8 Department"
-            },
-            "modifiable": true,
-            "name": "B5A8Department",
-            "objectFields": [
-                {
-                    "DBType": "String",
-                    "businessType": "Text",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Department Name"
-                    },
-                    "localized": false,
-                    "name": "departmentName",
-                    "objectFieldSettings": [
-                        {
-                            "name": "showCounter",
-                            "value": false
-                        }
-                    ],
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "Clob",
-                    "businessType": "LongText",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Notes"
-                    },
-                    "localized": false,
-                    "name": "notes",
-                    "objectFieldSettings": [
-                        {
-                            "name": "showCounter",
-                            "value": false
-                        }
-                    ],
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "Clob",
-                    "unique": false
-                },
-                {
-                    "DBType": "Long",
-                    "businessType": "Relationship",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "L User To B5A8 Department"
-                    },
-                    "localized": false,
-                    "name": "r_userToB5A8Department_userId",
-                    "objectDefinitionExternalReferenceCode1": "L_USER",
-                    "objectFieldSettings": [
-                        {
-                            "name": "objectDefinition1ShortName",
-                            "value": "User"
-                        },
-                        {
-                            "name": "objectRelationshipERCObjectFieldName",
-                            "value": "r_userToB5A8Department_userERC"
-                        }
-                    ],
-                    "objectRelationshipExternalReferenceCode": "L-USER-TO-B5A8-DEPARTMENT",
-                    "readOnly": "false",
-                    "relationshipType": "oneToMany",
-                    "required": false,
-                    "state": false,
-                    "type": "Long",
-                    "unique": false
-                }
-            ],
-            "objectFolderExternalReferenceCode": "B5A8-ROLE-MAPPING-SYSTEM",
-            "objectRelationships": [
-                {
-                    "deletionType": "prevent",
-                    "externalReferenceCode": "B5A8-DEPARTMENT-TO-B5A8-ROLE-ASSIGNMENT",
-                    "label": {
-                        "en_US": "B5A8 Department To B5A8 Role Assignment"
-                    },
-                    "name": "b5A8DepartmentToB5A8RoleAssignment",
-                    "objectDefinitionExternalReferenceCode1": "B5A8-DEPARTMENT",
-                    "objectDefinitionExternalReferenceCode2": "B5A8-ROLE-ASSIGNMENT",
-                    "type": "oneToMany"
-                },
-                {
-                    "deletionType": "prevent",
-                    "externalReferenceCode": "B5A8-DEPARTMENT-TO-B5A8-ASSET",
-                    "label": {
-                        "en_US": "B5A8 Department To B5A8 Asset"
-                    },
-                    "name": "b5A8DepartmentToB5A8Asset",
-                    "objectDefinitionExternalReferenceCode1": "B5A8-DEPARTMENT",
-                    "objectDefinitionExternalReferenceCode2": "B5A8-ASSET",
-                    "type": "oneToMany"
-                }
-            ],
-            "panelCategoryKey": "",
-            "parameterRequired": false,
-            "pluralLabel": {
-                "en_US": "B5A8 Departments"
-            },
-            "portlet": true,
-            "restContextPath": "/o/c/b5a8departments",
-            "scope": "company",
-            "status": {
-                "code": 0,
-                "label": "approved",
-                "label_i18n": "Approved"
-            },
-            "titleObjectFieldName": "id"
-        },
-        {
-            "accountEntryRestricted": false,
-            "active": true,
-            "enableComments": false,
-            "enableObjectEntryHistory": false,
-            "externalReferenceCode": "B5A8-ROLE",
-            "label": {
-                "en_US": "B5A8 Role"
-            },
-            "modifiable": true,
-            "name": "B5A8Role",
-            "objectFields": [
-                {
-                    "DBType": "String",
-                    "businessType": "Text",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Role Name"
-                    },
-                    "localized": false,
-                    "name": "roleName",
-                    "objectFieldSettings": [
-                        {
-                            "name": "showCounter",
-                            "value": false
-                        }
-                    ],
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "String",
-                    "businessType": "Picklist",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Role Type"
-                    },
-                    "listTypeDefinitionExternalReferenceCode": "B5A8-ROLE-TYPE",
-                    "localized": false,
-                    "name": "roleType",
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "String",
-                    "unique": false
-                },
-                {
-                    "DBType": "Boolean",
-                    "businessType": "Boolean",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "",
-                    "label": {
-                        "en_US": "IsDefault"
-                    },
-                    "localized": false,
-                    "name": "isDefault",
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "Boolean",
-                    "unique": false
-                },
-                {
-                    "DBType": "Clob",
-                    "businessType": "LongText",
-                    "indexed": true,
-                    "indexedAsKeyword": false,
-                    "indexedLanguageId": "en_US",
-                    "label": {
-                        "en_US": "Description"
-                    },
-                    "localized": false,
-                    "name": "description",
-                    "objectFieldSettings": [
-                        {
-                            "name": "showCounter",
-                            "value": false
-                        }
-                    ],
-                    "readOnly": "false",
-                    "required": false,
-                    "state": false,
-                    "type": "Clob",
-                    "unique": false
-                }
-            ],
-            "objectFolderExternalReferenceCode": "B5A8-ROLE-MAPPING-SYSTEM",
-            "objectRelationships": [
-                {
-                    "deletionType": "prevent",
-                    "externalReferenceCode": "B5A8-ROLE-T0-B5A8-ROLE-ASSIGNMENT",
-                    "label": {
-                        "en_US": "B5A8 Role To B5A8 Role Assignment"
-                    },
-                    "name": "b5A8RoleToB5A8RoleAssignment",
-                    "objectDefinitionExternalReferenceCode1": "B5A8-ROLE",
-                    "objectDefinitionExternalReferenceCode2": "B5A8-ROLE-ASSIGNMENT",
-                    "type": "oneToMany"
-                }
-            ],
-            "panelCategoryKey": "",
-            "parameterRequired": false,
-            "pluralLabel": {
-                "en_US": "B5A8 Roles"
-            },
-            "portlet": true,
-            "restContextPath": "/o/c/b5a8roles",
-            "scope": "company",
-            "status": {
-                "code": 0,
-                "label": "approved",
-                "label_i18n": "Approved"
-            },
-            "titleObjectFieldName": "id"
-        }
-    ]
+		{
+			"accountEntryRestricted": false,
+			"active": true,
+			"enableComments": false,
+			"enableObjectEntryHistory": false,
+			"externalReferenceCode": "B5A8-ROLE-ASSIGNMENT",
+			"label": {
+				"en_US": "B5A8 Role Assignment"
+			},
+			"modifiable": true,
+			"name": "B5A8RoleAssignment",
+			"objectFields": [
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Assignment Name"
+					},
+					"localized": false,
+					"name": "assignmentName",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "Date",
+					"businessType": "Date",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "End Date"
+					},
+					"localized": false,
+					"name": "endDate",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Date",
+					"unique": false
+				},
+				{
+					"DBType": "Date",
+					"businessType": "Date",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "Start Date"
+					},
+					"localized": false,
+					"name": "startDate",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Date",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Picklist",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "B5A8 Role Assignment Status"
+					},
+					"listTypeDefinitionExternalReferenceCode": "B5A8-STATUS",
+					"localized": false,
+					"name": "roleAssignmentStatus",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Notes"
+					},
+					"localized": false,
+					"name": "notes",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Clob",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "B5A8 Department To B5A8 Role Assignment"
+					},
+					"localized": false,
+					"name": "r_b5A8DepartmentToB5A8RoleAssignment_c_b5a8DepartmentId",
+					"objectDefinitionExternalReferenceCode1": "B5A8-DEPARTMENT",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "B5A8-DEPARTMENT"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_b5A8DepartmentToB5A8RoleAssignment_c_b5a8DepartmentERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "B5A8-DEPARTMENT-TO-B5A8-ROLE-ASSIGNMENT",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "B5A8 Asset To B5A8 Role Assignment"
+					},
+					"localized": false,
+					"name": "r_b5A8AssetToB5A8RoleAssignment_c_b5a8AssetId",
+					"objectDefinitionExternalReferenceCode1": "B5A8-ASSET",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "B5A8-ASSET"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_b5A8AssetToB5A8RoleAssignment_c_b5a8AssetERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "B5A8-ASSET-TO-B5A8-ROLE-ASSIGNMENT",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "B5A8 Role To B5A8 Role Assignment"
+					},
+					"localized": false,
+					"name": "r_b5A8RoleToB5A8RoleAssignment_c_b5a8RoleId",
+					"objectDefinitionExternalReferenceCode1": "B5A8-ROLE",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "B5A8-ROLE"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_b5A8RoleToB5A8RoleAssignment_c_b5a8RoleERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "B5A8-ROLE-T0-B5A8-ROLE-ASSIGNMENT",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "L User To B5A8 Role Assignment"
+					},
+					"listTypeDefinitionId": 0,
+					"localized": false,
+					"name": "r_userToB5A8RoleAssignment_userId",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "User"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_userToB5A8RoleAssignment_userERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "L-USER-TO-B5A8-ROLE-ASSIGNMENT",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				}
+			],
+			"objectFolderExternalReferenceCode": "B5A8-ROLE-MAPPING-SYSTEM",
+			"panelCategoryKey": "",
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "B5A8 Role Assignments"
+			},
+			"portlet": true,
+			"restContextPath": "/o/c/b5a8roleassignments",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"titleObjectFieldName": "id"
+		},
+		{
+			"accountEntryRestricted": false,
+			"active": true,
+			"enableComments": false,
+			"enableObjectEntryHistory": false,
+			"externalReferenceCode": "B5A8-ASSET",
+			"label": {
+				"en_US": "B5A8 Asset"
+			},
+			"modifiable": true,
+			"name": "B5A8Asset",
+			"objectFields": [
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Asset Name"
+					},
+					"localized": false,
+					"name": "assetName",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Picklist",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Category"
+					},
+					"listTypeDefinitionExternalReferenceCode": "B5A8-ASSET-CATEGORY",
+					"localized": false,
+					"name": "category",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Picklist",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "B5A8 Asset Status"
+					},
+					"listTypeDefinitionExternalReferenceCode": "B5A8-STATUS",
+					"localized": false,
+					"name": "b5A8AssetStatus",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Description"
+					},
+					"localized": false,
+					"name": "description",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Clob",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "B5A8 Department To B5A8 Asset"
+					},
+					"localized": false,
+					"name": "r_b5A8DepartmentToB5A8Asset_c_b5a8DepartmentId",
+					"objectDefinitionExternalReferenceCode1": "B5A8-DEPARTMENT",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "B5A8-DEPARTMENT"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_b5A8DepartmentToB5A8Asset_c_b5a8DepartmentERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "B5A8-DEPARTMENT-TO-B5A8-ASSET",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				}
+			],
+			"objectFolderExternalReferenceCode": "B5A8-ROLE-MAPPING-SYSTEM",
+			"objectRelationships": [
+				{
+					"deletionType": "prevent",
+					"externalReferenceCode": "B5A8-ASSET-TO-B5A8-ROLE-ASSIGNMENT",
+					"label": {
+						"en_US": "B5A8 Asset To B5A8 Role Assignment"
+					},
+					"name": "b5A8AssetToB5A8RoleAssignment",
+					"objectDefinitionExternalReferenceCode1": "B5A8-ASSET",
+					"objectDefinitionExternalReferenceCode2": "B5A8-ROLE-ASSIGNMENT",
+					"type": "oneToMany"
+				}
+			],
+			"panelCategoryKey": "",
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "B5A8 Assets"
+			},
+			"portlet": true,
+			"restContextPath": "/o/c/b5a8assets",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"titleObjectFieldName": "id"
+		},
+		{
+			"accountEntryRestricted": false,
+			"active": true,
+			"enableComments": false,
+			"enableObjectEntryHistory": false,
+			"externalReferenceCode": "B5A8-DEPARTMENT",
+			"label": {
+				"en_US": "B5A8 Department"
+			},
+			"modifiable": true,
+			"name": "B5A8Department",
+			"objectFields": [
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Department Name"
+					},
+					"localized": false,
+					"name": "departmentName",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Notes"
+					},
+					"localized": false,
+					"name": "notes",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Clob",
+					"unique": false
+				},
+				{
+					"DBType": "Long",
+					"businessType": "Relationship",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "L User To B5A8 Department"
+					},
+					"localized": false,
+					"name": "r_userToB5A8Department_userId",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectFieldSettings": [
+						{
+							"name": "objectDefinition1ShortName",
+							"value": "User"
+						},
+						{
+							"name": "objectRelationshipERCObjectFieldName",
+							"value": "r_userToB5A8Department_userERC"
+						}
+					],
+					"objectRelationshipExternalReferenceCode": "L-USER-TO-B5A8-DEPARTMENT",
+					"readOnly": "false",
+					"relationshipType": "oneToMany",
+					"required": false,
+					"state": false,
+					"type": "Long",
+					"unique": false
+				}
+			],
+			"objectFolderExternalReferenceCode": "B5A8-ROLE-MAPPING-SYSTEM",
+			"objectRelationships": [
+				{
+					"deletionType": "prevent",
+					"externalReferenceCode": "B5A8-DEPARTMENT-TO-B5A8-ROLE-ASSIGNMENT",
+					"label": {
+						"en_US": "B5A8 Department To B5A8 Role Assignment"
+					},
+					"name": "b5A8DepartmentToB5A8RoleAssignment",
+					"objectDefinitionExternalReferenceCode1": "B5A8-DEPARTMENT",
+					"objectDefinitionExternalReferenceCode2": "B5A8-ROLE-ASSIGNMENT",
+					"type": "oneToMany"
+				},
+				{
+					"deletionType": "prevent",
+					"externalReferenceCode": "B5A8-DEPARTMENT-TO-B5A8-ASSET",
+					"label": {
+						"en_US": "B5A8 Department To B5A8 Asset"
+					},
+					"name": "b5A8DepartmentToB5A8Asset",
+					"objectDefinitionExternalReferenceCode1": "B5A8-DEPARTMENT",
+					"objectDefinitionExternalReferenceCode2": "B5A8-ASSET",
+					"type": "oneToMany"
+				}
+			],
+			"panelCategoryKey": "",
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "B5A8 Departments"
+			},
+			"portlet": true,
+			"restContextPath": "/o/c/b5a8departments",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"titleObjectFieldName": "id"
+		},
+		{
+			"accountEntryRestricted": false,
+			"active": true,
+			"enableComments": false,
+			"enableObjectEntryHistory": false,
+			"externalReferenceCode": "B5A8-ROLE",
+			"label": {
+				"en_US": "B5A8 Role"
+			},
+			"modifiable": true,
+			"name": "B5A8Role",
+			"objectFields": [
+				{
+					"DBType": "String",
+					"businessType": "Text",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Role Name"
+					},
+					"localized": false,
+					"name": "roleName",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "String",
+					"businessType": "Picklist",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Role Type"
+					},
+					"listTypeDefinitionExternalReferenceCode": "B5A8-ROLE-TYPE",
+					"localized": false,
+					"name": "roleType",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "String",
+					"unique": false
+				},
+				{
+					"DBType": "Boolean",
+					"businessType": "Boolean",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "",
+					"label": {
+						"en_US": "IsDefault"
+					},
+					"localized": false,
+					"name": "isDefault",
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Boolean",
+					"unique": false
+				},
+				{
+					"DBType": "Clob",
+					"businessType": "LongText",
+					"indexed": true,
+					"indexedAsKeyword": false,
+					"indexedLanguageId": "en_US",
+					"label": {
+						"en_US": "Description"
+					},
+					"localized": false,
+					"name": "description",
+					"objectFieldSettings": [
+						{
+							"name": "showCounter",
+							"value": false
+						}
+					],
+					"readOnly": "false",
+					"required": false,
+					"state": false,
+					"type": "Clob",
+					"unique": false
+				}
+			],
+			"objectFolderExternalReferenceCode": "B5A8-ROLE-MAPPING-SYSTEM",
+			"objectRelationships": [
+				{
+					"deletionType": "prevent",
+					"externalReferenceCode": "B5A8-ROLE-T0-B5A8-ROLE-ASSIGNMENT",
+					"label": {
+						"en_US": "B5A8 Role To B5A8 Role Assignment"
+					},
+					"name": "b5A8RoleToB5A8RoleAssignment",
+					"objectDefinitionExternalReferenceCode1": "B5A8-ROLE",
+					"objectDefinitionExternalReferenceCode2": "B5A8-ROLE-ASSIGNMENT",
+					"type": "oneToMany"
+				}
+			],
+			"panelCategoryKey": "",
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "B5A8 Roles"
+			},
+			"portlet": true,
+			"restContextPath": "/o/c/b5a8roles",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"titleObjectFieldName": "id"
+		}
+	]
 }
