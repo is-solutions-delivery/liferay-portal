@@ -1,0 +1,50 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2025 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
+package com.liferay.learn.configuration;
+
+import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.aiplatform.v1.PredictionServiceSettings;
+
+import java.io.ByteArrayInputStream;
+
+import java.util.List;
+
+import org.springframework.ai.vertexai.embedding.VertexAiEmbeddingConnectionDetails;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * @author Nilton Vieira
+ */
+@Configuration
+public class VertexAiEmbeddingConfiguration {
+
+	@Bean
+	public VertexAiEmbeddingConnectionDetails
+			vertexAiEmbeddingConnectionDetails()
+		throws Exception {
+
+		return new VertexAiEmbeddingConnectionDetails(
+			"devcon25-476012", "us-central1", "google",
+			PredictionServiceSettings.newBuilder(
+			).setCredentialsProvider(
+				FixedCredentialsProvider.create(
+					GoogleCredentials.fromStream(
+						new ByteArrayInputStream(
+							_googleRAGCredentials.getBytes())
+					).createScoped(
+						List.of(
+							"https://www.googleapis.com/auth/cloud-platform")
+					))
+			).build());
+	}
+
+	@Value("${liferay.learn.google.rag.credentials}")
+	private String _googleRAGCredentials;
+
+}
