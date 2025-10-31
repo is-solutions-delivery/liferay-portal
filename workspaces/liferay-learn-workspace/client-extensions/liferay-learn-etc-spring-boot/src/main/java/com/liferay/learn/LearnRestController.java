@@ -253,7 +253,7 @@ public class LearnRestController extends BaseRestController {
 
 	private String _getGoogleAccessToken() throws Exception {
 		GoogleCredentials googleCredentials = GoogleCredentials.fromStream(
-			new ByteArrayInputStream(_googleCredentials.getBytes())
+			new ByteArrayInputStream(_googleTTSCredentials.getBytes())
 		).createScoped(
 			Collections.singletonList(
 				"https://www.googleapis.com/auth/cloud-platform")
@@ -514,8 +514,8 @@ public class LearnRestController extends BaseRestController {
 		).build();
 	}
 
-	@Value("${liferay.learn.google.credentials}")
-	private String _googleCredentials;
+	@Value("${liferay.learn.google.tts.credentials}")
+	private String _googleTTSCredentials;
 
 	@Autowired
 	private LiferayOAuth2AccessTokenManager _liferayOAuth2AccessTokenManager;
