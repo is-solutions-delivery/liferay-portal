@@ -2,7 +2,7 @@
 	<#assign assetId = ObjectEntry_objectEntryId.getData()?number />
 </#if>
 
-<#if ObjectEntry_status.getData()?? && ObjectEntry_status.getData() == 'approved'>
+<#if ObjectEntry_status.getData()?? && ObjectEntry_status.getData() == 'approved' >
 	<#if stringUtil.equals(locale, "en_US")>
 		<#assign createDate = ObjectEntry_createDate.getData()?datetime("M/d/yy h:mm a") />
 	<#else>
@@ -28,7 +28,7 @@
 				<a
 					class="btn btn-link btn-nm page-editor__editable" data-lfr-editable-id="link" data-lfr-editable-type="link"
 					data-tooltip-floating="true"
-					href="http://discuss.liferay.com"
+					href="http://discuss.liferay.com/"
 					id="fragment-txnc-link">
 						<@liferay_ui["message"] key="submit-feedback" />
 				</a>
@@ -69,21 +69,15 @@
 										<@liferay_ui["message"] key="written-by" />
 
 										<p class="author">
-											<#if (ObjectField_authorName.getData())??>
-												${ObjectField_authorName.getData()}
-											</#if>
+											${ObjectEntry_author.getData()}
 										</p>
 									</div>
 								</div>
 
 								<div class="col paragraph">
-									<p class="disclaimer-how-to d-none">
-										<@liferay_ui["message"] key="knowledge-article-header-disclaimer-how-to" />
-									</p>
+									<p class="disclaimer-how-to d-none">${languageUtil.get(locale, "knowledge-article-header-disclaimer-how-to", "How To articles are not official guidelines or officially supported documentation. They are community-contributed content and may not always reflect the latest updates to Liferay DXP. We welcome your feedback to improve How To articles!")}</p>
 
-									<p class="disclaimer-default d-none">
-										<@liferay_ui["message"] key="knowledge-article-header-disclaimer" />
-									</p>
+									<p class="disclaimer-default d-none">${languageUtil.get(locale, "knowledge-article-header-disclaimer", "While we make every effort to ensure this Knowledge Base is accurate, it may not always reflect the most recent updates or official guidelines.We appreciate your understanding and encourage you to reach out with any feedback or concerns.")}</p>
 								</div>
 							</div>
 						</div>
@@ -176,7 +170,7 @@
 		</div>
 	</div>
 <#else>
-	<meta content="0; URL='/not-found'" http-equiv="refresh" />
+	<meta http-equiv="refresh" content="0; URL='/not-found'" />
 </#if>
 
 <script>

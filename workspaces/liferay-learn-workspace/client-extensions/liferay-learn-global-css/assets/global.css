@@ -1338,7 +1338,11 @@ pre[class*='language-'] {
 		background-color:var(--color-neutral-1);
 		border-radius: var(--border-radius-lg);
 		margin-bottom: var(--spacer-3,1rem);
-		padding: var(--spacer-3, 1rem) ;
+		padding: var(--spacer-3, 1rem) var(--spacer-2, 0.5rem);
+
+		.component-button {
+			padding-right: 0px var(--spacer-2, 0.5rem);
+		}
 
 		.btn-link {
 			color: var(--color-neutral-10);
