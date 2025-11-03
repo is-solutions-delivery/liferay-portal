@@ -29,18 +29,20 @@ public class VertexAiEmbeddingConfiguration {
 			vertexAiEmbeddingConnectionDetails()
 		throws Exception {
 
+		FixedCredentialsProvider fixedCredentialsProvider = FixedCredentialsProvider.create(
+				GoogleCredentials.fromStream(
+						new ByteArrayInputStream(
+								_googleRAGCredentials.getBytes())
+				).createScoped(
+						List.of(
+								"https://www.googleapis.com/auth/cloud-platform")
+				));
+
 		return new VertexAiEmbeddingConnectionDetails(
 			"devcon25-476012", "us-central1", "google",
 			PredictionServiceSettings.newBuilder(
 			).setCredentialsProvider(
-				FixedCredentialsProvider.create(
-					GoogleCredentials.fromStream(
-						new ByteArrayInputStream(
-							_googleRAGCredentials.getBytes())
-					).createScoped(
-						List.of(
-							"https://www.googleapis.com/auth/cloud-platform")
-					))
+				fixedCredentialsProvider
 			).build());
 	}
 
