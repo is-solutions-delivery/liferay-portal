@@ -21,12 +21,13 @@ public class VertexAiGeminiChatModelConfiguration {
 
 	@Bean
 	public ChatClient chatClient() {
-		VertexAiGeminiChatOptions vertexAiGeminiChatOptions = VertexAiGeminiChatOptions.builder(
-		).model(
+		VertexAiGeminiChatOptions vertexAiGeminiChatOptions =
+			VertexAiGeminiChatOptions.builder(
+			).model(
 				"gemini-2.0-flash"
-		).temperature(
+			).temperature(
 				0.4
-		).build();
+			).build();
 
 		return ChatClient.create(
 			VertexAiGeminiChatModel.builder(
