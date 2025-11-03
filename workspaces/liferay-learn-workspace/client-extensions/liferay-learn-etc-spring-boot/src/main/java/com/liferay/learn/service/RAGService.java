@@ -79,6 +79,7 @@ public class RAGService extends BaseService {
 		).content();
 	}
 
+	@Autowired
 	private ChatClient _chatClient;
 
 	@Autowired
