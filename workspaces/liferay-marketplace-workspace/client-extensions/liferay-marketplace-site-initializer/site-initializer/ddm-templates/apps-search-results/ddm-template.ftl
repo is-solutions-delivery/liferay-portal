@@ -1,22 +1,37 @@
-<#assign
-	commerceContext = renderRequest.getAttribute("COMMERCE_CONTEXT")
-/>
+<#setting url_escaping_charset='UTF-8'>
+
+<#assign commerceContext = renderRequest.getAttribute("COMMERCE_CONTEXT") />
+
+<#assign productIds = []>
+<#list entries as entry>
+    <#if entry.getCProductId()?has_content>
+        <#assign productIds = productIds + [entry.getCProductId()]>
+    </#if>
+</#list>
+
+<#assign productIdsString = productIds?join(",")>
+
+<#assign apiUrl =
+    "/headless-commerce-delivery-catalog/v1.0/channels/"
+    + commerceContext.getCommerceChannelId()
+    + "/products?filter=" + ("productId in (" + productIdsString + ")")?url('UTF-8')
+    + "&accountId=-1&images.accountId=-1&nestedFields=productSpecifications,categories"
+>
+
+<#assign response = restClient.get(apiUrl)>
+<#assign products = response.items>
 
 <div class="apps-search-results">
 	<div class="cards-container pb-6">
-		<#if entries?has_content>
-			<#list entries as entry>
-				<#if entry?has_content>
+			<#list products as product>
 					<#assign
-						product = restClient.get("/headless-commerce-delivery-catalog/v1.0/channels/"+ commerceContext.getCommerceChannelId() +"/products/"+ entry.getCProductId() +"?accountId=-1&images.accountId=-1&nestedFields=productSpecifications,categories,images")
-
 						categories = product.categories![]
 						productSpecifications = product.productSpecifications![]
 
 						productAreas = categories?filter(productCategory -> productCategory.vocabulary?replace(" ", "-") == "marketplace-app-category")![]
 						productCategories = categories?filter(productCategory -> productCategory.vocabulary?replace(" ", "-") == "marketplace-category")![]
 						productCategory = productCategories[0]!""
-						productImage = cpContentHelper.getDefaultImageFileURL(commerceContext.getAccountEntry().getAccountEntryId(), entry.getCPDefinitionId())
+						productImage = cpContentHelper.getDefaultImageFileURL(commerceContext.getAccountEntry().getAccountEntryId(), product.id)
 
 						areasListSize = productAreas?size-1
 
@@ -39,7 +54,7 @@
 					<a class="app-search-results-card bg-white border-radius-medium d-flex flex-column mb-0 text-dark text-decoration-none" href=${cpContentHelper.getFriendlyURL(entry, themeDisplay)}>
 						<div class="align-items-center card-image-title-container d-flex">
 							<div class="image-container mr-2 rounded">
-								<img alt="${entry.getName()}" class="app-search-image" draggable="false" src="${productImage}" />
+								<img alt="${product.name}" class="app-search-image" draggable="false" src="${productImage}" />
 							</div>
 
 							<div>
@@ -58,7 +73,7 @@
 								</span>
 
 								<div class="product-title">
-									${entry.getName()}
+									${product.name}
 								</div>
 
 								<div class="developer-name mt-1">
@@ -104,9 +119,7 @@
 							</div>
 						</div>
 					</a>
-				</#if>
 			</#list>
-		</#if>
 	</div>
 </div>
 
