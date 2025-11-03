@@ -53,7 +53,7 @@ public class RAGRestController extends BaseRestController {
 		_ragService.addOrUpdateDocument(
 			jsonObject.getLong("assetEntryId"),
 			jsonObject.getString("assetEntryType"),
-			jsonObject.getString("content"));
+			jsonObject.getString("content"), jsonObject.getString("name"));
 
 		return ResponseEntity.noContent(
 		).build();
