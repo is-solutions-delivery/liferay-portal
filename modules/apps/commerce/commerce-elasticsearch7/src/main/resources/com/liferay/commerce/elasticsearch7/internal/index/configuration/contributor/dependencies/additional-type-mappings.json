@@ -77,6 +77,9 @@
 		"couponCode": {
 			"type": "keyword"
 		},
+		"cpProductId": {
+			"type": "integer"
+		},
 		"criterionType_organization_required_matches": {
 			"type": "integer"
 		},

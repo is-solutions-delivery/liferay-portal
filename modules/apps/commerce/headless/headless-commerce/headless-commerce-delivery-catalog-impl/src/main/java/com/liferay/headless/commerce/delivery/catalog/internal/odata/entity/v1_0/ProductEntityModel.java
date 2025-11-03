@@ -60,7 +60,8 @@ public class ProductEntityModel implements EntityModel {
 				locale -> "externalReferenceCode"),
 			new StringEntityField(
 				"name", locale -> Field.getSortableFieldName("name")),
-			new StringEntityField("productType", locale -> "productTypeName"));
+			new StringEntityField("productType", locale -> "productTypeName"),
+			new IntegerEntityField("productId", locale -> CPField.PRODUCT_ID));
 	}
 
 	@Override
