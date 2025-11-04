@@ -268,16 +268,15 @@ public class LearnRestController extends BaseRestController {
 
 		while (matcher.find()) {
 			String closingTag = matcher.group(3);
-			String innerContent = StringUtil.trim(matcher.group(
-					2
-			));
+			String innerContent = StringUtil.trim(matcher.group(2));
 			String openingTag = matcher.group(1);
 
-			String text = StringUtil.trim(innerContent.replaceAll(
-				"(?s)<[^>]+>", " "
-			).replaceAll(
-				"\\s+", " "
-			));
+			String text = StringUtil.trim(
+				innerContent.replaceAll(
+					"(?s)<[^>]+>", " "
+				).replaceAll(
+					"\\s+", " "
+				));
 
 			if (!text.matches(".*[.!?;:]$")) {
 				int lastCloseTagIndex = innerContent.lastIndexOf("</");
@@ -311,11 +310,12 @@ public class LearnRestController extends BaseRestController {
 
 		html = stringBuffer.toString();
 
-		return StringUtil.trim(html.replaceAll(
-			"(?s)<[^>]+>", " "
-		).replaceAll(
-			"\\s+", " "
-		));
+		return StringUtil.trim(
+			html.replaceAll(
+				"(?s)<[^>]+>", " "
+			).replaceAll(
+				"\\s+", " "
+			));
 	}
 
 	private String _convertHTMLTableToTextInline(String html) {
@@ -341,10 +341,7 @@ public class LearnRestController extends BaseRestController {
 						headTrMatcher.group(1));
 
 					while (headCellsMatcher.find()) {
-						headers.add(
-							_htmlReplace(
-								headCellsMatcher.group(1)
-							));
+						headers.add(_htmlReplace(headCellsMatcher.group(1)));
 					}
 				}
 			}
@@ -391,9 +388,7 @@ public class LearnRestController extends BaseRestController {
 				List<String> cells = new ArrayList<>();
 
 				while (cellMatcher.find()) {
-					String raw = _htmlReplace(
-						cellMatcher.group(1)
-					);
+					String raw = _htmlReplace(cellMatcher.group(1));
 
 					if (Objects.equals(raw, "✔") || Objects.equals(raw, "✓")) {
 						raw = "supported";
@@ -432,8 +427,8 @@ public class LearnRestController extends BaseRestController {
 				}
 			}
 
-			String trimmedTableDescriptionText = StringUtil.trim(tableDescription.toString(
-			));
+			String trimmedTableDescriptionText = StringUtil.trim(
+				tableDescription.toString());
 
 			String replacement = trimmedTableDescriptionText + " ";
 
@@ -444,20 +439,6 @@ public class LearnRestController extends BaseRestController {
 		tableMatcher.appendTail(stringBuffer);
 
 		return stringBuffer.toString();
-	}
-
-	private String _htmlReplace(String string) {
-		if (string == null) {
-			return "";
-		}
-
-		return StringUtil.trim(StringUtil.replace(
-			string,
-			new String[] {
-				"&nbsp;", "&NBSP;", "\u00A0", "&amp;", "&lt;", "&gt;", "&quot;",
-				"&#39;"
-			},
-			new String[] {" ", " ", " ", "&", "<", ">", "\"", "'"}));
 	}
 
 	private Map<String, Object> _generateAudioResource(
@@ -746,6 +727,21 @@ public class LearnRestController extends BaseRestController {
 		return map;
 	}
 
+	private String _htmlReplace(String string) {
+		if (string == null) {
+			return "";
+		}
+
+		return StringUtil.trim(
+			StringUtil.replace(
+				string,
+				new String[] {
+					"&nbsp;", "&NBSP;", "\u00A0", "&amp;", "&lt;", "&gt;",
+					"&quot;", "&#39;"
+				},
+				new String[] {" ", " ", " ", "&", "<", ">", "\"", "'"}));
+	}
+
 	private void _postUserBadge(long quizId, long userId) {
 		JSONArray jsonArray = new JSONObject(
 			get(
@@ -803,11 +799,12 @@ public class LearnRestController extends BaseRestController {
 		List<String> parts = new ArrayList<>();
 		StringBundler sb = new StringBundler();
 
-		String ssmlContent = StringUtil.trim(ssml.replaceFirst(
-			"^<speak>", ""
-		).replaceFirst(
-			"</speak>$", ""
-		));
+		String ssmlContent = StringUtil.trim(
+			ssml.replaceFirst(
+				"^<speak>", ""
+			).replaceFirst(
+				"</speak>$", ""
+			));
 
 		String[] sentences = _convertHTMLListToTextInline(
 			_convertHTMLTableToTextInline(_htmlReplace(ssmlContent))
@@ -817,9 +814,7 @@ public class LearnRestController extends BaseRestController {
 
 		for (String sentence : sentences) {
 			if ((sb.length() + sentence.length()) > maxLength) {
-				parts.add(
-					StringUtil.trim(sb.toString(
-					)));
+				parts.add(StringUtil.trim(sb.toString()));
 				sb = new StringBundler();
 			}
 
@@ -831,9 +826,7 @@ public class LearnRestController extends BaseRestController {
 		}
 
 		if (sb.length() > 0) {
-			parts.add(
-				sb.toString(
-				));
+			parts.add(sb.toString());
 		}
 
 		return parts;
