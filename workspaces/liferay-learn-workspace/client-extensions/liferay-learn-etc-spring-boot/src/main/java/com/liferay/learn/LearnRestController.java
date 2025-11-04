@@ -279,16 +279,11 @@ public class LearnRestController extends BaseRestController {
 				int lastCloseTagIndex = innerContent.lastIndexOf("</");
 
 				if (lastCloseTagIndex != -1) {
-					String contentBeforeClosingTag = _replace(
-						innerContent.substring(0, lastCloseTagIndex), "",
-						"\\s+$");
-
-					String closingTagAndContentAfter = innerContent.substring(
-						lastCloseTagIndex);
-
 					innerContent = StringBundler.concat(
-						contentBeforeClosingTag, ".",
-						closingTagAndContentAfter);
+						_replace(
+							innerContent.substring(0, lastCloseTagIndex), "",
+							"\\s+$"),
+						".", innerContent.substring(lastCloseTagIndex));
 				}
 				else {
 					innerContent = innerContent + ".";
@@ -304,10 +299,10 @@ public class LearnRestController extends BaseRestController {
 
 		matcher.appendTail(stringBuffer);
 
-		html = stringBuffer.toString();
-
 		return StringUtil.trim(
-			_replace(_replace(html, " ", "(?s)<[^>]+>"), " ", "\\s+"));
+			_replace(
+				_replace(stringBuffer.toString(), " ", "(?s)<[^>]+>"), " ",
+				"\\s+"));
 	}
 
 	private String _convertHTMLTableToTextInline(String html) {
@@ -347,12 +342,10 @@ public class LearnRestController extends BaseRestController {
 
 			Matcher trMatcher = _trPattern.matcher(bodyHTML);
 
-			StringBuilder tableDescription = new StringBuilder("Table: ");
+			StringBundler tableSB = new StringBundler("Table: ");
 
 			if (!headers.isEmpty()) {
-				StringBundler sb = new StringBundler();
-
-				sb.append("Column headings: ");
+				StringBundler sb = new StringBundler("Column headings: ");
 
 				for (int i = 0; i < headers.size(); i++) {
 					sb.append(headers.get(i));
@@ -365,7 +358,7 @@ public class LearnRestController extends BaseRestController {
 					}
 				}
 
-				tableDescription.append(sb);
+				tableSB.append(sb);
 			}
 
 			int row = 0;
@@ -373,10 +366,7 @@ public class LearnRestController extends BaseRestController {
 			while (trMatcher.find()) {
 				row++;
 
-				String tr = trMatcher.group(1);
-
-				Matcher cellMatcher = _cellPattern.matcher(tr);
-
+				Matcher cellMatcher = _cellPattern.matcher(trMatcher.group(1));
 				List<String> cells = new ArrayList<>();
 
 				while (cellMatcher.find()) {
@@ -393,39 +383,25 @@ public class LearnRestController extends BaseRestController {
 				}
 
 				if (!cells.isEmpty()) {
-					tableDescription.append(
-						"Row "
-					).append(
-						row
-					).append(
-						". "
-					);
+					tableSB.append("Row ");
+					tableSB.append(row);
+					tableSB.append(". ");
 
 					for (int c = 0; c < cells.size(); c++) {
-						String colName =
+						tableSB.append(
 							(c < headers.size()) ? headers.get(c) :
-								("Column " + (c + 1));
-
-						tableDescription.append(
-							colName
-						).append(
-							": "
-						).append(
-							cells.get(c)
-						).append(
-							". "
-						);
+								("Column " + (c + 1)));
+						tableSB.append(": ");
+						tableSB.append(cells.get(c));
+						tableSB.append(". ");
 					}
 				}
 			}
 
-			String trimmedTableDescriptionText = StringUtil.trim(
-				tableDescription.toString());
-
-			String replacement = trimmedTableDescriptionText + " ";
-
 			tableMatcher.appendReplacement(
-				stringBuffer, Matcher.quoteReplacement(replacement));
+				stringBuffer,
+				Matcher.quoteReplacement(
+					StringUtil.trim(tableSB.toString()) + " "));
 		}
 
 		tableMatcher.appendTail(stringBuffer);
@@ -773,9 +749,9 @@ public class LearnRestController extends BaseRestController {
 	}
 
 	private String _replace(String string, String replacement, String regex) {
-		return Pattern.compile(
-			regex
-		).matcher(
+		Pattern pattern = Pattern.compile(regex);
+
+		return pattern.matcher(
 			string
 		).replaceAll(
 			replacement
@@ -787,11 +763,7 @@ public class LearnRestController extends BaseRestController {
 		StringBundler sb = new StringBundler();
 
 		String ssmlContent = StringUtil.trim(
-			ssml.replaceFirst(
-				"^<speak>", ""
-			).replaceFirst(
-				"</speak>$", ""
-			));
+			_replace(_replace(ssml, "", "^<speak>"), "", "</speak>$"));
 
 		String[] sentences = _convertHTMLListToTextInline(
 			_convertHTMLTableToTextInline(_unescapeHTML(ssmlContent))
@@ -805,11 +777,8 @@ public class LearnRestController extends BaseRestController {
 				sb = new StringBundler();
 			}
 
-			sb.append(
-				sentence
-			).append(
-				" "
-			);
+			sb.append(sentence);
+			sb.append(" ");
 		}
 
 		if (sb.length() > 0) {
