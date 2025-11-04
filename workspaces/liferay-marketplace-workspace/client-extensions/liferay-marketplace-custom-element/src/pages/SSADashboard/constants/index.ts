@@ -96,3 +96,16 @@ export const siteInitializers = [
 		name: 'Speedwell',
 	},
 ];
+
+export const ssaRoles = [
+	{
+		key: 'SSA',
+		label: 'SSA',
+		value: 'SSA',
+	},
+	{
+		key: 'SSA Admin',
+		label: 'SSA Admin',
+		value: 'SSA Admin',
+	},
+];

@@ -334,6 +334,9 @@ export default {
 	'instance-size': 'Instance Size',
 	'insufficient-resource-requirements': 'Insufficient Resource Requirements',
 	'intl-code': 'Intl. Code',
+	'invite': 'Invite',
+	'invite-new-user': 'Invite New User',
+	'invite-user': 'Invite User',
 	'ip-addresses': 'IP Addresses',
 	'join-an-existing-business-account-e-g-your-company-and-gain-full-access':
 		'Join an existing business account (e.g., your company) and gain full access.',
@@ -381,7 +384,11 @@ export default {
 		'Manage and publish apps on the Marketplace',
 	'manage-app': 'Manage App',
 	'manage-license-keys': 'Manage License Key(s)',
+	'manage-roles': 'Manage Roles',
+	'manage-the-roles-associated-with-this-user-roles-determine-what-features-permissions-and-areas-of-the-platform-the-user-can-access-so-updating-them-allows-you-to-control-their-level-of-access-and-responsibilities':
+		'Manage the roles associated with this user. Roles determine what features, permissions, and areas of the platform the user can access, so updating them allows you to control their level of access and responsibilities.',
 	'manage-trial': 'Manage Trial',
+	'manage-users': 'Manage Users',
 	'manage-your-current-trials': 'Manage your current trials',
 	'manage-your-teams-trial': "Manage your team's trial",
 	'mark-as-paid': 'Mark as Paid',
@@ -402,6 +409,7 @@ export default {
 	'move-up': 'Move Up',
 	'mp-commission': 'MP Commission',
 	'my-apps': 'My Apps',
+	'my-saas-demos': 'My SaaS Demos',
 	'my-solutions': 'My Solutions',
 	'name': 'Name',
 	'net-price': 'Net Price',
@@ -533,6 +541,7 @@ export default {
 	'reject-request': 'Reject Request',
 	'remove': 'Remove',
 	'remove-a-version': 'Remove a Version',
+	'remove-user': 'Remove User',
 	'request-a-marketplace-publisher-account':
 		'Request a Marketplace Publisher Account',
 	'request-account': 'Request Account',
@@ -549,6 +558,8 @@ export default {
 	'review-and-submit-solution': 'Review and Submit Solution',
 	'review-the-new-publisher-info-and-the-liferay-marketplace-terms-before-proceeding':
 		'Review the new publisher info and the Liferay Marketplace terms before proceeding.',
+	'roles': 'Roles',
+	'saas-environments': 'SaaS Environments',
 	'save': 'Save',
 	'save-as-a-draft-exit': 'Save as a Draft & Exit',
 	'save-as-draft': 'Save as Draft',
@@ -716,6 +727,8 @@ export default {
 		'Use any local ZIP files to upload. Max file size is 500MB',
 	'use-one-of-the-following-methods-to-provide-your-app-builds':
 		'Use one of the following methods to provide your app builds.',
+	'use-their-email-address-to-invite-them-as-an-ssa-user-or-admin-and-define-their-access-level':
+		'Use their email address to invite them as an SSA user or admin and define their access level.',
 	'user-account': 'User Account',
 	'user-email': 'User Email',
 	'users-requests-to-become-a-publisher':

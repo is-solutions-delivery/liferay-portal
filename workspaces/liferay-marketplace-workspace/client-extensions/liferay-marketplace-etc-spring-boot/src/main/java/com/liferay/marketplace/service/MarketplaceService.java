@@ -12,6 +12,7 @@ import com.liferay.headless.admin.user.client.resource.v1_0.AccountResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.AccountRoleResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.PostalAddressResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.UserAccountResource;
+import com.liferay.headless.admin.user.client.resource.v1_0.RoleResource;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Catalog;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.CustomField;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Product;
@@ -284,6 +285,17 @@ public class MarketplaceService extends BaseService {
 		}
 
 		return version;
+	}
+
+	public RoleResource getRoleResource() throws Exception {
+		return RoleResource.builder(
+		).header(
+				HttpHeaders.AUTHORIZATION,
+				_liferayOAuth2AccessTokenManager.getAuthorization(
+						"liferay-marketplace-etc-spring-boot-oahs")
+		).endpoint(
+				new URL(lxcDXPServerProtocol + "://" + lxcDXPMainDomain)
+		).build();
 	}
 
 	public Sku getSku(Long id) throws Exception {

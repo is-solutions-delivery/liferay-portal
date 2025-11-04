@@ -12,6 +12,7 @@ import SaaSTrials from './pages/SaaSTrial';
 import TrialDetails from './pages/TrialDetails';
 
 import './index.scss';
+import ManageUsers from './pages/ManageUsers';
 
 const SSADashboardRouter = () => (
 	<HashRouter>
@@ -22,6 +23,8 @@ const SSADashboardRouter = () => (
 				<Route element={<SaaSTrials />} path="saas-trials" />
 
 				<Route element={<TrialDetails />} path="details/:orderId" />
+
+				<Route element={<ManageUsers />} path='manage-users'/>
 			</Route>
 		</Routes>
 	</HashRouter>

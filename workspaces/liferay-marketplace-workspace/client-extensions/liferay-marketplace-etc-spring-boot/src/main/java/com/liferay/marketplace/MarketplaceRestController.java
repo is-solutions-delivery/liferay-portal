@@ -6,14 +6,12 @@
 package com.liferay.marketplace;
 
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
-import com.liferay.headless.admin.user.client.dto.v1_0.Account;
-import com.liferay.headless.admin.user.client.dto.v1_0.AccountRole;
-import com.liferay.headless.admin.user.client.dto.v1_0.PostalAddress;
-import com.liferay.headless.admin.user.client.dto.v1_0.UserAccount;
+import com.liferay.headless.admin.user.client.dto.v1_0.*;
 import com.liferay.headless.admin.user.client.resource.v1_0.AccountResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.AccountRoleResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.PostalAddressResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.UserAccountResource;
+import com.liferay.headless.admin.user.client.resource.v1_0.RoleResource;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Catalog;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Product;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.BillingAddress;
@@ -61,6 +59,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -79,6 +78,32 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 @RequestMapping("/marketplace")
 @RestController
 public class MarketplaceRestController extends BaseRestController {
+
+	@DeleteMapping("/assign-role/{roleId}/user-account/{userId}")
+	public ResponseEntity<Map<String, Object>> deleteAssignRoleUserAccount(
+			@PathVariable Long roleId,
+			@PathVariable Long userId) {
+		try {
+			RoleResource roleResource = _marketplaceService.getRoleResource();
+
+			roleResource.deleteRoleUserAccountAssociation(roleId, userId);
+
+			Map<String, Object> response = Map.of(
+					"status", "success",
+					"message", "Role removed successfully"
+			);
+
+			return ResponseEntity.ok(response);
+		}
+		catch (Exception e) {
+			Map<String, Object> error = Map.of(
+					"status", "error",
+					"message", "Failed to remove user role",
+					"details", e.getMessage()
+			);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+		}
+	}
 
 	@GetMapping("orders/export")
 	public ResponseEntity<StreamingResponseBody> getOrdersExport(
@@ -206,8 +231,7 @@ public class MarketplaceRestController extends BaseRestController {
 		UserAccountResource userAccountResource =
 			_marketplaceService.getUserAccountResource();
 
-		UserAccount userAccount = userAccountResource.getUserAccount(
-			GetterUtil.getLong(jwt.getClaimAsString("sub")));
+		UserAccount userAccount = userAccountResource.getMyUserAccount();
 
 		String emailAddress = userAccount.getEmailAddress();
 
@@ -234,6 +258,33 @@ public class MarketplaceRestController extends BaseRestController {
 		}
 
 		return ResponseEntity.ok(account);
+	}
+
+	@PostMapping("/assign-role/{roleId}/user-account/{userId}")
+	public ResponseEntity<Map<String, Object>> postAssignRoleUserAccount(
+			@PathVariable Long roleId,
+			@PathVariable Long userId) throws Exception {
+
+		System.out.println("POST Assign User Role " + roleId + ", " + userId);
+
+		RoleResource roleResource = _marketplaceService.getRoleResource();
+
+		try {
+			roleResource.postRoleUserAccountAssociation(roleId, userId);
+		} catch (Exception exception) {
+			Map<String, Object> error = Map.of(
+					"status", "error",
+					"message", "Failed to add user role",
+					"details", exception.getMessage()
+			);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+		}
+		Map<String, Object> response = Map.of(
+				"status", "success",
+				"message", "Role added successfully"
+		);
+
+		return ResponseEntity.ok(response);
 	}
 
 	@PostMapping("product/purchase")
