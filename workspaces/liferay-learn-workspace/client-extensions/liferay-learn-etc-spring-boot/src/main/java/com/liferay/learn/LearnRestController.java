@@ -748,11 +748,11 @@ public class LearnRestController extends BaseRestController {
 			).toUri());
 	}
 
-	private String _replace(String string, String replacement, String regex) {
+	private String _replace(String s, String replacement, String regex) {
 		Pattern pattern = Pattern.compile(regex);
 
 		return pattern.matcher(
-			string
+			s
 		).replaceAll(
 			replacement
 		);
