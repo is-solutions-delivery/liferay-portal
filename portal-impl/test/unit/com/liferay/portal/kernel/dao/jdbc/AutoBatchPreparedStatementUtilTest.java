@@ -177,7 +177,7 @@ public class AutoBatchPreparedStatementUtilTest {
 	}
 
 	@Test
-	public void testConcurrentWaitingForFutures() throws SQLException {
+	public void testConcurrentWaitingForFutures() throws Exception {
 		PropsUtil.set(PropsKeys.HIBERNATE_JDBC_BATCH_SIZE, "0");
 
 		doTestConcurrentWaitingForFutures(true);

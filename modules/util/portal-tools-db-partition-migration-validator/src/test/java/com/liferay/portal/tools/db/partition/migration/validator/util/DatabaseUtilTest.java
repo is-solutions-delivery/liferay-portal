@@ -28,7 +28,7 @@ import org.junit.Test;
 public class DatabaseUtilTest extends BaseTestCase {
 
 	@Before
-	public void setUp() throws SQLException {
+	public void setUp() throws Exception {
 		mockGetColumns(
 			Arrays.asList("Table1", "Company", "Table2", "Object_x_25000"));
 		mockGetCompanies(Arrays.asList(_company1, _company2));

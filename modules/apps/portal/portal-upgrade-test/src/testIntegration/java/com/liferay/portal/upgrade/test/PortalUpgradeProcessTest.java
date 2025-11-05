@@ -437,7 +437,7 @@ public class PortalUpgradeProcessTest {
 	private static class InnerPortalUpgradeProcess
 		extends PortalUpgradeProcess {
 
-		public void close() throws SQLException {
+		public void close() throws Exception {
 			connection.close();
 		}
 
@@ -448,11 +448,11 @@ public class PortalUpgradeProcessTest {
 				connection, newSchemaVersion);
 		}
 
-		public void updateVersionDisplayName() throws SQLException {
+		public void updateVersionDisplayName() throws Exception {
 			PortalUpgradeProcess.updateVersionDisplayName(connection);
 		}
 
-		private InnerPortalUpgradeProcess() throws SQLException {
+		private InnerPortalUpgradeProcess() throws Exception {
 			connection = DataAccess.getConnection();
 		}
 

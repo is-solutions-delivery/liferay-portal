@@ -45,7 +45,7 @@ public class OutputBlobTest {
 	}
 
 	@Test
-	public void testFree() throws SQLException {
+	public void testFree() throws Exception {
 		InputStream inputStream = new BufferedInputStream(
 			new ByteArrayInputStream(new byte[10]));
 
@@ -126,7 +126,7 @@ public class OutputBlobTest {
 	}
 
 	@Test
-	public void testGetBytes() throws SQLException {
+	public void testGetBytes() throws Exception {
 		OutputBlob outputBlob = new OutputBlob(
 			new ByteArrayInputStream(new byte[10]), 10);
 

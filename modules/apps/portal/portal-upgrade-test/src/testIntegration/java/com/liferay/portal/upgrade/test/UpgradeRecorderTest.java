@@ -277,7 +277,7 @@ public class UpgradeRecorderTest {
 	}
 
 	@Test
-	public void testFailureStatusByPendingCoreUpgrade() throws SQLException {
+	public void testFailureStatusByPendingCoreUpgrade() throws Exception {
 		try (Connection connection = DataAccess.getConnection()) {
 			Version version = PortalUpgradeProcess.getCurrentSchemaVersion(
 				connection);

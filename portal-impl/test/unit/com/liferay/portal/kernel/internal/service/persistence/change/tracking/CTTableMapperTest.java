@@ -350,7 +350,7 @@ public class CTTableMapperTest {
 	}
 
 	@Test
-	public void testBooleanParamSetter() throws SQLException {
+	public void testBooleanParamSetter() throws Exception {
 		ParamSetter booleanParamSetter = ReflectionTestUtil.getFieldValue(
 			_ctTableMapper, "_booleanParamSetter");
 
@@ -2601,7 +2601,7 @@ public class CTTableMapperTest {
 		implements MappingSqlQuery<Void> {
 
 		@Override
-		public List<Void> execute(Object... params) throws SQLException {
+		public List<Void> execute(Object... params) throws Exception {
 			Assert.assertEquals(Arrays.toString(params), 1, params.length);
 
 			PreparedStatement preparedStatement =

@@ -127,7 +127,7 @@ public class PreupgradeVerifyDatabaseStateTest
 	}
 
 	@Test
-	public void testVerifyPreupgradeMissingTable() throws SQLException {
+	public void testVerifyPreupgradeMissingTable() throws Exception {
 		ServiceComponent serviceComponent =
 			_serviceComponentLocalService.createServiceComponent(
 				RandomTestUtil.nextLong());
@@ -227,7 +227,7 @@ public class PreupgradeVerifyDatabaseStateTest
 		return new PreupgradeVerifyDatabaseState();
 	}
 
-	private String _getNormalizedName(String tableName) throws SQLException {
+	private String _getNormalizedName(String tableName) throws Exception {
 		try (Connection connection = DataAccess.getConnection()) {
 			DBInspector dbInspector = new DBInspector(connection);
 
