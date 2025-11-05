@@ -117,13 +117,13 @@ public class CustomFDSSerializer
 		Map<String, Object> properties = getDataSetObjectEntryProperties(
 			fdsName, httpServletRequest);
 
+		String additionalAPIURLParameters = String.valueOf(
+			properties.get("additionalAPIURLParameters"));
+
 		String systemAdditionalAPIURLParameters =
 			_systemFDSSerializer.serializeAdditionalAPIURLParameters(
 				fdsName, httpServletRequest, interpolate,
 				tokenResolutionsJSONObject);
-
-		String additionalAPIURLParameters = String.valueOf(
-			properties.get("additionalAPIURLParameters"));
 
 		if (Validator.isNotNull(systemAdditionalAPIURLParameters)) {
 			if (Validator.isNotNull(additionalAPIURLParameters)) {
