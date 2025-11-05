@@ -41,12 +41,12 @@ public class ObjectActionCourseRestController extends BaseRestController {
 					"/o/c/p2s3courses"
 				).queryParam(
 					"fields",
-					"id,module.lessonDurationMinutes,module.lessons," +
-						"module.quizDurationMinutes,module.quizzes"
+					"id,p2s3CourseToP2S3Modules.lessonDurationMinutes,p2s3CourseToP2S3Modules.lessons," +
+						"p2s3CourseToP2S3Modules.quizDurationMinutes,p2s3CourseToP2S3Modules.quizzes"
 				).queryParam(
-					"filter", "module/id eq '" + _getModuleId(json) + "'"
+					"filter", "p2s3CourseToP2S3Modules/id eq '" + _getModuleId(json) + "'"
 				).queryParam(
-					"nestedFields", "module"
+					"nestedFields", "p2s3CourseToP2S3Modules"
 				).build(
 				).toUri()));
 
@@ -57,7 +57,7 @@ public class ObjectActionCourseRestController extends BaseRestController {
 		patch(
 			"Bearer " + jwt.getTokenValue(),
 			_getPayloadJSONObject(
-				itemJSONObject.getJSONArray("module")
+				itemJSONObject.getJSONArray("p2s3CourseToP2S3Modules")
 			).toString(),
 			UriComponentsBuilder.fromPath(
 				"/o/c/p2s3courses/" + itemJSONObject.getLong("id")

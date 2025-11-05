@@ -176,11 +176,11 @@ public class LearnRestController extends BaseRestController {
 						"filter", "quizId eq '" + quizId + "'"
 					).queryParam(
 						"fields",
-						"id,position,question,questionType,quizAnswers," +
-							"quizAnswers.answer,quizAnswers.id," +
-								"quizAnswers.position"
+						"id,position,question,questionType,p2s3QuizQuestionToP2S3QuizAnswers," +
+							"p2s3QuizQuestionToP2S3QuizAnswers.answer,p2s3QuizQuestionToP2S3QuizAnswers.id," +
+								"p2s3QuizQuestionToP2S3QuizAnswers.position"
 					).queryParam(
-						"nestedFields", "quizAnswers"
+						"nestedFields", "p2s3QuizQuestionToP2S3QuizAnswers"
 					).queryParam(
 						"pageSize", "500"
 					).queryParam(
@@ -211,15 +211,15 @@ public class LearnRestController extends BaseRestController {
 						"fields",
 						StringBundler.concat(
 							"id,r_p2s3ModuleToP2S3Quizzes_c_p2s3ModuleId,durationMinutes,passingScore",
-							",isKnowledgeCheck,quizQuestions.id,quizQuestions.",
-							"position,quizQuestions.question,quizQuestions.",
-							"questionType,quizQuestions.questionTotalScore,",
-							"quizQuestions.quizAnswers,quizQuestions.",
-							"quizAnswers.id,quizQuestions.quizAnswers.position",
-							",quizQuestions.quizAnswers.answer,quizQuestions.",
-							"quizAnswers.score")
+							",isKnowledgeCheck,p2s3QuizToP2S3QuizQuestions.id,p2s3QuizToP2S3QuizQuestions.",
+							"position,p2s3QuizToP2S3QuizQuestions.question,p2s3QuizToP2S3QuizQuestions.",
+							"questionType,p2s3QuizToP2S3QuizQuestions.questionTotalScore,",
+							"p2s3QuizToP2S3QuizQuestions.p2s3QuizQuestionToP2S3QuizAnswers,p2s3QuizToP2S3QuizQuestions.",
+							"p2s3QuizQuestionToP2S3QuizAnswers.id,p2s3QuizToP2S3QuizQuestions.p2s3QuizQuestionToP2S3QuizAnswers.position",
+							",p2s3QuizToP2S3QuizQuestions.p2s3QuizQuestionToP2S3QuizAnswers.answer,p2s3QuizToP2S3QuizQuestions.",
+							"p2s3QuizQuestionToP2S3QuizAnswers.score")
 					).queryParam(
-						"nestedFields", "quizQuestions,quizAnswers"
+						"nestedFields", "p2s3QuizToP2S3QuizQuestions,p2s3QuizQuestionToP2S3QuizAnswers"
 					).queryParam(
 						"nestedFieldsDepth", "2"
 					).queryParam(

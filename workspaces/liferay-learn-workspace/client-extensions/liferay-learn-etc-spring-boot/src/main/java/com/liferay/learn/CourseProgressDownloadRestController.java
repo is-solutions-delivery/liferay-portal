@@ -90,7 +90,7 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 					).queryParam(
 						"filter", "isKnowledgeCheck eq false"
 					).queryParam(
-						"nestedFields", "module"
+						"nestedFields", "p2s3CourseToP2S3Modules"
 					).queryParam(
 						"page", i
 					).queryParam(
@@ -146,7 +146,7 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 							"active eq true and dateModified lt {endDate} " +
 								"and dateModified gt {startDate}"
 						).queryParam(
-							"nestedFields", "course,user"
+							"nestedFields", "p2s3CourseToP2S3Enrollments,user"
 						).queryParam(
 							"page", i
 						).queryParam(
