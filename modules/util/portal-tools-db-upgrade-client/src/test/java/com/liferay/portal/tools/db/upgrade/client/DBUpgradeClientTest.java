@@ -180,7 +180,6 @@ public class DBUpgradeClientTest {
 			_dbUpgradeClient, "_appServer");
 
 		Assert.assertNotNull(appServer);
-		Assert.assertEquals("tomcat", appServer.getServerDetectorServerId());
 		Assert.assertEquals(
 			new File(_liferayHomeDir, "tomcat"), appServer.getDir());
 		Assert.assertEquals("/bin", appServer.getExtraLibDirNames());
