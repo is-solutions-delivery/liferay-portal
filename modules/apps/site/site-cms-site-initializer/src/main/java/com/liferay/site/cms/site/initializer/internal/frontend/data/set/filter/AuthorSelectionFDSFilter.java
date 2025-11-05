@@ -81,7 +81,7 @@ public class AuthorSelectionFDSFilter extends BaseSelectionFDSFilter {
 			return selectionFDSFilterItems;
 		}
 
-		TreeSet<User> users = new TreeSet<>(
+		Set<User> users = new TreeSet<>(
 			Comparator.comparing(User::getFullName));
 
 		users.addAll(
