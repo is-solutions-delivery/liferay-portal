@@ -7,21 +7,21 @@ liferay-learn-etc-spring-boot-oahs:
     scopes:
         -   c_article.everything
         -   c_attachment.everything
-        -   c_badge.everything.read
-        -   c_course.everything
-        -   c_enrollment.everything
-        -   c_externalmedia.everything
-        -   c_learningpath.everything
-        -   c_learningpathstep.everything
-        -   c_lesson.everything
-        -   c_module.everything
+        -   c_p2s3badge.everything.read
+        -   c_p2s3course.everything
+        -   c_p2s3enrollment.everything
+        -   c_p2s3externalmedia.everything
+        -   c_p2s3learningpath.everything
+        -   c_p2s3learningpathstep.everything
+        -   c_p2s3lesson.everything
+        -   c_p2s3module.everything
         -   c_p2s3examresult.everything
         -   c_p2s3examresultssynchronization.everything
-        -   c_quiz.everything
-        -   c_quizanswer.everything.read
-        -   c_quizquestion.everything.read
-        -   c_quizresult.everything
-        -   c_userbadge.everything
+        -   c_p2s3quiz.everything
+        -   c_p2s3quizanswer.everything.read
+        -   c_p2s3quizquestion.everything.read
+        -   c_p2s3quizresult.everything
+        -   c_p2s3userbadge.everything
         -   Liferay.Headless.Admin.User.everything
         -   Liferay.Object.Admin.REST.everything.read
     type: oAuthApplicationHeadlessServer
@@ -31,12 +31,12 @@ liferay-learn-etc-spring-boot-oaua:
     .serviceScheme: http
     name: Liferay Learn Etc Spring Boot OAuth Application User Agent
     scopes:
-        -   c_course.everything
-        -   c_lesson.everything
-        -   c_module.everything
+        -   c_p2s3course.everything
+        -   c_p2s3lesson.everything
+        -   c_p2s3module.everything
         -   c_p2s3examresult.everything
         -   c_p2s3examresultssynchronization.everything
-        -   c_quiz.everything
+        -   c_p2s3quiz.everything
     type: oAuthApplicationUserAgent
 liferay-learn-etc-spring-boot-object-action-course:
     name: Liferay Learn Etc Spring Boot Object Action Course
