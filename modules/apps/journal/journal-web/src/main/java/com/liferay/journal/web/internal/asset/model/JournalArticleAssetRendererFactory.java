@@ -84,8 +84,6 @@ public class JournalArticleAssetRendererFactory
 
 	@Override
 	public long getAssetEntryClassPK(JournalArticle journalArticle) {
-		//		throws PortalException {
-
 		AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
 			getClassName(), journalArticle.getId());
 
