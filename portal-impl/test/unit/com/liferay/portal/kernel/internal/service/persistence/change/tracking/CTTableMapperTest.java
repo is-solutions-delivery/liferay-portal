@@ -41,7 +41,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 import java.util.ArrayList;
 import java.util.Arrays;

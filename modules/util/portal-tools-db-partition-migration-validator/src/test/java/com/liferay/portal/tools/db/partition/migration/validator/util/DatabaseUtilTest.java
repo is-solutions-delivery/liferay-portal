@@ -12,8 +12,6 @@ import com.liferay.portal.tools.db.partition.migration.validator.Company;
 import com.liferay.portal.tools.db.partition.migration.validator.LiferayDatabase;
 import com.liferay.portal.tools.db.partition.migration.validator.Release;
 
-import java.sql.SQLException;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

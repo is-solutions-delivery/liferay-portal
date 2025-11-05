@@ -19,7 +19,6 @@ import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 import com.liferay.portal.upgrade.v7_0_0.UpgradeCompanyId;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import org.junit.After;
 import org.junit.AfterClass;
