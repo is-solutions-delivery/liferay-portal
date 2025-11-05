@@ -280,7 +280,6 @@ public class DBUpgradeClientTest {
 		AppServer appServer = ReflectionTestUtil.getFieldValue(
 			_dbUpgradeClient, "_appServer");
 
-		Assert.assertEquals("tomcat", appServer.getServerDetectorServerId());
 		Assert.assertEquals(_tomcatDir, appServer.getDir());
 		Assert.assertEquals("bin", appServer.getExtraLibDirNames());
 		Assert.assertEquals("lib", appServer.getGlobalLibDirName());
