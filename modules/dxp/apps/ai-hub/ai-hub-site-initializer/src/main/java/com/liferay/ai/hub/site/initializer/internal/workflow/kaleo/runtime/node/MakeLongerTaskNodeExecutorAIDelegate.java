@@ -22,7 +22,7 @@ import org.osgi.service.component.annotations.Component;
 public class MakeLongerTaskNodeExecutorAIDelegate
 	extends BaseTaskNodeExecutorAIDelegate {
 
-	public static final String KEY = "makeLonger";
+	public static final String KEY = "make-longer";
 
 	@Override
 	public String getKey() {
