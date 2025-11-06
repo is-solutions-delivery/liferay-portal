@@ -44,7 +44,7 @@ public class ObjectActionCourseRestController extends BaseRestController {
 					StringBundler.concat(
 						"id,p2s3CourseToP2S3Modules.lessonDurationMinutes,",
 						"p2s3CourseToP2S3Modules.lessons,",
-						"p2s3CourseToP2S3Modules.quizDurationMinutes,",
+						"p2s3CourseToP2S3Modules.quizDurationMinutes," ,
 						"p2s3CourseToP2S3Modules.quizzes")
 				).queryParam(
 					"filter",
