@@ -106,8 +106,7 @@ public class AIHubSiteInitializer implements SiteInitializer {
 		String json = StringUtil.replace(
 			StringUtil.read(
 				AIHubSiteInitializer.class.getResourceAsStream(
-					"dependencies" +
-						"/writing-assistant-workflow-definition.json.tpl")),
+					"dependencies/workflow-definition.json.tpl")),
 			new String[] {
 				"__WORKFLOW_DEFINITION_NAME__", "__WORKFLOW_TASK_NAME__"
 			},
