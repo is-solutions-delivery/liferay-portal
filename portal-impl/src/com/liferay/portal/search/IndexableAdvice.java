@@ -109,7 +109,7 @@ public class IndexableAdvice extends ChainableMethodAdvice {
 		Indexer<Object> indexer = IndexerRegistryUtil.getIndexer(name);
 
 		if (indexer != null) {
-			_reindex(indexer, indexableContext, arguments, result);
+			_reindex(indexableContext, indexer, arguments, result);
 
 			return;
 		}
@@ -124,7 +124,7 @@ public class IndexableAdvice extends ChainableMethodAdvice {
 						return null;
 					}
 
-					_reindex(curIndexer, indexableContext, arguments, result);
+					_reindex(indexableContext, curIndexer, arguments, result);
 
 					return null;
 				}));
@@ -143,7 +143,7 @@ public class IndexableAdvice extends ChainableMethodAdvice {
 	}
 
 	private void _reindex(
-			Indexer<Object> indexer, IndexableContext indexableContext,
+			IndexableContext indexableContext, Indexer<Object> indexer,
 			Object result)
 		throws SearchException {
 
@@ -164,7 +164,7 @@ public class IndexableAdvice extends ChainableMethodAdvice {
 	}
 
 	private void _reindex(
-			Indexer<Object> indexer, IndexableContext indexableContext,
+			IndexableContext indexableContext, Indexer<Object> indexer,
 			Object[] arguments, Object result)
 		throws SearchException {
 
@@ -195,11 +195,11 @@ public class IndexableAdvice extends ChainableMethodAdvice {
 			try (SafeCloseable safeCloseable =
 					BufferableThreadLocal.setEnabledWithSafeCloseable(false)) {
 
-				_reindex(indexer, indexableContext, result);
+				_reindex(indexableContext, indexer, result);
 			}
 		}
 		else {
-			_reindex(indexer, indexableContext, result);
+			_reindex(indexableContext, indexer, result);
 		}
 	}
 
