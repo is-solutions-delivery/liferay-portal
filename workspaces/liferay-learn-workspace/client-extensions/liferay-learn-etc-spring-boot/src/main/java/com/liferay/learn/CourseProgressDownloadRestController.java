@@ -89,7 +89,9 @@ public class CourseProgressDownloadRestController extends BaseRestController {
 						"/o/c/p2s3quizes/"
 					).queryParam(
 						"fields",
-						"id,r_p2s3ModuleToP2S3Quizzes_c_p2s3Module,r_p2s3ModuleToP2S3Quizzes_c_p2s3Module.r_p2s3CourseToP2S3Modules_c_p2s3CourseId"
+						"id,r_p2s3ModuleToP2S3Quizzes_c_p2s3Module," +
+							"r_p2s3ModuleToP2S3Quizzes_c_p2s3Module." +
+								"r_p2s3CourseToP2S3Modules_c_p2s3CourseId"
 					).queryParam(
 						"filter", "isKnowledgeCheck eq false"
 					).queryParam(

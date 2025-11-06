@@ -179,9 +179,12 @@ public class LearnRestController extends BaseRestController {
 						"filter", "quizId eq '" + quizId + "'"
 					).queryParam(
 						"fields",
-						"id,position,question,questionType,p2s3QuizQuestionToP2S3QuizAnswers," +
-							"p2s3QuizQuestionToP2S3QuizAnswers.answer,p2s3QuizQuestionToP2S3QuizAnswers.id," +
-								"p2s3QuizQuestionToP2S3QuizAnswers.position"
+						StringBundler.concat(
+							"id,p2s3QuizQuestionToP2S3QuizAnswers,",
+							"p2s3QuizQuestionToP2S3QuizAnswers.answer,",
+							"p2s3QuizQuestionToP2S3QuizAnswers.id,",
+							"p2s3QuizQuestionToP2S3QuizAnswers.position,",
+							"position,question,questionType")
 					).queryParam(
 						"nestedFields", "p2s3QuizQuestionToP2S3QuizAnswers"
 					).queryParam(
@@ -213,17 +216,28 @@ public class LearnRestController extends BaseRestController {
 					).queryParam(
 						"fields",
 						StringBundler.concat(
-							"id,r_p2s3ModuleToP2S3Quizzes_c_p2s3ModuleId,durationMinutes,passingScore",
-							",isKnowledgeCheck,p2s3QuizToP2S3QuizQuestions.id,p2s3QuizToP2S3QuizQuestions.",
-							"position,p2s3QuizToP2S3QuizQuestions.question,p2s3QuizToP2S3QuizQuestions.",
-							"questionType,p2s3QuizToP2S3QuizQuestions.questionTotalScore,",
-							"p2s3QuizToP2S3QuizQuestions.p2s3QuizQuestionToP2S3QuizAnswers,p2s3QuizToP2S3QuizQuestions.",
-							"p2s3QuizQuestionToP2S3QuizAnswers.id,p2s3QuizToP2S3QuizQuestions.p2s3QuizQuestionToP2S3QuizAnswers.position",
-							",p2s3QuizToP2S3QuizQuestions.p2s3QuizQuestionToP2S3QuizAnswers.answer,p2s3QuizToP2S3QuizQuestions.",
-							"p2s3QuizQuestionToP2S3QuizAnswers.score")
+							"durationMinutes,id,isKnowledgeCheck,",
+							"p2s3QuizToP2S3QuizQuestions.id,",
+							"p2s3QuizToP2S3QuizQuestions.",
+							"p2s3QuizQuestionToP2S3QuizAnswers,",
+							"p2s3QuizToP2S3QuizQuestions.",
+							"p2s3QuizQuestionToP2S3QuizAnswers.answer,",
+							"p2s3QuizToP2S3QuizQuestions.",
+							"p2s3QuizQuestionToP2S3QuizAnswers.id,",
+							"p2s3QuizToP2S3QuizQuestions.",
+							"p2s3QuizQuestionToP2S3QuizAnswers.position,",
+							"p2s3QuizToP2S3QuizQuestions.",
+							"p2s3QuizQuestionToP2S3QuizAnswers.score,",
+							"p2s3QuizToP2S3QuizQuestions.position,",
+							"p2s3QuizToP2S3QuizQuestions.question,",
+							"p2s3QuizToP2S3QuizQuestions.questionTotalScore,",
+							"p2s3QuizToP2S3QuizQuestions.questionType,",
+							"passingScore,",
+							"r_p2s3ModuleToP2S3Quizzes_c_p2s3ModuleId")
 					).queryParam(
 						"nestedFields",
-						"p2s3QuizToP2S3QuizQuestions,p2s3QuizQuestionToP2S3QuizAnswers"
+						"p2s3QuizToP2S3QuizQuestions," +
+							"p2s3QuizQuestionToP2S3QuizAnswers"
 					).queryParam(
 						"nestedFieldsDepth", "2"
 					).queryParam(

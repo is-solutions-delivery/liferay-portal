@@ -41,8 +41,11 @@ public class ObjectActionCourseRestController extends BaseRestController {
 					"/o/c/p2s3courses"
 				).queryParam(
 					"fields",
-					"id,p2s3CourseToP2S3Modules.lessonDurationMinutes,p2s3CourseToP2S3Modules.lessons," +
-						"p2s3CourseToP2S3Modules.quizDurationMinutes,p2s3CourseToP2S3Modules.quizzes"
+					StringBundler.concat(
+						"id,p2s3CourseToP2S3Modules.lessonDurationMinutes,",
+						"p2s3CourseToP2S3Modules.lessons,",
+						"p2s3CourseToP2S3Modules.quizDurationMinutes,",
+						"p2s3CourseToP2S3Modules.quizzes")
 				).queryParam(
 					"filter",
 					"p2s3CourseToP2S3Modules/id eq '" + _getModuleId(json) + "'"
