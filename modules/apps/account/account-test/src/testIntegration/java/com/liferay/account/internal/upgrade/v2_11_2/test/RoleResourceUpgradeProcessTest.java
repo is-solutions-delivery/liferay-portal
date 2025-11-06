@@ -42,7 +42,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * @author Joao Cordeiro
+ * @author João Cordeiro
  */
 @DataGuard(scope = DataGuard.Scope.NONE)
 @RunWith(Arquillian.class)

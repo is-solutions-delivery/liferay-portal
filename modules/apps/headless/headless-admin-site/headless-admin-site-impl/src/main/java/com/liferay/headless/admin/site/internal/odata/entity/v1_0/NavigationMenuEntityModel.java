@@ -15,7 +15,7 @@ import com.liferay.portal.odata.entity.StringEntityField;
 import java.util.Map;
 
 /**
- * @author Joao Victor Alves
+ * @author João Victor Alves
  */
 public class NavigationMenuEntityModel implements EntityModel {
 

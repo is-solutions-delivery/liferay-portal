@@ -15,7 +15,7 @@ import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 
 /**
- * @author Joao Cordeiro
+ * @author João Cordeiro
  */
 public class RoleResourceUpgradeProcess extends UpgradeProcess {
 

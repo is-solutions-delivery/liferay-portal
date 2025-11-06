@@ -15,7 +15,7 @@ import java.util.Map;
 import org.osgi.service.component.annotations.Component;
 
 /**
- * @author Joao Victor Alves
+ * @author João Victor Alves
  */
 @Component(service = TaskNodeExecutorAIDelegate.class)
 public class FixSpellingAndGrammarTaskNodeExecutorAIDelegate

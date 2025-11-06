@@ -13,7 +13,7 @@ import com.liferay.site.navigation.model.SiteNavigationMenu;
 import com.liferay.site.navigation.service.SiteNavigationMenuLocalService;
 
 /**
- * @author Joao Victor Alves
+ * @author João Victor Alves
  */
 public class SiteNavigationMenuModelIndexerWriterContributor
 	implements ModelIndexerWriterContributor<SiteNavigationMenu> {

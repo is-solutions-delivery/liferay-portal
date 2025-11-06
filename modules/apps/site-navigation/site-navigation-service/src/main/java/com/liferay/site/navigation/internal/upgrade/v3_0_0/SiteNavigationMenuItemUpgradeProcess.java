@@ -34,7 +34,7 @@ import java.sql.ResultSet;
 import java.util.Objects;
 
 /**
- * @author Joao Victor Alves
+ * @author João Victor Alves
  */
 public class SiteNavigationMenuItemUpgradeProcess extends UpgradeProcess {
 

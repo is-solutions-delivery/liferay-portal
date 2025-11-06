@@ -13,7 +13,7 @@ import com.liferay.site.navigation.model.SiteNavigationMenu;
 import org.osgi.service.component.annotations.Component;
 
 /**
- * @author Joao Victor Alves
+ * @author João Victor Alves
  */
 @Component(
 	property = "indexer.class.name=com.liferay.site.navigation.model.SiteNavigationMenu",

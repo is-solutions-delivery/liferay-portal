@@ -27,7 +27,7 @@ import java.util.function.BiConsumer;
 import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Joao Victor Alves
+ * @author João Victor Alves
  */
 public abstract class BaseTaskNodeExecutorAIDelegate
 	implements TaskNodeExecutorAIDelegate {
