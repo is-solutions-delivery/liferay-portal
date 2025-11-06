@@ -1,0 +1,15 @@
+assemble:
+  - from: batch
+    into: batch
+expense:
+  name: Expense
+  oAuthApplicationHeadlessServer: expense-oahs
+  type: batch
+expense-oahs:
+  .serviceAddress: localhost:8080
+  .serviceScheme: http
+  name: Expense OAuth Application Headless Server
+  scopes:
+    -   Liferay.Headless.Batch.Engine.everything
+    -   Liferay.Object.Admin.REST.everything
+  type: oAuthApplicationHeadlessServer

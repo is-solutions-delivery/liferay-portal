@@ -1,0 +1,170 @@
+{
+  "configuration": {
+    "taskItemDelegateName": "DEFAULT",
+    "className": "com.liferay.headless.admin.list.type.dto.v1_0.ListTypeDefinition",
+    "parameters": {
+      "containsHeaders": "true",
+      "updateStrategy": "UPDATE",
+      "createStrategy": "UPSERT",
+      "onErrorFail": "false"
+    }
+  },
+  "items": [
+    {
+      "name": "C1D9 Category",
+      "listTypeEntries": [
+        {
+          "name": "Meals",
+          "key": "meals",
+          "externalReferenceCode": "C1D9-MEALS"
+        },
+        {
+          "name": "Lodging",
+          "key": "lodging",
+          "externalReferenceCode": "C1D9-LODGING"
+        },
+        {
+          "name": "Supplies",
+          "key": "supplies",
+          "externalReferenceCode": "C1D9-SUPPLIES"
+        },
+        {
+          "name": "Entertainment",
+          "key": "entertainment",
+          "externalReferenceCode": "C1D9-ENTERTAINMENT"
+        },
+        {
+          "name": "Miscellaneous",
+          "key": "miscellaneous",
+          "externalReferenceCode": "C1D9-MISCELLANEOUS"
+        }
+      ],
+      "externalReferenceCode": "C1D9-CATEGORY"
+    },
+    {
+      "name": "C1D9 Expense Status",
+      "listTypeEntries": [
+        {
+          "name": "Draft",
+          "key": "draft",
+          "externalReferenceCode": "C1D9-DRAFT"
+        },
+        {
+          "name": "Submitted",
+          "key": "submitted",
+          "externalReferenceCode": "C1D9-SUBMITTED"
+        },
+        {
+          "name": "Approved",
+          "key": "approved",
+          "externalReferenceCode": "C1D9-APPROVED"
+        },
+        {
+          "name": "Rejected",
+          "key": "rejected",
+          "externalReferenceCode": "C1D9-REJECTED"
+        },
+        {
+          "name": "Paid",
+          "key": "paid",
+          "externalReferenceCode": "C1D9-PAID"
+        }
+      ],
+      "externalReferenceCode": "C1D9-EXPENSE-STATUS"
+    },
+    {
+      "name": "C1D9 Travel Type",
+      "listTypeEntries": [
+        {
+          "name": "Domestic",
+          "key": "domestic",
+          "externalReferenceCode": "C1D9-DOMESTIC"
+        },
+        {
+          "name": "International",
+          "key": "international",
+          "externalReferenceCode": "C1D9-INTERNATIONAL"
+        },
+        {
+          "name": "Virtual",
+          "key": "virtual",
+          "externalReferenceCode": "C1D9-VIRTUAL"
+        }
+      ],
+      "externalReferenceCode": "C1D9-TRAVEL-TYPE"
+    },
+    {
+      "name": "C1D9 Approval Status",
+      "listTypeEntries": [
+        {
+          "name": "Pending",
+          "key": "pending",
+          "externalReferenceCode": "C1D9-PENDING"
+        },
+        {
+          "name": "Approved",
+          "key": "approved",
+          "externalReferenceCode": "C1D9-APPROVED"
+        },
+        {
+          "name": "Denied",
+          "key": "denied",
+          "externalReferenceCode": "C1D9-DENIED"
+        }
+      ],
+      "externalReferenceCode": "C1D9-APPROVAL-STATUS"
+    },
+    {
+      "name": "C1D9 Payment Method",
+      "listTypeEntries": [
+        {
+          "name": "Credit Card",
+          "key": "creditCard",
+          "externalReferenceCode": "C1D9-CREDIT-CARD"
+        },
+        {
+          "name": "Cash",
+          "key": "cash",
+          "externalReferenceCode": "C1D9-CASH"
+        },
+        {
+          "name": "Reimbursement",
+          "key": "reimbursement",
+          "externalReferenceCode": "C1D9-REIMBURSEMENT"
+        },
+        {
+          "name": "Company Card",
+          "key": "companyCard",
+          "externalReferenceCode": "C1D9-COMPANY-CARD"
+        }
+      ],
+      "externalReferenceCode": "C1D9-PAYMENT-METHOD"
+    },
+    {
+      "name": "C1D9 Policy Type",
+      "listTypeEntries": [
+        {
+          "name": "Expense Limit",
+          "key": "expenseLimit",
+          "externalReferenceCode": "C1D9-EXPENSE-LIMIT"
+        },
+        {
+          "name": "Reimbursement Rule",
+          "key": "reimbursementRule",
+          "externalReferenceCode": "C1D9-REIMBURSEMENT-RULE"
+        },
+        {
+          "name": "Travel Policy",
+          "key": "travelPolicy",
+          "externalReferenceCode": "C1D9-TRAVEL-POLICY"
+        },
+        {
+          "name": "Vendor Rule",
+          "key": "vendorRule",
+          "externalReferenceCode": "C1D9-VENDOR-RULE"
+        }
+      ],
+      "externalReferenceCode": "C1D9-POLICY-TYPE"
+    }
+  ]
+}

@@ -11,11 +11,11 @@
 	},
 	"items": [
 		{
-			"externalReferenceCode": "B7A3-CONTENT-MANAGEMENT-OPERATIONS",
+			"externalReferenceCode": "A7C4-TICKET",
 			"label": {
-				"en_US": "B2A5 Content Management Operations"
+				"en_US": "A7C4 Ticket"
 			},
-			"name": "B2A5ContentManagementOperations"
+			"name": "A7C4Ticket"
 		}
 	]
 }

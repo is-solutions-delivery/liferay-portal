@@ -1,0 +1,1500 @@
+{
+	"configuration": {
+		"className": "com.liferay.object.admin.rest.dto.v1_0.ObjectDefinition",
+		"parameters": {
+			"containsHeaders": "true",
+			"createStrategy": "UPSERT",
+			"onErrorFail": "false",
+			"updateStrategy": "UPDATE"
+		},
+		"taskItemDelegateName": "DEFAULT"
+	},
+	"items": [
+        {
+			"accountEntryRestricted": false,
+			"active": true,
+			"className": "com.liferay.portal.kernel.model.User",
+			"enableCategorization": true,
+			"enableComments": false,
+			"enableIndexSearch": true,
+			"enableLocalization": false,
+			"enableObjectEntryDraft": false,
+			"enableObjectEntryHistory": false,
+			"externalReferenceCode": "L_USER",
+			"label": {
+				"en_US": "User"
+			},
+			"modifiable": false,
+			"name": "User",
+			"objectFolderExternalReferenceCode": "default",
+			"objectRelationships": [
+
+				{
+					"deletionType": "prevent",
+					"externalReferenceCode": "L-USER-TO-C1D9-EXPENSE",
+					"label": {
+						"en_US": "L User to C1D9 Expense"
+					},
+					"name": "lUserToC1D9Expense",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectDefinitionExternalReferenceCode2": "C1D9-EXPENSE",
+					"type": "oneToMany"
+				},
+				{
+					"deletionType": "prevent",
+					"externalReferenceCode": "L-USER-TO-C1D9-EXPENSE-REPORT",
+					"label": {
+						"en_US": "L User to C1D9 Expense Report"
+					},
+					"name": "lUserToC1D9ExpenseReport",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectDefinitionExternalReferenceCode2": "C1D9-EXPENSE-REPORT",
+					"type": "oneToMany"
+				},
+                {
+					"deletionType": "prevent",
+					"externalReferenceCode": "L-USER-TO-C1D9-TRAVEL-REQUEST",
+					"label": {
+						"en_US": "L User to C1D9 Travel Request"
+					},
+					"name": "lUserToC1D9TravelRequest",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectDefinitionExternalReferenceCode2": "C1D9-TRAVEL-REQUEST",
+					"type": "oneToMany"
+				},
+				{
+					"deletionType": "prevent",
+					"externalReferenceCode": "L-USER-TO-C1D9-APPROVAL",
+					"label": {
+						"en_US": "L User to C1D9 Approval"
+					},
+					"name": "lUserToC1D9Approval",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectDefinitionExternalReferenceCode2": "C1D9-APPROVAL",
+					"type": "oneToMany"
+				},
+                {
+					"deletionType": "prevent",
+					"externalReferenceCode": "L-USER-TO-C1D9-REIMBURSEMENT",
+					"label": {
+						"en_US": "L User to C1D9 Reimbursement"
+					},
+					"name": "lUserToC1D9Reimbursement",
+					"objectDefinitionExternalReferenceCode1": "L_USER",
+					"objectDefinitionExternalReferenceCode2": "C1D9-REIMBURSEMENT",
+					"type": "oneToMany"
+				}
+			],
+			"parameterRequired": false,
+			"pluralLabel": {
+				"en_US": "Users"
+			},
+			"portlet": false,
+			"restContextPath": "/o/headless-admin-user/v1.0/user-accounts",
+			"scope": "company",
+			"status": {
+				"code": 0,
+				"label": "approved",
+				"label_i18n": "Approved"
+			},
+			"system": true,
+			"titleObjectFieldName": "id"
+		},
+		{
+          "objectFolderExternalReferenceCode": "C1D9-EXPENSE",
+          "enableCategorization": true,
+          "accountEntryRestricted": false,
+          "externalReferenceCode": "C1D9-EXPENSE",
+          "objectFields": [
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Title"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "title",
+              "state": false,
+              "businessType": "Text"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "Clob",
+              "label": {"en_US": "Description"},
+              "type": "Clob",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "description",
+              "state": false,
+              "businessType": "LongText"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "Double",
+              "label": {"en_US": "Amount"},
+              "type": "Double",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "amount",
+              "state": false,
+              "businessType": "Decimal"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "Date",
+              "label": {"en_US": "Date"},
+              "type": "Date",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "date",
+              "state": false,
+              "businessType": "Date"
+            },
+            {
+              "listTypeDefinitionExternalReferenceCode": "C1D9-CATEGORY",
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Category"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "category",
+              "state": false,
+              "businessType": "Picklist"
+            },
+            {
+              "listTypeDefinitionExternalReferenceCode": "C1D9-EXPENSE-STATUS",
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "C1D9 Status"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "c1D9Status",
+              "state": false,
+              "businessType": "Picklist"
+            },
+            {
+              "listTypeDefinitionExternalReferenceCode": "C1D9-PAYMENT-METHOD",
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Payment Method"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "paymentMethod",
+              "state": false,
+              "businessType": "Picklist"
+            },
+            {
+              "relationshipType": "oneToMany",
+              "indexed": true,
+              "localized": false,
+              "objectRelationshipExternalReferenceCode": "L-USER-TO-C1D9-EXPENSE",
+              "objectFieldSettings": [
+                {
+                  "name": "objectDefinition1ShortName",
+                  "value": "User"
+                },
+                {
+                  "name": "objectRelationshipERCObjectFieldName",
+                  "value": "r_userToC1D9Expense_userERC"
+                }
+              ],
+              "readOnly": "false",
+              "DBType": "Long",
+              "label": {"en_US": "User To C1D9 Expense"},
+              "type": "Long",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "r_userToC1D9Expense_userId",
+              "objectDefinitionExternalReferenceCode1": "L_USER",
+              "state": false,
+              "businessType": "Relationship"
+            },
+            {
+              "relationshipType": "oneToMany",
+              "indexed": true,
+              "localized": false,
+              "objectRelationshipExternalReferenceCode": "C1D9-COST-CENTER-TO-C1D9-EXPENSE",
+              "objectFieldSettings": [
+                {
+                  "name": "objectDefinition1ShortName",
+                  "value": "C1D9CostCenter"
+                },
+                {
+                  "name": "objectRelationshipERCObjectFieldName",
+                  "value": "r_c1D9CostCenterToC1D9Expense_c_c1d9CostCenterERC"
+                }
+              ],
+              "readOnly": "false",
+              "DBType": "Long",
+              "label": {"en_US": "C1D9 Cost Center To C1D9 Expense"},
+              "type": "Long",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "r_c1D9CostCenterToC1D9Expense_c_c1d9CostCenterId",
+              "objectDefinitionExternalReferenceCode1": "C1D9-COST-CENTER",
+              "state": false,
+              "businessType": "Relationship"
+            },
+            {
+              "relationshipType": "oneToMany",
+              "indexed": true,
+              "localized": false,
+              "objectRelationshipExternalReferenceCode": "C1D9-VENDOR-TO-C1D9-EXPENSE",
+              "objectFieldSettings": [
+                {
+                  "name": "objectDefinition1ShortName",
+                  "value": "C1D9Vendor"
+                },
+                {
+                  "name": "objectRelationshipERCObjectFieldName",
+                  "value": "r_c1D9VendorToC1D9Expense_c_c1d9VendorERC"
+                }
+              ],
+              "readOnly": "false",
+              "DBType": "Long",
+              "label": {"en_US": "C1D9 Vendor To C1D9 Expense"},
+              "type": "Long",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "r_c1D9VendorToC1D9Expense_c_c1d9VendorId",
+              "objectDefinitionExternalReferenceCode1": "C1D9-VENDOR",
+              "state": false,
+              "businessType": "Relationship"
+            },
+            {
+              "relationshipType": "oneToMany",
+              "indexed": true,
+              "localized": false,
+              "objectRelationshipExternalReferenceCode": "C1D9-POLICY-TO-C1D9-EXPENSE",
+              "objectFieldSettings": [
+                {
+                  "name": "objectDefinition1ShortName",
+                  "value": "C1D9Policy"
+                },
+                {
+                  "name": "objectRelationshipERCObjectFieldName",
+                  "value": "r_c1D9PolicyToC1D9Expense_c_c1d9PolicyERC"
+                }
+              ],
+              "readOnly": "false",
+              "DBType": "Long",
+              "label": {"en_US": "C1D9 Policy To C1D9 Expense"},
+              "type": "Long",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "r_c1D9PolicyToC1D9Expense_c_c1d9PolicyId",
+              "objectDefinitionExternalReferenceCode1": "C1D9-POLICY",
+              "state": false,
+              "businessType": "Relationship"
+            },
+            {
+              "relationshipType": "oneToMany",
+              "indexed": true,
+              "localized": false,
+              "objectRelationshipExternalReferenceCode": "C1D9-EXPENSE-REPORT-TO-C1D9-EXPENSE",
+              "objectFieldSettings": [
+                {
+                  "name": "objectDefinition1ShortName",
+                  "value": "C1D9ExpenseReport"
+                },
+                {
+                  "name": "objectRelationshipERCObjectFieldName",
+                  "value": "r_c1D9ExpenseReportToC1D9Expense_c_c1d9ExpenseReportERC"
+                }
+              ],
+              "readOnly": "false",
+              "DBType": "Long",
+              "label": {"en_US": "C1D9 Expense Report To C1D9 Expense"},
+              "type": "Long",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "r_c1D9ExpenseReportToC1D9Expense_c_c1d9ExpenseReportId",
+              "objectDefinitionExternalReferenceCode1": "C1D9-EXPENSE-REPORT",
+              "state": false,
+              "businessType": "Relationship"
+            },
+            {
+              "relationshipType": "oneToMany",
+              "indexed": true,
+              "localized": false,
+              "objectRelationshipExternalReferenceCode": "C1D9-TRAVEL-REQUEST-TO-C1D9-EXPENSE",
+              "objectFieldSettings": [
+                {
+                  "name": "objectDefinition1ShortName",
+                  "value": "C1D9TravelRequest"
+                },
+                {
+                  "name": "objectRelationshipERCObjectFieldName",
+                  "value": "r_c1D9TravelRequestToC1D9Expense_c_c1d9TravelRequestERC"
+                }
+              ],
+              "readOnly": "false",
+              "DBType": "Long",
+              "label": {"en_US": "C1D9 Travel Request To C1D9 Expense"},
+              "type": "Long",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "r_c1D9TravelRequestToC1D9Expense_c_c1d9TravelRequestId",
+              "objectDefinitionExternalReferenceCode1": "C1D9-TRAVEL-REQUEST",
+              "state": false,
+              "businessType": "Relationship"
+            }
+          ],
+          "restContextPath": "/o/c/c1d9expenses",
+          "scope": "company",
+          "portlet": true,
+          "modifiable": true,
+          "parameterRequired": false,
+          "enableObjectEntryHistory": false,
+          "titleObjectFieldName": "id",
+          "active": true,
+          "enableIndexSearch": true,
+          "label": {"en_US": "C1D9 Expense"},
+          "panelCategoryKey": "",
+          "pluralLabel": {"en_US": "C1D9 Expenses"},
+          "system": false,
+          "enableObjectEntryDraft": false,
+          "name": "C1D9Expense",
+          "status": {
+            "label_i18n": "Approved",
+            "code": 0,
+            "label": "approved"
+          }
+        },
+        {
+          "objectRelationships": [
+            {
+              "label": {"en_US": "C1D9 Expense Report To C1D9 Expense"},
+              "type": "oneToMany",
+              "externalReferenceCode": "C1D9-EXPENSE-REPORT-TO-C1D9-EXPENSE",
+              "system": false,
+              "name": "c1D9ExpenseReportToC1D9Expense",
+              "deletionType": "prevent",
+              "objectDefinitionExternalReferenceCode1": "C1D9-EXPENSE-REPORT",
+              "objectDefinitionExternalReferenceCode2": "C1D9-EXPENSE"
+            },
+            {
+              "label": {"en_US": "C1D9 Travel Request To C1D9 Expense Report"},
+              "reverse": true,
+              "type": "manyToMany",
+              "externalReferenceCode": "C1D9-EXPENSE-REPORT-TO-C1D9-TRAVEL-REQUEST",
+              "system": false,
+              "name": "c1D9TravelRequestToC1D9ExpenseReport",
+              "deletionType": "prevent",
+              "objectDefinitionExternalReferenceCode1": "C1D9-EXPENSE-REPORT",
+              "objectDefinitionExternalReferenceCode2": "C1D9-TRAVEL-REQUEST"
+            }
+          ],
+          "objectFolderExternalReferenceCode": "C1D9-EXPENSE",
+          "enableCategorization": true,
+          "enableLocalization": false,
+          "accountEntryRestricted": false,
+          "externalReferenceCode": "C1D9-EXPENSE-REPORT",
+          "objectFields": [
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Title"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "title",
+              "state": false,
+              "businessType": "Text"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "Date",
+              "label": {"en_US": "Report Date"},
+              "type": "Date",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "reportDate",
+              "state": false,
+              "businessType": "Date"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "Double",
+              "label": {"en_US": "Total Amount"},
+              "type": "Double",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "totalAmount",
+              "state": false,
+              "businessType": "Decimal"
+            },
+            {
+              "listTypeDefinitionExternalReferenceCode": "C1D9-EXPENSE-STATUS",
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "C1D9 Status"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "c1D9Status",
+              "state": false,
+              "businessType": "Picklist"
+            },
+            {
+              "relationshipType": "oneToMany",
+              "indexed": true,
+              "localized": false,
+              "objectRelationshipExternalReferenceCode": "L-USER-TO-C1D9-EXPENSE-REPORT",
+              "objectFieldSettings": [
+                {
+                  "name": "objectDefinition1ShortName",
+                  "value": "User"
+                },
+                {
+                  "name": "objectRelationshipERCObjectFieldName",
+                  "value": "r_userToC1D9ExpenseReport_userERC"
+                }
+              ],
+              "readOnly": "false",
+              "DBType": "Long",
+              "label": {"en_US": "User To C1D9 Expense Report"},
+              "type": "Long",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "r_userToC1D9ExpenseReport_userId",
+              "objectDefinitionExternalReferenceCode1": "L_USER",
+              "state": false,
+              "businessType": "Relationship"
+            },
+            {
+              "relationshipType": "oneToMany",
+              "indexed": true,
+              "localized": false,
+              "objectRelationshipExternalReferenceCode": "C1D9-COST-CENTER-TO-C1D9-EXPENSE-REPORT",
+              "objectFieldSettings": [
+                {
+                  "name": "objectDefinition1ShortName",
+                  "value": "C1D9CostCenter"
+                },
+                {
+                  "name": "objectRelationshipERCObjectFieldName",
+                  "value": "r_c1D9CostCenterToC1D9ExpenseReport_c_c1d9CostCenterERC"
+                }
+              ],
+              "readOnly": "false",
+              "DBType": "Long",
+              "label": {"en_US": "C1D9 Cost Center To C1D9 Expense Report"},
+              "type": "Long",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "r_c1D9CostCenterToC1D9ExpenseReport_c_c1d9CostCenterId",
+              "objectDefinitionExternalReferenceCode1": "C1D9-COST-CENTER",
+              "state": false,
+              "businessType": "Relationship"
+            }
+          ],
+          "restContextPath": "/o/c/c1d9expensereports",
+          "scope": "company",
+          "portlet": true,
+          "modifiable": true,
+          "parameterRequired": false,
+          "enableObjectEntryHistory": false,
+          "titleObjectFieldName": "id",
+          "active": true,
+          "enableIndexSearch": true,
+          "label": {"en_US": "C1D9 Expense Report"},
+          "panelCategoryKey": "",
+          "pluralLabel": {"en_US": "C1D9 Expense Reports"},
+          "system": false,
+          "enableObjectEntryDraft": false,
+          "name": "C1D9ExpenseReport",
+          "status": {
+            "label_i18n": "Approved",
+            "code": 0,
+            "label": "approved"
+          }
+        },
+        {
+        
+          "objectRelationships": [
+            {
+              "label": {"en_US": "C1D9 Travel Request To C1D9 Expense"},
+              "type": "oneToMany",
+              "externalReferenceCode": "C1D9-TRAVEL-REQUEST-TO-C1D9-EXPENSE",
+              "system": false,
+              "name": "c1D9TravelRequestToC1D9Expense",
+              "deletionType": "prevent",
+              "objectDefinitionExternalReferenceCode1": "C1D9-TRAVEL-REQUEST",
+              "objectDefinitionExternalReferenceCode2": "C1D9-EXPENSE"
+            },
+            {
+              "label": {"en_US": "C1D9 Travel Request To C1D9 Expense Report"},
+              "type": "manyToMany",
+              "externalReferenceCode": "C1D9-TRAVEL-REQUEST-TO-C1D9-EXPENSE-REPORT",
+              "system": false,
+              "name": "c1D9TravelRequestToC1D9ExpenseReport",
+              "deletionType": "prevent",
+              "objectDefinitionExternalReferenceCode1": "C1D9-TRAVEL-REQUEST",
+              "objectDefinitionExternalReferenceCode2": "C1D9-EXPENSE-REPORT"
+            }
+          ],
+          "objectFolderExternalReferenceCode": "C1D9-EXPENSE",
+          "enableCategorization": true,
+          "enableLocalization": false,
+          "accountEntryRestricted": false,
+          "externalReferenceCode": "C1D9-TRAVEL-REQUEST",
+          "objectFields": [
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Title"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "title",
+              "state": false,
+              "businessType": "Text"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Destination"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "destination",
+              "state": false,
+              "businessType": "Text"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "Date",
+              "label": {"en_US": "Start Date"},
+              "type": "Date",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "startDate",
+              "state": false,
+              "businessType": "Date"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "Date",
+              "label": {"en_US": "End Date"},
+              "type": "Date",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "endDate",
+              "state": false,
+              "businessType": "Date"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "Clob",
+              "label": {"en_US": "Purpose"},
+              "type": "Clob",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "purpose",
+              "state": false,
+              "businessType": "LongText"
+            },
+            {
+              "listTypeDefinitionExternalReferenceCode": "C1D9-TRAVEL-TYPE",
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Travel Type"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "travelType",
+              "state": false,
+              "businessType": "Picklist"
+            },
+            {
+              "listTypeDefinitionExternalReferenceCode": "C1D9-APPROVAL-STATUS",
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "C1D9 Status"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "c1D9Status",
+              "state": false,
+              "businessType": "Picklist"
+            },
+            {
+              "relationshipType": "oneToMany",
+              "indexed": true,
+              "localized": false,
+              "objectRelationshipExternalReferenceCode": "L-USER-TO-C1D9-TRAVEL-REQUEST",
+              "objectFieldSettings": [
+                {
+                  "name": "objectDefinition1ShortName",
+                  "value": "User"
+                },
+                {
+                  "name": "objectRelationshipERCObjectFieldName",
+                  "value": "r_userToC1D9TravelRequest_userERC"
+                }
+              ],
+              "readOnly": "false",
+              "DBType": "Long",
+              "label": {"en_US": "User To C1D9 Travel Request"},
+              "type": "Long",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "r_userToC1D9TravelRequest_userId",
+              "objectDefinitionExternalReferenceCode1": "L_USER",
+              "state": false,
+              "businessType": "Relationship"
+            }
+          ],
+          "restContextPath": "/o/c/c1d9travelrequests",
+          "scope": "company",
+          "portlet": true,
+          "modifiable": true,
+          "parameterRequired": false,
+          "enableObjectEntryHistory": false,
+          "titleObjectFieldName": "id",
+          "active": true,
+          "enableIndexSearch": true,
+          "label": {"en_US": "C1D9 Travel Request"},
+          "panelCategoryKey": "",
+          "pluralLabel": {"en_US": "C1D9 Travel Requests"},
+          "system": false,
+          "enableObjectEntryDraft": false,
+          "name": "C1D9TravelRequest",
+          "status": {
+            "label_i18n": "Approved",
+            "code": 0,
+            "label": "approved"
+          }
+        },
+        {
+          "objectFolderExternalReferenceCode": "C1D9-EXPENSE",
+          "enableCategorization": true,
+          "enableLocalization": false,
+          "accountEntryRestricted": false,
+          "externalReferenceCode": "d8256f5a-aa19-581e-81f9-01269d20cd68",
+          "objectFields": [
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Approval Type"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "approvalType",
+              "state": false,
+              "businessType": "Text"
+            },
+            {
+              "listTypeDefinitionExternalReferenceCode": "C1D9-APPROVAL-STATUS",
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "C1D9 Status"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "c1D9Status",
+              "state": false,
+              "businessType": "Picklist"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "Clob",
+              "label": {"en_US": "Comments"},
+              "type": "Clob",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "comments",
+              "state": false,
+              "businessType": "LongText"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "Date",
+              "label": {"en_US": "Date"},
+              "type": "Date",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "date",
+              "state": false,
+              "businessType": "Date"
+            },
+            {
+              "relationshipType": "oneToMany",
+              "indexed": true,
+              "localized": false,
+              "objectRelationshipExternalReferenceCode": "L-USER-TO-C1D9-APPROVAL",
+              "objectFieldSettings": [
+                {
+                  "name": "objectDefinition1ShortName",
+                  "value": "User"
+                },
+                {
+                  "name": "objectRelationshipERCObjectFieldName",
+                  "value": "r_userToC1D9Approval_userERC"
+                }
+              ],
+              "readOnly": "false",
+              "DBType": "Long",
+              "label": {"en_US": "User To C1D9 Approval"},
+              "type": "Long",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "r_userToC1D9Approval_userId",
+              "objectDefinitionExternalReferenceCode1": "L_USER",
+              "state": false,
+              "businessType": "Relationship"
+            }
+          ],
+          "restContextPath": "/o/c/c1d9approvals",
+          "scope": "company",
+          "portlet": true,
+          "modifiable": true,
+          "parameterRequired": false,
+          "enableObjectEntryHistory": false,
+          "titleObjectFieldName": "id",
+          "active": true,
+          "enableIndexSearch": true,
+          "label": {"en_US": "C1D9 Approval"},
+          "panelCategoryKey": "",
+          "pluralLabel": {"en_US": "C1D9 Approvals"},
+          "system": false,
+          "enableObjectEntryDraft": false,
+          "name": "C1D9Approval",
+          "status": {
+            "label_i18n": "Approved",
+            "code": 0,
+            "label": "approved"
+          }
+        },
+        {
+        
+          "objectFolderExternalReferenceCode": "C1D9-EXPENSE",
+          "enableCategorization": true,
+          "enableLocalization": false,
+          "accountEntryRestricted": false,
+          "externalReferenceCode": "eb364a56-b722-c30c-3944-2ef27b085c0c",
+          "objectFields": [
+            {
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "Date",
+              "label": {"en_US": "Reimbursement Date"},
+              "type": "Date",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "reimbursementDate",
+              "state": false,
+              "businessType": "Date"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "Double",
+              "label": {"en_US": "Amount"},
+              "type": "Double",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "amount",
+              "state": false,
+              "businessType": "Decimal"
+            },
+            {
+              "listTypeDefinitionExternalReferenceCode": "C1D9-PAYMENT-METHOD",
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Method"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "method",
+              "state": false,
+              "businessType": "Picklist"
+            },
+            {
+              "listTypeDefinitionExternalReferenceCode": "C1D9-EXPENSE-STATUS",
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "C1D9 Status"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "c1D9Status",
+              "state": false,
+              "businessType": "Picklist"
+            },
+            {
+              "relationshipType": "oneToMany",
+              "indexed": true,
+              "localized": false,
+              "objectRelationshipExternalReferenceCode": "L-USER-TO-C1D9-REIMBURSEMENT",
+              "objectFieldSettings": [
+                {
+                  "name": "objectDefinition1ShortName",
+                  "value": "User"
+                },
+                {
+                  "name": "objectRelationshipERCObjectFieldName",
+                  "value": "r_userToC1D9Reimbursement_userERC"
+                }
+              ],
+              "readOnly": "false",
+              "DBType": "Long",
+              "label": {"en_US": "User To C1D9 Reimbursement"},
+              "type": "Long",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "r_userToC1D9Reimbursement_userId",
+              "objectDefinitionExternalReferenceCode1": "L_USER",
+              "state": false,
+              "businessType": "Relationship"
+            }
+          ],
+          "restContextPath": "/o/c/c1d9reimbursements",
+          "scope": "company",
+          "portlet": true,
+          "modifiable": true,
+          "parameterRequired": false,
+          "enableObjectEntryHistory": false,
+          "titleObjectFieldName": "id",
+          "active": true,
+          "enableIndexSearch": true,
+          "label": {"en_US": "C1D9 Reimbursement"},
+          "panelCategoryKey": "",
+          "pluralLabel": {"en_US": "C1D9 Reimbursements"},
+          "system": false,
+          "enableObjectEntryDraft": false,
+          "name": "C1D9Reimbursement",
+          "status": {
+            "label_i18n": "Approved",
+            "code": 0,
+            "label": "approved"
+          }
+        },
+      {
+        
+          "objectRelationships": [
+            {
+              "label": {"en_US": "C1D9 Policy To C1D9 Expense"},
+              "type": "oneToMany",
+              "externalReferenceCode": "C1D9-POLICY-TO-C1D9-EXPENSE",
+              "system": false,
+              "name": "c1D9PolicyToC1D9Expense",
+              "deletionType": "prevent",
+              "objectDefinitionExternalReferenceCode1": "C1D9-POLICY",
+              "objectDefinitionExternalReferenceCode2": "C1D9-EXPENSE"
+            },
+            {
+              "label": {"en_US": "C1D9 Policy To C1D9 Cost Center"},
+              "type": "manyToMany",
+              "externalReferenceCode": "C1D9-POLICY-C1D9-COST-CENTER",
+              "system": false,
+              "name": "c1D9PolicyToC1D9CostCenter",
+              "deletionType": "prevent",
+              "objectDefinitionExternalReferenceCode1": "C1D9-POLICY",
+              "objectDefinitionExternalReferenceCode2": "C1D9-COST-CENTER"
+            }
+          ],
+          "objectFolderExternalReferenceCode": "C1D9-EXPENSE",
+          "enableCategorization": true,
+          "enableLocalization": false,
+          "accountEntryRestricted": false,
+          "externalReferenceCode": "C1D9-POLICY",
+          "objectFields": [
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Name"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "name",
+              "state": false,
+              "businessType": "Text"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "Clob",
+              "label": {"en_US": "Description"},
+              "type": "Clob",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "description",
+              "state": false,
+              "businessType": "LongText"
+            },
+            {
+              "listTypeDefinitionExternalReferenceCode": "C1D9-POLICY-TYPE",
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Type"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "type",
+              "state": false,
+              "businessType": "Picklist"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "Double",
+              "label": {"en_US": "Limit Amount"},
+              "type": "Double",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "limitAmount",
+              "state": false,
+              "businessType": "Decimal"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "Date",
+              "label": {"en_US": "Effective Date"},
+              "type": "Date",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "effectiveDate",
+              "state": false,
+              "businessType": "Date"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "readOnly": "false",
+              "DBType": "Date",
+              "label": {"en_US": "C1D9 Expiration Date"},
+              "type": "Date",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "",
+              "unique": false,
+              "name": "c1D9ExpirationDate",
+              "state": false,
+              "businessType": "Date"
+            }
+          ],
+          "restContextPath": "/o/c/c1d9policies",
+          "scope": "company",
+          "portlet": true,
+          "modifiable": true,
+          "parameterRequired": false,
+          "enableObjectEntryHistory": false,
+          "titleObjectFieldName": "id",
+          "active": true,
+          "enableIndexSearch": true,
+          "label": {"en_US": "C1D9 Policy"},
+          "panelCategoryKey": "",
+          "pluralLabel": {"en_US": "C1D9 Policies"},
+          "system": false,
+          "enableObjectEntryDraft": false,
+          "name": "C1D9Policy",
+          "status": {
+            "label_i18n": "Approved",
+            "code": 0,
+            "label": "approved"
+          }
+        },
+      {
+          "objectRelationships": [{
+            "label": {"en_US": "C1D9 Vendor To C1D9 Expense"},
+            "type": "oneToMany",
+            "externalReferenceCode": "C1D9-VENDOR-TO-C1D9-EXPENSE",
+            "system": false,
+            "name": "c1D9VendorToC1D9Expense",
+            "deletionType": "prevent",
+            "objectDefinitionExternalReferenceCode1": "C1D9-VENDOR",
+            "objectDefinitionExternalReferenceCode2": "C1D9-EXPENSE"
+          }],
+          "objectFolderExternalReferenceCode": "C1D9-EXPENSE",
+          "enableCategorization": true,
+          "enableLocalization": false,
+          "accountEntryRestricted": false,
+          "externalReferenceCode": "C1D9-VENDOR",
+          "objectFields": [
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Name"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "name",
+              "state": false,
+              "businessType": "Text"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Category"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "category",
+              "state": false,
+              "businessType": "Text"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "Clob",
+              "label": {"en_US": "Contact Info"},
+              "type": "Clob",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "contactInfo",
+              "state": false,
+              "businessType": "LongText"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Email"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "email",
+              "state": false,
+              "businessType": "Text"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Phone"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "phone",
+              "state": false,
+              "businessType": "Text"
+            }
+          ],
+          "restContextPath": "/o/c/c1d9vendors",
+          "scope": "company",
+          "portlet": true,
+          "modifiable": true,
+          "parameterRequired": false,
+          "enableObjectEntryHistory": false,
+          "titleObjectFieldName": "id",
+          "active": true,
+          "enableIndexSearch": true,
+          "label": {"en_US": "C1D9 Vendor"},
+          "panelCategoryKey": "",
+          "pluralLabel": {"en_US": "C1D9 Vendors"},
+          "system": false,
+          "enableObjectEntryDraft": false,
+          "name": "C1D9Vendor",
+          "status": {
+            "label_i18n": "Approved",
+            "code": 0,
+            "label": "approved"
+          }
+        },
+      {
+          "objectRelationships": [
+            {
+              "label": {"en_US": "C1D9 Cost Center To C1D9 Expense Report"},
+              "type": "oneToMany",
+              "externalReferenceCode": "C1D9-COST-CENTER-TO-C1D9-EXPENSE-REPORT",
+              "system": false,
+              "name": "c1D9CostCenterToC1D9ExpenseReport",
+              "deletionType": "prevent",
+              "objectDefinitionExternalReferenceCode1": "C1D9-COST-CENTER",
+              "objectDefinitionExternalReferenceCode2": "C1D9-EXPENSE-REPORT"
+            },
+            {
+              "label": {"en_US": "C1D9 Cost Center To C1D9 Expense"},
+              "type": "oneToMany",
+              "externalReferenceCode": "C1D9-COST-CENTER-TO-C1D9-EXPENSE",
+              "system": false,
+              "name": "c1D9CostCenterToC1D9Expense",
+              "deletionType": "prevent",
+              "objectDefinitionExternalReferenceCode1": "C1D9-COST-CENTER",
+              "objectDefinitionExternalReferenceCode2": "C1D9-EXPENSE"
+            },
+            {
+              "label": {"en_US": "C1D9 Policy To C1D9 Cost Center"},
+              "reverse": true,
+              "type": "manyToMany",
+              "externalReferenceCode": "C1D9-COST-CENTER-TO-C1D9-POLICY",
+              "system": false,
+              "name": "c1D9PolicyToC1D9CostCenter",
+              "deletionType": "prevent",
+              "objectDefinitionExternalReferenceCode1": "C1D9-COST-CENTER",
+              "objectDefinitionExternalReferenceCode2": "C1D9-POLICY"
+            },
+            {
+                "deletionType": "prevent",
+                "label": {"en_US": "C1D9 Cost Center To L User"},
+                "reverse": true,
+                "type": "manyToMany",
+                "externalReferenceCode": "C1D9-COST-CENTER-TO-L-USER",
+                "system": false,
+                "name": "c1D9CostCenterToLUser",                
+                "objectDefinitionExternalReferenceCode1": "C1D9-COST-CENTER",
+                "objectDefinitionExternalReferenceCode2": "L_USER"
+            }
+          ],
+          "objectFolderExternalReferenceCode": "C1D9-EXPENSE",
+          "enableCategorization": true,
+          "enableLocalization": false,
+          "accountEntryRestricted": false,
+          "externalReferenceCode": "C1D9-COST-CENTER",
+          "objectFields": [
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Name"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "name",
+              "state": false,
+              "businessType": "Text"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "String",
+              "label": {"en_US": "Code"},
+              "type": "String",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "code",
+              "state": false,
+              "businessType": "Text"
+            },
+            {
+              "indexed": true,
+              "localized": false,
+              "objectFieldSettings": [{
+                "name": "showCounter",
+                "value": false
+              }],
+              "readOnly": "false",
+              "DBType": "Clob",
+              "label": {"en_US": "Description"},
+              "type": "Clob",
+              "required": false,
+              "indexedAsKeyword": false,
+              "system": false,
+              "indexedLanguageId": "en_US",
+              "unique": false,
+              "name": "description",
+              "state": false,
+              "businessType": "LongText"
+            }
+          ],
+          "restContextPath": "/o/c/c1d9costcenters",
+          "scope": "company",
+          "portlet": true,
+          "modifiable": true,
+          "parameterRequired": false,
+          "enableObjectEntryHistory": false,
+          "titleObjectFieldName": "id",
+          "active": true,
+          "enableIndexSearch": true,
+          "label": {"en_US": "C1D9 Cost Center"},
+          "panelCategoryKey": "",
+          "pluralLabel": {"en_US": "C1D9 Cost Centers"},
+          "system": false,
+          "enableObjectEntryDraft": false,
+          "name": "C1D9CostCenter",
+          "status": {
+            "label_i18n": "Approved",
+            "code": 0,
+            "label": "approved"
+          }
+      }
+	]
+}

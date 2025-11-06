@@ -454,7 +454,7 @@
 					"unique": false
 				}
 			],
-			"objectFolderExternalReferenceCode": "A7C4-BUG-TRIAGE-AND-RESOLUTION",
+			"objectFolderExternalReferenceCode": "A7C4-TICKET",
 			"objectRelationships": [
 				{
 					"deletionType": "prevent",
@@ -562,7 +562,7 @@
 					"unique": false
 				}
 			],
-			"objectFolderExternalReferenceCode": "A7C4-BUG-TRIAGE-AND-RESOLUTION",
+			"objectFolderExternalReferenceCode": "A7C4-TICKET",
 			"panelCategoryKey": "",
 			"parameterRequired": false,
 			"pluralLabel": {
@@ -712,7 +712,7 @@
 					"unique": false
 				}
 			],
-			"objectFolderExternalReferenceCode": "A7C4-BUG-TRIAGE-AND-RESOLUTION",
+			"objectFolderExternalReferenceCode": "A7C4-TICKET",
 			"panelCategoryKey": "",
 			"parameterRequired": false,
 			"pluralLabel": {
@@ -815,7 +815,7 @@
 					"unique": false
 				}
 			],
-			"objectFolderExternalReferenceCode": "A7C4-BUG-TRIAGE-AND-RESOLUTION",
+			"objectFolderExternalReferenceCode": "A7C4-TICKET",
 			"panelCategoryKey": "",
 			"parameterRequired": false,
 			"pluralLabel": {

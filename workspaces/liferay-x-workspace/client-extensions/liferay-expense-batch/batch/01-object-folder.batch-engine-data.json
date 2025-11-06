@@ -1,5 +1,5 @@
 {
-	"configuration": {
+  "configuration": {
 		"className": "com.liferay.object.admin.rest.dto.v1_0.ObjectFolder",
 		"parameters": {
 			"containsHeaders": "true",
@@ -9,13 +9,13 @@
 		},
 		"taskItemDelegateName": "DEFAULT"
 	},
-	"items": [
-		{
-			"externalReferenceCode": "A7C4-BUG-TRIAGE-AND-RESOLUTION",
+  "items": [
+    {
+			"externalReferenceCode": "C1D9-EXPENSE",
 			"label": {
-				"en_US": "A7C4 Bug Triage & Resolution"
+				"en_US": "C1D9 Expense"
 			},
-			"name": "A7C4BugTriageAndResolution"
+			"name": "C1D9Expense"
 		}
-	]
+  ]
 }
