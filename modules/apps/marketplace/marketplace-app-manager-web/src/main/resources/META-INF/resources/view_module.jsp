@@ -82,14 +82,14 @@ else {
 			<liferay-ui:search-container-column-text>
 				<c:choose>
 					<c:when test='<%= pluginType.equals("portlets") %>'>
-						<liferay-util:include page="/icon.jsp" servletContext="<%= application %>">
-							<liferay-util:param name="iconURL" value='<%= themeDisplay.getPathThemeSpritemap() + "#portlets" %>' />
-						</liferay-util:include>
+						<svg class="lexicon-icon">
+							<use xlink:href="<%= themeDisplay.getPathThemeSpritemap() %>#document-compressed" />
+						</svg>
 					</c:when>
 					<c:otherwise>
-						<liferay-util:include page="/icon.jsp" servletContext="<%= application %>">
-							<liferay-util:param name="iconURL" value='<%= themeDisplay.getPathThemeSpritemap() + "#components" %>' />
-						</liferay-util:include>
+						<svg class="lexicon-icon">
+							<use xlink:href="<%= themeDisplay.getPathThemeSpritemap() %>#order-form-cog" />
+						</svg>
 					</c:otherwise>
 				</c:choose>
 			</liferay-ui:search-container-column-text>
