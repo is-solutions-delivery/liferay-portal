@@ -1,0 +1,16 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"name": "ctaLink",
+					"label": "CTA Link",
+					"description": "cta-link",
+					"type": "text",
+					"dataType": "string",
+					"defaultValue": ""
+				}
+			]
+		}
+	]
+}
