@@ -23,6 +23,7 @@ type MultiSelectProps<T> = {
 	sourceItems: T[];
 	tooltip?: string;
 	value?: string;
+	placeholder?: string;
 };
 
 const MultiSelect: React.FC<MultiSelectProps<any>> = ({
