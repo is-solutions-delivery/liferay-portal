@@ -2,13 +2,13 @@
 	commerceContext = renderRequest.getAttribute("COMMERCE_CONTEXT")
 	cpSpecificationGroups = cpContentHelper.getCPOptionCategories(themeDisplay.getCompanyId())
 />
-		
+
 <#function getSpecificationValue specificationGroupKey specificationKey productId default="">
-	<#local specificationGroup = cpSpecificationGroups?filter(specificationGroup -> specificationGroup.getKey() == specificationGroupKey) />				
-	
+	<#local specificationGroup = cpSpecificationGroups?filter(specificationGroup -> specificationGroup.getKey() == specificationGroupKey) />
+
 	<#if specificationGroup?has_content>
 		<#local specifications = cpContentHelper.getCategorizedCPDefinitionSpecificationOptionValues(productId, specificationGroup?first.getCPOptionCategoryId()) />
-		
+
 		<#local spec = specifications?filter(productSpecification ->
 			stringUtil.equals(productSpecification.getCPSpecificationOption().getKey(), specificationKey)) />
 
@@ -24,7 +24,7 @@
 			<#list entries as entry>
 				<#if entry?has_content>
 					<#assign
-					  	productDescription = stringUtil.shorten(htmlUtil.stripHtml(entry.getDescription()!""), 150, "...")
+						productDescription = stringUtil.shorten(htmlUtil.stripHtml(entry.getDescription()!""), 150, "...")
 						productId = entry.getCPDefinitionId()
 						productImage = cpContentHelper.getDefaultImageFileURL(commerceContext.getAccountEntry().getAccountEntryId(), productId)
 					/>
@@ -34,11 +34,12 @@
 							<div class="image-container mr-2 rounded">
 								<img alt="${entry.getName()}" class="app-search-image" draggable="false" loading="lazy" src="${productImage}" />
 							</div>
+
 							<div>
 								<div class="product-title">
 									${entry.getName()}
 								</div>
-								
+
 								<div class="developer-name mt-1">
 									${getSpecificationValue("product-metadata", "developer-name", productId)!''}
 								</div>

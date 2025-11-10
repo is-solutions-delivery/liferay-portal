@@ -13,10 +13,10 @@
 
 <#function getSpecificationValue specificationGroupKey specificationKey productId default="">
 	<#local specificationGroup = cpSpecificationGroups?filter(specificationGroup -> specificationGroup.getKey() == specificationGroupKey) />
-	
+
 	<#if specificationGroup?has_content>
 		<#local specifications = cpContentHelper.getCategorizedCPDefinitionSpecificationOptionValues(productId, specificationGroup?first.getCPOptionCategoryId()) />
-		
+
 		<#local spec = specifications?filter(productSpecification ->
 			stringUtil.equals(productSpecification.getCPSpecificationOption().getKey(), specificationKey)) />
 
@@ -37,7 +37,7 @@
 						productId = entry.getCPDefinitionId()
 						productImage = cpContentHelper.getDefaultImageFileURL(commerceContext.getAccountEntry().getAccountEntryId(), entry.getCPDefinitionId())
 					/>
-					
+
 					<a class="solution-search-results-card bg-white d-flex flex-column mb-0 text-dark text-decoration-none" href=${cpContentHelper.getFriendlyURL(entry, themeDisplay)}>
 						<div class="align-items-center d-flex image-container mb-3">
 							<img
