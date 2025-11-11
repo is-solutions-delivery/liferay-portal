@@ -1,0 +1,116 @@
+.carousel-container-buttons {
+	margin-top: 1.5rem;
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+}
+
+.carousel-dot {
+	width: 0.75rem;
+	height: 0.75rem;
+	border-radius: 50%;
+	background: rgba(43, 58, 75, 0.3);
+	border: none;
+	cursor: pointer;
+	transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.carousel-dot.is-active {
+	background: #005bff;
+}
+
+.carousel-dots {
+	align-items: center;
+	display: flex;
+	gap: 0.75rem;
+	justify-content: center;
+	padding: 0.5rem;
+}
+
+.carousel-main {
+	position: relative;
+	width: 100%;
+}
+
+.carousel-nav-button {
+	align-items: center;
+	background: #FFFFFF;
+	border: 1px solid #005bff;
+	border-radius: 50%;
+	color: #005bff;
+	cursor: pointer;
+	display: flex;
+	height: 2.5rem;
+	justify-content: center;
+	padding: 0.5rem; 
+	width: 2.5rem;
+}
+
+.carousel-outer-container {
+	box-sizing: content-box;
+	margin-inline: 0;
+	overflow: hidden;
+	padding-inline: 0;
+	width: 100%;
+}
+
+.carousel-slide {
+	cursor: pointer;
+	flex: 0 0 100%;
+	position: relative;
+	transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.carousel-slide.is-active {
+	opacity: 1;
+	z-index: 3;
+}
+
+.carousel-slide.is-peek {
+	opacity: 0.5;
+	z-index: 2;
+}
+
+.carousel-track {
+	display: flex;
+	gap: 0;
+	touch-action: pan-y;
+	transition: transform 0.45s ease;
+	will-change: transform;
+}
+
+.carousel-viewport {
+	overflow: visible;
+	position: relative;
+	width: 100%;
+}
+
+@media (max-width: 767px) {
+	.carousel-track {
+		gap: 0;
+	}
+	.carousel-slide {
+		flex: 0 0 100%;
+	}
+}
+
+@media screen and (min-width: 768px) {
+	.carousel-outer-container {
+		margin-inline: -6%; 
+		padding-inline: 6%;
+	}
+
+	.carousel-slide {
+		opacity: 0.5;
+		z-index: 2;
+	}
+	
+	.carousel-slide.is-active {
+		opacity: 1;
+		z-index: 3;
+	}
+	
+	.carousel-track {
+		gap: 2rem;
+	}
+}
