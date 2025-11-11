@@ -3,12 +3,12 @@
 		{
 			"fields": [
 				{
-					"name": "ctaLink",
-					"label": "CTA Link",
-					"description": "cta-link",
-					"type": "text",
 					"dataType": "string",
-					"defaultValue": ""
+					"defaultValue": "",
+					"description": "cta-link",
+					"label": "CTA Link",
+					"name": "ctaLink",
+					"type": "text"
 				}
 			]
 		}
