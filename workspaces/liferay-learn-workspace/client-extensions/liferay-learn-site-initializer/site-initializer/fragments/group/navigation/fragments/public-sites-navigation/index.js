@@ -219,21 +219,7 @@ function performSearch(query) {
 }
 
 function toggleMenuAnimation() {
-	const menuButtonOpen = menuElements.menuButton.classList.contains('open');
-
-	menuElements.menuIconLines.forEach((line, index) => {
-		line.style.opacity = index === 1 && menuButtonOpen ? '0' : '1';
-		line.style.transform = menuButtonOpen
-			? `rotate(${index === 0 ? 45 : -45}deg) translateY(${index === 0 ? 8 : -8}px)`
-			: '';
-	});
-
-	menuElements.menuTextOpen.style.display = menuButtonOpen
-		? 'none'
-		: 'inline';
-	menuElements.menuTextClose.style.display = menuButtonOpen
-		? 'inline'
-		: 'none';
+	menuElements.menuButton.classList.toggle('open');
 }
 
 function updateSearch() {
@@ -281,7 +267,6 @@ window.addEventListener('load', () => {
 
 menuElements.menuButton.addEventListener('click', () => {
 	documentationEducationDropdown.classList.toggle('hide');
-	menuElements.menuButton.classList.toggle('open');
 	toggleMenuAnimation();
 });
 

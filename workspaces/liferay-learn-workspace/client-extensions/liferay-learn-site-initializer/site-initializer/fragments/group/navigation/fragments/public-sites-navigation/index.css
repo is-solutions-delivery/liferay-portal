@@ -1,3 +1,35 @@
+.cta-menu-hamburguer {
+	display: none;
+}
+
+.cta-menu-hamburguer .menu-button-text-close {
+	display: none;
+}
+
+.cta-menu-hamburguer .nav-items-menu-button-icon-line {
+	transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.cta-menu-hamburguer.open .menu-button-text-close {
+	display: inline;
+}
+
+.cta-menu-hamburguer.open .menu-button-text-open {
+	display: none;
+}
+
+.cta-menu-hamburguer.open .nav-items-menu-button-icon-line:nth-child(1) {
+	transform: rotate(45deg) translateY(8px);
+}
+
+.cta-menu-hamburguer.open .nav-items-menu-button-icon-line:nth-child(2) {
+	opacity: 0;
+}
+
+.cta-menu-hamburguer.open .nav-items-menu-button-icon-line:nth-child(3) {
+	transform: rotate(-45deg) translateY(-8px);
+}
+
 .sign-button-container {
 	align-items: center;
 	display: flex;
@@ -43,10 +75,6 @@
 
 .public-sites-navigation-buttons {
 	gap: 2px;
-}
-
-.cta-menu-hamburguer {
-	display: none;
 }
 
 .public-site-navigation-container {
