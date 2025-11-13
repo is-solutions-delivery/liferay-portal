@@ -71,36 +71,27 @@ function changeFocus() {
 	searchInput.focus();
 }
 
-function isMenuOpen() {
-	return menuElements.menuButton.classList.contains('open');
-}
-
 function checkScreenSize() {
-	const menuButtonIsOpen = isMenuOpen();
-
-	menuElements.menuTextOpen.style.display = menuButtonIsOpen
-		? 'none'
-		: 'inline';
-	menuElements.menuTextClose.style.display = menuButtonIsOpen
-		? 'inline'
-		: 'none';
-
 	if (window.innerWidth <= 1024) {
-		if (!menuButtonIsOpen) {
+		if (!menuElements.menuButton.classList.contains('open')) {
 			documentationEducationDropdown.classList.add('hide');
 		}
 	}
 	else {
 		documentationEducationDropdown.classList.remove('hide');
 
-		if (menuButtonIsOpen) {
+		if (menuElements.menuButton.classList.contains('open')) {
 			menuElements.menuButton.classList.remove('open');
+
 			toggleMenuAnimation();
 		}
 
-		resetMenuIcon();
-		menuElements.menuTextOpen.style.display = 'inline';
+		menuElements.menuIconLines.forEach((element) => {
+			element.style.transform = '';
+			element.style.opacity = '';
+		});
 		menuElements.menuTextClose.style.display = 'none';
+		menuElements.menuTextOpen.style.display = 'inline';
 	}
 }
 
@@ -228,19 +219,19 @@ function performSearch(query) {
 }
 
 function toggleMenuAnimation() {
-	const menuButtonIsOpen = isMenuOpen();
+	const menuButtonOpen = menuElements.menuButton.classList.contains('open');
 
 	menuElements.menuIconLines.forEach((line, index) => {
-		line.style.opacity = index === 1 && menuButtonIsOpen ? '0' : '1';
-		line.style.transform = menuButtonIsOpen
+		line.style.opacity = index === 1 && menuButtonOpen ? '0' : '1';
+		line.style.transform = menuButtonOpen
 			? `rotate(${index === 0 ? 45 : -45}deg) translateY(${index === 0 ? 8 : -8}px)`
 			: '';
 	});
 
-	menuElements.menuTextOpen.style.display = menuButtonIsOpen
+	menuElements.menuTextOpen.style.display = menuButtonOpen
 		? 'none'
 		: 'inline';
-	menuElements.menuTextClose.style.display = menuButtonIsOpen
+	menuElements.menuTextClose.style.display = menuButtonOpen
 		? 'inline'
 		: 'none';
 }
