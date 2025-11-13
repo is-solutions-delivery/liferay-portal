@@ -12,7 +12,6 @@ const controlMenu = document.getElementById('ControlMenu');
 const documentationEducationDropdown = document.querySelector(
 	'.documentation-education-dropdown'
 );
-
 const fragmentSearchElements = {
 	searchSubmitLink: fragmentElement.querySelector('.search-submit'),
 	searchSubmitURL: fragmentElement.querySelector('.search-submit').href,
@@ -28,9 +27,7 @@ const fragmentSearchElements = {
 	),
 	suggestions: fragmentElement.querySelector('.suggestions'),
 };
-
 const inputElements = ['input', 'textarea'];
-
 const menuElements = {
 	menuButton: document.querySelector('.cta-menu-hamburguer'),
 	menuIconLines: document.querySelectorAll(
@@ -184,6 +181,7 @@ function performSearch(query) {
 					const suggestionTitle = suggestionLink.querySelector(
 						'.search-suggestion-item-title'
 					);
+
 					suggestionTitle.textContent = suggestion.text;
 
 					let contentText = suggestion.attributes.assetSearchSummary;
@@ -202,6 +200,7 @@ function performSearch(query) {
 					const suggestionURL = suggestionLink.querySelector(
 						'.search-suggestion-item-link'
 					);
+
 					suggestionURL.textContent = getBreadcrumbFromURL(assetURL);
 
 					fragmentSearchElements.searchSuggestions.appendChild(
@@ -226,13 +225,6 @@ function performSearch(query) {
 		.catch(() => {
 			fragmentSearchElements.suggestions.classList.add('search-error');
 		});
-}
-
-function resetMenuIcon() {
-	menuElements.menuIconLines.forEach((line) => {
-		line.style.transform = '';
-		line.style.opacity = '';
-	});
 }
 
 function toggleMenuAnimation() {
@@ -318,6 +310,7 @@ window.addEventListener('keyup', (event) => {
 		searchInput.blur();
 		siteSearchWrapper.classList.remove('search-open');
 	}
+
 	if (
 		(event.code === 'Slash' || event.key === '/') &&
 		!inputElements.includes(document.activeElement.tagName.toLowerCase())

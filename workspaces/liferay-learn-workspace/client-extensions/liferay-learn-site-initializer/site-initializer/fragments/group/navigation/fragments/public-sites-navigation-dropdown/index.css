@@ -67,8 +67,8 @@
 }
 
 .menu-dropdown-caret.rotated {
-    transform: rotate(180deg);
-    transition: transform 0.3s ease;
+	transform: rotate(180deg);
+	transition: transform 0.3s ease;
 }
 
 html:not(#__):not(#___) .page-editor.is-dragging .page-editor__fragment-content {
