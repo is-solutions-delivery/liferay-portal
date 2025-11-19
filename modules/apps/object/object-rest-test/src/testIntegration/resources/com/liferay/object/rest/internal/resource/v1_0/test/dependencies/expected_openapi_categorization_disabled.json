@@ -412,6 +412,9 @@
 					},
 					"userId": {
 						"type": "integer"
+					},
+					"version": {
+						"type": "integer"
 					}
 				},
 				"xml": {
@@ -1716,6 +1719,13 @@
 					{
 						"in": "query",
 						"name": "pageSize",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
 						"schema": {
 							"type": "string"
 						}
@@ -3306,6 +3316,13 @@
 					{
 						"in": "query",
 						"name": "pageSize",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort",
 						"schema": {
 							"type": "string"
 						}
