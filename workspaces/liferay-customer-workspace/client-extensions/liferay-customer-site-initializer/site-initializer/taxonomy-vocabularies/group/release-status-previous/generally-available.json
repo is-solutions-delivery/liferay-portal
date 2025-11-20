@@ -1,5 +1,6 @@
 {
 	"description": "OOTB, Enabled by default, can't be disabled",
+	"externalReferenceCode": "RSP_GA",
 	"name": "Generally Available (aka OOTB)",
 	"viewableBy": "Anyone"
 }

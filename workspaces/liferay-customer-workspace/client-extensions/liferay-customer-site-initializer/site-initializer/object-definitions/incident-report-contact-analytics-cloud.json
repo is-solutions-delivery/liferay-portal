@@ -1,6 +1,7 @@
 {
 	"accountEntryRestricted": true,
 	"accountEntryRestrictedObjectFieldName": "r_accountEntryToIncidentReportContactAC_accountEntryId",
+	"externalReferenceCode": "C_INCIDENT_REPORT_CONTACT_AC",
 	"label": {
 		"en_US": "Incident Report Contact Analytics Cloud"
 	},
@@ -8,6 +9,7 @@
 	"objectFields": [
 		{
 			"DBType": "Long",
+			"externalReferenceCode": "C_INCIDENT_REPORT_CONTACT_AC_acWorkspaceId",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -18,6 +20,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_INCIDENT_REPORT_CONTACT_AC_emailAddress",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {

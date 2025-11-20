@@ -1,6 +1,7 @@
 {
 	"accountEntryRestricted": true,
 	"accountEntryRestrictedObjectFieldName": "r_accountEntryToKoroneikiAccount_accountEntryId",
+	"externalReferenceCode": "C_KORONEIKI_ACCOUNT",
 	"label": {
 		"en_US": "Koroneiki Account"
 	},
@@ -8,6 +9,7 @@
 	"objectFields": [
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_accountKey",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -18,6 +20,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_acWorkspaceGroupId",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -28,6 +31,7 @@
 		},
 		{
 			"DBType": "Boolean",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_allowSelfProvisioning",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -38,6 +42,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_code",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -48,6 +53,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_dataRegion",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -58,6 +64,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_dxpVersion",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -68,6 +75,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_liferayContactEmailAddress",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -78,6 +86,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_liferayContactName",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -88,6 +97,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_liferayContactRole",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -98,6 +108,7 @@
 		},
 		{
 			"DBType": "Integer",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_maxRequestors",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -108,6 +119,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_name",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -118,6 +130,7 @@
 		},
 		{
 			"DBType": "Boolean",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_partner",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -128,6 +141,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_partnershipCurrent",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -138,6 +152,7 @@
 		},
 		{
 			"DBType": "Date",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_partnershipCurrentEndDate",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -148,6 +163,7 @@
 		},
 		{
 			"DBType": "Date",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_partnershipCurrentStartDate",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -158,6 +174,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_partnershipExpired",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -168,6 +185,7 @@
 		},
 		{
 			"DBType": "Date",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_partnershipExpiredEndDate",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -178,6 +196,7 @@
 		},
 		{
 			"DBType": "Date",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_partnershipExpiredStartDate",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -188,6 +207,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_partnershipFuture",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -198,6 +218,7 @@
 		},
 		{
 			"DBType": "Date",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_partnershipFutureEndDate",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -208,6 +229,7 @@
 		},
 		{
 			"DBType": "Date",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_partnershipFutureStartDate",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -218,6 +240,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_region",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -228,6 +251,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_salesforceAccountKey",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -238,6 +262,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_salesforceProjectKey",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -248,6 +273,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_slaCurrent",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -258,6 +284,7 @@
 		},
 		{
 			"DBType": "Date",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_slaCurrentEndDate",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -268,6 +295,7 @@
 		},
 		{
 			"DBType": "Date",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_slaCurrentStartDate",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -278,6 +306,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_slaExpired",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -288,6 +317,7 @@
 		},
 		{
 			"DBType": "Date",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_slaExpiredEndDate",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -298,6 +328,7 @@
 		},
 		{
 			"DBType": "Date",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_slaExpiredStartDate",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -308,6 +339,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_slaFuture",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -318,6 +350,7 @@
 		},
 		{
 			"DBType": "Date",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_slaFutureEndDate",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -328,6 +361,7 @@
 		},
 		{
 			"DBType": "Date",
+			"externalReferenceCode": "C_KORONEIKI_ACCOUNT_slaFutureStartDate",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {

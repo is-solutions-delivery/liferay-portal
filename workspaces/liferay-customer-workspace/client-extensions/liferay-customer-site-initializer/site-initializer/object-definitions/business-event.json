@@ -9,7 +9,7 @@
 	"objectActions": [
 		{
 			"active": true,
-			"externalReferenceCode": "BUSINESS-EVENT-ADD",
+			"externalReferenceCode": "C_BUSINESS_EVENT_ADD",
 			"label": {
 				"en_US": "Business Event Add"
 			},
@@ -21,7 +21,7 @@
 		},
 		{
 			"active": true,
-			"externalReferenceCode": "BUSINESS-EVENT-UPDATE",
+			"externalReferenceCode": "C_BUSINESS_EVENT_UPDATE",
 			"label": {
 				"en_US": "Business Event Update"
 			},
@@ -36,6 +36,7 @@
 		{
 			"DBType": "DateTime",
 			"businessType": "DateTime",
+			"externalReferenceCode": "C_BUSINESS_EVENT_actualGoLiveDateTime",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"indexedLanguageId": "",
@@ -61,6 +62,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Text",
+			"externalReferenceCode": "C_BUSINESS_EVENT_associatedTickets",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"indexedLanguageId": "en_US",
@@ -80,6 +82,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Picklist",
+			"externalReferenceCode": "C_BUSINESS_EVENT_currentLiferayVersion",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"indexedLanguageId": "en_US",
@@ -100,6 +103,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Text",
+			"externalReferenceCode": "C_BUSINESS_EVENT_description",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"indexedLanguageId": "en_US",
@@ -119,6 +123,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Picklist",
+			"externalReferenceCode": "C_BUSINESS_EVENT_eventStatus",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"indexedLanguageId": "en_US",
@@ -145,6 +150,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Picklist",
+			"externalReferenceCode": "C_BUSINESS_EVENT_eventType",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"indexedLanguageId": "en_US",
@@ -165,6 +171,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Text",
+			"externalReferenceCode": "C_BUSINESS_EVENT_lastComment",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"indexedLanguageId": "en_US",
@@ -186,6 +193,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Text",
+			"externalReferenceCode": "C_BUSINESS_EVENT_name",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"indexedLanguageId": "en_US",
@@ -205,6 +213,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Picklist",
+			"externalReferenceCode": "C_BUSINESS_EVENT_newLiferayVersion",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"indexedLanguageId": "en_US",
@@ -225,6 +234,7 @@
 		{
 			"DBType": "DateTime",
 			"businessType": "DateTime",
+			"externalReferenceCode": "C_BUSINESS_EVENT_targetGoLiveDateTime",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"indexedLanguageId": "",
@@ -250,6 +260,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Picklist",
+			"externalReferenceCode": "C_BUSINESS_EVENT_timeZone",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"indexedLanguageId": "en_US",

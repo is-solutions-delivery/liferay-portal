@@ -1,6 +1,7 @@
 {
 	"accountEntryRestricted": true,
 	"accountEntryRestrictedObjectFieldName": "r_accountEntryToCloudNativeEnvironment_accountEntryId",
+	"externalReferenceCode": "C_CN_ENVIRONMENT",
 	"label": {
 		"en_US": "Cloud Native Environment"
 	},
@@ -8,6 +9,7 @@
 	"objectFields": [
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_CN_ENVIRONMENT-accountKey",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -18,6 +20,7 @@
 		},
 		{
 			"DBType": "Integer",
+			"externalReferenceCode": "C_CN_ENVIRONMENT-maxClusterNodes",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -28,6 +31,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_CN_ENVIRONMENT-nonProductionSubscriptionUuid",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -38,6 +42,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_CN_ENVIRONMENT-productionSubscriptionUuid",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {

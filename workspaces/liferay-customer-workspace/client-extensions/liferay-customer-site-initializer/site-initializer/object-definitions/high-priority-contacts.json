@@ -1,4 +1,5 @@
 {
+	"externalReferenceCode": "C_HIGH_PRIORITY_CONTACTS",
 	"label": {
 		"en_US": "High Priority Contacts"
 	},
@@ -7,12 +8,13 @@
 		{
 			"DBType": "String",
 			"businessType": "Picklist",
+			"externalReferenceCode": "C_HIGH_PRIORITY_CONTACTS_contactsCategory",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
 				"en_US": "Contacts Category"
 			},
-			"listTypeDefinitionId": "[$LIST_TYPE_DEFINITION_ID:High Priority Contacts Category$]",
+			"listTypeDefinitionExternalReferenceCode": "HIGH_PRIORITY_CONTACTS_CATEGORY",
 			"name": "contactsCategory",
 			"required": true,
 			"type": "String"

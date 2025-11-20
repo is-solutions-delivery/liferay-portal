@@ -1,5 +1,6 @@
 {
 	"description": "OOTB, Enabled by default, can't be disabled",
+	"externalReferenceCode": "FA_GA",
 	"name": "Generally Available (aka OOTB)",
 	"viewableBy": "Anyone"
 }

@@ -1,4 +1,5 @@
 {
+	"externalReferenceCode": "C_AC_DATA_CENTER_LOCATION",
 	"label": {
 		"en_US": "Analytics Cloud Data Center Location"
 	},
@@ -6,6 +7,7 @@
 	"objectFields": [
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_AC_DATA_CENTER_LOCATION_name",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -16,6 +18,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_AC_DATA_CENTER_LOCATION_value",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {

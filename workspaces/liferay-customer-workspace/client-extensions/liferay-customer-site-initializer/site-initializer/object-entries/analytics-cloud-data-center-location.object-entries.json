@@ -1,27 +1,27 @@
 {
 	"object-entries": [
 		{
-			"externalReferenceCode": "CP-REGION-AC-01",
+			"externalReferenceCode": "CP_REGION_AC_01",
 			"name": "Oregon, USA",
 			"value": "Oregon, USA"
 		},
 		{
-			"externalReferenceCode": "CP-REGION-AC-02",
+			"externalReferenceCode": "CP_REGION_AC_02",
 			"name": "São Paulo, Brazil",
 			"value": "São Paulo, Brazil"
 		},
 		{
-			"externalReferenceCode": "CP-REGION-AC-03",
+			"externalReferenceCode": "CP_REGION_AC_03",
 			"name": "London, England",
 			"value": "London, England"
 		},
 		{
-			"externalReferenceCode": "CP-REGION-AC-04",
+			"externalReferenceCode": "CP_REGION_AC_04",
 			"name": "Frankfurt, Germany",
 			"value": "Frankfurt, Germany"
 		},
 		{
-			"externalReferenceCode": "CP-REGION-AC-05",
+			"externalReferenceCode": "CP_REGION_AC_05",
 			"name": "Mumbai, India",
 			"value": "Mumbai, India"
 		}

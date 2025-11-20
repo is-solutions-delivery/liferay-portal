@@ -1,4 +1,5 @@
 {
+	"externalReferenceCode": "C_DXPC_DATA_CENTER_REGION",
 	"label": {
 		"en_US": "DXPC Data Center Region"
 	},
@@ -6,6 +7,7 @@
 	"objectFields": [
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_DXPC_DATA_CENTER_REGION_name",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -16,6 +18,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_DXPC_DATA_CENTER_REGION_value",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {

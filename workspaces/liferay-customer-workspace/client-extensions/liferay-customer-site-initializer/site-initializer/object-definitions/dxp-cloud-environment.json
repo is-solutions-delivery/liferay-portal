@@ -1,6 +1,7 @@
 {
 	"accountEntryRestricted": true,
 	"accountEntryRestrictedObjectFieldName": "r_accountEntryToDXPCloudEnvironment_accountEntryId",
+	"externalReferenceCode": "C_DXP_CLOUD_ENVIRONMENT",
 	"label": {
 		"en_US": "DXP Cloud Environment"
 	},
@@ -8,6 +9,7 @@
 	"objectFields": [
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_DXP_CLOUD_ENVIRONMENT_accountKey",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -18,6 +20,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_DXP_CLOUD_ENVIRONMENT_dataCenterRegion",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -28,6 +31,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_DXP_CLOUD_ENVIRONMENT_disasterDataCenterRegion",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -38,6 +42,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_DXP_CLOUD_ENVIRONMENT_projectId",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {

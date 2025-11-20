@@ -1,4 +1,5 @@
 {
+	"externalReferenceCode": "C_CALLBACK_REQUEST",
 	"label": {
 		"en_US": "Callback Request"
 	},
@@ -6,6 +7,7 @@
 	"objectFields": [
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_CALLBACK_REQUEST_countryCode",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -16,6 +18,7 @@
 		},
 		{
 			"DBType": "Clob",
+			"externalReferenceCode": "C_CALLBACK_REQUEST_description",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -36,6 +39,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_CALLBACK_REQUEST_emailAddress",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -46,6 +50,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_CALLBACK_REQUEST_name",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -56,6 +61,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_CALLBACK_REQUEST_phoneNumber",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -66,6 +72,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_CALLBACK_REQUEST_relatedTicketIDs",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {

@@ -1,6 +1,7 @@
 {
 	"accountEntryRestricted": true,
 	"accountEntryRestrictedObjectFieldName": "r_accountEntryToAccountFlag_accountEntryId",
+	"externalReferenceCode": "C_ACCNT_FLAG",
 	"label": {
 		"en_US": "Account Flag"
 	},
@@ -8,6 +9,7 @@
 	"objectFields": [
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_ACCNT_FLAG_accountKey",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -18,6 +20,7 @@
 		},
 		{
 			"DBType": "Boolean",
+			"externalReferenceCode": "C_ACCNT_FLAG_finished",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -28,6 +31,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_ACCNT_FLAG_name",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {

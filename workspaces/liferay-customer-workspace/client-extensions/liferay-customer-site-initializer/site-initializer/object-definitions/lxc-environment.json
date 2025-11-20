@@ -1,6 +1,7 @@
 {
 	"accountEntryRestricted": true,
 	"accountEntryRestrictedObjectFieldName": "r_liferayExperienceCloudEnvironment_accountEntryId",
+	"externalReferenceCode": "C_LXC_ENVIRONMENT",
 	"label": {
 		"en_US": "Liferay Experience Cloud Environment"
 	},
@@ -8,6 +9,7 @@
 	"objectFields": [
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_LXC_ENVIRONMENT_accountKey",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -18,6 +20,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_LXC_ENVIRONMENT_acOwner",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -28,6 +31,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_LXC_ENVIRONMENT_incidentManagementEmailAddress",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -38,6 +42,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_LXC_ENVIRONMENT_incidentManagementFullName",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -48,6 +53,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_LXC_ENVIRONMENT_primaryRegion",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -58,6 +64,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_LXC_ENVIRONMENT_projectId",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {

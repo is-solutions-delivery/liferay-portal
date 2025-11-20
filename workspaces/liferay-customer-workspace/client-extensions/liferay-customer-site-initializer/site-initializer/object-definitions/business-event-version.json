@@ -10,6 +10,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Picklist",
+			"externalReferenceCode": "C_BUSINESS_EVENT_VERSION_change",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"indexedLanguageId": "en_US",
@@ -30,6 +31,7 @@
 		{
 			"DBType": "String",
 			"businessType": "Text",
+			"externalReferenceCode": "C_BUSINESS_EVENT_VERSION_comment",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"indexedLanguageId": "en_US",

@@ -1,6 +1,6 @@
 [
 	{
-		"externalReferenceCode": "CP-PRIMARY-NAV",
+		"externalReferenceCode": "CP_NAV",
 		"menuItems": [
 			{
 				"friendlyURL": "/home",
@@ -10,10 +10,10 @@
 			{
 				"menuItems": [
 					{
-						"externalReferenceCode": "productsDocumentationMenuItem",
+						"externalReferenceCode": "CP_NAV_PRODUCTS_DOCUMENTATION",
 						"menuItems": [
 							{
-								"externalReferenceCode": "knowledgeBaseMenuItem",
+								"externalReferenceCode": "CP_NAV_KNOWLEDGE_BASE",
 								"name_i18n": {
 									"en_US": "Knowledge Base",
 									"es_ES": "Base de conocimientos",
@@ -25,7 +25,7 @@
 								"useNewTab": false
 							},
 							{
-								"externalReferenceCode": "documentationMenuItem",
+								"externalReferenceCode": "CP_NAV_DOCUMENTATION",
 								"name_i18n": {
 									"en_US": "Documentation",
 									"es_ES": "Documentación",
@@ -47,15 +47,15 @@
 						"type": "node"
 					},
 					{
-						"externalReferenceCode": "toolsMenuItem",
+						"externalReferenceCode": "CP_NAV_TOOLS",
 						"menuItems": [
 							{
-								"externalReferenceCode": "releaseNotesMenuItem",
+								"externalReferenceCode": "CP_NAV_RELEASE_NOTES",
 								"friendlyURL": "/release-notes",
 								"type": "layout"
 							},
 							{
-								"externalReferenceCode": "downloadsMenuItem",
+								"externalReferenceCode": "CP_NAV_DOWNLOADS",
 								"name_i18n": {
 									"en_US": "Downloads",
 									"es_ES": "Descargas",
@@ -77,10 +77,10 @@
 						"type": "node"
 					},
 					{
-						"externalReferenceCode": "securitiesPoliciesMenuItem",
+						"externalReferenceCode": "CP_NAV_SECURITIES_POLICIES",
 						"menuItems": [
 							{
-								"externalReferenceCode": "securityOverviewMenuItem",
+								"externalReferenceCode": "CP_NAV_SECURITY_OVERVIEW",
 								"name_i18n": {
 									"en_US": "Security Overview",
 									"es_ES": "Panorama de la seguridad",
@@ -92,7 +92,7 @@
 								"useNewTab": false
 							},
 							{
-								"externalReferenceCode": "securityVulnerabilitiesMenuItem",
+								"externalReferenceCode": "CP_NAV_SECURITY_VULNERABILITIES",
 								"name_i18n": {
 									"en_US": "Security Vulnerabilities",
 									"es_ES": "Vulnerabilidades de Seguridad",
@@ -126,10 +126,10 @@
 			{
 				"menuItems": [
 					{
-						"externalReferenceCode": "supportDocumentationMenuItem",
+						"externalReferenceCode": "CP_NAV_SUPPORT_DOCUMENTATION",
 						"menuItems": [
 							{
-								"externalReferenceCode": "productSupportMenuItem",
+								"externalReferenceCode": "CP_NAV_PRODUCT_SUPPORT",
 								"name_i18n": {
 									"en_US": "Product Support",
 									"es_ES": "Soporte sobre productos",
@@ -141,7 +141,7 @@
 								"useNewTab": false
 							},
 							{
-								"externalReferenceCode": "accountSupportMenuItem",
+								"externalReferenceCode": "CP_NAV_ACCOUNT_SUPPORT",
 								"name_i18n": {
 									"en_US": "Account Support",
 									"es_ES": "Soporte de cuentas",
@@ -163,10 +163,10 @@
 						"type": "node"
 					},
 					{
-						"externalReferenceCode": "supportAssistanceMenuItem",
+						"externalReferenceCode": "CP_NAV_SUPPORT_ASSISTANCE",
 						"menuItems": [
 							{
-								"externalReferenceCode": "supportFaqMenuItem",
+								"externalReferenceCode": "CP_NAV_SUPPORT_FAQ",
 								"name_i18n": {
 									"en_US": "Support FAQ",
 									"es_ES": "Preguntas frecuentes sobre asistencia",
@@ -178,7 +178,7 @@
 								"useNewTab": false
 							},
 							{
-								"externalReferenceCode": "contactUsMenuItem",
+								"externalReferenceCode": "CP_NAV_CONTACT_US",
 								"name_i18n": {
 									"en_US": "Contact Us",
 									"es_ES": "Contacte con nosotros",
@@ -200,10 +200,10 @@
 						"type": "node"
 					},
 					{
-						"externalReferenceCode": "supportTicketsMenuItem",
+						"externalReferenceCode": "CP_NAV_SUPPORT_TICKETS",
 						"menuItems": [
 							{
-								"externalReferenceCode": "submitATicketMenuItem",
+								"externalReferenceCode": "CP_NAV_SUBMIT_A_TICKET",
 								"name_i18n": {
 									"en_US": "Submit a Ticket",
 									"es_ES": "Envíe un billete",
@@ -215,7 +215,7 @@
 								"useNewTab": false
 							},
 							{
-								"externalReferenceCode": "myTicketsMenuItem",
+								"externalReferenceCode": "CP_NAV_MY_TICKETS",
 								"name_i18n": {
 									"en_US": "My Tickets",
 									"es_ES": "Mis billetes",
@@ -227,7 +227,7 @@
 								"useNewTab": false
 							},
 							{
-								"externalReferenceCode": "myTeamsTicketsMenuItem",
+								"externalReferenceCode": "CP_NAV_MY_TEAMS_TICKETS",
 								"name_i18n": {
 									"en_US": "My Team's Tickets",
 									"es_ES": "Billetes de mi equipo",
@@ -239,8 +239,8 @@
 								"useNewTab": false
 							},
 							{
-								"externalReferenceCode": "escalateATicketMenuItem",
-								"friendlyURL": "/escalation-request",
+								"externalReferenceCode": "CP_NAV_ESCALATE_A_TICKET",
+								"friendlyURL": "/support-ticket-escalation",
 								"type": "layout"
 							}
 						],
@@ -284,10 +284,10 @@
 			{
 				"menuItems": [
 					{
-						"externalReferenceCode": "guidesMenuItem",
+						"externalReferenceCode": "CP_NEW_NAV_GUIDES",
 						"menuItems": [
 							{
-								"externalReferenceCode": "gettingStartedMenuItem",
+								"externalReferenceCode": "CP_NEW_NAV_GETTING_STARTED",
 								"name_i18n": {
 									"en_US": "Getting Started",
 									"es_ES": "Cómo empezar",
@@ -299,7 +299,7 @@
 								"useNewTab": true
 							},
 							{
-								"externalReferenceCode": "customerPortalHelpMenuItem",
+								"externalReferenceCode": "CP_NEW_NAV_CUSTOMER_PORTAL_HELP",
 								"name_i18n": {
 									"en_US": "Customer Portal Help",
 									"es_ES": "Ayuda del Portal del cliente",
@@ -321,10 +321,10 @@
 						"type": "node"
 					},
 					{
-						"externalReferenceCode": "productDocumentationMenuItem",
+						"externalReferenceCode": "CP_NEW_NAV_PRODUCT_DOCUMENTATION",
 						"menuItems": [
 							{
-								"externalReferenceCode": "liferayLearnMenuItem",
+								"externalReferenceCode": "CP_NEW_NAV_LIFERAY_LEARN",
 								"name_i18n": {
 									"en_US": "Liferay Learn",
 									"es_ES": "Liferay Learn",
@@ -336,7 +336,7 @@
 								"useNewTab": true
 							},
 							{
-								"externalReferenceCode": "knowledgeBaseMenuItem",
+								"externalReferenceCode": "CP_NEW_NAV_KNOWLEDGE_BASE",
 								"name_i18n": {
 									"en_US": "Knowledge Base",
 									"es_ES": "Base de conocimiento",
@@ -358,10 +358,10 @@
 						"type": "node"
 					},
 					{
-						"externalReferenceCode": "SecurityMenuItem",
+						"externalReferenceCode": "CP_NEW_NAV_SECURITY",
 						"menuItems": [
 							{
-								"externalReferenceCode": "securityOverviewMenuItem",
+								"externalReferenceCode": "CP_NEW_NAV_SECURITY_OVERVIEW",
 								"name_i18n": {
 									"en_US": "Security Overview",
 									"es_ES": "Visión general de seguridad",
@@ -373,7 +373,7 @@
 								"useNewTab": true
 							},
 							{
-								"externalReferenceCode": "securityReportsMenuItem",
+								"externalReferenceCode": "CP_NEW_NAV_SECURITY_REPORTS",
 								"name_i18n": {
 									"en_US": "Security Reports",
 									"es_ES": "Informes de seguridad",
@@ -395,10 +395,10 @@
 						"type": "node"
 					},
 					{
-						"externalReferenceCode": "updatesMenuItem",
+						"externalReferenceCode": "CP_NEW_NAV_UPDATES",
 						"menuItems": [
 							{
-								"externalReferenceCode": "releaseNotesMenuItem",
+								"externalReferenceCode": "CP_NEW_NAV_RELEASE_NOTES",
 								"friendlyURL": "/release-notes",
 								"name_i18n": {
 									"en_US": "Release Notes",
@@ -410,7 +410,7 @@
 								"useCustomName": true
 							},
 							{
-								"externalReferenceCode": "customerPortalUpdatesMenuItem",
+								"externalReferenceCode": "CP_NEW_NAV_CUSTOMER_PORTAL_UPDATES",
 								"name_i18n": {
 									"en_US": "Customer Portal Updates",
 									"es_ES": "Actualizaciones del Portal del cliente",
@@ -422,7 +422,7 @@
 								"useNewTab": true
 							},
 							{
-								"externalReferenceCode": "downloadsMenuItem",
+								"externalReferenceCode": "CP_NEW_NAV_DOWNLOADS",
 								"name_i18n": {
 									"en_US": "Downloads",
 									"es_ES": "Descargas",
@@ -456,10 +456,10 @@
 			{
 				"menuItems": [
 					{
-						"externalReferenceCode": "ticketsMenuItem",
+						"externalReferenceCode": "CP_NEW_NAV_TICKETS",
 						"menuItems": [
 							{
-								"externalReferenceCode": "myTicketsMenuItem",
+								"externalReferenceCode": "CP_NEW_NAV_MY_TICKETS",
 								"name_i18n": {
 									"en_US": "My Tickets",
 									"es_ES": "Mis tickets",
@@ -471,7 +471,7 @@
 								"useNewTab": true
 							},
 							{
-								"externalReferenceCode": "openATicketMenuItem",
+								"externalReferenceCode": "CP_NEW_NAV_OPEN_A_TICKET",
 								"name_i18n": {
 									"en_US": "Open a Ticket",
 									"es_ES": "Abre un ticket",
@@ -483,7 +483,7 @@
 								"useNewTab": true
 							},
 							{
-								"externalReferenceCode": "escalateATicketMenuItem",
+								"externalReferenceCode": "CP_NEW_NAV_ESCALATE_A_TICKET",
 								"name_i18n": {
 									"en_US": "Escalate a Ticket",
 									"es_ES": "Escala un ticket",
@@ -505,10 +505,10 @@
 						"type": "node"
 					},
 					{
-						"externalReferenceCode": "supportResourcesMenuItem",
+						"externalReferenceCode": "CP_NEW_NAV_SUPPORT_RESOURCES",
 						"menuItems": [
 							{
-								"externalReferenceCode": "supportCoverageMenuItem",
+								"externalReferenceCode": "CP_NEW_NAV_SUPPORT_COVERAGE",
 								"name_i18n": {
 									"en_US": "Support Coverage",
 									"es_ES": "Cobertura de soporte",
@@ -520,7 +520,7 @@
 								"useNewTab": true
 							},
 							{
-								"externalReferenceCode": "servicesAndCompatibilityMenuItem",
+								"externalReferenceCode": "CP_NEW_NAV_SERVICES_AND_COMPATIBILITY",
 								"name_i18n": {
 									"en_US": "Services and Compatibility",
 									"es_ES": "Servicios y compatibilidad",
@@ -542,10 +542,10 @@
 						"type": "node"
 					},
 					{
-						"externalReferenceCode": "supportTicketsMenuItem",
+						"externalReferenceCode": "CP_NEW_NAV_SUPPORT_TICKETS",
 						"menuItems": [
 							{
-								"externalReferenceCode": "contactUsMenuItem",
+								"externalReferenceCode": "CP_NEW_NAV_CONTACT_US",
 								"name_i18n": {
 									"en_US": "Contact Us",
 									"es_ES": "Contáctanos",
@@ -557,7 +557,7 @@
 								"useNewTab": true
 							},
 							{
-								"externalReferenceCode": "customerEventsMenuItem",
+								"externalReferenceCode": "CP_NEW_NAV_CUSTOMER_EVENTS",
 								"name_i18n": {
 									"en_US": "Customer Events",
 									"es_ES": "Eventos de cliente",

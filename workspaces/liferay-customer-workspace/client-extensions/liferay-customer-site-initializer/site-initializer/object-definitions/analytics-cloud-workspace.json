@@ -1,6 +1,7 @@
 {
 	"accountEntryRestricted": true,
 	"accountEntryRestrictedObjectFieldName": "r_accountEntryToAnalyticsCloudWorkspace_accountEntryId",
+	"externalReferenceCode": "C_AC_WORKSPACE",
 	"label": {
 		"en_US": "Analytics Cloud Workspace"
 	},
@@ -8,6 +9,7 @@
 	"objectFields": [
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_AC_WORKSPACE_accountKey",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -18,6 +20,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_AC_WORKSPACE_allowedEmailDomains",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -28,6 +31,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_AC_WORKSPACE_dataCenterLocation",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -38,6 +42,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_AC_WORKSPACE_ownerEmailAddress",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -48,6 +53,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_AC_WORKSPACE_timeZone",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -58,6 +64,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_AC_WORKSPACE_workspaceFriendlyUrl",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -68,6 +75,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_AC_WORKSPACE_workspaceGroupId",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -78,6 +86,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_AC_WORKSPACE_workspaceName",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {

@@ -1,5 +1,6 @@
 {
 	"active": true,
+	"externalReferenceCode": "C_SUPPORT_TICKET_ESCALATION",
 	"label": {
 		"en_US": "Support Ticket Escalation"
 	},
@@ -7,6 +8,7 @@
 	"objectFields": [
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_SUPPORT_TICKET_ESCALATION_customerEmailAddress",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -18,6 +20,7 @@
 		},
 		{
 			"DBType": "Clob",
+			"externalReferenceCode": "C_SUPPORT_TICKET_ESCALATION_description",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -35,6 +38,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_SUPPORT_TICKET_ESCALATION_phoneNumber",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -46,6 +50,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_SUPPORT_TICKET_ESCALATION_ticketsIDs",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {

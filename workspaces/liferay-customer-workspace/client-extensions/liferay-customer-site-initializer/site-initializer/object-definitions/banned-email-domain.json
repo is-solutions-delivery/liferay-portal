@@ -1,4 +1,5 @@
 {
+	"externalReferenceCode": "C_BANNED_EMAIL_DOMAIN",
 	"label": {
 		"en_US": "Banned Email Domain"
 	},
@@ -6,6 +7,7 @@
 	"objectFields": [
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_BANNED_EMAIL_DOMAIN_domain",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {

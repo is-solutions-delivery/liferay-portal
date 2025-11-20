@@ -6,7 +6,7 @@
 			"type": "StructuredContent"
 		}
 	],
-	"externalReferenceCode": "FEATURE-AVAILABILITY",
+	"externalReferenceCode": "FA",
 	"name": "Feature Availability",
 	"name_i18n": {
 		"en_US": "Feature Availability"

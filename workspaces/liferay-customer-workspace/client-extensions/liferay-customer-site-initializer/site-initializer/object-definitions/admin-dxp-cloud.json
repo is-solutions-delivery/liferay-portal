@@ -1,6 +1,7 @@
 {
 	"accountEntryRestricted": true,
 	"accountEntryRestrictedObjectFieldName": "r_accountEntryToAdminDXPCloud_accountEntryId",
+	"externalReferenceCode": "C_ADMIN_DXP_CLOUD",
 	"label": {
 		"en_US": "Admin DXP Cloud"
 	},
@@ -8,6 +9,7 @@
 	"objectFields": [
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_ADMIN_DXP_CLOUD_dxpCloudEnvironmentId",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -18,6 +20,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_ADMIN_DXP_CLOUD_emailAddress",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -28,6 +31,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_ADMIN_DXP_CLOUD_firstName",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -38,6 +42,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_ADMIN_DXP_CLOUD_githubUsername",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -48,6 +53,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_ADMIN_DXP_CLOUD_lastName",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {

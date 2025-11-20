@@ -2,6 +2,7 @@
 	"accountEntryRestricted": true,
 	"accountEntryRestrictedObjectFieldName": "r_accountEntryToTicketAttachment_accountEntryId",
 	"enableObjectEntryDraft": true,
+	"externalReferenceCode": "C_TICKET_ATTACHMENT",
 	"label": {
 		"en_US": "Ticket Attachment"
 	},
@@ -9,6 +10,7 @@
 	"objectFields": [
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_TICKET_ATTACHMENT_accountKey",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -20,6 +22,7 @@
 		{
 			"DBType": "Clob",
 			"businessType": "LongText",
+			"externalReferenceCode": "C_TICKET_ATTACHMENT_draftCommentBody",
 			"indexed": false,
 			"indexedAsKeyword": false,
 			"label": {
@@ -29,6 +32,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_TICKET_ATTACHMENT_fileName",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -39,6 +43,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_TICKET_ATTACHMENT_fileSize",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -49,6 +54,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_TICKET_ATTACHMENT_gcsBucketName",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -59,6 +65,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_TICKET_ATTACHMENT_jiraIssueKey",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -69,6 +76,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_TICKET_ATTACHMENT_md5Checksum",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -79,6 +87,7 @@
 		},
 		{
 			"DBType": "Long",
+			"externalReferenceCode": "C_TICKET_ATTACHMENT_state",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -88,6 +97,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_TICKET_ATTACHMENT_storageProvider",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -98,6 +108,7 @@
 		},
 		{
 			"DBType": "String",
+			"externalReferenceCode": "C_TICKET_ATTACHMENT_type",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
@@ -108,6 +119,7 @@
 		},
 		{
 			"DBType": "Long",
+			"externalReferenceCode": "C_TICKET_ATTACHMENT_zendeskTicketId",
 			"indexed": true,
 			"indexedAsKeyword": false,
 			"label": {
