@@ -8,7 +8,7 @@
 <%@ include file="/request_quote/init.jsp" %>
 
 <%
-HashMap<String, Object> requestQuoteData = HashMapBuilder.<String, Object>put(
+Map<String, Object> requestQuoteData = HashMapBuilder.<String, Object>put(
 	"baseOrderDetailURL", baseOrderDetailURL
 ).put(
 	"cpDefinitionId", cpDefinitionId
