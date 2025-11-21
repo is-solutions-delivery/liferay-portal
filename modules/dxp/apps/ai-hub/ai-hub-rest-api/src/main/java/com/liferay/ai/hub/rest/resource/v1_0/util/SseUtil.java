@@ -30,8 +30,8 @@ public class SseUtil {
 		_sseEventSinks = new ConcurrentHashMap<>();
 	}
 
-	public static SseEventSink getSSEEventSink(String key) {
-		return _sseEventSinks.get(key);
+	public static SseEventSink getSSEEventSink(String sseEventSinkKey) {
+		return _sseEventSinks.get(sseEventSinkKey);
 	}
 
 	public static Set<String> getSSEEventSinksKeys() {
@@ -43,14 +43,14 @@ public class SseUtil {
 	}
 
 	public static void initialize(Sse sse, SseEventSink sseEventSink) {
-		String key = PortalUUIDUtil.generate();
+		String sseEventSinkKey = PortalUUIDUtil.generate();
 
-		_sseEventSinks.put(key, sseEventSink);
+		_sseEventSinks.put(sseEventSinkKey, sseEventSink);
 
 		sseEventSink.send(
 			sse.newEventBuilder(
 			).data(
-				String.class, key
+				String.class, sseEventSinkKey
 			).name(
 				"Subscribe"
 			).build());
