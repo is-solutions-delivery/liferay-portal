@@ -57,9 +57,9 @@ public class DDMFormValuesToFieldsConverterImpl
 
 		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
 			_addFields(
-				ddmFormFieldValues, ddmForm, ddmFormFieldValue,
+				ddmForm, ddmFormFieldValue, ddmFormFieldValues,
 				ddmStructure.getStructureId(), ddmFormValues.getDefaultLocale(),
-				fields, fieldDisplayNamesSB);
+				fieldDisplayNamesSB, fields);
 		}
 
 		if (!ddmFormFieldValues.isEmpty()) {
@@ -75,9 +75,8 @@ public class DDMFormValuesToFieldsConverterImpl
 	}
 
 	private void _addField(
-			DDMFormField ddmFormField,
-			List<DDMFormFieldValue> ddmFormFieldValues,
-			DDMFormFieldValue ddmFormFieldValue, long ddmStructureId,
+			DDMFormField ddmFormField, DDMFormFieldValue ddmFormFieldValue,
+			List<DDMFormFieldValue> ddmFormFieldValues, long ddmStructureId,
 			Locale defaultLocale, Fields fields)
 		throws PortalException {
 
@@ -106,15 +105,15 @@ public class DDMFormValuesToFieldsConverterImpl
 	}
 
 	private void _addFields(
-			List<DDMFormFieldValue> ddmFormFieldValues, DDMForm ddmForm,
-			DDMFormFieldValue ddmFormFieldValue, long ddmStructureId,
-			Locale defaultLocale, Fields fields,
-			StringBundler fieldDisplayNamesSB)
+			DDMForm ddmForm, DDMFormFieldValue ddmFormFieldValue,
+			List<DDMFormFieldValue> ddmFormFieldValues, long ddmStructureId,
+			Locale defaultLocale, StringBundler fieldDisplayNamesSB,
+			Fields fields)
 		throws PortalException {
 
 		_addField(
 			ddmForm.getDDMFormField(ddmFormFieldValue.getName(), true),
-			ddmFormFieldValues, ddmFormFieldValue, ddmStructureId,
+			ddmFormFieldValue, ddmFormFieldValues, ddmStructureId,
 			defaultLocale, fields);
 
 		fieldDisplayNamesSB.append(ddmFormFieldValue.getName());
@@ -126,8 +125,8 @@ public class DDMFormValuesToFieldsConverterImpl
 				ddmFormFieldValue.getNestedDDMFormFieldValues()) {
 
 			_addFields(
-				ddmFormFieldValues, ddmForm, nestedDDMFormFieldValue,
-				ddmStructureId, defaultLocale, fields, fieldDisplayNamesSB);
+				ddmForm, nestedDDMFormFieldValue, ddmFormFieldValues,
+				ddmStructureId, defaultLocale, fieldDisplayNamesSB, fields);
 		}
 	}
 
@@ -144,10 +143,10 @@ public class DDMFormValuesToFieldsConverterImpl
 		field.setDefaultLocale(defaultLocale);
 		field.setName(ddmFormFieldValue.getName());
 
-		Value value = ddmFormFieldValue.getValue();
-
 		Set<Locale> availableLocales = _getAvailableLocales(
 			ddmFormFieldValues, ddmFormField.getName());
+
+		Value value = ddmFormFieldValue.getValue();
 
 		if (MapUtil.isEmpty(value.getValues())) {
 			LocalizedValue predefinedValue = ddmFormField.getPredefinedValue();
