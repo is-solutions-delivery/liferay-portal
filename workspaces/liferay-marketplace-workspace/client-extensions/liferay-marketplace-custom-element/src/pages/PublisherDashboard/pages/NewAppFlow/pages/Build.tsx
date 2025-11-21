@@ -46,7 +46,13 @@ const BuildContent = () => {
 	const [visibleSelectVersionModal, setVisibleSelectVersionModal] =
 		useState(false);
 
-	const selectedVersions = [...new Set(liferayPackages.map(liferayPackage => liferayPackage.versions).flat())]
+	const selectedVersions = [
+		...new Set(
+			liferayPackages
+				.map((liferayPackage) => liferayPackage.versions)
+				.flat()
+		),
+	];
 
 	return (
 		<>
