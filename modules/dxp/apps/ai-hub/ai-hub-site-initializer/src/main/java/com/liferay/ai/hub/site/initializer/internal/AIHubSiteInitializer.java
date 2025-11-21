@@ -154,7 +154,7 @@ public class AIHubSiteInitializer implements SiteInitializer {
 				"\\\"{{content}}\\\" and the title: \\\"{{title}}\\\" they ",
 				"can be present or not. Maintain a friendly and professional ",
 				"conversational tone, and use the chat history to maintain ",
-				"flow"),
+				"flow."),
 			"{{userMessage}}");
 		_deployWorkflowDefinition(
 			company,
