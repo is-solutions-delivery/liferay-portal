@@ -18,7 +18,6 @@ import AppPublish, {
 import HeadlessCommerceAdminCatalog from '../../../../services/rest/HeadlessCommerceAdminCatalog';
 import BasePublishAppOutlet from '../../BasePublishAppOutlet';
 import {NEW_APP_BUILD_FLOW_ITEMS} from './constants';
-import {useMarketplaceContext} from '../../../../context/MarketplaceContext';
 
 const NewAppBuildOutlet = () => {
 	const navigate = useNavigate();
