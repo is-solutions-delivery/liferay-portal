@@ -119,16 +119,15 @@ public class FileEntryTypeDLAppServiceWrapper extends DLAppServiceWrapper {
 			return;
 		}
 
-		long[] groupIds =
-			_siteConnectedGroupGroupProvider.
-				getCurrentAndAncestorSiteAndDepotGroupIds(groupId);
+		DLFileEntryType destinationDLFileEntryType = null;
 
 		DLFileEntryType dlFileEntryType =
 			_dlFileEntryTypeLocalService.getDLFileEntryType(fileEntryTypeId);
 
-		DLFileEntryType destinationDLFileEntryType = null;
+		for (long connectedGroupId :
+				_siteConnectedGroupGroupProvider.
+					getCurrentAndAncestorSiteAndDepotGroupIds(groupId)) {
 
-		for (long connectedGroupId : groupIds) {
 			destinationDLFileEntryType =
 				_dlFileEntryTypeLocalService.fetchFileEntryType(
 					connectedGroupId, dlFileEntryType.getFileEntryTypeKey());
