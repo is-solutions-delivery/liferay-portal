@@ -46,6 +46,8 @@ const BuildContent = () => {
 	const [visibleSelectVersionModal, setVisibleSelectVersionModal] =
 		useState(false);
 
+	const selectedVersions = [...new Set(liferayPackages.map(liferayPackage => liferayPackage.versions).flat())]
+
 	return (
 		<>
 			{appType === ProductType.CLOUD && (
@@ -180,7 +182,7 @@ const BuildContent = () => {
 
 				{visibleSelectVersionModal && (
 					<NewAppPackageVersionModal
-						currentVersions={[]}
+						currentVersions={selectedVersions}
 						handleClose={() => setVisibleSelectVersionModal(false)}
 					/>
 				)}
