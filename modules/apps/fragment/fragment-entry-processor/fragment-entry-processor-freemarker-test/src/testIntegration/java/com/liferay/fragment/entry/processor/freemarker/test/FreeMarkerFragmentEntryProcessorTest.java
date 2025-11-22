@@ -642,7 +642,6 @@ public class FreeMarkerFragmentEntryProcessorTest {
 						new MockHttpServletResponse(), Constants.VIEW,
 						LocaleUtil.fromLanguageId("en_US")))),
 			CoreMatchers.containsString("Style - dark"));
-
 		Assert.assertThat(
 			_getProcessedHTML(
 				_fragmentEntryProcessorRegistry.processFragmentEntryLinkHTML(
@@ -652,7 +651,6 @@ public class FreeMarkerFragmentEntryProcessorTest {
 						new MockHttpServletResponse(), Constants.VIEW,
 						LocaleUtil.fromLanguageId("es_ES")))),
 			CoreMatchers.containsString("Style - light"));
-
 		Assert.assertThat(
 			_getProcessedHTML(
 				_fragmentEntryProcessorRegistry.processFragmentEntryLinkHTML(
