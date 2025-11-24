@@ -90,7 +90,7 @@ public class ReleaseManagerTest {
 				},
 				null);
 
-			// Allow SchemaCreator to complete and register the new release.
+			// Wait for SchemaCreator to complete and register the new release
 
 			Thread.sleep(2000);
 
