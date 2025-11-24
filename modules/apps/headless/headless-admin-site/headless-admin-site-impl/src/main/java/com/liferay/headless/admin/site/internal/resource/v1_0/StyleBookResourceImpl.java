@@ -90,11 +90,10 @@ public class StyleBookResourceImpl extends BaseStyleBookResourceImpl {
 
 		_checkFeatureFlag();
 
-		List<StyleBookEntry> styleBookEntries;
+		List<StyleBookEntry> styleBookEntries = null;
 		long totalCount = 0L;
 
 		long groupId = _getGroupId(siteExternalReferenceCode);
-
 		OrderByComparator<StyleBookEntry> orderByComparator =
 			_getStyleBookEntryOrderByComparator(sorts);
 
