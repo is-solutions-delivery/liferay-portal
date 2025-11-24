@@ -77,12 +77,12 @@ public class ClusterGeneralTest implements Serializable {
 
 	@Test
 	public void testCanUpdateLogLevelsForAllNodesFromMaster() throws Exception {
-		_updateLogLevelsForAllNodes(_tomcatNode1, _tomcatNode2, true);
+		_updateLogLevelsForAllNodes(_tomcatNode2, _tomcatNode1, true);
 	}
 
 	@Test
 	public void testCanUpdateLogLevelsForAllNodesFromSlave() throws Exception {
-		_updateLogLevelsForAllNodes(_tomcatNode2, _tomcatNode1, false);
+		_updateLogLevelsForAllNodes(_tomcatNode1, _tomcatNode2, false);
 	}
 
 	@Test
@@ -157,7 +157,7 @@ public class ClusterGeneralTest implements Serializable {
 	}
 
 	private void _updateLogLevelsForAllNodes(
-			TomcatNode senderTomcatNode, TomcatNode receiverTomcatNode,
+			TomcatNode receiverTomcatNode, TomcatNode senderTomcatNode,
 			boolean senderTomcatNodeIsMaster)
 		throws Exception {
 
