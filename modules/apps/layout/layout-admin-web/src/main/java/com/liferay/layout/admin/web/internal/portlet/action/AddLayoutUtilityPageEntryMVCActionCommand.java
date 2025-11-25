@@ -86,11 +86,9 @@ public class AddLayoutUtilityPageEntryMVCActionCommand
 
 		String name = ParamUtil.getString(actionRequest, "name");
 		String type = ParamUtil.getString(actionRequest, "type");
+
 		long masterLayoutPlid = ParamUtil.getLong(
 			actionRequest, "masterLayoutPlid");
-
-		ServiceContext serviceContext = ServiceContextFactory.getInstance(
-			actionRequest);
 
 		LayoutPageTemplateEntry masterLayoutPageTemplateEntry =
 			_layoutPageTemplateEntryLocalService.
@@ -102,6 +100,9 @@ public class AddLayoutUtilityPageEntryMVCActionCommand
 			masterLayoutPageTemplateEntryERC =
 				masterLayoutPageTemplateEntry.getExternalReferenceCode();
 		}
+
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(
+			actionRequest);
 
 		return _layoutUtilityPageEntryLocalService.addLayoutUtilityPageEntry(
 			null, serviceContext.getUserId(), serviceContext.getScopeGroupId(),
