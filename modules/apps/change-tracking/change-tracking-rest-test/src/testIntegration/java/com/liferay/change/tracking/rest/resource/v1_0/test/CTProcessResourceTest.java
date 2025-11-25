@@ -57,11 +57,10 @@ public class CTProcessResourceTest extends BaseCTProcessResourceTestCase {
 		_addCTProcess();
 		_addCTProcess();
 
-		Page<CTProcess> page = ctProcessResource.getCTProcessesPage(
-			null, null, null, Pagination.of(1, 10), null);
-
 		Page<CTProcess> descPage = ctProcessResource.getCTProcessesPage(
 			null, null, null, Pagination.of(1, 10), "datePublished:desc");
+		Page<CTProcess> page = ctProcessResource.getCTProcessesPage(
+			null, null, null, Pagination.of(1, 10), null);
 
 		assertEquals(
 			(List<CTProcess>)descPage.getItems(),

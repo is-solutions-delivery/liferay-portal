@@ -167,11 +167,10 @@ public class CTCollectionResourceTest extends BaseCTCollectionResourceTestCase {
 		_postCTCollection(randomCTCollection());
 		_postCTCollection(randomCTCollection());
 
-		Page<CTCollection> page = ctCollectionResource.getCTCollectionsPage(
-			null, null, Pagination.of(1, 10), null);
-
 		Page<CTCollection> descPage = ctCollectionResource.getCTCollectionsPage(
 			null, null, Pagination.of(1, 10), "dateModified:desc");
+		Page<CTCollection> page = ctCollectionResource.getCTCollectionsPage(
+			null, null, Pagination.of(1, 10), null);
 
 		assertEquals(
 			(List<CTCollection>)descPage.getItems(),
