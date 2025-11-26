@@ -64,6 +64,8 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.metatype.annotations.ExtendedObjectClassDefinition;
 import com.liferay.portal.db.partition.util.DBPartitionUtil;
+import com.liferay.portal.kernel.comment.CommentManager;
+import com.liferay.portal.kernel.comment.DiscussionPermission;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
@@ -216,7 +218,8 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 		ObjectDefinition objectDefinition, String restContextPath) {
 
 		return new ObjectEntryResourceImpl(
-			_dtoConverterRegistry, _entityModelProvider, objectDefinition,
+			_commentManager, _discussionPermission, _dtoConverterRegistry,
+			_entityModelProvider, objectDefinition,
 			_objectDefinitionsMap.get(restContextPath),
 			_objectDefinitionLocalService, _objectEntryLocalService,
 			_objectEntryManagerRegistry, _objectFieldLocalService,
@@ -1051,6 +1054,9 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 		_collaboratorResourceServiceRegistrationsMap = new HashMap<>();
 
 	@Reference
+	private CommentManager _commentManager;
+
+	@Reference
 	private CompanyLocalService _companyLocalService;
 
 	private final Map<String, List<ComponentInstance>> _componentInstancesMap =
@@ -1061,6 +1067,9 @@ public class ObjectDefinitionDeployerImpl implements ObjectDefinitionDeployer {
 
 	@Reference
 	private PermissionCheckerFactory _defaultPermissionCheckerFactory;
+
+	@Reference
+	private DiscussionPermission _discussionPermission;
 
 	@Reference
 	private DTOConverterRegistry _dtoConverterRegistry;

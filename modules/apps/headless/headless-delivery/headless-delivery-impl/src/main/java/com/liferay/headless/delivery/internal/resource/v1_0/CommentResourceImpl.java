@@ -11,22 +11,20 @@ import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.service.DLFileEntryService;
 import com.liferay.headless.common.spi.odata.entity.CommentEntityModel;
 import com.liferay.headless.delivery.dto.v1_0.Comment;
-import com.liferay.headless.delivery.internal.dto.v1_0.util.CommentUtil;
+import com.liferay.headless.delivery.dto.v1_0.util.CommentUtil;
 import com.liferay.headless.delivery.resource.v1_0.CommentResource;
+import com.liferay.headless.delivery.resource.v1_0.util.CommentResourceUtil;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleService;
 import com.liferay.knowledge.base.exception.NoSuchCommentException;
-import com.liferay.message.boards.exception.DiscussionMaxCommentsException;
 import com.liferay.message.boards.exception.MessageSubjectException;
 import com.liferay.message.boards.model.MBMessage;
-import com.liferay.petra.function.UnsafeSupplier;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.comment.CommentManager;
 import com.liferay.portal.kernel.comment.Discussion;
 import com.liferay.portal.kernel.comment.DiscussionComment;
 import com.liferay.portal.kernel.comment.DiscussionPermission;
-import com.liferay.portal.kernel.comment.DuplicateCommentException;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.Field;
@@ -400,8 +398,8 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 
 		BlogsEntry blogsEntry = _blogsEntryService.getEntry(blogPostingId);
 
-		return _postEntityComment(
-			comment.getExternalReferenceCode(), blogsEntry.getGroupId(),
+		return _postComment(
+			comment.getExternalReferenceCode(), blogsEntry.getGroupId(), null,
 			BlogsEntry.class.getName(), blogPostingId, comment.getText());
 	}
 
@@ -416,7 +414,7 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 			throw new NotFoundException();
 		}
 
-		return _postParentCommentComment(
+		return _postComment(
 			comment.getExternalReferenceCode(), parentComment.getGroupId(),
 			parentComment.getCommentId(), parentComment.getClassName(),
 			parentComment.getClassPK(), comment.getText());
@@ -428,8 +426,8 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 
 		DLFileEntry fileEntry = _dlFileEntryService.getFileEntry(documentId);
 
-		return _postEntityComment(
-			comment.getExternalReferenceCode(), fileEntry.getGroupId(),
+		return _postComment(
+			comment.getExternalReferenceCode(), fileEntry.getGroupId(), null,
 			DLFileEntry.class.getName(), documentId, comment.getText());
 	}
 
@@ -441,9 +439,9 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 		JournalArticle journalArticle = _journalArticleService.getLatestArticle(
 			structuredContentId);
 
-		return _postEntityComment(
+		return _postComment(
 			comment.getExternalReferenceCode(), journalArticle.getGroupId(),
-			JournalArticle.class.getName(), structuredContentId,
+			null, JournalArticle.class.getName(), structuredContentId,
 			comment.getText());
 	}
 
@@ -478,8 +476,8 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 				comment.getText());
 		}
 
-		return _postEntityComment(
-			externalReferenceCode, blogsEntry.getGroupId(),
+		return _postComment(
+			comment.getExternalReferenceCode(), blogsEntry.getGroupId(), null,
 			BlogsEntry.class.getName(), blogsEntry.getEntryId(),
 			comment.getText());
 	}
@@ -508,8 +506,8 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 				comment.getText());
 		}
 
-		return _postParentCommentComment(
-			externalReferenceCode, parentComment.getGroupId(),
+		return _postComment(
+			comment.getExternalReferenceCode(), parentComment.getGroupId(),
 			parentComment.getCommentId(), parentComment.getClassName(),
 			parentComment.getClassPK(), comment.getText());
 	}
@@ -536,8 +534,8 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 				comment.getText());
 		}
 
-		return _postEntityComment(
-			externalReferenceCode, dlFileEntry.getGroupId(),
+		return _postComment(
+			comment.getExternalReferenceCode(), dlFileEntry.getGroupId(), null,
 			DLFileEntry.class.getName(), dlFileEntry.getFileEntryId(),
 			comment.getText());
 	}
@@ -564,10 +562,10 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 				comment.getText());
 		}
 
-		return _postEntityComment(
-			externalReferenceCode, journalArticle.getGroupId(),
-			JournalArticle.class.getName(), journalArticle.getResourcePrimKey(),
-			comment.getText());
+		return _postComment(
+			comment.getExternalReferenceCode(), journalArticle.getGroupId(),
+			null, JournalArticle.class.getName(),
+			journalArticle.getResourcePrimKey(), comment.getText());
 	}
 
 	private Function<String, ServiceContext> _createServiceContextFunction() {
@@ -588,14 +586,15 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 	}
 
 	private com.liferay.portal.kernel.comment.Comment _fetchComment(
-			String externalReferenceCode, long siteId, String className,
-			long classPK)
-		throws Exception {
+		String externalReferenceCode, long siteId, String className,
+		long classPK) {
 
 		com.liferay.portal.kernel.comment.Comment comment =
 			_commentManager.fetchComment(siteId, externalReferenceCode);
 
-		if ((comment != null) && _isAssociated(className, classPK, comment)) {
+		if ((comment != null) &&
+			CommentResourceUtil.isAssociated(className, classPK, comment)) {
+
 			return comment;
 		}
 
@@ -610,7 +609,7 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 		com.liferay.portal.kernel.comment.Comment comment =
 			_commentManager.getComment(siteId, externalReferenceCode);
 
-		if (!_isAssociated(className, classPK, comment)) {
+		if (!CommentResourceUtil.isAssociated(className, classPK, comment)) {
 			StringBundler sb = new StringBundler(5);
 
 			sb.append("A comment with external reference code ");
@@ -710,77 +709,34 @@ public class CommentResourceImpl extends BaseCommentResourceImpl {
 		return permissionChecker.getUserId();
 	}
 
-	private boolean _isAssociated(
-		String className, long classPK,
-		com.liferay.portal.kernel.comment.Comment comment) {
-
-		if (className.equals(comment.getClassName()) &&
-			(classPK == comment.getClassPK())) {
-
-			return true;
-		}
-
-		return false;
-	}
-
 	private Comment _postComment(
-			UnsafeSupplier<Long, ? extends Exception> addCommentUnsafeSupplier,
-			String className, long classPK, long groupId)
+			String externalReferenceCode, long groupId, Long parentCommentId,
+			String className, long classPK, String text)
 		throws Exception {
 
 		_discussionPermission.checkAddPermission(
 			PermissionThreadLocal.getPermissionChecker(),
 			contextCompany.getCompanyId(), groupId, className, classPK);
 
-		try {
-			long commentId = addCommentUnsafeSupplier.get();
-
+		if (parentCommentId != null) {
 			return CommentUtil.toComment(
-				_commentManager.fetchComment(commentId), _commentManager,
-				_portal);
+				() -> _commentManager.fetchComment(
+					_commentManager.addComment(
+						externalReferenceCode, _getUserId(), className, classPK,
+						StringPool.BLANK, parentCommentId, StringPool.BLANK,
+						StringBundler.concat("<p>", text, "</p>"),
+						_createServiceContextFunction())),
+				_commentManager, _portal);
 		}
-		catch (DiscussionMaxCommentsException discussionMaxCommentsException) {
-			throw new ClientErrorException(
-				"Maximum number of comments has been reached", 422,
-				discussionMaxCommentsException);
-		}
-		catch (DuplicateCommentException duplicateCommentException) {
-			throw new ClientErrorException(
-				"A comment with the same text already exists", 409,
-				duplicateCommentException);
-		}
-		catch (MessageSubjectException messageSubjectException) {
-			throw new ClientErrorException(
-				"Comment text is null", 422, messageSubjectException);
-		}
-	}
 
-	private Comment _postEntityComment(
-			String externalReferenceCode, long groupId, String className,
-			long classPK, String text)
-		throws Exception {
-
-		return _postComment(
-			() -> _commentManager.addComment(
-				externalReferenceCode, _getUserId(), groupId, className,
-				classPK, StringPool.BLANK, StringPool.BLANK,
-				StringBundler.concat("<p>", text, "</p>"),
-				_createServiceContextFunction()),
-			className, classPK, groupId);
-	}
-
-	private Comment _postParentCommentComment(
-			String externalReferenceCode, long groupId, long parentCommentId,
-			String className, long classPK, String text)
-		throws Exception {
-
-		return _postComment(
-			() -> _commentManager.addComment(
-				externalReferenceCode, _getUserId(), className, classPK,
-				StringPool.BLANK, parentCommentId, StringPool.BLANK,
-				StringBundler.concat("<p>", text, "</p>"),
-				_createServiceContextFunction()),
-			className, classPK, groupId);
+		return CommentUtil.toComment(
+			() -> _commentManager.fetchComment(
+				_commentManager.addComment(
+					externalReferenceCode, _getUserId(), groupId, className,
+					classPK, StringPool.BLANK, StringPool.BLANK,
+					StringBundler.concat("<p>", text, "</p>"),
+					_createServiceContextFunction())),
+			_commentManager, _portal);
 	}
 
 	private Comment _updateComment(

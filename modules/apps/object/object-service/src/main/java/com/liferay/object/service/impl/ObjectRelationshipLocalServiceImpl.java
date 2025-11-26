@@ -36,6 +36,7 @@ import com.liferay.object.model.ObjectRelationshipTable;
 import com.liferay.object.petra.sql.dsl.DynamicObjectDefinitionTable;
 import com.liferay.object.petra.sql.dsl.DynamicObjectDefinitionTableUtil;
 import com.liferay.object.petra.sql.dsl.DynamicObjectRelationshipMappingTable;
+import com.liferay.object.petra.sql.dsl.DynamicObjectRelationshipMappingTableFactory;
 import com.liferay.object.relationship.util.ObjectRelationshipUtil;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectDefinitionSettingLocalService;
@@ -191,27 +192,34 @@ public class ObjectRelationshipLocalServiceImpl
 				objectRelationship.getType(),
 				ObjectRelationshipConstants.TYPE_MANY_TO_MANY)) {
 
+			DynamicObjectRelationshipMappingTable
+				dynamicObjectRelationshipMappingTable =
+					DynamicObjectRelationshipMappingTableFactory.create(
+						objectRelationship.getDBTableName(), objectDefinition1,
+						objectDefinition2, objectRelationship.isReverse());
+
 			if (_hasManyToManyObjectRelationshipMappingTableValues(
-					objectDefinition1, objectDefinition2, objectRelationship,
-					primaryKey1, primaryKey2)) {
+					dynamicObjectRelationshipMappingTable, primaryKey1,
+					primaryKey2)) {
 
 				return;
 			}
 
-			Map<String, String> pkObjectFieldDBColumnNames =
-				ObjectRelationshipUtil.getPKObjectFieldDBColumnNames(
-					objectDefinition1, objectDefinition2,
-					objectRelationship.isReverse());
+			Column<DynamicObjectRelationshipMappingTable, Long>
+				primaryKeyColumn1 =
+					dynamicObjectRelationshipMappingTable.
+						getPrimaryKeyColumn1();
+			Column<DynamicObjectRelationshipMappingTable, Long>
+				primaryKeyColumn2 =
+					dynamicObjectRelationshipMappingTable.
+						getPrimaryKeyColumn2();
 
 			runSQL(
 				StringBundler.concat(
 					"insert into ", objectRelationship.getDBTableName(), " (",
-					pkObjectFieldDBColumnNames.get(
-						"pkObjectFieldDBColumnName1"),
-					", ",
-					pkObjectFieldDBColumnNames.get(
-						"pkObjectFieldDBColumnName2"),
-					") values (", primaryKey1, ", ", primaryKey2, ")"));
+					primaryKeyColumn1.getName(), ", ",
+					primaryKeyColumn2.getName(), ") values (", primaryKey1,
+					", ", primaryKey2, ")"));
 
 			FinderCacheUtil.clearDSLQueryCache(
 				objectRelationship.getDBTableName());
@@ -306,32 +314,29 @@ public class ObjectRelationshipLocalServiceImpl
 		objectRelationshipLocalService.updateObjectRelationship(
 			reverseObjectRelationship);
 
-		Map<String, String> pkObjectFieldDBColumnNames =
-			ObjectRelationshipUtil.getPKObjectFieldDBColumnNames(
-				objectDefinition1, objectDefinition2, false);
-
-		String pkObjectFieldDBColumnName1 = pkObjectFieldDBColumnNames.get(
-			"pkObjectFieldDBColumnName1");
-		String pkObjectFieldDBColumnName2 = pkObjectFieldDBColumnNames.get(
-			"pkObjectFieldDBColumnName2");
-
 		DynamicObjectRelationshipMappingTable
 			dynamicObjectRelationshipMappingTable =
-				new DynamicObjectRelationshipMappingTable(
-					pkObjectFieldDBColumnName1, pkObjectFieldDBColumnName2,
-					objectRelationship.getDBTableName());
+				DynamicObjectRelationshipMappingTableFactory.create(
+					objectRelationship.getDBTableName(), objectDefinition1,
+					objectDefinition2);
 
 		runSQL(dynamicObjectRelationshipMappingTable.getCreateTableSQL());
 
 		Connection connection = _currentConnection.getConnection(
 			objectRelationshipPersistence.getDataSource());
+		Column<DynamicObjectRelationshipMappingTable, Long> primaryKeyColumn1 =
+			dynamicObjectRelationshipMappingTable.getPrimaryKeyColumn1();
 
 		ObjectDBManagerUtil.createIndexMetadata(
 			connection, objectRelationship.getDBTableName(), false,
-			pkObjectFieldDBColumnName1);
+			primaryKeyColumn1.getName());
+
+		Column<DynamicObjectRelationshipMappingTable, Long> primaryKeyColumn2 =
+			dynamicObjectRelationshipMappingTable.getPrimaryKeyColumn2();
+
 		ObjectDBManagerUtil.createIndexMetadata(
 			connection, objectRelationship.getDBTableName(), false,
-			pkObjectFieldDBColumnName2);
+			primaryKeyColumn2.getName());
 
 		return objectRelationship;
 	}
@@ -1530,23 +1535,9 @@ public class ObjectRelationshipLocalServiceImpl
 	}
 
 	private boolean _hasManyToManyObjectRelationshipMappingTableValues(
-		ObjectDefinition objectDefinition1, ObjectDefinition objectDefinition2,
-		ObjectRelationship objectRelationship, long primaryKey1,
-		long primaryKey2) {
-
-		Map<String, String> pkObjectFieldDBColumnNames =
-			ObjectRelationshipUtil.getPKObjectFieldDBColumnNames(
-				objectDefinition1, objectDefinition2,
-				objectRelationship.isReverse());
-
 		DynamicObjectRelationshipMappingTable
-			dynamicObjectRelationshipMappingTable =
-				new DynamicObjectRelationshipMappingTable(
-					pkObjectFieldDBColumnNames.get(
-						"pkObjectFieldDBColumnName1"),
-					pkObjectFieldDBColumnNames.get(
-						"pkObjectFieldDBColumnName2"),
-					objectRelationship.getDBTableName());
+			dynamicObjectRelationshipMappingTable,
+		long primaryKey1, long primaryKey2) {
 
 		Column<DynamicObjectRelationshipMappingTable, Long> primaryKeyColumn1 =
 			dynamicObjectRelationshipMappingTable.getPrimaryKeyColumn1();

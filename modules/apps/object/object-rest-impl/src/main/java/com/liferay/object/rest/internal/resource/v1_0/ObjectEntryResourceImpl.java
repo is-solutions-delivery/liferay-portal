@@ -6,6 +6,9 @@
 package com.liferay.object.rest.internal.resource.v1_0;
 
 import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
+import com.liferay.headless.delivery.dto.v1_0.Comment;
+import com.liferay.headless.delivery.dto.v1_0.util.CommentUtil;
+import com.liferay.headless.delivery.resource.v1_0.util.CommentResourceUtil;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.exception.ObjectEntryValidationException;
 import com.liferay.object.model.ObjectDefinition;
@@ -30,19 +33,27 @@ import com.liferay.object.service.ObjectRelationshipService;
 import com.liferay.object.system.SystemObjectDefinitionManagerRegistry;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.comment.CommentManager;
+import com.liferay.portal.kernel.comment.DiscussionPermission;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.aggregation.Aggregation;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
@@ -60,6 +71,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * @author Javier Gamarra
@@ -69,6 +81,8 @@ public class ObjectEntryResourceImpl
 	implements ExportImportVulcanBatchEngineTaskItemDelegate<ObjectEntry> {
 
 	public ObjectEntryResourceImpl(
+		CommentManager commentManager,
+		DiscussionPermission discussionPermission,
 		DTOConverterRegistry dtoConverterRegistry,
 		EntityModelProvider entityModelProvider,
 		ObjectDefinition objectDefinition,
@@ -84,6 +98,8 @@ public class ObjectEntryResourceImpl
 			systemObjectDefinitionManagerRegistry,
 		UserLocalService userLocalService) {
 
+		_commentManager = commentManager;
+		_discussionPermission = discussionPermission;
 		_dtoConverterRegistry = dtoConverterRegistry;
 		_entityModelProvider = entityModelProvider;
 		_objectDefinition = objectDefinition;
@@ -731,6 +747,25 @@ public class ObjectEntryResourceImpl
 	}
 
 	@Override
+	public Comment postByExternalReferenceCodeComment(
+			String externalReferenceCode, Comment comment)
+		throws Exception {
+
+		if (!_objectDefinition.isEnableComments() ||
+			!FeatureFlagManagerUtil.isEnabled(
+				_objectDefinition.getCompanyId(), "LPD-69419")) {
+
+			throw new UnsupportedOperationException();
+		}
+
+		ObjectEntry objectEntry = _getObjectEntry(externalReferenceCode, null);
+
+		return _addComment(
+			_getNonzeroGroupId(objectEntry.getId()), comment,
+			objectEntry.getId());
+	}
+
+	@Override
 	public void postByExternalReferenceCodeSubscribe(
 			String externalReferenceCode)
 		throws Exception {
@@ -975,6 +1010,25 @@ public class ObjectEntryResourceImpl
 	}
 
 	@Override
+	public Comment postScopeScopeKeyByExternalReferenceCodeComment(
+			String scopeKey, String externalReferenceCode, Comment comment)
+		throws Exception {
+
+		if (!_objectDefinition.isEnableComments() ||
+			!FeatureFlagManagerUtil.isEnabled(
+				_objectDefinition.getCompanyId(), "LPD-69419")) {
+
+			throw new UnsupportedOperationException();
+		}
+
+		ObjectEntry objectEntry = _getObjectEntry(
+			externalReferenceCode, scopeKey);
+
+		return _addComment(
+			objectEntry.getScopeId(), comment, objectEntry.getId());
+	}
+
+	@Override
 	public ObjectEntry postScopeScopeKeyByExternalReferenceCodeExpire(
 			String scopeKey, String externalReferenceCode)
 		throws Exception {
@@ -1092,6 +1146,36 @@ public class ObjectEntryResourceImpl
 		defaultObjectEntryManager.executeObjectAction(
 			contextCompany.getCompanyId(), _getDTOConverterContext(null),
 			externalReferenceCode, objectActionName, _objectDefinition, null);
+	}
+
+	@Override
+	public Comment
+			putByExternalReferenceCodeObjectEntryExternalReferenceCodeCommentByExternalReferenceCode(
+				String objectEntryExternalReferenceCode,
+				String externalReferenceCode, Comment comment)
+		throws Exception {
+
+		if (!_objectDefinition.isEnableComments() ||
+			!FeatureFlagManagerUtil.isEnabled(
+				_objectDefinition.getCompanyId(), "LPD-69419")) {
+
+			throw new UnsupportedOperationException();
+		}
+
+		ObjectEntry objectEntry = _getObjectEntry(
+			objectEntryExternalReferenceCode, null);
+
+		com.liferay.portal.kernel.comment.Comment serviceBuilderComment =
+			_fetchComment(
+				ObjectEntry.class.getName(), objectEntry.getId(),
+				externalReferenceCode, _getNonzeroGroupId(objectEntry.getId()));
+
+		if (serviceBuilderComment != null) {
+			return _updateComment(comment, serviceBuilderComment);
+		}
+
+		return _addComment(
+			objectEntry.getScopeId(), comment, objectEntry.getId());
 	}
 
 	@Override
@@ -1232,6 +1316,36 @@ public class ObjectEntryResourceImpl
 	}
 
 	@Override
+	public Comment
+			putScopeScopeKeyByExternalReferenceCodeObjectEntryExternalReferenceCodeCommentByExternalReferenceCode(
+				String scopeKey, String objectEntryExternalReferenceCode,
+				String externalReferenceCode, Comment comment)
+		throws Exception {
+
+		if (!_objectDefinition.isEnableComments() ||
+			!FeatureFlagManagerUtil.isEnabled(
+				_objectDefinition.getCompanyId(), "LPD-69419")) {
+
+			throw new UnsupportedOperationException();
+		}
+
+		ObjectEntry objectEntry = _getObjectEntry(
+			objectEntryExternalReferenceCode, scopeKey);
+
+		com.liferay.portal.kernel.comment.Comment serviceBuilderComment =
+			_fetchComment(
+				ObjectEntry.class.getName(), objectEntry.getId(),
+				externalReferenceCode, objectEntry.getScopeId());
+
+		if (serviceBuilderComment != null) {
+			return _updateComment(comment, serviceBuilderComment);
+		}
+
+		return _addComment(
+			objectEntry.getScopeId(), comment, objectEntry.getId());
+	}
+
+	@Override
 	public ObjectEntry putScopeScopeKeyByExternalReferenceCodeRestore(
 			String scopeKey, String externalReferenceCode)
 		throws Exception {
@@ -1315,6 +1429,54 @@ public class ObjectEntryResourceImpl
 		}
 	}
 
+	private Comment _addComment(
+			long groupId, Comment comment, long objectEntryId)
+		throws Exception {
+
+		_discussionPermission.checkAddPermission(
+			PermissionThreadLocal.getPermissionChecker(),
+			contextCompany.getCompanyId(), groupId, ObjectEntry.class.getName(),
+			objectEntryId);
+
+		return CommentUtil.toComment(
+			() -> _commentManager.fetchComment(
+				_commentManager.addComment(
+					comment.getExternalReferenceCode(),
+					PrincipalThreadLocal.getUserId(), groupId,
+					ObjectEntry.class.getName(), objectEntryId,
+					StringPool.BLANK, StringPool.BLANK,
+					StringBundler.concat("<p>", comment.getText(), "</p>"),
+					_createServiceContextFunction())),
+			_commentManager, PortalUtil.getPortal());
+	}
+
+	private Function<String, ServiceContext> _createServiceContextFunction() {
+		return className -> {
+			ServiceContext serviceContext = new ServiceContext();
+
+			serviceContext.setWorkflowAction(WorkflowConstants.ACTION_PUBLISH);
+
+			return serviceContext;
+		};
+	}
+
+	private com.liferay.portal.kernel.comment.Comment _fetchComment(
+		String className, long classPK, String externalReferenceCode,
+		long groupId) {
+
+		com.liferay.portal.kernel.comment.Comment serviceBuilderComment =
+			_commentManager.fetchComment(groupId, externalReferenceCode);
+
+		if ((serviceBuilderComment != null) &&
+			CommentResourceUtil.isAssociated(
+				className, classPK, serviceBuilderComment)) {
+
+			return serviceBuilderComment;
+		}
+
+		return null;
+	}
+
 	private DefaultDTOConverterContext _getDTOConverterContext(
 		Long objectEntryId) {
 
@@ -1382,6 +1544,28 @@ public class ObjectEntryResourceImpl
 			"(", filterString, ") and ", assigneeFilterString);
 	}
 
+	private long _getNonzeroGroupId(long objectEntryId) throws Exception {
+		com.liferay.object.model.ObjectEntry objectEntry =
+			_objectEntryLocalService.getObjectEntry(objectEntryId);
+
+		return objectEntry.getNonzeroGroupId();
+	}
+
+	private ObjectEntry _getObjectEntry(
+			String objectEntryExternalReferenceCode, String scopeKey)
+		throws Exception {
+
+		DefaultObjectEntryManager defaultObjectEntryManager =
+			DefaultObjectEntryManagerProvider.provide(
+				_objectEntryManagerRegistry.getObjectEntryManager(
+					_objectDefinition.getCompanyId(),
+					_objectDefinition.getStorageType()));
+
+		return defaultObjectEntryManager.getObjectEntry(
+			contextCompany.getCompanyId(), _getDTOConverterContext(null),
+			objectEntryExternalReferenceCode, _objectDefinition, scopeKey);
+	}
+
 	private String _getScopeKey(Map<String, Serializable> parameters) {
 		if (parameters.containsKey("scopeKey")) {
 			return String.valueOf(parameters.get("scopeKey"));
@@ -1396,6 +1580,27 @@ public class ObjectEntryResourceImpl
 		}
 
 		return null;
+	}
+
+	private Comment _updateComment(
+			Comment comment,
+			com.liferay.portal.kernel.comment.Comment serviceBuilderComment)
+		throws Exception {
+
+		_discussionPermission.checkUpdatePermission(
+			PermissionThreadLocal.getPermissionChecker(),
+			serviceBuilderComment.getCommentId());
+
+		return CommentUtil.toComment(
+			() -> _commentManager.fetchComment(
+				_commentManager.updateComment(
+					PrincipalThreadLocal.getUserId(),
+					ObjectEntry.class.getName(),
+					serviceBuilderComment.getClassPK(),
+					serviceBuilderComment.getCommentId(), StringPool.BLANK,
+					StringBundler.concat("<p>", comment.getText(), "</p>"),
+					_createServiceContextFunction())),
+			_commentManager, PortalUtil.getPortal());
 	}
 
 	private ValidationResponse _validateObjectEntry(
@@ -1446,6 +1651,8 @@ public class ObjectEntryResourceImpl
 	private static final Log _log = LogFactoryUtil.getLog(
 		ObjectEntryResourceImpl.class);
 
+	private final CommentManager _commentManager;
+	private final DiscussionPermission _discussionPermission;
 	private final DTOConverterRegistry _dtoConverterRegistry;
 	private final EntityModelProvider _entityModelProvider;
 
