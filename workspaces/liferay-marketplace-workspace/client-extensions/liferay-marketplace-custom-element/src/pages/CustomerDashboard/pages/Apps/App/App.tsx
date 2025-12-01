@@ -19,6 +19,7 @@ import {
 import {safeJSONParse} from '../../../../../utils/util';
 
 import './App.scss';
+import {breadcrumbStore} from '../../../../../context/store/BreadcrumbStore';
 
 const getPriceList = (
 	isCloud: boolean,
@@ -78,6 +79,11 @@ const getPriceList = (
 const App = () => {
 	const {orderId} = useParams();
 	const {placedOrder, product} = useOutletContext<any>();
+
+	breadcrumbStore.send({
+		replacements: {[orderId as string]: product.name},
+		type: 'setReplacements',
+	});
 
 	const licenseType = getProductSpecificationValue(
 		ProductSpecificationKey.APP_LICENSING_TYPE,

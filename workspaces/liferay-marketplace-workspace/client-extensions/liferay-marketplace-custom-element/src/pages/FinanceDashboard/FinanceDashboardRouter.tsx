@@ -13,9 +13,12 @@ import PaymentDetails from './pages/Payments/PaymentDetails/PaymentDetails';
 import Payments from './pages/Payments/Payments';
 
 import './index.scss';
+import {Breadcrumbs} from '../../components/Breadcrumb/Breadcrumb';
 
-const SSADashboardRouter = () => (
+const FinanceDashboardRouter = () => (
 	<HashRouter>
+		<Breadcrumbs basePath="web/marketplace/finance-dashboard" />
+
 		<Routes>
 			<Route element={<FinanceDashboardOutlet />}>
 				<Route element={<Orders />} index />
@@ -30,4 +33,4 @@ const SSADashboardRouter = () => (
 	</HashRouter>
 );
 
-export default withProviders(SSADashboardRouter);
+export default withProviders(FinanceDashboardRouter);

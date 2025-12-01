@@ -5,6 +5,7 @@
 
 import {HashRouter, Route, Routes} from 'react-router-dom';
 
+import {Breadcrumbs} from '../../components/Breadcrumb/Breadcrumb';
 import withProviders from '../../hoc/withProviders';
 import CustomerDashboardOutlet from './CustomerDashboardOutlet';
 import Apps from './pages/Apps';
@@ -27,6 +28,7 @@ import SolutionOutlet from './pages/Solutions/SolutionOutlet';
 const CustomerDashboardRouter = () => {
 	return (
 		<HashRouter>
+			<Breadcrumbs basePath="web/marketplace/customer-dashboard" />
 			<Routes>
 				<Route element={<CustomerDashboardOutlet />}>
 					<Route element={<Apps />} index />

@@ -25,6 +25,7 @@ import {
 import AppDetail from './AppDetail';
 
 import './App.scss';
+import {breadcrumbStore} from '../../../../context/store/BreadcrumbStore';
 
 type AppProps = {
 	header?: any;
@@ -57,6 +58,11 @@ const App: React.FC<AppProps> = ({header}) => {
 	if (isLoading || !product) {
 		return null;
 	}
+
+	breadcrumbStore.send({
+		replacements: {[productId as string]: product.name.en_US},
+		type: 'setReplacements',
+	});
 
 	const thumbnail = getThumbnailByProductAttachment(product?.images);
 

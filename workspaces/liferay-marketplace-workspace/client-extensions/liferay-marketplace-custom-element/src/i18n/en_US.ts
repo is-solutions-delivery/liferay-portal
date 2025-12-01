@@ -31,6 +31,7 @@ export default {
 	'address': 'Address',
 	'address-name': 'Address Name',
 	'admin-dashboard': 'Admin Dashboard',
+	'administrator-dashboard': 'Administrator Dashboard',
 	'agreements': 'Agreements',
 	'all-orders': 'All Orders',
 	'all-progress-and-information-related-to-the-creation-of-the-app-will-be-lost-do-you-still-want-to-exit':
@@ -283,6 +284,7 @@ export default {
 	'failure': 'Failure',
 	'file-not-available-for-download': 'File not available for download.',
 	'filter': 'Filter',
+	'finance-dashboard': 'Finance Dashboard',
 	'first-name': 'First Name',
 	'for-businesses-with-a-vat-tax-number-this-account-type-support-multiple-users':
 		'For businesses with a VAT/Tax number; this account type support multiple users.',
@@ -596,6 +598,7 @@ export default {
 	'sorry-there-are-no-results-found': 'Sorry, there are no results found.',
 	'specify-your-apps-version-this-will-help-the-user-understand-the-latest-version-of-your-app-offered-on-the-marketplace':
 		'Specify your app’s version. This will help the user understand the latest version of your app offered on the Marketplace.',
+	'ssa-dashboard': 'SSA Dashboard',
 	'ssa-trial-installation-in-progress': 'SSA Trial Installation in Progress',
 	'ssa-trial-summary': 'SSA Trial Summary',
 	'ssa-trials': 'SSA Trials',

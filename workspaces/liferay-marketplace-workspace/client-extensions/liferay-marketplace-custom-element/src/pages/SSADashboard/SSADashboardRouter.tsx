@@ -5,6 +5,7 @@
 
 import {HashRouter, Route, Routes} from 'react-router-dom';
 
+import {Breadcrumbs} from '../../components/Breadcrumb/Breadcrumb';
 import withProviders from '../../hoc/withProviders';
 import SSADashboardOutlet from './SSADashboardOutlet';
 import MySaaSTrials from './pages';
@@ -15,6 +16,7 @@ import './index.scss';
 
 const SSADashboardRouter = () => (
 	<HashRouter>
+		<Breadcrumbs basePath="web/marketplace/ssa-dashboard" />
 		<Routes>
 			<Route element={<SSADashboardOutlet />}>
 				<Route element={<MySaaSTrials />} index />

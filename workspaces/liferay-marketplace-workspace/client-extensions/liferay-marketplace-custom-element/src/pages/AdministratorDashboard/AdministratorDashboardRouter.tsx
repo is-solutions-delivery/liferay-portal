@@ -23,6 +23,7 @@ import Solutions from './pages/Solutions';
 import Trial from './pages/Trial';
 
 import './index.scss';
+import {Breadcrumbs} from '../../components/Breadcrumb/Breadcrumb';
 
 const AppWithActions = () => {
 	const {productId} = useParams();
@@ -70,6 +71,8 @@ const AppWithActions = () => {
 
 const AdministratorDashboardRouter = () => (
 	<HashRouter>
+		<Breadcrumbs basePath="web/marketplace/administrator-dashboard" />
+
 		<Routes>
 			<Route element={<AdministratorDashboardOutlet />}>
 				<Route element={<AdministrationSummary />} index />

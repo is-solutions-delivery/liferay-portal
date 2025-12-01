@@ -43,6 +43,7 @@ import {
 } from './pages/Solutions/SolutionForm/pages';
 
 import './PublisherDashboard.scss';
+import {Breadcrumbs} from '../../components/Breadcrumb/Breadcrumb';
 
 const PublisherDashboardRouter = () => {
 	const {accountId} = Liferay.CommerceContext.account || {};
@@ -79,6 +80,8 @@ const PublisherDashboardRouter = () => {
 
 	return (
 		<HashRouter>
+			<Breadcrumbs basePath="web/marketplace/publisher-dashboard" />
+
 			<Routes>
 				<Route path="newapp">
 					<Route
