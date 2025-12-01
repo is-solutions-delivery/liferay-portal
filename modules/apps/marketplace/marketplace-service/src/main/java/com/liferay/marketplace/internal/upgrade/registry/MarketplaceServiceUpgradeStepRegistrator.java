@@ -72,22 +72,20 @@ public class MarketplaceServiceUpgradeStepRegistrator
 				"Marketplace_App", "category", "VARCHAR(255) null"));
 
 		registry.register(
-			"2.0.3", "2.0.3.step-1",
+			"2.0.3", "3.0.0",
 			new DeleteDuplicateUniqueFinderRowsUpgradeProcess(
-				"Marketplace_App", new String[] {"remoteAppId"}, "appId asc"));
-
-		registry.register(
-			"2.0.3.step-1", "2.0.3.step-2",
-			new DeleteDuplicateUniqueFinderRowsUpgradeProcess(
-				"Marketplace_Module", new String[] {"appId", "contextName"},
-				"appId asc"));
-
-		registry.register(
-			"2.0.3.step-2", "3.0.0",
-			new DeleteDuplicateUniqueFinderRowsUpgradeProcess(
+				"Marketplace_App", new String[] {"remoteAppId"}, "appId asc")
+				,new DeleteDuplicateUniqueFinderRowsUpgradeProcess(
+				"Marketplace_Module",
+				 new String[] {"appId", "contextName"},
+				"appId asc"),
+				new DeleteDuplicateUniqueFinderRowsUpgradeProcess(
 				"Marketplace_Module",
 				new String[] {"appId", "bundleSymbolicName", "bundleVersion"},
-				"appId asc"));
+				"appId asc"
+			)
+		);
+
 	}
 
 	@Reference
