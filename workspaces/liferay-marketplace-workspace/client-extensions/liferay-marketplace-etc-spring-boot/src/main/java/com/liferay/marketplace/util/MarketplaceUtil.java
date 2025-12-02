@@ -5,18 +5,21 @@
 
 package com.liferay.marketplace.util;
 
+import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Product;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.SkuOption;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.OrderItem;
 import com.liferay.headless.commerce.admin.order.client.pagination.Page;
+import com.liferay.marketplace.MarketplaceRestController;
+import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 
 import java.util.Enumeration;
 import java.util.Map;
@@ -35,19 +38,16 @@ import org.json.JSONObject;
  */
 public class MarketplaceUtil {
 
-	public static Path addMarketplaceMetadata(
-			Path originalFilePath, Map<String, Properties> propertiesMap)
+	public static File addMarketplaceMetadata(
+			File file, Map<String, Properties> propertiesMap)
 		throws IOException {
 
 		Path filePathWithMarketplaceMetadata = Files.createTempFile(
-			"modified-",
-			getExtensionFile(
-				originalFilePath.getFileName(
-				).toString()));
+			"modified-", FileUtil.getExtension(file.getName()));
 
 		try (ZipOutputStream zipOutputStream = new ZipOutputStream(
 				Files.newOutputStream(filePathWithMarketplaceMetadata));
-			ZipFile originalZipFile = new ZipFile(originalFilePath.toFile())) {
+			ZipFile originalZipFile = new ZipFile(file)) {
 
 			Enumeration<? extends ZipEntry> entriesEnumeration =
 				originalZipFile.entries();
@@ -102,7 +102,7 @@ public class MarketplaceUtil {
 			}
 		}
 
-		return filePathWithMarketplaceMetadata;
+		return filePathWithMarketplaceMetadata.toFile();
 	}
 
 	public static JSONArray createCloudProvisioningJSONArray(
@@ -131,19 +131,60 @@ public class MarketplaceUtil {
 		return jsonArray;
 	}
 
-	public static Path createTempFilePath(
-			InputStream inputStream, String suffix)
-		throws Exception {
+	public static Properties createMarketplaceProperties(
+		Product product,
+		MarketplaceRestController.PublisherAssetLink publisherAssetLink) {
 
-		Path tempFilePath = Files.createTempFile("tempFile-", suffix);
+		Properties properties = new Properties();
 
-		try (InputStream newInputStream = inputStream) {
-			Files.copy(
-				newInputStream, tempFilePath,
-				StandardCopyOption.REPLACE_EXISTING);
-		}
+		properties.setProperty("product-id", String.valueOf(product.getId()));
+		properties.setProperty(
+			"product-name",
+			product.getName(
+			).get(
+				"en_US"
+			));
+		properties.setProperty("license-version", "1.0.0");
+		properties.setProperty("product-version-id", "1");
 
-		return tempFilePath;
+		properties.setProperty(
+			"publisher-asset-version", publisherAssetLink.version);
+
+		return properties;
+	}
+
+	public static Properties createProductProperties(
+		Product product,
+		MarketplaceRestController.PublisherAssetLink publisherAssetLink) {
+
+		Properties properties = new Properties();
+
+		properties.setProperty(
+			"category",
+			product.getCategories(
+			).toString());
+		properties.setProperty(
+			"remote-app-id", String.valueOf(product.getId()));
+		properties.setProperty("context-names", "");
+		properties.setProperty("version", publisherAssetLink.version);
+		properties.setProperty("icon-url", "");
+		properties.setProperty("required", "");
+		properties.setProperty(
+			"title",
+			product.getName(
+			).get(
+				"en_US"
+			));
+		properties.setProperty("bundles", "");
+		properties.setProperty(
+			"description",
+			product.getDescription(
+			).get(
+				"en_US"
+			));
+		properties.setProperty("restart-required", "");
+
+		return properties;
 	}
 
 	public static String createTemporaryDeployment(
@@ -204,16 +245,6 @@ public class MarketplaceUtil {
 		}
 
 		return new JSONObject();
-	}
-
-	public static String getExtensionFile(String fileName) {
-		int dot = fileName.lastIndexOf(".");
-
-		if (dot == -1) {
-			return "";
-		}
-
-		return fileName.substring(dot);
 	}
 
 	public static String getSkuOptionValue(String key, SkuOption[] skuOptions) {
