@@ -735,7 +735,7 @@ export default function NewAppContextProvider({
 					publisherAssetses.map(async (publisherAsset) => {
 						const packageFiles = await Promise.all(
 							publisherAsset.publisherAssetsToAttachment.map(
-								async (file: any) => {
+async (file: { sourceCode: { id: number; name: string; link: { href: string } } }) => {
 									const sourceFileDocument =
 										await HeadlessDelivery.getDocument(
 											file.sourceCode.id

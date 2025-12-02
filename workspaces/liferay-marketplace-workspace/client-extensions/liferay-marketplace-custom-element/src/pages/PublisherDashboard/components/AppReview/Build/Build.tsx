@@ -14,7 +14,7 @@ const FileContent = ({
 	liferayPackage,
 	uploaded,
 }: {
-	liferayPackage: any;
+	liferayPackage: {fileName?: string; src?: string};
 	uploaded: boolean;
 }) => {
 	if (uploaded) {
@@ -84,7 +84,7 @@ const Build = ({
 										</div>
 										<div className="d-flex flex-column">
 											{liferayPackage.file.map(
-												(packageFile: any) => {
+								(packageFile: { id: string; readableSize?: string; fileName?: string; src?: string }) => {
 													return (
 														<div
 															key={packageFile.id}
