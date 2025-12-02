@@ -1,0 +1,19 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "loading-knowledge-label",
+					"description": "Language override key to set the loading text.",
+					"label": "Loading Text Key",
+					"name": "loadingTextKey",
+					"type": "text",
+					"typeOptions": {
+						"placeholder": "Language Override Key"
+					}
+				}
+			]
+		}
+	]
+}
