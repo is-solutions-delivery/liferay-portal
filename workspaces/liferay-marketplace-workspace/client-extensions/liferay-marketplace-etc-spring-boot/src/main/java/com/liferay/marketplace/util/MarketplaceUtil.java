@@ -5,22 +5,120 @@
 
 package com.liferay.marketplace.util;
 
+import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Product;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.SkuOption;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.OrderItem;
 import com.liferay.headless.commerce.admin.order.client.pagination.Page;
+import com.liferay.marketplace.model.PublisherAssetLink;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.StringUtil;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
  * @author Keven Leone
+ * @author Eduardo Diniz
  */
 public class MarketplaceUtil {
+
+	public static File addMarketplaceMetadata(
+			File file, String fileName, Map<String, Properties> propertiesMap)
+		throws IOException {
+
+		Path tempDirectoryPath = Files.createTempDirectory("marketplace-temp-");
+
+		Path newZipPath = tempDirectoryPath.resolve(fileName);
+
+		try (ZipOutputStream zipOutputStream = new ZipOutputStream(
+				Files.newOutputStream(newZipPath));
+			ZipFile originalZip = new ZipFile(file)) {
+
+			while (originalZip.entries(
+					).hasMoreElements()) {
+
+				ZipEntry entry = originalZip.entries(
+				).nextElement();
+
+				zipOutputStream.putNextEntry(new ZipEntry(entry.getName()));
+
+				if (!entry.isDirectory()) {
+					try (InputStream inputStream = originalZip.getInputStream(
+							entry)) {
+
+						inputStream.transferTo(zipOutputStream);
+					}
+				}
+
+				zipOutputStream.closeEntry();
+			}
+
+			for (Map.Entry<String, Properties> propertiesEntry :
+					propertiesMap.entrySet()) {
+
+				String entryName = propertiesEntry.getKey();
+
+				int slash = entryName.lastIndexOf('/');
+
+				if (slash != -1) {
+					zipOutputStream.putNextEntry(
+						new ZipEntry(entryName.substring(0, slash + 1)));
+					zipOutputStream.closeEntry();
+				}
+
+				zipOutputStream.putNextEntry(new ZipEntry(entryName));
+
+				ByteArrayOutputStream byteArrayOutputStream =
+					new ByteArrayOutputStream();
+
+				propertiesEntry.getValue(
+				).store(
+					byteArrayOutputStream, "Added automatically by Marketplace"
+				);
+
+				zipOutputStream.write(byteArrayOutputStream.toByteArray());
+
+				zipOutputStream.closeEntry();
+			}
+		}
+
+		return newZipPath.toFile();
+	}
+
+	public static void cleanupTemporaryFile(
+		File file, boolean deleteParentFolder) {
+
+		try {
+			if (file != null) {
+				Files.deleteIfExists(file.toPath());
+
+				if (deleteParentFolder) {
+					Files.deleteIfExists(
+						file.toPath(
+						).getParent());
+				}
+			}
+		}
+		catch (Exception exception) {
+			System.err.println("Cleanup failed: " + exception.getMessage());
+		}
+	}
 
 	public static JSONArray createCloudProvisioningJSONArray(
 		Page<OrderItem> orderItemPage) {
@@ -46,6 +144,59 @@ public class MarketplaceUtil {
 		}
 
 		return jsonArray;
+	}
+
+	public static Properties createMarketplaceProperties(
+		Product product, PublisherAssetLink publisherAssetLink) {
+
+		Properties properties = new Properties();
+
+		properties.setProperty("license-version", "1.0.0");
+		properties.setProperty("product-id", String.valueOf(product.getId()));
+		properties.setProperty(
+			"product-name",
+			product.getName(
+			).get(
+				"en_US"
+			));
+		properties.setProperty("product-version-id", "1");
+		properties.setProperty(
+			"publisher-asset-version", publisherAssetLink.version);
+
+		return properties;
+	}
+
+	public static Properties createProductProperties(
+		Product product, PublisherAssetLink publisherAssetLink) {
+
+		Properties properties = new Properties();
+
+		properties.setProperty("bundles", "");
+		properties.setProperty(
+			"category",
+			product.getCategories(
+			).toString());
+		properties.setProperty("context-names", "");
+		properties.setProperty(
+			"description",
+			product.getDescription(
+			).get(
+				"en_US"
+			));
+		properties.setProperty("icon-url", "");
+		properties.setProperty(
+			"remote-app-id", String.valueOf(product.getId()));
+		properties.setProperty("required", "");
+		properties.setProperty("restart-required", "");
+		properties.setProperty(
+			"title",
+			product.getName(
+			).get(
+				"en_US"
+			));
+		properties.setProperty("version", publisherAssetLink.version);
+
+		return properties;
 	}
 
 	public static String createTemporaryDeployment(
@@ -106,6 +257,28 @@ public class MarketplaceUtil {
 		}
 
 		return new JSONObject();
+	}
+
+	public static Map<String, Properties> getMarketplaceProperties(
+		Product product, Map<String, String> productSpecificationsMap,
+		PublisherAssetLink publisherAssetLink) {
+
+		return HashMapBuilder.<String, Properties>put(
+			"liferay-marketplace.properties",
+			() -> createProductProperties(product, publisherAssetLink)
+		).put(
+			"META-INF/marketplace.properties",
+			() -> {
+				if (Objects.equals(
+						productSpecificationsMap.get("price-model"), "Paid")) {
+
+					return createMarketplaceProperties(
+						product, publisherAssetLink);
+				}
+
+				return null;
+			}
+		).build();
 	}
 
 	public static String getSkuOptionValue(String key, SkuOption[] skuOptions) {
