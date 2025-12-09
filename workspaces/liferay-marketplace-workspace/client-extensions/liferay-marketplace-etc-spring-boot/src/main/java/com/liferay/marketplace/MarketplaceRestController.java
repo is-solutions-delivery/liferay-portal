@@ -480,6 +480,15 @@ public class MarketplaceRestController extends BaseRestController {
 	@PostMapping("/process-publisher-assets/{productId}")
 	public void processPublisherAssets(@PathVariable long productId) {
 		try {
+			Product product = _marketplaceService.getProduct(productId);
+
+			Map<String, String> productSpecificationsMap =
+				_marketplaceService.getProductSpecificationsMap(productId);
+
+			if (Objects.equals(productSpecificationsMap.get("type"), "dxp")) {
+				return;
+			}
+
 			List<PublisherAssetLink> publisherAssetLinks =
 				_getPublisherAssetLinks(
 					_marketplaceService.getPublisherAssetsJSONObject(
@@ -494,11 +503,6 @@ public class MarketplaceRestController extends BaseRestController {
 
 				return;
 			}
-
-			Product product = _marketplaceService.getProduct(productId);
-
-			Map<String, String> productSpecificationsMap =
-				_marketplaceService.getProductSpecificationsMap(productId);
 
 			for (PublisherAssetLink publisherAssetLink : publisherAssetLinks) {
 				_processPublisherAssetLink(
@@ -578,8 +582,6 @@ public class MarketplaceRestController extends BaseRestController {
 
 		JSONArray itemsJSONArray = jsonObject.optJSONArray("items");
 
-		System.out.println(itemsJSONArray);
-
 		for (int i = 0; i < itemsJSONArray.length(); i++) {
 			JSONObject itemJSONObject = itemsJSONArray.getJSONObject(i);
 
@@ -618,26 +620,25 @@ public class MarketplaceRestController extends BaseRestController {
 		throws Exception {
 
 		File publisherAssetFile = null;
-		File publisherAssetWithMetadata = null;
+		File publisherAssetArtifactFile = null;
 
 		try {
 			publisherAssetFile = _getPublisherAssetFile(
 				publisherAssetLink.href);
 
-			publisherAssetWithMetadata = MarketplaceUtil.addMarketplaceMetadata(
+			publisherAssetArtifactFile = MarketplaceUtil.addArtifactMetadata(
 				publisherAssetFile, publisherAssetLink.fileName,
-				MarketplaceUtil.getMarketplaceProperties(
+				MarketplaceUtil.getArtifactProperties(
 					product, productSpecificationsMap, publisherAssetLink));
 
 			_marketplaceService.postVirtualFileEntry(
-				_marketplaceService.getProductVirtualSettingsId(
-					product.getProductId()),
-				publisherAssetWithMetadata, publisherAssetLink.version);
+				publisherAssetArtifactFile, product.getProductId(),
+				publisherAssetLink.version);
 
 			if (Objects.equals(productSpecificationsMap.get("type"), "cloud")) {
 				_marketplaceService.postProductAttachment(
-					product.getProductId(), publisherAssetWithMetadata,
-					publisherAssetLink.fileName);
+					publisherAssetArtifactFile, publisherAssetLink.fileName,
+					product.getProductId());
 			}
 
 			_marketplaceService.patchPublisherAssetAttachment(
@@ -648,10 +649,9 @@ public class MarketplaceRestController extends BaseRestController {
 				publisherAssetLink.attachmentId);
 		}
 		finally {
-			MarketplaceUtil.cleanupTemporaryFile(publisherAssetFile, false);
+			MarketplaceUtil.deleteTempFile(publisherAssetFile, false);
 
-			MarketplaceUtil.cleanupTemporaryFile(
-				publisherAssetWithMetadata, true);
+			MarketplaceUtil.deleteTempFile(publisherAssetArtifactFile, true);
 		}
 	}
 

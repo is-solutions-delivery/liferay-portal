@@ -55,7 +55,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
 
 import java.util.Base64;
 import java.util.Collection;
@@ -72,7 +71,6 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
@@ -557,59 +555,47 @@ public class MarketplaceService extends BaseService {
 	}
 
 	public void postProductAttachment(
-			long productId, File file, String attachmentFileName)
+			File file, String fileName, long productId)
 		throws Exception {
-
-		Path path = file.toPath();
-
-		byte[] fileBytes = Files.readAllBytes(path);
-
-		String base64 = Base64.getEncoder(
-		).encodeToString(
-			fileBytes
-		);
-
-		AttachmentBase64 attachmentBase64 = new AttachmentBase64();
-
-		attachmentBase64.setAttachment(() -> base64);
-
-		attachmentBase64.setTitle(
-			() -> HashMapBuilder.put(
-				"en_US", attachmentFileName
-			).build());
-
-		attachmentBase64.setContentType(() -> "application/zip");
 
 		AttachmentResource attachmentResource = getAttachmentResource();
 
 		attachmentResource.postProductIdAttachmentByBase64(
-			productId, attachmentBase64);
+			productId,
+			new AttachmentBase64() {
+				{
+					setAttachment(
+						() -> Base64.getEncoder(
+						).encodeToString(
+							Files.readAllBytes(file.toPath())
+						));
+					setContentType(() -> "application/zip");
+					setTitle(
+						() -> HashMapBuilder.put(
+							"en_US", fileName
+						).build());
+				}
+			});
 	}
 
-	public void postVirtualFileEntry(long id, File file, String version)
+	public void postVirtualFileEntry(File file, long productId, String version)
 		throws Exception {
 
 		ProductVirtualSettingsFileEntryResource
 			productVirtualSettingsFileEntryResource =
 				_getProductVirtualSettingsFileEntryResource();
 
-		try {
-			productVirtualSettingsFileEntryResource.
-				postProductVirtualSettingIdProductVirtualSettingsFileEntry(
-					id,
-					ProductVirtualSettingsFileEntry.toDTO(
-						new JSONObject(
-						).put(
-							"version", version
-						).toString()),
-					HashMapBuilder.put(
-						"file", file
-					).build());
-		}
-		catch (WebClientResponseException webClientResponseException) {
-			throw new RuntimeException(
-				"Failed to upload virtual file " + webClientResponseException);
-		}
+		productVirtualSettingsFileEntryResource.
+			postProductVirtualSettingIdProductVirtualSettingsFileEntry(
+				getProductVirtualSettingsId(productId),
+				ProductVirtualSettingsFileEntry.toDTO(
+					new JSONObject(
+					).put(
+						"version", version
+					).toString()),
+				HashMapBuilder.put(
+					"file", file
+				).build());
 	}
 
 	public void updateOrder(
