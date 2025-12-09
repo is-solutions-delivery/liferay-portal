@@ -1,24 +1,29 @@
 assemble:
     -   fromTask: bootJar
-liferay-marketplace-etc-spring-boot-analytics-provisioning:
-    name: Liferay Marketplace Etc Spring Boot Analytics Provisioning
-    oAuth2ApplicationExternalReferenceCode: liferay-marketplace-etc-spring-boot-oaua
-    resourcePath: /analytics/provisioning
-    type: objectAction
-liferay-marketplace-etc-spring-boot-marketplace-product-purchase:
-    name: Liferay Marketplace Etc Spring Boot Marketplace Product Purchase
-    oAuth2ApplicationExternalReferenceCode: liferay-marketplace-etc-spring-boot-oaua
-    resourcePath: /marketplace/product/purchase
-    type: objectAction
-liferay-marketplace-etc-spring-boot-marketplace-product-submit:
-    name: Liferay Marketplace Etc Spring Boot Marketplace Product Submit
-    oAuth2ApplicationExternalReferenceCode: liferay-marketplace-etc-spring-boot-oaua
-    resourcePath: /marketplace/product/submit
-    type: objectAction
-liferay-marketplace-etc-spring-boot-oahs:
+    .serviceAddress: localhost:58081
     .serviceAddress: localhost:58081
     .serviceScheme: http
+    .serviceScheme: http
+    liferay-marketplace-etc-spring-boot-analytics-provisioning:
+    liferay-marketplace-etc-spring-boot-marketplace-product-purchase:
+    liferay-marketplace-etc-spring-boot-marketplace-product-submit:
+    liferay-marketplace-etc-spring-boot-oahs:
+    liferay-marketplace-etc-spring-boot-oaua:
+    liferay-marketplace-etc-spring-boot-trial-provisioning:
+    name: Liferay Marketplace Etc Spring Boot Analytics Provisioning
+    name: Liferay Marketplace Etc Spring Boot Marketplace Product Purchase
+    name: Liferay Marketplace Etc Spring Boot Marketplace Product Submit
     name: Liferay Marketplace Etc Spring Boot OAuth Application Headless Server
+    name: Liferay Marketplace Etc Spring Boot OAuth Application User Agent
+    name: Liferay Marketplace Etc Spring Boot Trial Provisioning
+    oAuth2ApplicationExternalReferenceCode: liferay-marketplace-etc-spring-boot-oaua
+    oAuth2ApplicationExternalReferenceCode: liferay-marketplace-etc-spring-boot-oaua
+    oAuth2ApplicationExternalReferenceCode: liferay-marketplace-etc-spring-boot-oaua
+    oAuth2ApplicationExternalReferenceCode: liferay-marketplace-etc-spring-boot-oaua
+    resourcePath: /analytics/provisioning
+    resourcePath: /marketplace/product/purchase
+    resourcePath: /marketplace/product/submit
+    resourcePath: /trial/provisioning
     scopes:
         -   Liferay.Headless.Admin.User.everything
         -   Liferay.Headless.Admin.Workflow.everything
@@ -26,17 +31,15 @@ liferay-marketplace-etc-spring-boot-oahs:
         -   Liferay.Headless.Commerce.Admin.Order.everything
         -   Liferay.Headless.Commerce.Delivery.Catalog.everything
         -   Liferay.Notification.REST.everything
+        -   Liferay.Headless.Delivery.everything
         -   c_trialextensionrequest.everything
-    type: oAuthApplicationHeadlessServer
-liferay-marketplace-etc-spring-boot-oaua:
-    .serviceAddress: localhost:58081
-    .serviceScheme: http
-    name: Liferay Marketplace Etc Spring Boot OAuth Application User Agent
+        -   c_publisherassets.everything
+        -   c_publisherassetattachment.everything
     scopes:
         -   Liferay.Headless.Admin.User.read
+    type: objectAction
+    type: objectAction
+    type: objectAction
+    type: oAuthApplicationHeadlessServer
     type: oAuthApplicationUserAgent
-liferay-marketplace-etc-spring-boot-trial-provisioning:
-    name: Liferay Marketplace Etc Spring Boot Trial Provisioning
-    oAuth2ApplicationExternalReferenceCode: liferay-marketplace-etc-spring-boot-oaua
-    resourcePath: /trial/provisioning
     type: objectAction
