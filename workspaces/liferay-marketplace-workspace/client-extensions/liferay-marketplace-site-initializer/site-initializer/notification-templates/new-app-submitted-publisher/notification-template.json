@@ -1,0 +1,24 @@
+{
+	"description": "Notification sent to a publisher when their new app is submitted for review.",
+	"editorType": "richText",
+	"externalReferenceCode": "MARKETPLACE-NEW-APP-SUBMITTED-PUBLISHER",
+	"name": "New App Submitted Publisher",
+	"recipientType": "email",
+	"recipients": [
+		{
+			"bcc": "",
+			"cc": "",
+			"from": "do-not-reply@liferay.com",
+			"fromName": {
+				"en-US": "Liferay Marketplace"
+			},
+			"to": {
+				"en-US": "[%GETAPPINFORMATION_AUTHOR_EMAIL_ADDRESS%]"
+			}
+		}
+	],
+	"subject": {
+		"en_US": "Liferay Marketplace - New App Submitted Publisher"
+	},
+	"type": "email"
+}
