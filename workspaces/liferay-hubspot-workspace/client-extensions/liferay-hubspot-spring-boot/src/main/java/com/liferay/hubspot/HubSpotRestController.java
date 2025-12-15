@@ -1,65 +1,59 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
 package com.liferay.hubspot;
 
-
-
-import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
+import com.liferay.client.extension.util.spring.boot3.BaseRestController;
 import com.liferay.hubspot.service.HubSpotService;
 
-import com.liferay.client.extension.util.spring.boot3.BaseRestController;
+import org.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.json.JSONObject;
-
-import reactor.core.publisher.Mono;
-
+/**
+ * @author Ricardo Mariz
+ */
 @RequestMapping("/")
 @RestController
 public class HubSpotRestController extends BaseRestController {
 
-    @PostMapping("/lead")
-    public void createContact(@RequestBody String json) throws Exception {
-        
-        JSONObject jsonObject = new JSONObject(json);
+	@PostMapping("/lead")
+	public void createLead(@RequestBody String json) throws Exception {
+		JSONObject jsonObject = new JSONObject(json);
 
 		JSONObject objectEntryJSONObject = jsonObject.getJSONObject(
 			"objectEntry");
 
-        JSONObject objectValuesJSONObject = objectEntryJSONObject.getJSONObject(
+		JSONObject objectValuesJSONObject = objectEntryJSONObject.getJSONObject(
 			"values");
-            
-		String firstName = objectValuesJSONObject.getString(
-			"firstName");
 
-        String lastName = objectValuesJSONObject.getString(
-			"lastName");
+		String firstName = objectValuesJSONObject.getString("firstName");
 
-        String email = objectValuesJSONObject.getString(
-			"email");
+		String lastName = objectValuesJSONObject.getString("lastName");
 
-        String phone = objectValuesJSONObject.getString(
-			"phone");
+		String email = objectValuesJSONObject.getString("email");
 
-        String companyName = objectValuesJSONObject.getString(
-                "companyName");
+		String phone = objectValuesJSONObject.getString("phone");
 
-        String numberOfEmployees = String.valueOf(objectValuesJSONObject.getInt(
-                "numberOfEmployees"));
+		String companyName = objectValuesJSONObject.getString("companyName");
 
-        String websiteURL = String.valueOf(objectValuesJSONObject.getString("websiteURL"));
+		String numberOfEmployees = String.valueOf(
+			objectValuesJSONObject.getInt("numberOfEmployees"));
 
-        _hubSpotService.createLead(email, firstName, lastName, phone, companyName, numberOfEmployees, websiteURL);
-    }
+		String websiteURL = objectValuesJSONObject.getString("websiteURL");
 
+		_hubSpotService.createLead(
+			email, firstName, lastName, phone, companyName, numberOfEmployees,
+			websiteURL);
+	}
 
-    @Autowired
-    private HubSpotService _hubSpotService;
+	@Autowired
+	private HubSpotService _hubSpotService;
+
 }
-
-

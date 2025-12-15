@@ -52,9 +52,19 @@ form.addEventListener('submit', async (event) => {
 
 	submitLeadForm.disabled = true;
 
-	await createLead(formData);
-
-	submitLeadForm.disabled = false;
+	try {
+		await createLead(formData);
+	}
+	catch (error) {
+		console.error('Failed to create lead:', error);
+		Liferay.Util.openToast({
+			type: 'danger',
+			message: 'An error occurred while submitting the form. Please try again.',
+		});
+	}
+	finally {
+		submitLeadForm.disabled = false;
+	}
 });
 
 initializeFormData();
