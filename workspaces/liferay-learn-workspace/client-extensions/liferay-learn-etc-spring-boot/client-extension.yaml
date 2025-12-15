@@ -53,3 +53,8 @@ liferay-learn-etc-spring-boot-object-action-permission:
     oAuth2ApplicationExternalReferenceCode: liferay-learn-etc-spring-boot-oaua
     resourcePath: /object/action/permission
     type: objectAction
+liferay-learn-etc-spring-boot-object-action-rag:
+    name: Liferay Learn Etc Spring Boot Object Action RAG
+    oAuth2ApplicationExternalReferenceCode: liferay-learn-etc-spring-boot-oaua
+    resourcePath: /object/action/rag
+    type: objectAction
