@@ -1,0 +1,46 @@
+#hubspot-lead-form {
+	background-color: #faf7f3;
+	font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+#hubspot-lead-form .demo-section {
+	padding: 3rem 1rem;
+}
+
+#hubspot-lead-form .demo-card {
+	background: #fff;
+	border-radius: 12px;
+	padding: 2rem;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#hubspot-lead-form .btn-demo {
+	background-color: #0a007c;
+	color: #fff;
+	border: none;
+	border-radius: 8px;
+	padding: 0.75rem 1.5rem;
+	font-weight: 600;
+}
+
+#hubspot-lead-form .btn-demo:hover {
+	background-color: #0a0150;
+}
+
+#hubspot-lead-form .badge-section img {
+	height: 60px;
+	margin-right: 10px;
+}
+
+#hubspot-lead-form .required {
+	color: red;
+	font-size: 0.9rem;
+}
+
+#hubspot-lead-form .thank-card {
+	margin: 0 auto;
+}
+
+#hubspot-lead-form .thank-icon {
+	font-size: 3rem;
+}

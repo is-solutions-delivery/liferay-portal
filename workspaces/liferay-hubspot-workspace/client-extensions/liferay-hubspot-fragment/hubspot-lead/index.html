@@ -1,0 +1,105 @@
+<div id="hubspot-lead-form">
+	<div class="demo-card">
+		<form method="post" id="lead-form">
+			<div class="row mb-4 g-3">
+				<div class="col-md-6">
+					<label class="form-label">First Name *</label>
+					<input
+						type="text"
+						name="firstName"
+						class="form-control"
+						placeholder="John"
+						required
+					/>
+				</div>
+
+				<div class="col-md-6">
+					<label class="form-label">Last Name *</label>
+					<input
+						name="lastName"
+						type="text"
+						class="form-control"
+						placeholder="Doe"
+						required
+					/>
+				</div>
+
+				<div class="col-md-6 mt-2">
+					<label class="form-label">Email *</label>
+					<input
+						name="email"
+						type="email"
+						class="form-control"
+						placeholder="john.doe@contact.me"
+						required
+					/>
+				</div>
+
+				<div class="col-md-6 mt-2">
+					<label class="form-label">Phone Number *</label>
+					<input
+						name="phone"
+						type="tel"
+						class="form-control"
+						placeholder="+55 11 99999-9999"
+						required
+					/>
+				</div>
+
+				<div class="my-4 col-md-12">
+					<label class="form-label">Company Name *</label>
+					<input
+						type="text"
+						name="companyName"
+						class="form-control"
+						placeholder="Liferay"
+						required
+					/>
+				</div>
+				<div class="mb-4 col-md-12">
+					<label class="form-label">Website URL *</label>
+					<input
+						type="url"
+						name="websiteURL"
+						class="form-control"
+						placeholder="http://liferay.com"
+						required
+					/>
+				</div>
+
+				<div class="col-md-12">
+					<label class="form-label"
+						>How many employees work there? *</label
+					>
+					<input
+						type="number"
+						name="numberOfEmployees"
+						class="form-control"
+						placeholder="e.g. 500"
+						required
+					/>
+				</div>
+			</div>
+
+			<p
+				class="text-muted mt-3 small"
+				data-lfr-editable-id="paragraph-text"
+				data-lfr-editable-type="text"
+			>
+				We’re committed to your privacy. Liferay uses the information
+				you provide to contact you about relevant content, products, and
+				services. You may unsubscribe at any time.
+			</p>
+
+			<button
+				id="submit-lead-form"
+				type="submit"
+				class="btn btn-demo w-100"
+				data-lfr-editable-id="button-text"
+				data-lfr-editable-type="text"
+			>
+				Get your free demo
+			</button>
+		</form>
+	</div>
+</div>
