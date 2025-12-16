@@ -4,13 +4,13 @@
  */
 
 import ClayIcon from '@clayui/icon';
-import {useSelector} from '@xstate/store/react';
+import { useSelector } from '@xstate/store/react';
 
 import ButtonWithIcon from '../../../../../../components/ButtonWithIcon';
-import {ProductLicense} from '../../../../../../enums/Product';
+import { ProductLicense } from '../../../../../../enums/Product';
 import i18n from '../../../../../../i18n';
-import {useProductPurchaseOutletContext} from '../../../../ProductPurchaseOutlet';
-import {cartStore} from '../../../../store/CartStore';
+import { useProductPurchaseOutletContext } from '../../../../ProductPurchaseOutlet';
+import { cartStore } from '../../../../store/CartStore';
 import LicenseTier from './LicenseTier';
 
 import './index.scss';
@@ -29,10 +29,10 @@ type LicenseCardProps = {
 	sku: DeliverySKU;
 };
 
-const LicenseCard: React.FC<LicenseCardProps> = ({sku}) => {
-	const {product, productPurchaseCart} = useProductPurchaseOutletContext();
+const LicenseCard: React.FC<LicenseCardProps> = ({ sku }) => {
+	const { product, productPurchaseCart } = useProductPurchaseOutletContext();
 
-	const cartItems = useSelector(cartStore, ({context}) => context.cartItems);
+	const cartItems = useSelector(cartStore, ({ context }) => context.cartItems);
 
 	const cartItemsCount =
 		cartItems.find((item) => item.skuId === sku.id)?.quantity || MIN_ITEM;
@@ -50,7 +50,7 @@ const LicenseCard: React.FC<LicenseCardProps> = ({sku}) => {
 
 	const licenseDescription =
 		licenseTypeDescriptions[
-			licenseType as keyof typeof licenseTypeDescriptions
+		licenseType as keyof typeof licenseTypeDescriptions
 		];
 
 	return (
@@ -76,6 +76,7 @@ const LicenseCard: React.FC<LicenseCardProps> = ({sku}) => {
 						className="align-items-center d-flex justify-content-center license__card__buttons p-2"
 						disabled={cartItemsCount === MIN_ITEM}
 						displayType="primary"
+						iconMargin={false}
 						onClick={() =>
 							productPurchaseCart.removeFromCart(sku.id)
 						}
@@ -91,6 +92,7 @@ const LicenseCard: React.FC<LicenseCardProps> = ({sku}) => {
 						className="align-items-center d-flex justify-content-center license__card__buttons p-2"
 						disabled={cartItemsCount === MAX_ITEM}
 						displayType="primary"
+						iconMargin={false}
 						onClick={() =>
 							productPurchaseCart.addCart(
 								Number(product.id),

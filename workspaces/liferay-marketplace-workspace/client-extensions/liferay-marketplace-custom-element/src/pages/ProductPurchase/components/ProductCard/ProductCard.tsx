@@ -5,7 +5,7 @@
 
 import './ProductCard.scss';
 
-import {ReactNode} from 'react';
+import { ReactNode } from 'react';
 
 import {
 	getThumbnailByProductAttachment,
@@ -119,6 +119,6 @@ const ProductCard = ({
 	</div>
 );
 
-export {ProductCardRevamp};
+export { ProductCardRevamp };
 
 export default ProductCard;

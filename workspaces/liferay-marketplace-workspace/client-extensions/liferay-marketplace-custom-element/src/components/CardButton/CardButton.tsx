@@ -5,11 +5,14 @@
 
 import ClayIcon from '@clayui/icon';
 import classNames from 'classnames';
-import {MouseEvent, ReactNode} from 'react';
+import { MouseEvent, ReactNode } from 'react';
 
 import './CardButton.scss';
 
+type CardSize = 'default' | 'full'
+
 const CardButton = ({
+	cardSize = 'default',
 	description,
 	disabled,
 	icon = '',
@@ -18,6 +21,7 @@ const CardButton = ({
 	selected,
 	title,
 }: {
+	cardSize?: CardSize;
 	description: string;
 	disabled?: boolean;
 	icon?: ReactNode;
@@ -31,6 +35,8 @@ const CardButton = ({
 		className={classNames('card-button d-flex', {
 			'card-button--disabled': disabled,
 			'card-button--selected': selected,
+			"w-100": cardSize = 'full',
+
 		})}
 		onClick={(event) => {
 			if (disabled) {
@@ -58,6 +64,6 @@ const CardButton = ({
 	</div>
 );
 
-export {CardButton};
+export { CardButton };
 
 export default CardButton;

@@ -69,7 +69,7 @@ export default class HeadlessCommerceAdminCatalog {
 		workflowStatusInfo?: number;
 	}) {
 		return fetcher.post(
-			`/o/headless-commerce-admin-catalog/v1.0/products?nestedFields=productVirtualSettings`,
+			`o/headless-commerce-admin-catalog/v1.0/products?nestedFields=productVirtualSettings`,
 			{
 				active: true,
 				catalogId,
