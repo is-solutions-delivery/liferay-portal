@@ -18,10 +18,10 @@ import org.springframework.context.annotation.Import;
  */
 @Import(ClientExtensionUtilSpringBootComponentScan.class)
 @SpringBootApplication
-public class HubspotSpringBootApplication {
+public class HubSpotSpringBootApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(HubspotSpringBootApplication.class, args);
+		SpringApplication.run(HubSpotSpringBootApplication.class, args);
 	}
 
 }

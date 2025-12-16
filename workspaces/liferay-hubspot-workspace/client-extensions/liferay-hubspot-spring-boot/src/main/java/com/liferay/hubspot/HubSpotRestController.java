@@ -30,27 +30,17 @@ public class HubSpotRestController extends BaseRestController {
 		JSONObject objectEntryJSONObject = jsonObject.getJSONObject(
 			"objectEntry");
 
-		JSONObject objectValuesJSONObject = objectEntryJSONObject.getJSONObject(
+		JSONObject valuesJSONObject = objectEntryJSONObject.getJSONObject(
 			"values");
 
-		String firstName = objectValuesJSONObject.getString("firstName");
-
-		String lastName = objectValuesJSONObject.getString("lastName");
-
-		String email = objectValuesJSONObject.getString("email");
-
-		String phone = objectValuesJSONObject.getString("phone");
-
-		String companyName = objectValuesJSONObject.getString("companyName");
-
-		String numberOfEmployees = String.valueOf(
-			objectValuesJSONObject.getInt("numberOfEmployees"));
-
-		String websiteURL = objectValuesJSONObject.getString("websiteURL");
-
 		_hubSpotService.createLead(
-			email, firstName, lastName, phone, companyName, numberOfEmployees,
-			websiteURL);
+			valuesJSONObject.getString("email"),
+			valuesJSONObject.getString("firstName"),
+			valuesJSONObject.getString("lastName"),
+			valuesJSONObject.getString("phone"),
+			valuesJSONObject.getString("companyName"),
+			String.valueOf(valuesJSONObject.getInt("numberOfEmployees")),
+			valuesJSONObject.getString("websiteURL"));
 	}
 
 	@Autowired

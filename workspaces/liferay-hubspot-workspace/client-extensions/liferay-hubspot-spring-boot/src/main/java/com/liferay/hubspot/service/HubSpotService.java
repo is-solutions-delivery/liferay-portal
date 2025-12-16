@@ -28,20 +28,19 @@ public class HubSpotService extends BaseService {
 			String websiteURL)
 		throws Exception {
 
-		JSONObject propertiesJSONObject = new JSONObject(
-		).put(
-			"domain", websiteURL
-		).put(
-			"name", name
-		).put(
-			"numberofemployees", numberOfEmployees
-		).put(
-			"phone", phone
-		);
-
 		JSONObject bodyJSONObject = new JSONObject(
 		).put(
-			"properties", propertiesJSONObject
+			"properties",
+			new JSONObject(
+			).put(
+				"domain", websiteURL
+			).put(
+				"name", name
+			).put(
+				"numberofemployees", numberOfEmployees
+			).put(
+				"phone", phone
+			)
 		);
 
 		return post(
@@ -58,24 +57,22 @@ public class HubSpotService extends BaseService {
 			String email, String firstName, String lastName, String phone)
 		throws Exception {
 
-		JSONObject propertiesJSONObject = new JSONObject(
-		).put(
-			"email", email
-		).put(
-			"firstname", firstName
-		).put(
-			"lastname", lastName
-		).put(
-			"phone", phone
-		);
-
-		JSONObject bodyJSONObject = new JSONObject(
-		).put(
-			"properties", propertiesJSONObject
-		);
-
 		String contact = post(
-			getAuthorization(), bodyJSONObject.toString(),
+			getAuthorization(),
+			new JSONObject(
+			).put(
+				"properties",
+				new JSONObject(
+				).put(
+					"email", email
+				).put(
+					"firstname", firstName
+				).put(
+					"lastname", lastName
+				).put(
+					"phone", phone
+				)
+			).toString(),
 			UriComponentsBuilder.fromUriString(
 				_hubspotAuthURL
 			).path(
@@ -95,17 +92,17 @@ public class HubSpotService extends BaseService {
 			String companyName, String numberOfEmployees, String websiteURL)
 		throws Exception {
 
-		JSONObject contactJSONObject = getOrCreateContact(
-			email, firstName, lastName, phone);
-
-		String contactId = contactJSONObject.getString("id");
+		String contactId = getOrCreateContact(
+			email, firstName, lastName, phone
+		).getString(
+			"id"
+		);
 
 		getOrCreateCompany(companyName, numberOfEmployees, phone, websiteURL);
 
-		String leadTitle = "Lead Capture for " + companyName;
-
 		createLeadWithContactAssociation(
-			contactId, "WARM", leadTitle, "NEW_BUSINESS");
+			contactId, "WARM", "Lead Capture for " + companyName,
+			"NEW_BUSINESS");
 	}
 
 	public void createLeadWithContactAssociation(
@@ -113,50 +110,45 @@ public class HubSpotService extends BaseService {
 			String leadType)
 		throws Exception {
 
-		JSONObject propertiesJSONObject = new JSONObject(
-		).put(
-			"hs_lead_label", leadLabel
-		).put(
-			"hs_lead_name", leadName
-		).put(
-			"hs_lead_type", leadType
-		);
-
-		JSONObject associationTypeJSONObject = new JSONObject(
-		).put(
-			"associationCategory", "HUBSPOT_DEFINED"
-		).put(
-			"associationTypeId", _CONTACT_TO_LEAD_ASSOCIATION_TYPE_ID
-		);
-
-		JSONObject associationJSONObject = new JSONObject(
-		).put(
-			"to",
+		post(
+			getAuthorization(),
 			new JSONObject(
 			).put(
-				"id", contactId
-			)
-		).put(
-			"types",
-			new JSONArray(
+				"associations",
+				new JSONArray(
+				).put(
+					new JSONObject(
+					).put(
+						"to",
+						new JSONObject(
+						).put(
+							"id", contactId
+						)
+					).put(
+						"types",
+						new JSONArray(
+						).put(
+							new JSONObject(
+							).put(
+								"associationCategory", "HUBSPOT_DEFINED"
+							).put(
+								"associationTypeId",
+								_CONTACT_TO_LEAD_ASSOCIATION_TYPE_ID
+							)
+						)
+					)
+				)
 			).put(
-				associationTypeJSONObject
-			)
-		);
-
-		JSONObject bodyJSONObject = new JSONObject(
-		).put(
-			"associations",
-			new JSONArray(
-			).put(
-				associationJSONObject
-			)
-		).put(
-			"properties", propertiesJSONObject
-		);
-
-		post(
-			getAuthorization(), bodyJSONObject.toString(),
+				"properties",
+				new JSONObject(
+				).put(
+					"hs_lead_label", leadLabel
+				).put(
+					"hs_lead_name", leadName
+				).put(
+					"hs_lead_type", leadType
+				)
+			).toString(),
 			UriComponentsBuilder.fromUriString(
 				_hubspotAuthURL
 			).path(
@@ -166,37 +158,32 @@ public class HubSpotService extends BaseService {
 	}
 
 	public JSONObject findCompanyByName(String name) throws Exception {
-		JSONObject filterJSONObject = new JSONObject(
-		).put(
-			"operator", "EQ"
-		).put(
-			"propertyName", "name"
-		).put(
-			"value", name
-		);
-
-		JSONObject filterGroupJSONObject = new JSONObject(
-		).put(
-			"filters",
-			new JSONArray(
-			).put(
-				filterJSONObject
-			)
-		);
-
-		JSONObject bodyJSONObject = new JSONObject(
-		).put(
-			"filterGroups",
-			new JSONArray(
-			).put(
-				filterGroupJSONObject
-			)
-		).put(
-			"limit", 10
-		);
-
 		String response = post(
-			getAuthorization(), bodyJSONObject.toString(),
+			getAuthorization(),
+			new JSONObject(
+			).put(
+				"filterGroups",
+				new JSONArray(
+				).put(
+					new JSONObject(
+					).put(
+						"filters",
+						new JSONArray(
+						).put(
+							new JSONObject(
+							).put(
+								"operator", "EQ"
+							).put(
+								"propertyName", "name"
+							).put(
+								"value", name
+							)
+						)
+					)
+				)
+			).put(
+				"limit", 10
+			).toString(),
 			UriComponentsBuilder.fromUriString(
 				_hubspotAuthURL
 			).path(
@@ -204,9 +191,11 @@ public class HubSpotService extends BaseService {
 			).build(
 			).toUri());
 
-		JSONObject jsonObject = new JSONObject(response);
-
-		JSONArray resultsJSONArray = jsonObject.optJSONArray("results");
+		JSONArray resultsJSONArray = new JSONObject(
+			response
+		).optJSONArray(
+			"results"
+		);
 
 		if ((resultsJSONArray != null) && !resultsJSONArray.isEmpty()) {
 			return resultsJSONArray.getJSONObject(0);
@@ -216,37 +205,32 @@ public class HubSpotService extends BaseService {
 	}
 
 	public JSONObject findContactByName(String firstName) throws Exception {
-		JSONObject filterJSONObject = new JSONObject(
-		).put(
-			"operator", "EQ"
-		).put(
-			"propertyName", "firstname"
-		).put(
-			"value", firstName
-		);
-
-		JSONObject filterGroupJSONObject = new JSONObject(
-		).put(
-			"filters",
-			new JSONArray(
-			).put(
-				filterJSONObject
-			)
-		);
-
-		JSONObject bodyJSONObject = new JSONObject(
-		).put(
-			"filterGroups",
-			new JSONArray(
-			).put(
-				filterGroupJSONObject
-			)
-		).put(
-			"limit", 10
-		);
-
 		String response = post(
-			getAuthorization(), bodyJSONObject.toString(),
+			getAuthorization(),
+			new JSONObject(
+			).put(
+				"filterGroups",
+				new JSONArray(
+				).put(
+					new JSONObject(
+					).put(
+						"filters",
+						new JSONArray(
+						).put(
+							new JSONObject(
+							).put(
+								"operator", "EQ"
+							).put(
+								"propertyName", "firstname"
+							).put(
+								"value", firstName
+							)
+						)
+					)
+				)
+			).put(
+				"limit", 10
+			).toString(),
 			UriComponentsBuilder.fromUriString(
 				_hubspotAuthURL
 			).path(
@@ -254,9 +238,11 @@ public class HubSpotService extends BaseService {
 			).build(
 			).toUri());
 
-		JSONObject responseJSONObject = new JSONObject(response);
-
-		JSONArray resultsJSONArray = responseJSONObject.optJSONArray("results");
+		JSONArray resultsJSONArray = new JSONObject(
+			response
+		).optJSONArray(
+			"results"
+		);
 
 		if ((resultsJSONArray != null) && !resultsJSONArray.isEmpty()) {
 			return resultsJSONArray.getJSONObject(0);
