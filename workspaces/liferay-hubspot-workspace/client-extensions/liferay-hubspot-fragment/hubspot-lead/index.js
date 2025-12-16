@@ -1,3 +1,8 @@
+/**
+ * SPDX-FileCopyrightText: (c) 2000 Liferay, Inc. https://liferay.com
+ * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
+ */
+
 const form = document.getElementById('lead-form');
 const formContainer = document.getElementById('hubspot-lead-form');
 const submitLeadForm = document.getElementById('submit-lead-form');
@@ -14,8 +19,8 @@ async function createLead(formData) {
 	});
 
 	Liferay.Util.openToast({
-		type: 'success',
 		message: 'Thanks for submitting the contact form',
+		type: 'success',
 	});
 
 	formContainer.innerHTML = `
@@ -58,8 +63,9 @@ form.addEventListener('submit', async (event) => {
 	catch (error) {
 		console.error('Failed to create lead:', error);
 		Liferay.Util.openToast({
+			message:
+				'An error occurred while submitting the form. Please try again.',
 			type: 'danger',
-			message: 'An error occurred while submitting the form. Please try again.',
 		});
 	}
 	finally {
