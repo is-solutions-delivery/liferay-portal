@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-package com.liferay.learn;
+package com.liferay.learn.controller.action;
 
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
 import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
@@ -135,7 +135,7 @@ public class ObjectActionExamResultsSynchronizationRestController
 				DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ssX")
 			)
 		).put(
-			"email",
+			"emailAddress",
 			jsonObject.getJSONObject(
 				"simpleRegistration"
 			).getJSONObject(
@@ -216,35 +216,13 @@ public class ObjectActionExamResultsSynchronizationRestController
 		}
 
 		for (int i = 0; i < jsonArray.length(); i++) {
-			JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-
-			JSONObject jsonObject2 = new JSONObject(
-				put(
-					_getAuthorization(), _getPayload(jsonObject1),
-					UriComponentsBuilder.fromPath(
-						"/o/c/p2s3examresults/by-external-reference-code/" +
-							jsonObject1.getLong("id")
-					).build(
-					).toUri()));
+			JSONObject jsonObject = jsonArray.getJSONObject(i);
 
 			put(
-				_getAuthorization(),
-				new JSONArray(
-				).put(
-					new JSONObject(
-					).put(
-						"actionIds",
-						new JSONArray(
-						).put(
-							"VIEW"
-						)
-					).put(
-						"roleName", "Guest"
-					)
-				).toString(),
+				_getAuthorization(), _getPayload(jsonObject),
 				UriComponentsBuilder.fromPath(
-					"/o/c/p2s3examresults/" + jsonObject2.getLong("id") +
-						"/permissions"
+					"/o/c/p2s3examresults/by-external-reference-code/" +
+						jsonObject.getLong("id")
 				).build(
 				).toUri());
 		}

@@ -1,4 +1,5 @@
 assemble:
+    -   from: assets
     -   fromTask: bootJar
 liferay-learn-etc-spring-boot-oahs:
     .serviceAddress: localhost:58081
@@ -52,4 +53,9 @@ liferay-learn-etc-spring-boot-object-action-permission:
     name: Liferay Learn Etc Spring Boot Object Action Permission
     oAuth2ApplicationExternalReferenceCode: liferay-learn-etc-spring-boot-oaua
     resourcePath: /object/action/permission
+    type: objectAction
+liferay-learn-etc-spring-boot-object-action-rag:
+    name: Liferay Learn Etc Spring Boot Object Action RAG
+    oAuth2ApplicationExternalReferenceCode: liferay-learn-etc-spring-boot-oaua
+    resourcePath: /object/action/rag
     type: objectAction

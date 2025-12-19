@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-package com.liferay.learn;
+package com.liferay.learn.controller;
 
 import com.google.auth.oauth2.GoogleCredentials;
 
@@ -177,7 +177,7 @@ public class LearnRestController extends BaseRestController {
 						"/o/c/p2s3quizquestions"
 					).queryParam(
 						"filter",
-						"r_p2s3QuizToP2S3QuizQuestions_c_p2s3QuizId '" +
+						"r_p2s3QuizToP2S3QuizQuestions_c_p2s3QuizId eq '" +
 							quizId + "'"
 					).queryParam(
 						"fields",
@@ -289,7 +289,7 @@ public class LearnRestController extends BaseRestController {
 		JSONObject scoreSheetJSONObject) {
 
 		JSONArray quizAnswersJSONArray = quizQuestionJSONObject.getJSONArray(
-			"quizAnswers");
+			"p2s3QuizQuestionToP2S3QuizAnswers");
 
 		scoreSheetJSONObject.put("questionsAnswers", quizAnswersJSONArray);
 
@@ -327,7 +327,7 @@ public class LearnRestController extends BaseRestController {
 		JSONObject quizAnswersJSONObject, JSONObject quizJSONObject) {
 
 		JSONArray quizQuestionsJSONArray = quizJSONObject.getJSONArray(
-			"quizQuestions");
+			"p2s3QuizToP2S3QuizQuestions");
 
 		Map<String, Object> map = HashMapBuilder.<String, Object>put(
 			"isKnowledgeCheck", false
