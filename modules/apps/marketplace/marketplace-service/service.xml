@@ -68,7 +68,7 @@
 		<finder name="ContextName" return-type="Collection">
 			<finder-column name="contextName" />
 		</finder>
-		<finder name="A_CN" return-type="Module" unique="true">
+		<finder name="A_CN" return-type="Collection">
 			<finder-column name="appId" />
 			<finder-column name="contextName" />
 		</finder>
