@@ -41,7 +41,7 @@
 	supportPhone = getSpecificationValue("supportphone")
 	type = getSpecificationValue("type")?lower_case
 >
-<div class="pl-4">
+<div class = "pl-4">
 <@section title = languageUtil.get(locale, "developer")>
 	<#if publisherDetails?has_content>
 		<a class = "bg-neutral-8" href = "${redirectPath}/${publisherDetails.id}">
@@ -184,7 +184,10 @@
 						${languageUtil.get(locale, "source-code", "Source Code")}
 
 						<span class="d-none ml-1 support-link-icon-arrow-container">
-							<@clay["icon"] className="support-link-icon-arrow" symbol="tap-ahead" />
+							<@clay["icon"]
+								className="support-link-icon-arrow"
+								symbol="tap-ahead"
+							/>
 						</span>
 					</span>
 				</a>
@@ -205,7 +208,10 @@
 					${languageUtil.get(locale, "eula", "EULA")}
 
 					<span class="d-none support-link-icon-arrow-container ml-1">
-						<@clay["icon"] className="support-link-icon-arrow" symbol="tap-ahead" />
+						<@clay["icon"]
+							className="support-link-icon-arrow"
+							symbol="tap-ahead"
+						/>
 					</span>
 				</span>
 			</a>
@@ -246,7 +252,7 @@
 		<#nested>
 	</div>
 	<#if showLine>
-		<hr class="pb-2 m-0 !important"/>
+		<hr class="pb-2 m-0 !important" />
 	</#if>
 </#macro>
 
@@ -265,7 +271,7 @@
 					<div class="d-flex flex-column">
 						<span class="text-black-50">${languageUtil.get(locale, "app-documentation-url", "App Documentation URL")}</span>
 
-						<a class="font-weight-bold" href="tel:${appDocumentationURL}" target="_blank">
+						<a class="font-weight-bold" href="${appDocumentationURL}" target="_blank">
 							${appDocumentationURL}
 						</a>
 					</div>
@@ -284,7 +290,7 @@
 					<div class="d-flex flex-column">
 						<span class="text-black-50">${languageUtil.get(locale, "app-installation-guide-url", "App Installation Guide URL")}</span>
 
-						<a class="font-weight-bold" href="tel:${appInstallationGuideURL}" target="_blank">
+						<a class="font-weight-bold" href="${appInstallationGuideURL}" target="_blank">
 							${appInstallationGuideURL}
 						</a>
 					</div>

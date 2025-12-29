@@ -1,4 +1,4 @@
-<div class="section-container home-catalogs">
+<div class="home-catalogs section-container">
 	<div>
 		<div class="d-flex flex-row justify-content-between w-100">
 			<h1 class="mb-1 title">${configuration.sectionTitle}</h1>
@@ -24,7 +24,6 @@
 
 		<div class="container-gap d-flex flex-row flex-wrap mb-5">
 			[#list publishers as publisher]
-			
 
 				<a class="bg-white border-radius-medium catalog-card d-flex flex-column justify-content-between mb-0 text-dark text-decoration-none" href="/e/publisher-details/${configuration.publisherDetailsObjectId}/${publisher.id}" target="_self">
 					<div>
@@ -46,13 +45,13 @@
 					</div>
 
 					<div class="d-flex flex-row justify-content-start">
-					
 
 						[#if configuration.hideRatingInfo == false]
 							<p class="m-0 mr-2">
 							<span class="mr-1">0</span>
 							<span>${languageUtil.get(locale, "apps")}</span>
 						</p>
+
 						<div class="align-items-center d-flex justify-content-center ml-3">
 							<span class="stars">
 								[@clay["icon"] symbol="star" /]

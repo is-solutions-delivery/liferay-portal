@@ -1,22 +1,22 @@
 <#assign
-    channel = restClient.get("/headless-commerce-delivery-catalog/v1.0/channels?accountId=-1&filter=siteGroupId eq '${themeDisplay.getScopeGroupId()}'")
+	channel = restClient.get("/headless-commerce-delivery-catalog/v1.0/channels?accountId=-1&filter=siteGroupId eq '${themeDisplay.getScopeGroupId()}'")
 
-    productImagesResponse = restClient.get(
-        "/headless-commerce-delivery-catalog/v1.0/channels/" + channel.items[0].id +
-        "/products/" + CPDefinition_cProductId.getData() + "/images?accountId=-1"
-    )
+	productImagesResponse = restClient.get(
+		"/headless-commerce-delivery-catalog/v1.0/channels/" + channel.items[0].id +
+		"/products/" + CPDefinition_cProductId.getData() + "/images?accountId=-1"
+	)
 
-    allProductImages = productImagesResponse.items![]
-    filteredProductImages = []
+	allProductImages = productImagesResponse.items![]
+	filteredProductImages = []
 >
 
 <#list allProductImages as image>
-    <#if image.galleryEnabled?? && image.galleryEnabled>
-        <#assign filteredProductImages += [image] />
-    </#if>
+	<#if image.galleryEnabled?? && image.galleryEnabled>
+		<#assign filteredProductImages += [image] />
+	</#if>
 </#list>
 
-<#assign totalCount = filteredProductImages?size >
+<#assign totalCount = filteredProductImages?size />
 
 <div class = "carousel-container">
 	<div class = "main-image-wrapper">
@@ -212,9 +212,6 @@
 	background-color: #282934 !important;
 	border-bottom: none;
 	color: white !important;
-}
-
-.custom-gallery-modal {
 	height: 80% !important;
 }
 
@@ -279,7 +276,7 @@
 	aspect-ratio: 16/9;
 	border-radius: 8px;
 	max-width: 100vh !important;
-	object-fit: contain;;
+	object-fit: contain;
 }
 
 .modal-next {
