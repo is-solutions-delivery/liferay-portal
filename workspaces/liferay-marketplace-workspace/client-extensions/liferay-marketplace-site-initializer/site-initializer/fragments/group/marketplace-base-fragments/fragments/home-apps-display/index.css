@@ -49,6 +49,7 @@
 }
 
 .home-apps-display .image-container .app-search-image {
+	border-radius: 4px;
     height: 56px;
     object-fit: contain;
     width: 56px;
@@ -117,7 +118,7 @@
     vertical-align: middle;
 }
 
-.home-apps-display .section-container h1 {
+.home-apps-display .section-container .title {
     font-size: 36px
 }
 

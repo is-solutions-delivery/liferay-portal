@@ -1,7 +1,7 @@
-<div class="section-container">
+<div class="section-container home-catalogs">
 	<div>
 		<div class="d-flex flex-row justify-content-between w-100">
-			<h1 class="mb-1">${configuration.sectionTitle}</h1>
+			<h1 class="mb-1 title">${configuration.sectionTitle}</h1>
 
 			<button class="btn btn-link d-none font-weight-bold" type="button">
 				<span class="language-caret-icon">
@@ -13,22 +13,10 @@
 			</button>
 		</div>
 
-		<p class="text-black-50 mb-4">${configuration.sectionDescription}</p>
+		<p class="text-black-50 mb-6">${configuration.sectionDescription}</p>
 	</div>
 
 	[#if configuration.publisherDetailsObjectId?has_content]
-		[#assign channel = restClient.get("/headless-commerce-delivery-catalog/v1.0/channels?accountId=-1") /]
-
-		[#if channel?has_content]
-			[#assign channelId = channel.items[0].id /]
-		[/#if]
-
-		[#if channelId?has_content]
-			[#assign response =
-				restClient.get("/headless-commerce-delivery-catalog/v1.0/channels/${channelId}/products?accountId=-1&images.accountId=-1&nestedFields=categories,productSpecifications,images")
-			/]
-		[/#if]
-
 		[#assign
 			publisherdetailsesPage = restClient.get("/c/publisherdetailses?filter=showOnHomePage eq true&pageSize=4")
 			publishers = publisherdetailsesPage.items![]
@@ -36,11 +24,7 @@
 
 		<div class="container-gap d-flex flex-row flex-wrap mb-5">
 			[#list publishers as publisher]
-				[#assign publisherApps = restClient.get("/headless-commerce-delivery-catalog/v1.0/channels/"
-					+ channelId
-					+ "/products?accountId=-1&nestedFields=totalCount&filter=catalogId eq "
-					+ publisher.catalogId)
-				/]
+			
 
 				<a class="bg-white border-radius-medium catalog-card d-flex flex-column justify-content-between mb-0 text-dark text-decoration-none" href="/e/publisher-details/${configuration.publisherDetailsObjectId}/${publisher.id}" target="_self">
 					<div>
@@ -62,12 +46,13 @@
 					</div>
 
 					<div class="d-flex flex-row justify-content-start">
-						<p class="m-0 mr-2">
-							<span class="mr-1">${publisherApps.totalCount}</span>
-							<span>${languageUtil.get(locale, "apps")}</span>
-						</p>
+					
 
 						[#if configuration.hideRatingInfo == false]
+							<p class="m-0 mr-2">
+							<span class="mr-1">0</span>
+							<span>${languageUtil.get(locale, "apps")}</span>
+						</p>
 						<div class="align-items-center d-flex justify-content-center ml-3">
 							<span class="stars">
 								[@clay["icon"] symbol="star" /]

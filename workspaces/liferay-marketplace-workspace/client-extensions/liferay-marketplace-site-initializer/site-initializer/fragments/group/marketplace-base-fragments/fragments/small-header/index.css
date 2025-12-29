@@ -1,0 +1,25 @@
+.app-details-container.small-header {
+	height: 48px !important;
+}
+
+.sticky-container-24.small-header #get-app-description {
+	display: none !important;
+}
+
+.sticky-container-24.small-header .content-header {
+	padding-bottom: 12px !important;
+}
+
+.sticky-container-24.small-header img,
+.sticky-container-24.small-header .image-container {
+	height: 48px !important;
+	width: 48px !important;
+}
+
+.sticky-container-24.small-header .subtext {
+	padding-top: 4px !important;
+}
+
+.sticky-container-24.small-header .title {
+	font-size: 18px !important;
+}

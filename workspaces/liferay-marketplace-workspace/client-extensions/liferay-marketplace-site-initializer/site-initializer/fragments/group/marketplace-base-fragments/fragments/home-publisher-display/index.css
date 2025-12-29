@@ -55,13 +55,17 @@
 }
 
 .image-container .catalog-image {
+    -webkit-user-drag: none;
     border-radius: 50px;
     height: 40px;
     object-fit: contain;
     overflow: hidden;
-    -webkit-user-drag: none;
     user-drag: none;
     width: 40px;
+}
+
+.section-container.home-catalogs .title {
+    font-size: 36px
 }
 
 .stars {
