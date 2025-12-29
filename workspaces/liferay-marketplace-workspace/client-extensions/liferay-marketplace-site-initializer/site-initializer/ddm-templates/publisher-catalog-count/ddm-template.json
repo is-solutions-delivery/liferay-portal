@@ -1,0 +1,8 @@
+{
+	"className": "com.liferay.template.model.TemplateEntry",
+	"ddmTemplateKey": "MARKETPLACE-PUBLISHER-CATALOG-COUNT",
+	"infoItemClassName": "com.liferay.object#[$OBJECT_DEFINITION_ID:PublisherDetails$]",
+	"name": "marketplace_publisher_catalog_count",
+	"resourceClassName": "com.liferay.template.model.TemplateEntry"
+}
+

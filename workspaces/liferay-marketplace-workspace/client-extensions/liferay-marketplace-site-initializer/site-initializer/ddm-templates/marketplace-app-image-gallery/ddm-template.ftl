@@ -1,22 +1,22 @@
 <#assign
-	channel = restClient.get("/headless-commerce-delivery-catalog/v1.0/channels?accountId=-1&filter=siteGroupId eq '${themeDisplay.getScopeGroupId()}'")
+    channel = restClient.get("/headless-commerce-delivery-catalog/v1.0/channels?accountId=-1&filter=siteGroupId eq '${themeDisplay.getScopeGroupId()}'")
 
-	productImagesResponse = restClient.get(
-		"/headless-commerce-delivery-catalog/v1.0/channels/" + channel.items[0].id +
-		"/products/" + CPDefinition_cProductId.getData() + "/images?accountId=-1"
-	)
+    productImagesResponse = restClient.get(
+        "/headless-commerce-delivery-catalog/v1.0/channels/" + channel.items[0].id +
+        "/products/" + CPDefinition_cProductId.getData() + "/images?accountId=-1"
+    )
 
-	productImages = productImagesResponse.items![]
-	filteredProductImages = []
+    allProductImages = productImagesResponse.items![]
+    filteredProductImages = []
 >
 
-<#list productImages as image>
-	<#if image.galleryEnabled>
-		<#assign filteredProductImages += [image] />
-	</#if>
+<#list allProductImages as image>
+    <#if image.galleryEnabled?? && image.galleryEnabled>
+        <#assign filteredProductImages += [image] />
+    </#if>
 </#list>
 
-<#assign totalCount = filteredProductImages?size />
+<#assign totalCount = filteredProductImages?size >
 
 <div class = "carousel-container">
 	<div class = "main-image-wrapper">
@@ -32,7 +32,7 @@
 	</div>
 
 	<div class="thumbnails-wrapper">
-		<div class="align-items-center thumbnails"></div>
+		<div class="thumbnails align-items-center"></div>
 
 		<#assign count = (totalCount?default(0)?number) />
 
@@ -208,16 +208,19 @@
 	object-fit: contain;
 }
 
-.custom-gallery-modal button:disabled {
-	cursor: default;
-	opacity: 0.4;
-	pointer-events: none;
-}
-
 .custom-gallery-modal {
 	background-color: #282934 !important;
 	border-bottom: none;
 	color: white !important;
+}
+
+.custom-gallery-modal {
+	height: 80% !important;
+}
+
+.custom-gallery-modal .close {
+	color: white !important;
+	margin-right: 16px !important;
 }
 
 .custom-gallery-modal .liferay-modal-body {
@@ -227,9 +230,10 @@
 	position: relative;
 }
 
-.custom-gallery-modal .close {
-	color: white !important;
-	margin-right: 16px !important;
+.custom-gallery-modal button:disabled {
+	cursor: default;
+	opacity: 0.4;
+	pointer-events: none;
 }
 
 .lexicon-icon-overwide .lexicon-icon {
@@ -237,17 +241,13 @@
 	margin: 0px !important;
 }
 
-.custom-gallery-modal {
-	height: 80% !important;
-}
-
 .main-image-wrapper {
 	align-items: center;
-	display:flex;
+	display: flex;
+	height: 454px;
 	justify-content: center;
 	position: relative;
 	width: 902px;
-	height: 454px;
 }
 
 .main-image-wrapper img {
@@ -260,16 +260,13 @@
 	pointer-events: auto;
 }
 
-.main-image-wrapper:hover .nav-button:disabled{
+.main-image-wrapper:hover .nav-button:disabled {
 	cursor: default;
 	opacity: 0.4;
 }
 
-.modal-image {
-	aspect-ratio: 16/9;
-	border-radius: 8px;
-	max-width: 100vh !important;
-	object-fit: contain;
+.modal-gallery-header {
+	padding: 16px !important;
 }
 
 .modal-gallery-header .lexicon-icon {
@@ -278,17 +275,35 @@
 	width: 16px !important;
 }
 
-.modal-gallery-header {
-
-	padding: 16px !important;
+.modal-image {
+	aspect-ratio: 16/9;
+	border-radius: 8px;
+	max-width: 100vh !important;
+	object-fit: contain;;
 }
 
-.modal-prev,
 .modal-next {
+	right: 24px;
+}
+
+.modal-next .lexicon-icon {
+	margin-top: 0px !important;
+}
+
+.modal-prev {
+	left: 24px;
+}
+
+.modal-prev .lexicon-icon {
+	margin-top: 0px !important;
+}
+
+.modal-next,
+.modal-prev {
 	align-items: center;
 	background: rgba(105, 102, 102, 0.4) !important;
-	border-radius: 50%;
 	border: none;
+	border-radius: 50%;
 	display: flex;
 	font-size: 1.6rem;
 	justify-content: center;
@@ -297,23 +312,10 @@
 	top: 45%;
 }
 
-.modal-prev .lexicon-icon,
-.modal-next .lexicon-icon {
-	margin-top: 0px !important;
-}
-
-.modal-next {
-	right: 24px;
-}
-
-.modal-prev {
-	left: 24px;
-}
-
 .nav-button {
 	background: rgba(0,0,0,0.4);
-	border-radius: 50%;
 	border: none;
+	border-radius: 50%;
 	color: white;
 	cursor: pointer;
 	font-size: 1rem;
@@ -326,17 +328,17 @@
 	user-select: none;
 }
 
-.nav-button.prev {
-	left: 10px;
-}
-
 .nav-button.next {
 	right: 10px;
 }
 
+.nav-button.prev {
+	left: 10px;
+}
+
 .thumbnail {
-	border-radius: 12px;
 	border: 2px solid transparent;
+	border-radius: 12px;
 	cursor: pointer;
 	height: 86px;
 	object-fit: cover;
@@ -347,20 +349,21 @@
 	width: 142px;
 }
 
-.thumbnail.selected,
-.thumbnail:hover {
+.thumbnail:hover,
+.thumbnail.selected {
 	border-color: #8FB5FF;
 	opacity: 1;
 }
 
 .thumbnail.selected {
+	box-shadow: 0px 4px 8px 0px rgba(60, 60, 60, 0.12);
 	height: 102px;
 }
 
 .thumbnails {
 	display: flex;
 	gap: 8px;
-	overflow-x: auto;
+	overflow-y: visible;
 }
 
 .thumbnails-wrapper {
@@ -374,8 +377,8 @@
 
 .view-full-gallery {
 	background-color: white;
-	border-radius: 12px;
 	border: 1px solid #E2E2E4;
+	border-radius: 12px;
 	color: #2563eb;
 	cursor: pointer;
 	display: flex;
@@ -384,9 +387,10 @@
 	justify-content: center;
 	margin-left: 8px;
 	min-width: 152px;
-	transition: background-color 0.3s ease,
-		border-color 250ms ease-out,
-		box-shadow 0.3s ease;
+	transition:
+		background-color 0.3s ease,
+		box-shadow 0.3s ease,
+		border-color 250ms ease-out;
 }
 
 .view-full-gallery .subtitle {

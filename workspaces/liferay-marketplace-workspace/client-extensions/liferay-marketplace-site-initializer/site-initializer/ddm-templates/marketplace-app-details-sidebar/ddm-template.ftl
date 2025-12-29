@@ -18,7 +18,7 @@
 
 <#assign
 	publisherDetailsResponse = restClient.get("/c/publisherdetailses?filter=publisherName eq '${catalogName}'")
-	redirectPath = "https://marketplace.liferay.com/e/publisher-details/29282497"
+	redirectPath = "/e/publisher-details/38744115"
 />
 
 <#if publisherDetailsResponse.items?has_content>
@@ -41,6 +41,7 @@
 	supportPhone = getSpecificationValue("supportphone")
 	type = getSpecificationValue("type")?lower_case
 >
+<div class="pl-4">
 <@section title = languageUtil.get(locale, "developer")>
 	<#if publisherDetails?has_content>
 		<a class = "bg-neutral-8" href = "${redirectPath}/${publisherDetails.id}">
@@ -144,13 +145,13 @@
 	<div class="d-flex flex-column mt-4">
 		<#if (appDocumentationURL?has_content || appInstallationGuideURL?has_content)>
 			<div class="d-flex mb-4">
-				<span class="support-modal-icon" id="app-documentation">
+				<span class="support-modal-icon" id="installation-documentation">
 					<@clay["icon"] symbol="document" />
 				</span>
 
 				<a class="d-flex support-modal justify-content-between w-100" href="javascript:void(0)" onClick="openInstallationDocsModal();">
 					<span class="ml-1 ">
-						${languageUtil.get(locale, "app-documentation", "App Documentation")}
+						${languageUtil.get(locale, "installation-documentation", "Installation Documentation")}
 					</span>
 				</a>
 			</div>
@@ -183,10 +184,7 @@
 						${languageUtil.get(locale, "source-code", "Source Code")}
 
 						<span class="d-none ml-1 support-link-icon-arrow-container">
-							<@clay["icon"]
-								className="support-link-icon-arrow"
-								symbol="tap-ahead"
-							/>
+							<@clay["icon"] className="support-link-icon-arrow" symbol="tap-ahead" />
 						</span>
 					</span>
 				</a>
@@ -200,17 +198,14 @@
 
 			<a
 				class="d-flex justify-content-between support-link w-100"
-				href="/documents/d/marketplace/end_user_license_agreement-pdf"
+				href="${(appUsageTerms?has_content)?then(appUsageTerms, 'https://marketplace.liferay.com/license-agreement')}"
 				target="_blank">
 
 				<span class="ml-1">
 					${languageUtil.get(locale, "eula", "EULA")}
 
 					<span class="d-none support-link-icon-arrow-container ml-1">
-						<@clay["icon"]
-							className="support-link-icon-arrow"
-							symbol="tap-ahead"
-						/>
+						<@clay["icon"] className="support-link-icon-arrow" symbol="tap-ahead" />
 					</span>
 				</span>
 			</a>
@@ -223,12 +218,14 @@
 	title = languageUtil.get(locale, "share-link")
 >
 	<a class="align-items-center d-flex font-weight-bold ml-1 support-link text-primary" href="#copy-share-link" onclick="copyToClipboard(Liferay.ThemeDisplay.getCanonicalURL())">
-		<span class="link-icon mr-1">
+		<span id="linkIcon" class="link-icon mr-1">
 			<@clay["icon"] symbol="link" />
 		</span>
-		Copy & Share
+		<span id="linkLabel">Copy Link</span>
 	</a>
 </@section>
+
+</div>
 
 <#function getSpecificationValue key default="">
 	<#local spec = productSpecifications?filter(productSpecification ->
@@ -241,16 +238,15 @@
 	title
 	showLine=true
 >
-	<p>
+	<p class="pt-4 pb-2 mb-0 !important">
 		<strong>${title}</strong>
 	</p>
 
-	<div>
+	<div class="details">
 		<#nested>
 	</div>
-
 	<#if showLine>
-		<hr />
+		<hr class="pb-2 m-0 !important"/>
 	</#if>
 </#macro>
 
@@ -258,7 +254,7 @@
 	function installationDocsModalBody() {
 		return `
 			<#if appDocumentationURL?has_content>
-				<div class="d-flex flex-row align-items-center mb-3">
+				<div class="d-flex flex-row align-items-center">
 					<span class="align-items-center d-flex justify-content-center modal-icon-background mr-3" style="background: #E2E2E4; border-radius:50%; height:40px; overflow:hidden; width:40px;">
 						<@clay["icon"]
 							style="fill:#6B6C7E;"
@@ -269,7 +265,7 @@
 					<div class="d-flex flex-column">
 						<span class="text-black-50">${languageUtil.get(locale, "app-documentation-url", "App Documentation URL")}</span>
 
-						<a class="font-weight-bold" href="${appDocumentationURL}" target="_blank">
+						<a class="font-weight-bold" href="tel:${appDocumentationURL}" target="_blank">
 							${appDocumentationURL}
 						</a>
 					</div>
@@ -288,7 +284,7 @@
 					<div class="d-flex flex-column">
 						<span class="text-black-50">${languageUtil.get(locale, "app-installation-guide-url", "App Installation Guide URL")}</span>
 
-						<a class="font-weight-bold" href="${appInstallationGuideURL}" target="_blank">
+						<a class="font-weight-bold" href="tel:${appInstallationGuideURL}" target="_blank">
 							${appInstallationGuideURL}
 						</a>
 					</div>
@@ -394,9 +390,38 @@
 </script>
 
 <script ${nonceAttribute}>
+	let isCopying = false; // flag to block double clicks
+
 	function copyToClipboard(text) {
+		if (isCopying) return;
 		if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+			isCopying = true;
 			navigator.clipboard.writeText(text);
+
+			const linkIcon = document.getElementById("linkIcon");
+			const linkLabel = document.getElementById("linkLabel");
+
+			if (linkLabel && linkIcon) {
+				const originalLabel = linkLabel.innerText;
+
+				linkLabel.style.transition = "all 0.2s ease-out";
+				linkIcon.style.transition = "all 0.2s ease-out";
+
+				linkIcon.style.opacity = 0;
+				linkLabel.style.transform = "translateX(-19px)";
+				linkIcon.style.transform = "translateX(-19px)";
+
+				linkLabel.innerText = "Link copied!";
+
+				setTimeout(() => {
+					linkIcon.style.opacity = 1;
+					linkLabel.style.transform = "translateX(0)";
+					linkIcon.style.transform = "translateX(0)";
+					linkLabel.innerText = originalLabel;
+
+					isCopying = false;
+				}, 4000);
+			}
 
 			Liferay.Util.openToast({ message: "Copied link to the clipboard" });
 		}
@@ -404,6 +429,19 @@
 </script>
 
 <style ${nonceAttribute}>
+	.details {
+		margin-bottom: 16px !important;
+	}
+
+	.details > * {
+		margin: 0 !important;
+	}
+
+	.link-arrow mask,
+	.support-svg mask {
+		mask-type: alpha;
+	}
+
 	.support-link,
 	.support-modal {
 		font-size: 16px;
@@ -428,17 +466,12 @@
 		transform: rotate(90deg);
 	}
 
-	.support-modal-icon,
-	.support-modal {
-		color: #54555F;
+	.support-modal,
+	.support-modal-icon {
+		color: #0B5FFF;
 	}
 
 	.support-modal:hover {
 		color: #272833;
-	}
-
-	.support-svg mask,
-	.link-arrow mask {
-		mask-type: alpha;
 	}
 </style>
