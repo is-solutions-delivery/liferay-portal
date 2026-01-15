@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-package com.liferay.learn.service;
+package com.liferay.learn;
 
-import com.liferay.client.extension.util.spring.boot3.service.BaseService;
+import com.liferay.client.extension.util.spring.boot3.BaseRestController;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -19,15 +19,24 @@ import java.util.regex.Pattern;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Ana Beatriz Alves
  */
-@Service
-public class P2S3FriendlyURLService extends BaseService {
+@RequestMapping("/object/action/lesson-friendly-url-update")
+@RestController
+public class ObjectActionLessonFriendlyUrlUpdateRestController
+	extends BaseRestController {
 
 	@Async
 	public void handleCourseUpdate(String jwt, JSONObject payloadJSONObject) {
@@ -93,6 +102,36 @@ public class P2S3FriendlyURLService extends BaseService {
 			));
 
 		_updateLessonsInModule(jwt, moduleId, newSlug, 1);
+	}
+
+	@PostMapping
+	public ResponseEntity<String> post(
+		@AuthenticationPrincipal Jwt jwt, @RequestBody String json) {
+
+		JSONObject entryJSONObject = new JSONObject(json);
+
+		String objectDefinitionExternalReferenceCode =
+			entryJSONObject.getString("objectDefinitionExternalReferenceCode");
+		JSONObject objectEntryJSONObject = entryJSONObject.getJSONObject(
+			"objectEntry");
+
+		String token = "Bearer " + jwt.getTokenValue();
+
+		if (objectDefinitionExternalReferenceCode.equals("P2S3_COURSE")) {
+			handleCourseUpdate(token, objectEntryJSONObject);
+		}
+		else if (objectDefinitionExternalReferenceCode.equals("P2S3_MODULE")) {
+			handleModuleUpdate(token, objectEntryJSONObject);
+		}
+		else if (objectDefinitionExternalReferenceCode.equals("P2S3_LESSON")) {
+			handleLessonUpdate(token, objectEntryJSONObject);
+		}
+		else {
+			return new ResponseEntity<>(
+				"Unsupported Object Type", HttpStatus.BAD_REQUEST);
+		}
+
+		return new ResponseEntity<>(json, HttpStatus.ACCEPTED);
 	}
 
 	private JSONArray _fetchChildrenJSONArray(
