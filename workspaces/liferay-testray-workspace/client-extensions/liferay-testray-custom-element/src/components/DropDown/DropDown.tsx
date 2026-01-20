@@ -43,6 +43,7 @@ const DropDown: React.FC<DropDownProps> = ({
 					aria-label={i18n.translate('more-actions')}
 					className="page-link"
 					displayType="unstyled"
+					placeholder={''}
 					symbol="ellipsis-v"
 				/>
 			}

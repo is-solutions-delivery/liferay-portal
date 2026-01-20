@@ -274,6 +274,7 @@ const BuildForm = () => {
 							className="mt-5"
 							displayType="primary"
 							onClick={() => newProductVersionModal.open()}
+							placeholder={''}
 							symbol="plus"
 							title={i18n.sub('add-x', 'product-version')}
 						/>

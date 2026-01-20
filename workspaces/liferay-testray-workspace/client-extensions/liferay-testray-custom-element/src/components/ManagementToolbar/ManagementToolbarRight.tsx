@@ -100,6 +100,7 @@ const ManagementToolbarRight: React.FC<ManagementToolbarRightProps> = ({
 							aria-label={i18n.translate('add-pin')}
 							className="nav-btn nav-btn-monospaced"
 							displayType="unstyled"
+							placeholder={''}
 							onClick={onPin}
 							symbol={i18n.translate(pin ? 'unpin' : 'pin')}
 							title={i18n.translate(pin ? 'unpin' : 'pin')}
@@ -126,6 +127,7 @@ const ManagementToolbarRight: React.FC<ManagementToolbarRightProps> = ({
 					<ClayButtonWithIcon
 						aria-labelledby="plus"
 						className="nav-btn nav-btn-monospaced"
+						placeholder={''}
 						symbol="plus"
 					/>
 				</ClayManagementToolbar.Item>
