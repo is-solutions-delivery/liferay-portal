@@ -40,3 +40,7 @@
 		z-index: 0;
 	}
 }
+
+.page-item.active .page-link {
+	z-index: 3;
+}
