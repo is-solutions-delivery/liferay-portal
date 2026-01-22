@@ -1,8 +1,8 @@
 {
 	"dependencies": {
-		"@clayui/autocomplete": "*",
-		"@clayui/form": "*",
-		"@clayui/icon": "*",
+		"@clayui/autocomplete": "3.156.0",
+		"@clayui/form": "3.156.0",
+		"@clayui/icon": "3.144.1",
 		"commerce-frontend-js": "*",
 		"frontend-js-components-web": "*",
 		"frontend-js-web": "*",

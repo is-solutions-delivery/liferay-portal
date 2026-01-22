@@ -1,10 +1,10 @@
 {
 	"dependencies": {
-		"@clayui/autocomplete": "*",
-		"@clayui/button": "*",
-		"@clayui/form": "*",
-		"@clayui/icon": "*",
-		"@clayui/modal": "*",
+		"@clayui/autocomplete": "3.156.0",
+		"@clayui/button": "3.156.0",
+		"@clayui/form": "3.156.0",
+		"@clayui/icon": "3.144.1",
+		"@clayui/modal": "3.156.0",
 		"classnames": "2.3.1",
 		"commerce-frontend-js": "*",
 		"frontend-js-components-web": "*",
@@ -19,5 +19,5 @@
 		"checkFormat": "node-scripts format --check",
 		"format": "node-scripts format"
 	},
-	"version": "5.0.120"
+	"version": "5.0.119"
 }

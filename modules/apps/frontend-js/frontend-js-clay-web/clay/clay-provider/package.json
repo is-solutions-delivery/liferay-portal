@@ -3,7 +3,7 @@
 		"extends browserslist-config-clay"
 	],
 	"dependencies": {
-		"@clayui/icon": "*"
+		"@clayui/icon": "3.144.1"
 	},
 	"description": "ClayProvider component in React",
 	"files": [
@@ -17,7 +17,7 @@
 	"main": "src/index.ts",
 	"name": "@clayui/provider",
 	"peerDependencies": {
-		"@clayui/css": "*",
+		"@clayui/css": "3.x",
 		"react": "^16.0.0 || ^17.0.0 || ^18.0.0",
 		"react-dom": "^16.0.0 || ^17.0.0 || ^18.0.0"
 	},
