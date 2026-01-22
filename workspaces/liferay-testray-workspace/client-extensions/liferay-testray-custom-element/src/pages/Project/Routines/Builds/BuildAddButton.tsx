@@ -94,7 +94,6 @@ const BuildAddButton: React.FC<BuildAddButtonProps> = ({routineId}) => {
 							<ClayButtonWithIcon
 								aria-label={i18n.translate('manage')}
 								className="nav-btn nav-btn-monospaced"
-								placeholder={''}
 								symbol="plus"
 							/>
 						</div>

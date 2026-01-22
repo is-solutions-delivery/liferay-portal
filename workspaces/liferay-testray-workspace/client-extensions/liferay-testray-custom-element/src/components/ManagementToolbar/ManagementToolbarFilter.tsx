@@ -273,7 +273,6 @@ const FilterBody: React.FC<FilterBodyProps> = ({
 							aria-label={i18n.translate('clear')}
 							className="clear-button"
 							displayType="unstyled"
-							placeholder={''}
 							onClick={() => setFilter('')}
 							symbol="times"
 							title={i18n.translate('clear')}

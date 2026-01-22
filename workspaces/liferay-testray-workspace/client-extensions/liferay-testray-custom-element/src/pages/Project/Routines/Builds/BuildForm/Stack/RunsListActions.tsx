@@ -31,7 +31,6 @@ const RunsListActions: React.FC<RunsListActionsProps> = ({
 					aria-label={i18n.translate('add')}
 					displayType="secondary"
 					onClick={() => append({...field, runId: undefined})}
-					placeholder={''}
 					symbol="plus"
 				/>
 			)}
@@ -41,7 +40,6 @@ const RunsListActions: React.FC<RunsListActionsProps> = ({
 				className="ml-1"
 				displayType="secondary"
 				onClick={() => remove(index)}
-				placeholder={''}
 				symbol="hr"
 			/>
 		</ClayLayout.Col>

@@ -65,7 +65,6 @@ const ManagementToolbarSearch = () => {
 									aria-label={i18n.translate('clear')}
 									displayType="unstyled"
 									onClick={onClear}
-									placeholder={''}
 									symbol="times"
 								/>
 							</ClayInput.GroupInsetItem>
