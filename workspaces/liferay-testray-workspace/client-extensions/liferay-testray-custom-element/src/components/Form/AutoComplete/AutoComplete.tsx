@@ -81,6 +81,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = ({
 								key={item.id}
 								match={value}
 								onClick={() => onClickItem(item.name)}
+								placeholder=""
 								value={item.name}
 							/>
 						))}

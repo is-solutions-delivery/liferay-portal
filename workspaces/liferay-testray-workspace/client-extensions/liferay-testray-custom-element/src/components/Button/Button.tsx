@@ -4,13 +4,14 @@
  */
 
 import ClayButton from '@clayui/button';
+import {DisplayType} from '@clayui/button/lib/Button';
 import ClayIcon from '@clayui/icon';
 import ClayManagementToolbar from '@clayui/management-toolbar';
 import {Fragment, ReactNode} from 'react';
 
 type ButtonProps = {
 	children: ReactNode;
-	displayType?: React.ComponentProps<typeof ClayButton>['displayType'];
+	displayType?: DisplayType;
 	symbol?: string;
 	toolbar?: boolean;
 } & React.HTMLAttributes<HTMLButtonElement>;

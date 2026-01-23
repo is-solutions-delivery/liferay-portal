@@ -5,6 +5,7 @@
 
 import ClayAlert, {DisplayType as AlertDisplayType} from '@clayui/alert';
 import ClayButton from '@clayui/button';
+import {DisplayType as ButtonDisplayType} from '@clayui/button/lib/Button';
 import ClayLabel from '@clayui/label';
 import {useNavigate} from 'react-router-dom';
 import {useObjectPermission} from '~/hooks/data/useObjectPermission';
@@ -21,9 +22,6 @@ type BuildAlertBarProps = {
 	testrayBuild: TestrayBuild;
 	testrayTask: TestrayTask;
 };
-
-type ButtonDisplayType =
-	React.ComponentProps<typeof ClayButton>['displayType'];
 
 const BuildAlertBar: React.FC<BuildAlertBarProps> = ({
 	testrayBuild,

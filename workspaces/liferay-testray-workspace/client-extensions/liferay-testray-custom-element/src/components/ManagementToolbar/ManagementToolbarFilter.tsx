@@ -274,7 +274,6 @@ const FilterBody: React.FC<FilterBodyProps> = ({
 							className="clear-button"
 							displayType="unstyled"
 							onClick={() => setFilter('')}
-							placeholder={''}
 							symbol="times"
 							title={i18n.translate('clear')}
 						/>

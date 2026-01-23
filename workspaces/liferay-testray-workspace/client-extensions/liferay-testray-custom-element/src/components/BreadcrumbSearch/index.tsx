@@ -140,6 +140,7 @@ const BreadcrumbSearch: React.FC<BreadccrumbSearchProps> = ({
 													onClick={() => {
 														onClickRow(itemIndex);
 													}}
+													placeholder=""
 													value={item.label}
 												/>
 											)
@@ -150,6 +151,7 @@ const BreadcrumbSearch: React.FC<BreadccrumbSearchProps> = ({
 											match={i18n.translate(
 												'no-results-found'
 											)}
+											placeholder=""
 											value={i18n.translate(
 												'no-results-found'
 											)}
