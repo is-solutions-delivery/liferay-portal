@@ -8,7 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import './globals.css';
-import {liferay} from '../../liferay/server';
+import {liferay} from '../../../liferay/server';
 
 import type {Metadata} from 'next';
 

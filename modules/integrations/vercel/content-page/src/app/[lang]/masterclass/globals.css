@@ -66,10 +66,17 @@ body {
 		@apply grow-1;
 	}
 
-	/* Hero Section */}
-	.hero-section-evolve {
-		background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+	/* Hero Section */
+	.hero-section {
+		background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 50%, #fef3c7 100%);
 		@apply relative;
+		animation: gradient-shift 15s ease infinite;
+		background-size: 200% 200%;
+	}
+
+	@keyframes gradient-shift {
+		0%, 100% { background-position: 0% 50%; }
+		50% { background-position: 100% 50%; }
 	}
 
 	.hero-content {
@@ -85,85 +92,6 @@ body {
 			opacity: 1;
 			transform: translateY(0);
 		}
-	}
-
-	/* News Ticker */
-	.news-ticker {
-		@apply bg-gray-900 text-white;
-		overflow: hidden;
-	}
-
-	.ticker-content {
-		display: flex;
-		animation: ticker-scroll 30s linear infinite;
-	}
-
-	.ticker-item {
-		padding: 0 3rem;
-		white-space: nowrap;
-	}
-
-	@keyframes ticker-scroll {
-		0% { transform: translateX(0); }
-		100% { transform: translateX(-50%); }
-	}
-
-	/* Event Cards */
-	.event-card {
-		@apply bg-white rounded-xl shadow-md overflow-hidden relative;
-		@apply transition-all duration-300;
-		@apply hover:shadow-2xl hover:-translate-y-2;
-	}
-
-	.event-date-badge {
-		@apply absolute top-4 left-4 bg-blue-600 text-white rounded-lg px-4 py-2 z-10;
-		@apply flex flex-col items-center justify-center;
-		@apply shadow-lg;
-	}
-
-	.event-image-container {
-		@apply relative;
-	}
-
-	.event-type-badge {
-		@apply absolute bottom-4 right-4 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full;
-	}
-
-	.event-type-inperson {
-		@apply bg-purple-500;
-	}
-
-	/* News Cards */
-	.news-card {
-		@apply bg-white rounded-xl shadow-md overflow-hidden;
-		@apply transition-all duration-300;
-		@apply hover:shadow-2xl hover:-translate-y-1;
-	}
-
-	.news-image-container {
-		@apply relative;
-	}
-
-	.news-category-badge {
-		@apply absolute top-4 right-4 text-white text-xs font-bold px-3 py-1 rounded-full;
-	}
-
-	.badge-product {
-		@apply bg-blue-600;
-	}
-
-	.badge-press {
-		@apply bg-red-600;
-	}
-
-	.badge-community {
-		@apply bg-green-600;
-	}
-
-	/* CTA Section */
-	.cta-section {
-		background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-		@apply text-white;
 	}
 
 	.content-box {
@@ -280,7 +208,7 @@ body {
 	.hover-lift:hover {
 		@apply -translate-y-1;
 	}
-
+}
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
