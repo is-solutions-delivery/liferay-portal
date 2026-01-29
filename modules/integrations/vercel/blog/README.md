@@ -1,42 +1,29 @@
 # Liferay Headless Blog - Next.js Sample
 
-This is a [Next.js](https://nextjs.org) made to consume [Liferay](https://www.liferay.com/)'s CMS Blog headless APIs.
+This [Next.js](https://nextjs.org) template is made to consume [Liferay](https://www.liferay.com/)'s CMS Blog headless APIs.
 
 ## Prerequisites
 
-Before starting, ensure you have installed:
 
 - Git
 - Node.js 22+
 - Liferay Portal 2025.Q4+
 
-## Getting Started
+## [Getting Started](https://learn.liferay.com/w/dxp/getting-started)
 
-### 1. Clone the template
+### Clone the template
 
-To clone the `blog` template, run:
+1. Run in your terminal:
+    1. ```bash curl -sL https://raw.githubusercontent.com/liferay/liferay-portal/master/modules/integrations/vercel clone-template.sh | bash -s -- blog```
+    1. ```cd blog```
 
-```bash
-curl -sL https://raw.githubusercontent.com/liferay/liferay-portal/master/modules/integrations/vercel/clone-template.sh | bash -s -- blog
-```
+### Setup your local Liferay instance
 
-And then go to your newly created repository:
+!!! important
+    Currently, this feature is behind a beta feature flag (LPD-17564) and also depends on release feature flags (LPD-32050 and LPD-34594). Read [Feature Flags](https://learn.liferay.com/w/dxp/security-and-administration/administration/configuring-liferay/feature-flags) for more information. 
 
-```bash
-cd blog
-```
 
-### 2. Setup your local Liferay instance
-
-Currently, to run a Liferay DXP with the CMS site enabled, we need to enable the following feature flags:
-
-- Release FF:
-    - LPD-32050 (Enhancements to Object Entry Localization)
-    - LPD-34594 (Root Object Definitions)
-- Beta FF:
-    - LPD-17564 (CMS)
-
-1. Go to your running liferay instance [http://localhost:8080/](http://localhost:8080/);
+1. Go to your running liferay instance [http://localhost:8080](http://localhost:8080)
 
 1. Login with email and password;
 
