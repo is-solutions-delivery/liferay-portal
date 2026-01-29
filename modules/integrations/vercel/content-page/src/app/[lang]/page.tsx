@@ -108,8 +108,8 @@ export default async function Home({
 
 							<div className="flex gap-4">
 								<Button
-									external={true}
-									href={mainEvent.registrationLink}
+									external={false}
+									href={`/article/${mainEvent.id}`}
 								>
 									<span className="font-bold uppercase">
 										Learn More
@@ -185,13 +185,15 @@ export default async function Home({
 								</div>
 
 								<div className="p-6">
-									<h3 className="font-bold group-hover:text-blue-600 mb-2 text-xl transition-colors">
+									<a
+										className="font-bold group-hover:text-blue-600 mb-2 text-xl transition-colors"
+										href={`/article/${upcomingEvent.id}`}
+									>
 										{upcomingEvent.title}
-									</h3>
+									</a>
 
 									<p className="flex gap-2 items-center mb-4 text-gray-600 text-sm">
 										<span>🌐</span>{' '}
-
 										{upcomingEvent.locationName}
 									</p>
 
@@ -269,7 +271,6 @@ export default async function Home({
 									<div className="flex gap-3 items-center mb-3 text-gray-500 text-xs">
 										<span>
 											📅{' '}
-
 											{new Date(
 												event.dateCreated
 											).toLocaleDateString(lang)}
