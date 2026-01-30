@@ -85,34 +85,30 @@ public class MarketplacePubsubSubscriber {
 				subscriptionAdminSettings);
 		}
 		catch (Exception exception) {
-			_log.error("Failed to create Admin Client", exception);
+			_log.error("Failed to create subscription admin client", exception);
 
 			throw exception;
 		}
 
-		for (String topic : MarketplaceConstants.PUBSUB_TOPICS) {
+		for (String topic : MarketplaceConstants.KORONEIKI_PUBSUB_TOPICS) {
 			try {
-				String subscriptionName =
-					"marketplace_" + topic + "-subscription";
-
 				ProjectSubscriptionName projectSubscriptionName =
-					ProjectSubscriptionName.of(_projectId, subscriptionName);
+					ProjectSubscriptionName.of(
+						_projectId, "marketplace_" + topic + "-subscription");
 
 				try {
 					_subscriptionAdminClient.getSubscription(
 						projectSubscriptionName);
 
-					if (_log.isDebugEnabled()) {
-						_log.debug(
+					if (_log.isInfoEnabled()) {
+						_log.info(
 							"Found subscription " +
 								projectSubscriptionName.toString());
 					}
 				}
 				catch (NotFoundException notFoundException) {
 					if (_log.isInfoEnabled()) {
-						_log.info(
-							"Creating a new subscription \n",
-							notFoundException);
+						_log.info("Subscription not found", notFoundException);
 					}
 
 					TopicName topicName = TopicName.ofProjectTopicName(
@@ -127,8 +123,8 @@ public class MarketplacePubsubSubscriber {
 						topicName.toString()
 					).build();
 
-					if (_log.isDebugEnabled()) {
-						_log.debug(
+					if (_log.isInfoEnabled()) {
+						_log.info(
 							"Creating subscription " + subscription.toString());
 					}
 
@@ -169,25 +165,23 @@ public class MarketplacePubsubSubscriber {
 		GoogleCredentials googleCredentials =
 			ServiceAccountCredentials.fromStream(
 				new ByteArrayInputStream(
-					_gcpServiceAccountKey.getBytes(StandardCharsets.UTF_8))
+					_serviceAccountKey.getBytes(StandardCharsets.UTF_8))
 			).createScoped(
-				Collections.singletonList(_SCOPE)
+				Collections.singletonList(
+					"https://www.googleapis.com/auth/cloud-platform")
 			);
 
 		return FixedCredentialsProvider.create(googleCredentials);
 	}
 
-	private static final String _SCOPE =
-		"https://www.googleapis.com/auth/cloud-platform";
-
 	private static final Log _log = LogFactory.getLog(
 		MarketplacePubsubSubscriber.class);
 
-	@Value("${liferay.marketplace.pubsub.gcp.service.account.key}")
-	private String _gcpServiceAccountKey;
-
 	@Value("${liferay.marketplace.pubsub.gcp.project.id}")
 	private String _projectId;
+
+	@Value("${liferay.marketplace.pubsub.gcp.service.account.key}")
+	private String _serviceAccountKey;
 
 	private final List<Subscriber> _subscribers = new ArrayList<>();
 	private SubscriptionAdminClient _subscriptionAdminClient;
