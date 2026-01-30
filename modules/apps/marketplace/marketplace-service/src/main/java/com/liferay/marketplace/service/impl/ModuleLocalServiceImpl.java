@@ -71,11 +71,12 @@ public class ModuleLocalServiceImpl extends ModuleLocalServiceBaseImpl {
 		String contextName) {
 
 		if (Validator.isNotNull(bundleSymbolicName)) {
-			return modulePersistence.fetchByA_BSN_BV(
-				appId, bundleSymbolicName, bundleVersion);
+			return modulePersistence.fetchByA_BSN_BV_First(
+				appId, bundleSymbolicName, bundleVersion, null);
 		}
 		else if (Validator.isNotNull(contextName)) {
-			return modulePersistence.fetchByA_CN(appId, contextName);
+			return modulePersistence.fetchByA_CN_First(
+				appId, contextName, null);
 		}
 
 		return null;
