@@ -31,6 +31,7 @@ import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Entitlement;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ExternalLink;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Product;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ProductPurchase;
+import com.liferay.petra.string.StringBundler;
 
 import java.math.BigDecimal;
 
@@ -394,7 +395,7 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 						setAccountExternalReferenceCode(
 							koroneikiAccount::getKey);
 						setChannelId(_channel::getId);
-						setCurrencyCode("USD");
+						setCurrencyCode(() -> "USD");
 						setOrderItems(
 							() -> new OrderItem[] {
 								new OrderItem() {
@@ -405,7 +406,8 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 									}
 								}
 							});
-						setOrderTypeExternalReferenceCode("SALESFORCE-ORDER");
+						setOrderTypeExternalReferenceCode(
+							() -> "SALESFORCE-ORDER");
 					}
 				});
 		}
@@ -425,7 +427,6 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 	private String _productKeys;
 
 	private ProductPurchase _productPurchase;
-	
 	private final String _topicName;
 
 }
