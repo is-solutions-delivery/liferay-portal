@@ -46,6 +46,8 @@ import org.apache.commons.logging.LogFactory;
 
 import org.json.JSONObject;
 
+import org.springframework.beans.factory.annotation.Value;
+
 /**
  * @author Caleb Hall
  */
@@ -335,6 +337,10 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 
 		String name = entitlement.getName();
 
+		if (!_productKeys.contains(name)) {
+			return;
+		}
+
 		try {
 			com.liferay.osb.koroneiki.phloem.rest.client.pagination.Page
 				<ProductPurchase> productPurchasePage =
@@ -414,6 +420,9 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 	private final Channel _channel;
 	private final KoroneikiService _koroneikiService;
 	private final MarketplaceService _marketplaceService;
+
+	@Value("${liferay.marketplace.product.keys}")
+	private String _productKeys;
 
 	private ProductPurchase _productPurchase;
 	
