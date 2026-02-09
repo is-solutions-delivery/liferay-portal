@@ -358,8 +358,10 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 					productPurchase -> productPurchase.getDateCreated(
 					).toInstant()));
 
-			for (ProductPurchase productPurchase : productPurchaseItems) {
-				Product product = productPurchase.getProduct();
+			ProductPurchase productPurchase = null;
+
+			for (ProductPurchase productPurchaseItem : productPurchaseItems) {
+				Product product = productPurchaseItem.getProduct();
 
 				for (ExternalLink externalLink : product.getExternalLinks()) {
 					if (!externalLink.getEntityId(
@@ -370,26 +372,26 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 						continue;
 					}
 
-					Instant dateCreatedInstant = productPurchase.getDateCreated(
+					Instant dateCreatedInstant = productPurchaseItem.getDateCreated(
 					).toInstant();
 
 					if (dateCreatedInstant.isAfter(Instant.parse(timestamp))) {
-						_productPurchase = productPurchase;
+						productPurchase = productPurchaseItem;
 
 						break;
 					}
 				}
 
-				if (_productPurchase != null) {
+				if (productPurchase != null) {
 					break;
 				}
 			}
 
-			if (_productPurchase == null) {
+			if (productPurchase == null) {
 				return;
 			}
 
-			Product product = _productPurchase.getProduct();
+			Product product = productPurchase.getProduct();
 
 			_marketplaceService.postOrder(
 				new Order() {
@@ -428,7 +430,6 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 	@Value("${liferay.marketplace.product.keys}")
 	private String _productKeys;
 
-	private ProductPurchase _productPurchase;
 	private final String _topicName;
 
 }
