@@ -346,7 +346,9 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 			com.liferay.osb.koroneiki.phloem.rest.client.pagination.Page
 				<ProductPurchase> productPurchasePage =
 					_koroneikiService.getAccountAccountKeyProductPurchasesPage(
-						koroneikiAccount.getKey());
+						koroneikiAccount.getKey(),
+						com.liferay.osb.koroneiki.phloem.rest.client.pagination.
+							Pagination.of(1, -1));
 
 			List<ProductPurchase> productPurchaseItems = new ArrayList<>(
 				productPurchasePage.getItems());

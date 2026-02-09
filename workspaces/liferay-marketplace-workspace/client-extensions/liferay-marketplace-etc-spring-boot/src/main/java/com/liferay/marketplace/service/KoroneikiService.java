@@ -50,14 +50,14 @@ import org.springframework.stereotype.Component;
 public class KoroneikiService {
 
 	public Page<ProductPurchase> getAccountAccountKeyProductPurchasesPage(
-			String accountKey)
+			String accountKey, Pagination pagination)
 		throws Exception {
 
 		ProductPurchaseResource productPurchaseResource =
 			getProductPurchaseResource();
 
 		return productPurchaseResource.getAccountAccountKeyProductPurchasesPage(
-			accountKey, Pagination.of(1, 20));
+			accountKey, pagination);
 	}
 
 	public AccountResource getAccountResource() throws Exception {
