@@ -109,7 +109,7 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 							PUBSUB_TOPIC_NAME_KORONEIKI_ENTITLEMENT_CREATE)) {
 
 				com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Account
-					koroneikiAccount =
+					account =
 						com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.
 							Account.toDTO(
 								jsonObject.getJSONObject(
@@ -121,8 +121,7 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 					).toString());
 
 				_processKoroneikiEntitlementCreate(
-					entitlement, koroneikiAccount,
-					jsonObject.getString("timestamp"));
+					account, entitlement, jsonObject.getString("timestamp"));
 			}
 
 			ackReplyConsumer.ack();
@@ -331,22 +330,22 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 	}
 
 	private void _processKoroneikiEntitlementCreate(
-		Entitlement entitlement,
-		com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Account
-			koroneikiAccount,
-		String timestamp) {
+		com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Account account,
+		Entitlement entitlement, String timestamp) {
 
 		String name = entitlement.getName();
 
-		if (!_productKeys.contains(name)) {
+		if (!_productNames.contains(name)) {
 			return;
 		}
+
+		String accountKey = account.getKey();
 
 		try {
 			com.liferay.osb.koroneiki.phloem.rest.client.pagination.Page
 				<ProductPurchase> productPurchasePage =
 					_koroneikiService.getAccountAccountKeyProductPurchasesPage(
-						koroneikiAccount.getKey(),
+						account.getKey(),
 						com.liferay.osb.koroneiki.phloem.rest.client.pagination.
 							Pagination.of(1, -1));
 
@@ -372,8 +371,9 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 						continue;
 					}
 
-					Instant dateCreatedInstant = productPurchaseItem.getDateCreated(
-					).toInstant();
+					Instant dateCreatedInstant =
+						productPurchaseItem.getDateCreated(
+						).toInstant();
 
 					if (dateCreatedInstant.isAfter(Instant.parse(timestamp))) {
 						productPurchase = productPurchaseItem;
@@ -396,8 +396,7 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 			_marketplaceService.postOrder(
 				new Order() {
 					{
-						setAccountExternalReferenceCode(
-							koroneikiAccount::getKey);
+						setAccountExternalReferenceCode(() -> accountKey);
 						setChannelId(_channel::getId);
 						setCurrencyCode(() -> "USD");
 						setOrderItems(
@@ -427,8 +426,8 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 	private final KoroneikiService _koroneikiService;
 	private final MarketplaceService _marketplaceService;
 
-	@Value("${liferay.marketplace.product.keys}")
-	private String _productKeys;
+	@Value("${liferay.marketplace.product.names}")
+	private String _productNames;
 
 	private final String _topicName;
 
