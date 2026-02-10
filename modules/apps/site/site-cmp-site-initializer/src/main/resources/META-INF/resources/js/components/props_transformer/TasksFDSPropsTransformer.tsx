@@ -4,10 +4,7 @@
  */
 
 import {DateRenderer, IInternalRenderer} from '@liferay/frontend-data-set-web';
-import {
-	AssigneeAvatar,
-	AssigneeValue,
-} from '@liferay/object-dynamic-data-mapping-form-field-type';
+import {AssigneeValue} from '@liferay/object-dynamic-data-mapping-form-field-type';
 import {
 	AssignToModalContent,
 	SimpleActionLinkRenderer,
@@ -23,6 +20,7 @@ import StateLabel from '../StateLabel';
 import EditAssigneeModalContent from '../modal/EditAssigneeModalContent';
 import ACTIONS from './actions/creationMenuActions';
 import {cmpTasksFDSAtom} from './atoms';
+import AssigneeRenderer from './cell_renderers/AssigneeRenderer';
 
 const _CLASS_NAME_KALEO_TASK_INSTANCE_TOKEN =
 	'com.liferay.portal.workflow.kaleo.model.KaleoTaskInstanceToken';
@@ -130,19 +128,10 @@ export default function TasksFDSPropsTransformer({
 						}
 
 						return (
-							<span className="align-items-center d-flex">
-								<div className="c-mr-2">
-									<AssigneeAvatar
-										image={
-											itemData.embedded?.assignTo
-												?.portrait
-										}
-										name={itemData.embedded?.assignTo?.name}
-									/>
-								</div>
-
-								{itemData.embedded?.assignTo?.name}
-							</span>
+							<AssigneeRenderer
+								image={itemData.embedded?.assignTo?.portrait}
+								name={itemData.embedded?.assignTo?.name}
+							/>
 						);
 					},
 					name: 'assigneeTableCellRenderer',
