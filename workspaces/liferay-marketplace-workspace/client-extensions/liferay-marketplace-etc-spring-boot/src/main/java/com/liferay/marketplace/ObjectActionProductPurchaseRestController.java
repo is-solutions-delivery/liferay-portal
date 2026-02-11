@@ -4,7 +4,6 @@ import com.liferay.client.extension.util.spring.boot3.BaseRestController;
 import com.liferay.headless.admin.user.client.dto.v1_0.Account;
 import com.liferay.headless.admin.user.client.dto.v1_0.UserAccount;
 import com.liferay.headless.admin.user.client.resource.v1_0.AccountResource;
-import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Catalog;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Product;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.Order;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.OrderItem;
@@ -15,10 +14,6 @@ import com.liferay.marketplace.service.KoroneikiService;
 import com.liferay.marketplace.service.MarketplaceService;
 import com.liferay.marketplace.service.SalesforceService;
 import com.liferay.marketplace.util.MarketplaceUtil;
-import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.util.HashMapBuilder;
-
-import java.net.URL;
 
 import java.util.Map;
 import java.util.Objects;
@@ -167,7 +162,11 @@ public class ObjectActionProductPurchaseRestController
 			(paymentStatus ==
 				MarketplaceConstants.ORDER_PAYMENT_STATUS_COMPLETED)) {
 
-			_sendOrderConfirmationNotification(order);
+			_marketplaceService.postNotificationQueueEntry(
+				order.getCreatorEmailAddress(),
+				"MARKETPLACE-ORDER-CONFIRMATION",
+				productPurchaseNotificationTemplate.
+					getOrderConfirmationNotification());
 		}
 
 		if (Objects.equals(
@@ -176,167 +175,11 @@ public class ObjectActionProductPurchaseRestController
 			(paymentStatus ==
 				MarketplaceConstants.ORDER_PAYMENT_STATUS_COMPLETED)) {
 
-			_sendPaymentApprovedNotification(order);
+			_marketplaceService.postNotificationQueueEntry(
+				order.getCreatorEmailAddress(), "MARKETPLACE-PAYMENT-APPROVED",
+				productPurchaseNotificationTemplate.
+					getPaymentApprovedNotification());
 		}
-	}
-
-	private void _sendOrderConfirmationNotification(Order order)
-		throws Exception {
-
-		String orderTypeExternalReferenceCode =
-			order.getOrderTypeExternalReferenceCode();
-		String emailDescription = "";
-
-		Map<String, String> productSpecificationsMap =
-			_marketplaceService.getProductSpecificationsMap(
-				_marketplaceService.getOrderProductId(order));
-
-		if (Objects.equals(orderTypeExternalReferenceCode, "CDP")) {
-			emailDescription =
-				"<p>Your workspace is being created now!</p>" +
-					"<p>Click the button below to go to your dashboard and check the status of your environment. " +
-						"You can start using it as soon as it is ready.</p>";
-		}
-		else if (Objects.equals(orderTypeExternalReferenceCode, "DXP")) {
-			String priceModel = productSpecificationsMap.get("price-model");
-
-			if (Objects.equals(priceModel, "Free")) {
-				emailDescription =
-					"<p>Your app is ready for download.</p>" +
-						"<p>To find your app download, find your Order ID and choose Manage, " +
-							"then Download LPKG.</p>";
-			}
-			else if (Objects.equals(priceModel, "Paid")) {
-				emailDescription =
-					"<p>Your app is ready for download.</p>" +
-						"<p>To access your download, find your Order ID and select Manage, " +
-							"then <b>Download LPKG.</b> " +
-								"Please note that a <b>valid license is also required to activate </b> " +
-									"and use the application." + "</p>";
-			}
-		}
-
-		OrderItem[] orderItems = order.getOrderItems();
-
-		OrderItem orderItem = orderItems[0];
-
-		if (orderItem == null) {
-			return;
-		}
-
-		if (_log.isInfoEnabled()) {
-			_log.info(
-				"Sending order confirmation notification for order " +
-					order.getId());
-		}
-
-		Product product = _marketplaceService.getProductBySkuId(
-			orderItem.getSkuId());
-
-		Catalog catalog = _marketplaceService.getCatalog(
-			product.getCatalogId());
-
-		_marketplaceService.postNotificationQueueEntry(
-			order.getCreatorEmailAddress(), "MARKETPLACE-ORDER-CONFIRMATION",
-			new HashMapBuilder<String, String>().put(
-				"[%APP_NAME%]",
-				product.getName(
-				).get(
-					"en_US"
-				)
-			).put(
-				"[%CATALOG_NAME%]", catalog.getName()
-			).put(
-				"[%COMMERCEORDER_AUTHOR_EMAIL_ADDRESS%]",
-				order.getCreatorEmailAddress()
-			).put(
-				"[%ORDER_ID%]", String.valueOf(order.getId())
-			).put(
-				"[%PRODUCT_THUMBNAIL%]",
-				new URL(
-					StringBundler.concat(
-						lxcDXPServerProtocol, "://", lxcDXPMainDomain,
-						product.getThumbnail())
-				).toString(
-				).replaceAll(
-					"(?<=accounts/)-?\\d+(?=/images)", "-1"
-				)
-			).put(
-				"[%EMAIL_DESCRIPTION%]", emailDescription
-			).put(
-				"[%BUTTON_TEXT%]", "Go to Dashboard"
-			).put(
-				"[%APP_PRICE%]", order.getTotalFormatted()
-			).put(
-				"[%CPDEFINITION_ID%]", String.valueOf(product.getProductId())
-			).build());
-	}
-
-	private void _sendPaymentApprovedNotification(Order order)
-		throws Exception {
-
-		OrderItem[] orderItems = order.getOrderItems();
-
-		OrderItem orderItem = orderItems[0];
-
-		if (orderItem == null) {
-			return;
-		}
-
-		if (_log.isInfoEnabled()) {
-			_log.info(
-				"Sending payment approved notification for order " +
-					order.getId());
-		}
-
-		Product product = _marketplaceService.getProductBySkuId(
-			orderItem.getSkuId());
-
-		Catalog catalog = _marketplaceService.getCatalog(
-			product.getCatalogId());
-
-		_marketplaceService.postNotificationQueueEntry(
-			null, "MARKETPLACE-PAYMENT-APPROVED",
-			new HashMapBuilder<String, String>().put(
-				"[%APP_NAME%]",
-				product.getName(
-				).get(
-					"en_US"
-				)
-			).put(
-				"[%CATALOG_NAME%]", catalog.getName()
-			).put(
-				"[%COMMERCEORDER_AUTHOR_EMAIL_ADDRESS%]",
-				order.getCreatorEmailAddress()
-			).put(
-				"[%APP_NET_PRICE%]", order.getSubtotalFormatted()
-			).put(
-				"[%ORDER_ID%]", String.valueOf(order.getId())
-			).put(
-				"[%PRODUCT_THUMBNAIL%]",
-				new URL(
-					StringBundler.concat(
-						lxcDXPServerProtocol, "://", lxcDXPMainDomain,
-						product.getThumbnail())
-				).toString(
-				).replaceAll(
-					"(?<=accounts/)-?\\d+(?=/images)", "-1"
-				)
-			).put(
-				"[%EMAIL_DESCRIPTION%]",
-				"<p>You are all set 🚀 You <b>can start using all the premium features </b> " +
-					"of your Customer Data Platform right away. " +
-						"Click the button below to access your CDP and enjoy the full experience." +
-							"</p>"
-			).put(
-				"[%BUTTON_TEXT%]", "Launch LDP"
-			).put(
-				"[%APP_TOTAL_PRICE%]", order.getTotalFormatted()
-			).put(
-				"[%APP_VAT%]", order.getTaxAmountFormatted()
-			).put(
-				"[%CPDEFINITION_ID%]", String.valueOf(product.getProductId())
-			).build());
 	}
 
 	private void _setUpAddOns(
