@@ -113,6 +113,8 @@ public class KoroneikiService {
 			new URL(_koroneikiAuthURL)
 		).parameters(
 			"nestedFields", "productConsumptions"
+		).parameters(
+			"sort", "dateCreated:desc"
 		).build();
 	}
 

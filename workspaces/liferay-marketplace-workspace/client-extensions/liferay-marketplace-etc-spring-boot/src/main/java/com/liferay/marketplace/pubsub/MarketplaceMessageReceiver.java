@@ -35,10 +35,7 @@ import com.liferay.petra.string.StringBundler;
 
 import java.math.BigDecimal;
 
-import java.time.Instant;
-
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -120,8 +117,7 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 						"entitlement"
 					).toString());
 
-				_processKoroneikiEntitlementCreate(
-					account, entitlement, jsonObject.getString("timestamp"));
+				_processKoroneikiEntitlementCreate(account, entitlement);
 			}
 
 			ackReplyConsumer.ack();
@@ -331,7 +327,7 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 
 	private void _processKoroneikiEntitlementCreate(
 		com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Account account,
-		Entitlement entitlement, String timestamp) {
+		Entitlement entitlement) {
 
 		String name = entitlement.getName();
 
@@ -345,17 +341,12 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 			com.liferay.osb.koroneiki.phloem.rest.client.pagination.Page
 				<ProductPurchase> productPurchasePage =
 					_koroneikiService.getAccountAccountKeyProductPurchasesPage(
-						account.getKey(),
+						accountKey,
 						com.liferay.osb.koroneiki.phloem.rest.client.pagination.
 							Pagination.of(1, -1));
 
 			List<ProductPurchase> productPurchaseItems = new ArrayList<>(
 				productPurchasePage.getItems());
-
-			productPurchaseItems.sort(
-				Comparator.comparing(
-					productPurchase -> productPurchase.getDateCreated(
-					).toInstant()));
 
 			ProductPurchase productPurchase = null;
 
@@ -371,18 +362,8 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 						continue;
 					}
 
-					Instant dateCreatedInstant =
-						productPurchaseItem.getDateCreated(
-						).toInstant();
+					productPurchase = productPurchaseItem;
 
-					if (dateCreatedInstant.isAfter(Instant.parse(timestamp))) {
-						productPurchase = productPurchaseItem;
-
-						break;
-					}
-				}
-
-				if (productPurchase != null) {
 					break;
 				}
 			}
