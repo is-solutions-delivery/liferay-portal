@@ -24,7 +24,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -224,6 +226,23 @@ public class MarketplaceUtil {
 		catch (Exception exception) {
 			_log.error(exception);
 		}
+	}
+
+	public static String format(Date date) {
+		return format(date, "Not Applicable");
+	}
+
+	public static String format(Date date, String defaultValue) {
+		if (date == null) {
+			return defaultValue;
+		}
+
+		return date.toInstant(
+		).atZone(
+			ZoneId.of("UTC")
+		).format(
+			DateTimeFormatter.ofPattern("MMMM d, yyyy")
+		);
 	}
 
 	public static Map<String, Properties> getArtifactPropertiesMap(

@@ -288,6 +288,8 @@ public class MarketplaceService extends BaseService {
 				"liferay-marketplace-etc-spring-boot-oahs")
 		).endpoint(
 			new URL(lxcDXPServerProtocol + "://" + lxcDXPMainDomain)
+		).parameters(
+			"nestedFields", "catalog"
 		).build();
 	}
 
