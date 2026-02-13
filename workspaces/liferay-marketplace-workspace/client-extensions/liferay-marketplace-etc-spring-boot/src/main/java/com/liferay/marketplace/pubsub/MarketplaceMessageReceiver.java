@@ -26,7 +26,6 @@ import com.liferay.marketplace.constants.MarketplaceConstants;
 import com.liferay.marketplace.service.KoroneikiService;
 import com.liferay.marketplace.service.MarketplaceService;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Contact;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Entitlement;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ExternalLink;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Product;
@@ -363,7 +362,9 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 					}
 
 					productPurchase = productPurchaseItem;
+				}
 
+				if (productPurchase != null) {
 					break;
 				}
 			}

@@ -110,6 +110,7 @@ public class MarketplaceTopicSubscriber {
 			Channel channel, CredentialsProvider credentialsProvider,
 			String topicName)
 		throws Exception {
+
 		String subscriptionName = SubscriptionName.of(
 			_projectId, _topicPrefix + topicName + "-subscription"
 		).toString();
