@@ -18,6 +18,7 @@ import com.google.pubsub.v1.Subscription;
 import com.google.pubsub.v1.SubscriptionName;
 import com.google.pubsub.v1.TopicName;
 
+import com.liferay.headless.commerce.admin.channel.client.dto.v1_0.Channel;
 import com.liferay.marketplace.constants.MarketplaceConstants;
 import com.liferay.marketplace.service.KoroneikiService;
 import com.liferay.marketplace.service.MarketplaceService;
@@ -83,27 +84,30 @@ public class MarketplaceTopicSubscriber {
 		CredentialsProvider credentialsProvider =
 			FixedCredentialsProvider.create(googleCredentials);
 
+		Channel channel = _marketplaceService.getChannelByExternalReferenceCode(
+			"MARKETPLACE-CHANNEL");
+
 		_subscriptionAdminClient = SubscriptionAdminClient.create(
 			SubscriptionAdminSettings.newBuilder(
 			).setCredentialsProvider(
 				credentialsProvider
 			).build());
-
 		_subscribe(
-			credentialsProvider,
+			channel, credentialsProvider,
 			MarketplaceConstants.PUBSUB_TOPIC_NAME_KORONEIKI_ACCOUNT_CREATE);
 		_subscribe(
-			credentialsProvider,
+			channel, credentialsProvider,
 			MarketplaceConstants.PUBSUB_TOPIC_NAME_KORONEIKI_ACCOUNT_UPDATE);
 		_subscribe(
-			credentialsProvider,
+			channel, credentialsProvider,
 			MarketplaceConstants.
 				PUBSUB_TOPIC_NAME_KORONEIKI_ENTITLEMENT_CREATE);
 	}
 
 	private void _subscribe(
-		CredentialsProvider credentialsProvider, String topicName) {
-
+			Channel channel, CredentialsProvider credentialsProvider,
+			String topicName)
+		throws Exception {
 		String subscriptionName = SubscriptionName.of(
 			_projectId, _topicPrefix + topicName + "-subscription"
 		).toString();
@@ -129,7 +133,7 @@ public class MarketplaceTopicSubscriber {
 		Subscriber subscriber = Subscriber.newBuilder(
 			subscriptionName,
 			new MarketplaceMessageReceiver(
-				_koroneikiService, _marketplaceService, topicName)
+				channel, _koroneikiService, _marketplaceService, topicName)
 		).setCredentialsProvider(
 			credentialsProvider
 		).build();

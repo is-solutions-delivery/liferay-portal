@@ -19,12 +19,26 @@ import com.liferay.headless.admin.user.client.pagination.Page;
 import com.liferay.headless.admin.user.client.pagination.Pagination;
 import com.liferay.headless.admin.user.client.resource.v1_0.AccountResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.PostalAddressResource;
+import com.liferay.headless.commerce.admin.channel.client.dto.v1_0.Channel;
+import com.liferay.headless.commerce.admin.order.client.dto.v1_0.Order;
+import com.liferay.headless.commerce.admin.order.client.dto.v1_0.OrderItem;
 import com.liferay.marketplace.constants.MarketplaceConstants;
 import com.liferay.marketplace.service.KoroneikiService;
 import com.liferay.marketplace.service.MarketplaceService;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Contact;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Entitlement;
+import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ExternalLink;
+import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Product;
+import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ProductPurchase;
 
+import java.math.BigDecimal;
+
+import java.time.Instant;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.logging.Log;
@@ -38,9 +52,10 @@ import org.json.JSONObject;
 public class MarketplaceMessageReceiver implements MessageReceiver {
 
 	public MarketplaceMessageReceiver(
-		KoroneikiService koroneikiService,
+		Channel channel, KoroneikiService koroneikiService,
 		MarketplaceService marketplaceService, String topicName) {
 
+		_channel = channel;
 		_koroneikiService = koroneikiService;
 		_marketplaceService = marketplaceService;
 		_topicName = topicName;
@@ -90,8 +105,21 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 						MarketplaceConstants.
 							PUBSUB_TOPIC_NAME_KORONEIKI_ENTITLEMENT_CREATE)) {
 
-				// TODO
+				com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Account
+					koroneikiAccount =
+						com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.
+							Account.toDTO(
+								jsonObject.getJSONObject(
+									"account"
+								).toString());
+				Entitlement entitlement = Entitlement.toDTO(
+					jsonObject.getJSONObject(
+						"entitlement"
+					).toString());
 
+				_processKoroneikiEntitlementCreate(
+					entitlement, koroneikiAccount,
+					jsonObject.getString("timestamp"));
 			}
 
 			ackReplyConsumer.ack();
@@ -299,11 +327,96 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 		}
 	}
 
+	private void _processKoroneikiEntitlementCreate(
+		Entitlement entitlement,
+		com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Account
+			koroneikiAccount,
+		String timestamp) {
+
+		String name = entitlement.getName();
+
+		try {
+			com.liferay.osb.koroneiki.phloem.rest.client.pagination.Page
+				<ProductPurchase> productPurchasePage =
+					_koroneikiService.getAccountAccountKeyProductPurchasesPage(
+						koroneikiAccount.getKey());
+
+			List<ProductPurchase> productPurchaseItems = new ArrayList<>(
+				productPurchasePage.getItems());
+
+			productPurchaseItems.sort(
+				Comparator.comparing(
+					productPurchase -> productPurchase.getDateCreated(
+					).toInstant()));
+
+			for (ProductPurchase productPurchase : productPurchaseItems) {
+				Product product = productPurchase.getProduct();
+
+				for (ExternalLink externalLink : product.getExternalLinks()) {
+					if (!externalLink.getEntityId(
+						).contains(
+							name
+						)) {
+
+						continue;
+					}
+
+					Instant dateCreatedInstant = productPurchase.getDateCreated(
+					).toInstant();
+
+					if (dateCreatedInstant.isAfter(Instant.parse(timestamp))) {
+						_productPurchase = productPurchase;
+
+						break;
+					}
+				}
+
+				if (_productPurchase != null) {
+					break;
+				}
+			}
+
+			if (_productPurchase == null) {
+				return;
+			}
+
+			Product product = _productPurchase.getProduct();
+
+			_marketplaceService.postOrder(
+				new Order() {
+					{
+						setAccountExternalReferenceCode(
+							koroneikiAccount::getKey);
+						setChannelId(_channel::getId);
+						setCurrencyCode("USD");
+						setOrderItems(
+							() -> new OrderItem[] {
+								new OrderItem() {
+									{
+										setQuantity(() -> BigDecimal.ONE);
+										setSkuExternalReferenceCode(
+											product::getKey);
+									}
+								}
+							});
+						setOrderTypeExternalReferenceCode("SALESFORCE-ORDER");
+					}
+				});
+		}
+		catch (Exception exception) {
+			_log.error("Could not create order on Marketplace", exception);
+		}
+	}
+
 	private static final Log _log = LogFactory.getLog(
 		MarketplaceMessageReceiver.class);
 
+	private final Channel _channel;
 	private final KoroneikiService _koroneikiService;
 	private final MarketplaceService _marketplaceService;
+
+	private ProductPurchase _productPurchase;
+	
 	private final String _topicName;
 
 }
