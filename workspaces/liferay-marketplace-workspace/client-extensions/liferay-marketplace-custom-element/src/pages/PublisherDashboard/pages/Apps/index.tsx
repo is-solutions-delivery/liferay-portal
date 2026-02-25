@@ -21,6 +21,7 @@ import {
 import i18n from '../../../../i18n';
 import {formatDate} from '../../../../utils/date';
 import {usePublisherDashboardOutletContext} from '../../PublisherDashboardOutlet';
+import ProdutctStatus from '../../../../components/ProductStatus';
 
 function filterLatestProductVersions(products: Product[]): Product[] {
 	const latestVersions = new Map<number, Product>();
@@ -194,15 +195,9 @@ const Apps = () => {
 								}
 
 								return (
-									<OrderStatus
-										orderStatus={workflowStatusInfo.label}
-									>
-										{
-											ProductWorkflowStatusLabel[
-												workflowStatusInfo.code as keyof typeof ProductWorkflowStatusLabel
-											]
-										}
-									</OrderStatus>
+									<ProdutctStatus
+										productStatus={workflowStatusInfo.label}
+									/>
 								);
 							},
 						},

@@ -4,14 +4,14 @@
  */
 
 import ClayDropDown from '@clayui/drop-down';
-import {addDays, format} from 'date-fns';
-import {useNavigate} from 'react-router-dom';
+import { addDays, format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 import ButtonWithIcon from '../../../components/ButtonWithIcon';
-import {DashboardEmptyTable} from '../../../components/DashboardTable/DashboardEmptyTable';
+import { DashboardEmptyTable } from '../../../components/DashboardTable/DashboardEmptyTable';
 import OrderStatus from '../../../components/OrderStatus';
 import Table from '../../../components/Table/Table';
-import {OrderCustomFields, OrderTypes} from '../../../enums/Order';
+import { OrderCustomFields, OrderTypes } from '../../../enums/Order';
 import i18n from '../../../i18n';
 
 type PurchasedSolutionsTableProps = {
@@ -19,9 +19,9 @@ type PurchasedSolutionsTableProps = {
 };
 
 const orderTypeLabel = {
-	[OrderTypes.ADDONS]: {duration: null, label: 'Add-ons'},
-	[OrderTypes.SOLUTIONS30]: {duration: 30, label: '30-day Trial'},
-	[OrderTypes.SOLUTIONS7]: {duration: 7, label: '7-day Trial'},
+	[OrderTypes.ADDONS]: { duration: null, label: 'Add-ons' },
+	[OrderTypes.SOLUTIONS30]: { duration: 30, label: '30-day Trial' },
+	[OrderTypes.SOLUTIONS7]: { duration: 7, label: '7-day Trial' },
 } as const;
 
 const PurchasedSolutionsTable: React.FC<PurchasedSolutionsTableProps> = ({
@@ -46,7 +46,7 @@ const PurchasedSolutionsTable: React.FC<PurchasedSolutionsTableProps> = ({
 				{
 					key: 'placedOrderItems',
 					render: ([placedOrderItem]) => (
-						<div style={{width: 200}}>
+						<div style={{ width: 200 }}>
 							<img
 								alt="App Image"
 								className="order-details-publisher-table-icon"
@@ -62,7 +62,7 @@ const PurchasedSolutionsTable: React.FC<PurchasedSolutionsTableProps> = ({
 				},
 				{
 					key: 'author',
-					render: (author, {createDate}) => {
+					render: (author, { createDate }) => {
 						return (
 							<div className="d-flex flex-column">
 								<span className="dashboard-table-row-text">
@@ -102,7 +102,7 @@ const PurchasedSolutionsTable: React.FC<PurchasedSolutionsTableProps> = ({
 				},
 				{
 					key: 'createDate',
-					render: (createDate, {orderTypeExternalReferenceCode}) => {
+					render: (createDate, { orderTypeExternalReferenceCode }) => {
 						const duration = (orderTypeLabel as any)[
 							orderTypeExternalReferenceCode
 						]?.duration;
@@ -121,17 +121,15 @@ const PurchasedSolutionsTable: React.FC<PurchasedSolutionsTableProps> = ({
 				},
 				{
 					key: 'orderStatusInfo',
-					render: (orderStatusInfo) => (
-						<OrderStatus orderStatus={orderStatusInfo?.label}>
-							{orderStatusInfo?.label}
-						</OrderStatus>
+					render: (orderStatusInfo, PlacedOrder) => (
+						<OrderStatus placedOrder={PlacedOrder} />
 					),
 					title: 'Status',
 				},
 				{
 					align: 'right',
 					key: 'status',
-					render: (_, {customFields, id}) => {
+					render: (_, { customFields, id }) => {
 						const virtualHost =
 							customFields[OrderCustomFields.TRIAL_VIRTUAL_HOST];
 
@@ -177,7 +175,7 @@ const PurchasedSolutionsTable: React.FC<PurchasedSolutionsTableProps> = ({
 					},
 				},
 			]}
-			onClickRow={({id}) => navigate(`${id}`)}
+			onClickRow={({ id }) => navigate(`${id}`)}
 			rows={items}
 		/>
 	);

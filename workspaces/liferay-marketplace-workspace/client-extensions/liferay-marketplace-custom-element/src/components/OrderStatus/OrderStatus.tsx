@@ -18,7 +18,7 @@ type OrderStatusProps = {
 	placedOrder: PlacedOrder;
 };
 
-const OrderStatus = ({placedOrder}: OrderStatusProps) => {
+const OrderStatus = ({ placedOrder }: OrderStatusProps) => {
 	const orderStatusLabel = getOrderStatusLabel(placedOrder);
 
 	const getOrderStatusClassName = () => {
@@ -26,9 +26,9 @@ const OrderStatus = ({placedOrder}: OrderStatusProps) => {
 
 		if (
 			orderStatusLabel ===
-				orderWorkflowStatusCodeLabels[
-					OrderWorkflowStatusCode.PENDING_PAYMENT
-				] ||
+			orderWorkflowStatusCodeLabels[
+			OrderWorkflowStatusCode.PENDING_PAYMENT
+			] ||
 			OrderWorkflowStatusCode.PENDING === orderStatus
 		) {
 			return 'order-status-icon-pending';

@@ -5,16 +5,16 @@
 
 import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
-import {useModal} from '@clayui/modal';
-import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {KeyedMutator} from 'swr';
+import { useModal } from '@clayui/modal';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { KeyedMutator } from 'swr';
 
 import ListView from '../../../../components/ListView';
 import Modal from '../../../../components/Modal';
 import OrderStatus from '../../../../components/OrderStatus';
 import Page from '../../../../components/Page';
-import {useMarketplaceContext} from '../../../../context/MarketplaceContext';
+import { useMarketplaceContext } from '../../../../context/MarketplaceContext';
 import SearchBuilder from '../../../../core/SearchBuilder';
 import {
 	ProductTypeVocabulary,
@@ -22,17 +22,18 @@ import {
 	ProductWorkflowStatusLabel,
 } from '../../../../enums/Product';
 import i18n from '../../../../i18n';
-import {Liferay} from '../../../../liferay/liferay';
+import { Liferay } from '../../../../liferay/liferay';
 import HeadlessCommerceAdminCatalog from '../../../../services/rest/HeadlessCommerceAdminCatalog';
-import {formatDate} from '../../../../utils/date';
-import {getSiteURL} from '../../../../utils/site';
-import {usePublisherDashboardOutletContext} from '../../PublisherDashboardOutlet';
+import { formatDate } from '../../../../utils/date';
+import { getSiteURL } from '../../../../utils/site';
+import { usePublisherDashboardOutletContext } from '../../PublisherDashboardOutlet';
+import ProdutctStatus from '../../../../components/ProductStatus';
 
 const Solutions = () => {
 	const [loading, setLoading] = useState(false);
 	const [selectedApp, setSelectedApp] = useState<Product>({} as Product);
-	const {catalogId} = usePublisherDashboardOutletContext();
-	const {marketplaceUserAccount} = useMarketplaceContext();
+	const { catalogId } = usePublisherDashboardOutletContext();
+	const { marketplaceUserAccount } = useMarketplaceContext();
 	const modal = useModal();
 	const navigate = useNavigate();
 
@@ -45,7 +46,7 @@ const Solutions = () => {
 		try {
 			await HeadlessCommerceAdminCatalog.deleteProduct(product.productId);
 
-			mutate((response) => response, {revalidate: true});
+			mutate((response) => response, { revalidate: true });
 
 			Liferay.Util.openToast({
 				message: i18n.translate('request-sent-successfully'),
@@ -152,8 +153,8 @@ const Solutions = () => {
 							clickable: true,
 							id: 'name',
 							name: i18n.translate('name'),
-							render: (name, {thumbnail}) => (
-								<div style={{width: 200}}>
+							render: (name, { thumbnail }) => (
+								<div style={{ width: 200 }}>
 									<img
 										alt="App Image"
 										className="app-details-page-table-icon"
@@ -184,23 +185,17 @@ const Solutions = () => {
 						{
 							id: 'workflowStatusInfo',
 							name: i18n.translate('status'),
-							render: (workflowStatusInfo) => (
-								<OrderStatus
-									orderStatus={workflowStatusInfo.label}
-								>
-									{
-										ProductWorkflowStatusLabel[
-											workflowStatusInfo.code as keyof typeof ProductWorkflowStatusLabel
-										]
-									}
-								</OrderStatus>
+							render: (workflowStatusInfo,) => (
+								<ProdutctStatus
+									productStatus={workflowStatusInfo.label}
+								/>
 							),
 						},
 					],
 					navigateTo: (item) => `/solutions/${item.productId}`,
 				}}
 			>
-				{(_, {mutate}) => (
+				{(_, { mutate }) => (
 					<Modal
 						last={
 							<>
@@ -231,9 +226,8 @@ const Solutions = () => {
 						observer={modal.observer}
 						size={'md' as any}
 						status="danger"
-						title={`${i18n.translate('deleting')} ${
-							selectedApp.name?.en_US
-						}`}
+						title={`${i18n.translate('deleting')} ${selectedApp.name?.en_US
+							}`}
 						visible={modal.open}
 					>
 						{i18n.sub(

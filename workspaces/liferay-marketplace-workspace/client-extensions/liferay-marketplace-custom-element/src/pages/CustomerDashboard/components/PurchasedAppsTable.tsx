@@ -4,23 +4,23 @@
  */
 
 import DropDown from '@clayui/drop-down';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import ButtonWithIcon from '../../../components/ButtonWithIcon';
-import {DashboardEmptyTable} from '../../../components/DashboardTable/DashboardEmptyTable';
+import { DashboardEmptyTable } from '../../../components/DashboardTable/DashboardEmptyTable';
 import OrderStatus from '../../../components/OrderStatus';
 import Table from '../../../components/Table/Table';
-import {OrderTypes, orderTypeLabel} from '../../../enums/Order';
-import {ProductImageFallbackCategories} from '../../../enums/Product';
+import { OrderTypes, orderTypeLabel } from '../../../enums/Order';
+import { ProductImageFallbackCategories } from '../../../enums/Product';
 import i18n from '../../../i18n';
-import {getProductImageFallback} from '../../../utils/productUtils';
+import { getProductImageFallback } from '../../../utils/productUtils';
 import AppDropdownActions from '../pages/Apps/App/AppDropdownActions/AppDropdownActions';
 
 type AppsTableProps = {
 	items: Order[];
 };
 
-const AppsTable: React.FC<AppsTableProps> = ({items}) => {
+const AppsTable: React.FC<AppsTableProps> = ({ items }) => {
 	const navigate = useNavigate();
 
 	if (!items?.length) {
@@ -43,8 +43,8 @@ const AppsTable: React.FC<AppsTableProps> = ({items}) => {
 			columns={[
 				{
 					key: 'name',
-					render: (name, {thumbnail}) => (
-						<div style={{width: 200}}>
+					render: (name, { thumbnail }) => (
+						<div style={{ width: 200 }}>
 							<img
 								alt="App Image"
 								className="order-details-publisher-table-icon"
@@ -65,7 +65,7 @@ const AppsTable: React.FC<AppsTableProps> = ({items}) => {
 				},
 				{
 					key: 'author',
-					render: (author, {createDate}) => {
+					render: (author, { createDate }) => {
 						return (
 							<div className="d-flex flex-column">
 								<span className="dashboard-table-row-text">
@@ -102,10 +102,8 @@ const AppsTable: React.FC<AppsTableProps> = ({items}) => {
 				},
 				{
 					key: 'orderStatusInfo',
-					render: (orderStatusInfo) => (
-						<OrderStatus orderStatus={orderStatusInfo?.label}>
-							{orderStatusInfo?.label}
-						</OrderStatus>
+					render: (orderStatusInfo, PlacedOrder) => (
+						<OrderStatus placedOrder={PlacedOrder} />
 					),
 					title: i18n.translate('order-status'),
 				},
@@ -113,7 +111,7 @@ const AppsTable: React.FC<AppsTableProps> = ({items}) => {
 					align: 'center',
 					key: 'status',
 					render: (_, placedOrder) => {
-						const {id} = placedOrder;
+						const { id } = placedOrder;
 
 						return (
 							<div onClick={(event) => event.stopPropagation()}>
@@ -144,7 +142,7 @@ const AppsTable: React.FC<AppsTableProps> = ({items}) => {
 					},
 				},
 			]}
-			onClickRow={({id}) => navigate(`order/${id}`)}
+			onClickRow={({ id }) => navigate(`order/${id}`)}
 			rows={items}
 		/>
 	);
