@@ -1,0 +1,24 @@
+[#assign iconName = configuration.iconName!"plus"]
+[#assign iconWidth = configuration.iconWidth!"24"]
+[#assign iconHeight = configuration.iconHeight!"24"]
+
+<div class="${configuration.alignment}">
+<span class="icon-monospaced services-icon-wrapper services-lexicon-icon">
+	<svg aria-hidden="true" class="lexicon-icon" style="width:${iconWidth}px; height:${iconHeight}px;">
+		<use xlink:href="${themeDisplay.getPathThemeImages()}/lexicon/icons.svg#${iconName}" />
+		</svg>
+	</span>
+</div>
+
+<style>
+	.services-lexicon-icon .services-icon-wrapper {
+		width: var(--icon-width)px;
+		height: var(--icon-height)px;
+		display: inline-flex;
+	}
+
+	.services-lexicon-icon .services-icon {
+		width: 100%;
+		height: 100%;
+	}
+</style>

@@ -1,7 +1,6 @@
 {
 	"fieldSets": [
 		{
-			"label": "configuration",
 			"fields": [
 				{
 					"dataType": "string",
@@ -27,8 +26,8 @@
 					"name": "fragmentWidth",
 					"type": "text"
 				}
-			]
+			],
+			"label": "configuration"
 		}
-		
 	]
 }

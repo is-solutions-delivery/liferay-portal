@@ -1,0 +1,57 @@
+{
+	"fieldSets": [
+		{
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "plus",
+					"description": "Lexicon icon name",
+					"label": "Lexicon icon name",
+					"name": "iconName",
+					"type": "text"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "24",
+					"description": "icon-width (px)",
+					"label": "Icon width",
+					"name": "iconWidth",
+					"type": "text"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "24",
+					"description": "icon-height (px)",
+					"label": "Icon height",
+					"name": "iconHeight",
+					"type": "text"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "flex justify-start",
+					"description": "alignment",
+					"label": "alignment",
+					"name": "alignment",
+					"type": "select",
+					"typeOptions": {
+						"validValues": [
+							{
+								"label": "left",
+								"value": "flex justify-start"
+							},
+							{
+								"label": "center",
+								"value": "flex justify-center"
+							},
+							{
+								"label": "right",
+								"value": "flex justify-end"
+							}
+						]
+					}
+				}
+			],
+			"label": "configuration"
+		}
+	]
+}
