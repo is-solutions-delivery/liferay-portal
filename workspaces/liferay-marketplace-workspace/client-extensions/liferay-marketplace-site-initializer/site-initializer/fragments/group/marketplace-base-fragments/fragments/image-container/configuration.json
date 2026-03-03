@@ -1,0 +1,34 @@
+{
+	"fieldSets": [
+		{
+			"label": "configuration",
+			"fields": [
+				{
+					"dataType": "string",
+					"defaultValue": "0",
+					"description": "Fragment Id",
+					"label": "image",
+					"name": "fragmentId",
+					"type": "text"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "248px",
+					"description": "Fragment height - Add the CSS unit value (e.g., 248px, 50%, 20rem)",
+					"label": "Height",
+					"name": "fragmentHeight",
+					"type": "text"
+				},
+				{
+					"dataType": "string",
+					"defaultValue": "392px",
+					"description": "Fragment width - Add the CSS unit value (e.g., 248px, 50%, 20rem)",
+					"label": "Width",
+					"name": "fragmentWidth",
+					"type": "text"
+				}
+			]
+		}
+		
+	]
+}

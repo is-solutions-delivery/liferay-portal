@@ -1,0 +1,40 @@
+<div class="ldp-product component-image overflow-hidden">
+    <h1 data-lfr-editable-id="icon" data-lfr-editable-type="text" hidden="true" id="product-icon-${configuration.fragmentId}"></h1>
+
+    <img class="product-icon-img-${configuration.fragmentId}" src="" />
+
+   <svg
+		width="${configuration.fragmentWidth!""}"
+        height="${configuration.fragmentHeight!""}"
+        viewBox="0 0 104 87"
+        preserveAspectRatio="xMidYMid meet"
+        style="position: absolute; top: 0; left: 0;"
+    >
+        <defs>
+            <clipPath id="svg-path" clipPathUnits="objectBoundingBox">
+                <path
+                    transform="scale(0.009, 0.015)"
+                d="m 103.71667,39.84281 c 0,1.6846 -0.6694,3.29988 -1.86055,4.49077 l -19.694,19.68844 c -1.19089,1.19036 -2.80564,1.85923 -4.48945,1.85923 H 6.35 C 2.843,65.88125 0,63.0383 0,59.53125 V 28.28449 C 0,26.60015 0.66927,24.98463 1.86052,23.79371 L 23.80139,1.85922 C 24.9922,0.66876 26.60703,0 28.29084,0 h 69.07583 c 3.50705,0 6.35,2.843 6.35,6.35 z"
+
+                />
+            </clipPath>
+        </defs>
+    </svg>
+</div>
+
+<style>
+.ldp-product .component-image {
+    height: ${configuration.fragmentHeight!""};
+    overflow: hidden;
+    width: ${configuration.fragmentWidth!""};
+}
+
+.ldp-product .product-icon-img-${configuration.fragmentId} {
+    -webkit-clip-path: url(#svg-path);
+    clip-path: url(#svg-path);
+    height: ${configuration.fragmentHeight!""};
+    object-fit: cover;
+    width: ${configuration.fragmentWidth!""};
+}
+</style>
+
