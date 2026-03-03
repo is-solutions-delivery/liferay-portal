@@ -7,8 +7,10 @@ package com.liferay.marketplace.service;
 
 import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
 import com.liferay.client.extension.util.spring.boot3.service.BaseService;
+import com.liferay.headless.admin.user.client.dto.v1_0.AccountGroup;
 import com.liferay.headless.admin.user.client.dto.v1_0.UserAccount;
 import com.liferay.headless.admin.user.client.pagination.Page;
+import com.liferay.headless.admin.user.client.resource.v1_0.AccountGroupResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.AccountResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.AccountRoleResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.PostalAddressResource;
@@ -85,6 +87,17 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 public class MarketplaceService extends BaseService {
 
+	public void addAccountToAccountGroupByERC(
+			String accountERC, String accountGroupERC)
+		throws Exception {
+
+		AccountGroupResource accountGroupResource = getAccountGroupResource();
+
+		accountGroupResource.
+			postAccountGroupByExternalReferenceCodeAccountByExternalReferenceCode(
+				accountERC, accountGroupERC);
+	}
+
 	public void deployCloudService(JSONObject jsonObject, Order order)
 		throws Exception {
 
@@ -156,6 +169,19 @@ public class MarketplaceService extends BaseService {
 			"cloud-provisioning", cloudProvisioningJSONArray.toString());
 
 		updateOrder(customFields, order.getId(), order.getOrderStatus());
+	}
+
+	public AccountGroupResource getAccountGroupResource() throws Exception {
+		return AccountGroupResource.builder(
+		).header(
+			HttpHeaders.AUTHORIZATION,
+			_liferayOAuth2AccessTokenManager.getAuthorization(
+				"liferay-marketplace-etc-spring-boot-oahs")
+		).endpoint(
+			new URL(lxcDXPServerProtocol + "://" + lxcDXPMainDomain)
+		).parameters(
+			"nestedFields", "postalAddresses"
+		).build();
 	}
 
 	public AccountResource getAccountResource() throws Exception {
@@ -488,6 +514,34 @@ public class MarketplaceService extends BaseService {
 			searchString, filterString, pagination, sortString);
 	}
 
+	public boolean hasAccountInAccountGroupByERC(
+			String accountERC, String accountGroupERC)
+		throws Exception {
+
+		AccountGroupResource accountGroupResource = getAccountGroupResource();
+
+		Page<AccountGroup> page =
+			accountGroupResource.
+				getAccountByExternalReferenceCodeAccountExternalReferenceCodeAccountGroupsPage(
+					accountERC,
+					com.liferay.headless.admin.user.client.pagination.
+						Pagination.of(1, 50));
+
+		if ((page == null) || (page.getItems() == null)) {
+			return false;
+		}
+
+		for (AccountGroup accountGroup : page.getItems()) {
+			if (Objects.equals(
+					accountGroup.getExternalReferenceCode(), accountGroupERC)) {
+
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public void patchPublisherAssetAttachment(String body, long id)
 		throws Exception {
 
@@ -689,6 +743,17 @@ public class MarketplaceService extends BaseService {
 				HashMapBuilder.put(
 					"file", file
 				).build());
+	}
+
+	public void removeAccountFromAccountGroupByERC(
+			String accountERC, String accountGroupERC)
+		throws Exception {
+
+		AccountGroupResource accountGroupResource = getAccountGroupResource();
+
+		accountGroupResource.
+			deleteAccountGroupByExternalReferenceCodeAccountByExternalReferenceCode(
+				accountERC, accountGroupERC);
 	}
 
 	public void updateOrder(
