@@ -20,6 +20,8 @@ public class MarketplaceConstants {
 		"DXP", "Liferay SaaS", "Liferay Self-Hosted", "Liferay PaaS"
 	};
 
+	public static final String[] KORONEIKI_PARTNER_ENTITLEMENTS = {"PARTNER"};
+
 	public static final String ORDER_PAYMENT_METHOD_MONEY_ORDER = "money-order";
 
 	public static final String ORDER_PAYMENT_METHOD_MONEY_ORDER_LABEL =
