@@ -229,6 +229,17 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 				}
 			});
 
+		boolean hasPartner = _koroneikiService.hasEntitlement(
+				koroneikiAccount,
+				MarketplaceConstants.KORONEIKI_PARTNER_ENTITLEMENTS);
+
+		if(hasPartner){
+			if(!_marketplaceService.hasAccountInAccountGroupByERC(koroneikiAccount.getKey(), partnerERC)){
+				_marketplaceService.addAccountToAccountGroupByERC(koroneikiAccount.getKey(), partnerERC);
+			}
+		}
+
+
 		com.liferay.osb.koroneiki.phloem.rest.client.pagination.Page<Contact>
 			contactsPage = _koroneikiService.getContactsPage(
 				koroneikiAccount.getKey(),
@@ -308,6 +319,24 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 				}
 			});
 
+		boolean hasKoroneikiPartner = _koroneikiService.hasEntitlement(
+				koroneikiAccount,
+				MarketplaceConstants.KORONEIKI_PARTNER_ENTITLEMENTS);
+
+		boolean hasPartnerAccountGroup = _marketplaceService.hasAccountInAccountGroupByERC(
+				koroneikiAccount.getKey(), partnerERC);
+
+		if (hasKoroneikiPartner && !hasPartnerAccountGroup) {
+
+			_marketplaceService.addAccountToAccountGroupByERC(
+					koroneikiAccount.getKey(), partnerERC);
+
+		} else if (!hasKoroneikiPartner && hasPartnerAccountGroup) {
+
+			_marketplaceService.removeAccountFromAccountGroupByERC(
+					koroneikiAccount.getKey(), partnerERC);
+		}
+
 		if (_log.isInfoEnabled()) {
 			_log.info(
 				"Account \"" + koroneikiAccount.getKey() +
@@ -361,6 +390,8 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 
 	private static final Log _log = LogFactory.getLog(
 		MarketplaceMessageReceiver.class);
+
+	String partnerERC = "liferay-partner";
 
 	private final KoroneikiService _koroneikiService;
 	private final MarketplaceService _marketplaceService;

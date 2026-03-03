@@ -7,9 +7,11 @@ package com.liferay.marketplace.service;
 
 import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
 import com.liferay.client.extension.util.spring.boot3.service.BaseService;
+import com.liferay.headless.admin.user.client.dto.v1_0.AccountGroup;
 import com.liferay.headless.admin.user.client.dto.v1_0.UserAccount;
 import com.liferay.headless.admin.user.client.pagination.Page;
 import com.liferay.headless.admin.user.client.resource.v1_0.AccountResource;
+import com.liferay.headless.admin.user.client.resource.v1_0.AccountGroupResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.AccountRoleResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.PostalAddressResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.UserAccountResource;
@@ -169,6 +171,66 @@ public class MarketplaceService extends BaseService {
 		).parameters(
 			"nestedFields", "postalAddresses"
 		).build();
+	}
+
+	public AccountGroupResource getAccountGroupResource() throws Exception {
+		return AccountGroupResource.builder(
+		).header(
+				HttpHeaders.AUTHORIZATION,
+				_liferayOAuth2AccessTokenManager.getAuthorization(
+						"liferay-marketplace-etc-spring-boot-oahs")
+		).endpoint(
+				new URL(lxcDXPServerProtocol + "://" + lxcDXPMainDomain)
+		).parameters(
+				"nestedFields", "postalAddresses"
+		).build();
+	}
+
+
+	public void addAccountToAccountGroupByERC(
+			String accountERC, String accountGroupERC) throws Exception {
+
+		AccountGroupResource accountGroupResource = getAccountGroupResource();
+
+		accountGroupResource.postAccountGroupByExternalReferenceCodeAccountByExternalReferenceCode(
+						accountERC, accountGroupERC);
+	}
+
+	public void removeAccountFromAccountGroupByERC(
+			 String accountERC, String accountGroupERC) throws Exception {
+
+		AccountGroupResource accountGroupResource = getAccountGroupResource();
+
+		accountGroupResource.
+				deleteAccountGroupByExternalReferenceCodeAccountByExternalReferenceCode(
+						accountERC, accountGroupERC);
+	}
+
+	public boolean hasAccountInAccountGroupByERC(String accountERC, String accountGroupERC) throws Exception {
+
+		AccountGroupResource accountGroupResource = getAccountGroupResource();
+
+		Page<AccountGroup> page =
+				accountGroupResource.getAccountByExternalReferenceCodeAccountExternalReferenceCodeAccountGroupsPage(
+						accountERC,
+						com.liferay.headless.admin.user.client.pagination.Pagination.of(1, 50)
+				);
+
+		if (page == null || page.getItems() == null) {
+			return false;
+		}
+
+		for (AccountGroup accountGroup : page.getItems()) {
+
+			if (accountGroup.getExternalReferenceCode() != null) {
+
+				if (accountGroup.getExternalReferenceCode().equals(accountGroupERC)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	public AccountRoleResource getAccountRoleResource() throws Exception {
