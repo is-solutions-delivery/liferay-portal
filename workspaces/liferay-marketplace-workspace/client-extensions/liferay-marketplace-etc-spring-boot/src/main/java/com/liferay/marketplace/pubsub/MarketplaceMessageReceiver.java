@@ -230,15 +230,16 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 			});
 
 		boolean hasPartner = _koroneikiService.hasEntitlement(
-				koroneikiAccount,
-				MarketplaceConstants.KORONEIKI_PARTNER_ENTITLEMENTS);
+			koroneikiAccount,
+			MarketplaceConstants.KORONEIKI_PARTNER_ENTITLEMENTS);
 
-		if(hasPartner){
-			if(!_marketplaceService.hasAccountInAccountGroupByERC(koroneikiAccount.getKey(), partnerERC)){
-				_marketplaceService.addAccountToAccountGroupByERC(koroneikiAccount.getKey(), partnerERC);
-			}
+		if (hasPartner &&
+			!_marketplaceService.hasAccountInAccountGroupByERC(
+				koroneikiAccount.getKey(), _PARTNER_ERC)) {
+
+			_marketplaceService.addAccountToAccountGroupByERC(
+				koroneikiAccount.getKey(), _PARTNER_ERC);
 		}
-
 
 		com.liferay.osb.koroneiki.phloem.rest.client.pagination.Page<Contact>
 			contactsPage = _koroneikiService.getContactsPage(
@@ -320,21 +321,20 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 			});
 
 		boolean hasKoroneikiPartner = _koroneikiService.hasEntitlement(
-				koroneikiAccount,
-				MarketplaceConstants.KORONEIKI_PARTNER_ENTITLEMENTS);
+			koroneikiAccount,
+			MarketplaceConstants.KORONEIKI_PARTNER_ENTITLEMENTS);
 
-		boolean hasPartnerAccountGroup = _marketplaceService.hasAccountInAccountGroupByERC(
-				koroneikiAccount.getKey(), partnerERC);
+		boolean hasPartnerAccountGroup =
+			_marketplaceService.hasAccountInAccountGroupByERC(
+				koroneikiAccount.getKey(), _PARTNER_ERC);
 
 		if (hasKoroneikiPartner && !hasPartnerAccountGroup) {
-
 			_marketplaceService.addAccountToAccountGroupByERC(
-					koroneikiAccount.getKey(), partnerERC);
-
-		} else if (!hasKoroneikiPartner && hasPartnerAccountGroup) {
-
+				koroneikiAccount.getKey(), _PARTNER_ERC);
+		}
+		else if (!hasKoroneikiPartner && hasPartnerAccountGroup) {
 			_marketplaceService.removeAccountFromAccountGroupByERC(
-					koroneikiAccount.getKey(), partnerERC);
+				koroneikiAccount.getKey(), _PARTNER_ERC);
 		}
 
 		if (_log.isInfoEnabled()) {
@@ -388,10 +388,10 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 		_marketplaceService.postOrder(order);
 	}
 
+	private static final String _PARTNER_ERC = "liferay-partner";
+
 	private static final Log _log = LogFactory.getLog(
 		MarketplaceMessageReceiver.class);
-
-	String partnerERC = "liferay-partner";
 
 	private final KoroneikiService _koroneikiService;
 	private final MarketplaceService _marketplaceService;
