@@ -8,8 +8,8 @@ import {BaseOutlet} from '../Apps/App/AppOutlet';
 
 const LiferayServicesOutlet = () => (
 	<BaseOutlet
-		backTitle={i18n.translate('back-to-liferay-services')}
-		backURL="../services"
+		backTitle={i18n.translate('back-to-my-products')}
+		backURL="../products"
 		routes={[{name: i18n.translate('details'), path: ''}]}
 		showActions={false}
 	/>

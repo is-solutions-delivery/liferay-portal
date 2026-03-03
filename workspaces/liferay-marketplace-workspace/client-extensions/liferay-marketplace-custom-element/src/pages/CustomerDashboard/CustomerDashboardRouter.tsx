@@ -50,11 +50,11 @@ const CustomerDashboardRouter = () => {
 					<Route element={<Support />} path="support" />
 				</Route>
 
-				<Route element={<LiferayServicesListView />} path="services" />
+				<Route element={<LiferayServicesListView />} path="products" />
 
 				<Route
 					element={<LiferayServicesOutlet />}
-					path="services/:orderId"
+					path="products/:orderId"
 				>
 					<Route element={<LiferayService />} index />
 				</Route>
