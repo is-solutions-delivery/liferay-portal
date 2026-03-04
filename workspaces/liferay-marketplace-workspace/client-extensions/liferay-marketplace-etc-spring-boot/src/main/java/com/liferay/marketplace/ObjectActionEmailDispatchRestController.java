@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * @author Keven Leone
  */
-@RequestMapping("/object/action/dispatch/email")
+@RequestMapping("/object/action/email/dispatch")
 @RestController
 public class ObjectActionDispatchEmailRestController
 	extends BaseRestController {
