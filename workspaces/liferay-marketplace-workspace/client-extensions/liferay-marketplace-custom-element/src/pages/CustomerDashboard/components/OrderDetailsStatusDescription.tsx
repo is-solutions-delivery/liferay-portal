@@ -8,7 +8,7 @@ import classNames from 'classnames';
 
 import purchasedAppIcon from '../../../assets/icons/purchased_app_icon.svg';
 import OrderStatus from '../../../components/OrderStatus';
-import {OrderTypes} from '../../../enums/Order';
+import { OrderTypes } from '../../../enums/Order';
 
 type OrderDetailsStatusDescriptionProps = {
 	order?: PlacedOrder;

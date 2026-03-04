@@ -3,29 +3,41 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import ListView from '../../../../components/ListView';
 import OrderStatus from '../../../../components/OrderStatus';
 import Page from '../../../../components/Page';
 import SearchBuilder from '../../../../core/SearchBuilder';
-import {OrderTypes, PaymentStatus} from '../../../../enums/Order';
+import { OrderTypes, PaymentStatus } from '../../../../enums/Order';
 import i18n from '../../../../i18n';
-import {Liferay} from '../../../../liferay/liferay';
+import { Liferay } from '../../../../liferay/liferay';
 import PaymentStatusBadge from '../../../FinanceDashboard/components/PaymentStatus/PaymentStatusBadge';
-import {useCustomerDashboardOutletContext} from '../../CustomerDashboardOutlet';
+import { useCustomerDashboardOutletContext } from '../../CustomerDashboardOutlet';
 
 const searchParams = new URLSearchParams({
-	filter: SearchBuilder.eq(
+	filter: SearchBuilder.in(
 		'orderTypeExternalReferenceCode',
-		OrderTypes.ADDONS
+		[OrderTypes.ADDONS,
+		OrderTypes.DXP,]
 	),
 	nestedFields: 'placedOrderItems',
 	sort: 'createDate:desc',
 });
 
+const getViewDetailsPath = (orderId: string, orderType: string) => {
+
+	let path = orderId;
+
+	if (orderType === OrderTypes.DXP) {
+		path = `${orderId}/activation-key`
+	}
+
+	return path;
+}
+
 const LiferayServicesListView = () => {
-	const {selectedAccount} = useCustomerDashboardOutletContext();
+	const { selectedAccount } = useCustomerDashboardOutletContext();
 
 	const navigate = useNavigate();
 
@@ -54,7 +66,7 @@ const LiferayServicesListView = () => {
 							{
 								name: i18n.translate('view-details'),
 								onClick: (row: PlacedOrder) =>
-									navigate(`${row.id}`),
+									navigate(`${getViewDetailsPath(String(row.id), row.orderTypeExternalReferenceCode)}`),
 							},
 						],
 						columns: [
@@ -67,7 +79,7 @@ const LiferayServicesListView = () => {
 										placedOrderItems[0] || [];
 
 									return (
-										<div style={{width: 200}}>
+										<div style={{ width: 200 }}>
 											<img
 												alt="App Image"
 												className="order-details-publisher-table-icon"
@@ -86,7 +98,7 @@ const LiferayServicesListView = () => {
 								clickable: true,
 								id: 'author',
 								name: i18n.translate('purchased-by'),
-								render: (author, {createDate}) => (
+								render: (author, { createDate }) => (
 									<div className="d-flex flex-column">
 										<span className="dashboard-table-row-text">
 											{author}
@@ -129,7 +141,7 @@ const LiferayServicesListView = () => {
 								},
 							},
 						],
-						navigateTo: (item) => `${item.id}`,
+						navigateTo: (item) => `${getViewDetailsPath(String(item.id), item.orderTypeExternalReferenceCode)}`,
 					}}
 				/>
 			</div>

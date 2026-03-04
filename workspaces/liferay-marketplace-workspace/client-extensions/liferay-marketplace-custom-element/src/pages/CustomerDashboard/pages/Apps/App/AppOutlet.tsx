@@ -6,21 +6,20 @@
 import ClayButton from '@clayui/button';
 import DropDown from '@clayui/drop-down';
 import ClayIcon from '@clayui/icon';
-import {ReactNode} from 'react';
-import {Outlet, useOutletContext, useParams} from 'react-router-dom';
+import { ReactNode } from 'react';
+import { Outlet, useOutletContext, useParams } from 'react-router-dom';
 
 import BackLink from '../../../../../components/BackLink';
-import Navbar, {NavbarProps} from '../../../../../components/Navbar';
-import {PageRenderer} from '../../../../../components/Page';
-import {MarketplaceDeliveryProduct} from '../../../../../entity/MarketplaceDeliveryProduct';
-import {OrderTypes, OrderWorkflowStatusCode} from '../../../../../enums/Order';
-import {ProductSupportSpecificationKey} from '../../../../../enums/Product';
+import Navbar, { NavbarProps } from '../../../../../components/Navbar';
+import { PageRenderer } from '../../../../../components/Page';
+import AppDropdownActions from './AppDropdownActions/AppDropdownActions';
+import OrderDetailsHeader from '../../../components/OrderDetailsHeader';
+import { MarketplaceDeliveryProduct } from '../../../../../entity/MarketplaceDeliveryProduct';
+import { OrderTypes, OrderWorkflowStatusCode } from '../../../../../enums/Order';
+import { ProductSupportSpecificationKey } from '../../../../../enums/Product';
 import useGetProductByOrderId from '../../../../../hooks/useGetProductByOrderId';
 import i18n from '../../../../../i18n';
-import {getProductPriceModel} from '../../../../../utils/productUtils';
-import OrderDetailsHeader from '../../../components/OrderDetailsHeader';
-import AppDropdownActions from './AppDropdownActions/AppDropdownActions';
-
+import { getProductPriceModel } from '../../../../../utils/productUtils';
 import './App.scss';
 
 type ProductAndOrderPayload = NonNullable<
@@ -31,9 +30,10 @@ type BaseOutletProps = {
 	actionButtons?: ReactNode | ((data: ProductAndOrderPayload) => ReactNode);
 	backTitle: string;
 	backURL?: string;
+	description?: string;
 	routes:
-		| NavbarProps['routes']
-		| ((data: ProductAndOrderPayload) => NavbarProps['routes']);
+	| NavbarProps['routes']
+	| ((data: ProductAndOrderPayload) => NavbarProps['routes']);
 	showActions?: boolean;
 };
 
@@ -41,12 +41,13 @@ const BaseOutlet: React.FC<BaseOutletProps> = ({
 	actionButtons,
 	backTitle,
 	backURL = '..',
+	description,
 	routes,
 	showActions = true,
 }) => {
-	const {orderId} = useParams();
+	const { orderId } = useParams();
 	const outletContext = useOutletContext();
-	const {data, error, isLoading} = useGetProductByOrderId(orderId as string);
+	const { data, error, isLoading } = useGetProductByOrderId(orderId as string);
 
 	const placedOrderItems = data?.placedOrder.placedOrderItems ?? [];
 	const productCreatorAccountName = data?.product?.catalogName || '';
@@ -60,22 +61,27 @@ const BaseOutlet: React.FC<BaseOutletProps> = ({
 			<BackLink path={backURL}>{backTitle}</BackLink>
 
 			<div className="d-flex justify-content-between">
-				<OrderDetailsHeader
-					className="d-flex flex-row justify-content-between pb-3 pt-5"
-					hasOrderDetails
-					image={placedOrderItems[0]?.thumbnail}
-					name={placedOrderItems[0]?.name}
-					order={data?.placedOrder}
-					productOwner={productCreatorAccountName}
-				/>
+				<div className='d-flex flex-column'>
+					<div className='d-flex justify-content-between'>
+						<OrderDetailsHeader
+							className="d-flex flex-row justify-content-between pb-3 pt-5"
+							hasOrderDetails
+							image={placedOrderItems[0]?.thumbnail}
+							name={placedOrderItems[0]?.name}
+							order={data?.placedOrder}
+							productOwner={productCreatorAccountName}
+						/>
 
-				{actionButtons && (
-					<div id="solution-action-buttons">
-						{typeof actionButtons === 'function'
-							? actionButtons(data as ProductAndOrderPayload)
-							: actionButtons}
+						{actionButtons && (
+							<div id="solution-action-buttons">
+								{typeof actionButtons === 'function'
+									? actionButtons(data as ProductAndOrderPayload)
+									: actionButtons}
+							</div>
+						)}
 					</div>
-				)}
+					<p className='app-details-outlet-description'>{description}</p>
+				</div>
 
 				{showActions && (
 					<DropDown
@@ -110,7 +116,7 @@ const BaseOutlet: React.FC<BaseOutletProps> = ({
 				}
 			/>
 
-			<Outlet context={{...data, ...(outletContext || {})}} />
+			<Outlet context={{ ...data, ...(outletContext || {}) }} />
 		</PageRenderer>
 	);
 };
@@ -118,8 +124,8 @@ const BaseOutlet: React.FC<BaseOutletProps> = ({
 const AppOutlet = () => (
 	<BaseOutlet
 		backTitle={i18n.translate('back-to-my-apps')}
-		routes={({marketplaceDeliveryOrder, placedOrder, product}) => {
-			const {isPaidApp} = getProductPriceModel(product);
+		routes={({ marketplaceDeliveryOrder, placedOrder, product }) => {
+			const { isPaidApp } = getProductPriceModel(product);
 
 			const marketplaceDeliveryProduct = new MarketplaceDeliveryProduct(
 				product
@@ -191,6 +197,6 @@ const AppOutlet = () => (
 	/>
 );
 
-export {BaseOutlet};
+export { BaseOutlet };
 
 export default AppOutlet;

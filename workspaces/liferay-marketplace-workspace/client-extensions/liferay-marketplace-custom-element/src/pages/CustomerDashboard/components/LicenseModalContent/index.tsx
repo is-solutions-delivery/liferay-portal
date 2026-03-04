@@ -7,17 +7,17 @@ import classNames from 'classnames';
 
 import './index.scss';
 
-import {format, isBefore} from 'date-fns';
+import { format, isBefore } from 'date-fns';
 
 import i18n from '../../../../i18n';
-import {LicenseKey} from '../../../../services/oauth/types';
+import { LicenseKey } from '../../../../services/oauth/types';
 
 type LicenseKeyModalProps = {
 	Header: React.ReactNode;
 	modalData: LicenseKey;
 };
 
-const LicenceKeyModalContent = ({Header, modalData}: LicenseKeyModalProps) => {
+const LicenceKeyModalContent = ({ Header, modalData }: LicenseKeyModalProps) => {
 	const {
 		active,
 		expirationDate,
@@ -60,7 +60,7 @@ const LicenceKeyModalContent = ({Header, modalData}: LicenseKeyModalProps) => {
 					<div className="h4">Server</div>
 
 					<small className="font-weight-bold">
-						{i18n.translate('key-type')}
+						{i18n.translate('domain')}
 					</small>
 
 					<p className="align-items-center d-flex font-weight-bold license-paragraph-gray mt-1 px-3 py-2 rounded">
