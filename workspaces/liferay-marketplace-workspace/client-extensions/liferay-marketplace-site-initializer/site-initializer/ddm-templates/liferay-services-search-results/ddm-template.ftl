@@ -1,44 +1,32 @@
 <#assign
-	scopeGroupId = themeDisplay.getScopeGroupId()
 	commerceContext = renderRequest.getAttribute("COMMERCE_CONTEXT")
+	scopeGroupId = themeDisplay.getScopeGroupId()
 	specificationGroups = cpContentHelper.getCPOptionCategories(themeDisplay.getCompanyId())
 />
 
 <#function getSpecificationValue specificationGroupKey specificationKey productId defaultValue="">
-	<#local specificationGroup=specificationGroups?filter(specificationGroup -> specificationGroup.getKey() ==
-		specificationGroupKey) />
-
+	<#local specificationGroup=specificationGroups?filter(specificationGroup -> specificationGroup.getKey() == specificationGroupKey) />
 		<#if specificationGroup?has_content>
-			<#local specifications=cpContentHelper.getCategorizedCPDefinitionSpecificationOptionValues(productId,
-				specificationGroup?first.getCPOptionCategoryId()) />
+			<#local specifications=cpContentHelper.getCategorizedCPDefinitionSpecificationOptionValues(productId, specificationGroup?first.getCPOptionCategoryId()) />
+			<#local specification=specifications?filter(productSpecification -> stringUtil.equals(productSpecification.getCPSpecificationOption().getKey(), specificationKey)) />
 
-			<#local specification=specifications?filter(productSpecification ->
-				stringUtil.equals(productSpecification.getCPSpecificationOption().getKey(), specificationKey)) />
-
-				<#return (specification?first.value)!defaultValue />
+			<#return (specification?first.value)!defaultValue />
 		</#if>
 
 		<#return defaultValue />
 </#function>
 
 <#function getSpecificationCategory specificationGroupKey specificationKey productId>
-	<#local specificationGroup=specificationGroups?filter(specificationGroup -> specificationGroup.getKey() ==
-		specificationGroupKey) />
-
+	<#local specificationGroup=specificationGroups?filter(specificationGroup -> specificationGroup.getKey() == specificationGroupKey) />
 		<#if specificationGroup?has_content>
-			<#local specifications=cpContentHelper.getCategorizedCPDefinitionSpecificationOptionValues( productId,
-				specificationGroup?first.getCPOptionCategoryId() ) />
+			<#local specifications=cpContentHelper.getCategorizedCPDefinitionSpecificationOptionValues( productId, specificationGroup?first.getCPOptionCategoryId() ) />
+			<#local filtered=specifications?filter(productSpecification -> stringUtil.equals(productSpecification.getCPSpecificationOption().getKey(), specificationKey)) />
 
-			<#local filtered=specifications?filter(productSpecification ->
-				stringUtil.equals(productSpecification.getCPSpecificationOption().getKey(), specificationKey)
-				) />
-
-				<#if filtered?has_content>
-					<#return filtered?map(item -> item.value) />
-				</#if>
+			<#if filtered?has_content>
+				<#return filtered?map(item -> item.value) />
+			</#if>
 		</#if>
-
-		<#return [] />
+	<#return [] />
 </#function>
 
 <div class="apps-search-results">
@@ -49,18 +37,17 @@
 					<#assign productId = entry.getCPDefinitionId() />
 				</#if>
 
-				<#assign productDescription = stringUtil.shorten(htmlUtil.stripHtml(entry.getDescription()!""), 150, "..."
-					) productImage=cpContentHelper.getDefaultImageFileURL(-1, productId)!""
-					developerName=getSpecificationValue("product-metadata", "developer-name" , productId)
-					capabilities=getSpecificationCategory("product-metadata", "liferay-services-capabilities" ,
-					productId) categories=getSpecificationCategory("product-metadata", "liferay-services-categories" ,
-					productId) />
+				<#assign
+					capabilities = getSpecificationCategory("product-metadata", "liferay-services-capabilities", productId)
+					categories = getSpecificationCategory("product-metadata", "liferay-services-categories", productId)
+					developerName = getSpecificationValue("product-metadata", "developer-name", productId)
+					productDescription = stringUtil.shorten(htmlUtil.stripHtml(entry.getDescription()!""), 150, "...")
+					productImage = cpContentHelper.getDefaultImageFileURL(-1, productId)!""
+				/>
 
 				<a class="product-card" href=${cpContentHelper.getFriendlyURL(entry, themeDisplay)}>
 					<div class="card-image-wrapper marketplace-services-product-card">
-						<img
-							alt="${entry.getName()}" class="card-product-image" draggable="false" loading="lazy"
-							src="${productImage}" />
+						<img alt="${entry.getName()}" class="card-product-image" draggable="false" loading="lazy" src="${productImage}" />
 					</div>
 
 					<div class="card-body">
@@ -84,13 +71,8 @@
 									<#if tag?trim?has_content>
 										<li class="card-bullet-item">
 											<span class="card-bullet-icon">
-												<svg
-													fill="none" height="14" viewBox="0 0 14 14" width="14"
-													xmlns="http://www.w3.org/2000/svg">
-													<path
-														d="M2.5 7L5.5 10L11.5 4" stroke="#0B5FFF"
-														stroke-linecap="round" stroke-linejoin="round"
-														stroke-width="1.5" />
+												<svg fill="none" height="14" viewBox="0 0 14 14" width="14" xmlns="http://www.w3.org/2000/svg">
+													<path d="M2.5 7L5.5 10L11.5 4" stroke="#0B5FFF" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" />
 												</svg>
 											</span>
 											<span>${tag}</span>
@@ -112,13 +94,12 @@
 		gap: 1.5rem;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 		padding-bottom: 4rem;
-
 	}
 
 	.apps-search-results .product-card {
 		background: #ffffff;
-		border: 1px solid #E2E2E4;
 		border-radius: 12px;
+		border: 1px solid #E2E2E4;
 		box-sizing: border-box;
 		color: #1c1c24;
 		cursor: pointer;
@@ -140,21 +121,21 @@
 
 	.apps-search-results .card-image-wrapper {
 		align-items: center;
-		display: flex;
-		justify-content: center;
-		height: 221px;
-		width: 100%;
+		background-position: center;
 		background-repeat: no-repeat;
 		background-size: cover;
-		background-position: center;
+		display: flex;
+		height: 221px;
+		justify-content: center;
+		width: 100%;
 	}
 
 	.apps-search-results .card-product-image {
-		position: relative;
-		z-index: 1;
-		width: 120px;
 		height: 120px;
 		object-fit: contain;
+		position: relative;
+		width: 120px;
+		z-index: 1;
 	}
 
 	.apps-search-results .card-body {
@@ -189,26 +170,24 @@
 	}
 
 	.apps-search-results .card-tags {
+		align-items: flex-start;
 		display: flex;
 		flex-wrap: wrap;
 		gap: 6px;
-
-		align-items: flex-start;
 	}
 
 	.apps-search-results .card-tag {
 		background-color: #e6ebf5;
 		border-radius: 4px;
 		color: #2E5AAC;
+		display: inline-flex;
+		flex: 0 0 auto;
 		font-size: 13px;
 		font-weight: 400;
 		line-height: 16px;
 		padding: 4px 8px;
 		white-space: nowrap;
-
-		display: inline-flex;
 		width: fit-content;
-		flex: 0 0 auto;
 	}
 
 	.apps-search-results .card-description {
