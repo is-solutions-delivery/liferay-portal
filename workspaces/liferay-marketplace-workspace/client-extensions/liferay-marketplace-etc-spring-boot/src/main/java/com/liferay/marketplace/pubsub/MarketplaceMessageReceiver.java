@@ -336,52 +336,55 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 					Pagination.of(1, 1),
 				"");
 
-		Order order = ordersPage.fetchFirstItem();
+		if (ordersPage.fetchFirstItem() == null) {
+			if (_channelId == 0L) {
+				ChannelResource channelResource =
+					_marketplaceService.getChannelResource();
 
-		if (order == null) {
-			order = new Order() {
-				{
-					setAccountExternalReferenceCode(
-						productPurchase::getAccountKey);
-					setCurrencyCode(() -> "USD");
-					setExternalReferenceCode(() -> _opportunityId);
-					setOrderItems(
-						() -> new OrderItem[] {
-							new OrderItem() {
-								{
-									setQuantity(
-										() -> new BigDecimal(
-											productPurchase.getQuantity()));
-									setSkuExternalReferenceCode(
-										productPurchase::getProductKey);
+				Channel channel =
+					channelResource.getChannelByExternalReferenceCode(
+						"MARKETPLACE-CHANNEL");
+
+				_channelId = channel.getId();
+			}
+
+			orderResource.postOrder(
+				new Order() {
+					{
+						setAccountExternalReferenceCode(
+							productPurchase::getAccountKey);
+						setChannelId(() -> _channelId);
+						setCurrencyCode(() -> "USD");
+						setExternalReferenceCode(() -> _opportunityId);
+						setOrderItems(
+							() -> new OrderItem[] {
+								new OrderItem() {
+									{
+										setQuantity(
+											() -> new BigDecimal(
+												productPurchase.getQuantity()));
+										setSkuExternalReferenceCode(
+											productPurchase::getProductKey);
+									}
 								}
-							}
-						});
-					setOrderStatus(
-						() -> MarketplaceConstants.ORDER_STATUS_COMPLETED);
-					setOrderTypeExternalReferenceCode(() -> "SALESFORCE-ORDER");
-					setPaymentStatus(
-						() ->
-							MarketplaceConstants.
-								ORDER_PAYMENT_STATUS_COMPLETED);
-				}
-			};
-
-			ChannelResource channelResource =
-				_marketplaceService.getChannelResource();
-
-			Channel channel = channelResource.getChannelByExternalReferenceCode(
-				"MARKETPLACE-CHANNEL");
-
-			order.setChannelId(channel::getId);
-
-			orderResource.postOrder(order);
+							});
+						setOrderStatus(
+							() -> MarketplaceConstants.ORDER_STATUS_COMPLETED);
+						setOrderTypeExternalReferenceCode(
+							() -> "SALESFORCE-ORDER");
+						setPaymentStatus(
+							() ->
+								MarketplaceConstants.
+									ORDER_PAYMENT_STATUS_COMPLETED);
+					}
+				});
 		}
 	}
 
 	private static final Log _log = LogFactory.getLog(
 		MarketplaceMessageReceiver.class);
 
+	private Long _channelId = 0L;
 	private final KoroneikiService _koroneikiService;
 	private final MarketplaceService _marketplaceService;
 	private String _opportunityId;
