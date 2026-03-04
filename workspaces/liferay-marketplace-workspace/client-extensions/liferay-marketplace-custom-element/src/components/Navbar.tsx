@@ -4,7 +4,7 @@
  */
 
 import classNames from 'classnames';
-import {NavLink, useLocation} from 'react-router-dom';
+import { NavLink, useMatch, useResolvedPath } from 'react-router-dom';
 
 export type NavbarProps = {
 	routes: {
@@ -14,33 +14,35 @@ export type NavbarProps = {
 	}[];
 };
 
-const Navbar: React.FC<NavbarProps> = ({routes}) => {
-	const location = useLocation();
-
-	const routeParams = location.pathname.split('/').filter(Boolean);
-
+const Navbar: React.FC<NavbarProps> = ({ routes }) => {
 	return (
 		<div className="navbar navbar-expand-md navbar-underline navigation-bar navigation-bar-light">
 			<ul className="navbar-nav">
 				{routes
-					.filter(({visible = true}) => visible)
-					.map((route, index) => (
-						<NavLink
-							className={({isActive}) =>
-								classNames('nav-link', {
-									active:
-										index === 0
-											? isActive &&
-												routeParams.length === 2
-											: isActive,
-								})
-							}
-							key={index}
-							to={route.path}
-						>
-							{route.name}
-						</NavLink>
-					))}
+					.filter(({ visible = true }) => visible)
+					.map((route, index) => {
+						const resolved = useResolvedPath(route.path || '.');
+
+						const match = useMatch({
+							path: resolved.pathname,
+							end: route.path === '',
+						});
+
+						return (
+							<NavLink
+								key={index}
+								to={route.path}
+								className={() =>
+									classNames('nav-link', {
+										active: !!match,
+									})
+								}
+								end={route.path === ''}
+							>
+								{route.name}
+							</NavLink>
+						);
+					})}
 			</ul>
 		</div>
 	);
