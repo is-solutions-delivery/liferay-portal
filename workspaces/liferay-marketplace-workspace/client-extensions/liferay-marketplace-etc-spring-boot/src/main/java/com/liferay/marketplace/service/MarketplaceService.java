@@ -632,12 +632,6 @@ public class MarketplaceService extends BaseService {
 		}
 	}
 
-	public void postOrder(Order order) throws Exception {
-		OrderResource orderResource = getOrderResource();
-
-		orderResource.postOrder(order);
-	}
-
 	public void postProductAttachment(
 			File file, String fileName, long productId)
 		throws Exception {

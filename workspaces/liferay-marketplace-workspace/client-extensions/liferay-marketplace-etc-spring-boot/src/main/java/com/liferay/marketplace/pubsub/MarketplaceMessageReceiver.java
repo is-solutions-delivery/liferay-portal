@@ -375,7 +375,7 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 
 			order.setChannelId(channel::getId);
 
-			_marketplaceService.postOrder(order);
+			orderResource.postOrder(order);
 		}
 	}
 
