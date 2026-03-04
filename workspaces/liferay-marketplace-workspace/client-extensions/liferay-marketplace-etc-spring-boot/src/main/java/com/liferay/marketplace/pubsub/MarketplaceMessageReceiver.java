@@ -23,10 +23,12 @@ import com.liferay.headless.commerce.admin.channel.client.dto.v1_0.Channel;
 import com.liferay.headless.commerce.admin.channel.client.resource.v1_0.ChannelResource;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.Order;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.OrderItem;
+import com.liferay.headless.commerce.admin.order.client.resource.v1_0.OrderResource;
 import com.liferay.marketplace.constants.MarketplaceConstants;
 import com.liferay.marketplace.service.KoroneikiService;
 import com.liferay.marketplace.service.MarketplaceService;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Contact;
+import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ExternalLink;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ProductPurchase;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.string.StringBundler;
@@ -317,40 +319,66 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 			return;
 		}
 
-		ChannelResource channelResource =
-			_marketplaceService.getChannelResource();
+		String opportunityId = "";
 
-		Order order = new Order() {
-			{
-				setAccountExternalReferenceCode(productPurchase::getAccountKey);
-				setCurrencyCode(() -> "USD");
-				setExternalReferenceCode(productPurchase::getKey);
-				setOrderItems(
-					() -> new OrderItem[] {
-						new OrderItem() {
-							{
-								setQuantity(
-									() -> new BigDecimal(
-										productPurchase.getQuantity()));
-								setSkuExternalReferenceCode(
-									productPurchase::getProductKey);
-							}
-						}
-					});
-				setOrderStatus(
-					() -> MarketplaceConstants.ORDER_STATUS_COMPLETED);
-				setOrderTypeExternalReferenceCode(() -> "SALESFORCE-ORDER");
-				setPaymentStatus(
-					() -> MarketplaceConstants.ORDER_PAYMENT_STATUS_COMPLETED);
+		for (ExternalLink externalLink : productPurchase.getExternalLinks()) {
+			if (Objects.equals(externalLink.getEntityName(), "opportunity")) {
+				opportunityId = externalLink.getEntityId();
+
+				break;
 			}
-		};
+		}
 
-		Channel channel = channelResource.getChannelByExternalReferenceCode(
-			"MARKETPLACE-CHANNEL");
+		OrderResource orderResource = _marketplaceService.getOrderResource();
 
-		order.setChannelId(channel::getId);
+		com.liferay.headless.commerce.admin.order.client.pagination.Page<Order>
+			ordersPage = orderResource.getOrdersPage(
+				"", "externalReferenceCode eq '" + opportunityId + "'",
+				com.liferay.headless.commerce.admin.order.client.pagination.
+					Pagination.of(1, 1),
+				"");
 
-		_marketplaceService.postOrder(order);
+		Order order = ordersPage.fetchFirstItem();
+
+		if (order == null) {
+			order = new Order() {
+				{
+					setAccountExternalReferenceCode(
+						productPurchase::getAccountKey);
+					setCurrencyCode(() -> "USD");
+					setExternalReferenceCode(() -> opportunityId);
+					setOrderItems(
+						() -> new OrderItem[] {
+							new OrderItem() {
+								{
+									setQuantity(
+										() -> new BigDecimal(
+											productPurchase.getQuantity()));
+									setSkuExternalReferenceCode(
+										productPurchase::getProductKey);
+								}
+							}
+						});
+					setOrderStatus(
+						() -> MarketplaceConstants.ORDER_STATUS_COMPLETED);
+					setOrderTypeExternalReferenceCode(() -> "SALESFORCE-ORDER");
+					setPaymentStatus(
+						() ->
+							MarketplaceConstants.
+								ORDER_PAYMENT_STATUS_COMPLETED);
+				}
+			};
+
+			ChannelResource channelResource =
+				_marketplaceService.getChannelResource();
+
+			Channel channel = channelResource.getChannelByExternalReferenceCode(
+				"MARKETPLACE-CHANNEL");
+
+			order.setChannelId(channel::getId);
+
+			_marketplaceService.postOrder(order);
+		}
 	}
 
 	private static final Log _log = LogFactory.getLog(
