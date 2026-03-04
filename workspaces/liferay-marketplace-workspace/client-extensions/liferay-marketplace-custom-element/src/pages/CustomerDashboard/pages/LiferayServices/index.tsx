@@ -16,10 +16,10 @@ import PaymentStatusBadge from '../../../FinanceDashboard/components/PaymentStat
 import {useCustomerDashboardOutletContext} from '../../CustomerDashboardOutlet';
 
 const searchParams = new URLSearchParams({
-	filter: SearchBuilder.in(
-		'orderTypeExternalReferenceCode',
-		[OrderTypes.ADDONS, OrderTypes.DXP]
-	),
+	filter: SearchBuilder.in('orderTypeExternalReferenceCode', [
+		OrderTypes.ADDONS,
+		OrderTypes.DXP,
+	]),
 	nestedFields: 'placedOrderItems',
 	sort: 'createDate:desc',
 });
