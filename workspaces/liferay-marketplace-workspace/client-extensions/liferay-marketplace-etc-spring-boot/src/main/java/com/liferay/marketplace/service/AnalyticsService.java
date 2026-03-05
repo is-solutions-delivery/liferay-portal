@@ -9,10 +9,10 @@ import com.liferay.client.extension.util.spring.boot3.service.BaseService;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.Order;
 import com.liferay.marketplace.constants.MarketplaceConstants;
 import com.liferay.marketplace.model.AnalyticsForm;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 
 import java.util.Base64;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -93,14 +93,16 @@ public class AnalyticsService extends BaseService {
 
 		Order order = _marketplaceService.getOrder(orderId);
 
-		Map<String, String> customFields =
-			(Map<String, String>)order.getCustomFields();
-
 		_marketplaceService.updateOrder(
 			HashMapBuilder.put(
 				"order-metadata",
 				new JSONObject(
-					customFields.getOrDefault("order-metadata", "{}")
+					GetterUtil.get(
+						order.getCustomFields(
+						).get(
+							"order-metadata"
+						),
+						"{}")
 				).put(
 					"analyticsProject", new JSONObject(response)
 				).toString()
