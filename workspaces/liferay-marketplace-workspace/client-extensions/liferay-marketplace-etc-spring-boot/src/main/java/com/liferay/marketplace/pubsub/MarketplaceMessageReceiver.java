@@ -27,6 +27,7 @@ import com.liferay.headless.commerce.admin.order.client.resource.v1_0.OrderResou
 import com.liferay.marketplace.constants.MarketplaceConstants;
 import com.liferay.marketplace.service.KoroneikiService;
 import com.liferay.marketplace.service.MarketplaceService;
+import com.liferay.marketplace.service.ProvisioningHubService;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Contact;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ExternalLink;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ProductPurchase;
@@ -51,11 +52,12 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 	public MarketplaceMessageReceiver(
 		KoroneikiService koroneikiService,
 		MarketplaceService marketplaceService, List<String> productKeys,
-		String topicName) {
+		ProvisioningHubService provisioningHubService, String topicName) {
 
 		_koroneikiService = koroneikiService;
 		_marketplaceService = marketplaceService;
 		_productKeys = productKeys;
+		_provisioningHubService = provisioningHubService;
 		_topicName = topicName;
 	}
 
@@ -336,7 +338,9 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 					Pagination.of(1, 1),
 				"");
 
-		if (ordersPage.fetchFirstItem() == null) {
+		Order order = ordersPage.fetchFirstItem();
+
+		if (order == null) {
 			if (_channelId == 0L) {
 				ChannelResource channelResource =
 					_marketplaceService.getChannelResource();
@@ -348,7 +352,7 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 				_channelId = channel.getId();
 			}
 
-			orderResource.postOrder(
+			order = orderResource.postOrder(
 				new Order() {
 					{
 						setAccountExternalReferenceCode(
@@ -378,6 +382,8 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 									ORDER_PAYMENT_STATUS_COMPLETED);
 					}
 				});
+
+			_provisioningHubService.routeProvisioning(order, productPurchase);
 		}
 	}
 
@@ -389,6 +395,7 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 	private final MarketplaceService _marketplaceService;
 	private String _opportunityId;
 	private final List<String> _productKeys;
+	private final ProvisioningHubService _provisioningHubService;
 	private final String _topicName;
 
 }
