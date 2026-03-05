@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 /**
@@ -59,25 +58,7 @@ public class AnalyticsService extends BaseService {
 		).contentType(
 			MediaType.APPLICATION_FORM_URLENCODED
 		).body(
-			BodyInserters.fromFormData(
-				"corpProjectName", analyticsForm.getCorpProjectName()
-			).with(
-				"corpProjectUuid", analyticsForm.getCorpProjectUuid()
-			).with(
-				"incidentReportEmailAddresses",
-				analyticsForm.getIncidentReportEmailAddresses(
-				).toString()
-			).with(
-				"name", analyticsForm.getName()
-			).with(
-				"serverLocation", analyticsForm.getServerLocation()
-			).with(
-				"sharedCluster", analyticsForm.getSharedCluster()
-			).with(
-				"trial", analyticsForm.getTrial()
-			).with(
-				"ownerEmailAddress", analyticsForm.getOwnerEmailAddress()
-			)
+			analyticsForm.toFormData()
 		).retrieve(
 		).bodyToMono(
 			String.class

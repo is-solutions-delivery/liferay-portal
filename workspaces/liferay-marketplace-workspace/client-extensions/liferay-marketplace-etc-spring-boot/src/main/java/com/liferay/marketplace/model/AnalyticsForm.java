@@ -11,6 +11,11 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import org.springframework.http.client.reactive.ClientHttpRequest;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserter;
+import org.springframework.web.reactive.function.BodyInserters;
+
 /**
  * @author Caleb Hall
  */
@@ -82,6 +87,29 @@ public class AnalyticsForm {
 
 	public String getTrial() {
 		return _trial;
+	}
+
+	public BodyInserter<MultiValueMap<String, String>, ClientHttpRequest>
+		toFormData() {
+
+		return BodyInserters.fromFormData(
+			"corpProjectName", getCorpProjectName()
+		).with(
+			"corpProjectUuid", getCorpProjectUuid()
+		).with(
+			"incidentReportEmailAddresses",
+			getIncidentReportEmailAddresses().toString()
+		).with(
+			"name", getName()
+		).with(
+			"serverLocation", getServerLocation()
+		).with(
+			"sharedCluster", getSharedCluster()
+		).with(
+			"trial", getTrial()
+		).with(
+			"ownerEmailAddress", getOwnerEmailAddress()
+		);
 	}
 
 	private static final String _SERVER_LOCATION = "us-west1-ac-uat-c1";
