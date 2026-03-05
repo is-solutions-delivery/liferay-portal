@@ -8,6 +8,7 @@ package com.liferay.marketplace.service;
 import com.liferay.client.extension.util.spring.boot3.service.BaseService;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.Order;
 import com.liferay.marketplace.constants.MarketplaceConstants;
+import com.liferay.marketplace.model.AnalyticsForm;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 
 import java.util.Base64;
@@ -39,21 +40,12 @@ public class AnalyticsService extends BaseService {
 		return "Basic " + encoder.encodeToString(authorization.getBytes());
 	}
 
-	public void provision(JSONObject jsonObject) throws Exception {
-		Order order = _marketplaceService.getOrder(jsonObject.getLong("id"));
+	public void provision(AnalyticsForm analyticsForm, long orderId)
+		throws Exception {
 
 		if (_log.isInfoEnabled()) {
-			_log.info("Provisioning order " + order.getId());
+			_log.info("Provisioning order " + orderId);
 		}
-
-		Map<String, String> customFields =
-			(Map<String, String>)order.getCustomFields();
-
-		JSONObject orderMetadataJSONObject = new JSONObject(
-			customFields.getOrDefault("order-metadata", "{}"));
-
-		JSONObject analyticsFormJSONObject =
-			orderMetadataJSONObject.optJSONObject("analyticsForm");
 
 		String response = WebClient.builder(
 		).baseUrl(
@@ -63,34 +55,28 @@ public class AnalyticsService extends BaseService {
 		).build(
 		).post(
 		).uri(
-			"/o/faro/main/project/unprovisioned"
+			"/o/faro/main/project/provisioned"
 		).contentType(
 			MediaType.APPLICATION_FORM_URLENCODED
 		).body(
 			BodyInserters.fromFormData(
-				"corpProjectName",
-				analyticsFormJSONObject.getString("corpProjectName")
+				"corpProjectName", analyticsForm.getCorpProjectName()
 			).with(
-				"corpProjectUuid",
-				analyticsFormJSONObject.getString("corpProjectUuid")
+				"corpProjectUuid", analyticsForm.getCorpProjectUuid()
 			).with(
 				"incidentReportEmailAddresses",
-				analyticsFormJSONObject.getJSONArray(
-					"incidentReportEmailAddresses"
+				analyticsForm.getIncidentReportEmailAddresses(
 				).toString()
 			).with(
-				"name", analyticsFormJSONObject.getString("name")
+				"name", analyticsForm.getName()
 			).with(
-				"serverLocation",
-				analyticsFormJSONObject.optString(
-					"serverLocation", "us-west1-ac-uat-c1")
+				"serverLocation", analyticsForm.getServerLocation()
 			).with(
-				"sharedCluster", "false"
+				"sharedCluster", analyticsForm.getSharedCluster()
 			).with(
-				"trial", "true"
+				"trial", analyticsForm.getTrial()
 			).with(
-				"ownerEmailAddress",
-				analyticsFormJSONObject.getString("ownerEmailAddress")
+				"ownerEmailAddress", analyticsForm.getOwnerEmailAddress()
 			)
 		).retrieve(
 		).bodyToMono(
@@ -102,8 +88,16 @@ public class AnalyticsService extends BaseService {
 		}
 
 		if (_log.isInfoEnabled()) {
-			_log.info("Analytics project created for order " + order.getId());
+			_log.info("Analytics project created for order " + orderId);
 		}
+
+		Order order = _marketplaceService.getOrder(orderId);
+
+		Map<String, String> customFields =
+			(Map<String, String>)order.getCustomFields();
+
+		JSONObject orderMetadataJSONObject = new JSONObject(
+			customFields.getOrDefault("order-metadata", "{}"));
 
 		_marketplaceService.updateOrder(
 			HashMapBuilder.put(
@@ -112,7 +106,7 @@ public class AnalyticsService extends BaseService {
 					"analyticsProject", new JSONObject(response)
 				).toString()
 			).build(),
-			order.getId(), MarketplaceConstants.ORDER_STATUS_COMPLETED);
+			orderId, MarketplaceConstants.ORDER_STATUS_COMPLETED);
 	}
 
 	private static final Log _log = LogFactory.getLog(AnalyticsService.class);

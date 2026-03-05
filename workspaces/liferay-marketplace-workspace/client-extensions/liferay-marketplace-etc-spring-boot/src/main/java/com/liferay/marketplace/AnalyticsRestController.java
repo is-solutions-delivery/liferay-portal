@@ -7,6 +7,7 @@ package com.liferay.marketplace;
 
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
 import com.liferay.marketplace.constants.MarketplaceConstants;
+import com.liferay.marketplace.model.AnalyticsForm;
 import com.liferay.marketplace.service.AnalyticsService;
 import com.liferay.marketplace.service.KoroneikiService;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Product;
@@ -173,7 +174,12 @@ public class AnalyticsRestController extends BaseRestController {
 
 	@PostMapping("provisioning")
 	public void postProvisioning(@RequestBody String json) throws Exception {
-		_analyticsService.provision(new JSONObject(json));
+		JSONObject jsonObject = new JSONObject(json);
+
+		_analyticsService.provision(
+			AnalyticsForm.fromJSONObject(
+				jsonObject.getJSONObject("analytics-form")),
+			jsonObject.getLong("id"));
 	}
 
 	@Override
