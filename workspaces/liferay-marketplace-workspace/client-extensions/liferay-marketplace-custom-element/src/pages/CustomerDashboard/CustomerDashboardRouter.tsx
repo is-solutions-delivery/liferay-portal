@@ -3,32 +3,31 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import { Route, Routes } from 'react-router-dom';
+import {Route, Routes} from 'react-router-dom';
 
 import withProviders from '../../hoc/withProviders';
-
-import App from './pages/Apps/App/App';
+import App from '../PublisherDashboard/pages/Apps/App';
+import CustomerDashboardOutlet from './CustomerDashboardOutlet';
+import Apps from './pages/Apps';
 import AppOutlet from './pages/Apps/App/AppOutlet';
+import Provisioning from './pages/Apps/App/CloudProvisioning';
 import CloudProvisioningOutlet from './pages/Apps/App/CloudProvisioning/pages/CloudProvisioningOutlet';
 import EnvironmentSelection from './pages/Apps/App/CloudProvisioning/pages/EnvironmentSelection';
 import CloudProvisioningInstallation from './pages/Apps/App/CloudProvisioning/pages/Installation';
 import ProjectSelection from './pages/Apps/App/CloudProvisioning/pages/ProjectSelection';
-import Provisioning from './pages/Apps/App/CloudProvisioning';
 import Download from './pages/Apps/App/Download/Download';
 import CreateLicense from './pages/Apps/App/Licenses/CreateLicense';
 import Licenses from './pages/Apps/App/Licenses/Licenses';
 import Support from './pages/Apps/App/Support/Support';
-import Apps from './pages/Apps';
 import Connections from './pages/Connections';
 import LiferayServiceBundles from './pages/LiferayServices/Bundles/Bundles';
 import LiferayServiceLicenses from './pages/LiferayServices/Licenses/Licenses';
 import LiferayService from './pages/LiferayServices/LiferayService';
 import LiferayServicesOutlet from './pages/LiferayServices/LiferayServicesOutlet';
 import LiferayServicesListView from './pages/LiferayServices/index';
+import Solutions from './pages/Solutions';
 import Solution from './pages/Solutions/Solution';
 import SolutionOutlet from './pages/Solutions/SolutionOutlet';
-import Solutions from './pages/Solutions';
-import CustomerDashboardOutlet from './CustomerDashboardOutlet';
 
 const CustomerDashboardRouter = () => {
 	return (
@@ -61,7 +60,10 @@ const CustomerDashboardRouter = () => {
 				>
 					<Route element={<LiferayService />} index />
 
-					<Route element={<LiferayServiceLicenses />} path="activation-key" />
+					<Route
+						element={<LiferayServiceLicenses />}
+						path="activation-key"
+					/>
 
 					<Route element={<LiferayServiceBundles />} path="bundles" />
 				</Route>
@@ -95,7 +97,7 @@ const CustomerDashboardRouter = () => {
 };
 
 export default withProviders(CustomerDashboardRouter, {
-	breadcrumbProps: { hiddenPaths: ['customer-dashboard#/order'] },
+	breadcrumbProps: {hiddenPaths: ['customer-dashboard#/order']},
 	withBreadcrumbs: true,
 	withHashRouter: true,
 });

@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import { format } from 'date-fns';
-import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import {format} from 'date-fns';
+import {useEffect} from 'react';
+import {useParams} from 'react-router-dom';
 
-import { breadcrumbStore } from '../../../../components/Breadcrumb/BreadcrumbStore';
-import { DetailedCard } from '../../../../components/DetailedCard/DetailedCard';
-import { PageRenderer } from '../../../../components/Page';
+import {breadcrumbStore} from '../../../../components/Breadcrumb/BreadcrumbStore';
+import {DetailedCard} from '../../../../components/DetailedCard/DetailedCard';
+import {PageRenderer} from '../../../../components/Page';
 import QATable from '../../../../components/QATable';
 import {
 	OrderCustomFields,
@@ -20,15 +20,15 @@ import i18n from '../../../../i18n';
 import LiferayServicesAlerts from './LiferayServicesAlerts';
 
 const LiferayServiceLicenses = () => {
-	const { orderId } = useParams();
-	const { data, isLoading } = useGetProductByOrderId(orderId as string);
+	const {orderId} = useParams();
+	const {data, isLoading} = useGetProductByOrderId(orderId as string);
 
 	const placedOrder = data?.placedOrder;
 	const product = data?.product;
 
 	useEffect(() => {
 		breadcrumbStore.send({
-			replacements: { [orderId as string]: product?.name || '' },
+			replacements: {[orderId as string]: product?.name || ''},
 			type: 'setReplacements',
 		});
 	}, [orderId, product?.name]);

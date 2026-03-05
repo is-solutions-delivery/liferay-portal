@@ -60,7 +60,7 @@ const LicenceKeyModalContent = ({ Header, modalData }: LicenseKeyModalProps) => 
 					<div className="h4">Server</div>
 
 					<small className="font-weight-bold">
-						{i18n.translate('domain')}
+						{i18n.translate('key-type')}
 					</small>
 
 					<p className="align-items-center d-flex font-weight-bold license-paragraph-gray mt-1 px-3 py-2 rounded">

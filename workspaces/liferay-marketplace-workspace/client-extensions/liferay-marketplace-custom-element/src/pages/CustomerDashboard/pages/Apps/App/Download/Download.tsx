@@ -16,11 +16,16 @@ import {LearnLinks} from '../../../../../../enums/Learn';
 import {OrderTypes} from '../../../../../../enums/Order';
 import {ProductSpecificationKey} from '../../../../../../enums/Product';
 import useGetProductByOrderId from '../../../../../../hooks/useGetProductByOrderId';
-import i18n from '../../../../../../i18n';
+import i18n, {Word} from '../../../../../../i18n';
 import {Liferay} from '../../../../../../liferay/liferay';
 import HeadlessCommerceDeliveryCatalog from '../../../../../../services/rest/HeadlessCommerceDeliveryCatalog';
 import {getProductCategoriesByVocabularyName} from '../../../../../../utils/productUtils';
 import DownloadTable from './DownloadTable';
+
+export type DownloadProps = {
+	searchActive?: true;
+	title?: string;
+};
 
 type OutletContext = ReturnType<typeof useGetProductByOrderId>;
 
@@ -68,7 +73,7 @@ const DisplayAlert = ({
 	);
 };
 
-const Download = () => {
+const Download = ({searchActive, title}: DownloadProps) => {
 	const outletContext = useOutletContext<OutletContext['data']>();
 
 	const [search, setSearch] = useState('');
@@ -153,32 +158,38 @@ const Download = () => {
 				}
 			/>
 
-			<ClayForm.Group className="align-items-center bg-light d-flex justify-content-center mb-0 mb-4 p-3 rounded-lg w-100">
-				<ClayInput.Group stacked>
-					<ClayInput.GroupItem prepend>
-						<ClayInput
-							className="bg-white border-0"
-							onChange={({target}) => setSearch(target.value)}
-							placeholder="Search"
-							type="text"
-							value={search}
-						/>
-					</ClayInput.GroupItem>
-
-					<ClayInput.GroupItem prepend shrink>
-						<ClayInput.GroupText className="bg-white border-0">
-							<ButtonWithIcon
-								aria-label="Search"
-								className="border-0"
-								displayType="unstyled"
-								symbol="search"
+			{searchActive && (
+				<ClayForm.Group className="align-items-center bg-light d-flex justify-content-center mb-0 mb-4 p-3 rounded-lg w-100">
+					<ClayInput.Group stacked>
+						<ClayInput.GroupItem prepend>
+							<ClayInput
+								className="bg-white border-0"
+								onChange={({target}) => setSearch(target.value)}
+								placeholder="Search"
+								type="text"
+								value={search}
 							/>
-						</ClayInput.GroupText>
-					</ClayInput.GroupItem>
-				</ClayInput.Group>
-			</ClayForm.Group>
+						</ClayInput.GroupItem>
 
-			<DownloadTable loading={isLoading} virtualItems={virtualItems} />
+						<ClayInput.GroupItem prepend shrink>
+							<ClayInput.GroupText className="bg-white border-0">
+								<ButtonWithIcon
+									aria-label="Search"
+									className="border-0"
+									displayType="unstyled"
+									symbol="search"
+								/>
+							</ClayInput.GroupText>
+						</ClayInput.GroupItem>
+					</ClayInput.Group>
+				</ClayForm.Group>
+			)}
+
+			<DownloadTable
+				loading={isLoading}
+				title={title}
+				virtualItems={virtualItems}
+			/>
 		</>
 	);
 };
