@@ -96,13 +96,12 @@ public class AnalyticsService extends BaseService {
 		Map<String, String> customFields =
 			(Map<String, String>)order.getCustomFields();
 
-		JSONObject orderMetadataJSONObject = new JSONObject(
-			customFields.getOrDefault("order-metadata", "{}"));
-
 		_marketplaceService.updateOrder(
 			HashMapBuilder.put(
 				"order-metadata",
-				orderMetadataJSONObject.put(
+				new JSONObject(
+					customFields.getOrDefault("order-metadata", "{}")
+				).put(
 					"analyticsProject", new JSONObject(response)
 				).toString()
 			).build(),
