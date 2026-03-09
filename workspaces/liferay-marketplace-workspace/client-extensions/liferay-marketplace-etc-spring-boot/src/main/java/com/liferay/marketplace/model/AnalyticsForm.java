@@ -35,26 +35,23 @@ public class AnalyticsForm {
 			jsonObject.getString("corpProjectName"),
 			jsonObject.getString("corpProjectUuid"),
 			emailAddresses.toArray(new String[0]), jsonObject.getString("name"),
-			jsonObject.optString("serverLocation", _SERVER_LOCATION),
-			jsonObject.optString("sharedCluster", _SHARED_CLUSTER),
-			jsonObject.optString("trial", _TRIAL),
 			jsonObject.getString("ownerEmailAddress"));
 	}
 
 	public AnalyticsForm(
 		String corpProjectName, String corpProjectUuid,
 		String[] incidentReportEmailAddresses, String name,
-		String serverLocation, String sharedCluster, String trial,
 		String ownerEmailAddress) {
 
 		_corpProjectName = corpProjectName;
 		_corpProjectUuid = corpProjectUuid;
 		_incidentReportEmailAddresses = incidentReportEmailAddresses;
 		_name = name;
-		_serverLocation = serverLocation;
-		_sharedCluster = sharedCluster;
-		_trial = trial;
 		_ownerEmailAddress = ownerEmailAddress;
+
+		_serverLocation = _SERVER_LOCATION;
+		_sharedCluster = _SHARED_CLUSTER;
+		_trial = _TRIAL;
 	}
 
 	public String getCorpProjectName() {
