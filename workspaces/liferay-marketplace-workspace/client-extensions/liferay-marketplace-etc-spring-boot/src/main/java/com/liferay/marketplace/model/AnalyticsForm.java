@@ -5,6 +5,8 @@
 
 package com.liferay.marketplace.model;
 
+import com.liferay.portal.kernel.util.Validator;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,21 +37,22 @@ public class AnalyticsForm {
 			jsonObject.getString("corpProjectName"),
 			jsonObject.getString("corpProjectUuid"),
 			emailAddresses.toArray(new String[0]), jsonObject.getString("name"),
+			jsonObject.getString("serverLocation"),
 			jsonObject.getString("ownerEmailAddress"));
 	}
 
 	public AnalyticsForm(
 		String corpProjectName, String corpProjectUuid,
 		String[] incidentReportEmailAddresses, String name,
-		String ownerEmailAddress) {
+		String serverLocation, String ownerEmailAddress) {
 
 		_corpProjectName = corpProjectName;
 		_corpProjectUuid = corpProjectUuid;
 		_incidentReportEmailAddresses = incidentReportEmailAddresses;
 		_name = name;
+		_serverLocation = serverLocation;
 		_ownerEmailAddress = ownerEmailAddress;
 
-		_serverLocation = _SERVER_LOCATION;
 		_sharedCluster = _SHARED_CLUSTER;
 		_trial = _TRIAL;
 	}
@@ -75,6 +78,10 @@ public class AnalyticsForm {
 	}
 
 	public String getServerLocation() {
+		if (Validator.isBlank(_serverLocation)) {
+			return _SERVER_LOCATION;
+		}
+
 		return _serverLocation;
 	}
 
@@ -95,7 +102,9 @@ public class AnalyticsForm {
 			"corpProjectUuid", getCorpProjectUuid()
 		).with(
 			"incidentReportEmailAddresses",
-			getIncidentReportEmailAddresses().toString()
+			new JSONArray(
+				getIncidentReportEmailAddresses()
+			).toString()
 		).with(
 			"name", getName()
 		).with(

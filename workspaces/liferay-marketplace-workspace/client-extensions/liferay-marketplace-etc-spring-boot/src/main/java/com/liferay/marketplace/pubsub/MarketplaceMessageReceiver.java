@@ -324,10 +324,13 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 		if (_channelId == null) {
 			synchronized (this) {
 				if (_channelId == null) {
-					ChannelResource channelResource = _marketplaceService.getChannelResource();
+					ChannelResource channelResource =
+						_marketplaceService.getChannelResource();
 
-					Channel channel = channelResource.getChannelByExternalReferenceCode(
+					Channel channel =
+						channelResource.getChannelByExternalReferenceCode(
 							"MARKETPLACE-CHANNEL");
+
 					_channelId = channel.getId();
 				}
 			}
