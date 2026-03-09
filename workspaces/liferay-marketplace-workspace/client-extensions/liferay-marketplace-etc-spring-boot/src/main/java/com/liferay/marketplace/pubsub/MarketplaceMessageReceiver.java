@@ -382,6 +382,25 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 									ORDER_PAYMENT_STATUS_COMPLETED);
 					}
 				});
+		}
+		else {
+			Account account = _getAccount(productPurchase.getAccountKey());
+
+			if (account == null) {
+				_processKoroneikiAccountCreate(
+					_koroneikiService.getKoroneikiAccount(
+						productPurchase.getAccountKey()));
+			}
+
+			orderResource.patchOrder(
+				order.getId(),
+				new Order() {
+					{
+						setAccountExternalReferenceCode(
+							productPurchase::getAccountKey);
+					}
+				});
+		}
 
 			_provisioningHubService.provision(order, productPurchase);
 		}
