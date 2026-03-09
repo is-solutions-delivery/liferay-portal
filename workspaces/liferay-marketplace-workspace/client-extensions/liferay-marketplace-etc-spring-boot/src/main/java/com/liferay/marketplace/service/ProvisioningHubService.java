@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class ProvisioningHubService extends BaseService {
 
-	public void routeProvisioning(Order order, ProductPurchase productPurchase)
+	public void provision(Order order, ProductPurchase productPurchase)
 		throws Exception {
 
 		Product product = productPurchase.getProduct();

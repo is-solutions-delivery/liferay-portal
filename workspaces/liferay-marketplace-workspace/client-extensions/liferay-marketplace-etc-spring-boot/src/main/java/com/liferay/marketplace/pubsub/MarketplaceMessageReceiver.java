@@ -341,7 +341,7 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 		Order order = ordersPage.fetchFirstItem();
 
 		if (order == null) {
-			if (_channelId == 0L) {
+			if (_channelId == null) {
 				ChannelResource channelResource =
 					_marketplaceService.getChannelResource();
 
@@ -383,14 +383,14 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 					}
 				});
 
-			_provisioningHubService.routeProvisioning(order, productPurchase);
+			_provisioningHubService.provision(order, productPurchase);
 		}
 	}
 
 	private static final Log _log = LogFactory.getLog(
 		MarketplaceMessageReceiver.class);
 
-	private Long _channelId = 0L;
+	private Long _channelId;
 	private final KoroneikiService _koroneikiService;
 	private final MarketplaceService _marketplaceService;
 	private String _opportunityId;
