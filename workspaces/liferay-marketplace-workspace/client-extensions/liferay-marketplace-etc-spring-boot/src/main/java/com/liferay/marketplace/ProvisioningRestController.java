@@ -8,16 +8,20 @@ package com.liferay.marketplace;
 import com.liferay.client.extension.util.spring.boot3.BaseRestController;
 import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
 import com.liferay.marketplace.service.KoroneikiService;
+import com.liferay.marketplace.service.MarketplaceService;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ProductPurchase;
 import com.liferay.osb.provisioning.marketplace.rest.client.dto.v1_0.AppLicenseKey;
 import com.liferay.osb.provisioning.marketplace.rest.client.http.HttpInvoker;
 import com.liferay.osb.provisioning.marketplace.rest.client.pagination.Page;
 import com.liferay.osb.provisioning.marketplace.rest.client.pagination.Pagination;
 import com.liferay.osb.provisioning.marketplace.rest.client.resource.v1_0.AppLicenseKeyResource;
+import com.liferay.osb.provisioning.rest.client.dto.v1_0.LicenseKey;
+import com.liferay.osb.provisioning.rest.client.resource.v1_0.LicenseKeyResource;
 import com.liferay.petra.string.StringPool;
 
 import java.net.URL;
 
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
 import java.util.Collections;
@@ -51,8 +55,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ProvisioningRestController extends BaseRestController {
 
-	@PostMapping("license-keys/{id}/deactivate")
-	public void deactivateLicenseKeys(
+	@PostMapping("app-license-keys/{id}/deactivate")
+	public void deactivateAppLicenseKeys(
 			@AuthenticationPrincipal Jwt jwt, @PathVariable("id") long id)
 		throws Exception {
 
@@ -67,8 +71,8 @@ public class ProvisioningRestController extends BaseRestController {
 		}
 	}
 
-	@GetMapping("license-keys/{id}")
-	public AppLicenseKey getLicenseKeys(@PathVariable("id") long id)
+	@GetMapping("app-license-keys/{id}")
+	public AppLicenseKey getAppLicenseKeys(@PathVariable("id") long id)
 		throws Exception {
 
 		AppLicenseKeyResource appLicenseKeyResource =
@@ -77,8 +81,8 @@ public class ProvisioningRestController extends BaseRestController {
 		return appLicenseKeyResource.getAppLicenseKey(id);
 	}
 
-	@GetMapping("license-keys/{id}/download")
-	public ResponseEntity getLicenseKeysDownload(@PathVariable("id") long id)
+	@GetMapping("app-license-keys/{id}/download")
+	public ResponseEntity getAppLicenseKeysDownload(@PathVariable("id") long id)
 		throws Exception {
 
 		AppLicenseKeyResource appLicenseKeyResource =
@@ -121,8 +125,17 @@ public class ProvisioningRestController extends BaseRestController {
 			httpResponse.getBinaryContent(), httpHeaders, HttpStatus.OK);
 	}
 
-	@GetMapping("order-license-keys/{orderId}")
-	public Page<AppLicenseKey> getOrderLicenseKeys(
+	@GetMapping("license-key/{id}")
+	public LicenseKey getLicenseKey(@PathVariable("id") long id)
+		throws Exception {
+
+		LicenseKeyResource licenseKeyResource = _getLicenseKeyResource();
+
+		return licenseKeyResource.getLicenseKey(id);
+	}
+
+	@GetMapping("order-app-license-keys/{orderId}")
+	public Page<AppLicenseKey> getOrderAppLicenseKeys(
 			@PathVariable("orderId") String orderId,
 			@RequestParam(defaultValue = "1", required = false) int page,
 			@RequestParam(defaultValue = "20", required = false) int pageSize)
@@ -136,8 +149,26 @@ public class ProvisioningRestController extends BaseRestController {
 			Pagination.of(page, pageSize), "");
 	}
 
-	@PostMapping("license-keys")
-	public AppLicenseKey postLicenseKeys(
+	@GetMapping("order-license-keys/{orderId}")
+	public com.liferay.osb.provisioning.rest.client.pagination.Page<LicenseKey>
+			getOrderLicenseKeys(
+				@PathVariable("orderId") String orderId,
+				@RequestParam(defaultValue = "1", required = false) int page,
+				@RequestParam(defaultValue = "20", required = false) int
+					pageSize)
+		throws Exception {
+
+		LicenseKeyResource licenseKeyResource = _getLicenseKeyResource();
+
+		return licenseKeyResource.getLicenseKeysPage(
+			"", "orderId eq '" + orderId + "'",
+			com.liferay.osb.provisioning.rest.client.pagination.Pagination.of(
+				page, pageSize),
+			"");
+	}
+
+	@PostMapping("app-license-keys")
+	public AppLicenseKey postAppLicenseKeys(
 			@AuthenticationPrincipal Jwt jwt, @RequestBody String json)
 		throws Exception {
 
@@ -205,8 +236,72 @@ public class ProvisioningRestController extends BaseRestController {
 		return appLicenseKey;
 	}
 
+	@PostMapping("license-key-type-free")
+	public LicenseKey postLicenseKeyTypeFree(@RequestBody String json)
+		throws Exception {
+
+		LicenseKeyResource licenseKeyResource = _getLicenseKeyResource();
+
+		LicenseKey licenseKey = licenseKeyResource.postLicenseKeyTypeFree(
+			LicenseKey.toDTO(json));
+
+		if (_log.isInfoEnabled()) {
+			_log.info(
+				"Created License Key for order " +
+					licenseKey.getAssetReceiptLicenseUuid());
+		}
+
+		return licenseKey;
+	}
+
+	@PostMapping("license-key-type-free/{id}/renew")
+	public void postLicenseKeyTypeFreeRenew(@PathVariable long id)
+		throws Exception {
+
+		LicenseKeyResource licenseKeyResource = _getLicenseKeyResource();
+
+		LicenseKey licenseKey = licenseKeyResource.getLicenseKey(id);
+
+		ZonedDateTime expirationDate = licenseKey.getExpirationDate(
+		).toInstant(
+		).atZone(
+			ZoneOffset.UTC
+		);
+
+		if (expirationDate.isAfter(ZonedDateTime.now(ZoneOffset.UTC))) {
+			return;
+		}
+
+		licenseKeyResource.postLicenseKeyTypeFree(
+			new LicenseKey() {
+				{
+					setAssetReceiptLicenseUuid(
+						licenseKey.getAssetReceiptLicenseUuid());
+					setDomains(licenseKey.getDomains());
+					setOwner(licenseKey.getOwner());
+				}
+			});
+
+		if (_log.isInfoEnabled()) {
+			_log.info(
+				"Renewed License Key for order" +
+					licenseKey.getAssetReceiptLicenseUuid());
+		}
+	}
+
 	private AppLicenseKeyResource _getAppLicenseKeyResource() throws Exception {
 		return AppLicenseKeyResource.builder(
+		).header(
+			"Authorization",
+			_liferayOAuth2AccessTokenManager.getAuthorization(
+				"external-provisioning")
+		).endpoint(
+			_externalProvisioningHomePageURL
+		).build();
+	}
+
+	private LicenseKeyResource _getLicenseKeyResource() throws Exception {
+		return LicenseKeyResource.builder(
 		).header(
 			"Authorization",
 			_liferayOAuth2AccessTokenManager.getAuthorization(
@@ -233,5 +328,8 @@ public class ProvisioningRestController extends BaseRestController {
 
 	@Autowired
 	private LiferayOAuth2AccessTokenManager _liferayOAuth2AccessTokenManager;
+
+	@Autowired
+	private MarketplaceService _marketplaceService;
 
 }
