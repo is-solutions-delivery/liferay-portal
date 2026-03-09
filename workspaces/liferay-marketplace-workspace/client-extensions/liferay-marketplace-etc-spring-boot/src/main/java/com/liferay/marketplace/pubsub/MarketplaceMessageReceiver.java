@@ -333,19 +333,23 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 			}
 		}
 
+		String opportunityId = null;
+
 		for (ExternalLink externalLink : productPurchase.getExternalLinks()) {
 			if (Objects.equals(externalLink.getEntityName(), "opportunity")) {
-				_opportunityId = externalLink.getEntityId();
+				opportunityId = externalLink.getEntityId();
 
 				break;
 			}
 		}
 
+		final String finalOpportunityId = opportunityId;
+
 		OrderResource orderResource = _marketplaceService.getOrderResource();
 
 		com.liferay.headless.commerce.admin.order.client.pagination.Page<Order>
 			ordersPage = orderResource.getOrdersPage(
-				"", "externalReferenceCode eq '" + _opportunityId + "'",
+				"", "externalReferenceCode eq '" + finalOpportunityId + "'",
 				com.liferay.headless.commerce.admin.order.client.pagination.
 					Pagination.of(1, 1),
 				"");
@@ -360,7 +364,7 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 							productPurchase::getAccountKey);
 						setChannelId(() -> _channelId);
 						setCurrencyCode(() -> "USD");
-						setExternalReferenceCode(() -> _opportunityId);
+						setExternalReferenceCode(() -> finalOpportunityId);
 						setOrderItems(
 							() -> new OrderItem[] {
 								new OrderItem() {
@@ -412,7 +416,6 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 	private volatile Long _channelId;
 	private final KoroneikiService _koroneikiService;
 	private final MarketplaceService _marketplaceService;
-	private String _opportunityId;
 	private final List<String> _productKeys;
 	private final ProvisioningHubService _provisioningHubService;
 	private final String _topicName;
