@@ -321,6 +321,18 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 			return;
 		}
 
+		if (_channelId == null) {
+			synchronized (this) {
+				if (_channelId == null) {
+					ChannelResource channelResource = _marketplaceService.getChannelResource();
+
+					Channel channel = channelResource.getChannelByExternalReferenceCode(
+							"MARKETPLACE-CHANNEL");
+					_channelId = channel.getId();
+				}
+			}
+		}
+
 		for (ExternalLink externalLink : productPurchase.getExternalLinks()) {
 			if (Objects.equals(externalLink.getEntityName(), "opportunity")) {
 				_opportunityId = externalLink.getEntityId();
@@ -341,17 +353,6 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 		Order order = ordersPage.fetchFirstItem();
 
 		if (order == null) {
-			if (_channelId == null) {
-				ChannelResource channelResource =
-					_marketplaceService.getChannelResource();
-
-				Channel channel =
-					channelResource.getChannelByExternalReferenceCode(
-						"MARKETPLACE-CHANNEL");
-
-				_channelId = channel.getId();
-			}
-
 			order = orderResource.postOrder(
 				new Order() {
 					{
@@ -402,14 +403,13 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 				});
 		}
 
-			_provisioningHubService.provision(order, productPurchase);
-		}
+		_provisioningHubService.provision(order, productPurchase);
 	}
 
 	private static final Log _log = LogFactory.getLog(
 		MarketplaceMessageReceiver.class);
 
-	private Long _channelId;
+	private volatile Long _channelId;
 	private final KoroneikiService _koroneikiService;
 	private final MarketplaceService _marketplaceService;
 	private String _opportunityId;
