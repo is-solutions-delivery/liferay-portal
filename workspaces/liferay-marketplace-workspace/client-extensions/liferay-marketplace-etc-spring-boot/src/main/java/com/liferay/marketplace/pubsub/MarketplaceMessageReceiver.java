@@ -398,6 +398,8 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 					{
 						setAccountExternalReferenceCode(
 							productPurchase::getAccountKey);
+						setOrderStatus(
+							() -> MarketplaceConstants.ORDER_STATUS_COMPLETED);
 					}
 				});
 		}
