@@ -18,10 +18,12 @@ import java.util.Objects;
 import org.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Caleb Hall
  */
+@Component
 public class ProvisioningHubService extends BaseService {
 
 	public void provision(Order order, ProductPurchase productPurchase)
