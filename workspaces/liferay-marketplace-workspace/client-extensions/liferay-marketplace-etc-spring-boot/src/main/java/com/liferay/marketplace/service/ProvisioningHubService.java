@@ -7,10 +7,15 @@ package com.liferay.marketplace.service;
 
 import com.liferay.client.extension.util.spring.boot3.service.BaseService;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.Order;
+import com.liferay.marketplace.model.AnalyticsForm;
+import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Account;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Product;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ProductPurchase;
 
+import java.util.Map;
 import java.util.Objects;
+
+import org.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -25,13 +30,40 @@ public class ProvisioningHubService extends BaseService {
 		Product product = productPurchase.getProduct();
 
 		if (Objects.equals(product.getName(), "Liferay Data Platform")) {
+			Account account = _koroneikiService.getKoroneikiAccount(
+				productPurchase.getAccountKey());
 
-			// TODO
+			Map<String, String> accountProperties = account.getProperties();
 
+			// first try like this
+
+			AnalyticsForm analyticsForm1 = AnalyticsForm.fromJSONObject(
+				new JSONObject(accountProperties));
+
+			_analyticsService.provision(analyticsForm1, order.getId());
+
+			// if the first doesn't fit properly then build as follows
+
+			AnalyticsForm analyticsForm2 = new AnalyticsForm(
+				accountProperties.get("corpProjectName"),
+				accountProperties.get("corpProjectUuid"),
+				accountProperties.get(
+					"incidentReportEmailAddresses"
+				).split(
+					","
+				),
+				accountProperties.get("serverLocation"),
+				accountProperties.get("name"),
+				accountProperties.get("serverLocation"));
+
+			_analyticsService.provision(analyticsForm2, order.getId());
 		}
 	}
 
 	@Autowired
 	private AnalyticsService _analyticsService;
+
+	@Autowired
+	private KoroneikiService _koroneikiService;
 
 }
