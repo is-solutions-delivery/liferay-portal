@@ -1,0 +1,49 @@
+.dxp-free-form {
+    &-aggreements-text {
+        font-size: 11px;
+        text-align: justify;
+    }
+
+    &-fail {
+        border: solid 1px red !important;
+    }
+
+    &-purpose-helper-text,
+    &-notify-me-check-box,
+    &-aggreements-check-box {
+        font-size: 11px;
+    }
+
+    &-select-input {
+        height: 40px;
+    }
+
+    &-textarea {
+        height: 100px;
+
+        &:focus {
+            outline: #cccccc !important;
+        }
+    }
+
+    &-loading {
+        height: 20px;
+    }
+
+    .loading-animation {
+        margin: 0px !important;
+    }
+
+}
+
+.dropdown-menu {
+    border-radius: 10px !important;
+    max-width: none !important;
+    padding: 8px !important;
+    transition: all 0.3s ease-in-out !important;
+    width: 525px;
+
+    .dropdown-item:hover {
+        color: #0053F0;
+    }
+}
