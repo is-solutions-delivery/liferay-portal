@@ -3,17 +3,17 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {useCallback, useEffect, useMemo, useState} from 'react';
-import {useForm} from 'react-hook-form';
-import {useNavigate, useParams} from 'react-router-dom';
-import {z} from 'zod';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { z } from 'zod';
 
 import FooterButtons from '../../../../../../../components/FooterButtons';
-import {useMarketplaceContext} from '../../../../../../../context/MarketplaceContext';
-import {Analytics} from '../../../../../../../core/Analytics';
-import {MarketplaceDeliveryProduct} from '../../../../../../../entity/MarketplaceDeliveryProduct';
+import { useMarketplaceContext } from '../../../../../../../context/MarketplaceContext';
+import { Analytics } from '../../../../../../../core/Analytics';
+import { MarketplaceDeliveryProduct } from '../../../../../../../entity/MarketplaceDeliveryProduct';
 import useGetProductByOrderId from '../../../../../../../hooks/useGetProductByOrderId';
-import {Liferay} from '../../../../../../../liferay/liferay';
+import { Liferay } from '../../../../../../../liferay/liferay';
 import zodSchema from '../../../../../../../schema/zod';
 import provisioningOAuth2 from '../../../../../../../services/oauth/Provisioning';
 import ProductCard from '../../../../../../ProductPurchase/components/ProductCard/ProductCard';
@@ -21,10 +21,10 @@ import StepWizard from '../../../../../../ProductPurchase/components/StepWizard/
 import AccountEmailInfo from './AccountInfo';
 import LicenseDetails from './LicenseDetails';
 import SelectSubscription from './SelectSubscription';
-import {CreateLicenseForm, StepCreateLicense, StepsInformation} from './types';
+import { CreateLicenseForm, StepCreateLicense, StepsInformation } from './types';
 
 import './index.scss';
-import {formatDate} from '../../../../../../../utils/date';
+import { formatDate } from '../../../../../../../utils/date';
 
 type ExtendBannerProps = {
 	subscription: {
@@ -34,7 +34,7 @@ type ExtendBannerProps = {
 	};
 };
 
-const ExtendBanner: React.FC<ExtendBannerProps> = ({subscription}) => (
+const ExtendBanner: React.FC<ExtendBannerProps> = ({ subscription }) => (
 	<>
 		<div className="align-items-center d-flex mb-3 row">
 			<small className="col-6 col-md-4 font-weight-bold m-0">
@@ -77,9 +77,9 @@ const stepsInformation: StepsInformation = {
 const CreateLicense = () => {
 	const [loading, setLoading] = useState(false);
 	const [step, setStep] = useState(StepCreateLicense.SUBSCRIPTION);
-	const {orderId} = useParams();
-	const {myUserAccount} = useMarketplaceContext();
-	const {data} = useGetProductByOrderId(orderId as string);
+	const { orderId } = useParams();
+	const { myUserAccount } = useMarketplaceContext();
+	const { data } = useGetProductByOrderId(orderId as string);
 
 	const navigate = useNavigate();
 	const product = data?.product;
@@ -87,7 +87,7 @@ const CreateLicense = () => {
 	const productCreatorAccountName = product?.catalogName || '';
 
 	const {
-		formState: {errors},
+		formState: { errors },
 		getValues,
 		register,
 		setValue,
@@ -102,12 +102,12 @@ const CreateLicense = () => {
 		},
 	});
 
-	const {description, hostname, ipAddress, macAddress, subscription} =
+	const { description, hostname, ipAddress, macAddress, subscription } =
 		watch();
 
 	useEffect(() => {
 		if (product) {
-			const {familyName, givenName} = myUserAccount;
+			const { familyName, givenName } = myUserAccount;
 
 			setValue(
 				'description',
@@ -135,7 +135,7 @@ const CreateLicense = () => {
 			);
 
 			try {
-				const licenseKey = await provisioningOAuth2.createLicenseKey({
+				const licenseKey = await provisioningOAuth2.createAppLicenseKey({
 					licenseEntry: {
 						description: form.description,
 						hostName: form.hostname,
@@ -170,7 +170,7 @@ const CreateLicense = () => {
 
 				navigate(`/order/${orderId}/licenses`);
 
-				await provisioningOAuth2.downloadLicenseKey(licenseKey.id);
+				await provisioningOAuth2.downloadAppLicenseKey(licenseKey.id);
 
 				Analytics.track('DOWNLOAD_LICENSE_KEY', {
 					licenseType: licenseKey.licenseType,

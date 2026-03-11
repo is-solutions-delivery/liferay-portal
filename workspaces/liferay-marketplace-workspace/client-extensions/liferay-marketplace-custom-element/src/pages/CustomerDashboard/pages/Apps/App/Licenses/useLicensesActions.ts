@@ -3,15 +3,15 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {useModal} from '@clayui/modal';
-import {useCallback} from 'react';
-import {KeyedMutator} from 'swr';
+import { useModal } from '@clayui/modal';
+import { useCallback } from 'react';
+import { KeyedMutator } from 'swr';
 
-import {Analytics} from '../../../../../../core/Analytics';
+import { Analytics } from '../../../../../../core/Analytics';
 import i18n from '../../../../../../i18n';
-import {Liferay} from '../../../../../../liferay/liferay';
+import { Liferay } from '../../../../../../liferay/liferay';
 import provisioningOAuth2 from '../../../../../../services/oauth/Provisioning';
-import {LicenseKey} from '../../../../../../services/oauth/types';
+import { LicenseKey } from '../../../../../../services/oauth/types';
 
 type Props = {
 	deactivateLicenseModal: ReturnType<typeof useModal>;
@@ -32,9 +32,9 @@ const useLicenseActions = ({
 }: Props) => {
 	const onDeativateLicenseKey = (licenseKey: LicenseKey) =>
 		provisioningOAuth2
-			.deactivateLicenseKey(licenseKey?.id as number)
+			.deactivateAppLicenseKey(licenseKey?.id as number)
 			.then(() => {
-				mutate((data: any) => data, {revalidate: true});
+				mutate((data: any) => data, { revalidate: true });
 
 				Liferay.Util.openToast({
 					message: i18n.translate(
@@ -53,7 +53,7 @@ const useLicenseActions = ({
 	const onViewLicenseKey = (licenseKey: LicenseKey) => {
 		licenseKeyModal.onOpenChange(true);
 
-		setModal({...licenseKey, keyType});
+		setModal({ ...licenseKey, keyType });
 	};
 
 	const onDownload = useCallback(
@@ -63,7 +63,7 @@ const useLicenseActions = ({
 			}
 
 			try {
-				await provisioningOAuth2.downloadLicenseKey(
+				await provisioningOAuth2.downloadAppLicenseKey(
 					licenseKey?.id as number
 				);
 

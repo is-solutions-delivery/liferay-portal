@@ -6,23 +6,23 @@
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
-import {useModal} from '@clayui/modal';
-import {ClayTooltipProvider} from '@clayui/tooltip';
+import { useModal } from '@clayui/modal';
+import { ClayTooltipProvider } from '@clayui/tooltip';
 import classNames from 'classnames';
-import {format, isBefore} from 'date-fns';
-import {useMemo, useState} from 'react';
-import {Link, useOutletContext, useParams} from 'react-router-dom';
+import { format, isBefore } from 'date-fns';
+import { useMemo, useState } from 'react';
+import { Link, useOutletContext, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 
-import {DashboardEmptyTable} from '../../../../../../components/DashboardTable/DashboardEmptyTable';
+import { DashboardEmptyTable } from '../../../../../../components/DashboardTable/DashboardEmptyTable';
 import Modal from '../../../../../../components/Modal';
 import StatusCell from '../../../../../../components/Table/StatusCell';
 import Table from '../../../../../../components/Table/Table';
-import {useMarketplaceContext} from '../../../../../../context/MarketplaceContext';
+import { useMarketplaceContext } from '../../../../../../context/MarketplaceContext';
 import useGetProductByOrderId from '../../../../../../hooks/useGetProductByOrderId';
 import i18n from '../../../../../../i18n';
 import provisioningOAuth2 from '../../../../../../services/oauth/Provisioning';
-import {LicenseKey} from '../../../../../../services/oauth/types';
+import { LicenseKey } from '../../../../../../services/oauth/types';
 import DeactivateKeysModal from '../../../../components/DeactivateKeysModal/DeactivateKeysModal';
 import LicenseDetailsModalHeader from '../../../../components/LicenseDetailsModalHeader';
 import LicenceKeyModalContent from '../../../../components/LicenseModalContent';
@@ -31,16 +31,16 @@ import TitleSubtitleHeader from '../../../../components/TitleSubtitleHeader';
 import useLicenseActions from './useLicensesActions';
 
 import './Licenses.scss';
-import {OrderStatus, OrderTypes} from '../../../../../../enums/Order';
+import { OrderStatus, OrderTypes } from '../../../../../../enums/Order';
 
 type OutletContext = ReturnType<typeof useGetProductByOrderId>;
 
 const PAGE_SIZES = [
-	{label: 5},
-	{label: 10},
-	{label: 20},
-	{label: 30},
-	{label: 50},
+	{ label: 5 },
+	{ label: 10 },
+	{ label: 20 },
+	{ label: 30 },
+	{ label: 50 },
 ];
 
 const isLicenseExpired = (expirationDate: string) =>
@@ -50,8 +50,8 @@ const Licenses = () => {
 	const [modalData, setModalData] = useState<LicenseKey>();
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(5);
-	const {myUserAccount} = useMarketplaceContext();
-	const {orderId} = useParams();
+	const { myUserAccount } = useMarketplaceContext();
+	const { orderId } = useParams();
 	const deactivateLicenseModal = useModal();
 	const licenseKeyModal = useModal();
 	const outletContext = useOutletContext<OutletContext['data']>();
@@ -72,7 +72,7 @@ const Licenses = () => {
 		`/order-license-keys/${orderId}/${page}/${pageSize}`,
 		async () => {
 			try {
-				return provisioningOAuth2.getOrderLicenseKeys(
+				return provisioningOAuth2.getOrderAppLicenseKeys(
 					orderId as string,
 					new URLSearchParams({
 						page: page.toString(),
@@ -94,7 +94,7 @@ const Licenses = () => {
 	const orderStatusIsNotCompleted =
 		placedOrder?.orderStatusInfo?.label !== OrderStatus.COMPLETED;
 
-	const {onDeativateLicenseKey, onDownload, onViewLicenseKey} =
+	const { onDeativateLicenseKey, onDownload, onViewLicenseKey } =
 		useLicenseActions({
 			deactivateLicenseModal,
 			keyType,
@@ -143,8 +143,8 @@ const Licenses = () => {
 								modalData?.expirationDate as string
 							)
 								? i18n.translate(
-										'this-key-is-expired-and-cannot-be-downloaded'
-									)
+									'this-key-is-expired-and-cannot-be-downloaded'
+								)
 								: ''
 						}
 					>
@@ -165,7 +165,7 @@ const Licenses = () => {
 		<div className="licenses mb-9 mt-4">
 			{rows.length ? (
 				<Table
-					Actions={({row}) => (
+					Actions={({ row }) => (
 						<TableActions
 							isDisabled={isLicenseExpired(row.expirationDate)}
 							onDeactivate={() => {
@@ -178,8 +178,8 @@ const Licenses = () => {
 							tooltip={
 								isLicenseExpired(row.expirationDate)
 									? i18n.translate(
-											'this-key-is-expired-and-cannot-be-downloaded'
-										)
+										'this-key-is-expired-and-cannot-be-downloaded'
+									)
 									: ''
 							}
 						/>
@@ -193,7 +193,7 @@ const Licenses = () => {
 							noWrap: true,
 							render: (
 								description,
-								{licenseType}: {licenseType: string}
+								{ licenseType }: { licenseType: string }
 							) => (
 								<TitleSubtitleHeader
 									subtitle={description}
@@ -226,7 +226,7 @@ const Licenses = () => {
 						{
 							bodyClass: 'border-0 cursor-pointer',
 							key: 'startDate',
-							render: (startDate, {expirationDate}) => (
+							render: (startDate, { expirationDate }) => (
 								<div className="date-cell">
 									<p className="m-0">
 										{format(
@@ -239,9 +239,9 @@ const Licenses = () => {
 									<p className="m-0">
 										{expirationDate
 											? format(
-													new Date(expirationDate),
-													'MMM dd, yyyy'
-												)
+												new Date(expirationDate),
+												'MMM dd, yyyy'
+											)
 											: 'DNE'}
 									</p>
 								</div>
@@ -260,7 +260,7 @@ const Licenses = () => {
 						{
 							bodyClass: 'border-0 cursor-pointer',
 							key: 'status',
-							render: (_, {active, expirationDate}) => {
+							render: (_, { active, expirationDate }) => {
 								const isActive =
 									active &&
 									isBefore(
@@ -314,8 +314,8 @@ const Licenses = () => {
 							title={
 								orderStatusIsNotCompleted
 									? i18n.translate(
-											'the-order-must-be-completed-before-licensing-this-app.'
-										)
+										'the-order-must-be-completed-before-licensing-this-app.'
+									)
 									: undefined
 							}
 							to={`/order/${orderId}/create-license`}

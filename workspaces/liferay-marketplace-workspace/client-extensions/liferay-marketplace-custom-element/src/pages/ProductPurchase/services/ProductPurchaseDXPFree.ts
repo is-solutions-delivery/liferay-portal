@@ -1,7 +1,8 @@
 import { OrderCustomFields, OrderTypes } from "../../../enums/Order";
 import { Liferay } from "../../../liferay/liferay";
 import zodSchema from "../../../schema/zod";
-import dxpFreeLicensingOAuth2 from "../../../services/oauth/DXPFreeLicensing";
+import provisioningOAuth2 from "../../../services/oauth/Provisioning";
+
 import HeadlessDXPFreeRequest from "../../../services/rest/HeadlessDXPFreeRequest";
 import { getSiteURL } from "../../../utils/site";
 
@@ -61,7 +62,7 @@ export default class ProductPurchaseDXPFree extends ProductPurchase {
             "r_orderToDXPFreeRequest_commerceOrderId": order.id
         })
 
-        await dxpFreeLicensingOAuth2.createDXPFreeLicenseKey({
+        await provisioningOAuth2.createLicenseKey({
             "assetReceiptLicenseUuid": order.id,
             "domains": this.form.domain,
             "owner": Liferay.ThemeDisplay.getUserEmailAddress(),

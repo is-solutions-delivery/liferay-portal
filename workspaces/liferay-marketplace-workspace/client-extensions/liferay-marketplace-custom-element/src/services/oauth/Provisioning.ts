@@ -3,51 +3,59 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {downloadFile} from '../../utils/file';
-import {MarketplaceSpringBootOAuth2} from './OAuth2Client';
-import {LicenseKey, LicenseTypePayload} from './types';
+import { downloadFile } from '../../utils/file';
+import { MarketplaceSpringBootOAuth2 } from './OAuth2Client';
+import { LicenseKey, LicenseTypePayload } from './types';
 
 class ProvisioningOAuth2 extends MarketplaceSpringBootOAuth2 {
-	async createLicenseKey(payload: LicenseTypePayload) {
-		return this.post<LicenseKey>('/license-keys', payload, {
-			earlyReturn: true,
-		});
-	}
+    async createAppLicenseKey(payload: LicenseTypePayload) {
+        return this.post<LicenseKey>('/app-license-keys', payload, {
+            earlyReturn: true,
+        });
+    }
 
-	async deactivateLicenseKey(licenseKey: number) {
-		await this.post(`/license-keys/${licenseKey}/deactivate`);
-	}
+    async createLicenseKey(payload: any) {
+        return this.post<Response>('/license-key-type-free', payload, {
+            earlyReturn: false,
+        });
+    }
 
-	async downloadLicenseKey(id: number) {
-		const response = await this.get<Response>(
-			`/license-keys/${id}/download`,
-			{
-				earlyReturn: true,
-			}
-		);
+    async downloadAppLicenseKey(id: number) {
+        const response = await this.get<Response>(
+            `/app-license-keys/${id}/download`,
+            {
+                earlyReturn: true,
+            }
+        );
 
-		await downloadFile('license.xml', response);
-	}
+        await downloadFile('license.xml', response);
+    }
 
-	async licenseKeysRenew(licenseKey: number) {
-		await this.post(`/license-keys/${licenseKey}/renew`);
-	}
+    async deactivateAppLicenseKey(licenseKey: number) {
+        await this.post(`/app-license-keys/${licenseKey}/deactivate`);
+    }
 
-	async getOrderDXPLicenseKeys(orderId: string) {
-		return this.get<LicenseKey[]>(`/order-dxp-license-keys/${orderId}`, {
-			earlyReturn: true,
-		});
-	}
 
-	async getOrderLicenseKeys(
-		orderId: string,
-		searchParams: URLSearchParams = new URLSearchParams()
-	) {
-		return this.get<APIResponse>(
-			`/order-license-keys/${orderId}?${searchParams.toString()}`,
-			{earlyReturn: true}
-		);
-	}
+    async getOrderLicenseKeys(orderId: string) {
+        return this.get<LicenseKey[]>(`/order-license-keys/${orderId}`, {
+            earlyReturn: true,
+        });
+    }
+
+    async getOrderAppLicenseKeys(
+        orderId: string,
+        searchParams: URLSearchParams = new URLSearchParams()
+    ) {
+        return this.get<APIResponse>(
+            `/order-app-license-keys/${orderId}?${searchParams.toString()}`,
+            { earlyReturn: true }
+        );
+    }
+
+    async licenseKeysRenew(licenseKey: number) {
+        await this.post(`/license-key-type-free/${licenseKey}/renew`);
+    }
+
 }
 
 const provisioningOAuth2 = new ProvisioningOAuth2('/provisioning');

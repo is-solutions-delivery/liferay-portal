@@ -6,24 +6,24 @@
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
-import {useModal} from '@clayui/modal';
-import {ClayTooltipProvider} from '@clayui/tooltip';
-import {differenceInDays, format, isBefore, subMonths} from 'date-fns';
-import {useEffect, useState} from 'react';
-import {useLocation, useOutletContext, useParams} from 'react-router-dom';
+import { useModal } from '@clayui/modal';
+import { ClayTooltipProvider } from '@clayui/tooltip';
+import { differenceInDays, format, isBefore, subMonths } from 'date-fns';
+import { useEffect, useState } from 'react';
+import { useLocation, useOutletContext, useParams } from 'react-router-dom';
 import useSWR from 'swr';
 
-import {breadcrumbStore} from '../../../../../components/Breadcrumb/BreadcrumbStore';
+import { breadcrumbStore } from '../../../../../components/Breadcrumb/BreadcrumbStore';
 import EmptyState from '../../../../../components/EmptyState';
 import Modal from '../../../../../components/Modal';
 import StatusCell from '../../../../../components/Table/StatusCell';
 import Table from '../../../../../components/Table/Table';
-import {useMarketplaceContext} from '../../../../../context/MarketplaceContext';
-import {OrderTypes} from '../../../../../enums/Order';
+import { useMarketplaceContext } from '../../../../../context/MarketplaceContext';
+import { OrderTypes } from '../../../../../enums/Order';
 import useGetProductByOrderId from '../../../../../hooks/useGetProductByOrderId';
 import i18n from '../../../../../i18n';
 import provisioningOAuth2 from '../../../../../services/oauth/Provisioning';
-import {LicenseKey} from '../../../../../services/oauth/types';
+import { LicenseKey } from '../../../../../services/oauth/types';
 import LicenseDetailsModalHeader from '../../../components/LicenseDetailsModalHeader';
 import LicenceKeyModalContent from '../../../components/LicenseModalContent';
 import TitleSubtitleHeader from '../../../components/TitleSubtitleHeader';
@@ -40,8 +40,8 @@ const isLicenseExpired = (expirationDate: string) =>
 
 const LiferayProductLicenses = () => {
 	const [modalData, setModalData] = useState<LicenseKey>();
-	const {myUserAccount} = useMarketplaceContext();
-	const {orderId} = useParams();
+	const { myUserAccount } = useMarketplaceContext();
+	const { orderId } = useParams();
 	const deactivateLicenseModal = useModal();
 	const licenseKeyModal = useModal();
 	const location = useLocation();
@@ -56,7 +56,7 @@ const LiferayProductLicenses = () => {
 		`/order-free-dxp-license-keys/${orderId}`,
 		async (): Promise<LicenseKey[]> => {
 			try {
-				return provisioningOAuth2.getOrderDXPLicenseKeys(
+				return provisioningOAuth2.getOrderLicenseKeys(
 					orderId as string
 				);
 			}
@@ -71,7 +71,7 @@ const LiferayProductLicenses = () => {
 
 	useEffect(() => {
 		breadcrumbStore.send({
-			replacements: {[orderId as string]: product?.name || ''},
+			replacements: { [orderId as string]: product?.name || '' },
 			type: 'setReplacements',
 		});
 	}, [orderId, product?.name]);
@@ -103,7 +103,7 @@ const LiferayProductLicenses = () => {
 		);
 	};
 
-	const {onDownload, onViewLicenseKey} = useLicenseActions({
+	const { onDownload, onViewLicenseKey } = useLicenseActions({
 		deactivateLicenseModal,
 		keyType,
 		licenseKeyModal,
@@ -135,7 +135,7 @@ const LiferayProductLicenses = () => {
 			<div className="licenses mb-9">
 				{rows.length ? (
 					<Table
-						Actions={({row}) => {
+						Actions={({ row }) => {
 							const expired =
 								!row.expirationDate ||
 								isLicenseExpired(row.expirationDate);
@@ -158,8 +158,8 @@ const LiferayProductLicenses = () => {
 											title={
 												!renewalAvailable
 													? i18n.translate(
-															'renewal-will-be-available-3-months-before-your-activation-key-expires'
-														)
+														'renewal-will-be-available-3-months-before-your-activation-key-expires'
+													)
 													: undefined
 											}
 										>
@@ -171,7 +171,7 @@ const LiferayProductLicenses = () => {
 											disabled={expired}
 											displayType="secondary"
 											onClick={() => {
-												provisioningOAuth2.downloadLicenseKey(
+												provisioningOAuth2.downloadAppLicenseKey(
 													licenseKey
 												);
 											}}
@@ -221,7 +221,7 @@ const LiferayProductLicenses = () => {
 							{
 								bodyClass: 'border-0 cursor-pointer',
 								key: 'startDate',
-								render: (startDate, {expirationDate}) => (
+								render: (startDate, { expirationDate }) => (
 									<div className="date-cell">
 										<p className="m-0">
 											{format(
@@ -234,11 +234,11 @@ const LiferayProductLicenses = () => {
 										<p className="m-0">
 											{expirationDate
 												? format(
-														new Date(
-															expirationDate
-														),
-														'MMM dd, yyyy'
-													)
+													new Date(
+														expirationDate
+													),
+													'MMM dd, yyyy'
+												)
 												: 'DNE'}
 										</p>
 									</div>
@@ -257,7 +257,7 @@ const LiferayProductLicenses = () => {
 							{
 								bodyClass: 'border-0 cursor-pointer',
 								key: 'status',
-								render: (_, {active, expirationDate}) => {
+								render: (_, { active, expirationDate }) => {
 									const isActive =
 										active &&
 										isBefore(
@@ -322,8 +322,8 @@ const LiferayProductLicenses = () => {
 										modalData?.expirationDate as string
 									)
 										? i18n.translate(
-												'this-key-is-expired-and-cannot-be-downloaded'
-											)
+											'this-key-is-expired-and-cannot-be-downloaded'
+										)
 										: ''
 								}
 							>
