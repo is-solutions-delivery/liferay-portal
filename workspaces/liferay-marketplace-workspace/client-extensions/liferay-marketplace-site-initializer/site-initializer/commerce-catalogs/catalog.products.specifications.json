@@ -105,6 +105,14 @@
 	},
 	{
 		"categoryKey": "product-metadata",
+		"cpDefinitionExternalReferenceCode": "MKT-LIFERAY-PRODUCT-TYPE",
+		"description": "Liferay Product Type",
+		"facetable": true,
+		"key": "liferay-product-type",
+		"title": "Liferay Product Type"
+	},
+	{
+		"categoryKey": "product-metadata",
 		"cpDefinitionExternalReferenceCode": "MKT-LIFERAY-PRODUCTS-CAPABILITIES",
 		"description": "",
 		"facetable": true,

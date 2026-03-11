@@ -1,0 +1,11 @@
+{
+	"deletionType": "cascade",
+	"label": {
+		"en_US": "Order to DXP Free Request"
+	},
+	"name": "orderToDXPFreeRequest",
+	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:CommerceOrder$]",
+	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:DXPFreeRequest$]",
+	"objectDefinitionName2": "DXPFreeRequest",
+	"type": "oneToMany"
+}
