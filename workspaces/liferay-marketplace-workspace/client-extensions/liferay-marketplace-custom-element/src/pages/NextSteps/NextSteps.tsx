@@ -6,16 +6,16 @@
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
-import {Fragment} from 'react';
+import { Fragment } from 'react';
 import useSWR from 'swr';
 
 import checkCircleIcon from '../../assets/icons/check_circle_icon.svg';
 import paymentPendingIcon from '../../assets/icons/payment_pending_icon.svg';
 import timesCircleIcon from '../../assets/icons/times_circle_icon.svg';
-import {AccountAndAppCard} from '../../components/Card/AccountAndAppCard';
-import {Header} from '../../components/Header/Header';
-import {PageRenderer} from '../../components/Page';
-import {OrderTypes, PaymentStatus} from '../../enums/Order';
+import { AccountAndAppCard } from '../../components/Card/AccountAndAppCard';
+import { Header } from '../../components/Header/Header';
+import { PageRenderer } from '../../components/Page';
+import { OrderTypes, PaymentStatus } from '../../enums/Order';
 import {
 	ProductSpecificationKey,
 	ProductTypeVocabulary,
@@ -24,19 +24,19 @@ import {
 import withProviders from '../../hoc/withProviders';
 import useGetProductByOrderId from '../../hooks/useGetProductByOrderId';
 import i18n from '../../i18n';
-import {Liferay} from '../../liferay/liferay';
+import { Liferay } from '../../liferay/liferay';
 import HeadlessAdminUser from '../../services/rest/HeadlessAdminUser';
-import {getSiteURL} from '../../utils/site';
-import {getAccountImage} from '../../utils/util';
+import { getSiteURL } from '../../utils/site';
+import { getAccountImage } from '../../utils/util';
 import ProductPurchaseNextSteps from '../ProductPurchase/pages/NextSteps';
 
 import './NextSteps.scss';
-import {MarketplaceCategories} from '../../enums/Categories';
+import { MarketplaceCategories } from '../../enums/Categories';
 import {
 	getProductCategoriesByVocabularyName,
 	getProductSpecification,
 } from '../../utils/productUtils';
-import LDPNextSteps from '../ProductPurchase/pages/LiferayProduct/LDPNextSteps';
+import LDPNextSteps from '../ProductPurchase/pages/LiferayProducts/LDPNextSteps';
 
 type NextStepsBodyProps = ReturnType<typeof useGetProductByOrderId>['data'];
 
@@ -48,7 +48,7 @@ export function NextStepsBody(props: NextStepsBodyProps) {
 	const orderId = placedOrder?.id;
 	const productName = product?.name;
 
-	const {data: accountCommerce} = useSWR(
+	const { data: accountCommerce } = useSWR(
 		accountId ? `/next-steps/account-commerce/${accountId}` : null,
 		() => HeadlessAdminUser.getAccount(accountId as unknown as string)
 	);
@@ -258,7 +258,7 @@ export function NextSteps() {
 	const urlParams = new URLSearchParams(window.location.search);
 	const orderId = urlParams.get('orderId');
 
-	const {data, error, isLoading} = useGetProductByOrderId(orderId as string);
+	const { data, error, isLoading } = useGetProductByOrderId(orderId as string);
 
 	if (isLoading) {
 		return <ClayLoadingIndicator />;
@@ -280,7 +280,7 @@ export function NextSteps() {
 	const productTypeCategory = productTypes[0] as ProductTypeVocabulary;
 
 	if (
-		productTypeCategory === ProductTypeVocabulary.LIFERAY_PRODUCTS &&
+		productTypeCategory === ProductTypeVocabulary.LIFERAY_PRODUCT &&
 		solutionTypeSpecificationValue === SolutionTypes.LIFERAY_DATA_PLATFORM
 	) {
 		return (
@@ -320,4 +320,4 @@ export function NextSteps() {
 	);
 }
 
-export default withProviders(NextSteps, {withHashRouter: true});
+export default withProviders(NextSteps, { withHashRouter: true });

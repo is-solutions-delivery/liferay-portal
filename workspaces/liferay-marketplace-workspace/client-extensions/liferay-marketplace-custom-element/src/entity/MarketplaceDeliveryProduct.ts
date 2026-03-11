@@ -13,8 +13,8 @@ import {
 	ProductVocabulary,
 } from '../enums/Product';
 import i18n from '../i18n';
-import {ConsoleUserProject} from '../services/oauth/types';
-import {safeJSONParse} from '../utils/util';
+import { ConsoleUserProject } from '../services/oauth/types';
+import { safeJSONParse } from '../utils/util';
 
 const productTypeIcons = {
 	cloud: 'cloud',
@@ -22,7 +22,7 @@ const productTypeIcons = {
 };
 
 export class MarketplaceDeliveryProduct {
-	constructor(protected product: DeliveryProduct) {}
+	constructor(protected product: DeliveryProduct) { }
 
 	get appSettings() {
 		return safeJSONParse(this.specificationValues.APP_SETTINGS, {
@@ -31,7 +31,7 @@ export class MarketplaceDeliveryProduct {
 	}
 
 	get appType() {
-		const {APP_TYPE} = this.specificationValues;
+		const { APP_TYPE } = this.specificationValues;
 
 		let type: string =
 			ProductTypeLabels[APP_TYPE as unknown as ProductType];
@@ -148,8 +148,8 @@ export class MarketplaceDeliveryProduct {
 
 		return (
 			optionsTypes[
-				this.specificationValues
-					.APP_TYPE as unknown as keyof typeof optionsTypes
+			this.specificationValues
+				.APP_TYPE as unknown as keyof typeof optionsTypes
 			] || ProductLicense.BASE
 		);
 	}
@@ -176,15 +176,25 @@ export class MarketplaceDeliveryProduct {
 		return {
 			icon:
 				(productTypeIcons as any)[
-					type as keyof typeof productTypeIcons
+				type as keyof typeof productTypeIcons
 				] || 'cog',
 			label: `${type} App`,
 			type,
 		};
 	}
 
+	public getLiferayProductType() {
+		return this.getSpecificationValue(
+			ProductSpecificationKey.LIFERAY_PRODUCT_TYPE
+		);
+	}
+
+	public getProductTypeCategory() {
+		return this.getCategories(ProductVocabulary.PRODUCT_TYPE);
+	}
+
 	public getPurchasableSKUs() {
-		return this.product.skus.filter(({purchasable}) => purchasable);
+		return this.product.skus.filter(({ purchasable }) => purchasable);
 	}
 
 	public getSolutionCategories() {

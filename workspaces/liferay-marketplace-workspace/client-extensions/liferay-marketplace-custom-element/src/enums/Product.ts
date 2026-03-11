@@ -10,6 +10,11 @@ export enum LicenseType {
 	SUBSCRIPTION = 'subscription',
 }
 
+export enum LiferayProductType {
+	DXP = 'dxp',
+	LDP = 'ldp',
+}
+
 export enum ProductEditionOption {
 	EE = 'EE',
 }
@@ -67,6 +72,7 @@ export enum ProductSpecificationKey {
 	APP_TYPE = 'type',
 	APP_VERSION = 'latest-version',
 	APP_VERSION_NOTES = 'product-notes',
+	LIFERAY_PRODUCT_TYPE = 'liferay-product-type',
 	LIFERAY_VERSION = 'liferay-version',
 	SOLUTION_COMPANY_DESCRIPTION = 'solution-company-description',
 	SOLUTION_COMPANY_EMAIL = 'solution-company-email',
@@ -110,7 +116,7 @@ export enum ProductType {
 
 export enum ProductTypeVocabulary {
 	APP = 'App',
-	LIFERAY_PRODUCTS = 'Liferay Products',
+	LIFERAY_PRODUCT = 'Liferay Product',
 	SOLUTION = 'Solution',
 }
 

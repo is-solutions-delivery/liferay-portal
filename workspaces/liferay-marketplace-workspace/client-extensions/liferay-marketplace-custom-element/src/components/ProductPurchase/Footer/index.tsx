@@ -4,12 +4,12 @@
  */
 
 import ClayButton from '@clayui/button';
-import {ComponentProps, ReactElement} from 'react';
+import { ComponentProps, ReactElement } from 'react';
 
 import i18n from '../../../i18n';
-import {Liferay} from '../../../liferay/liferay';
-import {useProductPurchaseOutletContext} from '../../../pages/ProductPurchase/ProductPurchaseOutlet';
-import {getSiteURL} from '../../../utils/site';
+import { Liferay } from '../../../liferay/liferay';
+import { useProductPurchaseOutletContext } from '../../../pages/ProductPurchase/ProductPurchaseOutlet';
+import { getSiteURL } from '../../../utils/site';
 
 type ProductPurchaseFooterProps = {
 	backButtonProps?: ComponentProps<typeof ClayButton>;
@@ -24,7 +24,11 @@ const ProductPurchaseFooter: React.FC<ProductPurchaseFooterProps> = ({
 	continueButtonProps,
 	termsAndConditions,
 }) => {
-	const {productPurchaseCart} = useProductPurchaseOutletContext();
+	const { productPurchaseCart } = useProductPurchaseOutletContext();
+
+	if (backButtonProps?.hidden && cancelButtonProps?.hidden && continueButtonProps?.hidden) {
+		return null;
+	}
 
 	return (
 		<div className="d-flex flex-column mt-3 w-100">
@@ -32,6 +36,7 @@ const ProductPurchaseFooter: React.FC<ProductPurchaseFooterProps> = ({
 				<ClayButton
 					className="font-weight-bold"
 					displayType="unstyled"
+					hidden={cancelButtonProps?.hidden}
 					onClick={() => {
 						if (productPurchaseCart.cart.id) {
 							productPurchaseCart.removeCart(
@@ -46,11 +51,11 @@ const ProductPurchaseFooter: React.FC<ProductPurchaseFooterProps> = ({
 				</ClayButton>
 
 				<div>
-					<ClayButton displayType="secondary" {...backButtonProps}>
+					<ClayButton hidden={backButtonProps?.hidden} displayType="secondary" {...backButtonProps}>
 						{backButtonProps?.children || i18n.translate('back')}
 					</ClayButton>
 
-					<ClayButton className="ml-4" {...continueButtonProps}>
+					<ClayButton hidden={continueButtonProps?.hidden} className="ml-4" {...continueButtonProps}>
 						{continueButtonProps?.children ||
 							i18n.translate('continue')}
 					</ClayButton>
