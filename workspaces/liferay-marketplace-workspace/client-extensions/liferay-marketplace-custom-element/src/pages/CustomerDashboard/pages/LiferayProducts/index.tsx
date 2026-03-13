@@ -14,6 +14,7 @@ import i18n from '../../../../i18n';
 import {Liferay} from '../../../../liferay/liferay';
 import PaymentStatusBadge from '../../../FinanceDashboard/components/PaymentStatus/PaymentStatusBadge';
 import {useCustomerDashboardOutletContext} from '../../CustomerDashboardOutlet';
+import {getSiteURL} from '../../../../utils/site';
 
 const searchParams = new URLSearchParams({
 	filter: SearchBuilder.in('orderTypeExternalReferenceCode', [
@@ -68,6 +69,15 @@ const LiferayProductsListView = () => {
 									navigate(
 										`${getViewDetailsPath(String(row.id), row.orderTypeExternalReferenceCode)}`
 									),
+							},
+							{
+								hidden: (row: PlacedOrder) =>
+									![OrderTypes.CMP].includes(
+										row.orderTypeExternalReferenceCode as OrderTypes
+									),
+								name: i18n.translate('share-your-feedback'),
+								onClick: (row: PlacedOrder) =>
+									(window.location.href = `${Liferay.ThemeDisplay.getPortalURL()}${getSiteURL()}/product-feedback?orderId=${String(row.id)}`),
 							},
 						],
 						columns: [
