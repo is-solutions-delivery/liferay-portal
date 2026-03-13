@@ -346,7 +346,7 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 			}
 		}
 
-		final String finalOpportunityId = opportunityId;
+		String finalOpportunityId = opportunityId;
 
 		OrderResource orderResource = _marketplaceService.getOrderResource();
 

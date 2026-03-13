@@ -15,8 +15,6 @@ import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ProductPurchase;
 import java.util.Map;
 import java.util.Objects;
 
-import org.json.JSONObject;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,26 +35,16 @@ public class ProvisioningHubService extends BaseService {
 
 			Map<String, String> accountProperties = account.getProperties();
 
-			// first try like this
-
-			AnalyticsForm analyticsForm1 = AnalyticsForm.fromJSONObject(
-				new JSONObject(accountProperties));
-
-			_analyticsService.provision(analyticsForm1, order.getId());
-
-			// if the first doesn't fit properly then build as follows
-
 			AnalyticsForm analyticsForm2 = new AnalyticsForm(
-				accountProperties.get("corpProjectName"),
-				accountProperties.get("corpProjectUuid"),
+				account.getName(), account.getKey(),
 				accountProperties.get(
-					"incidentReportEmailAddresses"
+					"securityContactEmailAddress"
 				).split(
 					","
 				),
-				accountProperties.get("serverLocation"),
-				accountProperties.get("name"),
-				accountProperties.get("serverLocation"));
+				accountProperties.get("ldpWorkspaceName"),
+				accountProperties.get("dataCenterLocation"),
+				accountProperties.get("securityContactEmailAddress"));
 
 			_analyticsService.provision(analyticsForm2, order.getId());
 		}

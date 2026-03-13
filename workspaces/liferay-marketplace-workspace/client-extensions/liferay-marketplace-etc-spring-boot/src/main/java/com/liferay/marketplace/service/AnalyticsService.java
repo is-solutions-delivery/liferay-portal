@@ -56,7 +56,7 @@ public class AnalyticsService extends BaseService {
 		).build(
 		).post(
 		).uri(
-			"/o/faro/main/project/provisioned"
+			"/o/faro/main/project/unprovisioned"
 		).contentType(
 			MediaType.APPLICATION_FORM_URLENCODED
 		).body(
