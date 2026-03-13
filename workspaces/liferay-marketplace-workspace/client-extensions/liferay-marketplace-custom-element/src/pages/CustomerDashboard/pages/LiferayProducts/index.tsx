@@ -12,9 +12,9 @@ import SearchBuilder from '../../../../core/SearchBuilder';
 import {OrderTypes, PaymentStatus} from '../../../../enums/Order';
 import i18n from '../../../../i18n';
 import {Liferay} from '../../../../liferay/liferay';
+import {getSiteURL} from '../../../../utils/site';
 import PaymentStatusBadge from '../../../FinanceDashboard/components/PaymentStatus/PaymentStatusBadge';
 import {useCustomerDashboardOutletContext} from '../../CustomerDashboardOutlet';
-import {getSiteURL} from '../../../../utils/site';
 
 const searchParams = new URLSearchParams({
 	filter: SearchBuilder.in('orderTypeExternalReferenceCode', [
@@ -34,6 +34,10 @@ const getViewDetailsPath = (orderId: string, orderType: string) => {
 	}
 
 	return path;
+};
+
+const sendToProductFeedback = (orderId: string) => {
+	window.location.href = `${Liferay.ThemeDisplay.getPortalURL()}${getSiteURL()}/product-feedback?orderId=${orderId}`;
 };
 
 const LiferayProductsListView = () => {
@@ -77,7 +81,7 @@ const LiferayProductsListView = () => {
 									),
 								name: i18n.translate('share-your-feedback'),
 								onClick: (row: PlacedOrder) =>
-									(window.location.href = `${Liferay.ThemeDisplay.getPortalURL()}${getSiteURL()}/product-feedback?orderId=${String(row.id)}`),
+									sendToProductFeedback(String(row.id)),
 							},
 						],
 						columns: [
