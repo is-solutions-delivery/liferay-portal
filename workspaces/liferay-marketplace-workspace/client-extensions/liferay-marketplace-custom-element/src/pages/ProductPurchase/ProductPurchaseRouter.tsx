@@ -3,18 +3,18 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {HashRouter, Route, Routes} from 'react-router-dom';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 
-import {useMarketplaceContext} from '../../context/MarketplaceContext';
-import {MarketplaceDeliveryProduct} from '../../entity/MarketplaceDeliveryProduct';
-import {MarketplaceCategories} from '../../enums/Categories';
+import { useMarketplaceContext } from '../../context/MarketplaceContext';
+import { MarketplaceDeliveryProduct } from '../../entity/MarketplaceDeliveryProduct';
+import { MarketplaceCategories } from '../../enums/Categories';
 import {
 	ProductSpecificationKey,
 	ProductTypeVocabulary,
 	SolutionTypes,
 } from '../../enums/Product';
 import withProviders from '../../hoc/withProviders';
-import {useDeliveryProduct} from '../../hooks/data/useProduct';
+import { useDeliveryProduct } from '../../hooks/data/useProduct';
 import i18n from '../../i18n';
 import {
 	getProductCategoriesByVocabularyName,
@@ -24,7 +24,7 @@ import {
 import ProductPurchaseOutlet from './ProductPurchaseOutlet';
 import ProductPurchaseAccountSelection from './pages/AccountSelection';
 import AppAccountSelection from './pages/App/AccountSelection';
-import {InsuficientResources} from './pages/App/InsuficientResources';
+import { InsuficientResources } from './pages/App/InsuficientResources';
 import ContactSalesPage from './pages/App/InsuficientResources/ContactSales';
 import ContactSalesForm from './pages/App/InsuficientResources/ContactSalesForm';
 import License from './pages/App/License';
@@ -35,6 +35,7 @@ import OrderSummary from './pages/LiferayProduct/OrderSummary';
 import ProjectSelection from './pages/LiferayProduct/Project';
 import NextSteps from './pages/NextSteps';
 import SolutionProvisioningForm from './pages/Solution';
+import LiferayCMPForm from './pages/LiferayService/LiferayCMP/LiferayCMPForm';
 
 export const productTypeRoutes = {
 	[ProductTypeVocabulary.APP]: {
@@ -43,7 +44,7 @@ export const productTypeRoutes = {
 			useCart: true,
 		},
 		routes: (product: DeliveryProduct) => {
-			const {isPaidApp} = getProductPriceModel(product);
+			const { isPaidApp } = getProductPriceModel(product);
 
 			return [
 				{
@@ -106,6 +107,20 @@ export const productTypeRoutes = {
 					},
 				];
 			}
+			if (solutionType === SolutionTypes.CMP) {
+				return [
+					{
+						element: ProductPurchaseAccountSelection,
+						index: true,
+						title: i18n.translate('account'),
+					},
+					{
+						element: LiferayCMPForm,
+						path: 'activation-key-form',
+						title: i18n.translate('activation-key'),
+					}
+				];
+			}
 
 			if (solutionType === SolutionTypes.LIFERAY_DATA_PLATFORM) {
 				return [
@@ -114,7 +129,6 @@ export const productTypeRoutes = {
 						index: true,
 						title: i18n.translate('account'),
 					},
-
 					{
 						element: ProjectSelection,
 						path: 'project',
@@ -157,7 +171,7 @@ export const productTypeRoutes = {
 
 const ProductPurchaseRouter = () => {
 	const {
-		properties: {productId: pageProductId},
+		properties: { productId: pageProductId },
 	} = useMarketplaceContext();
 
 	// The productId that comes from the property can be used to hide the productId
@@ -169,7 +183,7 @@ const ProductPurchaseRouter = () => {
 			'productId'
 		) as unknown as string);
 
-	const {data: product, isLoading} = useDeliveryProduct(productId);
+	const { data: product, isLoading } = useDeliveryProduct(productId);
 
 	if (isLoading) {
 		return null;
@@ -192,10 +206,10 @@ const ProductPurchaseRouter = () => {
 
 	const productTypeRoute =
 		productTypeRoutes[
-			productTypeCategory as keyof typeof productTypeRoutes
+		productTypeCategory as keyof typeof productTypeRoutes
 		];
 
-	const {routes: _routes = []} = productTypeRoute || {};
+	const { routes: _routes = [] } = productTypeRoute || {};
 
 	const routes =
 		typeof _routes === 'function'
@@ -210,7 +224,7 @@ const ProductPurchaseRouter = () => {
 						<ProductPurchaseOutlet
 							product={product as DeliveryProduct}
 							productTypeRoute={
-								{...productTypeRoute, routes} as any
+								{ ...productTypeRoute, routes } as any
 							}
 							solutionTypeSpecificationValue={
 								solutionTypeSpecificationValue

@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {FieldErrors, UseFormRegister} from 'react-hook-form';
+import { FieldErrors, UseFormRegister } from 'react-hook-form';
 
-import {RequiredMask} from '../../../../../../../components/FieldBase';
+import { RequiredMask } from '../../../../../../../components/FieldBase';
 import FormInput from '../../../../../../../components/Input/formInput';
-import {CreateLicenseForm} from './types';
+import { CreateLicenseForm } from './types';
 
 type InputPropsLicense = {
 	inputProps: {
@@ -17,7 +17,7 @@ type InputPropsLicense = {
 	};
 };
 
-const LicenseDetails = ({inputProps}: InputPropsLicense) => (
+const LicenseDetails = ({ inputProps }: InputPropsLicense) => (
 	<div className="license-details-form">
 		<div className="h5">
 			Environment Details <RequiredMask />
@@ -28,7 +28,7 @@ const LicenseDetails = ({inputProps}: InputPropsLicense) => (
 		<FormInput
 			{...inputProps}
 			boldLabel
-			className="custom-input text-capitalize"
+			className="custom-input"
 			helpMessage="Include a description to uniquely identify this environment. This cannot be edited later."
 			label="Description"
 			name="description"

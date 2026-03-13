@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {zodResolver} from '@hookform/resolvers/zod';
-import {z} from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 import i18n from '../i18n';
-import {removeHTMLTags} from '../utils/string';
+import { removeHTMLTags } from '../utils/string';
 
 const domainRegex = /^(?!:\/\/)([a-zA-Z0-9-_]+?\.)+[a-zA-Z]{2,}$/;
 
@@ -69,7 +69,7 @@ const paidApp = z.object({
 	}),
 	publisherWebsiteURL: z
 		.string()
-		.url({message: i18n.translate('please-fill-in-a-valid-url')})
+		.url({ message: i18n.translate('please-fill-in-a-valid-url') })
 		.transform((url) => (url.startsWith('http') ? url : `https://${url}`)),
 });
 
@@ -90,17 +90,17 @@ const zodSchema = {
 		accounts: z.any().array().optional(),
 		companyName: z
 			.string()
-			.min(1, {message: 'Please enter a company name to continue'}),
+			.min(1, { message: 'Please enter a company name to continue' }),
 		country: z
 			.string()
-			.min(2, {message: 'Please select the country to continue'}),
+			.min(2, { message: 'Please select the country to continue' }),
 		emailAddress: z
 			.string()
 			.email(i18n.translate('this-field-is-required')),
 		extension: z.string().optional(),
 		familyName: z
 			.string()
-			.min(3, {message: i18n.translate('this-field-is-required')}),
+			.min(3, { message: i18n.translate('this-field-is-required') }),
 		givenName: z.string(),
 		phone: z.object({
 			code: z.string(),
@@ -108,19 +108,19 @@ const zodSchema = {
 		}),
 		phoneNumber: z
 			.string()
-			.min(1, {message: 'Please enter a phone number to continue.'}),
+			.min(1, { message: 'Please enter a phone number to continue.' }),
 	}),
 	accountForm: z.object({
 		accountImage: z.any(),
 		accountName: z
 			.string()
-			.min(1, {message: 'Please enter a company name to continue'}),
+			.min(1, { message: 'Please enter a company name to continue' }),
 		accountType: z.string().min(1),
 		billingAddress,
 		emailAddress: z.string().email('Please fill in valid email'),
 		taxNumber: z
 			.string()
-			.min(1, {message: 'Please enter a Tax/VAT number to continue'}),
+			.min(1, { message: 'Please enter a Tax/VAT number to continue' }),
 	}),
 	activationKey: z.object({
 		businessEmail: z.string().email('Please fill in valid email'),
@@ -193,12 +193,12 @@ const zodSchema = {
 		}),
 		profile: z.object({
 			areas: z.array(z.any()).nonempty(),
-			categories: z.object({label: z.string(), value: z.string().min(1)}),
+			categories: z.object({ label: z.string(), value: z.string().min(1) }),
 			description: z.string().min(3),
 			name: z.string().min(3),
 			tags: z.array(z.any()).nonempty(),
 		}),
-		storefront: z.object({images: z.array(z.any()).min(1).max(10)}),
+		storefront: z.object({ images: z.array(z.any()).min(1).max(10) }),
 		support: {
 			supportForFreeApp: freeApp,
 			supportForPaidApp: paidApp,
@@ -222,11 +222,11 @@ const zodSchema = {
 			.optional(),
 		phoneNumber: z
 			.string()
-			.min(1, {message: i18n.translate('this-field-is-required')}),
+			.min(1, { message: i18n.translate('this-field-is-required') }),
 		publisherType: z.array(z.string()).min(1),
 		requestDescription: z
 			.string()
-			.min(3, {message: 'Request Description is required'}),
+			.min(3, { message: 'Request Description is required' }),
 	}),
 	billingAddress,
 	contactSales: z.object({
@@ -247,10 +247,10 @@ const zodSchema = {
 		reason: z.string().min(3),
 	}),
 	generateLicenseKey: z.object({
-		description: z.string().max(100, {message: 'Invalid license name'}),
-		hostname: z.string(),
-		ipAddress: z.string(),
-		macAddress: z.string(),
+		description: z.string().min(3).max(100, { message: 'Invalid license name' }),
+		hostname: z.string().optional().or(z.literal('')),
+		ipAddress: z.string().optional().or(z.literal('')),
+		macAddress: z.string().optional().or(z.literal('')),
 		subscription: z
 			.object({
 				name: z.string(),
@@ -259,6 +259,18 @@ const zodSchema = {
 				skuId: z.number(),
 			})
 			.optional(),
+	}).superRefine((data, ctx) => {
+		if (!data.hostname && !data.ipAddress && !data.macAddress) {
+			const message = 'At least one identifier (Hostname, IP, or MAC) must be provided.';
+
+			['hostname', 'ipAddress', 'macAddress'].forEach((path) => {
+				ctx.addIssue({
+					code: z.ZodIssueCode.custom,
+					message,
+					path: [path],
+				});
+			});
+		}
 	}),
 	installProductSchema: z.object({
 		environment: z.object({
@@ -362,9 +374,9 @@ const zodSchema = {
 	ssaInviteUsers: z.object({
 		emailAddress: z
 			.string()
-			.email({message: i18n.translate('please-fill-in-a-valid-email')}),
+			.email({ message: i18n.translate('please-fill-in-a-valid-email') }),
 		roles: z
-			.array(z.object({value: z.string()}))
+			.array(z.object({ value: z.string() }))
 			.nonempty(i18n.translate('at-least-one-role-must-be-provided')),
 	}),
 	ssaTrialForm: z.object({
@@ -387,7 +399,7 @@ const zodSchema = {
 						(error) =>
 							z.string().email().safeParse(error.value).success
 					),
-				{message: 'One or more email addresses are invalid'}
+				{ message: 'One or more email addresses are invalid' }
 			)
 			.optional(),
 		objective: z.string().refine((val) => val, {
@@ -395,7 +407,7 @@ const zodSchema = {
 		}),
 		projectId: z
 			.string()
-			.min(3, {message: 'Project ID must have at least 3 characters'})
+			.min(3, { message: 'Project ID must have at least 3 characters' })
 			.regex(/^[a-zA-Z0-9]+$/, {
 				message: 'Only alphanumeric characters are allowed',
 			}),
@@ -406,11 +418,11 @@ const zodSchema = {
 		consoleInviteEmailAddresses: z.array(z.string().email()),
 		product: z
 			.any()
-			.refine((value) => !!value, {message: 'Product is required'}),
+			.refine((value) => !!value, { message: 'Product is required' }),
 		sendNotificationEmail: z.boolean(),
 	}),
 };
 
-export {z, zodResolver};
+export { z, zodResolver };
 
 export default zodSchema;

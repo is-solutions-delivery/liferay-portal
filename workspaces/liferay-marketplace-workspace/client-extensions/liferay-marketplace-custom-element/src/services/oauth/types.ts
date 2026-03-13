@@ -9,7 +9,7 @@ export type ConsoleProjectsUsage = {
 };
 
 export type ConsoleUserProject = {
-	environments: {isExtensionEnvironment: boolean; projectId: string}[];
+	environments: { isExtensionEnvironment: boolean; projectId: string }[];
 	rootProjectId: string;
 	rootProjectPlanUsage: {
 		cpu: ConsoleCPU;
@@ -53,9 +53,9 @@ export type LicenseKey = {
 export type LicenseTypePayload = {
 	licenseEntry: {
 		description: string;
-		hostName: string;
-		ipAddresses: string;
-		macAddresses: string;
+		hostName: string | undefined;
+		ipAddresses: string | undefined;
+		macAddresses: string | undefined;
 		orderId: string;
 		productId?: string;
 		productPurchaseKey: string;

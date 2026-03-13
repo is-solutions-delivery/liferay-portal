@@ -11,8 +11,8 @@ import {
 	filterSchema as filterSchemas,
 } from '../../schema/filters';
 import zodSchema from '../../schema/zod';
-import {downloadFile} from '../../utils/file';
-import {MarketplaceSpringBootOAuth2} from './OAuth2Client';
+import { downloadFile } from '../../utils/file';
+import { MarketplaceSpringBootOAuth2 } from './OAuth2Client';
 
 class MarketplaceOAuth2 extends MarketplaceSpringBootOAuth2 {
 	async createAccount(
@@ -74,7 +74,7 @@ class MarketplaceOAuth2 extends MarketplaceSpringBootOAuth2 {
 
 		const response = await this.get<Response>(
 			`/orders/export?filters=${searchBuilder}`,
-			{earlyReturn: true}
+			{ earlyReturn: true }
 		);
 
 		await downloadFile('orders.csv', response);
@@ -84,10 +84,16 @@ class MarketplaceOAuth2 extends MarketplaceSpringBootOAuth2 {
 		const order = await this.post<Order>(
 			`/tax-calculate/${orderId}`,
 			{},
-			{earlyReturn: true}
+			{ earlyReturn: true }
 		);
 
 		return order;
+	}
+
+	async provisionCMPBeta(payload: any) {
+		return this.post('/cmp-beta-license-key', payload, {
+			earlyReturn: true,
+		});
 	}
 }
 
