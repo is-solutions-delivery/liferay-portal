@@ -37,6 +37,7 @@ import {
 	getProductSpecification,
 } from '../../utils/productUtils';
 import LDPNextSteps from '../ProductPurchase/pages/LiferayProduct/LDPNextSteps';
+import LiferayAIHubNextSteps from '../ProductPurchase/pages/LiferayService/LiferaeyAIHub/LiferayAIHubNextSteps';
 
 type NextStepsBodyProps = ReturnType<typeof useGetProductByOrderId>['data'];
 
@@ -100,7 +101,6 @@ export function NextStepsBody(props: NextStepsBodyProps) {
 				}
 			/>
 		),
-
 		[PaymentStatus.PAID]: (
 			<Header
 				description={
@@ -289,6 +289,19 @@ export function NextSteps() {
 					'hold-tight-we-re-preparing-your-environment-so-you-can-start-using-your-liferay-data-platform-this-will-only-take-a-moment'
 				)}
 				title={i18n.translate('setting-up-your-free-version-ldp')}
+			/>
+		);
+	}
+
+	if (
+		productTypeCategory === ProductTypeVocabulary.LIFERAY_PRODUCT &&
+		solutionTypeSpecificationValue === SolutionTypes.AI_HUB
+	) {
+		return (
+			<LiferayAIHubNextSteps
+				data={data}
+				error={error}
+				isLoading={isLoading}
 			/>
 		);
 	}

@@ -33,6 +33,7 @@ import ActivationKeyForm from './pages/LiferayProduct/ActivationKeyForm';
 import LDPProvisioning from './pages/LiferayProduct/LDPProvisioningForm';
 import OrderSummary from './pages/LiferayProduct/OrderSummary';
 import ProjectSelection from './pages/LiferayProduct/Project';
+import LiferayAIHubForm from './pages/LiferayService/LiferaeyAIHub/LiferayAIHubForm';
 import NextSteps from './pages/NextSteps';
 import SolutionProvisioningForm from './pages/Solution';
 
@@ -91,6 +92,21 @@ export const productTypeRoutes = {
 
 			const solutionType =
 				marketplaceDeliveryProduct.specificationValues.SOLUTION_TYPE;
+
+			if (solutionType === SolutionTypes.AI_HUB) {
+				return [
+					{
+						element: ProductPurchaseAccountSelection,
+						index: true,
+						title: i18n.translate('account'),
+					},
+					{
+						element: LiferayAIHubForm,
+						path: 'ai-hub-form',
+						title: i18n.translate('ai-hub'),
+					},
+				];
+			}
 
 			if (
 				[SolutionTypes.CMP, SolutionTypes.DXP].includes(

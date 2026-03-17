@@ -7,6 +7,7 @@ export enum OrderCustomFields {
 	ANALYTICS_GROUP_ID = 'analytics-group-id',
 	CLOUD_PROVISIONING = 'cloud-provisioning',
 	KORONEIKI_PROJECT = 'koroneiki-project',
+	ORDER_ADDITIONAL_INFORMATIONS = 'order-additional-informations',
 	ORDER_METADATA = 'order-metadata',
 	PROJECT_NAME = 'project-name',
 	TRIAL_END_DATE = 'trial-end-date',
@@ -28,6 +29,7 @@ export enum OrderStatus {
 
 export enum OrderTypes {
 	ADDONS = 'ADDONS',
+	AI_HUB = 'AI_HUB',
 	CLIENT_EXTENSION = 'CLIENT_EXTENSION',
 	CLOUD_APP = 'CLOUD_APP',
 	CMP = 'CMP_BETA',

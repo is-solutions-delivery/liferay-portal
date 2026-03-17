@@ -226,6 +226,21 @@
 	},
 	{
 		"dataType": 15,
+		"defaultValue": "{}",
+		"modelResource": "com.liferay.commerce.model.CommerceOrder",
+		"name": "order-additional-informations",
+		"properties": {
+			"hidden": false,
+			"indexType": 2,
+			"localizeField": false,
+			"localizeFieldName": true,
+			"secret": false,
+			"visibleWithUpdatePermission": false,
+			"width": "0"
+		}
+	},
+	{
+		"dataType": 15,
 		"modelResource": "com.liferay.commerce.model.CommerceOrder",
 		"name": "trial-end-date",
 		"properties": {

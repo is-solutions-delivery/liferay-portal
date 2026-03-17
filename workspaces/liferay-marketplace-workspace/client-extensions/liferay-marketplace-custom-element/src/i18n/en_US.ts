@@ -34,8 +34,12 @@ export default {
 	'additional-apps-requested': 'Additional Apps Requested',
 	'address': 'Address',
 	'address-name': 'Address Name',
+	'administration-email': 'Administration Email',
 	'administrator-dashboard': 'Administrator Dashboard',
 	'agreements': 'Agreements',
+	'ai-hub': 'AI Hub',
+	'ai-hub-account-name': 'AI Hub Account Name',
+	'ai-hub-information': 'AI Hub Information',
 	'all-orders': 'All Orders',
 	'all-progress-and-information-related-to-the-creation-of-the-app-will-be-lost-do-you-still-want-to-exit':
 		'All progress and information related to the creation of the app will be lost. Do you still want to exit?',
@@ -245,6 +249,8 @@ export default {
 	'email': 'Email',
 	'email-address': 'Email Address',
 	'end-user-license-agreement': 'End User License Agreement',
+	'enter-administration-email': 'Enter administration email',
+	'enter-ai-hub-account-name': 'Enter AI Hub Account Name',
 	'enter-app-description': 'Enter app description',
 	'enter-domain-here': 'Enter domain here',
 	'enter-email-address': 'Enter email address',
@@ -335,12 +341,16 @@ export default {
 	'hold-tight-we-re-preparing-your-environment-so-you-can-start-using-your-liferay-data-platform-this-will-only-take-a-moment':
 		'Hold tight. We’re preparing your environment so you can start using your Liferay Data Platform. This will only take a moment!',
 	'host-name': 'Host Name',
+	'i-agree-to-the-processing-of-my-personal-data-for-the-purpose-of-evaluating-my-beta-access-request-in-accordance-with-liferay’s-privacy-policy':
+		'I agree to the processing of my personal data for the purpose of evaluating my beta access request in accordance with Liferay’s Privacy Policy.',
 	'i-certify-that-the-instances-activated-with-the-selected-activation-keys-have-been-shut-down-and-that-there-is-no-liferay-software-installed-deployed-used-or-executed-that-is-activated-with-the-selected-activation-key':
 		'I certify that the instances activated with the selected activation keys have been shut down and that there is no Liferay software installed, deployed, used or executed that is activated with the selected activation key.',
 	'i-have-read-and-agree-to-the-liferay-end-user-agreement':
 		'I have read and agree to the Liferay End User Agreement',
 	'i-have-read-and-agree-to-the-terms-and-conditions-above':
 		'I have read and agree to the terms and conditions above:',
+	'i-signify-my-assent-to-and-acceptance-of-this-agreement-and-acknowledge-that-i-have-read-and-you-understand-the-terms-if-i-am-an-individual-acting-on-behalf-of-an-entity-i-represent-that-i-have-the-authority-to-enter-into-this-agreement-on-behalf-of-that-entity':
+		'I signify my assent to and acceptance of this agreement and acknowledge that I have read and you understand the terms. If I am an individual acting on behalf of an entity, I represent that I have the authority to enter into this agreement on behalf of that entity.',
 	'id': 'ID',
 	'if-the-app-is-compatible-with-different-updates-of-74-please-upload-multiple-packages-for-each-update-or-update-the-compatibility-range':
 		'If the app is compatible with different updates of 7.4, please upload multiple packages for each update or update the compatibility range.',
@@ -574,6 +584,7 @@ export default {
 		'Purchase and install new apps and they will show up here.',
 	'purchase-app': 'Purchase App',
 	'purchase-completed': 'Purchase Completed',
+
 	'purchase-date': 'Purchase Date',
 	'purchase-failed': 'Purchase Failed',
 	'purchase-number': 'Purchase Number',
@@ -598,6 +609,8 @@ export default {
 		'Renewal will be available 3 months before your activation key expires.',
 	'request-a-marketplace-publisher-account':
 		'Request a Marketplace Publisher Account',
+	'request-access-to-ai-private-hub-beta':
+		'Request Access to AI Private Hub Beta',
 	'request-account': 'Request Account',
 	'request-description': 'Request Description',
 	'request-details': 'Request Details',
@@ -676,6 +689,8 @@ export default {
 	'storefront': 'Storefront',
 	'submit': 'Submit',
 	'submit-solution': 'Submit Solution',
+	'submit-your-request-to-join-the-beta-program-all-submissions-will-be-reviewed-and-youll-receive-an-email-with-the-outcome':
+		'Submit your request to join the beta program. All submissions will be reviewed, and you’ll receive an email with the outcome.',
 	'subscription-type': 'Subscription Type',
 	'subtotal': 'Subtotal',
 	'subtotal-discount': 'Subtotal Discount',
@@ -702,6 +717,7 @@ export default {
 	'text-images-block': 'Text Images Block',
 	'text-video-block': 'Text Video Block',
 	'thank-you-for-your': 'Thank you for your',
+	'thank-you-for-your-request': 'Thank You for Your Request!',
 	'the-app-and-all-its-client-extensions-services-will-be-deleted-and-uninstalled-from-liferay-dxp':
 		'The app and all its client extensions (services) will be deleted and uninstalled from Liferay DXP.',
 	'the-app-submission-is-compatible-with-liferay-experience-cloud-and':
@@ -737,6 +753,8 @@ export default {
 	'this-app-is-already-installed-in-this-environment':
 		'This app is already installed in this environment.',
 	'this-field-is-required': 'This field is required.',
+	'this-is-the-email-address-that-will-receive-the-aihub-account-management-invite':
+		'This is the email address that will receive the AIHub account management invite.',
 	'this-is-the-first-version-of-the-app-to-be-published':
 		'This is the first version of the app to be published.',
 	'this-key-is-expired-and-cannot-be-downloaded':
