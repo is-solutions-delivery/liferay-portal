@@ -51,16 +51,16 @@
 
 .modal-dialog.cmp-modal .modal-header {
 	border: none !important;
-	padding: 0 24px !important;
-	margin: 24px 0 4px 0 !important;
 	height: 20px !important;
+	margin: 24px 0 4px 0 !important;
+	padding: 0 24px !important;
 }
 
 .cmp-modal .modal-header h2 {
-	font-weight: 700 !important;
-	font-size: 14px !important;
-	text-transform: uppercase !important;
 	color: #2e5aac !important;
+	font-size: 14px !important;
+	font-weight: 700 !important;
+	text-transform: uppercase !important;
 }
 
 .cmp-modal .modal-body {
@@ -68,37 +68,37 @@
 }
 
 .cmp-modal .modal-body h2 {
-	font-weight: 700 !important;
 	font-size: 32px !important;
+	font-weight: 700 !important;
 }
 
 .cmp-modal .modal-body p {
-	padding-left: 2px !important;
-	margin-top: 4px !important;
-	font-weight: 400 !important;
-	font-size: 16px !important;
 	color: #6c6c75 !important;
+	font-size: 16px !important;
+	font-weight: 400 !important;
+	margin-top: 4px !important;
+	padding-left: 2px !important;
 }
 
 .cmp-modal .cmp-footer {
+	border-radius: 8px !important;
 	display: flex !important;
-	padding: 28px 0 !important;
 	justify-content: end !important;
 	margin-top: 60px !important;
-	border-radius: 8px !important;
+	padding: 28px 0 !important;
 }
 
 .cmp-modal #cmp-continue {
 	background-color: #25488a !important;
-	color: #ffffff !important;
 	border-radius: 8px !important;
+	color: #ffffff !important;
 	padding: 8px 16px !important;
 }
 
 .cmp-modal #cmp-cancel {
 	background-color: transparent !important;
 	border: 1px solid #2b3a4b !important;
-	color: #2b3a4b !important;
 	border-radius: 8px !important;
+	color: #2b3a4b !important;
 	padding: 8px 16px !important;
 }
