@@ -10,18 +10,36 @@
 const contactPublisherButtonElement = fragmentElement.querySelector(
 	'button#contact-publisher'
 );
-const contactPublisherModal = document.querySelector('#contact-publisher');
+const contactPublisherModal = document.querySelector(
+	'#contact-publisher-modal'
+);
 const getAppButtonElement = fragmentElement.querySelector('button#get-app');
 const getAppDescriptionElement = fragmentElement.querySelector(
 	'#get-app-description'
 );
 const tooltipElement = fragmentElement.querySelector('.clay-tooltip-bottom');
 
+const cmpButtonElement = fragmentElement.querySelector('button#cmp-button');
+
 const isFreeApp = (productSpecifications = []) =>
 	productSpecifications.some(
 		(productSpecification) =>
 			productSpecification.specificationKey === 'price-model' &&
 			productSpecification.value === 'Free'
+	);
+
+const isCMP = (productSpecifications = []) =>
+	productSpecifications.some(
+		(productSpecification) =>
+			productSpecification.specificationKey === 'solution-type' &&
+			productSpecification.value === 'cmp'
+	);
+
+const isLowCodeConfiguration = (productSpecifications = []) =>
+	productSpecifications.some(
+		(productSpecification) =>
+			productSpecification.specificationKey === 'type' &&
+			productSpecification.value === 'low-code-configuration'
 	);
 
 const trackAnalytics = (key, options) => {
@@ -68,6 +86,61 @@ const getProductPrice = async (product) => {
 	const price = `${hasTrialSku ? '30-day trial or' : ''} ${standardSku?.price?.priceFormatted}`;
 
 	return `${price} ${licenseTypeText}`;
+};
+
+const customizeCMPButton = (product) => {
+	if (!cmpButtonElement) {
+		return;
+	}
+
+	cmpButtonElement.onclick = () => {
+		trackAnalytics('Click on CMP Button', {
+			productName: product.name,
+		});
+
+		Liferay.Util.openModal({
+			headerHTML: `<h2>Content Marketing Platform</h2>`,
+			bodyHTML: `
+        <div>
+          <h2 class="m-0">CMP Requirements</h2>
+          <p>The Liferay CMP requires the 2026.Q1 Release of DXP to run</p>
+          <div class="cmp-footer">
+            <button class="btn btn-outline-primary mr-2" id="cmp-cancel">Cancel</button>
+            <button class="btn btn-primary" id="cmp-continue">Continue</button>
+          </div>
+        </div>
+      `,
+			center: true,
+			size: 'md',
+
+			onOpen: () => {
+				setTimeout(() => {
+					const modalDialog = document.querySelector(
+						'.modal.show .modal-dialog'
+					);
+					modalDialog?.classList.add('cmp-modal');
+
+					const closeBtn =
+						document.querySelector('.modal.show .close');
+
+					document
+						.querySelector('#cmp-continue')
+						?.addEventListener('click', () => {
+							closeBtn?.click();
+							Liferay.Util.navigate(
+								`${getSiteURL()}/product-purchase?productId=${productId}`
+							);
+						});
+
+					document
+						.querySelector('#cmp-cancel')
+						?.addEventListener('click', () => {
+							closeBtn?.click();
+						});
+				}, 0);
+			},
+		});
+	};
 };
 
 const customizeGetAppButton = async (product) => {
@@ -164,8 +237,18 @@ const main = async () => {
 		return;
 	}
 
-	const skuPublished = product.skus.some((sku) => sku.purchasable);
+	if (isCMP(product.productSpecifications)) {
+		if (!cmpButtonElement) {
+			return;
+		}
 
+		cmpButtonElement.classList.remove('d-none');
+		customizeCMPButton(product);
+
+		return;
+	}
+
+	const skuPublished = product.skus.some((sku) => sku.purchasable);
 	if (skuPublished) {
 		getAppButtonElement.classList.remove('d-none');
 
