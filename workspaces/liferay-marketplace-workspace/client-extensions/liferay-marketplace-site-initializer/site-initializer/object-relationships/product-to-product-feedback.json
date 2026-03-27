@@ -3,7 +3,7 @@
 	"label": {
 		"en_US": "Product to Product Feedback"
 	},
-	"name": "productEntryToProductFeedback",
+	"name": "productToProductFeedback",
 	"objectDefinitionId1": "[$OBJECT_DEFINITION_ID:CPDefinition$]",
 	"objectDefinitionId2": "[$OBJECT_DEFINITION_ID:ProductFeedback$]",
 	"objectDefinitionName2": "ProductFeedback",
