@@ -42,7 +42,8 @@ const App: React.FC<AppProps> = ({header}) => {
 			HeadlessCommerceAdminCatalog.getProduct(
 				productId as unknown as number,
 				new URLSearchParams({
-					nestedFields: 'attachments,images,productSpecifications',
+					nestedFields:
+						'attachments,images,productSpecifications,productSpecifications.pageSize: -1',
 				})
 			)
 	);
