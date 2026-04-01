@@ -6,6 +6,7 @@
 import {useEffect, useState} from 'react';
 
 type MktoForms2 = {
+	[x: string]: any;
 	loadForm: (
 		baseURL: string,
 		munchkinId: string,

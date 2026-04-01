@@ -9,13 +9,15 @@ import ClayForm, {ClayCheckbox, ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {zodResolver} from '@hookform/resolvers/zod';
-import classNames from 'classnames';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 
 import {RequiredMask} from '../../../../../components/FieldBase';
 import {Input} from '../../../../../components/Input/Input';
 import ProductPurchase from '../../../../../components/ProductPurchase';
+import {useMarketplaceContext} from '../../../../../context/MarketplaceContext';
+import useCommerceRegions from '../../../../../hooks/useCommerceRegions';
+import useMarketo from '../../../../../hooks/useMarketoForm';
 import i18n from '../../../../../i18n';
 import {Liferay} from '../../../../../liferay/liferay';
 import zodSchema, {z} from '../../../../../schema/zod';
@@ -35,11 +37,14 @@ const setValuesOptions = {
 };
 
 const AIHubForm = () => {
+	const {properties} = useMarketplaceContext();
 	const [active, setActive] = useState(false);
+	const [activeCountry, setActiveCountry] = useState(false);
 	const [loading, setLoading] = useState(false);
-
+	const [marketoFormInstance, setMarketoFormInstance] = useState<any>(null);
 	const {handlePurchase, product, selectedAccount} =
 		useProductPurchaseOutletContext();
+	const {data: regionsResponse = {items: []}} = useCommerceRegions();
 
 	const {
 		formState: {errors, isValid},
@@ -56,12 +61,11 @@ const AIHubForm = () => {
 			companyName: '',
 			country: '',
 			extension: '',
-			fullName: '',
+			fullName: Liferay.ThemeDisplay.getUserName(),
 			intlCode: {code: '+1', flag: 'en-us'},
 			jobTitle: '',
 			phoneNumber: '',
 			purpose: '',
-			purposeDescription: '',
 			termsAndConditions: false,
 			userAgreement: false,
 		},
@@ -70,23 +74,85 @@ const AIHubForm = () => {
 		resolver: zodResolver(zodSchema.aiHubForm),
 	});
 
-	const {intlCode, purpose, termsAndConditions, userAgreement} = watch();
+	const watchedValues = watch();
+	const {country, intlCode, purpose, termsAndConditions, userAgreement} =
+		watchedValues;
 
 	const [currentPhonesFlags, setCurrentPhonesFlags] = useState(intlCode);
+
+	const {MktoForms2, started} = useMarketo({
+		footerElement: () => null,
+		formId: properties.marketoFormId,
+		onSubmit: () => null,
+		submitText: i18n.translate('submit'),
+	});
+
+	useEffect(() => {
+		if (MktoForms2) {
+			MktoForms2.whenReady((form: any) => {
+				setMarketoFormInstance(form);
+
+				form.onValidate(() => {
+					form.submittable(true);
+				});
+			});
+		}
+	}, [MktoForms2, isValid]);
+
+	const subbmitMarketoForm = async (
+		data: z.infer<typeof zodSchema.aiHubForm>
+	) => {
+		if (started) {
+			const nameParts = data.fullName?.trim().split(' ') || [];
+			const firstName = nameParts[0] || '';
+			const lastName =
+				nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+
+			marketoFormInstance.setValues({
+				Company: data.companyName,
+				Country: data.country,
+				Email: data.businessEmailAddress,
+				FirstName: firstName,
+				LastName: lastName,
+				Phone: `${data.intlCode.code} ${data.phoneNumber} ${data.extension}`,
+				Purpose_of_Download__c: PURPOSE_OPTIONS.find(
+					(item) => item.value === data.purpose
+				)?.title,
+				Share_with_Partners__c: data.termsAndConditions,
+				Title: data.jobTitle,
+				temp_boolean_02: data.userAgreement,
+			});
+
+			marketoFormInstance.onValidate(() =>
+				marketoFormInstance.submittable(true)
+			);
+
+			marketoFormInstance.submit();
+		}
+	};
 
 	const onSubmit = async (data: z.infer<typeof zodSchema.aiHubForm>) => {
 		setLoading(true);
 
-		const productPurchase = new ProductPurchaseAIHub(
-			selectedAccount,
-			product
-		);
+		try {
+			if (marketoFormInstance) {
+				subbmitMarketoForm(data);
+			}
 
-		productPurchase.setForm(data);
+			const productPurchase = new ProductPurchaseAIHub(
+				selectedAccount,
+				product
+			);
+			productPurchase.setForm(data);
 
-		await handlePurchase(productPurchase);
-
-		setLoading(false);
+			await handlePurchase(productPurchase);
+		}
+		catch (error) {
+			console.error('Erro na compra:', error);
+		}
+		finally {
+			setLoading(false);
+		}
 	};
 
 	return (
@@ -94,6 +160,12 @@ const AIHubForm = () => {
 			className="liferay-ai-hub-form"
 			title={i18n.translate('request-access-to-ai-hub-private-beta')}
 		>
+			<form
+				aria-hidden="true"
+				className="d-block"
+				id={`mktoForm_${properties.marketoFormId}`}
+			/>
+
 			<p className="mb-6 text-black-50">
 				{i18n.translate(
 					'submit-your-request-to-join-the-beta-program-all-submissions-will-be-reviewed-and-youll-receive-an-email-with-the-outcome'
@@ -127,17 +199,57 @@ const AIHubForm = () => {
 							required
 						/>
 					</ClayInput.GroupItem>
-
-					<ClayInput.GroupItem>
-						<Input
-							{...register('country')}
+					<ClayInput.GroupItem className="d-block">
+						<label style={{marginBottom: '0'}}>
+							{i18n.translate('country')}
+						</label>
+						<ClayDropDown
+							active={activeCountry}
+							alignmentPosition={Align.BottomLeft}
 							className="w-100"
-							errorMessage={errors.country?.message}
-							id="country"
-							label={i18n.translate('country')}
-							placeholder={i18n.translate('enter-your-country')}
-							required
-						/>
+							onActiveChange={setActiveCountry}
+							trigger={
+								<ClayButton
+									className="align-items-center d-flex justify-content-between liferay-ai-hub-form-select-input rounded-lg w-100"
+									displayType="secondary"
+								>
+									<div className="align-items-center d-flex justify-content-between w-100">
+										<span>
+											{regionsResponse?.items?.find(
+												(item) =>
+													item.title_i18n.en_US ===
+													country
+											)?.title_i18n.en_US ||
+												i18n.translate('country')}
+										</span>
+										<ClayIcon symbol="caret-bottom" />
+									</div>
+								</ClayButton>
+							}
+						>
+							<ClayDropDown.ItemList>
+								{regionsResponse?.items?.map(
+									(option, index) => (
+										<ClayDropDown.Item
+											className="d-flex flex-column"
+											key={index}
+											onClick={() => {
+												setActiveCountry(false);
+												setValue(
+													'country',
+													option.title_i18n.en_US,
+													setValuesOptions
+												);
+											}}
+										>
+											<strong>
+												{option.title_i18n.en_US}
+											</strong>
+										</ClayDropDown.Item>
+									)
+								)}
+							</ClayDropDown.ItemList>
+						</ClayDropDown>
 					</ClayInput.GroupItem>
 				</ClayInput.Group>
 
