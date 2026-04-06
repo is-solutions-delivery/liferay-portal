@@ -10,6 +10,7 @@ import com.liferay.client.extension.util.spring.boot3.service.BaseService;
 import com.liferay.headless.admin.address.client.dto.v1_0.Country;
 import com.liferay.headless.admin.address.client.resource.v1_0.CountryResource;
 import com.liferay.headless.admin.user.client.dto.v1_0.UserAccount;
+import com.liferay.headless.admin.user.client.http.HttpInvoker;
 import com.liferay.headless.admin.user.client.pagination.Page;
 import com.liferay.headless.admin.user.client.resource.v1_0.AccountResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.AccountRoleResource;
@@ -667,12 +668,6 @@ public class MarketplaceService extends BaseService {
 		}
 	}
 
-	public void postOrder(Order order) throws Exception {
-		OrderResource orderResource = getOrderResource();
-
-		orderResource.postOrder(order);
-	}
-
 	public void postProductAttachment(
 			File file, String fileName, long productId)
 		throws Exception {
@@ -701,6 +696,15 @@ public class MarketplaceService extends BaseService {
 		UserAccountResource userAccountResource = getUserAccountResource();
 
 		userAccountResource.postUserAccount(userAccount);
+	}
+
+	public HttpInvoker.HttpResponse postUserAccountHttpResponse(
+			UserAccount userAccount)
+		throws Exception {
+
+		UserAccountResource userAccountResource = getUserAccountResource();
+
+		return userAccountResource.postUserAccountHttpResponse(userAccount);
 	}
 
 	public void postVirtualFileEntry(File file, long productId, String version)
