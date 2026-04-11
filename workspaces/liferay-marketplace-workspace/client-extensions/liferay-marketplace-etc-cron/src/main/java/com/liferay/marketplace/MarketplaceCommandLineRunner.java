@@ -70,7 +70,6 @@ public class MarketplaceCommandLineRunner
 	extends BaseRestController implements CommandLineRunner {
 
 	public void run(String... args) throws Exception {
-
 		_invoke(this::_processInProgressTrials, "In Progress Trials");
 
 		_invoke(
@@ -90,7 +89,6 @@ public class MarketplaceCommandLineRunner
 
 		_invoke(
 			this::_processRequestProductFeedback, "Request Product Feedback");
-
 	}
 
 	private void _assignAccountToUserAccount(
@@ -410,12 +408,12 @@ public class MarketplaceCommandLineRunner
 			limit
 		).forEach(
 			entry -> {
-				long productId = entry.getKey();
-				long count = entry.getValue();
+				Long productId = entry.getKey();
 
 				Product product = products.get(productId);
 
 				if (product != null) {
+					Long count = entry.getValue();
 					JSONObject productJSONObject = new JSONObject();
 
 					productJSONObject.put(
@@ -423,9 +421,12 @@ public class MarketplaceCommandLineRunner
 						product.getName(
 						).get(
 							"en_US"
-						));
-					productJSONObject.put("purchaseCount", count);
-					productJSONObject.put("thumbnail", product.getThumbnail());
+						)
+					).put(
+						"purchaseCount", count
+					).put(
+						"thumbnail", product.getThumbnail()
+					);
 
 					jsonArray.put(productJSONObject);
 				}
@@ -709,22 +710,13 @@ public class MarketplaceCommandLineRunner
 			order -> {
 				OrderItem[] orderItems = order.getOrderItems();
 
-				_log.info("Processing order " + order.getId() + " with " +
-					orderItems.length + " items");
-
 				if (orderItems == null) {
 					return;
 				}
 
 				for (OrderItem orderItem : orderItems) {
 					try {
-						Long skuId = orderItem.getSkuId();
-
-						if (skuId == null) {
-							continue;
-						}
-
-						Sku sku = skuResource.getSku(skuId);
+						Sku sku = skuResource.getSku(orderItem.getSkuId());
 
 						Long productId = sku.getProductId();
 
@@ -751,8 +743,7 @@ public class MarketplaceCommandLineRunner
 		Map<Long, Long> liferayProductsCounts = new HashMap<>();
 
 		for (Map.Entry<Long, Long> entry : productCounts.entrySet()) {
-			long productId = entry.getKey();
-			long count = entry.getValue();
+			Long productId = entry.getKey();
 
 			Product product = products.get(productId);
 
@@ -766,10 +757,11 @@ public class MarketplaceCommandLineRunner
 				continue;
 			}
 
+			Long count = entry.getValue();
+
 			for (Category category : categories) {
 				if (!Objects.equals(
-						category.getVocabulary(),
-						"marketplace product type")) {
+						category.getVocabulary(), "marketplace product type")) {
 
 					continue;
 				}
@@ -792,13 +784,12 @@ public class MarketplaceCommandLineRunner
 
 		JSONObject valueJSONObject = new JSONObject();
 
-		valueJSONObject.put("MostPurchasedApps", mostPurchasedAppsJSONArray);
 		valueJSONObject.put(
+			"MostPurchasedApps", mostPurchasedAppsJSONArray
+		).put(
 			"MostPurchasedLiferayProducts",
-			mostPurchasedLiferayProductsJSONArray);
-
-			_log.info("Most Purchased Apps: " + mostPurchasedAppsJSONArray);
-			_log.info("Most Purchased Liferay Products: " + mostPurchasedLiferayProductsJSONArray);
+			mostPurchasedLiferayProductsJSONArray
+		);
 
 		_patchReport(
 			new JSONObject(
