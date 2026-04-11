@@ -18,6 +18,7 @@ import com.liferay.headless.admin.user.client.resource.v1_0.RoleResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.UserAccountResource;
 import com.liferay.headless.admin.user.client.resource.v1_0.UserGroupResource;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Catalog;
+import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Category;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Product;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Sku;
 import com.liferay.headless.commerce.admin.catalog.client.resource.v1_0.CatalogResource;
@@ -69,6 +70,7 @@ public class MarketplaceCommandLineRunner
 	extends BaseRestController implements CommandLineRunner {
 
 	public void run(String... args) throws Exception {
+
 		_invoke(this::_processInProgressTrials, "In Progress Trials");
 
 		_invoke(
@@ -78,6 +80,8 @@ public class MarketplaceCommandLineRunner
 
 		_invoke(this::_processPendingOrders, "Pending Orders");
 
+		_invoke(this::_processMostPurchasedProducts, "Most Purchased Products");
+
 		_invoke(
 			this::_processProjectsUsingMarketplaceApps,
 			"Projects Using Marketplace Apps");
@@ -86,6 +90,7 @@ public class MarketplaceCommandLineRunner
 
 		_invoke(
 			this::_processRequestProductFeedback, "Request Product Feedback");
+
 	}
 
 	private void _assignAccountToUserAccount(
@@ -390,6 +395,46 @@ public class MarketplaceCommandLineRunner
 		).build();
 	}
 
+	private JSONArray _getTopProductsJSONArray(
+			Map<Long, Long> productCounts, Map<Long, Product> products,
+			int limit)
+		throws Exception {
+
+		JSONArray jsonArray = new JSONArray();
+
+		productCounts.entrySet(
+		).stream(
+		).sorted(
+			(a, b) -> Long.compare(b.getValue(), a.getValue())
+		).limit(
+			limit
+		).forEach(
+			entry -> {
+				long productId = entry.getKey();
+				long count = entry.getValue();
+
+				Product product = products.get(productId);
+
+				if (product != null) {
+					JSONObject productJSONObject = new JSONObject();
+
+					productJSONObject.put(
+						"productName",
+						product.getName(
+						).get(
+							"en_US"
+						));
+					productJSONObject.put("purchaseCount", count);
+					productJSONObject.put("thumbnail", product.getThumbnail());
+
+					jsonArray.put(productJSONObject);
+				}
+			}
+		);
+
+		return jsonArray;
+	}
+
 	private UserAccount _getUserAccount(
 		String emailAddress, Collection<UserAccount> userAccounts) {
 
@@ -643,6 +688,127 @@ public class MarketplaceCommandLineRunner
 
 			_assignRoleToUserAccount(role, userAccount);
 			_assignAccountToUserAccount(account, userAccount);
+		}
+	}
+
+	private void _processMostPurchasedProducts() throws Exception {
+		Map<Long, Long> productCounts = new HashMap<>();
+		Map<Long, Product> products = new HashMap<>();
+
+		SkuResource skuResource = _getSkuResource();
+		ProductResource productResource = _getProductResource();
+
+		String filterString = StringBundler.concat(
+			"(paymentStatus eq ", _ORDER_PAYMENT_STATUS_COMPLETED,
+			" or paymentStatus eq ", _ORDER_PAYMENT_STATUS_NOT_REQUIRED,
+			") and (orderStatus/any(x:(x eq ", _ORDER_STATUS_COMPLETED,
+			")) or orderTypeExternalReferenceCode eq 'AI_HUB')");
+
+		_forEachOrder(
+			filterString,
+			order -> {
+				OrderItem[] orderItems = order.getOrderItems();
+
+				_log.info("Processing order " + order.getId() + " with " +
+					orderItems.length + " items");
+
+				if (orderItems == null) {
+					return;
+				}
+
+				for (OrderItem orderItem : orderItems) {
+					try {
+						Long skuId = orderItem.getSkuId();
+
+						if (skuId == null) {
+							continue;
+						}
+
+						Sku sku = skuResource.getSku(skuId);
+
+						Long productId = sku.getProductId();
+
+						productCounts.put(
+							productId,
+							productCounts.getOrDefault(productId, 0L) + 1L);
+
+						if (!products.containsKey(productId)) {
+							Product product = productResource.getProduct(
+								productId);
+
+							products.put(productId, product);
+						}
+					}
+					catch (Exception exception) {
+						_log.error(
+							"Error processing order item " + orderItem.getId(),
+							exception);
+					}
+				}
+			});
+
+		Map<Long, Long> appsCounts = new HashMap<>();
+		Map<Long, Long> liferayProductsCounts = new HashMap<>();
+
+		for (Map.Entry<Long, Long> entry : productCounts.entrySet()) {
+			long productId = entry.getKey();
+			long count = entry.getValue();
+
+			Product product = products.get(productId);
+
+			if (product == null) {
+				continue;
+			}
+
+			Category[] categories = product.getCategories();
+
+			if (categories == null) {
+				continue;
+			}
+
+			for (Category category : categories) {
+				if (!Objects.equals(
+						category.getVocabulary(),
+						"marketplace product type")) {
+
+					continue;
+				}
+
+				if (Objects.equals(category.getName(), "App")) {
+					appsCounts.put(productId, count);
+				}
+
+				if (Objects.equals(category.getName(), "Liferay Product")) {
+					liferayProductsCounts.put(productId, count);
+				}
+			}
+		}
+
+		JSONArray mostPurchasedAppsJSONArray = _getTopProductsJSONArray(
+			appsCounts, products, 5);
+
+		JSONArray mostPurchasedLiferayProductsJSONArray =
+			_getTopProductsJSONArray(liferayProductsCounts, products, 5);
+
+		JSONObject valueJSONObject = new JSONObject();
+
+		valueJSONObject.put("MostPurchasedApps", mostPurchasedAppsJSONArray);
+		valueJSONObject.put(
+			"MostPurchasedLiferayProducts",
+			mostPurchasedLiferayProductsJSONArray);
+
+			_log.info("Most Purchased Apps: " + mostPurchasedAppsJSONArray);
+			_log.info("Most Purchased Liferay Products: " + mostPurchasedLiferayProductsJSONArray);
+
+		_patchReport(
+			new JSONObject(
+			).put(
+				"value", valueJSONObject.toString()
+			).toString(),
+			"PURCHASED-PRODUCTS-COUNT");
+
+		if (_log.isInfoEnabled()) {
+			_log.info("Processed most purchased products");
 		}
 	}
 
@@ -963,6 +1129,8 @@ public class MarketplaceCommandLineRunner
 	}
 
 	private static final int _ORDER_PAYMENT_STATUS_COMPLETED = 0;
+
+	private static final int _ORDER_PAYMENT_STATUS_NOT_REQUIRED = 23;
 
 	private static final int _ORDER_STATUS_COMPLETED = 0;
 
