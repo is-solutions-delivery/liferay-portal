@@ -19,6 +19,7 @@ import useKPI from '../hooks/useKPI';
 import useOrderMetrics from '../hooks/useOrderMetrics';
 import AdministratorAppsListView from './Apps/AdministratorAppsListView';
 import {AdministratorOrdersListView} from './Orders';
+import AdministratorMostPurchasedListView from './Purchased/AdministratorMostPurchasedListView';
 
 export default function AdministratorSummary() {
 	const {data: {kpis = []} = {}} = useKPI();
@@ -113,7 +114,9 @@ export default function AdministratorSummary() {
 				</Page>
 
 				<Page
-					pageRendererProps={{className: 'border py-2 rounded-lg'}}
+					pageRendererProps={{
+						className: 'border py-2 rounded-lg mb-8',
+					}}
 					rightButton={
 						<Link className="font-weight-bold" to="/apps">
 							{i18n.translate('view-all')}
@@ -126,6 +129,42 @@ export default function AdministratorSummary() {
 						isSortable
 						listViewProps={{
 							id: 'summary-apps',
+							initialContext: {pageSize: 5},
+							paginationOptions: {displayType: false},
+						}}
+						managementToolbarProps={{
+							visible: false,
+						}}
+					/>
+				</Page>
+
+				<Page
+					pageRendererProps={{
+						className: 'border py-2 rounded-lg mb-8 mt-8',
+					}}
+					title={i18n.translate('most-purchased-apps')}
+				>
+					<AdministratorMostPurchasedListView
+						itemsKey="MostPurchasedApps"
+						listViewProps={{
+							id: 'summary-most-purchased-apps',
+							initialContext: {pageSize: 5},
+							paginationOptions: {displayType: false},
+						}}
+						managementToolbarProps={{
+							visible: false,
+						}}
+					/>
+				</Page>
+
+				<Page
+					pageRendererProps={{className: 'border py-2 rounded-lg'}}
+					title={i18n.translate('most-purchased-products')}
+				>
+					<AdministratorMostPurchasedListView
+						itemsKey="MostPurchasedLiferayProducts"
+						listViewProps={{
+							id: 'summary-most-purchased-products',
 							initialContext: {pageSize: 5},
 							paginationOptions: {displayType: false},
 						}}
