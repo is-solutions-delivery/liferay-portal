@@ -393,10 +393,8 @@ public class MarketplaceCommandLineRunner
 		).build();
 	}
 
-	private JSONArray _getTopProductsJSONArray(
-			Map<Long, Long> productCounts, Map<Long, Product> products,
-			int limit)
-		throws Exception {
+	private JSONArray _getMostPurchasedProductsJSONArray(
+		Map<Long, Long> productCounts, Map<Long, Product> products) {
 
 		JSONArray jsonArray = new JSONArray();
 
@@ -404,32 +402,26 @@ public class MarketplaceCommandLineRunner
 		).stream(
 		).sorted(
 			(a, b) -> Long.compare(b.getValue(), a.getValue())
-		).limit(
-			limit
 		).forEach(
 			entry -> {
-				Long productId = entry.getKey();
+				Product product = products.get(entry.getKey());
 
-				Product product = products.get(productId);
+				if (product == null) {
+					return;
+				}
 
-				if (product != null) {
-					Long count = entry.getValue();
-					JSONObject productJSONObject = new JSONObject();
-
-					productJSONObject.put(
-						"productName",
-						product.getName(
+				jsonArray.put(
+					new JSONObject(
+					).put(
+						"productName", product.getName(
 						).get(
 							"en_US"
 						)
 					).put(
-						"purchaseCount", count
+						"purchaseCount", entry.getValue()
 					).put(
 						"thumbnail", product.getThumbnail()
-					);
-
-					jsonArray.put(productJSONObject);
-				}
+					));
 			}
 		);
 
@@ -776,11 +768,11 @@ public class MarketplaceCommandLineRunner
 			}
 		}
 
-		JSONArray mostPurchasedAppsJSONArray = _getTopProductsJSONArray(
-			appsCounts, products, 5);
+		JSONArray mostPurchasedAppsJSONArray =
+			_getMostPurchasedProductsJSONArray(appsCounts, products);
 
 		JSONArray mostPurchasedLiferayProductsJSONArray =
-			_getTopProductsJSONArray(liferayProductsCounts, products, 5);
+			_getMostPurchasedProductsJSONArray(liferayProductsCounts, products);
 
 		JSONObject valueJSONObject = new JSONObject();
 
