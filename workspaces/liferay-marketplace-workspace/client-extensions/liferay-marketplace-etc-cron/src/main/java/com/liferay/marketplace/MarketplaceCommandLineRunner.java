@@ -960,25 +960,30 @@ public class MarketplaceCommandLineRunner
 
 			String erc = "KORONEIKE-PROJECT-" + korKey;
 
-			String valuePayload = entry.getValue(
-			).toString();
+			try {
+				String valuePayload = entry.getValue(
+				).toString();
 
-			if (_getExistingReportValueJSONObject(erc) != null) {
-				_patchReport(
-					new JSONObject(
-					).put(
-						"value", valuePayload
-					).toString(),
-					erc);
+				if (_getExistingReportValueJSONObject(erc) != null) {
+					_patchReport(
+						new JSONObject(
+						).put(
+							"value", valuePayload
+						).toString(),
+						erc);
+				}
+				else {
+					_postReport(
+						new JSONObject(
+						).put(
+							"externalReferenceCode", erc
+						).put(
+							"value", valuePayload
+						).toString());
+				}
 			}
-			else {
-				_postReport(
-					new JSONObject(
-					).put(
-						"externalReferenceCode", erc
-					).put(
-						"value", valuePayload
-					).toString());
+			catch (Exception exception) {
+				_log.error("Unable to write report " + erc, exception);
 			}
 		}
 
@@ -995,8 +1000,21 @@ public class MarketplaceCommandLineRunner
 			ZoneOffset.UTC
 		).getYear();
 
-		_processProjectsForYear(currentYear);
-		_processLastYearProjectsCount(currentYear - 1);
+		try {
+			_processProjectsForYear(currentYear);
+		}
+		catch (Exception exception) {
+			_log.error(
+				"Unable to process projects for year " + currentYear,
+				exception);
+		}
+
+		try {
+			_processLastYearProjectsCount(currentYear - 1);
+		}
+		catch (Exception exception) {
+			_log.error("Unable to process last year projects count", exception);
+		}
 	}
 
 	private void _processPublisherSalesSummary() throws Exception {

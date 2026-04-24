@@ -32,22 +32,8 @@ const lastYearBaseSearchBuilder = new SearchBuilder()
 	.in('statusCode', [ProductWorkflowStatusCode.APPROVED])
 	.and();
 
-const appsAndConnectorSupportingQReleaseFilter = baseSearchBuilder
-	.clone()
-	.group('OPEN')
-	.lambdaContains('specificationValues', '2025 Q')
-	.or()
-	.lambdaContains('specificationValues', '2024 Q')
-	.or()
-	.lambdaContains('specificationValues', '2023 Q')
-	.group('CLOSE')
-	.and()
-	.not()
-	.lambda('specificationValues', ProductType.LOW_CODE_CONFIGURATION)
-	.build();
-
-const lastYearAppsAndConnectorSupportingQReleaseFilter =
-	lastYearBaseSearchBuilder
+const buildQReleaseFilter = (base: SearchBuilder) =>
+	base
 		.clone()
 		.group('OPEN')
 		.lambdaContains('specificationValues', '2025 Q')
@@ -60,6 +46,13 @@ const lastYearAppsAndConnectorSupportingQReleaseFilter =
 		.not()
 		.lambda('specificationValues', ProductType.LOW_CODE_CONFIGURATION)
 		.build();
+
+const appsAndConnectorSupportingQReleaseFilter =
+	buildQReleaseFilter(baseSearchBuilder);
+
+const lastYearAppsAndConnectorSupportingQReleaseFilter = buildQReleaseFilter(
+	lastYearBaseSearchBuilder
+);
 
 const lowCodeConfigurationsPublishedFilter = baseSearchBuilder
 	.clone()
@@ -272,10 +265,11 @@ const useKPI = () => {
 						projectsUsingMarkeplaceApps.length
 					),
 					colors: ['#9CE269', '#D4F3BE'],
-					lastYearCount: lastYearProjectsCount.count,
-					lastYearLabel: lastYearProjectsCount.year
-						? `${lastYearProjectsCount.year}`
-						: undefined,
+					lastYearCount:
+						lastYearProjectsCount.year === lastYear
+							? lastYearProjectsCount.count
+							: undefined,
+					lastYearLabel,
 					onClick: projectsUsingMarkeplaceApps.length
 						? () =>
 								modal.onOpenModal({
