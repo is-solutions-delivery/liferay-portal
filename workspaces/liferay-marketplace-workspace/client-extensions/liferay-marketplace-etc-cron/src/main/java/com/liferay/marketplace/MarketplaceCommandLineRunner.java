@@ -44,8 +44,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -134,6 +136,24 @@ public class MarketplaceCommandLineRunner
 					"Assigned role ", role.getName(), " to user ",
 					userAccount.getName()));
 		}
+	}
+
+	private String _buildYearOrderFilter(int year) {
+		return StringBundler.concat(
+			"createDate ge ",
+			LocalDate.of(
+				year, 1, 1
+			).atStartOfDay(
+				ZoneOffset.UTC
+			),
+			" and createDate lt ",
+			LocalDate.of(
+				year + 1, 1, 1
+			).atStartOfDay(
+				ZoneOffset.UTC
+			),
+			" and (not contains(creatorEmailAddress, '@liferay.com')) and ",
+			"orderTypeExternalReferenceCode ne 'SOLUTIONS7'");
 	}
 
 	private JSONObject _createPublisherSalesSummary(
@@ -249,6 +269,41 @@ public class MarketplaceCommandLineRunner
 		int quarter = ((localDate.getMonthValue() - 1) / 3) + 1;
 
 		return localDate.getYear() + " Q" + quarter;
+	}
+
+	private JSONObject _getExistingReportValueJSONObject(
+		String externalReferenceCode) {
+
+		try {
+			String response = get(
+				_liferayOAuth2AccessTokenManager.getAuthorization(
+					_liferayOAuthApplicationExternalReferenceCodes),
+				UriComponentsBuilder.fromPath(
+					"/o/c/reports/by-external-reference-code/" +
+						externalReferenceCode
+				).build(
+				).toUri());
+
+			JSONObject responseJSONObject = new JSONObject(response);
+
+			String value = responseJSONObject.optString("value", null);
+
+			if (Validator.isNull(value)) {
+				return null;
+			}
+
+			return new JSONObject(value);
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(
+					"Unable to fetch existing report " + externalReferenceCode +
+						" (likely first run)",
+					exception);
+			}
+
+			return null;
+		}
 	}
 
 	private String _getKoroneikiProject(Order order) {
@@ -495,6 +550,17 @@ public class MarketplaceCommandLineRunner
 			).toUri());
 	}
 
+	private void _postReport(String data) {
+		post(
+			_liferayOAuth2AccessTokenManager.getAuthorization(
+				_liferayOAuthApplicationExternalReferenceCodes),
+			data,
+			UriComponentsBuilder.fromPath(
+				"/o/c/reports/"
+			).build(
+			).toUri());
+	}
+
 	private void _postRequestProductFeedback(long orderId) throws Exception {
 		post(
 			_liferayOAuth2AccessTokenManager.getAuthorization(
@@ -603,6 +669,83 @@ public class MarketplaceCommandLineRunner
 			catch (Exception exception) {
 				_log.error(exception);
 			}
+		}
+	}
+
+	private void _processLastYearProjectsCount(int lastYear) throws Exception {
+		JSONObject existingValueJSONObject = _getExistingReportValueJSONObject(
+			_LAST_YEAR_COUNT_ERC);
+
+		if ((existingValueJSONObject != null) &&
+			(existingValueJSONObject.optInt("year") == lastYear)) {
+
+			if (_log.isInfoEnabled()) {
+				_log.info(
+					StringBundler.concat(
+						"lastYearProjectsUsingMarketplaceCount already cached ",
+						"for year ", lastYear, ", skipping recompute"));
+			}
+
+			return;
+		}
+
+		Set<String> korKeys = new HashSet<>();
+
+		_forEachOrder(
+			_buildYearOrderFilter(lastYear),
+			order -> {
+				Map<String, String> customFields =
+					(Map<String, String>)order.getCustomFields();
+
+				String koroneikiProject = customFields.get("koroneiki-project");
+
+				if (Validator.isNull(koroneikiProject)) {
+					return;
+				}
+
+				JSONArray koroneikiProjectJSONArray = new JSONArray(
+					koroneikiProject);
+
+				if (koroneikiProjectJSONArray.isEmpty()) {
+					return;
+				}
+
+				korKeys.add(
+					koroneikiProjectJSONArray.getJSONObject(
+						0
+					).getString(
+						"key"
+					));
+			});
+
+		JSONObject reportBodyJSONObject = new JSONObject(
+		).put(
+			"name", "lastYearProjectsUsingMarketplaceCount"
+		).put(
+			"value",
+			new JSONObject(
+			).put(
+				"count", korKeys.size()
+			).put(
+				"year", lastYear
+			).toString()
+		);
+
+		if (existingValueJSONObject != null) {
+			_patchReport(reportBodyJSONObject.toString(), _LAST_YEAR_COUNT_ERC);
+		}
+		else {
+			_postReport(
+				reportBodyJSONObject.put(
+					"externalReferenceCode", _LAST_YEAR_COUNT_ERC
+				).toString());
+		}
+
+		if (_log.isInfoEnabled()) {
+			_log.info(
+				StringBundler.concat(
+					"Updated lastYearProjectsUsingMarketplaceCount with ",
+					korKeys.size(), " KOR keys for year ", lastYear));
 		}
 	}
 
@@ -729,7 +872,7 @@ public class MarketplaceCommandLineRunner
 		}
 	}
 
-	private void _processProjectsUsingMarketplaceApps() throws Exception {
+	private void _processProjectsForYear(int year) throws Exception {
 		Map<String, JSONObject> projectsUsingMarketplace = new HashMap<>();
 
 		OrderResource orderResource = _getOrderResource();
@@ -739,15 +882,7 @@ public class MarketplaceCommandLineRunner
 			"name eq 'Customers'");
 
 		_forEachOrder(
-			StringBundler.concat(
-				"createDate gt ",
-				LocalDate.of(
-					2025, 1, 1
-				).atStartOfDay(
-					ZoneOffset.UTC
-				),
-				" and (not contains(creatorEmailAddress, '@liferay.com')) and ",
-				"orderTypeExternalReferenceCode ne 'SOLUTIONS7'"),
+			_buildYearOrderFilter(year),
 			order -> {
 				String accountExternalReferenceCode =
 					order.getAccountExternalReferenceCode();
@@ -783,11 +918,11 @@ public class MarketplaceCommandLineRunner
 					0
 				);
 
-				String key = jsonObject.getString("key");
+				String korKey = jsonObject.getString("key");
 
-				if (!projectsUsingMarketplace.containsKey(key)) {
+				if (!projectsUsingMarketplace.containsKey(korKey)) {
 					projectsUsingMarketplace.put(
-						key,
+						korKey,
 						new JSONObject(
 						).put(
 							"accountName", jsonObject.getString("name")
@@ -797,7 +932,7 @@ public class MarketplaceCommandLineRunner
 				}
 
 				projectsUsingMarketplace.get(
-					key
+					korKey
 				).getJSONArray(
 					"orders"
 				).put(
@@ -818,21 +953,50 @@ public class MarketplaceCommandLineRunner
 				);
 			});
 
-		_patchReport(
-			new JSONObject(
-			).put(
-				"value",
-				new JSONObject(
-					projectsUsingMarketplace
-				).toString()
-			).toString(),
-			"PROJECTS-USING-MARKETPLACE");
+		for (Map.Entry<String, JSONObject> entry :
+				projectsUsingMarketplace.entrySet()) {
+
+			String korKey = entry.getKey();
+
+			String erc = "KORONEIKE-PROJECT-" + korKey;
+
+			String valuePayload = entry.getValue(
+			).toString();
+
+			if (_getExistingReportValueJSONObject(erc) != null) {
+				_patchReport(
+					new JSONObject(
+					).put(
+						"value", valuePayload
+					).toString(),
+					erc);
+			}
+			else {
+				_postReport(
+					new JSONObject(
+					).put(
+						"externalReferenceCode", erc
+					).put(
+						"value", valuePayload
+					).toString());
+			}
+		}
 
 		if (_log.isInfoEnabled()) {
 			_log.info(
-				"There are " + projectsUsingMarketplace.size() +
-					" projects with Marketplace apps");
+				StringBundler.concat(
+					"Wrote ", projectsUsingMarketplace.size(),
+					" KORONEIKE-PROJECT-* reports for year ", year));
 		}
+	}
+
+	private void _processProjectsUsingMarketplaceApps() throws Exception {
+		int currentYear = ZonedDateTime.now(
+			ZoneOffset.UTC
+		).getYear();
+
+		_processProjectsForYear(currentYear);
+		_processLastYearProjectsCount(currentYear - 1);
 	}
 
 	private void _processPublisherSalesSummary() throws Exception {
@@ -961,6 +1125,9 @@ public class MarketplaceCommandLineRunner
 
 		orderResource.patchOrder(orderId, order);
 	}
+
+	private static final String _LAST_YEAR_COUNT_ERC =
+		"LAST-YEAR-PROJECTS-USING-MARKETPLACE-COUNT";
 
 	private static final int _ORDER_PAYMENT_STATUS_COMPLETED = 0;
 
