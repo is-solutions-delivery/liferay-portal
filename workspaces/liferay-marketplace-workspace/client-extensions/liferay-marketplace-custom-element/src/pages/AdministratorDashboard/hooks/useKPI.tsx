@@ -36,6 +36,8 @@ const buildQReleaseFilter = (base: SearchBuilder) =>
 	base
 		.clone()
 		.group('OPEN')
+		.lambdaContains('specificationValues', '2026 Q')
+		.or()
 		.lambdaContains('specificationValues', '2025 Q')
 		.or()
 		.lambdaContains('specificationValues', '2024 Q')
