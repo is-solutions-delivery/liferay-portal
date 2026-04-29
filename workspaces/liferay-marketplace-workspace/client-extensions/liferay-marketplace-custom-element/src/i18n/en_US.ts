@@ -166,6 +166,7 @@ export default {
 	'confirm-uninstall-terms': 'Confirm Uninstall Terms',
 	'congratulations': 'Congratulations',
 	'connect-anyway': 'Connect Anyway',
+	'connect-your-liferay-dsr': 'Connect Your Liferay DSR',
 	'contact': 'Contact',
 	'contact-publisher': 'Contact Publisher',
 	'contact-sales': 'Contact Sales',
@@ -180,6 +181,9 @@ export default {
 	'continue-to-download': 'Continue to Download',
 	'continue-to-install': 'Continue to Install',
 	'copied-x-to-the-clipboard': 'Copied {0} to the clipboard.',
+	'copy': 'Copy',
+	'copy-this-token-to-your-liferay-dxp-instance':
+		'Copy this token to your Liferay DXP Instance',
 	'could-not-find-ssa-account': 'Could not find SSA account',
 	'could-not-upload-the-file-a-package-with-this-filename-already-exists':
 		'Could not upload the file. A package with this filename already exists.',
@@ -811,6 +815,7 @@ export default {
 	'timezone': 'Timezone',
 	'title': 'Title',
 	'to-be-renewed': 'To be Renewed',
+	'tokens': 'Tokens',
 	'to-generate-your-unique-activation-key-file-and-access-the-download-please-complete-your-profile-details-below-tell-us-a-bit-about-your-intended-use-to-help-us-support-your-experience':
 		'To generate your unique activation key file and access the download, please complete your profile details below. Tell us a bit about your intended use to help us support your experience',
 	'to-generate-your-unique-activation-key-file-please-provide-the-technical-specifications-required-below-these-details-are-used-exclusively-to-configure-the-software-for-your-environment-and-ensure-hardware-compatibility':

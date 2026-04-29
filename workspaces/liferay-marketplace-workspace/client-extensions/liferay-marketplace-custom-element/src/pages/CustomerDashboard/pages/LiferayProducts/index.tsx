@@ -26,6 +26,7 @@ const searchParams = new URLSearchParams({
 		OrderTypes.ADDONS,
 		OrderTypes.AI_HUB,
 		OrderTypes.CMP,
+		OrderTypes.DSR,
 		OrderTypes.DXP,
 	]),
 	nestedFields: 'placedOrderItems',

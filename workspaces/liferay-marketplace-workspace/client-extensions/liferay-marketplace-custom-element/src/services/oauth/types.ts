@@ -29,6 +29,7 @@ export type LicenseKey = {
 	complimentary: boolean;
 	createDate: string;
 	description: string;
+	environment?: string;
 	expirationDate: string;
 	hostName: string;
 	id: number;

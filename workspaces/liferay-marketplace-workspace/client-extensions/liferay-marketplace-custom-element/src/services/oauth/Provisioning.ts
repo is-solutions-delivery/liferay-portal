@@ -89,7 +89,7 @@ class ProvisioningOAuth2 extends MarketplaceSpringBootOAuth2 {
 		});
 	}
 
-	async provisionDSR(payload: any) {
+	async provisionDSRBeta(payload: any) {
 		return this.post('/dsr-beta-license-key', payload, {
 			earlyReturn: true,
 		});

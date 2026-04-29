@@ -25,18 +25,24 @@ const getTabs = (data: ProductAndOrderPayload): NavbarProps['routes'] => {
 	}
 
 	const isCMP = orderTypeExternalReferenceCode === OrderTypes.CMP;
+	const isDSR = orderTypeExternalReferenceCode === OrderTypes.DSR;
 	const isDXP = orderTypeExternalReferenceCode === OrderTypes.DXP;
 
 	return [
 		{
 			name: i18n.translate('activation-keys'),
 			path: '',
-			visible: isCMP || isDXP,
+			visible: isCMP || isDSR || isDXP,
 		},
 		{
 			name: i18n.translate('bundles'),
 			path: 'bundles',
 			visible: isDXP,
+		},
+		{
+			name: i18n.translate('tokens'),
+			path: 'tokens',
+			visible: isDSR,
 		},
 	];
 };

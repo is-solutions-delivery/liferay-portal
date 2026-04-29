@@ -11,6 +11,7 @@ import {OrderTypes} from '../../../../enums/Order';
 import AIHubDetails from './Details/AIHubDetails';
 import ActivationKeysDetails from './Details/ActivationKeysDetails';
 import AnalyticsDetails from './Details/AnalyticsDetails';
+import DSRDetails from './Details/DSRDetails';
 
 const LiferayProduct = () => {
 	const {placedOrder, product} = useOutletContext<any>();
@@ -27,6 +28,10 @@ const LiferayProduct = () => {
 
 	if (orderTypeExternalReferenceCode === OrderTypes.AI_HUB) {
 		return <AIHubDetails />;
+	}
+
+	if (orderTypeExternalReferenceCode === OrderTypes.DSR) {
+		return <DSRDetails />;
 	}
 
 	if (
