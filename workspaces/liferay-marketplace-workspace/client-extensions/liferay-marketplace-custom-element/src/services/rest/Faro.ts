@@ -10,5 +10,5 @@ export async function getDataSourceToken(groupId: string): Promise<string> {
 		`o/faro/contacts/${groupId}/data_source/token`
 	);
 
-	return typeof response === 'string' ? response : (response?.token ?? '');
+	return typeof response === 'string' ? response : response?.token ?? '';
 }

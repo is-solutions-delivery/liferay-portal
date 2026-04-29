@@ -52,7 +52,9 @@ const DSRDetails = () => {
 								disabled={expired}
 								displayType="secondary"
 								onClick={() => {
-									provisioningOAuth2.downloadLicenseKey(row.id);
+									provisioningOAuth2.downloadLicenseKey(
+										row.id
+									);
 								}}
 								size="sm"
 							>
@@ -95,7 +97,11 @@ const DSRDetails = () => {
 						render: (startDate, {expirationDate}) => (
 							<div className="date-cell">
 								<p className="m-0">
-									{format(new Date(startDate), 'MMM dd, yyyy')} -
+									{format(
+										new Date(startDate),
+										'MMM dd, yyyy'
+									)}{' '}
+									-
 								</p>
 
 								<p className="m-0">
@@ -136,7 +142,9 @@ const DSRDetails = () => {
 							);
 						},
 						title: (
-							<TitleSubtitleHeader title={i18n.translate('status')} />
+							<TitleSubtitleHeader
+								title={i18n.translate('status')}
+							/>
 						),
 					},
 				]}

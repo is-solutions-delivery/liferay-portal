@@ -56,7 +56,7 @@ const DSRTokens = () => {
 						'copy-this-token-to-your-liferay-dxp-instance'
 					)}
 
-					<span className="reference-mark text-danger ml-1">*</span>
+					<span className="ml-1 reference-mark text-danger">*</span>
 				</label>
 
 				{isLoading ? (
