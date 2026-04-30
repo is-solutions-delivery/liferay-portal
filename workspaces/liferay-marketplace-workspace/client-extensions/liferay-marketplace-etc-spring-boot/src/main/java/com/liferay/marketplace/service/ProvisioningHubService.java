@@ -5,15 +5,21 @@
 
 package com.liferay.marketplace.service;
 
+import com.liferay.ai.hub.rest.client.dto.v1_0.ProvisioningRequest;
+import com.liferay.ai.hub.rest.client.resource.v1_0.ProvisioningRequestResource;
+import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
 import com.liferay.client.extension.util.spring.boot3.service.BaseService;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.Order;
+import com.liferay.marketplace.util.MarketplaceUtil;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Account;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.Product;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ProductPurchase;
 import com.liferay.petra.string.StringBundler;
-import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Validator;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import java.util.Map;
 import java.util.Objects;
@@ -25,6 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -32,6 +39,18 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ProvisioningHubService extends BaseService {
+
+	public ProvisioningRequestResource getProvisioningRequestResource()
+		throws MalformedURLException {
+
+		return ProvisioningRequestResource.builder(
+		).header(
+			"Authorization",
+			_liferayOAuth2AccessTokenManager.getAuthorization("external-ai-hub")
+		).endpoint(
+			_externalAIHUBHomePageURL
+		).build();
+	}
 
 	public void provision(
 			Account koroneikiAccount, Order order,
@@ -42,6 +61,19 @@ public class ProvisioningHubService extends BaseService {
 
 		if (Objects.equals(product.getName(), "Liferay Data Platform")) {
 			_provisionLDP(koroneikiAccount, order);
+		}
+	}
+
+	public void provisionAIHub(ProvisioningRequest provisioningRequest)
+		throws Exception {
+
+		ProvisioningRequestResource provisioningRequestResource =
+			getProvisioningRequestResource();
+
+		provisioningRequestResource.postProvisioning(provisioningRequest);
+
+		if (_log.isInfoEnabled()) {
+			_log.info("AI Hub provisioned " + provisioningRequest);
 		}
 	}
 
@@ -119,13 +151,8 @@ public class ProvisioningHubService extends BaseService {
 		_marketplaceService.completeOrder(
 			HashMapBuilder.put(
 				"order-metadata",
-				new JSONObject(
-					GetterUtil.get(
-						order.getCustomFields(
-						).get(
-							"order-metadata"
-						),
-						"{}")
+				MarketplaceUtil.getOrderMetadata(
+					order
 				).put(
 					"analyticsProject", new JSONObject(analyticsProject)
 				).toString()
@@ -139,8 +166,14 @@ public class ProvisioningHubService extends BaseService {
 	@Autowired
 	private AnalyticsService _analyticsService;
 
+	@Value("${external.ai.hub.oauth2.headless.server.home.page.url}")
+	private URL _externalAIHUBHomePageURL;
+
 	@Autowired
 	private KoroneikiService _koroneikiService;
+
+	@Autowired
+	private LiferayOAuth2AccessTokenManager _liferayOAuth2AccessTokenManager;
 
 	@Autowired
 	private MarketplaceService _marketplaceService;
