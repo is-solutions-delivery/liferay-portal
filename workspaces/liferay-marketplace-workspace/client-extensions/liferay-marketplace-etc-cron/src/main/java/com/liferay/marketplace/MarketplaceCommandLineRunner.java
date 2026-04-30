@@ -732,12 +732,15 @@ public class MarketplaceCommandLineRunner
 		);
 
 		if (existingValueJSONObject != null) {
-			_patchReport(reportBodyJSONObject.toString(), _LAST_YEAR_PROJECTS_USING_MARKETPLACE_COUNT_ERC);
+			_patchReport(
+				reportBodyJSONObject.toString(),
+				_LAST_YEAR_PROJECTS_USING_MARKETPLACE_COUNT_ERC);
 		}
 		else {
 			_postReport(
 				reportBodyJSONObject.put(
-					"externalReferenceCode", _LAST_YEAR_PROJECTS_USING_MARKETPLACE_COUNT_ERC
+					"externalReferenceCode",
+					_LAST_YEAR_PROJECTS_USING_MARKETPLACE_COUNT_ERC
 				).toString());
 		}
 
@@ -1148,8 +1151,9 @@ public class MarketplaceCommandLineRunner
 		orderResource.patchOrder(orderId, order);
 	}
 
-	private static final String _LAST_YEAR_PROJECTS_USING_MARKETPLACE_COUNT_ERC =
-		"LAST-YEAR-PROJECTS-USING-MARKETPLACE-COUNT";
+	private static final String
+		_LAST_YEAR_PROJECTS_USING_MARKETPLACE_COUNT_ERC =
+			"LAST-YEAR-PROJECTS-USING-MARKETPLACE-COUNT";
 
 	private static final int _ORDER_PAYMENT_STATUS_COMPLETED = 0;
 
