@@ -3,18 +3,15 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayButton from '@clayui/button';
-import {ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {useOutletContext} from 'react-router-dom';
 import useSWR from 'swr';
 
-import {DetailedCard} from '../../../../../components/DetailedCard/DetailedCard';
 import {OrderCustomFields} from '../../../../../enums/Order';
 import useGetProductByOrderId from '../../../../../hooks/useGetProductByOrderId';
 import i18n from '../../../../../i18n';
-import {getDataSourceToken} from '../../../../../services/rest/Faro';
+import analyticsOAuth2 from '../../../../../services/oauth/Analytics';
 import {copyToClipboard} from '../../../../../utils/browser';
 import {safeJSONParse} from '../../../../../utils/util';
 
@@ -29,63 +26,58 @@ const DSRTokens = () => {
 
 	const orderMetadata = safeJSONParse(
 		placedOrder.customFields[OrderCustomFields.ORDER_METADATA],
-		{analyticsProject: {groupId: ''}}
+		{analyticsProject: {projectId: ''}}
 	);
 
-	const groupId = orderMetadata?.analyticsProject?.groupId
-		? String(orderMetadata.analyticsProject.groupId)
+	const projectId = orderMetadata?.analyticsProject?.projectId
+		? String(orderMetadata.analyticsProject.projectId)
 		: '';
 
-	const {data: token, isLoading} = useSWR(
-		groupId ? `/faro/data-source-token/${groupId}` : null,
-		() => getDataSourceToken(groupId)
+	const {data: fetchedToken, isLoading} = useSWR(
+		projectId ? `/analytics/project/${projectId}/data-source/token` : null,
+		() => analyticsOAuth2.getProjectDataSourceToken(projectId)
 	);
 
+	const token = fetchedToken || i18n.translate('token-unavailable');
+
 	return (
-		<div className="dsr-tokens mb-9 mt-5">
-			<DetailedCard
-				cardIconAltText="Diagram Icon"
-				cardTitle={i18n.translate('connect-your-liferay-dsr')}
-				clayIcon="diagram"
-			>
-				<label
-					className="font-weight-bold mt-3"
-					htmlFor="dsr-token-input"
-				>
+		<div className="dsr-tokens mt-5">
+			<div className="dsr-token-card">
+				<div className="dsr-token-card-header">
+					<div className="dsr-token-card-icon">
+						<ClayIcon symbol="diagram" />
+					</div>
+
+					<h3 className="dsr-token-card-title m-0">
+						{i18n.translate('connect-your-liferay-dsr')}
+					</h3>
+				</div>
+
+				<span className="dsr-token-label">
 					{i18n.translate(
 						'copy-this-token-to-your-liferay-dxp-instance'
 					)}
 
-					<span className="ml-1 reference-mark text-danger">*</span>
-				</label>
+					<span className="dsr-token-required">*</span>
+				</span>
 
 				{isLoading ? (
 					<ClayLoadingIndicator />
 				) : (
-					<ClayInput.Group>
-						<ClayInput.GroupItem>
-							<ClayInput
-								className="dsr-token-input text-truncate"
-								id="dsr-token-input"
-								readOnly
-								type="text"
-								value={token ?? ''}
-							/>
-						</ClayInput.GroupItem>
+					<div className="dsr-token-field">
+						<span className="dsr-token-input">{token}</span>
 
-						<ClayInput.GroupItem append shrink>
-							<ClayButton
-								aria-label={i18n.translate('copy')}
-								disabled={!token}
-								displayType="secondary"
-								onClick={() => copyToClipboard(token ?? '')}
-							>
-								<ClayIcon symbol="paste" />
-							</ClayButton>
-						</ClayInput.GroupItem>
-					</ClayInput.Group>
+						<button
+							aria-label={i18n.translate('copy')}
+							className="dsr-token-copy"
+							onClick={() => copyToClipboard(token)}
+							type="button"
+						>
+							<ClayIcon symbol="copy" />
+						</button>
+					</div>
 				)}
-			</DetailedCard>
+			</div>
 		</div>
 	);
 };

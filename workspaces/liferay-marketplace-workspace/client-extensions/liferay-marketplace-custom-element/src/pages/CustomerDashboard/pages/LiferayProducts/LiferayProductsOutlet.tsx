@@ -55,7 +55,12 @@ const LiferayProductsOutlet = () => (
 					?.APP_BETA;
 
 			if (
-				[OrderTypes.AI_HUB, OrderTypes.CMP, OrderTypes.DXP].includes(
+				[
+					OrderTypes.AI_HUB,
+					OrderTypes.CMP,
+					OrderTypes.DSR,
+					OrderTypes.DXP,
+				].includes(
 					props?.placedOrder
 						?.orderTypeExternalReferenceCode as OrderTypes
 				)
@@ -78,8 +83,10 @@ const LiferayProductsOutlet = () => (
 							</ClayButton>
 						)}
 
-						{props?.placedOrder?.orderTypeExternalReferenceCode !==
-							OrderTypes.AI_HUB && (
+						{[OrderTypes.CMP, OrderTypes.DXP].includes(
+							props?.placedOrder
+								?.orderTypeExternalReferenceCode as OrderTypes
+						) && (
 							<ClayButton
 								displayType="primary"
 								onClick={() => {

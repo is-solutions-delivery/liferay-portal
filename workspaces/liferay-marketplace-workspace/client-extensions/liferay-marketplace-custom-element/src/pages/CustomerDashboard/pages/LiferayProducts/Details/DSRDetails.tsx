@@ -6,7 +6,7 @@
 import ClayButton from '@clayui/button';
 import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {format, isBefore} from 'date-fns';
-import {useParams} from 'react-router-dom';
+import {useLocation, useParams} from 'react-router-dom';
 import useSWR from 'swr';
 
 import EmptyState from '../../../../../components/EmptyState';
@@ -15,6 +15,7 @@ import Table from '../../../../../components/Table/Table';
 import i18n from '../../../../../i18n';
 import provisioningOAuth2 from '../../../../../services/oauth/Provisioning';
 import TitleSubtitleHeader from '../../../components/TitleSubtitleHeader';
+import ActivationKeyAlert from '../Licenses/LicenseAlert';
 
 import '../Licenses/Licenses.scss';
 
@@ -23,6 +24,7 @@ const isLicenseExpired = (expirationDate: string) =>
 
 const DSRDetails = () => {
 	const {orderId} = useParams();
+	const location = useLocation();
 
 	const {data: licenseKeysResponse, isLoading} = useSWR(
 		`/order-license-keys/${orderId}`,
@@ -38,122 +40,151 @@ const DSRDetails = () => {
 	}
 
 	return (
-		<div className="licenses mb-9 mt-5">
-			<Table
-				Actions={({row}) => {
-					const expired =
-						!row.expirationDate ||
-						isLicenseExpired(row.expirationDate);
+		<div className="mt-5">
+			{new URLSearchParams(location.search).has('next-steps') && (
+				<ActivationKeyAlert
+					className="license-alert"
+					symbol="check-circle"
+					title={i18n.translate(
+						'your-free-activation-key-has-been-generated'
+					)}
+				>
+					{i18n.translate(
+						'download-your-activation-key-file-below-and-upload-it-to-the-dedicated-portal-within-your-dxp-environment-to-get-started'
+					)}
+				</ActivationKeyAlert>
+			)}
 
-					return (
-						<div className="align-items-center d-flex license-actions">
-							<ClayButton
-								className="px-3 rounded"
-								disabled={expired}
-								displayType="secondary"
-								onClick={() => {
-									provisioningOAuth2.downloadLicenseKey(
-										row.id
-									);
-								}}
-								size="sm"
-							>
-								{i18n.translate('download')}
-							</ClayButton>
-						</div>
-					);
-				}}
-				columns={[
-					{
-						bodyClass: 'border-0 cursor-pointer',
-						expanded: true,
-						key: 'environment',
-						render: (environment, {description}) => (
-							<TitleSubtitleHeader
-								title={environment || description || '-'}
-							/>
-						),
-						title: (
-							<TitleSubtitleHeader
-								title={i18n.translate('environment')}
-							/>
-						),
-					},
-					{
-						bodyClass: 'border-0 cursor-pointer',
-						key: 'hostName',
-						render: (hostName) => (
-							<TitleSubtitleHeader subtitle={hostName || '-'} />
-						),
-						title: (
-							<TitleSubtitleHeader
-								title={`${i18n.translate('key-type')} (${i18n.translate('host-name')})`}
-							/>
-						),
-					},
-					{
-						bodyClass: 'border-0 cursor-pointer',
-						key: 'startDate',
-						render: (startDate, {expirationDate}) => (
-							<div className="date-cell">
-								<p className="m-0">
-									{format(
-										new Date(startDate),
-										'MMM dd, yyyy'
-									)}{' '}
-									-
-								</p>
+			<h3 className="font-weight-semi-bold mb-4 mt-4">
+				{i18n.translate('activation-keys')}
+			</h3>
 
-								<p className="m-0">
-									{expirationDate
-										? format(
-												new Date(expirationDate),
-												'MMM dd, yyyy'
-											)
-										: 'DNE'}
-								</p>
+			<div className="licenses mb-9">
+				<Table
+					Actions={({row}) => {
+						const expired =
+							!row.expirationDate ||
+							isLicenseExpired(row.expirationDate);
+
+						return (
+							<div className="align-items-center d-flex license-actions">
+								<ClayButton
+									className="px-3 rounded"
+									disabled={expired}
+									displayType="secondary"
+									onClick={() => {
+										provisioningOAuth2.downloadLicenseKey(
+											row.id
+										);
+									}}
+									size="sm"
+								>
+									{i18n.translate('download')}
+								</ClayButton>
 							</div>
-						),
-						title: (
-							<TitleSubtitleHeader
-								title={
-									<span>
-										Start Date -<br />
-										Exp. Date
-									</span>
-								}
-							/>
-						),
-					},
-					{
-						bodyClass: 'border-0 cursor-pointer',
-						key: 'status',
-						render: (_, {active, expirationDate}) => {
-							const isActive =
-								active &&
-								isBefore(new Date(), new Date(expirationDate));
-
-							const label = isActive ? 'active' : 'expired';
-
-							return (
-								<StatusCell icon="circle" iconClassName={label}>
-									{i18n.translate(label)}
-								</StatusCell>
-							);
+						);
+					}}
+					columns={[
+						{
+							bodyClass: 'border-0 cursor-pointer',
+							expanded: true,
+							key: 'environment',
+							render: (environment, {description}) => (
+								<TitleSubtitleHeader
+									title={environment || description || '-'}
+								/>
+							),
+							title: (
+								<TitleSubtitleHeader
+									title={i18n.translate('environment')}
+								/>
+							),
 						},
-						title: (
-							<TitleSubtitleHeader
-								title={i18n.translate('status')}
-							/>
-						),
-					},
-				]}
-				hasHover
-				hasKebabButton
-				hasPagination
-				kebabClassName="border-0"
-				rows={licenseKeysResponse?.items ?? []}
-			/>
+						{
+							bodyClass: 'border-0 cursor-pointer',
+							key: 'hostName',
+							render: (hostName) => (
+								<TitleSubtitleHeader
+									subtitle={hostName || '-'}
+								/>
+							),
+							title: (
+								<TitleSubtitleHeader
+									subtitle={i18n.translate('host-name')}
+									title={i18n.translate('key-type')}
+								/>
+							),
+						},
+						{
+							bodyClass: 'border-0 cursor-pointer',
+							key: 'startDate',
+							render: (startDate, {expirationDate}) => (
+								<div className="date-cell">
+									<p className="m-0">
+										{format(
+											new Date(startDate),
+											'MMM dd, yyyy'
+										)}{' '}
+										-
+									</p>
+
+									<p className="m-0">
+										{expirationDate
+											? format(
+													new Date(expirationDate),
+													'MMM dd, yyyy'
+												)
+											: 'DNE'}
+									</p>
+								</div>
+							),
+							title: (
+								<TitleSubtitleHeader
+									title={
+										<span>
+											Start Date -<br />
+											Exp. Date
+										</span>
+									}
+								/>
+							),
+						},
+						{
+							bodyClass: 'border-0 cursor-pointer',
+							key: 'status',
+							render: (_, {active, expirationDate}) => {
+								const isActive =
+									active &&
+									isBefore(
+										new Date(),
+										new Date(expirationDate)
+									);
+
+								const label = isActive ? 'active' : 'expired';
+
+								return (
+									<StatusCell
+										icon="circle"
+										iconClassName={label}
+									>
+										{i18n.translate(label)}
+									</StatusCell>
+								);
+							},
+							title: (
+								<TitleSubtitleHeader
+									title={i18n.translate('status')}
+								/>
+							),
+						},
+					]}
+					hasHover
+					hasKebabButton
+					hasPagination
+					kebabClassName="border-0"
+					rows={licenseKeysResponse?.items ?? []}
+				/>
+			</div>
 		</div>
 	);
 };

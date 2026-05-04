@@ -18,6 +18,14 @@ class AnalyticsOAuth2 extends MarketplaceSpringBootOAuth2 {
 		return this.get<AnalyticsProject>(`/project/${projectId}`);
 	}
 
+	async getProjectDataSourceToken(projectId: string): Promise<string> {
+		const response = await this.get<string | {token: string}>(
+			`/project/${projectId}/data-source/token`
+		);
+
+		return typeof response === 'string' ? response : response?.token ?? '';
+	}
+
 	async provisioning(
 		orderId: number,
 		data: unknown
