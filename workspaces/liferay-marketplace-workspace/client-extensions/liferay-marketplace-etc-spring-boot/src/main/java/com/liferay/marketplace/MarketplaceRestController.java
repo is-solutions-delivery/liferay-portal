@@ -32,6 +32,8 @@ import com.liferay.marketplace.util.MarketplaceUtil;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -47,7 +49,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -99,16 +108,15 @@ public class MarketplaceRestController extends BaseRestController {
 
 		byte[] lpkgBytes;
 
-		try (InputStream is = file.getInputStream()) {
-			lpkgBytes = _buildLpkg(is, originalName, Collections.emptyMap());
+		try (InputStream inputStream = file.getInputStream()) {
+			lpkgBytes = _buildLpkg(
+				inputStream, originalName, Collections.emptyMap(), null, null);
 		}
 
-		String finalName =
-			originalName.replace(
-				".jar", ""
-			).replace(
-				".zip", ""
-			) + ".lpkg";
+		String name = StringUtil.replace(
+			originalName, new String[] {".jar", ".zip"}, new String[] {"", ""});
+
+		String finalName = name + ".lpkg";
 
 		return ResponseEntity.ok(
 		).header(
@@ -400,16 +408,16 @@ public class MarketplaceRestController extends BaseRestController {
 		}
 		catch (WebClientResponseException webClientResponseException) {
 			_log.error(
-					"Unable to process publisher asset links for product " +
-							productId);
+				"Unable to process publisher asset links for product " +
+					productId);
 
 			_log.error(webClientResponseException.getResponseBodyAsString());
 		}
 		catch (Exception exception) {
 			_log.error(
-					"Unable to process publisher asset links for product " +
-							productId,
-					exception);
+				"Unable to process publisher asset links for product " +
+					productId,
+				exception);
 		}
 	}
 
@@ -425,8 +433,9 @@ public class MarketplaceRestController extends BaseRestController {
 	 * every sub-LPKG, matching the structure expected by the DXP runtime.
 	 */
 	private byte[] _assembleMasterLpkg(
-			List<_JarMetadata> apiJars, List<_JarMetadata> implJars,
-			Path apiDir, Path implDir)
+			List<JarMetadata> apiJars, List<JarMetadata> implJars, Path apiDir,
+			Path implDir, Map<String, String> productSpecificationsMap,
+			Product product, PublisherAssetLink publisherAssetLink)
 		throws IOException {
 
 		ByteArrayOutputStream byteArrayOutputStream =
@@ -435,51 +444,81 @@ public class MarketplaceRestController extends BaseRestController {
 		try (ZipOutputStream masterzipOutputStream = new ZipOutputStream(
 				byteArrayOutputStream)) {
 
-			List<String> subLpkgNames = new ArrayList<>();
-
-			_JarMetadata mainMeta =
-				!implJars.isEmpty() ? implJars.get(0) : apiJars.get(0);
+			List<String> sublpkgNames = new ArrayList<>();
 
 			if (!apiJars.isEmpty()) {
-				String name = apiJars.get(0).bundleName + " - API.lpkg";
+				JarMetadata main = apiJars.get(0);
+
+				Map<String, Path> jars =
+					LinkedHashMapBuilder.<String, Path>create(
+						apiJars.size()
+					).build();
+
+				List<String> bundleEntries = new ArrayList<>();
+
+				for (JarMetadata jar : apiJars) {
+					jars.put(jar._fileName, apiDir.resolve(jar._fileName));
+
+					bundleEntries.add(
+						StringBundler.concat(
+							jar._symbolicName, "#", jar._version, "##"));
+				}
+
+				String name = main._bundleName + " - API.lpkg";
 
 				masterzipOutputStream.putNextEntry(new ZipEntry(name));
+
+				Map<String, Properties> propertiesMap =
+					MarketplaceUtil.createMarketplaceProperties(
+						product, productSpecificationsMap, publisherAssetLink,
+						main._symbolicName + ".api", main._version,
+						String.join(",", bundleEntries), main._bundleName);
+
 				masterzipOutputStream.write(
-					_createSubLpkgBytes(apiJars, apiDir, "API"));
+					MarketplaceUtil.createMarketplaceProperties(
+						propertiesMap, jars));
+
 				masterzipOutputStream.closeEntry();
 
-				subLpkgNames.add(name);
+				sublpkgNames.add(name);
 			}
 
 			if (!implJars.isEmpty()) {
-				String name = implJars.get(0).bundleName + " - Impl.lpkg";
+				JarMetadata main = implJars.get(0);
+
+				Map<String, Path> jars =
+					LinkedHashMapBuilder.<String, Path>create(
+						implJars.size()
+					).build();
+
+				List<String> bundleEntries = new ArrayList<>();
+
+				for (JarMetadata jar : implJars) {
+					jars.put(jar._fileName, implDir.resolve(jar._fileName));
+
+					bundleEntries.add(
+						StringBundler.concat(
+							jar._symbolicName, "#", jar._version, "##"));
+				}
+
+				String name = main._bundleName + " - Impl.lpkg";
 
 				masterzipOutputStream.putNextEntry(new ZipEntry(name));
+
+				Map<String, Properties> propertiesMap =
+					MarketplaceUtil.createMarketplaceProperties(
+						product, productSpecificationsMap, publisherAssetLink,
+						main._symbolicName + ".impl", main._version,
+						String.join(",", bundleEntries), main._bundleName);
+
 				masterzipOutputStream.write(
-					_createSubLpkgBytes(implJars, implDir, "Impl"));
+					MarketplaceUtil.createMarketplaceProperties(
+						propertiesMap, jars));
+
 				masterzipOutputStream.closeEntry();
 
-				subLpkgNames.add(name);
+				sublpkgNames.add(name);
 			}
-
-			Properties props = new Properties();
-
-			props.setProperty("title", mainMeta.bundleName);
-			props.setProperty("version", mainMeta.version);
-			props.setProperty(
-				"liferay-marketplace-bundle-symbolic-name",
-				mainMeta.symbolicName + ".lpkg");
-			props.setProperty(
-				"liferay-marketplace-bundle-version", mainMeta.version);
-			props.setProperty("bundles", String.join(",", subLpkgNames));
-			props.setProperty("restart-required", "false");
-
-			byte[] propsBytes = _toPropertiesBytes(props);
-
-			masterzipOutputStream.putNextEntry(
-				new ZipEntry("marketplace.properties"));
-			masterzipOutputStream.write(propsBytes);
-			masterzipOutputStream.closeEntry();
 		}
 
 		return byteArrayOutputStream.toByteArray();
@@ -500,7 +539,8 @@ public class MarketplaceRestController extends BaseRestController {
 	 */
 	private byte[] _buildLpkg(
 			InputStream inputStream, String originalFileName,
-			Map<String, String> productSpecificationsMap)
+			Map<String, String> productSpecificationsMap, Product product,
+			PublisherAssetLink publisherAssetLink)
 		throws IOException {
 
 		Path workDir = Files.createTempDirectory("lpkg-build-");
@@ -508,8 +548,8 @@ public class MarketplaceRestController extends BaseRestController {
 		Path apiDir = Files.createDirectories(workDir.resolve("api"));
 		Path implDir = Files.createDirectories(workDir.resolve("impl"));
 
-		List<_JarMetadata> apiJars = new ArrayList<>();
-		List<_JarMetadata> implJars = new ArrayList<>();
+		List<JarMetadata> apiJars = new ArrayList<>();
+		List<JarMetadata> implJars = new ArrayList<>();
 
 		// Resolve license properties once — injected into each JAR for Paid
 		// products, null for Free (JARs remain untouched)
@@ -517,7 +557,8 @@ public class MarketplaceRestController extends BaseRestController {
 		Properties licenseProperties = null;
 
 		if (Objects.equals(
-				productSpecificationsMap.get("price-model"), "Paid")) {
+				productSpecificationsMap.get("price-model"), "Paid") &&
+			Objects.equals(productSpecificationsMap.get("type"), "dxp")) {
 
 			licenseProperties = new Properties();
 
@@ -558,93 +599,15 @@ public class MarketplaceRestController extends BaseRestController {
 
 			if (apiJars.isEmpty() && implJars.isEmpty()) {
 				throw new IOException(
-					"No valid OSGi bundles found in the uploaded file.");
+					"No valid OSGi bundles found in the uploaded file");
 			}
 
-			return _assembleMasterLpkg(apiJars, implJars, apiDir, implDir);
+			return _assembleMasterLpkg(
+				apiJars, implJars, apiDir, implDir, productSpecificationsMap,
+				product, publisherAssetLink);
 		}
 		finally {
 			FileSystemUtils.deleteRecursively(workDir);
-		}
-	}
-
-	/**
-	 * Creates a sub-LPKG (API or Impl) byte array containing the given JARs
-	 * and their liferay-marketplace.properties descriptor.
-	 */
-	private byte[] _createSubLpkgBytes(
-			List<_JarMetadata> jars, Path dir, String suffix)
-		throws IOException {
-
-		ByteArrayOutputStream byteArrayOutputStream =
-			new ByteArrayOutputStream();
-
-		try (ZipOutputStream zipOutputStream = new ZipOutputStream(
-				byteArrayOutputStream)) {
-
-			_JarMetadata main = jars.get(0);
-
-			Properties props = new Properties();
-
-			props.setProperty("title", main.bundleName + " " + suffix);
-			props.setProperty("version", main.version);
-			props.setProperty(
-				"liferay-marketplace-bundle-symbolic-name",
-				main.symbolicName + "." + suffix.toLowerCase());
-			props.setProperty(
-				"liferay-marketplace-bundle-version", main.version);
-			props.setProperty("restart-required", "false");
-
-			List<String> bundleEntries = new ArrayList<>();
-
-			jars.forEach(
-				j -> bundleEntries.add(
-					j.symbolicName + "#" + j.version + "##"));
-
-			props.setProperty("bundles", String.join(",", bundleEntries));
-
-			byte[] propsBytes = _toPropertiesBytes(props);
-
-			zipOutputStream.putNextEntry(
-				new ZipEntry("liferay-marketplace.properties"));
-			zipOutputStream.write(propsBytes);
-			zipOutputStream.closeEntry();
-
-			for (_JarMetadata jar : jars) {
-				zipOutputStream.putNextEntry(new ZipEntry(jar.fileName));
-				Files.copy(dir.resolve(jar.fileName), zipOutputStream);
-				zipOutputStream.closeEntry();
-			}
-		}
-
-		return byteArrayOutputStream.toByteArray();
-	}
-
-	/**
-	 * Extracts only the {@code name} field from the last entry in a JSON array
-	 * of category objects, which is the most specific category vocabulary.
-	 * Falls back to the raw value if it cannot be parsed as a JSON array.
-	 *
-	 * <p>Example input:
-	 * {@code [{"name": "Business Use", ...}, {"name": "Object Definition", ...}]}
-	 * <br>Example output: {@code Object Definition}
-	 */
-	private String _extractCategoryName(String categoryJSON) {
-		try {
-			JSONArray jsonArray = new JSONArray(categoryJSON);
-
-			if (jsonArray.length() == 0) {
-				return categoryJSON;
-			}
-
-			return jsonArray.getJSONObject(
-				jsonArray.length() - 1
-			).getString(
-				"name"
-			);
-		}
-		catch (Exception exception) {
-			return categoryJSON;
 		}
 	}
 
@@ -763,24 +726,24 @@ public class MarketplaceRestController extends BaseRestController {
 			ZipEntry entry;
 
 			while ((entry = zipInputStream.getNextEntry()) != null) {
-				if (entry.getName(
-					).equals(
-						"META-INF/marketplace.properties"
-					)) {
+				if (Objects.equals(
+						entry.getName(), "META-INF/marketplace.properties")) {
 
 					// Replace existing entry with the new one
 
-					zipOutputStream.putNextEntry(
-						new ZipEntry("META-INF/marketplace.properties"));
-					zipOutputStream.write(
-						_toPropertiesBytes(licenseProperties));
-					zipOutputStream.closeEntry();
+					MarketplaceUtil.addPropertiesToZipFile(
+						Collections.singletonMap(
+							"META-INF/marketplace.properties",
+							licenseProperties),
+						zipOutputStream);
 
 					propertiesWritten = true;
 				}
 				else {
 					zipOutputStream.putNextEntry(new ZipEntry(entry.getName()));
+
 					zipInputStream.transferTo(zipOutputStream);
+
 					zipOutputStream.closeEntry();
 				}
 
@@ -790,88 +753,12 @@ public class MarketplaceRestController extends BaseRestController {
 			// Entry did not exist in the source JAR — append it
 
 			if (!propertiesWritten) {
-				zipOutputStream.putNextEntry(
-					new ZipEntry("META-INF/marketplace.properties"));
-				zipOutputStream.write(_toPropertiesBytes(licenseProperties));
-				zipOutputStream.closeEntry();
+				MarketplaceUtil.addPropertiesToZipFile(
+					Collections.singletonMap(
+						"META-INF/marketplace.properties", licenseProperties),
+					zipOutputStream);
 			}
 		}
-	}
-
-	/**
-	 * Rewrites an LPKG byte array merging extra entries into the existing
-	 * {@code liferay-marketplace.properties} entry. All other zip entries are
-	 * copied verbatim. This avoids the {@link java.util.zip.ZipException}
-	 * "duplicate entry" that would occur if a second properties entry were
-	 * added on top of the one already written by {@link #_buildLpkg}.
-	 */
-	private byte[] _mergePropertiesIntoLpkg(
-			byte[] lpkgBytes, Map<String, Properties> extraProperties)
-		throws IOException {
-
-		ByteArrayOutputStream byteArrayOutputStream =
-			new ByteArrayOutputStream();
-
-		try (ZipInputStream zipInputStream = new ZipInputStream(
-				new java.io.ByteArrayInputStream(lpkgBytes));
-			ZipOutputStream zipOutputStream = new ZipOutputStream(
-				byteArrayOutputStream)) {
-
-			ZipEntry entry;
-
-			while ((entry = zipInputStream.getNextEntry()) != null) {
-				if (entry.getName(
-					).equals(
-						"marketplace.properties"
-					) ||
-					entry.getName(
-					).equals(
-						"liferay-marketplace.properties"
-					)) {
-
-					// Load the existing properties, merge extras, rewrite
-
-					Properties props = new Properties();
-
-					props.load(zipInputStream);
-
-					for (Map.Entry<String, Properties> extraEntry :
-							extraProperties.entrySet()) {
-
-						for (Map.Entry<Object, Object> propEntry :
-								extraEntry.getValue(
-								).entrySet()) {
-
-							String propKey = (String)propEntry.getKey();
-							String propValue = (String)propEntry.getValue();
-
-							if (Objects.equals(propKey, "category")) {
-								propValue = _extractCategoryName(propValue);
-							}
-
-							props.setProperty(propKey, propValue);
-						}
-					}
-
-					zipOutputStream.putNextEntry(
-						new ZipEntry("marketplace.properties"));
-					zipOutputStream.write(_toPropertiesBytes(props));
-					zipOutputStream.closeEntry();
-				}
-				else {
-
-					// Copy every other entry verbatim
-
-					zipOutputStream.putNextEntry(new ZipEntry(entry.getName()));
-					zipInputStream.transferTo(zipOutputStream);
-					zipOutputStream.closeEntry();
-				}
-
-				zipInputStream.closeEntry();
-			}
-		}
-
-		return byteArrayOutputStream.toByteArray();
 	}
 
 	@PostMapping("request-product-feedback/{orderId}")
@@ -938,27 +825,24 @@ public class MarketplaceRestController extends BaseRestController {
 
 	/**
 	 * Inspects a single JAR stream, reads its OSGi manifest, and places it in
-	 * either the API or Impl bucket based on the Bundle-SymbolicName.
-	 */
-	/**
-	 * Inspects a single JAR stream, reads its OSGi manifest, and places it in
 	 * either the API or Impl bucket. For Paid products ({@code licenseProperties}
 	 * non-null), rewrites the JAR injecting {@code META-INF/marketplace.properties}
 	 * so the DXP runtime can enforce license validation at install time.
 	 * Free product JARs are copied verbatim.
 	 */
 	private void _processJar(
-			String entryName, InputStream is, Path workDir,
-			List<_JarMetadata> apiJars, List<_JarMetadata> implJars,
-			Path apiDir, Path implDir, Properties licenseProperties)
+			String entryName, InputStream inputStream, Path workDir,
+			List<JarMetadata> apiJars, List<JarMetadata> implJars, Path apiDir,
+			Path implDir, Properties licenseProperties)
 		throws IOException {
 
 		String fileName = new File(
 			entryName
 		).getName();
+
 		Path tempFile = workDir.resolve("temp_" + System.nanoTime() + ".jar");
 
-		Files.copy(is, tempFile, StandardCopyOption.REPLACE_EXISTING);
+		Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
 
 		try (JarFile jarFile = new JarFile(tempFile.toFile())) {
 			Manifest mf = jarFile.getManifest();
@@ -967,29 +851,29 @@ public class MarketplaceRestController extends BaseRestController {
 				return;
 			}
 
-			Attributes attr = mf.getMainAttributes();
+			Attributes attributes = mf.getMainAttributes();
 
-			_JarMetadata meta = new _JarMetadata();
-
-			String rawBsn = attr.getValue("Bundle-SymbolicName");
+			String rawBsn = attributes.getValue("Bundle-SymbolicName");
 
 			if (rawBsn == null) {
 				return;
 			}
 
-			meta.symbolicName = rawBsn.split(";")[0].trim();
-			meta.version = Objects.toString(
-				attr.getValue("Bundle-Version"), "0.0.0");
-			meta.bundleName = Objects.toString(
-				attr.getValue("Bundle-Name"), meta.symbolicName);
-			meta.fileName = fileName;
+			JarMetadata meta = new JarMetadata();
+
+			meta._symbolicName = rawBsn.split(";")[0].trim();
+			meta._version = Objects.toString(
+				attributes.getValue("Bundle-Version"), "0.0.0");
+			meta._bundleName = Objects.toString(
+				attributes.getValue("Bundle-Name"), meta._symbolicName);
+			meta._fileName = fileName;
 
 			// For Paid products, rewrite the JAR injecting
 			// META-INF/marketplace.properties inside it.
 			// Free product JARs are moved verbatim.
 
 			Path targetDir =
-				meta.symbolicName.contains(".api") ? apiDir : implDir;
+				meta._symbolicName.contains(".api") ? apiDir : implDir;
 
 			if (licenseProperties != null) {
 				Path injectedJar = workDir.resolve(
@@ -1010,7 +894,7 @@ public class MarketplaceRestController extends BaseRestController {
 					StandardCopyOption.REPLACE_EXISTING);
 			}
 
-			if (meta.symbolicName.contains(".api")) {
+			if (meta._symbolicName.contains(".api")) {
 				apiJars.add(meta);
 			}
 			else {
@@ -1038,8 +922,9 @@ public class MarketplaceRestController extends BaseRestController {
 
 			publisherAssetArtifactFile = MarketplaceUtil.addArtifactMetadata(
 				publisherAssetFile, publisherAssetLink.getFileName(),
-				MarketplaceUtil.getArtifactPropertiesMap(
-					product, productSpecificationsMap, publisherAssetLink));
+				MarketplaceUtil.createMarketplaceProperties(
+					product, productSpecificationsMap, publisherAssetLink, null,
+					null, null, null));
 
 			_marketplaceService.postVirtualFileEntry(
 				publisherAssetArtifactFile, product.getProductId(),
@@ -1088,35 +973,36 @@ public class MarketplaceRestController extends BaseRestController {
 			// Enrich the specifications map with the product ERC so
 			// _buildLpkg can use it as product-id in the license properties.
 
-			Map<String, String> enrichedSpecificationsMap = new HashMap<>(
-				productSpecificationsMap);
-
-			enrichedSpecificationsMap.put(
-				"product-erc", product.getExternalReferenceCode());
+			Map<String, String> enrichedSpecificationsMap =
+				HashMapBuilder.putAll(
+					productSpecificationsMap
+				).put(
+					"product-erc", product.getExternalReferenceCode()
+				).build();
 
 			byte[] lpkgBytes;
 
-			try (InputStream is = Files.newInputStream(
+			try (InputStream inputStream = Files.newInputStream(
 					publisherAssetFile.toPath())) {
 
 				lpkgBytes = _buildLpkg(
-					is, publisherAssetLink.getFileName(),
-					enrichedSpecificationsMap);
+					inputStream, publisherAssetLink.getFileName(),
+					enrichedSpecificationsMap, product, publisherAssetLink);
 			}
-
-			// Merge artifact metadata into the existing
-			// liferay-marketplace.properties inside the LPKG instead of adding
-			// a second one (which would cause a ZipException).
-
-			Map<String, Properties> artifactProperties =
-				MarketplaceUtil.getArtifactPropertiesMap(
-					product, productSpecificationsMap, publisherAssetLink);
-
-			lpkgBytes = _mergePropertiesIntoLpkg(lpkgBytes, artifactProperties);
 
 			// Write the final LPKG bytes to a temp file
 
-			Path lpkgPath = Files.createTempFile("lpkg_", ".lpkg");
+			Path tempDir = Files.createTempDirectory("lpkg-upload-");
+
+			String appName = MarketplaceUtil.getDefaultLocale(
+				product.getName());
+
+			String fileNameWithoutExtension = StringUtil.replace(
+				StringUtil.toLowerCase(appName), ' ', '-');
+
+			String fileName = fileNameWithoutExtension + ".lpkg";
+
+			Path lpkgPath = tempDir.resolve(fileName);
 
 			lpkgFile = lpkgPath.toFile();
 
@@ -1135,7 +1021,7 @@ public class MarketplaceRestController extends BaseRestController {
 		}
 		finally {
 			MarketplaceUtil.deleteTempFile(publisherAssetFile, false);
-			MarketplaceUtil.deleteTempFile(lpkgFile, false);
+			MarketplaceUtil.deleteTempFile(lpkgFile, true);
 		}
 	}
 
@@ -1174,34 +1060,17 @@ public class MarketplaceRestController extends BaseRestController {
 	}
 
 	/**
-	 * Serializes a {@link Properties} object to a byte array without writing
-	 * directly into a {@link ZipOutputStream}, which avoids the
-	 * "duplicate entry" ZipException caused by Properties.store() flushing the
-	 * underlying stream and corrupting the zip entry state.
-	 */
-	private byte[] _toPropertiesBytes(Properties properties)
-		throws IOException {
-
-		ByteArrayOutputStream byteArrayOutputStream =
-			new ByteArrayOutputStream();
-
-		properties.store(byteArrayOutputStream, null);
-
-		return byteArrayOutputStream.toByteArray();
-	}
-
-	/**
 	 * Holds OSGi manifest metadata for a single JAR during LPKG assembly.
 	 * {@code marketplaceProperties} is non-null only for licensed (paid) DXP
 	 * bundles that ship a {@code META-INF/marketplace.properties} file.
 	 */
-	private static class _JarMetadata {
+	private static class JarMetadata {
 
-		String bundleName;
-		String fileName;
-		Properties marketplaceProperties;
-		String symbolicName;
-		String version;
+		private String _bundleName;
+		private String _fileName;
+		private Properties _marketplaceProperties;
+		private String _symbolicName;
+		private String _version;
 
 	}
 

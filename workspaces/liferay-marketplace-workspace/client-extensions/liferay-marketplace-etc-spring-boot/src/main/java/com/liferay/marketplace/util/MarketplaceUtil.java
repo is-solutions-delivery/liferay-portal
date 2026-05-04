@@ -5,14 +5,17 @@
 
 package com.liferay.marketplace.util;
 
+import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Category;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.Product;
 import com.liferay.headless.commerce.admin.catalog.client.dto.v1_0.SkuOption;
 import com.liferay.headless.commerce.admin.order.client.dto.v1_0.OrderItem;
 import com.liferay.marketplace.model.PublisherAssetLink;
 import com.liferay.osb.koroneiki.phloem.rest.client.dto.v1_0.ExternalLink;
 import com.liferay.portal.kernel.util.ArrayUtil;
-import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -26,7 +29,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Map;
@@ -34,6 +36,7 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
@@ -63,10 +66,54 @@ public class MarketplaceUtil {
 
 			_cloneZipFile(zipFile, zipOutputStream);
 
-			_addPropertiesToZipFile(propertiesMap, zipOutputStream);
+			addPropertiesToZipFile(propertiesMap, zipOutputStream);
 		}
 
 		return path.toFile();
+	}
+
+	public static void addPropertiesToZipFile(
+			Map<String, Properties> propertiesMap,
+			ZipOutputStream zipOutputStream)
+		throws IOException {
+
+		for (Map.Entry<String, Properties> entry : propertiesMap.entrySet()) {
+			Properties properties = entry.getValue();
+
+			if (properties == null) {
+				continue;
+			}
+
+			String key = entry.getKey();
+
+			int lastPathIndex = StringUtil.lastIndexOfAny(
+				key, new char[] {'/'});
+
+			if (lastPathIndex != -1) {
+				try {
+					zipOutputStream.putNextEntry(
+						new ZipEntry(key.substring(0, lastPathIndex + 1)));
+
+					zipOutputStream.closeEntry();
+				}
+				catch (ZipException zipException) {
+					if (_log.isDebugEnabled()) {
+						_log.debug(zipException);
+					}
+				}
+			}
+
+			zipOutputStream.putNextEntry(new ZipEntry(key));
+
+			ByteArrayOutputStream byteArrayOutputStream =
+				new ByteArrayOutputStream();
+
+			properties.store(byteArrayOutputStream, null);
+
+			zipOutputStream.write(byteArrayOutputStream.toByteArray());
+
+			zipOutputStream.closeEntry();
+		}
 	}
 
 	public static ExternalLink[] appendExternalLink(
@@ -124,43 +171,122 @@ public class MarketplaceUtil {
 		return jsonArray;
 	}
 
-	public static Properties createMarketplaceProperties(
-		Product product, PublisherAssetLink publisherAssetLink) {
+	public static byte[] createMarketplaceProperties(
+			Map<String, Properties> propertiesMap, Map<String, Path> jars)
+		throws IOException {
 
-		Properties properties = new Properties();
+		ByteArrayOutputStream byteArrayOutputStream =
+			new ByteArrayOutputStream();
 
-		properties.setProperty("license-version", "1.0.0");
-		properties.setProperty(
-			"product-id", String.valueOf(product.getProductId()));
-		properties.setProperty(
-			"product-name", getDefaultLocale(product.getName()));
-		properties.setProperty("product-version-id", "1");
-		properties.setProperty(
-			"publisher-asset-version", publisherAssetLink.getVersion());
+		try (ZipOutputStream zipOutputStream = new ZipOutputStream(
+				byteArrayOutputStream)) {
 
-		return properties;
+			addPropertiesToZipFile(propertiesMap, zipOutputStream);
+
+			// Binary Jars
+
+			if (jars != null) {
+				for (Map.Entry<String, Path> entry : jars.entrySet()) {
+					zipOutputStream.putNextEntry(new ZipEntry(entry.getKey()));
+
+					Files.copy(entry.getValue(), zipOutputStream);
+
+					zipOutputStream.closeEntry();
+				}
+			}
+		}
+
+		return byteArrayOutputStream.toByteArray();
 	}
 
-	public static Properties createProductProperties(
-		Product product, PublisherAssetLink publisherAssetLink) {
+	public static Map<String, Properties> createMarketplaceProperties(
+		Product product, Map<String, String> productSpecificationsMap,
+		PublisherAssetLink publisherAssetLink, String bundleSymbolicName,
+		String bundleVersion, String bundles, String title) {
 
-		Properties properties = new Properties();
+		// liferay-marketplace.properties
 
-		properties.setProperty("bundles", "");
-		properties.setProperty(
-			"category", Arrays.toString(product.getCategories()));
-		properties.setProperty("context-names", "");
-		properties.setProperty(
-			"description", getDefaultLocale(product.getDescription()));
-		properties.setProperty("icon-url", product.getThumbnail());
-		properties.setProperty(
-			"remote-app-id", String.valueOf(product.getId()));
-		properties.setProperty("required", "false");
-		properties.setProperty("restart-required", "false");
-		properties.setProperty("title", getDefaultLocale(product.getName()));
-		properties.setProperty("version", publisherAssetLink.getVersion());
+		Properties productProperties = new Properties();
 
-		return properties;
+		String category = null;
+
+		if (productSpecificationsMap != null) {
+			category = getCategoryName(
+				productSpecificationsMap.get("category"));
+		}
+
+		if (Validator.isNull(category) && (product != null)) {
+			category = getCategoryName(product.getCategories());
+		}
+
+		productProperties.setProperty(
+			"category", GetterUtil.getString(category));
+
+		if (product != null) {
+			productProperties.setProperty(
+				"description", getDefaultLocale(product.getDescription()));
+		}
+
+		String iconURL = null;
+
+		if (productSpecificationsMap != null) {
+			iconURL = productSpecificationsMap.get("icon-url");
+		}
+
+		if (Validator.isNull(iconURL) && (product != null)) {
+			iconURL = product.getThumbnail();
+		}
+
+		productProperties.setProperty(
+			"icon-url", GetterUtil.getString(iconURL));
+
+		if (Validator.isNotNull(bundleSymbolicName)) {
+			productProperties.setProperty(
+				"liferay-marketplace-bundle-symbolic-name", bundleSymbolicName);
+		}
+
+		if (Validator.isNotNull(bundleVersion)) {
+			productProperties.setProperty(
+				"liferay-marketplace-bundle-version", bundleVersion);
+		}
+
+		String remoteAppId = null;
+
+		if (productSpecificationsMap != null) {
+			remoteAppId = productSpecificationsMap.get("remote-app-id");
+		}
+
+		if (Validator.isNull(remoteAppId) && (product != null)) {
+			remoteAppId = String.valueOf(product.getId());
+		}
+
+		productProperties.setProperty(
+			"remote-app-id", GetterUtil.getString(remoteAppId));
+
+		productProperties.setProperty("required", "false");
+		productProperties.setProperty("restart-required", "false");
+
+		if (Validator.isNull(title) && (product != null)) {
+			title = getDefaultLocale(product.getName());
+		}
+
+		productProperties.setProperty("title", GetterUtil.getString(title));
+
+		String version = bundleVersion;
+
+		if (Validator.isNull(version) && (publisherAssetLink != null)) {
+			version = publisherAssetLink.getVersion();
+		}
+
+		productProperties.setProperty("version", GetterUtil.getString(version));
+
+		if (Validator.isNotNull(bundles)) {
+			productProperties.setProperty("bundles", bundles);
+		}
+
+		return LinkedHashMapBuilder.<String, Properties>put(
+			"liferay-marketplace.properties", productProperties
+		).build();
 	}
 
 	public static String createTemporaryDeployment(
@@ -243,26 +369,47 @@ public class MarketplaceUtil {
 		);
 	}
 
-	public static Map<String, Properties> getArtifactPropertiesMap(
-		Product product, Map<String, String> productSpecificationsMap,
-		PublisherAssetLink publisherAssetLink) {
+	public static String getCategoryName(Category[] categories) {
+		if (ArrayUtil.isEmpty(categories)) {
+			return "";
+		}
 
-		return HashMapBuilder.<String, Properties>put(
-			"liferay-marketplace.properties",
-			() -> createProductProperties(product, publisherAssetLink)
-		).put(
-			"META-INF/marketplace.properties",
-			() -> {
-				if (Objects.equals(
-						productSpecificationsMap.get("price-model"), "Paid")) {
-
-					return createMarketplaceProperties(
-						product, publisherAssetLink);
-				}
-
-				return null;
+		for (Category category : categories) {
+			if (_isMarketplaceCategory(category.getVocabulary())) {
+				return category.getName();
 			}
-		).build();
+		}
+
+		return categories[0].getName();
+	}
+
+	public static String getCategoryName(String categoryJSON) {
+		if (Validator.isNull(categoryJSON)) {
+			return categoryJSON;
+		}
+
+		try {
+			JSONArray jsonArray = new JSONArray(categoryJSON);
+
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+				if (_isMarketplaceCategory(
+						jsonObject.getString("vocabulary"))) {
+
+					return jsonObject.getString("name");
+				}
+			}
+
+			JSONObject jsonObject = jsonArray.getJSONObject(0);
+
+			return jsonObject.getString("name");
+		}
+		catch (Exception exception) {
+			_log.error(exception);
+
+			return categoryJSON;
+		}
 	}
 
 	public static JSONObject getCloudProvisioningJSONObject(
@@ -344,42 +491,6 @@ public class MarketplaceUtil {
 		return null;
 	}
 
-	private static void _addPropertiesToZipFile(
-			Map<String, Properties> propertiesMap,
-			ZipOutputStream zipOutputStream)
-			throws IOException {
-
-		for (Map.Entry<String, Properties> entry : propertiesMap.entrySet()) {
-			Properties properties = entry.getValue();
-
-			if (properties == null) {
-				continue;
-			}
-
-			String key = entry.getKey();
-
-			int lastPathIndex = StringUtil.lastIndexOfAny(
-					key, new char[] {'/'});
-
-			if (lastPathIndex != -1) {
-				zipOutputStream.putNextEntry(
-						new ZipEntry(key.substring(0, lastPathIndex + 1)));
-				zipOutputStream.closeEntry();
-			}
-
-			zipOutputStream.putNextEntry(new ZipEntry(key));
-
-			ByteArrayOutputStream byteArrayOutputStream =
-					new ByteArrayOutputStream();
-
-			properties.store(byteArrayOutputStream, null);
-
-			zipOutputStream.write(byteArrayOutputStream.toByteArray());
-
-			zipOutputStream.closeEntry();
-		}
-	}
-
 	private static void _cloneZipFile(
 			ZipFile zipFile, ZipOutputStream zipOutputStream)
 		throws IOException {
@@ -401,6 +512,16 @@ public class MarketplaceUtil {
 
 			zipOutputStream.closeEntry();
 		}
+	}
+
+	private static boolean _isMarketplaceCategory(String vocabulary) {
+		if (Objects.equals(vocabulary, "marketplace app category") ||
+			Objects.equals(vocabulary, "marketplace category")) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private static final Log _log = LogFactory.getLog(MarketplaceUtil.class);
