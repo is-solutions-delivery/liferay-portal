@@ -26,16 +26,16 @@ const DSRTokens = () => {
 
 	const orderMetadata = safeJSONParse(
 		placedOrder.customFields[OrderCustomFields.ORDER_METADATA],
-		{analyticsProject: {projectId: ''}}
+		{analyticsProject: {groupId: ''}}
 	);
 
-	const projectId = orderMetadata?.analyticsProject?.projectId
-		? String(orderMetadata.analyticsProject.projectId)
+	const groupId = orderMetadata?.analyticsProject?.groupId
+		? String(orderMetadata.analyticsProject.groupId)
 		: '';
 
 	const {data: fetchedToken, isLoading} = useSWR(
-		projectId ? `/analytics/project/${projectId}/data-source/token` : null,
-		() => analyticsOAuth2.getProjectDataSourceToken(projectId)
+		groupId ? `/analytics/project/${groupId}/data-source/token` : null,
+		() => analyticsOAuth2.getProjectDataSourceToken(groupId)
 	);
 
 	const token = fetchedToken || i18n.translate('token-unavailable');
