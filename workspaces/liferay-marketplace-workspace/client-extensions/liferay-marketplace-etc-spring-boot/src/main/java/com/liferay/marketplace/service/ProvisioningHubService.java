@@ -40,18 +40,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProvisioningHubService extends BaseService {
 
-	public ProvisioningRequestResource getProvisioningRequestResource()
-		throws MalformedURLException {
-
-		return ProvisioningRequestResource.builder(
-		).header(
-			"Authorization",
-			_liferayOAuth2AccessTokenManager.getAuthorization("external-ai-hub")
-		).endpoint(
-			_externalAIHUBHomePageURL
-		).build();
-	}
-
 	public void provision(
 			Account koroneikiAccount, Order order,
 			ProductPurchase productPurchase)
@@ -68,13 +56,25 @@ public class ProvisioningHubService extends BaseService {
 		throws Exception {
 
 		ProvisioningRequestResource provisioningRequestResource =
-			getProvisioningRequestResource();
+			_getProvisioningRequestResource();
 
 		provisioningRequestResource.postProvisioning(provisioningRequest);
 
 		if (_log.isInfoEnabled()) {
 			_log.info("AI Hub provisioned " + provisioningRequest);
 		}
+	}
+
+	private ProvisioningRequestResource _getProvisioningRequestResource()
+		throws Exception {
+
+		return ProvisioningRequestResource.builder(
+		).header(
+			"Authorization",
+			_liferayOAuth2AccessTokenManager.getAuthorization("external-ai-hub")
+		).endpoint(
+			_externalAIHUBHomePageURL
+		).build();
 	}
 
 	private String _getServerLocation(String dataCenterLocation) {
