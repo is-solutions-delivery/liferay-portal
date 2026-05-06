@@ -1,0 +1,7 @@
+{
+	"description": "Welcomes the customer while their Solutions Trial environment gets ready",
+	"isObjectAction": false,
+	"recipients": "[%COMMERCEORDER_AUTHOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a new Solutions Trial formally begins provisioning"
+}

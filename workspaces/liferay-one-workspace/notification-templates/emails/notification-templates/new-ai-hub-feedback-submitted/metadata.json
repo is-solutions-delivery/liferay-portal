@@ -1,0 +1,10 @@
+{
+	"description": "Notifies the Marketplace AI team of incoming user feedback",
+	"isObjectAction": false,
+	"recipients": [
+		"paulina.diaz@liferay.com",
+		"pablo.agulla@liferay.com"
+	],
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a user submits feedback regarding an AI Hub feature or integration"
+}

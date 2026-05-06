@@ -1,0 +1,7 @@
+{
+	"description": "Requests feedback from a customer after they have used a product",
+	"isObjectAction": true,
+	"recipients": "[%COMMERCEORDER_AUTHOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a post-purchase product feedback survey is triggered"
+}

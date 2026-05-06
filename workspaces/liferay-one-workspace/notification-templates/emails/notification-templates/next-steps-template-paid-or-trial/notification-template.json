@@ -1,0 +1,24 @@
+{
+	"description": "",
+	"editorType": "richText",
+	"externalReferenceCode": "MARKETPLACE-ACTION-DXP-PAID-OR-TRIAL-EMAIL-TEMPLATE",
+	"name": "Next Steps Email Paid or Trial MarketPlace",
+	"recipientType": "email",
+	"recipients": [
+		{
+			"bcc": "",
+			"cc": "",
+			"from": "do-not-reply@liferay.com",
+			"fromName": {
+				"en-US": "Liferay Marketplace"
+			},
+			"to": {
+				"en-US": "[%COMMERCEORDER_AUTHOR_EMAIL_ADDRESS%]"
+			}
+		}
+	],
+	"subject": {
+		"en_US": "Next Steps for Your Purchase"
+	},
+	"type": "email"
+}

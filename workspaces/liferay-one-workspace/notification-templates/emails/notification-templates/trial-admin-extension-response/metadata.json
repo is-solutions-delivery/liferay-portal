@@ -1,0 +1,7 @@
+{
+	"description": "Notifies the requester of the decision regarding their trial extension",
+	"isObjectAction": false,
+	"recipients": "[%TRIALEXTENSIONREQUEST_AUTHOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When an administrator responds to a trial extension request"
+}

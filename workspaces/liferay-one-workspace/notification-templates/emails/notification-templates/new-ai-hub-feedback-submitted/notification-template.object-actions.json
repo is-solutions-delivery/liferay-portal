@@ -1,0 +1,18 @@
+[
+	{
+		"active": true,
+		"conditionExpression": "orderType == \"AI_HUB\"",
+		"externalReferenceCode": "MKT-AI-HUB-FEEDBACK-EMAIL",
+		"label": {
+			"en_US": "AI Hub Feedback Email"
+		},
+		"name": "AIFeedbackEmail",
+		"objectActionExecutorKey": "notification",
+		"objectActionTriggerKey": "onAfterAdd",
+		"objectDefinitionId": "[$OBJECT_DEFINITION_ID:ProductFeedback$]",
+		"parameters": {
+			"notificationTemplateExternalReferenceCode": "MARKETPLACE-AI-HUB-FEEDBACK-SUBMIT-TEMPLATE",
+			"type": "email"
+		}
+	}
+]

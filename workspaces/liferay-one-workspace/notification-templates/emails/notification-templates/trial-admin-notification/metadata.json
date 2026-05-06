@@ -1,0 +1,7 @@
+{
+	"description": "Alerts administrative teams that a new trial period has begun",
+	"isObjectAction": false,
+	"recipients": "test@liferay.com",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a new product trial is started by a user"
+}

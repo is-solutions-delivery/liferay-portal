@@ -1,0 +1,7 @@
+{
+	"description": "Instructs the customer on next steps to deploy their newly purchased cloud app",
+	"isObjectAction": false,
+	"recipients": "[%GETAPPINFORMATION_AUTHOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a user purchases a Liferay Cloud application"
+}

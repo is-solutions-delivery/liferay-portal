@@ -1,0 +1,7 @@
+{
+	"description": "Notifies the customer that their trial solution is accessible",
+	"isObjectAction": true,
+	"recipients": "[%COMMERCEORDER_AUTHOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a trial environment has been fully created and is ready to use"
+}

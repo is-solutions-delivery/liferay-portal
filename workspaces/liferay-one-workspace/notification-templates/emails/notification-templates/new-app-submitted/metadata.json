@@ -1,0 +1,7 @@
+{
+	"description": "Sends an update specifying a new application has been submitted",
+	"isObjectAction": true,
+	"recipients": "marketplace-admin@liferay.com",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a publisher successfully submits a new app to the Marketplace"
+}

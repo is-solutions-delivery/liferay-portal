@@ -1,0 +1,7 @@
+{
+	"description": "Informs the publisher that their new app is live and available on the Marketplace",
+	"isObjectAction": false,
+	"recipients": "[%GETAPPINFORMATION_AUTHOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When an administrator approves a newly submitted app, pushing it live"
+}

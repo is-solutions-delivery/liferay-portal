@@ -1,0 +1,7 @@
+{
+	"description": "Confirms receipt of the new application submission to the publisher",
+	"isObjectAction": false,
+	"recipients": "[%GETAPPINFORMATION_AUTHOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a publisher submits a brand new application"
+}

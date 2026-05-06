@@ -1,0 +1,11 @@
+{
+	"description": "Alerts the CMP Beta product team about new user feedback",
+	"isObjectAction": false,
+	"recipients": [
+		"paulina.diaz@liferay.com",
+		"luiz.jardim@liferay.com",
+		"ana.buchmann@liferay.com"
+	],
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a user submits feedback specifically for the CMP Beta"
+}

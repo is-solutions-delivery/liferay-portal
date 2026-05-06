@@ -1,0 +1,1 @@
+export const LIFERAY_HOME = process.env.LIFERAY_HOME || 'http://localhost:8080';

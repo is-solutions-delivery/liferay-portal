@@ -1,0 +1,24 @@
+{
+	"description": "",
+	"editorType": "richText",
+	"externalReferenceCode": "MARKETPLACE-REQUEST-PRODUCT-FEEDBACK",
+	"name": "Marketplace Request Product Feedback",
+	"recipientType": "email",
+	"recipients": [
+		{
+			"bcc": "",
+			"cc": "",
+			"from": "do-not-reply@liferay.com",
+			"fromName": {
+				"en-US": "Liferay Marketplace"
+			},
+			"to": {
+				"en-US": "[%COMMERCEORDER_AUTHOR_EMAIL_ADDRESS%]"
+			}
+		}
+	],
+	"subject": {
+		"en_US": "Liferay Marketplace - Feedback Survey"
+	},
+	"type": "email"
+}

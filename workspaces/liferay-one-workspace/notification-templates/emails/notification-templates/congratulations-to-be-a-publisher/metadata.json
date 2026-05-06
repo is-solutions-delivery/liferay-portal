@@ -1,0 +1,7 @@
+{
+	"description": "Congratulates the newly approved publisher with next steps on the platform",
+	"isObjectAction": false,
+	"recipients": "[%GETAPPINFORMATION_AUTHOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a user's publisher profile request is reviewed and approved"
+}

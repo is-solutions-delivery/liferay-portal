@@ -1,0 +1,7 @@
+{
+	"description": "Instructs the user on how to download and configure their free app",
+	"isObjectAction": false,
+	"recipients": "[%GETAPPINFORMATION_AUTHOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a user completes a transaction to download a free product"
+}

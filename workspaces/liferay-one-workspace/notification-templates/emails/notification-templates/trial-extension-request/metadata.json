@@ -1,0 +1,7 @@
+{
+	"description": "Triggers a request to admins for evaluating a trial extension",
+	"isObjectAction": false,
+	"recipients": "[%COMMERCEORDER_AUTHOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a user submits a formal request to extend their trial period"
+}

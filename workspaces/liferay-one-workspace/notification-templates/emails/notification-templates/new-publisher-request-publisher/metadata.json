@@ -1,0 +1,7 @@
+{
+	"description": "Confirms receipt of the Publisher account request to the submitting user",
+	"isObjectAction": false,
+	"recipients": "[%GETAPPINFORMATION_AUTHOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a user submits a Publisher account request"
+}

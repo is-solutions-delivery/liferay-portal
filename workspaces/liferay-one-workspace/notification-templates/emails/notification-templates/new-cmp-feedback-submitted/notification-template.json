@@ -1,0 +1,24 @@
+{
+	"description": "",
+	"editorType": "richText",
+	"externalReferenceCode": "MARKETPLACE-CMP-BETA-FEEDBACK-SUBMIT-TEMPLATE",
+	"name": "New CMP Beta Feedback",
+	"recipientType": "email",
+	"recipients": [
+		{
+			"bcc": "",
+			"cc": "",
+			"from": "do-not-reply@liferay.com",
+			"fromName": {
+				"en-US": "Liferay Marketplace"
+			},
+			"to": {
+				"en-US": "paulina.diaz@liferay.com, luiz.jardim@liferay.com, ana.buchmann@liferay.com"
+			}
+		}
+	],
+	"subject": {
+		"en_US": "Liferay Marketplace - New CMP Beta Feedback"
+	},
+	"type": "email"
+}

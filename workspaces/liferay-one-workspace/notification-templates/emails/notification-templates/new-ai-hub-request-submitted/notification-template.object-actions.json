@@ -1,0 +1,17 @@
+[
+	{
+		"active": true,
+		"externalReferenceCode": "MKT-AI-HUB-REQUEST-EMAIL",
+		"label": {
+			"en_US": "AI Hub Request Email"
+		},
+		"name": "AIRequestEmail",
+		"objectActionExecutorKey": "notification",
+		"objectActionTriggerKey": "onAfterAdd",
+		"objectDefinitionId": "[$OBJECT_DEFINITION_ID:AIHubBetaPrivateAccessRequest$]",
+		"parameters": {
+			"notificationTemplateExternalReferenceCode": "MARKETPLACE-AI-HUB-REQUEST-TEMPLATE",
+			"type": "email"
+		}
+	}
+]

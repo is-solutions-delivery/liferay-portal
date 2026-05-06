@@ -1,0 +1,7 @@
+{
+	"description": "Alerts the Marketplace AI team that a new AI Hub request has been logged",
+	"isObjectAction": false,
+	"recipients": "pablo.agulla@liferay.com",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a user explicitly submits a request for a new AI Hub feature"
+}

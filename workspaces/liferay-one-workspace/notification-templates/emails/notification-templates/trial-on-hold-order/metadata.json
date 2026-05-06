@@ -1,0 +1,7 @@
+{
+	"description": "Informs the user that their trial provisioning is currently placed on hold",
+	"isObjectAction": false,
+	"recipients": "[%COMMERCEORDER_AUTHOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a trial request is paused, awaiting backend processing or verification"
+}

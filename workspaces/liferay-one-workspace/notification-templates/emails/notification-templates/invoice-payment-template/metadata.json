@@ -1,0 +1,7 @@
+{
+	"description": "Provides the customer with their order summary and billing information",
+	"isObjectAction": true,
+	"recipients": "accounts-receivables-intl@liferay.com",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a customer successfully places a new order resulting in an invoice payment"
+}

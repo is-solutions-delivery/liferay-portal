@@ -1,0 +1,24 @@
+{
+	"description": "",
+	"editorType": "richText",
+	"externalReferenceCode": "MARKETPLACE-ACTION-DXP-FREE-EMAIL-TEMPLATE",
+	"name": "Next Steps Email Free MarketPlace",
+	"recipientType": "email",
+	"recipients": [
+		{
+			"bcc": "",
+			"cc": "",
+			"from": "do-not-reply@liferay.com",
+			"fromName": {
+				"en-US": "Liferay Marketplace"
+			},
+			"to": {
+				"en-US": "[%GETAPPINFORMATION_AUTHOR_EMAIL_ADDRESS%]"
+			}
+		}
+	],
+	"subject": {
+		"en_US": "Next steps on [%GETAPPINFORMATION_PRODUCTNAME%] purchase"
+	},
+	"type": "email"
+}

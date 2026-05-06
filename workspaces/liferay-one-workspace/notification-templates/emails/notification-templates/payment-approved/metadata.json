@@ -1,0 +1,7 @@
+{
+	"description": "Informs the purchaser that their payment has been received and approved",
+	"isObjectAction": true,
+	"recipients": "[%CREATOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When an order payment is successfully authorized and cleared"
+}

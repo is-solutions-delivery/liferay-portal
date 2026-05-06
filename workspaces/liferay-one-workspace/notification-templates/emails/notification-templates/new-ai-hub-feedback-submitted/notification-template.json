@@ -1,0 +1,24 @@
+{
+	"description": "",
+	"editorType": "richText",
+	"externalReferenceCode": "MARKETPLACE-AI-HUB-FEEDBACK-SUBMIT-TEMPLATE",
+	"name": "New AI Hub Feedback",
+	"recipientType": "email",
+	"recipients": [
+		{
+			"bcc": "",
+			"cc": "",
+			"from": "do-not-reply@liferay.com",
+			"fromName": {
+				"en-US": "Liferay Marketplace"
+			},
+			"to": {
+				"en-US": "paulina.diaz@liferay.com, pablo.agulla@liferay.com"
+			}
+		}
+	],
+	"subject": {
+		"en_US": "Liferay Marketplace - New AI Hub Feedback"
+	},
+	"type": "email"
+}

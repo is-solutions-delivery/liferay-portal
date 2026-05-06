@@ -1,0 +1,7 @@
+{
+	"description": "Notifies administrators to review a newly pending app update submission",
+	"isObjectAction": false,
+	"recipients": "marketplace-admin@liferay.com",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a publisher updates an existing app and submits the new version for review"
+}

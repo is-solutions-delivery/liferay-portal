@@ -1,0 +1,7 @@
+{
+	"description": "Guides the customer on licensing and deploying their new paid or trial app",
+	"isObjectAction": false,
+	"recipients": "[%COMMERCEORDER_AUTHOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a user purchases a paid product or starts a trial"
+}

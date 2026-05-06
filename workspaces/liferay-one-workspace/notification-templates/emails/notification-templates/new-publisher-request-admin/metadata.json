@@ -1,0 +1,7 @@
+{
+	"description": "Notifies administrators to review a pending Publisher request in the dashboard",
+	"isObjectAction": false,
+	"recipients": "[%GETAPPINFORMATION_AUTHOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a user requests to upgrade their account to a Publisher status"
+}

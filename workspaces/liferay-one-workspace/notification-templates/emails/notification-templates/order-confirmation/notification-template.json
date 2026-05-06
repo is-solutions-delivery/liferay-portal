@@ -1,0 +1,24 @@
+{
+	"description": "",
+	"editorType": "richText",
+	"externalReferenceCode": "MARKETPLACE-ORDER-CONFIRMATION",
+	"name": "Order Confirmation",
+	"recipientType": "email",
+	"recipients": [
+		{
+			"bcc": "",
+			"cc": "",
+			"from": "do-not-reply@liferay.com",
+			"fromName": {
+				"en-US": "Liferay Marketplace"
+			},
+			"to": {
+				"en-US": "[%CREATOR_EMAIL_ADDRESS%]"
+			}
+		}
+	],
+	"subject": {
+		"en_US": "Liferay Marketplace - Order Confirmation"
+	},
+	"type": "email"
+}

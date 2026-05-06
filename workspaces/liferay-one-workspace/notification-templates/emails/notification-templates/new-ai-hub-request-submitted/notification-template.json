@@ -1,0 +1,24 @@
+{
+	"description": "",
+	"editorType": "richText",
+	"externalReferenceCode": "MARKETPLACE-AI-HUB-REQUEST-TEMPLATE",
+	"name": "New AI Hub Request",
+	"recipientType": "email",
+	"recipients": [
+		{
+			"bcc": "",
+			"cc": "",
+			"from": "do-not-reply@liferay.com",
+			"fromName": {
+				"en-US": "Liferay Marketplace"
+			},
+			"to": {
+				"en-US": "pablo.agulla@liferay.com"
+			}
+		}
+	],
+	"subject": {
+		"en_US": "Liferay Marketplace - New AI Hub Request"
+	},
+	"type": "email"
+}

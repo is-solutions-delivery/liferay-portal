@@ -1,0 +1,18 @@
+[
+	{
+		"active": true,
+		"conditionExpression": "orderType == \"CMP_BETA\"",
+		"externalReferenceCode": "MKT-CMP-FEEDBACK-EMAIL",
+		"label": {
+			"en_US": "CMP Feedback Email"
+		},
+		"name": "CMPFeedbackEmail",
+		"objectActionExecutorKey": "notification",
+		"objectActionTriggerKey": "onAfterAdd",
+		"objectDefinitionId": "[$OBJECT_DEFINITION_ID:ProductFeedback$]",
+		"parameters": {
+			"notificationTemplateExternalReferenceCode": "MARKETPLACE-CMP-BETA-FEEDBACK-SUBMIT-TEMPLATE",
+			"type": "email"
+		}
+	}
+]

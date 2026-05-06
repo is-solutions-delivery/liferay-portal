@@ -1,0 +1,7 @@
+{
+	"description": "Notifies administrators to review the newly submitted application",
+	"isObjectAction": false,
+	"recipients": "marketplace-admin@liferay.com",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a new app submission is completed and queued for review"
+}

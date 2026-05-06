@@ -1,0 +1,7 @@
+{
+	"description": "Confirms to the publisher that their app update was submitted and is under review",
+	"isObjectAction": false,
+	"recipients": "[%GETAPPINFORMATION_AUTHOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a publisher submits an update for their existing app"
+}

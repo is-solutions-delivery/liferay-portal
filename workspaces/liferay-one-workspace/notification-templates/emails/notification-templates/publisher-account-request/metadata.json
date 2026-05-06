@@ -1,0 +1,7 @@
+{
+	"description": "Initiates the publisher account setup workflow with administrators",
+	"isObjectAction": false,
+	"recipients": "marketplace-admin@liferay.com",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When an invitation or request to create a publisher account is initiated"
+}

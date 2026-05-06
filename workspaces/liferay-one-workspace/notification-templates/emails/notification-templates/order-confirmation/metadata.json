@@ -1,0 +1,7 @@
+{
+	"description": "Sends an order confirmation receipt to the creator of the purchase",
+	"isObjectAction": true,
+	"recipients": "[%CREATOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When a checkout is completed resulting in a formal order"
+}

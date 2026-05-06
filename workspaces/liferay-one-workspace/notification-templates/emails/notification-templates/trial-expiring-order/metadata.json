@@ -1,0 +1,7 @@
+{
+	"description": "Warns the customer that their trial will end soon and provides renewal steps",
+	"isObjectAction": true,
+	"recipients": "[%COMMERCEORDER_AUTHOR_EMAIL_ADDRESS%]",
+	"sender": "do-not-reply@liferay.com",
+	"triggerConditions": "When an active trial is nearing its expiration date"
+}
