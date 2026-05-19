@@ -4,13 +4,11 @@
  */
 
 import ClayButton from '@clayui/button';
-import ClayDropDown, {Align} from '@clayui/drop-down';
+import ClayDropDown from '@clayui/drop-down';
 import ClayForm, {ClayCheckbox, ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
-import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {zodResolver} from '@hookform/resolvers/zod';
 import classNames from 'classnames';
-import {useState} from 'react';
 import {useForm} from 'react-hook-form';
 
 import {RequiredMask} from '../../../../../components/FieldBase';
@@ -24,8 +22,6 @@ import zodSchema, {z} from '../../../../../schema/zod';
 import {productAgreements} from '../../../../../utils/agreements';
 import {phones} from '../../../../../utils/phones';
 import {useProductPurchaseOutletContext} from '../../../ProductPurchaseOutlet';
-import {ProductPurchaseAIHub} from '../../../services/ProductPurchaseAIHub';
-import {PURPOSE_OPTIONS} from '../ActivationKeyForm/constants';
 
 import './AIHubForm.scss';
 
@@ -38,6 +34,14 @@ const setValuesOptions = {
 
 const AIHubForm = () => {
 	const {
+		form,
+		product,
+		productPurchaseCart,
+		actions: {nextStep},
+		setForm,
+	} = useProductPurchaseOutletContext();
+
+	const {
 		formState: {errors, isValid},
 		handleSubmit,
 		register,
@@ -46,19 +50,18 @@ const AIHubForm = () => {
 	} = useForm<z.infer<typeof zodSchema.aiHubForm>>({
 		defaultValues: {
 			administratorEmailAddress:
-				Liferay.ThemeDisplay.getUserEmailAddress(),
-			aiHubAccountName: '',
-			businessEmailAddress: Liferay.ThemeDisplay.getUserEmailAddress(),
-			companyName: '',
-			country: '',
-			extension: '',
-			fullName: Liferay.ThemeDisplay.getUserName(),
-			intlCode: {code: '+1', flag: 'en-us'},
-			jobTitle: '',
-			phoneNumber: '',
-			purpose: '',
-			termsAndConditions: false,
-			userAgreement: false,
+				(form?.administratorEmailAddress as string) || Liferay.ThemeDisplay.getUserEmailAddress(),
+			aiHubAccountName: (form?.aiHubAccountName as string) || '',
+			businessEmailAddress: (form?.businessEmailAddress as string) || Liferay.ThemeDisplay.getUserEmailAddress(),
+			companyName: (form?.companyName as string) || '',
+			country: (form?.country as string) || '',
+			extension: (form?.extension as string) || '',
+			fullName: (form?.fullName as string) || Liferay.ThemeDisplay.getUserName(),
+			intlCode: (form?.intlCode as {code: string; flag: string}) || {code: '+1', flag: 'en-us'},
+			jobTitle: (form?.jobTitle as string) || '',
+			phoneNumber: (form?.phoneNumber as string) || '',
+			termsAndConditions: (form?.termsAndConditions as boolean) || false,
+			userAgreement: (form?.userAgreement as boolean) || false,
 		},
 		mode: 'all',
 		reValidateMode: 'onChange',
@@ -67,42 +70,30 @@ const AIHubForm = () => {
 
 	const watchedValues = watch();
 
-	const {intlCode, purpose, termsAndConditions, userAgreement} =
+	const {intlCode, termsAndConditions, userAgreement} =
 		watchedValues;
 
-	const [active, setActive] = useState(false);
-	const [currentPhonesFlags, setCurrentPhonesFlags] = useState(intlCode);
-	const [loading, setLoading] = useState(false);
 	const {data: regionsResponse} = useCommerceRegions();
-	const {handlePurchase, product, selectedAccount} =
-		useProductPurchaseOutletContext();
 
 	const countries = regionsResponse?.items ?? [];
 
 	const onSubmit = async (form: z.infer<typeof zodSchema.aiHubForm>) => {
-		setLoading(true);
+		const skuId = product.skus[0].id
 
-		try {
-			const productPurchase = new ProductPurchaseAIHub(
-				selectedAccount,
-				product
-			);
-
-			productPurchase.setForm(form);
-
-			await handlePurchase(productPurchase);
-		}
-		catch (error) {
-			console.error(error);
+		const existingItem = productPurchaseCart.cartItems.find((item) => item?.skuId === skuId);
+		
+		if (!existingItem) {
+			await productPurchaseCart.addCart(product.id, skuId)
 		}
 
-		setLoading(false);
+		setForm(form);
+		nextStep()
 	};
 
 	return (
 		<ProductPurchase.Shell
 			className="liferay-ai-hub-form"
-			title={i18n.translate('request-access-to-ai-hub-private-beta')}
+			title={i18n.translate('account-details')}
 		>
 			<p className="mb-6 text-black-50">
 				{i18n.translate(
@@ -110,9 +101,7 @@ const AIHubForm = () => {
 				)}
 			</p>
 
-			<p className="h4 mb-0">
-				{i18n.translate('personal-information-purpose')}
-			</p>
+			<p className="h4 mb-0">{i18n.translate('personal-information')}</p>
 
 			<hr className="mb-5 mt-3" />
 
@@ -194,11 +183,11 @@ const AIHubForm = () => {
 										<ClayIcon
 											className="mr-2"
 											symbol={
-												currentPhonesFlags?.flag as string
+												intlCode?.flag as string
 											}
 										/>
 
-										{currentPhonesFlags?.code}
+										{intlCode?.code}
 									</div>
 								}
 							>
@@ -209,11 +198,6 @@ const AIHubForm = () => {
 										return (
 											<ClayDropDown.Item
 												onClick={() => {
-													setCurrentPhonesFlags({
-														code: phone.code,
-														flag: phone.flag,
-													});
-
 													setValue(
 														'intlCode',
 														{
@@ -265,61 +249,7 @@ const AIHubForm = () => {
 					</div>
 				</ClayForm.Group>
 
-				<p className="h4">
-					{i18n.translate('purpose')} <RequiredMask />
-				</p>
-
-				<ClayDropDown
-					active={active}
-					alignmentPosition={Align.BottomLeft}
-					className="w-100"
-					menuElementAttrs={{className: 'dropdown-menu-purpose'}}
-					onActiveChange={setActive}
-					trigger={
-						<ClayButton
-							className="align-items-center d-flex justify-content-between liferay-ai-hub-form-select-input rounded-lg w-100"
-							displayType="secondary"
-							onClick={() => setActive(!active)}
-						>
-							<div className="align-items-center d-flex justify-content-between w-100">
-								<span>
-									{
-										PURPOSE_OPTIONS.find(
-											(item) => item.value === purpose
-										)?.title
-									}
-								</span>
-
-								<ClayIcon symbol="caret-bottom" />
-							</div>
-						</ClayButton>
-					}
-				>
-					<ClayDropDown.ItemList>
-						{PURPOSE_OPTIONS.map((option, index) => (
-							<ClayDropDown.Item
-								className="d-flex flex-column"
-								key={index}
-								onClick={() => {
-									setActive(false);
-
-									setValue(
-										'purpose',
-										option.value,
-										setValuesOptions
-									);
-								}}
-							>
-								<strong>{option.title}</strong>
-								<span>{option.subtitle}</span>
-							</ClayDropDown.Item>
-						))}
-					</ClayDropDown.ItemList>
-				</ClayDropDown>
-
-				<p className="h4 mt-6">
-					{i18n.translate('ai-hub-information')}
-				</p>
+				<p className="h4">{i18n.translate('ai-hub-information')}</p>
 
 				<hr className="mb-5 mt-3" />
 				<ClayInput.Group>
@@ -466,15 +396,11 @@ const AIHubForm = () => {
 
 			<ClayButton
 				className="w-100"
-				disabled={loading || !isValid}
+				disabled={!isValid}
 				onClick={handleSubmit(onSubmit)}
 			>
 				<div className="align-items-center d-flex justify-content-center">
-					<span>{i18n.translate('send-request')}</span>
-
-					<span className="ml-3">
-						{loading && <ClayLoadingIndicator />}
-					</span>
+					<span>{i18n.translate('continue')}</span>
 				</div>
 			</ClayButton>
 		</ProductPurchase.Shell>
