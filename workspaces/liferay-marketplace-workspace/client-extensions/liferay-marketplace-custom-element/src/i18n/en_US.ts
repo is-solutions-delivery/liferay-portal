@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {Liferay} from '../liferay/liferay';
+import { Liferay } from '../liferay/liferay';
 
 export default {
 	'a-license-key-for-the-entered-domain-already-exists':
@@ -556,6 +556,7 @@ export default {
 	'paid-date': 'Paid Date',
 	'pay-with-bank-transfer': 'Pay with Bank Transfer',
 	'pay-with-card': 'Pay with Card',
+	'pay-with-invoice': 'Pay with Invoice',
 	'payment': 'Payment',
 	'payment-method': 'Payment Method',
 	'payment-status': 'Payment Status',
@@ -818,6 +819,8 @@ export default {
 		'This order must be completed before downloading this app.',
 	'this-product-is-no-longer-available':
 		'This product is no longer available.',
+	'this-purchase-will-be-billed-under-your-existing-payment-agreement-the-payment-method-cannot-be-changed-and-no-online-payment-is-required':
+		'This purchase will be billed under your existing payment agreement. The payment method cannot be changed, and no online payment is required.',
 	'this-submission-is-currently-under-review-by-liferay-once-the-process-is-complete-it-will-be-published-on-the-marketplace-in-the-meantime-no-information-or-data-from-this-app-submission-can-be-updated':
 		'This submission is currently under review by Liferay. Once the process is complete, it will be published on the Marketplace. In the meantime, no information or data from this app submission can be updated.',
 	'times-already-extended': 'Times Already Extended',

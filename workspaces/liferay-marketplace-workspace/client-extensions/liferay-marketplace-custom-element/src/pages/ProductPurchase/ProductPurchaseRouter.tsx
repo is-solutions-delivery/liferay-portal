@@ -39,6 +39,8 @@ import LDPProvisioning from './pages/LiferayProduct/LDPProvisioningForm';
 import ProjectSelection from './pages/LiferayProduct/Project';
 import NextSteps from './pages/NextSteps';
 import SolutionProvisioningForm from './pages/Solution';
+import AIHubOrderSummary from './pages/LiferayProduct/AIHubOrderSummary';
+import NewAIHubForm from './pages/LiferayProduct/AIHubForm/NewAIHubForm';
 
 export const productTypeRoutes = {
 	[ProductTypeVocabulary.APP]: {
@@ -169,6 +171,26 @@ export const productTypeRoutes = {
 					},
 					{
 						element: LDPOrderSummary,
+						path: 'summary',
+						title: i18n.translate('summary'),
+					},
+				];
+			}
+
+			if (solutionType === SolutionTypes.NEW_AI_HUB) {
+				return [
+					{
+						element: ProductPurchaseAccountSelection,
+						index: true,
+						title: i18n.translate('account'),
+					},
+					{
+						element: NewAIHubForm,
+						path: 'new-ai-hub-form',
+						title: i18n.translate('account-details'),
+					},
+					{
+						element: AIHubOrderSummary,
 						path: 'summary',
 						title: i18n.translate('summary'),
 					},

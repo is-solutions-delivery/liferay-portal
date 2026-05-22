@@ -408,6 +408,15 @@ const zodSchema = {
 		workspaceName: z.string().min(3),
 		workspaceOwnerEmail: z.string().email(),
 	}),
+	newAIHubForm: z.object({
+		...personalInformationSchema,
+		administratorEmailAddress: z
+			.string()
+			.email('Please fill in valid email'),
+		aiHubAccountName: z.string().min(3, 'AI Hub Account Name is required'),
+		termsAndConditions: z.boolean().refine((value) => value === true),
+		userAgreement: z.boolean().refine((value) => value === true),
+	}),
 	productFeedback: z.object({
 		companyName: z.string().optional(),
 		emailAddress: z
