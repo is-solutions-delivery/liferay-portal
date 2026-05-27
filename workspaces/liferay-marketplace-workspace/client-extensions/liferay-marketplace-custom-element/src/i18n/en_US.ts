@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {Liferay} from '../liferay/liferay';
+import { Liferay } from '../liferay/liferay';
 
 export default {
 	'a-license-key-for-the-entered-domain-already-exists':
@@ -771,6 +771,7 @@ export default {
 	'thank-you-for-trying-the-beta-version-of-this-product-your-feedback-is-essential-to-improve-the-final-release-this-survey-takes-3–5-minutes':
 		'Thank you for trying the beta version of this product! Your feedback is essential to improve the final release. This survey takes ~3–5 minutes.',
 	'thank-you-for-your': 'Thank you for your',
+	'thank-you-for-your-purchase': 'Thank You for Your Purchase!',
 	'thank-you-for-your-request': 'Thank You for Your Request!',
 	'the-app-and-all-its-client-extensions-services-will-be-deleted-and-uninstalled-from-liferay-dxp':
 		'The app and all its client extensions (services) will be deleted and uninstalled from Liferay DXP.',

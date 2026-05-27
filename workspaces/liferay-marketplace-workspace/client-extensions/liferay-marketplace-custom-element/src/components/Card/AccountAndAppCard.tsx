@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import './AccountAndAppCard.scss';
 
 interface AppCardProps {
+	appBeta?: string;
 	category: string;
 	className?: string;
 	logo: string;
@@ -15,6 +16,7 @@ interface AppCardProps {
 }
 
 export function AccountAndAppCard({
+	appBeta,
 	category,
 	className,
 	logo,
@@ -32,7 +34,12 @@ export function AccountAndAppCard({
 			</div>
 
 			<div className="card-info">
-				<span className="card-info-text">{title}</span>
+
+				<div className="d-flex align-items-center flex-wrap">
+					<span className="card-info-text">{title}</span>
+
+					{appBeta && <div className="app-card-beta">{appBeta}</div>}
+				</div>
 
 				<span className="card-info-description">{category}</span>
 			</div>
