@@ -7,7 +7,12 @@ import ClayButton from '@clayui/button';
 
 import {NavbarProps} from '../../../../components/Navbar';
 import {useMarketplaceContext} from '../../../../context/MarketplaceContext';
-import {OrderTypes, orderTypeDocumentationURL} from '../../../../enums/Order';
+import {
+	OrderStatus,
+	OrderTypes,
+	OrderWorkflowStatusCode,
+	orderTypeDocumentationURL,
+} from '../../../../enums/Order';
 import useGetProductByOrderId from '../../../../hooks/useGetProductByOrderId';
 import i18n from '../../../../i18n';
 import {Liferay} from '../../../../liferay/liferay';
@@ -59,16 +64,18 @@ const LiferayProductsOutlet = () => {
 					props?.marketplaceDeliveryProduct?.specificationValues
 						?.APP_BETA;
 
+				const orderType = props?.placedOrder
+					?.orderTypeExternalReferenceCode as OrderTypes;
+
+				const orderStatus = props?.placedOrder?.orderStatusInfo?.code;
+
 				if (
 					[
 						OrderTypes.AI_HUB,
 						OrderTypes.CMP,
 						OrderTypes.DSR,
 						OrderTypes.DXP,
-					].includes(
-						props?.placedOrder
-							?.orderTypeExternalReferenceCode as OrderTypes
-					)
+					].includes(orderType)
 				) {
 					return (
 						<div className="mt-6">
@@ -82,15 +89,31 @@ const LiferayProductsOutlet = () => {
 										);
 									}}
 									outline
-									size="sm"
+									size="regular"
 								>
 									{i18n.translate('share-beta-feedback')}
 								</ClayButton>
 							)}
 
+							{orderType === OrderTypes.AI_HUB &&
+								orderStatus ===
+									OrderWorkflowStatusCode.COMPLETED && (
+									<ClayButton
+										className="mr-2"
+										displayType="primary"
+										onClick={() => {
+											Liferay.Util.navigate(
+												`${getSiteURL()}/product-purchase?productId=${props?.product?.productId}&aiHubTokens#/`
+											);
+										}}
+										size="regular"
+									>
+										{i18n.translate('buy-extra-token')}
+									</ClayButton>
+								)}
+
 							{[OrderTypes.CMP, OrderTypes.DXP].includes(
-								props?.placedOrder
-									?.orderTypeExternalReferenceCode as OrderTypes
+								orderType
 							) && (
 								<ClayButton
 									displayType="primary"
@@ -100,7 +123,7 @@ const LiferayProductsOutlet = () => {
 										);
 									}}
 									outline
-									size={appBeta ? 'sm' : 'regular'}
+									size="regular"
 								>
 									{i18n.translate('new-activation-key')}
 								</ClayButton>
@@ -110,7 +133,7 @@ const LiferayProductsOutlet = () => {
 				}
 
 				if (
-					props.marketplaceDeliveryProduct?.specificationValues
+					props?.marketplaceDeliveryProduct?.specificationValues
 						?.SOLUTION_TYPE === 'liferay-data-platform'
 				) {
 					const orderMetadata = safeJSONParse(
