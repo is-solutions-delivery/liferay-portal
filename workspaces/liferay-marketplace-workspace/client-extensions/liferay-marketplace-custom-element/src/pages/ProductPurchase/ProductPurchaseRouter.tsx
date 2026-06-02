@@ -34,6 +34,7 @@ import AIHubForm from './pages/LiferayProduct/AIHub/AIHubForm';
 import AIHubOpenBetaForm from './pages/LiferayProduct/AIHub/AIHubOpenBetaForm';
 import AIHubOrderSummary from './pages/LiferayProduct/AIHub/AIHubOrderSummary';
 import AIHubTokenOrderSummary from './pages/LiferayProduct/AIHub/AIHubTokenOrderSummary';
+import AIHubTokenSelection from './pages/LiferayProduct/AIHub/AIHubTokenSelection';
 import ActivationKeyForm from './pages/LiferayProduct/ActivationKeyForm';
 import DSRLicenseKeyForm from './pages/LiferayProduct/DSRLicenseKeyForm';
 import LDPInformation from './pages/LiferayProduct/LDPInformation';
@@ -42,7 +43,6 @@ import LDPProvisioning from './pages/LiferayProduct/LDPProvisioningForm';
 import ProjectSelection from './pages/LiferayProduct/Project';
 import NextSteps from './pages/NextSteps';
 import SolutionProvisioningForm from './pages/Solution';
-import AIHubTokenSelection from './pages/LiferayProduct/AIHub/AIHubTokenSelection';
 
 export const productTypeRoutes = {
 	[ProductTypeVocabulary.APP]: {
