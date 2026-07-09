@@ -143,12 +143,20 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 		ChannelResource channelResource =
 			_marketplaceService.getChannelResource();
 
-		Channel channel = channelResource.getChannelByExternalReferenceCode(
-			_MARKETPLACE_CHANNEL);
+		com.liferay.headless.commerce.admin.channel.client.pagination.Page
+			<Channel> channelPage = channelResource.getChannelsPage(
+				"", "",
+				com.liferay.headless.commerce.admin.channel.client.pagination.
+					Pagination.of(1, 1),
+				"");
 
-		_channelId = channel.getId();
+		if (channelPage.getTotalCount() == 0) {
+			return null;
+		}
 
-		return _channelId;
+		Channel channel = channelPage.fetchFirstItem();
+
+		return channel.getId();
 	}
 
 	private CustomField[] _getCustomFields(
@@ -278,6 +286,24 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 				_log.info(
 					"Skipping over account " + koroneikiAccount.getKey() +
 						" because it is a project");
+			}
+
+			AccountResource accountResource =
+				_marketplaceService.getAccountResource();
+
+			HttpInvoker.HttpResponse httpResponse =
+				accountResource.getAccountByExternalReferenceCodeHttpResponse(
+					koroneikiAccount.getParentAccountKey());
+
+			if (!_isOKStatusCode(httpResponse.getStatusCode())) {
+				if (_log.isInfoEnabled()) {
+					_log.info(
+						"Skipping over parent account " +
+							koroneikiAccount.getParentAccountKey() +
+								" because it does not exist on Marketplace");
+				}
+
+				return;
 			}
 
 			_marketplaceService.putSalesforceProject(
@@ -479,7 +505,7 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 				continue;
 			}
 
-			postalAddressResource.postAccountPostalAddress(
+			postalAddressResource.postAccountPostalAddressHttpResponse(
 				account.getId(), postalAddress);
 		}
 	}
@@ -544,8 +570,6 @@ public class MarketplaceMessageReceiver implements MessageReceiver {
 			}
 		}
 	}
-
-	private static final String _MARKETPLACE_CHANNEL = "MARKETPLACE-CHANNEL";
 
 	private static final Log _log = LogFactory.getLog(
 		MarketplaceMessageReceiver.class);
