@@ -501,7 +501,7 @@ public class MarketplaceService extends BaseService {
 					"/o/c/publisherassetses"
 				).queryParam(
 					"filter",
-					"r_productEntryToPublisherAssets_CPDefinitionId eq '" +
+					"r_productEntryToPublisherAssets_CProductId eq '" +
 						productId + "'"
 				).queryParam(
 					"pageSize", 20
